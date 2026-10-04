@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stock signals">
+<meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1A24" media="(prefers-color-scheme: dark)">
+<title>US stock signal board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #EEF1F4; --ink: #14202B; --muted: #5B6B79; --line: #CBD3DA; --field: #FFFFFF;
+  --buy: #0B7A6E; --sell: #B4235A; --close: #A45F00; --hold: #2F5DA8;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0F1A24; --ink: #E6EDF3; --muted: #8FA0AE; --line: #263645; --field: #17242F;
+    --buy: #3FCFB8; --sell: #FF6B9A; --close: #F2B04A; --hold: #7FA8F0;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0F1A24; --ink: #E6EDF3; --muted: #8FA0AE; --line: #263645; --field: #17242F;
+  --buy: #3FCFB8; --sell: #FF6B9A; --close: #F2B04A; --hold: #7FA8F0;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 17px/1.45 "Familjen Grotesk", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums; -webkit-text-size-adjust: 100%;
+}
+main { max-width: 640px; margin: 0 auto; padding: 20px 18px 48px; }
+h1 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+.top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.meta { color: var(--muted); font-size: 15px; margin: 6px 0 0; }
+button {
+  font: inherit; font-weight: 500; color: var(--ink); background: transparent;
+  border: 1.5px solid var(--ink); border-radius: 999px; padding: 8px 16px; min-height: 44px; cursor: pointer;
+}
+button.quiet { border-color: var(--line); color: var(--muted); }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--hold); outline-offset: 2px; }
+.equity { display: flex; align-items: center; gap: 10px; margin: 18px 0 4px; font-size: 15px; color: var(--muted); }
+input {
+  font: inherit; color: var(--ink); background: var(--field); border: 1.5px solid var(--line);
+  border-radius: 10px; padding: 8px 10px; min-height: 44px; width: 100%;
+}
+.equity input { width: 130px; }
+.market { border-top: 1.5px solid var(--ink); margin-top: 26px; padding-top: 12px; }
+.market header { display: flex; justify-content: space-between; align-items: baseline; }
+.sym { font-weight: 700; font-size: 18px; }
+.price { color: var(--muted); }
+.verdict { font-size: clamp(52px, 17vw, 84px); font-weight: 700; line-height: 0.95; letter-spacing: -0.03em; margin: 10px 0 8px; }
+.verdict.buy { color: var(--buy); } .verdict.sell { color: var(--sell); }
+.verdict.close { color: var(--close); } .verdict.hold { color: var(--hold); } .verdict.wait { color: var(--muted); }
+.why { margin: 0 0 12px; max-width: 34em; }
+table { border-collapse: collapse; width: 100%; margin: 4px 0 12px; }
+td { padding: 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+td:last-child { text-align: right; font-weight: 500; white-space: nowrap; padding-left: 12px; }
+td small { display: block; color: var(--muted); font-weight: 400; white-space: normal; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 6px; }
+details { margin-top: 8px; color: var(--muted); font-size: 15px; }
+summary { cursor: pointer; padding: 10px 0; min-height: 44px; }
+details table td { padding: 5px 0; }
+.form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 12px; }
+.form label { font-size: 14px; color: var(--muted); display: grid; gap: 4px; }
+.notice { border: 1.5px solid var(--close); border-radius: 12px; padding: 14px 16px; margin-top: 22px; }
+.notice p { margin: 0 0 8px; } .notice p:last-child { margin: 0; }
+footer { margin-top: 34px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+footer p { margin: 0 0 8px; }
+
+.setup { border-top: 1px solid var(--line); margin-top: 16px; }
+.setup label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); margin: 10px 0; }
+.setup ol { margin: 6px 0 10px; padding-left: 20px; color: var(--muted); font-size: 15px; }
+.rule { font-size: 15px; color: var(--muted); margin: 0 0 12px; max-width: 36em; }
+.rule b { color: var(--ink); font-weight: 500; }
+.group { margin-top: 34px; }
+.group > h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px; }
+.group .note, .record p { margin: 0 0 8px; color: var(--muted); font-size: 15px; max-width: 36em; }
+.group .market { margin-top: 14px; }
+.group > table td:first-child { font-weight: 500; }
+.group > table td small { font-weight: 400; }
+.verdict.small { font-size: 40px; margin-top: 4px; }
+details.stock { border-bottom: 1px solid var(--line); margin: 0; color: var(--ink); font-size: 17px; }
+details.stock > summary { display: flex; align-items: center; gap: 12px; list-style: none; padding: 12px 0; }
+details.stock > summary::-webkit-details-marker { display: none; }
+details.stock > summary .price { margin-left: auto; }
+details.stock[open] { padding-bottom: 14px; }
+.tag { font-weight: 500; font-size: 15px; }
+.tag.buy { color: var(--buy); } .tag.sell { color: var(--sell); } .tag.hold { color: var(--hold); } .tag.wait { color: var(--muted); }
+p.notice { margin: 16px 0 0; font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <h1>US stock signal board</h1>
+    <button id="refresh">Refresh</button>
+  </div>
+  <p class="meta" id="meta">Loading…</p>
+  <label class="equity">Account size, USD
+    <input id="equity" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 5000">
+  </label>
+  <details class="setup" id="setup">
+    <summary>Setup: data key and watchlist</summary>
+    <ol>
+      <li>Create a free account at twelvedata.com.</li>
+      <li>Copy the API key from your dashboard and paste it below.</li>
+    </ol>
+    <label>Twelve Data API key (saved on this device only)
+      <input id="key" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="paste key here">
+    </label>
+    <label>Watchlist, up to 100 US tickers separated by commas
+      <input id="watch" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    </label>
+    <div class="actions"><button id="saveSetup">Save and load</button></div>
+  </details>
+  <p class="meta" id="marketLine" hidden></p>
+  <p class="notice" id="progress" hidden></p>
+  <section class="group" id="act" hidden><h2>Today</h2><div id="actBody"></div></section>
+  <section class="group" id="trends" hidden><h2>Strongest trends</h2><p class="note" id="trendNote"></p><table id="trendTable"></table></section>
+  <section class="group" id="deals" hidden><h2>Best deals in an uptrend</h2><p class="note" id="dealNote"></p><table id="dealTable"></table></section>
+  <section class="group" id="all" hidden><h2>Every stock on your list</h2><div id="allBody"></div></section>
+  <section class="group record" id="record" hidden>
+    <h2>How this page's calls have turned out</h2>
+    <p id="recordText"></p>
+    <table id="recordTable"></table>
+  </section>
+  <footer>
+    <p>Read only. This page cannot place orders and holds no broker login. Everything you enter is saved only on this device.</p>
+    <p>Long only, daily candles. Each stock gets its own rule, chosen from 72 versions of two ideas: buying a moving average cross, or buying a dip inside an uptrend, each with or without a market filter. The choice is scored by walk-forward testing: at four points in the past the page picks the best rule using only earlier prices, then counts how it did on the years that followed. A Buy is shown only if the rule made money on those unseen years, in at least 3 of the 4 periods, without depending on one lucky trade. It re-learns whenever new prices arrive, and pauses a stock whose last four finished calls lost money.</p>
+    <p>Past results do not predict future results. This is a mechanical rule, not financial advice.</p>
+    <p id="source"></p>
+  </footer>
+</main>
+<script id="logic">
+// ---- Pure maths: indicators, two rule families, walk-forward learning, live verdict ----
+const BASE = { fam: 'cross', fast: 9, slow: 21, mult: 1.5, tp: 3, mf: false };
+const CFG = { TREND: 200, ATR: 14, RISK: 0.01, NOTIONAL_CAP: 0.30, TIME_STOP_DAYS: 30, FLAT_R: 0.5,
+  FOLDS: 4, FIRST_TRAIN: 0.5, MIN_TRAIN_TRADES: 12, MIN_TEST_TRADES: 8, MIN_GOOD_FOLDS: 3, MIN_T: 1.0, PAUSE_AFTER: 4 };
+
+// 72 rule versions: trend-following crosses and buy-the-dip pullbacks, each with and without a market filter.
+const VARIANTS = [BASE];
+for (const mf of [false, true]) {
+  for (const [fast, slow] of [[9, 21], [10, 30], [20, 50]]) for (const mult of [1.5, 2, 2.5]) for (const tp of [2, 3, null])
+    if (!(fast === 9 && mult === 1.5 && tp === 3 && !mf)) VARIANTS.push({ fam: 'cross', fast, slow, mult, tp, mf });
+  for (const mult of [1.5, 2, 2.5]) for (const tp of [2, 3, null]) VARIANTS.push({ fam: 'pull', fast: 20, slow: 50, mult, tp, mf });
+}
+
+function ema(values, period) {
+  const out = new Array(values.length).fill(null);
+  if (values.length < period) return out;
+  let v = values.slice(0, period).reduce((a, b) => a + b, 0) / period;
+  out[period - 1] = v;
+  const k = 2 / (period + 1);
+  for (let i = period; i < values.length; i++) { v = values[i] * k + v * (1 - k); out[i] = v; }
+  return out;
+}
+function atr(c, period) {
+  const out = new Array(c.length).fill(null);
+  if (c.length <= period) return out;
+  const tr = c.map((x, i) => i === 0 ? x.h - x.l : Math.max(x.h - x.l, Math.abs(x.h - c[i - 1].c), Math.abs(x.l - c[i - 1].c)));
+  let v = tr.slice(1, period + 1).reduce((a, b) => a + b, 0) / period;
+  out[period] = v;
+  for (let i = period + 1; i < c.length; i++) { v = (v * (period - 1) + tr[i]) / period; out[i] = v; }
+  return out;
+}
+// Market map: date -> true when the S&P 500 fund closed above its own 200 day average.
+function marketMap(spyCandles) {
+  const e = ema(spyCandles.map(c => c.c), CFG.TREND), m = {};
+  spyCandles.forEach((c, i) => { if (e[i] !== null) m[c.d] = c.c > e[i]; });
+  return m;
+}
+function indicators(candles, mkt) {
+  const closes = candles.map(c => c.c), e = {};
+  for (const p of [9, 10, 20, 21, 30, 50, CFG.TREND]) e[p] = ema(closes, p);
+  return { e, atr: atr(candles, CFG.ATR), mktUp: candles.map(c => !mkt || mkt[c.d] !== false) };
+}
+function signalAt(ind, candles, v, i) {
+  if (i <= CFG.TREND || (v.mf && !ind.mktUp[i])) return false;
+  const c = candles[i].c, t = ind.e[CFG.TREND][i];
+  if (v.fam === 'pull') { const e20 = ind.e[20]; return c > t && ind.e[50][i] > t && candles[i - 1].c < e20[i - 1] && c > e20[i]; }
+  const f = ind.e[v.fast], s = ind.e[v.slow];
+  return f[i - 1] <= s[i - 1] && f[i] > s[i] && c > t;
+}
+const exitAt = (ind, candles, v, j) => v.fam === 'pull' ? candles[j].c < ind.e[50][j] : ind.e[v.fast][j] < ind.e[v.slow][j];
+
+// Follow one trade from a signal on bar i. Entry is the NEXT bar's open. Returns null if that bar does not exist yet.
+// If stop and target are both touched in one bar, the stop is assumed first (the pessimistic reading).
+function followTrade(candles, ind, v, i, to) {
+  if (i + 1 > to) return null;
+  const dist = v.mult * ind.atr[i], entry = candles[i + 1].o;
+  const stop = entry - dist, target = v.tp ? entry + v.tp * dist : Infinity;
+  const done = (j, price, reason) => ({ sigIdx: i, entryIdx: i + 1, exitIdx: j, entry, stop, target, exit: price, r: (price - entry) / dist, reason, open: false });
+  for (let j = i + 1; j <= to; j++) {
+    const b = candles[j];
+    if (j > i + 1 && b.o <= stop) return done(j, b.o, 'stop');          // gap down through the stop
+    if (b.l <= stop) return done(j, stop, 'stop');
+    if (j > i + 1 && b.o >= target) return done(j, b.o, 'target');
+    if (b.h >= target) return done(j, target, 'target');
+    if (exitAt(ind, candles, v, j)) { if (j + 1 > to) break; return done(j + 1, candles[j + 1].o, 'rule_exit'); }
+  }
+  return { sigIdx: i, entryIdx: i + 1, exitIdx: to, entry, stop, target, exit: candles[to].c, r: (candles[to].c - entry) / dist, reason: 'open', open: true };
+}
+function allTrades(candles, ind, v) {
+  const trades = [], to = candles.length - 1;
+  for (let i = CFG.TREND + 1; i < to; i++) {
+    if (!signalAt(ind, candles, v, i)) continue;
+    const t = followTrade(candles, ind, v, i, to);
+    if (!t || t.open) break;
+    trades.push(t); i = t.exitIdx;
+  }
+  return trades;
+}
+function stats(trades) {
+  const n = trades.length, wins = trades.filter(t => t.r > 0).length, sum = trades.reduce((a, t) => a + t.r, 0);
+  const mean = n ? sum / n : 0, sd = n > 1 ? Math.sqrt(trades.reduce((a, t) => a + (t.r - mean) ** 2, 0) / (n - 1)) : 0;
+  return { n, winRate: n ? wins / n : 0, avgR: mean, totalR: sum, bestR: n ? Math.max(...trades.map(t => t.r)) : 0, t: sd > 0 ? mean / (sd / Math.sqrt(n)) : 0 };
+}
+
+// Walk-forward: at four points in the past, pick the best rule using only earlier prices, then score it on the
+// stretch that followed. The score the page trusts is the sum of those four unseen stretches.
+// The rule in use today is the best one on all history so far.
+function learn(candles, ind) {
+  const n = candles.length, T = VARIANTS.map(v => allTrades(candles, ind, v));
+  const pick = (end) => {
+    let best = 0, bestAvg = -Infinity;
+    T.forEach((tr, k) => { const s = stats(tr.filter(t => t.exitIdx < end)); if (s.n >= CFG.MIN_TRAIN_TRADES && s.avgR > bestAvg) { bestAvg = s.avgR; best = k; } });
+    return best;
+  };
+  const bound = (k) => k >= CFG.FOLDS ? n : Math.floor(n * (CFG.FIRST_TRAIN + k * (1 - CFG.FIRST_TRAIN) / CFG.FOLDS));
+  const oos = [];
+  const foldR = [];
+  for (let k = 0; k < CFG.FOLDS; k++) { const s = bound(k), e = bound(k + 1), vi = pick(s), part = T[vi].filter(t => t.sigIdx >= s && t.sigIdx < e); oos.push(...part); foldR.push(part.reduce((a, t) => a + t.r, 0)); }
+  const vi = pick(n), test = stats(oos), train = stats(T[vi]), baseTest = stats(T[0].filter(t => t.sigIdx >= bound(0)));
+  // must be profitable on unseen data even with its single best trade removed
+  const lucky = test.avgR > 0 && test.totalR - test.bestR <= 0;
+  // and profitable in at least 3 of the 4 unseen periods, with an edge large enough not to look like chance.
+  // On random prices this test passes about 3 stocks in 100; without it, about 25.
+  const goodFolds = foldR.filter(x => x > 0).length;
+  const base = test.n >= CFG.MIN_TEST_TRADES && test.avgR > 0 && !lucky;
+  const patchy = base && goodFolds < CFG.MIN_GOOD_FOLDS, weak = base && !patchy && test.t < CFG.MIN_T;
+  const proven = base && !patchy && !weak;
+  return { v: VARIANTS[vi], train, test, baseTest, proven, lucky, thin: test.n < CFG.MIN_TEST_TRADES, patchy, weak, foldR, goodFolds, splitDate: candles[bound(0)].d, firstDate: candles[0].d };
+}
+const ruleText = (v) => (v.fam === 'pull' ? 'buy the dip back above the 20 day average' : v.fast + '/' + v.slow + ' day cross') + ', stop ' + v.mult + ' × ATR, '
+  + (v.tp ? 'target ' + v.tp + 'R' : 'no fixed target') + (v.mf ? ', only while the market is in an uptrend' : '');
+
+function plan(price, dist, tp, equity) {
+  const p = { entry: price, stop: price - dist, target: tp ? price + tp * dist : null, stopPct: dist / price * 100 };
+  if (equity > 0) {
+    const riskQty = equity * CFG.RISK / dist, capQty = equity * CFG.NOTIONAL_CAP / price;
+    p.shares = Math.floor(Math.min(riskQty, capQty)); p.capped = capQty < riskQty;
+    p.notional = p.shares * price; p.risk = p.shares * dist;
+  }
+  return p;
+}
+
+// pos: {entry, stop, target, d (date marked), v}
+function exitCheck(pos, candles, ind, last) {
+  const v = pos.v || BASE, i = candles.length - 1, since = candles.filter(c => c.d > pos.d);
+  const low = Math.min(last, ...since.map(c => c.l)), high = Math.max(last, ...since.map(c => c.h));
+  if (pos.stop && low <= pos.stop) return 'Price reached your stop. If the stop order was with your broker, it has already sold. If not, sell.';
+  if (pos.target && high >= pos.target) return 'Price reached your target. If the limit order was with your broker, it has already sold.';
+  if (exitAt(ind, candles, v, i)) return (v.fam === 'pull' ? 'Price closed under its 50 day average.' : 'The ' + v.fast + ' day average has crossed back below the ' + v.slow + ' day average.') + ' The rule says sell at the next open.';
+  if (since.length >= CFG.TIME_STOP_DAYS && pos.stop && Math.abs(last - pos.entry) < CFG.FLAT_R * Math.abs(pos.entry - pos.stop))
+    return 'Held for ' + since.length + ' trading days and still flat. The time stop says sell.';
+  return null;
+}
+
+function verdict(candles, ind, L, pos, last, paused) {
+  const i = candles.length - 1, v = L.v;
+  if (pos) {
+    const x = exitCheck(pos, candles, ind, last);
+    return x ? { word: 'Sell', cls: 'sell', why: x } : { word: 'Hold', cls: 'hold', why: 'Your position is still valid. No stop, target, rule exit or time stop yet.' };
+  }
+  const wait = (why, extra) => ({ word: 'Wait', cls: 'wait', why, ...extra });
+  if (signalAt(ind, candles, v, i)) {
+    if (!L.proven) return wait('A buy signal fired at the last close, but this rule did not pass its check on this stock\u2019s unseen years. Skipped.');
+    if (paused) return wait('A buy signal fired, but this page\u2019s own recent calls on this stock lost money. Paused until its paper record recovers.', { signal: true });
+    return { word: 'Buy', cls: 'buy', act: true, signal: true, why: v.fam === 'pull'
+      ? 'In an uptrend, price dipped under its 20 day average and closed back above it at the last close.'
+      : 'The ' + v.fast + ' day average crossed above the ' + v.slow + ' day average at the last close, with price above the 200 day average.' };
+  }
+  if (v.mf && !ind.mktUp[i]) return wait('This stock\u2019s rule only buys while the S&P 500 is above its 200 day average. It is below, so no buys.');
+  if (v.fam === 'pull') {
+    const up = candles[i].c > ind.e[CFG.TREND][i] && ind.e[50][i] > ind.e[CFG.TREND][i];
+    if (!up) return wait('No buy. This stock\u2019s rule buys dips in an uptrend, and it is not in an uptrend.');
+    return wait(candles[i].c < ind.e[20][i] ? 'Dipping now. A buy fires on the first close back above the 20 day average.' : 'In an uptrend with no dip yet. A buy needs a close under the 20 day average, then a close back above it.');
+  }
+  const f = ind.e[v.fast][i], s = ind.e[v.slow][i], above = candles[i].c > ind.e[CFG.TREND][i];
+  if (f > s) return wait('No new cross. The ' + v.fast + ' day average is already above the ' + v.slow + ' day average, so the move has started. The rule only buys on the day of the cross.');
+  return wait('No buy yet. The ' + v.fast + ' day average must cross above the ' + v.slow + ' day average' + (above ? '.' : ' and price must get back above the 200 day average.'));
+}
+
+// Trend and pullback measures used for the two ranked lists. rs = 6 month change minus the market's.
+function trendStats(candles, ind, mktMom6) {
+  const i = candles.length - 1, c = candles[i].c, e50 = ind.e[50][i], e200 = ind.e[CFG.TREND][i];
+  const mom6 = c / candles[i - 126].c - 1, high63 = Math.max(...candles.slice(i - 62).map(x => x.h));
+  return { mom6, rs: mktMom6 === undefined ? null : mom6 - mktMom6, offHigh: (high63 - c) / high63, gap50: (c - e50) / ind.atr[i], up: c > e200 && e50 > e200 && mom6 > 0 };
+}
+
+// Paper record: every Buy signal the page saw, followed forward with the rule it used at the time.
+function resolveCall(call, candles, ind) {
+  const i = candles.findIndex(c => c.d === call.d);
+  if (i < 0) return null;
+  // use the stop distance frozen at signal time so later relearning cannot rewrite history
+  const frozen = { ...ind, atr: ind.atr.map((a, k) => k === i ? call.dist / call.v.mult : a) };
+  return followTrade(candles, frozen, call.v, i, candles.length - 1);
+}
+// Self-correction from live results: pause a stock when its last few finished paper calls lost money overall.
+function isPaused(finishedR) {
+  const lastFew = finishedR.slice(-CFG.PAUSE_AFTER);
+  return lastFew.length >= CFG.PAUSE_AFTER && lastFew.reduce((a, b) => a + b, 0) < 0;
+}
+if (typeof module !== 'undefined') module.exports = { BASE, CFG, VARIANTS, ema, atr, marketMap, indicators, signalAt, exitAt, followTrade, allTrades, stats, learn, trendStats, ruleText, plan, exitCheck, verdict, resolveCall, isPaused };
+</script>
+<script>
+// ---- Time helpers (US market hours, New York time; holidays are not known to this page) ----
+function ny(ms) {
+  const o = {}; new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', weekday: 'short' })
+    .formatToParts(new Date(ms)).forEach(p => o[p.type] = p.value);
+  return { d: o.year + '-' + o.month + '-' + o.day, mins: +o.hour * 60 + +o.minute, weekend: o.weekday === 'Sat' || o.weekday === 'Sun' };
+}
+const OPEN = 570, CLOSE = 960;
+const barClosed = (d, now) => { const n = ny(now); return d < n.d || (d === n.d && n.mins >= CLOSE + 10); };
+const marketOpen = (now) => { const n = ny(now); return !n.weekend && n.mins >= OPEN && n.mins < CLOSE; };
+function nextOpen(now) {
+  for (let k = 0; k < 8; k++) {
+    const ms = Math.floor(now / 60000) * 60000 + k * 86400000, n = ny(ms);
+    if (n.weekend) continue;
+    const t = ms - (n.mins - OPEN) * 60000;
+    if (t > now) return t;
+  }
+  return now;
+}
+function lastSession(now) {
+  for (let k = 0; k < 8; k++) { const n = ny(now - k * 86400000); if (n.weekend || (k === 0 && n.mins < CLOSE + 10)) continue; return n.d; }
+  return ny(now).d;
+}
+
+// ---- Device storage: small settings in localStorage, price history in IndexedDB ----
+const mem = {}, memC = {};
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('stk:' + k); return v === null ? (k in mem ? mem[k] : d) : JSON.parse(v); } catch { return k in mem ? mem[k] : d; } },
+  set(k, v) { mem[k] = v; try { localStorage.setItem('stk:' + k, JSON.stringify(v)); } catch {} },
+};
+const idb = (() => {
+  let dbp;
+  const open = () => dbp || (dbp = new Promise((res, rej) => { const r = indexedDB.open('stock-signals', 1); r.onupgradeneeded = () => r.result.createObjectStore('candles'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }));
+  const tx = async (mode, fn) => { const db = await open(); return new Promise((res, rej) => { const q = fn(db.transaction('candles', mode).objectStore('candles')); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); };
+  return { get: (k) => tx('readonly', s => s.get(k)).catch(() => memC[k]), set: (k, v) => { memC[k] = v; return tx('readwrite', s => s.put(v, k)).catch(() => {}); } };
+})();
+const DEFAULT_WATCH = ['SPY', 'QQQ', 'IWM', 'DIA', 'AAPL', 'MSFT', 'NVDA', 'AMZN', 'GOOGL', 'META', 'TSLA', 'AVGO', 'AMD', 'NFLX', 'ORCL', 'CRM',
+  'JPM', 'BAC', 'V', 'MA', 'UNH', 'LLY', 'JNJ', 'XOM', 'CVX', 'WMT', 'COST', 'HD', 'PG', 'KO', 'PEP', 'DIS'];
+const MAX_WATCH = 100, PER_MINUTE = 8;
+const watchlist = () => store.get('watch', DEFAULT_WATCH);
+
+// ---- Data: Twelve Data daily candles. The free plan allows 8 stocks a minute, so the list loads in batches. ----
+const toCandles = (rows, now) => { const all = rows.map(r => ({ d: r[0], o: r[1], h: r[2], l: r[3], c: r[4] })); return { candles: all.filter(c => barClosed(c.d, now)), last: all[all.length - 1].c }; };
+async function fetchSymbol(sym, key, now) {
+  const r = await fetch('https://api.twelvedata.com/time_series?symbol=' + encodeURIComponent(sym) + '&interval=1day&outputsize=4000&order=ASC&apikey=' + encodeURIComponent(key), { cache: 'no-store' });
+  const j = await r.json();
+  if (j.status === 'error' || !j.values) { const e = new Error(j.message || 'No data'); e.code = j.code; throw e; }
+  const rows = j.values.map(v => [v.datetime.slice(0, 10), +(+v.open).toFixed(4), +(+v.high).toFixed(4), +(+v.low).toFixed(4), +(+v.close).toFixed(4)]).sort((a, b) => a[0] < b[0] ? -1 : 1);
+  await idb.set(sym, { at: now, rows });
+  return { at: now, rows };
+}
+
+// ---- Rendering ----
+const $ = (id) => document.getElementById(id);
+const el = (tag, props = {}, ...kids) => { const n = Object.assign(document.createElement(tag), props); n.append(...kids); return n; };
+const money = (x) => x.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const R = (x) => (x >= 0 ? '+' : '') + x.toFixed(2) + 'R';
+const pct = (x) => Math.round(x * 100) + '%';
+const spct = (x) => (x >= 0 ? '+' : '') + (x * 100).toFixed(0) + '%';
+const when = (ms) => new Date(ms).toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+const yr = (d) => d.slice(0, 4);
+const row = (label, value, note) => { const a = el('td', {}, label); if (note) a.append(el('small', {}, note)); return el('tr', {}, a, el('td', {}, value)); };
+
+let state = { loaded: {}, errors: {}, now: Date.now(), busy: false, timer: null, progress: '' };
+
+// The market backdrop: S&P 500 fund (SPY) against its own 200 day average. Always loaded, even if not on the watchlist.
+function market() {
+  const d = state.loaded.SPY;
+  if (!d || d.candles.length < 400) return { stamp: 'none', map: null, mom6: undefined, known: false };
+  const stamp = d.candles[d.candles.length - 1].d;
+  if (!state.mkt || state.mkt.stamp !== stamp) {
+    const i = d.candles.length - 1, map = marketMap(d.candles);
+    state.mkt = { stamp, map, mom6: d.candles[i].c / d.candles[i - 126].c - 1, up: map[stamp] !== false, known: true };
+  }
+  return state.mkt;
+}
+
+// Everything the page knows about one stock, computed once per new day of prices.
+function study(sym) {
+  const data = state.loaded[sym];
+  if (!data || data.candles.length < 600) return null;
+  const M = market();
+  if (!data.ind || data.mktStamp !== M.stamp) {
+    data.ind = indicators(data.candles, M.map); data.learned = learn(data.candles, data.ind);
+    data.trend = trendStats(data.candles, data.ind, M.mom6); data.mktStamp = M.stamp;
+  }
+  const pos = store.get('positions', {})[sym] || null;
+  const finished = store.get('calls', []).filter(c => c.sym === sym).map(c => resolveCall(c, data.candles, data.ind)).filter(t => t && !t.open).map(t => t.r);
+  return { sym, ...data, pos, v: verdict(data.candles, data.ind, data.learned, pos, data.last, isPaused(finished)) };
+}
+
+function block(s, big) {
+  const { sym, candles, ind, learned: L, last, pos, v } = s, now = state.now, equity = parseFloat($('equity').value) || 0;
+  const i = candles.length - 1, dist = L.v.mult * ind.atr[i], open = marketOpen(now), box = el('div');
+  if (big) box.append(el('header', {}, el('span', { className: 'sym' }, sym), el('span', { className: 'price' }, money(last) + ' USD')));
+  box.append(el('div', { className: 'verdict ' + v.cls + (big ? '' : ' small') }, v.word), el('p', { className: 'why' }, v.why));
+  const save = (p) => { const all = store.get('positions', {}); if (p) all[sym] = p; else delete all[sym]; store.set('positions', all); render(); };
+  const actions = el('div', { className: 'actions' });
+
+  if (pos) {
+    const t = el('table'), move = (last - pos.entry) / pos.entry * 100;
+    t.append(row('Your entry', money(pos.entry), 'Marked ' + new Date(pos.ts).toLocaleDateString([], { dateStyle: 'medium' })));
+    if (pos.stop) t.append(row('Stop', money(pos.stop)));
+    if (pos.target) t.append(row('Target', money(pos.target)));
+    t.append(row('Since entry', (move >= 0 ? '+' : '') + move.toFixed(2) + '%'));
+    box.append(t);
+    actions.append(el('button', { onclick: () => save(null) }, 'I sold it'));
+  } else if (v.act) {
+    const p = plan(last, dist, L.v.tp, equity), t = el('table');
+    t.append(row('When', open ? 'Now' : 'Next open', open ? 'Market is open. The signal stays until today\u2019s close.' : when(nextOpen(now)) + ' your time'),
+      row('Buy near', money(p.entry), 'Last price. Your fill at the open will differ.'),
+      row('Stop loss', money(p.stop), p.stopPct.toFixed(1) + '% below. Place it with the order.'));
+    if (p.target) t.append(row('Take profit', money(p.target), L.v.tp + ' times the stop distance'));
+    else t.append(row('Take profit', 'None', 'This rule holds until its exit signal'));
+    if (p.shares === undefined) t.append(row('Size', 'Enter account size above'));
+    else if (p.shares < 1) t.append(row('Size', 'Under 1 share', 'Account is too small for a whole share within the limits'));
+    else t.append(row('Size', p.shares + ' shares', money(p.notional) + ' USD, risking ' + money(p.risk) + ' USD' + (p.capped ? '. Cut down by the 30% cap.' : '')));
+    box.append(t);
+    actions.append(el('button', { onclick: () => save({ entry: p.entry, stop: p.stop, target: p.target, d: candles[i].d, v: L.v, ts: Date.now() }) }, 'I bought'));
+  }
+  if (!pos) {
+    const openForm = el('button', { className: 'quiet' }, 'Track a position I already hold');
+    openForm.onclick = () => {
+      const f = el('div', { className: 'form' }), inp = (label, val) => { const x = el('input', { type: 'number', inputMode: 'decimal', step: 'any', value: val }); f.append(el('label', {}, label, x)); return x; };
+      const e = inp('Entry price', last), st = inp('Stop price (optional)', ''), tg = inp('Target price (optional)', '');
+      const ok = el('button', {}, 'Save position');
+      ok.onclick = () => { if (+e.value > 0) save({ entry: +e.value, stop: +st.value || null, target: +tg.value || null, d: candles[i].d, v: L.v, ts: Date.now() }); };
+      openForm.replaceWith(f, ok);
+    };
+    actions.append(openForm);
+  }
+  box.append(actions);
+
+  const status = L.proven ? 'Passes, so its signals are shown.' : L.thin ? 'Too few trades to judge, so its signals are skipped.' : L.lucky ? 'The profit came from one trade, so its signals are skipped.' : L.patchy ? 'It made money in only ' + L.goodFolds + ' of the 4 test periods, so its signals are skipped.' : L.weak ? 'The profit is too small to tell from luck, so its signals are skipped.' : 'Fails, so its signals are skipped.';
+  const rule = el('p', { className: 'rule' });
+  rule.append('Rule learned for ' + sym + ': ', el('b', {}, ruleText(L.v)), '. Scored on unseen prices, ' + yr(L.splitDate) + ' to ' + yr(candles[i].d) + ': ' + L.test.n + ' trades, ' + pct(L.test.winRate) + ' wins, average ' + R(L.test.avgR) + ', profitable in ' + L.goodFolds + ' of 4 periods. ' + status);
+  box.append(rule);
+
+  const d = el('details', {}, el('summary', {}, 'Numbers behind this')), dt = el('table'), T = s.trend;
+  dt.append(row('Last closed day', candles[i].d, 'Close ' + money(candles[i].c)),
+    row(L.v.fast + ' day average', money(ind.e[L.v.fast][i])), row(L.v.slow + ' day average', money(ind.e[L.v.slow][i])),
+    row('50 day average', money(ind.e[50][i])), row('200 day average', money(ind.e[CFG.TREND][i]), 'Price is ' + (candles[i].c > ind.e[CFG.TREND][i] ? 'above' : 'below')),
+    row('Change over 6 months', spct(T.mom6)), row('Below 3 month high', (T.offHigh * 100).toFixed(1) + '%'),
+    row('ATR (14)', money(ind.atr[i]), 'Stop distance ' + money(dist)),
+    row('Same rule on all history', R(L.train.avgR), L.train.n + ' trades, ' + pct(L.train.winRate) + ' wins. Best of 72 versions, so this number flatters.'),
+    row('6 month change vs market', T.rs === null ? 'n/a' : spct(T.rs)),
+    row('Plain 9/21 rule, same years', R(L.baseTest.avgR), '9/21 cross, 1.5 × ATR, 3R: ' + L.baseTest.n + ' trades'),
+    row('History used', candles.length + ' days'));
+  d.append(dt); box.append(d);
+  return box;
+}
+
+function render() {
+  const now = state.now, calls = store.get('calls', []), list = watchlist();
+  const open = marketOpen(now);
+  $('meta').textContent = (open ? 'US market is open. ' : 'US market is closed. Next open ' + when(nextOpen(now)) + ' your time. ') + 'Signals change once a day, after the 4 pm New York close.';
+  const M = market();
+  $('marketLine').hidden = !M.known;
+  if (M.known) $('marketLine').textContent = 'Market backdrop: ' + (M.up ? 'uptrend. The S&P 500 is above its 200 day average.' : 'downtrend. The S&P 500 is below its 200 day average, so rules with the market filter will not buy.');
+  $('progress').textContent = state.progress; $('progress').hidden = !state.progress;
+  const hasKey = Boolean(store.get('key', ''));
+  for (const id of ['act', 'trends', 'deals', 'all']) $(id).hidden = !hasKey;
+  if (!hasKey) { renderRecord(calls); return; }
+
+  const studies = list.map(study).filter(Boolean);
+
+  // 1. What to do today
+  const act = $('actBody'); act.replaceChildren();
+  const todo = studies.filter(s => s.pos || s.v.act).sort((a, b) => (a.v.word === 'Sell' ? 0 : a.v.act ? 1 : 2) - (b.v.word === 'Sell' ? 0 : b.v.act ? 1 : 2) || b.learned.test.avgR - a.learned.test.avgR);
+  if (!todo.length) act.append(el('p', { className: 'why' }, studies.length ? 'Nothing to buy or sell today. Most days look like this.' : 'Loading prices…'));
+  for (const s of todo) {
+    act.append(el('section', { className: 'market' }, block(s, true)));
+  }
+
+  for (const s of studies) {  // log every passed signal, shown or paused, so the paper record keeps running
+    const i = s.candles.length - 1;
+    if (s.v.signal && !calls.some(c => c.sym === s.sym && c.d === s.candles[i].d)) { calls.push({ sym: s.sym, d: s.candles[i].d, v: s.learned.v, dist: s.learned.v.mult * s.ind.atr[i] }); store.set('calls', calls.slice(-300)); }
+  }
+
+  // 2. Strongest trends
+  const up = studies.filter(s => s.trend.up), tb = $('trendTable'); tb.replaceChildren();
+  for (const [n, s] of [...up].sort((a, b) => b.trend.mom6 - a.trend.mom6).slice(0, 8).entries())
+    tb.append(row((n + 1) + '. ' + s.sym, spct(s.trend.mom6), money(s.last) + ' USD' + (s.trend.rs === null ? '' : ', ' + spct(s.trend.rs) + ' vs the market') + ', ' + (s.trend.offHigh * 100).toFixed(0) + '% below its 3 month high'));
+  $('trendNote').textContent = up.length ? up.length + ' of ' + studies.length + ' loaded stocks are in an uptrend. Ranked by 6 month change.' : 'No loaded stock is in an uptrend right now.';
+
+  // 3. Best deals: still in an uptrend, but pulled back to or under the 50 day average
+  const deals = up.filter(s => s.trend.gap50 <= 1.5).sort((a, b) => a.trend.gap50 - b.trend.gap50).slice(0, 8), db = $('dealTable'); db.replaceChildren();
+  for (const s of deals) db.append(row(s.sym, money(s.last), (s.trend.gap50 <= 0 ? 'Under' : 'Just above') + ' its 50 day average, ' + (s.trend.offHigh * 100).toFixed(0) + '% below its 3 month high, ' + spct(s.trend.mom6) + ' over 6 months'));
+  $('dealNote').textContent = deals.length ? 'Uptrends that have dipped. These are stocks to watch, not buy signals. A Buy appears under Today when that stock\u2019s own rule fires.' : 'No uptrending stock has pulled back to its 50 day average.';
+
+  // 4. Every stock
+  const all = $('allBody'), wasOpen = new Set([...all.querySelectorAll('details.stock[open]')].map(d => d.dataset.sym)); all.replaceChildren();
+  for (const sym of list) {
+    const s = studies.find(x => x.sym === sym), d = el('details', { className: 'stock' }); d.dataset.sym = sym;
+    if (!s) { d.append(el('summary', {}, el('span', { className: 'sym' }, sym), el('span', { className: 'price' }, state.errors[sym] ? 'Problem' : state.loaded[sym] ? 'Too little history' : 'Waiting'))); if (state.errors[sym]) d.append(el('p', { className: 'why' }, state.errors[sym])); all.append(d); continue; }
+    d.append(el('summary', {}, el('span', { className: 'sym' }, sym), el('span', { className: 'tag ' + s.v.cls }, s.v.word), el('span', { className: 'price' }, money(s.last))));
+    const fill = () => { if (!d.dataset.filled) { d.dataset.filled = '1'; d.append(block(s, false)); } };
+    d.addEventListener('toggle', () => { if (d.open) fill(); });
+    if (wasOpen.has(sym)) { d.open = true; fill(); }
+    all.append(d);
+  }
+  renderRecord(calls);
+}
+
+function renderRecord(calls) {
+  const rows = [];
+  for (const c of calls) { const data = state.loaded[c.sym]; if (!data || !data.ind) continue; rows.push({ c, t: resolveCall(c, data.candles, data.ind) }); }
+  $('record').hidden = rows.length === 0;
+  if (!rows.length) return;
+  const closed = rows.filter(x => x.t && !x.t.open), n = closed.length, wins = closed.filter(x => x.t.r > 0).length, sum = closed.reduce((a, x) => a + x.t.r, 0);
+  $('recordText').textContent = n ? n + ' finished: ' + pct(wins / n) + ' wins, average ' + R(sum / n) + '. Counted whether or not you took the trade.' + (n < 20 ? ' Fewer than 20 calls is too few to trust.' : '')
+    : 'No call has finished yet. Each Buy signal is followed here to its stop, target or rule exit.';
+  const tb = $('recordTable'); tb.replaceChildren();
+  for (const { c, t } of rows.slice(-8).reverse())
+    tb.append(row(c.sym + ' buy', !t ? 'Waiting for open' : t.open ? 'Open ' + R(t.r) : R(t.r), 'Signal ' + c.d + (t && !t.open ? ', ended by ' + t.reason.replace('_', ' ').replace('cross back', 'rule exit') : '')));
+}
+
+async function refresh() {
+  const key = store.get('key', ''), btn = $('refresh');
+  if (!key) { $('setup').open = true; $('meta').textContent = 'Add your free data key below to load prices.'; render(); return; }
+  if (state.busy) return;
+  state.busy = true; clearTimeout(state.timer); btn.disabled = true; state.now = Date.now();
+  const now = state.now, want = lastSession(now), list = watchlist(), positions = store.get('positions', {});
+  let fetched = 0, pending = 0, limited = false;
+  for (const sym of ['SPY', ...list.filter(x => x !== 'SPY')]) {
+    let cur = state.loaded[sym];
+    if (!cur) { const c = await idb.get(sym); if (c && c.rows && c.rows.length) { cur = state.loaded[sym] = { ...toCandles(c.rows, now), at: c.at }; } }
+    const lastBar = cur && cur.candles.length ? cur.candles[cur.candles.length - 1].d : '';
+    const live = cur && marketOpen(now) && (positions[sym] || (cur.learned && cur.ind && verdict(cur.candles, cur.ind, cur.learned, null, cur.last).act));
+    const stale = !cur || (lastBar < want && now - cur.at > 3600000) || (live && now - cur.at > 900000);
+    if (!stale) continue;
+    if (fetched >= PER_MINUTE || limited) { pending++; continue; }
+    btn.textContent = sym + '…';
+    try {
+      const c = await fetchSymbol(sym, key, now), d = toCandles(c.rows, now); fetched++; delete state.errors[sym];
+      state.loaded[sym] = cur && cur.candles.length === d.candles.length ? { ...cur, last: d.last, at: now } : { ...d, at: now };
+    } catch (e) {
+      if (e.code === 429) { limited = true; pending++; }
+      else if (e.code === 401) state.errors[sym] = 'The data key was rejected. Check it in Setup.';
+      else if (e instanceof TypeError) state.errors[sym] = 'This page could not reach the data service. Inside the Claude app that is expected: open your hosted copy in Safari.';
+      else state.errors[sym] = 'Could not load ' + sym + ': ' + e.message;
+      if (e.code === 401 || e instanceof TypeError) { state.progress = state.errors[sym]; break; }
+    }
+    render();
+  }
+  const have = list.filter(x => state.loaded[x]).length;
+  if (pending) {
+    state.progress = 'Loaded ' + have + ' of ' + list.length + ' stocks. The free data plan allows 8 a minute, so the next batch starts in about a minute. Keep this page open.';
+    state.timer = setTimeout(refresh, 62000);
+  } else if (!Object.values(state.errors).some(Boolean)) state.progress = '';
+  $('source').textContent = 'Data: Twelve Data daily prices, split adjusted. US market holidays are not known to this page.';
+  state.busy = false; btn.disabled = false; btn.textContent = 'Refresh'; render();
+}
+
+$('equity').value = store.get('equity', '');
+$('equity').addEventListener('input', () => { store.set('equity', $('equity').value); render(); });
+$('key').value = store.get('key', ''); $('watch').value = watchlist().join(', ');
+$('saveSetup').addEventListener('click', () => {
+  store.set('key', $('key').value.trim());
+  const list = [...new Set($('watch').value.toUpperCase().split(/[\s,]+/).filter(s => /^[A-Z.\-]{1,8}$/.test(s)))].slice(0, MAX_WATCH);
+  store.set('watch', list.length ? list : DEFAULT_WATCH); $('watch').value = watchlist().join(', ');
+  $('setup').open = false; state.errors = {}; refresh();
+});
+$('refresh').addEventListener('click', refresh);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+render(); refresh();
+</script>
+</body>
+</html>
