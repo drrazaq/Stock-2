@@ -1,0 +1,25 @@
+name: TipRanks radar
+on:
+  schedule:
+    - cron: '30 22 * * 2,5'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency: tipranks
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tipranks.mjs
+        env:
+          TIPRANKS_KEY: ${{ secrets.TIPRANKS_KEY }}
+          TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+          RATE: ${{ vars.RATE || '8' }}
+          PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
