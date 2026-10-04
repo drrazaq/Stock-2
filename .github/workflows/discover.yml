@@ -20,6 +20,7 @@ jobs:
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+          FMP_KEY: ${{ secrets.FMP_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           SEC_UA: ${{ github.repository_owner }} ${{ github.repository_owner }}@users.noreply.github.com
