@@ -21,9 +21,10 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           FMP_KEY: ${{ secrets.FMP_KEY }}
+          ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
-          SEC_UA: ${{ github.repository_owner }} ${{ github.repository_owner }}@users.noreply.github.com
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
       - run: |
           git config user.name "scanner"
