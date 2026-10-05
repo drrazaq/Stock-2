@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-concurrency: scanner
+concurrency: bot
 jobs:
   reply:
     runs-on: ubuntu-latest
@@ -30,5 +30,4 @@ jobs:
           git config user.email "scanner@users.noreply.github.com"
           git add data
           git diff --cached --quiet || git commit -m "bot $(date -u +%FT%RZ)"
-          git pull --rebase || true
-          git push
+          for i in 1 2 3 4; do git pull --rebase -X theirs && git push && break; sleep 10; done
