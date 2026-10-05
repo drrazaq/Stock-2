@@ -1,0 +1,32 @@
+name: Telegram bot replies
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: scanner
+jobs:
+  reply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scan.mjs
+        env:
+          MODE: chat
+          TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+          RATE: ${{ vars.RATE || '8' }}
+          PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+      - run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || git commit -m "bot $(date -u +%FT%RZ)"
+          git pull --rebase || true
+          git push
