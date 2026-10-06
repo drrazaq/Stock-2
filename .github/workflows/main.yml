@@ -22,6 +22,7 @@ jobs:
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+          YT_KEY: ${{ secrets.YT_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           RATE: ${{ vars.RATE || '8' }}
