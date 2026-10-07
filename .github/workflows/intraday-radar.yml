@@ -1,0 +1,30 @@
+name: Whole-market intraday radar
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '5,35 13-21 * * 1-5'
+permissions:
+  contents: write
+concurrency: radar
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node intraday-radar.mjs
+        env:
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+      - run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || git commit -m "radar $(date -u +%FT%RZ)"
+          for i in 1 2 3 4; do git pull --rebase -X theirs && git push && break; sleep 10; done
