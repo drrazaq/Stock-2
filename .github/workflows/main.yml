@@ -16,7 +16,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: node scan.mjs
+      - shell: bash
+        run: |
+          set -o pipefail
+          node scan.mjs 2>&1 | tee run.log
         env:
           MODE: ${{ github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily' }}
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
@@ -39,4 +42,5 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
         run: |
-          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}. In GitHub open Actions, open the red run, and send Claude the red lines." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
+          WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | grep -vE "DeprecationWarning|rate limit pause" | tail -n 3 | cut -c1-240 || true)
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
