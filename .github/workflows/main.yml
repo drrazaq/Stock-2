@@ -12,7 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
+      # Always start from the newest saved state. Without this a run that was queued behind another one starts from an
+      # older copy and then overwrites what the earlier run saved.
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -35,7 +39,8 @@ jobs:
           git config user.email "scanner@users.noreply.github.com"
           git add data
           git diff --cached --quiet || git commit -m "scan $(date -u +%FT%RZ)"
-          for i in 1 2 3 4; do git pull --rebase -X theirs && git push && break; sleep 10; done
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository" | tee -a run.log; exit 1; }
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()
         env:
