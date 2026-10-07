@@ -32,3 +32,11 @@ jobs:
           git add data
           git diff --cached --quiet || git commit -m "bot $(date -u +%FT%RZ)"
           for i in 1 2 3 4; do git pull --rebase -X theirs && git push && break; sleep 10; done
+      # If anything above failed, tell the owner on Telegram straight away.
+      - if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          [ $((10#$(date -u +%M))) -lt 10 ] || exit 0   # the bot runs every 5 minutes: warn about once an hour, not every time
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}. In GitHub open Actions, open the red run, and send Claude the red lines." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
