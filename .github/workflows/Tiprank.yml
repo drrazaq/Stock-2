@@ -23,3 +23,10 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
           RATE: ${{ vars.RATE || '8' }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+      # If anything above failed, tell the owner on Telegram straight away.
+      - if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}. In GitHub open Actions, open the red run, and send Claude the red lines." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
