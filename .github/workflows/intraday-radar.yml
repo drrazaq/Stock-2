@@ -9,7 +9,7 @@ concurrency: radar
 jobs:
   radar:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,7 +18,6 @@ jobs:
       - run: node intraday-radar.mjs
         env:
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
-          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
