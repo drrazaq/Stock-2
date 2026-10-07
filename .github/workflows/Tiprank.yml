@@ -11,7 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      # Always start from the newest saved state. Without this a run that was queued behind another one starts from an
+      # older copy and then overwrites what the earlier run saved.
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 20
