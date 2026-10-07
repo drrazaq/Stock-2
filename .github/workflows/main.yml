@@ -2,7 +2,7 @@ name: Stock scanner
 on:
   schedule:
     - cron: '30 21 * * 1-5'
-    - cron: '10,40 14-20 * * 1-5'
+    - cron: '10,40 13-20 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
@@ -18,7 +18,7 @@ jobs:
           node-version: 20
       - run: node scan.mjs
         env:
-          MODE: ${{ github.event.schedule == '10,40 14-20 * * 1-5' && 'intraday' || 'daily' }}
+          MODE: ${{ github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily' }}
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
