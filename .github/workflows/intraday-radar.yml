@@ -2,7 +2,7 @@ name: Whole-market intraday radar
 on:
   workflow_dispatch:
   schedule:
-    - cron: '5,35 13-21 * * 1-5'
+    - cron: '5,20,35,50 13-21 * * 1-5'
 permissions:
   contents: write
 concurrency: radar
