@@ -32,6 +32,14 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
+      # Learn from the winners, on the same whole-market prices (no extra data calls).
+      - shell: bash
+        run: |
+          set -o pipefail
+          node winners-study.mjs 2>&1 | tee -a run.log
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
       - if: always()
         uses: actions/cache/save@v4
         with:
@@ -40,7 +48,7 @@ jobs:
       - run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          git add data/leaders-study.json
+          git add data/leaders-study.json data/winners-study.json data/winners-paper.json
           git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
