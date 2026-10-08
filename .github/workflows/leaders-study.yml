@@ -1,0 +1,54 @@
+name: Leaders fair test
+on:
+  schedule:
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: leaders-study
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      # Always start from the newest saved state.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Two years of whole-market prices are kept in the Actions cache, not in the repository.
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-${{ github.run_id }}
+          restore-keys: leaders-study-
+      - shell: bash
+        run: |
+          set -o pipefail
+          node leaders-study.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+      - if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: study-cache
+          key: leaders-study-${{ github.run_id }}
+      - run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          git add data/leaders-study.json
+          git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
+      # If anything above failed, tell the owner on Telegram straight away.
+      - if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | grep -vE "DeprecationWarning|rate limit pause" | tail -n 3 | cut -c1-240 || true)
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
