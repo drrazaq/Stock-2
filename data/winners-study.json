@@ -1,0 +1,478 @@
+{
+ "generatedAt": "2026-10-08T19:09:23.038Z",
+ "status": "OK",
+ "from": "2024-10-08",
+ "to": "2026-10-07",
+ "splitAt": "2026-03-11",
+ "stocks": 6381,
+ "winners": 5134,
+ "winnerRate": 0.006075703694060982,
+ "gone": 660,
+ "rules": {
+  "hold": 10,
+  "stopAtr": 2,
+  "costs": {
+   "low": 0.004,
+   "base": 0.008
+  },
+  "goneCountedAs": -0.3,
+  "winner": "+30% within 20 sessions"
+ },
+ "base": {
+  "older": {
+   "n": 39612,
+   "win": 0.4297687569423407,
+   "avg": -0.004130485072905254,
+   "t": -8.960293309557194,
+   "pf": 0.8735126491385927,
+   "spy": 0.0032278661213731245,
+   "bestShare": 0.002588960539386415
+  },
+  "newer": {
+   "n": 36251,
+   "win": 0.4293398802791647,
+   "avg": -0.0063860732699515445,
+   "t": -12.457106798852319,
+   "pf": 0.8273343389587099,
+   "spy": 0.007599211198705944,
+   "bestShare": 0.0016562001910037925
+  }
+ },
+ "lift": [
+  {
+   "name": "opened 3% or more above the previous close",
+   "key": "gapUp",
+   "inWinners": 0.04674717569146864,
+   "inAll": 0.02519393376370554,
+   "lift": 1.855493315569987
+  },
+  {
+   "name": "up 50% or more in 6 months",
+   "key": "mom50",
+   "inWinners": 0.2148422282820413,
+   "inAll": 0.12084188850953545,
+   "lift": 1.777878771441812
+  },
+  {
+   "name": "volume at least twice its 50 day average",
+   "key": "vol2x",
+   "inWinners": 0.08219711725749902,
+   "inAll": 0.04710859699055035,
+   "lift": 1.7448432453632015
+  },
+  {
+   "name": "quiet base: last 10 days’ moves under 75% of the 50 day norm",
+   "key": "tight",
+   "inWinners": 0.12952863264511102,
+   "inAll": 0.09753078384151573,
+   "lift": 1.328079479557867
+  },
+  {
+   "name": "thinly followed: under 20M USD traded a day",
+   "key": "smallDv",
+   "inWinners": 0.36638098948188547,
+   "inAll": 0.3324288021964367,
+   "lift": 1.1021337112221279
+  },
+  {
+   "name": "S&P 500 above its 50 day average",
+   "key": "mktUp",
+   "inWinners": 0.7947019867549668,
+   "inAll": 0.8441062478920243,
+   "lift": 0.9414715134967498
+  },
+  {
+   "name": "up 4% to 20% on the day",
+   "key": "bigUp",
+   "inWinners": 0.052980132450331126,
+   "inAll": 0.06371086561617978,
+   "lift": 0.8315713801395359
+  },
+  {
+   "name": "price above the 50 day average, which is above the 200 day average",
+   "key": "trend",
+   "inWinners": 0.28924814959096223,
+   "inAll": 0.3885148608588115,
+   "lift": 0.7444970031560174
+  },
+  {
+   "name": "closed in the top fifth of the day’s range",
+   "key": "strongClose",
+   "inWinners": 0.08862485391507596,
+   "inAll": 0.20894905947302087,
+   "lift": 0.424145742213877
+  },
+  {
+   "name": "within 5% of its 52 week high",
+   "key": "high52",
+   "inWinners": 0.056291390728476824,
+   "inAll": 0.1662451701469222,
+   "lift": 0.3386046685069304
+  }
+ ],
+ "chosen": [
+  {
+   "name": "quiet base: last 10 days’ moves under 75% of the 50 day norm + opened 3% or more above the previous close",
+   "keys": [
+    "tight",
+    "gapUp"
+   ],
+   "sel": {
+    "n": 293,
+    "win": 0.5358361774744027,
+    "avg": 0.0450988203463706,
+    "t": 4.269825921111782,
+    "pf": 1.99627366564809,
+    "spy": 0.0037738915697506496,
+    "bestShare": 0.03488782439797009
+   },
+   "test": {
+    "low": {
+     "n": 987,
+     "win": 0.502532928064843,
+     "avg": 0.013554858235397666,
+     "t": 2.594111832636586,
+     "pf": 1.2624548074801376,
+     "spy": 0.017303595806901446,
+     "bestShare": 0.016944307934534643
+    },
+    "base": {
+     "n": 987,
+     "win": 0.49240121580547114,
+     "avg": 0.009554858235397676,
+     "t": 1.828596830535799,
+     "pf": 1.1780810908206512,
+     "spy": 0.017303595806901446,
+     "bestShare": 0.017414156926416624
+    }
+   },
+   "verdict": {
+    "v": "NOT PROVEN",
+    "why": "profit factor 1.18; no better than the S&P 500 over the same days"
+   }
+  },
+  {
+   "name": "quiet base: last 10 days’ moves under 75% of the 50 day norm + S&P 500 above its 50 day average",
+   "keys": [
+    "tight",
+    "mktUp"
+   ],
+   "sel": {
+    "n": 5966,
+    "win": 0.4488769694937982,
+    "avg": 0.0041162823032511505,
+    "t": 3.2946562555950196,
+    "pf": 1.1382555247236608,
+    "spy": 0.005303856704755047,
+    "bestShare": 0.006200867718949016
+   },
+   "test": {
+    "low": {
+     "n": 6501,
+     "win": 0.3739424703891709,
+     "avg": -0.009013477895063208,
+     "t": -6.819048781648035,
+     "pf": 0.7714111889149871,
+     "spy": 0.00912359503038013,
+     "bestShare": 0.010112366407888422
+    },
+    "base": {
+     "n": 6501,
+     "win": 0.3510229195508383,
+     "avg": -0.013013477895063151,
+     "t": -9.845205326784876,
+     "pf": 0.6900181163329696,
+     "spy": 0.00912359503038013,
+     "bestShare": 0.010597147883369467
+    }
+   },
+   "verdict": {
+    "v": "REJECTED",
+    "why": "lost money in the newer half even at the lowest cost"
+   }
+  },
+  {
+   "name": "quiet base: last 10 days’ moves under 75% of the 50 day norm",
+   "keys": [
+    "tight"
+   ],
+   "sel": {
+    "n": 6151,
+    "win": 0.44691920013006015,
+    "avg": 0.003268151329253429,
+    "t": 2.659007516038034,
+    "pf": 1.1074008865601221,
+    "spy": 0.0050953366000799334,
+    "bestShare": 0.0060485775650865855
+   },
+   "test": {
+    "low": {
+     "n": 7457,
+     "win": 0.39037146305484777,
+     "avg": -0.008018736608310428,
+     "t": -6.513009334625015,
+     "pf": 0.7964604392378163,
+     "spy": 0.01014942736812961,
+     "bestShare": 0.008546156840392687
+    },
+    "base": {
+     "n": 7457,
+     "win": 0.36878101113048145,
+     "avg": -0.012018736608310366,
+     "t": -9.761904841617964,
+     "pf": 0.7130182226775859,
+     "spy": 0.01014942736812961,
+     "bestShare": 0.008962258181943392
+    }
+   },
+   "verdict": {
+    "v": "REJECTED",
+    "why": "lost money in the newer half even at the lowest cost"
+   }
+  },
+  {
+   "name": "up 4% to 20% on the day + quiet base: last 10 days’ moves under 75% of the 50 day norm",
+   "keys": [
+    "bigUp",
+    "tight"
+   ],
+   "sel": {
+    "n": 1038,
+    "win": 0.4576107899807322,
+    "avg": 0.00984484077390252,
+    "t": 1.7945651010269403,
+    "pf": 1.219524956658014,
+    "spy": 0.0005082132899986376,
+    "bestShare": 0.05764924011547089
+   },
+   "test": {
+    "low": {
+     "n": 1599,
+     "win": 0.4277673545966229,
+     "avg": -0.0025875401247613737,
+     "t": -0.6941896642805987,
+     "pf": 0.9523677667126063,
+     "spy": 0.014945857552670978,
+     "bestShare": 0.01493172884597255
+    },
+    "base": {
+     "n": 1599,
+     "win": 0.42338961851156975,
+     "avg": -0.006587540124761353,
+     "t": -1.7673164655040026,
+     "pf": 0.8836602521935674,
+     "spy": 0.014945857552670978,
+     "bestShare": 0.015389050285611572
+    }
+   },
+   "verdict": {
+    "v": "REJECTED",
+    "why": "lost money in the newer half even at the lowest cost"
+   }
+  },
+  {
+   "name": "closed in the top fifth of the day’s range + quiet base: last 10 days’ moves under 75% of the 50 day norm",
+   "keys": [
+    "strongClose",
+    "tight"
+   ],
+   "sel": {
+    "n": 3587,
+    "win": 0.4413158628380262,
+    "avg": 0.002489272696765165,
+    "t": 1.5425030543029485,
+    "pf": 1.0796089274515692,
+    "spy": 0.0035438108370046207,
+    "bestShare": 0.01183862165352604
+   },
+   "test": {
+    "low": {
+     "n": 3869,
+     "win": 0.4001033858878263,
+     "avg": -0.005279384546589697,
+     "t": -3.030712498573858,
+     "pf": 0.8663465216828179,
+     "spy": 0.013783201162841978,
+     "bestShare": 0.008491710266802295
+    },
+    "base": {
+     "n": 3869,
+     "win": 0.3781338847247351,
+     "avg": -0.009279384546589694,
+     "t": -5.326974475195047,
+     "pf": 0.7787781554020445,
+     "spy": 0.013783201162841978,
+     "bestShare": 0.008864149221596167
+    }
+   },
+   "verdict": {
+    "v": "REJECTED",
+    "why": "lost money in the newer half even at the lowest cost"
+   }
+  }
+ ],
+ "promising": [],
+ "recentWinners": [
+  {
+   "sym": "VWAV",
+   "d": "2026-08-03"
+  },
+  {
+   "sym": "AUGO",
+   "d": "2026-06-10"
+  },
+  {
+   "sym": "AUGO",
+   "d": "2026-07-13"
+  },
+  {
+   "sym": "ATAI",
+   "d": "2026-06-05"
+  },
+  {
+   "sym": "ATAI",
+   "d": "2026-07-08"
+  },
+  {
+   "sym": "OPEN",
+   "d": "2026-06-22"
+  },
+  {
+   "sym": "NIQ",
+   "d": "2026-06-05"
+  },
+  {
+   "sym": "NIQ",
+   "d": "2026-07-14"
+  },
+  {
+   "sym": "LAR",
+   "d": "2026-07-28"
+  },
+  {
+   "sym": "MH",
+   "d": "2026-07-16"
+  },
+  {
+   "sym": "ARX",
+   "d": "2026-07-16"
+  },
+  {
+   "sym": "AMBQ",
+   "d": "2026-09-01"
+  },
+  {
+   "sym": "ONDS",
+   "d": "2026-07-13"
+  },
+  {
+   "sym": "PSKY",
+   "d": "2026-07-27"
+  },
+  {
+   "sym": "WYFI",
+   "d": "2026-06-09"
+  },
+  {
+   "sym": "WYFI",
+   "d": "2026-07-16"
+  },
+  {
+   "sym": "FLY",
+   "d": "2026-07-15"
+  },
+  {
+   "sym": "HTFL",
+   "d": "2026-07-17"
+  },
+  {
+   "sym": "BLSH",
+   "d": "2026-07-27"
+  },
+  {
+   "sym": "BLSH",
+   "d": "2026-08-25"
+  },
+  {
+   "sym": "PGEN",
+   "d": "2026-07-08"
+  },
+  {
+   "sym": "PGEN",
+   "d": "2026-09-04"
+  },
+  {
+   "sym": "VELO",
+   "d": "2026-07-24"
+  },
+  {
+   "sym": "AXTI",
+   "d": "2026-07-10"
+  },
+  {
+   "sym": "AXTI",
+   "d": "2026-08-10"
+  },
+  {
+   "sym": "AXTI",
+   "d": "2026-09-09"
+  },
+  {
+   "sym": "ELVR",
+   "d": "2026-07-27"
+  },
+  {
+   "sym": "ABTC",
+   "d": "2026-07-13"
+  },
+  {
+   "sym": "ABTC",
+   "d": "2026-08-11"
+  },
+  {
+   "sym": "LBRX",
+   "d": "2026-07-28"
+  },
+  {
+   "sym": "FIGR",
+   "d": "2026-07-23"
+  },
+  {
+   "sym": "BRCB",
+   "d": "2026-08-07"
+  },
+  {
+   "sym": "GEMI",
+   "d": "2026-08-17"
+  },
+  {
+   "sym": "VIA",
+   "d": "2026-07-16"
+  },
+  {
+   "sym": "BW",
+   "d": "2026-07-28"
+  },
+  {
+   "sym": "NTSK",
+   "d": "2026-07-22"
+  },
+  {
+   "sym": "NTSK",
+   "d": "2026-08-24"
+  },
+  {
+   "sym": "USAS",
+   "d": "2026-07-23"
+  },
+  {
+   "sym": "NRGV",
+   "d": "2026-08-24"
+  },
+  {
+   "sym": "NUAI",
+   "d": "2026-08-21"
+  }
+ ],
+ "text": "WINNERS STUDY, 2026-10-07\nWhole US market 2024-10-08 to 2026-10-07, stocks that later collapsed included. 5134 times a stock rose 30%+ within 20 sessions.\n\nWHAT WINNERS LOOKED LIKE THE DAY BEFORE (how much more common than on an ordinary day)\n- opened 3% or more above the previous close: 5% of winners vs 3% of all days (1.9x)\n- up 50% or more in 6 months: 21% of winners vs 12% of all days (1.8x)\n- volume at least twice its 50 day average: 8% of winners vs 5% of all days (1.7x)\n- quiet base: last 10 days’ moves under 75% of the 50 day norm: 13% of winners vs 10% of all days (1.3x)\n- thinly followed: under 20M USD traded a day: 37% of winners vs 33% of all days (1.1x)\nCommon among winners is not the same as a buy signal: most stocks with these looks do not become winners. So each look was tested as a buy rule:\n\nTESTED AS BUY RULES (buy next open, stop 2 daily moves, sell after 10 sessions; chosen on the older year, judged on the newer year from 2026-03-11, 0.8% cost)\nNOT PROVEN: quiet base: last 10 days’ moves under 75% of the 50 day norm + opened 3% or more above the previous close\n  987 trades, 49% won, average +1.0% a trade, profit factor 1.18. profit factor 1.18; no better than the S&P 500 over the same days\nREJECTED: quiet base: last 10 days’ moves under 75% of the 50 day norm + S&P 500 above its 50 day average\n  6501 trades, 35% won, average -1.3% a trade, profit factor 0.69. lost money in the newer half even at the lowest cost\nREJECTED: quiet base: last 10 days’ moves under 75% of the 50 day norm\n  7457 trades, 37% won, average -1.2% a trade, profit factor 0.71. lost money in the newer half even at the lowest cost\nREJECTED: up 4% to 20% on the day + quiet base: last 10 days’ moves under 75% of the 50 day norm\n  1599 trades, 42% won, average -0.7% a trade, profit factor 0.88. lost money in the newer half even at the lowest cost\nREJECTED: closed in the top fifth of the day’s range + quiet base: last 10 days’ moves under 75% of the 50 day norm\n  3869 trades, 38% won, average -0.9% a trade, profit factor 0.78. lost money in the newer half even at the lowest cost\nBuying a random stock the same way: 36251 trades, 43% won, average -0.6% a trade, profit factor 0.83.\n\nRESULT: no winner pattern passed the fair test. Nothing to act on. The study repeats every week as new days come in.\nAbout 2 years, one market climate. Daily prices only. Research, not an order. Not financial advice, not a halal ruling."
+}
