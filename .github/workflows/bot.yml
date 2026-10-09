@@ -1,7 +1,10 @@
 name: Telegram bot replies
+# The bot now stays awake: one run listens to Telegram for about 5.5 hours and answers each message within seconds.
+# The schedule below only makes sure a new run is waiting when the old one ends (GitHub queues one run in the "bot" group).
+# GitHub Actions minutes are free for public repositories.
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 permissions:
   contents: write
@@ -9,10 +12,8 @@ concurrency: bot
 jobs:
   reply:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 350
     steps:
-      # Always start from the newest saved state. Without this a run that was queued behind another one starts from an
-      # older copy and then overwrites what the earlier run saved.
       - uses: actions/checkout@v4
         with:
           ref: main
@@ -21,32 +22,47 @@ jobs:
           node-version: 20
       - shell: bash
         run: |
-          set -o pipefail
-          node scan.mjs 2>&1 | tee run.log
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          save() {
+            git add data
+            git diff --cached --quiet && return 0
+            git commit -q -m "bot $(date -u +%FT%RZ)"
+            for i in 1 2 3 4 5; do if git pull -q --rebase -X theirs && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
+            echo "Error: could not save the data folder to the repository" | tee -a run.log
+          }
+          end=$(( $(date +%s) + 330*60 )); last_full=0; : > run.log
+          while [ "$(date +%s)" -lt "$end" ]; do
+            git pull -q --rebase -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
+            now=$(date +%s)
+            if [ $((now - last_full)) -ge 300 ]; then
+              # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages
+              node scan.mjs >> run.log 2>&1 || echo "full check failed" >> run.log
+              last_full=$now
+            else
+              # in between: wait up to 25 seconds for a message and answer it at once
+              BOT_ONLY=1 TG_WAIT=25 node scan.mjs >> run.log 2>&1 || { echo "reply failed" >> run.log; sleep 5; }
+            fi
+            save
+            tail -c 200000 run.log > run.tmp && mv run.tmp run.log
+          done
         env:
           MODE: chat
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           FMP_KEY: ${{ secrets.FMP_KEY }}
           YT_KEY: ${{ secrets.YT_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           RATE: ${{ vars.RATE || '8' }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
-      - run: |
-          git config user.name "scanner"
-          git config user.email "scanner@users.noreply.github.com"
-          git add data
-          git diff --cached --quiet || git commit -m "bot $(date -u +%FT%RZ)"
-          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
-          [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository" | tee -a run.log; exit 1; }
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
         run: |
-          [ $((10#$(date -u +%M))) -lt 10 ] || exit 0   # the bot runs every 5 minutes: warn about once an hour, not every time
-          WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | grep -vE "DeprecationWarning|rate limit pause" | tail -n 3 | cut -c1-240 || true)
+          WHY=$(grep -iE "error|missing|rejected|refused|cannot|HTTP [45][0-9][0-9]" run.log 2>/dev/null | grep -vE "DeprecationWarning|rate limit pause" | tail -n 3 | cut -c1-240 || true)
           curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
