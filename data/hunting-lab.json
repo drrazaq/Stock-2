@@ -1,0 +1,200 @@
+{
+ "generatedAt": "2026-10-09T06:00:00.850Z",
+ "status": "OK",
+ "from": "2024-10-08",
+ "to": "2026-10-08",
+ "splitAt": "2026-03-19",
+ "rules": [
+  {
+   "key": "tight",
+   "name": "Tight base breakout",
+   "how": "uptrend (50 day over 200 day average), 15 quiet days in a range under 15% on drying volume, then a close above that range on 2x volume in the top quarter of the day; buy next open, stop at the range low (risk 5% or less), out after 10 sessions",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades (3 older, 3 newer; 20 each needed)",
+   "older": {
+    "n": 3,
+    "win": 0.3333333333333333,
+    "avg": 0.014812074001467598,
+    "pf": 3.244155730676457,
+    "spy": 0.009644889953650168,
+    "bestShare": 1,
+    "stops": 0
+   },
+   "newer": {
+    "n": 3,
+    "win": 0,
+    "avg": -0.12896086374721327,
+    "pf": 0,
+    "spy": 0.031081970939428143,
+    "bestShare": null,
+    "stops": 0.3333333333333333
+   },
+   "newerLow": {
+    "n": 3,
+    "win": 0,
+    "avg": -0.12496086374721327,
+    "pf": 0,
+    "spy": 0.031081970939428143,
+    "bestShare": null,
+    "stops": 0.3333333333333333
+   }
+  },
+  {
+   "key": "leader",
+   "name": "Holds up while the market falls",
+   "how": "S&P 500 down 3%+ over 5 days while the stock is down under 1% (or up) on 1.5x volume; next day the market is up and the stock breaks the previous high; stop at the 5 day low, out after 5 sessions",
+   "verdict": "NOT PROVEN",
+   "why": "average under zero at 0.8% cost; profit factor 0.97; no better than the S&P 500 over the same days; not clearly better than a random stock",
+   "older": {
+    "n": 39,
+    "win": 0.7435897435897436,
+    "avg": 0.057279935721137556,
+    "pf": 7.889811571689407,
+    "spy": 0.015755398940585277,
+    "bestShare": 0.3967376360974545,
+    "stops": 0.1282051282051282
+   },
+   "newer": {
+    "n": 190,
+    "win": 0.4,
+    "avg": -0.0008587514779307958,
+    "pf": 0.9653095383388222,
+    "spy": 0.00803790891829301,
+    "bestShare": 0.16266279856216947,
+    "stops": 0.11052631578947368
+   },
+   "newerLow": {
+    "n": 190,
+    "win": 0.4105263157894737,
+    "avg": 0.003141248522069207,
+    "pf": 1.140347149881055,
+    "spy": 0.00803790891829301,
+    "bestShare": 0.1531166257500641,
+    "stops": 0.11052631578947368
+   }
+  },
+  {
+   "key": "day2",
+   "name": "Second day after a big up day",
+   "how": "day 0 up 10%+ on 5x volume, closed in the top quarter; day 1 holds above day 0 low, not down over 3%, on less volume; buy a break of the day 1 high on day 2, stop at the day 1 low, out after 5 sessions",
+   "verdict": "NOT PROVEN",
+   "why": "lost money in the older year",
+   "older": {
+    "n": 51,
+    "win": 0.3137254901960784,
+    "avg": -0.025157422017341186,
+    "pf": 0.37056186059060103,
+    "spy": -0.0008736123111728802,
+    "bestShare": 0.347874093005961,
+    "stops": 0.39215686274509803
+   },
+   "newer": {
+    "n": 43,
+    "win": 0.627906976744186,
+    "avg": 0.057073700354022414,
+    "pf": 3.514019956608599,
+    "spy": 0.004463007689333356,
+    "bestShare": 0.16619294018807723,
+    "stops": 0.23255813953488372
+   },
+   "newerLow": {
+    "n": 43,
+    "win": 0.627906976744186,
+    "avg": 0.06107370035402241,
+    "pf": 3.878961602239691,
+    "spy": 0.004463007689333356,
+    "bestShare": 0.16225076682958203,
+    "stops": 0.23255813953488372
+   }
+  },
+  {
+   "key": "htf",
+   "name": "Strict high tight flag",
+   "how": "up 20%+ on 5x volume, then 3 to 5 quiet days in a range of 12% or less on falling volume with no down day over 4%; buy a break of the quiet high on 2x volume, stop at the quiet low, out after 5 sessions",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades (6 older, 6 newer; 20 each needed)",
+   "older": {
+    "n": 6,
+    "win": 0.16666666666666666,
+    "avg": -0.05810497885787295,
+    "pf": 0.18997431161678027,
+    "spy": -0.002334870036000395,
+    "bestShare": 1,
+    "stops": 0.16666666666666666
+   },
+   "newer": {
+    "n": 6,
+    "win": 0,
+    "avg": -0.010027549830756407,
+    "pf": 0,
+    "spy": 0.011364592509765256,
+    "bestShare": null,
+    "stops": 0.16666666666666666
+   },
+   "newerLow": {
+    "n": 6,
+    "win": 0,
+    "avg": -0.006027549830756407,
+    "pf": 0,
+    "spy": 0.011364592509765256,
+    "bestShare": null,
+    "stops": 0.16666666666666666
+   }
+  },
+  {
+   "key": "brk20q",
+   "name": "20 day high, quality version",
+   "how": "close at a 20 day high on 2x volume in the top quarter of the day, price 10 USD+, S&P 500 above its 50 day average; buy next open if not 5% above the close, stop at the 10 day low or 2 daily moves (the closer), target 2x the risk, out after 10 sessions",
+   "verdict": "REJECTED",
+   "why": "lost money in the newer year even at the lowest cost",
+   "older": {
+    "n": 1432,
+    "win": 0.4168994413407821,
+    "avg": -0.009519445861262691,
+    "pf": 0.7596584387914114,
+    "spy": -0.00046096914212748896,
+    "bestShare": 0.008835425924821857,
+    "stops": 0.36312849162011174
+   },
+   "newer": {
+    "n": 1038,
+    "win": 0.37475915221579964,
+    "avg": -0.013107189455451515,
+    "pf": 0.7405612461194572,
+    "spy": 0.005097454118038993,
+    "bestShare": 0.02418369070935857,
+    "stops": 0.3969171483622351
+   },
+   "newerLow": {
+    "n": 1038,
+    "win": 0.394990366088632,
+    "avg": -0.009107189455451524,
+    "pf": 0.8105220147462802,
+    "spy": 0.005097454118038993,
+    "bestShare": 0.02332456638738134,
+    "stops": 0.3969171483622351
+   }
+  }
+ ],
+ "base": {
+  "older": {
+   "n": 42335,
+   "win": 0.438974843510098,
+   "avg": -0.004853543292761843,
+   "pf": 0.8590069478937052,
+   "spy": 0.0012305864062354395,
+   "bestShare": 0.003322483625322277,
+   "stops": 0
+  },
+  "newer": {
+   "n": 37861,
+   "win": 0.44507540741132035,
+   "avg": -0.002361117720787494,
+   "pf": 0.9345809747231802,
+   "spy": 0.009715377162926071,
+   "bestShare": 0.0019091432564496212,
+   "stops": 0
+  }
+ },
+ "text": "HUNTING LAB, 2026-10-08\nFive new ways to catch moves, each a complete trade, tested on the whole US market 2024-10-08 to 2026-10-08 (collapsed stocks included), 0.8% cost. Rules fixed in advance; each must pass in BOTH years.\n\nNOT PROVEN: Tight base breakout\n  older year: 3 trades, 33% won, average +1.5%, profit factor 3.24\n  newer year: 3 trades, 0% won, average -12.9%, stopped out 33%\n  too few trades (3 older, 3 newer; 20 each needed)\nNOT PROVEN: Holds up while the market falls\n  older year: 39 trades, 74% won, average +5.7%, profit factor 7.89\n  newer year: 190 trades, 40% won, average -0.1%, profit factor 0.97, stopped out 11%\n  average under zero at 0.8% cost; profit factor 0.97; no better than the S&P 500 over the same days; not clearly better than a random stock\nNOT PROVEN: Second day after a big up day\n  older year: 51 trades, 31% won, average -2.5%, profit factor 0.37\n  newer year: 43 trades, 63% won, average +5.7%, profit factor 3.51, stopped out 23%\n  lost money in the older year\nNOT PROVEN: Strict high tight flag\n  older year: 6 trades, 17% won, average -5.8%, profit factor 0.19\n  newer year: 6 trades, 0% won, average -1.0%, stopped out 17%\n  too few trades (6 older, 6 newer; 20 each needed)\nREJECTED: 20 day high, quality version\n  older year: 1432 trades, 42% won, average -1.0%, profit factor 0.76\n  newer year: 1038 trades, 37% won, average -1.3%, profit factor 0.74, stopped out 40%\n  lost money in the newer year even at the lowest cost\n\nBuying a random stock for 10 days, newer year: 37861 trades, 45% won, average -0.2%, profit factor 0.93.\n\nNo new way passed. Nothing to act on. The lab repeats every Sunday as new days come in.\nNot tested here (no history to test on): Reddit or YouTube mentions plus a breakout, and news-tag rules. Those are scored forward instead (sources, movers journal).\nDaily prices only; fills at the open or the stated level are assumed. Research, not an order. Not financial advice, not a halal ruling."
+}
