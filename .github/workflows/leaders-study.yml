@@ -10,6 +10,9 @@ jobs:
   study:
     runs-on: ubuntu-latest
     timeout-minutes: 300
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+      MASSIVE_PAID: '1'
     steps:
       # Always start from the newest saved state.
       - uses: actions/checkout@v4
