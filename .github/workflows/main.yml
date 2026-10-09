@@ -25,6 +25,7 @@ jobs:
           set -o pipefail
           node scan.mjs 2>&1 | tee run.log
         env:
+          NODE_OPTIONS: --max-old-space-size=12288
           MODE: ${{ github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily' }}
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
