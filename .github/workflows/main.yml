@@ -28,6 +28,7 @@ jobs:
           MODE: ${{ github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily' }}
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           YT_KEY: ${{ secrets.YT_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
