@@ -1,0 +1,44 @@
+name: Smart money and analysts
+on:
+  schedule:
+    - cron: '20 11 * * 1-5'
+    - cron: '30 9 * * 0'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: smart-money
+jobs:
+  smart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - shell: bash
+        run: |
+          set -o pipefail
+          node smart-money.mjs 2>&1 | tee run.log
+        env:
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+          FMP_KEY: ${{ secrets.FMP_KEY }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+          STUDY: ${{ github.event.schedule == '30 9 * * 0' && '1' || '' }}
+      - run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || git commit -m "smart money $(date -u +%FT%RZ)"
+          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+      - if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          WHY=$(grep -iE "error|missing|cannot|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
