@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-11T10:21:39.854Z",
+ "generatedAt": "2026-10-11T21:57:09.785Z",
  "status": "OK",
  "from": "2021-10-12",
  "to": "2026-10-09",
@@ -7,6 +7,7 @@
  "exitTest": {
   "aO": {
    "n": 24034,
+   "sd": 0.04457573239635711,
    "win": 0.48984771573604063,
    "avg": -0.00627477753596489,
    "pf": 0.6578590569457382,
@@ -16,6 +17,7 @@
   },
   "aN": {
    "n": 27229,
+   "sd": 0.051152765294399105,
    "win": 0.5056006463696794,
    "avg": -0.0048686942129129145,
    "pf": 0.754229881199654,
@@ -25,6 +27,7 @@
   },
   "bO": {
    "n": 24034,
+   "sd": 0.06621047716968757,
    "win": 0.49533993509195307,
    "avg": -0.009550369882735242,
    "pf": 0.6324015366819066,
@@ -34,6 +37,7 @@
   },
   "bN": {
    "n": 27229,
+   "sd": 0.08008708426606881,
    "win": 0.5258731499504206,
    "avg": -0.008969155263869528,
    "pf": 0.6945182062789556,
@@ -52,6 +56,7 @@
    "why": "too few trades (20 older, 17 newer; 20 each needed)",
    "older": {
     "n": 20,
+    "sd": 0.11211333582304361,
     "win": 0.15,
     "avg": -0.057502718983043634,
     "pf": 0.07825225234911201,
@@ -61,6 +66,7 @@
    },
    "newer": {
     "n": 17,
+    "sd": 0.1001061955463655,
     "win": 0.058823529411764705,
     "avg": -0.052539747162869126,
     "pf": 0.06709445147677502,
@@ -70,12 +76,56 @@
    },
    "newerLow": {
     "n": 17,
+    "sd": 0.1001061955463655,
     "win": 0.058823529411764705,
     "avg": -0.04853974716286912,
     "pf": 0.07637800439848455,
     "spy": -0.005522311680273499,
     "bestShare": 1,
     "stops": 0.29411764705882354
+   },
+   "market": {
+    "risingOld": {
+     "n": 16,
+     "sd": 0.08109848952784976,
+     "win": 0.1875,
+     "avg": -0.027959601680678,
+     "pf": 0.17914971734443028,
+     "spy": 0.00682627514156528,
+     "bestShare": 0.8994479893170043,
+     "stops": 0.1875
+    },
+    "risingNew": {
+     "n": 13,
+     "sd": 0.08079020239950932,
+     "win": 0,
+     "avg": -0.04747548558783318,
+     "pf": 0,
+     "spy": -0.009618702688565154,
+     "bestShare": null,
+     "stops": 0.38461538461538464
+    },
+    "fallingOld": {
+     "n": 4,
+     "sd": 0.15312354910033965,
+     "win": 0,
+     "avg": -0.17567518819250616,
+     "pf": 0,
+     "spy": -0.008637475341689932,
+     "bestShare": null,
+     "stops": 0.5
+    },
+    "fallingNew": {
+     "n": 4,
+     "sd": 0.16390885868411165,
+     "win": 0.25,
+     "avg": -0.06899859728173593,
+     "pf": 0.18880406590871907,
+     "spy": 0.007790959096674377,
+     "bestShare": 1,
+     "stops": 0
+    },
+    "risingOnly": false
    }
   },
   {
@@ -83,9 +133,10 @@
    "name": "Holds up while the market falls",
    "how": "S&P 500 down 3%+ over 5 days while the stock is down under 1% (or up) on 1.5x volume; next day the market is up and the stock breaks the previous high; stop at the 5 day low, out after 5 sessions",
    "verdict": "NOT PROVEN",
-   "why": "lost money in the older half; profit factor 1.18; no better than the S&P 500 over the same days",
+   "why": "lost money in the older half; profit factor 1.18; no better than the S&P 500 over the same days; loses at higher costs (1.2% a trade); could still be luck after testing 16 ideas on the same years (false-discovery check)",
    "older": {
     "n": 1182,
+    "sd": 0.07135132456134824,
     "win": 0.3629441624365482,
     "avg": -0.009014013329387434,
     "pf": 0.659256697127565,
@@ -95,6 +146,7 @@
    },
    "newer": {
     "n": 663,
+    "sd": 0.08524005917119427,
     "win": 0.48114630467571645,
     "avg": 0.003958582007839502,
     "pf": 1.1818796913841798,
@@ -104,12 +156,56 @@
    },
    "newerLow": {
     "n": 663,
+    "sd": 0.08524005917119427,
     "win": 0.5158371040723982,
     "avg": 0.007958582007839513,
     "pf": 1.4030072927072745,
     "spy": 0.005836396298892724,
     "bestShare": 0.05546791653711616,
     "stops": 0.12518853695324283
+   },
+   "market": {
+    "risingOld": {
+     "n": 356,
+     "sd": 0.10318458748711985,
+     "win": 0.46348314606741575,
+     "avg": 0.00643437152763628,
+     "pf": 1.2500796660620392,
+     "spy": 0.005019982262367247,
+     "bestShare": 0.12110961170358939,
+     "stops": 0.1544943820224719
+    },
+    "risingNew": {
+     "n": 121,
+     "sd": 0.0659759086985233,
+     "win": 0.32231404958677684,
+     "avg": -0.012999346331142088,
+     "pf": 0.5571614107058883,
+     "spy": 0.004872690350598957,
+     "bestShare": 0.1614371415142399,
+     "stops": 0.09090909090909091
+    },
+    "fallingOld": {
+     "n": 826,
+     "sd": 0.050586871172637465,
+     "win": 0.3196125907990315,
+     "avg": -0.015672154986894053,
+     "pf": 0.4144819172382224,
+     "spy": -0.003926214837923008,
+     "bestShare": 0.024492271570339747,
+     "stops": 0.2675544794188862
+    },
+    "fallingNew": {
+     "n": 542,
+     "sd": 0.0885819865682984,
+     "win": 0.5166051660516605,
+     "avg": 0.007744392577981164,
+     "pf": 1.3858605077695851,
+     "spy": 0.006051540984766422,
+     "bestShare": 0.06732153081400863,
+     "stops": 0.13284132841328414
+    },
+    "risingOnly": false
    }
   },
   {
@@ -117,9 +213,10 @@
    "name": "Second day after a big up day",
    "how": "day 0 up 10%+ on 5x volume, closed in the top quarter; day 1 holds above day 0 low, not down over 3%, on less volume; buy a break of the day 1 high on day 2, stop at the day 1 low, out after 5 sessions",
    "verdict": "NOT PROVEN",
-   "why": "lost money in the older half; average under zero at 0.8% cost; profit factor 0.93; no better than the S&P 500 over the same days; not clearly better than a random stock",
+   "why": "lost money in the older half; average under zero at 0.8% cost; profit factor 0.93; no better than the S&P 500 over the same days; not clearly better than a random stock; loses at higher costs (1.2% a trade); could still be luck after testing 16 ideas on the same years (false-discovery check)",
    "older": {
     "n": 270,
+    "sd": 0.12161744991505227,
     "win": 0.37407407407407406,
     "avg": -0.008247829250711602,
     "pf": 0.8005681057511158,
@@ -129,6 +226,7 @@
    },
    "newer": {
     "n": 226,
+    "sd": 0.13566723111236317,
     "win": 0.37610619469026546,
     "avg": -0.0031153664420460825,
     "pf": 0.9272106085240315,
@@ -138,12 +236,56 @@
    },
    "newerLow": {
     "n": 226,
+    "sd": 0.13566723111236317,
     "win": 0.40707964601769914,
     "avg": 0.000884633557953919,
     "pf": 1.0219148936843145,
     "spy": 0.001938752070210446,
     "bestShare": 0.1133746808221723,
     "stops": 0.3672566371681416
+   },
+   "market": {
+    "risingOld": {
+     "n": 225,
+     "sd": 0.12347205329742138,
+     "win": 0.36,
+     "avg": -0.008982278402096443,
+     "pf": 0.7859375263821174,
+     "spy": 0.00017349803785145882,
+     "bestShare": 0.11054964300389689,
+     "stops": 0.4088888888888889
+    },
+    "risingNew": {
+     "n": 197,
+     "sd": 0.1400097506736937,
+     "win": 0.3756345177664975,
+     "avg": 0.001786449375977587,
+     "pf": 1.0438283636508834,
+     "spy": 0.002317689927532312,
+     "bestShare": 0.12562782748431262,
+     "stops": 0.37055837563451777
+    },
+    "fallingOld": {
+     "n": 45,
+     "sd": 0.11312102916432888,
+     "win": 0.4444444444444444,
+     "avg": -0.0045755834937873845,
+     "pf": 0.8806410729831458,
+     "spy": 0.010633887474881427,
+     "bestShare": 0.25763419845951036,
+     "stops": 0.28888888888888886
+    },
+    "fallingNew": {
+     "n": 29,
+     "sd": 0.09677585546900401,
+     "win": 0.3793103448275862,
+     "avg": -0.03641390837827586,
+     "pf": 0.35726956810038124,
+     "spy": -0.0006354119950449904,
+     "bestShare": 0.26200233714061033,
+     "stops": 0.3448275862068966
+    },
+    "risingOnly": false
    }
   },
   {
@@ -154,6 +296,7 @@
    "why": "lost money in the newer half even at the lowest cost",
    "older": {
     "n": 21,
+    "sd": 0.05047523263285581,
     "win": 0.3333333333333333,
     "avg": -0.0050848457828823815,
     "pf": 0.7650171374203728,
@@ -163,6 +306,7 @@
    },
    "newer": {
     "n": 22,
+    "sd": 0.09178432971183334,
     "win": 0.18181818181818182,
     "avg": -0.021546111106912923,
     "pf": 0.43897821167234974,
@@ -172,12 +316,56 @@
    },
    "newerLow": {
     "n": 22,
+    "sd": 0.09178432971183334,
     "win": 0.22727272727272727,
     "avg": -0.01754611110691292,
     "pf": 0.5006767562550312,
     "spy": 0.004937688289622291,
     "bestShare": 0.5773328300985658,
     "stops": 0.22727272727272727
+   },
+   "market": {
+    "risingOld": {
+     "n": 19,
+     "sd": 0.052769642816464485,
+     "win": 0.3157894736842105,
+     "avg": -0.006444272806540446,
+     "pf": 0.7261071378935239,
+     "spy": -0.0034810283163078395,
+     "bestShare": 0.4180653663542502,
+     "stops": 0.10526315789473684
+    },
+    "risingNew": {
+     "n": 19,
+     "sd": 0.0661005170879,
+     "win": 0.15789473684210525,
+     "avg": -0.009202268818063413,
+     "pf": 0.6231648093954666,
+     "spy": 0.004824574634309607,
+     "bestShare": 0.7590338706426465,
+     "stops": 0.2631578947368421
+    },
+    "fallingOld": {
+     "n": 2,
+     "sd": 0.0215142786914608,
+     "win": 0.5,
+     "avg": 0.007829710941869246,
+     "pf": 3.120958568855154,
+     "spy": 0.011647053641354543,
+     "bestShare": 1,
+     "stops": 0
+    },
+    "fallingNew": {
+     "n": 3,
+     "sd": 0.1962579102586326,
+     "win": 0.3333333333333333,
+     "avg": -0.09972377893629314,
+     "pf": 0.21463954267408597,
+     "spy": 0.005654074773269291,
+     "bestShare": 1,
+     "stops": 0
+    },
+    "risingOnly": false
    }
   },
   {
@@ -188,6 +376,7 @@
    "why": "lost money in the newer half even at the lowest cost",
    "older": {
     "n": 4400,
+    "sd": 0.08483396157213859,
     "win": 0.43227272727272725,
     "avg": -0.007622481609290273,
     "pf": 0.7847912529228825,
@@ -197,6 +386,7 @@
    },
    "newer": {
     "n": 4817,
+    "sd": 0.10016919081238551,
     "win": 0.3900768112933361,
     "avg": -0.009879626665617971,
     "pf": 0.7678227300950407,
@@ -206,12 +396,56 @@
    },
    "newerLow": {
     "n": 4817,
+    "sd": 0.10016919081238551,
     "win": 0.40751505086153206,
     "avg": -0.005879626665617951,
     "pf": 0.8535464844129166,
     "spy": 0.002631617661346535,
     "bestShare": 0.005714096715400768,
     "stops": 0.37346896408553043
+   },
+   "market": {
+    "risingOld": {
+     "n": 4238,
+     "sd": 0.0849530428388483,
+     "win": 0.4381783860311468,
+     "avg": -0.0064643266643471435,
+     "pf": 0.8140451241514809,
+     "spy": 0.003651745925565201,
+     "bestShare": 0.00524197900931831,
+     "stops": 0.31760264275601696
+    },
+    "risingNew": {
+     "n": 4599,
+     "sd": 0.10093705187715114,
+     "win": 0.39204174820613175,
+     "avg": -0.009417669392749616,
+     "pf": 0.7785449656429997,
+     "spy": 0.0025431810294556144,
+     "bestShare": 0.006168089246700374,
+     "stops": 0.3729071537290715
+    },
+    "fallingOld": {
+     "n": 162,
+     "sd": 0.07583168865703398,
+     "win": 0.2777777777777778,
+     "avg": -0.037920386897371004,
+     "pf": 0.2788587295545448,
+     "spy": 0.0005123434671845443,
+     "bestShare": 0.09552386924001377,
+     "stops": 0.49382716049382713
+    },
+    "fallingNew": {
+     "n": 218,
+     "sd": 0.08190321956830224,
+     "win": 0.3486238532110092,
+     "avg": -0.019625229867092413,
+     "pf": 0.5446100801013645,
+     "spy": 0.004497306056146146,
+     "bestShare": 0.048171919000861256,
+     "stops": 0.3853211009174312
+    },
+    "risingOnly": false
    }
   },
   {
@@ -222,6 +456,7 @@
    "why": "lost money in the newer half even at the lowest cost",
    "older": {
     "n": 496,
+    "sd": 0.11121608529877877,
     "win": 0.4314516129032258,
     "avg": -0.0017081353814897382,
     "pf": 0.9560817716959509,
@@ -231,6 +466,7 @@
    },
    "newer": {
     "n": 623,
+    "sd": 0.09926491471429283,
     "win": 0.42375601926163725,
     "avg": -0.010642203668776154,
     "pf": 0.7498015276317188,
@@ -240,12 +476,56 @@
    },
    "newerLow": {
     "n": 623,
+    "sd": 0.09926491471429282,
     "win": 0.434991974317817,
     "avg": -0.006642203668776167,
     "pf": 0.8349843962361355,
     "spy": 0.0027317049325346968,
     "bestShare": 0.0290701403203425,
     "stops": 0.20545746388443017
+   },
+   "market": {
+    "risingOld": {
+     "n": 401,
+     "sd": 0.11304393589402388,
+     "win": 0.4389027431421446,
+     "avg": -0.0007122695855778326,
+     "pf": 0.9816102183665324,
+     "spy": -0.00009509455779444535,
+     "bestShare": 0.05855293978298102,
+     "stops": 0.18952618453865336
+    },
+    "risingNew": {
+     "n": 532,
+     "sd": 0.09774500822765415,
+     "win": 0.43796992481203006,
+     "avg": -0.00804894388047072,
+     "pf": 0.8041069991944363,
+     "spy": 0.0033815124368526787,
+     "bestShare": 0.02345858984050583,
+     "stops": 0.19548872180451127
+    },
+    "fallingOld": {
+     "n": 95,
+     "sd": 0.10360598349394516,
+     "win": 0.4,
+     "avg": -0.005911737320023164,
+     "pf": 0.8506239241797109,
+     "spy": 0.006611205010269094,
+     "bestShare": 0.10531142439766678,
+     "stops": 0.15789473684210525
+    },
+    "fallingNew": {
+     "n": 91,
+     "sd": 0.10703986873004506,
+     "win": 0.34065934065934067,
+     "avg": -0.025802799354254134,
+     "pf": 0.49398288472365803,
+     "spy": -0.0010671697080935122,
+     "bestShare": 0.263804650010079,
+     "stops": 0.26373626373626374
+    },
+    "risingOnly": false
    }
   },
   {
@@ -256,6 +536,7 @@
    "why": "lost money in the newer half even at the lowest cost",
    "older": {
     "n": 45960,
+    "sd": 0.03848784674311663,
     "win": 0.3926892950391645,
     "avg": -0.008277600776303,
     "pf": 0.5859218813870909,
@@ -265,6 +546,7 @@
    },
    "newer": {
     "n": 52093,
+    "sd": 0.04531469246669722,
     "win": 0.3691090933522738,
     "avg": -0.009970967574284548,
     "pf": 0.5740144339975691,
@@ -274,12 +556,56 @@
    },
    "newerLow": {
     "n": 52093,
+    "sd": 0.04531469246669721,
     "win": 0.39241356804177147,
     "avg": -0.005970967574284656,
     "pf": 0.7147070939143855,
     "spy": 0.0006210108722544079,
     "bestShare": 0.0015609203193186556,
     "stops": 0.4653792256157257
+   },
+   "market": {
+    "risingOld": {
+     "n": 34946,
+     "sd": 0.03760318076156297,
+     "win": 0.387054312367653,
+     "avg": -0.008342932464500503,
+     "pf": 0.5759392984328296,
+     "spy": 0.000057241454466006836,
+     "bestShare": 0.0019211336894778559,
+     "stops": 0.4339552452355062
+    },
+    "risingNew": {
+     "n": 41348,
+     "sd": 0.04431184778535636,
+     "win": 0.3712876076231015,
+     "avg": -0.009200445639362127,
+     "pf": 0.590023124755489,
+     "spy": 0.0008648911087489585,
+     "bestShare": 0.002214309353365057,
+     "stops": 0.46169101286640224
+    },
+    "fallingOld": {
+     "n": 11014,
+     "sd": 0.04117023047413421,
+     "win": 0.4105683675322317,
+     "avg": -0.008070311764522357,
+     "pf": 0.6156027107948352,
+     "spy": 0.004756942273232683,
+     "bestShare": 0.0032694614380542907,
+     "stops": 0.42427819139277284
+    },
+    "fallingNew": {
+     "n": 10745,
+     "sd": 0.04887160163580568,
+     "win": 0.36072591903210793,
+     "avg": -0.012936024900033798,
+     "pf": 0.5230423510892883,
+     "spy": -0.0003174684221687874,
+     "bestShare": 0.0026787285391495787,
+     "stops": 0.47957189390414146
+    },
+    "risingOnly": false
    }
   },
   {
@@ -290,6 +616,7 @@
    "why": "lost money in the newer half even at the lowest cost",
    "older": {
     "n": 14908,
+    "sd": 0.06310673516114979,
     "win": 0.4044808156694392,
     "avg": -0.007565627403698268,
     "pf": 0.6818390804279213,
@@ -299,6 +626,7 @@
    },
    "newer": {
     "n": 20204,
+    "sd": 0.06516773350629634,
     "win": 0.4154622846960998,
     "avg": -0.00825626134165352,
     "pf": 0.6751957784412747,
@@ -308,12 +636,56 @@
    },
    "newerLow": {
     "n": 20204,
+    "sd": 0.06516773350629634,
     "win": 0.45372203524054644,
     "avg": -0.0042562613416535795,
     "pf": 0.8161965605967076,
     "spy": -0.0007791039953672601,
     "bestShare": 0.00540536828389017,
     "stops": 0
+   },
+   "market": {
+    "risingOld": {
+     "n": 8861,
+     "sd": 0.05881868162346345,
+     "win": 0.3987134634917052,
+     "avg": -0.00856559580358411,
+     "pf": 0.6414426442520965,
+     "spy": -0.0002842105321247319,
+     "bestShare": 0.005446800054752727,
+     "stops": 0
+    },
+    "risingNew": {
+     "n": 13392,
+     "sd": 0.06564213590589064,
+     "win": 0.41987753882915174,
+     "avg": -0.008118549926387005,
+     "pf": 0.6700177253272495,
+     "spy": 0.000623139222806741,
+     "bestShare": 0.009331899353805495,
+     "stops": 0
+    },
+    "fallingOld": {
+     "n": 6047,
+     "sd": 0.06888879954234615,
+     "win": 0.41293203241276666,
+     "avg": -0.006100318987725519,
+     "pf": 0.7417126725870822,
+     "spy": 0.0018826288558499839,
+     "bestShare": 0.024440463609343988,
+     "stops": 0
+    },
+    "fallingNew": {
+     "n": 6812,
+     "sd": 0.06422879479203146,
+     "win": 0.40678214914856137,
+     "avg": -0.008526994059394197,
+     "pf": 0.6844636207028834,
+     "spy": -0.0035358334694990732,
+     "bestShare": 0.0063351186631270245,
+     "stops": 0
+    },
+    "risingOnly": false
    }
   },
   {
@@ -324,6 +696,7 @@
    "why": "lost money in the newer half even at the lowest cost",
    "older": {
     "n": 4756,
+    "sd": 0.08607110928246546,
     "win": 0.546888141295206,
     "avg": -0.004698183061824278,
     "pf": 0.8561109874955503,
@@ -333,6 +706,7 @@
    },
    "newer": {
     "n": 8911,
+    "sd": 0.0926740595610184,
     "win": 0.5434855796206935,
     "avg": -0.005163028691062266,
     "pf": 0.8661121919641633,
@@ -342,12 +716,56 @@
    },
    "newerLow": {
     "n": 8911,
+    "sd": 0.09267405956101842,
     "win": 0.5558298731904388,
     "avg": -0.0011630286910622788,
     "pf": 0.9683631578092194,
     "spy": 0.0016654071553647027,
     "bestShare": 0.004649949818358663,
     "stops": 0.13747054202670855
+   },
+   "market": {
+    "risingOld": {
+     "n": 3087,
+     "sd": 0.07503053763435182,
+     "win": 0.5390346614836411,
+     "avg": -0.005474814441764268,
+     "pf": 0.8267983304335876,
+     "spy": 0.0014764919159554724,
+     "bestShare": 0.01095946552774026,
+     "stops": 0.09718172983479106
+    },
+    "risingNew": {
+     "n": 6349,
+     "sd": 0.09249637266199945,
+     "win": 0.5416601039533785,
+     "avg": -0.0052115028086776455,
+     "pf": 0.8629080407226477,
+     "spy": 0.0019175883573291162,
+     "bestShare": 0.007063340365306084,
+     "stops": 0.10836352181445898
+    },
+    "fallingOld": {
+     "n": 1669,
+     "sd": 0.10344186761358981,
+     "win": 0.5614140203714799,
+     "avg": -0.0032617174717255925,
+     "pf": 0.9056725181626388,
+     "spy": 0.005125760054394092,
+     "bestShare": 0.04947637904475,
+     "stops": 0.15578190533253444
+    },
+    "fallingNew": {
+     "n": 2562,
+     "sd": 0.09313093112814985,
+     "win": 0.5480093676814989,
+     "avg": -0.0050429029405781945,
+     "pf": 0.8736736170496117,
+     "spy": 0.001040466307873651,
+     "bestShare": 0.012522255069905645,
+     "stops": 0.20960187353629978
+    },
+    "risingOnly": false
    }
   },
   {
@@ -358,6 +776,7 @@
    "why": "lost money in the newer half even at the lowest cost",
    "older": {
     "n": 1438,
+    "sd": 0.078430089300927,
     "win": 0.42211404728789986,
     "avg": -0.006699427238242638,
     "pf": 0.7760170480828836,
@@ -367,6 +786,7 @@
    },
    "newer": {
     "n": 1312,
+    "sd": 0.10240966199660553,
     "win": 0.4557926829268293,
     "avg": -0.006389528082834661,
     "pf": 0.8402541854861095,
@@ -376,12 +796,456 @@
    },
    "newerLow": {
     "n": 1312,
+    "sd": 0.10240966199660552,
     "win": 0.4801829268292683,
     "avg": -0.002389528082834688,
     "pf": 0.93690163359241,
     "spy": 0.0026236561339302803,
     "bestShare": 0.017317937598625696,
     "stops": 0.17759146341463414
+   },
+   "market": {
+    "risingOld": {
+     "n": 971,
+     "sd": 0.08482993499505205,
+     "win": 0.42842430484037075,
+     "avg": -0.006108041215871776,
+     "pf": 0.8080056030807015,
+     "spy": -0.00019897595918639215,
+     "bestShare": 0.020107764085384058,
+     "stops": 0.14212152420185376
+    },
+    "risingNew": {
+     "n": 953,
+     "sd": 0.10486247752274395,
+     "win": 0.46799580272822666,
+     "avg": -0.0053576364165737215,
+     "pf": 0.8694713258020773,
+     "spy": 0.0022204549436043216,
+     "bestShare": 0.023585348047807198,
+     "stops": 0.16474291710388247
+    },
+    "fallingOld": {
+     "n": 467,
+     "sd": 0.0631455122516986,
+     "win": 0.4089935760171306,
+     "avg": -0.007929054278332797,
+     "pf": 0.6944867486628883,
+     "spy": 0.006205795476957302,
+     "bestShare": 0.03295174915332067,
+     "stops": 0.12633832976445397
+    },
+    "fallingNew": {
+     "n": 359,
+     "sd": 0.09568034288207795,
+     "win": 0.4233983286908078,
+     "avg": -0.00912878367600096,
+     "pf": 0.7547160785868006,
+     "spy": 0.003693992441397245,
+     "bestShare": 0.057002808065397904,
+     "stops": 0.2116991643454039
+    },
+    "risingOnly": false
+   }
+  },
+  {
+   "key": "candle50",
+   "name": "Bullish candle at the 50 day average in an uptrend (hammer, engulfing, piercing, morning star, harami)",
+   "how": "uptrend (50 over 200 day average), the low touches within 3% of the 50 day average and the close is above it, a bullish candle on 1.5x the 20 day volume, 5 USD+, 2M USD+ traded; buy next open, stop just under the candle low (no wider than 12%), target 2x the risk, out after 10 sessions",
+   "verdict": "REJECTED",
+   "why": "lost money in the newer half even at the lowest cost",
+   "older": {
+    "n": 2428,
+    "sd": 0.05731753914551208,
+    "win": 0.39332784184514,
+    "avg": -0.007529704208827685,
+    "pf": 0.703762174330621,
+    "spy": 0.0034527660826070145,
+    "bestShare": 0.0056458320775963555,
+    "stops": 0.45799011532125206
+   },
+   "newer": {
+    "n": 2675,
+    "sd": 0.0676390655413781,
+    "win": 0.3760747663551402,
+    "avg": -0.009102996025781828,
+    "pf": 0.6864363954803809,
+    "spy": 0.0020066779983649026,
+    "bestShare": 0.007659672680657327,
+    "stops": 0.4758878504672897
+   },
+   "newerLow": {
+    "n": 2675,
+    "sd": 0.06763906554137808,
+    "win": 0.39738317757009345,
+    "avg": -0.005102996025781844,
+    "pf": 0.8079997921484539,
+    "spy": 0.0020066779983649026,
+    "bestShare": 0.007177418353502373,
+    "stops": 0.4758878504672897
+   },
+   "market": {
+    "risingOld": {
+     "n": 1777,
+     "sd": 0.05644843468242193,
+     "win": 0.40292628024760835,
+     "avg": -0.0070548575233094,
+     "pf": 0.719362193054654,
+     "spy": 0.002606400382278071,
+     "bestShare": 0.007630673267420639,
+     "stops": 0.4473832301631964
+    },
+    "risingNew": {
+     "n": 2218,
+     "sd": 0.06619066972878344,
+     "win": 0.3859332732191163,
+     "avg": -0.007311421178679643,
+     "pf": 0.7355039631866082,
+     "spy": 0.0019726477004236693,
+     "bestShare": 0.007183841339938013,
+     "stops": 0.4612263300270514
+    },
+    "fallingOld": {
+     "n": 651,
+     "sd": 0.059650743084147966,
+     "win": 0.3671274961597542,
+     "avg": -0.008825867895718617,
+     "pf": 0.6628728499363195,
+     "spy": 0.005763045421292956,
+     "bestShare": 0.01911689301810523,
+     "stops": 0.4869431643625192
+    },
+    "fallingNew": {
+     "n": 457,
+     "sd": 0.0737299339444415,
+     "win": 0.3282275711159737,
+     "avg": -0.01779821049158628,
+     "pf": 0.5023846533418145,
+     "spy": 0.0021718403634275766,
+     "bestShare": 0.049723062279261494,
+     "stops": 0.5470459518599562
+    },
+    "risingOnly": false
+   }
+  },
+  {
+   "key": "drift",
+   "name": "Big news gap held for weeks (post-earnings drift style)",
+   "how": "opens 5%+ above the previous close on 3x the 50 day volume and closes at or above its open (the gain held all day), 5 USD+, 5M USD+ traded; buy the next open if not 3% above that close, stop just under the gap-day low (no wider than 15%), no target, out after 40 sessions",
+   "verdict": "REJECTED",
+   "why": "lost money in the newer half even at the lowest cost",
+   "older": {
+    "n": 1684,
+    "sd": 0.15672553262050676,
+    "win": 0.30344418052256533,
+    "avg": -0.0032120640948144945,
+    "pf": 0.9391594332702355,
+    "spy": 0.015038780431019236,
+    "bestShare": 0.02985626866618279,
+    "stops": 0.6217339667458432
+   },
+   "newer": {
+    "n": 1854,
+    "sd": 0.177650187735897,
+    "win": 0.23354908306364616,
+    "avg": -0.011931560415415888,
+    "pf": 0.8037980729758891,
+    "spy": 0.0072758640780057416,
+    "bestShare": 0.02092326976337468,
+    "stops": 0.7049622437971953
+   },
+   "newerLow": {
+    "n": 1854,
+    "sd": 0.17765018773589702,
+    "win": 0.24325782092772383,
+    "avg": -0.007931560415415899,
+    "pf": 0.8626940144751806,
+    "spy": 0.0072758640780057416,
+    "bestShare": 0.02056646823730815,
+    "stops": 0.7049622437971953
+   },
+   "market": {
+    "risingOld": {
+     "n": 1278,
+     "sd": 0.15655505224142638,
+     "win": 0.28169014084507044,
+     "avg": -0.010156453263677007,
+     "pf": 0.815750076850525,
+     "spy": 0.009773112280207852,
+     "bestShare": 0.04337956154604798,
+     "stops": 0.6447574334898278
+    },
+    "risingNew": {
+     "n": 1551,
+     "sd": 0.17170216893124268,
+     "win": 0.24500322372662797,
+     "avg": -0.009544286558248377,
+     "pf": 0.8382348608028961,
+     "spy": 0.007520118140786697,
+     "bestShare": 0.019860533076043917,
+     "stops": 0.6918117343649258
+    },
+    "fallingOld": {
+     "n": 406,
+     "sd": 0.15543729449406657,
+     "win": 0.37192118226600984,
+     "avg": 0.018647367820964534,
+     "pf": 1.4101453481401898,
+     "spy": 0.03161396244268662,
+     "bestShare": 0.03811026882671268,
+     "stops": 0.5492610837438424
+    },
+    "fallingNew": {
+     "n": 303,
+     "sd": 0.20530464371269147,
+     "win": 0.17491749174917492,
+     "avg": -0.024151566199134823,
+     "pf": 0.6554047706199665,
+     "spy": 0.006025573479414097,
+     "bestShare": 0.13623602247246652,
+     "stops": 0.7722772277227723
+    },
+    "risingOnly": false
+   }
+  },
+  {
+   "key": "strong",
+   "name": "Top-10% strength, tight base, breakout (pre-registered, held up to 40 sessions)",
+   "how": "six-month gain vs the S&P 500 in the top 10% of liquid stocks (5 USD+, 5M USD+ traded a day); above a rising 50 day and the 200 day average; the last 15 sessions within 15% and calmer than before; close above the prior 20 session high on 1.5x the 20 day volume; buy the next open, stop 2 daily moves under it, no target, out after 40 sessions (earnings dates are not in this history)",
+   "verdict": "REJECTED",
+   "why": "lost money in the newer half even at the lowest cost",
+   "older": {
+    "n": 859,
+    "sd": 0.164164138478965,
+    "win": 0.30384167636786963,
+    "avg": -0.007520215709253285,
+    "pf": 0.864081689467931,
+    "spy": 0.013885759611189279,
+    "bestShare": 0.05864551202612849,
+    "stops": 0.6356228172293364
+   },
+   "newer": {
+    "n": 749,
+    "sd": 0.15977476381052036,
+    "win": 0.2696929238985314,
+    "avg": -0.012004445078573038,
+    "pf": 0.802745339509535,
+    "spy": 0.012902084167887296,
+    "bestShare": 0.04265618462946214,
+    "stops": 0.6742323097463284
+   },
+   "newerLow": {
+    "n": 749,
+    "sd": 0.15977476381052036,
+    "win": 0.27770360480640854,
+    "avg": -0.008004445078573064,
+    "pf": 0.8618706621485758,
+    "spy": 0.012902084167887296,
+    "bestShare": 0.04183105107998785,
+    "stops": 0.6742323097463284
+   },
+   "market": {
+    "risingOld": {
+     "n": 718,
+     "sd": 0.16349106459471408,
+     "win": 0.31058495821727017,
+     "avg": -0.002600836480813078,
+     "pf": 0.9497752247262229,
+     "spy": 0.012638743112506358,
+     "bestShare": 0.06820162964127965,
+     "stops": 0.6392757660167131
+    },
+    "risingNew": {
+     "n": 656,
+     "sd": 0.16032060650501007,
+     "win": 0.27896341463414637,
+     "avg": -0.009749655999681056,
+     "pf": 0.8363076294585571,
+     "spy": 0.012956593632546835,
+     "bestShare": 0.04776674868631575,
+     "stops": 0.6661585365853658
+    },
+    "fallingOld": {
+     "n": 141,
+     "sd": 0.16587857906767625,
+     "win": 0.2695035460992908,
+     "avg": -0.03257067163847363,
+     "pf": 0.5561417507488521,
+     "spy": 0.020235815256964697,
+     "bestShare": 0.08848802434316906,
+     "stops": 0.6170212765957447
+    },
+    "fallingNew": {
+     "n": 93,
+     "sd": 0.15578686786309856,
+     "win": 0.20430107526881722,
+     "avg": -0.02790919385011218,
+     "pf": 0.6013233901326605,
+     "spy": 0.012517587298890995,
+     "bestShare": 0.19183250443711555,
+     "stops": 0.7311827956989247
+    },
+    "risingOnly": false
+   }
+  },
+  {
+   "key": "peadBase",
+   "name": "Earnings-style gap, short base, breakout (post-earnings drift, source 1)",
+   "how": "opens 5%+ above the previous close on 3x the 50 day volume, 10 USD+, 5M USD+ traded; the next 2 to 5 sessions stay in the upper half of the gap day; buy the next open after a close above that base high (within 10 sessions of the gap); stop at the gap-day low or 2.5 daily moves (the closer); sell the next open after a close under the 20 day average, or after 45 sessions",
+   "verdict": "REJECTED",
+   "why": "lost money in the newer half even at the lowest cost",
+   "older": {
+    "n": 367,
+    "sd": 0.13986308662991329,
+    "win": 0.3787465940054496,
+    "avg": -0.0042660792602000714,
+    "pf": 0.9084672472761652,
+    "spy": 0.01413414506838364,
+    "bestShare": 0.08157536836026509,
+    "stops": 0.1307901907356948
+   },
+   "newer": {
+    "n": 344,
+    "sd": 0.1834094483836019,
+    "win": 0.313953488372093,
+    "avg": -0.013521097433541992,
+    "pf": 0.78181319456531,
+    "spy": 0.007626214795906905,
+    "bestShare": 0.08222343210915972,
+    "stops": 0.2005813953488372
+   },
+   "newerLow": {
+    "n": 344,
+    "sd": 0.1834094483836019,
+    "win": 0.3372093023255814,
+    "avg": -0.00952109743354199,
+    "pf": 0.8393701116470071,
+    "spy": 0.007626214795906905,
+    "bestShare": 0.08030336033162955,
+    "stops": 0.2005813953488372
+   },
+   "market": {
+    "risingOld": {
+     "n": 306,
+     "sd": 0.14548763822113087,
+     "win": 0.3758169934640523,
+     "avg": -0.0022648058893459987,
+     "pf": 0.9521922600267396,
+     "spy": 0.012371335256491383,
+     "bestShare": 0.09183493721719345,
+     "stops": 0.13725490196078433
+    },
+    "risingNew": {
+     "n": 309,
+     "sd": 0.18914037997387037,
+     "win": 0.3268608414239482,
+     "avg": -0.004970771908833854,
+     "pf": 0.9142604142802953,
+     "spy": 0.00915855161133376,
+     "bestShare": 0.08366997662888258,
+     "stops": 0.1941747572815534
+    },
+    "fallingOld": {
+     "n": 61,
+     "sd": 0.10773218382735487,
+     "win": 0.39344262295081966,
+     "avg": -0.01430525387464839,
+     "pf": 0.66548542732637,
+     "spy": 0.0229770926493513,
+     "bestShare": 0.25118959052031264,
+     "stops": 0.09836065573770492
+    },
+    "fallingNew": {
+     "n": 35,
+     "sd": 0.09357866771510137,
+     "win": 0.2,
+     "avg": -0.08900825706596524,
+     "pf": 0.0846622999431023,
+     "spy": -0.005902130231718854,
+     "bestShare": 0.23106286092298897,
+     "stops": 0.2571428571428571
+    },
+    "risingOnly": false
+   }
+  },
+  {
+   "key": "leaderPB",
+   "name": "Leader pullback continuation (source 2)",
+   "how": "six-month gain vs the S&P 500 in the top 20% of stocks trading 20M USD+ a day, 5 USD+; above a rising 50 day average that is above the 200 day; 3 to 10% under its highest close of the last 20 sessions; closes above the previous day high on above-average volume; buy the next open unless it is more than 1 daily move above the close; stop at the lower of 2.5 daily moves or the 10 day low, skipped if over 10% away; sell the next open after a close under the 20 day average, or after 40 sessions",
+   "verdict": "REJECTED",
+   "why": "lost money in the newer half even at the lowest cost",
+   "older": {
+    "n": 1004,
+    "sd": 0.06267051174552084,
+    "win": 0.26195219123505975,
+    "avg": -0.006102711411871934,
+    "pf": 0.7024457551013175,
+    "spy": 0.002837311194426946,
+    "bestShare": 0.04488584966211091,
+    "stops": 0.022908366533864542
+   },
+   "newer": {
+    "n": 756,
+    "sd": 0.062132445578853356,
+    "win": 0.2619047619047619,
+    "avg": -0.006617858879915417,
+    "pf": 0.690750618180702,
+    "spy": 0.002977021100780326,
+    "bestShare": 0.040796296883168076,
+    "stops": 0.026455026455026454
+   },
+   "newerLow": {
+    "n": 756,
+    "sd": 0.062132445578853356,
+    "win": 0.30423280423280424,
+    "avg": -0.002617858879915447,
+    "pf": 0.8587129027837174,
+    "spy": 0.002977021100780326,
+    "bestShare": 0.03823426645034804,
+    "stops": 0.026455026455026454
+   },
+   "market": {
+    "risingOld": {
+     "n": 627,
+     "sd": 0.06712278349282474,
+     "win": 0.2711323763955343,
+     "avg": -0.0044430738919746405,
+     "pf": 0.7837503294878817,
+     "spy": 0.000752942592219871,
+     "bestShare": 0.06430419116997695,
+     "stops": 0.022328548644338118
+    },
+    "risingNew": {
+     "n": 587,
+     "sd": 0.06473106190177433,
+     "win": 0.2572402044293015,
+     "avg": -0.0044105371432229595,
+     "pf": 0.7807273919277875,
+     "spy": 0.003582057188060658,
+     "bestShare": 0.0494570107400762,
+     "stops": 0.020442930153321975
+    },
+    "fallingOld": {
+     "n": 377,
+     "sd": 0.05443993298868209,
+     "win": 0.246684350132626,
+     "avg": -0.008862904316316549,
+     "pf": 0.5665835847622198,
+     "spy": 0.006303887092527304,
+     "bestShare": 0.12132888977314274,
+     "stops": 0.023872679045092837
+    },
+    "fallingNew": {
+     "n": 169,
+     "sd": 0.05154945468029816,
+     "win": 0.2781065088757396,
+     "avg": -0.014284710119196426,
+     "pf": 0.44770420115493104,
+     "spy": 0.0008755052236586977,
+     "bestShare": 0.1295930866811226,
+     "stops": 0.047337278106508875
+    },
+    "risingOnly": false
    }
   },
   {
@@ -402,6 +1266,7 @@
    "why": "lost money in the newer half even at the lowest cost",
    "older": {
     "n": 439,
+    "sd": 0.08801803824021855,
     "win": 0.41002277904328016,
     "avg": -0.007437411549124845,
     "pf": 0.7927954366032649,
@@ -411,6 +1276,7 @@
    },
    "newer": {
     "n": 467,
+    "sd": 0.09228382340972639,
     "win": 0.4132762312633833,
     "avg": -0.012820131890124303,
     "pf": 0.6919201953201161,
@@ -420,18 +1286,63 @@
    },
    "newerLow": {
     "n": 467,
+    "sd": 0.09228382340972639,
     "win": 0.4346895074946467,
     "avg": -0.008820131890124356,
     "pf": 0.775522322442809,
     "spy": 0.0015527033826201878,
     "bestShare": 0.02249006385817232,
     "stops": 0.25267665952890794
+   },
+   "market": {
+    "risingOld": {
+     "n": 335,
+     "sd": 0.08656068434298982,
+     "win": 0.41492537313432837,
+     "avg": -0.007073573194655282,
+     "pf": 0.7999731158102734,
+     "spy": 0.0053667172609461996,
+     "bestShare": 0.022005392848295367,
+     "stops": 0.1761194029850746
+    },
+    "risingNew": {
+     "n": 390,
+     "sd": 0.09062745077815113,
+     "win": 0.3974358974358974,
+     "avg": -0.014656592062339577,
+     "pf": 0.6556835874836605,
+     "spy": 0.0029571511379179478,
+     "bestShare": 0.02903403398292689,
+     "stops": 0.26153846153846155
+    },
+    "fallingOld": {
+     "n": 104,
+     "sd": 0.09298169186353222,
+     "win": 0.3942307692307692,
+     "avg": -0.008609390864002774,
+     "pf": 0.7710529826545748,
+     "spy": -0.000804678979433483,
+     "bestShare": 0.10062133737252217,
+     "stops": 0.18269230769230768
+    },
+    "fallingNew": {
+     "n": 77,
+     "sd": 0.10036991987365251,
+     "win": 0.4935064935064935,
+     "avg": -0.003518580368514627,
+     "pf": 0.9043346220483327,
+     "spy": -0.0055607333000567685,
+     "bestShare": 0.074966746286981,
+     "stops": 0.2077922077922078
+    },
+    "risingOnly": false
    }
   }
  ],
  "base": {
   "older": {
    "n": 146897,
+   "sd": 0.09073282132783721,
    "win": 0.43268412561182323,
    "avg": -0.007129905104024269,
    "pf": 0.7982752282819061,
@@ -441,6 +1352,7 @@
   },
   "newer": {
    "n": 146842,
+   "sd": 0.10074519905588038,
    "win": 0.4339970853025701,
    "avg": -0.005478499785588646,
    "pf": 0.8506906850572328,
@@ -449,5 +1361,5 @@
    "stops": 0
   }
  },
- "text": "HUNTING LAB, 2026-10-09\n11 new ways to catch moves, each a complete trade, tested on the whole US market 2021-10-12 to 2026-10-09 (collapsed stocks included), 0.8% cost. Rules fixed in advance (the build-up version is chosen on the older half only); each must pass in BOTH halves.\n\nNOT PROVEN: Tight base breakout\n  older half: 20 trades, 15% won, average -5.8%, profit factor 0.08\n  newer half: 17 trades, 6% won, average -5.3%, profit factor 0.07, stopped out 29%\n  too few trades (20 older, 17 newer; 20 each needed)\nNOT PROVEN: Holds up while the market falls\n  older half: 1182 trades, 36% won, average -0.9%, profit factor 0.66\n  newer half: 663 trades, 48% won, average +0.4%, profit factor 1.18, stopped out 13%\n  lost money in the older half; profit factor 1.18; no better than the S&P 500 over the same days\nNOT PROVEN: Second day after a big up day\n  older half: 270 trades, 37% won, average -0.8%, profit factor 0.80\n  newer half: 226 trades, 38% won, average -0.3%, profit factor 0.93, stopped out 37%\n  lost money in the older half; average under zero at 0.8% cost; profit factor 0.93; no better than the S&P 500 over the same days; not clearly better than a random stock\nREJECTED: Strict high tight flag\n  older half: 21 trades, 33% won, average -0.5%, profit factor 0.77\n  newer half: 22 trades, 18% won, average -2.2%, profit factor 0.44, stopped out 23%\n  lost money in the newer half even at the lowest cost\nREJECTED: 20 day high, quality version\n  older half: 4400 trades, 43% won, average -0.8%, profit factor 0.78\n  newer half: 4817 trades, 39% won, average -1.0%, profit factor 0.77, stopped out 37%\n  lost money in the newer half even at the lowest cost\nREJECTED: Fast mover continuation (next day breaks the jump-day high)\n  older half: 496 trades, 43% won, average -0.2%, profit factor 0.96\n  newer half: 623 trades, 42% won, average -1.1%, profit factor 0.75, stopped out 21%\n  lost money in the newer half even at the lowest cost\nREJECTED: Undercut and reclaim (dips under yesterday’s low, closes back above it)\n  older half: 45960 trades, 39% won, average -0.8%, profit factor 0.59\n  newer half: 52093 trades, 37% won, average -1.0%, profit factor 0.57, stopped out 47%\n  lost money in the newer half even at the lowest cost\nREJECTED: Deep loser bought at the close, sold the next day\n  older half: 14908 trades, 40% won, average -0.8%, profit factor 0.68\n  newer half: 20204 trades, 42% won, average -0.8%, profit factor 0.68, stopped out 0%\n  lost money in the newer half even at the lowest cost\nREJECTED: Deep loser in an uptrend, bought at the close\n  older half: 4756 trades, 55% won, average -0.5%, profit factor 0.86\n  newer half: 8911 trades, 54% won, average -0.5%, profit factor 0.87, stopped out 14%\n  lost money in the newer half even at the lowest cost\nREJECTED: Most traded and strongest (follow the crowd and the trend)\n  older half: 1438 trades, 42% won, average -0.7%, profit factor 0.78\n  newer half: 1312 trades, 46% won, average -0.6%, profit factor 0.84, stopped out 18%\n  lost money in the newer half even at the lowest cost\nREJECTED: Volume build-up near the high\n  version: chosen on the older half from 96 versions: last 5 days’ volume 3x the 20 days before, 5 day change +0% to +18%, close within 5% of the 25 day high, price 20 USD or less; buy next open, stop -10%, target +20%, out after 8 sessions\n  older half: 439 trades, 41% won, average -0.7%, profit factor 0.79\n  newer half: 467 trades, 41% won, average -1.3%, profit factor 0.69, stopped out 25%\n  lost money in the newer half even at the lowest cost\n\nBuying a random stock for 10 days, newer half: 146842 trades, 43% won, average -0.5%, profit factor 0.85.\n\nEXIT TEST on the same quick-dip entries (24034 + 27229 trades)\n  current exit (5 day average or 5 days): older 24034 trades, 49% won, average -0.6%, profit factor 0.66 | newer 27229 trades, 51% won, average -0.5%, profit factor 0.75\n  take half at +1 daily move, let the rest run (trailing stop, up to 30 days): older 24034 trades, 50% won, average -1.0%, profit factor 0.63 | newer 27229 trades, 53% won, average -0.9%, profit factor 0.69\n  RESULT: KEEP THE CURRENT QUICK EXIT.\n\nNo new way passed. Nothing to act on. The lab repeats every Sunday as new days come in.\nNot tested here (no history to test on): Reddit or YouTube mentions plus a breakout, and news-tag rules. Those are scored forward instead (sources, movers journal).\nDaily prices only; fills at the open or the stated level are assumed. Research, not an order. Not financial advice, not a halal ruling."
+ "text": "HUNTING LAB, 2026-10-09\n16 new ways to catch moves, each a complete trade, tested on the whole US market 2021-10-12 to 2026-10-09 (collapsed stocks included), 0.8% cost. Rules fixed in advance (the build-up version is chosen on the older half only); each must pass in BOTH halves.\n\nREJECTED (lost money on the newer half even at the lowest cost): Strict high tight flag -2.2%; 20 day high, quality version -1.0%; Fast mover continuation -1.1%; Undercut and reclaim -1.0%; Deep loser bought at the close, sold the next day -0.8%; Deep loser in an uptrend, bought at the close -0.5%; Most traded and strongest -0.6%; Bullish candle at the 50 day average in an uptrend -0.9%; Big news gap held for weeks -1.2%; Top-10% strength, tight base, breakout -1.2%; Earnings-style gap, short base, breakout -1.4%; Leader pullback continuation -0.7%; Volume build-up near the high -1.3%.\n\nNOT PROVEN: Tight base breakout\n  older half: 20 trades, 15% won, average -5.8%, profit factor 0.08\n  newer half: 17 trades, 6% won, average -5.3%, profit factor 0.07, stopped out 29%\n  too few trades (20 older, 17 newer; 20 each needed)\nNOT PROVEN: Holds up while the market falls\n  older half: 1182 trades, 36% won, average -0.9%, profit factor 0.66\n  newer half: 663 trades, 48% won, average +0.4%, profit factor 1.18, stopped out 13%\n  lost money in the older half; profit factor 1.18; no better than the S&P 500 over the same days; loses at higher costs (1.2% a trade); could still be luck after testing 16 ideas on the same years (false-discovery check)\nNOT PROVEN: Second day after a big up day\n  older half: 270 trades, 37% won, average -0.8%, profit factor 0.80\n  newer half: 226 trades, 38% won, average -0.3%, profit factor 0.93, stopped out 37%\n  lost money in the older half; average under zero at 0.8% cost; profit factor 0.93; no better than the S&P 500 over the same days; not clearly better than a random stock; loses at higher costs (1.2% a trade); could still be luck after testing 16 ideas on the same years (false-discovery check)\n\nMarket type check: no rule made money in rising markets in both halves.\n\nBuying a random stock for 10 days, newer half: 146842 trades, 43% won, average -0.5%, profit factor 0.85.\n\nEXIT TEST on the same quick-dip entries (24034 + 27229 trades)\n  current exit (5 day average or 5 days): older 24034 trades, 49% won, average -0.6%, profit factor 0.66 | newer 27229 trades, 51% won, average -0.5%, profit factor 0.75\n  take half at +1 daily move, let the rest run (trailing stop, up to 30 days): older 24034 trades, 50% won, average -1.0%, profit factor 0.63 | newer 27229 trades, 53% won, average -0.9%, profit factor 0.69\n  RESULT: KEEP THE CURRENT QUICK EXIT.\n\nNo new way passed. Nothing to act on. The lab repeats every Sunday as new days come in.\nNot tested here (no history to test on): Reddit or YouTube mentions plus a breakout, and news-tag rules. Those are scored forward instead (sources, movers journal).\nDaily prices only; fills at the open or the stated level are assumed. Research, not an order. Not financial advice, not a halal ruling."
 }
