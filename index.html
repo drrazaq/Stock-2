@@ -421,9 +421,15 @@ function learn(candles, ind, prevKey, isBench, pool) {
   const tgt = VAR[vi].tp ? null : targetStudy(candles, T, folds, vi);
   // weekday of each unseen trade's BUY (entry day), older and newer half of the unseen period, for the day-of-week study
   const dmid = Math.floor((bound(0) + n) / 2), dow = { older: [0, 1, 2, 3, 4].map(() => [0, 0]), newer: [0, 1, 2, 3, 4].map(() => [0, 0]) };
+  // TIMING: the same unseen trades with the buy in the last minutes of the signal day (its close) instead of the next open, and the
+  // rule/time sale in the last minutes of the day the exit fired instead of the next open. Stops are left as they were.
+  const timing = { older: { openIn: [0, 0], closeIn: [0, 0], openOut: [0, 0], closeOut: [0, 0] }, newer: { openIn: [0, 0], closeIn: [0, 0], openOut: [0, 0], closeOut: [0, 0] } };
+  for (const t of oos) { const h = t.entryIdx < dmid ? timing.older : timing.newer, cost = t.exit / t.entry - 1 - t.pct, sc = candles[t.sigIdx].c;
+    if (t.exitIdx > t.entryIdx && sc > 0) { h.openIn[0]++; h.openIn[1] += t.pct; h.closeIn[0]++; h.closeIn[1] += t.exit / sc - 1 - cost; }
+    if ((t.reason === 'rule_exit' || t.reason === 'time_exit') && t.exitIdx - 1 >= t.entryIdx) { h.openOut[0]++; h.openOut[1] += t.pct; h.closeOut[0]++; h.closeOut[1] += candles[t.exitIdx - 1].c / t.entry - 1 - cost; } }
   for (const t of oos) { const wd = new Date(candles[t.entryIdx].d + 'T12:00:00Z').getUTCDay() - 1; if (wd < 0 || wd > 4) continue; const h = t.entryIdx < dmid ? dow.older : dow.newer; h[wd][0]++; h[wd][1] += t.pct; }   // a rule with a 2R/3R target already had its target chosen by the test
   const reach10 = mfes.length ? mfes.filter(m => m >= 0.10).length / mfes.length : null, reach20 = mfes.length ? mfes.filter(m => m >= 0.20).length / mfes.length : null;   // how often past trades ran +10% / +20% at some point   // each unseen trade's return, so the plan can show average win, average loss and a safety margin
-  return { v: VAR[vi], key: vkey(VAR[vi]), promoted, tgt, dow, hitRate, medDays, avgPct, oosPct, reach10, reach20, mfeMed, mfe75, maeMed, stopRate, timeRate, train, test, baseTest, edge, regime: { up: reg(true), down: reg(false) },
+  return { v: VAR[vi], key: vkey(VAR[vi]), promoted, tgt, dow, timing, hitRate, medDays, avgPct, oosPct, reach10, reach20, mfeMed, mfe75, maeMed, stopRate, timeRate, train, test, baseTest, edge, regime: { up: reg(true), down: reg(false) },
     proven: base && !patchy && !weak && !lagging, lucky, patchy, weak, lagging, thin: test.n < minN, foldR, goodFolds, splitDate: candles[bound(0)].d, firstDate: candles[0].d };
 }
 // Pattern recognition on completed daily bars. Body = |close - open|, range = high - low. Returns the pattern number or 0.
