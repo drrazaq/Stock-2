@@ -10,7 +10,7 @@ concurrency: smart-money
 jobs:
   smart:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,6 +29,15 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           STUDY: ${{ github.event.schedule == '30 9 * * 0' && '1' || '' }}
+      # Earnings history for the earnings-surprise study (Alpha Vantage 25 a day, FMP if the plan allows, Finnhub calendar).
+      - shell: bash
+        run: |
+          set -o pipefail
+          node earnings-study.mjs 2>&1 | tee -a run.log
+        env:
+          ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
+          FMP_KEY: ${{ secrets.FMP_KEY }}
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
       - run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
