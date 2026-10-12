@@ -14,43 +14,31 @@
   "since": "2026-10-05",
   "kind": "manual",
   "stop": 11.32,
-  "t1": 37.84,
-  "t2": 46.68,
   "stopWhy": "two normal daily moves (ATR) below the current price 11.99. It is below your entry, so hitting it means accepting a loss of 46.0%. I will raise it if the stock rises, never lower it.",
-  "raised": "2026-10-08",
-  "guide": true
+  "raised": "2026-10-08"
  },
  "RKLB": {
   "entry": 74.98,
   "since": "2026-10-06",
   "kind": "manual",
   "stop": 55,
-  "t1": 114.94,
-  "t2": 134.92,
   "raised": "2026-10-06",
-  "own": true,
-  "guide": true
+  "own": true
  },
  "PR": {
   "entry": 22.4,
   "since": "2026-10-06",
   "kind": "manual",
   "stop": 22.08,
-  "t1": 23.04,
-  "t2": 23.36,
   "stopWhy": "its 50 day average, the trend line a holder of this stock should not see broken. It is below your entry, so hitting it means accepting a loss of 1.8%. I will raise it if the stock rises, never lower it.",
-  "raised": "2026-10-09",
-  "guide": true
+  "raised": "2026-10-09"
  },
  "LLY": {
   "entry": 1174.24,
   "since": "2026-10-09",
   "kind": "entry",
   "maxHold": null,
-  "stop": 1121.91,
-  "t1": 1278.9,
-  "t2": 1331.23,
-  "guide": true
+  "stop": 1121.91
  },
  "RELL": {
   "entry": 21.19,
@@ -60,5 +48,57 @@
   "t1": 23.25,
   "t2": null,
   "own": true
+ },
+ "IESC": {
+  "entry": 297,
+  "since": "2026-10-12",
+  "kind": "quick",
+  "q": "rsi",
+  "key": "quick|2|5|2||1|10|rsi",
+  "maxHold": 5,
+  "stop": 263.37,
+  "t1": 319.52,
+  "t2": null,
+  "tmode": "all",
+  "test": {
+   "win": 0.7,
+   "net": 0.0261,
+   "n": 40,
+   "kind": "quick trade"
+  }
+ },
+ "DOCN": {
+  "entry": 134,
+  "since": "2026-10-12",
+  "kind": "entry",
+  "key": "pull|20|50|1.5||0||",
+  "maxHold": null,
+  "stop": 120.81,
+  "t1": null,
+  "t2": null,
+  "exitBelow": 129.73,
+  "test": {
+   "win": 0.563,
+   "net": 0.076,
+   "n": 16,
+   "kind": "swing trade"
+  }
+ },
+ "COHR": {
+  "entry": 307,
+  "since": "2026-10-12",
+  "kind": "entry",
+  "key": "pull|20|50|1.5||0||",
+  "maxHold": null,
+  "stop": 273.96,
+  "t1": null,
+  "t2": null,
+  "exitBelow": 307.11,
+  "test": {
+   "win": 0.529,
+   "net": 0.0621,
+   "n": 17,
+   "kind": "swing trade"
+  }
  }
 }
