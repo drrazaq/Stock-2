@@ -30,6 +30,22 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+      # Fast movers: tomorrow's day-trade candidates on paper, and a DAY-TRADE LIST only for rules that passed the 5-year test.
+      - uses: actions/cache/restore@v4
+        with:
+          path: fm-cache
+          key: fm-cache-none
+          restore-keys: fm-cache-
+      - shell: bash
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          MODE=live node fastmover-lab.mjs 2>&1 | tee -a run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          MASSIVE_PAID: '1'
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
       - run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
