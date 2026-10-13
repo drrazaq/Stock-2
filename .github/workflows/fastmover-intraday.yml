@@ -1,0 +1,61 @@
+name: Fast-mover minute test
+on:
+  schedule:
+    - cron: '0 5 * * 6'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: fastmover-intraday
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+      MASSIVE_PAID: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # The LEADERS cache is read only for its list of common stocks (funds and warrants are left out).
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: fm-cache
+          key: fm-cache-${{ github.run_id }}
+          restore-keys: fm-cache-
+      # Minute-by-minute test of the ignition rules on every day a stock touched +10% (the sample grows each Saturday).
+      - shell: bash
+        run: |
+          set -o pipefail
+          MODE=intraday node fastmover-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+      - if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: fm-cache
+          key: fm-cache-${{ github.run_id }}
+      - run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          git add data/ignition-lab.json
+          git diff --cached --quiet || git commit -m "ignition test $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the test result" | tee -a run.log; exit 1; }
+      - if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
