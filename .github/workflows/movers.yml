@@ -54,6 +54,7 @@ jobs:
           MODE=daily node octopus.mjs 2>&1 | tee -a run.log
         env:
           NODE_OPTIONS: --max-old-space-size=6144
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       - run: |
