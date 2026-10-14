@@ -1,6 +1,6 @@
 {
- "at": "2026-10-14T14:38:02.488Z",
- "tipranks": "ok: 0 US events read (all sizes), 0 major",
+ "at": "2026-10-14T14:48:37.496Z",
+ "tipranks": "ok: 50 US events read (all sizes), 13 major",
  "massive": "ok: 12 holidays, dividends for 1 of 13 held stocks",
  "toolArgs": [
   "daysBack",
@@ -11,7 +11,77 @@
   "impact",
   "limit"
  ],
- "tipranksCallsLeft": 29,
- "history": "0 past releases (all sizes) with an actual, back to n/a",
- "econUpcoming": 0
+ "toolSchema": {
+  "daysBack": {
+   "type": "integer",
+   "desc": "",
+   "required": false
+  },
+  "daysForward": {
+   "type": "integer",
+   "desc": "",
+   "required": false
+  },
+  "fromDate": {
+   "type": "string",
+   "desc": "",
+   "required": false
+  },
+  "toDate": {
+   "type": "string",
+   "desc": "",
+   "required": false
+  },
+  "countries": {
+   "type": "string",
+   "desc": "Comma-separated country names to keep (default 'US'); pass '' to keep all. Examples: 'US','UK','Germany','Japan','China'.",
+   "required": false
+  },
+  "impact": {
+   "type": "string",
+   "desc": "Comma-separated impact levels to keep: High, Medium, Low (default 'High,Medium'); pass '' to keep all.",
+   "required": false
+  },
+  "limit": {
+   "type": "integer",
+   "desc": "",
+   "required": false
+  }
+ },
+ "lastArgs": {
+  "daysBack": 3,
+  "daysForward": 10,
+  "countries": "US",
+  "limit": 500
+ },
+ "replyShape": {
+  "totalMatched": "number",
+  "returned": "number",
+  "filters": {
+   "countries": "string",
+   "impact": "string",
+   "limit": "number"
+  },
+  "economicCalendar": [
+   "list of 50",
+   {
+    "eventId": "number",
+    "actual": "object",
+    "country": "string",
+    "estimate": "object",
+    "event": "string",
+    "impact": "string",
+    "prev": "object",
+    "time": "string",
+    "unit": "object"
+   }
+  ]
+ },
+ "rowsFound": 50,
+ "countriesSeen": [
+  "US"
+ ],
+ "tipranksCallsLeft": 28,
+ "history": "9 past releases (all sizes) with an actual, back to 2026-10-13",
+ "econUpcoming": 43
 }
