@@ -1,9 +1,10 @@
 name: Ignition watcher
 on:
   schedule:
-    # 9:20 New York in summer; the second start covers winter time (the script exits at once when it is not 9:00-15:00 New York)
-    - cron: '20 13 * * 1-5'
-    - cron: '20 14 * * 1-5'
+    # 9:05 New York in summer (GitHub often starts 15-30 minutes late; if early, the script waits for 9:25);
+    # the second start covers winter time (the first then exits at once: 8:05 New York is outside the window)
+    - cron: '5 13 * * 1-5'
+    - cron: '5 14 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
