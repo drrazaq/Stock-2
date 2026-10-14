@@ -29,6 +29,7 @@ jobs:
           MODE: ${{ github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily' }}
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
