@@ -50,6 +50,8 @@ jobs:
         run: |
           set -o pipefail
           node events-study.mjs 2>&1 | tee -a run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       - if: always()
         uses: actions/cache/save@v4
         with:
