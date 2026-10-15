@@ -98,6 +98,24 @@ jobs:
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
+      # SELL NOW, BUY BACK LOWER? Selling and re-buying vs simply holding, 5 years, costs included.
+      - shell: bash
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node rebuy.mjs 2>&1 | tee -a run.log
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+      # REBALANCING: 10-stock portfolios, equal weights / trim over 15% / new cash to the smallest, vs simply holding.
+      - shell: bash
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node rebalance.mjs 2>&1 | tee -a run.log
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
       # OCTOPUS: 26 angles + every pair of them, retrained every week, judged only on unseen weeks (same prices + SEC events).
       - shell: bash
         continue-on-error: true
@@ -152,7 +170,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           git add data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json
-          for f in data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json; do [ -f "$f" ] && git add "$f"; done; true
+          for f in data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
