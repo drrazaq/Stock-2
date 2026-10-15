@@ -1,0 +1,281 @@
+{
+ "generatedAt": "2026-10-15T10:23:51.983Z",
+ "status": "OK",
+ "from": "2022-01-06",
+ "to": "2026-07-17",
+ "versions": 6,
+ "tCrit": 2.64,
+ "costPerSide": 0.004,
+ "results": {
+  "STRETCH/LOWER10": {
+   "trigger": "STRETCH",
+   "rebuy": "LOWER10",
+   "name": "stock 30%+ above its 50-day average -> sell, buy back 10% lower (or after 60 sessions)",
+   "verdict": "SWITCH WINS",
+   "why": "selling and buying back beat holding in both halves, beyond luck, at stress cost",
+   "results": {
+    "older": {
+     "n": 1723,
+     "adv": 0.0453,
+     "t": 10.96,
+     "better": 0.791,
+     "cameBack": 0.761,
+     "holdAvg": -0.05,
+     "worst": -0.825,
+     "noTop2": 0.0426,
+     "topStock": 0.024,
+     "days": 14.8
+    },
+    "newer": {
+     "n": 2395,
+     "adv": 0.0185,
+     "t": 4.92,
+     "better": 0.731,
+     "cameBack": 0.712,
+     "holdAvg": 0.0519,
+     "worst": -0.726,
+     "noTop2": 0.0174,
+     "topStock": 0.008,
+     "days": 13.3
+    },
+    "stress": {
+     "n": 2395,
+     "adv": 0.0144,
+     "t": 3.85,
+     "better": 0.729,
+     "cameBack": 0.712,
+     "holdAvg": 0.0519,
+     "worst": -0.727,
+     "noTop2": 0.0134,
+     "topStock": 0.008,
+     "days": 13.3
+    }
+   }
+  },
+  "STRETCH/UPTURN": {
+   "trigger": "STRETCH",
+   "rebuy": "UPTURN",
+   "name": "stock 30%+ above its 50-day average -> sell, buy back when it closes above its 20-day average again (or after 60 sessions)",
+   "verdict": "NOT PROVEN",
+   "why": "switch ahead by +2.6% in the older half, but that could be luck (t 1.01, 2.6 needed); switch ahead by +0.0% in the newer half, but that could be luck (t 0.11, 2.6 needed); loses at higher costs; the gain disappears without its 2 best cases",
+   "results": {
+    "older": {
+     "n": 1723,
+     "adv": 0.0263,
+     "t": 1.01,
+     "better": 0.473,
+     "cameBack": 0.999,
+     "holdAvg": -0.05,
+     "worst": -0.489,
+     "noTop2": -0.0002,
+     "topStock": 0.492,
+     "days": 3.2
+    },
+    "newer": {
+     "n": 2395,
+     "adv": 0.0003,
+     "t": 0.11,
+     "better": 0.443,
+     "cameBack": 1,
+     "holdAvg": 0.0519,
+     "worst": -0.726,
+     "noTop2": -0.0022,
+     "topStock": 0.067,
+     "days": 3.3
+    },
+    "stress": {
+     "n": 2395,
+     "adv": -0.0037,
+     "t": -1.38,
+     "better": 0.416,
+     "cameBack": 1,
+     "holdAvg": 0.0519,
+     "worst": -0.727,
+     "noTop2": -0.0062,
+     "topStock": 0.071,
+     "days": 3.3
+    }
+   }
+  },
+  "SPIKE/LOWER10": {
+   "trigger": "SPIKE",
+   "rebuy": "LOWER10",
+   "name": "stock up 25%+ in 10 sessions -> sell, buy back 10% lower (or after 60 sessions)",
+   "verdict": "SWITCH WINS",
+   "why": "selling and buying back beat holding in both halves, beyond luck, at stress cost",
+   "results": {
+    "older": {
+     "n": 3578,
+     "adv": 0.0407,
+     "t": 15.37,
+     "better": 0.767,
+     "cameBack": 0.745,
+     "holdAvg": -0.0356,
+     "worst": -0.699,
+     "noTop2": 0.0396,
+     "topStock": 0.009,
+     "days": 15.6
+    },
+    "newer": {
+     "n": 4244,
+     "adv": 0.0178,
+     "t": 4.98,
+     "better": 0.717,
+     "cameBack": 0.697,
+     "holdAvg": 0.0428,
+     "worst": -0.892,
+     "noTop2": 0.0148,
+     "topStock": 0.022,
+     "days": 14.3
+    },
+    "stress": {
+     "n": 4244,
+     "adv": 0.0137,
+     "t": 3.85,
+     "better": 0.715,
+     "cameBack": 0.697,
+     "holdAvg": 0.0428,
+     "worst": -0.892,
+     "noTop2": 0.0107,
+     "topStock": 0.023,
+     "days": 14.3
+    }
+   }
+  },
+  "SPIKE/UPTURN": {
+   "trigger": "SPIKE",
+   "rebuy": "UPTURN",
+   "name": "stock up 25%+ in 10 sessions -> sell, buy back when it closes above its 20-day average again (or after 60 sessions)",
+   "verdict": "NOT PROVEN",
+   "why": "switch ahead by +0.1% in the older half, but that could be luck (t 0.38, 2.6 needed); switch ahead by +3.4% in the newer half, but that could be luck (t 1.46, 2.6 needed); one stock made over 25% of the gain",
+   "results": {
+    "older": {
+     "n": 3578,
+     "adv": 0.0011,
+     "t": 0.38,
+     "better": 0.445,
+     "cameBack": 0.998,
+     "holdAvg": -0.0356,
+     "worst": -0.489,
+     "noTop2": -0.0018,
+     "topStock": 0.064,
+     "days": 3.3
+    },
+    "newer": {
+     "n": 4244,
+     "adv": 0.0339,
+     "t": 1.46,
+     "better": 0.445,
+     "cameBack": 0.998,
+     "holdAvg": 0.0428,
+     "worst": -0.846,
+     "noTop2": 0.006,
+     "topStock": 0.336,
+     "days": 3.3
+    },
+    "stress": {
+     "n": 4244,
+     "adv": 0.0298,
+     "t": 1.29,
+     "better": 0.414,
+     "cameBack": 0.998,
+     "holdAvg": 0.0428,
+     "worst": -0.847,
+     "noTop2": 0.0019,
+     "topStock": 0.345,
+     "days": 3.3
+    }
+   }
+  },
+  "FALLING/LOWER10": {
+   "trigger": "FALLING",
+   "rebuy": "LOWER10",
+   "name": "stock falling: under its 50-day average, 10%+ off its 20-day high -> sell, buy back 10% lower (or after 60 sessions)",
+   "verdict": "NOT PROVEN",
+   "why": "holding did better in the newer half (switch -0.2%); loses at higher costs; the gain disappears without its 2 best cases",
+   "results": {
+    "older": {
+     "n": 14788,
+     "adv": 0.0247,
+     "t": 20.87,
+     "better": 0.682,
+     "cameBack": 0.634,
+     "holdAvg": 0.001,
+     "worst": -0.683,
+     "noTop2": 0.0242,
+     "topStock": 0.004,
+     "days": 18.7
+    },
+    "newer": {
+     "n": 14165,
+     "adv": -0.0024,
+     "t": -1.7,
+     "better": 0.601,
+     "cameBack": 0.553,
+     "holdAvg": 0.0513,
+     "worst": -0.799,
+     "noTop2": -0.003,
+     "topStock": 0.007,
+     "days": 19.1
+    },
+    "stress": {
+     "n": 14165,
+     "adv": -0.0064,
+     "t": -4.53,
+     "better": 0.597,
+     "cameBack": 0.553,
+     "holdAvg": 0.0513,
+     "worst": -0.8,
+     "noTop2": -0.007,
+     "topStock": 0.008,
+     "days": 19.1
+    }
+   }
+  },
+  "FALLING/UPTURN": {
+   "trigger": "FALLING",
+   "rebuy": "UPTURN",
+   "name": "stock falling: under its 50-day average, 10%+ off its 20-day high -> sell, buy back when it closes above its 20-day average again (or after 60 sessions)",
+   "verdict": "NOT PROVEN",
+   "why": "holding did better in the newer half (switch -0.8%); loses at higher costs; the gain disappears without its 2 best cases",
+   "results": {
+    "older": {
+     "n": 14788,
+     "adv": 0.0053,
+     "t": 3.7,
+     "better": 0.338,
+     "cameBack": 0.993,
+     "holdAvg": 0.001,
+     "worst": -0.535,
+     "noTop2": 0.0045,
+     "topStock": 0.009,
+     "days": 15
+    },
+    "newer": {
+     "n": 14165,
+     "adv": -0.0084,
+     "t": -4.24,
+     "better": 0.289,
+     "cameBack": 0.996,
+     "holdAvg": 0.0513,
+     "worst": -0.808,
+     "noTop2": -0.0103,
+     "topStock": 0.042,
+     "days": 14.7
+    },
+    "stress": {
+     "n": 14165,
+     "adv": -0.0124,
+     "t": -6.27,
+     "better": 0.274,
+     "cameBack": 0.996,
+     "holdAvg": 0.0513,
+     "worst": -0.809,
+     "noTop2": -0.0143,
+     "topStock": 0.044,
+     "days": 14.7
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,206 @@
+{
+ "generatedAt": "2026-10-15T10:25:38.570Z",
+ "status": "OK",
+ "from": "2022-10-12",
+ "to": "2026-10-14",
+ "rules": {
+  "K": 5,
+  "HOLD": 10,
+  "STEP": 5,
+  "COST": 0.008,
+  "STRESS": 0.012,
+  "GONE": -0.3,
+  "MINPX": 3,
+  "MINDV": 2000000,
+  "TRAIN_MIN_WEEKS": 52,
+  "RIDGE": 0.05
+ },
+ "angles": 26,
+ "terms": 461,
+ "unseenWeeks": 145,
+ "verdict": "REJECTED",
+ "why": "lost money in the older unseen half; not 0.5%+ better than an average stock in the older half; not 0.5%+ better than an average stock in the newer half; its best-rated tenth did not beat its worst-rated tenth (newer half); profit factor 1.17, under 1.2",
+ "results": {
+  "older": {
+   "n": 360,
+   "win": 0.4583333333333333,
+   "avg": -0.008046713820798594,
+   "pf": 0.7452828811861739,
+   "spy": 0.004954410659649942,
+   "bestShare": 0.04088678883261132,
+   "noTop2": -0.009682646471601532,
+   "worst": -0.4008523284937511,
+   "days": 72
+  },
+  "olderStress": {
+   "n": 360,
+   "win": 0.425,
+   "avg": -0.012046713820798565,
+   "pf": 0.6438264133205855,
+   "spy": 0.004954410659649942,
+   "bestShare": 0.0436965329861462,
+   "noTop2": -0.01368264647160152,
+   "worst": -0.4048523284937511,
+   "days": 72
+  },
+  "olderAvg": -0.006943527838582478,
+  "olderDeciles": [
+   -0.005892829276127404,
+   -0.0003474313253307607,
+   0.000251453820919043,
+   0.0012267988251531117,
+   0.0028463272886274805,
+   0.0020752962928122717,
+   0.0016020893036111075,
+   0.002261304516528051,
+   0.0033044507806312944,
+   0.0032228015730382414
+  ],
+  "newer": {
+   "n": 365,
+   "win": 0.4958904109589041,
+   "avg": 0.004307515273233311,
+   "pf": 1.1715733798152896,
+   "spy": 0.010123858647552213,
+   "bestShare": 0.022232566751100136,
+   "noTop2": 0.0030330034706170634,
+   "worst": -0.2319186003798317,
+   "days": 73
+  },
+  "newerStress": {
+   "n": 365,
+   "win": 0.473972602739726,
+   "avg": 0.0003075152732332882,
+   "pf": 1.0113174539122183,
+   "spy": 0.010123858647552213,
+   "bestShare": 0.02339865157758933,
+   "noTop2": -0.0009669965293829003,
+   "worst": -0.2359186003798317,
+   "days": 73
+  },
+  "newerAvg": 0.0005042344357929938,
+  "newerDeciles": [
+   0.008513874365698037,
+   0.010120433551604911,
+   0.010012009389150797,
+   0.009611566808274914,
+   0.007890834076456984,
+   0.007228830964558704,
+   0.007493256092736228,
+   0.008142926810867817,
+   0.007701049768826882,
+   0.00833440620128013
+  ]
+ },
+ "learned": [
+  {
+   "term": "1 month move + market rising",
+   "weight": 0.0439,
+   "helps": true
+  },
+  {
+   "term": "daily swing size",
+   "weight": -0.0313,
+   "helps": false
+  },
+  {
+   "term": "1 month move",
+   "weight": -0.0312,
+   "helps": false
+  },
+  {
+   "term": "distance above the 1 year low",
+   "weight": 0.0285,
+   "helps": true
+  },
+  {
+   "term": "distance from the 1 year high + market rising",
+   "weight": 0.0267,
+   "helps": true
+  },
+  {
+   "term": "daily swing size + biggest 1-day jump this month",
+   "weight": -0.0267,
+   "helps": false
+  },
+  {
+   "term": "3 month move",
+   "weight": -0.0246,
+   "helps": false
+  },
+  {
+   "term": "daily swing size (extreme either way)",
+   "weight": -0.0244,
+   "helps": false
+  },
+  {
+   "term": "above the 50 day average",
+   "weight": 0.0234,
+   "helps": true
+  },
+  {
+   "term": "1 day move + market rising",
+   "weight": 0.0192,
+   "helps": true
+  },
+  {
+   "term": "biggest 1-day jump this month (extreme either way)",
+   "weight": -0.0192,
+   "helps": false
+  },
+  {
+   "term": "1 day move (extreme either way)",
+   "weight": -0.0185,
+   "helps": false
+  }
+ ],
+ "now": [
+  {
+   "sym": "TXN",
+   "score": 0.0864
+  },
+  {
+   "sym": "ADI",
+   "score": 0.0728
+  },
+  {
+   "sym": "NXPI",
+   "score": 0.0698
+  },
+  {
+   "sym": "MU",
+   "score": 0.0651
+  },
+  {
+   "sym": "STM",
+   "score": 0.0646
+  },
+  {
+   "sym": "ODFL",
+   "score": 0.0632
+  },
+  {
+   "sym": "XPO",
+   "score": 0.0625
+  },
+  {
+   "sym": "AVGO",
+   "score": 0.0608
+  },
+  {
+   "sym": "INTC",
+   "score": 0.0607
+  },
+  {
+   "sym": "OPCH",
+   "score": 0.0605
+  }
+ ],
+ "paper": {
+  "n": 0,
+  "avg": null,
+  "win": null
+ },
+ "version": 1,
+ "seconds": 99
+}

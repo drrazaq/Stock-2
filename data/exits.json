@@ -1,0 +1,2846 @@
+{
+ "generatedAt": "2026-10-15T10:23:46.769Z",
+ "status": "OK",
+ "from": "2022-10-12",
+ "to": "2026-04-23",
+ "versions": 45,
+ "tCrit": 3.26,
+ "cost": 0.008,
+ "results": {
+  "PB_UP": {
+   "name": "Pullback in a long uptrend",
+   "trades": 6622,
+   "best": "HOLD60",
+   "exits": {
+    "HOLD60": {
+     "name": "hold 3 months, 25% stop (today’s default)",
+     "verdict": "DEFAULT",
+     "why": "the yardstick",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.523,
+       "avg": 0.0117,
+       "perMonth": 0.0043,
+       "days": 57.7,
+       "pf": 1.19,
+       "noTop2": 0.0109,
+       "worst": -0.629,
+       "topStock": 0.006
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.506,
+       "avg": 0.0259,
+       "perMonth": 0.0096,
+       "days": 56.7,
+       "pf": 1.34,
+       "noTop2": 0.0241,
+       "worst": -0.856,
+       "topStock": 0.012
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.497,
+       "avg": 0.0219,
+       "perMonth": 0.0081,
+       "days": 56.7,
+       "pf": 1.28,
+       "noTop2": 0.0201,
+       "worst": -0.86,
+       "topStock": 0.012
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       },
+       "newer": {
+        "n": 3329,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       }
+      }
+     }
+    },
+    "HOLD120": {
+     "name": "hold 6 months, 25% stop",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-2.1% a trade); did not beat the default in the newer half (-1.6% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.537,
+       "avg": 0.0368,
+       "perMonth": 0.0071,
+       "days": 109.1,
+       "pf": 1.48,
+       "noTop2": 0.0357,
+       "worst": -0.629,
+       "topStock": 0.008
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.5,
+       "avg": 0.0427,
+       "perMonth": 0.0086,
+       "days": 104.1,
+       "pf": 1.44,
+       "noTop2": 0.0404,
+       "worst": -0.856,
+       "topStock": 0.01
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.493,
+       "avg": 0.0387,
+       "perMonth": 0.0078,
+       "days": 104.1,
+       "pf": 1.39,
+       "noTop2": 0.0364,
+       "worst": -0.86,
+       "topStock": 0.01
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": -0.0205,
+        "t": -7.06,
+        "noTop2": -0.0216,
+        "topStock": 0.015
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0162,
+        "t": -4.03,
+        "noTop2": -0.018,
+        "topStock": 0.018
+       }
+      }
+     }
+    },
+    "TRAIL10": {
+     "name": "sell 10% under the highest close",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +0.7% but that could be luck (t 2.8, 3.3 needed); did not beat the default in the newer half (-1.6% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.361,
+       "avg": 0.0019,
+       "perMonth": 0.0008,
+       "days": 47.2,
+       "pf": 1.03,
+       "noTop2": 0.0012,
+       "worst": -0.542,
+       "topStock": 0.006
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.345,
+       "avg": 0.0003,
+       "perMonth": 0.0002,
+       "days": 40.1,
+       "pf": 1.01,
+       "noTop2": -0.0013,
+       "worst": -0.821,
+       "topStock": 0.016
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.339,
+       "avg": -0.0037,
+       "perMonth": -0.0019,
+       "days": 40.1,
+       "pf": 0.94,
+       "noTop2": -0.0053,
+       "worst": -0.825,
+       "topStock": 0.017
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": 0.0065,
+        "t": 2.8,
+        "noTop2": 0.0061,
+        "topStock": 0.006
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0155,
+        "t": -4.53,
+        "noTop2": -0.0165,
+        "topStock": 0.013
+       }
+      }
+     }
+    },
+    "TRAIL15": {
+     "name": "sell 15% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-0.3% a trade); did not beat the default in the newer half (-1.3% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.427,
+       "avg": 0.017,
+       "perMonth": 0.0048,
+       "days": 74.4,
+       "pf": 1.25,
+       "noTop2": 0.0161,
+       "worst": -0.629,
+       "topStock": 0.006
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.389,
+       "avg": 0.0135,
+       "perMonth": 0.0045,
+       "days": 62.8,
+       "pf": 1.18,
+       "noTop2": 0.0112,
+       "worst": -0.821,
+       "topStock": 0.015
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.382,
+       "avg": 0.0095,
+       "perMonth": 0.0032,
+       "days": 62.8,
+       "pf": 1.12,
+       "noTop2": 0.0072,
+       "worst": -0.825,
+       "topStock": 0.015
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": -0.0034,
+        "t": -1.47,
+        "noTop2": -0.004,
+        "topStock": 0.007
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0132,
+        "t": -4.01,
+        "noTop2": -0.0143,
+        "topStock": 0.012
+       }
+      }
+     }
+    },
+    "TRAIL20": {
+     "name": "sell 20% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.0% a trade); did not beat the default in the newer half (-1.1% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.491,
+       "avg": 0.0291,
+       "perMonth": 0.0066,
+       "days": 92.4,
+       "pf": 1.4,
+       "noTop2": 0.0283,
+       "worst": -0.629,
+       "topStock": 0.006
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.446,
+       "avg": 0.0281,
+       "perMonth": 0.0072,
+       "days": 81.9,
+       "pf": 1.32,
+       "noTop2": 0.0256,
+       "worst": -0.856,
+       "topStock": 0.013
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.441,
+       "avg": 0.0241,
+       "perMonth": 0.0062,
+       "days": 81.9,
+       "pf": 1.27,
+       "noTop2": 0.0216,
+       "worst": -0.86,
+       "topStock": 0.013
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": -0.0097,
+        "t": -3.87,
+        "noTop2": -0.0103,
+        "topStock": 0.007
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0115,
+        "t": -3.36,
+        "noTop2": -0.0131,
+        "topStock": 0.018
+       }
+      }
+     }
+    },
+    "LOCK": {
+     "name": "lock profit: stop to +2% after +15%, then trail 15% after +30%",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.3% a trade); did not beat the default in the newer half (-1.7% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.55,
+       "avg": 0.0342,
+       "perMonth": 0.0072,
+       "days": 99,
+       "pf": 1.5,
+       "noTop2": 0.0332,
+       "worst": -0.629,
+       "topStock": 0.006
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.519,
+       "avg": 0.0318,
+       "perMonth": 0.0075,
+       "days": 89.5,
+       "pf": 1.38,
+       "noTop2": 0.0296,
+       "worst": -0.856,
+       "topStock": 0.012
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.502,
+       "avg": 0.0278,
+       "perMonth": 0.0065,
+       "days": 89.5,
+       "pf": 1.33,
+       "noTop2": 0.0256,
+       "worst": -0.86,
+       "topStock": 0.012
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": -0.013,
+        "t": -5.1,
+        "noTop2": -0.0138,
+        "topStock": 0.011
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0172,
+        "t": -5.29,
+        "noTop2": -0.0182,
+        "topStock": 0.012
+       }
+      }
+     }
+    },
+    "MA20": {
+     "name": "sell on a close under the 20-day average",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-1.1% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.302,
+       "avg": -0.0059,
+       "perMonth": -0.0086,
+       "days": 14.5,
+       "pf": 0.82,
+       "noTop2": -0.0065,
+       "worst": -0.395,
+       "topStock": 0.01
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.316,
+       "avg": -0.0026,
+       "perMonth": -0.0038,
+       "days": 14.5,
+       "pf": 0.93,
+       "noTop2": -0.0038,
+       "worst": -0.714,
+       "topStock": 0.017
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.296,
+       "avg": -0.0066,
+       "perMonth": -0.0096,
+       "days": 14.5,
+       "pf": 0.83,
+       "noTop2": -0.0078,
+       "worst": -0.718,
+       "topStock": 0.017
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": 0.0205,
+        "t": 8.13,
+        "noTop2": 0.0202,
+        "topStock": 0.004
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0113,
+        "t": -3.12,
+        "noTop2": -0.0118,
+        "topStock": 0.004
+       }
+      }
+     }
+    },
+    "MA50": {
+     "name": "sell on a close under the 50-day average",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-0.7% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.313,
+       "avg": -0.0072,
+       "perMonth": -0.0094,
+       "days": 16.1,
+       "pf": 0.76,
+       "noTop2": -0.0077,
+       "worst": -0.376,
+       "topStock": 0.013
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.327,
+       "avg": 0.0015,
+       "perMonth": 0.0019,
+       "days": 16.3,
+       "pf": 1.04,
+       "noTop2": -0.0009,
+       "worst": -0.714,
+       "topStock": 0.036
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.293,
+       "avg": -0.0025,
+       "perMonth": -0.0033,
+       "days": 16.3,
+       "pf": 0.93,
+       "noTop2": -0.0049,
+       "worst": -0.718,
+       "topStock": 0.037
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": 0.0198,
+        "t": 7.87,
+        "noTop2": 0.0194,
+        "topStock": 0.004
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0071,
+        "t": -1.83,
+        "noTop2": -0.0088,
+        "topStock": 0.015
+       }
+      }
+     }
+    },
+    "CHAND": {
+     "name": "sell 3 daily ranges under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-0.8% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.347,
+       "avg": -0.0057,
+       "perMonth": -0.0037,
+       "days": 32.5,
+       "pf": 0.89,
+       "noTop2": -0.0064,
+       "worst": -0.629,
+       "topStock": 0.009
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.34,
+       "avg": 0.0058,
+       "perMonth": 0.0036,
+       "days": 33.7,
+       "pf": 1.1,
+       "noTop2": 0.0034,
+       "worst": -0.714,
+       "topStock": 0.022
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.328,
+       "avg": 0.0018,
+       "perMonth": 0.0011,
+       "days": 33.7,
+       "pf": 1.03,
+       "noTop2": -0.0006,
+       "worst": -0.718,
+       "topStock": 0.023
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": 0.01,
+        "t": 4.67,
+        "noTop2": 0.0096,
+        "topStock": 0.006
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0084,
+        "t": -2.68,
+        "noTop2": -0.01,
+        "topStock": 0.02
+       }
+      }
+     }
+    },
+    "T20S10": {
+     "name": "take profit +20%, stop -10%, 3 months at most",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-1.4% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 3293,
+       "win": 0.459,
+       "avg": 0.0031,
+       "perMonth": 0.0016,
+       "days": 40.1,
+       "pf": 1.05,
+       "noTop2": 0.0027,
+       "worst": -0.629,
+       "topStock": 0.004
+      },
+      "newer": {
+       "n": 3329,
+       "win": 0.427,
+       "avg": -0.0014,
+       "perMonth": -0.0008,
+       "days": 35.1,
+       "pf": 0.98,
+       "noTop2": -0.0018,
+       "worst": -0.714,
+       "topStock": 0.004
+      },
+      "stress": {
+       "n": 3329,
+       "win": 0.423,
+       "avg": -0.0054,
+       "perMonth": -0.0032,
+       "days": 35.1,
+       "pf": 0.93,
+       "noTop2": -0.0058,
+       "worst": -0.718,
+       "topStock": 0.004
+      },
+      "vsDefault": {
+       "older": {
+        "n": 3293,
+        "diff": 0.0098,
+        "t": 5.11,
+        "noTop2": 0.0094,
+        "topStock": 0.007
+       },
+       "newer": {
+        "n": 3329,
+        "diff": -0.0137,
+        "t": -4.19,
+        "noTop2": -0.0141,
+        "topStock": 0.007
+       }
+      }
+     }
+    }
+   }
+  },
+  "PB_DEEP": {
+   "name": "Deep pullback of a strong stock",
+   "trades": 3605,
+   "best": "HOLD60",
+   "exits": {
+    "HOLD60": {
+     "name": "hold 3 months, 25% stop (today’s default)",
+     "verdict": "DEFAULT",
+     "why": "the yardstick",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.529,
+       "avg": 0.0225,
+       "perMonth": 0.0085,
+       "days": 55.3,
+       "pf": 1.28,
+       "noTop2": 0.0197,
+       "worst": -0.915,
+       "topStock": 0.015
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.54,
+       "avg": 0.0737,
+       "perMonth": 0.029,
+       "days": 53.4,
+       "pf": 1.82,
+       "noTop2": 0.0706,
+       "worst": -0.867,
+       "topStock": 0.011
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.535,
+       "avg": 0.0697,
+       "perMonth": 0.0274,
+       "days": 53.4,
+       "pf": 1.76,
+       "noTop2": 0.0666,
+       "worst": -0.871,
+       "topStock": 0.011
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       },
+       "newer": {
+        "n": 1707,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       }
+      }
+     }
+    },
+    "HOLD120": {
+     "name": "hold 6 months, 25% stop",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-2.6% a trade); did not beat the default in the newer half (-0.7% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.493,
+       "avg": 0.0332,
+       "perMonth": 0.0069,
+       "days": 100.7,
+       "pf": 1.31,
+       "noTop2": 0.0295,
+       "worst": -0.915,
+       "topStock": 0.014
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.511,
+       "avg": 0.1007,
+       "perMonth": 0.022,
+       "days": 96,
+       "pf": 1.88,
+       "noTop2": 0.0942,
+       "worst": -0.888,
+       "topStock": 0.019
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.507,
+       "avg": 0.0967,
+       "perMonth": 0.0211,
+       "days": 96,
+       "pf": 1.83,
+       "noTop2": 0.0902,
+       "worst": -0.892,
+       "topStock": 0.019
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": -0.0258,
+        "t": -4.73,
+        "noTop2": -0.0286,
+        "topStock": 0.024
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0066,
+        "t": -0.79,
+        "noTop2": -0.0114,
+        "topStock": 0.032
+       }
+      }
+     }
+    },
+    "TRAIL10": {
+     "name": "sell 10% under the highest close",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +0.4% but that could be luck (t 0.97, 3.3 needed); did not beat the default in the newer half (-4.5% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.363,
+       "avg": 0.0019,
+       "perMonth": 0.0012,
+       "days": 33.2,
+       "pf": 1.03,
+       "noTop2": -0.0004,
+       "worst": -0.389,
+       "topStock": 0.028
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.337,
+       "avg": 0.0035,
+       "perMonth": 0.0027,
+       "days": 27.4,
+       "pf": 1.05,
+       "noTop2": 0.0021,
+       "worst": -0.429,
+       "topStock": 0.013
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.329,
+       "avg": -0.0005,
+       "perMonth": -0.0004,
+       "days": 27.4,
+       "pf": 0.99,
+       "noTop2": -0.0019,
+       "worst": -0.433,
+       "topStock": 0.013
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": 0.0042,
+        "t": 0.97,
+        "noTop2": 0.0032,
+        "topStock": 0.008
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0452,
+        "t": -6.2,
+        "noTop2": -0.0462,
+        "topStock": 0.008
+       }
+      }
+     }
+    },
+    "TRAIL15": {
+     "name": "sell 15% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-0.4% a trade); did not beat the default in the newer half (-3.9% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.394,
+       "avg": 0.0123,
+       "perMonth": 0.0046,
+       "days": 56.6,
+       "pf": 1.17,
+       "noTop2": 0.0098,
+       "worst": -0.84,
+       "topStock": 0.02
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.378,
+       "avg": 0.0232,
+       "perMonth": 0.0108,
+       "days": 45.1,
+       "pf": 1.28,
+       "noTop2": 0.0206,
+       "worst": -0.778,
+       "topStock": 0.012
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.373,
+       "avg": 0.0192,
+       "perMonth": 0.0089,
+       "days": 45.1,
+       "pf": 1.23,
+       "noTop2": 0.0166,
+       "worst": -0.782,
+       "topStock": 0.013
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": -0.0045,
+        "t": -1.1,
+        "noTop2": -0.0057,
+        "topStock": 0.011
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0387,
+        "t": -5.9,
+        "noTop2": -0.0406,
+        "topStock": 0.015
+       }
+      }
+     }
+    },
+    "TRAIL20": {
+     "name": "sell 20% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.2% a trade); did not beat the default in the newer half (-2.3% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.436,
+       "avg": 0.0231,
+       "perMonth": 0.0064,
+       "days": 76.1,
+       "pf": 1.27,
+       "noTop2": 0.0195,
+       "worst": -0.915,
+       "topStock": 0.018
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.431,
+       "avg": 0.0535,
+       "perMonth": 0.0179,
+       "days": 62.6,
+       "pf": 1.57,
+       "noTop2": 0.0498,
+       "worst": -0.778,
+       "topStock": 0.021
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.426,
+       "avg": 0.0495,
+       "perMonth": 0.0166,
+       "days": 62.6,
+       "pf": 1.52,
+       "noTop2": 0.0458,
+       "worst": -0.782,
+       "topStock": 0.021
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": -0.0117,
+        "t": -2.63,
+        "noTop2": -0.0137,
+        "topStock": 0.024
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0233,
+        "t": -3.54,
+        "noTop2": -0.0261,
+        "topStock": 0.027
+       }
+      }
+     }
+    },
+    "LOCK": {
+     "name": "lock profit: stop to +2% after +15%, then trail 15% after +30%",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.0% a trade); did not beat the default in the newer half (-1.6% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.533,
+       "avg": 0.0316,
+       "perMonth": 0.0081,
+       "days": 81.9,
+       "pf": 1.37,
+       "noTop2": 0.0289,
+       "worst": -0.915,
+       "topStock": 0.015
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.55,
+       "avg": 0.0749,
+       "perMonth": 0.0222,
+       "days": 71,
+       "pf": 1.89,
+       "noTop2": 0.0723,
+       "worst": -0.867,
+       "topStock": 0.009
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.534,
+       "avg": 0.0709,
+       "perMonth": 0.021,
+       "days": 71,
+       "pf": 1.83,
+       "noTop2": 0.0683,
+       "worst": -0.871,
+       "topStock": 0.009
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": -0.0102,
+        "t": -2.38,
+        "noTop2": -0.0118,
+        "topStock": 0.019
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0159,
+        "t": -2.77,
+        "noTop2": -0.0177,
+        "topStock": 0.016
+       }
+      }
+     }
+    },
+    "MA20": {
+     "name": "sell on a close under the 20-day average",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +1.4% but that could be luck (t 3.07, 3.3 needed); did not beat the default in the newer half (-3.7% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.337,
+       "avg": -0.0007,
+       "perMonth": -0.0011,
+       "days": 13.3,
+       "pf": 0.98,
+       "noTop2": -0.0023,
+       "worst": -0.389,
+       "topStock": 0.032
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.342,
+       "avg": 0.0005,
+       "perMonth": 0.0008,
+       "days": 12.3,
+       "pf": 1.01,
+       "noTop2": -0.0014,
+       "worst": -0.778,
+       "topStock": 0.025
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.312,
+       "avg": -0.0035,
+       "perMonth": -0.006,
+       "days": 12.3,
+       "pf": 0.92,
+       "noTop2": -0.0054,
+       "worst": -0.782,
+       "topStock": 0.026
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": 0.0144,
+        "t": 3.07,
+        "noTop2": 0.0136,
+        "topStock": 0.007
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0372,
+        "t": -5.07,
+        "noTop2": -0.0382,
+        "topStock": 0.007
+       }
+      }
+     }
+    },
+    "MA50": {
+     "name": "sell on a close under the 50-day average",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +0.9% but that could be luck (t 1.87, 3.3 needed); did not beat the default in the newer half (-2.7% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.368,
+       "avg": -0.006,
+       "perMonth": -0.0066,
+       "days": 18.9,
+       "pf": 0.87,
+       "noTop2": -0.0092,
+       "worst": -0.915,
+       "topStock": 0.052
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.411,
+       "avg": 0.0141,
+       "perMonth": 0.0168,
+       "days": 17.6,
+       "pf": 1.3,
+       "noTop2": 0.0103,
+       "worst": -0.778,
+       "topStock": 0.041
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.386,
+       "avg": 0.0101,
+       "perMonth": 0.012,
+       "days": 17.6,
+       "pf": 1.21,
+       "noTop2": 0.0063,
+       "worst": -0.782,
+       "topStock": 0.042
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": 0.0085,
+        "t": 1.87,
+        "noTop2": 0.0066,
+        "topStock": 0.018
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0269,
+        "t": -3.83,
+        "noTop2": -0.0296,
+        "topStock": 0.023
+       }
+      }
+     }
+    },
+    "CHAND": {
+     "name": "sell 3 daily ranges under the highest close",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +0.3% but that could be luck (t 0.71, 3.3 needed); did not beat the default in the newer half (-2.5% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.38,
+       "avg": 0.001,
+       "perMonth": 0.0006,
+       "days": 33,
+       "pf": 1.01,
+       "noTop2": -0.0023,
+       "worst": -0.915,
+       "topStock": 0.03
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.371,
+       "avg": 0.0251,
+       "perMonth": 0.0151,
+       "days": 34.7,
+       "pf": 1.31,
+       "noTop2": 0.0212,
+       "worst": -0.867,
+       "topStock": 0.029
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.364,
+       "avg": 0.0211,
+       "perMonth": 0.0127,
+       "days": 34.7,
+       "pf": 1.26,
+       "noTop2": 0.0172,
+       "worst": -0.871,
+       "topStock": 0.03
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": 0.0028,
+        "t": 0.71,
+        "noTop2": 0.001,
+        "topStock": 0.024
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0254,
+        "t": -4.31,
+        "noTop2": -0.0281,
+        "topStock": 0.031
+       }
+      }
+     }
+    },
+    "T20S10": {
+     "name": "take profit +20%, stop -10%, 3 months at most",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +1.2% but that could be luck (t 2.72, 3.3 needed); did not beat the default in the newer half (-3.3% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1898,
+       "win": 0.454,
+       "avg": 0.0116,
+       "perMonth": 0.0078,
+       "days": 31.2,
+       "pf": 1.17,
+       "noTop2": 0.0108,
+       "worst": -0.647,
+       "topStock": 0.005
+      },
+      "newer": {
+       "n": 1707,
+       "win": 0.441,
+       "avg": 0.0148,
+       "perMonth": 0.0119,
+       "days": 26.1,
+       "pf": 1.19,
+       "noTop2": 0.0135,
+       "worst": -0.429,
+       "topStock": 0.008
+      },
+      "stress": {
+       "n": 1707,
+       "win": 0.437,
+       "avg": 0.0108,
+       "perMonth": 0.0087,
+       "days": 26.1,
+       "pf": 1.14,
+       "noTop2": 0.0095,
+       "worst": -0.433,
+       "topStock": 0.008
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1898,
+        "diff": 0.0117,
+        "t": 2.72,
+        "noTop2": 0.0106,
+        "topStock": 0.01
+       },
+       "newer": {
+        "n": 1707,
+        "diff": -0.0328,
+        "t": -4.7,
+        "noTop2": -0.0338,
+        "topStock": 0.008
+       }
+      }
+     }
+    }
+   }
+  },
+  "LEADER": {
+   "name": "Long-term leader",
+   "trades": 3193,
+   "best": "HOLD60",
+   "exits": {
+    "HOLD60": {
+     "name": "hold 3 months, 25% stop (today’s default)",
+     "verdict": "DEFAULT",
+     "why": "the yardstick",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.48,
+       "avg": 0.0041,
+       "perMonth": 0.0015,
+       "days": 56.2,
+       "pf": 1.05,
+       "noTop2": 0.0025,
+       "worst": -0.85,
+       "topStock": 0.01
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.498,
+       "avg": 0.0439,
+       "perMonth": 0.0168,
+       "days": 54.8,
+       "pf": 1.48,
+       "noTop2": 0.0405,
+       "worst": -0.852,
+       "topStock": 0.02
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.493,
+       "avg": 0.0399,
+       "perMonth": 0.0153,
+       "days": 54.8,
+       "pf": 1.43,
+       "noTop2": 0.0365,
+       "worst": -0.856,
+       "topStock": 0.02
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       },
+       "newer": {
+        "n": 1488,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       }
+      }
+     }
+    },
+    "HOLD120": {
+     "name": "hold 6 months, 25% stop",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-2.2% a trade); did not beat the default in the newer half (-0.5% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.483,
+       "avg": 0.0196,
+       "perMonth": 0.004,
+       "days": 103.3,
+       "pf": 1.19,
+       "noTop2": 0.0175,
+       "worst": -0.85,
+       "topStock": 0.009
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.467,
+       "avg": 0.06,
+       "perMonth": 0.013,
+       "days": 97.2,
+       "pf": 1.49,
+       "noTop2": 0.0562,
+       "worst": -0.852,
+       "topStock": 0.014
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.463,
+       "avg": 0.056,
+       "perMonth": 0.0121,
+       "days": 97.2,
+       "pf": 1.45,
+       "noTop2": 0.0522,
+       "worst": -0.856,
+       "topStock": 0.014
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": -0.0223,
+        "t": -4.71,
+        "noTop2": -0.0239,
+        "topStock": 0.018
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.0055,
+        "t": -0.74,
+        "noTop2": -0.0086,
+        "topStock": 0.02
+       }
+      }
+     }
+    },
+    "TRAIL10": {
+     "name": "sell 10% under the highest close",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +0.8% but that could be luck (t 2.19, 3.3 needed); did not beat the default in the newer half (-2.2% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.356,
+       "avg": -0.004,
+       "perMonth": -0.0021,
+       "days": 39.6,
+       "pf": 0.94,
+       "noTop2": -0.0051,
+       "worst": -0.358,
+       "topStock": 0.013
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.35,
+       "avg": 0.002,
+       "perMonth": 0.0013,
+       "days": 30.7,
+       "pf": 1.03,
+       "noTop2": 0,
+       "worst": -0.815,
+       "topStock": 0.017
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.342,
+       "avg": -0.002,
+       "perMonth": -0.0014,
+       "days": 30.7,
+       "pf": 0.97,
+       "noTop2": -0.004,
+       "worst": -0.819,
+       "topStock": 0.017
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": 0.0083,
+        "t": 2.19,
+        "noTop2": 0.0074,
+        "topStock": 0.009
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.0224,
+        "t": -3.53,
+        "noTop2": -0.0237,
+        "topStock": 0.01
+       }
+      }
+     }
+    },
+    "TRAIL15": {
+     "name": "sell 15% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-0.1% a trade); did not beat the default in the newer half (-1.8% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.387,
+       "avg": 0.0038,
+       "perMonth": 0.0013,
+       "days": 63,
+       "pf": 1.05,
+       "noTop2": 0.0023,
+       "worst": -0.819,
+       "topStock": 0.012
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.37,
+       "avg": 0.0181,
+       "perMonth": 0.0076,
+       "days": 49.9,
+       "pf": 1.22,
+       "noTop2": 0.0146,
+       "worst": -0.815,
+       "topStock": 0.019
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.364,
+       "avg": 0.0141,
+       "perMonth": 0.0059,
+       "days": 49.9,
+       "pf": 1.17,
+       "noTop2": 0.0106,
+       "worst": -0.819,
+       "topStock": 0.019
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": -0.0012,
+        "t": -0.33,
+        "noTop2": -0.0023,
+        "topStock": 0.011
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.0183,
+        "t": -3.13,
+        "noTop2": -0.0204,
+        "topStock": 0.023
+       }
+      }
+     }
+    },
+    "TRAIL20": {
+     "name": "sell 20% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-0.8% a trade); did not beat the default in the newer half (-1.3% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.43,
+       "avg": 0.0129,
+       "perMonth": 0.0034,
+       "days": 80.4,
+       "pf": 1.14,
+       "noTop2": 0.0109,
+       "worst": -0.85,
+       "topStock": 0.011
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.405,
+       "avg": 0.035,
+       "perMonth": 0.0109,
+       "days": 67.3,
+       "pf": 1.37,
+       "noTop2": 0.0316,
+       "worst": -0.815,
+       "topStock": 0.016
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.397,
+       "avg": 0.031,
+       "perMonth": 0.0097,
+       "days": 67.3,
+       "pf": 1.32,
+       "noTop2": 0.0276,
+       "worst": -0.819,
+       "topStock": 0.017
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": -0.0075,
+        "t": -1.84,
+        "noTop2": -0.0088,
+        "topStock": 0.014
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.0128,
+        "t": -2.28,
+        "noTop2": -0.0149,
+        "topStock": 0.022
+       }
+      }
+     }
+    },
+    "LOCK": {
+     "name": "lock profit: stop to +2% after +15%, then trail 15% after +30%",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.3% a trade); did not beat the default in the newer half (-0.8% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.501,
+       "avg": 0.0158,
+       "perMonth": 0.0037,
+       "days": 88.3,
+       "pf": 1.18,
+       "noTop2": 0.0142,
+       "worst": -0.85,
+       "topStock": 0.009
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.509,
+       "avg": 0.046,
+       "perMonth": 0.013,
+       "days": 74.1,
+       "pf": 1.49,
+       "noTop2": 0.0425,
+       "worst": -0.863,
+       "topStock": 0.013
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.494,
+       "avg": 0.042,
+       "perMonth": 0.0119,
+       "days": 74.1,
+       "pf": 1.44,
+       "noTop2": 0.0385,
+       "worst": -0.867,
+       "topStock": 0.013
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": -0.0131,
+        "t": -3.36,
+        "noTop2": -0.0143,
+        "topStock": 0.014
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.0075,
+        "t": -1.35,
+        "noTop2": -0.0099,
+        "topStock": 0.022
+       }
+      }
+     }
+    },
+    "MA20": {
+     "name": "sell on a close under the 20-day average",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-1.8% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.374,
+       "avg": -0.0032,
+       "perMonth": -0.0052,
+       "days": 13.1,
+       "pf": 0.91,
+       "noTop2": -0.0044,
+       "worst": -0.511,
+       "topStock": 0.018
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.341,
+       "avg": -0.0058,
+       "perMonth": -0.0104,
+       "days": 11.8,
+       "pf": 0.86,
+       "noTop2": -0.0096,
+       "worst": -0.404,
+       "topStock": 0.058
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.308,
+       "avg": -0.0098,
+       "perMonth": -0.0175,
+       "days": 11.8,
+       "pf": 0.77,
+       "noTop2": -0.0136,
+       "worst": -0.408,
+       "topStock": 0.06
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": 0.0292,
+        "t": 6.9,
+        "noTop2": 0.0283,
+        "topStock": 0.007
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.018,
+        "t": -2.63,
+        "noTop2": -0.0192,
+        "topStock": 0.007
+       }
+      }
+     }
+    },
+    "MA50": {
+     "name": "sell on a close under the 50-day average",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-1.2% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.352,
+       "avg": -0.0042,
+       "perMonth": -0.0037,
+       "days": 23.5,
+       "pf": 0.91,
+       "noTop2": -0.0058,
+       "worst": -0.511,
+       "topStock": 0.022
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.348,
+       "avg": 0.0066,
+       "perMonth": 0.006,
+       "days": 23.1,
+       "pf": 1.12,
+       "noTop2": 0.0028,
+       "worst": -0.815,
+       "topStock": 0.033
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.325,
+       "avg": 0.0026,
+       "perMonth": 0.0023,
+       "days": 23.1,
+       "pf": 1.05,
+       "noTop2": -0.0012,
+       "worst": -0.819,
+       "topStock": 0.034
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": 0.0222,
+        "t": 5.66,
+        "noTop2": 0.0211,
+        "topStock": 0.009
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.0123,
+        "t": -1.94,
+        "noTop2": -0.0145,
+        "topStock": 0.021
+       }
+      }
+     }
+    },
+    "CHAND": {
+     "name": "sell 3 daily ranges under the highest close",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +0.8% but that could be luck (t 2.34, 3.3 needed); did not beat the default in the newer half (-1.2% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.336,
+       "avg": -0.0102,
+       "perMonth": -0.0066,
+       "days": 32.6,
+       "pf": 0.84,
+       "noTop2": -0.0118,
+       "worst": -0.85,
+       "topStock": 0.017
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.347,
+       "avg": 0.0137,
+       "perMonth": 0.0084,
+       "days": 34.3,
+       "pf": 1.19,
+       "noTop2": 0.0103,
+       "worst": -0.815,
+       "topStock": 0.021
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.336,
+       "avg": 0.0097,
+       "perMonth": 0.0059,
+       "days": 34.3,
+       "pf": 1.13,
+       "noTop2": 0.0063,
+       "worst": -0.819,
+       "topStock": 0.022
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": 0.0079,
+        "t": 2.34,
+        "noTop2": 0.0073,
+        "topStock": 0.007
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.0121,
+        "t": -2.08,
+        "noTop2": -0.0143,
+        "topStock": 0.022
+       }
+      }
+     }
+    },
+    "T20S10": {
+     "name": "take profit +20%, stop -10%, 3 months at most",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +1.1% but that could be luck (t 3.24, 3.3 needed); did not beat the default in the newer half (-2.0% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 1705,
+       "win": 0.426,
+       "avg": -0.0031,
+       "perMonth": -0.0018,
+       "days": 35.4,
+       "pf": 0.96,
+       "noTop2": -0.004,
+       "worst": -0.85,
+       "topStock": 0.009
+      },
+      "newer": {
+       "n": 1488,
+       "win": 0.419,
+       "avg": 0.005,
+       "perMonth": 0.0036,
+       "days": 29.4,
+       "pf": 1.07,
+       "noTop2": 0.0042,
+       "worst": -0.815,
+       "topStock": 0.009
+      },
+      "stress": {
+       "n": 1488,
+       "win": 0.418,
+       "avg": 0.001,
+       "perMonth": 0.0007,
+       "days": 29.4,
+       "pf": 1.01,
+       "noTop2": 0.0002,
+       "worst": -0.819,
+       "topStock": 0.009
+      },
+      "vsDefault": {
+       "older": {
+        "n": 1705,
+        "diff": 0.0112,
+        "t": 3.24,
+        "noTop2": 0.0104,
+        "topStock": 0.011
+       },
+       "newer": {
+        "n": 1488,
+        "diff": -0.0201,
+        "t": -3.17,
+        "noTop2": -0.0211,
+        "topStock": 0.009
+       }
+      }
+     }
+    }
+   }
+  },
+  "TURN": {
+   "name": "Beaten-down stock turning up",
+   "trades": 4286,
+   "best": "HOLD60",
+   "exits": {
+    "HOLD60": {
+     "name": "hold 3 months, 25% stop (today’s default)",
+     "verdict": "DEFAULT",
+     "why": "the yardstick",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.558,
+       "avg": 0.0397,
+       "perMonth": 0.0153,
+       "days": 54.4,
+       "pf": 1.5,
+       "noTop2": 0.0375,
+       "worst": -0.784,
+       "topStock": 0.012
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.473,
+       "avg": 0.0203,
+       "perMonth": 0.008,
+       "days": 53.2,
+       "pf": 1.2,
+       "noTop2": 0.0181,
+       "worst": -0.66,
+       "topStock": 0.014
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.469,
+       "avg": 0.0163,
+       "perMonth": 0.0064,
+       "days": 53.2,
+       "pf": 1.16,
+       "noTop2": 0.0141,
+       "worst": -0.664,
+       "topStock": 0.015
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       },
+       "newer": {
+        "n": 1839,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       }
+      }
+     }
+    },
+    "HOLD120": {
+     "name": "hold 6 months, 25% stop",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-5.7% a trade); beat the default in the newer half by +0.5% but that could be luck (t 0.57, 3.3 needed); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.45,
+       "avg": 0.0052,
+       "perMonth": 0.0011,
+       "days": 98.6,
+       "pf": 1.04,
+       "noTop2": 0.002,
+       "worst": -0.836,
+       "topStock": 0.017
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.432,
+       "avg": 0.0563,
+       "perMonth": 0.0127,
+       "days": 93.3,
+       "pf": 1.42,
+       "noTop2": 0.0493,
+       "worst": -0.845,
+       "topStock": 0.022
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.427,
+       "avg": 0.0523,
+       "perMonth": 0.0118,
+       "days": 93.3,
+       "pf": 1.39,
+       "noTop2": 0.0453,
+       "worst": -0.849,
+       "topStock": 0.022
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": -0.0571,
+        "t": -13.02,
+        "noTop2": -0.0592,
+        "topStock": 0.028
+       },
+       "newer": {
+        "n": 1839,
+        "diff": 0.0047,
+        "t": 0.57,
+        "noTop2": -0.0009,
+        "topStock": 0.036
+       }
+      }
+     }
+    },
+    "TRAIL10": {
+     "name": "sell 10% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-0.6% a trade); beat the default in the newer half by +0.4% but that could be luck (t 0.7, 3.3 needed)",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.398,
+       "avg": 0.0078,
+       "perMonth": 0.0052,
+       "days": 31.9,
+       "pf": 1.15,
+       "noTop2": 0.0071,
+       "worst": -0.541,
+       "topStock": 0.007
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.332,
+       "avg": 0.0075,
+       "perMonth": 0.0055,
+       "days": 29,
+       "pf": 1.12,
+       "noTop2": 0.0052,
+       "worst": -0.544,
+       "topStock": 0.019
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.323,
+       "avg": 0.0035,
+       "perMonth": 0.0026,
+       "days": 29,
+       "pf": 1.05,
+       "noTop2": 0.0012,
+       "worst": -0.548,
+       "topStock": 0.019
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": -0.0057,
+        "t": -1.34,
+        "noTop2": -0.0064,
+        "topStock": 0.008
+       },
+       "newer": {
+        "n": 1839,
+        "diff": 0.0037,
+        "t": 0.7,
+        "noTop2": 0.0021,
+        "topStock": 0.013
+       }
+      }
+     }
+    },
+    "TRAIL15": {
+     "name": "sell 15% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.5% a trade); beat the default in the newer half by +0.3% but that could be luck (t 0.52, 3.3 needed); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.395,
+       "avg": 0.0111,
+       "perMonth": 0.0044,
+       "days": 53.2,
+       "pf": 1.15,
+       "noTop2": 0.008,
+       "worst": -0.784,
+       "topStock": 0.029
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.356,
+       "avg": 0.0222,
+       "perMonth": 0.0096,
+       "days": 48.6,
+       "pf": 1.26,
+       "noTop2": 0.0178,
+       "worst": -0.645,
+       "topStock": 0.026
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.351,
+       "avg": 0.0182,
+       "perMonth": 0.0079,
+       "days": 48.6,
+       "pf": 1.21,
+       "noTop2": 0.0138,
+       "worst": -0.649,
+       "topStock": 0.026
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": -0.0147,
+        "t": -3.65,
+        "noTop2": -0.0167,
+        "topStock": 0.028
+       },
+       "newer": {
+        "n": 1839,
+        "diff": 0.0029,
+        "t": 0.52,
+        "noTop2": -0.0002,
+        "topStock": 0.03
+       }
+      }
+     }
+    },
+    "TRAIL20": {
+     "name": "sell 20% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-2.9% a trade); beat the default in the newer half by +0.4% but that could be luck (t 0.52, 3.3 needed); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.407,
+       "avg": 0.0087,
+       "perMonth": 0.0026,
+       "days": 70.9,
+       "pf": 1.1,
+       "noTop2": 0.0057,
+       "worst": -0.784,
+       "topStock": 0.023
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.368,
+       "avg": 0.0335,
+       "perMonth": 0.0109,
+       "days": 64.6,
+       "pf": 1.32,
+       "noTop2": 0.0271,
+       "worst": -0.845,
+       "topStock": 0.026
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.363,
+       "avg": 0.0295,
+       "perMonth": 0.0096,
+       "days": 64.6,
+       "pf": 1.28,
+       "noTop2": 0.0231,
+       "worst": -0.849,
+       "topStock": 0.027
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": -0.0291,
+        "t": -7.47,
+        "noTop2": -0.031,
+        "topStock": 0.029
+       },
+       "newer": {
+        "n": 1839,
+        "diff": 0.0035,
+        "t": 0.52,
+        "noTop2": -0.0016,
+        "topStock": 0.037
+       }
+      }
+     }
+    },
+    "LOCK": {
+     "name": "lock profit: stop to +2% after +15%, then trail 15% after +30%",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-3.0% a trade); did not beat the default in the newer half (-1.0% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.497,
+       "avg": 0.0128,
+       "perMonth": 0.0035,
+       "days": 75.8,
+       "pf": 1.14,
+       "noTop2": 0.0093,
+       "worst": -0.836,
+       "topStock": 0.024
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.46,
+       "avg": 0.0271,
+       "perMonth": 0.008,
+       "days": 71.4,
+       "pf": 1.25,
+       "noTop2": 0.0226,
+       "worst": -0.66,
+       "topStock": 0.021
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.444,
+       "avg": 0.0231,
+       "perMonth": 0.0068,
+       "days": 71.4,
+       "pf": 1.21,
+       "noTop2": 0.0186,
+       "worst": -0.664,
+       "topStock": 0.021
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": -0.0298,
+        "t": -8.04,
+        "noTop2": -0.0317,
+        "topStock": 0.035
+       },
+       "newer": {
+        "n": 1839,
+        "diff": -0.0099,
+        "t": -1.78,
+        "noTop2": -0.013,
+        "topStock": 0.035
+       }
+      }
+     }
+    },
+    "MA20": {
+     "name": "sell on a close under the 20-day average",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-0.3% a trade); beat the default in the newer half by +1.0% but that could be luck (t 1.86, 3.3 needed)",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.381,
+       "avg": 0.0046,
+       "perMonth": 0.0058,
+       "days": 16.8,
+       "pf": 1.1,
+       "noTop2": 0.0037,
+       "worst": -0.541,
+       "topStock": 0.01
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.312,
+       "avg": 0.0018,
+       "perMonth": 0.0025,
+       "days": 15.2,
+       "pf": 1.04,
+       "noTop2": -0.0001,
+       "worst": -0.544,
+       "topStock": 0.02
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.297,
+       "avg": -0.0022,
+       "perMonth": -0.003,
+       "days": 15.2,
+       "pf": 0.96,
+       "noTop2": -0.0041,
+       "worst": -0.548,
+       "topStock": 0.02
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": -0.0027,
+        "t": -0.62,
+        "noTop2": -0.0034,
+        "topStock": 0.005
+       },
+       "newer": {
+        "n": 1839,
+        "diff": 0.01,
+        "t": 1.86,
+        "noTop2": 0.0091,
+        "topStock": 0.008
+       }
+      }
+     }
+    },
+    "MA50": {
+     "name": "sell on a close under the 50-day average",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.2% a trade)",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.29,
+       "avg": -0.003,
+       "perMonth": -0.0025,
+       "days": 24.4,
+       "pf": 0.94,
+       "noTop2": -0.0055,
+       "worst": -0.541,
+       "topStock": 0.038
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.25,
+       "avg": 0.0223,
+       "perMonth": 0.0197,
+       "days": 23.8,
+       "pf": 1.42,
+       "noTop2": 0.0165,
+       "worst": -0.544,
+       "topStock": 0.055
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.24,
+       "avg": 0.0183,
+       "perMonth": 0.0162,
+       "days": 23.8,
+       "pf": 1.33,
+       "noTop2": 0.0125,
+       "worst": -0.548,
+       "topStock": 0.056
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": -0.0116,
+        "t": -2.74,
+        "noTop2": -0.013,
+        "topStock": 0.015
+       },
+       "newer": {
+        "n": 1839,
+        "diff": 0.0226,
+        "t": 3.56,
+        "noTop2": 0.0183,
+        "topStock": 0.037
+       }
+      }
+     }
+    },
+    "CHAND": {
+     "name": "sell 3 daily ranges under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-0.5% a trade); beat the default in the newer half by +1.8% but that could be luck (t 2.81, 3.3 needed)",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.417,
+       "avg": 0.0112,
+       "perMonth": 0.0068,
+       "days": 34.5,
+       "pf": 1.17,
+       "noTop2": 0.0086,
+       "worst": -0.675,
+       "topStock": 0.024
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.34,
+       "avg": 0.026,
+       "perMonth": 0.0161,
+       "days": 33.8,
+       "pf": 1.35,
+       "noTop2": 0.019,
+       "worst": -0.66,
+       "topStock": 0.041
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.334,
+       "avg": 0.022,
+       "perMonth": 0.0136,
+       "days": 33.8,
+       "pf": 1.28,
+       "noTop2": 0.015,
+       "worst": -0.664,
+       "topStock": 0.042
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": -0.0051,
+        "t": -1.39,
+        "noTop2": -0.0064,
+        "topStock": 0.017
+       },
+       "newer": {
+        "n": 1839,
+        "diff": 0.0182,
+        "t": 2.81,
+        "noTop2": 0.0127,
+        "topStock": 0.042
+       }
+      }
+     }
+    },
+    "T20S10": {
+     "name": "take profit +20%, stop -10%, 3 months at most",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +0.4% but that could be luck (t 1.04, 3.3 needed); did not beat the default in the newer half (-0.0% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2447,
+       "win": 0.481,
+       "avg": 0.0237,
+       "perMonth": 0.0165,
+       "days": 30.1,
+       "pf": 1.36,
+       "noTop2": 0.0229,
+       "worst": -0.541,
+       "topStock": 0.007
+      },
+      "newer": {
+       "n": 1839,
+       "win": 0.408,
+       "avg": 0.0011,
+       "perMonth": 0.0008,
+       "days": 27.9,
+       "pf": 1.01,
+       "noTop2": -0.0005,
+       "worst": -0.591,
+       "topStock": 0.012
+      },
+      "stress": {
+       "n": 1839,
+       "win": 0.405,
+       "avg": -0.0029,
+       "perMonth": -0.0022,
+       "days": 27.9,
+       "pf": 0.96,
+       "noTop2": -0.0045,
+       "worst": -0.595,
+       "topStock": 0.012
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2447,
+        "diff": 0.0042,
+        "t": 1.04,
+        "noTop2": 0.0035,
+        "topStock": 0.008
+       },
+       "newer": {
+        "n": 1839,
+        "diff": -0.0002,
+        "t": -0.05,
+        "noTop2": -0.0013,
+        "topStock": 0.012
+       }
+      }
+     }
+    }
+   }
+  },
+  "BREAKOUT": {
+   "name": "New 1-year high on 1.5x volume",
+   "trades": 5727,
+   "best": "HOLD60",
+   "exits": {
+    "HOLD60": {
+     "name": "hold 3 months, 25% stop (today’s default)",
+     "verdict": "DEFAULT",
+     "why": "the yardstick",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.474,
+       "avg": -0.006,
+       "perMonth": -0.0022,
+       "days": 56.5,
+       "pf": 0.92,
+       "noTop2": -0.0073,
+       "worst": -0.587,
+       "topStock": 0.016
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.508,
+       "avg": 0.0309,
+       "perMonth": 0.0117,
+       "days": 55.5,
+       "pf": 1.42,
+       "noTop2": 0.029,
+       "worst": -0.898,
+       "topStock": 0.009
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.497,
+       "avg": 0.0269,
+       "perMonth": 0.0102,
+       "days": 55.5,
+       "pf": 1.36,
+       "noTop2": 0.025,
+       "worst": -0.902,
+       "topStock": 0.009
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       },
+       "newer": {
+        "n": 3153,
+        "diff": 0,
+        "t": null,
+        "noTop2": 0,
+        "topStock": null
+       }
+      }
+     }
+    },
+    "HOLD120": {
+     "name": "hold 6 months, 25% stop",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-2.0% a trade); did not beat the default in the newer half (-0.8% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.516,
+       "avg": 0.018,
+       "perMonth": 0.0036,
+       "days": 105.7,
+       "pf": 1.2,
+       "noTop2": 0.0167,
+       "worst": -0.861,
+       "topStock": 0.008
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.463,
+       "avg": 0.0354,
+       "perMonth": 0.0073,
+       "days": 101.5,
+       "pf": 1.32,
+       "noTop2": 0.0296,
+       "worst": -0.906,
+       "topStock": 0.021
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.459,
+       "avg": 0.0314,
+       "perMonth": 0.0065,
+       "days": 101.5,
+       "pf": 1.28,
+       "noTop2": 0.0256,
+       "worst": -0.91,
+       "topStock": 0.021
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": -0.0202,
+        "t": -5.49,
+        "noTop2": -0.0216,
+        "topStock": 0.014
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.0075,
+        "t": -1.44,
+        "noTop2": -0.0117,
+        "topStock": 0.029
+       }
+      }
+     }
+    },
+    "TRAIL10": {
+     "name": "sell 10% under the highest close",
+     "verdict": "WORSE",
+     "why": "beat the default in the older half by +0.6% but that could be luck (t 2.07, 3.3 needed); did not beat the default in the newer half (-1.9% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.351,
+       "avg": -0.0112,
+       "perMonth": -0.0049,
+       "days": 48,
+       "pf": 0.82,
+       "noTop2": -0.0123,
+       "worst": -0.587,
+       "topStock": 0.013
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.346,
+       "avg": -0.0056,
+       "perMonth": -0.0029,
+       "days": 40.1,
+       "pf": 0.91,
+       "noTop2": -0.007,
+       "worst": -0.81,
+       "topStock": 0.014
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.338,
+       "avg": -0.0096,
+       "perMonth": -0.005,
+       "days": 40.1,
+       "pf": 0.85,
+       "noTop2": -0.011,
+       "worst": -0.814,
+       "topStock": 0.015
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": 0.0058,
+        "t": 2.07,
+        "noTop2": 0.0053,
+        "topStock": 0.008
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.019,
+        "t": -4.48,
+        "noTop2": -0.0197,
+        "topStock": 0.007
+       }
+      }
+     }
+    },
+    "TRAIL15": {
+     "name": "sell 15% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-0.4% a trade); did not beat the default in the newer half (-1.7% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.412,
+       "avg": 0.0015,
+       "perMonth": 0.0004,
+       "days": 72.7,
+       "pf": 1.02,
+       "noTop2": 0.0002,
+       "worst": -0.587,
+       "topStock": 0.009
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.381,
+       "avg": 0.0073,
+       "perMonth": 0.0024,
+       "days": 62.4,
+       "pf": 1.09,
+       "noTop2": 0.0049,
+       "worst": -0.81,
+       "topStock": 0.016
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.376,
+       "avg": 0.0033,
+       "perMonth": 0.0011,
+       "days": 62.4,
+       "pf": 1.04,
+       "noTop2": 0.0009,
+       "worst": -0.814,
+       "topStock": 0.016
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": -0.0037,
+        "t": -1.29,
+        "noTop2": -0.0046,
+        "topStock": 0.01
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.0169,
+        "t": -4.32,
+        "noTop2": -0.0182,
+        "topStock": 0.013
+       }
+      }
+     }
+    },
+    "TRAIL20": {
+     "name": "sell 20% under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.0% a trade); did not beat the default in the newer half (-1.1% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.47,
+       "avg": 0.0117,
+       "perMonth": 0.0027,
+       "days": 89.3,
+       "pf": 1.14,
+       "noTop2": 0.0104,
+       "worst": -0.601,
+       "topStock": 0.007
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.423,
+       "avg": 0.0222,
+       "perMonth": 0.0059,
+       "days": 79.7,
+       "pf": 1.25,
+       "noTop2": 0.02,
+       "worst": -0.898,
+       "topStock": 0.011
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.419,
+       "avg": 0.0182,
+       "perMonth": 0.0048,
+       "days": 79.7,
+       "pf": 1.2,
+       "noTop2": 0.016,
+       "worst": -0.902,
+       "topStock": 0.011
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": -0.0097,
+        "t": -3.33,
+        "noTop2": -0.0106,
+        "topStock": 0.01
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.0106,
+        "t": -2.77,
+        "noTop2": -0.0121,
+        "topStock": 0.012
+       }
+      }
+     }
+    },
+    "LOCK": {
+     "name": "lock profit: stop to +2% after +15%, then trail 15% after +30%",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the older half (-1.2% a trade); did not beat the default in the newer half (-1.4% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.526,
+       "avg": 0.0163,
+       "perMonth": 0.0036,
+       "days": 95.5,
+       "pf": 1.21,
+       "noTop2": 0.015,
+       "worst": -0.587,
+       "topStock": 0.011
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.493,
+       "avg": 0.022,
+       "perMonth": 0.0054,
+       "days": 85.5,
+       "pf": 1.25,
+       "noTop2": 0.0197,
+       "worst": -0.906,
+       "topStock": 0.012
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.479,
+       "avg": 0.018,
+       "perMonth": 0.0044,
+       "days": 85.5,
+       "pf": 1.2,
+       "noTop2": 0.0157,
+       "worst": -0.91,
+       "topStock": 0.013
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": -0.0124,
+        "t": -4.01,
+        "noTop2": -0.0134,
+        "topStock": 0.011
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.0144,
+        "t": -3.83,
+        "noTop2": -0.0157,
+        "topStock": 0.013
+       }
+      }
+     }
+    },
+    "MA20": {
+     "name": "sell on a close under the 20-day average",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-0.6% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.336,
+       "avg": -0.0126,
+       "perMonth": -0.0148,
+       "days": 18,
+       "pf": 0.7,
+       "noTop2": -0.0135,
+       "worst": -0.587,
+       "topStock": 0.022
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.365,
+       "avg": -0.0004,
+       "perMonth": -0.0005,
+       "days": 18.6,
+       "pf": 0.99,
+       "noTop2": -0.0022,
+       "worst": -0.51,
+       "topStock": 0.022
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.349,
+       "avg": -0.0044,
+       "perMonth": -0.005,
+       "days": 18.6,
+       "pf": 0.91,
+       "noTop2": -0.0062,
+       "worst": -0.514,
+       "topStock": 0.022
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": 0.0245,
+        "t": 8.57,
+        "noTop2": 0.0241,
+        "topStock": 0.005
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.0063,
+        "t": -1.6,
+        "noTop2": -0.0069,
+        "topStock": 0.004
+       }
+      }
+     }
+    },
+    "MA50": {
+     "name": "sell on a close under the 50-day average",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-0.3% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.331,
+       "avg": -0.0147,
+       "perMonth": -0.0081,
+       "days": 38.1,
+       "pf": 0.76,
+       "noTop2": -0.0159,
+       "worst": -0.587,
+       "topStock": 0.017
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.342,
+       "avg": 0.0113,
+       "perMonth": 0.0063,
+       "days": 37.9,
+       "pf": 1.18,
+       "noTop2": 0.0055,
+       "worst": -0.81,
+       "topStock": 0.04
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.332,
+       "avg": 0.0073,
+       "perMonth": 0.0041,
+       "days": 37.9,
+       "pf": 1.11,
+       "noTop2": 0.0015,
+       "worst": -0.814,
+       "topStock": 0.04
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": 0.0096,
+        "t": 4.11,
+        "noTop2": 0.0087,
+        "topStock": 0.011
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.0029,
+        "t": -0.66,
+        "noTop2": -0.007,
+        "topStock": 0.038
+       }
+      }
+     }
+    },
+    "CHAND": {
+     "name": "sell 3 daily ranges under the highest close",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-0.8% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.334,
+       "avg": -0.0174,
+       "perMonth": -0.0109,
+       "days": 33.7,
+       "pf": 0.71,
+       "noTop2": -0.0185,
+       "worst": -0.601,
+       "topStock": 0.016
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.354,
+       "avg": 0.0058,
+       "perMonth": 0.0035,
+       "days": 34.7,
+       "pf": 1.09,
+       "noTop2": 0.0034,
+       "worst": -0.81,
+       "topStock": 0.018
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.342,
+       "avg": 0.0018,
+       "perMonth": 0.0011,
+       "days": 34.7,
+       "pf": 1.03,
+       "noTop2": -0.0006,
+       "worst": -0.814,
+       "topStock": 0.019
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": 0.0117,
+        "t": 4.94,
+        "noTop2": 0.0112,
+        "topStock": 0.007
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.0076,
+        "t": -2.21,
+        "noTop2": -0.0089,
+        "topStock": 0.014
+       }
+      }
+     }
+    },
+    "T20S10": {
+     "name": "take profit +20%, stop -10%, 3 months at most",
+     "verdict": "WORSE",
+     "why": "did not beat the default in the newer half (-0.9% a trade); the gain over the default disappears without its 2 best trades",
+     "results": {
+      "older": {
+       "n": 2574,
+       "win": 0.434,
+       "avg": -0.0081,
+       "perMonth": -0.0042,
+       "days": 40.6,
+       "pf": 0.87,
+       "noTop2": -0.0086,
+       "worst": -0.587,
+       "topStock": 0.005
+      },
+      "newer": {
+       "n": 3153,
+       "win": 0.45,
+       "avg": 0.0061,
+       "perMonth": 0.0036,
+       "days": 35.2,
+       "pf": 1.09,
+       "noTop2": 0.0055,
+       "worst": -0.744,
+       "topStock": 0.005
+      },
+      "stress": {
+       "n": 3153,
+       "win": 0.442,
+       "avg": 0.0021,
+       "perMonth": 0.0013,
+       "days": 35.2,
+       "pf": 1.03,
+       "noTop2": 0.0015,
+       "worst": -0.748,
+       "topStock": 0.005
+      },
+      "vsDefault": {
+       "older": {
+        "n": 2574,
+        "diff": 0.0112,
+        "t": 4.46,
+        "noTop2": 0.0108,
+        "topStock": 0.011
+       },
+       "newer": {
+        "n": 3153,
+        "diff": -0.0094,
+        "t": -2.34,
+        "noTop2": -0.0099,
+        "topStock": 0.008
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

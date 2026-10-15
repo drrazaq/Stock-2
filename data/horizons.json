@@ -1,0 +1,690 @@
+{
+ "generatedAt": "2026-10-15T10:23:33.329Z",
+ "status": "OK",
+ "from": "2022-10-12",
+ "to": "2026-10-14",
+ "versions": 12,
+ "spy": {
+  "20": 0.015767154827553406,
+  "60": 0.05211547679049755,
+  "120": 0.10642679558117615
+ },
+ "results": {
+  "PB_UP_20": {
+   "setup": "PB_UP",
+   "name": "Pullback in a long uptrend, back above its 20-day",
+   "hold": 20,
+   "months": 1,
+   "verdict": "REJECTED",
+   "why": "not +0.5%+ better than an average stock in the older half (+0.1% vs -0.0%); lost money in the newer half; not +0.5%+ better than an average stock in the newer half (-0.3% vs -0.1%); profit factor 0.95; loses at 1.2% cost; loses without its 2 best trades; did not beat simply holding the S&P 500 in the older half (+0.1% vs +1.7%); did not beat simply holding the S&P 500 in the newer half (-0.3% vs +1.4%)",
+   "results": {
+    "older": {
+     "n": 6261,
+     "win": 0.48235106213065004,
+     "avg": 0.0005501251380927691,
+     "ctrl": -0.00019120590104485278,
+     "pf": 1.013608380306308,
+     "bestShare": 0.003549594325719363,
+     "noTop2": 0.000267030413017838,
+     "days": 484,
+     "spy": 0.01671730488811476,
+     "worst": -0.6293872809799215,
+     "avgMAE": -0.062016202739859264,
+     "topStock": 0.004266304864592099
+    },
+    "newer": {
+     "n": 6618,
+     "win": 0.47129042006648536,
+     "avg": -0.0025974573568046107,
+     "ctrl": -0.0014056462341594583,
+     "pf": 0.9485850532967164,
+     "bestShare": 0.004703121574022312,
+     "noTop2": -0.0030404517479248614,
+     "days": 475,
+     "spy": 0.013531253181109322,
+     "worst": -0.8505182438943437,
+     "avgMAE": -0.07310462520168202,
+     "topStock": 0.006679339398404632
+    },
+    "stress": {
+     "n": 6618,
+     "win": 0.45708673315200965,
+     "avg": -0.006597457356804568,
+     "ctrl": -0.005405646234159324,
+     "pf": 0.8747181618998662,
+     "bestShare": 0.004879762483578252,
+     "noTop2": -0.0070404517479254235,
+     "days": 475,
+     "spy": 0.013531253181109322,
+     "worst": -0.8545182438943437,
+     "avgMAE": -0.07310462520168202,
+     "topStock": 0.006883231849849383
+    }
+   }
+  },
+  "PB_UP_60": {
+   "setup": "PB_UP",
+   "name": "Pullback in a long uptrend, back above its 20-day",
+   "hold": 60,
+   "months": 3,
+   "verdict": "NOT PROVEN",
+   "why": "not +1.5%+ better than an average stock in the older half (+2.0% vs +1.4%); did not beat simply holding the S&P 500 in the older half (+2.0% vs +5.2%)",
+   "results": {
+    "older": {
+     "n": 4495,
+     "win": 0.5377085650723026,
+     "avg": 0.019962869514861616,
+     "ctrl": 0.014280185850201601,
+     "pf": 1.3360829345853031,
+     "bestShare": 0.00846398115956078,
+     "noTop2": 0.018994333726664335,
+     "days": 469,
+     "spy": 0.05157626032975812,
+     "worst": -0.8712172131147541,
+     "avgMAE": -0.10175376456523107,
+     "topStock": 0.010347095065147537
+    },
+    "newer": {
+     "n": 4324,
+     "win": 0.4946808510638298,
+     "avg": 0.023229444730912492,
+     "ctrl": 0.00586363045878669,
+     "pf": 1.2989884795912843,
+     "bestShare": 0.008933405344620473,
+     "noTop2": 0.021759045385070067,
+     "days": 430,
+     "spy": 0.029894278726255556,
+     "worst": -0.9001310671909496,
+     "avgMAE": -0.11785644667308465,
+     "topStock": 0.008933405344620473
+    },
+    "stress": {
+     "n": 4324,
+     "win": 0.4870490286771508,
+     "avg": 0.01922944473091242,
+     "ctrl": 0.001863630458786189,
+     "pf": 1.2411805030325955,
+     "bestShare": 0.009101257163285024,
+     "noTop2": 0.017759045385069984,
+     "days": 430,
+     "spy": 0.029894278726255556,
+     "worst": -0.9041310671909496,
+     "avgMAE": -0.11785644667308465,
+     "topStock": 0.009101257163285024
+    }
+   }
+  },
+  "PB_UP_120": {
+   "setup": "PB_UP",
+   "name": "Pullback in a long uptrend, back above its 20-day",
+   "hold": 120,
+   "months": 6,
+   "verdict": "NOT PROVEN",
+   "why": "not +3.0%+ better than an average stock in the older half (+4.0% vs +3.0%); not +3.0%+ better than an average stock in the newer half (+3.9% vs +2.7%); did not beat simply holding the S&P 500 in the older half (+4.0% vs +10.4%); did not beat simply holding the S&P 500 in the newer half (+3.9% vs +8.0%)",
+   "results": {
+    "older": {
+     "n": 3643,
+     "win": 0.5322536371122701,
+     "avg": 0.04040033628025532,
+     "ctrl": 0.029809280797075108,
+     "pf": 1.52197454312482,
+     "bestShare": 0.009875121422722765,
+     "noTop2": 0.038241883683811796,
+     "days": 454,
+     "spy": 0.10408907366023536,
+     "worst": -0.6293872809799215,
+     "avgMAE": -0.12704712597289425,
+     "topStock": 0.010796904487905117
+    },
+    "newer": {
+     "n": 2986,
+     "win": 0.500669792364367,
+     "avg": 0.038726078604455455,
+     "ctrl": 0.026898095768742386,
+     "pf": 1.3905596449249704,
+     "bestShare": 0.007123227652615639,
+     "noTop2": 0.03682149487511698,
+     "days": 360,
+     "spy": 0.07953929643684399,
+     "worst": -0.8560633762260675,
+     "avgMAE": -0.1460714657935033,
+     "topStock": 0.0071626758587892
+    },
+    "stress": {
+     "n": 2986,
+     "win": 0.49296718017414604,
+     "avg": 0.03472607860445552,
+     "ctrl": 0.022898095768741907,
+     "pf": 1.3432457663488526,
+     "bestShare": 0.007217450612482858,
+     "noTop2": 0.03282149487511699,
+     "days": 360,
+     "spy": 0.07953929643684399,
+     "worst": -0.8600633762260675,
+     "avgMAE": -0.1460714657935033,
+     "topStock": 0.0072476177723336125
+    }
+   }
+  },
+  "PB_DEEP_20": {
+   "setup": "PB_DEEP",
+   "name": "Deep pullback of a strong stock, back above its 10-day",
+   "hold": 20,
+   "months": 1,
+   "verdict": "NOT PROVEN",
+   "why": "not +0.5%+ better than an average stock in the older half (+0.2% vs +0.6%); profit factor 1.10; did not beat simply holding the S&P 500 in the older half (+0.2% vs +2.1%)",
+   "results": {
+    "older": {
+     "n": 3063,
+     "win": 0.4773098269670258,
+     "avg": 0.0022558601300176565,
+     "ctrl": 0.006352768664953784,
+     "pf": 1.0405900969989403,
+     "bestShare": 0.006336695720045377,
+     "noTop2": 0.0015979902428639567,
+     "days": 451,
+     "spy": 0.02100989949382896,
+     "worst": -0.9147145053818555,
+     "avgMAE": -0.08143623356267682,
+     "topStock": 0.006759134306919528
+    },
+    "newer": {
+     "n": 3326,
+     "win": 0.4837642814191221,
+     "avg": 0.006668908038250889,
+     "ctrl": -0.0003148623625163175,
+     "pf": 1.1004618585709538,
+     "bestShare": 0.009184841958655602,
+     "noTop2": 0.005427016857416513,
+     "days": 459,
+     "spy": 0.0143212435890933,
+     "worst": -0.8670276096285083,
+     "avgMAE": -0.0984794215631587,
+     "topStock": 0.011015872857372261
+    },
+    "stress": {
+     "n": 3326,
+     "win": 0.47173782321106433,
+     "avg": 0.002668908038250921,
+     "ctrl": -0.004314862362516786,
+     "pf": 1.0389755923175672,
+     "bestShare": 0.009414013989661565,
+     "noTop2": 0.001427016857416835,
+     "days": 459,
+     "spy": 0.0143212435890933,
+     "worst": -0.8710276096285083,
+     "avgMAE": -0.0984794215631587,
+     "topStock": 0.011226484719499516
+    }
+   }
+  },
+  "PB_DEEP_60": {
+   "setup": "PB_DEEP",
+   "name": "Deep pullback of a strong stock, back above its 10-day",
+   "hold": 60,
+   "months": 3,
+   "verdict": "NOT PROVEN",
+   "why": "not +1.5%+ better than an average stock in the older half (+3.0% vs +2.8%); did not beat simply holding the S&P 500 in the older half (+3.0% vs +5.8%)",
+   "results": {
+    "older": {
+     "n": 2269,
+     "win": 0.5279858968708683,
+     "avg": 0.029757791432095556,
+     "ctrl": 0.028419460066485568,
+     "pf": 1.373468791677661,
+     "bestShare": 0.011354746211260256,
+     "noTop2": 0.027443946827207546,
+     "days": 424,
+     "spy": 0.05810529560310714,
+     "worst": -0.9147145053818555,
+     "avgMAE": -0.12657227893893983,
+     "topStock": 0.0173446322638021
+    },
+    "newer": {
+     "n": 2165,
+     "win": 0.5020785219399538,
+     "avg": 0.04843495441956468,
+     "ctrl": 0.02143480338475936,
+     "pf": 1.4757139522675018,
+     "bestShare": 0.00755623972854227,
+     "noTop2": 0.04622717649738006,
+     "days": 402,
+     "spy": 0.04604209759604803,
+     "worst": -0.8670276096285083,
+     "avgMAE": -0.14583650842844043,
+     "topStock": 0.008740191505678606
+    },
+    "stress": {
+     "n": 2165,
+     "win": 0.4969976905311778,
+     "avg": 0.04443495441956461,
+     "ctrl": 0.01743480338475916,
+     "pf": 1.4280099312946093,
+     "bestShare": 0.007645598218338085,
+     "noTop2": 0.04222717649738017,
+     "days": 402,
+     "spy": 0.04604209759604803,
+     "worst": -0.8710276096285083,
+     "avgMAE": -0.14583650842844043,
+     "topStock": 0.008820579124120672
+    }
+   }
+  },
+  "PB_DEEP_120": {
+   "setup": "PB_DEEP",
+   "name": "Deep pullback of a strong stock, back above its 10-day",
+   "hold": 120,
+   "months": 6,
+   "verdict": "NOT PROVEN",
+   "why": "not +3.0%+ better than an average stock in the older half (+3.9% vs +3.3%); did not beat simply holding the S&P 500 in the older half (+3.9% vs +10.7%)",
+   "results": {
+    "older": {
+     "n": 2036,
+     "win": 0.4906679764243615,
+     "avg": 0.03915269619244767,
+     "ctrl": 0.03273599458998349,
+     "pf": 1.364674173367055,
+     "bestShare": 0.014206308704565001,
+     "noTop2": 0.035229130922202895,
+     "days": 419,
+     "spy": 0.10677113421105303,
+     "worst": -0.9147145053818555,
+     "avgMAE": -0.15475063260088412,
+     "topStock": 0.014206308704565001
+    },
+    "newer": {
+     "n": 1572,
+     "win": 0.5146310432569975,
+     "avg": 0.09839197798647809,
+     "ctrl": 0.058473671231294,
+     "pf": 1.8654120524381506,
+     "bestShare": 0.020912286799151057,
+     "noTop2": 0.09243579925759784,
+     "days": 326,
+     "spy": 0.10327984487761546,
+     "worst": -0.8875084105767908,
+     "avgMAE": -0.16198640404637127,
+     "topStock": 0.020912286799151057
+    },
+    "stress": {
+     "n": 1572,
+     "win": 0.5108142493638677,
+     "avg": 0.09439197798647776,
+     "ctrl": 0.05447367123129283,
+     "pf": 1.8162339536253556,
+     "bestShare": 0.021104331718901463,
+     "noTop2": 0.0884357992575979,
+     "days": 326,
+     "spy": 0.10327984487761546,
+     "worst": -0.8915084105767908,
+     "avgMAE": -0.16198640404637127,
+     "topStock": 0.021104331718901463
+    }
+   }
+  },
+  "LEADER_20": {
+   "setup": "LEADER",
+   "name": "Long-term leader (top 10% of 12-month gains)",
+   "hold": 20,
+   "months": 1,
+   "verdict": "REJECTED",
+   "why": "lost money in the older half; not +0.5%+ better than an average stock in the older half (-0.3% vs +0.2%); profit factor 1.07; did not beat simply holding the S&P 500 in the older half (-0.3% vs +2.0%)",
+   "results": {
+    "older": {
+     "n": 3771,
+     "win": 0.47440997083001857,
+     "avg": -0.0030762068404658746,
+     "ctrl": 0.002483567293574452,
+     "pf": 0.9361164537845865,
+     "bestShare": 0.0072745163157164295,
+     "noTop2": -0.0037227808260406952,
+     "days": 502,
+     "spy": 0.020371456783038804,
+     "worst": -0.8674736842105263,
+     "avgMAE": -0.0680136288105776,
+     "topStock": 0.009485590445579242
+    },
+    "newer": {
+     "n": 3301,
+     "win": 0.47258406543471676,
+     "avg": 0.004000667584255516,
+     "ctrl": -0.0023431421199868884,
+     "pf": 1.0663851758312175,
+     "bestShare": 0.007008781240183473,
+     "noTop2": 0.003203217309316322,
+     "days": 481,
+     "spy": 0.011495196823277237,
+     "worst": -0.9083094592936655,
+     "avgMAE": -0.08743965477438297,
+     "topStock": 0.008443711731551291
+    },
+    "stress": {
+     "n": 3301,
+     "win": 0.46137534080581644,
+     "avg": 6.675842555278883e-7,
+     "ctrl": -0.00634314211998754,
+     "pf": 1.0000106994337168,
+     "bestShare": 0.00719942938260943,
+     "noTop2": -0.0007967826906835261,
+     "days": 481,
+     "spy": 0.011495196823277237,
+     "worst": -0.9123094592936655,
+     "avgMAE": -0.08743965477438297,
+     "topStock": 0.00863852657698282
+    }
+   }
+  },
+  "LEADER_60": {
+   "setup": "LEADER",
+   "name": "Long-term leader (top 10% of 12-month gains)",
+   "hold": 60,
+   "months": 3,
+   "verdict": "NOT PROVEN",
+   "why": "not +1.5%+ better than an average stock in the older half (+1.6% vs +2.1%); did not beat simply holding the S&P 500 in the older half (+1.6% vs +5.7%)",
+   "results": {
+    "older": {
+     "n": 2506,
+     "win": 0.4876296887470072,
+     "avg": 0.016190592334627597,
+     "ctrl": 0.02123751868647954,
+     "pf": 1.2137839585335035,
+     "bestShare": 0.014002838607999597,
+     "noTop2": 0.014105388140759118,
+     "days": 485,
+     "spy": 0.05719732418323583,
+     "worst": -0.854551724137931,
+     "avgMAE": -0.11203432192947371,
+     "topStock": 0.014002838607999597
+    },
+    "newer": {
+     "n": 1932,
+     "win": 0.4767080745341615,
+     "avg": 0.03059118840961314,
+     "ctrl": 0.013820137124736972,
+     "pf": 1.3093098585754372,
+     "bestShare": 0.013851746050636623,
+     "noTop2": 0.027218805479427684,
+     "days": 437,
+     "spy": 0.03744447437278936,
+     "worst": -0.9002856378329785,
+     "avgMAE": -0.1382146088144828,
+     "topStock": 0.013851746050636623
+    },
+    "stress": {
+     "n": 1932,
+     "win": 0.47101449275362317,
+     "avg": 0.026591188409613088,
+     "ctrl": 0.009820137124736467,
+     "pf": 1.263261146907066,
+     "bestShare": 0.01404118786355055,
+     "noTop2": 0.023218805479427927,
+     "days": 437,
+     "spy": 0.03744447437278936,
+     "worst": -0.9042856378329786,
+     "avgMAE": -0.1382146088144828,
+     "topStock": 0.01404118786355055
+    }
+   }
+  },
+  "LEADER_120": {
+   "setup": "LEADER",
+   "name": "Long-term leader (top 10% of 12-month gains)",
+   "hold": 120,
+   "months": 6,
+   "verdict": "NOT PROVEN",
+   "why": "not +3.0%+ better than an average stock in the older half (+2.2% vs +3.3%); not +3.0%+ better than an average stock in the newer half (+6.3% vs +3.8%); did not beat simply holding the S&P 500 in the older half (+2.2% vs +10.5%); did not beat simply holding the S&P 500 in the newer half (+6.3% vs +8.1%)",
+   "results": {
+    "older": {
+     "n": 1922,
+     "win": 0.48439125910509884,
+     "avg": 0.02240914874939131,
+     "ctrl": 0.032514251486327646,
+     "pf": 1.216752666988863,
+     "bestShare": 0.008196472047018512,
+     "noTop2": 0.02052874490891016,
+     "days": 471,
+     "spy": 0.1049192544177887,
+     "worst": -0.8523362134160787,
+     "avgMAE": -0.1426404067520231,
+     "topStock": 0.012405812185117077
+    },
+    "newer": {
+     "n": 1272,
+     "win": 0.46147798742138363,
+     "avg": 0.06251081159748575,
+     "ctrl": 0.03830960526901031,
+     "pf": 1.503676074316871,
+     "bestShare": 0.01247889171850993,
+     "noTop2": 0.058069554504782815,
+     "days": 369,
+     "spy": 0.0812446471247232,
+     "worst": -0.8151498351918685,
+     "avgMAE": -0.16664351321580617,
+     "topStock": 0.013121316117385361
+    },
+    "stress": {
+     "n": 1272,
+     "win": 0.45676100628930816,
+     "avg": 0.05851081159748581,
+     "ctrl": 0.0343096052690101,
+     "pf": 1.4633757791139712,
+     "bestShare": 0.012586026179054566,
+     "noTop2": 0.054069554504782874,
+     "days": 369,
+     "spy": 0.0812446471247232,
+     "worst": -0.8191498351918685,
+     "avgMAE": -0.16664351321580617,
+     "topStock": 0.013217823844515893
+    }
+   }
+  },
+  "TURN_20": {
+   "setup": "TURN",
+   "name": "Beaten-down stock turning up (back above its 50-day)",
+   "hold": 20,
+   "months": 1,
+   "verdict": "NOT PROVEN",
+   "why": "not +0.5%+ better than an average stock in the older half (+1.3% vs +0.8%); not +0.5%+ better than an average stock in the newer half (+0.4% vs +0.2%); profit factor 1.07; did not beat simply holding the S&P 500 in the older half (+1.3% vs +2.1%); did not beat simply holding the S&P 500 in the newer half (+0.4% vs +1.7%)",
+   "results": {
+    "older": {
+     "n": 4961,
+     "win": 0.5176375730699456,
+     "avg": 0.012915979882221767,
+     "ctrl": 0.008437412609796852,
+     "pf": 1.2349881480328386,
+     "bestShare": 0.00852462356138503,
+     "noTop2": 0.01187588725653666,
+     "days": 471,
+     "spy": 0.0210997850617739,
+     "worst": -0.7920466986232084,
+     "avgMAE": -0.08438463537813813,
+     "topStock": 0.009845664123513531
+    },
+    "newer": {
+     "n": 4459,
+     "win": 0.49046871495851085,
+     "avg": 0.004204153406360471,
+     "ctrl": 0.0019810506096242216,
+     "pf": 1.069771549216631,
+     "bestShare": 0.01141980955283993,
+     "noTop2": 0.002823707712536998,
+     "days": 464,
+     "spy": 0.017313830731265228,
+     "worst": -0.5910720860216254,
+     "avgMAE": -0.08953559489605502,
+     "topStock": 0.01141980955283993
+    },
+    "stress": {
+     "n": 4459,
+     "win": 0.477685579726396,
+     "avg": 0.00020415340636049394,
+     "ctrl": -0.002018949390376364,
+     "pf": 1.0032760242092253,
+     "bestShare": 0.01175954622591936,
+     "noTop2": -0.0011762922874632297,
+     "days": 464,
+     "spy": 0.017313830731265228,
+     "worst": -0.5950720860216254,
+     "avgMAE": -0.08953559489605502,
+     "topStock": 0.01175954622591936
+    }
+   }
+  },
+  "TURN_60": {
+   "setup": "TURN",
+   "name": "Beaten-down stock turning up (back above its 50-day)",
+   "hold": 60,
+   "months": 3,
+   "verdict": "NOT PROVEN",
+   "why": "not +1.5%+ better than an average stock in the older half (+2.8% vs +3.0%); not +1.5%+ better than an average stock in the newer half (+2.7% vs +2.1%); did not beat simply holding the S&P 500 in the older half (+2.8% vs +5.4%); did not beat simply holding the S&P 500 in the newer half (+2.7% vs +4.4%)",
+   "results": {
+    "older": {
+     "n": 3332,
+     "win": 0.5294117647058824,
+     "avg": 0.02803748524936016,
+     "ctrl": 0.030104145592279852,
+     "pf": 1.330254462363491,
+     "bestShare": 0.008504309223913847,
+     "noTop2": 0.026375782917676723,
+     "days": 434,
+     "spy": 0.05423992568368588,
+     "worst": -0.7840591829634131,
+     "avgMAE": -0.13098573133072333,
+     "topStock": 0.009499708951218743
+    },
+    "newer": {
+     "n": 2640,
+     "win": 0.48068181818181815,
+     "avg": 0.026703959918969625,
+     "ctrl": 0.020582177667019613,
+     "pf": 1.268633981297804,
+     "bestShare": 0.007015704969163112,
+     "noTop2": 0.024956486051597688,
+     "days": 404,
+     "spy": 0.0443310375507368,
+     "worst": -0.6452972952352988,
+     "avgMAE": -0.14151344360019502,
+     "topStock": 0.00974613962854708
+    },
+    "stress": {
+     "n": 2640,
+     "win": 0.47613636363636364,
+     "avg": 0.02270395991896956,
+     "ctrl": 0.0165821776670201,
+     "pf": 1.2237003500152552,
+     "bestShare": 0.0071116106584033344,
+     "noTop2": 0.02095648605159703,
+     "days": 404,
+     "spy": 0.0443310375507368,
+     "worst": -0.6492972952352988,
+     "avgMAE": -0.14151344360019502,
+     "topStock": 0.009859719478891681
+    }
+   }
+  },
+  "TURN_120": {
+   "setup": "TURN",
+   "name": "Beaten-down stock turning up (back above its 50-day)",
+   "hold": 120,
+   "months": 6,
+   "verdict": "NOT PROVEN",
+   "why": "not +3.0%+ better than an average stock in the older half (+0.2% vs +1.8%); not +3.0%+ better than an average stock in the newer half (+6.6% vs +5.8%); did not beat simply holding the S&P 500 in the older half (+0.2% vs +8.6%); did not beat simply holding the S&P 500 in the newer half (+6.6% vs +10.5%)",
+   "results": {
+    "older": {
+     "n": 2610,
+     "win": 0.4436781609195402,
+     "avg": 0.0021276343375251053,
+     "ctrl": 0.01815256597090775,
+     "pf": 1.017765936738477,
+     "bestShare": 0.01649476952787369,
+     "noTop2": -0.0011254622058892972,
+     "days": 405,
+     "spy": 0.08641943561333802,
+     "worst": -0.8362249442156451,
+     "avgMAE": -0.16199956640147728,
+     "topStock": 0.01649476952787369
+    },
+    "newer": {
+     "n": 1677,
+     "win": 0.44066785927251045,
+     "avg": 0.0661262832089914,
+     "ctrl": 0.05801659757638984,
+     "pf": 1.503274792027184,
+     "bestShare": 0.023183545693076846,
+     "noTop2": 0.058529741139971406,
+     "days": 320,
+     "spy": 0.10538048009464615,
+     "worst": -0.8452683435710681,
+     "avgMAE": -0.17362086727047107,
+     "topStock": 0.023183545693076846
+    },
+    "stress": {
+     "n": 1677,
+     "win": 0.4370900417412045,
+     "avg": 0.06212628320899122,
+     "ctrl": 0.05401659757638787,
+     "pf": 1.4648892405934246,
+     "bestShare": 0.023379231201425238,
+     "noTop2": 0.05452974113997098,
+     "days": 320,
+     "spy": 0.10538048009464615,
+     "worst": -0.8492683435710681,
+     "avgMAE": -0.17362086727047107,
+     "topStock": 0.023379231201425238
+    }
+   }
+  }
+ },
+ "today": {
+  "PB_UP": [
+   "BLK",
+   "YPF",
+   "ICLR",
+   "ROST",
+   "PRI",
+   "NRIX",
+   "REGN",
+   "ITW",
+   "GL",
+   "AUPH",
+   "CNI",
+   "CF",
+   "LTH",
+   "MICC"
+  ],
+  "PB_DEEP": [
+   "ICLR",
+   "APPF",
+   "WDAY",
+   "RHI",
+   "PI",
+   "SVV"
+  ],
+  "LEADER": [
+   "CLBK",
+   "SBLK",
+   "MLAB",
+   "MSGS",
+   "SU",
+   "TDW",
+   "PBR",
+   "GPRK",
+   "GEO",
+   "PTGX",
+   "UFCS",
+   "FTRE"
+  ],
+  "TURN": [
+   "CE",
+   "TIMB",
+   "MNSO",
+   "INFY",
+   "GFS",
+   "ULS"
+  ]
+ },
+ "rules": {
+  "stopAt": 0.75,
+  "cost": 0.008
+ }
+}
