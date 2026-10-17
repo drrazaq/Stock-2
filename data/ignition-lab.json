@@ -1,0 +1,2542 @@
+{
+ "version": 3,
+ "variants": 48,
+ "passing": 0,
+ "generatedAt": "2026-10-17T08:50:31.360Z",
+ "status": "OK",
+ "window": "2024-10-18 to 2026-10-16",
+ "candidates": 73909,
+ "tested": 12000,
+ "floatSource": {
+  "knownThatDay": 9004,
+  "todaysCount": 1633,
+  "none": 1363
+ },
+ "addedThisRun": 12000,
+ "refused": false,
+ "rules": {
+  "IG1/close": {
+   "rule": "IG1",
+   "exit": "close",
+   "penny": false,
+   "name": "Crosses +10% before 11:00 New York with a normal day’s volume already traded",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.44 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 379,
+     "win": 0.1741424802110818,
+     "avg": -0.03334063324538266,
+     "med": -0.092,
+     "pf": 0.5093138758693538,
+     "bestShare": 0.2379572729074856,
+     "best": 0.12228865435356191,
+     "big": 0.055408970976253295
+    },
+    "newer": {
+     "n": 316,
+     "win": 0.24050632911392406,
+     "avg": -0.03527563291139248,
+     "med": -0.092,
+     "pf": 0.4402295906838006,
+     "bestShare": 0.14955627038988892,
+     "best": 0.15916898734177232,
+     "big": 0.05063291139240506
+    },
+    "stress": {
+     "n": 316,
+     "win": 0.22784810126582278,
+     "avg": -0.04336107594936717,
+     "med": -0.098,
+     "pf": 0.37270638001758,
+     "bestShare": 0.15975728095711877,
+     "best": 0.15916898734177232,
+     "big": 0.05063291139240506
+    },
+    "last6": {
+     "n": 157,
+     "win": 0.2229299363057325,
+     "avg": -0.03808216560509554,
+     "med": -0.094,
+     "pf": 0.4412974003401419,
+     "bestShare": 0.2776283748014823,
+     "best": 0.18936560509554135,
+     "big": 0.05732484076433121
+    }
+   },
+   "days": 378,
+   "stocks": 511
+  },
+  "IG1/trail": {
+   "rule": "IG1",
+   "exit": "trail",
+   "penny": false,
+   "name": "Crosses +10% before 11:00 New York with a normal day’s volume already traded",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.66 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 379,
+     "win": 0.24538258575197888,
+     "avg": -0.029204221635883914,
+     "med": -0.0539,
+     "pf": 0.4318682277577875,
+     "bestShare": 0.07266719754685808,
+     "best": 0.07826754617414251,
+     "big": 0.036939313984168866
+    },
+    "newer": {
+     "n": 316,
+     "win": 0.31962025316455694,
+     "avg": -0.015462341772151904,
+     "med": -0.035199999999999995,
+     "pf": 0.6564721267216461,
+     "bestShare": 0.07691813391594911,
+     "best": 0.09879999999999996,
+     "big": 0.060126582278481014
+    },
+    "stress": {
+     "n": 316,
+     "win": 0.2911392405063291,
+     "avg": -0.023547784810126596,
+     "med": -0.0422,
+     "pf": 0.5350184340436165,
+     "bestShare": 0.08265688690594371,
+     "best": 0.09879999999999996,
+     "big": 0.060126582278481014
+    },
+    "last6": {
+     "n": 157,
+     "win": 0.3057324840764331,
+     "avg": -0.0159031847133758,
+     "med": -0.044,
+     "pf": 0.6723789528933208,
+     "bestShare": 0.13836306155107142,
+     "best": 0.10299936305732486,
+     "big": 0.07643312101910828
+    }
+   },
+   "days": 378,
+   "stocks": 511
+  },
+  "IG1/trail5": {
+   "rule": "IG1",
+   "exit": "trail5",
+   "penny": false,
+   "name": "Crosses +10% before 11:00 New York with a normal day’s volume already traded",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.63 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 379,
+     "win": 0.22427440633245382,
+     "avg": -0.026680211081794202,
+     "med": -0.0348,
+     "pf": 0.3034703183765687,
+     "bestShare": 0.08952242600326855,
+     "best": 0.046735620052770474,
+     "big": 0.018469656992084433
+    },
+    "newer": {
+     "n": 316,
+     "win": 0.3322784810126582,
+     "avg": -0.012448734177215186,
+     "med": -0.0267,
+     "pf": 0.6275480737367327,
+     "bestShare": 0.12259923658363632,
+     "best": 0.06295537974683543,
+     "big": 0.022151898734177215
+    },
+    "stress": {
+     "n": 316,
+     "win": 0.2911392405063291,
+     "avg": -0.020534177215189884,
+     "med": -0.0348,
+     "pf": 0.4744251221033359,
+     "bestShare": 0.13694022843289577,
+     "best": 0.06295537974683543,
+     "big": 0.022151898734177215
+    },
+    "last6": {
+     "n": 157,
+     "win": 0.3375796178343949,
+     "avg": -0.01691337579617835,
+     "med": -0.028699999999999996,
+     "pf": 0.5173140893970519,
+     "bestShare": 0.07688253276643592,
+     "best": 0.05981528662420383,
+     "big": 0.01910828025477707
+    }
+   },
+   "days": 378,
+   "stocks": 511
+  },
+  "IG2/close": {
+   "rule": "IG2",
+   "exit": "close",
+   "penny": false,
+   "name": "Crosses +20% before 11:00 with 1.5x a normal day’s volume",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.40 (1.20 needed); one trade made 20%+ of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 257,
+     "win": 0.1517509727626459,
+     "avg": -0.03500700389105064,
+     "med": -0.092,
+     "pf": 0.5288301404585586,
+     "bestShare": 0.309077224742023,
+     "best": 0.13790933852140075,
+     "big": 0.054474708171206226
+    },
+    "newer": {
+     "n": 217,
+     "win": 0.18433179723502305,
+     "avg": -0.042844700460829506,
+     "med": -0.092,
+     "pf": 0.3953211581987039,
+     "bestShare": 0.21570175871543032,
+     "best": 0.18385207373271908,
+     "big": 0.055299539170506916
+    },
+    "stress": {
+     "n": 217,
+     "win": 0.16589861751152074,
+     "avg": -0.050966820276497765,
+     "med": -0.098,
+     "pf": 0.34230103651900856,
+     "bestShare": 0.22595159917305113,
+     "best": 0.18385207373271908,
+     "big": 0.055299539170506916
+    },
+    "last6": {
+     "n": 108,
+     "win": 0.17592592592592593,
+     "avg": -0.04591296296296297,
+     "med": -0.094,
+     "pf": 0.38503323742434764,
+     "bestShare": 0.42230883205565933,
+     "best": 0.22627037037037032,
+     "big": 0.046296296296296294
+    }
+   },
+   "days": 296,
+   "stocks": 368
+  },
+  "IG2/trail": {
+   "rule": "IG2",
+   "exit": "trail",
+   "penny": false,
+   "name": "Crosses +20% before 11:00 with 1.5x a normal day’s volume",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.66 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 257,
+     "win": 0.22178988326848248,
+     "avg": -0.034594552529182865,
+     "med": -0.0627,
+     "pf": 0.35896751865604354,
+     "bestShare": 0.08845682607909695,
+     "best": 0.07859999999999999,
+     "big": 0.0311284046692607
+    },
+    "newer": {
+     "n": 217,
+     "win": 0.29493087557603687,
+     "avg": -0.016218433179723504,
+     "med": -0.044,
+     "pf": 0.6623979586942546,
+     "bestShare": 0.10400706703546553,
+     "best": 0.10486912442396311,
+     "big": 0.06912442396313365
+    },
+    "stress": {
+     "n": 217,
+     "win": 0.25806451612903225,
+     "avg": -0.024340552995391694,
+     "med": -0.0509,
+     "pf": 0.5488254890236608,
+     "bestShare": 0.11014614558528268,
+     "best": 0.10486912442396311,
+     "big": 0.06912442396313365
+    },
+    "last6": {
+     "n": 108,
+     "win": 0.28703703703703703,
+     "avg": -0.013850925925925926,
+     "med": -0.042499999999999996,
+     "pf": 0.7130718327419201,
+     "bestShare": 0.19071443942328384,
+     "best": 0.11216018518518521,
+     "big": 0.08333333333333333
+    }
+   },
+   "days": 296,
+   "stocks": 368
+  },
+  "IG2/trail5": {
+   "rule": "IG2",
+   "exit": "trail5",
+   "penny": false,
+   "name": "Crosses +20% before 11:00 with 1.5x a normal day’s volume",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.70 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 257,
+     "win": 0.22178988326848248,
+     "avg": -0.02866186770428013,
+     "med": -0.038400000000000004,
+     "pf": 0.289699529429916,
+     "bestShare": 0.1312785008154978,
+     "best": 0.047596887159533106,
+     "big": 0.019455252918287938
+    },
+    "newer": {
+     "n": 217,
+     "win": 0.31336405529953915,
+     "avg": -0.009754377880184337,
+     "med": -0.0263,
+     "pf": 0.701793437680506,
+     "bestShare": 0.16312683181434942,
+     "best": 0.06903594470046089,
+     "big": 0.027649769585253458
+    },
+    "stress": {
+     "n": 217,
+     "win": 0.28110599078341014,
+     "avg": -0.01787649769585253,
+     "med": -0.034999999999999996,
+     "pf": 0.5356920572604968,
+     "bestShare": 0.17921619447671824,
+     "best": 0.06903594470046089,
+     "big": 0.027649769585253458
+    },
+    "last6": {
+     "n": 108,
+     "win": 0.3055555555555556,
+     "avg": -0.013716666666666667,
+     "med": -0.022399999999999996,
+     "pf": 0.5795061027533349,
+     "bestShare": 0.10717084639498436,
+     "best": 0.06650277777777777,
+     "big": 0.027777777777777776
+    }
+   },
+   "days": 296,
+   "stocks": 368
+  },
+  "IG3/close": {
+   "rule": "IG3",
+   "exit": "close",
+   "penny": false,
+   "name": "Crosses +10% before 11:00, normal day’s volume, small float (under 20M shares)",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.40 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 136,
+     "win": 0.19117647058823528,
+     "avg": -0.032944117647058825,
+     "med": -0.092,
+     "pf": 0.5402973436073176,
+     "bestShare": 0.2463586471448376,
+     "best": 0.1314691176470588,
+     "big": 0.07352941176470588
+    },
+    "newer": {
+     "n": 144,
+     "win": 0.1875,
+     "avg": -0.04490694444444442,
+     "med": -0.094,
+     "pf": 0.39506819585024955,
+     "bestShare": 0.3104517901117636,
+     "best": 0.19310416666666663,
+     "big": 0.05555555555555555
+    },
+    "stress": {
+     "n": 144,
+     "win": 0.18055555555555555,
+     "avg": -0.05301458333333337,
+     "med": -0.101,
+     "pf": 0.343404892145732,
+     "bestShare": 0.32574448368272096,
+     "best": 0.19310416666666663,
+     "big": 0.05555555555555555
+    },
+    "last6": {
+     "n": 77,
+     "win": 0.19480519480519481,
+     "avg": -0.04044155844155844,
+     "med": -0.094,
+     "pf": 0.4720333666774046,
+     "bestShare": 0.47092417657411734,
+     "best": 0.2332025974025974,
+     "big": 0.06493506493506493
+    }
+   },
+   "days": 215,
+   "stocks": 190
+  },
+  "IG3/trail": {
+   "rule": "IG3",
+   "exit": "trail",
+   "penny": false,
+   "name": "Crosses +10% before 11:00, normal day’s volume, small float (under 20M shares)",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.60 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 136,
+     "win": 0.25,
+     "avg": -0.032683088235294123,
+     "med": -0.0669,
+     "pf": 0.38998147258628985,
+     "bestShare": 0.11324605855855858,
+     "best": 0.08277720588235296,
+     "big": 0.03676470588235294
+    },
+    "newer": {
+     "n": 144,
+     "win": 0.3194444444444444,
+     "avg": -0.019815972222222217,
+     "med": -0.0444,
+     "pf": 0.5970941643251486,
+     "bestShare": 0.09610291335603484,
+     "best": 0.10345416666666668,
+     "big": 0.06944444444444445
+    },
+    "stress": {
+     "n": 144,
+     "win": 0.2986111111111111,
+     "avg": -0.027923611111111097,
+     "med": -0.0507,
+     "pf": 0.49026418538613653,
+     "bestShare": 0.10353208874179033,
+     "best": 0.10345416666666668,
+     "big": 0.06944444444444445
+    },
+    "last6": {
+     "n": 77,
+     "win": 0.3246753246753247,
+     "avg": -0.017166233766233767,
+     "med": -0.044,
+     "pf": 0.6642536005486552,
+     "bestShare": 0.138465068257428,
+     "best": 0.11078831168831169,
+     "big": 0.09090909090909091
+    }
+   },
+   "days": 215,
+   "stocks": 190
+  },
+  "IG3/trail5": {
+   "rule": "IG3",
+   "exit": "trail5",
+   "penny": false,
+   "name": "Crosses +10% before 11:00, normal day’s volume, small float (under 20M shares)",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.46 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 136,
+     "win": 0.25735294117647056,
+     "avg": -0.027856617647058823,
+     "med": -0.042,
+     "pf": 0.3276125230725544,
+     "bestShare": 0.10872745002437835,
+     "best": 0.05025294117647059,
+     "big": 0.022058823529411766
+    },
+    "newer": {
+     "n": 144,
+     "win": 0.2916666666666667,
+     "avg": -0.02049652777777778,
+     "med": -0.0354,
+     "pf": 0.457325145252629,
+     "bestShare": 0.1950709604792345,
+     "best": 0.06019444444444445,
+     "big": 0.020833333333333332
+    },
+    "stress": {
+     "n": 144,
+     "win": 0.2569444444444444,
+     "avg": -0.028604166666666677,
+     "med": -0.042800000000000005,
+     "pf": 0.3463253614333551,
+     "bestShare": 0.21958484168079545,
+     "best": 0.06019444444444445,
+     "big": 0.020833333333333332
+    },
+    "last6": {
+     "n": 77,
+     "win": 0.2987012987012987,
+     "avg": -0.02421428571428572,
+     "med": -0.0376,
+     "pf": 0.4082267432634017,
+     "bestShare": 0.17011351267299024,
+     "best": 0.05896233766233765,
+     "big": 0.025974025974025976
+    }
+   },
+   "days": 215,
+   "stocks": 190
+  },
+  "IG4/close": {
+   "rule": "IG4",
+   "exit": "close",
+   "penny": false,
+   "name": "Crosses +10% before 11:00, normal day’s volume, listed under a year",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the newer year; loses at 1.5x costs; profit factor 0.45 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 49,
+     "win": 0.16326530612244897,
+     "avg": 0.024975510204081647,
+     "med": -0.092,
+     "pf": 1.3394352915071839,
+     "bestShare": 0.6462768160357825,
+     "best": 0.2409204081632653,
+     "big": 0.061224489795918366
+    },
+    "newer": {
+     "n": 44,
+     "win": 0.29545454545454547,
+     "avg": -0.03597045454545455,
+     "med": -0.092,
+     "pf": 0.4547114556416882,
+     "bestShare": 0.46552507955750866,
+     "best": 0.14959999999999996,
+     "big": 0.06818181818181818
+    },
+    "stress": {
+     "n": 44,
+     "win": 0.2727272727272727,
+     "avg": -0.044050000000000006,
+     "med": -0.098,
+     "pf": 0.38563458856345884,
+     "bestShare": 0.500082196284728,
+     "best": 0.14959999999999996,
+     "big": 0.06818181818181818
+    },
+    "last6": {
+     "n": 25,
+     "win": 0.24,
+     "avg": -0.05886799999999999,
+     "med": -0.094,
+     "pf": 0.17584140673125384,
+     "bestShare": 0.5302547770700637,
+     "best": 0.14628,
+     "big": 0.04
+    }
+   },
+   "days": 85,
+   "stocks": 72
+  },
+  "IG4/trail": {
+   "rule": "IG4",
+   "exit": "trail",
+   "penny": false,
+   "name": "Crosses +10% before 11:00, normal day’s volume, listed under a year",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.30 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 49,
+     "win": 0.2653061224489796,
+     "avg": -0.025926530612244897,
+     "med": -0.0668,
+     "pf": 0.5288008605022068,
+     "bestShare": 0.30890089079048894,
+     "best": 0.09312244897959183,
+     "big": 0.061224489795918366
+    },
+    "newer": {
+     "n": 44,
+     "win": 0.29545454545454547,
+     "avg": -0.03767500000000001,
+     "med": -0.0628,
+     "pf": 0.3026376677464136,
+     "bestShare": 0.1933555740895191,
+     "best": 0.07009545454545456,
+     "big": 0.022727272727272728
+    },
+    "stress": {
+     "n": 44,
+     "win": 0.29545454545454547,
+     "avg": -0.04575454545454545,
+     "med": -0.0698,
+     "pf": 0.23571618389582782,
+     "bestShare": 0.20711869866323077,
+     "best": 0.07009545454545456,
+     "big": 0.022727272727272728
+    },
+    "last6": {
+     "n": 25,
+     "win": 0.28,
+     "avg": -0.045939999999999995,
+     "med": -0.0734,
+     "pf": 0.2108698639549265,
+     "bestShare": 0.2359074617139133,
+     "best": 0.06733600000000001,
+     "big": 0
+    }
+   },
+   "days": 85,
+   "stocks": 72
+  },
+  "IG4/trail5": {
+   "rule": "IG4",
+   "exit": "trail5",
+   "penny": false,
+   "name": "Crosses +10% before 11:00, normal day’s volume, listed under a year",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.45 (1.20 needed); one trade made 20%+ of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 49,
+     "win": 0.2653061224489796,
+     "avg": -0.013881632653061216,
+     "med": -0.028499999999999998,
+     "pf": 0.570580808080808,
+     "bestShare": 0.40871874308475326,
+     "best": 0.06018367346938777,
+     "big": 0.02040816326530612
+    },
+    "newer": {
+     "n": 44,
+     "win": 0.25,
+     "avg": -0.021261363636363637,
+     "med": -0.0373,
+     "pf": 0.4469405852793378,
+     "bestShare": 0.22156084656084657,
+     "best": 0.05374545454545455,
+     "big": 0.022727272727272728
+    },
+    "stress": {
+     "n": 44,
+     "win": 0.22727272727272727,
+     "avg": -0.029340909090909088,
+     "med": -0.0441,
+     "pf": 0.34199796126401627,
+     "bestShare": 0.23919523099850967,
+     "best": 0.05374545454545455,
+     "big": 0.022727272727272728
+    },
+    "last6": {
+     "n": 25,
+     "win": 0.2,
+     "avg": -0.026587999999999994,
+     "med": -0.0375,
+     "pf": 0.2723590585659551,
+     "bestShare": 0.3737942122186495,
+     "best": 0.045751999999999994,
+     "big": 0
+    }
+   },
+   "days": 85,
+   "stocks": 72
+  },
+  "IG5/close": {
+   "rule": "IG5",
+   "exit": "close",
+   "penny": false,
+   "name": "Gap-up 10%+ that breaks its first 5-minute high (opening range breakout)",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.74 (1.20 needed); loses without its 2 best trades",
+   "results": {
+    "older": {
+     "n": 468,
+     "win": 0.28846153846153844,
+     "avg": -0.019252777777777765,
+     "med": -0.0479,
+     "pf": 0.6232033755838896,
+     "bestShare": 0.0778588971052031,
+     "best": 0.1135085470085471,
+     "big": 0.06837606837606838
+    },
+    "newer": {
+     "n": 380,
+     "win": 0.2657894736842105,
+     "avg": -0.013519999999999992,
+     "med": -0.051500000000000004,
+     "pf": 0.7357704552117136,
+     "bestShare": 0.133446571742124,
+     "best": 0.12387473684210523,
+     "big": 0.05526315789473684
+    },
+    "stress": {
+     "n": 380,
+     "win": 0.25263157894736843,
+     "avg": -0.021233157894736832,
+     "med": -0.058300000000000005,
+     "pf": 0.6270821393577487,
+     "bestShare": 0.14019221981456093,
+     "best": 0.12387473684210523,
+     "big": 0.05526315789473684
+    },
+    "last6": {
+     "n": 197,
+     "win": 0.29441624365482233,
+     "avg": 0.002879187817258883,
+     "med": -0.0473,
+     "pf": 1.0593597270624675,
+     "bestShare": 0.18859965423561376,
+     "best": 0.15462081218274107,
+     "big": 0.07106598984771574
+    }
+   },
+   "days": 395,
+   "stocks": 692
+  },
+  "IG5/trail": {
+   "rule": "IG5",
+   "exit": "trail",
+   "penny": false,
+   "name": "Gap-up 10%+ that breaks its first 5-minute high (opening range breakout)",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.57 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 468,
+     "win": 0.3269230769230769,
+     "avg": -0.012582692307692317,
+     "med": -0.034699999999999995,
+     "pf": 0.6619730437178543,
+     "bestShare": 0.05025103840584108,
+     "best": 0.08143782051282061,
+     "big": 0.042735042735042736
+    },
+    "newer": {
+     "n": 380,
+     "win": 0.2894736842105263,
+     "avg": -0.01724631578947368,
+     "med": -0.0398,
+     "pf": 0.5686320972052182,
+     "bestShare": 0.08910753559439749,
+     "best": 0.07605815789473684,
+     "big": 0.04473684210526316
+    },
+    "stress": {
+     "n": 380,
+     "win": 0.2710526315789474,
+     "avg": -0.024959473684210517,
+     "med": -0.0472,
+     "pf": 0.4524250769292944,
+     "bestShare": 0.09733937344477767,
+     "best": 0.07605815789473684,
+     "big": 0.04473684210526316
+    },
+    "last6": {
+     "n": 197,
+     "win": 0.3248730964467005,
+     "avg": -0.009897461928934011,
+     "med": -0.0334,
+     "pf": 0.7328894733958028,
+     "bestShare": 0.14389322965344498,
+     "best": 0.08048071065989848,
+     "big": 0.050761421319796954
+    }
+   },
+   "days": 395,
+   "stocks": 692
+  },
+  "IG5/trail5": {
+   "rule": "IG5",
+   "exit": "trail5",
+   "penny": false,
+   "name": "Gap-up 10%+ that breaks its first 5-minute high (opening range breakout)",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.54 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 468,
+     "win": 0.32051282051282054,
+     "avg": -0.011108119658119659,
+     "med": -0.020900000000000002,
+     "pf": 0.5766095207069268,
+     "bestShare": 0.05901213293973078,
+     "best": 0.0551790598290598,
+     "big": 0.014957264957264958
+    },
+    "newer": {
+     "n": 380,
+     "win": 0.2894736842105263,
+     "avg": -0.012710789473684212,
+     "med": -0.0266,
+     "pf": 0.5356789233357369,
+     "bestShare": 0.1381451439236236,
+     "best": 0.05284736842105261,
+     "big": 0.02368421052631579
+    },
+    "stress": {
+     "n": 380,
+     "win": 0.25263157894736843,
+     "avg": -0.020423947368421062,
+     "med": -0.0341,
+     "pf": 0.3820386648831133,
+     "bestShare": 0.15897959609011897,
+     "best": 0.05284736842105261,
+     "big": 0.02368421052631579
+    },
+    "last6": {
+     "n": 197,
+     "win": 0.29949238578680204,
+     "avg": -0.009404568527918787,
+     "med": -0.0264,
+     "pf": 0.6498989020956555,
+     "bestShare": 0.223831123517097,
+     "best": 0.05492893401015228,
+     "big": 0.025380710659898477
+    }
+   },
+   "days": 395,
+   "stocks": 692
+  },
+  "IG6/close": {
+   "rule": "IG6",
+   "exit": "close",
+   "penny": false,
+   "name": "Classic low-float runner: crosses +10% before 11:00, under 5 USD, float under 20M, normal day’s volume",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.66 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 38,
+     "win": 0.15789473684210525,
+     "avg": -0.05415526315789473,
+     "med": -0.094,
+     "pf": 0.28624445061043285,
+     "bestShare": 0.4093057070156306,
+     "best": 0.11363421052631577,
+     "big": 0.05263157894736842
+    },
+    "newer": {
+     "n": 64,
+     "win": 0.21875,
+     "avg": -0.024564062499999997,
+     "med": -0.101,
+     "pf": 0.6638082203498568,
+     "bestShare": 0.4223768564157083,
+     "best": 0.21621718749999996,
+     "big": 0.109375
+    },
+    "stress": {
+     "n": 64,
+     "win": 0.203125,
+     "avg": -0.034681249999999976,
+     "med": -0.1115,
+     "pf": 0.5714396045721345,
+     "bestShare": 0.43945127719962157,
+     "best": 0.21621718749999996,
+     "big": 0.109375
+    },
+    "last6": {
+     "n": 41,
+     "win": 0.21951219512195122,
+     "avg": -0.010292682926829253,
+     "med": -0.101,
+     "pf": 0.8580176300383554,
+     "bestShare": 0.5141165398792252,
+     "best": 0.25983902439024387,
+     "big": 0.12195121951219512
+    }
+   },
+   "days": 90,
+   "stocks": 88
+  },
+  "IG6/trail": {
+   "rule": "IG6",
+   "exit": "trail",
+   "penny": false,
+   "name": "Classic low-float runner: crosses +10% before 11:00, under 5 USD, float under 20M, normal day’s volume",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.53 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 38,
+     "win": 0.13157894736842105,
+     "avg": -0.041478947368421046,
+     "med": -0.0413,
+     "pf": 0.23052138254247212,
+     "bestShare": 0.6814908936891148,
+     "best": 0.0798421052631579,
+     "big": 0.02631578947368421
+    },
+    "newer": {
+     "n": 64,
+     "win": 0.28125,
+     "avg": -0.025670312500000004,
+     "med": -0.061,
+     "pf": 0.5319106501794973,
+     "bestShare": 0.19395789811987788,
+     "best": 0.10291406249999997,
+     "big": 0.09375
+    },
+    "stress": {
+     "n": 64,
+     "win": 0.234375,
+     "avg": -0.03578749999999998,
+     "med": -0.07150000000000001,
+     "pf": 0.4246527167223494,
+     "bestShare": 0.20798580301685893,
+     "best": 0.10291406249999997,
+     "big": 0.09375
+    },
+    "last6": {
+     "n": 41,
+     "win": 0.2682926829268293,
+     "avg": -0.02055365853658537,
+     "med": -0.057999999999999996,
+     "pf": 0.6231216457960643,
+     "bestShare": 0.2598866001578985,
+     "best": 0.10511219512195119,
+     "big": 0.0975609756097561
+    }
+   },
+   "days": 90,
+   "stocks": 88
+  },
+  "IG6/trail5": {
+   "rule": "IG6",
+   "exit": "trail5",
+   "penny": false,
+   "name": "Classic low-float runner: crosses +10% before 11:00, under 5 USD, float under 20M, normal day’s volume",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.37 (1.20 needed); one trade made 20%+ of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 38,
+     "win": 0.23684210526315788,
+     "avg": -0.037631578947368426,
+     "med": -0.0466,
+     "pf": 0.22644163150492266,
+     "bestShare": 0.21285236502627808,
+     "best": 0.045831578947368425,
+     "big": 0
+    },
+    "newer": {
+     "n": 64,
+     "win": 0.25,
+     "avg": -0.025979687499999998,
+     "med": -0.0444,
+     "pf": 0.37142749130500524,
+     "bestShare": 0.2226972010178117,
+     "best": 0.0564578125,
+     "big": 0.03125
+    },
+    "stress": {
+     "n": 64,
+     "win": 0.203125,
+     "avg": -0.036096874999999994,
+     "med": -0.054900000000000004,
+     "pf": 0.26718477398889773,
+     "bestShare": 0.24729906209189126,
+     "best": 0.0564578125,
+     "big": 0.03125
+    },
+    "last6": {
+     "n": 41,
+     "win": 0.2682926829268293,
+     "avg": -0.021824390243902436,
+     "med": -0.0444,
+     "pf": 0.45392408153301606,
+     "bestShare": 0.2941650981446626,
+     "best": 0.059487804878048785,
+     "big": 0.04878048780487805
+    }
+   },
+   "days": 90,
+   "stocks": 88
+  },
+  "IG9/close": {
+   "rule": "IG9",
+   "exit": "close",
+   "penny": false,
+   "name": "First orderly pullback after an early run: crossed +10% before 11:00 with a normal day’s volume, pulled back 4-12% from its high without falling under +6%, then a minute closes above the 3 minutes before it (before 13:00)",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.45 (1.20 needed); one trade made 20%+ of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 173,
+     "win": 0.17341040462427745,
+     "avg": -0.023684393063583817,
+     "med": -0.0619,
+     "pf": 0.6192325920694368,
+     "bestShare": 0.16201695805507615,
+     "best": 0.12538034682080926,
+     "big": 0.06936416184971098
+    },
+    "newer": {
+     "n": 160,
+     "win": 0.1875,
+     "avg": -0.03596499999999998,
+     "med": -0.0682,
+     "pf": 0.45227489053873965,
+     "bestShare": 0.24233942251031237,
+     "best": 0.14588062500000004,
+     "big": 0.0625
+    },
+    "stress": {
+     "n": 160,
+     "win": 0.18125,
+     "avg": -0.044043124999999995,
+     "med": -0.0766,
+     "pf": 0.3906279725359299,
+     "bestShare": 0.2525845084453103,
+     "best": 0.14588062500000004,
+     "big": 0.0625
+    },
+    "last6": {
+     "n": 75,
+     "win": 0.21333333333333335,
+     "avg": -0.021522666666666655,
+     "med": -0.0638,
+     "pf": 0.6722702724651805,
+     "bestShare": 0.3477591205605219,
+     "best": 0.17295333333333332,
+     "big": 0.09333333333333334
+    }
+   },
+   "days": 240,
+   "stocks": 290
+  },
+  "IG9/trail": {
+   "rule": "IG9",
+   "exit": "trail",
+   "penny": false,
+   "name": "First orderly pullback after an early run: crossed +10% before 11:00 with a normal day’s volume, pulled back 4-12% from its high without falling under +6%, then a minute closes above the 3 minutes before it (before 13:00)",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.38 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 173,
+     "win": 0.24855491329479767,
+     "avg": -0.020591329479768793,
+     "med": -0.043,
+     "pf": 0.5301759383820001,
+     "bestShare": 0.14691907758899472,
+     "best": 0.08399421965317919,
+     "big": 0.05202312138728324
+    },
+    "newer": {
+     "n": 160,
+     "win": 0.2625,
+     "avg": -0.0268875,
+     "med": -0.0437,
+     "pf": 0.37880844427758675,
+     "bestShare": 0.10192879469390867,
+     "best": 0.08129312500000005,
+     "big": 0.05
+    },
+    "stress": {
+     "n": 160,
+     "win": 0.2125,
+     "avg": -0.03496562500000001,
+     "med": -0.051500000000000004,
+     "pf": 0.2921400916061441,
+     "bestShare": 0.11126510459526184,
+     "best": 0.08129312500000005,
+     "big": 0.05
+    },
+    "last6": {
+     "n": 75,
+     "win": 0.30666666666666664,
+     "avg": -0.02223333333333333,
+     "med": -0.0442,
+     "pf": 0.47294392818762226,
+     "bestShare": 0.17870747844683554,
+     "best": 0.0840106666666667,
+     "big": 0.06666666666666667
+    }
+   },
+   "days": 240,
+   "stocks": 290
+  },
+  "IG9/trail5": {
+   "rule": "IG9",
+   "exit": "trail5",
+   "penny": false,
+   "name": "First orderly pullback after an early run: crossed +10% before 11:00 with a normal day’s volume, pulled back 4-12% from its high without falling under +6%, then a minute closes above the 3 minutes before it (before 13:00)",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.39 (1.20 needed); loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 173,
+     "win": 0.2774566473988439,
+     "avg": -0.017064739884393058,
+     "med": -0.031100000000000003,
+     "pf": 0.4752017634301559,
+     "bestShare": 0.16283854556336974,
+     "best": 0.053202890173410435,
+     "big": 0.023121387283236993
+    },
+    "newer": {
+     "n": 160,
+     "win": 0.3,
+     "avg": -0.017851874999999996,
+     "med": -0.0252,
+     "pf": 0.3949798771446729,
+     "bestShare": 0.16501313884270924,
+     "best": 0.052001874999999975,
+     "big": 0.0125
+    },
+    "stress": {
+     "n": 160,
+     "win": 0.25,
+     "avg": -0.02593,
+     "med": -0.0329,
+     "pf": 0.26892103825618063,
+     "bestShare": 0.19769346700740448,
+     "best": 0.052001874999999975,
+     "big": 0.0125
+    },
+    "last6": {
+     "n": 75,
+     "win": 0.25333333333333335,
+     "avg": -0.020605333333333333,
+     "med": -0.0252,
+     "pf": 0.33790326035731116,
+     "bestShare": 0.16989983517180168,
+     "best": 0.048845333333333345,
+     "big": 0.013333333333333334
+    }
+   },
+   "days": 240,
+   "stocks": 290
+  },
+  "IG7/close": {
+   "rule": "IG7",
+   "exit": "close",
+   "penny": false,
+   "name": "Micro-float pre-market gapper: gap 15%+, pre-market volume 5x+ a normal day, float under 10M, 1-5 USD, breaks its first 5-minute high",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 6; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0.5,
+     "avg": -0.023300000000000008,
+     "med": 0.07719999999999999,
+     "pf": 0.6235864297253634,
+     "bestShare": 1,
+     "best": 0.24225,
+     "big": 0
+    },
+    "newer": {
+     "n": 6,
+     "win": 0.3333333333333333,
+     "avg": -0.04555,
+     "med": -0.0645,
+     "pf": 0.11980676328502414,
+     "bestShare": 0.849462365591398,
+     "best": 0.17055,
+     "big": 0
+    },
+    "stress": {
+     "n": 6,
+     "win": 0.16666666666666666,
+     "avg": -0.05546666666666667,
+     "med": -0.075,
+     "pf": 0.059621361966657245,
+     "bestShare": 1,
+     "best": 0.17055,
+     "big": 0
+    },
+    "last6": {
+     "n": 3,
+     "win": 0,
+     "avg": -0.07773333333333333,
+     "med": -0.07970000000000001,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.12713333333333335,
+     "big": 0
+    }
+   },
+   "days": 8,
+   "stocks": 8
+  },
+  "IG7/trail": {
+   "rule": "IG7",
+   "exit": "trail",
+   "penny": false,
+   "name": "Micro-float pre-market gapper: gap 15%+, pre-market volume 5x+ a normal day, float under 10M, 1-5 USD, breaks its first 5-minute high",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 6; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0,
+     "avg": -0.03465,
+     "med": -0.0082,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.096,
+     "big": 0
+    },
+    "newer": {
+     "n": 6,
+     "win": 0.5,
+     "avg": 0.0017666666666666688,
+     "med": 0.011599999999999996,
+     "pf": 1.0459272097053727,
+     "bestShare": 0.5608947804473903,
+     "best": 0.12643333333333334,
+     "big": 0.16666666666666666
+    },
+    "stress": {
+     "n": 6,
+     "win": 0.5,
+     "avg": -0.008149999999999996,
+     "med": 0.0010999999999999968,
+     "pf": 0.8110510046367853,
+     "bestShare": 0.5950452596474513,
+     "best": 0.12643333333333334,
+     "big": 0.16666666666666666
+    },
+    "last6": {
+     "n": 3,
+     "win": 0.3333333333333333,
+     "avg": -0.006033333333333331,
+     "med": -0.0645,
+     "pf": 0.8820846905537459,
+     "bestShare": 1,
+     "best": 0.11783333333333335,
+     "big": 0.3333333333333333
+    }
+   },
+   "days": 8,
+   "stocks": 8
+  },
+  "IG7/trail5": {
+   "rule": "IG7",
+   "exit": "trail5",
+   "penny": false,
+   "name": "Micro-float pre-market gapper: gap 15%+, pre-market volume 5x+ a normal day, float under 10M, 1-5 USD, breaks its first 5-minute high",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 6; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0.5,
+     "avg": 0.020149999999999994,
+     "med": 0.04809999999999999,
+     "pf": 6.166666666666664,
+     "bestShare": 1,
+     "best": 0.096,
+     "big": 0
+    },
+    "newer": {
+     "n": 6,
+     "win": 0.16666666666666666,
+     "avg": -0.027749999999999997,
+     "med": -0.0387,
+     "pf": 0.24489795918367346,
+     "bestShare": 1,
+     "best": 0.04431666666666667,
+     "big": 0
+    },
+    "stress": {
+     "n": 6,
+     "win": 0.16666666666666666,
+     "avg": -0.03766666666666666,
+     "med": -0.0492,
+     "pf": 0.16141001855287568,
+     "bestShare": 1,
+     "best": 0.04431666666666667,
+     "big": 0
+    },
+    "last6": {
+     "n": 3,
+     "win": 0,
+     "avg": -0.03513333333333333,
+     "med": -0.0387,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.037766666666666664,
+     "big": 0
+    }
+   },
+   "days": 8,
+   "stocks": 8
+  },
+  "PENNY IG1/close": {
+   "rule": "IG1",
+   "exit": "close",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00 New York with a normal day’s volume already traded",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.28 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 47,
+     "win": 0.14893617021276595,
+     "avg": -0.04492553191489362,
+     "med": -0.115,
+     "pf": 0.5191300387155542,
+     "bestShare": 0.5470936608905462,
+     "best": 0.15332978723404256,
+     "big": 0.0851063829787234
+    },
+    "newer": {
+     "n": 50,
+     "win": 0.06,
+     "avg": -0.06348800000000003,
+     "med": -0.115,
+     "pf": 0.27538349159970765,
+     "bestShare": 0.37259615384615385,
+     "best": 0.13425600000000004,
+     "big": 0.06
+    },
+    "stress": {
+     "n": 50,
+     "win": 0.06,
+     "avg": -0.07916799999999999,
+     "med": -0.1325,
+     "pf": 0.2257105412436672,
+     "bestShare": 0.37438252881532197,
+     "best": 0.13425600000000004,
+     "big": 0.06
+    },
+    "last6": {
+     "n": 29,
+     "win": 0.06896551724137931,
+     "avg": -0.060779310344827586,
+     "med": -0.115,
+     "pf": 0.31599984477472925,
+     "bestShare": 0.5520078595112367,
+     "best": 0.16816206896551722,
+     "big": 0.06896551724137931
+    }
+   },
+   "days": 86,
+   "stocks": 82
+  },
+  "PENNY IG1/trail": {
+   "rule": "IG1",
+   "exit": "trail",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00 New York with a normal day’s volume already traded",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.53 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 47,
+     "win": 0.14893617021276595,
+     "avg": -0.061440425531914894,
+     "med": -0.101,
+     "pf": 0.1736206501831501,
+     "bestShare": 0.39360474699192355,
+     "best": 0.07374042553191489,
+     "big": 0.02127659574468085
+    },
+    "newer": {
+     "n": 50,
+     "win": 0.18,
+     "avg": -0.030646000000000003,
+     "med": -0.07450000000000001,
+     "pf": 0.5332764765008681,
+     "bestShare": 0.2971784327164725,
+     "best": 0.11105200000000004,
+     "big": 0.12
+    },
+    "stress": {
+     "n": 50,
+     "win": 0.16,
+     "avg": -0.046326000000000006,
+     "med": -0.08990000000000001,
+     "pf": 0.41176321202732563,
+     "bestShare": 0.31010238065869006,
+     "best": 0.11105200000000004,
+     "big": 0.12
+    },
+    "last6": {
+     "n": 29,
+     "win": 0.2413793103448276,
+     "avg": -0.01557586206896552,
+     "med": -0.0701,
+     "pf": 0.7542437431991293,
+     "bestShare": 0.3753155882565102,
+     "best": 0.1357655172413793,
+     "big": 0.13793103448275862
+    }
+   },
+   "days": 86,
+   "stocks": 82
+  },
+  "PENNY IG1/trail5": {
+   "rule": "IG1",
+   "exit": "trail5",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00 New York with a normal day’s volume already traded",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.34 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 47,
+     "win": 0.2765957446808511,
+     "avg": -0.04194255319148935,
+     "med": -0.052500000000000005,
+     "pf": 0.18665676445104584,
+     "bestShare": 0.18412908930150312,
+     "best": 0.059270212765957425,
+     "big": 0
+    },
+    "newer": {
+     "n": 50,
+     "win": 0.14,
+     "avg": -0.035308,
+     "med": -0.049800000000000004,
+     "pf": 0.33743666729217475,
+     "bestShare": 0.5786898009120232,
+     "best": 0.06481200000000001,
+     "big": 0.04
+    },
+    "stress": {
+     "n": 50,
+     "win": 0.12,
+     "avg": -0.05098800000000001,
+     "med": -0.06290000000000001,
+     "pf": 0.24149831900270743,
+     "bestShare": 0.6194406800542073,
+     "best": 0.06481200000000001,
+     "big": 0.04
+    },
+    "last6": {
+     "n": 29,
+     "win": 0.1724137931034483,
+     "avg": -0.02525862068965517,
+     "med": -0.055600000000000004,
+     "pf": 0.529120596554384,
+     "bestShare": 0.6321224638561536,
+     "best": 0.08227241379310345,
+     "big": 0.06896551724137931
+    }
+   },
+   "days": 86,
+   "stocks": 82
+  },
+  "PENNY IG2/close": {
+   "rule": "IG2",
+   "exit": "close",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +20% before 11:00 with 1.5x a normal day’s volume",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.29 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 36,
+     "win": 0.2222222222222222,
+     "avg": -0.0002833333333333322,
+     "med": -0.115,
+     "pf": 0.9966395413962372,
+     "bestShare": 0.412250834683151,
+     "best": 0.2075694444444444,
+     "big": 0.1388888888888889
+    },
+    "newer": {
+     "n": 33,
+     "win": 0.09090909090909091,
+     "avg": -0.06556666666666666,
+     "med": -0.115,
+     "pf": 0.28877128393925444,
+     "bestShare": 0.5116676152532726,
+     "best": 0.1759333333333334,
+     "big": 0.06060606060606061
+    },
+    "stress": {
+     "n": 33,
+     "win": 0.09090909090909091,
+     "avg": -0.08094545454545454,
+     "med": -0.1325,
+     "pf": 0.23618895116092886,
+     "bestShare": 0.523002421307506,
+     "best": 0.1759333333333334,
+     "big": 0.06060606060606061
+    },
+    "last6": {
+     "n": 20,
+     "win": 0.1,
+     "avg": -0.053110000000000004,
+     "med": -0.115,
+     "pf": 0.43394617639221955,
+     "bestShare": 0.5520078595112367,
+     "best": 0.2182,
+     "big": 0.1
+    }
+   },
+   "days": 64,
+   "stocks": 61
+  },
+  "PENNY IG2/trail": {
+   "rule": "IG2",
+   "exit": "trail",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +20% before 11:00 with 1.5x a normal day’s volume",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.73 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades",
+   "results": {
+    "older": {
+     "n": 36,
+     "win": 0.2222222222222222,
+     "avg": -0.04606666666666667,
+     "med": -0.08860000000000001,
+     "pf": 0.29957342568737594,
+     "bestShare": 0.3366699562949386,
+     "best": 0.08811388888888888,
+     "big": 0.027777777777777776
+    },
+    "newer": {
+     "n": 33,
+     "win": 0.24242424242424243,
+     "avg": -0.017236363636363636,
+     "med": -0.07980000000000001,
+     "pf": 0.7338075627105952,
+     "bestShare": 0.33182397959183674,
+     "best": 0.13494242424242428,
+     "big": 0.15151515151515152
+    },
+    "stress": {
+     "n": 33,
+     "win": 0.21212121212121213,
+     "avg": -0.032615151515151514,
+     "med": -0.0973,
+     "pf": 0.5749881535302481,
+     "bestShare": 0.34530595426138316,
+     "best": 0.13494242424242428,
+     "big": 0.15151515151515152
+    },
+    "last6": {
+     "n": 20,
+     "win": 0.35,
+     "avg": 0.007094999999999997,
+     "med": -0.0701,
+     "pf": 1.1140308582449372,
+     "bestShare": 0.3753155882565102,
+     "best": 0.17122500000000002,
+     "big": 0.2
+    }
+   },
+   "days": 64,
+   "stocks": 61
+  },
+  "PENNY IG2/trail5": {
+   "rule": "IG2",
+   "exit": "trail5",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +20% before 11:00 with 1.5x a normal day’s volume",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.51 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 36,
+     "win": 0.2777777777777778,
+     "avg": -0.04516666666666666,
+     "med": -0.0591,
+     "pf": 0.1887846737178208,
+     "bestShare": 0.2201374207188161,
+     "best": 0.05745,
+     "big": 0
+    },
+    "newer": {
+     "n": 33,
+     "win": 0.24242424242424243,
+     "avg": -0.026178787878787874,
+     "med": -0.055600000000000004,
+     "pf": 0.5137340988404818,
+     "bestShare": 0.5700668346663744,
+     "best": 0.08367272727272729,
+     "big": 0.06060606060606061
+    },
+    "stress": {
+     "n": 33,
+     "win": 0.18181818181818182,
+     "avg": -0.041557575757575765,
+     "med": -0.0731,
+     "pf": 0.3718107278640465,
+     "bestShare": 0.6194406800542073,
+     "best": 0.08367272727272729,
+     "big": 0.06060606060606061
+    },
+    "last6": {
+     "n": 20,
+     "win": 0.25,
+     "avg": -0.012950000000000003,
+     "med": -0.055600000000000004,
+     "pf": 0.7606505868219204,
+     "bestShare": 0.6321224638561536,
+     "best": 0.10622000000000001,
+     "big": 0.1
+    }
+   },
+   "days": 64,
+   "stocks": 61
+  },
+  "PENNY IG3/close": {
+   "rule": "IG3",
+   "exit": "close",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00, normal day’s volume, small float (under 20M shares)",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (11 / 17; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 11,
+     "win": 0,
+     "avg": -0.10778181818181819,
+     "med": -0.115,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.07956363636363636,
+     "big": 0
+    },
+    "newer": {
+     "n": 17,
+     "win": 0.11764705882352941,
+     "avg": -0.03455882352941176,
+     "med": -0.101,
+     "pf": 0.5808959908688829,
+     "bestShare": 0.5520078595112367,
+     "best": 0.19165882352941177,
+     "big": 0.11764705882352941
+    },
+    "stress": {
+     "n": 17,
+     "win": 0.11764705882352941,
+     "avg": -0.049176470588235294,
+     "med": -0.1115,
+     "pf": 0.4824490806661301,
+     "bestShare": 0.5543436417297575,
+     "best": 0.19165882352941177,
+     "big": 0.11764705882352941
+    },
+    "last6": {
+     "n": 10,
+     "win": 0.2,
+     "avg": -0.004949999999999991,
+     "med": -0.115,
+     "pf": 0.9426950683028479,
+     "bestShare": 0.5520078595112367,
+     "best": 0.28104999999999997,
+     "big": 0.2
+    }
+   },
+   "days": 27,
+   "stocks": 21
+  },
+  "PENNY IG3/trail": {
+   "rule": "IG3",
+   "exit": "trail",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00, normal day’s volume, small float (under 20M shares)",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (11 / 17; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 11,
+     "win": 0.09090909090909091,
+     "avg": -0.07497272727272729,
+     "med": -0.101,
+     "pf": 0.009131322840321997,
+     "bestShare": 1,
+     "best": 0.07443636363636363,
+     "big": 0
+    },
+    "newer": {
+     "n": 17,
+     "win": 0.23529411764705882,
+     "avg": -0.0062058823529411835,
+     "med": -0.101,
+     "pf": 0.9145679812130534,
+     "bestShare": 0.46068709049052603,
+     "best": 0.1460529411764706,
+     "big": 0.17647058823529413
+    },
+    "stress": {
+     "n": 17,
+     "win": 0.23529411764705882,
+     "avg": -0.020823529411764706,
+     "med": -0.1115,
+     "pf": 0.751996637242539,
+     "bestShare": 0.46841811067635547,
+     "best": 0.1460529411764706,
+     "big": 0.17647058823529413
+    },
+    "last6": {
+     "n": 10,
+     "win": 0.3,
+     "avg": 0.021819999999999992,
+     "med": -0.101,
+     "pf": 1.2991089787525703,
+     "bestShare": 0.5490134008652527,
+     "best": 0.20351999999999998,
+     "big": 0.2
+    }
+   },
+   "days": 27,
+   "stocks": 21
+  },
+  "PENNY IG3/trail5": {
+   "rule": "IG3",
+   "exit": "trail5",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00, normal day’s volume, small float (under 20M shares)",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (11 / 17; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 11,
+     "win": 0.2727272727272727,
+     "avg": -0.04112727272727273,
+     "med": -0.063,
+     "pf": 0.20464135021097044,
+     "bestShare": 0.5558419243986255,
+     "best": 0.06937272727272727,
+     "big": 0
+    },
+    "newer": {
+     "n": 17,
+     "win": 0.11764705882352941,
+     "avg": -0.029611764705882358,
+     "med": -0.06870000000000001,
+     "pf": 0.5594644263586244,
+     "bestShare": 0.8138589081808227,
+     "best": 0.09449411764705884,
+     "big": 0.058823529411764705
+    },
+    "stress": {
+     "n": 17,
+     "win": 0.11764705882352941,
+     "avg": -0.04422941176470589,
+     "med": -0.0862,
+     "pf": 0.44843016431924887,
+     "bestShare": 0.8225094061835432,
+     "best": 0.09449411764705884,
+     "big": 0.058823529411764705
+    },
+    "last6": {
+     "n": 10,
+     "win": 0.2,
+     "avg": 0.0008799999999999947,
+     "med": -0.068,
+     "pf": 1.0139571768437747,
+     "bestShare": 0.8138589081808227,
+     "best": 0.14587000000000003,
+     "big": 0.1
+    }
+   },
+   "days": 27,
+   "stocks": 21
+  },
+  "PENNY IG4/close": {
+   "rule": "IG4",
+   "exit": "close",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00, normal day’s volume, listed under a year",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 7; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0,
+     "avg": -0.115,
+     "med": -0.115,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0273,
+     "big": 0
+    },
+    "newer": {
+     "n": 7,
+     "win": 0,
+     "avg": -0.08798571428571429,
+     "med": -0.101,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.07037142857142857,
+     "big": 0
+    },
+    "stress": {
+     "n": 7,
+     "win": 0,
+     "avg": -0.10348571428571429,
+     "med": -0.1115,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.07037142857142857,
+     "big": 0
+    },
+    "last6": {
+     "n": 3,
+     "win": 0,
+     "avg": -0.11033333333333334,
+     "med": -0.115,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.053233333333333334,
+     "big": 0
+    }
+   },
+   "days": 9,
+   "stocks": 8
+  },
+  "PENNY IG4/trail": {
+   "rule": "IG4",
+   "exit": "trail",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00, normal day’s volume, listed under a year",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 7; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0,
+     "avg": -0.1021,
+     "med": -0.0892,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0273,
+     "big": 0
+    },
+    "newer": {
+     "n": 7,
+     "win": 0,
+     "avg": -0.0609,
+     "med": -0.0641,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.07037142857142857,
+     "big": 0
+    },
+    "stress": {
+     "n": 7,
+     "win": 0,
+     "avg": -0.07640000000000001,
+     "med": -0.0816,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.07037142857142857,
+     "big": 0
+    },
+    "last6": {
+     "n": 3,
+     "win": 0,
+     "avg": -0.07576666666666668,
+     "med": -0.10060000000000001,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.053233333333333334,
+     "big": 0
+    }
+   },
+   "days": 9,
+   "stocks": 8
+  },
+  "PENNY IG4/trail5": {
+   "rule": "IG4",
+   "exit": "trail5",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Crosses +10% before 11:00, normal day’s volume, listed under a year",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 7; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0,
+     "avg": -0.059050000000000005,
+     "med": -0.0366,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0273,
+     "big": 0
+    },
+    "newer": {
+     "n": 7,
+     "win": 0.14285714285714285,
+     "avg": -0.04787142857142857,
+     "med": -0.0565,
+     "pf": 0.10853950518754989,
+     "bestShare": 1,
+     "best": 0.03944285714285715,
+     "big": 0
+    },
+    "stress": {
+     "n": 7,
+     "win": 0.14285714285714285,
+     "avg": -0.06337142857142856,
+     "med": -0.07400000000000001,
+     "pf": 0.06393753956530913,
+     "bestShare": 1,
+     "best": 0.03944285714285715,
+     "big": 0
+    },
+    "last6": {
+     "n": 3,
+     "win": 0,
+     "avg": -0.07976666666666667,
+     "med": -0.08180000000000001,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.011099999999999999,
+     "big": 0
+    }
+   },
+   "days": 9,
+   "stocks": 8
+  },
+  "PENNY IG5/close": {
+   "rule": "IG5",
+   "exit": "close",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Gap-up 10%+ that breaks its first 5-minute high (opening range breakout)",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.43 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 43,
+     "win": 0.32558139534883723,
+     "avg": -0.01972325581395349,
+     "med": -0.061,
+     "pf": 0.7228884169253391,
+     "bestShare": 0.2782498644006508,
+     "best": 0.21315813953488374,
+     "big": 0.16279069767441862
+    },
+    "newer": {
+     "n": 33,
+     "win": 0.24242424242424243,
+     "avg": -0.04106060606060606,
+     "med": -0.0789,
+     "pf": 0.4256040695209834,
+     "bestShare": 0.3957171314741036,
+     "best": 0.19575151515151512,
+     "big": 0.06060606060606061
+    },
+    "stress": {
+     "n": 33,
+     "win": 0.18181818181818182,
+     "avg": -0.05728787878787879,
+     "med": -0.09640000000000001,
+     "pf": 0.3153339127915399,
+     "bestShare": 0.43620075801079594,
+     "best": 0.19575151515151512,
+     "big": 0.06060606060606061
+    },
+    "last6": {
+     "n": 17,
+     "win": 0.29411764705882354,
+     "avg": -0.012970588235294116,
+     "med": -0.0766,
+     "pf": 0.8001812415043046,
+     "bestShare": 0.4499433748584371,
+     "best": 0.23847058823529413,
+     "big": 0.11764705882352941
+    }
+   },
+   "days": 69,
+   "stocks": 64
+  },
+  "PENNY IG5/trail": {
+   "rule": "IG5",
+   "exit": "trail",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Gap-up 10%+ that breaks its first 5-minute high (opening range breakout)",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the newer year; loses at 1.5x costs; profit factor 0.61 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades",
+   "results": {
+    "older": {
+     "n": 43,
+     "win": 0.4418604651162791,
+     "avg": 0.002953488372093023,
+     "med": -0.012100000000000001,
+     "pf": 1.0862713130901434,
+     "bestShare": 0.1770996185354262,
+     "best": 0.13019302325581394,
+     "big": 0.11627906976744186
+    },
+    "newer": {
+     "n": 33,
+     "win": 0.24242424242424243,
+     "avg": -0.02113030303030303,
+     "med": -0.051500000000000004,
+     "pf": 0.6138553549673275,
+     "bestShare": 0.2817320703653586,
+     "best": 0.12433636363636365,
+     "big": 0.12121212121212122
+    },
+    "stress": {
+     "n": 33,
+     "win": 0.24242424242424243,
+     "avg": -0.03735757575757577,
+     "med": -0.069,
+     "pf": 0.44350652281857994,
+     "bestShare": 0.3000508905852417,
+     "best": 0.12433636363636365,
+     "big": 0.12121212121212122
+    },
+    "last6": {
+     "n": 17,
+     "win": 0.35294117647058826,
+     "avg": 0.011047058823529413,
+     "med": -0.043500000000000004,
+     "pf": 1.255544972105048,
+     "bestShare": 0.3384632058090387,
+     "best": 0.16001176470588233,
+     "big": 0.17647058823529413
+    }
+   },
+   "days": 69,
+   "stocks": 64
+  },
+  "PENNY IG5/trail5": {
+   "rule": "IG5",
+   "exit": "trail5",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Gap-up 10%+ that breaks its first 5-minute high (opening range breakout)",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "REJECTED",
+   "why": "lost money in the older year; lost money in the newer year; loses at 1.5x costs; profit factor 0.23 (1.20 needed); one trade made 20%+ of the gains; one stock made over 25% of the gains; loses without its 2 best trades; lost money in the last 6 months",
+   "results": {
+    "older": {
+     "n": 43,
+     "win": 0.3023255813953488,
+     "avg": -0.00850697674418605,
+     "med": -0.028800000000000003,
+     "pf": 0.7457250104268041,
+     "bestShare": 0.21215510812826244,
+     "best": 0.08415348837209302,
+     "big": 0.046511627906976744
+    },
+    "newer": {
+     "n": 33,
+     "win": 0.21212121212121213,
+     "avg": -0.03112121212121212,
+     "med": -0.035500000000000004,
+     "pf": 0.23426781986280942,
+     "bestShare": 0.6390833863781031,
+     "best": 0.06149696969696971,
+     "big": 0.030303030303030304
+    },
+    "stress": {
+     "n": 33,
+     "win": 0.12121212121212122,
+     "avg": -0.04734848484848484,
+     "med": -0.05090000000000001,
+     "pf": 0.12777715753042312,
+     "bestShare": 0.8313674093490607,
+     "best": 0.06149696969696971,
+     "big": 0.030303030303030304
+    },
+    "last6": {
+     "n": 17,
+     "win": 0.17647058823529413,
+     "avg": -0.0345529411764706,
+     "med": -0.027100000000000003,
+     "pf": 0.06226053639846742,
+     "bestShare": 0.7333333333333335,
+     "best": 0.05703529411764705,
+     "big": 0
+    }
+   },
+   "days": 69,
+   "stocks": 64
+  },
+  "PENNY IG6/close": {
+   "rule": "IG6",
+   "exit": "close",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Classic low-float runner: crosses +10% before 11:00, under 5 USD, float under 20M, normal day’s volume",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (11 / 17; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 11,
+     "win": 0,
+     "avg": -0.10778181818181819,
+     "med": -0.115,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.07956363636363636,
+     "big": 0
+    },
+    "newer": {
+     "n": 17,
+     "win": 0.11764705882352941,
+     "avg": -0.03455882352941176,
+     "med": -0.101,
+     "pf": 0.5808959908688829,
+     "bestShare": 0.5520078595112367,
+     "best": 0.19165882352941177,
+     "big": 0.11764705882352941
+    },
+    "stress": {
+     "n": 17,
+     "win": 0.11764705882352941,
+     "avg": -0.049176470588235294,
+     "med": -0.1115,
+     "pf": 0.4824490806661301,
+     "bestShare": 0.5543436417297575,
+     "best": 0.19165882352941177,
+     "big": 0.11764705882352941
+    },
+    "last6": {
+     "n": 10,
+     "win": 0.2,
+     "avg": -0.004949999999999991,
+     "med": -0.115,
+     "pf": 0.9426950683028479,
+     "bestShare": 0.5520078595112367,
+     "best": 0.28104999999999997,
+     "big": 0.2
+    }
+   },
+   "days": 27,
+   "stocks": 21
+  },
+  "PENNY IG6/trail": {
+   "rule": "IG6",
+   "exit": "trail",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Classic low-float runner: crosses +10% before 11:00, under 5 USD, float under 20M, normal day’s volume",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (11 / 17; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 11,
+     "win": 0.09090909090909091,
+     "avg": -0.07497272727272729,
+     "med": -0.101,
+     "pf": 0.009131322840321997,
+     "bestShare": 1,
+     "best": 0.07443636363636363,
+     "big": 0
+    },
+    "newer": {
+     "n": 17,
+     "win": 0.23529411764705882,
+     "avg": -0.0062058823529411835,
+     "med": -0.101,
+     "pf": 0.9145679812130534,
+     "bestShare": 0.46068709049052603,
+     "best": 0.1460529411764706,
+     "big": 0.17647058823529413
+    },
+    "stress": {
+     "n": 17,
+     "win": 0.23529411764705882,
+     "avg": -0.020823529411764706,
+     "med": -0.1115,
+     "pf": 0.751996637242539,
+     "bestShare": 0.46841811067635547,
+     "best": 0.1460529411764706,
+     "big": 0.17647058823529413
+    },
+    "last6": {
+     "n": 10,
+     "win": 0.3,
+     "avg": 0.021819999999999992,
+     "med": -0.101,
+     "pf": 1.2991089787525703,
+     "bestShare": 0.5490134008652527,
+     "best": 0.20351999999999998,
+     "big": 0.2
+    }
+   },
+   "days": 27,
+   "stocks": 21
+  },
+  "PENNY IG6/trail5": {
+   "rule": "IG6",
+   "exit": "trail5",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Classic low-float runner: crosses +10% before 11:00, under 5 USD, float under 20M, normal day’s volume",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (11 / 17; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 11,
+     "win": 0.2727272727272727,
+     "avg": -0.04112727272727273,
+     "med": -0.063,
+     "pf": 0.20464135021097044,
+     "bestShare": 0.5558419243986255,
+     "best": 0.06937272727272727,
+     "big": 0
+    },
+    "newer": {
+     "n": 17,
+     "win": 0.11764705882352941,
+     "avg": -0.029611764705882358,
+     "med": -0.06870000000000001,
+     "pf": 0.5594644263586244,
+     "bestShare": 0.8138589081808227,
+     "best": 0.09449411764705884,
+     "big": 0.058823529411764705
+    },
+    "stress": {
+     "n": 17,
+     "win": 0.11764705882352941,
+     "avg": -0.04422941176470589,
+     "med": -0.0862,
+     "pf": 0.44843016431924887,
+     "bestShare": 0.8225094061835432,
+     "best": 0.09449411764705884,
+     "big": 0.058823529411764705
+    },
+    "last6": {
+     "n": 10,
+     "win": 0.2,
+     "avg": 0.0008799999999999947,
+     "med": -0.068,
+     "pf": 1.0139571768437747,
+     "bestShare": 0.8138589081808227,
+     "best": 0.14587000000000003,
+     "big": 0.1
+    }
+   },
+   "days": 27,
+   "stocks": 21
+  },
+  "PENNY IG9/close": {
+   "rule": "IG9",
+   "exit": "close",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): First orderly pullback after an early run: crossed +10% before 11:00 with a normal day’s volume, pulled back 4-12% from its high without falling under +6%, then a minute closes above the 3 minutes before it (before 13:00)",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (22 / 23; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 22,
+     "win": 0.13636363636363635,
+     "avg": -0.07665909090909091,
+     "med": -0.0949,
+     "pf": 0.16945730326012015,
+     "bestShare": 0.5678581807614066,
+     "best": 0.12791818181818182,
+     "big": 0.045454545454545456
+    },
+    "newer": {
+     "n": 23,
+     "win": 0.08695652173913043,
+     "avg": -0.050195652173913044,
+     "med": -0.0902,
+     "pf": 0.37320158531950703,
+     "bestShare": 0.6299098050625547,
+     "best": 0.13538695652173913,
+     "big": 0.08695652173913043
+    },
+    "stress": {
+     "n": 23,
+     "win": 0.08695652173913043,
+     "avg": -0.0658695652173913,
+     "med": -0.10490000000000001,
+     "pf": 0.30325607064017657,
+     "bestShare": 0.6301182893539582,
+     "best": 0.13538695652173913,
+     "big": 0.08695652173913043
+    },
+    "last6": {
+     "n": 14,
+     "win": 0.07142857142857142,
+     "avg": -0.057835714285714275,
+     "med": -0.0941,
+     "pf": 0.34843485957994697,
+     "bestShare": 1,
+     "best": 0.1335142857142857,
+     "big": 0.07142857142857142
+    }
+   },
+   "days": 41,
+   "stocks": 42
+  },
+  "PENNY IG9/trail": {
+   "rule": "IG9",
+   "exit": "trail",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): First orderly pullback after an early run: crossed +10% before 11:00 with a normal day’s volume, pulled back 4-12% from its high without falling under +6%, then a minute closes above the 3 minutes before it (before 13:00)",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (22 / 23; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 22,
+     "win": 0.22727272727272727,
+     "avg": -0.03003636363636364,
+     "med": -0.0482,
+     "pf": 0.48651798896573156,
+     "bestShare": 0.4860245967097908,
+     "best": 0.1047090909090909,
+     "big": 0.09090909090909091
+    },
+    "newer": {
+     "n": 23,
+     "win": 0.17391304347826086,
+     "avg": -0.03182173913043479,
+     "med": -0.0643,
+     "pf": 0.487536759557485,
+     "bestShare": 0.5066781559672555,
+     "best": 0.09251304347826088,
+     "big": 0.08695652173913043
+    },
+    "stress": {
+     "n": 23,
+     "win": 0.17391304347826086,
+     "avg": -0.04749565217391304,
+     "med": -0.0791,
+     "pf": 0.36953886997172053,
+     "bestShare": 0.5236607840074964,
+     "best": 0.09251304347826088,
+     "big": 0.08695652173913043
+    },
+    "last6": {
+     "n": 14,
+     "win": 0.21428571428571427,
+     "avg": -0.019228571428571428,
+     "med": -0.05790000000000001,
+     "pf": 0.6854037630010519,
+     "bestShare": 0.6015345268542199,
+     "best": 0.10929999999999998,
+     "big": 0.14285714285714285
+    }
+   },
+   "days": 41,
+   "stocks": 42
+  },
+  "PENNY IG9/trail5": {
+   "rule": "IG9",
+   "exit": "trail5",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): First orderly pullback after an early run: crossed +10% before 11:00 with a normal day’s volume, pulled back 4-12% from its high without falling under +6%, then a minute closes above the 3 minutes before it (before 13:00)",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (22 / 23; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 22,
+     "win": 0.13636363636363635,
+     "avg": -0.03866363636363637,
+     "med": -0.0345,
+     "pf": 0.2142989100314058,
+     "bestShare": 0.4525862068965517,
+     "best": 0.05804545454545455,
+     "big": 0
+    },
+    "newer": {
+     "n": 23,
+     "win": 0.21739130434782608,
+     "avg": -0.03627391304347826,
+     "med": -0.0437,
+     "pf": 0.2507409070498428,
+     "bestShare": 0.6067335243553008,
+     "best": 0.05576956521739129,
+     "big": 0.043478260869565216
+    },
+    "stress": {
+     "n": 23,
+     "win": 0.13043478260869565,
+     "avg": -0.05194782608695653,
+     "med": -0.061200000000000004,
+     "pf": 0.1652927204135811,
+     "bestShare": 0.6715976331360947,
+     "best": 0.05576956521739129,
+     "big": 0.043478260869565216
+    },
+    "last6": {
+     "n": 14,
+     "win": 0.21428571428571427,
+     "avg": -0.04656428571428572,
+     "med": -0.046900000000000004,
+     "pf": 0.1295233008412338,
+     "bestShare": 0.9577319587628866,
+     "best": 0.049728571428571434,
+     "big": 0
+    }
+   },
+   "days": 41,
+   "stocks": 42
+  },
+  "PENNY IG7/close": {
+   "rule": "IG7",
+   "exit": "close",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Micro-float pre-market gapper: gap 15%+, pre-market volume 5x+ a normal day, float under 10M, 1-5 USD, breaks its first 5-minute high",
+   "exitName": "stop 8% (opening-range low for the breakout), sell at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 1; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0,
+     "avg": -0.11795,
+     "med": -0.0854,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0319,
+     "big": 0
+    },
+    "newer": {
+     "n": 1,
+     "win": 0,
+     "avg": -0.1543,
+     "med": -0.1543,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0555,
+     "big": 0
+    },
+    "stress": {
+     "n": 1,
+     "win": 0,
+     "avg": -0.1648,
+     "med": -0.1648,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0555,
+     "big": 0
+    },
+    "last6": {
+     "n": 0
+    }
+   },
+   "days": 3,
+   "stocks": 3
+  },
+  "PENNY IG7/trail": {
+   "rule": "IG7",
+   "exit": "trail",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Micro-float pre-market gapper: gap 15%+, pre-market volume 5x+ a normal day, float under 10M, 1-5 USD, breaks its first 5-minute high",
+   "exitName": "same stop, then sell when it falls 10% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 1; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0,
+     "avg": -0.087,
+     "med": -0.0854,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0319,
+     "big": 0
+    },
+    "newer": {
+     "n": 1,
+     "win": 0,
+     "avg": -0.1543,
+     "med": -0.1543,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0555,
+     "big": 0
+    },
+    "stress": {
+     "n": 1,
+     "win": 0,
+     "avg": -0.1648,
+     "med": -0.1648,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0555,
+     "big": 0
+    },
+    "last6": {
+     "n": 0
+    }
+   },
+   "days": 3,
+   "stocks": 3
+  },
+  "PENNY IG7/trail5": {
+   "rule": "IG7",
+   "exit": "trail5",
+   "penny": true,
+   "name": "PENNY (0.10-1 USD): Micro-float pre-market gapper: gap 15%+, pre-market volume 5x+ a normal day, float under 10M, 1-5 USD, breaks its first 5-minute high",
+   "exitName": "same stop, then sell when it falls 5% from its high since the buy, else at the close",
+   "verdict": "NOT PROVEN",
+   "why": "too few trades yet (2 / 1; the sample grows every Saturday)",
+   "results": {
+    "older": {
+     "n": 2,
+     "win": 0,
+     "avg": -0.0477,
+     "med": -0.0368,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0319,
+     "big": 0
+    },
+    "newer": {
+     "n": 1,
+     "win": 0,
+     "avg": -0.1543,
+     "med": -0.1543,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0555,
+     "big": 0
+    },
+    "stress": {
+     "n": 1,
+     "win": 0,
+     "avg": -0.1648,
+     "med": -0.1648,
+     "pf": 0,
+     "bestShare": null,
+     "best": 0.0555,
+     "big": 0
+    },
+    "last6": {
+     "n": 0
+    }
+   },
+   "days": 3,
+   "stocks": 3
+  }
+ }
+}
