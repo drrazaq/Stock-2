@@ -768,6 +768,7 @@ const MENU = [
   ['calendar', 'calendar', 'This week: CPI, jobs, Fed, holidays, your dividends'],
   ['skips', 'skips', 'Buys you skipped, why, and what they did since'],
   ['health', 'health', 'Is every part of the system running?'],
+  ['dips', 'dips', 'Fallen stocks now under their own fair value (watch list, tested every Sunday)'],
   ['research', 'research', 'Every idea tested, result, and what is waiting'],
   ['review', 'review', 'Hold-or-sell study of every stock you own'],
   ['sell', 'what to sell', 'What to sell and why: every reason, tested or not'],
@@ -2242,6 +2243,8 @@ async function tgCommands(sig) {
     } else if ((k = text.match(/^quiet\s+(on|off)\s*$/i))) { const st = readJson('data/settings.json', {}); st.quiet = k[1].toLowerCase() === 'on'; fs.writeFileSync('data/settings.json', JSON.stringify(st)); out.push(st.quiet ? 'QUIET ON: you get ONE action message each night and morning, plus BUY NOW, stop and target alerts. Research messages are kept in the system and summed up there. Send  quiet off  to get everything again.' : 'QUIET OFF: you get every message again (plan, your stocks, radar paper alerts, movers, smart money, deals, Sunday studies).');
     } else if (/^(themes?|sectors? flow|industr(y|ies)|where is the money)\s*\??\s*$/i.test(text)) { out.push(themesText());
     } else if (/^(skips?|my skips|skipped)\s*\??\s*$/i.test(text)) { out.push(await skipsText());
+    } else if (/^(dips?|fair dips?|cheap|fair price|undervalued|فرص)\s*\??\s*$/i.test(text)) { const Q = readJson0('data/quality.json'), L = Q && Q.dips || [];
+      out.push(!L.length ? 'FAIR-PRICE DIPS: none right now (or the Sunday study has not run yet).' : 'FAIR-PRICE DIPS (Sunday ' + String(Q.to || '').slice(0, 10) + '): down 40%+ from the 1-year high, cash flow positive, little dilution, and under the LOW end of their own fair value.\n' + (Q.dipVerdict === 'PROMISING' ? 'The 5-year test PASSED: research list, paper first, check ZAD.' : 'The 5-year test has NOT passed (' + (Q.dipVerdict || 'not run') + '): WATCH LIST ONLY, not a buy list.') + '\n' + L.slice(0, 15).map(d => '- ' + d.sym + ' ' + d.px + ' (down ' + Math.round(d.down * 100) + '%, fair value ' + d.fairLow + ' / ' + d.fairMid + ' / ' + d.fairHigh + ')').join('\n') + '\nFor any of them:  snapshot SYM');
     } else if (/^(health|system health|status)\s*\??\s*$/i.test(text)) { const H = readJson0('data/health.json'); out.push(!H ? 'HEALTH: the first check runs this evening.' : H.problems && H.problems.length ? 'SYSTEM HEALTH (' + String(H.at).slice(0, 16).replace('T', ' ') + ' UTC): ' + H.problems.length + ' problem(s)\n' + H.problems.map(p => '- ' + p).join('\n') + '\nSend this to Claude.' : 'SYSTEM HEALTH: all ' + H.ok + ' parts fine (' + String(H.at).slice(0, 16).replace('T', ' ') + ' UTC).');
     } else if (/^(calendar|economic calendar|events this week|upcoming( events)?|this week)\s*\??\s*$/i.test(text)) { out.push(calendarText(false));
     } else if (/^(rebalance|rebalancing|balance|allocation|weights?)\s*\??\s*$/i.test(text)) { out.push(rebalanceText(readJson('data/signals.json', null)));

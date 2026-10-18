@@ -51,6 +51,7 @@ const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!S
 const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
 D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; } }); store = null;
 const spyI = SY.get('SPY'), GONE = -0.3, COST = 0.008, STRESS = 0.012, H = [126, 252];
+const hi252 = (i, t) => { const b = i * T; let m = 0; for (let k = Math.max(0, t - 251); k <= t; k++) { const c = C[b + k]; if (c > m) m = c; } return m; };
 const liquid = (i, t) => { const b = i * T, c = C[b + t]; if (!(c >= 5)) return false; let dv = 0; for (let k = t - 19; k <= t; k++) { if (k < 0 || !isFinite(C[b + k])) return false; dv += C[b + k] * V[b + k]; } return dv / 20 >= 5e6; };
 function fwd(i, t, h) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + h >= T) return null; let last = null, lk = t;
   for (let k = t + 1; k <= t + h; k++) if (isFinite(C[b + k])) { last = C[b + k]; lk = k; } if (last === null) return null; if (lk === t + h) return last / e - 1;
@@ -63,33 +64,40 @@ function scoreDay(t) { const y = known(D[t]), rows = [];
   pct(rows, 'profit', false); pct(rows, 'dilute', true); pct(rows, 'growth', true); pct(rows, 'accr', true);
   for (const x of rows) { const cik = symCik(SYMS[x.i]), a = F.v[cik] && F.v[cik][y], sh = sharesAtYearEnd(cik, y), px = C[x.i * T + t]; x.m.cfy = a && isFinite(a.cfo) && sh > 0 && px > 0 ? a.cfo / (sh * px) : null; }
   pct(rows, 'cfy', false);
+  // FAIR-PRICE DIP (added 18 Oct): down 40%+ from its 1-year high, yet still cheap for the cash its business makes (positive operating
+  // cash flow) and not drowning in new shares (share count up under 10%). Ranked by cash-flow yield. Tested against the average stock
+  // AND against ALL stocks down 40%+, so a pass means the cheapness paid, not just the bounce of any fallen stock.
+  for (const x of rows) { const h = hi252(x.i, t), c = C[x.i * T + t]; x.m.dd = h > 0 && c > 0 ? 1 - c / h : null; x.down = x.m.dd !== null && x.m.dd >= 0.4;
+    x.d = x.down && x.m.cfy > 0 && (x.m.dilute === null || x.m.dilute < 0.1) ? x.r.cfy : null; }
   for (const x of rows) { const v = ['profit', 'dilute', 'growth', 'accr'].map(k => x.r[k]).filter(z => z !== undefined); x.q = v.length >= 3 ? mean(v) : null; x.p = x.r.profit !== undefined ? x.r.profit : null;
     x.v = x.r.cfy !== undefined ? x.r.cfy : null; x.qv = x.q !== null && x.v !== null ? (x.q + x.v) / 2 : null; }
   return rows; }
 // ---- 3. monthly portfolios
-const VERS = [['QUALITY', 'q'], ['PROFIT', 'p'], ['VALUE', 'v'], ['QUALITY+VALUE', 'qv']], trades = {}; for (const [n] of VERS) for (const h of H) trades[n + '_' + h] = [];
+const VERS = [['QUALITY', 'q'], ['PROFIT', 'p'], ['VALUE', 'v'], ['QUALITY+VALUE', 'qv'], ['FAIR-PRICE DIP', 'd']], trades = {}; for (const [n] of VERS) for (const h of H) trades[n + '_' + h] = [];
 let lastRows = null, months = 0;
 for (let t = 21; t < T - 1; t += 21) { const rows = scoreDay(t); if (rows.length < 100) continue; months++; if (t + 21 >= T - 1) lastRows = rows;
   for (const h of H) { if (t + h >= T) continue; const all = rows.map(x => fwd(x.i, t, h)).filter(x => x !== null && isFinite(x)); if (all.length < 50) continue; const ctrl = mean(all);
+    const downAll = rows.filter(x => x.down).map(x => fwd(x.i, t, h)).filter(x => x !== null && isFinite(x)), c2 = downAll.length >= 20 ? mean(downAll) : null;
     const sb = spyI !== undefined ? spyI * T : null, spy = sb !== null && O[sb + t + 1] > 0 && C[sb + t + h] > 0 ? C[sb + t + h] / O[sb + t + 1] - 1 : null;
     for (const [n, f] of VERS) { const top = rows.filter(x => x[f] !== null).sort((a, b) => b[f] - a[f]); const pick = top.slice(0, Math.max(10, Math.ceil(top.length * 0.1)));
-      for (const x of pick) { const g = fwd(x.i, t, h); if (g !== null && isFinite(g)) trades[n + '_' + h].push({ t, s: SYMS[x.i], g, c: ctrl, spy }); } } } }
+      for (const x of pick) { const g = fwd(x.i, t, h); if (g !== null && isFinite(g)) trades[n + '_' + h].push({ t, s: SYMS[x.i], g, c: ctrl, c2, spy }); } } } }
 if (!lastRows) lastRows = scoreDay(T - 1);
 // ---- 4. verdicts (per formation month: stocks bought the same month share the same market)
 const mid = (() => { const ts = [...new Set(Object.values(trades).flat().map(x => x.t))].sort((a, b) => a - b); return ts[Math.floor(ts.length / 2)] || T / 2; })();
 const stat = (a, cost) => { if (!a.length) return { n: 0 }; const p = a.map(x => x.g - cost), sm = (z) => z.reduce((u, v) => u + v, 0), w = p.filter(x => x > 0), l = p.filter(x => x <= 0), byS = {}; let pos = 0;
   for (let k = 0; k < a.length; k++) if (p[k] > 0) { byS[a[k].s] = (byS[a[k].s] || 0) + p[k]; pos += p[k]; } const srt = [...p].sort((u, v) => v - u);
   const byM = {}; for (let k = 0; k < a.length; k++) (byM[a[k].t] = byM[a[k].t] || []).push(p[k] - (a[k].c - cost)); const mv = Object.values(byM).map(mean), mm = mean(mv), sd = Math.sqrt(mv.reduce((u, v) => u + (v - mm) ** 2, 0) / Math.max(1, mv.length - 1));
-  return { n: p.length, months: mv.length, avg: sm(p) / p.length, ctrl: mean(a.map(x => x.c - cost)), spy: mean(a.filter(x => x.spy !== null).map(x => x.spy)), win: w.length / p.length, pf: l.length && sm(l) < 0 ? sm(w) / -sm(l) : null,
+  return { n: p.length, months: mv.length, avg: sm(p) / p.length, ctrl: mean(a.map(x => x.c - cost)), ctrlDown: (() => { const z = a.filter(x => x.c2 !== null && x.c2 !== undefined); return z.length ? mean(z.map(x => x.c2 - cost)) : null; })(), spy: mean(a.filter(x => x.spy !== null).map(x => x.spy)), win: w.length / p.length, pf: l.length && sm(l) < 0 ? sm(w) / -sm(l) : null,
     noTop2: srt.length > 2 ? sm(srt.slice(2)) / (srt.length - 2) : null, topStock: pos > 0 ? Math.max(...Object.values(byS)) / pos : null, edge: mm, t: sd > 0 ? mm / (sd / Math.sqrt(mv.length)) : null }; };
 const RES = {}, NV = VERS.length * H.length;
 for (const [n] of VERS) for (const h of H) { const a = trades[n + '_' + h], R = { older: stat(a.filter(x => x.t < mid), COST), newer: stat(a.filter(x => x.t >= mid), COST), stress: stat(a.filter(x => x.t >= mid), STRESS) }, why = [], need = h === 126 ? 0.015 : 0.03;
   let verdict = 'PROMISING';
   if (R.older.months < 12 || R.newer.months < 12) { verdict = 'NOT PROVEN'; why.push('too few months (' + (R.older.months || 0) + ' / ' + (R.newer.months || 0) + '; 12 each needed)'); }
   else { for (const k of ['older', 'newer']) { if (!(R[k].avg > R[k].ctrl + need)) why.push('not ' + pc(need) + '+ better than an average stock in the ' + k + ' half (' + pc(R[k].avg) + ' vs ' + pc(R[k].ctrl) + ')'); if (!(R[k].avg > (R[k].spy || 0) - COST)) why.push('did not beat holding the S&P 500 in the ' + k + ' half (' + pc(R[k].avg) + ' vs ' + pc(R[k].spy) + ')'); if (!(R[k].t >= 2)) why.push('the edge over an average stock could be luck in the ' + k + ' half (t ' + (R[k].t === null ? 'n/a' : R[k].t.toFixed(1)) + ')'); }
+    if (n === 'FAIR-PRICE DIP') for (const k of ['older', 'newer']) if (!(R[k].avg > R[k].ctrlDown)) why.push('no better than any stock down 40%+ in the ' + k + ' half (' + pc(R[k].avg) + ' vs ' + pc(R[k].ctrlDown) + ')');
     if (!(R.stress.avg > 0)) why.push('loses at 1.2% cost'); if (!(R.newer.noTop2 > 0)) why.push('loses without its 2 best trades'); if (R.newer.topStock > 0.25) why.push('one stock made over 25% of the profit');
     if (why.length) verdict = R.older.avg > R.older.ctrl && R.newer.avg > R.newer.ctrl ? 'NOT PROVEN' : 'REJECTED'; }
-  RES[n + '_' + h] = { name: { QUALITY: 'Quality companies (profit, no dilution, lean growth, cash-backed profit)', PROFIT: 'High gross profit on assets', VALUE: 'Cheap for its cash flow (fair-price lane)', 'QUALITY+VALUE': 'Good AND cheap (quality + cash-flow value)' }[n], months: Math.round(h / 21), verdict, why: why.join('; ') || 'beat an average stock and the S&P 500 in both halves, beyond luck, at stress cost', results: R }; }
+  RES[n + '_' + h] = { name: { QUALITY: 'Quality companies (profit, no dilution, lean growth, cash-backed profit)', PROFIT: 'High gross profit on assets', VALUE: 'Cheap for its cash flow (fair-price lane)', 'QUALITY+VALUE': 'Good AND cheap (quality + cash-flow value)', 'FAIR-PRICE DIP': 'Fair-price dip (down 40%+ but cheap for its cash flow, little dilution)' }[n], months: Math.round(h / 21), verdict, why: why.join('; ') || 'beat an average stock and the S&P 500 in both halves, beyond luck, at stress cost', results: R }; }
 const today = lastRows.filter(x => x.q !== null).sort((a, b) => b.q - a.q).slice(0, 25).map(x => ({ sym: SYMS[x.i], q: +x.q.toFixed(3), profit: x.m.profit === null ? null : +x.m.profit.toFixed(3), dilute: x.m.dilute === null ? null : +x.m.dilute.toFixed(3), growth: +x.m.growth.toFixed(3), accr: x.m.accr === null ? null : +x.m.accr.toFixed(3) }));
 const rank = {}; { const q = lastRows.filter(x => x.q !== null).sort((a, b) => b.q - a.q); q.forEach((x, n) => { rank[SYMS[x.i]] = +(1 - n / Math.max(1, q.length - 1)).toFixed(3); }); }   // 1 = best quality now, 0 = worst
 // fair value range per stock today, from its OWN past cash-flow yields (needs 3+ past years with positive cash flow)
@@ -99,12 +107,17 @@ const fair = {}; { const dayAt = (d) => { let lo = 0, hi = T - 1; while (lo < hi
     const yN = known(D[T - 1]), a = c[yN], sh = sharesAtYearEnd(cik, yN); if (ys.length < 3 || !a || !(a.cfo > 0) || !(sh > 0)) continue;
     ys.sort((u, v) => u - v); const q = (f) => ys[Math.min(ys.length - 1, Math.floor(f * (ys.length - 1) + 0.5))], cps = a.cfo / sh, px = C[x.i * T + T - 1];
     fair[s] = { cons: +(cps / q(0.75)).toFixed(2), base: +(cps / q(0.5)).toFixed(2), opt: +(cps / q(0.25)).toFixed(2), px: +px.toFixed(2), years: ys.length, cfy: +(cps / px).toFixed(4) }; } }
+// today's fair-price dips: down 40%+, positive cash flow, little dilution, AND under the LOW end of its own fair-value range
+const dipV = Object.entries(RES).filter(([k]) => k.startsWith('FAIR-PRICE DIP')).map(([, r]) => r.verdict), dipOk = dipV.includes('PROMISING');
+const dips = lastRows.filter(x => x.d !== null && fair[SYMS[x.i]] && fair[SYMS[x.i]].cons > fair[SYMS[x.i]].px).sort((a, b) => b.m.cfy - a.m.cfy).slice(0, 20)
+  .map(x => { const f = fair[SYMS[x.i]]; return { sym: SYMS[x.i], px: f.px, fairLow: f.cons, fairMid: f.base, fairHigh: f.opt, down: +x.m.dd.toFixed(3), cfy: +x.m.cfy.toFixed(3) }; });
 const r3 = (v) => v === null || v === undefined || !isFinite(v) ? null : +v.toFixed(3), per = {};   // every liquid stock's own measures and percentile ranks (1 = best), for the stock map
 for (const x of lastRows) per[SYMS[x.i]] = { q: r3(x.q), qr: r3(rank[SYMS[x.i]]), profit: r3(x.m.profit), pr: r3(x.r.profit), dilute: r3(x.m.dilute), growth: r3(x.m.growth), accr: r3(x.m.accr), cfy: r3(x.m.cfy), vr: r3(x.r.cfy) };
-const out = { generatedAt: new Date().toISOString(), status: 'OK', fair, per, from: D[21], to: D[T - 1], months, versions: NV, secCalls: calls, note, results: RES, today, rank, rules: { lagDays: 100, top: '10% of liquid stocks', cost: COST } };
+const out = { generatedAt: new Date().toISOString(), status: 'OK', fair, per, from: D[21], to: D[T - 1], months, versions: NV, secCalls: calls, note, results: RES, today, dips, dipVerdict: dipOk ? 'PROMISING' : (dipV.includes('NOT PROVEN') ? 'NOT PROVEN' : 'REJECTED'), rank, rules: { lagDays: 100, top: '10% of liquid stocks', cost: COST } };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 const msg = ['QUALITY COMPANIES (long investing: chosen by their SEC reports, held 6 and 12 months; ' + out.from + ' to ' + out.to + ', ' + months + ' monthly portfolios)', ''];
 for (const r of Object.values(RES)) { const n = r.results.newer; msg.push(r.name + ', ' + r.months + ' months: ' + r.verdict + (n.n ? ' | newer half ' + pc(n.avg) + ' vs average stock ' + pc(n.ctrl) + ', S&P 500 ' + pc(n.spy) + ', ' + Math.round(n.win * 100) + '% won' : '') + (r.verdict !== 'PROMISING' ? ' (' + r.why.split(';')[0] + ')' : '')); }
 if (!Object.values(RES).some(r => r.verdict === 'PROMISING')) msg.push('', 'No list this week: no version beat the market, so the "top companies" would not be a buy list.'); else msg.push('', 'Top quality companies now (research list, check ZAD): ' + today.slice(0, 12).map(x => x.sym).join(', '), '', NV + ' versions. A pass goes to paper first. Research only.');
+if (dips.length) msg.push('', 'FAIR-PRICE DIPS NOW (down 40%+ from the 1-year high, cash flow positive, under the LOW end of their own fair value; ' + (dipOk ? 'the test PASSED: research list, paper first, check ZAD' : 'the test has NOT passed yet: watch list only, not a buy list') + '):', ...dips.slice(0, 10).map(d => '- ' + d.sym + ' ' + d.px + ' (down ' + Math.round(d.down * 100) + '%, fair value ' + d.fairLow + ' to ' + d.fairHigh + ')'));
 console.log(msg.join('\n'));
 if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
