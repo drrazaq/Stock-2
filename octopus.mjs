@@ -227,4 +227,5 @@ const msg = ['OCTOPUS (26 angles + 325 combinations + 78 links to economic surpr
   '', 'Live paper record: ' + (rec.n ? rec.n + ' picks, ' + pc(rec.avg) + ' a trade, ' + Math.round(rec.win * 100) + '% won' : 'starts today, first results in 2 weeks') + '.',
   verdict === 'PROMISING' ? 'Top now (paper only until the live record passes): ' + now.slice(0, P_.K).map(z => z.sym).join(', ') : 'Not a buy list. Research only.'];
 console.log(msg.join('\n'));
-if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});

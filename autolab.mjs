@@ -147,4 +147,5 @@ const nBred = fresh.filter(r => r.from).length, cand = Object.values(LAB.candida
   ...(LAB.vaultLooks ? ['The newest 20% (vault) has now been used by ' + LAB.vaultLooks + ' rules in total, so it is no longer fully untouched: the truly untouched test is live paper on future days.'] : []),
   '', 'Only PROVEN LIVE rules (30+ paper trades, profitable and better than an average stock) reach your ACTIONS. Research only.'];
 console.log(msg.join('\n'));
-if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});

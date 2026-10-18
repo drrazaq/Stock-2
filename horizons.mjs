@@ -88,4 +88,5 @@ for (const s of SETUPS) { msg.push(NAME[s] + ':'); for (const h of H) { const r 
   if (today[s].length && Object.values(RES).some(r => r.setup === s && r.verdict === 'PROMISING')) msg.push('  In this setup today: ' + today[s].slice(0, 10).join(', ')); }
 msg.push('', SETUPS.length * H.length + ' versions tested, so about 1 could pass by luck. A pass goes to paper first. Research only.');
 console.log(msg.join('\n'));
-if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
