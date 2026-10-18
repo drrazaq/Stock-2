@@ -49,9 +49,11 @@ let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE ||
 const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 400) { fs.writeFileSync(OUT, JSON.stringify({ status: 'NOT RUN', why: 'only ' + T + ' sessions' })); process.exit(0); }
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
-D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; } }); store = null;
+D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; } }); const SIC = store.sic || {}; store = null;
+// banks, lenders, insurers and REITs (SEC industry 6xxx): operating cash flow does not measure their business, so they are left out of the dip hunt
+const finCo = (s) => { const x = SIC[s]; return !!(x && x.c && String(x.c)[0] === '6'); };
 const spyI = SY.get('SPY'), GONE = -0.3, COST = 0.008, STRESS = 0.012, H = [126, 252];
-const hi252 = (i, t) => { const b = i * T; let m = 0; for (let k = Math.max(0, t - 251); k <= t; k++) { const c = C[b + k]; if (c > m) m = c; } return m; };
+const hi252 = (i, t) => { const b = i * T; let m = 0; for (let k = Math.max(2, t - 251); k <= t; k++) { const c = Math.min(C[b + k], C[b + k - 1], C[b + k - 2]); if (c > m) m = c; } return m; };   // highest 3-day floor: one bad price print cannot fake a high
 const liquid = (i, t) => { const b = i * T, c = C[b + t]; if (!(c >= 5)) return false; let dv = 0; for (let k = t - 19; k <= t; k++) { if (k < 0 || !isFinite(C[b + k])) return false; dv += C[b + k] * V[b + k]; } return dv / 20 >= 5e6; };
 function fwd(i, t, h) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + h >= T) return null; let last = null, lk = t;
   for (let k = t + 1; k <= t + h; k++) if (isFinite(C[b + k])) { last = C[b + k]; lk = k; } if (last === null) return null; if (lk === t + h) return last / e - 1;
@@ -68,7 +70,7 @@ function scoreDay(t) { const y = known(D[t]), rows = [];
   // cash flow) and not drowning in new shares (share count up under 10%). Ranked by cash-flow yield. Tested against the average stock
   // AND against ALL stocks down 40%+, so a pass means the cheapness paid, not just the bounce of any fallen stock.
   for (const x of rows) { const h = hi252(x.i, t), c = C[x.i * T + t]; x.m.dd = h > 0 && c > 0 ? 1 - c / h : null; x.down = x.m.dd !== null && x.m.dd >= 0.4;
-    x.d = x.down && x.m.cfy > 0 && (x.m.dilute === null || x.m.dilute < 0.1) ? x.r.cfy : null; }
+    x.d = x.down && x.m.cfy > 0 && x.m.cfy < 0.4 && !finCo(SYMS[x.i]) && (x.m.dilute === null || x.m.dilute < 0.1) ? x.r.cfy : null; }   // a cash-flow yield of 40%+ is almost always a data error (units, share count), so it is skipped
   for (const x of rows) { const v = ['profit', 'dilute', 'growth', 'accr'].map(k => x.r[k]).filter(z => z !== undefined); x.q = v.length >= 3 ? mean(v) : null; x.p = x.r.profit !== undefined ? x.r.profit : null;
     x.v = x.r.cfy !== undefined ? x.r.cfy : null; x.qv = x.q !== null && x.v !== null ? (x.q + x.v) / 2 : null; }
   return rows; }
@@ -109,7 +111,8 @@ const fair = {}; { const dayAt = (d) => { let lo = 0, hi = T - 1; while (lo < hi
     fair[s] = { cons: +(cps / q(0.75)).toFixed(2), base: +(cps / q(0.5)).toFixed(2), opt: +(cps / q(0.25)).toFixed(2), px: +px.toFixed(2), years: ys.length, cfy: +(cps / px).toFixed(4) }; } }
 // today's fair-price dips: down 40%+, positive cash flow, little dilution, AND under the LOW end of its own fair-value range
 const dipV = Object.entries(RES).filter(([k]) => k.startsWith('FAIR-PRICE DIP')).map(([, r]) => r.verdict), dipOk = dipV.includes('PROMISING');
-const dips = lastRows.filter(x => x.d !== null && fair[SYMS[x.i]] && fair[SYMS[x.i]].cons > fair[SYMS[x.i]].px).sort((a, b) => b.m.cfy - a.m.cfy).slice(0, 20)
+const notHalal = new Set(); try { for (const t of JSON.parse(fs.readFileSync('data/zad-list.json', 'utf8')).notHalal || []) notHalal.add(t); } catch (e) {} try { for (const [t, v] of Object.entries(JSON.parse(fs.readFileSync('data/halal.json', 'utf8')))) if (v && v.s === 'fail') notHalal.add(t); } catch (e) {}
+const dips = lastRows.filter(x => x.d !== null && !notHalal.has(SYMS[x.i]) && fair[SYMS[x.i]] && fair[SYMS[x.i]].cons > fair[SYMS[x.i]].px).sort((a, b) => b.m.cfy - a.m.cfy).slice(0, 20)
   .map(x => { const f = fair[SYMS[x.i]]; return { sym: SYMS[x.i], px: f.px, fairLow: f.cons, fairMid: f.base, fairHigh: f.opt, down: +x.m.dd.toFixed(3), cfy: +x.m.cfy.toFixed(3) }; });
 const r3 = (v) => v === null || v === undefined || !isFinite(v) ? null : +v.toFixed(3), per = {};   // every liquid stock's own measures and percentile ranks (1 = best), for the stock map
 for (const x of lastRows) per[SYMS[x.i]] = { q: r3(x.q), qr: r3(rank[SYMS[x.i]]), profit: r3(x.m.profit), pr: r3(x.r.profit), dilute: r3(x.m.dilute), growth: r3(x.m.growth), accr: r3(x.m.accr), cfy: r3(x.m.cfy), vr: r3(x.r.cfy) };
