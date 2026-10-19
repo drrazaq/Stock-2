@@ -15,6 +15,15 @@
 // so no test sees a number before it was public. Every month the top 10% of liquid stocks (5 USD+, 5M USD+ a day) by the score are
 // bought, held 6 and 12 months, and compared with an average liquid stock bought the same day and with the S&P 500, older and newer
 // half, costs 0.8% a trade, 1.2% stress. 4 versions. Output: data/quality.json (verdicts + today's top quality companies).
+// Added 19 Oct, two published fundamental strategies through the SAME machinery (thresholds fixed in advance, financials 6xxx left out):
+//   MAGIC FORMULA (Greenblatt 2005): earnings yield = operating income / (market value + total liabilities - cash) and return on capital
+//     = operating income / (total assets - current liabilities - cash) (a simple proxy for Greenblatt's net working capital + fixed
+//     assets); combined = the average of the two percentile ranks; the top 10% (10+ stocks) are bought.
+//   F-SCORE (Piotroski 2000): 9 yes/no checks from the 10-Ks (net income > 0, operating cash flow > 0, ROA up, cash flow > net income,
+//     long-term debt / average assets down, current ratio up, no new shares, gross margin up, asset turnover up; ROA and turnover on
+//     start-of-year assets as in the paper). Stocks scoring 8-9 are bought (if under 10 that month, the 10 best scores). F-SCORE CHEAP
+//     = the same, only inside the cheapest 30% by book / market value (the paper's setting). A stock with any of the 9 inputs missing
+//     is left out (missing is never read as zero).
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -30,7 +39,10 @@ async function sec(url) { if (note) return null; await sleep(local(env.SEC_BASE)
   if (r.status === 403 || r.status === 429) { note = 'SEC refused (HTTP ' + r.status + ')'; return null; } if (!r.ok) return null; return r.json().catch(() => null); }
 // ---- 1. yearly fundamentals per company (cached; each finished year is read once)
 let F; try { F = JSON.parse(zlib.gunzipSync(fs.readFileSync(FC)).toString()); } catch (e) { F = { got: {}, v: {} }; }
-const TAGS = { gp: ['GrossProfit', 'USD', ''], ni: ['NetIncomeLoss', 'USD', ''], cfo: ['NetCashProvidedByUsedInOperatingActivities', 'USD', ''], assets: ['Assets', 'USD', 'Q4I'] };
+const TAGS = { gp: ['GrossProfit', 'USD', ''], ni: ['NetIncomeLoss', 'USD', ''], cfo: ['NetCashProvidedByUsedInOperatingActivities', 'USD', ''], assets: ['Assets', 'USD', 'Q4I'],
+  oi: ['OperatingIncomeLoss', 'USD', ''], liab: ['Liabilities', 'USD', 'Q4I'], lcur: ['LiabilitiesCurrent', 'USD', 'Q4I'], acur: ['AssetsCurrent', 'USD', 'Q4I'],
+  cash: ['CashAndCashEquivalentsAtCarryingValue', 'USD', 'Q4I'], ltd: ['LongTermDebtNoncurrent', 'USD', 'Q4I'], rev: ['Revenues', 'USD', ''],
+  rev2: ['RevenueFromContractWithCustomerExcludingAssessedTax', 'USD', ''], eq: ['StockholdersEquity', 'USD', 'Q4I'] };
 const Y = new Date().getUTCFullYear();
 for (let y = +(env.Q_FROM || 2017); y <= Y - 1; y++) for (const [k, [tag, u, sfx]] of Object.entries(TAGS)) { const key = k + y; if (F.got[key] && y < Y - 1) continue;
   const j = await sec(DATA + '/api/xbrl/frames/us-gaap/' + tag + '/' + u + '/CY' + y + sfx + '.json'); if (!j || !Array.isArray(j.data)) { if (note) break; continue; }
@@ -44,6 +56,15 @@ const sharesAtYearEnd = (cik, y) => { const a = SH.c[cik]; if (!a) return null; 
 function measures(cik, y) { const c = F.v[cik]; if (!c || !c[y] || !c[y - 1]) return null; const a = c[y], b = c[y - 1]; if (!(a.assets > 0) || !(b.assets > 0)) return null;
   const s1 = sharesAtYearEnd(cik, y), s0 = sharesAtYearEnd(cik, y - 1);
   return { profit: isFinite(a.gp) ? a.gp / a.assets : null, dilute: s1 > 0 && s0 > 0 ? s1 / s0 - 1 : null, growth: a.assets / b.assets - 1, accr: isFinite(a.ni) && isFinite(a.cfo) ? (a.ni - a.cfo) / a.assets : null }; }
+// Piotroski F-score (0-9) for company cik, fiscal year y; null when any input is missing (needs years y, y-1 and y-2 for start-of-year assets)
+const num = (...v) => v.every(u => typeof u === 'number' && isFinite(u));
+function fscore(cik, y) { const c = F.v[cik]; if (!c || !c[y] || !c[y - 1] || !c[y - 2]) return null; const a = c[y], b = c[y - 1], z = c[y - 2];
+  if (!num(a.ni, b.ni, a.cfo, a.ltd, b.ltd, a.acur, b.acur, a.gp, b.gp) || !(a.assets > 0 && b.assets > 0 && z.assets > 0) || !(a.lcur > 0 && b.lcur > 0)) return null;
+  const rk = num(a.rev, b.rev) ? 'rev' : num(a.rev2, b.rev2) ? 'rev2' : null; if (!rk || !(a[rk] > 0 && b[rk] > 0)) return null;   // the same revenue tag in both years
+  const s1 = sharesAtYearEnd(cik, y), s0 = sharesAtYearEnd(cik, y - 1); if (!(s1 > 0 && s0 > 0)) return null;
+  const chk = [a.ni > 0, a.cfo > 0, a.ni / b.assets > b.ni / z.assets, a.cfo > a.ni, a.ltd / ((a.assets + b.assets) / 2) < b.ltd / ((b.assets + z.assets) / 2),
+    a.acur / a.lcur > b.acur / b.lcur, s1 <= s0, a.gp / a[rk] > b.gp / b[rk], a[rk] / b.assets > b[rk] / z.assets];
+  return chk.filter(Boolean).length; }
 // ---- 2. prices (the same 5-year whole-market cache as the other studies)
 let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE || 'study-cache/grouped.json.gz')).toString()); } catch (e) { fs.writeFileSync(OUT, JSON.stringify({ status: 'NOT RUN', why: 'no price cache' })); process.exit(0); }
 const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 400) { fs.writeFileSync(OUT, JSON.stringify({ status: 'NOT RUN', why: 'only ' + T + ' sessions' })); process.exit(0); }
@@ -73,15 +94,26 @@ function scoreDay(t) { const y = known(D[t]), rows = [];
     x.d = x.down && x.m.cfy > 0 && x.m.cfy < 0.4 && !finCo(SYMS[x.i]) && (x.m.dilute === null || x.m.dilute < 0.1) ? x.r.cfy : null; }   // a cash-flow yield of 40%+ is almost always a data error (units, share count), so it is skipped
   for (const x of rows) { const v = ['profit', 'dilute', 'growth', 'accr'].map(k => x.r[k]).filter(z => z !== undefined); x.q = v.length >= 3 ? mean(v) : null; x.p = x.r.profit !== undefined ? x.r.profit : null;
     x.v = x.r.cfy !== undefined ? x.r.cfy : null; x.qv = x.q !== null && x.v !== null ? (x.q + x.v) / 2 : null; }
+  // MAGIC FORMULA and F-SCORE (added 19 Oct; financials 6xxx left out of both)
+  for (const x of rows) { const cik = symCik(SYMS[x.i]), a = F.v[cik] && F.v[cik][y], sh = sharesAtYearEnd(cik, y), px = C[x.i * T + t], mv = sh > 0 && px > 0 ? sh * px : null, fin = finCo(SYMS[x.i]);
+    const ev = a && mv && num(a.liab, a.cash) ? mv + a.liab - a.cash : null, cap = a && num(a.assets, a.lcur, a.cash) ? a.assets - a.lcur - a.cash : null;
+    x.m.ey = !fin && a && num(a.oi) && ev > 0 ? a.oi / ev : null; x.m.roc = !fin && a && num(a.oi) && cap > 0 ? a.oi / cap : null;
+    x.m.bm = !fin && a && num(a.eq) && a.eq > 0 && mv ? a.eq / mv : null; x.m.fs = fin ? null : fscore(cik, y); }
+  const mfRows = rows.filter(x => x.m.ey !== null && x.m.roc !== null); pct(mfRows, 'ey', false); pct(mfRows, 'roc', false);
+  for (const x of rows) x.mf = x.m.ey !== null && x.m.roc !== null ? (x.r.ey + x.r.roc) / 2 : null;
+  const bmS = rows.filter(x => x.m.bm !== null).sort((a, b) => b.m.bm - a.m.bm), cheap = new Set(bmS.slice(0, Math.ceil(bmS.length * 0.3)));
+  for (const x of rows) { x.fs = x.m.fs; x.fsc = cheap.has(x) ? x.m.fs : null; }
   return rows; }
 // ---- 3. monthly portfolios
-const VERS = [['QUALITY', 'q'], ['PROFIT', 'p'], ['VALUE', 'v'], ['QUALITY+VALUE', 'qv'], ['FAIR-PRICE DIP', 'd']], trades = {}; for (const [n] of VERS) for (const h of H) trades[n + '_' + h] = [];
+// third field 'f' = F-score rule: buy every stock scoring 8-9; if under 10 that month, the 10 best scores (others: top 10%, 10+ stocks)
+const VERS = [['QUALITY', 'q'], ['PROFIT', 'p'], ['VALUE', 'v'], ['QUALITY+VALUE', 'qv'], ['FAIR-PRICE DIP', 'd'], ['MAGIC FORMULA', 'mf'], ['F-SCORE', 'fs', 'f'], ['F-SCORE CHEAP', 'fsc', 'f']], trades = {}; for (const [n] of VERS) for (const h of H) trades[n + '_' + h] = [];
 let lastRows = null, months = 0;
 for (let t = 21; t < T - 1; t += 21) { const rows = scoreDay(t); if (rows.length < 100) continue; months++; if (t + 21 >= T - 1) lastRows = rows;
   for (const h of H) { if (t + h >= T) continue; const all = rows.map(x => fwd(x.i, t, h)).filter(x => x !== null && isFinite(x)); if (all.length < 50) continue; const ctrl = mean(all);
     const downAll = rows.filter(x => x.down).map(x => fwd(x.i, t, h)).filter(x => x !== null && isFinite(x)), c2 = downAll.length >= 20 ? mean(downAll) : null;
     const sb = spyI !== undefined ? spyI * T : null, spy = sb !== null && O[sb + t + 1] > 0 && C[sb + t + h] > 0 ? C[sb + t + h] / O[sb + t + 1] - 1 : null;
-    for (const [n, f] of VERS) { const top = rows.filter(x => x[f] !== null).sort((a, b) => b[f] - a[f]); const pick = top.slice(0, Math.max(10, Math.ceil(top.length * 0.1)));
+    for (const [n, f, mode] of VERS) { const top = rows.filter(x => x[f] !== null).sort((a, b) => b[f] - a[f]), hi = mode === 'f' ? top.filter(x => x[f] >= 8) : null;
+      const pick = mode === 'f' ? (hi.length >= 10 ? hi : top.slice(0, 10)) : top.slice(0, Math.max(10, Math.ceil(top.length * 0.1)));
       for (const x of pick) { const g = fwd(x.i, t, h); if (g !== null && isFinite(g)) trades[n + '_' + h].push({ t, s: SYMS[x.i], g, c: ctrl, c2, spy }); } } } }
 if (!lastRows) lastRows = scoreDay(T - 1);
 // ---- 4. verdicts (per formation month: stocks bought the same month share the same market)
@@ -99,7 +131,8 @@ for (const [n] of VERS) for (const h of H) { const a = trades[n + '_' + h], R = 
     if (n === 'FAIR-PRICE DIP') for (const k of ['older', 'newer']) if (!(R[k].avg > R[k].ctrlDown)) why.push('no better than any stock down 40%+ in the ' + k + ' half (' + pc(R[k].avg) + ' vs ' + pc(R[k].ctrlDown) + ')');
     if (!(R.stress.avg > 0)) why.push('loses at 1.2% cost'); if (!(R.newer.noTop2 > 0)) why.push('loses without its 2 best trades'); if (R.newer.topStock > 0.25) why.push('one stock made over 25% of the profit');
     if (why.length) verdict = R.older.avg > R.older.ctrl && R.newer.avg > R.newer.ctrl ? 'NOT PROVEN' : 'REJECTED'; }
-  RES[n + '_' + h] = { name: { QUALITY: 'Quality companies (profit, no dilution, lean growth, cash-backed profit)', PROFIT: 'High gross profit on assets', VALUE: 'Cheap for its cash flow (fair-price lane)', 'QUALITY+VALUE': 'Good AND cheap (quality + cash-flow value)', 'FAIR-PRICE DIP': 'Fair-price dip (down 40%+ but cheap for its cash flow, little dilution)' }[n], months: Math.round(h / 21), verdict, why: why.join('; ') || 'beat an average stock and the S&P 500 in both halves, beyond luck, at stress cost', results: R }; }
+  RES[n + '_' + h] = { name: { QUALITY: 'Quality companies (profit, no dilution, lean growth, cash-backed profit)', PROFIT: 'High gross profit on assets', VALUE: 'Cheap for its cash flow (fair-price lane)', 'QUALITY+VALUE': 'Good AND cheap (quality + cash-flow value)', 'FAIR-PRICE DIP': 'Fair-price dip (down 40%+ but cheap for its cash flow, little dilution)',
+    'MAGIC FORMULA': 'Magic formula (Greenblatt: high earnings yield + high return on capital)', 'F-SCORE': 'Piotroski F-score 8-9 (improving finances)', 'F-SCORE CHEAP': 'Piotroski F-score 8-9 among the cheapest 30% by book value' }[n], months: Math.round(h / 21), verdict, why: why.join('; ') || 'beat an average stock and the S&P 500 in both halves, beyond luck, at stress cost', results: R }; }
 const today = lastRows.filter(x => x.q !== null).sort((a, b) => b.q - a.q).slice(0, 25).map(x => ({ sym: SYMS[x.i], q: +x.q.toFixed(3), profit: x.m.profit === null ? null : +x.m.profit.toFixed(3), dilute: x.m.dilute === null ? null : +x.m.dilute.toFixed(3), growth: +x.m.growth.toFixed(3), accr: x.m.accr === null ? null : +x.m.accr.toFixed(3) }));
 const rank = {}; { const q = lastRows.filter(x => x.q !== null).sort((a, b) => b.q - a.q); q.forEach((x, n) => { rank[SYMS[x.i]] = +(1 - n / Math.max(1, q.length - 1)).toFixed(3); }); }   // 1 = best quality now, 0 = worst
 // fair value range per stock today, from its OWN past cash-flow yields (needs 3+ past years with positive cash flow)
@@ -116,7 +149,10 @@ const dips = lastRows.filter(x => x.d !== null && !notHalal.has(SYMS[x.i]) && fa
   .map(x => { const f = fair[SYMS[x.i]]; return { sym: SYMS[x.i], px: f.px, fairLow: f.cons, fairMid: f.base, fairHigh: f.opt, down: +x.m.dd.toFixed(3), cfy: +x.m.cfy.toFixed(3) }; });
 const r3 = (v) => v === null || v === undefined || !isFinite(v) ? null : +v.toFixed(3), per = {};   // every liquid stock's own measures and percentile ranks (1 = best), for the stock map
 for (const x of lastRows) per[SYMS[x.i]] = { q: r3(x.q), qr: r3(rank[SYMS[x.i]]), profit: r3(x.m.profit), pr: r3(x.r.profit), dilute: r3(x.m.dilute), growth: r3(x.m.growth), accr: r3(x.m.accr), cfy: r3(x.m.cfy), vr: r3(x.r.cfy) };
-const out = { generatedAt: new Date().toISOString(), status: 'OK', fair, per, from: D[21], to: D[T - 1], months, versions: NV, secCalls: calls, note, results: RES, today, dips, dipVerdict: dipOk ? 'PROMISING' : (dipV.includes('NOT PROVEN') ? 'NOT PROVEN' : 'REJECTED'), rank, rules: { lagDays: 100, top: '10% of liquid stocks', cost: COST } };
+// today's picks of the two added strategies (research only; whether they count depends on their own verdicts above)
+const magicToday = lastRows.filter(x => x.mf !== null).sort((a, b) => b.mf - a.mf).slice(0, 25).map(x => ({ sym: SYMS[x.i], mf: r3(x.mf), ey: r3(x.m.ey), roc: r3(x.m.roc) }));
+const fscoreToday = lastRows.filter(x => x.fs !== null && x.fs >= 8).sort((a, b) => b.fs - a.fs).slice(0, 25).map(x => ({ sym: SYMS[x.i], fs: x.fs, cheap: x.fsc !== null }));
+const out = { generatedAt: new Date().toISOString(), status: 'OK', fair, per, magicToday, fscoreToday, from: D[21], to: D[T - 1], months, versions: NV, secCalls: calls, note, results: RES, today, dips, dipVerdict: dipOk ? 'PROMISING' : (dipV.includes('NOT PROVEN') ? 'NOT PROVEN' : 'REJECTED'), rank, rules: { lagDays: 100, top: '10% of liquid stocks', cost: COST } };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 const msg = ['QUALITY COMPANIES (long investing: chosen by their SEC reports, held 6 and 12 months; ' + out.from + ' to ' + out.to + ', ' + months + ' monthly portfolios)', ''];
 for (const r of Object.values(RES)) { const n = r.results.newer; msg.push(r.name + ', ' + r.months + ' months: ' + r.verdict + (n.n ? ' | newer half ' + pc(n.avg) + ' vs average stock ' + pc(n.ctrl) + ', S&P 500 ' + pc(n.spy) + ', ' + Math.round(n.win * 100) + '% won' : '') + (r.verdict !== 'PROMISING' ? ' (' + r.why.split(';')[0] + ')' : '')); }
