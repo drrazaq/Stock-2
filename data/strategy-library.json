@@ -1507,7 +1507,7 @@
    "family": "Trend and momentum",
    "name": "Smooth momentum (frog in the pan)",
    "explain": "Up 30%+ in 6 months, made of many small up days rather than a few jumps.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "momHi",
@@ -1515,14 +1515,21 @@
     ],
     "h": 60
    },
-   "note": "Added 19 Oct (Da, Gurun & Warachka 2014)."
+   "note": "Added 19 Oct (Da, Gurun & Warachka 2014).",
+   "tested": "2026-10-16",
+   "result": {
+    "t": 0.28,
+    "edge": 0.0017,
+    "n": 3047,
+    "why": "not 0.3%+ better than an average stock (+0.2%); could be luck (t 0.3, 3.6 needed); not better than similar stocks (same size and swing): -0.3%"
+   }
   },
   {
    "id": "T21",
    "family": "Trend and momentum",
    "name": "Industry momentum",
    "explain": "Stocks in the top 20% of industries over 6 months.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "indTop",
@@ -1530,14 +1537,21 @@
     ],
     "h": 60
    },
-   "note": "Added 19 Oct (Moskowitz & Grinblatt 1999)."
+   "note": "Added 19 Oct (Moskowitz & Grinblatt 1999).",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.72,
+    "edge": -0.014,
+    "n": 3599,
+    "why": "not 0.3%+ better than an average stock (-1.4%); could be luck (t -1.7, 3.6 needed); not better than similar stocks (same size and swing): -1.7%"
+   }
   },
   {
    "id": "T22",
    "family": "Trend and momentum",
    "name": "Leader in a leading industry",
    "explain": "Up 30%+ in 6 months inside a top-20% industry.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "indTop",
@@ -1545,14 +1559,21 @@
     ],
     "h": 60
    },
-   "note": "Added 19 Oct (Moskowitz & Grinblatt 1999)."
+   "note": "Added 19 Oct (Moskowitz & Grinblatt 1999).",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -0.04,
+    "edge": -0.0004,
+    "n": 1685,
+    "why": "not 0.3%+ better than an average stock (-0.0%); could be luck (t -0.0, 3.6 needed); not better than similar stocks (same size and swing): -0.2%"
+   }
   },
   {
    "id": "T23",
    "family": "Trend and momentum",
    "name": "Smooth climber in a leading industry",
    "explain": "Smooth 6-month climb inside a top-20% industry.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "indTop",
@@ -1560,7 +1581,14 @@
     ],
     "h": 60
    },
-   "note": "Added 19 Oct (combination)."
+   "note": "Added 19 Oct (combination).",
+   "tested": "2026-10-16",
+   "result": {
+    "t": 0.26,
+    "edge": 0.0017,
+    "n": 1568,
+    "why": "not 0.3%+ better than an average stock (+0.2%); could be luck (t 0.3, 3.6 needed); not better than similar stocks (same size and swing): -0.5%"
+   }
   }
  ]
 }
