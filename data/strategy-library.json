@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
- "updated": "2026-10-19",
+ "updated": "2026-10-16",
  "strategies": [
   {
    "id": "T1",
@@ -15,13 +15,20 @@
    "family": "Trend and momentum",
    "name": "New 1-year high on 2x volume",
    "explain": "A fresh high with heavy buying: no trapped sellers above.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "atHi",
      "volHi"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -2.8,
+    "edge": -0.0532,
+    "n": 90,
+    "why": "not 0.3%+ better than an average stock (-5.3%); could be luck (t -2.8, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -5.4%; loses money without its 2 best trades"
    }
   },
   {
@@ -29,12 +36,19 @@
    "family": "Trend and momentum",
    "name": "New 1-year high, hold 3 months",
    "explain": "Highs tend to lead to more highs over months.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "atHi"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -4.64,
+    "edge": -0.0436,
+    "n": 986,
+    "why": "not 0.3%+ better than an average stock (-4.4%); could be luck (t -4.6, 3.5 needed); not better than similar stocks (same size and swing): -4.8%; loses money without its 2 best trades"
    }
   },
   {
@@ -42,12 +56,19 @@
    "family": "Trend and momentum",
    "name": "Full uptrend stack",
    "explain": "Price above the 10-day, 10-day above 20-day, above the 50- and 200-day: every timeframe agrees.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "stack"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -4.71,
+    "edge": -0.0075,
+    "n": 23829,
+    "why": "not 0.3%+ better than an average stock (-0.7%); could be luck (t -4.7, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -0.9%; loses money without its 2 best trades"
    }
   },
   {
@@ -55,13 +76,20 @@
    "family": "Trend and momentum",
    "name": "Pullback inside a full uptrend",
    "explain": "Buy a 5-12% dip while every trend line still points up.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "stack",
      "pb5"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.51,
+    "edge": -0.0113,
+    "n": 4104,
+    "why": "not 0.3%+ better than an average stock (-1.1%); could be luck (t -3.5, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -1.3%; loses money without its 2 best trades"
    }
   },
   {
@@ -69,12 +97,19 @@
    "family": "Trend and momentum",
    "name": "First close above the 200-day after 6+ months below",
    "explain": "A long downtrend turns: a new long trend may start.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "reclaim200"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -0.97,
+    "edge": -0.0203,
+    "n": 332,
+    "why": "not 0.3%+ better than an average stock (-2.0%); could be luck (t -1.0, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -1.9%; loses money without its 2 best trades"
    }
   },
   {
@@ -90,12 +125,19 @@
    "family": "Trend and momentum",
    "name": "Momentum burst: up 25% in 10 days",
    "explain": "Fast movers often keep moving for a few weeks.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "up25in10"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.63,
+    "edge": -0.0124,
+    "n": 2910,
+    "why": "not 0.3%+ better than an average stock (-1.2%); could be luck (t -1.6, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -0.8%; loses money without its 2 best trades"
    }
   },
   {
@@ -103,13 +145,20 @@
    "family": "Trend and momentum",
    "name": "Momentum burst in a rising market",
    "explain": "The same burst, only when the S&P 500 is above its 50-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "up25in10",
      "mktUp"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.81,
+    "edge": -0.0141,
+    "n": 2695,
+    "why": "not 0.3%+ better than an average stock (-1.4%); could be luck (t -1.8, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -0.9%; loses money without its 2 best trades"
    }
   },
   {
@@ -117,13 +166,20 @@
    "family": "Trend and momentum",
    "name": "Dual momentum",
    "explain": "Stock up 30%+ in 6 months AND the S&P 500 above its 200-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "momHi",
      "mkt200"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": 0.3,
+    "edge": 0.0012,
+    "n": 5833,
+    "why": "not 0.3%+ better than an average stock (+0.1%); could be luck (t 0.3, 3.5 needed)"
    }
   },
   {
@@ -131,13 +187,20 @@
    "family": "Trend and momentum",
    "name": "Darvas box: tight base, then a new high",
    "explain": "A quiet range (under 10% for 20 days) that breaks to a new high.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "tight20",
      "atHi"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -5.24,
+    "edge": -0.0502,
+    "n": 542,
+    "why": "not 0.3%+ better than an average stock (-5.0%); could be luck (t -5.2, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -5.2%; loses money without its 2 best trades"
    }
   },
   {
@@ -145,7 +208,7 @@
    "family": "Trend and momentum",
    "name": "High tight flag",
    "explain": "A strong stock (up 30%+ in 6 months) resting in a tight range near its high.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "momHi",
@@ -153,6 +216,13 @@
      "nearHi"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -5.69,
+    "edge": -0.0208,
+    "n": 2322,
+    "why": "not 0.3%+ better than an average stock (-2.1%); could be luck (t -5.7, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -2.3%; loses money without its 2 best trades"
    }
   },
   {
@@ -160,13 +230,20 @@
    "family": "Trend and momentum",
    "name": "Calm uptrend",
    "explain": "A full uptrend in a calm stock (daily swing under 2%): steadier gains.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "stack",
      "calm"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -4.8,
+    "edge": -0.0303,
+    "n": 4538,
+    "why": "not 0.3%+ better than an average stock (-3.0%); could be luck (t -4.8, 3.5 needed); not better than similar stocks (same size and swing): -3.1%"
    }
   },
   {
@@ -174,13 +251,20 @@
    "family": "Trend and momentum",
    "name": "Parabolic acceleration",
    "explain": "Up 25% in 10 days plus 3 up days in a row: ride the steepest part.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "up25in10",
      "up3"
     ],
     "h": 5
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -2.98,
+    "edge": -0.0155,
+    "n": 1545,
+    "why": "not 0.3%+ better than an average stock (-1.6%); could be luck (t -3.0, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -1.3%; loses money without its 2 best trades"
    }
   },
   {
@@ -218,7 +302,7 @@
    "family": "Ignition and early wave",
    "name": "Ignition bar",
    "explain": "+8% day, close at the top of the day, 2x volume: the first day of a run.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "day8",
@@ -226,6 +310,13 @@
      "volHi"
     ],
     "h": 10
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.6,
+    "edge": -0.0127,
+    "n": 641,
+    "why": "not 0.3%+ better than an average stock (-1.3%); could be luck (t -1.6, 3.5 needed); not better than similar stocks (same size and swing): -1.3%; loses money without its 2 best trades"
    }
   },
   {
@@ -233,7 +324,7 @@
    "family": "Ignition and early wave",
    "name": "Power gap",
    "explain": "Opens 4%+ higher, closes at the top, 2x volume.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "gapUp",
@@ -241,6 +332,13 @@
      "volHi"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.98,
+    "edge": -0.0276,
+    "n": 325,
+    "why": "not 0.3%+ better than an average stock (-2.8%); could be luck (t -2.0, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -3.1%; loses money without its 2 best trades"
    }
   },
   {
@@ -248,7 +346,7 @@
    "family": "Ignition and early wave",
    "name": "Quiet base, then volume",
    "explain": "20 quiet days, then heavy volume and a strong close.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "tight20",
@@ -256,6 +354,13 @@
      "closeTop"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.24,
+    "edge": -0.0214,
+    "n": 829,
+    "why": "not 0.3%+ better than an average stock (-2.1%); could be luck (t -3.2, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -2.3%; loses money without its 2 best trades"
    }
   },
   {
@@ -263,13 +368,20 @@
    "family": "Ignition and early wave",
    "name": "Coil: tight range on low volume",
    "explain": "Sellers are gone; the next move can be big.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "tight20",
      "volLo"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -4.53,
+    "edge": -0.0077,
+    "n": 13796,
+    "why": "not 0.3%+ better than an average stock (-0.8%); could be luck (t -4.5, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -1.0%; loses money without its 2 best trades"
    }
   },
   {
@@ -277,13 +389,20 @@
    "family": "Ignition and early wave",
    "name": "Gap and go (1 week)",
    "explain": "Gap up 4%+ and close at the top; hold a week.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "gapUp",
      "closeTop"
     ],
     "h": 5
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.78,
+    "edge": -0.0102,
+    "n": 907,
+    "why": "not 0.3%+ better than an average stock (-1.0%); could be luck (t -1.8, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -1.0%; loses money without its 2 best trades"
    }
   },
   {
@@ -291,13 +410,20 @@
    "family": "Ignition and early wave",
    "name": "3 up days on rising volume",
    "explain": "Steady buying pressure.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "up3",
      "volHi"
     ],
     "h": 10
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.85,
+    "edge": -0.0133,
+    "n": 2656,
+    "why": "not 0.3%+ better than an average stock (-1.3%); could be luck (t -3.8, 3.5 needed); not better than similar stocks (same size and swing): -1.3%"
    }
   },
   {
@@ -349,12 +475,19 @@
    "family": "Dips and reversals",
    "name": "Snap-back after a 15% drop",
    "explain": "Fell 15%+ in 5 days, then an up day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "snap"
     ],
     "h": 5
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.19,
+    "edge": -0.0171,
+    "n": 1230,
+    "why": "not 0.3%+ better than an average stock (-1.7%); could be luck (t -3.2, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -1.3%; loses money without its 2 best trades"
    }
   },
   {
@@ -362,13 +495,20 @@
    "family": "Dips and reversals",
    "name": "Snap-back in a strong stock",
    "explain": "The same, in a stock up 30%+ over 6 months.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "snap",
      "momHi"
     ],
     "h": 10
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": 0.32,
+    "edge": 0.0059,
+    "n": 99,
+    "why": "could be luck (t 0.3, 3.5 needed)"
    }
   },
   {
@@ -376,13 +516,20 @@
    "family": "Dips and reversals",
    "name": "Snap-back in a healthy market",
    "explain": "The same, with the S&P 500 above its 200-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "snap",
      "mkt200"
     ],
     "h": 10
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.33,
+    "edge": -0.0249,
+    "n": 883,
+    "why": "not 0.3%+ better than an average stock (-2.5%); could be luck (t -3.3, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -1.7%; loses money without its 2 best trades"
    }
   },
   {
@@ -390,12 +537,19 @@
    "family": "Dips and reversals",
    "name": "Bear trap (failed breakdown)",
    "explain": "Breaks under its 20-day low, closes back above: sellers trapped.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "bearTrap"
     ],
     "h": 10
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -4.72,
+    "edge": -0.0078,
+    "n": 15854,
+    "why": "not 0.3%+ better than an average stock (-0.8%); could be luck (t -4.7, 3.5 needed); not better than similar stocks (same size and swing): -0.8%; loses money without its 2 best trades"
    }
   },
   {
@@ -403,13 +557,20 @@
    "family": "Dips and reversals",
    "name": "Bear trap in an uptrend",
    "explain": "The same, above the 200-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "bearTrap",
      "up200"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -0.52,
+    "edge": -0.0032,
+    "n": 5092,
+    "why": "not 0.3%+ better than an average stock (-0.3%); could be luck (t -0.5, 3.5 needed); not better than similar stocks (same size and swing): -0.5%"
    }
   },
   {
@@ -417,13 +578,20 @@
    "family": "Dips and reversals",
    "name": "3 down days in an uptrend",
    "explain": "A short wash-out in a long uptrend.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "dn3",
      "up200"
     ],
     "h": 5
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -7.03,
+    "edge": -0.0067,
+    "n": 16517,
+    "why": "not 0.3%+ better than an average stock (-0.7%); could be luck (t -7.0, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -0.7%; loses money without its 2 best trades"
    }
   },
   {
@@ -431,13 +599,20 @@
    "family": "Dips and reversals",
    "name": "Deep pullback of a strong stock",
    "explain": "Up 30%+ in 6 months, now 12-25% under its 20-day high.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "momHi",
      "pb12"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.09,
+    "edge": -0.0054,
+    "n": 2887,
+    "why": "not 0.3%+ better than an average stock (-0.5%); could be luck (t -1.1, 3.5 needed); not better than similar stocks (same size and swing): -0.2%"
    }
   },
   {
@@ -445,7 +620,7 @@
    "family": "Dips and reversals",
    "name": "1-year low + heavy volume + no dilution",
    "explain": "Capitulation without new shares being sold.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "nearLow",
@@ -453,6 +628,13 @@
      "noDil"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -0.48,
+    "edge": -0.0041,
+    "n": 1106,
+    "why": "not 0.3%+ better than an average stock (-0.4%); could be luck (t -0.5, 3.5 needed); not better than similar stocks (same size and swing): -1.0%"
    }
   },
   {
@@ -460,13 +642,20 @@
    "family": "Dips and reversals",
    "name": "One-day crash in an uptrend",
    "explain": "Fell 8%+ in a day while above the 200-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "dayDn8",
      "up200"
     ],
     "h": 10
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -0.12,
+    "edge": -0.0008,
+    "n": 610,
+    "why": "not 0.3%+ better than an average stock (-0.1%); could be luck (t -0.1, 3.5 needed)"
    }
   },
   {
@@ -474,13 +663,20 @@
    "family": "Dips and reversals",
    "name": "Gap-down recovery",
    "explain": "Opens 4%+ lower but closes at the top of the day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "gapDn",
      "closeTop"
     ],
     "h": 10
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -0.9,
+    "edge": -0.0066,
+    "n": 382,
+    "why": "not 0.3%+ better than an average stock (-0.7%); could be luck (t -0.9, 3.5 needed); not better than similar stocks (same size and swing): -0.7%"
    }
   },
   {
@@ -488,14 +684,21 @@
    "family": "Dips and reversals",
    "name": "Oversold in a weak market",
    "explain": "Fell 7%+ in 5 days while the S&P 500 is under its 50-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "drop5",
      "mktDn"
     ],
     "h": 20
-   }
+   },
+   "result": {
+    "t": -0.44,
+    "edge": -0.0024,
+    "n": 9067,
+    "why": "not 0.3%+ better than an average stock (-0.2%); could be luck (t -0.4, 3.3 needed); not better than similar stocks (same size and swing): -0.4%"
+   },
+   "tested": "2026-10-16"
   },
   {
    "id": "M12",
@@ -517,12 +720,19 @@
    "family": "Calendar",
    "name": "Turn of the month",
    "explain": "The last days and first 3 days of each month: pension and salary money arrives.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "tom"
     ],
     "h": 5
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.67,
+    "edge": -0.0098,
+    "n": 58952,
+    "why": "not 0.3%+ better than an average stock (-1.0%); could be luck (t -3.7, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -0.9%; loses money without its 2 best trades"
    }
   },
   {
@@ -530,13 +740,20 @@
    "family": "Calendar",
    "name": "Turn of the month in a healthy market",
    "explain": "The same, with the S&P 500 above its 200-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "tom",
      "mkt200"
     ],
     "h": 5
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.38,
+    "edge": -0.0096,
+    "n": 54018,
+    "why": "not 0.3%+ better than an average stock (-1.0%); could be luck (t -3.4, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -0.9%; loses money without its 2 best trades"
    }
   },
   {
@@ -683,13 +900,20 @@
    "family": "Share supply",
    "name": "No new shares + uptrend",
    "explain": "Share count flat or shrinking, above the 50-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "noDil",
      "up50"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": 0.14,
+    "edge": 0.0005,
+    "n": 10484,
+    "why": "not 0.3%+ better than an average stock (+0.0%); could be luck (t 0.1, 3.5 needed); not better than similar stocks (same size and swing): -0.5%"
    }
   },
   {
@@ -697,14 +921,21 @@
    "family": "Share supply",
    "name": "Heavy dilution (avoid test)",
    "explain": "Share count up 20%+ in a year: expected to lag.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "dilut"
     ],
     "h": 60
    },
-   "note": "Tested as an AVOID rule."
+   "note": "Tested as an AVOID rule.",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -2.31,
+    "edge": -0.0379,
+    "n": 1009,
+    "why": "not 0.3%+ better than an average stock (-3.8%); could be luck (t -2.3, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -3.3%; loses money without its 2 best trades"
+   }
   },
   {
    "id": "S3",
@@ -793,13 +1024,20 @@
    "family": "Quality and value",
    "name": "Low-volatility anomaly",
    "explain": "Calm stocks above the 200-day beat wild ones on risk.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "calm",
      "up200"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -4.87,
+    "edge": -0.0219,
+    "n": 5581,
+    "why": "not 0.3%+ better than an average stock (-2.2%); could be luck (t -4.9, 3.5 needed); not better than similar stocks (same size and swing): -2.2%"
    }
   },
   {
@@ -807,12 +1045,19 @@
    "family": "Quality and value",
    "name": "Calm stocks alone",
    "explain": "Daily swing under 2%.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "calm"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -5.16,
+    "edge": -0.0206,
+    "n": 7227,
+    "why": "not 0.3%+ better than an average stock (-2.1%); could be luck (t -5.2, 3.5 needed); not better than similar stocks (same size and swing): -2.1%"
    }
   },
   {
@@ -820,13 +1065,20 @@
    "family": "Quality and value",
    "name": "Shareholder yield",
    "explain": "Shrinking share count in a calm stock.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "noDil",
      "calm"
     ],
     "h": 60
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.92,
+    "edge": -0.0072,
+    "n": 4916,
+    "why": "not 0.3%+ better than an average stock (-0.7%); could be luck (t -1.9, 3.5 needed); not better than similar stocks (same size and swing): -0.8%"
    }
   },
   {
@@ -848,13 +1100,20 @@
    "family": "Market conditions",
    "name": "Highs only in a healthy market",
    "explain": "New 1-year high, S&P 500 above its 200-day.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "atHi",
      "mkt200"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.86,
+    "edge": -0.0237,
+    "n": 1038,
+    "why": "not 0.3%+ better than an average stock (-2.4%); could be luck (t -3.9, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -2.6%; loses money without its 2 best trades"
    }
   },
   {
@@ -862,13 +1121,20 @@
    "family": "Market conditions",
    "name": "Highs when stocks move apart",
    "explain": "New high in a high-dispersion market.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "atHi",
      "dispHi"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.1,
+    "edge": -0.0149,
+    "n": 72,
+    "why": "not 0.3%+ better than an average stock (-1.5%); could be luck (t -1.1, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -1.9%; loses money without its 2 best trades"
    }
   },
   {
@@ -876,13 +1142,20 @@
    "family": "Market conditions",
    "name": "Uptrends when stocks move together",
    "explain": "Full stack in a low-dispersion market.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "stack",
      "dispLo"
     ],
     "h": 20
+   },
+   "tested": "2026-10-16",
+   "result": {
+    "t": 0.15,
+    "edge": 0.0015,
+    "n": 1590,
+    "why": "not 0.3%+ better than an average stock (+0.1%); could be luck (t 0.1, 3.5 needed); lost money after costs; not better than similar stocks (same size and swing): -0.2%; loses money without its 2 best trades"
    }
   },
   {
