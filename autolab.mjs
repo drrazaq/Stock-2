@@ -22,7 +22,7 @@ let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE ||
 const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 500) { console.log('autolab: only ' + T + ' sessions'); process.exit(0); }
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), HI = new Float32Array(NS * T).fill(NaN), LO = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
-D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; HI[k] = x.h ? x.h[j] : x.c[j]; LO[k] = x.l ? x.l[j] : x.c[j]; V[k] = x.v[j]; } }); store = null;
+D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; HI[k] = x.h ? x.h[j] : x.c[j]; LO[k] = x.l ? x.l[j] : x.c[j]; V[k] = x.v[j]; } }); const SICS = store.sic || {}; store = null;
 const spyI = SY.get('SPY');
 // ---- features per stock-day (all known at the close of day t)
 const F = { tr50: new Int8Array(NS * T), tr200: new Int8Array(NS * T), m6: new Float32Array(NS * T).fill(NaN), dd20: new Float32Array(NS * T).fill(NaN), r5: new Float32Array(NS * T).fill(NaN), vx: new Float32Array(NS * T).fill(NaN), dh: new Float32Array(NS * T).fill(NaN), atrp: new Float32Array(NS * T).fill(NaN), ok: new Uint8Array(NS * T), bk: new Uint8Array(NS * T) };
@@ -58,6 +58,18 @@ for (let i = 0; i < NS; i++) { const b = i * T; let s10 = 0, s20 = 0, n = 0, bel
     if (n > 10) s10 -= C[k - 10]; if (n > 20) s20 -= C[k - 20]; if (n >= 10) MA10[k] = s10 / 10; if (n >= 20) MA20[k] = s20 / 20;
     if (n >= 21) { let hi = -Infinity, lo = Infinity, l2 = Infinity; for (let j = k - 19; j <= k; j++) { if (C[j] > hi) hi = C[j]; if (C[j] < lo) lo = C[j]; } for (let j = k - 20; j < k; j++) if (LO[j] < l2) l2 = LO[j]; RNG20[k] = (hi - lo) / c; LO20[k] = l2; }
     BEL200[k] = F.tr200[k] === -1 ? Math.min(30000, bel = bel + 1) : (bel = 0); } }
+// FROG-IN-THE-PAN (Da, Gurun & Warachka 2014): momentum built from many small up days lasts longer than momentum from a few jumps.
+// SMOOTH = share of up days minus share of down days over the last 126 sessions (needs 100+ valid days).
+const SMOOTH = new Float32Array(NS * T).fill(NaN); for (let i = 0; i < NS; i++) { const b = i * T; let up = 0, dn = 0, n = 0; const q = [];
+  for (let t = 1; t < T; t++) { const c0 = C[b + t - 1], c1 = C[b + t]; const v = c0 > 0 && c1 > 0 ? Math.sign(c1 - c0) : null; q.push(v); if (v !== null) { n++; if (v > 0) up++; else if (v < 0) dn++; }
+    if (q.length > 126) { const o = q.shift(); if (o !== null) { n--; if (o > 0) up--; else if (o < 0) dn--; } } if (n >= 100) SMOOTH[b + t] = (up - dn) / n; } }
+// INDUSTRY MOMENTUM (Moskowitz & Grinblatt 1999): the stock's industry (SEC 3-digit code, 5+ members) is in the top 20% of industries by
+// median 6-month return on that day. Computed every 5th session and carried forward (speed).
+const INDTOP = new Uint8Array(NS * T); { const ind = new Map(); for (let i = 0; i < NS; i++) { const x = SICS[SYMS[i]]; if (x && x.c) { const g = String(x.c).slice(0, 3); if (!ind.has(g)) ind.set(g, []); ind.get(g).push(i); } }
+  const groups = [...ind.values()].filter(a => a.length >= 5); let top = new Set();
+  for (let t = 126; t < T; t++) { if (t % 5 === 0) { const sc = []; for (const g of groups) { const v = []; for (const i of g) { const a = C[i * T + t - 126], c = C[i * T + t]; if (a > 0 && c > 0) v.push(c / a - 1); } if (v.length >= 5) { v.sort((x, y) => x - y); sc.push([g, v[v.length >> 1]]); } }
+      sc.sort((x, y) => y[1] - x[1]); top = new Set(); for (const [g] of sc.slice(0, Math.max(1, Math.ceil(sc.length * 0.2)))) for (const i of g) top.add(i); }
+    for (const i of top) INDTOP[i * T + t] = 1; } }
 const MAX21 = new Float32Array(NS * T).fill(NaN); for (let i = 0; i < NS; i++) { const b = i * T; for (let t = 22; t < T; t++) { let m = -Infinity, ok = 0; for (let k = t - 20; k <= t; k++) { const c0 = C[b + k - 1], c1 = C[b + k]; if (c0 > 0 && c1 > 0) { ok++; if (c1 / c0 - 1 > m) m = c1 / c0 - 1; } } if (ok >= 15) MAX21[b + t] = m; } }
 // ---- building blocks (each a fixed yes/no test on a stock-day)
 const BLOCKS = {
@@ -89,8 +101,10 @@ const BLOCKS = {
   atHi: [(k) => F.dh[k] <= 0.001, 'closed at a new 1-year high'],
   tom: [(k, t) => { const d = +D[t].slice(8, 10); return d >= 27 || d <= 3; }, 'turn of the month (last days / first 3 days)'],
   // MAX / lottery effect (Bali, Cakici & Whitelaw 2011): the biggest one-day gain of the last 21 sessions; lottery-like stocks tend to lag
+  smooth: [(k) => SMOOTH[k] >= 0.1, 'smooth climb: clearly more up days than down days over 6 months'], jumpy: [(k) => SMOOTH[k] <= -0.05, 'more down days than up days over 6 months'],
+  indTop: [(k) => INDTOP[k] === 1, 'its industry is in the top 20% over 6 months'],
   lotHi: [(k) => MAX21[k] >= 0.15, 'lottery-like: a 15%+ one-day jump in the last month'], lotLo: [(k) => MAX21[k] < 0.04, 'no day above +4% in the last month'] };
-const BK = Object.keys(BLOCKS), HOLDS = [5, 10, 20, 60], CLASH = [['lotHi', 'lotLo'], ['lotLo', 'day8'], ['lotLo', 'up25in10'], ['stack', 'dn50'], ['stack', 'dn200'], ['reclaim200', 'dn200'], ['atHi', 'farHi'], ['atHi', 'pb12'], ['atHi', 'nearLow'], ['snap', 'pop5'], ['up25in10', 'drop5'], ['tight20', 'wild'], ['gapUp', 'gapDn'], ['day8', 'dayDn8'], ['closeTop', 'closeBot'], ['up3', 'dn3'], ['day8', 'dn3'], ['dayDn8', 'up3'], ['up50', 'dn50'], ['up200', 'dn200'], ['momHi', 'momLo'], ['pb5', 'pb12'], ['drop5', 'pop5'], ['volHi', 'volLo'], ['nearHi', 'farHi'], ['calm', 'wild'], ['mktUp', 'mktDn'], ['nearHi', 'pb12'], ['nearHi', 'drop5'], ['dilut', 'noDil'], ['offLow', 'nearLow'], ['dispHi', 'dispLo'], ['nearLow', 'nearHi'], ['nearLow', 'momHi']];
+const BK = Object.keys(BLOCKS), HOLDS = [5, 10, 20, 60], CLASH = [['smooth', 'jumpy'], ['lotHi', 'lotLo'], ['lotLo', 'day8'], ['lotLo', 'up25in10'], ['stack', 'dn50'], ['stack', 'dn200'], ['reclaim200', 'dn200'], ['atHi', 'farHi'], ['atHi', 'pb12'], ['atHi', 'nearLow'], ['snap', 'pop5'], ['up25in10', 'drop5'], ['tight20', 'wild'], ['gapUp', 'gapDn'], ['day8', 'dayDn8'], ['closeTop', 'closeBot'], ['up3', 'dn3'], ['day8', 'dn3'], ['dayDn8', 'up3'], ['up50', 'dn50'], ['up200', 'dn200'], ['momHi', 'momLo'], ['pb5', 'pb12'], ['drop5', 'pop5'], ['volHi', 'volLo'], ['nearHi', 'farHi'], ['calm', 'wild'], ['mktUp', 'mktDn'], ['nearHi', 'pb12'], ['nearHi', 'drop5'], ['dilut', 'noDil'], ['offLow', 'nearLow'], ['dispHi', 'dispLo'], ['nearLow', 'nearHi'], ['nearLow', 'momHi']];
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const rnd = mulberry32(+(env.AUTO_SEED || (Date.parse(D[T - 1]) / 864e5 | 0)));
 const ruleId = (r) => [...r.b].sort().join('+') + '/h' + r.h;
