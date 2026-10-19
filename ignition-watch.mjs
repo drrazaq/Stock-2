@@ -49,7 +49,7 @@ const passed = LAB && LAB.rules ? Object.values(LAB.rules).filter(x => x.verdict
 // live paper record must hold at 1.5x costs and without its 2 best trades; the live-only rule needs a longer record (no history test)
 const paperOk = (rule, exit, liveOnly) => { const r = PREC[rule + '/' + exit]; if (!r) return false; const need = liveOnly ? 60 : 30;
   return r.n >= need && r.avg > 0 && (r.stress === null || r.stress === undefined || r.stress > 0) && (r.noTop2 === null || r.noTop2 === undefined || r.noTop2 > 0) && (!liveOnly || (r.days >= 30 && r.stocks >= 20 && (r.pf || 0) >= 1.2)); };
-const halal = readJson('data/halal.json', {}), notHalal = (s) => halal[s] && halal[s].s === 'fail';
+const halal = readJson('data/halal.json', {}), zadNot = new Set((readJson('data/zad-list.json', {}) || {}).notHalal || []), notHalal = (s) => (halal[s] && halal[s].s === 'fail') || zadNot.has(s);   // your ZAD checks + ZAD's own not-halal list
 // ---- data
 let src = null, mode = 'NO_USABLE_MARKET_DATA', note = '';
 async function snapMassive() {
