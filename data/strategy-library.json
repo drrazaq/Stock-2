@@ -1369,6 +1369,67 @@
    "name": "Coffee-can portfolio",
    "explain": "A few great companies held 10 years.",
    "status": "long-term, not testable in 5 years"
+  },
+  {
+   "id": "R6",
+   "family": "Market conditions",
+   "name": "Breakout in a weak market",
+   "explain": "New 1-year high while the S&P 500 is under its 50-day: real strength against the tide.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "atHi",
+     "mktDn"
+    ],
+    "h": 20
+   },
+   "note": "Added 19 Oct from the 500-idea catalogue."
+  },
+  {
+   "id": "R7",
+   "family": "Market conditions",
+   "name": "Uptrend holding in a weak market",
+   "explain": "Full uptrend stack while the S&P 500 falls.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "stack",
+     "mktDn"
+    ],
+    "h": 20
+   },
+   "note": "Added 19 Oct from the 500-idea catalogue."
+  },
+  {
+   "id": "I13",
+   "family": "Ignition and early wave",
+   "name": "Volume awakening in a quiet base",
+   "explain": "Heavy volume while the 20-day range is still tight, before price breaks.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "tight20",
+     "volHi"
+    ],
+    "h": 20
+   },
+   "note": "Added 19 Oct from the 500-idea catalogue."
+  },
+  {
+   "id": "T19",
+   "family": "Trend and momentum",
+   "name": "Clean calm uptrend",
+   "explain": "Full uptrend, no new shares, calm stock.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "stack",
+     "noDil",
+     "calm"
+    ],
+    "h": 60
+   },
+   "note": "Added 19 Oct from the 500-idea catalogue."
   }
  ]
 }
