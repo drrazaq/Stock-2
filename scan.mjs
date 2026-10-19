@@ -342,7 +342,7 @@ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 =
   { const DC = readJson0('data/discovery.json'), dc = DC && DC.candidates ? DC.candidates.filter(x => !skip(x.sym)).slice(0, N) : [];
     if (dc.length) out.push('STRONG COMPANIES [INFO] (growth + momentum from their reports):', ...dc.map(x => '- ' + x.sym + ' ' + m0(x.price) + ': ' + (x.revGrowth !== undefined ? 'revenue ' + pcs(x.revGrowth) : '') + (x.profitTrend ? ', ' + x.profitTrend : '') + (x.mom6 !== undefined ? ', 6 months ' + pcs(x.mom6) : '')), ''); }
   // 6. quality and autolab (after Sunday)
-  { const Q = readJson0('data/quality.json'), q = Q && Q.status === 'OK' ? Q.today.filter(x => !skip(x.sym)).slice(0, N) : [], pass = Q && Q.results && Object.values(Q.results).some(r => r.verdict === 'PROMISING');
+  { const Q = readJson0('data/quality.json'), q = Q && Q.status === 'OK' ? Q.today.filter(x => !skip(x.sym)).slice(0, N) : [], pass = Q && Q.results && Object.entries(Q.results).some(([k, r]) => /^QUALITY_/.test(k) && r.verdict === 'PROMISING');
     if (q.length) out.push('TOP QUALITY COMPANIES [' + (pass ? 'TESTED on history, paper next' : 'INFO') + ']: ' + q.map(x => x.sym).join(', '), ''); }
   { const AL = readJson0('data/autolab.json'), c = AL && AL.candidates ? Object.values(AL.candidates).filter(x => x.today && x.today.length) : [];
     if (c.length) out.push('AUTOLAB [PAPER] (rules the system invented, passed 3 gates):', ...c.slice(0, N).map(x => '- ' + x.name + ': ' + x.today.filter(s0 => !skip(s0)).slice(0, 5).join(', ')), ''); }
