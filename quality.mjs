@@ -73,6 +73,7 @@ const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN
 D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; } }); const SIC = store.sic || {}; store = null;
 // banks, lenders, insurers and REITs (SEC industry 6xxx): operating cash flow does not measure their business, so they are left out of the dip hunt
 const finCo = (s) => { const x = SIC[s]; return !!(x && x.c && String(x.c)[0] === '6'); };
+const above200 = (i, t) => { if (t < 199) return null; let s = 0; for (let k = t - 199; k <= t; k++) { const c = C[i * T + k]; if (!(c > 0)) return null; s += c; } return C[i * T + t] > s / 200; };
 const spyI = SY.get('SPY'), GONE = -0.3, COST = 0.008, STRESS = 0.012, H = [126, 252];
 const hi252 = (i, t) => { const b = i * T; let m = 0; for (let k = Math.max(2, t - 251); k <= t; k++) { const c = Math.min(C[b + k], C[b + k - 1], C[b + k - 2]); if (c > m) m = c; } return m; };   // highest 3-day floor: one bad price print cannot fake a high
 const liquid = (i, t) => { const b = i * T, c = C[b + t]; if (!(c >= 5)) return false; let dv = 0; for (let k = t - 19; k <= t; k++) { if (k < 0 || !isFinite(C[b + k])) return false; dv += C[b + k] * V[b + k]; } return dv / 20 >= 5e6; };
@@ -103,10 +104,13 @@ function scoreDay(t) { const y = known(D[t]), rows = [];
   for (const x of rows) x.mf = x.m.ey !== null && x.m.roc !== null ? (x.r.ey + x.r.roc) / 2 : null;
   const bmS = rows.filter(x => x.m.bm !== null).sort((a, b) => b.m.bm - a.m.bm), cheap = new Set(bmS.slice(0, Math.ceil(bmS.length * 0.3)));
   for (const x of rows) { x.fs = x.m.fs; x.fsc = cheap.has(x) ? x.m.fs : null; }
+  // F-SCORE COMBINATIONS (added 19 Oct: the F-score beat the average stock but not the S&P 500): only stocks above their own 200-day
+  // average (improving finances AND an uptrend), and only in months when the S&P 500 is above its 200-day average (healthy market).
+  const spyUp = spyI !== undefined ? above200(spyI, t) : null; for (const x of rows) { x.fsu = x.fs !== null && above200(x.i, t) === true ? x.fs : null; x.fsm = x.fs !== null && spyUp === true ? x.fs : null; }
   return rows; }
 // ---- 3. monthly portfolios
 // third field 'f' = F-score rule: buy every stock scoring 8-9; if under 10 that month, the 10 best scores (others: top 10%, 10+ stocks)
-const VERS = [['QUALITY', 'q'], ['PROFIT', 'p'], ['VALUE', 'v'], ['QUALITY+VALUE', 'qv'], ['FAIR-PRICE DIP', 'd'], ['MAGIC FORMULA', 'mf'], ['F-SCORE', 'fs', 'f'], ['F-SCORE CHEAP', 'fsc', 'f']], trades = {}; for (const [n] of VERS) for (const h of H) trades[n + '_' + h] = [];
+const VERS = [['QUALITY', 'q'], ['PROFIT', 'p'], ['VALUE', 'v'], ['QUALITY+VALUE', 'qv'], ['FAIR-PRICE DIP', 'd'], ['MAGIC FORMULA', 'mf'], ['F-SCORE', 'fs', 'f'], ['F-SCORE CHEAP', 'fsc', 'f'], ['F-SCORE UPTREND', 'fsu', 'f'], ['F-SCORE STRONG MARKET', 'fsm', 'f']], trades = {}; for (const [n] of VERS) for (const h of H) trades[n + '_' + h] = [];
 let lastRows = null, months = 0;
 for (let t = 21; t < T - 1; t += 21) { const rows = scoreDay(t); if (rows.length < 100) continue; months++; if (t + 21 >= T - 1) lastRows = rows;
   for (const h of H) { if (t + h >= T) continue; const all = rows.map(x => fwd(x.i, t, h)).filter(x => x !== null && isFinite(x)); if (all.length < 50) continue; const ctrl = mean(all);
@@ -132,7 +136,7 @@ for (const [n] of VERS) for (const h of H) { const a = trades[n + '_' + h], R = 
     if (!(R.stress.avg > 0)) why.push('loses at 1.2% cost'); if (!(R.newer.noTop2 > 0)) why.push('loses without its 2 best trades'); if (R.newer.topStock > 0.25) why.push('one stock made over 25% of the profit');
     if (why.length) verdict = R.older.avg > R.older.ctrl && R.newer.avg > R.newer.ctrl ? 'NOT PROVEN' : 'REJECTED'; }
   RES[n + '_' + h] = { name: { QUALITY: 'Quality companies (profit, no dilution, lean growth, cash-backed profit)', PROFIT: 'High gross profit on assets', VALUE: 'Cheap for its cash flow (fair-price lane)', 'QUALITY+VALUE': 'Good AND cheap (quality + cash-flow value)', 'FAIR-PRICE DIP': 'Fair-price dip (down 40%+ but cheap for its cash flow, little dilution)',
-    'MAGIC FORMULA': 'Magic formula (Greenblatt: high earnings yield + high return on capital)', 'F-SCORE': 'Piotroski F-score 8-9 (improving finances)', 'F-SCORE CHEAP': 'Piotroski F-score 8-9 among the cheapest 30% by book value' }[n], months: Math.round(h / 21), verdict, why: why.join('; ') || 'beat an average stock and the S&P 500 in both halves, beyond luck, at stress cost', results: R }; }
+    'MAGIC FORMULA': 'Magic formula (Greenblatt: high earnings yield + high return on capital)', 'F-SCORE': 'Piotroski F-score 8-9 (improving finances)', 'F-SCORE CHEAP': 'Piotroski F-score 8-9 among the cheapest 30% by book value', 'F-SCORE UPTREND': 'Piotroski F-score 8-9, only stocks above their 200-day average', 'F-SCORE STRONG MARKET': 'Piotroski F-score 8-9, only when the S&P 500 is above its 200-day average' }[n], months: Math.round(h / 21), verdict, why: why.join('; ') || 'beat an average stock and the S&P 500 in both halves, beyond luck, at stress cost', results: R }; }
 const today = lastRows.filter(x => x.q !== null).sort((a, b) => b.q - a.q).slice(0, 25).map(x => ({ sym: SYMS[x.i], q: +x.q.toFixed(3), profit: x.m.profit === null ? null : +x.m.profit.toFixed(3), dilute: x.m.dilute === null ? null : +x.m.dilute.toFixed(3), growth: +x.m.growth.toFixed(3), accr: x.m.accr === null ? null : +x.m.accr.toFixed(3) }));
 const rank = {}; { const q = lastRows.filter(x => x.q !== null).sort((a, b) => b.q - a.q); q.forEach((x, n) => { rank[SYMS[x.i]] = +(1 - n / Math.max(1, q.length - 1)).toFixed(3); }); }   // 1 = best quality now, 0 = worst
 // fair value range per stock today, from its OWN past cash-flow yields (needs 3+ past years with positive cash flow)
