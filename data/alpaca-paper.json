@@ -1,15 +1,5 @@
 {
  "plans": {
-  "ALNT": {
-   "kind": "quick",
-   "q": "low",
-   "maxHold": 3,
-   "stop": 95.9789,
-   "kindName": "quick trade",
-   "entry": 101.22,
-   "qty": 10,
-   "since": "2026-10-13"
-  },
   "CLS": {
    "kind": "quick",
    "q": "low",
@@ -61,22 +51,34 @@
  },
  "pendingBuy": {},
  "pendingExit": {
-  "ALNT": {
-   "id": "a234d90c-1ddd-4fac-a811-92df7049dc12",
-   "entry": 101.22,
-   "qty": 10,
+  "ROIV": {
+   "id": "3dc19775-cdf7-4a53-8dd6-383df08afadd",
+   "entry": 33.314737,
+   "qty": 38,
    "kind": "quick",
-   "why": "time limit",
-   "since": "2026-10-13"
+   "why": "rule exit (5 day average)",
+   "since": "2026-10-14"
   }
  },
- "closed": [],
+ "closed": [
+  {
+   "sym": "ALNT",
+   "kind": "quick",
+   "entry": 101.22,
+   "exit": 92,
+   "pct": -0.09109,
+   "net": -0.09702,
+   "why": "time limit",
+   "in": "2026-10-13",
+   "out": "2026-10-19"
+  }
+ ],
  "start": {
   "d": "2026-10-12",
   "equity": 100000
  },
  "equity": {
-  "d": "2026-10-16",
-  "equity": 99570.25
+  "d": "2026-10-19",
+  "equity": 99672.03
  }
 }
