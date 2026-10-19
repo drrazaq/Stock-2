@@ -1,0 +1,27 @@
+{
+  "note": "AGENT LEAGUE. Three research agents compete to find strategies that really work. Each works only in its own lane and may change only its own 'champion' below. league.mjs is the referee (agents must not edit it, the test bars, or another agent's entries). Champion picks are frozen every study run in data/agent-shelf.jsonl and scored after 1 and 3 months against the S&P 500 and the average stock, on prices that did not exist when the picks were made.",
+  "started": "2026-10-20",
+  "agents": [
+    {
+      "id": "A",
+      "name": "Agent A - Timing",
+      "lane": "Price, momentum, early waves, breakouts, exits and stops, calendar and market-regime effects, earnings gaps.",
+      "runs": "Sunday 14:47 Kuwait",
+      "champion": { "strategy": "T1", "label": "6-month relative-strength leaders (LEADERS list)", "file": "data/leaders.json", "key": "paper", "since": "2026-10-20" }
+    },
+    {
+      "id": "B",
+      "name": "Agent B - Value",
+      "lane": "Company finances and fair price: F-score, quality, cash flow, buybacks and dilution, dividends, accruals, fallen stocks under fair value.",
+      "runs": "Tuesday 14:47 Kuwait",
+      "champion": { "strategy": "V15", "label": "F-score 8-9 in an uptrend", "file": "data/quality.json", "key": "fscoreUpToday", "since": "2026-10-20" }
+    },
+    {
+      "id": "C",
+      "name": "Agent C - Crowd",
+      "lane": "What other people do: insiders, tip sources and influencers, analysts, news and SEC events, supply-chain ripples, customer momentum.",
+      "runs": "Thursday 14:47 Kuwait",
+      "champion": { "strategy": "E3", "label": "Insider cluster buying (3+ insiders, last 30 days)", "file": "data/insider-study.json", "key": "recent", "min": { "n": 3 }, "fresh": 30, "dateField": "d", "since": "2026-10-20" }
+    }
+  ]
+}

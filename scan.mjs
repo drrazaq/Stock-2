@@ -769,6 +769,7 @@ const MENU = [
   ['skips', 'skips', 'Buys you skipped, why, and what they did since'],
   ['health', 'health', 'Is every part of the system running?'],
   ['strategies', 'strategies', 'The strategy library: what was tested, what failed, what is waiting'],
+  ['league', 'league', 'Agent league: three research agents competing, scored on results only'],
   ['dips', 'dips', 'Fallen stocks now under their own fair value (watch list, tested every Sunday)'],
   ['research', 'research', 'Every idea tested, result, and what is waiting'],
   ['review', 'review', 'Hold-or-sell study of every stock you own'],
@@ -2251,6 +2252,7 @@ async function tgCommands(sig) {
     } else if ((k = text.match(/^quiet\s+(on|off)\s*$/i))) { const st = readJson('data/settings.json', {}); st.quiet = k[1].toLowerCase() === 'on'; fs.writeFileSync('data/settings.json', JSON.stringify(st)); out.push(st.quiet ? 'QUIET ON: you get ONE action message each night and morning, plus BUY NOW, stop and target alerts. Research messages are kept in the system and summed up there. Send  quiet off  to get everything again.' : 'QUIET OFF: you get every message again (plan, your stocks, radar paper alerts, movers, smart money, deals, Sunday studies).');
     } else if (/^(themes?|sectors? flow|industr(y|ies)|where is the money)\s*\??\s*$/i.test(text)) { out.push(themesText());
     } else if (/^(skips?|my skips|skipped)\s*\??\s*$/i.test(text)) { out.push(await skipsText());
+    } else if (/^(league|agents|agent league)\s*\??\s*$/i.test(text)) { const LG = readJson0('data/agent-league.json'); out.push(LG && LG.text ? LG.text : 'AGENT LEAGUE: no score yet. The referee runs with the Sunday studies.');
     } else if (/^(strateg(y|ies)|library|strategy library|استراتيجيات)\s*\??\s*$/i.test(text)) { const LB = readJson0('data/strategy-library.json'), L = LB && LB.strategies || [], cnt = {};
       for (const e of L) { const k = /^LIVE/.test(e.status) ? 'passed, now on live paper' : /^FAILED/.test(e.status) || /rejected/.test(e.status) ? 'tested and failed' : /^queued/.test(e.status) ? 'waiting to be tested' : /not proven|^tested/.test(e.status) ? 'tested, not proven / in use' : /live paper|^paper|bred/.test(e.status) ? 'running on paper now' : /not for this system/.test(e.status) ? 'not for this system' : 'needs data / other'; cnt[k] = (cnt[k] || 0) + 1; }
       const near = L.filter(e => e.result && typeof e.result.t === 'number').sort((x, y) => y.result.t - x.result.t).slice(0, 5);
