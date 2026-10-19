@@ -22,6 +22,7 @@ async function sec(url) {
   if (r.status === 403 || r.status === 429) { note = 'SEC refused (HTTP ' + r.status + ')'; return null; }
   if (!r.ok) return null; return r.json().catch(() => null); }
 let S; try { S = JSON.parse(zlib.gunzipSync(fs.readFileSync(OUT)).toString()); } catch (e) { S = { frames: {}, c: {}, t: {} }; }
+if (!S.raw) S.raw = JSON.parse(JSON.stringify(S.c || {}));   // printed SEC counts (before 19 Oct, S.c held them)
 // 1. ticker -> SEC number, weekly
 if (!S.tAt || Date.now() - Date.parse(S.tAt) > 6 * 864e5) { const j = await sec(WWW + '/files/company_tickers.json');
   if (j) { S.t = {}; for (const x of Object.values(j)) if (x && x.ticker && !S.t[String(x.ticker).toUpperCase().replace(/-/g, '.')]) S.t[String(x.ticker).toUpperCase().replace(/-/g, '.')] = x.cik_str; S.tAt = new Date().toISOString(); } }
@@ -32,10 +33,21 @@ const recent = new Set(want.slice(-3)); let got = 0, failed = 0;
 for (const f of want) { if (S.frames[f] && !recent.has(f)) continue;
   const j = await sec(DATA + '/api/xbrl/frames/dei/EntityCommonStockSharesOutstanding/shares/' + f + '.json');
   if (!j || !Array.isArray(j.data)) { failed++; if (note) break; continue; }
-  for (const x of j.data) { if (!x || !x.cik || !(x.val > 0) || !x.end) continue; const a = S.c[x.cik] || (S.c[x.cik] = []), i = a.findIndex(p => p[0] === x.end);
+  for (const x of j.data) { if (!x || !x.cik || !(x.val > 0) || !x.end) continue; const a = S.raw[x.cik] || (S.raw[x.cik] = []), i = a.findIndex(p => p[0] === x.end);
     if (i >= 0) a[i][1] = x.val; else a.push([x.end, x.val]); }
   S.frames[f] = j.data.length; got++; }
-for (const a of Object.values(S.c)) a.sort((u, v) => u[0] < v[0] ? -1 : 1);
+for (const a of Object.values(S.raw)) a.sort((u, v) => u[0] < v[0] ? -1 : 1);
+// SPLITS (added 19 Oct): prices are split-adjusted, printed SEC counts are not (NVDA: 609M in 2019, 24B in 2026), so a split looked like
+// dilution, a reverse split like a buyback, and cash-flow yields of past years were off by every later split. Put every count on TODAY's
+// share basis with the official split list (data/splits.json from leaders-study, kept inside this file too). A split is applied to a count
+// only when the first count after the split is closer to (count x ratio) than to the count itself.
+{ let L = null; try { L = JSON.parse(fs.readFileSync('data/splits.json', 'utf8')).splits; } catch (e) {} if (Array.isArray(L) && L.length) S.splits = L; L = S.splits || [];
+  const bySym = {}; for (const x of L) (bySym[x.s] = bySym[x.s] || []).push(x); const cikSplits = {}; for (const [sym, cik] of Object.entries(S.t || {})) if (bySym[sym]) (cikSplits[cik] = cikSplits[cik] || []).push(...bySym[sym]);
+  S.c = {}; let changed = 0; for (const [cik, a] of Object.entries(S.raw)) { const sp = cikSplits[cik]; if (!sp) { S.c[cik] = a; continue; } const out = a.map(p => [p[0], p[1]]);
+    for (const x of sp) { const nxt = a.find(p => p[0] >= x.d); if (!nxt) continue; for (let k = 0; k < out.length; k++) { if (a[k][0] >= x.d) continue; const lastBefore = a.filter(p => p[0] < x.d).pop(); if (!lastBefore) continue;
+        if (Math.abs(Math.log(nxt[1] / (lastBefore[1] * x.r))) < Math.abs(Math.log(nxt[1] / lastBefore[1]))) out[k][1] = Math.round(out[k][1] * x.r); } }
+    S.c[cik] = out; if (out.some((p, k) => p[1] !== a[k][1])) changed++; }
+  console.log('shares: ' + L.length + ' splits known; ' + changed + ' companies put on today\'s share basis'); }
 S.at = new Date().toISOString(); S.lagDays = LAG; S.note = note;
 fs.mkdirSync('data', { recursive: true }); fs.writeFileSync(OUT, zlib.gzipSync(JSON.stringify(S)));
 console.log('shares: ' + got + ' quarters read (' + calls + ' SEC requests' + (failed ? ', ' + failed + ' failed' : '') + (note ? ', ' + note : '') + '), ' + Object.keys(S.c).length + ' companies, ' + Object.keys(S.frames).length + ' quarters in the history');

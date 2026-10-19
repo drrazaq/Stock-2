@@ -1430,6 +1430,35 @@
     "h": 60
    },
    "note": "Added 19 Oct from the 500-idea catalogue."
+  },
+  {
+   "id": "M14",
+   "family": "Dips and reversals",
+   "name": "Not a lottery stock, in an uptrend",
+   "explain": "No day above +4% in the last month, above the 200-day: the MAX effect says these beat lottery stocks.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "lotLo",
+     "up200"
+    ],
+    "h": 20
+   },
+   "note": "Researcher, 19 Oct (MAX effect)."
+  },
+  {
+   "id": "M15",
+   "family": "Dips and reversals",
+   "name": "Lottery stock (avoid test)",
+   "explain": "A 15%+ one-day jump in the last month: expected to lag (Bali, Cakici & Whitelaw 2011).",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "lotHi"
+    ],
+    "h": 20
+   },
+   "note": "Researcher, 19 Oct (MAX effect)."
   }
  ]
 }

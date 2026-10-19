@@ -72,6 +72,23 @@ for (let k = 1, have = Object.keys(store.days).length; have < WANT && k < WANT *
   store.days[d] = { T: rows.map(x => x.T), o: rows.map(x => +x.o.toFixed(4)), h: rows.map(x => +x.h.toFixed(4)), l: rows.map(x => +x.l.toFixed(4)), c: rows.map(x => +x.c.toFixed(4)), v: rows.map(x => Math.round(x.v)) };
   have++; added++; if (added % 25 === 0) { save(); console.log('sessions held:', have); }
 }
+// SPLITS (added 19 Oct, from the researcher's design): each day was fetched once, adjusted only for splits known on the fetch day, so a
+// later split leaves a fake crash/jump in the cache. Read the official split list, save it (data/splits.json, also used by shares.mjs to
+// put SEC share counts on today's basis) and repair the cache. A split is applied only when the price jump around it is closer to the
+// split ratio than to 1, so re-running never double-adjusts and days fetched after the split are left alone.
+try { const first = Object.keys(store.days).sort()[0] || '2019-01-01', list = []; let path = '/stocks/v1/splits?execution_date.gte=' + first + '&limit=5000', pages = 0;
+  while (path && pages++ < 20) { const j = await api(path); if (!j || j.refused || !Array.isArray(j.results)) { if (pages === 1) { path = '/v3/reference/splits?execution_date.gte=' + first + '&limit=1000'; continue; } break; }
+    for (const x of j.results) { const s = String(x.ticker || '').toUpperCase(), d = String(x.execution_date || ''), f = +x.split_from, t = +x.split_to; if (!s || !d || !(f > 0) || !(t > 0) || f === t) continue; if (/dividend/i.test(String(x.adjustment_type || ''))) continue; if (d >= first) list.push({ s, d, r: t / f }); }
+    path = j.next_url ? j.next_url.replace(PX, '') : null; }
+  if (list.length) { fs.writeFileSync('data/splits.json', JSON.stringify({ at: new Date().toISOString(), from: first, splits: list })); }
+  const days = Object.keys(store.days).sort(); let fixed = 0;
+  for (const sp of list) { const iA = days.findIndex(d => d >= sp.d); if (iA <= 0) continue; let pre = null, post = null;
+    for (let k = iA - 1; k >= Math.max(0, iA - 10) && pre === null; k--) { const x = store.days[days[k]], j = x.T.indexOf(sp.s); if (j >= 0) pre = x.c[j]; }
+    for (let k = iA; k < Math.min(days.length, iA + 10) && post === null; k++) { const x = store.days[days[k]], j = x.T.indexOf(sp.s); if (j >= 0) post = x.c[j]; }
+    if (!(pre > 0) || !(post > 0)) continue; const jump = Math.log(pre / post), want = Math.log(sp.r); if (!(Math.abs(jump - want) < Math.abs(jump))) continue;
+    for (let k = 0; k < iA; k++) { const x = store.days[days[k]], j = x.T.indexOf(sp.s); if (j < 0) continue; for (const f of ['o', 'h', 'l', 'c']) x[f][j] = +(x[f][j] / sp.r).toFixed(4); x.v[j] = Math.round(x.v[j] * sp.r); }
+    fixed++; }
+  console.log('splits: ' + list.length + ' on the official list since ' + first + '; repaired ' + fixed + ' in the price cache'); } catch (e) { console.log('splits: skipped (' + e.message + ')'); }
 // keep only the newest WANT sessions
 const allDays = Object.keys(store.days).sort(); for (const d of allDays.slice(0, Math.max(0, allDays.length - WANT))) delete store.days[d];
 save();

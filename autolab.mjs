@@ -58,6 +58,7 @@ for (let i = 0; i < NS; i++) { const b = i * T; let s10 = 0, s20 = 0, n = 0, bel
     if (n > 10) s10 -= C[k - 10]; if (n > 20) s20 -= C[k - 20]; if (n >= 10) MA10[k] = s10 / 10; if (n >= 20) MA20[k] = s20 / 20;
     if (n >= 21) { let hi = -Infinity, lo = Infinity, l2 = Infinity; for (let j = k - 19; j <= k; j++) { if (C[j] > hi) hi = C[j]; if (C[j] < lo) lo = C[j]; } for (let j = k - 20; j < k; j++) if (LO[j] < l2) l2 = LO[j]; RNG20[k] = (hi - lo) / c; LO20[k] = l2; }
     BEL200[k] = F.tr200[k] === -1 ? Math.min(30000, bel = bel + 1) : (bel = 0); } }
+const MAX21 = new Float32Array(NS * T).fill(NaN); for (let i = 0; i < NS; i++) { const b = i * T; for (let t = 22; t < T; t++) { let m = -Infinity, ok = 0; for (let k = t - 20; k <= t; k++) { const c0 = C[b + k - 1], c1 = C[b + k]; if (c0 > 0 && c1 > 0) { ok++; if (c1 / c0 - 1 > m) m = c1 / c0 - 1; } } if (ok >= 15) MAX21[b + t] = m; } }
 // ---- building blocks (each a fixed yes/no test on a stock-day)
 const BLOCKS = {
   up50: [(k) => F.tr50[k] === 1, 'above its 50-day average'], dn50: [(k) => F.tr50[k] === -1, 'under its 50-day average'],
@@ -86,8 +87,10 @@ const BLOCKS = {
   snap: [(k) => F.r5[k] <= -0.15 && C[k] > C[k - 1], 'fell 15%+ in 5 days, then an up day (snap-back)'],
   bearTrap: [(k) => LO[k] < LO20[k] && C[k] > LO20[k], 'broke under its 20-day low, closed back above (failed breakdown)'],
   atHi: [(k) => F.dh[k] <= 0.001, 'closed at a new 1-year high'],
-  tom: [(k, t) => { const d = +D[t].slice(8, 10); return d >= 27 || d <= 3; }, 'turn of the month (last days / first 3 days)'] };
-const BK = Object.keys(BLOCKS), HOLDS = [5, 10, 20, 60], CLASH = [['stack', 'dn50'], ['stack', 'dn200'], ['reclaim200', 'dn200'], ['atHi', 'farHi'], ['atHi', 'pb12'], ['atHi', 'nearLow'], ['snap', 'pop5'], ['up25in10', 'drop5'], ['tight20', 'wild'], ['gapUp', 'gapDn'], ['day8', 'dayDn8'], ['closeTop', 'closeBot'], ['up3', 'dn3'], ['day8', 'dn3'], ['dayDn8', 'up3'], ['up50', 'dn50'], ['up200', 'dn200'], ['momHi', 'momLo'], ['pb5', 'pb12'], ['drop5', 'pop5'], ['volHi', 'volLo'], ['nearHi', 'farHi'], ['calm', 'wild'], ['mktUp', 'mktDn'], ['nearHi', 'pb12'], ['nearHi', 'drop5'], ['dilut', 'noDil'], ['offLow', 'nearLow'], ['dispHi', 'dispLo'], ['nearLow', 'nearHi'], ['nearLow', 'momHi']];
+  tom: [(k, t) => { const d = +D[t].slice(8, 10); return d >= 27 || d <= 3; }, 'turn of the month (last days / first 3 days)'],
+  // MAX / lottery effect (Bali, Cakici & Whitelaw 2011): the biggest one-day gain of the last 21 sessions; lottery-like stocks tend to lag
+  lotHi: [(k) => MAX21[k] >= 0.15, 'lottery-like: a 15%+ one-day jump in the last month'], lotLo: [(k) => MAX21[k] < 0.04, 'no day above +4% in the last month'] };
+const BK = Object.keys(BLOCKS), HOLDS = [5, 10, 20, 60], CLASH = [['lotHi', 'lotLo'], ['lotLo', 'day8'], ['lotLo', 'up25in10'], ['stack', 'dn50'], ['stack', 'dn200'], ['reclaim200', 'dn200'], ['atHi', 'farHi'], ['atHi', 'pb12'], ['atHi', 'nearLow'], ['snap', 'pop5'], ['up25in10', 'drop5'], ['tight20', 'wild'], ['gapUp', 'gapDn'], ['day8', 'dayDn8'], ['closeTop', 'closeBot'], ['up3', 'dn3'], ['day8', 'dn3'], ['dayDn8', 'up3'], ['up50', 'dn50'], ['up200', 'dn200'], ['momHi', 'momLo'], ['pb5', 'pb12'], ['drop5', 'pop5'], ['volHi', 'volLo'], ['nearHi', 'farHi'], ['calm', 'wild'], ['mktUp', 'mktDn'], ['nearHi', 'pb12'], ['nearHi', 'drop5'], ['dilut', 'noDil'], ['offLow', 'nearLow'], ['dispHi', 'dispLo'], ['nearLow', 'nearHi'], ['nearLow', 'momHi']];
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const rnd = mulberry32(+(env.AUTO_SEED || (Date.parse(D[T - 1]) / 864e5 | 0)));
 const ruleId = (r) => [...r.b].sort().join('+') + '/h' + r.h;
