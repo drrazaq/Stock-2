@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-19T06:39:55.612Z",
+ "generatedAt": "2026-10-19T06:50:40.687Z",
  "from": "2021-11-10",
  "to": "2026-10-16",
  "events": 1872,
@@ -10,36 +10,42 @@
   "SAME_LAYER_3": {
    "name": "Peer in the same layer that has not moved yet, after a chain member jumps 6%+ on 2x volume; held 3 sessions",
    "verdict": "REJECTED",
-   "why": "not better than an average stock in the older half (-0.1%); could be luck in the older half (t -0.72, 2.7 needed); not better than an average stock in the newer half (-0.0%); could be luck in the newer half (t -0.19, 2.7 needed); loses at 1.2% costs; loses without its 2 best trades",
+   "why": "not better than an average stock in the older half (-0.1%); could be luck in the older half (t -0.73, 2.7 needed); not better than an average stock in the newer half (-0.0%); could be luck in the newer half (t -0.18, 2.7 needed); loses at 1.2% costs; loses without its 2 best trades",
    "results": {
     "older": {
-     "n": 1416,
+     "vsOwn": 0.0046,
+     "tOwn": 2.02,
+     "n": 1414,
      "days": 271,
      "avg": 0.0022,
      "ctrl": 0.0024,
-     "edge": -0.0013,
-     "t": -0.72,
+     "edge": -0.0014,
+     "t": -0.73,
      "win": 0.491,
-     "noTop2": 0.0018
+     "noTop2": 0.0017
     },
     "newer": {
-     "n": 2217,
+     "vsOwn": 0.0057,
+     "tOwn": 2.64,
+     "n": 2216,
      "days": 379,
-     "avg": 0.0003,
+     "avg": 0.0004,
      "ctrl": 0.0014,
      "edge": -0.0004,
-     "t": -0.19,
+     "t": -0.18,
      "win": 0.475,
      "noTop2": -0.0002
     },
     "stress": {
-     "n": 2217,
+     "vsOwn": 0.0057,
+     "tOwn": 2.64,
+     "n": 2216,
      "days": 379,
-     "avg": -0.0037,
+     "avg": -0.0036,
      "ctrl": 0.0014,
      "edge": -0.0044,
-     "t": -2.17,
-     "win": 0.429,
+     "t": -2.16,
+     "win": 0.43,
      "noTop2": -0.0042
     }
    }
@@ -47,20 +53,24 @@
   "SAME_LAYER_10": {
    "name": "Peer in the same layer that has not moved yet, after a chain member jumps 6%+ on 2x volume; held 10 sessions",
    "verdict": "NOT PROVEN",
-   "why": "could be luck in the older half (t 1.39, 2.7 needed); could be luck in the newer half (t 2.34, 2.7 needed)",
+   "why": "could be luck in the older half (t 1.41, 2.7 needed); not clearly better than the same stock on its other days in the older half (+0.5%, t 1.22); could be luck in the newer half (t 2.34, 2.7 needed); not clearly better than the same stock on its other days in the newer half (+0.6%, t 1.34)",
    "results": {
     "older": {
-     "n": 1416,
+     "vsOwn": 0.0049,
+     "tOwn": 1.22,
+     "n": 1414,
      "days": 271,
      "avg": 0.0059,
-     "ctrl": 0.0011,
-     "edge": 0.0048,
-     "t": 1.39,
+     "ctrl": 0.0012,
+     "edge": 0.0049,
+     "t": 1.41,
      "win": 0.512,
-     "noTop2": 0.0046
+     "noTop2": 0.0047
     },
     "newer": {
-     "n": 2215,
+     "vsOwn": 0.0057,
+     "tOwn": 1.34,
+     "n": 2214,
      "days": 378,
      "avg": 0.0088,
      "ctrl": 0.0022,
@@ -70,12 +80,14 @@
      "noTop2": 0.0079
     },
     "stress": {
-     "n": 2215,
+     "vsOwn": 0.0057,
+     "tOwn": 1.34,
+     "n": 2214,
      "days": 378,
      "avg": 0.0048,
      "ctrl": 0.0022,
      "edge": 0.0053,
-     "t": 1.33,
+     "t": 1.34,
      "win": 0.493,
      "noTop2": 0.0039
     }
@@ -83,58 +95,68 @@
   },
   "SAME_LAYER_20": {
    "name": "Peer in the same layer that has not moved yet, after a chain member jumps 6%+ on 2x volume; held 20 sessions",
-   "verdict": "PROMISING",
-   "why": "beat the average stock in both halves, beyond luck, at stress cost",
+   "verdict": "NOT PROVEN",
+   "why": "not clearly better than the same stock on its other days in the older half (+1.1%, t 1.86); not clearly better than the same stock on its other days in the newer half (+0.5%, t 0.76)",
    "results": {
     "older": {
-     "n": 1416,
+     "vsOwn": 0.0113,
+     "tOwn": 1.86,
+     "n": 1414,
      "days": 271,
-     "avg": 0.0159,
+     "avg": 0.016,
      "ctrl": -0.0024,
-     "edge": 0.0204,
-     "t": 3.97,
+     "edge": 0.0205,
+     "t": 4,
      "win": 0.544,
-     "noTop2": 0.0143
+     "noTop2": 0.0145
     },
     "newer": {
-     "n": 2206,
+     "vsOwn": 0.005,
+     "tOwn": 0.76,
+     "n": 2205,
      "days": 376,
-     "avg": 0.0267,
+     "avg": 0.0268,
      "ctrl": 0.0059,
      "edge": 0.0235,
-     "t": 3.84,
-     "win": 0.544,
-     "noTop2": 0.0253
+     "t": 3.85,
+     "win": 0.545,
+     "noTop2": 0.0254
     },
     "stress": {
-     "n": 2206,
+     "vsOwn": 0.005,
+     "tOwn": 0.76,
+     "n": 2205,
      "days": 376,
-     "avg": 0.0227,
+     "avg": 0.0228,
      "ctrl": 0.0059,
      "edge": 0.0195,
      "t": 3.19,
      "win": 0.529,
-     "noTop2": 0.0213
+     "noTop2": 0.0214
     }
    }
   },
   "OTHER_LAYER_3": {
    "name": "Supplier / customer in another layer that has not moved yet, after a chain member jumps 6%+ on 2x volume; held 3 sessions",
    "verdict": "REJECTED",
-   "why": "not better than an average stock in the older half (-0.4%); could be luck in the older half (t -3.04, 2.7 needed); lost money after costs in the older half; not better than an average stock in the newer half (-0.4%); could be luck in the newer half (t -3.3, 2.7 needed); lost money after costs in the newer half; loses at 1.2% costs; loses without its 2 best trades",
+   "why": "not better than an average stock in the older half (-0.4%); could be luck in the older half (t -2.95, 2.7 needed); lost money after costs in the older half; not clearly better than the same stock on its other days in the older half (+0.1%, t 0.86); not better than an average stock in the newer half (-0.4%); could be luck in the newer half (t -3.3, 2.7 needed); lost money after costs in the newer half; not clearly better than the same stock on its other days in the newer half (+0.2%, t 1.23); loses at 1.2% costs; loses without its 2 best trades",
    "results": {
     "older": {
-     "n": 10984,
+     "vsOwn": 0.0015,
+     "tOwn": 0.86,
+     "n": 10975,
      "days": 322,
      "avg": -0.0029,
      "ctrl": 0.0002,
-     "edge": -0.0038,
-     "t": -3.04,
+     "edge": -0.0037,
+     "t": -2.95,
      "win": 0.454,
      "noTop2": -0.003
     },
     "newer": {
-     "n": 17273,
+     "vsOwn": 0.0018,
+     "tOwn": 1.23,
+     "n": 17272,
      "days": 417,
      "avg": -0.0029,
      "ctrl": 0.001,
@@ -144,7 +166,9 @@
      "noTop2": -0.003
     },
     "stress": {
-     "n": 17273,
+     "vsOwn": 0.0018,
+     "tOwn": 1.23,
+     "n": 17272,
      "days": 417,
      "avg": -0.0069,
      "ctrl": 0.001,
@@ -158,20 +182,24 @@
   "OTHER_LAYER_10": {
    "name": "Supplier / customer in another layer that has not moved yet, after a chain member jumps 6%+ on 2x volume; held 10 sessions",
    "verdict": "NOT PROVEN",
-   "why": "could be luck in the older half (t 1.69, 2.7 needed); could be luck in the newer half (t 2.29, 2.7 needed)",
+   "why": "could be luck in the older half (t 1.83, 2.7 needed); not clearly better than the same stock on its other days in the older half (+0.2%, t 0.77); could be luck in the newer half (t 2.29, 2.7 needed); not clearly better than the same stock on its other days in the newer half (+0.1%, t 0.42)",
    "results": {
     "older": {
-     "n": 10984,
+     "vsOwn": 0.0023,
+     "tOwn": 0.77,
+     "n": 10975,
      "days": 322,
-     "avg": 0.0031,
+     "avg": 0.0032,
      "ctrl": -0.0016,
-     "edge": 0.0034,
-     "t": 1.69,
+     "edge": 0.0037,
+     "t": 1.83,
      "win": 0.498,
-     "noTop2": 0.0029
+     "noTop2": 0.003
     },
     "newer": {
-     "n": 17195,
+     "vsOwn": 0.0011,
+     "tOwn": 0.42,
+     "n": 17194,
      "days": 415,
      "avg": 0.0106,
      "ctrl": 0.0041,
@@ -181,7 +209,9 @@
      "noTop2": 0.0104
     },
     "stress": {
-     "n": 17195,
+     "vsOwn": 0.0011,
+     "tOwn": 0.42,
+     "n": 17194,
      "days": 415,
      "avg": 0.0066,
      "ctrl": 0.0041,
@@ -194,31 +224,37 @@
   },
   "OTHER_LAYER_20": {
    "name": "Supplier / customer in another layer that has not moved yet, after a chain member jumps 6%+ on 2x volume; held 20 sessions",
-   "verdict": "PROMISING",
-   "why": "beat the average stock in both halves, beyond luck, at stress cost",
+   "verdict": "NOT PROVEN",
+   "why": "not clearly better than the same stock on its other days in the older half (+0.5%, t 1.19); not clearly better than the same stock on its other days in the newer half (+0.1%, t 0.33)",
    "results": {
     "older": {
-     "n": 10984,
+     "vsOwn": 0.005,
+     "tOwn": 1.19,
+     "n": 10975,
      "days": 322,
-     "avg": 0.0131,
-     "ctrl": -0.0052,
-     "edge": 0.0157,
-     "t": 5.35,
+     "avg": 0.0132,
+     "ctrl": -0.0051,
+     "edge": 0.0161,
+     "t": 5.48,
      "win": 0.517,
-     "noTop2": 0.0129
+     "noTop2": 0.013
     },
     "newer": {
-     "n": 17129,
+     "vsOwn": 0.0014,
+     "tOwn": 0.33,
+     "n": 17128,
      "days": 413,
      "avg": 0.0282,
      "ctrl": 0.0069,
      "edge": 0.0197,
-     "t": 5.56,
+     "t": 5.57,
      "win": 0.555,
      "noTop2": 0.0279
     },
     "stress": {
-     "n": 17129,
+     "vsOwn": 0.0014,
+     "tOwn": 0.33,
+     "n": 17128,
      "days": 413,
      "avg": 0.0242,
      "ctrl": 0.0069,
@@ -226,6 +262,75 @@
      "t": 4.44,
      "win": 0.54,
      "noTop2": 0.0239
+    }
+   }
+  },
+  "CUSTOMER_TOP_21": {
+   "name": "Customer momentum (Cohen-Frazzini): suppliers whose customers rose most last month, held 1 month",
+   "verdict": "NOT PROVEN",
+   "why": "could be luck in the older half (t 0.77, 2.7 needed); not clearly better than the same stock on its other days in the older half (+0.5%, t 0.25); could be luck in the newer half (t 1.2, 2.7 needed); not clearly better than the same stock on its other days in the newer half (-0.0%, t -0.03)",
+   "results": {
+    "older": {
+     "vsOwn": 0.0047,
+     "tOwn": 0.25,
+     "n": 665,
+     "days": 29,
+     "avg": 0.0079,
+     "ctrl": -0.0028,
+     "edge": 0.0108,
+     "t": 0.77,
+     "win": 0.54,
+     "noTop2": 0.0056
+    },
+    "newer": {
+     "vsOwn": -0.0004,
+     "tOwn": -0.03,
+     "n": 756,
+     "days": 28,
+     "avg": 0.0265,
+     "ctrl": 0.0096,
+     "edge": 0.0167,
+     "t": 1.2,
+     "win": 0.519,
+     "noTop2": 0.0233
+    },
+    "stress": {
+     "vsOwn": -0.0004,
+     "tOwn": -0.03,
+     "n": 756,
+     "days": 28,
+     "avg": 0.0225,
+     "ctrl": 0.0096,
+     "edge": 0.0127,
+     "t": 0.91,
+     "win": 0.508,
+     "noTop2": 0.0193
+    },
+    "bottom": {
+     "older": {
+      "vsOwn": null,
+      "tOwn": null,
+      "n": 668,
+      "days": 29,
+      "avg": -0.0011,
+      "ctrl": -0.0031,
+      "edge": 0.0018,
+      "t": 0.19,
+      "win": 0.484,
+      "noTop2": -0.0035
+     },
+     "newer": {
+      "vsOwn": null,
+      "tOwn": null,
+      "n": 757,
+      "days": 28,
+      "avg": 0.0237,
+      "ctrl": 0.0096,
+      "edge": 0.0134,
+      "t": 1.24,
+      "win": 0.543,
+      "noTop2": 0.0206
+     }
     }
    }
   }
