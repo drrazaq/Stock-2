@@ -950,7 +950,11 @@ const wilsonLo = (p, n) => { if (!(n > 0) || typeof p !== 'number') return 0; co
 const highConv = (x) => !x.thin && x.n >= 60 && x.net >= 0.008 && wilsonLo(x.win, x.n) >= 0.5 && x.lo > 0 && x.stop > 0 && (x.lo - x.stop) / x.lo <= 0.12 && !(x.live && x.live.n >= 10 && x.live.avg <= 0);
 const rankOf = (x) => { if (!x.d || !(x.lo > 0) || !(x.stop > 0)) return null; const mid = (x.lo + x.hi) / 2, risk = (mid - x.stop) / mid + costPct(mid, STD_BUY); return risk > 0 ? x.d.lb / risk : null; };
 const distText = (d) => !d ? '' : 'Winners averaged ' + pcs(d.aw) + ', losers ' + pcs(d.al) + ', profit factor ' + (d.pf >= 20 ? 'over 20' : d.pf.toFixed(1)) + '. Safety margin (lower bound of the average): ' + pcs(d.lb) + (d.lb > 0 ? '' : ', so the edge could still be luck');
-function planCands(sig, held0) {
+function planCands(sig, held0) { const c0 = planCands0(sig, held0), LT = (sig && sig.lottery) || {};
+  // LOTTERY AVOID (tested 19 Oct, autolab M15: stocks with a 15%+ one-day jump in the last month lagged the average stock by about 3% over the next month, t -5): never a buy
+  for (const x of c0) if (LT[x.sym] >= 0.15) { x.ok = false; x.lottery = LT[x.sym]; x.avoid = 'AVOID: lottery-like (a ' + Math.round(LT[x.sym] * 100) + '% one-day jump in the last month); tested 19 Oct: such stocks lagged the average stock by about 3% over the next month (t -5)'; }
+  return c0; }
+function planCands0(sig, held0) {
   const c = [], HM = HALALM(), held = new Proxy(held0 || {}, { get: (o, k) => o[k] || (HM[k] && HM[k].s === 'fail' ? { notHalal: true } : undefined) });   // not halal in ZAD: never offered
   for (const q of sig.quickPaused ? [] : (sig.quick || [])) { if (held[q.sym]) continue; const net = netOf(q.avgPct, q.last);
     c.push({ sym: q.sym, kind: 'quick trade', n: q.n, net, live: q.live, lo: q.buyLo, hi: q.buyHi, stop: q.stop, days: q.maxHold || 5, earnDays: q.earnDays, sector: q.sector,
@@ -1832,6 +1836,7 @@ async function actionsText(sig, pos, px, title) {
   if (sells.length) out.push('', 'SELL', ...sells.map(l => '- ' + l));
   if (h.acts.part.length) out.push('', 'SELL PART', ...h.acts.part.map(l => '- ' + l));
   const buyPart = plan.replace(/\nSELL\n[\s\S]*?(\n\n|$)/, '\n').trim();
+  if (sig) { const av = planCands(sig, pos).filter(x => x.lottery); if (av.length) out.push('', 'AVOID (lottery-like, tested to lag about 3% a month): ' + av.slice(0, 8).map(x => x.sym + ' +' + Math.round(x.lottery * 100) + '% in one day').join(', ') + '. Do not chase these.'); }
   const FOCUS = (readJson0('data/settings.json') || {}).focus !== false, working = FOCUS ? liveConclusions().some(l => /^- WORKING/.test(l)) : true;
   if (FOCUS && !working) out.push('', 'FOCUS MODE (4-week plan from 18 Oct): no new trading buys until an engine shows a positive live record.', 'What to do instead: 1) long-term money in a halal index fund (check ZAD); 2) your long-term source\u2019s tips, each with a 35% stop; 3) EARLY WAVE alerts during the session, 1,000 USD each, stop at once.', 'Engine buys still logged on paper. To see them anyway: send  focus off');
   else out.push('', buyPart.replace(/^\n+/, ''));
@@ -2782,7 +2787,7 @@ async function daily() {
   fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
   { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
   { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
-  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
+  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
   fs.writeFileSync('data/alert-state.json', JSON.stringify({ day: '', sent: {} }));
   { const n = ledgerAppend(); if (n) console.log('research ledger: ' + n + ' new result' + (n > 1 ? 's' : '') + ' logged'); }
   try { switchPaper(loaded); } catch (e) { console.log('switch paper: ' + e.message); }
