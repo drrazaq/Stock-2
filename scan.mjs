@@ -1834,6 +1834,7 @@ async function actionsText(sig, pos, px, title) {
   const planSells = (plan.match(/\nSELL\n([\s\S]*?)(\n\n|$)/) || [])[1] || '', soldSyms = new Set(planSells.split('\n').map(l => l.replace(/^- /, '').split(/[ :]/)[0]));
   const sells = [...(planSells ? planSells.split('\n') : []), ...h.acts.sell.filter(l => !soldSyms.has(l.split(/[ :]/)[0]))];
   if (sells.length) out.push('', 'SELL', ...sells.map(l => '- ' + l));
+  try { fs.writeFileSync('data/actions-sells.json', JSON.stringify({ at: new Date().toISOString(), sells: sells.map(l => ({ sym: l.replace(/^- /, '').split(/[ :]/)[0], why: l.replace(/^- /, '').slice(0, 300) })) })); } catch (e) {}   // read by the pre-market check
   if (h.acts.part.length) out.push('', 'SELL PART', ...h.acts.part.map(l => '- ' + l));
   const buyPart = plan.replace(/\nSELL\n[\s\S]*?(\n\n|$)/, '\n').trim();
   if (sig) { const av = planCands(sig, pos).filter(x => x.lottery); if (av.length) out.push('', 'AVOID (lottery-like, tested to lag about 3% a month): ' + av.slice(0, 8).map(x => x.sym + ' +' + Math.round(x.lottery * 100) + '% in one day').join(', ') + '. Do not chase these.'); }

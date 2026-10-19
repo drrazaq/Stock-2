@@ -1,0 +1,28 @@
+name: Pre-market check
+on:
+  schedule:
+    - cron: '40 12 * * 1-5'   # 8:40 New York in summer time (7:40 in winter): before the open, 3:40 pm Kuwait
+  push:
+    branches: [main]
+    paths: ['run-premarket-now.txt']   # Claude's 'run now' button
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency: premarket
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node premarket-check.mjs
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
