@@ -1375,7 +1375,7 @@
    "family": "Market conditions",
    "name": "Breakout in a weak market",
    "explain": "New 1-year high while the S&P 500 is under its 50-day: real strength against the tide.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "atHi",
@@ -1383,14 +1383,21 @@
     ],
     "h": 20
    },
-   "note": "Added 19 Oct from the 500-idea catalogue."
+   "note": "Added 19 Oct from the 500-idea catalogue.",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.57,
+    "edge": -0.095,
+    "n": 80,
+    "why": "not 0.3%+ better than an average stock (-9.5%); could be luck (t -3.6, 3.6 needed); lost money after costs; not better than similar stocks (same size and swing): -9.3%; loses money without its 2 best trades"
+   }
   },
   {
    "id": "R7",
    "family": "Market conditions",
    "name": "Uptrend holding in a weak market",
    "explain": "Full uptrend stack while the S&P 500 falls.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "stack",
@@ -1398,14 +1405,21 @@
     ],
     "h": 20
    },
-   "note": "Added 19 Oct from the 500-idea catalogue."
+   "note": "Added 19 Oct from the 500-idea catalogue.",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -3.5,
+    "edge": -0.0149,
+    "n": 5483,
+    "why": "not 0.3%+ better than an average stock (-1.5%); could be luck (t -3.5, 3.6 needed); not better than similar stocks (same size and swing): -1.4%"
+   }
   },
   {
    "id": "I13",
    "family": "Ignition and early wave",
    "name": "Volume awakening in a quiet base",
    "explain": "Heavy volume while the 20-day range is still tight, before price breaks.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "tight20",
@@ -1413,14 +1427,21 @@
     ],
     "h": 20
    },
-   "note": "Added 19 Oct from the 500-idea catalogue."
+   "note": "Added 19 Oct from the 500-idea catalogue.",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -6.55,
+    "edge": -0.0151,
+    "n": 5494,
+    "why": "not 0.3%+ better than an average stock (-1.5%); could be luck (t -6.5, 3.6 needed); lost money after costs; not better than similar stocks (same size and swing): -1.7%; loses money without its 2 best trades"
+   }
   },
   {
    "id": "T19",
    "family": "Trend and momentum",
    "name": "Clean calm uptrend",
    "explain": "Full uptrend, no new shares, calm stock.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "stack",
@@ -1429,14 +1450,21 @@
     ],
     "h": 60
    },
-   "note": "Added 19 Oct from the 500-idea catalogue."
+   "note": "Added 19 Oct from the 500-idea catalogue.",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -1.63,
+    "edge": -0.0078,
+    "n": 3163,
+    "why": "not 0.3%+ better than an average stock (-0.8%); could be luck (t -1.6, 3.6 needed); not better than similar stocks (same size and swing): -0.9%"
+   }
   },
   {
    "id": "M14",
    "family": "Dips and reversals",
    "name": "Not a lottery stock, in an uptrend",
    "explain": "No day above +4% in the last month, above the 200-day: the MAX effect says these beat lottery stocks.",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "lotLo",
@@ -1444,21 +1472,35 @@
     ],
     "h": 20
    },
-   "note": "Researcher, 19 Oct (MAX effect)."
+   "note": "Researcher, 19 Oct (MAX effect).",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -4.69,
+    "edge": -0.0083,
+    "n": 21526,
+    "why": "not 0.3%+ better than an average stock (-0.8%); could be luck (t -4.7, 3.6 needed); lost money after costs; not better than similar stocks (same size and swing): -1.0%; loses money without its 2 best trades"
+   }
   },
   {
    "id": "M15",
    "family": "Dips and reversals",
    "name": "Lottery stock (avoid test)",
    "explain": "A 15%+ one-day jump in the last month: expected to lag (Bali, Cakici & Whitelaw 2011).",
-   "status": "queued (autolab)",
+   "status": "FAILED DISCOVERY",
    "rule": {
     "b": [
      "lotHi"
     ],
     "h": 20
    },
-   "note": "Researcher, 19 Oct (MAX effect)."
+   "note": "Researcher, 19 Oct (MAX effect).",
+   "tested": "2026-10-16",
+   "result": {
+    "t": -5.06,
+    "edge": -0.0323,
+    "n": 3054,
+    "why": "not 0.3%+ better than an average stock (-3.2%); could be luck (t -5.1, 3.6 needed); lost money after costs; not better than similar stocks (same size and swing): -2.4%; loses money without its 2 best trades"
+   }
   }
  ]
 }
