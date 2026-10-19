@@ -49,7 +49,8 @@ const passed = LAB && LAB.rules ? Object.values(LAB.rules).filter(x => x.verdict
 // live paper record must hold at 1.5x costs and without its 2 best trades; the live-only rule needs a longer record (no history test)
 const paperOk = (rule, exit, liveOnly) => { const r = PREC[rule + '/' + exit]; if (!r) return false; const need = liveOnly ? 60 : 30;
   return r.n >= need && r.avg > 0 && (r.stress === null || r.stress === undefined || r.stress > 0) && (r.noTop2 === null || r.noTop2 === undefined || r.noTop2 > 0) && (!liveOnly || (r.days >= 30 && r.stocks >= 20 && (r.pf || 0) >= 1.2)); };
-const halal = readJson('data/halal.json', {}), zadNot = new Set((readJson('data/zad-list.json', {}) || {}).notHalal || []), notHalal = (s) => (halal[s] && halal[s].s === 'fail') || zadNot.has(s);   // your ZAD checks + ZAD's own not-halal list
+const halal = readJson('data/halal.json', {}), zadNot = new Set((readJson('data/zad-list.json', {}) || {}).notHalal || []), notHalal = (s) => (halal[s] && halal[s].s === 'fail') || zadNot.has(s);
+const LOTT = (readJson('data/signals.json', {}) || {}).lottery || {};   // tested 19 Oct: a 15%+ one-day jump in the last month lagged the average stock ~3% over the next month (t -5): never alerted   // your ZAD checks + ZAD's own not-halal list
 // ---- data
 let src = null, mode = 'NO_USABLE_MARKET_DATA', note = '';
 async function snapMassive() {
@@ -113,7 +114,7 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
   let ok = ok0.filter(p => paperOk(p.rule, p.exit, liveOnly)), early = false;
   if (!ok.length) { const e = liveOnly ? ok0.filter(p => { const q = PREC[p.rule + '/' + p.exit]; return q && q.n >= 20 && q.avg > 0 && (q.stress === null || q.stress === undefined || q.stress > 0); }) : [];
     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
-  if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
+  if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
   if (rd === null || rd > 3) { flag(r.sym, 'noLive', 'price ' + (rd === null ? '?' : Math.round(rd)) + ' minutes old: too late to alert'); return; }
   const risk = await secRisk(r.sym); if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
   if (risk.tags.length) { t.blocked = risk.tags; flag(r.sym, 'secBlocked', 'alert blocked: ' + risk.tags.join(', ')); return; }
@@ -185,7 +186,7 @@ while (Date.now() - START < MAXMS) {
 }
 // ---- the audit: every stock that ran 15%+, one deterministic code (data and safety reasons first, so they are never blamed on a rule)
 const codeOf = (v) => { const f = v.flags;
-  if (f.alerted) return 'ALERTED'; if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.alertCap) return 'ALERT_CAP_REACHED';
+  if (f.alerted) return 'ALERTED'; if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.lottery) return 'LOTTERY_AVOID'; if (f.alertCap) return 'ALERT_CAP_REACHED';
   if (f.noLive) return 'NO_LIVE_PRICE_AT_SIGNAL'; if (f.volLate && !f.paperGate && !f.ruleNotPassed) return 'VOLUME_FIGURE_LATE'; if (f.paperGate) return 'CAUGHT_PAPER_GATE_NOT_MET'; if (f.ruleNotPassed) return 'CAUGHT_RULE_NOT_PASSED';
   if ((v.fm <= 575 && v.fc >= 0.10) || v.fo >= 0.10) return 'GAPPED_AT_OPEN'; if (v.lm === undefined) return 'NOT_VISIBLE_LIVE';   // opened 10%+ up = the move happened before the open: no feed can fix that
   if (v.lc >= 0.25) return 'VISIBLE_TOO_LATE'; if (f.noVolHist) return 'NO_VOLUME_HISTORY';
