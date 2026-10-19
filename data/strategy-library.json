@@ -1,0 +1,1101 @@
+{
+ "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
+ "updated": "2026-10-19",
+ "strategies": [
+  {
+   "id": "T1",
+   "family": "Trend and momentum",
+   "name": "6-month relative-strength leaders",
+   "explain": "Buy the stocks that rose most over 6 months and hold.",
+   "status": "tested: not proven",
+   "note": "LEADERS and horizons studies: did not beat the S&P 500."
+  },
+  {
+   "id": "T2",
+   "family": "Trend and momentum",
+   "name": "New 1-year high on 2x volume",
+   "explain": "A fresh high with heavy buying: no trapped sellers above.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "atHi",
+     "volHi"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "T3",
+   "family": "Trend and momentum",
+   "name": "New 1-year high, hold 3 months",
+   "explain": "Highs tend to lead to more highs over months.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "atHi"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "T4",
+   "family": "Trend and momentum",
+   "name": "Full uptrend stack",
+   "explain": "Price above the 10-day, 10-day above 20-day, above the 50- and 200-day: every timeframe agrees.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "stack"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "T5",
+   "family": "Trend and momentum",
+   "name": "Pullback inside a full uptrend",
+   "explain": "Buy a 5-12% dip while every trend line still points up.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "stack",
+     "pb5"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "T6",
+   "family": "Trend and momentum",
+   "name": "First close above the 200-day after 6+ months below",
+   "explain": "A long downtrend turns: a new long trend may start.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "reclaim200"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "T7",
+   "family": "Trend and momentum",
+   "name": "Golden cross (50-day crosses the 200-day)",
+   "explain": "Classic long-trend start signal.",
+   "status": "queued (weekly researcher)",
+   "note": "Needs a 50/200 cross measure."
+  },
+  {
+   "id": "T8",
+   "family": "Trend and momentum",
+   "name": "Momentum burst: up 25% in 10 days",
+   "explain": "Fast movers often keep moving for a few weeks.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "up25in10"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "T9",
+   "family": "Trend and momentum",
+   "name": "Momentum burst in a rising market",
+   "explain": "The same burst, only when the S&P 500 is above its 50-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "up25in10",
+     "mktUp"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "T10",
+   "family": "Trend and momentum",
+   "name": "Dual momentum",
+   "explain": "Stock up 30%+ in 6 months AND the S&P 500 above its 200-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "momHi",
+     "mkt200"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "T11",
+   "family": "Trend and momentum",
+   "name": "Darvas box: tight base, then a new high",
+   "explain": "A quiet range (under 10% for 20 days) that breaks to a new high.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "tight20",
+     "atHi"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "T12",
+   "family": "Trend and momentum",
+   "name": "High tight flag",
+   "explain": "A strong stock (up 30%+ in 6 months) resting in a tight range near its high.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "momHi",
+     "tight20",
+     "nearHi"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "T13",
+   "family": "Trend and momentum",
+   "name": "Calm uptrend",
+   "explain": "A full uptrend in a calm stock (daily swing under 2%): steadier gains.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "stack",
+     "calm"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "T14",
+   "family": "Trend and momentum",
+   "name": "Parabolic acceleration",
+   "explain": "Up 25% in 10 days plus 3 up days in a row: ride the steepest part.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "up25in10",
+     "up3"
+    ],
+    "h": 5
+   }
+  },
+  {
+   "id": "T15",
+   "family": "Trend and momentum",
+   "name": "20/50-day moving-average cross",
+   "explain": "Short trend crosses the medium trend.",
+   "status": "queued (weekly researcher)",
+   "note": "Needs a 20/50 cross measure."
+  },
+  {
+   "id": "T16",
+   "family": "Trend and momentum",
+   "name": "Supertrend / ADX trend filters",
+   "explain": "Indicator versions of \"trade only strong trends\".",
+   "status": "covered by T4"
+  },
+  {
+   "id": "T17",
+   "family": "Trend and momentum",
+   "name": "Multi-timeframe alignment",
+   "explain": "Daily, weekly and monthly trends all up.",
+   "status": "covered by T4"
+  },
+  {
+   "id": "T18",
+   "family": "Trend and momentum",
+   "name": "All-time high breakout",
+   "explain": "No holder above is losing money.",
+   "status": "needs data",
+   "note": "Needs more than 5 years of prices."
+  },
+  {
+   "id": "I1",
+   "family": "Ignition and early wave",
+   "name": "Ignition bar",
+   "explain": "+8% day, close at the top of the day, 2x volume: the first day of a run.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "day8",
+     "closeTop",
+     "volHi"
+    ],
+    "h": 10
+   }
+  },
+  {
+   "id": "I2",
+   "family": "Ignition and early wave",
+   "name": "Power gap",
+   "explain": "Opens 4%+ higher, closes at the top, 2x volume.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "gapUp",
+     "closeTop",
+     "volHi"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "I3",
+   "family": "Ignition and early wave",
+   "name": "Quiet base, then volume",
+   "explain": "20 quiet days, then heavy volume and a strong close.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "tight20",
+     "volHi",
+     "closeTop"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "I4",
+   "family": "Ignition and early wave",
+   "name": "Coil: tight range on low volume",
+   "explain": "Sellers are gone; the next move can be big.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "tight20",
+     "volLo"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "I5",
+   "family": "Ignition and early wave",
+   "name": "Gap and go (1 week)",
+   "explain": "Gap up 4%+ and close at the top; hold a week.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "gapUp",
+     "closeTop"
+    ],
+    "h": 5
+   }
+  },
+  {
+   "id": "I6",
+   "family": "Ignition and early wave",
+   "name": "3 up days on rising volume",
+   "explain": "Steady buying pressure.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "up3",
+     "volHi"
+    ],
+    "h": 10
+   }
+  },
+  {
+   "id": "I7",
+   "family": "Ignition and early wave",
+   "name": "Intraday ignition rules IG1-IG9",
+   "explain": "Live volume and price surges during the session.",
+   "status": "live paper (ignition lab)"
+  },
+  {
+   "id": "I8",
+   "family": "Ignition and early wave",
+   "name": "Pre-market leaders",
+   "explain": "Unusual pre-market activity before the open.",
+   "status": "collecting data",
+   "note": "About 60 sessions of pre-market data needed."
+  },
+  {
+   "id": "I9",
+   "family": "Ignition and early wave",
+   "name": "Opening-range breakout",
+   "explain": "Breaks the first 15-30 minute range.",
+   "status": "live paper (intraday radar)"
+  },
+  {
+   "id": "I10",
+   "family": "Ignition and early wave",
+   "name": "Low float + 3x volume",
+   "explain": "Few shares available and heavy demand.",
+   "status": "live paper (fast-mover lab)"
+  },
+  {
+   "id": "I11",
+   "family": "Ignition and early wave",
+   "name": "Filing -> quiet days -> breakout",
+   "explain": "A company filing, a few quiet days, then a breakout.",
+   "status": "tested: not proven",
+   "note": "Sequence study."
+  },
+  {
+   "id": "I12",
+   "family": "Ignition and early wave",
+   "name": "Young IPO above its 50-day",
+   "explain": "New listings that hold up early.",
+   "status": "paper (IPO lab)"
+  },
+  {
+   "id": "M1",
+   "family": "Dips and reversals",
+   "name": "Snap-back after a 15% drop",
+   "explain": "Fell 15%+ in 5 days, then an up day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "snap"
+    ],
+    "h": 5
+   }
+  },
+  {
+   "id": "M2",
+   "family": "Dips and reversals",
+   "name": "Snap-back in a strong stock",
+   "explain": "The same, in a stock up 30%+ over 6 months.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "snap",
+     "momHi"
+    ],
+    "h": 10
+   }
+  },
+  {
+   "id": "M3",
+   "family": "Dips and reversals",
+   "name": "Snap-back in a healthy market",
+   "explain": "The same, with the S&P 500 above its 200-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "snap",
+     "mkt200"
+    ],
+    "h": 10
+   }
+  },
+  {
+   "id": "M4",
+   "family": "Dips and reversals",
+   "name": "Bear trap (failed breakdown)",
+   "explain": "Breaks under its 20-day low, closes back above: sellers trapped.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "bearTrap"
+    ],
+    "h": 10
+   }
+  },
+  {
+   "id": "M5",
+   "family": "Dips and reversals",
+   "name": "Bear trap in an uptrend",
+   "explain": "The same, above the 200-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "bearTrap",
+     "up200"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "M6",
+   "family": "Dips and reversals",
+   "name": "3 down days in an uptrend",
+   "explain": "A short wash-out in a long uptrend.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "dn3",
+     "up200"
+    ],
+    "h": 5
+   }
+  },
+  {
+   "id": "M7",
+   "family": "Dips and reversals",
+   "name": "Deep pullback of a strong stock",
+   "explain": "Up 30%+ in 6 months, now 12-25% under its 20-day high.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "momHi",
+     "pb12"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "M8",
+   "family": "Dips and reversals",
+   "name": "1-year low + heavy volume + no dilution",
+   "explain": "Capitulation without new shares being sold.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "nearLow",
+     "volHi",
+     "noDil"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "M9",
+   "family": "Dips and reversals",
+   "name": "One-day crash in an uptrend",
+   "explain": "Fell 8%+ in a day while above the 200-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "dayDn8",
+     "up200"
+    ],
+    "h": 10
+   }
+  },
+  {
+   "id": "M10",
+   "family": "Dips and reversals",
+   "name": "Gap-down recovery",
+   "explain": "Opens 4%+ lower but closes at the top of the day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "gapDn",
+     "closeTop"
+    ],
+    "h": 10
+   }
+  },
+  {
+   "id": "M11",
+   "family": "Dips and reversals",
+   "name": "Oversold in a weak market",
+   "explain": "Fell 7%+ in 5 days while the S&P 500 is under its 50-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "drop5",
+     "mktDn"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "M12",
+   "family": "Dips and reversals",
+   "name": "Long-term reversal (3-year losers)",
+   "explain": "Buy the worst 3-year performers, hold 3 years.",
+   "status": "needs data",
+   "note": "5 years of data is too short for 3-year holds."
+  },
+  {
+   "id": "M13",
+   "family": "Dips and reversals",
+   "name": "Strong stock dips in a weak market",
+   "explain": "Up 30%+ in 6 months, down 7% in a week, S&P under its 50-day. Closest near-miss so far (t 2.48).",
+   "status": "bred every week (autolab)"
+  },
+  {
+   "id": "C1",
+   "family": "Calendar",
+   "name": "Turn of the month",
+   "explain": "The last days and first 3 days of each month: pension and salary money arrives.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "tom"
+    ],
+    "h": 5
+   }
+  },
+  {
+   "id": "C2",
+   "family": "Calendar",
+   "name": "Turn of the month in a healthy market",
+   "explain": "The same, with the S&P 500 above its 200-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "tom",
+     "mkt200"
+    ],
+    "h": 5
+   }
+  },
+  {
+   "id": "C3",
+   "family": "Calendar",
+   "name": "Day of the week",
+   "explain": "Does the buy day matter?",
+   "status": "tested",
+   "note": "Days study."
+  },
+  {
+   "id": "C4",
+   "family": "Calendar",
+   "name": "Days of the month",
+   "explain": "Month-day effects.",
+   "status": "tested",
+   "note": "Month-day study."
+  },
+  {
+   "id": "C5",
+   "family": "Calendar",
+   "name": "Santa rally / January effect",
+   "explain": "Year-end and January patterns.",
+   "status": "needs data",
+   "note": "Only 5 events in 5 years: too few."
+  },
+  {
+   "id": "C6",
+   "family": "Calendar",
+   "name": "Sell in May",
+   "explain": "Weaker summer months.",
+   "status": "needs data",
+   "note": "Only 5 events in 5 years: too few."
+  },
+  {
+   "id": "E1",
+   "family": "Company events",
+   "name": "Post-earnings drift",
+   "explain": "After a big earnings beat, the price keeps drifting up for weeks.",
+   "status": "tested",
+   "note": "Earnings study."
+  },
+  {
+   "id": "E2",
+   "family": "Company events",
+   "name": "SEC 8-K company news",
+   "explain": "Which kinds of filed news are followed by gains.",
+   "status": "tested",
+   "note": "Events study."
+  },
+  {
+   "id": "E3",
+   "family": "Company events",
+   "name": "Insider cluster buying",
+   "explain": "Several executives buy with their own money within weeks.",
+   "status": "queued (weekly researcher)",
+   "note": "Form 4 data is free from the SEC."
+  },
+  {
+   "id": "E4",
+   "family": "Company events",
+   "name": "Activist stake (13D)",
+   "explain": "A fund discloses 5%+ and demands changes.",
+   "status": "queued (weekly researcher)",
+   "note": "13D filings are free from the SEC."
+  },
+  {
+   "id": "E5",
+   "family": "Company events",
+   "name": "Analyst upgrades",
+   "explain": "Several analysts raise targets or ratings.",
+   "status": "collecting data"
+  },
+  {
+   "id": "E6",
+   "family": "Company events",
+   "name": "Index inclusion",
+   "explain": "Stocks added to the S&P 500 or Russell.",
+   "status": "needs data",
+   "note": "Needs historical announcement dates."
+  },
+  {
+   "id": "E7",
+   "family": "Company events",
+   "name": "Spin-offs",
+   "explain": "New companies split from a parent are often sold blindly.",
+   "status": "queued (weekly researcher)",
+   "note": "Form 10 filings are free from the SEC."
+  },
+  {
+   "id": "E8",
+   "family": "Company events",
+   "name": "Buyback announcements",
+   "explain": "Large repurchase programmes.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "E9",
+   "family": "Company events",
+   "name": "FDA decisions",
+   "explain": "Binary drug approvals.",
+   "status": "blocked (safety)",
+   "note": "All-or-nothing risk; kept out on purpose."
+  },
+  {
+   "id": "E10",
+   "family": "Company events",
+   "name": "Government contracts",
+   "explain": "New federal or defence awards.",
+   "status": "watched (deals)"
+  },
+  {
+   "id": "E11",
+   "family": "Company events",
+   "name": "Merger arbitrage",
+   "explain": "Buy the target after a takeover offer.",
+   "status": "not for this system",
+   "note": "The price stops moving after the offer."
+  },
+  {
+   "id": "E12",
+   "family": "Company events",
+   "name": "Lock-up expiry",
+   "explain": "New shares can be sold 90-180 days after an IPO.",
+   "status": "risk rule"
+  },
+  {
+   "id": "E13",
+   "family": "Company events",
+   "name": "Earnings gap and hold 3 days",
+   "explain": "Gaps up on earnings and holds the gap.",
+   "status": "queued (weekly researcher)",
+   "note": "Earnings dates are cached."
+  },
+  {
+   "id": "E14",
+   "family": "Company events",
+   "name": "Guidance raise",
+   "explain": "The company raises its forecast.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "S1",
+   "family": "Share supply",
+   "name": "No new shares + uptrend",
+   "explain": "Share count flat or shrinking, above the 50-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "noDil",
+     "up50"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "S2",
+   "family": "Share supply",
+   "name": "Heavy dilution (avoid test)",
+   "explain": "Share count up 20%+ in a year: expected to lag.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "dilut"
+    ],
+    "h": 60
+   },
+   "note": "Tested as an AVOID rule."
+  },
+  {
+   "id": "S3",
+   "family": "Share supply",
+   "name": "Offering absorbed",
+   "explain": "Price recovers after a share sale.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "S4",
+   "family": "Share supply",
+   "name": "Reverse-split aftermath",
+   "explain": "Behaviour after a reverse split.",
+   "status": "risk rule"
+  },
+  {
+   "id": "S5",
+   "family": "Share supply",
+   "name": "Short squeeze",
+   "explain": "Heavily shorted stock breaks out.",
+   "status": "needs data",
+   "note": "Short-interest history is paid data."
+  },
+  {
+   "id": "V1",
+   "family": "Quality and value",
+   "name": "Quality companies",
+   "explain": "Profitable, no dilution, cash-backed profits.",
+   "status": "tested: rejected",
+   "note": "Quality study."
+  },
+  {
+   "id": "V2",
+   "family": "Quality and value",
+   "name": "High gross profit on assets",
+   "explain": "Novy-Marx profitability.",
+   "status": "tested: rejected"
+  },
+  {
+   "id": "V3",
+   "family": "Quality and value",
+   "name": "Cheap for its cash flow",
+   "explain": "Value by operating cash-flow yield.",
+   "status": "tested: not proven"
+  },
+  {
+   "id": "V4",
+   "family": "Quality and value",
+   "name": "Good and cheap",
+   "explain": "Quality plus value together.",
+   "status": "tested: rejected"
+  },
+  {
+   "id": "V5",
+   "family": "Quality and value",
+   "name": "Fair-price dip",
+   "explain": "Down 40%+ but cheap for its cash flow.",
+   "status": "tested: rejected",
+   "note": "19 Oct: worse than any stock down 40%+."
+  },
+  {
+   "id": "V6",
+   "family": "Quality and value",
+   "name": "Magic formula (Greenblatt)",
+   "explain": "High earnings yield plus high return on capital.",
+   "status": "queued (weekly researcher)",
+   "note": "Operating income and assets are in the SEC data."
+  },
+  {
+   "id": "V7",
+   "family": "Quality and value",
+   "name": "Dividend growth",
+   "explain": "Companies that raise dividends every year.",
+   "status": "needs data",
+   "note": "Needs dividend history."
+  },
+  {
+   "id": "V8",
+   "family": "Quality and value",
+   "name": "Net-net (Graham)",
+   "explain": "Price under current assets minus all liabilities.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "V9",
+   "family": "Quality and value",
+   "name": "Low-volatility anomaly",
+   "explain": "Calm stocks above the 200-day beat wild ones on risk.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "calm",
+     "up200"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "V10",
+   "family": "Quality and value",
+   "name": "Calm stocks alone",
+   "explain": "Daily swing under 2%.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "calm"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "V11",
+   "family": "Quality and value",
+   "name": "Shareholder yield",
+   "explain": "Shrinking share count in a calm stock.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "noDil",
+     "calm"
+    ],
+    "h": 60
+   }
+  },
+  {
+   "id": "V12",
+   "family": "Quality and value",
+   "name": "GARP",
+   "explain": "Fast earnings growth at a reasonable price.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "V13",
+   "family": "Quality and value",
+   "name": "Piotroski F-score",
+   "explain": "9 accounting checks of improving health.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "R1",
+   "family": "Market conditions",
+   "name": "Highs only in a healthy market",
+   "explain": "New 1-year high, S&P 500 above its 200-day.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "atHi",
+     "mkt200"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "R2",
+   "family": "Market conditions",
+   "name": "Highs when stocks move apart",
+   "explain": "New high in a high-dispersion market.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "atHi",
+     "dispHi"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "R3",
+   "family": "Market conditions",
+   "name": "Uptrends when stocks move together",
+   "explain": "Full stack in a low-dispersion market.",
+   "status": "queued (autolab)",
+   "rule": {
+    "b": [
+     "stack",
+     "dispLo"
+    ],
+    "h": 20
+   }
+  },
+  {
+   "id": "R4",
+   "family": "Market conditions",
+   "name": "Sector rotation",
+   "explain": "Ride the strongest industries.",
+   "status": "tested",
+   "note": "Themes study."
+  },
+  {
+   "id": "R5",
+   "family": "Market conditions",
+   "name": "Market breadth",
+   "explain": "More stocks rising predicts more gains.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "N1",
+   "family": "Connected companies",
+   "name": "Supply-chain laggard",
+   "explain": "A supplier that has not moved yet after its chain leader ran.",
+   "status": "queued (weekly researcher)",
+   "note": "Value-chain map is in place."
+  },
+  {
+   "id": "N2",
+   "family": "Connected companies",
+   "name": "Peer earnings spillover",
+   "explain": "One company beats; its closest peers follow.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "N3",
+   "family": "Connected companies",
+   "name": "Sympathy move",
+   "explain": "Competitors move after a company-specific event.",
+   "status": "queued (weekly researcher)"
+  },
+  {
+   "id": "X1",
+   "family": "Exits and risk",
+   "name": "35% disaster stop",
+   "explain": "The stop study best for any liquid stock.",
+   "status": "tested: in use"
+  },
+  {
+   "id": "X2",
+   "family": "Exits and risk",
+   "name": "No stop for strong stocks",
+   "explain": "Top 30% by 6-month strength.",
+   "status": "tested: in use"
+  },
+  {
+   "id": "X3",
+   "family": "Exits and risk",
+   "name": "Trim over 15% back to 10%",
+   "explain": "Same profit, less risk.",
+   "status": "tested: in use"
+  },
+  {
+   "id": "X4",
+   "family": "Exits and risk",
+   "name": "Sell high, buy back 10% lower",
+   "explain": "Sell 30%+ above the 50-day or +25% in 10 days.",
+   "status": "tested: stricter month-by-month check"
+  },
+  {
+   "id": "X5",
+   "family": "Exits and risk",
+   "name": "Hold 3 months with a 25% stop",
+   "explain": "Default exit.",
+   "status": "tested: in use"
+  },
+  {
+   "id": "X6",
+   "family": "Exits and risk",
+   "name": "Equal-weight rebalancing",
+   "explain": "Back to equal weights every 3 months.",
+   "status": "tested"
+  },
+  {
+   "id": "Z1",
+   "family": "Not for this system",
+   "name": "Short selling / pairs trading",
+   "explain": "Needs shorting; not halal and not long-only.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z2",
+   "family": "Not for this system",
+   "name": "Statistical arbitrage",
+   "explain": "Thousands of tiny long-short trades.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z3",
+   "family": "Not for this system",
+   "name": "High-frequency trading / market making",
+   "explain": "Needs millisecond infrastructure.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z4",
+   "family": "Not for this system",
+   "name": "Order flow / Level 2 reading",
+   "explain": "Needs paid depth data and screen time.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z5",
+   "family": "Not for this system",
+   "name": "Dark-pool prints",
+   "explain": "Delayed, hard to interpret data.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z6",
+   "family": "Not for this system",
+   "name": "0DTE options",
+   "explain": "Same-day options gambling.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z7",
+   "family": "Not for this system",
+   "name": "Iron condors / volatility selling",
+   "explain": "Option selling with large tail risk.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z8",
+   "family": "Not for this system",
+   "name": "Gamma squeezes",
+   "explain": "Driving prices with options.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z9",
+   "family": "Not for this system",
+   "name": "Volatility arbitrage",
+   "explain": "Options pricing models.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z10",
+   "family": "Not for this system",
+   "name": "Futures trend following (CTA)",
+   "explain": "A different market.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z11",
+   "family": "Not for this system",
+   "name": "Global macro",
+   "explain": "Rates, currencies and countries.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z12",
+   "family": "Not for this system",
+   "name": "Scalping",
+   "explain": "Seconds-long trades; fees eat the edge.",
+   "status": "not for this system"
+  },
+  {
+   "id": "Z13",
+   "family": "Not for this system",
+   "name": "Merger arbitrage short leg",
+   "explain": "Needs shorting.",
+   "status": "not for this system"
+  },
+  {
+   "id": "O1",
+   "family": "Options (separate lab)",
+   "name": "Calls on tested stock buys",
+   "explain": "A 30-60 day call on each tested buy signal.",
+   "status": "paper (options lab)"
+  },
+  {
+   "id": "O2",
+   "family": "Options (separate lab)",
+   "name": "Covered calls",
+   "explain": "Sell calls on stock you own for income.",
+   "status": "options lab (separate)"
+  },
+  {
+   "id": "O3",
+   "family": "Options (separate lab)",
+   "name": "Cash-secured puts / the wheel",
+   "explain": "Sell puts to buy cheaper, then covered calls.",
+   "status": "options lab (separate)"
+  },
+  {
+   "id": "P1",
+   "family": "Passive (the core)",
+   "name": "Index fund, monthly buying",
+   "explain": "SPUS/HLAL every month (check ZAD).",
+   "status": "core plan"
+  },
+  {
+   "id": "P2",
+   "family": "Passive (the core)",
+   "name": "Dogs of the Dow",
+   "explain": "The 10 highest-yield Dow stocks, yearly.",
+   "status": "needs data"
+  },
+  {
+   "id": "P3",
+   "family": "Passive (the core)",
+   "name": "Coffee-can portfolio",
+   "explain": "A few great companies held 10 years.",
+   "status": "long-term, not testable in 5 years"
+  }
+ ]
+}

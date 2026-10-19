@@ -52,6 +52,12 @@ const DISP = new Float32Array(T).fill(NaN); { const day = new Float32Array(T).fi
 const dispMed = (() => { const v = [...DISP.slice(0, Math.floor(T * 0.6))].filter(isFinite).sort((a, b) => a - b); return v.length ? v[Math.floor(v.length / 2)] : NaN; })();
 const mkt200 = new Int8Array(T); if (spyI !== undefined) { let s = 0; const q = []; for (let t = 0; t < T; t++) { const c = C[spyI * T + t]; if (!isFinite(c)) continue; q.push(c); s += c; if (q.length > 200) s -= q.shift(); if (q.length === 200) mkt200[t] = c > s / 200 ? 1 : -1; } }
 const mktUp = new Int8Array(T); if (spyI !== undefined) { let s = 0; const q = []; for (let t = 0; t < T; t++) { const c = C[spyI * T + t]; if (!isFinite(c)) continue; q.push(c); s += c; if (q.length > 50) s -= q.shift(); if (q.length === 50) mktUp[t] = c > s / 50 ? 1 : -1; } }
+// ---- extra measures for the strategy-library blocks (added 19 Oct): 10/20-day averages, 20-day range tightness, days under the 200-day
+const MA10 = new Float32Array(NS * T).fill(NaN), MA20 = new Float32Array(NS * T).fill(NaN), RNG20 = new Float32Array(NS * T).fill(NaN), LO20 = new Float32Array(NS * T).fill(NaN), BEL200 = new Int16Array(NS * T);
+for (let i = 0; i < NS; i++) { const b = i * T; let s10 = 0, s20 = 0, n = 0, bel = 0; for (let t = 0; t < T; t++) { const k = b + t, c = C[k]; if (!isFinite(c)) { s10 = s20 = n = bel = 0; continue; } n++; s10 += c; s20 += c;
+    if (n > 10) s10 -= C[k - 10]; if (n > 20) s20 -= C[k - 20]; if (n >= 10) MA10[k] = s10 / 10; if (n >= 20) MA20[k] = s20 / 20;
+    if (n >= 21) { let hi = -Infinity, lo = Infinity, l2 = Infinity; for (let j = k - 19; j <= k; j++) { if (C[j] > hi) hi = C[j]; if (C[j] < lo) lo = C[j]; } for (let j = k - 20; j < k; j++) if (LO[j] < l2) l2 = LO[j]; RNG20[k] = (hi - lo) / c; LO20[k] = l2; }
+    BEL200[k] = F.tr200[k] === -1 ? Math.min(30000, bel = bel + 1) : (bel = 0); } }
 // ---- building blocks (each a fixed yes/no test on a stock-day)
 const BLOCKS = {
   up50: [(k) => F.tr50[k] === 1, 'above its 50-day average'], dn50: [(k) => F.tr50[k] === -1, 'under its 50-day average'],
@@ -71,8 +77,17 @@ const BLOCKS = {
   gapUp: [(k) => O[k] / C[k - 1] - 1 >= 0.04, 'opened 4%+ above the day before'], gapDn: [(k) => O[k] / C[k - 1] - 1 <= -0.04, 'opened 4%+ below the day before'],
   day8: [(k) => C[k] / C[k - 1] - 1 >= 0.08, 'rose 8%+ in one day'], dayDn8: [(k) => C[k] / C[k - 1] - 1 <= -0.08, 'fell 8%+ in one day'],
   closeTop: [(k) => HI[k] > LO[k] && (C[k] - LO[k]) / (HI[k] - LO[k]) >= 0.9, 'closed at the top of the day'], closeBot: [(k) => HI[k] > LO[k] && (C[k] - LO[k]) / (HI[k] - LO[k]) <= 0.1, 'closed at the bottom of the day'],
-  up3: [(k) => C[k] > C[k - 1] && C[k - 1] > C[k - 2] && C[k - 2] > C[k - 3], '3 up days in a row'], dn3: [(k) => C[k] < C[k - 1] && C[k - 1] < C[k - 2] && C[k - 2] < C[k - 3], '3 down days in a row'] };
-const BK = Object.keys(BLOCKS), HOLDS = [5, 10, 20, 60], CLASH = [['gapUp', 'gapDn'], ['day8', 'dayDn8'], ['closeTop', 'closeBot'], ['up3', 'dn3'], ['day8', 'dn3'], ['dayDn8', 'up3'], ['up50', 'dn50'], ['up200', 'dn200'], ['momHi', 'momLo'], ['pb5', 'pb12'], ['drop5', 'pop5'], ['volHi', 'volLo'], ['nearHi', 'farHi'], ['calm', 'wild'], ['mktUp', 'mktDn'], ['nearHi', 'pb12'], ['nearHi', 'drop5'], ['dilut', 'noDil'], ['offLow', 'nearLow'], ['dispHi', 'dispLo'], ['nearLow', 'nearHi'], ['nearLow', 'momHi']];
+  up3: [(k) => C[k] > C[k - 1] && C[k - 1] > C[k - 2] && C[k - 2] > C[k - 3], '3 up days in a row'], dn3: [(k) => C[k] < C[k - 1] && C[k - 1] < C[k - 2] && C[k - 2] < C[k - 3], '3 down days in a row'],
+  // strategy-library blocks (added 19 Oct; see data/strategy-library.json)
+  tight20: [(k) => RNG20[k] <= 0.10, 'tight: 20-day range under 10% of the price (quiet base)'],
+  stack: [(k) => C[k] > MA10[k] && MA10[k] > MA20[k] && F.tr50[k] === 1 && F.tr200[k] === 1, 'full uptrend stack (price > 10-day > 20-day, above 50- and 200-day)'],
+  reclaim200: [(k) => F.tr200[k] === 1 && BEL200[k - 1] >= 120, 'first close above the 200-day after 6+ months below'],
+  up25in10: [(k) => C[k] / C[k - 10] - 1 >= 0.25, 'up 25%+ in 10 sessions'],
+  snap: [(k) => F.r5[k] <= -0.15 && C[k] > C[k - 1], 'fell 15%+ in 5 days, then an up day (snap-back)'],
+  bearTrap: [(k) => LO[k] < LO20[k] && C[k] > LO20[k], 'broke under its 20-day low, closed back above (failed breakdown)'],
+  atHi: [(k) => F.dh[k] <= 0.001, 'closed at a new 1-year high'],
+  tom: [(k, t) => { const d = +D[t].slice(8, 10); return d >= 27 || d <= 3; }, 'turn of the month (last days / first 3 days)'] };
+const BK = Object.keys(BLOCKS), HOLDS = [5, 10, 20, 60], CLASH = [['stack', 'dn50'], ['stack', 'dn200'], ['reclaim200', 'dn200'], ['atHi', 'farHi'], ['atHi', 'pb12'], ['atHi', 'nearLow'], ['snap', 'pop5'], ['up25in10', 'drop5'], ['tight20', 'wild'], ['gapUp', 'gapDn'], ['day8', 'dayDn8'], ['closeTop', 'closeBot'], ['up3', 'dn3'], ['day8', 'dn3'], ['dayDn8', 'up3'], ['up50', 'dn50'], ['up200', 'dn200'], ['momHi', 'momLo'], ['pb5', 'pb12'], ['drop5', 'pop5'], ['volHi', 'volLo'], ['nearHi', 'farHi'], ['calm', 'wild'], ['mktUp', 'mktDn'], ['nearHi', 'pb12'], ['nearHi', 'drop5'], ['dilut', 'noDil'], ['offLow', 'nearLow'], ['dispHi', 'dispLo'], ['nearLow', 'nearHi'], ['nearLow', 'momHi']];
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const rnd = mulberry32(+(env.AUTO_SEED || (Date.parse(D[T - 1]) / 864e5 | 0)));
 const ruleId = (r) => [...r.b].sort().join('+') + '/h' + r.h;
@@ -84,7 +99,12 @@ function bred(n, taken) { const par = Object.values(LAB.tried).filter(x => x.dis
   while (par.length && out.length < n && guard++ < n * 80) { const p = par[Math.floor(rnd() * Math.min(par.length, 1 + Math.floor(rnd() * par.length)))], b = new Set(p.b); let h = p.h; const op = Math.floor(rnd() * 4), pick = () => BK[Math.floor(rnd() * BK.length)];
     if (op === 0) { const a = [...b]; b.delete(a[Math.floor(rnd() * a.length)]); b.add(pick()); } else if (op === 1) b.add(pick()); else if (op === 2) { const a = [...b]; b.delete(a[Math.floor(rnd() * a.length)]); } else h = HOLDS[Math.floor(rnd() * HOLDS.length)];
     if (!okRule(b)) continue; const r = { b: [...b], h, from: p.name }, id = ruleId(r); if (LAB.tried[id] || taken.some(z => ruleId(z) === id) || out.some(z => ruleId(z) === id)) continue; out.push(r); } return out; }
-function newRules(n) { const kids = bred(Math.floor(n / 2), []), out = [...kids]; let guard = 0; while (out.length < n && guard++ < n * 50) { const k = 2 + Math.floor(rnd() * 2), b = new Set(); while (b.size < k) b.add(BK[Math.floor(rnd() * BK.length)]);
+// STRATEGY LIBRARY (added 19 Oct): data/strategy-library.json lists named strategies; every entry with a fixed rule is tested here FIRST,
+// exactly as written (no tuning), and pays the same luck bar as everything else. Its verdict is written back into the library.
+const LIBF = 'data/strategy-library.json', LIBR = (() => { try { return JSON.parse(fs.readFileSync(LIBF, 'utf8')); } catch (e) { return null; } })();
+function libRules(n) { if (!LIBR) return []; const out = []; for (const e of LIBR.strategies || []) { if (out.length >= n || !e.rule || !Array.isArray(e.rule.b) || !e.rule.b.every(x => BLOCKS[x])) continue;
+    const r = { b: [...e.rule.b], h: e.rule.h, lib: e.id }; if (LAB.tried[ruleId(r)]) { if (!/^(LIVE|FAILED|PASSED)/.test(e.status || '')) { const x = LAB.tried[ruleId(r)]; e.status = x.verdict; e.result = x.discovery ? { t: x.discovery.t, edge: x.discovery.edge, n: x.discovery.n, why: x.discovery.why } : null; } continue; } out.push(r); } return out; }
+function newRules(n) { const lib = libRules(n), kids = bred(Math.floor((n - lib.length) / 2), lib), out = [...lib, ...kids]; let guard = 0; while (out.length < n && guard++ < n * 50) { const k = 2 + Math.floor(rnd() * 2), b = new Set(); while (b.size < k) b.add(BK[Math.floor(rnd() * BK.length)]);
   const arr = [...b]; if (CLASH.some(([x, y]) => b.has(x) && b.has(y))) continue; const r = { b: arr, h: HOLDS[Math.floor(rnd() * HOLDS.length)] }, id = ruleId(r); if (LAB.tried[id] || out.some(z => ruleId(z) === id)) continue; out.push(r); } return out; }
 // ---- testing
 function fwd(i, t, h) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + h >= T) return null; let last = null, lk = t; for (let k = t + 1; k <= t + h; k++) if (isFinite(C[b + k])) { last = C[b + k]; lk = k; }
@@ -121,7 +141,7 @@ const fresh = newRules(PER_WEEK), totalTried = Object.keys(LAB.tried).length + f
 let passedAll = 0;
 for (const r of fresh) { const id = ruleId(r), d1 = judge(run(r, 0, P1), BAR); let d2 = null, d3 = null, verdict = 'FAILED DISCOVERY';
   if (d1.pass) { d2 = judge(run(r, P1, P2), VBAR); verdict = 'FAILED VALIDATION'; if (d2.pass) { d3 = judge(run(r, P2, T), VBAR); verdict = d3.pass ? 'LIVE CANDIDATE' : 'FAILED VAULT'; LAB.vaultLooks = (LAB.vaultLooks || 0) + 1; } }
-  LAB.tried[id] = { week: D[T - 1], name: name(r), b: r.b, h: r.h, bredFrom: r.from || null, verdict, discovery: d1, validation: d2, vault: d3 };
+  LAB.tried[id] = { week: D[T - 1], name: (r.lib ? 'LIBRARY ' + r.lib + ': ' : '') + name(r), b: r.b, h: r.h, bredFrom: r.from || null, lib: r.lib || null, verdict, discovery: d1, validation: d2, vault: d3 };
   // ABLATION: every block must earn its place. Drop one block at a time (whole period): if a simpler rule does about as well
   // (at least 90% of the edge), the extra block is decoration and the rule is flagged; the simpler version is NOT promoted (it was not pre-tested).
   if (verdict === 'LIVE CANDIDATE' && r.b.length > 1) { const full = judge(run(r, 0, T), 0).edge; const idle = r.b.filter(x => { const e = judge(run({ b: r.b.filter(y => y !== x), h: r.h }, 0, T), 0).edge; return typeof e === 'number' && typeof full === 'number' && e >= full * 0.9; }); LAB.tried[id].idleBlocks = idle; r.idle = idle.map(x => BLOCKS[x][1]); }
@@ -140,7 +160,9 @@ for (const [id, c] of Object.entries(LAB.candidates)) if (c.status === 'FAILED L
 if (LAB.paper.length > 20000) LAB.paper = LAB.paper.slice(-20000);
 LAB.weeks++; LAB.generatedAt = new Date().toISOString(); LAB.status = 'OK'; LAB.last = { week: D[T - 1], tested: fresh.length, passed: passedAll, bar: +BAR.toFixed(2), totalTried };
 fs.writeFileSync(OUT, JSON.stringify(LAB));
-const nBred = fresh.filter(r => r.from).length, cand = Object.values(LAB.candidates), msg = ['AUTOLAB: the system invented and tested ' + fresh.length + ' new rules this week (' + nBred + ' bred from the best near-misses of past weeks, ' + (fresh.length - nBred) + ' brand new; ' + totalTried + ' tried in total; luck bar t ' + BAR.toFixed(1) + ')', '',
+if (LIBR) { for (const e of LIBR.strategies || []) { if (!e.rule) continue; const x = LAB.tried[ruleId({ b: e.rule.b, h: e.rule.h })]; if (!x) continue; e.status = x.verdict; e.tested = x.week; e.result = x.discovery ? { t: x.discovery.t, edge: x.discovery.edge, n: x.discovery.n, why: x.discovery.why || '' } : null; }
+  LIBR.updated = D[T - 1]; fs.writeFileSync(LIBF, JSON.stringify(LIBR, null, 1)); }
+const nLib = fresh.filter(r => r.lib).length, nBred = fresh.filter(r => r.from).length, cand = Object.values(LAB.candidates), msg = ['AUTOLAB: the system invented and tested ' + fresh.length + ' new rules this week (' + nLib + ' named strategies from the library, ' + nBred + ' bred from the best near-misses of past weeks, ' + (fresh.length - nBred - nLib) + ' brand new; ' + totalTried + ' tried in total; luck bar t ' + BAR.toFixed(1) + ')', '',
   passedAll ? passedAll + ' passed discovery, validation AND the untouched vault: now on live paper.' : 'None passed all three gates this week. That is the normal result; it means the bar is working.',
   'Failed at discovery ' + fresh.filter(r => LAB.tried[ruleId(r)].verdict === 'FAILED DISCOVERY').length + ', validation ' + fresh.filter(r => LAB.tried[ruleId(r)].verdict === 'FAILED VALIDATION').length + ', vault ' + fresh.filter(r => LAB.tried[ruleId(r)].verdict === 'FAILED VAULT').length + '.', '',
   ...(cand.length ? ['LIVE CANDIDATES (' + cand.length + '):', ...cand.map(c => '- ' + c.name + ': ' + c.status + (c.stability ? ' [' + c.stability + (c.ci ? ', 95% range ' + pc(c.ci[0]) + ' to ' + pc(c.ci[1]) + ' vs average stock' : '') + (c.loses && c.loses.length ? ', loses in ' + c.loses.join(', ') : '') + ']' : '') + (typeof c.vsSimilar === 'number' ? ' (newest 20%: ' + pc(c.vsSimilar) + ' vs similar stocks)' : '') + (c.idle && c.idle.length ? ' (adds nothing: ' + c.idle.join(', ') + ')' : '') + (c.paper.n ? ' (' + c.paper.n + ' paper trades, ' + pc(c.paper.avg) + ' a trade, ' + pc(c.paper.vsAvg) + ' vs an average stock)' : ' (paper starts now)'))] : ['No live candidates yet.']),
