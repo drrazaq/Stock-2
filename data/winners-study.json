@@ -1,13 +1,13 @@
 {
- "generatedAt": "2026-10-19T22:03:35.323Z",
+ "generatedAt": "2026-10-20T04:28:29.775Z",
  "status": "OK",
  "from": "2021-10-12",
- "to": "2026-10-16",
- "splitAt": "2024-09-13",
- "stocks": 8486,
- "winners": 18012,
- "winnerRate": 0.005768393800802105,
- "gone": 2374,
+ "to": "2026-10-19",
+ "splitAt": "2024-09-16",
+ "stocks": 8487,
+ "winners": 18016,
+ "winnerRate": 0.005764005932933283,
+ "gone": 2386,
  "rules": {
   "hold": 10,
   "stopAtr": 2,
@@ -20,94 +20,94 @@
  },
  "base": {
   "older": {
-   "n": 140429,
-   "win": 0.41608214827421686,
-   "avg": -0.00758989505643642,
-   "t": -31.763048054980658,
-   "pf": 0.7822736083326208,
-   "spy": 0.006476013808500425,
-   "bestShare": 0.0006072185626213449
+   "n": 140493,
+   "win": 0.41609902272711097,
+   "avg": -0.007592060449579906,
+   "t": -31.781831020374543,
+   "pf": 0.7822105363857123,
+   "spy": 0.006480954201799508,
+   "bestShare": 0.0006069935514501216
   },
   "newer": {
-   "n": 142480,
-   "win": 0.41026810780460415,
-   "avg": -0.0066805467281834405,
-   "t": -21.11924824913013,
-   "pf": 0.8178236471192804,
-   "spy": 0.004834865378632751,
-   "bestShare": 0.005528105056065357
+   "n": 142546,
+   "win": 0.41006411965260336,
+   "avg": -0.006709822328052527,
+   "t": -21.218557122207823,
+   "pf": 0.8171105092693927,
+   "spy": 0.0048289444039273,
+   "bestShare": 0.005527792848793833
   }
  },
  "lift": [
   {
    "name": "opened 3% or more above the previous close",
    "key": "gapUp",
-   "inWinners": 0.05451920941594492,
-   "inAll": 0.02465370261899554,
-   "lift": 2.211400464202005
+   "inWinners": 0.05450710479573712,
+   "inAll": 0.02463587837742721,
+   "lift": 2.2125090877896048
   },
   {
    "name": "volume at least twice its 50 day average",
    "key": "vol2x",
-   "inWinners": 0.10243171219187208,
-   "inAll": 0.051587605319143144,
-   "lift": 1.9855876534331336
+   "inWinners": 0.10240896980461811,
+   "inAll": 0.05157563146195104,
+   "lift": 1.9856076775360167
   },
   {
    "name": "up 50% or more in 6 months",
    "key": "mom50",
-   "inWinners": 0.1454585831667777,
-   "inAll": 0.08106431541315977,
-   "lift": 1.7943602240445782
+   "inWinners": 0.14548179396092362,
+   "inAll": 0.08104897485414018,
+   "lift": 1.7949862317535783
   },
   {
    "name": "quiet base: last 10 days’ moves under 75% of the 50 day norm",
    "key": "tight",
-   "inWinners": 0.148623140128803,
-   "inAll": 0.1098374300607872,
-   "lift": 1.3531192421977707
+   "inWinners": 0.148645648312611,
+   "inAll": 0.10979413898881624,
+   "lift": 1.3538577712946247
   },
   {
    "name": "thinly followed: under 20M USD traded a day",
    "key": "smallDv",
-   "inWinners": 0.5307017543859649,
-   "inAll": 0.419093729353701,
-   "lift": 1.2663080290043436
+   "inWinners": 0.5306949378330373,
+   "inAll": 0.419028450181149,
+   "lift": 1.26648903577696
   },
   {
    "name": "up 4% to 20% on the day",
    "key": "bigUp",
-   "inWinners": 0.05723961803242283,
-   "inAll": 0.05950489554473884,
-   "lift": 0.9619312412604294
+   "inWinners": 0.05722690941385435,
+   "inAll": 0.059458587844141486,
+   "lift": 0.9624666761992898
   },
   {
    "name": "S&P 500 above its 50 day average",
    "key": "mktUp",
-   "inWinners": 0.6775483011325782,
-   "inAll": 0.7634692731830216,
-   "lift": 0.8874598165657335
+   "inWinners": 0.677619893428064,
+   "inAll": 0.762730019541823,
+   "lift": 0.8884138241144812
   },
   {
    "name": "price above the 50 day average, which is above the 200 day average",
    "key": "trend",
-   "inWinners": 0.17993559848989563,
-   "inAll": 0.33519293471037775,
-   "lift": 0.536812026319613
+   "inWinners": 0.179895648312611,
+   "inAll": 0.3351006717421657,
+   "lift": 0.5368406078607534
   },
   {
    "name": "closed in the top fifth of the day’s range",
    "key": "strongClose",
-   "inWinners": 0.09465911614479236,
-   "inAll": 0.21927838712993586,
-   "lift": 0.4316846606897972
+   "inWinners": 0.09463809946714032,
+   "inAll": 0.21915220226234675,
+   "lift": 0.43183731895082306
   },
   {
    "name": "within 5% of its 52 week high",
    "key": "high52",
-   "inWinners": 0.032978014656895406,
-   "inAll": 0.1442796601348969,
-   "lift": 0.22857008829977843
+   "inWinners": 0.03297069271758437,
+   "inAll": 0.14421596593810349,
+   "lift": 0.22862026754884524
   }
  ],
  "chosen": [],
@@ -274,5 +274,5 @@
    "d": "2026-09-11"
   }
  ],
- "text": "WINNERS STUDY, 2026-10-16\nWhole US market 2021-10-12 to 2026-10-16, stocks that later collapsed included. 18012 times a stock rose 30%+ within 20 sessions.\n\nWHAT WINNERS LOOKED LIKE THE DAY BEFORE (how much more common than on an ordinary day)\n- opened 3% or more above the previous close: 5% of winners vs 2% of all days (2.2x)\n- volume at least twice its 50 day average: 10% of winners vs 5% of all days (2.0x)\n- up 50% or more in 6 months: 15% of winners vs 8% of all days (1.8x)\n- quiet base: last 10 days’ moves under 75% of the 50 day norm: 15% of winners vs 11% of all days (1.4x)\n- thinly followed: under 20M USD traded a day: 53% of winners vs 42% of all days (1.3x)\nCommon among winners is not the same as a buy signal: most stocks with these looks do not become winners. So each look was tested as a buy rule:\n\nTESTED AS BUY RULES (buy next open, stop 2 daily moves, sell after 10 sessions; chosen on the older half, judged on the newer half from 2024-09-13, 0.8% cost)\nNo look made money on the older half with enough trades.\nBuying a random stock the same way: 142480 trades, 41% won, average -0.7% a trade, profit factor 0.82.\n\nRESULT: no winner pattern passed the fair test. Nothing to act on. The study repeats every week as new days come in.\nAbout 5 years of data (first 210 sessions used only to warm up the averages), one market climate. Every pair of looks is tested, not only single looks. Daily prices only. Research, not an order. Not financial advice, not a halal ruling."
+ "text": "WINNERS STUDY, 2026-10-19\nWhole US market 2021-10-12 to 2026-10-19, stocks that later collapsed included. 18016 times a stock rose 30%+ within 20 sessions.\n\nWHAT WINNERS LOOKED LIKE THE DAY BEFORE (how much more common than on an ordinary day)\n- opened 3% or more above the previous close: 5% of winners vs 2% of all days (2.2x)\n- volume at least twice its 50 day average: 10% of winners vs 5% of all days (2.0x)\n- up 50% or more in 6 months: 15% of winners vs 8% of all days (1.8x)\n- quiet base: last 10 days’ moves under 75% of the 50 day norm: 15% of winners vs 11% of all days (1.4x)\n- thinly followed: under 20M USD traded a day: 53% of winners vs 42% of all days (1.3x)\nCommon among winners is not the same as a buy signal: most stocks with these looks do not become winners. So each look was tested as a buy rule:\n\nTESTED AS BUY RULES (buy next open, stop 2 daily moves, sell after 10 sessions; chosen on the older half, judged on the newer half from 2024-09-16, 0.8% cost)\nNo look made money on the older half with enough trades.\nBuying a random stock the same way: 142546 trades, 41% won, average -0.7% a trade, profit factor 0.82.\n\nRESULT: no winner pattern passed the fair test. Nothing to act on. The study repeats every week as new days come in.\nAbout 5 years of data (first 210 sessions used only to warm up the averages), one market climate. Every pair of looks is tested, not only single looks. Daily prices only. Research, not an order. Not financial advice, not a halal ruling."
 }

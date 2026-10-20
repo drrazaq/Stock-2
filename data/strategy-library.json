@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
- "updated": "2026-10-20",
+ "updated": "2026-10-19",
  "strategies": [
   {
    "id": "T1",
@@ -811,7 +811,7 @@
    "explain": "Several executives buy with their own money within weeks.",
    "status": "tested: not proven",
    "note": "insider-study.mjs (SEC Form 4 data sets): best of 6 versions.",
-   "tested": "2026-10-16"
+   "tested": "2026-10-19"
   },
   {
    "id": "E4",
@@ -1185,7 +1185,7 @@
    "explain": "A supplier that has not moved yet after its chain leader ran.",
    "status": "tested: not proven",
    "note": "chain-ripple.mjs, other-layer version (suppliers/customers).",
-   "tested": "2026-10-16"
+   "tested": "2026-10-19"
   },
   {
    "id": "N2",
@@ -1200,7 +1200,7 @@
    "name": "Sympathy move",
    "explain": "Competitors move after a company-specific event.",
    "status": "tested: not proven",
-   "tested": "2026-10-16",
+   "tested": "2026-10-19",
    "note": "chain-ripple.mjs, same-layer version (peers)."
   },
   {
@@ -1654,8 +1654,8 @@
    "name": "Customer momentum (Cohen & Frazzini 2008)",
    "explain": "Buy suppliers whose customers rose most last month: customer news reaches supplier prices with a delay.",
    "status": "tested: not proven",
-   "note": "Uses value-chain layers as the customer map (today\u2019s knowledge). A real 10-K customer map is queued for the researcher.",
-   "tested": "2026-10-16"
+   "note": "Uses value-chain layers as the customer map (today’s knowledge). A real 10-K customer map is queued for the researcher.",
+   "tested": "2026-10-19"
   },
   {
    "id": "V14",
@@ -1689,18 +1689,58 @@
    "family": "Early wave",
    "name": "Early-wave stack (pre-registered)",
    "explain": "Share count up <5% in 90 days and no 424B5 / 8-K 3.02 in 20 days; volume under 150% of median on days 3-7 before; then volume 3x+ with a close in the top 25% of the range; no 15%+ one-day jump in the last month. Next open, hold 3 and 10 days. Version 2 also needs an 8-K 1.01 in the last 10 days. Run ONCE as written.",
-   "status": "queued (Agent A): study built 20 Oct (ew-stack.mjs), runs once at the next study run",
+   "status": "tested: not proven",
    "agent": "A",
-   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox).",
+   "tested": "2026-10-19",
+   "study": "ew-stack.mjs -> data/ew-stack.json (run once, first run frozen)",
+   "result": {
+    "best": "V1_10",
+    "t": 0.28,
+    "tOlder": -4.81,
+    "edge": 0.001,
+    "edgeOlder": -0.012,
+    "vsSpy": -0.0021,
+    "vsSpyOlder": -0.0164,
+    "vsOwn": 0.0063,
+    "n": [
+     2042,
+     2133
+    ],
+    "bar": 3.85,
+    "why": "V1_3 REJECTED: not better than an average stock in the older half (-0.9%) | V1_10 REJECTED: not better than an average stock in the older half (-1.2%) | V2_3 REJECTED: could be luck in the older half (t 1.08, 3.85 needed) | V2_10 REJECTED: could be luck in the older half (t 1, 3.85 needed)"
+   }
   },
   {
    "id": "A-RG1",
    "family": "Regime",
    "name": "Regime gate: S&P 500 below its 200-day",
    "explain": "Do the system buy rules lose when the S&P 500 is under its 200-day average? If yes, no new buys in that state.",
-   "status": "queued (Agent A): study built 20 Oct, first result at the next study run",
+   "status": "tested: not proven",
    "agent": "A",
-   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox).",
+   "tested": "2026-10-19",
+   "study": "regime-gate.mjs -> data/regime-gate.json",
+   "result": {
+    "t": 0.74,
+    "tNewHigh": -3.17,
+    "leadersBelowVsAvg": 0.0021,
+    "leadersAboveVsAvg": -0.0144,
+    "newHighBelowVsAvg": -0.03,
+    "newHighAboveVsAvg": -0.0015,
+    "spyBelow20d": 0.0234,
+    "spyAbove20d": 0.0085,
+    "spyOlder": [
+     0.0201,
+     0.0077
+    ],
+    "spyNewer": [
+     0.0264,
+     0.0094
+    ],
+    "bar": 3.85,
+    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.85 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.85 needed)"
+   }
   },
   {
    "id": "B-CR1",
