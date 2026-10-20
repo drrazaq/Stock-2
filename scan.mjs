@@ -3033,7 +3033,7 @@ async function intraday(onlyMine) {
     }
     if (b && p > b.buyHi) say('hi', 'above its buy range (' + money(b.buyLo) + ' to ' + money(b.buyHi) + '). Too late for this signal.');
     if (b && p <= b.stop) say('lo', 'already down to its stop level ' + money(b.stop) + '. The signal has failed.');
-    if (t && p >= t.trigger) say('tr', 'BUY WATCH forming. It is above its trigger ~' + money(t.trigger) + '. It only counts if it closes above it today.');
+    if (t && p >= t.trigger) say('tr', 'NOTHING TO DO YET: it is trying to break out above ' + money(t.trigger) + '. If it CLOSES above that tonight, the night scan checks it and puts it in ACTIONS with a buy range, stop and sell prices if it passes. Do not buy from this message.');
     for (const o of (sig.openTrades || []).filter(x => x.sym === sym)) {
       if (QUIET()) continue;   // the system's own paper trades are not yours: no alerts about them in quiet mode (they are scored in  shadow )
       if (p <= o.stop) say('st' + o.since, 'SELL / REASSESS WATCH. Paper trade from ' + o.since + ' is at its stop ' + money(o.stop) + '.');
