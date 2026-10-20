@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
- "updated": "2026-10-20",
+ "updated": "2026-10-19",
  "strategies": [
   {
    "id": "T1",
@@ -1813,18 +1813,18 @@
     "leadersAboveVsAvg": -0.0144,
     "newHighBelowVsAvg": -0.03,
     "newHighAboveVsAvg": -0.0015,
-    "spyBelow20d": 0.0234,
-    "spyAbove20d": 0.0085,
+    "spyBelow20d": 0.0238,
+    "spyAbove20d": 0.0073,
     "spyOlder": [
-     0.0201,
-     0.0077
+     0.0209,
+     0.0069
     ],
     "spyNewer": [
-     0.0264,
-     0.0094
+     0.0263,
+     0.0076
     ],
-    "bar": 3.9,
-    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.90 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.90 needed)"
+    "bar": 3.92,
+    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.92 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.92 needed)"
    }
   },
   {
@@ -2262,9 +2262,26 @@
    "family": "Insiders",
    "name": "Insider cluster, then 3 quiet days",
    "explain": "2+ insiders buy (Form 4), then 3 sessions holding above the filing-day low on volume under 150% of median; buy day 4, hold 20. The quiet-after-filing version of E3.",
-   "status": "queued (Agent C)",
+   "status": "tested: rejected",
    "agent": "C",
-   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates.",
+   "tested": "2026-10-19",
+   "study": "fulfilling.mjs -> data/fulfilling.json (run once, first run frozen)",
+   "result": {
+    "best": "F1_20",
+    "t": -1.55,
+    "tOlder": -1.49,
+    "edge": -0.0098,
+    "edgeOlder": -0.0086,
+    "vsSpy": -0.0127,
+    "vsOwn": 0.0042,
+    "n": [
+     460,
+     382
+    ],
+    "bar": 3.92,
+    "why": "F1_20 REJECTED: not better than an average stock in the older half (-0.9%)"
+   }
   },
   {
    "id": "C-FADE1",
@@ -2310,6 +2327,50 @@
    "status": "queued (Agent A)",
    "agent": "A",
    "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+  },
+  {
+   "id": "C-FUL1",
+   "family": "Early wave",
+   "name": "FULFILLING-1: flat share count, no offering, quiet 3-7 days before, above the 50-day, not a lottery stock, insider cluster in 10 days, then ignition without a gap",
+   "explain": "FULFILLING-1: flat share count, no offering, quiet 3-7 days before, above the 50-day, not a lottery stock, insider cluster in 10 days, then ignition without a gap. Pre-registered 20 Oct 2026 (fulfilling.mjs).",
+   "agent": "C",
+   "status": "tested: too few cases",
+   "tested": "2026-10-19",
+   "study": "fulfilling.mjs -> data/fulfilling.json (run once, first run frozen)",
+   "result": {
+    "best": "F2_3",
+    "n": [
+     4,
+     3
+    ],
+    "bar": 3.92,
+    "why": "F2_3 TOO FEW CASES: too few cases in the older half (4) | F2_5 TOO FEW CASES: too few cases in the older half (4)"
+   }
+  },
+  {
+   "id": "C-QK1",
+   "family": "Company events",
+   "name": "8-K 1.01 material agreement, then 3 quiet sessions holding the filing-day low; buy day 4",
+   "explain": "8-K 1.01 material agreement, then 3 quiet sessions holding the filing-day low; buy day 4. Pre-registered 20 Oct 2026 (fulfilling.mjs).",
+   "agent": "C",
+   "status": "tested: rejected",
+   "tested": "2026-10-19",
+   "study": "fulfilling.mjs -> data/fulfilling.json (run once, first run frozen)",
+   "result": {
+    "best": "F3_10",
+    "t": -2.33,
+    "tOlder": -1.87,
+    "edge": -0.0056,
+    "edgeOlder": -0.0044,
+    "vsSpy": -0.0078,
+    "vsOwn": -0.0009,
+    "n": [
+     1574,
+     1873
+    ],
+    "bar": 3.92,
+    "why": "F3_10 REJECTED: not better than an average stock in the older half (-0.4%)"
+   }
   }
  ]
 }
