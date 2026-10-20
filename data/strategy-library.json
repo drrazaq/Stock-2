@@ -1738,8 +1738,8 @@
      0.0264,
      0.0094
     ],
-    "bar": 3.85,
-    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.85 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.85 needed)"
+    "bar": 3.87,
+    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.87 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.87 needed)"
    }
   },
   {
@@ -1801,54 +1801,162 @@
    "family": "Volume profile",
    "name": "Volume profile: value-area-low reclaim",
    "explain": "Close falls under the 60-day value area low, then closes back inside it; buy next open, hold 5 and 20 sessions (mean reversion toward the POC). Volume profile from daily bars: each of the last 60 sessions spreads its volume evenly across its high-low range in 50 price bins; POC = busiest bin, value area = the 70% of volume around it, HVN/LVN = bins well above/below the average. Approximation: true volume-at-price needs intraday data.",
-   "status": "queued (Agent A)",
+   "status": "tested: rejected",
    "agent": "A",
-   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else."
+   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else.",
+   "tested": "2026-10-19",
+   "study": "pattern-lab.mjs -> data/pattern-lab.json (run once, first run frozen)",
+   "result": {
+    "best": "VP1_20",
+    "t": -8.13,
+    "tOlder": -3.25,
+    "edge": -0.0116,
+    "edgeOlder": -0.0046,
+    "vsSpy": -0.0155,
+    "vsSpyOlder": -0.0127,
+    "vsOwn": -0.0008,
+    "n": [
+     26179,
+     25739
+    ],
+    "bar": 3.87,
+    "why": "VP1_20 REJECTED: not better than an average stock in the older half (-0.5%) | VP1_5 REJECTED: not better than an average stock in the older half (-0.7%)"
+   }
   },
   {
    "id": "A-VP2",
    "family": "Volume profile",
    "name": "Volume profile: breakout through a thin zone (LVN)",
    "explain": "Close above the 60-day value area high where the bins above are low-volume nodes; buy next open, hold 5 and 20 sessions (price should travel fast through thin zones). Volume profile from daily bars: each of the last 60 sessions spreads its volume evenly across its high-low range in 50 price bins; POC = busiest bin, value area = the 70% of volume around it, HVN/LVN = bins well above/below the average. Approximation: true volume-at-price needs intraday data.",
-   "status": "queued (Agent A)",
+   "status": "tested: rejected",
    "agent": "A",
-   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else."
+   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else.",
+   "tested": "2026-10-19",
+   "study": "pattern-lab.mjs -> data/pattern-lab.json (run once, first run frozen)",
+   "result": {
+    "best": "VP2_20",
+    "t": -8.45,
+    "tOlder": -5.33,
+    "edge": -0.0122,
+    "edgeOlder": -0.0072,
+    "vsSpy": -0.0162,
+    "vsSpyOlder": -0.0153,
+    "vsOwn": -0.0085,
+    "n": [
+     34765,
+     37287
+    ],
+    "bar": 3.87,
+    "why": "VP2_20 REJECTED: not better than an average stock in the older half (-0.7%) | VP2_5 REJECTED: not better than an average stock in the older half (-0.8%)"
+   }
   },
   {
    "id": "A-VP3",
    "family": "Volume profile",
    "name": "Volume profile: pullback to the POC in an uptrend",
    "explain": "Stock above its 200-day pulls back to within 1% of its 60-day POC (a high-volume node acting as support); buy next open, hold 10 sessions. Volume profile from daily bars: each of the last 60 sessions spreads its volume evenly across its high-low range in 50 price bins; POC = busiest bin, value area = the 70% of volume around it, HVN/LVN = bins well above/below the average. Approximation: true volume-at-price needs intraday data.",
-   "status": "queued (Agent A)",
+   "status": "tested: rejected",
    "agent": "A",
-   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else."
+   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else.",
+   "tested": "2026-10-19",
+   "study": "pattern-lab.mjs -> data/pattern-lab.json (run once, first run frozen)",
+   "result": {
+    "best": "VP3_10",
+    "t": -3.02,
+    "tOlder": -4.43,
+    "edge": -0.0041,
+    "edgeOlder": -0.0066,
+    "vsSpy": -0.0065,
+    "vsSpyOlder": -0.0106,
+    "vsOwn": -0.0008,
+    "n": [
+     8878,
+     10163
+    ],
+    "bar": 3.87,
+    "why": "VP3_10 REJECTED: not better than an average stock in the older half (-0.7%)"
+   }
   },
   {
    "id": "A-SMC1",
    "family": "Smart money concepts (SMC)",
    "name": "SMC: fair value gap fill",
    "explain": "A 3-day bullish imbalance (day 3 low above day 1 high) in an uptrend; buy when price first returns into the gap, hold 10 sessions.",
-   "status": "queued (Agent A)",
+   "status": "tested: rejected",
    "agent": "A",
-   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates."
+   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates.",
+   "tested": "2026-10-19",
+   "study": "pattern-lab.mjs -> data/pattern-lab.json (run once, first run frozen)",
+   "result": {
+    "best": "SMC1_10",
+    "t": -6.95,
+    "tOlder": -8.47,
+    "edge": -0.0086,
+    "edgeOlder": -0.0068,
+    "vsSpy": -0.0109,
+    "vsSpyOlder": -0.011,
+    "vsOwn": -0.0042,
+    "n": [
+     55980,
+     59994
+    ],
+    "bar": 3.87,
+    "why": "SMC1_10 REJECTED: not better than an average stock in the older half (-0.7%)"
+   }
   },
   {
    "id": "A-SMC2",
    "family": "Smart money concepts (SMC)",
    "name": "SMC: order block retest after break of structure",
    "explain": "Stock closes above its last swing high (break of structure); buy when it first returns to the last down day before that move (the order block), hold 10 sessions.",
-   "status": "queued (Agent A)",
+   "status": "tested: rejected",
    "agent": "A",
-   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates."
+   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates.",
+   "tested": "2026-10-19",
+   "study": "pattern-lab.mjs -> data/pattern-lab.json (run once, first run frozen)",
+   "result": {
+    "best": "SMC2_10",
+    "t": -7.4,
+    "tOlder": -11.5,
+    "edge": -0.0062,
+    "edgeOlder": -0.008,
+    "vsSpy": -0.0086,
+    "vsSpyOlder": -0.012,
+    "vsOwn": 0,
+    "n": [
+     38963,
+     42689
+    ],
+    "bar": 3.87,
+    "why": "SMC2_10 REJECTED: not better than an average stock in the older half (-0.8%)"
+   }
   },
   {
    "id": "A-SMC3",
    "family": "Smart money concepts (SMC)",
    "name": "SMC: liquidity sweep of equal lows",
    "explain": "Two or more swing lows within 1% (resting stops), price trades under them and closes back above the same day; buy next open, hold 5 sessions. (Close cousin of the failed bear trap M4/M5, so tested once only.)",
-   "status": "queued (Agent A)",
+   "status": "tested: rejected",
    "agent": "A",
-   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates."
+   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates.",
+   "tested": "2026-10-19",
+   "study": "pattern-lab.mjs -> data/pattern-lab.json (run once, first run frozen)",
+   "result": {
+    "best": "SMC3_5",
+    "t": -10,
+    "tOlder": -9.13,
+    "edge": -0.0071,
+    "edgeOlder": -0.0072,
+    "vsSpy": -0.0085,
+    "vsSpyOlder": -0.0093,
+    "vsOwn": 0.0004,
+    "n": [
+     13429,
+     14815
+    ],
+    "bar": 3.87,
+    "why": "SMC3_5 REJECTED: not better than an average stock in the older half (-0.7%)"
+   }
   }
  ]
 }
