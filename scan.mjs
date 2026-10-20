@@ -1919,11 +1919,28 @@ async function optionsShadow() { if (!env.ALPACA_KEY || !env.ALPACA_SECRET) retu
     o.out = today; o.bid1 = bid; o.ret = +(bid / o.ask - 1 - 10 / (o.ask * 100)).toFixed(4); /* ZAD: 5 USD per option contract, in and out */ o.stock = last[o.sym] ? +(last[o.sym] / o.under - 1 - 0.008).toFixed(4) : null; o.closed = true; }
   S.done = S.done.concat(S.open.filter(o => o.closed)).slice(-500); S.open = S.open.filter(o => !o.closed);
   // 2. open new paper calls on today's tested BUY signals
-  const cands = planCands(sg, {}).filter(x => x.ok && !S.open.some(o => o.sym === x.sym)).slice(0, 5), lo = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10), hi = new Date(Date.now() + 60 * 864e5).toISOString().slice(0, 10);
+  // candidates: tested BUY signals first; then (20 Oct 2026, so the lab is not empty while no buy engine is proven) the LONGER HOLDS
+  // picks (F-score in an uptrend) and the 6-month leaders list, ZAD not-halal removed
+  const Zl = readJson('data/zad-list.json', {}), badZ = new Set(Zl.notHalal || []), Q = readJson('data/quality.json', {}), LD = readJson('data/leaders.json', {});
+  const extra = [...((Q.fscoreUpToday || []).map(x => x.sym)), ...((LD.paper || []).map(x => x.sym))].filter(sym => sym && !badZ.has(sym) && myHalal(sym) !== 'fail').map(sym => ({ sym, ok: true }));
+  const seenC = new Set(), cands = [...planCands(sg, {}).filter(x => x.ok), ...extra].filter(x => !S.open.some(o => o.sym === x.sym) && !seenC.has(x.sym) && seenC.add(x.sym)).slice(0, 5), lo = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10), hi = new Date(Date.now() + 60 * 864e5).toISOString().slice(0, 10);
   for (const c of cands) { const px = last[c.sym]; if (!(px > 0)) continue; const j = await get('/v1beta1/options/snapshots/' + c.sym + '?feed=indicative&type=call&limit=500&expiration_date_gte=' + lo + '&expiration_date_lte=' + hi); if (!j || !j.snapshots) continue;
     const rows = Object.entries(j.snapshots).map(([occ, v]) => { const m = occ.match(/(\d{6})C(\d{8})$/); const q = v.latestQuote || {}; return m ? { occ, exp: '20' + m[1].slice(0, 2) + '-' + m[1].slice(2, 4) + '-' + m[1].slice(4, 6), k: +m[2] / 1000, ask: q.ap, bid: q.bp } : null; })
       .filter(x => x && x.k >= px && x.ask > 0 && x.bid > 0 && (x.ask - x.bid) / x.ask <= 0.15).sort((a, b) => a.k - b.k || (a.exp < b.exp ? -1 : 1));
     const o = rows[0]; if (o) S.open.push({ d: today, sym: c.sym, occ: o.occ, exp: o.exp, strike: o.k, ask: o.ask, bid: o.bid, under: px }); }
+  // 3. COVERED CALL paper test on the stocks the owner holds (O2): sell a call 30-45 days out, strike 5%+ above the price, at the BID;
+  // 14 days later buy it back at the ASK. Income = premium kept, next to the stock's own move. Nothing is sold; paper only.
+  S.cc = S.cc || { open: [], done: [] }; const posH = loadPos();
+  for (const o of S.cc.open) { if (Date.parse(today) - Date.parse(o.d) < 14 * 864e5) continue; const j = await get('/v1beta1/options/snapshots?feed=indicative&symbols=' + o.occ), q = j && j.snapshots && j.snapshots[o.occ] && j.snapshots[o.occ].latestQuote;
+    const ask = q && q.ap > 0 ? q.ap : (Date.parse(today) > Date.parse(o.exp) ? Math.max(0, (last[o.sym] || 0) - o.strike) : null); if (ask === null) continue;
+    o.out = today; o.ask1 = ask; o.income = +((o.bid - ask) * 100 - 10).toFixed(2); /* USD per contract after ZAD fees */ o.incomePct = +(o.income / (o.under * 100)).toFixed(4); o.stock = last[o.sym] ? +(last[o.sym] / o.under - 1).toFixed(4) : null; o.closed = true; }
+  S.cc.done = S.cc.done.concat(S.cc.open.filter(o => o.closed)).slice(-500); S.cc.open = S.cc.open.filter(o => !o.closed);
+  const lo2 = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10), hi2 = new Date(Date.now() + 45 * 864e5).toISOString().slice(0, 10);
+  for (const sym of Object.keys(posH).filter(k => posH[k] && posH[k].entry && !badZ.has(k) && myHalal(k) !== 'fail' && !S.cc.open.some(o => o.sym === k)).slice(0, 5)) { const px = last[sym]; if (!(px > 0)) continue;
+    const j = await get('/v1beta1/options/snapshots/' + sym + '?feed=indicative&type=call&limit=500&expiration_date_gte=' + lo2 + '&expiration_date_lte=' + hi2); if (!j || !j.snapshots) continue;
+    const rows = Object.entries(j.snapshots).map(([occ, v]) => { const m = occ.match(/(\d{6})C(\d{8})$/); const q = v.latestQuote || {}; return m ? { occ, exp: '20' + m[1].slice(0, 2) + '-' + m[1].slice(2, 4) + '-' + m[1].slice(4, 6), k: +m[2] / 1000, ask: q.ap, bid: q.bp } : null; })
+      .filter(x => x && x.k >= px * 1.05 && x.ask > 0 && x.bid > 0 && (x.ask - x.bid) / x.ask <= 0.3).sort((a, b) => a.k - b.k || (a.exp < b.exp ? -1 : 1));
+    const o = rows[0]; if (o) S.cc.open.push({ d: today, sym, occ: o.occ, exp: o.exp, strike: o.k, bid: o.bid, ask: o.ask, under: px }); }
   fs.writeFileSync('data/options-shadow.json', JSON.stringify(S));
   return 'Options lab (separate from stock trading, Alpaca data): ' + (st === null ? 'no BUY signal to test today' : 'data ' + (st === 200 ? 'OK' : 'HTTP ' + st)) + '; ' + S.open.length + ' open paper calls, ' + S.done.length + ' finished.'; }
 // OPTIONS LAB: kept fully SEPARATE from stock trading (owner's instruction). Its own file, its own message, never in ACTIONS,
@@ -1932,6 +1949,7 @@ function optionsText() { const OS = readJson0('data/options-shadow.json'); if (!
   const d = (OS.done || []).filter(o => typeof o.ret === 'number'), av = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, days = new Set(d.map(o => o.d)).size, st = d.filter(o => o.stock !== null);
   return ['OPTIONS LAB (paper only, SEPARATE from your stock trading)', '',
     'Test: a call 30-60 days out on each tested stock BUY signal, bought at the ask, sold at the bid 14 days later, ZAD fee 5 USD a contract each way, next to the same stock over the same days.',
+    (OS.cc ? 'Covered calls (paper) on the stocks you hold: ' + (OS.cc.open || []).length + ' open, ' + (OS.cc.done || []).length + ' finished' + ((OS.cc.done || []).length ? ', average income ' + pcs(av(OS.cc.done.map(o => o.incomePct || 0))) + ' of the stock value per 14 days after ZAD fees, while the stocks moved ' + pcs(av(OS.cc.done.filter(o => o.stock !== null).map(o => o.stock))) : '') + '.' : ''),
     'Open paper calls: ' + (OS.open || []).length + (OS.open && OS.open.length ? ' (' + OS.open.slice(-5).map(o => o.sym + ' ' + o.strike + ' call, exp ' + o.exp).join(', ') + ')' : '') + '.',
     d.length ? 'Finished: ' + d.length + ' on ' + days + ' signal day(s): calls ' + pcs(av(d.map(o => o.ret))) + ' a trade, ' + Math.round(d.filter(o => o.ret > 0).length / d.length * 100) + '% won, worst ' + pcs(Math.min(...d.map(o => o.ret))) + ' | the same stocks ' + (st.length ? pcs(av(st.map(o => o.stock))) : 'n/a') + '.' : 'Finished: none yet (first results 14 days after the first paper call).',
     'Verdict: ' + (d.length < 20 || days < 10 ? 'too early (20+ calls over 10+ days needed).' : av(d.map(o => o.ret)) > 0 && av(d.map(o => o.ret)) > (st.length ? av(st.map(o => o.stock)) : 0) ? 'calls did better than the stocks so far (one period only).' : 'calls did NOT beat simply owning the stock.'),
