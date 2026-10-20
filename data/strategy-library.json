@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
- "updated": "2026-10-16",
+ "updated": "2026-10-20",
  "strategies": [
   {
    "id": "T1",
@@ -1680,6 +1680,60 @@
    "status": "tested: not proven",
    "note": "Too few months in the older half (10 of 12 needed).",
    "tested": "2026-10-16"
+  },
+  {
+   "id": "A-EW1",
+   "family": "Early wave",
+   "name": "Early-wave stack (pre-registered)",
+   "explain": "Share count up <5% in 90 days and no 424B5 / 8-K 3.02 in 20 days; volume under 150% of median on days 3-7 before; then volume 3x+ with a close in the top 25% of the range; no 15%+ one-day jump in the last month. Next open, hold 3 and 10 days. Version 2 also needs an 8-K 1.01 in the last 10 days. Run ONCE as written.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+  },
+  {
+   "id": "A-RG1",
+   "family": "Regime",
+   "name": "Regime gate: S&P 500 below its 200-day",
+   "explain": "Do the system buy rules lose when the S&P 500 is under its 200-day average? If yes, no new buys in that state.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+  },
+  {
+   "id": "B-CR1",
+   "family": "Quality and value",
+   "name": "Cash runway",
+   "explain": "Cash covers 8+ quarters of cash burn and no ATM / 424B5 in 90 days; hold 60 days. Also as AVOID: under 4 quarters of runway.",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+  },
+  {
+   "id": "B-FS2",
+   "family": "Quality and value",
+   "name": "F-score + cheap + flat share count (pre-registered)",
+   "explain": "F-score 8-9, cheapest 30% by book value, share count up <5% in a year; hold 12 months. One version only.",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+  },
+  {
+   "id": "C-CT1",
+   "family": "Events",
+   "name": "Contract size vs company size",
+   "explain": "8-K item 1.01 whose stated dollar value is over 10% of market cap (value from the filing / Exhibit 10, SEC official APIs); hold 20 days. Stop if most filings state no amount.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+  },
+  {
+   "id": "C-IC1",
+   "family": "Insiders",
+   "name": "Insider cluster + contract",
+   "explain": "2+ insiders buying and an 8-K 1.01 within the same 10 days; hold 20 days.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
   }
  ]
 }
