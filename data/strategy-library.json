@@ -1795,6 +1795,33 @@
    "status": "not for this system",
    "agent": "A",
    "note": "Agent A, 20 Oct: published follow-up work finds the drift disappeared after it was published (Kurov, Wolfe & Gilbert 2021, Finance Research Letters). Not tested, to save a trial."
+  },
+  {
+   "id": "A-VP1",
+   "family": "Volume profile",
+   "name": "Volume profile: value-area-low reclaim",
+   "explain": "Close falls under the 60-day value area low, then closes back inside it; buy next open, hold 5 and 20 sessions (mean reversion toward the POC). Volume profile from daily bars: each of the last 60 sessions spreads its volume evenly across its high-low range in 50 price bins; POC = busiest bin, value area = the 70% of volume around it, HVN/LVN = bins well above/below the average. Approximation: true volume-at-price needs intraday data.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else."
+  },
+  {
+   "id": "A-VP2",
+   "family": "Volume profile",
+   "name": "Volume profile: breakout through a thin zone (LVN)",
+   "explain": "Close above the 60-day value area high where the bins above are low-volume nodes; buy next open, hold 5 and 20 sessions (price should travel fast through thin zones). Volume profile from daily bars: each of the last 60 sessions spreads its volume evenly across its high-low range in 50 price bins; POC = busiest bin, value area = the 70% of volume around it, HVN/LVN = bins well above/below the average. Approximation: true volume-at-price needs intraday data.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else."
+  },
+  {
+   "id": "A-VP3",
+   "family": "Volume profile",
+   "name": "Volume profile: pullback to the POC in an uptrend",
+   "explain": "Stock above its 200-day pulls back to within 1% of its 60-day POC (a high-volume node acting as support); buy next open, hold 10 sessions. Volume profile from daily bars: each of the last 60 sessions spreads its volume evenly across its high-low range in 50 price bins; POC = busiest bin, value area = the 70% of volume around it, HVN/LVN = bins well above/below the average. Approximation: true volume-at-price needs intraday data.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else."
   }
  ]
 }
