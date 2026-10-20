@@ -2244,9 +2244,9 @@
    "family": "Forward cash",
    "name": "Government award (SAM.gov / NIH RePORTER / BARDA)",
    "explain": "Award dollar value over 20% of market cap, share count flat, quiet 5 days before; buy next open, hold 20 sessions. Official free APIs only, point-in-time award date. Cash from the government, not a press release.",
-   "status": "queued (Agent C)",
+   "status": "queued (Agent C): study built 20 Oct (gov-awards.mjs, pre-registered, run once), first result at the next study run",
    "agent": "C",
-   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: built against the official USAspending API (contracts C/D, grants 04/05, 20M+; strict SEC-name match; stop rule: under 30% of 50M+ awards matched = needs data). Caveat: Award Amount is the total to date, so a pass goes to live paper first."
   },
   {
    "id": "C-PAT1",
@@ -2288,9 +2288,9 @@
    "family": "Crowd",
    "name": "Fade the losing tip sources",
    "explain": "Once a tip source scores under t -2 vs the average stock over the same days, its next buys become AVOID for 20 sessions. Built from the tip-source scoring (queue item 1). Avoiding a -7% tip is the income.",
-   "status": "queued (Agent C)",
+   "status": "queued (Agent C): tip-score.mjs built 20 Oct; FADE list written to data/tip-score.json \"fade\" every study run; main session wires it into ACTIONS",
    "agent": "C",
-   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: scoring rule pre-registered in tip-score.mjs (5 and 20 sessions, vs the average stock bought the same day and the S&P 500, t by day; FADE at t <= -2 with 10+ tips on 5+ days). No source has a finished 20-session record yet (tips start 5 Oct)."
   },
   {
    "id": "B-HAL1",
@@ -2407,6 +2407,33 @@
    "status": "queued (Agent C)",
    "agent": "C",
    "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them."
+  },
+  {
+   "id": "C-INS3",
+   "family": "Insiders",
+   "name": "Opportunistic insider buys (routine buyers removed)",
+   "explain": "Drop insiders who bought in the same calendar month in each of the last 3 years (routine); keep the rest (opportunistic). Cluster of 2+ opportunistic buyers, hold 20 and 60 sessions. Same SEC Form 4 cache as insider-study (insider CIK + filing date).",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "Agent C outside research, 20 Oct. Published: Cohen, Malloy and Pomorski, 'Decoding Inside Information', Journal of Finance 2012 (opportunistic trades predict returns, routine ones do not). Needs 3+ years of history per insider, so only the newer half can be tested; pre-register, run once."
+  },
+  {
+   "id": "C-SI1",
+   "family": "Share supply",
+   "name": "High short interest (avoid)",
+   "explain": "Short interest over 20% of shares outstanding at the last FINRA/exchange settlement date: avoid 20 sessions. Official FINRA bi-monthly short interest files (free), point in time by publication date.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "Agent C outside research, 20 Oct. Published: Boehmer, Jones and Zhang 2008 (JF) and Boehmer, Huszar and Jordan 2010 (JFE): heavily shorted stocks underperform. Avoid rule only; needs a FINRA file loader in the study workflow."
+  },
+  {
+   "id": "C-13F1",
+   "family": "Crowd",
+   "name": "New 13F positions by concentrated funds",
+   "explain": "A stock newly bought by 3+ funds whose 13F has under 30 positions, known at the 13F filing date (45 days after quarter end); hold 60 and 120 sessions. SEC official 13F data (EDGAR full-text / structured data sets).",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "Agent C outside research, 20 Oct. Published: Cohen, Polk and Silli, 'Best Ideas' (2010 working paper, later Review of Asset Pricing Studies): concentrated managers' largest new positions outperform. Point-in-time by filing date only; quarterly, so few events: pre-register, run once."
   }
  ]
 }
