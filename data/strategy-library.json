@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
- "updated": "2026-10-20",
+ "updated": "2026-10-19",
  "strategies": [
   {
    "id": "T1",
@@ -1772,8 +1772,8 @@
      0.0264,
      0.0094
     ],
-    "bar": 3.88,
-    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.88 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.88 needed)"
+    "bar": 3.9,
+    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.90 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.90 needed)"
    }
   },
   {
@@ -1790,9 +1790,43 @@
    "family": "Quality and value",
    "name": "F-score + cheap + flat share count (pre-registered)",
    "explain": "F-score 8-9, cheapest 30% by book value, share count up <5% in a year; hold 12 months. One version only.",
-   "status": "queued (Agent B)",
+   "status": "tested: rejected",
    "agent": "B",
-   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+   "note": "B-FS2 12 months: REJECTED (under the league luck bar in the older half (t 1.7, 3.9 needed)).",
+   "tested": "2026-10-19",
+   "study": "quality.mjs -> data/quality.json fs2 (run once, first run frozen)",
+   "result": {
+    "t": -3.5916842411838603,
+    "tOlder": 1.7368929106064372,
+    "edge": -0.13525680297083142,
+    "edgeOlder": 0.041091163354320955,
+    "avg": [
+     0.09571382765684619,
+     -0.018380320511710187
+    ],
+    "spy": [
+     0.14081418695764278,
+     0.1654777102655226
+    ],
+    "ctrl": [
+     0.042231450717496,
+     0.11687648245912124
+    ],
+    "own": [
+     0.08438895064538501,
+     0.022700381641270893
+    ],
+    "n": [
+     345,
+     210
+    ],
+    "months": [
+     26,
+     21
+    ],
+    "bar": 3.9,
+    "why": "under the league luck bar in the older half (t 1.7, 3.9 needed); under the league luck bar in the newer half (t -3.6, 3.9 needed); not better than the same stocks on their other days in the newer half (-1.8% vs +2.3%); did not beat holding the S&P 500 in the older half (+9.6% vs +14.1%); the edge over an average stock could be luck in the older half (t 1.7); not +3.0%+ better than an average stock in the newer half (-1.8% vs +11.7%); did not beat holding the S&P 500 in the newer half (-1.8% vs +16.5%); the edge over an average stock could be luck in the newer half (t -3.6); loses at 1.2% cost; loses without its 2 best trades"
+   }
   },
   {
    "id": "C-CT1",
