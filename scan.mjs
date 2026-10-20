@@ -771,6 +771,7 @@ const MENU = [
   ['strategies', 'strategies', 'The strategy library: what was tested, what failed, what is waiting'],
   ['league', 'league', 'Agent league: three research agents competing, scored on results only'],
   ['progress', 'progress', 'Proof of work: what was tested, rejected, built and scored lately'],
+  ['chase', 'chase', 'Read this before buying a stock that just jumped'],
   ['ladder', 'ladder', 'Your size level: how much per trade now, and what it takes to grow it'],
   ['dips', 'dips', 'Fallen stocks now under their own fair value (watch list, tested every Sunday)'],
   ['research', 'research', 'Every idea tested, result, and what is waiting'],
@@ -2355,6 +2356,12 @@ async function tgCommands(sig) {
         'Tip sources: ' + ((TS.fade || []).length ? 'FADE flags on ' + [...new Set((TS.fade || []).map(f => f.src))].join(', ') : 'none flagged yet') + '.',
         closest.length ? 'Closest to passing: ' + closest.map(e => e.id + ' ' + e.name + ' (t ' + e.result.t + ')').join(' | ') : '',
         '', 'What changed for you: every HOLD shows two sell prices; LONGER HOLDS buys; options tickets; the size ladder (send  ladder ). Full notes: the project docs "Agent A/B/C research" and "Changes and decisions".'].filter(x => x !== '' || true).join('\n'));
+    } else if (/^(chase|urge|chase card|i want to buy it)\s*\??\s*$/i.test(text)) { out.push(['CHASE CARD. You are looking at a stock that just jumped. Read this first.', '',
+        '1. Stocks that jumped 15%+ in one day lagged the average stock by 3.2% over the next month: 3,054 cases, 5 years, dead stocks included, real costs (t -5.1). It is one of the most solid results in the whole system.',
+        '2. The ones you remember (TGL, NIVF, GRML) are the lottery winners. For each one there are 50 that faded, halted or reverse-split. You remember the exception.',
+        '3. If you buy now you are the exit for people who bought 20 minutes ago with faster data.',
+        '4. What to do: put the phone down for 60 minutes. If you still want it, send  check SYM  first. If it still passes nothing, the most the ladder allows for an untested pick is 1,000 USD with a stop at once; better, add the money to SPUS/HLAL (check ZAD).',
+        '', 'The urge is the feeling this rule was built to protect you from.'].join('\n'));
     } else if (/^(league|agents|agent league)\s*\??\s*$/i.test(text)) { const LG = readJson0('data/agent-league.json'); out.push(LG && LG.text ? LG.text : 'AGENT LEAGUE: no score yet. The referee runs with the Sunday studies.');
     } else if (/^(strateg(y|ies)|library|strategy library|استراتيجيات)\s*\??\s*$/i.test(text)) { const LB = readJson0('data/strategy-library.json'), L = LB && LB.strategies || [], cnt = {};
       for (const e of L) { const k = /^LIVE/.test(e.status) ? 'passed, now on live paper' : /^FAILED/.test(e.status) || /rejected/.test(e.status) ? 'tested and failed' : /^queued/.test(e.status) ? 'waiting to be tested' : /not proven|^tested/.test(e.status) ? 'tested, not proven / in use' : /live paper|^paper|bred/.test(e.status) ? 'running on paper now' : /not for this system/.test(e.status) ? 'not for this system' : 'needs data / other'; cnt[k] = (cnt[k] || 0) + 1; }

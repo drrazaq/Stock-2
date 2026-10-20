@@ -1883,7 +1883,7 @@
    "id": "C-CT1",
    "family": "Events",
    "name": "Contract size vs company size",
-   "explain": "8-K item 1.01 whose stated dollar value is over 10% of market cap (value from the filing / Exhibit 10, SEC official APIs); hold 20 days. Stop if most filings state no amount.",
+   "explain": "8-K item 1.01 whose stated dollar value is over 10% of market cap (value from the filing / Exhibit 10, SEC official APIs); hold 20 days. Stop if most filings state no amount. Second pre-registered version (from the 20 Oct evening review): the contract value must also cover 4+ quarters of operating cash burn (10-Q cash flow).",
    "status": "queued (Agent C)",
    "agent": "C",
    "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
@@ -2459,6 +2459,33 @@
    "status": "queued (Agent C)",
    "agent": "C",
    "note": "Agent C outside research, 20 Oct. Published: Cohen, Polk and Silli, 'Best Ideas' (2010 working paper, later Review of Asset Pricing Studies): concentrated managers' largest new positions outperform. Point-in-time by filing date only; quarterly, so few events: pre-register, run once."
+  },
+  {
+   "id": "A-MISS1",
+   "family": "Audit",
+   "name": "Missed-runner autopsy (winners vs near-misses)",
+   "explain": "For the big runners the system missed (TGL, NIVF, GRML, TCRT, PFAI) and a matched control group that looked the same but did not run: reconstruct what was knowable before the move (filing, contract, news, volume, price), when Stock-2 could first have known, whether the first tradable open was still ahead of the move, and which alert fired or why it missed. Output: a table of miss reasons (coverage / timing / prediction), not a buy signal.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the 20 Oct evening reviews."
+  },
+  {
+   "id": "A-DEAD1",
+   "family": "Exits and risk",
+   "name": "Paper-engine deadlines",
+   "explain": "Every paper engine gets a fixed deadline: 60 days and 100 trades (90 days for E1 and V15, 120 for options). If it has not passed (30+ trades, 10+ days, positive after costs, beats the average stock) by then, it is retired: alerts off, record archived in data/retired.json, no re-test for 24 months. Build the ledger and the retirement check.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the 20 Oct evening reviews."
+  },
+  {
+   "id": "A-LEDGER",
+   "family": "Audit",
+   "name": "Ledger consistency: separate buy-signal, risk-filter and live status",
+   "explain": "Add fields buySignal / riskFilter / live / validation to every library entry so summary counts are computed, and a failed buy rule that works as an AVOID (M15, S2) is labelled as a validated avoid rule, not FAILED DISCOVERY.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the 20 Oct evening reviews."
   }
  ]
 }
