@@ -1957,6 +1957,24 @@
     "bar": 3.87,
     "why": "SMC3_5 REJECTED: not better than an average stock in the older half (-0.7%)"
    }
+  },
+  {
+   "id": "A-ROT1",
+   "family": "ETF and asset rotation",
+   "name": "Sector ETF momentum rotation",
+   "explain": "Each month hold the 3 sector ETFs with the best 6-month return (12-1 month version too); test only ETFs ZAD allows. Compare with holding SPUS/HLAL and the S&P 500.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "User 20 Oct: open the system to every channel, not only single stocks. Needs the ETF prices (Massive / Twelve Data); halal by ZAD only."
+  },
+  {
+   "id": "A-ROT2",
+   "family": "ETF and asset rotation",
+   "name": "Halal asset rotation: stocks vs gold vs cash",
+   "explain": "Each month hold SPUS/HLAL if above its 10-month average, otherwise a ZAD-allowed gold ETF or cash (Faber-style trend rule). Compare with always holding SPUS/HLAL.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "User 20 Oct: open the system to every channel, not only single stocks. Needs the ETF prices (Massive / Twelve Data); halal by ZAD only."
   }
  ]
 }
