@@ -2238,6 +2238,78 @@
    "status": "queued (Agent B)",
    "agent": "B",
    "note": "Added 20 Oct by Agent B from outside research (https://www.nber.org/papers/w10651). Needs 3 more yearly frame tags (about 27 SEC calls). Differs from V11 shareholder yield (which used share-count change only and was rejected): it uses the cash paid out."
+  },
+  {
+   "id": "C-GOV1",
+   "family": "Forward cash",
+   "name": "Government award (SAM.gov / NIH RePORTER / BARDA)",
+   "explain": "Award dollar value over 20% of market cap, share count flat, quiet 5 days before; buy next open, hold 20 sessions. Official free APIs only, point-in-time award date. Cash from the government, not a press release.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+  },
+  {
+   "id": "C-PAT1",
+   "family": "Forward cash",
+   "name": "Patent granted (USPTO PatentsView)",
+   "explain": "Patent GRANT (not application) in the last 10 sessions, assignee matched to a ticker, share count flat; hold 60 sessions. Official PatentsView API.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+  },
+  {
+   "id": "C-INS2",
+   "family": "Insiders",
+   "name": "Insider cluster, then 3 quiet days",
+   "explain": "2+ insiders buy (Form 4), then 3 sessions holding above the filing-day low on volume under 150% of median; buy day 4, hold 20. The quiet-after-filing version of E3.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+  },
+  {
+   "id": "C-FADE1",
+   "family": "Crowd",
+   "name": "Fade the losing tip sources",
+   "explain": "Once a tip source scores under t -2 vs the average stock over the same days, its next buys become AVOID for 20 sessions. Built from the tip-source scoring (queue item 1). Avoiding a -7% tip is the income.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+  },
+  {
+   "id": "B-HAL1",
+   "family": "Halal scarcity",
+   "name": "SPUS / HLAL rebalance dip",
+   "explain": "In the week a halal index fund adds or removes a stock, test the move in the added and removed stocks (quiet, no dilution) vs the same stock on its other days. Needs the fund rebalance dates (official fund documents only).",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+  },
+  {
+   "id": "B-FND1",
+   "family": "Quality and value",
+   "name": "Founder-led, no dilution, cash-rich (coffee can)",
+   "explain": "Founder CEO owns 10%+ (DEF 14A), share count up <5% over 2 years, cash runway 8+ quarters, F-score 8-9; hold 12 months, trim 15% to 10%. Needs proxy-statement parsing (SEC official APIs); heavy build.",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+  },
+  {
+   "id": "A-VIX1",
+   "family": "Regime",
+   "name": "VIX expected move as a risk gauge",
+   "explain": "Each Friday the VIX implies a 1-week S&P range. The S&P closed inside it 82% of 1,918 weeks; the 10 biggest misses were all drops. Test as a GATE (no new buys / tighter stops when the VIX range widens fast), not as a buy signal.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
+  },
+  {
+   "id": "A-CP1",
+   "family": "Chart patterns",
+   "name": "Cup-and-handle and double-bottom (objective daily-bar versions)",
+   "explain": "The two chart patterns with a measurable definition: cup = 30-60 session rounded base within 35% of the high, handle = a 5-15 session pullback under 12%, buy the breakout; double bottom = two lows within 3% at 20+ sessions apart, buy the close above the middle high. Hold 20. Low expectation: Darvas, tight bases and all SMC/volume-profile versions failed.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates."
   }
  ]
 }
