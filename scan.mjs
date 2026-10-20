@@ -770,6 +770,7 @@ const MENU = [
   ['health', 'health', 'Is every part of the system running?'],
   ['strategies', 'strategies', 'The strategy library: what was tested, what failed, what is waiting'],
   ['league', 'league', 'Agent league: three research agents competing, scored on results only'],
+  ['progress', 'progress', 'Proof of work: what was tested, rejected, built and scored lately'],
   ['ladder', 'ladder', 'Your size level: how much per trade now, and what it takes to grow it'],
   ['dips', 'dips', 'Fallen stocks now under their own fair value (watch list, tested every Sunday)'],
   ['research', 'research', 'Every idea tested, result, and what is waiting'],
@@ -2340,6 +2341,20 @@ async function tgCommands(sig) {
       else { const o = OS.real.find(z => !z.closed && z.sym === sym && z.strike === strike && z.exp === exp); if (!o) out.push('OPTIONS TRIAL: no open ' + sym + ' ' + exp + ' ' + strike + ' call recorded.');
         else { o.closed = true; o.out = ny(Date.now()).d; o.got = px; o.pnl = +((px - o.paid) * 100 - 10).toFixed(2); fs.writeFileSync('data/options-shadow.json', JSON.stringify(OS)); const all = OS.real.filter(z => z.closed), tot = all.reduce((a, z) => a + z.pnl, 0);
           out.push('OPTIONS TRIAL: closed ' + sym + ' ' + strike + ' call: ' + (o.pnl >= 0 ? '+' : '') + o.pnl.toFixed(0) + ' USD after fees. Trial record: ' + all.length + ' trade' + (all.length === 1 ? '' : 's') + ', ' + all.filter(z => z.pnl > 0).length + ' won, ' + (tot >= 0 ? '+' : '') + tot.toFixed(0) + ' USD in total. Kept separate from your stock record.'); } }
+    } else if (/^(progress|is it learning|learning|what did you learn|improve(ment)?s?)\s*\??\s*$/i.test(text)) {   // PROOF OF WORK: what the system tested, rejected, built and scored lately
+      const LB = readJson0('data/strategy-library.json'), L = LB && LB.strategies || [], d7 = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10), d30 = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
+      const tested = (since) => L.filter(e => e.tested && e.tested >= since), t7 = tested(d7), t30 = tested(d30), cnt = (a) => { const o = {}; for (const e of a) { const k = /passed|in use/.test(e.status) ? 'passed' : /rejected|FAILED/.test(e.status) ? 'rejected' : /not proven/.test(e.status) ? 'not proven' : 'other'; o[k] = (o[k] || 0) + 1; } return o; };
+      const AL = readJson0('data/autolab.json') || {}, LG = readJson0('data/agent-league.json') || {}, IR = readJson0('data/ignition-results.json') || {}, r8 = IR.record && IR.record['IG8/close'], OS = readJson0('data/options-shadow.json') || {}, TS = readJson0('data/tip-score.json') || {};
+      const closest = L.filter(e => e.result && typeof e.result.t === 'number' && !/rejected|FAILED/.test(e.status)).sort((a, b) => b.result.t - a.result.t).slice(0, 3);
+      const c7 = cnt(t7), c30 = cnt(t30), queued = L.filter(e => /^queued/.test(e.status)).length;
+      out.push(['PROGRESS (proof of work, updated ' + (LB && LB.updated || '') + ')', '',
+        'Last 7 days: ' + t7.length + ' strategies tested (' + (c7.passed || 0) + ' passed, ' + (c7['not proven'] || 0) + ' not proven, ' + (c7.rejected || 0) + ' rejected). Last 30 days: ' + t30.length + ' tested. Library: ' + L.length + ' strategies, ' + queued + ' queued for the agents.',
+        'Autolab: ' + (Object.keys(AL.tried || {}).length) + ' rules tried in total over ' + (AL.weeks || 0) + ' weeks, ' + (AL.last && AL.last.passed || 0) + ' passed last week.',
+        'Agent league: ' + (LG.rows ? LG.rows.map(r => r.name.replace(/ - /, ': ') + ' ' + r.points + ' pts').join(' | ') : 'no table yet') + '. Picks frozen weekly; first scores about 17 Nov.',
+        'Live paper: early-wave day channel ' + (r8 ? r8.n + ' trades on ' + r8.days + ' days, ' + pcs(r8.avg) + ' a trade' : 'no record') + '. Options lab: ' + ((OS.open || []).length) + ' paper calls open, ' + ((OS.done || []).length) + ' finished' + (OS.cc ? ', covered calls ' + (OS.cc.open || []).length + ' open' : '') + '.',
+        'Tip sources: ' + ((TS.fade || []).length ? 'FADE flags on ' + [...new Set((TS.fade || []).map(f => f.src))].join(', ') : 'none flagged yet') + '.',
+        closest.length ? 'Closest to passing: ' + closest.map(e => e.id + ' ' + e.name + ' (t ' + e.result.t + ')').join(' | ') : '',
+        '', 'What changed for you: every HOLD shows two sell prices; LONGER HOLDS buys; options tickets; the size ladder (send  ladder ). Full notes: the project docs "Agent A/B/C research" and "Changes and decisions".'].filter(x => x !== '' || true).join('\n'));
     } else if (/^(league|agents|agent league)\s*\??\s*$/i.test(text)) { const LG = readJson0('data/agent-league.json'); out.push(LG && LG.text ? LG.text : 'AGENT LEAGUE: no score yet. The referee runs with the Sunday studies.');
     } else if (/^(strateg(y|ies)|library|strategy library|استراتيجيات)\s*\??\s*$/i.test(text)) { const LB = readJson0('data/strategy-library.json'), L = LB && LB.strategies || [], cnt = {};
       for (const e of L) { const k = /^LIVE/.test(e.status) ? 'passed, now on live paper' : /^FAILED/.test(e.status) || /rejected/.test(e.status) ? 'tested and failed' : /^queued/.test(e.status) ? 'waiting to be tested' : /not proven|^tested/.test(e.status) ? 'tested, not proven / in use' : /live paper|^paper|bred/.test(e.status) ? 'running on paper now' : /not for this system/.test(e.status) ? 'not for this system' : 'needs data / other'; cnt[k] = (cnt[k] || 0) + 1; }
