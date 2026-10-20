@@ -955,6 +955,10 @@ const distText = (d) => !d ? '' : 'Winners averaged ' + pcs(d.aw) + ', losers ' 
 function planCands(sig, held0) { const c0 = planCands0(sig, held0), LT = (sig && sig.lottery) || {};
   // LOTTERY AVOID (tested 19 Oct, autolab M15: stocks with a 15%+ one-day jump in the last month lagged the average stock by about 3% over the next month, t -5): never a buy
   for (const x of c0) if (LT[x.sym] >= 0.15) { x.ok = false; x.lottery = LT[x.sym]; x.avoid = 'AVOID: lottery-like (a ' + Math.round(LT[x.sym] * 100) + '% one-day jump in the last month); tested 19 Oct: such stocks lagged the average stock by about 3% over the next month (t -5)'; }
+  // TIPSTER FADE (Agent C, 20 Oct, C-FADE1): a tip source whose tips lag the average stock with t <= -2 on 10+ tips over 5+ days is FADE; its
+  // recent buy tips become AVOID for 20 sessions after each tip (data/tip-score.json, re-scored every study run).
+  { const TS = readJson0('data/tip-score.json'), FD = {}; for (const f of (TS && TS.fade) || []) if (f && f.sym && !FD[f.sym]) FD[f.sym] = f.src;
+    for (const x of c0) if (FD[x.sym] && x.ok) { x.ok = false; x.fade = FD[x.sym]; x.avoid = 'AVOID: tipped by ' + FD[x.sym] + ', a source whose tips lagged the average stock (tested: FADE); avoid for 20 sessions after the tip'; } }
   return c0; }
 function planCands0(sig, held0) {
   const c = [], HM = HALALM(), held = new Proxy(held0 || {}, { get: (o, k) => o[k] || (HM[k] && HM[k].s === 'fail' ? { notHalal: true } : undefined) });   // not halal in ZAD: never offered
@@ -1869,6 +1873,7 @@ async function actionsText(sig, pos, px, title) {
   try { fs.writeFileSync('data/actions-sells.json', JSON.stringify({ at: new Date().toISOString(), sells: sells.map(l => ({ sym: l.replace(/^- /, '').split(/[ :]/)[0], why: l.replace(/^- /, '').slice(0, 300) })) })); } catch (e) {}   // read by the pre-market check
   if (h.acts.part.length) out.push('', 'SELL PART', ...h.acts.part.map(l => '- ' + l));
   const buyPart = plan.replace(/\nSELL\n[\s\S]*?(\n\n|$)/, '\n').trim();
+  if (sig) { const fd = planCands(sig, pos).filter(x => x.fade); if (fd.length) out.push('', 'AVOID (tipped by a FADE source whose tips lag the market; 20 sessions after the tip): ' + fd.slice(0, 8).map(x => x.sym + ' (' + x.fade + ')').join(', ') + '.'); }
   if (sig) { const av = planCands(sig, pos).filter(x => x.lottery); if (av.length) out.push('', 'AVOID (lottery-like, tested to lag about 3% a month): ' + av.slice(0, 8).map(x => x.sym + ' +' + Math.round(x.lottery * 100) + '% in one day').join(', ') + '. Do not chase these.'); }
   const FOCUS = (readJson0('data/settings.json') || {}).focus !== false, working = FOCUS ? liveConclusions().some(l => /^- WORKING/.test(l)) : true;
   out.push('', ladder().text);
