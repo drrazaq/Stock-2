@@ -20,16 +20,6 @@
    "qty": 3,
    "since": "2026-10-13"
   },
-  "ROIV": {
-   "kind": "quick",
-   "q": "low",
-   "maxHold": 5,
-   "stop": 30.6934,
-   "kindName": "quick trade",
-   "entry": 33.314737,
-   "qty": 38,
-   "since": "2026-10-14"
-  },
   "CRWD": {
    "kind": "quick",
    "q": "low",
@@ -49,17 +39,20 @@
    "since": "2026-10-16"
   }
  },
- "pendingBuy": {},
- "pendingExit": {
-  "ROIV": {
-   "id": "3dc19775-cdf7-4a53-8dd6-383df08afadd",
-   "entry": 33.314737,
-   "qty": 38,
-   "kind": "quick",
-   "why": "rule exit (5 day average)",
-   "since": "2026-10-14"
+ "pendingBuy": {
+  "EFXT": {
+   "id": "53acea56-4448-4b45-be58-a7dcd575edca",
+   "d": "2026-10-20",
+   "plan": {
+    "kind": "quick",
+    "q": "low",
+    "maxHold": 10,
+    "stop": 21.5427,
+    "kindName": "quick trade"
+   }
   }
  },
+ "pendingExit": {},
  "closed": [
   {
    "sym": "ALNT",
@@ -71,6 +64,17 @@
    "why": "time limit",
    "in": "2026-10-13",
    "out": "2026-10-19"
+  },
+  {
+   "sym": "ROIV",
+   "kind": "quick",
+   "entry": 33.314737,
+   "exit": 34.73,
+   "pct": 0.04248,
+   "net": 0.03774,
+   "why": "rule exit (5 day average)",
+   "in": "2026-10-14",
+   "out": "2026-10-20"
   }
  ],
  "start": {
@@ -78,7 +82,7 @@
   "equity": 100000
  },
  "equity": {
-  "d": "2026-10-19",
-  "equity": 99672.03
+  "d": "2026-10-20",
+  "equity": 99778.27
  }
 }
