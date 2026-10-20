@@ -770,6 +770,7 @@ const MENU = [
   ['health', 'health', 'Is every part of the system running?'],
   ['strategies', 'strategies', 'The strategy library: what was tested, what failed, what is waiting'],
   ['league', 'league', 'Agent league: three research agents competing, scored on results only'],
+  ['ladder', 'ladder', 'Your size level: how much per trade now, and what it takes to grow it'],
   ['dips', 'dips', 'Fallen stocks now under their own fair value (watch list, tested every Sunday)'],
   ['research', 'research', 'Every idea tested, result, and what is waiting'],
   ['review', 'review', 'Hold-or-sell study of every stock you own'],
@@ -892,7 +893,7 @@ function goalsText() {
     lines.push('', 'TIMELINE PLAN: ' + money(size) + ' USD a buy' + (ub && ub.set ? ' (your setting)' : avgAmt ? ' (average amount the system recommends today)' : '') + ' x ' + tpm + ' trades a month' + (pv.tradesPerMonth ? ' (your setting)' : buys30 >= 5 ? ' (your last 30 days)' : ' (assumed)') + ' x ' + pcs(net) + ' a trade after fees, from ' + src + '.',
       'That is about ' + money(at(size)) + ' USD a trade and ' + money(month(size)) + ' USD a month.');
     for (const g of left) lines.push('  ' + goalName(g) + ': ' + fmtT((g - prog) / month(size)) + ' at ' + money(size) + ' a buy; ' + fmtT((g - prog) / month(size * 2)) + ' at ' + money(size * 2) + '; ' + fmtT((g - prog) / month(size * 5)) + ' at ' + money(size * 5));
-    lines.push('Bigger buys reach goals faster but lose faster too: raise your buy size only after 20+ real sales with a positive record. Change the plan:  size 1000  |  trades 15'); } }
+    lines.push('Bigger buys reach goals faster but lose faster too: your size grows by the ladder (send  ladder ): 2,500 USD a trade after 30+ sales on 10+ days with a positive record. Change the plan:  size 1000  |  trades 15'); } }
   lines.push('The goals never raise your size or risk. To add a sale I could not price in dollars:  pnl -2000 TTD');
   return lines.join('\n');
 }
@@ -1069,6 +1070,26 @@ function sizeFor(x, mk) {
 // "Take half, let the rest run": used only when the Sunday exit test (hunting lab, years of data) found it better in both halves.
 const HALF_RUN = () => { const h = readJson0('data/hunting-lab.json'); return Boolean(h && h.exitTest && /TAKE HALF/.test(h.exitTest.verdict || '')); };
 const t1Text = (sym, P) => P.tmode === 'all' ? 'TARGET (' + money(P.t1) + ') reached: SELL ALL now (the tested plan for this stock sells everything at the target), then send  sold ' + sym + ' PRICE' : (P.tmode === 'half' || HALF_RUN()) && !P.trail ? 'TARGET 1 (' + money(P.t1) + ') reached: SELL HALF now, then send  sold half ' + sym + ' PRICE . I move the stop on the rest to your buy price ' + money(P.entry) + ' and trail it, so the rest can run.' : 'TAKE PROFIT. Target 1 (' + money(P.t1) + ') reached: sell, or sell half and move the stop to ' + money(P.entry) + '.';
+// SIZE LADDER (user plan 20 Oct 2026: 1,000 USD a trade now, then 2,500, then 5,000, then more). The most one buy may get is set by
+// YOUR REAL RECORD (data/my-trades.jsonl, every sale you reported), with fixed gates written in advance (never tuned on the record):
+//   level 1  1,000 USD  : the start.
+//   level 2  2,500 USD  : 30+ sales on 10+ different days, total after costs positive, wins pay 1.2x+ the losses (profit factor).
+//   level 3  5,000 USD  : 80+ sales over 3+ calendar months, total positive, profit factor 1.3+, 2 of the last 3 months positive.
+//   level 4 10,000 USD  : 200+ sales over 6+ months, total positive, profit factor 1.3+, 4 of the last 6 months positive.
+// STEP DOWN at once (one level) when your last 20 sales lost money in total after costs. Results are per 1,000 USD traded
+// (percent per trade minus 0.8% costs), so a bigger size never makes an old record look better. The other caps still apply:
+// 20% of your budget for one stock, and a hit stop costs at most 1.5% of your budget.
+const LADDER = [1000, 2500, 5000, 10000];
+let LADDER_C; function ladder() { if (LADDER_C) return LADDER_C;
+  const rows = []; try { for (const l of fs.readFileSync('data/my-trades.jsonl', 'utf8').split('\n')) { if (!l.trim()) continue; try { const x = JSON.parse(l); if (typeof x.pct === 'number' && isFinite(x.pct) && x.out) rows.push({ d: String(x.out).slice(0, 10), r: x.pct - 0.008 }); } catch (e) {} } } catch (e) {}
+  rows.sort((a, b) => a.d < b.d ? -1 : 1);
+  const n = rows.length, days = new Set(rows.map(z => z.d)).size, tot = rows.reduce((a, z) => a + z.r, 0), gain = rows.filter(z => z.r > 0).reduce((a, z) => a + z.r, 0), loss = -rows.filter(z => z.r < 0).reduce((a, z) => a + z.r, 0), pf = loss > 0 ? gain / loss : (gain > 0 ? 99 : 0);
+  const byM = {}; for (const z of rows) byM[z.d.slice(0, 7)] = (byM[z.d.slice(0, 7)] || 0) + z.r; const ms = Object.keys(byM).sort(), lastPos = (k) => ms.slice(-k).filter(m => byM[m] > 0).length;
+  let lv = 0; if (n >= 30 && days >= 10 && tot > 0 && pf >= 1.2) lv = 1; if (lv === 1 && n >= 80 && ms.length >= 3 && pf >= 1.3 && lastPos(3) >= 2) lv = 2; if (lv === 2 && n >= 200 && ms.length >= 6 && pf >= 1.3 && lastPos(6) >= 4) lv = 3;
+  const last20 = rows.slice(-20).reduce((a, z) => a + z.r, 0), down = n >= 20 && last20 < 0 && lv > 0; if (down) lv--;
+  const need = lv === 0 ? '30+ sales on 10+ days (now ' + n + ' on ' + days + '), total positive, profit factor 1.2+ (now ' + pf.toFixed(2) + ')' : lv === 1 ? '80+ sales over 3+ months (now ' + n + ', ' + ms.length + ' months), profit factor 1.3+, 2 of the last 3 months positive' : lv === 2 ? '200+ sales over 6+ months, profit factor 1.3+, 4 of the last 6 months positive' : 'top level';
+  return (LADDER_C = { level: lv + 1, max: LADDER[lv], next: LADDER[lv + 1] || null, need, n, days, tot, pf, down,
+    text: 'SIZE LEVEL ' + (lv + 1) + ': up to ' + LADDER[lv].toLocaleString('en-US') + ' USD a trade' + (down ? ' (stepped down: your last 20 sales lost money)' : '') + '. Your record: ' + n + ' sales on ' + days + ' days, ' + (tot >= 0 ? '+' : '') + (tot * 100).toFixed(1) + '% in total per 1,000 USD traded after costs.' + (LADDER[lv + 1] ? ' Next: ' + LADDER[lv + 1].toLocaleString('en-US') + ' USD a trade after ' + need + '.' : '') }); }
 // HOW MUCH TO PUT IN EACH BUY: one of 1,000 / 1,500 / 2,000 / 3,000 / 5,000 USD, from the strength of the evidence.
 // Never under 1,000 (the 6 USD fees eat a smaller buy). Your budget (send  budget 5000 ) caps the total open at once.
 function amountFor(x, mk, top) {
@@ -1082,6 +1103,7 @@ function amountFor(x, mk, top) {
   }
   if (weak && usd > 1000) { usd = usd >= 3000 ? usd / 2 : 1000; why += '; weak market: smaller'; }
   if (x.earnDays !== null && x.earnDays !== undefined && x.earnDays <= (x.days || 5) * 1.5 && usd > 1000) { usd = 1000; why += '; earnings inside the hold: minimum'; }
+  { const L = ladder(); if (usd > L.max) { usd = L.max; why += '; size level ' + L.level + ' (your real record sets the most per trade)'; } }
   { const b = budgetOnce(); if (b && usd > Math.max(1000, Math.floor(b * 0.2 / 500) * 500)) { usd = Math.max(1000, Math.floor(b * 0.2 / 500) * 500); why += '; capped at 20% of your budget for one stock'; } }
   // RISK PER TRADE: a hit stop should cost at most 1.5% of your budget (so 5 losses in a row cost about 7%). 1,000 USD stays the
   // minimum (your choice); when even 1,000 USD risks more than that, the card says so.
@@ -1840,6 +1862,7 @@ async function actionsText(sig, pos, px, title) {
   const buyPart = plan.replace(/\nSELL\n[\s\S]*?(\n\n|$)/, '\n').trim();
   if (sig) { const av = planCands(sig, pos).filter(x => x.lottery); if (av.length) out.push('', 'AVOID (lottery-like, tested to lag about 3% a month): ' + av.slice(0, 8).map(x => x.sym + ' +' + Math.round(x.lottery * 100) + '% in one day').join(', ') + '. Do not chase these.'); }
   const FOCUS = (readJson0('data/settings.json') || {}).focus !== false, working = FOCUS ? liveConclusions().some(l => /^- WORKING/.test(l)) : true;
+  out.push('', ladder().text);
   if (FOCUS && !working) out.push('', 'REALITY CHECK: no buy engine has proven itself live yet. What IS tested and in use: the 35% disaster stop (no stop for the strongest stocks), trimming any stock over 15% of your money back to 10%, selling a stretched stock and buying it back 10% lower, and never buying a stock that jumped 15%+ in one day in the last month.', 'BEST USE OF YOUR NEXT 1,000 USD: 1) hold cash, or 2) add to your halal index fund (check ZAD): it beat every stock method tested. 3) An EARLY WAVE alert only as a small test (1,000 USD, stop at once, expected result about zero until it proves itself).');
   if (FOCUS && !working) out.push('', 'FOCUS MODE (4-week plan from 18 Oct): no new trading buys until an engine shows a positive live record.', 'What to do instead: 1) long-term money in a halal index fund (check ZAD); 2) your long-term source\u2019s tips, each with a 35% stop; 3) EARLY WAVE alerts during the session, 1,000 USD each, stop at once.', 'Engine buys still logged on paper. To see them anyway: send  focus off');
   else out.push('', buyPart.replace(/^\n+/, ''));
@@ -2252,6 +2275,7 @@ async function tgCommands(sig) {
     } else if ((k = text.match(/^quiet\s+(on|off)\s*$/i))) { const st = readJson('data/settings.json', {}); st.quiet = k[1].toLowerCase() === 'on'; fs.writeFileSync('data/settings.json', JSON.stringify(st)); out.push(st.quiet ? 'QUIET ON: you get ONE action message each night and morning, plus BUY NOW, stop and target alerts. Research messages are kept in the system and summed up there. Send  quiet off  to get everything again.' : 'QUIET OFF: you get every message again (plan, your stocks, radar paper alerts, movers, smart money, deals, Sunday studies).');
     } else if (/^(themes?|sectors? flow|industr(y|ies)|where is the money)\s*\??\s*$/i.test(text)) { out.push(themesText());
     } else if (/^(skips?|my skips|skipped)\s*\??\s*$/i.test(text)) { out.push(await skipsText());
+    } else if (/^(ladder|size level|level)\s*\??\s*$/i.test(text)) { out.push(ladder().text + '\n\nThe ladder: 1,000 USD a trade, then 2,500 (30+ sales on 10+ days, positive, profit factor 1.2+), then 5,000 (80+ sales over 3+ months, profit factor 1.3+), then 10,000 (200+ sales over 6+ months). It steps down one level at once if your last 20 sales lost money. Report every sale ( sold SYM PRICE ) so the ladder can see it.');
     } else if (/^(league|agents|agent league)\s*\??\s*$/i.test(text)) { const LG = readJson0('data/agent-league.json'); out.push(LG && LG.text ? LG.text : 'AGENT LEAGUE: no score yet. The referee runs with the Sunday studies.');
     } else if (/^(strateg(y|ies)|library|strategy library|استراتيجيات)\s*\??\s*$/i.test(text)) { const LB = readJson0('data/strategy-library.json'), L = LB && LB.strategies || [], cnt = {};
       for (const e of L) { const k = /^LIVE/.test(e.status) ? 'passed, now on live paper' : /^FAILED/.test(e.status) || /rejected/.test(e.status) ? 'tested and failed' : /^queued/.test(e.status) ? 'waiting to be tested' : /not proven|^tested/.test(e.status) ? 'tested, not proven / in use' : /live paper|^paper|bred/.test(e.status) ? 'running on paper now' : /not for this system/.test(e.status) ? 'not for this system' : 'needs data / other'; cnt[k] = (cnt[k] || 0) + 1; }
