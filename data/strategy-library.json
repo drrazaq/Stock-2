@@ -886,8 +886,9 @@
    "family": "Company events",
    "name": "Earnings gap and hold 3 days",
    "explain": "Gaps up on earnings and holds the gap.",
-   "status": "queued (weekly researcher)",
-   "note": "Earnings dates are cached."
+   "status": "covered by E16",
+   "note": "Same idea as E16; tested once there (e16-absorption.mjs), not twice. Agent A, 20 Oct.",
+   "agent": "A"
   },
   {
    "id": "E14",
@@ -1610,8 +1611,9 @@
    "family": "Company events",
    "name": "Post-earnings absorption",
    "explain": "Earnings gap up 5%+, then 3 very quiet days holding above the gap midpoint; buy day 4.",
-   "status": "queued (weekly researcher)",
-   "note": "Added 19 Oct from outside reviews."
+   "status": "queued (Agent A): study built 20 Oct, first result at the next study run",
+   "note": "Added 19 Oct from outside reviews.",
+   "agent": "A"
   },
   {
    "id": "E17",
@@ -1635,7 +1637,8 @@
    "name": "Signal decay clock",
    "explain": "For every alert, the return if entered 1, 5, 15, 30, 60 minutes later and next open: how fast the edge disappears.",
    "status": "queued (weekly researcher)",
-   "note": "Added 19 Oct from outside reviews."
+   "note": "Added 19 Oct from outside reviews. Agent A 20 Oct: postponed. The intraday early-wave rules have no edge even at the alert minute (ignition lab 0 of 48 versions pass; live IG5 -7.7% a trade on 2 days), so there is nothing yet to time. Build it when an early-wave rule passes.",
+   "agent": "A"
   },
   {
    "id": "X8",
@@ -1651,7 +1654,7 @@
    "name": "Customer momentum (Cohen & Frazzini 2008)",
    "explain": "Buy suppliers whose customers rose most last month: customer news reaches supplier prices with a delay.",
    "status": "tested: not proven",
-   "note": "Uses value-chain layers as the customer map (today’s knowledge). A real 10-K customer map is queued for the researcher.",
+   "note": "Uses value-chain layers as the customer map (today\u2019s knowledge). A real 10-K customer map is queued for the researcher.",
    "tested": "2026-10-16"
   },
   {
@@ -1695,7 +1698,7 @@
    "family": "Regime",
    "name": "Regime gate: S&P 500 below its 200-day",
    "explain": "Do the system buy rules lose when the S&P 500 is under its 200-day average? If yes, no new buys in that state.",
-   "status": "queued (Agent A)",
+   "status": "queued (Agent A): study built 20 Oct, first result at the next study run",
    "agent": "A",
    "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
   },

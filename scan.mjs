@@ -2721,6 +2721,8 @@ async function daily() {
       checked++;
       if (BIOBLOCK.has(r.sym)) { leadSkip.push(r.sym + (BIOBLOCK.get(r.sym).startsWith('dilution') ? ' (heavy share dilution)' : ' (trial risk)')); continue; }
       if (myHalal(r.sym) === 'fail') { leadSkip.push(r.sym + ' (you marked it NOT halal in ZAD)'); continue; }
+      { const cs = (LC.S[r.sym] && LC.S[r.sym].c) || []; let mx = 0; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > mx) mx = b / a - 1; }   // Agent A, 20 Oct: lottery-like stocks lagged the average stock ~3% a month (M15, t -5.1); their 3-ATR stop is also far too wide
+        if (mx >= 0.15) { leadSkip.push(r.sym + ' (lottery-like: +' + Math.round(mx * 100) + '% in one day in the last month)'); continue; } }
       const e = await earnings(r.sym); if (e.known && e.date && e.days <= 7) { leadSkip.push(r.sym + ' (earnings ' + e.date + ')'); continue; }
       const nr = await newsRisk(r.sym); if (nr.hard) { leadSkip.push(r.sym + ' (' + nr.hard.tag.toLowerCase() + ')'); continue; }
       const row = { sym: r.sym, last: r.px, buyLo: +r.px.toFixed(2), buyHi: +(r.px + 0.5 * r.a).toFixed(2), stop: +(r.px - LEADCFG.ATR * r.a).toFixed(2), e50: +r.e50.toFixed(2), mom: r.mom, earn: earnText(e) + (nr.soft ? '. WARNING, ' + nr.soft.tag.toLowerCase() : ''), earnDays: e.known && e.date ? e.days : null };
