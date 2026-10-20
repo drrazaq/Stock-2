@@ -1748,6 +1748,10 @@ async function sellReply(sym, sig, pos) {
     else lines.push('Your own pick: no tested exit. I check it every night with the hold-or-sell study (send  review ' + sym + ') and the stop protects it.');
     lines.push('STOP: ' + (P.stop ? money(P.stop) + ' (sell at once if it trades there; keep it at your broker)' : 'none set. Send: stop ' + sym + ' PRICE'));
     lines.push('TARGET: ' + (P.t1 ? money(P.t1) + (P.ownT ? ' (yours)' : P.tmode ? ' (tested: sell ' + (P.tmode === 'half' ? 'half' : 'all') + ' there)' : '') : P.kind === 'manual' ? 'none (optional: target ' + sym + ' PRICE)' : 'none on purpose: the target study found no fixed price that beat the tested exit above. The exit catches the bounce for you.'));
+    // ONE PLAIN LINE (user, 20 Oct): the single price that decides, so the message never needs decoding. For a trend/leader trade the
+    // 50-day line is the working sell line when the formula stop sits far below it (lottery-like stocks make a 3-ATR stop meaningless).
+    { const a50 = avgN(50), far = P.stop && p && P.stop < p * 0.75, line = P.kind === 'leader' || far ? (a50 && (!P.stop || a50 > P.stop) ? a50 : P.stop) : (P.kind === 'quick' ? null : P.stop);
+      if (line) lines.push('IN ONE LINE: hold while it closes above ' + money(line) + '. If it CLOSES under ' + money(line) + ', sell at the next open.' + (far ? ' Move your broker stop from ' + money(P.stop) + ' up to ' + money(line) + ': the old stop is far too wide for this stock.' : ' Keep that stop at your broker.') + ' No target: wait for my SELL message when it is stretched.'); }
     return lines.join('\n'); }
   const d = await loadDaily(sym); if (!d || d.candles.length < 60) return sym + ': I could not load prices for it. Check the ticker.';
   const c = d.candles, i = c.length - 1, ind = L.indicators(c, null), a = ind.atr[i], e50 = ind.e[50][i];
