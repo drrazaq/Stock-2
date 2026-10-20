@@ -1,6 +1,6 @@
 {
- "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
- "updated": "2026-10-19",
+ "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources.",
+ "updated": "2026-10-20",
  "strategies": [
   {
    "id": "T1",
@@ -2371,6 +2371,42 @@
     "bar": 3.92,
     "why": "F3_10 REJECTED: not better than an average stock in the older half (-0.4%)"
    }
+  },
+  {
+   "id": "A-TRIM1",
+   "family": "Exits and risk",
+   "name": "Trim band by market calm",
+   "explain": "Trim 18% to 12% when the VIX is over 20 or the stock is in its top 20% of 30-day swing; 12% to 8% when the VIX is under 15; else 15% to 10%. One pre-registered version vs the fixed 15/10 band (rebalance.mjs).",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them."
+  },
+  {
+   "id": "A-TRIM2",
+   "family": "Exits and risk",
+   "name": "Trim into strength only",
+   "explain": "Trim only on a day with volume over 150% of median and a close in the top half of the range; otherwise wait. One version vs trimming at once.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them."
+  },
+  {
+   "id": "C-S8",
+   "family": "Share supply",
+   "name": "S-8 share creep (avoid)",
+   "explain": "An S-8 filing in the last 30 days and the share count up over 2% in 30 days: avoid 20 sessions. Employee-share dilution the 424B5 check misses.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them."
+  },
+  {
+   "id": "C-LOCK",
+   "family": "Share supply",
+   "name": "Lock-up expiry (avoid)",
+   "explain": "IPO or secondary lock-up expiry (S-1 / 424B4 date + 90 or 180 days): avoid 10 sessions after. SEC official data only.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them."
   }
  ]
 }
