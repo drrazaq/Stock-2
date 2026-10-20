@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
- "updated": "2026-10-19",
+ "updated": "2026-10-20",
  "strategies": [
   {
    "id": "T1",
@@ -1672,8 +1672,42 @@
    "name": "F-score in an uptrend",
    "explain": "F-score 8-9, only stocks above their own 200-day average.",
    "status": "tested: not proven",
-   "note": "Closest so far: beat the average stock in both halves (6 months t 5.5 / 2.6) and beat the S&P 500 in 2024-26 (+9.7% vs +7.6%), but not in 2021-23 (+5.8% vs +9.1%).",
-   "tested": "2026-10-16"
+   "note": "Closest buy rule, still NOT PROVEN (20 Oct, Agent B): beat the average stock in both halves (6 months t 5.5 / 2.6; 12 months t 4.6 / 2.0) and beat the S&P 500 in 2024-26 (+9.7% vs +7.6%; 12 months +18.3% vs +15.1%), not in 2021-23 (+5.8% vs +9.1%; 12 months +17.4% vs +21.8%). Newer-half t is under the league luck bar (3.9). Deep check added to quality.mjs (v15: month-by-month record, 2021-23 shortfall by sector group and size, same-stock-other-days yardstick); its numbers land in data/quality.json at the next study run. League champion of Agent B (forward picks frozen weekly).",
+   "tested": "2026-10-16",
+   "agent": "B",
+   "study": "quality.mjs -> data/quality.json results[\"F-SCORE UPTREND_126/252\"] + v15 (deep check, 20 Oct)",
+   "result": {
+    "t": 2.6,
+    "tOlder": 5.5,
+    "t12m": 2,
+    "t12mOlder": 4.6,
+    "avg6m": [
+     0.058,
+     0.097
+    ],
+    "spy6m": [
+     0.091,
+     0.076
+    ],
+    "avg12m": [
+     0.174,
+     0.183
+    ],
+    "spy12m": [
+     0.218,
+     0.151
+    ],
+    "n": [
+     410,
+     788
+    ],
+    "months": [
+     17,
+     27
+    ],
+    "leagueBar": 3.9,
+    "why": "6 months: did not beat the S&P 500 in the older half (+5.8% vs +9.1%). 12 months: did not beat the S&P 500 in the older half (+17.4% vs +21.8%); newer-half t 2.0 could be luck. Under the league bar (3.9) in the newer half at both holds."
+   }
   },
   {
    "id": "V16",
@@ -1749,7 +1783,7 @@
    "explain": "Cash covers 8+ quarters of cash burn and no ATM / 424B5 in 90 days; hold 60 days. Also as AVOID: under 4 quarters of runway.",
    "status": "queued (Agent B)",
    "agent": "B",
-   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+   "note": "From the outside review of 20 Oct. Not built on 20 Oct: needs QUARTERLY operating cash flow (SEC frames CYyyyyQn, not in the yearly fund cache) plus the offering-events cache (424B5 / ATM) joined by month; about 40 extra SEC frame calls a run. B-FS2 was run first because its inputs were already in the cache. Next for Agent B."
   },
   {
    "id": "B-FS2",
@@ -2110,6 +2144,15 @@
     "why": "not better than an average stock in the older half (-0.71%); could be luck in the older half (t -9.62, 3.88 needed); lost money after costs in the older half; did not beat the S&P 500 in the older half (-0.80%); not clearly better than the same stock on its other days in the older half (+0.10%, t 0.84); loses without its 2 best trades in the older half; not better than an average stock in the newer half (-1.02%); could be luck in the newer half (t -9.6, 3.88 needed); lost money after costs in the newer half; did not beat the S&P 500 in the newer half (-0.80%); not clearly better than the same stock on its other days in the newer half (-0.07%, t -0.51); loses without its 2 best trades in the newer half; loses at 1.2% costs",
     "lowCost": "not positive even at 0.25% costs"
    }
+  },
+  {
+   "id": "V17",
+   "family": "Quality and value",
+   "name": "Net payout yield (dividends + buybacks - issuance)",
+   "explain": "Boudoukh, Michaely, Richardson and Roberts (2007, Journal of Finance): total payout yield predicts returns better than the dividend yield alone. Testable from SEC frames: PaymentsOfDividends + PaymentsForRepurchaseOfCommonStock - ProceedsFromIssuanceOfCommonStock, over market value; top 10% of liquid stocks, held 6 and 12 months; financials left out.",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "Added 20 Oct by Agent B from outside research (https://www.nber.org/papers/w10651). Needs 3 more yearly frame tags (about 27 SEC calls). Differs from V11 shareholder yield (which used share-count change only and was rejected): it uses the cash paid out."
   }
  ]
 }
