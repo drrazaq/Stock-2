@@ -243,6 +243,7 @@ jobs:
           node regime-gate.mjs 2>&1 | tee -a run.log
           node pattern-lab.mjs 2>&1 | tee -a run.log
           node swing-lab.mjs 2>&1 | tee -a run.log
+          node fulfilling.mjs 2>&1 | tee -a run.log
         env:
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
       # AGENT LEAGUE referee: freezes each research agent's champion picks weekly and scores old batches vs the S&P 500 (same prices).
@@ -265,7 +266,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           git add data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json
-          for f in data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/strategy-library.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json; do [ -f "$f" ] && git add "$f"; done; true
+          for f in data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/strategy-library.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
