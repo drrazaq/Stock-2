@@ -1822,6 +1822,33 @@
    "status": "queued (Agent A)",
    "agent": "A",
    "note": "Asked by the user 20 Oct. Pre-register the exact rule in the study header and run once. Same gates as everything else."
+  },
+  {
+   "id": "A-SMC1",
+   "family": "Smart money concepts (SMC)",
+   "name": "SMC: fair value gap fill",
+   "explain": "A 3-day bullish imbalance (day 3 low above day 1 high) in an uptrend; buy when price first returns into the gap, hold 10 sessions.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates."
+  },
+  {
+   "id": "A-SMC2",
+   "family": "Smart money concepts (SMC)",
+   "name": "SMC: order block retest after break of structure",
+   "explain": "Stock closes above its last swing high (break of structure); buy when it first returns to the last down day before that move (the order block), hold 10 sessions.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates."
+  },
+  {
+   "id": "A-SMC3",
+   "family": "Smart money concepts (SMC)",
+   "name": "SMC: liquidity sweep of equal lows",
+   "explain": "Two or more swing lows within 1% (resting stops), price trades under them and closes back above the same day; buy next open, hold 5 sessions. (Close cousin of the failed bear trap M4/M5, so tested once only.)",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "Asked by the user 20 Oct. Daily-bar version; pre-register the exact rule and run once. Same gates."
   }
  ]
 }
