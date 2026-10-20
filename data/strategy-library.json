@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically.",
- "updated": "2026-10-19",
+ "updated": "2026-10-20",
  "strategies": [
   {
    "id": "T1",
@@ -1672,7 +1672,7 @@
    "name": "F-score in an uptrend",
    "explain": "F-score 8-9, only stocks above their own 200-day average.",
    "status": "tested: not proven",
-   "note": "Closest buy rule, still NOT PROVEN (20 Oct, Agent B): beat the average stock in both halves (6 months t 5.5 / 2.6; 12 months t 4.6 / 2.0) and beat the S&P 500 in 2024-26 (+9.7% vs +7.6%; 12 months +18.3% vs +15.1%), not in 2021-23 (+5.8% vs +9.1%; 12 months +17.4% vs +21.8%). Newer-half t is under the league luck bar (3.9). Deep check added to quality.mjs (v15: month-by-month record, 2021-23 shortfall by sector group and size, same-stock-other-days yardstick); its numbers land in data/quality.json at the next study run. League champion of Agent B (forward picks frozen weekly).",
+   "note": "Closest buy rule, still NOT PROVEN (deep check run 20 Oct, Agent B): beat the average stock in both halves (6 months t 5.5 / 2.6; 12 months t 4.6 / 2.0) and beat the S&P 500 in 2024-26 (+9.7% vs +7.6%; 12 months +18.3% vs +15.1%), not in 2021-23 (+5.8% vs +9.1%; 12 months +17.4% vs +21.8%). Month by month it beat the S&P in only 5 of 17 older months and 14 of 27 (6 m) / 10 of 21 (12 m) newer months. The 2021-23 shortfall was almost all ONE sector group: machinery, electronics and instruments (SIC 35/36/38: tech hardware, semis, instruments), 124 of 410 trades, +7.9% vs S&P +21.3% at 12 months, 94% of the shortfall; other manufacturing (+27% vs +24%) and retail (+32% vs +20%) beat the S&P. By size the middle third (33-95M USD a day) beat the S&P (+28% vs +21%), the large and small thirds lost. It does NOT beat the same stocks on their other days in 2024-26 (6 m +9.7% vs +11.1%, 12 m +18.3% vs +28.0%): the newer-half edge is the stocks, not the timing. Under the league bar (3.9) in the newer half. No new version: dropping a sector would be a new pre-registered rule.",
    "tested": "2026-10-16",
    "agent": "B",
    "study": "quality.mjs -> data/quality.json results[\"F-SCORE UPTREND_126/252\"] + v15 (deep check, 20 Oct)",
@@ -1706,7 +1706,58 @@
      27
     ],
     "leagueBar": 3.9,
-    "why": "6 months: did not beat the S&P 500 in the older half (+5.8% vs +9.1%). 12 months: did not beat the S&P 500 in the older half (+17.4% vs +21.8%); newer-half t 2.0 could be luck. Under the league bar (3.9) in the newer half at both holds."
+    "why": "6 months: did not beat the S&P 500 in the older half (+5.8% vs +9.1%). 12 months: did not beat the S&P 500 in the older half (+17.4% vs +21.8%); newer-half t 2.0 could be luck. Under the league bar (3.9) in the newer half at both holds.",
+    "deepCheck": {
+     "monthsBeatSpy6m": [
+      "5/17",
+      "14/27"
+     ],
+     "monthsBeatSpy12m": [
+      "5/17",
+      "10/21"
+     ],
+     "own6m": [
+      0.055,
+      0.111
+     ],
+     "own12m": [
+      0.132,
+      0.28
+     ],
+     "beatsOwnNewer": false,
+     "shortfall2021_23_12m": {
+      "machinery, electronics, instruments (SIC 35/36/38)": {
+       "n": 124,
+       "ret": 0.079,
+       "spy": 0.213,
+       "shareOfShortfall": 0.937
+      },
+      "other manufacturing": {
+       "n": 131,
+       "ret": 0.27,
+       "spy": 0.24
+      },
+      "wholesale and retail": {
+       "n": 55,
+       "ret": 0.325,
+       "spy": 0.196
+      },
+      "bySize": {
+       "middleThird": {
+        "ret": 0.284,
+        "spy": 0.212
+       },
+       "largeThird": {
+        "ret": 0.124,
+        "spy": 0.225
+       },
+       "smallThird": {
+        "ret": 0.115,
+        "spy": 0.216
+       }
+      }
+     }
+    }
    }
   },
   {
