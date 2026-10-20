@@ -2244,9 +2244,22 @@
    "family": "Forward cash",
    "name": "Government award (SAM.gov / NIH RePORTER / BARDA)",
    "explain": "Award dollar value over 20% of market cap, share count flat, quiet 5 days before; buy next open, hold 20 sessions. Official free APIs only, point-in-time award date. Cash from the government, not a press release.",
-   "status": "queued (Agent C): study built 20 Oct (gov-awards.mjs, pre-registered, run once), first result at the next study run",
+   "status": "tested: needs data",
    "agent": "C",
-   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: built against the official USAspending API (contracts C/D, grants 04/05, 20M+; strict SEC-name match; stop rule: under 30% of 50M+ awards matched = needs data). Caveat: Award Amount is the total to date, so a pass goes to live paper first."
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: built against the official USAspending API (contracts C/D, grants 04/05, 20M+; strict SEC-name match; stop rule: under 30% of 50M+ awards matched = needs data). Caveat: Award Amount is the total to date, so a pass goes to live paper first.",
+   "tested": "2026-10-19",
+   "study": "gov-awards.mjs -> data/gov-awards.json (run once; stopped by its own match-rate rule)",
+   "result": {
+    "awards": 11729,
+    "contracts": 6000,
+    "grants": 6000,
+    "matched": 1435,
+    "big50M": 9087,
+    "big50M_matched": 1427,
+    "matchRateAwards": 0.157,
+    "matchRateNames": 0.023,
+    "why": "only 16% of awards of 50M+ matched a listed ticker by strict recipient name (30% needed): the big recipients are subsidiaries (Raytheon Company, Northrop Grumman Systems, General Dynamics IT/Land/Mission, Electric Boat, Huntington Ingalls Inc, L3Harris Integrated Systems, KBR Services), universities and non-listed firms. No verdict. Next: a parent map from SEC Exhibit 21 (subsidiary lists, official) before any re-run; the pre-registered rule stays as written."
+   }
   },
   {
    "id": "C-PAT1",
@@ -2288,9 +2301,21 @@
    "family": "Crowd",
    "name": "Fade the losing tip sources",
    "explain": "Once a tip source scores under t -2 vs the average stock over the same days, its next buys become AVOID for 20 sessions. Built from the tip-source scoring (queue item 1). Avoiding a -7% tip is the income.",
-   "status": "queued (Agent C): tip-score.mjs built 20 Oct; FADE list written to data/tip-score.json \"fade\" every study run; main session wires it into ACTIONS",
+   "status": "tested: FADE flags live (first run 20 Oct); AVOID list in data/tip-score.json \"fade\", not yet wired into ACTIONS",
    "agent": "C",
-   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: scoring rule pre-registered in tip-score.mjs (5 and 20 sessions, vs the average stock bought the same day and the S&P 500, t by day; FADE at t <= -2 with 10+ tips on 5+ days). No source has a finished 20-session record yet (tips start 5 Oct)."
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: scoring rule pre-registered in tip-score.mjs (5 and 20 sessions, vs the average stock bought the same day and the S&P 500, t by day; FADE at t <= -2 with 10+ tips on 5+ days). No source has a finished 20-session record yet (tips start 5 Oct).",
+   "tested": "2026-10-19",
+   "study": "tip-score.mjs -> data/tip-score.json (weekly, rule fixed in the header)",
+   "result": {
+    "asOf": "2026-10-19",
+    "fade": [
+     "Reddit crowd: 30 tips on 5 days, 5 sessions -5.4% vs avg stock -1.7% (edge -3.6%, t -9.2), vs S&P -4.4% (t -11.0), 30% won",
+     "YouTube: VerifiedInvesting: 19 tips on 5 days, 5 sessions -4.3% vs avg stock -2.1% (edge -2.6%, t -2.1), vs S&P -3.5%, 26% won"
+    ],
+    "tooEarly": "Analysts turning positive (19 tips, 1 day, -15.0% in 5 sessions), ZipTrader (6), the rest under 10 tips; no 20-session window finished yet (tips start 5 Oct)",
+    "caveat": "5 days is the minimum the rule allows and the fortnight was a falling market; the flag is what the pre-registered rule says, re-checked every study run",
+    "avoidNow": "61 stocks from 82 tips of the two FADE sources, each until 20 sessions after its tip"
+   }
   },
   {
    "id": "B-HAL1",
