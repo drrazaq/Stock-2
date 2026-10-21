@@ -2465,10 +2465,79 @@
    "family": "Audit",
    "name": "Missed-runner autopsy (winners vs near-misses)",
    "explain": "For the big runners the system missed (TGL, NIVF, GRML, TCRT, PFAI) and a matched control group that looked the same but did not run: reconstruct what was knowable before the move (filing, contract, news, volume, price), when Stock-2 could first have known, whether the first tradable open was still ahead of the move, and which alert fired or why it missed. Output: a table of miss reasons (coverage / timing / prediction), not a buy signal. DECISION TREE, written before the numbers (from the 21 Oct review): if late data is the biggest cause (40%+ of misses) -> trial a real-time feed for one month and compare live vs delayed on the same alerts; if \"rule did not fire\" is biggest -> no new rule, check whether ORB fires on 10%+ of them; if \"blocked\" is biggest -> keep the blocks and check whether blocked runners faded within 5 days (55%+ fade = blocks right); if 20%+ were caught in time -> score those and size the engine that caught them only if positive after costs. Add the four-way diagnosis (coverage / timing / eligibility / prediction) and a latency-vs-net-return table at 0, 1, 5, 15, 30 minutes.",
-   "status": "queued (Agent A): built 21 Oct, waiting for the first run",
+   "status": "tested: audit done (no buy rule)",
    "agent": "A",
    "note": "From the 20 Oct evening reviews.",
-   "study": "missed-runners.mjs -> data/missed-runners.json (ledger data/ignition-missed-history.jsonl; latency tables on Massive minute bars, budget 300 stock-days a run)"
+   "study": "missed-runners.mjs -> data/missed-runners.json (ledger data/ignition-missed-history.jsonl; latency tables on Massive minute bars, budget 300 stock-days a run)",
+   "tested": "2026-10-20",
+   "result": {
+    "watchedDays": 3,
+    "movers": 757,
+    "alerted": 1,
+    "missReasons": {
+     "UNDER_1_USD": 236,
+     "NOT_VISIBLE_LIVE": 124,
+     "CAUGHT_RULE_NOT_PASSED": 28,
+     "VISIBLE_TOO_LATE": 4,
+     "LOW_VOLUME": 42,
+     "AFTER_11_00": 49,
+     "SEC_CHECK_UNAVAILABLE": 5,
+     "VOLUME_FIGURE_LATE": 243,
+     "CAUGHT_PAPER_GATE_NOT_MET": 15,
+     "ALERTED": 1,
+     "GAPPED_AT_OPEN": 10
+    },
+    "diagnosis": {
+     "eligibility": 298,
+     "coverage": 124,
+     "prediction": 28,
+     "timing": 306,
+     "caught": 1
+    },
+    "groupsOfMisses": {
+     "lateDataFeedFixable": 152,
+     "lateDataAll": 371,
+     "ruleNotFired": 92,
+     "blocked": 283,
+     "moveBeforeOpen": 229,
+     "misses": 756,
+     "movers": 757,
+     "alerted": 1
+    },
+    "decisionBranch": "KEEP_BLOCKS",
+    "why": "blocked is the biggest cause: 283 of 756 (+37.4%); blocked runners that faded within 5 sessions: n/a (daily sample) / +32.4% (ledger, by the close); 55%+ = the blocks are right",
+    "caughtInTime": 0.0453,
+    "orbFiredShare": 0.0347,
+    "catchableWithLivePrices": 0.2755,
+    "latencyIG8": {
+     "0min": 0.0066,
+     "1min": 0.0065,
+     "5min": 0.0096,
+     "15min": 0.0059,
+     "30min": -0.0021
+    },
+    "latencyMoversHindsight": {
+     "0min": -0.0298,
+     "1min": -0.0316,
+     "5min": -0.0356,
+     "15min": -0.0507,
+     "30min": -0.0502
+    },
+    "dailySample": {
+     "runs15pctIn3Sessions": 3382,
+     "controls": 3355,
+     "onWatchedDays": 44
+    },
+    "knowable": {
+     "runnersAnySecFiling10d": 0.1132,
+     "controlsAnySecFiling10d": 0.1338,
+     "runnersSharesUp5pct90d": 0.1794,
+     "controlsSharesUp5pct90d": 0.0877,
+     "runnersVolOver2xDayBefore": 0.1127,
+     "controlsVolOver2xDayBefore": 0.0572
+    },
+    "note": "Only 3 watched days so far; the ledger grows every session. Blocked runners fade check (55%+ within 5 days) cannot be measured yet on the daily sample (needs 5 sessions after the watched days); the by-close proxy says 32%."
+   }
   },
   {
    "id": "A-DEAD1",
@@ -2497,16 +2566,54 @@
    "agent": "A",
    "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence).",
    "study": "orb-study.mjs -> data/orb-study.json (pre-registered, first complete run frozen; incremental minute-bar cache in fm-cache)",
-   "spec": "RESOLVED 21 Oct 2026 from the original paper (SSRN 4729284, PDF read): opening range 9:30-9:35 (5 one-minute bars); direction = sign of the 5-minute candle, doji = no order; entry = stop order at the range high, filled at max(range high, bar open) on the first bar from 9:35 whose high exceeds it, no entry after 15:30; stop = entry minus 10% of the 14-day ATR; NO profit target, NO trailing stop (the paper has none); exit at the close; filters open > 5 USD, 14-day average volume 1M+ shares, ATR14 > 0.50 USD; relative volume = first-5-minute volume / its 14-session average, >= 1 (100%), top 20 by relative volume; paper sizing 1% risk and 4x leverage NOT reproduced (1,000 USD a trade); our costs 0.8% / 1.2% / 0.9% extra slippage; LONG ONLY; universe first the 100 most traded by previous-day dollar volume (minute-bar budget)."
+   "spec": "RESOLVED 21 Oct 2026 from the original paper (SSRN 4729284, PDF read): opening range 9:30-9:35 (5 one-minute bars); direction = sign of the 5-minute candle, doji = no order; entry = stop order at the range high, filled at max(range high, bar open) on the first bar from 9:35 whose high exceeds it, no entry after 15:30; stop = entry minus 10% of the 14-day ATR; NO profit target, NO trailing stop (the paper has none); exit at the close; filters open > 5 USD, 14-day average volume 1M+ shares, ATR14 > 0.50 USD; relative volume = first-5-minute volume / its 14-session average, >= 1 (100%), top 20 by relative volume; paper sizing 1% risk and 4x leverage NOT reproduced (1,000 USD a trade); our costs 0.8% / 1.2% / 0.9% extra slippage; LONG ONLY; universe first the 100 most traded by previous-day dollar volume (minute-bar budget).",
+   "provisional": {
+    "at": "2026-10-21T06:00:57.546Z",
+    "complete": false,
+    "stockDays": "92682 of 112212",
+    "trades": 3992,
+    "days": 499,
+    "stocks": 262,
+    "verdict": "REJECTED",
+    "avgNewer": -0.008,
+    "avgOlder": -0.0087,
+    "edgeNewer": -0.008,
+    "tNewer": -11.5,
+    "tOlder": -10.69,
+    "win": 0.1135,
+    "median": -0.0115,
+    "latency": {
+     "0min": -0.0083,
+     "1min": -0.0074,
+     "5min": -0.0075,
+     "15min": -0.0076,
+     "30min": -0.0083
+    },
+    "why": "the stop at 10% of ATR14 sits 0.2-0.3% under the entry on liquid stocks, so 90% of trades are stopped within minutes for a tiny gross loss; at our 0.8% round-trip cost (the paper assumes 0.0035 USD a share and no slippage) the rule cannot pay by construction. Frozen verdict after the cache completes next Sunday."
+   }
   },
   {
    "id": "A-RT1",
    "family": "Data",
    "name": "Real-time price feed decision",
    "explain": "Last night: 757 stocks ran 15%+, 0 caught in time, 371 missed for late data (Massive 15-minute delay). After the missed-runner autopsy (A-MISS1) says how many were catchable with live prices, decide on a real-time feed (Alpaca real-time data about 99 USD/month, or Massive real-time). The feed is the one thing that can make same-day trades possible; no rule can. BREAK-EVEN GATE: the feed is bought only if the incremental net profit it adds (live minus delayed fills, after all trading costs, at 1,000 USD size and the expected trade count) exceeds its monthly fee; a positive Sharpe alone is not enough. Note: the watcher already evaluates every minute, so the feed is the only latency.",
-   "status": "queued (Agent A)",
+   "status": "decided (Agent A): no feed now, re-check monthly",
    "agent": "A",
-   "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence)."
+   "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence).",
+   "tested": "2026-10-20",
+   "study": "missed-runners.mjs -> data/missed-runners.json (breakEven)",
+   "result": {
+    "feedUsdPerMonth": 99,
+    "tradeUsd": 1000,
+    "alertsPerMonthObserved": 42,
+    "feedFixableMissesPerMonth": 1064,
+    "liveMinus15minPerTrade": 0.0007,
+    "incrementalUsdPerMonthOnAlerts": 29,
+    "note": "IG8 (the only positive live record) earns about the same with a 0-, 1-, 5- or 15-minute fill (n 200, noisy); 29 USD a month of incremental profit on 42 alerts a month vs 99 USD for the feed. The 152 feed-fixable misses (20% of misses) have no rule with a positive record behind them, so no profit can honestly be assigned to them. Re-check when IG8 alerts pass ~140 a month or the live-minus-delayed gap widens with a bigger sample.",
+    "verdict": "FEED DOES NOT PAY ON THE OBSERVED ALERTS",
+    "catchableShareOfMovers": 0.2755,
+    "feedFixableMissesPerDay": 51
+   }
   },
   {
    "id": "C-ISC1",
