@@ -2486,6 +2486,24 @@
    "status": "queued (Agent A)",
    "agent": "A",
    "note": "From the 20 Oct evening reviews."
+  },
+  {
+   "id": "A-ORB1",
+   "family": "Intraday (minute bars)",
+   "name": "Opening-range breakout with a volume filter, long only (Zarattini, Barbon & Aziz 2024)",
+   "explain": "PRE-REGISTERED, one version: opening range = 9:30-9:50 high/low; entry at the first 5-minute close above the range high between 10:00 and 11:30, only if that bar's volume is 1.2x+ the stock's average 5-minute volume (20 days); target 0.75x the range width, stop 0.5x, stop to breakeven after 1x; flat at 15:50; no overnight; AVOID list applies. Universe: the 100 most traded US stocks by dollar volume on each test day (point-in-time), 2 years of minute bars from Massive (about 50,000 calls; paid plan). Yardsticks: the same stock open-to-close on its other days, the average stock open-to-close the same day, both halves, 1.2x stress, without its 2 best trades, league bar. Published: 10-year test, 50% won, Sharpe 2.4, about 0.5-1% a trade; the only intraday family with serious out-of-sample evidence.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence)."
+  },
+  {
+   "id": "A-RT1",
+   "family": "Data",
+   "name": "Real-time price feed decision",
+   "explain": "Last night: 757 stocks ran 15%+, 0 caught in time, 371 missed for late data (Massive 15-minute delay). After the missed-runner autopsy (A-MISS1) says how many were catchable with live prices, decide on a real-time feed (Alpaca real-time data about 99 USD/month, or Massive real-time). The feed is the one thing that can make same-day trades possible; no rule can.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence)."
   }
  ]
 }
