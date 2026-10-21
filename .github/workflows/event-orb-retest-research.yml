@@ -1,0 +1,105 @@
+name: Event ORB Retest Research
+
+# Research only, run by hand: no schedule, no Telegram, no BUY line, no scan/league file touched.
+# Chain: events (EDGAR 8-K acceptance times) -> requests -> 5-minute bars (Massive, cached) -> paper ledger -> lane study
+# (events and matched non-event controls) -> Stock-2 gates -> A-EVR1 library entry. Commits only data/ outputs (not the bars).
+on:
+  workflow_dispatch:
+    inputs:
+      max_events:
+        description: 'Newest strict events to test (1-500; the supplied requests script caps at 500)'
+        required: false
+        default: '500'
+        type: string
+      years:
+        description: 'How many years of 8-K history to read from EDGAR'
+        required: false
+        default: '2'
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stock2-event-orb-retest-research
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+      EVENT_ORB_MAX_EVENTS: ${{ inputs.max_events }}
+      EVR_YEARS: ${{ inputs.years }}
+      EVR_CALLS: '2500'
+      EVR_MINUTES: '35'
+      EVR_SEC_CALLS: '600'
+      EVR_SEC_MINUTES: '20'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify the frozen research core
+        run: |
+          node --check event-orb-retest-core.mjs
+          node --check event-orb-retest-events.mjs
+          node --check event-orb-retest-bars.mjs
+          node --check event-orb-retest-gates.mjs
+          node test/event-orb-retest-core.test.mjs
+      - name: Restore the lane-private caches (EDGAR pages, 5-minute bars)
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            fm-cache/evr-sec.json.gz
+            fm-cache/evr-min.json.gz
+          key: evr-cache-${{ github.run_id }}
+          restore-keys: evr-cache-
+      - name: Events from EDGAR (strict envelope) and matched controls
+        run: node event-orb-retest-events.mjs 2>&1 | tee -a run.log
+      - name: Bar requests (events, then controls)
+        run: |
+          set -o pipefail
+          node event-orb-retest-requests.mjs 2>&1 | tee -a run.log
+          EVENT_ORB_EVENTS=data/event-orb-retest-15d-controls.jsonl EVENT_ORB_REQUESTS=data/event-orb-retest-15d-control-requests.json node event-orb-retest-requests.mjs 2>&1 | tee -a run.log
+      - name: Five-minute bars from Massive (cached, budgeted)
+        run: node event-orb-retest-bars.mjs 2>&1 | tee -a run.log
+      - name: Paper ledger (append-only), lane study, control study
+        run: |
+          set -o pipefail
+          node event-orb-retest-paper-ledger.mjs 2>&1 | tee -a run.log
+          node event-orb-retest-study.mjs 2>&1 | tee -a run.log
+          EVENT_ORB_EVENTS=data/event-orb-retest-15d-controls.jsonl EVENT_ORB_STUDY=data/event-orb-retest-15d-control-study.json node event-orb-retest-study.mjs 2>&1 | tee -a run.log
+      - name: Stock-2 gates and the A-EVR1 library entry
+        run: |
+          set -o pipefail
+          node event-orb-retest-gates.mjs 2>&1 | tee -a run.log
+          node event-orb-retest-library.mjs 2>&1 | tee -a run.log
+      - if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            fm-cache/evr-sec.json.gz
+            fm-cache/evr-min.json.gz
+          key: evr-cache-${{ github.run_id }}
+      - name: Keep the run log and the bar manifest as an artifact (not committed)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stock2-event-orb-retest-${{ github.run_id }}
+          path: |
+            run.log
+            data/event-orb-retest-15d-bars.json
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Commit the data outputs
+        if: always()
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          for f in data/catalyst-events.jsonl data/event-orb-retest-15d-events.json data/event-orb-retest-15d-controls.jsonl data/event-orb-retest-15d-requests.json data/event-orb-retest-15d-control-requests.json data/event-orb-retest-15d-paper.json data/event-orb-retest-15d-study.json data/event-orb-retest-15d-control-study.json data/event-orb-retest-15d-gates.json data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "event ORB retest research $(date -u +%FT%RZ)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ]
