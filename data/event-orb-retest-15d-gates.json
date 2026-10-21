@@ -1,0 +1,529 @@
+{
+ "generatedAt": "2026-10-21T20:16:55.808Z",
+ "status": "REJECTED",
+ "allowBuy": false,
+ "lane": "EVENT_ORB_RETEST_15D_V1",
+ "ruleHash": "75599241cfcb1e488acf4c0f9b2a3b2ef3a9a634216fc4a37ec772112342b30d",
+ "asOf": "2026-10-21T20:16:48.009Z",
+ "why": "mean net > 0 (older half, cost 0.8% (base): mean net -0.0089); t >= luck bar (older half, cost 0.8% (base): t -2.3205 vs 3.95); positive without the 2 best trades (older half, cost 0.8% (base): without 2 best -0.0106); beats SPY over the same minutes (older half, cost 0.8% (base): excess -0.0087 on 49 trades); beats the same stock on non-event days (older half, cost 0.8% (base): excess -0.0038 vs 39 control trades); mean net > 0 (newer half, cost 0.8% (base): mean net -0.0003); t >= luck bar (newer half, cost 0.8% (base): t -0.8189 vs 3.95); positive without the 2 best trades (newer half, cost 0.8% (base): without 2 best -0.0052); beats SPY over the same minutes (newer half, cost 0.8% (base): excess 0 on 26 trades); mean net > 0 (older half, cost 1.2% (stress): mean net -0.0129); t >= luck bar (older half, cost 1.2% (stress): t -3.3405 vs 3.95); positive without the 2 best trades (older half, cost 1.2% (stress): without 2 best -0.0146); beats SPY over the same minutes (older half, cost 1.2% (stress): excess -0.0127 on 49 trades); beats the same stock on non-event days (older half, cost 1.2% (stress): excess -0.0038 vs 39 control trades); mean net > 0 (newer half, cost 1.2% (stress): mean net -0.0043); t >= luck bar (newer half, cost 1.2% (stress): t -1.6435 vs 3.95); positive without the 2 best trades (newer half, cost 1.2% (stress): without 2 best -0.0092); beats SPY over the same minutes (newer half, cost 1.2% (stress): excess -0.004 on 26 trades)",
+ "bar": 3.95,
+ "barSource": "max(3.0, league bar 3.95)",
+ "coverageFloor": {
+  "trades": 30,
+  "distinctDays": 10,
+  "distinctStocks": 10,
+  "controlTradesPerHalf": 10
+ },
+ "split": {
+  "method": "older = the first half of the distinct entry days",
+  "cutDay": "2026-08-07",
+  "days": 39
+ },
+ "laneCoverage": {
+  "suppliedEvents": 740,
+  "validPlans": 84,
+  "resolvedPlans": 75,
+  "rejected": {
+   "bar_gap": 86,
+   "event_blocked": 240,
+   "stop_invalidated_before_retest": 231,
+   "no_retest_confirmation": 57,
+   "missing_symbol_series": 7,
+   "entry_open_outside_trigger_cap": 26,
+   "risk_exceeds_12pct": 7,
+   "initial_range_crosses_session_boundary": 1,
+   "bar_not_observable_by_as_of": 1
+  }
+ },
+ "controlCoverage": {
+  "suppliedEvents": 500,
+  "validPlans": 77,
+  "resolvedPlans": 62,
+  "rejected": {
+   "bar_gap": 104,
+   "stop_invalidated_before_retest": 248,
+   "missing_symbol_series": 7,
+   "risk_exceeds_12pct": 8,
+   "entry_open_outside_trigger_cap": 18,
+   "no_retest_confirmation": 37,
+   "initial_range_crosses_session_boundary": 1
+  }
+ },
+ "laneOwnReport": {
+  "splits": "Chronological unique event publication dates, 50% train / 30% validation / 20% diagnostic holdout. No parameter optimization is performed.",
+  "midpoint": {
+   "train": {
+    "n": 53,
+    "wins": 16,
+    "winRate": 0.3019,
+    "meanNet": -0.0064,
+    "medianNet": -0.0061,
+    "totalNetUsd": -341.07,
+    "profitFactor": 0.476,
+    "best": 0.0787,
+    "worst": -0.0511,
+    "distinctDays": 20,
+    "distinctStocks": 45,
+    "dayT": -1.8432,
+    "exits": {
+     "session_close": 33,
+     "stop": 4,
+     "target": 16
+    }
+   },
+   "validation": {
+    "n": 13,
+    "wins": 4,
+    "winRate": 0.3077,
+    "meanNet": -0.005,
+    "medianNet": -0.0042,
+    "totalNetUsd": -64.72,
+    "profitFactor": 0.5532,
+    "best": 0.038,
+    "worst": -0.0675,
+    "distinctDays": 12,
+    "distinctStocks": 13,
+    "dayT": -0.6957,
+    "exits": {
+     "session_close": 10,
+     "target": 3
+    }
+   },
+   "diagnostic_holdout": {
+    "n": 9,
+    "wins": 3,
+    "winRate": 0.3333,
+    "meanNet": -0.004,
+    "medianNet": -0.0018,
+    "totalNetUsd": -35.57,
+    "profitFactor": 0.3021,
+    "best": 0.0097,
+    "worst": -0.0208,
+    "distinctDays": 7,
+    "distinctStocks": 9,
+    "dayT": -1.7398,
+    "exits": {
+     "session_close": 5,
+     "target": 3,
+     "stop": 1
+    }
+   }
+  }
+ },
+ "byEventKind": [
+  {
+   "kind": "sec_8k_earn_items_2.02",
+   "n": 42,
+   "meanNet": -0.0039
+  },
+  {
+   "kind": "sec_8k_news_items_8.01",
+   "n": 21,
+   "meanNet": -0.0093
+  },
+  {
+   "kind": "sec_8k_contract_items_1.01",
+   "n": 7,
+   "meanNet": -0.0084
+  },
+  {
+   "kind": "sec_8k_earn+news_items_2.02+8.01",
+   "n": 3,
+   "meanNet": -0.0063
+  },
+  {
+   "kind": "sec_8k_contract+earn_items_1.01+2.02",
+   "n": 1,
+   "meanNet": -0.0055
+  },
+  {
+   "kind": "sec_8k_contract+news_items_1.01+8.01",
+   "n": 1,
+   "meanNet": 0.0005
+  }
+ ],
+ "results": {
+  "midpoint": {
+   "label": "cost 0.8% (base)",
+   "whole": {
+    "n": 75,
+    "distinctDays": 39,
+    "distinctStocks": 60,
+    "meanNet": -0.0059,
+    "medianNet": -0.0056,
+    "winRate": 0.3067,
+    "totalNetUsd": -441.36,
+    "without2Best": -0.0076,
+    "medianDay": -0.0042,
+    "worstDay": -0.0675,
+    "bestDay": 0.038,
+    "dayT": -2.0716,
+    "exits": {
+     "session_close": 48,
+     "stop": 5,
+     "target": 22
+    },
+    "vsSpySameMinutes": {
+     "n": 75,
+     "meanTradeNet": -0.0059,
+     "meanSpy": -0.0002,
+     "meanExcess": -0.0057,
+     "label": "S&P 500 (SPY) gross return over the same minutes, a proxy for the average stock over those minutes"
+    },
+    "vsSameStockControl": {
+     "n": 62,
+     "meanControlNet": -0.0062,
+     "meanExcess": 0.0003,
+     "controlPlansResolved": 62,
+     "label": "same stock, same rule, same New York clock time, on a matched non-event day"
+    }
+   },
+   "older": {
+    "n": 49,
+    "distinctDays": 19,
+    "distinctStocks": 42,
+    "meanNet": -0.0089,
+    "medianNet": -0.0061,
+    "winRate": 0.2857,
+    "totalNetUsd": -434.29,
+    "without2Best": -0.0106,
+    "medianDay": -0.0072,
+    "worstDay": -0.0451,
+    "bestDay": 0.0199,
+    "dayT": -2.3205,
+    "exits": {
+     "session_close": 31,
+     "stop": 4,
+     "target": 14
+    },
+    "vsSpySameMinutes": {
+     "n": 49,
+     "meanTradeNet": -0.0089,
+     "meanSpy": -0.0002,
+     "meanExcess": -0.0087,
+     "label": "S&P 500 (SPY) gross return over the same minutes, a proxy for the average stock over those minutes"
+    },
+    "vsSameStockControl": {
+     "n": 39,
+     "meanControlNet": -0.005,
+     "meanExcess": -0.0038,
+     "controlPlansResolved": 39,
+     "label": "same stock, same rule, same New York clock time, on a matched non-event day"
+    }
+   },
+   "newer": {
+    "n": 26,
+    "distinctDays": 20,
+    "distinctStocks": 22,
+    "meanNet": -0.0003,
+    "medianNet": -0.003,
+    "winRate": 0.3462,
+    "totalNetUsd": -7.07,
+    "without2Best": -0.0052,
+    "medianDay": -0.003,
+    "worstDay": -0.0675,
+    "bestDay": 0.038,
+    "dayT": -0.8189,
+    "exits": {
+     "session_close": 17,
+     "target": 8,
+     "stop": 1
+    },
+    "vsSpySameMinutes": {
+     "n": 26,
+     "meanTradeNet": -0.0003,
+     "meanSpy": -0.0003,
+     "meanExcess": 0,
+     "label": "S&P 500 (SPY) gross return over the same minutes, a proxy for the average stock over those minutes"
+    },
+    "vsSameStockControl": {
+     "n": 23,
+     "meanControlNet": -0.008,
+     "meanExcess": 0.0078,
+     "controlPlansResolved": 23,
+     "label": "same stock, same rule, same New York clock time, on a matched non-event day"
+    }
+   }
+  },
+  "worst": {
+   "label": "cost 1.2% (stress)",
+   "whole": {
+    "n": 75,
+    "distinctDays": 39,
+    "distinctStocks": 60,
+    "meanNet": -0.0099,
+    "medianNet": -0.0096,
+    "winRate": 0.2667,
+    "totalNetUsd": -741.36,
+    "without2Best": -0.0116,
+    "medianDay": -0.0082,
+    "worstDay": -0.0715,
+    "bestDay": 0.034,
+    "dayT": -3.3523,
+    "exits": {
+     "session_close": 48,
+     "stop": 5,
+     "target": 22
+    },
+    "vsSpySameMinutes": {
+     "n": 75,
+     "meanTradeNet": -0.0099,
+     "meanSpy": -0.0002,
+     "meanExcess": -0.0097,
+     "label": "S&P 500 (SPY) gross return over the same minutes, a proxy for the average stock over those minutes"
+    },
+    "vsSameStockControl": {
+     "n": 62,
+     "meanControlNet": -0.0102,
+     "meanExcess": 0.0003,
+     "controlPlansResolved": 62,
+     "label": "same stock, same rule, same New York clock time, on a matched non-event day"
+    }
+   },
+   "older": {
+    "n": 49,
+    "distinctDays": 19,
+    "distinctStocks": 42,
+    "meanNet": -0.0129,
+    "medianNet": -0.0101,
+    "winRate": 0.2653,
+    "totalNetUsd": -630.29,
+    "without2Best": -0.0146,
+    "medianDay": -0.0112,
+    "worstDay": -0.0491,
+    "bestDay": 0.0159,
+    "dayT": -3.3405,
+    "exits": {
+     "session_close": 31,
+     "stop": 4,
+     "target": 14
+    },
+    "vsSpySameMinutes": {
+     "n": 49,
+     "meanTradeNet": -0.0129,
+     "meanSpy": -0.0002,
+     "meanExcess": -0.0127,
+     "label": "S&P 500 (SPY) gross return over the same minutes, a proxy for the average stock over those minutes"
+    },
+    "vsSameStockControl": {
+     "n": 39,
+     "meanControlNet": -0.009,
+     "meanExcess": -0.0038,
+     "controlPlansResolved": 39,
+     "label": "same stock, same rule, same New York clock time, on a matched non-event day"
+    }
+   },
+   "newer": {
+    "n": 26,
+    "distinctDays": 20,
+    "distinctStocks": 22,
+    "meanNet": -0.0043,
+    "medianNet": -0.007,
+    "winRate": 0.2692,
+    "totalNetUsd": -111.07,
+    "without2Best": -0.0092,
+    "medianDay": -0.007,
+    "worstDay": -0.0715,
+    "bestDay": 0.034,
+    "dayT": -1.6435,
+    "exits": {
+     "session_close": 17,
+     "target": 8,
+     "stop": 1
+    },
+    "vsSpySameMinutes": {
+     "n": 26,
+     "meanTradeNet": -0.0043,
+     "meanSpy": -0.0003,
+     "meanExcess": -0.004,
+     "label": "S&P 500 (SPY) gross return over the same minutes, a proxy for the average stock over those minutes"
+    },
+    "vsSameStockControl": {
+     "n": 23,
+     "meanControlNet": -0.012,
+     "meanExcess": 0.0078,
+     "controlPlansResolved": 23,
+     "label": "same stock, same rule, same New York clock time, on a matched non-event day"
+    }
+   }
+  }
+ },
+ "gates": [
+  {
+   "gate": "mean net > 0",
+   "half": "older",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "mean net -0.0089"
+  },
+  {
+   "gate": "t >= luck bar",
+   "half": "older",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "t -2.3205 vs 3.95"
+  },
+  {
+   "gate": "positive without the 2 best trades",
+   "half": "older",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "without 2 best -0.0106"
+  },
+  {
+   "gate": "beats SPY over the same minutes",
+   "half": "older",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "excess -0.0087 on 49 trades"
+  },
+  {
+   "gate": "beats the same stock on non-event days",
+   "half": "older",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "excess -0.0038 vs 39 control trades"
+  },
+  {
+   "gate": "mean net > 0",
+   "half": "newer",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "mean net -0.0003"
+  },
+  {
+   "gate": "t >= luck bar",
+   "half": "newer",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "t -0.8189 vs 3.95"
+  },
+  {
+   "gate": "positive without the 2 best trades",
+   "half": "newer",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "without 2 best -0.0052"
+  },
+  {
+   "gate": "beats SPY over the same minutes",
+   "half": "newer",
+   "scenario": "midpoint",
+   "ok": false,
+   "detail": "excess 0 on 26 trades"
+  },
+  {
+   "gate": "beats the same stock on non-event days",
+   "half": "newer",
+   "scenario": "midpoint",
+   "ok": true,
+   "detail": "excess 0.0078 vs 23 control trades"
+  },
+  {
+   "gate": "mean net > 0",
+   "half": "older",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "mean net -0.0129"
+  },
+  {
+   "gate": "t >= luck bar",
+   "half": "older",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "t -3.3405 vs 3.95"
+  },
+  {
+   "gate": "positive without the 2 best trades",
+   "half": "older",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "without 2 best -0.0146"
+  },
+  {
+   "gate": "beats SPY over the same minutes",
+   "half": "older",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "excess -0.0127 on 49 trades"
+  },
+  {
+   "gate": "beats the same stock on non-event days",
+   "half": "older",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "excess -0.0038 vs 39 control trades"
+  },
+  {
+   "gate": "mean net > 0",
+   "half": "newer",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "mean net -0.0043"
+  },
+  {
+   "gate": "t >= luck bar",
+   "half": "newer",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "t -1.6435 vs 3.95"
+  },
+  {
+   "gate": "positive without the 2 best trades",
+   "half": "newer",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "without 2 best -0.0092"
+  },
+  {
+   "gate": "beats SPY over the same minutes",
+   "half": "newer",
+   "scenario": "worst",
+   "ok": false,
+   "detail": "excess -0.004 on 26 trades"
+  },
+  {
+   "gate": "beats the same stock on non-event days",
+   "half": "newer",
+   "scenario": "worst",
+   "ok": true,
+   "detail": "excess 0.0078 vs 23 control trades"
+  }
+ ],
+ "failed": [
+  "mean net > 0 (older half, cost 0.8% (base): mean net -0.0089)",
+  "t >= luck bar (older half, cost 0.8% (base): t -2.3205 vs 3.95)",
+  "positive without the 2 best trades (older half, cost 0.8% (base): without 2 best -0.0106)",
+  "beats SPY over the same minutes (older half, cost 0.8% (base): excess -0.0087 on 49 trades)",
+  "beats the same stock on non-event days (older half, cost 0.8% (base): excess -0.0038 vs 39 control trades)",
+  "mean net > 0 (newer half, cost 0.8% (base): mean net -0.0003)",
+  "t >= luck bar (newer half, cost 0.8% (base): t -0.8189 vs 3.95)",
+  "positive without the 2 best trades (newer half, cost 0.8% (base): without 2 best -0.0052)",
+  "beats SPY over the same minutes (newer half, cost 0.8% (base): excess 0 on 26 trades)",
+  "mean net > 0 (older half, cost 1.2% (stress): mean net -0.0129)",
+  "t >= luck bar (older half, cost 1.2% (stress): t -3.3405 vs 3.95)",
+  "positive without the 2 best trades (older half, cost 1.2% (stress): without 2 best -0.0146)",
+  "beats SPY over the same minutes (older half, cost 1.2% (stress): excess -0.0127 on 49 trades)",
+  "beats the same stock on non-event days (older half, cost 1.2% (stress): excess -0.0038 vs 39 control trades)",
+  "mean net > 0 (newer half, cost 1.2% (stress): mean net -0.0043)",
+  "t >= luck bar (newer half, cost 1.2% (stress): t -1.6435 vs 3.95)",
+  "positive without the 2 best trades (newer half, cost 1.2% (stress): without 2 best -0.0092)",
+  "beats SPY over the same minutes (newer half, cost 1.2% (stress): excess -0.004 on 26 trades)"
+ ],
+ "thin": [],
+ "spy": {
+  "days": 39,
+  "barsFound": 3042,
+  "missingDays": 0,
+  "calls": 14,
+  "budget": 2500,
+  "refused": null,
+  "minutes": 0.1,
+  "maxMinutes": 35
+ },
+ "notes": [
+  "Per-trade net at 1,000 USD after the house costs; the lane rule itself (opening range, retest, confirmation, 15-minute delay, stop at the range low, 1.5R target, flat at the close) is unchanged.",
+  "Every gate here was written before the first run and is evaluated once; nothing is re-run with other settings.",
+  "This file cannot promote anything: a PASS would only queue a prospective paper period under the existing universal gates."
+ ]
+}

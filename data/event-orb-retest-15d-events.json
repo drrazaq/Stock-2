@@ -1,0 +1,98 @@
+{
+ "generatedAt": "2026-10-21T20:14:49.292Z",
+ "status": "OK",
+ "allowBuy": false,
+ "lane": "EVENT_ORB_RETEST_15D_V1",
+ "window": {
+  "from": "2024-10-21",
+  "years": 2,
+  "items": [
+   "1.01",
+   "2.02",
+   "8.01"
+  ],
+  "forms": [
+   "8-K"
+  ]
+ },
+ "universe": {
+  "symbols": 362,
+  "withSecNumber": 338,
+  "withoutSecNumber": 24,
+  "halalFailExcluded": 154,
+  "edgarPagesThisRun": 338,
+  "fromCache": 0,
+  "failed": 0,
+  "coveredSymbols": 338,
+  "secCalls": 339,
+  "secNote": null
+ },
+ "counts": {
+  "raw8KRowsAndRecentRows": 6862,
+  "raw8K": 6396,
+  "strictUnblocked": 3090,
+  "blocked": 995,
+  "laneFileRows": 740,
+  "laneUnblocked": 500,
+  "laneFrom": "2026-06-04T00:57:09.000Z",
+  "laneTo": "2026-10-21T20:04:14.000Z",
+  "eventsRecentRowsUsed": 0,
+  "rejectedByReason": {
+   "item_not_in_1.01_2.02_8.01": 2311,
+   "blocked_share_sale_within_30_days": 786,
+   "blocked_lottery_like": 135,
+   "blocked_lottery_like_and_share_sale_within_30_days": 74
+  },
+  "controls": 500,
+  "controlsMissing": {}
+ },
+ "families": {
+  "NEWS": 188,
+  "EARN": 260,
+  "CONTRACT": 85
+ },
+ "timestampBasis": {
+  "acceptanceDateTimeSamples": [
+   "2026-10-06T00:07:45.000Z",
+   "2026-08-19T00:30:26.000Z",
+   "2026-08-06T01:17:20.000Z"
+  ],
+  "readAs": "UTC (the Z suffix)",
+  "earningsFilingsByNewYorkHour": {
+   "10": 146,
+   "11": 211,
+   "12": 147,
+   "13": 87,
+   "14": 29,
+   "15": 2,
+   "16": 309,
+   "17": 30,
+   "18": 14,
+   "19": 2,
+   "20": 447,
+   "21": 347,
+   "22": 24,
+   "23": 9,
+   "07": 94,
+   "06": 107,
+   "00": 8,
+   "09": 12,
+   "08": 53,
+   "01": 5,
+   "02": 1
+  },
+  "eventsRecentCrossCheck": {
+   "exact": 29,
+   "checked": 55
+  },
+  "note": "If 2.02 filings cluster at 07-08 and 16-17 New York time, the UTC reading is right (pre-market and after-close releases)."
+ },
+ "blocks": {
+  "lotteryThreshold": 0.15,
+  "dilution": "8-K item 3.02 or 424B4/424B5 within 30 days before"
+ },
+ "files": {
+  "events": "data/catalyst-events.jsonl",
+  "controls": "data/event-orb-retest-15d-controls.jsonl"
+ }
+}
