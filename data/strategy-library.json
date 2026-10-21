@@ -2464,7 +2464,7 @@
    "id": "A-MISS1",
    "family": "Audit",
    "name": "Missed-runner autopsy (winners vs near-misses)",
-   "explain": "For the big runners the system missed (TGL, NIVF, GRML, TCRT, PFAI) and a matched control group that looked the same but did not run: reconstruct what was knowable before the move (filing, contract, news, volume, price), when Stock-2 could first have known, whether the first tradable open was still ahead of the move, and which alert fired or why it missed. Output: a table of miss reasons (coverage / timing / prediction), not a buy signal.",
+   "explain": "For the big runners the system missed (TGL, NIVF, GRML, TCRT, PFAI) and a matched control group that looked the same but did not run: reconstruct what was knowable before the move (filing, contract, news, volume, price), when Stock-2 could first have known, whether the first tradable open was still ahead of the move, and which alert fired or why it missed. Output: a table of miss reasons (coverage / timing / prediction), not a buy signal. DECISION TREE, written before the numbers (from the 21 Oct review): if late data is the biggest cause (40%+ of misses) -> trial a real-time feed for one month and compare live vs delayed on the same alerts; if \"rule did not fire\" is biggest -> no new rule, check whether ORB fires on 10%+ of them; if \"blocked\" is biggest -> keep the blocks and check whether blocked runners faded within 5 days (55%+ fade = blocks right); if 20%+ were caught in time -> score those and size the engine that caught them only if positive after costs. Add the four-way diagnosis (coverage / timing / eligibility / prediction) and a latency-vs-net-return table at 0, 1, 5, 15, 30 minutes.",
    "status": "queued (Agent A)",
    "agent": "A",
    "note": "From the 20 Oct evening reviews."
@@ -2491,7 +2491,7 @@
    "id": "A-ORB1",
    "family": "Intraday (minute bars)",
    "name": "Opening-range breakout with a volume filter, long only (Zarattini, Barbon & Aziz 2024)",
-   "explain": "PRE-REGISTERED, one version: opening range = 9:30-9:50 high/low; entry at the first 5-minute close above the range high between 10:00 and 11:30, only if that bar's volume is 1.2x+ the stock's average 5-minute volume (20 days); target 0.75x the range width, stop 0.5x, stop to breakeven after 1x; flat at 15:50; no overnight; AVOID list applies. Universe: the 100 most traded US stocks by dollar volume on each test day (point-in-time), 2 years of minute bars from Massive (about 50,000 calls; paid plan). Yardsticks: the same stock open-to-close on its other days, the average stock open-to-close the same day, both halves, 1.2x stress, without its 2 best trades, league bar. Published: 10-year test, 50% won, Sharpe 2.4, about 0.5-1% a trade; the only intraday family with serious out-of-sample evidence.",
+   "explain": "PRE-REGISTERED, one version, resolved from the ORIGINAL paper before any run (Zarattini, Barbon & Aziz 2024, \"A Profitable Day Trading Strategy for the U.S. Equity Market\": 5-minute opening range on \"stocks in play\" = unusually high first-5-minute volume vs the prior 14 days, 7,000+ stocks, 2016-2023, Sharpe about 2.4; the GitHub 20-minute / 1.2x-volume version is a variant, not the paper). Record the exact spec and source for every element (range length, volume baseline, entry fill, target, stop, trail, 15:50 flat, long only, eligible universe, costs incl. spread and slippage) BEFORE looking at results; ambiguity is resolved from the source, never by what backtests best. Universe: the 100 most traded US stocks by dollar volume per test day (point-in-time), 2 years of Massive minute bars (budget the calls). Report: trades, distinct days, distinct stocks, median, worst trade, worst day, busiest-day exposure, same-catalyst concentration, result at 0.8% / 1.2% cost and with 0.1% extra slippage, latency table (fill delayed 0 / 1 / 5 / 15 / 30 minutes), without 2 best trades, vs the same stock open-to-close on its other days and the average stock the same day, both halves, league bar. A marginal pass still goes to PAPER first (execution decides intraday rules).",
    "status": "queued (Agent A)",
    "agent": "A",
    "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence)."
@@ -2500,10 +2500,46 @@
    "id": "A-RT1",
    "family": "Data",
    "name": "Real-time price feed decision",
-   "explain": "Last night: 757 stocks ran 15%+, 0 caught in time, 371 missed for late data (Massive 15-minute delay). After the missed-runner autopsy (A-MISS1) says how many were catchable with live prices, decide on a real-time feed (Alpaca real-time data about 99 USD/month, or Massive real-time). The feed is the one thing that can make same-day trades possible; no rule can.",
+   "explain": "Last night: 757 stocks ran 15%+, 0 caught in time, 371 missed for late data (Massive 15-minute delay). After the missed-runner autopsy (A-MISS1) says how many were catchable with live prices, decide on a real-time feed (Alpaca real-time data about 99 USD/month, or Massive real-time). The feed is the one thing that can make same-day trades possible; no rule can. BREAK-EVEN GATE: the feed is bought only if the incremental net profit it adds (live minus delayed fills, after all trading costs, at 1,000 USD size and the expected trade count) exceeds its monthly fee; a positive Sharpe alone is not enough. Note: the watcher already evaluates every minute, so the feed is the only latency.",
    "status": "queued (Agent A)",
    "agent": "A",
    "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence)."
+  },
+  {
+   "id": "C-ISC1",
+   "family": "Events",
+   "name": "Information-shock continuation (Jiang & Zhu 2017)",
+   "explain": "Stocks whose return on a verified company-news day is far above the market and sector (an information shock, by the move relative to peers, not by news tone) drift the same way over the next week. Test: next-open entry, 3 / 5 / 10 sessions, earnings vs non-earnings news apart, duplicates removed, vs the same stock on its other days, the average stock and the S&P 500; must add something beyond the lottery rule M15 (15%+ jumps lag) and the news tests already rejected. Published monthly returns 1.6-3.3% in 2000-2012; a reason to test, not a result.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the 21 Oct reviews. One version, pre-registered, same gates."
+  },
+  {
+   "id": "C-SUP1",
+   "family": "Share supply",
+   "name": "Share-supply overhang score",
+   "explain": "Potentially saleable shares relative to float from filings known at the time: registered resale shares (S-3 / 424B3), warrants and their exercise prices, convertibles, ATM facilities, new offerings. Test each instrument separately first, then combined, as a filter on the existing buy candidates: does it cut the worst losses without removing the winners?",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the 21 Oct reviews. One version, pre-registered, same gates."
+  },
+  {
+   "id": "C-PEER1",
+   "family": "Connected companies",
+   "name": "Earlier-reporting peers predict later reporters",
+   "explain": "Before a company reports, do the earnings surprises of peers that already reported predict its abnormal return? Point-in-time report dates only; exclude companies that issued equivalent news. Extends N2 / N4.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the 21 Oct reviews. One version, pre-registered, same gates."
+  },
+  {
+   "id": "A-TURN1",
+   "family": "Trend and momentum",
+   "name": "Short-term momentum conditioned on turnover (Medhat & Schmeling 2022)",
+   "explain": "Last-month winners continue among HIGH-turnover liquid stocks and reverse among low-turnover ones. One pre-registered weekly test on large liquid stocks, 1-week hold, vs the average stock and the same stock on its other days. Low priority: it is a 1-week daily-data rule and that horizon has failed every other test.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the 21 Oct reviews. One version, pre-registered, same gates."
   }
  ]
 }
