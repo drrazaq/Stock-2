@@ -1,5 +1,5 @@
 {
- "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources.",
+ "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct.",
  "updated": "2026-10-19",
  "strategies": [
   {
@@ -2650,6 +2650,24 @@
    "status": "queued (Agent A)",
    "agent": "A",
    "note": "From the 21 Oct reviews. One version, pre-registered, same gates."
+  },
+  {
+   "id": "B-NOW1",
+   "family": "Company model",
+   "name": "Revenue nowcast vs consensus (CI-1)",
+   "explain": "For companies with clear operating drivers (subscribers x price, launches x price, contracted billing schedules, units x ASP), estimate the quarter's revenue from information dated BEFORE the report and compare it with the consensus known at that date. Signal = model above consensus by a margin. Test: entry next open after the report (and, as a diagnostic, 5 sessions before it), vs the average stock, the S&P 500, the same stock on its other reports, both halves, same gates. Needs point-in-time consensus history (Financial Datasets / Alpha Vantage estimates are not dated: say \"needs data\" if no honest source exists). Start with 20-30 companies with segment disclosures; SPCX Q3 2026 as the first replay (reported 14.6B vs 12.9B consensus).",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "From the SPCX discussion of 21 Oct. Pre-register, one version, same gates."
+  },
+  {
+   "id": "C-REV1",
+   "family": "Crowd",
+   "name": "Revenue-estimate revisions before the report",
+   "explain": "Log analysts' revenue estimates (not ratings) every week from now; after 90 days test whether rising estimates in the 30 days before a report predict the reaction and the drift. The free approximation of StarMine SmartEstimates (78% directional claim). Point-in-time by construction because we log it ourselves.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the SPCX discussion of 21 Oct. Pre-register, one version, same gates."
   }
  ]
 }
