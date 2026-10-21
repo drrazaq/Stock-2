@@ -2714,6 +2714,15 @@
    "status": "queued (Agent A)",
    "agent": "A",
    "note": "From the user's question of 21 Oct. Each block was already tested on its own (lottery -3.2%, dilution -3.8%, faded tipsters -5.4%/-4.3% per trade); this measures the combination. One version, run once, no threshold chosen afterwards."
+  },
+  {
+   "id": "A-EVR1",
+   "family": "Same-day (intraday)",
+   "name": "Event, then opening-range retest (5-minute bars, delayed data)",
+   "explain": "Only on days with a timestamped primary event (8-K acceptance time or issuer release). Opening range = first three completed 5-minute bars after the event is observable (bar close + 15-minute delay). Retest: touches no more than 0.2% above the range high, closes above it, never trades at or below the range low; confirmation bar closes above the retest high and session VWAP. Entry next observable bar open, stop at range low (max 12% risk), target 1.5R, flat at the close. 1,000 USD, 3 a day, 0.8%/1.2% cost. Tested on the minute-bar cache against the same stock on non-event days and the average stock the same minutes. Plain ORB on any stock is already REJECTED (-0.8%, 11% won); this is a different hypothesis (event-conditioned), registered as one version.",
+   "status": "queued (Agent A, low priority)",
+   "agent": "A",
+   "note": "From the 'Day-Trader Skill' spec of 21 Oct (written for a different repo layout; its modules do not exist here). Only the setup is taken. Overlaps IG8, which is live on paper; if both pass, keep the one with more distinct days."
   }
  ]
 }
