@@ -2668,6 +2668,24 @@
    "status": "queued (Agent C)",
    "agent": "C",
    "note": "From the SPCX discussion of 21 Oct. Pre-register, one version, same gates."
+  },
+  {
+   "id": "C-PCR1",
+   "family": "Options context",
+   "name": "Options-flow context on tested setups",
+   "explain": "Context statistic = mean(last 5 sessions of call volume minus put volume) minus mean(last 20 sessions), per stock, from Alpha Vantage historical options / put-call endpoints (ALPHAVANTAGE_KEY; complete chains only, post-close observations). Never a direction on its own. Pre-registered test: does an extreme (top/bottom decile vs the stock's own prior 60 valid readings) change the result of an EXISTING tested setup (earnings drift E1, the switch) vs the identical setup without it? Same gates; if the endpoint lacks history or completeness, record \"needs data\".",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the options-flow / forecast review of 21 Oct (ZIP not installed: different repo layout, Massive options endpoint not in plan)."
+  },
+  {
+   "id": "A-FC1",
+   "family": "Forecast models",
+   "name": "Forecast-model scoreboard (Chronos / TimesFM)",
+   "explain": "Score a NAMED open time-series model on dated 1-5 session forecasts for 15+ symbols: directional accuracy vs the always-up baseline, MAPE, Brier score; forecasts logged before the target is known (paper scoreboard only). Only a favourable score over 60+ forecasts would justify a separate pre-registered stock rule. Low priority: price-only models have failed every test so far.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "note": "From the options-flow / forecast review of 21 Oct (ZIP not installed: different repo layout, Massive options endpoint not in plan)."
   }
  ]
 }
