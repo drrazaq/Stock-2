@@ -1823,8 +1823,8 @@
      0.0263,
      0.0077
     ],
-    "bar": 3.93,
-    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.93 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.93 needed)"
+    "bar": 3.94,
+    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.94 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.94 needed)"
    }
   },
   {
@@ -2493,7 +2493,7 @@
    "family": "Intraday (minute bars)",
    "name": "Opening-range breakout with a volume filter, long only (Zarattini, Barbon & Aziz 2024)",
    "explain": "PRE-REGISTERED, one version, resolved from the ORIGINAL paper before any run (Zarattini, Barbon & Aziz 2024, \"A Profitable Day Trading Strategy for the U.S. Equity Market\": 5-minute opening range on \"stocks in play\" = unusually high first-5-minute volume vs the prior 14 days, 7,000+ stocks, 2016-2023, Sharpe about 2.4; the GitHub 20-minute / 1.2x-volume version is a variant, not the paper). Record the exact spec and source for every element (range length, volume baseline, entry fill, target, stop, trail, 15:50 flat, long only, eligible universe, costs incl. spread and slippage) BEFORE looking at results; ambiguity is resolved from the source, never by what backtests best. Universe: the 100 most traded US stocks by dollar volume per test day (point-in-time), 2 years of Massive minute bars (budget the calls). Report: trades, distinct days, distinct stocks, median, worst trade, worst day, busiest-day exposure, same-catalyst concentration, result at 0.8% / 1.2% cost and with 0.1% extra slippage, latency table (fill delayed 0 / 1 / 5 / 15 / 30 minutes), without 2 best trades, vs the same stock open-to-close on its other days and the average stock the same day, both halves, league bar. A marginal pass still goes to PAPER first (execution decides intraday rules).",
-   "status": "queued (Agent A): built 21 Oct, waiting for the first run",
+   "status": "running (Agent A): 92682 of 112212 stock-days of minute bars fetched; provisional REJECTED",
    "agent": "A",
    "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence).",
    "study": "orb-study.mjs -> data/orb-study.json (pre-registered, first complete run frozen; incremental minute-bar cache in fm-cache)",
