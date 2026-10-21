@@ -18,7 +18,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      # TipRanks economic calendar (CPI, PPI, retail sales, jobs, the Fed...) + Massive holidays and your dividends.
+      # Economic calendar: release dates from the official BLS and Federal Reserve schedules, actual values from Alpha Vantage,
+      # TipRanks only as a weekly fallback (its monthly calls are scarce) + Massive holidays and your dividends.
       # Saved ENCRYPTED (data/calendar.enc): TipRanks data may not be republished and this repository is public.
       - shell: bash
         run: |
@@ -26,6 +27,8 @@ jobs:
           node calendar.mjs 2>&1 | tee run.log
         env:
           TIPRANKS_KEY: ${{ secrets.TIPRANKS_KEY }}
+          ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       # SEC share counts (first run reads ~30 quarters, then 3 requests a day): dilution flag + float known on past days.

@@ -1,7 +1,10 @@
 // ECONOMIC CALENDAR: what is coming this week and how the market reacted to it in the past. Read-only; never places an order.
 // MODE=fetch (weekdays before the nightly scan, and Sunday morning):
-//   - US economic releases from the TipRanks economic calendar (your TIPRANKS_KEY, its official MCP API): CPI, core CPI, PPI,
-//     retail sales, jobs, the Fed, GDP, PCE... with time, forecast, previous and (once out) actual.
+//   - US release DATES first from FREE OFFICIAL sources (21 Oct 2026 repair, TipRanks calls nearly used up): the BLS release
+//     schedules (CPI, PPI, jobs report, real earnings) and the Federal Reserve's FOMC calendar; ACTUAL values from the Alpha Vantage
+//     economic endpoints (ALPHAVANTAGE_KEY: CPI, payrolls, unemployment, retail sales, Fed funds, GDP), refreshed weekly.
+//   - TipRanks economic calendar (TIPRANKS_KEY) only as the FALLBACK for forecasts and the smaller events: at most once every 6 days
+//     (Sunday), never when fewer than 20 calls are left; the history backfill only above 100 calls.
 //   - market holidays and half days, and the ex-dividend dates of the stocks you hold (Massive, your MASSIVE_KEY).
 //   TipRanks forbids republishing its data and the repository is public, so everything is saved ENCRYPTED in data/calendar.enc
 //   (with your PRIVATE_KEY, like your shares and budget). Only a status line (which source worked, how many events) is public.
@@ -13,6 +16,7 @@ import zlib from 'node:zlib';
 import crypto from 'node:crypto';
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch', local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const MCP = (local(env.TR_BASE) || 'https://mcp.tipranks.com') + '/mcp/?apikey=' + encodeURIComponent(env.TIPRANKS_KEY || ''), PX = local(env.PX_BASE) || 'https://api.massive.com';
+const AVB = local(env.AV_BASE) || 'https://www.alphavantage.co', BLS = local(env.BLS_BASE) || 'https://www.bls.gov', FED = local(env.FED_BASE) || 'https://www.federalreserve.gov';
 const FILE = 'data/calendar.enc', STATUS = 'data/calendar-status.json', iso = (ms) => new Date(ms).toISOString().slice(0, 10), sleep = (ms) => new Promise(r => setTimeout(r, local(env.TR_BASE) ? 0 : ms));
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 fs.mkdirSync('data', { recursive: true });
@@ -33,8 +37,41 @@ const num = (v) => { if (v === null || v === undefined || v === '') return null;
 if (MODE === 'fetch') {
   const status = { at: new Date().toISOString(), tipranks: 'not tried', massive: 'not tried' }, old = calRead() || {}, out = { updated: status.at, econ: [], hist: old.hist || [], holidays: old.holidays || [], div: {} };
   if (!key()) { status.tipranks = 'no PRIVATE_KEY: nothing can be saved privately'; fs.writeFileSync(STATUS, JSON.stringify(status, null, 1)); console.log(status.tipranks); process.exit(0); }
-  // ---- 1. TipRanks economic calendar
-  if (env.TIPRANKS_KEY) try {
+  const UA = env.SEC_UA || 'stock-signal-board admin@users.noreply.github.com', nyUtc = (d, hm) => { const [h, m] = hm.split(':').map(Number), guess = Date.parse(d + 'T' + hm + ':00Z'), p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(guess)).forEach(x => p[x.type] = x.value); const off = (h * 60 + m) - (+p.hour * 60 + +p.minute); return new Date(guess + off * 60000).toISOString().slice(0, 16); };
+  const MONTHS = { jan: '01', feb: '02', mar: '03', apr: '04', may: '05', jun: '06', jul: '07', aug: '08', sep: '09', oct: '10', nov: '11', dec: '12' }, mdy = (s) => { const m = /([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})/.exec(s); return m && MONTHS[m[1].toLowerCase()] ? m[3] + '-' + MONTHS[m[1].toLowerCase()] + '-' + m[2].padStart(2, '0') : null; };
+  const ampm = (s) => { const m = /(\d{1,2}):(\d{2})\s*([AP])\.?M/i.exec(s); if (!m) return null; let h = +m[1] % 12; if (/p/i.test(m[3])) h += 12; return String(h).padStart(2, '0') + ':' + m[2]; };
+  // ---- 0. FREE OFFICIAL release dates: BLS schedules (reference month | release date | time) and the Fed's FOMC calendar (statement days, 14:00 ET)
+  const official = [], seenO = new Set(); status.official = {};
+  const BLS_PAGES = [['cpi', 'Consumer Price Index (CPI)'], ['ppi', 'Producer Price Index (PPI)'], ['empsit', 'Employment Situation (nonfarm payrolls, unemployment rate)'], ['realer', 'Real Earnings']];
+  for (const [pg, name] of BLS_PAGES) try { const r = await fetch(BLS + '/schedule/news_release/' + pg + '.htm', { headers: { 'User-Agent': UA, Accept: 'text/html' } }); if (!r.ok) { status.official[pg] = 'HTTP ' + r.status; continue; } const html = (await r.text()).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' '); let n = 0;
+    const re = /([A-Z][a-z]{2,8}\.?\s+\d{1,2},\s+\d{4})\s+(\d{1,2}:\d{2}\s*[AP]\.?M)/g; let m; while ((m = re.exec(html))) { const d = mdy(m[1]), hm = ampm(m[2]); if (!d || !hm) continue; const t = nyUtc(d, hm), k = name + t; if (seenO.has(k)) continue; seenO.add(k); n++;
+      official.push({ t, name, key: nameKey(name), kind: kindOf(name), country: 'US', imp: 'High', fc: null, prev: null, act: null, unit: '', src: 'BLS' }); }
+    status.official[pg] = n ? n + ' release dates' : 'no dates parsed'; await sleep(500); } catch (e) { status.official[pg] = 'failed: ' + String(e.message || e).slice(0, 80); }
+  try { const r = await fetch(FED + '/monetarypolicy/fomccalendars.htm', { headers: { 'User-Agent': UA, Accept: 'text/html' } }); if (!r.ok) status.official.fomc = 'HTTP ' + r.status; else { const html = (await r.text()).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' '); let n = 0;
+      const yr = /(\d{4}) FOMC Meetings/g; let y; const years = []; while ((y = yr.exec(html))) years.push([+y[1], y.index]);
+      for (let i = 0; i < years.length; i++) { const seg = html.slice(years[i][1], years[i + 1] ? years[i + 1][1] : years[i][1] + 4000), re = /([A-Z][a-z]{2,8})\.?\s+(\d{1,2})-(\d{1,2})\*?/g; let m; while ((m = re.exec(seg))) { const mo = MONTHS[m[1].slice(0, 3).toLowerCase()]; if (!mo) continue; const d = years[i][0] + '-' + mo + '-' + m[3].padStart(2, '0'), t = nyUtc(d, '14:00'), k = 'FOMC' + t; if (seenO.has(k)) continue; seenO.add(k); n++;
+        official.push({ t, name: 'FOMC Interest Rate Decision', key: nameKey('FOMC Interest Rate Decision'), kind: 'FED', country: 'US', imp: 'High', fc: null, prev: null, act: null, unit: '%', src: 'Federal Reserve' }); } }
+      status.official.fomc = n ? n + ' meeting dates' : 'no dates parsed'; } } catch (e) { status.official.fomc = 'failed: ' + String(e.message || e).slice(0, 80); }
+  const nowIso = new Date().toISOString(), soon = new Date(Date.now() + 10 * 864e5).toISOString();
+  out.official = official.filter(e => e.t >= nowIso.slice(0, 10) && e.t <= soon); out.officialAll = official.filter(e => e.t >= new Date(Date.now() - 400 * 864e5).toISOString()).slice(0, 400);
+  status.officialUpcoming = out.official.length;
+  // ---- 0b. Alpha Vantage official actuals (weekly; 25 calls a day shared with the other jobs)
+  out.av = old.av || {}; out.avAt = old.avAt || null;
+  if (env.ALPHAVANTAGE_KEY && (!out.avAt || Date.now() - Date.parse(out.avAt) > 6 * 864e5)) { const AVS = [['CPI', 'CPI&interval=monthly'], ['NFP', 'NONFARM_PAYROLL'], ['UNEMP', 'UNEMPLOYMENT'], ['RETAIL', 'RETAIL_SALES'], ['FEDFUNDS', 'FEDERAL_FUNDS_RATE&interval=monthly'], ['GDP', 'REAL_GDP&interval=quarterly']]; let got = 0, stop = null;
+    for (const [k, q] of AVS) { try { const r = await fetch(AVB + '/query?function=' + q + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)), j = await r.json().catch(() => ({})); if (j.Information || j.Note) { stop = String(j.Information || j.Note).slice(0, 100); break; } const d = (j.data || []).filter(x => x && x.date && isFinite(+x.value)).slice(0, 40).map(x => [x.date, +x.value]); if (d.length) { out.av[k] = d; got++; } } catch (e) {} await sleep(local(env.AV_BASE) ? 0 : 1500); }
+    if (got) out.avAt = nowIso; status.alphaVantage = got + ' of ' + AVS.length + ' series' + (stop ? ' (stopped: ' + stop + ')' : ''); } else status.alphaVantage = env.ALPHAVANTAGE_KEY ? 'kept (refreshed weekly, last ' + String(out.avAt).slice(0, 10) + ')' : 'no ALPHAVANTAGE_KEY';
+  // fill missing ACTUALS from the official series: month-on-month % for CPI / retail sales, change in thousands for payrolls, levels for the rest
+  const refMonth = (e) => { const m = /\(([A-Za-z]{3})[a-z]*\)/.exec(e.name || ''); if (!m || !MONTHS[m[1].toLowerCase()]) return null; const mo = MONTHS[m[1].toLowerCase()], y = +e.t.slice(0, 4); return (mo > e.t.slice(5, 7) ? y - 1 : y) + '-' + mo + '-01'; };
+  const fillAct = (e) => { if (e.act !== null && e.act !== undefined) return; const rm = refMonth(e); if (!rm) return; const k = e.key || '', pick = (ser, f) => { const a = out.av[ser]; if (!a) return null; const i = a.findIndex(x => x[0] === rm); return i < 0 ? null : f(a, i); };
+    let v = null; if (/^cpi mom/.test(k)) v = pick('CPI', (a, i) => a[i + 1] ? +((a[i][1] / a[i + 1][1] - 1) * 100).toFixed(2) : null); else if (/^cpi yoy/.test(k)) v = pick('CPI', (a, i) => a[i + 12] ? +((a[i][1] / a[i + 12][1] - 1) * 100).toFixed(2) : null);
+    else if (/non ?farm payrolls/.test(k)) v = pick('NFP', (a, i) => a[i + 1] ? Math.round(a[i][1] - a[i + 1][1]) : null); else if (/^unemployment rate/.test(k)) v = pick('UNEMP', (a, i) => a[i][1]); else if (/^retail sales mom/.test(k)) v = pick('RETAIL', (a, i) => a[i + 1] ? +((a[i][1] / a[i + 1][1] - 1) * 100).toFixed(2) : null);
+    if (v !== null && isFinite(v)) { e.act = v; e.actSrc = 'AV'; } };
+  // ---- 1. TipRanks economic calendar: FALLBACK ONLY, gated by its monthly call budget
+  const oldStatus = readJson(STATUS, {}), trLeft = typeof oldStatus.tipranksCallsLeft === 'number' ? oldStatus.tipranksCallsLeft : null, wd = new Date().getUTCDay();
+  const trDue = !old.trAt || Date.now() - Date.parse(old.trAt) > 6 * 864e5, trOk = trLeft === null || trLeft >= 20;
+  if (!env.TIPRANKS_KEY) status.tipranks = 'no key'; else if (!trDue) { status.tipranks = 'kept (fetched ' + String(old.trAt).slice(0, 10) + ', refreshed every 6 days to save calls)'; out.econ = old.econ || []; }
+  else if (!trOk) { status.tipranks = 'skipped: only ' + trLeft + ' calls left this month (official sources carry the dates)'; out.econ = old.econ || []; }
+  else try {
     let session = null, id = 0;
     const rpc = async (method, params, notify) => { const h = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' }; if (session) h['Mcp-Session-Id'] = session;
       const r = await fetch(MCP, { method: 'POST', headers: h, body: JSON.stringify(notify ? { jsonrpc: '2.0', method, params } : { jsonrpc: '2.0', id: ++id, method, params }) }); if (r.headers.get('mcp-session-id')) session = r.headers.get('mcp-session-id'); if (notify) return null;
@@ -81,11 +118,17 @@ if (MODE === 'fetch') {
     const seen = new Set(out.hist.map(e => e.t + e.name)), add = (L) => { for (const e of L) if (e.act !== null && (e.fc !== null || e.prev !== null) && e.t < new Date().toISOString() && !seen.has(e.t + e.name)) { seen.add(e.t + e.name); out.hist.push(e); } };
     add(week);
     let left = null; { const u = tools.find(t => /usage/i.test(t.name)); if (u) try { const r = await rpc('tools/call', { name: u.name, arguments: {} }); const tx = r.structuredContent ? JSON.stringify(r.structuredContent) : ((r.content || [])[0] || {}).text || ''; const m = tx.match(/remain[a-z_]*"?\s*[:=]\s*(\d+)/i); if (m) left = +m[1]; } catch (e) { } }
-    status.tipranksCallsLeft = left; const perRun = left === null ? 2 : left > 400 ? 8 : left > 150 ? 4 : left > 60 ? 2 : 0;   // never use the calls the daily radar needs
+    status.tipranksCallsLeft = left; out.trAt = nowIso; const perRun = left === null ? 1 : left > 400 ? 8 : left > 150 ? 4 : left > 100 ? 2 : 0;   // never use the calls the daily radar needs
     const back = old.backTo || iso(now - 10 * 864e5); let bt = back;
     for (let k = 0; k < perRun && bt > iso(now - 1830 * 864e5); k++) { const to = bt, from = iso(Date.parse(bt) - 31 * 864e5); try { add(await call(from, to)); bt = from; await sleep(800); } catch (e) { break; } }
     out.backTo = bt; out.hist.sort((a, b) => a.t < b.t ? -1 : 1); status.history = out.hist.length + ' past releases (all sizes) with an actual, back to ' + (out.hist[0] ? out.hist[0].t.slice(0, 10) : 'n/a');
   } catch (e) { status.tipranks = 'failed: ' + String(e.message || e).slice(0, 120); out.econ = old.econ || []; }
+  if (!out.trAt) out.trAt = old.trAt || null; if (old.backTo && !out.backTo) out.backTo = old.backTo;
+  // merge: official dates first (they are the ground truth for WHEN), TipRanks rows add forecasts and the smaller events; one row per kind and day
+  { const seen = new Set(out.official.map(e => (e.kind || e.key) + '|' + e.t.slice(0, 10))), keep = (out.econ || []).filter(e => e.t >= new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10));
+    for (const e of keep) { const k = (e.kind || e.key) + '|' + e.t.slice(0, 10); if (e.kind && seen.has(k)) { const o = out.official.find(x => (x.kind || x.key) + '|' + x.t.slice(0, 10) === k); if (o) { if (o.fc === null) o.fc = e.fc; if (o.prev === null) o.prev = e.prev; if (o.act === null) o.act = e.act; o.name = e.name; o.key = e.key; } continue; } seen.add(k); out.official.push(e); }
+    out.econ = out.official.sort((a, b) => a.t < b.t ? -1 : 1); delete out.official; }
+  for (const e of out.econ) fillAct(e); for (const e of out.hist) fillAct(e);
   // ---- 2. Massive: market holidays, and ex-dividend dates of the stocks you hold
   if (env.MASSIVE_KEY) try {
     const get = async (p) => { const r = await fetch(PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY)); return r.ok ? r.json() : null; };
@@ -95,7 +138,7 @@ if (MODE === 'fetch') {
     status.massive = 'ok: ' + out.holidays.length + ' holidays, dividends for ' + Object.keys(out.div).length + ' of ' + held.length + ' held stocks';
   } catch (e) { status.massive = 'failed: ' + String(e.message || e).slice(0, 120); }
   out.study = old.study || null;
-  calWrite(out); status.econUpcoming = out.econ.filter(e => e.t >= new Date().toISOString().slice(0, 10)).length;
+  calWrite(out); status.econUpcoming = out.econ.filter(e => e.t >= new Date().toISOString().slice(0, 10)).length; status.econUpcomingOfficial = out.econ.filter(e => e.src && e.t >= new Date().toISOString().slice(0, 10)).length;
   fs.writeFileSync(STATUS, JSON.stringify(status, null, 1)); console.log('calendar: ' + JSON.stringify(status));
   process.exit(0);
 }

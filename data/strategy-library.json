@@ -2465,9 +2465,10 @@
    "family": "Audit",
    "name": "Missed-runner autopsy (winners vs near-misses)",
    "explain": "For the big runners the system missed (TGL, NIVF, GRML, TCRT, PFAI) and a matched control group that looked the same but did not run: reconstruct what was knowable before the move (filing, contract, news, volume, price), when Stock-2 could first have known, whether the first tradable open was still ahead of the move, and which alert fired or why it missed. Output: a table of miss reasons (coverage / timing / prediction), not a buy signal. DECISION TREE, written before the numbers (from the 21 Oct review): if late data is the biggest cause (40%+ of misses) -> trial a real-time feed for one month and compare live vs delayed on the same alerts; if \"rule did not fire\" is biggest -> no new rule, check whether ORB fires on 10%+ of them; if \"blocked\" is biggest -> keep the blocks and check whether blocked runners faded within 5 days (55%+ fade = blocks right); if 20%+ were caught in time -> score those and size the engine that caught them only if positive after costs. Add the four-way diagnosis (coverage / timing / eligibility / prediction) and a latency-vs-net-return table at 0, 1, 5, 15, 30 minutes.",
-   "status": "queued (Agent A)",
+   "status": "queued (Agent A): built 21 Oct, waiting for the first run",
    "agent": "A",
-   "note": "From the 20 Oct evening reviews."
+   "note": "From the 20 Oct evening reviews.",
+   "study": "missed-runners.mjs -> data/missed-runners.json (ledger data/ignition-missed-history.jsonl; latency tables on Massive minute bars, budget 300 stock-days a run)"
   },
   {
    "id": "A-DEAD1",
@@ -2492,9 +2493,11 @@
    "family": "Intraday (minute bars)",
    "name": "Opening-range breakout with a volume filter, long only (Zarattini, Barbon & Aziz 2024)",
    "explain": "PRE-REGISTERED, one version, resolved from the ORIGINAL paper before any run (Zarattini, Barbon & Aziz 2024, \"A Profitable Day Trading Strategy for the U.S. Equity Market\": 5-minute opening range on \"stocks in play\" = unusually high first-5-minute volume vs the prior 14 days, 7,000+ stocks, 2016-2023, Sharpe about 2.4; the GitHub 20-minute / 1.2x-volume version is a variant, not the paper). Record the exact spec and source for every element (range length, volume baseline, entry fill, target, stop, trail, 15:50 flat, long only, eligible universe, costs incl. spread and slippage) BEFORE looking at results; ambiguity is resolved from the source, never by what backtests best. Universe: the 100 most traded US stocks by dollar volume per test day (point-in-time), 2 years of Massive minute bars (budget the calls). Report: trades, distinct days, distinct stocks, median, worst trade, worst day, busiest-day exposure, same-catalyst concentration, result at 0.8% / 1.2% cost and with 0.1% extra slippage, latency table (fill delayed 0 / 1 / 5 / 15 / 30 minutes), without 2 best trades, vs the same stock open-to-close on its other days and the average stock the same day, both halves, league bar. A marginal pass still goes to PAPER first (execution decides intraday rules).",
-   "status": "queued (Agent A)",
+   "status": "queued (Agent A): built 21 Oct, waiting for the first run",
    "agent": "A",
-   "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence)."
+   "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence).",
+   "study": "orb-study.mjs -> data/orb-study.json (pre-registered, first complete run frozen; incremental minute-bar cache in fm-cache)",
+   "spec": "RESOLVED 21 Oct 2026 from the original paper (SSRN 4729284, PDF read): opening range 9:30-9:35 (5 one-minute bars); direction = sign of the 5-minute candle, doji = no order; entry = stop order at the range high, filled at max(range high, bar open) on the first bar from 9:35 whose high exceeds it, no entry after 15:30; stop = entry minus 10% of the 14-day ATR; NO profit target, NO trailing stop (the paper has none); exit at the close; filters open > 5 USD, 14-day average volume 1M+ shares, ATR14 > 0.50 USD; relative volume = first-5-minute volume / its 14-session average, >= 1 (100%), top 20 by relative volume; paper sizing 1% risk and 4x leverage NOT reproduced (1,000 USD a trade); our costs 0.8% / 1.2% / 0.9% extra slippage; LONG ONLY; universe first the 100 most traded by previous-day dollar volume (minute-bar budget)."
   },
   {
    "id": "A-RT1",
