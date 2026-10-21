@@ -37,22 +37,71 @@
    "entry": 14.516667,
    "qty": 66,
    "since": "2026-10-16"
+  },
+  "EFXT": {
+   "kind": "quick",
+   "q": "low",
+   "maxHold": 10,
+   "stop": 21.5427,
+   "kindName": "quick trade",
+   "entry": 24.39525,
+   "qty": 40,
+   "since": "2026-10-21"
   }
  },
  "pendingBuy": {
-  "EFXT": {
-   "id": "53acea56-4448-4b45-be58-a7dcd575edca",
-   "d": "2026-10-20",
+  "TEVA": {
+   "id": "c9f99177-e459-442e-a851-4bb4df152b64",
+   "d": "2026-10-21",
    "plan": {
     "kind": "quick",
-    "q": "low",
-    "maxHold": 10,
-    "stop": 21.5427,
+    "q": "down",
+    "maxHold": 5,
+    "stop": 38.3582,
     "kindName": "quick trade"
+   }
+  },
+  "WGO": {
+   "id": "32c7e3b1-a0be-4abe-87f7-fa50fa791ae4",
+   "d": "2026-10-21",
+   "plan": {
+    "kind": "entry",
+    "exitMA": 20,
+    "maxHold": 40,
+    "stop": 23.56,
+    "kindName": "earnings drift"
+   }
+  },
+  "WFRD": {
+   "id": "3fd9873e-2380-46d0-94e1-1588d7353371",
+   "d": "2026-10-21",
+   "plan": {
+    "kind": "entry",
+    "exitMA": 20,
+    "maxHold": 40,
+    "stop": 82.18,
+    "kindName": "earnings drift"
    }
   }
  },
- "pendingExit": {},
+ "pendingExit": {
+  "CIEN": {
+   "id": "358aa67a-dce9-4665-9703-967abe33c920",
+   "entry": 386.3,
+   "qty": 3,
+   "kind": "quick",
+   "why": "rule exit (5 day average)",
+   "since": "2026-10-13"
+  },
+  "CRWD": {
+   "id": "51825d72-52b6-4a07-ac1c-a9caba35e0b3",
+   "entry": 252.023333,
+   "qty": 3,
+   "kind": "quick",
+   "why": "rule exit (5 day average)",
+   "since": "2026-10-14"
+  }
+ },
  "closed": [
   {
    "sym": "ALNT",
@@ -82,7 +131,7 @@
   "equity": 100000
  },
  "equity": {
-  "d": "2026-10-20",
-  "equity": 99778.27
+  "d": "2026-10-21",
+  "equity": 99785.54
  }
 }
