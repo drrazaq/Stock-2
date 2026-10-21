@@ -1243,6 +1243,9 @@ function conclusion(sig, pos) {
   for (const q of (sig.quick || []).filter(x => !held[x.sym] && OK.has(x.sym)).slice(0, 4)) out.push(q.sym + ': BUY ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ' | STOP ' + money(q.stop) + ' | SELL ' + (q.t1 ? money(q.t1) + (q.t2 ? ' then ' + money(q.t2) : '') : 'on the rule exit') + ' | out after ' + (q.maxHold || 5) + ' sessions at the latest');
   for (const b of (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !held[x.sym] && OK.has(x.sym)).slice(0, 4)) out.push(b.sym + ': BUY ' + money(b.buyLo) + ' to ' + money(b.buyHi) + ' | STOP ' + money(b.stop) + ' | SELL ' + (b.target ? money(b.target) : 'when it closes below ~' + money(b.exitBelow)) + ' | swing trade, days to weeks');
   for (const r of (sig.leaders || []).filter(x => !held[x.sym] && OK.has(x.sym)).slice(0, 5)) out.push(leadLine(r));
+  // FOCUS MODE (user, 21 Oct: "it still suggests EFXT"): while no engine is proven live, engine trades are PAPER lines, never BUY lines
+  { const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; let working = false; try { working = liveConclusions().some(l => /^- WORKING/.test(l)); } catch (e) {}
+    if (FOCUS && !working) for (let i = 1; i < out.length; i++) out[i] = out[i].replace(/^([A-Z.]+): BUY /, '$1: PAPER ONLY, not a buy (its engine is not proven live; logged for the record): '); }
   if (sig.quickPaused) out.push('Quick trades are paused by the circuit breaker.');
   if (out.length === 1) out.push('No new trade today. Nothing passed its tests.');
   const pv = sig.posVerdict || {};
