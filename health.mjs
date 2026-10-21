@@ -15,7 +15,7 @@ const CHECKS = [
   ['data/smart-money.json', 'smart money (insiders, analysts)', 'every weekday', { biz: 30 }],
   ['data/sec-status.json', 'SEC company filings', 'every weekday', { biz: 30 }, (j) => j.ok ? null : 'the SEC refused or failed: ' + j.why],
   ['data/events-recent.json', 'SEC filings of the last 10 days', 'every weekday', { biz: 30 }],
-  ['data/calendar-status.json', 'economic calendar (TipRanks)', 'every weekday', { biz: 30 }, (j) => !/^ok/.test(j.tipranks || '') ? 'TipRanks: ' + j.tipranks : j.econUpcoming === 0 && /^ok: 0 /.test(j.tipranks) ? 'TipRanks answered but no events were read (input or reply format mismatch)' : (j.tipranksCallsLeft !== null && j.tipranksCallsLeft !== undefined && j.tipranksCallsLeft < 10 ? 'only ' + j.tipranksCallsLeft + ' TipRanks calls left this month' : null)],
+  ['data/calendar-status.json', 'economic calendar', 'every weekday', { biz: 30 }, (j) => /^skipped/.test(j.tipranks || '') && j.official && Object.keys(j.official).length ? null : !/^ok/.test(j.tipranks || '') ? 'TipRanks: ' + j.tipranks : j.econUpcoming === 0 && /^ok: 0 /.test(j.tipranks) ? 'TipRanks answered but no events were read (input or reply format mismatch)' : (j.tipranksCallsLeft !== null && j.tipranksCallsLeft !== undefined && j.tipranksCallsLeft < 10 ? 'only ' + j.tipranksCallsLeft + ' TipRanks calls left this month' : null)],
   ['data/ignition-live.json', 'fast-mover watcher (live session)', 'every weekday session', { biz: 34 }],
   ['data/movers-state.json', 'movers radar', 'every weekday morning', { biz: 34 }],
   ['data/intraday-radar.json', 'intraday radar', 'every weekday session', { biz: 34 }],

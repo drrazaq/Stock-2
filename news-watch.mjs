@@ -61,19 +61,19 @@ const add = (sym, why, x, th, kind) => { const key = x.id || x.headline; alerts.
 // Sent once per level per day (S&P 500 down or up 1.5%, then 2.5%), or for a top-tier headline (tariff, sanctions, export
 // controls, a surprise rate move, war) even before the market moves. It also says what the 5-year test found on days like this.
 const MACRO = /\b(tariffs?|trade war|sanctions?|export (controls?|curbs?|ban)|fed\b|fomc|powell|rate (cut|hike)s?|interest rates?|inflation|cpi|payrolls|jobs report|recession|china|beijing|xi jinping|trump|white house|executive order|ecb|lagarde|bank of england|european union|\beu\b|brussels|opec|war|invasion|missile|ceasefire|shutdown|debt ceiling|treasury yields?)\b/i;
-const TIER1 = /\b(tariffs?|sanctions?|export (controls?|curbs?|ban)|emergency rate|surprise (rate )?(cut|hike)|declares? war|invasion|missile strike|trade war)\b/i;
+const TIER1 = /\b(tariffs?|export (controls?|curbs?|ban)|emergency rate|surprise (rate )?(cut|hike)|declares? war|invasion|missile strike|trade war)\b/i;   // 'sanctions' dropped 22 Oct: daily routine headlines (a law firm, a shipping company) fired MARKET SHOCK on a +0.5% day
 const GEN = await fh('/news?category=general'), MS = readJson('data/macro-state.json', {}), today = iso(now);
 if (MS.day !== today) { MS.day = today; MS.sent = []; MS.heads = []; }
 { const spy = await fh('/quote?symbol=SPY'), dp = spy && isFinite(+spy.dp) && +spy.c > 0 ? +spy.dp : null;
   const heads = (Array.isArray(GEN) ? GEN : []).filter(x => x && x.headline && x.datetime * 1000 >= now - 6 * 3600e3 && MACRO.test(x.headline + ' ' + (x.summary || '')) && !MS.heads.includes(x.id || x.headline)).sort((a, b) => b.datetime - a.datetime);
   const lvl = dp === null ? null : dp <= -2.5 ? 'down2.5' : dp <= -1.5 ? 'down1.5' : dp >= 2.5 ? 'up2.5' : dp >= 1.5 ? 'up1.5' : null;
   const t1 = heads.filter(x => TIER1.test(x.headline)), why = [];
-  if (lvl && !MS.sent.includes(lvl)) { why.push('move'); MS.sent.push(lvl); } if (t1.length) why.push('headline');
+  if (lvl && !MS.sent.includes(lvl)) { why.push('move'); MS.sent.push(lvl); } if (t1.length && (dp === null || Math.abs(dp) >= 1.0)) why.push('headline');   // a headline alone needs the market to be moving 1%+ (22 Oct)
   if (why.length) { const MD = readJson('data/mday-study.json', null), row = (k) => MD && MD.rows ? MD.rows.find(r => r.k === k) : null, pcx = (x) => (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
     const k = dp !== null && dp <= -1.5 ? 'bigDown' : dp !== null && dp >= 1.5 ? 'bigUp' : null, r = k ? row(k) : null, allN = MD && MD.all && isFinite(MD.all.newer) ? MD.all.newer : null;
     const show = (why.includes('move') ? heads : t1).slice(0, 4); for (const x of show) MS.heads.push(x.id || x.headline);
     const DEC = k === 'bigDown' ? 'DECISION: HOLD everything you own; keep every stop at your broker. Do not panic-sell. ' + (r && /BETTER/.test(r.verdict) ? 'Tested buys in ACTIONS stay valid at their prices.' : 'Only the strongest tested buy today.') : k === 'bigUp' ? 'DECISION: HOLD. Do not chase stocks that already jumped; buy only tested buys inside their price range.' : 'DECISION: nothing to do now. You get another message if the S&P 500 moves 1.5%.';
-    const lines = ['MARKET SHOCK' + (dp !== null ? ': S&P 500 ' + (dp >= 0 ? '+' : '') + dp.toFixed(1) + '% today' : ''), DEC, '',
+    const lines = [(why.includes('move') ? 'MARKET SHOCK' : 'MARKET NEWS (heads-up)') + (dp !== null ? ': S&P 500 ' + (dp >= 0 ? '+' : '') + dp.toFixed(1) + '% today' : ''), DEC, '',
       ...(show.length ? ['Why (headlines):', ...show.map(x => '- "' + String(x.headline).slice(0, 160) + '" (' + (x.source || '') + ')')] : ['No big headline found yet; the move may be flows, data or rumours.']), '',
       r ? 'What the 5-year test found when the S&P 500 had ' + (k === 'bigDown' ? 'a big drop (1.5%+)' : 'a big rise (1.5%+)') + ' that day: the system’s tested buys made ' + pcx(r.newer.avg) + ' a trade on average (' + r.newer.n + ' unseen trades) vs ' + (allN !== null ? pcx(allN) : 'n/a') + ' on all days: ' + r.verdict + '.' : 'The market has not moved 1.5% yet; this is a heads-up on the news only.',
       'Decided by the system from the 5-year market-day test. Not financial advice.'];
