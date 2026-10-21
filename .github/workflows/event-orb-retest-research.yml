@@ -99,7 +99,7 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/catalyst-events.jsonl data/event-orb-retest-15d-events.json data/event-orb-retest-15d-controls.jsonl data/event-orb-retest-15d-requests.json data/event-orb-retest-15d-control-requests.json data/event-orb-retest-15d-paper.json data/event-orb-retest-15d-study.json data/event-orb-retest-15d-control-study.json data/event-orb-retest-15d-gates.json data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          for f in data/catalyst-events.jsonl data/event-orb-retest-15d-events.json data/event-orb-retest-15d-controls.jsonl data/event-orb-retest-15d-requests.json data/event-orb-retest-15d-control-requests.json data/event-orb-retest-15d-bars-coverage.json data/event-orb-retest-15d-paper.json data/event-orb-retest-15d-study.json data/event-orb-retest-15d-control-study.json data/event-orb-retest-15d-gates.json data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "event ORB retest research $(date -u +%FT%RZ)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ]

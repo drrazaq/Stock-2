@@ -65,6 +65,7 @@ async function main() {
     coverage: { requestFiles: sources, requests: requests.length, requestsFullyCovered: covered, requestsKnownWithGaps: partial, requestsNotYetFetched: uncovered, stocks: bySym.size, stockDaysNeeded: totalDays, stockDaysCachedBefore: haveBefore, stockDaysStillMissing: stockDaysMissing, ...budget() },
     requests: requests.map(r => ({ sym: r.sym, from: r.from, to: r.to, eventId: r.eventId, file: r.file, coverage: r.coverage })), series };
   fs.writeFileSync(OUT, JSON.stringify(out));
+  fs.writeFileSync(env.EVENT_ORB_BARS_COVERAGE || 'data/event-orb-retest-15d-bars-coverage.json', JSON.stringify({ generatedAt: out.generatedAt, status, why: out.why, barMinutes: 5, coverage: out.coverage, fiveMinuteBars: Object.values(series).reduce((a, b) => a + b.length, 0) }, null, 1));   // small, committed; the manifest itself is not
   console.log('evr-bars: ' + status + (refused ? ' (' + refused + ')' : '') + '; ' + calls + ' calls; covered ' + covered + ' of ' + requests.length + ' requests (' + partial + ' known with gaps, ' + uncovered + ' not fetched); series ' + Object.keys(series).length + ' stocks, ' + Object.values(series).reduce((a, b) => a + b.length, 0) + ' five-minute bars');
 }
 if (process.argv[1] && /event-orb-retest-bars\.mjs$/.test(process.argv[1])) await main();
