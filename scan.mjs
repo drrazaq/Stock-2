@@ -1068,7 +1068,8 @@ function planCands0(sig, held0) {
       expect: fair === 'PROVISIONALLY PROMISING' ? 'passed the whole-market fair test; live record still building' : 'NOT proven on the whole-market fair test (' + fair.toLowerCase() + ')',
       why: 'one of the strongest stocks: ' + pcs(r.mom) + ' in 6 months',
       ok: fair === 'PROVISIONALLY PROMISING', score: -0.001 }); }
-  for (const e of (sig.pead || []).filter(x => x.live && !held[x.sym])) { const t = e.test || {};
+  const ESnow = readJson0('data/earnings-study.json'), peadLive = !!(ESnow && ESnow.verdict === 'PROMISING');   // the CURRENT verdict decides, not the one stored in last night's signals (22 Oct)
+  for (const e of (sig.pead || []).filter(x => x.live && peadLive && !held[x.sym])) { const t = e.test || {};
     c.push({ sym: e.sym, kind: 'earnings drift', outsideTest: e.inTest === false, n: t.n || null, net: typeof t.avg === 'number' ? t.avg : null, lo: e.buyLo, hi: e.buyHi, stop: e.stop, days: e.hold, earnDays: null, sector: null,
       sell: 'when it closes under its 20 day average (~' + money(e.sma20) + ' now, rising) or after ' + e.hold + ' sessions', wait: 'days to weeks, up to ' + e.hold + ' sessions',
       expect: (t.n ? Math.round((t.win || 0) * 100) + '% of ' + t.n + ' past earnings beats it never saw won; average ' + pcs(t.avg) + ' a trade after costs (whole-market fair test)' : 'whole-market fair test passed'),
