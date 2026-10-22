@@ -35,7 +35,8 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
   fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
   fs.mkdirSync(path.join(dir, 'data'));
-  writeFixture(dir, 'data/settings.json', { ...DONE, ...(files['data/settings.json'] || {}) });
+  // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
+  const st0 = files['data/settings.json']; writeFixture(dir, 'data/settings.json', typeof st0 === 'string' ? st0 : { ...DONE, ...(st0 || {}) });
   for (const [k, v] of Object.entries(files)) if (k !== 'data/settings.json') writeFixture(dir, k, v);
   const file = path.join(dir, 'scan-under-test-' + (++seq) + '.mjs');
   fs.writeFileSync(file, src.join('\n') + '\nexport const __get = (name) => eval(name);\n');
