@@ -1,0 +1,30 @@
+name: Tests
+# Regression tests for the money-critical fixes (test/*.test.mjs). No secrets and no network: every test runs on fixture files,
+# and test/load-scan.mjs refuses any request that is not to localhost.
+on:
+  push:
+    paths-ignore:
+      - 'data/**'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run every test file
+        shell: bash
+        run: |
+          failed=0
+          for f in test/*.test.mjs; do
+            echo "::group::$f"
+            if node "$f"; then echo "PASS $f"; else echo "::error file=$f::test file failed"; failed=1; fi
+            echo "::endgroup::"
+          done
+          exit $failed
