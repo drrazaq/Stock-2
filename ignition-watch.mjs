@@ -151,6 +151,7 @@ while (Date.now() - START < MAXMS) {
     // minute price series from live quotes (for the build-up rule)
     if (live) { const S = ser[r.sym] || (ser[r.sym] = []); if (!S.length || S[S.length - 1].m !== m) { S.push({ m, p: r.price }); if (S.length > 35) S.shift(); } }
     for (const R of IG_RULES) { const k = R.id; if (seen[r.sym + k] || R.pull) continue;
+      if (!live) { if (chg >= (R.trig || 0.05)) flag(r.sym, 'stale', 'its price was older than 3 minutes when it qualified (not used; the rule waits for a fresh price)'); continue; }   // (outside review, 22 Oct) a stale price may neither consume the one-shot flag nor become a signal
       if (R.orb) { if (m < 575 || m >= R.by || !(r.open / r.prevC - 1 >= R.gap)) continue;
         if (orb[r.sym] === undefined) { orb[r.sym] = false; orb[r.sym] = (await openingRange(r.sym)) || null; } const o = orb[r.sym]; if (!o || !(r.price > o.orH)) continue;
         seen[r.sym + k] = 1; if (R.pmRv && !(av > 0 && o.pm / av >= R.pmRv)) continue; if (!passes(R, r.prevC, M)) continue; hits.push({ R, extra: { orH: o.orH, orL: o.orL } }); continue; }
@@ -197,7 +198,7 @@ const missed = movers.map(v => ({ sym: v.sym, code: codeOf(v), openGap: v.fo ===
 const tally = {}; for (const x of missed) tally[x.code] = (tally[x.code] || 0) + 1;
 const modes = {}; for (const b of beat) modes[b.mode] = (modes[b.mode] || 0) + 1;
 const med = (a) => { const s = a.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
-const scheduled = Math.max(1, Math.min(900, clock()) - Math.max(570, beat.length ? beat[0].m : 570));
+const scheduled = Math.max(1, Math.min(900, clock()) - 570);   // (outside review, 22 Oct) coverage counts from the 09:30 open, so a late start shows as missed minutes
 const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(beat[0].m), lastMinute: fmtM(beat[beat.length - 1].m), minutesCompletedRate: +(Math.min(1, beat.length / scheduled)).toFixed(3), modes,
   receivedMedian: med(beat.map(b => b.received)), evaluatedMedian: med(beat.map(b => b.evaluated)), liveMedian: med(beat.map(b => b.live)), liveRate: med(beat.map(b => b.evaluated ? +(b.live / b.evaluated).toFixed(3) : null)),
   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
