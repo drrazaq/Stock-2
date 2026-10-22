@@ -2729,6 +2729,13 @@ function leadLedger(dn) {
 const leadLine = (r) => r.sym + ': BUY ' + money(r.buyLo) + ' to ' + money(r.buyHi) + ' | STOP ' + money(r.stop) + ' | SELL when it closes under its trailing stop or its 50 day average (now ~' + money(r.e50) + ') | trend trade, weeks';
 const leadersText = () => { const s = readJson(LEAD_FILE, null); return s && s.text ? s.text : 'The LEADERS list is built by the nightly scan. None has run on this version yet; it arrives after tonight’s close.'; };
 
+// NIGHTLY STOP RAISE for one of your positions (moved out of daily() unchanged on 22 Oct so the regression tests can reach it).
+// P: the position (changed in place), c: daily candles, ind: L.indicators(c), i: the last candle.
+function nightlyStopRaise(P, c, ind, i) {
+  if (P.stopWhy && !P.own && c.some(k => k.d > P.since)) { const a = ind.atr[i], e50 = ind.e[50][i], ns = +Math.max(c[i].c - 2 * a, e50 < c[i].c ? e50 : 0).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }
+  if (P.kind === 'leader' && P.stop && c.some(k => k.d > P.since)) { const ns = +(c[i].c - LEADCFG.ATR * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }
+  if (P.trail && P.stop) { const ns = +(c[i].c - 3 * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }   // the running half: stop trails 3 daily moves under the close
+}
 async function daily() {
   const now = Date.now(), loaded = {}, errors = [];
   await tgCommands(readJson('data/signals.json', null));
@@ -2777,9 +2784,7 @@ async function daily() {
     const c = d.candles, i = c.length - 1, ind = L.indicators(c, mkt), T = L.trendStats(c, ind, mom6), halal = myHalal(sym);
     if (!only && !WIDE.has(sym) && i > 140) { const e2 = ind.e[L.CFG.TREND], e5 = ind.e[50], j = i - 5; wk.push({ sym, chg: c[i].c / c[j].c - 1, up: T.up, wasUp: c[j].c > e2[j] && e5[j] > e2[j] && c[j].c / c[j - 126].c - 1 > 0 }); }
     if (myPos[sym]) {   // your own position: end-of-day checks
-      if (myPos[sym].stopWhy && !myPos[sym].own && c.some(k => k.d > myPos[sym].since)) { const a = ind.atr[i], e50 = ind.e[50][i], ns = +Math.max(c[i].c - 2 * a, e50 < c[i].c ? e50 : 0).toFixed(2); if (ns > myPos[sym].stop && c[i].c > myPos[sym].stop) { myPos[sym].stop = ns; myPos[sym].raised = c[i].d; } }
-      if (myPos[sym].kind === 'leader' && myPos[sym].stop && c.some(k => k.d > myPos[sym].since)) { const ns = +(c[i].c - LEADCFG.ATR * ind.atr[i]).toFixed(2); if (ns > myPos[sym].stop && c[i].c > myPos[sym].stop) { myPos[sym].stop = ns; myPos[sym].raised = c[i].d; } }
-      if (myPos[sym].trail && myPos[sym].stop) { const ns = +(c[i].c - 3 * ind.atr[i]).toFixed(2); if (ns > myPos[sym].stop && c[i].c > myPos[sym].stop) { myPos[sym].stop = ns; myPos[sym].raised = c[i].d; } }   // the running half: stop trails 3 daily moves under the close
+      nightlyStopRaise(myPos[sym], c, ind, i);
       const P = myPos[sym], held = c.filter(k => k.d > P.since).length, flags = [];
       if (P.kind === 'leader' && held >= 1 && c[i].c < ind.e[50][i]) flags.push('LEADER EXIT: it closed under its 50 day average, the trend is broken. Sell at the next open.');
       if (P.kind === 'entry' && c[i].d >= P.since && !(P.stop && c[i].c <= P.stop)) {
