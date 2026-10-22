@@ -108,7 +108,8 @@ else {
 }
 const line = s => !s || !s.n ? 'no trades' : s.n + ' trades, ' + Math.round(s.win * 100) + '% won, average ' + pc(s.avg) + (s.pf ? ', profit factor ' + s.pf.toFixed(2) : '');
 const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[0], to: D[T - 1], stocks: Object.keys(cache.syms).length, reports: nreps, verdict, why: why.join('; ') || 'passed in both halves, at stress cost, in the last 12 months, and beat buying every earnings reaction', results: R,
-  rule: { minSurprise: 0.10, minUp: 0.03, minLoc: 0.5, maxGap: 0.03, maxStop: 0.15, exitMA: 20, hold: 40 } };
+  rule: { minSurprise: 0.10, minUp: 0.03, minLoc: 0.5, maxGap: 0.03, maxStop: 0.15, exitMA: 20, hold: 40 },
+  syms: Object.keys(cache.syms).sort() };   // the tested set (22 Oct): live signals outside it are kept as a separate paper record
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 const msg = ['EARNINGS SURPRISE DRIFT, fair test ' + D[T - 1], 'Earnings history: ' + out.stocks + ' stocks, ' + nreps + ' reports. Prices ' + D[0] + ' to ' + D[T - 1] + ', 0.8% cost.', '',
   'Rule (fixed): EPS 10%+ above the estimate, reaction day up 3%+ closing in the top half, buy the next open, stop under the reaction-day low, sell on a close under the 20 day average or after 40 sessions.',
