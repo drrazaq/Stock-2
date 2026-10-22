@@ -2733,8 +2733,8 @@ const leadersText = () => { const s = readJson(LEAD_FILE, null); return s && s.t
 // P: the position (changed in place), c: daily candles, ind: L.indicators(c), i: the last candle.
 function nightlyStopRaise(P, c, ind, i) {
   if (P.stopWhy && !P.own && c.some(k => k.d > P.since)) { const a = ind.atr[i], e50 = ind.e[50][i], ns = +Math.max(c[i].c - 2 * a, e50 < c[i].c ? e50 : 0).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }
-  if (P.kind === 'leader' && P.stop && c.some(k => k.d > P.since)) { const ns = +(c[i].c - LEADCFG.ATR * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }
-  if (P.trail && P.stop) { const ns = +(c[i].c - 3 * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }   // the running half: stop trails 3 daily moves under the close
+  if (P.kind === 'leader' && P.stop && !P.own && c.some(k => k.d > P.since)) { const ns = +(c[i].c - LEADCFG.ATR * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }
+  if (P.trail && P.stop && !P.own) { const ns = +(c[i].c - 3 * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }   // the running half: stop trails 3 daily moves under the close
 }
 async function daily() {
   const now = Date.now(), loaded = {}, errors = [];

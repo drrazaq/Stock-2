@@ -36,7 +36,7 @@ test('a stop is never lowered', () => {
 
 // KNOWN GAP (found while writing these tests, not changed): the leader raise (close - 3 ATR) and the trailing-half raise do not check
 // `own`, so a stop the owner set with  stop SYM PRICE  on a leader, or on the running half, is still moved. Owner's decision.
-test('the owner\'s own stop on a leader position is never raised', { todo: 'leader and trailing raises ignore own (owner to decide)' }, () => {
+test('the owner\'s own stop on a leader position is never raised', () => {
   const P = { entry: 100, since: '2026-10-18', kind: 'leader', stop: 70, own: true };
   raise(P, c, ind, i);
   assert.equal(P.stop, 70);
