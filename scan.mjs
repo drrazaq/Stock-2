@@ -220,7 +220,7 @@ function experimentRows() {
   const LS = J('leaders-study.json'); if (LS) { add('leaders study', 'LEADERS (strongest stocks) ' + (LS.chosen || ''), LS.verdict, Math.max(1, (LS.rows || []).length), LS.why); if (LS.live) add('leaders study', 'LEADERS live version ' + LS.live, LS.liveVerdict, 0, LS.liveWhy); }
   const SC = J('score-study.json'); if (SC) add('score study', '0-100 stock score', SC.verdict, Math.max(1, Object.keys(SC.variant || {}).length), '');
   const SM = J('smart-money-study.json'); if (SM) { add('smart money', 'insider buying', SM.verdict, 1, SM.why); if (SM.strict) add('smart money', 'strict insider cluster (3+ insiders, $100K+, profitable)', SM.strict.verdict, 1, SM.strict.why); }
-  const ES = J('events-study.json'); if (ES && ES.fam) { for (const x of Object.values(ES.fam)) add('company news', x.name, x.warn ? 'WARNING' : x.verdict, 1, x.why); if (ES.link) add('company news', 'supply chain (hot industry -> suppliers)', ES.link.verdict, 1, ES.link.why); if (ES.peer) add('company news', 'peer lag (leader jumps -> laggard peers)', ES.peer.verdict, 1, ES.peer.why); }
+  const ES = J('events-study.json'); if (ES && ES.fam) { for (const x of Object.values(ES.fam)) add('company news', x.name, x.warn ? 'WARNING' : x.verdict, 1, x.why); if (ES.link) add('company news', 'supply chain (hot industry -> suppliers)', linkVerdict(ES.link), 1, ES.link.why); if (ES.peer) add('company news', 'peer lag (leader jumps -> laggard peers)', ES.peer.verdict, 1, ES.peer.why); }
   else add('company news', 'SEC/FDA news families, supply chain, peer lag, Friday-night filings', 'NOT RUN YET', 0, 'first run Sunday');
   { const CS = (calRead0() || {}).study; if (CS && CS.industry) { const L = Object.entries(CS.industry), found = L.reduce((a, [, v]) => a + (v.up || []).length + (v.down || []).length, 0); add('economic calendar', 'industries after inflation / growth / Fed surprises (' + CS.releases + ' releases)', found ? 'PROMISING' : 'NOT PROVEN', Math.max(1, CS.industryTests || 1), found ? '' : 'no industry reacted steadily in both halves'); } else add('economic calendar', 'industries after inflation / growth / Fed surprises', 'NOT RUN YET', 0, 'first run Sunday after the calendar history loads'); }
   { const HZ = J('horizons.json'); if (HZ && HZ.status === 'OK') for (const r of Object.values(HZ.results)) add('mid / long term (1-6 months)', r.name + ', ' + r.months + ' month' + (r.months > 1 ? 's' : ''), r.verdict, 1, r.why); else add('mid / long term (1-6 months)', 'pullback, leader and turn-around setups held 1, 3, 6 months', 'NOT RUN YET', 0, 'first run Sunday'); }
@@ -333,6 +333,8 @@ function v15Tier() { if (!TIER2_ON()) return null; const Q = readJson0('data/qua
   if (!(V.older && V.newer && V.older.beatAvgStock / V.older.months > 0.5 && V.newer.beatAvgStock / V.newer.months > 0.5)) return null;
   const LG = readJson0('data/agent-league.json'), b = LG && (LG.rows || []).find(x => x.id === 'B'); if (b && b.scored3m >= 3 && typeof b.vsSpy3m === 'number' && b.vsSpy3m < 0) return null;   // live league record negative: off
   return 'small'; }
+// SUPPLY-CHAIN result (Agent C, 22 Oct): it has no luck test and no costs, so a PROMISING there is information only, never a pass.
+const linkVerdict = (k) => k && /PROMISING|BETTER/.test(k.verdict || '') && typeof k.t !== 'number' ? 'INFORMATION ONLY (no luck test, no costs; not a buy rule)' : (k && k.verdict) || 'not run';
 function switchPaperLine() { const S = readJson0('data/switch-paper.json'); if (!S) return 'Live paper check: starts with the next nightly scan.'; const D = S.done || [];
   if (!D.length) return 'Live paper check: ' + (S.open || []).length + ' cases running, first results after 60 sessions (about 3 months).';
   const a = D.reduce((t, x) => t + x.adv, 0) / D.length, b = D.filter(x => x.adv > 0).length / D.length;
@@ -484,7 +486,7 @@ function eventsText() { const ES = readJson0('data/events-study.json'); if (!ES 
     'AS A BUY (news + a strong day, bought the next open; must beat stocks that jumped the same way WITHOUT the news):', ...buy.map(([, x]) => '- ' + x.name + ': ' + x.verdict + '. Newer half ' + ln(x.results.newer) + (x.results.ctrlNewer && x.results.ctrlNewer.n ? '; without the news ' + pcs(x.results.ctrlNewer.avg) : '')),
     '', 'WARNINGS (stocks lagged the market and other stocks by 1%+ over the next 20 sessions, both halves):', ...(warn.length ? warn.map(([, x]) => '- ' + x.name + ': ' + pcs(x.drift.newer.vs) + ' vs other stocks (' + x.drift.newer.n + ' cases)') : ['- none proven']),
     ...(live.length ? ['', 'LAST 10 DAYS (only kinds that passed or warn):', ...live.map(e => '- ' + e.sym + ' ' + e.p.slice(0, 10) + ': ' + e.f.split(',').filter(k => ES.fam[k]).map(k => ES.fam[k].name.replace(/ \(.*\)$/, '') + (ES.fam[k].warn ? ' (WARNING)' : ' (passed)')).join('; '))] : []),
-    '', 'SUPPLY CHAIN (hot industry -> its suppliers next month): ' + (ES.link ? ES.link.verdict : 'not run') + '. Send  themes  for the map now.',
+    '', 'SUPPLY CHAIN (hot industry -> its suppliers next month): ' + (ES.link ? linkVerdict(ES.link) : 'not run') + '. Send  themes  for the map now.',
     'PEER LAG (industry leader jumps 6%+ -> its laggard peers for 3 days): ' + (ES.peer ? ES.peer.verdict + (ES.peer.results && ES.peer.results.newer ? ', newer half ' + ln(ES.peer.results.newer) + (ES.peer.results.ctrlNewer && ES.peer.results.ctrlNewer.n ? ' vs other laggards ' + pcs(ES.peer.results.ctrlNewer.avg) : '') : '') + (ES.peer.why ? ' (' + ES.peer.why + ')' : '') : 'runs from next Sunday') + '.',
     'Only kinds that PASSED become buys (as "event drift" in ACTIONS). Research, not advice.'].join('\n'); }
 
@@ -2147,7 +2149,7 @@ async function stockMap(sym, sig, pos, short) { const CS = readJson0('data/chain
   { const dl = dilutionLine(sym); if (dl && !P) out.push(dl); }
   { const Z = readJson0('data/zad-list.json'); if (Z && (Z.notHalal || []).includes(sym)) down.push('NOT HALAL on the ZAD list'); }
   // 5. tested evidence behind the chain idea
-  const ES = readJson0('data/events-study.json'), link = ES && ES.link ? ES.link.verdict : null;
+  const ES = readJson0('data/events-study.json'), link = ES && ES.link ? linkVerdict(ES.link) : null;
   out.push('TAILWINDS (' + up.length + '): ' + (up.join('; ') || 'none') + '.', 'HEADWINDS (' + down.length + '): ' + (down.join('; ') || 'none') + '.');
   if (!short) out.push('How much to trust the chain view: "a hot industry pulls its suppliers up" tested ' + (link || 'not yet') + ' on 5 years; quality and cheapness have their own tests (Sunday). This map explains a stock; only tested rules make a BUY. Check ZAD.');
   return out.join('\n'); }
