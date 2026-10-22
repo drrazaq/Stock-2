@@ -46,10 +46,10 @@ jobs:
       - run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          git add data
-          git diff --cached --quiet || git commit -m "scan $(date -u +%FT%RZ)"
-          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
-          [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository" | tee -a run.log; exit 1; }
+          # review S-1 (22 Oct): on a conflict the owner's positions, trades and bot state keep origin's copy (the bot's), every other
+          # file keeps this run's copy as before; see .github/save-data.sh and test/save-data.test.mjs
+          set -o pipefail
+          bash .github/save-data.sh "scan $(date -u +%FT%RZ)" 2>&1 | tee -a run.log
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()
         env:

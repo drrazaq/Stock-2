@@ -7,6 +7,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { createRequire } from 'node:module';
+import { execSync } from 'node:child_process';
 
 const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
@@ -2736,6 +2737,22 @@ function nightlyStopRaise(P, c, ind, i) {
   if (P.kind === 'leader' && P.stop && !P.own && c.some(k => k.d > P.since)) { const ns = +(c[i].c - LEADCFG.ATR * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }
   if (P.trail && P.stop && !P.own) { const ns = +(c[i].c - 3 * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }   // the running half: stop trails 3 daily moves under the close
 }
+// MERGE, NOT OVERWRITE (audit 22 Oct): the scan runs for a long time while the bot records buys, sales and stops. Re-read the file and
+// apply only the fields this job changed; a position sold meanwhile stays sold, a new one stays, a stop the owner changed stays his.
+// FIX (review S-1, 22 Oct): the bot runs on another runner, so its trades reach this job only through git; the local file is this job's
+// own hours-old checkout. The base is now the NEWEST copy on origin/main (git fetch + git show), the local file only when git fails.
+function latestPositions() {
+  try { const o = { stdio: ['ignore', 'pipe', 'pipe'], timeout: 60000 };
+    execSync('git fetch -q origin main', o); const j = JSON.parse(execSync('git show origin/main:' + POS_FILE, { ...o, maxBuffer: 64 << 20 }).toString());
+    if (j && typeof j === 'object' && !Array.isArray(j)) return j; } catch (e) { console.log('positions merge: origin copy not readable (' + String(e.message).split('\n')[0].slice(0, 120) + '), using the local file'); }
+  return readJson(POS_FILE, {});
+}
+function mergeNightlyPositions(POS_AT_LOAD, myPos) {
+  const fresh = latestPositions(), F = ['stop', 'raised', 'exitBelow', 'exitFlag', 't1', 't2', 'tmode', 'tnote', 'tChecked', 'dist0'];
+  for (const sym of Object.keys(fresh)) { const a = POS_AT_LOAD[sym], b = myPos[sym], f = fresh[sym]; if (!a || !b || a.entry !== f.entry || a.since !== f.since) continue;
+    for (const k of F) { if (JSON.stringify(f[k]) !== JSON.stringify(a[k])) continue; if (b[k] === undefined) delete f[k]; else f[k] = b[k]; } }
+  savePos(fresh); for (const k of Object.keys(myPos)) if (!fresh[k]) delete myPos[k]; Object.assign(myPos, fresh);
+}
 async function daily() {
   const now = Date.now(), loaded = {}, errors = [];
   await tgCommands(readJson('data/signals.json', null));
@@ -3039,12 +3056,7 @@ async function daily() {
   const srcStats = Object.values(bySrc).map(g => ({ ...g, avg: g.avg / g.n, spy: g.spy / g.n, withStop: g.withStop / g.n })).map(g => ({ ...g, judged: g.n >= 10 && g.days >= 20, muted: g.n >= 10 && g.days >= 20 && g.avg < g.spy, trusted: g.n >= 10 && g.days >= 20 && g.avg > g.spy && g.beat / g.n >= 0.5 }));
   const MUTED = new Set(srcStats.filter(g => g.muted).map(g => g.src)), TRUSTED = new Set(srcStats.filter(g => g.trusted).map(g => g.src));
   const tipBoardData = { sources: srcStats, tips: tipRows };
-  // MERGE, NOT OVERWRITE (audit 22 Oct): the scan runs for a long time while the bot records buys, sales and stops. Re-read the file and
-  // apply only the fields this job changed; a position sold meanwhile stays sold, a new one stays, a stop the owner changed stays his.
-  { const fresh = readJson(POS_FILE, {}), F = ['stop', 'raised', 'exitBelow', 'exitFlag', 't1', 't2', 'tmode', 'tnote', 'tChecked', 'dist0'];
-    for (const sym of Object.keys(fresh)) { const a = POS_AT_LOAD[sym], b = myPos[sym], f = fresh[sym]; if (!a || !b || a.entry !== f.entry || a.since !== f.since) continue;
-      for (const k of F) { if (JSON.stringify(f[k]) !== JSON.stringify(a[k])) continue; if (b[k] === undefined) delete f[k]; else f[k] = b[k]; } }
-    savePos(fresh); for (const k of Object.keys(myPos)) if (!fresh[k]) delete myPos[k]; Object.assign(myPos, fresh); }
+  mergeNightlyPositions(POS_AT_LOAD, myPos);
   const LESSONS = { updated: new Date(now).toISOString(), session, rules: {} };
   for (const [k, r] of Object.entries(live)) {
     const med = [...r.runUp].sort((a, b) => a - b)[Math.floor(r.runUp.length / 2)], avg = r.sum / r.n;
