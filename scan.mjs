@@ -2422,7 +2422,7 @@ async function tgCommands(sig) {
           const usd = n0 * (exit - P.entry) - 2 * FEE(); pv.shares[sym] = held - n0; addRealized(pv, sym, usd, ny(Date.now()).d); const news = goalNews(pv); privWrite(pv);
           out.push('Sold ' + n0 + ' of your ' + held + ' ' + sym + ' at ' + money(exit) + ' (' + pcs(exit / P.entry - 1) + ', about ' + (usd >= 0 ? '+' : '') + money(usd) + ' USD after fees). You still hold ' + (held - n0) + ' shares at ' + money(P.entry) + ', stop ' + (P.stop ? money(P.stop) : 'not set') + '. Change the stop at your broker to cover ' + (held - n0) + ' shares.' + news);
           continue; } } }
-    if ((k = text.match(/^(?:i\s+)?bought\s+([a-z.\-]{1,6})(?:\s+(?:at\s+)?(\d+(?:\.\d+)?))?/i))) {
+    if ((k = text.match(/^(?:i\s+)?bought\s+(?!options?\b)([a-z.\-]{1,6})(?:\s+(?:at\s+)?(\d+(?:\.\d+)?))?/i))) {   // (22 Oct) not "bought option ...": that is the options trial, handled below
       const sym = k[1].toUpperCase(); let entry = k[2] ? +k[2] : null;
       const shm = text.match(/(\d+(?:\.\d+)?)\s*(?:shares?|sh|stocks?|اسهم|سهم)\b/i) || text.match(/\b(?:x|qty|shares?)\s*(\d+(?:\.\d+)?)/i) || text.match(/^(?:i\s+)?bought\s+[a-z.\-]{1,6}\s+(?:at\s+)?\d+(?:\.\d+)?\s+(\d+)\s*$/i), shares = shm ? +shm[1] : null;
       if (!entry) { const j = await liveQ((sym)); entry = +j.price || null; }
@@ -2455,7 +2455,7 @@ async function tgCommands(sig) {
       let news = ''; { const pv = privRead(); if (pv.shares && pv.shares[sym]) { const h = Math.floor(pv.shares[sym] / 2); if (exit && P.entry) { addRealized(pv, sym, h * (exit - P.entry) - 2 * FEE(), ny(Date.now()).d, 'half'); news = goalNews(pv); } pv.shares[sym] -= h; privWrite(pv); } }
       P.trail = true; P.halfSince = ny(Date.now()).d; P.stop = Math.max(P.stop || 0, P.entry); P.own = false; delete P.stopWhy; P.maxHold = 30;
       out.push('Half of ' + sym + ' sold' + (exit ? ' at ' + money(exit) + ' (' + pcs(exit / P.entry - 1) + ')' : '') + '. The rest now has its stop at your buy price ' + money(P.stop) + ': it cannot turn into a loss. I raise the stop every night (3 daily moves under the close) and tell you when to sell the rest. Move the stop at your broker to ' + money(P.stop) + ' now.' + news);
-    } else if ((k = text.match(/^(?:i\s+)?sold\s+([a-z.\-]{1,6})(?:\s+(?:at\s+)?(\d+(?:\.\d+)?))?/i))) {
+    } else if ((k = text.match(/^(?:i\s+)?sold\s+(?!options?\b)([a-z.\-]{1,6})(?:\s+(?:at\s+)?(\d+(?:\.\d+)?))?/i))) {
       const sym = k[1].toUpperCase(), shTxt = (text.match(/(\d+)\s*shares?\b/i) || [])[1], shSaid = shTxt ? +shTxt : null;
       if (!pos[sym]) {   // already sold today (for example with the Sold button): correct that record with your real price and shares
         const today = ny(Date.now()).d, rows = fs.existsSync(MY_TRADES) ? fs.readFileSync(MY_TRADES, 'utf8').split('\n').filter(Boolean) : [];
