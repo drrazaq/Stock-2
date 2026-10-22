@@ -17,6 +17,7 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
+import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const TG = local(env.TG_BASE) || 'https://api.telegram.org', OUT = 'data/octopus.json', PAPER = 'data/octopus-paper.json';
 const pc = (x, d = 1) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(d) + '%';
@@ -49,13 +50,14 @@ const spyAbove50 = new Int8Array(T); if (spyI >= 0) { let s = 0, n = 0; for (let
 const EV = new Map();
 try { const ev = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.EV_CACHE || 'ev-cache/events-cache.json.gz')).toString());
   const tOf = new Map(D.map((d, t) => [d, t])), GOOD = new Set(['CONTRACT', 'ACQUIRED', 'ACTIVIST', 'BIO_NEWS', 'FDA_APPROVAL', 'FDA_NEW_USE']), BAD = new Set(['CONTRACT_END', 'RESTRUCTURE', 'DELIST', 'DILUTION', 'AUDITOR', 'RESTATE', 'OFFERING']);
-  const sessOf = (p) => { const d = p.slice(0, 10), hm = p.length >= 16 ? p.slice(11, 16) : '00:00'; let t = tOf.get(d); if (t !== undefined) return hm >= '16:00' ? t + 1 : t;
+  // event times: sec-time.mjs converts EDGAR's UTC acceptance time (and events-recent's New York time with offset) to the New York clock
+  const sessOf = (p) => { const ny = secNY(p); if (!ny) return null; const d = ny.d, hm = ny.hm || '00:00'; let t = tOf.get(d); if (t !== undefined) return hm >= '16:00' ? t + 1 : t;
     for (let k = 1; k < 6; k++) { const x = new Date(Date.parse(d + 'T12:00:00Z') + k * 864e5).toISOString().slice(0, 10); if (tOf.has(x)) return tOf.get(x); } return null; };
   for (const [s, S] of Object.entries(ev.syms || {})) { if (!SY.has(s)) continue; const a = []; for (const e of S.ev || []) { const t = sessOf(e.p); if (t === null || t >= T) continue; const f = String(e.f).split(',');
       a.push({ t, g: f.some(x => GOOD.has(x)) ? 1 : 0, b: f.some(x => BAD.has(x)) ? 1 : 0, e: f.includes('EARN') ? 1 : 0 }); } if (a.length) EV.set(SY.get(s), a); }
 } catch (e) { /* no event cache: fall back to the last 10 days of events saved by the weekday SEC job (daily mode) */
   const ER = readJson('data/events-recent.json', null), tOf = new Map(D.map((d, t) => [d, t])), GOOD = new Set(['CONTRACT', 'ACQUIRED', 'ACTIVIST', 'BIO_NEWS', 'FDA_APPROVAL', 'FDA_NEW_USE']), BAD = new Set(['CONTRACT_END', 'RESTRUCTURE', 'DELIST', 'DILUTION', 'AUDITOR', 'RESTATE', 'OFFERING']);
-  for (const e of (ER && ER.events) || []) { if (!SY.has(e.sym) || !e.p) continue; const d = String(e.p).slice(0, 10), hm = String(e.p).length >= 16 ? String(e.p).slice(11, 16) : '00:00'; let t = tOf.get(d); if (t === undefined) continue; if (hm >= '16:00') t++; if (t >= T) continue;
+  for (const e of (ER && ER.events) || []) { if (!SY.has(e.sym) || !e.p) continue; const ny = secNY(e.p); if (!ny) continue; const d = ny.d, hm = ny.hm || '00:00'; let t = tOf.get(d); if (t === undefined) continue; if (hm >= '16:00') t++; if (t >= T) continue;
     const f = String(e.f).split(','), i = SY.get(e.sym); if (!EV.has(i)) EV.set(i, []); EV.get(i).push({ t, g: f.some(x => GOOD.has(x)) ? 1 : 0, b: f.some(x => BAD.has(x)) ? 1 : 0, e: f.includes('EARN') ? 1 : 0 }); } }
 
 // ---- the economic calendar (data/calendar.enc, encrypted; needs PRIVATE_KEY): for each session, the direction of the latest

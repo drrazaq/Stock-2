@@ -18,6 +18,7 @@
 // Output: data/ew-stack.json.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
 const env = process.env, OUT = env.OUT || 'data/ew-stack.json', COST = 0.008, STRESS = 0.012, HOLDS = [3, 10];
 const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -38,7 +39,7 @@ const spyF = (t, h) => spyI === undefined ? null : fwd(spyI, t, h);
 const midT = Math.floor((60 + T) / 2), ownC = {}; const own = (i, t, h) => { const half = t < midT ? 0 : 1, key = i + '_' + h + '_' + half; if (key in ownC) return ownC[key]; const v = []; for (let k = half ? midT : 60; k < (half ? T - 1 : midT); k += 2) { if (Math.abs(k - t) <= h) continue; if (tradable(i, k)) { const g = fwd(i, k, h); if (g !== null && Math.abs(g) < 3) v.push(g); } } return (ownC[key] = v.length >= 30 ? mean(v) : null); };
 // SEC events per stock as session indexes (an event accepted after 16:00 New York counts for the next session)
 const firstOnOrAfter = (d) => { let lo = 0, hi = T; while (lo < hi) { const m = (lo + hi) >> 1; if (D[m] < d) lo = m + 1; else hi = m; } return lo; };
-const evT = (S, fam) => (S.ev || []).filter(e => String(e.f).split(',').includes(fam)).map(e => { const d = e.p.slice(0, 10), late = e.p.length >= 16 && e.p.slice(11, 16) >= '16:00'; let t = firstOnOrAfter(d); if (late && D[t] === d) t++; return t; }).filter(t => t < T);
+const evT = (S, fam) => (S.ev || []).filter(e => String(e.f).split(',').includes(fam) && secNY(e.p)).map(e => { const ny = secNY(e.p), d = ny.d, late = !!ny.hm && ny.hm >= '16:00'; let t = firstOnOrAfter(d); if (late && D[t] === d) t++; return t; }).filter(t => t < T);
 const lag = (SHR.lagDays || 30) * 864e5, sharesKnown = (a, ms) => { const lim = new Date(ms - lag).toISOString().slice(0, 10); let v = null; for (const [d, n] of a) { if (d <= lim) v = n; else break; } return v; };
 const trades = {}; for (const v of ['V1', 'V2']) for (const h of HOLDS) trades[v + '_' + h] = [];
 const today = []; let covered = 0, signals = 0, signals2 = 0; const fail = { supply: 0, quiet: 0, lottery: 0 };

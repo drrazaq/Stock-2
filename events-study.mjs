@@ -19,6 +19,7 @@
 // MODE=study (Sunday, leaders-study workflow, after the price cache is loaded): the fair test -> data/events-study.json.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { secNY, nyStamp } from './sec-time.mjs';   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const SEC_WWW = local(env.SEC_BASE) || 'https://www.sec.gov', SEC_DATA = local(env.SEC_BASE) || 'https://data.sec.gov', FDA = local(env.FDA_BASE) || 'https://api.fda.gov', TG = local(env.TG_BASE) || 'https://api.telegram.org';
@@ -105,7 +106,7 @@ if (MODE === 'fetch') {
     const n = (R.form || []).length, have = new Set(S.ev.map(e => e.a));
     for (let k = 0; k < n; k++) { const acc = R.accessionNumber[k]; if (have.has(acc)) continue;
       const f = famsOf(R.form[k], (R.items || [])[k], S.sic); if (!f.length) continue;
-      const p = String(R.acceptanceDateTime[k] || R.filingDate[k] || '').slice(0, 16); if (!p || p.slice(0, 10) < cut) continue;
+      const acc0 = String(R.acceptanceDateTime[k] || ''), p = acc0.length >= 16 ? acc0.slice(0, 16) + 'Z' : String(R.filingDate[k] || '').slice(0, 10); if (!p || p.slice(0, 10) < cut) continue;   // stored in UTC with an explicit Z (older cache rows: same UTC cut without the Z; sec-time.mjs reads both as UTC)
       S.ev.push({ p, f: f.join(','), a: acc }); have.add(acc); }
     S.ev.sort((x, y) => x.p < y.p ? -1 : 1);
   };
@@ -136,8 +137,10 @@ if (MODE === 'fetch') {
   const ck = {}; for (const sym of uni) ck[sym] = [cache.ciks[sym][0], (cache.syms[sym] || {}).sic || null];
   fs.writeFileSync(CIKS, JSON.stringify(ck));
   const since = iso(Date.now() - 10 * 864e5), recent = [];
-  for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) if (e.p.slice(0, 10) >= since) recent.push({ sym, p: e.p, f: e.f });
-  recent.sort((x, y) => x.p < y.p ? 1 : -1);
+  // events-recent.json `p` FORMAT: New York local time WITH its UTC offset, e.g. '2026-10-21T08:05-04:00' (EDGAR's UTC acceptance time
+  // converted), or a date only 'YYYY-MM-DD'. p.slice(0, 10) is the New York calendar date (scan.mjs reads that); Date.parse(p) is exact.
+  for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) { const p = nyStamp(e.p); if (p && p.slice(0, 10) >= since) recent.push({ sym, p, f: e.f, ms: (secNY(e.p) || {}).ms || null }); }
+  recent.sort((x, y) => (x.ms || Date.parse(x.p.slice(0, 10) + 'T12:00:00Z')) < (y.ms || Date.parse(y.p.slice(0, 10) + 'T12:00:00Z')) ? 1 : -1); for (const r of recent) delete r.ms;
   fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), events: recent }, null, 1));
   save();
   const nev = Object.values(cache.syms).reduce((a, S) => a + S.ev.length, 0);
@@ -156,10 +159,11 @@ const spyRet = (a, b) => spyC[a] && spyC[b] ? spyC[b] / spyC[a] - 1 : null;
 const spyUp = (() => { const o = new Array(T).fill(null); let sum = 0, k = 0; const q = []; for (let t = 0; t < T; t++) { if (spyC[t] === null) continue; q.push(spyC[t]); sum += spyC[t]; if (q.length > 50) sum -= q.shift(); if (q.length === 50) o[t] = spyC[t] > sum / 50; } return o; })();   // S&P 500 above its 50 day average
 const avg = (a, p) => { const o = new Array(a.length).fill(null); let s = 0; for (let i = 0; i < a.length; i++) { s += a[i]; if (i >= p) s -= a[i - p]; if (i >= p - 1) o[i] = s / p; } return o; };
 const tAt = (d) => { for (let k = 0; k < 6; k++) { const x = k ? iso(Date.parse(d + 'T12:00:00Z') + k * 864e5) : d; if (tOf.has(x)) return { t: tOf.get(x), moved: k > 0 }; } return null; };
-// reaction session (index into the stock's bars) of an event published at p ('YYYY-MM-DDTHH:MM' New York time, or a date only)
+// reaction session (index into the stock's bars) of an event published at p (EDGAR UTC time, converted to New York by sec-time.mjs; or a date only)
 function reactIdx(P, p, tHint) {
-  const a = tAt(p.slice(0, 10)); if (!a) return null; let i = P.idx.get(a.t); if (i === undefined) return null; const c = P.c;
-  const hm = p.length >= 16 ? p.slice(11, 16) : null;
+  const ny = secNY(p); if (!ny) return null;
+  const a = tAt(ny.d); if (!a) return null; let i = P.idx.get(a.t); if (i === undefined) return null; const c = P.c;
+  const hm = ny.hm;
   if (a.moved) return i;                                          // weekend/holiday filing: the next session reacts
   if (hm) return hm >= '16:00' ? i + 1 : i;                       // after the close -> next session; before or during -> that session
   if (tHint === 'bmo') return i; if (tHint === 'amc') return i + 1;
@@ -185,7 +189,7 @@ const PS = new Map();
 for (const [sym, S] of Object.entries(cache.syms)) { const c = bars.get(sym); if (!c || c.length < 60) continue;
   const P = { c, idx: new Map(c.map((b, i) => [b.t, i])), m20: avg(c.map(x => x.c), 20), earn: new Set(), fam: {} }; PS.set(sym, P);
   P.wk = {};
-  for (const e of S.ev) { const i = reactIdx(P, e.p); if (i === null || i < 25 || !c[i]) continue; const wd = new Date(e.p.slice(0, 10) + 'T12:00:00Z').getUTCDay(), late = wd === 6 || wd === 0 || (wd === 5 && e.p.length >= 16 && e.p.slice(11, 16) >= '16:00');
+  for (const e of S.ev) { const i = reactIdx(P, e.p); if (i === null || i < 25 || !c[i]) continue; const ny = secNY(e.p), wd = new Date((ny ? ny.d : e.p.slice(0, 10)) + 'T12:00:00Z').getUTCDay(), late = wd === 6 || wd === 0 || (wd === 5 && !!ny && !!ny.hm && ny.hm >= '16:00');   // New York clock
     for (const f of e.f.split(',')) { if (f === 'EARN') { for (let k = -2; k <= 2; k++) if (c[i + k]) P.earn.add(c[i + k].t); continue; } (P.fam[f] || (P.fam[f] = [])).push(i); if (late) (P.wk[f] || (P.wk[f] = new Set())).add(i); } }
   for (const r of ESx[sym] || []) { const i = reactIdx(P, r.d, r.t); if (i !== null && c[i]) for (let k = -2; k <= 2; k++) if (c[i + k]) P.earn.add(c[i + k].t); }
   // earnings acceleration from the EPS history: year-on-year growth 25%+ and faster than the quarter before

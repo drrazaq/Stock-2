@@ -20,6 +20,7 @@
 //   A pass means PAPER first, never a buy.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const MV = local(env.MASSIVE_BASE) || 'https://api.massive.com', TEST = Boolean(local(env.MASSIVE_BASE)), PAID = Boolean(env.MASSIVE_PAID);
 const EVC = env.EV_CACHE || 'ev-cache/events-cache.json.gz', HDIR = env.SEQ_DIR || 'seq-cache', HFILE = HDIR + '/hist.json.gz', OUT = 'data/sequence-study.json';
@@ -74,7 +75,7 @@ const isQuiet = (b, k, med) => b[k][5] < QUIET_VOL * med && b[k - 1][4] > 0 && M
 const outcome = (b, k) => { if (k + 1 >= b.length) return null; const e = b[k + 1][1]; if (!(e >= 1)) return null; const r = {}; for (const h of HOLDS) { const x = b[k + h]; if (!x) return null; r[h] = x[4] / e - 1; } return { e, r }; };
 for (const s of want) { const h = H.syms[s]; if (!h || h.d.length < 60) { evNoHist += (EV.syms[s].ev || []).length; continue; } const b = h.d, idx = new Map(b.map((x, k) => [x[0], k]));
   // event reaction days (index into this company's bars)
-  const evDays = []; for (const e of EV.syms[s].ev || []) { const d = String(e.p).slice(0, 10), hm = String(e.p).slice(11, 16).replace(':', '');
+  const evDays = []; for (const e of EV.syms[s].ev || []) { const ny = secNY(e.p); if (!ny) continue; const d = ny.d, hm = ny.hm ? ny.hm.replace(':', '') : '';   // New York clock (EDGAR times are UTC)
     const k = hm && hm < '0930' ? b.findIndex(x => x[0] >= d) : b.findIndex(x => x[0] > d);   // before the open -> that session, else the next
     if (k > 0) evDays.push({ k, f: String(e.f || '') }); }
   const evSet = new Set(evDays.map(e => e.k)); let nextFree = 0;

@@ -16,6 +16,7 @@
 // AND the same stock on its other days, must survive without its 2 best trades. A pass goes to live paper first. Output: data/fulfilling.json.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
 const env = process.env, OUT = env.OUT || 'data/fulfilling.json', COST = 0.008, STRESS = 0.012, IDIR = (env.CACHE_DIR || 'study-cache') + '/insider';
 const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }, gz = (f) => { try { return JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString()); } catch (e) { return null; } };
@@ -35,7 +36,7 @@ const firstOnOrAfter = (d) => { let lo = 0, hi = T; while (lo < hi) { const m = 
 // cluster events per stock: session index of the LAST filing of a 2+-insider cluster (one event per 30 days)
 const CL = {}; for (const [sym, a] of Object.entries(INS)) { let last = '0'; for (let k = 0; k < a.length; k++) { const p = a[k], from = new Date(Date.parse(p.d) - 10 * 864e5).toISOString().slice(0, 10); const n = new Set(a.filter(z => z.d >= from && z.d <= p.d).map(z => z.who)).size;
   if (n >= 2 && p.d > last) { const t = firstOnOrAfter(p.d); if (t < T) (CL[sym] = CL[sym] || []).push(t); last = new Date(Date.parse(p.d) + 30 * 864e5).toISOString().slice(0, 10); } } }
-const evT = (S, fam) => (S.ev || []).filter(e => String(e.f).split(',').includes(fam)).map(e => { const d = e.p.slice(0, 10), late = e.p.length >= 16 && e.p.slice(11, 16) >= '16:00'; let t = firstOnOrAfter(d); if (late && D[t] === d) t++; return t; }).filter(t => t < T);
+const evT = (S, fam) => (S.ev || []).filter(e => String(e.f).split(',').includes(fam) && secNY(e.p)).map(e => { const ny = secNY(e.p), d = ny.d, late = !!ny.hm && ny.hm >= '16:00'; let t = firstOnOrAfter(d); if (late && D[t] === d) t++; return t; }).filter(t => t < T);
 const lag = SHR ? (SHR.lagDays || 30) * 864e5 : 0, sharesKnown = (a, ms) => { const lim = new Date(ms - lag).toISOString().slice(0, 10); let v = null; for (const [d, n] of a) { if (d <= lim) v = n; else break; } return v; };
 const tradable = (i, t) => { const c = C[i * T + t]; if (!(c >= 3)) return false; let dv = 0, n = 0; for (let k = t - 19; k <= t; k++) { if (k < 0) continue; const c1 = C[i * T + k], v = V[i * T + k]; if (isFinite(c1) && isFinite(v)) { dv += c1 * v; n++; } } return n >= 15 && dv / n >= 1e6; };
 function fwd(i, t, h) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + h >= T) return null; let last = null; for (let k = t + h; k > t; k--) if (isFinite(C[b + k])) { last = C[b + k]; break; } return last === null ? null : last / e - 1; }

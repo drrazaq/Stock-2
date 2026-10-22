@@ -27,6 +27,7 @@
 // Output: data/missed-runners.json (also the line ACTIONS should show, in "actionsLine"; scan.mjs is not edited by this study).
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: dated on the New York calendar (fixed 22 Oct 2026)
 import { LIVE_RULES, IG_RULES, EXITS, simulate, toBars, costOf } from './ignition-core.mjs';
 const env = process.env, OUT = env.OUT || 'data/missed-runners.json', CDIR = env.FM_CACHE_DIR || 'fm-cache', HIST = 'data/ignition-missed-history.jsonl', DAYS = 'data/ignition-days.jsonl';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TEST = local(env.MASSIVE_BASE), PX = TEST || 'https://api.massive.com';
@@ -102,8 +103,9 @@ let EV = null; try { EV = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.EV_CACH
 const INS = (() => { const dir = (env.CACHE_DIR || 'study-cache') + '/insider', m = new Map(); try { for (const f of fs.readdirSync(dir)) if (f.endsWith('.json')) for (const b of JSON.parse(fs.readFileSync(dir + '/' + f, 'utf8'))) { let a = m.get(b[0]); if (!a) m.set(b[0], a = []); a.push(b[1]); } } catch (e) { return null; } return m; })();
 let SHR = null; try { SHR = JSON.parse(zlib.gunzipSync(fs.readFileSync('data/shares.json.gz')).toString()); } catch (e) {}
 const dMinus = (d, n) => new Date(Date.parse(d) - n * 864e5).toISOString().slice(0, 10);
-const secBefore = (sym, d) => { if (!EV) return null; const S = EV[sym]; if (!S || !S.ev) return 0; const from = dMinus(d, 10); return S.ev.filter(e => e.p.slice(0, 10) >= from && e.p.slice(0, 10) < d).length; };
-const secFams = (sym, d) => { if (!EV) return null; const S = EV[sym]; if (!S || !S.ev) return ''; const from = dMinus(d, 10); return [...new Set(S.ev.filter(e => e.p.slice(0, 10) >= from && e.p.slice(0, 10) < d).flatMap(e => e.f.split(',')))].join(','); };
+const nyDay = (p) => { const x = secNY(p); return x ? x.d : String(p).slice(0, 10); };
+const secBefore = (sym, d) => { if (!EV) return null; const S = EV[sym]; if (!S || !S.ev) return 0; const from = dMinus(d, 10); return S.ev.filter(e => nyDay(e.p) >= from && nyDay(e.p) < d).length; };
+const secFams = (sym, d) => { if (!EV) return null; const S = EV[sym]; if (!S || !S.ev) return ''; const from = dMinus(d, 10); return [...new Set(S.ev.filter(e => nyDay(e.p) >= from && nyDay(e.p) < d).flatMap(e => e.f.split(',')))].join(','); };
 const insBefore = (sym, d) => { if (!INS) return null; const a = INS.get(sym); if (!a) return 0; const from = dMinus(d, 30); return a.filter(x => x >= from && x < d).length; };
 const sharesChg = (sym, d) => { if (!SHR) return null; const a = SHR.c[SHR.t[sym]]; if (!a) return null; const lim = dMinus(d, SHR.lagDays || 30), old = dMinus(d, 90 + (SHR.lagDays || 30)); let now = null, then = null; for (const [e, n] of a) { if (e <= lim) now = n; if (e <= old) then = n; } return now && then ? now / then - 1 : null; };
 for (const L of [runners, controls]) for (const r of L) { r.secFilings10d = secBefore(r.sym, r.start); r.secFamilies = secFams(r.sym, r.start); r.insiderBuys30d = insBefore(r.sym, r.start); r.sharesChg90d = r4(sharesChg(r.sym, r.start)); }

@@ -108,12 +108,15 @@ for (const s of withCik) {
 const recent = (J('data/events-recent.json', {}).events || []), recentUsed = [], recentMatched = { exact: 0, checked: 0 };
 const known = new Map(); for (const r of all) if (typeof r === 'object') known.set(r.sym + '|' + r.publishedAt.slice(0, 16), r);
 for (const e of recent) {
-  if (!universe.includes(e.sym) || !/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(e.p || '')) continue;
-  if (covered.has(e.sym)) { recentMatched.checked++; if (known.has(e.sym + '|' + e.p)) recentMatched.exact++; continue; }
+  // e.p: since 22 Oct 2026 New York time with its offset ('2026-10-21T08:05-04:00'); older files: UTC cut to the minute without a Z.
+  // utcMin = the UTC minute in both cases (same key and event id as before).
+  const pz = String(e.p || ''), zoned = /^\d{4}-\d\d-\d\dT\d\d:\d\d(Z|[+-]\d\d:\d\d)$/.test(pz); if (!universe.includes(e.sym) || !(zoned || /^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(pz))) continue;
+  const utcMin = new Date(Date.parse(zoned ? pz : pz + ':00Z')).toISOString().slice(0, 16);
+  if (covered.has(e.sym)) { recentMatched.checked++; if (known.has(e.sym + '|' + utcMin)) recentMatched.exact++; continue; }
   const fams = String(e.f || '').split(',').filter(f => ['CONTRACT', 'EARN', 'NEWS'].includes(f)); if (!fams.length) { rej('recent_row_family_not_in_lane'); continue; }
-  const ms = Date.parse(e.p + ':00Z'); const cik = ciks[e.sym] ? ciks[e.sym][0] : null;
+  const ms = Date.parse(utcMin + ':00Z'); const cik = ciks[e.sym] ? ciks[e.sym][0] : null;
   if (!cik) { rej('recent_row_no_sec_number'); continue; }
-  const row = { eventId: 'events-recent:' + e.sym + ':' + e.p + ':' + fams.join('+'), sym: e.sym, kind: 'sec_8k_' + fams.join('+').toLowerCase() + '_from_events_recent', sourceUrl: 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=' + String(cik).padStart(10, '0') + '&type=8-K&dateb=&owner=include&count=40', publishedAt: new Date(ms).toISOString(), capturedAt: new Date(ms + 60000).toISOString(), availableAt: new Date(ms + 60000).toISOString(), verificationStatus: 'VERIFIED_PRIMARY_CONTENT', tradableUniverseVerified: true, blocked: lottery[e.sym] >= LOTTERY || /DILUTION|OFFERING/.test(String(e.f)), source: 'data/events-recent.json (events-study.mjs, EDGAR acceptance time cut to the minute, read as UTC)', _ms: ms, _fams: fams };
+  const row = { eventId: 'events-recent:' + e.sym + ':' + utcMin + ':' + fams.join('+'), sym: e.sym, kind: 'sec_8k_' + fams.join('+').toLowerCase() + '_from_events_recent', sourceUrl: 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=' + String(cik).padStart(10, '0') + '&type=8-K&dateb=&owner=include&count=40', publishedAt: new Date(ms).toISOString(), capturedAt: new Date(ms + 60000).toISOString(), availableAt: new Date(ms + 60000).toISOString(), verificationStatus: 'VERIFIED_PRIMARY_CONTENT', tradableUniverseVerified: true, blocked: lottery[e.sym] >= LOTTERY || /DILUTION|OFFERING/.test(String(e.f)), source: 'data/events-recent.json (events-study.mjs, EDGAR acceptance time cut to the minute; New York time with offset, older files UTC)', _ms: ms, _fams: fams };
   if (row.blocked) row.blockReasons = [lottery[e.sym] >= LOTTERY ? 'lottery_like' : 'share_sale_flag'];
   recentUsed.push(row);
 }

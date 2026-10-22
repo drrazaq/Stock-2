@@ -462,7 +462,7 @@
    "name": "Filing -> quiet days -> breakout",
    "explain": "A company filing, a few quiet days, then a breakout.",
    "status": "tested: not proven",
-   "note": "Sequence study."
+   "note": "Sequence study. re-run needed: SEC times were read as New York time (fixed 22 Oct) (sequence-study.mjs)."
   },
   {
    "id": "I12",
@@ -803,7 +803,7 @@
    "name": "SEC 8-K company news",
    "explain": "Which kinds of filed news are followed by gains.",
    "status": "tested",
-   "note": "Events study."
+   "note": "Events study. re-run needed: SEC times were read as New York time (fixed 22 Oct) (events-study.mjs)."
   },
   {
    "id": "E3",
@@ -1779,7 +1779,7 @@
    "explain": "Share count up <5% in 90 days and no 424B5 / 8-K 3.02 in 20 days; volume under 150% of median on days 3-7 before; then volume 3x+ with a close in the top 25% of the range; no 15%+ one-day jump in the last month. Next open, hold 3 and 10 days. Version 2 also needs an 8-K 1.01 in the last 10 days. Run ONCE as written.",
    "status": "tested: not proven",
    "agent": "A",
-   "note": "From the outside review of 20 Oct (see project doc Agent inbox).",
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox). re-run needed: SEC times were read as New York time (fixed 22 Oct) (ew-stack.mjs; its first run is frozen, so a corrected re-run needs the owner to allow replacing the frozen first run).",
    "tested": "2026-10-19",
    "study": "ew-stack.mjs -> data/ew-stack.json (run once, first run frozen)",
    "result": {
@@ -2280,7 +2280,7 @@
    "explain": "2+ insiders buy (Form 4), then 3 sessions holding above the filing-day low on volume under 150% of median; buy day 4, hold 20. The quiet-after-filing version of E3.",
    "status": "tested: rejected",
    "agent": "C",
-   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates.",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. re-run needed: SEC times were read as New York time (fixed 22 Oct) (fulfilling.mjs; first run frozen, a corrected re-run needs the owner to allow replacing it).",
    "tested": "2026-10-19",
    "study": "fulfilling.mjs -> data/fulfilling.json (run once, first run frozen)",
    "result": {
@@ -2373,7 +2373,8 @@
     ],
     "bar": 3.92,
     "why": "F2_3 TOO FEW CASES: too few cases in the older half (4) | F2_5 TOO FEW CASES: too few cases in the older half (4)"
-   }
+   },
+   "note": "re-run needed: SEC times were read as New York time (fixed 22 Oct) (fulfilling.mjs; first run frozen, a corrected re-run needs the owner to allow replacing it)."
   },
   {
    "id": "C-QK1",
@@ -2398,7 +2399,8 @@
     ],
     "bar": 3.92,
     "why": "F3_10 REJECTED: not better than an average stock in the older half (-0.4%)"
-   }
+   },
+   "note": "re-run needed: SEC times were read as New York time (fixed 22 Oct) (fulfilling.mjs; first run frozen, a corrected re-run needs the owner to allow replacing it)."
   },
   {
    "id": "A-TRIM1",
@@ -2470,7 +2472,7 @@
    "explain": "For the big runners the system missed (TGL, NIVF, GRML, TCRT, PFAI) and a matched control group that looked the same but did not run: reconstruct what was knowable before the move (filing, contract, news, volume, price), when Stock-2 could first have known, whether the first tradable open was still ahead of the move, and which alert fired or why it missed. Output: a table of miss reasons (coverage / timing / prediction), not a buy signal. DECISION TREE, written before the numbers (from the 21 Oct review): if late data is the biggest cause (40%+ of misses) -> trial a real-time feed for one month and compare live vs delayed on the same alerts; if \"rule did not fire\" is biggest -> no new rule, check whether ORB fires on 10%+ of them; if \"blocked\" is biggest -> keep the blocks and check whether blocked runners faded within 5 days (55%+ fade = blocks right); if 20%+ were caught in time -> score those and size the engine that caught them only if positive after costs. Add the four-way diagnosis (coverage / timing / eligibility / prediction) and a latency-vs-net-return table at 0, 1, 5, 15, 30 minutes.",
    "status": "tested: audit done (no buy rule)",
    "agent": "A",
-   "note": "From the 20 Oct evening reviews.",
+   "note": "From the 20 Oct evening reviews. re-run needed: SEC times were read as New York time (fixed 22 Oct) (missed-runners.mjs counts SEC filings in the 10 days before a move by date).",
    "study": "missed-runners.mjs -> data/missed-runners.json (ledger data/ignition-missed-history.jsonl; latency tables on Massive minute bars, budget 300 stock-days a run)",
    "tested": "2026-10-20",
    "result": {
