@@ -11,6 +11,17 @@
 //   its tips of the last 20 sessions become an AVOID list ("fade" in the output, with the session the avoid ends). The main session
 //   wires that list into ACTIONS; this script never edits scan.mjs. LISTEN (information only, never a buy) when t >= +2 with the same
 //   counts. Under 10 tips or under 5 days: "too early to judge". Nothing here is tuned on its own results.
+// TIER 2 (owner's decision 22 Oct 2026; PRE-REGISTERED 22 Oct 2026 before any tier-2 number was seen; the rule above is unchanged):
+//   a source is judged for tier 2 once it has 30+ finished tips on 10+ distinct days at a horizon (5 or 20 sessions). Its tip days are
+//   split in two halves by date (older half = the first half of its distinct tip days).
+//   FOLLOW (tier 2): in BOTH halves the tip beats the average stock bought the same day after the 1.2% stress cost, beats the S&P 500
+//     after 0.8% cost, is still positive (after 0.8% cost) without its 2 best tips, and the date-clustered t vs the average stock is
+//     2.5+ in each half. A FOLLOW source's NEW tips may be shown as tier-2 ideas (max 1,000 USD, with a stop, halal by ZAD only) by the
+//     main session; it is switched off automatically when its live record (20+ finished tips after the freeze) turns negative.
+//   FADE (tier 2): in BOTH halves worse than the average stock (costs cancel), t <= -2.5 in each half, and still worse without its
+//     2 worst tips. Its new tips become AVOID for 20 sessions.
+//   Each source's first tier-2 judgement is frozen (firstRun.tier2). Public sources with dated calls (data/tips-public.jsonl, written by
+//   tip-sources.mjs, e.g. ARK daily buys) are scored here exactly like the owner's logged tips.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { freezeEach, MONITOR_LABEL } from './first-run.mjs';   // run once per source: first judged verdict frozen (22 Oct 2026)
@@ -39,7 +50,7 @@ const tOf = (v) => { if (v.length < 2) return null; const m = mean(v), sd = Math
 const byDay = (a, f) => { const o = {}; for (const z of a) { const x = f(z); if (x === null || !isFinite(x)) continue; (o[z.t] = o[z.t] || []).push(x); } return Object.values(o).map(mean); };
 // ---- tips ----
 const seen = new Set(), tips = [];
-for (const x of lines(env.TIPS || 'data/tips.jsonl')) { if (!x || !x.sym || !x.src || !x.d) continue; const key = x.src + '|' + x.sym + '|' + x.d; if (seen.has(key)) continue; seen.add(key);
+for (const x of [...lines(env.TIPS || 'data/tips.jsonl'), ...lines(env.TIPS_PUBLIC || 'data/tips-public.jsonl')]) { if (!x || !x.sym || !x.src || !x.d) continue; const key = x.src + '|' + x.sym + '|' + x.d; if (seen.has(key)) continue; seen.add(key);
   const i = SY.get(String(x.sym).toUpperCase()), t = lastOnOrBefore(x.d); if (i === undefined || t < 20 || t + 1 >= T) { tips.push({ src: x.src, sym: x.sym, d: x.d, t: -1, noPrice: true }); continue; }
   const row = { src: x.src, sym: x.sym, d: x.d, t, entry: D[t + 1], sf: soFar(i, t) }; for (const h of HOLDS) { const g = fwd(i, t, h); row['r' + h] = g === null ? null : g; row['c' + h] = ctrl(t, h); row['s' + h] = spyF(t, h); } tips.push(row); }
 const statFor = (a, h) => { const f = a.filter(z => typeof z['r' + h] === 'number' && typeof z['c' + h] === 'number'); if (!f.length) return { n: 0 };
@@ -51,12 +62,29 @@ const sources = Object.entries(srcs).map(([src, a]) => { const priced = a.filter
   const judged = HOLDS.map(h => R['h' + h]).filter(r => r.n >= MIN_TIPS && r.days >= MIN_DAYS), fade = judged.some(r => typeof r.t === 'number' && r.t <= FADE_T), listen = !fade && judged.some(r => typeof r.t === 'number' && r.t >= LISTEN_T);
   return { src, tips: a.length, noPrice: a.filter(z => z.noPrice).length, firstTip: a.map(z => z.d).sort()[0], lastTip: a.map(z => z.d).sort().slice(-1)[0], soFar: sfN, soFarN: sf.length, ...R, verdict: fade ? 'FADE' : listen ? 'LISTEN (information only)' : judged.length ? 'NO EDGE EITHER WAY' : 'TOO EARLY TO JUDGE' }; })
   .sort((x, y) => y.tips - x.tips);
+// ---- TIER 2 (pre-registered 22 Oct 2026, see header) ----
+const T2 = { minTips: 30, minDays: 10, t: 2.5, stress: 0.012 };
+const tier2Of = (a) => { const out = {}; let verdict = 'TOO EARLY (tier 2)';
+  for (const h of HOLDS) { const f = a.filter(z => !z.noPrice && typeof z['r' + h] === 'number' && typeof z['c' + h] === 'number'), days = [...new Set(f.map(z => z.t))].sort((x, y) => x - y);
+    if (f.length < T2.minTips || days.length < T2.minDays) { out['h' + h] = { n: f.length, days: days.length, judged: false }; continue; }
+    const cut = days[Math.floor(days.length / 2)], halves = { older: f.filter(z => z.t < cut), newer: f.filter(z => z.t >= cut) }, R = {};
+    for (const [k, g] of Object.entries(halves)) { const net = g.map(z => z['r' + h] - COST).sort((x, y) => y - x), ex = g.map(z => z['r' + h] - z['c' + h]).sort((x, y) => x - y);
+      const sv = byDay(g, z => typeof z['s' + h] === 'number' ? z['r' + h] - COST - z['s' + h] : null);
+      R[k] = { n: g.length, days: new Set(g.map(z => z.t)).size, edgeStress: +(mean(byDay(g, z => z['r' + h] - T2.stress - z['c' + h])) || 0).toFixed(4), edgeGross: +(mean(byDay(g, z => z['r' + h] - z['c' + h])) || 0).toFixed(4), t: tOf(byDay(g, z => z['r' + h] - z['c' + h])), vsSpy: sv.length ? +mean(sv).toFixed(4) : null, noBest2: net.length > 2 ? +mean(net.slice(2)).toFixed(4) : null, noWorst2: ex.length > 2 ? +mean(ex.slice(2)).toFixed(4) : null }; }
+    const both = (fn) => ['older', 'newer'].every(k => fn(R[k])), follow = both(r => r.edgeStress > 0 && r.vsSpy > 0 && r.noBest2 > 0 && r.t >= T2.t), fade = both(r => r.edgeGross < 0 && r.t <= -T2.t && r.noWorst2 < 0);
+    out['h' + h] = { judged: true, ...R, verdict: follow ? 'FOLLOW (tier 2)' : fade ? 'FADE (tier 2)' : 'NO TIER-2 EDGE' }; }
+  const vs = HOLDS.map(h => out['h' + h]).filter(x => x.judged); if (vs.length) verdict = vs.some(x => /FADE/.test(x.verdict)) ? 'FADE (tier 2)' : vs.some(x => /FOLLOW/.test(x.verdict)) ? 'FOLLOW (tier 2)' : 'NO TIER-2 EDGE';
+  return { verdict, ...out }; };
+for (const s of sources) s.tier2 = tier2Of(srcs[s.src]);
 // RUN ONCE per source: the first run in which a source is judged (10+ finished tips on 5+ days, i.e. not TOO EARLY) freezes its verdict
 // in firstRun.sources; later runs never change it. Each row's `verdict` is that frozen verdict; `latestVerdict` is this run's
 // re-score, MONITORING ONLY. The FADE / AVOID list uses the frozen verdicts.
 const PREV = J(OUT, {}) || {}, frozenSrc = freezeEach(PREV.firstRun && PREV.firstRun.sources, Object.fromEntries(sources.map(s => [s.src, s])), (r) => r.verdict !== 'TOO EARLY TO JUDGE');
 for (const s of sources) { s.latestVerdict = s.verdict; s.verdict = frozenSrc[s.src] ? frozenSrc[s.src].verdict : 'TOO EARLY TO JUDGE'; if (frozenSrc[s.src]) s.verdictFrozenAt = frozenSrc[s.src].frozenAt; }
-const firstRun = Object.keys(frozenSrc).length ? { at: (PREV.firstRun && PREV.firstRun.at) || new Date().toISOString(), note: 'per source: the first judged verdict, never overwritten', sources: frozenSrc } : null;
+const frozenT2 = freezeEach(PREV.firstRun && PREV.firstRun.tier2, Object.fromEntries(sources.map(s => [s.src, s.tier2])), (r) => !/TOO EARLY/.test(r.verdict));
+for (const s of sources) { s.tier2.latestVerdict = s.tier2.verdict; s.tier2.verdict = frozenT2[s.src] ? frozenT2[s.src].verdict : 'TOO EARLY (tier 2)'; }
+const firstRun = Object.keys(frozenSrc).length || Object.keys(frozenT2).length ? { ...(PREV.firstRun || {}), at: (PREV.firstRun && PREV.firstRun.at) || new Date().toISOString(), note: 'per source: the first judged verdict, never overwritten', sources: frozenSrc, tier2: frozenT2 } : null;
+const follow = sources.filter(s => /FOLLOW/.test(s.tier2.verdict)).map(s => s.src), fadeT2 = sources.filter(s => /FADE/.test(s.tier2.verdict)).map(s => s.src);
 // AVOID list for C-FADE1: every tip of a FADE source whose 20-session window has not ended (the avoid ends at the close of session entry+19)
 const fadeList = []; for (const s of sources.filter(s => s.verdict === 'FADE')) for (const z of srcs[s.src]) { if (z.noPrice) continue; const endT = z.t + 20; if (endT >= T - 1) fadeList.push({ src: s.src, sym: z.sym, tip: z.d, from: z.entry, until: endT < T ? D[endT] : 'about ' + (endT - (T - 1)) + ' sessions after ' + D[T - 1] }); }
 // ---- market calls (SPY after a bullish / bearish call vs the unconditional average over the cache window) ----
@@ -79,7 +107,8 @@ tbl.push('verdict = frozen first judged verdict per source; this run (monitoring
 for (const s of sources) { const f = (r) => r.n ? r.n + ', ' + pc(r.avg) + ', ' + pc(r.edge) + ' (t ' + r.t + '), ' + pc(r.vsSpy) : 'none finished'; tbl.push(s.src + ' | ' + s.tips + (s.noPrice ? ' (' + s.noPrice + ' no price)' : '') + ' | ' + f(s.h5) + ' | ' + f(s.h20) + ' | ' + (s.soFar === null ? 'n/a' : pc(s.soFar) + ' on ' + s.soFarN) + ' | ' + s.verdict + (s.latestVerdict !== s.verdict ? ' [this run: ' + s.latestVerdict + ']' : '')); }
 for (const m of marketCalls) tbl.push('MARKET CALLS ' + m.src + ': ' + m.calls + ' calls (' + m.bullish + ' bullish); S&P in the call direction 5 sessions ' + pc(m.h5.spyInCallDirection) + ' (any day ' + pc(m.h5.unconditional) + ', n ' + m.h5.n + '), 20 sessions ' + pc(m.h20.spyInCallDirection) + ' (any day ' + pc(m.h20.unconditional) + ', n ' + m.h20.n + ')');
 for (const o of opinions) tbl.push('THEME PUSHES ' + o.src + ': ' + o.themePushes + ' pushes; theme ETF vs S&P 5 sessions ' + pc(o.h5.themeVsSpy) + ' (n ' + o.h5.n + '), 20 sessions ' + pc(o.h20.themeVsSpy) + ' (n ' + o.h20.n + ')');
+tbl.push('TIER 2 (30+ finished tips on 10+ days, both halves, t 2.5+, stress cost): FOLLOW ' + (follow.join(', ') || 'none') + ' | FADE ' + (fadeT2.join(', ') || 'none') + ' | ' + sources.map(s => s.src + ' ' + s.tier2.verdict).filter(x => !/TOO EARLY/.test(x)).join('; '));
 tbl.push(fadeList.length ? 'FADE / AVOID now: ' + fadeList.map(f => f.sym + ' (' + f.src + ', until ' + f.until + ')').join(', ') : 'FADE / AVOID now: none (no source has a 10-tip, 5-day record at t <= -2 yet)');
-const out = { generatedAt: new Date().toISOString(), agent: 'C', preRegistered: '2026-10-20', asOf: D[T - 1], cacheFrom: D[0], cost: COST, horizons: HOLDS, rule: 'FADE: 10+ finished tips on 5+ days and t <= -2 vs the average stock at 5 or 20 sessions; its tips become AVOID for 20 sessions. LISTEN (information only): t >= +2 with the same counts. Never a buy rule.', firstRun, latest: { label: MONITOR_LABEL, at: new Date().toISOString(), verdicts: Object.fromEntries(sources.map(s => [s.src, s.latestVerdict])) }, sources, fade: fadeList, marketCalls, opinions, channels: chanRows, tips: tips.filter(z => !z.noPrice).map(z => ({ src: z.src, sym: z.sym, d: z.d, entry: z.entry, r5: z.r5, c5: z.c5, s5: z.s5, r20: z.r20, c20: z.c20, s20: z.s20, soFar: z.sf ? +z.sf.r.toFixed(4) : null, soFarSessions: z.sf ? z.sf.n : 0 })), text: tbl.join('\n') };
+const out = { generatedAt: new Date().toISOString(), agent: 'C', preRegistered: '2026-10-20', tier2PreRegistered: '2026-10-22', tier2Rule: 'FOLLOW (tier 2): 30+ finished tips on 10+ days at a horizon; in both date halves beats the average stock after 1.2% stress cost, beats the S&P 500, positive without its 2 best tips, t >= 2.5. FADE (tier 2): both halves worse than the average stock, t <= -2.5, still worse without its 2 worst. First judgement frozen.', follow, fadeTier2: fadeT2, asOf: D[T - 1], cacheFrom: D[0], cost: COST, horizons: HOLDS, rule: 'FADE: 10+ finished tips on 5+ days and t <= -2 vs the average stock at 5 or 20 sessions; its tips become AVOID for 20 sessions. LISTEN (information only): t >= +2 with the same counts. Never a buy rule.', firstRun, latest: { label: MONITOR_LABEL, at: new Date().toISOString(), verdicts: Object.fromEntries(sources.map(s => [s.src, s.latestVerdict])) }, sources, fade: fadeList, marketCalls, opinions, channels: chanRows, tips: tips.filter(z => !z.noPrice).map(z => ({ src: z.src, sym: z.sym, d: z.d, entry: z.entry, r5: z.r5, c5: z.c5, s5: z.s5, r20: z.r20, c20: z.c20, s20: z.s20, soFar: z.sf ? +z.sf.r.toFixed(4) : null, soFarSessions: z.sf ? z.sf.n : 0 })), text: tbl.join('\n') };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 console.log(out.text);

@@ -40,6 +40,8 @@ const CHECKS = [
     ['orb-study', 'opening-range breakout study (A-ORB1)'], ['missed-runners', 'missed-runner audit (A-MISS1)'], ['sequence-study', 'sequence study (filing, quiet, breakout)'], ['quality', 'quality companies study (Agent B champion)'],
     ['stops', 'stop study (stop advice)'], ['exits', 'exit study'], ['rebuy', 'sell-and-buy-back study'], ['rebalance', 'rebalancing study'], ['winners-study', 'winners study'], ['hunting-lab', 'hunting lab'], ['score-study', 'stock score study']]
     .map(([f, n]) => ['data/' + f + '.json', 'Sunday ' + n, 'every Sunday', { days: 8 }, ran]),
+  // Agent C, 22 Oct 2026: new pre-registered studies (optional until their first Sunday run writes the file).
+  ...[['gov-awards2', 'government awards with the parent map (C-GOV1b)'], ['share-supply', 'share-supply avoid blocks (C-S8, C-LOCK)']].map(([f, n]) => ['data/' + f + '.json', 'Sunday ' + n, 'every Sunday', { days: 8, optional: true }, ran]),
 ];
 const problems = [], ok = [];
 for (const [f, name, how, lim, check] of CHECKS) {

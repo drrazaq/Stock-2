@@ -1888,9 +1888,9 @@
    "family": "Events",
    "name": "Contract size vs company size",
    "explain": "8-K item 1.01 whose stated dollar value is over 10% of market cap (value from the filing / Exhibit 10, SEC official APIs); hold 20 days. Stop if most filings state no amount. Second pre-registered version (from the 20 Oct evening review): the contract value must also cover 4+ quarters of operating cash burn (10-Q cash flow).",
-   "status": "queued (Agent C)",
+   "status": "pre-registered 22 Oct 2026 (both versions); queued as the next Agent C build",
    "agent": "C",
-   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox). | PRE-REGISTERED 22 Oct 2026 (Agent C), exact rule: event = 8-K with item 1.01 (from the SEC event cache, acceptance time UTC -> New York session via sec-time.mjs; earnings-day 8-Ks excluded as in events-study). Amount = the LARGEST dollar figure written as '$X million' or '$X billion' (or '$X,XXX,XXX' of 1,000,000+) in the item 1.01 section of the primary 8-K document (EDGAR Archives, accession from the cache); figures inside 'up to' are counted, figures labelled credit facility / loan / notes / debt / lease are NOT (those are financing, not customer contracts). CT1a: amount >= 10% of market cap (close of the reaction session x SEC share count known by then). CT1b: CT1a AND amount >= 4 quarters of operating cash burn (minus NetCashProvidedByUsedInOperatingActivities, last 10-Q/10-K known 30 days before; companies with positive operating cash flow pass). Buy the open after the reaction session, hold 20 sessions; one event per stock per 60 sessions. STOP RULE: if under 40% of item 1.01 filings state any parsable amount, 'needs data'. Gates: 0.8% / 1.2% stress, both halves, vs average stock, S&P 500 and own other days, without 2 best; PROVEN at t >= max(own, league, 4.0); TRADABLE SMALL tier 2 = both halves positive after 1.2%, beats average stock and S&P, without 2 best positive, t >= 2.5. Universe caveat: the event cache covers the scan universe + watch list only."
   },
   {
    "id": "C-IC1",
@@ -2307,7 +2307,7 @@
    "explain": "Once a tip source scores under t -2 vs the average stock over the same days, its next buys become AVOID for 20 sessions. Built from the tip-source scoring (queue item 1). Avoiding a -7% tip is the income.",
    "status": "tested: FADE flags live (first run 20 Oct); AVOID list in data/tip-score.json \"fade\", not yet wired into ACTIONS",
    "agent": "C",
-   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: scoring rule pre-registered in tip-score.mjs (5 and 20 sessions, vs the average stock bought the same day and the S&P 500, t by day; FADE at t <= -2 with 10+ tips on 5+ days). No source has a finished 20-session record yet (tips start 5 Oct).",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: scoring rule pre-registered in tip-score.mjs (5 and 20 sessions, vs the average stock bought the same day and the S&P 500, t by day; FADE at t <= -2 with 10+ tips on 5+ days). No source has a finished 20-session record yet (tips start 5 Oct). | 22 Oct (Agent C): tier-2 FOLLOW / FADE pre-registered in tip-score.mjs (30+ finished tips on 10+ days, both date halves, stress cost for FOLLOW, t >= 2.5 / <= -2.5, without 2 best / worst; first judgement frozen in firstRun.tier2). The original FADE rule (10 tips / 5 days / t <= -2) is unchanged; audit G5 notes it rests on few days. Public dated calls (ARK daily buys) are now logged to data/tips-public.jsonl and scored the same way.",
    "tested": "2026-10-19",
    "study": "tip-score.mjs -> data/tip-score.json (weekly, rule fixed in the header)",
    "result": {
@@ -2426,18 +2426,18 @@
    "family": "Share supply",
    "name": "S-8 share creep (avoid)",
    "explain": "An S-8 filing in the last 30 days and the share count up over 2% in 30 days: avoid 20 sessions. Employee-share dilution the 424B5 check misses.",
-   "status": "queued (Agent C)",
+   "status": "pre-registered 22 Oct 2026, built (share-supply.mjs); first run Sunday 25 Oct",
    "agent": "C",
-   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them."
+   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them. | Agent C 22 Oct: pre-registered in share-supply.mjs before any result. Data: EDGAR quarterly full index (all filers incl. later-delisted, CIK/form/filing date) + SEC quarterly share counts (30-day lag). Share counts are quarterly, so the test version S8B is 'S-8 and share count up over 2% vs the count known 90 days earlier' (S8A = any S-8, for comparison). Entry next open after the filing-date session, 20 sessions, vs the average stock (costs cancel). Judged for PROVEN (t <= -4.0 both halves + S&P + own days + without 2 worst) and TRADABLE SMALL tier-2 avoid (both halves negative, t <= -2.5, without 2 worst). Published support for share supply in general: net share issuance anomaly, Pontiff and Woodgate 2008 (Journal of Finance 63(2)), still present out of sample in McLean and Pontiff 2016 (Journal of Finance 71(1))."
   },
   {
    "id": "C-LOCK",
    "family": "Share supply",
    "name": "Lock-up expiry (avoid)",
    "explain": "IPO or secondary lock-up expiry (S-1 / 424B4 date + 90 or 180 days): avoid 10 sessions after. SEC official data only.",
-   "status": "queued (Agent C)",
+   "status": "pre-registered 22 Oct 2026, built (share-supply.mjs); first run Sunday 25 Oct",
    "agent": "C",
-   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them."
+   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them. | Agent C 22 Oct: pre-registered in share-supply.mjs. IPO = first 424B4 with the stock first in the price cache within 15 sessions after it; expiry = 424B4 date + 180 days. L180 (library rule): the 10 sessions from the expiry open. L180W: 5 sessions before to 1 after (published window, Field and Hanka 2001, Journal of Finance 56(2), 'The Expiration of IPO Share Lockups'). L90 information only. Same avoid gates and tier-2 test as C-S8. Universe caveat: today's SEC ticker list only (delisted IPOs missing)."
   },
   {
    "id": "C-INS3",
@@ -2786,6 +2786,76 @@
    "status": "in use (agents)",
    "agent": "A,B,C",
    "note": "From the owner's request of 22 Oct: test far more of what is out there. Tier 2 uses each rule's own bar, so more ideas do not raise it; the live auto-off is the guard against luck."
+  },
+  {
+   "id": "C-GOV1b",
+   "family": "Forward cash",
+   "name": "Government award, parent-mapped (USAspending recipient parent)",
+   "explain": "Same events and gates as C-GOV1 (award 20%+ of market cap on its start day; G2 adds flat share count and no 10% day in the 5 sessions before; hold 20 / 60), but recipients are matched to listed parents through the official USAspending recipient profile (parent_name), and awards are fetched per quarter so small and mid awards are in. Data rules: 30% match stop rule unchanged; no verdict until 95% of 50M+ awards have a parent lookup and every quarter list is complete.",
+   "status": "pre-registered 22 Oct 2026, built (gov-awards2.mjs); first run Sunday 25 Oct (may need 2 runs to finish the parent lookups)",
+   "agent": "C",
+   "source": "https://github.com/fedspendingtransparency/usaspending-api/blob/master/usaspending_api/api_contracts/contracts/v2/recipient/recipient_id.md",
+   "note": "Agent C 22 Oct 2026, queue item 1 (C-GOV1 parent map). C-GOV1 stopped at 16% match (subsidiary names). Judged for PROVEN and TRADABLE SMALL (tier 2). Caveat kept: Award Amount is the total to date; a pass goes to live paper first."
+  },
+  {
+   "id": "C-ARK1",
+   "family": "Crowd",
+   "name": "ARK Invest daily buys (public dated calls)",
+   "explain": "Each Buy row in ARK's published daily trades (ARKK, ARKW, ARKG, ARKQ, ARKF, ARKX) is a call on its trade date; bought the next open, 5 and 20 sessions, vs the average stock and the S&P 500 (tip-score rules: FADE / LISTEN, and tier-2 FOLLOW / FADE at 30+ calls on 10+ days, both halves). Second, separate pre-registered test once logged forward calls exist: the 5-year history from the same API (dated, public the same evening) with the same gates.",
+   "status": "forward logging live from 22 Oct (tip-sources.mjs -> data/tips-public.jsonl, scored by tip-score); historical test queued (Agent C)",
+   "agent": "C",
+   "source": "https://arkfunds.io/api (ARK trade notifications: https://ark-funds.com/ark-trade-notifications/)",
+   "data": "has: free public API, no key",
+   "queue": "forward score: running; historical test: after C-CT1",
+   "note": "WEB SCOUT 22 Oct. A source to score, never to copy. No published out-of-sample edge known; included because its calls are dated and public."
+  },
+  {
+   "id": "C-CONG1",
+   "family": "Crowd",
+   "name": "US Congress members' stock purchases (STOCK Act reports)",
+   "explain": "Each purchase in a House or Senate periodic transaction report is a call dated on its DISCLOSURE (filing) date, not the trade date; bought the next open, 20 and 60 sessions, vs the average stock and the S&P 500. Tested as a tip source (FOLLOW / FADE, tier 2 rules) and as a historical test 2021-2026 with the same gates.",
+   "status": "needs data",
+   "agent": "C",
+   "source": "https://www.nber.org/papers/w35041 (Capital in the Capitol, 2012-2023: after the STOCK Act legislators' portfolios trail or at best match the market); https://www.nber.org/papers/w26975",
+   "data": "needs data: House Clerk financial-disclosure ZIP/XML (disclosures-clerk.house.gov, public, no login) gives filing dates and PDF links; trades are in PDFs (parsing needed). Alternative: Alpha Vantage CONGRESS_TRADES (key exists, 25 calls/day) if it returns the disclosure date.",
+   "queue": "after C-ARK1 historical test",
+   "note": "WEB SCOUT 22 Oct. Published post-2012 result is no edge, so the expected outcome is NO EDGE or FADE; worth scoring because the crowd follows these trades."
+  },
+  {
+   "id": "C-CUST1",
+   "family": "Connected companies",
+   "name": "Customer momentum (Cohen and Frazzini)",
+   "explain": "Monthly: suppliers whose major customers (10%+ of sales, named in the supplier's 10-K) had the best prior-month return (top 20% of suppliers) are held one month; vs the average stock and suppliers whose customers were in the bottom 20%. Known at the 10-K filing date only.",
+   "status": "needs data",
+   "agent": "C",
+   "source": "https://arxiv.org/abs/2301.11394 (Customer Momentum replication: 1.22%/month EW t 5.2 full sample, but only 0.62%/month t 2.1 EW and insignificant VW after 2005; partly a large-to-small lead-lag)",
+   "data": "needs data: customer names from 10-K segment notes (SFAS 131 major customers); EDGAR full-text search could extract them, matching to tickers is the hard part.",
+   "queue": "needs data",
+   "note": "WEB SCOUT 22 Oct. Post-publication decay is documented; a reason to test, not a result. Overlaps with the supply-chain LINK test in events-study (industry level); this is firm level."
+  },
+  {
+   "id": "C-NSI1",
+   "family": "Share supply",
+   "name": "Net share issuance (avoid)",
+   "explain": "Share count known now (SEC cover count, 30-day lag) up 10%+ vs the count known 12 months earlier: avoid 60 sessions; tested vs the average stock (costs cancel), both halves, as an avoid block with the same PROVEN / tier-2 avoid gates as C-S8.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "source": "Pontiff and Woodgate 2008, 'Share Issuance and Cross-sectional Returns', Journal of Finance 63(2); out of sample in McLean and Pontiff 2016, 'Does Academic Research Destroy Stock Return Predictability?', Journal of Finance 71(1)",
+   "data": "has: data/shares.json.gz (quarterly SEC counts since 2019) and the price cache",
+   "queue": "after C-CT1",
+   "note": "WEB SCOUT 22 Oct. The scan already shows a 30%-in-a-year dilution warning that was never put through the gates; this is the test."
+  },
+  {
+   "id": "C-QP1",
+   "family": "Events",
+   "name": "IPO quiet-period expiry",
+   "explain": "IPO (first 424B4, stock first in the price cache within 15 sessions after it); the research quiet period ends 25 calendar days after the IPO (10 days for emerging-growth companies after the 2012 JOBS Act; both tested as written). Buy the open 5 sessions before the expiry, sell the close of the expiry session; vs the average stock, both halves, same gates.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "source": "Bradley, Jordan and Ritter 2003, 'The Quiet Period Goes out with a Bang', Journal of Finance 58(1) (about +4% abnormal in the 5 days before expiry when analysts initiate)",
+   "data": "has: the EDGAR index and IPO dates built for C-LOCK (share-supply.mjs)",
+   "queue": "after C-NSI1",
+   "note": "WEB SCOUT 22 Oct. Published effect is pre-2001; after the JOBS Act the date is less clear, which is why both versions are pre-registered."
   }
  ]
 }

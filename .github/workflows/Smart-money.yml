@@ -29,6 +29,12 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           STUDY: ${{ github.event.schedule == '30 9 * * 0' && '1' || '' }}
+      # Agent C (22 Oct 2026): public dated calls for the tip scoreboard (ARK daily buys, official free API, no login) ->
+      # data/tips-public.jsonl. Scored by tip-score.mjs; never a buy list.
+      - if: always()
+        shell: bash
+        continue-on-error: true
+        run: node tip-sources.mjs 2>&1 | tee -a run.log
       # Earnings history for the earnings-surprise study (Alpha Vantage 25 a day, FMP if the plan allows, Finnhub calendar).
       - shell: bash
         run: |
