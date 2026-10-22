@@ -463,6 +463,19 @@ function scRowKind(e) { e = String(e || ''); if (/^Quick trades/.test(e)) return
 // kept on paper and never lifts FOCUS.
 function workingKinds() { const W = new Set(); try { scorecardText(); for (const r of SC_ROWS) { if (!/^POSITIVE/.test(r.verdict || '') || !(r.n >= 30 && r.days >= 10 && r.stocks >= 20)) continue;
   const k = scRowKind(r.engine); if (k && k !== 'octopus') W.add(k); } } catch (e) { W.clear(); } return W; }
+// SUNDAY SCOREBOARD (review S-2, 22 Oct): the scoreboard with the owner's 90-day decision was attached only to an ACTIONS message built on
+// a UTC Sunday, and nothing builds one on Sundays. The bot's full check (every 5 minutes) now sends it once every Sunday, Kuwait time,
+// from 08:00; data/tg-state.json keeps the date it was sent.
+async function sundayScoreboard(now = Date.now()) { try {
+  const k = new Date(now), day = k.toLocaleDateString('en-US', { timeZone: 'Asia/Kuwait', weekday: 'short' }), hr = +k.toLocaleString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', hourCycle: 'h23' }), d = k.toLocaleDateString('en-CA', { timeZone: 'Asia/Kuwait' });
+  if (day !== 'Sun' || hr < 8 || !env.TG_TOKEN || !env.TG_CHAT) return;
+  if (readJson('data/tg-state.json', { offset: 0 }).scoreboardSent === d) return;
+  await telegram(scoreboardText() + '\n' + FOOT);
+  const st = readJson('data/tg-state.json', { offset: 0 }); st.scoreboardSent = d; fs.writeFileSync('data/tg-state.json', JSON.stringify(st)); console.log('Sunday scoreboard sent');
+} catch (e) { console.log('Sunday scoreboard failed: ' + e.message); } }
+// SPY CLOSES (review S-3, 22 Oct): written by every nightly scan from the SPY candles it already loaded, so the scoreboard has the S&P 500
+// figures (this week and 90 days) in every process, not only in one that happened to load SPY.
+function saveSpyCloses(candles) { try { const sp = (candles || []).map(c => c && c.c).filter(x => x > 0); if (sp.length > 70) fs.writeFileSync('data/spy-closes.json', JSON.stringify(sp.slice(-300))); } catch (e) {} }
 // LIVE RECORD CONCLUSIONS: the scorecard turned into plain decisions, shown automatically in every ACTIONS message (no command needed).
 function liveConclusions() { let t = ''; try { t = scorecardText(); } catch (e) { return []; }
   const A = (t.split('\nB. ')[0] || '').split('\n').filter(l => /^- /.test(l) && / => /.test(l)), nm = (l) => l.slice(2, l.indexOf(':')).replace(/ \(.*?\)/g, '').replace(/, 3 days after the signal/, '').replace(/^Early-wave radar, /, 'early-wave '), stop = [], care = [], work = [];
@@ -2786,6 +2799,7 @@ async function daily() {
     if (ws.length) { const n = await loadWide(ws, loaded, now); for (const x of ws) if (loaded[x]) { WIDE.add(x); LIST.push(x); } console.log('whole market:', n, 'of', ws.length, 'liquid companies loaded in', Math.round((Date.now() - t0) / 1000), 's'); } }
   if (!loaded.SPY) { await telegram('Stock scanner: could not load market data today (' + errors.length + ' errors). Check the TWELVE_KEY secret.'); process.exit(1); }
   const spy = loaded.SPY.candles, session = spy[spy.length - 1].d, prev = readJson('data/signals.json', null);
+  saveSpyCloses(spy);   // review S-3: the scoreboard's S&P 500 figures
   if (prev && prev.session === session && !env.FORCE) { console.log('No new session since ' + session + ' (weekend or holiday). Nothing sent.'); return; }
   const mkt = L.marketMap(spy), mktUp = mkt[session].up, mom6 = spy[spy.length - 1].c / spy[spy.length - 127].c - 1;
   const models = readJson('data/models.json', {});
@@ -3213,6 +3227,7 @@ async function intraday(onlyMine) {
   await tgCommands(sig);
   if (env.BOT_ONLY) return;   // fast reply loop: answer messages only; the full checks run every few minutes
   await preMarket(sig);
+  if (onlyMine) await sundayScoreboard();   // once every Sunday, Kuwait time (review S-2)
   if (onlyMine) { await fastMovers(); await watchdog(sig); }
   if (onlyMine && (!Object.keys(loadPos()).length || new Date(now).getUTCMinutes() % 15 >= 5)) return;   // chat mode: your positions only, about every 15 minutes
   if (!marketOpen(now) && !env.FORCE) { console.log('Market closed. Nothing to do.'); return; }
