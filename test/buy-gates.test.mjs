@@ -13,8 +13,9 @@ const quick = (sym) => ({ sym, n: 60, avgPct: 0.02, win: 0.6, last: 50, buyLo: 4
 // A live earnings-drift signal (beat by 12%, closed up 5% on the news).
 const pead = (sym) => ({ sym, live: true, inTest: true, buyLo: 30, buyHi: 31, stop: 27, hold: 40, sma20: 29, sur: 0.12, up: 0.05, test: { n: 176, avg: 0.018, win: 0.55 } });
 const sig = (extra = {}) => ({ session: '2026-10-21', market: { above50: true, up: true }, quick: [quick('AAA')], ...extra });
-// a quick-trade live record that the scorecard calls POSITIVE (40 trades, +2% a trade vs +0.5% for the S&P): one WORKING engine
-const working = { n: 40, winRate: 0.6, avgPct: 0.02, avgSpy: 0.005 };
+// a quick-trade live record that the scorecard calls POSITIVE under the full live bar (40 trades on 12 days in 25 stocks, +2% a trade vs
+// +0.5% for the S&P): one WORKING engine kind (days and stocks added 22 Oct, review S-14: FOCUS is lifted per kind under the full bar)
+const working = { n: 40, winRate: 0.6, avgPct: 0.02, avgSpy: 0.005, days: 12, stocks: 25 };
 const find = (S, s, sym) => S.fn('planCands')(s, {}).find(x => x.sym === sym);
 
 test('control: with focus off and no other gate, the proven quick trade is a buy', async () => {

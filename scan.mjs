@@ -389,13 +389,14 @@ function scorecardText() { const A = [], av = (a) => a.length ? a.reduce((x, y) 
   const verdict = (n, avg, bench, days, stocks) => { const ex = bench === null || bench === undefined ? avg : avg - bench; if (!n || avg === null) return 'no finished trades yet'; if (n < 10) return 'too early (' + n + ')';
     if (avg < 0 && ex < 0) return n >= 20 ? 'LOSING: do not act on these' : 'losing so far'; if (avg > 0 && ex > 0 && typeof days === 'number' && days < 10) return 'positive, but all from ' + days + ' trading day' + (days === 1 ? '' : 's') + ': not evidence yet (10+ days needed)'; if (avg > 0 && ex > 0 && typeof stocks === 'number' && stocks < 20) return 'positive, but on only ' + stocks + ' stock' + (stocks === 1 ? '' : 's') + ': not evidence yet (20+ needed; 22 Oct)'; if (avg > 0 && ex > 0) return n >= 30 ? 'POSITIVE so far (one market period only; not proof yet)' : 'positive so far, too few'; return 'mixed: no edge shown'; };
   const row = (name, n, win, avg, bench, extra, days, stocks) => { SC_ROWS.push({ engine: name, n: n || 0, win: typeof win === 'number' && isFinite(win) ? +win.toFixed(3) : null, avg: typeof avg === 'number' && isFinite(avg) ? +avg.toFixed(4) : null, days: typeof days === 'number' ? days : null, stocks: typeof stocks === 'number' ? stocks : null, verdict: verdict(n, avg, bench, days, stocks) }); return A.push('- ' + name + ': ' + (n ? n + ' finished, ' + (win === null || win === undefined || !isFinite(win) ? '' : Math.round(win * 100) + '% won, ') + 'average ' + pcs(avg) + (bench !== null && bench !== undefined ? ' vs S&P ' + pcs(bench) : '') + (extra ? ' ' + extra : '') + ' => ' : '') + verdict(n, avg, bench, days, stocks)); };
-  const sg = readJson0('data/signals.json') || {}, q = sg.quickRecord; if (q) row('Quick trades (ACTIONS)', q.n, q.winRate, q.avgPct, q.avgSpy, sg.quickPaused ? '(paused by the system)' : '');
+  const sg = readJson0('data/signals.json') || {}, q = sg.quickRecord; if (q) row('Quick trades (ACTIONS)', q.n, q.winRate, q.avgPct, q.avgSpy, sg.quickPaused ? '(paused by the system)' : '', q.days, q.stocks);
   const oc = readJson0('data/outcomes.json'); if (oc && oc.horizons) { const h = oc.horizons['3'] || oc.horizons['1']; row('Swing buys (ACTIONS), 3 days after the signal', h ? h.n : 0, oc.winRate, h ? h.avgReturn : null, h ? h.avgBenchmark : null, typeof oc.avgR === 'number' ? '(finished trades: ' + oc.finished + ', average ' + oc.avgR.toFixed(2) + 'R)' : ''); }
   const rr = readJson0('data/radar-record.json'); if (rr && rr.groups) for (const g of Object.values(rr.groups)) if (g.n) row('Early-wave radar, ' + g.name, g.n, g.win, g.avg, null);
   const ir = readJson0('data/ignition-results.json'); if (ir && ir.done) { const by = {}; for (const v of Object.values(ir.done)) if (typeof v.close === 'number') (by[v.rule] = by[v.rule] || []).push(v); for (const [k, a] of Object.entries(by)) row('Fast alerts rule ' + k + ' (paper, at the alert price, sold at the close)', a.length, a.filter(x => x.close > 0).length / a.length, av(a.map(x => x.close)), null, '(' + pcs(av(a.map(x => x.close_s))) + ' at 1.5x costs, ' + new Set(a.map(x => x.d)).size + ' day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks)', new Set(a.map(x => x.d)).size, new Set(a.map(x => x.sym)).size); }
   { const AP = readJson0(ALP_FILE); if (AP && Array.isArray(AP.closed)) { const by = {}; for (const t of AP.closed) if (typeof t.net === 'number') (by[t.engine || t.kind] = by[t.engine || t.kind] || []).push(t);
     for (const [k, a] of Object.entries(by)) row('Alpaca paper, ' + k + ' (filled at the open, after fees)', a.length, a.filter(x => x.net > 0).length / a.length, av(a.map(x => x.net)), null, '(' + new Set(a.map(x => x.out)).size + ' exit day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks)', new Set(a.map(x => x.out)).size, new Set(a.map(x => x.sym)).size); } }
-  { let T2 = []; try { T2 = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const by = {}; for (const r of T2) if (typeof r.pct === 'number') (by[r.kind] = by[r.kind] || []).push(r);
+  // tier2 off = exactly as before tier 2: its ledger rows are not shown and not counted (review S-14, 22 Oct)
+  if (TIER2_ON()) { let T2 = []; try { T2 = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const by = {}; for (const r of T2) if (typeof r.pct === 'number') (by[r.kind] = by[r.kind] || []).push(r);
     for (const [k, a] of Object.entries(by)) row('TRADABLE SMALL ledger, ' + k + ' (30 days after each instruction, after costs)', a.length, a.filter(x => x.pct > 0).length / a.length, av(a.map(x => x.pct)), null, '(' + new Set(a.map(x => x.d)).size + ' day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks; ' + T2.filter(r => r.kind === k && typeof r.pct !== 'number').length + ' still open)', new Set(a.map(x => x.d)).size, new Set(a.map(x => x.sym)).size); }
   const AL = readJson0('data/autolab.json'); if (AL && AL.candidates) for (const c of Object.values(AL.candidates)) if (c.paper) row('Autolab: ' + c.name, c.paper.n, c.paper.win, c.paper.avg, null, typeof c.paper.vsAvg === 'number' ? '(' + pcs(c.paper.vsAvg) + ' vs an average stock)' : '');
   const oct = readJson0('data/octopus-paper.json'); if (oct && oct.record) row('Octopus score top picks (rejected idea, kept on paper)', oct.record.n, oct.record.win, oct.record.avg, null);
@@ -452,6 +453,16 @@ function scoreboardText() { const now = Date.now(), d7 = new Date(now - 7 * 864e
     let T2 = []; try { T2 = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const t2w = T2.filter(r => r.d >= d7); if (t2w.length) W.push('- TRADABLE SMALL instructions this week: ' + t2w.map(r => r.sym + ' (' + r.kind + ')').join(', ') + '.');
     if (W.length > 2) L.push(...W); } catch (e) {}
   return L.join('\n'); }
+// ENGINE KIND OF A SCORECARD ROW (22 Oct): the same mapping for the LOSING block and for FOCUS. Rows of the TRADABLE SMALL ledger,
+// YOUR REAL trades, autolab, radar and fast alerts belong to no buy engine kind (null).
+function scRowKind(e) { e = String(e || ''); if (/^Quick trades/.test(e)) return 'quick trade'; if (/^Swing buys/.test(e)) return 'swing trade'; if (/^Octopus/.test(e)) return 'octopus';
+  const m = e.match(/^Alpaca paper, (.+?) \(filled/); if (m) { const n0 = m[1].replace(/ \(outside the tested set\)/, ''); return n0 === 'quick' ? 'quick trade' : n0 === 'leader' ? 'trend trade' : n0 === 'entry' ? null : n0; } return null; }
+// FOCUS PER ENGINE KIND (review S-14, 22 Oct): FOCUS was lifted for EVERY engine as soon as any row said POSITIVE (a tier-2 ledger row, an
+// Alpaca row of another kind). Now it is lifted only for the kind whose OWN live record is POSITIVE under the full live bar (30+ trades,
+// 10+ distinct days, 20+ stocks; a record whose days or stocks are unknown has not shown the bar). The octopus row is a rejected idea
+// kept on paper and never lifts FOCUS.
+function workingKinds() { const W = new Set(); try { scorecardText(); for (const r of SC_ROWS) { if (!/^POSITIVE/.test(r.verdict || '') || !(r.n >= 30 && r.days >= 10 && r.stocks >= 20)) continue;
+  const k = scRowKind(r.engine); if (k && k !== 'octopus') W.add(k); } } catch (e) { W.clear(); } return W; }
 // LIVE RECORD CONCLUSIONS: the scorecard turned into plain decisions, shown automatically in every ACTIONS message (no command needed).
 function liveConclusions() { let t = ''; try { t = scorecardText(); } catch (e) { return []; }
   const A = (t.split('\nB. ')[0] || '').split('\n').filter(l => /^- /.test(l) && / => /.test(l)), nm = (l) => l.slice(2, l.indexOf(':')).replace(/ \(.*?\)/g, '').replace(/, 3 days after the signal/, '').replace(/^Early-wave radar, /, 'early-wave '), stop = [], care = [], work = [];
@@ -1063,15 +1074,14 @@ function planCands(sig, held0) { const c0 = planCands0(sig, held0), LT = (sig &&
   // LIVE LOSING ENGINES (22 Oct): an engine whose live record says LOSING (20+ future-day trades, negative, behind the S&P) cannot
   // produce a buy line at all; it keeps logging on paper (the record stays visible) but never competes for the owner's money.
   // (audit 22 Oct) per engine kind, from the scorecard rows themselves, not from rendered text
-  let working = false; try { working = liveConclusions().some(l => /^- WORKING/.test(l)); const lose = new Map();
-    for (const r of SC_ROWS) { if (!/^LOSING/.test(r.verdict || '')) continue; const e = r.engine; let k = null;
-      if (/^Quick trades/.test(e)) k = 'quick trade'; else if (/^Swing buys/.test(e)) k = 'swing trade'; else if (/^Octopus/.test(e)) k = 'octopus';
-      else { const m = e.match(/^Alpaca paper, (.+?) \(filled/); if (m) { const n0 = m[1].replace(/ \(outside the tested set\)/, ''); k = n0 === 'quick' ? 'quick trade' : n0 === 'leader' ? 'trend trade' : n0 === 'entry' ? null : n0; } }
+  let WK = new Set(); try { WK = workingKinds(); const lose = new Map();
+    for (const r of SC_ROWS) { if (!/^LOSING/.test(r.verdict || '')) continue; const e = r.engine, k = scRowKind(e);
       if (k && !lose.has(k)) lose.set(k, e.replace(/ \(.*?\)/g, '') + ': ' + r.n + ' trades, average ' + pcs(r.avg)); }
     for (const x of c0) if (x.ok && lose.has(x.kind)) { x.ok = false; x.losingLive = true; x.avoid = 'PAPER ONLY: this engine is LOSING on its live record (' + lose.get(x.kind) + ')'; } } catch (e) {}
   // FOCUS MODE inside the gate (audit 22 Oct): while no engine is proven live, engine trades are paper only on EVERY path (alerts,
   // buttons, replies), not only in ACTIONS. Earnings drift stays as the owner's labelled choice (21 Oct).
-  { const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS && !working) for (const x of c0) if (x.ok && x.kind !== 'earnings drift') { x.ok = false; x.paperOnly = true; x.avoid = 'PAPER ONLY: focus mode, no buy engine has proven itself live yet (its ' + x.kind + ' is logged on paper)'; } }
+  // (review S-14) per kind: only the kinds in workingKinds() are lifted
+  { const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS) for (const x of c0) if (x.ok && x.kind !== 'earnings drift' && !WK.has(x.kind)) { x.ok = false; x.paperOnly = true; x.avoid = 'PAPER ONLY: focus mode, ' + (WK.size ? 'the ' + x.kind + ' engine has not' : 'no buy engine has') + ' proven itself live yet (its ' + x.kind + ' is logged on paper)'; } }
   return c0; }
 // ONE GATE FOR EVERY REPLY (audit 22 Oct): null when a buy line may be shown for this stock, otherwise the reason it may not.
 function gateVerdict(sym, sig) { try { sig = sig || readJson0('data/signals.json'); if (myHalal(sym) === 'fail') return 'you marked it NOT halal in ZAD';
@@ -1079,7 +1089,7 @@ function gateVerdict(sym, sig) { try { sig = sig || readJson0('data/signals.json
   const TS = readJson0('data/tip-score.json'), fd = ((TS && TS.fade) || []).find(f => f.sym === sym); if (fd) return 'tipped by ' + fd.src + ', a source whose tips lag (FADE)';
   const ew = eventWarn(sym); if (ew) return ew.replace(/^\s*\|\s*/, '').slice(0, 140);
   const pc = sig ? planCands(sig, {}).find(x => x.sym === sym) : null; if (pc && pc.ok) return null; if (pc && pc.avoid) return pc.avoid.replace(/^(AVOID|PAPER ONLY):\s*/, '');
-  const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS && !liveConclusions().some(l => /^- WORKING/.test(l))) return 'focus mode: no buy engine has proven itself live yet';
+  const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS && !(pc && workingKinds().has(pc.kind))) return 'focus mode: ' + (pc ? 'the ' + pc.kind + ' engine has not' : 'no tested engine for this stock has') + ' proven itself live yet';   // per kind (review S-14)
   return null; } catch (e) { return null; } }
 const gateLines = (lines, gv) => gv ? lines.map(l => /^CONCLUSION/.test(l) && /\bBUY\b/.test(l) ? 'CONCLUSION: PAPER ONLY (' + gv + '). Levels for the record: ' + l.replace(/^CONCLUSION[^:]*:\s*/, '').replace(/\b(ENTRY CONFIRMED\.\s*)?BUY\b/g, 'range') : l) : lines;
 function planCands0(sig, held0) {
@@ -1360,13 +1370,13 @@ function planText(sig, pos, px, title, only, full, opts) {
 function conclusion(sig, pos) {
   const out = ['CONCLUSION'];
   if (!sig) return out.concat('No scan has run yet.');
-  const held = pos || {}, OK = new Set(planCands(sig, held).filter(x => x.ok).map(x => x.sym));   // the same evidence gates as the plan: early, rejected or paper-only setups never show as BUY here
-  for (const q of (sig.quick || []).filter(x => !held[x.sym] && OK.has(x.sym)).slice(0, 4)) out.push(q.sym + ': BUY ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ' | STOP ' + money(q.stop) + ' | SELL ' + (q.t1 ? money(q.t1) + (q.t2 ? ' then ' + money(q.t2) : '') : 'on the rule exit') + ' | out after ' + (q.maxHold || 5) + ' sessions at the latest');
-  for (const b of (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !held[x.sym] && OK.has(x.sym)).slice(0, 4)) out.push(b.sym + ': BUY ' + money(b.buyLo) + ' to ' + money(b.buyHi) + ' | STOP ' + money(b.stop) + ' | SELL ' + (b.target ? money(b.target) : 'when it closes below ~' + money(b.exitBelow)) + ' | swing trade, days to weeks');
-  for (const r of (sig.leaders || []).filter(x => !held[x.sym] && OK.has(x.sym)).slice(0, 5)) out.push(leadLine(r));
-  // FOCUS MODE (user, 21 Oct: "it still suggests EFXT"): while no engine is proven live, engine trades are PAPER lines, never BUY lines
-  { const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; let working = false; try { working = liveConclusions().some(l => /^- WORKING/.test(l)); } catch (e) {}
-    if (FOCUS && !working) for (let i = 1; i < out.length; i++) out[i] = out[i].replace(/^([A-Z.]+): BUY /, '$1: PAPER ONLY, not a buy (its engine is not proven live; logged for the record): '); }
+  const held = pos || {}, OK = new Set(planCands(sig, held).filter(x => x.ok).map(x => x.kind + '|' + x.sym));   /* kind|sym: FOCUS is per engine kind (review S-14) */   // the same evidence gates as the plan: early, rejected or paper-only setups never show as BUY here
+  for (const q of (sig.quick || []).filter(x => !held[x.sym] && OK.has('quick trade|' + x.sym)).slice(0, 4)) out.push(q.sym + ': BUY ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ' | STOP ' + money(q.stop) + ' | SELL ' + (q.t1 ? money(q.t1) + (q.t2 ? ' then ' + money(q.t2) : '') : 'on the rule exit') + ' | out after ' + (q.maxHold || 5) + ' sessions at the latest');
+  for (const b of (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !held[x.sym] && OK.has('swing trade|' + x.sym)).slice(0, 4)) out.push(b.sym + ': BUY ' + money(b.buyLo) + ' to ' + money(b.buyHi) + ' | STOP ' + money(b.stop) + ' | SELL ' + (b.target ? money(b.target) : 'when it closes below ~' + money(b.exitBelow)) + ' | swing trade, days to weeks');
+  for (const r of (sig.leaders || []).filter(x => !held[x.sym] && OK.has('trend trade|' + x.sym)).slice(0, 5)) out.push(leadLine(r));
+  // FOCUS MODE (user, 21 Oct: "it still suggests EFXT"): while no engine is proven live, engine trades are PAPER lines, never BUY lines.
+  // (review S-14, 22 Oct) the lines above come only from planCands' ok set per kind, which applies FOCUS per engine kind; the old global
+  // rewrite here (lifted for all kinds by any POSITIVE row) is gone.
   if (sig.quickPaused) out.push('Quick trades are paused by the circuit breaker.');
   if (out.length === 1) out.push('No new trade today. Nothing passed its tests.');
   const pv = sig.posVerdict || {};
@@ -1376,11 +1386,11 @@ function conclusion(sig, pos) {
 // The same conclusion, recalculated from the price RIGHT NOW (market hours only): buy near the live price, with the stop and
 // selling prices moved by the same amount. A setup that has run away or failed is marked SKIP or CANCELLED.
 function conclusionLive(sig, pos, px) {
-  const out = ['WHAT TO DO NOW (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait time, live prices)'], held = pos || {}, OK = new Set(planCands(sig, held).filter(x => x.ok).map(x => x.sym)); let any = false;
-  for (const q of (sig.quick || []).filter(x => !held[x.sym] && OK.has(x.sym)).slice(0, 5)) { const p = px[q.sym]; if (!p) continue; any = true; const k = p / q.buyLo;
+  const out = ['WHAT TO DO NOW (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait time, live prices)'], held = pos || {}, OK = new Set(planCands(sig, held).filter(x => x.ok).map(x => x.kind + '|' + x.sym));   /* kind|sym: FOCUS is per engine kind (review S-14) */ let any = false;
+  for (const q of (sig.quick || []).filter(x => !held[x.sym] && OK.has('quick trade|' + x.sym)).slice(0, 5)) { const p = px[q.sym]; if (!p) continue; any = true; const k = p / q.buyLo;
     out.push(p > q.buyHi ? q.sym + ': SKIP. Now ' + money(p) + ', above its entry range (' + money(q.buyLo) + ' to ' + money(q.buyHi) + ').' : p <= q.stop ? q.sym + ': CANCELLED. Now ' + money(p) + ', at or below its invalidation level ' + money(q.stop) + '.'
       : q.sym + ': BUY near ' + money(p) + ' | STOP ' + money(p - (q.buyLo - q.stop)) + ' | SELL ' + (q.t1 ? money(q.t1 * k) + (q.t2 ? ' then ' + money(q.t2 * k) : '') : 'on the rule exit') + ' | out after ' + (q.maxHold || 5) + ' sessions at the latest'); }
-  for (const b of (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !held[x.sym] && OK.has(x.sym)).slice(0, 4)) { const p = px[b.sym]; if (!p) continue; any = true;
+  for (const b of (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !held[x.sym] && OK.has('swing trade|' + x.sym)).slice(0, 4)) { const p = px[b.sym]; if (!p) continue; any = true;
     out.push(p > b.buyHi ? b.sym + ': SKIP. Now ' + money(p) + ', above its buy range (' + money(b.buyLo) + ' to ' + money(b.buyHi) + ').' : p <= b.stop ? b.sym + ': CANCELLED. Now ' + money(p) + ', at its stop level.'
       : b.sym + ': BUY near ' + money(p) + ' | STOP ' + money(p - (b.buyLo - b.stop)) + ' | SELL ' + (b.target ? money(b.target * p / b.buyLo) : 'when it closes below ~' + money(b.exitBelow)) + ' | swing trade, days to weeks'); }
   if (sig.quickPaused) out.push('Quick trades are paused by the circuit breaker.');
@@ -2014,7 +2024,7 @@ async function actionsText(sig, pos, px, title) {
   const buyPart = plan.replace(/\nSELL\n[\s\S]*?(\n\n|$)/, '\n').trim();
   if (sig) { const fd = planCands(sig, pos).filter(x => x.fade); if (fd.length) out.push('', 'AVOID (tipped by a FADE source whose tips lag the market; 20 sessions after the tip): ' + fd.slice(0, 8).map(x => x.sym + ' (' + x.fade + ')').join(', ') + '.'); }
   if (sig) { const av = planCands(sig, pos).filter(x => x.lottery); if (av.length) out.push('', 'AVOID (lottery-like, tested to lag about 3% a month): ' + av.slice(0, 8).map(x => x.sym + ' +' + Math.round(x.lottery * 100) + '% in one day').join(', ') + '. Do not chase these.'); }
-  const FOCUS = (readJson0('data/settings.json') || {}).focus !== false, working = FOCUS ? liveConclusions().some(l => /^- WORKING/.test(l)) : true;
+  const FOCUS = (readJson0('data/settings.json') || {}).focus !== false, working = FOCUS ? workingKinds().size > 0 : true;   // a kind proven under the full live bar (review S-14)
   engineHistorySnapshot(); if (sig) { const lp = {}; for (const x of sig.stocks || []) if (x.last) lp[x.sym] = x.last; tier2Resolve(lp); }
   if (sig) { try { const lastPx = {}; for (const x of sig.stocks || []) if (x.last) lastPx[x.sym] = x.last; const pc = planCands(sig, pos); avoidLedger([...pc.filter(x => x.lottery).map(x => ({ sym: x.sym, why: 'lottery' })), ...pc.filter(x => x.fade).map(x => ({ sym: x.sym, why: 'faded tipster' }))], lastPx); } catch (e) {} }
   out.push('', ladder().text);
@@ -2058,7 +2068,7 @@ async function actionsText(sig, pos, px, title) {
     const SM = readJson('data/smart-money-study.json', null), smUp = SM && SM.rising && SM.rising.older.n >= 30 && SM.rising.newer.n >= 30 && SM.rising.older.avg > 0 && SM.rising.newer.avg > 0;
     const rOnly = rows.filter(r => r.market && r.market.risingOnly).map(r => r.name.replace(/ \(.*\)$/, ''));
     if (rows.length || LS) out.push('RESEARCH (Sunday): ' + (rows.length ? (pass.length ? 'NEW idea passed: ' + pass.map(r => r.name).join(', ') + ' (paper first)' : 'none of ' + rows.length + ' new ideas passed') : 'not run yet') + (LS && LS.liveVerdict ? '; LEADERS ' + String(LS.liveVerdict).toLowerCase() : '') + (rOnly.length ? '; works in RISING markets only: ' + rOnly.join(', ') : '') + (smUp ? '; insider buying works in rising markets (' + pcs(SM.rising.older.avg) + ' / ' + pcs(SM.rising.newer.avg) + ' a trade)' : '') + '. Send  lab  for details.'); }
-  if (!(FOCUS && !working)) { let ob = ''; try { ob = opportunitiesText(sig, true); } catch (e) {} if (ob) out.push('', ob); } else out.push('', 'Other ideas (information only): send  opportunities');
+  if (!FOCUS) { let ob = ''; try { ob = opportunitiesText(sig, true); } catch (e) {} if (ob) out.push('', ob); } else out.push('', 'Other ideas (information only): send  opportunities');   // FOCUS on: one working kind does not open the whole ungated board (review S-14)
   { const lc = liveConclusions(); if (lc.length) out.push('', ...lc); }
   out.push('', 'This is the one message to act on. Check ZAD, buy inside the range, set the stop. After: bought / sold SYMBOL PRICE SHARES. Why and details: send  details  or  review SYM');
   return out.join('\n');
@@ -2837,7 +2847,7 @@ async function daily() {
           lr.n++; lr.sum += y.t.pct; if (y.t.pct > 0) lr.wins++; lr.ends[y.t.reason] = (lr.ends[y.t.reason] || 0) + 1; lr.runUp.push(mx / y.t.entry - 1);
           if (y.x.t1) { lr.t1n++; if (mx >= y.x.t1 * (y.t.entry / y.x.ref)) lr.t1++; }
           lr.last.push(sym + ' ' + (y.t.pct >= 0 ? '+' : '') + (y.t.pct * 100).toFixed(1) + '% (' + y.t.reason.replace('_', ' ') + ')'); }
-        if (isQ) qFin.push({ d: c[y.t.exitIdx].d, pct: y.t.pct, spy: ind.bench && ind.bench[y.t.sigIdx] ? ind.bench[y.t.exitIdx] / ind.bench[y.t.sigIdx] - 1 : null }); else results.push(y.t.r);
+        if (isQ) qFin.push({ sym, d: c[y.t.exitIdx].d, pct: y.t.pct, spy: ind.bench && ind.bench[y.t.sigIdx] ? ind.bench[y.t.exitIdx] / ind.bench[y.t.sigIdx] - 1 : null }); else results.push(y.t.r);
         if (y.t.exitIdx === i) exits.push(sym + (isQ ? ' (quick trade)' : '') + ': paper trade from ' + y.x.d + ' ended by ' + y.t.reason.replace('_', ' ') + ' (' + (y.t.pct >= 0 ? '+' : '') + (y.t.pct * 100).toFixed(1) + '%)');
       }
       if (!isQ) { const o = L.barOutcomes(y.x, c, ind); for (const h in o) { const g = horizons[h] || (horizons[h] = { n: 0, ret: 0, bench: 0 }); g.n++; g.ret += o[h].ret; g.bench += o[h].bench || 0; } }
@@ -3072,7 +3082,7 @@ async function daily() {
     }
     fs.writeFileSync(SECF, JSON.stringify(SC)); }
   const qn = qFin.length, qs = qFin.filter(x => x.spy !== null);
-  const quickRecord = qn ? { n: qn, winRate: qFin.filter(x => x.pct > 0).length / qn, avgPct: qFin.reduce((a, x) => a + x.pct, 0) / qn, avgSpy: qs.length ? qs.reduce((a, x) => a + x.spy, 0) / qs.length : null } : null;
+  const quickRecord = qn ? { n: qn, winRate: qFin.filter(x => x.pct > 0).length / qn, avgPct: qFin.reduce((a, x) => a + x.pct, 0) / qn, avgSpy: qs.length ? qs.reduce((a, x) => a + x.spy, 0) / qs.length : null, days: new Set(qFin.map(x => x.d)).size, stocks: new Set(qFin.map(x => x.sym)).size } : null;   // days / stocks: the full live bar (review S-14, 22 Oct)
 
   const fin = results.length, wins = results.filter(r => r > 0).length;
   const outcomes = { updated: new Date(now).toISOString(), finished: fin, winRate: fin ? wins / fin : null, avgR: fin ? results.reduce((a, b) => a + b, 0) / fin : null,
