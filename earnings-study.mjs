@@ -11,7 +11,9 @@
 //   in the top half of its range, 5 USD+, 5M USD+ traded. Buy the next open (skip if 3%+ above the reaction close), stop
 //   0.5% under the reaction-day low (15% or less), sell on a close under the 20 day average or after 40 sessions.
 //   Judged on the older and newer half at 0.8% cost, 1.2% stress, last 12 months, against the S&P 500 and against ALL earnings
-//   reactions bought the same way (so the surprise itself must add value). Verdict saved in data/earnings-study.json.
+//   reactions bought the same way (so the surprise itself must add value). Since 22 Oct 2026 also the house gates (luck bar,
+//   average stock, same stock on other days, without the 2 best trades; see MODE=study below) and a frozen first run.
+//   Verdict saved in data/earnings-study.json.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch';
@@ -60,62 +62,127 @@ if (MODE === 'fetch') {
 }
 
 // ---------------- MODE=study ----------------
-let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE || 'study-cache/grouped.json.gz')).toString()); } catch (e) { console.log('earnings study: no price cache'); fs.writeFileSync(OUT, JSON.stringify({ status: 'NOT RUN', why: 'no price cache' })); process.exit(0); }
+// HOUSE GATES (22 Oct 2026, audit item 1; the rule itself is unchanged): for the main rule, in the older half, the newer half and
+// the whole period, at 0.8% cost: 30+ trades; average after costs above 0; date-clustered t (one average per entry day, t over the
+// days) at or above the luck bar = max(3.0, data/agent-league.json `bar`); better than the average stock bought on the same entry
+// days for the same holding window (needs the whole-market study cache, study-cache/grouped.json.gz); better than the S&P 500 over
+// the same days; better than the same stocks bought on random NON-earnings days with the same exit rule (and t 2+ on that); still
+// above 0 without the 2 best trades; and still above 0 at 1.2% cost. Distinct entry days and distinct stocks are reported.
+// RUN ONCE AS WRITTEN: the first complete verdict (both halves 30+ trades and every yardstick computed) is frozen in `firstRun` and
+// never overwritten; later runs go to `latest` (label "monitoring"). The top-level `verdict` is always firstRun.verdict once it exists.
+const PREV = readJson(OUT, {});
+let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE || 'study-cache/grouped.json.gz')).toString()); } catch (e) {
+  console.log('earnings study: no price cache (study-cache/grouped.json.gz); previous result kept');   // never wipe a frozen first run
+  fs.writeFileSync(OUT, JSON.stringify({ ...PREV, lastAttempt: { at: new Date().toISOString(), status: 'NOT RUN', why: 'no price cache' } }, null, 1)); process.exit(0); }
 const D = Object.keys(store.days || {}).sort(), T = D.length, tOf = new Map(D.map((d, t) => [d, t]));
 const bars = new Map(); D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { let a = bars.get(x.T[j]); if (!a) bars.set(x.T[j], a = []); a.push({ t, o: x.o[j], h: x.h[j], l: x.l[j], c: x.c[j], v: x.v[j] }); } });
-const spy = bars.get('SPY'), spyC = new Array(T).fill(null); if (spy) spy.forEach(b => spyC[b.t] = b.c);
-const spyRet = (a, b) => spyC[a] && spyC[b] ? spyC[b] / spyC[a] - 1 : null, mid = Math.floor(T / 2), COST = 0.008;
+const spy = bars.get('SPY'), spyC = new Array(T).fill(null), spyO = new Array(T).fill(null); if (spy) spy.forEach(b => { spyC[b.t] = b.c; spyO[b.t] = b.o; });
+const spyRet = (a, b) => spyC[a] && spyC[b] ? spyC[b] / spyC[a] - 1 : null, mid = Math.floor(T / 2), COST = 0.008, STRESS = 0.012;
+const spyWin = (a, b, k) => { const x = spyO[a], y = k === 'o' ? spyO[b] : spyC[b]; return x && y ? y / x - 1 : null; };   // S&P 500 from the entry open to the exit price of the same kind
 const nreps = Object.values(cache.syms).reduce((a, x) => a + x.length, 0);
+const LG = readJson('data/agent-league.json', {}), LEAGUE_BAR = typeof LG.bar === 'number' ? LG.bar : null, BAR = Math.max(3.0, LEAGUE_BAR || 0);
 const avg = (a, p) => { const o = new Array(a.length).fill(null); let s = 0; for (let i = 0; i < a.length; i++) { s += a[i]; if (i >= p) s -= a[i - p]; if (i >= p - 1) o[i] = s / p; } return o; };
 function tradeMA(c, e, entry, stop, ma, hold) {   // stop first (gaps fill at the open); else next open after a close under the average; else the close after `hold` sessions
   for (let j = e; j < c.length && c[j].t <= c[e].t + hold - 1; j++) { const b = c[j];
-    if (j > e && b.o <= stop) return { exit: b.o, j }; if (b.l <= stop) return { exit: stop, j };
-    if (ma[j] && b.c < ma[j]) { const n = c[j + 1]; if (!n) return null; return { exit: n.o, j: j + 1 }; } }
-  let j = e; while (j + 1 < c.length && c[j + 1].t <= c[e].t + hold - 1) j++; return c[j].t === c[e].t + hold - 1 || c[j + 1] ? { exit: c[j].c, j } : null;
+    if (j > e && b.o <= stop) return { exit: b.o, j, k: 'o' }; if (b.l <= stop) return { exit: stop, j, k: 'c' };
+    if (ma[j] && b.c < ma[j]) { const n = c[j + 1]; if (!n) return null; return { exit: n.o, j: j + 1, k: 'o' }; } }
+  let j = e; while (j + 1 < c.length && c[j + 1].t <= c[e].t + hold - 1) j++; return c[j].t === c[e].t + hold - 1 || c[j + 1] ? { exit: c[j].c, j, k: 'c' } : null;
 }
-const groups = { main: [], noPrice: [], all: [], neg: [] };
+// ---- yardstick 1: the average stock, bought at the same entry open, sold at the same exit day (whole-market cache only)
+const WHOLE = bars.size >= 1000;   // a whole-market cache has thousands of stocks; a small/partial price file cannot stand for "the average stock"
+const mktMemo = new Map(); let OPEN = null, CLOSE = null, LIQ = null;
+if (WHOLE) { const syms = [...bars.keys()].filter(s => s !== 'SPY'), NS = syms.length; OPEN = new Float32Array(NS * T).fill(NaN); CLOSE = new Float32Array(NS * T).fill(NaN); const V = new Float32Array(NS * T).fill(NaN);
+  syms.forEach((s, i) => { for (const b of bars.get(s)) { OPEN[i * T + b.t] = b.o; CLOSE[i * T + b.t] = b.c; V[i * T + b.t] = b.v; } });
+  LIQ = Array.from({ length: T }, () => []); for (let i = 0; i < NS; i++) for (let t = 1; t < T; t++) { const pc0 = CLOSE[i * T + t - 1]; if (pc0 >= 5 && pc0 * V[i * T + t - 1] >= 5e6 && OPEN[i * T + t] > 0) LIQ[t].push(i); } }
+const mktWin = (a, b, k) => { if (!WHOLE) return null; const key = a + '_' + b + k; if (mktMemo.has(key)) return mktMemo.get(key); const A = k === 'o' ? OPEN : CLOSE; let s = 0, n = 0;
+  for (const i of LIQ[a]) { const x = OPEN[i * T + a], y = A[i * T + b]; if (x > 0 && y > 0) { const r = y / x - 1; if (Math.abs(r) <= 3) { s += r; n++; } } } const v = n >= 50 ? s / n : null; mktMemo.set(key, v); return v; };
+// ---- seeded random numbers (same sample every run for the same data)
+const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let z = Math.imul(seed ^ seed >>> 15, 1 | seed); z = z + Math.imul(z ^ z >>> 7, 61 | z) ^ z; return ((z ^ z >>> 14) >>> 0) / 4294967296; };
+const hash = (s) => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; };
+const CTRL_PER_SYM = 40;   // random non-earnings entry days per stock (whole period) for the same-stock yardstick
+const groups = { main: [], noPrice: [], all: [], neg: [] }, ownCtrl = new Map();   // ownCtrl: sym -> [{ t, g }]
 for (const [sym, reps] of Object.entries(cache.syms)) {
-  const c = bars.get(sym); if (!c || c.length < 60) continue; const idx = new Map(c.map((b, i) => [b.t, i])), m20 = avg(c.map(x => x.c), 20); let free = -1;
+  const c = bars.get(sym); if (!c || c.length < 60) continue; const idx = new Map(c.map((b, i) => [b.t, i])), m20 = avg(c.map(x => x.c), 20); let free = -1; const near = new Set();
   for (const r of reps) {
     // the reaction day: before the open -> that session; after the close -> the next session; unknown -> the bigger gap of the two
     let t0 = null; for (let k = 0; k < 5 && t0 === null; k++) { const d = iso(Date.parse(r.d + 'T12:00:00Z') + k * 864e5); if (tOf.has(d)) t0 = tOf.get(d); }
-    if (t0 === null) continue; let i = idx.get(t0); if (i === undefined || i < 25) continue;
+    if (t0 === null) continue; let i = idx.get(t0); if (i === undefined) continue; for (let k = i - 2; k <= i + 7; k++) near.add(k);   // no control entries around any report
+    if (i < 25) continue;
     if (r.t === 'amc') i = i + 1; else if (r.t !== 'bmo' && c[i + 1] && c[i + 1].t === c[i].t + 1) { const g0 = Math.abs(c[i].o / c[i - 1].c - 1), g1 = Math.abs(c[i + 1].o / c[i].c - 1); if (g1 > g0) i = i + 1; }
     const b = c[i], p = c[i - 1], n1 = c[i + 1]; if (!b || !p || !n1 || n1.t !== b.t + 1) continue;
     if (!(b.c >= 5) || b.c * b.v < 5e6 || !(Math.abs(r.e) >= 0.05)) continue;
     const sur = (r.a - r.e) / Math.abs(r.e), up = b.c / p.c - 1, loc = b.h > b.l ? (b.c - b.l) / (b.h - b.l) : 0.5, e = n1.o, stop = b.l * 0.995;
     if (!(e > stop) || (e - stop) / e > 0.15 || e > b.c * 1.03) continue;
-    const res = tradeMA(c, i + 1, e, stop, m20, 40); if (!res) continue;
-    const tr = { sym, t: n1.t, gross: res.exit / e - 1, spy: spyRet(n1.t, c[res.j].t), sur };
+    const res = tradeMA(c, i + 1, e, stop, m20, 40); if (!res) continue; const tx = c[res.j].t;
+    const tr = { sym, t: n1.t, tx, gross: res.exit / e - 1, spy: spyRet(n1.t, tx), spyW: spyWin(n1.t, tx, res.k), mkt: mktWin(n1.t, tx, res.k), sur };
     const priceOk = up >= 0.03 && loc >= 0.5;
     groups.all.push(tr); if (sur >= 0.10) groups.noPrice.push(tr); if (sur >= 0.10 && priceOk && i > free) { groups.main.push(tr); free = res.j; } if (sur <= -0.10) groups.neg.push(tr);
   }
+  // ---- yardstick 3: the same stock on random non-earnings days: buy the open, stop 0.5% under the prior day's low (15% or less), same exits
+  const cand = []; for (let k = 26; k < c.length - 1; k++) if (!near.has(k) && !near.has(k - 1) && c[k].t === c[k - 1].t + 1) cand.push(k);
+  const R0 = rng(hash(sym)), picks = new Set(); for (let tries = 0; picks.size < Math.min(CTRL_PER_SYM, cand.length) && tries < CTRL_PER_SYM * 5; tries++) picks.add(cand[Math.floor(R0() * cand.length)]);
+  const L = []; for (const k of [...picks].sort((x, y) => x - y)) { const p = c[k - 1], e = c[k].o, stop = p.l * 0.995;
+    if (!(p.c >= 5) || p.c * p.v < 5e6 || !(e > stop) || (e - stop) / e > 0.15) continue; const res = tradeMA(c, k, e, stop, m20, 40); if (res) L.push({ t: c[k].t, g: res.exit / e - 1 }); }
+  ownCtrl.set(sym, L);
 }
+const ownMean = (sym, lo, hi) => { const L = (ownCtrl.get(sym) || []).filter(z => z.t >= lo && z.t < hi); return L.length >= 3 ? L.reduce((a, z) => a + z.g, 0) / L.length : null; };
+const mean = (v) => v.reduce((a, x) => a + x, 0) / v.length;
+const tStat = (v) => { if (v.length < 2) return null; const m = mean(v), sd = Math.sqrt(v.reduce((u, w) => u + (w - m) ** 2, 0) / (v.length - 1)); return sd > 0 ? +(m / (sd / Math.sqrt(v.length))).toFixed(2) : null; };
+const byDay = (a, f) => { const o = new Map(); for (const z of a) { const x = f(z); if (x === null || x === undefined || !isFinite(x)) continue; (o.get(z.t) || o.set(z.t, []).get(z.t)).push(x); } return [...o.values()].map(mean); };
+const r4 = (x) => x === null || x === undefined || !isFinite(x) ? null : +x.toFixed(4);
 function stats(a, cost) { if (!a.length) return { n: 0 }; const p = a.map(x => x.gross - cost), w = p.filter(x => x > 0), l = p.filter(x => x <= 0), sum = z => z.reduce((x, y) => x + y, 0), sp = a.filter(x => x.spy !== null).map(x => x.spy);
   return { n: p.length, win: w.length / p.length, avg: sum(p) / p.length, pf: l.length && sum(l) < 0 ? sum(w) / -sum(l) : null, spy: sp.length ? sum(sp) / sp.length : null, bestShare: sum(w) > 0 ? Math.max(...w) / sum(w) : null }; }
+// the gate numbers for one set of trades (lo..hi = the period, for the same-stock yardstick)
+function gates(a, cost, lo, hi) { if (!a.length) return { n: 0 };
+  const net = a.map(x => x.gross - cost), srt = [...net].sort((x, y) => y - x), dm = byDay(a, z => z.gross - cost);
+  const ed = byDay(a, z => z.mkt === null ? null : z.gross - cost - z.mkt), sv = byDay(a, z => z.spyW === null ? null : z.gross - cost - z.spyW);
+  const ov = byDay(a, z => { const m = ownMean(z.sym, lo, hi); return m === null ? null : z.gross - m; }), withMkt = a.filter(z => z.mkt !== null).length;
+  return { n: a.length, distinctDays: dm.length, distinctStocks: new Set(a.map(z => z.sym)).size, avg: r4(mean(net)), win: r4(net.filter(x => x > 0).length / net.length),
+    t: tStat(dm), vsAvgStock: WHOLE && ed.length ? r4(mean(ed)) : null, tAvgStock: WHOLE ? tStat(ed) : null, avgStockCovered: withMkt,
+    vsSpy: sv.length ? r4(mean(sv)) : null, tSpy: tStat(sv), vsOwn: ov.length ? r4(mean(ov)) : null, tOwn: tStat(ov), ownCovered: ov.length,
+    without2Best: srt.length > 2 ? r4(mean(srt.slice(2))) : null, worstDay: r4(Math.min(...dm)), bestDay: r4(Math.max(...dm)) }; }
 const older = a => a.filter(x => x.t < mid), newer = a => a.filter(x => x.t >= mid);
-const R = Object.fromEntries(Object.entries(groups).map(([k, a]) => [k, { older: stats(older(a), COST), newer: stats(newer(a), COST), stress: stats(newer(a), COST + 0.004), last12: stats(a.filter(x => x.t >= T - 252), COST) }]));
-const M = R.main, why = [];
-let verdict = 'PROMISING';
-if (!M.older.n || M.older.n < 30 || !M.newer.n || M.newer.n < 30) { verdict = 'NOT PROVEN'; why.push('too few trades yet (' + (M.older.n || 0) + ' older, ' + (M.newer.n || 0) + ' newer; 30 each needed). The earnings history grows every weekday'); }
-else {
-  if (!(M.older.avg > 0)) why.push('lost money in the older half'); if (!(M.newer.avg > 0)) why.push('lost money in the newer half');
-  if (!(M.stress.avg > 0)) why.push('loses at 1.2% cost'); if (!((M.newer.pf || 0) > 1.2)) why.push('profit factor ' + (M.newer.pf ? M.newer.pf.toFixed(2) : 'n/a'));
-  if (M.newer.spy !== null && !(M.newer.avg > M.newer.spy)) why.push('no better than the S&P 500 over the same days');
+const R = Object.fromEntries(Object.entries(groups).map(([k, a]) => [k, { older: stats(older(a), COST), newer: stats(newer(a), COST), stress: stats(newer(a), STRESS), last12: stats(a.filter(x => x.t >= T - 252), COST) }]));
+const Mt = groups.main, G = { older: gates(older(Mt), COST, 0, mid), newer: gates(newer(Mt), COST, mid, T), whole: gates(Mt, COST, 0, T),
+  stressOlder: gates(older(Mt), STRESS, 0, mid), stressNewer: gates(newer(Mt), STRESS, mid, T), stressWhole: gates(Mt, STRESS, 0, T) };
+const M = R.main, why = [], needCache = [], pcx = (x) => x === null ? 'n/a' : pc(x, 2);
+const enough = (G.older.n || 0) >= 30 && (G.newer.n || 0) >= 30;
+if (!enough) why.push('too few trades yet (' + (G.older.n || 0) + ' older, ' + (G.newer.n || 0) + ' newer; 30 each needed)');
+else for (const h of ['older', 'newer']) { const g = G[h], s = G['stress' + h[0].toUpperCase() + h.slice(1)];
+  if (!(g.avg > 0)) why.push('lost money after 0.8% costs in the ' + h + ' half (' + pcx(g.avg) + ')');
+  if (!(g.t !== null && g.t >= BAR)) why.push('could be luck in the ' + h + ' half (date-clustered t ' + g.t + ', luck bar ' + BAR.toFixed(2) + ')');
+  if (!WHOLE) needCache.push(h); else if (!(g.vsAvgStock > 0)) why.push('not better than the average stock on the same days in the ' + h + ' half (' + pcx(g.vsAvgStock) + ')');
+  if (!(g.vsSpy > 0)) why.push('not better than the S&P 500 over the same days in the ' + h + ' half (' + pcx(g.vsSpy) + ')');
+  if (!(g.vsOwn > 0 && g.tOwn >= 2)) why.push('not clearly better than the same stocks on their non-earnings days in the ' + h + ' half (' + pcx(g.vsOwn) + ', t ' + g.tOwn + ')');
+  if (!(g.without2Best > 0)) why.push('loses without its 2 best trades in the ' + h + ' half (' + pcx(g.without2Best) + ')');
+  if (!(s.avg > 0)) why.push('loses at 1.2% cost in the ' + h + ' half (' + pcx(s.avg) + ')'); }
+if (enough) {   // the original checks stay
+  if (!((M.newer.pf || 0) > 1.2)) why.push('profit factor ' + (M.newer.pf ? M.newer.pf.toFixed(2) : 'n/a') + ' in the newer half (1.2 needed)');
   if (R.all.newer.n && !(M.newer.avg > R.all.newer.avg + 0.005)) why.push('not clearly better than buying every earnings reaction the same way (the surprise adds too little)');
-  if (M.last12.n >= 10 && !(M.last12.avg > 0)) why.push('lost money in the last 12 months'); if (M.newer.bestShare > 0.5) why.push('one trade made half the gains');
-  if (why.length) verdict = M.newer.avg > 0 && M.older.avg > 0 ? 'NOT PROVEN' : 'REJECTED';
-}
-const line = s => !s || !s.n ? 'no trades' : s.n + ' trades, ' + Math.round(s.win * 100) + '% won, average ' + pc(s.avg) + (s.pf ? ', profit factor ' + s.pf.toFixed(2) : '');
-const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[0], to: D[T - 1], stocks: Object.keys(cache.syms).length, reports: nreps, verdict, why: why.join('; ') || 'passed in both halves, at stress cost, in the last 12 months, and beat buying every earnings reaction', results: R,
+  if (M.last12.n >= 10 && !(M.last12.avg > 0)) why.push('lost money in the last 12 months'); if (M.newer.bestShare > 0.5) why.push('one trade made half the gains'); }
+if (needCache.length) why.push('average-stock yardstick needs the study cache (whole-market study-cache/grouped.json.gz; this price file has ' + bars.size + ' stocks)');
+const verdict = !enough ? 'NOT PROVEN' : !why.length ? 'PROMISING' : (G.older.avg > 0 && G.newer.avg > 0 ? 'NOT PROVEN' : 'REJECTED');
+const whyText = why.join('; ') || 'passed every gate in both halves: beyond the luck bar, better than the average stock, the S&P 500 and the same stocks on other days, without its 2 best trades, at 1.2% cost, in the last 12 months, and beat buying every earnings reaction';
+const complete = enough && WHOLE;   // only a run with every yardstick computed may become the frozen first run
+const thisRun = { at: new Date().toISOString(), from: D[0], to: D[T - 1], stocks: Object.keys(cache.syms).length, priced: bars.size, reports: nreps, bar: +BAR.toFixed(2), leagueBar: LEAGUE_BAR, verdict, why: whyText, gates: G, results: R };
+const firstRun = PREV.firstRun && PREV.firstRun.verdict ? PREV.firstRun : (complete ? { ...thisRun, label: 'first run (frozen)' } : null);
+const topVerdict = firstRun ? firstRun.verdict : (verdict === 'PROMISING' ? 'NOT PROVEN' : verdict);   // nothing becomes a buy without a frozen complete run
+const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[0], to: D[T - 1], stocks: Object.keys(cache.syms).length, reports: nreps,
+  verdict: topVerdict, why: firstRun ? firstRun.why : whyText + (complete ? '' : ' (not frozen: the first complete run needs 30+ trades per half and the whole-market cache)'),
+  results: R, gates: G, bar: +BAR.toFixed(2), leagueBar: LEAGUE_BAR, firstRun, latest: { ...thisRun, label: firstRun && firstRun.at !== thisRun.at ? 'monitoring (does not change the verdict)' : 'this run' },
+  preGates: PREV.preGates || (PREV.verdict && !PREV.firstRun ? { verdict: PREV.verdict, at: PREV.generatedAt, note: 'verdict given before the house gates existed; not used' } : undefined),
   rule: { minSurprise: 0.10, minUp: 0.03, minLoc: 0.5, maxGap: 0.03, maxStop: 0.15, exitMA: 20, hold: 40 },
   syms: Object.keys(cache.syms).sort() };   // the tested set (22 Oct): live signals outside it are kept as a separate paper record
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
+const line = s => !s || !s.n ? 'no trades' : s.n + ' trades, ' + Math.round(s.win * 100) + '% won, average ' + pc(s.avg) + (s.pf ? ', profit factor ' + s.pf.toFixed(2) : '');
+const gl = g => !g || !g.n ? 'no trades' : g.n + ' trades on ' + g.distinctDays + ' days in ' + g.distinctStocks + ' stocks, average ' + pcx(g.avg) + ', t ' + g.t + ' (bar ' + BAR.toFixed(2) + '), vs average stock ' + (WHOLE ? pcx(g.vsAvgStock) : 'needs the study cache') + ', vs S&P 500 ' + pcx(g.vsSpy) + ', vs same stocks other days ' + pcx(g.vsOwn) + ' (t ' + g.tOwn + '), without 2 best ' + pcx(g.without2Best);
 const msg = ['EARNINGS SURPRISE DRIFT, fair test ' + D[T - 1], 'Earnings history: ' + out.stocks + ' stocks, ' + nreps + ' reports. Prices ' + D[0] + ' to ' + D[T - 1] + ', 0.8% cost.', '',
   'Rule (fixed): EPS 10%+ above the estimate, reaction day up 3%+ closing in the top half, buy the next open, stop under the reaction-day low, sell on a close under the 20 day average or after 40 sessions.',
-  'older half: ' + line(M.older), 'newer half: ' + line(M.newer), 'newer half at 1.2% cost: ' + line(M.stress), 'last 12 months: ' + line(M.last12), '',
+  'older half: ' + gl(G.older), 'newer half: ' + gl(G.newer), 'whole: ' + gl(G.whole), 'at 1.2% cost: older ' + pcx(G.stressOlder.avg) + ', newer ' + pcx(G.stressNewer.avg) + '; last 12 months: ' + line(M.last12), '',
   'Same, without the price check: newer ' + line(R.noPrice.newer), 'Every earnings reaction bought the same way: newer ' + line(R.all.newer), 'Big misses (control): newer ' + line(R.neg.newer), '',
-  'VERDICT: ' + verdict + '. ' + out.why + '.', verdict === 'PROMISING' ? 'It now goes on the nightly list as "earnings drift" buys; live paper results keep checking it.' : 'Nothing changes in your ACTIONS. The test repeats every Sunday as more earnings history arrives.',
+  'THIS RUN: ' + verdict + '. ' + whyText + '.', 'VERDICT: ' + out.verdict + (firstRun ? ' (frozen first run of ' + firstRun.at.slice(0, 10) + '; later runs are monitoring only)' : ' (no frozen first run yet)') + '.',
+  out.verdict === 'PROMISING' ? 'It stays on the nightly list as "earnings drift" buys; live paper results keep checking it.' : 'Earnings drift is NOT offered as a buy. Nothing changes in your ACTIONS.',
   'Research, not an order. Not financial advice, not a halal ruling.'];
 console.log(msg.join('\n'));
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || verdict === 'PROMISING')) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+const changed = PREV.verdict !== out.verdict;
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || changed)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
