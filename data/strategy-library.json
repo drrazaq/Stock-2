@@ -1,5 +1,5 @@
 {
- "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct.",
+ "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
  "updated": "2026-10-22",
  "strategies": [
   {
@@ -1231,7 +1231,8 @@
    "family": "Exits and risk",
    "name": "Sell high, buy back 10% lower",
    "explain": "Sell 30%+ above the 50-day or +25% in 10 days.",
-   "status": "tested: stricter month-by-month check"
+   "status": "tradable small (tier 2)",
+   "note": "22 Oct: STRETCH and SPIKE / LOWER10 t 3.0 at worst (blocks), below the 4.0 bar; shown as TAKE PROFIT OPTION; off if 20+ live cases average negative."
   },
   {
    "id": "X5",
@@ -1674,8 +1675,8 @@
    "family": "Quality and value",
    "name": "F-score in an uptrend",
    "explain": "F-score 8-9, only stocks above their own 200-day average.",
-   "status": "tested: not proven",
-   "note": "Closest buy rule, still NOT PROVEN (deep check run 20 Oct, Agent B): beat the average stock in both halves (6 months t 5.5 / 2.6; 12 months t 4.6 / 2.0) and beat the S&P 500 in 2024-26 (+9.7% vs +7.6%; 12 months +18.3% vs +15.1%), not in 2021-23 (+5.8% vs +9.1%; 12 months +17.4% vs +21.8%). Month by month it beat the S&P in only 5 of 17 older months and 14 of 27 (6 m) / 10 of 21 (12 m) newer months. The 2021-23 shortfall was almost all ONE sector group: machinery, electronics and instruments (SIC 35/36/38: tech hardware, semis, instruments), 124 of 410 trades, +7.9% vs S&P +21.3% at 12 months, 94% of the shortfall; other manufacturing (+27% vs +24%) and retail (+32% vs +20%) beat the S&P. By size the middle third (33-95M USD a day) beat the S&P (+28% vs +21%), the large and small thirds lost. It does NOT beat the same stocks on their other days in 2024-26 (6 m +9.7% vs +11.1%, 12 m +18.3% vs +28.0%): the newer-half edge is the stocks, not the timing. Under the league bar (3.9) in the newer half. No new version: dropping a sector would be a new pre-registered rule.",
+   "status": "tradable small (tier 2)",
+   "note": "Closest buy rule, still NOT PROVEN (deep check run 20 Oct, Agent B): beat the average stock in both halves (6 months t 5.5 / 2.6; 12 months t 4.6 / 2.0) and beat the S&P 500 in 2024-26 (+9.7% vs +7.6%; 12 months +18.3% vs +15.1%), not in 2021-23 (+5.8% vs +9.1%; 12 months +17.4% vs +21.8%). Month by month it beat the S&P in only 5 of 17 older months and 14 of 27 (6 m) / 10 of 21 (12 m) newer months. The 2021-23 shortfall was almost all ONE sector group: machinery, electronics and instruments (SIC 35/36/38: tech hardware, semis, instruments), 124 of 410 trades, +7.9% vs S&P +21.3% at 12 months, 94% of the shortfall; other manufacturing (+27% vs +24%) and retail (+32% vs +20%) beat the S&P. By size the middle third (33-95M USD a day) beat the S&P (+28% vs +21%), the large and small thirds lost. It does NOT beat the same stocks on their other days in 2024-26 (6 m +9.7% vs +11.1%, 12 m +18.3% vs +28.0%): the newer-half edge is the stocks, not the timing. Under the league bar (3.9) in the newer half. No new version: dropping a sector would be a new pre-registered rule. 22 Oct: t 5.5 / 2.6 vs the average stock, below the 4.0 bar; shown as LONGER HOLDS at 1,000 USD; off if the league's 3-month score turns negative.",
    "tested": "2026-10-16",
    "agent": "B",
    "study": "quality.mjs -> data/quality.json results[\"F-SCORE UPTREND_126/252\"] + v15 (deep check, 20 Oct)",
@@ -2776,6 +2777,15 @@
    "status": "queued (Agent A, high priority)",
    "agent": "A",
    "note": "From the 22 Oct audit: the live universe is wider than the tested one. Not a rule change; a coverage test."
+  },
+  {
+   "id": "WEB-SCOUT",
+   "family": "Testing method",
+   "name": "Weekly web scout: new ideas from research and public traders",
+   "explain": "Every agent run starts by searching for new, sourced ideas: recent papers (SSRN, arXiv q-fin, journals via the research search), practitioner write-ups with stated rules, and public traders who post dated calls. Each idea that has a precise rule and a named source is registered once (pre-registered, one version) and tested at the same gates; tier 2 or proven decides use. Public traders are not copied: their dated calls are logged and scored forward (tip-score); a source with a positive forward record over 30+ calls on 10+ days becomes a FOLLOW source at tier 2. Up to 5 new ideas per agent per week.",
+   "status": "in use (agents)",
+   "agent": "A,B,C",
+   "note": "From the owner's request of 22 Oct: test far more of what is out there. Tier 2 uses each rule's own bar, so more ideas do not raise it; the live auto-off is the guard against luck."
   }
  ]
 }
