@@ -1964,8 +1964,11 @@ async function reviewReply(sym, sig, pos) {
   return out.join('\n');
 }
 // Is this stock on today's tested BUY list? (a tested rule fired on it at the last close) -> its buy range and stop
-const buyToday = (sym, sig) => { if (!sig) return null;
-  const q = (sig.quickPaused ? [] : sig.quick || []).find(x => x.sym === sym && !x.demoted && okEv(x.n, netOf(x.avgPct, x.last), x.win)), b = (sig.stocks || []).find(x => x.sym === sym && x.state === 'Buy watch' && x.buyLo && !x.demoted && okEv(x.n, netOf(x.avgPct, x.last), x.win));
+// (review S-16, 22 Oct) the add goes through the same gates as every other buy: gateVerdict (halal, lottery, FADE, filing warnings, FOCUS)
+// and planCands ok for THAT setup's kind (FOCUS per kind, live-losing block). planCands is asked with no holdings, since the stock is owned.
+const buyToday = (sym, sig) => { if (!sig) return null; let OK;
+  try { if (gateVerdict(sym, sig)) return null; OK = new Set(planCands(sig, {}).filter(x => x.ok && x.sym === sym).map(x => x.kind)); } catch (e) { return null; }
+  const q = OK.has('quick trade') ? (sig.quickPaused ? [] : sig.quick || []).find(x => x.sym === sym && !x.demoted && okEv(x.n, netOf(x.avgPct, x.last), x.win)) : null, b = OK.has('swing trade') ? (sig.stocks || []).find(x => x.sym === sym && x.state === 'Buy watch' && x.buyLo && !x.demoted && okEv(x.n, netOf(x.avgPct, x.last), x.win)) : null;
   const r = q || b; return r ? { lo: r.buyLo, hi: r.buyHi, stop: r.stop, n: r.n, thin: r.n < 30 } : null; };
 // YOUR STOCKS: one clear action per stock you own. SELL ALL, SELL HALF, SELL SOME, HOLD, or BUY A LITTLE MORE.
 // Built from the HOLD OR SELL study of each stock. "Buy a little more" only when a TESTED buy rule fired on that stock today:
