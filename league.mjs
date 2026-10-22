@@ -22,6 +22,30 @@ const zInv = (p) => { let lo = 0, hi = 10; for (let k = 0; k < 60; k++) { const 
 let trials = Object.keys((J('data/autolab.json', {}) || {}).tried || {}).length;
 for (const f of fs.readdirSync('data').filter(f => f.endsWith('.json') && f !== 'autolab.json')) { const v = (J('data/' + f, {}) || {}).versions; if (typeof v === 'number' && v > 0 && v < 1000) trials += v; }
 trials += (LIB.strategies || []).filter(e => e.agent && /^tested/i.test(e.status || '')).length;
+// Studies that publish no integer `versions`: their tries are read from their own output here (one line per source). A file that
+// does publish `versions` is skipped (already counted above). Nothing here can lower the count, so the bar can only go up.
+const L = (x) => Array.isArray(x) ? x.length : 0, K = (x) => x && typeof x === 'object' ? Object.keys(x).length : 0;
+const TRIAL_SOURCES = [
+  ['ignition-lab.json', (d) => d.variants || K(d.rules)],                                          // fastmover-lab MODE=intraday: ignition rule x exit variants (48)
+  ['hunting-lab.json', (d) => L(d.rules) + L(d.quickFilters && d.quickFilters.rows) + (d.exitTest ? 1 : 0) + (d.scoreTest ? 1 : 0) + (d.persistence ? 1 : 0)],   // 17 rules + quick filters + exit/score/persistence tests
+  ['fastmover-lab.json', (d) => K(d.rules) + L(d.decode && d.decode.single) + L(d.decode && d.decode.pairs)],   // daily rules DT1-ON3 + every single and paired pattern the decoder looked at
+  ['octopus.json', (d) => d.angles || 1],                                                          // feature angles in the weekly model (26)
+  ['events-study.json', (d) => K(d.fam) + (d.link ? 1 : 0) + (d.peer ? 1 : 0)],                    // 16 event families + supplier-link + peer tests
+  ['sequence-study.json', (d) => K(d.results) * Math.max(1, K(d.byFamily))],                       // exits (h1/h3/h5) x event families reported
+  ['earnings-study.json', (d) => K(d.results) || 1],                                               // main, noPrice, all, neg groups
+  ['score-study.json', (d) => K(d.variant) || 1],                                                  // score + its 4 component scores
+  ['winners-study.json', (d) => L(d.lift) || 1],                                                   // winner patterns checked for lift
+  ['leaders-study.json', (d) => L(d.rows) + (d.regime ? 1 : 0) + (d.theme ? 1 : 0)],               // lookback/hold rows + regime and theme checks
+  ['tip-score.json', (d) => L(d.sources) * Math.max(1, L(d.horizons))],                            // tip sources x holding horizons
+  ['event-orb-retest-15d-study.json', (d) => K(d.scenarios) || 1],                                 // event-ORB lane: fill scenarios (midpoint, worst)
+  ['smart-money-study.json', (d) => ['older', 'rising', 'falling', 'strict'].filter(k => d[k]).length],   // main rule, rising/falling market splits, strict version
+  ['dow-study.json', (d) => L(d.rows)],                                                            // day-of-week rows
+  ['mday-study.json', (d) => L(d.rows)],                                                           // day-of-month rows
+  ['missed-runners.json', (d) => d.noNewBuyRule ? 0 : K(d.groups)],                                // audit only; counts only if it ever proposes a buy rule
+];
+const trialSources = { 'autolab.json + versions + agent library entries': trials };
+for (const [f, fn] of TRIAL_SOURCES) { const d = J('data/' + f, null); if (!d || typeof d !== 'object' || typeof d.versions === 'number') continue;
+  let n = 0; try { n = Math.max(0, Math.round(+fn(d) || 0)); } catch (e) { n = 0; } if (n) { trialSources[f] = n; trials += n; } }
 const BAR = Math.max(2.5, zInv(0.05 / Math.max(1, trials)));
 // ---- prices
 let store = null; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE || 'study-cache/grouped.json.gz')).toString()); } catch (e) { }
@@ -83,5 +107,5 @@ const text = ['AGENT LEAGUE (since ' + (AG.started || '?') + '; luck bar for eve
   ...rows.map((r, k) => (k + 1) + '. ' + r.name + ': ' + r.points + ' points. Champion ' + r.champion + '. Proven ' + r.clearsLeagueBar + (r.passedBench > r.clearsLeagueBar ? ' (+' + (r.passedBench - r.clearsLeagueBar) + ' under the league luck bar)' : '') + ', working live ' + r.working + '. Forward picks: ' +
     (r.scored1m ? r.beat1m + ' of ' + r.scored1m + ' months beat the S&P 500 (average ' + pc(r.vsSpy1m) + ')' : r.batchesFrozen + ' weekly batches frozen, first score after 1 month') + (r.scored3m ? '; 3 months: ' + r.beat3m + ' of ' + r.scored3m + ' (' + pc(r.vsSpy3m) + ')' : '') + '. Ideas tested ' + r.ideasTested + '.'), '',
   'Only results count: a strategy that passes every test, picks that beat the S&P 500 on days nobody had seen, and live paper records. Nothing reaches your money without the live paper record.'].join('\n');
-fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), asOf, bar: +BAR.toFixed(2), trials, priced: !!T, added, rows, batches, text }, null, 1));
+fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), asOf, bar: +BAR.toFixed(2), trials, trialSources, priced: !!T, added, rows, batches, text }, null, 1));
 console.log(text); if (!T) console.log('league: no price cache here; picks not frozen or scored this time.');
