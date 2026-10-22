@@ -9,7 +9,7 @@
 // 2. DAY-TRADE AND OVERNIGHT RULES, fixed in advance: gap-ups, day 2 of a runner, repeat runners, first lower open after a run,
 //    earnings gaps, heavy quiet volume before a jump. Conservative fills: bought at the open (or the close), stop 8% under the
 //    entry checked FIRST (if the day's low touched it, the trade is counted as stopped even if the stock closed higher), sold at
-//    the close. Costs by price: 1.6% a round trip under 5 USD, 0.9% 5-20 USD, 0.7% above (your 3 USD + 3 USD fee included).
+//    the close. Costs by price: 1.6% a round trip under 5 USD, 0.9% 5-20 USD, 0.8% above (the house floor; your 3 USD + 3 USD fee included).
 //    A rule passes only with 30+ trades in each half, profit in both halves, profit at 1.5x cost, profit factor above 1.15, profit
 //    in the last 12 months, and no single trade making 40% of the gains.
 // 3. LIVE (MODE=live, each morning before the open): tomorrow's candidates of every rule, logged on PAPER and scored the next day.
@@ -72,7 +72,7 @@ if (T < (MODE === 'live' ? 30 : 300)) { const why = 'only ' + T + ' sessions in 
 const FIRST = MODE === 'live' ? Math.max(0, T - 300) : 0;
 const bars = new Map(); for (let t = FIRST; t < T; t++) { const x = store.days[D[t]]; for (let j = 0; j < x.T.length; j++) { if (MODE !== 'intraday' && !(x.c[j] >= 1)) continue; let a = bars.get(x.T[j]); if (!a) bars.set(x.T[j], a = []); a.push({ t, o: x.o[j], h: x.h[j], l: x.l[j], c: x.c[j], v: x.v[j] }); } }
 const mid = Math.floor((FIRST + T) / 2), STOP = 0.08;
-const costOf = (p) => p < 5 ? 0.016 : p < 20 ? 0.009 : 0.007;
+const costOf = (p) => p < 5 ? 0.016 : p < 20 ? 0.009 : 0.008;   // house floor 0.8% a round trip (was 0.7% above 20 USD until 22 Oct 2026); stress 1.5x = 1.2%+
 
 // ---- per-stock helpers (all from bars BEFORE or ON the day named; nothing from the future)
 function prep(c) { const n = c.length, av = new Array(n).fill(null), hi52 = new Array(n).fill(null), lo52 = new Array(n).fill(null), run20 = new Array(n).fill(false), run30 = new Array(n).fill(false);
