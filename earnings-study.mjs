@@ -76,6 +76,12 @@ let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE ||
   fs.writeFileSync(OUT, JSON.stringify({ ...PREV, lastAttempt: { at: new Date().toISOString(), status: 'NOT RUN', why: 'no price cache' } }, null, 1)); process.exit(0); }
 const D = Object.keys(store.days || {}).sort(), T = D.length, tOf = new Map(D.map((d, t) => [d, t]));
 const bars = new Map(); D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { let a = bars.get(x.T[j]); if (!a) bars.set(x.T[j], a = []); a.push({ t, o: x.o[j], h: x.h[j], l: x.l[j], c: x.c[j], v: x.v[j] }); } });
+// DEAD STOCKS (review S-18, 22 Oct): x rows = the same stocks after they fell under the cache's 3 USD / 1M USD filter. Before, a stock
+// bought on a beat that then collapsed vanished before its exit and the trade was DROPPED (survivorship bias). The x rows are used to
+// value EXITS only (trade walk, stop, 20-day average, the average-stock yardstick), never an entry: entries are still picked from the
+// main rows exactly as before.
+const xbars = new Map(); D.forEach((d, t) => { const x = store.days[d].x; if (x && x.T) for (let j = 0; j < x.T.length; j++) { if (!(x.c[j] > 0)) continue; let a = xbars.get(x.T[j]); if (!a) xbars.set(x.T[j], a = []); a.push({ t, o: x.o[j], h: x.h[j], l: x.l[j], c: x.c[j], v: x.v[j], x: true }); } });
+const withX = (sym) => { const c = bars.get(sym), a = xbars.get(sym); if (!c || !a || !a.length) return c; const seen = new Set(c.map(b => b.t)); return [...c, ...a.filter(b => !seen.has(b.t))].sort((p, q) => p.t - q.t); };
 const spy = bars.get('SPY'), spyC = new Array(T).fill(null), spyO = new Array(T).fill(null); if (spy) spy.forEach(b => { spyC[b.t] = b.c; spyO[b.t] = b.o; });
 const spyRet = (a, b) => spyC[a] && spyC[b] ? spyC[b] / spyC[a] - 1 : null, mid = Math.floor(T / 2), COST = 0.008, STRESS = 0.012;
 const spyWin = (a, b, k) => { const x = spyO[a], y = k === 'o' ? spyO[b] : spyC[b]; return x && y ? y / x - 1 : null; };   // S&P 500 from the entry open to the exit price of the same kind
@@ -91,18 +97,23 @@ function tradeMA(c, e, entry, stop, ma, hold) {   // stop first (gaps fill at th
 // ---- yardstick 1: the average stock, bought at the same entry open, sold at the same exit day (whole-market cache only)
 const WHOLE = bars.size >= 1000;   // a whole-market cache has thousands of stocks; a small/partial price file cannot stand for "the average stock"
 const mktMemo = new Map(); let OPEN = null, CLOSE = null, LIQ = null;
+let XOPEN = null, XCLOSE = null;   // exit prices of stocks after they fell under the filter (review S-18)
 if (WHOLE) { const syms = [...bars.keys()].filter(s => s !== 'SPY'), NS = syms.length; OPEN = new Float32Array(NS * T).fill(NaN); CLOSE = new Float32Array(NS * T).fill(NaN); const V = new Float32Array(NS * T).fill(NaN);
   syms.forEach((s, i) => { for (const b of bars.get(s)) { OPEN[i * T + b.t] = b.o; CLOSE[i * T + b.t] = b.c; V[i * T + b.t] = b.v; } });
+  XOPEN = new Float32Array(NS * T).fill(NaN); XCLOSE = new Float32Array(NS * T).fill(NaN); syms.forEach((s, i) => { for (const b of xbars.get(s) || []) { XOPEN[i * T + b.t] = b.o; XCLOSE[i * T + b.t] = b.c; } });
   LIQ = Array.from({ length: T }, () => []); for (let i = 0; i < NS; i++) for (let t = 1; t < T; t++) { const pc0 = CLOSE[i * T + t - 1]; if (pc0 >= 5 && pc0 * V[i * T + t - 1] >= 5e6 && OPEN[i * T + t] > 0) LIQ[t].push(i); } }
 const mktWin = (a, b, k) => { if (!WHOLE) return null; const key = a + '_' + b + k; if (mktMemo.has(key)) return mktMemo.get(key); const A = k === 'o' ? OPEN : CLOSE; let s = 0, n = 0;
-  for (const i of LIQ[a]) { const x = OPEN[i * T + a], y = A[i * T + b]; if (x > 0 && y > 0) { const r = y / x - 1; if (Math.abs(r) <= 3) { s += r; n++; } } } const v = n >= 50 ? s / n : null; mktMemo.set(key, v); return v; };
+  const AX = k === 'o' ? XOPEN : XCLOSE;
+  for (const i of LIQ[a]) { const x = OPEN[i * T + a]; let y = A[i * T + b]; if (!(y > 0)) y = AX[i * T + b]; if (x > 0 && y > 0) { const r = y / x - 1; if (Math.abs(r) <= 3) { s += r; n++; } } } const v = n >= 50 ? s / n : null; mktMemo.set(key, v); return v; };
 // ---- seeded random numbers (same sample every run for the same data)
 const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let z = Math.imul(seed ^ seed >>> 15, 1 | seed); z = z + Math.imul(z ^ z >>> 7, 61 | z) ^ z; return ((z ^ z >>> 14) >>> 0) / 4294967296; };
 const hash = (s) => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; };
 const CTRL_PER_SYM = 40;   // random non-earnings entry days per stock (whole period) for the same-stock yardstick
 const groups = { main: [], noPrice: [], all: [], neg: [] }, ownCtrl = new Map();   // ownCtrl: sym -> [{ t, g }]
 for (const [sym, reps] of Object.entries(cache.syms)) {
-  const c = bars.get(sym); if (!c || c.length < 60) continue; const idx = new Map(c.map((b, i) => [b.t, i])), m20 = avg(c.map(x => x.c), 20); let free = -1; const near = new Set();
+  const c = bars.get(sym); if (!c || c.length < 60) continue; const idx = new Map(c.map((b, i) => [b.t, i])); let free = -1; const near = new Set();
+  // exits walk the series with the x rows (review S-18); `free` (no overlapping trades) is kept on the main rows as before
+  const cx = withX(sym), idxX = new Map(cx.map((b, i) => [b.t, i])), m20 = avg(cx.map(x => x.c), 20), lastMainAt = (t) => { let k = idx.has(t) ? idx.get(t) : -1; if (k < 0) for (k = c.length - 1; k >= 0 && c[k].t > t; k--); return k; }, exitAt = (t, e, stop) => { const r = tradeMA(cx, idxX.get(t), e, stop, m20, 40); return r ? { ...r, t: cx[r.j].t } : null; };
   for (const r of reps) {
     // the reaction day: before the open -> that session; after the close -> the next session; unknown -> the bigger gap of the two
     let t0 = null; for (let k = 0; k < 5 && t0 === null; k++) { const d = iso(Date.parse(r.d + 'T12:00:00Z') + k * 864e5); if (tOf.has(d)) t0 = tOf.get(d); }
@@ -113,16 +124,16 @@ for (const [sym, reps] of Object.entries(cache.syms)) {
     if (!(b.c >= 5) || b.c * b.v < 5e6 || !(Math.abs(r.e) >= 0.05)) continue;
     const sur = (r.a - r.e) / Math.abs(r.e), up = b.c / p.c - 1, loc = b.h > b.l ? (b.c - b.l) / (b.h - b.l) : 0.5, e = n1.o, stop = b.l * 0.995;
     if (!(e > stop) || (e - stop) / e > 0.15 || e > b.c * 1.03) continue;
-    const res = tradeMA(c, i + 1, e, stop, m20, 40); if (!res) continue; const tx = c[res.j].t;
+    const res = exitAt(n1.t, e, stop); if (!res) continue; const tx = res.t;
     const tr = { sym, t: n1.t, tx, gross: res.exit / e - 1, spy: spyRet(n1.t, tx), spyW: spyWin(n1.t, tx, res.k), mkt: mktWin(n1.t, tx, res.k), sur };
     const priceOk = up >= 0.03 && loc >= 0.5;
-    groups.all.push(tr); if (sur >= 0.10) groups.noPrice.push(tr); if (sur >= 0.10 && priceOk && i > free) { groups.main.push(tr); free = res.j; } if (sur <= -0.10) groups.neg.push(tr);
+    groups.all.push(tr); if (sur >= 0.10) groups.noPrice.push(tr); if (sur >= 0.10 && priceOk && i > free) { groups.main.push(tr); free = lastMainAt(tx); } if (sur <= -0.10) groups.neg.push(tr);
   }
   // ---- yardstick 3: the same stock on random non-earnings days: buy the open, stop 0.5% under the prior day's low (15% or less), same exits
   const cand = []; for (let k = 26; k < c.length - 1; k++) if (!near.has(k) && !near.has(k - 1) && c[k].t === c[k - 1].t + 1) cand.push(k);
   const R0 = rng(hash(sym)), picks = new Set(); for (let tries = 0; picks.size < Math.min(CTRL_PER_SYM, cand.length) && tries < CTRL_PER_SYM * 5; tries++) picks.add(cand[Math.floor(R0() * cand.length)]);
   const L = []; for (const k of [...picks].sort((x, y) => x - y)) { const p = c[k - 1], e = c[k].o, stop = p.l * 0.995;
-    if (!(p.c >= 5) || p.c * p.v < 5e6 || !(e > stop) || (e - stop) / e > 0.15) continue; const res = tradeMA(c, k, e, stop, m20, 40); if (res) L.push({ t: c[k].t, g: res.exit / e - 1 }); }
+    if (!(p.c >= 5) || p.c * p.v < 5e6 || !(e > stop) || (e - stop) / e > 0.15) continue; const res = exitAt(c[k].t, e, stop); if (res) L.push({ t: c[k].t, g: res.exit / e - 1 }); }
   ownCtrl.set(sym, L);
 }
 const ownMean = (sym, lo, hi) => { const L = (ownCtrl.get(sym) || []).filter(z => z.t >= lo && z.t < hi); return L.length >= 3 ? L.reduce((a, z) => a + z.g, 0) / L.length : null; };
