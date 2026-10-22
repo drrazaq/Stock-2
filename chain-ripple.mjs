@@ -15,12 +15,15 @@ const CH = JSON.parse(fs.readFileSync('data/chains.json', 'utf8')).chains;
 const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 300) { console.log('chain-ripple: too few sessions'); process.exit(0); }
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, O = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
-D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; } }); store = null;
+// CX: closes of a stock AFTER it fell out of the cache's 3 USD / 1M USD filter (study-cache x rows, 22 Oct 2026). Used only to value an
+// exit (a held stock that collapsed under 3 USD keeps its real price); never for an entry.
+const CX = new Float32Array(NS * T).fill(NaN);
+D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; }  if (x.x) for (let j = 0; j < x.x.T.length; j++) { const q = SY.get(x.x.T[j]); if (q !== undefined) CX[q * T + t] = x.x.c[j]; }}); store = null;
 const spyI = SY.get('SPY');
 const r1 = (i, t) => { const a = C[i * T + t - 1], b = C[i * T + t]; return a > 0 && b > 0 ? b / a - 1 : null; };
 const vx = (i, t) => { let s = 0, n = 0; for (let k = t - 20; k < t; k++) { const v = V[i * T + k]; if (isFinite(v)) { s += v; n++; } } const v0 = V[i * T + t]; return n >= 15 && s > 0 && isFinite(v0) ? v0 / (s / n) : null; };
 const liquid = (i, t) => { const c = C[i * T + t]; if (!(c >= 5)) return false; let dv = 0, n = 0; for (let k = t - 19; k <= t; k++) { const c1 = C[i * T + k], v = V[i * T + k]; if (isFinite(c1) && isFinite(v)) { dv += c1 * v; n++; } } return n >= 15 && dv / n >= 5e6; };
-function fwd(i, t, h) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + h >= T) return null; let last = null; for (let k = t + h; k > t; k--) if (isFinite(C[b + k])) { last = C[b + k]; break; } return last === null ? null : last / e - 1; }
+function fwd(i, t, h) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + h >= T) return null; let last = null; for (let k = t + h; k > t; k--) { const z = isFinite(C[b + k]) ? C[b + k] : CX[b + k]; if (isFinite(z)) { last = z; break; } } return last === null ? null : last / e - 1; }
 const ctrlC = {}; const ctrl = (t, h) => { const key = t + '_' + h; if (key in ctrlC) return ctrlC[key]; const v = []; for (let i = 0; i < NS; i += 2) if (i !== spyI && liquid(i, t)) { const g = fwd(i, t, h); if (g !== null && isFinite(g) && Math.abs(g) < 3) v.push(g); } return (ctrlC[key] = v.length >= 30 ? mean(v) : null); };
 // chain map: symbol -> [{chain, layer}]
 const members = []; for (const [chain, layers] of Object.entries(CH)) layers.forEach((L, li) => { for (const s of L.syms) if (SY.has(s)) members.push({ s, i: SY.get(s), chain, li }); });

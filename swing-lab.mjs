@@ -27,7 +27,10 @@ let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE ||
 const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 400) { console.log('swing-lab: too few sessions'); process.exit(0); }
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN), H = new Float32Array(NS * T).fill(NaN), L = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
-D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; H[k] = x.h ? x.h[j] : NaN; L[k] = x.l ? x.l[j] : NaN; C[k] = x.c[j]; V[k] = x.v[j]; } }); store = null;
+// CX: closes of a stock AFTER it fell out of the cache's 3 USD / 1M USD filter (study-cache x rows, 22 Oct 2026). Used only to value an
+// exit (a held stock that collapsed under 3 USD keeps its real price); never for an entry.
+const CX = new Float32Array(NS * T).fill(NaN);
+D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; H[k] = x.h ? x.h[j] : NaN; L[k] = x.l ? x.l[j] : NaN; C[k] = x.c[j]; V[k] = x.v[j]; }  if (x.x) for (let j = 0; j < x.x.T.length; j++) { const q = SY.get(x.x.T[j]); if (q !== undefined) CX[q * T + t] = x.x.c[j]; }}); store = null;
 const spyI = SY.get('SPY'), ETF = new Set(['SPY', 'QQQ', 'IWM', 'DIA', 'XLK', 'XLF', 'XLE', 'XLV', 'XLI', 'XLY', 'XLP', 'XLU', 'XLB', 'XLRE', 'XLC']);
 const DV = new Float32Array(NS * T).fill(NaN), MA200 = new Float32Array(NS * T).fill(NaN), MA5 = new Float32Array(NS * T).fill(NaN);
 for (let i = 0; i < NS; i++) { const b = i * T; let s = 0, n = 0, s2 = 0, n2 = 0, s5 = 0, n5 = 0; const q = [], q2 = [], q5 = [];
@@ -40,7 +43,7 @@ const upT = (i, t) => C[i * T + t] > MA200[i * T + t];
 // exit simulation: buy the next open, sell at the close of the first session meeting exitFn (checked from the entry session on), or at
 // the close of the last session; returns { g, h } with h = sessions held
 function trade(i, t, maxH, exitFn) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + maxH >= T) return null; let last = null, h = 0;
-  for (let k = t + 1; k <= t + maxH; k++) { if (isFinite(C[b + k])) { last = C[b + k]; h = k - t; if (exitFn && exitFn(i, k)) break; } }
+  for (let k = t + 1; k <= t + maxH; k++) { if (isFinite(C[b + k])) { last = C[b + k]; h = k - t; if (exitFn && exitFn(i, k)) break; } else if (isFinite(CX[b + k])) { last = CX[b + k]; h = k - t; } }   // CX: price after it fell under 3 USD
   return last === null ? null : { g: last / e - 1, h }; }
 function fwd(i, t, h) { const r = trade(i, t, h, null); return r ? r.g : null; }
 const ctrlC = {}; const ctrl = (t, h) => { const key = t + '_' + h; if (key in ctrlC) return ctrlC[key]; const v = []; for (let i = 0; i < NS; i += 2) if (i !== spyI && liquid(i, t)) { const g = fwd(i, t, h); if (g !== null && isFinite(g) && Math.abs(g) < 3) v.push(g); } return (ctrlC[key] = v.length >= 30 ? mean(v) : null); };

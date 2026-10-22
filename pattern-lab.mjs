@@ -36,12 +36,15 @@ let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE ||
 const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 400) { console.log('pattern-lab: too few sessions'); process.exit(0); }
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN), H = new Float32Array(NS * T).fill(NaN), L = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
-D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; H[k] = x.h ? x.h[j] : NaN; L[k] = x.l ? x.l[j] : NaN; C[k] = x.c[j]; V[k] = x.v[j]; } }); store = null;
+// CX: closes of a stock AFTER it fell out of the cache's 3 USD / 1M USD filter (study-cache x rows, 22 Oct 2026). Used only to value an
+// exit (a held stock that collapsed under 3 USD keeps its real price); never for an entry.
+const CX = new Float32Array(NS * T).fill(NaN);
+D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; H[k] = x.h ? x.h[j] : NaN; L[k] = x.l ? x.l[j] : NaN; C[k] = x.c[j]; V[k] = x.v[j]; }  if (x.x) for (let j = 0; j < x.x.T.length; j++) { const q = SY.get(x.x.T[j]); if (q !== undefined) CX[q * T + t] = x.x.c[j]; }}); store = null;
 const spyI = SY.get('SPY');
 const DV = new Float32Array(NS * T).fill(NaN);   // 20-session average traded value
 for (let i = 0; i < NS; i++) { const b = i * T; let s = 0, n = 0; const q = []; for (let t = 0; t < T; t++) { const c = C[b + t], v = V[b + t], x = isFinite(c) && isFinite(v) ? c * v : NaN; q.push(x); if (isFinite(x)) { s += x; n++; } if (q.length > 20) { const y = q.shift(); if (isFinite(y)) { s -= y; n--; } } if (n >= 15) DV[b + t] = s / n; } }
 const tradable = (i, t) => C[i * T + t] >= 5 && DV[i * T + t] >= 5e6;
-function fwd(i, t, h) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + h >= T) return null; let last = null; for (let k = t + h; k > t; k--) if (isFinite(C[b + k])) { last = C[b + k]; break; } return last === null ? null : last / e - 1; }
+function fwd(i, t, h) { const b = i * T, e = O[b + t + 1]; if (!(e > 0) || t + h >= T) return null; let last = null; for (let k = t + h; k > t; k--) { const z = isFinite(C[b + k]) ? C[b + k] : CX[b + k]; if (isFinite(z)) { last = z; break; } } return last === null ? null : last / e - 1; }
 const ctrlC = {}; const ctrl = (t, h) => { const key = t + '_' + h; if (key in ctrlC) return ctrlC[key]; const v = []; for (let i = 0; i < NS; i += 2) if (i !== spyI && tradable(i, t)) { const g = fwd(i, t, h); if (g !== null && isFinite(g) && Math.abs(g) < 3) v.push(g); } return (ctrlC[key] = v.length >= 30 ? mean(v) : null); };
 const spyF = (t, h) => spyI === undefined ? null : fwd(spyI, t, h);
 const START = 210, midT = Math.floor((START + T) / 2), ownC = {};

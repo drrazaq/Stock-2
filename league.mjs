@@ -52,8 +52,10 @@ let store = null; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.C
 const D = store ? Object.keys(store.days || {}).sort() : [], T = D.length, dayMap = new Map();
 const dm = (t) => { if (!dayMap.has(t)) { const x = store.days[D[t]], m = new Map(); x.T.forEach((s, j) => m.set(s, j)); dayMap.set(t, m); } return dayMap.get(t); };
 const px = (t, s, f) => { const j = dm(t).get(s); return j === undefined ? null : store.days[D[t]][f][j]; };
+// pxx: the close of a stock that fell out of the cache's 3 USD / 1M USD filter that day (x rows, 22 Oct 2026); for exits only
+const xMap = new Map(), pxx = (t, s) => { if (!xMap.has(t)) { const x = store.days[D[t]].x, m = new Map(); if (x) x.T.forEach((q, j) => m.set(q, j)); xMap.set(t, m); } const j = xMap.get(t).get(s); return j === undefined ? null : store.days[D[t]].x.c[j]; };
 // ei = index of the ENTRY session (bought at its open); held h sessions, sold at the close of session ei + h - 1.
-function hold(s, ei, h) { const e = px(ei, s, 'o'); if (!(e > 0)) return null; let last = null; for (let k = ei; k <= ei + h - 1; k++) { const c = px(k, s, 'c'); if (c > 0) last = c; } return last ? last / e - 1 : null; }   // gone before the end: last price it traded
+function hold(s, ei, h) { const e = px(ei, s, 'o'); if (!(e > 0)) return null; let last = null; for (let k = ei; k <= ei + h - 1; k++) { const c = px(k, s, 'c') || pxx(k, s); if (c > 0) last = c; } return last ? last / e - 1 : null; }   // under 3 USD: its real price (x rows); gone: last price it traded
 const avgCache = {};
 function avgStock(ei, h) { const key = ei + ':' + h; if (key in avgCache) return avgCache[key]; const x = store.days[D[ei]], end = dm(ei + h - 1); let s = 0, n = 0;
   for (let j = 0; j < x.T.length; j++) { const o = x.o[j]; if (!(o >= 3 && o * x.v[j] >= 1e6) || x.T[j] === 'SPY') continue; const k = end.get(x.T[j]); if (k === undefined) continue; const r = store.days[D[ei + h - 1]].c[k] / o - 1; if (isFinite(r)) { s += Math.max(-1, Math.min(5, r)); n++; } }

@@ -20,7 +20,10 @@ let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE ||
 const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 300) { console.log('insider: too few sessions'); process.exit(0); }
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
-D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; } }); store = null;
+// CX: closes of a stock AFTER it fell out of the cache's 3 USD / 1M USD filter (study-cache x rows, 22 Oct 2026). Used only to value an
+// exit (a held stock that collapsed under 3 USD keeps its real price); never for an entry.
+const CX = new Float32Array(NS * T).fill(NaN);
+D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; }  if (x.x) for (let j = 0; j < x.x.T.length; j++) { const q = SY.get(x.x.T[j]); if (q !== undefined) CX[q * T + t] = x.x.c[j]; }}); store = null;
 const spyI = SY.get('SPY');
 // ---- 2. insider purchases, quarter by quarter (each finished quarter is downloaded once and kept compact in the cache)
 const MON = { JAN: '01', FEB: '02', MAR: '03', APR: '04', MAY: '05', JUN: '06', JUL: '07', AUG: '08', SEP: '09', OCT: '10', NOV: '11', DEC: '12' };
@@ -53,7 +56,7 @@ for (const [sym, a] of Object.entries(bySym)) { a.sort((x, y) => x.d < y.d ? -1 
     if (n >= 3) lastC3 = add('CLUSTER3', lastC3); if (n >= 2) lastC2 = add('CLUSTER2', lastC2); if (p.usd >= 250000) lastB = add('BIG1', lastB); } }
 // ---- 4. returns and controls
 const liquid = (i, t) => { const c = C[i * T + t]; if (!(c >= 3)) return false; let dv = 0, n = 0; for (let k = Math.max(0, t - 19); k <= t; k++) { const c1 = C[i * T + k], v = V[i * T + k]; if (isFinite(c1) && isFinite(v)) { dv += c1 * v; n++; } } return n >= 15 && dv / n >= 1e6; };
-function fwd(i, t, h) { const b = i * T, e = O[b + t]; if (!(e > 0) || t + h >= T) return null; let last = null; for (let k = t + h; k >= t; k--) if (isFinite(C[b + k])) { last = C[b + k]; break; } return last === null ? null : last / e - 1; }   // bought at the open of session t
+function fwd(i, t, h) { const b = i * T, e = O[b + t]; if (!(e > 0) || t + h >= T) return null; let last = null; for (let k = t + h; k >= t; k--) { const z = isFinite(C[b + k]) ? C[b + k] : CX[b + k]; if (isFinite(z)) { last = z; break; } } return last === null ? null : last / e - 1; }   // bought at the open of session t
 const cc = {}; const ctrl = (t, h) => { const key = t + '_' + h; if (key in cc) return cc[key]; const v = []; for (let i = 0; i < NS; i += 2) if (i !== spyI && liquid(i, t - 1)) { const g = fwd(i, t, h); if (g !== null && Math.abs(g) < 3) v.push(g); } return (cc[key] = v.length >= 30 ? mean(v) : null); };
 const midT = Math.floor(T / 2), oc = {}; const own = (i, t, h) => { const half = t < midT ? 0 : 1, key = i + '_' + h + '_' + half; if (key in oc) return oc[key]; const v = []; for (let k = half ? midT : 1; k < (half ? T - 1 : midT); k += 3) { const g = fwd(i, k, h); if (g !== null && Math.abs(g) < 3) v.push(g); } return (oc[key] = v.length >= 20 ? mean(v) : null); };
 const trades = {}; for (const [key, ev] of Object.entries(EV)) for (const h of HOLDS) { const a = trades[key + '_' + h] = []; for (const e of ev) { const i = SY.get(e.sym), t = dayIdx(e.d); if (t >= T || t < 1 || !liquid(i, t - 1)) continue; const g = fwd(i, t, h), c0 = ctrl(t, h), ob = own(i, t, h); if (g === null || c0 === null || ob === null || Math.abs(g) > 3) continue; a.push({ t, s: e.sym, g, c: c0, ob }); } }

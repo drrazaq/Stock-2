@@ -21,6 +21,12 @@ const CACHE_DIR = 'study-cache', CACHE = CACHE_DIR + '/grouped.json.gz';
 fs.mkdirSync(CACHE_DIR, { recursive: true }); fs.mkdirSync('data', { recursive: true });
 
 // ---- 1. The cache: one compact record per trading day, only rows that could ever qualify (price 3 USD+, 1M USD+ traded)
+// DEAD STOCKS (22 Oct 2026, audit G9). The main arrays (T, o, h, l, c, v) still hold ONLY rows that qualify (3 USD+, 1M USD+), so
+// the 3 USD rule for ENTRY into any test is unchanged. Each day also carries `x` = { T, o, h, l, c, v }: the rows of stocks that
+// FAILED the filter that day (under 3 USD or thin) but had qualified on an earlier day in the cache, so a stock that collapses
+// keeps its later prices and studies can count the exit and the loss below 3 USD (they read x for exits only, never for entries).
+// `xAt` = the day the x rows were fetched (split repair of x is by date). Days fetched before this change have no x: they are
+// re-fetched for x only (main rows untouched), up to TAIL_CALLS a run (default 1300 = the whole window in one Sunday run).
 let store = { days: {}, gone: [], ref: null };
 try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(CACHE)).toString()); } catch (e) { console.log('no cache yet: building from scratch'); }
 store.days = store.days || {}; store.gone = store.gone || [];
@@ -59,6 +65,8 @@ if (!store.ref || !store.ref.complete || Date.now() - Date.parse(store.ref.at) >
   console.log('company list:', r.syms.length, 'tickers', r.complete ? '(complete)' : '(INCOMPLETE)');
 }
 const CS = new Set(store.ref ? store.ref.syms : []);
+const qualifies = (x) => x.c >= 3 && x.c * x.v >= 1e6;
+const pack = (rows) => ({ T: rows.map(x => x.T), o: rows.map(x => +x.o.toFixed(4)), h: rows.map(x => +x.h.toFixed(4)), l: rows.map(x => +x.l.toFixed(4)), c: rows.map(x => +x.c.toFixed(4)), v: rows.map(x => Math.round(x.v)) });
 // Walk back from yesterday until about two years of sessions are held, or the plan refuses older dates.
 let refusedAt = null, added = 0;
 for (let k = 1, have = Object.keys(store.days).length; have < WANT && k < WANT * 1.6 && calls < MAX_CALLS; k++) {
@@ -67,11 +75,18 @@ for (let k = 1, have = Object.keys(store.days).length; have < WANT && k < WANT *
   const j = await api(`/v2/aggs/grouped/locale/us/market/stocks/${d}?adjusted=true`);
   if (j && j.refused) { refusedAt = d; break; }                       // older than the plan allows
   if (!j) continue;                                                    // a failed call: try again next week
-  const rows = (j.results || []).filter(x => x && /^[A-Z]{1,5}$/.test(x.T || '') && x.c >= 3 && x.c * x.v >= 1e6 && (CS.has(x.T) || x.T === 'SPY' || !CS.size));
+  const all = (j.results || []).filter(x => x && /^[A-Z]{1,5}$/.test(x.T || '') && (CS.has(x.T) || x.T === 'SPY' || !CS.size)), rows = all.filter(qualifies);
   if (!rows.length) { if (k > 4) store.gone.push(d); continue; }       // a market holiday
-  store.days[d] = { T: rows.map(x => x.T), o: rows.map(x => +x.o.toFixed(4)), h: rows.map(x => +x.h.toFixed(4)), l: rows.map(x => +x.l.toFixed(4)), c: rows.map(x => +x.c.toFixed(4)), v: rows.map(x => Math.round(x.v)) };
+  store.days[d] = { ...pack(rows), x: pack(all.filter(x => !qualifies(x) && x.c > 0)), xAt: iso(Date.now()) };
   have++; added++; if (added % 25 === 0) { save(); console.log('sessions held:', have); }
 }
+// x rows for days fetched before 22 Oct 2026 (main rows are left exactly as they are)
+{ let tailCalls = 0; const TAIL_CALLS = +(env.TAIL_CALLS || 1300), need = Object.keys(store.days).filter(d => !store.days[d].x).sort().reverse();
+  for (const d of need) { if (tailCalls >= TAIL_CALLS) break; const j = await api(`/v2/aggs/grouped/locale/us/market/stocks/${d}?adjusted=true`); tailCalls++;
+    if (!j || j.refused || !Array.isArray(j.results)) continue;
+    store.days[d].x = pack(j.results.filter(x => x && /^[A-Z]{1,5}$/.test(x.T || '') && (CS.has(x.T) || !CS.size) && !qualifies(x) && x.c > 0)); store.days[d].xAt = iso(Date.now());
+    if (tailCalls % 100 === 0) { save(); console.log('dead-stock rows added for', tailCalls, 'older days'); } }
+  if (need.length) console.log('dead-stock rows: ' + Math.min(need.length, tailCalls) + ' of ' + need.length + ' older days filled this run' + (need.length > tailCalls ? ' (the rest next run)' : '')); }
 // SPLITS (added 19 Oct, from the researcher's design): each day was fetched once, adjusted only for splits known on the fetch day, so a
 // later split leaves a fake crash/jump in the cache. Read the official split list, save it (data/splits.json, also used by shares.mjs to
 // put SEC share counts on today's basis) and repair the cache. A split is applied only when the price jump around it is closer to the
@@ -88,9 +103,17 @@ try { const first = Object.keys(store.days).sort()[0] || '2019-01-01', list = []
     if (!(pre > 0) || !(post > 0)) continue; const jump = Math.log(pre / post), want = Math.log(sp.r); if (!(Math.abs(jump - want) < Math.abs(jump))) continue;
     for (let k = 0; k < iA; k++) { const x = store.days[days[k]], j = x.T.indexOf(sp.s); if (j < 0) continue; for (const f of ['o', 'h', 'l', 'c']) x[f][j] = +(x[f][j] / sp.r).toFixed(4); x.v[j] = Math.round(x.v[j] * sp.r); }
     fixed++; }
+  // x rows: fetched already adjusted for every split known on their fetch day (xAt), so only splits executed after xAt are applied
+  if (list.length) { const today = iso(Date.now()); for (const d of days) { const x = store.days[d]; if (!x.x || !x.xAt) continue;
+      for (const sp of list) { if (!(sp.d > x.xAt) || !(d < sp.d) || sp.d > today) continue; const j = x.x.T.indexOf(sp.s); if (j < 0) continue; for (const f of ['o', 'h', 'l', 'c']) x.x[f][j] = +(x.x[f][j] / sp.r).toFixed(4); x.x.v[j] = Math.round(x.x.v[j] * sp.r); }
+      x.xAt = today; } }
   console.log('splits: ' + list.length + ' on the official list since ' + first + '; repaired ' + fixed + ' in the price cache'); } catch (e) { console.log('splits: skipped (' + e.message + ')'); }
 // keep only the newest WANT sessions
 const allDays = Object.keys(store.days).sort(); for (const d of allDays.slice(0, Math.max(0, allDays.length - WANT))) delete store.days[d];
+// x rows only for stocks that qualified on an earlier (or the same) day in the window: a stock must enter the universe first
+{ const seen = new Set(); let kept = 0; for (const d of Object.keys(store.days).sort()) { const x = store.days[d]; for (const s of x.T) seen.add(s);
+    if (!x.x) continue; const keep = x.x.T.map((s, j) => seen.has(s) ? j : -1).filter(j => j >= 0); for (const f of ['T', 'o', 'h', 'l', 'c', 'v']) x.x[f] = keep.map(j => x.x[f][j]); kept += keep.length; }
+  console.log('dead-stock rows kept (stocks that had qualified, then fell under 3 USD or went thin):', kept); }
 save();
 const D = Object.keys(store.days).sort(), T = D.length;
 console.log('sessions:', T, D[0], 'to', D[T - 1], '| added', added, '| calls', calls, refusedAt ? '| plan limit reached at ' + refusedAt : '');
