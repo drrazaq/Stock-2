@@ -15,6 +15,7 @@
 // verdict at "needs data"). Anything else is REJECTED. Output: data/event-orb-retest-15d-gates.json.
 import fs from 'node:fs';
 import { fetchStockDays, budget, save } from './event-orb-retest-bars.mjs';
+import { latestBlock } from './first-run.mjs';   // run once: the first complete verdict (PASS or REJECTED) is frozen (22 Oct 2026)
 const env = process.env, STUDY = env.EVENT_ORB_STUDY || 'data/event-orb-retest-15d-study.json', CSTUDY = env.EVENT_ORB_CONTROL_STUDY || 'data/event-orb-retest-15d-control-study.json', OUT = env.EVENT_ORB_GATES || 'data/event-orb-retest-15d-gates.json';
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const MIN_N = 30, MIN_DAYS = 10, MIN_STOCKS = 10, MIN_CONTROL = 10, SCEN = { midpoint: 'cost 0.8% (base)', worst: 'cost 1.2% (stress)' };
@@ -25,7 +26,16 @@ const dayT = (T) => { const by = new Map(); for (const x of T) (by.get(x.day) ||
 const tradesOf = (study, scenario) => ((study && study.paperLedger && study.paperLedger.records) || []).map(r => { const o = (r.history || []).find(x => x.type === 'OUTCOME_RESOLVED'); const tr = o && o.outcome && o.outcome.scenarios && o.outcome.scenarios[scenario]; return tr ? { ...tr, eventId: r.plan.event.id, eventKind: r.plan.event.kind } : null; }).filter(Boolean);
 
 const study = J(STUDY, null), cstudy = J(CSTUDY, null);
-const write = (o) => { fs.writeFileSync(OUT, JSON.stringify(o, null, 1)); console.log('evr-gates: ' + o.status + (o.why ? ' - ' + o.why : '')); };
+// RUN ONCE: "every gate here was written before the first run and is evaluated once". The first complete verdict (PASS or REJECTED,
+// not 'needs data') is frozen in firstRun; the top level keeps carrying that frozen verdict (event-orb-retest-library.mjs reads it),
+// and a later run (other inputs, more events) only fills `latest`, which is MONITORING ONLY. An output written before this freeze
+// existed (status PASS/REJECTED, no firstRun) is taken as the first run.
+const PREVG = J(OUT, null), strip = (o) => { const { firstRun, latest, ...rest } = o || {}; return rest; };
+const PREVFIRST = PREVG && (PREVG.firstRun || (/^(PASS|REJECTED)$/.test(PREVG.status || '') ? { ...strip(PREVG), frozenAt: PREVG.generatedAt || null } : null));
+const write = (o0) => { let o = o0;
+  if (PREVFIRST) o = { ...strip(PREVFIRST), generatedAt: new Date().toISOString(), firstRun: PREVFIRST, latest: latestBlock(o0) };
+  else if (/^(PASS|REJECTED)$/.test(o0.status || '')) o = { ...o0, firstRun: { ...o0, frozenAt: new Date().toISOString() }, latest: null };
+  fs.writeFileSync(OUT, JSON.stringify(o, null, 1)); console.log('evr-gates: ' + o.status + (o.why ? ' - ' + o.why : '') + (PREVFIRST ? ' (frozen first run; this run, monitoring only: ' + o0.status + ')' : '')); };
 if (!study || !study.paperLedger) { write({ generatedAt: new Date().toISOString(), status: 'needs data', why: 'no lane study output at ' + STUDY + (study && study.reason ? ' (' + study.reason + ')' : ''), allowBuy: false, bar: BAR }); process.exit(0); }
 const base = tradesOf(study, 'midpoint');
 if (!base.length) { write({ generatedAt: new Date().toISOString(), status: 'needs data', why: 'the lane resolved 0 trades (coverage ' + JSON.stringify(study.coverage) + ')', allowBuy: false, bar: BAR, laneCoverage: study.coverage, laneRejected: study.coverage && study.coverage.rejected }); process.exit(0); }

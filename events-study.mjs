@@ -19,7 +19,8 @@
 // MODE=study (Sunday, leaders-study workflow, after the price cache is loaded): the fair test -> data/events-study.json.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
-import { secNY, nyStamp } from './sec-time.mjs';   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
+import { secNY, nyStamp } from './sec-time.mjs';
+import { freezeEach, latestBlock } from './first-run.mjs';   // run once: first judged verdict frozen (22 Oct 2026)   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const SEC_WWW = local(env.SEC_BASE) || 'https://www.sec.gov', SEC_DATA = local(env.SEC_BASE) || 'https://data.sec.gov', FDA = local(env.FDA_BASE) || 'https://api.fda.gov', TG = local(env.TG_BASE) || 'https://api.telegram.org';
@@ -311,17 +312,31 @@ const PEER = (() => {
 })();
 
 const nev = Object.values(cache.syms).reduce((a, S) => a + S.ev.length, 0);
-const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[0], to: D[T - 1], stocks: PS.size, events: nev, rule: RULE, fam: FR, link: LINK, peer: PEER,
+// RUN ONCE. A family (and the supply-chain and peer tests) is judged once: its first run with 30+ cases in both halves, AFTER the SEC
+// history is complete (90%+ of companies with their full 5-year filing history) and after the SEC-time fix of 22 Oct 2026, is frozen
+// in firstRun and never overwritten. Until then its verdict reads 'NO VERDICT YET' and it drives nothing live (no buy, no warning).
+// This run's numbers go to `latest` (MONITORING ONLY). scan.mjs reads the top-level fam/link/peer, which carry the frozen verdicts.
+const nSym = Object.keys(cache.syms).length, covOld = nSym ? Object.values(cache.syms).filter(S => S.old).length / nSym : 0, COMPLETE = covOld >= 0.9;
+const PREVO = readJson(OUT, {}) || {}, PF = PREVO.firstRun || {};
+const famJudged = (x) => x.sign < 0 ? !!(x.drift && x.drift.older && x.drift.newer && x.drift.older.n >= 30 && x.drift.newer.n >= 30) : ((x.results.older || {}).n || 0) >= 30 && ((x.results.newer || {}).n || 0) >= 30;
+const testJudged = (x) => !!x && !/^NOT RUN/.test(x.verdict || '') && !/too few/i.test(x.why || '');
+const FF = COMPLETE ? freezeEach(PF.fam, FR, famJudged) : { ...(PF.fam || {}) };
+const FL = PF.link || (COMPLETE && testJudged(LINK) ? { ...LINK, frozenAt: new Date().toISOString() } : null), FP = PF.peer || (COMPLETE && testJudged(PEER) ? { ...PEER, frozenAt: new Date().toISOString() } : null);
+const noVerdict = (x) => ({ ...x, verdict: 'NO VERDICT YET (this run: ' + x.verdict + ')', warn: false });
+const FAMOUT = Object.fromEntries(Object.keys(FR).map(k => [k, FF[k] || noVerdict(FR[k])])), LINKOUT = FL ? { ...FL, now: LINK.now } : noVerdict(LINK), PEEROUT = FP || noVerdict(PEER);
+const firstRun = Object.keys(FF).length || FL || FP ? { at: PF.at || new Date().toISOString(), coverage: PF.coverage || +covOld.toFixed(3), fam: FF, link: FL, peer: FP } : null;
+const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[0], to: D[T - 1], stocks: PS.size, events: nev, secHistoryComplete: +covOld.toFixed(3), rule: RULE, fam: FAMOUT, link: LINKOUT, peer: PEEROUT,
+  firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], coverage: +covOld.toFixed(3), fam: FR, link: LINK, peer: PEER }),
   map: { item: ITEM, bioSic: '2833-2836, 8731', forms: { ACTIVIST: ['SC 13D', 'SCHEDULE 13D'], OFFERING: ['424B4', '424B5'] } } };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 const line = s => !s || !s.n ? 'no trades' : s.n + ' trades, ' + Math.round(s.win * 100) + '% won, avg ' + pc(s.avg);
-const pass = Object.entries(FR).filter(([, x]) => x.verdict === 'PROMISING'), warns = Object.entries(FR).filter(([, x]) => x.warn);
+const pass = Object.entries(FAMOUT).filter(([, x]) => x.verdict === 'PROMISING'), warns = Object.entries(FAMOUT).filter(([, x]) => x.warn);
 const msg = ['EVENT STUDY (company news -> what the stock did next), fair test ' + D[T - 1], PS.size + ' stocks, ' + nev + ' SEC/FDA events, prices ' + D[0] + ' to ' + D[T - 1] + '.', '',
   'BUY IDEAS (news + a strong reaction day, bought the next open, sold under the 20 day average or after 40 sessions; must beat stocks that jumped the same way without the news):',
-  ...Object.entries(FR).filter(([, x]) => x.sign >= 0).map(([k, x]) => '- ' + x.name + ': ' + x.verdict + ' | newer ' + line(x.results.newer) + ' | without the news ' + (x.results.ctrlNewer.n ? pc(x.results.ctrlNewer.avg) : 'n/a')), '',
+  ...Object.entries(FAMOUT).filter(([, x]) => x.sign >= 0).map(([k, x]) => '- ' + x.name + ': ' + x.verdict + ' | newer ' + line((x.results.newer || {})) + ' | without the news ' + ((x.results.ctrlNewer || {}).n ? pc(x.results.ctrlNewer.avg) : 'n/a')), '',
   'WARNINGS (over the next 20 sessions the stock lagged the market AND random stocks by 1%+, both halves):', ...(warns.length ? warns.map(([, x]) => '- ' + x.name + ': ' + pc(x.drift.older.vs) + ' / ' + pc(x.drift.newer.vs) + ' vs other stocks (' + x.drift.newer.n + ' newer cases)') : ['- none proven yet']), '',
-  'PEER LAG (industry leader jumps 6%+, laggard peers bought next day, 3 sessions): ' + PEER.verdict + (PEER.results ? ' | newer ' + PEER.results.newer.n + ' trades, ' + pc(PEER.results.newer.avg) + ' vs other laggards ' + pc(PEER.results.ctrlNewer.avg) : '') + (PEER.why ? '. ' + PEER.why : '') + '.',
-  'SUPPLY CHAIN: ' + LINK.verdict + (LINK.why ? '. ' + LINK.why : '') + '.', ...(LINK.now || []).slice(0, 5).map(x => '- ' + x.up + ' is hot (' + pc(x.upMom, 0) + ' in 3 months) -> ' + x.down + ' not yet (' + pc(x.downMom, 0) + '): ' + x.stocks.join(', ')), '',
+  'PEER LAG (industry leader jumps 6%+, laggard peers bought next day, 3 sessions): ' + PEEROUT.verdict + (PEEROUT.results ? ' | newer ' + PEEROUT.results.newer.n + ' trades, ' + pc(PEEROUT.results.newer.avg) + ' vs other laggards ' + pc(PEEROUT.results.ctrlNewer.avg) : '') + (PEEROUT.why ? '. ' + PEEROUT.why : '') + '.',
+  'SUPPLY CHAIN: ' + LINKOUT.verdict + (LINKOUT.why ? '. ' + LINKOUT.why : '') + '.', ...(LINKOUT.now || []).slice(0, 5).map(x => '- ' + x.up + ' is hot (' + pc(x.upMom, 0) + ' in 3 months) -> ' + x.down + ' not yet (' + pc(x.downMom, 0) + '): ' + x.stocks.join(', ')), '',
   pass.length ? 'PASSED: ' + pass.map(([, x]) => x.name).join('; ') + '. These now go on the nightly list as "event drift" buys (paper account follows them too).' : 'Nothing passed yet, so nothing changes in your ACTIONS. The test repeats every Sunday as the SEC history fills in.',
   'Research, not an order. Not financial advice, not a halal ruling.'];
 console.log(msg.join('\n'));

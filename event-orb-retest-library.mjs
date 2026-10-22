@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 const LIB = 'data/strategy-library.json', GATES = process.env.EVENT_ORB_GATES || 'data/event-orb-retest-15d-gates.json';
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
-const lib = J(LIB, null), g = J(GATES, null);
+const lib = J(LIB, null), g0 = J(GATES, null), g = g0 && g0.firstRun ? g0.firstRun : g0;   // the frozen first verdict (run once), never a later monitoring run
 if (!lib || !Array.isArray(lib.strategies)) { console.log('evr-library: no library'); process.exit(0); }
 const e = lib.strategies.find(x => x && x.id === 'A-EVR1');
 if (!e) { console.log('evr-library: no A-EVR1 entry'); process.exit(0); }
