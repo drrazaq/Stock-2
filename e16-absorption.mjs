@@ -16,6 +16,7 @@
 // Output: data/e16-absorption.json (verdicts + today's list of stocks whose 3 quiet days ended at this close).
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { freezeEach, latestBlock } from './first-run.mjs';   // run once per version: first judged verdict frozen (22 Oct 2026)
 const env = process.env, OUT = env.OUT || 'data/e16-absorption.json', COST = 0.008, STRESS = 0.012, HOLDS = [10, 20];
 const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -68,14 +69,19 @@ for (const [k, a] of Object.entries(trades)) { const h = +k.split('_')[1], R = {
   const verdict = !(R.older.n >= 20 && R.newer.n >= 20) ? 'TOO FEW CASES' : !why.length ? 'PASSED' : R.older.edge > 0 && R.newer.edge > 0 ? 'NOT PROVEN' : 'REJECTED';
   RES[k] = { name: 'Earnings gap up 5%+, 3 quiet days holding above the gap middle, buy day 4, hold ' + h + ' sessions', hold: h, verdict, why: why.join('; ') || 'beat the average stock, the S&P 500 and the same stock on its other days in both halves, beyond the luck bar, at stress cost, without its 2 best trades', results: R,
     allGaps: { older: stat(base[h].filter(z => z.t < midT), COST), newer: stat(base[h].filter(z => z.t >= midT), COST) } }; }
-const order = ['PASSED', 'NOT PROVEN', 'REJECTED', 'TOO FEW CASES'], best = Object.values(RES).sort((x, y) => order.indexOf(x.verdict) - order.indexOf(y.verdict) || ((y.results.newer.t || -9) - (x.results.newer.t || -9)))[0];
+// RUN ONCE AS WRITTEN: a version's first run with 20+ cases in both halves is frozen in firstRun.results and never overwritten; later
+// runs go to `latest` (monitoring only). The library E16 reads firstRun only.
+const PREV = J(OUT, {}) || {}, FR = freezeEach(PREV.firstRun && PREV.firstRun.results, RES, (r) => r.verdict !== 'TOO FEW CASES');
+const firstRun = Object.keys(FR).length ? { at: (PREV.firstRun && PREV.firstRun.at) || new Date().toISOString(), bar: (PREV.firstRun && PREV.firstRun.bar) || +BAR.toFixed(2), results: FR } : null;
+const RESF = Object.fromEntries(Object.keys(RES).map(k => [k, FR[k] || { ...RES[k], verdict: 'NO VERDICT YET (' + RES[k].verdict + ')' }]));
+const order = ['PASSED', 'NOT PROVEN', 'REJECTED', 'TOO FEW CASES'], best = Object.values(FR).sort((x, y) => order.indexOf(x.verdict) - order.indexOf(y.verdict) || ((y.results.newer.t || -9) - (x.results.newer.t || -9)))[0];
 const out = { generatedAt: new Date().toISOString(), agent: 'A', from: D[21], to: D[T - 1], stocksWithDates: Object.keys(earn).length, gaps, quietHolds: holds, versions: NV, ownBar: +OWN_BAR.toFixed(2), leagueBar: LEAGUE_BAR, bar: +BAR.toFixed(2),
-  caveat: 'Earnings dates only for the large companies in the earnings cache (today’s companies); judged against the same stock on its other days to remove most of that bias. A pass goes to live paper first.', results: RES, today };
+  caveat: 'Earnings dates only for the large companies in the earnings cache (today’s companies); judged against the same stock on its other days to remove most of that bias. A pass goes to live paper first. results = the frozen first verdict of each version (firstRun); latest = monitoring only.', results: RESF, firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], bar: +BAR.toFixed(2), results: RES }), today };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 console.log('E16 GAP-AND-HOLD (' + out.from + ' to ' + out.to + ', ' + gaps + ' earnings gaps of 5%+, ' + holds + ' quiet holds; bar t ' + out.bar + ')');
-for (const r of Object.values(RES)) { const n = r.results.newer, o = r.results.older; console.log('- hold ' + r.hold + ': ' + r.verdict + ' | older ' + (o.n || 0) + ' trades, edge ' + pc(o.edge) + ' t ' + o.t + ' | newer ' + (n.n || 0) + ' trades, edge ' + pc(n.edge) + ' t ' + n.t + ', vs S&P ' + pc(n.vsSpy) + ', vs own ' + pc(n.vsOwn) + (r.verdict !== 'PASSED' ? ' (' + r.why.split(';')[0] + ')' : '')); }
+for (const r of Object.values(RESF)) { const n = r.results.newer, o = r.results.older; console.log('- hold ' + r.hold + ': ' + r.verdict + ' | older ' + (o.n || 0) + ' trades, edge ' + pc(o.edge) + ' t ' + o.t + ' | newer ' + (n.n || 0) + ' trades, edge ' + pc(n.edge) + ' t ' + n.t + ', vs S&P ' + pc(n.vsSpy) + ', vs own ' + pc(n.vsOwn) + (r.verdict !== 'PASSED' ? ' (' + r.why.split(';')[0] + ')' : '')); }
 // library: E16 (agent A); "tested: passed" only when the code above says PASSED
 try { const LB = J('data/strategy-library.json', null), e = LB && LB.strategies.find(x => x.id === 'E16');
-  if (e && best) { const R = best.results; e.agent = 'A'; e.status = 'tested: ' + (best.verdict === 'PASSED' ? 'passed' : best.verdict.toLowerCase()); e.tested = D[T - 1]; e.study = 'e16-absorption.mjs -> data/e16-absorption.json (today)';
-    e.result = { hold: best.hold, t: R.newer.t, tOlder: R.older.t, edge: R.newer.edge, edgeOlder: R.older.edge, vsSpy: R.newer.vsSpy, vsSpyOlder: R.older.vsSpy, vsOwn: R.newer.vsOwn, n: [R.older.n || 0, R.newer.n || 0], bar: out.bar, why: best.why };
+  if (e && best) { const R = best.results; e.agent = 'A'; e.status = 'tested: ' + (best.verdict === 'PASSED' ? 'passed' : best.verdict.toLowerCase()); e.tested = firstRun.at.slice(0, 10); e.study = 'e16-absorption.mjs -> data/e16-absorption.json (run once per version, first judged run frozen; wired into leaders-study.yml 22 Oct 2026)';
+    e.result = { hold: best.hold, t: R.newer.t, tOlder: R.older.t, edge: R.newer.edge, edgeOlder: R.older.edge, vsSpy: R.newer.vsSpy, vsSpyOlder: R.older.vsSpy, vsOwn: R.newer.vsOwn, n: [R.older.n || 0, R.newer.n || 0], bar: firstRun.bar, why: best.why };
     fs.writeFileSync('data/strategy-library.json', JSON.stringify(LB, null, 1)); } } catch (e) {}

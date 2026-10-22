@@ -316,6 +316,14 @@ jobs:
         run: |
           set -o pipefail
           node fulfilling.mjs 2>&1 | tee -a run.log
+      # Agent A, research only: E16 earnings gap-and-hold absorption (pre-registered, run once per version; earnings dates from
+      # data/earnings-cache.json.gz, same prices). Writes data/e16-absorption.json and library E16.
+      - if: success() || failure()   # run even if an earlier study step failed
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node e16-absorption.mjs 2>&1 | tee -a run.log
       # Agent C (Crowd), research only: tip-source scoreboard (every logged source vs the average stock and the S&P 500; FADE list for
       # C-FADE1) and C-GOV1 federal awards (official USAspending API, pre-registered, run once; awards kept in study-cache/gov).
       - shell: bash
