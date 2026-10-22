@@ -19,6 +19,7 @@
 //   (t 2.4+, three versions tried); still positive without its 2 best trades; no stock over 25% of the profit.
 //   A pass means PAPER first, never a buy.
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -104,7 +105,7 @@ for (const h of HOLDS) { const S = trades.SEQ, C = trades.CTRL, half = (a, newer
   const why = []; if (r.seq.n < 30) why.push('too few trades (' + r.seq.n + ')');
   else { for (const [nm, x] of [['older', r.older], ['newer', r.newer]]) { if (!(x.seq.n >= 10 && x.seq.avg > 0)) why.push('not profitable in the ' + nm + ' half (' + pc(x.seq.avg) + ', ' + x.seq.n + ' trades)'); if (!(x.ctrl.n && x.seq.avg > x.ctrl.avg)) why.push('not better than the no-filing control in the ' + nm + ' half'); }
     if (!(r.t >= 2.4)) why.push('gap over the control could be luck (t ' + (r.t === null ? 'n/a' : r.t) + ', 2.4 needed)'); if (!(r.seq.noTop2 > 0)) why.push('loses without its 2 best trades'); if (r.seq.topShare > 0.25) why.push('one stock made over 25% of the profit'); if (!(r.seqStress.avg > 0)) why.push('loses at 1.5x costs'); }
-  r.verdict = why.length ? (r.seq.n < 30 ? 'TOO FEW TRADES' : 'NOT PROVEN') : 'PROMISING (paper first)'; r.why = why.join('; '); if (!why.length) anyPass = true; results['h' + h] = r; }
+  r.verdict = why.length ? (r.seq.n < 30 ? 'TOO FEW TRADES' : 'NOT PROVEN') : 'PROMISING (paper first)'; r.why = why.join('; '); if (!why.length) { const lw = belowLeague([r.t], 2.4); if (lw) { r.verdict = BELOW; r.why = 'beat the no-filing control; ' + lw; } else anyPass = true; } results['h' + h] = r; }
 const byFamily = Object.fromEntries(Object.entries(fams).filter(([, a]) => a.length >= 5).map(([k, a]) => [k, { n: a.length, avg3: +mean(a).toFixed(4) }]));
 const best = Object.values(results).sort((a, b) => (b.gap ?? -9) - (a.gap ?? -9))[0];
 const text = ['SEQUENCE STUDY (filing -> quiet days -> breakout), ' + iso(Date.now()), '',

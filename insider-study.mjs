@@ -8,6 +8,7 @@
 // bought the same day and (2) the same stock on its other days in the same half. Both halves, date-clustered t, luck bar for the
 // 6 versions, must survive without its 2 best trades. Output: data/insider-study.json (+ today's fresh clusters as a watch list).
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 import { freezeEach, latestBlock } from './first-run.mjs';   // run once per version: first judged verdict frozen (22 Oct 2026)
 import { execFileSync } from 'node:child_process';
@@ -70,6 +71,7 @@ for (const [k, a] of Object.entries(trades)) { const R = { older: stat(a.filter(
   if (R.stress.n >= 20 && !(R.stress.avg > 0)) why.push('loses at 1.2% costs'); if (R.newer.n >= 20 && !(R.newer.noTop2 > 0)) why.push('loses without its 2 best trades'); if (R.newer.topStock > 0.25) why.push('one stock made over 25% of the profit');
   const [key, h] = [k.replace(/_\d+$/, ''), k.split('_').pop()];
   RES[k] = { name: NAMES[key] + ', bought the next open after the filing, held ' + h + ' sessions', verdict: !(R.older.n >= 20 && R.newer.n >= 20) ? 'TOO FEW CASES' : !why.length ? 'PROMISING' : R.older.edge > 0 && R.newer.edge > 0 ? 'NOT PROVEN' : 'REJECTED', why: why.join('; ') || 'beat the average stock and the same stock’s other days in both halves, beyond luck, at stress cost', results: R }; }
+for (const r of Object.values(RES)) if (r.verdict === 'PROMISING') { const lw = belowLeague([r.results.older.t, r.results.newer.t], BAR); if (lw) { r.verdict = BELOW; r.why = 'beat the average stock and the same stock in both halves; ' + lw; } }
 // RUN ONCE per version: the first run in which a version has 20+ cases in both halves (verdict other than TOO FEW CASES) is frozen in
 // firstRun.results and never overwritten; this run's numbers go to `latest` (monitoring only). The library E3 reads firstRun only.
 const PREV = (() => { try { return JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch (e) { return {}; } })() || {};

@@ -4,6 +4,7 @@
 // way. A rule that passes goes on paper on the new days that arrive each week; only a passing paper record could ever make it
 // a BUY. Uses the price cache built by leaders-study.mjs (same weekly job). No data calls. Read-only.
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
 
@@ -308,6 +309,7 @@ const rows = RULES.map(r => {
   // MARKET TYPE: the same trades split by whether the S&P 500 was above its 50 day average at entry (a rising market) or not
   const up = (x) => spy50[x.t] && spyC[x.t] > spy50[x.t], ro = stats(older(a).filter(up), COST.base), rn = stats(newer(a).filter(up), COST.base), fo = stats(older(a).filter(x => !up(x)), COST.base), fn = stats(newer(a).filter(x => !up(x)), COST.base);
   const risingOnly = ro.n >= 20 && rn.n >= 20 && ro.avg > 0 && rn.avg > 0 && (rn.pf || 0) > 1.2;
+  if (v === 'PROMISING') { const tt = (s) => s.n > 1 && s.sd > 0 ? s.avg / (s.sd / Math.sqrt(s.n)) : null, lw = belowLeague([tt(o), tt(nw)], 0); if (lw) { v = BELOW; why.push('passed in both halves; ' + lw); } }
   return { ...r, verdict: v, why: why.join('; ') || 'passed in both halves. Paper only until its new-day record also passes', older: o, newer: nw, newerLow: lo, market: { risingOld: ro, risingNew: rn, fallingOld: fo, fallingNew: fn, risingOnly } };
 });
 // forward paper record for passing rules, on days that arrive after they passed

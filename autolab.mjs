@@ -11,6 +11,7 @@
 // A rule is never tested twice (same id = same rule), and none is ever adjusted after seeing its result.
 // Output: data/autolab.json (every rule tried, its verdicts, live candidates, their paper record, this week's picks).
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org', OUT = 'data/autolab.json';
 const pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
@@ -158,7 +159,8 @@ const fresh = newRules(PER_WEEK), totalTried = Object.keys(LAB.tried).length + f
 let passedAll = 0;
 for (const r of fresh) { const id = ruleId(r), d1 = judge(run(r, 0, P1), BAR); let d2 = null, d3 = null, verdict = 'FAILED DISCOVERY';
   if (d1.pass) { d2 = judge(run(r, P1, P2), VBAR); verdict = 'FAILED VALIDATION'; if (d2.pass) { d3 = judge(run(r, P2, T), VBAR); verdict = d3.pass ? 'LIVE CANDIDATE' : 'FAILED VAULT'; LAB.vaultLooks = (LAB.vaultLooks || 0) + 1; } }
-  LAB.tried[id] = { week: D[T - 1], name: (r.lib ? 'LIBRARY ' + r.lib + ': ' : '') + name(r), b: r.b, h: r.h, bredFrom: r.from || null, lib: r.lib || null, verdict, discovery: d1, validation: d2, vault: d3 };
+  let belowL = null; if (verdict === 'LIVE CANDIDATE') { belowL = belowLeague([d1.t], BAR); if (belowL) verdict = BELOW; }
+  LAB.tried[id] = { week: D[T - 1], name: (r.lib ? 'LIBRARY ' + r.lib + ': ' : '') + name(r), b: r.b, h: r.h, bredFrom: r.from || null, lib: r.lib || null, verdict, discovery: d1, validation: d2, vault: d3, ...(belowL ? { belowLeagueBar: 'passed discovery, validation and vault; at discovery ' + belowL } : {}) };
   // ABLATION: every block must earn its place. Drop one block at a time (whole period): if a simpler rule does about as well
   // (at least 90% of the edge), the extra block is decoration and the rule is flagged; the simpler version is NOT promoted (it was not pre-tested).
   if (verdict === 'LIVE CANDIDATE' && r.b.length > 1) { const full = judge(run(r, 0, T), 0).edge; const idle = r.b.filter(x => { const e = judge(run({ b: r.b.filter(y => y !== x), h: r.h }, 0, T), 0).edge; return typeof e === 'number' && typeof full === 'number' && e >= full * 0.9; }); LAB.tried[id].idleBlocks = idle; r.idle = idle.map(x => BLOCKS[x][1]); }

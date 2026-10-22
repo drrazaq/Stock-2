@@ -15,6 +15,7 @@
 // the 50 versions tried (paired t-stat above the rising bar), keeps its gain without its 2 best trades, and no single
 // stock makes over 25% of the gain. (Whether the BUY makes money is the buy test's job; this only asks which selling keeps more.) Output: data/exits.json.
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org', OUT = 'data/exits.json';
 const pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
@@ -114,6 +115,7 @@ for (const s of SETUPS) { const a = trades[s], o = a.filter(x => x.t < mid), w =
       else { for (const h of ['older', 'newer']) { const v = R.vsDefault[h]; if (!(v.diff > 0)) why.push('did not beat the default in the ' + h + ' half (' + pc(v.diff) + ' a trade)'); else if (!(v.t >= TCRIT)) why.push('beat the default in the ' + h + ' half by ' + pc(v.diff) + ' but that could be luck (t ' + v.t + ', ' + TCRIT.toFixed(1) + ' needed)'); }
         if (!(R.vsDefault.newer.noTop2 > 0)) why.push('the gain over the default disappears without its 2 best trades'); if (R.vsDefault.newer.topStock > 0.25) why.push('one stock made over 25% of the gain over the default');
         if (why.length) verdict = R.vsDefault.older.diff > 0 && R.vsDefault.newer.diff > 0 ? 'NOT PROVEN' : 'WORSE'; } }
+    if (verdict === 'BETTER') { const lw = belowLeague([R.vsDefault.older.t, R.vsDefault.newer.t], TCRIT); if (lw) { verdict = BELOW; why.push('beat the default in both halves; ' + lw); } }
     row[ex] = { name: EXNAME[ex], verdict, why: why.join('; ') || (ex === 'HOLD60' ? 'the yardstick' : 'beat the default on the same trades in both halves, beyond luck'), results: R }; }
   const better = EXITS.filter(ex => row[ex].verdict === 'BETTER').sort((x, y) => row[y].results.vsDefault.newer.diff - row[x].results.vsDefault.newer.diff);
   RES[s] = { name: NAME[s], trades: a.length, best: better[0] || 'HOLD60', exits: row }; }

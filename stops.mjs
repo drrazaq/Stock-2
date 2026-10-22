@@ -10,6 +10,7 @@
 // THE RECOMMENDED STOP, chosen by a rule fixed in advance: among the rules that cost at most 0.5% a buy against no stop in both halves
 // (and no t-stat under -2), the one with the smallest average loss in the worst 5% of buys. It is a safety rule, not a profit rule.
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org', OUT = 'data/stops.json';
 const pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
@@ -61,6 +62,7 @@ for (const pool of POOLS) { const A = rows[pool], ts = [...new Set(A.map(x => x.
       o[h] = { n: a.length, avg: +mean(g).toFixed(4), worst5: +mean(w5).toFixed(4), worst: +g[0].toFixed(3), hit: +mean(a.map(x => x.res[r].hit)).toFixed(3), vsNone: r === 'NONE' ? null : tst(byDate(a, x => x.res[r].g - x.res.NONE.g)) }; }
     o.harmful = r !== 'NONE' && ['older', 'newer'].some(h => (o[h].vsNone.t !== null && o[h].vsNone.t <= -2) || o[h].vsNone.diff < -0.005);   // costs more than 0.5% a buy (the price of the insurance) in either half
     o.better = r !== 'NONE' && ['older', 'newer'].every(h => o[h].vsNone.diff > 0 && o[h].vsNone.t >= TCRIT);
+    if (o.better) { const lw = belowLeague([o.older.vsNone.t, o.newer.vsNone.t], TCRIT); if (lw) { o.better = false; o.belowLeagueBar = 'better than no stop in both halves; ' + lw; } }
     R[r] = o; }
   const safe = RULES.filter(r => r !== 'NONE' && !R[r].harmful).sort((a, b) => (R[b].newer.worst5 + R[b].older.worst5) - (R[a].newer.worst5 + R[a].older.worst5));
   RES[pool] = { rules: R, recommended: safe[0] || 'NONE', buys: A.length }; }

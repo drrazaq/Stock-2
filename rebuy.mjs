@@ -16,6 +16,7 @@
 // 2 best cases, with no single stock making over 25% of the gain, and (since 18 Oct 2026) month by month beyond luck too. It also reports how often the stock never came back lower.
 // Output: data/rebuy.json.
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org', OUT = 'data/rebuy.json';
 const pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
@@ -75,6 +76,7 @@ for (const key of Object.keys(cases)) { const a = cases[key], R = { older: stat(
       else if (!(R[h].tBlock >= TCRIT)) why.push('switch ahead by ' + pc(R[h].adv) + ' in the ' + h + ' half, but the cases bunch in a few hot months: month by month it could be luck (t ' + R[h].tBlock + ' over ' + R[h].blocks + ' months, ' + TCRIT.toFixed(1) + ' needed)'); }
     if (!(R.stress.adv > 0)) why.push('loses at higher costs'); if (!(R.newer.noTop2 > 0)) why.push('the gain disappears without its 2 best cases'); if (R.newer.topStock > 0.25) why.push('one stock made over 25% of the gain');
     if (why.length) verdict = R.older.adv < 0 && R.newer.adv < 0 ? 'HOLDING WINS' : 'NOT PROVEN'; }
+  if (verdict === 'SWITCH WINS') { const lw = belowLeague([R.older.t, R.older.tBlock, R.newer.t, R.newer.tBlock], TCRIT); if (lw) { verdict = BELOW; why.push('selling and buying back beat holding in both halves; ' + lw + '. Holding stays the rule'); } }
   const [tg, rb] = key.split('/'); RES[key] = { trigger: tg, rebuy: rb, name: TNAME[tg] + ' -> sell, ' + RNAME[rb], verdict, why: why.join('; ') || 'selling and buying back beat holding in both halves, beyond luck, at stress cost', results: R }; }
 const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[60], to: D[T - H - 3], versions: NT, tCrit: +TCRIT.toFixed(2), costPerSide: SIDE, results: RES };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));

@@ -14,6 +14,7 @@
 // Judged on the gain after 12 months AND on the worst fall along the way (risk), per start date, older and newer half, and the bar
 // rises with the number of versions (8). Output: data/rebalance.json.
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org', OUT = 'data/rebalance.json';
 const pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
@@ -75,6 +76,7 @@ for (const pool of POOLS) { const R = rows[pool], mid = Math.floor(R.length / 2)
     const enough = out.older.starts >= 6 && out.newer.starts >= 6;
     out.moreProfit = enough && both('gain', 1); out.lessProfit = enough && both('gain', -1); out.lowerRisk = enough && both('safer', 1); out.higherRisk = enough && both('safer', -1);
     out.verdict = !enough ? 'NOT ENOUGH HISTORY' : out.moreProfit && !out.higherRisk ? 'BETTER' : out.lowerRisk && !out.lessProfit ? 'SAFER, SAME PROFIT' : out.lowerRisk && out.lessProfit ? 'SAFER BUT LESS PROFIT' : out.lessProfit ? 'WORSE' : 'NO CLEAR DIFFERENCE';
+    if (/^(BETTER|SAFER, SAME PROFIT)$/.test(out.verdict)) { const k = out.verdict === 'BETTER' ? 'gain' : 'safer', lw = belowLeague(['older', 'newer'].map(h => Math.abs(out[h][k].t)), TCRIT); if (lw) { out.ownVerdict = out.verdict; out.verdict = BELOW; out.why = (out.ownVerdict === 'BETTER' ? 'more profit than holding' : 'safer than holding at the same profit') + ' in both halves; ' + lw; } }
     RES[pool + '_' + m] = out; } }
 const out = { generatedAt: new Date().toISOString(), status: 'OK', from: rows.ANY.length ? rows.ANY[0].d : null, to: rows.ANY.length ? rows.ANY[rows.ANY.length - 1].d : null, starts: rows.ANY.length, perStart: PER, tCrit: +TCRIT.toFixed(2), results: RES, rules: { stocks: N, start: START, minTrade: MINTRADE, fee: FEE, band: '15% -> 10%' } };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));

@@ -6,6 +6,7 @@
 // 2 best trades. Caveat written into the output: chain membership is TODAY's knowledge (a company listed in 2025 cannot appear earlier;
 // a company that left a chain is missing), so a pass goes to live paper first. Output: data/chain-ripple.json. Research only.
 import fs from 'node:fs';
+import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 import { freezeEach, latestBlock } from './first-run.mjs';   // run once per version: first judged verdict frozen (22 Oct 2026)
 const env = process.env, OUT = 'data/chain-ripple.json', COST = 0.008, STRESS = 0.012, HOLDS = [3, 10, 20];
@@ -67,6 +68,7 @@ for (const [k, a] of Object.entries(trades)) { const R = { older: stat(a.filter(
   RES.CUSTOMER_TOP_21 = { name: 'Customer momentum (Cohen-Frazzini): suppliers whose customers rose most last month, held 1 month', verdict: !(R.older.n >= 20 && R.newer.n >= 20) ? 'TOO FEW CASES' : !why.length ? 'PROMISING' : R.older.edge > 0 && R.newer.edge > 0 ? 'NOT PROVEN' : 'REJECTED', why: why.join('; ') || 'beat the average stock and the bottom group in both halves, beyond luck', results: R }; }
 // today's ripple candidates (watch list): chain members that jumped today, and the connected names that have not moved
 const tL = T - 1, todayMovers = members.filter(m => { const r = r1(m.i, tL), x = vx(m.i, tL); return r !== null && r >= 0.06 && x !== null && x >= 2; }).map(m => ({ sym: m.s, chain: m.chain, layer: CH[m.chain][m.li].layer, move: +r1(m.i, tL).toFixed(3) }));
+for (const r of Object.values(RES)) if (r.verdict === 'PROMISING') { const lw = belowLeague([r.results.older.t, r.results.newer.t], BAR); if (lw) { r.verdict = BELOW; r.why = 'beat the average stock in both halves; ' + lw; } }
 // RUN ONCE per version: a version's first run with 20+ cases in both halves is frozen in firstRun.results and never overwritten;
 // this run's numbers go to `latest` (monitoring only). The library (N1, N3, N4) reads firstRun only.
 const PREV = (() => { try { return JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch (e) { return {}; } })() || {};

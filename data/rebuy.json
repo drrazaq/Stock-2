@@ -11,8 +11,8 @@
    "trigger": "STRETCH",
    "rebuy": "LOWER10",
    "name": "stock 30%+ above its 50-day average -> sell, buy back 10% lower (or after 60 sessions)",
-   "verdict": "SWITCH WINS",
-   "why": "selling and buying back beat holding in both halves, beyond luck, at stress cost",
+   "verdict": "BELOW THE LEAGUE BAR",
+   "why": "selling and buying back beat holding in both halves; it cleared its own luck bar (t 10.96 / 4.70 / 5.00 / 2.96, 2.64 needed) but not the league bar (t 3.95 needed, 1299 rules tried by all studies and agents together), so it could be luck. Holding stays the rule",
    "results": {
     "older": {
      "n": 1723,
@@ -119,8 +119,8 @@
    "trigger": "SPIKE",
    "rebuy": "LOWER10",
    "name": "stock up 25%+ in 10 sessions -> sell, buy back 10% lower (or after 60 sessions)",
-   "verdict": "SWITCH WINS",
-   "why": "selling and buying back beat holding in both halves, beyond luck, at stress cost",
+   "verdict": "BELOW THE LEAGUE BAR",
+   "why": "selling and buying back beat holding in both halves; it cleared its own luck bar (t 15.38 / 6.08 / 5.01 / 3.04, 2.64 needed) but not the league bar (t 3.95 needed, 1299 rules tried by all studies and agents together), so it could be luck. Holding stays the rule",
    "results": {
     "older": {
      "n": 3579,
@@ -331,5 +331,6 @@
     }
    }
   }
- }
+ },
+ "leagueBarApplied": "22 Oct 2026: passing verdicts re-checked against the league bar (no rule changed)"
 }
