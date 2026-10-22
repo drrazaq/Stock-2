@@ -2856,6 +2856,42 @@
    "data": "has: the EDGAR index and IPO dates built for C-LOCK (share-supply.mjs)",
    "queue": "after C-NSI1",
    "note": "WEB SCOUT 22 Oct. Published effect is pre-2001; after the JOBS Act the date is less clear, which is why both versions are pre-registered."
+  },
+  {
+   "id": "B-EM1",
+   "family": "Company events",
+   "name": "Earnings that keep getting better (a run of beats, not one)",
+   "explain": "Buy at the next open after a report that is the 3rd consecutive quarter of positive EPS surprise AND year-on-year revenue growth rising for 2+ quarters; hold 60 sessions, exit on a close under the 50-day average. Whole market incl. dead stocks, both halves, 0.8%/1.2% cost, the three yardsticks, without the 2 best. Must also beat a single-beat version on the same reports (the E1-style rule), so the sequence adds something. Literature: earnings-announcement momentum built from several surprises stayed predictive where the latest surprise alone did not (2025 study cited by the reviewer).",
+   "status": "queued (Agent B, front of queue)",
+   "agent": "B",
+   "note": "From two outside reviews of 22 Oct (evening). Pre-register one version before any run; judged for PROVEN and TRADABLE SMALL; must beat the existing engine it builds on (incremental value), not only the market."
+  },
+  {
+   "id": "B-SIF1",
+   "family": "Trend and momentum",
+   "name": "Strong stock in a strong industry with improving finances",
+   "explain": "Monthly basket: stocks in the top 30% by 6-month relative strength, whose industry (SIC group) is in the top 30% by 6-month return, AND F-score up versus a year ago. Hold 3 months. Must beat T1 (leaders) and V15 alone on the same dates, and must not depend on one sector (report the result with the top sector removed). Kill: concentration in one hot sector, a few outliers, or no edge in the newer half.",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "From two outside reviews of 22 Oct (evening). Pre-register one version before any run; judged for PROVEN and TRADABLE SMALL; must beat the existing engine it builds on (incremental value), not only the market."
+  },
+  {
+   "id": "C-DIFF1",
+   "family": "Company events",
+   "name": "What changed in the filing (10-Q/10-K versus the previous one)",
+   "explain": "For each 10-Q/10-K, compare with the same company's previous filing: change in share count, cash runway, capex, customer concentration, and how much the text changed (similarity of the risk-factor and MD&A sections; 'lazy prices', Cohen, Malloy and Nguyen 2020: firms whose filings change little outperform). Rule: buy the 20% of companies whose filings changed least and whose share count did not rise; hold 3 months. Point-in-time by the SEC acceptance time. Must add value over F-score alone.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From two outside reviews of 22 Oct (evening). Pre-register one version before any run; judged for PROVEN and TRADABLE SMALL; must beat the existing engine it builds on (incremental value), not only the market."
+  },
+  {
+   "id": "A-IG8X",
+   "family": "Ignition and early wave",
+   "name": "Does price acceptance after the first jump add anything to IG8?",
+   "explain": "On minute bars: among IG8 alerts, split by whether the stock held above its alert price for the next 15 minutes with rising relative volume, separately for liquid stocks and small caps. Only a diagnostic until IG8 has 10+ distinct days; any split found becomes a new pre-registered version, never a change to IG8 itself.",
+   "status": "queued (Agent A, after IG8 reaches 10 days)",
+   "agent": "A",
+   "note": "From two outside reviews of 22 Oct (evening). Pre-register one version before any run; judged for PROVEN and TRADABLE SMALL; must beat the existing engine it builds on (incremental value), not only the market."
   }
  ]
 }
