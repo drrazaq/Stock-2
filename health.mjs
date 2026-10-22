@@ -10,6 +10,7 @@ const now = Date.now();
 const bizHours = (t) => { let h = 0; for (let x = t; x < now; x += 3600e3) { const d = new Date(x).getUTCDay(); if (d !== 0 && d !== 6) h++; } return h; };
 const stamp = (j) => { if (!j) return null; for (const k of ['updated', 'at', 'generatedAt', 'session', 'day', 'd']) if (j[k] && !isNaN(Date.parse(j[k]))) return Date.parse(String(j[k]).length === 10 ? j[k] + 'T21:00:00Z' : j[k]); return null; };
 // [file, plain name, how often it should update, max age in weekday hours (daily) or calendar days (weekly), extra content check]
+const ran = (j) => /^(NOT RUN|FAIL|ERROR)/i.test(String(j.status || '')) ? 'not run: ' + (j.why || j.status) : null;
 const CHECKS = [
   ['data/signals.json', 'nightly scan (ACTIONS, buy list)', 'every weekday night', { biz: 30 }],
   ['data/smart-money.json', 'smart money (insiders, analysts)', 'every weekday', { biz: 30 }],
@@ -29,11 +30,21 @@ const CHECKS = [
   ['data/autolab.json', 'Sunday autolab (new rules)', 'every Sunday', { days: 8, optional: true }, (j) => j.status && j.status !== 'OK' ? 'not run: ' + (j.why || j.status) : null],
   ['data/horizons.json', 'Sunday horizons test', 'every Sunday', { days: 8, optional: true }, (j) => j.status && j.status !== 'OK' ? 'not run: ' + (j.why || j.status) : null],
   ['data/shares.json.gz', 'SEC share counts (dilution flag, past float)', 'every weekday evening', { days: 5 }, (j) => j.note ? 'SEC: ' + j.note : null],
+  // Added 22 Oct 2026 (audit H1): research outputs, so a crash inside a 'continue on error' step no longer stays silent. Sunday studies
+  // (leaders-study.yml, 06:00 UTC Sunday) may be up to 8 days old; the Saturday intraday lab (fastmover-intraday.yml) too.
+  ['data/earnings-study.json', 'Sunday earnings-drift test (feeds the nightly earnings-drift buys)', 'every Sunday', { days: 8 }, ran],
+  ['data/ignition-lab.json', 'Saturday intraday ignition lab (ignition alerts use only rules that pass it)', 'every Saturday', { days: 8 }, ran],
+  ['data/agent-league.json', 'agent league (weekly freeze and scoring of champion picks)', 'every Sunday', { days: 8 }, (j) => j.priced === false ? 'ran without the price cache: no picks frozen or scored' : null],
+  ...[['insider-study', 'insider cluster study (Agent C champion E3)'], ['chain-ripple', 'chain-ripple study'], ['regime-gate', 'regime-gate study (A-RG1)'], ['pattern-lab', 'pattern lab (Agent A)'],
+    ['swing-lab', 'swing lab (Agent A)'], ['fulfilling', 'fulfilling lab (Agent C)'], ['ew-stack', 'early-wave stack (A-EW1)'], ['tip-score', 'tip-source scoreboard (FADE list)'], ['gov-awards', 'government awards study (C-GOV1)'],
+    ['orb-study', 'opening-range breakout study (A-ORB1)'], ['missed-runners', 'missed-runner audit (A-MISS1)'], ['sequence-study', 'sequence study (filing, quiet, breakout)'], ['quality', 'quality companies study (Agent B champion)'],
+    ['stops', 'stop study (stop advice)'], ['exits', 'exit study'], ['rebuy', 'sell-and-buy-back study'], ['rebalance', 'rebalancing study'], ['winners-study', 'winners study'], ['hunting-lab', 'hunting lab'], ['score-study', 'stock score study']]
+    .map(([f, n]) => ['data/' + f + '.json', 'Sunday ' + n, 'every Sunday', { days: 8 }, ran]),
 ];
 const problems = [], ok = [];
 for (const [f, name, how, lim, check] of CHECKS) {
   const j = readJson(f); if (j === undefined) { if (!lim.optional) problems.push(name + ': its file is missing (' + f + '). It should update ' + how + '.'); continue; }
-  const t = stamp(j); if (!t) { ok.push(name); continue; }
+  const t = stamp(j); if (!t) { problems.push(name + ': its file has no date (' + f + '), so its age cannot be checked. The output format may have changed.'); continue; }
   const age = lim.biz ? bizHours(t) : (now - t) / 864e5, stale = lim.biz ? age > lim.biz : age > lim.days;
   if (stale) problems.push(name + ': last result ' + new Date(t).toISOString().slice(0, 16).replace('T', ' ') + ' UTC; it should update ' + how + '. The job is probably failing.');
   else { const c = check ? check(j) : null; if (c) problems.push(name + ': ' + c); else ok.push(name); } }
