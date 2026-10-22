@@ -178,7 +178,7 @@ async function sellCheckText(sig) { const pos = loadPos(), syms = Object.keys(po
     { const nw = news.filter(n => n.sym === sym && Date.now() - Date.parse(n.at) < 3 * 864e5); if (nw.length) R.push(['INFO', 'threat headline: ' + nw[nw.length - 1].why + ' ("' + String(nw[nw.length - 1].h).slice(0, 70) + '")']); }
     { const sh = (pv.shares || {})[sym]; if (sh && tot > 0 && sh * (px || P.entry) / tot > 0.15) R.push(['INFO', Math.round(sh * (px || P.entry) / tot * 100) + '% of your money in one stock (trimming over 15% lowered the worst fall in the test)']); }
     const head = sym + (px ? ' ' + money(px) + ' (' + pcs(px / P.entry - 1) + ' from your ' + money(P.entry) + ')' : ''), body = R.map(([k, w]) => '   ' + k + ': ' + w);
-    if (R.some(x => x[0] === 'MUST' || x[0] === 'TESTED')) sells.push([head + ': SELL', ...body]);
+    if (R.some(x => x[0] === 'MUST' || x[0] === 'TESTED')) { sells.push([head + ': SELL', ...body]); noteSell(sym, R.filter(x => x[0] === 'MUST' || x[0] === 'TESTED').map(x => x[1]).join('; ')); }
     else if (R.some(x => x[0] === 'OPTION')) options.push([head + ': TAKE PROFIT OPTION (your choice)', ...body]);
     else holds.push([head + ': HOLD' + (P.stop ? ', stop ' + money(P.stop) : ', SET A STOP'), ...(body.length ? body : ['   no sell reason found: trend, filings, news, quality and size checked'])]); }
   const out = ['WHAT TO SELL AND WHY (' + syms.length + ' stocks checked: stop, halal, SEC filings, stretch, earnings, dilution, quality, your sources, news, size)', ''];
@@ -366,7 +366,8 @@ function scorecardText() { const A = [], av = (a) => a.length ? a.reduce((x, y) 
   const oct = readJson0('data/octopus-paper.json'); if (oct && oct.record) row('Octopus score top picks (rejected idea, kept on paper)', oct.record.n, oct.record.win, oct.record.avg, null);
   let mt = []; try { mt = fs.readFileSync(MY_TRADES, 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)); } catch (e) {}
   const own = mt.filter(t => (t.kind || 'manual') === 'manual'), sys = mt.filter(t => (t.kind || 'manual') !== 'manual');
-  if (sys.length) row('YOUR REAL trades on system picks', sys.length, sys.filter(t => t.pct > 0).length / sys.length, av(sys.map(t => t.pct)), null); if (own.length) row('YOUR REAL trades on your own picks', own.length, own.filter(t => t.pct > 0).length / own.length, av(own.map(t => t.pct)), null);
+  const disc = (a) => { const k = a.filter(t => t.sysSell !== undefined); return k.length ? '(' + k.filter(t => t.sysSell).length + ' of ' + k.length + ' sold after the system said SELL)' : ''; };
+  if (sys.length) row('YOUR REAL trades on system picks', sys.length, sys.filter(t => t.pct > 0).length / sys.length, av(sys.map(t => t.pct)), null, disc(sys)); if (own.length) row('YOUR REAL trades on your own picks', own.length, own.filter(t => t.pct > 0).length / own.length, av(own.map(t => t.pct)), null, disc(own));
   // OPEN, MARKED TO MARKET (22 Oct): not verdicts, but the unfinished results are shown, not hidden behind "open"
   try { const SG = readJson0('data/signals.json'), lastPx = {}; for (const x of (SG && SG.stocks) || []) if (x.last) lastPx[x.sym] = x.last;
     const LD = readJson0('data/leaders.json'), lp = ((LD && LD.paper) || []).filter(x => x.entry > 0 && lastPx[x.sym] > 0); if (lp.length) { const r = lp.map(x => lastPx[x.sym] / x.entry - 1); A.push('- Leaders list (T1), ' + lp.length + ' open paper positions marked to market: average ' + pcs(av(r)) + ' before costs, ' + r.filter(x => x > 0).length + ' up (scored by the league at 1 and 3 months; not a verdict)'); }
@@ -645,7 +646,7 @@ async function alpacaPaper(sig, loaded, session) {
       const o = await alp('POST', '/v2/orders', { symbol: sym, qty: String(P.qty), side: 'sell', type: 'market', time_in_force: 'day', client_order_id: 's2x-' + sym + '-' + today });
       if (o && o.id) A.pendingExit[sym] = { id: o.id, entry: P.entry, qty: P.qty, kind: P.kind, why, since: P.since }; } }
   // 5. tonight's proven buys become paper orders for the next session
-  const cands = planCands(sig, {}).filter(x => x.ok && !held[x.sym] && !A.plans[x.sym] && !A.pendingBuy[x.sym] && x.hi > 0 && x.stop > 0 && x.stop < x.hi);
+  const cands = planCands(sig, {}).filter(x => (x.ok || x.losingLive) && !held[x.sym] && !A.plans[x.sym] && !A.pendingBuy[x.sym] && x.hi > 0 && x.stop > 0 && x.stop < x.hi);
   for (const x of cands.slice(0, 10)) { const usd = amountFor(x, sig.market, false).usd, qty = Math.floor(usd / x.hi); if (qty < 1) continue;
     const src = x.kind === 'quick trade' ? (sig.quick || []).find(q => q.sym === x.sym) : x.kind === 'swing trade' ? (sig.stocks || []).find(b => b.sym === x.sym) : x.kind === 'earnings drift' ? (sig.pead || []).find(e => e.sym === x.sym) : x.kind === 'event drift' ? (sig.evt || []).find(e => e.sym === x.sym) : null;
     const plan = x.kind === 'quick trade' ? { kind: 'quick', q: src && src.q, maxHold: (src && src.maxHold) || 5, stop: x.stop } : x.kind === 'swing trade' ? { kind: 'entry', key: src && src.key, maxHold: src && src.maxHold, stop: x.stop } : (x.kind === 'earnings drift' || x.kind === 'event drift') ? { kind: 'entry', exitMA: 20, maxHold: (src && src.hold) || 40, stop: x.stop } : x.kind === 'trend trade' ? { kind: 'leader', stop: x.stop } : x.kind === 'octopus' ? { kind: 'entry', maxHold: 10, stop: x.stop } : x.kind === 'mid-term' ? { kind: 'entry', maxHold: x.days, stop: x.stop } : null;
@@ -863,6 +864,11 @@ const posLine = (sym, P, price) => sym + ': bought ' + money(P.entry) + (price ?
 // "today": the short-trade list. Only setups that passed the tests at the last close, re-priced now.
 // ---- YOUR REAL RECORD: every sale you report, split by the kind of trade, so paper and real results can be compared.
 const MY_TRADES = 'data/my-trades.jsonl';
+// SELL NOTICES (22 Oct): one line per stock per day whenever the bot tells the owner to SELL a held stock. The  sold  command then
+// records whether the system said SELL before the sale (and when), so the real record separates discipline from strategy.
+function noteSell(sym, why) { try { const f = 'data/sell-notices.jsonl', d = new Date().toISOString().slice(0, 10); let last = null; try { const L = fs.readFileSync(f, 'utf8').trim().split('\n'); for (let i = L.length - 1; i >= Math.max(0, L.length - 400); i--) { const x = JSON.parse(L[i]); if (x.sym === sym) { last = x; break; } } } catch (e) {}
+  if (!last || last.d !== d) fs.appendFileSync(f, JSON.stringify({ d, sym, why: String(why || '').slice(0, 120) }) + '\n'); } catch (e) {} }
+function sellNoticeBefore(sym, since) { try { const L = fs.readFileSync('data/sell-notices.jsonl', 'utf8').trim().split('\n').map(x => JSON.parse(x)).filter(x => x.sym === sym && (!since || x.d >= since)); return L.length ? L[0] : null; } catch (e) { return null; } }
 // MOOD at the moment of a buy or a sale (optional word in the message): after enough trades, which moods made money and which lost
 const moodOf = (t) => { const m = String(t || '').match(/\b(calm|anxious|excited|fomo|fear|scared|bored|angry|confident|hopeful|greedy)\b|\u0645\u062A\u062D\u0645\u0633|\u062E\u0627\u064A\u0641|\u0642\u0644\u0642|\u0647\u0627\u062F\u0626|\u0648\u0627\u062B\u0642/i); if (!m) return null; const w = m[0].toLowerCase();
   return { '\u0645\u062A\u062D\u0645\u0633': 'excited', '\u062E\u0627\u064A\u0641': 'fear', '\u0642\u0644\u0642': 'anxious', '\u0647\u0627\u062F\u0626': 'calm', '\u0648\u0627\u062B\u0642': 'confident', scared: 'fear', greedy: 'fomo' }[w] || w; };
@@ -1174,10 +1180,10 @@ function planText(sig, pos, px, title, only, full, opts) {
   for (const x of pick) { const g = secGroup(x.sector), first = g && pick.find(p => p !== x && secGroup(p.sector) === g && pick.indexOf(p) < pick.indexOf(x)); if (first) x.sameAs = first.sym; }
   const pv = sig.posVerdict || {}, sells = [], holds = [];
   for (const sym of Object.keys(held)) { const P = held[sym], p = px && px[sym], now = p ? ' Now ' + money(p) + ' (' + pcs(p / P.entry - 1) + ').' : '';
-    if (p && P.stop && p <= P.stop) sells.push(sym + ': SELL NOW. Your stop ' + money(P.stop) + ' is reached.' + now);
-    else if (eventSell(sym)) sells.push(sym + ': ' + eventSell(sym) + now);
-    else if (p && P.t2 && p >= P.t2) sells.push(sym + ': SELL. Target 2 (' + money(P.t2) + ') reached.' + now);
-    else if (pv[sym]) sells.push(sym + ': SELL at the ' + (px ? 'close or next open' : 'open') + '. ' + pv[sym].replace(/^\w/, ch => ch.toUpperCase()).replace(/\.?$/, '.') + now);
+    if (p && P.stop && p <= P.stop) { sells.push(sym + ': SELL NOW. Your stop ' + money(P.stop) + ' is reached.' + now); noteSell(sym, 'stop reached'); }
+    else if (eventSell(sym)) { sells.push(sym + ': ' + eventSell(sym) + now); noteSell(sym, eventSell(sym)); }
+    else if (p && P.t2 && p >= P.t2) { sells.push(sym + ': SELL. Target 2 (' + money(P.t2) + ') reached.' + now); noteSell(sym, 'target 2 reached'); }
+    else if (pv[sym]) { sells.push(sym + ': SELL at the ' + (px ? 'close or next open' : 'open') + '. ' + pv[sym].replace(/^\w/, ch => ch.toUpperCase()).replace(/\.?$/, '.') + now); noteSell(sym, pv[sym]); }
     else if (p && P.t1 && p >= P.t1 && !P.trail) sells.push(sym + ': ' + t1Text(sym, P) + now);
     else holds.push(sym + ': stop ' + (P.stop ? money(P.stop) : 'NOT SET') + (P.t1 ? ', target ' + money(P.t1) : '') + (P.own ? ' (your own stop)' : '') + (p ? ', now ' + money(p) + ' (' + pcs(p / P.entry - 1) + ')' : '')); }
   // PROTECT MODE (a risk rule fixed in advance, not a tested edge): stop buying while the portfolio is bleeding or buys are piling up.
@@ -2380,6 +2386,7 @@ async function tgCommands(sig) {
       if (exit && P.entry) {     // your real trades are the evidence that matters most: every sale is recorded
         const t = { sym, kind: P.kind || 'manual', entry: P.entry, exit, since: P.since || null, out: ny(Date.now()).d, pct: +(exit / P.entry - 1 - MY_COST).toFixed(5), priced: k[2] ? 'you' : 'quote at the time of your message', t1: P.t1 || null, stop: P.stop || null, test: P.test || null, orig: P.orig || null, mkt: { atBuy: P.mktAtBuy || null, atSale: (sig && sig.market) ? (sig.market.above50 === false || sig.market.up === false ? 'weak' : 'rising') : null }, lesson: soldLesson(P, exit) };
         { const md = moodOf(text); if (md || P.mood) t.mood = { buy: P.mood || null, sell: md }; }
+        { const nz = sellNoticeBefore(sym, P.since); t.sysSell = nz ? { d: nz.d, why: nz.why } : null; out.push(nz ? 'The system had said SELL on ' + nz.d + ' (' + nz.why + ').' : 'No SELL notice had been sent for ' + sym + ' while you held it: this sale was your own call.'); }
         // LOSS LEDGER: why each losing trade lost (gaps through the stop are the hidden cost to watch)
         if (t.pct <= 0) t.lossType = P.stop && exit < P.stop * 0.995 ? 'gap through the stop (' + pcs(exit / P.stop - 1) + ' past it)' : P.stop && exit <= P.stop * 1.01 ? 'stop hit (normal)' : t.mkt.atSale === 'weak' ? 'sold in a weak market' : P.kind === 'manual' ? 'own pick, sold early' : 'sold on the rule exit or early';
         fs.appendFileSync(MY_TRADES, JSON.stringify(t) + '\n');
