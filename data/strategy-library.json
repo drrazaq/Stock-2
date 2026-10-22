@@ -2763,6 +2763,15 @@
    "status": "queued (Agent B)",
    "agent": "B",
    "note": "From the owner's aim of 22 Oct and three outside reviews the same day (look-alikes, point-in-time data, failure fingerprints, sustained vs peak). 'No actionable profile' is a valid and useful result."
+  },
+  {
+   "id": "A-E1W1",
+   "family": "Company events",
+   "name": "Earnings drift on the whole liquid market (not only the 270 tested companies)",
+   "explain": "The E1 study ran on the ~270 companies whose earnings history was fetched; the live rule fires on every liquid US stock. Re-run the same frozen rule on the whole liquid market incl. dead stocks (earnings history from the official calendar sources; budget the calls over several weeks if needed), both halves, 0.8%/1.2% cost, the three yardsticks, without the 2 best. Report separately: the 270 tested companies, the rest, and the whole. Until this is done, live signals outside the tested set are labelled and recorded apart.",
+   "status": "queued (Agent A, high priority)",
+   "agent": "A",
+   "note": "From the 22 Oct audit: the live universe is wider than the tested one. Not a rule change; a coverage test."
   }
  ]
 }
