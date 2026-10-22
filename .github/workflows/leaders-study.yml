@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      # The library as it was when this run started: at the end only the entries THIS run changed are re-applied on top of the newest library.
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
       # Two years of whole-market prices are kept in the Actions cache, not in the repository.
       - uses: actions/cache/restore@v4
         with:
@@ -40,6 +42,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Share counts on today's split basis, before quality and autolab use them (uses data/splits.json from the step above).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -48,18 +51,21 @@ jobs:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # Value chains (AI, space, energy, obesity drugs) and every industry: how each link is doing (same prices, no extra calls).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node chains.mjs 2>&1 | tee -a run.log
       # Chain ripple: when a chain member jumps, do its suppliers/peers that have not moved yet follow? (same prices, no extra calls)
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node chain-ripple.mjs 2>&1 | tee -a run.log
       # Insider cluster buying (SEC Form 4 data sets, free, quarterly): do 2-3+ insiders buying with their own money predict gains?
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -68,6 +74,7 @@ jobs:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # Learn from the winners, on the same whole-market prices (no extra data calls).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
           node winners-study.mjs 2>&1 | tee -a run.log
@@ -76,6 +83,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Test new hunting rules on the same prices (no extra data calls).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
           node hunting-lab.mjs 2>&1 | tee -a run.log
@@ -84,6 +92,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Score every stock and test whether the score works (same prices, no extra data calls).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
           node score-study.mjs 2>&1 | tee -a run.log
@@ -92,6 +101,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Earnings-surprise drift fair test (same prices, no extra data calls).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
           MODE=study node earnings-study.mjs 2>&1 | tee -a run.log
@@ -100,11 +110,13 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Company-news event study + supply-chain test (same prices; the event history comes from the weekday smart-money job).
       - uses: actions/cache/restore@v4
+        if: success() || failure()   # run even if an earlier study step failed
         with:
           path: ev-cache
           key: events-cache-none
           restore-keys: events-cache-
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
           MODE=study node events-study.mjs 2>&1 | tee -a run.log
@@ -113,6 +125,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # HORIZONS: pullback / leader / turn-around setups held 1, 3 and 6 months (mid and long term), same prices.
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -122,6 +135,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # EXIT TEST: the same buys sold 10 ways (hold, trailing stops, profit lock, average lines, target/stop), vs the S&P 500.
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -131,6 +145,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # SELL NOW, BUY BACK LOWER? Selling and re-buying vs simply holding, 5 years, costs included.
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -140,6 +155,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # REBALANCING: 10-stock portfolios, equal weights / trim over 15% / new cash to the smallest, vs simply holding.
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -149,16 +165,18 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # QUALITY COMPANIES: long investing by the SEC reports (profit, no dilution, lean growth, cash-backed profit), held 6-12 months.
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node quality.mjs 2>&1 | tee -a run.log
         env:
-          SEC_UA: ${{ secrets.SEC_UA }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # STOP STUDY: 10 stop rules on your own kind of buys (any / strong stocks), vs no stop, 5 years.
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -168,6 +186,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # AUTOLAB: the system invents 60 new rules a week and tests each through discovery, validation and an untouched vault; survivors go to paper.
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -177,6 +196,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # OCTOPUS: 26 angles + every pair of them, retrained every week, judged only on unseen weeks (same prices + SEC events).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -187,6 +207,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Economic calendar study: S&P 500 on CPI / PPI / retail sales / jobs / Fed days, by surprise vs forecast (encrypted data).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -195,19 +216,22 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       # SEC share counts per quarter since 2019 (dilution flag; float known on each past day for the fast-mover lab).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node shares.mjs 2>&1 | tee -a run.log
         env:
-          SEC_UA: ${{ secrets.SEC_UA }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # Fast-mover lab: its own 5-year whole-market cache incl. 1-3 USD stocks (paid Massive plan), decode + day-trade tests.
       - uses: actions/cache/restore@v4
+        if: success() || failure()   # run even if an earlier study step failed
         with:
           path: fm-cache
           key: fm-cache-${{ github.run_id }}
           restore-keys: fm-cache-
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
           MODE=study node fastmover-lab.mjs 2>&1 | tee -a run.log
@@ -218,6 +242,7 @@ jobs:
       # Agent A (Timing), research only, same fm-cache (minute bars cached in it): A-MISS1 missed-runner autopsy and A-ORB1 opening-range
       # breakout on stocks in play (pre-registered from the original paper; incremental until the 2-year minute history is complete).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -227,6 +252,7 @@ jobs:
           MR_CALLS: '300'
           MR_MINUTES: '12'
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -235,7 +261,7 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           ORB_CALLS: '2500'
           ORB_MINUTES: '35'
-      - if: always()
+      - if: success() || failure()
         uses: actions/cache/save@v4
         with:
           path: fm-cache
@@ -243,11 +269,13 @@ jobs:
       # SEQUENCE STUDY: filing -> quiet days -> breakout as ONE rule, vs the same breakout without a filing. Full daily history per
       # company (no minimum volume, so quiet days are not missing), kept in its own Actions cache.
       - uses: actions/cache/restore@v4
+        if: success() || failure()   # run even if an earlier study step failed
         with:
           path: seq-cache
           key: seq-cache-${{ github.run_id }}
           restore-keys: seq-cache-
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
@@ -256,47 +284,88 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
       # Agent A (Timing) studies, research only: A-EW1 early-wave stack (pre-registered, run once; needs ev-cache from above) and the A-RG1 regime gate.
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node ew-stack.mjs 2>&1 | tee -a run.log
+      # One step per study, so one crash no longer hides the others.
+      - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
+        continue-on-error: true
+        run: |
+          set -o pipefail
           node regime-gate.mjs 2>&1 | tee -a run.log
-          node pattern-lab.mjs 2>&1 | tee -a run.log
-          node swing-lab.mjs 2>&1 | tee -a run.log
-          node fulfilling.mjs 2>&1 | tee -a run.log
         env:
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
+      - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node pattern-lab.mjs 2>&1 | tee -a run.log
+      - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node swing-lab.mjs 2>&1 | tee -a run.log
+      - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node fulfilling.mjs 2>&1 | tee -a run.log
       # Agent C (Crowd), research only: tip-source scoreboard (every logged source vs the average stock and the S&P 500; FADE list for
       # C-FADE1) and C-GOV1 federal awards (official USAspending API, pre-registered, run once; awards kept in study-cache/gov).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node tip-score.mjs 2>&1 | tee -a run.log
+      - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
+        continue-on-error: true
+        run: |
+          set -o pipefail
           node gov-awards.mjs 2>&1 | tee -a run.log
         env:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # AGENT LEAGUE referee: freezes each research agent's champion picks weekly and scores old batches vs the S&P 500 (same prices).
       - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node league.mjs 2>&1 | tee -a run.log
-      - if: always()
+      - if: success() || failure()
         uses: actions/cache/save@v4
         with:
           path: seq-cache
           key: seq-cache-${{ github.run_id }}
-      - if: always()
+      - if: success() || failure()
         uses: actions/cache/save@v4
         with:
           path: study-cache
           key: leaders-study-${{ github.run_id }}
-      - run: |
+      # SAVE (runs even if a study failed). Fresh main first, then only this run's own output files (listed below) are copied back,
+      # and data/strategy-library.json gets only the entries/fields this run changed (library-merge.mjs), so library edits pushed
+      # during the 2-hour run are kept. The push loop keeps the old behaviour (pull --rebase -X theirs, 5 tries).
+      - if: success() || failure()
+        shell: bash
+        run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          git add data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json
-          for f in data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/strategy-library.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json data/tip-score.json data/gov-awards.json data/missed-runners.json data/orb-study.json data/ignition-missed-history.jsonl; do [ -f "$f" ] && git add "$f"; done; true
+          FILES="data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json data/tip-score.json data/gov-awards.json data/missed-runners.json data/orb-study.json data/ignition-missed-history.jsonl data/e16-absorption.json"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && ! git diff --quiet HEAD -- "$f" 2>/dev/null && mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done; true
+          for f in $FILES; do [ -f "$f" ] && ! git ls-files --error-unmatch "$f" >/dev/null 2>&1 && mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json 2>&1 | tee -a run.log || echo "Error: library merge failed; this run's library edits were not saved" | tee -a run.log
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
