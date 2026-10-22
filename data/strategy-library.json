@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct.",
- "updated": "2026-10-21",
+ "updated": "2026-10-22",
  "strategies": [
   {
    "id": "T1",
@@ -2754,6 +2754,15 @@
      "data/event-orb-retest-15d-study.json"
     ]
    }
+  },
+  {
+   "id": "B-100X1",
+   "family": "Quality and value",
+   "name": "The 10x study: what did the biggest winners look like a year before?",
+   "explain": "Whole market incl. dead stocks, 5 years: list every stock that rose 10x or more from any point (and 5x, 3x as wider sets). For each, record what was visible 6 and 12 months BEFORE the run began: share count change, revenue growth, F-score, insider buying, 8-K types, price vs 200-day, float, sector, age since listing. Then the honest half: count the look-alikes (same visible profile) that did NOT run, and how many went to zero. Output: did the winners share a profile that was rare among non-winners? Only if yes does a pre-registered buy rule follow, tested at the same gates, with holding measured in months and exits by the loss line (not a target).",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "From the owner's aim of 22 Oct: ride the next 100x stocks. The lottery block (15%+ day in the last month) stays; this looks for the profile BEFORE the jump, not after. Report base rates: how many 10x stocks in 5 years, out of how many listed."
   }
  ]
 }
