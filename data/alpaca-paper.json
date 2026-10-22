@@ -10,26 +10,6 @@
    "qty": 2,
    "since": "2026-10-13"
   },
-  "CIEN": {
-   "kind": "quick",
-   "q": "low",
-   "maxHold": 7,
-   "stop": 352.0629,
-   "kindName": "quick trade",
-   "entry": 386.3,
-   "qty": 3,
-   "since": "2026-10-13"
-  },
-  "CRWD": {
-   "kind": "quick",
-   "q": "low",
-   "maxHold": 10,
-   "stop": 226.4437,
-   "kindName": "quick trade",
-   "entry": 252.023333,
-   "qty": 3,
-   "since": "2026-10-14"
-  },
   "IOVA": {
    "kind": "leader",
    "stop": 12.19,
@@ -47,59 +27,38 @@
    "entry": 24.39525,
    "qty": 40,
    "since": "2026-10-21"
-  }
- },
- "pendingBuy": {
+  },
   "TEVA": {
-   "id": "c9f99177-e459-442e-a851-4bb4df152b64",
-   "d": "2026-10-21",
-   "plan": {
-    "kind": "quick",
-    "q": "down",
-    "maxHold": 5,
-    "stop": 38.3582,
-    "kindName": "quick trade"
-   }
+   "kind": "quick",
+   "q": "down",
+   "maxHold": 5,
+   "stop": 38.3582,
+   "kindName": "quick trade",
+   "entry": 40.117083,
+   "qty": 24,
+   "since": "2026-10-22"
   },
   "WGO": {
-   "id": "32c7e3b1-a0be-4abe-87f7-fa50fa791ae4",
-   "d": "2026-10-21",
-   "plan": {
-    "kind": "entry",
-    "exitMA": 20,
-    "maxHold": 40,
-    "stop": 23.56,
-    "kindName": "earnings drift"
-   }
-  },
-  "WFRD": {
-   "id": "3fd9873e-2380-46d0-94e1-1588d7353371",
-   "d": "2026-10-21",
-   "plan": {
-    "kind": "entry",
-    "exitMA": 20,
-    "maxHold": 40,
-    "stop": 82.18,
-    "kindName": "earnings drift"
-   }
+   "kind": "entry",
+   "exitMA": 20,
+   "maxHold": 40,
+   "stop": 23.56,
+   "kindName": "earnings drift",
+   "entry": 25.5,
+   "qty": 37,
+   "since": "2026-10-22"
   }
  },
+ "pendingBuy": {},
  "pendingExit": {
-  "CIEN": {
-   "id": "358aa67a-dce9-4665-9703-967abe33c920",
-   "entry": 386.3,
-   "qty": 3,
+  "CLS": {
+   "id": "f9f0ef5e-eed9-4270-b5a3-fcafc4edd222",
+   "entry": 331.13,
+   "qty": 2,
    "kind": "quick",
-   "why": "rule exit (5 day average)",
+   "kindName": "quick trade",
+   "why": "time limit",
    "since": "2026-10-13"
-  },
-  "CRWD": {
-   "id": "51825d72-52b6-4a07-ac1c-a9caba35e0b3",
-   "entry": 252.023333,
-   "qty": 3,
-   "kind": "quick",
-   "why": "rule exit (5 day average)",
-   "since": "2026-10-14"
   }
  },
  "closed": [
@@ -124,6 +83,42 @@
    "why": "rule exit (5 day average)",
    "in": "2026-10-14",
    "out": "2026-10-20"
+  },
+  {
+   "sym": "CIEN",
+   "kind": "quick",
+   "engine": "quick",
+   "entry": 386.3,
+   "exit": 338.723333,
+   "pct": -0.12316,
+   "net": -0.12834,
+   "why": "rule exit (5 day average)",
+   "in": "2026-10-13",
+   "out": "2026-10-22"
+  },
+  {
+   "sym": "CRWD",
+   "kind": "quick",
+   "engine": "quick",
+   "entry": 252.023333,
+   "exit": 243.82,
+   "pct": -0.03255,
+   "net": -0.04049,
+   "why": "rule exit (5 day average)",
+   "in": "2026-10-14",
+   "out": "2026-10-22"
+  },
+  {
+   "sym": "WFRD",
+   "kind": "entry",
+   "engine": "earnings drift",
+   "entry": 84.126364,
+   "exit": 82,
+   "pct": -0.02528,
+   "net": -0.03176,
+   "why": "stop, same day as the fill",
+   "in": "2026-10-22",
+   "out": "2026-10-22"
   }
  ],
  "start": {
@@ -131,7 +126,7 @@
   "equity": 100000
  },
  "equity": {
-  "d": "2026-10-21",
-  "equity": 99785.54
+  "d": "2026-10-22",
+  "equity": 99677.93
  }
 }
