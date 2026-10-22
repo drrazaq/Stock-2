@@ -1344,8 +1344,8 @@
    "family": "Options (separate lab)",
    "name": "Calls on tested stock buys",
    "explain": "One pre-registered version: the at-the-money call at the nearest expiry 45+ days out, bought at the mid on each E1 signal, exit on the same rule as E1 or at 30 sessions. Backfill from Alpha Vantage HISTORICAL_OPTIONS on every E1 event in the record; counts only if the call beats the stock on 60%+ of events with median return 1.5x the stock. Fits the 1-contract trial better than covered calls, which need 100 shares (10,000+ USD a position).",
-   "status": "paper (options lab)",
-   "note": "Both outside sources (21 Oct) converged on long calls on E1 as the first structure. Whether options on halal stocks are permitted is ZAD's decision; the trial stays on paper until ZAD confirms and E1 has its live verdict."
+   "status": "waiting (needs a tier-2 stock rule to sit on)",
+   "note": "Both outside sources (21 Oct) converged on long calls on E1 as the first structure. Whether options on halal stocks are permitted is ZAD's decision; the trial stays on paper until ZAD confirms and E1 has its live verdict. 22 Oct (later): E1 is NOT PROVEN after the full gates, so O1 has no qualified stock signal to sit on. It waits until E1 or another stock rule reaches tier 2 or proven; the first candidate anchor is LONGER HOLDS (V15, tier 2): one pre-registered version, at-the-money call 60-90 days out on each new LONGER HOLDS pick, vs the same stock bought the same day, 100 paper trades on 50+ stocks before a real contract. ZAD's view on options decides first."
   },
   {
    "id": "O2",
