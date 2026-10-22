@@ -1101,9 +1101,12 @@ function gateVerdict(sym, sig) { try { sig = sig || readJson0('data/signals.json
   const lot = ((sig && sig.lottery) || {})[sym]; if (lot >= 0.15) return 'lottery-like (a ' + Math.round(lot * 100) + '% one-day jump in the last month; tested to lag)';
   const TS = readJson0('data/tip-score.json'), fd = ((TS && TS.fade) || []).find(f => f.sym === sym); if (fd) return 'tipped by ' + fd.src + ', a source whose tips lag (FADE)';
   const ew = eventWarn(sym); if (ew) return ew.replace(/^\s*\|\s*/, '').slice(0, 140);
-  const pc = sig ? planCands(sig, {}).find(x => x.sym === sym) : null; if (pc && pc.ok) return null; if (pc && pc.avoid) return pc.avoid.replace(/^(AVOID|PAPER ONLY):\s*/, '');
+  if (BIOBLOCK.has(sym)) return 'dilution / trial-risk block (' + String(BIOBLOCK.get(sym)).slice(0, 100) + ')';   // review S-5
+  // (review S-5, 22 Oct) every plan block gives a reason; before, the blocks without an avoid text fell through and passed with focus off
+  const pc = sig ? planCands(sig, {}).find(x => x.sym === sym) : null; if (pc && pc.ok) return null;
+  if (pc && !pc.ok) return pc.avoid ? pc.avoid.replace(/^(AVOID|PAPER ONLY):\s*/, '') : pc.threatBlock ? 'threat headline in the last 24 hours' : pc.macroBlock ? 'macro: ' + pc.macroBlock : pc.watch ? 'early evidence (under 30 unseen trades): watch only' : pc.newsBlock ? 'bad-news filing' : pc.regBlock ? 'falling market (no record of its own in falling markets)' : 'not cleared by the plan gates';
   const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS && !(pc && workingKinds().has(pc.kind))) return 'focus mode: ' + (pc ? 'the ' + pc.kind + ' engine has not' : 'no tested engine for this stock has') + ' proven itself live yet';   // per kind (review S-14)
-  return null; } catch (e) { return null; } }
+  return null; } catch (e) { return 'gate check failed (' + String(e && e.message).slice(0, 60) + ')'; } }   // an error means blocked (review S-5)
 const gateLines = (lines, gv) => gv ? lines.map(l => /^CONCLUSION/.test(l) && /\bBUY\b/.test(l) ? 'CONCLUSION: PAPER ONLY (' + gv + '). Levels for the record: ' + l.replace(/^CONCLUSION[^:]*:\s*/, '').replace(/\b(ENTRY CONFIRMED\.\s*)?BUY\b/g, 'range') : l) : lines;
 function planCands0(sig, held0) {
   const c = [], HM = HALALM(), held = new Proxy(held0 || {}, { get: (o, k) => o[k] || (HM[k] && HM[k].s === 'fail' ? { notHalal: true } : undefined) });   // not halal in ZAD: never offered
