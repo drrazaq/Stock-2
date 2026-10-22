@@ -9,10 +9,13 @@ import { loadScan, blocked } from './load-scan.mjs';
 
 // a switch rule (sell when stretched, buy back 10% lower) that passed in both halves but is below the league bar
 const rule = (o = {}, n = {}) => ({ verdict: 'BELOW THE LEAGUE BAR', trigger: 'STRETCH',
-  results: { older: { t: 3.0, tBlock: 2.8, adv: 0.010, noTop2: 0.004, ...o }, newer: { t: 2.7, tBlock: 2.6, adv: 0.020, noTop2: 0.006, ...n } } });
+  results: { older: { t: 3.0, tBlock: 2.8, adv: 0.010, noTop2: 0.004, ...o }, newer: { t: 2.7, tBlock: 2.6, adv: 0.020, noTop2: 0.006, ...n },
+    stress: { t: 2.6, tBlock: 2.5, adv: 0.012, noTop2: 0.004 } } });   // stress (newer half at the stress cost): checked since 22 Oct (review S-13), as rebuy.json writes it
 const done = (k, adv, trig = 'STRETCH') => Array.from({ length: k }, (_, i) => ({ sym: 'S' + i, trig, adv }));
 // LONGER HOLDS (v15): t 3.1 / 2.6 by month, beat the average stock in 20 of 30 and 18 of 30 months
-const quality = (t = {}) => ({ v15: { monthly: { '6m': { t: { older: 3.1, newer: 2.6, clearsLeagueBar: false, ...t }, older: { beatAvgStock: 20, months: 30 }, newer: { beatAvgStock: 18, months: 30 } } } } });
+// plus the trade study row of the same rule (stress cost and without its 2 best: checked since 22 Oct, review S-13), as quality.json writes it
+const quality = (t = {}) => ({ v15: { monthly: { '6m': { t: { older: 3.1, newer: 2.6, clearsLeagueBar: false, ...t }, older: { beatAvgStock: 20, months: 30 }, newer: { beatAvgStock: 18, months: 30 } } } },
+  results: { 'F-SCORE UPTREND_126': { results: { older: { avg: 0.058, noTop2: 0.055 }, newer: { avg: 0.097, noTop2: 0.090 }, stress: { avg: 0.093, noTop2: 0.086 } } } } });
 
 test('switch rule: passes both halves at t >= 2.5, positive, positive without the top 2 -> small', async () => {
   const S = await loadScan({ files: { 'data/settings.json': { tier2: true } } });

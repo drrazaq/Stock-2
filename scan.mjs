@@ -315,15 +315,23 @@ const TIER2_T = 2.5;
 // TIER 2 is an ADDITION with its own switch (owner, 22 Oct: "as an addition like a new strategy, don't mess up the system").
 //  tier2 off  = the system behaves exactly as before (proven-only);  tier2 on  = the addition is shown, in its own section, with its own record.
 const TIER2_ON = () => (readJson0('data/settings.json') || {}).tier2 !== false;
-// its own ledger: every tier-2 instruction shown is logged once with its price; after 21 sessions its move is filled in.
+// its own ledger: every tier-2 instruction shown is logged once with its price; after 30 calendar days its move is filled in, after costs.
+// (review S-11, 22 Oct) a switch case (sell, buy back lower) is a round trip too, so it now pays the same 0.8% as a buy.
 function tier2Log(sym, kind, px) { try { if (!(px > 0)) return; const f = 'data/tier2-ledger.jsonl', d = new Date().toISOString().slice(0, 10); let L = []; try { L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {}
   if (L.some(r => r.sym === r.sym && r.sym === sym && r.kind === kind && Date.now() - Date.parse(r.d) < 30 * 864e5)) return; fs.appendFileSync(f, JSON.stringify({ d, sym, kind, px: +(+px).toFixed(4) }) + '\n'); } catch (e) {} }
 function tier2Resolve(lastPx) { try { const f = 'data/tier2-ledger.jsonl'; let L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)), ch = false;
-  for (const r of L) if (!r.out && Date.now() - Date.parse(r.d) >= 30 * 864e5 && lastPx[r.sym] > 0) { r.out = new Date().toISOString().slice(0, 10); r.px1 = lastPx[r.sym]; r.pct = +(r.kind === 'switch sell' ? r.px / r.px1 - 1 : r.px1 / r.px - 1 - 0.008).toFixed(4); ch = true; }
+  for (const r of L) if (!r.out && Date.now() - Date.parse(r.d) >= 30 * 864e5 && lastPx[r.sym] > 0) { r.out = new Date().toISOString().slice(0, 10); r.px1 = lastPx[r.sym]; r.pct = +(r.kind === 'switch sell' ? r.px / r.px1 - 1 - 0.008 : r.px1 / r.px - 1 - 0.008).toFixed(4); ch = true; }
   if (ch) fs.writeFileSync(f, L.map(x => JSON.stringify(x)).join('\n') + '\n'); return L; } catch (e) { return []; } }
+// TIER 2 SWITCHES ITSELF OFF ON ITS OWN LEDGER (review S-12, 22 Oct): 20+ resolved cases of that kind in data/tier2-ledger.jsonl with a
+// negative average after costs. (Before, V15 read only the league's 3-month score, which cannot exist before about Feb 2027.)
+function tier2LedgerNegative(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
+  return a.length >= 20 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
 function swTier(r) { if (!r) return null; if (r.verdict === 'SWITCH WINS') return 'proven'; if (!TIER2_ON() || r.verdict !== 'BELOW THE LEAGUE BAR' || !r.results) return null;
   const o = r.results.older || {}, n = r.results.newer || {}, ts = [o.t, n.t, o.tBlock, n.tBlock].filter(x => typeof x === 'number');
   if (ts.length < 2 || Math.min(...ts) < TIER2_T || !(o.adv > 0 && n.adv > 0) || !(o.noTop2 > 0 && n.noTop2 > 0)) return null;
+  // (review S-13) the stress cost: rebuy.json gives it for the newer half only (results.stress); no older-half stress figure exists in its output
+  if (!(r.results.stress && r.results.stress.adv > 0)) return null;
+  if (tier2LedgerNegative('switch sell')) return null;   // its own ledger negative: off (review S-12)
   const S = readJson0('data/switch-paper.json'), D = ((S && S.done) || []).filter(x => !r.trigger || x.trig === r.trigger);
   if (D.length >= 20 && D.reduce((a, x) => a + (x.adv || 0), 0) / D.length < 0) return null;   // live record negative: off
   return 'small'; }
@@ -332,6 +340,11 @@ const swLabel = (r) => swTier(r) === 'small' ? ' TRADABLE SMALL (tier 2: passed 
 function v15Tier() { if (!TIER2_ON()) return null; const Q = readJson0('data/quality.json'), V = Q && Q.v15 && Q.v15.monthly && Q.v15.monthly['6m']; if (!V || !V.t) return null;
   if (V.t.clearsLeagueBar) return 'proven'; if (!(V.t.older >= TIER2_T && V.t.newer >= TIER2_T)) return null;
   if (!(V.older && V.newer && V.older.beatAvgStock / V.older.months > 0.5 && V.newer.beatAvgStock / V.newer.months > 0.5)) return null;
+  // (review S-13) stress cost and without its 2 best, from the trade study row of the same rule (F-SCORE UPTREND, 6 months): noTop2 in both
+  // halves, stress for the newer half only (quality.mjs publishes no older-half stress figure)
+  { const R = Q.results && Q.results['F-SCORE UPTREND_126'] && Q.results['F-SCORE UPTREND_126'].results; if (!R || !R.older || !R.newer || !R.stress) return null;
+    if (!(R.older.noTop2 > 0 && R.newer.noTop2 > 0) || !(R.stress.avg > 0)) return null; }
+  if (tier2LedgerNegative('longer hold')) return null;   // its own ledger negative: off (review S-12)
   const LG = readJson0('data/agent-league.json'), b = LG && (LG.rows || []).find(x => x.id === 'B'); if (b && b.scored3m >= 3 && typeof b.vsSpy3m === 'number' && b.vsSpy3m < 0) return null;   // live league record negative: off
   return 'small'; }
 // SUPPLY-CHAIN result (Agent C, 22 Oct): it has no luck test and no costs, so a PROMISING there is information only, never a pass.
