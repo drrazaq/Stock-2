@@ -2,7 +2,9 @@
 // referee: the agents must NOT edit it. It runs at the end of every study run (it needs the whole-market price cache) and:
 //   1. FREEZES each agent's champion picks once a week into data/agent-shelf.jsonl (append-only): the stocks its champion strategy
 //      picks today, ZAD not-halal removed, at most 10.
-//   2. SCORES every frozen batch after 21 and 63 sessions: bought at the next open after the freeze, 0.8% costs, against the S&P 500
+//   2. SCORES every frozen batch after 21 and 63 sessions: bought at the FIRST OPEN AFTER THE MOMENT OF THE FREEZE (row field
+//      frozenAt, a UTC timestamp; New York clock: frozen before 09:30 on a trading day -> that day's open, otherwise the next
+//      session's open), never at an open that had already happened. 0.8% costs, against the S&P 500
 //      and the average stock over the SAME days. These prices did not exist when the picks were made, so no agent can fit them.
 //   3. COUNTS strategies an agent got through the full test bench, but only if its t also clears the LEAGUE luck bar, which counts the
 //      rules tried by ALL agents together (three agents searching = three times the chances of a lucky fluke).
@@ -26,13 +28,25 @@ let store = null; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.C
 const D = store ? Object.keys(store.days || {}).sort() : [], T = D.length, dayMap = new Map();
 const dm = (t) => { if (!dayMap.has(t)) { const x = store.days[D[t]], m = new Map(); x.T.forEach((s, j) => m.set(s, j)); dayMap.set(t, m); } return dayMap.get(t); };
 const px = (t, s, f) => { const j = dm(t).get(s); return j === undefined ? null : store.days[D[t]][f][j]; };
-function hold(s, t, h) { const e = px(t + 1, s, 'o'); if (!(e > 0)) return null; let last = null; for (let k = t + 1; k <= t + h; k++) { const c = px(k, s, 'c'); if (c > 0) last = c; } return last ? last / e - 1 : null; }   // gone before the end: last price it traded
+// ei = index of the ENTRY session (bought at its open); held h sessions, sold at the close of session ei + h - 1.
+function hold(s, ei, h) { const e = px(ei, s, 'o'); if (!(e > 0)) return null; let last = null; for (let k = ei; k <= ei + h - 1; k++) { const c = px(k, s, 'c'); if (c > 0) last = c; } return last ? last / e - 1 : null; }   // gone before the end: last price it traded
 const avgCache = {};
-function avgStock(t, h) { const key = t + ':' + h; if (key in avgCache) return avgCache[key]; const x = store.days[D[t + 1]], end = dm(t + h); let s = 0, n = 0;
-  for (let j = 0; j < x.T.length; j++) { const o = x.o[j]; if (!(o >= 3 && o * x.v[j] >= 1e6) || x.T[j] === 'SPY') continue; const k = end.get(x.T[j]); if (k === undefined) continue; const r = store.days[D[t + h]].c[k] / o - 1; if (isFinite(r)) { s += Math.max(-1, Math.min(5, r)); n++; } }
+function avgStock(ei, h) { const key = ei + ':' + h; if (key in avgCache) return avgCache[key]; const x = store.days[D[ei]], end = dm(ei + h - 1); let s = 0, n = 0;
+  for (let j = 0; j < x.T.length; j++) { const o = x.o[j]; if (!(o >= 3 && o * x.v[j] >= 1e6) || x.T[j] === 'SPY') continue; const k = end.get(x.T[j]); if (k === undefined) continue; const r = store.days[D[ei + h - 1]].c[k] / o - 1; if (isFinite(r)) { s += Math.max(-1, Math.min(5, r)); n++; } }
   return (avgCache[key] = n ? s / n : null); }
+// ---- New York clock for a UTC timestamp, and the entry session for a freeze moment
+const NYF = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+const nyOf = (iso) => { const p = Object.fromEntries(NYF.formatToParts(new Date(iso)).map(x => [x.type, x.value])); return { d: p.year + '-' + p.month + '-' + p.day, hm: p.hour + ':' + p.minute }; };
+function entryIdx(frozenAt) { if (!frozenAt || !isFinite(Date.parse(frozenAt))) return -1; const ny = nyOf(frozenAt);   // first open strictly after the freeze
+  for (let i = 0; i < T; i++) if (D[i] > ny.d || (D[i] === ny.d && ny.hm < '09:30')) return i; return -1; }   // -1: that session is not in the cache yet
 // ---- 1. freeze this week's champion picks
-const shelf = fs.existsSync(SHELF) ? fs.readFileSync(SHELF, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean) : [];
+// The shelf is append-only. A row {"correction": true, agent, strategy, date, frozenAt, why} never replaces a pick row: it adds the
+// true freeze moment for a batch written before frozenAt existed (the 2026-10-16 batches were committed 2026-10-19 22:07:59 UTC,
+// commit 5fc4b91), and scoring uses it.
+const shelfAll = fs.existsSync(SHELF) ? fs.readFileSync(SHELF, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean) : [];
+const corrections = new Map(); for (const z of shelfAll) if (z.correction && z.frozenAt) corrections.set(z.agent + '|' + z.date + '|' + z.strategy, z.frozenAt);
+const shelf = shelfAll.filter(z => !z.correction);
+const frozenAtOf = (z) => corrections.get(z.agent + '|' + z.date + '|' + z.strategy) || z.frozenAt || null;   // no frozenAt and no correction: not scored
 const asOf = T ? D[T - 1] : null, added = [];
 function champPicks(c) { const src = J(c.file, null); let arr = src; for (const k of String(c.key || '').split('.').filter(Boolean)) arr = arr && arr[k]; if (!Array.isArray(arr)) return null;
   const cut = c.fresh && asOf ? new Date(Date.parse(asOf) - c.fresh * 864e5).toISOString().slice(0, 10) : null, out = [];
@@ -43,15 +57,17 @@ function champPicks(c) { const src = J(c.file, null); let arr = src; for (const 
 if (asOf) for (const a of AG.agents || []) { const c = a.champion; if (!c || !c.file) continue;
   const prev = shelf.filter(z => z.agent === a.id).map(z => z.date).sort().pop(); if (prev && D.indexOf(prev) >= 0 && T - 1 - D.indexOf(prev) < 5) continue;   // once a week
   const syms = champPicks(c); if (!syms || !syms.length) { added.push({ agent: a.id, strategy: c.strategy, date: asOf, syms: [], note: 'champion picked nothing' }); continue; }
-  const row = { agent: a.id, strategy: c.strategy, label: c.label, date: asOf, syms }; shelf.push(row); added.push(row); fs.appendFileSync(SHELF, JSON.stringify(row) + '\n'); }
+  // date = last day in the price cache (data as of); frozenAt = the real moment of the freeze, which decides the entry open
+  const row = { agent: a.id, strategy: c.strategy, label: c.label, date: asOf, frozenAt: new Date().toISOString(), syms }; shelf.push(row); added.push(row); fs.appendFileSync(SHELF, JSON.stringify(row) + '\n'); }
 // ---- 2. score every frozen batch whose holding period has ended
 const prevOut = J(OUT, {}), scored = {}; for (const b of prevOut.batches || []) scored[b.agent + '|' + b.date + '|' + b.strategy] = b;
 const batches = [];
-for (const z of shelf) { const id = z.agent + '|' + z.date + '|' + z.strategy, b = scored[id] || { agent: z.agent, strategy: z.strategy, date: z.date, n: z.syms.length, res: {} };
-  const t = T ? D.indexOf(z.date) : -1;
-  if (t >= 0) for (const h of HS) { if (b.res[h] || t + h >= T || !z.syms.length) continue; const rs = z.syms.map(s => hold(s, t, h)).filter(r => r !== null); if (!rs.length) continue;
-    const pick = rs.reduce((p, q) => p + q, 0) / rs.length - COST, spy = hold('SPY', t, h), avg = avgStock(t, h);
-    b.res[h] = { pick: r4(pick), spy: r4(spy), avg: r4(avg), vsSpy: r4(spy === null ? null : pick - spy), vsAvg: r4(avg === null ? null : pick - avg), n: rs.length, until: D[t + h] }; }
+for (const z of shelf) { const id = z.agent + '|' + z.date + '|' + z.strategy, fa = frozenAtOf(z), ei = T ? entryIdx(fa) : -1, entry = ei >= 0 ? D[ei] : null;
+  let b = scored[id]; if (!b || (b.entry || null) !== entry) b = { agent: z.agent, strategy: z.strategy, date: z.date, frozenAt: fa, entry, n: z.syms.length, res: {} };   // a result scored from another entry day is dropped
+  delete b.note; if (!fa) b.note = 'no freeze time recorded: not scored'; else if (ei < 0) b.note = 'entry session (first open after ' + fa + ') not in the price cache yet';
+  if (ei >= 0) for (const h of HS) { if (b.res[h] || ei + h - 1 >= T || !z.syms.length) continue; const rs = z.syms.map(s => hold(s, ei, h)).filter(r => r !== null); if (!rs.length) continue;
+    const pick = rs.reduce((p, q) => p + q, 0) / rs.length - COST, spy = hold('SPY', ei, h), avg = avgStock(ei, h);
+    b.res[h] = { pick: r4(pick), spy: r4(spy), avg: r4(avg), vsSpy: r4(spy === null ? null : pick - spy), vsAvg: r4(avg === null ? null : pick - avg), n: rs.length, entry, until: D[ei + h - 1] }; }
   batches.push(b); }
 // ---- 3. the table
 const rows = (AG.agents || []).map(a => { const mine = (LIB.strategies || []).filter(e => e.agent === a.id), B = batches.filter(b => b.agent === a.id);
