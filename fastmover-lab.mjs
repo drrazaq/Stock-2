@@ -272,23 +272,11 @@ P.record = paper; P.updated = new Date().toISOString(); fs.writeFileSync(PAPER, 
 // IGNITION paper: the watcher's ignitions of earlier days, scored on minute bars exactly like the Saturday test.
 // Up to 400 a morning (was 80): IG8 alone logs 50-230 a day, so 80 left a growing backlog and scored only each day's EARLIEST alerts.
 // Paid Massive plan: 400 calls take about a minute.
-{ const { IG_RULES, LIVE_RULES, EXITS, simulate, toBars, costOf: igCost } = await import('./ignition-core.mjs');
+{ const { scoreIgnitionPaper } = await import('./ignition-paper.mjs');   // the scoring itself lives in ignition-paper.mjs (tested: test/ignition-paper.test.mjs)
   const L = fs.existsSync('data/ignition-paper.jsonl') ? fs.readFileSync('data/ignition-paper.jsonl', 'utf8').split('\n').filter(Boolean).map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(Boolean) : [];
-  const IR = readJson('data/ignition-results.json', { done: {} }), utcToday = iso(Date.now()); let asked = 0;
-  for (const t of L) { const k = t.d + '|' + t.sym + '|' + t.rule; if (IR.done[k] || t.d >= utcToday || asked >= +(env.IG_EVAL || 400)) continue;
-    const R = [...IG_RULES, ...LIVE_RULES].find(r => r.id === t.rule); if (!R) continue;
-    if (typeof t.delay === 'number' && t.delay > 3) { IR.done[k] = { d: t.d, sym: t.sym, rule: t.rule, res: 'stale signal (price ' + t.delay + ' min old): not scored' }; continue; }   // (outside review, 22 Oct) only fresh signals count const j = await api(`/v2/aggs/ticker/${t.sym}/range/1/minute/${t.d}/${t.d}?adjusted=true&sort=asc&limit=50000`); asked++; if (!j || j.refused) continue;
-    const b = toBars(j.results, t.d), k0 = b.findIndex(x => x[0] >= t.m && x[0] >= 570); if (k0 < 0) { IR.done[k] = { d: t.d, sym: t.sym, rule: t.rule, res: 'no bars' }; continue; }
-    // strict fill: bought at the next minute's open; if that open is more than 3% above the alert price (the alert's limit), NO FILL
-    const nx = R.orb ? b[k0] : b[k0 + 1]; if (!nx || (!R.orb && nx[1] > t.price * 1.03)) { IR.done[k] = { d: t.d, sym: t.sym, rule: t.rule, res: 'no fill (opened past the 3% limit)' }; continue; }
-    const out = {}; for (const X of EXITS) { const o = simulate(b, t.prevC, R.orb ? { k: k0, orH: t.orH, orL: t.orL } : R.pull ? { k: k0, stop: t.stop } : { k: k0 }, R, X); if (o) { out[X.id] = +(o.g - igCost(o.e)).toFixed(4); out[X.id + '_s'] = +(o.g - 1.5 * igCost(o.e)).toFixed(4); } }
-    IR.done[k] = { d: t.d, sym: t.sym, rule: t.rule, ...out }; }
-  for (const t of L) if (typeof t.delay === 'number' && t.delay > 3) { const k = t.d + '|' + t.sym + '|' + t.rule; if (IR.done[k] && !IR.done[k].res) IR.done[k] = { d: t.d, sym: t.sym, rule: t.rule, res: 'stale signal (price ' + t.delay + ' min old): removed from the record 22 Oct' }; }   // earlier stale signals leave the record too
-  const rec = {}; for (const v of Object.values(IR.done)) for (const X of EXITS) { if (typeof v[X.id] !== 'number') continue; const id = v.rule + '/' + X.id, r = rec[id] || (rec[id] = { n: 0, sum: 0, won: 0 }); r.n++; r.sum += v[X.id]; if (v[X.id] > 0) r.won++; }
-  for (const [id, r] of Object.entries(rec)) { const [ru, ex] = id.split('/'), vals = Object.values(IR.done).filter(v => v.rule === ru && typeof v[ex] === 'number'), st = vals.map(v => v[ex + '_s']).filter(x => typeof x === 'number'), srt = vals.map(v => v[ex]).sort((a, b) => b - a);
-    r.avg = r.sum / r.n; r.win = r.won / r.n; r.stress = st.length ? st.reduce((a, b) => a + b, 0) / st.length : null; r.noTop2 = srt.length > 2 ? srt.slice(2).reduce((a, b) => a + b, 0) / (srt.length - 2) : null;
-    r.days = new Set(vals.map(v => v.d)).size; r.stocks = new Set(vals.map(v => v.sym)).size; const w = srt.filter(x => x > 0), l = srt.filter(x => x <= 0); r.pf = l.length ? w.reduce((a, b) => a + b, 0) / -l.reduce((a, b) => a + b, 0) : (w.length ? 99 : null); }
-  IR.record = rec; IR.updated = new Date().toISOString(); fs.writeFileSync('data/ignition-results.json', JSON.stringify(IR));
+  const IR = readJson('data/ignition-results.json', { done: {} });
+  const { asked, record: rec } = await scoreIgnitionPaper(L, IR, { today: iso(Date.now()), max: +(env.IG_EVAL || 400), minuteBars: (sym, d) => api(`/v2/aggs/ticker/${sym}/range/1/minute/${d}/${d}?adjusted=true&sort=asc&limit=50000`) });
+  IR.updated = new Date().toISOString(); fs.writeFileSync('data/ignition-results.json', JSON.stringify(IR));
   if (asked) console.log('ignition paper: ' + asked + ' ignitions scored; record ' + Object.entries(rec).map(([k, r]) => k + ' ' + r.n + '/' + pc(r.avg)).join(', ')); }
 const passed = new Set(LAB && LAB.rules ? Object.entries(LAB.rules).filter(([, x]) => x.verdict === 'PROMISING').map(([k]) => k) : []);
 const halal = readJson('data/halal.json', {}), notHalal = (s) => halal[s] && halal[s].s === 'fail';
