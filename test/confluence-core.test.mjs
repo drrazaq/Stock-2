@@ -97,7 +97,7 @@ test('portfolio: slots, liquidity priority, no double position, stop frees the s
   near(r4.trades[0].fundUsd, tradeUsd(300, 105 / 101 - 1, { cost: 0.001 })); near(r4.meq[T - 1], r4.trades[0].fundUsd, 1e-9);
   // a position still running at the last session is marked at its last close (cost of the buy already charged), not sold
   const r5 = simulate({ T, cands: [{ id: 'G', sym: 'A', k: 8, liq: 1, hold: 20, stop: 0.15, rule: 'r' }], series: (s) => S[s], slots: 1, size: 300 });
-  assert.equal(r5.trades.length, 0); assert.equal(r5.stillOpen, 1); near(r5.eq[T - 1], 300 * (11 / 10 - 1) - 3 - 300 * 0.004);
+  assert.equal(r5.trades.length, 0); assert.equal(r5.stillOpen, 1); near(r5.avgOpen, 4 / 4);   // held every session from its buy (8) to the end (11) near(r5.eq[T - 1], 300 * (11 / 10 - 1) - 3 - 300 * 0.004);
 });
 
 test('curve stats and losing streak', () => {

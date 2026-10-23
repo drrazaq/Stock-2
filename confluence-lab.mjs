@@ -149,7 +149,8 @@ if (Object.keys(CANDS).length && (doHist || env.PORTFOLIO || !PORTF)) {
     const r = runs.SPUS, tr = r.trades, net = tr.map(z => z.usd);
     row.trades = tr.length; row.win = r4(net.filter(x => x > 0).length / (tr.length || 1)); row.avgUsdPerTrade = r2(mean(net)); row.feesUsd = r2(tr.length * 6); row.costUsd = r2(tr.length * size * COST); row.skippedNoSlot = r.skipped; row.stillOpen = r.stillOpen;
     row.byRule = Object.fromEntries([...new Set(tr.map(z => z.rule))].map(k => { const a = tr.filter(z => z.rule === k); return [k, { trades: a.length, usd: r2(a.reduce((x, z) => x + z.usd, 0)), win: r4(a.filter(z => z.usd > 0).length / a.length) }]; }));
-    row.losingStreak = losingStreak(tr);
+    row.losingStreak = losingStreak(tr); { const srt = [...net].sort((x, y) => y - x), med = srt.length ? srt[srt.length >> 1] : null; row.best3TradesUsd = srt.slice(0, 3).map(r2); row.medianTradeUsd = r2(med);
+      row.profitWithoutBest2 = r2(net.reduce((a, x) => a + x, 0) - srt.slice(0, 2).reduce((a, x) => a + x, 0)); row.avgSlotsUsed = r2(r.avgOpen); }
     for (const [p, [a, b]] of Object.entries(periods)) { const inP = tr.filter(z => z.x >= a && z.x <= b);
       row.periods[p] = { strategy: curveStats(r.eq, D, a, b, cap), tradesClosed: inP.length, losingStreak: losingStreak(inP),
         sameDollarsSPUS: FUNDS.SPUS ? curveStats(runs.SPUS.meq, D, a, b, cap) : null, sameDollarsHLAL: FUNDS.HLAL ? curveStats(runs.HLAL.meq, D, a, b, cap) : null,

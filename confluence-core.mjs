@@ -99,7 +99,7 @@ export const tradeUsd = (size, g, { cost = COST, fee = 3 } = {}) => size * (g - 
 // cost fundCost). Returns the trades taken and the daily equity (realized + open marks) of the strategy and of the mirror.
 export function simulate({ T, cands, series, slots, size, fee = 3, cost = COST, bench = null, fundCost = 0.001 }) {
   const byK = new Map(); for (const c of cands) (byK.get(c.k) || byK.set(c.k, []).get(c.k)).push(c);
-  const open = [], trades = [], eq = new Float64Array(T), meq = new Float64Array(T); let real = 0, mreal = 0, skipped = 0;
+  const open = [], trades = [], eq = new Float64Array(T), meq = new Float64Array(T); let real = 0, mreal = 0, skipped = 0, occ = 0, first = -1;
   const bO = bench ? bench.O : null, bC = bench ? bench.C : null;
   const close = (p, q) => { const net = tradeUsd(size, p.w.g, { cost, fee }); real += net + size * cost / 2 + fee; // entry part was charged at the buy
     let mnet = null; if (p.me > 0) { const mx = p.w.atOpen ? bO[q] : bC[q], mpx = mx > 0 ? mx : lastBench(q); mnet = mpx > 0 ? tradeUsd(size, mpx / p.me - 1, { cost: fundCost, fee }) : null; if (mnet !== null) mreal += mnet + size * fundCost / 2 + fee; }
@@ -114,8 +114,8 @@ export function simulate({ T, cands, series, slots, size, fee = 3, cost = COST, 
     for (let j = open.length - 1; j >= 0; j--) { const p = open[j]; if (p.w.x === q && !p.w.atOpen) { close(p, q); open.splice(j, 1); } }
     let mark = 0, mmark = 0; for (const p of open) { let c = NaN; for (let u = q; u >= p.c.k; u--) if (p.s.C[u] > 0) { c = p.s.C[u]; break; } mark += isFinite(c) ? size * (c / p.e - 1) : 0;
       if (p.me) { const b = lastBench(q); if (b > 0) mmark += size * (b / p.me - 1); } }
-    eq[q] = real + mark; meq[q] = mreal + mmark; }
-  return { trades, eq, meq, skipped, stillOpen: open.length };
+    eq[q] = real + mark; meq[q] = mreal + mmark; if (first < 0 && byK.size && q >= Math.min(...byK.keys())) first = q; if (first >= 0) occ += open.length; }
+  return { trades, eq, meq, skipped, stillOpen: open.length, avgOpen: first >= 0 ? occ / (T - first) : 0 };
 }
 // summary of a daily equity curve (USD) between sessions a..b (inclusive) on dates D: profit, months, drawdown
 export function curveStats(eq, D, a, b, capital) {
