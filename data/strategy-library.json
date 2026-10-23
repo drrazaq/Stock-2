@@ -3168,10 +3168,10 @@
    "id": "CAT-IMPACT1",
    "family": "Company events",
    "name": "Trade the change in value, not the date",
-   "explain": "After a material, genuinely new event (pivotal Phase 3 success, FDA approval of the company's first or main product, or a partnership with a stated upfront payment), buy at the next open only if: the event's commercial value is large against the company's market cap (peak-sales or upfront amount stated in the filing / market cap >= 0.5), the company has cash for at least 4 quarters without new financing (10-Q cash vs quarterly operating cash burn), and no offering filing in the prior 20 sessions; hold 40 sessions; stop 20%. Compared with matched biotech stocks without such events (same size and momentum bucket) and the same stocks on other days; both halves, 0.8%/1.2% cost, without the 2 best, t >= 2.5. Exact-day events only (no month/quarter dates).",
+   "explain": "After a material, genuinely new event of a pre-registered type (pivotal trial success, approval of the company's first or core product, a partnership with a stated upfront payment, a material contract), confirmed by a primary source with a public timestamp: buy at the next open only if the stated economic value is at least 5% of market cap OR 25% of annual revenue, cash runway is at least 12 months (10-Q cash vs quarterly operating cash burn), no share sale in the prior 30 days, no negative clinical/regulatory evidence, competitor context recorded, and the post-news price reaction measured. Hold 40 sessions; stop 20%. Gate implemented in catalyst-integrity.mjs (assessCatalystImpact; missing data never passes). Compared with matched biotech stocks without such events (size and momentum bucket) and the same stocks on other days; both halves, 0.8%/1.2% cost, without the 2 best, t >= 2.5. Exact-day dates only (parseEventDatePrecision).",
    "status": "queued (Agent C)",
    "agent": "C",
-   "note": "From the outside review of 23 Oct after CAT-RUN1/CAT-NEWS1 were rejected. New hypothesis, not a variant tuned on their results; pre-register before any run."
+   "note": "From the outside review of 23 Oct after CAT-RUN1/CAT-NEWS1 were rejected. New hypothesis, not a variant tuned on their results; pre-register before any run. Thresholds set 23 Oct before any run, from the outside reviewer's patch (5% of market cap or 25% of revenue replaced an earlier 50%-of-market-cap draft; no run had happened). These are hypothesis filters, not tuned values."
   }
  ]
 }
