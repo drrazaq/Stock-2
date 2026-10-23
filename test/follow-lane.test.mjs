@@ -205,3 +205,12 @@ test('FADE -> AVOID: buy calls of FADE traders whose entry is within the last 20
   const A = fadeAvoid(calls, { 'yt:bad': 'Hot Trades' }, S);
   assert.deepEqual(Object.keys(A), ['NEW']); assert.equal(A.NEW.trader, 'Hot Trades'); assert.ok(A.NEW.until > S[39]);
 });
+
+// --- Bluesky and Mastodon posts (23 Oct): one post = one dated call per stock, same strict ticker rule ---
+import { postCalls } from '../follow-lane.mjs';
+test('posts: a Mastodon post in HTML with a cashtag is a call at its post time; an emphasis word is not; a bearish post is not', () => {
+  const html = '<p>Adding to <a href="https://x/tags/NVDA" class="mention hashtag">$<span>NVDA</span></a> on this dip. Market is BACK!</p>';
+  const c = postCalls({ html, pub: '2026-10-20T14:05:00.000Z', id: '1' }, 'md:bob@mastodon.social', 'Mastodon bob', 'md', U, NAMES);
+  assert.deepEqual(c.map(x => [x.sym, x.tr, x.src, x.pub]), [['NVDA', 'md:bob@mastodon.social', 'md', '2026-10-20T14:05:00.000Z']]);
+  assert.deepEqual(postCalls({ text: 'Shorting $TSLA, it will crash', pub: '2026-10-20T14:05:00.000Z', id: '2' }, 'bs:x', 'Bluesky x', 'bs', U, NAMES), []);
+});
