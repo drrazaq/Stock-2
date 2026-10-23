@@ -402,6 +402,41 @@ function catalystCalendarText() { const C = readJson0('data/catalyst-today.json'
     ...up.map(u => '- ' + u.sym + ': ' + kind(u) + ' ' + u.event + (u.precision !== 'day' ? ' (earliest day of the stated ' + u.precision + ')' : '') + '; buy day ' + u.buy + ', sell day ' + u.sell + (u.halal === 'ok' ? ' (halal per ZAD)' : ' (check ZAD)')),
     ...(inWin.length ? ['', 'Already inside the window (buy day passed): ' + inWin.map(u => u.sym + ' ' + kind(u) + ' ' + u.event).join(', ') + '.'] : []),
     '', 'Never hold through the decision day: the result is a coin toss that can halve a small company. Research only.'].join('\n'); }
+// CHAIN DECODER (owner, 23 Oct 2026: "follow the source"; chain-decoder.mjs, pre-registered CHAIN-MOM1 / CHAIN-DEMAND1 / CHAIN-LAG1 /
+// CHAIN-READ1). data/chain-today.json is written weekly: hot layers now, each member's chain and layer (point in time), and buys ONLY for a
+// rule whose frozen verdict is PROVEN, or TRADABLE SMALL with the tier2 switch on and its own ledger ('chain:<rule>') not negative.
+// Gates at display time: ZAD not halal -> removed; unknown halal -> shown with "check ZAD first"; lottery-like, an offering filing in
+// 30 days or a tested warning filing -> removed; a stock you hold -> skipped. Each shown line is logged once in the tier-2 ledger.
+const CHAIN_RULES = ['CHAIN-MOM1', 'CHAIN-DEMAND1', 'CHAIN-LAG1', 'CHAIN-READ1'];
+const CHAIN_NAMES = { 'CHAIN-MOM1': 'hot layer of an active chain', 'CHAIN-DEMAND1': 'demand signal at the source', 'CHAIN-LAG1': 'one layer leads another', 'CHAIN-READ1': 'earnings read-through' };
+function chainTier(rule) { const C = readJson0('data/chain-today.json'), v = C && C.rules && C.rules[rule];
+  if (v === 'PROVEN') return 'proven'; if (v !== 'TRADABLE SMALL' || !TIER2_ON() || tier2LedgerNegative('chain:' + rule)) return null; return 'small'; }
+const chainLayerName = (k) => String(k || '').replace('|', ' > ');
+function chainLines(sig, pos) { const C = readJson0('data/chain-today.json'); if (!C || !Array.isArray(C.buys) || !C.buys.length) return [];
+  const tiers = Object.fromEntries(CHAIN_RULES.map(r => [r, chainTier(r)])); if (!CHAIN_RULES.some(r => tiers[r])) return [];
+  const after = (sig && sig.session) || ny(Date.now()).d, next = (C.sessions || []).find(d => d > after); if (!next) return [];
+  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
+  const rows = [], seen = new Set();
+  for (const b of C.buys) { if (!b || !b.sym || !tiers[b.rule] || b.buy !== next || seen.has(b.sym) || held.has(b.sym)) continue;
+    const hal = bad.has(b.sym) || b.halal === 'fail' || myHalal(b.sym) === 'fail' ? 'fail' : myHalal(b.sym) === 'ok' || b.halal === 'ok' ? 'ok' : 'unknown';
+    if (hal === 'fail' || lot[b.sym] >= 0.15 || followOffering(b.sym) || eventWarn(b.sym)) continue; seen.add(b.sym);
+    const px = last[b.sym] || b.lastClose; tier2Log(b.sym, 'chain:' + b.rule, px);
+    rows.push('- BUY ' + b.sym + ' at the open on ' + next + (px ? ', up to ' + money(px * 1.03) + ' (3% above the last close ' + money(px) + ')' : '') + '. ' + (b.stopPct ? 'STOP ' + Math.round(b.stopPct * 100) + '% under your buy' : 'STOP 15% under your buy (safety stop; the test held without one)') + ' at your broker. SELL at the close on ' + b.sell + '. ' + CHAIN_NAMES[b.rule] + ' (' + b.rule + ', ' + (tiers[b.rule] === 'proven' ? 'PROVEN' : 'tier 2') + '): ' + chainLayerName(b.chainLayer) + '; ' + b.event + (b.source ? ' (' + b.source + ')' : '') + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + ' Send  bought ' + b.sym + ' PRICE .');
+    if (rows.length >= 5) break; }
+  if (!rows.length) return [];
+  const proven = CHAIN_RULES.filter(r => tiers[r] === 'proven').length, small = CHAIN_RULES.filter(r => tiers[r] === 'small').length;
+  return [(small ? 'CHAIN (tier 2, TRADABLE SMALL: passed its own pre-registered 5-year test in both halves after the higher cost, below the 4.0 proof bar; 1,000 USD each, switched off if its live record turns negative' + (proven ? '; PROVEN rules marked' : '') + '):' : 'CHAIN (PROVEN):'), ...rows]; }
+function chainsText() { const C = readJson0('data/chain-today.json');
+  if (!C) return 'CHAINS: the chain decoder runs with the Sunday studies (chain-decoder). Ask again after it runs.';
+  const row = (x) => '- ' + chainLayerName(x.layer) + ': ' + pcs(x.excess) + ' vs the S&P 500 in 3 months (' + x.n + ' stocks)', qual = CHAIN_RULES.some(chainTier), v = C.verdicts || {};
+  return ['CHAINS (value chains by layer, members counted from the first SEC filing that shows them in that business; as of ' + C.lastClose + ')', '',
+    'HOT NOW (3-month return of the layer’s members minus the S&P 500, ' + pcs(C.spy63) + '):', ...(C.hot || []).slice(0, 8).map(row), '', 'COLDEST:', ...(C.cold || []).map(row), '',
+    ...((C.recentDemand || []).length ? ['DEMAND SIGNALS (last 30 sessions, big customers’ earnings 8-Ks with raised guidance or capital spending):', ...C.recentDemand.slice(-5).map(e => '- ' + e.node + ' ' + e.filed + ' (' + e.kind + '): ' + String(e.text || '').slice(0, 120)), ''] : []),
+    'DECODER VERDICTS (pre-registered 23 Oct 2026, judged once):', ...CHAIN_RULES.map(r => '- ' + r + ' (' + CHAIN_NAMES[r] + '): ' + (v[r] || 'not run')),
+    '', qual ? 'A rule qualified: its buys appear in ACTIONS under CHAIN on their buy day.' : 'INFORMATION ONLY: no chain rule passed its test, so a hot layer here is context, not a buy.', 'Send  check SYM  to see a stock’s chain and layer.'].join('\n'); }
+function chainGraphLine(sym) { const C = readJson0('data/chain-today.json'), m = C && C.members && C.members[sym]; if (!m || !m.length) return null;
+  const hot = new Map(((C && C.hot) || []).map((x, k) => [x.layer, k + 1]));
+  return 'Chains (point-in-time graph): ' + m.map(x => x.chain + ', layer ' + (x.li + 1) + ' of ' + x.of + ': ' + x.layer + (x.status === 'today-only' ? ' (today only: no dated SEC filing shows it there yet)' : x.since ? ' (since ' + x.since + ')' : '') + (hot.has(x.chain + '|' + x.layer) ? ', HOT #' + hot.get(x.chain + '|' + x.layer) : '')).join(' | ') + '. Send  chains  for the hot layers.'; }
 // SUPPLY-CHAIN result (Agent C, 22 Oct): it has no luck test and no costs, so a PROMISING there is information only, never a pass.
 const linkVerdict = (k) => k && /PROMISING|BETTER/.test(k.verdict || '') && typeof k.t !== 'number' ? 'INFORMATION ONLY (no luck test, no costs; not a buy rule)' : (k && k.verdict) || 'not run';
 function switchPaperLine() { const S = readJson0('data/switch-paper.json'); if (!S) return 'Live paper check: starts with the next nightly scan.'; const D = S.done || [];
@@ -957,6 +992,7 @@ const MENU = [
   ['themes', 'themes', 'Where the money goes: industries and supply chain'],
   ['events', 'events', 'Company news (SEC, FDA): what it did next, tested'],
   ['catalysts', 'catalysts', 'Upcoming FDA dates and trial readouts (calendar; a buy only if a rule passed)'],
+  ['chains', 'chains', 'Value chains: which layers are hot now, and the chain decoder verdicts'],
   ['calendar', 'calendar', 'This week: CPI, jobs, Fed, holidays, your dividends'],
   ['skips', 'skips', 'Buys you skipped, why, and what they did since'],
   ['health', 'health', 'Is every part of the system running?'],
@@ -2136,6 +2172,7 @@ async function actionsText(sig, pos, px, title) {
         ...picks.map(x => (tier2Log(x.sym, 'longer hold', last[x.sym]), x)).map(x => '- BUY ' + x.sym + (last[x.sym] ? ' up to ' + money(last[x.sym] * 1.02) + ' (2% above the last close)' : ' at the next open') + ', F-score ' + x.fs + '/9. STOP 25% under your buy at your broker. SELL when it is 30%+ above its 50-day average (the bot tells you; buy back 10% lower), or TRIM when it passes 15% of your money. Review at 6 months. Check ZAD first; send  bought ' + x.sym + ' PRICE .'),
         'Why these: in the 5-year test this rule made +9.7% in 6 months vs the S&P 500 +7.6% in 2024-26, but +5.8% vs +9.1% in 2021-23. It beat the average stock in both. The league scores these same picks monthly.'); } }
   { const cl = catalystLines(sig, pos); if (cl.length) out.push('', ...cl); }   // CATALYST RUN-UP: only when a catalyst rule reached tier 2 or proven (23 Oct)
+  { const chl = chainLines(sig, pos); if (chl.length) out.push('', ...chl); }   // CHAIN: only when a chain-decoder rule reached tier 2 or proven (23 Oct)
   // EARNINGS DRIFT (owner's choice, 21 Oct): the only buy rule that passed its own 5-year test (both halves, stress cost, last 12 months),
   // shown with its full instruction while its live paper record builds (30+ trades on 10+ days needed before it becomes a plain BUY).
   if (FOCUS && !working && sig) { const ed = planCands(sig, pos || {}).filter(x => x.kind === 'earnings drift' && x.ok).slice(0, 3), pf = sig.peadFunnel;
@@ -2246,6 +2283,7 @@ async function stockMap(sym, sig, pos, short) { const CS = readJson0('data/chain
   out.push((short ? 'STOCK MAP ' : 'SNAPSHOT: ') + sym + (si && si.desc ? ', ' + si.desc : si ? ', SEC industry code ' + si.sic : '') + (CS ? ' (chain data as of ' + CS.asOf + ')' : ''));
   // 1. value chains
   const mine = []; for (const [name, layers] of Object.entries(CH)) layers.forEach((L, k) => { if (L.syms.includes(sym)) mine.push({ name, k, layers }); });
+  { const cg = chainGraphLine(sym); if (cg) out.push(cg); }
   if (!mine.length) out.push('Value chain: not on the chain map (data/chains.json; it can be added). Judged by its industry below.');
   for (const m of mine) { const st = CS && CS.chains && CS.chains[m.name]; out.push('Value chain: ' + m.name + ', layer ' + (m.k + 1) + ' of ' + m.layers.length + ': ' + m.layers[m.k].layer);
     if (st) { const spy = CS.spy.r3; if (!short) out.push(...st.map((L, k) => (k === m.k ? '  > ' : '    ') + L.layer + ': ' + pcs(L.r3) + ' in 3 months' + (k < m.k ? ' (its suppliers)' : k > m.k ? ' (its customers)' : ' (ITS LAYER)')));
@@ -2649,6 +2687,7 @@ async function tgCommands(sig) {
     } else if (/^(exits?|exit test|when to sell)\s*\??\s*$/i.test(text)) { out.push(exitsText());
     } else if (/^(research|experiments?|registry|ideas tested)\s*\??\s*$/i.test(text)) { out.push(experimentsText());
     } else if (/^(catalysts|catalyst calendar|run-?ups?|fda dates?)\s*\??\s*$/i.test(text)) { out.push(catalystCalendarText());
+    } else if (/^(chains|chain map|hot chains?|hot layers?|value chains?)\s*\??\s*$/i.test(text)) { out.push(chainsText());
     } else if (/^(events?|news study|catalysts?|company news)\s*\??\s*$/i.test(text)) { out.push(eventsText());
     } else if (/^(day ?trades?|fast ?movers?|runners?|fast)\s*\??\s*$/i.test(text)) { out.push(fastText());
     } else if (/^(news ?watch|my news|news alerts?|threats?)\s*\??\s*$/i.test(text)) { out.push(newsText());
