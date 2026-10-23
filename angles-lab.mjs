@@ -117,7 +117,7 @@ async function download(url, file) { try { execFileSync('curl', ['-sS', '-f', '-
 const PRE = {}; { let okAll = true; for (const y of RUSSELL) { if (y.rank >= D[0]) continue; const f = AC + '/pre-' + y.rank + '.json'; let m = J(f, null);
     if (!m) { const j = await api('/v2/aggs/grouped/locale/us/market/stocks/' + y.rank + '?adjusted=true'); if (j && Array.isArray(j.results) && j.results.length > 1000) { m = {}; for (const x of j.results) if (x && x.T && x.c > 0) m[x.T] = [x.c, x.v || 0]; W(f, m); } }
     if (m) PRE[y.rank] = m; else okAll = false; }
-  STATUS.russell = { ok: okAll && REF.ok && Object.keys(SH.c).length > 1000, preRankDays: Object.keys(PRE), ref: REF.ok }; log('Russell pre-cache rank days: ' + Object.keys(PRE).join(', ')); }
+  STATUS.russell = { ok: REF.ok && Object.keys(SH.c).length > 1000, allPreRankDays: okAll, preRankDays: Object.keys(PRE), ref: REF.ok };   /* a rank-day pair without prices is skipped and listed (Massive history reaches back 5 years only) */ log('Russell pre-cache rank days: ' + Object.keys(PRE).join(', ')); }
 // Map cik -> { mv, i (the most traded ticker in the cache, or -1) } on a rank day
 function valuesOn(date) { const out = new Map(), t = tOf.get(date);
   const add = (s, px, dv) => { if (!isCS(s) || !(px > 0)) return; const cik = symCik(s); if (!cik) return; const sh = sharesKnown(cik, date); if (!(sh > 0)) return; const i = SY.has(s) ? SY.get(s) : -1, b = out.get(cik); if (!b || dv > b.dv) out.set(cik, { mv: px * sh, i, dv }); };
@@ -192,8 +192,9 @@ const NQnum = (v) => { const x = parseFloat(String(v || '').replace(/[$,]/g, '')
 async function fundHist(sym) { const f = AC + '/fund-' + sym + '.json'; let b = J(f, null); if (b && b.at && Date.now() - Date.parse(b.at) < 20 * 3600e3) return b.rows;
   let rows = null; const j = await api('/v2/aggs/ticker/' + sym + '/range/1/day/2019-12-01/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000');
   if (j && Array.isArray(j.results) && j.results.length > 200) rows = j.results.map(x => [iso(x.t), x.o, x.c]);
-  if (!rows) { const r = await get(NQ + '/api/quote/' + sym + '/historical?assetclass=etf&fromdate=2019-12-01&todate=' + iso(Date.now()) + '&limit=9999', { headers: NQ_HEAD, timeout: 45000 }); const k = r && r.ok ? await r.json().catch(() => null) : null; const tr = k && k.data && k.data.tradesTable && k.data.tradesTable.rows;
-    if (Array.isArray(tr) && tr.length > 200) rows = tr.map(x => { const m = String(x.date || '').match(/^(\d\d)\/(\d\d)\/(\d{4})$/); return m ? [m[3] + '-' + m[1] + '-' + m[2], NQnum(x.open), NQnum(x.close)] : null; }).filter(x => x && x[2] > 0).sort((a, b) => a[0] < b[0] ? -1 : 1); }
+  // Massive's history reaches back 5 years only: then the full history from Nasdaq
+  if (!rows || rows[0][0] > '2020-01-31') { const r = await get(NQ + '/api/quote/' + sym + '/historical?assetclass=etf&fromdate=2019-12-01&todate=' + iso(Date.now()) + '&limit=9999', { headers: NQ_HEAD, timeout: 45000 }); const k = r && r.ok ? await r.json().catch(() => null) : null; const tr = k && k.data && k.data.tradesTable && k.data.tradesTable.rows;
+    if (Array.isArray(tr) && tr.length > 200 && (!rows || tr.length > rows.length)) rows = tr.map(x => { const m = String(x.date || '').match(/^(\d\d)\/(\d\d)\/(\d{4})$/); return m ? [m[3] + '-' + m[1] + '-' + m[2], NQnum(x.open), NQnum(x.close)] : null; }).filter(x => x && x[2] > 0).sort((a, b) => a[0] < b[0] ? -1 : 1); }
   if (rows) W(f, { at: new Date().toISOString(), rows }); return rows || (b && b.rows) || null; }
 const FUNDS = { SPUS: await fundHist('SPUS'), HLAL: await fundHist('HLAL') }; STATUS.funds = { ok: !!(FUNDS.SPUS && FUNDS.SPUS.length > 500 && FUNDS.SPUS[0][0] <= '2021-01-04'), SPUS: FUNDS.SPUS ? FUNDS.SPUS.length : 0, HLAL: FUNDS.HLAL ? FUNDS.HLAL.length : 0 };
 log('funds: SPUS ' + STATUS.funds.SPUS + ' days, HLAL ' + STATUS.funds.HLAL + ' days');
@@ -209,7 +210,7 @@ const H = (id) => ANGLES[id].hold, SIG = {}; for (const id of IDS) SIG[id] = [];
     const nowMv = new Map([...nowV].map(([k, v]) => [k, v.mv])), prevMv = new Map([...prevV].map(([k, v]) => [k, v.mv])), x = idxOf(yr.recon);
     const lists = { 'ANG-RUS-ADD': russellAdds(nowMv, prevMv, yr, yr0), 'ANG-RUS-DOWN': russellDowns(nowMv, prevMv, yr, yr0) };
     for (const [id, ciks] of Object.entries(lists)) { let n = 0; for (const c of ciks) { const i = nowV.get(c).i; if (i < 0 || !LIQ[i * T + t]) continue; sigs[id].push({ t, i, k: t + 1, x }); n++; } diag.push(yr.rank + ' ' + id + ': ' + ciks.length + ' predicted, ' + n + ' liquid'); } }
-  Object.assign(SIG, sigs); STATUS.russell.diag = diag; log('Russell: ' + diag.join('; ')); }
+  Object.assign(SIG, sigs); STATUS.russell.diag = diag; STATUS.russell.pairsSkipped = diag.filter(x => /too few values/.test(x)); STATUS.russell.ok = STATUS.russell.ok && diag.filter(x => / ANG-RUS-ADD: /.test(x)).length >= 3; log('Russell: ' + diag.join('; ')); }
 // ---- IPO first base + lock-up ----
 { for (const p of IPO) { const c = fullC(p.i), v = fullV(p.i);
     for (let t = p.f0 + 63; t <= Math.min(p.f0 + 504, T - 1); t++) { if (!ipoBase(c, v, p.f0, t)) continue; if (LIQ[p.i * T + t]) SIG['ANG-IPOBASE'].push({ t, i: p.i, k: t + 1, x: t + H('ANG-IPOBASE'), stop: 0.08 }); break; }   // only the FIRST breakout
@@ -300,7 +301,7 @@ const INFO_RES = {}; for (const f of ['SPUS', 'HLAL']) { const rows = FUNDS[f]; 
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
 const isJudged = (r) => r && r.verdict && r.verdict !== 'NOT RUN';
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k]) => need.includes(k)).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, ...strip(r) }])), isJudged);
-const infoFirst = freezeEach(PREV.informationFirstRun, Object.fromEntries(Object.entries(INFO_RES).map(([k, r]) => [k, { at: new Date().toISOString(), ...r }])), isJudged);
+const infoFirst = freezeEach(PREV.informationFirstRun, Object.fromEntries(Object.entries(INFO_RES).map(([k, r]) => [k, { at: new Date().toISOString(), ...r }])), (r) => isJudged(r) && r.sinceFirst && r.sinceFirst.from <= '2020-01-31');   // only with the fund's full history
 
 // ================= 5. PAPER LANE =================
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();

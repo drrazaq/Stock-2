@@ -13139,22 +13139,10 @@
    "family": "Untested angles",
    "name": "Halal funds: save monthly and buy only on a 5% dip, vs buy every month (extends HOLD-DIPFUND, which tested 10%)",
    "explain": "SPUS and HLAL: 1 unit of money each month at the first session. DCA buys at that open; DIP keeps it as cash and invests all saved cash at the next open after a close 5%+ under the highest close of the last 252 sessions. 0.4% per buy and on the final sale (hold-core.mjs dcaVsDip, dip = 0.05). Over the cache window and since the fund's first price.",
-   "status": "tested: information (one path per fund)",
+   "status": "pre-registered 2026-10-24 (angles lab); information only (one path, no statistics)",
    "agent": "angles",
    "libraryCheck": "HOLD-DIPFUND (10% dip: information, DIP +1.0% vs DCA in the window, -0.8% since inception for SPUS)",
-   "note": "Information only, never a buy signal.",
-   "result": {
-    "SPUS": {
-     "window": -0.0003,
-     "sinceFirst": -0.0003,
-     "from": "2021-10-25"
-    },
-    "HLAL": {
-     "window": 0.0012,
-     "sinceFirst": 0.0012,
-     "from": "2021-10-25"
-    }
-   }
+   "note": "Information only, never a buy signal."
   }
  ]
 }
