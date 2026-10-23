@@ -2698,10 +2698,86 @@
    "family": "Quality and value",
    "name": "V15 as a monthly paper basket",
    "explain": "On the first Sunday of each month, record the top 10 F-score>=8-above-200-day names as one paper basket; score each basket against SPUS/HLAL and the average stock over the following month and 3 months. One countable sample per month instead of a thin trade list. No change to the live V15 rule.",
-   "status": "queued (Agent B)",
+   "status": "tested: not proven",
    "agent": "B",
    "note": "From the source answers of 21 Oct (Q3: a design fix, not more trades). Report distinct months, median, worst month.",
-   "built": "Built 23 Oct 2026 before any result: formation = the last session before the first session after the first Sunday of each month; top 10 = F-score (quality.mjs fscore) 8-9 AND above the 200-day average, F-score high to low then larger 20-day traded value; buy the next open; held 21 and 63 sessions, each judged; one sample per month (basket average); same-stock yardstick = the same names on other basket months of the same half; SPUS/HLAL reported where in the price cache."
+   "built": "Built 23 Oct 2026 before any result: formation = the last session before the first session after the first Sunday of each month; top 10 = F-score (quality.mjs fscore) 8-9 AND above the 200-day average, F-score high to low then larger 20-day traded value; buy the next open; held 21 and 63 sessions, each judged; one sample per month (basket average); same-stock yardstick = the same names on other basket months of the same half; SPUS/HLAL reported where in the price cache.",
+   "tested": "2026-10-19",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "B-BASK1_1m": {
+     "verdict": "NOT PROVEN",
+     "n": [
+      26,
+      25
+     ],
+     "avg": [
+      0.0016,
+      0.023
+     ],
+     "median": [
+      -0.0008,
+      0.0111
+     ],
+     "edge": [
+      0.0014,
+      0.0109
+     ],
+     "vsOwn": [
+      -0.0004,
+      -0.0027
+     ],
+     "noTop2": [
+      -0.0065,
+      0.0035
+     ],
+     "stress": [
+      -0.0024,
+      0.019
+     ],
+     "tBlock": [
+      0.3,
+      0.8
+     ],
+     "why": "lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.3 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.8 under 2.5 in the newer half"
+    },
+    "B-BASK1_3m": {
+     "verdict": "NOT PROVEN",
+     "n": [
+      26,
+      23
+     ],
+     "avg": [
+      0.0279,
+      0.0707
+     ],
+     "median": [
+      0.0471,
+      0.0581
+     ],
+     "edge": [
+      0.0091,
+      0.0338
+     ],
+     "vsOwn": [
+      -0.0099,
+      -0.0228
+     ],
+     "noTop2": [
+      0.0193,
+      0.0452
+     ],
+     "stress": [
+      0.0239,
+      0.0667
+     ],
+     "tBlock": [
+      0.24,
+      1.2
+     ],
+     "why": "not better than the same stocks on their other days in the older half; block t 0.24 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.2 under 2.5 in the newer half"
+    }
+   }
   },
   {
    "id": "A-E1N1",
@@ -2863,20 +2939,96 @@
    "family": "Company events",
    "name": "Earnings that keep getting better (a run of beats, not one)",
    "explain": "Buy at the next open after a report that is the 3rd consecutive quarter of positive EPS surprise AND year-on-year revenue growth rising for 2+ quarters; hold 60 sessions, exit on a close under the 50-day average. Whole market incl. dead stocks, both halves, 0.8%/1.2% cost, the three yardsticks, without the 2 best. Must also beat a single-beat version on the same reports (the E1-style rule), so the sequence adds something. Literature: earnings-announcement momentum built from several surprises stayed predictive where the latest surprise alone did not (2025 study cited by the reviewer).",
-   "status": "queued (Agent B, front of queue)",
+   "status": "tested: rejected",
    "agent": "B",
    "note": "From two outside reviews of 22 Oct (evening). Pre-register one version before any run; judged for PROVEN and TRADABLE SMALL; must beat the existing engine it builds on (incremental value), not only the market.",
-   "built": "Built 23 Oct 2026 before any result: reports from data/earnings-cache.json.gz (its stocks only); entry = the open of the first session on/after a before-open report, else the session after the report date; EPS beat streak >= 3 (a gap of 120+ days ends a run; equal is not a beat); revenue growth rising = y/y growth of the latest 3 quarters filed BEFORE the entry day each higher than the one before (Q4 = year - 9-month YTD; stale if 200+ days old); 5 USD+ and 5M USD+ traded the day before; exit = next open after a close under the 50-day average, else the close of the 60th session; one open trade per stock. Single-beat version = any positive surprise, same entry/exit; B-EM1 must beat it (after-cost average and edge) in both halves. Same-stock yardstick = the stock on every 5th session at least 6 sessions from any report, same exits."
+   "built": "Built 23 Oct 2026 before any result: reports from data/earnings-cache.json.gz (its stocks only); entry = the open of the first session on/after a before-open report, else the session after the report date; EPS beat streak >= 3 (a gap of 120+ days ends a run; equal is not a beat); revenue growth rising = y/y growth of the latest 3 quarters filed BEFORE the entry day each higher than the one before (Q4 = year - 9-month YTD; stale if 200+ days old); 5 USD+ and 5M USD+ traded the day before; exit = next open after a close under the 50-day average, else the close of the 60th session; one open trade per stock. Single-beat version = any positive surprise, same entry/exit; B-EM1 must beat it (after-cost average and edge) in both halves. Same-stock yardstick = the stock on every 5th session at least 6 sessions from any report, same exits.",
+   "tested": "2026-10-19",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     133,
+     223
+    ],
+    "avg": [
+     -0.0047,
+     0.0188
+    ],
+    "median": [
+     -0.0163,
+     -0.0219
+    ],
+    "edge": [
+     -0.0064,
+     0.0062
+    ],
+    "vsOwn": [
+     -0.0066,
+     -0.0212
+    ],
+    "noTop2": [
+     -0.0118,
+     0.0115
+    ],
+    "stress": [
+     -0.0087,
+     0.0148
+    ],
+    "tBlock": [
+     -0.04,
+     0.96
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.04 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.96 under 2.5 in the newer half; not better than the single-beat version on the same reports in the older half (-0.5% vs +0.0% after cost; edge -0.6% vs +0.4%); not better than the single-beat version on the same reports in the newer half (+1.9% vs +2.0% after cost; edge +0.6% vs +1.3%)"
+   }
   },
   {
    "id": "B-SIF1",
    "family": "Trend and momentum",
    "name": "Strong stock in a strong industry with improving finances",
    "explain": "Monthly basket: stocks in the top 30% by 6-month relative strength, whose industry (SIC group) is in the top 30% by 6-month return, AND F-score up versus a year ago. Hold 3 months. Must beat T1 (leaders) and V15 alone on the same dates, and must not depend on one sector (report the result with the top sector removed). Kill: concentration in one hot sector, a few outliers, or no edge in the newer half.",
-   "status": "queued (Agent B)",
+   "status": "tested: rejected",
    "agent": "B",
    "note": "From two outside reviews of 22 Oct (evening). Pre-register one version before any run; judged for PROVEN and TRADABLE SMALL; must beat the existing engine it builds on (incremental value), not only the market.",
-   "built": "Built 23 Oct 2026 before any result: formation every 21 sessions; 6-month = 126-session return; top 30% of liquid stocks; industry = SEC SIC 2-digit group with 5+ liquid members, top 30% by members average 6-month return; F-score (quality.mjs) of the latest public year above the year before; financials (6xxx) have no F-score. Hold 63 sessions. Extra gates: after-cost average above T1 alone (all top-30% stocks) and V15 alone on the same dates in both halves; without the SIC group with the most trades, still above the average stock and above 0 in both halves."
+   "built": "Built 23 Oct 2026 before any result: formation every 21 sessions; 6-month = 126-session return; top 30% of liquid stocks; industry = SEC SIC 2-digit group with 5+ liquid members, top 30% by members average 6-month return; F-score (quality.mjs) of the latest public year above the year before; financials (6xxx) have no F-score. Hold 63 sessions. Extra gates: after-cost average above T1 alone (all top-30% stocks) and V15 alone on the same dates in both halves; without the SIC group with the most trades, still above the average stock and above 0 in both halves.",
+   "tested": "2026-10-19",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     341,
+     463
+    ],
+    "avg": [
+     0.0141,
+     0.0681
+    ],
+    "median": [
+     0.0159,
+     0.0036
+    ],
+    "edge": [
+     -0.0002,
+     0.0348
+    ],
+    "vsOwn": [
+     -0.0411,
+     -0.0359
+    ],
+    "noTop2": [
+     0.0097,
+     0.0615
+    ],
+    "stress": [
+     0.0101,
+     0.0641
+    ],
+    "tBlock": [
+     -0.01,
+     0.96
+    ],
+    "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -0.01 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.96 under 2.5 in the newer half; not better than V15 alone on the same dates in the older half (+1.4% vs +2.1%)"
+   }
   },
   {
    "id": "C-DIFF1",
@@ -3479,10 +3631,48 @@
    "family": "Quality and value",
    "name": "Cash-rich, growing, low-debt companies (the measurable filters from the chain screener)",
    "explain": "Monthly basket, point in time from SEC XBRL (10-Q/10-K as filed): free-cash-flow yield > 5% (trailing 4 quarters operating cash flow minus capex, over market cap), revenue growth >= 10% year on year, debt-to-equity < 0.5, and, for companies that hold inventory, days of inventory < 60; stock above its 200-day average. Equal weight, hold 3 months. Compared with the average stock, with V15 (F-score in an uptrend) on the same dates, and with the same stocks in months they did not qualify; both halves, 0.8%/1.2% cost, without the 2 best, t >= 2.5. Supplier diversification and on-time delivery are not public data and are left out.",
-   "status": "queued (Agent B, Tuesday 27 Oct)",
+   "status": "tested: not proven",
    "agent": "B",
    "note": "From the owner's Stock Chain Screener image and prompts of 23 Oct. Pre-registered before any run. Low debt also fits common halal screens, but halal stays ZAD's decision.",
-   "built": "Built 23 Oct 2026 before any result (value-lab.mjs + value-core.mjs fcfCheck): formation every 21 sessions (as quality.mjs), liquid stocks (5 USD+, 5M USD+ a day); SEC companyfacts point in time (a filing counts from the day after its filing date); TTM = 10-K year, or YTD + last year - YTD a year earlier; capex = PaymentsToAcquirePropertyPlantAndEquipment / ProductiveAssets (unknown -> left out); market value = split-adjusted share count known 30 days after its date x close; FCF yield 40%+ treated as a data error (quality.mjs bound); revenue growth = TTM vs TTM a year earlier, same tag; debt = LongTermDebt (incl. current) else the parts reported that date, none if the company never reported debt; filings 200+ days old = stale. Buy next open, sell the close 63 sessions later. Judged at the owner tier-2 standard (block t over 63-session blocks)."
+   "built": "Built 23 Oct 2026 before any result (value-lab.mjs + value-core.mjs fcfCheck): formation every 21 sessions (as quality.mjs), liquid stocks (5 USD+, 5M USD+ a day); SEC companyfacts point in time (a filing counts from the day after its filing date); TTM = 10-K year, or YTD + last year - YTD a year earlier; capex = PaymentsToAcquirePropertyPlantAndEquipment / ProductiveAssets (unknown -> left out); market value = split-adjusted share count known 30 days after its date x close; FCF yield 40%+ treated as a data error (quality.mjs bound); revenue growth = TTM vs TTM a year earlier, same tag; debt = LongTermDebt (incl. current) else the parts reported that date, none if the company never reported debt; filings 200+ days old = stale. Buy next open, sell the close 63 sessions later. Judged at the owner tier-2 standard (block t over 63-session blocks).",
+   "tested": "2026-10-19",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     534,
+     486
+    ],
+    "avg": [
+     0.0387,
+     0.0572
+    ],
+    "median": [
+     0.0369,
+     0.0207
+    ],
+    "edge": [
+     0.0226,
+     0.0289
+    ],
+    "vsOwn": [
+     -0.0274,
+     -0.0046
+    ],
+    "noTop2": [
+     0.0362,
+     0.0474
+    ],
+    "stress": [
+     0.0347,
+     0.0532
+    ],
+    "tBlock": [
+     1.3,
+     1.79
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 1.3 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.79 under 2.5 in the newer half"
+   }
   }
  ]
 }
