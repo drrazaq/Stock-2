@@ -12625,6 +12625,182 @@
     ],
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.02 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.23 under 2.5 in the newer half"
    }
+  },
+  {
+   "id": "ANG-RUS-ADD",
+   "family": "Untested angles",
+   "name": "Russell 2000 addition from below (predicted on rank day)",
+   "explain": "On each Russell rank day (table RUSSELL), total market value = close x SEC share count known 30 days earlier (common stocks; one ticker per company). Predicted ADDITION from below: market value now >= the published smallest Russell 2000 company and < the published 1000/2000 breakpoint, AND on the previous rank day the company traded with a market value under that year's smallest Russell 2000 company (so it was not in the Russell 3000). Liquid on rank day. Buy the next open, sell the close of the reconstitution Friday. Hold field 40 (blocks): one block per year. Source(s): Madhavan (2003) The Russell Reconstitution Effect, Financial Analysts Journal 59(4); Dimensional (2024) Even Migrating Stocks Face Index Reconstitution Costs (2014-2023: R2000 migrating additions +1.2% vs the R2000 in the 20 days before recon, -0.95% in the 20 after). Reported: additions earn positive excess returns between rank day and reconstitution, then partly reverse.",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "E6 / ANOM-IDXADD (index inclusion: needs data, S&P announcement dates); C-SPEC1 (queued, S&P additions). Russell additions predicted from market value were never tested",
+   "sources": [
+    "https://doi.org/10.2469/faj.v59.n4.2545",
+    "https://www.dimensional.com/us-en/insights/even-migrating-stocks-face-index-reconstitution-costs"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 40 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-RUS-DOWN",
+   "family": "Untested angles",
+   "name": "Russell 1000 -> 2000 migrant (predicted on rank day)",
+   "explain": "On each rank day: the company had a market value >= the previous year's 1000/2000 breakpoint on the previous rank day (a Russell 1000 member), and now sits BELOW the Russell 1000 band: ranked by market value, its cumulative share of the total market value of all ranked companies is more than 2.5 percentage points past the cumulative share at the published breakpoint (banding), and its value is >= the smallest Russell 2000 company. Liquid. Buy the next open, sell the close of the reconstitution Friday. Source(s): Chang, Hong & Liskovich (2015) Regression Discontinuity and the Price Effects of Stock Market Indexing, Review of Financial Studies 28(1); Madhavan (2003) FAJ 59(4). Reported: stocks moving from the Russell 1000 to the top of the Russell 2000 rise into reconstitution (index-fund demand per dollar of value is much larger in the 2000).",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "none (E6 / ANOM-IDXADD are S&P additions)",
+   "sources": [
+    "https://doi.org/10.1093/rfs/hhu041",
+    "https://doi.org/10.2469/faj.v59.n4.2545"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 40 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-IPOBASE",
+   "family": "Untested angles",
+   "name": "IPO first base breakout (O'Neil), 3-24 months after listing",
+   "explain": "IPO = the company's first 424B4 (SEC EDGAR index) and the stock first appears in the price cache within 15 sessions after it, not before; blank-check companies (SIC 6770, or the first 10 closes all within 9.5-10.6 USD) left out. Signal at session t when the stock is 63-504 sessions old: base high H = the highest close of the last 65 sessions (from listing), set 15+ sessions before t; base depth (H vs the lowest close since H) 8-40%; close above H but within 5% of it (buy zone); volume >= 1.5x its average of the prior 50 sessions (20+ needed); liquid. Only the FIRST such breakout per stock. Buy the next open; sell the close of the first session closing 8%+ under the buy (O'Neil stop), else the close of the 60th session. Source(s): O'Neil, How to Make Money in Stocks (IPO base: a new issue's first base in its first months; 7-8% loss-cutting rule); Ritter (1991) The Long-Run Performance of Initial Public Offerings, Journal of Finance 46(1) (IPOs as a group lag: why the base filter matters). Reported: practitioner method; no audited record (AAII CAN SLIM screen as the nearest tracked proxy).",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "I12 (young IPO above its 50-day: paper), DEC2-IBD (generic O'Neil base, any stock): the IPO-only first base was never tested",
+   "sources": [
+    "https://www.luxalgo.com/library/concept/ipo-base/",
+    "https://doi.org/10.1111/j.1540-6261.1991.tb03743.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 60 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-LCREV-W",
+   "family": "Untested angles",
+   "name": "Large-cap 1-week losers without news (short-term reversal)",
+   "explain": "Every week at the close of its last session t: among the top 500 by market value (liquid), the 10% with the lowest 5-session return (close t vs close t-5), LEAVING OUT any company that filed an 8-K with item 2.02 (results) or 8.01 (other events) dated within those 5 sessions (SEC submissions). Buy the next open, sell the close of the 5th session. Source(s): Chan (2003) Stock price reaction to news and no-news: drift and reversal after headlines, Journal of Financial Economics 70(2); de Groot, Huij & Zhou (2012) Another look at trading costs and short-term reversal profits, Journal of Banking & Finance 36(2) (large caps: 30-50 bp a week net). Reported: no-news losers reverse; large-cap reversal survives realistic trading costs (30-50 bp a week).",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "A-SW2 (rejected) took the worst 5-day losers among ALL liquid stocks in an uptrend with no news filter; ANOM-DAYREV1 (rejected) is the intraday month. Large caps + no-news filter is a different, published version",
+   "sources": [
+    "https://doi.org/10.1016/S0304-405X(03)00146-6",
+    "https://ideas.repec.org/a/eee/jbfina/v36y2012i2p371-382.html"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 5 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-LCREV-M",
+   "family": "Untested angles",
+   "name": "Large-cap 1-month losers without news (short-term reversal)",
+   "explain": "Every month at the close of its last session t: among the top 500 by market value (liquid), the 10% with the lowest 21-session return, leaving out any company with an 8-K item 2.02 or 8.01 dated within those 21 sessions. Buy the next open, hold 21 sessions. Source(s): Jegadeesh (1990) Evidence of Predictable Behavior of Security Returns, Journal of Finance 45(3); Chan (2003) JFE 70(2). Reported: one-month losers outperform the next month; strongest without news.",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "ANOM-DAYREV1 (intraday month, rejected); no plain large-cap no-news month version",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1990.tb05110.x",
+    "https://doi.org/10.1016/S0304-405X(03)00146-6"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-LCGAP20",
+   "family": "Untested angles",
+   "name": "Large-cap earnings gap-up that holds 3 sessions, hold 20",
+   "explain": "Earnings reaction session r (Nasdaq calendar: before the open = report day, else the next session) of a top-500 company (as of r-1): open >= 4% over the previous close, volume >= 2x its 50-session average, and the LOW of each of the next 3 sessions stays above the low of session r (daily bars with highs/lows from Massive). Buy the open of r+4, hold 20 sessions. Source(s): Zhou & Zhu (2012) Jump on the Post-Earnings Announcement Drift, Financial Analysts Journal 68(3) (positive earnings jumps drift for 3 months); Chan, Jegadeesh & Lakonishok (1996) Momentum Strategies, Journal of Finance 51(5). Reported: earnings jumps predict drift in the same direction over the following 3 months (1971-2009).",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "E13 -> E16 (not proven: ANY liquid stock, 5%+ gap, 3 QUIET days above the gap midpoint, hold 20); DEC2-GAPGO (any stock, no earnings link). Large caps, gap-day-low hold and a 60-day hold are new",
+   "sources": [
+    "https://ideas.repec.org/a/taf/ufajxx/v68y2012i3p63-80.html",
+    "https://doi.org/10.1111/j.1540-6261.1996.tb05222.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 20 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-LCGAP60",
+   "family": "Untested angles",
+   "name": "Large-cap earnings gap-up that holds 3 sessions, hold 60",
+   "explain": "Earnings reaction session r (Nasdaq calendar: before the open = report day, else the next session) of a top-500 company (as of r-1): open >= 4% over the previous close, volume >= 2x its 50-session average, and the LOW of each of the next 3 sessions stays above the low of session r. Buy the open of r+4, hold 60 sessions (same signal as ANG-LCGAP20). Source(s): Zhou & Zhu (2012) FAJ 68(3). Reported: as ANG-LCGAP20.",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "as ANG-LCGAP20",
+   "sources": [
+    "https://ideas.repec.org/a/taf/ufajxx/v68y2012i3p63-80.html"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 60 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-QLOW",
+   "family": "Untested angles",
+   "name": "Quality stock at its 52-week low turning up (F-score 7+)",
+   "explain": "Non-financial liquid stock with Piotroski F-score >= 7 (quality.mjs yearly cache and code; a 10-K counts from 10 April), whose close was within 5% of its 252-session lowest close on at least one of the last 10 sessions, and which at t makes its first close above its 20-session average (close t-1 at or under that day's average). Buy the next open, hold 60 sessions. Source(s): Piotroski (2000) Value Investing: The Use of Historical Financial Statement Information, Journal of Accounting Research 38; George & Hwang (2004) The 52-Week High and Momentum Investing, Journal of Finance 59(5) (anchoring to 52-week extremes). Reported: high F-score stocks beat low; anchoring at 52-week extremes delays the price reaction.",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "V13 (F-score 8-9: not proven), V15 (F-score in an UPTREND: tier 2), M8 (1-year low + volume: failed), D2-002/3 (52-week low discovered rules). F-score at the low with a turn-up trigger was never tested",
+   "sources": [
+    "https://doi.org/10.2307/2672906",
+    "https://doi.org/10.1111/j.1540-6261.2004.00695.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 60 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-LOCKUP",
+   "family": "Untested angles",
+   "name": "IPO lock-up expiry bounce: buy 3 sessions after the expiry",
+   "explain": "IPO as ANG-IPOBASE. Expiry session E = the first session on or after the 424B4 date + 180 calendar days. Signal at the close of E+2 (liquid); buy the open of E+3, hold 20 sessions. Source(s): Field & Hanka (2001) The Expiration of IPO Share Lockups, Journal of Finance 56(2) (-1.5% three-day abnormal return around expiry). Reported: the price dips around the expiry (supply), a permanent 40% volume increase; the bounce after it is the untested part.",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "E12 (risk rule), C-LOCK (AVOID the 10 sessions after expiry: pre-registered, share-supply.mjs). The long side 3 sessions after was never tested",
+   "sources": [
+    "https://ideas.repec.org/a/bla/jfinan/v56y2001i2p471-500.html"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 20 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-DIVG",
+   "family": "Untested angles",
+   "name": "Dividend growth streak (5+ raises) with low debt",
+   "explain": "Monthly at the close of the first session of each month: non-financial liquid stocks whose annual dividend per share (SEC XBRL CommonStockDividendsPerShareDeclared, else ...CashPaid) rose in each of the last 5 fiscal years (6 annual figures; each year compared with the year before IN THE SAME 10-K, so splits do not break it; only filings public before the day; latest year ended within 15 months) AND interest-bearing debt / market value < 33% (the halal screen's debt test). Equal weight; each month a new tranche held 63 sessions. Source(s): Ned Davis Research via Hartford Funds (S&P 500, 1973-2025: dividend growers and initiators 13.0% a year vs 12.7% all payers, 11.5% non-payers, lower volatility); Michaely, Thaler & Womack (1995) Price Reactions to Dividend Initiations and Omissions, Journal of Finance 50(2). Reported: dividend growers beat other groups with lower volatility (practitioner study, not peer reviewed).",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "V7 (dividend growth: needs data), ANOM-DIVINIT (initiations: rejected). A raise STREAK from SEC data was never tested",
+   "sources": [
+    "https://www.nasdaq.com/articles/does-long-term-dividend-investing-really-work-study-says-definitely",
+    "https://doi.org/10.1111/j.1540-6261.1995.tb04796.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-FOMC",
+   "family": "Untested angles",
+   "name": "Pre-FOMC drift on SPUS",
+   "explain": "Buy SPUS at the close of the session before each FOMC statement day (table FOMC), sell at the close of the statement day. Yardstick: SPUS over ALL 1-session windows of the same half. 0.8% cost as every rule (the 0.1% ETF-cost figure is information only). Source(s): Lucca & Moench (2015) The Pre-FOMC Announcement Drift, Journal of Finance 70(1); Kurov, Wolfe & Gilbert (2021) The disappearing pre-FOMC announcement drift, Finance Research Letters 40 (gone after 2015). Reported: S&P 500 rose ~49 bp in the 24 hours before announcements (1994-2011); essentially disappeared after 2015.",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "C7 (not tested: drift reported gone). Owner asked; tested once on SPUS",
+   "sources": [
+    "https://doi.org/10.1111/jofi.12196",
+    "https://ideas.repec.org/a/eee/finlet/v40y2021ics1544612320315956.html"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 1 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-SPLIT",
+   "family": "Untested angles",
+   "name": "Forward stock split, first in 3 years (post-split drift)",
+   "explain": "Forward split (more shares, Massive split list) whose execution date is the company's first split in the previous 3 years. Signal at the close of the first session on or after the execution date (liquid); buy the next open, hold 126 sessions. Source(s): Ikenberry, Rankine & Stice (1996) What Do Stock Splits Really Signal? JFQA 31(3) (+7.9% first-year excess return); Long-run returns after splits revisited, 1975-2011 (no significant drift 2000-2011 overall; firms that had NOT split before: +6.05% a year, significant). Reported: drift after splits, much weaker after 2000; survives for first-time splitters.",
+   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "agent": "angles",
+   "libraryCheck": "S4 (reverse-split aftermath: risk rule). Forward splits never tested",
+   "sources": [
+    "https://ideas.repec.org/a/cup/jfinqa/v31y1996i03p357-375_00.html",
+    "https://acfr.aut.ac.nz/__data/assets/pdf_file/0005/105476/89582-Splits-Longrun-2017.pdf"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 126 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "ANG-DIP5",
+   "family": "Untested angles",
+   "name": "Halal funds: save monthly and buy only on a 5% dip, vs buy every month (extends HOLD-DIPFUND, which tested 10%)",
+   "explain": "SPUS and HLAL: 1 unit of money each month at the first session. DCA buys at that open; DIP keeps it as cash and invests all saved cash at the next open after a close 5%+ under the highest close of the last 252 sessions. 0.4% per buy and on the final sale (hold-core.mjs dcaVsDip, dip = 0.05). Over the cache window and since the fund's first price.",
+   "status": "pre-registered 2026-10-24 (angles lab); information only (one path, no statistics)",
+   "agent": "angles",
+   "libraryCheck": "HOLD-DIPFUND (10% dip: information, DIP +1.0% vs DCA in the window, -0.8% since inception for SPUS)",
+   "note": "Information only, never a buy signal."
   }
  ]
 }
