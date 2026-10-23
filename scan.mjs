@@ -352,7 +352,11 @@ function tradersText() { const B = readJson0('data/follow-board.json'); if (!B |
     'Luck bar: with ' + B.judged + ' traders judged, about ' + ((B.luck && B.luck.followByLuckAtMost) || 0) + ' would reach t 2.5 by luck alone.', '',
     ...list.map(t => '- ' + t.level + ' ' + t.name + ' (' + t.src + ', judged at ' + t.H + ' session' + (t.H > 1 ? 's' : '') + '): ' + t.record), '',
     'FOLLOW traders’ new buy calls appear in ACTIONS under FOLLOWING (tier 2, 1,000 USD, with a stop). FADE: their calls lag the average stock. Research, not advice.'].join('\n'); }
-function swTier(r) { if (!r) return null; if (r.verdict === 'SWITCH WINS') return 'proven'; if (!TIER2_ON() || r.verdict !== 'BELOW THE LEAGUE BAR' || !r.results) return null;
+function swTier(r) { if (!r) return null;
+  // A-SWR1 (Agent A, 23 Oct): the switch counted in USD against holding, failed buy-backs included. While its verdict for this trigger is
+  // not TRADABLE SMALL or PROVEN, the switch is neither tier 2 nor proven (it lost -2.8% to -3.4% per switch vs holding in 2024-26).
+  { const AV = (readJson0('data/agent-a-lab.json') || {}).verdicts || {}, k = 'A-SWR1/' + (r.trigger || 'STRETCH') + '/LOWER10', v = AV[k];
+    if (v && v !== 'TRADABLE SMALL' && v !== 'PROVEN') return null; } if (r.verdict === 'SWITCH WINS') return 'proven'; if (!TIER2_ON() || r.verdict !== 'BELOW THE LEAGUE BAR' || !r.results) return null;
   const o = r.results.older || {}, n = r.results.newer || {}, ts = [o.t, n.t, o.tBlock, n.tBlock].filter(x => typeof x === 'number');
   if (ts.length < 2 || Math.min(...ts) < TIER2_T || !(o.adv > 0 && n.adv > 0) || !(o.noTop2 > 0 && n.noTop2 > 0)) return null;
   // (review S-13) the stress cost: rebuy.json gives it for the newer half only (results.stress); no older-half stress figure exists in its output

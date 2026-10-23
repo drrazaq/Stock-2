@@ -68,3 +68,14 @@ test('LONGER HOLDS: a negative live league record (3+ months scored, behind the 
 });
 
 test('no network was touched', () => assert.deepEqual(blocked, []));
+
+// Agent A, 23 Oct (A-SWR1): counted in USD against simply holding, with failed buy-backs counted, the switch lost (-2.8% / -3.4% per
+// switch in the newer half) and was NOT PROVEN. The owner's pre-agreed consequence: tier 2 off for the switch while that verdict stands.
+test('switch rule: the USD switch-vs-holding test (A-SWR1) not passed -> null', async () => {
+  const S = await loadScan({ files: { 'data/settings.json': { tier2: true }, 'data/agent-a-lab.json': { verdicts: { 'A-SWR1/STRETCH/LOWER10': 'NOT PROVEN', 'A-SWR1/SPIKE/LOWER10': 'NOT PROVEN', 'A-ROT1/6m': 'REJECTED' } } } });
+  assert.equal(S.fn('swTier')(rule()), null);
+});
+test('switch rule: A-SWR1 passed for that trigger -> the old test still decides', async () => {
+  const S = await loadScan({ files: { 'data/settings.json': { tier2: true }, 'data/agent-a-lab.json': { verdicts: { 'A-SWR1/STRETCH/LOWER10': 'TRADABLE SMALL' } } } });
+  assert.equal(S.fn('swTier')(rule()), 'small');
+});
