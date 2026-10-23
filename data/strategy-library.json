@@ -12631,28 +12631,104 @@
    "family": "Untested angles",
    "name": "Russell 2000 addition from below (predicted on rank day)",
    "explain": "On each Russell rank day (table RUSSELL), total market value = close x SEC share count known 30 days earlier (common stocks; one ticker per company). Predicted ADDITION from below: market value now >= the published smallest Russell 2000 company and < the published 1000/2000 breakpoint, AND on the previous rank day the company traded with a market value under that year's smallest Russell 2000 company (so it was not in the Russell 3000). Liquid on rank day. Buy the next open, sell the close of the reconstitution Friday. Hold field 40 (blocks): one block per year. Source(s): Madhavan (2003) The Russell Reconstitution Effect, Financial Analysts Journal 59(4); Dimensional (2024) Even Migrating Stocks Face Index Reconstitution Costs (2014-2023: R2000 migrating additions +1.2% vs the R2000 in the 20 days before recon, -0.95% in the 20 after). Reported: additions earn positive excess returns between rank day and reconstitution, then partly reverse.",
-   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "angles",
    "libraryCheck": "E6 / ANOM-IDXADD (index inclusion: needs data, S&P announcement dates); C-SPEC1 (queued, S&P additions). Russell additions predicted from market value were never tested",
    "sources": [
     "https://doi.org/10.2469/faj.v59.n4.2545",
     "https://www.dimensional.com/us-en/insights/even-migrating-stocks-face-index-reconstitution-costs"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 40 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 40 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "angles-lab.mjs -> data/angles-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     15,
+     63
+    ],
+    "avg": [
+     -0.0493,
+     0.0458
+    ],
+    "stress": [
+     -0.0533,
+     0.0418
+    ],
+    "edge": [
+     -0.064,
+     0.0375
+    ],
+    "vsOwn": [
+     -0.0342,
+     0.0872
+    ],
+    "noTop2": [
+     -0.1201,
+     -0.0106
+    ],
+    "tBlock": [
+     null,
+     0.35
+    ],
+    "win": [
+     0.3333,
+     0.4286
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (15 cases, 1 blocks / 63 cases, 3 blocks)"
+   }
   },
   {
    "id": "ANG-RUS-DOWN",
    "family": "Untested angles",
    "name": "Russell 1000 -> 2000 migrant (predicted on rank day)",
    "explain": "On each rank day: the company had a market value >= the previous year's 1000/2000 breakpoint on the previous rank day (a Russell 1000 member), and now sits BELOW the Russell 1000 band: ranked by market value, its cumulative share of the total market value of all ranked companies is more than 2.5 percentage points past the cumulative share at the published breakpoint (banding), and its value is >= the smallest Russell 2000 company. Liquid. Buy the next open, sell the close of the reconstitution Friday. Source(s): Chang, Hong & Liskovich (2015) Regression Discontinuity and the Price Effects of Stock Market Indexing, Review of Financial Studies 28(1); Madhavan (2003) FAJ 59(4). Reported: stocks moving from the Russell 1000 to the top of the Russell 2000 rise into reconstitution (index-fund demand per dollar of value is much larger in the 2000).",
-   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "angles",
    "libraryCheck": "none (E6 / ANOM-IDXADD are S&P additions)",
    "sources": [
     "https://doi.org/10.1093/rfs/hhu041",
     "https://doi.org/10.2469/faj.v59.n4.2545"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 40 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 40 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "angles-lab.mjs -> data/angles-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     0,
+     11
+    ],
+    "avg": [
+     null,
+     -0.1865
+    ],
+    "stress": [
+     null,
+     -0.1905
+    ],
+    "edge": [
+     null,
+     -0.2277
+    ],
+    "vsOwn": [
+     null,
+     -0.1211
+    ],
+    "noTop2": [
+     null,
+     -0.2404
+    ],
+    "tBlock": [
+     null,
+     null
+    ],
+    "win": [
+     null,
+     0.0909
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 11 cases, 1 blocks)"
+   }
   },
   {
    "id": "ANG-IPOBASE",
