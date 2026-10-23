@@ -2086,18 +2086,32 @@
    "family": "ETF and asset rotation",
    "name": "Sector ETF momentum rotation",
    "explain": "Each month hold the 3 sector ETFs with the best 6-month return (12-1 month version too); test only ETFs ZAD allows. Compare with holding SPUS/HLAL and the S&P 500.",
-   "status": "queued (Agent A, FIRST on Sunday 25 Oct)",
+   "status": "tested: rejected",
    "agent": "A",
-   "note": "User 20 Oct: open the system to every channel, not only single stocks. Needs the ETF prices (Massive / Twelve Data); halal by ZAD only. 23 Oct: moved to the front of Agent A queue (owner sources: sector momentum is a selection edge, and selection is where the system has found its strongest results: V15, chain layers). Judged at PROVEN and TRADABLE SMALL."
+   "note": "User 20 Oct: open the system to every channel, not only single stocks. Needs the ETF prices (Massive / Twelve Data); halal by ZAD only. 23 Oct: moved to the front of Agent A queue (owner sources: sector momentum is a selection edge, and selection is where the system has found its strongest results: V15, chain layers). Judged at PROVEN and TRADABLE SMALL.",
+   "tested": "2026-10-23",
+   "study": "agent-a-lab.mjs -> data/agent-a-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "6m": "REJECTED: behind SPUS in the older half (-0.89% a month); behind HLAL in the older half (-0.55% a month); behind S&P 500 in the older half (-0.61% a month); not better than the same funds held equally in the older half; not ahead without its 2 best months in the older half; behind SPUS in the newer half (-0.33% a month); behind HLAL in the newer half (-0.33% a month); behind S&P 500 in the newer half (-0.15",
+    "12-1": "REJECTED: behind SPUS in the older half (-0.64% a month); behind HLAL in the older half (-0.20% a month); behind S&P 500 in the older half (-0.34% a month); not better than the same funds held equally in the older half; not ahead without its 2 best months in the older half; behind SPUS in the newer half (-0.13% a month); behind HLAL in the newer half (-0.12% a month); ahead of S&P 500 in the newer half but ",
+    "halal": "ZAD check needed for every fund ZAD has not listed"
+   }
   },
   {
    "id": "A-ROT2",
    "family": "ETF and asset rotation",
    "name": "Halal asset rotation: stocks vs gold vs cash",
    "explain": "Each month hold SPUS/HLAL if above its 10-month average, otherwise a ZAD-allowed gold ETF or cash (Faber-style trend rule). Compare with always holding SPUS/HLAL.",
-   "status": "queued (Agent A, FIRST on Sunday 25 Oct)",
+   "status": "tested: rejected",
    "agent": "A",
-   "note": "User 20 Oct: open the system to every channel, not only single stocks. Needs the ETF prices (Massive / Twelve Data); halal by ZAD only. 23 Oct: moved to the front of Agent A queue (owner sources: sector momentum is a selection edge, and selection is where the system has found its strongest results: V15, chain layers). Judged at PROVEN and TRADABLE SMALL."
+   "note": "User 20 Oct: open the system to every channel, not only single stocks. Needs the ETF prices (Massive / Twelve Data); halal by ZAD only. 23 Oct: moved to the front of Agent A queue (owner sources: sector momentum is a selection edge, and selection is where the system has found its strongest results: V15, chain layers). Judged at PROVEN and TRADABLE SMALL.",
+   "tested": "2026-10-23",
+   "study": "agent-a-lab.mjs -> data/agent-a-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "SPUS": "REJECTED: behind SPUS in the older half (-0.07% a month); not ahead without its 2 best months in the older half; behind SPUS in the newer half (-0.75% a month); not ahead without its 2 best months in the newer half",
+    "HLAL": "REJECTED: behind HLAL in the older half (-0.39% a month); not ahead without its 2 best months in the older half; behind HLAL in the newer half (-0.86% a month); not ahead without its 2 best months in the newer half",
+    "halal": "ZAD check needed for every fund ZAD has not listed"
+   }
   },
   {
    "id": "A-SW1",
@@ -2851,9 +2865,16 @@
    "family": "Company events",
    "name": "Earnings drift on the whole liquid market (not only the 270 tested companies)",
    "explain": "The E1 study ran on the ~270 companies whose earnings history was fetched; the live rule fires on every liquid US stock. Re-run the same frozen rule on the whole liquid market incl. dead stocks (earnings history from the official calendar sources; budget the calls over several weeks if needed), both halves, 0.8%/1.2% cost, the three yardsticks, without the 2 best. Report separately: the 270 tested companies, the rest, and the whole. Until this is done, live signals outside the tested set are labelled and recorded apart.",
-   "status": "queued (Agent A, high priority)",
+   "status": "tested: not proven",
    "agent": "A",
-   "note": "From the 22 Oct audit: the live universe is wider than the tested one. Not a rule change; a coverage test."
+   "note": "From the 22 Oct audit: the live universe is wider than the tested one. Not a rule change; a coverage test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-lab.mjs -> data/agent-a-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "tested270": "NOT PROVEN: lost money after 1.2% costs in the older half (-0.12%); not better than the S&P 500 in the older half (-0.33%); loses without its 2 best trades in the older half; date-clustered t -0.12 under 2.5 in the older half; date-clustered t 1.06 under 2.5 in the newer half",
+    "rest": "REJECTED: lost money after 0.8% costs in the older half (-0.79%); lost money after 1.2% costs in the older half (-1.19%); not better than the average stock in the older half (-0.76%); not better than the S&P 500 in the older half (-1.05%); loses without its 2 best trades in the older half; date-clustered t -2.5 under 2.5 in the older half; lost money after 0.8% costs in the newer half (-0.20%); lost money a",
+    "whole": "REJECTED: lost money after 0.8% costs in the older half (-0.69%); lost money after 1.2% costs in the older half (-1.09%); not better than the average stock in the older half (-0.66%); not better than the S&P 500 in the older half (-0.99%); loses without its 2 best trades in the older half; date-clustered t -2.39 under 2.5 in the older half; lost money after 1.2% costs in the newer half (-0.39%); not better "
+   }
   },
   {
    "id": "WEB-SCOUT",
@@ -3053,9 +3074,15 @@
    "family": "Exits and risk",
    "name": "Switch vs doing nothing, including the failed re-entry",
    "explain": "Re-score the sell-high/buy-back switch (STRETCH and SPIKE, buy back 10% lower) as the incremental result against simply holding: (1) hold, (2) sell and buy back under the rule, (3) sell and never re-enter because the stock kept rising; case 3 counted at its opportunity cost, not dropped. Report the share that never re-entered and the net effect per switch vs hold, at 0.8%/1.2% cost. No change to the live rule; a yardstick check on its tier-2 status.",
-   "status": "queued (Agent A)",
+   "status": "tested: not proven",
    "agent": "A",
-   "note": "Registered 22 Oct as A-SW4, which collided with an existing swing-lab ID and was never saved; re-registered under this ID the same evening."
+   "note": "Registered 22 Oct as A-SW4, which collided with an existing swing-lab ID and was never saved; re-registered under this ID the same evening.",
+   "tested": "2026-10-23",
+   "study": "agent-a-lab.mjs -> data/agent-a-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "STRETCH/LOWER10": "NOT PROVEN: ahead in the older half but month by month t 0.49 under 2.5; ahead at 1.2% cost in the older half but month by month t 0.2 under 2.5; holding did better in the newer half (-2.77% per switch in USD); holding did better at 1.2% cost in the newer half (-3.18%); not ahead without its 2 best switches in the newer half",
+    "SPIKE/LOWER10": "NOT PROVEN: ahead in the older half but month by month t 1.5 under 2.5; ahead at 1.2% cost in the older half but month by month t 1.05 under 2.5; holding did better in the newer half (-3.41% per switch in USD); holding did better at 1.2% cost in the newer half (-3.81%); not better than switching the same stocks on their other days in the newer half (-0.18%); not ahead without its 2 best switches in the newer "
+   }
   },
   {
    "id": "CAT-RUN1",
