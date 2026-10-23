@@ -43,6 +43,7 @@ jobs:
         timeout-minutes: 160
         run: |
           set -o pipefail
+          if tail -n 1 run-expert-now.txt 2>/dev/null | grep -q PROBE2; then export PROBE2=1; fi
           if tail -n 1 run-expert-now.txt 2>/dev/null | grep -q PROBE; then node expert-probe.mjs 2>&1 | tee run.log; exit 0; fi
           node expert-lab.mjs 2>&1 | tee run.log
         env:
