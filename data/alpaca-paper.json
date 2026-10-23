@@ -1,15 +1,5 @@
 {
  "plans": {
-  "CLS": {
-   "kind": "quick",
-   "q": "low",
-   "maxHold": 7,
-   "stop": 309.1062,
-   "kindName": "quick trade",
-   "entry": 331.13,
-   "qty": 2,
-   "since": "2026-10-13"
-  },
   "IOVA": {
    "kind": "leader",
    "stop": 12.19,
@@ -49,18 +39,18 @@
    "since": "2026-10-22"
   }
  },
- "pendingBuy": {},
- "pendingExit": {
-  "CLS": {
-   "id": "f9f0ef5e-eed9-4270-b5a3-fcafc4edd222",
-   "entry": 331.13,
-   "qty": 2,
-   "kind": "quick",
-   "kindName": "quick trade",
-   "why": "time limit",
-   "since": "2026-10-13"
+ "pendingBuy": {
+  "TXG": {
+   "id": "cf8244b0-f844-448b-ab1c-20d3cccde194",
+   "d": "2026-10-23",
+   "plan": {
+    "kind": "leader",
+    "stop": 52.24,
+    "kindName": "trend trade"
+   }
   }
  },
+ "pendingExit": {},
  "closed": [
   {
    "sym": "ALNT",
@@ -119,6 +109,18 @@
    "why": "stop, same day as the fill",
    "in": "2026-10-22",
    "out": "2026-10-22"
+  },
+  {
+   "sym": "CLS",
+   "kind": "quick",
+   "engine": "quick trade",
+   "entry": 331.13,
+   "exit": 261.725,
+   "pct": -0.2096,
+   "net": -0.21866,
+   "why": "time limit",
+   "in": "2026-10-13",
+   "out": "2026-10-23"
   }
  ],
  "start": {
@@ -126,7 +128,7 @@
   "equity": 100000
  },
  "equity": {
-  "d": "2026-10-22",
-  "equity": 99677.93
+  "d": "2026-10-23",
+  "equity": 99637.47
  }
 }
