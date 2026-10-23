@@ -4,7 +4,8 @@ name: Expert lab
 # by US POINT IN TIME from official / licensed data only (FMP analyst grades, SEC 13F data sets, SEC Form 4 data sets, Alpha Vantage
 # Congress trades). Pre-registered rules EXP-* (data/strategy-library.json), each run ONCE on the history the data allows (first verdict
 # frozen in data/expert-lab.json), plus a forward PAPER record. Never places an order. Commits only its own files and its own library entries.
-# Start by hand: change run-expert-now.txt (last line PROBE = endpoint check only) or run the workflow.
+# Start by hand: change run-expert-now.txt (last line PROBE / PROBE2 / PROBE3 = endpoint checks only; DIAG = data and coverage only,
+# no returns computed, nothing frozen) or run the workflow.
 on:
   schedule:
     - cron: '50 22 * * 1-5'   # weekdays after the US close and the daily bars
@@ -46,6 +47,7 @@ jobs:
           if tail -n 1 run-expert-now.txt 2>/dev/null | grep -q PROBE2; then export PROBE2=1; fi
           if tail -n 1 run-expert-now.txt 2>/dev/null | grep -q PROBE3; then export PROBE3=1; fi
           if tail -n 1 run-expert-now.txt 2>/dev/null | grep -q PROBE; then node expert-probe.mjs 2>&1 | tee run.log; exit 0; fi
+          if tail -n 1 run-expert-now.txt 2>/dev/null | grep -q DIAG && [ "${{ github.event_name }}" != schedule ]; then export DIAG=1; fi
           node expert-lab.mjs 2>&1 | tee run.log
         env:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}

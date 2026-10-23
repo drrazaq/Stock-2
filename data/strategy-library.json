@@ -5007,6 +5007,69 @@
    "status": "needs data",
    "agent": "decoded",
    "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
+  },
+  {
+   "id": "EXP-AN1",
+   "family": "Ranked experts",
+   "name": "Top-10% analyst firm: upgrade into buy or initiation at buy (hold 63)",
+   "explain": "A firm upgrades a stock from a non-buy grade into buy, or initiates at buy (FMP grades history). Firm = top 10% by its earlier buy calls (63-session excess over the average stock; success rate and average, percentiles averaged; min 20 resolved calls in the last 3 years; 30+ eligible firms). Hold 63 sessions.",
+   "status": "collecting data (FMP free plan: grades history for part of the market, 20 calls per run)",
+   "agent": "expert",
+   "note": "Overlaps E5 (Analyst upgrades, collecting data): E5 is every upgrade; this is the ranked-firm version. Evidence: Mikhail, Walther and Willis (JFE 2004) persistence in analysts stock picking, but no net profit after costs for a follower acting days later. Firm level only: analyst-level history (TipRanks-style) is not licensed on the current plans (Finnhub upgrade-downgrade 403, Massive Benzinga 403, FMP price-target-news 402). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
+  },
+  {
+   "id": "EXP-AN2",
+   "family": "Ranked experts",
+   "name": "2+ top-10% analyst firms turn buy on the same stock within 10 sessions (hold 63)",
+   "explain": "Cluster of EXP-AN1 calls by 2+ different top-10% firms within 10 sessions; buy the next open after the completing call. Hold 63.",
+   "status": "collecting data (same as EXP-AN1)",
+   "agent": "expert",
+   "note": "Overlaps E5. Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
+  },
+  {
+   "id": "EXP-13F1",
+   "family": "Ranked experts",
+   "name": "Top-10% 13F manager: new position or large add of 1%+ of the book (hold 126)",
+   "explain": "SEC Form 13F data sets: managers with 10-150 share positions and 100M USD+. Signal = a NEW position or a LARGE ADD (value growth / split-adjusted price growth >= 1.5x since the previous 13F) worth >= 1% of the book, by a manager in the top 10% by the follow return of its earlier 13Fs (20 largest positions bought after each filing, 63 sessions vs the average stock; last 8 resolved filings, min 4; 30+ eligible managers). Buy after the FILING date (up to 45 days after the quarter). Hold 126.",
+   "status": "pre-registered 23 Oct 2026; first run pending (expert lab)",
+   "agent": "expert",
+   "note": "Overlaps C-13F1 (queued, Agent C: 3+ concentrated funds, no ranking) and the follow lane 13F scoring (follow-lane.mjs, 20 seed funds). Evidence: Cohen, Polk and Silli Best Ideas (managers top-conviction stocks beat by 1-4% a quarter, 1991-2005, gross). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
+  },
+  {
+   "id": "EXP-13F2",
+   "family": "Ranked experts",
+   "name": "2+ top-10% 13F managers buy the same stock within 45 days (hold 126)",
+   "explain": "EXP-13F1 moves by 2+ different top-10% managers with filing dates within 45 days; buy after the completing filing. Hold 126.",
+   "status": "pre-registered 23 Oct 2026; first run pending (expert lab)",
+   "agent": "expert",
+   "note": "Overlaps C-13F1. Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
+  },
+  {
+   "id": "EXP-INS1",
+   "family": "Ranked experts",
+   "name": "Purchase by a top-10% insider, ranked by the insider own earlier purchases (hold 126)",
+   "explain": "SEC Form 4 open-market purchases (code P, 10,000 USD+; insider-study.mjs cache). Insider = top 10% by earlier purchase days (126-session excess over the average stock; min 2 resolved; 30+ eligible insiders). Hold 126.",
+   "status": "pre-registered 23 Oct 2026; first run pending (expert lab)",
+   "agent": "expert",
+   "note": "Overlaps E3 (insider clusters, tested: not proven), C-INS2 (rejected), C-INS3 (opportunistic insiders, queued). New angle: the insider OWN past record (persistently profitable insiders, SSRN 2948387). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
+  },
+  {
+   "id": "EXP-CONG1",
+   "family": "Ranked experts",
+   "name": "Purchase by a top-10% Congress member, ranked by earlier disclosed purchases (hold 126)",
+   "explain": "Each purchase on its DISCLOSURE date; member = top 10% by earlier purchases (126-session excess; min 5 resolved). Hold 126.",
+   "status": "needs data",
+   "agent": "expert",
+   "note": "Overlaps C-CONG1 (needs data) and the follow lane (Congress members scored as tip sources). Evidence: Belmont et al. (J Public Econ 2022, 2012-2020) no edge. Unlock: FMP Starter senate/house trades or an Alpha Vantage premium key (the free 25 calls a day are used by follow-lane and earnings-study). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
+  },
+  {
+   "id": "EXP-ETORO1",
+   "family": "Ranked experts",
+   "name": "New long by a top-ranked eToro Popular Investor (forward paper, hold 63)",
+   "explain": "eToro public API rankings (2-year gain, risk score <= 5, 50+ copiers, Popular Investors): the top 20; each NEW unleveraged long US-stock position in their live portfolios (daily snapshot) is a paper signal; hold 63. Forward only: the API has no dated trade history.",
+   "status": "needs owner keys (ETORO_KEY, ETORO_USER_KEY)",
+   "agent": "expert",
+   "note": "Overlaps FOLLOW-KINFO (broker-verified traders) and the follow lane. Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
   }
  ]
 }
