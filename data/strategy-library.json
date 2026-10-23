@@ -3470,6 +3470,15 @@
    "status": "queued (discovery engine, after the 1 Nov batch)",
    "agent": "A",
    "note": "23 Oct: round 2 found mainly a volatility profile (runners had just crashed, about 50% under the 52-week high), because look-alikes were not matched on volatility. Registered before any run."
+  },
+  {
+   "id": "B-FCF1",
+   "family": "Quality and value",
+   "name": "Cash-rich, growing, low-debt companies (the measurable filters from the chain screener)",
+   "explain": "Monthly basket, point in time from SEC XBRL (10-Q/10-K as filed): free-cash-flow yield > 5% (trailing 4 quarters operating cash flow minus capex, over market cap), revenue growth >= 10% year on year, debt-to-equity < 0.5, and, for companies that hold inventory, days of inventory < 60; stock above its 200-day average. Equal weight, hold 3 months. Compared with the average stock, with V15 (F-score in an uptrend) on the same dates, and with the same stocks in months they did not qualify; both halves, 0.8%/1.2% cost, without the 2 best, t >= 2.5. Supplier diversification and on-time delivery are not public data and are left out.",
+   "status": "queued (Agent B, Tuesday 27 Oct)",
+   "agent": "B",
+   "note": "From the owner's Stock Chain Screener image and prompts of 23 Oct. Pre-registered before any run. Low debt also fits common halal screens, but halal stays ZAD's decision."
   }
  ]
 }
