@@ -257,9 +257,16 @@ if (!DIAG) {
         const tp = lastOnOrBefore(per || R.filingDate[q]), cur = new Map([...agg].map(([cu, h]) => { const s = CMAP[cu], i = s ? SY.get(s) : undefined; return [cu, { v: h[0], sym: s, i, px: i !== undefined ? closeAt(i, tp) : null }]; }));
         const dsf = lastHold.get(String(cik)), lv = (LIVE.h13 || {})[cik], pf = lv && (!dsf || lv.p > dsf.p) ? lv : dsf, prev = pf && pf.p < (per || R.filingDate[q]) && Date.parse(per || R.filingDate[q]) - Date.parse(pf.p) <= 200 * 864e5 ? new Map(pf.h.map(([cu, v]) => { const s = CMAP[cu], i = s ? SY.get(s) : undefined; return [cu, { v, px: i !== undefined ? closeAt(i, lastOnOrBefore(pf.p)) : null }]; })) : null;
         (LIVE.h13 = LIVE.h13 || {})[cik] = { p: per || R.filingDate[q], h: [...agg].map(([cu, h]) => [cu, Math.round(h[0])]) };
-        for (const ch of holdingChanges(prev, cur, 0.01)) { const h = cur.get(ch.id); if (h.sym) addSignal('EXP-13F1', h.sym, R.filingDate[q], { manager: sub.name || cik, kind: ch.kind, weight: r4(ch.w) }); }
+        for (const ch of holdingChanges(prev, cur, 0.01)) { const h = cur.get(ch.id); if (h.sym) addSignal('EXP-13F1', h.sym, R.filingDate[q], { manager: sub.name || cik, cik: String(cik), kind: ch.kind, weight: r4(ch.w) }); }
         LIVE.f13[acc] = R.filingDate[q]; filings++; } }
     paperNote['EXP-13F1'] = top.length + ' top managers checked, ' + filings + ' new 13F filings since ' + START; }
+  // 13F2 live: 2+ different top managers' EXP-13F1 moves in the same stock with filing dates within 45 days (data-set signals of the last 45
+  // days + paper signals); a cluster completed on or after START is a paper signal
+  { const day = (d) => Math.round(Date.parse(d) / 864e5), from = iso(Date.parse(START) - 45 * 864e5), pool = [];
+    for (const s0 of SIG['EXP-13F1'] || []) if (s0.d >= from) pool.push({ sym: s0.sym, t: day(s0.d), who: String(s0.who) });
+    for (const x of [...lines, ...newLines]) if (x.type === 'signal' && x.m === 'EXP-13F1' && x.info) pool.push({ sym: x.sym, t: day(x.d), who: String(x.info.cik || x.info.manager) });
+    let n = 0; for (const c of clusterSignals(pool, RULES['EXP-13F2'].cluster.days, 2)) { const d = iso(c.t * 864e5); if (d >= START) { addSignal('EXP-13F2', c.sym, d, { managers: c.who.length }); n++; } }
+    paperNote['EXP-13F2'] = n + ' clusters of 2+ top managers since ' + START; }
   // Form 4: new purchases by the CURRENT top insiders (EDGAR submissions of each insider)
   { const top = TOPNOW['EXP-INS1'] || []; let forms = 0;
     for (const cik of top) { const sub = await sec(SECD + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json'); if (!sub || !sub.filings) continue; const R = sub.filings.recent;
