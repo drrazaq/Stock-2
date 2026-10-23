@@ -149,13 +149,17 @@ const RES = {}, DIAGS = {}, PICKS_TODAY = {};
   const top10 = (t) => { const rows = []; for (let i = 0; i < NS; i++) { if (i === spyI || !liquid(i, t) || above200(i, t) !== true) continue; const f = fsAt(i, t); if (f !== null && f >= 8) rows.push({ i, f, dv: dollarVol(i, t) }); }
     return rows.sort((a, b) => b.f - a.f || b.dv - a.dv).slice(0, 10).map(x => x.i); };
   const B = firstSundayNext.map(t => ({ t, syms: top10(t) })), ETF = ['SPUS', 'HLAL'].map(s => [s, SY.get(s)]);
-  DIAGS['B-BASK1'] = { months: B.length, namesPerMonth: B.map(b => b.syms.length), etfsInCache: ETF.filter(([, i]) => i !== undefined).map(([s]) => s) };
+  // SPUS / HLAL trade under the cache's 1M USD a day filter: their daily bars come from Massive (same source as the cache), by date
+  const etfBars = {}; for (const [s, i] of ETF) { if (i !== undefined || !env.MASSIVE_KEY) continue; try { const r = await fetch((local(env.MASSIVE_BASE) || 'https://api.massive.com') + '/v2/aggs/ticker/' + s + '/range/1/day/' + D[0] + '/' + D[T - 1] + '?adjusted=true&sort=asc&limit=50000&apiKey=' + encodeURIComponent(env.MASSIVE_KEY), { signal: AbortSignal.timeout(60000) });
+    const j = r.ok ? await r.json() : null; if (j && Array.isArray(j.results)) { const m = {}; for (const b of j.results) m[new Date(b.t).toISOString().slice(0, 10)] = { o: b.o, c: b.c }; etfBars[s] = m; } } catch (e) {} }
+  const etfFwd = (s, i, t, h) => { if (i !== undefined) return fwd(i, t, h); const m = etfBars[s]; if (!m || t + h >= T) return null; const a = m[D[t + 1]], b = m[D[t + h]]; return a && b && a.o > 0 && b.c > 0 ? b.c / a.o - 1 : null; };
+  DIAGS['B-BASK1'] = { months: B.length, namesPerMonth: B.map(b => b.syms.length), etfsInCache: ETF.filter(([, i]) => i !== undefined).map(([s]) => s), etfsFromMassive: Object.entries(etfBars).map(([s, m]) => s + ' ' + Object.keys(m).length + ' days') };
   if (!DIAG) for (const h of [21, 63]) { const mid = midOf(B.filter(b => b.syms.length).map(b => b.t)), months = [];
       // the same stocks on the other basket months of the same half (not picked that month)
       const pickedAt = new Set(); for (const b of B) for (const i of b.syms) pickedAt.add(i + '_' + b.t);
       const own = (i, t) => { const half = t < mid, v = []; for (const b of B) { if ((b.t < mid) !== half || pickedAt.has(i + '_' + b.t) || !liquid(i, b.t)) continue; const g = fwdM(i, b.t, h); if (g !== null && Math.abs(g) < 3) v.push(g); } return v.length >= 3 ? mean(v) : null; };
       for (const b of B) { if (!b.syms.length) continue; const c = ctrl(b.t, h); if (c === null) continue; const g = b.syms.map(i => fwdM(i, b.t, h)).filter(x => x !== null && isFinite(x)); if (g.length < b.syms.length * 0.8) continue;
-        const ow = b.syms.map(i => own(i, b.t)).filter(x => x !== null), etf = Object.fromEntries(ETF.map(([s, i]) => [s, i === undefined ? null : r4(fwd(i, b.t, h))]));
+        const ow = b.syms.map(i => own(i, b.t)).filter(x => x !== null), etf = Object.fromEntries(ETF.map(([s, i]) => [s, r4(etfFwd(s, i, b.t, h))]));
         months.push({ t: b.t, s: 'basket ' + D[b.t + 1], g: mean(g), c, own: ow.length >= 5 ? mean(ow) : null, h, half: b.t < mid ? 'older' : 'newer', etf, names: b.syms.map(i => SYMS[i]) }); }
       const R = halves(months, h), net = months.map(m => m.g - COST), cmp = (k) => { const z = months.filter(m => m.half === k); const e = (s) => { const v = z.filter(m => m.etf[s] !== null); return v.length ? { months: v.length, basket: r4(mean(v.map(m => m.g - COST))), etf: r4(mean(v.map(m => m.etf[s]))), beaten: v.filter(m => m.g - COST > m.etf[s]).length } : null; }; return { SPUS: e('SPUS'), HLAL: e('HLAL') }; };
       RES['B-BASK1_' + (h === 21 ? '1m' : '3m')] = { ...judge(R, { bar: BAR }), results: R, hold: h, split: D[mid], distinctMonths: months.length, medianMonth: r4(median(net)), worstMonth: r4(Math.min(...net)), bestMonth: r4(Math.max(...net)),
