@@ -2937,6 +2937,60 @@
    "explain": "Reconstruct whether OCGN would have fired under CAT-RUN1 / CAT-NEWS1 on its known runs, with dates, and say plainly whether the rules catch it. One stock cannot prove or disprove a rule; it is never counted as a test.",
    "status": "illustration (not a test)",
    "note": "Added 23 Oct 2026 with CAT-RUN1/CAT-NEWS1."
+  },
+  {
+   "id": "CAT-SYMP1",
+   "family": "Company events",
+   "name": "Sector sympathy after a big biotech win",
+   "explain": "When a biotech/medtech company has a positive Phase 3 readout, an FDA approval/acceptance, or is bought at a 50%+ premium (8-K, official), buy at the next open the other listed companies in the same SIC group that have an announced catalyst within 12 months and have not risen 15% in the last 5 sessions; hold 20 sessions; stop 15%. Dilution (424B5/S-3 in 20 sessions) and lottery-like stocks excluded. Example given: the rare-blood-disease group lift after the IRON Phase 3 result and a same-day acquisition at a 130% premium (Oct 2026).",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
+  },
+  {
+   "id": "C-SQZ1",
+   "family": "Share supply",
+   "name": "High short interest plus fresh news",
+   "explain": "Short interest in the top decile (official FINRA bi-monthly files) AND 2+ positive company 8-Ks in the last 10 sessions AND volume 2x its 20-day average: buy at the next open, sell at the close 3 sessions later. Needs the FINRA short-interest loader (C-SI1).",
+   "status": "needs data (FINRA short-interest files)",
+   "agent": "C",
+   "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
+  },
+  {
+   "id": "B-V15BE",
+   "family": "Exits and risk",
+   "name": "LONGER HOLDS with a break-even stop after +15%",
+   "explain": "Same buy as V15 (F-score 8-9, above the 200-day). Exit variant registered as its own test: when the stock is 15% above the buy, the stop moves to the buy price; otherwise unchanged (25% stop, SELL WITH PROFIT 30%+ above the 50-day, review at 6 months). Compared with the V15 exits on the same buys; the live V15 rule is not changed.",
+   "status": "queued (Agent B)",
+   "agent": "B",
+   "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
+  },
+  {
+   "id": "C-SPEC1",
+   "family": "Company events",
+   "name": "Special situations: cash tender offers and index additions",
+   "explain": "(1) Announced all-cash tender offers / mergers for halal targets: buy at the next open after the 8-K/SC TO-T when the spread to the offer price is 3-15%, hold to close of the deal or 120 sessions, exit on deal break; report deal-break losses separately. (2) Additions to the S&P 500/400/600 announced by S&P (official press releases): buy at the next open after the announcement, sell at the close before the effective date. Halal of the target decided by ZAD.",
+   "status": "queued (Agent C)",
+   "agent": "C",
+   "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
+  },
+  {
+   "id": "A-HVD1",
+   "family": "Same-day (intraday)",
+   "name": "Highest-volume-day premarket setup",
+   "explain": "A stock whose premarket volume approaches its highest daily volume of the last year, then forms one consolidation; buy the break of the consolidation high, stop under its low. Needs real-time premarket bars; with the 15-minute delay it is a paper diagnostic only. Source: a small-cap trader's self-reported method (not verified).",
+   "status": "needs data (real-time premarket feed)",
+   "agent": "A",
+   "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
+  },
+  {
+   "id": "FOLLOW-KINFO",
+   "family": "Crowd",
+   "name": "Broker-verified traders as FOLLOW candidates",
+   "explain": "Kinfo publishes trader records linked to broker accounts. If its public pages or API allow it under its terms, add those traders' dated trades to the follow lane as the highest evidence grade; otherwise record 'needs access'. Screenshots of wins are never counted.",
+   "status": "queued (follow lane)",
+   "agent": "C",
+   "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
   }
  ]
 }
