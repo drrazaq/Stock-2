@@ -82,3 +82,15 @@ test('a rule failing its per-budget check is excluded even if its frozen first r
     'data/decoded-today.json': { generatedAt: now, methods: { 'DEC2-TPS': { newSignals: [{ sym: 'QLYS', close: 190 }] } } } } });
   assert.deepEqual(S5.fn('trySmallLines')({}, { QLYS: 190 }), []);
 });
+
+// 23 Oct, night: the anomaly lab (data/anomaly-lab.json, same frozen-first-run format) feeds TRY SMALL too. Qualifying on that night:
+// ANOM-52WH (hold 126), ANOM-RESMOM (63), ANOM-SUESURGE (60). Each pick uses its rule's own hold; stop 15% for holds up to ~3 months,
+// 35% (the tested disaster stop) for 6-month holds.
+test('anomaly-lab rules that meet the standard give buys with their own hold', async () => {
+  const S6 = await loadScan({ files: { ...files, 'data/value-lab.json': { firstRun: {} },
+    'data/anomaly-lab.json': { firstRun: { 'ANOM-RESMOM': { verdict: 'NOT PROVEN', hold: 63, results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } }, 'ANOM-DN': { verdict: 'REJECTED', hold: 21, results: { older: half(-0.01, -0.01, -0.01), newer: half(0.01, 0.01, 0.01) } } } },
+    'data/anomaly-today.json': { generatedAt: now, methods: { 'ANOM-RESMOM': { name: 'Residual momentum', hold: 63, newSignals: [{ sym: 'TPC', close: 78 }] }, 'ANOM-DN': { hold: 21, newSignals: [{ sym: 'QLYS', close: 190 }] } } } } });
+  const L = S6.fn('trySmallLines')({}, { TPC: 78 }).join('\n');
+  assert.match(L, /- BUY TPC 300 USD up to 80\.34\. STOP 66\.30 at your broker \(15%\)\. SELL after about 3 months \(63 sessions\).*ANOM-RESMOM \(Residual momentum\)/);
+  assert.doesNotMatch(L, /QLYS/);
+});
