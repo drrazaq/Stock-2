@@ -12487,10 +12487,50 @@
    "family": "Machine learning",
    "name": "Machine-learning weekly ranker (gradient-boosted trees): top 10 a week, hold 20 sessions",
    "explain": "Each week (last session), every liquid US stock (5 USD+, median 20-day dollar volume 5M+, dead stocks included) is scored by gradient-boosted trees on 41 point-in-time features (returns 5-252 sessions, 12-1 momentum, 52-week high/low distance, volatility, ADR, volume trend, intraday vs overnight share, up-day share, drawdown, gaps, sector-relative strength, market regime and breadth, FCF yield, revenue growth, debt/equity, F-score). Target: next-20-session return minus the average stock. Walk-forward: expanding window, retrained every quarter, predicts only the next quarter; first 12 months training only. Buy the top 10, equal weight, hold 20 sessions, 0.8% cost (1.2% stress), 35% disaster stop. Must beat a plain 12-1 momentum ranking and hold up on an untouched final-12-month holdout.",
-   "status": "pre-registered 24 Oct 2026 (ML lab); 5-year walk-forward one-shot pending",
+   "status": "tested: rejected; fails its registered extra gates; forward paper lane from 23 Oct 2026",
    "agent": "ml",
    "spec": "ml-spec.json",
-   "note": "Pre-registered 24 Oct 2026 BEFORE any training: ml-spec.json is the exact frozen rule (features, hyper-parameters, dates, gates). One version; no tuning. Run by ml-lab.mjs, first complete verdict frozen in data/ml-lab.json; forward paper lane data/ml-paper.jsonl from the decision of 23 Oct 2026 (entry Monday 26 Oct)."
+   "note": "Pre-registered 24 Oct 2026 BEFORE any training: ml-spec.json is the exact frozen rule (features, hyper-parameters, dates, gates). One version; no tuning. Run by ml-lab.mjs, first complete verdict frozen in data/ml-lab.json; forward paper lane data/ml-paper.jsonl from the decision of 23 Oct 2026 (entry Monday 26 Oct).",
+   "tested": "2026-10-23",
+   "study": "ml-lab.mjs -> data/ml-lab.json (walk-forward, run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     520,
+     520
+    ],
+    "avg": [
+     0.0193,
+     0.0159
+    ],
+    "stress": [
+     0.0153,
+     0.0119
+    ],
+    "edge": [
+     -0.0014,
+     0.0077
+    ],
+    "vsOwn": [
+     0.0253,
+     -0.0033
+    ],
+    "noTop2": [
+     0.0173,
+     0.0119
+    ],
+    "tBlock": [
+     0.49,
+     0.84
+    ],
+    "holdout": {
+     "n": 520,
+     "avg": -0.0077,
+     "edge": -0.0165,
+     "tBlock": -0.97
+    },
+    "why": "not better than the average stock in the older half; block t 0.49 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.84 under 2.5 in the newer half; does not beat the 12-1 momentum baseline in the older half (avg +1.9% vs +2.4%, edge -0.1% vs +0.3%); does not beat the 12-1 momentum baseline in the newer half (avg +1.6% vs +2.5%, edge +0.8% vs +1.7%); holdout: lost money after 0.8% cost (-0.8%); holdout: not better than the average stock (edge -1.7%)"
+   }
   },
   {
    "id": "CONF-2",
