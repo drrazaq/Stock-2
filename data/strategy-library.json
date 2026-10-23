@@ -3779,7 +3779,45 @@
    "explain": "Kristjan Kullamagi (Market Wizards: The Next Generation; about 5k USD to about 100M USD, statements reviewed by Schwager). Liquid; ADR >= 4%; prior move 30%+ (63-session high close vs the low of the 63 sessions before it); 10-session base range <= 2.5 ADR with higher lows, base high >= 85% of the 63-session high; 10-day avg > 20-day avg, 20-day rising, close >= 20-day avg and within 1 ADR under the base high; QQQ 10-day > 20-day, both rising. Buy-stop at the base high (5 sessions; cancelled by a close under the base low). Stop = entry-day low (worse than 1 ADR -> booked as stopped at 1 ADR). Sell 1/3 at the close of day 3 if in profit, stop to breakeven; rest at the next open after a close under the 10-day average; max 120 sessions. MIS-SPECIFIED BEFORE: T2/T3/T11/T12/R1 bought the next open after a close at a 1-year high, held a FIXED 5-60 sessions with no stop, no prior-move or ADR filter, no QQQ trend filter.",
    "status": "live paper from 26 Oct (decoded lane)",
    "agent": "decoded",
-   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost.",
+   "tested": "2026-10-23",
+   "study": "decoded-lab.mjs -> data/decoded-history.json (run once as written, first complete run frozen; information only, the paper lane runs regardless)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1333,
+     2372
+    ],
+    "avg": [
+     -0.0207,
+     -0.0131
+    ],
+    "stress": [
+     -0.0247,
+     -0.0171
+    ],
+    "edge": [
+     -0.0225,
+     -0.0124
+    ],
+    "vsOwn": [
+     0.0051,
+     0.0063
+    ],
+    "noTop2": [
+     -0.0221,
+     -0.0142
+    ],
+    "tBlock": [
+     -4.77,
+     -4.81
+    ],
+    "win": 0.2313,
+    "avgWin": 0.0887,
+    "avgLoss": -0.0473,
+    "pf": 0.5651,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -4.77 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -4.81 under 2.5 in the newer half"
+   }
   },
   {
    "id": "DEC-EP",
@@ -3788,7 +3826,45 @@
    "explain": "Kristjan Kullamagi. Opens 10%+ above the prior close, volume >= 3x the 50-day average, closes 10%+ up in the top half of its range; 63-session return to the prior close <= +20% (neglected); close 5 USD+, 20-day traded value 5M USD+. Buy the next open (handicap: the trader buys the opening-range high on the gap day). Stop = gap-day low, at most 1.5 ADR (pre-gap) under the entry; skipped if the open is at or under it. Exit as DEC-QBO (1/3 day 3, breakeven, 10-day trail, max 120). MIS-SPECIFIED BEFORE: I2/I5 power gap / gap-and-go held a fixed 5-20 sessions, any stock (no neglect filter), no stop or trail.",
    "status": "live paper from 26 Oct (decoded lane)",
    "agent": "decoded",
-   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost.",
+   "tested": "2026-10-23",
+   "study": "decoded-lab.mjs -> data/decoded-history.json (run once as written, first complete run frozen; information only, the paper lane runs regardless)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     593,
+     1388
+    ],
+    "avg": [
+     -0.0147,
+     -0.015
+    ],
+    "stress": [
+     -0.0187,
+     -0.019
+    ],
+    "edge": [
+     -0.0149,
+     -0.0229
+    ],
+    "vsOwn": [
+     0.0225,
+     0.0053
+    ],
+    "noTop2": [
+     -0.0189,
+     -0.031
+    ],
+    "tBlock": [
+     -1.2,
+     -2.36
+    ],
+    "win": 0.3089,
+    "avgWin": 0.1697,
+    "avgLoss": -0.0974,
+    "pf": 0.779,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.2 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.36 under 2.5 in the newer half"
+   }
   },
   {
    "id": "DEC-MB",
@@ -3797,7 +3873,45 @@
    "explain": "Pradeep Bonde (Stockbee). Close +4% on the prior close, volume above the prior day and >= 100k shares, close in the top 30% of the range, not after 3 up closes in a row; liquid. Breadth filter: 10-session sum of stocks up 4%+ / down 4%+ (5 USD+, 100k+ shares) >= 1.0. Buy the next open; stop = burst-day low (intraday); sell at the close of day 5. CLOSEST EARLIER TESTS: I1 (+8% day, 2x volume, 10 sessions), I6 (3 up days, 10 sessions), I5 (gap and go, 5), all failed; none had the day-low stop or the breadth filter. Low prior expectation (2-5 day entries were closed on 20 Oct).",
    "status": "live paper from 26 Oct (decoded lane)",
    "agent": "decoded",
-   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost.",
+   "tested": "2026-10-23",
+   "study": "decoded-lab.mjs -> data/decoded-history.json (run once as written, first complete run frozen; information only, the paper lane runs regardless)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     17807,
+     28861
+    ],
+    "avg": [
+     -0.0069,
+     -0.0065
+    ],
+    "stress": [
+     -0.0109,
+     -0.0105
+    ],
+    "edge": [
+     -0.0068,
+     -0.0074
+    ],
+    "vsOwn": [
+     0.0172,
+     0.0084
+    ],
+    "noTop2": [
+     -0.0071,
+     -0.0081
+    ],
+    "tBlock": [
+     -4.62,
+     -3.42
+    ],
+    "win": 0.3806,
+    "avgWin": 0.0712,
+    "avgLoss": -0.0545,
+    "pf": 0.8029,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -4.62 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -3.42 under 2.5 in the newer half"
+   }
   },
   {
    "id": "DEC-VCP",
@@ -3806,7 +3920,45 @@
    "explain": "Mark Minervini (US Investing Championship 1997 +155%, 2021 +334.8% in the 1M USD+ stock division, brokerage-statement verified) and William O'Neil (pivot buy range, 7-8% loss rule). Trend template: close > 50/150/200-day; 150 > 200; 200-day rising over 21 sessions; 50 > 150; close >= 1.3x the 52-week low and >= 0.75x the 52-week high; RS (0.4 r63 + 0.2 r126 + 0.2 r189 + 0.2 r252) in the top 30% of liquid stocks. Contraction depths of t-39..t-20 > t-19..t-10 > t-9..t, last <= 10%; 10-day volume < 50-day; close >= 93% of the pivot. SPY above its 50-day. Buy-stop at the pivot (5 sessions; no fill 5%+ above it; cancelled under the base low). Stop = base low, max 8%. After a +10% close the stop goes to the fill; sell 1/2 at +20%; rest at the next open after a close under the 50-day; max 252. NOT TESTED BEFORE as written (A-CP1 cup-and-handle is queued; T4/T12 fixed holds only).",
    "status": "live paper from 26 Oct (decoded lane)",
    "agent": "decoded",
-   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost.",
+   "tested": "2026-10-23",
+   "study": "decoded-lab.mjs -> data/decoded-history.json (run once as written, first complete run frozen; information only, the paper lane runs regardless)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1871,
+     4532
+    ],
+    "avg": [
+     -0.0074,
+     -0.0042
+    ],
+    "stress": [
+     -0.0114,
+     -0.0082
+    ],
+    "edge": [
+     -0.0068,
+     -0.0076
+    ],
+    "vsOwn": [
+     -0.0115,
+     -0.0057
+    ],
+    "noTop2": [
+     -0.0089,
+     -0.0057
+    ],
+    "tBlock": [
+     -1.64,
+     -1.72
+    ],
+    "win": 0.2547,
+    "avgWin": 0.1395,
+    "avgLoss": -0.0546,
+    "pf": 0.8736,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.64 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.72 under 2.5 in the newer half"
+   }
   },
   {
    "id": "DEC-PB",
@@ -3815,7 +3967,45 @@
    "explain": "Martin Luk (2025 USIC 20k+ stock division +969.8%, reported win rate about 15%, average win about 7x average loss) and Oliver Kell (2020 USIC +941.1%, EMA crossback). Up 30%+ over 21, 63 or 126 sessions; EMA9 > EMA21 > EMA50, EMA21 rising; the low touches the 21-day EMA (<= 0.5% above) and the close is back above it, above the open, top half of range; liquid. Buy the next open; stop = signal-day low (skip if the open is under it or the stop is 8%+ away); sell at the next open after a close under the 9-day EMA; max 60. CLOSEST EARLIER TESTS: T5 pullback in a full uptrend and A-SMC2 (fixed holds, no tight stop, no trail).",
    "status": "live paper from 26 Oct (decoded lane)",
    "agent": "decoded",
-   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost.",
+   "tested": "2026-10-23",
+   "study": "decoded-lab.mjs -> data/decoded-history.json (run once as written, first complete run frozen; information only, the paper lane runs regardless)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     5987,
+     16736
+    ],
+    "avg": [
+     -0.0107,
+     -0.008
+    ],
+    "stress": [
+     -0.0147,
+     -0.012
+    ],
+    "edge": [
+     -0.0099,
+     -0.0082
+    ],
+    "vsOwn": [
+     0.0041,
+     0.0039
+    ],
+    "noTop2": [
+     -0.011,
+     -0.0082
+    ],
+    "tBlock": [
+     -5.16,
+     -7.75
+    ],
+    "win": 0.2229,
+    "avgWin": 0.0644,
+    "avgLoss": -0.0297,
+    "pf": 0.6227,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -5.16 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -7.75 under 2.5 in the newer half"
+   }
   },
   {
    "id": "DEC-FROG",
@@ -3824,7 +4014,45 @@
    "explain": "Da, Gurun and Warachka (Review of Financial Studies 2014; 1927-2007: continuous-information winners +5.94% over 6 months vs -2.07% for discrete). At the close of the first session of each month: liquid stocks, return from 252 to 21 sessions ago; top 30% = winners; ID = sign(return) x (% down days - % up days) over the same window; the 30 winners with the lowest ID; buy the next open, sell the close of day 126. MIS-SPECIFIED BEFORE: T20 / T23 used a 6-month window, an absolute up-30% filter and a 60-session hold on any day, not the paper's 12-1 ranking and 6-month hold.",
    "status": "live paper from 26 Oct (decoded lane)",
    "agent": "decoded",
-   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost.",
+   "tested": "2026-10-23",
+   "study": "decoded-lab.mjs -> data/decoded-history.json (run once as written, first complete run frozen; information only, the paper lane runs regardless)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     166,
+     286
+    ],
+    "avg": [
+     0.0634,
+     0.1109
+    ],
+    "stress": [
+     0.0594,
+     0.1069
+    ],
+    "edge": [
+     0.0556,
+     0.0394
+    ],
+    "vsOwn": [
+     -0.0651,
+     0.0574
+    ],
+    "noTop2": [
+     0.0521,
+     0.0964
+    ],
+    "tBlock": [
+     1.66,
+     1.35
+    ],
+    "win": 0.6062,
+    "avgWin": 0.2432,
+    "avgLoss": -0.137,
+    "pf": 2.7323,
+    "why": "not better than the same stocks on their other days in the older half; block t 1.66 under 2.5 in the older half; block t 1.35 under 2.5 in the newer half"
+   }
   },
   {
    "id": "DEC-CRASH",
@@ -3833,7 +4061,45 @@
    "explain": "Coordinator request 23 Oct 2026 (recovery family; overlaps D3-POOL, the discovery engine, which stays separate). Down 50%+ over 126 sessions; lowest low of t-9..t >= lowest low of t-29..t-10; range of t-9..t <= 0.6x that of t-29..t-10; average volume of t-9..t >= 1.2x that of t-29..t-10; liquid. Buy the next open; sell the next open after a close under the 10-session base low, or the close of day 60. EXTRA GATE: must beat, in both halves, crashed stocks on the same day with ADR within 25% that DID make a lower low (same entry and exit).",
    "status": "live paper from 26 Oct (decoded lane)",
    "agent": "decoded",
-   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only, the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless. TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost.",
+   "tested": "2026-10-23",
+   "study": "decoded-lab.mjs -> data/decoded-history.json (run once as written, first complete run frozen; information only, the paper lane runs regardless)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     316,
+     303
+    ],
+    "avg": [
+     -0.0076,
+     -0.0587
+    ],
+    "stress": [
+     -0.0116,
+     -0.0627
+    ],
+    "edge": [
+     0.017,
+     -0.063
+    ],
+    "vsOwn": [
+     0.069,
+     -0.1062
+    ],
+    "noTop2": [
+     -0.0348,
+     -0.1169
+    ],
+    "tBlock": [
+     -0.03,
+     -1.6
+    ],
+    "win": 0.2116,
+    "avgWin": 0.5596,
+    "avgLoss": -0.1916,
+    "pf": 0.7841,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t -0.03 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.6 under 2.5 in the newer half; not better than crashed stocks still making lower lows in the newer half (-3.2% vs -2.2%, 277 matched)"
+   }
   },
   {
    "id": "DEC-SOC",
