@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-10-21T06:00:57.547Z",
+ "generatedAt": "2026-10-23T07:31:36.121Z",
  "agent": "A",
  "library": "A-ORB1",
- "status": "INCREMENTAL",
+ "status": "OK",
  "needsData": null,
  "preRegistered": "2026-10-21",
  "versions": 1,
  "ownBar": 2.45,
- "leagueBar": 3.94,
- "bar": 3.94,
+ "leagueBar": 3.95,
+ "bar": 3.95,
  "costs": {
   "normal": 0.008,
   "stress": 0.012,
@@ -16,150 +16,149 @@
  },
  "universe": "top 100 by previous-day dollar volume, then open > 5 USD, 14-day average volume 1M+ shares, ATR14 > 0.50 USD, relative volume (first 5 minutes vs the previous 14 sessions) >= 1, top 20 by relative volume, bullish 5-minute range, long only",
  "spec": "see the header of orb-study.mjs: every element resolved from Zarattini, Barbon & Aziz (2024) before the first run",
- "firstRun": null,
- "latest": {
-  "at": "2026-10-21T06:00:57.546Z",
-  "from": "2024-10-16",
-  "to": "2026-10-20",
+ "firstRun": {
+  "at": "2026-10-23T07:31:36.120Z",
+  "from": "2024-10-18",
+  "to": "2026-10-22",
   "sessions": 504,
-  "complete": false,
-  "stockDaysKnown": 92682,
-  "stockDaysNeeded": 112212,
-  "bar": 3.94,
+  "complete": true,
+  "stockDaysKnown": 112185,
+  "stockDaysNeeded": 112185,
+  "bar": 3.95,
   "verdict": "REJECTED",
-  "why": "not better than the average universe stock open-to-close in the older half (-0.9%); could be luck in the older half (t -10.69, 3.94 needed); lost money after costs in the older half (-0.9%); did not beat the S&P 500 open-to-close in the older half (-0.9%); not clearly better than the same stock open-to-close on its other days in the older half (-1.0%, t -33.26); loses without its 2 best trades in the older half; not better than the average universe stock open-to-close in the newer half (-0.8%); could be luck in the newer half (t -11.5, 3.94 needed); lost money after costs in the newer half (-0.8%); did not beat the S&P 500 open-to-close in the newer half (-0.9%); not clearly better than the same stock open-to-close on its other days in the newer half (-0.9%, t -24.83); loses without its 2 best trades in the newer half; loses at 1.2% costs; loses with 0.1% extra slippage",
-  "trades": 3992,
-  "days": 499,
-  "stocks": 262,
+  "why": "not better than the average universe stock open-to-close in the older half (-0.9%); could be luck in the older half (t -9.36, 3.95 needed); lost money after costs in the older half (-0.9%); did not beat the S&P 500 open-to-close in the older half (-0.9%); not clearly better than the same stock open-to-close on its other days in the older half (-1.0%, t -18.43); loses without its 2 best trades in the older half; not better than the average universe stock open-to-close in the newer half (-0.8%); could be luck in the newer half (t -11.59, 3.95 needed); lost money after costs in the newer half (-0.8%); did not beat the S&P 500 open-to-close in the newer half (-0.9%); not clearly better than the same stock open-to-close on its other days in the newer half (-0.9%, t -25.78); loses without its 2 best trades in the newer half; loses at 1.2% costs; loses with 0.1% extra slippage",
+  "trades": 4007,
+  "days": 503,
+  "stocks": 467,
   "counts": {
-   "eligibleStockDays": 47400,
-   "skippedNoRvBaseline": 71,
-   "inPlay": 17785,
-   "bullishTop20": 4816,
-   "noFill": 824
+   "eligibleStockDays": 48917,
+   "skippedNoRvBaseline": 86,
+   "inPlay": 18810,
+   "bullishTop20": 4874,
+   "noFill": 867
   },
   "results": {
    "older": {
-    "n": 1903,
-    "days": 248,
-    "stocks": 238,
-    "avg": -0.0087,
-    "median": -0.0108,
+    "n": 1920,
+    "days": 252,
+    "stocks": 367,
+    "avg": -0.0086,
+    "median": -0.0109,
     "worstTrade": -0.0581,
-    "worstDay": -0.0157,
-    "ctrl": 0.0011,
-    "edge": -0.0089,
-    "t": -10.69,
-    "vsSpy": -0.0094,
-    "tSpy": -13.36,
-    "vsOwn": -0.01,
-    "tOwn": -33.26,
-    "win": 0.0883,
+    "worstDay": -0.0182,
+    "ctrl": 0.0012,
+    "edge": -0.0085,
+    "t": -9.36,
+    "vsSpy": -0.009,
+    "tSpy": -11.05,
+    "vsOwn": -0.0096,
+    "tOwn": -18.43,
+    "win": 0.0875,
     "noTop2": -0.0089
    },
    "newer": {
-    "n": 2089,
+    "n": 2087,
     "days": 251,
-    "stocks": 225,
-    "avg": -0.008,
-    "median": -0.0115,
-    "worstTrade": -0.0232,
-    "worstDay": -0.0159,
-    "ctrl": 0.0006,
-    "edge": -0.008,
-    "t": -11.5,
-    "vsSpy": -0.0085,
-    "tSpy": -19.86,
-    "vsOwn": -0.0086,
-    "tOwn": -24.83,
-    "win": 0.1135,
-    "noTop2": -0.0081
+    "stocks": 327,
+    "avg": -0.0082,
+    "median": -0.0116,
+    "worstTrade": -0.0308,
+    "worstDay": -0.0157,
+    "ctrl": 0.0007,
+    "edge": -0.0082,
+    "t": -11.59,
+    "vsSpy": -0.0086,
+    "tSpy": -20.11,
+    "vsOwn": -0.0087,
+    "tOwn": -25.78,
+    "win": 0.1088,
+    "noTop2": -0.0083
    },
    "stress": {
-    "n": 2089,
+    "n": 2087,
     "days": 251,
-    "stocks": 225,
-    "avg": -0.012,
-    "median": -0.0155,
-    "worstTrade": -0.0272,
-    "worstDay": -0.0199,
-    "ctrl": 0.0006,
-    "edge": -0.012,
-    "t": -17.24,
-    "vsSpy": -0.0125,
-    "tSpy": -29.23,
-    "vsOwn": -0.0126,
-    "tOwn": -36.41,
-    "win": 0.0948,
-    "noTop2": -0.0121
+    "stocks": 327,
+    "avg": -0.0122,
+    "median": -0.0156,
+    "worstTrade": -0.0348,
+    "worstDay": -0.0197,
+    "ctrl": 0.0007,
+    "edge": -0.0122,
+    "t": -17.26,
+    "vsSpy": -0.0126,
+    "tSpy": -29.45,
+    "vsOwn": -0.0127,
+    "tOwn": -37.63,
+    "win": 0.0906,
+    "noTop2": -0.0123
    },
    "slip": {
-    "n": 2089,
+    "n": 2087,
     "days": 251,
-    "stocks": 225,
-    "avg": -0.009,
-    "median": -0.0125,
-    "worstTrade": -0.0242,
-    "worstDay": -0.0169,
-    "ctrl": 0.0006,
-    "edge": -0.009,
-    "t": -12.93,
-    "vsSpy": -0.0095,
-    "tSpy": -22.2,
-    "vsOwn": -0.0096,
-    "tOwn": -27.73,
-    "win": 0.1082,
-    "noTop2": -0.0091
+    "stocks": 327,
+    "avg": -0.0092,
+    "median": -0.0126,
+    "worstTrade": -0.0318,
+    "worstDay": -0.0167,
+    "ctrl": 0.0007,
+    "edge": -0.0092,
+    "t": -13.01,
+    "vsSpy": -0.0096,
+    "tSpy": -22.45,
+    "vsOwn": -0.0097,
+    "tOwn": -28.74,
+    "win": 0.104,
+    "noTop2": -0.0093
    },
    "all": {
-    "n": 3992,
-    "days": 499,
-    "stocks": 262,
-    "avg": -0.0083,
-    "median": -0.0111,
+    "n": 4007,
+    "days": 503,
+    "stocks": 467,
+    "avg": -0.0084,
+    "median": -0.0112,
     "worstTrade": -0.0581,
-    "worstDay": -0.0159,
+    "worstDay": -0.0182,
     "ctrl": 0.0009,
-    "edge": -0.0084,
-    "t": -15.6,
-    "vsSpy": -0.0089,
-    "tSpy": -21.78,
-    "vsOwn": -0.0093,
-    "tOwn": -40.17,
-    "win": 0.1015,
-    "noTop2": -0.0084
+    "edge": -0.0083,
+    "t": -14.52,
+    "vsSpy": -0.0088,
+    "tSpy": -19.13,
+    "vsOwn": -0.0092,
+    "tOwn": -29.41,
+    "win": 0.0986,
+    "noTop2": -0.0086
    }
   },
   "latency": {
    "0min": {
-    "n": 3992,
-    "mean": -0.0083,
-    "median": -0.0111,
-    "win": 0.1015
+    "n": 4007,
+    "mean": -0.0084,
+    "median": -0.0112,
+    "win": 0.0986
    },
    "1min": {
-    "n": 3992,
-    "mean": -0.0074,
-    "median": -0.011,
-    "win": 0.1237
+    "n": 4007,
+    "mean": -0.0076,
+    "median": -0.0111,
+    "win": 0.1203
    },
    "5min": {
-    "n": 3992,
-    "mean": -0.0075,
-    "median": -0.011,
-    "win": 0.1247
+    "n": 4007,
+    "mean": -0.0078,
+    "median": -0.0111,
+    "win": 0.1208
    },
    "15min": {
-    "n": 3992,
-    "mean": -0.0076,
-    "median": -0.011,
-    "win": 0.127
+    "n": 4007,
+    "mean": -0.0077,
+    "median": -0.0111,
+    "win": 0.1255
    },
    "30min": {
-    "n": 3991,
-    "mean": -0.0083,
-    "median": -0.011,
-    "win": 0.1158
+    "n": 4006,
+    "mean": -0.0084,
+    "median": -0.0111,
+    "win": 0.1173
    }
   },
   "busiestDay": {
@@ -167,12 +166,20 @@
    "trades": 17,
    "exposureUsd": 17000
   },
-  "worstDay": -0.0159,
+  "worstDay": -0.0182,
   "worstTrade": -0.0581,
   "topStocks": [
    [
+    "BYND",
+    0.4518
+   ],
+   [
     "SNDK",
-    0.2457
+    0.2609
+   ],
+   [
+    "RUM",
+    0.1702
    ],
    [
     "BBAI",
@@ -184,7 +191,11 @@
    ],
    [
     "IREN",
-    0.0865
+    0.1013
+   ],
+   [
+    "KKR",
+    0.058
    ],
    [
     "FICO",
@@ -197,22 +208,205 @@
    [
     "APLD",
     0.0508
-   ],
-   [
-    "KKR",
-    0.0475
-   ],
-   [
-    "OPEN",
-    0.0393
-   ],
-   [
-    "KVUE",
-    0.0215
    ]
   ]
  },
- "calls": 2500,
+ "latest": {
+  "at": "2026-10-23T07:31:36.120Z",
+  "from": "2024-10-18",
+  "to": "2026-10-22",
+  "sessions": 504,
+  "complete": true,
+  "stockDaysKnown": 112185,
+  "stockDaysNeeded": 112185,
+  "bar": 3.95,
+  "verdict": "REJECTED",
+  "why": "not better than the average universe stock open-to-close in the older half (-0.9%); could be luck in the older half (t -9.36, 3.95 needed); lost money after costs in the older half (-0.9%); did not beat the S&P 500 open-to-close in the older half (-0.9%); not clearly better than the same stock open-to-close on its other days in the older half (-1.0%, t -18.43); loses without its 2 best trades in the older half; not better than the average universe stock open-to-close in the newer half (-0.8%); could be luck in the newer half (t -11.59, 3.95 needed); lost money after costs in the newer half (-0.8%); did not beat the S&P 500 open-to-close in the newer half (-0.9%); not clearly better than the same stock open-to-close on its other days in the newer half (-0.9%, t -25.78); loses without its 2 best trades in the newer half; loses at 1.2% costs; loses with 0.1% extra slippage",
+  "trades": 4007,
+  "days": 503,
+  "stocks": 467,
+  "counts": {
+   "eligibleStockDays": 48917,
+   "skippedNoRvBaseline": 86,
+   "inPlay": 18810,
+   "bullishTop20": 4874,
+   "noFill": 867
+  },
+  "results": {
+   "older": {
+    "n": 1920,
+    "days": 252,
+    "stocks": 367,
+    "avg": -0.0086,
+    "median": -0.0109,
+    "worstTrade": -0.0581,
+    "worstDay": -0.0182,
+    "ctrl": 0.0012,
+    "edge": -0.0085,
+    "t": -9.36,
+    "vsSpy": -0.009,
+    "tSpy": -11.05,
+    "vsOwn": -0.0096,
+    "tOwn": -18.43,
+    "win": 0.0875,
+    "noTop2": -0.0089
+   },
+   "newer": {
+    "n": 2087,
+    "days": 251,
+    "stocks": 327,
+    "avg": -0.0082,
+    "median": -0.0116,
+    "worstTrade": -0.0308,
+    "worstDay": -0.0157,
+    "ctrl": 0.0007,
+    "edge": -0.0082,
+    "t": -11.59,
+    "vsSpy": -0.0086,
+    "tSpy": -20.11,
+    "vsOwn": -0.0087,
+    "tOwn": -25.78,
+    "win": 0.1088,
+    "noTop2": -0.0083
+   },
+   "stress": {
+    "n": 2087,
+    "days": 251,
+    "stocks": 327,
+    "avg": -0.0122,
+    "median": -0.0156,
+    "worstTrade": -0.0348,
+    "worstDay": -0.0197,
+    "ctrl": 0.0007,
+    "edge": -0.0122,
+    "t": -17.26,
+    "vsSpy": -0.0126,
+    "tSpy": -29.45,
+    "vsOwn": -0.0127,
+    "tOwn": -37.63,
+    "win": 0.0906,
+    "noTop2": -0.0123
+   },
+   "slip": {
+    "n": 2087,
+    "days": 251,
+    "stocks": 327,
+    "avg": -0.0092,
+    "median": -0.0126,
+    "worstTrade": -0.0318,
+    "worstDay": -0.0167,
+    "ctrl": 0.0007,
+    "edge": -0.0092,
+    "t": -13.01,
+    "vsSpy": -0.0096,
+    "tSpy": -22.45,
+    "vsOwn": -0.0097,
+    "tOwn": -28.74,
+    "win": 0.104,
+    "noTop2": -0.0093
+   },
+   "all": {
+    "n": 4007,
+    "days": 503,
+    "stocks": 467,
+    "avg": -0.0084,
+    "median": -0.0112,
+    "worstTrade": -0.0581,
+    "worstDay": -0.0182,
+    "ctrl": 0.0009,
+    "edge": -0.0083,
+    "t": -14.52,
+    "vsSpy": -0.0088,
+    "tSpy": -19.13,
+    "vsOwn": -0.0092,
+    "tOwn": -29.41,
+    "win": 0.0986,
+    "noTop2": -0.0086
+   }
+  },
+  "latency": {
+   "0min": {
+    "n": 4007,
+    "mean": -0.0084,
+    "median": -0.0112,
+    "win": 0.0986
+   },
+   "1min": {
+    "n": 4007,
+    "mean": -0.0076,
+    "median": -0.0111,
+    "win": 0.1203
+   },
+   "5min": {
+    "n": 4007,
+    "mean": -0.0078,
+    "median": -0.0111,
+    "win": 0.1208
+   },
+   "15min": {
+    "n": 4007,
+    "mean": -0.0077,
+    "median": -0.0111,
+    "win": 0.1255
+   },
+   "30min": {
+    "n": 4006,
+    "mean": -0.0084,
+    "median": -0.0111,
+    "win": 0.1173
+   }
+  },
+  "busiestDay": {
+   "day": "2025-02-03",
+   "trades": 17,
+   "exposureUsd": 17000
+  },
+  "worstDay": -0.0182,
+  "worstTrade": -0.0581,
+  "topStocks": [
+   [
+    "BYND",
+    0.4518
+   ],
+   [
+    "SNDK",
+    0.2609
+   ],
+   [
+    "RUM",
+    0.1702
+   ],
+   [
+    "BBAI",
+    0.144
+   ],
+   [
+    "CLS",
+    0.1296
+   ],
+   [
+    "IREN",
+    0.1013
+   ],
+   [
+    "KKR",
+    0.058
+   ],
+   [
+    "FICO",
+    0.0524
+   ],
+   [
+    "CBRS",
+    0.0513
+   ],
+   [
+    "APLD",
+    0.0508
+   ]
+  ]
+ },
+ "calls": 1288,
  "budget": 2500,
  "caveat": "A PASS goes to live paper first (execution decides intraday rules). Results per trade at 1,000 USD, not the paper’s 1%-risk sizing."
 }

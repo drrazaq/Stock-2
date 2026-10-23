@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-10-23",
+ "updated": "2026-10-19",
  "strategies": [
   {
    "id": "T1",
@@ -811,9 +811,10 @@
    "name": "Insider cluster buying",
    "explain": "Several executives buy with their own money within weeks.",
    "status": "tested: not proven",
-   "note": "insider-study.mjs (SEC Form 4 data sets): best of 6 versions.",
+   "note": "insider-study.mjs (SEC Form 4 data sets): best of 6 frozen versions.",
    "tested": "2026-10-19",
-   "agent": "C"
+   "agent": "C",
+   "study": "insider-study.mjs -> data/insider-study.json (run once per version, first judged run frozen)"
   },
   {
    "id": "E4",
@@ -1615,9 +1616,27 @@
    "family": "Company events",
    "name": "Post-earnings absorption",
    "explain": "Earnings gap up 5%+, then 3 very quiet days holding above the gap midpoint; buy day 4.",
-   "status": "queued (Agent A)",
+   "status": "tested: not proven",
    "note": "Added 19 Oct from outside reviews. Agent A 20 Oct: study written (e16-absorption.mjs, rule fixed in its header) but NOT wired into the workflow yet (2 builds a week: A-EW1 and A-RG1 went first). Wire it next week.",
-   "agent": "A"
+   "agent": "A",
+   "tested": "2026-10-23",
+   "study": "e16-absorption.mjs -> data/e16-absorption.json (run once per version, first judged run frozen; wired into leaders-study.yml 22 Oct 2026)",
+   "result": {
+    "hold": 20,
+    "t": 1.04,
+    "tOlder": 0.6,
+    "edge": 0.0231,
+    "edgeOlder": 0.014,
+    "vsSpy": 0.0121,
+    "vsSpyOlder": 0.0067,
+    "vsOwn": 0.0107,
+    "n": [
+     34,
+     46
+    ],
+    "bar": 3.95,
+    "why": "could be luck in the older half (t 0.6, 3.95 needed); not clearly better than the same stock on its other days in the older half (+1.6%, t 0.71); loses without its 2 best trades in the older half; could be luck in the newer half (t 1.04, 3.95 needed); not clearly better than the same stock on its other days in the newer half (+1.1%, t 0.43)"
+   }
   },
   {
    "id": "E17",
@@ -1809,7 +1828,7 @@
    "agent": "A",
    "note": "From the outside review of 20 Oct (see project doc Agent inbox).",
    "tested": "2026-10-19",
-   "study": "regime-gate.mjs -> data/regime-gate.json",
+   "study": "regime-gate.mjs -> data/regime-gate.json (run once, first run frozen)",
    "result": {
     "t": 0.74,
     "tNewHigh": -3.17,
@@ -1817,18 +1836,18 @@
     "leadersAboveVsAvg": -0.0144,
     "newHighBelowVsAvg": -0.03,
     "newHighAboveVsAvg": -0.0015,
-    "spyBelow20d": 0.0238,
-    "spyAbove20d": 0.0073,
+    "spyBelow20d": 0.0234,
+    "spyAbove20d": 0.0085,
     "spyOlder": [
-     0.0209,
-     0.0069
-    ],
-    "spyNewer": [
-     0.0263,
+     0.0201,
      0.0077
     ],
-    "bar": 3.94,
-    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.94 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.94 needed)"
+    "spyNewer": [
+     0.0264,
+     0.0094
+    ],
+    "bar": 3.85,
+    "why": "NOT PROVEN: BELOW was not worse than ABOVE in the older half (-1.2% vs -1.3% against the average stock); BELOW still made money after costs in the older half (+2.1%); BELOW was not worse than ABOVE in the newer half (+2.6% vs -1.6% against the average stock); BELOW still made money after costs in the newer half (+6.1%); difference could be luck (block t 0.74, 3.85 needed) | NOT PROVEN: BELOW still made money after costs in the older half (+1.2%); BELOW still made money after costs in the newer half (+1.2%); difference could be luck (block t -3.17, 3.85 needed)"
    }
   },
   {
@@ -2440,9 +2459,27 @@
    "family": "Share supply",
    "name": "S-8 share creep (avoid)",
    "explain": "An S-8 filing in the last 30 days and the share count up over 2% in 30 days: avoid 20 sessions. Employee-share dilution the 424B5 check misses.",
-   "status": "pre-registered 22 Oct 2026, built (share-supply.mjs); first run Sunday 25 Oct",
+   "status": "tested: rejected",
    "agent": "C",
-   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them. | Agent C 22 Oct: pre-registered in share-supply.mjs before any result. Data: EDGAR quarterly full index (all filers incl. later-delisted, CIK/form/filing date) + SEC quarterly share counts (30-day lag). Share counts are quarterly, so the test version S8B is 'S-8 and share count up over 2% vs the count known 90 days earlier' (S8A = any S-8, for comparison). Entry next open after the filing-date session, 20 sessions, vs the average stock (costs cancel). Judged for PROVEN (t <= -4.0 both halves + S&P + own days + without 2 worst) and TRADABLE SMALL tier-2 avoid (both halves negative, t <= -2.5, without 2 worst). Published support for share supply in general: net share issuance anomaly, Pontiff and Woodgate 2008 (Journal of Finance 63(2)), still present out of sample in McLean and Pontiff 2016 (Journal of Finance 71(1))."
+   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them. | Agent C 22 Oct: pre-registered in share-supply.mjs before any result. Data: EDGAR quarterly full index (all filers incl. later-delisted, CIK/form/filing date) + SEC quarterly share counts (30-day lag). Share counts are quarterly, so the test version S8B is 'S-8 and share count up over 2% vs the count known 90 days earlier' (S8A = any S-8, for comparison). Entry next open after the filing-date session, 20 sessions, vs the average stock (costs cancel). Judged for PROVEN (t <= -4.0 both halves + S&P + own days + without 2 worst) and TRADABLE SMALL tier-2 avoid (both halves negative, t <= -2.5, without 2 worst). Published support for share supply in general: net share issuance anomaly, Pontiff and Woodgate 2008 (Journal of Finance 63(2)), still present out of sample in McLean and Pontiff 2016 (Journal of Finance 71(1)).",
+   "tested": "2026-10-19",
+   "study": "share-supply.mjs -> data/share-supply.json (run once, first run frozen)",
+   "result": {
+    "version": "S8B",
+    "level": "NONE",
+    "t": -0.46,
+    "tOlder": 0.31,
+    "edge": -0.0094,
+    "edgeOlder": 0.0046,
+    "vsSpy": -0.0101,
+    "vsOwn": 0.0108,
+    "n": [
+     164,
+     330
+    ],
+    "bar": 4,
+    "why": "S8B REJECTED: not worse than an average stock in the older half (+0.5%) | S8A NOT PROVEN / NONE"
+   }
   },
   {
    "id": "C-LOCK",
@@ -2582,10 +2619,10 @@
    "family": "Intraday (minute bars)",
    "name": "Opening-range breakout with a volume filter, long only (Zarattini, Barbon & Aziz 2024)",
    "explain": "PRE-REGISTERED, one version, resolved from the ORIGINAL paper before any run (Zarattini, Barbon & Aziz 2024, \"A Profitable Day Trading Strategy for the U.S. Equity Market\": 5-minute opening range on \"stocks in play\" = unusually high first-5-minute volume vs the prior 14 days, 7,000+ stocks, 2016-2023, Sharpe about 2.4; the GitHub 20-minute / 1.2x-volume version is a variant, not the paper). Record the exact spec and source for every element (range length, volume baseline, entry fill, target, stop, trail, 15:50 flat, long only, eligible universe, costs incl. spread and slippage) BEFORE looking at results; ambiguity is resolved from the source, never by what backtests best. Universe: the 100 most traded US stocks by dollar volume per test day (point-in-time), 2 years of Massive minute bars (budget the calls). Report: trades, distinct days, distinct stocks, median, worst trade, worst day, busiest-day exposure, same-catalyst concentration, result at 0.8% / 1.2% cost and with 0.1% extra slippage, latency table (fill delayed 0 / 1 / 5 / 15 / 30 minutes), without 2 best trades, vs the same stock open-to-close on its other days and the average stock the same day, both halves, league bar. A marginal pass still goes to PAPER first (execution decides intraday rules).",
-   "status": "running (Agent A): 92682 of 112212 stock-days of minute bars fetched; provisional REJECTED",
+   "status": "tested: rejected",
    "agent": "A",
    "note": "From the 21 Oct reviews (daily-trading redesign, ORB evidence).",
-   "study": "orb-study.mjs -> data/orb-study.json (pre-registered, first complete run frozen; incremental minute-bar cache in fm-cache)",
+   "study": "orb-study.mjs -> data/orb-study.json (run once, first complete run frozen)",
    "spec": "RESOLVED 21 Oct 2026 from the original paper (SSRN 4729284, PDF read): opening range 9:30-9:35 (5 one-minute bars); direction = sign of the 5-minute candle, doji = no order; entry = stop order at the range high, filled at max(range high, bar open) on the first bar from 9:35 whose high exceeds it, no entry after 15:30; stop = entry minus 10% of the 14-day ATR; NO profit target, NO trailing stop (the paper has none); exit at the close; filters open > 5 USD, 14-day average volume 1M+ shares, ATR14 > 0.50 USD; relative volume = first-5-minute volume / its 14-session average, >= 1 (100%), top 20 by relative volume; paper sizing 1% risk and 4x leverage NOT reproduced (1,000 USD a trade); our costs 0.8% / 1.2% / 0.9% extra slippage; LONG ONLY; universe first the 100 most traded by previous-day dollar volume (minute-bar budget).",
    "provisional": {
     "at": "2026-10-21T06:00:57.546Z",
@@ -2610,6 +2647,31 @@
      "30min": -0.0083
     },
     "why": "the stop at 10% of ATR14 sits 0.2-0.3% under the entry on liquid stocks, so 90% of trades are stopped within minutes for a tiny gross loss; at our 0.8% round-trip cost (the paper assumes 0.0035 USD a share and no slippage) the rule cannot pay by construction. Frozen verdict after the cache completes next Sunday."
+   },
+   "tested": "2026-10-22",
+   "result": {
+    "t": -11.59,
+    "tOlder": -9.36,
+    "edge": -0.0082,
+    "edgeOlder": -0.0085,
+    "avg": -0.0082,
+    "vsSpy": -0.0086,
+    "vsOwn": -0.0087,
+    "n": [
+     1920,
+     2087
+    ],
+    "days": 503,
+    "stocks": 467,
+    "bar": 3.95,
+    "latency": {
+     "0min": -0.0084,
+     "1min": -0.0076,
+     "5min": -0.0078,
+     "15min": -0.0077,
+     "30min": -0.0084
+    },
+    "why": "not better than the average universe stock open-to-close in the older half (-0.9%); could be luck in the older half (t -9.36, 3.95 needed); lost money after costs in the older half (-0.9%); did not beat the S&P 500 open-to-close in the older half (-0.9%); not clearly better than the same stock open-to-close on its other days in the older half (-1.0%, t -18.43); loses without its 2 best trades in the older half; not better than the average universe stock open-to-close in the newer half (-0.8%); could be luck in the newer half (t -11.59, 3.95 needed); lost money after costs in the newer half (-0.8%); did not beat the S&P 500 open-to-close in the newer half (-0.9%); not clearly better than the same stock open-to-close on its other days in the newer half (-0.9%, t -25.78); loses without its 2 best trades in the newer half; loses at 1.2% costs; loses with 0.1% extra slippage"
    }
   },
   {

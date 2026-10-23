@@ -1,0 +1,545 @@
+{
+ "generatedAt": "2026-10-23T07:40:12.752Z",
+ "agent": "A",
+ "from": "2021-11-10",
+ "to": "2026-10-19",
+ "stocksWithDates": 485,
+ "gaps": 852,
+ "quietHolds": 81,
+ "versions": 2,
+ "ownBar": 2.5,
+ "leagueBar": 3.95,
+ "bar": 3.95,
+ "caveat": "Earnings dates only for the large companies in the earnings cache (today’s companies); judged against the same stock on its other days to remove most of that bias. A pass goes to live paper first. results = the frozen first verdict of each version (firstRun); latest = monitoring only.",
+ "results": {
+  "E16_10": {
+   "name": "Earnings gap up 5%+, 3 quiet days holding above the gap middle, buy day 4, hold 10 sessions",
+   "hold": 10,
+   "verdict": "REJECTED",
+   "why": "not better than an average stock in the older half (-0.4%); could be luck in the older half (t -0.35, 3.95 needed); lost money after costs in the older half; did not beat the S&P 500 in the older half (-0.6%); not clearly better than the same stock on its other days in the older half (+0.4%, t 0.37); loses without its 2 best trades in the older half; could be luck in the newer half (t 1.31, 3.95 needed); not clearly better than the same stock on its other days in the newer half (+2.8%, t 1.26)",
+   "results": {
+    "older": {
+     "n": 34,
+     "days": 32,
+     "stocks": 31,
+     "avg": -0.0006,
+     "ctrl": 0.0039,
+     "edge": -0.0038,
+     "t": -0.35,
+     "vsSpy": -0.0064,
+     "tSpy": -0.59,
+     "vsOwn": 0.0045,
+     "tOwn": 0.37,
+     "win": 0.471,
+     "noTop2": -0.0105
+    },
+    "newer": {
+     "n": 46,
+     "days": 38,
+     "stocks": 40,
+     "avg": 0.0304,
+     "ctrl": 0.0109,
+     "edge": 0.0266,
+     "t": 1.31,
+     "vsSpy": 0.0204,
+     "tSpy": 0.99,
+     "vsOwn": 0.0281,
+     "tOwn": 1.26,
+     "win": 0.609,
+     "noTop2": 0.0063
+    },
+    "stress": {
+     "n": 46,
+     "days": 38,
+     "stocks": 40,
+     "avg": 0.0264,
+     "ctrl": 0.0109,
+     "edge": 0.0226,
+     "t": 1.12,
+     "vsSpy": 0.0164,
+     "tSpy": 0.79,
+     "vsOwn": 0.0281,
+     "tOwn": 1.26,
+     "win": 0.565,
+     "noTop2": 0.0023
+    }
+   },
+   "allGaps": {
+    "older": {
+     "n": 357,
+     "days": 192,
+     "stocks": 136,
+     "avg": -0.0063,
+     "ctrl": -0.0043,
+     "edge": -0.0013,
+     "t": -0.23,
+     "vsSpy": null,
+     "tSpy": null,
+     "vsOwn": null,
+     "tOwn": null,
+     "win": 0.451,
+     "noTop2": -0.009
+    },
+    "newer": {
+     "n": 487,
+     "days": 219,
+     "stocks": 165,
+     "avg": 0.0083,
+     "ctrl": 0.0051,
+     "edge": 0.0042,
+     "t": 0.64,
+     "vsSpy": null,
+     "tSpy": null,
+     "vsOwn": null,
+     "tOwn": null,
+     "win": 0.517,
+     "noTop2": 0.0056
+    }
+   },
+   "frozenAt": "2026-10-23T07:40:12.751Z"
+  },
+  "E16_20": {
+   "name": "Earnings gap up 5%+, 3 quiet days holding above the gap middle, buy day 4, hold 20 sessions",
+   "hold": 20,
+   "verdict": "NOT PROVEN",
+   "why": "could be luck in the older half (t 0.6, 3.95 needed); not clearly better than the same stock on its other days in the older half (+1.6%, t 0.71); loses without its 2 best trades in the older half; could be luck in the newer half (t 1.04, 3.95 needed); not clearly better than the same stock on its other days in the newer half (+1.1%, t 0.43)",
+   "results": {
+    "older": {
+     "n": 34,
+     "days": 32,
+     "stocks": 31,
+     "avg": 0.0171,
+     "ctrl": 0.0034,
+     "edge": 0.014,
+     "t": 0.6,
+     "vsSpy": 0.0067,
+     "tSpy": 0.29,
+     "vsOwn": 0.0161,
+     "tOwn": 0.71,
+     "win": 0.5,
+     "noTop2": -0.0086
+    },
+    "newer": {
+     "n": 46,
+     "days": 38,
+     "stocks": 40,
+     "avg": 0.0248,
+     "ctrl": 0.0106,
+     "edge": 0.0231,
+     "t": 1.04,
+     "vsSpy": 0.0121,
+     "tSpy": 0.53,
+     "vsOwn": 0.0107,
+     "tOwn": 0.43,
+     "win": 0.543,
+     "noTop2": 0.0036
+    },
+    "stress": {
+     "n": 46,
+     "days": 38,
+     "stocks": 40,
+     "avg": 0.0208,
+     "ctrl": 0.0106,
+     "edge": 0.0191,
+     "t": 0.86,
+     "vsSpy": 0.0081,
+     "tSpy": 0.36,
+     "vsOwn": 0.0107,
+     "tOwn": 0.43,
+     "win": 0.543,
+     "noTop2": -0.0004
+    }
+   },
+   "allGaps": {
+    "older": {
+     "n": 357,
+     "days": 192,
+     "stocks": 136,
+     "avg": 0.0023,
+     "ctrl": -0.0042,
+     "edge": 0.0075,
+     "t": 0.96,
+     "vsSpy": null,
+     "tSpy": null,
+     "vsOwn": null,
+     "tOwn": null,
+     "win": 0.493,
+     "noTop2": -0.002
+    },
+    "newer": {
+     "n": 487,
+     "days": 219,
+     "stocks": 165,
+     "avg": 0.0182,
+     "ctrl": 0.0064,
+     "edge": 0.0131,
+     "t": 1.39,
+     "vsSpy": null,
+     "tSpy": null,
+     "vsOwn": null,
+     "tOwn": null,
+     "win": 0.524,
+     "noTop2": 0.0151
+    }
+   },
+   "frozenAt": "2026-10-23T07:40:12.751Z"
+  }
+ },
+ "firstRun": {
+  "at": "2026-10-23T07:40:12.752Z",
+  "bar": 3.95,
+  "results": {
+   "E16_10": {
+    "name": "Earnings gap up 5%+, 3 quiet days holding above the gap middle, buy day 4, hold 10 sessions",
+    "hold": 10,
+    "verdict": "REJECTED",
+    "why": "not better than an average stock in the older half (-0.4%); could be luck in the older half (t -0.35, 3.95 needed); lost money after costs in the older half; did not beat the S&P 500 in the older half (-0.6%); not clearly better than the same stock on its other days in the older half (+0.4%, t 0.37); loses without its 2 best trades in the older half; could be luck in the newer half (t 1.31, 3.95 needed); not clearly better than the same stock on its other days in the newer half (+2.8%, t 1.26)",
+    "results": {
+     "older": {
+      "n": 34,
+      "days": 32,
+      "stocks": 31,
+      "avg": -0.0006,
+      "ctrl": 0.0039,
+      "edge": -0.0038,
+      "t": -0.35,
+      "vsSpy": -0.0064,
+      "tSpy": -0.59,
+      "vsOwn": 0.0045,
+      "tOwn": 0.37,
+      "win": 0.471,
+      "noTop2": -0.0105
+     },
+     "newer": {
+      "n": 46,
+      "days": 38,
+      "stocks": 40,
+      "avg": 0.0304,
+      "ctrl": 0.0109,
+      "edge": 0.0266,
+      "t": 1.31,
+      "vsSpy": 0.0204,
+      "tSpy": 0.99,
+      "vsOwn": 0.0281,
+      "tOwn": 1.26,
+      "win": 0.609,
+      "noTop2": 0.0063
+     },
+     "stress": {
+      "n": 46,
+      "days": 38,
+      "stocks": 40,
+      "avg": 0.0264,
+      "ctrl": 0.0109,
+      "edge": 0.0226,
+      "t": 1.12,
+      "vsSpy": 0.0164,
+      "tSpy": 0.79,
+      "vsOwn": 0.0281,
+      "tOwn": 1.26,
+      "win": 0.565,
+      "noTop2": 0.0023
+     }
+    },
+    "allGaps": {
+     "older": {
+      "n": 357,
+      "days": 192,
+      "stocks": 136,
+      "avg": -0.0063,
+      "ctrl": -0.0043,
+      "edge": -0.0013,
+      "t": -0.23,
+      "vsSpy": null,
+      "tSpy": null,
+      "vsOwn": null,
+      "tOwn": null,
+      "win": 0.451,
+      "noTop2": -0.009
+     },
+     "newer": {
+      "n": 487,
+      "days": 219,
+      "stocks": 165,
+      "avg": 0.0083,
+      "ctrl": 0.0051,
+      "edge": 0.0042,
+      "t": 0.64,
+      "vsSpy": null,
+      "tSpy": null,
+      "vsOwn": null,
+      "tOwn": null,
+      "win": 0.517,
+      "noTop2": 0.0056
+     }
+    },
+    "frozenAt": "2026-10-23T07:40:12.751Z"
+   },
+   "E16_20": {
+    "name": "Earnings gap up 5%+, 3 quiet days holding above the gap middle, buy day 4, hold 20 sessions",
+    "hold": 20,
+    "verdict": "NOT PROVEN",
+    "why": "could be luck in the older half (t 0.6, 3.95 needed); not clearly better than the same stock on its other days in the older half (+1.6%, t 0.71); loses without its 2 best trades in the older half; could be luck in the newer half (t 1.04, 3.95 needed); not clearly better than the same stock on its other days in the newer half (+1.1%, t 0.43)",
+    "results": {
+     "older": {
+      "n": 34,
+      "days": 32,
+      "stocks": 31,
+      "avg": 0.0171,
+      "ctrl": 0.0034,
+      "edge": 0.014,
+      "t": 0.6,
+      "vsSpy": 0.0067,
+      "tSpy": 0.29,
+      "vsOwn": 0.0161,
+      "tOwn": 0.71,
+      "win": 0.5,
+      "noTop2": -0.0086
+     },
+     "newer": {
+      "n": 46,
+      "days": 38,
+      "stocks": 40,
+      "avg": 0.0248,
+      "ctrl": 0.0106,
+      "edge": 0.0231,
+      "t": 1.04,
+      "vsSpy": 0.0121,
+      "tSpy": 0.53,
+      "vsOwn": 0.0107,
+      "tOwn": 0.43,
+      "win": 0.543,
+      "noTop2": 0.0036
+     },
+     "stress": {
+      "n": 46,
+      "days": 38,
+      "stocks": 40,
+      "avg": 0.0208,
+      "ctrl": 0.0106,
+      "edge": 0.0191,
+      "t": 0.86,
+      "vsSpy": 0.0081,
+      "tSpy": 0.36,
+      "vsOwn": 0.0107,
+      "tOwn": 0.43,
+      "win": 0.543,
+      "noTop2": -0.0004
+     }
+    },
+    "allGaps": {
+     "older": {
+      "n": 357,
+      "days": 192,
+      "stocks": 136,
+      "avg": 0.0023,
+      "ctrl": -0.0042,
+      "edge": 0.0075,
+      "t": 0.96,
+      "vsSpy": null,
+      "tSpy": null,
+      "vsOwn": null,
+      "tOwn": null,
+      "win": 0.493,
+      "noTop2": -0.002
+     },
+     "newer": {
+      "n": 487,
+      "days": 219,
+      "stocks": 165,
+      "avg": 0.0182,
+      "ctrl": 0.0064,
+      "edge": 0.0131,
+      "t": 1.39,
+      "vsSpy": null,
+      "tSpy": null,
+      "vsOwn": null,
+      "tOwn": null,
+      "win": 0.524,
+      "noTop2": 0.0151
+     }
+    },
+    "frozenAt": "2026-10-23T07:40:12.751Z"
+   }
+  }
+ },
+ "latest": {
+  "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
+  "at": "2026-10-23T07:40:12.752Z",
+  "to": "2026-10-19",
+  "bar": 3.95,
+  "results": {
+   "E16_10": {
+    "name": "Earnings gap up 5%+, 3 quiet days holding above the gap middle, buy day 4, hold 10 sessions",
+    "hold": 10,
+    "verdict": "REJECTED",
+    "why": "not better than an average stock in the older half (-0.4%); could be luck in the older half (t -0.35, 3.95 needed); lost money after costs in the older half; did not beat the S&P 500 in the older half (-0.6%); not clearly better than the same stock on its other days in the older half (+0.4%, t 0.37); loses without its 2 best trades in the older half; could be luck in the newer half (t 1.31, 3.95 needed); not clearly better than the same stock on its other days in the newer half (+2.8%, t 1.26)",
+    "results": {
+     "older": {
+      "n": 34,
+      "days": 32,
+      "stocks": 31,
+      "avg": -0.0006,
+      "ctrl": 0.0039,
+      "edge": -0.0038,
+      "t": -0.35,
+      "vsSpy": -0.0064,
+      "tSpy": -0.59,
+      "vsOwn": 0.0045,
+      "tOwn": 0.37,
+      "win": 0.471,
+      "noTop2": -0.0105
+     },
+     "newer": {
+      "n": 46,
+      "days": 38,
+      "stocks": 40,
+      "avg": 0.0304,
+      "ctrl": 0.0109,
+      "edge": 0.0266,
+      "t": 1.31,
+      "vsSpy": 0.0204,
+      "tSpy": 0.99,
+      "vsOwn": 0.0281,
+      "tOwn": 1.26,
+      "win": 0.609,
+      "noTop2": 0.0063
+     },
+     "stress": {
+      "n": 46,
+      "days": 38,
+      "stocks": 40,
+      "avg": 0.0264,
+      "ctrl": 0.0109,
+      "edge": 0.0226,
+      "t": 1.12,
+      "vsSpy": 0.0164,
+      "tSpy": 0.79,
+      "vsOwn": 0.0281,
+      "tOwn": 1.26,
+      "win": 0.565,
+      "noTop2": 0.0023
+     }
+    },
+    "allGaps": {
+     "older": {
+      "n": 357,
+      "days": 192,
+      "stocks": 136,
+      "avg": -0.0063,
+      "ctrl": -0.0043,
+      "edge": -0.0013,
+      "t": -0.23,
+      "vsSpy": null,
+      "tSpy": null,
+      "vsOwn": null,
+      "tOwn": null,
+      "win": 0.451,
+      "noTop2": -0.009
+     },
+     "newer": {
+      "n": 487,
+      "days": 219,
+      "stocks": 165,
+      "avg": 0.0083,
+      "ctrl": 0.0051,
+      "edge": 0.0042,
+      "t": 0.64,
+      "vsSpy": null,
+      "tSpy": null,
+      "vsOwn": null,
+      "tOwn": null,
+      "win": 0.517,
+      "noTop2": 0.0056
+     }
+    }
+   },
+   "E16_20": {
+    "name": "Earnings gap up 5%+, 3 quiet days holding above the gap middle, buy day 4, hold 20 sessions",
+    "hold": 20,
+    "verdict": "NOT PROVEN",
+    "why": "could be luck in the older half (t 0.6, 3.95 needed); not clearly better than the same stock on its other days in the older half (+1.6%, t 0.71); loses without its 2 best trades in the older half; could be luck in the newer half (t 1.04, 3.95 needed); not clearly better than the same stock on its other days in the newer half (+1.1%, t 0.43)",
+    "results": {
+     "older": {
+      "n": 34,
+      "days": 32,
+      "stocks": 31,
+      "avg": 0.0171,
+      "ctrl": 0.0034,
+      "edge": 0.014,
+      "t": 0.6,
+      "vsSpy": 0.0067,
+      "tSpy": 0.29,
+      "vsOwn": 0.0161,
+      "tOwn": 0.71,
+      "win": 0.5,
+      "noTop2": -0.0086
+     },
+     "newer": {
+      "n": 46,
+      "days": 38,
+      "stocks": 40,
+      "avg": 0.0248,
+      "ctrl": 0.0106,
+      "edge": 0.0231,
+      "t": 1.04,
+      "vsSpy": 0.0121,
+      "tSpy": 0.53,
+      "vsOwn": 0.0107,
+      "tOwn": 0.43,
+      "win": 0.543,
+      "noTop2": 0.0036
+     },
+     "stress": {
+      "n": 46,
+      "days": 38,
+      "stocks": 40,
+      "avg": 0.0208,
+      "ctrl": 0.0106,
+      "edge": 0.0191,
+      "t": 0.86,
+      "vsSpy": 0.0081,
+      "tSpy": 0.36,
+      "vsOwn": 0.0107,
+      "tOwn": 0.43,
+      "win": 0.543,
+      "noTop2": -0.0004
+     }
+    },
+    "allGaps": {
+     "older": {
+      "n": 357,
+      "days": 192,
+      "stocks": 136,
+      "avg": 0.0023,
+      "ctrl": -0.0042,
+      "edge": 0.0075,
+      "t": 0.96,
+      "vsSpy": null,
+      "tSpy": null,
+      "vsOwn": null,
+      "tOwn": null,
+      "win": 0.493,
+      "noTop2": -0.002
+     },
+     "newer": {
+      "n": 487,
+      "days": 219,
+      "stocks": 165,
+      "avg": 0.0182,
+      "ctrl": 0.0064,
+      "edge": 0.0131,
+      "t": 1.39,
+      "vsSpy": null,
+      "tSpy": null,
+      "vsOwn": null,
+      "tOwn": null,
+      "win": 0.524,
+      "noTop2": 0.0151
+     }
+    }
+   }
+  }
+ },
+ "today": []
+}

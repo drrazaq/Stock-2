@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-21T05:35:19.758Z",
+ "generatedAt": "2026-10-23T07:18:05.475Z",
  "status": "OK",
  "from": "2021-10-12",
  "to": "2026-10-19",
@@ -11,12 +11,12 @@
  },
  "versions": 6,
  "bar": 2.7,
- "note": "SEC data sets are quarterly, so the newest weeks appear only after the quarter ends.",
+ "note": "SEC data sets are quarterly, so the newest weeks appear only after the quarter ends. results = the frozen first verdict of each version (firstRun); latest = monitoring only.",
  "results": {
   "CLUSTER3_20": {
    "name": "3+ different insiders buying within 10 days, bought the next open after the filing, held 20 sessions",
    "verdict": "NOT PROVEN",
-   "why": "not clearly better than the average stock in the older half (+0.0%, t 0.05, 2.7 needed); lost money after costs in the older half; not clearly better than the average stock in the newer half (+0.2%, t 0.2, 2.7 needed); not clearly better than the same stock on other days in the newer half (+1.4%, t 1.61)",
+   "why": "not clearly better than the average stock in the older half (+0.0%, t 0.05, 2.7 needed); lost money after costs in the older half; not clearly better than the average stock in the newer half (+0.2%, t 0.2, 2.7 needed); not clearly better than the same stock on other days in the newer half (+1.4%, t 1.6)",
    "results": {
     "older": {
      "n": 812,
@@ -32,37 +32,38 @@
      "topStock": 0.033
     },
     "newer": {
-     "n": 740,
-     "days": 370,
-     "avg": 0.0116,
-     "ctrl": 0.0082,
-     "edge": 0.0017,
+     "n": 739,
+     "days": 369,
+     "avg": 0.0118,
+     "ctrl": 0.0083,
+     "edge": 0.0018,
      "t": 0.2,
-     "vsOwn": 0.0138,
-     "tOwn": 1.61,
+     "vsOwn": 0.014,
+     "tOwn": 1.6,
      "win": 0.503,
-     "noTop2": 0.0069,
+     "noTop2": 0.007,
      "topStock": 0.062
     },
     "stress": {
-     "n": 740,
-     "days": 370,
-     "avg": 0.0076,
-     "ctrl": 0.0082,
-     "edge": -0.0023,
-     "t": -0.26,
-     "vsOwn": 0.0138,
-     "tOwn": 1.61,
-     "win": 0.489,
-     "noTop2": 0.0029,
+     "n": 739,
+     "days": 369,
+     "avg": 0.0078,
+     "ctrl": 0.0083,
+     "edge": -0.0022,
+     "t": -0.25,
+     "vsOwn": 0.014,
+     "tOwn": 1.6,
+     "win": 0.49,
+     "noTop2": 0.003,
      "topStock": 0.064
     }
-   }
+   },
+   "frozenAt": "2026-10-19T07:59:42.248Z"
   },
   "CLUSTER3_60": {
    "name": "3+ different insiders buying within 10 days, bought the next open after the filing, held 60 sessions",
    "verdict": "REJECTED",
-   "why": "not clearly better than the average stock in the older half (+1.7%, t 1.63, 2.7 needed); not clearly better than the average stock in the newer half (-1.2%, t -1.22, 2.7 needed)",
+   "why": "not clearly better than the average stock in the older half (+1.7%, t 1.63, 2.7 needed); not clearly better than the average stock in the newer half (-1.2%, t -1.23, 2.7 needed)",
    "results": {
     "older": {
      "n": 812,
@@ -78,47 +79,48 @@
      "topStock": 0.024
     },
     "newer": {
-     "n": 690,
-     "days": 344,
-     "avg": 0.0361,
-     "ctrl": 0.0471,
-     "edge": -0.0121,
-     "t": -1.22,
-     "vsOwn": 0.0246,
-     "tOwn": 2.45,
+     "n": 687,
+     "days": 343,
+     "avg": 0.0365,
+     "ctrl": 0.0475,
+     "edge": -0.0122,
+     "t": -1.23,
+     "vsOwn": 0.025,
+     "tOwn": 2.46,
      "win": 0.514,
-     "noTop2": 0.0323,
+     "noTop2": 0.0326,
      "topStock": 0.043
     },
     "stress": {
-     "n": 690,
-     "days": 344,
-     "avg": 0.0321,
-     "ctrl": 0.0471,
-     "edge": -0.0161,
+     "n": 687,
+     "days": 343,
+     "avg": 0.0325,
+     "ctrl": 0.0475,
+     "edge": -0.0162,
      "t": -1.63,
-     "vsOwn": 0.0246,
-     "tOwn": 2.45,
-     "win": 0.506,
-     "noTop2": 0.0283,
-     "topStock": 0.043
+     "vsOwn": 0.025,
+     "tOwn": 2.46,
+     "win": 0.505,
+     "noTop2": 0.0286,
+     "topStock": 0.044
     }
-   }
+   },
+   "frozenAt": "2026-10-19T07:59:42.248Z"
   },
   "CLUSTER2_20": {
    "name": "2+ different insiders buying within 10 days, bought the next open after the filing, held 20 sessions",
    "verdict": "REJECTED",
-   "why": "not clearly better than the average stock in the older half (-0.5%, t -0.97, 2.7 needed); not clearly better than the same stock on other days in the older half (+0.7%, t 1.27); lost money after costs in the older half; not clearly better than the average stock in the newer half (+0.4%, t 0.76, 2.7 needed)",
+   "why": "not clearly better than the average stock in the older half (-0.4%, t -0.96, 2.7 needed); not clearly better than the same stock on other days in the older half (+0.7%, t 1.26); lost money after costs in the older half; not clearly better than the average stock in the newer half (+0.4%, t 0.8, 2.7 needed)",
    "results": {
     "older": {
-     "n": 1817,
-     "days": 518,
+     "n": 1815,
+     "days": 517,
      "avg": -0.0108,
-     "ctrl": -0.0033,
-     "edge": -0.0046,
-     "t": -0.97,
+     "ctrl": -0.0034,
+     "edge": -0.0045,
+     "t": -0.96,
      "vsOwn": 0.0069,
-     "tOwn": 1.27,
+     "tOwn": 1.26,
      "win": 0.447,
      "noTop2": -0.0122,
      "topStock": 0.021
@@ -126,81 +128,83 @@
     "newer": {
      "n": 1569,
      "days": 499,
-     "avg": 0.0103,
-     "ctrl": 0.0061,
-     "edge": 0.0036,
-     "t": 0.76,
-     "vsOwn": 0.0134,
-     "tOwn": 2.63,
-     "win": 0.511,
-     "noTop2": 0.0077,
+     "avg": 0.0105,
+     "ctrl": 0.0062,
+     "edge": 0.0038,
+     "t": 0.8,
+     "vsOwn": 0.0137,
+     "tOwn": 2.69,
+     "win": 0.512,
+     "noTop2": 0.008,
      "topStock": 0.024
     },
     "stress": {
      "n": 1569,
      "days": 499,
-     "avg": 0.0063,
-     "ctrl": 0.0061,
-     "edge": -0.0004,
-     "t": -0.08,
-     "vsOwn": 0.0134,
-     "tOwn": 2.63,
-     "win": 0.492,
-     "noTop2": 0.0037,
+     "avg": 0.0065,
+     "ctrl": 0.0062,
+     "edge": -0.0002,
+     "t": -0.04,
+     "vsOwn": 0.0137,
+     "tOwn": 2.69,
+     "win": 0.493,
+     "noTop2": 0.004,
      "topStock": 0.025
     }
-   }
+   },
+   "frozenAt": "2026-10-19T07:59:42.248Z"
   },
   "CLUSTER2_60": {
    "name": "2+ different insiders buying within 10 days, bought the next open after the filing, held 60 sessions",
    "verdict": "REJECTED",
-   "why": "not clearly better than the average stock in the older half (+0.3%, t 0.39, 2.7 needed); lost money after costs in the older half; not clearly better than the average stock in the newer half (-0.5%, t -0.58, 2.7 needed)",
+   "why": "not clearly better than the average stock in the older half (+0.3%, t 0.44, 2.7 needed); lost money after costs in the older half; not clearly better than the average stock in the newer half (-0.6%, t -0.73, 2.7 needed)",
    "results": {
     "older": {
-     "n": 1817,
-     "days": 518,
-     "avg": -0.0018,
-     "ctrl": -0.0026,
-     "edge": 0.0029,
-     "t": 0.39,
-     "vsOwn": 0.0266,
-     "tOwn": 3.31,
-     "win": 0.479,
-     "noTop2": -0.0039,
+     "n": 1815,
+     "days": 517,
+     "avg": -0.0017,
+     "ctrl": -0.0027,
+     "edge": 0.0032,
+     "t": 0.44,
+     "vsOwn": 0.0268,
+     "tOwn": 3.33,
+     "win": 0.48,
+     "noTop2": -0.0037,
      "topStock": 0.022
     },
     "newer": {
-     "n": 1445,
+     "n": 1446,
      "days": 462,
-     "avg": 0.0364,
+     "avg": 0.036,
      "ctrl": 0.0445,
-     "edge": -0.0049,
-     "t": -0.58,
-     "vsOwn": 0.0192,
-     "tOwn": 2.24,
-     "win": 0.51,
-     "noTop2": 0.0331,
+     "edge": -0.0061,
+     "t": -0.73,
+     "vsOwn": 0.0182,
+     "tOwn": 2.12,
+     "win": 0.509,
+     "noTop2": 0.0327,
      "topStock": 0.02
     },
     "stress": {
-     "n": 1445,
+     "n": 1446,
      "days": 462,
-     "avg": 0.0324,
+     "avg": 0.032,
      "ctrl": 0.0445,
-     "edge": -0.0089,
-     "t": -1.05,
-     "vsOwn": 0.0192,
-     "tOwn": 2.24,
-     "win": 0.502,
-     "noTop2": 0.0291,
+     "edge": -0.0101,
+     "t": -1.2,
+     "vsOwn": 0.0182,
+     "tOwn": 2.12,
+     "win": 0.501,
+     "noTop2": 0.0287,
      "topStock": 0.021
     }
-   }
+   },
+   "frozenAt": "2026-10-19T07:59:42.248Z"
   },
   "BIG1_20": {
    "name": "one insider buying 250,000 USD or more, bought the next open after the filing, held 20 sessions",
    "verdict": "REJECTED",
-   "why": "not clearly better than the average stock in the older half (-0.2%, t -0.4, 2.7 needed); not clearly better than the same stock on other days in the older half (+0.6%, t 1.04); lost money after costs in the older half; not clearly better than the average stock in the newer half (-1.1%, t -2.22, 2.7 needed); not clearly better than the same stock on other days in the newer half (-0.1%, t -0.16); lost money after costs in the newer half; loses at 1.2% costs; loses without its 2 best trades",
+   "why": "not clearly better than the average stock in the older half (-0.2%, t -0.4, 2.7 needed); not clearly better than the same stock on other days in the older half (+0.6%, t 1.04); lost money after costs in the older half; not clearly better than the average stock in the newer half (-1.1%, t -2.2, 2.7 needed); not clearly better than the same stock on other days in the newer half (-0.1%, t -0.14); lost money after costs in the newer half; loses at 1.2% costs; loses without its 2 best trades",
    "results": {
     "older": {
      "n": 2056,
@@ -216,37 +220,38 @@
      "topStock": 0.017
     },
     "newer": {
-     "n": 2001,
-     "days": 526,
-     "avg": -0.0025,
-     "ctrl": 0.0061,
-     "edge": -0.0109,
-     "t": -2.22,
-     "vsOwn": -0.0008,
-     "tOwn": -0.16,
-     "win": 0.461,
-     "noTop2": -0.0039,
+     "n": 1999,
+     "days": 525,
+     "avg": -0.0023,
+     "ctrl": 0.0062,
+     "edge": -0.0108,
+     "t": -2.2,
+     "vsOwn": -0.0007,
+     "tOwn": -0.14,
+     "win": 0.462,
+     "noTop2": -0.0037,
      "topStock": 0.019
     },
     "stress": {
-     "n": 2001,
-     "days": 526,
-     "avg": -0.0065,
-     "ctrl": 0.0061,
-     "edge": -0.0149,
-     "t": -3.04,
-     "vsOwn": -0.0008,
-     "tOwn": -0.16,
-     "win": 0.444,
-     "noTop2": -0.0079,
+     "n": 1999,
+     "days": 525,
+     "avg": -0.0063,
+     "ctrl": 0.0062,
+     "edge": -0.0148,
+     "t": -3.01,
+     "vsOwn": -0.0007,
+     "tOwn": -0.14,
+     "win": 0.445,
+     "noTop2": -0.0077,
      "topStock": 0.019
     }
-   }
+   },
+   "frozenAt": "2026-10-19T07:59:42.248Z"
   },
   "BIG1_60": {
    "name": "one insider buying 250,000 USD or more, bought the next open after the filing, held 60 sessions",
    "verdict": "REJECTED",
-   "why": "not clearly better than the average stock in the older half (-0.2%, t -0.3, 2.7 needed); not clearly better than the same stock on other days in the older half (+1.2%, t 1.49); lost money after costs in the older half; not clearly better than the average stock in the newer half (-1.1%, t -1.09, 2.7 needed); not clearly better than the same stock on other days in the newer half (+0.8%, t 0.84)",
+   "why": "not clearly better than the average stock in the older half (-0.2%, t -0.3, 2.7 needed); not clearly better than the same stock on other days in the older half (+1.2%, t 1.49); lost money after costs in the older half; not clearly better than the average stock in the newer half (-1.1%, t -1.11, 2.7 needed); not clearly better than the same stock on other days in the newer half (+0.8%, t 0.86)",
    "results": {
     "older": {
      "n": 2056,
@@ -262,126 +267,35 @@
      "topStock": 0.013
     },
     "newer": {
-     "n": 1826,
-     "days": 487,
+     "n": 1824,
+     "days": 486,
      "avg": 0.0284,
-     "ctrl": 0.0427,
-     "edge": -0.011,
-     "t": -1.09,
-     "vsOwn": 0.0082,
-     "tOwn": 0.84,
-     "win": 0.504,
+     "ctrl": 0.0428,
+     "edge": -0.0113,
+     "t": -1.11,
+     "vsOwn": 0.0084,
+     "tOwn": 0.86,
+     "win": 0.503,
      "noTop2": 0.0253,
      "topStock": 0.034
     },
     "stress": {
-     "n": 1826,
-     "days": 487,
+     "n": 1824,
+     "days": 486,
      "avg": 0.0244,
-     "ctrl": 0.0427,
-     "edge": -0.015,
-     "t": -1.49,
-     "vsOwn": 0.0082,
-     "tOwn": 0.84,
-     "win": 0.494,
+     "ctrl": 0.0428,
+     "edge": -0.0153,
+     "t": -1.51,
+     "vsOwn": 0.0084,
+     "tOwn": 0.86,
+     "win": 0.493,
      "noTop2": 0.0213,
      "topStock": 0.034
     }
-   }
+   },
+   "frozenAt": "2026-10-19T07:59:42.248Z"
   }
  },
- "recent": [
-  {
-   "sym": "FUL",
-   "d": "2026-09-30",
-   "n": 5,
-   "usd": 499074
-  },
-  {
-   "sym": "BBD",
-   "d": "2026-09-21",
-   "n": 5,
-   "usd": 9269554
-  },
-  {
-   "sym": "FNWD",
-   "d": "2026-09-28",
-   "n": 4,
-   "usd": 3694
-  },
-  {
-   "sym": "BPRE",
-   "d": "2026-09-30",
-   "n": 3,
-   "usd": 5534860
-  },
-  {
-   "sym": "KWY",
-   "d": "2026-09-30",
-   "n": 3,
-   "usd": 37207
-  },
-  {
-   "sym": "KOD",
-   "d": "2026-09-30",
-   "n": 3,
-   "usd": 156989304
-  },
-  {
-   "sym": "BGDE",
-   "d": "2026-09-22",
-   "n": 3,
-   "usd": 24037
-  },
-  {
-   "sym": "UXIN",
-   "d": "2026-09-30",
-   "n": 2,
-   "usd": 1059952
-  },
-  {
-   "sym": "CLPR",
-   "d": "2026-09-30",
-   "n": 2,
-   "usd": 323704
-  },
-  {
-   "sym": "ADRX",
-   "d": "2026-09-29",
-   "n": 2,
-   "usd": 54400000
-  },
-  {
-   "sym": "DTIL",
-   "d": "2026-09-29",
-   "n": 2,
-   "usd": 23501
-  },
-  {
-   "sym": "INR",
-   "d": "2026-09-28",
-   "n": 2,
-   "usd": 663725
-  },
-  {
-   "sym": "ADAG",
-   "d": "2026-09-25",
-   "n": 2,
-   "usd": 69914
-  },
-  {
-   "sym": "DFDV",
-   "d": "2026-09-25",
-   "n": 2,
-   "usd": 181751
-  },
-  {
-   "sym": "UMH",
-   "d": "2026-09-25",
-   "n": 2,
-   "usd": 21890
-  }
- ],
  "firstRun": {
   "at": "2026-10-19T07:59:42.248Z",
   "bar": 2.7,
@@ -668,7 +582,382 @@
     },
     "frozenAt": "2026-10-19T07:59:42.248Z"
    }
+  }
+ },
+ "latest": {
+  "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
+  "at": "2026-10-23T07:18:05.475Z",
+  "to": "2026-10-19",
+  "bar": 2.7,
+  "results": {
+   "CLUSTER3_20": {
+    "name": "3+ different insiders buying within 10 days, bought the next open after the filing, held 20 sessions",
+    "verdict": "REJECTED",
+    "why": "not clearly better than the average stock in the older half (-0.2%, t -0.24, 2.7 needed); lost money after costs in the older half; not clearly better than the average stock in the newer half (+0.4%, t 0.4, 2.7 needed); not clearly better than the same stock on other days in the newer half (+1.5%, t 1.7)",
+    "results": {
+     "older": {
+      "n": 812,
+      "days": 376,
+      "avg": -0.0079,
+      "ctrl": -0.0019,
+      "edge": -0.0016,
+      "t": -0.24,
+      "vsOwn": 0.015,
+      "tOwn": 2.13,
+      "win": 0.457,
+      "noTop2": -0.0106,
+      "topStock": 0.033
+     },
+     "newer": {
+      "n": 740,
+      "days": 370,
+      "avg": 0.0114,
+      "ctrl": 0.007,
+      "edge": 0.0035,
+      "t": 0.4,
+      "vsOwn": 0.0148,
+      "tOwn": 1.7,
+      "win": 0.501,
+      "noTop2": 0.0067,
+      "topStock": 0.061
+     },
+     "stress": {
+      "n": 740,
+      "days": 370,
+      "avg": 0.0074,
+      "ctrl": 0.007,
+      "edge": -0.0005,
+      "t": -0.05,
+      "vsOwn": 0.0148,
+      "tOwn": 1.7,
+      "win": 0.488,
+      "noTop2": 0.0027,
+      "topStock": 0.064
+     }
+    }
+   },
+   "CLUSTER3_60": {
+    "name": "3+ different insiders buying within 10 days, bought the next open after the filing, held 60 sessions",
+    "verdict": "REJECTED",
+    "why": "not clearly better than the average stock in the older half (+1.5%, t 1.41, 2.7 needed); not clearly better than the average stock in the newer half (-1.1%, t -1.12, 2.7 needed)",
+    "results": {
+     "older": {
+      "n": 812,
+      "days": 376,
+      "avg": 0.0173,
+      "ctrl": 0.001,
+      "edge": 0.0154,
+      "t": 1.41,
+      "vsOwn": 0.0523,
+      "tOwn": 4.58,
+      "win": 0.49,
+      "noTop2": 0.0126,
+      "topStock": 0.024
+     },
+     "newer": {
+      "n": 690,
+      "days": 344,
+      "avg": 0.0342,
+      "ctrl": 0.0446,
+      "edge": -0.0114,
+      "t": -1.12,
+      "vsOwn": 0.0255,
+      "tOwn": 2.51,
+      "win": 0.516,
+      "noTop2": 0.0304,
+      "topStock": 0.043
+     },
+     "stress": {
+      "n": 690,
+      "days": 344,
+      "avg": 0.0302,
+      "ctrl": 0.0446,
+      "edge": -0.0154,
+      "t": -1.52,
+      "vsOwn": 0.0255,
+      "tOwn": 2.51,
+      "win": 0.507,
+      "noTop2": 0.0264,
+      "topStock": 0.043
+     }
+    }
+   },
+   "CLUSTER2_20": {
+    "name": "2+ different insiders buying within 10 days, bought the next open after the filing, held 20 sessions",
+    "verdict": "REJECTED",
+    "why": "not clearly better than the average stock in the older half (-0.4%, t -0.91, 2.7 needed); not clearly better than the same stock on other days in the older half (+0.9%, t 1.54); lost money after costs in the older half; not clearly better than the average stock in the newer half (+0.4%, t 0.82, 2.7 needed)",
+    "results": {
+     "older": {
+      "n": 1817,
+      "days": 518,
+      "avg": -0.0123,
+      "ctrl": -0.0044,
+      "edge": -0.0044,
+      "t": -0.91,
+      "vsOwn": 0.0086,
+      "tOwn": 1.54,
+      "win": 0.444,
+      "noTop2": -0.0137,
+      "topStock": 0.021
+     },
+     "newer": {
+      "n": 1569,
+      "days": 499,
+      "avg": 0.0095,
+      "ctrl": 0.0049,
+      "edge": 0.004,
+      "t": 0.82,
+      "vsOwn": 0.0141,
+      "tOwn": 2.75,
+      "win": 0.511,
+      "noTop2": 0.007,
+      "topStock": 0.024
+     },
+     "stress": {
+      "n": 1569,
+      "days": 499,
+      "avg": 0.0055,
+      "ctrl": 0.0049,
+      "edge": 0,
+      "t": -0.01,
+      "vsOwn": 0.0141,
+      "tOwn": 2.75,
+      "win": 0.492,
+      "noTop2": 0.003,
+      "topStock": 0.025
+     }
+    }
+   },
+   "CLUSTER2_60": {
+    "name": "2+ different insiders buying within 10 days, bought the next open after the filing, held 60 sessions",
+    "verdict": "REJECTED",
+    "why": "not clearly better than the average stock in the older half (+0.3%, t 0.34, 2.7 needed); lost money after costs in the older half; not clearly better than the average stock in the newer half (-0.6%, t -0.67, 2.7 needed)",
+    "results": {
+     "older": {
+      "n": 1817,
+      "days": 518,
+      "avg": -0.0058,
+      "ctrl": -0.0056,
+      "edge": 0.0025,
+      "t": 0.34,
+      "vsOwn": 0.0296,
+      "tOwn": 3.61,
+      "win": 0.478,
+      "noTop2": -0.0078,
+      "topStock": 0.022
+     },
+     "newer": {
+      "n": 1445,
+      "days": 462,
+      "avg": 0.0336,
+      "ctrl": 0.042,
+      "edge": -0.0058,
+      "t": -0.67,
+      "vsOwn": 0.0195,
+      "tOwn": 2.26,
+      "win": 0.509,
+      "noTop2": 0.0303,
+      "topStock": 0.02
+     },
+     "stress": {
+      "n": 1445,
+      "days": 462,
+      "avg": 0.0296,
+      "ctrl": 0.042,
+      "edge": -0.0098,
+      "t": -1.13,
+      "vsOwn": 0.0195,
+      "tOwn": 2.26,
+      "win": 0.501,
+      "noTop2": 0.0263,
+      "topStock": 0.021
+     }
+    }
+   },
+   "BIG1_20": {
+    "name": "one insider buying 250,000 USD or more, bought the next open after the filing, held 20 sessions",
+    "verdict": "REJECTED",
+    "why": "not clearly better than the average stock in the older half (-0.3%, t -0.61, 2.7 needed); not clearly better than the same stock on other days in the older half (+0.5%, t 0.98); lost money after costs in the older half; not clearly better than the average stock in the newer half (-1.0%, t -2.11, 2.7 needed); not clearly better than the same stock on other days in the newer half (+0.0%, t 0.03); lost money after costs in the newer half; loses at 1.2% costs; loses without its 2 best trades",
+    "results": {
+     "older": {
+      "n": 2056,
+      "days": 536,
+      "avg": -0.0099,
+      "ctrl": -0.0066,
+      "edge": -0.0029,
+      "t": -0.61,
+      "vsOwn": 0.0055,
+      "tOwn": 0.98,
+      "win": 0.458,
+      "noTop2": -0.0109,
+      "topStock": 0.017
+     },
+     "newer": {
+      "n": 2001,
+      "days": 526,
+      "avg": -0.0032,
+      "ctrl": 0.0049,
+      "edge": -0.0104,
+      "t": -2.11,
+      "vsOwn": 0.0001,
+      "tOwn": 0.03,
+      "win": 0.461,
+      "noTop2": -0.0045,
+      "topStock": 0.019
+     },
+     "stress": {
+      "n": 2001,
+      "days": 526,
+      "avg": -0.0072,
+      "ctrl": 0.0049,
+      "edge": -0.0144,
+      "t": -2.92,
+      "vsOwn": 0.0001,
+      "tOwn": 0.03,
+      "win": 0.442,
+      "noTop2": -0.0085,
+      "topStock": 0.019
+     }
+    }
+   },
+   "BIG1_60": {
+    "name": "one insider buying 250,000 USD or more, bought the next open after the filing, held 60 sessions",
+    "verdict": "REJECTED",
+    "why": "not clearly better than the average stock in the older half (-0.4%, t -0.52, 2.7 needed); not clearly better than the same stock on other days in the older half (+1.3%, t 1.51); lost money after costs in the older half; not clearly better than the average stock in the newer half (-1.1%, t -1.07, 2.7 needed); not clearly better than the same stock on other days in the newer half (+0.9%, t 0.93)",
+    "results": {
+     "older": {
+      "n": 2056,
+      "days": 536,
+      "avg": -0.0145,
+      "ctrl": -0.0143,
+      "edge": -0.0041,
+      "t": -0.52,
+      "vsOwn": 0.0126,
+      "tOwn": 1.51,
+      "win": 0.472,
+      "noTop2": -0.0164,
+      "topStock": 0.013
+     },
+     "newer": {
+      "n": 1826,
+      "days": 487,
+      "avg": 0.0262,
+      "ctrl": 0.0402,
+      "edge": -0.011,
+      "t": -1.07,
+      "vsOwn": 0.0091,
+      "tOwn": 0.93,
+      "win": 0.504,
+      "noTop2": 0.0232,
+      "topStock": 0.034
+     },
+     "stress": {
+      "n": 1826,
+      "days": 487,
+      "avg": 0.0222,
+      "ctrl": 0.0402,
+      "edge": -0.015,
+      "t": -1.46,
+      "vsOwn": 0.0091,
+      "tOwn": 0.93,
+      "win": 0.494,
+      "noTop2": 0.0192,
+      "topStock": 0.034
+     }
+    }
+   }
+  }
+ },
+ "recent": [
+  {
+   "sym": "FUL",
+   "d": "2026-09-30",
+   "n": 5,
+   "usd": 499074
   },
-  "seeded": "seeded 22 Oct 2026 from commit 5ab1344: the first committed run of the current code (the run-once freeze did not exist yet)"
- }
+  {
+   "sym": "FNWD",
+   "d": "2026-09-28",
+   "n": 4,
+   "usd": 3694
+  },
+  {
+   "sym": "BPRE",
+   "d": "2026-09-30",
+   "n": 3,
+   "usd": 5534860
+  },
+  {
+   "sym": "KWY",
+   "d": "2026-09-30",
+   "n": 3,
+   "usd": 37207
+  },
+  {
+   "sym": "KOD",
+   "d": "2026-09-30",
+   "n": 3,
+   "usd": 156989304
+  },
+  {
+   "sym": "UXIN",
+   "d": "2026-09-30",
+   "n": 2,
+   "usd": 1059952
+  },
+  {
+   "sym": "CLPR",
+   "d": "2026-09-30",
+   "n": 2,
+   "usd": 323704
+  },
+  {
+   "sym": "ADRX",
+   "d": "2026-09-29",
+   "n": 2,
+   "usd": 54400000
+  },
+  {
+   "sym": "DTIL",
+   "d": "2026-09-29",
+   "n": 2,
+   "usd": 23501
+  },
+  {
+   "sym": "INR",
+   "d": "2026-09-28",
+   "n": 2,
+   "usd": 663725
+  },
+  {
+   "sym": "ADAG",
+   "d": "2026-09-25",
+   "n": 2,
+   "usd": 69914
+  },
+  {
+   "sym": "DFDV",
+   "d": "2026-09-25",
+   "n": 2,
+   "usd": 181751
+  },
+  {
+   "sym": "UMH",
+   "d": "2026-09-25",
+   "n": 2,
+   "usd": 21890
+  },
+  {
+   "sym": "NYAX",
+   "d": "2026-09-24",
+   "n": 2,
+   "usd": 4752861
+  },
+  {
+   "sym": "HHH",
+   "d": "2026-09-24",
+   "n": 2,
+   "usd": 1667490
+  }
+ ]
 }
