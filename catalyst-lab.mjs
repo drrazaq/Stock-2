@@ -57,7 +57,7 @@ const spyF = (t, h) => spyI === undefined ? null : fwd(spyI, t, h);
 let lastReq = 0, nReq = 0, nFail = 0;
 async function get(url, kind = 'json', headers = { 'User-Agent': UA }) {
   for (let a = 0; a < 4; a++) { const w = (local(env.EFTS_BASE) ? 0 : 125) - (Date.now() - lastReq); if (w > 0) await sleep(w); lastReq = Date.now(); nReq++;
-    try { const r = await fetch(url, { headers, signal: AbortSignal.timeout(30000) }); if (r.status === 404 || r.status === 410) return kind === 'text' ? '' : null; if (r.status === 429 || r.status === 403 || r.status >= 500) { await sleep(2000 * (a + 1)); continue; } if (!r.ok) return null;
+    try { const r = await fetch(url, { headers, signal: AbortSignal.timeout(30000) }); if (r.status === 404 || r.status === 410) return kind === 'text' ? '' : null; if (r.status === 429 || r.status === 403 || r.status >= 500) { await sleep(2000 * (a + 1)); continue; } if (!r.ok) { nFail++; if (nFail <= 5) console.log('catalyst-lab: HTTP ' + r.status + ' ' + url.replace(/apiKey=[^&]+/, 'apiKey=***').slice(0, 200)); return null; }
       return kind === 'json' ? await r.json() : kind === 'bin' ? Buffer.from(await r.arrayBuffer()) : await r.text(); } catch (e) { await sleep(1000 * (a + 1)); } }
   nFail++; return null; }
 const months = (from) => { const out = [], now = new Date(); for (let y = +from.slice(0, 4), m = +from.slice(5, 7); y < now.getUTCFullYear() || (y === now.getUTCFullYear() && m <= now.getUTCMonth() + 1); m === 12 ? (y++, m = 1) : m++) out.push(y + '-' + String(m).padStart(2, '0')); return out; };
@@ -67,7 +67,7 @@ const slug = (p) => p.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 async function efts(phrase, a, b) {
   const hits = []; for (let from = 0; from < 10000; from += 100) {
     const j = await get(EFTS + '/LATEST/search-index?q=' + encodeURIComponent('"' + phrase + '"') + '&forms=8-K&dateRange=custom&startdt=' + a + '&enddt=' + b + '&from=' + from);
-    if (!j || !j.hits) return null; const tot = (j.hits.total && j.hits.total.value) || 0;
+    if (!j || !j.hits) { if (j) { nFail++; if (nFail <= 5) console.log('catalyst-lab: full-text search answered without hits: ' + JSON.stringify(j).slice(0, 200)); } return null; } const tot = (j.hits.total && j.hits.total.value) || 0;
     if (from === 0 && tot >= 9900 && a < b) { const mid = new Date((Date.parse(a) + Date.parse(b)) / 2).toISOString().slice(0, 10), x = await efts(phrase, a, mid), y = await efts(phrase, new Date(Date.parse(mid) + 864e5).toISOString().slice(0, 10), b); return x && y ? x.concat(y) : null; }
     for (const h of j.hits.hits || []) { const s = h._source || {}, tk = []; for (const dn of s.display_names || []) { const m = dn.match(/\(([A-Z0-9.,\s-]+)\)\s+\(CIK/); if (m) tk.push(...m[1].split(',').map(x => x.trim()).filter(Boolean)); }
       hits.push([h._id, s.adsh, +((s.ciks || [])[0] || 0), s.file_date, (s.sics || [])[0] || '', tk]); }
