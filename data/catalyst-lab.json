@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-23T06:02:15.913Z",
+ "generatedAt": "2026-10-23T06:04:06.363Z",
  "preRegistered": "2026-10-23",
  "window": [
   "2022-01-06",
@@ -7,15 +7,11 @@
  ],
  "sessions": 1200,
  "bar": 4,
- "complete": false,
+ "complete": true,
  "data": {
   "fullTextPhrases": 44,
-  "fullTextComplete": false,
-  "missing": [
-   "Notice of Delisting 2024-03",
-   "Notice of Delisting 2024-11",
-   "workforce reduction 2022-08"
-  ],
+  "fullTextComplete": true,
+  "missing": [],
   "catalystHits": 23297,
   "bioDocuments": 12632,
   "documentsNotRead": 0,
@@ -23,15 +19,16 @@
   "companiesWithTickers": 11105,
   "massiveRefCiks": 10219,
   "positive8K": 38055,
-  "negative8K": 59398,
-  "requests": 136,
-  "failedRequests": 3
+  "negative8K": 59893,
+  "requests": 53,
+  "failedRequests": 0,
+  "failures": []
  },
  "caveat": "Prices: 5-year whole-market cache incl. dead stocks; its rows hold 3 USD+ stocks with 1M USD+ traded, so the 2 USD floor is in practice 3 USD (penny-stock run-ups like OCGN under 3 USD are outside the test). EDGAR full-text search gives filing dates only (no time), used from the first session on/after that date. CAT-NEWS1 positive/negative is by fixed phrases, not by reading: some hits are mentions, not events. results = frozen first verdict (firstRun); latest = monitoring only.",
  "results": {
   "CAT-RUN1": {
    "name": "Run-up into a scheduled biotech/medtech catalyst: buy 30 sessions before, sell 2 sessions before",
-   "verdict": "NO VERDICT YET (REJECTED, data still loading)",
+   "verdict": "REJECTED",
    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; t 0.78 under 2.5 in the older half; loses without its 2 best trades in the older half; not better than the average stock in the newer half; t -0.31 under 2.5 in the newer half; not better than the same stock on its other days in the newer half",
    "results": {
     "all": {
@@ -230,48 +227,49 @@
       "noTop2": 0.0255
      }
     }
-   }
+   },
+   "frozenAt": "2026-10-23T06:04:06.359Z"
   },
   "CAT-NEWS1": {
    "name": "News build-up: 3+ positive 8-Ks in 60 sessions, none negative, above the 50-day; hold 15 sessions",
-   "verdict": "NO VERDICT YET (REJECTED, data still loading)",
-   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -1.08 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 0.36 under 2.5 in the newer half",
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -1.01 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 0.36 under 2.5 in the newer half",
    "results": {
     "all": {
-     "n": 569,
-     "days": 436,
-     "stocks": 206,
-     "win": 0.4499,
-     "avg": -0.002,
-     "median": -0.0181,
+     "n": 566,
+     "days": 434,
+     "stocks": 204,
+     "win": 0.4505,
+     "avg": -0.0016,
+     "median": -0.0176,
      "worst": -0.7462,
      "best": 1.1917,
-     "avgStress": -0.006,
+     "avgStress": -0.0056,
      "ctrl": 0.0013,
-     "edge": -0.0024,
-     "t": -0.29,
+     "edge": -0.0021,
+     "t": -0.25,
      "vsOwn": -0.0041,
-     "tOwn": -0.47,
-     "vsSpy": -0.0064,
-     "noTop2": -0.0059
+     "tOwn": -0.48,
+     "vsSpy": -0.0062,
+     "noTop2": -0.0056
     },
     "older": {
-     "n": 255,
-     "days": 205,
-     "stocks": 103,
-     "win": 0.4078,
-     "avg": -0.0146,
-     "median": -0.0252,
+     "n": 252,
+     "days": 203,
+     "stocks": 101,
+     "win": 0.4087,
+     "avg": -0.0139,
+     "median": -0.025,
      "worst": -0.4059,
      "best": 0.5772,
-     "avgStress": -0.0186,
-     "ctrl": -0.0036,
-     "edge": -0.0104,
-     "t": -1.08,
-     "vsOwn": -0.0131,
-     "tOwn": -1.28,
-     "vsSpy": -0.0162,
-     "noTop2": -0.0191
+     "avgStress": -0.0179,
+     "ctrl": -0.0037,
+     "edge": -0.0098,
+     "t": -1.01,
+     "vsOwn": -0.0133,
+     "tOwn": -1.29,
+     "vsSpy": -0.0157,
+     "noTop2": -0.0185
     },
     "newer": {
      "n": 314,
@@ -293,19 +291,299 @@
     }
    },
    "funnel": {
-    "companies": 7810,
-    "signals": 2664,
-    "noPrice": 15807,
+    "companies": 7811,
+    "signals": 2658,
+    "noPrice": 15585,
     "gate": 72,
-    "dilution": 794,
+    "dilution": 791,
     "lottery": 1226
+   },
+   "frozenAt": "2026-10-23T06:04:06.359Z"
+  }
+ },
+ "firstRun": {
+  "at": "2026-10-23T06:04:06.359Z",
+  "bar": 4,
+  "results": {
+   "CAT-RUN1": {
+    "name": "Run-up into a scheduled biotech/medtech catalyst: buy 30 sessions before, sell 2 sessions before",
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; t 0.78 under 2.5 in the older half; loses without its 2 best trades in the older half; not better than the average stock in the newer half; t -0.31 under 2.5 in the newer half; not better than the same stock on its other days in the newer half",
+    "results": {
+     "all": {
+      "n": 839,
+      "days": 223,
+      "stocks": 268,
+      "win": 0.4827,
+      "avg": 0.0111,
+      "median": -0.0056,
+      "worst": -0.9136,
+      "best": 1.6949,
+      "avgStress": 0.0071,
+      "ctrl": 0.0056,
+      "edge": 0.0048,
+      "t": 0.4,
+      "vsOwn": -0.0051,
+      "tOwn": -0.4,
+      "vsSpy": -0.0025,
+      "noTop2": 0.007
+     },
+     "older": {
+      "n": 403,
+      "days": 114,
+      "stocks": 180,
+      "win": 0.4119,
+      "avg": -0.0046,
+      "median": -0.0252,
+      "worst": -0.8617,
+      "best": 1.6949,
+      "avgStress": -0.0086,
+      "ctrl": -0.0003,
+      "edge": 0.014,
+      "t": 0.78,
+      "vsOwn": 0.0101,
+      "tOwn": 0.5,
+      "vsSpy": 0.0027,
+      "noTop2": -0.0115
+     },
+     "newer": {
+      "n": 436,
+      "days": 109,
+      "stocks": 190,
+      "win": 0.5482,
+      "avg": 0.0255,
+      "median": 0.0178,
+      "worst": -0.9136,
+      "best": 1.6833,
+      "avgStress": 0.0215,
+      "ctrl": 0.0111,
+      "edge": -0.0048,
+      "t": -0.31,
+      "vsOwn": -0.0211,
+      "tOwn": -1.34,
+      "vsSpy": -0.0078,
+      "noTop2": 0.019
+     }
+    },
+    "funnel": {
+     "groups": 3007,
+     "inWindow": 2490,
+     "tooLate": 398,
+     "noPrice": 833,
+     "gate": 75,
+     "dilution": 98,
+     "lottery": 139,
+     "overlap": 107
+    },
+    "information": {
+     "byKind": {
+      "PDUFA": {
+       "n": 313,
+       "days": 201,
+       "stocks": 118,
+       "win": 0.508,
+       "avg": 0.0173,
+       "median": 0.0026,
+       "worst": -0.7258,
+       "best": 0.8077,
+       "avgStress": 0.0133,
+       "ctrl": 0.0095,
+       "edge": 0.0127,
+       "t": 1.06,
+       "vsOwn": 0.0041,
+       "tOwn": 0.31,
+       "vsSpy": 0.0061,
+       "noTop2": 0.0122
+      },
+      "ADCOM": {
+       "n": 38,
+       "days": 34,
+       "stocks": 30,
+       "win": 0.3947,
+       "avg": -0.0041,
+       "median": -0.0246,
+       "worst": -0.4217,
+       "best": 0.8077,
+       "avgStress": -0.0081,
+       "ctrl": 0.0038,
+       "edge": -0.0111,
+       "t": -0.28,
+       "vsOwn": -0.0149,
+       "tOwn": -0.35,
+       "vsSpy": -0.0182,
+       "noTop2": -0.045
+      },
+      "TOPLINE": {
+       "n": 561,
+       "days": 65,
+       "stocks": 222,
+       "win": 0.4688,
+       "avg": 0.0087,
+       "median": -0.0113,
+       "worst": -0.9136,
+       "best": 1.6949,
+       "avgStress": 0.0047,
+       "ctrl": 0.0051,
+       "edge": -0.029,
+       "t": -1.12,
+       "vsOwn": -0.045,
+       "tOwn": -1.68,
+       "vsSpy": -0.037,
+       "noTop2": 0.0027
+      }
+     },
+     "byPrecision": {
+      "day": {
+       "n": 254,
+       "days": 188,
+       "stocks": 107,
+       "win": 0.5,
+       "avg": 0.0121,
+       "median": -0.0005,
+       "worst": -0.7258,
+       "best": 0.8077,
+       "avgStress": 0.0081,
+       "ctrl": 0.0092,
+       "edge": 0.0042,
+       "t": 0.33,
+       "vsOwn": -0.005,
+       "tOwn": -0.37,
+       "vsSpy": -0.0034,
+       "noTop2": 0.0058
+      },
+      "month": {
+       "n": 85,
+       "days": 44,
+       "stocks": 63,
+       "win": 0.5412,
+       "avg": 0.0252,
+       "median": 0.0087,
+       "worst": -0.8737,
+       "best": 0.779,
+       "avgStress": 0.0212,
+       "ctrl": -0.0003,
+       "edge": 0.0301,
+       "t": 0.88,
+       "vsOwn": 0.0234,
+       "tOwn": 0.61,
+       "vsSpy": 0.0198,
+       "noTop2": 0.0084
+      },
+      "quarter": {
+       "n": 297,
+       "days": 19,
+       "stocks": 170,
+       "win": 0.4377,
+       "avg": -0.015,
+       "median": -0.0251,
+       "worst": -0.8617,
+       "best": 1.2066,
+       "avgStress": -0.019,
+       "ctrl": -0.0051,
+       "edge": -0.0077,
+       "t": -0.36,
+       "vsOwn": -0.0422,
+       "tOwn": -1.44,
+       "vsSpy": -0.0148,
+       "noTop2": -0.0231
+      },
+      "half": {
+       "n": 203,
+       "days": 9,
+       "stocks": 134,
+       "win": 0.5025,
+       "avg": 0.0419,
+       "median": 0.0035,
+       "worst": -0.9136,
+       "best": 1.6949,
+       "avgStress": 0.0379,
+       "ctrl": 0.0194,
+       "edge": 0.0355,
+       "t": 1.32,
+       "vsOwn": 0.0542,
+       "tOwn": 1.46,
+       "vsSpy": 0.0427,
+       "noTop2": 0.0255
+      }
+     }
+    },
+    "frozenAt": "2026-10-23T06:04:06.359Z"
+   },
+   "CAT-NEWS1": {
+    "name": "News build-up: 3+ positive 8-Ks in 60 sessions, none negative, above the 50-day; hold 15 sessions",
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -1.01 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 0.36 under 2.5 in the newer half",
+    "results": {
+     "all": {
+      "n": 566,
+      "days": 434,
+      "stocks": 204,
+      "win": 0.4505,
+      "avg": -0.0016,
+      "median": -0.0176,
+      "worst": -0.7462,
+      "best": 1.1917,
+      "avgStress": -0.0056,
+      "ctrl": 0.0013,
+      "edge": -0.0021,
+      "t": -0.25,
+      "vsOwn": -0.0041,
+      "tOwn": -0.48,
+      "vsSpy": -0.0062,
+      "noTop2": -0.0056
+     },
+     "older": {
+      "n": 252,
+      "days": 203,
+      "stocks": 101,
+      "win": 0.4087,
+      "avg": -0.0139,
+      "median": -0.025,
+      "worst": -0.4059,
+      "best": 0.5772,
+      "avgStress": -0.0179,
+      "ctrl": -0.0037,
+      "edge": -0.0098,
+      "t": -1.01,
+      "vsOwn": -0.0133,
+      "tOwn": -1.29,
+      "vsSpy": -0.0157,
+      "noTop2": -0.0185
+     },
+     "newer": {
+      "n": 314,
+      "days": 231,
+      "stocks": 133,
+      "win": 0.4841,
+      "avg": 0.0082,
+      "median": -0.0106,
+      "worst": -0.7462,
+      "best": 1.1917,
+      "avgStress": 0.0042,
+      "ctrl": 0.0053,
+      "edge": 0.0047,
+      "t": 0.36,
+      "vsOwn": 0.0039,
+      "tOwn": 0.29,
+      "vsSpy": 0.0023,
+      "noTop2": 0.0012
+     }
+    },
+    "funnel": {
+     "companies": 7811,
+     "signals": 2658,
+     "noPrice": 15585,
+     "gate": 72,
+     "dilution": 791,
+     "lottery": 1226
+    },
+    "frozenAt": "2026-10-23T06:04:06.359Z"
    }
   }
  },
- "firstRun": null,
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-23T06:02:15.915Z",
+  "at": "2026-10-23T06:04:06.364Z",
   "to": "2026-10-19",
   "results": {
    "CAT-RUN1": {
@@ -514,43 +792,43 @@
    "CAT-NEWS1": {
     "name": "News build-up: 3+ positive 8-Ks in 60 sessions, none negative, above the 50-day; hold 15 sessions",
     "verdict": "REJECTED",
-    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -1.08 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 0.36 under 2.5 in the newer half",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -1.01 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 0.36 under 2.5 in the newer half",
     "results": {
      "all": {
-      "n": 569,
-      "days": 436,
-      "stocks": 206,
-      "win": 0.4499,
-      "avg": -0.002,
-      "median": -0.0181,
+      "n": 566,
+      "days": 434,
+      "stocks": 204,
+      "win": 0.4505,
+      "avg": -0.0016,
+      "median": -0.0176,
       "worst": -0.7462,
       "best": 1.1917,
-      "avgStress": -0.006,
+      "avgStress": -0.0056,
       "ctrl": 0.0013,
-      "edge": -0.0024,
-      "t": -0.29,
+      "edge": -0.0021,
+      "t": -0.25,
       "vsOwn": -0.0041,
-      "tOwn": -0.47,
-      "vsSpy": -0.0064,
-      "noTop2": -0.0059
+      "tOwn": -0.48,
+      "vsSpy": -0.0062,
+      "noTop2": -0.0056
      },
      "older": {
-      "n": 255,
-      "days": 205,
-      "stocks": 103,
-      "win": 0.4078,
-      "avg": -0.0146,
-      "median": -0.0252,
+      "n": 252,
+      "days": 203,
+      "stocks": 101,
+      "win": 0.4087,
+      "avg": -0.0139,
+      "median": -0.025,
       "worst": -0.4059,
       "best": 0.5772,
-      "avgStress": -0.0186,
-      "ctrl": -0.0036,
-      "edge": -0.0104,
-      "t": -1.08,
-      "vsOwn": -0.0131,
-      "tOwn": -1.28,
-      "vsSpy": -0.0162,
-      "noTop2": -0.0191
+      "avgStress": -0.0179,
+      "ctrl": -0.0037,
+      "edge": -0.0098,
+      "t": -1.01,
+      "vsOwn": -0.0133,
+      "tOwn": -1.29,
+      "vsSpy": -0.0157,
+      "noTop2": -0.0185
      },
      "newer": {
       "n": 314,
@@ -572,11 +850,11 @@
      }
     },
     "funnel": {
-     "companies": 7810,
-     "signals": 2664,
-     "noPrice": 15807,
+     "companies": 7811,
+     "signals": 2658,
+     "noPrice": 15585,
      "gate": 72,
-     "dilution": 794,
+     "dilution": 791,
      "lottery": 1226
     }
    }
@@ -15063,15 +15341,6 @@
     "sameStock": 0.0069
    },
    {
-    "s": "AMGN",
-    "buy": "2022-10-21",
-    "sell": "2022-11-10",
-    "positives": 3,
-    "net": 0.1677,
-    "avgStock": 0.0916,
-    "sameStock": 0.0036
-   },
-   {
     "s": "LXEO",
     "buy": "2024-06-18",
     "sell": "2024-07-10",
@@ -16150,24 +16419,6 @@
     "net": -0.1364,
     "avgStock": 0.0357,
     "sameStock": 0.0185
-   },
-   {
-    "s": "NKLA",
-    "buy": "2022-08-03",
-    "sell": "2022-08-23",
-    "positives": 3,
-    "net": -0.1922,
-    "avgStock": 0.0092,
-    "sameStock": -0.0333
-   },
-   {
-    "s": "NKLA",
-    "buy": "2022-08-26",
-    "sell": "2022-09-16",
-    "positives": 3,
-    "net": -0.1888,
-    "avgStock": -0.0863,
-    "sameStock": -0.0333
    },
    {
     "s": "GTLS",
