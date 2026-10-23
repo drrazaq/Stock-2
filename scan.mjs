@@ -440,6 +440,21 @@ function chainsText() { const C = readJson0('data/chain-today.json');
 function chainGraphLine(sym) { const C = readJson0('data/chain-today.json'), m = C && C.members && C.members[sym]; if (!m || !m.length) return null;
   const hot = new Map(((C && C.hot) || []).map((x, k) => [x.layer, k + 1]));
   return 'Chains (point-in-time graph): ' + m.map(x => x.chain + ', layer ' + (x.li + 1) + ' of ' + x.of + ': ' + x.layer + (x.status === 'today-only' ? ' (today only: no dated SEC filing shows it there yet)' : x.since ? ' (since ' + x.since + ')' : '') + (hot.has(x.chain + '|' + x.layer) ? ', HOT #' + hot.get(x.chain + '|' + x.layer) : '')).join(' | ') + '. Send  chains  for the hot layers.'; }
+// DISCOVERED (owner, 23 Oct 2026: "come up with new paths by itself"; discovery2.mjs). data/discovery2-today.json is written weekly: the
+// signals at the last close of rules the system found on 2021-2023 and tested once on 2024-2026. A buy is shown ONLY for a rule whose
+// frozen verdict is TRADABLE SMALL with the tier2 switch on and its own ledger ('discovery:<id>') not negative. Same display gates as CHAIN.
+function discoveryLines(sig, pos) { if (!TIER2_ON()) return []; const C = readJson0('data/discovery2-today.json'); if (!C || !Array.isArray(C.buys) || !C.buys.length) return [];
+  const on = (r) => C.rules && C.rules[r] === 'TRADABLE SMALL' && !tier2LedgerNegative('discovery:' + r);
+  const after = (sig && sig.session) || ny(Date.now()).d, next = (C.sessions || []).find(d => d > after); if (!next) return [];
+  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
+  const rows = [], seen = new Set();
+  for (const b of C.buys) { if (!b || !b.sym || !on(b.rule) || b.buy !== next || seen.has(b.sym) || held.has(b.sym)) continue;
+    const hal = bad.has(b.sym) || b.halal === 'fail' || myHalal(b.sym) === 'fail' ? 'fail' : myHalal(b.sym) === 'ok' || b.halal === 'ok' ? 'ok' : 'unknown';
+    if (hal === 'fail' || lot[b.sym] >= 0.15 || followOffering(b.sym) || eventWarn(b.sym)) continue; seen.add(b.sym);
+    const px = last[b.sym] || b.lastClose; tier2Log(b.sym, 'discovery:' + b.rule, px);
+    rows.push('- BUY ' + b.sym + ' at the open on ' + next + (px ? ', up to ' + money(px * 1.03) + ' (3% above the last close ' + money(px) + ')' : '') + '. STOP ' + Math.round((b.stopPct || 0.15) * 100) + '% under your buy at your broker. SELL at the close on ' + b.sell + ' (hold ' + b.hold + ' sessions). Rule ' + b.rule + ': ' + b.combo + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + ' Send  bought ' + b.sym + ' PRICE .');
+    if (rows.length >= 5) break; }
+  return rows.length ? ['DISCOVERED (tier 2, TRADABLE SMALL: a rule the system found on 2021-2023 and passed its one test on 2024-2026 after the higher cost, below the 4.0 proof bar; 1,000 USD each, switched off if its live record turns negative):', ...rows] : []; }
 // SUPPLY-CHAIN result (Agent C, 22 Oct): it has no luck test and no costs, so a PROMISING there is information only, never a pass.
 const linkVerdict = (k) => k && /PROMISING|BETTER/.test(k.verdict || '') && typeof k.t !== 'number' ? 'INFORMATION ONLY (no luck test, no costs; not a buy rule)' : (k && k.verdict) || 'not run';
 function switchPaperLine() { const S = readJson0('data/switch-paper.json'); if (!S) return 'Live paper check: starts with the next nightly scan.'; const D = S.done || [];
@@ -2179,6 +2194,7 @@ async function actionsText(sig, pos, px, title) {
         'Why these: in the 5-year test this rule made +9.7% in 6 months vs the S&P 500 +7.6% in 2024-26, but +5.8% vs +9.1% in 2021-23. It beat the average stock in both. The league scores these same picks monthly.'); } }
   { const cl = catalystLines(sig, pos); if (cl.length) out.push('', ...cl); }   // CATALYST RUN-UP: only when a catalyst rule reached tier 2 or proven (23 Oct)
   { const chl = chainLines(sig, pos); if (chl.length) out.push('', ...chl); }   // CHAIN: only when a chain-decoder rule reached tier 2 or proven (23 Oct)
+  { const dl = discoveryLines(sig, pos); if (dl.length) out.push('', ...dl); }   // DISCOVERED: only when a discovery2 rule reached tier 2 (23 Oct)
   // EARNINGS DRIFT (owner's choice, 21 Oct): the only buy rule that passed its own 5-year test (both halves, stress cost, last 12 months),
   // shown with its full instruction while its live paper record builds (30+ trades on 10+ days needed before it becomes a plain BUY).
   if (FOCUS && !working && sig) { const ed = planCands(sig, pos || {}).filter(x => x.kind === 'earnings drift' && x.ok).slice(0, 3), pf = sig.peadFunnel;
