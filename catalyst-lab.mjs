@@ -54,12 +54,12 @@ const own = (i, t, h) => { const half = t < midT ? 0 : 1, key = i + '_' + h + '_
 const spyF = (t, h) => spyI === undefined ? null : fwd(spyI, t, h);
 
 // ---- network (SEC: at most ~8 requests a second, with the declared User-Agent) ----
-let lastReq = 0, nReq = 0, nFail = 0;
+let lastReq = 0, nReq = 0, nFail = 0; const FAILS = [];
 async function get(url, kind = 'json', headers = { 'User-Agent': UA }) {
   for (let a = 0; a < 4; a++) { const w = (local(env.EFTS_BASE) ? 0 : 125) - (Date.now() - lastReq); if (w > 0) await sleep(w); lastReq = Date.now(); nReq++;
-    try { const r = await fetch(url, { headers, signal: AbortSignal.timeout(30000) }); if (r.status === 404 || r.status === 410) return kind === 'text' ? '' : null; if (r.status === 429 || r.status === 403 || r.status >= 500) { await sleep(2000 * (a + 1)); continue; } if (!r.ok) { nFail++; if (nFail <= 5) console.log('catalyst-lab: HTTP ' + r.status + ' ' + url.replace(/apiKey=[^&]+/, 'apiKey=***').slice(0, 200)); return null; }
+    try { const r = await fetch(url, { headers, signal: AbortSignal.timeout(30000) }); if (r.status === 404 || r.status === 410) return kind === 'text' ? '' : null; if (r.status === 429 || r.status === 403 || r.status >= 500) { await sleep(2000 * (a + 1)); continue; } if (!r.ok) { nFail++; FAILS.push('HTTP ' + r.status + ' ' + url.replace(/apiKey=[^&]+/, 'apiKey=***').slice(0, 240)); if (nFail <= 5) console.log('catalyst-lab: HTTP ' + r.status + ' ' + url.replace(/apiKey=[^&]+/, 'apiKey=***').slice(0, 200)); return null; }
       return kind === 'json' ? await r.json() : kind === 'bin' ? Buffer.from(await r.arrayBuffer()) : await r.text(); } catch (e) { await sleep(1000 * (a + 1)); } }
-  nFail++; return null; }
+  nFail++; FAILS.push('gave up after 4 tries: ' + url.replace(/apiKey=[^&]+/, 'apiKey=***').slice(0, 240)); return null; }
 const months = (from) => { const out = [], now = new Date(); for (let y = +from.slice(0, 4), m = +from.slice(5, 7); y < now.getUTCFullYear() || (y === now.getUTCFullYear() && m <= now.getUTCMonth() + 1); m === 12 ? (y++, m = 1) : m++) out.push(y + '-' + String(m).padStart(2, '0')); return out; };
 const monthEnd = (ym) => new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7), 0)).toISOString().slice(0, 10), thisMonth = new Date().toISOString().slice(0, 7);
 const slug = (p) => p.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -67,7 +67,7 @@ const slug = (p) => p.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 async function efts(phrase, a, b) {
   const hits = []; for (let from = 0; from < 10000; from += 100) {
     const j = await get(EFTS + '/LATEST/search-index?q=' + encodeURIComponent('"' + phrase + '"') + '&forms=8-K&dateRange=custom&startdt=' + a + '&enddt=' + b + '&from=' + from);
-    if (!j || !j.hits) { if (j) { nFail++; if (nFail <= 5) console.log('catalyst-lab: full-text search answered without hits: ' + JSON.stringify(j).slice(0, 200)); } return null; } const tot = (j.hits.total && j.hits.total.value) || 0;
+    if (!j || !j.hits) { if (j) { nFail++; FAILS.push('no hits: ' + JSON.stringify(j).slice(0, 240)); if (nFail <= 5) console.log('catalyst-lab: full-text search answered without hits: ' + JSON.stringify(j).slice(0, 200)); } return null; } const tot = (j.hits.total && j.hits.total.value) || 0;
     if (from === 0 && tot >= 9900 && a < b) { const mid = new Date((Date.parse(a) + Date.parse(b)) / 2).toISOString().slice(0, 10), x = await efts(phrase, a, mid), y = await efts(phrase, new Date(Date.parse(mid) + 864e5).toISOString().slice(0, 10), b); return x && y ? x.concat(y) : null; }
     for (const h of j.hits.hits || []) { const s = h._source || {}, tk = []; for (const dn of s.display_names || []) { const m = dn.match(/\(([A-Z0-9.,\s-]+)\)\s+\(CIK/); if (m) tk.push(...m[1].split(',').map(x => x.trim()).filter(Boolean)); }
       hits.push([h._id, s.adsh, +((s.ciks || [])[0] || 0), s.file_date, (s.sics || [])[0] || '', tk]); }
@@ -115,6 +115,10 @@ const judge = (trades, bar) => { const R = { all: stat(trades), older: stat(trad
   // 1. EDGAR full-text search (cached per phrase and month)
   const catHits = []; for (const p of CATALYST_PHRASES) catHits.push(...(await phraseHits(p, FROM_RUN)));
   const posHits = [], negHits = []; for (const p of POSITIVE) posHits.push(...(await phraseHits(p, FROM_NEWS))); for (const p of NEGATIVE) negHits.push(...(await phraseHits(p, FROM_NEWS)));
+  // one more try for the phrase-months EDGAR refused (after a pause): a refused month is fetched again before the run counts as incomplete
+  if (!FT.complete && !outOfTime()) { const miss = FT.missing.splice(0); FT.complete = true; await sleep(30000);
+    for (const m of miss) { const ph = m.slice(0, m.length - 8), ym = m.slice(-7), h = await efts(ph, ym + '-01', monthEnd(ym)); if (!h) { FT.complete = false; FT.missing.push(m); continue; } W(CD + '/efts/' + slug(ph) + '/' + ym + '.json', h);
+      (CATALYST_PHRASES.includes(ph) ? catHits : POSITIVE.includes(ph) ? posHits : negHits).push(...h); } }
   console.log('catalyst-lab: full-text search ' + FT.phrases + ' phrases, ' + FT.months + ' months fetched now, ' + nReq + ' requests' + (FT.complete ? '' : ', INCOMPLETE (' + FT.missing.length + ' phrase-months missing)'));
   // 2. the 8-K documents of biotech/medtech catalyst hits -> dated catalysts (cached per document)
   const docF = CD + '/docs.json', DOCS = J(docF, {}); let docNew = 0, docMissing = 0; const bioDocs = new Map();
@@ -207,7 +211,7 @@ const judge = (trades, bar) => { const R = { all: stat(trades), older: stat(trad
     upcoming: upcoming.filter(u => u.sell >= last).slice(0, 300), news: newsToday });
 
   const out = { generatedAt: new Date().toISOString(), preRegistered: '2026-10-23', window: [D[START], last], sessions: T - START, bar: BAR, complete,
-    data: { fullTextPhrases: FT.phrases, fullTextComplete: FT.complete, missing: FT.missing.slice(0, 20), catalystHits: catHits.length, bioDocuments: bioDocs.size, documentsNotRead: docMissing, dilutionIndexQuarters: DIL.ok + ' of ' + DIL.all, companiesWithTickers: cikTick.size, massiveRefCiks: Object.keys(REF).length, positive8K: posHits.length, negative8K: negHits.length, requests: nReq, failedRequests: nFail },
+    data: { fullTextPhrases: FT.phrases, fullTextComplete: FT.complete, missing: FT.missing.slice(0, 20), catalystHits: catHits.length, bioDocuments: bioDocs.size, documentsNotRead: docMissing, dilutionIndexQuarters: DIL.ok + ' of ' + DIL.all, companiesWithTickers: cikTick.size, massiveRefCiks: Object.keys(REF).length, positive8K: posHits.length, negative8K: negHits.length, requests: nReq, failedRequests: nFail, failures: FAILS.slice(0, 10) },
     caveat: 'Prices: 5-year whole-market cache incl. dead stocks; its rows hold 3 USD+ stocks with 1M USD+ traded, so the 2 USD floor is in practice 3 USD (penny-stock run-ups like OCGN under 3 USD are outside the test). EDGAR full-text search gives filing dates only (no time), used from the first session on/after that date. CAT-NEWS1 positive/negative is by fixed phrases, not by reading: some hits are mentions, not events. results = frozen first verdict (firstRun); latest = monitoring only.',
     results, firstRun, latest: latestBlock({ at: new Date().toISOString(), to: last, results: RES }), ocgn, trades: { 'CAT-RUN1': run1.map(z => ({ s: z.s, buy: z.buy, sell: z.sell, event: z.event, kinds: z.kinds, precision: z.precision, filed: z.filed, net: r4(z.g - COST), avgStock: r4(z.c), sameStock: r4(z.ob) })), 'CAT-NEWS1': news.map(z => ({ s: z.s, buy: D[z.t + 1], sell: D[z.t + HOLD_NEWS], positives: z.positives, net: r4(z.g - COST), avgStock: r4(z.c), sameStock: r4(z.ob) })) } };
   fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
