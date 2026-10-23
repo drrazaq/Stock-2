@@ -222,16 +222,32 @@ fs.writeFileSync(BOARD, JSON.stringify({ generatedAt: new Date().toISOString(), 
 log('paper lane: scanned ' + toScan.length + ' new session(s) (' + toScan.map(t => D[t]).join(', ') + '); ' + newLines.filter(x => x.type === 'signal').length + ' new signal lines; ' + signals.length + ' signals in all' + (Object.keys(capped).length ? '; over the cap of ' + PAPER_CAP + ' a day (not recorded): ' + Object.entries(capped).map(([k, v]) => k + ' ' + v).join(', ') : ''));
 for (const m of IDS) { const b = board[m]; if (!b.signals && GROUPED(m)) continue; console.log('- ' + m + ': signals ' + b.signals + ', pending ' + b.pending + ', open ' + b.open + ', closed ' + b.closed.n + ' avg ' + pc(b.closed.avg) + (Array.isArray(today[m].newSignals) ? ' | today ' + today[m].newSignals.map(z => z.sym + (z.halal === 'ok' ? '' : '(' + z.halal + ')')).join(' ') : ' | today ' + today[m].newSignals)); }
 
-// ================= 3. 5-YEAR ONE-SHOT =================
-const LEAGUE = J('data/agent-league.json', {}), BAR = Math.max(TIER2_T, +LEAGUE.bar || 0, 4.0);
-const need = IDS.filter(m => !(HISTF.firstRun || {})[m]), NF = need.filter(m => M2(m) && M2(m).mkt);   // NF: shadow runs without the market filter
-const VERSIONS = IDS.length + IDS.filter(m => M2(m) && M2(m).mkt).length;
-if (!need.length && !env.HISTORY) { const h = J(HIST, {}); if (h.versions !== VERSIONS) { h.versions = VERSIONS; fs.writeFileSync(HIST, JSON.stringify(h, null, 1)); } log('5-year one-shot: every method frozen; skipped (HISTORY=1 for a monitoring run)'); process.exit(0); }
 const HIST_END = T - 1, liqSample = []; for (let t = 0; t < T; t++) { const a = []; for (let i = 0; i < NS; i += 4) if (LIQ[i * T + t]) a.push(i); liqSample.push(a); }
 // the average liquid stock (sampled every 4th) bought at the open of k (or the close of k for close entries) and sold at the close of x
 const cMemo = new Map(), ctrlSpan = (k, x, atClose) => { const key = (k * 4096 + x) * 2 + (atClose ? 1 : 0); if (cMemo.has(key)) return cMemo.get(key); const v = [];
   for (const i of liqSample[atClose ? k : k - 1] || []) { const e = atClose ? C[i * T + k] : O[i * T + k]; let y = NaN; for (let q = x; q >= k && !(y > 0); q--) y = C[i * T + q]; if (e > 0 && y > 0 && Math.abs(y / e - 1) < 3) v.push(y / e - 1); }
   const m = v.length >= 50 ? mean(v) : null; cMemo.set(key, m); return m; };
+// ================= CHECK (monitoring only; never a verdict) =================
+// CHECK=TPS (added 23 Oct 2026 after DEC2-TPS was frozen PROVEN): the frozen run scores each TPS trade per dollar INVESTED (10% to 100%
+// of the budget). This check re-scores the same trades per dollar of BUDGET (profit / the full planned position, cost charged on the money
+// actually traded) and runs one execution variant (first 10% bought at the NEXT OPEN instead of the signal close; adds and exit unchanged).
+// Written to data/decoded-check.json. It does not touch firstRun or the library.
+if (env.CHECK === 'TPS') { const m = 'DEC2-TPS', blk = M2(m).block, out = { budget: [], invested: [], nextOpen: [] };
+  for (let i = 0; i < NS; i++) { if (i === spyI) continue; const S = series(i), I = indOf(S), b = i * T; let free = -1, free2 = -1;
+    for (let t = 130; t < T - 1; t++) { if (!MAIN[b + t]) continue; const sig = (free < t || free2 < t) ? detect(m, S, I, i, t, ctxOf(i, t, S)) : null; if (!sig) continue;
+      if (free < t) { const r = sim(m, S, I, t, sig, T - 1); if (r.state === 'closed') { free = r.x; const c = ctrlSpan(r.k, r.x, true); if (c !== null) { const half = D[t] < SPLIT ? 'older' : 'newer', base = { t, s: SYMS[i], k: r.k, x: r.x, half };
+            out.invested.push({ ...base, g: r.g, c }); out.budget.push({ ...base, g: r.inv * (r.g - COST) + COST, c: r.inv * (c - COST), inv: r.inv }); } } else if (r.state === 'open') free = Infinity; }
+      if (free2 < t) { const r = sim(m, S, I, t, { ...sig, entry: 'open' }, T - 1); if (r.state === 'closed') { free2 = r.x; const c = ctrlSpan(r.k, r.x, false); if (c !== null) out.nextOpen.push({ t, s: SYMS[i], k: r.k, x: r.x, half: D[t] < SPLIT ? 'older' : 'newer', g: r.inv * (r.g - COST) + COST, c: r.inv * (c - COST) }); } else if (r.state === 'open') free2 = Infinity; } } }
+  const sum = (a) => ({ older: halfStat(a.filter(z => z.half === 'older'), blk), newer: halfStat(a.filter(z => z.half === 'newer'), blk), last12m: halfStat(a.filter(z => D[z.t] >= iso(Date.parse(D[T - 1]) - 365 * 864e5)), blk) });
+  const res = { generatedAt: new Date().toISOString(), label: 'MONITORING CHECK ONLY: not a verdict; DEC2-TPS firstRun stays as frozen', note: 'budget = profit per dollar of the FULL planned position (10/20/30/40 scale-in), cost on money traded; nextOpen = same, first buy at the next open; vsOwn not computed for these',
+    avgInvested: r4(mean(out.budget.map(z => z.inv))), invested: sum(out.invested), budget: sum(out.budget), nextOpen: sum(out.nextOpen) };
+  fs.writeFileSync('data/decoded-check.json', JSON.stringify(res, null, 1)); for (const k of ['invested', 'budget', 'nextOpen']) console.log('CHECK TPS ' + k + ': older ' + JSON.stringify(res[k].older) + ' | newer ' + JSON.stringify(res[k].newer) + ' | 12m ' + JSON.stringify(res[k].last12m));
+  process.exit(0); }
+// ================= 3. 5-YEAR ONE-SHOT =================
+const LEAGUE = J('data/agent-league.json', {}), BAR = Math.max(TIER2_T, +LEAGUE.bar || 0, 4.0);
+const need = IDS.filter(m => !(HISTF.firstRun || {})[m]), NF = need.filter(m => M2(m) && M2(m).mkt);   // NF: shadow runs without the market filter
+const VERSIONS = IDS.length + IDS.filter(m => M2(m) && M2(m).mkt).length + 1;   // + 1: the DEC2-TPS next-open check
+if (!need.length && !env.HISTORY) { const h = J(HIST, {}); if (h.versions !== VERSIONS) { h.versions = VERSIONS; fs.writeFileSync(HIST, JSON.stringify(h)); } log('5-year one-shot: every method frozen; skipped (HISTORY=1 for a monitoring run)'); process.exit(0); }
 const RUNS = [...need.map(m => [m, m, false]), ...NF.map(m => [m + '~nf', m, true])], TR = Object.fromEntries(RUNS.map(([k]) => [k, []])), CTRL = [];
 for (let i = 0; i < NS; i++) { const S = series(i), I = indOf(S), b = i * T, free = Object.fromEntries(RUNS.map(([k]) => [k, -1])), mine = Object.fromEntries(RUNS.map(([k]) => [k, []])), won = {};
   const runs = RUNS.filter(([, m]) => i === spyI ? !!(M2(m) && M2(m).spyOnly) : !(M2(m) && M2(m).spyOnly)); if (!runs.length) continue;

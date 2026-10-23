@@ -195,8 +195,8 @@ export function simulate2(X, S, I, t, sig, last = S.c.length - 1) {
     if (!sh) break;
     if (day >= maxDays && !pend) { sell(j, 1, c[j], 'time limit (' + maxDays + ' sessions)'); break; }
   }
-  if (sh > 0) { const m = c[lastOk]; return { state: 'open', k, fill, legs, g: (got + sh * m) / inv - 1, held: +(sh / sh0).toFixed(4), mark: m, stop: stop > 0 ? stop : null, why: pend ? 'exit at the next open' : null }; }
-  const sells = legs.filter(z => z[1] > 0), x = sells.length ? sells[sells.length - 1][0] : k; return { state: 'closed', k, fill, x, legs, g: got / inv - 1 };
+  if (sh > 0) { const m = c[lastOk]; return { state: 'open', k, fill, legs, inv, g: (got + sh * m) / inv - 1, held: +(sh / sh0).toFixed(4), mark: m, stop: stop > 0 ? stop : null, why: pend ? 'exit at the next open' : null }; }
+  const sells = legs.filter(z => z[1] > 0), x = sells.length ? sells[sells.length - 1][0] : k; return { state: 'closed', k, fill, x, legs, inv, g: got / inv - 1 };
 }
 // ---------- exit rules (called at each close j; st.k = entry index) ----------
 const lowTrail = (n) => (S, I, j) => ({ stop: lo(S.l, j - n + 1, j) });
