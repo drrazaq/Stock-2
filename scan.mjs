@@ -326,6 +326,29 @@ function tier2Resolve(lastPx) { try { const f = 'data/tier2-ledger.jsonl'; let L
 // negative average after costs. (Before, V15 read only the league's 3-month score, which cannot exist before about Feb 2027.)
 function tier2LedgerNegative(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 20 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
+// FOLLOWING (owner's request 23 Oct 2026; follow-lane.mjs): new buy calls of public traders whose OWN full dated call history passed the
+// tier-2 bar (FOLLOW in data/follow-board.json). Gates here, at display time: not halal in ZAD -> removed; unknown halal -> shown with
+// "check ZAD first"; lottery-like (15%+ one-day jump last month) -> removed; a tested warning filing or an offering filing (424B4 / 424B5)
+// in the last 30 days -> removed (dilution); a stock you hold -> skipped; a trader whose own tier-2 ledger turned negative -> off.
+// 1,000 USD, stop 15% under the buy unless the trader gave one, sold at the close of his horizon. Each shown call is logged as 'follow:<trader>'.
+const ordinal = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+function followOffering(sym) { const ER = readJson0('data/events-recent.json'); return ((ER && ER.events) || []).some(e => e.sym === sym && /OFFERING/.test(e.f || '') && Date.now() - Date.parse(e.p) < 30 * 864e5); }
+function followSection(sig, pos) { if (!TIER2_ON()) return []; const FT = readJson0('data/follow-today.json'); if (!FT || !Array.isArray(FT.calls) || !FT.calls.length || Date.now() - Date.parse(FT.at || 0) > 4 * 864e5) return [];
+  const lot = (sig && sig.lottery) || {}, last = {}, seen = new Set(), rows = []; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
+  for (const x of FT.calls) { if (!x || !x.sym || seen.has(x.sym) || (pos || {})[x.sym]) continue; const kind = 'follow:' + x.trader, hal = myHalal(x.sym);
+    if (hal === 'fail' || lot[x.sym] >= 0.15 || eventWarn(x.sym) || followOffering(x.sym) || tier2LedgerNegative(kind)) continue; seen.add(x.sym);
+    const px = x.last > 0 ? x.last : last[x.sym], H = x.H || 20, own = x.st > 0 && px > 0 && x.st < px;
+    if (px > 0) tier2Log(x.sym, kind, px);
+    rows.push('- BUY ' + x.sym + (px > 0 ? ' at the next open, only up to ' + money(px * 1.03) + ' (last close ' + money(px) + ' +3%)' : ' at the next open (no recent price: only near the open)') + ', 1,000 USD. ' + (own ? 'STOP ' + money(x.st) + ' (the trader’s own)' : 'STOP 15% under your buy') + ' at your broker. SELL at the close of the ' + ordinal(H) + ' session after you buy (' + (H === 1 ? 'the same day: he day-trades' : 'his horizon') + ')' + (x.tg > 0 ? '; his target ' + money(x.tg) + ' is information only' : '') + '. From ' + x.trader + (x.title ? ' ("' + String(x.title).slice(0, 60) + '", ' + String(x.pub || '').slice(0, 10) + ')' : '') + '. His record: ' + x.record + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + ' Send  bought ' + x.sym + ' PRICE .');
+    if (rows.length >= 5) break; }
+  return rows.length ? ['FOLLOWING (traders whose own call history wins; tier 2, 1,000 USD, stop 15% unless the trader gave one)', ...rows, 'Why these: each trader passed the tier-2 test on his own full call history (30+ calls on 10+ days, both halves, after the 1.2% cost, t 2.5+), below the 4.0 proof bar. Send  traders  for the leaderboard.'] : []; }
+function tradersText() { const B = readJson0('data/follow-board.json'); if (!B || !Array.isArray(B.traders)) return 'TRADERS: the follow lane has not run yet (it runs each night after the US close and in full on Sunday).';
+  const by = (l) => B.traders.filter(t => t.level === l), list = [...by('FOLLOW'), ...by('FADE'), ...by('NO EDGE'), ...by('WATCH')].slice(0, 10), c = B.counts || {};
+  return ['TRADERS (public traders scored on every dated call they made; from ' + String(B.generatedAt || '').slice(0, 10) + ')',
+    B.screened + ' traders screened, ' + B.judged + ' with enough calls to judge: FOLLOW ' + (c.FOLLOW || 0) + ', FADE ' + (c.FADE || 0) + ', NO EDGE ' + (c['NO EDGE'] || 0) + ', WATCH (too few) ' + (c.WATCH || 0) + '. Calls scored: ' + ((B.calls && B.calls.scored) || 0) + '.',
+    'Luck bar: with ' + B.judged + ' traders judged, about ' + ((B.luck && B.luck.followByLuckAtMost) || 0) + ' would reach t 2.5 by luck alone.', '',
+    ...list.map(t => '- ' + t.level + ' ' + t.name + ' (' + t.src + ', judged at ' + t.H + ' session' + (t.H > 1 ? 's' : '') + '): ' + t.record), '',
+    'FOLLOW traders’ new buy calls appear in ACTIONS under FOLLOWING (tier 2, 1,000 USD, with a stop). FADE: their calls lag the average stock. Research, not advice.'].join('\n'); }
 function swTier(r) { if (!r) return null; if (r.verdict === 'SWITCH WINS') return 'proven'; if (!TIER2_ON() || r.verdict !== 'BELOW THE LEAGUE BAR' || !r.results) return null;
   const o = r.results.older || {}, n = r.results.newer || {}, ts = [o.t, n.t, o.tBlock, n.tBlock].filter(x => typeof x === 'number');
   if (ts.length < 2 || Math.min(...ts) < TIER2_T || !(o.adv > 0 && n.adv > 0) || !(o.noTop2 > 0 && n.noTop2 > 0)) return null;
@@ -347,6 +370,38 @@ function v15Tier() { if (!TIER2_ON()) return null; const Q = readJson0('data/qua
   if (tier2LedgerNegative('longer hold')) return null;   // its own ledger negative: off (review S-12)
   const LG = readJson0('data/agent-league.json'), b = LG && (LG.rows || []).find(x => x.id === 'B'); if (b && b.scored3m >= 3 && typeof b.vsSpy3m === 'number' && b.vsSpy3m < 0) return null;   // live league record negative: off
   return 'small'; }
+// CATALYST RUN-UP (the owner's OCGN case, 23 Oct 2026; catalyst-lab.mjs, pre-registered CAT-RUN1 / CAT-NEWS1). data/catalyst-today.json is
+// written weekly: upcoming dated catalysts (PDUFA, advisory committee, expected topline) with the buy and sell sessions, gates checked.
+// A BUY is shown only when the rule's frozen verdict is PROVEN, or TRADABLE SMALL with the tier2 switch on and its own ledger not
+// negative; otherwise nothing new appears in ACTIONS and  catalysts  shows the calendar as information only.
+function catalystTier(rule) { const C = readJson0('data/catalyst-today.json'), v = C && C.rules && C.rules[rule];
+  if (v === 'PROVEN') return 'proven'; if (v !== 'TRADABLE SMALL' || !TIER2_ON() || tier2LedgerNegative('catalyst')) return null; return 'small'; }
+function catalystLines(sig, pos) { const C = readJson0('data/catalyst-today.json'); if (!C) return [];
+  const tiers = { 'CAT-RUN1': catalystTier('CAT-RUN1'), 'CAT-NEWS1': catalystTier('CAT-NEWS1') }; if (!tiers['CAT-RUN1'] && !tiers['CAT-NEWS1']) return [];
+  const after = (sig && sig.session) || ny(Date.now()).d, next = (C.sessions || []).find(d => d > after); if (!next) return [];
+  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
+  const ok = (sym, hal) => sym && hal !== 'fail' && !bad.has(sym) && myHalal(sym) !== 'fail' && !(lot[sym] >= 0.15) && !held.has(sym);
+  const run = tiers['CAT-RUN1'] ? (C.upcoming || []).filter(u => u.buy === next && !u.entryPassed && !u.blocked && ok(u.sym, u.halal)).slice(0, 3) : [];
+  const nw = tiers['CAT-NEWS1'] ? (C.news || []).filter(u => u.buy === next && ok(u.sym, u.halal)).slice(0, 3) : [];
+  if (!run.length && !nw.length) return [];
+  const lab = (t) => t === 'proven' ? 'PROVEN' : 'tier 2, TRADABLE SMALL: passed its own pre-registered 5-year test in both halves after the higher cost, below the 4.0 proof bar; 1,000 USD, switched off if its live record turns negative';
+  const buyLine = (u) => { const px = last[u.sym] || u.lastClose; tier2Log(u.sym, 'catalyst', px); return '- BUY ' + u.sym + ' at the open on ' + next + (px ? ', up to ' + money(px * 1.03) + ' (3% above the last close ' + money(px) + ')' : '') + '. STOP 15% under your buy at your broker. ';
+  };
+  const out = [];
+  if (run.length) out.push('CATALYST RUN-UP (' + lab(tiers['CAT-RUN1']) + '):', ...run.map(u => buyLine(u) + 'SELL at the close on ' + u.sell + ' (2 sessions before the ' + (u.kinds || []).map(k => k === 'ADCOM' ? 'advisory committee' : k === 'TOPLINE' ? 'expected topline' : k).join(' / ') + ' date ' + u.event + (u.precision && u.precision !== 'day' ? ', earliest day of the stated ' + u.precision : '') + '; never hold through it). Stated in an 8-K filed ' + u.firstStated + '. Check ZAD; send  bought ' + u.sym + ' PRICE .'));
+  if (nw.length) out.push('NEWS BUILD-UP (' + lab(tiers['CAT-NEWS1']) + '):', ...nw.map(u => buyLine(u) + 'SELL at the close on ' + u.sell + ' (15 sessions). ' + u.positives + ' positive 8-Ks in 60 sessions, none negative. Check ZAD; send  bought ' + u.sym + ' PRICE .'));
+  return out; }
+function catalystCalendarText() { const C = readJson0('data/catalyst-today.json'), L = readJson0('data/catalyst-lab.json');
+  if (!C) return 'CATALYSTS: the catalyst calendar is built with the Sunday studies (catalyst-lab). Ask again after it runs.';
+  const v = (id) => { const r = L && L.results && L.results[id]; return r ? r.verdict : 'not run'; }, qual = catalystTier('CAT-RUN1') || catalystTier('CAT-NEWS1');
+  const up = (C.upcoming || []).filter(u => !u.entryPassed && !u.blocked && u.halal !== 'fail').slice(0, 15), inWin = (C.upcoming || []).filter(u => u.entryPassed && !u.blocked).slice(0, 8);
+  const kind = (u) => (u.kinds || []).map(k => k === 'ADCOM' ? 'advisory committee' : k === 'TOPLINE' ? 'topline' : k).join('/');
+  return ['CATALYST CALENDAR (from company 8-Ks: FDA decision dates, advisory committees, expected trial readouts; week of ' + C.lastClose + ')', '',
+    'Rules: run-up into the date (CAT-RUN1) ' + v('CAT-RUN1') + '; news build-up (CAT-NEWS1) ' + v('CAT-NEWS1') + '.', qual ? 'A rule qualified: its buys appear in ACTIONS on their buy day.' : 'INFORMATION ONLY: no catalyst rule passed its test, so nothing here is a buy.', '',
+    up.length ? 'Coming up (buy day = 30 sessions before, sell day = 2 sessions before):' : 'No upcoming dated catalyst passes the gates (price, volume, no recent share sale, no 15% one-day jump).',
+    ...up.map(u => '- ' + u.sym + ': ' + kind(u) + ' ' + u.event + (u.precision !== 'day' ? ' (earliest day of the stated ' + u.precision + ')' : '') + '; buy day ' + u.buy + ', sell day ' + u.sell + (u.halal === 'ok' ? ' (halal per ZAD)' : ' (check ZAD)')),
+    ...(inWin.length ? ['', 'Already inside the window (buy day passed): ' + inWin.map(u => u.sym + ' ' + kind(u) + ' ' + u.event).join(', ') + '.'] : []),
+    '', 'Never hold through the decision day: the result is a coin toss that can halve a small company. Research only.'].join('\n'); }
 // SUPPLY-CHAIN result (Agent C, 22 Oct): it has no luck test and no costs, so a PROMISING there is information only, never a pass.
 const linkVerdict = (k) => k && /PROMISING|BETTER/.test(k.verdict || '') && typeof k.t !== 'number' ? 'INFORMATION ONLY (no luck test, no costs; not a buy rule)' : (k && k.verdict) || 'not run';
 function switchPaperLine() { const S = readJson0('data/switch-paper.json'); if (!S) return 'Live paper check: starts with the next nightly scan.'; const D = S.done || [];
@@ -901,6 +956,7 @@ const MENU = [
   ['leaders', 'leaders', 'Strongest stocks to ride, with stop and exit'],
   ['themes', 'themes', 'Where the money goes: industries and supply chain'],
   ['events', 'events', 'Company news (SEC, FDA): what it did next, tested'],
+  ['catalysts', 'catalysts', 'Upcoming FDA dates and trial readouts (calendar; a buy only if a rule passed)'],
   ['calendar', 'calendar', 'This week: CPI, jobs, Fed, holidays, your dividends'],
   ['skips', 'skips', 'Buys you skipped, why, and what they did since'],
   ['health', 'health', 'Is every part of the system running?'],
@@ -926,13 +982,14 @@ const MENU = [
   ['lab', 'lab', 'This week’s hunting lab results'],
   ['score', 'score', 'Every stock scored 0 to 100'],
   ['sources', 'sources', 'Scoreboard of the sources you logged'],
+  ['traders', 'traders', 'Public traders scored on their own call history'],
   ['details', 'details', 'Long version with every setup'],
   ['report', 'report', 'Last night’s full scan report'],
   ['quieton', 'quiet on', 'Only action messages and alerts'],
   ['quietoff', 'quiet off', 'Every message'],
   ['help', 'help', 'All commands explained'],
   ['menu', 'menu', 'Show the button bar again'],
-], MENU_V = 12;
+], MENU_V = 13;
 const MENU_KB = [['actions', 'my stocks', 'market today'], ['check a stock', 'i bought', 'i sold'], ['market', 'movers', 'day trades'], ['leaders', 'themes', 'events', 'calendar'], ['record', 'goals', 'paper'], ['today', 'review', 'help']];
 const MENU_TEXT = ['MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.', '',
   'EVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today', 'AFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)',
@@ -2078,12 +2135,14 @@ async function actionsText(sig, pos, px, title) {
       out.push('', 'LONGER HOLDS (F-score 8-9 in an uptrend: improving finances, stock above its 200-day; ' + (v15Tier() === 'small' ? 'TRADABLE SMALL (tier 2): passed its own test in both halves against the average stock (t ' + Q.v15.monthly['6m'].t.older.toFixed(1) + ' / ' + Q.v15.monthly['6m'].t.newer.toFixed(1) + '), below the 4.0 proof bar; switched off if its live league score turns negative' : v15Tier() === 'proven' ? 'PROVEN' : 'NOT PROVEN') + '. 1,000 USD each, at most 3 open):',
         ...picks.map(x => (tier2Log(x.sym, 'longer hold', last[x.sym]), x)).map(x => '- BUY ' + x.sym + (last[x.sym] ? ' up to ' + money(last[x.sym] * 1.02) + ' (2% above the last close)' : ' at the next open') + ', F-score ' + x.fs + '/9. STOP 25% under your buy at your broker. SELL when it is 30%+ above its 50-day average (the bot tells you; buy back 10% lower), or TRIM when it passes 15% of your money. Review at 6 months. Check ZAD first; send  bought ' + x.sym + ' PRICE .'),
         'Why these: in the 5-year test this rule made +9.7% in 6 months vs the S&P 500 +7.6% in 2024-26, but +5.8% vs +9.1% in 2021-23. It beat the average stock in both. The league scores these same picks monthly.'); } }
+  { const cl = catalystLines(sig, pos); if (cl.length) out.push('', ...cl); }   // CATALYST RUN-UP: only when a catalyst rule reached tier 2 or proven (23 Oct)
   // EARNINGS DRIFT (owner's choice, 21 Oct): the only buy rule that passed its own 5-year test (both halves, stress cost, last 12 months),
   // shown with its full instruction while its live paper record builds (30+ trades on 10+ days needed before it becomes a plain BUY).
   if (FOCUS && !working && sig) { const ed = planCands(sig, pos || {}).filter(x => x.kind === 'earnings drift' && x.ok).slice(0, 3), pf = sig.peadFunnel;
     if (!ed.length && pf && pf.reports) out.push('', 'EARNINGS DRIFT: no buy tonight. ' + pf.reports + ' companies reported for this session; ' + pf.beat + ' beat by 10%+; ' + pf.passed + ' also closed up 3%+ in the top half of the day with a stop under 15%' + (pf.notHalal ? '; ' + pf.notHalal + ' skipped as not halal (ZAD)' : '') + (pf.noPrice ? '; ' + pf.noPrice + ' without a usable price (not on the liquid list)' : '') + '. The rule fires only on the reaction day.');
     if (ed.length) out.push('', 'EARNINGS DRIFT (passed its 5-year test: beat 10%+ and a strong reaction day; live paper still building, so 1,000 USD each, your choice):', 'Shape: about 1 win in 3, winners much bigger than losers (+1.8% a trade on average over 176 past beats). If two losses in a row would make you move the stop, skip these.',
       ...ed.map(x => '- BUY ' + x.sym + ' from ' + money(x.lo) + ' to ' + money(x.hi) + ' at the open. STOP ' + money(x.stop) + ' at your broker. SELL ' + x.sell + '. Past test: ' + x.expect + (x.outsideTest ? '. NOTE: this company was not in the tested set (smaller or newer); its paper record is kept separately, so treat it as the weaker of the two' : '') + '. Send  bought ' + x.sym + ' PRICE .')); }
+  { const fl = followSection(sig, pos); if (fl.length) out.push('', ...fl); }   // FOLLOWING (follow-lane.mjs, tier 2)
   { const IR = readJson0('data/ignition-results.json'), r8 = IR && IR.record && IR.record['IG8/close'];   // the daily-trade channel, so a day without swing buys is not a day without trades
     if (r8 && r8.n >= 20) out.push('DAILY TRADES: watch for EARLY WAVE alerts between about 4:45 and 9 pm Kuwait (at most 3 a day, 1,000 USD each, stop 8%, sell by the close). Their live paper record so far: ' + r8.n + ' trades, ' + Math.round(r8.win * 100) + '% won, ' + pcs(r8.avg) + ' a trade after costs (' + pcs(r8.stress) + ' at 1.5x costs), but on only ' + r8.days + ' day' + (r8.days === 1 ? '' : 's') + (r8.avg > 0 ? '. Not evidence until 10+ distinct days (now ' + r8.days + ' of 10) and 20+ stocks; it switches itself off if the record turns negative.' : '. Negative so far: alerts are paused until it recovers.')); }
   if (FOCUS && !working && TIER2_ON()) out.push('', 'TWO LEVELS (your choice, 22 Oct): PROVEN = passed every test and the 4.0 luck bar (none yet). TRADABLE SMALL = passed its own test in both halves after the higher cost, beat its yardstick, t 2.5+, but below 4.0: real instructions at 1,000 USD with a stop, switched off by itself if its live record turns negative. Today TRADABLE SMALL: ' + ([v15Tier() === 'small' ? 'LONGER HOLDS (F-score in an uptrend)' : null, (() => { const RB = readJson0('data/rebuy.json'); return RB && RB.status === 'OK' && Object.values(RB.results).some(r => swTier(r) === 'small') ? 'selling a stretched stock and buying it back 10% lower' : null; })()].filter(Boolean).join('; ') || 'none') + '. Always in use: your stops, and never buying a stock that jumped 15%+ in one day in the last month.', 'BEST USE OF YOUR NEXT 1,000 USD: 1) hold cash, or 2) add to your halal index fund (check ZAD): it beat every stock method tested. 3) An EARLY WAVE alert only as a small test (1,000 USD, stop at once, expected result about zero until it proves itself).');
@@ -2391,6 +2450,7 @@ async function tgCommands(sig) {
       const hm = h1 ? [h1[1], !/^(yes|ok|halal|pass)$/i.test(h1[2])] : h2 ? [h2[1], !/^halal$/i.test(h2[2])] : h3 ? [h3[1], true] : null;
       if (hm) { const sym = hm[0].toUpperCase(), mk = HALALM(); mk[sym] = { s: hm[1] ? 'fail' : 'ok', d: ny(Date.now()).d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
         out.push(sym + (hm[1] ? ': marked NOT HALAL (ZAD). I will not offer it as a buy anywhere: plan, BUY NOW, radar or checks.' + (pos[sym] ? ' You hold it: decide yourself whether to sell.' : '') : ': marked HALAL (checked in ZAD). Thank you.') + ' To change it: halal ' + sym + (hm[1] ? ' yes' : ' no')); continue; } }
+    if (/^traders?\s*$/i.test(text)) { out.push(tradersText()); continue; }
     if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl) { out.push(nl); continue; } }   // a forwarded message is someone else's words: treat it as a tip, not as your question
     if (/^(sources?|tips?)\s*$/i.test(text)) { out.push(tipBoard(sig)); continue; }
     if ((k = m.text.trim().match(/^follow\s+(.+)$/i))) {       // follow NAME UCxxxxxxxx   (or a channel link containing the ID)
@@ -2588,6 +2648,7 @@ async function tgCommands(sig) {
     } else if (/^(quality|long term|long investing|investing)\s*\??\s*$/i.test(text)) { out.push(qualityText());
     } else if (/^(exits?|exit test|when to sell)\s*\??\s*$/i.test(text)) { out.push(exitsText());
     } else if (/^(research|experiments?|registry|ideas tested)\s*\??\s*$/i.test(text)) { out.push(experimentsText());
+    } else if (/^(catalysts|catalyst calendar|run-?ups?|fda dates?)\s*\??\s*$/i.test(text)) { out.push(catalystCalendarText());
     } else if (/^(events?|news study|catalysts?|company news)\s*\??\s*$/i.test(text)) { out.push(eventsText());
     } else if (/^(day ?trades?|fast ?movers?|runners?|fast)\s*\??\s*$/i.test(text)) { out.push(fastText());
     } else if (/^(news ?watch|my news|news alerts?|threats?)\s*\??\s*$/i.test(text)) { out.push(newsText());
