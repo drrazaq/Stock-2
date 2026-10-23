@@ -184,7 +184,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
   // materiality: stated value / the supplier's latest annual revenue filed before the agreement (SEC XBRL company concept)
   const REVF = CD + '/revenue.json', REVC = J(REVF, {});
   async function annualRevenue(cik) { if (cik in REVC) return REVC[cik]; if (outOfTime()) return undefined; const rows = [];
-    for (const tag of ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet']) { const j = await get(DATA + '/api/xbrl/companyconcept/CIK' + pad10(cik) + '/us-gaap/' + tag + '.json'); for (const u of ((j && j.units && j.units.USD) || [])) if (u.fp === 'FY' && /^10-K|^20-F/.test(u.form || '') && u.filed && u.val > 0) rows.push([u.filed, u.end, u.val]); }
+    for (const tag of ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet']) { const j = await get(DATA + '/api/xbrl/companyconcept/CIK' + pad10(cik) + '/us-gaap/' + tag + '.json'); const us = j && j.units && j.units.USD; for (const u of (Array.isArray(us) ? us : [])) if (u.fp === 'FY' && /^10-K|^20-F/.test(u.form || '') && u.filed && u.val > 0) rows.push([u.filed, u.end, u.val]); }
     REVC[cik] = rows; return rows; }
   for (const e of agreements) { if (!e.value) { e.materiality = null; continue; } const rows = await annualRevenue(e.supplierCik); if (!rows) { e.materiality = null; continue; }
     const before = rows.filter(r => r[0] <= e.first_public_at).sort((a, b) => a[1] < b[1] ? 1 : -1)[0]; e.supplierRevenue = before ? before[2] : null; e.materiality = before ? r4(e.value / before[2]) : null; }
