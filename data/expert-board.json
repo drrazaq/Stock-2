@@ -1,0 +1,326 @@
+{
+ "generatedAt": "2026-10-23T21:08:40.484Z",
+ "lastClose": "2026-10-23",
+ "paperStart": "2026-10-23",
+ "cost": 0.008,
+ "readiness": "30+ resolved paper trades on 10+ distinct signal days, average > 0 after 0.8% cost",
+ "methods": {
+  "EXP-AN1": {
+   "name": "Top-10% analyst firm: upgrade into buy or initiation at buy",
+   "hold": 63,
+   "stop": 0.35,
+   "data": {
+    "source": "FMP /stable/grades (firm level; the only analyst history on the current plans: Finnhub upgrade-downgrade and Massive Benzinga ratings answer 403, FMP price-target-news 402)",
+    "universe": 1500,
+    "tried": 20,
+    "withHistory": 12,
+    "deniedByPlan": 8,
+    "callsNow": 20,
+    "budgetPerRun": 20,
+    "stop": null,
+    "complete": false,
+    "note": "collecting: 20 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
+   },
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "trySmallReady": false,
+   "fiveYear": null,
+   "paper": "off until the analyst history is complete (collecting: 20 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run.)"
+  },
+  "EXP-AN2": {
+   "name": "2+ top-10% analyst firms turn buy within 10 sessions",
+   "hold": 63,
+   "stop": 0.35,
+   "data": {
+    "source": "FMP /stable/grades (firm level; the only analyst history on the current plans: Finnhub upgrade-downgrade and Massive Benzinga ratings answer 403, FMP price-target-news 402)",
+    "universe": 1500,
+    "tried": 20,
+    "withHistory": 12,
+    "deniedByPlan": 8,
+    "callsNow": 20,
+    "budgetPerRun": 20,
+    "stop": null,
+    "complete": false,
+    "note": "collecting: 20 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
+   },
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "trySmallReady": false,
+   "fiveYear": null,
+   "paper": null
+  },
+  "EXP-13F1": {
+   "name": "Top-10% 13F manager: new position or large add (1%+ of book)",
+   "hold": 126,
+   "stop": 0.35,
+   "data": {
+    "source": "SEC Form 13F data sets",
+    "dataSets": 29,
+    "cached": 29,
+    "fetchedNow": 0,
+    "failed": [],
+    "filingsKept": 98752,
+    "complete": true,
+    "mapping": {
+     "cached": 16690,
+     "byName": 0,
+     "byMassive": 0,
+     "none": 0,
+     "lookups": 0,
+     "top20WeightMapped": 0.9309
+    },
+    "managers": 7896,
+    "followCalls": 89945,
+    "moves": 212761,
+    "topManagersNow": 574,
+    "eligibleNow": 5740
+   },
+   "signals": 59,
+   "waiting": 59,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "trySmallReady": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; not better than the same stocks on their other days in the newer half; block t -0.08 under 2.5 in the newer half; SKILL gate: not better than the same rule using every expert (no ranking) in the newer half (+8.9% vs +7.8% after cost; edge +0.1% vs +0.2%)"
+   },
+   "paper": "574 top managers checked, 6 new 13F filings since 2026-10-23"
+  },
+  "EXP-13F2": {
+   "name": "2+ top-10% 13F managers buy the same stock within 45 days",
+   "hold": 126,
+   "stop": 0.35,
+   "data": {
+    "source": "SEC Form 13F data sets",
+    "dataSets": 29,
+    "cached": 29,
+    "fetchedNow": 0,
+    "failed": [],
+    "filingsKept": 98752,
+    "complete": true,
+    "mapping": {
+     "cached": 16690,
+     "byName": 0,
+     "byMassive": 0,
+     "none": 0,
+     "lookups": 0,
+     "top20WeightMapped": 0.9309
+    },
+    "managers": 7896,
+    "followCalls": 89945,
+    "moves": 212761,
+    "topManagersNow": 574,
+    "eligibleNow": 5740,
+    "clusters": 329
+   },
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "trySmallReady": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; not better than the same stocks on their other days in the newer half"
+   },
+   "paper": null
+  },
+  "EXP-INS1": {
+   "name": "Purchase by a top-10% insider (by earlier purchases)",
+   "hold": 126,
+   "stop": 0.35,
+   "data": {
+    "source": "SEC Form 4 data sets (insider-study.mjs cache, read only)",
+    "quarters": 23,
+    "purchases": 139160,
+    "missingQuarters": [],
+    "complete": true,
+    "purchaseDays": 31852,
+    "insiders": 15633,
+    "topInsidersNow": 527,
+    "eligibleNow": 5264
+   },
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "trySmallReady": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "block t 2.46 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.71 under 2.5 in the newer half; SKILL gate: not better than the same rule using every expert (no ranking) in the newer half (+6.2% vs +8.5% after cost; edge -2.5% vs +0.8%)"
+   },
+   "paper": "527 top insiders checked, 1 new Form 4 since 2026-10-23"
+  },
+  "EXP-CONG1": {
+   "name": "Purchase by a top-10% Congress member (by earlier disclosed purchases)",
+   "hold": 126,
+   "stop": 0.35,
+   "data": {
+    "source": "none on the current plans",
+    "complete": false,
+    "note": "needs data: FMP senate/house trades answer 402 on this plan; Finnhub congressional-trading 403; Alpha Vantage CONGRESS_TRADES works but its 25 calls a day are already used by follow-lane.mjs (members scored there as tip sources) and earnings-study.mjs. Unlock: FMP Starter (senate-trades / house-trades with disclosure dates) or an Alpha Vantage premium key."
+   },
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "trySmallReady": false,
+   "fiveYear": null,
+   "paper": "needs data: FMP senate/house trades answer 402 on this plan; Finnhub congressional-trading 403; Alpha Vantage CONGRESS_TRADES works but its 25 calls a day are already used by follow-lane.mjs (members scored there as tip sources) and earnings-study.mjs. Unlock: FMP Starter (senate-trades / house-trades with disclosure dates) or an Alpha Vantage premium key."
+  },
+  "EXP-ETORO1": {
+   "name": "New long by a top eToro Popular Investor (eToro ranking)",
+   "hold": 63,
+   "stop": 0.35,
+   "data": {
+    "source": "eToro public API",
+    "complete": false,
+    "keys": false,
+    "note": "forward paper only (the API gives live portfolios and aggregate stats, not a dated trade history). Needs the owner's ETORO_KEY and ETORO_USER_KEY secrets."
+   },
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "trySmallReady": false,
+   "fiveYear": null,
+   "paper": "disabled: add the ETORO_KEY and ETORO_USER_KEY secrets (eToro API portal) to switch it on"
+  }
+ }
+}
