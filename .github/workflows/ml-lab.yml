@@ -1,0 +1,78 @@
+name: ML lab
+# ML LAB (ml-lab.mjs; owner's request of 24 Oct 2026: a machine-learning ranker built so it cannot fool itself). ML-RANK1 is
+# pre-registered in ml-spec.json + data/strategy-library.json BEFORE any training: gradient-boosted trees on ~41 point-in-time features,
+# walk-forward (expanding window, retrained every quarter, predicts only the next quarter), weekly top 10, 20-session hold, 0.8% cost,
+# 35% disaster stop; judged against the average stock AND a plain 12-1 momentum ranking, with an untouched final-12-month holdout.
+# The 5-year walk-forward runs ONCE (first complete verdict frozen in data/ml-lab.json); a forward PAPER ledger records each week's top 10
+# from the decision of Fri 23 Oct 2026 (data/ml-paper.jsonl, ml-today.json, ml-board.json).
+# Weekday evenings: resolves paper trades (cheap; features only for paper dates); the week's last session adds the new list.
+# The whole-market price cache is RESTORED READ ONLY from the Sunday job; the value lab's SEC facts cache is RESTORED READ ONLY.
+# Nothing is saved to any cache; the live model is data/ml-model.json. Commits only its own files and its own library entry.
+# Never places an order. Start by hand: change run-ml-now.txt (or run the workflow).
+on:
+  schedule:
+    - cron: '40 23 * * 1-5'   # weekday evenings after the close (Friday = the week's list)
+    - cron: '10 14 * * 6'     # Saturday retry of Friday's list (idempotent)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-ml-now.txt']
+permissions:
+  contents: write
+concurrency: ml-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Tests first (no network)
+        run: node test/ml-core.test.mjs
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: value-cache
+          key: value-cache-none
+          restore-keys: value-cache-
+      - shell: bash
+        timeout-minutes: 270
+        run: |
+          set -o pipefail
+          node ml-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          ML_MINUTES: '240'
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/ml-run.log 2>/dev/null || true
+          FILES="data/ml-lab.json data/ml-today.json data/ml-paper.jsonl data/ml-board.json data/ml-model.json data/ml-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "ml lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the ML lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ml-lab-log
+          path: run.log
