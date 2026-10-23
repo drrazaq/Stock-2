@@ -35,6 +35,8 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { pathToFileURL } from 'node:url';
 
+// AI chips and the AI hardware supply chain (for the concentration check only; not a rule)
+export const AI_CHIPS = new Set('NVDA AMD AVGO TSM MU ARM SMCI MRVL ASML INTC QCOM AMAT LRCX KLAC SNDK WDC STX CRWV NBIS ALAB CRDO COHR ANET VRT TXN ON MCHP NXPI GFS LSCC AEHR ACLS ONTO CAMT NVMI TER ENTG MPWR SITM POWI WOLF AAOI LITE CIEN DELL HPE IREN CORZ APLD'.split(' '));
 export const COST = 0.008, STRESS = 0.012, HOLDS = [1, 5, 20, 60], MIN_CALLS = 30, MIN_DAYS = 10, T_BAR = 2.5, REPEAT_DAYS = 5;
 
 // ---------- 1. tickers in a video ----------
@@ -402,7 +404,16 @@ async function main() {
     return { tr, name: m.name, src: m.src || (tr.startsWith('st:') ? 'StockTwits' : 'YouTube'), url: m.url, subs: m.subs, H, hFrom: m.hFrom, calls: rows.length, first: ds[0], last: ds[ds.length - 1], level: j.level, why: j.why, atH: j, horizons: hz, withExits }; });
   const rank = { FOLLOW: 0, FADE: 1, 'NO EDGE': 2, WATCH: 3 };
   traders.sort((a, b) => rank[a.level] - rank[b.level] || (b.atH.t ?? -99) - (a.atH.t ?? -99) || b.calls - a.calls);
-  const FOLLOW_BAR = +applyLuckBar(traders).toFixed(2);   // luck bar for FOLLOW (main session, 23 Oct); see applyLuckBar
+  const FOLLOW_BAR = +applyLuckBar(traders).toFixed(2);
+  // CONCENTRATION (main session review, 23 Oct): for FOLLOW and near-miss traders, how much of the record is one theme (AI chips and the
+  // AI supply chain) or a few stocks; and the same judgement with his 3 most profitable stocks removed.
+  for (const t of traders) { if (!(t.level === 'FOLLOW' || (t.atH.t >= 2))) continue; const H = t.H, rows = rowsBy[t.tr].filter(r => typeof r['r' + H] === 'number' && typeof r['c' + H] === 'number'), by = {};
+    for (const r of rows) { const b = by[r.sym] = by[r.sym] || { sym: r.sym, n: 0, net: 0 }; b.n++; b.net += r['r' + H] - COST; }
+    const st = Object.values(by).sort((a, b) => b.net - a.net), tot = rows.reduce((a, r) => a + r['r' + H] - COST, 0), ai = rows.filter(r => AI_CHIPS.has(r.sym)), aiNet = ai.reduce((a, r) => a + r['r' + H] - COST, 0);
+    const top3 = new Set(st.slice(0, 3).map(x => x.sym)), j3 = judge(rows.filter(r => !top3.has(r.sym)), H);
+    t.concentration = { aiChipCallShare: rows.length ? +(ai.length / rows.length).toFixed(3) : null, aiChipProfitShare: tot ? +(aiNet / tot).toFixed(3) : null, nonAi: (() => { const g = rows.filter(r => !AI_CHIPS.has(r.sym)); return g.length ? { n: g.length, avg: +(g.reduce((a, r) => a + r['r' + H] - COST, 0) / g.length).toFixed(4) } : null; })(),
+      topStocks: st.slice(0, 8).map(x => ({ sym: x.sym, calls: x.n, profitShare: tot ? +(x.net / tot).toFixed(3) : null, avg: +(x.net / x.n).toFixed(4) })),
+      withoutTop3Stocks: { removed: [...top3], n: j3.n, days: j3.days, avg: j3.avg, vsAvgStock: j3.vsAvgStock, t: j3.t, tBlock: j3.tBlock, level: j3.level, why: j3.why } }; }   // luck bar for FOLLOW (main session, 23 Oct); see applyLuckBar
   const judged = traders.filter(t => t.level !== 'WATCH').length, count = (l) => traders.filter(t => t.level === l).length;
   const pc = (x) => x === null || x === undefined ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
   const recordLine = (t) => { const a = t.atH; return a.n + ' calls on ' + a.days + ' days (' + (t.first || '?') + ' to ' + (t.last || '?') + '), at ' + t.H + ' session' + (t.H > 1 ? 's' : '') + ': ' + pc(a.avg) + ' a call after costs (median ' + pc(a.median) + '), ' + Math.round((a.win || 0) * 100) + '% won, vs the average stock ' + pc(a.vsAvgStock) + ' (t ' + (a.t ?? 'n/a') + (a.blocks ? ', block t ' + (a.tBlock ?? 'n/a') + ' over ' + a.blocks + ' blocks' : '') + '), vs S&P ' + pc(a.vsSpy) + ', without his 2 best ' + pc(a.noBest2) + ', worst ' + pc(a.worst); };
