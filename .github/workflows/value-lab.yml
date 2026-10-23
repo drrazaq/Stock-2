@@ -5,6 +5,8 @@ name: Value lab
 # files and its own library entries. Start: change run-value-lab-now.txt (a last line containing DIAG = coverage check only, no
 # returns computed, nothing written) or run the workflow by hand.
 on:
+  schedule:
+    - cron: '17 13 * * 0'   # Sunday, after the Sunday studies (06:00 UTC, up to 5 hours): monitoring only, verdicts stay frozen
   workflow_dispatch:
   push:
     branches: [main]
