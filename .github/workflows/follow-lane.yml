@@ -2,6 +2,8 @@ name: Follow lane
 # Public traders scored on their own full dated call history (follow-lane.mjs). Daily after the US close: new uploads / posts of FOLLOW and
 # WATCH traders, rescore, write data/follow-board.json and data/follow-today.json (read by the ACTIONS message). Sunday: full refresh
 # (discover new YouTube channels, backfill up to 2 years of uploads within the ~8,000-unit daily YouTube quota, refresh every channel).
+# Other sources each run: StockTwits, US Congress trades (Alpha Vantage, members rotated within the free-tier limit), SEC 13F of
+# concentrated funds (weekly), newsletter RSS feeds (data/follow-feeds.json).
 on:
   schedule:
     - cron: '5 21 * * 1-5'    # 17:05 New York in summer time (16:05 in winter): after the close, before the nightly ACTIONS scan (21:30 UTC)
@@ -47,6 +49,8 @@ jobs:
           MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || (github.event.schedule == '0 14 * * 0' && 'full' || 'daily') }}
           YT_KEY: ${{ secrets.YT_KEY }}
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       - if: success() || failure()
         uses: actions/cache/save@v4
         with:

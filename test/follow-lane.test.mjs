@@ -125,3 +125,28 @@ test('horizon: fixed in advance from the channel’s own words', () => {
   assert.equal(horizonFor('Long-term investing in dividend stocks'), 60);
   assert.equal(horizonFor('Stock market news'), 20);
 });
+
+// --- sources added 23 Oct (owner: "open the web") ---
+import { congressCall, f13Calls, parseInfoTable } from '../follow-lane.mjs';
+const trade = (o = {}) => ({ politician_canonical: 'Nancy Pelosi', bioguide_id: 'P000197', symbol: 'NVDA', asset_type_code: 'ST', asset_name: 'NVIDIA Corporation - Common Stock', transaction_type: 'BUY', transaction_date: '2026-07-28', filed_date: '2026-08-21', ...o });
+test('congress: a stock BUY is a call dated at the FILING (when the public could know), never the trade date', () => {
+  const c = congressCall(trade(), U);
+  assert.equal(c.sym, 'NVDA'); assert.equal(c.tr, 'cg:P000197'); assert.equal(entrySession(Date.parse(c.pub), ['2026-08-20', '2026-08-21', '2026-08-24']), 2);
+});
+test('congress: sales, untickered assets, puts and unknown symbols are not buy calls; a call option is', () => {
+  assert.equal(congressCall(trade({ transaction_type: 'SALE' }), U), null);
+  assert.equal(congressCall(trade({ symbol: null }), U), null);
+  assert.equal(congressCall(trade({ asset_type_code: 'OP', asset_name: 'NVIDIA (NVDA) put options' }), U), null);
+  assert.equal(congressCall(trade({ symbol: 'ZZZZ' }), U), null);
+  assert.equal(congressCall(trade({ asset_type_code: 'OP', asset_name: 'NVIDIA (NVDA) Call options; strike 120' }), U).sym, 'NVDA');
+});
+test('13F: a new position or one raised 50%+ is a call; held, trimmed, small adds and puts are not', () => {
+  const prev = { A: [100, 1], B: [100, 1], C: [100, 1] }, cur = { A: [100, 1], B: [160, 1], C: [120, 1], D: [50, 1] };
+  assert.deepEqual(f13Calls(prev, cur).sort(), ['B', 'D']);
+});
+test('13F: the information table is read (shares summed per CUSIP; put and call lines left out)', () => {
+  const xml = '<informationTable><infoTable><nameOfIssuer>APPLE INC</nameOfIssuer><cusip>037833100</cusip><value>500</value><shrsOrPrnAmt><sshPrnamt>10</sshPrnamt></shrsOrPrnAmt></infoTable>' +
+    '<infoTable><nameOfIssuer>APPLE INC</nameOfIssuer><cusip>037833100</cusip><value>100</value><shrsOrPrnAmt><sshPrnamt>2</sshPrnamt></shrsOrPrnAmt></infoTable>' +
+    '<infoTable><nameOfIssuer>TESLA INC</nameOfIssuer><cusip>88160R101</cusip><value>90</value><shrsOrPrnAmt><sshPrnamt>5</sshPrnamt></shrsOrPrnAmt><putCall>Put</putCall></infoTable></informationTable>';
+  assert.deepEqual(parseInfoTable(xml), { '037833100': [12, 600, 'APPLE INC'] });
+});

@@ -130,6 +130,21 @@ export function dedupeCalls(calls) { const last = new Map(), out = [];
     if (was !== undefined && p - was < REPEAT_DAYS * 864e5) continue; last.set(k, p); out.push(c); }
   return out; }
 
+// ---------- 4b. other public sources (owner, 23 Oct: "open the web") ----------
+// CONGRESS (Alpha Vantage CONGRESS_TRADES): a member's stock BUY (or call-option buy) is a call made public on its FILING date (the trade
+// date is weeks earlier and was not public). Entry: the first open after the filing day (filed time unknown, so taken as after the close).
+export function congressCall(t, universe) { if (!t || !/^(BUY|PURCHASE)/i.test(String(t.transaction_type || ''))) return null;
+  const sym = String(t.symbol || t.ticker_reported || '').toUpperCase(); if (!/^[A-Z]{1,5}$/.test(sym) || (universe && !universe.has(sym)) || FUND_SYMS.has(sym)) return null;
+  const at = String(t.asset_type_code || ''); if (!(at === 'ST' || (at === 'OP' && /\bcall/i.test(t.asset_name || '') && !/\bput/i.test(t.asset_name || '')))) return null;
+  const d = String(t.filed_date || t.notification_date || '').slice(0, 10); if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return null;
+  return { tr: 'cg:' + t.bioguide_id, n: 'Congress: ' + (t.politician_canonical || t.politician || t.bioguide_id), src: 'cg', sym, pub: d + 'T21:00:00-04:00', vid: d + '|' + (t.transaction_date || '') + '|' + at, bull: 1, tt: String(t.asset_name || '').slice(0, 90) }; }
+// SEC 13F: holdings { cusip: [shares, value, name] } of two consecutive filings; a call = a new position or shares raised 50%+.
+export function f13Calls(prev, cur) { return Object.keys(cur).filter(k => cur[k][0] > 0 && (!prev[k] || !(prev[k][0] > 0) || cur[k][0] >= prev[k][0] * 1.5)); }
+export function parseInfoTable(xml) { const out = {}, tag = (b, t) => { const m = b.match(new RegExp('<(?:\\w+:)?' + t + '>([^<]*)<')); return m ? m[1].trim() : ''; };
+  for (const b of String(xml).split(/<(?:\w+:)?infoTable>/).slice(1)) { if (tag(b, 'putCall')) continue; const c = tag(b, 'cusip').toUpperCase(), sh = +tag(b, 'sshPrnamt') || 0, v = +tag(b, 'value') || 0; if (!c) continue;
+    const o = out[c] = out[c] || [0, 0, tag(b, 'nameOfIssuer')]; o[0] += sh; o[1] += v; }
+  return out; }
+
 // ---------- 5. the run (only when executed directly) ----------
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMain) await main();
@@ -245,12 +260,68 @@ async function main() {
         if (!ms.length || !(j.cursor && j.cursor.more)) break; max = j.cursor.max; }
       if (deep && pages >= 1) info.backfilled = iso(now); } }
   st.calls = stCalls; log('StockTwits: ' + stCalls + ' calls, ' + Object.keys(state.st.users).length + ' users known; last answer ' + st.status);
+  const addCall = (c) => { if (!c) return; const k = c.tr + '|' + c.sym + '|' + c.vid; if (have.has(k)) return; have.add(k); add.push(c); };
+  // ---- US Congress members' trades (Alpha Vantage CONGRESS_TRADES; free tier about 25 calls a day: members are rotated) ----
+  const AVB = (env.AV_BASE || 'https://www.alphavantage.co').replace(/\/$/, ''), AV_MAX = +(env.AV_CALLS || 24); let avCalls = 0; const cg = { status: env.ALPHAVANTAGE_KEY ? 'not called' : 'needs data: no ALPHAVANTAGE_KEY secret' };
+  state.congress = state.congress || { members: {} };
+  async function av(q) { if (!env.ALPHAVANTAGE_KEY || avCalls >= AV_MAX) return null; avCalls++; if (avCalls > 1) await sleep(1500);
+    try { const r = await fetch(AVB + '/query?' + q + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)); cg.status = 'HTTP ' + r.status; if (!r.ok) return null; const j = await r.json();
+      if (j && (j.Information || j.Note || j['Error Message'])) { cg.status = String(j.Information || j.Note || j['Error Message']).slice(0, 160); avCalls = AV_MAX; return null; } return j; } catch (e) { cg.status = 'error ' + (e.message || e); return null; } }
+  if (env.ALPHAVANTAGE_KEY) { const C2 = state.congress;
+    if (!C2.listAt || now - Date.parse(C2.listAt) > 30 * 864e5) { const j = await av('function=POLITICIAN_METADATA'); const cut = iso(now - 730 * 864e5);
+      for (const p of (j && j.politicians) || []) { if (!(p.terms || []).some(t => (t.end_date || '9999') >= cut)) continue; C2.members[p.bioguide_id] = C2.members[p.bioguide_id] || { name: p.display_name, chamber: p.chamber, party: p.party }; }
+      if (j && j.politicians) C2.listAt = new Date(now).toISOString(); }
+    // members with trades first, then never fetched, each at most once a week
+    const due = Object.entries(C2.members).filter(([, m]) => !m.at || now - Date.parse(m.at) > 7 * 864e5).sort((a, b) => (b[1].n || 0) - (a[1].n || 0) || (a[1].at ? 1 : 0) - (b[1].at ? 1 : 0));
+    for (const [id, m] of due) { if (avCalls >= AV_MAX) break; const j = await av('function=CONGRESS_TRADES&bioguide_id=' + id); if (!j) break; m.at = new Date(now).toISOString(); let n = 0;
+      for (const t of j.trades || j.data || []) { const c = congressCall(t, UNI); if (c && c.pub.slice(0, 10) >= iso(since2y)) { addCall(c); n++; } } m.n = Math.max(m.n || 0, n); } }
+  cg.calls = avCalls; cg.members = Object.keys(state.congress.members).length; cg.fetched = Object.values(state.congress.members).filter(m => m.at).length;
+  log('Congress (Alpha Vantage): ' + avCalls + ' calls, ' + cg.fetched + ' of ' + cg.members + ' members fetched so far; last answer ' + cg.status);
+  // ---- SEC 13F of concentrated funds (official EDGAR; entry after the FILING day, never the quarter end) ----
+  const SECW = env.SEC_BASE || 'https://www.sec.gov', SECD = env.SECD_BASE || 'https://data.sec.gov', UA = env.SEC_UA || 'Stock-2 research stock2@users.noreply.github.com', f13 = { status: 'not called' }; let secCalls = 0;
+  async function sec(url, text) { if (secCalls >= +(env.SEC_CALLS || 900)) return null; secCalls++; await sleep(150);
+    try { const r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept-Encoding': 'gzip, deflate' } }); f13.status = 'HTTP ' + r.status; if (!r.ok) return null; return text ? await r.text() : await r.json(); } catch (e) { f13.status = 'error ' + (e.message || e); return null; } }
+  // seed: managers known for concentrated books (the CIK is checked against EDGAR; the concentration test below decides who is scored)
+  const SEED13F = [1067983, 1336528, 1649339, 1709323, 1061768, 1079114, 1112520, 1040273, 1536411, 921669, 1345471, 1418814, 1056831, 1167483, 1135730, 1061165, 1103804, 1541617, 1656456, 1517137, ...((J('data/follow-13f.json', []) || []).map(Number))];
+  state.f13 = state.f13 || { funds: {}, cusip: {} };
+  if (MODE === 'full' || !state.f13.at || now - Date.parse(state.f13.at) > 7 * 864e5) {
+    let names = null; const norm = (x) => String(x || '').toUpperCase().replace(/[.,&/'-]/g, ' ').replace(/\b(INC|CORP|CORPORATION|CO|COMPANY|LTD|PLC|HLDGS?|HOLDINGS?|GROUP|CL(ASS)? [A-C]|COM|NEW|THE|SA|NV|AG|LP)\b/g, ' ').replace(/\s+/g, ' ').trim();
+    const toTicker = async (cusip, nm) => { const S = state.f13.cusip; if (cusip in S) return S[cusip];
+      let t = null; if (env.MASSIVE_KEY) { const j = await mv('/v3/reference/tickers?cusip=' + cusip + '&limit=1'); t = j && j.results && j.results[0] && j.results[0].ticker || null; }
+      if (!t) { if (!names) { const ct = await sec(SECW + '/files/company_tickers.json'); names = new Map(); for (const v of Object.values(ct || {})) if (!names.has(norm(v.title))) names.set(norm(v.title), v.ticker); } t = names.get(norm(nm)) || null; }
+      S[cusip] = t && /^[A-Z]{1,5}$/.test(t) ? t : null; return S[cusip]; };
+    for (const cik of [...new Set(SEED13F)]) { const sub = await sec(SECD + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json'); if (!sub || !sub.filings) continue;
+      const F = state.f13.funds[cik] = state.f13.funds[cik] || { filings: {} }; F.name = sub.name; const R = sub.filings.recent, list = [];
+      for (let k = 0; k < (R.form || []).length; k++) if (R.form[k] === '13F-HR' && R.filingDate[k] >= iso(now - 820 * 864e5)) list.push({ acc: R.accessionNumber[k], d: R.filingDate[k] });
+      list.sort((a, b) => a.d < b.d ? -1 : 1);
+      for (const f of list) { if (F.filings[f.acc]) continue; const dir = SECW + '/Archives/edgar/data/' + cik + '/' + f.acc.replace(/-/g, ''), idx = await sec(dir + '/index.json'); if (!idx) continue;
+        const x = ((idx.directory && idx.directory.item) || []).map(i => i.name).find(n => /\.xml$/i.test(n) && !/primary_doc/i.test(n)); if (!x) continue; const xml = await sec(dir + '/' + x, true); if (!xml) continue;
+        F.filings[f.acc] = { d: f.d, h: parseInfoTable(xml) }; }
+      const fs2 = Object.values(F.filings).sort((a, b) => a.d < b.d ? -1 : 1), lastF = fs2[fs2.length - 1];
+      if (lastF) { const vals = Object.values(lastF.h).map(v => v[1]).sort((a, b) => b - a), tot = vals.reduce((a, b) => a + b, 0); F.positions = vals.length; F.top10 = tot > 0 ? +(vals.slice(0, 10).reduce((a, b) => a + b, 0) / tot).toFixed(3) : 0; F.concentrated = vals.length <= 40 && F.top10 >= 0.6; }
+      if (F.concentrated) for (let k = 1; k < fs2.length; k++) for (const cu of f13Calls(fs2[k - 1].h, fs2[k].h)) { const t = await toTicker(cu, fs2[k].h[cu][2]); if (!t || !UNI.has(t) || FUND_SYMS.has(t)) continue;
+        addCall({ tr: '13f:' + cik, n: '13F: ' + F.name, src: '13f', sym: t, pub: fs2[k].d + 'T21:00:00-04:00', vid: fs2[k].d + '|' + cu, bull: 1, tt: (fs2[k - 1].h[cu] ? 'raised ' : 'new ') + fs2[k].h[cu][2] }); }
+      for (const a of Object.keys(F.filings).sort((a, b) => F.filings[a].d < F.filings[b].d ? -1 : 1).slice(0, -10)) delete F.filings[a]; }   // keep the last 10 filings
+    state.f13.at = new Date(now).toISOString(); }
+  f13.calls = secCalls; f13.funds = Object.keys(state.f13.funds).length; f13.concentrated = Object.values(state.f13.funds).filter(f => f.concentrated).map(f => f.name);
+  log('SEC 13F: ' + secCalls + ' calls, ' + f13.funds + ' funds read, concentrated: ' + (f13.concentrated.join(', ') || 'none') + '; last answer ' + f13.status);
+  // ---- public newsletters with dated buy calls (RSS feeds published for readers; no login, no archive scraping) ----
+  const FEEDS = J('data/follow-feeds.json', null) || ['https://moneymachinenewsletter.substack.com/feed', 'https://smartstocksnewsletter.substack.com/feed', 'https://topstockstrader.substack.com/feed', 'https://stockpicking.substack.com/feed', 'https://actionalerts.substack.com/feed', 'https://astuteinvestor.substack.com/feed', 'https://blusuitdillon.substack.com/feed', 'https://cockneyrebel.substack.com/feed'];
+  const rss = { status: 'not called', feeds: FEEDS.length, ok: 0 }, unx = (t) => String(t || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&#36;|&dollar;/g, '$').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, "'").replace(/&nbsp;/g, ' ');
+  for (const url of FEEDS) { try { const r = await fetch(url, { headers: { 'User-Agent': 'Stock-2 personal research (RSS reader)', Accept: 'application/rss+xml,application/xml' } }); rss.status = 'HTTP ' + r.status; if (!r.ok) continue; rss.ok++;
+      const xml = await r.text(), feedName = unx((xml.match(/<channel>[\s\S]*?<title>([\s\S]*?)<\/title>/) || [])[1]).trim() || new URL(url).host, tr = 'rss:' + new URL(url).host;
+      for (const it of xml.split(/<item[ >]/).slice(1)) { const title = unx((it.match(/<title>([\s\S]*?)<\/title>/) || [])[1]), body = unx((it.match(/<description>([\s\S]*?)<\/description>/) || [])[1]), pd = Date.parse((it.match(/<pubDate>([^<]+)<\/pubDate>/) || [])[1] || ''), link = ((it.match(/<link>([^<]+)<\/link>/) || [])[1] || '').trim();
+        if (!isFinite(pd)) continue; for (const c of parseVideo({ title, desc: body }, UNI).calls) addCall({ tr, n: 'Newsletter: ' + feedName.slice(0, 50), src: 'rss', sym: c.sym, pub: new Date(pd).toISOString(), vid: link || String(pd), bull: c.bull ? 1 : 0, ...(c.st ? { st: c.st } : {}), ...(c.tg ? { tg: c.tg } : {}), tt: title.slice(0, 90) }); } } catch (e) { rss.status = 'error ' + (e.message || e); }
+    await sleep(500); }
+  log('Newsletters (RSS): ' + rss.ok + ' of ' + FEEDS.length + ' feeds read; last answer ' + rss.status);
   if (add.length) fs.appendFileSync(CALLS, add.map(c => JSON.stringify(c)).join('\n') + '\n');
   log(add.length + ' new calls logged (' + (old.length + add.length) + ' in total)');
   // ---- score every call ----
   const all = dedupeCalls([...old, ...add].filter(c => c.tr && c.sym && c.pub)), meta = {};
   for (const [id, c] of Object.entries(state.channels)) meta['yt:' + id] = { name: c.name, H: c.H, hFrom: c.hFrom, src: 'YouTube', subs: c.subs, url: 'https://www.youtube.com/channel/' + id };
   for (const [u, c] of Object.entries(state.st.users)) meta['st:' + u] = { name: 'StockTwits ' + u, H: 20, hFrom: 'default (StockTwits states no hold)', src: 'StockTwits', followers: c.followers, url: 'https://stocktwits.com/' + u };
+  const SRC = { yt: ['YouTube', 20], st: ['StockTwits', 20], cg: ['US Congress', 20], '13f': ['SEC 13F fund', 60], rss: ['Newsletter', 20] };
+  for (const c of all) if (!meta[c.tr]) { const z = SRC[c.src] || ['other', 20]; meta[c.tr] = { name: c.n || c.tr, H: z[1], hFrom: 'fixed per source type on 23 Oct 2026 (' + z[0] + ': ' + z[1] + ' sessions)', src: z[0] }; }
   const rowsBy = {}, pending = []; let scored = 0, noPrice = 0;
   for (const c of all) { const e = T ? entrySession(Date.parse(c.pub), D) : -1; if (e === -1) { pending.push(c); continue; } if (e < 1) { noPrice++; continue; }
     const b = barsOf(c.sym); if (!b || !(b.o[e] > 0)) { noPrice++; continue; } const H = (meta[c.tr] || {}).H || 20, row = { e, sym: c.sym, d: D[e], bull: c.bull };
@@ -270,13 +341,13 @@ async function main() {
   for (const t of traders) t.record = recordLine(t);
   // ---- new calls of FOLLOW traders (entry session not in the data yet) ----
   const follow = new Set(traders.filter(t => t.level === 'FOLLOW').map(t => t.tr)), lastClose = (sym) => { const b = barsOf(sym); if (!b) return null; for (let k = T - 1; k >= Math.max(0, T - 5); k--) if (b.c[k] > 0) return +b.c[k].toFixed(4); return null; };
-  const HAL = J('data/halal.json', {}) || {}, todayCalls = pending.filter(c => follow.has(c.tr) && now - Date.parse(c.pub) < 4 * 864e5).map(c => { const t = traders.find(x => x.tr === c.tr); return { trader: t.name, tr: c.tr, sym: c.sym, pub: c.pub, title: c.tt, H: t.H, st: c.st || null, tg: c.tg || null, last: lastClose(c.sym), halal: (HAL[c.sym] && HAL[c.sym].s) || 'unknown', record: t.record }; });
+  const HAL = J('data/halal.json', {}) || {}, todayCalls = pending.filter(c => follow.has(c.tr) && now - Date.parse(c.pub) < 4 * 864e5).map(c => { const t = traders.find(x => x.tr === c.tr); return { trader: t.name, source: t.src, tr: c.tr, sym: c.sym, pub: c.pub, title: c.tt, H: t.H, st: c.st || null, tg: c.tg || null, last: lastClose(c.sym), halal: (HAL[c.sym] && HAL[c.sym].s) || 'unknown', record: t.record }; });
   fs.writeFileSync(TODAY, JSON.stringify({ at: new Date(now).toISOString(), asOf: D[T - 1] || null, rule: 'new buy calls of FOLLOW traders (tier 2); scan.mjs gates them (halal, lottery, filings) before ACTIONS', calls: todayCalls }, null, 1));
   const ytCalls = all.filter(c => c.src === 'yt').length, stCallsN = all.filter(c => c.src === 'st').length;
   const out = { generatedAt: new Date(now).toISOString(), mode: MODE, preRegistered: '2026-10-23', asOf: D[T - 1] || null, pricesFrom: D[0] || null, priceSource: fromStudy ? 'study cache (whole market, dead stocks kept) + recent Massive days' : 'Massive grouped daily (own cache)',
     rule: 'Each trader is ONE hypothesis at ONE horizon H fixed in advance (1 day trader, 60 long-term, else 20 sessions). Entry: the first regular-session open after the call was public (New York). FOLLOW: 30+ finished calls on 10+ days; both halves positive after 0.8% and 1.2% and beating the average stock; positive without his 2 best; date-clustered t vs the average stock >= 2.5. FADE: same counts, worse in both halves, t <= -2.5, still worse without his 2 worst. WATCH: too few.',
-    sources: { youtube: { ...yt, channels: Object.keys(state.channels).length, backfilled: Object.values(state.channels).filter(c => c.backfilled).length, calls: ytCalls }, stocktwits: { ...st, users: Object.keys(state.st.users).length, calls: stCallsN } },
-    unreached: { X: 'needs data: X API read access is paid (Basic tier, about 200 USD a month); with a bearer token in an X_BEARER secret, the users/:id/tweets endpoint gives the same dated calls.', Reddit: 'needs data: the Reddit API needs an app the owner registers (reddit.com/prefs/apps, script type, free for personal non-commercial use); with REDDIT_ID / REDDIT_SECRET secrets, /user/<name>/submitted gives dated posts.', Discord: 'needs data: Discord has no public read API; a bot can read only servers that invite it (the owner would need admin consent in each trading server).', TikTok: 'needs data: TikTok’s Research API is for approved academic researchers only; no other official read access to videos.' },
+    sources: { youtube: { ...yt, channels: Object.keys(state.channels).length, backfilled: Object.values(state.channels).filter(c => c.backfilled).length, calls: ytCalls }, stocktwits: { ...st, users: Object.keys(state.st.users).length, calls: stCallsN }, congress: { ...cg, callsLogged: all.filter(c => c.src === 'cg').length }, sec13f: { ...f13, callsLogged: all.filter(c => c.src === '13f').length }, newsletters: { ...rss, callsLogged: all.filter(c => c.src === 'rss').length } },
+    unreached: { X: 'needs data: X API read access is paid (Basic tier, about 200 USD a month); with a bearer token in an X_BEARER secret, the users/:id/tweets endpoint gives the same dated calls.', Reddit: 'needs data: the Reddit API needs an app the owner registers (reddit.com/prefs/apps, script type, free for personal non-commercial use); with REDDIT_ID / REDDIT_SECRET secrets, /user/<name>/submitted gives dated posts.', Discord: 'needs data: Discord has no public read API; a bot can read only servers that invite it (the owner would need admin consent in each trading server).', TikTok: 'needs data: TikTok’s Research API is for approved academic researchers only; no other official read access to videos.' , Kinfo: 'not reached: Kinfo (broker-verified trader journals) has no public API; its leaderboards are inside the app behind an account, so reading them would need a login. Unlock: Kinfo would have to grant API or export access.' },
     screened: traders.length, judged, counts: { FOLLOW: count('FOLLOW'), FADE: count('FADE'), 'NO EDGE': count('NO EDGE'), WATCH: count('WATCH') },
     luck: { judged, tBar: T_BAR, followByLuckAtMost: +luckExpected(judged, T_BAR).toFixed(2), fadeByLuckAtMost: +luckExpected(judged, T_BAR).toFixed(2), note: 'with ' + judged + ' traders judged, about ' + luckExpected(judged, T_BAR).toFixed(1) + ' would reach t 2.5 by luck alone (the half and cost checks make it fewer)' },
     calls: { total: all.length, scored, pending: pending.length, noPrice },

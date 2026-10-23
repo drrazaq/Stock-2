@@ -11,7 +11,7 @@ import { loadScan, blocked } from './load-scan.mjs';
 
 const today = new Date().toISOString().slice(0, 10), recent = new Date().toISOString();
 const rec = '42 calls on 18 days, at 20 sessions: +3.1% a call after costs';
-const call = (sym, o = {}) => ({ trader: 'Good Trader', tr: 'yt:UCgood', sym, pub: recent, title: sym + ' breakout', H: 20, st: null, tg: null, last: 10, halal: 'unknown', record: rec, ...o });
+const call = (sym, o = {}) => ({ trader: 'Good Trader', source: 'YouTube', tr: 'yt:UCgood', sym, pub: recent, title: sym + ' breakout', H: 20, st: null, tg: null, last: 10, halal: 'unknown', record: rec, ...o });
 const files = (calls, extra = {}) => ({ 'data/settings.json': { tier2: true }, 'data/follow-today.json': { at: recent, asOf: today, calls }, 'data/halal.json': { BADH: { s: 'fail', d: today, by: 'ZAD (you)' }, GOOD: { s: 'ok', d: today, by: 'ZAD (you)' } }, ...extra });
 const sig = { lottery: { LOTO: 0.4 }, stocks: [] };
 const show = async (calls, extra, s = sig) => { const S = await loadScan({ files: files(calls, extra) }); return { S, text: S.fn('followSection')(s, {}).join('\n') }; };
@@ -22,8 +22,13 @@ test('a FOLLOW trader’s halal-ok call is shown with his record, the entry rang
   assert.match(text, /BUY GOOD .*up to 10\.30/);
   assert.match(text, /STOP 15% under your buy/);
   assert.match(text, /SELL at the close of the 20th session/);
-  assert.match(text, /Good Trader/); assert.match(text, /42 calls on 18 days/);
+  assert.match(text, /From Good Trader \[YouTube\]/); assert.match(text, /42 calls on 18 days/);
   assert.doesNotMatch(text, /check ZAD first/);
+});
+
+test('each FOLLOW is labelled with its source type (a 13F fund here)', async () => {
+  const { text } = await show([call('GOOD', { trader: '13F: PERSHING SQUARE', source: 'SEC 13F fund', H: 60 })]);
+  assert.match(text, /From 13F: PERSHING SQUARE \[SEC 13F fund\]/); assert.match(text, /close of the 60th session/);
 });
 
 test('the trader’s own stop is used when he gave one', async () => {
