@@ -57,8 +57,8 @@ export const METHODS = {
 };
 const ok = (x) => typeof x === 'number' && isFinite(x);
 // ---------- indicators (one stock, whole series) ----------
-function smaArr(x, p) { const n = x.length, o = new Float64Array(n).fill(NaN); let s = 0, bad = 0; for (let i = 0; i < n; i++) { const a = x[i]; if (ok(a)) s += a; else bad++; if (i >= p) { const b = x[i - p]; if (ok(b)) s -= b; else bad--; } if (i >= p - 1 && bad === 0) o[i] = s / p; } return o; }
-function emaArr(x, p) { const n = x.length, o = new Float64Array(n).fill(NaN), k = 2 / (p + 1); let e = NaN, run = 0, s = 0;
+export function smaArr(x, p) { const n = x.length, o = new Float64Array(n).fill(NaN); let s = 0, bad = 0; for (let i = 0; i < n; i++) { const a = x[i]; if (ok(a)) s += a; else bad++; if (i >= p) { const b = x[i - p]; if (ok(b)) s -= b; else bad--; } if (i >= p - 1 && bad === 0) o[i] = s / p; } return o; }
+export function emaArr(x, p) { const n = x.length, o = new Float64Array(n).fill(NaN), k = 2 / (p + 1); let e = NaN, run = 0, s = 0;
   for (let i = 0; i < n; i++) { const a = x[i]; if (!ok(a)) { e = NaN; run = 0; s = 0; continue; } run++; if (run < p) { s += a; continue; } if (run === p) { s += a; e = s / p; } else e = a * k + e * (1 - k); o[i] = e; } return o; }
 export function indicators(S) {
   const n = S.c.length, rng = new Float64Array(n).fill(NaN), dv = new Float64Array(n).fill(NaN);

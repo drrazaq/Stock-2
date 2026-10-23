@@ -1,7 +1,8 @@
 name: Decoded lab
 # DECODED LAB (decoded-lab.mjs; owner's request of 23 Oct 2026: "study how people won on past trades and try to implement them on future
-# trades"). Weekday evenings after the US close: scans the day for the decoded trader methods (DEC-QBO, DEC-EP, DEC-MB, DEC-VCP, DEC-PB,
-# DEC-FROG, DEC-CRASH; rules in decoded-core.mjs), records PAPER signals from 23 Oct 2026 (entries from Monday 26 Oct), resolves them with
+# trades"; batch 2 the same day: "study more, dig"). Weekday evenings after the US close: scans the day for the decoded trader methods
+# (batch 1 DEC-* in decoded-core.mjs; batch 2 DEC2-* in decoded2-core.mjs: 35 more trader methods + 48 exit versions + 8 champion
+# filters), records PAPER signals from 23 Oct 2026 (entries from Monday 26 Oct), resolves them with
 # each method's own exit, and runs each method's 5-year one-shot once (first verdict frozen). The whole-market price cache is RESTORED READ
 # ONLY from the Sunday job (never saved here); the sessions since are fetched from Massive. Commits only its own output files and its own
 # library entries. Never places an order. Start by hand: change run-decoded-now.txt (or run the workflow).
@@ -34,6 +35,17 @@ jobs:
           path: study-cache
           key: leaders-study-none
           restore-keys: leaders-study-
+      # batch 2 (DEC2-CONTRACT, DEC2-INSQ): the SEC 8-K event cache and value-lab's SEC companyfacts cache, RESTORED READ ONLY (never saved here)
+      - uses: actions/cache/restore@v4
+        with:
+          path: ev-cache
+          key: events-cache-none
+          restore-keys: events-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: value-cache
+          key: value-cache-none
+          restore-keys: value-cache-
       - shell: bash
         timeout-minutes: 100
         run: |
