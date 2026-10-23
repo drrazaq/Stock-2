@@ -12497,18 +12497,94 @@
    "family": "Confluence (combined rules)",
    "name": "Confluence: a stock picked by 2+ different rule families within 5 sessions",
    "explain": "At the close of session t a stock has signals from 2+ DIFFERENT rule families with signal sessions in [t-5, t], one of them at t. Buy the next open; hold = the shortest hold of the input rules in the window; stop: next open after a close 15% under the buy (35% for a 126-session hold); one open trade per stock. Input rules (frozen 5-year trade lists): B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); DEC-FROG (MOMENTUM, hold 126); DEC2-MINTT (MOMENTUM, hold 60, near-miss); ANOM-SUESURGE (EARNINGS, hold 60); DEC2-TPS (PULLBACK, hold 10); EXP-13F2 (SMART MONEY, hold 126, near-miss); EXP-INS1 (SMART MONEY, hold 126, near-miss); ANOM-SPIN (EVENT, hold 126). Families: VALUE, MOMENTUM, EARNINGS, PULLBACK, SMART MONEY, EVENT (two rules of one family agreeing count once).",
-   "status": "pre-registered 2026-10-24 (confluence lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 23 Oct 2026 close",
    "agent": "confluence",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (confluence-core.mjs header = the exact rule; versions CONF-2 and CONF-3 only). Judged once at the tier-2 standard (both halves before / from 2024-01-01, 0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t with 63-session blocks); first complete verdict frozen in data/confluence-lab.json; forward paper lane (data/confluence-paper.jsonl) from 26 Oct 2026. Input selection: frozen first run > 0 after 1.2% cost AND edge > 0 in both halves, plus the near-misses the owner named (EXP-13F2, EXP-INS1, DEC2-MINTT, ANOM-SPIN)."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (confluence-core.mjs header = the exact rule; versions CONF-2 and CONF-3 only). Judged once at the tier-2 standard (both halves before / from 2024-01-01, 0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t with 63-session blocks); first complete verdict frozen in data/confluence-lab.json; forward paper lane (data/confluence-paper.jsonl) from 26 Oct 2026. Input selection: frozen first run > 0 after 1.2% cost AND edge > 0 in both halves, plus the near-misses the owner named (EXP-13F2, EXP-INS1, DEC2-MINTT, ANOM-SPIN).",
+   "tested": "2026-10-23",
+   "study": "confluence-lab.mjs -> data/confluence-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3390,
+     7659
+    ],
+    "avg": [
+     -0.0054,
+     0.0042
+    ],
+    "stress": [
+     -0.0094,
+     0.0002
+    ],
+    "edge": [
+     -0.0077,
+     -0.0121
+    ],
+    "vsOwn": [
+     -0.0143,
+     -0.0111
+    ],
+    "noTop2": [
+     -0.0059,
+     0.0039
+    ],
+    "tBlock": [
+     -1.27,
+     -2.81
+    ],
+    "win": [
+     0.4493,
+     0.4969
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.27 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -2.81 under 2.5 in the newer half"
+   }
   },
   {
    "id": "CONF-3",
    "family": "Confluence (combined rules)",
    "name": "Confluence: a stock picked by 3+ different rule families within 5 sessions",
    "explain": "At the close of session t a stock has signals from 3+ DIFFERENT rule families with signal sessions in [t-5, t], one of them at t. Buy the next open; hold = the shortest hold of the input rules in the window; stop: next open after a close 15% under the buy (35% for a 126-session hold); one open trade per stock. Input rules (frozen 5-year trade lists): B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); DEC-FROG (MOMENTUM, hold 126); DEC2-MINTT (MOMENTUM, hold 60, near-miss); ANOM-SUESURGE (EARNINGS, hold 60); DEC2-TPS (PULLBACK, hold 10); EXP-13F2 (SMART MONEY, hold 126, near-miss); EXP-INS1 (SMART MONEY, hold 126, near-miss); ANOM-SPIN (EVENT, hold 126). Families: VALUE, MOMENTUM, EARNINGS, PULLBACK, SMART MONEY, EVENT (two rules of one family agreeing count once).",
-   "status": "pre-registered 2026-10-24 (confluence lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 23 Oct 2026 close",
    "agent": "confluence",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (confluence-core.mjs header = the exact rule; versions CONF-2 and CONF-3 only). Judged once at the tier-2 standard (both halves before / from 2024-01-01, 0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t with 63-session blocks); first complete verdict frozen in data/confluence-lab.json; forward paper lane (data/confluence-paper.jsonl) from 26 Oct 2026. Input selection: frozen first run > 0 after 1.2% cost AND edge > 0 in both halves, plus the near-misses the owner named (EXP-13F2, EXP-INS1, DEC2-MINTT, ANOM-SPIN)."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (confluence-core.mjs header = the exact rule; versions CONF-2 and CONF-3 only). Judged once at the tier-2 standard (both halves before / from 2024-01-01, 0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t with 63-session blocks); first complete verdict frozen in data/confluence-lab.json; forward paper lane (data/confluence-paper.jsonl) from 26 Oct 2026. Input selection: frozen first run > 0 after 1.2% cost AND edge > 0 in both halves, plus the near-misses the owner named (EXP-13F2, EXP-INS1, DEC2-MINTT, ANOM-SPIN).",
+   "tested": "2026-10-23",
+   "study": "confluence-lab.mjs -> data/confluence-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     79,
+     144
+    ],
+    "avg": [
+     -0.0042,
+     0.0043
+    ],
+    "stress": [
+     -0.0082,
+     0.0003
+    ],
+    "edge": [
+     0.0023,
+     -0.0156
+    ],
+    "vsOwn": [
+     -0.005,
+     -0.0108
+    ],
+    "noTop2": [
+     -0.0094,
+     0.0003
+    ],
+    "tBlock": [
+     -0.02,
+     -1.23
+    ],
+    "win": [
+     0.3671,
+     0.5139
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.02 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.23 under 2.5 in the newer half"
+   }
   }
  ]
 }
