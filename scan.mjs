@@ -2150,10 +2150,11 @@ const buyToday = (sym, sig) => { if (!sig) return null; let OK;
 async function holdingsText(sig, pos, title, raw) {
   const mine = Object.keys(pos); if (!mine.length) return raw ? { acts: { sell: [], part: [], add: [], hold: [] }, holdShort: [] } : 'You have no stocks recorded. Send:  bought SYMBOL PRICE SHARES   for each one you own.';
   const pv = privRead(), out = [title || 'YOUR STOCKS: what to do'], acts = { sell: [], part: [], add: [], hold: [] };
-  const mark = (sym, act, why) => { if (pos[sym]) pos[sym].lastAct = { act, why: String(why || '').slice(0, 80), d: ny(Date.now()).d }; };
+  let curPx = null; const mark = (sym, act, why) => { if (!pos[sym]) return; const d = ny(Date.now()).d, prev = pos[sym].lastAct, same = prev && prev.act === act;
+    pos[sym].lastAct = { act, why: String(why || '').slice(0, 80), d, since: same ? (prev.since || prev.d) : d, ...(same ? (prev.px0 ? { px0: prev.px0 } : {}) : curPx ? { px0: curPx } : {}) }; };
   for (const sym of mine.slice(0, 15)) { let r = ''; try { r = await reviewReply(sym, sig, pos); } catch (e) { continue; }
     const P = pos[sym], verdict = ((r.match(/→ (.+)/) || [])[1] || '').trim(), why = ((r.match(/^Why: (.+)$/m) || [])[1] || '').split(/[.:;]/)[0].trim(), stopM = r.match(/^Stop to use: ([\d.,]+)/m), stop = stopM ? stopM[1] : (P.stop ? money(P.stop) : 'not set');
-    const pm = r.match(/^Price ([\d.,]+)/m), px = pm ? +pm[1].replace(/,/g, '') : null, chg = px && P.entry ? ' (' + pcs(px / P.entry - 1) + ')' : '', earn = ((r.match(/^Earnings on (\S+)/m) || [])[1] || '').replace(/:+$/, ''), sh = pv.shares && pv.shares[sym];
+    const pm = r.match(/^Price ([\d.,]+)/m), px = (curPx = pm ? +pm[1].replace(/,/g, '') : null), chg = px && P.entry ? ' (' + pcs(px / P.entry - 1) + ')' : '', earn = ((r.match(/^Earnings on (\S+)/m) || [])[1] || '').replace(/:+$/, ''), sh = pv.shares && pv.shares[sym];
     const ew = eventWarn(sym), tail = (earn ? ' | EARNINGS ' + earn + ': decide before' : '') + ew;
     // TWO PRICES (user, 20 Oct): the profit line (30% above the 50-day: the tested SWITCH sell, then buy back 10% lower) and the loss line
     // (a close under the 50-day for trend trades, else the stop). Shown on every HOLD line so "when to sell" never needs decoding.
@@ -2186,6 +2187,20 @@ async function holdingsText(sig, pos, title, raw) {
   out.push('', 'After you act, send:  sold SYM PRICE   or  sold SYM PRICE 5 shares   (part) or  added SYM PRICE SHARES . Details for one stock:  review SYM');
   return out.join('\n');
 }
+// UNRESOLVED SELLS (holdings review, 23 Oct): a SELL the owner has not acted on is listed with its age and the move since the first
+// SELL, so the cost of waiting is visible (TTD, RKLB, COHR, SYM: SELL 14 Oct, still held 23 Oct; DOCN sold 100 vs a 120.81 stop).
+function unresolvedSells(pos, lastPx, today) {
+  const out = [];
+  for (const [sym, P] of Object.entries(pos || {})) { const A = P && P.lastAct; if (!A || A.act !== 'SELL ALL') continue;
+    const since = A.since || A.d; if (!since || since >= today) continue;
+    const days = Math.round((Date.parse(today) - Date.parse(since)) / 864e5), now = lastPx && lastPx[sym];
+    out.push(sym + ': SELL since ' + since + ' (' + days + ' days)' + (A.px0 > 0 && now > 0 ? ', ' + money(A.px0) + ' then, ' + money(now) + ' now (' + pcs(now / A.px0 - 1) + ' since)' : '') + '. Still held. If you are keeping it on purpose, that is your call; the tested rule says sell.'); }
+  return out;
+}
+function halalGapLine(pos) {   // holdings with no halal mark of yours (or ZAD list entry): never shown as approved
+  const miss = Object.keys(pos || {}).filter(s => myHalal(s) === 'unknown');
+  return miss.length ? 'HALAL NOT MARKED: ' + miss.join(', ') + '. Check each in ZAD, then send  halal SYM yes  or  halal SYM no .' : '';
+}
 // ACTIONS: the ONE message to act on. Sells first, then buys (strongest first, with amount, range and stop), then one line of
 // holds and the goal. Everything else the system sends is information. Send  details  for the full cards, or  review SYM .
 async function actionsText(sig, pos, px, title) {
@@ -2196,6 +2211,9 @@ async function actionsText(sig, pos, px, title) {
   const planSells = (plan.match(/\nSELL\n([\s\S]*?)(\n\n|$)/) || [])[1] || '', soldSyms = new Set(planSells.split('\n').map(l => l.replace(/^- /, '').split(/[ :]/)[0]));
   const sells = [...(planSells ? planSells.split('\n') : []), ...h.acts.sell.filter(l => !soldSyms.has(l.split(/[ :]/)[0]))];
   if (sells.length) out.push('', 'SELL', ...sells.map(l => '- ' + l));
+  { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; for (const x of (sig && sig.uni) || []) if (x.last && !lp[x.sym]) lp[x.sym] = x.last;
+    const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) out.push('', 'SELLS NOT DONE YET (' + un.length + ')', ...un.map(l => '- ' + l)); }
+  { const hg = halalGapLine(pos); if (hg) out.push('', hg); }
   try { fs.writeFileSync('data/actions-sells.json', JSON.stringify({ at: new Date().toISOString(), sells: sells.map(l => ({ sym: l.replace(/^- /, '').split(/[ :]/)[0], why: l.replace(/^- /, '').slice(0, 300) })) })); } catch (e) {}   // read by the pre-market check
   if (h.acts.part.length) out.push('', 'SELL PART', ...h.acts.part.map(l => '- ' + l));
   const buyPart = plan.replace(/\nSELL\n[\s\S]*?(\n\n|$)/, '\n').trim();
