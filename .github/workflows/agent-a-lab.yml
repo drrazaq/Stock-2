@@ -1,0 +1,71 @@
+name: Agent A lab
+# AGENT A's pre-registered studies on their own (agent-a-lab.mjs, 23 Oct 2026): A-ROT1 / A-ROT2 halal fund rotation, A-SWR1 the switch
+# vs holding (failed re-entries included), A-E1W1 the frozen E1 earnings-drift rule on the whole liquid market. Run once as written;
+# first complete verdicts frozen. The whole-market price cache is RESTORED READ ONLY from the Sunday job (never saved here); only this
+# lab's own cache (a-cache: fund prices, Nasdaq earnings calendar) is saved. Commits only its own output files and its own library entries.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-agent-a-now.txt']   # changing this file runs the lab at once
+permissions:
+  contents: write
+concurrency: agent-a-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: a-cache
+          key: a-cache-${{ github.run_id }}
+          restore-keys: a-cache-
+      - shell: bash
+        timeout-minutes: 150
+        run: |
+          set -o pipefail
+          node agent-a-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          A_MINUTES: '110'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: a-cache
+          key: a-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          FILES="data/agent-a-lab.json data/rot-today.json"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "agent A lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the agent A lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-a-lab-log
+          path: run.log
