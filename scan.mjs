@@ -2265,7 +2265,8 @@ function trySmallLines(pos, lastPx) {
   const fresh = (j) => j && Date.now() - Date.parse(j.generatedAt || 0) <= 10 * 864e5;
   const VL = readJson0('data/value-lab.json'), VT = readJson0('data/value-today.json'), DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), src = [];
   if (VL && fresh(VT) && VT.rules) for (const id of tryQualifies(VL.firstRun)) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (R && Array.isArray(R.picks)) src.push({ id, picks: R.picks.map(p => ({ sym: p.sym, px: p.lastClose, blocked: p.blocked })), stopPct: 0.15, hold: 63, what: 'cash-rich, growing, low-debt company' }); }
-  if (DH && fresh(DT) && DT.methods) for (const id of tryQualifies(DH.firstRun)) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
+  const DC = readJson0('data/decoded-check.json'), failsBudget = (id) => !!(DC && DC.budget && new RegExp('\\b' + id + '\\b').test(DC.label || '') && tryQualifies({ x: { results: DC.budget } }).length === 0);   // DEC2-TPS: proven per dollar invested, loses per dollar planned
+  if (DH && fresh(DT) && DT.methods) for (const id of tryQualifies(DH.firstRun).filter(i => !failsBudget(i))) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
   if (!src.length) return [];
   const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set(Object.keys(pos || {}));
   let slots = TRY_MAX - Object.values(pos || {}).filter(P => P && P.src === 'try small').length; const buys = [], mark = [];

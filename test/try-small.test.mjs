@@ -70,3 +70,15 @@ test('a decoded-lab rule that meets the standard gives buys with its own hold an
   assert.doesNotMatch(L, /TPC/);
   assert.match(L, /MARK HALAL FIRST.*IVZ/);
 });
+
+// 23 Oct, night: DEC2-TPS (Connors TPS scale-in) was frozen PROVEN per dollar INVESTED, but it buys in 4 steps and on average only ~half
+// of the planned position is ever bought; per dollar of the planned position (data/decoded-check.json "budget") it LOSES after costs
+// (-0.25% / -0.13%). A rule whose budget check fails both-halves standard must not reach TRY SMALL.
+test('a rule failing its per-budget check is excluded even if its frozen first run qualifies', async () => {
+  const good = { verdict: 'PROVEN', results: { older: half(0.0067, 0.0114, 0.0105), newer: half(0.0107, 0.012, 0.014) } };
+  const S5 = await loadScan({ files: { ...files, 'data/value-lab.json': { firstRun: {} },
+    'data/decoded-history.json': { firstRun: { 'DEC2-TPS': good } },
+    'data/decoded-check.json': { label: 'MONITORING CHECK ONLY: not a verdict; DEC2-TPS firstRun stays as frozen', budget: { older: half(-0.0065, 0.0048, -0.0026), newer: half(-0.005, 0.003, -0.001) } },
+    'data/decoded-today.json': { generatedAt: now, methods: { 'DEC2-TPS': { newSignals: [{ sym: 'QLYS', close: 190 }] } } } } });
+  assert.deepEqual(S5.fn('trySmallLines')({}, { QLYS: 190 }), []);
+});
