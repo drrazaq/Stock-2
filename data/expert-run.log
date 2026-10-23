@@ -4,16 +4,13 @@
 [7s] sessions 1264 (2021-10-12 to 2026-10-23; 5-year window from 2021-10-12, session 0), stocks 11678
 [7s] insiders: 139160 purchases from 23 quarters
 [11s] 13F: 98752 filings kept from 29 data sets (0 downloaded now)
-[17s] analyst grades: 20 of 1500 stocks tried, 12 with history (20 FMP calls now)
-[35s] signals: EXP-INS1 520 (all experts 31852), EXP-13F1 3083 (all experts 212761), EXP-13F2 329 (all experts 36913)
-- EXP-INS1: REJECTED | older 75 (61 days) avg +14.0% stress +13.6% edge +9.2% own +10.5% no2 +9.5% tBlock 2.46 win +64.0% | newer 72 (61 days) avg +6.2% stress +5.8% edge -2.5% own -12.7% no2 +2.7% tBlock -0.71 win +51.4% | all experts: older -3.4% / newer +8.5% | block t 2.46 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.71 under 2.5 in the newer half; SKILL gate: not better than the same rule using every expert (no ranking) in the newer half (+6.2% vs +8.5% after cost; edge -2.5% vs +0.8%)
-- EXP-13F1: NOT PROVEN | older 579 (85 days) avg -0.2% stress -0.6% edge +3.9% own -0.1% no2 -0.6% tBlock 2.61 win +49.6% | newer 687 (86 days) avg +8.9% stress +8.5% edge +0.1% own -7.9% no2 +8.0% tBlock -0.08 win +55.3% | all experts: older -4.9% / newer +7.8% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; not better than the same stocks on their other days in the newer half; block t -0.08 under 2.5 in the newer half; SKILL gate: not better than the same rule using every expert (no ranking) in the newer half (+8.9% vs +7.8% after cost; edge +0.1% vs +0.2%)
-- EXP-13F2: NOT PROVEN | older 98 (28 days) avg -0.3% stress -0.7% edge +2.9% own -1.0% no2 -1.6% tBlock 3.19 win +48.0% | newer 89 (29 days) avg +8.8% stress +8.4% edge +4.8% own -9.4% no2 +5.7% tBlock 2.63 win +62.9% | all experts: older -4.4% / newer +7.9% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; not better than the same stocks on their other days in the newer half
-[411s] paper: 59 new signals, 59 in all; SEC calls 1114; Massive calls 7
-- EXP-AN1: 0 paper signals, closed 0 | off until the analyst history is complete (collecting: 20 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run.)
+[16s] analyst grades: 40 of 1500 stocks tried, 18 with history (20 FMP calls now)
+[32s] signals: EXP-INS1 520 (all experts 31852), EXP-13F1 3083 (all experts 212761), EXP-13F2 329 (all experts 36913)
+[338s] paper: 0 new signals, 59 in all; SEC calls 1101; Massive calls 5
+- EXP-AN1: 0 paper signals, closed 0 | off until the analyst history is complete (collecting: 40 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run.)
 - EXP-AN2: 0 paper signals, closed 0 | 
-- EXP-13F1: 59 paper signals, closed 0 | 574 top managers checked, 6 new 13F filings since 2026-10-23 | 5-year: NOT PROVEN
+- EXP-13F1: 59 paper signals, closed 0 | 574 top managers checked, 0 new 13F filings since 2026-10-23 | 5-year: NOT PROVEN
 - EXP-13F2: 0 paper signals, closed 0 |  | 5-year: NOT PROVEN
-- EXP-INS1: 0 paper signals, closed 0 | 527 top insiders checked, 1 new Form 4 since 2026-10-23 | 5-year: REJECTED
+- EXP-INS1: 0 paper signals, closed 0 | 527 top insiders checked, 0 new Form 4 since 2026-10-23 | 5-year: REJECTED
 - EXP-CONG1: 0 paper signals, closed 0 | needs data: FMP senate/house trades answer 402 on this plan; Finnhub congressional-trading 403; Alpha Vantage CONGRESS_TRADES works but its 25 calls a day are already used by follow-lane.mjs (members scored there as tip sources) and earnings-study.mjs. Unlock: FMP Starter (senate-trades / house-trades with disclosure dates) or an Alpha Vantage premium key.
 - EXP-ETORO1: 0 paper signals, closed 0 | disabled: add the ETORO_KEY and ETORO_USER_KEY secrets (eToro API portal) to switch it on
