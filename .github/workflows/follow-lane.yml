@@ -1,0 +1,75 @@
+name: Follow lane
+# Public traders scored on their own full dated call history (follow-lane.mjs). Daily after the US close: new uploads / posts of FOLLOW and
+# WATCH traders, rescore, write data/follow-board.json and data/follow-today.json (read by the ACTIONS message). Sunday: full refresh
+# (discover new YouTube channels, backfill up to 2 years of uploads within the ~8,000-unit daily YouTube quota, refresh every channel).
+on:
+  schedule:
+    - cron: '5 21 * * 1-5'    # 17:05 New York in summer time (16:05 in winter): after the close, before the nightly ACTIONS scan (21:30 UTC)
+    - cron: '0 14 * * 0'      # Sunday full refresh, after the Sunday study has refreshed the price cache
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'full (discover + backfill) or daily'
+        default: 'full'
+permissions:
+  contents: write
+concurrency: follow-lane
+jobs:
+  follow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # The whole-market price cache of the Sunday study (2 years, dead stocks kept, splits repaired), read only.
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      # This lane's own recent days (and a full 2-year cache if the study cache is missing).
+      - uses: actions/cache/restore@v4
+        with:
+          path: follow-cache
+          key: follow-cache-${{ github.run_id }}
+          restore-keys: follow-cache-
+      - shell: bash
+        run: |
+          set -o pipefail
+          node follow-lane.mjs 2>&1 | tee run.log
+        env:
+          MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || (github.event.schedule == '0 14 * * 0' && 'full' || 'daily') }}
+          YT_KEY: ${{ secrets.YT_KEY }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: follow-cache
+          key: follow-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          FILES="data/follow-board.json data/follow-today.json data/follow-calls.jsonl data/follow-channels.json"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "follow lane $(date -u +%FT%H:%MZ)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the follow lane result" | tee -a run.log; exit 1; }
+      - if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | grep -vE "DeprecationWarning" | tail -n 3 | cut -c1-240 || true)
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
