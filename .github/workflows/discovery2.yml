@@ -46,6 +46,8 @@ jobs:
           set -o pipefail
           ls -la study-cache ev-cache cat-cache 2>&1 | head -40 | tee run.log
           node discovery2.mjs 2>&1 | tee -a run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       - if: success() || failure()
         shell: bash
         run: |

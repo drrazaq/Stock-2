@@ -421,6 +421,8 @@ jobs:
         run: |
           set -o pipefail
           node discovery2.mjs 2>&1 | tee -a run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # AGENT LEAGUE referee: freezes each research agent's champion picks weekly and scores old batches vs the S&P 500 (same prices).
       - shell: bash
         if: success() || failure()   # run even if an earlier study step failed

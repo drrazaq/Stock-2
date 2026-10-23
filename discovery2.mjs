@@ -113,6 +113,16 @@ const ES = gz(env.EARN || 'data/earnings-cache.json.gz'); SRC.earnings = ES && E
 const INS = new Map(); { let n = 0; try { for (const f of fs.readdirSync(CDIR + '/insider').filter(f => f.endsWith('.json'))) for (const b of J(CDIR + '/insider/' + f, [])) { if (!SY.has(b[0])) continue; const s = firstOnOrAfter(D, String(b[1]).slice(0, 10)); if (s >= T) continue; (INS.get(b[0]) || INS.set(b[0], []).get(b[0])).push([s, b[2]]); n++; } } catch (e) {} SRC.insider = n ? n + ' purchase filings' : null; }
 const SH = gz(env.SHARES || 'data/shares.json.gz'); SRC.shares = SH && SH.t ? Object.keys(SH.t).length + ' tickers' : null;
 const cikOf = (s) => SH && SH.t ? (SH.t[s] || SH.t[s.replace(/\./g, '-')] || null) : null;
+// the S-8 / 424B4 half of the EDGAR full index (study-cache/edgar-idx, written by share-supply.mjs): quarters not yet in the restored
+// cache are fetched here in the same format (official SEC file, declared User-Agent; only when SEC_UA is set, never in tests)
+if (env.SEC_UA) { const dir = CDIR + '/edgar-idx', now = new Date(); fs.mkdirSync(dir, { recursive: true }); let got = 0, failed = 0;
+  for (let y = +D[0].slice(0, 4); y <= now.getUTCFullYear(); y++) for (let q = 1; q <= 4; q++) { if (y === now.getUTCFullYear() && (q - 1) * 3 > now.getUTCMonth()) continue;
+    const f = dir + '/' + y + 'Q' + q + '.json', cur = y === now.getUTCFullYear() && Math.floor(now.getUTCMonth() / 3) + 1 === q; if (fs.existsSync(f) && !cur) continue;
+    let buf = null; for (let a = 0; a < 3 && !buf; a++) { try { const r = await fetch('https://www.sec.gov/Archives/edgar/full-index/' + y + '/QTR' + q + '/master.gz', { headers: { 'User-Agent': env.SEC_UA } }); if (r.ok) buf = Buffer.from(await r.arrayBuffer()); else await new Promise(s => setTimeout(s, 3000 * (a + 1))); } catch (e) { await new Promise(s => setTimeout(s, 3000 * (a + 1))); } }
+    if (!buf) { failed++; continue; } let txt; try { txt = zlib.gunzipSync(buf).toString('latin1'); } catch (e) { txt = buf.toString('latin1'); }
+    const rows = []; for (const line of txt.split('\n')) { const p = line.split('|'); if (p.length < 5) continue; const form = p[2].trim(); if (form === 'S-8' || form === '424B4') rows.push([+p[0], form, p[3].trim()]); }
+    fs.writeFileSync(f, JSON.stringify(rows)); got++; await new Promise(s => setTimeout(s, 250)); }
+  if (got || failed) console.log('discovery2: EDGAR index quarters fetched now ' + got + (failed ? ', failed ' + failed : '')); }
 const IDX = new Map(); { let q1 = 0, q2 = 0; const symsByCik = new Map(); if (SH && SH.t) for (const [s, c] of Object.entries(SH.t)) if (SY.has(s)) (symsByCik.get(+c) || symsByCik.set(+c, []).get(+c)).push(s);
   const addRows = (rows) => { for (const [cik, form, d] of rows || []) { const ss = symsByCik.get(+cik); if (!ss) continue; const s = firstOnOrAfter(D, d); if (s >= T) continue; const kind = form === '424B4' || form === '424B5' ? 'off' : form === 'S-8' ? 's8' : /^S-[13]/.test(form) ? 'shelf' : null; if (!kind) continue; for (const sym of ss) (IDX.get(sym) || IDX.set(sym, []).get(sym)).push([s, kind]); } };
   try { for (const f of fs.readdirSync(CATD + '/idx').filter(f => /^\d{4}Q\d\.json$/.test(f))) { addRows(J(CATD + '/idx/' + f, [])); q1++; } } catch (e) {}
