@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-23T06:31:19.894Z",
+ "generatedAt": "2026-10-23T06:35:14.527Z",
  "preRegistered": "2026-10-23",
  "status": "OK",
  "complete": false,
- "failedRequests": 18,
+ "failedRequests": 15,
  "window": [
   "2024-02-01",
   "2026-10-22"
@@ -12,18 +12,34 @@
  "leagueBar": 3.95,
  "coverage": {
   "alpaca": {
-   "requests": 1780,
+   "requests": 244,
    "errors": {
-    "HTTP 403": 15,
-    "HTTP 400": 1,
-    "HTTP 422": 2
+    "optionBars HTTP 400": 1,
+    "optionBars HTTP 403": 14
    },
    "firstOptionBar": "2024-01-18",
    "lastOptionBar": "2026-10-21",
-   "contractLists": 716,
-   "contractsSeen": 983484,
-   "optionSeriesFetched": 5626,
+   "contractLists": 0,
+   "contractsSeen": 0,
+   "optionSeriesFetched": 0,
    "snapshotCalls": 229,
+   "failedSample": [
+    "optionBars HTTP 400 /v1beta1/options/bars?symbols=RYTM240719C00040000,RYTM240719C00035000,RYTM240719C00045000,RYTM240719C00030000,RYTM240719C00050000,1RYTM240719C00050010,RYTM24071",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=VTRS261120C00017000,VTRS261120C00016000,VTRS261120C00018000,VTRS261120C00015000,VTRS261120C00019000,VTRS261120C00014000,VTRS261120",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=SLS261023C00011500,SLS261023C00012000,SLS261023C00011000,SLS261023C00012500,SLS261023C00010500,SLS261023C00013000,SLS261023C000100",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=META261026C00742500,META261026C00745000,META261026C00740000,META261026C00747500,META261026C00737500,META261026C00750000,META261026",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=BABA261030C00112000,BABA261030C00111000,BABA261030C00113000,BABA261030C00110000,BABA261030C00114000,BABA261030C00109000,BABA261030",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=BB261030C00008000,BB261030C00007500,BB261030C00008500,BB261030C00007000,BB261030C00009000,BB261030C00006500,BB261030C00009500,BB26",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=TD261120C00120000,TD261120C00125000,TD261120C00115000,TD261120C00130000,TD261120C00110000,TD261120C00135000,TD261120C00105000,TD26",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=NVDA261030C00230000,NVDA261030C00232500,NVDA261030C00227500,NVDA261030C00235000,NVDA261030C00225000,NVDA261030C00237500,NVDA261030",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=META261030C00730000,META261030C00727500,META261030C00732500,META261030C00725000,META261030C00735000,META261030C00722500,META261030",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=SNDK261106C01775000,SNDK261106C01770000,SNDK261106C01780000,SNDK261106C01765000,SNDK261106C01785000,SNDK261106C01760000,SNDK261106",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=MU261104C01070000,MU261104C01065000,MU261104C01075000,MU261104C01060000,MU261104C01080000,MU261104C01055000,MU261104C01085000,MU26",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=RIVN261106C00014500,RIVN261106C00014000,RIVN261106C00015000,RIVN261106C00013500,RIVN261106C00015500,RIVN261106C00013000,RIVN261106",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=NVDA261106C00242500,NVDA261106C00240000,NVDA261106C00245000,NVDA261106C00237500,NVDA261106C00247500,NVDA261106C00235000,NVDA261106",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=SKYD1261106C00010000,SKYD261106C00010000,SKYD1261106C00009500,SKYD261106C00009500,SKYD1261106C00010500,SKYD261106C00010500,SKYD126",
+    "optionBars HTTP 403 /v1beta1/options/bars?symbols=BB261113C00008500,BB261113C00009000,BB261113C00008000,BB261113C00009500,BB261113C00007500,BB261113C00010000,BB261113C00007000,BB26"
+   ],
    "optionSeriesCached": 5626,
    "optionBarsCached": 91702,
    "underlyingsWithContracts": 354,
@@ -32,7 +48,7 @@
   },
   "alphaVantage": null,
   "massive": null,
-  "stockFeed": "iex",
+  "stockFeed": "sip",
   "note": "Option prices: Alpaca daily option bars (trade prices; no historical quotes, so the spread is measured today from snapshots and applied to the past). Alpha Vantage: free key (25 calls a day; HISTORICAL_OPTIONS refused as premium; the ratio endpoints answer). Massive: option reference answers, option aggregates 403 (not in plan)."
  },
  "verdicts": {
@@ -143,35 +159,90 @@
    "byExit": {
     "close": 37,
     "intrinsic": 24
+   },
+   "sensitivity": {
+    "note": "information only; the verdict above is the registered one",
+    "halfSpread2pct": {
+     "wouldBe": "REJECTED",
+     "n": 61,
+     "avg": 0.1336,
+     "median": -0.4925,
+     "win": 0.3115,
+     "stock": 0.0232,
+     "tBlock": -0.02,
+     "halves": [
+      -0.0333,
+      0.391
+     ]
+    },
+    "atMid": {
+     "wouldBe": "REJECTED",
+     "n": 61,
+     "avg": 0.1798,
+     "median": -0.4718,
+     "win": 0.3115,
+     "stock": 0.0232,
+     "tBlock": 0.09,
+     "halves": [
+      0.0062,
+      0.4475
+     ]
+    },
+    "closeExitsOnly": {
+     "wouldBe": "TOO FEW CASES",
+     "n": 37,
+     "avg": -0.0577,
+     "median": -0.5386,
+     "win": 0.2162,
+     "stock": 0.0072,
+     "tBlock": -0.71,
+     "halves": [
+      -0.0219,
+      -0.1165
+     ]
+    },
+    "closeExitsOnlyHalfSpread2pct": {
+     "wouldBe": "TOO FEW CASES",
+     "n": 37,
+     "avg": 0.0666,
+     "median": -0.4068,
+     "win": 0.2432,
+     "stock": 0.0072,
+     "tBlock": -0.38,
+     "halves": [
+      0.1082,
+      -0.0016
+     ]
+    }
    }
   },
   "OPT-CAT1": {
    "verdict": "REJECTED",
-   "why": "lost money after the spread and ZAD fees in the older half (-0.6563); lost money at the 1.5x spread stress in the older half (-0.7487); did not beat buying the same stock with the same money in the older half (-0.6563 vs -0.0237); lost money after the spread and ZAD fees in the newer half (-0.3404); lost money at the 1.5x spread stress in the newer half (-0.5246); did not beat buying the same stock with the same money in the newer half (-0.3404 vs 0.0791); loses without its 2 best trades (-0.5373); block t -5.34 over 22 non-overlapping 30-session blocks, under 2.5",
+   "why": "lost money after the spread and ZAD fees in the older half (-0.6566); lost money at the 1.5x spread stress in the older half (-0.749); did not beat buying the same stock with the same money in the older half (-0.6566 vs -0.0237); lost money after the spread and ZAD fees in the newer half (-0.341); lost money at the 1.5x spread stress in the newer half (-0.5253); did not beat buying the same stock with the same money in the newer half (-0.341 vs 0.0791); loses without its 2 best trades (-0.5377); block t -5.36 over 22 non-overlapping 30-session blocks, under 2.5",
    "n": 268,
    "days": 89,
    "win": 0.1455,
-   "avg": -0.5019,
-   "median": -0.8682,
-   "avgStress": -0.6391,
+   "avg": -0.5023,
+   "median": -0.8702,
+   "avgStress": -0.6397,
    "stock": 0.0266,
-   "edge": -0.5285,
-   "noBest2": -0.5373,
+   "edge": -0.5289,
+   "noBest2": -0.5377,
    "worst": -1,
    "best": 4.3857,
    "blocks": 22,
-   "tBlock": -5.34,
+   "tBlock": -5.36,
    "half": {
     "older": {
      "n": 137,
      "days": 44,
      "win": 0.0876,
-     "avg": -0.6563,
+     "avg": -0.6566,
      "median": -0.9128,
-     "avgStress": -0.7487,
+     "avgStress": -0.749,
      "stock": -0.0237,
-     "edge": -0.6326,
-     "noBest2": -0.7072,
+     "edge": -0.6329,
+     "noBest2": -0.7075,
      "worst": -1,
      "best": 2.8635,
      "blocks": 13,
@@ -181,16 +252,16 @@
      "n": 131,
      "days": 45,
      "win": 0.2061,
-     "avg": -0.3404,
+     "avg": -0.341,
      "median": -0.7613,
-     "avgStress": -0.5246,
+     "avgStress": -0.5253,
      "stock": 0.0791,
-     "edge": -0.4195,
-     "noBest2": -0.4109,
+     "edge": -0.4201,
+     "noBest2": -0.4115,
      "worst": -1,
      "best": 4.3857,
      "blocks": 10,
-     "tBlock": -1.97
+     "tBlock": -1.98
     }
    },
    "B": 30,
@@ -220,20 +291,75 @@
     "n": 123,
     "days": 43,
     "win": 0.1138,
-    "avg": -0.6474,
+    "avg": -0.648,
     "median": -0.9227,
-    "avgStress": -0.7696,
+    "avgStress": -0.7703,
     "stock": 0.0308,
-    "edge": -0.6782,
-    "noBest2": -0.704,
+    "edge": -0.6788,
+    "noBest2": -0.7046,
     "worst": -1,
     "best": 2.8635,
     "blocks": 20,
-    "tBlock": -7.94
+    "tBlock": -8.02
    },
    "byExit": {
     "close": 144,
     "intrinsic": 124
+   },
+   "sensitivity": {
+    "note": "information only; the verdict above is the registered one",
+    "halfSpread2pct": {
+     "wouldBe": "REJECTED",
+     "n": 268,
+     "avg": -0.0469,
+     "median": -0.465,
+     "win": 0.306,
+     "stock": 0.0266,
+     "tBlock": -0.69,
+     "halves": [
+      -0.3388,
+      0.2584
+     ]
+    },
+    "atMid": {
+     "wouldBe": "REJECTED",
+     "n": 268,
+     "avg": -0.0081,
+     "median": -0.4428,
+     "win": 0.3172,
+     "stock": 0.0266,
+     "tBlock": -0.37,
+     "halves": [
+      -0.3118,
+      0.3095
+     ]
+    },
+    "closeExitsOnly": {
+     "wouldBe": "REJECTED",
+     "n": 144,
+     "avg": -0.596,
+     "median": -0.8373,
+     "win": 0.1111,
+     "stock": 0.0181,
+     "tBlock": -5.62,
+     "halves": [
+      -0.7153,
+      -0.4768
+     ]
+    },
+    "closeExitsOnlyHalfSpread2pct": {
+     "wouldBe": "REJECTED",
+     "n": 144,
+     "avg": -0.1712,
+     "median": -0.4237,
+     "win": 0.2708,
+     "stock": 0.0181,
+     "tBlock": -1.27,
+     "halves": [
+      -0.3998,
+      0.0574
+     ]
+    }
    },
    "stockSameTrades": 0.0266
   },
@@ -262,51 +388,51 @@
    "spread": {
     "measured": 32,
     "of": 33,
-    "medianH": 0.1221,
-    "p75H": 0.1798,
+    "medianH": 0.0983,
+    "p75H": 0.1795,
     "window": "30-60 days"
    },
    "pooledInfo": {
     "verdict": "REJECTED",
-    "why": "lost money after the spread and ZAD fees in the older half (-0.2492); lost money at the 1.5x spread stress in the older half (-0.3117); did not beat buying the same stock with the same money in the older half (-0.2492 vs 0.003); lost money after the spread and ZAD fees in the newer half (-0.2143); lost money at the 1.5x spread stress in the newer half (-0.2748); did not beat buying the same stock with the same money in the newer half (-0.2143 vs -0.0156); loses without its 2 best trades (-0.3185); block t -4.16 over 26 non-overlapping 10-session blocks, under 2.5",
+    "why": "lost money after the spread and ZAD fees in the older half (-0.2514); lost money at the 1.5x spread stress in the older half (-0.3146); did not beat buying the same stock with the same money in the older half (-0.2514 vs 0.003); lost money after the spread and ZAD fees in the newer half (-0.2199); lost money at the 1.5x spread stress in the newer half (-0.2818); did not beat buying the same stock with the same money in the newer half (-0.2199 vs -0.0156); loses without its 2 best trades (-0.3186); block t -4.32 over 26 non-overlapping 10-session blocks, under 2.5",
     "n": 58,
     "days": 44,
-    "avg": -0.2318,
-    "median": -0.5061,
+    "avg": -0.2356,
+    "median": -0.3923,
     "win": 0.2931,
     "stock": -0.0063,
-    "noBest2": -0.3185,
-    "tBlock": -4.16,
+    "noBest2": -0.3186,
+    "tBlock": -4.32,
     "half": {
      "older": {
       "n": 29,
       "days": 22,
       "win": 0.2759,
-      "avg": -0.2492,
+      "avg": -0.2514,
       "median": -0.5227,
-      "avgStress": -0.3117,
+      "avgStress": -0.3146,
       "stock": 0.003,
-      "edge": -0.2522,
-      "noBest2": -0.4223,
+      "edge": -0.2544,
+      "noBest2": -0.4246,
       "worst": -1,
       "best": 2.7235,
       "blocks": 19,
-      "tBlock": -4.31
+      "tBlock": -4.42
      },
      "newer": {
       "n": 29,
       "days": 22,
       "win": 0.3103,
-      "avg": -0.2143,
-      "median": -0.3537,
-      "avgStress": -0.2748,
+      "avg": -0.2199,
+      "median": -0.3125,
+      "avgStress": -0.2818,
       "stock": -0.0156,
-      "edge": -0.1987,
-      "noBest2": -0.3287,
-      "worst": -0.9877,
-      "best": 1.6683,
+      "edge": -0.2043,
+      "noBest2": -0.3213,
+      "worst": -0.9882,
+      "best": 1.3062,
       "blocks": 8,
-      "tBlock": -1.04
+      "tBlock": -1.14
      }
     }
    },
@@ -314,20 +440,75 @@
     "n": 15,
     "days": 12,
     "win": 0.1333,
-    "avg": -0.4859,
-    "median": -0.6088,
-    "avgStress": -0.5692,
+    "avg": -0.5085,
+    "median": -0.6482,
+    "avgStress": -0.5984,
     "stock": -0.045,
-    "edge": -0.4409,
-    "noBest2": -0.7002,
+    "edge": -0.4635,
+    "noBest2": -0.689,
     "worst": -0.9484,
-    "best": 1.6683,
+    "best": 1.3062,
     "blocks": 11,
-    "tBlock": -1.74
+    "tBlock": -2.18
    },
    "byExit": {
     "close": 53,
     "intrinsic": 5
+   },
+   "sensitivity": {
+    "note": "information only; the verdict above is the registered one",
+    "halfSpread2pct": {
+     "wouldBe": "REJECTED",
+     "n": 58,
+     "avg": -0.1154,
+     "median": -0.285,
+     "win": 0.3103,
+     "stock": -0.0063,
+     "tBlock": -2.58,
+     "halves": [
+      -0.126,
+      -0.1049
+     ]
+    },
+    "atMid": {
+     "wouldBe": "REJECTED",
+     "n": 58,
+     "avg": -0.0792,
+     "median": -0.2557,
+     "win": 0.3103,
+     "stock": -0.0063,
+     "tBlock": -2.12,
+     "halves": [
+      -0.0902,
+      -0.0682
+     ]
+    },
+    "closeExitsOnly": {
+     "wouldBe": "REJECTED",
+     "n": 53,
+     "avg": -0.2527,
+     "median": -0.4975,
+     "win": 0.283,
+     "stock": -0.0181,
+     "tBlock": -4.27,
+     "halves": [
+      -0.2017,
+      -0.3019
+     ]
+    },
+    "closeExitsOnlyHalfSpread2pct": {
+     "wouldBe": "REJECTED",
+     "n": 53,
+     "avg": -0.1605,
+     "median": -0.2976,
+     "win": 0.283,
+     "stock": -0.0181,
+     "tBlock": -2.96,
+     "halves": [
+      -0.119,
+      -0.2005
+     ]
+    }
    }
   },
   "OPT-UOA1": {
@@ -357,10 +538,10 @@
    "optionsCalls": 13,
    "priced": 9,
    "days": 9,
-   "avg": -0.1802,
+   "avg": -0.1577,
    "stock": -0.0124,
    "win": 0.2222,
-   "tBlock": -1.48,
+   "tBlock": -1.34,
    "level": "WATCH",
    "why": "9 priced options calls on 9 days (30 on 10 needed)"
   },
@@ -469,7 +650,7 @@
    "optionsCalls": 3,
    "priced": 2,
    "days": 1,
-   "avg": -0.3423,
+   "avg": -0.3469,
    "stock": -0.0352,
    "win": 0.5,
    "tBlock": null,
@@ -483,7 +664,7 @@
    "optionsCalls": 4,
    "priced": 2,
    "days": 2,
-   "avg": -0.6707,
+   "avg": -0.6709,
    "stock": -0.0879,
    "win": 0,
    "tBlock": null,
@@ -511,7 +692,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": 1.6683,
+   "avg": 1.3062,
    "stock": 0.1812,
    "win": 1,
    "tBlock": null,
@@ -539,7 +720,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": 0.1459,
+   "avg": 0.0231,
    "stock": 0.1573,
    "win": 1,
    "tBlock": null,
@@ -575,6 +756,20 @@
    "why": "1 priced options calls on 1 days (30 on 10 needed)"
   },
   {
+   "tr": "yt:UC7fe2lxq_lP4--RBSP_CWMA",
+   "name": "Vincent Desiano",
+   "src": "yt",
+   "optionsCalls": 3,
+   "priced": 1,
+   "days": 1,
+   "avg": -0.3922,
+   "stock": -0.0203,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
    "tr": "yt:UCmh7afBz-uWwOSSNTqUBAhg",
    "name": "Forbes",
    "src": "yt",
@@ -589,14 +784,14 @@
    "why": "1 priced options calls on 1 days (30 on 10 needed)"
   },
   {
-   "tr": "yt:UC7fe2lxq_lP4--RBSP_CWMA",
-   "name": "Vincent Desiano",
-   "src": "yt",
-   "optionsCalls": 3,
+   "tr": "st:WeeklyOptionsTrading",
+   "name": "StockTwits WeeklyOptionsTrading",
+   "src": "st",
+   "optionsCalls": 5,
    "priced": 1,
    "days": 1,
-   "avg": -0.5197,
-   "stock": -0.0203,
+   "avg": -0.613,
+   "stock": -0.031,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -609,22 +804,8 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": -0.5908,
+   "avg": -0.6482,
    "stock": -0.0214,
-   "win": 0,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "1 priced options calls on 1 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:WeeklyOptionsTrading",
-   "name": "StockTwits WeeklyOptionsTrading",
-   "src": "st",
-   "optionsCalls": 5,
-   "priced": 1,
-   "days": 1,
-   "avg": -0.613,
-   "stock": -0.031,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -2493,8 +2674,8 @@
     "o": 0.72,
     "x": 0.5,
     "by": "close",
-    "h": 0.2055,
-    "net": -0.6217,
+    "h": 0.2468,
+    "net": -0.6553,
     "st": 0.0292
    },
    {
@@ -2535,8 +2716,8 @@
     "o": 11.88,
     "x": 1.05,
     "by": "close",
-    "h": 0.0836,
-    "net": -0.9294,
+    "h": 0.091,
+    "net": -0.9305,
     "st": -0.027
    },
    {
@@ -2871,7 +3052,7 @@
     "o": 0.75,
     "x": 0.14,
     "by": "close",
-    "h": 0.8255,
+    "h": 0.8057,
     "net": -1,
     "st": -0.1636
    },
@@ -3977,8 +4158,8 @@
     "o": 4.85,
     "x": 8.54,
     "by": "close",
-    "h": 0.0836,
-    "net": 0.4657,
+    "h": 0.091,
+    "net": 0.444,
     "st": 0.0488
    },
    {
@@ -4061,8 +4242,8 @@
     "o": 16.15,
     "x": 27.379999999999995,
     "by": "intrinsic",
-    "h": 0.0836,
-    "net": 0.4269,
+    "h": 0.091,
+    "net": 0.4057,
     "st": 0.0865
    },
    {
@@ -4789,7 +4970,7 @@
     "o": 0.3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.8255,
+    "h": 0.8057,
     "net": -1,
     "st": 0.0411
    },
@@ -5167,8 +5348,8 @@
     "o": 0.48,
     "x": 0.26,
     "by": "close",
-    "h": 0.4237,
-    "net": -0.8639,
+    "h": 0.5072,
+    "net": -0.899,
     "st": 0.0875
    },
    {
@@ -5349,7 +5530,7 @@
     "o": 0.6,
     "x": 0.05,
     "by": "close",
-    "h": 0.8255,
+    "h": 0.8057,
     "net": -1,
     "st": -0.2474
    },
@@ -5757,8 +5938,8 @@
     "o": 1.76,
     "x": 2.7,
     "by": "close",
-    "h": 0.1221,
-    "net": 0.1459,
+    "h": 0.1774,
+    "net": 0.0231,
     "st": 0.1573,
     "tr": "yt:UCfn1ZbMpd79fuTQkLAffj2Q"
    },
@@ -5847,8 +6028,8 @@
     "o": 4.85,
     "x": 3.85,
     "by": "close",
-    "h": 0.2341,
-    "net": -0.5197,
+    "h": 0.1209,
+    "net": -0.3922,
     "st": -0.0203,
     "tr": "yt:UC7fe2lxq_lP4--RBSP_CWMA"
    },
@@ -5892,8 +6073,8 @@
     "o": 32.16,
     "x": 53.01999999999998,
     "by": "intrinsic",
-    "h": 0.1239,
-    "net": 0.2821,
+    "h": 0.1274,
+    "net": 0.2729,
     "st": 0.2129,
     "tr": "yt:UCubRfH0RBrtrlt3ePhGp7Bw"
    },
@@ -5967,8 +6148,8 @@
     "o": 1.59,
     "x": 0.93,
     "by": "close",
-    "h": 0.1322,
-    "net": -0.5908,
+    "h": 0.2035,
+    "net": -0.6482,
     "st": -0.0214,
     "tr": "yt:UCpDIpBd3rAbPc2ZTPSEUgug"
    },
@@ -6042,8 +6223,8 @@
     "o": 0.26,
     "x": 0.2,
     "by": "close",
-    "h": 0.1798,
-    "net": -0.6803,
+    "h": 0.1795,
+    "net": -0.6801,
     "st": -0.1435,
     "tr": "yt:UCjpmA2LGMq0M0S2c3t9Y3fg"
    },
@@ -6117,8 +6298,8 @@
     "o": 35.85,
     "x": 0.52,
     "by": "close",
-    "h": 0.031,
-    "net": -0.9877,
+    "h": 0.0485,
+    "net": -0.9882,
     "st": -0.2015,
     "tr": "st:Randhawa408"
    },
@@ -6222,8 +6403,8 @@
     "o": 1.47,
     "x": 1.19,
     "by": "close",
-    "h": 0.2115,
-    "net": -0.5148,
+    "h": 0.0431,
+    "net": -0.3125,
     "st": -0.0026,
     "tr": "st:Skumaroptions"
    },
@@ -6387,8 +6568,8 @@
     "o": 1.14,
     "x": 4.18,
     "by": "close",
-    "h": 0.1322,
-    "net": 1.6683,
+    "h": 0.2035,
+    "net": 1.3062,
     "st": 0.1812,
     "tr": "st:Ladoga"
    },
