@@ -1,0 +1,72 @@
+name: Value lab
+# Agent B's VALUE LAB on its own (value-lab.mjs; pre-registered library entries B-FCF1, B-BASK1, B-EM1, B-SIF1, run once as written;
+# owner's request of 23 Oct 2026). The whole-market price cache and quality.mjs's yearly SEC cache are RESTORED READ ONLY from the
+# Sunday job (never saved here); only this lab's own SEC companyfacts cache (value-cache) is saved. Commits only its own output
+# files and its own library entries. Start: change run-value-lab-now.txt (a last line containing DIAG = coverage check only, no
+# returns computed, nothing written) or run the workflow by hand.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-value-lab-now.txt']
+permissions:
+  contents: write
+concurrency: value-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: value-cache
+          key: value-cache-${{ github.run_id }}
+          restore-keys: value-cache-
+      - shell: bash
+        timeout-minutes: 100
+        run: |
+          set -o pipefail
+          if tail -n 1 run-value-lab-now.txt | grep -q DIAG; then export DIAG=1; fi
+          node value-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: value-cache
+          key: value-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          FILES="data/value-lab.json data/value-today.json"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "value lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the value lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: value-lab-log
+          path: run.log
