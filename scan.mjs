@@ -2144,12 +2144,29 @@ const buyToday = (sym, sig) => { if (!sig) return null; let OK;
   try { if (gateVerdict(sym, sig)) return null; OK = new Set(planCands(sig, {}).filter(x => x.ok && x.sym === sym).map(x => x.kind)); } catch (e) { return null; }
   const q = OK.has('quick trade') ? (sig.quickPaused ? [] : sig.quick || []).find(x => x.sym === sym && !x.demoted && okEv(x.n, netOf(x.avgPct, x.last), x.win)) : null, b = OK.has('swing trade') ? (sig.stocks || []).find(x => x.sym === sym && x.state === 'Buy watch' && x.buyLo && !x.demoted && okEv(x.n, netOf(x.avgPct, x.last), x.win)) : null;
   const r = q || b; return r ? { lo: r.buyLo, hi: r.buyHi, stop: r.stop, n: r.n, thin: r.n < 30 } : null; };
+// MOVE TOGETHER (holdings review, 23 Oct): 7 of 12 holdings fell as one group. Daily returns over the last 60 sessions; stocks linked
+// at correlation 0.4 or more form a group; the largest group of 3+ is shown with its share of the money (shares x price when known).
+function clusterRisk(closes, dollars) {
+  const syms = Object.keys(closes || {}).filter(s => Array.isArray(closes[s]) && closes[s].length >= 31);
+  const ret = {}; for (const s of syms) { const c = closes[s].slice(-61); ret[s] = c.slice(1).map((x, i) => Math.log(x / c[i])); }
+  const corr = (a, b) => { const m = Math.min(a.length, b.length), x = a.slice(-m), y = b.slice(-m), mx = x.reduce((q, v) => q + v, 0) / m, my = y.reduce((q, v) => q + v, 0) / m; let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < m; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; } return sxx && syy ? sxy / Math.sqrt(sxx * syy) : 0; };
+  const C = {}; for (const a of syms) for (const b of syms) if (a < b) C[a + '|' + b] = corr(ret[a], ret[b]);
+  const cc = (a, b) => C[a < b ? a + '|' + b : b + '|' + a];
+  const seen = new Set(); let best = null;
+  for (const s of syms) { if (seen.has(s)) continue; const g = [s]; seen.add(s); for (let k = 0; k < g.length; k++) for (const t of syms) if (!seen.has(t) && cc(g[k], t) >= 0.4) { seen.add(t); g.push(t); } if (g.length >= 3 && (!best || g.length > best.length)) best = g; }
+  if (!best) return null;
+  let sum = 0, n = 0; for (const a of best) for (const b of best) if (a < b) { sum += cc(a, b); n++; }
+  const byMoney = syms.every(s => dollars && dollars[s] > 0), tot = byMoney ? syms.reduce((q, s) => q + dollars[s], 0) : syms.length, part = byMoney ? best.reduce((q, s) => q + dollars[s], 0) : best.length, share = part / tot;
+  const line = 'MOVE TOGETHER: ' + best.join(', ') + ' (average correlation ' + (sum / n).toFixed(2) + ' over 60 sessions) = ' + (byMoney ? Math.round(share * 100) + '% of your money' : best.length + ' of your ' + syms.length + ' stocks (no share counts, so counted, not weighted)') + '. One bad day for that theme hits all of them at once. Information only.';
+  return { syms: best, corr: sum / n, share, byMoney, line };
+}
 // YOUR STOCKS: one clear action per stock you own. SELL ALL, SELL HALF, SELL SOME, HOLD, or BUY A LITTLE MORE.
 // Built from the HOLD OR SELL study of each stock. "Buy a little more" only when a TESTED buy rule fired on that stock today:
 // never just to lower the average of a falling stock.
 async function holdingsText(sig, pos, title, raw) {
   const mine = Object.keys(pos); if (!mine.length) return raw ? { acts: { sell: [], part: [], add: [], hold: [] }, holdShort: [] } : 'You have no stocks recorded. Send:  bought SYMBOL PRICE SHARES   for each one you own.';
   const pv = privRead(), out = [title || 'YOUR STOCKS: what to do'], acts = { sell: [], part: [], add: [], hold: [] };
+  const CL = {}, DL = {};
   let curPx = null; const mark = (sym, act, why) => { if (!pos[sym]) return; const d = ny(Date.now()).d, prev = pos[sym].lastAct, same = prev && prev.act === act;
     pos[sym].lastAct = { act, why: String(why || '').slice(0, 80), d, since: same ? (prev.since || prev.d) : d, ...(same ? (prev.px0 ? { px0: prev.px0 } : {}) : curPx ? { px0: curPx } : {}) }; };
   for (const sym of mine.slice(0, 15)) { let r = ''; try { r = await reviewReply(sym, sig, pos); } catch (e) { continue; }
@@ -2158,7 +2175,7 @@ async function holdingsText(sig, pos, title, raw) {
     const ew = eventWarn(sym), tail = (earn ? ' | EARNINGS ' + earn + ': decide before' : '') + ew;
     // TWO PRICES (user, 20 Oct): the profit line (30% above the 50-day: the tested SWITCH sell, then buy back 10% lower) and the loss line
     // (a close under the 50-day for trend trades, else the stop). Shown on every HOLD line so "when to sell" never needs decoding.
-    let two = ''; try { const dd = await loadDaily(sym), cc = dd && dd.candles; if (cc && cc.length >= 50) { const m50 = cc.slice(-50).reduce((q, x) => q + x.c, 0) / 50, RBt = readJson0('data/rebuy.json'), sw = RBt && RBt.status === 'OK' && swWins(RBt.results['STRETCH/LOWER10']);
+    let two = ''; try { const dd = await loadDaily(sym), cc = dd && dd.candles; if (cc && cc.length >= 31) { CL[sym] = cc.map(x => x.c); if (sh > 0 && px) DL[sym] = sh * px; } if (cc && cc.length >= 50) { const m50 = cc.slice(-50).reduce((q, x) => q + x.c, 0) / 50, RBt = readJson0('data/rebuy.json'), sw = RBt && RBt.status === 'OK' && swWins(RBt.results['STRETCH/LOWER10']);
       const lossLine = P.kind === 'leader' || (P.stop && px && P.stop < px * 0.75) ? Math.max(m50, P.stop || 0) : (P.stop || null);
       two = (sw ? ' SELL WITH PROFIT at ' + money(m50 * 1.3) + ' (then buy back ~' + money(m50 * 1.3 * 0.9) + ')' : '') + (lossLine ? ' | SELL if it closes under ' + money(lossLine) : '') + (P.t1 && P.ownT ? ' | your target ' + money(P.t1) : ''); } } catch (e) {}
     // A trade the system chose follows ITS OWN tested exit and stop. The general hold-or-sell study (trend under the averages)
@@ -2177,11 +2194,12 @@ async function holdingsText(sig, pos, title, raw) {
     else { mark(sym, 'HOLD', why); const b0 = buyToday(sym, sig), b = b0 && !b0.thin && px && P.entry && px > P.entry * 1.01 && !(sig && sig.session && P.since && sig.session <= P.since) ? b0 : null;   // add ONLY: a fully proven rule (not early evidence), a NEW signal, and the stock already in profit. Never to lower an average.
       if (b && verdict.startsWith('HOLD') && !(P.stop && px && px <= P.stop)) acts.add.push(sym + chg + ': HOLD and ADD 1,000 USD (a winner with a new PROVEN signal; fees 3 USD per buy and per sell) inside ' + money(b.lo) + '-' + money(b.hi) + '. A tested buy rule fired on it today' + (b.thin ? ' (early evidence)' : '') + '' + '. Then use ONE stop for all shares: ' + money(Math.max(b.stop, P.own ? P.stop || 0 : 0)) + '. Send after:  added ' + sym + ' PRICE SHARES' + tail);
       else { acts.hold.push(sym + chg + ': HOLD, stop ' + stop + (verdict.includes('RAISE') ? ' (raise it to this now)' : stopTag(sym, P)) + (P.t1 ? ', sell ' + (P.tmode === 'half' ? 'half' : 'at') + ' ' + money(P.t1) + (P.t2 ? ', rest at ' + money(P.t2) : '') + (P.tmode === 'half' ? ' (half)' : '') : '') + '.' + tail); (acts.holdShort = acts.holdShort || []).push(sym + chg + (two ? ':' + two : '') + ' stop ' + stop + (verdict.includes('RAISE') ? ' (raise to this)' : stopTag(sym, P, true)) + (P.t1 ? ' target ' + money(P.t1) + (P.tmode ? ' (tested' + (P.tmode === 'half' ? ', half' : '') + ')' : P.ownT ? ' (yours)' : '') : P.tnote ? ' no target (tested)' : '') + (earn ? ' EARNINGS ' + earn : '') + (ew ? ' NEWS WARNING' : '')); } } }
-  if (raw) return { acts, holdShort: acts.holdShort || [] };
+  if (raw) { let cl = null; try { const cr = clusterRisk(CL, DL); cl = cr && cr.line; } catch (e) {} return { acts, holdShort: acts.holdShort || [], cluster: cl }; }
   if (acts.sell.length) out.push('', 'SELL ALL', ...acts.sell);
   if (acts.part.length) out.push('', 'SELL PART', ...acts.part);
   if (acts.add.length) out.push('', 'BUY A LITTLE MORE', ...acts.add);
   if (acts.hold.length) out.push('', 'HOLD (keep these stops at your broker)', ...acts.hold);
+  { try { const cr = clusterRisk(CL, DL); if (cr) out.push('', cr.line); } catch (e) {} }
   { const dn = buyDayNote(), tn = timingNote(); if (tn) out.push('', tn); if (dn) out.push(dn); }
   { const g = goalsText().split('\n'); if (/^MONEY GOALS \((?!they start)/.test(g[0])) out.push('', 'GOAL: ' + (g.find(x => /^NEXT /.test(x)) || '').replace(/^NEXT\s+/, '') + ' | ' + g[1].replace(/^Now: /, 'now ') + ' (accounting only: never a reason to buy more or bigger)'); }
   out.push('', 'After you act, send:  sold SYM PRICE   or  sold SYM PRICE 5 shares   (part) or  added SYM PRICE SHARES . Details for one stock:  review SYM');
@@ -2214,6 +2232,7 @@ async function actionsText(sig, pos, px, title) {
   { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; for (const x of (sig && sig.uni) || []) if (x.last && !lp[x.sym]) lp[x.sym] = x.last;
     const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) out.push('', 'SELLS NOT DONE YET (' + un.length + ')', ...un.map(l => '- ' + l)); }
   { const hg = halalGapLine(pos); if (hg) out.push('', hg); }
+  if (h.cluster) out.push('', h.cluster);
   try { fs.writeFileSync('data/actions-sells.json', JSON.stringify({ at: new Date().toISOString(), sells: sells.map(l => ({ sym: l.replace(/^- /, '').split(/[ :]/)[0], why: l.replace(/^- /, '').slice(0, 300) })) })); } catch (e) {}   // read by the pre-market check
   if (h.acts.part.length) out.push('', 'SELL PART', ...h.acts.part.map(l => '- ' + l));
   const buyPart = plan.replace(/\nSELL\n[\s\S]*?(\n\n|$)/, '\n').trim();
