@@ -55,3 +55,18 @@ test('its own ledger negative after 10+ resolved cases: that rule is off', async
 });
 
 test('no network was used', () => assert.deepEqual(blocked, []));
+
+// 23 Oct, evening: the decoded lab's frozen first runs also qualify under the SAME pre-registered TRY SMALL standard. DEC-FROG (frog in
+// the pan) made +5.9% / +10.7% after the 1.2% stress cost, beat the average stock by +5.6% / +3.9%, and stayed positive without its 2
+// best, in both halves. It is held 126 sessions by its own rule (no stop in the test); TRY SMALL adds the system's tested 35% disaster
+// stop. Picks come from data/decoded-today.json on its monthly formation day.
+test('a decoded-lab rule that meets the standard gives buys with its own hold and a 35% stop', async () => {
+  const S4 = await loadScan({ files: { ...files, 'data/value-lab.json': { firstRun: {} },
+    'data/decoded-history.json': { firstRun: { 'DEC-FROG': { verdict: 'NOT PROVEN', results: { older: half(0.0594, 0.0556, 0.0521), newer: half(0.1069, 0.0394, 0.0964) } }, 'DEC-QBO': { verdict: 'REJECTED', results: { older: half(-0.02, -0.01, -0.03), newer: half(-0.01, -0.01, -0.02) } } } },
+    'data/decoded-today.json': { generatedAt: now, methods: { 'DEC-FROG': { newSignals: [{ sym: 'QLYS', close: 190, halal: 'ok' }, { sym: 'IVZ', close: 28 }] }, 'DEC-QBO': { newSignals: [{ sym: 'TPC', close: 78 }] } } } } });
+  const L = S4.fn('trySmallLines')({}, { QLYS: 190 }).join('\n');
+  assert.match(L, /- BUY QLYS 300 USD up to 195\.70\. STOP 123\.50 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\)/);
+  assert.match(L, /DEC-FROG/);
+  assert.doesNotMatch(L, /TPC/);
+  assert.match(L, /MARK HALAL FIRST.*IVZ/);
+});

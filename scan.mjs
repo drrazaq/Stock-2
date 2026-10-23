@@ -2261,17 +2261,22 @@ function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger
   return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
 function trySmallLines(pos, lastPx) {
   if ((readJson0('data/settings.json') || {}).trySmall === false) return [];
-  const VL = readJson0('data/value-lab.json'), VT = readJson0('data/value-today.json'); if (!VL || !VT || !VT.rules || Date.now() - Date.parse(VT.generatedAt || 0) > 10 * 864e5) return [];
+  // sources: the value lab (B-*) and, since 23 Oct evening, the decoded lab (DEC-*), both judged on their frozen first runs by tryQualifies
+  const fresh = (j) => j && Date.now() - Date.parse(j.generatedAt || 0) <= 10 * 864e5;
+  const VL = readJson0('data/value-lab.json'), VT = readJson0('data/value-today.json'), DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), src = [];
+  if (VL && fresh(VT) && VT.rules) for (const id of tryQualifies(VL.firstRun)) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (R && Array.isArray(R.picks)) src.push({ id, picks: R.picks.map(p => ({ sym: p.sym, px: p.lastClose, blocked: p.blocked })), stopPct: 0.15, hold: 63, what: 'cash-rich, growing, low-debt company' }); }
+  if (DH && fresh(DT) && DT.methods) for (const id of tryQualifies(DH.firstRun)) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
+  if (!src.length) return [];
   const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set(Object.keys(pos || {}));
   let slots = TRY_MAX - Object.values(pos || {}).filter(P => P && P.src === 'try small').length; const buys = [], mark = [];
-  for (const id of tryQualifies(VL.firstRun)) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (!R || !Array.isArray(R.picks) || tryLedgerOff('try:' + id)) continue;
-    for (const p of R.picks) { if (!p || p.blocked || held.has(p.sym) || bad.has(p.sym)) continue; const h = myHalal(p.sym); if (h === 'fail') continue; let ew = ''; try { ew = eventWarn(p.sym); } catch (e) {} if (ew) continue;
-      const px = (lastPx && lastPx[p.sym]) || p.lastClose; if (!(px > 0)) continue;
+  for (const S0 of src) { if (tryLedgerOff('try:' + S0.id)) continue;
+    for (const p of S0.picks) { if (!p || p.blocked || held.has(p.sym) || bad.has(p.sym)) continue; const h = myHalal(p.sym); if (h === 'fail') continue; let ew = ''; try { ew = eventWarn(p.sym); } catch (e) {} if (ew) continue;
+      const px = (lastPx && lastPx[p.sym]) || p.px; if (!(px > 0)) continue;
       if (h !== 'ok') { if (!mark.includes(p.sym)) mark.push(p.sym); continue; }
-      if (slots <= 0 || buys.some(b => b.sym === p.sym)) continue; slots--; tier2Log(p.sym, 'try:' + id, px); buys.push({ sym: p.sym, id, px }); } }
+      if (slots <= 0 || buys.some(b => b.sym === p.sym)) continue; slots--; tier2Log(p.sym, 'try:' + S0.id, px); buys.push({ sym: p.sym, id: S0.id, px, stopPct: S0.stopPct, hold: S0.hold, what: S0.what }); } }
   if (!buys.length && !mark.length) return [];
   const out = ['TRY SMALL (weaker proof: made money after costs in BOTH 5-year test halves and beat the average stock, but did NOT pass the luck test. Small on purpose: ' + TRY_USD + ' USD each, max ' + TRY_MAX + ' open. Switches itself off if its first 10 results lose on average.)'];
-  for (const b of buys) out.push('- BUY ' + b.sym + ' ' + TRY_USD + ' USD up to ' + money(b.px * 1.03) + '. STOP ' + money(b.px * 0.85) + ' at your broker (15%). SELL after about 3 months (63 sessions); the bot reminds you. Rule ' + b.id + ' (cash-rich, growing, low-debt company).');
+  for (const b of buys) out.push('- BUY ' + b.sym + ' ' + TRY_USD + ' USD up to ' + money(b.px * 1.03) + '. STOP ' + money(b.px * (1 - b.stopPct)) + ' at your broker (' + Math.round(b.stopPct * 100) + '%). SELL after about ' + (b.hold >= 120 ? '6 months' : '3 months') + ' (' + b.hold + ' sessions); the bot reminds you. Rule ' + b.id + ' (' + b.what + ').');
   if (mark.length) out.push('MARK HALAL FIRST (picks of this lane, no ZAD mark of yours yet): ' + mark.slice(0, 6).join(', ') + '. Check ZAD, send  halal SYM yes  and they can be bought next time.');
   return out;
 }
@@ -2762,7 +2767,9 @@ async function tgCommands(sig) {
       const P = { entry, since: ny(Date.now()).d, ...planFor(sym, entry, sig) }; { const md = moodOf(text); if (md) P.mood = md; }
       { const Qh = readJson0('data/quality.json'); if (((Qh && Qh.fscoreUpToday) || []).some(x => x.sym === sym)) P.src = 'longer hold'; }   // counts toward the 3 open LONGER HOLDS
       if (!P.src) { const VT = readJson0('data/value-today.json'), VL = readJson0('data/value-lab.json'), q = VL ? tryQualifies(VL.firstRun) : [];   // TRY SMALL buy: its own 15% stop and ~3-month exit
-        if (VT && VT.rules && q.some(id => ((VT.rules[id.replace(/_\w+$/, '')] || {}).picks || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.85).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, 15% under your buy (fixed, never moved by the bot)'; P.tryHold = 63; } }
+        if (VT && VT.rules && q.some(id => ((VT.rules[id.replace(/_\w+$/, '')] || {}).picks || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.85).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, 15% under your buy (fixed, never moved by the bot)'; P.tryHold = 63; } 
+        if (!P.src) { const DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), dq = DH ? tryQualifies(DH.firstRun) : [];
+          if (DT && DT.methods && dq.some(id => ((DT.methods[id] || {}).newSignals || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.65).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop for a 6-month hold, 35% under your buy (fixed, never moved by the bot)'; P.tryHold = 126; } } }
       { const cd = sig ? planCands(sig, {}).find(x => x.sym === sym && x.ok) : null; if (cd && typeof cd.win === 'number') P.test = { win: +cd.win.toFixed(3), net: cd.net !== null ? +cd.net.toFixed(4) : null, n: cd.n || null, kind: cd.kind }; }   // what the tests promised, to compare with what really happens
       if (P.kind === 'manual' && !P.stop) {   // no tested plan today: suggest a stop from the stock's own volatility and trend
         const d = await loadDaily(sym);
