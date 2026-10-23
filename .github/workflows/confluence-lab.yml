@@ -1,0 +1,116 @@
+name: Confluence lab
+# CONFLUENCE LAB (confluence-lab.mjs; owner's request of 24 Oct 2026: several real ways to make money; this lab COMBINES the weak edges
+# and measures them as a portfolio). CONF-2 / CONF-3 (pre-registered in confluence-core.mjs and data/strategy-library.json before any
+# run): a stock picked by 2+ (3+) different rule families within 5 sessions. 5-year test ONCE (first complete verdict frozen in
+# data/confluence-lab.json), a portfolio simulation (information only, data/confluence-portfolio.json) and a forward PAPER ledger
+# (data/confluence-paper.jsonl, confluence-today.json, confluence-board.json) built from the other labs' own forward ledgers.
+# Step 1 (only while data/confluence-signals.json.gz lacks a list): the full 5-year signal lists of the rules whose lab stored only its
+# newest trades, from patched TEMPORARY copies of anomaly-lab.mjs / decoded-lab.mjs (the repository files are not changed).
+# Weekday evenings after the other labs (+ a catch-up run before the next open). Caches are RESTORED READ ONLY (never saved here).
+# Commits only its own files and its own library entries. Never places an order. Start by hand: change run-confluence-now.txt
+# (a last line containing PORTFOLIO re-runs the simulation; HISTORY adds a monitoring run of the 5-year test).
+on:
+  schedule:
+    - cron: '50 23 * * 1-5'   # after the decoded (22:40), expert (22:50) and anomaly (23:25) labs
+    - cron: '30 2 * * 2-6'    # catch-up (a lab that finished late), still before the next open
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-confluence-now.txt']
+permissions:
+  contents: write
+concurrency: confluence-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - name: Are the full signal lists stored?
+        id: sig
+        shell: bash
+        run: |
+          node -e "const z=require('zlib'),fs=require('fs');let j={};try{j=JSON.parse(z.gunzipSync(fs.readFileSync('data/confluence-signals.json.gz')))}catch(e){};const need=['ANOM-52WH','ANOM-RESMOM','ANOM-SUESURGE','DEC2-TPS','DEC2-MINTT'].filter(r=>!(j.signals||{})[r]);console.log('missing lists: '+(need.join(' ')||'none'));fs.appendFileSync(process.env.GITHUB_OUTPUT,'need='+(need.length?'yes':'no')+'\n')"
+      - name: Restore the other labs' caches (read only; only needed for step 1)
+        if: steps.sig.outputs.need == 'yes'
+        uses: actions/cache/restore@v4
+        with:
+          path: a-cache
+          key: a-cache-none
+          restore-keys: a-cache-
+      - if: steps.sig.outputs.need == 'yes'
+        uses: actions/cache/restore@v4
+        with:
+          path: anomaly-cache
+          key: anomaly-cache-none
+          restore-keys: anomaly-cache-
+      - if: steps.sig.outputs.need == 'yes'
+        uses: actions/cache/restore@v4
+        with:
+          path: ev-cache
+          key: events-cache-none
+          restore-keys: events-cache-
+      - if: steps.sig.outputs.need == 'yes'
+        uses: actions/cache/restore@v4
+        with:
+          path: value-cache
+          key: value-cache-none
+          restore-keys: value-cache-
+      - name: Step 1, full signal lists (once)
+        if: steps.sig.outputs.need == 'yes'
+        shell: bash
+        timeout-minutes: 220
+        run: |
+          set -o pipefail
+          node confluence-signals.mjs 2>&1 | tee signals.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - name: Step 2, confluence lab
+        shell: bash
+        timeout-minutes: 60
+        run: |
+          set -o pipefail
+          if tail -n 1 run-confluence-now.txt | grep -q PORTFOLIO; then export PORTFOLIO=1; fi
+          if tail -n 1 run-confluence-now.txt | grep -q HISTORY; then export HISTORY=1; fi
+          node confluence-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          { [ -f signals.log ] && grep -E "^(running|wrote|ANOM-|DEC2-|Error|ANOMALY|DECODED)" signals.log | cut -c1-1500; tail -n 300 run.log 2>/dev/null | cut -c1-2000; } > data/confluence-run.log 2>/dev/null || true
+          FILES="data/confluence-lab.json data/confluence-paper.jsonl data/confluence-today.json data/confluence-board.json data/confluence-portfolio.json data/confluence-signals.json.gz data/confluence-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "confluence lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the confluence lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: confluence-lab-log
+          path: |
+            run.log
+            signals.log
+          if-no-files-found: ignore

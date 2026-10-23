@@ -12491,6 +12491,24 @@
    "agent": "ml",
    "spec": "ml-spec.json",
    "note": "Pre-registered 24 Oct 2026 BEFORE any training: ml-spec.json is the exact frozen rule (features, hyper-parameters, dates, gates). One version; no tuning. Run by ml-lab.mjs, first complete verdict frozen in data/ml-lab.json; forward paper lane data/ml-paper.jsonl from the decision of 23 Oct 2026 (entry Monday 26 Oct)."
+  },
+  {
+   "id": "CONF-2",
+   "family": "Confluence (combined rules)",
+   "name": "Confluence: a stock picked by 2+ different rule families within 5 sessions",
+   "explain": "At the close of session t a stock has signals from 2+ DIFFERENT rule families with signal sessions in [t-5, t], one of them at t. Buy the next open; hold = the shortest hold of the input rules in the window; stop: next open after a close 15% under the buy (35% for a 126-session hold); one open trade per stock. Input rules (frozen 5-year trade lists): B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); DEC-FROG (MOMENTUM, hold 126); DEC2-MINTT (MOMENTUM, hold 60, near-miss); ANOM-SUESURGE (EARNINGS, hold 60); DEC2-TPS (PULLBACK, hold 10); EXP-13F2 (SMART MONEY, hold 126, near-miss); EXP-INS1 (SMART MONEY, hold 126, near-miss); ANOM-SPIN (EVENT, hold 126). Families: VALUE, MOMENTUM, EARNINGS, PULLBACK, SMART MONEY, EVENT (two rules of one family agreeing count once).",
+   "status": "pre-registered 2026-10-24 (confluence lab); 5-year one-shot pending",
+   "agent": "confluence",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (confluence-core.mjs header = the exact rule; versions CONF-2 and CONF-3 only). Judged once at the tier-2 standard (both halves before / from 2024-01-01, 0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t with 63-session blocks); first complete verdict frozen in data/confluence-lab.json; forward paper lane (data/confluence-paper.jsonl) from 26 Oct 2026. Input selection: frozen first run > 0 after 1.2% cost AND edge > 0 in both halves, plus the near-misses the owner named (EXP-13F2, EXP-INS1, DEC2-MINTT, ANOM-SPIN)."
+  },
+  {
+   "id": "CONF-3",
+   "family": "Confluence (combined rules)",
+   "name": "Confluence: a stock picked by 3+ different rule families within 5 sessions",
+   "explain": "At the close of session t a stock has signals from 3+ DIFFERENT rule families with signal sessions in [t-5, t], one of them at t. Buy the next open; hold = the shortest hold of the input rules in the window; stop: next open after a close 15% under the buy (35% for a 126-session hold); one open trade per stock. Input rules (frozen 5-year trade lists): B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); DEC-FROG (MOMENTUM, hold 126); DEC2-MINTT (MOMENTUM, hold 60, near-miss); ANOM-SUESURGE (EARNINGS, hold 60); DEC2-TPS (PULLBACK, hold 10); EXP-13F2 (SMART MONEY, hold 126, near-miss); EXP-INS1 (SMART MONEY, hold 126, near-miss); ANOM-SPIN (EVENT, hold 126). Families: VALUE, MOMENTUM, EARNINGS, PULLBACK, SMART MONEY, EVENT (two rules of one family agreeing count once).",
+   "status": "pre-registered 2026-10-24 (confluence lab); 5-year one-shot pending",
+   "agent": "confluence",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (confluence-core.mjs header = the exact rule; versions CONF-2 and CONF-3 only). Judged once at the tier-2 standard (both halves before / from 2024-01-01, 0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t with 63-session blocks); first complete verdict frozen in data/confluence-lab.json; forward paper lane (data/confluence-paper.jsonl) from 26 Oct 2026. Input selection: frozen first run > 0 after 1.2% cost AND edge > 0 in both halves, plus the near-misses the owner named (EXP-13F2, EXP-INS1, DEC2-MINTT, ANOM-SPIN)."
   }
  ]
 }
