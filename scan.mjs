@@ -2180,7 +2180,7 @@ async function holdingsText(sig, pos, title, raw) {
       two = (sw ? ' SELL WITH PROFIT at ' + money(m50 * 1.3) + ' (then buy back ~' + money(m50 * 1.3 * 0.9) + ')' : '') + (lossLine ? ' | SELL if it closes under ' + money(lossLine) : '') + (P.t1 && P.ownT ? ' | your target ' + money(P.t1) : ''); } } catch (e) {}
     // A trade the system chose follows ITS OWN tested exit and stop. The general hold-or-sell study (trend under the averages)
     // is for your own picks only: a dip-buy is below its short averages by design, so "trend broken" would contradict the buy.
-    if (['quick', 'entry', 'radar', 'leader'].includes(P.kind)) {
+    if (['quick', 'entry', 'radar', 'leader'].includes(P.kind) || P.src === 'try small') {
       const stopHit = P.stop && px && px <= P.stop, xf = P.exitFlag && (!P.since || P.exitFlag.d >= P.since) ? P.exitFlag.why : null;
       if (stopHit || xf) { mark(sym, 'SELL ALL', stopHit ? 'stop reached' : 'its tested exit'); acts.sell.push(sym + chg + ': SELL ALL. ' + (stopHit ? 'the stop ' + money(P.stop) + ' is reached' : xf.replace(/^[A-Z -]+: /, '').toLowerCase().replace(/\.$/, '')) + ' (its own tested exit).' + tail); continue; }
       const ex = P.kind === 'quick' ? 'exit: first close ' + (P.q === 'gap' ? 'below' : 'above') + ' its 5 day average or ' + (P.maxHold || 5) + ' sessions' : P.kind === 'entry' ? 'exit: a close under ~' + (P.exitBelow ? money(P.exitBelow) : 'its exit line') + (P.maxHold ? ' or ' + P.maxHold + ' sessions' : '') : P.kind === 'leader' ? 'exit: a close under its rising stop or 50 day average' : 'exit: target or 5 sessions';
@@ -2219,6 +2219,34 @@ function halalGapLine(pos) {   // holdings with no halal mark of yours (or ZAD l
   const miss = Object.keys(pos || {}).filter(s => myHalal(s) === 'unknown');
   return miss.length ? 'HALAL NOT MARKED: ' + miss.join(', ') + '. Check each in ZAD, then send  halal SYM yes  or  halal SYM no .' : '';
 }
+// TRY SMALL (owner's request 23 Oct 2026, "find a way to make money ... do it all"; size chosen: the smallest real option).
+// A weaker-proof lane, separate from TRADABLE SMALL. Pre-registered in test/try-small.test.mjs before any live use: a rule qualifies when its
+// FROZEN first run made money after the 1.2% stress cost in BOTH halves, beat the average stock in both, and stayed positive without its
+// 2 best trades in both. The luck bar is not required. 300 USD, max 2 open, ZAD-ok stocks only, stop 15%, sold after ~3 months.
+// Off with  settings.trySmall = false , or for a rule whose own ledger (kind try:<rule>) averages < 0 after 10+ resolved cases.
+const TRY_USD = 300, TRY_MAX = 2;
+function tryQualifies(firstRun) {
+  const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0;
+  return Object.entries(firstRun || {}).filter(([, r]) => r && r.results && ok(r.results.older) && ok(r.results.newer)).map(([id]) => id);
+}
+function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
+  return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
+function trySmallLines(pos, lastPx) {
+  if ((readJson0('data/settings.json') || {}).trySmall === false) return [];
+  const VL = readJson0('data/value-lab.json'), VT = readJson0('data/value-today.json'); if (!VL || !VT || !VT.rules || Date.now() - Date.parse(VT.generatedAt || 0) > 10 * 864e5) return [];
+  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set(Object.keys(pos || {}));
+  let slots = TRY_MAX - Object.values(pos || {}).filter(P => P && P.src === 'try small').length; const buys = [], mark = [];
+  for (const id of tryQualifies(VL.firstRun)) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (!R || !Array.isArray(R.picks) || tryLedgerOff('try:' + id)) continue;
+    for (const p of R.picks) { if (!p || p.blocked || held.has(p.sym) || bad.has(p.sym)) continue; const h = myHalal(p.sym); if (h === 'fail') continue; let ew = ''; try { ew = eventWarn(p.sym); } catch (e) {} if (ew) continue;
+      const px = (lastPx && lastPx[p.sym]) || p.lastClose; if (!(px > 0)) continue;
+      if (h !== 'ok') { if (!mark.includes(p.sym)) mark.push(p.sym); continue; }
+      if (slots <= 0 || buys.some(b => b.sym === p.sym)) continue; slots--; tier2Log(p.sym, 'try:' + id, px); buys.push({ sym: p.sym, id, px }); } }
+  if (!buys.length && !mark.length) return [];
+  const out = ['TRY SMALL (weaker proof: made money after costs in BOTH 5-year test halves and beat the average stock, but did NOT pass the luck test. Small on purpose: ' + TRY_USD + ' USD each, max ' + TRY_MAX + ' open. Switches itself off if its first 10 results lose on average.)'];
+  for (const b of buys) out.push('- BUY ' + b.sym + ' ' + TRY_USD + ' USD up to ' + money(b.px * 1.03) + '. STOP ' + money(b.px * 0.85) + ' at your broker (15%). SELL after about 3 months (63 sessions); the bot reminds you. Rule ' + b.id + ' (cash-rich, growing, low-debt company).');
+  if (mark.length) out.push('MARK HALAL FIRST (picks of this lane, no ZAD mark of yours yet): ' + mark.slice(0, 6).join(', ') + '. Check ZAD, send  halal SYM yes  and they can be bought next time.');
+  return out;
+}
 // ACTIONS: the ONE message to act on. Sells first, then buys (strongest first, with amount, range and stop), then one line of
 // holds and the goal. Everything else the system sends is information. Send  details  for the full cards, or  review SYM .
 async function actionsText(sig, pos, px, title) {
@@ -2253,6 +2281,7 @@ async function actionsText(sig, pos, px, title) {
       out.push('', 'LONGER HOLDS (F-score 8-9 in an uptrend: improving finances, stock above its 200-day; ' + (v15Tier() === 'small' ? 'TRADABLE SMALL (tier 2): passed its own test in both halves against the average stock (t ' + Q.v15.monthly['6m'].t.older.toFixed(1) + ' / ' + Q.v15.monthly['6m'].t.newer.toFixed(1) + '), below the 4.0 proof bar; switched off if its live league score turns negative' : v15Tier() === 'proven' ? 'PROVEN' : 'NOT PROVEN') + '. 1,000 USD each, at most 3 open):',
         ...picks.map(x => (tier2Log(x.sym, 'longer hold', last[x.sym]), x)).map(x => '- BUY ' + x.sym + (last[x.sym] ? ' up to ' + money(last[x.sym] * 1.02) + ' (2% above the last close)' : ' at the next open') + ', F-score ' + x.fs + '/9. STOP 25% under your buy at your broker. SELL when it is 30%+ above its 50-day average (the bot tells you; buy back 10% lower), or TRIM when it passes 15% of your money. Review at 6 months. Check ZAD first; send  bought ' + x.sym + ' PRICE .'),
         'Why these: in the 5-year test this rule made +9.7% in 6 months vs the S&P 500 +7.6% in 2024-26, but +5.8% vs +9.1% in 2021-23. It beat the average stock in both. The league scores these same picks monthly.'); } }
+  { try { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; const tl = trySmallLines(pos, lp); if (tl.length) out.push('', ...tl); } catch (e) {} }   // TRY SMALL (23 Oct)
   { const cl = catalystLines(sig, pos); if (cl.length) out.push('', ...cl); }   // CATALYST RUN-UP: only when a catalyst rule reached tier 2 or proven (23 Oct)
   { const chl = chainLines(sig, pos); if (chl.length) out.push('', ...chl); }   // CHAIN: only when a chain-decoder rule reached tier 2 or proven (23 Oct)
   { const dl = discoveryLines(sig, pos); if (dl.length) out.push('', ...dl); }   // DISCOVERED: only when a discovery2 rule reached tier 2 (23 Oct)
@@ -2702,6 +2731,8 @@ async function tgCommands(sig) {
       if (!entry) { out.push(sym + ': I could not get a price. Send it with the price, for example: bought ' + sym + ' 12.50'); continue; }
       const P = { entry, since: ny(Date.now()).d, ...planFor(sym, entry, sig) }; { const md = moodOf(text); if (md) P.mood = md; }
       { const Qh = readJson0('data/quality.json'); if (((Qh && Qh.fscoreUpToday) || []).some(x => x.sym === sym)) P.src = 'longer hold'; }   // counts toward the 3 open LONGER HOLDS
+      if (!P.src) { const VT = readJson0('data/value-today.json'), VL = readJson0('data/value-lab.json'), q = VL ? tryQualifies(VL.firstRun) : [];   // TRY SMALL buy: its own 15% stop and ~3-month exit
+        if (VT && VT.rules && q.some(id => ((VT.rules[id.replace(/_\w+$/, '')] || {}).picks || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.85).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, 15% under your buy (fixed, never moved by the bot)'; P.tryHold = 63; } }
       { const cd = sig ? planCands(sig, {}).find(x => x.sym === sym && x.ok) : null; if (cd && typeof cd.win === 'number') P.test = { win: +cd.win.toFixed(3), net: cd.net !== null ? +cd.net.toFixed(4) : null, n: cd.n || null, kind: cd.kind }; }   // what the tests promised, to compare with what really happens
       if (P.kind === 'manual' && !P.stop) {   // no tested plan today: suggest a stop from the stock's own volatility and trend
         const d = await loadDaily(sym);
@@ -3092,6 +3123,7 @@ async function daily() {
         if (lv) P.exitBelow = +lv.toFixed(2);
         if (vv && L.exitAt ? L.exitAt(ind, c, vv, i) : (lv && c[i].c < lv)) flags.push('SWING TRADE EXIT: it closed under ~' + money(P.exitBelow) + ', the tested exit line. Sell at the next open.'); }
       if (P.stop && c[i].c <= P.stop) flags.push('CLOSED AT OR BELOW YOUR STOP ' + money(P.stop) + '. Sell / reassess at the next open.');
+      if (P.src === 'try small' && held >= (P.tryHold || 63)) flags.push('TRY SMALL TIME EXIT: ' + (P.tryHold || 63) + ' sessions have passed. Sell at the next open.');
       if (held >= 1 && P.t1 && c[i].h >= P.t1) flags.push('Target 1 ' + money(P.t1) + ' was reached today.');
       const gapT = P.q === 'gap', hit = gapT ? c[i].c < ind.sma5[i] : c[i].c > ind.sma5[i];
       if (P.trail) { if (c.filter(k => k.d > (P.halfSince || P.since)).length >= 30) flags.push('RUNNING HALF TIME EXIT: 30 sessions have passed. Sell the rest at the next open.'); }
