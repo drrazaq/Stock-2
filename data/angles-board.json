@@ -1,0 +1,432 @@
+{
+ "generatedAt": "2026-10-23T22:18:23.623Z",
+ "lastClose": "2026-10-23",
+ "paperStart": "2026-10-26",
+ "cost": 0.008,
+ "readiness": "30+ resolved paper trades on 10+ distinct signal days, average > 0 after 0.8% cost",
+ "methods": {
+  "ANG-RUS-ADD": {
+   "name": "Russell 2000 addition from below (predicted on rank day)",
+   "hold": 40,
+   "family": "russell",
+   "dataOk": false,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": null
+  },
+  "ANG-RUS-DOWN": {
+   "name": "Russell 1000 -> 2000 migrant (predicted on rank day)",
+   "hold": 40,
+   "family": "russell",
+   "dataOk": false,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": null
+  },
+  "ANG-IPOBASE": {
+   "name": "IPO first base breakout (O'Neil), 3-24 months after listing",
+   "hold": 60,
+   "family": "ipo",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "TOO FEW CASES",
+    "why": "fewer than 20 cases or 3 blocks in a half (9 cases, 6 blocks / 32 cases, 11 blocks)"
+   }
+  },
+  "ANG-LCREV-W": {
+   "name": "Large-cap 1-week losers without news (short-term reversal)",
+   "hold": 5,
+   "family": "reversal",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.8 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -5.1 under 2.5 in the newer half"
+   }
+  },
+  "ANG-LCREV-M": {
+   "name": "Large-cap 1-month losers without news (short-term reversal)",
+   "hold": 21,
+   "family": "reversal",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.14 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.36 under 2.5 in the newer half"
+   }
+  },
+  "ANG-LCGAP20": {
+   "name": "Large-cap earnings gap-up that holds 3 sessions, hold 20",
+   "hold": 20,
+   "family": "gap",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t 0.29 under 2.5 in the older half; block t 0.96 under 2.5 in the newer half"
+   }
+  },
+  "ANG-LCGAP60": {
+   "name": "Large-cap earnings gap-up that holds 3 sessions, hold 60",
+   "hold": 60,
+   "family": "gap",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.71 under 2.5 in the older half; block t 1.06 under 2.5 in the newer half"
+   }
+  },
+  "ANG-QLOW": {
+   "name": "Quality stock at its 52-week low turning up (F-score 7+)",
+   "hold": 60,
+   "family": "quality",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "not better than the average stock in the older half; block t -1.46 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.59 under 2.5 in the newer half"
+   }
+  },
+  "ANG-LOCKUP": {
+   "name": "IPO lock-up expiry bounce: buy 3 sessions after the expiry",
+   "hold": 20,
+   "family": "ipo",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "TOO FEW CASES",
+    "why": "fewer than 20 cases or 3 blocks in a half (12 cases, 8 blocks / 54 cases, 26 blocks)"
+   }
+  },
+  "ANG-DIVG": {
+   "name": "Dividend growth streak (5+ raises) with low debt",
+   "hold": 63,
+   "family": "dividend",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; block t 1.21 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.61 under 2.5 in the newer half"
+   }
+  },
+  "ANG-FOMC": {
+   "name": "Pre-FOMC drift on SPUS",
+   "hold": 1,
+   "family": "calendar",
+   "dataOk": false,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": null
+  },
+  "ANG-SPLIT": {
+   "name": "Forward stock split, first in 3 years (post-split drift)",
+   "hold": 126,
+   "family": "split",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null,
+    "pf": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "TOO FEW CASES",
+    "why": "fewer than 20 cases or 3 blocks in a half (15 cases, 4 blocks / 43 cases, 5 blocks)"
+   }
+  }
+ }
+}
