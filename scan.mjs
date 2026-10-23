@@ -682,8 +682,8 @@ try { DISCMETA = JSON.parse(fs.readFileSync('data/discovery.json', 'utf8')); con
 // Several ZAD marks in one message (owner, 23 Oct: 15 marks in one message got no reply): every "halal SYM yes/no" in the text, in order.
 function halalBatch(text) {
   const out = [], seen = new Set();
-  for (const m of String(text || '').matchAll(/(?:^|[^a-z])(?:halal|zad)\s+([a-z.\-]{1,6})\s+(yes|ok|pass|no|not\s+halal|fail|haram)\b/gi)) {
-    const sym = m[1].toUpperCase(); if (seen.has(sym)) continue; seen.add(sym); out.push([sym, !/^(yes|ok|pass)$/i.test(m[2])]); }
+  for (const m of String(text || '').matchAll(/(?:^|[^a-z])(?:halal|zad)\s+([a-z.\-]{1,6}(?:\s*,\s*[a-z.\-]{1,6})*)\s+(yes|ok|pass|no|not\s+halal|fail|haram)\b/gi)) {   // also a comma list: halal pr,lly,app yes
+    for (const t of m[1].split(/\s*,\s*/)) { const sym = t.toUpperCase(); if (!sym || seen.has(sym)) continue; seen.add(sym); out.push([sym, !/^(yes|ok|pass)$/i.test(m[2])]); } }
   return out;
 }
 // YOUR HALAL MARKS from ZAD: "halal BFLY no" blocks it everywhere (plan, radar, checks); "halal BFLY yes" marks it as checked.
