@@ -61,7 +61,8 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/options-lab.json"
+          tail -c 20000 run.log > data/options-lab-run.log 2>/dev/null || true   # the Actions log cannot be read from outside, so its tail is committed
+          FILES="data/options-lab.json data/options-lab-run.log"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"

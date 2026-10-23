@@ -18,6 +18,9 @@ const addDays = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 864e5).toI
 const readJ = (f, d) => { try { const b = fs.readFileSync(f); return JSON.parse(f.endsWith('.gz') ? zlib.gunzipSync(b).toString() : b.toString()); } catch (e) { return d; } };
 const writeGz = (f, o) => fs.writeFileSync(f, zlib.gzipSync(JSON.stringify(o)));
 fs.mkdirSync(CD, { recursive: true }); fs.mkdirSync('data', { recursive: true });
+// a crash is written into the output file (the Actions log cannot be read from outside)
+const crash = (e) => { try { const p = readJ(OUT, {}); fs.writeFileSync(OUT, JSON.stringify({ ...p, crashedAt: new Date().toISOString(), crash: String(e && e.stack || e).slice(0, 2000) }, null, 1)); } catch (x) {} console.error(e); process.exit(1); };
+process.on('uncaughtException', crash); process.on('unhandledRejection', crash);
 const prev = readJ(OUT, {});
 const cov = { alpaca: { requests: 0, errors: {}, firstOptionBar: null, lastOptionBar: null, contractLists: 0, contractsSeen: 0, optionSeriesFetched: 0, snapshotCalls: 0 },
   alphaVantage: (prev.coverage && prev.coverage.alphaVantage) || null, massive: (prev.coverage && prev.coverage.massive) || null };
@@ -154,7 +157,7 @@ const board = [];
 // ---- OPT-UOA1: needs daily call volume AND open-interest history ------------------------------------------------------------------
 R['OPT-UOA1'] = { verdict: 'NEEDS DATA', why: 'call VOLUME history exists (Alpaca daily option bars carry each contract\'s volume), but OPEN INTEREST history does not: Alpaca\'s contract list gives only the latest open interest, ' +
   'Alpha Vantage HISTORICAL_OPTIONS (volume + open interest per day) is a premium endpoint the free key cannot call, and the free HISTORICAL_VOLUME_OPEN_INTEREST_RATIO gives only a per-contract ratio (the open interest of contracts that did not trade cannot be recovered) at 25 calls a day. ' +
-  'Unlock: an Alpha Vantage premium plan key in ALPHAVANTAGE_KEY (HISTORICAL_OPTIONS gives each contract's daily volume and open interest); the rule then runs as registered.' };
+  'Unlock: an Alpha Vantage premium plan key in ALPHAVANTAGE_KEY (HISTORICAL_OPTIONS gives each contract\'s daily volume and open interest); the rule then runs as registered.' };
 
 // ---- verdicts, first run frozen, output -------------------------------------------------------------------------------------------
 function luckBar(judged) { const erfc0 = (x) => { const z = Math.abs(x), t = 1 / (1 + 0.5 * z), r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277))))))))); return x >= 0 ? r : 2 - r; };
@@ -162,6 +165,8 @@ function luckBar(judged) { const erfc0 = (x) => { const z = Math.abs(x), t = 1 /
   return Math.max(TIER2_T, zInv(0.05 / Math.max(1, judged))); }
 // frozen once: a COMPLETE run (under 1% of Alpaca requests failed) with a real verdict for OPT-LH1 / OPT-CAT1. OPT-FOLLOW1 is a living
 // per-trader board (as the follow lane): it is re-judged on every run, never frozen.
+{ let f = null, l = null, n = 0; for (const v of Object.values(OB)) for (const x of v.a || []) { n++; if (!f || x.t < f) f = x.t; if (!l || x.t > l) l = x.t; }
+  Object.assign(cov.alpaca, { firstOptionBar: f, lastOptionBar: l, optionSeriesCached: Object.keys(OB).length, optionBarsCached: n, underlyingsWithContracts: Object.values(CT).filter(c => c.list.length).length, underlyingsWithoutContracts: Object.values(CT).filter(c => !c.list.length).length, contractsCached: Object.values(CT).reduce((a, c) => a + c.list.length, 0) }); }
 const errN = Object.values(cov.alpaca.errors).reduce((a, b) => a + b, 0), complete = errN <= cov.alpaca.requests * 0.01;
 const firstRun = prev.firstRun || { at: new Date().toISOString(), results: {} };
 for (const id of ['OPT-LH1', 'OPT-CAT1']) { const r = R[id]; if (complete && r && !firstRun.results[id] && /^(PROVEN|TRADABLE SMALL|NOT PROVEN|REJECTED)$/.test(r.verdict)) firstRun.results[id] = { at: new Date().toISOString(), verdict: r.verdict, why: r.why, n: r.n ?? null, avg: r.avg ?? null, stock: r.stock ?? null, tBlock: r.tBlock ?? null }; }

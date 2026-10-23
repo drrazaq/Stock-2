@@ -5,10 +5,11 @@
 //   verdictOf(trades, opts)                       -> TRADABLE SMALL / PROVEN / NOT PROVEN / REJECTED / TOO FEW CASES
 //   isOptionsCall(call)                           -> an explicit, bullish options call on the named stock
 //   entrySession(pubIso, sessions)                -> the first regular-session open after the post was public
+//   labCandidates(rule, ctx) / labTicket(rows, spot, cand) -> LIVE: tonight's stocks of a qualified rule and its 1-contract call
 // Run: node test/options-core.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { optionNet, pickContract, exitValue, verdictOf, isOptionsCall, entrySession } from '../options-core.mjs';
+import { optionNet, pickContract, exitValue, verdictOf, isOptionsCall, entrySession, labCandidates, labTicket } from '../options-core.mjs';
 
 test('a call bought at 2.00 and sold at 3.00 with a 5% half-spread and 5 USD each side', () => {
   // paid 2.00 x 1.05 = 2.10 -> 210 + 5 = 215 USD; got 3.00 x 0.95 = 2.85 -> 285 - 5 = 280 USD; 280 / 215 - 1 = +30.23%
@@ -93,4 +94,25 @@ test('entry: before 9:30 New York on a session -> that open; during or after it 
   assert.equal(entrySession('2024-05-01T13:30:00Z', S), 2);   // 9:30: the open has started, so the next session
   assert.equal(entrySession('2024-05-04T15:00:00Z', S), 4);   // Saturday -> Monday
   assert.equal(entrySession('2024-05-07T15:00:00Z', S), null);
+});
+
+// LIVE (only for a rule at tier 2 or proven): which stocks, which expiry window, and the contract the ticket names
+const ctx = { today: '2026-10-23', next: '2026-10-26',
+  quality: { fscoreUpToday: [{ sym: 'WST', fs: 9 }, { sym: 'HQY', fs: 8 }] },
+  catalystToday: { upcoming: [{ sym: 'ABCD', buy: '2026-10-26', sell: '2026-12-04', event: '2026-12-08' }, { sym: 'LATE', buy: '2026-10-27', sell: '2026-12-05', event: '2026-12-09' }, { sym: 'BLKD', buy: '2026-10-26', sell: '2026-12-04', event: '2026-12-08', blocked: 'dilution' }] },
+  followCalls: [{ tr: 'st:good', sym: 'NVDA', bull: 1, pub: '2026-10-23T14:00:00Z', tt: '$NVDA 200c 11/21 loading up' }, { tr: 'st:good', sym: 'AMD', bull: 1, pub: '2026-10-23T15:00:00Z', tt: '$AMD looks strong' }, { tr: 'st:other', sym: 'MU', bull: 1, pub: '2026-10-23T15:00:00Z', tt: '$MU calls loaded' }, { tr: 'st:good', sym: 'TSLA', bull: 1, pub: '2026-10-20T15:00:00Z', tt: '$TSLA calls' }],
+  follow: ['st:good'] };
+test('live candidates: LONGER HOLDS picks 60-90 days; CAT-RUN1 entries for the next session (not blocked) expiring after the event; FOLLOW traders\' new options calls 30-60 days', () => {
+  assert.deepEqual(labCandidates('OPT-LH1', ctx).map(c => [c.sym, c.lo, c.hi]), [['WST', '2026-12-25', '2027-01-24'], ['HQY', '2026-12-25', '2027-01-24']]);
+  assert.deepEqual(labCandidates('OPT-CAT1', ctx).map(c => [c.sym, c.lo, c.hi, c.sellBy]), [['ABCD', '2026-12-09', '2027-02-06', '2026-12-04']]);
+  assert.deepEqual(labCandidates('OPT-FOLLOW1', ctx).map(c => [c.sym, c.lo, c.hi]), [['NVDA', '2026-11-25', '2026-12-25']]);
+});
+
+const rows = [{ occ: 'W1', exp: '2026-12-18', k: 50, ask: 2.0, bid: 1.9 }, { occ: 'W2', exp: '2027-01-15', k: 50, ask: 2.6, bid: 2.4 }, { occ: 'W3', exp: '2027-01-15', k: 55, ask: 1.2, bid: 1.1 }, { occ: 'W4', exp: '2027-01-15', k: 45, ask: 5.5, bid: 5.3 }];
+test('ticket: the earliest expiry in the window, the strike nearest the money; sell date 21 days before expiry for LONGER HOLDS', () => {
+  const t = labTicket(rows, 51, { sym: 'WST', rule: 'OPT-LH1', lo: '2026-12-25', hi: '2027-01-24' });
+  assert.deepEqual([t.occ, t.k, t.ask, t.sellBy], ['W2', 50, 2.6, '2026-12-25']);
+});
+test('ticket: the at-the-money call costs over 300 USD -> no ticket (never a cheaper far strike instead)', () => {
+  assert.equal(labTicket(rows, 45.5, { sym: 'WST', rule: 'OPT-LH1', lo: '2026-12-25', hi: '2027-01-24' }), null);
 });

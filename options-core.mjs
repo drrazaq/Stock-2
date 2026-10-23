@@ -69,3 +69,22 @@ export function nyParts(ms) { const o = {}; new Intl.DateTimeFormat('en-CA', { t
   return { d: o.year + '-' + o.month + '-' + o.day, min: +o.hour * 60 + +o.minute }; }
 export function entrySession(pubIso, sessions) { const ms = Date.parse(pubIso); if (!isFinite(ms)) return null; const n = nyParts(ms);
   const i = sessions.findIndex(d => d > n.d || (d === n.d && n.min < 570)); return i < 0 ? null : i; }
+
+// ---- LIVE (only a rule at tier 2 or proven; scan.mjs applies halal "ok", max 2 open and one contract) ---------------------------------
+// ctx: { today, next (the next session), quality, catalystToday, followCalls, follow: [trader ids at FOLLOW] }
+const plus = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+export function labCandidates(rule, ctx) {
+  if (rule === 'OPT-LH1') return ((ctx.quality && ctx.quality.fscoreUpToday) || []).filter(x => x && x.sym).map(x => ({ sym: x.sym, rule, lo: plus(ctx.next, 60), hi: plus(ctx.next, 90) }));
+  if (rule === 'OPT-CAT1') return ((ctx.catalystToday && ctx.catalystToday.upcoming) || []).filter(u => u && u.sym && u.buy === ctx.next && !u.blocked && !u.entryPassed && u.event)
+    .map(u => ({ sym: u.sym, rule, lo: plus(u.event, 1), hi: plus(u.event, 60), sellBy: u.sell, event: u.event }));
+  if (rule === 'OPT-FOLLOW1') { const F = new Set(ctx.follow || []), seen = new Set();
+    return (ctx.followCalls || []).filter(c => F.has(c.tr) && isOptionsCall(c) && nyParts(Date.parse(c.pub)).d >= ctx.today && !seen.has(c.sym) && seen.add(c.sym))
+      .map(c => ({ sym: c.sym, rule, lo: plus(ctx.next, 30), hi: plus(ctx.next, 60), sellBy: plus(ctx.next, 14), by: c.tr })); }
+  return []; }
+// the contract: the earliest expiry inside the window, the strike nearest the money (tie = lower); its ask must be 3.00 or less
+// (1 contract = at most 300 USD premium); otherwise no ticket. rows = [{ occ, exp, k, ask, bid }] from an Alpaca snapshot.
+export function labTicket(rows, spot, cand) {
+  const ok = rows.filter(r => r.exp >= cand.lo && r.exp <= cand.hi && r.ask > 0 && r.bid > 0); if (!ok.length || !(spot > 0)) return null;
+  const exp = ok.map(r => r.exp).sort()[0], best = ok.filter(r => r.exp === exp).sort((a, b) => Math.abs(a.k - spot) - Math.abs(b.k - spot) || a.k - b.k)[0];
+  if (!(best.ask * 100 <= 300)) return null;
+  return { sym: cand.sym, rule: cand.rule, occ: best.occ, exp, k: best.k, ask: best.ask, bid: best.bid, spot, sellBy: cand.rule === 'OPT-LH1' ? plus(exp, -21) : cand.sellBy, event: cand.event || null }; }
