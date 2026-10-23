@@ -9,14 +9,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseVideo, entrySession, callReturn, judge, luckExpected, horizonFor } from '../follow-lane.mjs';
 
-const U = new Set(['AGI', 'MIT', 'NVDA', 'PLTR', 'SOFI', 'AAPL', 'TSLA', 'NOW', 'ALL', 'AI', 'CEO', 'USA', 'IONQ', 'RKLB', 'HOOD', 'GME', 'BIG', 'ONE', 'OPEN']);
-const syms = (v) => parseVideo(v, U).calls.map(c => c.sym);
+const U = new Set(['TRIP', 'BACK', 'LIFE', 'REAL', 'SAFE', 'CASH', 'NEXT', 'EVER', 'WIN', 'AMD', 'AGI', 'MIT', 'NVDA', 'PLTR', 'SOFI', 'AAPL', 'TSLA', 'NOW', 'ALL', 'AI', 'CEO', 'USA', 'IONQ', 'RKLB', 'HOOD', 'GME', 'BIG', 'ONE', 'OPEN']);
+const NAMES = new Map([['RKLB', 'ROCKET LAB USA INC'], ['NVDA', 'NVIDIA CORP'], ['TRIP', 'TRIPADVISOR INC'], ['SOFI', 'SOFI TECHNOLOGIES INC'], ['AMD', 'ADVANCED MICRO DEVICES INC']]);
+const syms = (v) => parseVideo(v, U, NAMES).calls.map(c => c.sym);
 
 test('tickers: $TICKER and (TICKER) count; CEO, AI, USA in a sentence do not', () => {
   assert.deepEqual(syms({ title: 'The CEO of $PLTR just said AI will change the USA (SOFI is next)', desc: '' }), ['PLTR', 'SOFI']);
 });
 
-test('tickers: a bare listed ticker in a normal title counts; common words that are also tickers (NOW, ALL, BIG) do not', () => {
+test('tickers: "TICKER stock" counts; common words that are also tickers (NOW, ALL, BIG) do not', () => {
   assert.deepEqual(syms({ title: 'NVDA Stock Is About To Explode, Buy It NOW Before ALL The BIG Funds', desc: '' }), ['NVDA']);
 });
 
@@ -25,8 +26,9 @@ test('tickers: a shouting all-caps title gives no bare tickers (only $ or bracke
   assert.deepEqual(syms({ title: 'THIS STOCK WILL EXPLODE TOMORROW ($IONQ)', desc: '' }), ['IONQ']);
 });
 
-test('tickers: words that are not listed are never tickers, and at most 5 per video (title first)', () => {
-  assert.deepEqual(syms({ title: 'Why FOMO Buyers of RKLB Are Wrong', desc: '' }), ['RKLB']);
+test('tickers: a bare ticker counts only with its company name in the same text; at most 5 per video (title first)', () => {
+  assert.deepEqual(syms({ title: 'Why FOMO Buyers of RKLB Are Wrong', desc: '' }), []);
+  assert.deepEqual(parseVideo({ title: 'Why FOMO Buyers of RKLB Are Wrong', desc: 'Rocket Lab just won a launch contract' }, U, NAMES).calls.map(c => c.sym), ['RKLB']);
   assert.equal(syms({ title: 'My picks: $NVDA', desc: '$PLTR $SOFI $AAPL $TSLA $IONQ $RKLB $HOOD' }).length, 5);
   assert.equal(syms({ title: 'My picks: $NVDA', desc: '$PLTR $SOFI $AAPL $TSLA $IONQ $RKLB $HOOD' })[0], 'NVDA');
 });
@@ -127,7 +129,7 @@ test('horizon: fixed in advance from the channel’s own words', () => {
 });
 
 // --- sources added 23 Oct (owner: "open the web") ---
-import { congressCall, f13Calls, parseInfoTable, nonUSChannel } from '../follow-lane.mjs';
+import { congressCall, f13Calls, parseInfoTable, nonUSChannel, luckBar, applyLuckBar, fadeAvoid } from '../follow-lane.mjs';
 const trade = (o = {}) => ({ politician_canonical: 'Nancy Pelosi', bioguide_id: 'P000197', symbol: 'NVDA', asset_type_code: 'ST', asset_name: 'NVIDIA Corporation - Common Stock', transaction_type: 'BUY', transaction_date: '2026-07-28', filed_date: '2026-08-21', ...o });
 test('congress: a stock BUY is a call dated at the FILING (when the public could know), never the trade date', () => {
   const c = congressCall(trade(), U);
@@ -169,5 +171,37 @@ test('congress: an option BUY that names no type counts (members\u2019 option bu
   assert.equal(congressCall(trade({ asset_type_code: 'OP', asset_name: 'Bloom Energy Corporation Class A Common Stock (BE) [OP]', symbol: 'NVDA' }), U).sym, 'NVDA');
 });
 test('tickers: AI words that are also tickers (AGI, MIT) are not calls when bare', () => {
-  assert.deepEqual(syms({ title: 'AGI Has Arrived. Here is How I Am Investing In NVDA', desc: 'Research from MIT shows' }), ['NVDA']);
+  assert.deepEqual(syms({ title: 'AGI Has Arrived. Here is How I Am Investing In NVDA stock', desc: 'Research from MIT shows' }), ['NVDA']);
+});
+
+// --- main session review, 23 Oct: strict extraction, the luck bar for FOLLOW, FADE -> AVOID ---
+test('strict tickers: capitalised words in titles are not calls (all of these are listed tickers in the test universe)', () => {
+  for (const title of ['Watch Out For the ROUND TRIP!', 'Penny Stock Mania is BACK', 'This Stock Could Change Your LIFE', 'The REAL Reason The Market Is Falling',
+    'I Made $10,000 Day Trading (HUGE WIN)', 'Is It SAFE To Buy Stocks NOW?', 'CASH Is King Right Now', 'The NEXT Big Short Squeeze', 'EVER Wonder Why Small Caps Run?', 'Do This Before The OPEN Tomorrow'])
+    assert.deepEqual(syms({ title, desc: '' }), [], title);
+});
+test('strict tickers: real calls still count ($, "TICKER stock/shares", (TICKER), EXCHANGE: TICKER, or the company named)', () => {
+  assert.deepEqual(syms({ title: 'TRIP stock just broke out', desc: '' }), ['TRIP']);
+  assert.deepEqual(syms({ title: 'Buying more $BACK today', desc: '' }), ['BACK']);
+  assert.deepEqual(syms({ title: 'Why I am buying Tripadvisor (TRIP) here', desc: '' }), ['TRIP']);
+  assert.deepEqual(syms({ title: 'NVDA earnings: Nvidia crushes estimates', desc: '' }), ['NVDA']);
+  assert.deepEqual(syms({ title: 'NASDAQ: SOFI breakout', desc: '' }), ['SOFI']);
+  assert.deepEqual(syms({ title: 'PLTR shares jump after contract', desc: '' }), ['PLTR']);
+});
+test('strict tickers: in a shouting title "WORD STOCK" needs the company name too', () => {
+  assert.deepEqual(syms({ title: 'BACK STOCK ALERT!!!', desc: '' }), []);
+  assert.deepEqual(syms({ title: 'AMD STOCK TO THE MOON', desc: 'Advanced Micro Devices beat' }), ['AMD']);
+});
+test('luck bar: with 155 traders judged a FOLLOW needs block t 3.41; 3.38 stays WATCH ("could be luck"), 3.88 stays FOLLOW', () => {
+  assert.equal(+luckBar(155).toFixed(2), 3.41); assert.equal(luckBar(3), 2.5);
+  const tr = (name, tBlock, level = 'FOLLOW') => ({ name, level, atH: { tBlock } });
+  const T = [tr('A', 3.88), tr('B', 3.38), tr('C', -4, 'FADE'), ...Array.from({ length: 152 }, (_, i) => tr('N' + i, 1, 'NO EDGE'))];
+  const bar = applyLuckBar(T);
+  assert.equal(+bar.toFixed(2), 3.41); assert.equal(T[0].level, 'FOLLOW'); assert.equal(T[1].level, 'WATCH'); assert.match(T[1].why, /could be luck/); assert.equal(T[2].level, 'FADE');
+});
+test('FADE -> AVOID: buy calls of FADE traders whose entry is within the last 20 sessions, latest per stock', () => {
+  const S = Array.from({ length: 40 }, (_, i) => new Date(Date.UTC(2026, 8, 1 + i)).toISOString().slice(0, 10));   // 40 sessions (calendar days stand in)
+  const calls = [{ tr: 'yt:bad', sym: 'OLD', pub: S[10] + 'T12:00:00Z' }, { tr: 'yt:bad', sym: 'NEW', pub: S[30] + 'T12:00:00Z' }, { tr: 'yt:good', sym: 'OK', pub: S[35] + 'T12:00:00Z' }];
+  const A = fadeAvoid(calls, { 'yt:bad': 'Hot Trades' }, S);
+  assert.deepEqual(Object.keys(A), ['NEW']); assert.equal(A.NEW.trader, 'Hot Trades'); assert.ok(A.NEW.until > S[39]);
 });

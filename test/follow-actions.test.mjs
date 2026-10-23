@@ -88,4 +88,16 @@ test('"traders" shows FOLLOW, FADE and the closest others with numbers, the coun
   server.close();
 });
 
+// FADE -> AVOID: a buy call by a FADE trader in the last 20 sessions blocks that stock everywhere (planCands, gateVerdict, the ACTIONS AVOID line)
+const quick = (sym) => ({ sym, n: 60, avgPct: 0.02, win: 0.6, last: 50, buyLo: 49, buyHi: 51, stop: 45, maxHold: 5 });
+const sigQ = { session: '2026-10-21', market: { above50: true, up: true }, quick: [quick('AAA'), quick('BBB')] };
+const until = (d) => new Date(Date.now() + d * 864e5).toISOString().slice(0, 10);
+test('a stock a FADE trader called in the last 20 sessions is not a buy, says why, and is listed under AVOID', async () => {
+  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/signals.json': sigQ, 'data/follow-fade.json': { at: recent, avoid: { AAA: { trader: 'Hot Trades', pub: recent, until: until(20) }, BBB: { trader: 'Old Fade', pub: recent, until: until(-1) } } } } });
+  const pc = S.fn('planCands')(sigQ, {}), a = pc.find(x => x.sym === 'AAA'), b = pc.find(x => x.sym === 'BBB');
+  assert.equal(a.ok, false); assert.equal(a.fade, 'Hot Trades'); assert.match(a.avoid, /AVOID: tipped by Hot Trades/);
+  assert.equal(b.ok, true);   // its 20 sessions are over
+  assert.match(S.fn('gateVerdict')('AAA', sigQ), /Hot Trades.*FADE/);
+});
+
 test('no network was touched', () => assert.deepEqual(blocked, []));

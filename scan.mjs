@@ -332,6 +332,8 @@ function tier2LedgerNegative(kind) { try { const a = fs.readFileSync('data/tier2
 // in the last 30 days -> removed (dilution); a stock you hold -> skipped; a trader whose own tier-2 ledger turned negative -> off.
 // 1,000 USD, stop 15% under the buy unless the trader gave one, sold at the close of his horizon. Each shown call is logged as 'follow:<trader>'.
 const ordinal = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+function followFade() { const F = readJson0('data/follow-fade.json'), A = (F && (F.avoid || F)) || {}, today = new Date().toISOString().slice(0, 10), out = {};
+  for (const [sym, v] of Object.entries(A)) if (v && v.trader && !(v.until && v.until < today)) out[sym] = v.trader; return out; }
 function followOffering(sym) { const ER = readJson0('data/events-recent.json'); return ((ER && ER.events) || []).some(e => e.sym === sym && /OFFERING/.test(e.f || '') && Date.now() - Date.parse(e.p) < 30 * 864e5); }
 function followSection(sig, pos) { if (!TIER2_ON()) return []; const FT = readJson0('data/follow-today.json'); if (!FT || !Array.isArray(FT.calls) || !FT.calls.length || Date.now() - Date.parse(FT.at || 0) > 4 * 864e5) return [];
   const lot = (sig && sig.lottery) || {}, last = {}, seen = new Set(), rows = []; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
@@ -1197,6 +1199,9 @@ function planCands(sig, held0) { const c0 = planCands0(sig, held0), LT = (sig &&
   // recent buy tips become AVOID for 20 sessions after each tip (data/tip-score.json, re-scored every study run).
   { const TS = readJson0('data/tip-score.json'), FD = {}; for (const f of (TS && TS.fade) || []) if (f && f.sym && !FD[f.sym]) FD[f.sym] = f.src;
     for (const x of c0) if (FD[x.sym] && x.ok) { x.ok = false; x.fade = FD[x.sym]; x.avoid = 'AVOID: tipped by ' + FD[x.sym] + ', a source whose tips lagged the average stock (tested: FADE); avoid for 20 sessions after the tip'; } }
+  // FOLLOW-LANE FADE (23 Oct): buy calls of public traders whose own call history lags the average stock (follow-lane.mjs FADE), avoided for
+  // 20 sessions after the entry (data/follow-fade.json); same AVOID wording, so the ACTIONS AVOID line picks them up.
+  { const FF = followFade(); for (const x of c0) if (FF[x.sym] && x.ok) { x.ok = false; x.fade = FF[x.sym]; x.avoid = 'AVOID: tipped by ' + FF[x.sym] + ', a source whose tips lagged the average stock (tested: FADE); avoid for 20 sessions after the tip'; } }
   // LIVE LOSING ENGINES (22 Oct): an engine whose live record says LOSING (20+ future-day trades, negative, behind the S&P) cannot
   // produce a buy line at all; it keeps logging on paper (the record stays visible) but never competes for the owner's money.
   // (audit 22 Oct) per engine kind, from the scorecard rows themselves, not from rendered text
@@ -1212,7 +1217,7 @@ function planCands(sig, held0) { const c0 = planCands0(sig, held0), LT = (sig &&
 // ONE GATE FOR EVERY REPLY (audit 22 Oct): null when a buy line may be shown for this stock, otherwise the reason it may not.
 function gateVerdict(sym, sig) { try { sig = sig || readJson0('data/signals.json'); if (myHalal(sym) === 'fail') return 'you marked it NOT halal in ZAD';
   const lot = ((sig && sig.lottery) || {})[sym]; if (lot >= 0.15) return 'lottery-like (a ' + Math.round(lot * 100) + '% one-day jump in the last month; tested to lag)';
-  const TS = readJson0('data/tip-score.json'), fd = ((TS && TS.fade) || []).find(f => f.sym === sym); if (fd) return 'tipped by ' + fd.src + ', a source whose tips lag (FADE)';
+  const TS = readJson0('data/tip-score.json'), fd = ((TS && TS.fade) || []).find(f => f.sym === sym); if (fd) return 'tipped by ' + fd.src + ', a source whose tips lag (FADE)'; const ff = followFade()[sym]; if (ff) return 'tipped by ' + ff + ', a source whose tips lag (FADE)';
   const ew = eventWarn(sym); if (ew) return ew.replace(/^\s*\|\s*/, '').slice(0, 140);
   if (BIOBLOCK.has(sym)) return 'dilution / trial-risk block (' + String(BIOBLOCK.get(sym)).slice(0, 100) + ')';   // review S-5
   // (review S-5, 22 Oct) every plan block gives a reason; before, the blocks without an avoid text fell through and passed with focus off

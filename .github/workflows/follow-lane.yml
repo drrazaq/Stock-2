@@ -61,7 +61,7 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/follow-board.json data/follow-today.json data/follow-calls.jsonl data/follow-channels.json"
+          FILES="data/follow-board.json data/follow-today.json data/follow-calls.jsonl data/follow-channels.json data/follow-fade.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           git reset -q --hard && git clean -fdq data && git pull -q --rebase

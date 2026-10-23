@@ -54,19 +54,29 @@ export const FUND_SYMS = new Set(['SPY', 'QQQ', 'IWM', 'DIA', 'VOO', 'VTI', 'TQQ
 const BEAR = /\b(sell(ing)?|sold|short(ing|ed)?|puts?|crash(ing|ed)?|bearish|avoid|overvalued|dump(ing)?|collaps\w*|bubble|bankrupt\w*|going to zero|stay away|red flag|downgrade\w*|plunge\w*|tank(ing|ed)?|scam)\b/gi;
 const BULL = /\b(buy(ing)?|bought|bullish|calls?|long|moon\w*|explod\w*|soar\w*|rocket\w*|breakout|break ?out|squeeze|undervalued|upside|rall(y|ies|ying)|runners?|picks?|watch ?list|price target|accumulat\w*|load(ing)? up|to buy|next \d+x|\d+x|skyrocket\w*|surg\w*|rip(ping)?|gap(ping)? up)\b/gi;
 const num = (re, s) => { const m = s.match(re); return m ? +m[1] : null; };
-export function parseVideo(v, universe) {
+// STRICT (main session review, 23 Oct): a ticker counts only if it is $TICKER, (TICKER), EXCHANGE: TICKER, "TICKER stock/stocks/shares/calls"
+// on a line that is not shouting, or a bare listed ticker whose company name (SEC company list) appears in the same title/description.
+// Capitalised emphasis words ("the ROUND TRIP", "is BACK") are never calls on their own.
+const GENERIC = new Set('american first united global international national general new advanced applied digital capital energy financial bank bancorp healthcare health technologies technology systems pharmaceuticals pharma therapeutics resources industries services solutions partners enterprises brands communications networks medical bio biosciences sciences acquisition investment investments realty properties group holdings trust company'.split(' '));
+const nameCache = new Map();
+export function nameVariants(title) { const k = String(title || ''); if (nameCache.has(k)) return nameCache.get(k);
+  const w = k.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(x => x && !/^(inc|corp|corporation|co|company|ltd|plc|holdings?|group|class|cl|com|new|the|sa|nv|ag|lp|llc|trust|de|a|b|c)$/.test(x)), out = [];
+  if (w[0] && w[0].length >= 4 && !GENERIC.has(w[0])) out.push(w[0]); if (w.length >= 2 && (out.length === 0)) out.push(w[0] + ' ' + w[1]);
+  nameCache.set(k, out); return out; }
+const named = (sym, text, names) => { const t = names && names.get(sym); if (!t) return false; const low = text.toLowerCase(); return nameVariants(t).some(v => new RegExp('(^|[^a-z0-9])' + v.replace(/ /g, '\\s+') + '([^a-z0-9]|$)').test(low)); };
+export function parseVideo(v, universe, names) {
   const title = String((v && v.title) || ''), desc = String((v && v.desc) || '').slice(0, 1500), text = title + '\n' + desc;
   const nb = (text.match(BEAR) || []).length, nu = (text.match(BULL) || []).length, bearish = nb > nu;
-  const ok = (s) => s && s.length >= 1 && (!universe || universe.has(s)) && !FUND_SYMS.has(s);
+  const ok = (s) => s && s.length >= 1 && (!universe || universe.has(s)) && !FUND_SYMS.has(s), plain = (s) => ok(s) && !NOT_BARE.has(s);
   const found = [];   // [index, sym]; title first (index), then description (offset)
   const scan = (s, off) => {
     for (const m of s.matchAll(/\$([A-Z]{1,5})\b/g)) if (ok(m[1])) found.push([off + m.index, m[1]]);
     for (const m of s.matchAll(/\b(?:NASDAQ|NYSE|AMEX)\s*:\s*([A-Z]{1,5})\b/g)) if (ok(m[1])) found.push([off + m.index, m[1]]);
-    for (const m of s.matchAll(/\(([A-Z]{2,5})\)/g)) if (ok(m[1]) && !NOT_BARE.has(m[1])) found.push([off + m.index, m[1]]);
-    // bare tickers: only a listed symbol that is not a plain word, and only on a line that is not shouting (under half its words in capitals)
-    for (const line of s.split('\n')) { const words = line.match(/\b[A-Za-z]{3,}\b/g) || [], caps = words.filter(w => w === w.toUpperCase()).length;
-      if (!words.length || caps / words.length >= 0.5) continue; const lo = s.indexOf(line);
-      for (const m of line.matchAll(/(?<![$\w])([A-Z]{2,5})(?![\w])/g)) if (ok(m[1]) && !NOT_BARE.has(m[1])) found.push([off + lo + m.index, m[1]]); } };
+    for (const m of s.matchAll(/\(([A-Z]{2,5})\)/g)) if (plain(m[1])) found.push([off + m.index, m[1]]);
+    let lo = 0; for (const line of s.split('\n')) { const words = line.match(/\b[A-Za-z]{3,}\b/g) || [], caps = words.filter(w => w === w.toUpperCase()).length, shouting = !words.length || caps / words.length >= 0.5;
+      for (const m of line.matchAll(/(?<![$\w])([A-Z]{2,5})\s+(?:stocks?|shares|calls)\b/gi)) { const sym = m[1]; if (sym !== sym.toUpperCase() || !plain(sym)) continue; if (!shouting || named(sym, text, names)) found.push([off + lo + m.index, sym]); }
+      for (const m of line.matchAll(/(?<![$\w])([A-Z]{2,5})(?![\w])/g)) if (plain(m[1]) && named(m[1], text, names)) found.push([off + lo + m.index, m[1]]);
+      lo += line.length + 1; } };
   scan(title, 0); scan(desc, 100000);
   const syms = []; for (const [, s] of found.sort((a, b) => a[0] - b[0])) if (!syms.includes(s)) syms.push(s);
   if (bearish) return { bearish: true, calls: [] };
@@ -139,6 +149,23 @@ export function dedupeCalls(calls) { const last = new Map(), out = [];
     if (was !== undefined && p - was < REPEAT_DAYS * 864e5) continue; last.set(k, p); out.push(c); }
   return out; }
 
+// LUCK BAR FOR FOLLOW (main session, 23 Oct, stricter only): many traders are screened, so a FOLLOW must clear the bar for that many
+// tries, as the league does: block t >= max(2.5, zInv(0.05 / judged)). Below it, the trader stays WATCH ('could be luck'). FADE is unchanged
+// (avoiding a source is the safe side).
+const erfc0 = (x) => { const z = Math.abs(x), t = 1 / (1 + 0.5 * z), r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277))))))))); return x >= 0 ? r : 2 - r; };
+const zInv = (p) => { let lo = 0, hi = 10; for (let k = 0; k < 60; k++) { const m = (lo + hi) / 2; if (0.5 * erfc0(m / Math.SQRT2) > p) lo = m; else hi = m; } return (lo + hi) / 2; };
+export const luckBar = (judged) => Math.max(T_BAR, zInv(0.05 / Math.max(1, judged)));
+export function applyLuckBar(traders) { const J = traders.filter(t => t.level !== 'WATCH').length, BAR = luckBar(J);
+  for (const t of traders) if (t.level === 'FOLLOW' && !((t.atH && t.atH.tBlock) >= BAR || (t.tBlock >= BAR))) { t.level = 'WATCH'; t.why = 'passed every check but the luck bar for ' + J + ' traders screened (block t ' + BAR.toFixed(2) + ' needed): could be luck, kept on watch'; }
+  return BAR; }
+// FADE -> AVOID (main session, 23 Oct): buy calls of FADE traders whose entry session is within the last 20 sessions (or still pending);
+// { sym: { trader, pub, until } }, the latest call per stock; until = the 20th session after entry (estimated in calendar days past the data)
+export function fadeAvoid(calls, fadeNames, sessions) { const T = sessions.length, out = {};
+  for (const c of [...calls].sort((a, b) => Date.parse(a.pub) - Date.parse(b.pub))) { const name = fadeNames[c.tr]; if (!name) continue; let e = entrySession(Date.parse(c.pub), sessions); if (e === -1) e = T; if (e < T - 20) continue;
+    const k = e + 19, until = k < T ? sessions[k] : new Date(Date.parse(sessions[T - 1] + 'T12:00:00Z') + Math.ceil((k - (T - 1)) * 7 / 5 + 1) * 864e5).toISOString().slice(0, 10);
+    out[c.sym] = { trader: name, pub: c.pub, until }; }
+  return out; }
+
 // ---------- 4b. other public sources (owner, 23 Oct: "open the web") ----------
 // CONGRESS (Alpha Vantage CONGRESS_TRADES): a member's stock BUY (or call-option buy) is a call made public on its FILING date (the trade
 // date is weeks earlier and was not public). Entry: the first open after the filing day (filed time unknown, so taken as after the close).
@@ -194,6 +221,16 @@ async function main() {
     O[k] = rows.o[j]; Hh[k] = rows.h ? rows.h[j] : NaN; Ll[k] = rows.l ? rows.l[j] : NaN; C[k] = rows.c[j]; V[k] = rows.v ? rows.v[j] : NaN; M[k] = main; } } });
   const refSyms = store.ref && store.ref.syms; store = null;
   const UNI = new Set([...SY.keys(), ...(refSyms || []), ...Object.keys(J('data/sec-ciks.json', {}) || {})]);
+  // company names (SEC company list) for the strict ticker rule; kept in the lane's cache, refreshed weekly
+  let NAMES = new Map(); { const nc = gz(FC + '/names.json.gz');
+    if (nc && nc.at && now - Date.parse(nc.at) < 7 * 864e5) NAMES = new Map(nc.m);
+    else { try { const r = await fetch((env.SEC_BASE || 'https://www.sec.gov') + '/files/company_tickers.json', { headers: { 'User-Agent': env.SEC_UA || 'Stock-2 research stock2@users.noreply.github.com' } }); if (r.ok) { const j = await r.json(); for (const v of Object.values(j || {})) if (v && v.ticker && !NAMES.has(String(v.ticker).toUpperCase())) NAMES.set(String(v.ticker).toUpperCase(), v.title); } } catch (e) {}
+      if (NAMES.size) fs.writeFileSync(FC + '/names.json.gz', zlib.gzipSync(JSON.stringify({ at: new Date(now).toISOString(), m: [...NAMES] }))); else if (nc) NAMES = new Map(nc.m); } }
+  log('company names for the strict ticker rule: ' + NAMES.size);
+  // every fetched video's title and description, kept in the lane's Actions cache, so the extraction can be re-run without API quota
+  const VIDS = gz(FC + '/videos.json.gz') || {};
+  // STRICT EXTRACTION (23 Oct, v2): once, every channel is re-fetched so its videos (with descriptions) enter the cache and are re-read
+  if (state.extractV !== 2) { for (const c of Object.values(state.channels)) c.backfilled = null; state.extractV = 2; log('strict extraction v2: every channel queued for a re-fetch'); }
   // splits in the days added after the study cache's last repair (same jump test as leaders-study.mjs, per needed symbol)
   const SPL = ((J('data/splits.json', {}) || {}).splits || []).filter(s => s.d > D[0] && s.d <= D[T - 1]);
   const repaired = new Set(); function barsOf(sym) { const i = SY.get(sym); if (i === undefined) return null; const b = i * T, sl = (A) => Array.from(A.subarray(b, b + T));
@@ -218,12 +255,15 @@ async function main() {
   const old = fs.existsSync(CALLS) ? fs.readFileSync(CALLS, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean) : [];
   const have = new Set(old.map(c => c.tr + '|' + c.sym + '|' + c.vid)), add = [];
   const addVideo = (tr, name, it) => { const sn = it.snippet || {}, cd = it.contentDetails || {}, vid = cd.videoId || (sn.resourceId && sn.resourceId.videoId) || ''; const pub = cd.videoPublishedAt || sn.publishedAt; if (!pub || /^(Private|Deleted) video$/.test(sn.title || '')) return;
-    const p = parseVideo({ title: sn.title, desc: sn.description }, UNI); for (const c of p.calls) { const k = tr + '|' + c.sym + '|' + vid; if (have.has(k)) continue; have.add(k);
+    if (vid) VIDS[vid] = [tr, name, pub, String(sn.title || '').slice(0, 200), String(sn.description || '').slice(0, 1500)];
+    const p = parseVideo({ title: sn.title, desc: sn.description }, UNI, NAMES); for (const c of p.calls) { const k = tr + '|' + c.sym + '|' + vid; if (have.has(k)) continue; have.add(k);
       add.push({ tr, n: name, src: 'yt', sym: c.sym, pub, vid, bull: c.bull ? 1 : 0, ...(c.en ? { en: c.en } : {}), ...(c.tg ? { tg: c.tg } : {}), ...(c.st ? { st: c.st } : {}), tt: String(sn.title || '').slice(0, 90) }); } };
   const QUERIES = ['stock to buy now', 'penny stock', 'small cap runner', 'swing trade', 'day trading watchlist', 'biotech catalyst', 'stock picks this week', 'stocks to watch tomorrow', 'top stocks to buy', 'momentum stocks', 'growth stock to buy', 'premarket movers'];
   const since2y = now - 730 * 864e5;
   if (env.YT_KEY) {
-    if (MODE === 'full') {   // discovery: video search (100 units a page), channels that post stock calls
+    const refetchPending = Object.values(state.channels).filter(c => !c.backfilled && !c.nonUS && !c.gone).length;
+    if (MODE === 'full' && refetchPending > 50) log('discovery skipped: ' + refetchPending + ' channels still to (re-)fetch; the quota goes to them first');
+    if (MODE === 'full' && refetchPending <= 50) {   // discovery: video search (100 units a page), channels that post stock calls
       const hits = {}, after = new Date(now - 365 * 864e5).toISOString(), pages = +(env.YT_PAGES || 2);
       for (const q of QUERIES) { let tok = ''; for (let p = 0; p < pages; p++) { const j = await ytGet('search?part=snippet&type=video&maxResults=50&relevanceLanguage=en&regionCode=US&order=relevance&publishedAfter=' + after + '&q=' + encodeURIComponent(q) + (tok ? '&pageToken=' + tok : ''), 100); if (!j) break;
         for (const it of j.items || []) { const id = it.snippet && it.snippet.channelId; if (id) hits[id] = (hits[id] || 0) + 1; } tok = j.nextPageToken; if (!tok) break; } }
@@ -326,14 +366,24 @@ async function main() {
   for (const url of FEEDS) { try { const r = await fetch(url, { headers: { 'User-Agent': 'Stock-2 personal research (RSS reader)', Accept: 'application/rss+xml,application/xml' } }); rss.status = 'HTTP ' + r.status; if (!r.ok) continue; rss.ok++;
       const xml = await r.text(), feedName = unx((xml.match(/<channel>[\s\S]*?<title>([\s\S]*?)<\/title>/) || [])[1]).trim() || new URL(url).host, tr = 'rss:' + new URL(url).host;
       for (const it of xml.split(/<item[ >]/).slice(1)) { const title = unx((it.match(/<title>([\s\S]*?)<\/title>/) || [])[1]), body = unx((it.match(/<description>([\s\S]*?)<\/description>/) || [])[1]), pd = Date.parse((it.match(/<pubDate>([^<]+)<\/pubDate>/) || [])[1] || ''), link = ((it.match(/<link>([^<]+)<\/link>/) || [])[1] || '').trim();
-        if (!isFinite(pd)) continue; for (const c of parseVideo({ title, desc: body }, UNI).calls) addCall({ tr, n: 'Newsletter: ' + feedName.slice(0, 50), src: 'rss', sym: c.sym, pub: new Date(pd).toISOString(), vid: link || String(pd), bull: c.bull ? 1 : 0, ...(c.st ? { st: c.st } : {}), ...(c.tg ? { tg: c.tg } : {}), tt: title.slice(0, 90) }); } } catch (e) { rss.status = 'error ' + (e.message || e); }
+        if (!isFinite(pd)) continue; for (const c of parseVideo({ title, desc: body }, UNI, NAMES).calls) addCall({ tr, n: 'Newsletter: ' + feedName.slice(0, 50), src: 'rss', sym: c.sym, pub: new Date(pd).toISOString(), vid: link || String(pd), bull: c.bull ? 1 : 0, ...(c.st ? { st: c.st } : {}), ...(c.tg ? { tg: c.tg } : {}), tt: title.slice(0, 90) }); } } catch (e) { rss.status = 'error ' + (e.message || e); }
     await sleep(500); }
   log('Newsletters (RSS): ' + rss.ok + ' of ' + FEEDS.length + ' feeds read; last answer ' + rss.status);
   if (add.length) fs.appendFileSync(CALLS, add.map(c => JSON.stringify(c)).join('\n') + '\n');
   log(add.length + ' new calls logged (' + (old.length + add.length) + ' in total)');
   // ---- score every call ----
   // calls logged before a word joined NOT_BARE are dropped unless the stored title shows it as $TICKER (stricter only)
-  const all = dedupeCalls([...old, ...add].filter(c => c.tr && c.sym && c.pub && !((c.src === 'yt' || c.src === 'rss') && NOT_BARE.has(c.sym) && !String(c.tt || '').includes('$' + c.sym)))), meta = {};
+  // YouTube calls are RE-EXTRACTED with the current strict rule: from the video cache where a channel's videos are cached, otherwise from the
+  // stored title only (descriptions of the first backfill were not kept); newsletter calls from their stored title. Other sources carry
+  // their symbol in structured data and are kept as logged.
+  const cachedCh = new Set(Object.values(VIDS).map(v => v[0])), yt2 = [];
+  for (const [vid, v] of Object.entries(VIDS)) { const [tr, n, pub, title, desc] = v; if (Date.parse(pub) < since2y) { delete VIDS[vid]; continue; } for (const c of parseVideo({ title, desc }, UNI, NAMES).calls) yt2.push({ tr, n, src: 'yt', sym: c.sym, pub, vid, bull: c.bull ? 1 : 0, ...(c.en ? { en: c.en } : {}), ...(c.tg ? { tg: c.tg } : {}), ...(c.st ? { st: c.st } : {}), tt: title.slice(0, 90) }); }
+  const strictTitle = (c) => parseVideo({ title: c.tt || '' }, UNI, NAMES).calls.some(x => x.sym === c.sym);
+  const base = [...old, ...add].filter(c => c.tr && c.sym && c.pub && !(c.src === 'yt' && cachedCh.has(c.tr)) && !((c.src === 'yt' || c.src === 'rss') && !strictTitle(c)));
+  const seenK = new Set(), merged = []; for (const c of [...yt2, ...base]) { const k = c.tr + '|' + c.sym + '|' + c.vid; if (seenK.has(k)) continue; seenK.add(k); merged.push(c); }
+  const all = dedupeCalls(merged), meta = {};
+  log('calls after strict re-extraction: ' + all.length + ' (' + yt2.length + ' from ' + cachedCh.size + ' cached channels; ' + base.filter(c => c.src === 'yt').length + ' title-only YouTube calls kept of ' + [...old, ...add].filter(c => c.src === 'yt' && !cachedCh.has(c.tr)).length + ')');
+  fs.writeFileSync(FC + '/videos.json.gz', zlib.gzipSync(JSON.stringify(VIDS)));
   for (const [id, c] of Object.entries(state.channels)) meta['yt:' + id] = { name: c.name, H: c.H, hFrom: c.hFrom, src: 'YouTube', subs: c.subs, url: 'https://www.youtube.com/channel/' + id, excluded: !!c.nonUS };
   for (const [u, c] of Object.entries(state.st.users)) meta['st:' + u] = { name: 'StockTwits ' + u, H: 20, hFrom: 'default (StockTwits states no hold)', src: 'StockTwits', followers: c.followers, url: 'https://stocktwits.com/' + u };
   const SRC = { yt: ['YouTube', 20], st: ['StockTwits', 20], cg: ['US Congress', 20], '13f': ['SEC 13F fund', 60], rss: ['Newsletter', 20] };
@@ -352,13 +402,7 @@ async function main() {
     return { tr, name: m.name, src: m.src || (tr.startsWith('st:') ? 'StockTwits' : 'YouTube'), url: m.url, subs: m.subs, H, hFrom: m.hFrom, calls: rows.length, first: ds[0], last: ds[ds.length - 1], level: j.level, why: j.why, atH: j, horizons: hz, withExits }; });
   const rank = { FOLLOW: 0, FADE: 1, 'NO EDGE': 2, WATCH: 3 };
   traders.sort((a, b) => rank[a.level] - rank[b.level] || (b.atH.t ?? -99) - (a.atH.t ?? -99) || b.calls - a.calls);
-  // LUCK BAR FOR FOLLOW (main session, 23 Oct, stricter only): many traders are screened, so a FOLLOW must clear the bar for that many
-  // tries, as the league does: block t >= max(2.5, zInv(0.05 / judged)). Below it, the trader stays WATCH ('could be luck'). FADE is unchanged
-  // (avoiding a source is the safe side).
-  { const J = traders.filter(t => t.level !== 'WATCH').length, erfc0 = (x) => { const z = Math.abs(x), t = 1 / (1 + 0.5 * z), r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277))))))))); return x >= 0 ? r : 2 - r; },
-      zInv = (p) => { let lo = 0, hi = 10; for (let k = 0; k < 60; k++) { const m = (lo + hi) / 2; if (0.5 * erfc0(m / Math.SQRT2) > p) lo = m; else hi = m; } return (lo + hi) / 2; }, BAR = Math.max(T_BAR, zInv(0.05 / Math.max(1, J)));
-    globalThis.FOLLOW_BAR = +BAR.toFixed(2);
-    for (const t of traders) if (t.level === 'FOLLOW' && !((t.atH && t.atH.tBlock) >= BAR || (t.tBlock >= BAR))) { t.level = 'WATCH'; t.why = 'passed every check but the luck bar for ' + J + ' traders screened (block t ' + BAR.toFixed(2) + ' needed): could be luck, kept on watch'; } }
+  const FOLLOW_BAR = +applyLuckBar(traders).toFixed(2);   // luck bar for FOLLOW (main session, 23 Oct); see applyLuckBar
   const judged = traders.filter(t => t.level !== 'WATCH').length, count = (l) => traders.filter(t => t.level === l).length;
   const pc = (x) => x === null || x === undefined ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
   const recordLine = (t) => { const a = t.atH; return a.n + ' calls on ' + a.days + ' days (' + (t.first || '?') + ' to ' + (t.last || '?') + '), at ' + t.H + ' session' + (t.H > 1 ? 's' : '') + ': ' + pc(a.avg) + ' a call after costs (median ' + pc(a.median) + '), ' + Math.round((a.win || 0) * 100) + '% won, vs the average stock ' + pc(a.vsAvgStock) + ' (t ' + (a.t ?? 'n/a') + (a.blocks ? ', block t ' + (a.tBlock ?? 'n/a') + ' over ' + a.blocks + ' blocks' : '') + '), vs S&P ' + pc(a.vsSpy) + ', without his 2 best ' + pc(a.noBest2) + ', worst ' + pc(a.worst); };
@@ -366,6 +410,8 @@ async function main() {
   // ---- new calls of FOLLOW traders (entry session not in the data yet) ----
   const follow = new Set(traders.filter(t => t.level === 'FOLLOW').map(t => t.tr)), lastClose = (sym) => { const b = barsOf(sym); if (!b) return null; for (let k = T - 1; k >= Math.max(0, T - 5); k--) if (b.c[k] > 0) return +b.c[k].toFixed(4); return null; };
   const HAL = J('data/halal.json', {}) || {}, todayCalls = pending.filter(c => follow.has(c.tr) && now - Date.parse(c.pub) < 4 * 864e5).map(c => { const t = traders.find(x => x.tr === c.tr); return { trader: t.name, source: t.src, tr: c.tr, sym: c.sym, pub: c.pub, title: c.tt, H: t.H, st: c.st || null, tg: c.tg || null, last: lastClose(c.sym), halal: (HAL[c.sym] && HAL[c.sym].s) || 'unknown', record: t.record }; });
+  { const fadeNames = Object.fromEntries(traders.filter(t => t.level === 'FADE').map(t => [t.tr, t.name])), FA = fadeAvoid(all.filter(c => fadeNames[c.tr]), fadeNames, D);
+    fs.writeFileSync('data/follow-fade.json', JSON.stringify({ at: new Date(now).toISOString(), asOf: D[T - 1] || null, rule: 'buy calls of FADE traders, avoid for 20 sessions after the entry (read by scan.mjs planCands)', avoid: FA }, null, 1)); log('FADE avoid list: ' + Object.keys(FA).length + ' stocks'); }
   fs.writeFileSync(TODAY, JSON.stringify({ at: new Date(now).toISOString(), asOf: D[T - 1] || null, rule: 'new buy calls of FOLLOW traders (tier 2); scan.mjs gates them (halal, lottery, filings) before ACTIONS', calls: todayCalls }, null, 1));
   const ytCalls = all.filter(c => c.src === 'yt').length, stCallsN = all.filter(c => c.src === 'st').length;
   const out = { generatedAt: new Date(now).toISOString(), mode: MODE, preRegistered: '2026-10-23', asOf: D[T - 1] || null, pricesFrom: D[0] || null, priceSource: fromStudy ? 'study cache (whole market, dead stocks kept) + recent Massive days' : 'Massive grouped daily (own cache)',
@@ -374,7 +420,7 @@ async function main() {
     unreached: { X: 'needs data: X API read access is paid (Basic tier, about 200 USD a month); with a bearer token in an X_BEARER secret, the users/:id/tweets endpoint gives the same dated calls.', Reddit: 'needs data: the Reddit API needs an app the owner registers (reddit.com/prefs/apps, script type, free for personal non-commercial use); with REDDIT_ID / REDDIT_SECRET secrets, /user/<name>/submitted gives dated posts.', Discord: 'needs data: Discord has no public read API; a bot can read only servers that invite it (the owner would need admin consent in each trading server).', TikTok: 'needs data: TikTok’s Research API is for approved academic researchers only; no other official read access to videos.' , Kinfo: 'not reached: Kinfo (broker-verified trader journals) has no public API; its leaderboards are inside the app behind an account, so reading them would need a login. Unlock: Kinfo would have to grant API or export access.' },
     excludedNonUS: [...excluded].sort(), correction: 'after the first run (23 Oct 2026, stricter only): FOLLOW also needs block t >= 2.5 over non-overlapping H-session blocks (FADE block t <= -2.5), and channels about non-US markets are left out',
     screened: traders.length, judged, counts: { FOLLOW: count('FOLLOW'), FADE: count('FADE'), 'NO EDGE': count('NO EDGE'), WATCH: count('WATCH') },
-    luck: { judged, tBar: T_BAR, followBar: globalThis.FOLLOW_BAR, followByLuckAtMost: +luckExpected(judged, T_BAR).toFixed(2), fadeByLuckAtMost: +luckExpected(judged, T_BAR).toFixed(2), note: 'with ' + judged + ' traders judged, about ' + luckExpected(judged, T_BAR).toFixed(1) + ' would reach t 2.5 by luck alone (the half and cost checks make it fewer)' },
+    luck: { judged, tBar: T_BAR, followBar: FOLLOW_BAR, followByLuckAtMost: +luckExpected(judged, T_BAR).toFixed(2), fadeByLuckAtMost: +luckExpected(judged, T_BAR).toFixed(2), note: 'with ' + judged + ' traders judged, about ' + luckExpected(judged, T_BAR).toFixed(1) + ' would reach t 2.5 by luck alone (the half and cost checks make it fewer)' },
     calls: { total: all.length, scored, pending: pending.length, noPrice },
     traders: traders.map(t => ({ ...t, horizons: Object.fromEntries(Object.entries(t.horizons).map(([k, v]) => [k, { n: v.n, days: v.days, avg: v.avg, median: v.median, win: v.win, vsAvgStock: v.vsAvgStock, vsSpy: v.vsSpy, t: v.t }])) })) };
   fs.writeFileSync(BOARD, JSON.stringify(out));
