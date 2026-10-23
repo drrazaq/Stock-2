@@ -385,6 +385,30 @@ jobs:
         with:
           path: cat-cache
           key: cat-cache-${{ github.run_id }}
+      # AGENT A LAB (pre-registered 23 Oct 2026: A-ROT1 / A-ROT2 halal fund rotation, A-SWR1 switch vs holding, A-E1W1 E1 on the whole
+      # market; first run frozen 23 Oct, so Sunday runs are MONITORING only). Same prices; own Actions cache (fund bars, Nasdaq calendar).
+      # Writes data/rot-today.json (this month's rotation holdings; ACTIONS only if a version is TRADABLE SMALL or PROVEN).
+      - uses: actions/cache/restore@v4
+        if: success() || failure()   # run even if an earlier study step failed
+        with:
+          path: a-cache
+          key: a-cache-${{ github.run_id }}
+          restore-keys: a-cache-
+      - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
+        continue-on-error: true
+        timeout-minutes: 60
+        run: |
+          set -o pipefail
+          node agent-a-lab.mjs 2>&1 | tee -a run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          A_MINUTES: '40'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: a-cache
+          key: a-cache-${{ github.run_id }}
       # CHAIN DECODER (owner, 23 Oct 2026: "follow the source"; pre-registered as CHAIN-MOM1 / CHAIN-DEMAND1 / CHAIN-LAG1 / CHAIN-READ1, run
       # once as written): point-in-time chain graph from EDGAR (membership filings, major customers, material agreements), same prices;
       # writes the weekly hot-layer list read by ACTIONS and  chains  (buys only if a rule reached tier 2 or proven). Own Actions cache.
@@ -448,7 +472,7 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json data/tip-score.json data/gov-awards.json data/gov-awards2.json data/share-supply.json data/missed-runners.json data/orb-study.json data/ignition-missed-history.jsonl data/e16-absorption.json data/catalyst-lab.json data/catalyst-today.json data/chain-decoder.json data/chain-graph.json data/chain-today.json data/chain-decoder-error.json data/discovery2.json data/discovery2-today.json"
+          FILES="data/agent-a-lab.json data/rot-today.json data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json data/tip-score.json data/gov-awards.json data/gov-awards2.json data/share-supply.json data/missed-runners.json data/orb-study.json data/ignition-missed-history.jsonl data/e16-absorption.json data/catalyst-lab.json data/catalyst-today.json data/chain-decoder.json data/chain-graph.json data/chain-today.json data/chain-decoder-error.json data/discovery2.json data/discovery2-today.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && ! git diff --quiet HEAD -- "$f" 2>/dev/null && mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done; true
           for f in $FILES; do [ -f "$f" ] && ! git ls-files --error-unmatch "$f" >/dev/null 2>&1 && mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done; true
