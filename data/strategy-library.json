@@ -13149,14 +13149,52 @@
    "family": "Untested angles",
    "name": "Pre-FOMC drift on SPUS",
    "explain": "Buy SPUS at the close of the session before each FOMC statement day (table FOMC), sell at the close of the statement day. Yardstick: SPUS over ALL 1-session windows of the same half. 0.8% cost as every rule (the 0.1% ETF-cost figure is information only). Source(s): Lucca & Moench (2015) The Pre-FOMC Announcement Drift, Journal of Finance 70(1); Kurov, Wolfe & Gilbert (2021) The disappearing pre-FOMC announcement drift, Finance Research Letters 40 (gone after 2015). Reported: S&P 500 rose ~49 bp in the 24 hours before announcements (1994-2011); essentially disappeared after 2015.",
-   "status": "pre-registered 2026-10-24 (angles lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "angles",
    "libraryCheck": "C7 (not tested: drift reported gone). Owner asked; tested once on SPUS",
    "sources": [
     "https://doi.org/10.1111/jofi.12196",
     "https://ideas.repec.org/a/eee/finlet/v40y2021ics1544612320315956.html"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 1 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (angles-core.mjs = the exact rule; one version; hold 1 sessions). 5-year one-shot by angles-lab.mjs, first complete verdict frozen in data/angles-lab.json; forward paper lane (data/angles-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "angles-lab.mjs -> data/angles-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     24,
+     22
+    ],
+    "avg": [
+     -0.0044,
+     -0.0091
+    ],
+    "stress": [
+     -0.0084,
+     -0.0131
+    ],
+    "edge": [
+     -0.005,
+     -0.01
+    ],
+    "vsOwn": [
+     0.003,
+     -0.002
+    ],
+    "noTop2": [
+     -0.0071,
+     -0.0112
+    ],
+    "tBlock": [
+     -1.5,
+     -3.79
+    ],
+    "win": [
+     0.3333,
+     0.1818
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.5 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.79 under 2.5 in the newer half"
+   }
   },
   {
    "id": "ANG-SPLIT",
@@ -13215,10 +13253,22 @@
    "family": "Untested angles",
    "name": "Halal funds: save monthly and buy only on a 5% dip, vs buy every month (extends HOLD-DIPFUND, which tested 10%)",
    "explain": "SPUS and HLAL: 1 unit of money each month at the first session. DCA buys at that open; DIP keeps it as cash and invests all saved cash at the next open after a close 5%+ under the highest close of the last 252 sessions. 0.4% per buy and on the final sale (hold-core.mjs dcaVsDip, dip = 0.05). Over the cache window and since the fund's first price.",
-   "status": "pre-registered 2026-10-24 (angles lab); information only (one path, no statistics)",
+   "status": "tested: information (one path per fund)",
    "agent": "angles",
    "libraryCheck": "HOLD-DIPFUND (10% dip: information, DIP +1.0% vs DCA in the window, -0.8% since inception for SPUS)",
-   "note": "Information only, never a buy signal."
+   "note": "Information only, never a buy signal.",
+   "result": {
+    "SPUS": {
+     "window": -0.0012,
+     "sinceFirst": -0.0046,
+     "from": "2019-12-18"
+    },
+    "HLAL": {
+     "window": 0.0005,
+     "sinceFirst": 0.0019,
+     "from": "2019-12-02"
+    }
+   }
   }
  ]
 }
