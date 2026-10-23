@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-10-23",
+ "updated": "2026-10-23T19:08:23.034Z",
  "strategies": [
   {
    "id": "T1",
@@ -4116,6 +4116,897 @@
    "explain": "Quarterly EPS +20%+ y/y and accelerating, positive last 2 quarters, multi-year EPS growth, within 10% of the 52-week high, RS top 30%; buy the pivot of a base on +40% volume, sell at -8%. The price half is DEC-VCP; the EPS half needs quarterly EPS from SEC (the value-lab cache has no EPS tags yet). Not built.",
    "status": "queued (decoded lane): needs SEC quarterly EPS",
    "agent": "decoded"
+  },
+  {
+   "id": "DEC2-DARVAS",
+   "family": "Decoded traders (batch 2)",
+   "name": "Darvas box: buy-stop over a confirmed box top at a 52-week high, stop under the box bottom, raised box by box",
+   "explain": "Nicolas Darvas (How I Made $2,000,000 in the Stock Market (1960)). RULE: Darvas box. Box top H = the highest high of t-25..t-1, made 4+ sessions ago with 3 lower highs after it, and a 52-week high; box bottom B = the lowest low after the top, made 4+ sessions ago (3 higher lows after it). Buy-stop at H (fills during t, at the open if it gaps over). Stop just under the box bottom (0.995 B). Trail: each new box that forms above (top confirmed by 3 lower highs, bottom by 3 higher lows) lifts the stop under its bottom. Max 504 sessions. No market filter. RECORD: self-reported (his 1960 book: about 2M USD in 18 months; press coverage, no statements). SOURCE: https://www.wallstreetmojo.com/darvas-box-theory. EARLIER TEST: T11 Darvas box (FAILED DISCOVERY): bought the next open after a tight base at a high and held a fixed 20 sessions with no stop; MIS-SPECIFIED (no box stop, no box-by-box trail).",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-WEIN",
+   "family": "Decoded traders (batch 2)",
+   "name": "Weinstein Stage 2: weekly close over the base on 2x volume, 30-week average turning up, Mansfield RS > 0; exit on a week close under the 30-week",
+   "explain": "Stan Weinstein (Secrets for Profiting in Bull and Bear Markets (1988)). RULE: Weinstein Stage 2 (weekly, on the week's last session). Week close above the 20-week resistance (highest high of the 100 sessions before the week) after the prior week closed at or under it; that base no deeper than 35%; 30-week average (150-day) not lower than 4 weeks ago; the week's average daily volume >= 2x the prior 10 weeks'; Mansfield RS > 0 (stock/SPY ratio above its 52-week average). MARKET: SPY above its 30-week average. Next open. Stop: lowest low of the 4 weeks before the breakout week (skipped if more than 15% away). Exit: next open after a WEEK close under the 30-week average. Max 504. RECORD: author / newsletter record (Professional Tape Reader), not audited. SOURCE: https://www.luxalgo.com/library/concept/weinstein-stage-analysis/. EARLIER TEST: none exact; T6 (first close above the 200-day after 6+ months below, FAILED DISCOVERY) is a different rule.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost. Market filter: SPY above its 30-week average; also run once without it (shown, not judged)."
+  },
+  {
+   "id": "DEC2-LIVER",
+   "family": "Decoded traders (batch 2)",
+   "name": "Livermore pivotal point: close through the prior pivot after a 10-35% natural reaction, on volume; out if it falls back under the pivot",
+   "explain": "Jesse Livermore (How to Trade in Stocks (1940)). RULE: Livermore pivotal point (continuation). Close > 50-day > 200-day; pivotal point P = the highest close of t-60..t-6; a natural reaction since then of 10-35% (lowest close after P); yesterday's close at or under P, today's close above it on volume >= 1.5x vavg50. Next open. Exit at the next open after a close back under P (pivot failed) or after a reaction from the highest close since entry larger than the setup's natural reaction (at least 10%). Max 252. RECORD: historical, anecdotal (1907 and 1929 fortunes, later bankruptcies). SOURCE: https://www.luxalgo.com/library/concept/livermore-pivotal-point/. EARLIER TEST: none.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-TURT20",
+   "family": "Decoded traders (batch 2)",
+   "name": "Turtle System 1: 20-day breakout, 2N stop, units at +1/2 N, exit under the 10-day low, skip after a winning breakout",
+   "explain": "Richard Dennis / the Turtles (Curtis Faith, The Original Turtle Trading Rules (2003)). RULE: Turtle System 1. Buy-stop at the prior 20-day high (fills during t). N = 20-day Wilder ATR. Stop 2N under the last unit. Add a unit (equal money) at each close 1/2 N above the last unit, up to 4 units (the Turtles add intraday at the level; a close is the daily-bar stand-in). Exit: a trade under the prior 10-day low (intraday). SKIP RULE: skip a signal if the last System-1 breakout of that stock (taken or skipped) was a winner. No market filter. RECORD: real but FUTURES (Dennis and the Turtles, 1980s; reported via Faith and Covel), not stocks. SOURCE: https://www.mql5.com/en/articles/23448. EARLIER TEST: T2/T3 (1-year high, fixed holds, FAILED DISCOVERY) are not the Turtle rule; MIS-SPECIFIED as a Turtle test (no 2N stop, no 10/20-day exit, no units).",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-TURT55",
+   "family": "Decoded traders (batch 2)",
+   "name": "Turtle System 2: 55-day breakout, 2N stop, units at +1/2 N, exit under the 20-day low",
+   "explain": "Richard Dennis / the Turtles (Curtis Faith, The Original Turtle Trading Rules (2003)). RULE: Turtle System 2: 55-day breakout, exit under the prior 20-day low, same N, 2N stop and units; no skip rule. RECORD: real but FUTURES (Dennis and the Turtles). SOURCE: https://www.mql5.com/en/articles/23448. EARLIER TEST: as DEC2-TURT20.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-ZANGER",
+   "family": "Decoded traders (batch 2)",
+   "name": "Zanger breakout: base high taken on 1.5x volume within 5%, 7% stop, out if no day-one acceleration, 25% sold at +15%, rest on the 21-day EMA",
+   "explain": "Dan Zanger (financialwisdomtv.com/post/dan-zanger). RULE: Zanger chart-pattern breakout: close > 50-day > 200-day, up 30%+ in 126 sessions; a 20-session base no deeper than 20%; close above the base high (not more than 5% above) on volume >= 1.5x vavg50, yesterday at or under it. Buy the close. Stop just under the breakout point (0.99 x base high), at most 7% away. If day 2 does not close above the buy price: sell its close (\"no acceleration on day one\"). Sell 25% at +15%. Rest: next open after a close under the 21-day EMA. Max 252. RECORD: self-reported (about 10k USD to 18M USD 1998-2000; an audit letter is cited but not published). SOURCE: https://www.financialwisdomtv.com/post/dan-zanger. EARLIER TEST: T11 / T12 / I3 (bases and breakouts with fixed 10-20 session holds, FAILED DISCOVERY): MIS-SPECIFIED (no 7% stop, no day-one rule, no partial).",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-IBD",
+   "family": "Decoded traders (batch 2)",
+   "name": "IBD 85-85 (price half) base breakout with O'Neil sell rules: 8% stop, take 20%, but hold 8 weeks if +20% came within 3 weeks",
+   "explain": "William O'Neil / IBD (How to Make Money in Stocks; IBD sell rules). RULE: IBD 85-85 (price half; the EPS rating needs data) + O'Neil base breakout + O'Neil sell rules. Relative strength top 15%; 8-week base (t-40..t-1) 5-33% deep after a prior 30%+ advance; close above the base high, within 5%, on volume >= 1.4x vavg50. MARKET: SPY above its 50-day. Buy the close. Stop 8%. Sell all at a close 20%+ above cost, EXCEPT when the +20% came within 15 sessions: then hold to the close of session 40 (8 weeks) with the stop at cost. Max 120. RECORD: AAII CAN SLIM screen (tracked paper, +19.2% a year since 1998, no costs); O'Neil's own record not audited. SOURCE: https://dutchuncles.in/academy/the-8-week-hold-rule-how-can-it-double-the-returns/. EARLIER TEST: T1 (6-month RS leaders, tested: not proven) and DEC-VCP (REJECTED) cover parts; the O'Neil sell rules (20-25% profit, 8-week hold) were never tested.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost. Market filter: SPY above its 50-day average; also run once without it (shown, not judged)."
+  },
+  {
+   "id": "DEC2-BBSQ",
+   "family": "Decoded traders (batch 2)",
+   "name": "Bollinger squeeze: 6-month low bandwidth, close over the upper band; parabolic SAR exit",
+   "explain": "John Bollinger (Bollinger on Bollinger Bands (2001), Method I). RULE: Bollinger squeeze (Method I): BandWidth (4 sd / 20-day average) made a 125-session low within the last 5 sessions; today's close above the upper band, yesterday's not. Next open. Exit: Wilder parabolic SAR (0.02 step, 0.20 max), started at the lowest low of t-4..t, as an intraday stop. Max 252. RECORD: none (indicator author; no trading record). SOURCE: https://www.luxalgo.com/library/concept/bollinger-squeeze/. EARLIER TEST: I4 coil (tight range on low volume, hold 20, FAILED DISCOVERY): MIS-SPECIFIED (no band break, fixed hold instead of the SAR exit).",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-KELT",
+   "family": "Decoded traders (batch 2)",
+   "name": "Keltner 10-day rule: buy over the upper band, out under the lower band",
+   "explain": "Chester Keltner (How to Make Money in Commodities (1960)). RULE: Keltner 10-day rule (1960): middle = 10-day average of (h+l+c)/3, bands +/- the 10-day average range. Buy-stop at yesterday's upper band (fills during t). Exit: a trade under the lower band (it moves with the band). Max 252. RECORD: none (1960 commodity rule). SOURCE: https://en.wikipedia.org/wiki/Keltner_channel. EARLIER TEST: none.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-GOLDX",
+   "family": "Decoded traders (batch 2)",
+   "name": "Golden cross with filters (rising 200-day, close over the 50-day); out on the death cross",
+   "explain": "practitioner classic (T7 in the library (never built)). RULE: Golden cross with filters: the 50-day crosses above the 200-day; the 200-day higher than 20 sessions ago; close above the 50-day. Next open. Exit at the next open after the 50-day closes under the 200-day (death cross). Max 504. RECORD: none (practitioner classic). SOURCE: library T7. EARLIER TEST: T7 golden cross: queued, never built.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-ICHI",
+   "family": "Decoded traders (batch 2)",
+   "name": "Ichimoku cloud breakout (tenkan > kijun, chikou up, green cloud ahead); out under the kijun",
+   "explain": "Goichi Hosoda (Ichimoku) (Ichimoku Kinko Hyo, standard rules). RULE: Ichimoku cloud breakout: close above the plotted cloud (spans from 26 sessions ago), yesterday's not; tenkan > kijun; close above the close 26 sessions ago (chikou); the forward cloud green. Next open. Exit next open after a close under the kijun. Max 504. RECORD: none public. SOURCE: https://doc.stocksharp.com/en/api-examples/0011_Ichimoku_Kumo_Breakout. EARLIER TEST: none.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-APPEL",
+   "family": "Decoded traders (batch 2)",
+   "name": "Appel two-MACD: buy MACD(8,17) over its signal, sell MACD(12,25) under its signal",
+   "explain": "Gerald Appel (Technical Analysis: Power Tools for Active Investors (2005)). RULE: Gerald Appel's two-MACD system: buy when MACD(8,17) crosses above its 9-period signal; sell (next open) when MACD(12,25) crosses under its 9-period signal. Max 252. RECORD: newsletter record (Systems and Forecasts), not verified here. SOURCE: https://amibroker.com/guide/t_macd.html. EARLIER TEST: none.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-POCKET",
+   "family": "Decoded traders (batch 2)",
+   "name": "Pocket pivot at the 10-day line; O'Neil-disciple 10-day / 7-week sell rule",
+   "explain": "Gil Morales & Chris Kacher (Trade Like an O'Neil Disciple (2010)). RULE: Kacher & Morales pocket pivot: up close; volume above the largest down-day volume of the prior 10 sessions; low within 2% of the 10-day average and close at or above it, not more than 5% above; close > 50-day > 200-day; close in the top half. Buy the close. Stop: the pivot-day low, at most 8%. Sell (O'Neil-disciple rule): after a close under the 10-day line, sell if the next session trades under that day's low; if the stock has not closed under the 10-day for 35 sessions (7 weeks) the 50-day line takes over the same role. Max 252. RECORD: self-reported (Kacher and Morales, 2005-2009 claims). SOURCE: https://www.luxalgo.com/library/concept/pocket-pivot/. EARLIER TEST: none.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-BGU",
+   "family": "Decoded traders (batch 2)",
+   "name": "Buyable gap-up (0.75 ATR gap on 1.5x volume), stop at the gap-day low, 10-day / 7-week sell rule",
+   "explain": "Gil Morales & Chris Kacher (Trade Like an O'Neil Disciple (2010)). RULE: Kacher & Morales buyable gap-up: open >= prior close + 0.75 x 40-day ATR; volume >= 1.5x vavg50; close above the prior close; close above a 200-day that is higher than 30 sessions ago. Buy the close. Stop: the gap-day low. Sell rule as POCKET. RECORD: self-reported (Kacher and Morales). SOURCE: https://scan.stockcharts.com/discussion/comment/2736/. EARLIER TEST: I2 power gap (FAILED DISCOVERY): fixed 5-20 session hold, any stock, no gap-day-low stop: MIS-SPECIFIED.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-WEDGE",
+   "family": "Decoded traders (batch 2)",
+   "name": "Kell wedge pop: gap back over the 10/20 EMAs after a tight pullback; half at exhaustion, rest on the 20 EMA",
+   "explain": "Oliver Kell (traderlion.com (Kell, MU wedge pop)). RULE: Oliver Kell wedge pop: in the last 5 sessions a close under the 10 or 20-day EMA; those 5 sessions within 2x ADR; today gaps over yesterday's high and closes above both EMAs, above its open, on volume above vavg50; close above the 200-day. Next open. Stop: the pop-day low (skipped if more than 10% away). Sell half at a close 20%+ above the 10-day EMA (exhaustion extension); rest at the next open after a close under the 20-day EMA. Max 252. RECORD: competition-verified trader (Kell, USIC 2020 +941%); the rule is from his teaching, not audited. SOURCE: https://traderlion.com/profile/oliver-kell/mu-wedge-pop/. EARLIER TEST: DEC-PB (REJECTED) is his EMA crossback, a different entry.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-MINTT",
+   "family": "Decoded traders (batch 2)",
+   "name": "Minervini trend template alone, 25% trailing stop",
+   "explain": "Mark Minervini (Trade Like a Stock Market Wizard (2013)). RULE: Minervini trend template alone: the first day all template conditions hold (batch-1 trendTemplate, RS top 30%) after a day they did not. Next open. Exit: 25% trailing stop under the highest close since entry. Max 504. No market filter. RECORD: competition-verified trader (Minervini, USIC 2021 +334.8%); the template alone is not his full method. SOURCE: https://actionalerts.substack.com/p/using-mark-minervinis-trend-template. EARLIER TEST: T4 full uptrend stack (FAILED DISCOVERY): fixed 20-session hold, not a 25% trail: MIS-SPECIFIED.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-STINE",
+   "family": "Decoded traders (batch 2)",
+   "name": "Stine superstock: small share count, new high out of a flat year on 3x volume; half at +100%, rest on the 50-day",
+   "explain": "Jesse Stine (Insider Buy Superstocks (2013)). RULE: Jesse Stine \"superstock\" traits: shares outstanding (SEC, point in time) <= 30M; a new 52-week closing high out of a flat year (t-252..t-22 high/low <= 1.6); volume >= 3x vavg50; close in the top half. Next open. Stop 15%. Sell half at +100%; rest at the next open after a close under the 50-day. Max 504. RECORD: self-reported (book: about 46k USD to 6.8M USD 2008-2010, not audited). SOURCE: https://www.tradingview.com/chart/AOI/Wl6SZ9WZ-Is-Alliance-One-a-Jesse-C-Stine-SuperStock. EARLIER TEST: none.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-HOLYG",
+   "family": "Decoded traders (batch 2)",
+   "name": "Raschke Holy Grail: ADX>30 trend, first touch of the 20 EMA, buy over the touch bar, target the swing high",
+   "explain": "Linda Raschke (Street Smarts (1995)). RULE: Raschke Holy Grail: the recent swing high (highest high of t-10..t-1) came with ADX(14) > 30 and rising, +DI > -DI; today is the first touch of the 20-day EMA. Buy-stop at today's high for 1 session. Stop: today's low. Target: the swing high. Max 20 sessions (our cap). RECORD: real CTA record (Raschke, LBR Group; Market Wizards), but FUTURES. SOURCE: https://tradingsetupsreview.com/the-holy-grail-trading-setup. EARLIER TEST: T5 pullback in an uptrend (FAILED DISCOVERY): fixed hold, no ADX, no swing-high target: MIS-SPECIFIED.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-8020",
+   "family": "Decoded traders (batch 2)",
+   "name": "Raschke 80-20: wide reversal-down day, next day opens under its low and trades back through it; 2-day hold",
+   "explain": "Linda Raschke (Street Smarts (1995)). RULE: Raschke 80-20: yesterday opened in the top 20% of its range and closed in the bottom 20%; today opens under yesterday's low and trades back up to it (buy-stop at yesterday's low). Stop: today's low (from day 2). Sell the close of day 2. RECORD: real CTA record (Raschke), but FUTURES and intraday. SOURCE: https://www.antoinebuteau.com/lessons-from-linda-bradford-raschke/. EARLIER TEST: M4 bear trap (FAILED DISCOVERY): fixed 10-session hold; related, not the same rule.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-NR7ID",
+   "family": "Decoded traders (batch 2)",
+   "name": "Crabel NR7 inside day breakout, stop at its low, out at the close",
+   "explain": "Toby Crabel (Day Trading with Short Term Price Patterns (1990)). RULE: Crabel NR7 inside day: today's range is the narrowest of 7 and inside yesterday's. Buy-stop at today's high for 1 session; stop at today's low; sell at the close of the breakout day. RECORD: institutional (Crabel Capital), rules not disclosed; the book is a study of patterns. SOURCE: https://www.tradingsetupsreview.com/inside-daynr4. EARLIER TEST: I4 coil (FAILED DISCOVERY) related; no breakout entry was tested.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-LWVB",
+   "family": "Decoded traders (batch 2)",
+   "name": "Larry Williams volatility breakout (open + 0.5 range), first profitable open",
+   "explain": "Larry Williams (Long-Term Secrets to Short-Term Trading (1999)). RULE: Larry Williams volatility breakout: yesterday closed above its 20-day average; buy-stop at today's open + 0.5 x yesterday's range. Stop one range under the fill. Exit: the first profitable open (bail-out), else the close of day 5. RECORD: competition record in FUTURES (Williams, 1987 Robbins World Cup +11,376%). SOURCE: https://www.luxalgo.com/library/concept/volatility-breakout/. EARLIER TEST: none.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-RSI2",
+   "family": "Decoded traders (batch 2)",
+   "name": "Connors RSI(2) < 5 above the 200-day, out on a close over the 5-day average",
+   "explain": "Larry Connors (Short Term Trading Strategies That Work (2008)). RULE: Connors RSI(2): close above the 200-day, RSI(2) < 5. Buy the close; sell the close when it closes above the 5-day average. No stop (Connors). Max 60. RECORD: published backtests only (no live record). SOURCE: https://www.luxalgo.com/library/concept/rsi-2/. EARLIER TEST: A-SW1 (tested: rejected) bought the NEXT OPEN at RSI(2) < 10 with a 5-session cap; Connors buys the CLOSE at RSI(2) < 5 with no cap: partly MIS-SPECIFIED.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-TPS",
+   "family": "Decoded traders (batch 2)",
+   "name": "Connors TPS: RSI(2) < 25 twice, scale in 10/20/30/40% on lower closes, out at RSI(2) > 70",
+   "explain": "Larry Connors (High Probability ETF Trading (2009)). RULE: Connors TPS: close above the 200-day, RSI(2) < 25 two days running: buy 10% at the close; add 20%, 30%, 40% at each later close under the last buy; sell everything at the close when RSI(2) > 70. No stop. Max 60. RECORD: published backtests only. SOURCE: https://wl6.wealth-lab.com/Forum/Posts/Connors-TPS-Strategy-40197. EARLIER TEST: none (scale-in never tested).",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-DBL7",
+   "family": "Decoded traders (batch 2)",
+   "name": "Connors Double 7s: 7-day closing low above the 200-day, out at a 7-day closing high",
+   "explain": "Larry Connors (Short Term Trading Strategies That Work (2008)). RULE: Connors Double 7s: close above the 200-day and at a 7-day closing low: buy the close; sell the close at a 7-day closing high. Max 60. RECORD: published backtests only (ETFs). SOURCE: https://strategyquant.com/blog/larry-connors-double-7-strategy-tested-on-spy-and-8-other-markets/. EARLIER TEST: A-SW4 (10-day low in a strong stock, hold 5, tested: rejected) related.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-H2",
+   "family": "Decoded traders (batch 2)",
+   "name": "Al Brooks second entry (H2) pullback to the 20 EMA, stop under the signal bar, 2R target",
+   "explain": "Al Brooks (Trading Price Action Trends (2012)). RULE: Al Brooks second entry (daily): 20-day EMA rising; a trend high in t-15..t-2; one failed up-attempt (H1) followed by a lower low; today a pullback bar near the EMA closing in its top half. Buy-stop at today's high for 1 session; stop at today's low; target 2R; max 10 sessions. RECORD: none public (educator). SOURCE: https://www.luxalgo.com/library/concept/bar-counting-h1-h2/. EARLIER TEST: A-SW3 (three lower highs and lows in an uptrend, tested: rejected) related.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-NISON",
+   "family": "Decoded traders (batch 2)",
+   "name": "Nison bullish engulfing / hammer at the 20-day low, confirmed by a close over its high; out under the pattern low or at resistance",
+   "explain": "Steve Nison (Japanese Candlestick Charting Techniques (1991)). RULE: Nison candle at support with confirmation: yesterday a bullish engulfing or hammer at the 20-day low (within 1%), after a close under the 20-day average; today closes above yesterday's high. Buy the close. Exit: next open after a close under the pattern low; target the prior 20-day high (resistance); max 20. RECORD: none (author / educator). SOURCE: https://therighttrader.com/learn/candlestick-patterns/bullish-engulfing. EARLIER TEST: none.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-WYCK",
+   "family": "Decoded traders (batch 2)",
+   "name": "Wyckoff spring: break under range support and close back inside; half at the range top, rest at the count target",
+   "explain": "Richard Wyckoff (Wyckoff method (spring), luxalgo.com library). RULE: Wyckoff spring: a 55-session range t-60..t-6, 8-30% high; in t-5..t a low under support (not more than 10% under); today closes back above support (today made the spring or yesterday closed under it). Next open. Stop 1% under the spring low. Sell half at the range top (stop to cost); rest at support + 2 range heights, or the next open after a close under the 50-day once the first target was hit. Max 126. RECORD: none (method, historical). SOURCE: https://www.luxalgo.com/library/concept/spring/. EARLIER TEST: M4 bear trap (FAILED DISCOVERY) and A-SMC3 liquidity sweep (tested: rejected) are related with fixed holds.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-GAPGO",
+   "family": "Decoded traders (batch 2)",
+   "name": "Gap and go (daily): 4%+ gap up in an uptrend, stop if the gap fills, out at the close",
+   "explain": "momentum day-trader classic (gap-and-go (daily approximation)). RULE: Gap and go (daily): yesterday above its 50-day; opens 4%+ above yesterday's close: buy the open; stop at yesterday's close (gap filled); sell the close. RECORD: none (day-trader folklore). SOURCE: library I5. EARLIER TEST: I5 gap and go 1 week (FAILED DISCOVERY): held 5 sessions with no gap-fill stop: MIS-SPECIFIED (it is a day trade).",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-GAPFILL",
+   "family": "Decoded traders (batch 2)",
+   "name": "Gap fill (long): 2%+ gap down above the 200-day, sell at the gap fill or the close",
+   "explain": "practitioner classic (gap-fill fade (long side)). RULE: Gap fill, long side: yesterday above its 200-day; opens 2%+ under yesterday's close: buy the open; sell at yesterday's close if reached (gap filled), else at the close. RECORD: none (folklore). SOURCE: library M10. EARLIER TEST: M10 gap-down recovery (FAILED DISCOVERY): fixed hold, no gap-fill target.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-TSOUP",
+   "family": "Decoded traders (batch 2)",
+   "name": "Turtle Soup Plus One: close under a 20-day low made 3+ days earlier, buy back through it next day",
+   "explain": "Linda Raschke / Larry Connors (Street Smarts (1995)). RULE: Raschke/Connors Turtle Soup Plus One: today closes under the prior 20-day low, which was made 3+ sessions earlier; buy-stop at that prior low for 1 session; stop under the lower of the two days' lows; sell the close of day 5. RECORD: real CTA record (Raschke), FUTURES. SOURCE: https://www.antoinebuteau.com/lessons-from-linda-bradford-raschke/. EARLIER TEST: A-SMC3 / M4 related (rejected / failed).",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-SANTA",
+   "family": "Decoded traders (batch 2)",
+   "name": "Santa Claus rally on SPY (last 5 sessions of December + first 2 of January)",
+   "explain": "Yale & Jeffrey Hirsch (Stock Trader's Almanac). RULE: Santa Claus rally (Hirsch, Stock Trader's Almanac), SPY only: buy the close before the last 5 sessions of December, sell the close of the 2nd January session. RECORD: almanac statistics (index, since 1950). SOURCE: https://www.nasdaq.com/articles/what-santa-claus-rally-and-has-it-arrived. EARLIER TEST: C5 (needs data: only 5 events in 5 years). Run anyway; expected TOO FEW CASES.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-TOM",
+   "family": "Decoded traders (batch 2)",
+   "name": "Turn of the month on SPY (second-to-last session to the 4th session)",
+   "explain": "Yale & Jeffrey Hirsch (Stock Trader's Almanac). RULE: Turn of the month (Hirsch), SPY only: buy the close of the second-to-last session of the month, sell the close of the 4th session of the new month. RECORD: almanac statistics; academic support (Lakonishok and Smidt 1988) on the index. SOURCE: Stock Trader's Almanac. EARLIER TEST: C1 turn of the month (FAILED DISCOVERY) bought EVERY stock: MIS-SPECIFIED (the almanac rule is the index).",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-FROGTRIG",
+   "family": "Decoded traders (batch 2)",
+   "name": "DEC-FROG basket member entered only on a QBO or PB trigger; 10-day-low trail or day 126",
+   "explain": "combination (outside review) (DEC-FROG + DEC-QBO / DEC-PB). RULE: Combination: a stock in the latest DEC-FROG basket (smooth 12-month leader), entered only on a DEC-QBO or DEC-PB trigger (their own entry); stop and trail = the 10-day low (intraday), or the close of day 126, whichever first. RECORD: combination of DEC-FROG (NOT PROVEN) and DEC-QBO / DEC-PB (REJECTED). SOURCE: outside review 23 Oct 2026. EARLIER TEST: new.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-CONTRACT",
+   "family": "Decoded traders (batch 2)",
+   "name": "8-K 1.01 contract, under 2B USD value, +4% close on 2x volume; stop the day low, trail the 10-day low",
+   "explain": "event + chart (outside review) (SEC 8-K item 1.01). RULE: 8-K item 1.01 (material agreement) reaching the market in t-2..t (SEC acceptance time, New York session); market value (SEC shares known 30 days earlier x close) < 2B USD; today closes 4%+ up on volume >= 2x vavg50; not up 100%+ in 21 sessions. Next open. Stop: today's low; trail: the 10-day low. Max 252. RECORD: none (outside review). SOURCE: outside review 23 Oct 2026. EARLIER TEST: C-QK1 (8-K 1.01 then 3 quiet days, tested: rejected) and E2 (8-K news, tested) differ: no small-cap, no +4% on 2x volume.",
+   "status": "live paper (decoded lane, batch 2) when its data is available",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-INSQ",
+   "family": "Decoded traders (batch 2)",
+   "name": "2+ insiders buy > 200k USD within 5 days in a B-FCF1 company; 15% stop, hold 63",
+   "explain": "event + quality (outside review) (SEC Form 4 + B-FCF1). RULE: Insider quality: 2+ different insiders' open-market buys (Form 4) filed within 5 days, together > 200k USD, the cluster completing on t (filing date); the company passes B-FCF1 (value-core.mjs fcfCheck) on t. Next open. Stop 15%. Hold 63. RECORD: academic support for opportunistic insider buys (Cohen, Malloy and Pomorski 2012). SOURCE: outside review 23 Oct 2026. EARLIER TEST: E3 insider cluster (tested: not proven) and C-INS2 (tested: rejected) had no size floor and no B-FCF1 quality check.",
+   "status": "live paper (decoded lane, batch 2) when its data is available",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-DL-L10-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop day low; trail 10-day low; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail L10, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-DL-L10-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop day low; trail 10-day low",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail L10, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-DL-E21-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop day low; trail 21-day EMA close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail E21, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-DL-E21-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop day low; trail 21-day EMA close",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail E21, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-DL-S50-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop day low; trail 50-day close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail S50, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-DL-S50-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop day low; trail 50-day close",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail S50, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-2A-L10-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop 2 ATR; trail 10-day low; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail L10, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-2A-L10-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop 2 ATR; trail 10-day low",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail L10, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-2A-E21-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop 2 ATR; trail 21-day EMA close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail E21, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-2A-E21-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop 2 ATR; trail 21-day EMA close",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail E21, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-2A-S50-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop 2 ATR; trail 50-day close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail S50, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-QBO-2A-S50-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO entry; stop 2 ATR; trail 50-day close",
+   "explain": "Exit set on the batch-1 DEC-QBO entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail S50, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-DL-L10-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop day low; trail 10-day low; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail L10, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-DL-L10-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop day low; trail 10-day low",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail L10, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-DL-E21-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop day low; trail 21-day EMA close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail E21, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-DL-E21-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop day low; trail 21-day EMA close",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail E21, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-DL-S50-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop day low; trail 50-day close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail S50, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-DL-S50-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop day low; trail 50-day close",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail S50, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-2A-L10-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop 2 ATR; trail 10-day low; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail L10, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-2A-L10-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop 2 ATR; trail 10-day low",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail L10, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-2A-E21-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop 2 ATR; trail 21-day EMA close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail E21, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-2A-E21-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop 2 ATR; trail 21-day EMA close",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail E21, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-2A-S50-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop 2 ATR; trail 50-day close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail S50, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-PB-2A-S50-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB entry; stop 2 ATR; trail 50-day close",
+   "explain": "Exit set on the batch-1 DEC-PB entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail S50, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-DL-L10-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop day low; trail 10-day low; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail L10, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-DL-L10-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop day low; trail 10-day low",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail L10, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-DL-E21-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop day low; trail 21-day EMA close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail E21, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-DL-E21-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop day low; trail 21-day EMA close",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail E21, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-DL-S50-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop day low; trail 50-day close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail S50, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-DL-S50-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop day low; trail 50-day close",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail S50, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-2A-L10-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop 2 ATR; trail 10-day low; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail L10, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-2A-L10-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop 2 ATR; trail 10-day low",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail L10, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-2A-E21-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop 2 ATR; trail 21-day EMA close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail E21, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-2A-E21-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop 2 ATR; trail 21-day EMA close",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail E21, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-2A-S50-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop 2 ATR; trail 50-day close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail S50, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-VCP-2A-S50-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 VCP entry; stop 2 ATR; trail 50-day close",
+   "explain": "Exit set on the batch-1 DEC-VCP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail S50, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-DL-L10-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop day low; trail 10-day low; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail L10, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-DL-L10-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop day low; trail 10-day low",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail L10, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-DL-E21-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop day low; trail 21-day EMA close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail E21, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-DL-E21-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop day low; trail 21-day EMA close",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail E21, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-DL-S50-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop day low; trail 50-day close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail S50, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-DL-S50-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop day low; trail 50-day close",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop DL, trail S50, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-2A-L10-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop 2 ATR; trail 10-day low; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail L10, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-2A-L10-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop 2 ATR; trail 10-day low",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail L10, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-2A-E21-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop 2 ATR; trail 21-day EMA close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail E21, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-2A-E21-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop 2 ATR; trail 21-day EMA close",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail E21, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-2A-S50-P",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop 2 ATR; trail 50-day close; half at 3R",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail S50, partial half at 3R. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-X-EP-2A-S50-N",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 EP entry; stop 2 ATR; trail 50-day close",
+   "explain": "Exit set on the batch-1 DEC-EP entry (outside review of 23 Oct: the batch-1 win rates matched the traders, the win SIZE did not). (48 versions) Exit set on the batch-1 entries QBO / PB / VCP / EP (their own entries, entry filters and skips unchanged). Stop DL = the day low (buy-stop entries: the entry-day low, from day 2, booked as stopped at 1 ADR if the entry day fell more than 1 ADR; open entries: the signal-day low) or 2A = 2 x 14-day ATR under the fill. Trail L10 = intraday under the 10-day low, E21 = next open after a close under the 21-day EMA, S50 = next open after a close under the 50-day. P = sell half at fill + 3R; N = no partial. Max 252. THIS VERSION: stop 2A, trail S50, partial none. One of 48 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-F-QBO-EXT10",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO with no entry more than 10% over the 20-day (own exit)",
+   "explain": "Champion filter on the batch-1 DEC-QBO rule (own entry and exit unchanged). (8 versions) Champion filters on the batch-1 rule with its OWN exit: EXT10/EXT20 skip a signal whose close is more than 10% / 20% above its 20-day average; STRONG adds the strong market filter (QQQ 10-day > 20-day, 20-day rising, more than 50% of liquid stocks above their 50-day, more 52-week highs than lows); ADD adds 50% once, at the first close 5%+ above the fill that is the highest close since entry (reported separately). THIS VERSION: EXT10. One of 8 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-F-QBO-EXT20",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO with no entry more than 20% over the 20-day (own exit)",
+   "explain": "Champion filter on the batch-1 DEC-QBO rule (own entry and exit unchanged). (8 versions) Champion filters on the batch-1 rule with its OWN exit: EXT10/EXT20 skip a signal whose close is more than 10% / 20% above its 20-day average; STRONG adds the strong market filter (QQQ 10-day > 20-day, 20-day rising, more than 50% of liquid stocks above their 50-day, more 52-week highs than lows); ADD adds 50% once, at the first close 5%+ above the fill that is the highest close since entry (reported separately). THIS VERSION: EXT20. One of 8 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-F-QBO-STRONG",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO with the strong market filter (own exit)",
+   "explain": "Champion filter on the batch-1 DEC-QBO rule (own entry and exit unchanged). (8 versions) Champion filters on the batch-1 rule with its OWN exit: EXT10/EXT20 skip a signal whose close is more than 10% / 20% above its 20-day average; STRONG adds the strong market filter (QQQ 10-day > 20-day, 20-day rising, more than 50% of liquid stocks above their 50-day, more 52-week highs than lows); ADD adds 50% once, at the first close 5%+ above the fill that is the highest close since entry (reported separately). THIS VERSION: STRONG. One of 8 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost. Market filter: strong market filter; also run once without it (shown, not judged)."
+  },
+  {
+   "id": "DEC2-F-QBO-ADD",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 QBO with add 50% to a winner (own exit)",
+   "explain": "Champion filter on the batch-1 DEC-QBO rule (own entry and exit unchanged). (8 versions) Champion filters on the batch-1 rule with its OWN exit: EXT10/EXT20 skip a signal whose close is more than 10% / 20% above its 20-day average; STRONG adds the strong market filter (QQQ 10-day > 20-day, 20-day rising, more than 50% of liquid stocks above their 50-day, more 52-week highs than lows); ADD adds 50% once, at the first close 5%+ above the fill that is the highest close since entry (reported separately). THIS VERSION: ADD. One of 8 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-F-PB-EXT10",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB with no entry more than 10% over the 20-day (own exit)",
+   "explain": "Champion filter on the batch-1 DEC-PB rule (own entry and exit unchanged). (8 versions) Champion filters on the batch-1 rule with its OWN exit: EXT10/EXT20 skip a signal whose close is more than 10% / 20% above its 20-day average; STRONG adds the strong market filter (QQQ 10-day > 20-day, 20-day rising, more than 50% of liquid stocks above their 50-day, more 52-week highs than lows); ADD adds 50% once, at the first close 5%+ above the fill that is the highest close since entry (reported separately). THIS VERSION: EXT10. One of 8 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-F-PB-EXT20",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB with no entry more than 20% over the 20-day (own exit)",
+   "explain": "Champion filter on the batch-1 DEC-PB rule (own entry and exit unchanged). (8 versions) Champion filters on the batch-1 rule with its OWN exit: EXT10/EXT20 skip a signal whose close is more than 10% / 20% above its 20-day average; STRONG adds the strong market filter (QQQ 10-day > 20-day, 20-day rising, more than 50% of liquid stocks above their 50-day, more 52-week highs than lows); ADD adds 50% once, at the first close 5%+ above the fill that is the highest close since entry (reported separately). THIS VERSION: EXT20. One of 8 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-F-PB-STRONG",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB with the strong market filter (own exit)",
+   "explain": "Champion filter on the batch-1 DEC-PB rule (own entry and exit unchanged). (8 versions) Champion filters on the batch-1 rule with its OWN exit: EXT10/EXT20 skip a signal whose close is more than 10% / 20% above its 20-day average; STRONG adds the strong market filter (QQQ 10-day > 20-day, 20-day rising, more than 50% of liquid stocks above their 50-day, more 52-week highs than lows); ADD adds 50% once, at the first close 5%+ above the fill that is the highest close since entry (reported separately). THIS VERSION: STRONG. One of 8 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost. Market filter: strong market filter; also run once without it (shown, not judged)."
+  },
+  {
+   "id": "DEC2-F-PB-ADD",
+   "family": "Decoded traders (batch 2)",
+   "name": "Batch-1 PB with add 50% to a winner (own exit)",
+   "explain": "Champion filter on the batch-1 DEC-PB rule (own entry and exit unchanged). (8 versions) Champion filters on the batch-1 rule with its OWN exit: EXT10/EXT20 skip a signal whose close is more than 10% / 20% above its 20-day average; STRONG adds the strong market filter (QQQ 10-day > 20-day, 20-day rising, more than 50% of liquid stocks above their 50-day, more 52-week highs than lows); ADD adds 50% once, at the first close 5%+ above the fill that is the highest close since entry (reported separately). THIS VERSION: ADD. One of 8 versions; all count toward the luck bar.",
+   "status": "live paper (decoded lane, batch 2)",
+   "agent": "decoded",
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost."
+  },
+  {
+   "id": "DEC2-GREEN",
+   "family": "Decoded traders (batch 2)",
+   "name": "GREEN",
+   "explain": "Greenblatt magic formula: needs EBIT and enterprise value point in time; this lab has prices only. Earlier test V6 (tested: not proven; 6-month version rejected).",
+   "status": "needs data",
+   "agent": "decoded",
+   "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
+  },
+  {
+   "id": "DEC2-OSH",
+   "family": "Decoded traders (batch 2)",
+   "name": "OSH",
+   "explain": "O'Shaughnessy trending value: needs a six-factor value composite (P/E, P/S, P/B, P/CF, EV/EBITDA, shareholder yield) point in time. Not in the lab data.",
+   "status": "needs data",
+   "agent": "decoded",
+   "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
+  },
+  {
+   "id": "DEC2-LYNCH",
+   "family": "Decoded traders (batch 2)",
+   "name": "LYNCH",
+   "explain": "Peter Lynch fast grower: needs EPS growth 20-25% a year and PEG; quarterly EPS point in time not loaded (same gap as DEC-CANSLIM).",
+   "status": "needs data",
+   "agent": "decoded",
+   "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
+  },
+  {
+   "id": "DEC2-CAMILLO",
+   "family": "Decoded traders (batch 2)",
+   "name": "CAMILLO",
+   "explain": "Chris Camillo social arbitrage: needs licensed historical social/attention data (same gap as DEC-SOC).",
+   "status": "needs data",
+   "agent": "decoded",
+   "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
+  },
+  {
+   "id": "DEC2-SPINOFF",
+   "family": "Decoded traders (batch 2)",
+   "name": "SPINOFF",
+   "explain": "Greenblatt spin-offs / post-bankruptcy: needs Form 10 / emergence dates mapped to tickers (E7 queued).",
+   "status": "needs data",
+   "agent": "decoded",
+   "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
+  },
+  {
+   "id": "DEC2-SHORT-CATALYST",
+   "family": "Decoded traders (batch 2)",
+   "name": "SHORT-CATALYST",
+   "explain": "High short interest + catalyst: needs a point-in-time short-interest history; no FINRA loader in the system yet (C-SI1 / C-SQZ1 queued).",
+   "status": "needs data",
+   "agent": "decoded",
+   "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
+  },
+  {
+   "id": "DEC2-EPS-REV",
+   "family": "Decoded traders (batch 2)",
+   "name": "EPS-REV",
+   "explain": "EPS estimate revisions: needs point-in-time estimate snapshots; the FMP history the system has is not as-of (C-REV1 logs our own snapshots from now).",
+   "status": "needs data",
+   "agent": "decoded",
+   "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
+  },
+  {
+   "id": "DEC2-ASIA-SUPPLIER",
+   "family": "Decoded traders (batch 2)",
+   "name": "ASIA-SUPPLIER",
+   "explain": "Asian supplier, same chain layer: needs customer-exposure data the system does not have.",
+   "status": "needs data",
+   "agent": "decoded",
+   "note": "Listed 23 Oct 2026 (decoded lane, batch 2); not built: the data it needs is not in the system."
   }
  ]
 }
