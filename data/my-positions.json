@@ -71,54 +71,60 @@
  "IESC": {
   "entry": 297,
   "since": "2026-10-12",
-  "kind": "quick",
-  "q": "rsi",
-  "key": "quick|2|5|2||1|10|rsi",
-  "maxHold": 5,
-  "stop": 222.75,
-  "test": {
-   "win": 0.7,
-   "net": 0.0261,
-   "n": 40,
-   "kind": "quick trade"
-  },
+  "kind": "manual",
+  "stop": 193.05,
   "lastAct": {
    "act": "HOLD",
-   "why": "its own rule",
-   "d": "2026-10-14"
+   "why": "switched to the 35% stop (owner)",
+   "d": "2026-10-23"
   },
   "own": true,
-  "exitFlag": {
-   "d": "2026-10-22",
-   "why": "CLOSED AT OR BELOW YOUR STOP 222.75."
-  }
+  "switched": {
+   "d": "2026-10-23",
+   "by": "owner (23 Oct, chat)",
+   "fromKind": "quick",
+   "fromStop": 222.75,
+   "fromKey": "quick|2|5|2||1|10|rsi",
+   "fromExitBelow": null,
+   "fromMaxHold": 5,
+   "test": {
+    "win": 0.7,
+    "net": 0.0261,
+    "n": 40,
+    "kind": "quick trade"
+   },
+   "why": "its entry rule is retired (lost on 20+ live trades); held from now as your own pick with the tested 35% stop"
+  },
+  "stopWhy": "the tested 35% disaster stop for your own picks (stop study, 18 Oct): tighter stops cost money on 5 years of buys"
  },
  "COHR": {
   "entry": 307,
   "since": "2026-10-12",
-  "kind": "entry",
-  "key": "pull|20|50|1.5||0||",
-  "maxHold": null,
-  "stop": 230.25,
-  "t1": null,
-  "t2": null,
-  "exitBelow": 291.85,
-  "test": {
-   "win": 0.529,
-   "net": 0.0621,
-   "n": 17,
-   "kind": "swing trade"
-  },
+  "kind": "manual",
+  "stop": 199.55,
   "lastAct": {
-   "act": "SELL ALL",
-   "why": "its tested exit",
-   "d": "2026-10-14"
+   "act": "HOLD",
+   "why": "switched to the 35% stop (owner)",
+   "d": "2026-10-23"
   },
-  "exitFlag": {
-   "d": "2026-10-22",
-   "why": "CLOSED AT OR BELOW YOUR STOP 230.25."
+  "own": true,
+  "switched": {
+   "d": "2026-10-23",
+   "by": "owner (23 Oct, chat)",
+   "fromKind": "entry",
+   "fromStop": 230.25,
+   "fromKey": "pull|20|50|1.5||0||",
+   "fromExitBelow": 291.85,
+   "fromMaxHold": null,
+   "test": {
+    "win": 0.529,
+    "net": 0.0621,
+    "n": 17,
+    "kind": "swing trade"
+   },
+   "why": "its entry rule is retired (lost on 20+ live trades); held from now as your own pick with the tested 35% stop"
   },
-  "own": true
+  "stopWhy": "the tested 35% disaster stop for your own picks (stop study, 18 Oct): tighter stops cost money on 5 years of buys"
  },
  "SYM": {
   "entry": 61.58,
