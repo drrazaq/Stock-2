@@ -1,16 +1,12 @@
 name: Options lab
 # The OPTIONS LANE (options-lab.mjs, pre-registered 23 Oct 2026 as OPT-LH1 / OPT-CAT1 / OPT-FOLLOW1 / OPT-UOA1): long calls only,
-# judged on real historical option prices (Alpaca daily option bars since Feb 2024; Alpha Vantage HISTORICAL_OPTIONS bid/ask when the
-# key allows it). Weekly on Saturday and on demand. The whole-market price cache is RESTORED READ ONLY from the Sunday study; only this
+# judged on real historical option prices (Alpaca daily option bars from about Jan 2024; Alpha Vantage options history is premium and the
+# repo key is free, see data/options-lab.json coverage). Weekly on Saturday and on demand. The whole-market price cache is RESTORED READ ONLY from the Sunday study; only this
 # lab's own option-price cache (opt-cache) is saved. Commits only its own output file and its own library entries.
 on:
   schedule:
     - cron: '0 12 * * 6'
   workflow_dispatch:
-    inputs:
-      mode:
-        description: 'run (default) or probe'
-        default: 'run'
 permissions:
   contents: write
 concurrency: options-lab
@@ -38,18 +34,23 @@ jobs:
           path: opt-cache
           key: opt-cache-${{ github.run_id }}
           restore-keys: opt-cache-
+      # V15 (LONGER HOLDS) picks of every monthly formation, from the same quality.mjs machinery (Q_PICKS: picks only, no verdict, no output)
       - shell: bash
-        timeout-minutes: 280
+        timeout-minutes: 60
         run: |
           set -o pipefail
-          node options-lab.mjs 2>&1 | tee run.log
+          mkdir -p opt-cache
+          Q_PICKS=opt-cache/v15-picks.json node quality.mjs 2>&1 | tail -5 | tee run.log || echo "V15 picks not written"
         env:
-          MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'run' }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+      - shell: bash
+        timeout-minutes: 220
+        run: |
+          set -o pipefail
+          node options-lab.mjs 2>&1 | tee -a run.log
+        env:
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
-          ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
-          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
-          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       - if: success() || failure()
         uses: actions/cache/save@v4
         with:

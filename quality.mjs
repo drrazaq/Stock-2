@@ -131,7 +131,11 @@ for (const [n] of VERS) for (const h of H) if (!(ONLY12.has(n) && h !== 252)) tr
 const dollarVol = (i, t) => { const b = i * T; let dv = 0; for (let k = t - 19; k <= t; k++) dv += C[b + k] * V[b + k]; return dv / 20; };   // 20-day traded value at purchase (size yardstick)
 const OWN = {}; for (const h of H) OWN[h] = { sum: new Float64Array(NS), n: new Int32Array(NS) };   // every liquid stock's forward return on every monthly day (same-stock-other-days yardstick)
 let lastRows = null, months = 0;
+// Q_PICKS (options lane, 23 Oct 2026): writes every formation day's F-SCORE UPTREND (V15) picks, the same choice as below, and stops
+// before any verdict or output file. Nothing else changes when it is not set.
+const QP = [];
 for (let t = 21; t < T - 1; t += 21) { const rows = scoreDay(t); if (rows.length < 100) continue; months++; if (t + 21 >= T - 1) lastRows = rows;
+  if (env.Q_PICKS) { const top = rows.filter(x => x.fsu !== null).sort((a, b) => b.fsu - a.fsu), hi = top.filter(x => x.fsu >= 8); QP.push({ d: D[t], syms: (hi.length >= 10 ? hi : top.slice(0, 10)).map(x => SYMS[x.i]) }); if (t + 21 < T - 1) continue; }
   for (const h of H) { if (t + h >= T) continue; const all = []; for (const x of rows) { const g = fwd(x.i, t, h); if (g !== null && isFinite(g)) { all.push(g); OWN[h].sum[x.i] += g; OWN[h].n[x.i]++; } } if (all.length < 50) continue; const ctrl = mean(all);
     const downAll = rows.filter(x => x.down).map(x => fwd(x.i, t, h)).filter(x => x !== null && isFinite(x)), c2 = downAll.length >= 20 ? mean(downAll) : null;
     const sb = spyI !== undefined ? spyI * T : null, spy = sb !== null && O[sb + t + 1] > 0 && C[sb + t + h] > 0 ? C[sb + t + h] / O[sb + t + 1] - 1 : null;
@@ -141,6 +145,7 @@ for (let t = 21; t < T - 1; t += 21) { const rows = scoreDay(t); if (rows.length
 // same-stock-other-days yardstick: the average forward return of the SAME stocks on their other monthly days (the picked months taken out)
 const ownYard = (a, h) => { const pickS = {}, pickN = {}; for (const x of a) { pickS[x.i] = (pickS[x.i] || 0) + x.g; pickN[x.i] = (pickN[x.i] || 0) + 1; }
   const v = []; for (const x of a) { const n = OWN[h].n[x.i] - pickN[x.i]; if (n > 0) v.push((OWN[h].sum[x.i] - pickS[x.i]) / n); } return v.length ? mean(v) - COST : null; };
+if (env.Q_PICKS) { fs.writeFileSync(env.Q_PICKS, JSON.stringify({ at: new Date().toISOString(), to: D[T - 1], formations: QP })); console.log('quality: ' + QP.length + ' V15 formations written to ' + env.Q_PICKS); process.exit(0); }
 if (!lastRows) lastRows = scoreDay(T - 1);
 // ---- 4. verdicts (per formation month: stocks bought the same month share the same market)
 const mid = (() => { const ts = [...new Set(Object.values(trades).flat().map(x => x.t))].sort((a, b) => a - b); return ts[Math.floor(ts.length / 2)] || T / 2; })();

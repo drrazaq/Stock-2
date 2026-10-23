@@ -1,34 +1,182 @@
-// OPTIONS LANE (owner, 23 Oct 2026: "check not only trading but options too, with the same mindset"). Probe stage: what historical
-// option prices can this repo's keys actually get? Writes data/options-lab.json { coverage }. Network only; no orders, no Telegram.
+// OPTIONS LANE (owner, 23 Oct 2026: "check not only trading but options too, with the same mindset"). Long calls only, 1 contract.
+// Four rules, each pre-registered in data/strategy-library.json BEFORE any run (OPT-LH1, OPT-CAT1, OPT-FOLLOW1, OPT-UOA1); the pure
+// rules live in options-core.mjs (tests: test/options-core.test.mjs). This file fetches and caches the data and writes
+// data/options-lab.json (verdicts, the options-traders leaderboard, data coverage). Run once as written: the first complete verdict of
+// each rule is frozen in firstRun; later runs are monitoring only. Never places orders, never sends Telegram.
+// DATA (probe of 23 Oct 2026, kept in data/options-lab.json "probe"): Alpaca daily option bars (trade prices, no quotes) from about
+// Jan 2024; Alpaca option contracts incl. expired ones; Alpha Vantage free key: HISTORICAL_OPTIONS refused (premium), 25 calls a day;
+// Massive option aggregates 403. So spreads are measured today from Alpaca snapshots and applied to the past (stated limit).
+// Env: MODE=probe runs the old probe only (kept in git history); V15_PICKS=opt-cache/v15-picks.json (written by quality.mjs Q_PICKS).
 import fs from 'node:fs';
-const env = process.env, sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const AD = 'https://data.alpaca.markets', AT = 'https://paper-api.alpaca.markets', AV = 'https://www.alphavantage.co', MV = 'https://api.massive.com';
+import zlib from 'node:zlib';
+import { optionNet, pickContract, exitValue, verdictOf, isOptionsCall, entrySession, tierOfVerdict, stats, splitHalves, tStat, STOCK_COST, STRESS_X, TIER2_T, PROOF_T, MIN_PER_HALF } from './options-core.mjs';
+const env = process.env, sleep = (ms) => new Promise(r => setTimeout(r, ms)), OUT = 'data/options-lab.json', CD = env.OPT_CACHE || 'opt-cache';
+const AD = (env.ALPACA_DATA || 'https://data.alpaca.markets').replace(/\/$/, ''), AT = (env.ALPACA_TRADE || 'https://paper-api.alpaca.markets').replace(/\/$/, '');
 const AH = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY || '', 'APCA-API-SECRET-KEY': env.ALPACA_SECRET || '' } };
-async function get(url, opt) { try { const r = await fetch(url, opt); const txt = await r.text(); let j = null; try { j = JSON.parse(txt); } catch (e) {} return { status: r.status, j, txt: txt.slice(0, 400), bytes: txt.length }; } catch (e) { return { status: e.message }; } }
-const out = { at: new Date().toISOString(), probe: {} }, P = out.probe;
-// Alpaca: daily bars of a known old contract, the earliest date served, and whether expired contracts are listed
-P.alpacaBarsOld = await get(AD + '/v1beta1/options/bars?symbols=AAPL240315C00170000&timeframe=1Day&start=2023-06-01&end=2024-03-16&limit=1000', AH);
-if (P.alpacaBarsOld.j && P.alpacaBarsOld.j.bars) { const b = P.alpacaBarsOld.j.bars.AAPL240315C00170000 || []; P.alpacaBarsOld = { status: P.alpacaBarsOld.status, n: b.length, first: b[0], last: b[b.length - 1] }; }
-P.alpacaBarsNear = await get(AD + '/v1beta1/options/bars?symbols=AAPL251017C00250000,WST251017C00300000&timeframe=1Day&start=2025-07-01&end=2025-10-18&limit=1000', AH);
-if (P.alpacaBarsNear.j && P.alpacaBarsNear.j.bars) P.alpacaBarsNear = { status: P.alpacaBarsNear.status, counts: Object.fromEntries(Object.entries(P.alpacaBarsNear.j.bars).map(([k, v]) => [k, [v.length, v[0], v[v.length - 1]]])) };
-P.alpacaContractsInactive = await get(AT + '/v2/options/contracts?underlying_symbols=WST&status=inactive&expiration_date_gte=2024-03-01&expiration_date_lte=2024-04-30&limit=50', AH);
-if (P.alpacaContractsInactive.j) { const c = P.alpacaContractsInactive.j.option_contracts || []; P.alpacaContractsInactive = { status: P.alpacaContractsInactive.status, n: c.length, sample: c.slice(0, 2).map(x => [x.symbol, x.expiration_date, x.strike_price, x.open_interest, x.open_interest_date]) }; }
-P.alpacaTrades = await get(AD + '/v1beta1/options/trades?symbols=AAPL251017C00250000&start=2025-10-01&end=2025-10-02&limit=3', AH);
-P.alpacaQuotesHist = await get(AD + '/v1beta1/options/quotes?symbols=AAPL251017C00250000&start=2025-10-01&end=2025-10-02&limit=3', AH);
-// Alpha Vantage: premium options history, the volume / open-interest ratio, the put/call ratio, and the daily allowance message
-const avq = async (q) => { const r = await get(AV + '/query?' + q + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY || '')); await sleep(1200);
-  const j = r.j; return { status: r.status, bytes: r.bytes, keys: j ? Object.keys(j).slice(0, 6) : null, info: j && (j.Information || j.Note || j['Error Message']) || null, rows: j && Array.isArray(j.data) ? j.data.length : null, first: j && Array.isArray(j.data) ? j.data.find(x => x.type === 'call') : null }; };
-P.avHistOptions = await avq('function=HISTORICAL_OPTIONS&symbol=WST&date=2024-06-14');
-P.avHistOptionsOld = await avq('function=HISTORICAL_OPTIONS&symbol=IBM&date=2021-03-12');
-P.avVOI = await avq('function=HISTORICAL_VOLUME_OPEN_INTEREST_RATIO&symbol=WST&date=2024-06-14');
-P.avPCR = await avq('function=HISTORICAL_PUT_CALL_RATIO&symbol=WST&date=2024-06-14');
-// burst of 6 quick calls to see the per-minute limit message, if any
-P.avBurst = []; for (let k = 0; k < 6; k++) { const r = await get(AV + '/query?function=HISTORICAL_OPTIONS&symbol=HQY&date=2025-0' + (k + 1) + '-15&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY || '')); P.avBurst.push([r.status, r.bytes, r.j && (r.j.Information || r.j.Note) || (r.j && Array.isArray(r.j.data) ? 'rows ' + r.j.data.length : r.txt.slice(0, 80))]); }
-// Massive (formerly Polygon): option reference and aggregates
-const mvq = async (p) => { const r = await get(MV + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY || '')); return { status: r.status, txt: r.txt.slice(0, 200) }; };
-P.massiveContracts = await mvq('/v3/reference/options/contracts?underlying_ticker=WST&expired=true&expiration_date.lte=2024-04-30&limit=5');
-P.massiveAggs = await mvq('/v2/aggs/ticker/O:AAPL240315C00170000/range/1/day/2024-01-02/2024-03-15');
-fs.mkdirSync('data', { recursive: true });
-const prev = (() => { try { return JSON.parse(fs.readFileSync('data/options-lab.json', 'utf8')); } catch (e) { return {}; } })();
-fs.writeFileSync('data/options-lab.json', JSON.stringify({ ...prev, probe: out }, null, 1));
-console.log(JSON.stringify(out, null, 1));
+const WINDOW_FROM = '2024-02-01', r4 = (x) => x === null || x === undefined || !isFinite(x) ? null : +x.toFixed(4);
+const addDays = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10), dayDiff = (a, b) => Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 864e5);
+const readJ = (f, d) => { try { const b = fs.readFileSync(f); return JSON.parse(f.endsWith('.gz') ? zlib.gunzipSync(b).toString() : b.toString()); } catch (e) { return d; } };
+const writeGz = (f, o) => fs.writeFileSync(f, zlib.gzipSync(JSON.stringify(o)));
+fs.mkdirSync(CD, { recursive: true }); fs.mkdirSync('data', { recursive: true });
+const prev = readJ(OUT, {});
+const cov = { alpaca: { requests: 0, errors: {}, firstOptionBar: null, lastOptionBar: null, contractLists: 0, contractsSeen: 0, optionSeriesFetched: 0, snapshotCalls: 0 },
+  alphaVantage: (prev.coverage && prev.coverage.alphaVantage) || null, massive: (prev.coverage && prev.coverage.massive) || null };
+// ---- Alpaca, throttled (free plan: 200 requests a minute) and cached ----------------------------------------------------------------
+let lastCall = 0;
+async function alp(url) { for (let a = 0; a < 5; a++) { const w = 330 - (Date.now() - lastCall); if (w > 0) await sleep(w); lastCall = Date.now(); cov.alpaca.requests++;
+    let r; try { r = await fetch(url, AH); } catch (e) { cov.alpaca.errors[e.message] = (cov.alpaca.errors[e.message] || 0) + 1; await sleep(3000); continue; }
+    if (r.status === 429) { await sleep(15000); continue; } if (!r.ok) { cov.alpaca.errors['HTTP ' + r.status] = (cov.alpaca.errors['HTTP ' + r.status] || 0) + 1; if (r.status >= 500) { await sleep(3000); continue; } return null; }
+    return r.json().catch(() => null); } return null; }
+async function pages(url, key) { const out = {}; let tok = null, n = 0;
+  do { const j = await alp(url + (tok ? '&page_token=' + encodeURIComponent(tok) : '')); if (!j) return n ? out : null; const v = j[key];
+    if (Array.isArray(v)) (out._ = out._ || []).push(...v); else if (v) for (const [k, a] of Object.entries(v)) (out[k] = out[k] || []).push(...a);
+    tok = j.next_page_token; n++; } while (tok && n < 200); return out; }
+// stock daily bars, raw and split-adjusted, from Dec 2023 (one cache file each, refreshed to yesterday)
+const TODAY = new Date().toISOString().slice(0, 10);
+const SB = { raw: readJ(CD + '/stocks-raw.json.gz', {}), split: readJ(CD + '/stocks-split.json.gz', {}) };
+let stockFeed = 'sip';
+async function stockBars(syms) { const need = [...new Set(syms)].filter(s => s && !(SB.raw[s] && SB.raw[s].to >= addDays(TODAY, -3)));
+  for (let i = 0; i < need.length; i += 50) { const b = need.slice(i, i + 50);
+    for (const adj of ['raw', 'split']) { let got = await pages(AD + '/v2/stocks/bars?symbols=' + b.map(encodeURIComponent).join(',') + '&timeframe=1Day&start=2023-12-01&end=' + TODAY + '&adjustment=' + adj + '&feed=' + stockFeed + '&limit=10000', 'bars');
+      if (!got && stockFeed === 'sip') { stockFeed = 'iex'; got = await pages(AD + '/v2/stocks/bars?symbols=' + b.map(encodeURIComponent).join(',') + '&timeframe=1Day&start=2023-12-01&end=' + TODAY + '&adjustment=' + adj + '&feed=iex&limit=10000', 'bars'); }
+      for (const s of b) { const a = (got && got[s]) || []; SB[adj][s] = { to: TODAY, d: a.map(x => x.t.slice(0, 10)), o: a.map(x => x.o), c: a.map(x => x.c) }; } } }
+  writeGz(CD + '/stocks-raw.json.gz', SB.raw); writeGz(CD + '/stocks-split.json.gz', SB.split); }
+const px = (adj, s, d, f) => { const x = SB[adj][s]; if (!x) return null; const i = x.d.indexOf(d); return i < 0 ? null : x[f][i]; };
+// call contracts of an underlying, expiring from 2024-01-01 (active and expired), cached per symbol for 7 days
+const CT = readJ(CD + '/contracts.json.gz', {});
+async function contracts(sym) { const c = CT[sym]; if (c && Date.now() - Date.parse(c.at) < 7 * 864e5) return c.list;
+  const list = []; for (const st of ['inactive', 'active']) { const g = await pages(AT + '/v2/options/contracts?underlying_symbols=' + encodeURIComponent(sym) + '&type=call&status=' + st + '&expiration_date_gte=2024-01-01&limit=10000', 'option_contracts');
+    cov.alpaca.contractLists++; for (const x of (g && g._) || []) if (x.underlying_symbol === sym || x.root_symbol === sym) list.push({ occ: x.symbol, exp: x.expiration_date, k: +x.strike_price, size: +x.size || 100 }); }
+  CT[sym] = { at: new Date().toISOString(), list }; cov.alpaca.contractsSeen += list.length; return list; }
+// daily bars of option contracts over their last 130 days, cached per contract (complete once the contract has expired)
+const OB = readJ(CD + '/option-bars.json.gz', {});
+async function optionBars(occs, exp) { const need = occs.filter(o => !(OB[o] && (OB[o].full || OB[o].to >= addDays(TODAY, -3))));
+  for (let i = 0; i < need.length; i += 100) { const b = need.slice(i, i + 100), end = exp < TODAY ? exp : TODAY;
+    const g = await pages(AD + '/v1beta1/options/bars?symbols=' + b.join(',') + '&timeframe=1Day&start=' + addDays(exp, -130) + '&end=' + end + '&limit=10000', 'bars'); if (!g) continue;
+    for (const o of b) { const a = (g[o] || []).map(x => ({ t: x.t.slice(0, 10), o: x.o, c: x.c, v: x.v })); OB[o] = { to: end, full: exp < TODAY, a }; cov.alpaca.optionSeriesFetched++;
+      for (const x of a) { if (!cov.alpaca.firstOptionBar || x.t < cov.alpaca.firstOptionBar) cov.alpaca.firstOptionBar = x.t; if (!cov.alpaca.lastOptionBar || x.t > cov.alpaca.lastOptionBar) cov.alpaca.lastOptionBar = x.t; } } }
+  const out = {}; for (const o of occs) out[o] = (OB[o] && OB[o].a) || []; return out; }
+const saveCache = () => { writeGz(CD + '/contracts.json.gz', CT); writeGz(CD + '/option-bars.json.gz', OB); };
+
+if ((env.MODE || 'run') === 'probe') { console.log('probe mode retired: the probe result is kept in data/options-lab.json (probe)'); process.exit(0); }
+if (!env.ALPACA_KEY || !env.ALPACA_SECRET) { fs.writeFileSync(OUT, JSON.stringify({ ...prev, generatedAt: new Date().toISOString(), status: 'NOT RUN', why: 'no Alpaca key' }, null, 1)); process.exit(0); }
+
+// ---- sessions (SPY) ------------------------------------------------------------------------------------------------------------------
+await stockBars(['SPY']); const SESS = SB.raw.SPY.d.filter(d => d >= '2023-12-01'), SI = new Map(SESS.map((d, i) => [d, i])), LAST = SESS[SESS.length - 1];
+const nextSession = (d) => SESS.find(x => x > d) || null;
+const lastOnOrBefore = (d) => { let r = null; for (const x of SESS) { if (x > d) break; r = x; } return r; };
+
+// ---- one option trade (shared by OPT-LH1 / OPT-CAT1 / OPT-FOLLOW1) -----------------------------------------------------------------
+// sig: { sym, entry: 'YYYY-MM-DD' session, exit: session, expPick: (expiries sorted) => expiry or null }
+const counts = () => ({ signals: 0, beforeWindow: 0, notFinished: 0, noStockPrice: 0, noContracts: 0, noExpiry: 0, noPrice: 0, split: 0, priced: 0, exitByClose: 0, exitByIntrinsic: 0 });
+async function oneTrade(sig, C) { C.signals++;
+  if (sig.entry < WINDOW_FROM) { C.beforeWindow++; return null; } if (!sig.exit || sig.exit > LAST) { C.notFinished++; return null; }
+  const o0 = px('raw', sig.sym, sig.entry, 'o'), c1 = px('raw', sig.sym, sig.exit, 'c'), a0 = px('split', sig.sym, sig.entry, 'o'), a1 = px('split', sig.sym, sig.exit, 'c'), ac0 = px('split', sig.sym, sig.entry, 'c'), rc0 = px('raw', sig.sym, sig.entry, 'c');
+  if (!(o0 > 0 && c1 > 0 && a0 > 0 && a1 > 0)) { C.noStockPrice++; return null; }
+  if (Math.abs((c1 / a1) / (rc0 / ac0) - 1) > 0.01) { C.split++; return null; }   // a split during the hold (raw / adjusted ratio changed)
+  const list = await contracts(sig.sym); if (!list.length) { C.noContracts++; return null; }
+  const exps = [...new Set(list.map(x => x.exp))].sort(), exp = sig.expPick(exps); if (!exp) { C.noExpiry++; return null; }
+  const chain = list.filter(x => x.exp === exp && x.size === 100), near = [...chain].sort((a, b) => Math.abs(a.k - o0) - Math.abs(b.k - o0) || a.k - b.k).slice(0, 8);
+  const bars = await optionBars(near.map(x => x.occ), exp), pick = pickContract(near, bars, sig.entry, o0); if (!pick) { C.noPrice++; return null; }
+  const ex = exitValue(bars[pick.occ], sig.exit, c1, pick.k); C.priced++; C[ex.by === 'close' ? 'exitByClose' : 'exitByIntrinsic']++;
+  return { sym: sig.sym, e: SI.get(sig.entry), entry: sig.entry, exit: sig.exit, occ: pick.occ, exp, k: pick.k, spot: o0, open: pick.open, out: ex.px, outBy: ex.by,
+    stock: r4(a1 / a0 - 1 - STOCK_COST), ...(sig.extra || {}) }; }
+// spreads measured today (Alpaca option snapshots, indicative feed): h = max(2%, median (ask-bid)/mid of the 6 calls nearest the money / 2)
+const SPR = {};
+async function spreadOf(sym, lo, hi) { const key = sym + '|' + lo + '|' + hi; if (key in SPR) return SPR[key];
+  const spot = SB.raw[sym] && SB.raw[sym].c.length ? SB.raw[sym].c[SB.raw[sym].c.length - 1] : null; cov.alpaca.snapshotCalls++;
+  const j = spot ? await alp(AD + '/v1beta1/options/snapshots/' + encodeURIComponent(sym) + '?feed=indicative&type=call&limit=1000&expiration_date_gte=' + addDays(TODAY, lo) + '&expiration_date_lte=' + addDays(TODAY, hi)) : null;
+  const rows = j && j.snapshots ? Object.entries(j.snapshots).map(([occ, v]) => { const m = occ.match(/C(\d{8})$/), q = v.latestQuote || {}; return m && q.ap > 0 && q.bp > 0 && q.ap >= q.bp ? { k: +m[1] / 1000, rel: (q.ap - q.bp) / ((q.ap + q.bp) / 2) } : null; }).filter(Boolean) : [];
+  const near = rows.sort((a, b) => Math.abs(a.k - spot) - Math.abs(b.k - spot)).slice(0, 6).map(x => x.rel).sort((a, b) => a - b);
+  return SPR[key] = near.length ? near[near.length >> 1] : null; }
+async function priceTrades(rule, raw, lo, hi) { const syms = [...new Set(raw.map(t => t.sym))], rel = {};
+  for (const s of syms) rel[s] = await spreadOf(s, lo, hi);
+  const hs = Object.values(rel).filter(x => x !== null).map(x => Math.max(0.02, x / 2)).sort((a, b) => a - b), p75 = hs.length ? hs[Math.floor(hs.length * 0.75)] : 0.05;
+  for (const t of raw) { const h = rel[t.sym] !== null ? Math.max(0.02, rel[t.sym] / 2) : p75; t.h = r4(h); t.hMeasured = rel[t.sym] !== null;
+    t.net = r4(optionNet(t.open, t.out, h)); t.netStress = r4(optionNet(t.open, t.out, h * STRESS_X)); t.cost = +(100 * t.open * (1 + h) + 5).toFixed(2); }
+  return { measured: hs.length, of: syms.length, medianH: hs.length ? r4(hs[hs.length >> 1]) : null, p75H: r4(p75), window: lo + '-' + hi + ' days' }; }
+const LEAGUE = (() => { const b = readJ('data/agent-league.json', {}).bar; return isFinite(b) ? b : null; })(), BAR = Math.max(TIER2_T, LEAGUE || 0, PROOF_T);
+const info = (trades, B) => { const s = trades.filter(t => t.cost <= 300); return { under300: s.length ? stats(s, B) : { n: 0 }, byExit: { close: trades.filter(t => t.outBy === 'close').length, intrinsic: trades.filter(t => t.outBy === 'intrinsic').length } }; };
+const slim = (t) => ({ s: t.sym, in: t.entry, out: t.exit, occ: t.occ, k: t.k, spot: t.spot, o: t.open, x: t.out, by: t.outBy, h: t.h, net: t.net, st: t.stock, ...(t.tr ? { tr: t.tr } : {}) });
+const R = {}, T = {};
+
+// ---- OPT-LH1: calls 60-90 days out on each NEW V15 pick ------------------------------------------------------------------------------
+{ const P = readJ(env.V15_PICKS || CD + '/v15-picks.json', null), C = counts();
+  if (!P || !Array.isArray(P.formations)) R['OPT-LH1'] = { verdict: 'NOT RUN', why: 'no V15 picks file (quality.mjs Q_PICKS did not run)' };
+  else { const sigs = []; let prevSet = new Set();
+    for (const f of P.formations) { const entry = nextSession(f.d); for (const s of f.syms) if (!prevSet.has(s) && entry) { const i = SI.get(entry);
+        sigs.push({ sym: s, entry, extra: { formed: f.d }, mkExit: (exp) => { const a = SESS[i + 125] || null, b = addDays(exp, -21) <= LAST ? lastOnOrBefore(addDays(exp, -21)) : null; return a && (!b || a < b) ? a : b; },
+          expPick: (exps) => exps.find(x => dayDiff(entry, x) >= 60 && dayDiff(entry, x) <= 90) || null }); }
+      prevSet = new Set(f.syms); }
+    await stockBars(sigs.filter(x => x.entry >= WINDOW_FROM).map(x => x.sym)); const raw = [];
+    for (const s of sigs) { if (s.entry < WINDOW_FROM) { C.signals++; C.beforeWindow++; continue; } const list = await contracts(s.sym); if (!list.length) { C.signals++; C.noContracts++; continue; }
+      const exp = s.expPick([...new Set(list.map(x => x.exp))].sort()); if (!exp) { C.signals++; C.noExpiry++; continue; } s.exit = s.mkExit(exp); const t = await oneTrade(s, C); if (t) raw.push(t); }
+    saveCache(); const sp = await priceTrades('OPT-LH1', raw, 60, 90), v = verdictOf(raw, { B: 63, bar: BAR });
+    R['OPT-LH1'] = { ...v, counts: C, spread: sp, formations: P.formations.length, picksFrom: P.formations[0] && P.formations[0].d, picksTo: P.to, ...info(raw, 63) }; T['OPT-LH1'] = raw.map(slim); } }
+
+// ---- OPT-CAT1: a call expiring after the catalyst, on each CAT-RUN1 entry ------------------------------------------------------------
+{ const CL = readJ('data/catalyst-lab.json', null), tr = CL && CL.trades && CL.trades['CAT-RUN1'], C = counts();
+  if (!Array.isArray(tr)) R['OPT-CAT1'] = { verdict: 'WAITS FOR CAT-RUN1', why: 'no CAT-RUN1 trades in data/catalyst-lab.json' };
+  else { const sigs = tr.map(x => ({ sym: x.s, entry: x.buy, exit: x.sell, extra: { event: x.event, kinds: x.kinds, catNet: x.net }, expPick: (exps) => exps.find(e => e > x.event && dayDiff(x.event, e) <= 60) || null }));
+    await stockBars(sigs.filter(x => x.entry >= WINDOW_FROM).map(x => x.sym)); const raw = [];
+    for (const s of sigs) { const t = await oneTrade(s, C); if (t) raw.push(t); }
+    saveCache(); const sp = await priceTrades('OPT-CAT1', raw, 30, 90), v = verdictOf(raw, { B: 30, bar: BAR });
+    R['OPT-CAT1'] = { ...v, counts: C, spread: sp, catRun1Verdict: CL.results && CL.results['CAT-RUN1'] && (CL.results['CAT-RUN1'].verdict || CL.results['CAT-RUN1']), ...info(raw, 30),
+      stockSameTrades: raw.length ? r4(raw.reduce((a, t) => a + t.stock, 0) / raw.length) : null }; T['OPT-CAT1'] = raw.map(slim); } }
+
+// ---- OPT-FOLLOW1: options traders of the follow lane ---------------------------------------------------------------------------------
+const board = [];
+{ const C = counts(); let rows = [];
+  try { rows = fs.readFileSync('data/follow-calls.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {}
+  const opt = rows.filter(isOptionsCall).sort((a, b) => Date.parse(a.pub) - Date.parse(b.pub)), last = new Map(), calls = [];
+  for (const c of opt) { const k = c.tr + '|' + c.sym, p = Date.parse(c.pub); if (last.has(k) && p - last.get(k) < 5 * 864e5) continue; last.set(k, p); calls.push(c); }
+  const sigs = []; for (const c of calls) { const i = entrySession(c.pub, SESS); if (i === null) { C.signals++; C.notFinished++; continue; } const entry = SESS[i];
+    sigs.push({ sym: c.sym, entry, exit: SESS[i + 9] || null, extra: { tr: c.tr, name: c.n, src: c.src, pub: c.pub, text: String(c.tt || '').slice(0, 140) }, expPick: (exps) => exps.find(x => dayDiff(entry, x) >= 30 && dayDiff(entry, x) <= 60) || null }); }
+  await stockBars(sigs.filter(x => x.entry >= WINDOW_FROM).map(x => x.sym)); const raw = [];
+  for (const s of sigs) { const t = await oneTrade(s, C); if (t) raw.push(t); }
+  saveCache(); const sp = await priceTrades('OPT-FOLLOW1', raw, 30, 60);
+  const byT = new Map(); for (const t of raw) { if (!byT.has(t.tr)) byT.set(t.tr, []); byT.get(t.tr).push(t); }
+  const allTr = new Map(); for (const c of calls) allTr.set(c.tr, { name: c.n, src: c.src, calls: (allTr.get(c.tr) || { calls: 0 }).calls + 1 });
+  const judgedN = [...byT.values()].filter(a => a.length >= 30 && new Set(a.map(z => z.e)).size >= 10).length, zInvBar = luckBar(judgedN);
+  for (const [tr, a0] of allTr) { const a = byT.get(tr) || [], s = a.length ? stats(a, 10) : { n: 0 }, row = { tr, name: a0.name, src: a0.src, optionsCalls: a0.calls, priced: a.length, days: s.days || 0, avg: s.avg ?? null, stock: s.stock ?? null, win: s.win ?? null, tBlock: s.tBlock ?? null };
+    if (a.length < 30 || (s.days || 0) < 10) { row.level = 'WATCH'; row.why = a.length + ' priced options calls on ' + (s.days || 0) + ' days (30 on 10 needed)'; }
+    else { const v = verdictOf(a, { B: 10, bar: Math.max(BAR, zInvBar) }), hv = splitHalves(a), ho = stats(hv.older, 10), hn = stats(hv.newer, 10), w2 = [...a.map(z => z.net)].sort((x, y) => x - y).slice(2);
+      const fade = ho.avg < 0 && hn.avg < 0 && s.tBlock <= -TIER2_T && w2.length && w2.reduce((x, y) => x + y, 0) / w2.length < 0;
+      row.level = (v.verdict === 'TRADABLE SMALL' || v.verdict === 'PROVEN') && s.tBlock >= zInvBar ? 'FOLLOW' : fade ? 'FADE' : 'NO EDGE'; row.why = row.level === 'FADE' ? 'lost in both halves, block t ' + s.tBlock : v.why; row.half = v.half; }
+    board.push(row); }
+  board.sort((a, b) => b.priced - a.priced || (b.avg ?? -9) - (a.avg ?? -9));
+  const pooled = raw.length ? verdictOf(raw, { B: 10, bar: BAR }) : null, fol = board.filter(b => b.level === 'FOLLOW');
+  R['OPT-FOLLOW1'] = { verdict: fol.length ? 'TRADABLE SMALL' : board.some(b => b.level !== 'WATCH') ? 'NO FOLLOW TRADER' : 'TOO FEW CASES', why: fol.length ? fol.length + ' trader(s) passed: ' + fol.map(b => b.name).join(', ') : judgedN + ' trader(s) had 30+ priced options calls on 10+ days; none passed the gates and the luck bar (block t ' + zInvBar.toFixed(2) + ')',
+    follow: fol.map(b => b.tr), luckBar: +zInvBar.toFixed(2), judged: judgedN, optionsCallsFound: opt.length, afterDedupe: calls.length, traders: allTr.size, counts: C, spread: sp,
+    pooledInfo: pooled ? { verdict: pooled.verdict, why: pooled.why, n: pooled.n, days: pooled.days, avg: pooled.avg, median: pooled.median, win: pooled.win, stock: pooled.stock, noBest2: pooled.noBest2, tBlock: pooled.tBlock, half: pooled.half } : null, ...info(raw, 10) };
+  T['OPT-FOLLOW1'] = raw.map(slim); }
+
+// ---- OPT-UOA1: needs daily call volume AND open-interest history ------------------------------------------------------------------
+R['OPT-UOA1'] = { verdict: 'NEEDS DATA', why: 'call VOLUME history exists (Alpaca daily option bars carry each contract\'s volume), but OPEN INTEREST history does not: Alpaca\'s contract list gives only the latest open interest, ' +
+  'Alpha Vantage HISTORICAL_OPTIONS (volume + open interest per day) is a premium endpoint the free key cannot call, and the free HISTORICAL_VOLUME_OPEN_INTEREST_RATIO gives only a per-contract ratio (the open interest of contracts that did not trade cannot be recovered) at 25 calls a day. ' +
+  'Unlock: an Alpha Vantage premium plan key in ALPHAVANTAGE_KEY (HISTORICAL_OPTIONS gives each contract's daily volume and open interest); the rule then runs as registered.' };
+
+// ---- verdicts, first run frozen, output -------------------------------------------------------------------------------------------
+function luckBar(judged) { const erfc0 = (x) => { const z = Math.abs(x), t = 1 / (1 + 0.5 * z), r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277))))))))); return x >= 0 ? r : 2 - r; };
+  const zInv = (p) => { let lo = 0, hi = 10; for (let k = 0; k < 60; k++) { const m = (lo + hi) / 2; if (0.5 * erfc0(m / Math.SQRT2) > p) lo = m; else hi = m; } return (lo + hi) / 2; };
+  return Math.max(TIER2_T, zInv(0.05 / Math.max(1, judged))); }
+// frozen once: a COMPLETE run (under 1% of Alpaca requests failed) with a real verdict for OPT-LH1 / OPT-CAT1. OPT-FOLLOW1 is a living
+// per-trader board (as the follow lane): it is re-judged on every run, never frozen.
+const errN = Object.values(cov.alpaca.errors).reduce((a, b) => a + b, 0), complete = errN <= cov.alpaca.requests * 0.01;
+const firstRun = prev.firstRun || { at: new Date().toISOString(), results: {} };
+for (const id of ['OPT-LH1', 'OPT-CAT1']) { const r = R[id]; if (complete && r && !firstRun.results[id] && /^(PROVEN|TRADABLE SMALL|NOT PROVEN|REJECTED)$/.test(r.verdict)) firstRun.results[id] = { at: new Date().toISOString(), verdict: r.verdict, why: r.why, n: r.n ?? null, avg: r.avg ?? null, stock: r.stock ?? null, tBlock: r.tBlock ?? null }; }
+const verdicts = Object.fromEntries(Object.entries(R).map(([id, r]) => [id, (firstRun.results[id] || {}).verdict || r.verdict]));
+const out = { generatedAt: new Date().toISOString(), preRegistered: '2026-10-23', status: 'OK', complete, failedRequests: errN, window: [WINDOW_FROM, LAST], proofBar: BAR, leagueBar: LEAGUE,
+  coverage: { ...cov, stockFeed, note: 'Option prices: Alpaca daily option bars (trade prices; no historical quotes, so the spread is measured today from snapshots and applied to the past). Alpha Vantage: free key (25 calls a day; HISTORICAL_OPTIONS refused as premium; the ratio endpoints answer). Massive: option reference answers, option aggregates 403 (not in plan).' },
+  verdicts, tiers: Object.fromEntries(Object.entries(verdicts).map(([id, v]) => [id, tierOfVerdict(v)])), firstRun, latest: R, leaderboard: board, trades: T, probe: prev.probe };
+fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
+// library: status and result of each rule (first complete verdict only; later runs leave the frozen status)
+const L = readJ('data/strategy-library.json', null);
+if (L && Array.isArray(L.strategies)) { for (const e of L.strategies) { const r = R[e.id], f = firstRun.results[e.id]; if (!r) continue;
+    e.status = f ? 'tested: ' + f.verdict.toLowerCase() : r.verdict === 'NEEDS DATA' ? 'needs data' : r.verdict === 'WAITS FOR CAT-RUN1' ? 'waits for CAT-RUN1' : e.id === 'OPT-FOLLOW1' ? 'living board: ' + r.verdict.toLowerCase() : e.status;
+    if (e.id === 'OPT-FOLLOW1') e.result = { optionsCalls: r.optionsCallsFound, afterDedupe: r.afterDedupe, traders: r.traders, judged: r.judged, luckBar: r.luckBar, follow: r.follow, why: r.why, asOf: TODAY };
+    if (f && !(e.result && e.result.frozenAt === f.at)) { e.tested = e.tested || firstRun.at.slice(0, 10); e.study = 'options-lab.mjs -> data/options-lab.json (first complete run frozen)'; e.result = { n: r.n ?? null, nHalves: r.half ? [r.half.older.n, r.half.newer.n] : null, avg: r.avg ?? null, median: r.median ?? null, win: r.win ?? null, stock: r.stock ?? null, noBest2: r.noBest2 ?? null, tBlock: r.tBlock ?? null, bar: BAR, why: f.why, frozenAt: f.at }; }
+    else if (r.verdict === 'NEEDS DATA') e.result = { why: r.why }; }
+  fs.writeFileSync('data/strategy-library.json', JSON.stringify(L, null, 1)); }
+console.log('OPTIONS LAB ' + LAST + '\n' + Object.entries(R).map(([id, r]) => id + ': ' + r.verdict + (r.n !== undefined ? ' | n ' + r.n + ', avg ' + r.avg + ', stock ' + r.stock + ', block t ' + r.tBlock : '') + ' | ' + r.why).join('\n'));
+console.log('coverage ' + JSON.stringify(cov.alpaca));
