@@ -9,7 +9,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseVideo, entrySession, callReturn, judge, luckExpected, horizonFor } from '../follow-lane.mjs';
 
-const U = new Set(['NVDA', 'PLTR', 'SOFI', 'AAPL', 'TSLA', 'NOW', 'ALL', 'AI', 'CEO', 'USA', 'IONQ', 'RKLB', 'HOOD', 'GME', 'BIG', 'ONE', 'OPEN']);
+const U = new Set(['AGI', 'MIT', 'NVDA', 'PLTR', 'SOFI', 'AAPL', 'TSLA', 'NOW', 'ALL', 'AI', 'CEO', 'USA', 'IONQ', 'RKLB', 'HOOD', 'GME', 'BIG', 'ONE', 'OPEN']);
 const syms = (v) => parseVideo(v, U).calls.map(c => c.sym);
 
 test('tickers: $TICKER and (TICKER) count; CEO, AI, USA in a sentence do not', () => {
@@ -163,4 +163,11 @@ test('non-US channel: Australian / Indian market channels are excluded (their co
   assert.equal(nonUSChannel('Breakout', 'Nifty and Sensex trading ideas', ''), true);
   assert.equal(nonUSChannel('ZipTrader', 'US stock market news and small caps', 'US'), false);
   assert.equal(nonUSChannel('Meet Kevin', 'Investing', ''), false);
+});
+
+test('congress: an option BUY that names no type counts (members\u2019 option buys are mostly calls); one that says put does not', () => {
+  assert.equal(congressCall(trade({ asset_type_code: 'OP', asset_name: 'Bloom Energy Corporation Class A Common Stock (BE) [OP]', symbol: 'NVDA' }), U).sym, 'NVDA');
+});
+test('tickers: AI words that are also tickers (AGI, MIT) are not calls when bare', () => {
+  assert.deepEqual(syms({ title: 'AGI Has Arrived. Here is How I Am Investing In NVDA', desc: 'Research from MIT shows' }), ['NVDA']);
 });

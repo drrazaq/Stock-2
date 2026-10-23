@@ -48,7 +48,7 @@ export const NOT_BARE = new Set(('A I AN AS AT BE BY DO GO IF IN IS IT ME MY NO 
   'PENNY SMALL TODAY MONTH EARLY PICKS MOON YOLO FOMO FUD HODL WSB DD TV UK EU CA NY USD USA ETF FDA CEO CFO CTO IPO SEC FED CPI GDP ' +
   'EPS OTC DOW SP NFT BTC ETH NYSE AMEX LLC INC CORP LTD PM AM EST ET PT TP SL GPU CPU API APP PC VS AI EV EVS KWD KD GTC PE TIP TIPS ' +
   'LOG SPAC CHAT GPT OK ZERO HALF SAVE HOT COOL FUN LOVE LIFE TECH CEOS MAKE EASY HARD RUNS CARE NICE FIVE TEN WOLF GOLD CORE TRUE ' +
-  'SURE FUND MEME').split(/\s+/).filter(Boolean));
+  'SURE FUND MEME AGI ASI MIT LLM SAAS EBIT IRA ROTH ROI ATM REIT CAGR DCA FCF ROE PEG NASA FBI IRS DOJ FTC AWS WWDC CES EVER NEXT').split(/\s+/).filter(Boolean));
 // index and sector funds are market talk, not a stock call (same list as scan.mjs FUNDS)
 export const FUND_SYMS = new Set(['SPY', 'QQQ', 'IWM', 'DIA', 'VOO', 'VTI', 'TQQQ', 'SQQQ', 'SOXL', 'SOXS', 'UVXY', 'VXX', 'VIX', 'SPX', 'NDX', 'DJI', 'XLK', 'XLF', 'XLE', 'XLV', 'XLI', 'XLY', 'XLP', 'XLU', 'XLB', 'XLRE', 'XLC', 'GLD', 'SLV', 'USO', 'TLT', 'IBIT', 'SMH', 'ARKK']);
 const BEAR = /\b(sell(ing)?|sold|short(ing|ed)?|puts?|crash(ing|ed)?|bearish|avoid|overvalued|dump(ing)?|collaps\w*|bubble|bankrupt\w*|going to zero|stay away|red flag|downgrade\w*|plunge\w*|tank(ing|ed)?|scam)\b/gi;
@@ -144,7 +144,7 @@ export function dedupeCalls(calls) { const last = new Map(), out = [];
 // date is weeks earlier and was not public). Entry: the first open after the filing day (filed time unknown, so taken as after the close).
 export function congressCall(t, universe) { if (!t || !/^(BUY|PURCHASE)/i.test(String(t.transaction_type || ''))) return null;
   const sym = String(t.symbol || t.ticker_reported || '').toUpperCase(); if (!/^[A-Z]{1,5}$/.test(sym) || (universe && !universe.has(sym)) || FUND_SYMS.has(sym)) return null;
-  const at = String(t.asset_type_code || ''); if (!(at === 'ST' || (at === 'OP' && /\bcall/i.test(t.asset_name || '') && !/\bput/i.test(t.asset_name || '')))) return null;
+  const at = String(t.asset_type_code || ''); if (!(at === 'ST' || (at === 'OP' && !/\bputs?\b/i.test(t.asset_name || '')))) return null;   // an option buy without a stated type is taken as a call
   const d = String(t.filed_date || t.notification_date || '').slice(0, 10); if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return null;
   return { tr: 'cg:' + t.bioguide_id, n: 'Congress: ' + (t.politician_canonical || t.politician || t.bioguide_id), src: 'cg', sym, pub: d + 'T21:00:00-04:00', vid: d + '|' + (t.transaction_date || '') + '|' + at, bull: 1, tt: String(t.asset_name || '').slice(0, 90) }; }
 // SEC 13F: holdings { cusip: [shares, value, name] } of two consecutive filings; a call = a new position or shares raised 50%+.
@@ -285,8 +285,11 @@ async function main() {
       if (j && j.politicians) C2.listAt = new Date(now).toISOString(); }
     // members with trades first, then never fetched, each at most once a week
     const due = Object.entries(C2.members).filter(([, m]) => !m.at || now - Date.parse(m.at) > 7 * 864e5).sort((a, b) => (b[1].n || 0) - (a[1].n || 0) || (a[1].at ? 1 : 0) - (b[1].at ? 1 : 0));
+    cg.seen = { responses: 0, trades: 0, buys: 0, withSymbol: 0, keys: null };
     for (const [id, m] of due) { if (avCalls >= AV_MAX) break; const j = await av('function=CONGRESS_TRADES&bioguide_id=' + id); if (!j) break; m.at = new Date(now).toISOString(); let n = 0;
-      for (const t of j.trades || j.data || []) { const c = congressCall(t, UNI); if (c && c.pub.slice(0, 10) >= iso(since2y)) { addCall(c); n++; } } m.n = Math.max(m.n || 0, n); } }
+      cg.seen.responses++; if (!cg.seen.keys) cg.seen.keys = Object.keys(j).slice(0, 8); const TR = j.trades || j.data || [];
+      cg.seen.trades += TR.length; cg.seen.buys += TR.filter(t => /^(BUY|PURCHASE)/i.test(String(t.transaction_type || ''))).length; cg.seen.withSymbol += TR.filter(t => t.symbol).length;
+      for (const t of TR) { const c = congressCall(t, UNI); if (c && c.pub.slice(0, 10) >= iso(since2y)) { addCall(c); n++; } } m.n = Math.max(m.n || 0, n); } }
   cg.calls = avCalls; cg.members = Object.keys(state.congress.members).length; cg.fetched = Object.values(state.congress.members).filter(m => m.at).length;
   log('Congress (Alpha Vantage): ' + avCalls + ' calls, ' + cg.fetched + ' of ' + cg.members + ' members fetched so far; last answer ' + cg.status);
   // ---- SEC 13F of concentrated funds (official EDGAR; entry after the FILING day, never the quarter end) ----
@@ -329,7 +332,8 @@ async function main() {
   if (add.length) fs.appendFileSync(CALLS, add.map(c => JSON.stringify(c)).join('\n') + '\n');
   log(add.length + ' new calls logged (' + (old.length + add.length) + ' in total)');
   // ---- score every call ----
-  const all = dedupeCalls([...old, ...add].filter(c => c.tr && c.sym && c.pub)), meta = {};
+  // calls logged before a word joined NOT_BARE are dropped unless the stored title shows it as $TICKER (stricter only)
+  const all = dedupeCalls([...old, ...add].filter(c => c.tr && c.sym && c.pub && !((c.src === 'yt' || c.src === 'rss') && NOT_BARE.has(c.sym) && !String(c.tt || '').includes('$' + c.sym)))), meta = {};
   for (const [id, c] of Object.entries(state.channels)) meta['yt:' + id] = { name: c.name, H: c.H, hFrom: c.hFrom, src: 'YouTube', subs: c.subs, url: 'https://www.youtube.com/channel/' + id, excluded: !!c.nonUS };
   for (const [u, c] of Object.entries(state.st.users)) meta['st:' + u] = { name: 'StockTwits ' + u, H: 20, hFrom: 'default (StockTwits states no hold)', src: 'StockTwits', followers: c.followers, url: 'https://stocktwits.com/' + u };
   const SRC = { yt: ['YouTube', 20], st: ['StockTwits', 20], cg: ['US Congress', 20], '13f': ['SEC 13F fund', 60], rss: ['Newsletter', 20] };
