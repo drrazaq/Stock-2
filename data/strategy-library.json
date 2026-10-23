@@ -2935,8 +2935,8 @@
    "agent": "C",
    "name": "Run-up into a ClinicalTrials.gov primary-completion date (second source for CAT-RUN1)",
    "explain": "Same entry/exit as CAT-RUN1 (buy the open 30 sessions before, sell the close 2 sessions before), event date = the primary completion date on ClinicalTrials.gov API v2 (official, free) of an industry-sponsored phase 2/3 or 3 trial, sponsor matched to an EDGAR company name. BUILT ONLY IF CAT-RUN1 has fewer than 20 trades in a half (the owner: \"if PDUFA dates are too few\"). Known limit, stated now: the v2 API gives the CURRENT primary completion date, not the date known at the time, so a test on it would use later knowledge; it would need the record history before any verdict. GATES (all fixed now): whole US market incl. dead stocks (5-year whole-market cache study-cache/grouped.json.gz; its rows hold stocks at 3 USD+ with 1M USD+ traded, so the 2 USD entry floor is in practice 3 USD; exits use the dead-stock x rows); at the signal close: price 2 USD+ and 20-day average dollar volume 2M USD+; EXCLUDED if the company filed a 424B5, S-1, S-1/A, S-3 or S-3/A (EDGAR quarterly full index, filing date) in the 20 sessions before the entry session (dilution); EXCLUDED if the stock closed 15%+ above its previous close on any of the 21 sessions up to the signal close (house lottery rule). Halal is NOT applied in the test (data/halal.json + ZAD at the live stage only). Costs 0.8% per round trip (stress 1.2%). JUDGED FOR PROVEN and TRADABLE SMALL (tier 2): sessions split into an older and a newer half; 20+ trades in each half needed for any verdict; in BOTH halves: average net after 0.8% AND after 1.2% above 0, edge vs the average stock (3 USD+, 1M USD+ a day, bought the same day for the same sessions) above 0 with date-clustered t >= 2.5 (one average per entry day), better than the same stock on its other days in the same half (vsOwn > 0), still above 0 without its 2 best trades. All of that = TRADABLE SMALL; plus t >= max(own bar 2.5, league bar from data/agent-league.json, 4.0) in both halves = PROVEN. Edge above 0 in both halves but a gate missed = NOT PROVEN; otherwise REJECTED. Reported: trades, distinct days, stocks, win rate, average and median net, worst trade, each half, vs average stock, vs same stock, vs S&P 500 (information), without 2 best, t. RUN ONCE AS WRITTEN: the first complete verdict is frozen in firstRun (first-run.mjs); later runs are monitoring only. One version; no tuning after the first run.",
-   "status": "pre-registered 23 Oct 2026 (conditional: built only if CAT-RUN1 has too few cases)",
-   "note": "Pre-registered 23 Oct 2026 as a separate rule; never pooled with CAT-RUN1."
+   "status": "not built (its condition was not met)",
+   "note": "Pre-registered 23 Oct 2026 as a separate rule; never pooled with CAT-RUN1. 23 Oct 2026: CAT-RUN1 had 403 / 436 trades in its two halves, far above the 20 needed, so the conditional second source was not built (and the v2 API gives only today's completion date, which would leak later knowledge)."
   },
   {
    "id": "CAT-NEWS1",
@@ -2971,8 +2971,8 @@
    "agent": "C",
    "name": "OCGN check (illustration only, not evidence)",
    "explain": "Reconstruct whether OCGN would have fired under CAT-RUN1 / CAT-NEWS1 on its known runs, with dates, and say plainly whether the rules catch it. One stock cannot prove or disprove a rule; it is never counted as a test.",
-   "status": "illustration (not a test)",
-   "note": "Added 23 Oct 2026 with CAT-RUN1/CAT-NEWS1."
+   "status": "illustration done (not a test)",
+   "note": "Added 23 Oct 2026 with CAT-RUN1/CAT-NEWS1. 23 Oct 2026 (catalyst-lab.json ocgn): the rules do NOT catch OCGN. Its only run in the price cache (+72%, 12 Oct to 2 Nov 2021, 9.11 to 15.67 USD) is before the test window and no dated catalyst was stated for it; every later OCGN catalyst (topline dates 2023-2027) fell on days it traded under 3 USD (0.79 USD on 22 Oct 2026), outside the 2 USD floor and the cache."
   },
   {
    "id": "CAT-SYMP1",
