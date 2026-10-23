@@ -13,6 +13,6 @@ jobs:
           node --input-type=module -e "
           import { snapshots, feedUsed } from './alpaca-feed.mjs';
           const h = { headers: { 'APCA-API-KEY-ID': process.env.ALPACA_KEY, 'APCA-API-SECRET-KEY': process.env.ALPACA_SECRET } };
-          const r = await fetch('https://data.alpaca.markets/v2/stocks/snapshots?feed=sip&symbols=SPY,BHVN', h); console.log('SIP request HTTP', r.status, r.ok ? '' : (await r.text()).slice(0, 200));
+          const r = await fetch('https://data.alpaca.markets/v2/stocks/snapshots?feed=sip&symbols=SPY,BHVN', h); console.log('::notice::SIP request HTTP ' + r.status + ' ' + (r.ok ? '' : (await r.text()).slice(0, 150).replace(/\n/g, ' ')));
           const j = await snapshots('https://data.alpaca.markets', ['SPY', 'BHVN'], h);
-          console.log('FEED USED:', feedUsed()); for (const [s, x] of Object.entries(j || {})) console.log(s, 'last', x.latestTrade && x.latestTrade.p, 'at', x.latestTrade && x.latestTrade.t, 'day volume', x.dailyBar && x.dailyBar.v);"
+          console.log('::notice::FEED USED ' + feedUsed() + ' | ' + Object.entries(j || {}).map(([s, x]) => s + ' ' + (x.latestTrade && x.latestTrade.p) + ' at ' + (x.latestTrade && x.latestTrade.t) + ' vol ' + (x.dailyBar && x.dailyBar.v)).join(' | '));"
