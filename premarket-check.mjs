@@ -5,6 +5,7 @@
 // Pre-market prices are thin (few trades, wide spreads, often reversed at the open), so the system never says "sell pre-market"; the
 // decision is acted on in the regular session. Prices: Alpaca market-data snapshots (free IEX feed; the paper keys are enough).
 // Read-only; places no orders. Sends one Telegram message.
+import { snapshots } from './alpaca-feed.mjs';
 import fs from 'node:fs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const AD = local(env.ALPACA_DATA_BASE) || 'https://data.alpaca.markets', TG = local(env.TG_BASE) || 'https://api.telegram.org';
@@ -16,8 +17,8 @@ const P = J('data/my-positions.json', {}), SG = J('data/signals.json', {}), pv =
 if (!syms.length) { console.log('premarket: no positions'); process.exit(0); }
 const ny = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 let snaps = {}, note = '';
-if (env.ALPACA_KEY && env.ALPACA_SECRET) { try { const r = await fetch(AD + '/v2/stocks/snapshots?feed=iex&symbols=' + encodeURIComponent(syms.join(',')), { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } });
-    if (r.ok) snaps = await r.json(); else note = 'price feed HTTP ' + r.status; } catch (e) { note = 'price feed unreachable'; } } else note = 'no Alpaca key in this workflow';
+if (env.ALPACA_KEY && env.ALPACA_SECRET) { try { const j = await snapshots(AD, syms, { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } });
+    if (j) snaps = j; else note = 'price feed refused'; } catch (e) { note = 'price feed unreachable'; } } else note = 'no Alpaca key in this workflow';
 const last = {}; for (const x of SG.stocks || []) if (x.last) last[x.sym] = x.last;
 const rows = { sell: [], watch: [], hold: [] };
 for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade, prevC = (sn.prevDailyBar && sn.prevDailyBar.c) || (sn.dailyBar && String(sn.dailyBar.t || '').slice(0, 10) < ny ? sn.dailyBar.c : null) || last[s] || null;
