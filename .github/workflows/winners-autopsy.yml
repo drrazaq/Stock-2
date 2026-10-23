@@ -1,0 +1,132 @@
+name: Winners autopsy
+# WINNER AUTOPSY (winners-autopsy-lab.mjs, owner's request of 23 Oct 2026). Research + a forward paper record; never places an order.
+# Trigger (run-winners-now.txt changed, or by hand): 1. discover = the autopsy of the last 90 sessions, winners vs matched controls, and
+# the candidate rules PRE-REGISTERED in data/strategy-library.json (ids WIN-...); 2. that pre-registration is COMMITTED AND PUSHED before
+# 3. test = the registered rules run once on the 5-year history (first verdict frozen); 4. paper = today's signals into the paper record.
+# Weekdays after the close: paper only. This lab's own cache (w-cache: prices, EDGAR index, Nasdaq calendar, industry codes) is saved;
+# a-cache (Nasdaq calendar fallback) and study-cache (insider purchases, descriptive) are RESTORED READ ONLY. Commits only its own files
+# (data/winners-autopsy.json, data/winners-paper.jsonl, data/winners-board.json, data/winners-autopsy-run.log) and its own library entries.
+on:
+  schedule:
+    - cron: '20 22 * * 1-5'   # weekdays after the US close: paper record only
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-winners-now.txt']
+permissions:
+  contents: write
+concurrency: winners-autopsy
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: w-cache
+          key: winners-cache-${{ github.run_id }}
+          restore-keys: winners-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: a-cache
+          key: a-cache-none
+          restore-keys: a-cache-
+      - if: github.event_name != 'schedule'
+        uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - name: Discover (autopsy + pre-registration)
+        if: github.event_name != 'schedule'
+        shell: bash
+        timeout-minutes: 260
+        run: |
+          set -o pipefail
+          MODE=discover node winners-autopsy-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          W_MINUTES: '240'
+      - if: always() && github.event_name != 'schedule'
+        uses: actions/cache/save@v4
+        with:
+          path: w-cache
+          key: winners-cache-${{ github.run_id }}-discover
+      - name: Commit the pre-registration before any 5-year run
+        if: github.event_name != 'schedule'
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/winners-autopsy-run.log 2>/dev/null || true
+          FILES="data/winners-autopsy.json data/winners-autopsy-run.log"
+          OUTD="$RUNNER_TEMP/reg-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "winners autopsy: candidate rules pre-registered $(date -u +%FT%H:%MZ)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the pre-registration"; exit 1; }
+          cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - name: Test the registered rules once on 5 years
+        if: github.event_name != 'schedule'
+        shell: bash
+        timeout-minutes: 60
+        run: |
+          set -o pipefail
+          MODE=test node winners-autopsy-lab.mjs 2>&1 | tee -a run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          W_MINUTES: '50'
+      - name: Paper record
+        if: success() || failure()
+        shell: bash
+        timeout-minutes: 40
+        run: |
+          set -o pipefail
+          MODE=paper node winners-autopsy-lab.mjs 2>&1 | tee -a run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          W_MINUTES: '30'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: w-cache
+          key: winners-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 400 run.log | cut -c1-2000 > data/winners-autopsy-run.log 2>/dev/null || true
+          FILES="data/winners-autopsy.json data/winners-paper.jsonl data/winners-board.json data/winners-autopsy-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "winners autopsy $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the winners autopsy result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: winners-autopsy-log
+          path: run.log
