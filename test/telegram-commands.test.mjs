@@ -68,3 +68,13 @@ test('"sold option ..." closes the trial contract and scores it in USD after the
 
 test('no network was touched', () => assert.deepEqual(blocked, []));
 test.after(() => server.close());
+
+// 23 Oct: 15 ZAD marks sent in one message got no action from the bot. End to end: every mark is saved and the reply lists them.
+test('many halal marks in one message are all saved', async () => {
+  const S = await loadScan({ env });
+  const reply = await send(S, '• halal QLYS yes  halal TPC yes  halal EBAY yes. halal PCTY no  halal NEM yes   halal QTWO yes   halal MITK yes • halal IBEX yes halal USPH yes halal ADUS yes halal LAUR yes halal RELY yes halal CART yes halal MPC no • halal DINO yes.     No action from the bot');
+  const h = S.readJson('data/halal.json');
+  assert.equal(h.QLYS.s, 'ok'); assert.equal(h.DINO.s, 'ok'); assert.equal(h.PCTY.s, 'fail'); assert.equal(h.MPC.s, 'fail');
+  assert.match(reply, /Recorded 15 ZAD marks/);
+  assert.match(reply, /NOT HALAL: PCTY, MPC/);
+});

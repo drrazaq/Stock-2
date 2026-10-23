@@ -679,6 +679,13 @@ const fromFile = fs.existsSync('watchlist.txt') ? fs.readFileSync('watchlist.txt
 // Candidates from the discovery engine are tested automatically, so a Buy watch with prices is sent if a tested rule fires on one.
 let DISC = new Set(), BIOBLOCK = new Map(), DISCMETA = null;
 try { DISCMETA = JSON.parse(fs.readFileSync('data/discovery.json', 'utf8')); const cs = DISCMETA.candidates || []; DISC = new Set(cs.map(c => c.sym).filter(x => /^[A-Z.\-]{1,8}$/.test(x))); for (const c of cs) { if (c.bio && (c.bio.risk === 'high' || c.bio.risk === 'unknown')) BIOBLOCK.set(c.sym, c.bio.text); else if (c.hardBlock) BIOBLOCK.set(c.sym, 'dilution: ' + String(c.hardBlock).slice(0, 120)); } } catch {}
+// Several ZAD marks in one message (owner, 23 Oct: 15 marks in one message got no reply): every "halal SYM yes/no" in the text, in order.
+function halalBatch(text) {
+  const out = [], seen = new Set();
+  for (const m of String(text || '').matchAll(/(?:^|[^a-z])(?:halal|zad)\s+([a-z.\-]{1,6})\s+(yes|ok|pass|no|not\s+halal|fail|haram)\b/gi)) {
+    const sym = m[1].toUpperCase(); if (seen.has(sym)) continue; seen.add(sym); out.push([sym, !/^(yes|ok|pass)$/i.test(m[2])]); }
+  return out;
+}
 // YOUR HALAL MARKS from ZAD: "halal BFLY no" blocks it everywhere (plan, radar, checks); "halal BFLY yes" marks it as checked.
 const HALAL_FILE = 'data/halal.json', HALAL_DAYS = 90;
 // FILTERING POLICY: only YOUR OWN ZAD marks ever remove a stock. Every other screen (the built-in list, Zoya, Halal Terminal,
@@ -2652,6 +2659,8 @@ async function tgCommands(sig) {
         const known = !src ? [...new Set(readTips().map(t => t.src))].filter(n => n && n.length >= 3 && n !== 'Unnamed source').find(n => text.includes(n)) : null;   // a source you logged before, named in the pasted text
         out.push(await opinionReply(text, sig, src || known || null)); continue; } }
     { const h1 = text.match(/^(?:halal|zad)\s+([a-z.\-]{1,6})\s+(yes|ok|halal|pass|no|not(?:\s+halal)?|fail|haram)\s*$/i), h2 = text.match(/^([a-z.\-]{1,6})\s+(?:is\s+)?(not\s+halal|haram|halal)(?:\s+(?:in|on)\s+zad)?\s*$/i), h3 = text.match(/^(?:not\s+halal|haram)\s+([a-z.\-]{1,6})\s*$/i);
+      if (!h1 && !h2 && !h3) { const hb = halalBatch(text); if (hb.length >= 2) { const mk = HALALM(), d = ny(Date.now()).d; for (const [sym, bad] of hb) mk[sym] = { s: bad ? 'fail' : 'ok', d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
+        out.push('Recorded ' + hb.length + ' ZAD marks.\nHALAL: ' + (hb.filter(x => !x[1]).map(x => x[0]).join(', ') || 'none') + '\nNOT HALAL: ' + (hb.filter(x => x[1]).map(x => x[0]).join(', ') || 'none') + '\nTo change one: halal SYM yes  or  halal SYM no'); continue; } }
       const hm = h1 ? [h1[1], !/^(yes|ok|halal|pass)$/i.test(h1[2])] : h2 ? [h2[1], !/^halal$/i.test(h2[2])] : h3 ? [h3[1], true] : null;
       if (hm) { const sym = hm[0].toUpperCase(), mk = HALALM(); mk[sym] = { s: hm[1] ? 'fail' : 'ok', d: ny(Date.now()).d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
         out.push(sym + (hm[1] ? ': marked NOT HALAL (ZAD). I will not offer it as a buy anywhere: plan, BUY NOW, radar or checks.' + (pos[sym] ? ' You hold it: decide yourself whether to sell.' : '') : ': marked HALAL (checked in ZAD). Thank you.') + ' To change it: halal ' + sym + (hm[1] ? ' yes' : ' no')); continue; } }
