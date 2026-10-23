@@ -13,6 +13,7 @@
 // says so). Volume stays the late Massive figure (can only undercount). Last fallback: Alpaca's top-50 gainers (PARTIAL coverage).
 // Read-only; never places an order.
 import { snapshots, feedUsed } from './alpaca-feed.mjs';
+import { sendAlert } from './opp-mode.mjs';
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from './ignition-core.mjs';
@@ -122,6 +123,7 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
   if (risk.tags.length) { t.blocked = risk.tags; flag(r.sym, 'secBlocked', 'alert blocked: ' + risk.tags.join(', ')); return; }
   alerts++; if (early) earlyAlerts++; t.alerted = true; t.early = early; flag(r.sym, 'alerted', 'ALERTED (' + R.id + (early ? ', early paper' : '') + ')');
   const ex = ok.sort((a, b) => ((PREC[b.rule + '/' + b.exit] || {}).avg || 0) - ((PREC[a.rule + '/' + a.exit] || {}).avg || 0))[0], pr = PREC[ex.rule + '/' + ex.exit], stop = R.orb ? extra.orL : R.pull ? Math.max(extra.stop * 0.995, r.price * 0.88) : r.price * 0.92, hist = !liveOnly && ex.results ? ex.results.newer : null;
+  if (!sendAlert({ early }, (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')); } catch (e) { return {}; } })())) return;   // recorded as an early paper alert (t.alerted), not sent: opportunities only
   await tg([(early ? 'EARLY WAVE ALERT [PAPER, NOT PROVEN] | only ' + pr.n + ' paper trades on ' + (pr.days || '?') + ' day(s). Ride it only with the minimum 1,000 USD and the stop.' : 'IGNITION ALERT | FAST DAY TRADE, separate from the tested swing buys in ACTIONS'), r.sym + ' ' + pc(chg) + ' at ' + fmtM(clock()) + ' New York (' + kuwait(clock()) + ' Kuwait, ' + (rd < 1 ? 'live' : Math.round(rd) + ' min old') + ' price). Coverage: ' + mode,
     'Price ' + r.price.toFixed(2) + ' | volume ' + (rv === null ? 'n/a' : rv.toFixed(1) + 'x a normal day (late figure)') + (M.float ? ' | float ' + (M.float / 1e6).toFixed(1) + 'M shares' : '') + (M.age !== null && M.age < 250 ? ' | traded only ' + M.age + ' sessions' : '') + ' | SEC: no share sale or delisting notice in 30 days',
     'BUY only up to ' + (r.price * 1.03).toFixed(2) + ' (3% above now; higher = skip). STOP ' + stop.toFixed(2) + '. EXIT: ' + ex.exitName + ' (sell before 11 pm Kuwait at the latest).',
