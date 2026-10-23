@@ -94,3 +94,13 @@ test('anomaly-lab rules that meet the standard give buys with their own hold', a
   assert.match(L, /- BUY TPC 300 USD up to 80\.34\. STOP 66\.30 at your broker \(15%\)\. SELL after about 3 months \(63 sessions\).*ANOM-RESMOM \(Residual momentum\)/);
   assert.doesNotMatch(L, /QLYS/);
 });
+
+// 24 Oct: every standard lab feeds TRY SMALL the same way (frozen first run in data/<lab>-lab.json, picks in data/<lab>-today.json):
+// anomaly, expert, confluence, ml, angles. A new lab only has to write those two files.
+test('the angles lab (and any standard lab) feeds TRY SMALL by the same standard', async () => {
+  const S7 = await loadScan({ files: { ...files, 'data/value-lab.json': { firstRun: {} },
+    'data/angles-lab.json': { firstRun: { 'ANG-X': { verdict: 'NOT PROVEN', hold: 20, results: { older: half(0.01, 0.01, 0.01), newer: half(0.02, 0.01, 0.02) } } } },
+    'data/angles-today.json': { generatedAt: now, methods: { 'ANG-X': { name: 'Test angle', hold: 20, newSignals: [{ sym: 'TPC', close: 78 }] } } } } });
+  const L = S7.fn('trySmallLines')({}, { TPC: 78 }).join('\n');
+  assert.match(L, /- BUY TPC 300 USD .*SELL after about 1 month\(s\) \(20 sessions\).*ANG-X \(Test angle\)/);
+});
