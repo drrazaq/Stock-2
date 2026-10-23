@@ -119,3 +119,14 @@ test('the live file holds hot layers and the chain of each member, and no buys w
   assert.deepEqual(TODAY.buys, []);
   assert.equal(TODAY.members.AAA[0].chain, 'AI'); assert.equal(TODAY.members.AAA[0].layer, 'Chips');
 });
+
+test('a crash is recorded with the stage it reached (data/chain-decoder-error.json), so a failed Actions run can be read from the repository', async () => {
+  const d2 = fs.mkdtempSync(path.join(os.tmpdir(), 'chain-decoder-crash-')); process.on('exit', () => { try { fs.rmSync(d2, { recursive: true, force: true }); } catch (e) {} });
+  fs.mkdirSync(path.join(d2, 'data')); fs.mkdirSync(path.join(d2, 'study-cache')); fs.copyFileSync(path.join(dir, 'study-cache/grouped.json.gz'), path.join(d2, 'study-cache/grouped.json.gz'));
+  fs.writeFileSync(path.join(d2, 'data/chain-defs.json'), JSON.stringify({ chains: { Broken: { layers: null } }, demandNodes: [] }));
+  const code = await new Promise((resolve) => { const p = spawn(process.execPath, [path.join(REPO, 'chain-decoder.mjs')], { cwd: d2, env: { PATH: process.env.PATH, EFTS_BASE: 'http://127.0.0.1:9', SEC_BASE: 'http://127.0.0.1:9', DATA_BASE: 'http://127.0.0.1:9', CHAIN_MINUTES: '1' } }); p.on('close', resolve); });
+  const E = JSON.parse(fs.readFileSync(path.join(d2, 'data/chain-decoder-error.json'), 'utf8'));
+  assert.equal(code, 1); assert.equal(E.stage, 'membership'); assert.match(E.error, /TypeError/);
+});
+
+test('a complete run marks the error file done', () => { assert.equal(rd('data/chain-decoder-error.json').stage, 'done'); });

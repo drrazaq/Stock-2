@@ -32,6 +32,10 @@ const pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }, W = (f, o) => { fs.mkdirSync(f.replace(/\/[^/]+$/, ''), { recursive: true }); fs.writeFileSync(f, JSON.stringify(o)); };
 const sleep = (ms) => new Promise(r => setTimeout(r, ms)), pad10 = (c) => String(c).padStart(10, '0'), slug = (p) => String(p).toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 80);
 fs.mkdirSync(CD, { recursive: true });
+// the stage reached and any crash are written to data/chain-decoder-error.json (committed), because Actions logs are not always readable
+let STAGE = 'start'; const stage = (x) => { STAGE = x; console.log('chain-decoder: stage ' + x + ' (' + Math.round((Date.now() - T0) / 1000) + ' s, ' + Math.round(process.memoryUsage().rss / 1e6) + ' MB)'); };
+const crash = (e) => { try { W(env.ERR_OUT || 'data/chain-decoder-error.json', { at: new Date().toISOString(), stage: STAGE, error: String(e && e.stack || e).slice(0, 4000) }); } catch (x) {} console.log('chain-decoder: FAILED at ' + STAGE + ': ' + (e && e.stack || e)); process.exit(1); };
+process.on('uncaughtException', crash); process.on('unhandledRejection', crash);
 const DEFS = J('data/chain-defs.json', null); if (!DEFS) { console.log('chain-decoder: no data/chain-defs.json'); process.exit(0); }
 
 // ---- prices (read only) ----
@@ -121,12 +125,14 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
   const PREV = J(OUT, {}) || {}, LG = J('data/agent-league.json', {}), BAR = +Math.max(2.5, typeof LG.bar === 'number' ? LG.bar : 0, 4.0).toFixed(2);
   const WSTART = D[0], last = D[T - 1];
   // 1. tickers and CIKs
+  stage('tickers');
   const TK = await secTickers(), REF = await massiveRef(), cikTick = new Map(), addT = (cik, t) => { if (!cik || !t) return; if (!cikTick.has(cik)) cikTick.set(cik, []); if (!cikTick.get(cik).includes(t)) cikTick.get(cik).push(t); };
   for (const [t, c] of Object.entries(TK)) addT(c, t); for (const [c, ts] of Object.entries(REF)) for (const t of ts) addT(+c, t);
   for (const [s, al] of Object.entries(DEFS.tickerAliases || {})) for (const a of al) if (TK[s]) addT(TK[s], a);
   const cikOf = (sym) => { if (TK[sym]) return TK[sym]; const cur = Object.entries(DEFS.tickerAliases || {}).find(([, al]) => al.includes(sym)); return cur && TK[cur[0]] ? TK[cur[0]] : null; };
   const symAt = (cik, t) => { for (const s of cikTick.get(cik) || []) { const i = SY.get(s); if (i !== undefined && i !== spyI && isFinite(C[i * T + t])) return i; } return undefined; };
 
+  stage('membership');
   // 2. LAYER MEMBERSHIP, point in time: first own filing with a layer keyword
   const MEMF = CD + '/members.json', MEM = J(MEMF, {}), FORMS_M = '10-K,10-Q,20-F,40-F,8-K,6-K,S-1,F-1,424B4';
   async function firstFiling(cik, keywords) { const key = cik + '|' + keywords.join('/'); if (key in MEM) return MEM[key]; if (outOfTime()) { miss('member ' + key); return undefined; }
@@ -150,6 +156,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
   const pitAt = (L, t) => L.members.filter(m => m.since <= t);
   const layersOfCik = (cik, t) => LAYERS.filter(L => L.members.some(m => m.cik === cik && m.since <= t));
 
+  stage('links');
   // 3. MAJOR-CUSTOMER LINKS and MATERIAL AGREEMENTS (official, dated)
   const NODES = DEFS.demandNodes.map(n => ({ ...n, cik: cikOf(n.sym) }));
   const CUSTQ = (a) => ['"' + a + ' accounted for"', '"sales to ' + a + '"', '"revenue from ' + a + '"', '"revenues from ' + a + '"', '"net revenue from ' + a + '"', '"' + a + ' represented"', '"' + a + ' comprised"', '"' + a + ' was our largest customer"', '"' + a + ' is our largest customer"', '"' + a + ', our largest customer"'].join(' OR ');
@@ -184,6 +191,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
   W(REVF, REVC);
   console.log('chain-decoder: ' + links.length + ' major-customer links, ' + agreements.length + ' material agreements (' + docsRead + ' documents read now, ' + docsLeft + ' not read yet)');
 
+  stage('demand 8-Ks');
   // 4. demand-node earnings 8-Ks (item 2.02) from EDGAR submissions; exhibit 99 text -> demand signal
   const D8F = CD + '/demand8k.json', D8 = J(D8F, {}), demandEvents = [];
   for (const n of NODES) { if (!n.cik) continue; const sf = CD + '/subs/' + n.cik + '.json'; let subs = J(sf, null);
@@ -203,6 +211,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
   W(D8F, D8);
   console.log('chain-decoder: ' + demandEvents.length + ' demand-node earnings 8-Ks, ' + demandEvents.filter(e => e.hit).length + ' with raised guidance or capital spending');
 
+  stage('read-through 8-Ks');
   // 5. CHAIN-READ1 candidates: 8-Ks with raised-guidance phrases (item 2.02) from point-in-time chain members
   const READ_PHRASES = ['raised guidance', 'raises guidance', 'raising guidance', 'raised its guidance', 'raises its guidance', 'increased guidance', 'increases guidance', 'raised outlook', 'raises outlook', 'raising outlook', 'raised its outlook', 'raises its outlook', 'raised full-year', 'raises full-year', 'raising full-year', 'raised its full-year', 'raises its full-year', 'raised fiscal', 'raises fiscal'];
   const memberCiks = new Set(LAYERS.flatMap(L => L.members.map(m => m.cik))), RDF = CD + '/read.json', RD = J(RDF, {}), readEvents = [];
@@ -215,11 +224,12 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
   W(RDF, RD);
   console.log('chain-decoder: ' + readEvents.length + ' chain-member 8-Ks with raised-guidance words, ' + readEvents.filter(e => e.hit).length + ' also with revenue up 10%+ on the prior year');
 
-  const DIL = await dilutionIndex();
+  stage('dilution index'); const DIL = await dilutionIndex();
   const complete = DATA_OK.complete && memberCounts.pending === 0 && DIL.ok === DIL.all && Object.keys(TK).length > 1000;
   const gatesAt = (cik, i, t) => { if (!gateOk(i, t)) return 'gate'; if (lottery(i, t)) return 'lottery'; if (dilutedBefore(DIL.by.get(cik), D, t + 1)) return 'dilution'; return null; };
 
   // 6a. CHAIN-MOM1
+  stage('MOM1');
   const mom = [], momFunnel = { rebalances: 0, picks: 0, gate: 0, lottery: 0, dilution: 0, below50: 0 }, momHistory = [], ownMom = new Map();
   const layerInputs = (t, withGates) => LAYERS.map(L => ({ key: L.key, members: pitAt(L, t).map(m => { const i = symAt(m.cik, t); if (i === undefined || i === spyI) return null; const r63 = ret(i, t - 63, t), s50 = sma50(i, t);
     const g = withGates ? gatesAt(m.cik, i, t) : null; return { s: SYMS[i], cik: m.cik, i, r63, above50: s50 !== null && CC(i, t) > s50, ok: !g, why: g }; }).filter(Boolean) }));
@@ -235,6 +245,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
   for (const z of mom) { const v = ownMom.get(z.cik + '_' + half(z.t)); z.ob = v && v.length >= 3 ? mean(v) : null; }
 
   // 6b. CHAIN-DEMAND1
+  stage('DEMAND1');
   const upstreamOf = (cik, t) => { const out = new Map(); for (const L of layersOfCik(cik, t)) { const up = LAYERS.find(x => x.chain === L.chain && x.li === L.li - 1); if (up) for (const m of pitAt(up, t)) if (m.cik !== cik) out.set(m.cik, 'upstream layer: ' + up.key); } return out; };
   const officialOf = (cik, t) => { const out = new Map(), day = D[t]; for (const l of links) if (l.customerCik === cik && linkActive(l.filings, day)) out.set(l.supplierCik, 'customer disclosure');
     for (const e of agreements) if (e.customerCik === cik && linkActive([e.first_public_at], day) && !out.has(e.supplierCik)) out.set(e.supplierCik, 'material agreement'); return out; };
@@ -247,6 +258,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
       const r = fwdStop(i, s, DEM_HOLD), c0 = ctrl(s, DEM_HOLD); if (!r || c0 === null) continue; openD.set(i, r.at);
       dem.push({ t: s, s: SYMS[i], g: r.ret, why: r.why, c: c0, ob: ownStop(i, s, DEM_HOLD), sp: spyF(s, DEM_HOLD), node: e.node, via, filed: e.filed, url: e.url, kind: e.kind }); } }
 
+  stage('LAG1');
   // 6c. CHAIN-LAG1: monthly layer excess returns; learn on the first half, trade the second half only
   const blocks = []; for (let t = START; t < T; t += 21) blocks.push(t);
   const series = {}; for (const L of LAYERS) series[L.key] = blocks.map(t => { if (t - 21 < 0) return null; const sp = spyI === undefined ? 0 : ret(spyI, t - 21, t); const v = pitAt(L, t).map(m => { const i = symAt(m.cik, t); return i === undefined ? null : ret(i, t - 21, t); }).filter(x => x !== null && Math.abs(x) < 3); return v.length >= 3 && sp !== null ? mean(v) - sp : null; });
@@ -265,6 +277,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
     leadersByYear[y] = { from: D[a], to: D[b], top5: rows.slice(0, 5) }; }
 
   // 6d. CHAIN-READ1
+  stage('READ1');
   const rd = [], rdFunnel = { signals: 0, peers: 0, rose5: 0, gate: 0, lottery: 0, dilution: 0, overlap: 0, noPrice: 0 }, openR = new Map();
   const seenR = new Set(); for (const e of readEvents.filter(e => e.hit).sort((a, b) => a.filed < b.filed ? -1 : 1)) { const s = firstOnOrAfter(D, e.filed), base = s - 1; if (s < START || s >= T - 1 || seenR.has(e.cik + '|' + s)) continue; seenR.add(e.cik + '|' + s);
     const Ls = layersOfCik(e.cik, s); if (!Ls.length) continue; rdFunnel.signals++; const peers = new Map(); for (const L of Ls) for (const m of pitAt(L, s)) if (m.cik !== e.cik && !peers.has(m.cik)) peers.set(m.cik, L.key);
@@ -288,6 +301,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
   const tierOf = (id) => { const r = FR[id]; return r && (r.verdict === 'PROVEN' || r.verdict === 'TRADABLE SMALL') ? r.verdict : null; };
 
   // 8. GRAPH file
+  stage('write');
   const allLinks = [...links, ...agreements], symOfCik = (c) => (cikTick.get(c) || [])[0] || null;
   W(GRAPH_OUT, { generatedAt: new Date().toISOString(), defined: DEFS.defined, window: [WSTART, last], complete,
     counts: { chains: Object.keys(DEFS.chains).length, layers: LAYERS.length, memberships: memberCounts.pointInTime + memberCounts.todayOnly + memberCounts.pending, pointInTime: memberCounts.pointInTime, todayOnly: memberCounts.todayOnly, todayOnlyNoCik: memberCounts.noCik, todayOnlyNoFiling: memberCounts.noFiling, notCheckedYet: memberCounts.pending, customerLinks: links.length, agreements: agreements.length, agreementsWithValue: agreements.filter(e => e.value).length, demandNodes: NODES.length, demandNodesWithCik: NODES.filter(n => n.cik).length },
@@ -335,4 +349,5 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
       e.status = 'tested: ' + r.verdict.toLowerCase(); e.tested = firstRun.at.slice(0, 10); e.study = 'chain-decoder.mjs -> data/chain-decoder.json (run once as written, first complete run frozen)';
       e.result = { t: (R.newer || {}).t, tOlder: (R.older || {}).t, edge: (R.newer || {}).edge, edgeOlder: (R.older || {}).edge, vsOwn: (R.newer || {}).vsOwn, vsOwnOlder: (R.older || {}).vsOwn, n: [(R.older || {}).n || 0, (R.newer || {}).n || 0], avg: (R.all || {}).avg, win: (R.all || {}).win, bar: firstRun.bar, why: r.why }; ch = true; }
     if (ch) fs.writeFileSync('data/strategy-library.json', JSON.stringify(LB, null, 1)); } catch (e) { console.log('chain-decoder: library not updated: ' + e.message); }
-})();
+  W(env.ERR_OUT || 'data/chain-decoder-error.json', { at: new Date().toISOString(), stage: 'done', error: null, seconds: Math.round((Date.now() - T0) / 1000), requests: nReq });
+})().catch(crash);

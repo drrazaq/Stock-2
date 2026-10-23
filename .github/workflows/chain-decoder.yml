@@ -51,7 +51,8 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/chain-decoder.json data/chain-graph.json data/chain-today.json"
+          tail -c 20000 run.log > data/chain-decoder-run.log 2>/dev/null || true
+          FILES="data/chain-decoder.json data/chain-graph.json data/chain-today.json data/chain-decoder-error.json data/chain-decoder-run.log"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
