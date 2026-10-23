@@ -23,3 +23,12 @@ test('counts late sales and what they cost against selling at the stop', () => {
 test('no late sales: says so', () => assert.match(sd([T[3], T[4]]).line, /0 of 2/));
 test('no trades: no line', () => assert.equal(sd([]).line, ''));
 test('no network was used', () => assert.deepEqual(blocked, []));
+
+// 23 Oct, evening: the trade records called these losses "gap through the stop", but that label only compared the sale with the stop.
+// Daily bars show DOCN opened 127.02 on 14 Oct and fell through its 120.81 stop that day (sold 20 Oct at 100); AEHR opened 67.19 on
+// 15 Oct and fell through 65.75 (sold 20 Oct at 60.30). A stop ORDER at the broker would have sold near the stop. The label is now
+// "sold below the stop", and such sales stay counted as late.
+test('a stored "gap" label does not excuse a sale under the stop', () => {
+  const r = sd([{ ...T[2], lossType: 'gap through the stop (-17.2% past it)' }]);
+  assert.equal(r.late, 1);
+});
