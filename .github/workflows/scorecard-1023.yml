@@ -1,0 +1,30 @@
+name: Scorecard 23 Oct (one-off)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=8192
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scorecard-1023.mjs
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+      - if: always()
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          [ -f data/scorecard-1023.json ] && git add data/scorecard-1023.json; true
+          git diff --cached --quiet || git commit -m "scorecard 2026-10-23"
+          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
