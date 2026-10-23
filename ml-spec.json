@@ -1,0 +1,107 @@
+{
+ "id": "ML-RANK1",
+ "name": "Machine-learning weekly ranker (gradient-boosted trees), top 10 a week, 20-session hold",
+ "registered": "2026-10-24",
+ "status": "FROZEN before any training. Nothing in this file may change after the first run; a changed rule is a new id (ML-RANK2...).",
+ "owner": "drrazaq/Stock-2. Research + forward paper only; never places an order.",
+ "data": {
+  "prices": "study-cache/grouped.json.gz (the Sunday job's whole-market daily cache, Massive grouped bars, common stocks + ADRs per the cache reference list, dead stocks' later prices in the x rows), restored READ ONLY; the sessions since the cache day from Massive grouped daily bars, splits since the cache day repaired (anomaly-lab.mjs method).",
+  "fundamentals": "SEC companyfacts compact facts from value-cache/facts.json.gz (value lab's cache, restored READ ONLY) read with value-core.mjs fcfCheck (filed strictly before the day); F-score = quality.mjs / value-lab.mjs code on study-cache/fund.json.gz (a year's 10-K usable from 10 April of the next year); share counts data/shares.json.gz known 30 days after their date.",
+  "industry": "SIC 2-digit group: the cache's Massive SIC code, else data/sec-ciks.json.",
+  "halal": "the owner's ZAD mark (data/zad-list.json notHalal, data/halal.json); RECORDED with every pick, NOT used to filter in the test."
+ },
+ "universe": "point in time on each decision date t: the stock has a main cache row on t (not SPY), close >= 5 USD, the MEDIAN of its last 20 sessions' dollar volume (close x volume, main rows, all 20 present) >= 5,000,000 USD, and a close 60 sessions earlier. Stocks that later died stay in (exits read from the x rows; a stock with no later price exits at its last known close).",
+ "decisionDates": "the last session of each ISO week (the next session is in a later ISO week; for the newest session, by the NYSE calendar in anomaly-core.mjs nextSession). Decision made after that session's close.",
+ "target": "excess20 = (close of t+20 / open of t+1 - 1) minus the equal-weight average of the same return over every universe stock on t (a missing close walks back to the last known close). Training label = excess20 winsorized per decision date at the 1st and 99th percentile.",
+ "features": {
+  "note": "all computed from data known at the close of t (prices up to and including t; fundamentals filed before t). Stock features 1-37 are converted to cross-sectional percentile ranks within the universe on t (0..1, missing stays missing). Market features 38-41 are raw (same for every stock on t). Daily returns use the merged series (main row, else x row).",
+  "list": [
+   ["r5", "close t / close t-5 - 1"],
+   ["r20", "close t / close t-20 - 1"],
+   ["r60", "close t / close t-60 - 1"],
+   ["r126", "close t / close t-126 - 1"],
+   ["r252", "close t / close t-252 - 1"],
+   ["mom12_1", "close t-21 / close t-252 - 1"],
+   ["dist52h", "close t / highest close of t-251..t - 1 (200+ closes)"],
+   ["dist52l", "close t / lowest close of t-251..t - 1 (200+ closes)"],
+   ["vol20", "standard deviation of daily log returns t-19..t (15+)"],
+   ["vol60", "standard deviation of daily log returns t-59..t (45+)"],
+   ["adr20", "average (high - low) / close over t-19..t"],
+   ["volTrend", "log(average dollar volume t-19..t / average dollar volume t-59..t)"],
+   ["logDV20", "log of the median dollar volume t-19..t"],
+   ["intraday60", "sum of log(close/open) over t-59..t"],
+   ["overnight60", "sum of log(open/previous close) over t-59..t"],
+   ["intradayShare60", "intraday60 / (|intraday60| + |overnight60|)"],
+   ["upShare60", "share of up closes over t-59..t (frog in the pan)"],
+   ["upShare252", "share of up closes over t-251..t"],
+   ["dd126", "close t / highest close of t-125..t - 1 (drawdown from the 6-month high)"],
+   ["gaps60", "number of opens 4%+ away from the previous close over t-59..t"],
+   ["maxRet20", "largest daily return t-19..t"],
+   ["minRet20", "smallest daily return t-19..t"],
+   ["r1", "close t / close t-1 - 1"],
+   ["dma50", "close t / 50-session average close - 1"],
+   ["dma200", "close t / 200-session average close - 1"],
+   ["beta60", "beta of daily returns to SPY over t-59..t (45+ pairs)"],
+   ["idioVol60", "standard deviation of the residual of that regression"],
+   ["volRatio", "vol20 / vol60"],
+   ["logPrice", "log(close t)"],
+   ["logMcap", "log(shares known on t x close t)"],
+   ["secRel60", "r60 minus the average r60 of the stock's SIC 2-digit group in the universe on t (5+ members)"],
+   ["secRel126", "r126 minus the group's average r126"],
+   ["secMom126", "the group's average r126"],
+   ["fcfYield", "value-core fcfCheck fcfy: (TTM operating cash flow - TTM capex) / (shares x close); 40%+ = data error = missing"],
+   ["revGrowth", "value-core fcfCheck growth: TTM revenue vs the TTM a year earlier"],
+   ["debtEquity", "value-core fcfCheck de: debt / equity at the latest balance sheet"],
+   ["fscore", "Piotroski F-score (quality.mjs code), financials (SIC 6xxx) missing"],
+   ["spyVs200", "SPY close / its 200-session average - 1 (market regime)"],
+   ["breadth50", "share of universe stocks closing above their 50-session average (breadth)"],
+   ["spyR20", "SPY close t / close t-20 - 1"],
+   ["spyVol20", "standard deviation of SPY daily log returns t-19..t"]
+  ],
+  "fundamentalsTiming": "fundamental features (fcfYield, revGrowth, debtEquity, fscore) are computed on the first decision date of each calendar month with that day's knowledge (filings filed strictly before it) and carried unchanged to the month's later decision dates (point in time, at most a month stale)."
+ },
+ "models": {
+  "ML-RANK1": {
+   "type": "gradient-boosted regression trees, written in pure JS (ml-core.mjs), squared error on the training label",
+   "hyperParameters": { "trees": 200, "maxDepth": 4, "learningRate": 0.05, "minLeaf": 400, "rowSubsample": 0.3, "colSubsample": 0.8, "lambdaL2": 1.0, "bins": 32, "seed": 20261024 },
+   "binning": "per feature, 31 cut points at the training rows' quantiles (computed from the training rows of each retrain only); missing = its own bin; each split also chooses the side for missing values",
+   "tuning": "NONE. These values are fixed here before any training and never tuned on any test or holdout period."
+  },
+  "LIN": { "type": "ridge regression on the same 41 features (standardized with the training rows' mean and sd, missing = 0 after standardizing)", "lambda": 1000 },
+  "MOM": { "type": "simple baseline: rank by raw mom12_1 (12-1 momentum), highest first; stocks with no mom12_1 are not ranked" }
+ },
+ "walkForward": {
+  "firstFeatureRow": "decision dates with 252+ cache sessions before them",
+  "retrain": "on the first decision date of every calendar quarter from 2023-10-01; the model is used for every decision date of that quarter (retrain date included)",
+  "trainingRows": "EXPANDING window: every universe row from the first feature row whose label is fully known at the retrain close (t + 20 <= retrain session); later rows never",
+  "trainingOnly": "decision dates before 2023-10-01 (about the first 12 months of feature rows) are training only",
+  "development": { "from": "2023-10-01", "to": "2025-09-30", "olderHalf": "2023-10-01 .. 2024-09-30", "newerHalf": "2024-10-01 .. 2025-09-30" },
+  "holdout": { "from": "2025-10-01", "to": "the last decision date whose 20-session exit is in the data", "rule": "UNTOUCHED: reported separately; nothing in this spec or the code may change after it is seen" }
+ },
+ "strategy": {
+  "picks": "each decision date: the 10 highest scores (ties: symbol order); halal recorded, not filtered",
+  "entry": "the open of t+1 (a stock with no open on t+1 is skipped, not replaced, and counted)",
+  "exit": "the close of t+20 (20 sessions held), or the disaster stop",
+  "disasterStop": "35%: the first session whose low is <= entry x 0.65 exits at entry x 0.65, or at that session's open if it opened below",
+  "weights": "equal weight; each pick is one trade; the same stock picked in later weeks is a new trade",
+  "cost": "0.8% round trip (stress 1.2%)"
+ },
+ "judging": {
+  "standard": "value-core.mjs halfStat + judge (the owner's tier-2 standard) on the development halves: > 0 after 0.8% and 1.2% cost, edge over the average universe stock > 0, better than the same stocks on their other decision dates of the half (not picked, in the universe; 3+ dates), > 0 without the 2 best trades, block t (non-overlapping 20-session blocks) >= 2.5 = TRADABLE SMALL; >= the proof bar max(2.5, league bar, 4.0) = PROVEN.",
+  "extraGates": [
+   "ML-RANK1 beats the MOM baseline on the same dates in BOTH development halves (higher average after cost AND higher edge over the average stock)",
+   "HOLDOUT: ML-RANK1 average after 0.8% > 0, edge over the average stock > 0, and higher than the MOM baseline's holdout average after cost"
+  ],
+  "comparators": "MOM and LIN are judged the same way and reported beside it (information; they are not new rules)",
+  "freeze": "the first complete run is frozen in data/ml-lab.json firstRun['ML-RANK1'] (value-lab.json firstRun format: results.older / results.newer / results.all from halfStat, plus holdout, hold 20); later runs are monitoring only. Complete = every retrain trained, 40+ holdout decision dates, SEC facts for 70%+ of the universe's companies with a CIK.",
+  "liveLane": "data/ml-today.json methods['ML-RANK1'].newSignals is filled ONLY when the frozen first run passes BOTH extra gates (it beats the simple baseline and its holdout held up); otherwise the weekly picks are still recorded (paperPicks and the ledger) but newSignals stays empty, so no buy lane reads them.",
+  "information": "feature importance (split gain per retrain, normalized) and its stability across retrains (Spearman between consecutive retrains; times in the top 5); weekly information coefficient (Spearman of score vs excess20)."
+ },
+ "paper": {
+  "from": "the decision date 2026-10-23 (entry at the open of Monday 26 Oct 2026)",
+  "record": "each weekly decision date: ML-RANK1's top 10 and the MOM baseline's top 10 with close and halal mark -> data/ml-paper.jsonl. A list recorded after 13:30 UTC of its entry day is LATE: its entry is the first open after it was recorded.",
+  "resolve": "after 20 sessions with the 35% stop, net of 0.8%, against the average universe stock",
+  "board": "data/ml-board.json: closed paper trades per method, ML vs baseline; READY = 30+ resolved trades on 10+ decision dates with a positive average after 0.8% cost",
+  "liveModel": "the model of the decision date's quarter, trained exactly as in the walk-forward (rows whose labels are known at the quarter's first decision date); stored in data/ml-model.json"
+ }
+}
