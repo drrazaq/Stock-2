@@ -3134,8 +3134,26 @@
    "agent": "C",
    "name": "At-the-money call 60-90 days out on each new LONGER HOLDS (V15) pick",
    "explain": "SIGNAL: each NEW V15 pick (F-score 8-9 AND close above its own 200-day average; quality.mjs monthly formation every 21 sessions, the same picks the V15 test bought: every stock scoring 8-9, or the 10 best scores if under 10); NEW = not in the previous formation's picks. ENTRY: the next session's open after the formation day. EXPIRY: the earliest listed expiry 60-90 calendar days after the entry session. EXIT: the earlier of the V15 stock rule exit (126 sessions, as tested) and the last session on or before expiry minus 21 calendar days. B = 63 sessions. COMMON TO ALL FOUR (fixed 23 Oct 2026, before any run; options-core.mjs + options-lab.mjs). LONG CALLS ONLY, 1 contract. DATA: option prices = Alpaca historical DAILY option bars (v1beta1/options/bars, trade prices; history from about Jan-Feb 2024); contracts = Alpaca /v2/options/contracts (active and expired); underlying = Alpaca daily stock bars, RAW (strike choice, intrinsic value) and SPLIT-ADJUSTED (stock yardstick); sessions = SPY bars. Alpha Vantage HISTORICAL_OPTIONS (bid/ask, volume, open interest) is NOT available: the repo key is the free tier (premium endpoint refused, 25 requests a day, 1 a second); Alpaca has no historical option quotes (endpoint answers 404); Massive option aggregates are not in the plan (403). CONTRACT: on the entry session, among the calls of the rule's expiry, the strike nearest the underlying's raw open that has a daily bar ON the entry session (the 8 nearest strikes are tried; tie = lower strike); none = \"no price\" (counted, not traded). PRICES: entry = that bar's open x (1 + h); exit = the contract's close on the exit session x (1 - h); no bar on the exit session = intrinsic value max(0, raw close - strike) x (1 - h) (a floor; a call is worth at least that). A split during the hold (raw/adjusted ratio changes) excludes the trade (counted). SPREAD h = half the ask-bid spread as a share of the mid, MEASURED on the run day from Alpaca option snapshots (latest quote, indicative feed): per underlying the median (ask-bid)/mid of the 6 calls nearest the money in the rule's expiry window, h = max(2%, that / 2); an underlying with no usable quote today = the 75th percentile h of the rule's measured underlyings (5% if none). STRESS = 1.5 x h. Known limit: today's spread applied to the past. FEE: ZAD 5 USD per contract each side: net = (100 x exit - 5) / (100 x entry + 5) - 1. YARDSTICK (same money at risk): the same stock bought at the same session's open and sold at the same exit session's close (split-adjusted), minus 0.8% a round trip. HALVES: distinct entry sessions split at the median. JUDGED (verdictOf in options-core.mjs): 20+ priced trades in each half; in BOTH halves average net > 0 at h AND at the 1.5h stress, and above the same-money stock yardstick; still > 0 without its 2 best trades (whole period); t >= 2.5 over NON-OVERLAPPING blocks of B sessions (block = floor(entry session / B); a block's value = the average of its per-entry-day averages of net; 3+ blocks needed) = TRADABLE SMALL (tier 2); plus block t >= max(2.5, league bar from data/agent-league.json, 4.0) = PROVEN; edge over the stock > 0 in both halves but a gate missed = NOT PROVEN; else REJECTED; under 20 in a half = TOO FEW CASES. NOT applied in the test (live stage only): halal (data/halal.json \"ok\" only), the 300 USD premium cap (the <= 300 USD subset is reported for information), at most 2 open. RUN ONCE AS WRITTEN: the first complete verdict is frozen (firstRun); later runs are monitoring only; one version each, no tuning.",
-   "status": "pre-registered 23 Oct 2026 (not run)",
-   "note": "Pre-registered before any run (23 Oct 2026). The anchor O1 named on 22 Oct. Built in options-lab.mjs."
+   "status": "tested: rejected",
+   "note": "Pre-registered before any run (23 Oct 2026). The anchor O1 named on 22 Oct. Built in options-lab.mjs.",
+   "tested": "2026-10-23",
+   "study": "options-lab.mjs -> data/options-lab.json (first complete run frozen)",
+   "result": {
+    "n": 61,
+    "nHalves": [
+     37,
+     24
+    ],
+    "avg": -0.0716,
+    "median": -0.5983,
+    "win": 0.2787,
+    "stock": 0.0232,
+    "noBest2": -0.2816,
+    "tBlock": -0.67,
+    "bar": 4,
+    "why": "lost money after the spread and ZAD fees in the older half (-0.1637); lost money at the 1.5x spread stress in the older half (-0.2354); did not beat buying the same stock with the same money in the older half (-0.1637 vs 0.0073); lost money at the 1.5x spread stress in the newer half (-0.071); loses without its 2 best trades (-0.2816); block t -0.67 over 10 non-overlapping 63-session blocks, under 2.5",
+    "frozenAt": "2026-10-23T06:39:03.597Z"
+   }
   },
   {
    "id": "OPT-CAT1",
@@ -3143,8 +3161,26 @@
    "agent": "C",
    "name": "Call expiring after the catalyst, bought when CAT-RUN1 enters, sold 2 sessions before the event",
    "explain": "SIGNAL: every CAT-RUN1 trade in data/catalyst-lab.json (trades[\"CAT-RUN1\"]: buy = the open of session s-30, sell = the close of session s-2, event date). Only if that output exists; otherwise \"waits for CAT-RUN1\". EXPIRY: the earliest listed expiry strictly AFTER the event date and at most 60 calendar days after it (none = not traded, counted). ENTRY the open of the CAT-RUN1 buy session; EXIT the close of the CAT-RUN1 sell session (never held through the event). B = 30 sessions. COMMON TO ALL FOUR (fixed 23 Oct 2026, before any run; options-core.mjs + options-lab.mjs). LONG CALLS ONLY, 1 contract. DATA: option prices = Alpaca historical DAILY option bars (v1beta1/options/bars, trade prices; history from about Jan-Feb 2024); contracts = Alpaca /v2/options/contracts (active and expired); underlying = Alpaca daily stock bars, RAW (strike choice, intrinsic value) and SPLIT-ADJUSTED (stock yardstick); sessions = SPY bars. Alpha Vantage HISTORICAL_OPTIONS (bid/ask, volume, open interest) is NOT available: the repo key is the free tier (premium endpoint refused, 25 requests a day, 1 a second); Alpaca has no historical option quotes (endpoint answers 404); Massive option aggregates are not in the plan (403). CONTRACT: on the entry session, among the calls of the rule's expiry, the strike nearest the underlying's raw open that has a daily bar ON the entry session (the 8 nearest strikes are tried; tie = lower strike); none = \"no price\" (counted, not traded). PRICES: entry = that bar's open x (1 + h); exit = the contract's close on the exit session x (1 - h); no bar on the exit session = intrinsic value max(0, raw close - strike) x (1 - h) (a floor; a call is worth at least that). A split during the hold (raw/adjusted ratio changes) excludes the trade (counted). SPREAD h = half the ask-bid spread as a share of the mid, MEASURED on the run day from Alpaca option snapshots (latest quote, indicative feed): per underlying the median (ask-bid)/mid of the 6 calls nearest the money in the rule's expiry window, h = max(2%, that / 2); an underlying with no usable quote today = the 75th percentile h of the rule's measured underlyings (5% if none). STRESS = 1.5 x h. Known limit: today's spread applied to the past. FEE: ZAD 5 USD per contract each side: net = (100 x exit - 5) / (100 x entry + 5) - 1. YARDSTICK (same money at risk): the same stock bought at the same session's open and sold at the same exit session's close (split-adjusted), minus 0.8% a round trip. HALVES: distinct entry sessions split at the median. JUDGED (verdictOf in options-core.mjs): 20+ priced trades in each half; in BOTH halves average net > 0 at h AND at the 1.5h stress, and above the same-money stock yardstick; still > 0 without its 2 best trades (whole period); t >= 2.5 over NON-OVERLAPPING blocks of B sessions (block = floor(entry session / B); a block's value = the average of its per-entry-day averages of net; 3+ blocks needed) = TRADABLE SMALL (tier 2); plus block t >= max(2.5, league bar from data/agent-league.json, 4.0) = PROVEN; edge over the stock > 0 in both halves but a gate missed = NOT PROVEN; else REJECTED; under 20 in a half = TOO FEW CASES. NOT applied in the test (live stage only): halal (data/halal.json \"ok\" only), the 300 USD premium cap (the <= 300 USD subset is reported for information), at most 2 open. RUN ONCE AS WRITTEN: the first complete verdict is frozen (firstRun); later runs are monitoring only; one version each, no tuning.",
-   "status": "pre-registered 23 Oct 2026 (not run)",
-   "note": "Pre-registered before any run (23 Oct 2026). CAT-RUN1 itself was REJECTED as a stock rule (23 Oct); this tests whether the option version of the same entries differs. Built in options-lab.mjs."
+   "status": "tested: rejected",
+   "note": "Pre-registered before any run (23 Oct 2026). CAT-RUN1 itself was REJECTED as a stock rule (23 Oct); this tests whether the option version of the same entries differs. Built in options-lab.mjs.",
+   "tested": "2026-10-23",
+   "study": "options-lab.mjs -> data/options-lab.json (first complete run frozen)",
+   "result": {
+    "n": 269,
+    "nHalves": [
+     138,
+     131
+    ],
+    "avg": -0.5022,
+    "median": -0.8702,
+    "win": 0.145,
+    "stock": 0.0265,
+    "noBest2": -0.5375,
+    "tBlock": -5.33,
+    "bar": 4,
+    "why": "lost money after the spread and ZAD fees in the older half (-0.6573); lost money at the 1.5x spread stress in the older half (-0.7495); did not beat buying the same stock with the same money in the older half (-0.6573 vs -0.0234); lost money after the spread and ZAD fees in the newer half (-0.3388); lost money at the 1.5x spread stress in the newer half (-0.5221); did not beat buying the same stock with the same money in the newer half (-0.3388 vs 0.0791); loses without its 2 best trades (-0.5375); block t -5.33 over 22 non-overlapping 30-session blocks, under 2.5",
+    "frozenAt": "2026-10-23T06:39:03.598Z"
+   }
   },
   {
    "id": "OPT-FOLLOW1",
