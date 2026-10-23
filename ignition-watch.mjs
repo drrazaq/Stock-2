@@ -14,6 +14,7 @@
 // Read-only; never places an order.
 import { snapshots, feedUsed } from './alpaca-feed.mjs';
 import { sendAlert } from './opp-mode.mjs';
+import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from './ignition-core.mjs';
@@ -104,7 +105,7 @@ async function secRisk(sym) {
     return { known: true, tags: [...tags] }; } catch (e) { return { known: false, tags: [] }; } }
 async function tg(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[alert]\n' + text); return; } await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text, disable_web_page_preview: true }) }).catch(() => {}); }
 // ---- the loop
-const seen = {}, orb = {}, triggers = [], beat = [], vis = {}, ser = {}, pull = {}; let alerts = 0;
+const seen = {}, orb = {}, triggers = [], beat = [], vis = {}, ser = {}, pull = {}, earlyWave = {}; let alerts = 0;   // earlyWave: observation only (23 Oct)
 const flag = (sym, f, text) => { const v = vis[sym]; if (!v) return; v.flags[f] = true; if (text && !v.notes.includes(text)) v.notes.push(text); };
 const IG8 = LIVE_RULES.find(r => r.id === 'IG8'), IG8T = LIVE_RULES.find(r => r.id === 'IG8T');
 let earlyAlerts = 0;
@@ -146,11 +147,14 @@ while (Date.now() - START < MAXMS) {
   for (const r of rows) { if (!(r.prevC > 0) || !(r.price > 0)) continue; evald++; const chg = r.price / r.prevC - 1, rd = r.t > 0 ? (nowMs - r.t) / 60000 : null, live = isFreshPriceAge(rd);
     if (rd !== null) ages.push(rd); if (r.vt > 0) vages.push((nowMs - r.vt) / 60000); if (live) liveN++;
     // visibility ledger: every stock from its first sighting
+    const prevSeenPx = vis[r.sym] ? vis[r.sym].last : null;
     const v = vis[r.sym] || (vis[r.sym] = { sym: r.sym, fm: m, fc: chg, fo: r.open > 0 ? r.open / r.prevC - 1 : null, fAge: rd, fMode: mode, maxC: chg, minC: chg, flags: {}, notes: [] });
     v.maxC = Math.max(v.maxC, chg); v.minC = Math.min(v.minC, chg); v.last = r.price; v.lastC = chg; if (live && v.lm === undefined) { v.lm = m; v.lc = chg; }
     if (live && chg >= 0.05 && v.l5 === undefined) v.l5 = m; if (chg >= 0.10 && v.c10 === undefined) { v.c10 = m; v.c10live = live; }
-    if (!(r.prevC >= 1)) { if (chg >= 0.10) flag(r.sym, 'under1', 'under 1 USD (never traded by these rules)'); continue; }
     const M = meta(r.sym), av = avgVol.get(r.sym) || (r.prevV > 0 ? r.prevV : 0), rv = r.vol !== null && av > 0 ? r.vol / av : null, hits = [], rvT = rv !== null && cf ? rv / cf : null;
+    // EARLY-WAVE OBSERVATION (23 Oct): +2% to +15% with elevated volume pace, sub-$1 included; logged only, never an alert or a buy
+    try { updateEarlyWaveCandidate(earlyWave, r.sym, scoreEarlyWaveCandidate({ change: chg, rv, rvT, live, price: r.price, oneMinuteChange: prevSeenPx > 0 ? r.price / prevSeenPx - 1 : null }), fmtM(m)); } catch (e) {}
+    if (!(r.prevC >= 1)) { if (chg >= 0.10) flag(r.sym, 'under1', 'under 1 USD (never traded by these rules)'); continue; }
     if (r.vol > 0 && avgVol.has(r.sym)) { sumV += r.vol; sumA += avgVol.get(r.sym); }   // no 20-day history (new listing, was under 1 USD): yesterday's volume stands in
     // minute price series from live quotes (for the build-up rule)
     if (live) { const S = ser[r.sym] || (ser[r.sym] = []); if (!S.length || S[S.length - 1].m !== m) { S.push({ m, p: r.price }); if (S.length > 35) S.shift(); } }
@@ -214,5 +218,6 @@ fs.writeFileSync('data/ignition-live.json', JSON.stringify({ version: IG_VERSION
 const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISIBLE_TOO_LATE', 'VOLUME_FIGURE_LATE']), dataMiss = missed.filter(x => DATA_CODES.has(x.code)),
   gapLike = (x) => (x.preMarketGap !== null && x.preMarketGap >= 0.2) || (x.openGap !== null && x.openGap >= 0.10) || (/^0?9:3[0-5]/.test(String(x.firstSeen)) && x.firstSeenUp >= 0.10), feedFix = dataMiss.filter(x => !gapLike(x));
 fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
+{ const ewl = Object.values(earlyWave).sort((x, y) => y.score - x.score); if (ewl.length) fs.appendFileSync('data/early-wave-obs.jsonl', JSON.stringify({ day, mode, src, n: ewl.length, top: ewl.slice(0, 300) }) + '\n'); }   // judged later against matched stocks; not a signal
 fs.appendFileSync('data/ignition-paper.jsonl', triggers.filter(t => !t.logged).map(t => JSON.stringify(t) + '\n').join(''));
 console.log('ignition watcher: ' + loops + ' minutes, modes ' + JSON.stringify(modes) + (note ? ' [' + note + ']' : '') + ', ' + triggers.length + ' ignitions, ' + alerts + ' alerts, ' + missed.length + ' movers of 15%+ audited ' + JSON.stringify(tally));
