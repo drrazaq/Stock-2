@@ -43,3 +43,13 @@ test('the owner\'s own stop on a leader position is never raised', () => {
 });
 
 test('no network was touched', () => assert.deepEqual(blocked, []));
+
+// Holdings brief 23 Oct: PR's stop was raised to 23.45 over its 22.40 entry, but its reason still said "below your entry ... a loss of 1.8%".
+test('a raise above the entry rewrites the stale "below your entry" part of the reason', () => {
+  const P = { entry: 88, since: '2026-10-18', kind: 'manual', stop: 80, stopWhy: 'its 50 day average, the trend line a holder of this stock should not see broken. It is below your entry, so hitting it means accepting a loss of 9.1%. I will raise it if the stock rises, never lower it.' };
+  raise(P, c, ind, i);
+  assert.equal(P.stop, 90);
+  assert.match(P.stopWhy, /^its 50 day average/);
+  assert.match(P.stopWhy, /now above your entry, so it locks in a gain of 2\.3%/);
+  assert.doesNotMatch(P.stopWhy, /loss of/);
+});

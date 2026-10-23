@@ -1617,11 +1617,35 @@ async function detailList(sig) {
   return out.join('\n');
 }
 // On-demand analysis of ANY ticker, right now, with the same rules as the nightly scan. The ticker then joins the nightly list.
+// SPLITS (23 Oct, holdings brief): Twelve Data handed the scan IESC (2-for-1, 24 Aug) and GRML (1-for-50, 24 Aug) unadjusted, so
+// IESC read -62% over 6 months (real about -37%) and GRML +1,151% with "uptrend" (real about -65%). Same rule as leaders-study.mjs:
+// a split is applied only when the price jump across its date matches it, so an already adjusted series is never adjusted twice.
+function adjustSplits(sym, c, splits) {
+  if (!c || c.length < 2 || !Array.isArray(splits)) return 0; let n = 0;
+  for (const sp of splits) { if (sp.s !== sym || !(sp.r > 0) || sp.r === 1) continue;
+    const iA = c.findIndex(x => x.d >= sp.d); if (iA <= 0) continue;
+    const pre = c[iA - 1].c, post = c[iA].c; if (!(pre > 0) || !(post > 0)) continue;
+    const jump = Math.log(pre / post), want = Math.log(sp.r); if (!(Math.abs(jump - want) < Math.abs(jump))) continue;
+    for (let k = 0; k < iA; k++) { for (const f of ['o', 'h', 'l', 'c']) c[k][f] = +(c[k][f] / sp.r).toFixed(4); c[k].v = Math.round(c[k].v * sp.r); }
+    n++; }
+  return n;
+}
+let SPLITS0 = null; const SPLIT_ASKED = {};
+async function splitsFor(sym, c) {   // the official list saved by the Sunday study, plus a direct Massive check when a series has a split-sized one-day jump
+  if (!SPLITS0) { const j = readJson0('data/splits.json'); SPLITS0 = j && Array.isArray(j.splits) ? j.splits : []; }
+  const own = SPLITS0.filter(x => x.s === sym);
+  let big = false; for (let k = Math.max(1, c.length - 400); k < c.length; k++) { const q = c[k].c / c[k - 1].c; if (q >= 1.8 || q <= 0.55) { big = true; break; } }
+  if (!big || !env.MASSIVE_KEY) return own;
+  if (!SPLIT_ASKED[sym]) { SPLIT_ASKED[sym] = []; try { const j = await mv('/stocks/v1/splits?ticker=' + encodeURIComponent(sym) + '&limit=100');
+    for (const x of (j && Array.isArray(j.results) ? j.results : [])) { const f = +x.split_from, t = +x.split_to, d = String(x.execution_date || ''); if (!d || !(f > 0) || !(t > 0) || f === t || /dividend/i.test(String(x.adjustment_type || ''))) continue; SPLIT_ASKED[sym].push({ s: sym, d, r: t / f }); } } catch (e) {} }
+  return [...own, ...SPLIT_ASKED[sym].filter(x => !own.some(o => o.d === x.d))];
+}
 let spyDaily = null;
 async function loadDaily(sym) {
   if (sym === 'SPY' && spyDaily) return spyDaily;
   const j = await td('/time_series?symbol=' + encodeURIComponent(sym) + '&interval=1day&outputsize=4000&order=ASC'); if (!j || !j.values) return null;
   const now = Date.now(), all = j.values.map(v => ({ d: v.datetime.slice(0, 10), o: +(+v.open).toFixed(4), h: +(+v.high).toFixed(4), l: +(+v.low).toFixed(4), c: +(+v.close).toFixed(4), v: Math.round(+v.volume || 0) })).sort((a, b) => a.d < b.d ? -1 : 1);
+  adjustSplits(sym, all, await splitsFor(sym, all));
   const res = { candles: all.filter(c => barClosed(c.d, now)), last: all[all.length - 1].c }; if (sym === 'SPY') spyDaily = res; return res;
 }
 function addExtra(sym) { const a = readExtra(); if (a.includes(sym)) return false; a.push(sym); fs.writeFileSync(EXTRA_FILE, JSON.stringify(a.slice(-60))); return true; }
@@ -2946,8 +2970,13 @@ const leadersText = () => { const s = readJson(LEAD_FILE, null); return s && s.t
 
 // NIGHTLY STOP RAISE for one of your positions (moved out of daily() unchanged on 22 Oct so the regression tests can reach it).
 // P: the position (changed in place), c: daily candles, ind: L.indicators(c), i: the last candle.
+function stopWhyNow(P) {   // keeps the "above/below your entry" part of the reason true after a raise (PR, 23 Oct: stop 23.45 over entry 22.40 still said "a loss of 1.8%")
+  if (!P.stopWhy || !(P.entry > 0) || !(P.stop > 0)) return; const base = P.stopWhy.replace(/\. It is (now )?(above|below) your entry[^.]*\.\d*%?[^.]*/, '').replace(/\. I will raise it.*$/, '');
+  const g = Math.abs(P.stop / P.entry - 1) * 100;
+  P.stopWhy = base + (P.stop > P.entry ? '. It is now above your entry, so it locks in a gain of ' + g.toFixed(1) + '%' : '. It is below your entry, so hitting it means accepting a loss of ' + g.toFixed(1) + '%') + '. I will raise it if the stock rises, never lower it.';
+}
 function nightlyStopRaise(P, c, ind, i) {
-  if (P.stopWhy && !P.own && c.some(k => k.d > P.since)) { const a = ind.atr[i], e50 = ind.e[50][i], ns = +Math.max(c[i].c - 2 * a, e50 < c[i].c ? e50 : 0).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }
+  if (P.stopWhy && !P.own && c.some(k => k.d > P.since)) { const a = ind.atr[i], e50 = ind.e[50][i], ns = +Math.max(c[i].c - 2 * a, e50 < c[i].c ? e50 : 0).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; stopWhyNow(P); } }
   if (P.kind === 'leader' && P.stop && !P.own && c.some(k => k.d > P.since)) { const ns = +(c[i].c - LEADCFG.ATR * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }
   if (P.trail && P.stop && !P.own) { const ns = +(c[i].c - 3 * ind.atr[i]).toFixed(2); if (ns > P.stop && c[i].c > P.stop) { P.stop = ns; P.raised = c[i].d; } }   // the running half: stop trails 3 daily moves under the close
 }
@@ -2980,6 +3009,7 @@ async function daily() {
     const j = await td('/time_series?symbol=' + encodeURIComponent(sym) + '&interval=1day&outputsize=4000&order=ASC');
     if (j.status === 'error' || !j.values) { errors.push(sym); continue; }
     const all = j.values.map(v => ({ d: v.datetime.slice(0, 10), o: +(+v.open).toFixed(4), h: +(+v.high).toFixed(4), l: +(+v.low).toFixed(4), c: +(+v.close).toFixed(4), v: Math.round(+v.volume || 0) })).sort((a, b) => a.d < b.d ? -1 : 1);
+    if (adjustSplits(sym, all, await splitsFor(sym, all))) console.log('split adjusted: ' + sym);
     loaded[sym] = { candles: all.filter(c => barClosed(c.d, now)), last: all[all.length - 1].c };
   }
   const WIDE = new Set();
@@ -3017,6 +3047,7 @@ async function daily() {
     if (!only && !WIDE.has(sym) && i > 140) { const e2 = ind.e[L.CFG.TREND], e5 = ind.e[50], j = i - 5; wk.push({ sym, chg: c[i].c / c[j].c - 1, up: T.up, wasUp: c[j].c > e2[j] && e5[j] > e2[j] && c[j].c / c[j - 126].c - 1 > 0 }); }
     if (myPos[sym]) {   // your own position: end-of-day checks
       nightlyStopRaise(myPos[sym], c, ind, i);
+      if (/your entry/.test(myPos[sym].stopWhy || '')) stopWhyNow(myPos[sym]);   // also repairs a reason left stale by an earlier raise
       const P = myPos[sym], held = c.filter(k => k.d > P.since).length, flags = [];
       if (P.kind === 'leader' && held >= 1 && c[i].c < ind.e[50][i]) flags.push('LEADER EXIT: it closed under its 50 day average, the trend is broken. Sell at the next open.');
       if (P.kind === 'entry' && c[i].d >= P.since && !(P.stop && c[i].c <= P.stop)) {
