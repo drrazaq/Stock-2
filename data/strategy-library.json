@@ -3461,6 +3461,15 @@
     "bar": 2.58,
     "why": "not better than the average stock bought the same day; not better than the same stock on its other days; day t -3.78 under the luck bar 2.58; block t -1.98 under the luck bar 2.58"
    }
+  },
+  {
+   "id": "D3-POOL",
+   "family": "Testing method",
+   "name": "Discovery engine, round 3: look-alikes matched on volatility too",
+   "explain": "Same method as discovery2 (runners vs matched look-alikes, discovery on the older half only, 10 rules frozen, tested once on the newer half), but the look-alikes are also matched on 20-day volatility and drawdown from the 52-week high, so the engine cannot rediscover \"volatile stocks move a lot\". Counts toward the same luck bar as the discovery2 pool.",
+   "status": "queued (discovery engine, after the 1 Nov batch)",
+   "agent": "A",
+   "note": "23 Oct: round 2 found mainly a volatility profile (runners had just crashed, about 50% under the 52-week high), because look-alikes were not matched on volatility. Registered before any run."
   }
  ]
 }
