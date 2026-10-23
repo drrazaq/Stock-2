@@ -1,8 +1,22 @@
 chain-decoder: stage tickers (3 s, 815 MB)
 chain-decoder: stage membership (3 s, 820 MB)
-chain-decoder: 58 layers; members point-in-time 398, today-only 16 (no CIK 16, no filing 0), not checked 1
-chain-decoder: stage links (7 s, 836 MB)
-chain-decoder: FAILED at links: TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
-    at annualRevenue (file:///home/runner/work/Stock-2/Stock-2/chain-decoder.mjs:187:258)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async file:///home/runner/work/Stock-2/Stock-2/chain-decoder.mjs:189:96
+chain-decoder: 58 layers; members point-in-time 399, today-only 16 (no CIK 16, no filing 0), not checked 0
+chain-decoder: stage links (4 s, 828 MB)
+chain-decoder: 628 major-customer links, 1533 material agreements (0 documents read now, 0 not read yet)
+chain-decoder: stage demand 8-Ks (151 s, 603 MB)
+chain-decoder: 968 demand-node earnings 8-Ks, 461 with raised guidance or capital spending
+chain-decoder: stage read-through 8-Ks (465 s, 665 MB)
+chain-decoder: 346 chain-member 8-Ks with raised-guidance words, 213 also with revenue up 10%+ on the prior year
+chain-decoder: stage dilution index (542 s, 673 MB)
+chain-decoder: stage MOM1 (553 s, 760 MB)
+chain-decoder: stage DEMAND1 (553 s, 760 MB)
+chain-decoder: stage LAG1 (553 s, 804 MB)
+chain-decoder: stage READ1 (553 s, 804 MB)
+chain-decoder: stage write (553 s, 828 MB)
+CHAIN DECODER (2022-01-21 to 2026-10-19, bar t 4)
+- CHAIN-MOM1: NOT PROVEN | 588 trades, 56 days, 223 stocks, win 56%, avg +3.5% | older 335 edge +1.8% t 1.18 vsOwn -0.5% | newer 253 edge +3.6% t 1.5 vsOwn +1.6% | t 1.18 under 2.5 in the older half
+- CHAIN-DEMAND1: REJECTED | 2373 trades, 249 days, 326 stocks, win 45%, avg +0.3% | older 1160 edge -0.2% t -0.27 vsOwn -1.4% | newer 1213 edge +1.8% t 1.59 vsOwn -1.1% | lost money after 0.8% costs in the older half
+- CHAIN-LAG1: NO REPEATING ORDER FOUND | 0 trades, 0 days, 0 stocks, win n/a, avg n/a | older 0 edge n/a t undefined vsOwn n/a | newer 0 edge n/a t undefined vsOwn n/a | no same-chain layer pair reached |t| 3.0 on the first half
+- CHAIN-READ1: REJECTED | 960 trades, 132 days, 164 stocks, win 55%, avg +2.8% | older 388 edge +0.6% t 0.61 vsOwn +1.4% | newer 572 edge -0.3% t -0.27 vsOwn +0.6% | t 0.61 under 2.5 in the older half
+LAG1 pairs learned on the first half: none
+hot layers now: Cloud and software|Business software (SaaS) +34.8%, AI build-out|AI software and data +26.5%, Cloud and software|Data and observability +24.0%
