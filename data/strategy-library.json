@@ -8529,6 +8529,54 @@
    "status": "needs owner keys (ETORO_KEY, ETORO_USER_KEY)",
    "agent": "expert",
    "note": "Overlaps FOLLOW-KINFO (broker-verified traders) and the follow lane. Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
+  },
+  {
+   "id": "WIN-001",
+   "family": "Winner autopsy",
+   "name": "Winner precursor: loose 10d + down 10pct 5d + high volatility",
+   "agent": "WIN",
+   "status": "pre-registered",
+   "explain": "Buy at the next open after this combination appears (fresh: on at the close, off the close before) on a stock with price >= 1 USD and median 20-day dollar volume >= 2M USD: last 10 closes spread over 25%+ AND down 10%+ in the last 5 sessions AND daily moves 6%+ (20-day standard deviation). Two exits fixed before any result: S8T10 = 8% stop, else sell the close of the 10th session; TRAIL = 8% stop rising to 10% under the highest close, 20 sessions max.",
+   "built": "Registered 2026-10-23T19:32:05.900Z by winners-autopsy-lab.mjs BEFORE any 5-year run, from the winner autopsy of 2026-06-16..2026-10-22: 228 of 989 winners vs 504 of 4945 matched controls (lift 2.2601, z 11.2281). FALLBACK: it did NOT make money as a 90-day buy rule; registered only because fewer than 3 combinations passed both tests. 5-year test: halves 2021-23 / 2024-26 (split 2024-01-01), signals end before the autopsy window, tier-2 standard of value-core.mjs (0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t). Forward paper record from the next session: data/winners-paper.jsonl, data/winners-board.json.",
+   "note": "Run once as written; the first 5-year verdict of each exit is frozen in data/winners-autopsy.json firstRun.",
+   "registered": "2026-10-23T19:32:05.900Z",
+   "flags": [
+    "LOOSE_10D",
+    "DOWN_10PCT_5D",
+    "HIGH_VOLATILITY"
+   ]
+  },
+  {
+   "id": "WIN-002",
+   "family": "Winner autopsy",
+   "name": "Winner precursor: deep drawdown + loose 10d + high volatility",
+   "agent": "WIN",
+   "status": "pre-registered",
+   "explain": "Buy at the next open after this combination appears (fresh: on at the close, off the close before) on a stock with price >= 1 USD and median 20-day dollar volume >= 2M USD: 40%+ below its 6-month high close AND last 10 closes spread over 25%+ AND daily moves 6%+ (20-day standard deviation). Two exits fixed before any result: S8T10 = 8% stop, else sell the close of the 10th session; TRAIL = 8% stop rising to 10% under the highest close, 20 sessions max.",
+   "built": "Registered 2026-10-23T19:32:05.900Z by winners-autopsy-lab.mjs BEFORE any 5-year run, from the winner autopsy of 2026-06-16..2026-10-22: 171 of 989 winners vs 348 of 4945 matched controls (lift 2.4539, z 10.4187). FALLBACK: it did NOT make money as a 90-day buy rule; registered only because fewer than 3 combinations passed both tests. 5-year test: halves 2021-23 / 2024-26 (split 2024-01-01), signals end before the autopsy window, tier-2 standard of value-core.mjs (0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t). Forward paper record from the next session: data/winners-paper.jsonl, data/winners-board.json.",
+   "note": "Run once as written; the first 5-year verdict of each exit is frozen in data/winners-autopsy.json firstRun.",
+   "registered": "2026-10-23T19:32:05.900Z",
+   "flags": [
+    "DEEP_DRAWDOWN",
+    "LOOSE_10D",
+    "HIGH_VOLATILITY"
+   ]
+  },
+  {
+   "id": "WIN-003",
+   "family": "Winner autopsy",
+   "name": "Winner precursor: deep drawdown + down 10pct 5d + high volatility",
+   "agent": "WIN",
+   "status": "pre-registered",
+   "explain": "Buy at the next open after this combination appears (fresh: on at the close, off the close before) on a stock with price >= 1 USD and median 20-day dollar volume >= 2M USD: 40%+ below its 6-month high close AND down 10%+ in the last 5 sessions AND daily moves 6%+ (20-day standard deviation). Two exits fixed before any result: S8T10 = 8% stop, else sell the close of the 10th session; TRAIL = 8% stop rising to 10% under the highest close, 20 sessions max.",
+   "built": "Registered 2026-10-23T19:32:05.900Z by winners-autopsy-lab.mjs BEFORE any 5-year run, from the winner autopsy of 2026-06-16..2026-10-22: 173 of 989 winners vs 357 of 4945 matched controls (lift 2.4201, z 10.3409). FALLBACK: it did NOT make money as a 90-day buy rule; registered only because fewer than 3 combinations passed both tests. 5-year test: halves 2021-23 / 2024-26 (split 2024-01-01), signals end before the autopsy window, tier-2 standard of value-core.mjs (0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t). Forward paper record from the next session: data/winners-paper.jsonl, data/winners-board.json.",
+   "note": "Run once as written; the first 5-year verdict of each exit is frozen in data/winners-autopsy.json firstRun.",
+   "registered": "2026-10-23T19:32:05.900Z",
+   "flags": [
+    "DEEP_DRAWDOWN",
+    "DOWN_10PCT_5D",
+    "HIGH_VOLATILITY"
+   ]
   }
  ]
 }
