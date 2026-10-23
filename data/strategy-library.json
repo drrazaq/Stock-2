@@ -8535,7 +8535,7 @@
    "family": "Winner autopsy",
    "name": "Winner precursor: loose 10d + down 10pct 5d + high volatility",
    "agent": "WIN",
-   "status": "pre-registered",
+   "status": "tested: rejected",
    "explain": "Buy at the next open after this combination appears (fresh: on at the close, off the close before) on a stock with price >= 1 USD and median 20-day dollar volume >= 2M USD: last 10 closes spread over 25%+ AND down 10%+ in the last 5 sessions AND daily moves 6%+ (20-day standard deviation). Two exits fixed before any result: S8T10 = 8% stop, else sell the close of the 10th session; TRAIL = 8% stop rising to 10% under the highest close, 20 sessions max.",
    "built": "Registered 2026-10-23T19:32:05.900Z by winners-autopsy-lab.mjs BEFORE any 5-year run, from the winner autopsy of 2026-06-16..2026-10-22: 228 of 989 winners vs 504 of 4945 matched controls (lift 2.2601, z 11.2281). FALLBACK: it did NOT make money as a 90-day buy rule; registered only because fewer than 3 combinations passed both tests. 5-year test: halves 2021-23 / 2024-26 (split 2024-01-01), signals end before the autopsy window, tier-2 standard of value-core.mjs (0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t). Forward paper record from the next session: data/winners-paper.jsonl, data/winners-board.json.",
    "note": "Run once as written; the first 5-year verdict of each exit is frozen in data/winners-autopsy.json firstRun.",
@@ -8544,14 +8544,82 @@
     "LOOSE_10D",
     "DOWN_10PCT_5D",
     "HIGH_VOLATILITY"
-   ]
+   ],
+   "tested": "2026-10-23",
+   "study": "winners-autopsy-lab.mjs -> data/winners-autopsy.json (run once as written, first verdict frozen)",
+   "result": {
+    "S8T10": {
+     "verdict": "REJECTED",
+     "n": [
+      2149,
+      6697
+     ],
+     "avg": [
+      -0.01,
+      -0.0097
+     ],
+     "stress": [
+      -0.014,
+      -0.0137
+     ],
+     "edge": [
+      -0.0142,
+      -0.0071
+     ],
+     "vsOwn": [
+      -0.0012,
+      -0.0049
+     ],
+     "noTop2": [
+      -0.0117,
+      -0.0164
+     ],
+     "tBlock": [
+      -2.54,
+      -0.71
+     ],
+     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.54 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.71 under 2.5 in the newer half"
+    },
+    "TRAIL": {
+     "verdict": "REJECTED",
+     "n": [
+      2287,
+      6932
+     ],
+     "avg": [
+      -0.01,
+      -0.0116
+     ],
+     "stress": [
+      -0.014,
+      -0.0156
+     ],
+     "edge": [
+      -0.0127,
+      -0.0122
+     ],
+     "vsOwn": [
+      0.0069,
+      -0.0071
+     ],
+     "noTop2": [
+      -0.0113,
+      -0.0127
+     ],
+     "tBlock": [
+      -3.15,
+      -3.57
+     ],
+     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -3.15 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.57 under 2.5 in the newer half"
+    }
+   }
   },
   {
    "id": "WIN-002",
    "family": "Winner autopsy",
    "name": "Winner precursor: deep drawdown + loose 10d + high volatility",
    "agent": "WIN",
-   "status": "pre-registered",
+   "status": "tested: rejected",
    "explain": "Buy at the next open after this combination appears (fresh: on at the close, off the close before) on a stock with price >= 1 USD and median 20-day dollar volume >= 2M USD: 40%+ below its 6-month high close AND last 10 closes spread over 25%+ AND daily moves 6%+ (20-day standard deviation). Two exits fixed before any result: S8T10 = 8% stop, else sell the close of the 10th session; TRAIL = 8% stop rising to 10% under the highest close, 20 sessions max.",
    "built": "Registered 2026-10-23T19:32:05.900Z by winners-autopsy-lab.mjs BEFORE any 5-year run, from the winner autopsy of 2026-06-16..2026-10-22: 171 of 989 winners vs 348 of 4945 matched controls (lift 2.4539, z 10.4187). FALLBACK: it did NOT make money as a 90-day buy rule; registered only because fewer than 3 combinations passed both tests. 5-year test: halves 2021-23 / 2024-26 (split 2024-01-01), signals end before the autopsy window, tier-2 standard of value-core.mjs (0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t). Forward paper record from the next session: data/winners-paper.jsonl, data/winners-board.json.",
    "note": "Run once as written; the first 5-year verdict of each exit is frozen in data/winners-autopsy.json firstRun.",
@@ -8560,14 +8628,82 @@
     "DEEP_DRAWDOWN",
     "LOOSE_10D",
     "HIGH_VOLATILITY"
-   ]
+   ],
+   "tested": "2026-10-23",
+   "study": "winners-autopsy-lab.mjs -> data/winners-autopsy.json (run once as written, first verdict frozen)",
+   "result": {
+    "S8T10": {
+     "verdict": "REJECTED",
+     "n": [
+      1615,
+      3979
+     ],
+     "avg": [
+      -0.0139,
+      -0.0125
+     ],
+     "stress": [
+      -0.0179,
+      -0.0165
+     ],
+     "edge": [
+      -0.0122,
+      -0.0165
+     ],
+     "vsOwn": [
+      0.0074,
+      0.0008
+     ],
+     "noTop2": [
+      -0.0155,
+      -0.0145
+     ],
+     "tBlock": [
+      -2.06,
+      -3.21
+     ],
+     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -2.06 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -3.21 under 2.5 in the newer half"
+    },
+    "TRAIL": {
+     "verdict": "REJECTED",
+     "n": [
+      1654,
+      4011
+     ],
+     "avg": [
+      -0.0093,
+      -0.0126
+     ],
+     "stress": [
+      -0.0133,
+      -0.0166
+     ],
+     "edge": [
+      -0.0096,
+      -0.0179
+     ],
+     "vsOwn": [
+      0.0173,
+      -0.0044
+     ],
+     "noTop2": [
+      -0.0105,
+      -0.0145
+     ],
+     "tBlock": [
+      -1.57,
+      -4.67
+     ],
+     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.57 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -4.67 under 2.5 in the newer half"
+    }
+   }
   },
   {
    "id": "WIN-003",
    "family": "Winner autopsy",
    "name": "Winner precursor: deep drawdown + down 10pct 5d + high volatility",
    "agent": "WIN",
-   "status": "pre-registered",
+   "status": "tested: rejected",
    "explain": "Buy at the next open after this combination appears (fresh: on at the close, off the close before) on a stock with price >= 1 USD and median 20-day dollar volume >= 2M USD: 40%+ below its 6-month high close AND down 10%+ in the last 5 sessions AND daily moves 6%+ (20-day standard deviation). Two exits fixed before any result: S8T10 = 8% stop, else sell the close of the 10th session; TRAIL = 8% stop rising to 10% under the highest close, 20 sessions max.",
    "built": "Registered 2026-10-23T19:32:05.900Z by winners-autopsy-lab.mjs BEFORE any 5-year run, from the winner autopsy of 2026-06-16..2026-10-22: 173 of 989 winners vs 357 of 4945 matched controls (lift 2.4201, z 10.3409). FALLBACK: it did NOT make money as a 90-day buy rule; registered only because fewer than 3 combinations passed both tests. 5-year test: halves 2021-23 / 2024-26 (split 2024-01-01), signals end before the autopsy window, tier-2 standard of value-core.mjs (0.8% and 1.2% cost, vs the average stock, vs the same stock on other days, without the 2 best, block t). Forward paper record from the next session: data/winners-paper.jsonl, data/winners-board.json.",
    "note": "Run once as written; the first 5-year verdict of each exit is frozen in data/winners-autopsy.json firstRun.",
@@ -8576,7 +8712,75 @@
     "DEEP_DRAWDOWN",
     "DOWN_10PCT_5D",
     "HIGH_VOLATILITY"
-   ]
+   ],
+   "tested": "2026-10-23",
+   "study": "winners-autopsy-lab.mjs -> data/winners-autopsy.json (run once as written, first verdict frozen)",
+   "result": {
+    "S8T10": {
+     "verdict": "REJECTED",
+     "n": [
+      1834,
+      4866
+     ],
+     "avg": [
+      -0.0146,
+      -0.0088
+     ],
+     "stress": [
+      -0.0186,
+      -0.0128
+     ],
+     "edge": [
+      -0.0137,
+      -0.0087
+     ],
+     "vsOwn": [
+      -0.0032,
+      0.0016
+     ],
+     "noTop2": [
+      -0.0168,
+      -0.018
+     ],
+     "tBlock": [
+      -1.91,
+      -0.35
+     ],
+     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.91 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.35 under 2.5 in the newer half"
+    },
+    "TRAIL": {
+     "verdict": "REJECTED",
+     "n": [
+      1971,
+      5055
+     ],
+     "avg": [
+      -0.0121,
+      -0.0138
+     ],
+     "stress": [
+      -0.0161,
+      -0.0178
+     ],
+     "edge": [
+      -0.008,
+      -0.018
+     ],
+     "vsOwn": [
+      0.0102,
+      -0.0084
+     ],
+     "noTop2": [
+      -0.0143,
+      -0.0155
+     ],
+     "tBlock": [
+      -1.45,
+      -4.48
+     ],
+     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.45 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -4.48 under 2.5 in the newer half"
+    }
+   }
   }
  ]
 }
