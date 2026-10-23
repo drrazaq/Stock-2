@@ -555,6 +555,15 @@ function avoidLedger(items, last) { const f = 'data/avoid-ledger.jsonl', d = new
   const avg = done.reduce((a, r) => a + r.pct, 0) / done.length, byWhy = {}; for (const r of done) (byWhy[r.why] = byWhy[r.why] || []).push(r.pct);
   return 'AVOIDED STOCKS, 10 sessions later: ' + done.length + ' resolved, average ' + pcs(avg) + (Object.keys(byWhy).length > 1 ? ' (' + Object.entries(byWhy).map(([k, a]) => k + ' ' + pcs(a.reduce((x, y) => x + y, 0) / a.length) + ' on ' + a.length).join('; ') + ')' : '') + '. ' + (avg < 0 ? 'The avoid rules were right so far.' : 'Avoided stocks did fine so far: watch whether the rules are too strict (no change before 100 resolved).'); }
 // WEEKLY SCOREBOARD (22 Oct): you vs the system vs the S&P 500, this week and the last 90 days; the one number that says whether trading beats the index.
+// SELL DISCIPLINE (23 Oct): the owner's biggest measured leak. A sale more than 1% under its stop counts as late; its cost is the gap
+// between the actual result and the stop's result. Shown every Sunday.
+function sellDiscipline(trades) {
+  const w = (trades || []).filter(t => t && t.stop > 0 && t.entry > 0 && t.exit > 0), late = w.filter(t => t.exit < t.stop * 0.99);
+  const cost = late.reduce((a, t) => a + ((t.stop / t.entry - 1) - (t.exit / t.entry - 1)), 0);
+  if (!w.length) return { withStop: 0, late: 0, cost: 0, line: '' };
+  const line = 'SELL DISCIPLINE: ' + late.length + ' of ' + w.length + ' sales with a stop were made late (more than 1% under the stop)' + (late.length ? ': ' + late.map(t => t.sym).join(', ') + '. Selling at the stop would have saved about ' + Math.round(cost * 100) + ' points (about ' + Math.round(cost * 1000) + ' USD at 1,000 USD a trade). Keep every stop as a real order at your broker.' : '. Well done: every stop was respected.');
+  return { withStop: w.length, late: late.length, cost, line };
+}
 function scoreboardText() { const now = Date.now(), d7 = new Date(now - 7 * 864e5).toISOString().slice(0, 10), d90 = new Date(now - 90 * 864e5).toISOString().slice(0, 10), av = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
   let mt = []; try { mt = fs.readFileSync(MY_TRADES, 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(t => typeof t.pct === 'number' && t.out); } catch (e) {}
   const you = (since) => mt.filter(t => String(t.out).slice(0, 10) >= since).map(t => t.pct);   // stored after costs already
@@ -577,6 +586,7 @@ function scoreboardText() { const now = Date.now(), d7 = new Date(now - 7 * 864e
     const LB = readJson0('data/strategy-library.json'), lt = ((LB && LB.strategies) || []).filter(x => x.tested && x.tested >= d7); if (lt.length) { const c = {}; for (const x of lt) { const k = /tradable small/i.test(x.status) ? 'TRADABLE SMALL' : /passed|proven/i.test(x.status) && !/not proven/i.test(x.status) ? 'passed' : /reject|FAILED/i.test(x.status) ? 'rejected' : /not proven|too few|needs data/i.test(x.status) ? 'not proven / needs data' : 'other'; (c[k] = c[k] || []).push(x.id); } W.push('- Tested this week: ' + lt.length + ' rules: ' + Object.entries(c).map(([k, a]) => a.length + ' ' + k + (/(TRADABLE|passed)/.test(k) ? ' (' + a.join(', ') + ')' : '')).join(', ') + '.'); }
     let T2 = []; try { T2 = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const t2w = T2.filter(r => r.d >= d7); if (t2w.length) W.push('- TRADABLE SMALL instructions this week: ' + t2w.map(r => r.sym + ' (' + r.kind + ')').join(', ') + '.');
     if (W.length > 2) L.push(...W); } catch (e) {}
+  try { const sd = sellDiscipline(mt); if (sd.line) L.push('', sd.line); } catch (e) {}
   return L.join('\n'); }
 // ENGINE KIND OF A SCORECARD ROW (22 Oct): the same mapping for the LOSING block and for FOCUS. Rows of the TRADABLE SMALL ledger,
 // YOUR REAL trades, autolab, radar and fast alerts belong to no buy engine kind (null).
