@@ -1,0 +1,864 @@
+{
+ "at": "2026-10-23T18:51:58.824Z",
+ "keys": {
+  "FMP_KEY": true,
+  "FINNHUB_KEY": true,
+  "ALPHAVANTAGE_KEY": true,
+  "TIPRANKS_KEY": true,
+  "SEC_UA": true,
+  "ETORO_KEY": false,
+  "ETORO_USER_KEY": false,
+  "OPENFIGI_KEY": false
+ },
+ "endpoints": {
+  "fmp grades": {
+   "status": 200,
+   "rows": 1808,
+   "fields": [
+    "symbol",
+    "date",
+    "gradingCompany",
+    "previousGrade",
+    "newGrade",
+    "action"
+   ],
+   "range": [
+    "2012-02-08",
+    "2026-10-20"
+   ]
+  },
+  "fmp grades-historical": {
+   "status": 200,
+   "rows": 94,
+   "fields": [
+    "symbol",
+    "date",
+    "analystRatingsStrongBuy",
+    "analystRatingsBuy",
+    "analystRatingsHold",
+    "analystRatingsSell",
+    "analystRatingsStrongSell"
+   ],
+   "range": [
+    "2018-12-01",
+    "2026-10-01"
+   ]
+  },
+  "fmp grades-latest-news": {
+   "status": 200,
+   "rows": 5,
+   "fields": [
+    "symbol",
+    "publishedDate",
+    "newsURL",
+    "newsTitle",
+    "newsBaseURL",
+    "newsPublisher",
+    "newGrade",
+    "previousGrade",
+    "gradingCompany",
+    "action",
+    "priceWhenPosted"
+   ],
+   "range": [
+    "2026-10-23",
+    "2026-10-23"
+   ]
+  },
+  "fmp grades-news": {
+   "status": 402,
+   "text": 177
+  },
+  "fmp price-target-news": {
+   "status": 402,
+   "text": 177
+  },
+  "fmp price-target-latest-news": {
+   "status": 200,
+   "rows": 5,
+   "fields": [
+    "symbol",
+    "publishedDate",
+    "newsURL",
+    "newsTitle",
+    "analystName",
+    "priceTarget",
+    "adjPriceTarget",
+    "priceWhenPosted",
+    "newsPublisher",
+    "newsBaseURL",
+    "analystCompany"
+   ],
+   "range": [
+    "2026-10-23",
+    "2026-10-23"
+   ]
+  },
+  "fmp price-target-summary": {
+   "status": 200,
+   "rows": 1,
+   "fields": [
+    "symbol",
+    "lastMonthCount",
+    "lastMonthAvgPriceTarget",
+    "lastQuarterCount",
+    "lastQuarterAvgPriceTarget",
+    "lastYearCount",
+    "lastYearAvgPriceTarget",
+    "allTimeCount",
+    "allTimeAvgPriceTarget",
+    "publishers"
+   ],
+   "range": null
+  },
+  "fmp senate-trades": {
+   "status": 402,
+   "text": 177
+  },
+  "fmp house-trades": {
+   "status": 402,
+   "text": 177
+  },
+  "fmp senate-latest": {
+   "status": 200,
+   "rows": 5,
+   "fields": [
+    "symbol",
+    "senateID",
+    "disclosureDate",
+    "transactionDate",
+    "firstName",
+    "lastName",
+    "office",
+    "district",
+    "owner",
+    "assetDescription",
+    "assetType",
+    "type",
+    "amount",
+    "comment",
+    "link"
+   ],
+   "range": [
+    "2026-09-08",
+    "2026-10-22"
+   ]
+  },
+  "fmp house-latest": {
+   "status": 200,
+   "rows": 5,
+   "fields": [
+    "symbol",
+    "senateID",
+    "disclosureDate",
+    "transactionDate",
+    "firstName",
+    "lastName",
+    "office",
+    "district",
+    "owner",
+    "assetDescription",
+    "assetType",
+    "type",
+    "amount",
+    "capitalGainsOver200USD",
+    "comment",
+    "link"
+   ],
+   "range": [
+    "2026-10-01",
+    "2026-10-23"
+   ]
+  },
+  "fmp institutional-holder-list": {
+   "status": 402,
+   "text": 177
+  },
+  "fmp insider-trading-search": {
+   "status": 402,
+   "text": 177
+  },
+  "fmp v3 upgrades-downgrades": {
+   "status": 403,
+   "rows": 0,
+   "fields": [
+    "Error Message"
+   ],
+   "range": null,
+   "note": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentatio"
+  },
+  "fmp v4 price-target": {
+   "status": 403,
+   "rows": 0,
+   "fields": [
+    "Error Message"
+   ],
+   "range": null,
+   "note": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentatio"
+  },
+  "finnhub upgrade-downgrade": {
+   "status": 403,
+   "rows": 0,
+   "fields": [
+    "error"
+   ],
+   "range": null,
+   "note": "You don't have access to this resource."
+  },
+  "finnhub price-target": {
+   "status": 403,
+   "rows": 0,
+   "fields": [
+    "error"
+   ],
+   "range": null,
+   "note": "You don't have access to this resource."
+  },
+  "finnhub recommendation": {
+   "status": 200,
+   "rows": 4,
+   "fields": [
+    "symbol",
+    "period",
+    "strongBuy",
+    "buy",
+    "hold",
+    "sell",
+    "strongSell"
+   ],
+   "range": null
+  },
+  "finnhub congressional-trading": {
+   "status": 403,
+   "rows": 0,
+   "fields": [
+    "error"
+   ],
+   "range": null,
+   "note": "You don't have access to this resource."
+  },
+  "finnhub insider-transactions": {
+   "status": 200,
+   "rows": 116,
+   "fields": [
+    "name",
+    "share",
+    "change",
+    "filingDate",
+    "transactionDate",
+    "transactionCode",
+    "transactionPrice",
+    "id",
+    "symbol",
+    "source",
+    "isDerivative",
+    "currency"
+   ],
+   "range": [
+    "2025-11-07",
+    "2026-10-15"
+   ]
+  },
+  "finnhub institutional-ownership": {
+   "status": 403,
+   "rows": 0,
+   "fields": [
+    "error"
+   ],
+   "range": null,
+   "note": "You don't have access to this resource."
+  },
+  "alphavantage CONGRESS_TRADES symbol": {
+   "status": 200,
+   "rows": 500,
+   "fields": [
+    "chamber",
+    "politician",
+    "bioguide_id",
+    "politician_canonical",
+    "party",
+    "state",
+    "state_district",
+    "symbol",
+    "ticker_reported",
+    "ticker_source",
+    "asset_name",
+    "asset_type_code",
+    "transaction_type",
+    "transaction_date",
+    "notification_date",
+    "amount_min",
+    "amount_max",
+    "owner_code",
+    "filing_status",
+    "filed_date",
+    "extraction_method",
+    "extraction_confidence",
+    "extraction_flags",
+    "source_page",
+    "source_row",
+    "extraction_artifact_sha256"
+   ],
+   "range": [
+    "2016-01-05",
+    "2026-10-14"
+   ]
+  },
+  "sec 13f data sets page": {
+   "status": 200,
+   "text": 108010
+  },
+  "openfigi mapping": {
+   "status": 200,
+   "rows": 1,
+   "fields": [
+    "data"
+   ],
+   "range": null
+  }
+ },
+ "sec13fZips": [
+  "/files/datastandardsinnovation/data/form-13f-data-sets/01jun2026-31aug2026_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01mar2026-31may2026_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01dec2025-28feb2026_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01sep2025-30nov2025_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01jun2025-31aug2025_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01mar2025-31may2025_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01dec2024-28feb2025_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01sep2024-30nov2024_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01jun2024-31aug2024_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01mar2024-31may2024_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01jan2024-29feb2024_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2023q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2023q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2023q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2023q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2022q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2022q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2022q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2022q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2021q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2021q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2021q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2021q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2020q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2020q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2020q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2020q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2019q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2019q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2019q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2019q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2018q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2018q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2018q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2018q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2017q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2017q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2017q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2017q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2016q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2016q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2016q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2016q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2015q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2015q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2015q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2015q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2014q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2014q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2014q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2014q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2013q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2013q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2013q2_form13f.zip"
+ ],
+ "tipranksTools": [
+  {
+   "name": "list_my_portfolios",
+   "args": []
+  },
+  {
+   "name": "get_portfolio_holdings",
+   "args": [
+    "portfolio_id"
+   ]
+  },
+  {
+   "name": "get_portfolio_overview",
+   "args": [
+    "portfolio_id"
+   ]
+  },
+  {
+   "name": "get_portfolio_analysis",
+   "args": [
+    "portfolio_id"
+   ]
+  },
+  {
+   "name": "get_portfolio_performance",
+   "args": [
+    "portfolio_id"
+   ]
+  },
+  {
+   "name": "get_assets_data",
+   "args": [
+    "tickers"
+   ]
+  },
+  {
+   "name": "get_assets_events",
+   "args": [
+    "tickers",
+    "from_date",
+    "to_date"
+   ]
+  },
+  {
+   "name": "get_assets_news",
+   "args": [
+    "tickers",
+    "count",
+    "from_date"
+   ]
+  },
+  {
+   "name": "get_latest_news",
+   "args": [
+    "tickers",
+    "category",
+    "from_date",
+    "limit",
+    "to_date"
+   ]
+  },
+  {
+   "name": "get_article",
+   "args": [
+    "identifier"
+   ]
+  },
+  {
+   "name": "get_assets_warnings",
+   "args": [
+    "tickers"
+   ]
+  },
+  {
+   "name": "get_trending_stocks",
+   "args": [
+    "num",
+    "filter",
+    "daysAgo",
+    "trendingType",
+    "country",
+    "sector"
+   ]
+  },
+  {
+   "name": "get_company_kpis",
+   "args": [
+    "ticker",
+    "count",
+    "group"
+   ]
+  },
+  {
+   "name": "get_market_movers",
+   "args": [
+    "category",
+    "country",
+    "num"
+   ]
+  },
+  {
+   "name": "get_top_rated_stocks",
+   "args": [
+    "num",
+    "sector",
+    "country"
+   ]
+  },
+  {
+   "name": "get_top_smart_score_stocks",
+   "args": [
+    "num",
+    "sector",
+    "country"
+   ]
+  },
+  {
+   "name": "get_economic_calendar",
+   "args": [
+    "daysBack",
+    "daysForward",
+    "fromDate",
+    "toDate",
+    "countries",
+    "impact",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_peers",
+   "args": [
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_politicians",
+   "args": []
+  },
+  {
+   "name": "get_politician_activity",
+   "args": [
+    "politicianId",
+    "activity"
+   ]
+  },
+  {
+   "name": "get_earnings_calendar",
+   "args": [
+    "fromDate",
+    "toDate",
+    "exchange"
+   ]
+  },
+  {
+   "name": "get_ticker_earnings",
+   "args": [
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_ipo_calendar",
+   "args": [
+    "fromDate",
+    "toDate"
+   ]
+  },
+  {
+   "name": "get_clinical_trials",
+   "args": []
+  },
+  {
+   "name": "get_stock_splits",
+   "args": [
+    "fromDate",
+    "toDate",
+    "type",
+    "limit",
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_buybacks",
+   "args": [
+    "ticker",
+    "limit",
+    "page"
+   ]
+  },
+  {
+   "name": "get_bulls_bears_summary",
+   "args": [
+    "tickers"
+   ]
+  },
+  {
+   "name": "get_investor_sentiment",
+   "args": [
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_blogger_sentiment",
+   "args": [
+    "ticker",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_top_hedge_fund_managers",
+   "args": [
+    "num"
+   ]
+  },
+  {
+   "name": "get_hedge_fund_activity",
+   "args": [
+    "ticker",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_best_performing_experts",
+   "args": [
+    "expert_type",
+    "num"
+   ]
+  },
+  {
+   "name": "get_technical_analysis",
+   "args": [
+    "tickers",
+    "timeFrame"
+   ]
+  },
+  {
+   "name": "get_etf_analysis",
+   "args": [
+    "tickers"
+   ]
+  },
+  {
+   "name": "get_etf_forecast",
+   "args": [
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_etf_top_stocks",
+   "args": [
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_etf_exposures",
+   "args": [
+    "ticker",
+    "page",
+    "page_size"
+   ]
+  },
+  {
+   "name": "get_etf_screener",
+   "args": [
+    "assetClass",
+    "category",
+    "focus",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_commodity_quote",
+   "args": [
+    "symbol"
+   ]
+  },
+  {
+   "name": "get_all_commodities_quotes",
+   "args": []
+  },
+  {
+   "name": "get_commodity_historical",
+   "args": [
+    "symbol",
+    "from_date",
+    "to_date"
+   ]
+  },
+  {
+   "name": "get_forex_quote",
+   "args": [
+    "symbol"
+   ]
+  },
+  {
+   "name": "get_all_forex_quotes",
+   "args": [
+    "symbols",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_forex_historical",
+   "args": [
+    "symbol",
+    "from_date",
+    "to_date"
+   ]
+  },
+  {
+   "name": "get_index_quote",
+   "args": [
+    "symbol"
+   ]
+  },
+  {
+   "name": "get_index_historical",
+   "args": [
+    "symbol",
+    "from_date",
+    "to_date"
+   ]
+  },
+  {
+   "name": "get_crypto_quote",
+   "args": [
+    "symbol"
+   ]
+  },
+  {
+   "name": "get_all_crypto_quotes",
+   "args": [
+    "symbols",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_crypto_historical",
+   "args": [
+    "symbol",
+    "from_date",
+    "to_date"
+   ]
+  },
+  {
+   "name": "get_crypto_news",
+   "args": [
+    "page"
+   ]
+  },
+  {
+   "name": "get_sector_analysis",
+   "args": []
+  },
+  {
+   "name": "get_market_performance",
+   "args": [
+    "country"
+   ]
+  },
+  {
+   "name": "get_earnings_history",
+   "args": [
+    "ticker",
+    "quarters"
+   ]
+  },
+  {
+   "name": "get_financials",
+   "args": [
+    "ticker",
+    "period",
+    "count"
+   ]
+  },
+  {
+   "name": "get_earnings_call_summary",
+   "args": [
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_ai_stock_analysis",
+   "args": [
+    "tickers",
+    "provider",
+    "detail"
+   ]
+  },
+  {
+   "name": "get_dividend_history",
+   "args": [
+    "ticker",
+    "count"
+   ]
+  },
+  {
+   "name": "get_stock_quotes",
+   "args": [
+    "tickers"
+   ]
+  },
+  {
+   "name": "get_stock_prices",
+   "args": [
+    "tickers",
+    "period"
+   ]
+  },
+  {
+   "name": "get_stock_catalyst",
+   "args": [
+    "tickers"
+   ]
+  },
+  {
+   "name": "get_market_commentary",
+   "args": []
+  },
+  {
+   "name": "get_insider_transactions",
+   "args": [
+    "ticker",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_hedge_fund_holdings",
+   "args": [
+    "ticker",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_etf_holdings",
+   "args": [
+    "ticker",
+    "sort_by",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_analysts_by_firm",
+   "args": [
+    "firm",
+    "sector"
+   ]
+  },
+  {
+   "name": "get_recent_analyst_ratings",
+   "args": [
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_options_expirations",
+   "args": [
+    "ticker"
+   ]
+  },
+  {
+   "name": "get_options_chain",
+   "args": [
+    "ticker",
+    "expiration_date",
+    "contract_type",
+    "strike_gte",
+    "strike_lte",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_options_contract",
+   "args": [
+    "contract_ticker"
+   ]
+  },
+  {
+   "name": "get_options_unusual_trades",
+   "args": [
+    "ticker",
+    "limit"
+   ]
+  },
+  {
+   "name": "get_my_usage",
+   "args": []
+  }
+ ]
+}
