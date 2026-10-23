@@ -110,7 +110,10 @@ async function tg(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[ale
 const HELD = { at: 0, pos: {} }, STOP_SENT = {};   // live stop watch (23 Oct)
 const seen = {}, orb = {}, triggers = [], beat = [], vis = {}, ser = {}, pull = {}, earlyWave = {}; let alerts = 0;   // earlyWave: observation only (23 Oct)
 const flag = (sym, f, text) => { const v = vis[sym]; if (!v) return; v.flags[f] = true; if (text && !v.notes.includes(text)) v.notes.push(text); };
-const IG8 = LIVE_RULES.find(r => r.id === 'IG8'), IG8T = LIVE_RULES.find(r => r.id === 'IG8T');
+// IG8 RETIRED (24 Oct): lost on its live paper record (657 trades, -0.8% after costs) and on 23 Oct's first full SIP day (316 trades,
+// -2.2% at the close, worse than matched stocks equally up at the same minute that did not trigger). IG8_ON=1 brings it back for research.
+const IG8_RETIRED = process.env.IG8_ON !== '1';
+const IG8 = IG8_RETIRED ? null : LIVE_RULES.find(r => r.id === 'IG8'), IG8T = IG8_RETIRED ? null : LIVE_RULES.find(r => r.id === 'IG8T');
 let earlyAlerts = 0;
 async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
   const ok0 = liveOnly ? [{ rule: R.id, exit: 'trail', exitName: 'stop 8%, then sell when it falls 10% from its high since the buy, else at the close' }, { rule: R.id, exit: 'close', exitName: 'stop 8%, sell at the close' }] : passed.filter(p => p.rule === R.id);
