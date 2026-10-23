@@ -189,7 +189,7 @@ const SPLITS = []; { const f = AC + '/splits.json.gz'; let x = JZ(f, null);
 
 // ---- 2g. SPUS / HLAL daily history ----
 const NQnum = (v) => { const x = parseFloat(String(v || '').replace(/[$,]/g, '')); return isFinite(x) && x > 0 ? x : NaN; };
-async function fundHist(sym) { const f = AC + '/fund-' + sym + '.json'; let b = J(f, null); if (b && b.at && Date.now() - Date.parse(b.at) < 20 * 3600e3) return b.rows;
+async function fundHist(sym) { const f = AC + '/fund-' + sym + '.json'; let b = J(f, null); if (b && b.at && Date.now() - Date.parse(b.at) < 20 * 3600e3 && b.rows && b.rows[0][0] <= '2020-01-31') return b.rows;
   let rows = null; const j = await api('/v2/aggs/ticker/' + sym + '/range/1/day/2019-12-01/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000');
   if (j && Array.isArray(j.results) && j.results.length > 200) rows = j.results.map(x => [iso(x.t), x.o, x.c]);
   // Massive's history reaches back 5 years only: then the full history from Nasdaq
