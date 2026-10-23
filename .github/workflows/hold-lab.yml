@@ -1,0 +1,65 @@
+name: Hold lab
+# HOLD LAB (hold-lab.mjs; pre-registered library entries HOLD-GETEVEN, HOLD-AVGDOWN, HOLD-REGIME, HOLD-DIPFUND, run once as written;
+# owner's request of 23 Oct 2026: hold instead of selling, wait for the stock to come back, average down; dead stocks included).
+# The whole-market price cache (with the x rows of dead stocks) and quality.mjs's yearly SEC cache are RESTORED READ ONLY from the
+# Sunday job (never saved here). Commits only its own output files and its own library entries. Start: change run-hold-now.txt (a last
+# line containing DIAG = coverage check only, nothing computed or written) or run the workflow by hand.
+on:
+  schedule:
+    - cron: '47 13 * * 0'   # Sunday, after the Sunday studies: monitoring only, verdicts stay frozen
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-hold-now.txt']
+permissions:
+  contents: write
+concurrency: hold-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - shell: bash
+        timeout-minutes: 75
+        run: |
+          set -o pipefail
+          if tail -n 1 run-hold-now.txt | grep -q DIAG; then export DIAG=1; fi
+          node hold-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 400 run.log | cut -c1-2000 > data/hold-lab-run.log 2>/dev/null || true
+          FILES="data/hold-lab.json data/hold-lab-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "hold lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the hold lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hold-lab-log
+          path: run.log
