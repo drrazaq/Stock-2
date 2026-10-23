@@ -385,6 +385,31 @@ jobs:
         with:
           path: cat-cache
           key: cat-cache-${{ github.run_id }}
+      # CHAIN DECODER (owner, 23 Oct 2026: "follow the source"; pre-registered as CHAIN-MOM1 / CHAIN-DEMAND1 / CHAIN-LAG1 / CHAIN-READ1, run
+      # once as written): point-in-time chain graph from EDGAR (membership filings, major customers, material agreements), same prices;
+      # writes the weekly hot-layer list read by ACTIONS and  chains  (buys only if a rule reached tier 2 or proven). Own Actions cache.
+      - uses: actions/cache/restore@v4
+        if: success() || failure()   # run even if an earlier study step failed
+        with:
+          path: chain-cache
+          key: chain-cache-${{ github.run_id }}
+          restore-keys: chain-cache-
+      - shell: bash
+        if: success() || failure()   # run even if an earlier study step failed
+        continue-on-error: true
+        timeout-minutes: 75
+        run: |
+          set -o pipefail
+          node chain-decoder.mjs 2>&1 | tee -a run.log
+        env:
+          CHAIN_MINUTES: '60'
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: chain-cache
+          key: chain-cache-${{ github.run_id }}
       # AGENT LEAGUE referee: freezes each research agent's champion picks weekly and scores old batches vs the S&P 500 (same prices).
       - shell: bash
         if: success() || failure()   # run even if an earlier study step failed
@@ -410,7 +435,7 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json data/tip-score.json data/gov-awards.json data/gov-awards2.json data/share-supply.json data/missed-runners.json data/orb-study.json data/ignition-missed-history.jsonl data/e16-absorption.json data/catalyst-lab.json data/catalyst-today.json"
+          FILES="data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json data/tip-score.json data/gov-awards.json data/gov-awards2.json data/share-supply.json data/missed-runners.json data/orb-study.json data/ignition-missed-history.jsonl data/e16-absorption.json data/catalyst-lab.json data/catalyst-today.json data/chain-decoder.json data/chain-graph.json data/chain-today.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && ! git diff --quiet HEAD -- "$f" 2>/dev/null && mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done; true
           for f in $FILES; do [ -f "$f" ] && ! git ls-files --error-unmatch "$f" >/dev/null 2>&1 && mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done; true
