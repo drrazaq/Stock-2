@@ -1,0 +1,147 @@
+{
+ "note": "CHAIN DECODER definitions, written 23 Oct 2026 BEFORE any run (pre-registered with CHAIN-MOM1 / CHAIN-DEMAND1 / CHAIN-LAG1 / CHAIN-READ1). Chains and layers come from web research (each layer has its source link); they are TODAY's view and so carry hindsight. To limit that, chain-decoder.mjs makes membership POINT IN TIME: a stock counts as a member of a layer only from the first EDGAR filing (10-K, 10-Q, 20-F, 40-F, 8-K, 6-K, S-1, F-1, 424B4) of its own CIK whose text contains one of the layer's keywords (SEC full-text search, filing date, 2001+). A member with no such filing, or no CIK, is marked 'today-only' and EXCLUDED from every history test. Layers are listed upstream (suppliers) to downstream (customers). demandNodes: companies whose earnings 8-Ks are read by CHAIN-DEMAND1 and whose names are searched as major customers in other companies' 10-K / 10-Q (customers over 10% of revenue must be disclosed) and in 8-K material agreements (items 1.01 / 8.01 / 7.01 with an exhibit 99). Do not edit after the first run: the first complete verdict is frozen.",
+ "defined": "2026-10-23",
+ "chains": {
+  "AI build-out": { "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain", "layers": [
+   { "layer": "Chip equipment and materials", "keywords": ["semiconductor equipment", "wafer fabrication equipment", "semiconductor capital equipment", "wafer processing"], "syms": ["ASML", "AMAT", "LRCX", "KLAC", "TER", "ONTO", "ENTG", "MKSI", "CAMT", "FORM", "UCTT", "ICHR", "ACLS", "COHU", "AEHR", "NVMI"], "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain" },
+   { "layer": "Foundry", "keywords": ["foundry", "wafer foundry"], "syms": ["TSM", "GFS", "INTC", "TSEM", "UMC"], "source": "https://newspaceeconomy.ca/2026/06/05/what-is-the-ai-supply-chain-where-can-it-break-and-how-can-it-be-protected/" },
+   { "layer": "AI chip designers", "keywords": ["artificial intelligence", "AI accelerator", "data center", "accelerated computing"], "syms": ["NVDA", "AMD", "AVGO", "MRVL", "ARM", "ALAB", "CRDO", "MPWR"], "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain" },
+   { "layer": "Memory and storage (HBM)", "keywords": ["high bandwidth memory", "HBM", "DRAM", "NAND", "hard disk drive"], "syms": ["MU", "WDC", "STX", "SNDK"], "source": "https://www.storagenewsletter.com/2026/09/18/data-centers-set-to-drive-a-1-5-trillion-semiconductor-market-by-2031/" },
+   { "layer": "Networking and optics", "keywords": ["optical transceiver", "optical components", "data center networking", "optical networking", "fiber optic"], "syms": ["ANET", "CSCO", "CIEN", "COHR", "LITE", "AAOI", "FN", "APH", "GLW", "NOK", "INFN"], "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain" },
+   { "layer": "Servers and assembly", "keywords": ["servers", "server rack", "data center"], "syms": ["SMCI", "DELL", "HPE", "CLS", "FLEX", "JBL", "SANM"], "source": "https://penchan.co/en/market/ai/supply-chain/" },
+   { "layer": "Power and electrical equipment", "keywords": ["data center", "power distribution", "electrical infrastructure", "switchgear", "transformers"], "syms": ["VRT", "ETN", "GEV", "PWR", "HUBB", "NVT", "POWL", "MTZ", "EME", "IESC", "PRIM"], "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain" },
+   { "layer": "Cooling", "keywords": ["liquid cooling", "thermal management", "data center cooling", "cooling systems"], "syms": ["MOD", "JCI", "TT", "CARR", "SPXC", "AAON"], "source": "https://datacentremagazine.com/globenewswire/3346267" },
+   { "layer": "Data centers", "keywords": ["data center", "data centers", "colocation"], "syms": ["EQIX", "DLR", "IRM", "APLD", "IREN", "CORZ", "GDS"], "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain" },
+   { "layer": "Cloud platforms", "keywords": ["cloud computing", "cloud services", "cloud infrastructure", "cloud platform"], "syms": ["MSFT", "AMZN", "GOOGL", "ORCL", "META", "CRWV", "NBIS", "IBM"], "source": "https://penchan.co/en/market/ai/supply-chain/" },
+   { "layer": "AI software and data", "keywords": ["artificial intelligence", "machine learning"], "syms": ["PLTR", "SNOW", "DDOG", "MDB", "NOW", "CRM", "AI", "PATH", "ESTC"], "source": "https://penchan.co/en/market/ai/supply-chain/" }
+  ] },
+  "Cloud and software": { "source": "https://www.etfcentral.com/compare-etfs/WCLD-vs-SKYY", "layers": [
+   { "layer": "Content delivery and edge", "keywords": ["content delivery", "edge computing", "edge network"], "syms": ["NET", "AKAM", "FSLY"], "source": "https://www.etfcentral.com/compare-etfs/WCLD-vs-SKYY" },
+   { "layer": "Data and observability", "keywords": ["observability", "data cloud", "database", "data streaming"], "syms": ["SNOW", "DDOG", "MDB", "ESTC", "CFLT", "DT"], "source": "https://www.etfcentral.com/compare-etfs/WCLD-vs-SKYY" },
+   { "layer": "Business software (SaaS)", "keywords": ["software-as-a-service", "software as a service", "subscription revenue", "cloud-based"], "syms": ["CRM", "NOW", "WDAY", "ADBE", "INTU", "TEAM", "HUBS", "ZM", "DOCU", "SHOP", "TWLO", "MNDY"], "source": "https://www.wisdomtree.com/us/media/wcld-competitve-analysis" }
+  ] },
+  "Power, utilities and nuclear": { "source": "https://etfdb.com/etf/URA/", "layers": [
+   { "layer": "Uranium miners", "keywords": ["uranium"], "syms": ["CCJ", "UEC", "UUUU", "NXE", "DNN", "URG"], "source": "https://etfdb.com/etf/URA/" },
+   { "layer": "Nuclear fuel and reactors", "keywords": ["enrichment", "nuclear fuel", "small modular reactor", "nuclear reactor", "microreactor"], "syms": ["LEU", "BWXT", "OKLO", "SMR", "NNE"], "source": "https://etfdb.com/etf/URA/" },
+   { "layer": "Grid equipment", "keywords": ["transmission and distribution", "electrical grid", "grid infrastructure", "switchgear"], "syms": ["GEV", "ETN", "PWR", "HUBB", "MYRG", "POWL"], "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain" },
+   { "layer": "Independent power producers", "keywords": ["power generation", "wholesale power", "nuclear generation", "generating capacity"], "syms": ["CEG", "VST", "TLN", "NRG"], "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain" },
+   { "layer": "Regulated utilities", "keywords": ["regulated utility", "electric utility", "public utility commission"], "syms": ["NEE", "DUK", "SO", "D", "AEP", "XEL", "ETR", "EXC", "PEG"], "source": "https://www.wing.vc/content/the-structural-bottlenecks-in-the-ai-data-center-supply-chain" }
+  ] },
+  "Defense and space": { "source": "https://stockanalysis.com/etf/ita", "layers": [
+   { "layer": "Defense components and electronics", "keywords": ["defense", "Department of Defense", "aerospace"], "syms": ["HEI", "TDG", "MRCY", "CW", "KTOS", "DRS", "HWM"], "source": "https://stockanalysis.com/etf/ita" },
+   { "layer": "Drones and new defense", "keywords": ["unmanned aircraft", "unmanned aerial", "drone", "loitering munition"], "syms": ["AVAV", "KTOS", "RCAT", "ONDS"], "source": "https://stockanalysis.com/etf/ita" },
+   { "layer": "Space launch and satellites", "keywords": ["satellite", "launch vehicle", "spacecraft", "space systems"], "syms": ["RKLB", "LUNR", "ASTS", "PL", "RDW", "IRDM", "VSAT", "FLY", "SPCE"], "source": "https://stockanalysis.com/etf/UFO/holdings/" },
+   { "layer": "Prime contractors", "keywords": ["Department of Defense", "defense", "U.S. Government"], "syms": ["LMT", "NOC", "GD", "RTX", "LHX", "BA", "HII"], "source": "https://stockanalysis.com/etf/ita" }
+  ] },
+  "GLP-1 and obesity": { "source": "https://policyrisk.com/supplymap/glp1-drugs", "layers": [
+   { "layer": "Contract manufacturing and fill-finish", "keywords": ["GLP-1", "fill-finish", "fill and finish", "injectable", "drug delivery"], "syms": ["TMO", "DHR", "WST", "BDX", "STVN", "RGEN", "AVTR"], "source": "https://benzinga.com/analyst-ratings/analyst-color/24/03/37668318/top-7-biotech-winners-of-novo-nordisk-eli-lillys-outsourcing-strategy-for-weight-lo" },
+   { "layer": "Obesity drug makers", "keywords": ["GLP-1", "obesity", "semaglutide", "tirzepatide", "incretin"], "syms": ["LLY", "NVO", "AMGN", "VKTX", "PFE", "ALT", "TERN", "SKYE", "MTSR"], "source": "https://www.fiercepharma.com/pharma/2025-forecast-after-novo-lilly-expansion-sprees-positive-signals-emerge-around-future-supply" },
+   { "layer": "Weight-loss care and telehealth", "keywords": ["GLP-1", "weight loss", "weight management"], "syms": ["HIMS", "TDOC", "LFMD"], "source": "https://www.thesmartcube.com/resources/blog/glp-1-market-trends-future-outlook-next-decade/" }
+  ] },
+  "EVs and batteries": { "source": "https://moneybase.com/blog/educational/lit-the-lithium-battery-tech-etf-fuelling-the-shift-to-evs/", "layers": [
+   { "layer": "Lithium and battery materials", "keywords": ["lithium"], "syms": ["ALB", "SQM", "LAC", "PLL", "SGML", "LAR"], "source": "https://moneybase.com/blog/educational/lit-the-lithium-battery-tech-etf-fuelling-the-shift-to-evs/" },
+   { "layer": "Batteries and charging", "keywords": ["lithium-ion", "battery cell", "solid-state battery", "EV charging", "charging stations"], "syms": ["ENVX", "QS", "CHPT", "EVGO", "BLNK", "FLNC", "EOSE"], "source": "https://www.kavout.com/blogs/lit-etf-is-it-the-best-way-to-invest-in-lithium-and-battery-tech/" },
+   { "layer": "Power chips for EVs", "keywords": ["electric vehicle", "silicon carbide", "automotive"], "syms": ["ON", "NXPI", "WOLF", "MCHP", "STM", "IFNNY"], "source": "https://www.kavout.com/blogs/lit-etf-is-it-the-best-way-to-invest-in-lithium-and-battery-tech/" },
+   { "layer": "EV makers", "keywords": ["electric vehicle", "electric vehicles"], "syms": ["TSLA", "RIVN", "LCID", "NIO", "XPEV", "LI", "PSNY"], "source": "https://moneybase.com/blog/educational/lit-the-lithium-battery-tech-etf-fuelling-the-shift-to-evs/" }
+  ] },
+  "Crypto": { "source": "https://www.marketbeat.com/instant-alerts/bitcoin-stocks-worth-watching-october-23rd-2025-10-23", "layers": [
+   { "layer": "Bitcoin miners", "keywords": ["bitcoin mining", "digital asset mining", "mining of bitcoin", "self-mining"], "syms": ["MARA", "RIOT", "CLSK", "CIFR", "HUT", "BITF", "WULF", "IREN", "CORZ", "BTDR", "HIVE", "BTBT"], "source": "https://www.marketbeat.com/instant-alerts/bitcoin-stocks-worth-watching-october-23rd-2025-10-23" },
+   { "layer": "Exchanges and bitcoin holders", "keywords": ["bitcoin", "crypto assets", "digital assets", "cryptocurrency"], "syms": ["COIN", "MSTR", "HOOD", "GLXY", "BKKT"], "source": "https://www.marketbeat.com/instant-alerts/bitcoin-stocks-worth-watching-october-23rd-2025-10-23" }
+  ] },
+  "Cybersecurity": { "source": "https://www.nasdaq.com/articles/4-biggest-cybersecurity-etfs-2025", "layers": [
+   { "layer": "Security platforms", "keywords": ["cybersecurity", "network security", "endpoint security"], "syms": ["PANW", "CRWD", "FTNT", "ZS", "CHKP", "S"], "source": "https://www.nasdaq.com/articles/4-biggest-cybersecurity-etfs-2025" },
+   { "layer": "Identity and specialist security", "keywords": ["cybersecurity", "identity security", "vulnerability management", "identity and access"], "syms": ["OKTA", "CYBR", "QLYS", "TENB", "RPD", "VRNS", "SAIL"], "source": "https://chartrow.com/quote/cibr/holdings" }
+  ] },
+  "Reshoring and industrial automation": { "source": "https://www.tikr.com/blog/10-reshoring-stocks-poised-to-ride-the-u-s-manufacturing-boom", "layers": [
+   { "layer": "Steel and materials", "keywords": ["steel"], "syms": ["NUE", "STLD", "CLF", "CMC", "RS"], "source": "https://www.tikr.com/blog/9-stocks-benefiting-from-reshoring-or-onshoring-trends" },
+   { "layer": "Automation and robotics", "keywords": ["industrial automation", "factory automation", "robotics", "automation"], "syms": ["ROK", "EMR", "CGNX", "ZBRA", "SYM", "TER", "PH", "AME"], "source": "https://explore.nemo.money/us-reshoring-and-industrial-automation" },
+   { "layer": "Industrial construction and engineering", "keywords": ["engineering and construction", "industrial construction", "construction services", "manufacturing facilities"], "syms": ["FLR", "J", "ACM", "STRL", "ROAD", "FIX", "EME", "PRIM", "MTZ"], "source": "https://www.tikr.com/blog/10-reshoring-stocks-poised-to-ride-the-u-s-manufacturing-boom" }
+  ] },
+  "Water": { "source": "https://stockanalysis.com/etf/PHO", "layers": [
+   { "layer": "Water equipment and treatment", "keywords": ["water treatment", "water infrastructure", "water quality", "water technology"], "syms": ["XYL", "WTS", "MWA", "FELE", "BMI", "ZWS", "PNR", "ECL", "VLTO", "AWK"], "source": "https://stockanalysis.com/etf/PHO" },
+   { "layer": "Water utilities", "keywords": ["water utility", "water and wastewater", "regulated water"], "syms": ["AWK", "WTRG", "CWT", "AWR", "SJW", "MSEX"], "source": "https://stockanalysis.com/etf/PHO" }
+  ] },
+  "Semiconductor cycle": { "source": "https://www.spglobal.com/market-intelligence/en/news-insights/articles/2024/6/amid-ai-sales-rush-semiconductors-still-have-an-analog-inventory-problem-81900389", "layers": [
+   { "layer": "Semiconductor equipment", "keywords": ["semiconductor equipment", "wafer fabrication equipment"], "syms": ["AMAT", "LRCX", "KLAC", "ASML", "TER"], "source": "https://www.spglobal.com/market-intelligence/en/news-insights/articles/2024/6/amid-ai-sales-rush-semiconductors-still-have-an-analog-inventory-problem-81900389" },
+   { "layer": "Analog and microcontrollers", "keywords": ["analog", "microcontroller", "mixed-signal"], "syms": ["TXN", "ADI", "MCHP", "NXPI", "ON", "STM", "SWKS", "QRVO", "MPWR", "SLAB"], "source": "https://247wallst.com/investing/2026/07/12/5-analog-chip-stocks-set-to-rebound-as-the-cycle-changes/" },
+   { "layer": "Memory", "keywords": ["DRAM", "NAND", "memory"], "syms": ["MU", "WDC", "STX", "SNDK"], "source": "https://www.storagenewsletter.com/2026/09/18/data-centers-set-to-drive-a-1-5-trillion-semiconductor-market-by-2031/" },
+   { "layer": "Electronics distribution", "keywords": ["electronic components", "distribution of electronic"], "syms": ["ARW", "AVT"], "source": "https://www.spglobal.com/market-intelligence/en/news-insights/articles/2024/6/amid-ai-sales-rush-semiconductors-still-have-an-analog-inventory-problem-81900389" }
+  ] },
+  "Shipping": { "source": "https://www.lloydslist.com/LL1150772/Container-and-dry-bulk-shipping-stocks-are-outpacing-tanker-shares", "layers": [
+   { "layer": "Dry bulk", "keywords": ["dry bulk", "drybulk", "Capesize"], "syms": ["SBLK", "GNK", "GOGL", "EGLE", "SB", "DSX"], "source": "https://www.lloydslist.com/LL1150772/Container-and-dry-bulk-shipping-stocks-are-outpacing-tanker-shares" },
+   { "layer": "Tankers", "keywords": ["tanker", "tankers", "crude oil tanker", "product tanker"], "syms": ["FRO", "STNG", "INSW", "TNK", "DHT", "NAT", "TRMD", "ASC"], "source": "https://www.lloydslist.com/LL1150772/Container-and-dry-bulk-shipping-stocks-are-outpacing-tanker-shares" },
+   { "layer": "Containers and liners", "keywords": ["container ship", "containerships", "container vessels", "liner"], "syms": ["ZIM", "MATX", "DAC", "GSL", "CMRE"], "source": "https://www.lloydslist.com/LL1150772/Container-and-dry-bulk-shipping-stocks-are-outpacing-tanker-shares" }
+  ] },
+  "Gold and silver miners": { "source": "https://www.vaneck.com/us/en/investments/gold-miners-etf-gdx/holdings/", "layers": [
+   { "layer": "Gold producers", "keywords": ["gold production", "gold mine", "ounces of gold"], "syms": ["NEM", "B", "AEM", "KGC", "AU", "GFI", "HMY", "AGI", "EGO", "IAG", "NGD"], "source": "https://www.vaneck.com/us/en/investments/gold-miners-etf-gdx/holdings/" },
+   { "layer": "Royalty and streaming", "keywords": ["streaming agreement", "royalty", "precious metals stream"], "syms": ["FNV", "WPM", "RGLD", "OR", "TFPM", "SAND"], "source": "https://www.vaneck.com/us/en/investments/gold-miners-etf-gdx/holdings/" },
+   { "layer": "Silver producers", "keywords": ["silver production", "ounces of silver", "silver mine"], "syms": ["PAAS", "AG", "HL", "CDE", "SSRM", "EXK", "SVM"], "source": "https://www.vaneck.com/us/en/investments/gold-miners-etf-gdx/holdings/" }
+  ] },
+  "Homebuilders and building products": { "source": "https://stockanalysis.com/etf/ITB", "layers": [
+   { "layer": "Building materials", "keywords": ["aggregates", "cement", "ready-mixed concrete"], "syms": ["VMC", "MLM", "EXP", "KNF", "CRH"], "source": "https://stockanalysis.com/etf/ITB" },
+   { "layer": "Building products", "keywords": ["building products", "residential construction", "repair and remodel"], "syms": ["BLDR", "MAS", "OC", "TREX", "FBIN", "MHK", "LII", "CSL", "UFPI", "IBP"], "source": "https://stockanalysis.com/etf/ITB" },
+   { "layer": "Homebuilders", "keywords": ["homebuilding", "homebuilder", "home closings", "homes delivered"], "syms": ["DHI", "LEN", "PHM", "NVR", "TOL", "KBH", "MTH", "TMHC", "MHO", "CCS", "GRBK"], "source": "https://stockanalysis.com/etf/ITB" },
+   { "layer": "Home improvement retail", "keywords": ["home improvement"], "syms": ["HD", "LOW", "FND"], "source": "https://stockanalysis.com/etf/ITB" }
+  ] },
+  "Payments": { "source": "https://stockanalysis.com/etf/ipay", "layers": [
+   { "layer": "Card networks", "keywords": ["payments network", "payment network", "card network"], "syms": ["V", "MA", "AXP"], "source": "https://stockanalysis.com/etf/ipay" },
+   { "layer": "Processors and fintech", "keywords": ["payment processing", "merchant acquiring", "payments", "buy now, pay later"], "syms": ["FI", "FIS", "GPN", "PYPL", "XYZ", "TOST", "AFRM", "SHOP", "FOUR", "PAYO", "DLO"], "source": "https://stockanalysis.com/etf/ipay" }
+  ] },
+  "Energy (oil and gas)": { "source": "https://stockanalysis.com/etf/ita", "layers": [
+   { "layer": "Services and equipment", "keywords": ["oilfield services", "drilling services", "hydraulic fracturing", "pressure pumping"], "syms": ["SLB", "HAL", "BKR", "NOV", "LBRT", "PTEN", "HP", "WHD"], "source": "https://www.tikr.com/blog/9-stocks-benefiting-from-reshoring-or-onshoring-trends" },
+   { "layer": "Producers", "keywords": ["crude oil", "natural gas production", "oil and gas properties"], "syms": ["XOM", "CVX", "COP", "EOG", "OXY", "DVN", "FANG", "PR", "CTRA", "EQT"], "source": "https://www.tikr.com/blog/9-stocks-benefiting-from-reshoring-or-onshoring-trends" },
+   { "layer": "Pipelines and refiners", "keywords": ["pipeline", "refining", "midstream"], "syms": ["KMI", "WMB", "OKE", "ET", "MPC", "PSX", "VLO"], "source": "https://www.tikr.com/blog/9-stocks-benefiting-from-reshoring-or-onshoring-trends" }
+  ] }
+ },
+ "sourcesNote": "Every chain and layer above was set from the linked page(s) plus the companies' own filings; the source page is where the layer idea comes from, not proof of membership. Proof of membership (and its date) is the company's own EDGAR filing found by chain-decoder.mjs.",
+ "demandNodes": [
+  { "sym": "MSFT", "aliases": ["Microsoft"] },
+  { "sym": "AMZN", "aliases": ["Amazon", "Amazon.com", "Amazon Web Services", "AWS"] },
+  { "sym": "GOOGL", "aliases": ["Google", "Alphabet"] },
+  { "sym": "META", "aliases": ["Meta Platforms", "Meta", "Facebook"] },
+  { "sym": "AAPL", "aliases": ["Apple", "Apple Inc"] },
+  { "sym": "ORCL", "aliases": ["Oracle"] },
+  { "sym": "NVDA", "aliases": ["NVIDIA", "Nvidia Corporation"] },
+  { "sym": "CRWV", "aliases": ["CoreWeave"] },
+  { "sym": "TSLA", "aliases": ["Tesla"] },
+  { "sym": "DELL", "aliases": ["Dell", "Dell Technologies"] },
+  { "sym": "HPQ", "aliases": ["HP Inc", "Hewlett-Packard"] },
+  { "sym": "HPE", "aliases": ["Hewlett Packard Enterprise"] },
+  { "sym": "CSCO", "aliases": ["Cisco"] },
+  { "sym": "SMCI", "aliases": ["Super Micro", "Supermicro"] },
+  { "sym": "INTC", "aliases": ["Intel"] },
+  { "sym": "AMD", "aliases": ["Advanced Micro Devices", "AMD"] },
+  { "sym": "AVGO", "aliases": ["Broadcom"] },
+  { "sym": "QCOM", "aliases": ["Qualcomm"] },
+  { "sym": "MU", "aliases": ["Micron"] },
+  { "sym": "AMAT", "aliases": ["Applied Materials"] },
+  { "sym": "LRCX", "aliases": ["Lam Research"] },
+  { "sym": "KLAC", "aliases": ["KLA Corporation", "KLA-Tencor"] },
+  { "sym": "WMT", "aliases": ["Walmart", "Wal-Mart"] },
+  { "sym": "COST", "aliases": ["Costco"] },
+  { "sym": "TGT", "aliases": ["Target Corporation"] },
+  { "sym": "HD", "aliases": ["Home Depot", "The Home Depot"] },
+  { "sym": "LOW", "aliases": ["Lowe's", "Lowes"] },
+  { "sym": "BBY", "aliases": ["Best Buy"] },
+  { "sym": "BA", "aliases": ["Boeing"] },
+  { "sym": "LMT", "aliases": ["Lockheed Martin"] },
+  { "sym": "RTX", "aliases": ["Raytheon", "RTX"] },
+  { "sym": "NOC", "aliases": ["Northrop Grumman"] },
+  { "sym": "GD", "aliases": ["General Dynamics"] },
+  { "sym": "LHX", "aliases": ["L3Harris"] },
+  { "sym": "GM", "aliases": ["General Motors"] },
+  { "sym": "F", "aliases": ["Ford", "Ford Motor"] },
+  { "sym": "MCK", "aliases": ["McKesson"] },
+  { "sym": "CAH", "aliases": ["Cardinal Health"] },
+  { "sym": "COR", "aliases": ["AmerisourceBergen", "Cencora"] },
+  { "sym": "XOM", "aliases": ["Exxon", "ExxonMobil", "Exxon Mobil"] },
+  { "sym": "CVX", "aliases": ["Chevron"] },
+  { "sym": "VZ", "aliases": ["Verizon"] },
+  { "sym": "T", "aliases": ["AT&T"] },
+  { "sym": "TMUS", "aliases": ["T-Mobile"] },
+  { "sym": "CMCSA", "aliases": ["Comcast"] },
+  { "sym": "CAT", "aliases": ["Caterpillar"] },
+  { "sym": "DE", "aliases": ["Deere", "John Deere"] }
+ ],
+ "tickerAliases": { "META": ["FB"], "XYZ": ["SQ"], "FI": ["FISV"], "B": ["GOLD"], "GOOGL": ["GOOG"], "COR": ["ABC"], "SNDK": [], "J": [], "LAR": [] }
+}
