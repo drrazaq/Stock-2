@@ -1,0 +1,302 @@
+{
+ "generatedAt": "2026-10-23T20:20:21.075Z",
+ "lastClose": "2026-10-23",
+ "paperStart": "2026-10-26",
+ "note": "PAPER ONLY. Published anomalies recording forward from 26 Oct 2026. Nothing here is a buy by itself: a rule needs a TRADABLE SMALL / PROVEN frozen 5-year verdict (data/anomaly-lab.json firstRun) or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
+ "methods": {
+  "ANOM-MOM12": {
+   "name": "12-1 month momentum (top 10%)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-52WH": {
+   "name": "Near the 52-week high (George & Hwang)",
+   "hold": 126,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-RESMOM": {
+   "name": "Residual (idiosyncratic) momentum",
+   "hold": 63,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-INDMOM": {
+   "name": "Industry momentum (Moskowitz & Grinblatt)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-TSMOM": {
+   "name": "Time-series momentum on single stocks (own 12-1 return above zero)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-LOWVOL": {
+   "name": "Low volatility (lowest 10%)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-LOWBETA": {
+   "name": "Low beta (betting-against-beta long leg)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-LOWMAX": {
+   "name": "Not a lottery stock (lowest MAX)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-LOWIVOL": {
+   "name": "Low idiosyncratic volatility",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-SEASON": {
+   "name": "Same-month seasonality (Heston & Sadka)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-OVNMOM": {
+   "name": "Overnight-return momentum",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-DAYMOM12": {
+   "name": "Intraday (day) momentum, 12-1 months",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-DAYMOM1": {
+   "name": "Intraday (day) return of the last month, top 10% (coordinator's 1-month version)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-DAYREV1": {
+   "name": "Intraday short-term reversal (last month's intraday losers)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-DAYNIGHT": {
+   "name": "Day-night interaction: strong intraday, weak overnight (12-1)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-HVP": {
+   "name": "High-volume return premium",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-EIL20": {
+   "name": "Emerging industry leadership (coordinator, 20 sessions)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-EIL60": {
+   "name": "Emerging industry leadership (coordinator, 60 sessions)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-TOM": {
+   "name": "Turn of the month (SPY, close of day -2 to close of day +3)",
+   "hold": 4,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-PREHOL": {
+   "name": "Pre-holiday (SPY)",
+   "hold": 1,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-EAP": {
+   "name": "Earnings-announcement premium (own the stock into its report)",
+   "hold": 6,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-SUE": {
+   "name": "Post-earnings drift on the analyst surprise (SUE top 10%)",
+   "hold": 60,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-EAR": {
+   "name": "Earnings-announcement-return drift (EAR top 10%)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-SUESURGE": {
+   "name": "Earnings AND revenue surprise together (SUE + SURGE)",
+   "hold": 60,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-GP": {
+   "name": "Gross profitability (Novy-Marx)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-CFOA": {
+   "name": "Cash-based operating profitability (simplified: operating cash flow / assets)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-AG": {
+   "name": "Low asset growth",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-ACC": {
+   "name": "Low accruals (Sloan)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-QMJ": {
+   "name": "Quality minus junk (simplified, long the top 10%)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-RD": {
+   "name": "High R&D intensity (R&D / market value)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-OL": {
+   "name": "Operating leverage (Novy-Marx)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-CAPEX": {
+   "name": "Low abnormal capital investment",
+   "hold": 63,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-NSI": {
+   "name": "Net share issuance: shrinking share count (lowest 10%)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-BBY": {
+   "name": "Buyback yield (actual repurchases)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-INSIDER": {
+   "name": "Opportunistic insider purchases (routine buyers removed)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-13D": {
+   "name": "Activist 13D filing",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-SPIN": {
+   "name": "Spin-offs (the new company)",
+   "hold": 126,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-DIVINIT": {
+   "name": "Dividend initiations",
+   "hold": 126,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-13FBEST": {
+   "name": "13F best ideas of active managers",
+   "hold": 63,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-SILOW": {
+   "name": "Low short interest (lowest 10% of shares sold short)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-DTCLOW": {
+   "name": "Low days-to-cover",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "ANOM-SIDROP": {
+   "name": "Short-interest decline (shorts covering)",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  }
+ }
+}

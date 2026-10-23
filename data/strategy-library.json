@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-10-23T19:08:23.034Z",
+ "updated": "2026-10-23",
  "strategies": [
   {
    "id": "T1",
@@ -10119,6 +10119,2263 @@
      "dipVsDcaSinceFirst": -0.0331
     }
    }
+  },
+  {
+   "id": "ANOM-MOM12",
+   "family": "Published anomalies",
+   "name": "12-1 month momentum (top 10%)",
+   "explain": "Monthly: return from the close 252 sessions ago to the close 21 sessions ago; top 10% of liquid stocks; hold 63 sessions. Paper(s): Jegadeesh & Titman (1993) Returns to Buying Winners and Selling Losers, Journal of Finance 48(1). Reported: winners minus losers about 1% a month 1965-89. Replication: replicates (HXZ: R11 significant; Chen-Zimmermann: Mom12m clear); crashes in rebounds (2009, 2020).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "T1 (6-month leaders, any day; tested: not proven) and DEC-FROG (smooth 12-1 winners); the plain 12-1 decile was never run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1993.tb04702.x",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3279,
+     7523
+    ],
+    "avg": [
+     0.0148,
+     0.0493
+    ],
+    "stress": [
+     0.0108,
+     0.0453
+    ],
+    "edge": [
+     -0.0064,
+     0.0166
+    ],
+    "vsOwn": [
+     -0.1619,
+     -0.0626
+    ],
+    "noTop2": [
+     0.0124,
+     0.0483
+    ],
+    "tBlock": [
+     -0.1,
+     1.32
+    ],
+    "win": [
+     0.4809,
+     0.5162
+    ],
+    "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -0.1 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.32 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-52WH",
+   "family": "Published anomalies",
+   "name": "Near the 52-week high (George & Hwang)",
+   "explain": "Monthly: close / highest close of the last 252 sessions; top 10% of liquid stocks; hold 126 sessions (the paper's 6 months). Paper(s): George & Hwang (2004) The 52-Week High and Momentum Investing, Journal of Finance 59(5). Reported: top 30% by price/52-week high beat the bottom 30% by ~0.45% a month, 6-month hold. Replication: replicates in CZ (52-week high); HXZ: weaker value-weighted.",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "T3 (new 1-year high, hold 3 months, any day: FAILED DISCOVERY). T3 was an event version, not the monthly ratio sort of the paper: mis-specified",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2004.00695.x",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 126 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     3266,
+     6722
+    ],
+    "avg": [
+     0.0464,
+     0.0715
+    ],
+    "stress": [
+     0.0424,
+     0.0675
+    ],
+    "edge": [
+     0.0176,
+     0.0018
+    ],
+    "vsOwn": [
+     -0.1325,
+     0.007
+    ],
+    "noTop2": [
+     0.045,
+     0.0705
+    ],
+    "tBlock": [
+     2.37,
+     0.39
+    ],
+    "win": [
+     0.5664,
+     0.5855
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 2.37 under 2.5 in the older half; block t 0.39 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-RESMOM",
+   "family": "Published anomalies",
+   "name": "Residual (idiosyncratic) momentum",
+   "explain": "Monthly: beta from a regression of daily returns on SPY over the sessions 252..21 before formation; residual = daily return - beta x SPY return (no intercept); score = sum of residuals / their standard deviation; top 10% of liquid stocks; hold 63. (Market model instead of the paper's Fama-French 3 factors: no factor data in the repository.) Paper(s): Blitz, Huij & Martens (2011) Residual Momentum, Journal of Empirical Finance 18(3); Gutierrez & Pirinsky (2007) Momentum, reversal, and the trading behaviors of institutions, Journal of Financial Markets 10(1). Reported: about half the volatility of total-return momentum with similar returns (1930-2009). Replication: replicated out of sample by Blitz, Hanauer & Vidojevic (2020) internationally.",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://doi.org/10.1016/j.jempfin.2011.01.003",
+    "https://doi.org/10.1016/j.finmar.2006.09.002",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     3258,
+     7461
+    ],
+    "avg": [
+     0.0239,
+     0.0446
+    ],
+    "stress": [
+     0.0199,
+     0.0406
+    ],
+    "edge": [
+     0.0025,
+     0.0117
+    ],
+    "vsOwn": [
+     -0.1404,
+     -0.0541
+    ],
+    "noTop2": [
+     0.0214,
+     0.0438
+    ],
+    "tBlock": [
+     0.32,
+     1.4
+    ],
+    "win": [
+     0.516,
+     0.5426
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 0.32 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.4 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-INDMOM",
+   "family": "Published anomalies",
+   "name": "Industry momentum (Moskowitz & Grinblatt)",
+   "explain": "Monthly: industry = SEC SIC 2-digit group with 5+ liquid members; industry return = average 126-session return of its liquid members; every liquid member of the top 15% of industries; hold 21. Paper(s): Moskowitz & Grinblatt (1999) Do Industries Explain Momentum? Journal of Finance 54(4). Reported: top-3 of 20 industries beat the bottom 3 by ~0.4% a month; strongest at short horizons. Replication: replicates (CZ IndMom); HXZ: significant equal-weighted.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "T21 (top 20% of industries over 6 months, any day, 60-session hold: FAILED DISCOVERY) and B-SIF1. T21 used daily entries; the paper is a monthly sort held 1 month: partly mis-specified",
+   "sources": [
+    "https://doi.org/10.1111/0022-1082.00146",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3816,
+     13227
+    ],
+    "avg": [
+     -0.0043,
+     0.0088
+    ],
+    "stress": [
+     -0.0083,
+     0.0048
+    ],
+    "edge": [
+     -0.003,
+     -0.0037
+    ],
+    "vsOwn": [
+     -0.0139,
+     0.0043
+    ],
+    "noTop2": [
+     -0.0053,
+     0.0081
+    ],
+    "tBlock": [
+     -0.41,
+     -0.62
+    ],
+    "win": [
+     0.4602,
+     0.4758
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.41 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.62 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-TSMOM",
+   "family": "Published anomalies",
+   "name": "Time-series momentum on single stocks (own 12-1 return above zero)",
+   "explain": "Monthly: every liquid stock whose return from 252 to 21 sessions ago is above zero; hold 21. Paper(s): Moskowitz, Ooi & Pedersen (2012) Time Series Momentum, Journal of Financial Economics 104(2); Lim, Wang & Yao (2018) Time-series momentum in nearly 100 years of stock returns, Journal of Banking & Finance 97. Reported: stock-level TSMOM ~0.8-1.1% a month long-short (1927-2017). Replication: Huang et al. (2020 JFE) dispute its strength beyond cross-sectional momentum.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "T10 (dual momentum) related, never the plain sign rule",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2011.11.003",
+    "https://doi.org/10.1016/j.jbankfin.2018.10.006",
+    "https://doi.org/10.1016/j.jfineco.2019.08.004"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     14114,
+     48689
+    ],
+    "avg": [
+     -0.0121,
+     0.0079
+    ],
+    "stress": [
+     -0.0161,
+     0.0039
+    ],
+    "edge": [
+     -0.0123,
+     -0.0055
+    ],
+    "vsOwn": [
+     -0.0566,
+     -0.0149
+    ],
+    "noTop2": [
+     -0.0124,
+     0.0077
+    ],
+    "tBlock": [
+     -1.79,
+     -3.49
+    ],
+    "win": [
+     0.4206,
+     0.4926
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.79 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -3.49 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-LOWVOL",
+   "family": "Published anomalies",
+   "name": "Low volatility (lowest 10%)",
+   "explain": "Monthly: standard deviation of daily returns over the last 252 sessions; bottom 10% of liquid stocks; hold 63. Paper(s): Ang, Hodrick, Xing & Zhang (2006) The Cross-Section of Volatility and Expected Returns, Journal of Finance 61(1); Blitz & van Vliet (2007) The Volatility Effect, Journal of Portfolio Management 34(1). Reported: low-volatility stocks earn similar or higher returns with far less risk. Replication: risk-adjusted effect replicates (CZ RealizedVol); raw returns lag in strong bull markets.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "V9 / V10 (calm stocks, any day, absolute thresholds: FAILED DISCOVERY). Not the monthly decile sort: mis-specified",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2006.00836.x",
+    "https://doi.org/10.3905/jpm.2007.698039",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3261,
+     7468
+    ],
+    "avg": [
+     -0.0099,
+     0.007
+    ],
+    "stress": [
+     -0.0139,
+     0.003
+    ],
+    "edge": [
+     -0.0319,
+     -0.0259
+    ],
+    "vsOwn": [
+     -0.0614,
+     -0.014
+    ],
+    "noTop2": [
+     -0.0102,
+     0.0068
+    ],
+    "tBlock": [
+     -1.81,
+     -1.79
+    ],
+    "win": [
+     0.4615,
+     0.5189
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.81 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.79 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-LOWBETA",
+   "family": "Published anomalies",
+   "name": "Low beta (betting-against-beta long leg)",
+   "explain": "Monthly: beta = correlation with SPY x (stock sd / SPY sd), daily returns over 252 sessions (the paper uses 5 years for correlation: not available), shrunk 0.6 beta + 0.4; bottom 10% of liquid stocks; hold 63. Paper(s): Frazzini & Pedersen (2014) Betting Against Beta, Journal of Financial Economics 111(1). Reported: BAB ~0.7% a month (levered long-short); the long leg alone mainly lowers risk. Replication: Novy-Marx & Velikov (2022) show much of BAB comes from tiny stocks and its construction.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2013.10.005",
+    "https://doi.org/10.1016/j.jfineco.2021.05.023"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     6102,
+     7466
+    ],
+    "avg": [
+     -0.0167,
+     0.0112
+    ],
+    "stress": [
+     -0.0207,
+     0.0072
+    ],
+    "edge": [
+     -0.003,
+     -0.0219
+    ],
+    "vsOwn": [
+     -0.0311,
+     -0.0139
+    ],
+    "noTop2": [
+     -0.0179,
+     0.0108
+    ],
+    "tBlock": [
+     -0.33,
+     -1.34
+    ],
+    "win": [
+     0.4413,
+     0.5226
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.33 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.34 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-LOWMAX",
+   "family": "Published anomalies",
+   "name": "Not a lottery stock (lowest MAX)",
+   "explain": "Monthly: highest daily return of the last 21 sessions; bottom 10% of liquid stocks; hold 21. Paper(s): Bali, Cakici & Whitelaw (2011) Maxing Out: Stocks as Lotteries, Journal of Financial Economics 99(2). Reported: highest-MAX decile underperforms lowest by ~1% a month. Replication: replicates (CZ MaxRet); HXZ: insignificant value-weighted.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "M14 (no +4% day, above 200-day, any day: FAILED DISCOVERY) / M15 (avoid test). The long leg as a monthly decile was never run",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2010.08.014",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     6311,
+     8548
+    ],
+    "avg": [
+     -0.0057,
+     -0.0021
+    ],
+    "stress": [
+     -0.0097,
+     -0.0061
+    ],
+    "edge": [
+     -0.0002,
+     -0.016
+    ],
+    "vsOwn": [
+     -0.0128,
+     -0.0057
+    ],
+    "noTop2": [
+     -0.006,
+     -0.0023
+    ],
+    "tBlock": [
+     -0.03,
+     -3.47
+    ],
+    "win": [
+     0.4486,
+     0.4606
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.03 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.47 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-LOWIVOL",
+   "family": "Published anomalies",
+   "name": "Low idiosyncratic volatility",
+   "explain": "Monthly: standard deviation of market-model (SPY) residuals over the last 21 sessions; bottom 10% of liquid stocks; hold 21. Paper(s): Ang, Hodrick, Xing & Zhang (2006) The Cross-Section of Volatility and Expected Returns, Journal of Finance 61(1). Reported: highest IVOL quintile underperforms lowest by ~1.06% a month. Replication: HXZ: mostly fails value-weighted; strongest among small stocks.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none (V9/V10 used total volatility)",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2006.00836.x",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     6310,
+     8548
+    ],
+    "avg": [
+     -0.0069,
+     0.0016
+    ],
+    "stress": [
+     -0.0109,
+     -0.0024
+    ],
+    "edge": [
+     -0.0014,
+     -0.0122
+    ],
+    "vsOwn": [
+     -0.0142,
+     0.0013
+    ],
+    "noTop2": [
+     -0.0072,
+     0.0015
+    ],
+    "tBlock": [
+     -0.19,
+     -3.27
+    ],
+    "win": [
+     0.4371,
+     0.4818
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.19 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t -3.27 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-SEASON",
+   "family": "Published anomalies",
+   "name": "Same-month seasonality (Heston & Sadka)",
+   "explain": "Monthly (formation = first session of the month, so the hold covers that month): average return of the stock in the same calendar month of earlier years in the window (1 to 4 years available; the paper uses up to 20); top 10% of liquid stocks; hold 21. Paper(s): Heston & Sadka (2008) Seasonality in the cross-section of stock returns, Journal of Financial Economics 87(2); Keloharju, Linnainmaa & Nyberg (2016) Return Seasonalities, Journal of Finance 71(4). Reported: stocks that did well in the same calendar month in past years beat by ~1% that month. Replication: replicates (CZ MomSeason); KLN 2016 show it across asset classes.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "C4 (days of the month) is a different calendar test; none",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2007.02.003",
+    "https://doi.org/10.1111/jofi.12398",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3274,
+     8103
+    ],
+    "avg": [
+     -0.0083,
+     0.0093
+    ],
+    "stress": [
+     -0.0123,
+     0.0053
+    ],
+    "edge": [
+     -0.0124,
+     -0.0043
+    ],
+    "vsOwn": [
+     -0.0119,
+     -0.0016
+    ],
+    "noTop2": [
+     -0.0094,
+     0.0085
+    ],
+    "tBlock": [
+     -1.92,
+     -1
+    ],
+    "win": [
+     0.4444,
+     0.4836
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.92 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-OVNMOM",
+   "family": "Published anomalies",
+   "name": "Overnight-return momentum",
+   "explain": "Monthly: sum of log(open / previous close) over the last 252 sessions; top 10% of liquid stocks; hold 21 (close-to-close from the next open). Paper(s): Lou, Polk & Skouras (2019) A tug of war: Overnight versus intraday expected returns, Journal of Financial Economics 134(1). Reported: momentum profits accrue overnight; past overnight winners keep earning overnight. Replication: confirmed by Barardehi, Bogousslavsky & Muravyev for news-driven returns only at long horizons.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://personal.lse.ac.uk/polk/research/TugOfWar.pdf"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3261,
+     7980
+    ],
+    "avg": [
+     -0.0154,
+     0.013
+    ],
+    "stress": [
+     -0.0194,
+     0.009
+    ],
+    "edge": [
+     -0.0194,
+     -0.0005
+    ],
+    "vsOwn": [
+     -0.0367,
+     -0.0029
+    ],
+    "noTop2": [
+     -0.0167,
+     0.0122
+    ],
+    "tBlock": [
+     -4.3,
+     -0.06
+    ],
+    "win": [
+     0.4161,
+     0.4722
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.3 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.06 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-DAYMOM12",
+   "family": "Published anomalies",
+   "name": "Intraday (day) momentum, 12-1 months",
+   "explain": "Monthly: sum of log(close / open) over the sessions 252..21 before formation; top 10% of liquid stocks; hold 21. Paper(s): Barardehi, Bogousslavsky & Muravyev, What Drives Momentum and Reversal? Evidence from Day and Night Signals (SSRN 4069509; Review of Financial Studies, 2026 per the coordinator; an earlier CV lists it as R&R at RFS). Reported: portfolios on past INTRADAY returns show momentum (12-1) and short-term reversal (1 month); past OVERNIGHT returns show neither (1926-2019). Replication: new; no independent replication yet.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://experts.illinois.edu/en/publications/what-drives-momentum-and-reversal-evidence-from-day-and-night-sig/"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3267,
+     8007
+    ],
+    "avg": [
+     -0.0077,
+     0.013
+    ],
+    "stress": [
+     -0.0117,
+     0.009
+    ],
+    "edge": [
+     -0.0117,
+     -0.0007
+    ],
+    "vsOwn": [
+     -0.0512,
+     -0.0116
+    ],
+    "noTop2": [
+     -0.0086,
+     0.0126
+    ],
+    "tBlock": [
+     -1.65,
+     -0.17
+    ],
+    "win": [
+     0.4392,
+     0.5027
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.65 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.17 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-DAYMOM1",
+   "family": "Published anomalies",
+   "name": "Intraday (day) return of the last month, top 10% (coordinator's 1-month version)",
+   "explain": "Monthly: sum of log(close / open) over the last 21 sessions; top 10% of liquid stocks; hold 21. Paper(s): Barardehi, Bogousslavsky & Muravyev (SSRN 4069509). Reported: the paper finds 1-month intraday returns REVERSE: this long-the-winners version is expected to lag. Replication: new.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://experts.illinois.edu/en/publications/what-drives-momentum-and-reversal-evidence-from-day-and-night-sig/"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     6312,
+     8558
+    ],
+    "avg": [
+     -0.024,
+     0.0121
+    ],
+    "stress": [
+     -0.028,
+     0.0081
+    ],
+    "edge": [
+     -0.0174,
+     -0.0016
+    ],
+    "vsOwn": [
+     -0.0026,
+     0.0339
+    ],
+    "noTop2": [
+     -0.0244,
+     0.0114
+    ],
+    "tBlock": [
+     -3.95,
+     -0.27
+    ],
+    "win": [
+     0.4167,
+     0.4892
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.95 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.27 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-DAYREV1",
+   "family": "Published anomalies",
+   "name": "Intraday short-term reversal (last month's intraday losers)",
+   "explain": "Monthly: sum of log(close / open) over the last 21 sessions; bottom 10% of liquid stocks; hold 21. Paper(s): Barardehi, Bogousslavsky & Muravyev (SSRN 4069509). Reported: the reversal leg the paper reports for 1-month intraday returns. Replication: new; plain 1-month reversal is weak after costs (A-SW2 rejected here).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "A-SW2 (5-day losers, 5-session hold: rejected) is a different horizon",
+   "sources": [
+    "https://experts.illinois.edu/en/publications/what-drives-momentum-and-reversal-evidence-from-day-and-night-sig/"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     6311,
+     8550
+    ],
+    "avg": [
+     -0.0277,
+     0.0003
+    ],
+    "stress": [
+     -0.0317,
+     -0.0037
+    ],
+    "edge": [
+     -0.02,
+     -0.0136
+    ],
+    "vsOwn": [
+     -0.0177,
+     -0.0156
+    ],
+    "noTop2": [
+     -0.0286,
+     -0.0031
+    ],
+    "tBlock": [
+     -1.87,
+     -2.5
+    ],
+    "win": [
+     0.4085,
+     0.4554
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.87 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.5 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-DAYNIGHT",
+   "family": "Published anomalies",
+   "name": "Day-night interaction: strong intraday, weak overnight (12-1)",
+   "explain": "Monthly: top 30% by 12-1 intraday sum AND bottom 30% by 12-1 overnight sum (log(open / previous close), sessions 252..21); all such liquid stocks; hold 21. Paper(s): Barardehi, Bogousslavsky & Muravyev (SSRN 4069509); Lou, Polk & Skouras (2019) JFE 134(1). Reported: trading-driven (intraday) gains continue; news-driven (overnight) gains do not. Replication: new.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://experts.illinois.edu/en/publications/what-drives-momentum-and-reversal-evidence-from-day-and-night-sig/",
+    "https://personal.lse.ac.uk/polk/research/TugOfWar.pdf"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     4170,
+     8283
+    ],
+    "avg": [
+     0.0008,
+     0.0089
+    ],
+    "stress": [
+     -0.0032,
+     0.0049
+    ],
+    "edge": [
+     -0.0018,
+     -0.0045
+    ],
+    "vsOwn": [
+     -0.0238,
+     0.0069
+    ],
+    "noTop2": [
+     0.0003,
+     0.0084
+    ],
+    "tBlock": [
+     -0.38,
+     -1.64
+    ],
+    "win": [
+     0.47,
+     0.5067
+    ],
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -0.38 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.64 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-HVP",
+   "family": "Published anomalies",
+   "name": "High-volume return premium",
+   "explain": "Weekly: the last 5 sessions' volume is higher than each of the 9 earlier non-overlapping 5-session volumes (top of 10 weeks); liquid; buy the next open; hold 21; one open trade per stock. Paper(s): Gervais, Kaniel & Mingelgrin (2001) The High-Volume Return Premium, Journal of Finance 56(3). Reported: stocks with unusually high volume over a week/day earn more over the next month (1963-96). Replication: Kaniel, Ozoguz & Starks (2012) find it in 41 countries; CZ include a volume-trend family.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "I3 / I13 (volume awakening in a quiet base: FAILED DISCOVERY) are breakout versions with price conditions, not this",
+   "sources": [
+    "https://doi.org/10.1111/0022-1082.00349",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     19917,
+     28255
+    ],
+    "avg": [
+     -0.0038,
+     0.0019
+    ],
+    "stress": [
+     -0.0078,
+     -0.0021
+    ],
+    "edge": [
+     -0.0069,
+     -0.008
+    ],
+    "vsOwn": [
+     -0.0043,
+     0.0034
+    ],
+    "noTop2": [
+     -0.0041,
+     0.0017
+    ],
+    "tBlock": [
+     -3.78,
+     -4.38
+    ],
+    "win": [
+     0.4732,
+     0.4868
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.78 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t -4.38 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-EIL20",
+   "family": "Published anomalies",
+   "name": "Emerging industry leadership (coordinator, 20 sessions)",
+   "explain": "Weekly: industry (SIC 2-digit, 5+ liquid members) breadth = share of members above their 50-day average; improving = breadth up 0.20+ over 20 sessions, at least 0.50 now, AND the share at a 20-session closing high higher than 20 sessions ago. Stock: percentile of its 63-session return inside its industry, up 0.25+ over 20 sessions and at least 0.70 now. Buy the next open; hold 20; one open trade per stock. Must beat plain 12-1 momentum (top 10%) and plain industry momentum (ANOM-INDMOM selection) on the same dates, same hold, in both halves. Paper(s): Coordinator hypothesis, built on Moskowitz & Grinblatt (1999) and Hong, Torous & Valkanov (2007) Do industries lead stock markets? JFE 83(2). Reported: none (new combination). Replication: n/a.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "T22 (up 30% in a top-20% industry: FAILED DISCOVERY) is the static version",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2005.09.010"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 20 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1358,
+     2203
+    ],
+    "avg": [
+     0.0208,
+     0.0021
+    ],
+    "stress": [
+     0.0168,
+     -0.0019
+    ],
+    "edge": [
+     -0.0088,
+     -0.0052
+    ],
+    "vsOwn": [
+     0.0117,
+     0.0039
+    ],
+    "noTop2": [
+     0.0191,
+     0.0005
+    ],
+    "tBlock": [
+     -1.04,
+     -1.62
+    ],
+    "win": [
+     0.5869,
+     0.4594
+    ],
+    "why": "not better than the average stock in the older half; block t -1.04 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t -1.62 under 2.5 in the newer half; not better than plain 12-1 momentum on the same dates in the newer half (+0.2% vs +0.8% after cost); not better than plain industry momentum on the same dates in the newer half (+0.2% vs +0.4% after cost)"
+   }
+  },
+  {
+   "id": "ANOM-EIL60",
+   "family": "Published anomalies",
+   "name": "Emerging industry leadership (coordinator, 60 sessions)",
+   "explain": "As ANOM-EIL20 with hold 60. Paper(s): as ANOM-EIL20. Reported: none. Replication: n/a.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "as ANOM-EIL20",
+   "sources": [],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 60 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1337,
+     2051
+    ],
+    "avg": [
+     0.0337,
+     0.0209
+    ],
+    "stress": [
+     0.0297,
+     0.0169
+    ],
+    "edge": [
+     -0.0207,
+     -0.0185
+    ],
+    "vsOwn": [
+     0.0013,
+     0.0099
+    ],
+    "noTop2": [
+     0.028,
+     0.0185
+    ],
+    "tBlock": [
+     -1.52,
+     -1.33
+    ],
+    "win": [
+     0.5236,
+     0.5061
+    ],
+    "why": "not better than the average stock in the older half; block t -1.52 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.33 under 2.5 in the newer half; not better than plain 12-1 momentum on the same dates in the newer half (+2.1% vs +4.3% after cost); not better than plain industry momentum on the same dates in the newer half (+2.1% vs +3.6% after cost)"
+   }
+  },
+  {
+   "id": "ANOM-TOM",
+   "family": "Published anomalies",
+   "name": "Turn of the month (SPY, close of day -2 to close of day +3)",
+   "explain": "Each month: buy SPY at the close of the session before the last session of the month, sell at the close of the 3rd session of the new month (4 sessions: -1, +1, +2, +3). Yardstick: SPY over all 4-session windows of the half. Paper(s): Lakonishok & Smidt (1988) Are Seasonal Anomalies Real? Review of Financial Studies 1(4); McConnell & Xu (2008) Equity Returns at the Turn of the Month, Financial Analysts Journal 64(2). Reported: nearly all of the US market's excess return 1926-2005 came in days -1..+3. Replication: still present to 2020s in index data (weaker).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "C1 / C2 (turn of the month on every stock vs the average stock: FAILED DISCOVERY). Comparing every stock with the average stock on the same days cancels a market-wide effect: mis-specified",
+   "sources": [
+    "https://doi.org/10.1093/rfs/1.4.403",
+    "https://doi.org/10.2469/faj.v64.n2.11"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 4 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     27,
+     33
+    ],
+    "avg": [
+     -0.0074,
+     -0.0046
+    ],
+    "stress": [
+     -0.0114,
+     -0.0086
+    ],
+    "edge": [
+     -0.0082,
+     -0.0076
+    ],
+    "vsOwn": [
+     -0.0002,
+     0.0004
+    ],
+    "noTop2": [
+     -0.0108,
+     -0.007
+    ],
+    "tBlock": [
+     -2.07,
+     -2.55
+    ],
+    "win": [
+     0.3704,
+     0.3939
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.07 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.55 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-PREHOL",
+   "family": "Published anomalies",
+   "name": "Pre-holiday (SPY)",
+   "explain": "Buy SPY at the close of the session before a pre-holiday session (a session followed by a weekday market closure), sell at the close of the pre-holiday session. Yardstick: SPY over all 1-session windows of the half. Paper(s): Ariel (1990) High Stock Returns before Holidays, Journal of Finance 45(5). Reported: pre-holiday days earned 9-14x a normal day (1963-82). Replication: weaker since 1990s (Lakonishok-Smidt; later studies).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "C5 (Santa / January: needs data); none",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1990.tb02441.x"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 1 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     22,
+     28
+    ],
+    "avg": [
+     -0.0062,
+     -0.0065
+    ],
+    "stress": [
+     -0.0102,
+     -0.0105
+    ],
+    "edge": [
+     -0.0064,
+     -0.0072
+    ],
+    "vsOwn": [
+     0.0016,
+     0.0008
+    ],
+    "noTop2": [
+     -0.0079,
+     -0.0072
+    ],
+    "tBlock": [
+     -3.74,
+     -7.37
+    ],
+    "win": [
+     0.1364,
+     0.1071
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -3.74 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -7.37 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-EAP",
+   "family": "Published anomalies",
+   "name": "Earnings-announcement premium (own the stock into its report)",
+   "explain": "Every report with a consensus EPS on the Nasdaq calendar: reaction session r = the report day if before the open, else the next session; buy the open of r-5 (dates are published weeks ahead), sell the close of r; liquid the day before buying. Paper(s): Frazzini & Lamont (2007) The Earnings Announcement Premium and Trading Volume, NBER w13090; Barber, De George, Lehavy & Trueman (2013) The earnings announcement premium around the globe, Journal of Financial Economics 108(1). Reported: announcement months earn ~0.5-1% more than other months; mostly in the days around the report. Replication: replicates (CZ AnnouncementReturn family); small vs costs.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "E19 (queued, same idea; never run). Same rule, now run",
+   "sources": [
+    "https://www.nber.org/papers/w13090",
+    "https://doi.org/10.1016/j.jfineco.2012.10.007",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 6 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     15266,
+     23783
+    ],
+    "avg": [
+     -0.0066,
+     -0.0028
+    ],
+    "stress": [
+     -0.0106,
+     -0.0068
+    ],
+    "edge": [
+     -0.0053,
+     -0.0063
+    ],
+    "vsOwn": [
+     -0.0007,
+     0.0031
+    ],
+    "noTop2": [
+     -0.0068,
+     -0.003
+    ],
+    "tBlock": [
+     -2.07,
+     -2.65
+    ],
+    "win": [
+     0.4621,
+     0.4689
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.07 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.65 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-SUE",
+   "family": "Published anomalies",
+   "name": "Post-earnings drift on the analyst surprise (SUE top 10%)",
+   "explain": "(actual EPS - consensus) / the close before the report; top 10% vs the surprises of all liquid reports of the previous 63 sessions (rolling, point in time); buy the open of r+1; hold 60. Paper(s): Bernard & Thomas (1989) Post-Earnings-Announcement Drift, Journal of Accounting Research 27; Livnat & Mendenhall (2006) Comparing the Post-Earnings Announcement Drift for Surprises Calculated from Analyst and Time Series Forecasts, JAR 44(1). Reported: top-minus-bottom SUE decile ~4-6% over 60 days (older samples). Replication: much weaker after 2006 for large stocks (Martineau 2022 \"Rest in Peace Post-Earnings Announcement Drift\", Critical Finance Review).",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "E1 / A-E1W1 (big beat + gap rule: not proven) and B-EM1 (beat streak: rejected). E1 uses a gap condition, not the SUE decile",
+   "sources": [
+    "https://doi.org/10.2307/2491062",
+    "https://doi.org/10.1111/j.1475-679X.2006.00196.x",
+    "https://doi.org/10.1561/104.00000122"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 60 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     1472,
+     2005
+    ],
+    "avg": [
+     -0.0015,
+     0.0496
+    ],
+    "stress": [
+     -0.0055,
+     0.0456
+    ],
+    "edge": [
+     0.0077,
+     0.0151
+    ],
+    "vsOwn": [
+     -0.044,
+     0.0514
+    ],
+    "noTop2": [
+     -0.0038,
+     0.0458
+    ],
+    "tBlock": [
+     1.01,
+     0.63
+    ],
+    "win": [
+     0.4688,
+     0.5372
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 1.01 under 2.5 in the older half; block t 0.63 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-EAR",
+   "family": "Published anomalies",
+   "name": "Earnings-announcement-return drift (EAR top 10%)",
+   "explain": "3-session return from the close of r-2 to the close of r+1 minus the average liquid stock's; top 10% vs the previous 63 sessions' liquid reports; buy the open of r+2; hold 60. Paper(s): Chan, Jegadeesh & Lakonishok (1996) Momentum Strategies, Journal of Finance 51(5); Brandt, Kishore, Santa-Clara & Venkatachalam (2008) Earnings announcements are full of surprises, SSRN 909563. Reported: EAR-sorted drift ~7% a year top minus bottom, and stronger than SUE in recent decades. Replication: replicates (CZ AnnouncementReturn).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "E16 (gap + quiet days: not proven), E13; the EAR decile was never run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1996.tb05222.x",
+    "https://ssrn.com/abstract=909563",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 60 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1546,
+     2130
+    ],
+    "avg": [
+     -0.0216,
+     0.0413
+    ],
+    "stress": [
+     -0.0256,
+     0.0373
+    ],
+    "edge": [
+     -0.0238,
+     -0.0076
+    ],
+    "vsOwn": [
+     -0.0242,
+     0.0258
+    ],
+    "noTop2": [
+     -0.024,
+     0.0391
+    ],
+    "tBlock": [
+     -1.53,
+     -0.35
+    ],
+    "win": [
+     0.4444,
+     0.5376
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.53 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.35 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-SUESURGE",
+   "family": "Published anomalies",
+   "name": "Earnings AND revenue surprise together (SUE + SURGE)",
+   "explain": "SUE in the top 30% (rolling 63 sessions) AND SURGE (the quarter's revenue minus the same quarter a year earlier minus the mean of that seasonal change over up to 8 earlier quarters, over its standard deviation; at least 4 earlier changes; SEC quarterly revenue) in the top 30%; buy the open of the first session after both r and the SEC filing with the quarter's revenue (filed within 10 sessions of r, else skipped); hold 60. Paper(s): Jegadeesh & Livnat (2006) Revenue surprises and stock returns, Journal of Accounting and Economics 41(1-2). Reported: drift is largest when earnings and revenue surprises agree. Replication: revenue-surprise drift replicates (CZ RevenueSurprise).",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "B-EM1 (beat streak + rising growth: rejected) is different",
+   "sources": [
+    "https://doi.org/10.1016/j.jacceco.2005.10.002",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 60 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     898,
+     1406
+    ],
+    "avg": [
+     0.0153,
+     0.0473
+    ],
+    "stress": [
+     0.0113,
+     0.0433
+    ],
+    "edge": [
+     0.0227,
+     0.0026
+    ],
+    "vsOwn": [
+     -0.0389,
+     0.002
+    ],
+    "noTop2": [
+     0.0129,
+     0.0449
+    ],
+    "tBlock": [
+     1.23,
+     0.23
+    ],
+    "win": [
+     0.5111,
+     0.5526
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 1.23 under 2.5 in the older half; block t 0.23 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-GP",
+   "family": "Published anomalies",
+   "name": "Gross profitability (Novy-Marx)",
+   "explain": "Monthly, non-financial: trailing-12-month (revenue - cost of revenue, or GrossProfit) / latest total assets; top 10% of liquid stocks; hold 63. Paper(s): Novy-Marx (2013) The other side of value: The gross profitability premium, Journal of Financial Economics 108(1). Reported: top-minus-bottom GP/A quintile ~0.31% a month value-weighted. Replication: replicates (HXZ GPA; CZ GP).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "V2 (high gross profit on assets: tested: rejected); V2 was the same idea with a different construction. Re-run once in the common anomaly frame",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2013.01.003",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2443,
+     3478
+    ],
+    "avg": [
+     -0.0187,
+     0.0131
+    ],
+    "stress": [
+     -0.0227,
+     0.0091
+    ],
+    "edge": [
+     -0.0063,
+     -0.0216
+    ],
+    "vsOwn": [
+     -0.0301,
+     0.006
+    ],
+    "noTop2": [
+     -0.0199,
+     0.0119
+    ],
+    "tBlock": [
+     -0.7,
+     -1.51
+    ],
+    "win": [
+     0.4535,
+     0.4787
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.7 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.51 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-CFOA",
+   "family": "Published anomalies",
+   "name": "Cash-based operating profitability (simplified: operating cash flow / assets)",
+   "explain": "Monthly, non-financial: trailing-12-month operating cash flow / latest total assets (a simplified CbOP: the paper adds back R&D and adjusts working capital); top 10% of liquid stocks; hold 63. Paper(s): Ball, Gerakos, Linnainmaa & Nikolaev (2016) Accruals, cash flows, and operating profitability in the cross section of stock returns, Journal of Financial Economics 121(1). Reported: cash-based operating profitability subsumes accruals and beats GP/A. Replication: replicates (CZ CBOperProf).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "V3 (cheap for its cash flow) is a value ratio, not this",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2016.03.002",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3490,
+     5024
+    ],
+    "avg": [
+     -0.0054,
+     0.0231
+    ],
+    "stress": [
+     -0.0094,
+     0.0191
+    ],
+    "edge": [
+     0.006,
+     -0.0107
+    ],
+    "vsOwn": [
+     -0.0457,
+     -0.0423
+    ],
+    "noTop2": [
+     -0.006,
+     0.0219
+    ],
+    "tBlock": [
+     0.63,
+     -0.83
+    ],
+    "win": [
+     0.4699,
+     0.496
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.63 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.83 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-AG",
+   "family": "Published anomalies",
+   "name": "Low asset growth",
+   "explain": "Monthly, non-financial: latest total assets / total assets about a year earlier (the balance sheet 330-400 days before the latest) - 1; bottom 10% of liquid stocks; hold 63. Paper(s): Cooper, Gulen & Schill (2008) Asset Growth and the Cross-Section of Stock Returns, Journal of Finance 63(4). Reported: low-growth decile beat high by ~20% a year equal-weighted (1968-2003). Replication: replicates but much smaller value-weighted (HXZ I/A).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2008.01370.x",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3493,
+     5035
+    ],
+    "avg": [
+     -0.0177,
+     0.0363
+    ],
+    "stress": [
+     -0.0217,
+     0.0323
+    ],
+    "edge": [
+     -0.0054,
+     0.002
+    ],
+    "vsOwn": [
+     -0.021,
+     0.0679
+    ],
+    "noTop2": [
+     -0.0195,
+     0.0344
+    ],
+    "tBlock": [
+     -0.02,
+     0.11
+    ],
+    "win": [
+     0.4374,
+     0.4918
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.02 under 2.5 in the older half; block t 0.11 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-ACC",
+   "family": "Published anomalies",
+   "name": "Low accruals (Sloan)",
+   "explain": "Monthly, non-financial: (TTM net income - TTM operating cash flow) / average of latest and year-earlier total assets; bottom 10% of liquid stocks; hold 63. Paper(s): Sloan (1996) Do Stock Prices Fully Reflect Information in Accruals and Cash Flows about Future Earnings? The Accounting Review 71(3). Reported: low-minus-high accrual decile ~10% a year (1962-91). Replication: weakened sharply after 2000 (Green, Hand & Soliman 2011); CZ still list it.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "V1 (quality, incl. cash-backed profits: rejected) mixed several checks; the accrual decile alone was never run",
+   "sources": [
+    "https://www.jstor.org/stable/248290",
+    "https://www.openassetpricing.com",
+    "https://doi.org/10.1287/mnsc.1110.1345"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3391,
+     4911
+    ],
+    "avg": [
+     -0.0229,
+     0.0276
+    ],
+    "stress": [
+     -0.0269,
+     0.0236
+    ],
+    "edge": [
+     -0.0112,
+     -0.007
+    ],
+    "vsOwn": [
+     -0.0336,
+     0.0491
+    ],
+    "noTop2": [
+     -0.0248,
+     0.0258
+    ],
+    "tBlock": [
+     -0.73,
+     -0.34
+    ],
+    "win": [
+     0.4364,
+     0.4694
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.73 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.34 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-QMJ",
+   "family": "Published anomalies",
+   "name": "Quality minus junk (simplified, long the top 10%)",
+   "explain": "Monthly, non-financial: average of three percentile ranks: PROFITABILITY (mean rank of GP/A, net income/A, operating cash flow/A, gross margin, minus accruals; 3+ of 5), GROWTH (mean rank of the 1-year change in GP/A and in net income/A; 1+), SAFETY (mean rank of minus beta, minus 252-session volatility, minus liabilities/assets; 2+); top 10% of liquid stocks; hold 63. (No payout component; growth over 1 year, not 5.) Paper(s): Asness, Frazzini & Pedersen (2019) Quality minus junk, Review of Accounting Studies 24. Reported: QMJ ~0.4-0.6% a month across 24 countries. Replication: replicates (AQR data library).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "V1 (quality companies: rejected), V13 / V15 (F-score). Different construction",
+   "sources": [
+    "https://doi.org/10.1007/s11142-018-9470-2"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1874,
+     4719
+    ],
+    "avg": [
+     0.0172,
+     0.0201
+    ],
+    "stress": [
+     0.0132,
+     0.0161
+    ],
+    "edge": [
+     -0.0057,
+     -0.0133
+    ],
+    "vsOwn": [
+     -0.02,
+     -0.0078
+    ],
+    "noTop2": [
+     0.0164,
+     0.0191
+    ],
+    "tBlock": [
+     -0.57,
+     -0.86
+    ],
+    "win": [
+     0.5261,
+     0.5067
+    ],
+    "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -0.57 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.86 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-RD",
+   "family": "Published anomalies",
+   "name": "High R&D intensity (R&D / market value)",
+   "explain": "Monthly, non-financial, R&D reporters only: TTM research and development expense / (share count known x close); top 10% of liquid stocks; hold 63. Paper(s): Chan, Lakonishok & Sougiannis (2001) The Stock Market Valuation of Research and Development Expenditures, Journal of Finance 56(6); Eberhart, Maxwell & Siddique (2004) An Examination of Long-Term Abnormal Stock Returns and Operating Performance Following R&D Increases, Journal of Finance 59(2). Reported: high R&D-to-market firms earn ~6% a year excess. Replication: replicates (CZ RD / RDcap).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://doi.org/10.1111/0022-1082.00416",
+    "https://doi.org/10.1111/j.1540-6261.2004.00649.x",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1464,
+     2163
+    ],
+    "avg": [
+     -0.0357,
+     0.0553
+    ],
+    "stress": [
+     -0.0397,
+     0.0513
+    ],
+    "edge": [
+     -0.0233,
+     0.0171
+    ],
+    "vsOwn": [
+     0.1188,
+     0.1861
+    ],
+    "noTop2": [
+     -0.04,
+     0.051
+    ],
+    "tBlock": [
+     -0.68,
+     0.45
+    ],
+    "win": [
+     0.4126,
+     0.4734
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.68 under 2.5 in the older half; block t 0.45 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-OL",
+   "family": "Published anomalies",
+   "name": "Operating leverage (Novy-Marx)",
+   "explain": "Monthly, non-financial: (TTM cost of revenue + TTM SG&A) / latest total assets; top 10% of liquid stocks; hold 63. Paper(s): Novy-Marx (2011) Operating Leverage, Review of Finance 15(1). Reported: high (cost of goods + SG&A)/assets earns more. Replication: replicates (Chen-Zimmermann signal OPLeverage).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://doi.org/10.1093/rof/rfq019",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2768,
+     3944
+    ],
+    "avg": [
+     0.0126,
+     0.0313
+    ],
+    "stress": [
+     0.0086,
+     0.0273
+    ],
+    "edge": [
+     0.0249,
+     -0.0021
+    ],
+    "vsOwn": [
+     -0.048,
+     0.0435
+    ],
+    "noTop2": [
+     0.0107,
+     0.0299
+    ],
+    "tBlock": [
+     3.31,
+     0.19
+    ],
+    "win": [
+     0.5087,
+     0.5304
+    ],
+    "why": "not better than the same stocks on their other days in the older half; not better than the average stock in the newer half; block t 0.19 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-CAPEX",
+   "family": "Published anomalies",
+   "name": "Low abnormal capital investment",
+   "explain": "Monthly, non-financial: TTM capex / TTM revenue now, divided by the average of the same ratio 1, 2 and 3 years earlier (all known before the day), minus 1; bottom 10% of liquid stocks; hold 63. Paper(s): Titman, Wei & Xie (2004) Capital Investments and Stock Returns, Journal of Financial and Quantitative Analysis 39(4). Reported: firms raising capex the most underperform. Replication: replicates (Chen-Zimmermann signal Investment, Titman-Wei-Xie); HXZ investment family.",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://doi.org/10.1017/S0022109000003173",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     1823,
+     2660
+    ],
+    "avg": [
+     -0.0117,
+     0.0376
+    ],
+    "stress": [
+     -0.0157,
+     0.0336
+    ],
+    "edge": [
+     0.0007,
+     0.0015
+    ],
+    "vsOwn": [
+     -0.0711,
+     -0.0206
+    ],
+    "noTop2": [
+     -0.0138,
+     0.0353
+    ],
+    "tBlock": [
+     0.36,
+     -0.01
+    ],
+    "win": [
+     0.4635,
+     0.5026
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.36 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t -0.01 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-NSI",
+   "family": "Published anomalies",
+   "name": "Net share issuance: shrinking share count (lowest 10%)",
+   "explain": "Monthly, all liquid stocks: share count known now / share count known 252 sessions earlier (both 30 days late) - 1; bottom 10%; hold 63. Paper(s): Pontiff & Woodgate (2008) Share Issuance and Cross-sectional Returns, Journal of Finance 63(2). Reported: issuance strongly predicts lower returns after 1970. Replication: one of the most robust (HXZ NSI; CZ ShareIss1Y).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "S1 (flat count + above 50-day, any day: FAILED DISCOVERY), S2 (avoid test), V11, C-NSI1 (queued avoid). The monthly decile was never run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2008.01338.x",
+    "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2377,
+     6190
+    ],
+    "avg": [
+     0.0291,
+     0.024
+    ],
+    "stress": [
+     0.0251,
+     0.02
+    ],
+    "edge": [
+     0.0071,
+     -0.0098
+    ],
+    "vsOwn": [
+     -0.0291,
+     0.014
+    ],
+    "noTop2": [
+     0.0284,
+     0.0233
+    ],
+    "tBlock": [
+     0.95,
+     -1.53
+    ],
+    "win": [
+     0.5642,
+     0.531
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 0.95 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.53 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-BBY",
+   "family": "Published anomalies",
+   "name": "Buyback yield (actual repurchases)",
+   "explain": "Monthly, all liquid stocks: TTM PaymentsForRepurchaseOfCommonStock / (share count known x close); top 10% among repurchasers; hold 63. (Announcement dates need a news feed: see ANOM-BBANN.) Paper(s): Boudoukh, Michaely, Richardson & Roberts (2007) On the Importance of Measuring Payout Yield, Journal of Finance 62(2); Ikenberry, Lakonishok & Vermaelen (1995) Market underreaction to open market share repurchases, JFE 39(2-3). Reported: payout yield incl. buybacks predicts returns; announcement drift +12% over 4 years (1980-90). Replication: payout yield replicates (CZ NetPayoutYield); announcement drift weaker after 2000.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "E8 (buyback announcements: queued), V17 (net payout yield: queued). Measured from what was actually spent",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2007.01226.x",
+    "https://doi.org/10.1016/0304-405X(95)00826-Z",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2020,
+     2978
+    ],
+    "avg": [
+     0.0059,
+     0.0256
+    ],
+    "stress": [
+     0.0019,
+     0.0216
+    ],
+    "edge": [
+     0.0153,
+     -0.0108
+    ],
+    "vsOwn": [
+     -0.0541,
+     0.008
+    ],
+    "noTop2": [
+     0.0029,
+     0.0236
+    ],
+    "tBlock": [
+     1.38,
+     -1.29
+    ],
+    "win": [
+     0.4906,
+     0.5138
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 1.38 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.29 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-INSIDER",
+   "family": "Published anomalies",
+   "name": "Opportunistic insider purchases (routine buyers removed)",
+   "explain": "SEC Form 4 open-market purchase (code P) by an insider who traded in each of the 3 previous calendar years but NOT in the same calendar month in all 3 (a routine trader = traded in the same month 3 years running); buy the next open after the filing date; hold 21; one open trade per stock. Paper(s): Cohen, Malloy & Pomorski (2012) Decoding Inside Information, Journal of Finance 67(3). Reported: opportunistic buys earn ~0.8% a month abnormal; routine trades nothing. Replication: replicated in later insider studies; CZ include insider-buying signals.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "E3 (insider cluster: not proven), C-INS2 (rejected), C-INS3 (queued, this idea with clusters). One-shot of the paper's single-trade version",
+   "sources": [
+    "https://www.nber.org/papers/w16454",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     746,
+     823
+    ],
+    "avg": [
+     -0.0104,
+     0.003
+    ],
+    "stress": [
+     -0.0144,
+     -0.001
+    ],
+    "edge": [
+     -0.0069,
+     -0.0087
+    ],
+    "vsOwn": [
+     -0.0086,
+     0.001
+    ],
+    "noTop2": [
+     -0.0125,
+     0.0004
+    ],
+    "tBlock": [
+     -1.25,
+     0.05
+    ],
+    "win": [
+     0.4424,
+     0.4897
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.25 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t 0.05 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-13D",
+   "family": "Published anomalies",
+   "name": "Activist 13D filing",
+   "explain": "Original SC 13D / SCHEDULE 13D (not amendments) in the EDGAR quarterly index; subject = the one listed company on the filing; buy the next open after the filing date; hold 63; one open trade per stock. (Not every 13D is an activist: passive 5% holders file 13G.) Paper(s): Brav, Jiang, Partnoy & Thomas (2008) Hedge Fund Activism, Corporate Governance, and Firm Performance, Journal of Finance 63(4). Reported: +7% abnormal around the filing, no reversal over the next year. Replication: confirmed (Bebchuk, Brav & Jiang 2015).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "E4 (queued). First run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2008.01373.x"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     253,
+     364
+    ],
+    "avg": [
+     -0.0565,
+     0.0021
+    ],
+    "stress": [
+     -0.0605,
+     -0.0019
+    ],
+    "edge": [
+     -0.0386,
+     -0.0339
+    ],
+    "vsOwn": [
+     -0.0245,
+     0.0104
+    ],
+    "noTop2": [
+     -0.0612,
+     -0.0108
+    ],
+    "tBlock": [
+     -3.18,
+     -1.15
+    ],
+    "win": [
+     0.3874,
+     0.478
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.18 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.15 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-SPIN",
+   "family": "Published anomalies",
+   "name": "Spin-offs (the new company)",
+   "explain": "Form 10-12B filer (the new company) whose ticker first trades in the cache on or after the filing (not traded before it, within 400 days); buy the open of its 2nd trading session; hold 126. Paper(s): Cusatis, Miles & Woolridge (1993) Restructuring through spinoffs, Journal of Financial Economics 33(3); McConnell & Ovtchinnikov (2004) Predictability of Long-Term Spinoff Returns, Journal of Investment Management 2(3). Reported: spun-off firms beat matched firms by ~25-30% over 3 years. Replication: weaker in later samples; concentrated in takeovers.",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "E7 (queued). First run",
+   "sources": [
+    "https://doi.org/10.1016/0304-405X(93)90011-Z",
+    "https://www.joim.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 126 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     21,
+     17
+    ],
+    "avg": [
+     0.0877,
+     0.2311
+    ],
+    "stress": [
+     0.0837,
+     0.2271
+    ],
+    "edge": [
+     0.099,
+     0.1746
+    ],
+    "vsOwn": [
+     -0.0095,
+     -0.2027
+    ],
+    "noTop2": [
+     -0.0059,
+     0.1422
+    ],
+    "tBlock": [
+     0.58,
+     1.5
+    ],
+    "win": [
+     0.5238,
+     0.7647
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (21 cases, 5 blocks / 17 cases, 5 blocks)"
+   }
+  },
+  {
+   "id": "ANOM-DIVINIT",
+   "family": "Published anomalies",
+   "name": "Dividend initiations",
+   "explain": "A regular cash dividend (Massive dividends: type CD) declared by a stock with no dividend of any kind in the previous 730 days and in the cache for 252+ sessions; buy the next open after the declaration date; hold 126. Paper(s): Michaely, Thaler & Womack (1995) Price Reactions to Dividend Initiations and Omissions, Journal of Finance 50(2). Reported: +7.5% drift in the year after an initiation. Replication: Boehme & Sorescu (2002) find the drift fragile.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "V7 (dividend growth: needs data). First run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1995.tb04793.x",
+    "https://doi.org/10.1111/1540-6261.00436"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 126 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     44,
+     69
+    ],
+    "avg": [
+     -0.0176,
+     0.0195
+    ],
+    "stress": [
+     -0.0216,
+     0.0155
+    ],
+    "edge": [
+     -0.0496,
+     -0.0374
+    ],
+    "vsOwn": [
+     -0.1049,
+     -0.0587
+    ],
+    "noTop2": [
+     -0.0382,
+     -0.0217
+    ],
+    "tBlock": [
+     -1.62,
+     -0.59
+    ],
+    "win": [
+     0.4318,
+     0.4058
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.62 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.59 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-13FBEST",
+   "family": "Published anomalies",
+   "name": "13F best ideas of active managers",
+   "explain": "For each 13F-HR (filed by the 45-day deadline) with 20-300 share positions (no options): the stock with the largest weight above its weight in the sum of all 13F filings that quarter = that manager's best idea. Formation = first session after the deadline; every liquid best-idea stock; hold 63. CUSIP -> ticker via Massive. Paper(s): Cohen, Polk & Silli (2010) Best Ideas, SSRN 1364827. Reported: managers' best ideas beat the market by ~1-2.5% a quarter. Replication: Antón, Cohen & Polk (2021) confirm with newer data.",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "C-13F1 (new positions by concentrated funds: queued) is different",
+   "sources": [
+    "https://ssrn.com/abstract=1364827"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 63 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     5463,
+     6564
+    ],
+    "avg": [
+     -0.015,
+     0.0438
+    ],
+    "stress": [
+     -0.019,
+     0.0398
+    ],
+    "edge": [
+     0.0077,
+     0.001
+    ],
+    "vsOwn": [
+     -0.101,
+     -0.0307
+    ],
+    "noTop2": [
+     -0.0156,
+     0.0431
+    ],
+    "tBlock": [
+     0.89,
+     0.33
+    ],
+    "win": [
+     0.4613,
+     0.5539
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.89 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.33 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-SILOW",
+   "family": "Published anomalies",
+   "name": "Low short interest (lowest 10% of shares sold short)",
+   "explain": "Monthly: latest FINRA short interest known 14 days after its settlement date / share count known; bottom 10% of liquid stocks; hold 21. Paper(s): Asquith, Pathak & Ritter (2005) Short interest, institutional ownership, and stock returns, Journal of Financial Economics 78(2); Boehme, Danielsen & Sorescu (2006) Short-Sale Constraints, Differences of Opinion, and Overvaluation, JFQA 41(2). Reported: high short interest predicts low returns; low SI is the long side. Replication: replicates (CZ ShortInterest).",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "C-SI1 (avoid, queued), S5 / C-SQZ1 (needs data). First run",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2004.06.005",
+    "https://doi.org/10.1017/S0022109000002118",
+    "https://www.openassetpricing.com"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     4380,
+     6829
+    ],
+    "avg": [
+     -0.0055,
+     0.0062
+    ],
+    "stress": [
+     -0.0095,
+     0.0022
+    ],
+    "edge": [
+     0.0001,
+     -0.0072
+    ],
+    "vsOwn": [
+     -0.0147,
+     0.0035
+    ],
+    "noTop2": [
+     -0.0058,
+     0.0059
+    ],
+    "tBlock": [
+     0.02,
+     -1.64
+    ],
+    "win": [
+     0.4642,
+     0.5137
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.02 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.64 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-DTCLOW",
+   "family": "Published anomalies",
+   "name": "Low days-to-cover",
+   "explain": "Monthly: latest FINRA days-to-cover (short interest / average daily volume) known 14 days after settlement; bottom 10% of liquid stocks; hold 21. Paper(s): Hong, Li, Ni, Scheinkman & Yan (2016) Days to Cover and Stock Returns, NBER w21166. Reported: days-to-cover predicts returns better than short interest (~1.2% a month high-low). Replication: Hong et al. report it over 1988-2012; not in the HXZ list.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://www.nber.org/papers/w21166"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     6305,
+     8541
+    ],
+    "avg": [
+     -0.0229,
+     0.0027
+    ],
+    "stress": [
+     -0.0269,
+     -0.0013
+    ],
+    "edge": [
+     -0.016,
+     -0.0108
+    ],
+    "vsOwn": [
+     -0.0146,
+     0.0032
+    ],
+    "noTop2": [
+     -0.0237,
+     -0.0008
+    ],
+    "tBlock": [
+     -4.43,
+     -1.85
+    ],
+    "win": [
+     0.419,
+     0.4752
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.43 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.85 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-SIDROP",
+   "family": "Published anomalies",
+   "name": "Short-interest decline (shorts covering)",
+   "explain": "Monthly: change in short interest between the latest known report and the one about a month earlier (2 reports back), among stocks with 2%+ of shares short a month earlier; the largest 10% declines; hold 21. Paper(s): Desai, Ramesh, Thiagarajan & Balachandran (2002) An Investigation of the Informational Role of Short Interest in the Nasdaq Market, Journal of Finance 57(5). Reported: short-interest changes carry information; covering precedes better returns. Replication: mixed.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "anomaly",
+   "libraryCheck": "none",
+   "sources": [
+    "https://doi.org/10.1111/1540-6261.00492"
+   ],
+   "note": "Pre-registered 23 Oct 2026 BEFORE any run (anomaly-core.mjs = the exact rule; one version; hold 21 sessions). 5-year one-shot by anomaly-lab.mjs, first complete verdict frozen in data/anomaly-lab.json; forward paper lane (data/anomaly-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "anomaly-lab.mjs -> data/anomaly-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2728,
+     4893
+    ],
+    "avg": [
+     -0.0133,
+     0.0034
+    ],
+    "stress": [
+     -0.0173,
+     -0.0006
+    ],
+    "edge": [
+     -0.0078,
+     -0.0102
+    ],
+    "vsOwn": [
+     -0.0127,
+     0.0043
+    ],
+    "noTop2": [
+     -0.0138,
+     0.0026
+    ],
+    "tBlock": [
+     -2.47,
+     -5.19
+    ],
+    "win": [
+     0.4348,
+     0.4791
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.47 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t -5.19 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "ANOM-IDXADD",
+   "family": "Published anomalies",
+   "name": "Index additions",
+   "explain": "NOT RUN: no point-in-time S&P / Russell announcement dates in the repository (S&P press releases are not archived in a machine-readable feed); the paper finds the effect has largely disappeared since 2010",
+   "status": "needs data",
+   "agent": "anomaly",
+   "libraryCheck": "E6 (needs data), C-SPEC1 (queued)",
+   "sources": [
+    "https://www.nber.org/papers/w30748"
+   ],
+   "note": "Registered so it is not lost; no data in the repository."
+  },
+  {
+   "id": "ANOM-REVISION",
+   "family": "Published anomalies",
+   "name": "Analyst earnings-forecast revision momentum",
+   "explain": "NOT RUN: no history of consensus revisions (data/analyst-archive starts October 2026; C-REV1 is collecting)",
+   "status": "needs data",
+   "agent": "anomaly",
+   "libraryCheck": "E5, C-REV1",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1996.tb05222.x"
+   ],
+   "note": "Registered so it is not lost; no data in the repository."
+  },
+  {
+   "id": "ANOM-8KTONE",
+   "family": "Published anomalies",
+   "name": "Tone of 8-K / 10-K text",
+   "explain": "NOT RUN: needs the full text of every filing for 5 years plus a tested dictionary pipeline; not built in this round",
+   "status": "needs data",
+   "agent": "anomaly",
+   "libraryCheck": "C-DIFF1 (queued)",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2010.01625.x"
+   ],
+   "note": "Registered so it is not lost; no data in the repository."
+  },
+  {
+   "id": "ANOM-OPTSKEW",
+   "family": "Published anomalies",
+   "name": "Options-implied skew / volatility spread",
+   "explain": "NOT RUN: no 5-year history of option implied volatilities per stock",
+   "status": "needs data",
+   "agent": "anomaly",
+   "libraryCheck": "OPT-UOA1 (needs data)",
+   "sources": [
+    "https://doi.org/10.1017/S0022109010000220",
+    "https://doi.org/10.1017/S0022109010000074"
+   ],
+   "note": "Registered so it is not lost; no data in the repository."
+  },
+  {
+   "id": "ANOM-BBANN",
+   "family": "Published anomalies",
+   "name": "Buyback announcements",
+   "explain": "NOT RUN: announcement dates are in press releases / 8-K item 8.01 text, not a structured field; ANOM-BBY tests the money actually spent instead",
+   "status": "needs data",
+   "agent": "anomaly",
+   "libraryCheck": "E8 (queued)",
+   "sources": [
+    "https://doi.org/10.1016/0304-405X(95)00826-Z"
+   ],
+   "note": "Registered so it is not lost; no data in the repository."
   }
  ]
 }
