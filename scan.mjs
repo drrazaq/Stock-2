@@ -2181,6 +2181,13 @@ function clusterRisk(closes, dollars) {
   const line = 'MOVE TOGETHER: ' + best.join(', ') + ' (average correlation ' + (sum / n).toFixed(2) + ' over 60 sessions) = ' + (byMoney ? Math.round(share * 100) + '% of your money' : best.length + ' of your ' + syms.length + ' stocks (no share counts, so counted, not weighted)') + '. One bad day for that theme hits all of them at once. Information only.';
   return { syms: best, corr: sum / n, share, byMoney, line };
 }
+// The "SELL if it closes under X" price on a HOLD line (fix 23 Oct: CCJ showed 92.60, its 50-day, while trading at 78.93 on a HOLD).
+function lossLineFor(P, px, m50) {
+  const own = P.own || /35% disaster/.test(P.stopWhy || ''), st = P.stop > 0 ? P.stop : null;
+  if (own) return st;
+  if ((P.kind === 'leader' || (st && px && st < px * 0.75)) && m50 > 0 && px && m50 < px) return Math.max(m50, st || 0);
+  return st;
+}
 // YOUR STOCKS: one clear action per stock you own. SELL ALL, SELL HALF, SELL SOME, HOLD, or BUY A LITTLE MORE.
 // Built from the HOLD OR SELL study of each stock. "Buy a little more" only when a TESTED buy rule fired on that stock today:
 // never just to lower the average of a falling stock.
@@ -2197,7 +2204,7 @@ async function holdingsText(sig, pos, title, raw) {
     // TWO PRICES (user, 20 Oct): the profit line (30% above the 50-day: the tested SWITCH sell, then buy back 10% lower) and the loss line
     // (a close under the 50-day for trend trades, else the stop). Shown on every HOLD line so "when to sell" never needs decoding.
     let two = ''; try { const dd = await loadDaily(sym), cc = dd && dd.candles; if (cc && cc.length >= 31) { CL[sym] = cc.map(x => x.c); if (sh > 0 && px) DL[sym] = sh * px; } if (cc && cc.length >= 50) { const m50 = cc.slice(-50).reduce((q, x) => q + x.c, 0) / 50, RBt = readJson0('data/rebuy.json'), sw = RBt && RBt.status === 'OK' && swWins(RBt.results['STRETCH/LOWER10']);
-      const lossLine = P.kind === 'leader' || (P.stop && px && P.stop < px * 0.75) ? Math.max(m50, P.stop || 0) : (P.stop || null);
+      const lossLine = lossLineFor(P, px, m50);
       two = (sw ? ' SELL WITH PROFIT at ' + money(m50 * 1.3) + ' (then buy back ~' + money(m50 * 1.3 * 0.9) + ')' : '') + (lossLine ? ' | SELL if it closes under ' + money(lossLine) : '') + (P.t1 && P.ownT ? ' | your target ' + money(P.t1) : ''); } } catch (e) {}
     // A trade the system chose follows ITS OWN tested exit and stop. The general hold-or-sell study (trend under the averages)
     // is for your own picks only: a dip-buy is below its short averages by design, so "trend broken" would contradict the buy.
@@ -2214,7 +2221,7 @@ async function holdingsText(sig, pos, title, raw) {
     else if (verdict === 'TAKE PART PROFIT') mark(sym, 'SELL SOME', 'lock profit'), acts.part.push(sym + chg + ': SELL SOME (about a third' + (sh >= 3 ? ', ' + Math.floor(sh / 3) + ' shares' : '') + ') to lock profit, raise the stop on the rest to ' + stop + '.' + tail);
     else { mark(sym, 'HOLD', why); const b0 = buyToday(sym, sig), b = b0 && !b0.thin && px && P.entry && px > P.entry * 1.01 && !(sig && sig.session && P.since && sig.session <= P.since) ? b0 : null;   // add ONLY: a fully proven rule (not early evidence), a NEW signal, and the stock already in profit. Never to lower an average.
       if (b && verdict.startsWith('HOLD') && !(P.stop && px && px <= P.stop)) acts.add.push(sym + chg + ': HOLD and ADD 1,000 USD (a winner with a new PROVEN signal; fees 3 USD per buy and per sell) inside ' + money(b.lo) + '-' + money(b.hi) + '. A tested buy rule fired on it today' + (b.thin ? ' (early evidence)' : '') + '' + '. Then use ONE stop for all shares: ' + money(Math.max(b.stop, P.own ? P.stop || 0 : 0)) + '. Send after:  added ' + sym + ' PRICE SHARES' + tail);
-      else { acts.hold.push(sym + chg + ': HOLD, stop ' + stop + (verdict.includes('RAISE') ? ' (raise it to this now)' : stopTag(sym, P)) + (P.t1 ? ', sell ' + (P.tmode === 'half' ? 'half' : 'at') + ' ' + money(P.t1) + (P.t2 ? ', rest at ' + money(P.t2) : '') + (P.tmode === 'half' ? ' (half)' : '') : '') + '.' + tail); (acts.holdShort = acts.holdShort || []).push(sym + chg + (two ? ':' + two : '') + ' stop ' + stop + (verdict.includes('RAISE') ? ' (raise to this)' : stopTag(sym, P, true)) + (P.t1 ? ' target ' + money(P.t1) + (P.tmode ? ' (tested' + (P.tmode === 'half' ? ', half' : '') + ')' : P.ownT ? ' (yours)' : '') : P.tnote ? ' no target (tested)' : '') + (earn ? ' EARNINGS ' + earn : '') + (ew ? ' NEWS WARNING' : '')); } } }
+      else { acts.hold.push(sym + chg + ': HOLD, stop ' + stop + (verdict.includes('RAISE') ? ' (raise it to this now)' : stopTag(sym, P)) + (P.t1 ? ', sell ' + (P.tmode === 'half' ? 'half' : 'at') + ' ' + money(P.t1) + (P.t2 ? ', rest at ' + money(P.t2) : '') + (P.tmode === 'half' ? ' (half)' : '') : '') + '.' + tail); (acts.holdShort = acts.holdShort || []).push(sym + chg + (two ? ':' + two : '') + (P.stop ? (two ? '' : ' stop ' + money(P.stop)) + (verdict.includes('RAISE') && stop !== money(P.stop) ? ' (suggested: raise the stop to ' + stop + ')' : '') + stopTag(sym, P, true).replace(' UNCONFIRMED', ' (stop not confirmed at broker)') : ' NO STOP: send  stop ' + sym + ' PRICE') + (P.t1 ? ' target ' + money(P.t1) + (P.tmode ? ' (tested' + (P.tmode === 'half' ? ', half' : '') + ')' : P.ownT ? ' (yours)' : '') : P.tnote ? ' no target (tested)' : '') + (earn ? ' EARNINGS ' + earn : '') + (ew ? ' NEWS WARNING' : '')); } } }
   if (raw) { let cl = null; try { const cr = clusterRisk(CL, DL); cl = cr && cr.line; } catch (e) {} return { acts, holdShort: acts.holdShort || [], cluster: cl }; }
   if (acts.sell.length) out.push('', 'SELL ALL', ...acts.sell);
   if (acts.part.length) out.push('', 'SELL PART', ...acts.part);
