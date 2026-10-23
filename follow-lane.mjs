@@ -113,13 +113,22 @@ export function judge(rows, H) { const f = rows.filter(z => typeof z['r' + H] ==
   const days = [...new Set(f.map(z => z.e))].sort((a, b) => a - b), cut = days[Math.floor(days.length / 2)], half = {};
   for (const [k, g] of [['older', f.filter(z => z.e < cut)], ['newer', f.filter(z => z.e >= cut)]]) half[k] = { n: g.length, days: new Set(g.map(z => z.e)).size,
     net: r4(mean(g.map(z => z['r' + H] - COST))), netStress: r4(mean(g.map(z => z['r' + H] - STRESS))), edge: r4(mean(byDay(g, z => z['r' + H] - COST - z['c' + H]))), gross: r4(mean(byDay(g, z => z['r' + H] - z['c' + H]))), t: tStat(byDay(g, z => z['r' + H] - COST - z['c' + H])) };
+  // CORRECTION after the first real run (23 Oct 2026, stricter only): calls whose H-session windows overlap are not independent, so the
+  // per-day t is also required over non-overlapping blocks of H sessions (block = floor(entry / H)), like the house tier-2 tBlock.
+  const byBlock = (fn) => { const o = new Map(); for (const z of f) { const x = fn(z); if (!isFinite(x)) continue; const b = Math.floor(z.e / H); if (!o.has(b)) o.set(b, new Map()); const m = o.get(b); if (!m.has(z.e)) m.set(z.e, []); m.get(z.e).push(x); }
+    return [...o.values()].map(m => mean([...m.values()].map(mean))); };
+  const blk = byBlock(z => z['r' + H] - COST - z['c' + H]), tBlock = blk.length >= 3 ? tStat(blk) : null, tBlockGross = blk.length >= 3 ? tStat(byBlock(z => z['r' + H] - z['c' + H])) : null;
   const both = (fn) => fn(half.older) && fn(half.newer), ex = f.map(z => z['r' + H] - z['c' + H]).sort((a, b) => a - b), noWorst2 = ex.length > 2 ? mean(ex.slice(2)) : null, tGross = tStat(byDay(f, z => z['r' + H] - z['c' + H]));
-  const follow = both(h => h.net > 0 && h.netStress > 0 && h.edge > 0) && s.noBest2 > 0 && s.t >= T_BAR, fade = both(h => h.gross < 0) && tGross <= -T_BAR && noWorst2 < 0;
-  const why = follow ? 'passed every check' : fade ? 'worse than the average stock in both halves, t ' + tGross : [!both(h => h.net > 0) ? 'loses money after 0.8% in a half' : !both(h => h.netStress > 0) ? 'loses money after the 1.2% stress cost in a half' : null, !both(h => h.edge > 0) ? 'does not beat the average stock in both halves' : null, !(s.noBest2 > 0) ? 'negative without its 2 best calls' : null, !(s.t >= T_BAR) ? 't ' + s.t + ' under ' + T_BAR : null].filter(Boolean).join('; ');
-  return { ...s, H, half, tGross, noWorst2: r4(noWorst2), level: follow ? 'FOLLOW' : fade ? 'FADE' : 'NO EDGE', why }; }
+  const follow = both(h => h.net > 0 && h.netStress > 0 && h.edge > 0) && s.noBest2 > 0 && s.t >= T_BAR && tBlock >= T_BAR, fade = both(h => h.gross < 0) && tGross <= -T_BAR && noWorst2 < 0 && tBlockGross <= -T_BAR;
+  const why = follow ? 'passed every check' : fade ? 'worse than the average stock in both halves, t ' + tGross : [!both(h => h.net > 0) ? 'loses money after 0.8% in a half' : !both(h => h.netStress > 0) ? 'loses money after the 1.2% stress cost in a half' : null, !both(h => h.edge > 0) ? 'does not beat the average stock in both halves' : null, !(s.noBest2 > 0) ? 'negative without its 2 best calls' : null, !(s.t >= T_BAR) ? 't ' + s.t + ' under ' + T_BAR : null, s.t >= T_BAR && !(tBlock >= T_BAR) ? 'block t ' + tBlock + ' over ' + blk.length + ' non-overlapping ' + H + '-session blocks, under ' + T_BAR : null].filter(Boolean).join('; ');
+  return { ...s, H, half, tGross, blocks: blk.length, tBlock, tBlockGross, noWorst2: r4(noWorst2), level: follow ? 'FOLLOW' : fade ? 'FADE' : 'NO EDGE', why }; }
 // upper tail of the normal: how many of n judged traders reach t by luck alone (the other checks make it fewer; this is the ceiling)
 export function luckExpected(n, t) { const z = Math.abs(t), k = 1 / (1 + 0.2316419 * z), d = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
   const p = d * k * (0.319381530 + k * (-0.356563782 + k * (1.781477937 + k * (-1.821255978 + k * 1.330274429)))); return n * p; }
+// CORRECTION after the first real run (23 Oct 2026): channels about the Australian or Indian (etc.) markets are left out; their stock codes
+// (ASX, NSE) read as unrelated US tickers.
+const NON_US_C = new Set(['IN', 'AU', 'NZ', 'PK', 'BD', 'LK', 'NG', 'ZA', 'KE', 'MY', 'ID', 'PH', 'SG', 'TH', 'VN', 'AE', 'SA', 'EG']);
+export function nonUSChannel(name, desc, country) { return NON_US_C.has(String(country || '').toUpperCase()) || /\b(ASX|NSE|BSE|Nifty|Sensex|Bank ?Nifty|Bursa|JSE|PSX|Tadawul|Australian|Australia|India|Indian|Rupee|crore|lakh)\b/i.test(String(name || '') + ' ' + String(desc || '')); }
 export function horizonFor(text) { const s = String(text || '');
   if (/\bday[- ]?trad\w*|\bintraday\b|\bscalp\w*/i.test(s) && !/\bswing\b|\blong[- ]term\b/i.test(s)) return 1;
   if (/\blong[- ]term\b|\binvest(ing|or|ors|ment)?\b|\bdividends?\b|buy and hold|retire\w*/i.test(s) && !/\bswing\b|\bday[- ]?trad/i.test(s)) return 60;
@@ -221,13 +230,16 @@ async function main() {
       for (const c of [...((J('data/channels.json', []) || []))]) if (c && /^UC/.test(c.id || '')) hits[c.id] = (hits[c.id] || 0) + 100;   // the owner's followed channels always
       const fresh = Object.keys(hits).filter(id => !state.channels[id]);
       for (let k = 0; k < fresh.length; k += 50) { const j = await ytGet('channels?part=snippet,statistics,contentDetails&maxResults=50&id=' + fresh.slice(k, k + 50).join(','), 1); for (const it of (j && j.items) || []) { const sn = it.snippet || {}, txt = (sn.title || '') + ' ' + (sn.description || '');
-        state.channels[it.id] = { name: String(sn.title || it.id).slice(0, 60), H: horizonFor(txt), hFrom: 'channel name and description, frozen ' + iso(now), subs: +((it.statistics || {}).subscriberCount || 0), videos: +((it.statistics || {}).videoCount || 0), uploads: (it.contentDetails && it.contentDetails.relatedPlaylists && it.contentDetails.relatedPlaylists.uploads) || 'UU' + it.id.slice(2), found: iso(now), hits: hits[it.id] }; } }
+        state.channels[it.id] = { name: String(sn.title || it.id).slice(0, 60), H: horizonFor(txt), hFrom: 'channel name and description, frozen ' + iso(now), subs: +((it.statistics || {}).subscriberCount || 0), videos: +((it.statistics || {}).videoCount || 0), uploads: (it.contentDetails && it.contentDetails.relatedPlaylists && it.contentDetails.relatedPlaylists.uploads) || 'UU' + it.id.slice(2), found: iso(now), hits: hits[it.id], ctry: sn.country || '', nonUS: nonUSChannel(sn.title, sn.description, sn.country) }; } }
       for (const [id, c] of Object.entries(state.channels)) if (hits[id]) c.hits = Math.max(c.hits || 0, hits[id]);
       log('YouTube discovery: ' + Object.keys(hits).length + ' channels in search results, ' + fresh.length + ' new; units used ' + units);
     }
     {
+      // country and description for channels found before the non-US check existed (1 unit per 50 channels)
+      const noC = Object.keys(state.channels).filter(id => state.channels[id].ctry === undefined);
+      for (let k = 0; k < noC.length; k += 50) { const j = await ytGet('channels?part=snippet&maxResults=50&id=' + noC.slice(k, k + 50).join(','), 1); for (const it of (j && j.items) || []) { const c = state.channels[it.id], sn = it.snippet || {}; if (!c) continue; c.ctry = sn.country || ''; c.nonUS = nonUSChannel(sn.title, sn.description, sn.country); } }
       // backfill: up to 2 years of uploads, channels with the most search hits first, until the budget is used (the rest next Sunday)
-      const todo = Object.entries(state.channels).filter(([, c]) => !c.backfilled).sort((a, b) => (b[1].hits || 0) - (a[1].hits || 0));
+      const todo = Object.entries(state.channels).filter(([, c]) => !c.backfilled && !c.nonUS).sort((a, b) => (b[1].hits || 0) - (a[1].hits || 0));
       const reserve = Object.values(state.channels).filter(c => c.backfilled && !c.gone).length + 20;   // keep units for the new-upload check below
       for (const [id, c] of todo) { if (units + 2 > BUDGET - reserve) break; let tok = '', pages = 0, failed = false;
         while (pages < 40) { const j = await ytGet('playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=' + c.uploads + (tok ? '&pageToken=' + tok : ''), 1); pages++;
@@ -318,12 +330,13 @@ async function main() {
   log(add.length + ' new calls logged (' + (old.length + add.length) + ' in total)');
   // ---- score every call ----
   const all = dedupeCalls([...old, ...add].filter(c => c.tr && c.sym && c.pub)), meta = {};
-  for (const [id, c] of Object.entries(state.channels)) meta['yt:' + id] = { name: c.name, H: c.H, hFrom: c.hFrom, src: 'YouTube', subs: c.subs, url: 'https://www.youtube.com/channel/' + id };
+  for (const [id, c] of Object.entries(state.channels)) meta['yt:' + id] = { name: c.name, H: c.H, hFrom: c.hFrom, src: 'YouTube', subs: c.subs, url: 'https://www.youtube.com/channel/' + id, excluded: !!c.nonUS };
   for (const [u, c] of Object.entries(state.st.users)) meta['st:' + u] = { name: 'StockTwits ' + u, H: 20, hFrom: 'default (StockTwits states no hold)', src: 'StockTwits', followers: c.followers, url: 'https://stocktwits.com/' + u };
   const SRC = { yt: ['YouTube', 20], st: ['StockTwits', 20], cg: ['US Congress', 20], '13f': ['SEC 13F fund', 60], rss: ['Newsletter', 20] };
   for (const c of all) if (!meta[c.tr]) { const z = SRC[c.src] || ['other', 20]; meta[c.tr] = { name: c.n || c.tr, H: z[1], hFrom: 'fixed per source type on 23 Oct 2026 (' + z[0] + ': ' + z[1] + ' sessions)', src: z[0] }; }
   const rowsBy = {}, pending = []; let scored = 0, noPrice = 0;
-  for (const c of all) { const e = T ? entrySession(Date.parse(c.pub), D) : -1; if (e === -1) { pending.push(c); continue; } if (e < 1) { noPrice++; continue; }
+  const excluded = new Set(); for (const c of all) if (meta[c.tr] && meta[c.tr].excluded) excluded.add(meta[c.tr].name);
+  for (const c of all) { if (meta[c.tr] && meta[c.tr].excluded) continue; const e = T ? entrySession(Date.parse(c.pub), D) : -1; if (e === -1) { pending.push(c); continue; } if (e < 1) { noPrice++; continue; }
     const b = barsOf(c.sym); if (!b || !(b.o[e] > 0)) { noPrice++; continue; } const H = (meta[c.tr] || {}).H || 20, row = { e, sym: c.sym, d: D[e], bull: c.bull };
     for (const h of HOLDS) { const r = callReturn(b, e, h); row['r' + h] = r === null ? null : r; row['c' + h] = r === null ? null : ctrl(e, h); row['s' + h] = r === null || !spyBars ? null : callReturn(spyBars, e, h); }
     if (c.st || c.tg) { const rx = callReturn(b, e, H, { st: c.st, tg: c.tg }); if (rx !== null) row.rx = rx; }
@@ -337,7 +350,7 @@ async function main() {
   traders.sort((a, b) => rank[a.level] - rank[b.level] || (b.atH.t ?? -99) - (a.atH.t ?? -99) || b.calls - a.calls);
   const judged = traders.filter(t => t.level !== 'WATCH').length, count = (l) => traders.filter(t => t.level === l).length;
   const pc = (x) => x === null || x === undefined ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
-  const recordLine = (t) => { const a = t.atH; return a.n + ' calls on ' + a.days + ' days (' + (t.first || '?') + ' to ' + (t.last || '?') + '), at ' + t.H + ' session' + (t.H > 1 ? 's' : '') + ': ' + pc(a.avg) + ' a call after costs (median ' + pc(a.median) + '), ' + Math.round((a.win || 0) * 100) + '% won, vs the average stock ' + pc(a.vsAvgStock) + ' (t ' + (a.t ?? 'n/a') + '), vs S&P ' + pc(a.vsSpy) + ', without his 2 best ' + pc(a.noBest2) + ', worst ' + pc(a.worst); };
+  const recordLine = (t) => { const a = t.atH; return a.n + ' calls on ' + a.days + ' days (' + (t.first || '?') + ' to ' + (t.last || '?') + '), at ' + t.H + ' session' + (t.H > 1 ? 's' : '') + ': ' + pc(a.avg) + ' a call after costs (median ' + pc(a.median) + '), ' + Math.round((a.win || 0) * 100) + '% won, vs the average stock ' + pc(a.vsAvgStock) + ' (t ' + (a.t ?? 'n/a') + (a.blocks ? ', block t ' + (a.tBlock ?? 'n/a') + ' over ' + a.blocks + ' blocks' : '') + '), vs S&P ' + pc(a.vsSpy) + ', without his 2 best ' + pc(a.noBest2) + ', worst ' + pc(a.worst); };
   for (const t of traders) t.record = recordLine(t);
   // ---- new calls of FOLLOW traders (entry session not in the data yet) ----
   const follow = new Set(traders.filter(t => t.level === 'FOLLOW').map(t => t.tr)), lastClose = (sym) => { const b = barsOf(sym); if (!b) return null; for (let k = T - 1; k >= Math.max(0, T - 5); k--) if (b.c[k] > 0) return +b.c[k].toFixed(4); return null; };
@@ -348,6 +361,7 @@ async function main() {
     rule: 'Each trader is ONE hypothesis at ONE horizon H fixed in advance (1 day trader, 60 long-term, else 20 sessions). Entry: the first regular-session open after the call was public (New York). FOLLOW: 30+ finished calls on 10+ days; both halves positive after 0.8% and 1.2% and beating the average stock; positive without his 2 best; date-clustered t vs the average stock >= 2.5. FADE: same counts, worse in both halves, t <= -2.5, still worse without his 2 worst. WATCH: too few.',
     sources: { youtube: { ...yt, channels: Object.keys(state.channels).length, backfilled: Object.values(state.channels).filter(c => c.backfilled).length, calls: ytCalls }, stocktwits: { ...st, users: Object.keys(state.st.users).length, calls: stCallsN }, congress: { ...cg, callsLogged: all.filter(c => c.src === 'cg').length }, sec13f: { ...f13, callsLogged: all.filter(c => c.src === '13f').length }, newsletters: { ...rss, callsLogged: all.filter(c => c.src === 'rss').length } },
     unreached: { X: 'needs data: X API read access is paid (Basic tier, about 200 USD a month); with a bearer token in an X_BEARER secret, the users/:id/tweets endpoint gives the same dated calls.', Reddit: 'needs data: the Reddit API needs an app the owner registers (reddit.com/prefs/apps, script type, free for personal non-commercial use); with REDDIT_ID / REDDIT_SECRET secrets, /user/<name>/submitted gives dated posts.', Discord: 'needs data: Discord has no public read API; a bot can read only servers that invite it (the owner would need admin consent in each trading server).', TikTok: 'needs data: TikTok’s Research API is for approved academic researchers only; no other official read access to videos.' , Kinfo: 'not reached: Kinfo (broker-verified trader journals) has no public API; its leaderboards are inside the app behind an account, so reading them would need a login. Unlock: Kinfo would have to grant API or export access.' },
+    excludedNonUS: [...excluded].sort(), correction: 'after the first run (23 Oct 2026, stricter only): FOLLOW also needs block t >= 2.5 over non-overlapping H-session blocks (FADE block t <= -2.5), and channels about non-US markets are left out',
     screened: traders.length, judged, counts: { FOLLOW: count('FOLLOW'), FADE: count('FADE'), 'NO EDGE': count('NO EDGE'), WATCH: count('WATCH') },
     luck: { judged, tBar: T_BAR, followByLuckAtMost: +luckExpected(judged, T_BAR).toFixed(2), fadeByLuckAtMost: +luckExpected(judged, T_BAR).toFixed(2), note: 'with ' + judged + ' traders judged, about ' + luckExpected(judged, T_BAR).toFixed(1) + ' would reach t 2.5 by luck alone (the half and cost checks make it fewer)' },
     calls: { total: all.length, scored, pending: pending.length, noPrice },

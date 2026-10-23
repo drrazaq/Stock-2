@@ -90,7 +90,7 @@ test('score: a horizon not finished yet -> null; a stock that stops trading is v
 
 // a trader with 3 calls a day on 10 days; the day's edge vs the average stock is m + d*z, z = +1,-1,+1,...; with 10 days t = 3m/d
 const trader = ({ days = 10, per = 3, m = 0.05, d = 0.06, sign = 1, cost = 0.008 } = {}) => {
-  const rows = []; for (let k = 0; k < days; k++) for (let j = 0; j < per; j++) { const edge = sign * (m + d * (k % 2 ? -1 : 1)); rows.push({ e: 10 + k * 5, sym: 'S' + k + '_' + j, r20: edge + cost, c20: 0, s20: 0 }); }
+  const rows = []; for (let k = 0; k < days; k++) for (let j = 0; j < per; j++) { const edge = sign * (m + d * (k % 2 ? -1 : 1)); rows.push({ e: 10 + k * 20, sym: 'S' + k + '_' + j, r20: edge + cost, c20: 0, s20: 0 }); }
   return rows; };
 test('judge: 30 calls on 10 days, t exactly 2.5, positive in both halves after 1.2% -> FOLLOW', () => {
   const j = judge(trader({ m: 0.05, d: 0.06 }), 20);
@@ -105,7 +105,7 @@ test('judge: 29 calls, or 30 calls on only 9 days -> WATCH (too few)', () => {
   assert.equal(judge(trader({ days: 9, per: 4 }), 20).level, 'WATCH');
 });
 test('judge: winning on average but losing in the newer half -> NO EDGE', () => {
-  const rows = trader({ m: 0.05, d: 0.01 }); for (const r of rows) if (r.e >= 35) r.r20 = 0.008 - 0.01;   // newer 5 days -1%
+  const rows = trader({ m: 0.05, d: 0.01 }); for (const r of rows) if (r.e >= 110) r.r20 = 0.008 - 0.01;   // newer 5 days -1%
   assert.equal(judge(rows, 20).level, 'NO EDGE');
 });
 test('judge: the mirror image (t -2.5, worse in both halves) -> FADE', () => {
@@ -127,7 +127,7 @@ test('horizon: fixed in advance from the channel’s own words', () => {
 });
 
 // --- sources added 23 Oct (owner: "open the web") ---
-import { congressCall, f13Calls, parseInfoTable } from '../follow-lane.mjs';
+import { congressCall, f13Calls, parseInfoTable, nonUSChannel } from '../follow-lane.mjs';
 const trade = (o = {}) => ({ politician_canonical: 'Nancy Pelosi', bioguide_id: 'P000197', symbol: 'NVDA', asset_type_code: 'ST', asset_name: 'NVIDIA Corporation - Common Stock', transaction_type: 'BUY', transaction_date: '2026-07-28', filed_date: '2026-08-21', ...o });
 test('congress: a stock BUY is a call dated at the FILING (when the public could know), never the trade date', () => {
   const c = congressCall(trade(), U);
@@ -149,4 +149,18 @@ test('13F: the information table is read (shares summed per CUSIP; put and call 
     '<infoTable><nameOfIssuer>APPLE INC</nameOfIssuer><cusip>037833100</cusip><value>100</value><shrsOrPrnAmt><sshPrnamt>2</sshPrnamt></shrsOrPrnAmt></infoTable>' +
     '<infoTable><nameOfIssuer>TESLA INC</nameOfIssuer><cusip>88160R101</cusip><value>90</value><shrsOrPrnAmt><sshPrnamt>5</sshPrnamt></shrsOrPrnAmt><putCall>Put</putCall></infoTable></informationTable>';
   assert.deepEqual(parseInfoTable(xml), { '037833100': [12, 600, 'APPLE INC'] });
+});
+
+// --- corrections after the first real run (23 Oct; both only make the rule stricter) ---
+test('judge: calls on many days but inside few non-overlapping H-session blocks are not independent -> not FOLLOW', () => {
+  // 30 calls on 10 days, all within 2 blocks of 60 sessions: per-day t is high, but there are only 2 independent windows
+  const rows = []; for (let k = 0; k < 10; k++) for (let j = 0; j < 3; j++) rows.push({ e: 10 + k * 10, sym: 'S' + k + j, r60: 0.008 + 0.05 + 0.01 * (k % 2 ? -1 : 1), c60: 0, s60: 0 });
+  const J = judge(rows, 60);
+  assert.ok(J.t >= 2.5); assert.equal(J.blocks, 2); assert.equal(J.level, 'NO EDGE'); assert.match(J.why, /block/);
+});
+test('non-US channel: Australian / Indian market channels are excluded (their codes are other companies in the US)', () => {
+  assert.equal(nonUSChannel('Livewire Markets', 'Australian investing insights, ASX stocks', 'AU'), true);
+  assert.equal(nonUSChannel('Breakout', 'Nifty and Sensex trading ideas', ''), true);
+  assert.equal(nonUSChannel('ZipTrader', 'US stock market news and small caps', 'US'), false);
+  assert.equal(nonUSChannel('Meet Kevin', 'Investing', ''), false);
 });
