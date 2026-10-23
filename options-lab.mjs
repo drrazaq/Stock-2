@@ -26,9 +26,11 @@ const cov = { alpaca: { requests: 0, errors: {}, firstOptionBar: null, lastOptio
   alphaVantage: (prev.coverage && prev.coverage.alphaVantage) || null, massive: (prev.coverage && prev.coverage.massive) || null };
 // ---- Alpaca, throttled (free plan: 200 requests a minute) and cached ----------------------------------------------------------------
 let lastCall = 0;
+const kindOf = (url) => /\/v2\/stocks\/bars/.test(url) ? (/feed=sip/.test(url) ? 'stockBars-sip' : 'stockBars') : /\/options\/contracts/.test(url) ? 'contracts' : /\/options\/bars/.test(url) ? 'optionBars' : /snapshots/.test(url) ? 'snapshots' : 'other';
+const failed = (url, why) => { const k = kindOf(url) + ' ' + why; cov.alpaca.errors[k] = (cov.alpaca.errors[k] || 0) + 1; if ((cov.alpaca.failedSample = cov.alpaca.failedSample || []).length < 25) cov.alpaca.failedSample.push(k + ' ' + url.replace(/^https?:\/\/[^/]+/, '').slice(0, 160)); };
 async function alp(url) { for (let a = 0; a < 5; a++) { const w = 330 - (Date.now() - lastCall); if (w > 0) await sleep(w); lastCall = Date.now(); cov.alpaca.requests++;
-    let r; try { r = await fetch(url, AH); } catch (e) { cov.alpaca.errors[e.message] = (cov.alpaca.errors[e.message] || 0) + 1; await sleep(3000); continue; }
-    if (r.status === 429) { await sleep(15000); continue; } if (!r.ok) { cov.alpaca.errors['HTTP ' + r.status] = (cov.alpaca.errors['HTTP ' + r.status] || 0) + 1; if (r.status >= 500) { await sleep(3000); continue; } return null; }
+    let r; try { r = await fetch(url, AH); } catch (e) { failed(url, e.message); await sleep(3000); continue; }
+    if (r.status === 429) { await sleep(15000); continue; } if (!r.ok) { failed(url, 'HTTP ' + r.status); if (r.status >= 500) { await sleep(3000); continue; } return null; }
     return r.json().catch(() => null); } return null; }
 async function pages(url, key) { const out = {}; let tok = null, n = 0;
   do { const j = await alp(url + (tok ? '&page_token=' + encodeURIComponent(tok) : '')); if (!j) return n ? out : null; const v = j[key];
@@ -100,6 +102,11 @@ async function priceTrades(rule, raw, lo, hi) { const syms = [...new Set(raw.map
   return { measured: hs.length, of: syms.length, medianH: hs.length ? r4(hs[hs.length >> 1]) : null, p75H: r4(p75), window: lo + '-' + hi + ' days' }; }
 const LEAGUE = (() => { const b = readJ('data/agent-league.json', {}).bar; return isFinite(b) ? b : null; })(), BAR = Math.max(TIER2_T, LEAGUE || 0, PROOF_T);
 const info = (trades, B) => { const s = trades.filter(t => t.cost <= 300); return { under300: s.length ? stats(s, B) : { n: 0 }, byExit: { close: trades.filter(t => t.outBy === 'close').length, intrinsic: trades.filter(t => t.outBy === 'intrinsic').length } }; };
+// INFORMATION ONLY, never a second chance to pass (the verdict is the registered one): the same trades at a 2% half-spread, at the
+// mid (fees only), and only the trades whose exit was a real close (not the intrinsic floor)
+const sens = (raw, B) => { const at = (a, h) => a.map(t => ({ ...t, net: optionNet(t.open, t.out, h === undefined ? t.h : h), netStress: optionNet(t.open, t.out, (h === undefined ? t.h : h) * STRESS_X) }));
+  const brief = (a) => { const v = verdictOf(a, { B, bar: BAR }); return { wouldBe: v.verdict, n: v.n, avg: v.avg, median: v.median, win: v.win, stock: v.stock, tBlock: v.tBlock, halves: v.half ? [v.half.older.avg, v.half.newer.avg] : null }; };
+  const cl = raw.filter(t => t.outBy === 'close'); return { note: 'information only; the verdict above is the registered one', halfSpread2pct: brief(at(raw, 0.02)), atMid: brief(at(raw, 0)), closeExitsOnly: brief(cl), closeExitsOnlyHalfSpread2pct: brief(at(cl, 0.02)) }; };
 const slim = (t) => ({ s: t.sym, in: t.entry, out: t.exit, occ: t.occ, k: t.k, spot: t.spot, o: t.open, x: t.out, by: t.outBy, h: t.h, net: t.net, st: t.stock, ...(t.tr ? { tr: t.tr } : {}) });
 const R = {}, T = {};
 
@@ -115,7 +122,7 @@ const R = {}, T = {};
     for (const s of sigs) { if (s.entry < WINDOW_FROM) { C.signals++; C.beforeWindow++; continue; } const list = await contracts(s.sym); if (!list.length) { C.signals++; C.noContracts++; continue; }
       const exp = s.expPick([...new Set(list.map(x => x.exp))].sort()); if (!exp) { C.signals++; C.noExpiry++; continue; } s.exit = s.mkExit(exp); const t = await oneTrade(s, C); if (t) raw.push(t); }
     saveCache(); const sp = await priceTrades('OPT-LH1', raw, 60, 90), v = verdictOf(raw, { B: 63, bar: BAR });
-    R['OPT-LH1'] = { ...v, counts: C, spread: sp, formations: P.formations.length, picksFrom: P.formations[0] && P.formations[0].d, picksTo: P.to, ...info(raw, 63) }; T['OPT-LH1'] = raw.map(slim); } }
+    R['OPT-LH1'] = { ...v, counts: C, spread: sp, formations: P.formations.length, picksFrom: P.formations[0] && P.formations[0].d, picksTo: P.to, ...info(raw, 63), sensitivity: sens(raw, 63) }; T['OPT-LH1'] = raw.map(slim); } }
 
 // ---- OPT-CAT1: a call expiring after the catalyst, on each CAT-RUN1 entry ------------------------------------------------------------
 { const CL = readJ('data/catalyst-lab.json', null), tr = CL && CL.trades && CL.trades['CAT-RUN1'], C = counts();
@@ -124,7 +131,7 @@ const R = {}, T = {};
     await stockBars(sigs.filter(x => x.entry >= WINDOW_FROM).map(x => x.sym)); const raw = [];
     for (const s of sigs) { const t = await oneTrade(s, C); if (t) raw.push(t); }
     saveCache(); const sp = await priceTrades('OPT-CAT1', raw, 30, 90), v = verdictOf(raw, { B: 30, bar: BAR });
-    R['OPT-CAT1'] = { ...v, counts: C, spread: sp, catRun1Verdict: CL.results && CL.results['CAT-RUN1'] && (CL.results['CAT-RUN1'].verdict || CL.results['CAT-RUN1']), ...info(raw, 30),
+    R['OPT-CAT1'] = { ...v, counts: C, spread: sp, catRun1Verdict: CL.results && CL.results['CAT-RUN1'] && (CL.results['CAT-RUN1'].verdict || CL.results['CAT-RUN1']), ...info(raw, 30), sensitivity: sens(raw, 30),
       stockSameTrades: raw.length ? r4(raw.reduce((a, t) => a + t.stock, 0) / raw.length) : null }; T['OPT-CAT1'] = raw.map(slim); } }
 
 // ---- OPT-FOLLOW1: options traders of the follow lane ---------------------------------------------------------------------------------
@@ -151,7 +158,7 @@ const board = [];
   const pooled = raw.length ? verdictOf(raw, { B: 10, bar: BAR }) : null, fol = board.filter(b => b.level === 'FOLLOW');
   R['OPT-FOLLOW1'] = { verdict: fol.length ? 'TRADABLE SMALL' : board.some(b => b.level !== 'WATCH') ? 'NO FOLLOW TRADER' : 'TOO FEW CASES', why: fol.length ? fol.length + ' trader(s) passed: ' + fol.map(b => b.name).join(', ') : judgedN + ' trader(s) had 30+ priced options calls on 10+ days; none passed the gates and the luck bar (block t ' + zInvBar.toFixed(2) + ')',
     follow: fol.map(b => b.tr), luckBar: +zInvBar.toFixed(2), judged: judgedN, optionsCallsFound: opt.length, afterDedupe: calls.length, traders: allTr.size, counts: C, spread: sp,
-    pooledInfo: pooled ? { verdict: pooled.verdict, why: pooled.why, n: pooled.n, days: pooled.days, avg: pooled.avg, median: pooled.median, win: pooled.win, stock: pooled.stock, noBest2: pooled.noBest2, tBlock: pooled.tBlock, half: pooled.half } : null, ...info(raw, 10) };
+    pooledInfo: pooled ? { verdict: pooled.verdict, why: pooled.why, n: pooled.n, days: pooled.days, avg: pooled.avg, median: pooled.median, win: pooled.win, stock: pooled.stock, noBest2: pooled.noBest2, tBlock: pooled.tBlock, half: pooled.half } : null, ...info(raw, 10), sensitivity: raw.length ? sens(raw, 10) : null };
   T['OPT-FOLLOW1'] = raw.map(slim); }
 
 // ---- OPT-UOA1: needs daily call volume AND open-interest history ------------------------------------------------------------------
@@ -167,7 +174,9 @@ function luckBar(judged) { const erfc0 = (x) => { const z = Math.abs(x), t = 1 /
 // per-trader board (as the follow lane): it is re-judged on every run, never frozen.
 { let f = null, l = null, n = 0; for (const v of Object.values(OB)) for (const x of v.a || []) { n++; if (!f || x.t < f) f = x.t; if (!l || x.t > l) l = x.t; }
   Object.assign(cov.alpaca, { firstOptionBar: f, lastOptionBar: l, optionSeriesCached: Object.keys(OB).length, optionBarsCached: n, underlyingsWithContracts: Object.values(CT).filter(c => c.list.length).length, underlyingsWithoutContracts: Object.values(CT).filter(c => !c.list.length).length, contractsCached: Object.values(CT).reduce((a, c) => a + c.list.length, 0) }); }
-const errN = Object.values(cov.alpaca.errors).reduce((a, b) => a + b, 0), complete = errN <= cov.alpaca.requests * 0.01;
+// completeness counts the requests that price trades (stock bars on the feed used, contract lists, option bars); the SIP feed refusal
+// (the free plan falls back to IEX) and spread snapshots (a missing one uses the 75th percentile) do not make a run incomplete
+const errN = Object.entries(cov.alpaca.errors).filter(([k]) => /^(stockBars|contracts|optionBars) /.test(k)).reduce((a, [, b]) => a + b, 0), complete = errN <= cov.alpaca.requests * 0.01;
 const firstRun = prev.firstRun || { at: new Date().toISOString(), results: {} };
 for (const id of ['OPT-LH1', 'OPT-CAT1']) { const r = R[id]; if (complete && r && !firstRun.results[id] && /^(PROVEN|TRADABLE SMALL|NOT PROVEN|REJECTED)$/.test(r.verdict)) firstRun.results[id] = { at: new Date().toISOString(), verdict: r.verdict, why: r.why, n: r.n ?? null, avg: r.avg ?? null, stock: r.stock ?? null, tBlock: r.tBlock ?? null }; }
 const verdicts = Object.fromEntries(Object.entries(R).map(([id, r]) => [id, (firstRun.results[id] || {}).verdict || r.verdict]));
