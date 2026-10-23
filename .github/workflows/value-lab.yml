@@ -44,6 +44,7 @@ jobs:
           node value-lab.mjs 2>&1 | tee run.log
         env:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
       - if: success() || failure()
         uses: actions/cache/save@v4
         with:
