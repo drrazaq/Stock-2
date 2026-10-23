@@ -1,300 +1,181 @@
-    "action"
-   ],
-   "range": [
-    "2012-02-08",
-    "2026-10-20"
-   ]
+{
+ "at": "2026-10-23T18:55:02.358Z",
+ "keys": {
+  "FMP_KEY": true,
+  "FINNHUB_KEY": true,
+  "ALPHAVANTAGE_KEY": true,
+  "TIPRANKS_KEY": true,
+  "SEC_UA": true,
+  "ETORO_KEY": false,
+  "ETORO_USER_KEY": false,
+  "OPENFIGI_KEY": false
+ },
+ "endpoints": {
+  "fmp house-latest page 0 limit 100": {
+   "status": 402,
+   "text": 224
   },
-  "fmp grades-historical": {
+  "fmp house-latest page 5 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp house-latest page 20 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp house-latest page 50 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp house-latest page 100 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp house-latest page 200 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp senate-latest page 0 limit 100": {
+   "status": 402,
+   "text": 224
+  },
+  "fmp senate-latest page 5 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp senate-latest page 20 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp senate-latest page 50 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp senate-latest page 100 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp senate-latest page 200 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp price-target-latest-news page 0 limit 100": {
+   "status": 402,
+   "text": 224
+  },
+  "fmp price-target-latest-news page 5 limit 100": {
+   "status": 402,
+   "text": 224
+  },
+  "fmp price-target-latest-news page 20 limit 100": {
+   "status": 402,
+   "text": 224
+  },
+  "fmp price-target-latest-news page 50 limit 100": {
+   "status": 402,
+   "text": 224
+  },
+  "fmp price-target-latest-news page 100 limit 100": {
+   "status": 402,
+   "text": 224
+  },
+  "fmp price-target-latest-news page 200 limit 100": {
+   "status": 402,
+   "text": 224
+  },
+  "fmp grades-latest-news page 0 limit 100": {
+   "status": 402,
+   "text": 224
+  },
+  "fmp grades-latest-news page 5 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp grades-latest-news page 20 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp grades-latest-news page 50 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp grades-latest-news page 100 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp grades-latest-news page 200 limit 100": {
+   "status": 402,
+   "text": 212
+  },
+  "fmp grades SOFI": {
    "status": 200,
-   "rows": 94,
+   "rows": 176,
    "fields": [
     "symbol",
     "date",
-    "analystRatingsStrongBuy",
-    "analystRatingsBuy",
-    "analystRatingsHold",
-    "analystRatingsSell",
-    "analystRatingsStrongSell"
-   ],
-   "range": [
-    "2018-12-01",
-    "2026-10-01"
-   ]
-  },
-  "fmp grades-latest-news": {
-   "status": 200,
-   "rows": 5,
-   "fields": [
-    "symbol",
-    "publishedDate",
-    "newsURL",
-    "newsTitle",
-    "newsBaseURL",
-    "newsPublisher",
-    "newGrade",
-    "previousGrade",
     "gradingCompany",
-    "action",
-    "priceWhenPosted"
+    "previousGrade",
+    "newGrade",
+    "action"
    ],
    "range": [
-    "2026-10-23",
-    "2026-10-23"
+    "2021-06-02",
+    "2026-10-06"
    ]
   },
-  "fmp grades-news": {
+  "fmp grades IONQ": {
    "status": 402,
-   "text": 177
+   "text": 215
   },
-  "fmp price-target-news": {
+  "fmp grades CELH": {
    "status": 402,
-   "text": 177
-  },
-  "fmp price-target-latest-news": {
-   "status": 200,
-   "rows": 5,
-   "fields": [
-    "symbol",
-    "publishedDate",
-    "newsURL",
-    "newsTitle",
-    "analystName",
-    "priceTarget",
-    "adjPriceTarget",
-    "priceWhenPosted",
-    "newsPublisher",
-    "newsBaseURL",
-    "analystCompany"
-   ],
-   "range": [
-    "2026-10-23",
-    "2026-10-23"
-   ]
-  },
-  "fmp price-target-summary": {
-   "status": 200,
-   "rows": 1,
-   "fields": [
-    "symbol",
-    "lastMonthCount",
-    "lastMonthAvgPriceTarget",
-    "lastQuarterCount",
-    "lastQuarterAvgPriceTarget",
-    "lastYearCount",
-    "lastYearAvgPriceTarget",
-    "allTimeCount",
-    "allTimeAvgPriceTarget",
-    "publishers"
-   ],
-   "range": null
-  },
-  "fmp senate-trades": {
-   "status": 402,
-   "text": 177
-  },
-  "fmp house-trades": {
-   "status": 402,
-   "text": 177
-  },
-  "fmp senate-latest": {
-   "status": 200,
-   "rows": 5,
-   "fields": [
-    "symbol",
-    "senateID",
-    "disclosureDate",
-    "transactionDate",
-    "firstName",
-    "lastName",
-    "office",
-    "district",
-    "owner",
-    "assetDescription",
-    "assetType",
-    "type",
-    "amount",
-    "comment",
-    "link"
-   ],
-   "range": [
-    "2026-09-08",
-    "2026-10-22"
-   ]
-  },
-  "fmp house-latest": {
-   "status": 200,
-   "rows": 5,
-   "fields": [
-    "symbol",
-    "senateID",
-    "disclosureDate",
-    "transactionDate",
-    "firstName",
-    "lastName",
-    "office",
-    "district",
-    "owner",
-    "assetDescription",
-    "assetType",
-    "type",
-    "amount",
-    "capitalGainsOver200USD",
-    "comment",
-    "link"
-   ],
-   "range": [
-    "2026-10-01",
-    "2026-10-23"
-   ]
-  },
-  "fmp institutional-holder-list": {
-   "status": 402,
-   "text": 177
-  },
-  "fmp insider-trading-search": {
-   "status": 402,
-   "text": 177
-  },
-  "fmp v3 upgrades-downgrades": {
-   "status": 403,
-   "rows": 0,
-   "fields": [
-    "Error Message"
-   ],
-   "range": null,
-   "note": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentatio"
-  },
-  "fmp v4 price-target": {
-   "status": 403,
-   "rows": 0,
-   "fields": [
-    "Error Message"
-   ],
-   "range": null,
-   "note": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentatio"
-  },
-  "finnhub upgrade-downgrade": {
-   "status": 403,
-   "rows": 0,
-   "fields": [
-    "error"
-   ],
-   "range": null,
-   "note": "You don't have access to this resource."
-  },
-  "finnhub price-target": {
-   "status": 403,
-   "rows": 0,
-   "fields": [
-    "error"
-   ],
-   "range": null,
-   "note": "You don't have access to this resource."
-  },
-  "finnhub recommendation": {
-   "status": 200,
-   "rows": 4,
-   "fields": [
-    "symbol",
-    "period",
-    "strongBuy",
-    "buy",
-    "hold",
-    "sell",
-    "strongSell"
-   ],
-   "range": null
-  },
-  "finnhub congressional-trading": {
-   "status": 403,
-   "rows": 0,
-   "fields": [
-    "error"
-   ],
-   "range": null,
-   "note": "You don't have access to this resource."
-  },
-  "finnhub insider-transactions": {
-   "status": 200,
-   "rows": 116,
-   "fields": [
-    "name",
-    "share",
-    "change",
-    "filingDate",
-    "transactionDate",
-    "transactionCode",
-    "transactionPrice",
-    "id",
-    "symbol",
-    "source",
-    "isDerivative",
-    "currency"
-   ],
-   "range": [
-    "2025-11-07",
-    "2026-10-15"
-   ]
-  },
-  "finnhub institutional-ownership": {
-   "status": 403,
-   "rows": 0,
-   "fields": [
-    "error"
-   ],
-   "range": null,
-   "note": "You don't have access to this resource."
-  },
-  "alphavantage CONGRESS_TRADES symbol": {
-   "status": 200,
-   "rows": 500,
-   "fields": [
-    "chamber",
-    "politician",
-    "bioguide_id",
-    "politician_canonical",
-    "party",
-    "state",
-    "state_district",
-    "symbol",
-    "ticker_reported",
-    "ticker_source",
-    "asset_name",
-    "asset_type_code",
-    "transaction_type",
-    "transaction_date",
-    "notification_date",
-    "amount_min",
-    "amount_max",
-    "owner_code",
-    "filing_status",
-    "filed_date",
-    "extraction_method",
-    "extraction_confidence",
-    "extraction_flags",
-    "source_page",
-    "source_row",
-    "extraction_artifact_sha256"
-   ],
-   "range": [
-    "2016-01-05",
-    "2026-10-14"
-   ]
-  },
-  "sec 13f data sets page": {
-   "status": 200,
-   "text": 108010
-  },
-  "openfigi mapping": {
-   "status": 200,
-   "rows": 1,
-   "fields": [
-    "data"
-   ],
-   "range": null
+   "text": 215
   }
  },
  "sec13fZips": [
   "/files/datastandardsinnovation/data/form-13f-data-sets/01jun2026-31aug2026_form13f.zip",
-  "/files/structureddata/data/form-13f-dat
+  "/files/structureddata/data/form-13f-data-sets/01mar2026-31may2026_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01dec2025-28feb2026_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01sep2025-30nov2025_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01jun2025-31aug2025_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01mar2025-31may2025_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01dec2024-28feb2025_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01sep2024-30nov2024_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01jun2024-31aug2024_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01mar2024-31may2024_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/01jan2024-29feb2024_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2023q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2023q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2023q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2023q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2022q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2022q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2022q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2022q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2021q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2021q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2021q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2021q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2020q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2020q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2020q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2020q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2019q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2019q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2019q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2019q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2018q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2018q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2018q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2018q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2017q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2017q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2017q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2017q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2016q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2016q3_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2016q2_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2016q1_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2015q4_form13f.zip",
+  "/files/structureddata/data/form-13f-data-sets/2015q3_form13f.zip",
+  "/files/structureddata/data/form
