@@ -104,16 +104,18 @@ const F13 = []; const NAMES = new Map(); { const st = { files: 0, fetched: 0, fa
     list = [...new Set([...t.matchAll(/href="([^"]*form13f\.zip)"/gi)].map(m => m[1]))]; } catch (e) { st.failed.push('list: ' + e.message); }
   const yr = (u) => { const m = /(\d{4})q(\d)_form13f/.exec(u); if (m) return m[1] + '-' + String(m[2] * 3).padStart(2, '0'); const n = /(\d{2})([a-z]{3})(\d{4})-(\d{2})([a-z]{3})(\d{4})_form13f/i.exec(u); return n ? n[6] + '-' + MON[n[5].toUpperCase()] : '0000'; };
   const want = list.filter(u => yr(u) >= PRE_FROM.slice(0, 7)).sort((a, b) => yr(a) < yr(b) ? -1 : 1);
-  const tsvSmall = (zip, name) => { let txt; try { txt = execFileSync('unzip', ['-p', zip, name], { maxBuffer: 1 << 30 }).toString(); } catch (e) { return null; } const L = txt.split(/\r?\n/), H = L[0].split('\t'); return { H, rows: L.slice(1).filter(Boolean).map(l => l.split('\t')) }; };
+  // the members of a data set ZIP, matched by file name whatever folder they sit in (one 2025 set nests them)
+  const member = (zip, name) => { try { return execFileSync('unzip', ['-Z1', zip], { maxBuffer: 1 << 26 }).toString().split(/\r?\n/).find(f => f.split('/').pop().toUpperCase() === name) || null; } catch (e) { return null; } };
+  const tsvSmall = (zip, name) => { let txt; const m = member(zip, name); if (!m) return null; try { txt = execFileSync('unzip', ['-p', zip, m], { maxBuffer: 1 << 30 }).toString(); } catch (e) { return null; } const L = txt.split(/\r?\n/), H = L[0].split('\t'); return { H, rows: L.slice(1).filter(Boolean).map(l => l.split('\t')) }; };
   for (const u of want) { const name = u.split('/').pop().replace('.zip', ''), cf = EC + '/13f/' + name + '.json.gz'; st.files++;
     if (fs.existsSync(cf)) continue; if (left() < 70 * 60e3) { st.failed.push(name + ' (time)'); continue; }
     const zip = EC + '/tmp13f.zip'; try { execFileSync('curl', ['-sS', '-f', '-L', '--retry', '3', '-A', UA, '-o', zip, (u.startsWith('http') ? '' : SECW) + u], { stdio: 'inherit', timeout: 15 * 60e3 }); } catch (e) { st.failed.push(name); continue; }
     await sleep(300); st.fetched++;
-    const S = tsvSmall(zip, 'SUBMISSION.tsv'), CP = tsvSmall(zip, 'COVERPAGE.tsv'); if (!S) { st.failed.push(name + ' (no SUBMISSION)'); continue; }
+    const S = tsvSmall(zip, 'SUBMISSION.TSV'), CP = tsvSmall(zip, 'COVERPAGE.TSV'); if (!S) { st.failed.push(name + ' (no SUBMISSION)'); continue; }
     const si = (n) => S.H.indexOf(n), amend = new Set(); if (CP) { const ci = (n) => CP.H.indexOf(n); for (const x of CP.rows) if (String(x[ci('ISAMENDMENT')] || '').toUpperCase() === 'Y') amend.add(x[ci('ACCESSION_NUMBER')]); }
     const keep = new Map(); for (const x of S.rows) { if (x[si('SUBMISSIONTYPE')] !== '13F-HR' || amend.has(x[si('ACCESSION_NUMBER')])) continue; const f = isoD(x[si('FILING_DATE')]), p = isoD(x[si('PERIODOFREPORT')]); if (f && p) keep.set(x[si('ACCESSION_NUMBER')], { a: x[si('ACCESSION_NUMBER')], c: String(+x[si('CIK')]), f, p, h: new Map() }); }
     // INFOTABLE is large: streamed; share positions only (no put / call rows, type SH), aggregated per CUSIP
-    await new Promise((res) => { const ch = spawn('unzip', ['-p', zip, 'INFOTABLE.tsv']), rl = readline.createInterface({ input: ch.stdout }); let H = null, ia, ic, iv, is, it, ip, inm;
+    await new Promise((res) => { const ch = spawn('unzip', ['-p', zip, member(zip, 'INFOTABLE.TSV') || 'INFOTABLE.tsv']), rl = readline.createInterface({ input: ch.stdout }); let H = null, ia, ic, iv, is, it, ip, inm;
       rl.on('line', (l) => { const x = l.split('\t'); if (!H) { H = x; ia = H.indexOf('ACCESSION_NUMBER'); ic = H.indexOf('CUSIP'); iv = H.indexOf('VALUE'); is = H.indexOf('SSHPRNAMT'); it = H.indexOf('SSHPRNAMTTYPE'); ip = H.indexOf('PUTCALL'); inm = H.indexOf('NAMEOFISSUER'); return; }
         const k = keep.get(x[ia]); if (!k || (x[ip] && x[ip].trim()) || String(x[it] || '').toUpperCase() !== 'SH') return; const cu = String(x[ic] || '').toUpperCase().trim(); if (cu.length < 8) return;
         const v = valueDollars(+x[iv] || 0, k.f), sh = +x[is] || 0; const h = k.h.get(cu) || [0, 0]; h[0] += v; h[1] += sh; k.h.set(cu, h); if (!NAMES.has(cu)) NAMES.set(cu, x[inm]); });
@@ -136,7 +138,7 @@ const lastSeen = new Map(); for (const f of F13) for (const [cu, v, sh] of f.h) 
 async function mapCusips(cusips, budget) { await loadSecNames(); let used = 0;
   for (const cu of cusips) { if (cu in CMAP) { cst.cached++; continue; } const ls = lastSeen.get(cu), okPx = (s) => { const i = SY.get(s); if (i === undefined || !ls || !(ls.px > 0)) return false; const c = closeAt(i, lastOnOrBefore(ls.p)); return c > 0 && ls.px / c > 0.7 && ls.px / c < 1.43; };
     const byName = secNames.get(normName(NAMES.get(cu))); if (byName && okPx(byName)) { CMAP[cu] = byName; cst.byName++; continue; }
-    if (used >= budget || left() < 40 * 60e3) continue; used++; cst.lookups++;
+    if (used >= budget || left() < 40 * 60e3) { cst.notYet = (cst.notYet || 0) + 1; continue; } used++; cst.lookups++;
     let s = null; for (const q of ['', '&active=false']) { const j = await api('/v3/reference/tickers?cusip=' + cu + q + '&limit=1'); const r = j && j.results && j.results[0]; if (r && r.ticker) { s = String(r.ticker).toUpperCase(); break; } }
     if (s && SY.has(s)) { CMAP[cu] = s; cst.byMassive++; } else { CMAP[cu] = null; cst.none++; } }
   fs.writeFileSync(EC + '/cusip.json', JSON.stringify(CMAP)); }
