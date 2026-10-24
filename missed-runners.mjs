@@ -29,6 +29,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: dated on the New York calendar (fixed 22 Oct 2026)
 import { LIVE_RULES, IG_RULES, EXITS, simulate, toBars, costOf } from './ignition-core.mjs';
+import { blockedRunnerPolicy } from './blocked-runner-policy.mjs';   // (24 Oct, outside patch) KEEP / REVIEW / UNRESOLVED by a 30-case, 55% rule
 const env = process.env, OUT = env.OUT || 'data/missed-runners.json', CDIR = env.FM_CACHE_DIR || 'fm-cache', HIST = 'data/ignition-missed-history.jsonl', DAYS = 'data/ignition-days.jsonl';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TEST = local(env.MASSIVE_BASE), PX = TEST || 'https://api.massive.com';
 const sleep = (ms) => new Promise(r => setTimeout(r, TEST ? 0 : ms)), J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -120,9 +121,10 @@ for (const r of runners) { const days = []; for (let t = tOf.get(r.start); t <= 
   else if (!days.some(d => watched.has(d))) r.code = 'DAY_NOT_WATCHED'; else if (r.startDayHighUp !== null && r.startDayHighUp < 0.15 && !days.some(d => { const t = tOf.get(d), c = bars.get(r.sym), i = c.findIndex(b => b.t === t); return i > 0 && c[i].h / c[i - 1].c - 1 >= 0.15; })) r.code = 'MULTI_DAY_RUN_NO_15PCT_DAY'; else r.code = 'WATCHED_NOT_IN_TOP150';
   r.diagnosis = DIAG[r.code] || 'other'; r.group = GROUP[r.code] || (r.code === 'DAY_NOT_WATCHED' || r.code === 'WATCHED_NOT_IN_TOP150' ? 'notObserved' : r.code === 'MULTI_DAY_RUN_NO_15PCT_DAY' ? 'multiDay' : 'other'); }
 const count = (L, k) => { const o = {}; for (const x of L) o[x[k]] = (o[x[k]] || 0) + 1; return o; };
-// blocked runners: did they fade within 5 sessions? (decision-tree branch 3 check)
-const blockedRuns = runners.filter(r => r.group === 'blocked' && r.fade5 !== null), fadeShare = blockedRuns.length ? r4(blockedRuns.filter(r => r.fade5 < 0).length / blockedRuns.length) : null;
-const blockedLedger = hist.filter(x => GROUP[x.code] === 'blocked'), ledgerFade = blockedLedger.length ? r4(blockedLedger.filter(x => x.afterFirstSeen && x.afterFirstSeen.last < 0).length / blockedLedger.length) : null;
+// Counterfactual check: only daily-price rows with an actual +5-session close are valid fade outcomes.
+// The intraday ledger's afterFirstSeen.last is same-session performance, NOT a 5-session outcome; report it descriptively only.
+const blockedRuns = runners.filter(r => r.group === 'blocked' && Number.isFinite(r.fade5)), fadeShare = blockedRuns.length ? r4(blockedRuns.filter(r => r.fade5 < 0).length / blockedRuns.length) : null;
+const blockedLedger = hist.filter(x => GROUP[x.code] === 'blocked'), ledgerSameSessionNegative = blockedLedger.length ? r4(blockedLedger.filter(x => x.afterFirstSeen && x.afterFirstSeen.last < 0).length / blockedLedger.length) : null;
 
 // ---- 7. latency tables on minute bars (budget), cached per stock-day with the results only
 const MC = CDIR + '/mr-min.json.gz'; let mc = {}; try { mc = JSON.parse(zlib.gunzipSync(fs.readFileSync(MC)).toString()); } catch (e) {}
@@ -173,11 +175,11 @@ const caughtShare = hist.length ? caughtInTimeRows.length / hist.length : 0, orb
 let branch, why; if (!misses) { branch = 'NO DATA'; why = 'no watched days'; }
 else if (lateShare >= 0.40) { branch = 'FEED_TRIAL'; why = 'feed-fixable late data = ' + lateFixable + ' of ' + misses + ' misses (' + pc(lateShare) + ', 40% needed)'; }
 else if (big[0] === 'ruleNotFired') { branch = 'NO_NEW_RULE'; why = 'rule did not fire (or fired without a validated record) is the biggest cause: ' + big[1] + ' of ' + misses + ' (' + pc(big[1] / misses) + '); late data ' + pc(lateShare) + ' (' + pc(lateAllShare) + ' counting gap-like), blocked ' + pc(share('blocked')) + '. ORB (IG5/IG7) fired on ' + pc(orbShare) + ' of the audited movers (10% asked)'; }
-else if (big[0] === 'blocked') { branch = 'KEEP_BLOCKS'; why = 'blocked is the biggest cause: ' + big[1] + ' of ' + misses + ' (' + pc(big[1] / misses) + '); blocked runners that faded within 5 sessions: ' + pc(fadeShare) + ' (daily sample) / ' + pc(ledgerFade) + ' (ledger, by the close); 55%+ = the blocks are right'; }
+else if (big[0] === 'blocked') { const policy = blockedRunnerPolicy({ blockedIsLargest: true, sampleN: blockedRuns.length, fadeShare }); branch = policy.branch; why = 'blocked is the biggest cause: ' + big[1] + ' of ' + misses + ' (' + pc(big[1] / misses) + '); ' + policy.reason; }
 else { branch = 'FEED_TRIAL'; why = 'late data is the biggest cause (' + pc(lateShare) + ') though under 40%'; }
 const decision = { branch, why, caughtInTime: { rows: caughtInTimeRows.length, share: r4(caughtShare), branch4: caughtShare >= 0.20 ? 'SCORE_THEM: 20%+ caught in time; size the engine only if its paper record is positive after costs' : 'under 20% caught in time: no sizing' },
   groupsOfMisses: { lateDataFeedFixable: lateFixable, lateDataAll: groups.lateData || 0, ruleNotFired: groups.ruleNotFired || 0, blocked: groups.blocked || 0, moveBeforeOpen: (groups.moveBeforeOpen || 0) + feedGapLike, misses, movers, alerted: tally.ALERTED || 0 },
-  orbFiredShare: r4(orbShare), blockedFade5: { dailySample: fadeShare, n: blockedRuns.length, ledgerByClose: ledgerFade, nLedger: blockedLedger.length } };
+  orbFiredShare: r4(orbShare), blockedFade5: { dailySample: fadeShare, n: blockedRuns.length, minimumN: 30, fadeBar: 0.55, ledgerSameSessionNegative, nLedger: blockedLedger.length, note: 'Only dailySample is a 5-session outcome. ledgerSameSessionNegative is same-session and must not be interpreted as a 5-session fade.' } };
 const ig8 = ((J('data/ignition-results.json', {}) || {}).record || {})['IG8/close'] || null;
 const actionsLine = 'Missed runners (' + dayRows.length + ' watched days, ' + movers + ' movers of 15%+): ' + Object.entries(tally).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => k + ' ' + v).join(', ') + '. Decision: ' + branch + '.';
 const asOfDay = dayRows.length ? dayRows.map(x => x.day).sort().slice(-1)[0] : null;   // (outside review, 23 Oct) readers compare this with the newest watcher day; older = stale
