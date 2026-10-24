@@ -17,3 +17,9 @@ export function freezeEach(prevFirst, results, isJudged = () => true) {
   return out;
 }
 export const latestBlock = (thisRun) => ({ label: MONITOR_LABEL, ...thisRun });
+// CORRECTED RUNS (engine audit, 24 Oct 2026): when an audit finds a bug in a lab's engine, the rule is re-run once on the SAME window with
+// the fix and written to `correctedRun` (frozen per rule with freezeEach, next to firstRun, which is never touched). Each entry carries
+// `bugs` (ids), `explanation`, `at` and the asFrozen reproduction. effectiveRuns = firstRun with each corrected rule replaced by its
+// corrected entry (marked corrected: true): what a reader that acts on verdicts (TRY SMALL) should use.
+export const effectiveRuns = (firstRun, correctedRun) => { if (!correctedRun) return firstRun; const out = { ...(firstRun || {}) };
+  for (const [k, r] of Object.entries(correctedRun)) if (r && r.results) out[k] = { ...r, corrected: true }; return out; };

@@ -21,6 +21,7 @@
 //   positive without its 2 best trades, block t >= 2.5 (blocks = the hold length) -> TRADABLE SMALL; block t >= the proof bar -> PROVEN.
 //   CALENDAR rules (ANOM-TOM, ANOM-PREHOL) trade SPY close to close (a halal investor would use SPUS/HLAL); their yardstick is SPY's
 //   average return over ALL windows of the same length in the same half (the average stock over the same days would be the trade itself).
+import { yardPush } from './yardstick.mjs';
 export const COST = 0.008, STRESS = 0.012, SPLIT = '2024-01-01', PAPER_START = '2026-10-26';
 const P = (cite, url) => ({ cite, url });
 // replication sources used throughout
@@ -268,7 +269,12 @@ export const eilStockOk = (rkNow, rkPrev) => ok(rkNow) && ok(rkPrev) && rkNow - 
 // average return of windows of `len` sessions (buy the open of u, sell the close of u + len - 1), u every `step` sessions from `from` to
 // `to`, where okAt(u) is true (e.g. liquid the session before, same half) and the window does not overlap any [k, x] in `busy`.
 // ret(u, x) -> the return or null. 3+ windows needed, else null.
-export function ownAverage({ from, to, len, step = 10, okAt, busy = [], ret }) { const v = []; for (let u = from; u + len - 1 <= to; u += step) { if (!okAt(u)) continue; const x = u + len - 1; if (busy.some(([a, b]) => u <= b && x >= a)) continue; const g = ret(u, x); if (ok(g) && Math.abs(g) < 3) v.push(g); } return v.length >= 3 ? mean(v) : null; }
+// mode (engine audit AUD-1, yardstick.mjs): 'asFrozen' (default, the frozen runs: windows of +300% or more dropped), 'capBoth' (capped at
+// +300%, as the corrected trades are), 'raw' (no cap)
+export function ownAverage({ from, to, len, step = 10, okAt, busy = [], ret, mode = 'asFrozen' }) { const v = []; for (let u = from; u + len - 1 <= to; u += step) { if (!okAt(u)) continue; const x = u + len - 1; if (busy.some(([a, b]) => u <= b && x >= a)) continue; yardPush(v, ret(u, x), mode); } return v.length >= 3 ? mean(v) : null; }
+// AUD-2: the SURGE top-30% cut-off for a trade bought at session k, over H = [[reaction session, surprise, filing session], ...] (the
+// rolling 63-session window is applied by the caller): only surprises whose SEC filing was public by the entry (filing session <= k)
+export const surgeCutoff = (H, k, q = 0.7) => quantile(H.filter(z => z[2] <= k).map(z => z[1]), q);
 // ---------------- paper board ----------------
 export function boardStats(rows) { const net = rows.map(r => r.g - COST), win = net.filter(x => x > 0), loss = net.filter(x => x <= 0), sum = (a) => a.reduce((x, y) => x + y, 0);
   return { n: rows.length, days: new Set(rows.map(r => r.d)).size, stocks: new Set(rows.map(r => r.sym)).size, win: rows.length ? r4(win.length / rows.length) : null, avg: rows.length ? r4(sum(net) / rows.length) : null,

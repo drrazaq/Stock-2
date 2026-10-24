@@ -20,6 +20,7 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { freezeEach, latestBlock } from './first-run.mjs';
+import { tradeG, yardPush, yardMean, correctedEntry } from './yardstick.mjs';
 import { halfStat, TIER2_T } from './value-core.mjs';
 import { ownAverage, boardStats, paperReady } from './anomaly-core.mjs';
 import { monthEnds } from './angles-core.mjs';
@@ -76,8 +77,9 @@ const liqAt = new Map(); const liqList = (t) => { if (!liqAt.has(t)) { const a =
 const pxAt = (i, t) => { const z = C[i * T + t]; return z > 0 ? z : CX[i * T + t] > 0 ? CX[i * T + t] : null; };
 const closeAtS = (i, x, k) => { for (let q = Math.min(x, T - 1); q >= k; q--) { const z = pxAt(i, q); if (z) return z; } return null; };
 const retS = (i, k, x) => { if (x >= T || k < 1 || k >= T) return null; const e = O[i * T + k]; if (!(e > 0)) return null; const y = closeAtS(i, x, k); return y > 0 ? y / e - 1 : null; };
-const cMemo = new Map(); const ctrlSpan = (k, x) => { const key = k * 8192 + x; if (cMemo.has(key)) return cMemo.get(key); const v = [];
-  for (const i of liqList(k - 1)) { if (i % 2) continue; const g = retS(i, k, x); if (g !== null && Math.abs(g) < 3) v.push(g); } const m = v.length >= 50 ? mean(v) : null; cMemo.set(key, m); return m; };
+// mode (engine audit AUD-1, yardstick.mjs): 'asFrozen' = the frozen runs (stocks of +300% or more dropped); 'capBoth' = corrected; 'raw'
+const cMemo = new Map(); const ctrlSpan = (k, x, mode = 'asFrozen') => { const key = (k * 8192 + x) + mode; if (cMemo.has(key)) return cMemo.get(key); const v = [];
+  for (const i of liqList(k - 1)) { if (i % 2) continue; yardPush(v, retS(i, k, x), mode); } const m = yardMean(v, 50); cMemo.set(key, m); return m; };
 const SECCIK = J('data/sec-ciks.json', {});
 const sicOf = (s) => { const x = SIC[s]; if (x && x.c) return String(x.c).padStart(4, '0'); const y = SECCIK[s]; return y && y[1] ? String(y[1]).padStart(4, '0') : null; };
 const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
@@ -157,15 +159,16 @@ const dataOk = (id) => failingFunds(id).length === 0;
 const need = IDS.filter(id => !FROZEN[id]);
 log('5-year one-shot for ' + need.length + ' rules not yet frozen');
 const ROTE = Object.values(ROT_MAP).map(m => EIDX.get(m.etf));
-function tradesOf(id, sigs, oneAtATime = false) { const out = [], busy = new Map(), spans = new Map(), rot = RULES[id].family === 'rotation', many = (rot || RULES[id].tranche) && !oneAtATime;
-  for (const z of [...sigs].sort((p, q) => p.t - q.t || p.I - q.I)) { if (z.x >= T || z.k >= T) continue; if (!many && (busy.get(z.I) ?? -1) >= z.k) continue;
-    const g = ret(z.I, z.k, z.x); if (g === null || !isFinite(g)) continue; const c = ctrlSpan(z.k, z.x); if (c === null) continue;
+// mode / end: engine audit (AUD-1): the yardstick mode and the last session a trade may use (the frozen window for a corrected run)
+function tradesOf(id, sigs, oneAtATime = false, mode = 'asFrozen', end = T - 1) { const out = [], busy = new Map(), spans = new Map(), rot = RULES[id].family === 'rotation', many = (rot || RULES[id].tranche) && !oneAtATime;
+  for (const z of [...sigs].sort((p, q) => p.t - q.t || p.I - q.I)) { if (z.x >= T || z.k >= T || z.x > end) continue; if (!many && (busy.get(z.I) ?? -1) >= z.k) continue;
+    const g = tradeG(ret(z.I, z.k, z.x), mode); if (g === null || !isFinite(g)) continue; const c = ctrlSpan(z.k, z.x, mode); if (c === null) continue;
     busy.set(z.I, z.x); (spans.get(z.I) || spans.set(z.I, []).get(z.I)).push([z.k, z.x]);
     const tr = { t: z.t, s: symOf(z.I), I: z.I, k: z.k, x: z.x, g, c, spy: spyRet(z.k, z.x), half: halfOf(D[z.t]), ev: z.ev, h: halal(symOf(z.I)) };
     if (rot) { const v = ROTE.map(e => ret(e, z.k, z.x)).filter(u => u !== null); tr.ew = v.length === ROTE.length ? mean(v) : null; }
     out.push(tr); }
   const ownMemo = new Map();
-  for (const z of out) { const len = z.x - z.k + 1, key = z.I + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 21, to: T - 1, len, step: 10, busy: z.I < NS ? spans.get(z.I) || [] : [], okAt: (u) => okAtI(z.I, u) && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.I, u, x) }));
+  for (const z of out) { const len = z.x - z.k + 1, key = z.I + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 21, to: end, len, step: 10, busy: z.I < NS ? spans.get(z.I) || [] : [], okAt: (u) => okAtI(z.I, u) && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.I, u, x), mode }));
     z.own = ownMemo.get(key); }
   return out; }
 const shape = (tr) => { const net = tr.map(z => z.g - COST), w = net.filter(x => x > 0), l = net.filter(x => x <= 0), by = {}; tr.forEach((z, j) => { const y = D[z.t].slice(0, 4); (by[y] = by[y] || []).push(net[j]); });
@@ -191,6 +194,19 @@ for (const id of IDS) { const R = RULES[id];
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
 const isJudged = (r) => r && r.verdict && r.verdict !== 'NOT RUN';
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k]) => need.includes(k)).map(([k, r]) => [k, { at: new Date().toISOString(), to: D[T - 1], window: [D[0], D[T - 1]], bar: BAR, ...strip(r), ...(r.info && r.info.months ? { info: { ...r.info, months: undefined } } : {}) }])), isJudged);
+
+// ---- ENGINE AUDIT (24 Oct 2026; yardstick.mjs): the macro rules that reached TRY SMALL, re-run ONCE on their frozen window with the
+// yardstick fixed (AUD-1: the rule's trades, the average stock and the same-instrument yardstick capped at +300% alike); written to
+// correctedRun next to firstRun (never over it). The SPY gate (vsSpy) is a fund-to-fund comparison, unchanged by the fix but recomputed.
+const correctedRun = { ...(PREV.correctedRun || {}) };
+for (const id of ['MACRO-GOLD-S20', 'MACRO-USD-E60']) { const fr = firstRun[id]; if (!fr || !fr.results || correctedRun[id] || !dataOk(id)) continue; const end = D.indexOf(String(fr.to || (fr.window || [])[1]));
+  if (end < 0) { log('audit ' + id + ': frozen window end not in the data; not corrected'); continue; } const R0 = RULES[id];
+  const run = (mode) => { const tr = tradesOf(id, SIG[id], false, mode, end), H2 = { older: tr.filter(z => z.half === 'older'), newer: tr.filter(z => z.half === 'newer') }, gaps = {};
+    const Rs = { older: halfStat(H2.older, R0.hold), newer: halfStat(H2.newer, R0.hold), all: halfStat(tr, R0.hold) };
+    for (const h of ['older', 'newer']) { Rs[h].vsSpy = yardGap(H2[h], 'spy'); gaps[h] = {}; if (R0.target.etf !== 'SPY') gaps[h].spy = Rs[h].vsSpy; }
+    return { ...judgeMacro(Rs, { bar: fr.bar, gaps }), R: Rs }; };
+  correctedRun[id] = correctedEntry({ frozen: fr, fixed: run('capBoth'), asFrozen: run('asFrozen'), raw: run('raw'), bugs: ['AUD-1'], window: [D[0], D[end]], extra: { hold: R0.hold } });
+  const c = correctedRun[id]; log('AUDIT ' + id + ': frozen ' + fr.verdict + ' -> corrected ' + c.verdict + ' (reproduced: ' + c.reproduced.matchesFrozen + ') | older edge ' + pc(fr.results.older.edge) + ' -> ' + pc(c.results.older.edge) + ' | newer edge ' + pc(fr.results.newer.edge) + ' -> ' + pc(c.results.newer.edge)); }
 
 // ================= 6. INFORMATION: what the world did to the sectors, and how fast =================
 const HS = [1, 5, 20, 60], fundsAll = ALL_ETFS.filter(s => FSTAT[s].coverD > T * 0.5);
@@ -246,7 +262,7 @@ log('paper lane: scanned ' + toScan.length + ' new session(s); ' + newLines.filt
 // ================= 8. OUTPUT + LIBRARY =================
 const out = { generatedAt: new Date().toISOString(), preRegistered: 'macro-core.mjs header + RULES + EVENTS (24 Oct 2026, before any run) + data/strategy-library.json MACRO-*', window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, funds: FSTAT,
   standard: 'both halves (signal before / from ' + SPLIT + '): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock / fund on its other days, > 0 without the 2 best, block t >= ' + TIER2_T + ', better than SPY over the same sessions (not for the SPY rule), the rotation also better than the equal weight of its 6 funds -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN',
-  events: EVENTS, firstRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { ...strip(r), info: r.info ? { ...r.info, months: undefined } : undefined }])) }),
+  events: EVENTS, firstRun, correctedRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { ...strip(r), info: r.info ? { ...r.info, months: undefined } : undefined }])) }),
   information: { note: 'information only, never a buy: what each dated event did to every fund (close before the entry session -> close of day 1 / 5 / 20 / 60; vsSpy = minus SPY), averaged by kind; and how each driver moves with its sector (daily correlation / beta; 20-session moves at the same time and the NEXT 20 sessions, vs SPY)', byKind, drivers: drv, eventStudy, rotationMonths: SIG['MACRO-ROT'].months || [] },
   trades: Object.fromEntries(Object.entries(RES).filter(([, r]) => r.trades).map(([k, r]) => [k, r.trades.slice(-400)])) };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));

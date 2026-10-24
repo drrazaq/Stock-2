@@ -20,10 +20,11 @@ import zlib from 'node:zlib';
 import readline from 'node:readline';
 import { execFileSync, spawn } from 'node:child_process';
 import { freezeEach, latestBlock } from './first-run.mjs';
+import { tradeG, yardPush, yardMean, correctedEntry } from './yardstick.mjs';
 import { halfStat, judge, TIER2_T, ttmAt, instantAt, quarterAt, shiftYear } from './value-core.mjs';
 import { ANOMALIES, NEEDS_DATA, IDS, COST, SPLIT, PAPER_START, mean, sd, r4, halfOf, pickFrac, pctRanks, mom, high52, volatility, maxRet, residMom, fpBeta, ivol, logSum, hvpWeek, seasonal,
   monthStarts, weekStarts, tomWindows, nextSession, reactionIdx, quantile, surge, insiderType, parseMasterIdx, byFiling, bestIdeas, divInitiations, EIL, eilIndustryOk, eilStockOk, ownAverage,
-  boardStats, paperReady, shapeOf, preRegister } from './anomaly-core.mjs';
+  boardStats, paperReady, shapeOf, preRegister, surgeCutoff } from './anomaly-core.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', NQ = local(env.NASDAQ_BASE) || 'https://api.nasdaq.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov', FINRA = local(env.FINRA_BASE) || 'https://api.finra.org';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', AC = env.ANOM_CACHE || 'anomaly-cache', OUT = 'data/anomaly-lab.json', PAPER = 'data/anomaly-paper.jsonl', TODAY = 'data/anomaly-today.json', BOARD = 'data/anomaly-board.json';
@@ -75,8 +76,9 @@ const LIQ = new Uint8Array(N); for (let i = 0; i < NS; i++) { if (i === spyI) co
 const liqAt = new Map(); const liqList = (t) => { if (!liqAt.has(t)) { const a = []; for (let i = 0; i < NS; i++) if (LIQ[i * T + t]) a.push(i); liqAt.set(t, a); } return liqAt.get(t); };
 const closeAt = (i, x, k) => { for (let q = x; q >= k; q--) { const z = C[i * T + q]; if (z > 0) return z; const y = CX[i * T + q]; if (y > 0) return y; } return null; };
 const ret = (i, k, x) => { if (x >= T || k < 1) return null; const e = O[i * T + k]; if (!(e > 0)) return null; const y = closeAt(i, x, k); return y > 0 ? y / e - 1 : null; };
-const cMemo = new Map(); const ctrlSpan = (k, x) => { const key = k * 8192 + x; if (cMemo.has(key)) return cMemo.get(key); const v = [];
-  for (const i of liqList(k - 1)) { if (i % 2) continue; const g = ret(i, k, x); if (g !== null && Math.abs(g) < 3) v.push(g); } const m = v.length >= 50 ? mean(v) : null; cMemo.set(key, m); return m; };
+// mode (engine audit AUD-1, yardstick.mjs): 'asFrozen' = the frozen runs (stocks of +300% or more dropped); 'capBoth' = corrected; 'raw'
+const cMemo = new Map(); const ctrlSpan = (k, x, mode = 'asFrozen') => { const key = (k * 8192 + x) + mode; if (cMemo.has(key)) return cMemo.get(key); const v = [];
+  for (const i of liqList(k - 1)) { if (i % 2) continue; yardPush(v, ret(i, k, x), mode); } const m = yardMean(v, 50); cMemo.set(key, m); return m; };
 // industry (SIC 2-digit): the Sunday cache's Massive codes, else the SEC code list
 const SECCIK = J('data/sec-ciks.json', {}), SH = JZ('data/shares.json.gz', { t: {}, c: {} });
 const sicOf = (s) => { const x = SIC[s]; if (x && x.c) return String(x.c).padStart(4, '0'); const y = SECCIK[s]; return y && y[1] ? String(y[1]).padStart(4, '0') : null; };
@@ -321,7 +323,9 @@ const EVENTS = {}; const evPush = (id, e) => (EVENTS[id] = EVENTS[id] || []).pus
       if (a > 0 && b > 0 && mk !== null) { const ear = b / a - 1 - mk; while (earH.length && earH[0][0] < r.r + 1 - 63) earH.shift(); const e90 = quantile(earH.map(z => z[1]), 0.9); if (e90 !== null && ear >= e90) evPush('ANOM-EAR', { t: r.r + 1, i, k: r.r + 2, x: r.r + 61 }); earH.push([r.r + 1, ear]); } }
     // SUE + SURGE (revenue from the SEC filing for the quarter just reported, filed within 10 sessions of r)
     const co = coOf(r.sym); if (co) { surgeDiag.reports++; const sg = surgeAt(co, r.d, r.r); while (surH.length && surH[0][0] < r.r - 63) surH.shift();
-      if (sg) { surgeDiag.withSurge++; const g70 = quantile(surH.map(z => z[1]), 0.7); if (q70 !== null && g70 !== null && s >= q70 && sg.v >= g70) { const k = Math.max(r.r + 1, sg.k); evPush('ANOM-SUESURGE', { t: k - 1, i, k, x: k + 59 }); } surH.push([r.r, sg.v]); } }
+      if (sg) { surgeDiag.withSurge++; const g70 = quantile(surH.map(z => z[1]), 0.7), k = Math.max(r.r + 1, sg.k); if (q70 !== null && g70 !== null && s >= q70 && sg.v >= g70) evPush('ANOM-SUESURGE', { t: k - 1, i, k, x: k + 59 });
+        // engine audit AUD-2: the same rule with the cut-off over surprises whose filing was public by the entry (corrected run only)
+        const f70 = surgeCutoff(surH, k, 0.7); if (q70 !== null && f70 !== null && s >= q70 && sg.v >= f70) evPush('ANOM-SUESURGE~fix', { t: k - 1, i, k, x: k + 59 }); surH.push([r.r, sg.v, sg.k]); } }
     sueH.push([r.r, s]); }
   STATUS.earn.surge = surgeDiag; }
 // one quarter's value; a 4th quarter without a 9-month YTD figure = the full year minus the three quarters before it
@@ -364,13 +368,14 @@ const need = IDS.filter(id => !FROZEN[id]);
 log('5-year one-shot for ' + need.length + ' anomalies not yet frozen' + (env.HISTORY ? ' (+ monitoring of all)' : ''));
 const RES = {}, SAMEDATE = {};
 const calCtrl = new Map(); const calAvg = (len, half) => { const key = len + half; if (calCtrl.has(key)) return calCtrl.get(key); const v = []; for (let u = 0; u + len < T; u++) if (halfOf(D[u]) === half && MKT[u] > 0 && MKT[u + len] > 0) v.push(MKT[u + len] / MKT[u] - 1); const m = v.length ? mean(v) : null; calCtrl.set(key, m); return m; };
-function tradesOf(id, sigs) { const hold = H(id), out = [], busyUntil = new Map(), spans = new Map();
-  for (const z of sigs.sort((p, q) => p.t - q.t || p.i - q.i)) { if (z.x >= T || z.future) continue;
+// mode / end: engine audit (AUD-1): the yardstick mode and the last session a trade may use (the frozen window for a corrected run)
+function tradesOf(id, sigs, mode = 'asFrozen', end = T - 1) { const hold = H(id), out = [], busyUntil = new Map(), spans = new Map();
+  for (const z of sigs.sort((p, q) => p.t - q.t || p.i - q.i)) { if (z.x >= T || z.x > end || z.future) continue;
     if (z.i < 0) { const a = MKT[z.k], b = MKT[z.x]; if (!(a > 0 && b > 0)) continue; const h = halfOf(D[z.t]), c = calAvg(z.x - z.k, h); out.push({ t: z.t, s: 'SPY', i: -1, k: z.k, x: z.x, g: b / a - 1, c, own: c, half: h }); continue; }
-    if (ONE_OPEN.has(id) && (busyUntil.get(z.i) ?? -1) >= z.k) continue; const g = ret(z.i, z.k, z.x); if (g === null || !isFinite(g)) continue; const c = ctrlSpan(z.k, z.x); if (c === null) continue;
+    if (ONE_OPEN.has(id) && (busyUntil.get(z.i) ?? -1) >= z.k) continue; const g = tradeG(ret(z.i, z.k, z.x), mode); if (g === null || !isFinite(g)) continue; const c = ctrlSpan(z.k, z.x, mode); if (c === null) continue;
     busyUntil.set(z.i, z.x); (spans.get(z.i) || spans.set(z.i, []).get(z.i)).push([z.k, z.x]); out.push({ t: z.t, s: SYMS[z.i], i: z.i, k: z.k, x: z.x, g, c, half: halfOf(D[z.t]) }); }
   const ownMemo = new Map();
-  for (const z of out) { if (z.i < 0) continue; const len = z.x - z.k + 1, key = z.i + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 253, to: T - 1, len, step: 10, busy: spans.get(z.i) || [], okAt: (u) => LIQ[z.i * T + u - 1] === 1 && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.i, u, x) }));
+  for (const z of out) { if (z.i < 0) continue; const len = z.x - z.k + 1, key = z.i + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 253, to: end, len, step: 10, busy: spans.get(z.i) || [], okAt: (u) => LIQ[z.i * T + u - 1] === 1 && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.i, u, x), mode }));
     z.own = ownMemo.get(key); }
   return out; }
 const avgNet = (tr) => tr.length ? mean(tr.map(z => z.g - COST)) : null;
@@ -391,6 +396,18 @@ for (const id of [...new Set([...need, ...(env.HISTORY ? IDS : [])])]) { if (lef
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
 const isJudged = (r) => r && r.verdict && r.verdict !== 'NOT RUN';
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k]) => need.includes(k)).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, ...strip(r) }])), isJudged);
+
+// ---- ENGINE AUDIT (24 Oct 2026; yardstick.mjs): the anomalies that reached TRY SMALL, re-run ONCE on their frozen window with the fixes and
+// written to correctedRun next to firstRun (never over it). AUD-1 (all): yardstick and trades capped at +300% alike. AUD-2 (SUESURGE):
+// the revenue-surprise cut-off without later filings. Modes: asFrozen (must reproduce the frozen numbers), corrected, no cap (sensitivity).
+const correctedRun = { ...(PREV.correctedRun || {}) };
+for (const id of ['ANOM-52WH', 'ANOM-RESMOM', 'ANOM-SUESURGE']) { const fr = firstRun[id]; if (!fr || !fr.results || correctedRun[id] || !familyOk(id)) continue; if (left() < 10 * 60e3) { log('audit ' + id + ': no time left this run'); continue; }
+  const end = tOf.get(String((fr.window || [])[1])); if (end === undefined) { log('audit ' + id + ': frozen window end ' + (fr.window || [])[1] + ' not in the data; not corrected'); continue; }
+  const hold = H(id), sigs = signalsOf(id, 0, T - 1), fixSigs = id === 'ANOM-SUESURGE' ? (EVENTS['ANOM-SUESURGE~fix'] || []).slice() : sigs, bugs = id === 'ANOM-SUESURGE' ? ['AUD-1', 'AUD-2'] : ['AUD-1'];
+  const run = (S0, mode) => { const tr = tradesOf(id, S0.slice(), mode, end), R = { older: halfStat(tr.filter(z => z.half === 'older'), hold), newer: halfStat(tr.filter(z => z.half === 'newer'), hold), all: halfStat(tr, hold) }; return { ...judge(R, { bar: fr.bar }), R }; };
+  const extra = { hold }; if (id === 'ANOM-SUESURGE') { const a1 = run(sigs, 'capBoth'); extra.aud1Only = { note: 'AUD-1 alone (old cut-off, capped yardstick): information', verdict: a1.verdict, older: { n: a1.R.older.n, edge: a1.R.older.edge, avgStress: a1.R.older.avgStress }, newer: { n: a1.R.newer.n, edge: a1.R.newer.edge, avgStress: a1.R.newer.avgStress } }; }
+  correctedRun[id] = correctedEntry({ frozen: fr, fixed: run(fixSigs, 'capBoth'), asFrozen: run(sigs, 'asFrozen'), raw: run(fixSigs, 'raw'), bugs, window: [D[0], D[end]], extra });
+  const c = correctedRun[id]; log('AUDIT ' + id + ': frozen ' + fr.verdict + ' -> corrected ' + c.verdict + ' (reproduced: ' + c.reproduced.matchesFrozen + ') | older edge ' + pc(fr.results.older.edge) + ' -> ' + pc(c.results.older.edge) + ' | newer edge ' + pc(fr.results.newer.edge) + ' -> ' + pc(c.results.newer.edge) + ' | ' + c.why.slice(0, 200)); }
 
 // ================= 5. PAPER LANE =================
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
@@ -437,7 +454,7 @@ log('paper lane: scanned ' + toScan.length + ' new session(s); ' + newLines.filt
 const out = { generatedAt: new Date().toISOString(), preRegistered: 'anomaly-core.mjs header + ANOMALIES (23 Oct 2026, before any run) + data/strategy-library.json ANOM-*', window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, data: STATUS,
   standard: 'both halves (formation before / from ' + SPLIT + '): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (calendar rules: SPY over all same-length windows), better than the same stock on its other days, > 0 without the 2 best, block t >= ' + TIER2_T + ' -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN',
   needsData: Object.fromEntries(Object.entries(NEEDS_DATA).map(([k, v]) => [k, { name: v.name, why: v.why }])), sameDateComparisons: SAMEDATE,
-  firstRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }),
+  firstRun, correctedRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }),
   trades: Object.fromEntries(Object.entries(RES).filter(([, r]) => r.trades).map(([k, r]) => [k, r.trades.slice(-300)])) };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 try { const LB = J('data/strategy-library.json', null); let ch = false;

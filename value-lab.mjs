@@ -28,6 +28,7 @@ import zlib from 'node:zlib';
 import { execFileSync } from 'node:child_process';
 import { freezeEach, latestBlock } from './first-run.mjs';
 import { growthRun, beatStreak, fcfCheck, halfStat, judge, r4, COST, TIER2_T, STALE_DAYS } from './value-core.mjs';
+import { tradeG, yardPush, yardMean, correctedEntry } from './yardstick.mjs';
 const env = process.env, OUT = env.OUT || 'data/value-lab.json', TODAY_OUT = env.TODAY_OUT || 'data/value-today.json', VC = env.VALUE_CACHE || 'value-cache', DIAG = !!env.DIAG;
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const DATA = local(env.SEC_BASE) || 'https://data.sec.gov', WWW = local(env.SEC_BASE) || 'https://www.sec.gov', UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com';
@@ -51,7 +52,8 @@ const liquid = (i, t) => { const b = i * T, c = C[b + t]; if (!(c >= 5)) return 
 const dollarVol = (i, t) => { const b = i * T; let dv = 0, n = 0; for (let k = t - 19; k <= t; k++) if (k >= 0 && isFinite(C[b + k])) { dv += C[b + k] * V[b + k]; n++; } return n ? dv / n : 0; };
 const above200 = (i, t) => { if (t < 199) return null; let s = 0; for (let k = t - 199; k <= t; k++) { const c = C[i * T + k]; if (!(c > 0)) return null; s += c; } return C[i * T + t] > s / 200; };
 // buy the open of t+1, sell the close of t+h; a stock that left the cache keeps its real later price via the x rows, else its last close
-function fwd(i, t, h) { if (t + h >= T) return null; const e = O[i * T + t + 1]; if (!(e > 0)) return null; for (let k = t + h; k > t; k--) { const z = CC(i, k); if (z > 0) return z / e - 1; } return null; }
+let LIMIT = T - 1;   // engine audit: the last session a trade may use (the frozen run's last session for a corrected run)
+function fwd(i, t, h) { if (t + h >= T || t + h > LIMIT) return null; const e = O[i * T + t + 1]; if (!(e > 0)) return null; for (let k = t + h; k > t; k--) { const z = CC(i, k); if (z > 0) return z / e - 1; } return null; }
 const finCo = (s) => { const x = SIC[s]; return !!(x && x.c && String(x.c)[0] === '6'); };
 const sic2 = (s) => { const x = SIC[s], c = x && x.c ? String(x.c).padStart(4, '0') : ''; return c ? c.slice(0, 2) : null; };
 
@@ -111,14 +113,16 @@ const covered = [...needCiks].filter(c => FX.c[c] && Object.keys(FX.c[c]).length
 
 // ---- yardsticks per formation day: the average liquid stock, and each stock's own forward return (same-stock-other-days) ----
 const liqAt = (t) => { if (!LIQ.has(t)) { const a = []; for (let i = 0; i < NS; i++) if (i !== spyI && liquid(i, t)) a.push(i); LIQ.set(t, a); LIQS.set(t, new Set(a)); } return LIQ.get(t); };
-const ctrlMemo = new Map(); const ctrl = (t, h) => { const k = t + '_' + h; if (ctrlMemo.has(k)) return ctrlMemo.get(k); const v = []; for (const i of liqAt(t)) { const g = fwd(i, t, h); if (g !== null && Math.abs(g) < 3) v.push(g); } const m = v.length >= 50 ? mean(v) : null; ctrlMemo.set(k, m); return m; };
+// mode (engine audit AUD-1, yardstick.mjs): 'asFrozen' = the frozen runs (stocks of +300% or more dropped from the yardstick, trades
+// uncapped); 'capBoth' = the correction (both capped at +300%); 'raw' = no cap (sensitivity)
+const ctrlMemo = new Map(); const ctrl = (t, h, mode = 'asFrozen') => { const k = t + '_' + h + mode; if (ctrlMemo.has(k)) return ctrlMemo.get(k); const v = []; for (const i of liqAt(t)) yardPush(v, fwd(i, t, h), mode); const m = yardMean(v, 50); ctrlMemo.set(k, m); return m; };
 const fwdMemo = new Map(); const fwdM = (i, t, h) => { const k = i * 1e7 + t * 10 + (h === 21 ? 1 : h === 63 ? 2 : 3); if (!fwdMemo.has(k)) fwdMemo.set(k, fwd(i, t, h)); return fwdMemo.get(k); };
 // the same stock's average forward return on the OTHER formation days of the same half (days it was not picked by this rule)
-function ownOf(i, t, h, days, picked, mid) { const half = t < mid, v = []; for (const u of days) { if ((u < mid) !== half || picked.has(i + '_' + u)) continue; liqAt(u); if (!LIQS.get(u).has(i)) continue; const g = fwdM(i, u, h); if (g !== null && Math.abs(g) < 3) v.push(g); } return v.length >= 3 ? mean(v) : null; }
+function ownOf(i, t, h, days, picked, mid, mode = 'asFrozen') { const half = t < mid, v = []; for (const u of days) { if ((u < mid) !== half || picked.has(i + '_' + u)) continue; liqAt(u); if (!LIQS.get(u).has(i)) continue; yardPush(v, fwdM(i, u, h), mode); } return v.length >= 3 ? mean(v) : null; }
 const midOf = (ts) => { const u = [...new Set(ts)].sort((a, b) => a - b); return u[Math.floor(u.length / 2)]; };
 // build trades for a monthly-basket rule: picks = Map t -> [i]; returns trades with g, c, own
-function basketTrades(picks, h, days) { const mid = midOf([...picks.keys()].filter(t => (picks.get(t) || []).length)), picked = new Set(); for (const [t, a] of picks) for (const i of a) picked.add(i + '_' + t);
-  const out = []; for (const [t, a] of picks) { const c = ctrl(t, h); if (c === null) continue; for (const i of a) { const g = fwdM(i, t, h); if (g === null || !isFinite(g)) continue; out.push({ t, s: SYMS[i], i, g, c, own: ownOf(i, t, h, days, picked, mid), h, half: t < mid ? 'older' : 'newer' }); } }
+function basketTrades(picks, h, days, mode = 'asFrozen') { const mid = midOf([...picks.keys()].filter(t => (picks.get(t) || []).length)), picked = new Set(); for (const [t, a] of picks) for (const i of a) picked.add(i + '_' + t);
+  const out = []; for (const [t, a] of picks) { const c = ctrl(t, h, mode); if (c === null) continue; for (const i of a) { const g = fwdM(i, t, h); if (g === null || !isFinite(g)) continue; out.push({ t, s: SYMS[i], i, g: tradeG(g, mode), c, own: ownOf(i, t, h, days, picked, mid, mode), h, half: t < mid ? 'older' : 'newer' }); } }
   return { trades: out, mid }; }
 const halves = (tr, h) => ({ older: halfStat(tr.filter(z => z.half === 'older'), h), newer: halfStat(tr.filter(z => z.half === 'newer'), h), all: halfStat(tr, h) });
 const avgNet = (tr) => tr.length ? mean(tr.map(z => z.g - COST)) : null;
@@ -128,14 +132,14 @@ const fsMemo = new Map(); const fsAt = (i, t) => { const k = i + '_' + t; if (!f
 function v15At(t) { const rows = []; for (const i of LIQ.get(t) || []) { if (above200(i, t) !== true) continue; const f = fsAt(i, t); if (f !== null) rows.push({ i, f }); }
   rows.sort((a, b) => b.f - a.f); const hi = rows.filter(x => x.f >= 8); return (hi.length >= 10 ? hi : rows.slice(0, 10)).map(x => x.i); }
 
-const RES = {}, DIAGS = {}, PICKS_TODAY = {};
+const RES = {}, DIAGS = {}, PICKS_TODAY = {}; let FCF_PICKS = null, BASK_MONTHS = null;
 // ================= B-FCF1 =================
 { const picks = new Map(), why = {}; let checked = 0;
   for (const t of FORM) { if (t < 199) continue; const a = [];
     for (const i of LIQ.get(t)) { if (above200(i, t) !== true) continue; const co = coOf(SYMS[i]); if (!co) { why['no SEC facts'] = (why['no SEC facts'] || 0) + 1; continue; } const cik = symCik(SYMS[i]), sh = sharesKnown(cik, D[t]);
       if (!(sh > 0)) { why['no share count'] = (why['no share count'] || 0) + 1; continue; } checked++; const r = fcfCheck(co, D[t], C[i * T + t], sh); if (r.ok) a.push(i); else for (const w of (r.why || '').split(', ')) why[w] = (why[w] || 0) + 1; }
     picks.set(t, a); }
-  const days = [...picks.keys()]; DIAGS['B-FCF1'] = { formations: days.length, checked, picksPerMonth: days.map(t => picks.get(t).length), notChosenBecause: why };
+  const days = [...picks.keys()]; FCF_PICKS = picks; DIAGS['B-FCF1'] = { formations: days.length, checked, picksPerMonth: days.map(t => picks.get(t).length), notChosenBecause: why };
   if (!DIAG) { const { trades, mid } = basketTrades(picks, 63, days), R = halves(trades, 63);
     const v15 = new Map(); for (const t of days) if (picks.get(t).length) v15.set(t, v15At(t)); const vt = basketTrades(v15, 63, days).trades.map(z => ({ ...z, half: z.t < mid ? 'older' : 'newer' }));
     const vs = { older: { rule: avgNet(trades.filter(z => z.half === 'older')), v15: avgNet(vt.filter(z => z.half === 'older')) }, newer: { rule: avgNet(trades.filter(z => z.half === 'newer')), v15: avgNet(vt.filter(z => z.half === 'newer')) } };
@@ -152,15 +156,18 @@ const RES = {}, DIAGS = {}, PICKS_TODAY = {};
   // SPUS / HLAL trade under the cache's 1M USD a day filter: their daily bars come from Massive (same source as the cache), by date
   const etfBars = {}; for (const [s, i] of ETF) { if (i !== undefined || !env.MASSIVE_KEY) continue; try { const r = await fetch((local(env.MASSIVE_BASE) || 'https://api.massive.com') + '/v2/aggs/ticker/' + s + '/range/1/day/' + D[0] + '/' + D[T - 1] + '?adjusted=true&sort=asc&limit=50000&apiKey=' + encodeURIComponent(env.MASSIVE_KEY), { signal: AbortSignal.timeout(60000) });
     const j = r.ok ? await r.json() : null; if (j && Array.isArray(j.results)) { const m = {}; for (const b of j.results) m[new Date(b.t).toISOString().slice(0, 10)] = { o: b.o, c: b.c }; etfBars[s] = m; } } catch (e) {} }
-  const etfFwd = (s, i, t, h) => { if (i !== undefined) return fwd(i, t, h); const m = etfBars[s]; if (!m || t + h >= T) return null; const a = m[D[t + 1]], b = m[D[t + h]]; return a && b && a.o > 0 && b.c > 0 ? b.c / a.o - 1 : null; };
+  const etfFwd = (s, i, t, h) => { if (i !== undefined) return fwd(i, t, h); const m = etfBars[s]; if (!m || t + h >= T || t + h > LIMIT) return null; const a = m[D[t + 1]], b = m[D[t + h]]; return a && b && a.o > 0 && b.c > 0 ? b.c / a.o - 1 : null; };
   DIAGS['B-BASK1'] = { months: B.length, namesPerMonth: B.map(b => b.syms.length), etfsInCache: ETF.filter(([, i]) => i !== undefined).map(([s]) => s), etfsFromMassive: Object.entries(etfBars).map(([s, m]) => s + ' ' + Object.keys(m).length + ' days') };
-  if (!DIAG) for (const h of [21, 63]) { const mid = midOf(B.filter(b => b.syms.length).map(b => b.t)), months = [];
+  // one basket per month: g = the average gross return of its names; mode for the engine audit (AUD-1), run on the frozen window (LIMIT)
+  BASK_MONTHS = (h, mode = 'asFrozen') => { const BB = B.filter(b => b.t < LIMIT), mid = midOf(BB.filter(b => b.syms.length).map(b => b.t)), months = [];
       // the same stocks on the other basket months of the same half (not picked that month)
-      const pickedAt = new Set(); for (const b of B) for (const i of b.syms) pickedAt.add(i + '_' + b.t);
-      const own = (i, t) => { const half = t < mid, v = []; for (const b of B) { if ((b.t < mid) !== half || pickedAt.has(i + '_' + b.t) || !liquid(i, b.t)) continue; const g = fwdM(i, b.t, h); if (g !== null && Math.abs(g) < 3) v.push(g); } return v.length >= 3 ? mean(v) : null; };
-      for (const b of B) { if (!b.syms.length) continue; const c = ctrl(b.t, h); if (c === null) continue; const g = b.syms.map(i => fwdM(i, b.t, h)).filter(x => x !== null && isFinite(x)); if (g.length < b.syms.length * 0.8) continue;
+      const pickedAt = new Set(); for (const b of BB) for (const i of b.syms) pickedAt.add(i + '_' + b.t);
+      const own = (i, t) => { const half = t < mid, v = []; for (const b of BB) { if ((b.t < mid) !== half || pickedAt.has(i + '_' + b.t) || !liquid(i, b.t)) continue; yardPush(v, fwdM(i, b.t, h), mode); } return v.length >= 3 ? mean(v) : null; };
+      for (const b of BB) { if (!b.syms.length) continue; const c = ctrl(b.t, h, mode); if (c === null) continue; const g = b.syms.map(i => fwdM(i, b.t, h)).filter(x => x !== null && isFinite(x)).map(x => tradeG(x, mode)); if (g.length < b.syms.length * 0.8) continue;
         const ow = b.syms.map(i => own(i, b.t)).filter(x => x !== null), etf = Object.fromEntries(ETF.map(([s, i]) => [s, r4(etfFwd(s, i, b.t, h))]));
         months.push({ t: b.t, s: 'basket ' + D[b.t + 1], g: mean(g), c, own: ow.length >= 5 ? mean(ow) : null, h, half: b.t < mid ? 'older' : 'newer', etf, names: b.syms.map(i => SYMS[i]) }); }
+      return { months, mid }; };
+  if (!DIAG) for (const h of [21, 63]) { const { months, mid } = BASK_MONTHS(h);
       const R = halves(months, h), net = months.map(m => m.g - COST), cmp = (k) => { const z = months.filter(m => m.half === k); const e = (s) => { const v = z.filter(m => m.etf[s] !== null); return v.length ? { months: v.length, basket: r4(mean(v.map(m => m.g - COST))), etf: r4(mean(v.map(m => m.etf[s]))), beaten: v.filter(m => m.g - COST > m.etf[s]).length } : null; }; return { SPUS: e('SPUS'), HLAL: e('HLAL') }; };
       RES['B-BASK1_' + (h === 21 ? '1m' : '3m')] = { ...judge(R, { bar: BAR }), results: R, hold: h, split: D[mid], distinctMonths: months.length, medianMonth: r4(median(net)), worstMonth: r4(Math.min(...net)), bestMonth: r4(Math.max(...net)),
         vsEtf: { older: cmp('older'), newer: cmp('newer') }, months: months.map(m => ({ buy: D[m.t + 1], net: r4(m.g - COST), avgStock: r4(m.c - COST), sameStocks: r4(m.own === null ? null : m.own - COST), ...m.etf, names: m.names })) }; }
@@ -235,6 +242,17 @@ if (DIAG) { console.log('VALUE LAB DIAGNOSTICS (coverage only, no returns comput
 const PREV = J(OUT, {}), complete = covered >= needCiks.size * 0.8, isJudged = (r) => complete && r && r.verdict !== 'TOO FEW CASES';
 const strip = (r) => { const { trades, months, ...rest } = r; return rest; };
 const firstRun = freezeEach(PREV.firstRun, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), to: D[T - 1], bar: BAR, ...strip(r) }])), isJudged);
+// ---- ENGINE AUDIT (24 Oct 2026, bug AUD-1, yardstick.mjs): each rule that reached TRY SMALL is re-run ONCE on its frozen window with the
+// yardstick fixed; written to correctedRun next to firstRun (never over it). Three modes: asFrozen (must reproduce the frozen numbers),
+// capBoth (the corrected verdict), raw (sensitivity). Nothing else changes: same picks, entries, exits, costs, halves and judge.
+const correctedRun = { ...(PREV.correctedRun || {}) };
+if (complete) for (const id of ['B-FCF1', 'B-BASK1_1m', 'B-BASK1_3m']) { const fr = firstRun[id]; if (!fr || correctedRun[id]) continue; const end = D.indexOf(String(fr.to)); if (end < 0) { console.log('audit: ' + id + ' frozen window end ' + fr.to + ' not in the cache; not corrected'); continue; }
+  LIMIT = end; fwdMemo.clear(); ctrlMemo.clear();
+  const run = (mode) => { let R; if (id === 'B-FCF1') { const p = new Map([...FCF_PICKS].filter(([t]) => t < LIMIT)); R = halves(basketTrades(p, 63, [...p.keys()], mode).trades, 63); }
+    else { const h = id.endsWith('_1m') ? 21 : 63; R = halves(BASK_MONTHS(h, mode).months, h); } return { ...judge(R, { bar: fr.bar }), R }; };
+  correctedRun[id] = correctedEntry({ frozen: fr, fixed: run('capBoth'), asFrozen: run('asFrozen'), raw: run('raw'), bugs: ['AUD-1'], window: [D[0], D[end]], extra: { hold: fr.hold } });
+  const c = correctedRun[id]; console.log('AUDIT ' + id + ': frozen ' + fr.verdict + ' -> corrected ' + c.verdict + ' (reproduced: ' + c.reproduced.matchesFrozen + ') | older edge ' + pc(fr.results.older.edge) + ' -> ' + pc(c.results.older.edge) + ' | newer edge ' + pc(fr.results.newer.edge) + ' -> ' + pc(c.results.newer.edge)); }
+LIMIT = T - 1;
 const tierOf = (id) => { const ks = Object.keys(firstRun).filter(k => k === id || k.startsWith(id + '_')), v = ks.map(k => firstRun[k].verdict); return v.includes('PROVEN') ? 'PROVEN' : v.includes('TRADABLE SMALL') ? 'TRADABLE SMALL' : null; };
 // today's picks with the live gates (halal, lottery 15%+ one-day jump in the last 21 sessions, share count up 10%+ in a year = dilution)
 const HAL = J('data/halal.json', {}), zbad = new Set((J('data/zad-list.json', {}).notHalal) || []);
@@ -248,7 +266,7 @@ fs.writeFileSync(TODAY_OUT, JSON.stringify({ generatedAt: new Date().toISOString
 const out = { generatedAt: new Date().toISOString(), versions: Object.keys(RES).length, preRegistered: 'data/strategy-library.json (B-FCF1 23 Oct; B-BASK1 21 Oct; B-EM1 and B-SIF1 22 Oct)', window: [D[0], D[T - 1]], bar: BAR, leagueBar: LEAGUE.bar || null, complete, cover, diagnostics: DIAGS,
   missing: { 'V15 sector-neutral / ex-tech': 'no such entry in data/strategy-library.json (searched 23 Oct 2026): not run; it needs its own pre-registration' },
   standard: 'both halves: > 0 after 0.8% and 1.2% cost, edge over the average stock > 0, better than the same stocks on their other formation days, > 0 without the 2 best, block t >= ' + TIER2_T + ' (blocks = the hold length) -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN; plus each rule\'s own gates',
-  firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }), trades: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, r.trades || r.months || []])) };
+  firstRun, correctedRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }), trades: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, r.trades || r.months || []])) };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 console.log('VALUE LAB ' + D[0] + ' to ' + D[T - 1] + ' | proof bar ' + BAR + ' | SEC facts ' + covered + '/' + needCiks.size + (complete ? '' : ' (INCOMPLETE: nothing frozen)'));
 for (const [k, r] of Object.entries(RES)) { const o = r.results.older, n = r.results.newer, f = (h) => h.n + ' (' + h.days + ' days) avg ' + pc(h.avg) + ' med ' + pc(h.median) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock + ' (' + h.blocks + ')';

@@ -26,6 +26,7 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { freezeEach, latestBlock } from './first-run.mjs';
+import { tradeG, yardPush, yardMean, correctedEntry } from './yardstick.mjs';
 import { halfStat, judge, r4, TIER2_T, fcfCheck } from './value-core.mjs';
 import { secNY } from './sec-time.mjs';
 import { METHODS, COST, liquid, regimeUp, aboveSma, rsScore, detectQBO, detectEP, detectMB, detectVCP, detectPB, detectCrash, crashControl,
@@ -224,9 +225,10 @@ for (const m of IDS) { const b = board[m]; if (!b.signals && GROUPED(m)) continu
 
 const HIST_END = T - 1, liqSample = []; for (let t = 0; t < T; t++) { const a = []; for (let i = 0; i < NS; i += 4) if (LIQ[i * T + t]) a.push(i); liqSample.push(a); }
 // the average liquid stock (sampled every 4th) bought at the open of k (or the close of k for close entries) and sold at the close of x
-const cMemo = new Map(), ctrlSpan = (k, x, atClose) => { const key = (k * 4096 + x) * 2 + (atClose ? 1 : 0); if (cMemo.has(key)) return cMemo.get(key); const v = [];
-  for (const i of liqSample[atClose ? k : k - 1] || []) { const e = atClose ? C[i * T + k] : O[i * T + k]; let y = NaN; for (let q = x; q >= k && !(y > 0); q--) y = C[i * T + q]; if (e > 0 && y > 0 && Math.abs(y / e - 1) < 3) v.push(y / e - 1); }
-  const m = v.length >= 50 ? mean(v) : null; cMemo.set(key, m); return m; };
+// mode (engine audit AUD-1, yardstick.mjs): 'asFrozen' = the frozen runs (stocks of +300% or more dropped); 'capBoth' = corrected; 'raw'
+const cMemo = new Map(), ctrlSpan = (k, x, atClose, mode = 'asFrozen') => { const key = ((k * 4096 + x) * 2 + (atClose ? 1 : 0)) + mode; if (cMemo.has(key)) return cMemo.get(key); const v = [];
+  for (const i of liqSample[atClose ? k : k - 1] || []) { const e = atClose ? C[i * T + k] : O[i * T + k]; let y = NaN; for (let q = x; q >= k && !(y > 0); q--) y = C[i * T + q]; if (e > 0 && y > 0) yardPush(v, y / e - 1, mode); }
+  const m = yardMean(v, 50); cMemo.set(key, m); return m; };
 // ================= CHECK (monitoring only; never a verdict) =================
 // CHECK=TPS (added 23 Oct 2026 after DEC2-TPS was frozen PROVEN): the frozen run scores each TPS trade per dollar INVESTED (10% to 100%
 // of the budget). This check re-scores the same trades per dollar of BUDGET (profit / the full planned position, cost charged on the money
@@ -243,6 +245,28 @@ if (env.CHECK === 'TPS') { const m = 'DEC2-TPS', blk = M2(m).block, out = { budg
     avgInvested: r4(mean(out.budget.map(z => z.inv))), invested: sum(out.invested), budget: sum(out.budget), nextOpen: sum(out.nextOpen) };
   fs.writeFileSync('data/decoded-check.json', JSON.stringify(res, null, 1)); for (const k of ['invested', 'budget', 'nextOpen']) console.log('CHECK TPS ' + k + ': older ' + JSON.stringify(res[k].older) + ' | newer ' + JSON.stringify(res[k].newer) + ' | 12m ' + JSON.stringify(res[k].last12m));
   process.exit(0); }
+// ================= ENGINE AUDIT (24 Oct 2026; yardstick.mjs) =================
+// DEC-FROG (the decoded rule in TRY SMALL) re-run ONCE on its frozen window, exactly as the one-shot below walks it, with the yardstick
+// fixed (AUD-1: trades and the average stock capped at +300% alike; the same-stock-other-days yardstick, uncapped in the frozen run,
+// capped the same way). Written to correctedRun in data/decoded-history.json next to firstRun (never over it).
+const CORR = { ...(HISTF.correctedRun || {}) };
+for (const m of ['DEC-FROG']) { const fr = (HISTF.firstRun || {})[m]; if (!fr || !fr.results || CORR[m]) continue; const end = tOf.get(String((fr.window || [])[1]));
+  if (end === undefined) { log('audit ' + m + ': frozen window end not in the data; not corrected'); continue; }
+  const base = []; for (let i = 0; i < NS; i++) { if (i === spyI) continue; const S = series(i), I = indOf(S), b = i * T; let free = -1; const mine = [];
+    for (let t = 130; t < end; t++) { if (!MAIN[b + t] || free >= t) continue; const sig = detect(m, S, I, i, t, ctxOf(i, t, S)); if (!sig) continue; const r = sim(m, S, I, t, sig, end);
+      if (r.state === 'pending' || r.state === 'open') { free = Infinity; continue; } if (r.state !== 'closed') { free = t + (sig.valid || 0); continue; } free = r.x;
+      mine.push({ t, s: SYMS[i], i, k: r.k, x: r.x, g0: r.g, atClose: sig.entry === 'close', half: D[t] < SPLIT ? 'older' : 'newer' }); }
+    if (!mine.length) continue; const mark = new Int32Array(T + 2); for (const z of mine) { mark[z.k]++; mark[z.x + 1]--; }
+    const cov = new Int32Array(T + 2); let run = 0; for (let q = 0; q <= T; q++) { run += mark[q]; cov[q + 1] = cov[q] + (run > 0 ? 1 : 0); }
+    const own = new Map(); for (const z of mine) { const len = z.x - z.k + 1, ck = len + '|' + z.half; if (!own.has(ck)) { const v = [];
+        for (let u = 131; u + len < end; u += 10) { if ((D[u] < SPLIT) !== (z.half === 'older') || !LIQ[b + u - 1] || cov[Math.min(T, u + len) + 1] - cov[u] > 0) continue; const e = O[b + u], y = C[b + u + len - 1]; if (e > 0 && y > 0) v.push(y / e - 1); }
+        own.set(ck, v); } z.ownV = own.get(ck); base.push(z); } }
+  const blk = ALL[m].block, runM = (mode) => { const tr = []; for (const z of base) { const c = ctrlSpan(z.k, z.x, z.atClose, mode); if (c === null) continue;
+      const ov = mode === 'capBoth' ? z.ownV.map(x => tradeG(x, mode)) : z.ownV; tr.push({ ...z, g: tradeG(z.g0, mode), c, own: ov.length >= 3 ? mean(ov) : null }); }
+    const R = { older: halfStat(tr.filter(z => z.half === 'older'), blk), newer: halfStat(tr.filter(z => z.half === 'newer'), blk), all: halfStat(tr, blk) }; return { ...judge(R, { bar: fr.bar }), R }; };
+  CORR[m] = correctedEntry({ frozen: fr, fixed: runM('capBoth'), asFrozen: runM('asFrozen'), raw: runM('raw'), bugs: ['AUD-1'], window: [D[0], D[end]], extra: { block: blk } });
+  const c = CORR[m]; log('AUDIT ' + m + ': frozen ' + fr.verdict + ' -> corrected ' + c.verdict + ' (reproduced: ' + c.reproduced.matchesFrozen + ') | older edge ' + pc(fr.results.older.edge) + ' -> ' + pc(c.results.older.edge) + ' | newer edge ' + pc(fr.results.newer.edge) + ' -> ' + pc(c.results.newer.edge));
+  const h = J(HIST, {}); h.correctedRun = CORR; fs.writeFileSync(HIST, JSON.stringify(h)); }
 // ================= 3. 5-YEAR ONE-SHOT =================
 const LEAGUE = J('data/agent-league.json', {}), BAR = Math.max(TIER2_T, +LEAGUE.bar || 0, 4.0);
 const need = IDS.filter(m => !(HISTF.firstRun || {})[m]), NF = need.filter(m => M2(m) && M2(m).mkt);   // NF: shadow runs without the market filter
@@ -285,7 +309,7 @@ fs.writeFileSync(HIST, JSON.stringify({ generatedAt: new Date().toISOString(), p
   versions: VERSIONS, versionsNote: 'every version run once (batch 1 + batch 2) plus the no-market-filter shadow runs; league.mjs adds this to the luck-bar count',
   standard: 'both halves (signals before / from ' + SPLIT + '): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock on its other days, > 0 without the 2 best, block t >= ' + TIER2_T + ' -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN',
   data: { eightK: EVOK, insiders: INSOK, secFacts: FCFOK, shares: !!SH },
-  firstRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }),
+  firstRun, correctedRun: CORR, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }),
   trades: { ...(HISTF.trades || {}), ...Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, r.trades.slice(-(M2(k) && M2(k).family ? 300 : 1500))])) } }));
 console.log('DECODED 5-YEAR ONE-SHOT ' + D[0] + ' to ' + D[HIST_END] + ' | bar ' + BAR + (complete ? '' : ' | INCOMPLETE (nothing frozen)'));
 for (const [m, r] of Object.entries(RES)) { const f = (h) => h.n + ' (' + h.days + ' days) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock;
