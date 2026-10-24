@@ -1,0 +1,95 @@
+name: Squad 15 lab
+# SQUAD 15 (OPTIONS on the large, liquid winners; squad15-lab.mjs; 24 Oct 2026). LONG CALLS ONLY, never selling or writing options.
+# Calls on the signals of SQ11-PB12 (leader pullback), SQ6-MTUM / SQ6-QMOM (momentum fund picks, largest names only) and TIP-DIPLEAD
+# (information), pre-registered in squad15-core.mjs and data/strategy-library.json before any run; each one's test runs ONCE (first
+# complete verdict frozen in data/squad15-lab.json firstRun). Forward PAPER ledger from Monday 26 Oct 2026 (data/squad15-paper.jsonl).
+# The whole-market price cache is RESTORED READ ONLY (used only to rebuild Squad 6's full MTUM / QMOM pick list in a scratch copy;
+# nothing of Squad 6 is committed). Only this lab's own cache (squad15-cache) is saved. Commits only its own output files and its own
+# library entries. Never places an order. Start by hand: change run-squad15-now.txt (a last line containing PROBE = data probe only).
+on:
+  schedule:
+    - cron: '41 0 * * 2-6'    # weekday evenings (New York) after Squad 6 / 11 have written their signals: paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad15-now.txt']
+permissions:
+  contents: write
+concurrency: squad15-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad15-cache
+          key: squad15-cache-${{ github.run_id }}
+          restore-keys: squad15-cache-
+      - shell: bash
+        run: |
+          MODE=run
+          if [ "${{ github.event_name }}" = "schedule" ]; then MODE=paper; fi
+          if [ "${{ github.event_name }}" = "push" ] && tail -n 1 run-squad15-now.txt | grep -q PROBE; then MODE=probe; fi
+          echo "MODE=$MODE" >> "$GITHUB_ENV"; echo "mode $MODE"
+      - if: env.MODE == 'run'
+        uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      # Squad 6's own code, unchanged except that it keeps ALL its trades (its committed file keeps only the last 300), run OFFLINE in a
+      # scratch copy; only its trade list is read (squad15-cache/sq6-full.json). Nothing of it is committed.
+      - if: env.MODE == 'run'
+        shell: bash
+        timeout-minutes: 30
+        run: |
+          mkdir -p squad15-cache
+          S="$RUNNER_TEMP/sq6"; mkdir -p "$S"; cp -r *.mjs data "$S/"; ln -s "$PWD/study-cache" "$S/study-cache"
+          sed -i 's/r\.trades\.slice(-300)/r.trades/' "$S/squad6-lab.mjs"
+          (cd "$S" && OFFLINE=1 node squad6-lab.mjs 2>&1 | tail -15) || echo "squad6 rebuild failed"
+          cp "$S/data/squad6-lab.json" squad15-cache/sq6-full.json || true
+      - shell: bash
+        timeout-minutes: 200
+        run: |
+          set -o pipefail
+          node squad15-lab.mjs 2>&1 | tee run.log
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad15-cache
+          key: squad15-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad15-run.log 2>/dev/null || true
+          FILES="data/squad15-lab.json data/squad15-paper.jsonl data/squad15-today.json data/squad15-board.json data/squad15-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 15 lab $(date -u +%F) ($MODE)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 15 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad15-lab-log
+          path: run.log
