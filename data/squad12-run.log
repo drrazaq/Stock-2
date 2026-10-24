@@ -1,18 +1,19 @@
 [0s] squad 12 lab (DIAG: coverage and event counts only); frozen already: 0/6
-[6s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
+[5s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
 [7s] splits since 2026-10-19: 71 listed, 0 repaired
 [7s] window 2021-10-12..2026-10-23 (1264 sessions, 8599 stocks)
 [8s] ticker map: {"ok":true,"quarters":23,"downloadedNow":0,"missing":[],"tickers":10422}
-[10s] SEC facts (Squad 4/5 caches): {"ok":true,"companies":4433,"answered":4433,"fromCaches":6154}
+[9s] SEC facts (Squad 4/5 caches): {"ok":true,"companies":4433,"answered":4433,"fromCaches":6154}
 [11s] split list: {"ok":true,"rows":7351,"tickers":4769,"pagesNow":8}
 [12s] statement share counts: {"ok":true,"wanted":0,"fetchedNow":0}
 [13s] domicile: {"ok":true,"wanted":0,"fetchedNow":0,"missing":0}
-[14s] companies ever among the 300 largest at a month start: 447
-[96s] XBRL facts fetched: 200/447
-[163s] XBRL facts fetched: 400/447
-[176s] XBRL (revenue + EPS): {"ok":true,"companies":447,"have":447,"withRevenue":447,"withEps":438,"fetchedNow":447,"failed":0}
-[186s] Nasdaq calendar: {"ok":true,"days":1314,"missing":0,"fromOtherCaches":1309,"fetchedNow":5,"reports":65130,"timed":47}
-[251s] full-text search: {"ok":false,"fetchedNow":205,"fromSquad1":1320,"missing":["investor day 2022-11"],"guidanceHits":5049,"investorDayHits":4757,"investorDayWithItems":4757}
+[13s] companies ever among the 300 largest at a month start: 447
+[13s] XBRL (revenue + EPS): {"ok":true,"companies":447,"have":447,"withRevenue":447,"withEps":438,"fetchedNow":0,"failed":0}
+[62s] 8-K 2.02 lists: 200/447
+[94s] 8-K 2.02 lists: 400/447
+[103s] 8-K Item 2.02 releases: {"ok":true,"companies":447,"have":447,"releases":16937,"fetchedNow":447,"olderPages":140,"failed":0}
+[108s] full-text search: {"ok":true,"fetchedNow":26,"fromSquad1":1320,"missing":[],"guidanceHits":5049,"investorDayHits":4891,"investorDayWithItems":4891}
+[108s] earnings releases by acceptance time (New York): {"before":1333,"after":4362,"during":3411}
 SQUAD 12 DIAGNOSTICS (coverage and event counts only; nothing judged or written)
 {
  "window": [
@@ -62,33 +63,36 @@ SQUAD 12 DIAGNOSTICS (coverage and event counts only; nothing judged or written)
    "have": 447,
    "withRevenue": 447,
    "withEps": 438,
-   "fetchedNow": 447,
+   "fetchedNow": 0,
    "failed": 0
   },
   "earn": {
    "ok": true,
-   "days": 1314,
-   "missing": 0,
-   "fromOtherCaches": 1309,
-   "fetchedNow": 5,
-   "reports": 65130,
-   "timed": 47
+   "companies": 447,
+   "have": 447,
+   "releases": 16937,
+   "fetchedNow": 447,
+   "olderPages": 140,
+   "failed": 0,
+   "acceptancePhase": {
+    "before": 1333,
+    "after": 4362,
+    "during": 3411
+   }
   },
   "efts": {
-   "ok": false,
-   "fetchedNow": 205,
+   "ok": true,
+   "fetchedNow": 26,
    "fromSquad1": 1320,
-   "missing": [
-    "investor day 2022-11"
-   ],
+   "missing": [],
    "guidanceHits": 5049,
-   "investorDayHits": 4757,
-   "investorDayWithItems": 4757
+   "investorDayHits": 4891,
+   "investorDayWithItems": 4891
   },
   "invItems": {
    "ok": true,
-   "hits": 4757,
-   "withItems": 4757
+   "hits": 4891,
+   "withItems": 4891
   }
  },
  "bigCompanies": 447,
@@ -117,38 +121,39 @@ SQUAD 12 DIAGNOSTICS (coverage and event counts only; nothing judged or written)
  "rank300Cap": 32.7354,
  "events": {
   "SQ12-EGAPHOLD": {
-   "raw": 7,
-   "big": 3,
-   "afterOneOpen": 3,
+   "raw": 419,
+   "big": 419,
+   "afterOneOpen": 389,
    "halves": {
-    "older": 0,
-    "newer": 3
+    "older": 154,
+    "newer": 235
    },
    "top100": {
-    "older": 0,
-    "newer": 1
+    "older": 56,
+    "newer": 68
    },
    "sample": [
-    "APD 2026-01-30 2026-01-30 bmo",
-    "VZ 2026-01-30 2026-01-30 bmo",
-    "CL 2026-01-30 2026-01-30 bmo"
+    "CRWD 2026-08-27 2026-08-26 20:07 NY 0001535527-26-000029",
+    "DELL 2026-09-02 2026-09-01 20:10 NY 0001571996-26-000039",
+    "CSX 2026-10-22 2026-10-21 20:01 NY 0000277948-26-000039"
    ]
   },
   "SQ12-EARN52H": {
-   "raw": 6,
-   "big": 2,
-   "afterOneOpen": 2,
+   "raw": 353,
+   "big": 353,
+   "afterOneOpen": 327,
    "halves": {
-    "older": 0,
-    "newer": 2
+    "older": 67,
+    "newer": 260
    },
    "top100": {
-    "older": 0,
-    "newer": 2
+    "older": 24,
+    "newer": 89
    },
    "sample": [
-    "XOM 2026-01-30 2026-01-30 bmo",
-    "CVX 2026-01-30 2026-01-30 bmo"
+    "SNOW 2026-09-03 2026-09-02 20:08 NY 0001640147-26-000033",
+    "ABBV 2026-10-06 2026-10-05 20:07 NY 0001551152-26-000030",
+    "WCN 2026-10-22 2026-10-21 20:08 NY 0001104659-26-117838"
    ]
   },
   "SQ12-REVEPS": {
@@ -207,12 +212,12 @@ SQUAD 12 DIAGNOSTICS (coverage and event counts only; nothing judged or written)
    ]
   },
   "SQ12-INVDAY": {
-   "raw": 65,
-   "big": 65,
-   "candidates": 119,
-   "afterOneOpen": 65,
+   "raw": 66,
+   "big": 66,
+   "candidates": 122,
+   "afterOneOpen": 66,
    "halves": {
-    "older": 32,
+    "older": 33,
     "newer": 33
    },
    "top100": {
