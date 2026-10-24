@@ -23,7 +23,8 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { execFileSync } from 'node:child_process';
-import { freezeEach, latestBlock } from './first-run.mjs';
+import { freezeEach, latestBlock, effectiveRuns } from './first-run.mjs';
+import { capG, correctedEntry } from './yardstick.mjs';
 import { halfStat, TIER2_T } from './value-core.mjs';
 import { judgeHold } from './hold-core.mjs';
 import { high52, residMom, nextSession, boardStats, paperReady, monthStarts } from './anomaly-core.mjs';
@@ -247,21 +248,22 @@ async function turnFinal(list) { const out = { 'TIP-TURN': [], 'TIP-TURN-100': [
 // ================= 4. 5-YEAR ONE-SHOT =================
 const need = IDS.filter(id => !(id in FROZEN)), LIGHT = env.TIP_LIGHT === '1' && !need.length;   // weekday evenings once all are frozen: paper lane only
 // the average liquid stock bought at the open of session te (liquid the session before) and held: curve by offset (every second stock,
-// each capped at +300%, a dead stock counts 0 after it vanished) - hold-lab.mjs method
+// each capped at +300% (winsorised), a dead stock counts 0 after it vanished) - hold-lab.mjs method. AUD-1 (engine audit 24 Oct 2026): the
+// rule's own returns are capped at +300% the same way (yardstick.mjs capBoth); capped = false gives the uncapped curve (sensitivity 'raw').
 const curveMemo = new Map();
-function curve(te, len) { const m = curveMemo.get(te); if (m && m.length >= Math.min(len, T - te)) return m; const L = Math.min(len, T - te), sum = new Float64Array(L), cnt = new Uint32Array(L), lq = liqList(te - 1);
+function curve(te, len, capped = true) { const key = capped ? te : -te - 1, m = curveMemo.get(key); if (m && m.length >= Math.min(len, T - te)) return m; const L = Math.min(len, T - te), sum = new Float64Array(L), cnt = new Uint32Array(L), lq = liqList(te - 1);
   for (let q = 0; q < lq.length; q += 2) { const i = lq[q], e = OO(i, te); if (!(e > 0)) continue; const li = lastI[i], van = vanishedI(i), dead = deadI(i); let lc = NaN;
-    for (let off = 0; off < L; off++) { const k = te + off; let v; if (van && k > li) v = dead ? 0 : CC(i, li); else { const z = CC(i, k); if (z > 0) lc = z; v = lc; } if (!(v >= 0)) continue; sum[off] += Math.min(v / e, 4); cnt[off]++; } }
-  const out = new Float32Array(L); for (let off = 0; off < L; off++) out[off] = cnt[off] >= 50 ? sum[off] / cnt[off] - 1 : NaN; curveMemo.set(te, out); return out; }
-const ctrlRet = (kIn, x, at) => { const cv = curve(kIn, HOLD + 1), off = (at === 'o' ? x - 1 : x) - kIn; const v = off >= 0 && off < cv.length ? cv[off] : NaN; return isFinite(v) ? v : null; };
+    for (let off = 0; off < L; off++) { const k = te + off; let v; if (van && k > li) v = dead ? 0 : CC(i, li); else { const z = CC(i, k); if (z > 0) lc = z; v = lc; } if (!(v >= 0)) continue; sum[off] += capped ? Math.min(v / e, 4) : v / e; cnt[off]++; } }
+  const out = new Float32Array(L); for (let off = 0; off < L; off++) out[off] = cnt[off] >= 50 ? sum[off] / cnt[off] - 1 : NaN; curveMemo.set(key, out); return out; }
+const ctrlRet = (kIn, x, at, capped = true) => { const cv = curve(kIn, HOLD + 1, capped), off = (at === 'o' ? x - 1 : x) - kIn; const v = off >= 0 && off < cv.length ? cv[off] : NaN; return isFinite(v) ? v : null; };
 // the same stock with the same plan on its other days (every 21st session, starts 63+ sessions away from this entry)
 const ownMemo = new Map(), ownList = (i) => { if (!ownMemo.has(i)) { const a = []; for (let k = 1; k + HOLD <= T; k += 21) { const r = runPlan(ser(i), k, PLAN); if (r) a.push({ k, g: r.g }); } ownMemo.set(i, a); } return ownMemo.get(i); };
-const ownOf = (i, te) => { const a = ownList(i).filter(z => Math.abs(z.k - te) >= 63).map(z => z.g); return a.length ? mean(a) : null; };
+const ownOf = (i, te, capped = false) => { const a = ownList(i).filter(z => Math.abs(z.k - te) >= 63).map(z => capped ? capG(z.g) : z.g); return a.length ? mean(a) : null; };
 const exitPx = (i, r) => r.kind === 'dead' ? 0 : r.at === 'o' ? OO(i, r.x) : CC(i, r.x);
 function evalSignal(id, i, t, info) { const te = t + 1; if (te >= T) return { censored: true }; const r = runPlan(ser(i), te, PLAN); if (!r) return { censored: true };
   const plans = Object.fromEntries(Object.entries(PLANS).map(([k, p]) => { const z = runPlan(ser(i), te, p); return [k, z ? { g: z.g, w: z.w, unitYears: z.unitYears, kind: z.kind } : null]; }));
   return { t, s: SYMS[i], i, half: halfOf(D[t]), sig: D[t], buy: D[te], sell: D[r.x], kind: r.kind, g: r.g, w: r.w, n: r.units.length, unitYears: r.unitYears, worst: r.worst, days: r.days, endVsFirst: exitPx(i, r) / r.units[0].px - 1,
-    c: weighted(r.units, r.x, r.at, ctrlRet) ?? NaN, own: ownOf(i, te), spy: weighted(r.units, r.x, r.at, idxRet('SPY')), spus: weighted(r.units, r.x, r.at, idxRet('SPUS')), hlal: weighted(r.units, r.x, r.at, idxRet('HLAL')), plans, info }; }
+    c: weighted(r.units, r.x, r.at, ctrlRet) ?? NaN, cRaw: weighted(r.units, r.x, r.at, (a, b, c) => ctrlRet(a, b, c, false)) ?? NaN, own: ownOf(i, te), ownCap: ownOf(i, te, true), spy: weighted(r.units, r.x, r.at, idxRet('SPY')), spus: weighted(r.units, r.x, r.at, idxRet('SPUS')), hlal: weighted(r.units, r.x, r.at, idxRet('HLAL')), plans, info }; }
 const SIGS = Object.fromEntries(IDS.map(id => [id, []])), CENS = Object.fromEntries(IDS.map(id => [id, 0])), RAW = Object.fromEntries(IDS.map(id => [id, []]));
 { const openUntil = Object.fromEntries(IDS.map(id => [id, new Map()])), turnAll = [];
   const take = (id, list, t) => { for (const z of list) { const ou = openUntil[id].get(z.i); if (ou !== undefined && t <= ou) continue; RAW[id].push({ i: z.i, t, info: z.info }); const e = evalSignal(id, z.i, t, z.info);
@@ -279,16 +281,21 @@ const SIGS = Object.fromEntries(IDS.map(id => [id, []])), CENS = Object.fromEntr
 W(TC + '/subs.json', SUBS);
 const benchPY = (rows, key) => { const v = rows.filter(z => ok(z[key])); const y = v.reduce((a, z) => a + z.unitYears, 0); return v.length && y > 0 ? r4(v.reduce((a, z) => a + z[key] * z.w, 0) / y) : null; };
 const RES = {};
+// three yardstick modes (yardstick.mjs): capBoth = THE VERDICT (rule and yardsticks capped at +300% alike); asFrozen = the pre-audit engine
+// (yardstick curve capped, rule uncapped); raw = no cap on either side (sensitivity)
+const asMode = (tr, mode) => tr.map(z => mode === 'capBoth' ? { ...z, g: capG(z.g), own: z.ownCap } : mode === 'raw' ? { ...z, c: z.cRaw } : z);
+const py = (a) => ({ rule: r4(perYearOf(a)), spy: benchPY(a, 'spy'), spus: benchPY(a, 'spus'), hlal: benchPY(a, 'hlal'), avgStock: benchPY(a, 'c') });
+const judgeMode = (tr0, mode) => { const tr = asMode(tr0, mode), by = { older: tr.filter(z => z.half === 'older'), newer: tr.filter(z => z.half === 'newer') };
+  const R = { older: halfStat(by.older, BLOCK), newer: halfStat(by.newer, BLOCK), all: halfStat(tr, BLOCK) }, PY = { older: py(by.older), newer: py(by.newer), all: py(tr) };
+  const v = judgeHold(R, { bar: BAR, ownName: 'the same stocks with the same plan on their other days', perYear: { older: [PY.older.rule, PY.older.spy], newer: [PY.newer.rule, PY.newer.spy] } }); return { ...v, R, PY }; };
 for (const id of LIGHT ? [] : IDS) { const tr = SIGS[id], by = { older: tr.filter(z => z.half === 'older'), newer: tr.filter(z => z.half === 'newer') };
-  const R = { older: halfStat(by.older, BLOCK), newer: halfStat(by.newer, BLOCK), all: halfStat(tr, BLOCK) };
-  const py = (a) => ({ rule: r4(perYearOf(a)), spy: benchPY(a, 'spy'), spus: benchPY(a, 'spus'), hlal: benchPY(a, 'hlal'), avgStock: benchPY(a, 'c') });
-  const PY = { older: py(by.older), newer: py(by.newer), all: py(tr) };
+  const J0 = judgeMode(tr, 'capBoth'), JF = judgeMode(tr, 'asFrozen'), JR = judgeMode(tr, 'raw'), R = J0.R, PY = J0.PY;
   const plans = Object.fromEntries(['REGISTERED', ...Object.keys(PLANS)].map(k => { const f = (a) => { const v = k === 'REGISTERED' ? a : a.map(z => z.plans[k] ? { ...z.plans[k] } : null).filter(Boolean);
       return { n: v.length, avg: r4(mean(v.map(z => z.g - COST))), perYear: r4(perYearOf(v)), moneyIn: r4(mean(v.map(z => z.w))) }; }; return [k, { older: f(by.older), newer: f(by.newer), all: f(tr) }]; }));
-  const v = judgeHold(R, { bar: BAR, ownName: 'the same stocks with the same plan on their other days', perYear: { older: [PY.older.rule, PY.older.spy], newer: [PY.newer.rule, PY.newer.spy] } });
+  const v = { verdict: J0.verdict, why: J0.why };
   const worst = [...tr].sort((a, b) => a.g - b.g).slice(0, 10).map(z => ({ s: z.s, sig: z.sig, sell: z.sell, kind: z.kind, net: r4(z.g - COST), worstOnTheWay: r4(z.worst), units: z.n }));
   const best = [...tr].sort((a, b) => b.g - a.g).slice(0, 5).map(z => ({ s: z.s, sig: z.sig, sell: z.sell, net: r4(z.g - COST) }));
-  RES[id] = { ...v, name: RULES[id].name, hold: HOLD, cost: COST, split: SPLIT, results: R, perYear: PY, plans, failures: { older: failures(by.older), newer: failures(by.newer), all: failures(tr) }, worst, best,
+  RES[id] = { ...v, yardstick: 'capBoth', modes: { asFrozen: { verdict: JF.verdict, why: JF.why, R: JF.R }, raw: { verdict: JR.verdict, why: JR.why, R: JR.R } }, name: RULES[id].name, hold: HOLD, cost: COST, split: SPLIT, results: R, perYear: PY, plans, failures: { older: failures(by.older), newer: failures(by.newer), all: failures(tr) }, worst, best,
     signals: tr.length, tooRecent: CENS[id], stocks: new Set(tr.map(z => z.s)).size, byYear: Object.fromEntries([...new Set(tr.map(z => z.sig.slice(0, 4)))].sort().map(y => { const a = tr.filter(z => z.sig.startsWith(y)); return [y, { n: a.length, avg: r4(mean(a.map(z => z.g - COST))) }]; })),
     trades: tr.map(z => ({ s: z.s, sig: z.sig, buy: z.buy, sell: z.sell, kind: z.kind, units: z.n, net: r4(z.g - COST), avgStock: r4(ok(z.c) ? z.c - COST : null), sameStock: r4(z.own === null ? null : z.own - COST), spy: r4(z.spy), worst: r4(z.worst), endVsFirst: r4(z.endVsFirst) })) };
   const f = (h) => (h.n || 0) + ' (' + (h.days || 0) + 'd) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tB ' + h.tBlock;
@@ -356,6 +363,12 @@ const complete = T >= 1000 && STATUS.pre.ok && STATUS.facts.ok && STATUS.scan.ok
 const dataOk = (id) => complete && (!/TURN/.test(id) || STATUS.insider.ok);
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k]) => need.includes(k) && dataOk(k)).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], to: D[T - 1], bar: BAR, ...strip(r) }])), () => true);
+// AUD-1: a rule frozen by the pre-audit engine (no yardstick field) keeps its firstRun untouched; its corrected verdict (capBoth, this run) is
+// frozen once in correctedRun next to it (first-run.mjs effectiveRuns = what a reader acting on verdicts uses)
+const correctedRun = freezeEach(PREV.correctedRun, Object.fromEntries(Object.keys(FROZEN).filter(k => FROZEN[k].yardstick !== 'capBoth' && RES[k] && dataOk(k)).map(k => { const r = RES[k];
+  return [k, correctedEntry({ frozen: FROZEN[k], fixed: { verdict: r.verdict, why: r.why, R: r.results }, asFrozen: r.modes.asFrozen, raw: r.modes.raw, bugs: ['AUD-1'], window: [D[0], D[T - 1]],
+    extra: { yardstick: 'capBoth', name: r.name, hold: HOLD, perYear: r.perYear, failures: r.failures, plans: r.plans, signals: r.signals } })]; })), () => true);
+const EFF = effectiveRuns(firstRun, correctedRun);
 
 // ================= 7. PAPER LANE =================
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
@@ -375,7 +388,7 @@ for (const x of sigLines) { const k = tOf.get(x.entryDate); if (k === undefined)
   x._k = k; x._r = r; if (r.kind === 'open') { x._state = 'open'; continue; } x._state = 'closed'; x._c = weighted(r.units, r.x, r.at, (kIn, xx, at) => ctrlRet(kIn, xx, at));
   if (!resolved.has(x.id)) { resolved.add(x.id); newLines.push({ type: 'result', id: x.id, m: x.m, sym: x.sym, d: x.d, buy: D[k], sell: D[r.x], kind: r.kind, units: r.units.length, moneyIn: r4(r.w), g: r4(r.g), net: r4(r.g - COST), avgStock: x._c === null ? null : r4(x._c - COST) }); } }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x, (k, v) => k[0] === '_' ? undefined : v)).join('\n') + '\n');
-for (const id of IDS) { const mine = sigLines.filter(x => x.m === id), closed = mine.filter(x => x._state === 'closed').map(x => ({ d: x.d, sym: x.sym, g: x._r.g, c: x._c, halal: x.halal })), fr = firstRun[id], st = boardStats(closed);
+for (const id of IDS) { const mine = sigLines.filter(x => x.m === id), closed = mine.filter(x => x._state === 'closed').map(x => ({ d: x.d, sym: x.sym, g: capG(x._r.g), c: x._c, halal: x.halal })), fr = EFF[id], st = boardStats(closed);
   board[id] = { name: RULES[id].name, hold: HOLD, signals: mine.length, waiting: mine.filter(x => x._state === 'waiting').length, open: mine.filter(x => x._state === 'open').length, closed: st, halalOk: boardStats(closed.filter(z => z.halal === 'ok')), ready: paperReady(st), fiveYear: fr ? { verdict: fr.verdict, why: fr.why } : null };
   today[id] = { name: RULES[id].name, hold: HOLD, tier: fr ? fr.verdict : null, newSignals: mine.filter(x => x.recordedAfter === D[T - 1] && newLines.includes(x)).map(x => ({ sym: x.sym, close: x.close, halal: x.halal, d: x.d, plan: x.plan })),
     open: mine.filter(x => x._state === 'open').map(x => ({ sym: x.sym, halal: x.halal, signal: x.d, buy: D[x._k], units: x._r.units.length, sinceBuy: r4(x._r.g), stopPending: !!x._r.stopPending })) }; }
@@ -388,13 +401,13 @@ log('paper lane: scanned ' + toScan.length + ' new session(s); ' + newLines.filt
 const out = { generatedAt: new Date().toISOString(), preRegistered: 'tipster-core.mjs RULES + data/strategy-library.json TIP-* (24 Oct 2026, before any run)', window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, stress: STRESS, hold: HOLD, complete, data: STATUS, diagnostics: DIAGS,
   standard: 'both halves (signal before / from ' + SPLIT + '): > 0 after 0.8% and 1.2% cost per unit of money, better than the average liquid stock over the same unit-weighted days, better than the same stocks with the same plan on their other days, > 0 without the 2 best, block t >= ' + TIER2_T + ' (63-session blocks; 12-month holds overlap so t is optimistic) -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN; plus return per year of capital tied up above the S&P 500 (SPY) over the same days in both halves',
   plan: 'REGISTERED: 1 unit at the next open, +0.5 unit after a close 15% under the first buy, 35% stop on the total, 252 sessions. Information plans on the same entries: ONCE (no add), FORGET (no add, no stop), MONTHLY (+0.1 unit every 21 sessions)',
-  firstRun, latest: LIGHT ? PREV.latest : latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }), themes: LIGHT ? PREV.themes : themeLog, reconstruction: RECON,
+  firstRun, correctedRun, effectiveNote: 'readers acting on verdicts use first-run.mjs effectiveRuns(firstRun, correctedRun)', latest: LIGHT ? PREV.latest : latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }), themes: LIGHT ? PREV.themes : themeLog, reconstruction: RECON,
   trades: LIGHT ? PREV.trades : Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, r.trades])), light: LIGHT || undefined };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 try { const LB = J('data/strategy-library.json', null); let ch = false;
-  for (const id of IDS) { const e = LB && LB.strategies.find(x => x.id === id), r = firstRun[id]; if (!e || !r || e.result) continue; const R = r.results;
-    e.status = 'tested: ' + r.verdict.toLowerCase() + (r.verdict === 'TRADABLE SMALL' ? ' (tier 2)' : '') + '; forward paper lane from 26 Oct 2026'; e.tested = String(r.to); e.study = 'tipster-lab.mjs -> data/tipster-lab.json (run once as written, first complete run frozen)';
+  for (const id of IDS) { const e = LB && LB.strategies.find(x => x.id === id), r = EFF[id]; if (!e || !r || (e.result && !(r.corrected && !e.result.corrected))) continue; const R = r.results;
+    e.status = 'tested: ' + r.verdict.toLowerCase() + (r.verdict === 'TRADABLE SMALL' ? ' (tier 2)' : '') + '; forward paper lane from 26 Oct 2026'; e.tested = String(r.to || (r.window || [])[1]); e.study = 'tipster-lab.mjs -> data/tipster-lab.json (run once as written, first complete run frozen)';
     e.result = { verdict: r.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg, R.newer.avg], stress: [R.older.avgStress, R.newer.avgStress], edge: [R.older.edge, R.newer.edge], vsOwn: [R.older.vsOwn, R.newer.vsOwn], noTop2: [R.older.noTop2, R.newer.noTop2], tBlock: [R.older.tBlock, R.newer.tBlock],
-      perYear: [r.perYear.older.rule, r.perYear.newer.rule], spyPerYear: [r.perYear.older.spy, r.perYear.newer.spy], why: r.why }; ch = true; }
+      perYear: [r.perYear.older.rule, r.perYear.newer.rule], spyPerYear: [r.perYear.older.spy, r.perYear.newer.spy], why: r.why, ...(r.corrected ? { corrected: true, bugs: r.bugs } : {}) }; ch = true; }
   if (ch) fs.writeFileSync('data/strategy-library.json', JSON.stringify(LB, null, 1)); } catch (e) { console.log('tipster-lab: library not updated: ' + e.message); }
 console.log('TIPSTER LAB ' + D[0] + ' to ' + D[T - 1] + ' | bar ' + BAR + ' | frozen ' + Object.keys(firstRun).length + '/' + IDS.length + (complete ? '' : ' | INCOMPLETE: ' + Object.entries(STATUS).filter(([, s]) => s && s.ok === false).map(([k]) => k).join(', ')) + ' | ' + Object.entries(STATUS).map(([k, s]) => k + (s.ok === false ? ' MISSING' : ' ok')).join(', '));
