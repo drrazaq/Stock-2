@@ -19530,7 +19530,7 @@
    "family": "Index-style baskets (Squad 5)",
    "name": "The 20 largest companies, equal weight, quarterly",
    "explain": "the 20 largest US companies by market value, equal weight, re-formed every quarter (cap-weighted twin reported). RULE: Quarterly: the 20 largest by market value; equal weight, reset to equal at every quarter. Cap-weighted twin (same members) reported as information. Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B; a cover-page share count more than 3x off the financial-statement count (weighted-average shares from the filing date) is replaced by the latter. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner's recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today's members carry the owner's ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.",
-   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): not proven",
    "agent": "squad5",
    "registered": "2026-10-24",
    "libraryCheck": "Overlaps: P1 (index fund, monthly buying: the yardstick itself), X6 (equal-weight rebalancing of the owner's holdings), ANOM-MOM12 / DEC-FROG (12-1 momentum, top 10% / smooth, fixed holds, all liquid stocks: rejected / not proven), ANOM-QMJ / V1 (quality, all sizes: rejected), E6 / ANOM-IDXADD (index additions: needs data), A-RG1 / SQ3-REGIME (200-day regime). New here: BASKETS of the LARGEST companies with index mechanics (rank by size, buffer, no re-weighting, quarterly), judged as a portfolio with turnover costs as well as per holding.",
@@ -19577,6 +19577,41 @@
     ],
     "beatsSpyBothHalves": true,
     "why": "not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 1.49 under 2.5 in the older half; block t 1.36 under 2.5 in the newer half"
+   },
+   "correctedResult": {
+    "at": "2026-10-24T10:08:12.329Z",
+    "bugs": [
+     "SQ5-DATA1",
+     "SQ5-DATA2",
+     "SQ5-DATA3"
+    ],
+    "verdict": "NOT PROVEN",
+    "stress": [
+     0.0022,
+     0.0446
+    ],
+    "edge": [
+     0.0231,
+     0.0216
+    ],
+    "noTop2": [
+     -0.0046,
+     0.0368
+    ],
+    "portfolioCagr": [
+     0.0375,
+     0.2436
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1824
+    ],
+    "spusCagr": [
+     0.0052,
+     0.2124
+    ],
+    "beatsSpyBothHalves": true,
+    "why": "not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 1.2 under 2.5 in the older half; block t 1.36 under 2.5 in the newer half"
    }
   },
   {
@@ -19584,7 +19619,7 @@
    "family": "Index-style baskets (Squad 5)",
    "name": "The 20 largest, with a 200-day market filter",
    "explain": "SQ5-TOP20, but all cash while SPY is under its 200-day average (checked monthly). RULE: As SQ5-TOP20; at every month start, SPY close below its 200-session average -> sell all at the next open, hold cash at 0%; back above -> buy the current top 20 at the next open; quarterly resets while invested. Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B; a cover-page share count more than 3x off the financial-statement count (weighted-average shares from the filing date) is replaced by the latter. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner's recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today's members carry the owner's ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.",
-   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): not proven",
    "agent": "squad5",
    "registered": "2026-10-24",
    "libraryCheck": "Overlaps: P1 (index fund, monthly buying: the yardstick itself), X6 (equal-weight rebalancing of the owner's holdings), ANOM-MOM12 / DEC-FROG (12-1 momentum, top 10% / smooth, fixed holds, all liquid stocks: rejected / not proven), ANOM-QMJ / V1 (quality, all sizes: rejected), E6 / ANOM-IDXADD (index additions: needs data), A-RG1 / SQ3-REGIME (200-day regime). New here: BASKETS of the LARGEST companies with index mechanics (rank by size, buffer, no re-weighting, quarterly), judged as a portfolio with turnover costs as well as per holding.",
@@ -19631,6 +19666,41 @@
     ],
     "beatsSpyBothHalves": false,
     "why": "not better than the same stocks held as long on their other days in the older half; block t 0.89 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.98 under 2.5 in the newer half"
+   },
+   "correctedResult": {
+    "at": "2026-10-24T10:08:12.329Z",
+    "bugs": [
+     "SQ5-DATA1",
+     "SQ5-DATA2",
+     "SQ5-DATA3"
+    ],
+    "verdict": "NOT PROVEN",
+    "stress": [
+     0.0049,
+     0.0293
+    ],
+    "edge": [
+     0.033,
+     0.0194
+    ],
+    "noTop2": [
+     0.0014,
+     0.0264
+    ],
+    "portfolioCagr": [
+     0.0576,
+     0.1656
+    ],
+    "spyCagr": [
+     0.1088,
+     0.1824
+    ],
+    "spusCagr": [
+     0.1417,
+     0.2124
+    ],
+    "beatsSpyBothHalves": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.89 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.98 under 2.5 in the newer half"
    }
   },
   {
@@ -19638,7 +19708,7 @@
    "family": "Index-style baskets (Squad 5)",
    "name": "The 100 largest, equal weight (vs cap weight)",
    "explain": "the 100 largest by market value, equal weight, quarterly; must beat the cap-weighted 100. RULE: Quarterly: the 100 largest by market value, equal weight, reset every quarter. The cap-weighted 100 (same members) is the information twin. Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B; a cover-page share count more than 3x off the financial-statement count (weighted-average shares from the filing date) is replaced by the latter. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner's recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today's members carry the owner's ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.",
-   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): not proven",
    "agent": "squad5",
    "registered": "2026-10-24",
    "libraryCheck": "Overlaps: P1 (index fund, monthly buying: the yardstick itself), X6 (equal-weight rebalancing of the owner's holdings), ANOM-MOM12 / DEC-FROG (12-1 momentum, top 10% / smooth, fixed holds, all liquid stocks: rejected / not proven), ANOM-QMJ / V1 (quality, all sizes: rejected), E6 / ANOM-IDXADD (index additions: needs data), A-RG1 / SQ3-REGIME (200-day regime). New here: BASKETS of the LARGEST companies with index mechanics (rank by size, buffer, no re-weighting, quarterly), judged as a portfolio with turnover costs as well as per holding.",
@@ -19685,6 +19755,41 @@
     ],
     "beatsSpyBothHalves": false,
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 1.37 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.37 under 2.5 in the newer half; return per year of capital tied up -2.7% not above the S&P 500 on the same days in the older half (0.5%); return per year of capital tied up 13.1% not above the S&P 500 on the same days in the newer half (18.3%)"
+   },
+   "correctedResult": {
+    "at": "2026-10-24T10:08:12.329Z",
+    "bugs": [
+     "SQ5-DATA1",
+     "SQ5-DATA2",
+     "SQ5-DATA3"
+    ],
+    "verdict": "NOT PROVEN",
+    "stress": [
+     -0.0116,
+     0.0275
+    ],
+    "edge": [
+     0.0095,
+     0.0046
+    ],
+    "noTop2": [
+     -0.0097,
+     0.0281
+    ],
+    "portfolioCagr": [
+     -0.0143,
+     0.1638
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1824
+    ],
+    "spusCagr": [
+     0.0052,
+     0.2124
+    ],
+    "beatsSpyBothHalves": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 1.12 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.44 under 2.5 in the newer half; return per year of capital tied up -3.0% not above the S&P 500 on the same days in the older half (0.5%); return per year of capital tied up 13.5% not above the S&P 500 on the same days in the newer half (18.3%)"
    }
   },
   {
@@ -19692,7 +19797,7 @@
    "family": "Index-style baskets (Squad 5)",
    "name": "Winners stay: 12-1 momentum top 20 of the 500 largest, with an index buffer",
    "explain": "top 20 by 12-1 month return among the 500 largest; sold only when out of the top 40 (or out of the 500 largest); no re-weighting. RULE: Monthly: among the 500 largest, rank by the 12-1 month return (close 21 sessions ago / close 252 sessions ago - 1); hold 20; a holding is sold only when it falls out of the top 40 by that return or out of the 500 largest; vacancies filled by the best-ranked not held; no re-weighting; freed cash split equally among new entries. Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B; a cover-page share count more than 3x off the financial-statement count (weighted-average shares from the filing date) is replaced by the latter. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner's recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today's members carry the owner's ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.",
-   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): rejected",
    "agent": "squad5",
    "registered": "2026-10-24",
    "libraryCheck": "Overlaps: P1 (index fund, monthly buying: the yardstick itself), X6 (equal-weight rebalancing of the owner's holdings), ANOM-MOM12 / DEC-FROG (12-1 momentum, top 10% / smooth, fixed holds, all liquid stocks: rejected / not proven), ANOM-QMJ / V1 (quality, all sizes: rejected), E6 / ANOM-IDXADD (index additions: needs data), A-RG1 / SQ3-REGIME (200-day regime). New here: BASKETS of the LARGEST companies with index mechanics (rank by size, buffer, no re-weighting, quarterly), judged as a portfolio with turnover costs as well as per holding.",
@@ -19739,6 +19844,41 @@
     ],
     "beatsSpyBothHalves": false,
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -1.17 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.82 under 2.5 in the newer half; return per year of capital tied up -3.6% not above the S&P 500 on the same days in the older half (18.8%)"
+   },
+   "correctedResult": {
+    "at": "2026-10-24T10:08:12.329Z",
+    "bugs": [
+     "SQ5-DATA1",
+     "SQ5-DATA2",
+     "SQ5-DATA3"
+    ],
+    "verdict": "REJECTED",
+    "stress": [
+     -0.0101,
+     0.0274
+    ],
+    "edge": [
+     -0.0166,
+     0.0207
+    ],
+    "noTop2": [
+     -0.01,
+     0.0278
+    ],
+    "portfolioCagr": [
+     0.0031,
+     0.4363
+    ],
+    "spyCagr": [
+     0.2015,
+     0.1824
+    ],
+    "spusCagr": [
+     0.2769,
+     0.2124
+    ],
+    "beatsSpyBothHalves": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -1.15 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.72 under 2.5 in the newer half; return per year of capital tied up -7.3% not above the S&P 500 on the same days in the older half (18.8%)"
    }
   },
   {
@@ -19746,7 +19886,7 @@
    "family": "Index-style baskets (Squad 5)",
    "name": "Winners stay, with a 200-day market filter",
    "explain": "SQ5-MOMBUF, but all cash while SPY is under its 200-day average (checked monthly). RULE: As SQ5-MOMBUF; at every month start, SPY close below its 200-session average -> sell all at the next open (cash 0%); back above -> a fresh top 20, equal weight. Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B; a cover-page share count more than 3x off the financial-statement count (weighted-average shares from the filing date) is replaced by the latter. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner's recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today's members carry the owner's ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.",
-   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): rejected",
    "agent": "squad5",
    "registered": "2026-10-24",
    "libraryCheck": "Overlaps: P1 (index fund, monthly buying: the yardstick itself), X6 (equal-weight rebalancing of the owner's holdings), ANOM-MOM12 / DEC-FROG (12-1 momentum, top 10% / smooth, fixed holds, all liquid stocks: rejected / not proven), ANOM-QMJ / V1 (quality, all sizes: rejected), E6 / ANOM-IDXADD (index additions: needs data), A-RG1 / SQ3-REGIME (200-day regime). New here: BASKETS of the LARGEST companies with index mechanics (rank by size, buffer, no re-weighting, quarterly), judged as a portfolio with turnover costs as well as per holding.",
@@ -19793,6 +19933,41 @@
     ],
     "beatsSpyBothHalves": false,
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -1.56 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.67 under 2.5 in the newer half; return per year of capital tied up -29.0% not above the S&P 500 on the same days in the older half (2.1%)"
+   },
+   "correctedResult": {
+    "at": "2026-10-24T10:08:12.329Z",
+    "bugs": [
+     "SQ5-DATA1",
+     "SQ5-DATA2",
+     "SQ5-DATA3"
+    ],
+    "verdict": "REJECTED",
+    "stress": [
+     -0.0287,
+     0.0096
+    ],
+    "edge": [
+     -0.014,
+     0.006
+    ],
+    "noTop2": [
+     -0.0282,
+     0.0101
+    ],
+    "portfolioCagr": [
+     -0.1525,
+     0.1642
+    ],
+    "spyCagr": [
+     0.2015,
+     0.1824
+    ],
+    "spusCagr": [
+     0.2769,
+     0.2124
+    ],
+    "beatsSpyBothHalves": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -1.6 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.63 under 2.5 in the newer half; return per year of capital tied up -29.9% not above the S&P 500 on the same days in the older half (2.1%)"
    }
   },
   {
@@ -19800,7 +19975,7 @@
    "family": "Index-style baskets (Squad 5)",
    "name": "Quality + size: the 20 most profitable cash generators of the 300 largest",
    "explain": "among the 300 largest, the 20 with the best ROIC + free-cash-flow margin rank; quarterly, equal weight. RULE: Quarterly: among the 300 largest, quality score = average percentile rank of the ROIC proxy (TTM operating income x 0.79 / (equity + debt - cash)) and the TTM free-cash-flow margin ((operating cash flow - capex) / revenue), both > 0; SEC facts filed before t, of a period ended 45+ days before t; the top 20, equal weight reset. Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B; a cover-page share count more than 3x off the financial-statement count (weighted-average shares from the filing date) is replaced by the latter. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner's recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today's members carry the owner's ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.",
-   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): rejected",
    "agent": "squad5",
    "registered": "2026-10-24",
    "libraryCheck": "Overlaps: P1 (index fund, monthly buying: the yardstick itself), X6 (equal-weight rebalancing of the owner's holdings), ANOM-MOM12 / DEC-FROG (12-1 momentum, top 10% / smooth, fixed holds, all liquid stocks: rejected / not proven), ANOM-QMJ / V1 (quality, all sizes: rejected), E6 / ANOM-IDXADD (index additions: needs data), A-RG1 / SQ3-REGIME (200-day regime). New here: BASKETS of the LARGEST companies with index mechanics (rank by size, buffer, no re-weighting, quarterly), judged as a portfolio with turnover costs as well as per holding.",
@@ -19847,6 +20022,41 @@
     ],
     "beatsSpyBothHalves": false,
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.28 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.55 under 2.5 in the newer half; return per year of capital tied up -6.2% not above the S&P 500 on the same days in the older half (0.6%); return per year of capital tied up 8.1% not above the S&P 500 on the same days in the newer half (18.3%)"
+   },
+   "correctedResult": {
+    "at": "2026-10-24T10:08:12.329Z",
+    "bugs": [
+     "SQ5-DATA1",
+     "SQ5-DATA2",
+     "SQ5-DATA3"
+    ],
+    "verdict": "REJECTED",
+    "stress": [
+     -0.0155,
+     0.0159
+    ],
+    "edge": [
+     0.0057,
+     -0.007
+    ],
+    "noTop2": [
+     -0.0172,
+     0.0117
+    ],
+    "portfolioCagr": [
+     -0.04,
+     0.1006
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1824
+    ],
+    "spusCagr": [
+     0.0052,
+     0.2124
+    ],
+    "beatsSpyBothHalves": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.36 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.48 under 2.5 in the newer half; return per year of capital tied up -4.7% not above the S&P 500 on the same days in the older half (0.6%); return per year of capital tied up 8.5% not above the S&P 500 on the same days in the newer half (18.3%)"
    }
   },
   {
@@ -19854,7 +20064,7 @@
    "family": "Index-style baskets (Squad 5)",
    "name": "New entrants to the 500 largest (index-addition proxy), held 6 months",
    "explain": "a stock that just entered the 500 largest (not in at any of the previous 12 month starts); hold 6 months. RULE: Monthly: in the 500 largest at this month start and in none of the previous 12 month starts' 500 largest; buy at the next open; sell at the open of the 6th month start after entry (~126 sessions). Portfolio: equal weight across open entrants, max 5% each (rest cash), reset monthly. Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B; a cover-page share count more than 3x off the financial-statement count (weighted-average shares from the filing date) is replaced by the latter. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner's recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today's members carry the owner's ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.",
-   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): rejected",
    "agent": "squad5",
    "registered": "2026-10-24",
    "libraryCheck": "Overlaps: P1 (index fund, monthly buying: the yardstick itself), X6 (equal-weight rebalancing of the owner's holdings), ANOM-MOM12 / DEC-FROG (12-1 momentum, top 10% / smooth, fixed holds, all liquid stocks: rejected / not proven), ANOM-QMJ / V1 (quality, all sizes: rejected), E6 / ANOM-IDXADD (index additions: needs data), A-RG1 / SQ3-REGIME (200-day regime). New here: BASKETS of the LARGEST companies with index mechanics (rank by size, buffer, no re-weighting, quarterly), judged as a portfolio with turnover costs as well as per holding.",
@@ -19901,6 +20111,41 @@
     ],
     "beatsSpyBothHalves": false,
     "why": "block t 0.17 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -1.01 under 2.5 in the newer half; return per year of capital tied up 18.5% not above the S&P 500 on the same days in the older half (20.3%); return per year of capital tied up 8.0% not above the S&P 500 on the same days in the newer half (16.1%)"
+   },
+   "correctedResult": {
+    "at": "2026-10-24T10:08:12.329Z",
+    "bugs": [
+     "SQ5-DATA1",
+     "SQ5-DATA2",
+     "SQ5-DATA3"
+    ],
+    "verdict": "REJECTED",
+    "stress": [
+     0.0661,
+     0.0466
+    ],
+    "edge": [
+     0.0477,
+     -0.0185
+    ],
+    "noTop2": [
+     0.0313,
+     0.0217
+    ],
+    "portfolioCagr": [
+     0.0642,
+     0.1062
+    ],
+    "spyCagr": [
+     0.1548,
+     0.1824
+    ],
+    "spusCagr": [
+     0.2244,
+     0.2124
+    ],
+    "beatsSpyBothHalves": false,
+    "why": "block t 0.38 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.79 under 2.5 in the newer half; return per year of capital tied up 14.3% not above the S&P 500 on the same days in the older half (19.3%); return per year of capital tied up 11.0% not above the S&P 500 on the same days in the newer half (16.4%)"
    }
   },
   {
@@ -19908,7 +20153,7 @@
    "family": "Index-style baskets (Squad 5)",
    "name": "The 30 largest that pass a Shariah proxy (SPUS-style, concentrated)",
    "explain": "the 30 largest passing a point-in-time Shariah proxy (no banks/insurance/alcohol/tobacco/gambling/media; debt and cash each < 33% of market value); quarterly, equal weight. RULE: Quarterly: the 30 largest that pass: business screen by SEC SIC (out: 6000-6499, 6700-6799, 2082-2085, 2100-2199, 2011, 7011, 7990, 7993, 4832-4841, 7310-7319, 7812-7829) and, on the latest balance sheet filed before t, debt / market value < 33% and cash / market value < 33% (both known; never reported debt = 0); equal weight reset. Cap-weighted twin as information. A proxy of the S&P Shariah method (which uses 36-month average market value and more items), not the ZAD status. Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B; a cover-page share count more than 3x off the financial-statement count (weighted-average shares from the filing date) is replaced by the latter. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner's recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today's members carry the owner's ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.",
-   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): not proven",
    "agent": "squad5",
    "registered": "2026-10-24",
    "libraryCheck": "Overlaps: P1 (index fund, monthly buying: the yardstick itself), X6 (equal-weight rebalancing of the owner's holdings), ANOM-MOM12 / DEC-FROG (12-1 momentum, top 10% / smooth, fixed holds, all liquid stocks: rejected / not proven), ANOM-QMJ / V1 (quality, all sizes: rejected), E6 / ANOM-IDXADD (index additions: needs data), A-RG1 / SQ3-REGIME (200-day regime). New here: BASKETS of the LARGEST companies with index mechanics (rank by size, buffer, no re-weighting, quarterly), judged as a portfolio with turnover costs as well as per holding.",
@@ -19955,6 +20200,41 @@
     ],
     "beatsSpyBothHalves": true,
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 1.15 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.63 under 2.5 in the newer half; return per year of capital tied up -1.0% not above the S&P 500 on the same days in the older half (0.6%); return per year of capital tied up 16.2% not above the S&P 500 on the same days in the newer half (18.3%)"
+   },
+   "correctedResult": {
+    "at": "2026-10-24T10:08:12.329Z",
+    "bugs": [
+     "SQ5-DATA1",
+     "SQ5-DATA2",
+     "SQ5-DATA3"
+    ],
+    "verdict": "NOT PROVEN",
+    "stress": [
+     -0.002,
+     0.0404
+    ],
+    "edge": [
+     0.0189,
+     0.0174
+    ],
+    "noTop2": [
+     -0.0052,
+     0.0344
+    ],
+    "portfolioCagr": [
+     0.0257,
+     0.2221
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1824
+    ],
+    "spusCagr": [
+     0.0052,
+     0.2124
+    ],
+    "beatsSpyBothHalves": true,
+    "why": "lost money after 1.2% costs in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 1.32 under 2.5 in the older half; block t 1.34 under 2.5 in the newer half"
    }
   },
   {
