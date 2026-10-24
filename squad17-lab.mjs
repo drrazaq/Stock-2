@@ -96,8 +96,18 @@ const FUNDC = {}, FUNDBARS = {}; for (const f of ['SPUS', 'HLAL']) { const arr =
 { const i = SY.get('SPUS'); if (!(lastI[i] === T - 1)) { const m = new Map((FUNDBARS.SPUS || []).map(x => [x.d, x])); let n = 0;
     for (let t = 0; t < T; t++) { const b = m.get(D[t]), k = i * T + t; if (b && b.c > 0) { CA[k] = b.c; OA[k] = b.o > 0 ? b.o : b.c; n++; } }
     for (let t = T - 1; t >= 0; t--) if (CA[i * T + t] > 0) { lastI[i] = t; break; } STATUS.spusRow = { filledFromBars: n }; } else STATUS.spusRow = { fromCache: true }; }
-const SPUSI = SY.get('SPUS'), SPUS_ME = monthEndCloses(FUNDBARS.SPUS.length ? FUNDBARS.SPUS : D.map((d, t) => ({ d, c: FUNDC.SPUS[t] })));
-STATUS.funds = { ok: ['SPUS', 'HLAL'].every(f => FUNDC[f].filter(x => x > 0).length > T * 0.9) && lastI[SPUSI] === T - 1 && SPUS_ME.length && SPUS_ME[0][1] <= '2020-12-31', SPUS: FUNDC.SPUS.filter(x => x > 0).length, HLAL: FUNDC.HLAL.filter(x => x > 0).length, spusHistoryFrom: SPUS_ME.length ? SPUS_ME[0][1] : null, ...STATUS.spusRow };
+// DATA GUARD (after DIAG 1 of 24 Oct 2026, before any SQ17 result): the price API returns SPUS only from Oct 2021 (5-year limit), so the
+// 10-month average did not exist at the start. The month-end closes BEFORE the first bar come from Alpha Vantage TIME_SERIES_MONTHLY
+// (official API, ALPHAVANTAGE_KEY secret; SPUS never split, so its raw closes match); overlapping months must agree within 1%.
+const SPUSI = SY.get('SPUS'); let SPUS_ME = monthEndCloses(FUNDBARS.SPUS.length ? FUNDBARS.SPUS : D.map((d, t) => ({ d, c: FUNDC.SPUS[t] })));
+STATUS.spusHist = { ok: SPUS_ME.length > 0 && SPUS_ME[0][0] <= '2021-01', added: 0 };
+if (!STATUS.spusHist.ok && env.ALPHAVANTAGE_KEY && !OFFLINE) { const j = await getJ('https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=SPUS&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)), ser = j && j['Monthly Time Series'];
+  if (ser) { const av = Object.entries(ser).map(([d, v]) => [d.slice(0, 7), d, +v['4. close']]).filter(x => x[2] > 0).sort((a, b) => a[0] < b[0] ? -1 : 1), have = new Map(SPUS_ME.map(x => [x[0], x]));
+    const overlap = av.filter(x => have.has(x[0]) && have.get(x[0])[1] === x[1]), agree = overlap.filter(x => Math.abs(x[2] / have.get(x[0])[2] - 1) < 0.01).length;
+    const older = av.filter(x => x[0] < SPUS_ME[0][0]); SPUS_ME = [...older, ...SPUS_ME];
+    STATUS.spusHist = { ok: SPUS_ME[0][0] <= '2021-01' && overlap.length >= 6 && agree >= overlap.length - 1, added: older.length, from: SPUS_ME[0][1], overlapMonths: overlap.length, agreeWithin1pct: agree }; } else STATUS.spusHist.error = 'no Alpha Vantage answer'; }
+log('SPUS month-end history: ' + JSON.stringify(STATUS.spusHist));
+STATUS.funds = { ok: ['SPUS', 'HLAL'].every(f => FUNDC[f].filter(x => x > 0).length > T * 0.9) && lastI[SPUSI] === T - 1 && STATUS.spusHist.ok, SPUS: FUNDC.SPUS.filter(x => x > 0).length, HLAL: FUNDC.HLAL.filter(x => x > 0).length, spusHistoryFrom: SPUS_ME.length ? SPUS_ME[0][1] : null, ...STATUS.spusRow };
 
 // ================= 2. SEC: historical ticker map (Form 3/4/5 SUBMISSION tables) =================
 const MON = { JAN: '01', FEB: '02', MAR: '03', APR: '04', MAY: '05', JUN: '06', JUL: '07', AUG: '08', SEP: '09', OCT: '10', NOV: '11', DEC: '12' };
