@@ -17446,60 +17446,250 @@
    "family": "Winner DNA (Squad 7)",
    "name": "Beaten-down stock (33%+ under its 200-day) that gapped up 3%+ in the last month and is not diluting (hold 20)",
    "explain": "Close >= 33% under its 200-day average (d200 <= -0.33); at least one opening gap of +3% or more in the last 20 sessions (gapUp20 >= 1); share count up no more than 0.8% in a year (dShares <= 0.008, both counts known 30 days late). Rank: deepest under the 200-day first; max 10 a day. Hold 20 sessions. Evidence (older half only): stage 1 (W20, +30% in 20 sessions): d200 bottom decile lift 1.75 with winners 21.3% vs losers 12.9% of liquid stock-days (population 3.1% / 3.2%); gapUp20 >= 2 lift 1.55; dilution top decile lift 1.29 but losers 8.1% > winners 5.8%, so dilution is excluded. Older-half screen: 312 trades, average +5.1% after 0.8%, edge over the average stock +3.0%, all 4 older semesters positive, block t 1.63.",
-   "status": "pre-registered 2026-10-24 (squad 7 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad7",
    "kind": "buy",
    "hold": 20,
    "libraryCheck": "D2-004 (deep under the 200-day + a down day + 5-day loss: rejected), M8 (1-year low + heavy volume + no dilution: failed discovery), DEC-CRASH (crashed 50%+ and stabilising: paper), S2 / C-NSI1 (dilution avoid). New: the recent gap-up (buyers showing up) inside a deep reset, dilution excluded.",
-   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad7-lab.mjs -> data/squad7-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     320,
+     523
+    ],
+    "avg": [
+     0.0485,
+     -0.006
+    ],
+    "stress": [
+     0.0445,
+     -0.01
+    ],
+    "edge": [
+     0.0263,
+     -0.0189
+    ],
+    "vsOwn": [
+     0.0674,
+     0.0462
+    ],
+    "noTop2": [
+     0.0417,
+     -0.0138
+    ],
+    "tBlock": [
+     1.04,
+     -1.42
+    ],
+    "win": [
+     0.5531,
+     0.4512
+    ],
+    "why": "block t 1.04 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.42 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ7-DEEPEARN",
    "family": "Winner DNA (Squad 7)",
    "name": "Beaten-down stock (33%+ under its 200-day) with its next report near (59-85 days since the last) (hold 20)",
    "explain": "Close >= 33% under its 200-day average; the last earnings report on the Nasdaq calendar was 59 to 85 calendar days before the signal close (the next report usually falls inside the 20-session hold). Rank: deepest under the 200-day first; max 10 a day. Hold 20 sessions. Evidence (older half only): stage 1 (W20): earnDays 59-85 deciles have winners 3.4-4.7% vs losers 2.2-2.8% and a forward return of +0.7% to +1.5% (population -0.7%); d200 bottom decile as above. Older-half screen: 341 trades, average +4.8%, edge +2.6%, 3 of 4 semesters positive, block t 1.21.",
-   "status": "pre-registered 2026-10-24 (squad 7 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad7",
    "kind": "buy",
    "hold": 20,
    "libraryCheck": "ANOM-EAP (earnings-announcement premium alone: rejected), E19 (queued), D2-004 (deep reset + down day: rejected). New: the pre-report window only inside a deep reset.",
-   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad7-lab.mjs -> data/squad7-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     343,
+     541
+    ],
+    "avg": [
+     0.0476,
+     0.0014
+    ],
+    "stress": [
+     0.0436,
+     -0.0026
+    ],
+    "edge": [
+     0.0248,
+     -0.0209
+    ],
+    "vsOwn": [
+     0.0808,
+     0.018
+    ],
+    "noTop2": [
+     0.0413,
+     -0.0016
+    ],
+    "tBlock": [
+     1.07,
+     -1.8
+    ],
+    "win": [
+     0.5102,
+     0.4954
+    ],
+    "why": "block t 1.07 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.8 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ7-BUYBACKVOL",
    "family": "Winner DNA (Squad 7)",
    "name": "Buyback company (share count down 3%+ in a year) not collapsing, on 1.34x volume (hold 120)",
    "explain": "Share count down 3% or more over a year (dShares <= -0.03, known 30 days late); close no more than 34% under its 200-day average (d200 >= -0.34); today's volume >= 1.34x its 50-day average (turn50 >= 1.34). Rank: highest volume ratio first; max 10 a day. Hold 120 sessions. Evidence (older half only): stage 1 (W120, +100% in 120 sessions): shrinking share count bottom decile has the lowest loser rate (2.2% vs 8.7% population) and a forward return of +1.6% vs -4.2%; turn50 top decile lift 1.83; d200 under -34% carries 36% losers, so it is excluded. Older-half screen: 731 trades, average +2.8%, edge +2.2%, all 4 older semesters positive (the last one only 9 trades), block t 1.74.",
-   "status": "pre-registered 2026-10-24 (squad 7 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad7",
    "kind": "buy",
    "hold": 120,
    "libraryCheck": "ANOM-NSI (shrinking share count, lowest 10%, alone: rejected), V17 net payout yield (queued), E8 buyback announcements (queued). New: buyback + not collapsing + a volume day as the timing trigger.",
-   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad7-lab.mjs -> data/squad7-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     988,
+     1373
+    ],
+    "avg": [
+     0.0477,
+     0.0518
+    ],
+    "stress": [
+     0.0437,
+     0.0478
+    ],
+    "edge": [
+     0.0177,
+     -0.0151
+    ],
+    "vsOwn": [
+     -0.0492,
+     0.0193
+    ],
+    "noTop2": [
+     0.0458,
+     0.0484
+    ],
+    "tBlock": [
+     0.93,
+     -1.42
+    ],
+    "win": [
+     0.5941,
+     0.5462
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 0.93 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.42 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ7-DEEPNODIL",
    "family": "Winner DNA (Squad 7)",
    "name": "Beaten-down stock (33%+ under its 200-day) that is not diluting (hold 20)",
    "explain": "Close >= 33% under its 200-day average; share count up no more than 0.3% in a year (dShares <= 0.003, known 30 days late). Rank: deepest under the 200-day first; max 10 a day. Hold 20 sessions. Evidence (older half only): stage 1 (W20): d200 bottom decile winners 21.3% vs losers 12.9%; dShares <= 0.003 deciles have fewer losers than winners. Older-half screen: 301 trades, average +1.8%, edge +1.7%, 3 of 4 semesters positive, block t 0.94.",
-   "status": "pre-registered 2026-10-24 (squad 7 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad7",
    "kind": "buy",
    "hold": 20,
    "libraryCheck": "D2-004 (rejected), M8 (failed discovery), ANOM-NSI (rejected), S2 (dilution avoid). New: the deep reset filtered by no dilution, no volume or down-day trigger.",
-   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad7-lab.mjs -> data/squad7-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     313,
+     589
+    ],
+    "avg": [
+     0.0161,
+     -0.0171
+    ],
+    "stress": [
+     0.0121,
+     -0.0211
+    ],
+    "edge": [
+     0.0124,
+     -0.0295
+    ],
+    "vsOwn": [
+     0.0313,
+     0.0262
+    ],
+    "noTop2": [
+     0.0106,
+     -0.0241
+    ],
+    "tBlock": [
+     0.48,
+     -3.16
+    ],
+    "win": [
+     0.5048,
+     0.4499
+    ],
+    "why": "block t 0.48 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -3.16 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ7-LAGEARN",
    "family": "Winner DNA (Squad 7)",
    "name": "Sector laggard under its 200-day with its next report near (hold 20)",
    "explain": "59-85 calendar days since the last earnings report; 3-month return 10%+ under its sector median (rsSec <= -0.10, SIC 2-digit, 6+ liquid members); close under its 200-day average. Rank: furthest behind its sector first; max 10 a day. Hold 20 sessions. Evidence (older half only): stage 1 (W20): rsSec bottom decile lift 1.61, winners 14.5% vs losers 10.6%, forward +0.6% vs -0.7%; earnDays 59-85 as above. Older-half screen: 610 trades, average +2.1%, edge +1.5%, 3 of 4 semesters positive, block t 1.32.",
-   "status": "pre-registered 2026-10-24 (squad 7 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad7",
    "kind": "buy",
    "hold": 20,
    "libraryCheck": "ANOM-EAP (rejected), D2-001 / D2-002 (industry-relative losers: not proven). New: the sector laggard only inside the pre-report window.",
-   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 after the stage-1 discovery on the OLDER half only (data/squad7-dna.json) and BEFORE any newer-half number was computed (squad7-core.mjs RULES = the exact rule; one version). 5-year one-shot by squad7-lab.mjs, first complete verdict frozen in data/squad7-lab.json; forward paper lane (data/squad7-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad7-lab.mjs -> data/squad7-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     645,
+     1049
+    ],
+    "avg": [
+     0.0202,
+     -0.0006
+    ],
+    "stress": [
+     0.0162,
+     -0.0046
+    ],
+    "edge": [
+     0.0151,
+     -0.0203
+    ],
+    "vsOwn": [
+     0.0349,
+     -0.0043
+    ],
+    "noTop2": [
+     0.0168,
+     -0.0023
+    ],
+    "tBlock": [
+     1.35,
+     -2.71
+    ],
+    "win": [
+     0.4961,
+     0.4728
+    ],
+    "why": "block t 1.35 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.71 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ7-DNA",
