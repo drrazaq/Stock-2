@@ -21430,72 +21430,346 @@
    "family": "Variants of what worked: leader pullbacks, MTUM, leader-follower (Squad 14)",
    "name": "Leader pullback 12% with the MTUM-style (risk-adjusted 6+12 month) leader list (hold 126)",
    "explain": "RULE: Leader = MTUM-style: among the 300 largest US companies by point-in-time market value at the prior month end, the up-to-60 with the highest positive combined z of 6- and 12-month momentum (skipping the last month), each divided by the annualised volatility of weekly returns (up to 3 years), MSCI method (squad6-core mtumPick). Signal: the first close >= 12% under the highest close of the last 50 sessions while above the 200-session average. Buy the next open; sell at the close of session 126. Common (squad14-core.mjs header): universe = the 300 (LEADH4: 500) largest US operating companies by point-in-time market value at each month-end close (Squad 5 / 11 market value, dead stocks included, US domicile, one ticker per company); leader sets of a month end used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad14-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves. PB12P5 and MTPB also as one account (0.4% per side) vs SPY and SPUS per half. VARIANTS OF A WINNER (SQ11-PB12 / SQ6-MTUM / SQ13-LEADH): 6 tried, one version each; the luck bar matters more than for an independent idea.",
-   "status": "pre-registered 2026-10-24 (squad 14); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad14",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not a re-run of SQ11-PB12 / PB8 (12-1 leaders, 12% / 8%), SQ6-MTUM (traded-value universe, fixed date, no pullback add), SQ13-LEADH (3-digit SIC, traded-value ranks), SQ5-SHARIAH30 / SQ10-SH* (Shariah baskets, no pullback entry), T5 / M7 / DEC-PB / SQ4-QUALDIP (dips on other universes).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad14-lab.mjs -> data/squad14-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     110,
+     250
+    ],
+    "avg": [
+     0.1596,
+     0.1722
+    ],
+    "stress": [
+     0.1556,
+     0.1682
+    ],
+    "edge": [
+     0.0991,
+     0.0784
+    ],
+    "vsOwn": [
+     -0.0795,
+     -0.0568
+    ],
+    "noTop2": [
+     0.1466,
+     0.1495
+    ],
+    "tBlock": [
+     1.28,
+     0.59
+    ],
+    "perYear": [
+     0.3215,
+     0.3455
+    ],
+    "spyPerYear": [
+     0.2681,
+     0.2101
+    ],
+    "tryWouldQualify": true,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.28 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.59 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ14-PB15",
    "family": "Variants of what worked: leader pullbacks, MTUM, leader-follower (Squad 14)",
    "name": "Leader pullback 15% (12-1 leaders, hold 126)",
    "explain": "RULE: Leader = the top 20% by 12-1 month return among the 300 largest by market value at the prior month end (as SQ11-PB12). Signal: the first close >= 15% under the highest close of the last 50 sessions while above the 200-session average. Buy the next open; sell at the close of session 126. Common (squad14-core.mjs header): universe = the 300 (LEADH4: 500) largest US operating companies by point-in-time market value at each month-end close (Squad 5 / 11 market value, dead stocks included, US domicile, one ticker per company); leader sets of a month end used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad14-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves. PB12P5 and MTPB also as one account (0.4% per side) vs SPY and SPUS per half. VARIANTS OF A WINNER (SQ11-PB12 / SQ6-MTUM / SQ13-LEADH): 6 tried, one version each; the luck bar matters more than for an independent idea.",
-   "status": "pre-registered 2026-10-24 (squad 14); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad14",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not a re-run of SQ11-PB12 / PB8 (12-1 leaders, 12% / 8%), SQ6-MTUM (traded-value universe, fixed date, no pullback add), SQ13-LEADH (3-digit SIC, traded-value ranks), SQ5-SHARIAH30 / SQ10-SH* (Shariah baskets, no pullback entry), T5 / M7 / DEC-PB / SQ4-QUALDIP (dips on other universes).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad14-lab.mjs -> data/squad14-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     51,
+     182
+    ],
+    "avg": [
+     0.1885,
+     0.1776
+    ],
+    "stress": [
+     0.1845,
+     0.1736
+    ],
+    "edge": [
+     0.094,
+     0.0589
+    ],
+    "vsOwn": [
+     -0.0672,
+     -0.1297
+    ],
+    "noTop2": [
+     0.1543,
+     0.1478
+    ],
+    "tBlock": [
+     1.34,
+     1.76
+    ],
+    "perYear": [
+     0.3832,
+     0.3567
+    ],
+    "spyPerYear": [
+     0.2742,
+     0.2098
+    ],
+    "tryWouldQualify": true,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.34 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.76 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ14-PB12P5",
    "family": "Variants of what worked: leader pullbacks, MTUM, leader-follower (Squad 14)",
    "name": "PB12 as a 5-slot account (max 5 open, 20% each, skip when full; hold 126)",
    "explain": "RULE: The SQ11-PB12 signals (12-1 leaders of the 300 largest; first close 12% under the 50-day high, above the 200-day; hold 126) traded in ONE account: at most 5 open positions, each new one 20% of the account marked at the previous close (bought with the cash there is); a signal while 5 are open or on a stock already held is skipped; signals of the same evening taken by the 12-1 return (highest first). 0.4% cost per buy and per sale. Judged per trade on the trades taken AND as a portfolio vs SPY and SPUS per half (CAGR, max drawdown). Common (squad14-core.mjs header): universe = the 300 (LEADH4: 500) largest US operating companies by point-in-time market value at each month-end close (Squad 5 / 11 market value, dead stocks included, US domicile, one ticker per company); leader sets of a month end used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad14-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves. PB12P5 and MTPB also as one account (0.4% per side) vs SPY and SPUS per half. VARIANTS OF A WINNER (SQ11-PB12 / SQ6-MTUM / SQ13-LEADH): 6 tried, one version each; the luck bar matters more than for an independent idea.",
-   "status": "pre-registered 2026-10-24 (squad 14); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "squad14",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not a re-run of SQ11-PB12 / PB8 (12-1 leaders, 12% / 8%), SQ6-MTUM (traded-value universe, fixed date, no pullback add), SQ13-LEADH (3-digit SIC, traded-value ranks), SQ5-SHARIAH30 / SQ10-SH* (Shariah baskets, no pullback entry), T5 / M7 / DEC-PB / SQ4-QUALDIP (dips on other universes).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad14-lab.mjs -> data/squad14-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     15,
+     20
+    ],
+    "avg": [
+     -0.0851,
+     0.1931
+    ],
+    "stress": [
+     -0.0891,
+     0.1891
+    ],
+    "edge": [
+     -0.112,
+     0.0816
+    ],
+    "vsOwn": [
+     -0.2747,
+     0.0117
+    ],
+    "noTop2": [
+     -0.1432,
+     0.1386
+    ],
+    "tBlock": [
+     -2.46,
+     1.37
+    ],
+    "perYear": [
+     -0.1702,
+     0.3862
+    ],
+    "spyPerYear": [
+     0.2166,
+     0.1794
+    ],
+    "portfolioCagr": [
+     -0.153,
+     0.1744
+    ],
+    "spyCagr": [
+     0.1962,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "fewer than 20 cases or 3 blocks in a half (15 cases, 3 blocks / 20 cases, 4 blocks)"
+   }
   },
   {
    "id": "SQ14-PB12H",
    "family": "Variants of what worked: leader pullbacks, MTUM, leader-follower (Squad 14)",
    "name": "PB12 on Shariah-screened leaders only (SIC screen + debt and cash < 33% of market value; hold 126)",
    "explain": "RULE: As SQ11-PB12 (12-1 leaders of the 300 largest; first close 12% under the 50-day high, above the 200-day; hold 126), only on leaders that pass the point-in-time Shariah proxy at the leader month end (squad5-core shariahOk: SEC SIC business screen; debt / market value and cash / market value each < 33% on the latest balance sheet filed before that date). Not the ZAD status; today's candidates carry the owner's ZAD mark. Common (squad14-core.mjs header): universe = the 300 (LEADH4: 500) largest US operating companies by point-in-time market value at each month-end close (Squad 5 / 11 market value, dead stocks included, US domicile, one ticker per company); leader sets of a month end used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad14-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves. PB12P5 and MTPB also as one account (0.4% per side) vs SPY and SPUS per half. VARIANTS OF A WINNER (SQ11-PB12 / SQ6-MTUM / SQ13-LEADH): 6 tried, one version each; the luck bar matters more than for an independent idea.",
-   "status": "pre-registered 2026-10-24 (squad 14); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad14",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not a re-run of SQ11-PB12 / PB8 (12-1 leaders, 12% / 8%), SQ6-MTUM (traded-value universe, fixed date, no pullback add), SQ13-LEADH (3-digit SIC, traded-value ranks), SQ5-SHARIAH30 / SQ10-SH* (Shariah baskets, no pullback entry), T5 / M7 / DEC-PB / SQ4-QUALDIP (dips on other universes).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad14-lab.mjs -> data/squad14-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     72,
+     161
+    ],
+    "avg": [
+     0.1503,
+     0.2037
+    ],
+    "stress": [
+     0.1463,
+     0.1997
+    ],
+    "edge": [
+     0.1092,
+     0.0642
+    ],
+    "vsOwn": [
+     -0.0871,
+     -0.1107
+    ],
+    "noTop2": [
+     0.1331,
+     0.1686
+    ],
+    "tBlock": [
+     1.12,
+     1.54
+    ],
+    "perYear": [
+     0.3041,
+     0.4078
+    ],
+    "spyPerYear": [
+     0.2556,
+     0.2155
+    ],
+    "tryWouldQualify": true,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.12 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.54 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ14-LEADH4",
    "family": "Variants of what worked: leader pullbacks, MTUM, leader-follower (Squad 14)",
    "name": "Industry leader's first 52-week high -> its non-moving large peers, SIC 4-digit, market-value ranks (hold 63)",
    "explain": "RULE: Universe: the 500 largest by market value at the prior month end. Industry = SEC SIC 4-digit (catch-alls 7389, 6770, 9995, 9999 left out); groups with 4+ members. Leader = the group's largest by market value. Signal at the close of t: the leader closes above the highest close of its previous 252 sessions (240+ present) and did not on any of the 63 sessions before. Followers = the group's ranks 2-4 by market value whose 10-session return is under +2%. Buy them the next open; sell at the close of session 63; one open trade per stock. Common (squad14-core.mjs header): universe = the 300 (LEADH4: 500) largest US operating companies by point-in-time market value at each month-end close (Squad 5 / 11 market value, dead stocks included, US domicile, one ticker per company); leader sets of a month end used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad14-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves. PB12P5 and MTPB also as one account (0.4% per side) vs SPY and SPUS per half. VARIANTS OF A WINNER (SQ11-PB12 / SQ6-MTUM / SQ13-LEADH): 6 tried, one version each; the luck bar matters more than for an independent idea.",
-   "status": "pre-registered 2026-10-24 (squad 14); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad14",
    "registered": "2026-10-24",
    "hold": 63,
    "libraryCheck": "Not a re-run of SQ11-PB12 / PB8 (12-1 leaders, 12% / 8%), SQ6-MTUM (traded-value universe, fixed date, no pullback add), SQ13-LEADH (3-digit SIC, traded-value ranks), SQ5-SHARIAH30 / SQ10-SH* (Shariah baskets, no pullback entry), T5 / M7 / DEC-PB / SQ4-QUALDIP (dips on other universes).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad14-lab.mjs -> data/squad14-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     36,
+     63
+    ],
+    "avg": [
+     0.0103,
+     0.0357
+    ],
+    "stress": [
+     0.0063,
+     0.0317
+    ],
+    "edge": [
+     -0.0155,
+     -0.0136
+    ],
+    "vsOwn": [
+     -0.034,
+     -0.0218
+    ],
+    "noTop2": [
+     -0.0115,
+     0.0219
+    ],
+    "tBlock": [
+     -0.11,
+     -0.65
+    ],
+    "perYear": [
+     0.0412,
+     0.1429
+    ],
+    "spyPerYear": [
+     0.2225,
+     0.1433
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -0.11 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.65 under 2.5 in the newer half; return per year of capital tied up 4.1% not above the S&P 500 on the same days in the older half (22.3%); return per year of capital tied up 14.3% not above the S&P 500 on the same days in the newer half (14.3%)"
+   }
   },
   {
    "id": "SQ14-MTPB",
    "family": "Variants of what worked: leader pullbacks, MTUM, leader-follower (Squad 14)",
    "name": "MTUM-style book on the 300 largest (May/Nov) + one add on its first 12% pullback (hold to the base exit)",
    "explain": "RULE: At the last session of May and November: the MTUM-style book (up-to-60 with the highest positive risk-adjusted 6+12 month z among the 300 largest by market value). BASE: buy each at the next open, sell at the close of session 126. ADD: while a base is open, the name's first close 12% under its 50-day high above its 200-day at a close t with t+1 before the base exit buys a second piece at the open of t+1, sold at the base exit close (one add per base). Judged per trade on base + add trades together. PORTFOLIO: every base and add piece 1/80 of the account (bought with the cash there is), 0.4% per side, vs SPY and SPUS per half. Common (squad14-core.mjs header): universe = the 300 (LEADH4: 500) largest US operating companies by point-in-time market value at each month-end close (Squad 5 / 11 market value, dead stocks included, US domicile, one ticker per company); leader sets of a month end used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad14-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves. PB12P5 and MTPB also as one account (0.4% per side) vs SPY and SPUS per half. VARIANTS OF A WINNER (SQ11-PB12 / SQ6-MTUM / SQ13-LEADH): 6 tried, one version each; the luck bar matters more than for an independent idea.",
-   "status": "pre-registered 2026-10-24 (squad 14); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad14",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not a re-run of SQ11-PB12 / PB8 (12-1 leaders, 12% / 8%), SQ6-MTUM (traded-value universe, fixed date, no pullback add), SQ13-LEADH (3-digit SIC, traded-value ranks), SQ5-SHARIAH30 / SQ10-SH* (Shariah baskets, no pullback entry), T5 / M7 / DEC-PB / SQ4-QUALDIP (dips on other universes).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad14-core.mjs = the exact rule; one version; 6 variants in all). 5-year one-shot by squad14-lab.mjs, first complete verdict frozen; forward paper lane (data/squad14-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad14-lab.mjs -> data/squad14-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     227,
+     355
+    ],
+    "avg": [
+     0.041,
+     0.1593
+    ],
+    "stress": [
+     0.037,
+     0.1553
+    ],
+    "edge": [
+     0.0366,
+     0.0752
+    ],
+    "vsOwn": [
+     -0.0991,
+     -0.0185
+    ],
+    "noTop2": [
+     0.0309,
+     0.1432
+    ],
+    "tBlock": [
+     1.04,
+     1.84
+    ],
+    "perYear": [
+     0.0899,
+     0.3766
+    ],
+    "spyPerYear": [
+     0.1997,
+     0.2048
+    ],
+    "portfolioCagr": [
+     -0.0342,
+     0.1805
+    ],
+    "spyCagr": [
+     0.1962,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.04 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.84 under 2.5 in the newer half; return per year of capital tied up 9.0% not above the S&P 500 on the same days in the older half (20.0%)"
+   }
   }
  ]
 }
