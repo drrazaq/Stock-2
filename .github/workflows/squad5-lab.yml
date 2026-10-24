@@ -5,7 +5,7 @@ name: Squad 5 lab
 # data/strategy-library.json before any run; each one's 5-year test runs ONCE (first complete verdict frozen in data/squad5-lab.json
 # firstRun), judged as a portfolio (turnover costs, CAGR, drawdown vs SPY / SPUS / the average stock) and per holding period. Forward PAPER
 # ledger from Monday 26 Oct 2026 (data/squad5-paper.jsonl, squad5-today.json = the current members of each basket, squad5-board.json).
-# The whole-market price cache and Squad 4's SEC cache are RESTORED READ ONLY (never saved); only this lab's own cache (squad5-cache) is
+# The whole-market price cache and Squad 4's / Squad 10's SEC caches are RESTORED READ ONLY (never saved); only this lab's own cache (squad5-cache) is
 # saved. Commits only its own output files and its own library entries. Never places an order. Start by hand: change run-squad5-now.txt
 # (a last line containing DIAG = coverage check only, nothing judged or written) or run the workflow.
 on:
@@ -43,6 +43,11 @@ jobs:
           path: squad4-cache
           key: squad4-cache-none
           restore-keys: squad4-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad10-cache
+          key: squad10-cache-none
+          restore-keys: squad10-cache-
       - uses: actions/cache/restore@v4
         with:
           path: squad5-cache

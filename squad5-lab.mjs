@@ -17,16 +17,17 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { execFileSync } from 'node:child_process';
-import { freezeEach, latestBlock } from './first-run.mjs';
+import { freezeEach, latestBlock, effectiveRuns } from './first-run.mjs';
 import { halfStat, TIER2_T } from './value-core.mjs';
 import { judgeHold } from './hold-core.mjs';
 import { fundamentals, cikFromSpans, artifactJumps, hasArtifact } from './squad4-core.mjs';
+import { impliedSplits, balanceAt, SH_TAGS } from './squad10-core.mjs';   // CORRECTED RUN (25 Oct 2026): Squad 10's data fixes, pure functions
 import { RULES, IDS, COST, STRESS, SIDE, SIDE_STRESS, SPLIT, PAPER_START, BLOCK, YEAR, CAP, BIG, TOPN, EWN, QUALN, MOMBUF, NEWIN_LOOK, NEWIN_MONTHS, NEWIN_MAXW, SHN, PIT_LAG,
   byCap, mom121, bufferSelect, newEntrant, qualityPick, debtCashAt, shariahOk, aboveMA, simulate, equalW, capW, pathStats, monthly, monthStarts, monthEnds, isQuarterMonth,
   preRegister, boardStats, paperReady, mean, median, r4, halfOf, addDays, periodPieces, periodHold, usCompany, capAt } from './squad5-core.mjs';
 const env = process.env, DIAG = !!env.DIAG, OFFLINE = !!env.OFFLINE, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', NQ = local(env.NASDAQ_BASE) || 'https://api.nasdaq.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov';
-const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ5_CACHE || 'squad5-cache', SC4 = env.SQ4_CACHE || 'squad4-cache';
+const UA = env.SQ5_UA || env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ5_CACHE || 'squad5-cache', SC4 = env.SQ4_CACHE || 'squad4-cache', SC10 = env.SQ10_CACHE || 'squad10-cache';
 const OUT = env.SQ5_OUT || 'data/squad5-lab.json', PAPER = env.SQ5_PAPER || 'data/squad5-paper.jsonl', TODAY = env.SQ5_TODAY || 'data/squad5-today.json', BOARD = env.SQ5_BOARD || 'data/squad5-board.json', LIB = env.SQ5_LIB || 'data/strategy-library.json';
 const START = env.PAPER_START || PAPER_START;
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }, JZ = (f, d) => { try { return JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString()); } catch (e) { return d; } };
@@ -76,10 +77,11 @@ if (spyI === undefined) { console.log('squad5-lab: SPY missing from the cache; n
 const lastI = new Int32Array(NS).fill(-1); for (let i = 0; i < NS; i++) for (let t = T - 1; t >= 0; t--) if (CA[i * T + t] > 0) { lastI[i] = t; break; }
 const GONE = 5, vanishedI = (i) => lastI[i] >= 0 && lastI[i] < T - 1 - GONE, deadI = (i) => vanishedI(i) && CA[i * T + lastI[i]] < 3;
 const LIQ = new Uint8Array(N), DV20 = new Float32Array(N);
-for (let i = 0; i < NS; i++) { if (i === spyI) continue; const b = i * T; let s = 0, n = 0;
+function liqRow(i) { const b = i * T; let s = 0, n = 0; LIQ.fill(0, b, b + T); DV20.fill(0, b, b + T);
   for (let t = 0; t < T; t++) { const v = MAIN[b + t] ? CA[b + t] * VA[b + t] : NaN; if (isFinite(v)) { s += v; n++; }
     if (t >= 20) { const k = b + t - 20, w = MAIN[k] ? CA[k] * VA[k] : NaN; if (isFinite(w)) { s -= w; n--; } }
     if (t >= 19 && n === 20) { DV20[b + t] = s / 20; if (CA[b + t] >= 5 && s / 20 >= 5e6) LIQ[b + t] = 1; } } }
+for (let i = 0; i < NS; i++) if (i !== spyI) liqRow(i);
 const liqMemo = new Map(), liqList = (t) => { if (!liqMemo.has(t)) { const a = []; for (let i = 0; i < NS; i++) if (LIQ[i * T + t]) a.push(i); liqMemo.set(t, a); } return liqMemo.get(t); };
 const SPYC = cl(spyI);
 log('window ' + D[0] + '..' + D[T - 1] + ' (' + T + ' sessions, ' + NS + ' stocks)');
@@ -116,6 +118,29 @@ const TMAP = new Map(); { const qs = [], now = new Date(); for (let y = 2021; y 
   STATUS.tickerMap = { ok: qs.slice(0, -1).every(q => !fail.includes(q)), quarters: qs.length, fromSquad4Cache: from4, downloadedNow: got, missing: fail, tickers: TMAP.size };
   log('ticker map: ' + JSON.stringify(STATUS.tickerMap)); }
 const SECCIK = J('data/sec-ciks.json', {}), SH = JZ('data/shares.json.gz', { t: {}, c: {} });
+// ---- FIX SQ5-DATA1 (corrected run, 25 Oct 2026; Squad 10's guard, copied): RENAMED GIANTS. The price cache has no rows under a renamed
+// company's OLD ticker (no FB at all) and the new ticker's rows before the rename can belong to an unrelated security (META before
+// 9 Jun 2022 = a Roundhill ETF), so Meta was missing from every 2022 ranking. For the 400 most traded stocks at the last close: an older
+// ticker of the same SEC company (Form 3/4/5 map) whose filings end before the current ticker's begin and that has no usable cache rows gets
+// its daily bars (Massive, adjusted) written into the current ticker's row up to its last bar (its last close within 15% of the current
+// ticker's next close). ----
+STATUS.renames = { ok: true, spliced: [], skipped: [] };
+{ const top = []; for (let i = 0; i < NS; i++) if (i !== spyI && DV20[i * T + T - 1] > 0) top.push([DV20[i * T + T - 1], i]); top.sort((a, b) => b[0] - a[0]);
+  for (const [, i] of top.slice(0, 400)) { const sym = SYMS[i], cik = String((SH.t[sym]) || (SECCIK[sym] && SECCIK[sym][0]) || ''); if (!cik) continue;
+    const mine = (TMAP.get(sym) || []).filter(x => x[0] === cik); if (!mine.length) continue; const myFirst = mine.reduce((a, x) => x[1] < a ? x[1] : a, '9999');
+    if (myFirst <= D[0]) continue;
+    for (const [old, spans] of TMAP) { if (old === sym) continue; const sp = spans.find(x => x[0] === cik && x[2] <= myFirst && x[2] >= D[0] && x[3] >= 3); if (!sp) continue;
+      const oi = SY.get(old); if (oi !== undefined && lastI[oi] >= 0 && CA[oi * T + lastI[oi]] > 0 && D[lastI[oi]] >= sp[2]) continue;
+      const j = await api('/v2/aggs/ticker/' + old + '/range/1/day/' + D[0] + '/' + myFirst + '?adjusted=true&sort=asc&limit=50000'), bars = j && Array.isArray(j.results) ? j.results : [];
+      if (bars.length < 20) { STATUS.renames.skipped.push(old + '->' + sym + ' (no bars)'); if (!OFFLINE) STATUS.renames.ok = false; continue; }
+      const lastD = iso(bars[bars.length - 1].t), tn = D.findIndex(d => d > lastD), nxt = tn > 0 ? (() => { for (let k = tn; k < Math.min(T, tn + 5); k++) if (CA[i * T + k] > 0) return CA[i * T + k]; return null; })() : null, lc = bars[bars.length - 1].c;
+      if (!(nxt > 0) || Math.abs(Math.log(lc / nxt)) > Math.log(1.15)) { STATUS.renames.skipped.push(old + '->' + sym + ' (price gap ' + lc + ' vs ' + nxt + ')'); continue; }
+      const m = new Map(bars.map(b => [iso(b.t), b])); let n = 0;
+      for (let t = 0; t < T && D[t] <= lastD; t++) { const k = i * T + t, b = m.get(D[t]); if (b && b.c > 0) { OA[k] = b.o; CA[k] = b.c; VA[k] = b.v; MAIN[k] = 1; n++; } else { OA[k] = NaN; CA[k] = NaN; VA[k] = NaN; MAIN[k] = 0; } }
+      liqRow(i); for (let t = T - 1; t >= 0; t--) if (CA[i * T + t] > 0) { lastI[i] = t; break; }
+      TMAP.get(sym).push([cik, D[0], lastD, sp[3]]);
+      STATUS.renames.spliced.push(old + '->' + sym + ' to ' + lastD + ' (' + n + ' bars)'); break; } }
+  log('renames: ' + JSON.stringify(STATUS.renames)); }
 const cikMemo = new Map(); function cikAt(i, d) { const s = SYMS[i], k = i + '|' + d.slice(0, 7); if (cikMemo.has(k)) return cikMemo.get(k);
   let c = cikFromSpans(TMAP.get(s) || TMAP.get(s.replace(/\./g, '-')), d); if (!c && (!vanishedI(i) || lastI[i] >= T - 260)) { const a = SH.t[s] || SH.t[s.replace(/\./g, '-')]; if (a) c = String(a); else { const y = SECCIK[s]; if (y) c = String(y[0]); } }
   cikMemo.set(k, c || null); return c || null; }
@@ -177,7 +202,11 @@ const SPL = new Map(); { let rows = J(SC + '/splits.json', null), pages = 0;
   for (const [t, d, f, to, kind] of rows || []) { if (!t || !d || !(f > 0) || !(to > 0) || f === to || /dividend/i.test(kind)) continue; (SPL.get(t) || SPL.set(t, []).get(t)).push([d, to / f]); }
   for (const a of SPL.values()) a.sort((x, y) => x[0] < y[0] ? -1 : 1);
   STATUS.splits = { ok: (rows || []).length > 500, rows: (rows || []).length, tickers: SPL.size, pagesNow: pages }; log('split list: ' + JSON.stringify(STATUS.splits)); }
-const capOf = (i, cik, t) => { const r = capAt({ adjClose: CC(i, t), d: D[t], splits: SPL.get(SYMS[i]) || SPL.get(SYMS[i].replace(/\./g, '-')), cover: coverRows(cik), alt: ALT[cik] }); return r ? r.cap : null; };
+// FIX SQ5-DATA2 (corrected run, 25 Oct 2026; Squad 10's guard): the split list misses some splits (GOOGL 20-for-1 and TSLA 3-for-1 in 2022:
+// Alphabet ranked at 96B, Tesla too small); a near-whole jump in the company's financial-statement share count with no listed split is a split
+const IMPLIED = {}, splMemo = new Map(), splitsOf = (i, cik) => { const k = i + '|' + cik; if (!splMemo.has(k)) { const L = SPL.get(SYMS[i]) || SPL.get(SYMS[i].replace(/\./g, '-')) || [], imp = impliedSplits(ALT[cik], L);
+  if (imp.length) IMPLIED[SYMS[i]] = imp; splMemo.set(k, imp.length ? [...L, ...imp].sort((a, b) => a[0] < b[0] ? -1 : 1) : L); } return splMemo.get(k); };
+const capOf = (i, cik, t) => { const r = capAt({ adjClose: CC(i, t), d: D[t], splits: splitsOf(i, cik), cover: coverRows(cik), alt: ALT[cik] }); return r ? r.cap : null; };
 const coverOk = (cik, d) => { const lim = addDays(d, -30); return (coverRows(cik) || []).some(([e, n]) => e <= lim && n > 0); };
 // the financial-statement count is fetched for every company without a usable cover-page count and for every company in the provisional 700
 // largest at any month start (rowsAt is a hoisted function declaration)
@@ -185,7 +214,7 @@ const coverOk = (cik, d) => { const lim = addDays(d, -30); return (coverRows(cik
     if (t >= 19) for (const r of byCap(rowsAt(t, false).rows).slice(0, 700)) if (!(r.cik in ALT)) want.add(r.cik); }
   let got = 0; if (!OFFLINE) for (const c of want) { if (left() < 75 * 60e3) break; await sleep(local(env.SEC_BASE) ? 0 : 110); let r = null; try { r = await fetch(SECD + '/api/xbrl/companyfacts/CIK' + c.padStart(10, '0') + '.json', { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60000) }); } catch (e) {}
     if (r && r.ok) { const j = await r.json().catch(() => null); if (j) { ALT[c] = altFrom(j); got++; } } else if (r && r.status === 404) ALT[c] = []; }
-  if (got) W(SC + '/alt-shares-v3.json', ALT); STATUS.altShares = { ok: [...want].filter(c => !(c in ALT)).length <= Math.max(5, want.size * 0.02), wanted: want.size, fetchedNow: got, known: Object.values(ALT).filter(a => a.length).length }; log('statement share counts: ' + JSON.stringify(STATUS.altShares)); }
+  if (got) { W(SC + '/alt-shares-v3.json', ALT); splMemo.clear(); } STATUS.altShares = { ok: [...want].filter(c => !(c in ALT)).length <= Math.max(5, want.size * 0.02), wanted: want.size, fetchedNow: got, known: Object.values(ALT).filter(a => a.length).length }; log('statement share counts: ' + JSON.stringify(STATUS.altShares)); }
 // ---- domicile (SEC submissions: business address + 20-F / 40-F filings; also the SIC code); own cache ----
 function rowsAt(t, useDom) { const rows = new Map(); let noCik = 0, noFacts = 0, noShares = 0, foreign = 0;
   for (const i of liqList(t)) { const cik = cikAt(i, D[t]); if (!cik) { noCik++; continue; } if (!coOf(cik)) { noFacts++; continue; } if (useDom && SUBS[cik] && SUBS[cik].us === false) { foreign++; continue; } const cap = capOf(i, cik, t); if (!cap) noShares++;
@@ -231,8 +260,30 @@ const capRows = (t, n) => universe(t).ranked.slice(0, n).map(r => ({ key: r.i, c
 function momRanked(t) { const U = universe(t).ranked.slice(0, BIG), c = []; for (const r of U) { const m = mom121(cl(r.i), t); if (ok(m)) c.push({ i: r.i, m }); } return c.sort((a, b) => b.m - a.m || a.i - b.i).map(z => z.i); }
 function qualKeys(t) { const rows = []; for (const r of universe(t).ranked.slice(0, QUALN)) { const co = coOf(r.cik); if (!co) continue; const f = fundamentals(co, D[t]); if (!f || !f.revEnd || f.revEnd > addDays(D[t], -PIT_LAG)) continue; rows.push({ key: r.i, roic: f.roic, fcfM: f.fcfM }); } return qualityPick(rows, TOPN); }
 const shariahMemo = new Map();
+// FIX SQ5-DATA3 (corrected run, 25 Oct 2026; Squad 10's guard): 17 large companies (ORCL, AVGO, QCOM, KO, XOM, CAT, UNP, ABBV, NOW...) report
+// debt under other SEC tags (and ORCL filed a bogus LongTermDebt = 0): debt = squad10-core balanceAt (the larger of total debt and non-current
+// + current debt over the wider tag list; back up to 400 days; none reported in 400 days = none). The cash test keeps Squad 5's registered
+// definition (cash and equivalents); debt is the corrected figure. Extra SEC items of the ~200 largest at every quarter: own cache (seeded
+// read-only from Squad 10's cache).
+const SHALL = [...new Set(Object.values(SH_TAGS).flat())], SHF = { ...JZ(SC10 + '/shfacts-v2.json.gz', {}), ...JZ(SC + '/shfacts-v2.json.gz', {}) };
+function compactSH(j) { const g = j && j.facts && j.facts['us-gaap'], out = {}; if (!g) return out;
+  for (const tag of SHALL) { const u = g[tag] && g[tag].units && g[tag].units.USD; if (!Array.isArray(u)) continue; const rows = [], seen = new Set();
+    for (const x of u) { if (!x || !x.end || !x.filed || !isFinite(x.val) || x.end < '2017-01-01') continue;
+      if (x.start) { const dd = (Date.parse(x.end) - Date.parse(x.start)) / 864e5 + 1; if (!((dd >= 80 && dd <= 100) || (dd >= 170 && dd <= 190) || (dd >= 260 && dd <= 285) || (dd >= 350 && dd <= 380))) continue; }
+      const k = (x.start || '') + '|' + x.end + '|' + x.val + '|' + x.filed; if (seen.has(k)) continue; seen.add(k); rows.push([x.start || '', x.end, x.val, x.filed]); }
+    if (rows.length) out[tag] = rows; }
+  return out; }
+{ const want = new Set(); for (const t of [...QS, T - 1]) for (const r of universe(t).ranked.slice(0, 200)) if (!(r.cik in SHF)) want.add(r.cik);
+  let got = 0, fail = 0; if (!OFFLINE && !DIAG) for (const c of want) { if (left() < 40 * 60e3) break; await sleep(local(env.SEC_BASE) ? 0 : 110); let r = null;
+    try { r = await fetch(SECD + '/api/xbrl/companyfacts/CIK' + c.padStart(10, '0') + '.json', { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(90000) }); } catch (e) {}
+    if (r && r.ok) { const j = await r.json().catch(() => null); if (j) { SHF[c] = compactSH(j); got++; } else fail++; } else if (r && r.status === 404) SHF[c] = {}; else fail++; }
+  if (got) WZ(SC + '/shfacts-v2.json.gz', SHF); const still = [...want].filter(c => !(c in SHF)).length;
+  STATUS.shFacts = { ok: still <= Math.max(3, want.size * 0.01), wantedNow: want.size, fetchedNow: got, failed: fail, missing: still, known: Object.keys(SHF).length }; log('debt facts (fix SQ5-DATA3): ' + JSON.stringify(STATUS.shFacts)); }
+const shfMemo = new Map(); function shOf(cik) { if (shfMemo.has(cik)) return shfMemo.get(cik); const a = SHF[cik]; let o = null;
+  if (a) { o = {}; for (const [g, tags] of Object.entries(SH_TAGS)) { o[g] = {}; for (const t of tags) if (a[t]) o[g][t] = a[t].map(([s0, e, v, f]) => ({ s: s0, e, v, f })); } } shfMemo.set(cik, o); return o; }
 function shariahRows(t, n) { if (shariahMemo.has(t)) return shariahMemo.get(t); const out = [], why = {};
-  for (const r of universe(t).ranked) { if (out.length >= n) break; const co = coOf(r.cik), bs = co ? debtCashAt(co, D[t]) : { debt: null, cash: null }, v = shariahOk({ sic: sicAt(r.i, r.cik), debt: bs.debt, cash: bs.cash, cap: r.cap });
+  for (const r of universe(t).ranked) { if (out.length >= n) break; const co = coOf(r.cik), bs = co ? debtCashAt(co, D[t]) : { debt: null, cash: null }, sx = shOf(r.cik), fx = sx ? balanceAt(sx, D[t]) : null;
+    const debt = fx && fx.end ? fx.debt : bs.debt, v = shariahOk({ sic: sicAt(r.i, r.cik), debt, cash: bs.cash, cap: r.cap });
     if (v.ok) out.push({ key: r.i, cap: r.cap }); else why[v.why.replace(/ \(SIC.*/, '')] = (why[v.why.replace(/ \(SIC.*/, '')] || 0) + 1; }
   const o = { rows: out, why }; shariahMemo.set(t, o); return o; }
 // new-entrant flags per month start (in the 500 largest?)
@@ -338,6 +389,14 @@ for (const id of IDS) { const B = build(id); if (B.start === null) { RES[id] = {
 
 // ================= 8. FREEZE =================
 const complete = T >= 1000 && STATUS.facts.ok && STATUS.cikCover.ok && STATUS.sic.ok && STATUS.tickerMap.ok && STATUS.domicile.ok && STATUS.splits.ok && STATUS.altShares.ok;
+// CORRECTED RUN (25 Oct 2026): Squad 10 found three data defects in the universe Squad 5 inherited (fixes SQ5-DATA1..3 above). Each SQ5 rule is
+// re-run once on the SAME window with the fixed data and written to correctedRun (frozen per rule; firstRun is never touched).
+const FIXES = { 'SQ5-DATA1': 'Renamed giants: the price cache had no FB rows and META before 9 Jun 2022 was an unrelated ETF, so Meta was missing from every 2022 ranking; the old ticker\'s bars are now spliced into the current ticker (Massive, adjusted).',
+  'SQ5-DATA2': 'Split list gaps: GOOGL 20-for-1 and TSLA 3-for-1 (2022) were missing, so Alphabet ranked at ~96B and Tesla too small; a near-whole jump in the SEC financial-statement share count with no listed split is now taken as a split (squad10-core impliedSplits).',
+  'SQ5-DATA3': 'Debt under other SEC tags for 17 large companies (and a bogus LongTermDebt = 0 for ORCL): SQ5-SHARIAH30\'s debt test now uses squad10-core balanceAt (wider tag list, larger of total and parts). Affects SQ5-SHARIAH30 only; SQ5-QUAL20\'s ROIC proxy still uses the Squad 4 fundamentals.' };
+const fixOk = STATUS.renames.ok && STATUS.shFacts.ok;
+const correctedRun = freezeEach(PREV.correctedRun || {}, Object.fromEntries(Object.entries(RES).filter(([k, r]) => complete && fixOk && r.results && (k in FROZEN)).map(([k, r]) => [k, { at: new Date().toISOString(), bugs: Object.keys(FIXES), explanation: Object.entries(FIXES).map(([b, x]) => b + ': ' + x).join(' '),
+  window: [D[0], D[T - 1]], to: D[T - 1], bar: BAR, frozenAt: FROZEN[k].frozenAt || null, firstRunVerdict: FROZEN[k].verdict, ...r, dataFixes: { renames: STATUS.renames.spliced, impliedSplits: IMPLIED } }])));
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k, r]) => need.includes(k) && complete && r.results).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], to: D[T - 1], bar: BAR, ...r }])), (r) => r.verdict !== 'TOO FEW CASES');
 
 // ================= 9. TODAY (current members) + PAPER LANE =================
@@ -346,7 +405,7 @@ const seen = new Set(lines.map(x => x.type + '|' + x.id)), newLines = [], today 
 for (const id of IDS) { const B = build(id); if (B.start === null) continue; const S = simulate({ T, start: B.start + 1, events: B.events, px: pxApi, side: SIDE });
   const lastEq = S.eq[T - 1], openT = S.trades.filter(z => z.kind === 'open');
   const members = openT.map(z => ({ sym: SYMS[z.i], close: r4(CC(z.i, T - 1) || lastCloseI(z.i, T - 1)), halal: halal(SYMS[z.i]), since: D[z.te], sinceBuy: r4(z.pxOut / z.pxIn - 1) })).sort((a, b) => (b.sinceBuy || 0) - (a.sinceBuy || 0));
-  const fr = firstRun[id] || {}, paper = S.trades.filter(z => D[z.te] >= START);
+  const fr = effectiveRuns(firstRun, correctedRun)[id] || {}, paper = S.trades.filter(z => D[z.te] >= START);
   for (const z of paper) { const sid = id + '|' + SYMS[z.i] + '|' + D[z.te];
     if (!seen.has('signal|' + sid)) { seen.add('signal|' + sid); newLines.push({ type: 'signal', id: sid, m: id, sym: SYMS[z.i], d: D[z.te - 1], buy: D[z.te], px: r4(z.pxIn), halal: halal(SYMS[z.i]), recordedAfter: D[T - 1] }); }
     if (z.kind !== 'open' && !seen.has('result|' + sid)) { seen.add('result|' + sid); const g = (z.kind === 'dead' ? 0 : z.pxOut) / z.pxIn - 1, c = ctrl(z.te, z.x, z.at, 'raw');
@@ -366,12 +425,16 @@ log('paper lane: ' + newLines.length + ' new line(s)');
 const out = { generatedAt: new Date().toISOString(), preRegistered: 'squad5-core.mjs RULES + data/strategy-library.json SQ5-* (24 Oct 2026, before any run)', window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, stress: STRESS, sideCost: SIDE, sideStress: SIDE_STRESS, complete, data: STATUS, diagnostics: DIAGS,
   standard: 'PER TRADE (TRY SMALL reads this): each continuous holding = one trade; both halves by entry (before / from ' + SPLIT + '): > 0 after 0.8% and 1.2%, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= ' + TIER2_T + ' (63-session blocks) -> TRADABLE SMALL; >= ' + BAR + ' -> PROVEN; plus return per year of capital above SPY on the same days in both halves. All gross returns capped at +300% on both sides (AUD-1 capBoth); uncapped = sensitivity. PORTFOLIO: 0.4% per side on all turnover (stress 0.6%), CAGR / max drawdown per half vs SPY, SPUS, HLAL (price) and the equal-weight average liquid stock; beatsSpyBothHalves.',
   halalNote: 'No point-in-time halal status exists in the repository; the tests run on the whole liquid market. SQ5-SHARIAH30 uses a point-in-time Shariah PROXY (SIC business screen + debt and cash < 33% of market value), not ZAD.',
-  firstRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, r])) }), trades: TRADES };
+  firstRun, correctedRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, r])) }), trades: TRADES };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 try { const LB = J(LIB, null); let ch = false;
   for (const id of IDS) { const e = LB && LB.strategies.find(x => x.id === id), r = firstRun[id]; if (!e || !r || e.result || !r.results) continue; const R = r.results, P = r.portfolio || {}, H = (h) => ((P.standard || {}).halves || {})[h] || {};
     e.status = 'tested: ' + r.verdict.toLowerCase() + (r.verdict === 'TRADABLE SMALL' ? ' (tier 2)' : '') + '; forward paper lane from 26 Oct 2026'; e.tested = String(r.to); e.study = 'squad5-lab.mjs -> data/squad5-lab.json (run once as written, first complete run frozen)';
     e.result = { verdict: r.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg, R.newer.avg], stress: [R.older.avgStress, R.newer.avgStress], edge: [R.older.edge, R.newer.edge], vsOwn: [R.older.vsOwn, R.newer.vsOwn], noTop2: [R.older.noTop2, R.newer.noTop2], tBlock: [R.older.tBlock, R.newer.tBlock],
       portfolioCagr: [H('older').rule ? H('older').rule.cagr : null, H('newer').rule ? H('newer').rule.cagr : null], spyCagr: [H('older').spy ? H('older').spy.cagr : null, H('newer').spy ? H('newer').spy.cagr : null], beatsSpyBothHalves: P.beatsSpyBothHalves, why: r.why }; ch = true; }
+  for (const id of IDS) { const e = LB && LB.strategies.find(x => x.id === id), r = correctedRun[id]; if (!e || !r || e.correctedResult || !r.results) continue; const R = r.results, H = (h) => ((r.portfolio.standard || {}).halves || {})[h] || {};
+    e.correctedResult = { at: r.at, bugs: r.bugs, verdict: r.verdict, stress: [R.older.avgStress, R.newer.avgStress], edge: [R.older.edge, R.newer.edge], noTop2: [R.older.noTop2, R.newer.noTop2],
+      portfolioCagr: [H('older').rule ? H('older').rule.cagr : null, H('newer').rule ? H('newer').rule.cagr : null], spyCagr: [H('older').spy ? H('older').spy.cagr : null, H('newer').spy ? H('newer').spy.cagr : null], spusCagr: [H('older').spus ? H('older').spus.cagr : null, H('newer').spus ? H('newer').spus.cagr : null], beatsSpyBothHalves: r.portfolio.beatsSpyBothHalves, why: r.why };
+    e.status = String(e.status || '').replace(/; corrected run.*$/, '') + '; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): ' + r.verdict.toLowerCase(); ch = true; }
   if (ch) fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); } catch (e) { console.log('squad5-lab: library not updated: ' + e.message); }
-console.log('SQUAD 5 LAB ' + D[0] + ' to ' + D[T - 1] + ' | bar ' + BAR + ' | frozen ' + Object.keys(firstRun).length + '/' + IDS.length + (complete ? '' : ' | INCOMPLETE: ' + Object.entries(STATUS).filter(([, s]) => s && s.ok === false).map(([k]) => k).join(', ')));
+console.log('SQUAD 5 LAB ' + D[0] + ' to ' + D[T - 1] + ' | bar ' + BAR + ' | frozen ' + Object.keys(firstRun).length + '/' + IDS.length + ' | corrected ' + Object.keys(correctedRun).length + (complete ? '' : ' | INCOMPLETE: ' + Object.entries(STATUS).filter(([, s]) => s && s.ok === false).map(([k]) => k).join(', ')));
