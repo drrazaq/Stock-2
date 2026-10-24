@@ -1,0 +1,83 @@
+name: Squad 4 lab
+# SQUAD 4: BIG WINNERS, THEMES AND COMPOUNDERS (squad4-lab.mjs; the owner's 4-squad competition of 24 Oct 2026: "buy the leaders of a big
+# story and hold"). Part A = the B-100X1 10x study (every sustained 5x / 10x of the window, what was visible before, look-alikes, profile
+# precision). Part B = the SQ4-* long-horizon rules, pre-registered in squad4-core.mjs and data/strategy-library.json before any run; each
+# one's 5-year test runs ONCE (first complete verdict frozen in data/squad4-lab.json firstRun); a forward PAPER ledger records every new
+# signal from Monday 26 Oct 2026 (data/squad4-paper.jsonl, squad4-today.json, squad4-board.json). Weekly full run on Sunday after the
+# Sunday studies; light runs on weekday evenings (paper lane only). The whole-market price cache is RESTORED READ ONLY; only this lab's own
+# cache (squad4-cache: SEC company facts, Form 3/4/5 data sets, SIC codes) is saved. Commits only its own output files and its own library
+# entries. Never places an order. Start by hand: change run-squad4-now.txt (a last line containing DIAG = coverage check only, nothing
+# judged or written) or run the workflow.
+on:
+  schedule:
+    - cron: '37 15 * * 0'     # Sunday, after the Sunday studies and the other labs
+    - cron: '50 23 * * 1-5'   # weekday evenings after the close: paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad4-now.txt']
+permissions:
+  contents: write
+concurrency: squad4-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad4-cache
+          key: squad4-cache-${{ github.run_id }}
+          restore-keys: squad4-cache-
+      - shell: bash
+        timeout-minutes: 335
+        run: |
+          set -o pipefail
+          if tail -n 1 run-squad4-now.txt | grep -q DIAG; then export DIAG=1; fi
+          node squad4-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SQ4_MINUTES: '300'
+          SQ4_LIGHT: ${{ github.event.schedule == '50 23 * * 1-5' && '1' || '' }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad4-cache
+          key: squad4-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad4-run.log 2>/dev/null || true
+          FILES="data/squad4-lab.json data/squad4-tenx.json data/squad4-paper.jsonl data/squad4-today.json data/squad4-board.json data/squad4-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 4 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 4 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad4-lab-log
+          path: run.log
