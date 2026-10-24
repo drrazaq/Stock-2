@@ -15388,60 +15388,312 @@
    "family": "Tipster style (decoded)",
    "name": "Dip in a leader while the market is afraid",
    "explain": "industry top-3 by market cap, 30%+ under its 52-week high, S&P 500 15%+ under its high, revenue still growing; hold 12 months, add on -15%. RULE: Signal at the close of t: SPY close <= 85% of its highest close of the last 252 sessions; the stock is an industry LEADER; its close <= 70% of its highest close of the last 252 sessions (90%+ of them present); TTM revenue (SEC, filed before t, period ended <= 200 days before) above the TTM a year earlier. Universe: US companies filing quarterly SEC share counts, one ticker per company, liquid (close >= 5 USD, 20-session traded value >= 5M USD); market cap = close x shares known (30 days late, unadjusted split jumps repaired); industry = SIC 4-digit (current code); LEADER = top 3 by market cap of an industry with 5+ members that day. PLAN: 1 unit at the next open, +0.5 unit at the next open after the first close <= first buy -15%, sell all at the next open after the position is worth <= 65% of the money in (35% disaster stop on the total), else at the close of session 252; one open position per stock. Cost 0.8% per unit (1.2% stress). Judged at the tier-2 standard (both halves before / from 2024-01-01, vs the average stock over the same days, vs the same stocks with the same plan on other days, without the 2 best, block t >= 2.5 on 63-session blocks) plus return per year of capital tied up above the S&P 500 over the same days in both halves. Information: plans ONCE (no add), FORGET (no add, no stop), MONTHLY (+0.1 unit every 21 sessions); SPUS / HLAL per year on the same days; how many picks failed.",
-   "status": "pre-registered 24 Oct 2026 (tipster lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "tipster",
    "libraryCheck": "Overlaps: HOLD-AVGDOWN (averaging down on any / quality stocks: not proven), ANOM-52WH / DEC-FROG / ANOM-RESMOM (momentum: the opposite side, buying strength), M13 (strong stock dips in a weak market: autolab near miss), T22 / B-SIF1 / CHAIN-MOM1 / ANOM-INDMOM (industry strength), E3 / ANOM-INSIDER / C-INS3 (insider buying). New here: market-cap DOMINANCE of an industry as the filter, market-wide fear as the timing, 12-month holds with one add, and the strategic-investment trigger.",
-   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "tipster-lab.mjs -> data/tipster-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     197,
+     73
+    ],
+    "avg": [
+     0.1203,
+     0.7324
+    ],
+    "stress": [
+     0.1163,
+     0.7284
+    ],
+    "edge": [
+     0.0849,
+     0.4164
+    ],
+    "vsOwn": [
+     0.101,
+     0.5639
+    ],
+    "noTop2": [
+     0.1046,
+     0.6688
+    ],
+    "tBlock": [
+     1.57,
+     null
+    ],
+    "perYear": [
+     0.1029,
+     0.7154
+    ],
+    "spyPerYear": [
+     0.1119,
+     0.3705
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (197 cases, 4 blocks / 73 cases, 2 blocks)"
+   }
   },
   {
    "id": "TIP-THEME",
    "family": "Tipster style (decoded)",
    "name": "Leaders of the hottest industry with accelerating revenue",
    "explain": "each quarter the industry with the best 12-month return whose revenue growth is accelerating; buy its top 3 by market cap; hold 12 months, add on -15%. RULE: At the close of the first session of January, April, July and October: for industries with 5+ members, 12-month return = median 252-session return of the members; revenue accelerating = the median latest-quarter YoY revenue growth (filed before t) above the median prior-quarter YoY growth and above 0 (3+ members with both). THEME = the accelerating industry with the highest 12-month return. Buy its 3 LEADERS. Universe: US companies filing quarterly SEC share counts, one ticker per company, liquid (close >= 5 USD, 20-session traded value >= 5M USD); market cap = close x shares known (30 days late, unadjusted split jumps repaired); industry = SIC 4-digit (current code); LEADER = top 3 by market cap of an industry with 5+ members that day. PLAN: 1 unit at the next open, +0.5 unit at the next open after the first close <= first buy -15%, sell all at the next open after the position is worth <= 65% of the money in (35% disaster stop on the total), else at the close of session 252; one open position per stock. Cost 0.8% per unit (1.2% stress). Judged at the tier-2 standard (both halves before / from 2024-01-01, vs the average stock over the same days, vs the same stocks with the same plan on other days, without the 2 best, block t >= 2.5 on 63-session blocks) plus return per year of capital tied up above the S&P 500 over the same days in both halves. Information: plans ONCE (no add), FORGET (no add, no stop), MONTHLY (+0.1 unit every 21 sessions); SPUS / HLAL per year on the same days; how many picks failed.",
-   "status": "pre-registered 24 Oct 2026 (tipster lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "tipster",
    "libraryCheck": "Overlaps: HOLD-AVGDOWN (averaging down on any / quality stocks: not proven), ANOM-52WH / DEC-FROG / ANOM-RESMOM (momentum: the opposite side, buying strength), M13 (strong stock dips in a weak market: autolab near miss), T22 / B-SIF1 / CHAIN-MOM1 / ANOM-INDMOM (industry strength), E3 / ANOM-INSIDER / C-INS3 (insider buying). New here: market-cap DOMINANCE of an industry as the filter, market-wide fear as the timing, 12-month holds with one add, and the strategic-investment trigger.",
-   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "tipster-lab.mjs -> data/tipster-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     19,
+     21
+    ],
+    "avg": [
+     0.0167,
+     0.0521
+    ],
+    "stress": [
+     0.0127,
+     0.0481
+    ],
+    "edge": [
+     0.0901,
+     -0.0716
+    ],
+    "vsOwn": [
+     -0.0567,
+     -0.2395
+    ],
+    "noTop2": [
+     -0.0517,
+     -0.0314
+    ],
+    "tBlock": [
+     0.73,
+     -0.69
+    ],
+    "perYear": [
+     0.0003,
+     0.052
+    ],
+    "spyPerYear": [
+     0.0894,
+     0.178
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (19 cases, 7 blocks / 21 cases, 7 blocks)"
+   }
   },
   {
    "id": "TIP-TURN",
    "family": "Tipster style (decoded)",
    "name": "Fallen former leader: decline stopped and someone big buys",
    "explain": "a former industry top-3 near its 3-year low, two quarters of improving revenue growth, and 1M USD+ insider buying or a strategic share sale (8-K item 3.02) in 90 days; hold 12 months. RULE: Signal at the close of t: the stock was an industry LEADER at any month-start formation in the 756 sessions before t (from the data start, Oct 2021); close <= 110% of its lowest close of the previous 756 sessions (about 3 years; Massive daily history before the cache window; 90%+ present); the latest three quarterly YoY revenue growth figures filed before t rising (two quarters of improvement, value-core growthRun); and, filed in the 90 days before t, open-market insider purchases (Form 4 code P) of 1M USD+ in total OR an 8-K with Item 3.02 (unregistered sale of equity: a strategic / private investment). Universe: US companies filing quarterly SEC share counts, one ticker per company, liquid (close >= 5 USD, 20-session traded value >= 5M USD); market cap = close x shares known (30 days late, unadjusted split jumps repaired); industry = SIC 4-digit (current code); LEADER = top 3 by market cap of an industry with 5+ members that day. PLAN: 1 unit at the next open, +0.5 unit at the next open after the first close <= first buy -15%, sell all at the next open after the position is worth <= 65% of the money in (35% disaster stop on the total), else at the close of session 252; one open position per stock. Cost 0.8% per unit (1.2% stress). Judged at the tier-2 standard (both halves before / from 2024-01-01, vs the average stock over the same days, vs the same stocks with the same plan on other days, without the 2 best, block t >= 2.5 on 63-session blocks) plus return per year of capital tied up above the S&P 500 over the same days in both halves. Information: plans ONCE (no add), FORGET (no add, no stop), MONTHLY (+0.1 unit every 21 sessions); SPUS / HLAL per year on the same days; how many picks failed.",
-   "status": "pre-registered 24 Oct 2026 (tipster lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "tipster",
    "libraryCheck": "Overlaps: HOLD-AVGDOWN (averaging down on any / quality stocks: not proven), ANOM-52WH / DEC-FROG / ANOM-RESMOM (momentum: the opposite side, buying strength), M13 (strong stock dips in a weak market: autolab near miss), T22 / B-SIF1 / CHAIN-MOM1 / ANOM-INDMOM (industry strength), E3 / ANOM-INSIDER / C-INS3 (insider buying). New here: market-cap DOMINANCE of an industry as the filter, market-wide fear as the timing, 12-month holds with one add, and the strategic-investment trigger.",
-   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "tipster-lab.mjs -> data/tipster-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     8,
+     10
+    ],
+    "avg": [
+     0.3149,
+     0.1273
+    ],
+    "stress": [
+     0.3109,
+     0.1233
+    ],
+    "edge": [
+     0.1356,
+     -0.0268
+    ],
+    "vsOwn": [
+     0.2244,
+     0.2181
+    ],
+    "noTop2": [
+     0.1184,
+     -0.0995
+    ],
+    "tBlock": [
+     0.41,
+     -1.13
+    ],
+    "perYear": [
+     0.3349,
+     0.1481
+    ],
+    "spyPerYear": [
+     0.2981,
+     0.1994
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (8 cases, 5 blocks / 10 cases, 4 blocks)"
+   }
   },
   {
    "id": "TIP-DIPLEAD-100",
    "family": "Tipster style (decoded)",
    "name": "Dip in a leader while the market is afraid (100 largest only)",
    "explain": "industry top-3 by market cap, 30%+ under its 52-week high, S&P 500 15%+ under its high, revenue still growing; hold 12 months, add on -15%; only the 100 largest US companies that day. RULE: Signal at the close of t: SPY close <= 85% of its highest close of the last 252 sessions; the stock is an industry LEADER; its close <= 70% of its highest close of the last 252 sessions (90%+ of them present); TTM revenue (SEC, filed before t, period ended <= 200 days before) above the TTM a year earlier. AND the stock is among the 100 largest universe members by market cap that day. Universe: US companies filing quarterly SEC share counts, one ticker per company, liquid (close >= 5 USD, 20-session traded value >= 5M USD); market cap = close x shares known (30 days late, unadjusted split jumps repaired); industry = SIC 4-digit (current code); LEADER = top 3 by market cap of an industry with 5+ members that day. PLAN: 1 unit at the next open, +0.5 unit at the next open after the first close <= first buy -15%, sell all at the next open after the position is worth <= 65% of the money in (35% disaster stop on the total), else at the close of session 252; one open position per stock. Cost 0.8% per unit (1.2% stress). Judged at the tier-2 standard (both halves before / from 2024-01-01, vs the average stock over the same days, vs the same stocks with the same plan on other days, without the 2 best, block t >= 2.5 on 63-session blocks) plus return per year of capital tied up above the S&P 500 over the same days in both halves. Information: plans ONCE (no add), FORGET (no add, no stop), MONTHLY (+0.1 unit every 21 sessions); SPUS / HLAL per year on the same days; how many picks failed.",
-   "status": "pre-registered 24 Oct 2026 (tipster lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "tipster",
    "libraryCheck": "Overlaps: HOLD-AVGDOWN (averaging down on any / quality stocks: not proven), ANOM-52WH / DEC-FROG / ANOM-RESMOM (momentum: the opposite side, buying strength), M13 (strong stock dips in a weak market: autolab near miss), T22 / B-SIF1 / CHAIN-MOM1 / ANOM-INDMOM (industry strength), E3 / ANOM-INSIDER / C-INS3 (insider buying). New here: market-cap DOMINANCE of an industry as the filter, market-wide fear as the timing, 12-month holds with one add, and the strategic-investment trigger.",
-   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "tipster-lab.mjs -> data/tipster-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     33,
+     11
+    ],
+    "avg": [
+     0.062,
+     0.4996
+    ],
+    "stress": [
+     0.058,
+     0.4956
+    ],
+    "edge": [
+     -0.0017,
+     -0.0323
+    ],
+    "vsOwn": [
+     -0.0719,
+     -0.0105
+    ],
+    "noTop2": [
+     0.0179,
+     0.2457
+    ],
+    "tBlock": [
+     -0.35,
+     null
+    ],
+    "perYear": [
+     0.0397,
+     0.4912
+    ],
+    "spyPerYear": [
+     0.1109,
+     0.3687
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (33 cases, 3 blocks / 11 cases, 2 blocks)"
+   }
   },
   {
    "id": "TIP-THEME-100",
    "family": "Tipster style (decoded)",
    "name": "Leaders of the hottest industry with accelerating revenue (100 largest only)",
    "explain": "each quarter the industry with the best 12-month return whose revenue growth is accelerating; buy its top 3 by market cap; hold 12 months, add on -15%; only the 100 largest US companies that day. RULE: At the close of the first session of January, April, July and October: for industries with 5+ members, 12-month return = median 252-session return of the members; revenue accelerating = the median latest-quarter YoY revenue growth (filed before t) above the median prior-quarter YoY growth and above 0 (3+ members with both). THEME = the accelerating industry with the highest 12-month return. Buy its 3 LEADERS. AND the stock is among the 100 largest universe members by market cap that day. Universe: US companies filing quarterly SEC share counts, one ticker per company, liquid (close >= 5 USD, 20-session traded value >= 5M USD); market cap = close x shares known (30 days late, unadjusted split jumps repaired); industry = SIC 4-digit (current code); LEADER = top 3 by market cap of an industry with 5+ members that day. PLAN: 1 unit at the next open, +0.5 unit at the next open after the first close <= first buy -15%, sell all at the next open after the position is worth <= 65% of the money in (35% disaster stop on the total), else at the close of session 252; one open position per stock. Cost 0.8% per unit (1.2% stress). Judged at the tier-2 standard (both halves before / from 2024-01-01, vs the average stock over the same days, vs the same stocks with the same plan on other days, without the 2 best, block t >= 2.5 on 63-session blocks) plus return per year of capital tied up above the S&P 500 over the same days in both halves. Information: plans ONCE (no add), FORGET (no add, no stop), MONTHLY (+0.1 unit every 21 sessions); SPUS / HLAL per year on the same days; how many picks failed.",
-   "status": "pre-registered 24 Oct 2026 (tipster lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "tipster",
    "libraryCheck": "Overlaps: HOLD-AVGDOWN (averaging down on any / quality stocks: not proven), ANOM-52WH / DEC-FROG / ANOM-RESMOM (momentum: the opposite side, buying strength), M13 (strong stock dips in a weak market: autolab near miss), T22 / B-SIF1 / CHAIN-MOM1 / ANOM-INDMOM (industry strength), E3 / ANOM-INSIDER / C-INS3 (insider buying). New here: market-cap DOMINANCE of an industry as the filter, market-wide fear as the timing, 12-month holds with one add, and the strategic-investment trigger.",
-   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "tipster-lab.mjs -> data/tipster-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     2,
+     3
+    ],
+    "avg": [
+     0.061,
+     0.1024
+    ],
+    "stress": [
+     0.057,
+     0.0984
+    ],
+    "edge": [
+     0.0401,
+     0.0292
+    ],
+    "vsOwn": [
+     -0.0475,
+     -0.2417
+    ],
+    "noTop2": [
+     null,
+     -0.0184
+    ],
+    "tBlock": [
+     null,
+     null
+    ],
+    "perYear": [
+     0.0699,
+     0.139
+    ],
+    "spyPerYear": [
+     0.1447,
+     0.2282
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 1 blocks / 3 cases, 2 blocks)"
+   }
   },
   {
    "id": "TIP-TURN-100",
    "family": "Tipster style (decoded)",
    "name": "Fallen former leader: decline stopped and someone big buys (100 largest only)",
    "explain": "a former industry top-3 near its 3-year low, two quarters of improving revenue growth, and 1M USD+ insider buying or a strategic share sale (8-K item 3.02) in 90 days; hold 12 months; only the 100 largest US companies that day. RULE: Signal at the close of t: the stock was an industry LEADER at any month-start formation in the 756 sessions before t (from the data start, Oct 2021); close <= 110% of its lowest close of the previous 756 sessions (about 3 years; Massive daily history before the cache window; 90%+ present); the latest three quarterly YoY revenue growth figures filed before t rising (two quarters of improvement, value-core growthRun); and, filed in the 90 days before t, open-market insider purchases (Form 4 code P) of 1M USD+ in total OR an 8-K with Item 3.02 (unregistered sale of equity: a strategic / private investment). AND the stock is among the 100 largest universe members by market cap that day. Universe: US companies filing quarterly SEC share counts, one ticker per company, liquid (close >= 5 USD, 20-session traded value >= 5M USD); market cap = close x shares known (30 days late, unadjusted split jumps repaired); industry = SIC 4-digit (current code); LEADER = top 3 by market cap of an industry with 5+ members that day. PLAN: 1 unit at the next open, +0.5 unit at the next open after the first close <= first buy -15%, sell all at the next open after the position is worth <= 65% of the money in (35% disaster stop on the total), else at the close of session 252; one open position per stock. Cost 0.8% per unit (1.2% stress). Judged at the tier-2 standard (both halves before / from 2024-01-01, vs the average stock over the same days, vs the same stocks with the same plan on other days, without the 2 best, block t >= 2.5 on 63-session blocks) plus return per year of capital tied up above the S&P 500 over the same days in both halves. Information: plans ONCE (no add), FORGET (no add, no stop), MONTHLY (+0.1 unit every 21 sessions); SPUS / HLAL per year on the same days; how many picks failed.",
-   "status": "pre-registered 24 Oct 2026 (tipster lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "tipster",
    "libraryCheck": "Overlaps: HOLD-AVGDOWN (averaging down on any / quality stocks: not proven), ANOM-52WH / DEC-FROG / ANOM-RESMOM (momentum: the opposite side, buying strength), M13 (strong stock dips in a weak market: autolab near miss), T22 / B-SIF1 / CHAIN-MOM1 / ANOM-INDMOM (industry strength), E3 / ANOM-INSIDER / C-INS3 (insider buying). New here: market-cap DOMINANCE of an industry as the filter, market-wide fear as the timing, 12-month holds with one add, and the strategic-investment trigger.",
-   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "tipster-lab.mjs -> data/tipster-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     0,
+     0
+    ],
+    "avg": [
+     null,
+     null
+    ],
+    "stress": [
+     null,
+     null
+    ],
+    "edge": [
+     null,
+     null
+    ],
+    "vsOwn": [
+     null,
+     null
+    ],
+    "noTop2": [
+     null,
+     null
+    ],
+    "tBlock": [
+     null,
+     null
+    ],
+    "perYear": [
+     null,
+     null
+    ],
+    "spyPerYear": [
+     null,
+     null
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 0 cases, 0 blocks)"
+   }
   },
   {
    "id": "SQ3-VOLRISK",
