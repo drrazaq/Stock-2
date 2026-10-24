@@ -208,8 +208,40 @@ export const CANDIDATES = {
 };
 export const candOk = (c, f) => c.when.every(([k, side, cut]) => ok(f[k]) && (side === '>=' ? f[k] >= cut : f[k] <= cut));
 
-// ================= STAGE 2 RULES (registered after stage 1; see the header block written then) =================
-export const RULES = {};
+// ================= STAGE 2 RULES: PRE-REGISTERED 24 Oct 2026, after stage 1 (data/squad7-dna.json) and the older-half screen
+// (data/squad7-screen.json), BEFORE any newer-half (2024-26) number was computed. One version each; library ids SQ7-*; the same text is
+// written into data/strategy-library.json by squad7-lab.mjs before its first computation.
+// CHOSEN: the 5 candidates whose older-half edge over the average stock was positive and positive in 3+ of 4 older semesters (H, B, M, A,
+// G). NOT chosen: C, D, E, F, K, L (edge <= 0 in the older half), I (edge +0.3%, 2 of 4 semesters), J (edge +1.9% but 13% worse than
+// the same stocks on their other days). None of the chosen reached block t 2.5 even in the older half (best 1.74): a pass is unlikely.
+// COMMON: universe = liquid at the close of t (close >= 5 USD, 20-session average traded value >= 5M USD; dead stocks included); every
+// feature known at that close (squad7-core.mjs priceFeatures / sectorFeatures / sharesChange / earnFeatures); at most 10 signals a day in
+// the rank order given; buy the next open, sell the close of session t + hold; one open trade per stock per rule; 0.8% cost (1.2%
+// stress); judged at the tier-2 standard (value-core judge, halves = signal before / from 2024-01-01, AUD-1 capped yardstick). Signals
+// from session 20 of the window (a feature that is not yet known simply fails the rule).
+const RX = (c, name, rule, evidence, lib) => ({ ...c, name, rule, evidence, lib });
+export const RULES = {
+  'SQ7-DEEPGAP': RX(CANDIDATES.H, 'Beaten-down stock (33%+ under its 200-day) that gapped up 3%+ in the last month and is not diluting (hold 20)',
+    'Close >= 33% under its 200-day average (d200 <= -0.33); at least one opening gap of +3% or more in the last 20 sessions (gapUp20 >= 1); share count up no more than 0.8% in a year (dShares <= 0.008, both counts known 30 days late). Rank: deepest under the 200-day first; max 10 a day. Hold 20 sessions.',
+    'stage 1 (W20, +30% in 20 sessions): d200 bottom decile lift 1.75 with winners 21.3% vs losers 12.9% of liquid stock-days (population 3.1% / 3.2%); gapUp20 >= 2 lift 1.55; dilution top decile lift 1.29 but losers 8.1% > winners 5.8%, so dilution is excluded. Older-half screen: 312 trades, average +5.1% after 0.8%, edge over the average stock +3.0%, all 4 older semesters positive, block t 1.63.',
+    'D2-004 (deep under the 200-day + a down day + 5-day loss: rejected), M8 (1-year low + heavy volume + no dilution: failed discovery), DEC-CRASH (crashed 50%+ and stabilising: paper), S2 / C-NSI1 (dilution avoid). New: the recent gap-up (buyers showing up) inside a deep reset, dilution excluded.'),
+  'SQ7-DEEPEARN': RX(CANDIDATES.B, 'Beaten-down stock (33%+ under its 200-day) with its next report near (59-85 days since the last) (hold 20)',
+    'Close >= 33% under its 200-day average; the last earnings report on the Nasdaq calendar was 59 to 85 calendar days before the signal close (the next report usually falls inside the 20-session hold). Rank: deepest under the 200-day first; max 10 a day. Hold 20 sessions.',
+    'stage 1 (W20): earnDays 59-85 deciles have winners 3.4-4.7% vs losers 2.2-2.8% and a forward return of +0.7% to +1.5% (population -0.7%); d200 bottom decile as above. Older-half screen: 341 trades, average +4.8%, edge +2.6%, 3 of 4 semesters positive, block t 1.21.',
+    'ANOM-EAP (earnings-announcement premium alone: rejected), E19 (queued), D2-004 (deep reset + down day: rejected). New: the pre-report window only inside a deep reset.'),
+  'SQ7-BUYBACKVOL': RX(CANDIDATES.M, 'Buyback company (share count down 3%+ in a year) not collapsing, on 1.34x volume (hold 120)',
+    'Share count down 3% or more over a year (dShares <= -0.03, known 30 days late); close no more than 34% under its 200-day average (d200 >= -0.34); today\'s volume >= 1.34x its 50-day average (turn50 >= 1.34). Rank: highest volume ratio first; max 10 a day. Hold 120 sessions.',
+    'stage 1 (W120, +100% in 120 sessions): shrinking share count bottom decile has the lowest loser rate (2.2% vs 8.7% population) and a forward return of +1.6% vs -4.2%; turn50 top decile lift 1.83; d200 under -34% carries 36% losers, so it is excluded. Older-half screen: 731 trades, average +2.8%, edge +2.2%, all 4 older semesters positive (the last one only 9 trades), block t 1.74.',
+    'ANOM-NSI (shrinking share count, lowest 10%, alone: rejected), V17 net payout yield (queued), E8 buyback announcements (queued). New: buyback + not collapsing + a volume day as the timing trigger.'),
+  'SQ7-DEEPNODIL': RX(CANDIDATES.A, 'Beaten-down stock (33%+ under its 200-day) that is not diluting (hold 20)',
+    'Close >= 33% under its 200-day average; share count up no more than 0.3% in a year (dShares <= 0.003, known 30 days late). Rank: deepest under the 200-day first; max 10 a day. Hold 20 sessions.',
+    'stage 1 (W20): d200 bottom decile winners 21.3% vs losers 12.9%; dShares <= 0.003 deciles have fewer losers than winners. Older-half screen: 301 trades, average +1.8%, edge +1.7%, 3 of 4 semesters positive, block t 0.94.',
+    'D2-004 (rejected), M8 (failed discovery), ANOM-NSI (rejected), S2 (dilution avoid). New: the deep reset filtered by no dilution, no volume or down-day trigger.'),
+  'SQ7-LAGEARN': RX(CANDIDATES.G, 'Sector laggard under its 200-day with its next report near (hold 20)',
+    '59-85 calendar days since the last earnings report; 3-month return 10%+ under its sector median (rsSec <= -0.10, SIC 2-digit, 6+ liquid members); close under its 200-day average. Rank: furthest behind its sector first; max 10 a day. Hold 20 sessions.',
+    'stage 1 (W20): rsSec bottom decile lift 1.61, winners 14.5% vs losers 10.6%, forward +0.6% vs -0.7%; earnDays 59-85 as above. Older-half screen: 610 trades, average +2.1%, edge +1.5%, 3 of 4 semesters positive, block t 1.32.',
+    'ANOM-EAP (rejected), D2-001 / D2-002 (industry-relative losers: not proven). New: the sector laggard only inside the pre-report window.'),
+};
 export const IDS = Object.keys(RULES);
 export const ruleOk = (id, f) => RULES[id].when.every(([k, side, cut]) => ok(f[k]) && (side === '>=' ? f[k] >= cut : f[k] <= cut));
 

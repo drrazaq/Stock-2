@@ -186,7 +186,7 @@ log('5-year one-shot for ' + need.length + ' rules not yet frozen (data ' + (dat
 for (const id of need) { const uses = RULES[id].when.map(w => w[0]), needEarn = uses.some(k => k === 'earnDays' || k === 'surprise'), needSh = uses.some(k => k === 'dShares' || k === 'logMcap');
   if (!STATUS.price.ok || (needEarn && !STATUS.earn.ok) || (needSh && !STATUS.shares.ok)) { RES[id] = { verdict: 'NOT RUN', why: 'data not complete this run: ' + JSON.stringify(STATUS).slice(0, 300) }; continue; }
   if (left() < 10 * 60e3) { RES[id] = { verdict: 'NOT RUN', why: 'time budget used up this run' }; continue; }
-  const sigs = signalsOf(id, 252, T - 1), tr = tradesOf(id, sigs), hold = RULES[id].hold;
+  const sigs = signalsOf(id, 20, T - 1), tr = tradesOf(id, sigs), hold = RULES[id].hold;
   COUNTS[id] = { older: sigs.filter(z => halfOf(D[z.t]) === 'older').length, newer: sigs.filter(z => halfOf(D[z.t]) === 'newer').length };
   const R = { older: halfStat(tr.filter(z => z.half === 'older'), hold), newer: halfStat(tr.filter(z => z.half === 'newer'), hold), all: halfStat(tr, hold) }, v = judge(R, { bar: BAR });
   RES[id] = { ...v, results: R, shape: shapeOf(tr), hold, name: RULES[id].name, rule: RULES[id].rule, split: SPLIT, cost: COST, yardstick: 'capBoth (AUD-1 corrected: trades and yardstick capped at +300% alike)',
