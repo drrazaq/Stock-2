@@ -18202,6 +18202,536 @@
     "https://doi.org/10.1111/j.1540-6261.2008.01338.x"
    ],
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ9-DT-3ST",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "Triple Supertrend + volume + Stochastic RSI pullback (DaviddTech / Traders Landing)",
+   "explain": "Close above its 200-day EMA; at least 2 of 3 Supertrends green (ATR 10 x 1, ATR 11 x 2, ATR 12 x 3, hl2 source, Wilder ATR); Time Segmented Volume (13-session sum of volume x close change) above 0; Stochastic RSI (RSI 14, stoch 14, K 3, D 3): K crosses above D, the pullback had K or D under 20 on the previous session, and neither line is at 80+. Buy the next open. Stop = the previous swing low (lowest low of the 10 sessions before the entry) or the furthest green Supertrend line, whichever is further away. Half sold at 1R (the other half's stop moves to the entry), the other half at 2R. Max hold 40 sessions. Source: DaviddTech, \"WOW! 87% WIN RATE SuperTrend with Volume Trading Strategy.\" (2022-01-17). Claimed: 131 trades, 74% win, profit factor 1.61, +187% net in about 6 months, max drawdown 22% (BTC/USDT 15-minute). That result already included filters he added while coding (Hull MA 100, ADX, a volume filter) and an optimiser; title says 87%, description 80%. Costs in the claim: not stated; out-of-sample: no (about 6 months, optimised on the same data). Replication: faithful (timeframe proxy: 15-minute BTC/USDT -> daily US stocks).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 40,
+   "libraryCheck": "T16 (Supertrend / ADX filters) was never run on its own (marked covered by T4); none with TSV and a Stochastic-RSI trigger",
+   "sources": [
+    "https://www.youtube.com/watch?v=WlWhoVEJaTA"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 40 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     4494,
+     11099
+    ],
+    "avg": [
+     -0.0185,
+     -0.0032
+    ],
+    "stress": [
+     -0.0225,
+     -0.0072
+    ],
+    "edge": [
+     -0.0117,
+     -0.013
+    ],
+    "vsOwn": [
+     -0.0216,
+     -0.004
+    ],
+    "noTop2": [
+     -0.0187,
+     -0.0034
+    ],
+    "tBlock": [
+     -2.33,
+     -4.34
+    ],
+    "win": [
+     0.4299,
+     0.5045
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.33 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -4.34 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-DT-KST",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "Know Sure Thing cross under zero in an uptrend (DaviddTech \"better than the MACD\")",
+   "explain": "Close above its 200-day EMA; KST (Pring, TradingView defaults: ROC 10/15/20/30, smoothed 10/10/10/15, weights 1-4, signal SMA 9) crosses above its signal line while the KST is below zero. Buy the next open. House bracket: stop entry - 3 x ATR14, target 1.5x the risk, max 40 sessions. Source: DaviddTech, \"Extremely More Profitable than the MACD Trading Strategy | Tested 100 Times\" (2021-09-10). Claimed: 156 trades, 46.8% win, +45.75% net (1-hour chart; same settings MACD gave 96 trades, 44% win, +16.8%). Costs in the claim: not stated; out-of-sample: no. Replication: partial (exit not given in the video: DaviddTech house bracket).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 40,
+   "libraryCheck": "DEC2-APPEL is a two-MACD rule; no KST rule",
+   "sources": [
+    "https://www.youtube.com/watch?v=oceOcXBV6Yk"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 40 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     4078,
+     11745
+    ],
+    "avg": [
+     -0.0022,
+     -0.0018
+    ],
+    "stress": [
+     -0.0062,
+     -0.0058
+    ],
+    "edge": [
+     -0.0062,
+     -0.01
+    ],
+    "vsOwn": [
+     -0.0167,
+     -0.0124
+    ],
+    "noTop2": [
+     -0.0026,
+     -0.002
+    ],
+    "tBlock": [
+     -1.14,
+     -1.8
+    ],
+    "win": [
+     0.4443,
+     0.4471
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.14 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.8 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-DT-MACD",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "MACD cross under zero in an uptrend (the control in the KST video)",
+   "explain": "Close above its 200-day EMA; MACD (12, 26, 9 EMA) line crosses above its signal line while the MACD line is below zero. Buy the next open. House bracket: stop entry - 3 x ATR14, target 1.5x the risk, max 40 sessions. Source: DaviddTech, \"Extremely More Profitable than the MACD Trading Strategy | Tested 100 Times\" (2021-09-10). Claimed: 96 trades, 44% win, +16.8% net (1-hour; the KST version did better). Costs in the claim: not stated; out-of-sample: no. Replication: partial (the video's comparison rule; exit not given: house bracket).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 40,
+   "libraryCheck": "DEC2-APPEL (two MACDs, trend exit) differs; the plain under-zero cross above the 200 EMA was never run",
+   "sources": [
+    "https://www.youtube.com/watch?v=oceOcXBV6Yk"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 40 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3872,
+     11137
+    ],
+    "avg": [
+     -0.0066,
+     0.0003
+    ],
+    "stress": [
+     -0.0106,
+     -0.0037
+    ],
+    "edge": [
+     -0.0059,
+     -0.0103
+    ],
+    "vsOwn": [
+     -0.0188,
+     -0.0141
+    ],
+    "noTop2": [
+     -0.0071,
+     0
+    ],
+    "tBlock": [
+     -0.8,
+     -2.16
+    ],
+    "win": [
+     0.4269,
+     0.4514
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.8 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.16 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-DT-WQM",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "Waddah Attar Explosion + QQE Mod + McGinley Dynamic (DaviddTech \"1794%\")",
+   "explain": "Close above the McGinley Dynamic 150; QQE Mod (Mihkel00 defaults: RSI 6, smoothing 5, QQE 3 and 1.61, threshold 3, Bollinger 50 x 0.35) bar blue (both QQE conditions bullish) and the second RSI line above the QQE line; Waddah Attar Explosion (LazyBear defaults: sensitivity 150, MACD 20/40, BB 20 x 2, dead zone = Wilder ATR 100 x 3.7) green bar above both the explosion line and the dead zone. Buy the next open. Stop = entry - 3 x ATR14, but never more than 2.5% below the entry; target 1.5x the risk; max 40 sessions. Source: DaviddTech, \"INSANE 1794,42%+ HIGHLY PROFITABLE Trading Strategy- Waddah Attar + QQE + MCGinley\" (2023-03-06). Claimed: 166 trades, 60% win, profit factor 2.38, +1794% (leveraged up to 25x), max drawdown 24% (BTC/USDT 1-hour, April 2022 to March 2023). Costs in the claim: not stated; out-of-sample: no (one year, settings chosen on it). Replication: faithful (timeframe proxy: 1-hour BTC/USDT -> daily US stocks).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 40,
+   "libraryCheck": "none (no WAE, QQE or McGinley rule in the library)",
+   "sources": [
+    "https://www.youtube.com/watch?v=UjY3Zq2-8ic"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 40 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     45806,
+     110926
+    ],
+    "avg": [
+     -0.0091,
+     -0.0091
+    ],
+    "stress": [
+     -0.0131,
+     -0.0131
+    ],
+    "edge": [
+     -0.0092,
+     -0.0097
+    ],
+    "vsOwn": [
+     0.0008,
+     0.0012
+    ],
+    "noTop2": [
+     -0.0091,
+     -0.0091
+    ],
+    "tBlock": [
+     -12.39,
+     -14.16
+    ],
+    "win": [
+     0.3849,
+     0.3831
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -12.39 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -14.16 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-DT-SSLW",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "SSL channel cross + Waddah Attar + 200 EMA (DaviddTech / Traders Landing)",
+   "explain": "Close above its 200-day EMA; SSL channel 21 (SMA 21 of highs and of lows) crosses up (the close goes above the high-average after being below the low-average); Waddah Attar Explosion green bar above the explosion line and the dead zone. Buy the next open. Stop = entry - 2 x ATR14; half sold at 1R, the other half's stop moves to the entry and it is sold at the close of the next SSL cross down (or the break-even stop); max 40 sessions. Source: DaviddTech, \"High Win Rate + High Profit | Complete System | SSL + ATR + WAE + EMA | FOREX CRYPTO & STOCKS\" (2022-05-09). Claimed: His faithful version: 584 trades, 65% win, NET LOSS -47% (BTC/USDT 30-minute). His \"improved\" version (multiple entries, 2% max stop, ADX filter): 764 trades 73% win profit factor 1.23 +408%; on 2017-2022 deep history 2,399 trades 71% win, profit factor 1.19, +1,256%, max drawdown 67%. Costs in the claim: not stated; out-of-sample: partly (deep history 2017-2022 for the improved version, after tuning). Replication: faithful (timeframe proxy: 30-minute BTC/USDT -> daily US stocks; ATR band multiplier 2 as in the video).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 40,
+   "libraryCheck": "none",
+   "sources": [
+    "https://www.youtube.com/watch?v=WhMMFzw2qDE"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 40 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     6930,
+     20895
+    ],
+    "avg": [
+     -0.0083,
+     -0.0046
+    ],
+    "stress": [
+     -0.0123,
+     -0.0086
+    ],
+    "edge": [
+     -0.0096,
+     -0.0129
+    ],
+    "vsOwn": [
+     -0.0152,
+     -0.0039
+    ],
+    "noTop2": [
+     -0.0085,
+     -0.0048
+    ],
+    "tBlock": [
+     -1.73,
+     -4.98
+    ],
+    "win": [
+     0.4782,
+     0.5119
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.73 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -4.98 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-DT-HDIV",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "Hidden bullish MACD divergence in an uptrend (DaviddTech \"stop using the RSI\")",
+   "explain": "EMA 50 above EMA 400; hidden bullish divergence on the MACD line (12/26): a pivot low of the MACD line (5 sessions each side, confirmed 5 sessions later) that is LOWER than the previous MACD pivot low 5-60 sessions earlier, while the price low at the new pivot is HIGHER than the price low at the previous one. Signal on the confirmation session; buy the next open. House bracket: stop entry - 3 x ATR14, target 1.5x the risk, max 40 sessions. Source: DaviddTech, \"Simple Trading Strategy \"STOP Using the RSI\" Tested 100 Times\" (2021-10-11). Claimed: 138 trades, 84% win, +149% net, profit factor 2.7, max drawdown 11% - the best of about 9 oscillators he tried on the same chart (RSI gave 69.6% win and +0.93%). Costs in the claim: not stated; out-of-sample: no (picked the best of ~9 oscillators x regular/hidden on one sample). Replication: partial (the video used fixed percentage exits it did not state: house bracket).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 40,
+   "libraryCheck": "none (no divergence rule)",
+   "sources": [
+    "https://www.youtube.com/watch?v=5ML87TuLVFk"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 40 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     904,
+     6634
+    ],
+    "avg": [
+     -0.0246,
+     -0.0001
+    ],
+    "stress": [
+     -0.0286,
+     -0.0041
+    ],
+    "edge": [
+     -0.0226,
+     -0.0081
+    ],
+    "vsOwn": [
+     -0.0415,
+     -0.0131
+    ],
+    "noTop2": [
+     -0.0253,
+     -0.0004
+    ],
+    "tBlock": [
+     -2.24,
+     -1.42
+    ],
+    "win": [
+     0.3518,
+     0.4507
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.24 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.42 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-TMA-3LS",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "Three-line strike with the trend (The Moving Average's favourite candle)",
+   "explain": "Uptrend: smoothed (Wilder) MAs 21 > 50 > 200 and the close above all three. Three down candles in a row, each closing lower, then one up candle that opens at or below the previous close and closes above the open of the first of the three (engulfs them). Buy the next open. Stop = entry - the signal candle's high-low range; target = 2x the risk; max 20 sessions. Source: The Moving Average, \"Best Candle Formation for 5 Minute Scalping\" (2022-07-12). Claimed: \"Consistently gets me a 70 to 75% win rate when I trade during my market hours\"; 8 winners out of 8 in the example trend (AUD/USD 5-minute, 10-pip stop, 20-pip target). Costs in the claim: not stated; out-of-sample: no (his own trading, no trade list). Replication: proxy (5-minute forex pips -> daily bars: the 10-pip stop is one signal-candle length).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 20,
+   "libraryCheck": "DEC2-NISON (engulfing / hammer at a 20-day low) differs; no three-line strike",
+   "sources": [
+    "https://www.youtube.com/watch?v=RyTlRkMujuk"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 20 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     158,
+     452
+    ],
+    "avg": [
+     -0.0088,
+     -0.0138
+    ],
+    "stress": [
+     -0.0128,
+     -0.0178
+    ],
+    "edge": [
+     -0.013,
+     -0.0143
+    ],
+    "vsOwn": [
+     -0.0087,
+     -0.0124
+    ],
+    "noTop2": [
+     -0.0118,
+     -0.0151
+    ],
+    "tBlock": [
+     -1.23,
+     -2.15
+    ],
+    "win": [
+     0.3734,
+     0.3407
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.23 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.15 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-TMA-TREND",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "Trend scalp: stacked SMMAs + engulfing (or 3-line strike) + RSI over 50 (The Moving Average \"highest win rate\")",
+   "explain": "Smoothed MAs 21 > 50 > 200 and the close above all three; the signal candle is a bullish engulfing (up candle, previous candle down, opens at or below the previous close and closes at or above the previous open) or a three-line strike; RSI 14 above 50. Buy the next open. Stop = entry - 2 x the signal candle's high-low range; target = 2x the risk; max 20 sessions. Source: The Moving Average, \"5 Minute Scalping Strategy **HIGHEST WIN RATE**\" (2021-08-05). Claimed: \"Highest win rate\"; no trade statistics. 1% risk for 2% reward, \"24% gain on your account each month\" is an example calculation, not a result. Costs in the claim: not stated; out-of-sample: no statistics given. Replication: proxy (5-minute forex session scalp -> daily bars).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 20,
+   "libraryCheck": "DEC2-NISON / DEC2-PB differ (engulfing at a low; 21-EMA pullback); none with the SMMA stack + RSI 50",
+   "sources": [
+    "https://www.youtube.com/watch?v=wbfXaqjIrJ0"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 20 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     5196,
+     16111
+    ],
+    "avg": [
+     -0.0119,
+     -0.0052
+    ],
+    "stress": [
+     -0.0159,
+     -0.0092
+    ],
+    "edge": [
+     -0.0119,
+     -0.0117
+    ],
+    "vsOwn": [
+     -0.0168,
+     -0.0063
+    ],
+    "noTop2": [
+     -0.0122,
+     -0.0054
+    ],
+    "tBlock": [
+     -2.49,
+     -5.73
+    ],
+    "win": [
+     0.3657,
+     0.4021
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.49 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -5.73 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-TMA-FIB",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "Fibonacci 0.618 golden-pocket pullback after a break of structure (The Moving Average)",
+   "explain": "Impulse: the highest high of the last 11 sessions (H) was made 2-10 sessions ago; L = the lowest low of the 20 sessions before H; H is above the highest high of the 40 sessions before L (break of structure) and H - L is at least 3 x ATR14; no low since H has reached the 0.618 level E = H - 0.618 x (H - L). Then a buy limit at E for the next 10 sessions (filled at E, or at the open if it opens below E). Stop at L (the 1.0 level); target H (the previous high, about 1:1.6); max 20 sessions after the fill. Source: The Moving Average, \"1 Minute Fibonacci Scalping Strategy Backtested 100 TIMES\" (2025-07-18). Claimed: 100 trades on EUR/USD 1-minute over 12 days (London to New York session); \"substantially more wins than losses\" at 1:1.5-1.6; exact figures only on screen. Costs in the claim: not stated; out-of-sample: no (12 days). Replication: proxy (1-minute EUR/USD -> daily bars; swing points defined mechanically).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 20,
+   "libraryCheck": "none (no Fibonacci rule)",
+   "sources": [
+    "https://www.youtube.com/watch?v=2GAAK_JhNW0"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 20 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     6298,
+     14897
+    ],
+    "avg": [
+     -0.0177,
+     -0.0009
+    ],
+    "stress": [
+     -0.0217,
+     -0.0049
+    ],
+    "edge": [
+     -0.0094,
+     -0.0063
+    ],
+    "vsOwn": [
+     -0.0153,
+     -0.005
+    ],
+    "noTop2": [
+     -0.0181,
+     -0.0011
+    ],
+    "tBlock": [
+     -2.32,
+     -2.34
+    ],
+    "win": [
+     0.3504,
+     0.4366
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.32 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.34 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ9-QG-KALMAN",
+   "family": "YouTube strategy testers (Squad 9)",
+   "name": "Kalman-filter mean reversion: buy 2 standard deviations under the adaptive mean (Quant Guild)",
+   "explain": "x = log close. Measurement noise R = variance of x minus its 60-session average over the last 60 sessions; process noise Q = R / 100 (\"trust the model more\"); local-level Kalman filter mean m. z = (x - m) / sqrt(R). Signal when z falls to -2 or below (above -2 the session before). Buy the next open; sell at the first close at or above the Kalman mean; max 20 sessions; no stop (as in the video). Source: Quant Guild, \"Trading Mean Reversion with Kalman Filters\" (2026-03-03). Claimed: No backtest figure: the video shows a simulated mean-reverting (Ornstein-Uhlenbeck) path where trading around the estimated mean makes money, and warns that real prices are not stationary and the edge can vanish. Costs in the claim: n/a; out-of-sample: n/a (theory demonstration). Replication: proxy (1-minute bars, 60-bar calibration -> daily bars, 60-session calibration).",
+   "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026",
+   "agent": "squad9",
+   "kind": "buy",
+   "hold": 20,
+   "libraryCheck": "A-SW1 / DEC2-RSI2 / M-series are oversold rules on fixed indicators; no adaptive (Kalman) mean",
+   "sources": [
+    "https://www.youtube.com/watch?v=BuPil7nXvMU"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad9-core.mjs RULES = the exact rule; one version; max hold 20 sessions). 5-year one-shot by squad9-lab.mjs on daily bars of the whole US market, first complete verdict frozen in data/squad9-lab.json; the same rule on SPY and QQQ alone is reported next to the channel's claim (information); forward paper lane (data/squad9-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad9-lab.mjs -> data/squad9-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3500,
+     8120
+    ],
+    "avg": [
+     -0.0022,
+     0.0145
+    ],
+    "stress": [
+     -0.0062,
+     0.0105
+    ],
+    "edge": [
+     -0.0088,
+     -0.0116
+    ],
+    "vsOwn": [
+     -0.0073,
+     -0.0054
+    ],
+    "noTop2": [
+     -0.0036,
+     0.014
+    ],
+    "tBlock": [
+     -1.81,
+     -2.98
+    ],
+    "win": [
+     0.5686,
+     0.6419
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.81 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -2.98 under 2.5 in the newer half"
+   }
   }
  ]
 }
