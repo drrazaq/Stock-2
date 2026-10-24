@@ -2295,7 +2295,7 @@ const labRuns = (j) => { if (!j) return {}; const out = { ...(j.firstRun || {}) 
 // Near-copies of a rule already in the lane (24 Oct 2026): Squad 14 re-tested SQ11-PB12 with other leader lists / a deeper dip / a
 // Shariah screen AFTER PB12 had won. They largely pick the same trades, so they would send the owner the same buy up to 4 times and
 // their extra 'wins' add little evidence. Only the original SQ11-PB12 trades; the copies stay on paper.
-const TRY_DUPLICATE = new Set(['SQ14-PB12M', 'SQ14-PB15', 'SQ14-PB12H']);
+const TRY_DUPLICATE = new Set(['SQ14-PB12M', 'SQ14-PB15', 'SQ14-PB12H', 'SQ18-PB12-MON', 'SQ18-PB12-DRY', 'SQ18-QMOM-CALM']);   // + Squad 18 filters of PB12 / QMOM (same stocks)
 const TRY_PAUSED = new Set(['ANOM-SUESURGE', 'SQ1-BBAUTH']);
 // (audit 24 Oct, coordinator) B-BASK1 (value lab) was judged as ONE basket a month: each tested 'trade' is the average return of its 10
 // names (value-lab.mjs BASK_MONTHS, n = number of months). Like squad5 / squad10, 2 of its names at 1,000 USD with a stop is not the

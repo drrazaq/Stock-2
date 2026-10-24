@@ -160,3 +160,7 @@ test('near-copies of SQ11-PB12 from Squad 14 never trade', () => {
   const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
   assert.deepEqual(q({ 'SQ14-PB12M': r, 'SQ14-PB15': r, 'SQ14-PB12H': r, 'SQ11-PB12': r }), ['SQ11-PB12']);
 });
+test('Squad 18 filtered copies of PB12 / QMOM never trade', () => {
+  const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
+  assert.deepEqual(q({ 'SQ18-PB12-MON': r, 'SQ18-PB12-DRY': r, 'SQ18-QMOM-CALM': r }), []);
+});
