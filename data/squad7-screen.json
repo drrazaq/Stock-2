@@ -1,0 +1,866 @@
+{
+ "generatedAt": "2026-10-24T06:31:36.545Z",
+ "stage": "1b",
+ "note": "OLDER HALF ONLY: every candidate trade has its signal AND its exit before 2024-01-01 (the newer half is not read). Same engine as the 5-year test (next open, fixed hold, one open trade per stock, max 10 a day, 0.8% cost, the average liquid stock over the same sessions as the yardstick, +300% cap both sides). Used only to choose which candidates become SQ7 rules.",
+ "window": [
+  "2021-10-12",
+  "2023-12-29"
+ ],
+ "data": {
+  "price": {
+   "ok": true,
+   "sessions": 1260,
+   "from": "2021-10-12",
+   "to": "2026-10-19",
+   "stocks": 8487,
+   "xDays": 1251,
+   "hlMissing": 0
+  },
+  "sector": {
+   "ok": true,
+   "everLiquid": 5063,
+   "withSector": 3148
+  },
+  "shares": {
+   "ok": true,
+   "companies": 9397,
+   "everLiquidMapped": 3339
+  },
+  "earn": {
+   "ok": true,
+   "days": 558,
+   "missing": 0,
+   "fetchedNow": 0,
+   "symbols": 3507
+  }
+ },
+ "candidates": {
+  "A": {
+   "name": "Deep under the 200-day, not diluting",
+   "hold": 20,
+   "when": [
+    [
+     "d200",
+     "<=",
+     -0.33
+    ],
+    [
+     "dShares",
+     "<=",
+     0.003
+    ]
+   ],
+   "rank": [
+    "d200",
+    "low"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 301,
+    "days": 195,
+    "stocks": 128,
+    "avg": 0.0183,
+    "median": 0.0025,
+    "avgStress": 0.0143,
+    "ctrl": -0.0034,
+    "edge": 0.0174,
+    "tDay": 1.41,
+    "blocks": 20,
+    "tBlock": 0.94,
+    "vsOwn": 0.0335,
+    "ownCovered": 187,
+    "noTop2": 0.0126,
+    "best": 0.9964,
+    "worst": -0.7419,
+    "win": 0.5017
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 26,
+     "edge": 0.0346
+    },
+    "2022H2": {
+     "n": 104,
+     "edge": 0.0081
+    },
+    "2023H1": {
+     "n": 92,
+     "edge": 0.0289
+    },
+    "2023H2": {
+     "n": 79,
+     "edge": -0.0034
+    }
+   },
+   "signals": 3484
+  },
+  "B": {
+   "name": "Deep under the 200-day, next report near (59-85 days since the last)",
+   "hold": 20,
+   "when": [
+    [
+     "d200",
+     "<=",
+     -0.33
+    ],
+    [
+     "earnDays",
+     ">=",
+     59
+    ],
+    [
+     "earnDays",
+     "<=",
+     85
+    ]
+   ],
+   "rank": [
+    "d200",
+    "low"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 341,
+    "days": 153,
+    "stocks": 232,
+    "avg": 0.0482,
+    "median": 0.0083,
+    "avgStress": 0.0442,
+    "ctrl": 0.012,
+    "edge": 0.0258,
+    "tDay": 1.58,
+    "blocks": 20,
+    "tBlock": 1.21,
+    "vsOwn": 0.0833,
+    "ownCovered": 149,
+    "noTop2": 0.0418,
+    "best": 1.1738,
+    "worst": -0.5978,
+    "win": 0.5132
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 37,
+     "edge": 0.0265
+    },
+    "2022H2": {
+     "n": 127,
+     "edge": 0.0267
+    },
+    "2023H1": {
+     "n": 91,
+     "edge": 0.0887
+    },
+    "2023H2": {
+     "n": 86,
+     "edge": -0.0327
+    }
+   },
+   "signals": 2446
+  },
+  "C": {
+   "name": "Sector laggard (3-month return 22%+ under its sector) while the sector turns up (half its peers beat SPY), under the 200-day",
+   "hold": 20,
+   "when": [
+    [
+     "d200",
+     "<=",
+     -0.26
+    ],
+    [
+     "rsSec",
+     "<=",
+     -0.22
+    ],
+    [
+     "breadthSec",
+     ">=",
+     0.5
+    ]
+   ],
+   "rank": [
+    "rsSec",
+    "low"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 595,
+    "days": 275,
+    "stocks": 325,
+    "avg": -0.0089,
+    "median": -0.0125,
+    "avgStress": -0.0129,
+    "ctrl": -0.0083,
+    "edge": -0.0071,
+    "tDay": -0.67,
+    "blocks": 20,
+    "tBlock": -0.88,
+    "vsOwn": 0.0318,
+    "ownCovered": 252,
+    "noTop2": -0.0121,
+    "best": 0.9296,
+    "worst": -0.7352,
+    "win": 0.4639
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 52,
+     "edge": 0.0423
+    },
+    "2022H2": {
+     "n": 209,
+     "edge": -0.0225
+    },
+    "2023H1": {
+     "n": 182,
+     "edge": 0.0014
+    },
+    "2023H2": {
+     "n": 152,
+     "edge": -0.019
+    }
+   },
+   "signals": 3508
+  },
+  "D": {
+   "name": "Deep under the 200-day but calm (20-day volatility under 4.35%)",
+   "hold": 20,
+   "when": [
+    [
+     "d200",
+     "<=",
+     -0.33
+    ],
+    [
+     "vol20",
+     "<=",
+     0.0435
+    ]
+   ],
+   "rank": [
+    "d200",
+    "low"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 515,
+    "days": 285,
+    "stocks": 289,
+    "avg": -0.0126,
+    "median": -0.0278,
+    "avgStress": -0.0166,
+    "ctrl": -0.0066,
+    "edge": -0.0151,
+    "tDay": -1.44,
+    "blocks": 20,
+    "tBlock": -0.86,
+    "vsOwn": 0.0407,
+    "ownCovered": 275,
+    "noTop2": -0.0165,
+    "best": 0.9858,
+    "worst": -0.6439,
+    "win": 0.4408
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 47,
+     "edge": 0.034
+    },
+    "2022H2": {
+     "n": 204,
+     "edge": -0.0092
+    },
+    "2023H1": {
+     "n": 147,
+     "edge": -0.0097
+    },
+    "2023H2": {
+     "n": 117,
+     "edge": -0.0471
+    }
+   },
+   "signals": 3790
+  },
+  "E": {
+   "name": "Deep under the 200-day with volume waking up (1.45x the 50-day)",
+   "hold": 20,
+   "when": [
+    [
+     "d200",
+     "<=",
+     -0.33
+    ],
+    [
+     "turn50",
+     ">=",
+     1.45
+    ]
+   ],
+   "rank": [
+    "turn50",
+    "high"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 1454,
+    "days": 364,
+    "stocks": 783,
+    "avg": -0.0081,
+    "median": -0.0188,
+    "avgStress": -0.0121,
+    "ctrl": 0.0006,
+    "edge": -0.0269,
+    "tDay": -3.29,
+    "blocks": 20,
+    "tBlock": -0.97,
+    "vsOwn": 0.0329,
+    "ownCovered": 354,
+    "noTop2": -0.0099,
+    "best": 1.4682,
+    "worst": -0.8924,
+    "win": 0.4725
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 133,
+     "edge": 0.0586
+    },
+    "2022H2": {
+     "n": 597,
+     "edge": -0.0179
+    },
+    "2023H1": {
+     "n": 382,
+     "edge": -0.0188
+    },
+    "2023H2": {
+     "n": 342,
+     "edge": -0.0411
+    }
+   },
+   "signals": 3585
+  },
+  "F": {
+   "name": "Long base far under the 52-week high, no dilution",
+   "hold": 20,
+   "when": [
+    [
+     "hi52",
+     "<=",
+     -0.53
+    ],
+    [
+     "baseLen",
+     ">=",
+     26
+    ],
+    [
+     "dShares",
+     "<=",
+     0.008
+    ]
+   ],
+   "rank": [
+    "baseLen",
+    "high"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 469,
+    "days": 275,
+    "stocks": 189,
+    "avg": -0.003,
+    "median": -0.0063,
+    "avgStress": -0.007,
+    "ctrl": -0.0054,
+    "edge": -0.0002,
+    "tDay": -0.02,
+    "blocks": 22,
+    "tBlock": -0.07,
+    "vsOwn": 0.0148,
+    "ownCovered": 274,
+    "noTop2": -0.0054,
+    "best": 0.5821,
+    "worst": -0.5579,
+    "win": 0.4776
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 48,
+     "edge": 0.0102
+    },
+    "2022H2": {
+     "n": 147,
+     "edge": -0.0043
+    },
+    "2023H1": {
+     "n": 150,
+     "edge": -0.0165
+    },
+    "2023H2": {
+     "n": 124,
+     "edge": -0.0001
+    }
+   },
+   "signals": 3909
+  },
+  "G": {
+   "name": "Pre-report sector laggard under its 200-day (59-85 days since the last report)",
+   "hold": 20,
+   "when": [
+    [
+     "earnDays",
+     ">=",
+     59
+    ],
+    [
+     "earnDays",
+     "<=",
+     85
+    ],
+    [
+     "rsSec",
+     "<=",
+     -0.1
+    ],
+    [
+     "d200",
+     "<=",
+     0
+    ]
+   ],
+   "rank": [
+    "rsSec",
+    "low"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 610,
+    "days": 285,
+    "stocks": 432,
+    "avg": 0.0214,
+    "median": -0.0008,
+    "avgStress": 0.0174,
+    "ctrl": 0.0016,
+    "edge": 0.0151,
+    "tDay": 1.6,
+    "blocks": 20,
+    "tBlock": 1.32,
+    "vsOwn": 0.0364,
+    "ownCovered": 279,
+    "noTop2": 0.0178,
+    "best": 1.1738,
+    "worst": -0.5978,
+    "win": 0.4967
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 57,
+     "edge": 0.0175
+    },
+    "2022H2": {
+     "n": 196,
+     "edge": 0.0268
+    },
+    "2023H1": {
+     "n": 194,
+     "edge": 0.0171
+    },
+    "2023H2": {
+     "n": 163,
+     "edge": -0.0145
+    }
+   },
+   "signals": 3632
+  },
+  "H": {
+   "name": "Deep under the 200-day, recent 3%+ gap up, not diluting",
+   "hold": 20,
+   "when": [
+    [
+     "d200",
+     "<=",
+     -0.33
+    ],
+    [
+     "gapUp20",
+     ">=",
+     1
+    ],
+    [
+     "dShares",
+     "<=",
+     0.008
+    ]
+   ],
+   "rank": [
+    "d200",
+    "low"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 312,
+    "days": 196,
+    "stocks": 160,
+    "avg": 0.0506,
+    "median": 0.0277,
+    "avgStress": 0.0466,
+    "ctrl": 0.0065,
+    "edge": 0.03,
+    "tDay": 2.59,
+    "blocks": 20,
+    "tBlock": 1.63,
+    "vsOwn": 0.07,
+    "ownCovered": 171,
+    "noTop2": 0.0437,
+    "best": 1.2505,
+    "worst": -0.7911,
+    "win": 0.5577
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 33,
+     "edge": 0.0607
+    },
+    "2022H2": {
+     "n": 124,
+     "edge": 0.0366
+    },
+    "2023H1": {
+     "n": 85,
+     "edge": 0.0375
+    },
+    "2023H2": {
+     "n": 70,
+     "edge": 0.0222
+    }
+   },
+   "signals": 2929
+  },
+  "I": {
+   "name": "Quiet pullback: 15-34% under the 200-day, 30+ day base, no dilution",
+   "hold": 120,
+   "when": [
+    [
+     "d200",
+     ">=",
+     -0.34
+    ],
+    [
+     "d200",
+     "<=",
+     -0.15
+    ],
+    [
+     "baseLen",
+     ">=",
+     30
+    ],
+    [
+     "dShares",
+     "<=",
+     0.007
+    ]
+   ],
+   "rank": [
+    "baseLen",
+    "high"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 423,
+    "days": 188,
+    "stocks": 392,
+    "avg": 0.0178,
+    "median": 0.0254,
+    "avgStress": 0.0138,
+    "ctrl": 0.0064,
+    "edge": 0.0031,
+    "tDay": 0.24,
+    "blocks": 3,
+    "tBlock": 0.12,
+    "vsOwn": 0.0563,
+    "ownCovered": 111,
+    "noTop2": 0.0147,
+    "best": 0.7848,
+    "worst": -0.656,
+    "win": 0.5414
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 81,
+     "edge": 0.0411
+    },
+    "2022H2": {
+     "n": 192,
+     "edge": 0.0257
+    },
+    "2023H1": {
+     "n": 146,
+     "edge": -0.0376
+    },
+    "2023H2": {
+     "n": 4,
+     "edge": -0.3242
+    }
+   },
+   "signals": 2790
+  },
+  "J": {
+   "name": "Leader in a strong sector: 15%+ over the 200-day, 55%+ of sector peers beat SPY",
+   "hold": 120,
+   "when": [
+    [
+     "d200",
+     ">=",
+     0.15
+    ],
+    [
+     "breadthSec",
+     ">=",
+     0.55
+    ]
+   ],
+   "rank": [
+    "breadthSec",
+    "high"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 473,
+    "days": 172,
+    "stocks": 434,
+    "avg": 0.0215,
+    "median": -0.008,
+    "avgStress": 0.0175,
+    "ctrl": -0.0025,
+    "edge": 0.0193,
+    "tDay": 1.16,
+    "blocks": 3,
+    "tBlock": 0.49,
+    "vsOwn": -0.1312,
+    "ownCovered": 100,
+    "noTop2": 0.0161,
+    "best": 1.3794,
+    "worst": -0.6547,
+    "win": 0.482
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 48,
+     "edge": -0.0382
+    },
+    "2022H2": {
+     "n": 216,
+     "edge": -0.0099
+    },
+    "2023H1": {
+     "n": 199,
+     "edge": 0.0635
+    },
+    "2023H2": {
+     "n": 10,
+     "edge": -0.1062
+    }
+   },
+   "signals": 2790
+  },
+  "K": {
+   "name": "Leader on volume, no dilution: 15%+ over the 200-day, volume 1.6x the 50-day",
+   "hold": 120,
+   "when": [
+    [
+     "d200",
+     ">=",
+     0.15
+    ],
+    [
+     "turn50",
+     ">=",
+     1.6
+    ],
+    [
+     "dShares",
+     "<=",
+     0.007
+    ]
+   ],
+   "rank": [
+    "turn50",
+    "high"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 659,
+    "days": 239,
+    "stocks": 597,
+    "avg": 0.0002,
+    "median": -0.0143,
+    "avgStress": -0.0038,
+    "ctrl": -0.0063,
+    "edge": -0.0055,
+    "tDay": -0.49,
+    "blocks": 3,
+    "tBlock": -0.58,
+    "vsOwn": -0.1211,
+    "ownCovered": 131,
+    "noTop2": -0.0033,
+    "best": 1.3396,
+    "worst": -0.7202,
+    "win": 0.4674
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 41,
+     "edge": -0.028
+    },
+    "2022H2": {
+     "n": 228,
+     "edge": -0.024
+    },
+    "2023H1": {
+     "n": 374,
+     "edge": 0.0154
+    },
+    "2023H2": {
+     "n": 16,
+     "edge": -0.01
+    }
+   },
+   "signals": 2140
+  },
+  "L": {
+   "name": "Pullback 27-49% under the 52-week high, 6-month RS not weak, volume expanding after a dry-up",
+   "hold": 120,
+   "when": [
+    [
+     "hi52",
+     ">=",
+     -0.49
+    ],
+    [
+     "hi52",
+     "<=",
+     -0.27
+    ],
+    [
+     "rs126",
+     ">=",
+     -0.2
+    ],
+    [
+     "dryPop",
+     ">=",
+     2
+    ]
+   ],
+   "rank": [
+    "dryPop",
+    "high"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 1426,
+    "days": 311,
+    "stocks": 1208,
+    "avg": -0.018,
+    "median": -0.0345,
+    "avgStress": -0.022,
+    "ctrl": -0.0127,
+    "edge": -0.017,
+    "tDay": -1.69,
+    "blocks": 3,
+    "tBlock": -1.12,
+    "vsOwn": 0.0291,
+    "ownCovered": 203,
+    "noTop2": -0.0222,
+    "best": 2.992,
+    "worst": -0.9966,
+    "win": 0.4348
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 314,
+     "edge": -0.0116
+    },
+    "2022H2": {
+     "n": 574,
+     "edge": 0.0055
+    },
+    "2023H1": {
+     "n": 523,
+     "edge": -0.0373
+    },
+    "2023H2": {
+     "n": 15,
+     "edge": 0.0672
+    }
+   },
+   "signals": 3104
+  },
+  "M": {
+   "name": "Buyback company (shares -3%+ in a year) not collapsing, on 1.34x volume",
+   "hold": 120,
+   "when": [
+    [
+     "dShares",
+     "<=",
+     -0.03
+    ],
+    [
+     "d200",
+     ">=",
+     -0.34
+    ],
+    [
+     "turn50",
+     ">=",
+     1.34
+    ]
+   ],
+   "rank": [
+    "turn50",
+    "high"
+   ],
+   "maxPerDay": 10,
+   "older": {
+    "n": 731,
+    "days": 254,
+    "stocks": 489,
+    "avg": 0.0279,
+    "median": 0.0233,
+    "avgStress": 0.0239,
+    "ctrl": -0.0004,
+    "edge": 0.0217,
+    "tDay": 2.17,
+    "blocks": 3,
+    "tBlock": 1.74,
+    "vsOwn": -0.0064,
+    "ownCovered": 104,
+    "noTop2": 0.0259,
+    "best": 0.7714,
+    "worst": -0.67,
+    "win": 0.5595
+   },
+   "edgeBySemester": {
+    "2022H1": {
+     "n": 127,
+     "edge": 0.0293
+    },
+    "2022H2": {
+     "n": 281,
+     "edge": 0.0308
+    },
+    "2023H1": {
+     "n": 314,
+     "edge": 0.0025
+    },
+    "2023H2": {
+     "n": 9,
+     "edge": 0.1852
+    }
+   },
+   "signals": 2734
+  }
+ }
+}
