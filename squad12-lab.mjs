@@ -248,7 +248,7 @@ const half = (a) => ({ older: a.filter(s => halfOf(D[s.t]) === 'older').length, 
 const DIAGS = { window: [D[0], D[T - 1]], sessions: T, data: STATUS, bigCompanies: BIGCIK.size,
   top300Now: universe(T - 1).ranked.slice(0, 20).map(r => SYMS[r.i] + ' ' + (r.cap / 1e9).toFixed(0) + 'B'), rank300Cap: (() => { const r = universe(T - 1).ranked[TOPN - 1]; return r ? r4(r.cap / 1e9) : null; })(),
   events: Object.fromEntries(IDS.map(id => [id, { ...CNT[id], afterOneOpen: SIG[id].length, halves: half(SIG[id]), top100: half(SIG[id].filter(s => s.rank < TOP100)), sample: SIG[id].slice(-3).map(s => SYMS[s.i] + ' ' + D[s.t] + ' ' + (s.ev || '')) }])) };
-if (DIAG) { console.log('SQUAD 12 DIAGNOSTICS (coverage and event counts only; nothing judged or written)'); console.log(JSON.stringify(DIAGS, null, 1).slice(0, 30000)); process.exit(0); }
+if (DIAG) { console.log('SQUAD 12 DIAGNOSTICS (coverage and event counts only; nothing judged or written)'); for (const [id, v] of Object.entries(DIAGS.events)) console.log(id + ' ' + JSON.stringify(v).slice(0, 1800)); console.log('top300Now ' + DIAGS.top300Now.join(', ') + ' | rank300Cap ' + DIAGS.rank300Cap + 'B'); process.exit(0); }
 
 // ================= 7. YARDSTICKS (as squad5-lab) =================
 const ART = new Map(), artOf = (i) => { if (!ART.has(i)) ART.set(i, artifactJumps(cl(i))); return ART.get(i); };
