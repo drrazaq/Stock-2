@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-23T23:53:23.498Z",
+ "generatedAt": "2026-10-24T05:58:12.166Z",
  "preRegistered": "anomaly-core.mjs header + ANOMALIES (23 Oct 2026, before any run) + data/strategy-library.json ANOM-*",
  "window": [
   "2021-10-12",
@@ -13,17 +13,17 @@
    "ok": true,
    "companies": 3645,
    "withFacts": 3270,
-   "at": "2026-10-23T23:50:53.668Z"
+   "at": "2026-10-24T05:55:28.047Z"
   },
   "earn": {
    "ok": true,
    "days": 1314,
    "missing": 0,
-   "fetchedNow": 16,
+   "fetchedNow": 15,
    "fromAgentA": 1308,
    "reports": 67628,
    "surge": {
-    "reports": 39501,
+    "reports": 39516,
     "withSurge": 27297
    }
   },
@@ -38,7 +38,7 @@
    "ok": true,
    "quarters": 28,
    "missing": [],
-   "rows": 16574
+   "rows": 16580
   },
   "divs": {
    "ok": true,
@@ -4852,9 +4852,434 @@
    "frozenAt": "2026-10-23T20:20:21.074Z"
   }
  },
+ "correctedRun": {
+  "ANOM-52WH": {
+   "at": "2026-10-24T05:58:10.380Z",
+   "bugs": [
+    "AUD-1"
+   ],
+   "explanation": "AUD-1: The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule's own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule's and the yardstick's, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run.",
+   "window": [
+    "2021-10-12",
+    "2026-10-23"
+   ],
+   "frozenAt": "2026-10-23T20:20:21.074Z",
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "not better than the same stocks on their other days in the older half; block t 2.2 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.32 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 3266,
+     "days": 14,
+     "stocks": 1302,
+     "avg": 0.0464,
+     "median": 0.0261,
+     "avgStress": 0.0424,
+     "ctrl": 0.0223,
+     "edge": 0.0162,
+     "tDay": 1.54,
+     "blocks": 3,
+     "tBlock": 2.2,
+     "vsOwn": -0.1325,
+     "ownCovered": 14,
+     "noTop2": 0.045,
+     "best": 2.5283,
+     "worst": -0.9315,
+     "win": 0.5664
+    },
+    "newer": {
+     "n": 6722,
+     "days": 28,
+     "stocks": 2070,
+     "avg": 0.0714,
+     "median": 0.0317,
+     "avgStress": 0.0674,
+     "ctrl": 0.0666,
+     "edge": -0.0032,
+     "tDay": -0.23,
+     "blocks": 5,
+     "tBlock": -0.32,
+     "vsOwn": 0.0059,
+     "ownCovered": 28,
+     "noTop2": 0.0705,
+     "best": 2.992,
+     "worst": -0.928,
+     "win": 0.5855
+    },
+    "all": {
+     "n": 9988,
+     "days": 42,
+     "stocks": 2422,
+     "avg": 0.0632,
+     "median": 0.0298,
+     "avgStress": 0.0592,
+     "ctrl": 0.0521,
+     "edge": 0.0033,
+     "tDay": 0.32,
+     "blocks": 7,
+     "tBlock": 0.51,
+     "vsOwn": -0.0403,
+     "ownCovered": 42,
+     "noTop2": 0.0626,
+     "best": 2.992,
+     "worst": -0.9315,
+     "win": 0.5793
+    }
+   },
+   "hold": 126,
+   "reproduced": {
+    "matchesFrozen": true,
+    "note": "the old engine on this run's data gives the frozen numbers: the change is the fix alone",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 3266,
+     "days": 14,
+     "blocks": 3,
+     "avg": 0.0464,
+     "avgStress": 0.0424,
+     "ctrl": 0.0209,
+     "edge": 0.0176,
+     "vsOwn": -0.1325,
+     "noTop2": 0.045,
+     "tBlock": 2.37,
+     "best": 2.5283
+    },
+    "newer": {
+     "n": 6722,
+     "days": 28,
+     "blocks": 5,
+     "avg": 0.0715,
+     "avgStress": 0.0675,
+     "ctrl": 0.0616,
+     "edge": 0.0018,
+     "vsOwn": 0.007,
+     "noTop2": 0.0705,
+     "tBlock": 0.39,
+     "best": 3.6702
+    }
+   },
+   "noCapEitherSide": {
+    "note": "sensitivity only: no cap on the rule or the yardstick",
+    "verdict": "REJECTED",
+    "older": {
+     "n": 3266,
+     "days": 14,
+     "blocks": 3,
+     "avg": 0.0464,
+     "avgStress": 0.0424,
+     "ctrl": 0.023,
+     "edge": 0.0154,
+     "vsOwn": -0.1325,
+     "noTop2": 0.045,
+     "tBlock": 2.06,
+     "best": 2.5283
+    },
+    "newer": {
+     "n": 6722,
+     "days": 28,
+     "blocks": 5,
+     "avg": 0.0715,
+     "avgStress": 0.0675,
+     "ctrl": 0.0698,
+     "edge": -0.0063,
+     "vsOwn": 0.0053,
+     "noTop2": 0.0705,
+     "tBlock": -0.68,
+     "best": 3.6702
+    }
+   }
+  },
+  "ANOM-RESMOM": {
+   "at": "2026-10-24T05:58:11.955Z",
+   "bugs": [
+    "AUD-1"
+   ],
+   "explanation": "AUD-1: The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule's own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule's and the yardstick's, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run.",
+   "window": [
+    "2021-10-12",
+    "2026-10-23"
+   ],
+   "frozenAt": "2026-10-23T20:20:21.074Z",
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "not better than the same stocks on their other days in the older half; block t 0.25 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.29 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 3258,
+     "days": 14,
+     "stocks": 963,
+     "avg": 0.0232,
+     "median": 0.0053,
+     "avgStress": 0.0192,
+     "ctrl": 0.0141,
+     "edge": 0.0013,
+     "tDay": 0.1,
+     "blocks": 5,
+     "tBlock": 0.25,
+     "vsOwn": -0.1413,
+     "ownCovered": 14,
+     "noTop2": 0.0214,
+     "best": 2.992,
+     "worst": -0.8874,
+     "win": 0.516
+    },
+    "newer": {
+     "n": 7461,
+     "days": 31,
+     "stocks": 1487,
+     "avg": 0.0445,
+     "median": 0.0183,
+     "avgStress": 0.0405,
+     "ctrl": 0.0265,
+     "edge": 0.0101,
+     "tDay": 1.4,
+     "blocks": 11,
+     "tBlock": 1.29,
+     "vsOwn": -0.0557,
+     "ownCovered": 31,
+     "noTop2": 0.0438,
+     "best": 2.992,
+     "worst": -0.8829,
+     "win": 0.5426
+    },
+    "all": {
+     "n": 10719,
+     "days": 45,
+     "stocks": 1869,
+     "avg": 0.038,
+     "median": 0.0145,
+     "avgStress": 0.034,
+     "ctrl": 0.0227,
+     "edge": 0.0073,
+     "tDay": 1.17,
+     "blocks": 15,
+     "tBlock": 0.87,
+     "vsOwn": -0.0823,
+     "ownCovered": 45,
+     "noTop2": 0.0375,
+     "best": 2.992,
+     "worst": -0.8874,
+     "win": 0.5345
+    }
+   },
+   "hold": 63,
+   "reproduced": {
+    "matchesFrozen": true,
+    "note": "the old engine on this run's data gives the frozen numbers: the change is the fix alone",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 3258,
+     "days": 14,
+     "blocks": 5,
+     "avg": 0.0239,
+     "avgStress": 0.0199,
+     "ctrl": 0.0136,
+     "edge": 0.0025,
+     "vsOwn": -0.1404,
+     "noTop2": 0.0214,
+     "tBlock": 0.32,
+     "best": 5.0499
+    },
+    "newer": {
+     "n": 7461,
+     "days": 31,
+     "blocks": 11,
+     "avg": 0.0446,
+     "avgStress": 0.0406,
+     "ctrl": 0.025,
+     "edge": 0.0117,
+     "vsOwn": -0.0541,
+     "noTop2": 0.0438,
+     "tBlock": 1.4,
+     "best": 4.0344
+    }
+   },
+   "noCapEitherSide": {
+    "note": "sensitivity only: no cap on the rule or the yardstick",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 3258,
+     "days": 14,
+     "blocks": 5,
+     "avg": 0.0239,
+     "avgStress": 0.0199,
+     "ctrl": 0.0143,
+     "edge": 0.0017,
+     "vsOwn": -0.1405,
+     "noTop2": 0.0214,
+     "tBlock": 0.28,
+     "best": 5.0499
+    },
+    "newer": {
+     "n": 7461,
+     "days": 31,
+     "blocks": 11,
+     "avg": 0.0446,
+     "avgStress": 0.0406,
+     "ctrl": 0.027,
+     "edge": 0.0097,
+     "vsOwn": -0.0562,
+     "noTop2": 0.0438,
+     "tBlock": 1.26,
+     "best": 4.0344
+    }
+   }
+  },
+  "ANOM-SUESURGE": {
+   "at": "2026-10-24T05:58:12.164Z",
+   "bugs": [
+    "AUD-1",
+    "AUD-2"
+   ],
+   "explanation": "AUD-1: The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule's own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule's and the yardstick's, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run. AUD-2: ANOM-SUESURGE only: the top-30% revenue-surprise cut-off also counted surprises from SEC filings made after the trade was bought (look-ahead in the threshold). Corrected: only filings public by the entry session count.",
+   "window": [
+    "2021-10-12",
+    "2026-10-23"
+   ],
+   "frozenAt": "2026-10-23T20:20:21.074Z",
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "not better than the same stocks on their other days in the older half; block t 1.21 under 2.5 in the older half; block t 0.2 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 892,
+     "days": 217,
+     "stocks": 581,
+     "avg": 0.015,
+     "median": 0.0065,
+     "avgStress": 0.011,
+     "ctrl": -0.0123,
+     "edge": 0.0215,
+     "tDay": 2.22,
+     "blocks": 10,
+     "tBlock": 1.21,
+     "vsOwn": -0.0394,
+     "ownCovered": 211,
+     "noTop2": 0.0127,
+     "best": 1.1555,
+     "worst": -0.6912,
+     "win": 0.5112
+    },
+    "newer": {
+     "n": 1411,
+     "days": 319,
+     "stocks": 820,
+     "avg": 0.0469,
+     "median": 0.0218,
+     "avgStress": 0.0429,
+     "ctrl": 0.0315,
+     "edge": 0.0024,
+     "tDay": 0.21,
+     "blocks": 12,
+     "tBlock": 0.2,
+     "vsOwn": 0.0018,
+     "ownCovered": 315,
+     "noTop2": 0.0445,
+     "best": 2.0424,
+     "worst": -0.746,
+     "win": 0.5507
+    },
+    "all": {
+     "n": 2303,
+     "days": 536,
+     "stocks": 1106,
+     "avg": 0.0346,
+     "median": 0.0139,
+     "avgStress": 0.0306,
+     "ctrl": 0.0145,
+     "edge": 0.0101,
+     "tDay": 1.28,
+     "blocks": 21,
+     "tBlock": 0.81,
+     "vsOwn": -0.0147,
+     "ownCovered": 526,
+     "noTop2": 0.0331,
+     "best": 2.0424,
+     "worst": -0.746,
+     "win": 0.5354
+    }
+   },
+   "hold": 60,
+   "aud1Only": {
+    "note": "AUD-1 alone (old cut-off, capped yardstick): information",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 898,
+     "edge": 0.0224,
+     "avgStress": 0.0113
+    },
+    "newer": {
+     "n": 1406,
+     "edge": 0.0017,
+     "avgStress": 0.0433
+    }
+   },
+   "reproduced": {
+    "matchesFrozen": true,
+    "note": "the old engine on this run's data gives the frozen numbers: the change is the fix alone",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 898,
+     "days": 218,
+     "blocks": 10,
+     "avg": 0.0153,
+     "avgStress": 0.0113,
+     "ctrl": -0.0123,
+     "edge": 0.0227,
+     "vsOwn": -0.0389,
+     "noTop2": 0.0129,
+     "tBlock": 1.23,
+     "best": 1.1555
+    },
+    "newer": {
+     "n": 1406,
+     "days": 319,
+     "blocks": 12,
+     "avg": 0.0473,
+     "avgStress": 0.0433,
+     "ctrl": 0.0306,
+     "edge": 0.0026,
+     "vsOwn": 0.002,
+     "noTop2": 0.0449,
+     "tBlock": 0.23,
+     "best": 2.0424
+    }
+   },
+   "noCapEitherSide": {
+    "note": "sensitivity only: no cap on the rule or the yardstick",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 892,
+     "days": 217,
+     "blocks": 10,
+     "avg": 0.015,
+     "avgStress": 0.011,
+     "ctrl": -0.0122,
+     "edge": 0.0214,
+     "vsOwn": -0.0394,
+     "noTop2": 0.0127,
+     "tBlock": 1.21,
+     "best": 1.1555
+    },
+    "newer": {
+     "n": 1411,
+     "days": 319,
+     "blocks": 12,
+     "avg": 0.0469,
+     "avgStress": 0.0429,
+     "ctrl": 0.0318,
+     "edge": 0.0021,
+     "vsOwn": 0.0017,
+     "noTop2": 0.0445,
+     "tBlock": 0.18,
+     "best": 2.0424
+    }
+   }
+  }
+ },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-23T23:53:23.498Z",
+  "at": "2026-10-24T05:58:12.166Z",
   "results": {}
  },
  "trades": {}
