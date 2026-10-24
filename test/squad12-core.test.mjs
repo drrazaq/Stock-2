@@ -19,9 +19,12 @@ test('six rules, each with a paper URL, a rule text, the 63-session hold and a l
 test('sessions: before-open report reacts the same day, after-close the next session, weekend and no time flag handled', () => {
   assert.equal(onOrAfter(D, '2024-01-03'), 1); assert.equal(after(D, '2024-01-03'), 2); assert.equal(onOrAfter(D, '2024-01-06'), 4); assert.equal(after(D, '2024-01-08'), 5);
   assert.equal(reactionIdx(D, '2024-01-03', 'bmo'), 1); assert.equal(reactionIdx(D, '2024-01-03', 'amc'), 2); assert.equal(reactionIdx(D, '2024-01-05', 'amc'), 4); assert.equal(reactionIdx(D, '2024-01-03', null), -1);
-  assert.equal(reactionFromAcceptance(D, '2024-01-03T12:05:00.000Z'), 1);     // 07:05 New York: before the open -> that day
-  assert.equal(reactionFromAcceptance(D, '2024-01-03T21:05:00.000Z'), 2);     // 16:05 New York: after the close -> next session
-  assert.equal(reactionFromAcceptance(D, '2024-01-03T16:00:00.000Z'), -1);    // 11:00 New York: during the session -> skipped
+  assert.equal(reactionFromAcceptance(D, '2024-01-03T12:05:00.000Z'), 1);     // read 07:05 New York: before the open -> that day
+  assert.equal(reactionFromAcceptance(D, '2024-01-03T16:00:00.000Z'), 1);     // read 11:00 (a 06:00 release stamped with the offset twice) -> that day
+  assert.equal(reactionFromAcceptance(D, '2024-01-03T21:05:00.000Z'), 2);     // read 16:05: after the close -> next session
+  assert.equal(reactionFromAcceptance(D, '2024-01-04T02:30:00.000Z'), 2);     // read 21:30 on 3 Jan (16:30 stamped twice) -> next session
+  assert.equal(reactionFromAcceptance(D, '2024-01-03T19:30:00.000Z'), -1);    // read 14:30: ambiguous -> skipped
+  assert.equal(reactionFromAcceptance(D, '2024-01-03T23:30:00.000Z'), -1);    // read 18:30: ambiguous -> skipped
   assert.equal(reactionFromAcceptance(D, '2024-01-05T21:30:00.000Z'), 4);     // Friday evening -> Monday
   assert.equal(reactionFromAcceptance(D, '2024-01-03'), -1);                  // no time
   assert.deepEqual(earnings8k({ form: ['8-K', '8-K/A', '8-K', '10-Q', '8-K'], items: ['2.02,9.01', '2.02', '7.01,9.01', '', '5.02,2.02'], accessionNumber: ['a', 'b', 'c', 'd', 'e'], filingDate: ['d1', 'd2', 'd3', 'd4', 'd5'], acceptanceDateTime: ['t1', 't2', 't3', 't4', 't5'] }),
