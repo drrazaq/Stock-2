@@ -1,0 +1,229 @@
+[0s] squad 12 lab (DIAG: coverage and event counts only); frozen already: 0/6
+[6s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
+[7s] splits since 2026-10-19: 71 listed, 0 repaired
+[7s] window 2021-10-12..2026-10-23 (1264 sessions, 8599 stocks)
+[8s] ticker map: {"ok":true,"quarters":23,"downloadedNow":0,"missing":[],"tickers":10422}
+[10s] SEC facts (Squad 4/5 caches): {"ok":true,"companies":4433,"answered":4433,"fromCaches":6154}
+[11s] split list: {"ok":true,"rows":7351,"tickers":4769,"pagesNow":8}
+[12s] statement share counts: {"ok":true,"wanted":0,"fetchedNow":0}
+[13s] domicile: {"ok":true,"wanted":0,"fetchedNow":0,"missing":0}
+[14s] companies ever among the 300 largest at a month start: 447
+[96s] XBRL facts fetched: 200/447
+[163s] XBRL facts fetched: 400/447
+[176s] XBRL (revenue + EPS): {"ok":true,"companies":447,"have":447,"withRevenue":447,"withEps":438,"fetchedNow":447,"failed":0}
+[186s] Nasdaq calendar: {"ok":true,"days":1314,"missing":0,"fromOtherCaches":1309,"fetchedNow":5,"reports":65130,"timed":47}
+[251s] full-text search: {"ok":false,"fetchedNow":205,"fromSquad1":1320,"missing":["investor day 2022-11"],"guidanceHits":5049,"investorDayHits":4757,"investorDayWithItems":4757}
+SQUAD 12 DIAGNOSTICS (coverage and event counts only; nothing judged or written)
+{
+ "window": [
+  "2021-10-12",
+  "2026-10-23"
+ ],
+ "sessions": 1264,
+ "data": {
+  "highLow": {
+   "ok": true,
+   "rows": 4349876,
+   "withHighLow": 4349876
+  },
+  "tickerMap": {
+   "ok": true,
+   "quarters": 23,
+   "downloadedNow": 0,
+   "missing": [],
+   "tickers": 10422
+  },
+  "facts": {
+   "ok": true,
+   "companies": 4433,
+   "answered": 4433,
+   "fromCaches": 6154
+  },
+  "splits": {
+   "ok": true,
+   "rows": 7351,
+   "tickers": 4769,
+   "pagesNow": 8
+  },
+  "altShares": {
+   "ok": true,
+   "wanted": 0,
+   "fetchedNow": 0
+  },
+  "domicile": {
+   "ok": true,
+   "wanted": 0,
+   "fetchedNow": 0,
+   "missing": 0
+  },
+  "xbrl": {
+   "ok": true,
+   "companies": 447,
+   "have": 447,
+   "withRevenue": 447,
+   "withEps": 438,
+   "fetchedNow": 447,
+   "failed": 0
+  },
+  "earn": {
+   "ok": true,
+   "days": 1314,
+   "missing": 0,
+   "fromOtherCaches": 1309,
+   "fetchedNow": 5,
+   "reports": 65130,
+   "timed": 47
+  },
+  "efts": {
+   "ok": false,
+   "fetchedNow": 205,
+   "fromSquad1": 1320,
+   "missing": [
+    "investor day 2022-11"
+   ],
+   "guidanceHits": 5049,
+   "investorDayHits": 4757,
+   "investorDayWithItems": 4757
+  },
+  "invItems": {
+   "ok": true,
+   "hits": 4757,
+   "withItems": 4757
+  }
+ },
+ "bigCompanies": 447,
+ "top300Now": [
+  "NVDA 5084B",
+  "AAPL 5075B",
+  "GOOGL 3941B",
+  "MSFT 3895B",
+  "AMZN 2675B",
+  "SPCX 1840B",
+  "META 1653B",
+  "AVGO 1536B",
+  "TSLA 1470B",
+  "LLY 1199B",
+  "MU 991B",
+  "WMT 951B",
+  "JPM 881B",
+  "AMD 844B",
+  "XOM 759B",
+  "JNJ 636B",
+  "MA 551B",
+  "PLTR 505B",
+  "ABBV 505B",
+  "CVX 461B"
+ ],
+ "rank300Cap": 32.7354,
+ "events": {
+  "SQ12-EGAPHOLD": {
+   "raw": 7,
+   "big": 3,
+   "afterOneOpen": 3,
+   "halves": {
+    "older": 0,
+    "newer": 3
+   },
+   "top100": {
+    "older": 0,
+    "newer": 1
+   },
+   "sample": [
+    "APD 2026-01-30 2026-01-30 bmo",
+    "VZ 2026-01-30 2026-01-30 bmo",
+    "CL 2026-01-30 2026-01-30 bmo"
+   ]
+  },
+  "SQ12-EARN52H": {
+   "raw": 6,
+   "big": 2,
+   "afterOneOpen": 2,
+   "halves": {
+    "older": 0,
+    "newer": 2
+   },
+   "top100": {
+    "older": 0,
+    "newer": 2
+   },
+   "sample": [
+    "XOM 2026-01-30 2026-01-30 bmo",
+    "CVX 2026-01-30 2026-01-30 bmo"
+   ]
+  },
+  "SQ12-REVEPS": {
+   "raw": 1006,
+   "big": 1006,
+   "afterOneOpen": 835,
+   "halves": {
+    "older": 341,
+    "newer": 494
+   },
+   "top100": {
+    "older": 120,
+    "newer": 199
+   },
+   "sample": [
+    "CME 2026-10-23 10-Q 2026-10-23 q 2026-09-30 rev +13.0% eps +16.1%",
+    "TXN 2026-10-23 10-Q 2026-10-23 q 2026-09-30 rev +27.7% eps +77.0%",
+    "WDC 2026-10-23 10-Q 2026-10-23 q 2026-10-02 rev +55.5% eps +50.8%"
+   ]
+  },
+  "SQ12-ACCEL2": {
+   "raw": 1149,
+   "big": 1149,
+   "afterOneOpen": 971,
+   "halves": {
+    "older": 313,
+    "newer": 658
+   },
+   "top100": {
+    "older": 102,
+    "newer": 258
+   },
+   "sample": [
+    "NDAQ 2026-10-22 10-Q 2026-10-22 q 2026-09-30 growth +20.9% > +20.5% > +2.0%",
+    "STLD 2026-10-23 10-Q 2026-10-23 q 2026-09-30 growth +34.8% > +33.4% > +19.1%",
+    "TXN 2026-10-23 10-Q 2026-10-23 q 2026-09-30 growth +27.7% > +22.8% > +18.6%"
+   ]
+  },
+  "SQ12-RAISECONF": {
+   "raw": 307,
+   "big": 306,
+   "candidates": 537,
+   "afterOneOpen": 280,
+   "halves": {
+    "older": 121,
+    "newer": 159
+   },
+   "top100": {
+    "older": 35,
+    "newer": 46
+   },
+   "sample": [
+    "ELV 2026-10-22 8-K 2026-10-21 0001156039-26-000068",
+    "HON 2026-10-23 8-K 2026-10-22 0000773840-26-000141",
+    "ROP 2026-10-23 8-K 2026-10-22 0000882835-26-000042"
+   ]
+  },
+  "SQ12-INVDAY": {
+   "raw": 65,
+   "big": 65,
+   "candidates": 119,
+   "afterOneOpen": 65,
+   "halves": {
+    "older": 32,
+    "newer": 33
+   },
+   "top100": {
+    "older": 11,
+    "newer": 10
+   },
+   "sample": [
+    "HPE 2026-10-01 8-K 2026-09-30 0001645590-26-000084",
+    "ZS 2026-10-07 8-K 2026-10-06 0001713683-26-000200",
+    "HUM 2026-10-12 8-K 2026-10-09 0000049071-26-000057"
+   ]
+  }
+ }
+}
