@@ -102,3 +102,23 @@ export function compareTrades(mine, theirs, tol = 0.002) { const key = (z) => z.
   out.onlyMine = mine.filter(z => !T.has(key(z)) && first !== null && z.sig >= first).map(key);
   out.bigNetDiff = out.bigNetDiff.slice(0, 40); out.onlyTheirs = out.onlyTheirs.slice(0, 60); out.onlyMine = out.onlyMine.slice(0, 60);
   return out; }
+
+// ---------------- SQ6-QMOM (Alpha Architect quantitative momentum, written from the spec) ----------------
+// frog in the pan over daily close-to-close moves of sessions a..b: sign(mom) x (share of down days - share of up days); null if under 90%
+// of the days have both closes
+export function frogInPan(c, a, b, mom) { let up = 0, dn = 0, n = 0; for (let q = Math.max(1, a); q <= b; q++) { if (!(c[q] > 0 && c[q - 1] > 0)) continue; n++; if (c[q] > c[q - 1]) up++; else if (c[q] < c[q - 1]) dn++; }
+  if (!Number.isFinite(mom) || n < 0.9 * (b - a + 1)) return null; return Math.sign(mom) * (dn - up) / n; }
+// rows [{ id, mom, fip }] -> top 10% by momentum (ceil), then the smoother half (lowest FIP, ceil)
+export function quantMomentumPick(rows, topFrac = 0.10) { const r = rows.filter(x => Number.isFinite(x.mom) && Number.isFinite(x.fip)).sort((a, b) => b.mom - a.mom), top = r.slice(0, Math.ceil(r.length * topFrac));
+  return [...top].sort((a, b) => a.fip - b.fip).slice(0, Math.ceil(top.length / 2)).map(x => x.id); }
+
+// ---------------- SQ11-PB12 (leader pullback, written from the spec) ----------------
+// market value on the adjusted-price basis: adjusted close x the share count of date e put on today's basis (x every split after e)
+export const splitsAfter = (splits, e) => (splits || []).reduce((f, s) => (s.d > e && s.r > 0 ? f * s.r : f), 1);
+// highest close of the last n sessions (today included; missing sessions skipped) and the n-session average (needs all n closes)
+export function rollingMaxClose(c, n = 50) { const T = c.length, o = new Float64Array(T).fill(NaN); for (let t = 0; t < T; t++) { if (!(c[t] > 0)) continue; let m = -Infinity; for (let q = Math.max(0, t - n + 1); q <= t; q++) if (c[q] > 0 && c[q] > m) m = c[q]; o[t] = m; } return o; }
+export function rollingMean(c, n = 200) { const T = c.length, o = new Float64Array(T).fill(NaN); let s = 0, h = 0; for (let t = 0; t < T; t++) { if (c[t] > 0) { s += c[t]; h++; } if (t >= n && c[t - n] > 0) { s -= c[t - n]; h--; } if (t >= n - 1 && h === n) o[t] = s / n; } return o; }
+// pullback signal at t: close >= depth under its 50-session high, above its 200-session average, and the previous close (the latest one
+// before t) was less than depth under ITS 50-session high
+export function pullbackAt(c, hi, ma, t, depth = 0.12) { if (!(c[t] > 0) || !(hi[t] > 0) || !(ma[t] > 0)) return false; if (!(c[t] <= hi[t] * (1 - depth) * (1 + 1e-12)) || !(c[t] > ma[t])) return false;
+  let p = t - 1; while (p >= 0 && !(c[p] > 0)) p--; if (p < 0 || !(hi[p] > 0)) return false; return c[p] > hi[p] * (1 - depth) * (1 + 1e-12); }

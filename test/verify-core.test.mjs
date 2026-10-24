@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { cap, half, sessionAfter, weekKey, lastSessionsOf, closeOnOrBefore, holdReturn, liquidSeries, tradedValue63, weeklyReturnsUpTo, zOf, msciMomentumPick,
-  textOf, authorizedSize, sizeOfCompany, sharesKnownOn, firstPerKey, sameStockOtherDays, compareTrades } from '../verify-core.mjs';
+  textOf, authorizedSize, sizeOfCompany, sharesKnownOn, firstPerKey, sameStockOtherDays, compareTrades, frogInPan, quantMomentumPick, splitsAfter, rollingMaxClose, rollingMean, pullbackAt } from '../verify-core.mjs';
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;
 
 test('cap, halves, sessions strictly after a filing date', () => {
@@ -67,4 +67,19 @@ test('same stock on its other days: capped, non-overlapping, 3+ windows', () => 
 test('trade comparison matches by symbol and signal date', () => {
   const a = [{ s: 'X', sig: '2024-01-02', buy: '2024-01-03', sell: '2024-04-03', net: 0.1, avgStock: 0.02, sameStock: 0.01 }], b = [{ ...a[0], net: 0.1005 }, { s: 'Y', sig: '2024-01-02', net: 0 }];
   const r = compareTrades(a, b); assert.equal(r.matched, 1); assert.equal(r.netWithin, 1); assert.equal(r.sameDates, 1); assert.deepEqual(r.onlyTheirs, ['Y|2024-01-02']);
+});
+
+test('QMOM: frog in the pan and the smoother half of the top 10%', () => {
+  assert.ok(near(frogInPan([1, 2, 3, 2, 3], 1, 4, 0.5), (1 - 3) / 4)); assert.equal(frogInPan([1, 2, 0, 0, 3], 1, 4, 0.5), null, 'under 90% of days known');
+  const rows = Array.from({ length: 200 }, (_, i) => ({ id: i, mom: i / 100, fip: i % 2 ? -0.1 : 0.1 })); const p = quantMomentumPick(rows);
+  assert.equal(p.length, 10); assert.ok(p.every(i => i >= 180 && i % 2 === 1), 'top 20 by momentum, the 10 smoothest');
+});
+
+test('PB12: split basis, 50-session closing high, 200-session average, FIRST close 12% under the high', () => {
+  assert.equal(splitsAfter([{ d: '2022-07-18', r: 20 }, { d: '2024-06-10', r: 10 }], '2022-08-01'), 10);
+  const c = [10, 12, 11, 10.5, 10.4, 10]; const hi = rollingMaxClose(c, 3); assert.deepEqual([...hi], [10, 12, 12, 12, 11, 10.5]);
+  assert.ok(Number.isNaN(rollingMean(c, 3)[1])); assert.ok(near(rollingMean(c, 3)[2], 11));
+  const C = Array(260).fill(100); for (let t = 0; t < 250; t++) C[t] = 50 + t * 0.2; C[250] = 110; C[251] = 87; C[252] = 86;   // high 110, 200-day mean ~ 80
+  const H = rollingMaxClose(C, 50), M = rollingMean(C, 200); assert.equal(pullbackAt(C, H, M, 251), true); assert.equal(pullbackAt(C, H, M, 252), false, 'not the first close under');
+  const C2 = C.slice(); C2[251] = 70; C2[252] = 70; assert.equal(pullbackAt(C2, rollingMaxClose(C2, 50), rollingMean(C2, 200), 251), false, 'under its 200-day average');
 });
