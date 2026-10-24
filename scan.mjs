@@ -2211,7 +2211,7 @@ async function holdingsText(sig, pos, title, raw) {
     if (['quick', 'entry', 'radar', 'leader'].includes(P.kind) || P.src === 'try small') {
       const stopHit = P.stop && px && px <= P.stop, xf = P.exitFlag && (!P.since || P.exitFlag.d >= P.since) ? P.exitFlag.why : null;
       if (stopHit || xf) { mark(sym, 'SELL ALL', stopHit ? 'stop reached' : 'its tested exit'); acts.sell.push(sym + chg + ': SELL ALL. ' + (stopHit ? 'the stop ' + money(P.stop) + ' is reached' : xf.replace(/^[A-Z -]+: /, '').toLowerCase().replace(/\.$/, '')) + ' (its own tested exit).' + tail); continue; }
-      const ex = P.kind === 'quick' ? 'exit: first close ' + (P.q === 'gap' ? 'below' : 'above') + ' its 5 day average or ' + (P.maxHold || 5) + ' sessions' : P.kind === 'entry' ? 'exit: a close under ~' + (P.exitBelow ? money(P.exitBelow) : 'its exit line') + (P.maxHold ? ' or ' + P.maxHold + ' sessions' : '') : P.kind === 'leader' ? 'exit: a close under its rising stop or 50 day average' : 'exit: target or 5 sessions';
+      const ex = trySmallExitText(P) || (P.kind === 'quick' ? 'exit: first close ' + (P.q === 'gap' ? 'below' : 'above') + ' its 5 day average or ' + (P.maxHold || 5) + ' sessions' : P.kind === 'entry' ? 'exit: a close under ~' + (P.exitBelow ? money(P.exitBelow) : 'its exit line') + (P.maxHold ? ' or ' + P.maxHold + ' sessions' : '') : P.kind === 'leader' ? 'exit: a close under its rising stop or 50 day average' : 'exit: target or 5 sessions');
       mark(sym, 'HOLD', 'its own rule'); acts.hold.push(sym + chg + ': HOLD, stop ' + (P.stop ? money(P.stop) : 'not set') + stopTag(sym, P) + (P.t1 && P.tmode ? ', sell ' + (P.tmode === 'half' ? 'half' : 'all') + ' at ' + money(P.t1) + ' (tested)' : '') + '; ' + ex + ' (system trade: its own rule decides).' + tail);
       (acts.holdShort = acts.holdShort || []).push(sym + chg + ':' + (two || ' stop ' + (P.stop ? money(P.stop) : 'not set')) + stopTag(sym, P, true) + (P.t1 && P.tmode ? ' target ' + money(P.t1) + ' (tested)' : '') + (earn ? ' EARNINGS ' + earn : '') + (ew ? ' NEWS WARNING' : '')); continue; }
     if (P.stop && px && px <= P.stop) { mark(sym, 'SELL ALL', 'stop reached'); acts.sell.push(sym + chg + ': SELL ALL. the stop ' + money(P.stop) + ' is reached.' + tail); }
@@ -2277,27 +2277,47 @@ function tryQualifies(firstRun) {
 }
 function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
-function trySmallLines(pos, lastPx) {
+// (audit 24 Oct) the HOLD line of a TRY SMALL holding said 'exit: target or 5 sessions' (the fallback for a manual kind): its real exits
+// are the lane stop and the time exit after its rule's hold.
+function trySmallExitText(P) { if (!P || P.src !== 'try small' || ['quick', 'entry', 'radar', 'leader'].includes(P.kind)) return null; const h = P.tryHold || 63, mo = Math.max(1, Math.round(h / 21));
+  return 'exit: the stop, or sell after ' + h + ' sessions (about ' + mo + ' month' + (mo > 1 ? 's' : '') + ' after ' + (P.since || 'your buy') + '; the bot reminds you)'; }
+// the two TRY SMALL lane exits at a daily close (used for holdings too short in history for the full nightly checks)
+function trySmallCloseFlags(P, c) { const i = c.length - 1, held = c.filter(k => k.d > P.since).length, fl = []; if (i < 0) return { held, fl };
+  if (P.stop && c[i].c <= P.stop) fl.push('CLOSED AT OR BELOW YOUR STOP ' + money(P.stop) + '. Sell / reassess at the next open.');
+  if (held >= (P.tryHold || 63)) fl.push('TRY SMALL TIME EXIT: ' + (P.tryHold || 63) + ' sessions have passed. Sell at the next open.');
+  return { held, fl }; }
+// (audit 24 Oct) the TRY SMALL buy shown for this stock in the last 30 days (tier2-ledger kind try:<rule>, with its hold and stop).
+// 'bought SYM' used to look only at TODAY's lab files: a signal list renewed between the message and the reply left the buy untagged
+// (no 15%/35% stop, no time exit, not counted in the max 2 open).
+function tryLedgerHit(sym) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.sym === sym && /^try:/.test(r.kind || '') && Date.now() - Date.parse(r.d) <= 30 * 864e5);
+  return a.length ? a[a.length - 1] : null; } catch (e) { return null; } }
+function trySmallLines(pos, lastPx, exclude, session) {
   if ((readJson0('data/settings.json') || {}).trySmall === false) return [];
   // sources: the value lab (B-*) and, since 23 Oct evening, the decoded lab (DEC-*), both judged on their frozen first runs by tryQualifies
   const fresh = (j) => j && Date.now() - Date.parse(j.generatedAt || 0) <= 10 * 864e5;
+  // (audit 24 Oct) a NEW-SIGNAL list is valid for the next open only: its close must be the newest session the scan knows (else, without
+  // a session, at most 5 calendar days old). Before, a lab whose nightly run stopped kept showing the same old signals for 10 days.
+  // (a file with no close date at all is judged by when it was written, at most 5 days)
+  const sigFresh = (d, gen) => d ? (session ? String(d) >= String(session) : Date.now() - Date.parse(d) <= 5 * 864e5) : !!gen && Date.now() - Date.parse(gen) <= 5 * 864e5;
+  // a lab's own close is used as the price only when it is that fresh; a week-old close (the value lab's) gives a wrong limit and stop
+  const pxOf = (p, d, gen) => (lastPx && lastPx[p.sym] > 0) ? lastPx[p.sym] : (p.px > 0 && sigFresh(d, gen) ? p.px : null);
   const VL = readJson0('data/value-lab.json'), VT = readJson0('data/value-today.json'), DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), src = [];
-  if (VL && fresh(VT) && VT.rules) for (const id of tryQualifies(labRuns(VL))) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (R && Array.isArray(R.picks)) src.push({ id, picks: R.picks.map(p => ({ sym: p.sym, px: p.lastClose, blocked: p.blocked })), stopPct: 0.15, hold: 63, what: 'cash-rich, growing, low-debt company' }); }
+  if (VL && fresh(VT) && VT.rules) for (const id of tryQualifies(labRuns(VL))) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (R && Array.isArray(R.picks)) src.push({ id, picks: R.picks.map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.lastClose }, VT.lastClose, VT.lastClose ? null : VT.generatedAt), blocked: p.blocked })), stopPct: 0.15, hold: 63, what: 'cash-rich, growing, low-debt company' }); }
   const DC = readJson0('data/decoded-check.json'), failsBudget = (id) => !!(DC && DC.budget && new RegExp('\\b' + id + '\\b').test(DC.label || '') && tryQualifies({ x: { results: DC.budget } }).length === 0);   // DEC2-TPS: proven per dollar invested, loses per dollar planned
-  if (DH && fresh(DT) && DT.methods) for (const id of tryQualifies(labRuns(DH)).filter(i => !failsBudget(i))) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
+  if (DH && fresh(DT) && DT.methods && sigFresh(DT.lastClose, DT.generatedAt)) for (const id of tryQualifies(labRuns(DH)).filter(i => !failsBudget(i))) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.close }, DT.lastClose, DT.generatedAt) })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
   for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4', 'squad6', 'squad7', 'squad8', 'squad9', 'squad11', 'squad12', 'squad13', 'squad14', 'squad16']) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json');   // standard labs (23-24 Oct): same standard, each rule's own hold
-    if (AL && fresh(AT) && AT.methods) for (const id of tryQualifies(labRuns(AL))) { const M = AT.methods[id], hold = +((AL.firstRun[id] || {}).hold || (M && M.hold) || 63); if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: hold > 100 ? 0.35 : 0.15, hold, what: M.name || 'published market pattern' }); } }
+    if (AL && fresh(AT) && AT.methods) { const runs = labRuns(AL); for (const id of tryQualifies(runs)) { const M = AT.methods[id], hold = +((runs[id] || {}).hold || (M && M.hold) || 63), sd = AT.lastClose || null; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.filter(p => p && sigFresh(sd || p.d, AT.generatedAt)).map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.close }, sd || p.d, AT.generatedAt) })), stopPct: hold > 100 ? 0.35 : 0.15, hold, what: M.name || 'published market pattern' }); } } }
   if (!src.length) return [];
-  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set(Object.keys(pos || {}));
+  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);   // exclude: already a BUY elsewhere in this message
   let slots = TRY_MAX - Object.values(pos || {}).filter(P => P && P.src === 'try small').length; const buys = [], mark = [];
   for (const S0 of src) { if (tryLedgerOff('try:' + S0.id)) continue;
     for (const p of S0.picks) { if (!p || p.blocked || held.has(p.sym) || bad.has(p.sym)) continue; const h = myHalal(p.sym); if (h === 'fail') continue; let ew = ''; try { ew = eventWarn(p.sym); } catch (e) {} if (ew) continue;
-      const px = (lastPx && lastPx[p.sym]) || p.px; if (!(px > 0)) continue;
+      const px = p.px > 0 ? p.px : null;
       if (h !== 'ok') { if (!mark.includes(p.sym)) mark.push(p.sym); continue; }
-      if (slots <= 0 || buys.some(b => b.sym === p.sym)) continue; slots--; tier2Log(p.sym, 'try:' + S0.id, px); buys.push({ sym: p.sym, id: S0.id, px, stopPct: S0.stopPct, hold: S0.hold, what: S0.what }); } }
+      if (slots <= 0 || buys.some(b => b.sym === p.sym)) continue; slots--; if (px) tier2Log(p.sym, 'try:' + S0.id, px, { hold: S0.hold, stopPct: S0.stopPct }); buys.push({ sym: p.sym, id: S0.id, px, stopPct: S0.stopPct, hold: S0.hold, what: S0.what }); } }
   if (!buys.length && !mark.length) return [];
   const out = ['TRY SMALL (weaker proof: made money after costs in BOTH 5-year test halves and beat the average stock, but did NOT pass the luck test. Small on purpose: ' + TRY_USD + ' USD each, max ' + TRY_MAX + ' open. Switches itself off if its first 10 results lose on average.)'];
-  for (const b of buys) out.push('- BUY ' + b.sym + ' ' + TRY_USD + ' USD up to ' + money(b.px * 1.03) + '. STOP ' + money(b.px * (1 - b.stopPct)) + ' at your broker (' + Math.round(b.stopPct * 100) + '%). SELL after about ' + (Math.max(1, Math.round(b.hold / 21)) + ' month' + (Math.round(b.hold / 21) > 1 ? 's' : '')) + ' (' + b.hold + ' sessions); the bot reminds you. Rule ' + b.id + ' (' + b.what + ').');
+  for (const b of buys) out.push('- BUY ' + b.sym + ' ' + TRY_USD + ' USD ' + (b.px ? 'up to ' + money(b.px * 1.03) + '. STOP ' + money(b.px * (1 - b.stopPct)) + ' at your broker (' + Math.round(b.stopPct * 100) + '%).' : 'at the next open (no recent price here: check the live price first). STOP ' + Math.round(b.stopPct * 100) + '% under your buy price at your broker; the bot works it out when you send  bought ' + b.sym + ' PRICE .') + ' SELL after about ' + (Math.max(1, Math.round(b.hold / 21)) + ' month' + (Math.round(b.hold / 21) > 1 ? 's' : '')) + ' (' + b.hold + ' sessions); the bot reminds you. Rule ' + b.id + ' (' + b.what + ').');
   if (mark.length) out.push('MARK HALAL FIRST (picks of this lane, no ZAD mark of yours yet): ' + mark.slice(0, 6).join(', ') + '. Check ZAD, send  halal SYM yes  and they can be bought next time.');
   return out;
 }
@@ -2335,7 +2355,9 @@ async function actionsText(sig, pos, px, title) {
       out.push('', 'LONGER HOLDS (F-score 8-9 in an uptrend: improving finances, stock above its 200-day; ' + (v15Tier() === 'small' ? 'TRADABLE SMALL (tier 2): passed its own test in both halves against the average stock (t ' + Q.v15.monthly['6m'].t.older.toFixed(1) + ' / ' + Q.v15.monthly['6m'].t.newer.toFixed(1) + '), below the 4.0 proof bar; switched off if its live league score turns negative' : v15Tier() === 'proven' ? 'PROVEN' : 'NOT PROVEN') + '. 1,000 USD each, at most 3 open):',
         ...picks.map(x => (tier2Log(x.sym, 'longer hold', last[x.sym]), x)).map(x => '- BUY ' + x.sym + (last[x.sym] ? ' up to ' + money(last[x.sym] * 1.02) + ' (2% above the last close)' : ' at the next open') + ', F-score ' + x.fs + '/9. STOP 25% under your buy at your broker. SELL when it is 30%+ above its 50-day average (the bot tells you; buy back 10% lower), or TRIM when it passes 15% of your money. Review at 6 months. Check ZAD first; send  bought ' + x.sym + ' PRICE .'),
         'Why these: in the 5-year test this rule made +9.7% in 6 months vs the S&P 500 +7.6% in 2024-26, but +5.8% vs +9.1% in 2021-23. It beat the average stock in both. The league scores these same picks monthly.'); } }
-  { try { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; const tl = trySmallLines(pos, lp); if (tl.length) out.push('', ...tl); } catch (e) {} }   // TRY SMALL (23 Oct)
+  { try { const lp = {}; for (const x of [...((sig && sig.stocks) || []), ...((sig && sig.uni) || [])]) if (x.last > 0 && !lp[x.sym]) lp[x.sym] = x.last;   // (audit 24 Oct) sig.uni too: value picks are rarely in sig.stocks
+      const ex = new Set([...(out.join('\n') + '\n' + (FOCUS && !working ? '' : buyPart)).matchAll(/\bBUY ([A-Z][A-Z.\-]{0,7})\b/g)].map(m => m[1]));   // never a 2nd buy of a stock already a BUY in this message
+      const tl = trySmallLines(pos, lp, ex, sig && sig.session); if (tl.length) out.push('', ...tl); } catch (e) {} }   // TRY SMALL (23 Oct)
   { const cl = catalystLines(sig, pos); if (cl.length) out.push('', ...cl); }   // CATALYST RUN-UP: only when a catalyst rule reached tier 2 or proven (23 Oct)
   { const chl = chainLines(sig, pos); if (chl.length) out.push('', ...chl); }   // CHAIN: only when a chain-decoder rule reached tier 2 or proven (23 Oct)
   { const dl = discoveryLines(sig, pos); if (dl.length) out.push('', ...dl); }   // DISCOVERED: only when a discovery2 rule reached tier 2 (23 Oct)
@@ -2787,10 +2809,11 @@ async function tgCommands(sig) {
       if (!entry) { out.push(sym + ': I could not get a price. Send it with the price, for example: bought ' + sym + ' 12.50'); continue; }
       const P = { entry, since: ny(Date.now()).d, ...planFor(sym, entry, sig) }; { const md = moodOf(text); if (md) P.mood = md; }
       { const Qh = readJson0('data/quality.json'); if (((Qh && Qh.fscoreUpToday) || []).some(x => x.sym === sym)) P.src = 'longer hold'; }   // counts toward the 3 open LONGER HOLDS
+      if (!P.src) { const tl = tryLedgerHit(sym); if (tl && tl.hold > 0) { const sp = tl.stopPct > 0 ? tl.stopPct : (tl.hold > 100 ? 0.35 : 0.15); P.src = 'try small'; P.stop = +(entry * (1 - sp)).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, ' + Math.round(sp * 100) + '% under your buy (fixed, never moved by the bot)'; P.tryHold = tl.hold || 63; } }   // (audit 24 Oct) the buy as it was SHOWN, even if the lab's file changed since
       if (!P.src) { const VT = readJson0('data/value-today.json'), VL = readJson0('data/value-lab.json'), q = VL ? tryQualifies(labRuns(VL)) : [];   // TRY SMALL buy: its own 15% stop and ~3-month exit
         if (VT && VT.rules && q.some(id => ((VT.rules[id.replace(/_\w+$/, '')] || {}).picks || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.85).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, 15% under your buy (fixed, never moved by the bot)'; P.tryHold = 63; } 
         for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4', 'squad6', 'squad7', 'squad8', 'squad9', 'squad11', 'squad12', 'squad13', 'squad14', 'squad16']) if (!P.src) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json'), aq = AL ? tryQualifies(labRuns(AL)) : [], hit = AT && AT.methods ? aq.find(id => ((AT.methods[id] || {}).newSignals || []).some(x => x.sym === sym)) : null;
-          if (hit) { const hold = +((AL.firstRun[hit] || {}).hold || 63), sp = hold > 100 ? 0.35 : 0.15; P.src = 'try small'; P.stop = +(entry * (1 - sp)).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, ' + Math.round(sp * 100) + '% under your buy (fixed, never moved by the bot)'; P.tryHold = hold; } }
+          if (hit) { const hold = +((labRuns(AL)[hit] || {}).hold || 63), sp = hold > 100 ? 0.35 : 0.15; P.src = 'try small'; P.stop = +(entry * (1 - sp)).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, ' + Math.round(sp * 100) + '% under your buy (fixed, never moved by the bot)'; P.tryHold = hold; } }
         if (!P.src) { const DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), dq = DH ? tryQualifies(labRuns(DH)) : [];
           if (DT && DT.methods && dq.some(id => ((DT.methods[id] || {}).newSignals || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.65).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop for a 6-month hold, 35% under your buy (fixed, never moved by the bot)'; P.tryHold = 126; } } }
       { const cd = sig ? planCands(sig, {}).find(x => x.sym === sym && x.ok) : null; if (cd && typeof cd.win === 'number') P.test = { win: +cd.win.toFixed(3), net: cd.net !== null ? +cd.net.toFixed(4) : null, n: cd.n || null, kind: cd.kind }; }   // what the tests promised, to compare with what really happens
@@ -3170,7 +3193,13 @@ async function daily() {
   for (const sym of LIST) {
     const d = loaded[sym]; if (!d) continue;
     const only = QONLY.has(sym);
-    if (d.candles.length < 600) { if (DISC.has(sym)) refLine(sym, d); continue; }
+    if (d.candles.length < 600) { if (DISC.has(sym)) refLine(sym, d);
+      // (audit 24 Oct) a TRY SMALL holding with under ~2.5 years of history (e.g. a 2025 listing) skipped every exit check below:
+      // its stop-at-the-close and its time exit were never flagged, so the SELL never reached ACTIONS. The two lane exits only:
+      { const P = myPos[sym], c = d.candles, i = c.length - 1; if (P && P.src === 'try small' && i >= 0) { const { held, fl } = trySmallCloseFlags(P, c);
+        if (fl.length) { P.exitFlag = { d: c[i].d, why: fl[0].replace(/ Sell.*$/, '') }; posVerdict[sym] = fl[0].replace(/ Sell.*$/, '').toLowerCase(); } else delete P.exitFlag;
+        myLines.push(posLine(sym, P, d.last) + (fl.length ? '\n  ' + fl.join('\n  ') : '\n  no exit signal at this close') + '\n  held ' + held + ' session' + (held === 1 ? '' : 's')); } }
+      continue; }
     const c = d.candles, i = c.length - 1, ind = L.indicators(c, mkt), T = L.trendStats(c, ind, mom6), halal = myHalal(sym);
     if (!only && !WIDE.has(sym) && i > 140) { const e2 = ind.e[L.CFG.TREND], e5 = ind.e[50], j = i - 5; wk.push({ sym, chg: c[i].c / c[j].c - 1, up: T.up, wasUp: c[j].c > e2[j] && e5[j] > e2[j] && c[j].c / c[j - 126].c - 1 > 0 }); }
     if (myPos[sym]) {   // your own position: end-of-day checks
