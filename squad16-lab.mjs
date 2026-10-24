@@ -305,6 +305,10 @@ const SPUS = new Float64Array(T).fill(NaN); { const i = SY.get('SPUS'); let src 
   STATUS.spus = { ok: true, src, sessions: [...SPUS].filter(x => x > 0).length, note: 'information (portfolio comparison); SPY is the gate' }; log('SPUS: ' + JSON.stringify(STATUS.spus)); }
 if (DIAG) { console.log('SQUAD 16 DIAGNOSTICS (data coverage and selection counts only; nothing judged or written)'); console.log('DATA ' + JSON.stringify(STATUS));
   for (const id of BASKET_IDS) { const a = INFO[id]; for (const j of [0, Math.floor(a.length / 2), a.length - 1]) if (a[j]) console.log('SEL ' + id + ' ' + JSON.stringify(a[j]).slice(0, 700)); }
+  { const t = REVS['SQ16-SHYLD'][0], U = top(t, 1000), rows = U.map(r => ({ r, f: fund(r.cik, t) })).map(({ r, f }) => ({ s: SYMS[r.i], capB: r4(r.cap / 1e9), divB: r4(f.div / 1e9), repB: r4(f.rep / 1e9), issB: r4(f.iss / 1e9), debtB: r4(f.debt / 1e9), debt0B: r4(f.debt0 / 1e9), y: r4(shYield({ div: f.div, rep: f.rep, iss: f.iss, cap: r.cap, debt: f.debt, debt0: f.debt0 })) }));
+    for (const x of rows.filter(x => ok(x.y)).sort((a, b) => b.y - a.y).slice(0, 12)) console.log('SHYLDCHK ' + D[t] + ' ' + JSON.stringify(x));
+    const X = U.filter(r => !isFin(r.i, r.cik) && !isUtil(r.i, r.cik)).map(r => fund(r.cik, t)); console.log('MAGICCHK ' + JSON.stringify({ n: X.length, ebitPos: X.filter(f => f.ebit > 0).length, ppe: X.filter(f => ok(f.ppe)).length, ca: X.filter(f => ok(f.ca)).length, cl: X.filter(f => ok(f.cl)).length, assets: X.filter(f => ok(f.assets)).length, ni: X.filter(f => ok(f.ni)).length, eq: X.filter(f => ok(f.eq)).length }));
+    for (const s of ['GOOGL', 'META', 'BRK.B', 'V', 'NVDA', 'VLO']) { const r = U.find(x => SYMS[x.i] === s); console.log('CAPCHK ' + D[t] + ' ' + s + ' ' + (r ? r4(r.cap / 1e9) + 'B rank ' + r.rank : 'not in 1000')); } }
   const cik0 = universe(MENDS[MENDS.length - 1]).ranked.slice(0, 3); for (const r of cik0) { const f = fund(r.cik, MENDS[MENDS.length - 1]); console.log('FUND ' + SYMS[r.i] + ' ' + JSON.stringify({ ...f, niAnnual: f.niAnnual.length })); }
   process.exit(0); }
 
