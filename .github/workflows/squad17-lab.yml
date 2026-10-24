@@ -1,0 +1,101 @@
+name: Squad 17 lab
+# SQUAD 17: "WHICH HALAL CORE HOLDING: SPUS, THE HALAL TOP 20, OR A MIX?" (squad17-lab.mjs; 24 Oct 2026). Four core-holding rules
+# pre-registered in squad17-core.mjs and data/strategy-library.json before any run (50% SPUS + 50% SQ10-SH20-C15; SH20-C15 with a 10-month
+# SPUS trend switch to cash; halal momentum 30 of the 100 largest, cap-weighted; halal top 20 pure cap weight, yearly). Each one's 5-year test
+# runs ONCE (first complete verdict frozen in data/squad17-lab.json firstRun), judged as an account vs SPUS (primary) and SPY, and per holding
+# period. NOT a TRY SMALL lab (scan.mjs does not read it). The price cache and Squad 4's, 5's and 10's caches are RESTORED READ ONLY (never
+# saved under their keys); Squad 10's files are copied into this lab's own cache (squad17-cache), the only cache saved.
+# Commits only its own output files and its own library entries. Never places an order. Start by hand: change run-squad17-now.txt (a last
+# line containing DIAG = data and structure check only, nothing judged or written) or run the workflow.
+on:
+  schedule:
+    - cron: '29 16 * * 0'    # Sunday, after the Sunday studies
+    - cron: '31 0 * * 2-6'   # weekday evenings after the close: paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad17-now.txt']
+permissions:
+  contents: write
+concurrency: squad17-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad4-cache
+          key: squad4-cache-none
+          restore-keys: squad4-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad5-cache
+          key: squad5-cache-none
+          restore-keys: squad5-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad10-cache
+          key: squad10-cache-none
+          restore-keys: squad10-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad17-cache
+          key: squad17-cache-${{ github.run_id }}
+          restore-keys: squad17-cache-
+      - shell: bash
+        run: |
+          mkdir -p squad17-cache
+          if [ -d squad10-cache ]; then cp -rn squad10-cache/. squad17-cache/ || true; fi
+          du -sh study-cache squad4-cache squad5-cache squad10-cache squad17-cache 2>/dev/null || true
+      - shell: bash
+        timeout-minutes: 185
+        run: |
+          set -o pipefail
+          if tail -n 1 run-squad17-now.txt | grep -q DIAG && [ "${{ github.event_name }}" = "push" ]; then export DIAG=1; fi
+          node squad17-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SQ17_MINUTES: '170'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad17-cache
+          key: squad17-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad17-run.log 2>/dev/null || true
+          FILES="data/squad17-lab.json data/squad17-paper.jsonl data/squad17-today.json data/squad17-board.json data/squad17-run.log data/squad17-diag.json"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 17 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 17 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad17-lab-log
+          path: run.log

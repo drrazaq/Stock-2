@@ -23308,6 +23308,50 @@
     "tryWouldQualify": false,
     "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -1.02 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t -0.53 under 2.5 in the newer half; return per year of capital tied up 7.6% not above the S&P 500 on the same days in the older half (26.5%); return per year of capital tied up 22.9% not above the S&P 500 on the same days in the newer half (27.4%)"
    }
+  },
+  {
+   "id": "SQ17-MIX50",
+   "family": "Halal core holding (Squad 17)",
+   "name": "Half SPUS + half Halal top 20 (capped 15%), rebalanced quarterly",
+   "explain": "50% SPUS + 50% SQ10-SH20-C15 (the 20 largest Shariah-screened, cap-weighted, max 15%), both sleeves reset to 50/50 every quarter. Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic method, NOT the ZAD status: SIC business screen; debt, cash + short-term investments and receivables each < 33% of the 36-month average market value; interest income < 5% of revenue; Squad 10 data fixes: implied splits from SEC share counts, renamed giants FB->META etc., wider debt tags, historical ticker -> SEC company map). Formation at the first session of Jan / Apr / Jul / Oct (yearly: January), trades at the next open, cash at 0%, SPUS held as a security (price only, like the stocks). JUDGED AS AN ACCOUNT vs SPUS (primary) and SPY: CAGR in both halves (start - end 2023 / 2024 - last close) after 0.4% per side on the real turnover (stress 0.6%), max drawdown, worst calendar year, CAGR / |max drawdown|; plus the per-period standard of Squad 10 (each holding period one trade, 0.8% / 1.2%, average-stock and same-stock yardsticks, no-top-2, 20+ trades, 3+ blocks, block t, return per year above SPY; +300% cap both sides). Run once, first complete verdict frozen. Core-holding study: not used for TRY SMALL.",
+   "status": "pre-registered 2026-10-24 (squad 17); 5-year one-shot pending",
+   "agent": "squad17",
+   "registered": "2026-10-24",
+   "libraryCheck": "Builds on SQ10-SH20-C15 (beat SPUS both halves as an account, deeper 2022 drawdown), SQ10-SH20-C15-Y (too few periods), SQ10-SH30-MOM (momentum tilt, not selection), SQ5-TOP20-TF (SPY 200-day filter, did not help), SQ16 (value / quality baskets failed). New here: a SPUS + basket mix, a 10-month SPUS trend switch, momentum SELECTION (top 30 of the 100 largest halal) with size weights, an uncapped yearly halal top 20; judged first as one account vs SPUS with worst year and return for the drawdown.",
+   "note": "Pre-registered 2026-10-24 BEFORE any squad 17 run (squad17-core.mjs = the exact rule). 5-year one-shot by squad17-lab.mjs, first complete verdict frozen in data/squad17-lab.json; core-holding study, not a TRY SMALL lab."
+  },
+  {
+   "id": "SQ17-SH20-TF10",
+   "family": "Halal core holding (Squad 17)",
+   "name": "Halal top 20 (capped 15%) with a 10-month SPUS trend switch to cash",
+   "explain": "SQ10-SH20-C15, but all in cash (0%) while SPUS closes a month below its 10-month average (checked at every month end, trades next open); back above = buy the current top 20 again. Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic method, NOT the ZAD status: SIC business screen; debt, cash + short-term investments and receivables each < 33% of the 36-month average market value; interest income < 5% of revenue; Squad 10 data fixes: implied splits from SEC share counts, renamed giants FB->META etc., wider debt tags, historical ticker -> SEC company map). Formation at the first session of Jan / Apr / Jul / Oct (yearly: January), trades at the next open, cash at 0%, SPUS held as a security (price only, like the stocks). JUDGED AS AN ACCOUNT vs SPUS (primary) and SPY: CAGR in both halves (start - end 2023 / 2024 - last close) after 0.4% per side on the real turnover (stress 0.6%), max drawdown, worst calendar year, CAGR / |max drawdown|; plus the per-period standard of Squad 10 (each holding period one trade, 0.8% / 1.2%, average-stock and same-stock yardsticks, no-top-2, 20+ trades, 3+ blocks, block t, return per year above SPY; +300% cap both sides). Run once, first complete verdict frozen. Core-holding study: not used for TRY SMALL.",
+   "status": "pre-registered 2026-10-24 (squad 17); 5-year one-shot pending",
+   "agent": "squad17",
+   "registered": "2026-10-24",
+   "libraryCheck": "Builds on SQ10-SH20-C15 (beat SPUS both halves as an account, deeper 2022 drawdown), SQ10-SH20-C15-Y (too few periods), SQ10-SH30-MOM (momentum tilt, not selection), SQ5-TOP20-TF (SPY 200-day filter, did not help), SQ16 (value / quality baskets failed). New here: a SPUS + basket mix, a 10-month SPUS trend switch, momentum SELECTION (top 30 of the 100 largest halal) with size weights, an uncapped yearly halal top 20; judged first as one account vs SPUS with worst year and return for the drawdown.",
+   "note": "Pre-registered 2026-10-24 BEFORE any squad 17 run (squad17-core.mjs = the exact rule). 5-year one-shot by squad17-lab.mjs, first complete verdict frozen in data/squad17-lab.json; core-holding study, not a TRY SMALL lab."
+  },
+  {
+   "id": "SQ17-SHMOM30",
+   "family": "Halal core holding (Squad 17)",
+   "name": "Halal momentum 30 of the 100 largest, cap-weighted, capped 15%",
+   "explain": "among the 100 largest Shariah-screened companies, the 30 with the best 12-1 month return, weighted by market value, no stock above 15%, quarterly. Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic method, NOT the ZAD status: SIC business screen; debt, cash + short-term investments and receivables each < 33% of the 36-month average market value; interest income < 5% of revenue; Squad 10 data fixes: implied splits from SEC share counts, renamed giants FB->META etc., wider debt tags, historical ticker -> SEC company map). Formation at the first session of Jan / Apr / Jul / Oct (yearly: January), trades at the next open, cash at 0%, SPUS held as a security (price only, like the stocks). JUDGED AS AN ACCOUNT vs SPUS (primary) and SPY: CAGR in both halves (start - end 2023 / 2024 - last close) after 0.4% per side on the real turnover (stress 0.6%), max drawdown, worst calendar year, CAGR / |max drawdown|; plus the per-period standard of Squad 10 (each holding period one trade, 0.8% / 1.2%, average-stock and same-stock yardsticks, no-top-2, 20+ trades, 3+ blocks, block t, return per year above SPY; +300% cap both sides). Run once, first complete verdict frozen. Core-holding study: not used for TRY SMALL.",
+   "status": "pre-registered 2026-10-24 (squad 17); 5-year one-shot pending",
+   "agent": "squad17",
+   "registered": "2026-10-24",
+   "libraryCheck": "Builds on SQ10-SH20-C15 (beat SPUS both halves as an account, deeper 2022 drawdown), SQ10-SH20-C15-Y (too few periods), SQ10-SH30-MOM (momentum tilt, not selection), SQ5-TOP20-TF (SPY 200-day filter, did not help), SQ16 (value / quality baskets failed). New here: a SPUS + basket mix, a 10-month SPUS trend switch, momentum SELECTION (top 30 of the 100 largest halal) with size weights, an uncapped yearly halal top 20; judged first as one account vs SPUS with worst year and return for the drawdown.",
+   "note": "Pre-registered 2026-10-24 BEFORE any squad 17 run (squad17-core.mjs = the exact rule). 5-year one-shot by squad17-lab.mjs, first complete verdict frozen in data/squad17-lab.json; core-holding study, not a TRY SMALL lab."
+  },
+  {
+   "id": "SQ17-SH20-CW-Y",
+   "family": "Halal core holding (Squad 17)",
+   "name": "Halal top 20, pure cap weight, rebalanced once a year",
+   "explain": "the 20 largest Shariah-screened companies, pure cap weight (no cap), re-formed once a year in January, weights drift in between. Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic method, NOT the ZAD status: SIC business screen; debt, cash + short-term investments and receivables each < 33% of the 36-month average market value; interest income < 5% of revenue; Squad 10 data fixes: implied splits from SEC share counts, renamed giants FB->META etc., wider debt tags, historical ticker -> SEC company map). Formation at the first session of Jan / Apr / Jul / Oct (yearly: January), trades at the next open, cash at 0%, SPUS held as a security (price only, like the stocks). JUDGED AS AN ACCOUNT vs SPUS (primary) and SPY: CAGR in both halves (start - end 2023 / 2024 - last close) after 0.4% per side on the real turnover (stress 0.6%), max drawdown, worst calendar year, CAGR / |max drawdown|; plus the per-period standard of Squad 10 (each holding period one trade, 0.8% / 1.2%, average-stock and same-stock yardsticks, no-top-2, 20+ trades, 3+ blocks, block t, return per year above SPY; +300% cap both sides). Run once, first complete verdict frozen. Core-holding study: not used for TRY SMALL.",
+   "status": "pre-registered 2026-10-24 (squad 17); 5-year one-shot pending",
+   "agent": "squad17",
+   "registered": "2026-10-24",
+   "libraryCheck": "Builds on SQ10-SH20-C15 (beat SPUS both halves as an account, deeper 2022 drawdown), SQ10-SH20-C15-Y (too few periods), SQ10-SH30-MOM (momentum tilt, not selection), SQ5-TOP20-TF (SPY 200-day filter, did not help), SQ16 (value / quality baskets failed). New here: a SPUS + basket mix, a 10-month SPUS trend switch, momentum SELECTION (top 30 of the 100 largest halal) with size weights, an uncapped yearly halal top 20; judged first as one account vs SPUS with worst year and return for the drawdown.",
+   "note": "Pre-registered 2026-10-24 BEFORE any squad 17 run (squad17-core.mjs = the exact rule). 5-year one-shot by squad17-lab.mjs, first complete verdict frozen in data/squad17-lab.json; core-holding study, not a TRY SMALL lab."
   }
  ]
 }
