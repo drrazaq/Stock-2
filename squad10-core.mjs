@@ -22,8 +22,8 @@
 //      advertising 7310-7319; motion pictures 7812-7829). No industry code = out.
 //   2. financial ratios on the latest balance sheet filed BEFORE the formation day (the latest equity date known; 200+ days old = unknown),
 //      each divided by the AVERAGE MARKET VALUE over the last 36 month starts (as S&P; as many as the data has, at least the current one):
-//        debt (LongTermDebt incl. current part, else non-current + current part / DebtCurrent; + ShortTermBorrowings, else CommercialPaper,
-//          when DebtCurrent was not used; a company that never reported a debt item has none)            < 33%
+//        debt (see SH_TAGS below: the larger of total debt and non-current + current debt; a company that never reported a debt item has
+//          none)                                                                                           < 33%
 //        cash + short-term investments (cash & equivalents; + ShortTermInvestments / MarketableSecuritiesCurrent /
 //          AvailableForSaleSecuritiesDebtSecuritiesCurrent, missing = 0)                                       < 33%
 //        receivables (AccountsReceivableNetCurrent / ReceivablesNetCurrent, missing = 0)                       < 33%  (Dow Jones style)
@@ -67,27 +67,37 @@ const addDays = (d, n) => new Date(ms(d) + n * DAY).toISOString().slice(0, 10), 
 const firstOf = (tagged, f) => { for (const facts of Object.values(tagged || {})) { const r = f(facts); if (r !== null && r !== undefined) return r; } return null; };
 export const r4 = (x) => x === null || x === undefined || !isFinite(x) ? null : +(+x).toFixed(4);
 
-// SEC tags this squad reads (compact rows { s, e, v, f })
+// SEC tags this squad reads (compact rows { s, e, v, f }). DATA GUARD set after DIAG 1-2 of 24 Oct 2026 (coverage only, BEFORE any rule
+// result): 17 large companies (ORCL, AVGO, QCOM, KO, XOM, CAT, UNP, ABBV, NOW, ...) report debt under other tags (DebtLongtermAndShortterm-
+// CombinedAmount, LongTermDebtAndCapitalLeaseObligations*, LongTermNotesPayable, NotesPayableCurrent, CommercialPaperAtCarryingValue) and
+// one (ORCL) filed a bogus LongTermDebt = 0, so: debt = the LARGER of (a) the largest total-debt item and (b) non-current + current debt
+// (DebtCurrent if reported, else current long-term debt + short-term borrowings / commercial paper), each the largest of its tags; and
+// when nothing is reported at the balance-sheet date itself, the latest item of the 120 days before it.
 export const SH_TAGS = { eq: ['StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest'],
-  ltd: ['LongTermDebt'], ltdNc: ['LongTermDebtNoncurrent'], ltdC: ['LongTermDebtCurrent'], debtC: ['DebtCurrent'], stb: ['ShortTermBorrowings'], cp: ['CommercialPaper'],
+  tot: ['LongTermDebt', 'DebtLongtermAndShorttermCombinedAmount', 'LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities', 'DebtAndCapitalLeaseObligations', 'NotesPayable'],
+  nc: ['LongTermDebtNoncurrent', 'LongTermDebtAndCapitalLeaseObligations', 'LongTermNotesPayable'],
+  cur: ['LongTermDebtCurrent', 'LongTermDebtAndCapitalLeaseObligationsCurrent', 'NotesPayableCurrent'], debtC: ['DebtCurrent'],
+  short: ['ShortTermBorrowings', 'CommercialPaper', 'CommercialPaperAtCarryingValue', 'ShortTermBankLoansAndNotesPayable', 'OtherShortTermBorrowings'],
   cash: ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents'],
   sti: ['ShortTermInvestments', 'MarketableSecuritiesCurrent', 'AvailableForSaleSecuritiesDebtSecuritiesCurrent'],
   recv: ['AccountsReceivableNetCurrent', 'ReceivablesNetCurrent'],
   intInc: ['InvestmentIncomeInterest', 'InvestmentIncomeInterestAndDividend'],
   rev: ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet', 'RevenueFromContractWithCustomerIncludingAssessedTax'] };
+const DEBT_G = ['tot', 'nc', 'cur', 'debtC', 'short'];
 
 // the balance sheet at the latest equity date filed before asOf: { end, debt, cashInv, recv, intInc, rev } (null = unknown)
 export function balanceAt(co, asOf, stale = STALE) {
   const none = { end: null, debt: null, cashInv: null, recv: null, intInc: null, rev: null };
   const eq = firstOf(co && co.eq, (f) => instantAt(f, asOf)); if (!eq || (ms(asOf) - ms(eq.end)) / DAY > stale) return none;
-  const at1 = (facts) => { if (!facts) return null; const r = instantAt(facts.filter(x => x.e <= addDays(eq.end, 5)), asOf); return r && near(r.end, eq.end, 5) ? r.val : null; };
-  const at = (g) => firstOf(co[g], at1), ever = ['ltd', 'ltdNc', 'ltdC', 'debtC', 'stb', 'cp'].some(g => Object.values(co[g] || {}).some(f => (f || []).some(x => x.f < asOf)));
-  const total = at('ltd'), nc = at('ltdNc'), cur = at('ltdC'), dc = at('debtC'), stb = at('stb'), cp = at('cp');
-  let debt; if (total !== null || nc !== null || cur !== null || dc !== null || stb !== null || cp !== null) {
-    const longPart = total !== null ? total : (nc || 0) + (cur !== null ? cur : 0), usedDebtC = total === null && cur === null && dc !== null;
-    debt = longPart + (usedDebtC ? dc : 0) + (usedDebtC ? 0 : (stb !== null ? stb : cp !== null ? cp : 0)); }
-  else debt = ever ? null : 0;
-  const cash = at('cash'), sti = at('sti'), recv = at('recv');
+  // per group: the largest of its tags at the balance-sheet date (+-5 days), or (back) the latest within the 120 days before it
+  const val1 = (facts, lo) => { if (!facts) return null; const r = instantAt(facts.filter(x => x.e <= addDays(eq.end, 5) && x.e >= lo), asOf); return r ? r.val : null; };
+  const grp = (g, lo) => { let m = null; for (const f of Object.values(co[g] || {})) { const v = val1(f, lo); if (v !== null && (m === null || v > m)) m = v; } return m; };
+  const debtAt = (lo) => { const v = {}; for (const g of DEBT_G) v[g] = grp(g, lo); if (DEBT_G.every(g => v[g] === null)) return null;
+    const parts = (v.nc || 0) + (v.debtC !== null ? v.debtC : (v.cur || 0) + (v.short || 0)); return Math.max(v.tot !== null ? v.tot : 0, parts); };
+  const ever = DEBT_G.some(g => Object.values(co[g] || {}).some(f => (f || []).some(x => x.f < asOf)));
+  let debt = debtAt(addDays(eq.end, -5)); if (debt === null) debt = debtAt(addDays(eq.end, -120)); if (debt === null) debt = ever ? null : 0;
+  let cash = grp('cash', addDays(eq.end, -5)); if (cash === null) cash = grp('cash', addDays(eq.end, -120));
+  const sti = grp('sti', addDays(eq.end, -5)), recv = grp('recv', addDays(eq.end, -5));
   const ttm = (g) => firstOf(co[g], (f) => { const r = ttmAt(f, asOf); return r ? r.val : null; });
   return { end: eq.end, debt, cashInv: cash === null ? null : cash + (sti || 0), recv: recv === null ? 0 : recv, intInc: ttm('intInc'), rev: ttm('rev') };
 }

@@ -23,7 +23,7 @@ test('Shariah screen: business, each ratio vs the average market value, interest
 test('balance sheet point in time: filed before the day, debt parts, cash + investments, receivables, TTM interest / revenue', () => {
   const r = (e, v, f, s) => ({ s: s || '', e, v, f });
   const co = { eq: { StockholdersEquity: [r('2024-03-31', 100, '2024-05-01'), r('2024-06-30', 120, '2024-08-01')] },
-    ltdNc: { LongTermDebtNoncurrent: [r('2024-06-30', 20, '2024-08-01')] }, ltdC: { LongTermDebtCurrent: [r('2024-06-30', 5, '2024-08-01')] }, cp: { CommercialPaper: [r('2024-06-30', 3, '2024-08-01')] },
+    nc: { LongTermDebtNoncurrent: [r('2024-06-30', 20, '2024-08-01')] }, cur: { LongTermDebtCurrent: [r('2024-06-30', 5, '2024-08-01')] }, short: { CommercialPaper: [r('2024-06-30', 3, '2024-08-01')] },
     cash: { CashAndCashEquivalentsAtCarryingValue: [r('2024-03-31', 9, '2024-05-01'), r('2024-06-30', 7, '2024-08-01')] }, sti: { ShortTermInvestments: [r('2024-06-30', 4, '2024-08-01')] },
     recv: { AccountsReceivableNetCurrent: [r('2024-06-30', 11, '2024-08-01')] },
     intInc: { InvestmentIncomeInterest: [r('2024-06-30', 2, '2024-08-01', '2023-07-01')] }, rev: { Revenues: [r('2024-06-30', 200, '2024-08-01', '2023-07-01')] } };
@@ -31,6 +31,11 @@ test('balance sheet point in time: filed before the day, debt parts, cash + inve
   const a = balanceAt(co, '2024-08-01'); assert.equal(a.end, '2024-03-31'); assert.equal(a.cashInv, 9); assert.equal(a.debt, 0, 'no debt item filed before the day = none');
   assert.equal(balanceAt({ eq: co.eq, cash: co.cash }, '2024-08-02').debt, 0, 'never reported debt = none');
   assert.equal(balanceAt(co, '2025-06-01').end, null, 'a balance sheet 200+ days old is unknown');
+  // a bogus total of 0 does not hide the parts; the largest total wins; DebtCurrent replaces current LTD + short-term borrowings
+  assert.equal(balanceAt({ ...co, tot: { LongTermDebt: [r('2024-06-30', 0, '2024-08-01')], DebtLongtermAndShorttermCombinedAmount: [r('2024-06-30', 40, '2024-08-01')] } }, '2024-08-02').debt, 40);
+  assert.equal(balanceAt({ ...co, debtC: { DebtCurrent: [r('2024-06-30', 6, '2024-08-01')] } }, '2024-08-02').debt, 26);
+  // nothing at the balance-sheet date: the latest item within 120 days before it
+  assert.equal(balanceAt({ eq: co.eq, cash: co.cash, nc: { LongTermDebtNoncurrent: [r('2024-04-02', 50, '2024-05-01')] } }, '2024-08-02').debt, 50);
 });
 
 test('cap weights and the 15% cap: excess re-spread pro rata until none is above', () => {

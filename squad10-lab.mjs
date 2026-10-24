@@ -221,7 +221,7 @@ const HEXT = J('data/halal-ext.json', {}), screener = (s) => { const x = HEXT[s]
 
 // ================= 4b. SHARIAH SCREEN DATA (own cache shfacts: the extra SEC items of the ~200 largest at every quarter) =================
 const CANDS = 200, SHN_MAX = 60;
-const SHALL = [...new Set(Object.values(SH_TAGS).flat())], SHF = JZ(SC + '/shfacts.json.gz', {});
+const SHALL = [...new Set(Object.values(SH_TAGS).flat())], SHF = JZ(SC + '/shfacts-v2.json.gz', {});
 function compactSH(j) { const g = j && j.facts && j.facts['us-gaap'], out = {}; if (!g) return out;
   for (const tag of SHALL) { const u = g[tag] && g[tag].units && g[tag].units.USD; if (!Array.isArray(u)) continue; const rows = [], seen = new Set();
     for (const x of u) { if (!x || !x.end || !x.filed || !isFinite(x.val) || x.end < '2017-01-01') continue;
@@ -233,7 +233,7 @@ function compactSH(j) { const g = j && j.facts && j.facts['us-gaap'], out = {}; 
   let got = 0, fail = 0; if (!OFFLINE) for (const c of want) { if (left() < 40 * 60e3) break; await sleep(local(env.SEC_BASE) ? 0 : 110); let r = null;
     try { r = await fetch(SECD + '/api/xbrl/companyfacts/CIK' + c.padStart(10, '0') + '.json', { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(90000) }); } catch (e) {}
     if (r && r.ok) { const j = await r.json().catch(() => null); if (j) { SHF[c] = compactSH(j); got++; } else fail++; } else if (r && r.status === 404) SHF[c] = {}; else fail++; }
-  if (got) WZ(SC + '/shfacts.json.gz', SHF); const still = [...want].filter(c => !(c in SHF)).length;
+  if (got) WZ(SC + '/shfacts-v2.json.gz', SHF); const still = [...want].filter(c => !(c in SHF)).length;
   STATUS.shFacts = { ok: still <= Math.max(3, want.size * 0.01), wantedNow: want.size, fetchedNow: got, failed: fail, missing: still, known: Object.keys(SHF).length }; log('Shariah facts: ' + JSON.stringify(STATUS.shFacts)); }
 const shMemo = new Map(); function shOf(cik) { if (shMemo.has(cik)) return shMemo.get(cik); const a = SHF[cik]; let o = null;
   if (a) { o = {}; for (const [g, tags] of Object.entries(SH_TAGS)) { o[g] = {}; for (const t of tags) if (a[t]) o[g][t] = a[t].map(([s0, e, v, f]) => ({ s: s0, e, v, f })); } } shMemo.set(cik, o); return o; }
@@ -261,6 +261,13 @@ if (DIAG) { console.log('SQUAD 10 DIAGNOSTICS (coverage and the Shariah screen o
       const inst = u.filter(x => !x.start && x.end >= '2021-01-01').sort((a, b) => a.end < b.end ? -1 : 1); if (inst.length) items[tag] = inst.slice(-2).map(x => [x.end, x.val, x.filed]); }
     tagDump[c] = { ...p, entity: j.entityName, items }; }
   DIAGS.tagDump = tagDump;
+  // market-value probe of the giants at the 2022-2023 quarters (Squad 5's universe showed GOOGL at 96B and META at 44B in Jan 2022)
+  DIAGS.capProbe = {}; for (const t of [...QS.filter(x => D[x] < '2023-04-01'), T - 1]) { const U = universe(t), o = {};
+    for (const sy of ['GOOGL', 'GOOG', 'FB', 'META', 'AVGO', 'BRK.B', 'AAPL']) { const i = SY.get(sy); if (i === undefined) { o[sy] = 'no prices'; continue; } const cik = cikAt(i, D[t]), r = U.ranked.find(z => z.i === i), rc = cik ? U.ranked.find(z => z.cik === cik) : null;
+      const lim = addDays(D[t], -30), cov = (coverRows(cik) || []).filter(([e]) => e <= lim).slice(-2), alt = (ALT[cik] || []).filter(([f]) => f < D[t]).slice(-2);
+      o[sy] = { close: r4(CC(i, t)), dv: r4(DV20[i * T + t] / 1e6), liquid: !!LIQ[i * T + t], cik, rank: r ? r.rank + 1 : null, capB: r ? r4(r.cap / 1e9) : null, rowOfCik: rc ? SYMS[rc.i] + ' ' + r4(rc.cap / 1e9) + 'B' : null, capNowB: cik ? r4(capOf(i, cik, t) / 1e9) : null,
+        splits: (SPL.get(sy) || []).slice(-3), cover: cov, alt, spans: (TMAP.get(sy) || []).slice(0, 4) }; }
+    DIAGS.capProbe[D[t]] = o; }
   fs.writeFileSync('data/squad10-diag.json', JSON.stringify(DIAGS, null, 1)); console.log(JSON.stringify(DIAGS, null, 1).slice(0, 20000)); process.exit(0); }
 
 // ================= 5. THE BASKETS =================
