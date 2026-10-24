@@ -130,7 +130,7 @@ if (MODE === 'run' || MODE === 'diag') {
     const out = {}; for (const o of occs) out[o] = OB[key(o)] || []; return out; }
   // ---- price each signal once for each contract kind ----
   const uniq = new Map(); for (const k of ['PB12', 'MOM', 'DIP']) for (const z of SIG[k]) { const key = z.src + '|' + z.sym + '|' + z.buy; if (!uniq.has(key)) uniq.set(key, z); }
-  const CNT = {}, cnt = (src, k) => { CNT[src] = CNT[src] || {}; CNT[src][k] = (CNT[src][k] || 0) + 1; }, PRICED = [];
+  const DBG = [], CNT = {}, cnt = (src, k) => { CNT[src] = CNT[src] || {}; CNT[src][k] = (CNT[src][k] || 0) + 1; }, PRICED = [];
   let done = 0;
   for (const z of uniq.values()) { cnt(z.src, 'signals'); if (++done % 100 === 0) { log('priced ' + done + ' / ' + uniq.size + ' signals'); WZ(CD + '/contracts.json.gz', CT); WZ(CD + '/optbars.json.gz', OB); }
     const e = SI.has(z.buy) ? SI.get(z.buy) : -1, sellI = idxOnOrBefore(z.sell); if (e < 0) { cnt(z.src, 'entryNotASession'); continue; }
@@ -143,7 +143,8 @@ if (MODE === 'run' || MODE === 'diag') {
     const T = dayDiff(z.buy, exp) / 365;
     // entry-day bars of the 8 ATM candidates, then of the delta candidates
     const atmC = [...chain].sort((a, b) => Math.abs(a.k - o0) - Math.abs(b.k - o0) || a.k - b.k).slice(0, 8), b1 = await optBars(atmC.map(c => c.occ), z.buy, addDays(z.buy, 1)), atm = pickAtm(atmC, b1, z.buy, o0);
-    if (!atm) { cnt(z.src, 'noAtmTraded'); continue; }
+    if (!atm) { cnt(z.src, 'noAtmTraded'); if (MODE === 'diag' && DBG.length < 8) { const wide = await optBars(atmC.map(c => c.occ), addDays(z.buy, -10), addDays(z.buy, 10)), exps = [...new Set(list.map(x => x.exp))].filter(e => dayDiff(z.buy, e) >= 120 && dayDiff(z.buy, e) <= 300).sort();
+        DBG.push({ sym: z.sym, buy: z.buy, spot: o0, exp, expsNear: exps, chainN: chain.length, cands: atmC.map(c => ({ occ: c.occ, k: c.k, entryDayBars: (b1[c.occ] || []).length, barsPm10d: (wide[c.occ] || []).map(b => b.t + ':' + b.v) })) }); } continue; }
     const iv = impliedVol(atm.open, o0, atm.k, T, RATE); const picks = { ATM: { ...atm, delta: null } };
     if (iv) for (const kind of ['ITM70', 'DEEP85']) { const t = TARGET[kind];
         const cand = chain.map(c => ({ ...c, delta: bsDelta(o0, c.k, T, RATE, iv) })).sort((a, b) => Math.abs(a.delta - t) - Math.abs(b.delta - t) || a.k - b.k).slice(0, 8);
@@ -161,7 +162,7 @@ if (MODE === 'run' || MODE === 'diag') {
   // DIAG = a data check only (counts and entry-side contract details; no exit, no return, nothing judged or frozen)
   if (MODE === 'diag') { const smp = (src, kind) => PRICED.filter(t => t.src === src && t.kind === kind).slice(0, 4).map(t => ({ sym: t.sym, entry: t.entry, exp: t.exp, occ: t.occ, k: t.k, spot: t.spot, open: t.open, iv: t.iv, delta: t.delta, days: t.days }));
     const byHalf = {}; for (const t of PRICED) { const k = t.src + ' ' + t.kind + ' ' + halfOf(t.entry); byHalf[k] = (byHalf[k] || 0) + 1; }
-    fs.writeFileSync(OUT, JSON.stringify({ ...PREV, diag: { at: new Date().toISOString(), last: LAST, sources: srcInfo, counts: CNT, pricedByHalf: byHalf, exitsBy: PRICED.reduce((a, t) => (a[t.by] = (a[t.by] || 0) + 1, a), {}), requests: COV.requests, errors: COV.errors, failedSample: COV.failedSample,
+    fs.writeFileSync(OUT, JSON.stringify({ ...PREV, diag: { at: new Date().toISOString(), last: LAST, sources: srcInfo, counts: CNT, pricedByHalf: byHalf, exitsBy: PRICED.reduce((a, t) => (a[t.by] = (a[t.by] || 0) + 1, a), {}), requests: COV.requests, debugNoAtm: DBG, errors: COV.errors, failedSample: COV.failedSample,
       sample: Object.fromEntries(['PB12', 'MOM', 'DIP'].flatMap(s => ['ATM', 'ITM70', 'DEEP85'].map(k => [s + ' ' + k, smp(s, k)]))) } }, null, 1));
     log('DIAG written: ' + JSON.stringify(byHalf)); process.exit(0); }
   // ---- today's OPRA half-spreads per stock and contract kind ----
