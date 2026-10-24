@@ -191,7 +191,10 @@ if (MODE === 'run' || MODE === 'diag') {
     TRADES[id] = tr.map(t => ({ s: t.sym, from: t.from, in: t.entry, out: t.exit, exp: t.exp, occ: t.occ, k: t.k, spot: t.spot, o: t.open, x: t.out, by: t.by, iv: t.iv, d: t.delta, h: t.h, prem: t.premium, net: t.net, st: t.stock, spy: t.spy }));
     const h = v.results; log('- ' + id + ': ' + RES[id].verdict + ' | 2024 n ' + h.older.n + ' avg ' + pc(h.older.avg) + ' stress ' + pc(h.older.avgStress) + ' vs stock ' + pc(h.older.stock) + ' t ' + h.older.tBlock
       + ' | 2025-26 n ' + h.newer.n + ' avg ' + pc(h.newer.avg) + ' stress ' + pc(h.newer.avgStress) + ' vs stock ' + pc(h.newer.stock) + ' t ' + h.newer.tBlock + ' | premium median ' + h.all.premium.median + ' USD | ' + v.why.slice(0, 300)); }
-  const errN = Object.entries(COV.errors).filter(([k]) => /^(stockBars|contracts|optionBars) /.test(k)).reduce((a, [, b]) => a + b, 0);
+  // completeness counts failures that a rerun could change (network, 5xx, 429 left after retries, auth); a deterministic refusal of a symbol
+  // (HTTP 422 / 404: Alpaca has no option listing for it, e.g. BK, PSTG) is a 'noContracts' case, not a failed request. Fixed 24 Oct 2026
+  // after the first run was refused the freeze only for that (4 x 422 among 245 cached-run requests); its numbers were identical.
+  const errN = Object.entries(COV.errors).filter(([k]) => /^(stockBars|contracts|optionBars) /.test(k) && !/HTTP (422|404)$/.test(k)).reduce((a, [, b]) => a + b, 0);
   DATA = { complete: errN <= COV.requests * 0.01 && momOk, failedRequests: errN, requests: COV.requests, sources: srcInfo, counts: CNT, spreadsMeasured: snapOk, stocksPriced: syms.length, medianHalfSpread: medH, p75HalfSpread: Object.fromEntries(Object.entries(p75).map(([k, v]) => [k, r4(v)])) };
 }
 
