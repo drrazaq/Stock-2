@@ -10,7 +10,7 @@
 //    frozen in data/squad10-lab.json firstRun; later runs = monitoring only (latest). SENSITIVITY (information only) after it.
 // 3. PAPER LANE from Monday 26 Oct 2026: data/squad10-paper.jsonl, data/squad10-today.json (the CURRENT members of each basket with
 //    weights, ZAD marks and reserves), data/squad10-board.json.
-// DIAG=1: data coverage + the Shariah screen's top 30 (with reasons) at every January and today; nothing judged or written in data/.
+// DIAG=1: data coverage + the Shariah screen's top 60 (with reasons) at every January and today -> data/squad10-diag.json only; nothing judged.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { execFileSync } from 'node:child_process';
@@ -246,11 +246,22 @@ function shariahList(t) { if (listMemo.has(t)) return listMemo.get(t); const row
   for (const r of universe(t).ranked) { if (rows.length >= SHN_MAX) break; const sic = sicAt(r.i, r.cik), co = shOf(r.cik);
     const b = co ? balanceAt(co, D[t]) : { debt: null, cashInv: null, recv: null, intInc: null, rev: null }, avg = mvAvg(r.cik, t, r.cap);
     const v = co ? shariahPass({ sic, mvAvg: avg, ...b }) : { ok: false, why: 'no SEC facts fetched' };
-    if (walked.length < 40) walked.push({ sym: SYMS[r.i], capB: r4(r.cap / 1e9), pass: v.ok, why: v.why, debtPct: r4(b.debt / avg), cashPct: r4(b.cashInv / avg), recvPct: r4(b.recv / avg), intPct: b.rev > 0 && b.intInc !== null ? r4(b.intInc / b.rev) : null });
+    const pct = (x) => x === null || x === undefined || !(avg > 0) ? null : r4(x / avg);
+    if (walked.length < 60) walked.push({ sym: SYMS[r.i], cik: r.cik, capB: r4(r.cap / 1e9), pass: v.ok, why: v.why, bsEnd: b.end || null, debtPct: pct(b.debt), cashPct: pct(b.cashInv), recvPct: pct(b.recv), intPct: b.rev > 0 && b.intInc !== null ? r4(b.intInc / b.rev) : null });
     if (v.ok) rows.push({ key: r.i, i: r.i, cik: r.cik, sym: SYMS[r.i], cap: r.cap, mom: mom121(cl(r.i), t) }); else why[v.why] = (why[v.why] || 0) + 1; }
   const o = { rows, why, walked }; listMemo.set(t, o); return o; }
 DIAGS.shariah = [...QS.filter(t => D[t].slice(5, 7) === '01'), T - 1].map(t => { const L = shariahList(t); return { date: D[t], passing: L.rows.length, outReasons: L.why, top40: L.walked.map(w => w.sym + (w.pass ? '' : ' (OUT: ' + w.why + ')') + ' ' + w.capB + 'B d' + w.debtPct + ' c' + w.cashPct + ' r' + w.recvPct + ' i' + w.intPct) }; });
-if (DIAG) { console.log('SQUAD 10 DIAGNOSTICS (coverage and the Shariah screen only; nothing judged or written)'); console.log(JSON.stringify(DIAGS, null, 1).slice(0, 60000)); process.exit(0); }
+if (DIAG) { console.log('SQUAD 10 DIAGNOSTICS (coverage and the Shariah screen only; nothing judged or written)');
+  // the companies of the walked lists that fail for missing data: every us-gaap USD item about debt / cash / investments / receivables they
+  // report (latest two values), to choose the data tags BEFORE any rule result
+  const probs = new Map(); for (const t of [...QS, T - 1]) for (const w of shariahList(t).walked) if (/unknown|no SEC/.test(w.why || '') && !probs.has(w.cik)) probs.set(w.cik, { sym: w.sym, why: w.why, at: D[t] });
+  const tagDump = {}; if (!OFFLINE) for (const [c, p] of [...probs].slice(0, 40)) { await sleep(110); let j = null; try { const r = await fetch(SECD + '/api/xbrl/companyfacts/CIK' + c.padStart(10, '0') + '.json', { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(90000) }); if (r.ok) j = await r.json(); else tagDump[c] = { ...p, status: r.status }; } catch (e) {}
+    const g = j && j.facts && j.facts['us-gaap']; if (!g) continue; const items = {};
+    for (const [tag, v] of Object.entries(g)) { if (!/Debt|Borrowing|NotesPayable|CommercialPaper|^Cash|Investments|Receivable|StockholdersEquity$/.test(tag)) continue; const u = v.units && v.units.USD; if (!Array.isArray(u)) continue;
+      const inst = u.filter(x => !x.start && x.end >= '2021-01-01').sort((a, b) => a.end < b.end ? -1 : 1); if (inst.length) items[tag] = inst.slice(-2).map(x => [x.end, x.val, x.filed]); }
+    tagDump[c] = { ...p, entity: j.entityName, items }; }
+  DIAGS.tagDump = tagDump;
+  fs.writeFileSync('data/squad10-diag.json', JSON.stringify(DIAGS, null, 1)); console.log(JSON.stringify(DIAGS, null, 1).slice(0, 20000)); process.exit(0); }
 
 // ================= 5. THE BASKETS =================
 // o.exclude = Set of tickers removed from the eligible list (sensitivity), o.maxW = weight cap override (sensitivity)
