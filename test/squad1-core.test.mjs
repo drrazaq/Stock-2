@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { RULES, IDS, BUY_IDS, ONE_OPEN, relFlags, isInsider, isTopOfficer, clusterEvents, topOfficerBuys, parseForm4, parseDailyIdx, buybackAmount, buybackSize, html2text,
   firstPerCompany, eftsHits, linkActive, recChange, recUp, divHikes, siKnown, lowShort, avoidVerdict, ownAverage, capG, pickFrac, monthStarts, firstAfter, nextSession, halfOf,
-  preRegister, boardStats, paperReady, BUYBACK_PHRASES, GUIDE_PHRASES } from '../squad1-core.mjs';
+  preRegister, boardStats, paperReady, BUYBACK_PHRASES, GUIDE_PHRASES, pitPick, sharesAt } from '../squad1-core.mjs';
 import { judge } from '../value-core.mjs';
 
 test('registry: 9 buy rules + 1 avoid rule, every rule has a hold, a rule text, a paper with a link and a library check', () => {
@@ -67,6 +67,18 @@ test('buyback size: dollars and share counts are read only from authorization se
   assert.deepEqual(buybackAmount('Revenue was $900 million. Net income rose.'), { usd: null, shares: null });
   assert.equal(buybackAmount('The Board authorized a $250,000,000 share repurchase program.').usd, 2.5e8);
   assert.equal(buybackSize({ usd: 1e9, shares: null }, 1e8, 100), 0.1); assert.equal(buybackSize({ usd: 1e8, shares: 1e7 }, 1e8, 100), 0.1); assert.equal(buybackSize({ usd: null, shares: null }, 1e8, 10), null);
+});
+
+test('survivorship fix: a company absent from TODAY\'s ticker list still gets its share count (filing CIK or point-in-time CIK)', () => {
+  const todayMap = { AAPL: '320193' }, todayCik = (s) => todayMap[s] || null;   // DAY (taken over) is not in today's list
+  const counts = { 1725057: [['2023-01-01', 155e6]], 320193: [['2023-01-01', 15e9]] }, series = (cik, d) => { const a = counts[cik]; if (!a) return null; let v = null; for (const [e, n] of a) if (e <= d) v = n; return v; };
+  const evidence = new Map([['DAY', [['2022-02-10', '1725057'], ['2025-11-05', '1725057']]], ['ABC', [['2021-01-05', '111'], ['2024-06-01', '222']]]]);
+  assert.equal(sharesAt({ sym: 'DAY', d: '2024-03-01', filingCik: 1725057, evidence: new Map(), todayCik, series }), 155e6, 'filing CIK');
+  assert.equal(sharesAt({ sym: 'DAY', d: '2024-03-01', evidence, todayCik, series }), 155e6, 'point-in-time CIK from Form 4 evidence');
+  assert.equal(sharesAt({ sym: 'DAY', d: '2024-03-01', evidence: new Map(), todayCik, series }), null, 'the old lookup (today\'s list only) loses the trade');
+  assert.equal(sharesAt({ sym: 'AAPL', d: '2024-03-01', evidence: new Map(), todayCik, series }), 15e9);
+  assert.equal(pitPick(evidence.get('ABC'), '2023-01-01'), '111'); assert.equal(pitPick(evidence.get('ABC'), '2024-07-01'), '222', 'a reused ticker follows its date');
+  assert.equal(pitPick(evidence.get('ABC'), '2020-12-01'), '111'); assert.equal(pitPick(evidence.get('ABC'), '2019-01-01'), null);
 });
 
 test('first event per company per window; EDGAR full-text hits are compacted with tickers', () => {

@@ -22,7 +22,7 @@ import { freezeEach, latestBlock } from './first-run.mjs';
 import { halfStat, judge, TIER2_T } from './value-core.mjs';
 import { RULES, IDS, ONE_OPEN, COST, SPLIT, PAPER_START, BUYBACK_PHRASES, GUIDE_PHRASES, mean, r4, halfOf, capG, pickFrac, monthStarts, firstAfter as fAfter, nextSession, addDays, ownAverage,
   relFlags, isInsider, isTopOfficer, clusterEvents, topOfficerBuys, parseForm4, parseDailyIdx, html2text, buybackAmount, buybackSize, firstPerCompany, eftsHits, linkActive, recChange, recUp,
-  divHikes, siKnown, lowShort, avoidVerdict, boardStats, paperReady, shapeOf, preRegister } from './squad1-core.mjs';
+  divHikes, siKnown, lowShort, avoidVerdict, boardStats, paperReady, shapeOf, preRegister, pitPick, sharesAt } from './squad1-core.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', EFTS = local(env.EFTS_BASE) || 'https://efts.sec.gov',
   FINRA = local(env.FINRA_BASE) || 'https://api.finra.org', FH = local(env.FH_BASE) || 'https://finnhub.io/api/v1';
@@ -85,12 +85,14 @@ const SECCIK = J('data/sec-ciks.json', {}), SH = JZ('data/shares.json.gz', { t: 
 const symCik = (s) => { const a = SH.t[s] || SH.t[s.replace(/\./g, '-')]; if (a) return String(a); const y = SECCIK[s]; return y ? String(y[0]) : null; };
 const cikSyms = new Map(); for (const s of SYMS) { const c = symCik(s); if (c) (cikSyms.get(c) || cikSyms.set(c, []).get(c)).push(s); }
 const sharesKnown = (cik, d) => { const a = SH.c[cik]; if (!a) return null; const lim = iso(Date.parse(d + 'T00:00:00Z') - 30 * 864e5); let v = null; for (const [e, n] of a) if (e <= lim) v = n; return v; };
-const sharesOf = (s, d) => { const c = symCik(s); return c ? sharesKnown(c, d) : null; };
+// share count known on d: the filing's own CIK, else the point-in-time CIK of the ticker (EVID), else today's ticker list (survivorship fix)
+const sharesOf = (s, d, filingCik) => sharesAt({ sym: s, d, filingCik, evidence: EVID, todayCik: symCik, series: sharesKnown });
 const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
 const FORM_M = monthStarts(D), STATUS = {};
 const hasPx = (i, t) => { for (let q = Math.max(0, t - 5); q <= Math.min(T - 1, t + 5); q++) if (C[i * T + q] > 0 || CX[i * T + q] > 0) return true; return false; };
 // the stock behind a filing: a display-name ticker with prices, else a ticker of the CIK with prices near the date
 const symFor = (cik, tickers, d) => { const t = Math.min(firstAfter(d), T - 1); for (const s of tickers || []) { const i = SY.get(s); if (i !== undefined && hasPx(i, t)) return s; }
+  const p = pitPick(CIKSYM.get(String(+cik)), d); if (p && SY.has(p) && hasPx(SY.get(p), t)) return p;   // point-in-time ticker of the CIK (delisted companies too)
   for (const s of cikSyms.get(String(+cik)) || []) if (hasPx(SY.get(s), t)) return s; return null; };
 
 // ================= 2. DATA SOURCES =================
@@ -108,34 +110,41 @@ const months = (from) => { const out = [], now = new Date(); for (let y = +from.
 const monthEnd = (m) => iso(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0)), thisMonth = iso(Date.now()).slice(0, 7), slug = (p) => p.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
 // ---- 2a. SEC insider data sets (2021 on) with roles; forward: EDGAR daily index + Form 4 documents ----
+// point-in-time identity evidence (survivorship fix, 24 Oct 2026): ticker -> [[date, CIK]] and CIK -> [[date, ticker]] from every Form 3/4/5
+// submission (issuer ticker + issuer CIK on its filing date) and from EDGAR full-text hits, so taken-over / renamed / delisted companies keep
+// their share counts and tickers (TODAY's ticker list alone dropped them)
+const EVID = new Map(), CIKSYM = new Map(); const addEv = (sym, cik, d) => { if (!sym || !cik || !d || !/^[A-Z][A-Z0-9.]{0,6}$/.test(sym)) return; const c = String(+cik); if (!(+c > 0)) return;
+  (EVID.get(sym) || EVID.set(sym, []).get(sym)).push([d, c]); (CIKSYM.get(c) || CIKSYM.set(c, []).get(c)).push([d, sym]); };
 const BUYS = []; { const qs = [], now = new Date(); for (let y = 2021; y <= now.getUTCFullYear(); y++) for (let q = 1; q <= 4; q++) if (new Date(Date.UTC(y, q * 3, 1)) < now) qs.push(y + 'q' + q);
   let got = 0; const fail = [];
-  for (const q of qs) { const cf = SC + '/insider/' + q + '.json'; let x = J(cf, null);
+  for (const q of qs) { const cf = SC + '/insider2/' + q + '.json'; let x = J(cf, null);
     if (!x && left() > 100 * 60e3) { for (const p of ['/files/structureddata/data/insider-transactions-data-sets/', '/files/datastandardsinnovation/data/insider-transactions-data-sets/']) { const zip = SC + '/ins.zip'; if (local(env.SEC_BASE) || !(await download(SEC + p + q + '_form345.zip', zip))) continue;
         const S = tsv(zip, 'SUBMISSION.tsv'), Nt = tsv(zip, 'NONDERIV_TRANS.tsv'), RO = tsv(zip, 'REPORTINGOWNER.tsv'); try { fs.unlinkSync(zip); } catch (e) {} if (!S || !Nt || !RO) continue;
         const own = new Map(), ri = (n) => RO.H.indexOf(n); for (const r of RO.rows) if (!own.has(r[ri('ACCESSION_NUMBER')])) own.set(r[ri('ACCESSION_NUMBER')], [r[ri('RPTOWNERCIK')], r[ri('RPTOWNER_RELATIONSHIP')] || '', r[ri('RPTOWNER_TITLE')] || '']);
         const si = (n) => S.H.indexOf(n), ni = (n) => Nt.H.indexOf(n), sub = new Map();
-        for (const r of S.rows) if (r[si('DOCUMENT_TYPE')] === '4') sub.set(r[si('ACCESSION_NUMBER')], { d: isoD(r[si('FILING_DATE')]), sym: String(r[si('ISSUERTRADINGSYMBOL')] || '').toUpperCase().trim().replace(/-/g, '.') });
+        const pairs = new Map(); for (const r of S.rows) { const d0 = isoD(r[si('FILING_DATE')]), sy = String(r[si('ISSUERTRADINGSYMBOL')] || '').toUpperCase().trim().replace(/-/g, '.'), ck = String(+r[si('ISSUERCIK')] || '');
+          if (d0 && sy && +ck > 0) { const k = sy + '|' + ck, pr = pairs.get(k); if (!pr) pairs.set(k, [sy, ck, d0, d0]); else { if (d0 < pr[2]) pr[2] = d0; if (d0 > pr[3]) pr[3] = d0; } }
+          if (r[si('DOCUMENT_TYPE')] === '4') sub.set(r[si('ACCESSION_NUMBER')], { d: d0, sym: sy, cik: ck }); }
         const rows = []; for (const r of Nt.rows) { if (r[ni('TRANS_CODE')] !== 'P' || r[ni('TRANS_ACQUIRED_DISP_CD')] !== 'A') continue; const s = sub.get(r[ni('ACCESSION_NUMBER')]); if (!s || !s.d || !/^[A-Z][A-Z0-9.]{0,6}$/.test(s.sym)) continue;
-          const o = own.get(r[ni('ACCESSION_NUMBER')]); if (!o) continue; const sh = +r[ni('TRANS_SHARES')], px = +r[ni('TRANS_PRICEPERSHARE')]; if (sh > 0 && px > 0) rows.push([s.sym, s.d, o[0], Math.round(sh * px), o[1], o[2]]); }
-        x = { rows }; W(cf, x); got++; break; } }
-    if (!x) { fail.push(q); continue; } for (const r of x.rows) BUYS.push(r); }
+          const o = own.get(r[ni('ACCESSION_NUMBER')]); if (!o) continue; const sh = +r[ni('TRANS_SHARES')], px = +r[ni('TRANS_PRICEPERSHARE')]; if (sh > 0 && px > 0) rows.push([s.sym, s.d, o[0], Math.round(sh * px), o[1], o[2], s.cik]); }
+        x = { rows, pairs: [...pairs.values()] }; W(cf, x); got++; break; } }
+    if (!x) { fail.push(q); continue; } for (const r of x.rows) BUYS.push(r); for (const [sy, ck, a, b] of x.pairs || []) { addEv(sy, ck, a); if (b !== a) addEv(sy, ck, b); } }
   const dataEnd = (() => { const ok = qs.filter(q => !fail.includes(q)), last = ok[ok.length - 1]; return last ? iso(Date.UTC(+last.slice(0, 4), +last.slice(5) * 3, 0)) : null; })();
   // forward: Form 4s filed from the paper start (EDGAR daily index), cached per day once the day's index answered
   let fwdDays = 0, fwdDocs = 0, fwdMiss = [];
-  if (dataEnd) { const from = START > dataEnd ? START : addDays(dataEnd, 1), uni = (r) => cikSyms.has(r.cik);
+  if (dataEnd) { const from = START > dataEnd ? START : addDays(dataEnd, 1), uni = (r) => cikSyms.has(r.cik) || CIKSYM.has(r.cik);
     for (let d = from; d <= iso(Date.now()); d = addDays(d, 1)) { const wd = new Date(d + 'T00:00:00Z').getUTCDay(); if (wd === 0 || wd === 6) continue; const cf = SC + '/f4/' + d + '.json'; let x = J(cf, null);
       if (!x && left() > 40 * 60e3) { const q = Math.floor((+d.slice(5, 7) - 1) / 3) + 1, txt = await sec(SEC + '/Archives/edgar/daily-index/' + d.slice(0, 4) + '/QTR' + q + '/master.' + d.replace(/-/g, '') + '.idx', 'text');
         if (txt) { const files = parseDailyIdx(txt, new Set(['4']), uni), rows = []; let bad = 0;
           for (const f of files) { const doc = await sec(SEC + '/Archives/' + f.file, 'text'); if (doc === undefined) { bad++; continue; } const p = parseForm4(doc); if (!p || !p.buys.length || !p.owners.length) continue; fwdDocs++;
             const o = p.owners[0], rel = [o.officer && 'Officer', o.director && 'Director', o.ten && 'TenPercentOwner', o.other && 'Other'].filter(Boolean).join(','), sym = p.sym || (cikSyms.get(String(+p.issuerCik)) || [])[0];
-            for (const b of p.buys) if (sym) rows.push([sym, d, o.cik, Math.round(b.usd), rel, o.title]); }
+            if (sym && p.issuerCik) addEv(sym, p.issuerCik, d); for (const b of p.buys) if (sym) rows.push([sym, d, o.cik, Math.round(b.usd), rel, o.title, String(+p.issuerCik || '')]); }
           if (bad <= files.length * 0.02) { x = { rows, files: files.length }; W(cf, x); } else fwdMiss.push(d + ' (' + bad + ' documents not read)'); }
         else if (d < iso(Date.now())) fwdMiss.push(d); }
-      if (x) { fwdDays++; for (const r of x.rows) BUYS.push(r); } } }
+      if (x) { fwdDays++; for (const r of x.rows) { BUYS.push(r); if (r[6]) addEv(r[0], r[6], r[1]); } } } }
   STATUS.insider = { ok: !fail.some(q => q < qs[qs.length - 1]), quarters: qs.length, downloadedNow: got, missing: fail, purchases: BUYS.length, dataSetsTo: dataEnd, forwardDays: fwdDays, forwardDocsWithBuys: fwdDocs, forwardMissing: fwdMiss.slice(0, 10) };
   log('insider: ' + BUYS.length + ' purchase rows, data sets to ' + dataEnd + ', missing ' + (fail.join(' ') || 'none') + '; forward days ' + fwdDays + (fwdMiss.length ? ' (not yet: ' + fwdMiss.slice(0, 3).join(', ') + ')' : '')); }
-const BUYROWS = BUYS.map(([sym, d, who, usd, rel, title]) => { const f = relFlags(rel); return { sym, d, who, usd, officer: f.officer, insider: isInsider(f), top: f.officer && isTopOfficer(title) }; });
+const BUYROWS = BUYS.map(([sym, d, who, usd, rel, title, cik]) => { const f = relFlags(rel); if (cik) addEv(sym, cik, d); return { sym, d, who, usd, cik: cik || null, officer: f.officer, insider: isInsider(f), top: f.officer && isTopOfficer(title) }; });
 
 // ---- 2b. FINRA consolidated short interest (public API; the anomaly lab's monthly files read only when present) ----
 const SI = new Map(); { let ok = 0, tried = 0, fromA = 0, note = ''; const ms0 = months(D[0].slice(0, 7));
@@ -168,13 +177,14 @@ async function phraseHits(phrase) { const out = [];
     const h = await efts(phrase, m + '-01', monthEnd(m)); FT.monthsFetched++; if (!h) { if (had) out.push(...had); else { FT.complete = false; FT.missing.push(phrase + ' ' + m); } continue; } W(f, h); out.push(...h); }
   return out; }
 const BBHITS = [], GUHITS = []; for (const p of BUYBACK_PHRASES) BBHITS.push(...(await phraseHits(p))); for (const p of GUIDE_PHRASES) GUHITS.push(...(await phraseHits(p)));
+for (const h of [...BBHITS, ...GUHITS]) if ((h[5] || []).length === 1) addEv(h[5][0], h[2], h[3]);   // a single-ticker filer: point-in-time evidence
 if (!FT.complete && left() > 60 * 60e3) { await sleep(30000); const miss = FT.missing.splice(0); FT.complete = true;   // one more try for refused phrase-months
   for (const x of miss) { const m = x.slice(-7), ph = x.slice(0, -8), h = await efts(ph, m + '-01', monthEnd(m)); if (!h) { FT.complete = false; FT.missing.push(x); continue; } W(SC + '/efts/' + slug(ph) + '/' + m + '.json', h); (BUYBACK_PHRASES.includes(ph) ? BBHITS : GUHITS).push(...h); } }
 STATUS.efts = { ok: FT.complete, monthsFetchedNow: FT.monthsFetched, missing: FT.missing.slice(0, 20), buybackHits: BBHITS.length, guidanceHits: GUHITS.length };
 log('full-text search: ' + BBHITS.length + ' buyback hits, ' + GUHITS.length + ' guidance hits, ' + FT.monthsFetched + ' phrase-months fetched now' + (FT.complete ? '' : ', INCOMPLETE ' + FT.missing.length));
 // buyback documents: the matched document of every filing of a universe company is read once for the authorized size
 const BBDOC = J(SC + '/bbdocs.json', {}); { let read = 0, miss = 0; const want = new Map();
-  for (const h of BBHITS) { if (!cikSyms.has(String(h[2])) && !(h[5] || []).some(s => SY.has(s))) continue; if (h[3] < '2021-07-01') continue; if (!want.has(h[0])) want.set(h[0], h); }
+  for (const h of BBHITS) { if (!cikSyms.has(String(h[2])) && !CIKSYM.has(String(+h[2])) && !(h[5] || []).some(s => SY.has(s))) continue; if (h[3] < '2021-07-01') continue; if (!want.has(h[0])) want.set(h[0], h); }
   for (const [id, h] of want) { if (id in BBDOC) continue; if (left() < 45 * 60e3) { miss++; continue; }
     const file = String(id).split(':')[1], html = await sec(SEC + '/Archives/edgar/data/' + h[2] + '/' + String(h[1]).replace(/-/g, '') + '/' + file, 'text');
     if (html === undefined) { miss++; continue; } const a = buybackAmount(html2text(String(html).slice(0, 800000))); BBDOC[id] = [a.usd, a.shares]; read++; if (read % 500 === 0) { W(SC + '/bbdocs.json', BBDOC); log('buyback documents read: ' + read); } }
@@ -226,12 +236,12 @@ const drop = (i, t, n) => { const a = closeAt(i, t - n, Math.max(0, t - n - 5)),
 // insiders
 for (const e of clusterEvents(BUYROWS, { minPeople: 3, minUsd: 300000, needOfficer: true })) evAt('SQ1-INSCLU', e.sym, e.d);
 for (const e of topOfficerBuys(BUYROWS, 100000)) evAt('SQ1-CEODIP', e.sym, e.d, (i, t) => { const r = drop(i, t, 126); return r !== null && r <= -0.25; });
-for (const e of clusterEvents(BUYROWS, { minPeople: 2, minUsd: 100000, needOfficer: false })) evAt('SQ1-INSLOWSI', e.sym, e.d, (i, t) => { const s = SYMS[i], a = SI.get(s); return lowShort(siKnown(a, D[t]), siKnown(a, D[t], 2), sharesOf(s, D[t])); });
+for (const e of clusterEvents(BUYROWS, { minPeople: 2, minUsd: 100000, needOfficer: false })) evAt('SQ1-INSLOWSI', e.sym, e.d, (i, t) => { const s = SYMS[i], a = SI.get(s); return lowShort(siKnown(a, D[t]), siKnown(a, D[t], 2), sharesOf(s, D[t], e.cik)); });
 // buybacks: one size per filing (largest over its matched documents)
 { const byF = new Map(); for (const h of BBHITS) { const a = BBDOC[h[0]]; if (!a) continue; const f = byF.get(h[1]) || byF.set(h[1], { cik: h[2], d: h[3], tk: h[5], usd: null, shares: null }).get(h[1]);
     if (a[0] && (f.usd === null || a[0] > f.usd)) f.usd = a[0]; if (a[1] && (f.shares === null || a[1] > f.shares)) f.shares = a[1]; }
   const q5 = [], q3 = []; for (const f of byF.values()) { const sym = symFor(f.cik, f.tk, f.d); if (!sym) continue; const i = SY.get(sym), t = Math.min(firstAfter(f.d), T) - 1; if (t < 1) continue;
-    const px = C[i * T + t] > 0 ? C[i * T + t] : closeAt(i, t, t - 5), sz = buybackSize(f, sharesOf(sym, D[t]), px); if (sz === null || sz >= 0.4) continue;
+    const px = C[i * T + t] > 0 ? C[i * T + t] : closeAt(i, t, t - 5), sz = buybackSize(f, sharesOf(sym, D[t], f.cik), px); if (sz === null || sz >= 0.4) continue;
     if (sz >= 0.05) q5.push({ sym, d: f.d, sz }); if (sz >= 0.03) { const r = drop(i, t, 63); if (r !== null && r <= -0.15) q3.push({ sym, d: f.d, sz }); } }
   for (const e of firstPerCompany(q5, 180)) evAt('SQ1-BBAUTH', e.sym, e.d); for (const e of firstPerCompany(q3, 180)) evAt('SQ1-BBDIP', e.sym, e.d);
   STATUS.buyback.filings = byF.size; STATUS.buyback.size5 = q5.length; STATUS.buyback.size3dip = q3.length; }
@@ -258,12 +268,12 @@ const familyNote = (id) => { const f = RULES[id].family; return f + ' data: ' + 
 // ================= 4. 5-YEAR ONE-SHOT =================
 const need = IDS.filter(id => !FROZEN[id]);
 const RES = {}, COUNTS = {};
-function tradesOf(id, sigs) { const out = [], busyUntil = new Map(), spans = new Map();
-  for (const z of [...sigs].sort((p, q) => p.t - q.t || p.i - q.i)) { if (z.x >= T || z.future) continue;
+function tradesOf(id, sigs, end = T - 1) { const out = [], busyUntil = new Map(), spans = new Map();
+  for (const z of [...sigs].sort((p, q) => p.t - q.t || p.i - q.i)) { if (z.x >= T || z.x > end || z.future) continue;
     if (ONE_OPEN.has(id) && (busyUntil.get(z.i) ?? -1) >= z.k) continue; const g0 = ret(z.i, z.k, z.x); if (g0 === null || !isFinite(g0)) continue; const g = capG(g0), c = ctrlSpan(z.k, z.x); if (c === null) continue;
     busyUntil.set(z.i, z.x); (spans.get(z.i) || spans.set(z.i, []).get(z.i)).push([z.k, z.x]); out.push({ t: z.t, s: SYMS[z.i], i: z.i, k: z.k, x: z.x, g, c, half: halfOf(D[z.t]) }); }
   const ownMemo = new Map();
-  for (const z of out) { const len = z.x - z.k + 1, key = z.i + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 253, to: T - 1, len, step: 10, busy: spans.get(z.i) || [], okAt: (u) => LIQ[z.i * T + u - 1] === 1 && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.i, u, x) }));
+  for (const z of out) { const len = z.x - z.k + 1, key = z.i + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 253, to: end, len, step: 10, busy: spans.get(z.i) || [], okAt: (u) => LIQ[z.i * T + u - 1] === 1 && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.i, u, x) }));
     z.own = ownMemo.get(z.i + '|' + len + '|' + z.half); }
   return out; }
 for (const id of IDS) { const sigs = familyOk(id) ? signalsOf(id, 0, T - 1).filter(z => !z.future && z.x < T) : []; COUNTS[id] = { dataOk: familyOk(id), older: sigs.filter(z => halfOf(D[z.t]) === 'older').length, newer: sigs.filter(z => halfOf(D[z.t]) === 'newer').length }; }
@@ -282,6 +292,25 @@ for (const id of [...new Set([...need, ...(env.HISTORY ? IDS : [])])]) { if (lef
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
 const isJudged = (r) => r && r.verdict && r.verdict !== 'NOT RUN';
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k]) => need.includes(k)).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, ...strip(r) }])), isJudged);
+
+// ---- CORRECTED RUN (24 Oct 2026, independent re-check verify-lab.mjs): share counts and filing tickers were looked up through TODAY's SEC ticker
+// list, so taken-over / renamed / delisted companies (DAY, SMAR, HOLX, AVDX, VRNT, LNW ...) lost their share count or ticker and their trades were
+// silently dropped (survivorship bias). Fixed: the filing's own CIK, else the point-in-time CIK / ticker from Form 3/4/5 submissions and EDGAR hits,
+// else today's list. Each affected rule is re-run ONCE on its frozen window and written to correctedRun next to firstRun (never over it).
+const PIT_IDS = ['SQ1-BBAUTH', 'SQ1-BBDIP', 'SQ1-INSLOWSI', 'SQ1-SIAVOID', 'SQ1-GUIDEUP'];
+const PIT_WHY = { 'SQ1-BBAUTH': 'buyback size needs the share count; the filer\'s ticker came from today\'s list when the EDGAR hit named none', 'SQ1-BBDIP': 'as SQ1-BBAUTH', 'SQ1-INSLOWSI': 'short interest / share count needs the share count of the issuer', 'SQ1-SIAVOID': 'short interest / share count needs the share count', 'SQ1-GUIDEUP': 'the filer\'s ticker came from today\'s list when the EDGAR hit named none (no share count used)' };
+const correctedRun = { ...(PREV.correctedRun || {}) }, brief = (h) => h && h.n ? { n: h.n, blocks: h.blocks, avg: h.avg, avgStress: h.avgStress, edge: h.edge, vsOwn: h.vsOwn, noTop2: h.noTop2, tBlock: h.tBlock, win: h.win } : { n: 0 };
+for (const id of PIT_IDS) { const fr = firstRun[id]; if (!fr || !fr.results || correctedRun[id] || !familyOk(id)) continue; const end = tOf.get(String((fr.window || [])[1])); if (end === undefined) { log('correction ' + id + ': frozen window end not in the data'); continue; }
+  const tr = tradesOf(id, signalsOf(id, 0, T - 1), end), hold = H(id), R = { older: halfStat(tr.filter(z => z.half === 'older'), hold), newer: halfStat(tr.filter(z => z.half === 'newer'), hold), all: halfStat(tr, hold) };
+  const v = RULES[id].kind === 'avoid' ? avoidVerdict(R) : judge(R, { bar: fr.bar });
+  correctedRun[id] = { at: new Date().toISOString(), frozenAt: fr.frozenAt || fr.at || null, window: [D[0], D[end]], bar: fr.bar, bugs: ['SQ1-PIT'], hold, kind: RULES[id].kind, name: RULES[id].name,
+    explanation: 'SQ1-PIT (survivorship): company identity was taken from TODAY\'s SEC ticker list, so companies taken over, renamed or delisted since (e.g. DAY, SMAR, HOLX, AVDX, VRNT, LNW) got no share count or no ticker and their trades were silently dropped. Here: ' + PIT_WHY[id] + '. Corrected: the filing\'s own CIK, else the point-in-time CIK/ticker from Form 3/4/5 submissions and EDGAR hits on that date, else today\'s list. Same rule text, same window, same costs and gates; run once.',
+    verdict: v.verdict, why: v.why, results: R, frozen: { verdict: fr.verdict, older: brief(fr.results.older), newer: brief(fr.results.newer) },
+    trades: tr.slice(-400).map(z => ({ s: z.s, sig: D[z.t], buy: D[z.k], sell: D[z.x], net: r4(z.g - COST), avgStock: r4(z.c - COST) })) };
+  const f = (h) => (h.n || 0) + ' avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock;
+  log('CORRECTED ' + id + ': ' + fr.verdict + ' -> ' + v.verdict + ' | older ' + f(R.older) + ' | newer ' + f(R.newer)); }
+{ const fr = firstRun['SQ1-INSCLU'], end = fr ? tOf.get(String(fr.window[1])) : undefined; if (fr && end !== undefined && familyOk('SQ1-INSCLU')) { const tr = tradesOf('SQ1-INSCLU', signalsOf('SQ1-INSCLU', 0, T - 1), end);
+  log('reproduction check (unaffected rule SQ1-INSCLU): trades older/newer ' + tr.filter(z => z.half === 'older').length + '/' + tr.filter(z => z.half === 'newer').length + ' vs frozen ' + fr.results.older.n + '/' + fr.results.newer.n); } }
 
 // ================= 5. PAPER LANE (buy rules; the avoid rule lists its stocks in today.avoid) =================
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
@@ -320,12 +349,14 @@ log('paper lane: scanned ' + toScan.length + ' new session(s); ' + newLines.filt
 const out = { generatedAt: new Date().toISOString(), squad: 1, philosophy: 'information edge: official filings and data the market has not priced yet', preRegistered: 'squad1-core.mjs RULES (24 Oct 2026, before any run) + data/strategy-library.json SQ1-*',
   window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, data: STATUS, signalCounts: COUNTS,
   standard: 'both halves (signal before / from ' + SPLIT + '): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= ' + TIER2_T + ' -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN. Gross returns capped at +300% for trades and yardsticks alike (AUD-1). The avoid rule is never a buy.',
-  firstRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }),
+  firstRun, correctedRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }),
   trades: Object.fromEntries(Object.entries(RES).filter(([, r]) => r.trades).map(([k, r]) => [k, r.trades.slice(-400)])) };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 try { const LB = J('data/strategy-library.json', null); let ch = false;
   for (const id of IDS) { const e = LB && LB.strategies.find(x => x.id === id), r = firstRun[id]; if (!e || !r || e.result) continue; const R = r.results;
     e.status = 'tested: ' + r.verdict.toLowerCase() + (r.verdict === 'TRADABLE SMALL' ? ' (tier 2)' : '') + '; forward paper lane from 26 Oct 2026'; e.tested = String(r.window[1]); e.study = 'squad1-lab.mjs -> data/squad1-lab.json (run once as written, first complete run frozen)';
     e.result = { verdict: r.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg, R.newer.avg], stress: [R.older.avgStress, R.newer.avgStress], edge: [R.older.edge, R.newer.edge], vsOwn: [R.older.vsOwn, R.newer.vsOwn], noTop2: [R.older.noTop2, R.newer.noTop2], tBlock: [R.older.tBlock, R.newer.tBlock], win: [R.older.win, R.newer.win], why: r.why }; ch = true; }
+  for (const [id, c] of Object.entries(correctedRun)) { const e = LB && LB.strategies.find(x => x.id === id); if (!e || (e.corrected && e.corrected.at === c.at)) continue; const R = c.results;
+    e.corrected = { at: c.at, bugs: c.bugs, verdict: c.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg, R.newer.avg], stress: [R.older.avgStress, R.newer.avgStress], edge: [R.older.edge, R.newer.edge], noTop2: [R.older.noTop2, R.newer.noTop2], tBlock: [R.older.tBlock, R.newer.tBlock], note: 'corrected run (survivorship fix SQ1-PIT); firstRun unchanged' }; ch = true; }
   if (ch) fs.writeFileSync('data/strategy-library.json', JSON.stringify(LB, null, 1)); } catch (e) { console.log('squad1-lab: library not updated: ' + e.message); }
 console.log('SQUAD 1 LAB ' + D[0] + ' to ' + D[T - 1] + ' | bar ' + BAR + ' | frozen ' + Object.keys(firstRun).length + '/' + IDS.length + ' | ' + Object.entries(STATUS).map(([k, s]) => k + (s.ok ? ' ok' : ' MISSING')).join(', '));

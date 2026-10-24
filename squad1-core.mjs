@@ -126,7 +126,7 @@ export function clusterEvents(buys, { minPeople = 3, minUsd = 300000, needOffice
   for (const [sym, a] of by) { a.sort((x, y) => x.d < y.d ? -1 : x.d > y.d ? 1 : 0); let block = '';
     const dates = [...new Set(a.map(x => x.d))];
     for (const d of dates) { if (d < block) continue; const lo = addDays(d, -(days - 1)), win = a.filter(x => x.d >= lo && x.d <= d), people = new Set(win.map(x => x.who)), usd = win.reduce((s, x) => s + x.usd, 0);
-      if (people.size >= minPeople && usd >= minUsd && (!needOfficer || win.some(x => x.officer))) { out.push({ sym, d, people: people.size, usd: Math.round(usd) }); block = addDays(d, cooldown); } } }
+      if (people.size >= minPeople && usd >= minUsd && (!needOfficer || win.some(x => x.officer))) { const ck = (win.filter(x => x.cik).pop() || {}).cik; out.push({ sym, d, people: people.size, usd: Math.round(usd), ...(ck ? { cik: ck } : {}) }); block = addDays(d, cooldown); } } }
   return out.sort((x, y) => x.d < y.d ? -1 : x.d > y.d ? 1 : 0);
 }
 // top-officer purchases: rows summed per (sym, filing date, who); kept if a CEO/CFO title and minUsd+ -> [{ sym, d, who, usd }]
@@ -150,6 +150,18 @@ export function parseDailyIdx(text, forms, keep = () => true) { const out = [], 
     if (!forms.has(form) || seen.has(file)) continue; if (/^\d{8}$/.test(date)) date = date.slice(0, 4) + '-' + date.slice(4, 6) + '-' + date.slice(6);
     const row = { form, cik: String(+cik), date, file }; if (!keep(row)) continue; seen.add(file); out.push(row); }
   return out; }
+
+// ---------------- point-in-time company identity (fix of 24 Oct 2026: never TODAY's ticker list alone) ----------------
+// evs = [[date, value], ...] evidence that `value` (a CIK, or a ticker) was right on `date` (from Form 4 submissions, EDGAR hits). The value
+// of the latest evidence on or before d; else the earliest evidence after d within maxAfter days; else null.
+export function pitPick(evs, d, maxAfter = 400) { if (!evs || !evs.length) return null; let best = null, bd = '', next = null, nd = '';
+  for (const [x, v] of evs) { if (x <= d) { if (x >= bd) { bd = x; best = v; } } else if (!nd || x < nd) { nd = x; next = v; } }
+  if (best !== null) return best; return next !== null && daysBetween(d, nd) <= maxAfter ? next : null; }
+// the share count known on d (30 days late) for a company: the filing's own CIK first, then the point-in-time CIK of the ticker, then the
+// CIK of today's ticker list; the first of these with a known count wins. series(cik, d) -> count or null.
+export function sharesAt({ sym, d, filingCik, evidence, todayCik, series }) {
+  for (const c of [filingCik, pitPick(evidence && evidence.get(sym), d), todayCik ? todayCik(sym) : null]) { if (!c) continue; const n = series(String(+c), d); if (n > 0) return n; }
+  return null; }
 
 // ---------------- buybacks (8-K text) ----------------
 export function html2text(h) { return String(h || '').replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;|&#xa0;/gi, ' ')
