@@ -5,7 +5,7 @@
 // Run: node --test test/squad15-core.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { RULES, IDS, bsCall, bsDelta, impliedVol, pickExpiry, pickAtm, pickDelta, exitIndex, exitPrice, optionNet, premiumOf, halfSpread, snapPick, onePerStock, judge, halfStats, preRegister, halfOf } from '../squad15-core.mjs';
+import { RULES, IDS, isMonthly, expiryOrder, bsCall, bsDelta, impliedVol, pickExpiry, pickAtm, pickDelta, exitIndex, exitPrice, optionNet, premiumOf, halfSpread, snapPick, onePerStock, judge, halfStats, preRegister, halfOf } from '../squad15-core.mjs';
 
 test('black-scholes: price, delta and implied vol round trip', () => {
   const p = bsCall(100, 100, 0.5, 0.045, 0.3); assert.ok(p > 9 && p < 10, 'ATM 6-month call near 9.4: ' + p);
@@ -17,6 +17,9 @@ test('black-scholes: price, delta and implied vol round trip', () => {
 test('expiry: the longest 150-270 calendar days out', () => {
   assert.equal(pickExpiry(['2024-06-21', '2024-07-19', '2024-09-20', '2024-12-20', '2025-01-17'], '2024-02-01'), '2024-09-20');
   assert.equal(pickExpiry(['2024-03-15'], '2024-02-01'), null);
+  assert.equal(pickExpiry(['2024-09-20', '2024-10-25'], '2024-02-01'), '2024-09-20', 'a weekly (the 25th) is never picked');
+  assert.ok(isMonthly('2025-04-17'), 'Thursday before Good Friday'); assert.ok(!isMonthly('2025-05-02'));
+  assert.deepEqual(expiryOrder(['2024-07-19', '2024-09-20', '2024-08-16', '2024-08-23'], '2024-02-01'), ['2024-09-20', '2024-08-16', '2024-07-19']);
 });
 test('contract picks: nearest strike with a bar that day; delta target uses the ATM implied vol', () => {
   const chain = [90, 95, 100, 105, 110].map(k => ({ occ: 'X' + k, k })), day = '2024-03-01';

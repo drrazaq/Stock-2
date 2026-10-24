@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { freezeEach, latestBlock } from './first-run.mjs';
 import { RULES, IDS, TARGET, FEE, STOCK_COST, STRESS_X, ERA_FROM, BIG_TV, CAP_USD, PAPER_START, RATE, EXIT_BEFORE, PROOF_T, LATE_EXIT, mean, median, pct, r4, halfOf, dayDiff, addDays, day10,
-  impliedVol, bsDelta, pickExpiry, pickAtm, pickDelta, exitIndex, exitPrice, optionNet, premiumOf, halfSpread, snapPick, onePerStock, judge, preRegister } from './squad15-core.mjs';
+  impliedVol, bsDelta, pickExpiry, expiryOrder, pickAtm, pickDelta, exitIndex, exitPrice, optionNet, premiumOf, halfSpread, snapPick, onePerStock, judge, preRegister } from './squad15-core.mjs';
 const env = process.env, MODE = env.MODE || 'run', OUT = 'data/squad15-lab.json', PAPER = 'data/squad15-paper.jsonl', TODAYF = 'data/squad15-today.json', BOARD = 'data/squad15-board.json', LIB = 'data/strategy-library.json', CD = env.SQ15_CACHE || 'squad15-cache';
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }, JZ = (f, d) => { try { return JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString()); } catch (e) { return d; } };
 const WZ = (f, o) => fs.writeFileSync(f, zlib.gzipSync(JSON.stringify(o)));
@@ -136,13 +136,17 @@ if (MODE === 'run' || MODE === 'diag') {
     const e = SI.has(z.buy) ? SI.get(z.buy) : -1, sellI = idxOnOrBefore(z.sell); if (e < 0) { cnt(z.src, 'entryNotASession'); continue; }
     const o0 = sv(z.sym, z.buy, 'o'), a0 = sv(z.sym, z.buy, 'ao'), rc0 = sv(z.sym, z.buy, 'c'), ac0 = sv(z.sym, z.buy, 'ac'); if (!(o0 > 0 && a0 > 0 && rc0 > 0 && ac0 > 0)) { cnt(z.src, 'noStockPrice'); continue; }
     const list = await contracts(z.sym); if (!list.length) { cnt(z.src, 'noContracts'); continue; }
-    const exp = pickExpiry([...new Set(list.map(x => x.exp))], z.buy); if (!exp) { cnt(z.src, 'noExpiry'); continue; }
+    const order = expiryOrder(list.map(x => x.exp), z.buy); if (!order.length) { cnt(z.src, 'noExpiry'); continue; }
+    // the longest monthly whose ATM area traded on the entry day (entry-day bars of its 8 ATM candidates)
+    const occDate = (o) => { const m = o.match(/(\d{6})C\d{8}$/); return m ? '20' + m[1].slice(0, 2) + '-' + m[1].slice(2, 4) + '-' + m[1].slice(4, 6) : null; };
+    let exp = null, chain = null, atmC = null, b1 = null, atm = null;
+    for (const ex of order) { const ch = list.filter(x => x.exp === ex && occDate(x.occ) === ex && x.size === 100 && /^[A-Z][A-Z.]*\d{6}C\d{8}$/.test(x.occ) && x.occ.startsWith(z.sym.replace('.', ''))); if (!ch.length) continue;
+      const ac = [...ch].sort((a, b) => Math.abs(a.k - o0) - Math.abs(b.k - o0) || a.k - b.k).slice(0, 8), bb = await optBars(ac.map(c => c.occ), z.buy, addDays(z.buy, 1)), p = pickAtm(ac, bb, z.buy, o0);
+      if (!exp) { exp = ex; chain = ch; atmC = ac; b1 = bb; } if (p) { exp = ex; chain = ch; atmC = ac; b1 = bb; atm = p; break; } }
+    if (!exp) { cnt(z.src, 'noStandardChain'); continue; }
     const x0 = exitIndex(SESS, sellI, exp); if (x0 > LASTI || x0 <= e) { cnt(z.src, x0 > LASTI ? 'notFinished' : 'exitNotAfterEntry'); continue; }
-    const chain = list.filter(x => x.exp === exp && x.size === 100 && /^[A-Z][A-Z.]*\d{6}C\d{8}$/.test(x.occ) && x.occ.startsWith(z.sym.replace('.', '')));
-    if (!chain.length) { cnt(z.src, 'noStandardChain'); continue; }
     const T = dayDiff(z.buy, exp) / 365;
-    // entry-day bars of the 8 ATM candidates, then of the delta candidates
-    const atmC = [...chain].sort((a, b) => Math.abs(a.k - o0) - Math.abs(b.k - o0) || a.k - b.k).slice(0, 8), b1 = await optBars(atmC.map(c => c.occ), z.buy, addDays(z.buy, 1)), atm = pickAtm(atmC, b1, z.buy, o0);
+    if (atm) cnt(z.src, 'expiryRank' + order.indexOf(exp));
     if (!atm) { cnt(z.src, 'noAtmTraded'); if (MODE === 'diag' && DBG.length < 8) { const wide = await optBars(atmC.map(c => c.occ), addDays(z.buy, -10), addDays(z.buy, 10)), exps = [...new Set(list.map(x => x.exp))].filter(e => dayDiff(z.buy, e) >= 120 && dayDiff(z.buy, e) <= 300).sort();
         DBG.push({ sym: z.sym, buy: z.buy, spot: o0, exp, expsNear: exps, chainN: chain.length, cands: atmC.map(c => ({ occ: c.occ, k: c.k, entryDayBars: (b1[c.occ] || []).length, barsPm10d: (wide[c.occ] || []).map(b => b.t + ':' + b.v) })) }); } continue; }
     const iv = impliedVol(atm.open, o0, atm.k, T, RATE); const picks = { ATM: { ...atm, delta: null } };

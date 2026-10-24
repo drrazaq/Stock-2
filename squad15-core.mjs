@@ -27,7 +27,12 @@
 // OPTION ERA: option daily bars exist from 2024-01-18, so only stock-rule entries on or after 2024-01-19 can be priced.
 //   HALVES (by entry session): OLDER = 2024, NEWER = 2025-2026. 20+ priced trades per half, else TOO FEW CASES.
 // THE CONTRACT (standard 100-share calls only; a contract adjusted by a corporate action is left out):
-//   EXPIRY: among the call expiries 150-270 calendar days after the entry session, the LONGEST.
+//   EXPIRY: among the STANDARD MONTHLY call expiries (dated the 15th-21st, a Friday, or the Thursday before a Friday holiday) 150-270
+//           calendar days after the entry session, the LONGEST whose ATM area traded on the entry session (if none of its 8 ATM strikes has
+//           a bar that session, the next longer-to-shorter monthly is tried, down to 150 days). AMENDED 24 Oct 2026 after DIAG 2 (a data
+//           check: counts and contract lists only, no return seen, nothing judged): Alpaca's contract list holds every expiry ever listed,
+//           including weeklies listed only weeks before they expire, so "the longest expiry" often picked a contract that did not exist yet
+//           on the entry day (221 of 252 PB12 signals had no ATM bar). Monthlies + "traded that day" use only what existed then.
 //   ATM:    the 8 strikes nearest the stock's raw open of the entry session (tie = lower strike) are tried, nearest first; the first that has a
 //           daily bar on the entry session is taken, at that bar's OPEN.
 //   ITM70:  the ATM contract's price gives the implied volatility (Black-Scholes, rate 4.5%, no dividends); with it the delta of every strike
@@ -96,8 +101,12 @@ export function impliedVol(price, S, K, T, r = RATE) { if (!(price > 0 && S > 0 
   if (price < bsCall(S, K, T, r, lo) - 1e-9 || price > bsCall(S, K, T, r, hi)) return null;
   for (let k = 0; k < 80; k++) { const m = (lo + hi) / 2; if (bsCall(S, K, T, r, m) > price) hi = m; else lo = m; } return (lo + hi) / 2; }
 // ---------------- the contract ----------------
-// the longest expiry 150-270 calendar days after the entry day; null if none
-export function pickExpiry(exps, day) { const ok2 = exps.filter(e => { const n = dayDiff(day, e); return n >= EXP_LO && n <= EXP_HI; }).sort(); return ok2.length ? ok2[ok2.length - 1] : null; }
+// a standard monthly expiry: dated the 15th-21st, on a Friday (or a Thursday: the Friday was a market holiday)
+export const isMonthly = (e) => { const d = +String(e).slice(8, 10), w = new Date(e + 'T12:00:00Z').getUTCDay(); return d >= 15 && d <= 21 && (w === 5 || w === 4); };
+// the monthly expiries 150-270 calendar days after the entry day, longest first
+export function expiryOrder(exps, day) { return [...new Set(exps)].filter(e => { const n = dayDiff(day, e); return isMonthly(e) && n >= EXP_LO && n <= EXP_HI; }).sort().reverse(); }
+// the longest such expiry; null if none
+export function pickExpiry(exps, day) { return expiryOrder(exps, day)[0] || null; }
 // bars = { occ: [{ t, o, c }] }; the first of the ordered candidates with a bar (open > 0) on `day`
 const barOn = (bars, occ, day) => (bars[occ] || []).find(x => day10(x.t) === day);
 function firstTraded(cands, bars, day) { for (const c of cands.slice(0, 8)) { const b = barOn(bars, c.occ, day); if (b && b.o > 0) return { ...c, open: b.o }; } return null; }
@@ -155,7 +164,7 @@ export function judge(tr, { bar = PROOF_T, info = false } = {}) {
   if (!why.length) return out(H.older.tBlock >= bar && H.newer.tBlock >= bar ? 'PROVEN' : 'TRADABLE SMALL');
   return out(H.older.edge > 0 && H.newer.edge > 0 ? 'NOT PROVEN' : 'REJECTED'); }
 // ---------------- library pre-registration (idempotent; before any computation) ----------------
-const COMMON = 'Common (squad15-core.mjs header): LONG CALLS ONLY, one contract per signal, one open call per stock per rule. Expiry = the longest 150-270 calendar days after the entry session; ATM = strike nearest the raw open (first of the 8 nearest with a daily bar that session, at its open); ITM70 / DEEP85 = delta nearest 0.70 / 0.85 using the ATM pick\'s Black-Scholes implied vol (rate 4.5%, no dividends). Exit = the stock rule\'s sell session or the last session on/before expiry - 30 days, whichever first, at the contract\'s close (else its first close within 5 sessions, else intrinsic). Costs: half-spread h = max(1%, median OPRA (ask-bid)/mid / 2 of the 4 contracts nearest the same target today, 150-270 days) applied to the past (no historical option quotes exist: Alpaca v1beta1/options/quotes 404), stress 1.5x h, ZAD fee 5 USD per contract each side. Option era from 2024-01-19 (Alpaca option bars start 2024-01-18); halves 2024 vs 2025-26 by entry; 20+ trades and 3+ 63-session blocks per half; judged per half: > 0 after h and fees and at 1.5x, beats the same stock bought with the same money over the same days (0.8% round trip), > 0 without the half\'s 2 best, block t >= 2.5. Per-year return (call, stock, SPY) and premium per contract (median, quartiles, share <= 300 USD) reported.';
+const COMMON = 'Common (squad15-core.mjs header): LONG CALLS ONLY, one contract per signal, one open call per stock per rule. Expiry = the longest STANDARD MONTHLY expiry 150-270 calendar days after the entry session whose ATM area traded that session (amended after DIAG 2, before any result: weeklies listed later were being picked); ATM = strike nearest the raw open (first of the 8 nearest with a daily bar that session, at its open); ITM70 / DEEP85 = delta nearest 0.70 / 0.85 using the ATM pick\'s Black-Scholes implied vol (rate 4.5%, no dividends). Exit = the stock rule\'s sell session or the last session on/before expiry - 30 days, whichever first, at the contract\'s close (else its first close within 5 sessions, else intrinsic). Costs: half-spread h = max(1%, median OPRA (ask-bid)/mid / 2 of the 4 contracts nearest the same target today, 150-270 days) applied to the past (no historical option quotes exist: Alpaca v1beta1/options/quotes 404), stress 1.5x h, ZAD fee 5 USD per contract each side. Option era from 2024-01-19 (Alpaca option bars start 2024-01-18); halves 2024 vs 2025-26 by entry; 20+ trades and 3+ 63-session blocks per half; judged per half: > 0 after h and fees and at 1.5x, beats the same stock bought with the same money over the same days (0.8% round trip), > 0 without the half\'s 2 best, block t >= 2.5. Per-year return (call, stock, SPY) and premium per contract (median, quartiles, share <= 300 USD) reported.';
 const SRC = { PB12: 'SQ11-PB12 trades (data/squad11-lab.json, all kept)', MOM: 'SQ6-MTUM (hold 126) + SQ6-QMOM (hold 63) picks from Squad 6\'s own code re-run offline keeping all trades, only stocks with a 63-session average traded value >= 500M USD at formation (a pick in both counts once, as MTUM)', DIP: 'TIP-DIPLEAD trades (data/tipster-lab.json)' };
 const CHECK = 'Not OPT-LH1 (calls 60-90 days on V15 mid-cap picks), OPT-CAT1 (calls before biotech catalysts), OPT-FOLLOW1 (options calls of followed traders) or OPT-UOA1 (unusual option activity): different signals, large liquid names only, 150-270 day calls, delta-chosen contracts, judged against the same stock with the same money.';
 export function preRegister(LB, today = '2026-10-24') { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
