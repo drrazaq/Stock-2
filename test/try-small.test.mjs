@@ -145,3 +145,8 @@ test('SQ1-BBAUTH is paused until its corrected run exists (survivorship bug foun
   const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
   assert.deepEqual(q({ 'SQ1-BBAUTH': r }), []);
 });
+test('a basket whose whole-portfolio test lagged SPY does not qualify (SQ5-TOP20-TF, 24 Oct)', () => {
+  const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
+  assert.deepEqual(q({ A: { ...r, portfolio: { standard: { halves: { older: { beatsSpy: false }, newer: { beatsSpy: false } } } } } }), []);
+  assert.deepEqual(q({ A: { ...r, portfolio: { standard: { halves: { older: { beatsSpy: true }, newer: { beatsSpy: true } } } } } }), ['A']);
+});

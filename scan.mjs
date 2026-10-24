@@ -2262,10 +2262,12 @@ const TRY_PAUSED = new Set(['ANOM-SUESURGE', 'SQ1-BBAUTH']);
 // (24 Oct 2026) a rule whose lab measured its return per year of capital against the S&P 500 must beat it in BOTH halves:
 // otherwise simply holding SPUS did better, and a 1,000 USD ticket adds risk without adding money. Rules without that measure are unaffected.
 const beatsIndex = (py) => !py || ['older', 'newer'].every(h => !py[h] || typeof py[h].rule !== 'number' || typeof py[h].spy !== 'number' || py[h].rule > py[h].spy);
+// Basket labs (squad 5) also report a whole-portfolio test; when it says the basket lagged SPY in a half, the rule does not qualify.
+const portfolioBeatsSpy = (pf) => { const h = pf && pf.standard && pf.standard.halves; return !h || ['older', 'newer'].every(k => !h[k] || h[k].beatsSpy !== false); };
 function tryQualifies(firstRun) {
   // (24 Oct) also a usable sample in each half: not frozen REJECTED / TOO FEW CASES, 20+ trades, 3+ blocks where reported
   const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0 && !(typeof h.n === 'number' && h.n < 20) && !(typeof h.blocks === 'number' && h.blocks < 3);
-  return Object.entries(firstRun || {}).filter(([id, r]) => r && r.results && !(TRY_PAUSED.has(id) && !r.corrected) && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer) && beatsIndex(r.perYear)).map(([id]) => id);
+  return Object.entries(firstRun || {}).filter(([id, r]) => r && r.results && !(TRY_PAUSED.has(id) && !r.corrected) && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer) && beatsIndex(r.perYear) && portfolioBeatsSpy(r.portfolio)).map(([id]) => id);
 }
 function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
