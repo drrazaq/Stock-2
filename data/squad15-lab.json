@@ -231,5 +231,548 @@
    "first": null,
    "last": null
   }
+ },
+ "diag": {
+  "at": "2026-10-24T10:13:32.192Z",
+  "last": "2026-10-23",
+  "sources": {
+   "PB12": {
+    "all": 355,
+    "frozenN": 355,
+    "inEra": 252
+   },
+   "DIP": {
+    "all": 270,
+    "inEra": 73
+   },
+   "MOM": {
+    "file": true,
+    "mtum": 840,
+    "qmom": 750,
+    "mtumFrozenN": 839,
+    "qmomFrozenN": 750,
+    "ok": true,
+    "inEra": 869,
+    "largest": 268,
+    "tooSmall": 598,
+    "noTradedValue": 3
+   }
+  },
+  "counts": {
+   "PB12": {
+    "signals": 252,
+    "pricedATM": 24,
+    "pricedITM70": 19,
+    "pricedDEEP85": 13,
+    "noAtmTraded": 221,
+    "noDEEP85Traded": 11,
+    "noITM70Traded": 5,
+    "splitDuringHoldATM": 3,
+    "splitDuringHoldITM70": 3,
+    "splitDuringHoldDEEP85": 3,
+    "noContracts": 3,
+    "noStockPrice": 1
+   },
+   "MOM": {
+    "signals": 268,
+    "noAtmTraded": 260,
+    "noITM70Traded": 1,
+    "pricedATM": 8,
+    "pricedDEEP85": 5,
+    "noDEEP85Traded": 3,
+    "pricedITM70": 7
+   },
+   "DIP": {
+    "signals": 73,
+    "noAtmTraded": 58,
+    "noContracts": 2,
+    "pricedATM": 13,
+    "pricedITM70": 12,
+    "pricedDEEP85": 6,
+    "noITM70Traded": 1,
+    "noDEEP85Traded": 7
+   }
+  },
+  "pricedByHalf": {
+   "PB12 ATM older": 12,
+   "PB12 ITM70 older": 8,
+   "PB12 DEEP85 older": 7,
+   "PB12 ATM newer": 12,
+   "PB12 ITM70 newer": 11,
+   "PB12 DEEP85 newer": 6,
+   "MOM ATM newer": 8,
+   "MOM DEEP85 newer": 5,
+   "MOM ITM70 newer": 7,
+   "DIP ATM newer": 13,
+   "DIP ITM70 newer": 12,
+   "DIP DEEP85 newer": 6
+  },
+  "exitsBy": {
+   "lateClose": 30,
+   "close": 41,
+   "intrinsic": 36
+  },
+  "requests": 1454,
+  "errors": {
+   "contracts HTTP 422": 4
+  },
+  "failedSample": [
+   "contracts HTTP 422 /v2/options/contracts?underlying_symbols=BK&type=call&status=inactive&expiration_date_gte=2024-06-07&limit=10000",
+   "contracts HTTP 422 /v2/options/contracts?underlying_symbols=BK&type=call&status=active&expiration_date_gte=2024-06-07&limit=10000",
+   "contracts HTTP 422 /v2/options/contracts?underlying_symbols=PSTG&type=call&status=inactive&expiration_date_gte=2024-06-07&limit=10000",
+   "contracts HTTP 422 /v2/options/contracts?underlying_symbols=PSTG&type=call&status=active&expiration_date_gte=2024-06-07&limit=10000"
+  ],
+  "sample": {
+   "PB12 ATM": [
+    {
+     "sym": "META",
+     "entry": "2024-04-26",
+     "exp": "2025-01-17",
+     "occ": "META250117C00440000",
+     "k": 440,
+     "spot": 441.46,
+     "open": 63.15,
+     "iv": 0.3738,
+     "delta": null,
+     "days": 127
+    },
+    {
+     "sym": "MPC",
+     "entry": "2026-01-13",
+     "exp": "2026-09-18",
+     "occ": "MPC260918C00175000",
+     "k": 175,
+     "spot": 175.71,
+     "open": 21,
+     "iv": 0.3152,
+     "delta": null,
+     "days": 126
+    },
+    {
+     "sym": "VLO",
+     "entry": "2026-04-20",
+     "exp": "2027-01-15",
+     "occ": "VLO270115C00220000",
+     "k": 220,
+     "spot": 224.52,
+     "open": 34.8,
+     "iv": 0.3824,
+     "delta": null,
+     "days": 127
+    },
+    {
+     "sym": "LHX",
+     "entry": "2026-04-23",
+     "exp": "2027-01-15",
+     "occ": "LHX270115C00330000",
+     "k": 330,
+     "spot": 333.11,
+     "open": 37,
+     "iv": 0.2665,
+     "delta": null,
+     "days": 126
+    }
+   ],
+   "PB12 ITM70": [
+    {
+     "sym": "META",
+     "entry": "2024-04-26",
+     "exp": "2025-01-17",
+     "occ": "META250117C00405000",
+     "k": 405,
+     "spot": 441.46,
+     "open": 83.65,
+     "iv": 0.3738,
+     "delta": 0.7028,
+     "days": 130
+    },
+    {
+     "sym": "MPC",
+     "entry": "2026-01-13",
+     "exp": "2026-09-18",
+     "occ": "MPC260918C00170000",
+     "k": 170,
+     "spot": 175.71,
+     "open": 23.08,
+     "iv": 0.3152,
+     "delta": 0.6461,
+     "days": 126
+    },
+    {
+     "sym": "VLO",
+     "entry": "2026-04-20",
+     "exp": "2027-01-15",
+     "occ": "VLO270115C00210000",
+     "k": 210,
+     "spot": 224.52,
+     "open": 40.1,
+     "iv": 0.3824,
+     "delta": 0.6804,
+     "days": 129
+    },
+    {
+     "sym": "LHX",
+     "entry": "2026-04-23",
+     "exp": "2027-01-15",
+     "occ": "LHX270115C00300000",
+     "k": 300,
+     "spot": 333.11,
+     "open": 51,
+     "iv": 0.2665,
+     "delta": 0.7635,
+     "days": 126
+    }
+   ],
+   "PB12 DEEP85": [
+    {
+     "sym": "META",
+     "entry": "2024-04-26",
+     "exp": "2025-01-17",
+     "occ": "META250117C00350000",
+     "k": 350,
+     "spot": 441.46,
+     "open": 120.5,
+     "iv": 0.3738,
+     "delta": 0.8389,
+     "days": 126
+    },
+    {
+     "sym": "VLO",
+     "entry": "2026-04-20",
+     "exp": "2027-01-15",
+     "occ": "VLO270115C00160000",
+     "k": 160,
+     "spot": 224.52,
+     "open": 72.07,
+     "iv": 0.3824,
+     "delta": 0.9025,
+     "days": 129
+    },
+    {
+     "sym": "LHX",
+     "entry": "2026-04-23",
+     "exp": "2027-01-15",
+     "occ": "LHX270115C00300000",
+     "k": 300,
+     "spot": 333.11,
+     "open": 51,
+     "iv": 0.2665,
+     "delta": 0.7635,
+     "days": 126
+    },
+    {
+     "sym": "PCAR",
+     "entry": "2024-05-01",
+     "exp": "2025-01-17",
+     "occ": "PCAR250117C00086800",
+     "k": 86.8,
+     "spot": 106.11,
+     "open": 24.3,
+     "iv": 0.2655,
+     "delta": 0.875,
+     "days": 126
+    }
+   ],
+   "MOM ATM": [
+    {
+     "sym": "EA",
+     "entry": "2025-12-01",
+     "exp": "2026-08-21",
+     "occ": "EA260918C00200000",
+     "k": 200,
+     "spot": 201.99,
+     "open": 8.9,
+     "iv": 0.0455,
+     "delta": null,
+     "days": 126
+    },
+    {
+     "sym": "APH",
+     "entry": "2026-03-02",
+     "exp": "2026-11-20",
+     "occ": "APH261120C00140000",
+     "k": 140,
+     "spot": 141.495,
+     "open": 22.15,
+     "iv": 0.4076,
+     "delta": null,
+     "days": 63
+    },
+    {
+     "sym": "WDC",
+     "entry": "2026-06-01",
+     "exp": "2027-01-15",
+     "occ": "WDC270115C00540000",
+     "k": 540,
+     "spot": 536,
+     "open": 158.19,
+     "iv": 0.9333,
+     "delta": null,
+     "days": 63
+    },
+    {
+     "sym": "CIEN",
+     "entry": "2026-06-01",
+     "exp": "2027-01-15",
+     "occ": "CIEN270115C00560000",
+     "k": 560,
+     "spot": 559.52,
+     "open": 169.56,
+     "iv": 0.9524,
+     "delta": null,
+     "days": 65
+    }
+   ],
+   "MOM ITM70": [
+    {
+     "sym": "APH",
+     "entry": "2026-03-02",
+     "exp": "2026-11-20",
+     "occ": "APH261120C00125000",
+     "k": 125,
+     "spot": 141.495,
+     "open": 30,
+     "iv": 0.4076,
+     "delta": 0.734,
+     "days": 63
+    },
+    {
+     "sym": "WDC",
+     "entry": "2026-06-01",
+     "exp": "2027-01-15",
+     "occ": "WDC270115C00490000",
+     "k": 490,
+     "spot": 536,
+     "open": 176.6,
+     "iv": 0.9333,
+     "delta": 0.7014,
+     "days": 63
+    },
+    {
+     "sym": "CIEN",
+     "entry": "2026-06-01",
+     "exp": "2027-01-15",
+     "occ": "CIEN270115C00510000",
+     "k": 510,
+     "spot": 559.52,
+     "open": 187.3,
+     "iv": 0.9524,
+     "delta": 0.7043,
+     "days": 64
+    },
+    {
+     "sym": "SNDK",
+     "entry": "2026-06-01",
+     "exp": "2027-02-19",
+     "occ": "SNDK270219C01680000",
+     "k": 1680,
+     "spot": 1731.15,
+     "open": 642.18,
+     "iv": 1.0565,
+     "delta": 0.6978,
+     "days": 63
+    }
+   ],
+   "MOM DEEP85": [
+    {
+     "sym": "EA",
+     "entry": "2025-12-01",
+     "exp": "2026-08-21",
+     "occ": "EA260918C00200000",
+     "k": 200,
+     "spot": 201.99,
+     "open": 8.9,
+     "iv": 0.0455,
+     "delta": 0.8675,
+     "days": 126
+    },
+    {
+     "sym": "WDC",
+     "entry": "2026-06-01",
+     "exp": "2027-01-15",
+     "occ": "WDC270115C00330000",
+     "k": 330,
+     "spot": 536,
+     "open": 267.29,
+     "iv": 0.9333,
+     "delta": 0.8564,
+     "days": 64
+    },
+    {
+     "sym": "SNDK",
+     "entry": "2026-06-01",
+     "exp": "2027-02-19",
+     "occ": "SNDK270219C01060000",
+     "k": 1060,
+     "spot": 1731.15,
+     "open": 926.77,
+     "iv": 1.0565,
+     "delta": 0.8489,
+     "days": 63
+    },
+    {
+     "sym": "TER",
+     "entry": "2026-06-01",
+     "exp": "2027-01-15",
+     "occ": "TER270115C00270000",
+     "k": 270,
+     "spot": 366.51,
+     "open": 136.98,
+     "iv": 0.7468,
+     "delta": 0.8052,
+     "days": 63
+    }
+   ],
+   "DIP ATM": [
+    {
+     "sym": "VAL",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "VAL251219C00030000",
+     "k": 30,
+     "spot": 28.1,
+     "open": 5.79,
+     "iv": 0.6642,
+     "delta": null,
+     "days": 160
+    },
+    {
+     "sym": "LDOS",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "LDOS251219C00150000",
+     "k": 150,
+     "spot": 130.81,
+     "open": 10.11,
+     "iv": 0.3562,
+     "delta": null,
+     "days": 158
+    },
+    {
+     "sym": "BAH",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "BAH251219C00110000",
+     "k": 110,
+     "spot": 104.78,
+     "open": 17.85,
+     "iv": 0.5351,
+     "delta": null,
+     "days": 158
+    },
+    {
+     "sym": "TMDX",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "TMDX251219C00055000",
+     "k": 55,
+     "spot": 64.29,
+     "open": 27.9,
+     "iv": 1.1662,
+     "delta": null,
+     "days": 158
+    }
+   ],
+   "DIP ITM70": [
+    {
+     "sym": "VAL",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "VAL251219C00030000",
+     "k": 30,
+     "spot": 28.1,
+     "open": 5.79,
+     "iv": 0.6642,
+     "delta": 0.586,
+     "days": 160
+    },
+    {
+     "sym": "BAH",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "BAH251219C00110000",
+     "k": 110,
+     "spot": 104.78,
+     "open": 17.85,
+     "iv": 0.5351,
+     "delta": 0.5738,
+     "days": 158
+    },
+    {
+     "sym": "TMDX",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "TMDX251219C00055000",
+     "k": 55,
+     "spot": 64.29,
+     "open": 27.9,
+     "iv": 1.1662,
+     "delta": 0.7519,
+     "days": 158
+    },
+    {
+     "sym": "NE",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "NE251219C00015000",
+     "k": 15,
+     "spot": 17.53,
+     "open": 5.5,
+     "iv": 0.6875,
+     "delta": 0.7302,
+     "days": 159
+    }
+   ],
+   "DIP DEEP85": [
+    {
+     "sym": "VAL",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "VAL251219C00030000",
+     "k": 30,
+     "spot": 28.1,
+     "open": 5.79,
+     "iv": 0.6642,
+     "delta": 0.586,
+     "days": 160
+    },
+    {
+     "sym": "TMDX",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "TMDX251219C00040000",
+     "k": 40,
+     "spot": 64.29,
+     "open": 33,
+     "iv": 1.1662,
+     "delta": 0.8429,
+     "days": 158
+    },
+    {
+     "sym": "NE",
+     "entry": "2025-04-07",
+     "exp": "2025-12-19",
+     "occ": "NE251219C00015000",
+     "k": 15,
+     "spot": 17.53,
+     "open": 5.5,
+     "iv": 0.6875,
+     "delta": 0.7302,
+     "days": 159
+    },
+    {
+     "sym": "BTSG",
+     "entry": "2025-04-09",
+     "exp": "2025-12-19",
+     "occ": "BTSG251219C00020000",
+     "k": 20,
+     "spot": 16.26,
+     "open": 2.16,
+     "iv": 0.5982,
+     "delta": 0.4591,
+     "days": 156
+    }
+   ]
+  }
  }
 }
