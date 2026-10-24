@@ -7,8 +7,8 @@
 //    universe = Squad 5's point-in-time market values (squad5-core capAt / byCap): ticker map, SEC facts, statement share counts, split list
 //               and domicile read from Squad 4's / Squad 5's caches (RESTORED READ ONLY, never saved under their keys); anything missing is
 //               fetched into this lab's own cache (squad12-cache).
-//    earnings = the Nasdaq earnings calendar (date + before-open / after-close), from Agent A's / the angles lab's caches (read only),
-//               the missing days fetched into squad12-cache.
+//    earnings = each big company's own SEC 8-K Item 2.02 (Results of Operations) by CIK from EDGAR submissions, with the acceptance time
+//               (amended before any result: the Nasdaq calendar caches have almost no before / after-open flags); own cache.
 //    SEC XBRL = company facts (revenue tags + diluted EPS, with filing date, form and accession) of every company that was among the 300
 //               largest at a month start, fetched by CIK into squad12-cache (refreshed for today's 300 largest each run: the paper lane).
 //    8-K text = SEC EDGAR full-text search: Squad 1's guidance-raise hits (squad1-cache, read only, else fetched here) and the investor /
@@ -25,11 +25,12 @@ import { judgeHold } from './hold-core.mjs';
 import { cikFromSpans, artifactJumps, hasArtifact } from './squad4-core.mjs';
 import { byCap, capAt, usCompany, monthStarts } from './squad5-core.mjs';
 import { GUIDE_PHRASES } from './squad1-core.mjs';
+import { secNY } from './sec-time.mjs';
 import { RULES, IDS, COST, STRESS, SPLIT, PAPER_START, CAP, HOLD, YEAR, TOPN, TOP100, GUIDE_GAP_DAYS, INV_GAP_DAYS, INV_PHRASES, mean, r4, halfOf, addDays,
-  onOrAfter, after, reactionIdx, monthStartFor, gapHolds, newHigh, confirmIdx, filingsOf, revGrowth, epsGrowth, accel2, firstPer, oneOpen, eftsRows, invItemsOk, byYear,
+  onOrAfter, after, reactionFromAcceptance, earnings8k, monthStartFor, gapHolds, newHigh, confirmIdx, filingsOf, revGrowth, epsGrowth, accel2, firstPer, oneOpen, eftsRows, invItemsOk, byYear,
   boardStats, paperReady, preRegister, GROW } from './squad12-core.mjs';
 const env = process.env, DIAG = !!env.DIAG, OFFLINE = !!env.OFFLINE, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
-const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', NQ = local(env.NASDAQ_BASE) || 'https://api.nasdaq.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov', EFTS = local(env.EFTS_BASE) || 'https://efts.sec.gov';
+const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov', EFTS = local(env.EFTS_BASE) || 'https://efts.sec.gov';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ12_CACHE || 'squad12-cache', SC4 = 'squad4-cache', SC5 = 'squad5-cache', SC1 = 'squad1-cache';
 const OUT = env.SQ12_OUT || 'data/squad12-lab.json', PAPER = 'data/squad12-paper.jsonl', TODAY = 'data/squad12-today.json', BOARD = 'data/squad12-board.json', LIB = env.SQ12_LIB || 'data/strategy-library.json';
 const START = env.PAPER_START || PAPER_START;
@@ -178,17 +179,16 @@ const NSH = 8, F12 = {}; for (let k = 0; k < NSH; k++) Object.assign(F12, JZ(SC 
 const taggedOf = (cik) => { const f = F12[cik]; if (!f) return null; const out = {}; for (const t of REV_TAGS) if (f.rev && f.rev[t]) out[t] = f.rev[t].map(([s, e, v, fd, form, accn]) => ({ s, e, v, f: fd, form, accn })); return out; };
 const epsRows = (cik) => { const f = F12[cik]; return f && f.eps ? f.eps.map(([s, e, v, fd, form, accn]) => ({ s, e, v, f: fd, form, accn })) : null; };
 
-// ================= 4. Nasdaq earnings calendar (other labs' caches read only; missing days fetched into the own cache) =================
-const NQ_HEAD = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36', Accept: 'application/json, text/plain, */*', Origin: 'https://www.nasdaq.com', Referer: 'https://www.nasdaq.com/' };
-const REPORTS = []; { const days = [], old = iso(Date.now() - 7 * 864e5), today = iso(Date.now()); for (let x = Date.parse(D[0] + 'T12:00:00Z'); x <= Date.now(); x += 864e5) { const w = new Date(x).getUTCDay(); if (w > 0 && w < 6) days.push(iso(x)); }
-  let fetched = 0, miss = 0, fromOthers = 0;
-  for (const d of days) { let rows = null; if (d < old) { rows = J(SC + '/nasdaq/' + d + '.json', null); if (!rows) for (const dir of ['angles-cache', 'anomaly-cache', 'a-cache']) { rows = J(dir + '/nasdaq/' + d + '.json', null); if (rows) { fromOthers++; break; } } }
-    if (!rows) { if (OFFLINE || left() < 60 * 60e3) { miss++; continue; } await sleep(local(env.NASDAQ_BASE) ? 0 : 350); fetched++; let j = null;
-      try { const r = await fetch(NQ + '/api/calendar/earnings?date=' + d, { headers: NQ_HEAD, signal: AbortSignal.timeout(30000) }); j = r.ok ? await r.json().catch(() => null) : null; } catch (e) { j = null; }
-      if (!j || !j.data) { if (d < today) miss++; continue; } rows = (j.data.rows || []).map(x => { const s = String(x.symbol || '').trim(); if (!/^[A-Z]{1,5}$/.test(s)) return null; return [s, x.time === 'time-pre-market' ? 'bmo' : x.time === 'time-after-hours' ? 'amc' : null]; }).filter(Boolean); W(SC + '/nasdaq/' + d + '.json', rows); }
-    for (const r of rows) REPORTS.push({ sym: r[0], d, time: r[1] || null }); }
-  STATUS.earn = { ok: miss <= days.length * 0.03, days: days.length, missing: miss, fromOtherCaches: fromOthers, fetchedNow: fetched, reports: REPORTS.length, timed: REPORTS.filter(r => r.time).length };
-  log('Nasdaq calendar: ' + JSON.stringify(STATUS.earn)); }
+// ================= 4. EARNINGS RELEASES: SEC 8-K Item 2.02 of the big companies, by CIK, with the EDGAR acceptance time (own cache) =================
+// (amended before any result: the Nasdaq calendar caches carry a before / after-open flag on almost no past report)
+const ER = J(SC + '/er8k.json', {}); { const nowTop = new Set(universe(T - 1).ranked.slice(0, TOPN).map(r => r.cik)), stale = (c) => !ER[c] || (nowTop.has(c) && Date.now() - Date.parse(ER[c].at || 0) > 18 * 3600e3);
+  const todo = [...BIGCIK].filter(c => !ER[c] || ER[c].partial || (!DIAG && stale(c))); let got = 0, fail = 0, pages = 0;
+  if (!OFFLINE) for (const c of todo) { if (left() < 60 * 60e3) break; const r = await secGet(SECD + '/submissions/CIK' + c.padStart(10, '0') + '.json'); if (!r.ok || !r.j) { if (r.status === 404) ER[c] = { at: new Date().toISOString(), rows: [] }; else fail++; continue; }
+    const rec = (r.j.filings && r.j.filings.recent) || {}, rows = earnings8k(rec); let oldest = (rec.filingDate || []).reduce((a, d) => d < a ? d : a, '9999'), partial = false;
+    for (const f of (r.j.filings && r.j.filings.files) || []) { if (oldest <= D[0]) break; if (f.filingTo && f.filingTo < D[0]) continue; const x = await secGet(SECD + '/submissions/' + f.name); pages++; if (!x.ok || !x.j) { partial = true; continue; } rows.push(...earnings8k(x.j)); for (const d of x.j.filingDate || []) if (d < oldest) oldest = d; }
+    ER[c] = { at: new Date().toISOString(), rows, partial }; got++; if (got % 200 === 0) log('8-K 2.02 lists: ' + got + '/' + todo.length); }
+  if (got) W(SC + '/er8k.json', ER); const have = [...BIGCIK].filter(c => ER[c] && !ER[c].partial).length, rows = [...BIGCIK].reduce((a, c) => a + ((ER[c] && ER[c].rows.length) || 0), 0);
+  STATUS.earn = { ok: have >= BIGCIK.size * 0.98, companies: BIGCIK.size, have, releases: rows, fetchedNow: got, olderPages: pages, failed: fail }; log('8-K Item 2.02 releases: ' + JSON.stringify(STATUS.earn)); }
 
 // ================= 5. EDGAR full-text search (8-K): guidance raises (Squad 1 cache read only) + investor / analyst days =================
 let lastSec = 0; async function efj(url) { for (let a = 0; a < 4; a++) { const w = (local(env.EFTS_BASE) ? 0 : 125) - (Date.now() - lastSec); if (w > 0) await sleep(w); lastSec = Date.now();
@@ -208,6 +208,8 @@ async function phraseHits(phrase, useSq1) { const out = [];
     const h = await efts(phrase, m + '-01', monthEnd(m)); FT.fetchedNow++; if (!h) { if (had) out.push(...had); else { FT.complete = false; FT.missing.push(phrase + ' ' + m); } continue; } W(f, h); out.push(...h); }
   return out; }
 const GUHITS = [], INVHITS = []; for (const p of GUIDE_PHRASES) GUHITS.push(...(await phraseHits(p, true))); for (const p of INV_PHRASES) INVHITS.push(...(await phraseHits(p, false)));
+if (!FT.complete && !OFFLINE && left() > 55 * 60e3) { await sleep(30000); const miss = FT.missing.splice(0); FT.complete = true;   // one more try for refused phrase-months
+  for (const x of miss) { const m = x.slice(-7), ph = x.slice(0, -8), h = await efts(ph, m + '-01', monthEnd(m)); if (!h) { FT.complete = false; FT.missing.push(x); continue; } W(SC + '/efts/' + slug(ph) + '/' + m + '.json', h); (INV_PHRASES.includes(ph) ? INVHITS : GUHITS).push(...h); } }
 STATUS.efts = { ok: FT.complete, fetchedNow: FT.fetchedNow, fromSquad1: FT.fromSquad1, missing: FT.missing.slice(0, 20), guidanceHits: GUHITS.length, investorDayHits: INVHITS.length, investorDayWithItems: INVHITS.filter(h => Array.isArray(h[3])).length };
 STATUS.invItems = { ok: INVHITS.length > 0 && STATUS.efts.investorDayWithItems >= INVHITS.length * 0.9, hits: INVHITS.length, withItems: STATUS.efts.investorDayWithItems };
 log('full-text search: ' + JSON.stringify(STATUS.efts));
@@ -215,11 +217,13 @@ log('full-text search: ' + JSON.stringify(STATUS.efts));
 // ================= 6. EVENTS -> signals { i, t, cik, rank } =================
 const SIG = Object.fromEntries(IDS.map(id => [id, []])), CNT = Object.fromEntries(IDS.map(id => [id, { raw: 0, big: 0 }]));
 const push = (id, i, t, cik, extra = {}) => { CNT[id].raw++; if (t < 1 || t > T - 1 || i === undefined || i === null || i < 0) return; const r = rankAt(t, cik, i); if (!r) return; CNT[id].big++; SIG[id].push({ i, t, cik: r.cik, rank: r.rank, ...extra }); };
-// earnings (Nasdaq calendar; the ticker as it traded that day)
-{ const seen = new Set(); for (const e of REPORTS) { const i = SY.get(e.sym); if (i === undefined) continue; const R = reactionIdx(D, e.d, e.time); if (R < 1 || R > T - 1) continue; const k = i + '|' + R; if (seen.has(k)) continue; seen.add(k);
-    const cik = cikAt(i, D[R]), b = i * T + R, pcl = (() => { for (let q = R - 1; q >= Math.max(0, R - 5); q--) if (CA[i * T + q] > 0) return CA[i * T + q]; return NaN; })();
+// earnings (the company's own 8-K Item 2.02, by CIK; reaction session from the acceptance time)
+{ const seen = new Set(), ph = { before: 0, after: 0, during: 0 }; for (const cik of BIGCIK) for (const [accn, fd, acc] of (ER[cik] && ER[cik].rows) || []) { if (fd < D[0]) continue; const R = reactionFromAcceptance(D, acc), x = secNY(acc);
+    if (x && x.hm) ph[x.hm < '09:30' ? 'before' : x.hm >= '16:00' ? 'after' : 'during']++; if (R < 1 || R > T - 1) continue; const r0 = rankAt(R, cik, null); if (!r0) continue; const i = r0.i, k = i + '|' + R; if (seen.has(k)) continue; seen.add(k);
+    const e = { d: fd, time: x.hm + ' NY ' + accn }, b = i * T + R, pcl = (() => { for (let q = R - 1; q >= Math.max(0, R - 5); q--) if (CA[i * T + q] > 0) return CA[i * T + q]; return NaN; })();
     if (gapHolds({ pc: pcl, o: OA[b], h: HA[b], l: LA[b], c: CA[b] })) push('SQ12-EGAPHOLD', i, R, cik, { ev: e.d + ' ' + e.time });
-    if (newHigh(cl(i), R)) push('SQ12-EARN52H', i, R, cik, { ev: e.d + ' ' + e.time }); } }
+    if (newHigh(cl(i), R)) push('SQ12-EARN52H', i, R, cik, { ev: e.d + ' ' + e.time }); }
+  STATUS.earn.acceptancePhase = ph; log('earnings releases by acceptance time (New York): ' + JSON.stringify(ph)); }
 // SEC filings (by CIK): the signal session = the last session on / before the filing date (entry = the first session after it)
 for (const cik of BIGCIK) { const tagged = taggedOf(cik); if (!tagged) continue; const eps = epsRows(cik);
   for (const F of filingsOf(tagged)) { const ta = after(D, F.f); if (ta < 1 || ta > T) continue; const t = ta - 1; const r = rankAt(t, cik, null); if (!r) continue;

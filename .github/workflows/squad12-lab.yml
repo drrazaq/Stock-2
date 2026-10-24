@@ -5,8 +5,8 @@ name: Squad 12 lab
 # point-in-time market value (top-100 cut as information), pre-registered in squad12-core.mjs and data/strategy-library.json before any
 # run; each one's 5-year test runs ONCE (first complete verdict frozen in data/squad12-lab.json firstRun). Forward PAPER ledger from
 # Monday 26 Oct 2026 (data/squad12-paper.jsonl, squad12-today.json, squad12-board.json).
-# The whole-market price cache, Squad 4's and Squad 5's SEC / universe caches, Squad 1's EDGAR full-text cache and the Nasdaq calendar
-# caches of the angles / anomaly / Agent A labs are RESTORED READ ONLY (never saved); only this lab's own cache (squad12-cache) is saved.
+# The whole-market price cache, Squad 4's and Squad 5's SEC / universe caches and Squad 1's EDGAR full-text cache are RESTORED READ
+# ONLY (never saved); only this lab's own cache (squad12-cache) is saved. Earnings releases = each company's SEC 8-K Item 2.02.
 # Commits only its own output files and its own library entries. Never places an order. Start by hand: change run-squad12-now.txt (a
 # last line containing DIAG = coverage and event counts only, nothing judged or written) or run the workflow.
 on:
@@ -53,21 +53,6 @@ jobs:
           path: squad1-cache
           key: squad1-cache-none
           restore-keys: squad1-cache-
-      - uses: actions/cache/restore@v4
-        with:
-          path: angles-cache
-          key: angles-cache-none
-          restore-keys: angles-cache-
-      - uses: actions/cache/restore@v4
-        with:
-          path: anomaly-cache
-          key: anomaly-cache-none
-          restore-keys: anomaly-cache-
-      - uses: actions/cache/restore@v4
-        with:
-          path: a-cache
-          key: a-cache-none
-          restore-keys: a-cache-
       - uses: actions/cache/restore@v4
         with:
           path: squad12-cache

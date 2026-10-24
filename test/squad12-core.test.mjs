@@ -6,7 +6,7 @@
 // Pure functions, no network, no files. Run: node test/squad12-core.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { RULES, IDS, HOLD, onOrAfter, after, reactionIdx, monthStartFor, gapHolds, newHigh, confirmIdx, quarterValues, yoy, growth3, accel2, revGrowth, epsGrowth, filingsOf,
+import { RULES, IDS, HOLD, onOrAfter, after, reactionIdx, reactionFromAcceptance, earnings8k, monthStartFor, gapHolds, newHigh, confirmIdx, quarterValues, yoy, growth3, accel2, revGrowth, epsGrowth, filingsOf,
   firstPer, oneOpen, eftsRows, invItemsOk, byYear, preRegister, halfOf } from '../squad12-core.mjs';
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;
 const D = ['2024-01-02', '2024-01-03', '2024-01-04', '2024-01-05', '2024-01-08'];
@@ -19,6 +19,13 @@ test('six rules, each with a paper URL, a rule text, the 63-session hold and a l
 test('sessions: before-open report reacts the same day, after-close the next session, weekend and no time flag handled', () => {
   assert.equal(onOrAfter(D, '2024-01-03'), 1); assert.equal(after(D, '2024-01-03'), 2); assert.equal(onOrAfter(D, '2024-01-06'), 4); assert.equal(after(D, '2024-01-08'), 5);
   assert.equal(reactionIdx(D, '2024-01-03', 'bmo'), 1); assert.equal(reactionIdx(D, '2024-01-03', 'amc'), 2); assert.equal(reactionIdx(D, '2024-01-05', 'amc'), 4); assert.equal(reactionIdx(D, '2024-01-03', null), -1);
+  assert.equal(reactionFromAcceptance(D, '2024-01-03T12:05:00.000Z'), 1);     // 07:05 New York: before the open -> that day
+  assert.equal(reactionFromAcceptance(D, '2024-01-03T21:05:00.000Z'), 2);     // 16:05 New York: after the close -> next session
+  assert.equal(reactionFromAcceptance(D, '2024-01-03T16:00:00.000Z'), -1);    // 11:00 New York: during the session -> skipped
+  assert.equal(reactionFromAcceptance(D, '2024-01-05T21:30:00.000Z'), 4);     // Friday evening -> Monday
+  assert.equal(reactionFromAcceptance(D, '2024-01-03'), -1);                  // no time
+  assert.deepEqual(earnings8k({ form: ['8-K', '8-K/A', '8-K', '10-Q', '8-K'], items: ['2.02,9.01', '2.02', '7.01,9.01', '', '5.02,2.02'], accessionNumber: ['a', 'b', 'c', 'd', 'e'], filingDate: ['d1', 'd2', 'd3', 'd4', 'd5'], acceptanceDateTime: ['t1', 't2', 't3', 't4', 't5'] }),
+    [['a', 'd1', 't1'], ['e', 'd5', 't5']]);
   assert.equal(monthStartFor([3, 25, 46], 30), 25); assert.equal(monthStartFor([3, 25, 46], 25), 25); assert.equal(monthStartFor([3, 25, 46], 2), -1);
 });
 

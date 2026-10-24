@@ -28,13 +28,17 @@
 //   other days (entries every 21 sessions, 63+ sessions away), > 0 without its 2 best trades, 20+ trades and 3+ blocks (63 sessions),
 //   block t >= 2.5 (TRADABLE SMALL) / >= the proof bar (PROVEN), AND return per year of capital tied up above SPY on the same days
 //   (perYear). Also reported: a calendar-year table (by entry year: average net vs SPY and vs the average stock on the same days).
-//   EARNINGS DATES: the Nasdaq earnings calendar (date + before-open / after-close flag; ticker as it traded that day). Reaction session
-//   R = the report date's session if reported BEFORE THE OPEN, the next session if AFTER THE CLOSE; a report with no time flag is skipped.
+//   EARNINGS DATES (AMENDED 24 Oct 2026 BEFORE ANY RESULT, after the DIAG coverage run: the Nasdaq calendar cache has a before-open /
+//     after-close flag on only 47 of 65,130 past reports, so the registered "no flag = skipped" left 3 events in 5 years): the company's
+//     own SEC 8-K with Item 2.02 (Results of Operations), by CIK, from EDGAR submissions, with its EDGAR acceptance time (UTC, read on
+//     the New York clock by sec-time.mjs). Accepted before 09:30 -> reaction session R = that day's session (the first session on / after
+//     that date); 16:00 or later -> the next session; 09:30-15:59 -> skipped (the open came before the news); 8-K/A left out.
 //   SEC XBRL (company facts, by CIK): a value is known from its FILING date; the filing's event session = the first session strictly
 //   after the filing date (an evening filing is bought the next morning; a morning filing one day late: conservative).
 //   8-K TEXT: SEC EDGAR full-text search (efts.sec.gov, 8-K incl. exhibits), the filer's CIK; "confirmed" = the close of the first
 //   session strictly after the filing date is above the close of the last session strictly before it (covers a pre-open or an
 //   after-close release alike); that session is the signal session.
+import { secNY } from './sec-time.mjs';
 export const COST = 0.008, STRESS = 0.012, SPLIT = '2024-01-01', PAPER_START = '2026-10-26', CAP = 3, HOLD = 63, YEAR = 252;
 export const TOPN = 300, TOP100 = 100, GAP = 0.03, HIGH_LOOK = 252, GROW = 0.10, GUIDE_GAP_DAYS = 60, INV_GAP_DAYS = 180;
 export const INV_PHRASES = ['investor day', 'analyst day', 'capital markets day'];
@@ -53,6 +57,11 @@ export function after(D, d) { let lo = 0, hi = D.length; while (lo < hi) { const
 // reaction session of an earnings report on date d: before the open -> the first session on / after d; after the close -> the first
 // session after d; no time flag -> -1 (skipped). Returns an index (may be D.length = not yet traded).
 export function reactionIdx(D, d, time) { if (time === 'bmo') return onOrAfter(D, d); if (time === 'amc') return after(D, d); return -1; }
+// reaction session of an 8-K Item 2.02 from its EDGAR acceptance time (UTC ISO): before 09:30 New York -> bmo, 16:00+ -> amc, else -1
+export function reactionFromAcceptance(D, acc) { const x = secNY(acc); if (!x || !x.hm) return -1; return reactionIdx(D, x.d, x.hm < '09:30' ? 'bmo' : x.hm >= '16:00' ? 'amc' : null); }
+// EDGAR submissions (filings.recent or an older page) -> [[accession, filingDate, acceptanceDateTime]] of original 8-Ks with Item 2.02
+export function earnings8k(cols) { const out = [], f = (cols && cols.form) || []; for (let k = 0; k < f.length; k++) { if (f[k] !== '8-K') continue; const it = String((cols.items || [])[k] || '');
+    if (!/(^|,)\s*2\.02\b/.test(it)) continue; out.push([cols.accessionNumber[k], cols.filingDate[k], cols.acceptanceDateTime[k]]); } return out; }
 // the latest month start on or before t (MS = sorted month-start indices); -1 if none
 export function monthStartFor(MS, t) { let lo = 0, hi = MS.length - 1, ans = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (MS[m] <= t) { ans = MS[m]; lo = m + 1; } else hi = m - 1; } return ans; }
 
@@ -141,7 +150,7 @@ export function boardStats(rows) { const net = rows.map(r => r.g - COST), win = 
 export const paperReady = (s) => s.n >= 30 && s.days >= 10 && s.avg > 0;
 
 // ================= the rules as registered =================
-const COMMON = 'BIG = among the 300 largest US companies by point-in-time market value at the latest month start on or before the signal session (Squad 5 universe and market value: liquid US stocks, close >= 5 USD and 20-session traded value >= 5M USD, dead and delisted included, one ticker per company, CIK from the historical SEC Form 3/4/5 ticker map, US domicile, SEC share counts 30+ days old or from their filing date, split-repaired); events matched by CIK (SEC) or by the ticker as it traded that day (earnings calendar), never today\'s ticker list. Top-100 cut of the same events reported as information. Entry at the next open after the signal session; exit at the close of session 63; one open trade per stock; a stock that stops trading under 3 USD = 0. Earnings dates: Nasdaq calendar, reaction session = report day if before the open, next session if after the close, no time flag = skipped. SEC XBRL values known from their filing date; event session = first session after the filing date. 8-K text: EDGAR full-text search (8-K incl. exhibits), filer CIK; confirmed = close of the first session after the filing date above the close of the last session before it. Cost 0.8% (1.2% stress); every gross return (rule and yardsticks) capped at +300% (AUD-1). Judged at the tier-2 standard (halves before / from 2024-01-01; > 0 after both costs, better than the average liquid stock on the same sessions, better than the same stock held 63 sessions on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5) plus return per year of capital above SPY on the same days in both halves; calendar-year table vs SPY reported. Run once, first complete verdict frozen.';
+const COMMON = 'BIG = among the 300 largest US companies by point-in-time market value at the latest month start on or before the signal session (Squad 5 universe and market value: liquid US stocks, close >= 5 USD and 20-session traded value >= 5M USD, dead and delisted included, one ticker per company, CIK from the historical SEC Form 3/4/5 ticker map, US domicile, SEC share counts 30+ days old or from their filing date, split-repaired); events matched by the filer\'s CIK, never today\'s ticker list. Top-100 cut of the same events reported as information. Entry at the next open after the signal session; exit at the close of session 63; one open trade per stock; a stock that stops trading under 3 USD = 0. Earnings dates (amended before any result: the Nasdaq calendar cache has almost no before/after-open flags): the company\'s own SEC 8-K Item 2.02 by CIK with its EDGAR acceptance time on the New York clock; accepted before 09:30 = reaction that day, 16:00 or later = next session, 09:30-15:59 = skipped; 8-K/A out. SEC XBRL values known from their filing date; event session = first session after the filing date. 8-K text: EDGAR full-text search (8-K incl. exhibits), filer CIK; confirmed = close of the first session after the filing date above the close of the last session before it. Cost 0.8% (1.2% stress); every gross return (rule and yardsticks) capped at +300% (AUD-1). Judged at the tier-2 standard (halves before / from 2024-01-01; > 0 after both costs, better than the average liquid stock on the same sessions, better than the same stock held 63 sessions on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5) plus return per year of capital above SPY on the same days in both halves; calendar-year table vs SPY reported. Run once, first complete verdict frozen.';
 const CJL = P('Chan, Jegadeesh & Lakonishok (1996) Momentum Strategies, Journal of Finance 51(5)', 'https://doi.org/10.1111/j.1540-6261.1996.tb05222.x');
 const BKSV = P('Brandt, Kishore, Santa-Clara & Venkatachalam (2008) Earnings announcements are full of surprises, SSRN 909563', 'https://ssrn.com/abstract=909563');
 export const RULES = {
