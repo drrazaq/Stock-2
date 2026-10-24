@@ -1,0 +1,69 @@
+name: Squad 6 lab
+# SQUAD 6: TRADERS AND FUNDS WITH PUBLIC, MULTI-YEAR RECORDS, DECODED FAITHFULLY (squad6-lab.mjs; the owner's squad competition of
+# 24 Oct 2026). Eight rules pre-registered in squad6-core.mjs and data/strategy-library.json before any run (Clenow, Radge, Connors x2,
+# MSCI momentum / MTUM, Alpha Architect QMOM, O'Neil three-weeks-tight, DeMark TD9); each one's 5-year test runs ONCE (first complete
+# verdict frozen in data/squad6-lab.json firstRun); a forward PAPER ledger records every new signal from Monday 26 Oct 2026
+# (data/squad6-paper.jsonl, squad6-today.json, squad6-board.json). Weekly run on Sunday after the Sunday studies; weekday evenings after the
+# close (paper lane; frozen verdicts never change). The whole-market price cache is RESTORED READ ONLY; nothing is saved to any cache.
+# Commits only its own output files and its own library entries. Never places an order. Start by hand: change run-squad6-now.txt or run
+# the workflow.
+on:
+  schedule:
+    - cron: '47 15 * * 0'     # Sunday, after the Sunday studies
+    - cron: '56 23 * * 1-5'   # weekday evenings after the close: paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad6-now.txt']
+permissions:
+  contents: write
+concurrency: squad6-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - shell: bash
+        timeout-minutes: 185
+        run: |
+          set -o pipefail
+          node squad6-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SQ6_MINUTES: '175'
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad6-run.log 2>/dev/null || true
+          FILES="data/squad6-lab.json data/squad6-paper.jsonl data/squad6-today.json data/squad6-board.json data/squad6-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 6 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 6 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad6-lab-log
+          path: run.log
