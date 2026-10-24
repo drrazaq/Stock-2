@@ -1,0 +1,88 @@
+name: Tipster lab
+# TIPSTER LAB (tipster-lab.mjs; owner's request of 24 Oct 2026: "my tipster told me to buy NVIDIA at about 90 USD, buy and forget, add more
+# every now and then, and Intel, now up 100%+: how did he figure it out? Decode the style and test it"). Rules TIP-* pre-registered in
+# tipster-core.mjs and data/strategy-library.json before any run; each one's 5-year test runs ONCE (first complete verdict frozen in
+# data/tipster-lab.json firstRun), and a forward PAPER ledger records every new signal from Monday 26 Oct 2026 (data/tipster-paper.jsonl,
+# tipster-today.json, tipster-board.json). Weekly full run on Sunday after the Sunday studies; light runs on weekday evenings (paper lane
+# only once every rule is frozen). The whole-market price cache and the anomaly lab's SEC facts / insider cache are RESTORED READ ONLY;
+# only this lab's own cache (tipster-cache: the 3 years before the window, extra SEC facts, 8-K items) is saved. Commits only its own output
+# files and its own library entries. Never places an order. Start by hand: change run-tipster-now.txt (a last line containing DIAG =
+# coverage check only, nothing computed or written) or run the workflow.
+on:
+  schedule:
+    - cron: '17 14 * * 0'     # Sunday, after the Sunday studies
+    - cron: '40 23 * * 1-5'   # weekday evenings after the close: paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-tipster-now.txt']
+permissions:
+  contents: write
+concurrency: tipster-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: anomaly-cache
+          key: anomaly-cache-none
+          restore-keys: anomaly-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: tipster-cache
+          key: tipster-cache-${{ github.run_id }}
+          restore-keys: tipster-cache-
+      - shell: bash
+        timeout-minutes: 270
+        run: |
+          set -o pipefail
+          if tail -n 1 run-tipster-now.txt | grep -q DIAG; then export DIAG=1; fi
+          node tipster-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          TIP_MINUTES: '240'
+          TIP_LIGHT: ${{ github.event.schedule == '40 23 * * 1-5' && '1' || '' }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: tipster-cache
+          key: tipster-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/tipster-run.log 2>/dev/null || true
+          FILES="data/tipster-lab.json data/tipster-paper.jsonl data/tipster-today.json data/tipster-board.json data/tipster-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "tipster lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the tipster lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tipster-lab-log
+          path: run.log
