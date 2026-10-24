@@ -102,7 +102,7 @@ test('the angles lab (and any standard lab) feeds TRY SMALL by the same standard
     'data/angles-lab.json': { firstRun: { 'ANG-X': { verdict: 'NOT PROVEN', hold: 20, results: { older: half(0.01, 0.01, 0.01), newer: half(0.02, 0.01, 0.02) } } } },
     'data/angles-today.json': { generatedAt: now, methods: { 'ANG-X': { name: 'Test angle', hold: 20, newSignals: [{ sym: 'TPC', close: 78 }] } } } } });
   const L = S7.fn('trySmallLines')({}, { TPC: 78 }).join('\n');
-  assert.match(L, /- BUY TPC 1000 USD .*SELL after about 1 month\(s\) \(20 sessions\).*ANG-X \(Test angle\)/);
+  assert.match(L, /- BUY TPC 1000 USD .*SELL after about 1 month \(20 sessions\).*ANG-X \(Test angle\)/);
 });
 
 // 24 Oct: owner's choice after the portfolio simulation: 1,000 USD a TRY SMALL trade (at 300 USD the 3 + 3 USD fees ate ~2% a trade).
