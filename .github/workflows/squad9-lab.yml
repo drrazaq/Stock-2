@@ -1,0 +1,67 @@
+name: Squad 9 lab
+# SQUAD 9: YOUTUBE STRATEGY TESTERS (squad9-lab.mjs; the owner sent DaviddTech, The Moving Average and Quant Guild on 24 Oct 2026 and
+# asked whether their backtested claims hold up after costs and on unseen years). The SQ9-* rules, pre-registered in squad9-core.mjs and
+# data/strategy-library.json before any run, each get ONE 5-year test on daily bars of the whole US market (first complete verdict frozen
+# in data/squad9-lab.json firstRun), plus the same rule on SPY and QQQ alone next to the channel's claim (information). Then the forward
+# PAPER lane from Monday 26 Oct 2026 (data/squad9-paper.jsonl, squad9-today.json, squad9-board.json) on weekday evenings.
+# The whole-market price cache is RESTORED READ ONLY; this lab saves no cache. Commits only its own output files and its own library
+# entries. Never places an order. Start by hand: change run-squad9-now.txt (a last line containing DIAG = coverage check only).
+on:
+  schedule:
+    - cron: '20 0 * * 2-6'    # weekday evenings after the close (UTC next day): paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad9-now.txt']
+permissions:
+  contents: write
+concurrency: squad9-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - shell: bash
+        timeout-minutes: 160
+        run: |
+          set -o pipefail
+          if tail -n 1 run-squad9-now.txt | grep -q DIAG; then export DIAG=1; fi
+          node squad9-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad9-run.log 2>/dev/null || true
+          FILES="data/squad9-lab.json data/squad9-paper.jsonl data/squad9-today.json data/squad9-board.json data/squad9-diag.json data/squad9-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 9 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 9 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad9-lab-log
+          path: run.log
