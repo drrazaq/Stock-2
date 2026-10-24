@@ -18047,7 +18047,7 @@
    "family": "Squad 8 (path edge and share supply)",
    "name": "Runner whose gain came from overnight gaps (75%+ of the 10-session gain made close-to-open)",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND the overnight part of the gain, sum over the 10 sessions of ln(open / previous close), is at least 75% of ln(close_t / close_t-10). Buy the next open; hold 20; one open trade per stock. Paper(s): Lou, Polk & Skouras (2019) A tug of war: Overnight versus intraday expected returns, Journal of Financial Economics 134(1); Barardehi, Bogousslavsky & Muravyev, What Drives Momentum and Reversal? Evidence from Day and Night Signals (SSRN 4069509). Reported: momentum profits accrue overnight (LPS); past intraday returns reverse at one month while past overnight returns do not (BBM): the evidence favours the overnight-driven runner on the long side.",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18056,14 +18056,52 @@
     "https://personal.lse.ac.uk/polk/research/TugOfWar.pdf",
     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4069509"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1484,
+     2872
+    ],
+    "avg": [
+     -0.0154,
+     -0.013
+    ],
+    "stress": [
+     -0.0194,
+     -0.017
+    ],
+    "edge": [
+     -0.0293,
+     -0.0137
+    ],
+    "vsOwn": [
+     0.0119,
+     0.0102
+    ],
+    "noTop2": [
+     -0.0168,
+     -0.0143
+    ],
+    "tBlock": [
+     -3.42,
+     -2.12
+    ],
+    "win": [
+     0.4528,
+     0.4241
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -3.42 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.12 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-TUG",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Runner with a strong daily tug of war (7+ of 21 sessions open up then close under the open)",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND in the 21 sessions ending t, 7 or more sessions had open > previous close AND close < open. Buy the next open; hold 20; one open trade per stock. Paper(s): Akbas, Boehmer, Jiang & Koch (2022) Overnight returns, daytime reversals, and future stock returns, Journal of Financial Economics 145(3); Lou, Polk & Skouras (2019) A tug of war: Overnight versus intraday expected returns, Journal of Financial Economics 134(1). Reported: a more intense daily tug of war (positive overnight returns followed by daytime reversals) predicts HIGHER future returns: daytime arbitrageurs over-correct (the long side the evidence favours, against the \"fragile\" intuition).",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18072,14 +18110,52 @@
     "https://ideas.repec.org/a/eee/jfinec/v145y2022i3p850-875.html",
     "https://personal.lse.ac.uk/polk/research/TugOfWar.pdf"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2394,
+     4509
+    ],
+    "avg": [
+     -0.0372,
+     -0.0101
+    ],
+    "stress": [
+     -0.0412,
+     -0.0141
+    ],
+    "edge": [
+     -0.0333,
+     -0.0111
+    ],
+    "vsOwn": [
+     0.0032,
+     0.0086
+    ],
+    "noTop2": [
+     -0.0381,
+     -0.0112
+    ],
+    "tBlock": [
+     -5.42,
+     -1.66
+    ],
+    "win": [
+     0.4114,
+     0.4287
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -5.42 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.66 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-ACCUM",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Runner with accumulation volume (volume on up sessions 2x+ volume on down sessions)",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND over the 10 sessions ending t, total volume of sessions closing above the previous close is at least 2.0x the total volume of sessions closing below it (no down session at all also passes). Buy the next open; hold 20; one open trade per stock. Paper(s): Gervais, Kaniel & Mingelgrin (2001) The High-Volume Return Premium, Journal of Finance 56(3); Granville (1963) on-balance volume (practitioner: volume on up days = accumulation). Reported: stocks with unusually high volume tend to rise afterwards (GKM); practitioners read heavier volume on up days than on down days as accumulation.",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18088,14 +18164,52 @@
     "https://doi.org/10.1111/0022-1082.00349",
     "https://www.investopedia.com/terms/o/onbalancevolume.asp"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     9833,
+     13001
+    ],
+    "avg": [
+     -0.0232,
+     -0.005
+    ],
+    "stress": [
+     -0.0272,
+     -0.009
+    ],
+    "edge": [
+     -0.0216,
+     -0.0148
+    ],
+    "vsOwn": [
+     0.0376,
+     0.0369
+    ],
+    "noTop2": [
+     -0.0237,
+     -0.0055
+    ],
+    "tBlock": [
+     -4.46,
+     -2.9
+    ],
+    "win": [
+     0.4361,
+     0.4468
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -4.46 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.9 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-ORDERLY",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Orderly runner: 7+ up closes of 10 and no single session above 40% of the gain",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND 7+ of the 10 sessions closed above the previous close AND no single session's close-to-close log return exceeds 40% of ln(close_t / close_t-10). Buy the next open; hold 20; one open trade per stock. Paper(s): Da, Gurun & Warachka (2014) Frog in the Pan: Continuous Information and Momentum, Review of Financial Studies 27(7). Reported: momentum built from many small moves (continuous information) persists much more than momentum from a few large jumps.",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18103,14 +18217,52 @@
    "sources": [
     "https://doi.org/10.1093/rfs/hhu003"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     4406,
+     5474
+    ],
+    "avg": [
+     -0.0183,
+     -0.0039
+    ],
+    "stress": [
+     -0.0223,
+     -0.0079
+    ],
+    "edge": [
+     -0.0139,
+     -0.0098
+    ],
+    "vsOwn": [
+     0.0051,
+     0.0046
+    ],
+    "noTop2": [
+     -0.0188,
+     -0.0046
+    ],
+    "tBlock": [
+     -3.05,
+     -2.34
+    ],
+    "win": [
+     0.4458,
+     0.4512
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -3.05 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.34 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-HOLD3",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Breakout that holds: a new 60-session closing high whose next 3 closes stay at or above the old high",
    "explain": "Breakout session b: liquid; close_b above L = the highest close of the 60 sessions before b; no such breakout in the 20 sessions before b. Signal at the close of t = b+3 when the closes of b+1, b+2 and b+3 are all >= L and the stock is liquid at t. Buy the next open; hold 20; one open trade per stock. Paper(s): George & Hwang (2004) The 52-Week High and Momentum Investing, Journal of Finance 59(5); Lo, Mamaysky & Wang (2000) Foundations of Technical Analysis, Journal of Finance 55(4). Reported: stocks near their highs keep outperforming (anchoring); practitioners treat a breakout that does not fall back as accepted by the market.",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18119,14 +18271,52 @@
     "https://doi.org/10.1111/j.1540-6261.2004.00695.x",
     "https://doi.org/10.1111/0022-1082.00265"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     5792,
+     9113
+    ],
+    "avg": [
+     -0.012,
+     -0.0035
+    ],
+    "stress": [
+     -0.016,
+     -0.0075
+    ],
+    "edge": [
+     -0.0088,
+     -0.012
+    ],
+    "vsOwn": [
+     0.0058,
+     0.0045
+    ],
+    "noTop2": [
+     -0.0124,
+     -0.0041
+    ],
+    "tBlock": [
+     -2.09,
+     -3.63
+    ],
+    "win": [
+     0.4454,
+     0.4615
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -2.09 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -3.63 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-SHRINK",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Runner whose share count shrank 2%+ in a year (buybacks)",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND the SEC share count known at t (30 days late) is at least 2% below the count known 365 days earlier (and not below 60% of it: a data error), both counts dated within 200 days of their cut-off. Buy the next open; hold 20; one open trade per stock. Paper(s): Pontiff & Woodgate (2008) Share Issuance and Cross-sectional Returns, Journal of Finance 63(2); Daniel & Titman (2006) Market Reactions to Tangible and Intangible Information, Journal of Finance 61(4) (composite share issuance); Ikenberry, Lakonishok & Vermaelen (1995) Market underreaction to open market share repurchases, Journal of Financial Economics 39(2-3). Reported: firms that shrink their share count outperform; issuers lag (one of the most replicated anomalies).",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18136,14 +18326,52 @@
     "https://doi.org/10.1111/j.1540-6261.2006.00884.x",
     "https://doi.org/10.1016/0304-405X(95)00826-Z"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1489,
+     2134
+    ],
+    "avg": [
+     -0.0023,
+     -0.0042
+    ],
+    "stress": [
+     -0.0063,
+     -0.0082
+    ],
+    "edge": [
+     -0.0076,
+     -0.0132
+    ],
+    "vsOwn": [
+     0.0176,
+     0.0067
+    ],
+    "noTop2": [
+     -0.0035,
+     -0.005
+    ],
+    "tBlock": [
+     -2.45,
+     -2.48
+    ],
+    "win": [
+     0.4909,
+     0.4564
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -2.45 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.48 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-LOWTURN",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Runner on low float turnover (10-session volume under 20% of the shares)",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND the sum of volume over the 10 sessions ending t is under 20% of the SEC share count known at t (30 days late, split basis of the prices). Buy the next open; hold 20; one open trade per stock. Paper(s): Lee & Swaminathan (2000) Price Momentum and Trading Volume, Journal of Finance 55(5); Medhat & Schmeling (2022) Short-term Momentum, Review of Financial Studies 35(3) (the opposite at one month: winners continue among HIGH-turnover stocks). Reported: low-volume winners keep their momentum longer than high-volume (glamour) winners (Lee & Swaminathan); Medhat & Schmeling find the opposite at one month: a genuine test between the two.",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18152,14 +18380,52 @@
     "https://doi.org/10.1111/0022-1082.00280",
     "https://repec.cepr.org/repec/cpr/ceprdp/DP15857.pdf"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     7414,
+     8547
+    ],
+    "avg": [
+     -0.0172,
+     -0.0064
+    ],
+    "stress": [
+     -0.0212,
+     -0.0104
+    ],
+    "edge": [
+     -0.0153,
+     -0.0141
+    ],
+    "vsOwn": [
+     0.0333,
+     0.0247
+    ],
+    "noTop2": [
+     -0.0175,
+     -0.007
+    ],
+    "tBlock": [
+     -3.17,
+     -3.5
+    ],
+    "win": [
+     0.4496,
+     0.448
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -3.17 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -3.5 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-POSTLOCK",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Young-company runner after its IPO lock-up has passed (200-730 days after the IPO)",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND the company's IPO (first 424B4 in the SEC EDGAR index, the stock first in the price cache within 15 sessions after it, not before; blank-check companies left out) was 200 to 730 calendar days before t. Buy the next open; hold 20; one open trade per stock. Paper(s): Field & Hanka (2001) The Expiration of IPO Share Lockups, Journal of Finance 56(2); Ritter (1991) The Long-Run Performance of Initial Public Offerings, Journal of Finance 46(1). Reported: lock-up expiry releases a wave of insider supply (price dip, a lasting 40% volume rise); once it has passed, that supply overhang is gone.",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18168,14 +18434,52 @@
     "https://doi.org/10.1111/0022-1082.00336",
     "https://doi.org/10.1111/j.1540-6261.1991.tb03743.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     57,
+     260
+    ],
+    "avg": [
+     -0.0503,
+     -0.0101
+    ],
+    "stress": [
+     -0.0543,
+     -0.0141
+    ],
+    "edge": [
+     -0.0478,
+     -0.0212
+    ],
+    "vsOwn": [
+     0.0789,
+     0.0487
+    ],
+    "noTop2": [
+     -0.0758,
+     -0.017
+    ],
+    "tBlock": [
+     -2.1,
+     -1
+    ],
+    "win": [
+     0.386,
+     0.4538
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -2.1 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-CLEAN",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Clean-supply runner: share count up at most 3% in a year and no reverse split in 3 years",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND the SEC share count known at t is at most 3% above the count known 365 days earlier (both dated within 200 days of their cut-off) AND no reverse split (split_to < split_from, Massive split list) executed in the 1,095 calendar days up to t. Buy the next open; hold 20; one open trade per stock. Paper(s): Pontiff & Woodgate (2008) Share Issuance and Cross-sectional Returns, Journal of Finance 63(2); Martell & Webb (2008) The performance of stocks that are reverse split, Review of Quantitative Finance and Accounting 30. Reported: issuers lag (Pontiff & Woodgate); reverse-split stocks underperform for years afterwards (Martell & Webb).",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18184,14 +18488,52 @@
     "https://doi.org/10.1111/j.1540-6261.2008.01338.x",
     "https://doi.org/10.1007/s11156-007-0076-y"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     5884,
+     8117
+    ],
+    "avg": [
+     -0.0071,
+     -0.004
+    ],
+    "stress": [
+     -0.0111,
+     -0.008
+    ],
+    "edge": [
+     -0.0076,
+     -0.0155
+    ],
+    "vsOwn": [
+     0.0344,
+     0.0224
+    ],
+    "noTop2": [
+     -0.0079,
+     -0.0047
+    ],
+    "tBlock": [
+     -1.75,
+     -3.29
+    ],
+    "win": [
+     0.475,
+     0.4496
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.75 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -3.29 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ8-REAL",
    "family": "Squad 8 (path edge and share supply)",
    "name": "Real-demand runner: overnight-led gain (50%+), up-volume 1.5x+ down-volume, share count up at most 5% in a year",
    "explain": "RUNNER at the close of t (liquid; 10-session gain +15% to +100%; first session crossing +15%; complete data) AND the overnight part of the 10-session log gain is at least 50% of it AND volume on up sessions is at least 1.5x volume on down sessions over the 10 sessions AND the share count known at t is at most 5% above the count known 365 days earlier. Buy the next open; hold 20; one open trade per stock. Paper(s): Lou, Polk & Skouras (2019) A tug of war: Overnight versus intraday expected returns, Journal of Financial Economics 134(1); Gervais, Kaniel & Mingelgrin (2001) JF 56(3); Pontiff & Woodgate (2008) Share Issuance and Cross-sectional Returns, Journal of Finance 63(2). Reported: combination of the three published directions above (overnight-led momentum, high-volume premium, no issuance); the combination itself has no published record.",
-   "status": "pre-registered 2026-10-24 (squad 8 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad8",
    "kind": "buy",
    "hold": 20,
@@ -18201,7 +18543,45 @@
     "https://doi.org/10.1111/0022-1082.00349",
     "https://doi.org/10.1111/j.1540-6261.2008.01338.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad8-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad8-lab.mjs, first complete verdict frozen in data/squad8-lab.json; forward paper lane (data/squad8-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad8-lab.mjs -> data/squad8-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1398,
+     2692
+    ],
+    "avg": [
+     0.0084,
+     -0.0061
+    ],
+    "stress": [
+     0.0044,
+     -0.0101
+    ],
+    "edge": [
+     0.0028,
+     -0.0171
+    ],
+    "vsOwn": [
+     0.0216,
+     -0.0023
+    ],
+    "noTop2": [
+     0.0071,
+     -0.0074
+    ],
+    "tBlock": [
+     0.36,
+     -2.61
+    ],
+    "win": [
+     0.505,
+     0.4454
+    ],
+    "why": "block t 0.36 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.61 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ9-DT-3ST",
