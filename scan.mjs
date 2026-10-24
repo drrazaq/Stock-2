@@ -321,8 +321,33 @@ function tier2Log(sym, kind, px, extra) { try { if (!(px > 0)) return; const f =
   if (L.some(r => r.sym === r.sym && r.sym === sym && r.kind === kind && Date.now() - Date.parse(r.d) < 30 * 864e5)) return; fs.appendFileSync(f, JSON.stringify({ d, sym, kind, px: +(+px).toFixed(4), ...(extra || {}) }) + '\n'); } catch (e) {} }
 // option tickets (kind option:<rule>) are never priced here with the stock's price: optionsShadow resolves them at their own bid
 function tier2Resolve(lastPx) { try { const f = 'data/tier2-ledger.jsonl'; let L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)), ch = false;
-  for (const r of L) if (!r.out && !/^option:/.test(r.kind || '') && Date.now() - Date.parse(r.d) >= 30 * 864e5 && lastPx[r.sym] > 0) { r.out = new Date().toISOString().slice(0, 10); r.px1 = lastPx[r.sym]; r.pct = +(r.kind === 'switch sell' ? r.px / r.px1 - 1 - 0.008 : r.px1 / r.px - 1 - 0.008).toFixed(4); ch = true; }
+  for (const r of L) if (!r.out && !/^(option|try):/.test(r.kind || '') && Date.now() - Date.parse(r.d) >= 30 * 864e5 && lastPx[r.sym] > 0) { r.out = new Date().toISOString().slice(0, 10); r.px1 = lastPx[r.sym]; r.pct = +(r.kind === 'switch sell' ? r.px / r.px1 - 1 - 0.008 : r.px1 / r.px - 1 - 0.008).toFixed(4); ch = true; }
   if (ch) fs.writeFileSync(f, L.map(x => JSON.stringify(x)).join('\n') + '\n'); return L; } catch (e) { return []; } }
+// (audit 24 Oct, coordinator) TRY SMALL ledger rows (kind try:<rule>) are resolved like the trade itself: bought at the open of the first
+// session on or after the day it was shown, sold at the close of its rule's hold-th session (counting the buy day), or at the lane stop
+// (15% / 35%) if a low reached it first (at the open if it gapped under). Prices: Massive daily bars, else the scan's Twelve Data bars, for
+// EVERY logged stock (before, only stocks in the scan's own list were priced, after 30 calendar days, so QLYS-type rows never resolved
+// and the 10-result auto-off could not work). 0.8% round-trip cost, as for every tier-2 row.
+function tryHoldOf(id) { if (/^B-/.test(id)) return 63; if (/^DEC/.test(id)) return 126;
+  for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4', 'squad6', 'squad7', 'squad8', 'squad9', 'squad11', 'squad12', 'squad13', 'squad14', 'squad16']) { const AL = readJson0('data/' + lab + '-lab.json'), r = AL ? labRuns(AL)[id] : null; if (r && +r.hold > 0) return +r.hold; }
+  return 63; }
+function tryResolveRow(r, bars) {   // bars: [{d,o,h,l,c}] ascending; returns { out, px, px1, pct, why } or null while still open
+  const hold = +r.hold > 0 ? +r.hold : tryHoldOf(String(r.kind).slice(4)), sp = +r.stopPct > 0 ? +r.stopPct : (hold > 100 ? 0.35 : 0.15);
+  const st = r.shownAt ? ny(Date.parse(r.shownAt)) : null, d0 = st ? st.d : r.d, after = !!(st && st.mins >= 960);   // shown after the close: the next session's open
+  const k = bars.findIndex(b => after ? b.d > d0 : b.d >= d0); if (k < 0 || !(bars[k].o > 0)) return null; const en = bars[k].o, stop = en * (1 - sp);
+  for (let j = k; j < bars.length && j < k + hold; j++) { const b = bars[j]; if (b.l > 0 && b.l <= stop) { const ex = j > k && b.o < stop ? b.o : stop; return { out: b.d, px: en, px1: ex, pct: +(ex / en - 1 - 0.008).toFixed(4), why: 'stop' }; } }
+  const x = k + hold - 1; if (x >= bars.length) return null;
+  return { out: bars[x].d, px: en, px1: bars[x].c, pct: +(bars[x].c / en - 1 - 0.008).toFixed(4), why: 'time exit' }; }
+async function tryBars(sym, from) {
+  if (env.MASSIVE_KEY) { const j = await mv('/v2/aggs/ticker/' + encodeURIComponent(sym) + '/range/1/day/' + from + '/' + ny(Date.now()).d + '?adjusted=true&sort=asc&limit=50000');
+    if (j && Array.isArray(j.results) && j.results.length) return j.results.map(b => ({ d: new Date(b.t).toISOString().slice(0, 10), o: b.o, h: b.h, l: b.l, c: b.c })).filter(b => barClosed(b.d, Date.now())); }
+  const d = await loadDaily(sym); return d && d.candles ? d.candles.filter(b => b.d >= from) : null; }
+async function tryLedgerResolve() { const f = 'data/tier2-ledger.jsonl'; let L; try { L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; }
+  let ch = false; const today = ny(Date.now()).d;
+  for (const r of L) { if (r.out || !/^try:/.test(r.kind || '')) continue; const hold = +r.hold > 0 ? +r.hold : tryHoldOf(String(r.kind).slice(4));
+    if (r.checked === today) continue; let bars = null; try { bars = await tryBars(r.sym, r.d); } catch (e) {} if (!bars || !bars.length) continue;
+    const z = tryResolveRow({ ...r, hold }, bars); r.checked = today; ch = true; if (z) { r.out = z.out; r.px1 = +(+z.px1).toFixed(4); r.entryPx = +(+z.px).toFixed(4); r.pct = z.pct; r.why = z.why; } }
+  if (ch) fs.writeFileSync(f, L.map(x => JSON.stringify(x)).join('\n') + '\n'); return L; }
 // TIER 2 SWITCHES ITSELF OFF ON ITS OWN LEDGER (review S-12, 22 Oct): 20+ resolved cases of that kind in data/tier2-ledger.jsonl with a
 // negative average after costs. (Before, V15 read only the league's 3-month score, which cannot exist before about Feb 2027.)
 function tier2LedgerNegative(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
@@ -905,6 +930,11 @@ function usHolidays(y) {
   return (HOLS[y] = new Set(list.filter(Boolean).map(isoD)));
 }
 const isHoliday = (dateStr) => usHolidays(+dateStr.slice(0, 4)).has(dateStr);
+// trading sessions strictly after date a, up to and including date b (US exchange weekdays minus holidays); and the date n sessions after a
+const isSession = (x) => { const w = new Date(x + 'T00:00:00Z').getUTCDay(); return w !== 0 && w !== 6 && !isHoliday(x); };
+const nextDay = (x) => new Date(Date.parse(x + 'T00:00:00Z') + 864e5).toISOString().slice(0, 10);
+function sessionsAfter(a, b) { if (!a || !b || b <= a) return 0; let n = 0, x = a; for (let k = 0; k < 800 && x < b; k++) { x = nextDay(x); if (isSession(x)) n++; } return n; }
+function sessionPlus(a, n) { let x = a; for (let k = 0; k < 800 && n > 0; k++) { x = nextDay(x); if (isSession(x)) n--; } return x; }
 const marketOpen = (now) => { const n = ny(now); return !n.weekend && !isHoliday(n.d) && n.mins >= 570 && n.mins < 960; };
 
 let used = 0;
@@ -2265,6 +2295,10 @@ const labRuns = (j) => { if (!j) return {}; const out = { ...(j.firstRun || {}) 
 // their extra 'wins' add little evidence. Only the original SQ11-PB12 trades; the copies stay on paper.
 const TRY_DUPLICATE = new Set(['SQ14-PB12M', 'SQ14-PB15', 'SQ14-PB12H']);
 const TRY_PAUSED = new Set(['ANOM-SUESURGE', 'SQ1-BBAUTH']);
+// (audit 24 Oct, coordinator) B-BASK1 (value lab) was judged as ONE basket a month: each tested 'trade' is the average return of its 10
+// names (value-lab.mjs BASK_MONTHS, n = number of months). Like squad5 / squad10, 2 of its names at 1,000 USD with a stop is not the
+// rule that was tested, so it never feeds TRY SMALL. B-FCF1 stays: it was judged per stock (each pick its own trade, n = 534 / 486).
+const TRY_BASKET = new Set(['B-BASK1_1m', 'B-BASK1_3m']);
 // (24 Oct 2026) a rule whose lab measured its return per year of capital against the S&P 500 must beat it in BOTH halves:
 // otherwise simply holding SPUS did better, and a 1,000 USD ticket adds risk without adding money. Rules without that measure are unaffected.
 const beatsIndex = (py) => !py || ['older', 'newer'].every(h => !py[h] || typeof py[h].rule !== 'number' || typeof py[h].spy !== 'number' || py[h].rule > py[h].spy);
@@ -2273,7 +2307,7 @@ const portfolioBeatsSpy = (pf) => { const h = pf && pf.standard && pf.standard.h
 function tryQualifies(firstRun) {
   // (24 Oct) also a usable sample in each half: not frozen REJECTED / TOO FEW CASES, 20+ trades, 3+ blocks where reported
   const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0 && !(typeof h.n === 'number' && h.n < 20) && !(typeof h.blocks === 'number' && h.blocks < 3);
-  return Object.entries(firstRun || {}).filter(([id, r]) => r && r.results && !(TRY_PAUSED.has(id) && !r.corrected) && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer) && !TRY_DUPLICATE.has(id) && beatsIndex(r.perYear) && portfolioBeatsSpy(r.portfolio)).map(([id]) => id);
+  return Object.entries(firstRun || {}).filter(([id, r]) => r && r.results && !(TRY_PAUSED.has(id) && !r.corrected) && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer) && !TRY_DUPLICATE.has(id) && !TRY_BASKET.has(id) && beatsIndex(r.perYear) && portfolioBeatsSpy(r.portfolio)).map(([id]) => id);
 }
 function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
@@ -2284,7 +2318,7 @@ function trySmallExitText(P) { if (!P || P.src !== 'try small' || ['quick', 'ent
 // the two TRY SMALL lane exits at a daily close (used for holdings too short in history for the full nightly checks)
 function trySmallCloseFlags(P, c) { const i = c.length - 1, held = c.filter(k => k.d > P.since).length, fl = []; if (i < 0) return { held, fl };
   if (P.stop && c[i].c <= P.stop) fl.push('CLOSED AT OR BELOW YOUR STOP ' + money(P.stop) + '. Sell / reassess at the next open.');
-  if (held >= (P.tryHold || 63)) fl.push('TRY SMALL TIME EXIT: ' + (P.tryHold || 63) + ' sessions have passed. Sell at the next open.');
+  if (held + 1 >= (P.tryHold || 63)) fl.push('TRY SMALL TIME EXIT: ' + (P.tryHold || 63) + ' sessions are up (counting your buy day). Sell at the next open.');   // (audit) the tested exit is the close of the hold-th session counting the buy day
   return { held, fl }; }
 // (audit 24 Oct) the TRY SMALL buy shown for this stock in the last 30 days (tier2-ledger kind try:<rule>, with its hold and stop).
 // 'bought SYM' used to look only at TODAY's lab files: a signal list renewed between the message and the reply left the buy untagged
@@ -2298,24 +2332,27 @@ function trySmallLines(pos, lastPx, exclude, session) {
   // (audit 24 Oct) a NEW-SIGNAL list is valid for the next open only: its close must be the newest session the scan knows (else, without
   // a session, at most 5 calendar days old). Before, a lab whose nightly run stopped kept showing the same old signals for 10 days.
   // (a file with no close date at all is judged by when it was written, at most 5 days)
-  const sigFresh = (d, gen) => d ? (session ? String(d) >= String(session) : Date.now() - Date.parse(d) <= 5 * 864e5) : !!gen && Date.now() - Date.parse(gen) <= 5 * 864e5;
+  const sigFresh = (d, gen) => d ? (session ? String(d) >= String(session) : true) && sessionsAfter(String(d).slice(0, 10), ny(Date.now()).d) <= 5 : !!gen && sessionsAfter(new Date(Date.parse(gen) - 864e5).toISOString().slice(0, 10), ny(Date.now()).d) <= 5;
   // a lab's own close is used as the price only when it is that fresh; a week-old close (the value lab's) gives a wrong limit and stop
   const pxOf = (p, d, gen) => (lastPx && lastPx[p.sym] > 0) ? lastPx[p.sym] : (p.px > 0 && sigFresh(d, gen) ? p.px : null);
   const VL = readJson0('data/value-lab.json'), VT = readJson0('data/value-today.json'), DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), src = [];
-  if (VL && fresh(VT) && VT.rules) for (const id of tryQualifies(labRuns(VL))) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (R && Array.isArray(R.picks)) src.push({ id, picks: R.picks.map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.lastClose }, VT.lastClose, VT.lastClose ? null : VT.generatedAt), blocked: p.blocked })), stopPct: 0.15, hold: 63, what: 'cash-rich, growing, low-debt company' }); }
+  // (audit 24 Oct, coordinator) a TRY SMALL buy must match the tested entry: the value rules buy at the open after their formation
+  // close, so a list is offered only within 5 sessions of rules[id].formed (no formed date: within 5 sessions of when the file was written)
+  const today = ny(Date.now()).d, within5 = (d) => !!d && sessionsAfter(String(d).slice(0, 10), today) <= 5, later = [];
+  if (VL && fresh(VT) && VT.rules) for (const id of tryQualifies(labRuns(VL))) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (R && !within5(R.formed || (VT.generatedAt && new Date(Date.parse(VT.generatedAt) - 864e5).toISOString().slice(0, 10)))) { if (R.formed) { const nx = sessionPlus(R.formed, 21); later.push(id + ' list ' + (nx > today ? 'due about ' + nx : 'formed about ' + nx + ', shown after the value lab\'s next run (Sundays)')); } continue; } if (R && Array.isArray(R.picks)) src.push({ id, picks: R.picks.map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.lastClose }, VT.lastClose, VT.lastClose ? null : VT.generatedAt), blocked: p.blocked })), stopPct: 0.15, hold: 63, what: 'cash-rich, growing, low-debt company' }); }
   const DC = readJson0('data/decoded-check.json'), failsBudget = (id) => !!(DC && DC.budget && new RegExp('\\b' + id + '\\b').test(DC.label || '') && tryQualifies({ x: { results: DC.budget } }).length === 0);   // DEC2-TPS: proven per dollar invested, loses per dollar planned
   if (DH && fresh(DT) && DT.methods && sigFresh(DT.lastClose, DT.generatedAt)) for (const id of tryQualifies(labRuns(DH)).filter(i => !failsBudget(i))) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.close }, DT.lastClose, DT.generatedAt) })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
   for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4', 'squad6', 'squad7', 'squad8', 'squad9', 'squad11', 'squad12', 'squad13', 'squad14', 'squad16']) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json');   // standard labs (23-24 Oct): same standard, each rule's own hold
     if (AL && fresh(AT) && AT.methods) { const runs = labRuns(AL); for (const id of tryQualifies(runs)) { const M = AT.methods[id], hold = +((runs[id] || {}).hold || (M && M.hold) || 63), sd = AT.lastClose || null; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.filter(p => p && sigFresh(sd || p.d, AT.generatedAt)).map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.close }, sd || p.d, AT.generatedAt) })), stopPct: hold > 100 ? 0.35 : 0.15, hold, what: M.name || 'published market pattern' }); } } }
-  if (!src.length) return [];
+  if (!src.length) return later.length ? ['TRY SMALL: no buy today (a pick is bought only within 5 sessions of its formation, as tested). Next ' + later.join(', ') + '.'] : [];
   const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);   // exclude: already a BUY elsewhere in this message
   let slots = TRY_MAX - Object.values(pos || {}).filter(P => P && P.src === 'try small').length; const buys = [], mark = [];
   for (const S0 of src) { if (tryLedgerOff('try:' + S0.id)) continue;
     for (const p of S0.picks) { if (!p || p.blocked || held.has(p.sym) || bad.has(p.sym)) continue; const h = myHalal(p.sym); if (h === 'fail') continue; let ew = ''; try { ew = eventWarn(p.sym); } catch (e) {} if (ew) continue;
       const px = p.px > 0 ? p.px : null;
       if (h !== 'ok') { if (!mark.includes(p.sym)) mark.push(p.sym); continue; }
-      if (slots <= 0 || buys.some(b => b.sym === p.sym)) continue; slots--; if (px) tier2Log(p.sym, 'try:' + S0.id, px, { hold: S0.hold, stopPct: S0.stopPct }); buys.push({ sym: p.sym, id: S0.id, px, stopPct: S0.stopPct, hold: S0.hold, what: S0.what }); } }
-  if (!buys.length && !mark.length) return [];
+      if (slots <= 0 || buys.some(b => b.sym === p.sym)) continue; slots--; if (px) tier2Log(p.sym, 'try:' + S0.id, px, { hold: S0.hold, stopPct: S0.stopPct, shownAt: new Date().toISOString() }); buys.push({ sym: p.sym, id: S0.id, px, stopPct: S0.stopPct, hold: S0.hold, what: S0.what }); } }
+  if (!buys.length && !mark.length) return later.length ? ['TRY SMALL: no buy today (a pick is bought only within 5 sessions of its formation, as tested). Next ' + later.join(', ') + '.'] : [];
   const out = ['TRY SMALL (weaker proof: made money after costs in BOTH 5-year test halves and beat the average stock, but did NOT pass the luck test. Small on purpose: ' + TRY_USD + ' USD each, max ' + TRY_MAX + ' open. Switches itself off if its first 10 results lose on average.)'];
   for (const b of buys) out.push('- BUY ' + b.sym + ' ' + TRY_USD + ' USD ' + (b.px ? 'up to ' + money(b.px * 1.03) + '. STOP ' + money(b.px * (1 - b.stopPct)) + ' at your broker (' + Math.round(b.stopPct * 100) + '%).' : 'at the next open (no recent price here: check the live price first). STOP ' + Math.round(b.stopPct * 100) + '% under your buy price at your broker; the bot works it out when you send  bought ' + b.sym + ' PRICE .') + ' SELL after about ' + (Math.max(1, Math.round(b.hold / 21)) + ' month' + (Math.round(b.hold / 21) > 1 ? 's' : '')) + ' (' + b.hold + ' sessions); the bot reminds you. Rule ' + b.id + ' (' + b.what + ').');
   if (mark.length) out.push('MARK HALAL FIRST (picks of this lane, no ZAD mark of yours yet): ' + mark.slice(0, 6).join(', ') + '. Check ZAD, send  halal SYM yes  and they can be bought next time.');
@@ -2341,6 +2378,7 @@ async function actionsText(sig, pos, px, title) {
   if (sig) { const fd = planCands(sig, pos).filter(x => x.fade); if (fd.length) out.push('', 'AVOID (tipped by a FADE source whose tips lag the market; 20 sessions after the tip): ' + fd.slice(0, 8).map(x => x.sym + ' (' + x.fade + ')').join(', ') + '.'); }
   if (sig) { const av = planCands(sig, pos).filter(x => x.lottery); if (av.length) out.push('', 'AVOID (lottery-like, tested to lag about 3% a month): ' + av.slice(0, 8).map(x => x.sym + ' +' + Math.round(x.lottery * 100) + '% in one day').join(', ') + '. Do not chase these.'); }
   const FOCUS = (readJson0('data/settings.json') || {}).focus !== false, working = FOCUS ? workingKinds().size > 0 : true;   // a kind proven under the full live bar (review S-14)
+  try { await tryLedgerResolve(); } catch (e) {}   // TRY SMALL rows: priced at their own hold / stop, every stock (audit 24 Oct)
   engineHistorySnapshot(); if (sig) { const lp = {}; for (const x of sig.stocks || []) if (x.last) lp[x.sym] = x.last; tier2Resolve(lp); }
   if (sig) { try { const lastPx = {}; for (const x of sig.stocks || []) if (x.last) lastPx[x.sym] = x.last; const pc = planCands(sig, pos); avoidLedger([...pc.filter(x => x.lottery).map(x => ({ sym: x.sym, why: 'lottery' })), ...pc.filter(x => x.fade).map(x => ({ sym: x.sym, why: 'faded tipster' }))], lastPx); } catch (e) {} }
   out.push('', ladder().text);
@@ -3212,7 +3250,7 @@ async function daily() {
         if (lv) P.exitBelow = +lv.toFixed(2);
         if (vv && L.exitAt ? L.exitAt(ind, c, vv, i) : (lv && c[i].c < lv)) flags.push('SWING TRADE EXIT: it closed under ~' + money(P.exitBelow) + ', the tested exit line. Sell at the next open.'); }
       if (P.stop && c[i].c <= P.stop) flags.push('CLOSED AT OR BELOW YOUR STOP ' + money(P.stop) + '. Sell / reassess at the next open.');
-      if (P.src === 'try small' && held >= (P.tryHold || 63)) flags.push('TRY SMALL TIME EXIT: ' + (P.tryHold || 63) + ' sessions have passed. Sell at the next open.');
+      if (P.src === 'try small') flags.push(...trySmallCloseFlags(P, c).fl.filter(f => /TIME EXIT/.test(f)));   // (audit 24 Oct) one rule for the time exit, no longer a session late
       if (held >= 1 && P.t1 && c[i].h >= P.t1) flags.push('Target 1 ' + money(P.t1) + ' was reached today.');
       const gapT = P.q === 'gap', hit = gapT ? c[i].c < ind.sma5[i] : c[i].c > ind.sma5[i];
       if (P.trail) { if (c.filter(k => k.d > (P.halfSince || P.since)).length >= 30) flags.push('RUNNING HALF TIME EXIT: 30 sessions have passed. Sell the rest at the next open.'); }
