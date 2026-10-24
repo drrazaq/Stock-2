@@ -2252,7 +2252,7 @@ function halalGapLine(pos) {   // holdings with no halal mark of yours (or ZAD l
 // FROZEN first run made money after the 1.2% stress cost in BOTH halves, beat the average stock in both, and stayed positive without its
 // 2 best trades in both. The luck bar is not required. 300 USD, max 2 open, ZAD-ok stocks only, stop 15%, sold after ~3 months.
 // Off with  settings.trySmall = false , or for a rule whose own ledger (kind try:<rule>) averages < 0 after 10+ resolved cases.
-const TRY_USD = 300, TRY_MAX = 2;
+const TRY_USD = 1000, TRY_MAX = 2;   // 1,000 USD: owner's choice 24 Oct (at 300 USD the fees ate ~2% a trade)
 function tryQualifies(firstRun) {
   const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0;
   return Object.entries(firstRun || {}).filter(([, r]) => r && r.results && ok(r.results.older) && ok(r.results.newer)).map(([id]) => id);

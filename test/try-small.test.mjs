@@ -30,7 +30,7 @@ test('only a rule positive after stress cost, ahead of the average stock and pos
 test('halal-ok picks become 300 USD buys with a 15% stop; unknown ones ask for a mark; failed and blocked ones are dropped', () => {
   const L = lines({}, { QLYS: 190, TPC: 78 }).join('\n');
   assert.match(L, /^TRY SMALL/);
-  assert.match(L, /- BUY QLYS 300 USD up to 195\.70.*STOP 161\.50/);
+  assert.match(L, /- BUY QLYS 1000 USD up to 195\.70.*STOP 161\.50/);
   assert.match(L, /- BUY TPC/);
   assert.match(L, /MARK HALAL FIRST.*IVZ/);
   assert.doesNotMatch(L, /PRK|BADX/);
@@ -65,7 +65,7 @@ test('a decoded-lab rule that meets the standard gives buys with its own hold an
     'data/decoded-history.json': { firstRun: { 'DEC-FROG': { verdict: 'NOT PROVEN', results: { older: half(0.0594, 0.0556, 0.0521), newer: half(0.1069, 0.0394, 0.0964) } }, 'DEC-QBO': { verdict: 'REJECTED', results: { older: half(-0.02, -0.01, -0.03), newer: half(-0.01, -0.01, -0.02) } } } },
     'data/decoded-today.json': { generatedAt: now, methods: { 'DEC-FROG': { newSignals: [{ sym: 'QLYS', close: 190, halal: 'ok' }, { sym: 'IVZ', close: 28 }] }, 'DEC-QBO': { newSignals: [{ sym: 'TPC', close: 78 }] } } } } });
   const L = S4.fn('trySmallLines')({}, { QLYS: 190 }).join('\n');
-  assert.match(L, /- BUY QLYS 300 USD up to 195\.70\. STOP 123\.50 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\)/);
+  assert.match(L, /- BUY QLYS 1000 USD up to 195\.70\. STOP 123\.50 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\)/);
   assert.match(L, /DEC-FROG/);
   assert.doesNotMatch(L, /TPC/);
   assert.match(L, /MARK HALAL FIRST.*IVZ/);
@@ -91,7 +91,7 @@ test('anomaly-lab rules that meet the standard give buys with their own hold', a
     'data/anomaly-lab.json': { firstRun: { 'ANOM-RESMOM': { verdict: 'NOT PROVEN', hold: 63, results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } }, 'ANOM-DN': { verdict: 'REJECTED', hold: 21, results: { older: half(-0.01, -0.01, -0.01), newer: half(0.01, 0.01, 0.01) } } } },
     'data/anomaly-today.json': { generatedAt: now, methods: { 'ANOM-RESMOM': { name: 'Residual momentum', hold: 63, newSignals: [{ sym: 'TPC', close: 78 }] }, 'ANOM-DN': { hold: 21, newSignals: [{ sym: 'QLYS', close: 190 }] } } } } });
   const L = S6.fn('trySmallLines')({}, { TPC: 78 }).join('\n');
-  assert.match(L, /- BUY TPC 300 USD up to 80\.34\. STOP 66\.30 at your broker \(15%\)\. SELL after about 3 months \(63 sessions\).*ANOM-RESMOM \(Residual momentum\)/);
+  assert.match(L, /- BUY TPC 1000 USD up to 80\.34\. STOP 66\.30 at your broker \(15%\)\. SELL after about 3 months \(63 sessions\).*ANOM-RESMOM \(Residual momentum\)/);
   assert.doesNotMatch(L, /QLYS/);
 });
 
@@ -102,5 +102,8 @@ test('the angles lab (and any standard lab) feeds TRY SMALL by the same standard
     'data/angles-lab.json': { firstRun: { 'ANG-X': { verdict: 'NOT PROVEN', hold: 20, results: { older: half(0.01, 0.01, 0.01), newer: half(0.02, 0.01, 0.02) } } } },
     'data/angles-today.json': { generatedAt: now, methods: { 'ANG-X': { name: 'Test angle', hold: 20, newSignals: [{ sym: 'TPC', close: 78 }] } } } } });
   const L = S7.fn('trySmallLines')({}, { TPC: 78 }).join('\n');
-  assert.match(L, /- BUY TPC 300 USD .*SELL after about 1 month\(s\) \(20 sessions\).*ANG-X \(Test angle\)/);
+  assert.match(L, /- BUY TPC 1000 USD .*SELL after about 1 month\(s\) \(20 sessions\).*ANG-X \(Test angle\)/);
 });
+
+// 24 Oct: owner's choice after the portfolio simulation: 1,000 USD a TRY SMALL trade (at 300 USD the 3 + 3 USD fees ate ~2% a trade).
+test('TRY SMALL trades are 1,000 USD', () => { assert.equal(S.value('TRY_USD'), 1000); });
