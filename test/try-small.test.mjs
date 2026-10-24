@@ -117,3 +117,18 @@ test('too few cases, too few trades or too few blocks never qualify', () => {
   assert.deepEqual(q({ A: { verdict: 'NOT PROVEN', results: { older: ok(40, 2), newer: ok(40, 5) } } }), []);
   assert.deepEqual(q({ A: { verdict: 'NOT PROVEN', results: { older: ok(40, 3), newer: ok(40, 5) } } }), ['A']);
 });
+
+// 24 Oct: the engine audit writes corrected re-runs next to the frozen first runs (data/<lab>.json correctedRun[id]; first-run.mjs
+// effectiveRuns). TRY SMALL must act on the corrected run when one exists (AUD-1 yardstick cap, AUD-2 SUESURGE look-ahead).
+test('a corrected run replaces the frozen first run for TRY SMALL', async () => {
+  const bad = { verdict: 'NOT PROVEN', results: { older: half(-0.01, -0.01, -0.01), newer: half(0.02, 0.01, 0.02) } };
+  const S8 = await loadScan({ files: { ...files, 'data/value-lab.json': { firstRun: {} },
+    'data/anomaly-lab.json': { firstRun: { 'ANOM-X': { verdict: 'NOT PROVEN', hold: 60, results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } } }, correctedRun: { 'ANOM-X': bad } },
+    'data/anomaly-today.json': { generatedAt: now, methods: { 'ANOM-X': { hold: 60, newSignals: [{ sym: 'TPC', close: 78 }] } } } } });
+  assert.deepEqual(S8.fn('trySmallLines')({}, { TPC: 78 }), []);
+});
+test('ANOM-SUESURGE is paused until its corrected run exists', () => {
+  const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
+  assert.deepEqual(q({ 'ANOM-SUESURGE': r }), []);
+  assert.deepEqual(q({ 'ANOM-SUESURGE': { ...r, corrected: true } }), ['ANOM-SUESURGE']);
+});

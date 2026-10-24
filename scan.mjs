@@ -2253,10 +2253,14 @@ function halalGapLine(pos) {   // holdings with no halal mark of yours (or ZAD l
 // 2 best trades in both. The luck bar is not required. 300 USD, max 2 open, ZAD-ok stocks only, stop 15%, sold after ~3 months.
 // Off with  settings.trySmall = false , or for a rule whose own ledger (kind try:<rule>) averages < 0 after 10+ resolved cases.
 const TRY_USD = 1000, TRY_MAX = 2;   // 1,000 USD: owner's choice 24 Oct (at 300 USD the fees ate ~2% a trade)
+// (24 Oct, engine audit) a lab's corrected re-run (correctedRun[id], firstRun untouched) replaces that rule's frozen first run here
+const labRuns = (j) => { if (!j) return {}; const out = { ...(j.firstRun || {}) }; for (const [k, r] of Object.entries(j.correctedRun || {})) if (r && r.results) out[k] = { ...r, corrected: true }; return out; };
+// paused until its corrected re-run exists: ANOM-SUESURGE (engine audit AUD-2, 24 Oct: its revenue-surprise cut-off used filings made after the buy)
+const TRY_PAUSED = new Set(['ANOM-SUESURGE']);
 function tryQualifies(firstRun) {
   // (24 Oct) also a usable sample in each half: not frozen REJECTED / TOO FEW CASES, 20+ trades, 3+ blocks where reported
   const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0 && !(typeof h.n === 'number' && h.n < 20) && !(typeof h.blocks === 'number' && h.blocks < 3);
-  return Object.entries(firstRun || {}).filter(([, r]) => r && r.results && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer)).map(([id]) => id);
+  return Object.entries(firstRun || {}).filter(([id, r]) => r && r.results && !(TRY_PAUSED.has(id) && !r.corrected) && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer)).map(([id]) => id);
 }
 function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
@@ -2265,11 +2269,11 @@ function trySmallLines(pos, lastPx) {
   // sources: the value lab (B-*) and, since 23 Oct evening, the decoded lab (DEC-*), both judged on their frozen first runs by tryQualifies
   const fresh = (j) => j && Date.now() - Date.parse(j.generatedAt || 0) <= 10 * 864e5;
   const VL = readJson0('data/value-lab.json'), VT = readJson0('data/value-today.json'), DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), src = [];
-  if (VL && fresh(VT) && VT.rules) for (const id of tryQualifies(VL.firstRun)) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (R && Array.isArray(R.picks)) src.push({ id, picks: R.picks.map(p => ({ sym: p.sym, px: p.lastClose, blocked: p.blocked })), stopPct: 0.15, hold: 63, what: 'cash-rich, growing, low-debt company' }); }
+  if (VL && fresh(VT) && VT.rules) for (const id of tryQualifies(labRuns(VL))) { const R = VT.rules[id.replace(/_\w+$/, '')]; if (R && Array.isArray(R.picks)) src.push({ id, picks: R.picks.map(p => ({ sym: p.sym, px: p.lastClose, blocked: p.blocked })), stopPct: 0.15, hold: 63, what: 'cash-rich, growing, low-debt company' }); }
   const DC = readJson0('data/decoded-check.json'), failsBudget = (id) => !!(DC && DC.budget && new RegExp('\\b' + id + '\\b').test(DC.label || '') && tryQualifies({ x: { results: DC.budget } }).length === 0);   // DEC2-TPS: proven per dollar invested, loses per dollar planned
-  if (DH && fresh(DT) && DT.methods) for (const id of tryQualifies(DH.firstRun).filter(i => !failsBudget(i))) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
+  if (DH && fresh(DT) && DT.methods) for (const id of tryQualifies(labRuns(DH)).filter(i => !failsBudget(i))) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
   for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4']) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json');   // standard labs (23-24 Oct): same standard, each rule's own hold
-    if (AL && fresh(AT) && AT.methods) for (const id of tryQualifies(AL.firstRun)) { const M = AT.methods[id], hold = +((AL.firstRun[id] || {}).hold || (M && M.hold) || 63); if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: hold > 100 ? 0.35 : 0.15, hold, what: M.name || 'published market pattern' }); } }
+    if (AL && fresh(AT) && AT.methods) for (const id of tryQualifies(labRuns(AL))) { const M = AT.methods[id], hold = +((AL.firstRun[id] || {}).hold || (M && M.hold) || 63); if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: p.close })), stopPct: hold > 100 ? 0.35 : 0.15, hold, what: M.name || 'published market pattern' }); } }
   if (!src.length) return [];
   const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set(Object.keys(pos || {}));
   let slots = TRY_MAX - Object.values(pos || {}).filter(P => P && P.src === 'try small').length; const buys = [], mark = [];
@@ -2770,11 +2774,11 @@ async function tgCommands(sig) {
       if (!entry) { out.push(sym + ': I could not get a price. Send it with the price, for example: bought ' + sym + ' 12.50'); continue; }
       const P = { entry, since: ny(Date.now()).d, ...planFor(sym, entry, sig) }; { const md = moodOf(text); if (md) P.mood = md; }
       { const Qh = readJson0('data/quality.json'); if (((Qh && Qh.fscoreUpToday) || []).some(x => x.sym === sym)) P.src = 'longer hold'; }   // counts toward the 3 open LONGER HOLDS
-      if (!P.src) { const VT = readJson0('data/value-today.json'), VL = readJson0('data/value-lab.json'), q = VL ? tryQualifies(VL.firstRun) : [];   // TRY SMALL buy: its own 15% stop and ~3-month exit
+      if (!P.src) { const VT = readJson0('data/value-today.json'), VL = readJson0('data/value-lab.json'), q = VL ? tryQualifies(labRuns(VL)) : [];   // TRY SMALL buy: its own 15% stop and ~3-month exit
         if (VT && VT.rules && q.some(id => ((VT.rules[id.replace(/_\w+$/, '')] || {}).picks || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.85).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, 15% under your buy (fixed, never moved by the bot)'; P.tryHold = 63; } 
-        for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4']) if (!P.src) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json'), aq = AL ? tryQualifies(AL.firstRun) : [], hit = AT && AT.methods ? aq.find(id => ((AT.methods[id] || {}).newSignals || []).some(x => x.sym === sym)) : null;
+        for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4']) if (!P.src) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json'), aq = AL ? tryQualifies(labRuns(AL)) : [], hit = AT && AT.methods ? aq.find(id => ((AT.methods[id] || {}).newSignals || []).some(x => x.sym === sym)) : null;
           if (hit) { const hold = +((AL.firstRun[hit] || {}).hold || 63), sp = hold > 100 ? 0.35 : 0.15; P.src = 'try small'; P.stop = +(entry * (1 - sp)).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, ' + Math.round(sp * 100) + '% under your buy (fixed, never moved by the bot)'; P.tryHold = hold; } }
-        if (!P.src) { const DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), dq = DH ? tryQualifies(DH.firstRun) : [];
+        if (!P.src) { const DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), dq = DH ? tryQualifies(labRuns(DH)) : [];
           if (DT && DT.methods && dq.some(id => ((DT.methods[id] || {}).newSignals || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.65).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop for a 6-month hold, 35% under your buy (fixed, never moved by the bot)'; P.tryHold = 126; } } }
       { const cd = sig ? planCands(sig, {}).find(x => x.sym === sym && x.ok) : null; if (cd && typeof cd.win === 'number') P.test = { win: +cd.win.toFixed(3), net: cd.net !== null ? +cd.net.toFixed(4) : null, n: cd.n || null, kind: cd.kind }; }   // what the tests promised, to compare with what really happens
       if (P.kind === 'manual' && !P.stop) {   // no tested plan today: suggest a stop from the stock's own volatility and trend
