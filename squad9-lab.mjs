@@ -124,7 +124,13 @@ const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filte
 
 // ================= 4. CHANNEL STYLE: the rule on SPY alone and on QQQ alone (information) =================
 const ETF = {};
-for (const [sym, idx] of [['SPY', spyI], ['QQQ', qqqI]]) { if (idx === undefined) { ETF[sym] = null; continue; } const P = series(idx), got = {}; for (const id of IDS) got[id] = [];
+// a fund the whole-market cache does not carry (QQQ: the Sunday cache keeps SPY only) -> its own daily bars from Massive (information only)
+async function fundSeries(sym, idx) { const have = idx === undefined ? 0 : sub(CA, idx).filter(x => x > 0).length; if (have >= T * 0.95) return series(idx);
+  const j = await api('/v2/aggs/ticker/' + sym + '/range/1/day/' + D[0] + '/' + D[T - 1] + '?adjusted=true&sort=asc&limit=50000'), rows = j && Array.isArray(j.results) ? j.results : [];
+  const P = { o: new Float64Array(T).fill(NaN), h: new Float64Array(T).fill(NaN), l: new Float64Array(T).fill(NaN), c: new Float64Array(T).fill(NaN), v: new Float64Array(T).fill(NaN) }; let n = 0;
+  for (const r of rows) { const t = tOf.get(iso(r.t + 12 * 36e5)); if (t === undefined) continue; P.o[t] = r.o; P.h[t] = r.h; P.l[t] = r.l; P.c[t] = r.c; P.v[t] = r.v; n++; }
+  log(sym + ': ' + have + ' sessions in the cache, ' + n + ' fetched from Massive'); return n >= T * 0.95 ? P : null; }
+for (const [sym, idx] of [['SPY', spyI], ['QQQ', qqqI]]) { const P = await fundSeries(sym, idx); if (!P) { ETF[sym] = null; continue; } const got = {}; for (const id of IDS) got[id] = [];
   runStock(P, () => true, (id, t, plan, s) => { if (s && !s.open) got[id].push({ t, g: s.g, k: s.k, x: s.x }); });
   const bh = (a, b) => { const x = P.o[a], y = P.c[b]; return x > 0 && y > 0 ? r4(y / x - 1) : null; }, lastOld = tSplit - 1;
   ETF[sym] = { buyHold: { older: bh(200, lastOld), newer: bh(tSplit, T - 1), note: 'buy at the open of session 200 (the first session any rule can signal) / of the first 2024 session, sell at the last close of the half' }, rules: {} };
