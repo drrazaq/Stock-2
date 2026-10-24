@@ -150,3 +150,9 @@ test('a basket whose whole-portfolio test lagged SPY does not qualify (SQ5-TOP20
   assert.deepEqual(q({ A: { ...r, portfolio: { standard: { halves: { older: { beatsSpy: false }, newer: { beatsSpy: false } } } } } }), []);
   assert.deepEqual(q({ A: { ...r, portfolio: { standard: { halves: { older: { beatsSpy: true }, newer: { beatsSpy: true } } } } } }), ['A']);
 });
+// 24 Oct: basket labs (squad5, squad10) never feed TRY SMALL: a basket only works owned whole.
+test('basket labs squad5 and squad10 are not read by TRY SMALL', async () => {
+  const fs = await import('node:fs');
+  const src = fs.readFileSync(new URL('../scan.mjs', import.meta.url), 'utf8');
+  for (const line of src.split('\n').filter(l => l.includes("for (const lab of ['anomaly'"))) { assert.ok(!line.includes("'squad5'")); assert.ok(!line.includes("'squad10'")); }
+});
