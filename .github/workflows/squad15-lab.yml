@@ -5,7 +5,7 @@ name: Squad 15 lab
 # complete verdict frozen in data/squad15-lab.json firstRun). Forward PAPER ledger from Monday 26 Oct 2026 (data/squad15-paper.jsonl).
 # The whole-market price cache is RESTORED READ ONLY (used only to rebuild Squad 6's full MTUM / QMOM pick list in a scratch copy;
 # nothing of Squad 6 is committed). Only this lab's own cache (squad15-cache) is saved. Commits only its own output files and its own
-# library entries. Never places an order. Start by hand: change run-squad15-now.txt (a last line containing PROBE = data probe only).
+# library entries. Never places an order. Start by hand: change run-squad15-now.txt (a last line containing PROBE = data probe only; DIAG = data check: counts only, no return seen, nothing judged).
 on:
   schedule:
     - cron: '41 0 * * 2-6'    # weekday evenings (New York) after Squad 6 / 11 have written their signals: paper lane
@@ -40,8 +40,9 @@ jobs:
           MODE=run
           if [ "${{ github.event_name }}" = "schedule" ]; then MODE=paper; fi
           if [ "${{ github.event_name }}" = "push" ] && tail -n 1 run-squad15-now.txt | grep -q PROBE; then MODE=probe; fi
+          if [ "${{ github.event_name }}" = "push" ] && tail -n 1 run-squad15-now.txt | grep -q DIAG; then MODE=diag; fi
           echo "MODE=$MODE" >> "$GITHUB_ENV"; echo "mode $MODE"
-      - if: env.MODE == 'run'
+      - if: env.MODE == 'run' || env.MODE == 'diag'
         uses: actions/cache/restore@v4
         with:
           path: study-cache
@@ -49,7 +50,7 @@ jobs:
           restore-keys: leaders-study-
       # Squad 6's own code, unchanged except that it keeps ALL its trades (its committed file keeps only the last 300), run OFFLINE in a
       # scratch copy; only its trade list is read (squad15-cache/sq6-full.json). Nothing of it is committed.
-      - if: env.MODE == 'run'
+      - if: env.MODE == 'run' || env.MODE == 'diag'
         shell: bash
         timeout-minutes: 30
         run: |
