@@ -180,6 +180,34 @@ export function pairTable(rows, pop, qs) { const out = [], base = rows.filter(r 
       pop: p.length, popWin: p.length ? r4(p.reduce((s, r) => s + r.win, 0) / p.length) : null, popLose: p.length ? r4(p.reduce((s, r) => s + r.lose, 0) / p.length) : null, popFwd: r4(mean(fw)), popFwdAll: r4(pAll) }); }
   return out.sort((x, y) => (y.lift || 0) - (x.lift || 0)); }
 
+// ================= STAGE 1b: CANDIDATE SCREEN (older half only; written 24 Oct 2026 after reading data/squad7-dna.json) =================
+// What stage 1 showed (older half, 2021-10 .. 2023-12): the traits that separate winners from look-alikes best are VARIANCE traits
+// (wide 10-day range, high volatility, deep under the 52-week high, big gaps, a down day, short base, dilution, small size). They
+// flag LOSERS as often as winners: their best deciles have a negative average forward return. Traits where winners clearly outnumber
+// losers: deep under the 200-day average (20-session horizon only), the sector laggard, no dilution, a long quiet base, 59-85 days since
+// the last report (next report near), a moderate pullback (200-day -34%..-15%) and leaders in strong sectors (120-session horizon).
+// Each candidate below pairs a winner-lift trait with a loser-cutting trait (cuts = stage-1 decile boundaries, rounded). Several singles
+// are already rejected in the library (ANOM-LOWVOL, ANOM-EAP, ANOM-NSI, D2-004, M8, I3/I13), so only combinations are screened.
+// The screen runs the rule engine on the OLDER half only (signal + hold before 2024-01-01); the 4-8 best by older-half edge become the
+// SQ7 rules; the newer half is then their out-of-sample test. when = [[feature, '>=' | '<=', cut]], rank = per-day order, max 10 a day.
+const C = (name, hold, when, rank) => ({ name, hold, when, rank, maxPerDay: 10 });
+export const CANDIDATES = {
+  A: C('Deep under the 200-day, not diluting', 20, [['d200', '<=', -0.33], ['dShares', '<=', 0.003]], ['d200', 'low']),
+  B: C('Deep under the 200-day, next report near (59-85 days since the last)', 20, [['d200', '<=', -0.33], ['earnDays', '>=', 59], ['earnDays', '<=', 85]], ['d200', 'low']),
+  C: C('Sector laggard (3-month return 22%+ under its sector) while the sector turns up (half its peers beat SPY), under the 200-day', 20, [['d200', '<=', -0.26], ['rsSec', '<=', -0.22], ['breadthSec', '>=', 0.5]], ['rsSec', 'low']),
+  D: C('Deep under the 200-day but calm (20-day volatility under 4.35%)', 20, [['d200', '<=', -0.33], ['vol20', '<=', 0.0435]], ['d200', 'low']),
+  E: C('Deep under the 200-day with volume waking up (1.45x the 50-day)', 20, [['d200', '<=', -0.33], ['turn50', '>=', 1.45]], ['turn50', 'high']),
+  F: C('Long base far under the 52-week high, no dilution', 20, [['hi52', '<=', -0.53], ['baseLen', '>=', 26], ['dShares', '<=', 0.008]], ['baseLen', 'high']),
+  G: C('Pre-report sector laggard under its 200-day (59-85 days since the last report)', 20, [['earnDays', '>=', 59], ['earnDays', '<=', 85], ['rsSec', '<=', -0.1], ['d200', '<=', 0]], ['rsSec', 'low']),
+  H: C('Deep under the 200-day, recent 3%+ gap up, not diluting', 20, [['d200', '<=', -0.33], ['gapUp20', '>=', 1], ['dShares', '<=', 0.008]], ['d200', 'low']),
+  I: C('Quiet pullback: 15-34% under the 200-day, 30+ day base, no dilution', 120, [['d200', '>=', -0.34], ['d200', '<=', -0.15], ['baseLen', '>=', 30], ['dShares', '<=', 0.007]], ['baseLen', 'high']),
+  J: C('Leader in a strong sector: 15%+ over the 200-day, 55%+ of sector peers beat SPY', 120, [['d200', '>=', 0.15], ['breadthSec', '>=', 0.55]], ['breadthSec', 'high']),
+  K: C('Leader on volume, no dilution: 15%+ over the 200-day, volume 1.6x the 50-day', 120, [['d200', '>=', 0.15], ['turn50', '>=', 1.6], ['dShares', '<=', 0.007]], ['turn50', 'high']),
+  L: C('Pullback 27-49% under the 52-week high, 6-month RS not weak, volume expanding after a dry-up', 120, [['hi52', '>=', -0.49], ['hi52', '<=', -0.27], ['rs126', '>=', -0.2], ['dryPop', '>=', 2.0]], ['dryPop', 'high']),
+  M: C('Buyback company (shares -3%+ in a year) not collapsing, on 1.34x volume', 120, [['dShares', '<=', -0.03], ['d200', '>=', -0.34], ['turn50', '>=', 1.34]], ['turn50', 'high']),
+};
+export const candOk = (c, f) => c.when.every(([k, side, cut]) => ok(f[k]) && (side === '>=' ? f[k] >= cut : f[k] <= cut));
+
 // ================= STAGE 2 RULES (registered after stage 1; see the header block written then) =================
 export const RULES = {};
 export const IDS = Object.keys(RULES);

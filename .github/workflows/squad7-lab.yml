@@ -56,6 +56,7 @@ jobs:
           set -o pipefail
           L="$(tail -n 1 run-squad7-now.txt)"
           if [ "${{ github.event_name }}" = "push" ] && echo "$L" | grep -q DNA; then export SQ7_MODE=dna; fi
+          if [ "${{ github.event_name }}" = "push" ] && echo "$L" | grep -q SCREEN; then export SQ7_MODE=screen; fi
           if echo "$L" | grep -q DIAG; then export DIAG=1; fi
           node squad7-lab.mjs 2>&1 | tee run.log
         env:
@@ -72,7 +73,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/squad7-run.log 2>/dev/null || true
-          FILES="data/squad7-dna.json data/squad7-lab.json data/squad7-paper.jsonl data/squad7-today.json data/squad7-board.json data/squad7-diag.json data/squad7-run.log"
+          FILES="data/squad7-dna.json data/squad7-screen.json data/squad7-lab.json data/squad7-paper.jsonl data/squad7-today.json data/squad7-board.json data/squad7-diag.json data/squad7-run.log"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"

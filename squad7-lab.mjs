@@ -3,6 +3,8 @@
 //   SQ7_MODE=dna  STAGE 1 discovery on the OLDER half only (labels must end before 2024-01-01): matched case-control lift tables for
 //                 W20 (+30% in 20 sessions) and W120 (+100% in 120 sessions) -> data/squad7-dna.json. Run once (refuses to overwrite).
 //                 Nothing is judged, nothing is traded, no newer-half price is read by the discovery.
+//   SQ7_MODE=screen STAGE 1b: the CANDIDATES of squad7-core.mjs run through the rule engine on the OLDER half only (signal and exit before
+//                 2024-01-01) -> data/squad7-screen.json; the best 4-8 become the SQ7 rules. Run once.
 //   default       STAGE 2: the SQ7-* rules (squad7-core.mjs RULES, registered after stage 1 and before any newer-half number) are written
 //                 into data/strategy-library.json, then each rule not yet frozen gets its ONE 5-year test (value-core judge; halves = signal
 //                 before / from 2024-01-01; AUD-1 capped yardstick); first complete verdict frozen in data/squad7-lab.json firstRun
@@ -20,11 +22,11 @@ import zlib from 'node:zlib';
 import { freezeEach, latestBlock } from './first-run.mjs';
 import { halfStat, judge, TIER2_T } from './value-core.mjs';
 import { ownAverage, nextSession } from './squad1-core.mjs';
-import { COST, SPLIT, PAPER_START, W20, W120, CONTROLS, POP_EVERY, FEATURES, PRICE_FEATURES, DESCRIBE, RULES, IDS, ruleOk, mean, r4, capG, halfOf, labelSeries, episodeStarts, cellKey, looseKey,
+import { COST, SPLIT, PAPER_START, W20, W120, CONTROLS, POP_EVERY, FEATURES, PRICE_FEATURES, DESCRIBE, RULES, IDS, candOk, CANDIDATES, mean, r4, capG, halfOf, labelSeries, episodeStarts, cellKey, looseKey,
   pickN, priceFeatures, sectorFeatures, sharesChange, sharesAt, splitFix, earnFeatures, liftTable, bestQuintile, pairTable, boardStats, paperReady, preRegister } from './squad7-core.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', NQ = local(env.NASDAQ_BASE) || 'https://api.nasdaq.com';
-const SC = env.SQ7_CACHE || 'squad7-cache', OUT = 'data/squad7-lab.json', DNA = 'data/squad7-dna.json', PAPER = 'data/squad7-paper.jsonl', TODAY = 'data/squad7-today.json', BOARD = 'data/squad7-board.json', LIB = 'data/strategy-library.json';
+const SC = env.SQ7_CACHE || 'squad7-cache', OUT = 'data/squad7-lab.json', DNA = 'data/squad7-dna.json', SCREEN = 'data/squad7-screen.json', PAPER = 'data/squad7-paper.jsonl', TODAY = 'data/squad7-today.json', BOARD = 'data/squad7-board.json', LIB = 'data/strategy-library.json';
 const MODE = env.SQ7_MODE || 'rules', DIAG = !!env.DIAG, START = env.PAPER_START || PAPER_START;
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }, JZ = (f, d) => { try { return JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString()); } catch (e) { return d; } };
 const W = (f, o) => { fs.mkdirSync(f.replace(/\/[^/]*$/, ''), { recursive: true }); fs.writeFileSync(f, JSON.stringify(o)); };
@@ -35,10 +37,11 @@ fs.mkdirSync(SC, { recursive: true }); fs.mkdirSync('data', { recursive: true })
 const PREV = J(OUT, {}), FROZEN = PREV.firstRun || {}, LEAGUE = J('data/agent-league.json', {}), BAR = Math.max(TIER2_T, +LEAGUE.bar || 0, 4.0), STATUS = {};
 log('squad 7 lab, mode ' + MODE + (DIAG ? ' (DIAG)' : '') + '; rules registered ' + IDS.length + ', frozen ' + Object.keys(FROZEN).length);
 if (MODE === 'dna' && fs.existsSync(DNA) && !DIAG) { console.log('squad7-lab: stage 1 already done (' + DNA + ' exists); discovery runs once'); process.exit(0); }
-if (MODE !== 'dna' && !IDS.length) { console.log('squad7-lab: no SQ7 rule registered yet (stage 1 first); nothing done'); process.exit(0); }
+if (MODE === 'screen' && fs.existsSync(SCREEN) && !DIAG) { console.log('squad7-lab: the candidate screen already ran (' + SCREEN + ' exists); it runs once'); process.exit(0); }
+if (MODE === 'rules' && !IDS.length) { console.log('squad7-lab: no SQ7 rule registered yet (stage 1 first); nothing done'); process.exit(0); }
 
 // ================= 0. PRE-REGISTRATION (before any computation; idempotent) =================
-if (MODE !== 'dna' && !DIAG) { const LB = J(LIB, null), ch = preRegister(LB); if (ch) fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); log('library: ' + ch + ' SQ7 entries written now'); }
+if (MODE === 'rules' && !DIAG) { const LB = J(LIB, null), ch = preRegister(LB); if (ch) fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); log('library: ' + ch + ' SQ7 entries written now'); }
 
 // ================= 1. PRICES =================
 let store = JZ(env.CACHE || 'study-cache/grouped.json.gz', null);
@@ -51,7 +54,7 @@ let calls = 0; async function api(path) { if (!env.MASSIVE_KEY && !local(env.MAS
 const CS = new Set(store.ref ? store.ref.syms : []), qualifies = (x) => x.c >= 3 && x.c * x.v >= 1e6;
 const pack = (rows) => ({ T: rows.map(x => x.T), o: rows.map(x => x.o), h: rows.map(x => x.h), l: rows.map(x => x.l), c: rows.map(x => x.c), v: rows.map(x => x.v) });
 const cacheLast = Object.keys(store.days).sort().pop(), fresh = [];
-if (MODE !== 'dna') for (let x = Date.parse(cacheLast) + 864e5; x <= Date.now(); x += 864e5) { const d = iso(x), wd = new Date(x).getUTCDay(); if (wd === 0 || wd === 6 || DIAG) continue;
+if (MODE === 'rules') for (let x = Date.parse(cacheLast) + 864e5; x <= Date.now(); x += 864e5) { const d = iso(x), wd = new Date(x).getUTCDay(); if (wd === 0 || wd === 6 || DIAG) continue;
   const j = await api('/v2/aggs/grouped/locale/us/market/stocks/' + d + '?adjusted=true'); if (!j || j.refused || !Array.isArray(j.results) || !j.results.length) continue;
   const all = j.results.filter(x => x && /^[A-Z]{1,5}$/.test(x.T || '') && (CS.has(x.T) || x.T === 'SPY' || !CS.size) && x.c > 0);
   store.days[d] = { ...pack(all.filter(qualifies)), x: pack(all.filter(x => !qualifies(x))) }; fresh.push(d); }
@@ -65,7 +68,7 @@ let xDays = 0, hlMissing = 0;
 D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const k = SY.get(x.T[j]) * T + t; OA[k] = x.o[j]; CA[k] = x.c[j]; VA[k] = x.v[j]; MAIN[k] = 1; if (x.h && x.l) { HA[k] = x.h[j]; LA[k] = x.l[j]; } else hlMissing++; }
   if (x.x) { xDays++; for (let j = 0; j < x.x.T.length; j++) { const q = SY.get(x.x.T[j]); if (q === undefined) continue; const k = q * T + t; if (MAIN[k]) continue; CA[k] = x.x.c[j]; OA[k] = x.x.o[j]; VA[k] = x.x.v ? x.x.v[j] : NaN; if (x.x.h && x.x.l) { HA[k] = x.x.h[j]; LA[k] = x.x.l[j]; } } } });
 const SIC0 = store.sic || {}; store = null;
-if (MODE !== 'dna' && !DIAG) { const j = await api('/stocks/v1/splits?execution_date.gte=' + cacheLast + '&limit=1000'), rows = j && Array.isArray(j.results) ? j.results : []; let fixed = 0;
+if (MODE === 'rules' && !DIAG) { const j = await api('/stocks/v1/splits?execution_date.gte=' + cacheLast + '&limit=1000'), rows = j && Array.isArray(j.results) ? j.results : []; let fixed = 0;
   for (const x of rows) { const s = String(x.ticker || '').toUpperCase(), d = String(x.execution_date || ''), f = +x.split_from, to = +x.split_to; if (!s || !d || !(f > 0) || !(to > 0) || f === to || /dividend/i.test(String(x.adjustment_type || ''))) continue;
     const r = to / f, i = SY.get(s), ta = D.findIndex(z => z >= d); if (i === undefined || ta <= 0) continue; let pre = null, post = null;
     for (let k = ta - 1; k >= Math.max(0, ta - 10) && pre === null; k--) if (CA[i * T + k] > 0) pre = CA[i * T + k]; for (let k = ta; k < Math.min(T, ta + 10) && post === null; k++) if (CA[i * T + k] > 0) post = CA[i * T + k];
@@ -99,7 +102,7 @@ STATUS.shares = { ok: Object.keys(SH.c).length > 3000, companies: Object.keys(SH
 // Nasdaq earnings calendar: [sym, time, actual, estimate] per day file
 const REP = new Map(); { const today = iso(Date.now()); let have = 0, miss = 0, fetched = 0; const NQH = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36', Accept: 'application/json, text/plain, */*', Origin: 'https://www.nasdaq.com', Referer: 'https://www.nasdaq.com/' };
   const usd = (s) => { const x = parseFloat(String(s || '').replace(/[$,()]/g, '')); return isFinite(x) ? (/\(/.test(String(s)) ? -x : x) : null; };
-  const lastD = MODE === 'dna' ? D[tSplit - 1] : D[T - 1];
+  const lastD = MODE !== 'rules' ? D[tSplit - 1] : D[T - 1];
   for (const d of D) { if (d > lastD) break; let rows = null; for (const dir of [SC, 'anomaly-cache', 'a-cache']) { rows = J(dir + '/nasdaq/' + d + '.json', null); if (rows) break; }
     if (!rows && !DIAG && left() > 200 * 60e3 && d < today) { await sleep(local(env.NASDAQ_BASE) ? 0 : 350); fetched++; let j = null;
       try { const r = await fetch(NQ + '/api/calendar/earnings?date=' + d, { headers: NQH, signal: AbortSignal.timeout(30000) }); j = r.ok ? await r.json() : null; } catch (e) {}
@@ -157,19 +160,27 @@ if (MODE === 'dna') {
 // ================= 4B. STAGE 2: 5-YEAR ONE-SHOT =================
 const need = IDS.filter(id => !FROZEN[id]), RES = {}, COUNTS = {};
 // signals of a rule on sessions [a, b]: liquid at t, every condition met, at most maxPerDay ranked by the registered rank feature
-function signalsOf(id, a, b) { const R = RULES[id], out = [];
-  for (let t = Math.max(0, a); t <= b; t++) { const hits = []; for (const i of liqList(t)) { const f = featAt(i, t); if (ruleOk(id, f)) hits.push({ i, t, r: f[R.rank[0]] }); }
+function signalsOf(id, a, b) { return sigOf(RULES[id], a, b); }
+function sigOf(R, a, b) { const out = [];
+  for (let t = Math.max(0, a); t <= b; t++) { const hits = []; for (const i of liqList(t)) { const f = featAt(i, t); if (candOk(R, f)) hits.push({ i, t, r: f[R.rank[0]] }); }
     hits.sort((p, q) => R.rank[1] === 'high' ? q.r - p.r : p.r - q.r); for (const h of hits.slice(0, R.maxPerDay)) out.push({ ...h, k: t + 1, x: t + R.hold, future: t + 1 > T - 1 }); }
   return out; }
 function tradesOf(id, sigs) { const out = [], busyUntil = new Map(), spans = new Map();
   for (const z of sigs) { if (z.x >= T || z.future) continue; if ((busyUntil.get(z.i) ?? -1) >= z.k) continue; const g0 = ret(z.i, z.k, z.x); if (g0 === null || !isFinite(g0)) continue; const g = capG(g0), c = ctrlSpan(z.k, z.x); if (c === null) continue;
     busyUntil.set(z.i, z.x); (spans.get(z.i) || spans.set(z.i, []).get(z.i)).push([z.k, z.x]); out.push({ t: z.t, s: SYMS[z.i], i: z.i, k: z.k, x: z.x, g, c, half: halfOf(D[z.t]) }); }
   const ownMemo = new Map();
-  for (const z of out) { const len = z.x - z.k + 1, key = z.i + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 253, to: T - 1, len, step: 10, busy: spans.get(z.i) || [], okAt: (u) => LIQ[z.i * T + u - 1] === 1 && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.i, u, x) }));
+  for (const z of out) { const len = z.x - z.k + 1, key = z.i + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 253, to: MODE === 'screen' ? tSplit - 1 : T - 1, len, step: 10, busy: spans.get(z.i) || [], okAt: (u) => LIQ[z.i * T + u - 1] === 1 && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.i, u, x) }));
     z.own = ownMemo.get(key); }
   return out; }
 const shapeOf = (tr) => { const net = tr.map(z => z.g - COST), by = {}; tr.forEach((z, k) => { const y = D[z.t].slice(0, 4); (by[y] = by[y] || []).push(net[k]); });
   return { trades: tr.length, win: tr.length ? r4(net.filter(x => x > 0).length / tr.length) : null, byYear: Object.fromEntries(Object.keys(by).sort().map(y => [y, { n: by[y].length, avg: r4(mean(by[y])) }])) }; };
+// ---- STAGE 1b: CANDIDATE SCREEN on the OLDER half only (signal + hold end before the first 2024 session) ----
+if (MODE === 'screen') { const outS = { generatedAt: new Date().toISOString(), stage: '1b', note: 'OLDER HALF ONLY: every candidate trade has its signal AND its exit before ' + SPLIT + ' (the newer half is not read). Same engine as the 5-year test (next open, fixed hold, one open trade per stock, max 10 a day, 0.8% cost, the average liquid stock over the same sessions as the yardstick, +300% cap both sides). Used only to choose which candidates become SQ7 rules.', window: [D[0], D[tSplit - 1]], data: STATUS, candidates: {} };
+  for (const [key, R] of Object.entries(CANDIDATES)) { const last = tSplit - 1 - R.hold, sigs = sigOf(R, 20, last), tr = tradesOf('screen-' + key, sigs).filter(z => z.x <= tSplit - 1);
+    const st = halfStat(tr, R.hold), sem = {}; for (const z of tr) { const k = D[z.t].slice(0, 4) + (D[z.t].slice(5, 7) <= '06' ? 'H1' : 'H2'); (sem[k] = sem[k] || []).push(z.g - COST - z.c); }
+    outS.candidates[key] = { ...R, older: st, edgeBySemester: Object.fromEntries(Object.keys(sem).sort().map(k => [k, { n: sem[k].length, edge: r4(mean(sem[k])) }])), signals: sigs.length };
+    log('screen ' + key + ' (' + R.hold + 'd) ' + R.name + ': n ' + st.n + ' days ' + st.days + ' avg ' + pc(st.avg) + ' stress ' + pc(st.avgStress) + ' edge ' + pc(st.edge) + ' own ' + pc(st.vsOwn) + ' no2 ' + pc(st.noTop2) + ' tBlock ' + st.tBlock + ' | ' + Object.entries(outS.candidates[key].edgeBySemester).map(([k, v]) => k + ' ' + v.n + ' ' + pc(v.edge)).join(', ')); }
+  fs.writeFileSync(SCREEN, JSON.stringify(outS, null, 1)); console.log('SQUAD 7 STAGE 1b screen written to ' + SCREEN); process.exit(0); }
 const dataOk = STATUS.price.ok && STATUS.shares.ok && STATUS.earn.ok;
 log('5-year one-shot for ' + need.length + ' rules not yet frozen (data ' + (dataOk ? 'ok' : 'INCOMPLETE: ' + JSON.stringify({ shares: STATUS.shares, earn: STATUS.earn })) + ')');
 for (const id of need) { const uses = RULES[id].when.map(w => w[0]), needEarn = uses.some(k => k === 'earnDays' || k === 'surprise'), needSh = uses.some(k => k === 'dShares' || k === 'logMcap');
