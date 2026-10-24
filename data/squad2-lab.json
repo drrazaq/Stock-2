@@ -1,0 +1,1834 @@
+{
+ "generatedAt": "2026-10-24T06:05:27.986Z",
+ "preRegistered": "2026-10-24 (squad2-core.mjs header + data/strategy-library.json SQ2-*)",
+ "window": [
+  "2021-11-10",
+  "2026-10-19"
+ ],
+ "split": "2024-01-01",
+ "bar": 4.02,
+ "cost": {
+  "base": 0.008,
+  "stress": 0.012,
+  "slipPerSide": 0.001,
+  "info": 0.004
+ },
+ "data": {
+  "minuteBars": "Alpaca SIP 1-minute bars, raw, regular session",
+  "historyProbe": {
+   "2016-01-04": 11,
+   "2018-01-02": 11,
+   "2021-01-04": 11,
+   "2021-10-12": 11
+  },
+  "regime": {
+   "src": "QQQ (Alpaca SIP daily bars, all adjustments)",
+   "ok": true
+  },
+  "plan": {
+   "sessions": 1239,
+   "stockDays": 106973,
+   "byFlag": {
+    "gap": 45818,
+    "ep": 3612,
+    "lead": 35643,
+    "htf": 21341,
+    "qbo": 18458
+   }
+  },
+  "stockDays": {
+   "rows": 106973,
+   "got": 105366,
+   "missing": 149,
+   "mismatch": 1458,
+   "incomplete": 0
+  },
+  "coverage": 0.985,
+  "complete": true,
+  "missingShards": []
+ },
+ "standard": "value-core.mjs judge (tier 2): both halves (signal before / from 2024-01-01) > 0 after 0.8% and 1.2%; edge vs the matched control > 0; vs the same stock on other days > 0; without the 2 best > 0; block t >= 2.5; 20+ trades and 3+ blocks per half; PROVEN at block t >= 4.02. Same-minute entry/stop ambiguity booked worst case.",
+ "firstRun": {
+  "SQ2-ORB5": {
+   "at": "2026-10-24T06:05:27.224Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.08 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.99 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 2372,
+     "days": 494,
+     "stocks": 1099,
+     "avg": -0.0081,
+     "median": -0.0135,
+     "avgStress": -0.0121,
+     "ctrl": -0.0081,
+     "edge": -0.0045,
+     "tDay": -2.9,
+     "blocks": 108,
+     "tBlock": -3.08,
+     "vsOwn": -0.0009,
+     "ownCovered": 494,
+     "noTop2": -0.0083,
+     "best": 0.305,
+     "worst": -0.3731,
+     "win": 0.3427
+    },
+    "newer": {
+     "n": 4066,
+     "days": 669,
+     "stocks": 1527,
+     "avg": -0.0073,
+     "median": -0.0135,
+     "avgStress": -0.0113,
+     "ctrl": -0.0082,
+     "edge": -0.0032,
+     "tDay": -2.02,
+     "blocks": 141,
+     "tBlock": -0.99,
+     "vsOwn": 0.0003,
+     "ownCovered": 669,
+     "noTop2": -0.008,
+     "best": 2.0527,
+     "worst": -0.2049,
+     "win": 0.3532
+    },
+    "all": {
+     "n": 6438,
+     "days": 1163,
+     "stocks": 1951,
+     "avg": -0.0076,
+     "median": -0.0135,
+     "avgStress": -0.0116,
+     "ctrl": -0.0082,
+     "edge": -0.0038,
+     "tDay": -3.33,
+     "blocks": 248,
+     "tBlock": -2.24,
+     "vsOwn": -0.0002,
+     "ownCovered": 1163,
+     "noTop2": -0.0081,
+     "best": 2.0527,
+     "worst": -0.3731,
+     "win": 0.3493
+    }
+   },
+   "hold": 1,
+   "maxHold": 1,
+   "kind": "day",
+   "block": 5,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 6438,
+    "win": 0.3493,
+    "avg": -0.0076,
+    "avgWin": 0.0437,
+    "avgLoss": -0.0351,
+    "pf": 0.6686,
+    "avgHeld": 1,
+    "byYear": {
+     "2021": {
+      "n": 185,
+      "avg": -0.017
+     },
+     "2022": {
+      "n": 1153,
+      "avg": -0.0071
+     },
+     "2023": {
+      "n": 1034,
+      "avg": -0.0077
+     },
+     "2024": {
+      "n": 1339,
+      "avg": -0.0075
+     },
+     "2025": {
+      "n": 1562,
+      "avg": -0.0065
+     },
+     "2026": {
+      "n": 1165,
+      "avg": -0.0081
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0081,
+     "newer": -0.0073
+    },
+    "ambiguousTrades": 11,
+    "cost04": {
+     "older": -0.0041,
+     "newer": -0.0033
+    },
+    "slip005": {
+     "older": -0.0071,
+     "newer": -0.0063
+    },
+    "matchedControlShare": 0.9741,
+    "poolStockDays": 10194
+   },
+   "old": [
+    {
+     "id": "A-ORB1",
+     "verdict": null,
+     "n": [
+      1920,
+      2087
+     ],
+     "avg": -0.0082,
+     "edge": -0.0082,
+     "win": null,
+     "avgWin": null,
+     "avgLoss": null
+    },
+    {
+     "id": "DEC2-GAPGO",
+     "verdict": "REJECTED",
+     "n": [
+      5352,
+      14757
+     ],
+     "avg": [
+      -0.0074,
+      -0.0089
+     ],
+     "edge": [
+      -0.0097,
+      -0.0099
+     ],
+     "win": 0.3743,
+     "avgWin": 0.058,
+     "avgLoss": -0.0483
+    }
+   ],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  },
+  "SQ2-ORB30": {
+   "at": "2026-10-24T06:05:27.267Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.25 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.93 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 1657,
+     "days": 464,
+     "stocks": 914,
+     "avg": -0.0098,
+     "median": -0.01,
+     "avgStress": -0.0138,
+     "ctrl": -0.0075,
+     "edge": -0.0068,
+     "tDay": -4.44,
+     "blocks": 108,
+     "tBlock": -4.25,
+     "vsOwn": -0.0027,
+     "ownCovered": 464,
+     "noTop2": -0.0102,
+     "best": 0.3545,
+     "worst": -0.3926,
+     "win": 0.3422
+    },
+    "newer": {
+     "n": 2862,
+     "days": 634,
+     "stocks": 1358,
+     "avg": -0.0086,
+     "median": -0.01,
+     "avgStress": -0.0126,
+     "ctrl": -0.0078,
+     "edge": -0.0047,
+     "tDay": -2.29,
+     "blocks": 140,
+     "tBlock": -1.93,
+     "vsOwn": 0.0002,
+     "ownCovered": 634,
+     "noTop2": -0.0093,
+     "best": 1.5559,
+     "worst": -0.2398,
+     "win": 0.3571
+    },
+    "all": {
+     "n": 4519,
+     "days": 1098,
+     "stocks": 1746,
+     "avg": -0.009,
+     "median": -0.01,
+     "avgStress": -0.013,
+     "ctrl": -0.0077,
+     "edge": -0.0056,
+     "tDay": -4.15,
+     "blocks": 248,
+     "tBlock": -3.81,
+     "vsOwn": -0.001,
+     "ownCovered": 1098,
+     "noTop2": -0.0095,
+     "best": 1.5559,
+     "worst": -0.3926,
+     "win": 0.3516
+    }
+   },
+   "hold": 1,
+   "maxHold": 1,
+   "kind": "day",
+   "block": 5,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 4519,
+    "win": 0.3516,
+    "avg": -0.009,
+    "avgWin": 0.0345,
+    "avgLoss": -0.0326,
+    "pf": 0.5734,
+    "avgHeld": 1,
+    "byYear": {
+     "2021": {
+      "n": 120,
+      "avg": -0.0159
+     },
+     "2022": {
+      "n": 766,
+      "avg": -0.008
+     },
+     "2023": {
+      "n": 771,
+      "avg": -0.0106
+     },
+     "2024": {
+      "n": 976,
+      "avg": -0.0096
+     },
+     "2025": {
+      "n": 1071,
+      "avg": -0.0067
+     },
+     "2026": {
+      "n": 815,
+      "avg": -0.0098
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0098,
+     "newer": -0.0086
+    },
+    "ambiguousTrades": 2,
+    "cost04": {
+     "older": -0.0058,
+     "newer": -0.0046
+    },
+    "slip005": {
+     "older": -0.0088,
+     "newer": -0.0076
+    },
+    "matchedControlShare": 0.9803,
+    "poolStockDays": 9703
+   },
+   "old": [
+    {
+     "id": "A-ORB1",
+     "verdict": null,
+     "n": [
+      1920,
+      2087
+     ],
+     "avg": -0.0082,
+     "edge": -0.0082,
+     "win": null,
+     "avgWin": null,
+     "avgLoss": null
+    },
+    {
+     "id": "DEC2-GAPGO",
+     "verdict": "REJECTED",
+     "n": [
+      5352,
+      14757
+     ],
+     "avg": [
+      -0.0074,
+      -0.0089
+     ],
+     "edge": [
+      -0.0097,
+      -0.0099
+     ],
+     "win": 0.3743,
+     "avgWin": 0.058,
+     "avgLoss": -0.0483
+    }
+   ],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  },
+  "SQ2-EPORB": {
+   "at": "2026-10-24T06:05:27.656Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.76 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.73 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 533,
+     "days": 271,
+     "stocks": 394,
+     "avg": -0.0073,
+     "median": -0.0335,
+     "avgStress": -0.0113,
+     "ctrl": -0.005,
+     "edge": -0.0097,
+     "tDay": -2.06,
+     "blocks": 25,
+     "tBlock": -1.76,
+     "vsOwn": -0.0053,
+     "ownCovered": 271,
+     "noTop2": -0.0092,
+     "best": 0.4862,
+     "worst": -0.5508,
+     "win": 0.3021
+    },
+    "newer": {
+     "n": 889,
+     "days": 424,
+     "stocks": 643,
+     "avg": -0.0029,
+     "median": -0.0384,
+     "avgStress": -0.0069,
+     "ctrl": 0.0009,
+     "edge": -0.004,
+     "tDay": -0.37,
+     "blocks": 35,
+     "tBlock": -0.73,
+     "vsOwn": 0.0051,
+     "ownCovered": 424,
+     "noTop2": -0.0079,
+     "best": 2.9947,
+     "worst": -0.3448,
+     "win": 0.3161
+    },
+    "all": {
+     "n": 1422,
+     "days": 695,
+     "stocks": 873,
+     "avg": -0.0045,
+     "median": -0.0369,
+     "avgStress": -0.0085,
+     "ctrl": -0.0013,
+     "edge": -0.0063,
+     "tDay": -0.9,
+     "blocks": 60,
+     "tBlock": -1.65,
+     "vsOwn": 0.001,
+     "ownCovered": 695,
+     "noTop2": -0.0077,
+     "best": 2.9947,
+     "worst": -0.5508,
+     "win": 0.3108
+    }
+   },
+   "hold": 6,
+   "maxHold": 120,
+   "kind": "swing",
+   "block": 20,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 1422,
+    "win": 0.3108,
+    "avg": -0.0045,
+    "avgWin": 0.1055,
+    "avgLoss": -0.0542,
+    "pf": 0.8782,
+    "avgHeld": 5.6624,
+    "byYear": {
+     "2022": {
+      "n": 303,
+      "avg": -0.0098
+     },
+     "2023": {
+      "n": 230,
+      "avg": -0.004
+     },
+     "2024": {
+      "n": 272,
+      "avg": 0.0031
+     },
+     "2025": {
+      "n": 349,
+      "avg": -0.0003
+     },
+     "2026": {
+      "n": 268,
+      "avg": -0.0124
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0073,
+     "newer": -0.0028
+    },
+    "ambiguousTrades": 2,
+    "cost04": {
+     "older": -0.0033,
+     "newer": 0.0011
+    },
+    "slip005": {
+     "older": -0.0063,
+     "newer": -0.0019
+    },
+    "matchedControlShare": 0.7553,
+    "poolStockDays": 2326
+   },
+   "old": [
+    {
+     "id": "DEC-EP",
+     "verdict": "REJECTED",
+     "n": [
+      593,
+      1388
+     ],
+     "avg": [
+      -0.0147,
+      -0.015
+     ],
+     "edge": [
+      -0.0149,
+      -0.0229
+     ],
+     "win": 0.3089,
+     "avgWin": 0.1697,
+     "avgLoss": -0.0974
+    }
+   ],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  },
+  "SQ2-QBO": {
+   "at": "2026-10-24T06:05:27.717Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.92 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.99 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 770,
+     "days": 184,
+     "stocks": 470,
+     "avg": -0.0162,
+     "median": -0.0294,
+     "avgStress": -0.0202,
+     "ctrl": -0.0091,
+     "edge": -0.0148,
+     "tDay": -4.43,
+     "blocks": 17,
+     "tBlock": -3.92,
+     "vsOwn": -0.009,
+     "ownCovered": 184,
+     "noTop2": -0.0176,
+     "best": 0.6272,
+     "worst": -0.1593,
+     "win": 0.187
+    },
+    "newer": {
+     "n": 1615,
+     "days": 381,
+     "stocks": 846,
+     "avg": -0.011,
+     "median": -0.0295,
+     "avgStress": -0.015,
+     "ctrl": -0.0095,
+     "edge": -0.0098,
+     "tDay": -3.49,
+     "blocks": 34,
+     "tBlock": -2.99,
+     "vsOwn": -0.0091,
+     "ownCovered": 381,
+     "noTop2": -0.0125,
+     "best": 1.2734,
+     "worst": -0.5707,
+     "win": 0.218
+    },
+    "all": {
+     "n": 2385,
+     "days": 565,
+     "stocks": 1090,
+     "avg": -0.0127,
+     "median": -0.0295,
+     "avgStress": -0.0167,
+     "ctrl": -0.0093,
+     "edge": -0.0114,
+     "tDay": -5.23,
+     "blocks": 50,
+     "tBlock": -4.66,
+     "vsOwn": -0.0091,
+     "ownCovered": 565,
+     "noTop2": -0.0137,
+     "best": 1.2734,
+     "worst": -0.5707,
+     "win": 0.208
+    }
+   },
+   "hold": 4,
+   "maxHold": 120,
+   "kind": "swing",
+   "block": 20,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 2385,
+    "win": 0.208,
+    "avg": -0.0127,
+    "avgWin": 0.0894,
+    "avgLoss": -0.0395,
+    "pf": 0.5949,
+    "avgHeld": 4.3321,
+    "byYear": {
+     "2022": {
+      "n": 260,
+      "avg": -0.0197
+     },
+     "2023": {
+      "n": 510,
+      "avg": -0.0144
+     },
+     "2024": {
+      "n": 500,
+      "avg": -0.0133
+     },
+     "2025": {
+      "n": 615,
+      "avg": -0.0091
+     },
+     "2026": {
+      "n": 500,
+      "avg": -0.011
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0162,
+     "newer": -0.011
+    },
+    "ambiguousTrades": 6,
+    "cost04": {
+     "older": -0.0122,
+     "newer": -0.007
+    },
+    "slip005": {
+     "older": -0.0152,
+     "newer": -0.01
+    },
+    "matchedControlShare": 1,
+    "poolStockDays": 18253
+   },
+   "old": [
+    {
+     "id": "DEC-QBO",
+     "verdict": "REJECTED",
+     "n": [
+      1333,
+      2372
+     ],
+     "avg": [
+      -0.0207,
+      -0.0131
+     ],
+     "edge": [
+      -0.0225,
+      -0.0124
+     ],
+     "win": 0.2313,
+     "avgWin": 0.0887,
+     "avgLoss": -0.0473
+    }
+   ],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  },
+  "SQ2-VWAP": {
+   "at": "2026-10-24T06:05:27.777Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -15.69 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -13.93 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 3854,
+     "days": 490,
+     "stocks": 513,
+     "avg": -0.0102,
+     "median": -0.0208,
+     "avgStress": -0.0142,
+     "ctrl": -0.0084,
+     "edge": -0.01,
+     "tDay": -14.44,
+     "blocks": 99,
+     "tBlock": -15.69,
+     "vsOwn": -0.0038,
+     "ownCovered": 490,
+     "noTop2": -0.0104,
+     "best": 0.3564,
+     "worst": -0.1725,
+     "win": 0.3072
+    },
+    "newer": {
+     "n": 8171,
+     "days": 702,
+     "stocks": 734,
+     "avg": -0.0107,
+     "median": -0.0246,
+     "avgStress": -0.0147,
+     "ctrl": -0.0089,
+     "edge": -0.0096,
+     "tDay": -13.43,
+     "blocks": 141,
+     "tBlock": -13.93,
+     "vsOwn": -0.005,
+     "ownCovered": 702,
+     "noTop2": -0.0109,
+     "best": 0.6229,
+     "worst": -0.2207,
+     "win": 0.2934
+    },
+    "all": {
+     "n": 12025,
+     "days": 1192,
+     "stocks": 1072,
+     "avg": -0.0106,
+     "median": -0.0234,
+     "avgStress": -0.0146,
+     "ctrl": -0.0087,
+     "edge": -0.0098,
+     "tDay": -19.22,
+     "blocks": 239,
+     "tBlock": -20.7,
+     "vsOwn": -0.0045,
+     "ownCovered": 1192,
+     "noTop2": -0.0107,
+     "best": 0.6229,
+     "worst": -0.2207,
+     "win": 0.2978
+    }
+   },
+   "hold": 1,
+   "maxHold": 1,
+   "kind": "day",
+   "block": 5,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 12025,
+    "win": 0.2978,
+    "avg": -0.0106,
+    "avgWin": 0.0388,
+    "avgLoss": -0.0315,
+    "pf": 0.5224,
+    "avgHeld": 1,
+    "byYear": {
+     "2022": {
+      "n": 1925,
+      "avg": -0.0102
+     },
+     "2023": {
+      "n": 1929,
+      "avg": -0.0102
+     },
+     "2024": {
+      "n": 2814,
+      "avg": -0.0099
+     },
+     "2025": {
+      "n": 2921,
+      "avg": -0.0124
+     },
+     "2026": {
+      "n": 2436,
+      "avg": -0.0096
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0102,
+     "newer": -0.0107
+    },
+    "ambiguousTrades": 0,
+    "cost04": {
+     "older": -0.0062,
+     "newer": -0.0067
+    },
+    "slip005": {
+     "older": -0.0092,
+     "newer": -0.0097
+    },
+    "matchedControlShare": 1,
+    "poolStockDays": 34963
+   },
+   "old": [
+    {
+     "id": "DEC-PB",
+     "verdict": "REJECTED",
+     "n": [
+      5987,
+      16736
+     ],
+     "avg": [
+      -0.0107,
+      -0.008
+     ],
+     "edge": [
+      -0.0099,
+      -0.0082
+     ],
+     "win": 0.2229,
+     "avgWin": 0.0644,
+     "avgLoss": -0.0297
+    }
+   ],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  },
+  "SQ2-EMAPB": {
+   "at": "2026-10-24T06:05:27.808Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -6 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.93 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 972,
+     "days": 389,
+     "stocks": 626,
+     "avg": -0.0098,
+     "median": -0.0172,
+     "avgStress": -0.0138,
+     "ctrl": -0.009,
+     "edge": -0.0103,
+     "tDay": -7.79,
+     "blocks": 107,
+     "tBlock": -6,
+     "vsOwn": -0.0026,
+     "ownCovered": 389,
+     "noTop2": -0.0103,
+     "best": 0.2285,
+     "worst": -0.1036,
+     "win": 0.2119
+    },
+    "newer": {
+     "n": 1682,
+     "days": 565,
+     "stocks": 945,
+     "avg": -0.0082,
+     "median": -0.0174,
+     "avgStress": -0.0122,
+     "ctrl": -0.0064,
+     "edge": -0.0072,
+     "tDay": -3.75,
+     "blocks": 140,
+     "tBlock": -3.93,
+     "vsOwn": 0,
+     "ownCovered": 565,
+     "noTop2": -0.0091,
+     "best": 1.1494,
+     "worst": -0.2192,
+     "win": 0.2372
+    },
+    "all": {
+     "n": 2654,
+     "days": 954,
+     "stocks": 1260,
+     "avg": -0.0088,
+     "median": -0.0172,
+     "avgStress": -0.0128,
+     "ctrl": -0.0074,
+     "edge": -0.0084,
+     "tDay": -6.72,
+     "blocks": 247,
+     "tBlock": -6.5,
+     "vsOwn": -0.0011,
+     "ownCovered": 954,
+     "noTop2": -0.0094,
+     "best": 1.1494,
+     "worst": -0.2192,
+     "win": 0.228
+    }
+   },
+   "hold": 1,
+   "maxHold": 1,
+   "kind": "day",
+   "block": 5,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 2654,
+    "win": 0.228,
+    "avg": -0.0088,
+    "avgWin": 0.0363,
+    "avgLoss": -0.0221,
+    "pf": 0.4846,
+    "avgHeld": 1,
+    "byYear": {
+     "2021": {
+      "n": 78,
+      "avg": -0.0146
+     },
+     "2022": {
+      "n": 491,
+      "avg": -0.01
+     },
+     "2023": {
+      "n": 403,
+      "avg": -0.0087
+     },
+     "2024": {
+      "n": 567,
+      "avg": -0.0076
+     },
+     "2025": {
+      "n": 624,
+      "avg": -0.0072
+     },
+     "2026": {
+      "n": 491,
+      "avg": -0.0101
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0098,
+     "newer": -0.008
+    },
+    "ambiguousTrades": 28,
+    "cost04": {
+     "older": -0.0058,
+     "newer": -0.0042
+    },
+    "slip005": {
+     "older": -0.0088,
+     "newer": -0.0072
+    },
+    "matchedControlShare": 0.9906,
+    "poolStockDays": 10194
+   },
+   "old": [
+    {
+     "id": "DEC-PB",
+     "verdict": "REJECTED",
+     "n": [
+      5987,
+      16736
+     ],
+     "avg": [
+      -0.0107,
+      -0.008
+     ],
+     "edge": [
+      -0.0099,
+      -0.0082
+     ],
+     "win": 0.2229,
+     "avgWin": 0.0644,
+     "avgLoss": -0.0297
+    },
+    {
+     "id": "DEC2-GAPGO",
+     "verdict": "REJECTED",
+     "n": [
+      5352,
+      14757
+     ],
+     "avg": [
+      -0.0074,
+      -0.0089
+     ],
+     "edge": [
+      -0.0097,
+      -0.0099
+     ],
+     "win": 0.3743,
+     "avgWin": 0.058,
+     "avgLoss": -0.0483
+    }
+   ],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  },
+  "SQ2-HTF": {
+   "at": "2026-10-24T06:05:27.844Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.87 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.9 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 354,
+     "days": 214,
+     "stocks": 223,
+     "avg": -0.0259,
+     "median": -0.0445,
+     "avgStress": -0.0299,
+     "ctrl": -0.0161,
+     "edge": -0.0176,
+     "tDay": -3.22,
+     "blocks": 24,
+     "tBlock": -2.87,
+     "vsOwn": -0.0232,
+     "ownCovered": 214,
+     "noTop2": -0.0293,
+     "best": 0.604,
+     "worst": -0.5667,
+     "win": 0.1638
+    },
+    "newer": {
+     "n": 989,
+     "days": 420,
+     "stocks": 487,
+     "avg": -0.0063,
+     "median": -0.0446,
+     "avgStress": -0.0103,
+     "ctrl": -0.0019,
+     "edge": -0.0113,
+     "tDay": -2.01,
+     "blocks": 36,
+     "tBlock": -0.9,
+     "vsOwn": -0.0065,
+     "ownCovered": 420,
+     "noTop2": -0.0095,
+     "best": 1.974,
+     "worst": -0.6549,
+     "win": 0.2255
+    },
+    "all": {
+     "n": 1343,
+     "days": 634,
+     "stocks": 640,
+     "avg": -0.0115,
+     "median": -0.0445,
+     "avgStress": -0.0155,
+     "ctrl": -0.0056,
+     "edge": -0.0134,
+     "tDay": -3.24,
+     "blocks": 59,
+     "tBlock": -2.15,
+     "vsOwn": -0.0121,
+     "ownCovered": 634,
+     "noTop2": -0.0138,
+     "best": 1.974,
+     "worst": -0.6549,
+     "win": 0.2092
+    }
+   },
+   "hold": 6,
+   "maxHold": 60,
+   "kind": "swing",
+   "block": 20,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 1343,
+    "win": 0.2092,
+    "avg": -0.0115,
+    "avgWin": 0.1674,
+    "avgLoss": -0.0588,
+    "pf": 0.7533,
+    "avgHeld": 5.8541,
+    "byYear": {
+     "2022": {
+      "n": 178,
+      "avg": -0.0357
+     },
+     "2023": {
+      "n": 176,
+      "avg": -0.0159
+     },
+     "2024": {
+      "n": 240,
+      "avg": -0.007
+     },
+     "2025": {
+      "n": 386,
+      "avg": 0.0026
+     },
+     "2026": {
+      "n": 363,
+      "avg": -0.0153
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0259,
+     "newer": -0.0061
+    },
+    "ambiguousTrades": 6,
+    "cost04": {
+     "older": -0.0219,
+     "newer": -0.0023
+    },
+    "slip005": {
+     "older": -0.0249,
+     "newer": -0.0053
+    },
+    "matchedControlShare": 0.9993,
+    "poolStockDays": 21084
+   },
+   "old": [
+    {
+     "id": "DEC2-WEDGE",
+     "verdict": "REJECTED",
+     "n": [
+      2569,
+      6518
+     ],
+     "avg": [
+      -0.0034,
+      -0.0081
+     ],
+     "edge": [
+      -0.0087,
+      -0.0092
+     ],
+     "win": 0.2094,
+     "avgWin": 0.1024,
+     "avgLoss": -0.0357
+    },
+    {
+     "id": "T12",
+     "verdict": null,
+     "n": 2322,
+     "avg": null,
+     "edge": -0.0208,
+     "win": null,
+     "avgWin": null,
+     "avgLoss": null
+    }
+   ],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  },
+  "SQ2-PWR": {
+   "at": "2026-10-24T06:05:27.865Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -13.13 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -13.19 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 901,
+     "days": 302,
+     "stocks": 660,
+     "avg": -0.0105,
+     "median": -0.01,
+     "avgStress": -0.0145,
+     "ctrl": -0.0078,
+     "edge": -0.0106,
+     "tDay": -14.56,
+     "blocks": 103,
+     "tBlock": -13.13,
+     "vsOwn": -0.0036,
+     "ownCovered": 302,
+     "noTop2": -0.0107,
+     "best": 0.0684,
+     "worst": -0.3743,
+     "win": 0.1154
+    },
+    "newer": {
+     "n": 1503,
+     "days": 482,
+     "stocks": 996,
+     "avg": -0.0094,
+     "median": -0.01,
+     "avgStress": -0.0134,
+     "ctrl": -0.0076,
+     "edge": -0.0098,
+     "tDay": -15.48,
+     "blocks": 139,
+     "tBlock": -13.19,
+     "vsOwn": -0.0024,
+     "ownCovered": 482,
+     "noTop2": -0.0097,
+     "best": 0.2417,
+     "worst": -0.117,
+     "win": 0.171
+    },
+    "all": {
+     "n": 2404,
+     "days": 784,
+     "stocks": 1388,
+     "avg": -0.0098,
+     "median": -0.01,
+     "avgStress": -0.0138,
+     "ctrl": -0.0076,
+     "edge": -0.0101,
+     "tDay": -21.07,
+     "blocks": 242,
+     "tBlock": -18.53,
+     "vsOwn": -0.0028,
+     "ownCovered": 784,
+     "noTop2": -0.01,
+     "best": 0.2417,
+     "worst": -0.3743,
+     "win": 0.1502
+    }
+   },
+   "hold": 1,
+   "maxHold": 1,
+   "kind": "day",
+   "block": 5,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 2404,
+    "win": 0.1502,
+    "avg": -0.0098,
+    "avgWin": 0.0115,
+    "avgLoss": -0.0136,
+    "pf": 0.149,
+    "avgHeld": 1,
+    "byYear": {
+     "2021": {
+      "n": 28,
+      "avg": -0.0068
+     },
+     "2022": {
+      "n": 469,
+      "avg": -0.0085
+     },
+     "2023": {
+      "n": 404,
+      "avg": -0.0131
+     },
+     "2024": {
+      "n": 528,
+      "avg": -0.0092
+     },
+     "2025": {
+      "n": 508,
+      "avg": -0.009
+     },
+     "2026": {
+      "n": 467,
+      "avg": -0.0102
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0105,
+     "newer": -0.0094
+    },
+    "ambiguousTrades": 1,
+    "cost04": {
+     "older": -0.0065,
+     "newer": -0.0054
+    },
+    "slip005": {
+     "older": -0.0095,
+     "newer": -0.0084
+    },
+    "matchedControlShare": 0.9122,
+    "poolStockDays": 4484
+   },
+   "old": [],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  },
+  "SQ2-SWING": {
+   "at": "2026-10-24T06:05:27.978Z",
+   "window": [
+    "2021-11-10",
+    "2026-10-19"
+   ],
+   "bar": 4.02,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.47 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.16 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 2260,
+     "days": 489,
+     "stocks": 1099,
+     "avg": -0.0103,
+     "median": -0.038,
+     "avgStress": -0.0143,
+     "ctrl": -0.0107,
+     "edge": -0.0021,
+     "tDay": -0.59,
+     "blocks": 27,
+     "tBlock": -0.47,
+     "vsOwn": -0.0015,
+     "ownCovered": 489,
+     "noTop2": -0.0114,
+     "best": 1.4949,
+     "worst": -0.5508,
+     "win": 0.2035
+    },
+    "newer": {
+     "n": 3797,
+     "days": 663,
+     "stocks": 1527,
+     "avg": -0.0072,
+     "median": -0.0428,
+     "avgStress": -0.0112,
+     "ctrl": -0.0052,
+     "edge": -0.0046,
+     "tDay": -1.02,
+     "blocks": 36,
+     "tBlock": -1.16,
+     "vsOwn": -0.003,
+     "ownCovered": 663,
+     "noTop2": -0.0085,
+     "best": 2.4113,
+     "worst": -0.8479,
+     "win": 0.216
+    },
+    "all": {
+     "n": 6057,
+     "days": 1152,
+     "stocks": 1951,
+     "avg": -0.0084,
+     "median": -0.041,
+     "avgStress": -0.0124,
+     "ctrl": -0.0072,
+     "edge": -0.0035,
+     "tDay": -1.18,
+     "blocks": 62,
+     "tBlock": -0.98,
+     "vsOwn": -0.0023,
+     "ownCovered": 1152,
+     "noTop2": -0.0092,
+     "best": 2.4113,
+     "worst": -0.8479,
+     "win": 0.2113
+    }
+   },
+   "hold": 9,
+   "maxHold": 60,
+   "kind": "swing",
+   "block": 20,
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "intradayEntry": true,
+   "shape": {
+    "n": 6057,
+    "win": 0.2113,
+    "avg": -0.0084,
+    "avgWin": 0.1643,
+    "avgLoss": -0.0546,
+    "pf": 0.8058,
+    "avgHeld": 9.1114,
+    "byYear": {
+     "2021": {
+      "n": 181,
+      "avg": -0.046
+     },
+     "2022": {
+      "n": 1098,
+      "avg": -0.0152
+     },
+     "2023": {
+      "n": 981,
+      "avg": 0.0018
+     },
+     "2024": {
+      "n": 1263,
+      "avg": -0.0044
+     },
+     "2025": {
+      "n": 1444,
+      "avg": -0.0045
+     },
+     "2026": {
+      "n": 1090,
+      "avg": -0.0142
+     }
+    }
+   },
+   "info": {
+    "bestCaseSameMinute": {
+     "older": -0.0103,
+     "newer": -0.0072
+    },
+    "ambiguousTrades": 11,
+    "cost04": {
+     "older": -0.0063,
+     "newer": -0.0032
+    },
+    "slip005": {
+     "older": -0.0093,
+     "newer": -0.0062
+    },
+    "matchedControlShare": 0.9741,
+    "poolStockDays": 10194
+   },
+   "old": [
+    {
+     "id": "DEC2-GAPGO",
+     "verdict": "REJECTED",
+     "n": [
+      5352,
+      14757
+     ],
+     "avg": [
+      -0.0074,
+      -0.0089
+     ],
+     "edge": [
+      -0.0097,
+      -0.0099
+     ],
+     "win": 0.3743,
+     "avgWin": 0.058,
+     "avgLoss": -0.0483
+    },
+    {
+     "id": "DEC-EP",
+     "verdict": "REJECTED",
+     "n": [
+      593,
+      1388
+     ],
+     "avg": [
+      -0.0147,
+      -0.015
+     ],
+     "edge": [
+      -0.0149,
+      -0.0229
+     ],
+     "win": 0.3089,
+     "avgWin": 0.1697,
+     "avgLoss": -0.0974
+    }
+   ],
+   "frozenAt": "2026-10-24T06:05:27.986Z"
+  }
+ },
+ "latest": {
+  "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
+  "at": "2026-10-24T06:05:27.986Z",
+  "results": {
+   "SQ2-ORB5": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 2372,
+      "days": 494,
+      "stocks": 1099,
+      "avg": -0.0081,
+      "median": -0.0135,
+      "avgStress": -0.0121,
+      "ctrl": -0.0081,
+      "edge": -0.0045,
+      "tDay": -2.9,
+      "blocks": 108,
+      "tBlock": -3.08,
+      "vsOwn": -0.0009,
+      "ownCovered": 494,
+      "noTop2": -0.0083,
+      "best": 0.305,
+      "worst": -0.3731,
+      "win": 0.3427
+     },
+     "newer": {
+      "n": 4066,
+      "days": 669,
+      "stocks": 1527,
+      "avg": -0.0073,
+      "median": -0.0135,
+      "avgStress": -0.0113,
+      "ctrl": -0.0082,
+      "edge": -0.0032,
+      "tDay": -2.02,
+      "blocks": 141,
+      "tBlock": -0.99,
+      "vsOwn": 0.0003,
+      "ownCovered": 669,
+      "noTop2": -0.008,
+      "best": 2.0527,
+      "worst": -0.2049,
+      "win": 0.3532
+     }
+    }
+   },
+   "SQ2-ORB30": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 1657,
+      "days": 464,
+      "stocks": 914,
+      "avg": -0.0098,
+      "median": -0.01,
+      "avgStress": -0.0138,
+      "ctrl": -0.0075,
+      "edge": -0.0068,
+      "tDay": -4.44,
+      "blocks": 108,
+      "tBlock": -4.25,
+      "vsOwn": -0.0027,
+      "ownCovered": 464,
+      "noTop2": -0.0102,
+      "best": 0.3545,
+      "worst": -0.3926,
+      "win": 0.3422
+     },
+     "newer": {
+      "n": 2862,
+      "days": 634,
+      "stocks": 1358,
+      "avg": -0.0086,
+      "median": -0.01,
+      "avgStress": -0.0126,
+      "ctrl": -0.0078,
+      "edge": -0.0047,
+      "tDay": -2.29,
+      "blocks": 140,
+      "tBlock": -1.93,
+      "vsOwn": 0.0002,
+      "ownCovered": 634,
+      "noTop2": -0.0093,
+      "best": 1.5559,
+      "worst": -0.2398,
+      "win": 0.3571
+     }
+    }
+   },
+   "SQ2-EPORB": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 533,
+      "days": 271,
+      "stocks": 394,
+      "avg": -0.0073,
+      "median": -0.0335,
+      "avgStress": -0.0113,
+      "ctrl": -0.005,
+      "edge": -0.0097,
+      "tDay": -2.06,
+      "blocks": 25,
+      "tBlock": -1.76,
+      "vsOwn": -0.0053,
+      "ownCovered": 271,
+      "noTop2": -0.0092,
+      "best": 0.4862,
+      "worst": -0.5508,
+      "win": 0.3021
+     },
+     "newer": {
+      "n": 889,
+      "days": 424,
+      "stocks": 643,
+      "avg": -0.0029,
+      "median": -0.0384,
+      "avgStress": -0.0069,
+      "ctrl": 0.0009,
+      "edge": -0.004,
+      "tDay": -0.37,
+      "blocks": 35,
+      "tBlock": -0.73,
+      "vsOwn": 0.0051,
+      "ownCovered": 424,
+      "noTop2": -0.0079,
+      "best": 2.9947,
+      "worst": -0.3448,
+      "win": 0.3161
+     }
+    }
+   },
+   "SQ2-QBO": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 770,
+      "days": 184,
+      "stocks": 470,
+      "avg": -0.0162,
+      "median": -0.0294,
+      "avgStress": -0.0202,
+      "ctrl": -0.0091,
+      "edge": -0.0148,
+      "tDay": -4.43,
+      "blocks": 17,
+      "tBlock": -3.92,
+      "vsOwn": -0.009,
+      "ownCovered": 184,
+      "noTop2": -0.0176,
+      "best": 0.6272,
+      "worst": -0.1593,
+      "win": 0.187
+     },
+     "newer": {
+      "n": 1615,
+      "days": 381,
+      "stocks": 846,
+      "avg": -0.011,
+      "median": -0.0295,
+      "avgStress": -0.015,
+      "ctrl": -0.0095,
+      "edge": -0.0098,
+      "tDay": -3.49,
+      "blocks": 34,
+      "tBlock": -2.99,
+      "vsOwn": -0.0091,
+      "ownCovered": 381,
+      "noTop2": -0.0125,
+      "best": 1.2734,
+      "worst": -0.5707,
+      "win": 0.218
+     }
+    }
+   },
+   "SQ2-VWAP": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 3854,
+      "days": 490,
+      "stocks": 513,
+      "avg": -0.0102,
+      "median": -0.0208,
+      "avgStress": -0.0142,
+      "ctrl": -0.0084,
+      "edge": -0.01,
+      "tDay": -14.44,
+      "blocks": 99,
+      "tBlock": -15.69,
+      "vsOwn": -0.0038,
+      "ownCovered": 490,
+      "noTop2": -0.0104,
+      "best": 0.3564,
+      "worst": -0.1725,
+      "win": 0.3072
+     },
+     "newer": {
+      "n": 8171,
+      "days": 702,
+      "stocks": 734,
+      "avg": -0.0107,
+      "median": -0.0246,
+      "avgStress": -0.0147,
+      "ctrl": -0.0089,
+      "edge": -0.0096,
+      "tDay": -13.43,
+      "blocks": 141,
+      "tBlock": -13.93,
+      "vsOwn": -0.005,
+      "ownCovered": 702,
+      "noTop2": -0.0109,
+      "best": 0.6229,
+      "worst": -0.2207,
+      "win": 0.2934
+     }
+    }
+   },
+   "SQ2-EMAPB": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 972,
+      "days": 389,
+      "stocks": 626,
+      "avg": -0.0098,
+      "median": -0.0172,
+      "avgStress": -0.0138,
+      "ctrl": -0.009,
+      "edge": -0.0103,
+      "tDay": -7.79,
+      "blocks": 107,
+      "tBlock": -6,
+      "vsOwn": -0.0026,
+      "ownCovered": 389,
+      "noTop2": -0.0103,
+      "best": 0.2285,
+      "worst": -0.1036,
+      "win": 0.2119
+     },
+     "newer": {
+      "n": 1682,
+      "days": 565,
+      "stocks": 945,
+      "avg": -0.0082,
+      "median": -0.0174,
+      "avgStress": -0.0122,
+      "ctrl": -0.0064,
+      "edge": -0.0072,
+      "tDay": -3.75,
+      "blocks": 140,
+      "tBlock": -3.93,
+      "vsOwn": 0,
+      "ownCovered": 565,
+      "noTop2": -0.0091,
+      "best": 1.1494,
+      "worst": -0.2192,
+      "win": 0.2372
+     }
+    }
+   },
+   "SQ2-HTF": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 354,
+      "days": 214,
+      "stocks": 223,
+      "avg": -0.0259,
+      "median": -0.0445,
+      "avgStress": -0.0299,
+      "ctrl": -0.0161,
+      "edge": -0.0176,
+      "tDay": -3.22,
+      "blocks": 24,
+      "tBlock": -2.87,
+      "vsOwn": -0.0232,
+      "ownCovered": 214,
+      "noTop2": -0.0293,
+      "best": 0.604,
+      "worst": -0.5667,
+      "win": 0.1638
+     },
+     "newer": {
+      "n": 989,
+      "days": 420,
+      "stocks": 487,
+      "avg": -0.0063,
+      "median": -0.0446,
+      "avgStress": -0.0103,
+      "ctrl": -0.0019,
+      "edge": -0.0113,
+      "tDay": -2.01,
+      "blocks": 36,
+      "tBlock": -0.9,
+      "vsOwn": -0.0065,
+      "ownCovered": 420,
+      "noTop2": -0.0095,
+      "best": 1.974,
+      "worst": -0.6549,
+      "win": 0.2255
+     }
+    }
+   },
+   "SQ2-PWR": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 901,
+      "days": 302,
+      "stocks": 660,
+      "avg": -0.0105,
+      "median": -0.01,
+      "avgStress": -0.0145,
+      "ctrl": -0.0078,
+      "edge": -0.0106,
+      "tDay": -14.56,
+      "blocks": 103,
+      "tBlock": -13.13,
+      "vsOwn": -0.0036,
+      "ownCovered": 302,
+      "noTop2": -0.0107,
+      "best": 0.0684,
+      "worst": -0.3743,
+      "win": 0.1154
+     },
+     "newer": {
+      "n": 1503,
+      "days": 482,
+      "stocks": 996,
+      "avg": -0.0094,
+      "median": -0.01,
+      "avgStress": -0.0134,
+      "ctrl": -0.0076,
+      "edge": -0.0098,
+      "tDay": -15.48,
+      "blocks": 139,
+      "tBlock": -13.19,
+      "vsOwn": -0.0024,
+      "ownCovered": 482,
+      "noTop2": -0.0097,
+      "best": 0.2417,
+      "worst": -0.117,
+      "win": 0.171
+     }
+    }
+   },
+   "SQ2-SWING": {
+    "verdict": "REJECTED",
+    "results": {
+     "older": {
+      "n": 2260,
+      "days": 489,
+      "stocks": 1099,
+      "avg": -0.0103,
+      "median": -0.038,
+      "avgStress": -0.0143,
+      "ctrl": -0.0107,
+      "edge": -0.0021,
+      "tDay": -0.59,
+      "blocks": 27,
+      "tBlock": -0.47,
+      "vsOwn": -0.0015,
+      "ownCovered": 489,
+      "noTop2": -0.0114,
+      "best": 1.4949,
+      "worst": -0.5508,
+      "win": 0.2035
+     },
+     "newer": {
+      "n": 3797,
+      "days": 663,
+      "stocks": 1527,
+      "avg": -0.0072,
+      "median": -0.0428,
+      "avgStress": -0.0112,
+      "ctrl": -0.0052,
+      "edge": -0.0046,
+      "tDay": -1.02,
+      "blocks": 36,
+      "tBlock": -1.16,
+      "vsOwn": -0.003,
+      "ownCovered": 663,
+      "noTop2": -0.0085,
+      "best": 2.4113,
+      "worst": -0.8479,
+      "win": 0.216
+     }
+    }
+   }
+  }
+ }
+}

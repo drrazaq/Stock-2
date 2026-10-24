@@ -1,0 +1,124 @@
+{
+ "generatedAt": "2026-10-24T06:05:35.062Z",
+ "paperStart": "2026-10-26",
+ "note": "PAPER ONLY. Every SQ2 rule ENTERS INTRADAY (buy-stop / VWAP reclaim during the session), so newSignals is always empty: scan.mjs TRY SMALL places next-open orders, which these rules are not. A rule that passes needs a live intraday alert path (coordinator). Halal = the owner's ZAD mark.",
+ "methods": {
+  "SQ2-ORB5": {
+   "name": "5-minute opening-range breakout on a 4%+ gap with 3x relative volume (day trade)",
+   "hold": 1,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [],
+   "open": []
+  },
+  "SQ2-ORB30": {
+   "name": "30-minute opening-range breakout on a 4%+ gap with 3x relative volume (day trade)",
+   "hold": 1,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [],
+   "open": []
+  },
+  "SQ2-EPORB": {
+   "name": "Episodic pivot bought on the gap day: 10%+ gap in a neglected stock, 5-minute opening-range high, Qullamaggie exits",
+   "hold": 120,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [],
+   "open": []
+  },
+  "SQ2-QBO": {
+   "name": "Qullamaggie breakout bought on the intraday break of the base high (or the 5-minute opening-range high), stop at the day low so far",
+   "hold": 120,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [],
+   "open": []
+  },
+  "SQ2-VWAP": {
+   "name": "VWAP reclaim after a morning flush on leaders (day trade)",
+   "hold": 1,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [],
+   "open": []
+  },
+  "SQ2-EMAPB": {
+   "name": "First pullback to the 9/21 EMA on 5-minute bars after a 4%+ gap with 3x relative volume (day trade)",
+   "hold": 1,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [],
+   "open": []
+  },
+  "SQ2-HTF": {
+   "name": "High tight flag bought on the intraday break of the flag high, stop at the day low so far, 10-day trail",
+   "hold": 60,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [
+    {
+     "sym": "CAI",
+     "level": 32.89,
+     "halal": "unknown"
+    },
+    {
+     "sym": "XP",
+     "level": 32.73,
+     "halal": "unknown"
+    },
+    {
+     "sym": "KOD",
+     "level": 104,
+     "halal": "unknown"
+    },
+    {
+     "sym": "MSTR",
+     "level": 171.19,
+     "halal": "unknown"
+    },
+    {
+     "sym": "BMBL",
+     "level": 5.98,
+     "halal": "unknown"
+    }
+   ],
+   "open": []
+  },
+  "SQ2-PWR": {
+   "name": "Power-hour breakout of the day high on strong, active stocks (day trade)",
+   "hold": 1,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [],
+   "open": []
+  },
+  "SQ2-SWING": {
+   "name": "Swing version: 5-minute opening-range breakout on a 4%+ gap with 3x relative volume, held for days with a 10-day-low trail",
+   "hold": 60,
+   "tier": "REJECTED",
+   "intradayOnly": true,
+   "newSignals": [],
+   "todayTriggers": [],
+   "watch": [],
+   "open": []
+  }
+ },
+ "lastClose": "2026-10-23"
+}

@@ -16079,7 +16079,7 @@
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "5-minute opening-range breakout on a 4%+ gap with 3x relative volume (day trade)",
    "explain": "Day t: universe; first-minute open >= 4% above the prior close; relative volume >= 3 at 09:35 (volume 09:30-09:34 vs 20-day average x F(5)). Buy-stop at the 09:30-09:34 high, live 09:35-15:30. Stop = the day's low as known at the fill (lowest low of the completed bars). Exit: the stop, else the 15:59 close. Gap + relative volume is the news proxy (no news history for the whole market). Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: A-ORB1, DEC2-GAPGO.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "Same setup entered at the next open on daily bars: A-ORB1, DEC2-GAPGO",
    "sources": [
@@ -16088,14 +16088,51 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-ORB5]; kind day; blocks of 5 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2372,
+     4066
+    ],
+    "avg": [
+     -0.0081,
+     -0.0073
+    ],
+    "stress": [
+     -0.0121,
+     -0.0113
+    ],
+    "edge": [
+     -0.0045,
+     -0.0032
+    ],
+    "vsOwn": [
+     -0.0009,
+     0.0003
+    ],
+    "noTop2": [
+     -0.0083,
+     -0.008
+    ],
+    "tBlock": [
+     -3.08,
+     -0.99
+    ],
+    "win": 0.3493,
+    "avgWin": 0.0437,
+    "avgLoss": -0.0351,
+    "pf": 0.6686,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.08 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.99 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ2-ORB30",
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "30-minute opening-range breakout on a 4%+ gap with 3x relative volume (day trade)",
    "explain": "Day t: universe; first-minute open >= 4% above the prior close; relative volume >= 3 at 10:00 (volume 09:30-09:59 vs 20-day average x F(30)). Buy-stop at the 09:30-09:59 high, live 10:00-15:30. Stop = the day's low as known at the fill. Exit: the stop, else the 15:59 close. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: A-ORB1, DEC2-GAPGO.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "Same setup entered at the next open on daily bars: A-ORB1, DEC2-GAPGO",
    "sources": [
@@ -16103,14 +16140,51 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-ORB30]; kind day; blocks of 5 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1657,
+     2862
+    ],
+    "avg": [
+     -0.0098,
+     -0.0086
+    ],
+    "stress": [
+     -0.0138,
+     -0.0126
+    ],
+    "edge": [
+     -0.0068,
+     -0.0047
+    ],
+    "vsOwn": [
+     -0.0027,
+     0.0002
+    ],
+    "noTop2": [
+     -0.0102,
+     -0.0093
+    ],
+    "tBlock": [
+     -4.25,
+     -1.93
+    ],
+    "win": 0.3516,
+    "avgWin": 0.0345,
+    "avgLoss": -0.0326,
+    "pf": 0.5734,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.25 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.93 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ2-EPORB",
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "Episodic pivot bought on the gap day: 10%+ gap in a neglected stock, 5-minute opening-range high, Qullamaggie exits",
    "explain": "Day t: universe; first-minute open >= 10% above the prior close; the 63 sessions before were up no more than +20% (neglected); relative volume >= 3 at 09:35. Buy-stop at the 09:30-09:34 high, live 09:35-15:30 (Kullamagi buys the opening-range high ON the gap day; DEC-EP bought the next open). Stop = the day's low as known at the fill, but never more than 1.5 x the pre-gap 20-day ADR under the fill. Exit (KQ, as DEC-EP): sell 1/3 at the close of day 3 if above the fill and move the stop to the fill; from day 4 sell the rest at the next open after a close under the 10-day average; at most 120 sessions. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC-EP.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "Same setup entered at the next open on daily bars: DEC-EP",
    "sources": [
@@ -16118,14 +16192,51 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-EPORB]; kind swing, exit engine KQ; blocks of 20 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     533,
+     889
+    ],
+    "avg": [
+     -0.0073,
+     -0.0029
+    ],
+    "stress": [
+     -0.0113,
+     -0.0069
+    ],
+    "edge": [
+     -0.0097,
+     -0.004
+    ],
+    "vsOwn": [
+     -0.0053,
+     0.0051
+    ],
+    "noTop2": [
+     -0.0092,
+     -0.0079
+    ],
+    "tBlock": [
+     -1.76,
+     -0.73
+    ],
+    "win": 0.3108,
+    "avgWin": 0.1055,
+    "avgLoss": -0.0542,
+    "pf": 0.8782,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.76 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.73 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ2-QBO",
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "Qullamaggie breakout bought on the intraday break of the base high (or the 5-minute opening-range high), stop at the day low so far",
    "explain": "Setup = DEC-QBO exactly (decoded-core detectQBO at the close of t0: ADR >= 4%, 30%+ prior move, tight 10-session base with higher lows, 10/20-day averages, QQQ 10-day > 20-day and both rising) plus this squad's universe; the order is live on the 5 sessions after t0 and cancelled by a daily close under the base low. Each live day: buy-stop at max(base high, the 09:30-09:34 high), live 09:35-15:30. Stop = the day's low as known at the fill, at most 1 ADR under the fill. Exit KQ (1/3 day 3, stop to the fill, 10-day trail from day 4, max 120). Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC-QBO.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "Same setup entered at the next open on daily bars: DEC-QBO",
    "sources": [
@@ -16133,14 +16244,51 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-QBO]; kind swing, exit engine KQ; blocks of 20 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     770,
+     1615
+    ],
+    "avg": [
+     -0.0162,
+     -0.011
+    ],
+    "stress": [
+     -0.0202,
+     -0.015
+    ],
+    "edge": [
+     -0.0148,
+     -0.0098
+    ],
+    "vsOwn": [
+     -0.009,
+     -0.0091
+    ],
+    "noTop2": [
+     -0.0176,
+     -0.0125
+    ],
+    "tBlock": [
+     -3.92,
+     -2.99
+    ],
+    "win": 0.208,
+    "avgWin": 0.0894,
+    "avgLoss": -0.0395,
+    "pf": 0.5949,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.92 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.99 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ2-VWAP",
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "VWAP reclaim after a morning flush on leaders (day trade)",
    "explain": "Leaders at the close of t-1: universe, close above its 50-day average, 63-session return >= +30%, the 30 strongest by that return. Day t: a FLUSH = a 1-minute bar between 09:30 and 10:29 whose low is 2%+ under the day's open and whose close is under the session VWAP; then the first completed clock-aligned 5-minute bar (ending by 11:30) that closes above the session VWAP: buy at the open of the next minute (market). Stop = the day's low as known at the fill. Exit: the stop, else the 15:59 close. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC-PB.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "Same setup entered at the next open on daily bars: DEC-PB",
    "sources": [
@@ -16149,14 +16297,51 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-VWAP]; kind day; blocks of 5 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3854,
+     8171
+    ],
+    "avg": [
+     -0.0102,
+     -0.0107
+    ],
+    "stress": [
+     -0.0142,
+     -0.0147
+    ],
+    "edge": [
+     -0.01,
+     -0.0096
+    ],
+    "vsOwn": [
+     -0.0038,
+     -0.005
+    ],
+    "noTop2": [
+     -0.0104,
+     -0.0109
+    ],
+    "tBlock": [
+     -15.69,
+     -13.93
+    ],
+    "win": 0.2978,
+    "avgWin": 0.0388,
+    "avgLoss": -0.0315,
+    "pf": 0.5224,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -15.69 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -13.93 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ2-EMAPB",
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "First pullback to the 9/21 EMA on 5-minute bars after a 4%+ gap with 3x relative volume (day trade)",
    "explain": "Day t: the SQ2-ORB5 pool (4%+ gap, relative volume >= 3 at 09:35). Clock-aligned 5-minute bars; EMA9 and EMA21 of their closes, both seeded with the prior close. Trend: a completed 5-minute bar closed above the EMA9 and the day's high after 09:35 exceeded the 09:30-09:34 high. FIRST PULLBACK = the first later 5-minute bar starting 09:40-11:25 whose low <= EMA9 and whose close > EMA21 (EMAs including that bar). Buy-stop at that bar's high, live for the next 15 minutes only. Stop = that bar's low. Exit: the stop, else the 15:59 close. Only the first pullback of the day. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC-PB, DEC2-GAPGO.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "Same setup entered at the next open on daily bars: DEC-PB, DEC2-GAPGO",
    "sources": [
@@ -16165,14 +16350,51 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-EMAPB]; kind day; blocks of 5 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     972,
+     1682
+    ],
+    "avg": [
+     -0.0098,
+     -0.0082
+    ],
+    "stress": [
+     -0.0138,
+     -0.0122
+    ],
+    "edge": [
+     -0.0103,
+     -0.0072
+    ],
+    "vsOwn": [
+     -0.0026,
+     0
+    ],
+    "noTop2": [
+     -0.0103,
+     -0.0091
+    ],
+    "tBlock": [
+     -6,
+     -3.93
+    ],
+    "win": 0.228,
+    "avgWin": 0.0363,
+    "avgLoss": -0.0221,
+    "pf": 0.4846,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -6 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.93 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ2-HTF",
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "High tight flag bought on the intraday break of the flag high, stop at the day low so far, 10-day trail",
    "explain": "At the close of t-1: universe; the highest high of the last 40 sessions (pole top, session p) is 3 to 25 sessions old; it is 90%+ above the lowest low of the 40 sessions up to p (the pole); since p no low under 75% of the top (flag pullback <= 25%); close under the top. Day t: buy-stop at max(pole top, the 09:30-09:34 high), live 09:35-15:30. Stop = the day's low as known at the fill, at most 1 ADR under the fill. Exit: the stop; else the next open after a close under the 10-day average (from day 1); at most 60 sessions. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC2-WEDGE, T12.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "Same setup entered at the next open on daily bars: DEC2-WEDGE, T12",
    "sources": [
@@ -16180,14 +16402,51 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-HTF]; kind swing, exit engine S10; blocks of 20 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     354,
+     989
+    ],
+    "avg": [
+     -0.0259,
+     -0.0063
+    ],
+    "stress": [
+     -0.0299,
+     -0.0103
+    ],
+    "edge": [
+     -0.0176,
+     -0.0113
+    ],
+    "vsOwn": [
+     -0.0232,
+     -0.0065
+    ],
+    "noTop2": [
+     -0.0293,
+     -0.0095
+    ],
+    "tBlock": [
+     -2.87,
+     -0.9
+    ],
+    "win": 0.2092,
+    "avgWin": 0.1674,
+    "avgLoss": -0.0588,
+    "pf": 0.7533,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.87 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.9 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ2-PWR",
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "Power-hour breakout of the day high on strong, active stocks (day trade)",
    "explain": "Pool day t: the gap (>= 4% by the open) and leader lists of this squad (known at the open). At 15:00 (bars to 14:59 completed): last price >= 3% above the prior close, within 1% of the day's high, relative volume >= 1.5 (F(330)). Buy-stop at the day's high so far, live 15:00-15:50. Stop = the lowest low of 14:00-14:59, at most 1 ADR under the fill. Exit: the stop, else the 15:59 close. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: none.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "none",
    "sources": [
@@ -16195,14 +16454,51 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-PWR]; kind day; blocks of 5 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     901,
+     1503
+    ],
+    "avg": [
+     -0.0105,
+     -0.0094
+    ],
+    "stress": [
+     -0.0145,
+     -0.0134
+    ],
+    "edge": [
+     -0.0106,
+     -0.0098
+    ],
+    "vsOwn": [
+     -0.0036,
+     -0.0024
+    ],
+    "noTop2": [
+     -0.0107,
+     -0.0097
+    ],
+    "tBlock": [
+     -13.13,
+     -13.19
+    ],
+    "win": 0.1502,
+    "avgWin": 0.0115,
+    "avgLoss": -0.0136,
+    "pf": 0.149,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -13.13 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -13.19 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ2-SWING",
    "family": "Intraday execution (squad 2, minute bars)",
    "name": "Swing version: 5-minute opening-range breakout on a 4%+ gap with 3x relative volume, held for days with a 10-day-low trail",
    "explain": "Entry exactly as SQ2-ORB5 (same pool, same buy-stop, same initial stop = the day's low as known at the fill). Not sold at the close: from day 2 the stop trails to the lowest low of the 10 sessions before each day (never lowered); a daily open under the stop fills at the open; at most 60 sessions (sold at the close of day 60). Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC2-GAPGO, DEC-EP.",
-   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026",
    "agent": "squad2",
    "libraryCheck": "Same setup entered at the next open on daily bars: DEC2-GAPGO, DEC-EP",
    "sources": [
@@ -16210,7 +16506,44 @@
    ],
    "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-SWING]; kind swing, exit engine L10; blocks of 20 sessions.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
-   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)",
+   "tested": "2026-10-24",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2260,
+     3797
+    ],
+    "avg": [
+     -0.0103,
+     -0.0072
+    ],
+    "stress": [
+     -0.0143,
+     -0.0112
+    ],
+    "edge": [
+     -0.0021,
+     -0.0046
+    ],
+    "vsOwn": [
+     -0.0015,
+     -0.003
+    ],
+    "noTop2": [
+     -0.0114,
+     -0.0085
+    ],
+    "tBlock": [
+     -0.47,
+     -1.16
+    ],
+    "win": 0.2113,
+    "avgWin": 0.1643,
+    "avgLoss": -0.0546,
+    "pf": 0.8058,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.47 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.16 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ4-GROWLEAD",
