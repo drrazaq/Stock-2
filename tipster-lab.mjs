@@ -124,15 +124,19 @@ const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {})
 // member at the month starts of the first 260 sessions (12-month returns, 52-week highs) and every industry leader at any month start
 // (3-year lows), plus SPY. Cached per ticker in tipster-cache/pre-nasdaq.json; a ticker Nasdaq does not know (most delisted stocks) is
 // recorded as [] and stays without pre-window history (it can only qualify once the window itself gives enough sessions).
-const NQP = J(TC + '/pre-nasdaq.json', null) || { tk: {} }, preMode = Object.keys(PRE.days).length >= 700 ? 'massive' : 'nasdaq'; let nqGot = 0, nqFail = 0, preNeed = [];
+const NQP = J(TC + '/pre-nasdaq2.json', null) || { tk: {} }, preMode = Object.keys(PRE.days).length >= 700 ? 'massive' : 'nasdaq'; let nqGot = 0, nqFail = 0, preNeed = [];
 if (preMode === 'nasdaq') { const need = new Set(['SPY']), ms0 = monthStarts(D); for (const t of ms0.filter(t => t < 260)) for (const r of capsAt(t).rows) need.add(SYMS[r.key]); for (const t of ms0) for (const i of capsAt(t).leaders) need.add(SYMS[i]); preNeed = [...need];
   const mdy = (s) => { const m = String(s || '').match(/^(\d\d)\/(\d\d)\/(\d{4})$/); return m ? m[3] + '-' + m[1] + '-' + m[2] : null; };
+  // the query runs to today (the form hold-lab.mjs uses; a past todate came back empty on 24 Oct) and is cut at the window start here.
+  // SPY goes first: if SPY gives no history the source is not working, nothing is recorded and the run stays incomplete.
+  preNeed = ['SPY', ...preNeed.filter(s => s !== 'SPY')];
   if (!DIAG) for (const s of preNeed) { if (NQP.tk[s] !== undefined) continue; if (left() < 120 * 60e3) break; await sleep(local(env.NASDAQ_BASE) ? 0 : 250);
-    const q = await getJ(NQ + '/api/quote/' + encodeURIComponent(s) + '/historical?assetclass=' + (s === 'SPY' ? 'etf' : 'stocks') + '&fromdate=' + PRE_FROM + '&todate=' + addDays(D[0], -1) + '&limit=9999', NQ_HEAD);
+    const q = await getJ(NQ + '/api/quote/' + encodeURIComponent(s) + '/historical?assetclass=' + (s === 'SPY' ? 'etf' : 'stocks') + '&fromdate=' + PRE_FROM + '&todate=' + iso(Date.now()) + '&limit=9999', NQ_HEAD);
     if (q === null) { nqFail++; continue; } const rows = q && q.data && q.data.tradesTable && q.data.tradesTable.rows;
+    if (s === 'SPY' && !(Array.isArray(rows) && rows.length > 500)) { log('pre-window (Nasdaq): SPY gave no usable history; response keys ' + JSON.stringify(Object.keys(q || {})) + ' data ' + JSON.stringify(q && q.data ? Object.keys(q.data) : null) + ' status ' + JSON.stringify(q && q.status || null).slice(0, 300) + ' rows ' + (Array.isArray(rows) ? rows.length + ' first ' + JSON.stringify(rows[0]).slice(0, 200) : typeof rows)); nqFail++; break; }
     NQP.tk[s] = Array.isArray(rows) ? rows.map(r => { const d = mdy(r.date), c = nnum(r.close); return d && c > 0 && d < D[0] && d >= PRE_FROM ? [d, +c.toFixed(4)] : null; }).filter(Boolean).sort((a, b) => a[0] < b[0] ? -1 : 1) : [];
-    nqGot++; if (nqGot % 250 === 0) { W(TC + '/pre-nasdaq.json', NQP); log('pre-window (Nasdaq): ' + nqGot + ' tickers fetched'); } }
-  if (nqGot) W(TC + '/pre-nasdaq.json', NQP); }
+    nqGot++; if (nqGot % 250 === 0) { W(TC + '/pre-nasdaq2.json', NQP); log('pre-window (Nasdaq): ' + nqGot + ' tickers fetched'); } }
+  if (nqGot) W(TC + '/pre-nasdaq2.json', NQP); }
 const PD = preMode === 'massive' ? Object.keys(PRE.days).sort() : (NQP.tk.SPY || []).map(b => b[0]), P = PD.length, E = P + T, EC = new Float32Array(NS * E).fill(NaN), pIdx = new Map(PD.map((d, p) => [d, p]));
 if (preMode === 'massive') PD.forEach((d, p) => { const [ix, cs] = PRE.days[d]; for (let j = 0; j < ix.length; j++) { const i = SY.get(PRE.syms[ix[j]]); if (i !== undefined) EC[i * E + p] = cs[j]; } });
 else for (const [s, rows] of Object.entries(NQP.tk)) { const i = SY.get(s); if (i === undefined || !Array.isArray(rows)) continue; for (const [d, c] of rows) { const p = pIdx.get(d); if (p !== undefined) EC[i * E + p] = c; } }
