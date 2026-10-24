@@ -289,7 +289,10 @@ if (DIAG) { console.log('SQUAD 10 DIAGNOSTICS (coverage and the Shariah screen o
     for (const [tag, v] of Object.entries(g)) { if (!/Debt|Borrowing|NotesPayable|CommercialPaper|^Cash|Investments|Receivable|StockholdersEquity$/.test(tag)) continue; const u = v.units && v.units.USD; if (!Array.isArray(u)) continue;
       const inst = u.filter(x => !x.start && x.end >= '2021-01-01').sort((a, b) => a.end < b.end ? -1 : 1); if (inst.length) items[tag] = inst.slice(-2).map(x => [x.end, x.val, x.filed]); }
     tagDump[c] = { ...p, entity: j.entityName, items }; }
-  DIAGS.tagDump = tagDump;
+  DIAGS.tagDump = Object.fromEntries(Object.entries(tagDump).map(([c, v]) => [c, { sym: v.sym, why: v.why, at: v.at }]));
+  // what the cached SEC items say at the failing date (the 3 latest rows of every Shariah tag filed before it)
+  DIAGS.failRows = {}; for (const [c, p] of probs) { const a = SHF[c] || {}, o = {}; for (const [tag, rows] of Object.entries(a)) { const r = rows.filter(x => x[3] < p.at && !x[0]).slice(-3); if (r.length) o[tag] = r.map(x => x[1] + ' ' + (x[2] / 1e9).toFixed(2) + 'B f' + x[3]); }
+    DIAGS.failRows[p.sym + ' ' + p.at] = o; }
   // market-value probe of the giants at the 2022-2023 quarters (Squad 5's universe showed GOOGL at 96B and META at 44B in Jan 2022)
   DIAGS.capProbe = {}; for (const t of [...QS.filter(x => D[x] < '2023-04-01'), T - 1]) { const U = universe(t), o = {};
     for (const sy of ['GOOGL', 'GOOG', 'FB', 'META', 'AVGO', 'BRK.B', 'AAPL']) { const i = SY.get(sy); if (i === undefined) { o[sy] = 'no prices'; continue; } const cik = cikAt(i, D[t]), r = U.ranked.find(z => z.i === i), rc = cik ? U.ranked.find(z => z.cik === cik) : null;
