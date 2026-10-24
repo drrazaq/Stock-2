@@ -1,0 +1,77 @@
+name: Macro lab
+# MACRO LAB (macro-lab.mjs; owner's request of 24 Oct 2026: "traders make money from what is happening in the world: demand, war, oil up ->
+# industry up, weapons companies on conflict, peace, global warming / energy policy, inflation, rates"). Each MACRO-* rule (pre-registered in
+# macro-core.mjs and data/strategy-library.json before any run, with the dated event table) is tested ONCE on 5 years (first complete verdict
+# frozen in data/macro-lab.json), plus information tables (what each dated event did to every sector fund at day 1/5/20/60), and a forward
+# PAPER ledger records every new signal from Monday 26 Oct 2026 (data/macro-paper.jsonl, macro-today.json, macro-board.json).
+# Runs on weekday evenings after the close. The whole-market price cache is RESTORED READ ONLY from the Sunday job; only this lab's own
+# cache (macro-cache: fund histories) is saved. Commits only its own output files and its own library entries. Never places an order.
+# Start by hand: change run-macro-now.txt (or run the workflow).
+on:
+  schedule:
+    - cron: '17 23 * * 1-5'   # weekday evenings after the close: paper lane (and the one-shot of any rule not yet frozen)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-macro-now.txt']
+permissions:
+  contents: write
+concurrency: macro-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: macro-cache
+          key: macro-cache-${{ github.run_id }}
+          restore-keys: macro-cache-
+      - shell: bash
+        timeout-minutes: 75
+        run: |
+          set -o pipefail
+          node macro-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: macro-cache
+          key: macro-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/macro-run.log 2>/dev/null || true
+          FILES="data/macro-lab.json data/macro-paper.jsonl data/macro-today.json data/macro-board.json data/macro-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "macro lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the macro lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macro-lab-log
+          path: run.log
