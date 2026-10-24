@@ -144,11 +144,11 @@ export function shariahOk({ sic, debt, cash, cap }) {
 export function splitRatio(splits, a, b) { let f = 1; for (const [d, r] of splits || []) if (d > a && d <= b && r > 0) f *= r; return f; }
 // cover = [[asOfDate, shares]] (cover-page counts, usable 30+ days after their date); alt = [[filed, periodEnd, shares]] (financial-statement
 // counts, usable after their filing date). Price as traded on d = adjusted close x every later split; shares x the splits between their date
-// and d. When both counts exist and differ by more than 3x, the financial-statement count is used. Returns { cap, src } or null.
+// and d (a financial-statement count from its filing date: filings after a split restate earlier periods). When both counts exist and differ by more than 3x, the financial-statement count is used. Returns { cap, src } or null.
 export function capAt({ adjClose, d, splits, cover, alt }) {
   if (!(adjClose > 0)) return null; const px = adjClose * splitRatio(splits, d, '9999-12-31'), lim = addDays(d, -30);
   let a = null, b = null; for (const [e, n] of cover || []) if (e <= lim && n > 0) a = n * splitRatio(splits, e, d);
-  for (const [f, e, n] of alt || []) if (f < d && n > 0) b = n * splitRatio(splits, e, d);
+  for (const [f, , n] of alt || []) if (f < d && n > 0) b = n * splitRatio(splits, f, d);   // a filing made after a split restates its counts (ASC 260): adjust from the FILING date
   const sh = a && b && (a / b > 3 || b / a > 3) ? b : a || b; return sh ? { cap: px * sh, src: sh === a ? 'cover' : 'statements' } : null;
 }
 // US company from SEC submissions: business address state code (US state, DC, PR) and no 20-F / 40-F among its filings

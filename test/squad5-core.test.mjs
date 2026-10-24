@@ -132,4 +132,6 @@ test('market value from as-traded numbers: later splits restore the traded price
   // a cover count 1000x off is replaced by the statement count
   const r = capAt({ adjClose: 10, d: '2024-03-01', splits: [], cover: [['2024-01-01', 1e9]], alt: [['2024-02-01', '2023-12-31', 1e6]] }); assert.equal(r.cap, 1e7); assert.equal(r.src, 'statements');
   assert.equal(capAt({ adjClose: 10, d: '2024-03-01', splits: [], cover: [['2024-02-15', 5]] }), null, 'cover count under 30 days old is not usable yet');
+  // a 10-Q filed after a 10-for-1 split reports the restated (post-split) count for a quarter that ended before the split: no extra factor
+  assert.equal(capAt({ adjClose: 72, d: '2025-01-02', splits: [['2024-10-03', 10]], alt: [['2024-10-20', '2024-09-29', 1.29e9]] }).cap, 72 * 1.29e9);
 });

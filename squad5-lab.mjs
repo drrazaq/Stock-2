@@ -219,7 +219,7 @@ const DIAGS = { window: [D[0], D[T - 1]], sessions: T, stocks: NS, data: STATUS 
 { let g = 0, gc = 0, a = 0, ac = 0; for (const t of MS) for (const i of liqList(t)) { const c = cikAt(i, D[t]); if (vanishedI(i)) { g++; if (c) gc++; } else { a++; if (c) ac++; } }
   STATUS.cikCover = { ok: g === 0 || gc / g >= 0.75, vanished: g, vanishedWithCik: gc, alive: a, aliveWithCik: ac, vanishedShare: r4(g ? gc / g : null), aliveShare: r4(a ? ac / a : null) };
   const snap = (t) => { const U = universe(t); return { date: D[t], liquid: U.liquid, companies: U.companies, ranked: U.ranked.length, noCik: U.noCik, noFacts: U.noFacts, noShares: U.noShares, foreign: U.foreign, top30: U.ranked.slice(0, 30).map(r => SYMS[r.i] + ' ' + (r.cap / 1e9).toFixed(0) + 'B'), rank500Cap: U.ranked[499] ? r4(U.ranked[499].cap / 1e9) : null, vanishedInTop500: U.ranked.slice(0, 500).filter(r => vanishedI(r.i)).length,
-    probe: Object.fromEntries(['GOOGL', 'META', 'BRK.B', 'NVDA', 'AVGO', 'WMT', 'CMG', 'SIRI', 'BYND', 'PARA', 'NFE', 'SPCX', 'PLTR'].map(sy => { const r = U.ranked.find(z => SYMS[z.i] === sy); return [sy, r ? (r.cap / 1e9).toFixed(1) + 'B #' + (r.rank + 1) : 'not ranked'] })) }; };
+    probe: Object.fromEntries(['GOOGL', 'META', 'BRK.B', 'NVDA', 'AVGO', 'WMT', 'CMG', 'SIRI', 'BYND', 'PARA', 'NFE', 'SPCX', 'PLTR', 'LRCX', 'CTAS'].map(sy => { const r = U.ranked.find(z => SYMS[z.i] === sy); return [sy, r ? (r.cap / 1e9).toFixed(1) + 'B #' + (r.rank + 1) : 'not ranked'] })) }; };
   DIAGS.snapshots = [...QS.filter(t => D[t].slice(5, 7) === '01'), T - 1].map(snap); }
 if (DIAG) { console.log('SQUAD 5 DIAGNOSTICS (coverage and the largest companies only; nothing judged or written)'); console.log(JSON.stringify(DIAGS, null, 1).slice(0, 30000)); process.exit(0); }
 
