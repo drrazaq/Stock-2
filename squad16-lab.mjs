@@ -30,7 +30,7 @@ const env = process.env, DIAG = !!env.DIAG, OFFLINE = !!env.OFFLINE, local = (u)
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ16_CACHE || 'squad16-cache', SC4 = env.SQ4_CACHE || 'squad4-cache';
 const OUT = env.SQ16_OUT || 'data/squad16-lab.json', PAPER = 'data/squad16-paper.jsonl', TODAY = 'data/squad16-today.json', BOARD = 'data/squad16-board.json', LIB = env.SQ16_LIB || 'data/strategy-library.json';
-const START = env.PAPER_START || PAPER_START;
+const START = env.PAPER_START || PAPER_START, PROV = 1200;   // provisional largest companies whose share counts and domicile are fetched (the rules rank up to the 1000 largest)
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }, JZ = (f, d) => { try { return JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString()); } catch (e) { return d; } };
 const W = (f, o) => { fs.mkdirSync(f.replace(/\/[^/]*$/, ''), { recursive: true }); fs.writeFileSync(f, JSON.stringify(o)); }, WZ = (f, o) => { fs.mkdirSync(f.replace(/\/[^/]*$/, ''), { recursive: true }); fs.writeFileSync(f, zlib.gzipSync(JSON.stringify(o))); };
 const sleep = (ms) => new Promise(r => setTimeout(r, ms)), iso = (x) => new Date(x).toISOString().slice(0, 10), pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
@@ -312,12 +312,15 @@ if (DIAG) { console.log('SQUAD 16 DIAGNOSTICS (data coverage and selection count
 const TR = {}, SG = {}, NOTE = {}; for (const id of IDS) { TR[id] = []; SG[id] = []; NOTE[id] = { artifacts: 0, open: 0, notBought: 0, skippedBusy: 0 }; }
 const JUMPS = new Map(); const jumpsOf = (i) => { if (!JUMPS.has(i)) JUMPS.set(i, artifactJumps(cl(i))); return JUMPS.get(i); };
 const planOf = (id) => RULES[id].kind === 'sleeve' ? 'buy the next open; hold one year (sold at the review four quarters later unless re-picked)' : RULES[id].kind === 'daily' ? 'buy the next open; sell at the close of session 63' : 'buy the next open; hold while the ' + RULES[id].review + ' review keeps it selected';
-for (const id of BASKET_IDS) { const R = REVS[id], H = SEL[id]; for (const e of episodes(H)) { const ta = R[e.a], tb = e.b === null ? null : R[e.b], i = e.key;
+const EP = {};   // whole holdings (entry to exit): the PORTFOLIO test and the paper signals; TR = review-period pieces: the per-trade verdict
+for (const id of BASKET_IDS) { const R = REVS[id], H = SEL[id]; EP[id] = [];
+  const wOf = (j, i) => id === 'SQ16-MSCIQ' ? (WEIGHT[id + '|' + R[j]].get(i) || 0) : 1 / (RULES[id].target || Math.max(1, H[j].size));
+  for (const e of episodes(H)) { const ta = R[e.a], tb = e.b === null ? null : R[e.b], i = e.key;
     if (D[ta] >= START || ta === T - 1) SG[id].push({ t: ta, i, plan: planOf(id) });
-    const r = episodeTrade(series(i), ta, tb, lastI[i], T); if (!r) { NOTE[id].notBought++; continue; } if (r.pending) continue;
-    const w = id === 'SQ16-MSCIQ' ? (WEIGHT[id + '|' + ta].get(i) || 0) : 1 / (RULES[id].target || Math.max(1, H[e.a].size));
-    if (r.open) { NOTE[id].open++; TR[id].push({ t: ta, i, open: true, k: r.k, px0: r.px0, w }); continue; }
-    if (hasArtifact(jumpsOf(i), r.k, r.x)) { NOTE[id].artifacts++; continue; } TR[id].push({ t: ta, i, ...r, w }); } }
+    const r = episodeTrade(series(i), ta, tb, lastI[i], T); if (!r || r.pending) continue; if (!r.open && hasArtifact(jumpsOf(i), r.k, r.x)) continue; EP[id].push(r.open ? { t: ta, i, open: true, k: r.k, px0: r.px0, w: wOf(e.a, i) } : { t: ta, i, ...r, w: wOf(e.a, i) }); }
+  for (let j = 0; j < R.length; j++) for (const i of H[j]) { const r = episodeTrade(series(i), R[j], j + 1 < R.length ? R[j + 1] : null, lastI[i], T); if (!r) { NOTE[id].notBought++; continue; } if (r.pending) continue;
+    if (r.open) { NOTE[id].open++; TR[id].push({ t: R[j], i, open: true, k: r.k, px0: r.px0 }); continue; }
+    if (hasArtifact(jumpsOf(i), r.k, r.x)) { NOTE[id].artifacts++; continue; } TR[id].push({ t: R[j], i, ...r, kind: r.kind === 'dropped' ? 'period' : r.kind }); } }
 // RSNH: daily
 { const id = 'SQ16-RSNH', busy = new Map(), rsMemo = new Map(), U5 = new Map(); let sigs = 0;
   const arrs = (i) => { if (!rsMemo.has(i)) { const c = Float64Array.from(cl(i)); rsMemo.set(i, { c, hi: rsHighArr(c, SPYC), s50: smaArr(c, 50) }); } return rsMemo.get(i); };
@@ -328,7 +331,7 @@ for (const id of BASKET_IDS) { const R = REVS[id], H = SEL[id]; for (const e of 
       if (r.open) { NOTE[id].open++; busy.set(i, Infinity); TR[id].push({ t, i, open: true, k: r.k, px0: r.px0 }); continue; }
       busy.set(i, r.x); if (hasArtifact(jumpsOf(i), r.k, r.x)) { NOTE[id].artifacts++; continue; } TR[id].push({ t, i, ...r, at: 'c' }); } }
   NOTE[id].signals = sigs; }
-log('trades: ' + IDS.map(id => id + ' ' + TR[id].length).join(', '));
+log('trades (review-period pieces): ' + IDS.map(id => id + ' ' + TR[id].length).join(', ') + ' | holdings: ' + BASKET_IDS.map(id => id + ' ' + EP[id].length).join(', '));
 
 // ================= 8. THE ACCOUNTS (every basket) =================
 const pxApi = { o: (i, k) => OA[i * T + k], c: (i, k) => CA[i * T + k] };
@@ -338,7 +341,7 @@ function portStats(eq, s0) { const lv = new Float64Array(T).fill(NaN); lv[s0] = 
     out[h] = { from: D[a], to: D[b], rule, spy, spus, beatsSpy: !!(rule && spy && rule.cagr > spy.cagr), beatsSpus: spus ? !!(rule && rule.cagr > spus.cagr) : null }; }
   return { halves: out, years: yearTable(D, lv, spyLv, SPUS, s0) }; }
 const ACC = {};
-for (const id of BASKET_IDS) { const s0 = REVS[id][0], cands = TR[id].map(z => ({ id: z.i + '|' + z.t, key: z.i, i: z.i, k: z.k, x: z.open ? null : z.x, at: z.at || 'c', w: z.w }));
+for (const id of BASKET_IDS) { const s0 = REVS[id][0], cands = EP[id].map(z => ({ id: z.i + '|' + z.t, key: z.i, i: z.i, k: z.k, x: z.open ? null : z.x, at: z.at || 'c', w: z.w }));
   const A = simAccount2({ T, start: s0 + 1, cands, px: pxApi, side: SIDE }), B = simAccount2({ T, start: s0 + 1, cands, px: pxApi, side: SIDE_STRESS });
   const P = { standard: { label: '0.4% per side', ...portStats(A.eq, s0) }, stress: { label: '0.6% per side', ...portStats(B.eq, s0) }, taken: A.taken.length, candidates: cands.length, skipped: A.skipped, weights: id === 'SQ16-MSCIQ' ? 'index weight (quality score x market value, 5% cap) at entry' : '1/' + (RULES[id].target || 'basket size') + ' of the account at entry' };
   P.beatsSpyBothHalves = !!(P.standard.halves.older.beatsSpy && P.standard.halves.newer.beatsSpy); P.beatsSpyBothHalvesStress = !!(P.stress.halves.older.beatsSpy && P.stress.halves.newer.beatsSpy); ACC[id] = P;
@@ -365,7 +368,7 @@ for (const id of IDS) { if (dataOk().length) { RES[id] = { verdict: 'NOT RUN', w
   const PY = Object.fromEntries(['older', 'newer'].map(h => [h, { rule: r4(perYearOf(by[h], 'g', COST)), spy: r4(perYearOf(by[h], 'spy', 0)), avgStock: r4(perYearOf(by[h], 'c', 0)) }]));
   const v = judgeHold(R, { bar: BAR, ownName: 'the same stocks held as long on their other days', perYear: { older: [PY.older.rule, PY.older.spy], newer: [PY.newer.rule, PY.newer.spy] } });
   const kinds = {}; for (const z of tr) kinds[z.kind] = (kinds[z.kind] || 0) + 1; const sh = { older: shape(by.older), newer: shape(by.newer) };
-  RES[id] = { ...v, name: RULES[id].name, hold: RULES[id].hold || shape(tr).medianDays || 63, holdRule: planOf(id), block: blk, cost: COST, split: SPLIT, yardstick: 'capBoth (AUD-1)', replication: RULES[id].replication, source: RULES[id].source, results: R, perYear: PY,
+  RES[id] = { ...v, name: RULES[id].name, hold: RULES[id].kind === 'sleeve' ? 252 : RULES[id].hold || shape(tr).medianDays || 63, holdRule: planOf(id), block: blk, cost: COST, split: SPLIT, yardstick: 'capBoth (AUD-1)', replication: RULES[id].replication, source: RULES[id].source, results: R, perYear: PY,
     byYear: byYear(tr), shape: sh, exits: kinds, notes: NOTE[id], reviews: REVS[id] ? REVS[id].length : null,
     trades: tr.map(z => ({ s: z.s, sig: z.sig, buy: D[z.k], sell: D[z.x], kind: z.kind, days: z.days, net: r4(z.g - COST), avgStock: r4(z.c - COST), spy: r4(z.spy), sameStock: r4(ok(z.own) ? z.own - COST : null) })) };
   if (ACC[id]) RES[id].portfolio = ACC[id];
