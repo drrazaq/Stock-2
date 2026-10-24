@@ -2260,6 +2260,10 @@ const labRuns = (j) => { if (!j) return {}; const out = { ...(j.firstRun || {}) 
 // silently dropping taken-over / renamed companies (survivorship); corrected, its older half loses after costs. Off until a corrected run exists.
 // BASKET labs (squad5, squad10; 24 Oct 2026) are left out of TRY SMALL on purpose: a basket works only when the WHOLE basket is owned by
 // weight; 2 of its names at 1,000 USD with a 15% stop is not the rule that was tested. The basket is shown separately as a core holding.
+// Near-copies of a rule already in the lane (24 Oct 2026): Squad 14 re-tested SQ11-PB12 with other leader lists / a deeper dip / a
+// Shariah screen AFTER PB12 had won. They largely pick the same trades, so they would send the owner the same buy up to 4 times and
+// their extra 'wins' add little evidence. Only the original SQ11-PB12 trades; the copies stay on paper.
+const TRY_DUPLICATE = new Set(['SQ14-PB12M', 'SQ14-PB15', 'SQ14-PB12H']);
 const TRY_PAUSED = new Set(['ANOM-SUESURGE', 'SQ1-BBAUTH']);
 // (24 Oct 2026) a rule whose lab measured its return per year of capital against the S&P 500 must beat it in BOTH halves:
 // otherwise simply holding SPUS did better, and a 1,000 USD ticket adds risk without adding money. Rules without that measure are unaffected.
@@ -2269,7 +2273,7 @@ const portfolioBeatsSpy = (pf) => { const h = pf && pf.standard && pf.standard.h
 function tryQualifies(firstRun) {
   // (24 Oct) also a usable sample in each half: not frozen REJECTED / TOO FEW CASES, 20+ trades, 3+ blocks where reported
   const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0 && !(typeof h.n === 'number' && h.n < 20) && !(typeof h.blocks === 'number' && h.blocks < 3);
-  return Object.entries(firstRun || {}).filter(([id, r]) => r && r.results && !(TRY_PAUSED.has(id) && !r.corrected) && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer) && beatsIndex(r.perYear) && portfolioBeatsSpy(r.portfolio)).map(([id]) => id);
+  return Object.entries(firstRun || {}).filter(([id, r]) => r && r.results && !(TRY_PAUSED.has(id) && !r.corrected) && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer) && !TRY_DUPLICATE.has(id) && beatsIndex(r.perYear) && portfolioBeatsSpy(r.portfolio)).map(([id]) => id);
 }
 function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }

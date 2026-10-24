@@ -156,3 +156,7 @@ test('basket labs squad5 and squad10 are not read by TRY SMALL', async () => {
   const src = fs.readFileSync(new URL('../scan.mjs', import.meta.url), 'utf8');
   for (const line of src.split('\n').filter(l => l.includes("for (const lab of ['anomaly'"))) { assert.ok(!line.includes("'squad5'")); assert.ok(!line.includes("'squad10'")); }
 });
+test('near-copies of SQ11-PB12 from Squad 14 never trade', () => {
+  const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
+  assert.deepEqual(q({ 'SQ14-PB12M': r, 'SQ14-PB15': r, 'SQ14-PB12H': r, 'SQ11-PB12': r }), ['SQ11-PB12']);
+});
