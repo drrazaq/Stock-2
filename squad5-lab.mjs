@@ -160,7 +160,8 @@ const shMemo = new Map(), shRows = (cik) => { if (!shMemo.has(cik)) { const a = 
 // ================= 4. UNIVERSE + market value ranks =================
 // ---- alternative share counts for companies without a cover-page count (multi-class companies): SEC balance-sheet / weighted-average
 // shares, keyed by their FILING date (known from then), the current period of each filing; own cache ----
-const ALT = J(SC + '/alt-shares.json', {}), ALT_TAGS = ['CommonStockSharesOutstanding', 'WeightedAverageNumberOfSharesOutstandingBasic', 'WeightedAverageNumberOfDilutedSharesOutstanding'];
+const SUBS = J(SC + '/subs.json', {});
+const ALT = J(SC + '/alt-shares-v2.json', {}), ALT_TAGS = ['WeightedAverageNumberOfSharesOutstandingBasic', 'WeightedAverageNumberOfDilutedSharesOutstanding', 'CommonStockSharesOutstanding'];
 function altFrom(j) { const g = j && j.facts && j.facts['us-gaap']; if (!g) return [];
   for (const tag of ALT_TAGS) { const u = g[tag] && g[tag].units && g[tag].units.shares; if (!Array.isArray(u)) continue; const m = new Map();
     for (const x of u) { if (!x || !x.filed || !x.end || !(x.val > 0) || x.end < '2019-01-01') continue; if (x.start) { const dd = (Date.parse(x.end) - Date.parse(x.start)) / 864e5 + 1; if (!((dd >= 80 && dd <= 100) || (dd >= 350 && dd <= 380))) continue; }
@@ -168,13 +169,17 @@ function altFrom(j) { const g = j && j.facts && j.facts['us-gaap']; if (!g) retu
     const rows = [...m.values()].sort((a, b) => a[0] < b[0] ? -1 : 1).map(r => [r[0], r[2]]); if (rows.length >= 2) return rows; }
   return []; }
 const altMemo = new Map(), altRows = (cik) => { if (!altMemo.has(cik)) { const a = ALT[cik]; altMemo.set(cik, a && a.length ? splitFix(a) : null); } return altMemo.get(cik); };
-const shAt = (cik, d) => sharesAt(shRows(cik), d, 30) || sharesAt(altRows(cik), d, 1);
-{ const want = new Set(); for (const t of [...MS, T - 1]) for (const i of liqList(t)) { const cik = cikAt(i, D[t]); if (cik && coOf(cik) && !sharesAt(shRows(cik), D[t], 30) && !(cik in ALT)) want.add(cik); }
+// the cover-page count; when the financial-statement count known that day differs from it by more than 3x, the cover-page count is a unit
+// error (seen in the DIAG check: x1000 rows) and the financial-statement count is used
+const shAt = (cik, d) => { const a = sharesAt(shRows(cik), d, 30), b = sharesAt(altRows(cik), d, 1); return a && b && (a / b > 3 || b / a > 3) ? b : a || b; };
+// (rowsAt is defined below; function declarations are hoisted) the financial-statement count is fetched for every company without a cover-page
+// count and for every company in the provisional 700 largest at any month start
+{ const want = new Set(); for (const t of [...MS, T - 1]) { for (const i of liqList(t)) { const cik = cikAt(i, D[t]); if (cik && coOf(cik) && !sharesAt(shRows(cik), D[t], 30) && !(cik in ALT)) want.add(cik); }
+    if (t >= 19) for (const r of byCap(rowsAt(t, false).rows).slice(0, 700)) if (!(r.cik in ALT)) want.add(r.cik); }
   let got = 0; if (!OFFLINE) for (const c of want) { if (left() < 75 * 60e3) break; await sleep(local(env.SEC_BASE) ? 0 : 110); let r = null; try { r = await fetch(SECD + '/api/xbrl/companyfacts/CIK' + c.padStart(10, '0') + '.json', { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60000) }); } catch (e) {}
     if (r && r.ok) { const j = await r.json().catch(() => null); if (j) { ALT[c] = altFrom(j); got++; } } else if (r && r.status === 404) ALT[c] = []; }
-  if (got) W(SC + '/alt-shares.json', ALT); STATUS.altShares = { wanted: want.size, fetchedNow: got, known: Object.values(ALT).filter(a => a.length).length }; log('alternative share counts: ' + JSON.stringify(STATUS.altShares)); }
+  if (got) W(SC + '/alt-shares-v2.json', ALT); altMemo.clear(); STATUS.altShares = { wanted: want.size, fetchedNow: got, known: Object.values(ALT).filter(a => a.length).length }; log('alternative share counts: ' + JSON.stringify(STATUS.altShares)); }
 // ---- domicile (SEC submissions: business address + 20-F / 40-F filings; also the SIC code); own cache ----
-const SUBS = J(SC + '/subs.json', {});
 function rowsAt(t, useDom) { const rows = new Map(); let noCik = 0, noFacts = 0, noShares = 0, foreign = 0;
   for (const i of liqList(t)) { const cik = cikAt(i, D[t]); if (!cik) { noCik++; continue; } if (!coOf(cik)) { noFacts++; continue; } if (useDom && SUBS[cik] && SUBS[cik].us === false) { foreign++; continue; } const sh = shAt(cik, D[t]); if (!sh) noShares++;
     const r = { key: i, i, cik, dv: DV20[i * T + t], close: CC(i, t), cap: sh ? CC(i, t) * sh : null }, o = rows.get(cik); if (!o || r.dv > o.dv) rows.set(cik, r); }
