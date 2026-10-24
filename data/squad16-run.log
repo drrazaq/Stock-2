@@ -1,0 +1,15 @@
+[6s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
+[7s] splits since 2026-10-19: 71 listed, 0 repaired
+[7s] window 2021-10-12..2026-10-23 (1264 sessions, 8600 stocks), rows with high/low +100.0%, month ends: 59 (2021-11-30 on)
+[8s] ticker map: {"ok":true,"quarters":23,"fromSquad4Cache":23,"downloadedNow":0,"missing":[],"tickers":10422}
+[10s] SEC facts: {"ok":true,"companies":4445,"answered":4441,"withRevenue":3717,"fromSquad4Cache":6154,"fetchedNow":0,"failed":0,"mode":"cache"}
+[11s] split list: {"ok":true,"rows":7351,"tickers":4769,"pagesNow":8}
+file:///home/runner/work/Stock-2/Stock-2/squad16-lab.mjs:188
+    if (t >= 19) for (const r of byCap(rowsAt(t, false).rows).slice(0, PROV)) if (!(r.cik in ALT)) want.add(r.cik); }
+                                                                       ^
+
+ReferenceError: PROV is not defined
+    at file:///home/runner/work/Stock-2/Stock-2/squad16-lab.mjs:188:72
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+Node.js v20.20.2
