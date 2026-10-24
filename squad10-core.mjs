@@ -113,6 +113,17 @@ export function shariahPass({ sic, mvAvg, debt, cashInv, recv, intInc, rev }) {
 // average of the values (the last `n` given, newest last), ignoring missing; null if none
 export function avgLast(vals, n = AVG_MONTHS) { const a = vals.slice(-n).filter(x => ok(x) && x > 0); return a.length ? a.reduce((x, y) => x + y, 0) / a.length : null; }
 
+// IMPLIED SPLITS: alt = [[filed, periodEnd, shares]] (financial-statement counts by filing date), listed = [[date, r]]. Two consecutive
+// filings (<= 200 days apart) whose counts differ by a near-whole factor k (2, 3, 4, 5, 8, 10, 15, 20, 25, 30, 40, 50 or 1 / k, within 2%)
+// with no listed split of about that size between them (30 days of slack) -> a split [later filing date, k]. Placing it at the later filing
+// date gives the right market value on every day (the earlier count x k before it, the restated count after it).
+const KS = [2, 3, 4, 5, 8, 10, 15, 20, 25, 30, 40, 50];
+export function impliedSplits(alt, listed = []) { const out = [], a = (alt || []).filter(x => x && x[2] > 0).sort((x, y) => x[0] < y[0] ? -1 : 1);
+  for (let j = 1; j < a.length; j++) { const [f1, , n1] = a[j - 1], [f2, , n2] = a[j]; if ((ms(f2) - ms(f1)) / DAY > 200) continue; const F = n2 / n1;
+    let k = null; for (const q of KS) { if (Math.abs(F / q - 1) < 0.02) k = q; else if (Math.abs(F * q - 1) < 0.02) k = 1 / q; } if (k === null) continue;
+    if ((listed || []).some(([d, r]) => d > addDays(f1, -30) && d <= addDays(f2, 30) && Math.abs(r / k - 1) < 0.05)) continue; out.push([f2, k]); }
+  return out; }
+
 // ---- weights ----
 export function capWeights(rows) { const s = rows.reduce((a, r) => a + r.cap, 0); return new Map(rows.map(r => [r.key, s > 0 ? r.cap / s : 0])); }
 // weights (Map key -> w, sum 1) with no weight above maxW: the excess is re-spread pro rata over the uncapped ones, repeated

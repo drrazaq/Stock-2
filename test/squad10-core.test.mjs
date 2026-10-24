@@ -3,7 +3,7 @@
 // momentum tilt, the bottom-third momentum cut, review months and the idempotent library pre-registration.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { balanceAt, shariahPass, avgLast, capWeights, capAtMax, momTilt, dropBottomThird, weightsFor, reviewMonth, periodHold, preRegister, IDS, RULES } from '../squad10-core.mjs';
+import { impliedSplits, balanceAt, shariahPass, avgLast, capWeights, capAtMax, momTilt, dropBottomThird, weightsFor, reviewMonth, periodHold, preRegister, IDS, RULES } from '../squad10-core.mjs';
 
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e, sum = (m) => [...m.values()].reduce((a, b) => a + b, 0);
 
@@ -71,4 +71,13 @@ test('review months and holds; library pre-registration is idempotent', () => {
   assert.equal(periodHold('SQ10-SH20-C15-Y'), 252); assert.equal(periodHold('SQ10-SH10'), 63);
   const LB = { strategies: [{ id: 'X' }] }; assert.equal(preRegister(LB), IDS.length); assert.equal(preRegister(LB), 0); assert.equal(IDS.length, 8);
   const e = LB.strategies.find(x => x.id === 'SQ10-SH30-MOM'); assert.match(e.explain, /momentum/); assert.match(e.status, /pre-registered/); assert.ok(RULES['SQ10-SH50-XMOM'].mom);
+});
+
+test('implied splits: a near-whole jump in the statement share count with no listed split', () => {
+  const alt = [['2022-04-27', '2022-03-31', 658763000], ['2022-07-27', '2022-06-30', 13078000000], ['2022-10-26', '2022-09-30', 12971000000]];
+  assert.deepEqual(impliedSplits(alt, []), [['2022-07-27', 20]]);
+  assert.deepEqual(impliedSplits(alt, [['2022-07-18', 20]]), [], 'already listed');
+  assert.deepEqual(impliedSplits([['2022-01-01', '', 100], ['2022-04-01', '', 130]], []), [], 'a 30% rise is not a split');
+  assert.deepEqual(impliedSplits([['2022-01-01', '', 1000], ['2022-04-01', '', 100]], []), [['2022-04-01', 0.1]]);
+  assert.deepEqual(impliedSplits([['2021-01-01', '', 100], ['2022-04-01', '', 200]], []), [], 'filings too far apart');
 });
