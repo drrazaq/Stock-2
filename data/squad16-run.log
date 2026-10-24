@@ -1,15 +1,43 @@
-[6s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
-[7s] splits since 2026-10-19: 71 listed, 0 repaired
-[7s] window 2021-10-12..2026-10-23 (1264 sessions, 8600 stocks), rows with high/low +100.0%, month ends: 59 (2021-11-30 on)
-[8s] ticker map: {"ok":true,"quarters":23,"fromSquad4Cache":23,"downloadedNow":0,"missing":[],"tickers":10422}
-[10s] SEC facts: {"ok":true,"companies":4445,"answered":4441,"withRevenue":3717,"fromSquad4Cache":6154,"fetchedNow":0,"failed":0,"mode":"cache"}
-[11s] split list: {"ok":true,"rows":7351,"tickers":4769,"pagesNow":8}
-file:///home/runner/work/Stock-2/Stock-2/squad16-lab.mjs:188
-    if (t >= 19) for (const r of byCap(rowsAt(t, false).rows).slice(0, PROV)) if (!(r.cik in ALT)) want.add(r.cik); }
-                                                                       ^
-
-ReferenceError: PROV is not defined
-    at file:///home/runner/work/Stock-2/Stock-2/squad16-lab.mjs:188:72
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-
-Node.js v20.20.2
+[4s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
+[5s] splits since 2026-10-19: 71 listed, 0 repaired
+[5s] window 2021-10-12..2026-10-23 (1264 sessions, 8600 stocks), rows with high/low +100.0%, month ends: 59 (2021-11-30 on)
+[5s] ticker map: {"ok":true,"quarters":23,"fromSquad4Cache":23,"downloadedNow":0,"missing":[],"tickers":10422}
+[6s] SEC facts: {"ok":true,"companies":4445,"answered":4441,"withRevenue":3717,"fromSquad4Cache":6154,"fetchedNow":0,"failed":0,"mode":"cache"}
+[8s] split list: {"ok":true,"rows":7351,"tickers":4769,"pagesNow":8}
+[153s] statement share counts: {"ok":true,"wanted":514,"fetchedNow":514,"known":2203}
+[275s] domicile: {"ok":true,"wantedNow":766,"fetchedNow":766,"failed":0,"missing":0,"known":1902,"foreign":190}
+[309s] extra SEC items: {"ok":true,"companies":1522,"missing":0,"withAssets":1522,"withNetIncome":1520,"wantedNow":1219,"fetchedNow":1219,"failed":0,"mode":"bulk"}
+[322s] selections: {"ok":true,"reviews":{"SQ16-MAGIC":20,"SQ16-ACQM":20,"SQ16-QVAL":20,"SQ16-GPVAL":20,"SQ16-MSCIQ":10,"SQ16-SHYLD":20,"SQ16-VALMOM":16,"SQ16-CORNER":16,"SQ16-IND12":48},"minEligible":{"magic":434,"acqm":522,"qvalPicks":27,"gpval":250,"shyld":520,"valmom":917,"corner":103,"msciqRanked":533,"msciqVar":550}}
+[322s] SPUS: {"ok":true,"src":"massive","sessions":1255,"note":"information (portfolio comparison); SPY is the gate"}
+SQUAD 16 DIAGNOSTICS (data coverage and selection counts only; nothing judged or written)
+DATA {"price":{"ok":true,"sessions":1264,"from":"2021-10-12","to":"2026-10-23","stocks":8600,"rowsWithHighLow":1},"tickerMap":{"ok":true,"quarters":23,"fromSquad4Cache":23,"downloadedNow":0,"missing":[],"tickers":10422},"facts":{"ok":true,"companies":4445,"answered":4441,"withRevenue":3717,"fromSquad4Cache":6154,"fetchedNow":0,"failed":0,"mode":"cache"},"splits":{"ok":true,"rows":7351,"tickers":4769,"pagesNow":8},"altShares":{"ok":true,"wanted":514,"fetchedNow":514,"known":2203},"domicile":{"ok":true,"wantedNow":766,"fetchedNow":766,"failed":0,"missing":0,"known":1902,"foreign":190},"extra":{"ok":true,"companies":1522,"missing":0,"withAssets":1522,"withNetIncome":1520,"wantedNow":1219,"fetchedNow":1219,"failed":0,"mode":"bulk"},"select":{"ok":true,"reviews":{"SQ16-MAGIC":20,"SQ16-ACQM":20,"SQ16-QVAL":20,"SQ16-GPVAL":20,"SQ16-MSCIQ":10,"SQ16-SHYLD":20,"SQ16-VALMOM":16,"SQ16-CORNER":16,"SQ16-IND12":48},"minEligible":{"magic":434,"acqm":522,"qvalPicks":27,"gpval":250,"shyld":520,"valmom":917,"corner":103,"msciqRanked":533,"msciqVar":550}},"spus":{"ok":true,"src":"massive","sessions":1255,"note":"information (portfolio comparison); SPY is the gate"}}
+SEL SQ16-MAGIC {"d":"2021-12-31","universe":748,"eligible":463,"best":["OMC","MO","LPX","WSM","HPQ","CDK","DISH","DKS","VNT","DGX"],"sleeve":["OMC","MO","LPX","WSM","HPQ","CDK","DISH","DKS","VNT","DGX"],"held":10}
+SEL SQ16-MAGIC {"d":"2024-06-28","universe":754,"eligible":480,"best":["MO","WSM","SAIC","IPG","PR","SIRI","MTCH","TNET","CROX","WH"],"sleeve":["SAIC","PR","TNET","WH","NXT","CPAY","FFIV","ULTA","VRSN","ATKR"],"held":40}
+SEL SQ16-MAGIC {"d":"2026-09-30","universe":736,"eligible":437,"best":["GEN","PR","GDDY","DECK","ADBE","CROX","IT","MO","MTCH","BKNG"],"sleeve":["CROX","DBX","WH","FDS","SAIC","OTIS","CTSH","FICO","BBY","KVUE"],"held":40}
+SEL SQ16-ACQM {"d":"2021-12-31","eligible":522,"picks":30,"sample":["META","GOOGL","X","THC","LPX","WSM","LYB","KSS","AN","STLD"]}
+SEL SQ16-ACQM {"d":"2024-06-28","eligible":576,"picks":30,"sample":["THC","PBF","ORLY","APA","GM","LAD","AN","GPI","MPC","VLO"]}
+SEL SQ16-ACQM {"d":"2026-09-30","eligible":548,"picks":30,"sample":["PAGP","APA","AN","THC","LAD","CMCSA","NCLH","GAP","SFD","SM"]}
+SEL SQ16-QVAL {"d":"2021-12-31","eligible":522,"cheapWithF":53,"picks":27,"sample":["M","HOLX","LH","WSM","KSS","CLF","DKS","WHR","WLK","DGX"]}
+SEL SQ16-QVAL {"d":"2024-06-28","eligible":576,"cheapWithF":58,"picks":29,"sample":["JBL","AOS","PVH","ORLY","GM","CVS","T","LEA","NCLH","DVA"]}
+SEL SQ16-QVAL {"d":"2026-09-30","eligible":548,"cheapWithF":55,"picks":27,"sample":["PBF","CF","GAP","SIRI","EXE","M","DINO","URBN","EQT","PAGP"]}
+SEL SQ16-GPVAL {"d":"2021-12-31","eligible":261,"picks":50,"sample":["META","CVS","BLDR","LKQ","INCY","WMT","WBA","BBY","BIIB","NUE"]}
+SEL SQ16-GPVAL {"d":"2024-06-28","eligible":260,"picks":50,"sample":["CVS","INCY","USFD","BLDR","NKE","OXY","CVX","DLTR","MNST","ZM"]}
+SEL SQ16-GPVAL {"d":"2026-09-30","eligible":261,"picks":50,"sample":["CVS","NKE","INCY","TGT","DG","USFD","BBY","GPC","MNST","XYZ"]}
+SEL SQ16-MSCIQ {"d":"2021-11-30","universe":600,"ranked":533,"withVariability":550,"picks":125,"sample":["HD","ITW","MRNA","BURL","ABBV","QCOM","DKS","TGT","POOL","EL"]}
+SEL SQ16-MSCIQ {"d":"2024-05-31","universe":600,"ranked":554,"withVariability":580,"picks":125,"sample":["HD","LII","SYY","ORCL","ABBV","MANH","VRSK","APA","THC","CAT"]}
+SEL SQ16-MSCIQ {"d":"2026-05-29","universe":600,"ranked":558,"withVariability":582,"picks":125,"sample":["MEDP","HD","UI","SYY","LII","IBKR","LRCX","CMG","LVS","KMB"]}
+SEL SQ16-SHYLD {"d":"2021-12-31","eligible":520,"picks":100,"sample":["META +60.8%","NLSN +56.7%","GOOGL +47.5%","DXC +46.6%","VLO +43.7%","ATUS +37.2%","COTY +35.6%","XPO +34.1%","DGX +33.2%","HOG +32.5%"]}
+SEL SQ16-SHYLD {"d":"2024-06-28","eligible":627,"picks":100,"sample":["ORLY +47.0%","ADT +37.8%","WBA +28.4%","RH +28.0%","VVV +27.0%","WU +26.5%","R +25.9%","UPS +23.6%","VFC +23.5%","KVUE +23.2%"]}
+SEL SQ16-SHYLD {"d":"2026-09-30","eligible":588,"picks":100,"sample":["BYD +34.5%","PINS +25.6%","OMC +20.9%","FTV +20.0%","FLR +19.9%","SON +19.7%","ETSY +19.7%","LAD +19.6%","DBX +19.6%","AN +19.4%"]}
+SEL SQ16-VALMOM {"d":"2022-12-30","eligible":924,"picks":100,"sample":["UNM","ET","PBF","AZPN","EQT","CIVI","WTM","BTU","SRE","MUR"]}
+SEL SQ16-VALMOM {"d":"2024-12-31","eligible":925,"picks":100,"sample":["JXN","IBKR","SF","CNX","SLG","UNM","GM","MTB","JEF","FCNCA"]}
+SEL SQ16-VALMOM {"d":"2026-09-30","eligible":917,"picks":100,"sample":["PBF","NOV","CNC","CHRD","ALB","VTRS","PR","VSH","SM","KNX"]}
+SEL SQ16-CORNER {"d":"2022-12-30","eligible":174,"best":["PBF","BTU","WFRD","ATI","SMCI","MPC","XOM","ENLC","AR","VLO","UNM","STLD","NOV"],"sleeve":["PBF","BTU","WFRD","ATI","SMCI","MPC","XOM","ENLC","AR","VLO","UNM","STLD","NOV"],"held":13}
+SEL SQ16-CORNER {"d":"2024-12-31","eligible":123,"best":["EAT","LUMN","EME","MTZ","NRG","WMT","THC","KD","MDU","PPC","UNM","DKS","URBN"],"sleeve":["EAT","WMT","KD","MDU","UNM","SF","DELL","DAL","IP","GM","ET","CPNG","T"],"held":52}
+SEL SQ16-CORNER {"d":"2026-09-30","eligible":150,"best":["PACS","PBF","VLO","VSH","DINO","BTSG","MPC","DAR","AVT","FLEX","CAKE","SANM","ARW"],"sleeve":["VSH","BTSG","AVT","FLEX","CAKE","SANM","PSX","TGT","WCC","OSCR","ANF","SNX","EAT"],"held":52}
+SEL SQ16-IND12 {"d":"2022-10-31","industries":["13 +65.6%","29 +64.5%","51 +43.5%","63 +20.1%","50 +17.6%"],"picks":54}
+SEL SQ16-IND12 {"d":"2024-10-31","industries":["36 +155.0%","80 +75.1%","15 +68.7%","62 +67.7%","34 +62.3%"],"picks":61}
+SEL SQ16-IND12 {"d":"2026-09-30","industries":["36 +117.1%","35 +100.4%","33 +68.7%","80 +61.3%","29 +51.3%"],"picks":86}
+FUND NVDA {"cik":"1045810","ebit":197579000000,"rev":302970000000,"gp":226241000000,"cfo":134360000000,"eq":228984000000,"debt":33366000000,"cash":22443000000,"debt0":8466000000,"rev0":165218000000,"gp0":115400000000,"ni":192880000000,"ni0":86597000000,"assets":320272000000,"assets0":140740000000,"ca":197412000000,"ca0":102219000000,"cl":43019000000,"cl0":24257000000,"ltd":32366000000,"ltd0":8466000000,"ppe":14285000000,"dcur":1000000000,"div":6776000000,"rep":55315000000,"iss":null,"niAnnual":12}
+FUND AAPL {"cik":"320193","ebit":154859000000,"rev":466823000000,"gp":227123000000,"cfo":146724000000,"eq":107520000000,"debt":82300000000,"cash":39544000000,"debt0":91800000000,"rev0":408625000000,"gp0":190739000000,"ni":128930000000,"ni0":99280000000,"assets":383266000000,"assets0":331495000000,"ca":149818000000,"ca0":122491000000,"cl":149326000000,"cl0":141120000000,"ltd":71340000000,"ltd0":82430000000,"ppe":51431000000,"dcur":11007000000,"div":15640000000,"rep":82226000000,"iss":null,"niAnnual":11}
+FUND GOOGL {"cik":"1652044","ebit":147628000000,"rev":445866000000,"gp":271517000000,"cfo":185675000000,"eq":640480000000,"debt":100164000000,"cash":55911000000,"debt0":24607000000,"rev0":371399000000,"gp0":218912000000,"ni":244205000000,"ni0":115573000000,"assets":921983000000,"assets0":502053000000,"ca":343524000000,"ca0":166216000000,"cl":126111000000,"cl0":87310000000,"ltd":98165000000,"ltd0":23607000000,"ppe":null,"dcur":1999000000,"div":10157000000,"rep":17403000000,"iss":null,"niAnnual":11}
