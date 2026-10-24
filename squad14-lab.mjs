@@ -214,8 +214,9 @@ STATUS.shariah = { ok: leadInfo.every(x => x.shariahPass >= 5), avgPassOf60: r4(
 log('leaders: ' + JSON.stringify(STATUS.leaders) + ' | sic: ' + JSON.stringify(STATUS.sic) + ' | shariah: ' + JSON.stringify(STATUS.shariah));
 // SPUS (price only): the cache, else Massive daily bars
 const SPUS = new Float64Array(T).fill(NaN); { const i = SY.get('SPUS'); let src = 'none';
-  if (i !== undefined && lastI[i] >= T - 3) { for (let t = 0; t < T; t++) if (CC(i, t) > 0) SPUS[t] = CC(i, t); src = 'cache'; }
-  else { const j = await api('/v2/aggs/ticker/SPUS/range/1/day/' + D[0] + '/' + D[T - 1] + '?adjusted=true&sort=asc&limit=50000'); if (j && Array.isArray(j.results)) { const m = new Map(j.results.map(b => [iso(b.t), b.c])); for (let t = 0; t < T; t++) { const v = m.get(D[t]); if (v > 0) SPUS[t] = v; } src = 'massive'; } }
+  if (i !== undefined) { for (let t = 0; t < T; t++) if (CC(i, t) > 0) SPUS[t] = CC(i, t); src = 'cache'; }
+  if ([...SPUS].filter(x => x > 0).length < T * 0.9) {   // DIAG 24 Oct: the price cache has no SPUS before the fresh sessions -> Massive daily bars
+    SPUS.fill(NaN); src = 'none'; const j = await api('/v2/aggs/ticker/SPUS/range/1/day/' + D[0] + '/' + D[T - 1] + '?adjusted=true&sort=asc&limit=50000'); if (j && Array.isArray(j.results)) { const m = new Map(j.results.map(b => [iso(b.t), b.c])); for (let t = 0; t < T; t++) { const v = m.get(D[t]); if (v > 0) SPUS[t] = v; } src = 'massive'; } }
   STATUS.spus = { ok: true, src, sessions: [...SPUS].filter(x => x > 0).length, note: 'information (portfolio comparison); SPY is the gate' }; log('SPUS: ' + JSON.stringify(STATUS.spus)); }
 if (DIAG) { const pick = FORM.filter((t, j) => j % 8 === 0 || j === FORM.length - 1);
   console.log('SQUAD 14 DIAGNOSTICS (data coverage, leader sets, Shariah proxy and industry groups only; nothing judged or written)');
