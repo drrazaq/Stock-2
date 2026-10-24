@@ -88,20 +88,12 @@ log('window ' + D[0] + '..' + D[T - 1] + ' (' + T + ' sessions, ' + NS + ' stock
 
 // ---- the ~3 years BEFORE the window (Massive grouped daily, adjusted; closes only; own cache) ----
 const PRE = JZ(TC + '/pre.json.gz', { syms: [], days: {}, empty: [] }); { const want = []; for (let x = Date.parse(PRE_FROM + 'T12:00:00Z'); iso(x) < D[0]; x += 864e5) { const w = new Date(x).getUTCDay(); if (w > 0 && w < 6) want.push(iso(x)); }
-  const have = new Set([...Object.keys(PRE.days), ...PRE.empty]), todo = want.filter(d => !have.has(d)); let got = 0; const sIdx = new Map(PRE.syms.map((s, k) => [s, k]));
-  if (!DIAG) for (const d of todo) { if (left() < 120 * 60e3) break; const j = await api('/v2/aggs/grouped/locale/us/market/stocks/' + d + '?adjusted=true'); if (!j || j.refused) continue;
+  const have = new Set([...Object.keys(PRE.days), ...PRE.empty]), todo = want.filter(d => !have.has(d)); let got = 0, refused = 0; const sIdx = new Map(PRE.syms.map((s, k) => [s, k]));
+  if (!DIAG) for (const d of todo) { if (left() < 120 * 60e3) break; const j = await api('/v2/aggs/grouped/locale/us/market/stocks/' + d + '?adjusted=true'); if (j && j.refused) { refused++; if (refused >= 10 && !got) break; continue; } if (!j) continue;
     const rows = Array.isArray(j.results) ? j.results.filter(x => x && SY.has(x.T) && x.c > 0) : []; if (!rows.length) { PRE.empty.push(d); continue; }
     const ix = [], cs = []; for (const x of rows) { if (!sIdx.has(x.T)) { sIdx.set(x.T, PRE.syms.length); PRE.syms.push(x.T); } ix.push(sIdx.get(x.T)); cs.push(+x.c.toFixed(4)); } PRE.days[d] = [ix, cs]; got++; }
   if (got) WZ(TC + '/pre.json.gz', PRE);
-  STATUS.pre = { ok: Object.keys(PRE.days).length >= 700, sessions: Object.keys(PRE.days).length, fetchedNow: got, from: Object.keys(PRE.days).sort()[0] || null }; log('pre-window: ' + STATUS.pre.sessions + ' sessions (' + got + ' fetched now)'); }
-const PD = Object.keys(PRE.days).sort(), P = PD.length, E = P + T, EC = new Float32Array(NS * E).fill(NaN);
-PD.forEach((d, p) => { const [ix, cs] = PRE.days[d]; for (let j = 0; j < ix.length; j++) { const i = SY.get(PRE.syms[ix[j]]); if (i !== undefined) EC[i * E + p] = cs[j]; } });
-let boundaryFix = 0; for (let i = 0; i < NS; i++) { const b = i * E; for (let t = 0; t < T; t++) { const z = CC(i, t); if (z > 0) EC[b + P + t] = z; }
-  // the cache was adjusted when it was built; a split since then shows as a whole-ratio jump at the boundary: scale the pre-window
-  let a = NaN, z = NaN; for (let p = P - 1; p >= Math.max(0, P - 5) && !(a > 0); p--) a = EC[b + p]; for (let t = 0; t < 5 && !(z > 0); t++) z = EC[b + P + t];
-  if (a > 0 && z > 0) { const r = z / a, R = r >= 1 ? r : 1 / r, w = Math.round(R); if (w >= 2 && w <= 50 && Math.abs(R / w - 1) <= 0.03) { for (let p = 0; p < P; p++) EC[b + p] *= r; boundaryFix++; } } }
-const ext = (i) => EC.subarray(i * E, i * E + E), spyE = spyI !== undefined ? ext(spyI) : null;
-log('extended closes: ' + P + ' pre-window + ' + T + ' window sessions; boundary split repairs ' + boundaryFix);
+  if (refused) log('pre-window: Massive refused ' + refused + ' grouped requests (plan history limit); falling back to Nasdaq per-ticker history'); }
 
 // ---- SPUS / HLAL (price only) ----
 const NQ_HEAD = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36', Accept: 'application/json, text/plain, */*', Origin: 'https://www.nasdaq.com', Referer: 'https://www.nasdaq.com/' };
@@ -127,6 +119,34 @@ function capsAt(t) { if (capMemo.has(t)) return capMemo.get(t); const rows = [];
   const u = dedupeByCompany(rows), L = industryLeaders(u), B = largest(u, TOP_BIG), out = { rows: u, ...L, big: B.set, bigRank: B.rank }; capMemo.set(t, out); return out; }
 const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
 
+// ---- the years before the window, fallback: Nasdaq per-ticker daily history (Massive serves only ~5 years). Needed for: every universe
+// member at the month starts of the first 260 sessions (12-month returns, 52-week highs) and every industry leader at any month start
+// (3-year lows), plus SPY. Cached per ticker in tipster-cache/pre-nasdaq.json; a ticker Nasdaq does not know (most delisted stocks) is
+// recorded as [] and stays without pre-window history (it can only qualify once the window itself gives enough sessions).
+const NQP = J(TC + '/pre-nasdaq.json', null) || { tk: {} }, preMode = Object.keys(PRE.days).length >= 700 ? 'massive' : 'nasdaq'; let nqGot = 0, nqFail = 0, preNeed = [];
+if (preMode === 'nasdaq') { const need = new Set(['SPY']), ms0 = monthStarts(D); for (const t of ms0.filter(t => t < 260)) for (const r of capsAt(t).rows) need.add(SYMS[r.key]); for (const t of ms0) for (const i of capsAt(t).leaders) need.add(SYMS[i]); preNeed = [...need];
+  const mdy = (s) => { const m = String(s || '').match(/^(\d\d)\/(\d\d)\/(\d{4})$/); return m ? m[3] + '-' + m[1] + '-' + m[2] : null; };
+  if (!DIAG) for (const s of preNeed) { if (NQP.tk[s] !== undefined) continue; if (left() < 120 * 60e3) break; await sleep(local(env.NASDAQ_BASE) ? 0 : 250);
+    const q = await getJ(NQ + '/api/quote/' + encodeURIComponent(s) + '/historical?assetclass=' + (s === 'SPY' ? 'etf' : 'stocks') + '&fromdate=' + PRE_FROM + '&todate=' + addDays(D[0], -1) + '&limit=9999', NQ_HEAD);
+    if (q === null) { nqFail++; continue; } const rows = q && q.data && q.data.tradesTable && q.data.tradesTable.rows;
+    NQP.tk[s] = Array.isArray(rows) ? rows.map(r => { const d = mdy(r.date), c = nnum(r.close); return d && c > 0 && d < D[0] && d >= PRE_FROM ? [d, +c.toFixed(4)] : null; }).filter(Boolean).sort((a, b) => a[0] < b[0] ? -1 : 1) : [];
+    nqGot++; if (nqGot % 250 === 0) { W(TC + '/pre-nasdaq.json', NQP); log('pre-window (Nasdaq): ' + nqGot + ' tickers fetched'); } }
+  if (nqGot) W(TC + '/pre-nasdaq.json', NQP); }
+const PD = preMode === 'massive' ? Object.keys(PRE.days).sort() : (NQP.tk.SPY || []).map(b => b[0]), P = PD.length, E = P + T, EC = new Float32Array(NS * E).fill(NaN), pIdx = new Map(PD.map((d, p) => [d, p]));
+if (preMode === 'massive') PD.forEach((d, p) => { const [ix, cs] = PRE.days[d]; for (let j = 0; j < ix.length; j++) { const i = SY.get(PRE.syms[ix[j]]); if (i !== undefined) EC[i * E + p] = cs[j]; } });
+else for (const [s, rows] of Object.entries(NQP.tk)) { const i = SY.get(s); if (i === undefined || !Array.isArray(rows)) continue; for (const [d, c] of rows) { const p = pIdx.get(d); if (p !== undefined) EC[i * E + p] = c; } }
+{ const tried = preNeed.filter(s => NQP.tk[s] !== undefined), withData = tried.filter(s => NQP.tk[s].length >= 100), noData = tried.filter(s => NQP.tk[s].length < 100), notTried = preNeed.length - tried.length;
+  const delistedNoData = noData.filter(s => { const i = SY.get(s); return i !== undefined && vanishedI(i); }).length;
+  STATUS.pre = preMode === 'massive' ? { ok: P >= 700, mode: 'massive grouped', sessions: P, from: PD[0] || null }
+    : { ok: P >= 700 && notTried + nqFail <= preNeed.length * 0.01, mode: 'nasdaq per ticker', sessions: P, from: PD[0] || null, needed: preNeed.length, withHistory: withData.length, noHistory: noData.length, noHistoryAndDelistedInWindow: delistedNoData, notTriedYet: notTried, failedNow: nqFail, fetchedNow: nqGot,
+      note: 'tickers without pre-window history (mostly stocks delisted since) can only qualify once the window gives enough sessions: a survivorship gap in the first year of the window' };
+  log('pre-window: ' + JSON.stringify(STATUS.pre)); }
+let boundaryFix = 0; for (let i = 0; i < NS; i++) { const b = i * E; for (let t = 0; t < T; t++) { const z = CC(i, t); if (z > 0) EC[b + P + t] = z; }
+  // the cache was adjusted when it was built; a split since then shows as a whole-ratio jump at the boundary: scale the pre-window
+  let a = NaN, z = NaN; for (let p = P - 1; p >= Math.max(0, P - 5) && !(a > 0); p--) a = EC[b + p]; for (let t = 0; t < 5 && !(z > 0); t++) z = EC[b + P + t];
+  if (a > 0 && z > 0) { const r = z / a, R = r >= 1 ? r : 1 / r, w = Math.round(R); if (w >= 2 && w <= 50 && Math.abs(R / w - 1) <= 0.03) { for (let p = 0; p < P; p++) EC[b + p] *= r; boundaryFix++; } } }
+const ext = (i) => EC.subarray(i * E, i * E + E), spyE = spyI !== undefined ? ext(spyI) : null;
+log('extended closes: ' + P + ' pre-window + ' + T + ' window sessions; boundary split repairs ' + boundaryFix);
 // ---- SEC facts (revenue, gross profit, cost of revenue, net income), compact [start, end, value, filed] ----
 const TAGS = { rev: ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet', 'RevenueFromContractWithCustomerIncludingAssessedTax'], gp: ['GrossProfit'], cogs: ['CostOfGoodsAndServicesSold', 'CostOfRevenue', 'CostOfGoodsSold'], ni: ['NetIncomeLoss', 'ProfitLoss'] };
 const ALLTAGS = [...new Set(Object.values(TAGS).flat())];
