@@ -1,0 +1,265 @@
+{
+ "generatedAt": "2026-10-24T06:34:35.842Z",
+ "lastClose": "2026-10-23",
+ "paperStart": "2026-10-26",
+ "cost": 0.008,
+ "readiness": "30+ resolved paper trades on 10+ distinct signal days, average > 0 after 0.8% cost",
+ "methods": {
+  "SQ6-CLENOW": {
+   "name": "Clenow \"Stocks on the Move\" momentum (weekly, regression slope x R2)",
+   "who": "Andreas Clenow (CIO of ACIES Asset Management; the book publishes the full rules and a 1999-2014 S&P 500 simulation)",
+   "replication": "partial",
+   "signals": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.22 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.75 under 2.5 in the newer half"
+   }
+  },
+  "SQ6-RADGE": {
+   "name": "Radge Weekend Trend Trader (20-week high, ROC 30%+, index filter, 40%/10% trailing stop)",
+   "who": "Nick Radge (The Chartist; published the rules with a long simulated and live record)",
+   "replication": "faithful",
+   "signals": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.56 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.96 under 2.5 in the newer half"
+   }
+  },
+  "SQ6-CRSIPB": {
+   "name": "Connors ConnorsRSI pullback (limit 4% under the close, out when ConnorsRSI > 50)",
+   "who": "Larry Connors / Connors Research (published high-win-rate stock pullback system)",
+   "replication": "faithful",
+   "signals": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.61 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.02 under 2.5 in the newer half"
+   }
+  },
+  "SQ6-CUMRSI": {
+   "name": "Connors cumulative RSI(2) on stocks over the 200-day (2-day sum < 35, out at RSI(2) > 65)",
+   "who": "Larry Connors & Cesar Alvarez",
+   "replication": "partial",
+   "signals": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.04 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -7.91 under 2.5 in the newer half"
+   }
+  },
+  "SQ6-MTUM": {
+   "name": "MSCI USA Momentum index method (iShares MTUM): risk-adjusted 6 and 12-month momentum, semi-annual",
+   "who": "MSCI index rulebook tracked by iShares MTUM (public methodology, live since 2013)",
+   "replication": "proxy",
+   "signals": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "not better than the same stocks on their other days in the older half; block t 0.68 under 2.5 in the older half; block t 1.52 under 2.5 in the newer half"
+   }
+  },
+  "SQ6-QMOM": {
+   "name": "Alpha Architect Quantitative Momentum (QMOM): top 10% 12-2 momentum, the smoother half, quarterly",
+   "who": "Wes Gray & Jack Vogel (Alpha Architect; QMOM ETF live since Dec 2015, rules published in the book and fund documents)",
+   "replication": "partial",
+   "signals": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "not better than the same stocks on their other days in the older half; block t 0.45 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.75 under 2.5 in the newer half"
+   }
+  },
+  "SQ6-3WT": {
+   "name": "O'Neil / IBD three-weeks-tight breakout (buy over the 3-week high, 8% stop, +20% target)",
+   "who": "William O'Neil / David Ryan (IBD; Ryan won the US Investing Championship with CAN SLIM; 3-weeks-tight is one of their add / buy points)",
+   "replication": "partial",
+   "signals": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.71 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.2 under 2.5 in the newer half"
+   }
+  },
+  "SQ6-TD9": {
+   "name": "DeMark TD Sequential buy setup 9 (perfected), 1-4 bar bounce",
+   "who": "Tom DeMark (indicators licensed to Bloomberg / used by large funds; no public personal record)",
+   "replication": "proxy",
+   "signals": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null,
+    "avgWin": null,
+    "avgLoss": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -6.47 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -13.13 under 2.5 in the newer half"
+   }
+  }
+ }
+}

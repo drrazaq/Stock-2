@@ -1,0 +1,516 @@
+{
+ "generatedAt": "2026-10-24T06:34:35.842Z",
+ "lastClose": "2026-10-23",
+ "paperStart": "2026-10-26",
+ "note": "PAPER ONLY. Squad 6 (public-record traders and fund rulebooks) recording forward from 26 Oct 2026. Nothing here is a buy by itself: a rule needs a qualifying frozen 5-year verdict in BOTH halves (data/squad6-lab.json firstRun). Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
+ "methods": {
+  "SQ6-CLENOW": {
+   "name": "Clenow \"Stocks on the Move\" momentum (weekly, regression slope x R2)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "SQ6-RADGE": {
+   "name": "Radge Weekend Trend Trader (20-week high, ROC 30%+, index filter, 40%/10% trailing stop)",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "SQ6-CRSIPB": {
+   "name": "Connors ConnorsRSI pullback (limit 4% under the close, out when ConnorsRSI > 50)",
+   "hold": 10,
+   "tier": "REJECTED",
+   "newSignals": [
+    {
+     "sym": "SLM",
+     "close": 19.415,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 18.64 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "MDGL",
+     "close": 434.24,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 416.87 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "IEP",
+     "close": 5.765,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 5.53 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "STC",
+     "close": 44.07,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 42.31 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "FCFS",
+     "close": 172.75,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 165.84 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "ONON",
+     "close": 32.51,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 31.21 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "EGO",
+     "close": 31.67,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 30.40 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "OLMA",
+     "close": 6.41,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 6.15 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "AXSM",
+     "close": 145.04,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 139.24 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "PCVX",
+     "close": 60.43,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 58.01 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "MGTX",
+     "close": 9.21,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 8.84 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "CECO",
+     "close": 49.08,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 47.12 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    },
+    {
+     "sym": "BULL",
+     "close": 5.65,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "limit buy at 5.42 for the next session only; sell the next open after a close with ConnorsRSI > 50 (max 60 sessions)"
+    }
+   ],
+   "open": []
+  },
+  "SQ6-CUMRSI": {
+   "name": "Connors cumulative RSI(2) on stocks over the 200-day (2-day sum < 35, out at RSI(2) > 65)",
+   "hold": 10,
+   "tier": "REJECTED",
+   "newSignals": [
+    {
+     "sym": "PSX",
+     "close": 283.18,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "MEI",
+     "close": 12.12,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "HRMY",
+     "close": 36.13,
+     "halal": "fail",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "AMZN",
+     "close": 248,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "AFRM",
+     "close": 70.08,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "IHG",
+     "close": 162.4,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "MSGS",
+     "close": 388.63,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "AIT",
+     "close": 317,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "OSBC",
+     "close": 24.43,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "EDU",
+     "close": 58.38,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "BAP",
+     "close": 370.21,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "WAB",
+     "close": 272.35,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "CAKE",
+     "close": 108.37,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "KB",
+     "close": 114.74,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "ITGR",
+     "close": 126.54,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "ARMK",
+     "close": 52.56,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "VRSN",
+     "close": 300.32,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "MGNI",
+     "close": 22.89,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "MSM",
+     "close": 113.86,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "COR",
+     "close": 331,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "CVI",
+     "close": 58.16,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "PCVX",
+     "close": 60.43,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "MRNA",
+     "close": 200.1,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "ING",
+     "close": 31.84,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "ECPG",
+     "close": 97.73,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "PARR",
+     "close": 77.15,
+     "halal": "ok",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "VIRT",
+     "close": 55.93,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "FDMT",
+     "close": 10.8,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "CORT",
+     "close": 85.86,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "DCO",
+     "close": 157.26,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "CGAU",
+     "close": 20.25,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "DINO",
+     "close": 121.66,
+     "halal": "ok",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "EFXT",
+     "close": 22.75,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "BTSG",
+     "close": 60.11,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "MBX",
+     "close": 48.5,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "AUGO",
+     "close": 78.07,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    },
+    {
+     "sym": "HELP",
+     "close": 10.19,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open; sell the next open after a close with RSI(2) > 65 (max 60 sessions)"
+    }
+   ],
+   "open": []
+  },
+  "SQ6-MTUM": {
+   "name": "MSCI USA Momentum index method (iShares MTUM): risk-adjusted 6 and 12-month momentum, semi-annual",
+   "hold": 126,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "SQ6-QMOM": {
+   "name": "Alpha Architect Quantitative Momentum (QMOM): top 10% 12-2 momentum, the smoother half, quarterly",
+   "hold": 63,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "SQ6-3WT": {
+   "name": "O'Neil / IBD three-weeks-tight breakout (buy over the 3-week high, 8% stop, +20% target)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [
+    {
+     "sym": "PTC",
+     "close": 193.8,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 196.15 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "THC",
+     "close": 268.45,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 278.49 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "A",
+     "close": 173.07,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 179.20 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "PCRX",
+     "close": 36.42,
+     "halal": "ok",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 36.77 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "SHOP",
+     "close": 168.68,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 180.98 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "UTZ",
+     "close": 14.28,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 14.46 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "UFPT",
+     "close": 295.78,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 310.25 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "WEAV",
+     "close": 7.4,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 7.51 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "PRTH",
+     "close": 7.82,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 7.95 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "UGP",
+     "close": 7.74,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 8.38 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    },
+    {
+     "sym": "BWIN",
+     "close": 31.96,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy-stop at 32.13 valid 5 sessions; stop 8% under the fill, sell at +20%, else the close of session 63"
+    }
+   ],
+   "open": []
+  },
+  "SQ6-TD9": {
+   "name": "DeMark TD Sequential buy setup 9 (perfected), 1-4 bar bounce",
+   "hold": 5,
+   "tier": "REJECTED",
+   "newSignals": [
+    {
+     "sym": "PZZA",
+     "close": 18.1,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open unless it opens at or under 17.69; stop 17.69; sell the close of the 4th session"
+    },
+    {
+     "sym": "NRG",
+     "close": 92.31,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open unless it opens at or under 90.80; stop 90.80; sell the close of the 4th session"
+    },
+    {
+     "sym": "KARD",
+     "close": 12.8,
+     "halal": "unknown",
+     "d": "2026-10-23",
+     "plan": "buy the next open unless it opens at or under 12.34; stop 12.34; sell the close of the 4th session"
+    }
+   ],
+   "open": []
+  }
+ }
+}

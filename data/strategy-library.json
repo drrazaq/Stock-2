@@ -16974,7 +16974,7 @@
    "family": "Public-record traders and fund rulebooks (Squad 6)",
    "name": "Clenow \"Stocks on the Move\" momentum (weekly, regression slope x R2)",
    "explain": "RULE: Weekly, on the first session of each week that falls on a Wednesday or later (his Wednesday). Universe: the 500 most traded liquid stocks (S&P 500 proxy). Score = annualised exponential regression slope of the last 90 closes (OLS of ln close on day number; exp(slope x 252) - 1) x the regression R2. Rank the universe; the top 20% (100) are the buy / keep zone. A stock may be held only if its close is above its 100-day average and it had no one-day move of 15%+ (close to close) in the last 90 sessions. SELL (next open) a held stock that leaves the top 20%, closes under its 100-day average, has a 15%+ move, or leaves the universe. BUY (next open), only when SPY closes above its 200-day average: from the top of the ranking down, stocks not held that pass the filters, each sized 0.1% of the account / ATR(20) (ATR as a fraction of the close; capped at 10% of the account), while the summed sizes fit in 100%; the first one that does not fit stops the buying. DEVIATIONS from the published method: S&P 500 membership is proxied by the 500 most traded liquid stocks (no point-in-time index list); the every-other-week size rebalance is not modelled; each position is judged as one trade (equal weight per trade, the system standard), its size is recorded. Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
-   "status": "pre-registered 2026-10-24 (squad 6); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad6",
    "registered": "2026-10-24",
    "who": "Andreas Clenow (CIO of ACIES Asset Management; the book publishes the full rules and a 1999-2014 S&P 500 simulation)",
@@ -16988,14 +16988,53 @@
     "QuantConnect forum: Andreas F. Clenow momentum (rules restated, 2018)"
    ],
    "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: ANOM-MOM12 / T1 (momentum, no regression quality, no index filter, no exits) and SQ5-MOMBUF (squad 5, same day: plain 12-1 top 20 of the 500 largest with a buffer).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     175,
+     475
+    ],
+    "avg": [
+     -0.0076,
+     0.0244
+    ],
+    "stress": [
+     -0.0116,
+     0.0204
+    ],
+    "edge": [
+     -0.0044,
+     0.0134
+    ],
+    "vsOwn": [
+     -0.112,
+     -0.0154
+    ],
+    "noTop2": [
+     -0.0165,
+     0.0149
+    ],
+    "tBlock": [
+     -0.22,
+     0.75
+    ],
+    "win": [
+     0.32,
+     0.4105
+    ],
+    "newerBetter": true,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.22 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.75 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ6-RADGE",
    "family": "Public-record traders and fund rulebooks (Squad 6)",
    "name": "Radge Weekend Trend Trader (20-week high, ROC 30%+, index filter, 40%/10% trailing stop)",
    "explain": "RULE: Weekly, on the last session of each week. Liquid stock; this week's close is the highest weekly close of the last 20 weeks; 20-week rate of change (week close / week close 20 weeks earlier - 1) >= 30%; SPY's week close above the 10-week average of its week closes. BUY the next open. EXIT, checked on each week close (review levels, not live stops): stop = highest week close since entry x 0.60 while SPY's week close is above its 10-week average, x 0.90 when it is below; the stop only rises; a week close under the stop sells at the next open. At most 504 sessions (then the close). DEVIATIONS from the published method: The book trades a liquid index universe (Russell 1000 / ASX); here every liquid stock. \"20-week high\" read as a 20-week closing high. Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
-   "status": "pre-registered 2026-10-24 (squad 6); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad6",
    "registered": "2026-10-24",
    "who": "Nick Radge (The Chartist; published the rules with a long simulated and live record)",
@@ -17009,14 +17048,53 @@
     "usethinkscript: Weekend Trend Trader by Nick Radge (rules restated from the book)"
    ],
    "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: DEC2-TURT55 / T3 (breakouts with different exits).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2543,
+     5679
+    ],
+    "avg": [
+     -0.0433,
+     -0.0138
+    ],
+    "stress": [
+     -0.0473,
+     -0.0178
+    ],
+    "edge": [
+     -0.0126,
+     -0.0319
+    ],
+    "vsOwn": [
+     -0.0766,
+     -0.0048
+    ],
+    "noTop2": [
+     -0.0457,
+     -0.0149
+    ],
+    "tBlock": [
+     -0.56,
+     -1.96
+    ],
+    "win": [
+     0.2882,
+     0.3432
+    ],
+    "newerBetter": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.56 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.96 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ6-CRSIPB",
    "family": "Public-record traders and fund rulebooks (Squad 6)",
    "name": "Connors ConnorsRSI pullback (limit 4% under the close, out when ConnorsRSI > 50)",
    "explain": "RULE: Daily. Close above 5 USD, 21-day average volume 250k+ shares (and the system's liquid floor); ADX(10) > 30; today's low at least 4% under yesterday's close; today's close in the bottom 25% of its range; ConnorsRSI(3,2,100) < 15. ConnorsRSI = (Wilder RSI(3) of the close + RSI(2) of the up/down streak + percent rank of today's 1-day return among the previous 100) / 3. BUY: a limit order for the next session at today's close x 0.96 (filled at the open if it opens under it). SELL: the next open after the first close with ConnorsRSI > 50. No stop (as published). At most 60 sessions (then the close). One open trade per stock. DEVIATIONS from the published method: The published exit sells AT the close; here the next open (the standard). Max 60 sessions is our cap (none published). Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
-   "status": "pre-registered 2026-10-24 (squad 6); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad6",
    "registered": "2026-10-24",
    "who": "Larry Connors / Connors Research (published high-win-rate stock pullback system)",
@@ -17030,14 +17108,53 @@
     "Connors & Alvarez (2012) An Introduction to ConnorsRSI"
    ],
    "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: DEC2-RSI2 / A-SW1 (RSI(2), no limit entry, no ADX).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1642,
+     2904
+    ],
+    "avg": [
+     -0.0089,
+     0.0101
+    ],
+    "stress": [
+     -0.0129,
+     0.0061
+    ],
+    "edge": [
+     -0.0137,
+     -0.0078
+    ],
+    "vsOwn": [
+     -0.0031,
+     0.0082
+    ],
+    "noTop2": [
+     -0.0095,
+     0.0084
+    ],
+    "tBlock": [
+     -3.61,
+     -1.02
+    ],
+    "win": [
+     0.4781,
+     0.6102
+    ],
+    "newerBetter": true,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.61 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.02 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ6-CUMRSI",
    "family": "Public-record traders and fund rulebooks (Squad 6)",
    "name": "Connors cumulative RSI(2) on stocks over the 200-day (2-day sum < 35, out at RSI(2) > 65)",
    "explain": "RULE: Daily. Liquid; close above its 200-day average; Wilder RSI(2) of today + RSI(2) of yesterday < 35. BUY the next open. SELL the next open after the first close with RSI(2) > 65. No stop. At most 60 sessions. One open trade per stock. DEVIATIONS from the published method: Published for indices / ETFs with a buy at the close; applied to liquid stocks and bought at the next open. Differs from DEC2-RSI2 (RSI(2) < 5, out over the 5-day average) and A-SW1 (RSI(2) < 10, max 5 sessions). Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
-   "status": "pre-registered 2026-10-24 (squad 6); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad6",
    "registered": "2026-10-24",
    "who": "Larry Connors & Cesar Alvarez",
@@ -17049,14 +17166,53 @@
     "Connors & Alvarez (2008) Short Term Trading Strategies That Work, ch. \"Cumulative RSI\""
    ],
    "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: DEC2-RSI2 / A-SW1.",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     17649,
+     47255
+    ],
+    "avg": [
+     -0.0056,
+     -0.0034
+    ],
+    "stress": [
+     -0.0096,
+     -0.0074
+    ],
+    "edge": [
+     -0.0055,
+     -0.0067
+    ],
+    "vsOwn": [
+     -0.0078,
+     -0.0056
+    ],
+    "noTop2": [
+     -0.0058,
+     -0.0035
+    ],
+    "tBlock": [
+     -4.04,
+     -7.91
+    ],
+    "win": [
+     0.528,
+     0.5406
+    ],
+    "newerBetter": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.04 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -7.91 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ6-MTUM",
    "family": "Public-record traders and fund rulebooks (Squad 6)",
    "name": "MSCI USA Momentum index method (iShares MTUM): risk-adjusted 6 and 12-month momentum, semi-annual",
    "explain": "RULE: At the close of the last session of May and of November. Universe: the 600 most traded liquid stocks with 252+ sessions of history (MSCI USA proxy). 12-month momentum = close 21 sessions ago / close 252 sessions ago - 1; 6-month = close 21 ago / close 126 ago - 1; each divided by the annualised standard deviation of weekly returns over up to 3 years (156 weeks, 52 at least); each turned into a z-score across the universe, averaged 50/50, standardised again and winsorised at +-3. BUY the next open the 120 stocks (20% of the universe) with the highest positive combined z-score. SELL at the close of session 126 (the next review). DEVIATIONS from the published method: Market-cap x score weighting, the 50% buffer and the ad-hoc rebalance are not modelled; equal weight per trade; no risk-free rate (it is common to every stock); the first reviews have under 3 years of weekly returns; the universe is a traded-value proxy. Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
-   "status": "pre-registered 2026-10-24 (squad 6); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad6",
    "registered": "2026-10-24",
    "who": "MSCI index rulebook tracked by iShares MTUM (public methodology, live since 2013)",
@@ -17068,14 +17224,53 @@
     "MSCI Momentum Indexes Methodology (May 2017; current edition 2025)"
    ],
    "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: ANOM-MOM12 (raw 12-1 decile of all liquid stocks) and SQ5-MOMBUF (plain 12-1 top 20 of the 500 largest).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     360,
+     479
+    ],
+    "avg": [
+     0.0728,
+     0.1929
+    ],
+    "stress": [
+     0.0688,
+     0.1889
+    ],
+    "edge": [
+     0.0313,
+     0.1215
+    ],
+    "vsOwn": [
+     -0.1571,
+     0.0128
+    ],
+    "noTop2": [
+     0.0609,
+     0.1812
+    ],
+    "tBlock": [
+     0.68,
+     1.52
+    ],
+    "win": [
+     0.5861,
+     0.6576
+    ],
+    "newerBetter": true,
+    "why": "not better than the same stocks on their other days in the older half; block t 0.68 under 2.5 in the older half; block t 1.52 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ6-QMOM",
    "family": "Public-record traders and fund rulebooks (Squad 6)",
    "name": "Alpha Architect Quantitative Momentum (QMOM): top 10% 12-2 momentum, the smoother half, quarterly",
    "explain": "RULE: At the close of the last session of February, May, August and November (their seasonal quarterly rebalance). Universe: the 1000 most traded liquid stocks with 252+ sessions, REITs (SIC 6798) left out. Momentum = close 21 sessions ago / close 252 sessions ago - 1 (2-12). Keep the top 10% (100). Frog-in-the-pan FIP = sign(momentum) x (% of down days - % of up days) over the same sessions; BUY the next open the 50 with the LOWEST FIP (smoothest), equal weight. SELL at the close of session 63. DEVIATIONS from the published method: No 25% sector cap, no high-beta screen, traded-value universe proxy; the fund went monthly in Q4 2024, the book's quarterly seasonal schedule is used throughout. Overlaps DEC-FROG (all liquid stocks, monthly, top 30% then 30 smoothest, hold 126): here large caps, quarterly, top 10% then 50, hold 63. Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
-   "status": "pre-registered 2026-10-24 (squad 6); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad6",
    "registered": "2026-10-24",
    "who": "Wes Gray & Jack Vogel (Alpha Architect; QMOM ETF live since Dec 2015, rules published in the book and fund documents)",
@@ -17089,14 +17284,53 @@
     "Alpha Architect, QMOM process"
    ],
    "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: DEC-FROG (frog in the pan on all liquid stocks) and SQ5-MOMBUF (plain 12-1 top 20).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     250,
+     500
+    ],
+    "avg": [
+     0.0458,
+     0.0536
+    ],
+    "stress": [
+     0.0418,
+     0.0496
+    ],
+    "edge": [
+     0.0233,
+     0.0246
+    ],
+    "vsOwn": [
+     -0.118,
+     -0.1059
+    ],
+    "noTop2": [
+     0.0285,
+     0.047
+    ],
+    "tBlock": [
+     0.45,
+     0.75
+    ],
+    "win": [
+     0.524,
+     0.522
+    ],
+    "newerBetter": true,
+    "why": "not better than the same stocks on their other days in the older half; block t 0.45 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.75 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ6-3WT",
    "family": "Public-record traders and fund rulebooks (Squad 6)",
    "name": "O'Neil / IBD three-weeks-tight breakout (buy over the 3-week high, 8% stop, +20% target)",
    "explain": "RULE: Weekly, on the last session of each week. Liquid; the last 3 week closes each within 1.5% of the week close before it (2 tight steps); a prior advance: the first of the 3 week closes is 20%+ above the lowest week close of the 12 weeks before it; close > 50-day > 200-day average; 126-session return in the top 30% of liquid stocks that day (RS 70+ proxy). BUY: a buy-stop at the highest daily high of the 3 weeks + 0.10 USD, valid the next 5 sessions. STOP 8% under the fill (intraday, O'Neil's 7-8% rule); TARGET +20% (intraday, his 20-25% profit rule); else the close of session 63. Stop and target the same day = stop. One open trade per stock. DEVIATIONS from the published method: No EPS / composite rating (needs data); RS rating proxied by the 126-session return rank; the 8-week hold exception after a fast +20% is not modelled (DEC2-IBD has it). Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
-   "status": "pre-registered 2026-10-24 (squad 6); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad6",
    "registered": "2026-10-24",
    "who": "William O'Neil / David Ryan (IBD; Ryan won the US Investing Championship with CAN SLIM; 3-weeks-tight is one of their add / buy points)",
@@ -17108,14 +17342,53 @@
     "O'Neil, How to Make Money in Stocks (4th ed., 2009), three-weeks-tight; IBD rule restated in TradingView \"3 Weeks Tight - CANSLIM Technical Indicator\""
    ],
    "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: DEC2-IBD (base breakout).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     385,
+     1069
+    ],
+    "avg": [
+     -0.0136,
+     -0.0015
+    ],
+    "stress": [
+     -0.0176,
+     -0.0055
+    ],
+    "edge": [
+     -0.0107,
+     -0.0183
+    ],
+    "vsOwn": [
+     -0.0517,
+     -0.0298
+    ],
+    "noTop2": [
+     -0.0149,
+     -0.0024
+    ],
+    "tBlock": [
+     -0.71,
+     -3.2
+    ],
+    "win": [
+     0.3299,
+     0.3667
+    ],
+    "newerBetter": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.71 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.2 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ6-TD9",
    "family": "Public-record traders and fund rulebooks (Squad 6)",
    "name": "DeMark TD Sequential buy setup 9 (perfected), 1-4 bar bounce",
    "explain": "RULE: Daily. Liquid; a completed TD buy setup: 9 closes in a row each lower than the close 4 sessions earlier, the close before bar 1 NOT lower than the close 4 sessions before it (bar 9 is today, not bar 10+); perfected: the lower of the lows of bars 8 and 9 <= the lower of the lows of bars 6 and 7. BUY the next open (skipped if it opens at or under the stop). STOP: the lowest low of the 9 setup bars (intraday). SELL at the close of the 4th session (the expected 1-4 bar reaction). One open trade per stock. DEVIATIONS from the published method: DeMark gives no fixed exit; the 4-session exit and the setup-low stop are our reading of the 1-4 bar reaction and the TD risk level. Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
-   "status": "pre-registered 2026-10-24 (squad 6); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad6",
    "registered": "2026-10-24",
    "who": "Tom DeMark (indicators licensed to Bloomberg / used by large funds; no public personal record)",
@@ -17127,7 +17400,46 @@
     "DeMark (1994) The New Science of Technical Analysis, TD Sequential setup"
    ],
    "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: M6 / A-SW3 (down-day counts).",
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     13301,
+     15447
+    ],
+    "avg": [
+     -0.0099,
+     -0.0084
+    ],
+    "stress": [
+     -0.0139,
+     -0.0124
+    ],
+    "edge": [
+     -0.0092,
+     -0.0109
+    ],
+    "vsOwn": [
+     -0.0032,
+     -0.0015
+    ],
+    "noTop2": [
+     -0.01,
+     -0.0087
+    ],
+    "tBlock": [
+     -6.47,
+     -13.13
+    ],
+    "win": [
+     0.2452,
+     0.2742
+    ],
+    "newerBetter": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -6.47 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -13.13 under 2.5 in the newer half"
+   }
   }
  ]
 }
