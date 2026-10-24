@@ -1,0 +1,291 @@
+{
+ "generatedAt": "2026-10-24T05:00:22.578Z",
+ "lastClose": "2026-10-23",
+ "paperStart": "2026-10-26",
+ "rotationLatest": {
+  "d": "2026-09-30",
+  "pick": [
+   "XLE",
+   "COPX"
+  ],
+  "scores": {
+   "XLE": 1.6655,
+   "FCG": -0.3337,
+   "GDX": 0.1854,
+   "COPX": 0.4789,
+   "IWM": -1.8909,
+   "XLK": -0.2949
+  }
+ },
+ "driversToday": {
+  "USO:up": false,
+  "UNG:up": false,
+  "GLD:up": false,
+  "CPER:up": false,
+  "TLT:up": true,
+  "UUP:down": false,
+  "VIXY:spike": false
+ },
+ "note": "PAPER ONLY. Macro rules recording forward from 26 Oct 2026. Nothing here is a buy by itself: a rule needs a TRADABLE SMALL / PROVEN frozen 5-year verdict (data/macro-lab.json firstRun), or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Event rules record only when a new dated event is added to macro-core.mjs EVENTS. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
+ "methods": {
+  "MACRO-OIL-E20": {
+   "name": "Oil up -> energy (fund XLE, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-OIL-S20": {
+   "name": "Oil up -> energy (10 most traded energy stocks, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-OIL-E60": {
+   "name": "Oil up -> energy (fund XLE, hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-OIL-S60": {
+   "name": "Oil up -> energy (10 most traded energy stocks, hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-GAS-E20": {
+   "name": "Natural gas up -> gas producers (fund FCG, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-GAS-S20": {
+   "name": "Natural gas up -> gas producers (10 most traded gas stocks, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-GAS-E60": {
+   "name": "Natural gas up -> gas producers (fund FCG, hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-GAS-S60": {
+   "name": "Natural gas up -> gas producers (10 most traded gas stocks, hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-GOLD-E20": {
+   "name": "Gold up -> gold miners (fund GDX, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-GOLD-S20": {
+   "name": "Gold up -> gold miners (10 most traded gold stocks, hold 20)",
+   "hold": 20,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-GOLD-E60": {
+   "name": "Gold up -> gold miners (fund GDX, hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-GOLD-S60": {
+   "name": "Gold up -> gold miners (10 most traded gold stocks, hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-CU-E20": {
+   "name": "Copper up -> metal miners (fund COPX, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-CU-S20": {
+   "name": "Copper up -> metal miners (10 most traded metals stocks, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-CU-E60": {
+   "name": "Copper up -> metal miners (fund COPX, hold 60)",
+   "hold": 60,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-CU-S60": {
+   "name": "Copper up -> metal miners (10 most traded metals stocks, hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-RATE-E20": {
+   "name": "Long rates falling (TLT up) -> small caps (IWM, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-USD-E20": {
+   "name": "Dollar falling (UUP down) -> multinational tech (XLK, hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-VIX-E20": {
+   "name": "Fear spike, then fear falling -> S&P 500 (SPY, hold 20)",
+   "hold": 20,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-WAR-E20": {
+   "name": "Conflict start -> defense fund (ITA, hold 20)",
+   "hold": 20,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-WAR-S20": {
+   "name": "Conflict start -> 10 most traded defense stocks (hold 20)",
+   "hold": 20,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-PEACE-E20": {
+   "name": "Ceasefire / peace deal -> the beaten sector fund (hold 20)",
+   "hold": 20,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-OPEC-E20": {
+   "name": "OPEC+ cut / extension -> energy fund (XLE, hold 20)",
+   "hold": 20,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-OPEC-S20": {
+   "name": "OPEC+ cut / extension -> 10 most traded oil & gas stocks (hold 20)",
+   "hold": 20,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-CLIM-E20": {
+   "name": "US climate-law step -> clean-energy fund (ICLN, hold 20)",
+   "hold": 20,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-CLIM-S20": {
+   "name": "US climate-law step -> 10 most traded clean-energy stocks (hold 20)",
+   "hold": 20,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-RATE-E60": {
+   "name": "Long rates falling (TLT up) -> small caps (IWM, hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-USD-E60": {
+   "name": "Dollar falling (UUP down) -> multinational tech (XLK, hold 60)",
+   "hold": 60,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-VIX-E60": {
+   "name": "Fear spike, then fear falling -> S&P 500 (SPY, hold 60)",
+   "hold": 60,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-WAR-E60": {
+   "name": "Conflict start -> defense fund (ITA, hold 60)",
+   "hold": 60,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-WAR-S60": {
+   "name": "Conflict start -> 10 most traded defense stocks (hold 60)",
+   "hold": 60,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-PEACE-E60": {
+   "name": "Ceasefire / peace deal -> the beaten sector fund (hold 60)",
+   "hold": 60,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-OPEC-E60": {
+   "name": "OPEC+ cut / extension -> energy fund (XLE, hold 60)",
+   "hold": 60,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-OPEC-S60": {
+   "name": "OPEC+ cut / extension -> 10 most traded oil & gas stocks (hold 60)",
+   "hold": 60,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-CLIM-E60": {
+   "name": "US climate-law step -> clean-energy fund (ICLN, hold 60)",
+   "hold": 60,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-CLIM-S60": {
+   "name": "US climate-law step -> 10 most traded clean-energy stocks (hold 60)",
+   "hold": 60,
+   "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "open": []
+  },
+  "MACRO-ROT": {
+   "name": "Macro-regime rotation: the 2 sector funds whose macro driver is strongest, monthly",
+   "hold": 21,
+   "tier": "NOT PROVEN",
+   "newSignals": [],
+   "open": []
+  }
+ }
+}

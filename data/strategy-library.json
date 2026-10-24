@@ -13275,7 +13275,7 @@
    "family": "Macro and world events",
    "name": "Oil up -> energy (fund XLE, hold 20)",
    "explain": "Signal at the close of session t: USO (oil (WTI futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy XLE at the next open, sell at the close of the 20th session. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil); Driesprong, Jacobsen & Maat (2008) Striking oil: Another puzzle? Journal of Financial Economics 89(2) (oil changes predict stock returns with a lag: slow information diffusion); Neville, Draaisma, Funnell, Harvey & Van Hemert (2021) The Best Strategies for Inflationary Times (energy the only US sector with positive real returns in 8 US inflation regimes since 1926); Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none for oil as a signal (A-ROT1 ranks XLE by its own return; Z11 trades oil itself: not done here)",
    "sources": [
@@ -13284,14 +13284,56 @@
     "https://www.evidenceinvestor.com/wp-content/uploads/2021/12/SSRN-id3813202.pdf",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     105,
+     172
+    ],
+    "avg": [
+     0.0111,
+     0.012
+    ],
+    "stress": [
+     0.0071,
+     0.008
+    ],
+    "edge": [
+     0.0408,
+     -0.0037
+    ],
+    "vsSpy": [
+     0.0319,
+     0.0023
+    ],
+    "vsOwn": [
+     0.0031,
+     0.0048
+    ],
+    "noTop2": [
+     0.0078,
+     0.0104
+    ],
+    "tBlock": [
+     1.07,
+     -0.19
+    ],
+    "win": [
+     0.6762,
+     0.564
+    ],
+    "why": "block t 1.07 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.19 under 2.5 in the newer half"
+   }
   },
   {
    "id": "MACRO-OIL-S20",
    "family": "Macro and world events",
    "name": "Oil up -> energy (10 most traded energy stocks, hold 20)",
    "explain": "Signal at the close of session t: USO (oil (WTI futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy at the next open the 10 liquid stocks of the group \"oil & gas stocks (SIC 1311, 1381-1389, 2911, 4610-4619, 4922-4923)\" with the highest 20-session average traded value on day t, equal weight; sell each at the close of the 20th session. One open trade per stock. Source(s): Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil); Driesprong, Jacobsen & Maat (2008) Striking oil: Another puzzle? Journal of Financial Economics 89(2) (oil changes predict stock returns with a lag: slow information diffusion); Neville, Draaisma, Funnell, Harvey & Van Hemert (2021) The Best Strategies for Inflationary Times (energy the only US sector with positive real returns in 8 US inflation regimes since 1926); Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none for oil as a signal (A-ROT1 ranks XLE by its own return; Z11 trades oil itself: not done here)",
    "sources": [
@@ -13300,14 +13342,56 @@
     "https://www.evidenceinvestor.com/wp-content/uploads/2021/12/SSRN-id3813202.pdf",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     127,
+     204
+    ],
+    "avg": [
+     -0.0082,
+     0.0041
+    ],
+    "stress": [
+     -0.0122,
+     0.0001
+    ],
+    "edge": [
+     0.0295,
+     -0.0041
+    ],
+    "vsSpy": [
+     0.0098,
+     -0.0014
+    ],
+    "vsOwn": [
+     -0.0044,
+     0.0136
+    ],
+    "noTop2": [
+     -0.0128,
+     0.0019
+    ],
+    "tBlock": [
+     0.87,
+     -0.63
+    ],
+    "win": [
+     0.4882,
+     0.5392
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.87 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.63 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-OIL-E60",
    "family": "Macro and world events",
    "name": "Oil up -> energy (fund XLE, hold 60)",
    "explain": "Signal at the close of session t: USO (oil (WTI futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy XLE at the next open, sell at the close of the 60th session. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil); Driesprong, Jacobsen & Maat (2008) Striking oil: Another puzzle? Journal of Financial Economics 89(2) (oil changes predict stock returns with a lag: slow information diffusion); Neville, Draaisma, Funnell, Harvey & Van Hemert (2021) The Best Strategies for Inflationary Times (energy the only US sector with positive real returns in 8 US inflation regimes since 1926); Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none for oil as a signal (A-ROT1 ranks XLE by its own return; Z11 trades oil itself: not done here)",
    "sources": [
@@ -13316,14 +13400,56 @@
     "https://www.evidenceinvestor.com/wp-content/uploads/2021/12/SSRN-id3813202.pdf",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     105,
+     156
+    ],
+    "avg": [
+     0.048,
+     0.0114
+    ],
+    "stress": [
+     0.044,
+     0.0074
+    ],
+    "edge": [
+     0.0971,
+     -0.0214
+    ],
+    "vsSpy": [
+     0.0749,
+     -0.0291
+    ],
+    "vsOwn": [
+     0.0069,
+     -0.0223
+    ],
+    "noTop2": [
+     0.0413,
+     0.009
+    ],
+    "tBlock": [
+     0.63,
+     0.03
+    ],
+    "win": [
+     0.5524,
+     0.5577
+    ],
+    "why": "block t 0.63 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t 0.03 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-OIL-S60",
    "family": "Macro and world events",
    "name": "Oil up -> energy (10 most traded energy stocks, hold 60)",
    "explain": "Signal at the close of session t: USO (oil (WTI futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy at the next open the 10 liquid stocks of the group \"oil & gas stocks (SIC 1311, 1381-1389, 2911, 4610-4619, 4922-4923)\" with the highest 20-session average traded value on day t, equal weight; sell each at the close of the 60th session. One open trade per stock. Source(s): Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil); Driesprong, Jacobsen & Maat (2008) Striking oil: Another puzzle? Journal of Financial Economics 89(2) (oil changes predict stock returns with a lag: slow information diffusion); Neville, Draaisma, Funnell, Harvey & Van Hemert (2021) The Best Strategies for Inflationary Times (energy the only US sector with positive real returns in 8 US inflation regimes since 1926); Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none for oil as a signal (A-ROT1 ranks XLE by its own return; Z11 trades oil itself: not done here)",
    "sources": [
@@ -13332,222 +13458,894 @@
     "https://www.evidenceinvestor.com/wp-content/uploads/2021/12/SSRN-id3813202.pdf",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     68,
+     122
+    ],
+    "avg": [
+     0.0276,
+     0.0112
+    ],
+    "stress": [
+     0.0236,
+     0.0072
+    ],
+    "edge": [
+     0.0454,
+     -0.0045
+    ],
+    "vsSpy": [
+     0.0461,
+     -0.027
+    ],
+    "vsOwn": [
+     -0.0743,
+     -0.0455
+    ],
+    "noTop2": [
+     0.0063,
+     0.0039
+    ],
+    "tBlock": [
+     0.69,
+     -0.89
+    ],
+    "win": [
+     0.4706,
+     0.4836
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 0.69 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.89 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-GAS-E20",
    "family": "Macro and world events",
    "name": "Natural gas up -> gas producers (fund FCG, hold 20)",
    "explain": "Signal at the close of session t: UNG (natural gas (futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy FCG at the next open, sell at the close of the 20th session. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     104,
+     142
+    ],
+    "avg": [
+     0.0395,
+     -0.0186
+    ],
+    "stress": [
+     0.0355,
+     -0.0226
+    ],
+    "edge": [
+     0.0574,
+     -0.0162
+    ],
+    "vsSpy": [
+     0.0613,
+     -0.0189
+    ],
+    "vsOwn": [
+     0.0344,
+     -0.0212
+    ],
+    "noTop2": [
+     0.0364,
+     -0.0209
+    ],
+    "tBlock": [
+     1.34,
+     -1.79
+    ],
+    "win": [
+     0.6538,
+     0.3028
+    ],
+    "why": "block t 1.34 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.79 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-GAS-S20",
    "family": "Macro and world events",
    "name": "Natural gas up -> gas producers (10 most traded gas stocks, hold 20)",
    "explain": "Signal at the close of session t: UNG (natural gas (futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy at the next open the 10 liquid stocks of the group \"natural-gas-weighted producers (fixed list)\" with the highest 20-session average traded value on day t, equal weight; sell each at the close of the 20th session. One open trade per stock. Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     105,
+     153
+    ],
+    "avg": [
+     0.039,
+     -0.0279
+    ],
+    "stress": [
+     0.035,
+     -0.0319
+    ],
+    "edge": [
+     0.032,
+     -0.0352
+    ],
+    "vsSpy": [
+     0.0513,
+     -0.0358
+    ],
+    "vsOwn": [
+     0.0611,
+     -0.0319
+    ],
+    "noTop2": [
+     0.033,
+     -0.0383
+    ],
+    "tBlock": [
+     0.41,
+     -1.73
+    ],
+    "win": [
+     0.5238,
+     0.3595
+    ],
+    "why": "block t 0.41 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.73 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-GAS-E60",
    "family": "Macro and world events",
    "name": "Natural gas up -> gas producers (fund FCG, hold 60)",
    "explain": "Signal at the close of session t: UNG (natural gas (futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy FCG at the next open, sell at the close of the 60th session. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     104,
+     137
+    ],
+    "avg": [
+     0.0279,
+     -0.004
+    ],
+    "stress": [
+     0.0239,
+     -0.008
+    ],
+    "edge": [
+     0.0708,
+     -0.0097
+    ],
+    "vsSpy": [
+     0.0685,
+     -0.0144
+    ],
+    "vsOwn": [
+     -0.006,
+     -0.0237
+    ],
+    "noTop2": [
+     0.0205,
+     -0.0074
+    ],
+    "tBlock": [
+     0.7,
+     -0.96
+    ],
+    "win": [
+     0.4904,
+     0.4161
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 0.7 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.96 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-GAS-S60",
    "family": "Macro and world events",
    "name": "Natural gas up -> gas producers (10 most traded gas stocks, hold 60)",
    "explain": "Signal at the close of session t: UNG (natural gas (futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy at the next open the 10 liquid stocks of the group \"natural-gas-weighted producers (fixed list)\" with the highest 20-session average traded value on day t, equal weight; sell each at the close of the 60th session. One open trade per stock. Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     52,
+     86
+    ],
+    "avg": [
+     0.0896,
+     -0.017
+    ],
+    "stress": [
+     0.0856,
+     -0.021
+    ],
+    "edge": [
+     0.0649,
+     -0.0751
+    ],
+    "vsSpy": [
+     0.1171,
+     -0.0633
+    ],
+    "vsOwn": [
+     0.1419,
+     0.0221
+    ],
+    "noTop2": [
+     0.0664,
+     -0.0264
+    ],
+    "tBlock": [
+     0.4,
+     -1.65
+    ],
+    "win": [
+     0.5385,
+     0.4884
+    ],
+    "why": "block t 0.4 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.65 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-GOLD-E20",
    "family": "Macro and world events",
    "name": "Gold up -> gold miners (fund GDX, hold 20)",
    "explain": "Signal at the close of session t: GLD (gold) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy GDX at the next open, sell at the close of the 20th session. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): ETF Trends: gold miners as leveraged exposure to gold (operating leverage: costs fixed, revenue moves with the metal); Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "A-ROT2 holds gold itself when stocks trend down (rejected); gold as a signal for miners never tested",
    "sources": [
     "https://www.etftrends.com/?p=130644",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     113,
+     171
+    ],
+    "avg": [
+     -0.0023,
+     0.024
+    ],
+    "stress": [
+     -0.0063,
+     0.02
+    ],
+    "edge": [
+     -0.0041,
+     0.0282
+    ],
+    "vsSpy": [
+     -0.0075,
+     0.0261
+    ],
+    "vsOwn": [
+     0.006,
+     -0.001
+    ],
+    "noTop2": [
+     -0.0052,
+     0.0215
+    ],
+    "tBlock": [
+     0.2,
+     1.19
+    ],
+    "win": [
+     0.5752,
+     0.6257
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t 0.2 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.19 under 2.5 in the newer half; not better than SPY in the older half"
+   }
   },
   {
    "id": "MACRO-GOLD-S20",
    "family": "Macro and world events",
    "name": "Gold up -> gold miners (10 most traded gold stocks, hold 20)",
    "explain": "Signal at the close of session t: GLD (gold) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy at the next open the 10 liquid stocks of the group \"gold & silver miners (SIC 1040-1049)\" with the highest 20-session average traded value on day t, equal weight; sell each at the close of the 20th session. One open trade per stock. Source(s): ETF Trends: gold miners as leveraged exposure to gold (operating leverage: costs fixed, revenue moves with the metal); Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "A-ROT2 holds gold itself when stocks trend down (rejected); gold as a signal for miners never tested",
    "sources": [
     "https://www.etftrends.com/?p=130644",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     102,
+     181
+    ],
+    "avg": [
+     0.0188,
+     0.021
+    ],
+    "stress": [
+     0.0148,
+     0.017
+    ],
+    "edge": [
+     0.0082,
+     0.0012
+    ],
+    "vsSpy": [
+     0.0163,
+     0.0259
+    ],
+    "vsOwn": [
+     0.073,
+     0.0112
+    ],
+    "noTop2": [
+     0.0114,
+     0.0163
+    ],
+    "tBlock": [
+     0.64,
+     0.88
+    ],
+    "win": [
+     0.5196,
+     0.5856
+    ],
+    "why": "block t 0.64 under 2.5 in the older half; block t 0.88 under 2.5 in the newer half"
+   }
   },
   {
    "id": "MACRO-GOLD-E60",
    "family": "Macro and world events",
    "name": "Gold up -> gold miners (fund GDX, hold 60)",
    "explain": "Signal at the close of session t: GLD (gold) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy GDX at the next open, sell at the close of the 60th session. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): ETF Trends: gold miners as leveraged exposure to gold (operating leverage: costs fixed, revenue moves with the metal); Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "A-ROT2 holds gold itself when stocks trend down (rejected); gold as a signal for miners never tested",
    "sources": [
     "https://www.etftrends.com/?p=130644",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     113,
+     158
+    ],
+    "avg": [
+     -0.0291,
+     0.0883
+    ],
+    "stress": [
+     -0.0331,
+     0.0843
+    ],
+    "edge": [
+     -0.017,
+     0.0623
+    ],
+    "vsSpy": [
+     -0.0378,
+     0.0496
+    ],
+    "vsOwn": [
+     -0.0226,
+     -0.0268
+    ],
+    "noTop2": [
+     -0.0339,
+     0.0838
+    ],
+    "tBlock": [
+     -0.64,
+     0.6
+    ],
+    "win": [
+     0.3628,
+     0.7595
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.64 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.6 under 2.5 in the newer half; not better than SPY in the older half"
+   }
   },
   {
    "id": "MACRO-GOLD-S60",
    "family": "Macro and world events",
    "name": "Gold up -> gold miners (10 most traded gold stocks, hold 60)",
    "explain": "Signal at the close of session t: GLD (gold) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy at the next open the 10 liquid stocks of the group \"gold & silver miners (SIC 1040-1049)\" with the highest 20-session average traded value on day t, equal weight; sell each at the close of the 60th session. One open trade per stock. Source(s): ETF Trends: gold miners as leveraged exposure to gold (operating leverage: costs fixed, revenue moves with the metal); Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "A-ROT2 holds gold itself when stocks trend down (rejected); gold as a signal for miners never tested",
    "sources": [
     "https://www.etftrends.com/?p=130644",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     62,
+     76
+    ],
+    "avg": [
+     -0.0196,
+     0.1206
+    ],
+    "stress": [
+     -0.0236,
+     0.1166
+    ],
+    "edge": [
+     -0.0477,
+     0.0754
+    ],
+    "vsSpy": [
+     -0.0362,
+     0.1044
+    ],
+    "vsOwn": [
+     0.0819,
+     0.0778
+    ],
+    "noTop2": [
+     -0.0309,
+     0.1053
+    ],
+    "tBlock": [
+     -0.58,
+     1.27
+    ],
+    "win": [
+     0.4355,
+     0.6579
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.58 under 2.5 in the older half; block t 1.27 under 2.5 in the newer half; not better than SPY in the older half"
+   }
   },
   {
    "id": "MACRO-CU-E20",
    "family": "Macro and world events",
    "name": "Copper up -> metal miners (fund COPX, hold 20)",
    "explain": "Signal at the close of session t: CPER (copper (futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy COPX at the next open, sell at the close of the 20th session. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Neville, Draaisma, Funnell, Harvey & Van Hemert (2021) The Best Strategies for Inflationary Times (energy the only US sector with positive real returns in 8 US inflation regimes since 1926).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://www.evidenceinvestor.com/wp-content/uploads/2021/12/SSRN-id3813202.pdf"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     97,
+     165
+    ],
+    "avg": [
+     -0.0139,
+     0.0144
+    ],
+    "stress": [
+     -0.0179,
+     0.0104
+    ],
+    "edge": [
+     -0.0102,
+     0.0214
+    ],
+    "vsSpy": [
+     -0.0004,
+     0.0184
+    ],
+    "vsOwn": [
+     -0.0113,
+     -0.0028
+    ],
+    "noTop2": [
+     -0.0176,
+     0.0115
+    ],
+    "tBlock": [
+     -0.71,
+     0.46
+    ],
+    "win": [
+     0.5052,
+     0.5333
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.71 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.46 under 2.5 in the newer half; not better than SPY in the older half"
+   }
   },
   {
    "id": "MACRO-CU-S20",
    "family": "Macro and world events",
    "name": "Copper up -> metal miners (10 most traded metals stocks, hold 20)",
    "explain": "Signal at the close of session t: CPER (copper (futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy at the next open the 10 liquid stocks of the group \"metal miners, not gold or uranium (SIC 1000-1099 except 1040-1049 and 1094)\" with the highest 20-session average traded value on day t, equal weight; sell each at the close of the 20th session. One open trade per stock. Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Neville, Draaisma, Funnell, Harvey & Van Hemert (2021) The Best Strategies for Inflationary Times (energy the only US sector with positive real returns in 8 US inflation regimes since 1926).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://www.evidenceinvestor.com/wp-content/uploads/2021/12/SSRN-id3813202.pdf"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     125,
+     179
+    ],
+    "avg": [
+     -0.0133,
+     0.0101
+    ],
+    "stress": [
+     -0.0173,
+     0.0061
+    ],
+    "edge": [
+     -0.0012,
+     -0.0579
+    ],
+    "vsSpy": [
+     -0.0041,
+     0.0085
+    ],
+    "vsOwn": [
+     0.0383,
+     -0.0529
+    ],
+    "noTop2": [
+     -0.0202,
+     0.0004
+    ],
+    "tBlock": [
+     -0.08,
+     -1.64
+    ],
+    "win": [
+     0.472,
+     0.5307
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.08 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.64 under 2.5 in the newer half; not better than SPY in the older half"
+   }
   },
   {
    "id": "MACRO-CU-E60",
    "family": "Macro and world events",
    "name": "Copper up -> metal miners (fund COPX, hold 60)",
    "explain": "Signal at the close of session t: CPER (copper (futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy COPX at the next open, sell at the close of the 60th session. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Neville, Draaisma, Funnell, Harvey & Van Hemert (2021) The Best Strategies for Inflationary Times (energy the only US sector with positive real returns in 8 US inflation regimes since 1926).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://www.evidenceinvestor.com/wp-content/uploads/2021/12/SSRN-id3813202.pdf"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     97,
+     163
+    ],
+    "avg": [
+     0.0046,
+     0.044
+    ],
+    "stress": [
+     0.0006,
+     0.04
+    ],
+    "edge": [
+     0.0149,
+     0.0314
+    ],
+    "vsSpy": [
+     0.0066,
+     0.0193
+    ],
+    "vsOwn": [
+     -0.0009,
+     -0.0397
+    ],
+    "noTop2": [
+     -0.0043,
+     0.039
+    ],
+    "tBlock": [
+     -0.76,
+     0.98
+    ],
+    "win": [
+     0.5773,
+     0.5337
+    ],
+    "why": "not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.76 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.98 under 2.5 in the newer half"
+   }
   },
   {
    "id": "MACRO-CU-S60",
    "family": "Macro and world events",
    "name": "Copper up -> metal miners (10 most traded metals stocks, hold 60)",
    "explain": "Signal at the close of session t: CPER (copper (futures fund)) 20-session return (close t vs close t-20) is in the TOP 20% of its own 20-session returns on the previous 252 sessions (strictly more than 80% of them are lower). Buy at the next open the 10 liquid stocks of the group \"metal miners, not gold or uranium (SIC 1000-1099 except 1040-1049 and 1094)\" with the highest 20-session average traded value on day t, equal weight; sell each at the close of the 60th session. One open trade per stock. Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Neville, Draaisma, Funnell, Harvey & Van Hemert (2021) The Best Strategies for Inflationary Times (energy the only US sector with positive real returns in 8 US inflation regimes since 1926).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://www.evidenceinvestor.com/wp-content/uploads/2021/12/SSRN-id3813202.pdf"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     66,
+     90
+    ],
+    "avg": [
+     0.0189,
+     -0.018
+    ],
+    "stress": [
+     0.0149,
+     -0.022
+    ],
+    "edge": [
+     -0.0406,
+     -0.0652
+    ],
+    "vsSpy": [
+     0.0078,
+     -0.0324
+    ],
+    "vsOwn": [
+     -0.0019,
+     -0.1443
+    ],
+    "noTop2": [
+     -0.0025,
+     -0.0452
+    ],
+    "tBlock": [
+     0.13,
+     -0.92
+    ],
+    "win": [
+     0.5455,
+     0.4778
+    ],
+    "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.13 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.92 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-RATE-E20",
    "family": "Macro and world events",
    "name": "Long rates falling (TLT up) -> small caps (IWM, hold 20)",
    "explain": "Signal at the close of t: TLT 20-session return in the TOP 20% of its 20-session returns on the previous 252 sessions (long yields falling fast). Buy IWM at the next open, hold 20 sessions. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Moskowitz & Grinblatt (1999) Do Industries Explain Momentum? Journal of Finance 54(4).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "ANG-FOMC (FOMC-day drift on SPUS, a calendar rule); no rate-move signal tested",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://doi.org/10.1111/0022-1082.00146"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     116,
+     102
+    ],
+    "avg": [
+     0.0072,
+     -0.0145
+    ],
+    "stress": [
+     0.0032,
+     -0.0185
+    ],
+    "edge": [
+     -0.008,
+     -0.007
+    ],
+    "vsSpy": [
+     0.0014,
+     -0.0078
+    ],
+    "vsOwn": [
+     0.0195,
+     -0.0178
+    ],
+    "noTop2": [
+     0.0047,
+     -0.0171
+    ],
+    "tBlock": [
+     -4.26,
+     -2.43
+    ],
+    "win": [
+     0.4828,
+     0.3824
+    ],
+    "why": "not better than the average stock in the older half; block t -4.26 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.43 under 2.5 in the newer half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-USD-E20",
    "family": "Macro and world events",
    "name": "Dollar falling (UUP down) -> multinational tech (XLK, hold 20)",
    "explain": "Signal at the close of t: UUP 20-session return in the BOTTOM 20% of its 20-session returns on the previous 252 sessions (strictly more than 80% of them are higher). Buy XLK (the most foreign-revenue-heavy US sector) at the next open, hold 20 sessions. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "Z11 (currencies: not traded here; the dollar is only a signal)",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     125,
+     135
+    ],
+    "avg": [
+     -0.0054,
+     0.0145
+    ],
+    "stress": [
+     -0.0094,
+     0.0105
+    ],
+    "edge": [
+     -0.0052,
+     0.0091
+    ],
+    "vsSpy": [
+     0.0035,
+     0.0076
+    ],
+    "vsOwn": [
+     -0.0067,
+     0.0023
+    ],
+    "noTop2": [
+     -0.0078,
+     0.0113
+    ],
+    "tBlock": [
+     -1.15,
+     2.29
+    ],
+    "win": [
+     0.504,
+     0.5333
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.15 under 2.5 in the older half; block t 2.29 under 2.5 in the newer half"
+   }
   },
   {
    "id": "MACRO-VIX-E20",
    "family": "Macro and world events",
    "name": "Fear spike, then fear falling -> S&P 500 (SPY, hold 20)",
    "explain": "Signal at the close of t: within the last 10 sessions (t included) VIXY closed 30%+ above its average of the 60 sessions before that day (a spike), AND VIXY closes at t 15%+ under its highest close of the last 10 sessions (fear falling); first such session only (the day before was not a signal). Buy SPY at the next open, hold 20 sessions. Yardsticks: the average liquid stock and SPY on its other same-length windows of the half (the \"better than SPY\" gate cannot apply). SPUS is the halal way to own the same thing; SPY is tested as the owner asked. Source(s): Whaley (2000) The Investor Fear Gauge, Journal of Portfolio Management 26(3) (VIX spikes mark sell-offs; high VIX precedes higher expected returns).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "A-VIX1 (queued: the VIX range as a GATE, not a buy rule); ANOM-* calendar rules on SPY",
    "sources": [
     "https://doi.org/10.3905/jpm.2000.319728"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     1,
+     3
+    ],
+    "avg": [
+     0.0144,
+     0.0559
+    ],
+    "stress": [
+     0.0104,
+     0.0519
+    ],
+    "edge": [
+     -0.0072,
+     -0.0054
+    ],
+    "vsSpy": [
+     0,
+     0
+    ],
+    "vsOwn": [
+     0.0195,
+     0.05
+    ],
+    "noTop2": [
+     null,
+     0.0345
+    ],
+    "tBlock": [
+     null,
+     -0.36
+    ],
+    "win": [
+     1,
+     1
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (1 cases, 1 blocks / 3 cases, 3 blocks)"
+   }
   },
   {
    "id": "MACRO-WAR-E20",
    "family": "Macro and world events",
    "name": "Conflict start -> defense fund (ITA, hold 20)",
    "explain": "Each dated war event of the table EVENTS (kind war: a war's start, the first direct strike between states in a cycle, or the restart after a ceasefire; fixed 24 Oct 2026). Buy ITA at the open of the entry session (the first open after the news), hold 20 sessions. Source(s): War! Good news for defense firms? Analysis of the impact of the Russia-Ukraine conflict, Journal of Economic Studies (2024) (positive abnormal returns of defense firms at the invasion); Motley Fool, 1 Mar 2022: why defense stocks rocketed higher in February 2022; Benzinga, Dec 2023: defense stocks Lockheed and RTX shot higher when Russia first attacked Ukraine, then struggled.",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "E10 / C-GOV1 (company contract awards), not wars; none",
    "sources": [
@@ -13555,137 +14353,557 @@
     "https://www.fool.com/investing/2022/03/01/why-defense-stocks-rocketed-higher-in-february",
     "https://in.benzinga.com/news/23/12/36097989/defense-stocks-lockheed-and-rtx-shot-higher-when-russia-first-attacked-ukraine-now-they-struggle"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     2,
+     7
+    ],
+    "avg": [
+     0.0717,
+     0.017
+    ],
+    "stress": [
+     0.0677,
+     0.013
+    ],
+    "edge": [
+     0.02,
+     -0.0044
+    ],
+    "vsSpy": [
+     0.0315,
+     0.0077
+    ],
+    "vsOwn": [
+     0.0735,
+     0.0101
+    ],
+    "noTop2": [
+     null,
+     -0.0141
+    ],
+    "tBlock": [
+     null,
+     -0.25
+    ],
+    "win": [
+     1,
+     0.7143
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 7 cases, 7 blocks)"
+   }
   },
   {
    "id": "MACRO-WAR-S20",
    "family": "Macro and world events",
    "name": "Conflict start -> 10 most traded defense stocks (hold 20)",
    "explain": "Each dated war event (table EVENTS). Buy at the open of the entry session the 10 liquid stocks of \"defense & aerospace (SIC 3720-3769, 3812, 3480-3489, 3795)\" with the highest 20-session average traded value on the session before; hold 20 sessions. One open trade per stock. Source(s): War! Good news for defense firms? Analysis of the impact of the Russia-Ukraine conflict, Journal of Economic Studies (2024) (positive abnormal returns of defense firms at the invasion); Motley Fool, 1 Mar 2022: why defense stocks rocketed higher in February 2022.",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "E10 / C-GOV1 (contract awards); none",
    "sources": [
     "https://www.emeraldinsight.com/insight/content/doi/10.1108/JES-11-2023-0667/full/html",
     "https://www.fool.com/investing/2022/03/01/why-defense-stocks-rocketed-higher-in-february"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     20,
+     70
+    ],
+    "avg": [
+     0.0583,
+     0.0262
+    ],
+    "stress": [
+     0.0543,
+     0.0222
+    ],
+    "edge": [
+     0.0067,
+     0.0049
+    ],
+    "vsSpy": [
+     0.0182,
+     0.0169
+    ],
+    "vsOwn": [
+     0.0641,
+     0.0219
+    ],
+    "noTop2": [
+     0.0496,
+     0.0128
+    ],
+    "tBlock": [
+     null,
+     0.36
+    ],
+    "win": [
+     0.85,
+     0.6286
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (20 cases, 2 blocks / 70 cases, 7 blocks)"
+   }
   },
   {
    "id": "MACRO-PEACE-E20",
    "family": "Macro and world events",
    "name": "Ceasefire / peace deal -> the beaten sector fund (hold 20)",
    "explain": "Each dated peace event (table EVENTS: kind peace). On the session before the entry session, rank the 11 SPDR sector funds (XLE, XLB, XLI, XLU, XLK, XLF, XLV, XLY, XLP, XLC, XLRE) by their 20-session return; buy the WORST at the open of the entry session, hold 20 sessions. Source(s): Benzinga, Dec 2023: defense stocks Lockheed and RTX shot higher when Russia first attacked Ukraine, then struggled; Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://in.benzinga.com/news/23/12/36097989/defense-stocks-lockheed-and-rtx-shot-higher-when-russia-first-attacked-ukraine-now-they-struggle",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     1,
+     7
+    ],
+    "avg": [
+     0.0097,
+     0.0002
+    ],
+    "stress": [
+     0.0057,
+     -0.0038
+    ],
+    "edge": [
+     -0.0817,
+     -0.0097
+    ],
+    "vsSpy": [
+     -0.0115,
+     -0.0169
+    ],
+    "vsOwn": [
+     0.0018,
+     0.0006
+    ],
+    "noTop2": [
+     null,
+     -0.0209
+    ],
+    "tBlock": [
+     null,
+     -0.87
+    ],
+    "win": [
+     1,
+     0.4286
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (1 cases, 1 blocks / 7 cases, 7 blocks)"
+   }
   },
   {
    "id": "MACRO-OPEC-E20",
    "family": "Macro and world events",
    "name": "OPEC+ cut / extension -> energy fund (XLE, hold 20)",
    "explain": "Each dated OPEC+ event (table EVENTS: a new cut, an extension of cuts, or a delay of a planned increase). Buy XLE at the open of the entry session, hold 20 sessions. Source(s): Kilian & Park (2009) IER 50(4) (oil supply shocks: oil-sector stocks gain while the market loses); Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x",
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     4,
+     5
+    ],
+    "avg": [
+     0.0107,
+     0.014
+    ],
+    "stress": [
+     0.0067,
+     0.01
+    ],
+    "edge": [
+     -0.021,
+     0.0216
+    ],
+    "vsSpy": [
+     -0.0046,
+     0.0109
+    ],
+    "vsOwn": [
+     0.0028,
+     0.0068
+    ],
+    "noTop2": [
+     -0.0242,
+     -0.0213
+    ],
+    "tBlock": [
+     -0.46,
+     1.37
+    ],
+    "win": [
+     0.25,
+     0.6
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (4 cases, 4 blocks / 5 cases, 5 blocks)"
+   }
   },
   {
    "id": "MACRO-OPEC-S20",
    "family": "Macro and world events",
    "name": "OPEC+ cut / extension -> 10 most traded oil & gas stocks (hold 20)",
    "explain": "Each dated OPEC+ event. Buy at the open of the entry session the 10 liquid stocks of \"oil & gas stocks (SIC 1311, 1381-1389, 2911, 4610-4619, 4922-4923)\" with the highest 20-session average traded value on the session before; hold 20 sessions. Source(s): Kilian & Park (2009) IER 50(4) (oil supply shocks: oil-sector stocks gain while the market loses).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     40,
+     50
+    ],
+    "avg": [
+     0.0021,
+     0.0261
+    ],
+    "stress": [
+     -0.0019,
+     0.0221
+    ],
+    "edge": [
+     -0.0296,
+     0.0338
+    ],
+    "vsSpy": [
+     -0.0132,
+     0.0231
+    ],
+    "vsOwn": [
+     -0.0061,
+     0.0189
+    ],
+    "noTop2": [
+     -0.0071,
+     0.0195
+    ],
+    "tBlock": [
+     -0.85,
+     1.95
+    ],
+    "win": [
+     0.45,
+     0.64
+    ],
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.85 under 2.5 in the older half; block t 1.95 under 2.5 in the newer half; not better than SPY in the older half"
+   }
   },
   {
    "id": "MACRO-CLIM-E20",
    "family": "Macro and world events",
    "name": "US climate-law step -> clean-energy fund (ICLN, hold 20)",
    "explain": "Each dated US federal climate-law step (table EVENTS: kind climate). Buy ICLN at the open of the entry session, hold 20 sessions. Source(s): Schaeffer's, 28 Jul 2022: Senate unveils climate bill, solar stocks pop; Motley Fool, 28 Jul 2022: why Plug Power and alternative-energy stocks exploded.",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://www.schaeffersresearch.com/content/news/2022/07/28/senate-unveils-climate-change-bill-solar-stocks-pop",
     "https://www.fool.com/investing/2022/07/28/why-plug-power-alternative-energy-stocks-exploded/"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     2,
+     0
+    ],
+    "avg": [
+     -0.0524,
+     null
+    ],
+    "stress": [
+     -0.0564,
+     null
+    ],
+    "edge": [
+     -0.0242,
+     null
+    ],
+    "vsSpy": [
+     -0.055,
+     null
+    ],
+    "vsOwn": [
+     -0.0293,
+     null
+    ],
+    "noTop2": [
+     null,
+     null
+    ],
+    "tBlock": [
+     null,
+     null
+    ],
+    "win": [
+     0.5,
+     null
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 0 cases, 0 blocks)"
+   }
   },
   {
    "id": "MACRO-CLIM-S20",
    "family": "Macro and world events",
    "name": "US climate-law step -> 10 most traded clean-energy stocks (hold 20)",
    "explain": "Each dated US federal climate-law step. Buy at the open of the entry session the 10 liquid stocks of the fixed clean-energy list with the highest 20-session average traded value on the session before; hold 20 sessions. Source(s): Schaeffer's, 28 Jul 2022: Senate unveils climate bill, solar stocks pop; Motley Fool, 28 Jul 2022: why Plug Power and alternative-energy stocks exploded.",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://www.schaeffersresearch.com/content/news/2022/07/28/senate-unveils-climate-change-bill-solar-stocks-pop",
     "https://www.fool.com/investing/2022/07/28/why-plug-power-alternative-energy-stocks-exploded/"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 20 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     24,
+     0
+    ],
+    "avg": [
+     -0.09,
+     null
+    ],
+    "stress": [
+     -0.094,
+     null
+    ],
+    "edge": [
+     -0.0344,
+     null
+    ],
+    "vsSpy": [
+     -0.0801,
+     null
+    ],
+    "vsOwn": [
+     -0.0487,
+     null
+    ],
+    "noTop2": [
+     -0.1291,
+     null
+    ],
+    "tBlock": [
+     -0.64,
+     null
+    ],
+    "win": [
+     0.3333,
+     null
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (24 cases, 3 blocks / 0 cases, 0 blocks)"
+   }
   },
   {
    "id": "MACRO-RATE-E60",
    "family": "Macro and world events",
    "name": "Long rates falling (TLT up) -> small caps (IWM, hold 60)",
    "explain": "Signal at the close of t: TLT 20-session return in the TOP 20% of its 20-session returns on the previous 252 sessions (long yields falling fast). Buy IWM at the next open, hold 60 sessions. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Moskowitz & Grinblatt (1999) Do Industries Explain Momentum? Journal of Finance 54(4).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "ANG-FOMC (FOMC-day drift on SPUS, a calendar rule); no rate-move signal tested",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010",
     "https://doi.org/10.1111/0022-1082.00146"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     116,
+     102
+    ],
+    "avg": [
+     -0.0004,
+     0.034
+    ],
+    "stress": [
+     -0.0044,
+     0.03
+    ],
+    "edge": [
+     -0.0048,
+     0.0023
+    ],
+    "vsSpy": [
+     -0.0196,
+     -0.0007
+    ],
+    "vsOwn": [
+     0.0147,
+     0.0039
+    ],
+    "noTop2": [
+     -0.0028,
+     0.0316
+    ],
+    "tBlock": [
+     -1.09,
+     -0.08
+    ],
+    "win": [
+     0.5431,
+     0.7451
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.09 under 2.5 in the older half; block t -0.08 under 2.5 in the newer half; not better than SPY in the older half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-USD-E60",
    "family": "Macro and world events",
    "name": "Dollar falling (UUP down) -> multinational tech (XLK, hold 60)",
    "explain": "Signal at the close of t: UUP 20-session return in the BOTTOM 20% of its 20-session returns on the previous 252 sessions (strictly more than 80% of them are higher). Buy XLK (the most foreign-revenue-heavy US sector) at the next open, hold 60 sessions. EVERY flagged session is its own tranche (overlapping holds); the block t over non-overlapping blocks of the hold length is the test (one-at-a-time version: information). Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "Z11 (currencies: not traded here; the dollar is only a signal)",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     125,
+     124
+    ],
+    "avg": [
+     0.0441,
+     0.0507
+    ],
+    "stress": [
+     0.0401,
+     0.0467
+    ],
+    "edge": [
+     0.0393,
+     0.0242
+    ],
+    "vsSpy": [
+     0.031,
+     0.0196
+    ],
+    "vsOwn": [
+     0.0232,
+     -0.0047
+    ],
+    "noTop2": [
+     0.0415,
+     0.0457
+    ],
+    "tBlock": [
+     1.13,
+     1.25
+    ],
+    "win": [
+     0.736,
+     0.6774
+    ],
+    "why": "block t 1.13 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.25 under 2.5 in the newer half"
+   }
   },
   {
    "id": "MACRO-VIX-E60",
    "family": "Macro and world events",
    "name": "Fear spike, then fear falling -> S&P 500 (SPY, hold 60)",
    "explain": "Signal at the close of t: within the last 10 sessions (t included) VIXY closed 30%+ above its average of the 60 sessions before that day (a spike), AND VIXY closes at t 15%+ under its highest close of the last 10 sessions (fear falling); first such session only (the day before was not a signal). Buy SPY at the next open, hold 60 sessions. Yardsticks: the average liquid stock and SPY on its other same-length windows of the half (the \"better than SPY\" gate cannot apply). SPUS is the halal way to own the same thing; SPY is tested as the owner asked. Source(s): Whaley (2000) The Investor Fear Gauge, Journal of Portfolio Management 26(3) (VIX spikes mark sell-offs; high VIX precedes higher expected returns).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "A-VIX1 (queued: the VIX range as a GATE, not a buy rule); ANOM-* calendar rules on SPY",
    "sources": [
     "https://doi.org/10.3905/jpm.2000.319728"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     1,
+     3
+    ],
+    "avg": [
+     -0.109,
+     0.1175
+    ],
+    "stress": [
+     -0.113,
+     0.1135
+    ],
+    "edge": [
+     0.0042,
+     -0.0076
+    ],
+    "vsSpy": [
+     0,
+     0
+    ],
+    "vsOwn": [
+     -0.1123,
+     0.0834
+    ],
+    "noTop2": [
+     null,
+     0.0895
+    ],
+    "tBlock": [
+     null,
+     -0.5
+    ],
+    "win": [
+     0,
+     1
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (1 cases, 1 blocks / 3 cases, 3 blocks)"
+   }
   },
   {
    "id": "MACRO-WAR-E60",
    "family": "Macro and world events",
    "name": "Conflict start -> defense fund (ITA, hold 60)",
    "explain": "Each dated war event of the table EVENTS (kind war: a war's start, the first direct strike between states in a cycle, or the restart after a ceasefire; fixed 24 Oct 2026). Buy ITA at the open of the entry session (the first open after the news), hold 60 sessions. Source(s): War! Good news for defense firms? Analysis of the impact of the Russia-Ukraine conflict, Journal of Economic Studies (2024) (positive abnormal returns of defense firms at the invasion); Motley Fool, 1 Mar 2022: why defense stocks rocketed higher in February 2022; Benzinga, Dec 2023: defense stocks Lockheed and RTX shot higher when Russia first attacked Ukraine, then struggled.",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "E10 / C-GOV1 (company contract awards), not wars; none",
    "sources": [
@@ -13693,97 +14911,391 @@
     "https://www.fool.com/investing/2022/03/01/why-defense-stocks-rocketed-higher-in-february",
     "https://in.benzinga.com/news/23/12/36097989/defense-stocks-lockheed-and-rtx-shot-higher-when-russia-first-attacked-ukraine-now-they-struggle"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     2,
+     5
+    ],
+    "avg": [
+     0.0493,
+     0.007
+    ],
+    "stress": [
+     0.0453,
+     0.003
+    ],
+    "edge": [
+     0.0198,
+     -0.0107
+    ],
+    "vsSpy": [
+     0.0353,
+     -0.0307
+    ],
+    "vsOwn": [
+     0.0343,
+     -0.041
+    ],
+    "noTop2": [
+     null,
+     -0.0679
+    ],
+    "tBlock": [
+     null,
+     -0.27
+    ],
+    "win": [
+     0.5,
+     0.4
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 5 cases, 5 blocks)"
+   }
   },
   {
    "id": "MACRO-WAR-S60",
    "family": "Macro and world events",
    "name": "Conflict start -> 10 most traded defense stocks (hold 60)",
    "explain": "Each dated war event (table EVENTS). Buy at the open of the entry session the 10 liquid stocks of \"defense & aerospace (SIC 3720-3769, 3812, 3480-3489, 3795)\" with the highest 20-session average traded value on the session before; hold 60 sessions. One open trade per stock. Source(s): War! Good news for defense firms? Analysis of the impact of the Russia-Ukraine conflict, Journal of Economic Studies (2024) (positive abnormal returns of defense firms at the invasion); Motley Fool, 1 Mar 2022: why defense stocks rocketed higher in February 2022.",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "E10 / C-GOV1 (contract awards); none",
    "sources": [
     "https://www.emeraldinsight.com/insight/content/doi/10.1108/JES-11-2023-0667/full/html",
     "https://www.fool.com/investing/2022/03/01/why-defense-stocks-rocketed-higher-in-february"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     20,
+     52
+    ],
+    "avg": [
+     0.0464,
+     0.0409
+    ],
+    "stress": [
+     0.0424,
+     0.0369
+    ],
+    "edge": [
+     0.0169,
+     -0.0499
+    ],
+    "vsSpy": [
+     0.0324,
+     0.0012
+    ],
+    "vsOwn": [
+     0.0366,
+     -0.0105
+    ],
+    "noTop2": [
+     0.0245,
+     -0.0079
+    ],
+    "tBlock": [
+     null,
+     -0.8
+    ],
+    "win": [
+     0.7,
+     0.4423
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (20 cases, 2 blocks / 52 cases, 7 blocks)"
+   }
   },
   {
    "id": "MACRO-PEACE-E60",
    "family": "Macro and world events",
    "name": "Ceasefire / peace deal -> the beaten sector fund (hold 60)",
    "explain": "Each dated peace event (table EVENTS: kind peace). On the session before the entry session, rank the 11 SPDR sector funds (XLE, XLB, XLI, XLU, XLK, XLF, XLV, XLY, XLP, XLC, XLRE) by their 20-session return; buy the WORST at the open of the entry session, hold 60 sessions. Source(s): Benzinga, Dec 2023: defense stocks Lockheed and RTX shot higher when Russia first attacked Ukraine, then struggled; Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://in.benzinga.com/news/23/12/36097989/defense-stocks-lockheed-and-rtx-shot-higher-when-russia-first-attacked-ukraine-now-they-struggle",
     "https://doi.org/10.1016/j.jfineco.2005.09.010"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     1,
+     7
+    ],
+    "avg": [
+     0.0144,
+     0.0005
+    ],
+    "stress": [
+     0.0104,
+     -0.0035
+    ],
+    "edge": [
+     -0.0953,
+     -0.0039
+    ],
+    "vsSpy": [
+     -0.0694,
+     -0.0207
+    ],
+    "vsOwn": [
+     -0.0267,
+     -0.0122
+    ],
+    "noTop2": [
+     null,
+     -0.016
+    ],
+    "tBlock": [
+     null,
+     -0.76
+    ],
+    "win": [
+     1,
+     0.4286
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (1 cases, 1 blocks / 7 cases, 6 blocks)"
+   }
   },
   {
    "id": "MACRO-OPEC-E60",
    "family": "Macro and world events",
    "name": "OPEC+ cut / extension -> energy fund (XLE, hold 60)",
    "explain": "Each dated OPEC+ event (table EVENTS: a new cut, an extension of cuts, or a delay of a planned increase). Buy XLE at the open of the entry session, hold 60 sessions. Source(s): Kilian & Park (2009) IER 50(4) (oil supply shocks: oil-sector stocks gain while the market loses); Kilian & Park (2009) The impact of oil price shocks on the U.S. stock market, International Economic Review 50(4) (demand-driven oil rises lift stocks; supply shocks hurt; oil-sector stocks move with oil).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x",
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     3,
+     5
+    ],
+    "avg": [
+     0.001,
+     0.0327
+    ],
+    "stress": [
+     -0.003,
+     0.0287
+    ],
+    "edge": [
+     -0.0413,
+     0.0106
+    ],
+    "vsSpy": [
+     -0.0564,
+     0.0113
+    ],
+    "vsOwn": [
+     -0.0401,
+     -0.0011
+    ],
+    "noTop2": [
+     -0.0843,
+     -0.0204
+    ],
+    "tBlock": [
+     -0.7,
+     0.39
+    ],
+    "win": [
+     0.6667,
+     0.6
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (3 cases, 3 blocks / 5 cases, 5 blocks)"
+   }
   },
   {
    "id": "MACRO-OPEC-S60",
    "family": "Macro and world events",
    "name": "OPEC+ cut / extension -> 10 most traded oil & gas stocks (hold 60)",
    "explain": "Each dated OPEC+ event. Buy at the open of the entry session the 10 liquid stocks of \"oil & gas stocks (SIC 1311, 1381-1389, 2911, 4610-4619, 4922-4923)\" with the highest 20-session average traded value on the session before; hold 60 sessions. Source(s): Kilian & Park (2009) IER 50(4) (oil supply shocks: oil-sector stocks gain while the market loses).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://doi.org/10.1111/j.1468-2354.2009.00568.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     30,
+     50
+    ],
+    "avg": [
+     -0.0221,
+     0.0162
+    ],
+    "stress": [
+     -0.0261,
+     0.0122
+    ],
+    "edge": [
+     -0.0645,
+     -0.0058
+    ],
+    "vsSpy": [
+     -0.0795,
+     -0.0052
+    ],
+    "vsOwn": [
+     -0.129,
+     -0.0314
+    ],
+    "noTop2": [
+     -0.0386,
+     0.0049
+    ],
+    "tBlock": [
+     -1.46,
+     -0.15
+    ],
+    "win": [
+     0.4333,
+     0.54
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.46 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.15 under 2.5 in the newer half; not better than SPY in the older half; not better than SPY in the newer half"
+   }
   },
   {
    "id": "MACRO-CLIM-E60",
    "family": "Macro and world events",
    "name": "US climate-law step -> clean-energy fund (ICLN, hold 60)",
    "explain": "Each dated US federal climate-law step (table EVENTS: kind climate). Buy ICLN at the open of the entry session, hold 60 sessions. Source(s): Schaeffer's, 28 Jul 2022: Senate unveils climate bill, solar stocks pop; Motley Fool, 28 Jul 2022: why Plug Power and alternative-energy stocks exploded.",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://www.schaeffersresearch.com/content/news/2022/07/28/senate-unveils-climate-change-bill-solar-stocks-pop",
     "https://www.fool.com/investing/2022/07/28/why-plug-power-alternative-energy-stocks-exploded/"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     2,
+     0
+    ],
+    "avg": [
+     -0.2268,
+     null
+    ],
+    "stress": [
+     -0.2308,
+     null
+    ],
+    "edge": [
+     -0.1169,
+     null
+    ],
+    "vsSpy": [
+     -0.1544,
+     null
+    ],
+    "vsOwn": [
+     -0.1804,
+     null
+    ],
+    "noTop2": [
+     null,
+     null
+    ],
+    "tBlock": [
+     null,
+     null
+    ],
+    "win": [
+     0,
+     null
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 0 cases, 0 blocks)"
+   }
   },
   {
    "id": "MACRO-CLIM-S60",
    "family": "Macro and world events",
    "name": "US climate-law step -> 10 most traded clean-energy stocks (hold 60)",
    "explain": "Each dated US federal climate-law step. Buy at the open of the entry session the 10 liquid stocks of the fixed clean-energy list with the highest 20-session average traded value on the session before; hold 60 sessions. Source(s): Schaeffer's, 28 Jul 2022: Senate unveils climate bill, solar stocks pop; Motley Fool, 28 Jul 2022: why Plug Power and alternative-energy stocks exploded.",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "none",
    "sources": [
     "https://www.schaeffersresearch.com/content/news/2022/07/28/senate-unveils-climate-change-bill-solar-stocks-pop",
     "https://www.fool.com/investing/2022/07/28/why-plug-power-alternative-energy-stocks-exploded/"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 60 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     24,
+     0
+    ],
+    "avg": [
+     -0.3127,
+     null
+    ],
+    "stress": [
+     -0.3167,
+     null
+    ],
+    "edge": [
+     -0.1816,
+     null
+    ],
+    "vsSpy": [
+     -0.235,
+     null
+    ],
+    "vsOwn": [
+     -0.1462,
+     null
+    ],
+    "noTop2": [
+     -0.3549,
+     null
+    ],
+    "tBlock": [
+     null,
+     null
+    ],
+    "win": [
+     0.0417,
+     null
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (24 cases, 2 blocks / 0 cases, 0 blocks)"
+   }
   },
   {
    "id": "MACRO-ROT",
    "family": "Macro and world events",
    "name": "Macro-regime rotation: the 2 sector funds whose macro driver is strongest, monthly",
    "explain": "At the close of the last session of each month, score each driver of the fixed map USO -> XLE, UNG -> FCG, GLD -> GDX, CPER -> COPX, TLT -> IWM, minus UUP -> XLK: score = sign x (63-session return) / (standard deviation of its daily returns over the previous 252 sessions x sqrt(63)). Hold, equal weight, the funds of the 2 highest POSITIVE scores (fewer positive -> the empty place is cash at 0%), bought at the next open, sold at the close of the last session of that month. Each fund-month is one trade (hold field 21 = one month, for blocks). Extra yardstick: the equal weight of all 6 funds over the same months must be beaten in both halves. Source(s): Hong, Torous & Valkanov (2007) Do industries lead stock markets? Journal of Financial Economics 83(2) (industry and commodity returns lead the market by up to two months); Moskowitz & Grinblatt (1999) Do Industries Explain Momentum? Journal of Finance 54(4); Driesprong, Jacobsen & Maat (2008) Striking oil: Another puzzle? Journal of Financial Economics 89(2) (oil changes predict stock returns with a lag: slow information diffusion).",
-   "status": "pre-registered 2026-10-24 (macro lab); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "macro",
    "libraryCheck": "A-ROT1 (sector funds ranked by their OWN 6-month / 12-1 return: rejected), A-ROT2 (rejected), R4, CHAIN-MOM1: here the rank is the DRIVER's move, never the fund's own",
    "sources": [
@@ -13791,7 +15303,49 @@
     "https://doi.org/10.1111/0022-1082.00146",
     "https://ideas.repec.org/a/eee/jfinec/v89y2008i2p307-327.html"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 21 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (macro-core.mjs = the exact rule and the dated event table; one version; hold 21 sessions). 5-year one-shot by macro-lab.mjs, first complete verdict frozen in data/macro-lab.json; forward paper lane (data/macro-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "macro-lab.mjs -> data/macro-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     42,
+     60
+    ],
+    "avg": [
+     0.0043,
+     0.0134
+    ],
+    "stress": [
+     0.0003,
+     0.0094
+    ],
+    "edge": [
+     0.0122,
+     0.0022
+    ],
+    "vsSpy": [
+     0.0131,
+     0.0064
+    ],
+    "vsOwn": [
+     0.0058,
+     -0.0031
+    ],
+    "noTop2": [
+     -0.0041,
+     0.0069
+    ],
+    "tBlock": [
+     0.82,
+     0.17
+    ],
+    "win": [
+     0.5,
+     0.55
+    ],
+    "why": "loses without its 2 best in the older half; block t 0.82 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.17 under 2.5 in the newer half"
+   }
   }
  ]
 }
