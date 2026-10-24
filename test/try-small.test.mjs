@@ -132,3 +132,12 @@ test('ANOM-SUESURGE is paused until its corrected run exists', () => {
   assert.deepEqual(q({ 'ANOM-SUESURGE': r }), []);
   assert.deepEqual(q({ 'ANOM-SUESURGE': { ...r, corrected: true } }), ['ANOM-SUESURGE']);
 });
+// 24 Oct: Squad 4's SQ4-GROWLEAD passed the per-trade checks but earned less per year than the S&P 500 in both halves (15.3% vs 18.9%,
+// 12.1% vs 15.8%). Holding SPUS did better, so TRY SMALL must not buy it. Rules without a per-year measure are unaffected.
+test('a rule that loses to the S&P 500 per year does not qualify', () => {
+  const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
+  assert.deepEqual(q({ A: { ...r, perYear: { older: { rule: 0.153, spy: 0.189 }, newer: { rule: 0.121, spy: 0.158 } } } }), []);
+  assert.deepEqual(q({ A: { ...r, perYear: { older: { rule: 0.25, spy: 0.189 }, newer: { rule: 0.121, spy: 0.158 } } } }), []);
+  assert.deepEqual(q({ A: { ...r, perYear: { older: { rule: 0.25, spy: 0.189 }, newer: { rule: 0.2, spy: 0.158 } } } }), ['A']);
+  assert.deepEqual(q({ A: r }), ['A']);
+});
