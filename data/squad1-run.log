@@ -1,23 +1,26 @@
-[0s] squad 1 lab (DIAG: coverage only, no returns); frozen already: 0/10
+[0s] squad 1 lab; frozen already: 0/10
 [0s] library: 0 SQ1 entries pre-registered now
 [4s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
 [5s] splits since 2026-10-19: 71 listed, 0 repaired
 [5s] sessions 1264 (2021-10-12 to 2026-10-23), stocks 8489
-[36s] insider: 139160 purchase rows, data sets to 2026-09-30, missing none; forward days 0
-[605s] short interest: 60/61 months (FINRA API: not a list for 2026-10)
-[1208s] full-text search: 6636 buyback hits, 5452 guidance hits, 2496 phrase-months fetched now
-[1283s] buyback documents read: 500
-[1359s] buyback documents read: 1000
-[1425s] buyback documents read: 1500
-[1493s] buyback documents read: 2000
-[1556s] buyback documents read: 2500
-[1619s] buyback documents read: 3000
-[1682s] buyback documents read: 3500
-[1745s] buyback documents read: 4000
-[1814s] buyback documents read: 4500
-[1862s] buyback documents: 4849 (4849 read now, 0 not read, 4358 with a size)
-[1862s] customer links: 420 usable, 312 suppliers
-[1868s] analyst consensus: {"ok":false,"note":"Finnhub history too short for a 5-year test (median earliest month of 5 large stocks: 2026-07-01; needs 2021-06 or earlier)","depth":{"probes":{"AAPL":"2026-07-01","MSFT":"2026-07-01","JPM":"2026-07-01","XOM":"2026-07-01","PFE":"2026-07-01"},"earliest":"2026-07-01"}}
-[2543s] dividends: 482750 rows
-[2544s] signals with a complete hold (before one-open / yardstick filters): SQ1-INSCLU 311/340, SQ1-CEODIP 364/343, SQ1-INSLOWSI 143/145, SQ1-BBAUTH 283/451, SQ1-BBDIP 78/95, SQ1-CUSTMOM 474/587, SQ1-GUIDEUP 1045/1490, SQ1-RECUP NO DATA, SQ1-DIVHIKE 368/363, SQ1-SIAVOID 2374/4769
-SQUAD 1 DIAG 2021-10-12 to 2026-10-23 | insider ok, si ok, efts ok, buyback ok, guidance ok, customer ok, analyst MISSING, divs ok, price ok
+[5s] insider: 139160 purchase rows, data sets to 2026-09-30, missing none; forward days 0
+[17s] short interest: 60/61 months (FINRA API: not a list for 2026-10)
+[37s] full-text search: 6636 buyback hits, 5452 guidance hits, 39 phrase-months fetched now
+[37s] buyback documents: 4849 (0 read now, 0 not read, 4358 with a size)
+[37s] customer links: 420 usable, 312 suppliers
+[37s] analyst consensus: {"ok":false,"note":"Finnhub history too short for a 5-year test (median earliest month of 5 large stocks: 2026-07-01; needs 2021-06 or earlier)","depth":{"probes":{"AAPL":"2026-07-01","MSFT":"2026-07-01","JPM":"2026-07-01","XOM":"2026-07-01","PFE":"2026-07-01"},"earliest":"2026-07-01"}}
+[38s] dividends: 482750 rows
+[41s] signals with a complete hold (before one-open / yardstick filters): SQ1-INSCLU 311/340, SQ1-CEODIP 364/343, SQ1-INSLOWSI 143/145, SQ1-BBAUTH 283/451, SQ1-BBDIP 78/95, SQ1-CUSTMOM 474/587, SQ1-GUIDEUP 1045/1490, SQ1-RECUP NO DATA, SQ1-DIVHIKE 368/363, SQ1-SIAVOID 2374/4769
+[41s] 5-year one-shot for 10 rules not yet frozen
+[41s] - SQ1-INSCLU: REJECTED | older 290 (203d, 9bl) avg +3.0% stress +2.6% edge +2.7% own +5.8% no2 +2.1% tBlock 2.09 win +53.8% | newer 325 (210d, 11bl) avg +1.9% stress +1.5% edge -3.7% own -0.5% no2 +1.4% tBlock -1.88 win +51.4% | block t 2.09 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.88 under 2.5 in the newer half
+[41s] - SQ1-CEODIP: REJECTED | older 226 (154d, 7bl) avg +2.8% stress +2.4% edge -1.1% own +6.0% no2 +1.9% tBlock -0.24 win +54.0% | newer 257 (167d, 10bl) avg +5.9% stress +5.5% edge -0.2% own +7.9% no2 +5.0% tBlock -0.58 win +55.3% | not better than the average stock in the older half; block t -0.24 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.58 under 2.5 in the newer half
+[41s] - SQ1-INSLOWSI: REJECTED | older 134 (102d, 9bl) avg +0.3% stress -0.1% edge +0.8% own -1.7% no2 -0.4% tBlock 0.85 win +49.3% | newer 139 (117d, 10bl) avg +0.9% stress +0.5% edge -3.0% own -1.8% no2 -0.1% tBlock -2.09 win +51.8% | lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.85 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their ot
+[41s] - SQ1-BBAUTH: NOT PROVEN | older 283 (187d, 9bl) avg +0.8% stress +0.4% edge +2.1% own -2.2% no2 +0.3% tBlock 1.44 win +48.4% | newer 451 (256d, 11bl) avg +3.2% stress +2.8% edge +0.2% own +1.3% no2 +2.3% tBlock 0.02 win +52.1% | not better than the same stocks on their other days in the older half; block t 1.44 under 2.5 in the older half; block t 0.02 under 2.5 in the newer half
+[41s] - SQ1-BBDIP: REJECTED | older 78 (58d, 5bl) avg +3.0% stress +2.6% edge +2.8% own -0.3% no2 +1.1% tBlock 1.56 win +50.0% | newer 95 (71d, 4bl) avg +8.4% stress +8.0% edge -6.9% own -8.4% no2 +5.1% tBlock -2.65 win +53.7% | not better than the same stocks on their other days in the older half; block t 1.56 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -2.65 under 2.5 in the newer half
+[41s] - SQ1-CUSTMOM: REJECTED | older 474 (25d, 25bl) avg -0.1% stress -0.5% edge +0.4% own -0.7% no2 -0.4% tBlock 0.63 win +48.9% | newer 587 (33d, 33bl) avg +0.4% stress -0.0% edge -1.0% own +0.7% no2 +0.1% tBlock -1.21 win +45.7% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.63 under 2.5 in the older half; lost money after 1.2% costs in the newer half; no
+[41s] - SQ1-GUIDEUP: REJECTED | older 895 (222d, 9bl) avg +0.2% stress -0.2% edge +0.1% own -1.8% no2 -0.1% tBlock -0.17 win +50.2% | newer 1291 (267d, 11bl) avg +5.2% stress +4.8% edge -0.4% own +1.0% no2 +4.9% tBlock -0.16 win +57.9% | lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.17 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.16 under 2.5 in the newer half
+[41s] - SQ1-RECUP: NOT RUN (analyst data)
+[41s] - SQ1-DIVHIKE: NOT PROVEN | older 338 (198d, 9bl) avg -2.7% stress -3.1% edge +0.2% own -5.6% no2 -3.2% tBlock 0.36 win +36.7% | newer 342 (214d, 12bl) avg +4.2% stress +3.8% edge +1.4% own -0.4% no2 +3.5% tBlock 0.98 win +51.2% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.36 under 2.5 in the older half; not better than the same stocks on their other da
+[43s] - SQ1-SIAVOID: AVOID WEAK (REJECTED AS A BUY) | older 2372 (25d, 25bl) avg -4.8% stress -5.2% edge -4.0% own -1.9% no2 -5.0% tBlock -3.24 win +36.9% | newer 4767 (33d, 33bl) avg +0.0% stress -0.4% edge -1.3% own +1.1% no2 -0.1% tBlock -1.74 win +44.2% | these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy
+[43s] paper lane: scanned 0 new session(s); 0 new signals; 0 in all; avoid list 223
+SQUAD 1 LAB 2021-10-12 to 2026-10-23 | bar 4.02 | frozen 9/10 | insider ok, si ok, efts ok, buyback ok, guidance ok, customer ok, analyst MISSING, divs ok, price ok
