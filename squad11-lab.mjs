@@ -203,9 +203,9 @@ STATUS.leaders = { ok: MENDS.length >= 40 && leadInfo.every(x => x.top300 === TO
 log('leaders: ' + JSON.stringify(STATUS.leaders));
 if (DIAG) { const pick = FORM.filter((t, j) => j % 6 === 0 || j === FORM.length - 1);
   console.log('SQUAD 11 DIAGNOSTICS (data coverage and the leader sets only; nothing judged or written)');
-  console.log(JSON.stringify({ data: STATUS, perMonth: leadInfo, snapshots: pick.map(t => { const U = universe(t).ranked.slice(0, TOPN);
-    return { date: D[t], top10: U.slice(0, 10).map(r => SYMS[r.i] + ' ' + (r.cap / 1e9).toFixed(0) + 'B'), rank300: U[TOPN - 1] ? SYMS[U[TOPN - 1].i] + ' ' + (U[TOPN - 1].cap / 1e9).toFixed(1) + 'B' : null,
-      leaders: [...LEAD.get(t)].map(i => ({ s: SYMS[i], m: mom121(cl(i), t) })).sort((a, b) => b.m - a.m).map(x => x.s + ' ' + pc(x.m)) }; }) }, null, 1).slice(0, 60000));
+  console.log('DATA ' + JSON.stringify(STATUS)); for (const x of leadInfo) console.log('MONTH ' + JSON.stringify(x));
+  for (const t of pick) { const U = universe(t).ranked.slice(0, TOPN); console.log('SNAP ' + D[t] + ' | top5 ' + U.slice(0, 5).map(r => SYMS[r.i] + ' ' + (r.cap / 1e9).toFixed(0) + 'B').join(', ') + ' | #300 ' + (U[TOPN - 1] ? SYMS[U[TOPN - 1].i] + ' ' + (U[TOPN - 1].cap / 1e9).toFixed(1) + 'B' : '-')
+    + ' | leaders ' + [...LEAD.get(t)].map(i => ({ s: SYMS[i], m: mom121(cl(i), t) })).sort((a, b) => b.m - a.m).map(x => x.s + ' ' + pc(x.m)).join(', ')); }
   process.exit(0); }
 
 // ================= 6. SIGNALS AND TRADES =================
