@@ -4,7 +4,7 @@
 // Pure functions. Run: node --test test/squad18-core.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { RULES, IDS, TRADE_IDS, CONTRIB_IDS, volDays, stressAt, accumOk, dryPullback, dayDip, nextWeekStart, monBuy, delayBuy, monthGroups, contribDay, account, advantage, contribVerdict,
+import { RULES, IDS, TRADE_IDS, CONTRIB_IDS, volDays, distActive, stressAt, accumOk, dryPullback, dayDip, nextWeekStart, monBuy, delayBuy, monthGroups, contribDay, account, advantage, contribVerdict,
   basketNav, holdFrom, preHoliday, inTom, removedReport, paired, preRegister, weekday, halfOf } from '../squad18-core.mjs';
 import { holdTrade } from '../squad11-core.mjs';
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;
@@ -34,6 +34,12 @@ test('market stress: SPY -2%, VIXY +15%, or 5+ distribution days', () => {
   const vx = Array.from({ length: n }, () => 20); vx[29] = 23; assert.equal(stressAt(c, v, vx, 29).fear, true); vx[29] = 22.9; assert.equal(stressAt(c, v, vx, 29).fear, false);
   const c4 = [], v4 = []; for (let k = 0; k < n; k++) { c4.push(100 - (k % 2 ? 0.5 : 0)); v4.push(k % 2 ? 20 : 10); }   // every other day down 0.5% on higher volume
   const s = stressAt(c4, v4, null, 29); assert.ok(s.nDist >= 5); assert.equal(s.dist, true); assert.equal(s.stress, true);
+});
+
+test('active IBD distribution days retire once SPY closes 5%+ above them', () => {
+  const c = [100, 99, 100, 102, 103.95, 104], v = [10, 20, 5, 5, 5, 5];   // day 1: distribution (-1% on 20 > 10)
+  assert.equal(distActive(c, v, 3), 1); assert.equal(distActive(c, v, 4), 0);   // 103.95 = 99 x 1.05: retired at day 4
+  assert.equal(distActive([100, 99, 100, 102, 103.9, 104], v, 4), 1); assert.equal(distActive([100, 99, 100, 102, 103.9, 104], v, 5), 0);
 });
 
 test('shrinking-volume pullback: last 10 days vs the 50 before', () => {

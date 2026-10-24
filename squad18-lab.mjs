@@ -211,13 +211,20 @@ if (DIAG) { const pick = FORM.filter((t, j) => j % 6 === 0 || j === FORM.length 
 const f64 = (A, i) => Float64Array.from(A.subarray(i * T, i * T + T));
 const SPYCD = f64(CA, spyI), SPYV = f64(VA, spyI), SPYO = f64(OA, spyI);
 // VIXY: reverse splits are back-adjusted here (a close-to-close ratio >= 2.5x or <= 0.4x is treated as a split, not a market move; data hygiene)
-const vixyI = SY.get('VIXY'), VIXY = vixyI === undefined ? null : f64(CA, vixyI); let vixySplits = 0;
+// funds not in the stock price cache (VIXY, SPUS): Massive daily bars (adjusted), as squad10-lab.mjs loads SPUS
+async function fundBars(sym) { const j = await api('/v2/aggs/ticker/' + sym + '/range/1/day/2019-01-01/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000');
+  return j && Array.isArray(j.results) && j.results.length > 100 ? j.results.map(b => ({ d: iso(b.t), o: b.o, c: b.c })) : null; }
+async function fundSeries(sym) { const i = SY.get(sym); if (i !== undefined && CA.subarray(i * T, i * T + T).filter(x => x > 0).length > T * 0.9) return { o: f64(OA, i), c: f64(CA, i), src: 'cache' };
+  const b = await fundBars(sym); if (!b) return null; const m = new Map(b.map(x => [x.d, x])), o = new Float64Array(T).fill(NaN), c = new Float64Array(T).fill(NaN);
+  for (let t = 0; t < T; t++) { const x = m.get(D[t]); if (x) { if (x.o > 0) o[t] = x.o; if (x.c > 0) c[t] = x.c; } } return { o, c, src: 'massive' }; }
+const VX = await fundSeries('VIXY'), SP = await fundSeries('SPUS');
+const VIXY = VX ? VX.c : null; let vixySplits = 0;
 if (VIXY) { let prev = -1; for (let t = 0; t < T; t++) { if (!(VIXY[t] > 0)) continue; if (prev >= 0) { const r = VIXY[t] / VIXY[prev]; if (r >= 2.5 || r <= 0.4) { for (let q = 0; q <= prev; q++) VIXY[q] *= r; vixySplits++; } } prev = t; } }
 const STR = Array.from({ length: T }, (_, t) => stressAt(SPYCD, SPYV, VIXY, t)), stressed = (u) => u >= T || STR[u].stress;
-const spusI = SY.get('SPUS'), SPUSO = spusI === undefined ? null : f64(OA, spusI), SPUSC = spusI === undefined ? null : f64(CA, spusI);
+const SPUSO = SP ? SP.o : null, SPUSC = SP ? SP.c : null;
 const cnt = (f) => { let n = 0; for (let t = 252; t < T; t++) if (f(t)) n++; return n; };
-STATUS.market = { ok: SPYV.filter(x => x > 0).length >= T * 0.95, spyVolumeDays: SPYV.filter(x => x > 0).length, vixyDays: VIXY ? VIXY.filter(x => x > 0).length : 0, vixySplitsAdjusted: vixySplits,
-  spusDays: SPUSC ? SPUSC.filter(x => x > 0).length : 0, from252: T - 252, stressDays: cnt(t => STR[t].stress), spyDropDays: cnt(t => STR[t].spyDrop), fearDays: cnt(t => STR[t].fear), distDays: cnt(t => STR[t].dist) };
+STATUS.market = { ok: SPYV.filter(x => x > 0).length >= T * 0.95 && !!VIXY && VIXY.filter(x => x > 0).length >= T * 0.9, spyVolumeDays: SPYV.filter(x => x > 0).length, vixyDays: VIXY ? VIXY.filter(x => x > 0).length : 0, vixySource: VX ? VX.src : null, spusSource: SP ? SP.src : null, vixySplitsAdjusted: vixySplits,
+  spusDays: SPUSC ? SPUSC.filter(x => x > 0).length : 0, from252: T - 252, stressDays: cnt(t => STR[t].stress), spyDropDays: cnt(t => STR[t].spyDrop), fearDays: cnt(t => STR[t].fear), distDays: cnt(t => STR[t].dist), rawDist5Days: cnt(t => STR[t].nDist >= 5), accGeDistDays: cnt(t => STR[t].nAcc >= STR[t].nDist) };
 if (!(STATUS.market.vixyDays >= T * 0.9)) STATUS.market.note = 'VIXY missing or short: the fear leg of market stress is off where VIXY has no close';
 log('market: ' + JSON.stringify(STATUS.market));
 
@@ -366,8 +373,8 @@ for (const id of TRADE_IDS) { const mine = []; if (fromT >= 0) for (const s of S
   let hi = prevLast >= 0 ? SPYCD[prevLast] : -Infinity, fired = null; for (const t of g.idx) { if (SPYCD[t] > hi) hi = SPYCD[t]; else if (SPYCD[t] <= hi * 0.97 + 1e-9 && fired === null) fired = D[t]; }
   for (const id of CONTRIB_IDS) { const fr = firstRun[id]; today[id] = { name: RULES[id].name, tier: fr ? fr.verdict : null, newSignals: [], advice: RULES[id].variant === 'dip3' ? (fired ? 'this month SPY closed 3%+ under its high on ' + fired + ' (the dip-3 buy day is the next open after it)' : 'no 3% SPY dip yet this month (' + g.ym + '); if none comes, the dip-3 rule buys at the last session of the month') : RULES[id].variant === 'mid' ? 'mid-month buy: first session on or after the 15th' : 'month-end buy: the open of the month\'s last session', note: 'account rule (timing of the monthly basket contribution), never a TRY SMALL buy' }; } }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x)).join('\n') + '\n');
-const stNow = STR[T - 1];
-fs.writeFileSync(TODAY, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], paperStart: START, marketToday: { stress: stNow.stress, spyDown2: stNow.spyDrop, fearJump: stNow.fear, distributionDays25: stNow.nDist, accumulationDays25: stNow.nAcc },
+const stNow = STR[T - 1];   // marketToday below
+fs.writeFileSync(TODAY, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], paperStart: START, marketToday: { stress: stNow.stress, spyDown2: stNow.spyDrop, fearJump: stNow.fear, distributionDays25: stNow.nDist, activeDistributionDays: stNow.nDistActive, accumulationDays25: stNow.nAcc },
   note: 'PAPER ONLY. Squad 18 (human-behaviour filters on the rules that work) recording forward from 26 Oct 2026. A rule needs a qualifying frozen 5-year verdict in BOTH halves (data/squad18-lab.json firstRun). Halal = the owner\'s ZAD mark; "unknown" must be checked before any real buy.', methods: today }, null, 1));
 fs.writeFileSync(BOARD, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], paperStart: START, cost: COST, readiness: '30+ resolved paper trades on 10+ distinct signal days, average > 0 after 0.8% cost', methods: board }, null, 1));
 log('paper lane: ' + newLines.filter(x => x.type === 'signal').length + ' new signals, ' + newLines.filter(x => x.type === 'result').length + ' new results; today: ' + TRADE_IDS.map(id => id + ' ' + today[id].newSignals.length).join(', '));

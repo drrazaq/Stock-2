@@ -37,8 +37,13 @@
 //     (a) SPY closes 2%+ under its previous close; OR
 //     (b) FEAR JUMP: VIXY (the VIX short-term futures fund; the VIX index itself is not in the price data) closes 15%+ over its previous
 //         close (a VIXY day of +15% is roughly a VIX day of +25-30%); OR
-//     (c) DISTRIBUTION: 5+ IBD-style distribution days among the last 25 sessions (t included): SPY closes 0.2%+ down on HIGHER volume
-//         than the session before.
+//     (c) DISTRIBUTION: 5+ ACTIVE IBD distribution days among the last 25 sessions (t included): SPY closes 0.2%+ down on HIGHER volume
+//         than the session before; a distribution day stops counting once SPY closes 5%+ above that day's close (IBD's own expiry rule).
+//         AMENDMENT (24 Oct 2026, after the DIAG data check, BEFORE any rule was run or any trade result seen): the first text had no 5%
+//         expiry; the DIAG run showed 5+ raw distribution days on 736 of 1012 sessions (73%: "stress" nearly always on, not the owner's
+//         "bad-news day"). The expiry is IBD's published rule (the text already said IBD-style), not a value fitted to results; nothing else
+//         changed. The raw count is still used for the ACCUM rule (accumulation vs distribution, both raw), as registered.
+//         Data note from the same DIAG: VIXY and SPUS are not in the stock price cache; they are loaded from Massive daily bars.
 //   ACCUMULATION DAY = SPY closes 0.2%+ up on higher volume than the session before.
 //   COST 0.8% round trip (1.2% stress). Halves by signal date (before / from 2024-01-01). Trade rules JUDGED exactly like squad 11 (hold-core
 //   judgeHold: > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments (rule and yardstick capped
@@ -81,10 +86,10 @@
 //   on a pre-holiday session, signal inside the turn-of-month window (last 2 / first 3 sessions of a month), signal on an SPY -2% day.
 import { isoWeek } from './squad6-core.mjs';
 export const COST = 0.008, STRESS = 0.012, SPLIT = '2024-01-01', PAPER_START = '2026-10-26', BUY_COST = 0.004, YEAR = 252;
-export const STRESS_SPY = -0.02, STRESS_VIXY = 0.15, DIST_TH = 0.002, DIST_N = 25, DIST_MAX = 5, DELAY_MAX = 21, DIP_MKT = 0.03;
+export const STRESS_SPY = -0.02, STRESS_VIXY = 0.15, DIST_TH = 0.002, DIST_N = 25, DIST_MAX = 5, DIST_EXPIRE = 0.05, DELAY_MAX = 21, DIP_MKT = 0.03;
 export const RULES = {
   'SQ18-PB12-CALM': { name: 'Leader 12% pullback (SQ11-PB12), skipped on market-stress closes (hold 126)', hold: 126, block: 63, base: 'PB12', kind: 'filter',
-    rule: 'SQ11-PB12 signals, SKIPPED when the market is under stress at the signal close: SPY closes 2%+ down, or VIXY closes 15%+ up, or 5+ IBD-style distribution days (SPY 0.2%+ down on higher volume than the session before) among the last 25 sessions. Buy the next open; sell at the close of session 126.' },
+    rule: 'SQ11-PB12 signals, SKIPPED when the market is under stress at the signal close: SPY closes 2%+ down, or VIXY closes 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume than the session before, retired once SPY closes 5%+ above it) among the last 25 sessions. Buy the next open; sell at the close of session 126.' },
   'SQ18-PB12-MON': { name: 'Leader 12% pullback (SQ11-PB12), Thursday/Friday signals bought at the next week\'s first open (hold 126)', hold: 126, block: 63, base: 'PB12', kind: 'timing',
     rule: 'SQ11-PB12 signals; a signal at a Thursday or Friday close is bought at the open of the first session of the next calendar week (Monday, or Tuesday after a holiday) instead of the next open; sell at the close of session 126 from the actual buy. Other signals unchanged.' },
   'SQ18-FRIDIP': { name: 'Leader falls 2%+ on a Friday while SPY falls less than 1%; buy Monday open (hold 21)', hold: 21, block: 21, kind: 'standalone',
@@ -119,10 +124,16 @@ export function volDays(c, v, t, n = DIST_N, th = DIST_TH) { let dist = 0, acc =
   for (let u = Math.max(1, t - n + 1); u <= t; u++) { const r = dayRet(c, u); if (r === null || !(v[u] > 0) || !(v[u - 1] > 0)) continue; have++;
     if (v[u] > v[u - 1]) { if (r <= -th + 1e-12) dist++; else if (r >= th - 1e-12) acc++; } }
   return { dist, acc, have }; }
+// ACTIVE IBD distribution days at t: distribution days among the last n sessions whose close has not since been exceeded by 5%+ (any close
+// after the day up to t at or above the day's close x 1.05 retires it)
+export function distActive(c, v, t, n = DIST_N, th = DIST_TH, exp = DIST_EXPIRE) { let dist = 0;
+  for (let u = Math.max(1, t - n + 1); u <= t; u++) { const r = dayRet(c, u); if (r === null || !(v[u] > 0) || !(v[u - 1] > 0) || !(v[u] > v[u - 1]) || !(r <= -th + 1e-12)) continue;
+    let gone = false; for (let q = u + 1; q <= t; q++) if (c[q] > 0 && c[q] >= c[u] * (1 + exp) - 1e-9) { gone = true; break; } if (!gone) dist++; }
+  return dist; }
 // market stress at close t: { stress, spyDrop, fear, dist }. vixy may be null (that leg off).
-export function stressAt(spyC, spyV, vixy, t) { const r = dayRet(spyC, t), f = vixy ? dayRet(vixy, t) : null, vd = volDays(spyC, spyV, t);
-  const spyDrop = r !== null && r <= STRESS_SPY + 1e-12, fear = f !== null && f >= STRESS_VIXY - 1e-12, dist = vd.dist >= DIST_MAX;
-  return { stress: spyDrop || fear || dist, spyDrop, fear, dist, nDist: vd.dist, nAcc: vd.acc }; }
+export function stressAt(spyC, spyV, vixy, t) { const r = dayRet(spyC, t), f = vixy ? dayRet(vixy, t) : null, vd = volDays(spyC, spyV, t), da = distActive(spyC, spyV, t);
+  const spyDrop = r !== null && r <= STRESS_SPY + 1e-12, fear = f !== null && f >= STRESS_VIXY - 1e-12, dist = da >= DIST_MAX;
+  return { stress: spyDrop || fear || dist, spyDrop, fear, dist, nDist: vd.dist, nDistActive: da, nAcc: vd.acc }; }
 export const accumOk = (spyC, spyV, t) => { const x = volDays(spyC, spyV, t); return x.acc >= x.dist; };
 // the pullback on shrinking volume: avg volume t-9..t below avg t-59..t-10 (90% of the days present in each window)
 export function dryPullback(v, t) { if (t - 59 < 0) return null; const avg = (a, b) => { let s = 0, n = 0; for (let k = a; k <= b; k++) if (v[k] > 0) { s += v[k]; n++; } return n >= (b - a + 1) * 0.9 ? s / n : null; };
@@ -201,7 +212,7 @@ export function paired(rows) { const v = rows.filter(z => ok(z.g) && ok(z.base))
 export function splitBy(rows, f, cost = COST) { const m = new Map(); for (const z of rows) { const k = f(z); if (k === null || k === undefined) continue; (m.get(k) || m.set(k, []).get(k)).push(z); }
   return Object.fromEntries([...m.entries()].sort().map(([k, a]) => [k, { older: removedReport(a.filter(z => z.half === 'older'), cost), newer: removedReport(a.filter(z => z.half === 'newer'), cost) }])); }
 // ---------------- library pre-registration (idempotent; before any computation) ----------------
-const COMMON = 'Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ IBD-style distribution days (SPY 0.2%+ down on higher volume) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.';
+const COMMON = 'Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.';
 const CHECK = 'Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.';
 export function preRegister(LB, today = '2026-10-24') { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
   for (const [id, r] of Object.entries(RULES)) { if (LB.strategies.some(e => e.id === id)) continue;
