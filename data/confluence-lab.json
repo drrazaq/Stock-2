@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-23T22:08:21.380Z",
+ "generatedAt": "2026-10-24T00:06:43.100Z",
  "preRegistered": "confluence-core.mjs header + data/strategy-library.json CONF-2 / CONF-3 (24 Oct 2026, before any run)",
  "window": [
   "2021-10-12",
@@ -9,8 +9,10 @@
  "split": "2024-01-01",
  "cost": 0.008,
  "block": 63,
- "complete": true,
- "incomplete": [],
+ "complete": false,
+ "incomplete": [
+  "ANOM-SPIN"
+ ],
  "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 (63-session blocks) -> TRADABLE SMALL; block t >= 4.02 -> PROVEN",
  "inputs": {
   "B-FCF1": {
@@ -150,11 +152,11 @@
    "nearMiss": false,
    "frozenVerdict": "TOO FEW CASES",
    "frozenTrades": 38,
-   "signals": 38,
-   "used": 38,
+   "signals": 0,
+   "used": 0,
    "noPrice": 0,
-   "full": true,
-   "source": "anomaly-lab.json trades (full list)"
+   "full": false,
+   "source": "anomaly-lab.json trades: ONLY the newest 0 of 38 (full list missing)"
   }
  },
  "firstRun": {
