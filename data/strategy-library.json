@@ -15912,6 +15912,166 @@
     ],
     "why": "10000 USD older half: did not beat plain 1,000 USD tickets (-4436.83 vs -199.28); 10000 USD older half: did not beat SPUS held (-4436.83 vs 1041.24); 10000 USD older half: max drawdown -52.5% vs SPUS -28.9% (more than 5 points worse); 10000 USD older half: without its 2 best trades -4613.59 did not beat plain -199.28; 10000 USD newer half: did not beat plain 1,000 USD tickets (1222.62 vs 5669.94); 10000 USD newer half: did not beat SPUS held (1222.62 vs 5857.51); 10000 USD newer half: max drawdown -28.2% vs SPUS -23.0% (more than 5 points worse); 10000 USD newer half: without its 2 best trades"
    }
+  },
+  {
+   "id": "SQ1-INSCLU",
+   "family": "Squad 1 (information edge)",
+   "name": "Insider cluster with a size floor and an officer (3+ insiders, 300k USD+, 30 days)",
+   "explain": "SEC Form 4 open-market purchases (code P, acquired, price > 0) by officers, directors or \"other\" insiders (a reporting owner that is ONLY a 10% owner, usually a fund, is left out). A cluster fires on the filing date d when, in the 30 calendar days ending d, 3+ different such insiders bought, together 300,000 USD+, and at least one of them is an OFFICER. Buy the next open after d; hold 63 sessions; one open trade per stock; after a cluster fires, the same stock cannot fire again for 30 days. Paper(s): Alldredge & Blank (2019) Do Insiders Cluster Trades With Colleagues? Evidence From Daily Insider Trading, Journal of Financial Research 42(2); Cohen, Malloy & Pomorski (2012) Decoding Inside Information, Journal of Finance 67(3). Reported: clustered insider purchases are followed by abnormal returns of over 2% in the next month (Alldredge & Blank 2019).",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "E3 (insider cluster, no size floor: not proven), C-INS2 (2+ insiders then quiet days: rejected), DEC2-INSQ (2+ insiders 200k+ in a B-FCF1 company: too few cases), ANOM-INSIDER (single opportunistic buys: rejected), EXP-INS1 (top-ranked insiders: rejected). New here: 3+ people, 300k USD floor, an officer required, funds (10%-only owners) removed, 63-session hold",
+   "sources": [
+    "https://ideas.repec.org/a/bla/jfnres/v42y2019i2p331-360.html",
+    "https://www.nber.org/papers/w16454"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-CEODIP",
+   "family": "Squad 1 (information edge)",
+   "name": "CEO or CFO buys 100k USD+ after the stock fell 25%+ in 6 months",
+   "explain": "SEC Form 4 open-market purchases (code P) whose reporting owner is an officer with a title containing CEO / Chief Executive / CFO / Chief Financial, 100,000 USD+ in one filing; the stock closed 25%+ lower on the session before entry than 126 sessions earlier. Buy the next open after the filing date; hold 63; one open trade per stock. Paper(s): Lakonishok & Lee (2001) Are Insider Trades Informative? Review of Financial Studies 14(1); Wang, Shin & Francis (2012) Are CFOs' Trades More Informative Than CEOs' Trades? Journal of Financial and Quantitative Analysis 47(4); Jenter (2005) Market Timing and Managerial Portfolio Decisions, Journal of Finance 60(4). Reported: insiders are contrarian; purchases predict returns, most in smaller firms; CFO and CEO purchases carry the most information.",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "EXP-INS1 ranks insiders by past record (rejected); ANOM-INSIDER (any opportunistic buy: rejected). The contrarian top-officer version was never run",
+   "sources": [
+    "https://doi.org/10.1093/rfs/14.1.79",
+    "https://doi.org/10.1017/S0022109012000233",
+    "https://doi.org/10.1111/j.1540-6261.2005.00785.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-INSLOWSI",
+   "family": "Squad 1 (information edge)",
+   "name": "Insiders buy while short sellers stay away (2+ insiders 100k USD+, short interest under 3% and not rising)",
+   "explain": "SEC Form 4 open-market purchases (code P) by officers / directors / other insiders (10%-only owners left out): 2+ different insiders in the 30 calendar days ending the filing date d, together 100,000 USD+. AND the FINRA short interest known on d (published ~14 days after settlement) is under 3% of the share count known (30 days late) AND not higher than the report about a month earlier (2 reports back). Buy the next open after d; hold 63; one open trade per stock; 30-day cooldown per stock. Short interest is used as the AVOID filter the research queue asked for. Paper(s): Chung, Sul & Wang (2019) Insider trading and short selling: combining the signals of informed traders, Journal of Portfolio Management (summary: Alpha Architect); Boehmer, Jones & Zhang (2008) Which Shorts Are Informed? Journal of Finance 63(2). Reported: combining insider demand and short-selling signals earned 1.27% in the next month and 2.03% in the next year (1977-2014); heavily shorted stocks underperform.",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "C-SI1 (high short interest avoid: queued), ANOM-SILOW (low SI alone: rejected), E3 / C-INS2 (clusters alone). The combination was never run",
+   "sources": [
+    "https://alphaarchitect.com/short-selling-insider-selling-bad-news-part-2/",
+    "https://doi.org/10.1111/j.1540-6261.2008.01324.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-BBAUTH",
+   "family": "Squad 1 (information edge)",
+   "name": "Buyback authorization of 5%+ of the company (8-K text)",
+   "explain": "SEC EDGAR full-text search of 8-Ks (incl. exhibits) for board buyback-authorization phrases (BUYBACK_PHRASES); the matching document is read and the authorized size taken from sentences that name a repurchase / buyback AND an authorization / approval: the largest dollar amount ($ N million / billion) and the largest \"up to N shares\"; size = max(dollars / (share count known x close before entry), shares / share count known). Size 5%+ (40%+ = a parsing error, left out). First such filing per company in 180 days. Buy the next open after the filing date; hold 63; one open trade per stock. Paper(s): Ikenberry, Lakonishok & Vermaelen (1995) Market underreaction to open market share repurchases, Journal of Financial Economics 39(2-3); Peyer & Vermaelen (2009) The Nature and Persistence of Buyback Anomalies, Review of Financial Studies 22(4). Reported: about +12% abnormal over 4 years after open-market buyback announcements (1980-90); Peyer & Vermaelen reject that the anomaly disappeared.",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "E8 (buyback announcements: queued), ANOM-BBANN (needs data: dates were not structured), ANOM-BBY (money actually spent: rejected), V17 (queued). First run of the announcement itself",
+   "sources": [
+    "https://doi.org/10.1016/0304-405X(95)00826-Z",
+    "https://ideas.repec.org/a/oup/rfinst/v22y2009i4p1693-1745.html"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-BBDIP",
+   "family": "Squad 1 (information edge)",
+   "name": "Buyback authorization of 3%+ after the stock fell 15%+ in 3 months (8-K text)",
+   "explain": "The SQ1-BBAUTH event with size 3%+ (instead of 5%+) AND the close on the session before entry 15%+ below the close 63 sessions earlier. Buy the next open after the filing date; hold 126; one open trade per stock. Paper(s): Peyer & Vermaelen (2009) The Nature and Persistence of Buyback Anomalies, Review of Financial Studies 22(4); Ikenberry, Lakonishok & Vermaelen (1995) JFE 39(2-3). Reported: buybacks answer an overreaction to bad news; the drift is largest after prior price falls (Peyer & Vermaelen) and for value stocks (Ikenberry et al.: +45% over 4 years for the highest book-to-market).",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 126,
+   "libraryCheck": "as SQ1-BBAUTH",
+   "sources": [
+    "https://ideas.repec.org/a/oup/rfinst/v22y2009i4p1693-1745.html",
+    "https://doi.org/10.1016/0304-405X(95)00826-Z"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 126 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-CUSTMOM",
+   "family": "Squad 1 (information edge)",
+   "name": "Customer momentum from 10-K major-customer disclosures",
+   "explain": "Monthly (first session of the month): suppliers with an ACTIVE major-customer link in data/chain-graph.json (type customer: the supplier's own 10-K / 10-Q text naming the customer next to a concentration word; active from the first session after the first filing showing it until 400 days after the latest such filing on or before the day). Customer return = average return of the linked customers over the last 21 sessions. Liquid suppliers ranked by customer return; buy the top 20% (at least 10 ranked suppliers that month, else the month is skipped) at the next open; hold 21. Paper(s): Cohen & Frazzini (2008) Economic Links and Predictable Returns, Journal of Finance 63(4). Reported: buying suppliers whose major customers rose most last month and selling those whose customers fell earned ~1.5% a month (1981-2004); the supplier reacts late to its customer's news.",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 21,
+   "libraryCheck": "N4 (customer momentum with value-chain layers as the map: not proven), C-CUST1 (the 10-K version: needs data). First run with the 10-K customer map. Note: the customers are the 47 large demand nodes of chain-defs.json (today's choice of big buyers, a mild hindsight risk)",
+   "sources": [
+    "https://ideas.repec.org/a/bla/jfinan/v63y2008i4p1977-2011.html"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 21 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-GUIDEUP",
+   "family": "Squad 1 (information edge)",
+   "name": "Company raises its own full-year guidance (8-K text)",
+   "explain": "SEC EDGAR full-text search of 8-Ks (incl. exhibits) for guidance-raise phrases (GUIDE_PHRASES, e.g. \"raises full year\", \"raised its guidance\", \"raising outlook\"); the filer's own stock. First such filing per company in 60 days. Buy the next open after the filing date; hold 63; one open trade per stock. Paper(s): Ng, Tuna & Verdi (2013) Management forecast credibility and underreaction to news, Review of Accounting Studies 18(4); Bernard & Thomas (1989) Post-Earnings-Announcement Drift, Journal of Accounting Research 27. Reported: prices underreact to management forecast news: returns drift after the forecast, like post-earnings drift.",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "CHAIN-READ1 / CHAIN-DEMAND1 bought OTHER chain members after a raise (rejected); ANOM-SUE (analyst surprise drift: not proven). The company's own raise across the whole market was never run",
+   "sources": [
+    "https://ideas.repec.org/a/spr/reaccs/v18y2013i4d10.1007_s11142-012-9217-4.html",
+    "https://doi.org/10.2307/2491062"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-RECUP",
+   "family": "Squad 1 (information edge)",
+   "name": "Analyst consensus turns more bullish (buy share up 15+ points in 3 months)",
+   "explain": "Monthly (first session of month m): Finnhub recommendation trends (monthly counts of strong buy / buy / hold / sell / strong sell). Using only the snapshots of months BEFORE m: now = the snapshot of month m-1, before = month m-4. Bullish share = (strong buy + buy) / all; 5+ analysts in both; bullish share up 0.15+; liquid. Buy the next open; hold 63; one open trade per stock. Not run if the source has under 4 years of history. Paper(s): Jegadeesh, Kim, Krische & Lee (2004) Analyzing the Analysts: When Do Recommendations Add Value? Journal of Finance 59(3); Womack (1996) Do Brokerage Analysts' Recommendations Have Investment Value? Journal of Finance 51(1). Reported: the CHANGE in the consensus recommendation predicts returns better than its level (Jegadeesh et al. 2004).",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "E5 (analyst upgrades: collecting data), EXP-AN1 / EXP-AN2 (single firm grades: collecting data), ANOM-REVISION (needs data), C-REV1 (queued). First consensus-change run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2004.00665.x",
+    "https://doi.org/10.1111/j.1540-6261.1996.tb05205.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-DIVHIKE",
+   "family": "Squad 1 (information edge)",
+   "name": "Large regular dividend increase (25%+)",
+   "explain": "Massive dividend declarations: a regular cash dividend (type CD, frequency 1, 2, 4 or 12) whose amount is 1.25x to 3x the previous regular cash dividend of the same frequency, declared 20 to 400 days earlier. Buy the next open after the declaration date; hold 63; one open trade per stock. Paper(s): Michaely, Thaler & Womack (1995) Price Reactions to Dividend Initiations and Omissions: Overreaction or Drift? Journal of Finance 50(2); Grullon, Michaely & Swaminathan (2002) Are Dividend Changes a Sign of Firm Maturity? Journal of Business 75(3). Reported: dividend changes are followed by drift in the same direction (MTW); Grullon et al. find a positive announcement reaction but question later abnormal returns: mixed evidence.",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "ANOM-DIVINIT (initiations: rejected), V7 (dividend growth: needs data). First run of large increases",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1995.tb04793.x",
+    "https://doi.org/10.1086/339903"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ1-SIAVOID",
+   "family": "Squad 1 (information edge)",
+   "name": "AVOID heavily shorted stocks (15%+ of shares sold short)",
+   "explain": "AVOID TEST, never a buy. Monthly: liquid stocks whose FINRA short interest known that day (14 days after settlement) is 15%+ of the share count known; their next-21-session return (next open to close) vs the average liquid stock. The avoid filter works if they LAG the average stock in both halves (edge < 0) with block t <= -2.5 (AVOID CONFIRMED); edge < 0 in both halves without that t = AVOID WEAK; else AVOID NOT SUPPORTED. Every verdict carries \"REJECTED AS A BUY\" so TRY SMALL can never buy it. Paper(s): Asquith, Pathak & Ritter (2005) Short interest, institutional ownership, and stock returns, Journal of Financial Economics 78(2); Boehmer, Jones & Zhang (2008) Which Shorts Are Informed? Journal of Finance 63(2). Reported: heavily shorted stocks underperform, most when institutional ownership is low.",
+   "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending",
+   "agent": "squad1",
+   "kind": "avoid",
+   "hold": 21,
+   "libraryCheck": "C-SI1 (the same avoid at 20%: queued), ANOM-SILOW / ANOM-DTCLOW / ANOM-SIDROP (long side: rejected)",
+   "sources": [
+    "https://doi.org/10.1016/j.jfineco.2004.06.005",
+    "https://doi.org/10.1111/j.1540-6261.2008.01324.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 21 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
   }
  ]
 }
