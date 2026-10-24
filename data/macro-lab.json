@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24T05:00:22.578Z",
+ "generatedAt": "2026-10-24T05:54:58.234Z",
  "preRegistered": "macro-core.mjs header + RULES + EVENTS (24 Oct 2026, before any run) + data/strategy-library.json MACRO-*",
  "window": [
   "2021-10-12",
@@ -5226,9 +5226,287 @@
    "frozenAt": "2026-10-24T05:00:22.552Z"
   }
  },
+ "correctedRun": {
+  "MACRO-GOLD-S20": {
+   "at": "2026-10-24T05:54:58.133Z",
+   "bugs": [
+    "AUD-1"
+   ],
+   "explanation": "AUD-1: The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule's own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule's and the yardstick's, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run.",
+   "window": [
+    "2021-10-12",
+    "2026-10-23"
+   ],
+   "frozenAt": "2026-10-24T05:00:22.552Z",
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "block t 0.63 under 2.5 in the older half; block t 0.87 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 102,
+     "days": 12,
+     "stocks": 11,
+     "avg": 0.0188,
+     "median": 0.0072,
+     "avgStress": 0.0148,
+     "ctrl": -0.0105,
+     "edge": 0.008,
+     "tDay": 0.23,
+     "blocks": 11,
+     "tBlock": 0.63,
+     "vsOwn": 0.073,
+     "ownCovered": 12,
+     "noTop2": 0.0114,
+     "best": 0.3905,
+     "worst": -0.2797,
+     "win": 0.5196,
+     "vsSpy": 0.0163
+    },
+    "newer": {
+     "n": 181,
+     "days": 36,
+     "stocks": 19,
+     "avg": 0.021,
+     "median": 0.0239,
+     "avgStress": 0.017,
+     "ctrl": -0.0135,
+     "edge": 0.001,
+     "tDay": 0.04,
+     "blocks": 18,
+     "tBlock": 0.87,
+     "vsOwn": 0.0112,
+     "ownCovered": 36,
+     "noTop2": 0.0163,
+     "best": 0.4457,
+     "worst": -0.3448,
+     "win": 0.5856,
+     "vsSpy": 0.0259
+    },
+    "all": {
+     "n": 283,
+     "days": 48,
+     "stocks": 20,
+     "avg": 0.0202,
+     "median": 0.0216,
+     "avgStress": 0.0162,
+     "ctrl": -0.0124,
+     "edge": 0.0028,
+     "tDay": 0.13,
+     "blocks": 29,
+     "tBlock": 1.09,
+     "vsOwn": 0.0266,
+     "ownCovered": 48,
+     "noTop2": 0.0172,
+     "best": 0.4457,
+     "worst": -0.3448,
+     "win": 0.5618
+    }
+   },
+   "hold": 20,
+   "reproduced": {
+    "matchesFrozen": true,
+    "note": "the old engine on this run's data gives the frozen numbers: the change is the fix alone",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 102,
+     "days": 12,
+     "blocks": 11,
+     "avg": 0.0188,
+     "avgStress": 0.0148,
+     "ctrl": -0.0108,
+     "edge": 0.0082,
+     "vsOwn": 0.073,
+     "noTop2": 0.0114,
+     "tBlock": 0.64,
+     "best": 0.3905
+    },
+    "newer": {
+     "n": 181,
+     "days": 36,
+     "blocks": 18,
+     "avg": 0.021,
+     "avgStress": 0.017,
+     "ctrl": -0.0137,
+     "edge": 0.0012,
+     "vsOwn": 0.0112,
+     "noTop2": 0.0163,
+     "tBlock": 0.88,
+     "best": 0.4457
+    }
+   },
+   "noCapEitherSide": {
+    "note": "sensitivity only: no cap on the rule or the yardstick",
+    "verdict": "REJECTED",
+    "older": {
+     "n": 102,
+     "days": 12,
+     "blocks": 11,
+     "avg": 0.0188,
+     "avgStress": 0.0148,
+     "ctrl": -0.0105,
+     "edge": 0.008,
+     "vsOwn": 0.073,
+     "noTop2": 0.0114,
+     "tBlock": 0.63,
+     "best": 0.3905
+    },
+    "newer": {
+     "n": 181,
+     "days": 36,
+     "blocks": 18,
+     "avg": 0.021,
+     "avgStress": 0.017,
+     "ctrl": -0.0123,
+     "edge": -0.0001,
+     "vsOwn": 0.0112,
+     "noTop2": 0.0163,
+     "tBlock": 0.82,
+     "best": 0.4457
+    }
+   }
+  },
+  "MACRO-USD-E60": {
+   "at": "2026-10-24T05:54:58.201Z",
+   "bugs": [
+    "AUD-1"
+   ],
+   "explanation": "AUD-1: The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule's own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule's and the yardstick's, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run.",
+   "window": [
+    "2021-10-12",
+    "2026-10-23"
+   ],
+   "frozenAt": "2026-10-24T05:00:22.552Z",
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "block t 1.11 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.2 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 125,
+     "days": 125,
+     "stocks": 1,
+     "avg": 0.0441,
+     "median": 0.0647,
+     "avgStress": 0.0401,
+     "ctrl": -0.0028,
+     "edge": 0.0388,
+     "tDay": 5.68,
+     "blocks": 10,
+     "tBlock": 1.11,
+     "vsOwn": 0.0232,
+     "ownCovered": 125,
+     "noTop2": 0.0415,
+     "best": 0.2201,
+     "worst": -0.2115,
+     "win": 0.736,
+     "vsSpy": 0.031
+    },
+    "newer": {
+     "n": 124,
+     "days": 124,
+     "stocks": 1,
+     "avg": 0.0507,
+     "median": 0.0578,
+     "avgStress": 0.0467,
+     "ctrl": 0.0191,
+     "edge": 0.0236,
+     "tDay": 4.14,
+     "blocks": 11,
+     "tBlock": 1.2,
+     "vsOwn": -0.0047,
+     "ownCovered": 124,
+     "noTop2": 0.0457,
+     "best": 0.3633,
+     "worst": -0.2335,
+     "win": 0.6774,
+     "vsSpy": 0.0196
+    },
+    "all": {
+     "n": 249,
+     "days": 249,
+     "stocks": 1,
+     "avg": 0.0474,
+     "median": 0.0612,
+     "avgStress": 0.0434,
+     "ctrl": 0.0081,
+     "edge": 0.0313,
+     "tDay": 6.98,
+     "blocks": 20,
+     "tBlock": 1.46,
+     "vsOwn": 0.0093,
+     "ownCovered": 249,
+     "noTop2": 0.0449,
+     "best": 0.3633,
+     "worst": -0.2335,
+     "win": 0.7068
+    }
+   },
+   "hold": 60,
+   "reproduced": {
+    "matchesFrozen": true,
+    "note": "the old engine on this run's data gives the frozen numbers: the change is the fix alone",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 125,
+     "days": 125,
+     "blocks": 10,
+     "avg": 0.0441,
+     "avgStress": 0.0401,
+     "ctrl": -0.0032,
+     "edge": 0.0393,
+     "vsOwn": 0.0232,
+     "noTop2": 0.0415,
+     "tBlock": 1.13,
+     "best": 0.2201
+    },
+    "newer": {
+     "n": 124,
+     "days": 124,
+     "blocks": 11,
+     "avg": 0.0507,
+     "avgStress": 0.0467,
+     "ctrl": 0.0185,
+     "edge": 0.0242,
+     "vsOwn": -0.0047,
+     "noTop2": 0.0457,
+     "tBlock": 1.25,
+     "best": 0.3633
+    }
+   },
+   "noCapEitherSide": {
+    "note": "sensitivity only: no cap on the rule or the yardstick",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 125,
+     "days": 125,
+     "blocks": 10,
+     "avg": 0.0441,
+     "avgStress": 0.0401,
+     "ctrl": -0.0027,
+     "edge": 0.0388,
+     "vsOwn": 0.0232,
+     "noTop2": 0.0415,
+     "tBlock": 1.11,
+     "best": 0.2201
+    },
+    "newer": {
+     "n": 124,
+     "days": 124,
+     "blocks": 11,
+     "avg": 0.0507,
+     "avgStress": 0.0467,
+     "ctrl": 0.0195,
+     "edge": 0.0232,
+     "vsOwn": -0.0047,
+     "noTop2": 0.0457,
+     "tBlock": 1.18,
+     "best": 0.3633
+    }
+   }
+  }
+ },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-24T05:00:22.578Z",
+  "at": "2026-10-24T05:54:58.234Z",
   "results": {
    "MACRO-OIL-E20": {
     "verdict": "REJECTED",
