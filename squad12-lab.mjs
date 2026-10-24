@@ -226,12 +226,12 @@ const push = (id, i, t, cik, extra = {}) => { CNT[id].raw++; if (t < 1 || t > T 
   STATUS.earn.acceptancePhase = ph; log('earnings releases by acceptance time (New York): ' + JSON.stringify(ph));
   // CLOCK CHECK (data validation, no rule result): by New York acceptance hour, the average absolute opening gap on the filing-date session
   // and on the next session; a pre-open release moves the filing-date open, an after-close release the next open
-  const H = {}, raw = []; for (const cik of BIGCIK) for (const [, fd, acc] of (ER[cik] && ER[cik].rows) || []) { if (fd < D[1]) continue; const x = secNY(acc); if (!x || !x.hm) continue; if (raw.length < 8) raw.push(acc);
+  const H = {}, raw = [], YH = {}; for (const cik of BIGCIK) for (const [, fd, acc] of (ER[cik] && ER[cik].rows) || []) { if (fd < D[1]) continue; const x = secNY(acc); if (!x || !x.hm) continue; if (raw.length < 8) raw.push(acc);
     const r0 = rankAt(onOrAfter(D, fd), cik, null); if (!r0) continue; const i = r0.i, t0 = onOrAfter(D, fd); if (t0 >= T - 1 || D[t0] !== fd) continue;
     const g = (t) => { const o = OO(i, t), p = CC(i, t - 1); return o > 0 && p > 0 ? Math.abs(o / p - 1) : null; }, a = g(t0), b = g(t0 + 1); if (a === null || b === null) continue;
-    const h = x.hm.slice(0, 2), o = H[h] || (H[h] = { n: 0, gapSameDay: 0, gapNextDay: 0 }); o.n++; o.gapSameDay += a; o.gapNextDay += b; }
+    const h = x.hm.slice(0, 2), o = H[h] || (H[h] = { n: 0, gapSameDay: 0, gapNextDay: 0 }); o.n++; o.gapSameDay += a; o.gapNextDay += b; const yk = fd.slice(0, 7) + ' ' + h; YH[yk] = (YH[yk] || 0) + 1; }
   for (const o of Object.values(H)) { o.gapSameDay = r4(o.gapSameDay / o.n); o.gapNextDay = r4(o.gapNextDay / o.n); }
-  STATUS.earn.clockCheck = { rawExamples: raw, byNewYorkHour: H }; log('clock check: ' + JSON.stringify(STATUS.earn.clockCheck)); }
+  STATUS.earn.clockCheck = { rawExamples: raw, byNewYorkHour: H }; log('clock by month and hour: ' + JSON.stringify(Object.fromEntries(Object.entries(YH).filter(([k]) => /( 1[0-6]| 2[01])$/.test(k)).sort()))); log('clock check: ' + JSON.stringify(STATUS.earn.clockCheck)); }
 // SEC filings (by CIK): the signal session = the last session on / before the filing date (entry = the first session after it)
 for (const cik of BIGCIK) { const tagged = taggedOf(cik); if (!tagged) continue; const eps = epsRows(cik);
   for (const F of filingsOf(tagged)) { const ta = after(D, F.f); if (ta < 1 || ta > T) continue; const t = ta - 1; const r = rankAt(t, cik, null); if (!r) continue;
