@@ -155,7 +155,7 @@ const NEED = new Set(); for (const t of MS) for (const i of liqList(t)) { const 
   log('SEC facts: ' + JSON.stringify(STATUS.facts)); }
 const coMemo = new Map(); const coOf = (cik) => { if (!cik) return null; if (coMemo.has(cik)) return coMemo.get(cik); const a = FX.c[cik]; let o = null;
   if (hasRev(a)) { o = {}; for (const [g, tags] of Object.entries(TAGS)) { o[g] = {}; for (const t of tags) if (a[t]) o[g][t] = a[t].map(([s0, e, v, f]) => ({ s: s0, e, v, f })); } } coMemo.set(cik, o); return o; };
-const coverRows = (cik) => SH.c[cik] && SH.c[cik].length ? SH.c[cik] : (FX.c[cik] && FX.c[cik]._sh) || null;   // as reported (no split repair: splits are applied by capAt)
+const coverRows = (cik) => SH.raw && SH.raw[cik] && SH.raw[cik].length ? SH.raw[cik] : (FX.c[cik] && FX.c[cik]._sh) || null;   // AS REPORTED (data/shares.json.gz raw; its c rows are split-adjusted): splits are applied by capAt
 
 // ================= 4. UNIVERSE + market value ranks =================
 // ---- alternative share counts for companies without a cover-page count (multi-class companies): SEC balance-sheet / weighted-average
