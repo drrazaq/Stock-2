@@ -23502,130 +23502,489 @@
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Leader 12% pullback (SQ11-PB12), skipped on market-stress closes (hold 126)",
    "explain": "RULE: SQ11-PB12 signals, SKIPPED when the market is under stress at the signal close: SPY closes 2%+ down, or VIXY closes 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume than the session before, retired once SPY closes 5%+ above it) among the last 25 sessions. Buy the next open; sell at the close of session 126. Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     37,
+     118
+    ],
+    "avg": [
+     0.0205,
+     0.0977
+    ],
+    "stress": [
+     0.0165,
+     0.0937
+    ],
+    "edge": [
+     0.0056,
+     0.0211
+    ],
+    "vsOwn": [
+     -0.2033,
+     -0.2119
+    ],
+    "noTop2": [
+     -0.0023,
+     0.0559
+    ],
+    "tBlock": [
+     0.8,
+     0.97
+    ],
+    "perYear": [
+     0.041,
+     0.1953
+    ],
+    "spyPerYear": [
+     0.176,
+     0.1612
+    ],
+    "removedAvg": [
+     0.1716,
+     0.1905
+    ],
+    "vsBase": null,
+    "why": "not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.8 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.97 under 2.5 in the newer half; return per year of capital tied up 4.1% not above the S&P 500 on the same days in the older half (17.6%)"
+   }
   },
   {
    "id": "SQ18-PB12-MON",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Leader 12% pullback (SQ11-PB12), Thursday/Friday signals bought at the next week's first open (hold 126)",
    "explain": "RULE: SQ11-PB12 signals; a signal at a Thursday or Friday close is bought at the open of the first session of the next calendar week (Monday, or Tuesday after a holiday) instead of the next open; sell at the close of session 126 from the actual buy. Other signals unchanged. Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     99,
+     258
+    ],
+    "avg": [
+     0.1444,
+     0.1664
+    ],
+    "stress": [
+     0.1404,
+     0.1624
+    ],
+    "edge": [
+     0.0877,
+     0.0484
+    ],
+    "vsOwn": [
+     -0.0998,
+     -0.1071
+    ],
+    "noTop2": [
+     0.1318,
+     0.1443
+    ],
+    "tBlock": [
+     1.26,
+     0.53
+    ],
+    "perYear": [
+     0.2911,
+     0.3338
+    ],
+    "spyPerYear": [
+     0.264,
+     0.202
+    ],
+    "removedAvg": null,
+    "vsBase": [
+     0.0038,
+     0.0041
+    ],
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.26 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.53 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ18-FRIDIP",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Leader falls 2%+ on a Friday while SPY falls less than 1%; buy Monday open (hold 21)",
    "explain": "RULE: Leader (top 20% by 12-1 month return among the 300 largest US companies by market value at the prior month end, as SQ11). Signal: on a Friday close, the leader closes 2%+ under its previous close while SPY closes better than -1%. Buy the next open (Monday); sell at the close of session 21; one open trade per stock. Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": 21,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     164,
+     554
+    ],
+    "avg": [
+     -0.0012,
+     0.0092
+    ],
+    "stress": [
+     -0.0052,
+     0.0052
+    ],
+    "edge": [
+     -0.0105,
+     0.0015
+    ],
+    "vsOwn": [
+     -0.0423,
+     -0.0402
+    ],
+    "noTop2": [
+     -0.0041,
+     0.0055
+    ],
+    "tBlock": [
+     -1.18,
+     0.85
+    ],
+    "perYear": [
+     -0.0149,
+     0.1103
+    ],
+    "spyPerYear": [
+     0.1235,
+     0.1591
+    ],
+    "removedAvg": null,
+    "vsBase": null,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -1.18 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.85 under 2.5 in the newer half; return per year of capital tied up -1.5% not above the S&P 500 on the same days in the older half (12.3%); return per year of capital tied up 11.0% not above the S&P 500 on the same days in the newer half (15.9%)"
+   }
   },
   {
    "id": "SQ18-PB12-ACCUM",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Leader 12% pullback (SQ11-PB12), only when market accumulation days >= distribution days (hold 126)",
    "explain": "RULE: SQ11-PB12 signals, kept only when, over the last 25 sessions (signal close included), SPY accumulation days (0.2%+ up on higher volume than the session before) >= distribution days (0.2%+ down on higher volume). Buy the next open; sell at the close of session 126. Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     41,
+     112
+    ],
+    "avg": [
+     0.0168,
+     0.0458
+    ],
+    "stress": [
+     0.0128,
+     0.0418
+    ],
+    "edge": [
+     0.0003,
+     -0.0058
+    ],
+    "vsOwn": [
+     -0.1718,
+     -0.2182
+    ],
+    "noTop2": [
+     -0.0111,
+     0.0087
+    ],
+    "tBlock": [
+     0.45,
+     0.64
+    ],
+    "perYear": [
+     0.0337,
+     0.0915
+    ],
+    "spyPerYear": [
+     0.2013,
+     0.1246
+    ],
+    "removedAvg": [
+     0.1887,
+     0.2032
+    ],
+    "vsBase": null,
+    "why": "not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.45 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t 0.64 under 2.5 in the newer half; return per year of capital tied up 3.4% not above the S&P 500 on the same days in the older half (20.1%); return per year of capital tied up 9.2% not above the S&P 500 on the same days in the newer half (12.5%)"
+   }
   },
   {
    "id": "SQ18-PB12-DRY",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Leader 12% pullback (SQ11-PB12) on shrinking volume only (hold 126)",
    "explain": "RULE: SQ11-PB12 signals, kept only when the stock's average volume over the last 10 sessions (t-9..t) is below its average volume over the 50 sessions before them (t-59..t-10). Buy the next open; sell at the close of session 126. Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     67,
+     156
+    ],
+    "avg": [
+     0.1705,
+     0.1775
+    ],
+    "stress": [
+     0.1665,
+     0.1735
+    ],
+    "edge": [
+     0.116,
+     0.0586
+    ],
+    "vsOwn": [
+     -0.0834,
+     -0.1117
+    ],
+    "noTop2": [
+     0.1522,
+     0.141
+    ],
+    "tBlock": [
+     1.1,
+     0.25
+    ],
+    "perYear": [
+     0.3411,
+     0.3555
+    ],
+    "spyPerYear": [
+     0.2672,
+     0.2129
+    ],
+    "removedAvg": [
+     0.1109,
+     0.169
+    ],
+    "vsBase": null,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.1 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.25 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ18-MTUM-CALM",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "MSCI-style momentum (SQ6-MTUM), buy delayed while the market is stressed (hold to the base exit, 126)",
    "explain": "RULE: SQ6-MTUM picks (last session of May / November). When the market is under stress at the formation close (as SQ18-PB12-CALM), buy at the open after the first calm close among the next 21 sessions (else after the 21st); sell at the base trade's exit (the close of session 126 from the base buy). Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": 126,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     359,
+     479
+    ],
+    "avg": [
+     0.0592,
+     0.178
+    ],
+    "stress": [
+     0.0552,
+     0.174
+    ],
+    "edge": [
+     0.0365,
+     0.1062
+    ],
+    "vsOwn": [
+     -0.172,
+     -0.0001
+    ],
+    "noTop2": [
+     0.0472,
+     0.1662
+    ],
+    "tBlock": [
+     0.8,
+     1.43
+    ],
+    "perYear": [
+     0.1234,
+     0.3637
+    ],
+    "spyPerYear": [
+     0.1698,
+     0.2019
+    ],
+    "removedAvg": null,
+    "vsBase": [
+     -0.0418,
+     -0.0601
+    ],
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.8 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.43 under 2.5 in the newer half; return per year of capital tied up 12.3% not above the S&P 500 on the same days in the older half (17.0%)"
+   }
   },
   {
    "id": "SQ18-QMOM-CALM",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Quantitative momentum (SQ6-QMOM), buy delayed while the market is stressed (hold to the base exit, 63)",
    "explain": "RULE: SQ6-QMOM picks (last session of Feb / May / Aug / Nov). When the market is under stress at the formation close (as SQ18-PB12-CALM), buy at the open after the first calm close among the next 21 sessions (else after the 21st); sell at the base trade's exit (the close of session 63 from the base buy). Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": 63,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     250,
+     499
+    ],
+    "avg": [
+     0.0548,
+     0.0711
+    ],
+    "stress": [
+     0.0508,
+     0.0671
+    ],
+    "edge": [
+     0.0181,
+     0.0307
+    ],
+    "vsOwn": [
+     -0.0692,
+     -0.0702
+    ],
+    "noTop2": [
+     0.0384,
+     0.0636
+    ],
+    "tBlock": [
+     0.35,
+     0.72
+    ],
+    "perYear": [
+     0.2608,
+     0.3215
+    ],
+    "spyPerYear": [
+     0.2495,
+     0.2314
+    ],
+    "removedAvg": null,
+    "vsBase": [
+     0.0136,
+     0.0444
+    ],
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.35 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.72 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ18-BASK-DIP3",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Monthly 1,000 USD into the halal basket: buy after the first 3% SPY dip of the month (else the last session)",
    "explain": "RULE: Each month: buy the halal top-20 basket (SQ10-SH20-C15) at the open after the first close of the month (first to second-to-last session) that is 3%+ under SPY's highest close since the previous month's last close; if none, at the open of the month's last session. Compared with buying at the open of the month's first session. Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: worse timing; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": null,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "WORSE TIMING",
+    "basketAdvantage": [
+     -0.004,
+     -0.0162
+    ],
+    "t": -1.6,
+    "why": "basket monthly advantage older -0.4%, newer -1.6% (t over all months -1.6); account older 29040.1668 vs plain 29155.8959, newer 43839.1525 vs plain 44635.7278"
+   }
   },
   {
    "id": "SQ18-BASK-MID",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Monthly 1,000 USD into the halal basket: buy mid-month (first session on or after the 15th)",
    "explain": "RULE: Each month: buy the halal top-20 basket (SQ10-SH20-C15) at the open of the first session on or after the 15th. Compared with buying at the open of the month's first session. Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: worse timing; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": null,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "WORSE TIMING",
+    "basketAdvantage": [
+     -0.0031,
+     -0.0189
+    ],
+    "t": -2.36,
+    "why": "basket monthly advantage older -0.3%, newer -1.9% (t over all months -2.36); account older 29075.7894 vs plain 29155.8959, newer 43708.6589 vs plain 44635.7278"
+   }
   },
   {
    "id": "SQ18-BASK-END",
    "family": "Human-behaviour filters and timing (Squad 18)",
    "name": "Monthly 1,000 USD into the halal basket: buy at the month's last session (before turn-of-month inflows)",
    "explain": "RULE: Each month: buy the halal top-20 basket (SQ10-SH20-C15) at the open of the month's last session. Compared with buying at the open of the month's first session. Common (squad18-core.mjs header): human-behaviour filters on the rules that already work. PB12 = SQ11-PB12 rebuilt exactly (leaders = top 20% by 12-1 month return of the 300 largest US companies by point-in-time market value; first close 12% under the 50-day closing high above the 200-day; buy the next open, hold 126). MTUM / QMOM = SQ6-MTUM / SQ6-QMOM rebuilt with squad6-core. Market stress at a close = SPY 2%+ down, or VIXY 15%+ up, or 5+ active IBD distribution days (SPY 0.2%+ down on higher volume, retired once SPY closes 5%+ above that day; amended before any run, see the core header) in the last 25 sessions. Cost 0.8% (1.2% stress); judged once (first complete run frozen in data/squad18-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01), the squad 11 standard (average stock capped +300% AUD-1, same stock other days, no top 2, 20+ trades, 3+ blocks, block t >= 2.5, per year above SPY). Every filter also reports the trades it REMOVED. Contribution rules are accounts on the halal top-20 basket (SQ10-SH20-C15 member lists from data/squad10-lab.json) vs buying on the first session of each month; verdict BETTER TIMING only with a positive monthly advantage and a larger account in both halves and t >= 2.",
-   "status": "pre-registered 2026-10-24 (squad 18); 5-year one-shot pending",
+   "status": "tested: worse timing; forward paper lane from 26 Oct 2026",
    "agent": "squad18",
    "registered": "2026-10-24",
    "hold": null,
    "libraryCheck": "Not among the bot days study (data/dow-study.json: buy weekday, no steady difference), data/mday-study.json (buy after big down day / gap: better), C1 / C2 / ANOM-TOM / DEC2-TOM (turn of the month, REJECTED), ANOM-PREHOL (REJECTED), C4 (month days), HOLD-DIPFUND (save and buy only a 10% fund dip), A-RG1 / SQ3-REGIME / HOLD-REGIME (200-day regime gates), MACRO-VIX-E20/E60 (buy SPY after a fear spike), ANOM-HVP (high-volume premium), SQ8-ACCUM (up vs down volume on runners), SQ11-FLUSH (leader -5% on an SPY -2% day): none filters the surviving rules or times the monthly basket contribution.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad18-core.mjs = the exact rule; one version). 5-year one-shot by squad18-lab.mjs, first complete verdict frozen; forward paper lane (data/squad18-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header"
+   "amended": "24 Oct 2026, after the DIAG data check and BEFORE any rule was run: the stress leg (c) now uses IBD's own 5% expiry of distribution days (the raw count was on 73% of sessions); see squad18-core.mjs header",
+   "tested": "2026-10-23",
+   "study": "squad18-lab.mjs -> data/squad18-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "WORSE TIMING",
+    "basketAdvantage": [
+     -0.0054,
+     -0.0208
+    ],
+    "t": -1.95,
+    "why": "basket monthly advantage older -0.5%, newer -2.1% (t over all months -1.95); account older 28992.5427 vs plain 29155.8959, newer 43593.8755 vs plain 44635.7278"
+   }
   }
  ]
 }
