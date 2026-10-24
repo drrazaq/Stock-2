@@ -1,0 +1,193 @@
+name: Squad 2 lab
+# SQUAD 2 (24 Oct 2026): the traders' setups executed INSIDE the session on 1-minute SIP bars (squad2-core.mjs, squad2-lab.mjs). Each SQ2-*
+# rule is pre-registered (squad2-core.mjs header + data/strategy-library.json) before any run, tested ONCE on the 5-year window of the
+# whole-market daily cache (first complete verdict frozen in data/squad2-lab.json), then recorded forward on paper from Mon 26 Oct 2026
+# (data/squad2-paper.jsonl, squad2-today.json, squad2-board.json). Never places an order.
+# Jobs: plan (daily cache READ ONLY -> the stock-days each rule needs) -> 12 shards (Alpaca SIP 1-minute bars, cached per symbol-day in
+# squad2-min, one cache per shard) -> judge (+ paper lane) -> commit of this squad's own files only. On the weekday schedule only the
+# paper lane runs (the one-shot is skipped once every rule is frozen).
+# Start by hand: change run-squad2-now.txt (or run the workflow).
+on:
+  schedule:
+    - cron: '17 23 * * 1-5'   # weekday evenings after the close: paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad2-now.txt']
+permissions:
+  contents: write
+concurrency: squad2-lab
+env:
+  SHARDS: '12'
+jobs:
+  plan:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - shell: bash
+        run: |
+          set -o pipefail
+          node squad2-lab.mjs plan 2>&1 | tee plan.log
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: squad2-plan
+          path: |
+            squad2-work/plan.json.gz
+            plan.log
+          retention-days: 3
+  shard:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/download-artifact@v4
+        with:
+          name: squad2-plan
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad2-min
+          key: squad2-min-v1-${{ matrix.shard }}-${{ github.run_id }}
+          restore-keys: squad2-min-v1-${{ matrix.shard }}-
+      - shell: bash
+        timeout-minutes: 310
+        run: |
+          set -o pipefail
+          node squad2-lab.mjs shard 2>&1 | tee shard.log
+        env:
+          SHARD: ${{ matrix.shard }}
+          SQ2_MINUTES: '290'
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad2-min
+          key: squad2-min-v1-${{ matrix.shard }}-${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: squad2-shard-${{ matrix.shard }}
+          path: |
+            squad2-work/shard-${{ matrix.shard }}.json.gz
+            shard.log
+          retention-days: 3
+  judge:
+    needs: shard
+    if: always() && github.event_name != 'schedule' && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: squad2-*
+          merge-multiple: true
+      - shell: bash
+        run: |
+          set -o pipefail
+          cat plan.log > run.log 2>/dev/null || true
+          for f in shard.log; do [ -f "$f" ] && tail -n 5 "$f" >> run.log; done; true
+          node squad2-lab.mjs judge 2>&1 | tee -a run.log
+          node squad2-lab.mjs paper 2>&1 | tee -a run.log
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad2-run.log 2>/dev/null || true
+          FILES="data/squad2-lab.json data/squad2-trades.json.gz data/squad2-paper.jsonl data/squad2-today.json data/squad2-board.json data/squad2-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad2 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad2 lab result"; exit 1; }
+  paper:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - shell: bash
+        run: |
+          set -o pipefail
+          node squad2-lab.mjs paper 2>&1 | tee run.log
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 100 run.log | cut -c1-2000 > data/squad2-run.log 2>/dev/null || true
+          FILES="data/squad2-paper.jsonl data/squad2-today.json data/squad2-board.json data/squad2-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad2 paper $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad2 paper lane"; exit 1; }

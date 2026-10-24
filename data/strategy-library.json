@@ -16072,6 +16072,144 @@
     "https://doi.org/10.1111/j.1540-6261.2008.01324.x"
    ],
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad1-core.mjs RULES = the exact rule; one version; hold 21 sessions). 5-year one-shot by squad1-lab.mjs, first complete verdict frozen in data/squad1-lab.json; forward paper lane (data/squad1-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ2-ORB5",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "5-minute opening-range breakout on a 4%+ gap with 3x relative volume (day trade)",
+   "explain": "Day t: universe; first-minute open >= 4% above the prior close; relative volume >= 3 at 09:35 (volume 09:30-09:34 vs 20-day average x F(5)). Buy-stop at the 09:30-09:34 high, live 09:35-15:30. Stop = the day's low as known at the fill (lowest low of the completed bars). Exit: the stop, else the 15:59 close. Gap + relative volume is the news proxy (no news history for the whole market). Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: A-ORB1, DEC2-GAPGO.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "Same setup entered at the next open on daily bars: A-ORB1, DEC2-GAPGO",
+   "sources": [
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4729284",
+    "https://www.investopedia.com/terms/o/openingrangebreakout.asp"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-ORB5]; kind day; blocks of 5 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+  },
+  {
+   "id": "SQ2-ORB30",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "30-minute opening-range breakout on a 4%+ gap with 3x relative volume (day trade)",
+   "explain": "Day t: universe; first-minute open >= 4% above the prior close; relative volume >= 3 at 10:00 (volume 09:30-09:59 vs 20-day average x F(30)). Buy-stop at the 09:30-09:59 high, live 10:00-15:30. Stop = the day's low as known at the fill. Exit: the stop, else the 15:59 close. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: A-ORB1, DEC2-GAPGO.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "Same setup entered at the next open on daily bars: A-ORB1, DEC2-GAPGO",
+   "sources": [
+    "https://www.investopedia.com/terms/o/openingrangebreakout.asp"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-ORB30]; kind day; blocks of 5 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+  },
+  {
+   "id": "SQ2-EPORB",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "Episodic pivot bought on the gap day: 10%+ gap in a neglected stock, 5-minute opening-range high, Qullamaggie exits",
+   "explain": "Day t: universe; first-minute open >= 10% above the prior close; the 63 sessions before were up no more than +20% (neglected); relative volume >= 3 at 09:35. Buy-stop at the 09:30-09:34 high, live 09:35-15:30 (Kullamagi buys the opening-range high ON the gap day; DEC-EP bought the next open). Stop = the day's low as known at the fill, but never more than 1.5 x the pre-gap 20-day ADR under the fill. Exit (KQ, as DEC-EP): sell 1/3 at the close of day 3 if above the fill and move the stop to the fill; from day 4 sell the rest at the next open after a close under the 10-day average; at most 120 sessions. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC-EP.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "Same setup entered at the next open on daily bars: DEC-EP",
+   "sources": [
+    "https://www.financialwisdomtv.com/post/the-episodic-pivot-strategy-qullamaggie-s-high-momentum-setup-explained"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-EPORB]; kind swing, exit engine KQ; blocks of 20 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+  },
+  {
+   "id": "SQ2-QBO",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "Qullamaggie breakout bought on the intraday break of the base high (or the 5-minute opening-range high), stop at the day low so far",
+   "explain": "Setup = DEC-QBO exactly (decoded-core detectQBO at the close of t0: ADR >= 4%, 30%+ prior move, tight 10-session base with higher lows, 10/20-day averages, QQQ 10-day > 20-day and both rising) plus this squad's universe; the order is live on the 5 sessions after t0 and cancelled by a daily close under the base low. Each live day: buy-stop at max(base high, the 09:30-09:34 high), live 09:35-15:30. Stop = the day's low as known at the fill, at most 1 ADR under the fill. Exit KQ (1/3 day 3, stop to the fill, 10-day trail from day 4, max 120). Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC-QBO.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "Same setup entered at the next open on daily bars: DEC-QBO",
+   "sources": [
+    "https://completetradersedge.com/?p=233509"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-QBO]; kind swing, exit engine KQ; blocks of 20 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+  },
+  {
+   "id": "SQ2-VWAP",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "VWAP reclaim after a morning flush on leaders (day trade)",
+   "explain": "Leaders at the close of t-1: universe, close above its 50-day average, 63-session return >= +30%, the 30 strongest by that return. Day t: a FLUSH = a 1-minute bar between 09:30 and 10:29 whose low is 2%+ under the day's open and whose close is under the session VWAP; then the first completed clock-aligned 5-minute bar (ending by 11:30) that closes above the session VWAP: buy at the open of the next minute (market). Stop = the day's low as known at the fill. Exit: the stop, else the 15:59 close. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC-PB.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "Same setup entered at the next open on daily bars: DEC-PB",
+   "sources": [
+    "https://www.alphatrends.net/",
+    "https://www.financialwisdomtv.com/post/martin-luk-s-pullback-trading-strategy-how-the-2025-u-s-investing-champion-finds-low-risk-high-re"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-VWAP]; kind day; blocks of 5 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+  },
+  {
+   "id": "SQ2-EMAPB",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "First pullback to the 9/21 EMA on 5-minute bars after a 4%+ gap with 3x relative volume (day trade)",
+   "explain": "Day t: the SQ2-ORB5 pool (4%+ gap, relative volume >= 3 at 09:35). Clock-aligned 5-minute bars; EMA9 and EMA21 of their closes, both seeded with the prior close. Trend: a completed 5-minute bar closed above the EMA9 and the day's high after 09:35 exceeded the 09:30-09:34 high. FIRST PULLBACK = the first later 5-minute bar starting 09:40-11:25 whose low <= EMA9 and whose close > EMA21 (EMAs including that bar). Buy-stop at that bar's high, live for the next 15 minutes only. Stop = that bar's low. Exit: the stop, else the 15:59 close. Only the first pullback of the day. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC-PB, DEC2-GAPGO.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "Same setup entered at the next open on daily bars: DEC-PB, DEC2-GAPGO",
+   "sources": [
+    "https://www.warriortrading.com/",
+    "https://tradingsetupsreview.com/the-holy-grail-trading-setup"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-EMAPB]; kind day; blocks of 5 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+  },
+  {
+   "id": "SQ2-HTF",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "High tight flag bought on the intraday break of the flag high, stop at the day low so far, 10-day trail",
+   "explain": "At the close of t-1: universe; the highest high of the last 40 sessions (pole top, session p) is 3 to 25 sessions old; it is 90%+ above the lowest low of the 40 sessions up to p (the pole); since p no low under 75% of the top (flag pullback <= 25%); close under the top. Day t: buy-stop at max(pole top, the 09:30-09:34 high), live 09:35-15:30. Stop = the day's low as known at the fill, at most 1 ADR under the fill. Exit: the stop; else the next open after a close under the 10-day average (from day 1); at most 60 sessions. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC2-WEDGE, T12.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "Same setup entered at the next open on daily bars: DEC2-WEDGE, T12",
+   "sources": [
+    "https://thepatternsite.com/HTF.html"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-HTF]; kind swing, exit engine S10; blocks of 20 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+  },
+  {
+   "id": "SQ2-PWR",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "Power-hour breakout of the day high on strong, active stocks (day trade)",
+   "explain": "Pool day t: the gap (>= 4% by the open) and leader lists of this squad (known at the open). At 15:00 (bars to 14:59 completed): last price >= 3% above the prior close, within 1% of the day's high, relative volume >= 1.5 (F(330)). Buy-stop at the day's high so far, live 15:00-15:50. Stop = the lowest low of 14:00-14:59, at most 1 ADR under the fill. Exit: the stop, else the 15:59 close. Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: none.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "none",
+   "sources": [
+    "https://www.investopedia.com/terms/p/power-hour.asp"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-PWR]; kind day; blocks of 5 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
+  },
+  {
+   "id": "SQ2-SWING",
+   "family": "Intraday execution (squad 2, minute bars)",
+   "name": "Swing version: 5-minute opening-range breakout on a 4%+ gap with 3x relative volume, held for days with a 10-day-low trail",
+   "explain": "Entry exactly as SQ2-ORB5 (same pool, same buy-stop, same initial stop = the day's low as known at the fill). Not sold at the close: from day 2 the stop trails to the lowest low of the 10 sessions before each day (never lowered); a daily open under the stop fills at the open; at most 60 sessions (sold at the close of day 60). Old version: bought the NEXT OPEN on daily bars (or simulated a daily buy-stop with the final daily low as the stop). Same-setup earlier tests: DEC2-GAPGO, DEC-EP.",
+   "status": "pre-registered 2026-10-24 (squad 2 lab); 5-year one-shot on 1-minute SIP bars pending",
+   "agent": "squad2",
+   "libraryCheck": "Same setup entered at the next open on daily bars: DEC2-GAPGO, DEC-EP",
+   "sources": [
+    "https://www.investopedia.com/terms/d/donchianchannels.asp"
+   ],
+   "spec": "squad2-core.mjs header (common conventions) + SETUPS[SQ2-SWING]; kind swing, exit engine L10; blocks of 20 sessions.",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad2-core.mjs = the exact rule; one version). 5-year one-shot by squad2-lab.mjs on Alpaca SIP 1-minute bars, first complete verdict frozen in data/squad2-lab.json; forward paper lane (data/squad2-paper.jsonl) from 26 Oct 2026. INTRADAY ENTRY: TRY SMALL (next-open orders) must not take its signals; a winner needs a live intraday alert path.",
+   "study": "squad2-lab.mjs -> data/squad2-lab.json (run once as written, first complete run frozen)"
   }
  ]
 }
