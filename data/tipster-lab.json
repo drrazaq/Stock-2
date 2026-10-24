@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24T05:04:34.134Z",
+ "generatedAt": "2026-10-24T06:29:31.358Z",
  "preRegistered": "tipster-core.mjs RULES + data/strategy-library.json TIP-* (24 Oct 2026, before any run)",
  "window": [
   "2021-10-12",
@@ -12,22 +12,30 @@
  "hold": 252,
  "complete": false,
  "data": {
-  "pre": {
-   "ok": false,
-   "sessions": 0,
-   "fetchedNow": 0,
-   "from": null
-  },
   "funds": {
    "ok": true,
    "SPUS": 1255,
    "HLAL": 1255
   },
+  "pre": {
+   "ok": false,
+   "mode": "nasdaq per ticker",
+   "sessions": 0,
+   "from": null,
+   "needed": 1966,
+   "withHistory": 0,
+   "noHistory": 1966,
+   "noHistoryAndDelistedInWindow": 0,
+   "notTriedYet": 0,
+   "failedNow": 0,
+   "fetchedNow": 1966,
+   "note": "tickers without pre-window history (mostly stocks delisted since) can only qualify once the window gives enough sessions: a survivorship gap in the first year of the window"
+  },
   "facts": {
    "ok": true,
    "companies": 2614,
    "withFacts": 2447,
-   "fetchedNow": 167,
+   "fetchedNow": 0,
    "failed": 0,
    "anomalyCacheAt": "2026-10-23T23:50:53.668Z"
   },
@@ -45,7 +53,7 @@
   "turn": {
    "candidatesPriceGrowth": 3892,
    "stocks": 111,
-   "eightKFetched": 111,
+   "eightKFetched": 0,
    "eightKFailed": 0,
    "priceGrowthStocks": {
     "HUN": {
@@ -460,9 +468,17 @@
   "stocks": 8599,
   "preWindow": {
    "ok": false,
+   "mode": "nasdaq per ticker",
    "sessions": 0,
-   "fetchedNow": 0,
-   "from": null
+   "from": null,
+   "needed": 1966,
+   "withHistory": 0,
+   "noHistory": 1966,
+   "noHistoryAndDelistedInWindow": 0,
+   "notTriedYet": 0,
+   "failedNow": 0,
+   "fetchedNow": 1966,
+   "note": "tickers without pre-window history (mostly stocks delisted since) can only qualify once the window gives enough sessions: a survivorship gap in the first year of the window"
   },
   "spyDDknown": 1038,
   "crashSessions": 98,
@@ -475,7 +491,7 @@
    "ok": true,
    "companies": 2614,
    "withFacts": 2447,
-   "fetchedNow": 167,
+   "fetchedNow": 0,
    "failed": 0,
    "anomalyCacheAt": "2026-10-23T23:50:53.668Z"
   },
@@ -499,7 +515,7 @@
  "firstRun": {},
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-24T05:04:34.134Z",
+  "at": "2026-10-24T06:29:31.358Z",
   "results": {
    "TIP-DIPLEAD": {
     "verdict": "TOO FEW CASES",

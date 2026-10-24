@@ -2,17 +2,25 @@
 [5s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
 [6s] splits since 2026-10-19: 71 listed, 0 repaired
 [6s] window 2021-10-12..2026-10-23 (1264 sessions, 8599 stocks, x rows on 1255 days)
-[117s] pre-window: 0 sessions (0 fetched now)
-[117s] extended closes: 0 pre-window + 1264 window sessions; boundary split repairs 0
-[158s] SEC facts coverage 2447/2614 (167 fetched now)
-[159s] insider: 139035 purchases, missing none
-[200s] signals: TIP-DIPLEAD 207, TIP-THEME 28 (+8 too recent), TIP-TURN 10 (+9 too recent), TIP-DIPLEAD-100 37, TIP-THEME-100 3 (+4 too recent), TIP-TURN-100 0 (+1 too recent)
-[200s] - TIP-DIPLEAD: TOO FEW CASES | older 134 (24d) avg +21.1% stress +20.7% edge +30.8% own +25.4% no2 +17.0% tB null /yr +17.1% SPY +22.5% | newer 73 (4d) avg +75.9% stress +75.5% edge +44.4% own +58.1% no2 +67.2% tB null /yr +74.2% SPY +37.0% | fewer than 20 cases or 3 blocks in a half (134 cases, 2 blocks / 73 cases, 2 blocks)
-[200s] - TIP-THEME: TOO FEW CASES | older 7 (3d) avg +19.0% stress +18.6% edge +23.7% own +11.8% no2 +3.7% tB 0.9 /yr +20.6% SPY +25.1% | newer 21 (7d) avg +5.2% stress +4.8% edge -7.2% own -24.0% no2 -3.1% tB -0.69 /yr +5.2% SPY +17.8% | fewer than 20 cases or 3 blocks in a half (7 cases, 3 blocks / 21 cases, 7 blocks)
-[200s] - TIP-TURN: TOO FEW CASES | older 0 (0d) avg n/a stress n/a edge n/a own n/a no2 n/a tB undefined /yr n/a SPY n/a | newer 10 (10d) avg +14.4% stress +14.0% edge -2.5% own +23.6% no2 -7.8% tB -0.66 /yr +17.0% SPY +21.9% | fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 10 cases, 3 blocks)
-[200s] - TIP-DIPLEAD-100: TOO FEW CASES | older 26 (10d) avg +32.9% stress +32.5% edge +16.9% own +13.4% no2 +17.2% tB null /yr +29.4% SPY +22.1% | newer 11 (3d) avg +50.0% stress +49.6% edge -3.2% own -1.1% no2 +24.6% tB null /yr +49.1% SPY +36.9% | fewer than 20 cases or 3 blocks in a half (26 cases, 2 blocks / 11 cases, 2 blocks)
-[200s] - TIP-THEME-100: TOO FEW CASES | older 0 (0d) avg n/a stress n/a edge n/a own n/a no2 n/a tB undefined /yr n/a SPY n/a | newer 3 (2d) avg +10.2% stress +9.8% edge +2.9% own -24.5% no2 -1.8% tB null /yr +13.9% SPY +22.8% | fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 3 cases, 2 blocks)
-[200s] - TIP-TURN-100: TOO FEW CASES | older 0 (0d) avg n/a stress n/a edge n/a own n/a no2 n/a tB undefined /yr n/a SPY n/a | newer 0 (0d) avg n/a stress n/a edge n/a own n/a no2 n/a tB undefined /yr n/a SPY n/a | fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 0 cases, 0 blocks)
-[202s] reconstruction: NVDA, INTC
-[202s] paper lane: scanned 0 new session(s); 0 new signals; 0 in all
-TIPSTER LAB 2021-10-12 to 2026-10-23 | bar 4.02 | frozen 0/6 | INCOMPLETE: pre | pre MISSING, funds ok, facts ok, insider ok, scan ok, turn ok
+[8s] pre-window: Massive refused 10 grouped requests (plan history limit); falling back to Nasdaq per-ticker history
+[629s] pre-window (Nasdaq): 250 tickers fetched
+[1244s] pre-window (Nasdaq): 500 tickers fetched
+[1861s] pre-window (Nasdaq): 750 tickers fetched
+[2458s] pre-window (Nasdaq): 1000 tickers fetched
+[3068s] pre-window (Nasdaq): 1250 tickers fetched
+[3713s] pre-window (Nasdaq): 1500 tickers fetched
+[4335s] pre-window (Nasdaq): 1750 tickers fetched
+[4874s] pre-window: {"ok":false,"mode":"nasdaq per ticker","sessions":0,"from":null,"needed":1966,"withHistory":0,"noHistory":1966,"noHistoryAndDelistedInWindow":0,"notTriedYet":0,"failedNow":0,"fetchedNow":1966,"note":"tickers without pre-window history (mostly stocks delisted since) can only qualify once the window gives enough sessions: a survivorship gap in the first year of the window"}
+[4874s] extended closes: 0 pre-window + 1264 window sessions; boundary split repairs 0
+[4875s] SEC facts coverage 2447/2614 (0 fetched now)
+[4875s] insider: 139035 purchases, missing none
+[4890s] signals: TIP-DIPLEAD 207, TIP-THEME 28 (+8 too recent), TIP-TURN 10 (+9 too recent), TIP-DIPLEAD-100 37, TIP-THEME-100 3 (+4 too recent), TIP-TURN-100 0 (+1 too recent)
+[4890s] - TIP-DIPLEAD: TOO FEW CASES | older 134 (24d) avg +21.1% stress +20.7% edge +30.8% own +25.4% no2 +17.0% tB null /yr +17.1% SPY +22.5% | newer 73 (4d) avg +75.9% stress +75.5% edge +44.4% own +58.1% no2 +67.2% tB null /yr +74.2% SPY +37.0% | fewer than 20 cases or 3 blocks in a half (134 cases, 2 blocks / 73 cases, 2 blocks)
+[4890s] - TIP-THEME: TOO FEW CASES | older 7 (3d) avg +19.0% stress +18.6% edge +23.7% own +11.8% no2 +3.7% tB 0.9 /yr +20.6% SPY +25.1% | newer 21 (7d) avg +5.2% stress +4.8% edge -7.2% own -24.0% no2 -3.1% tB -0.69 /yr +5.2% SPY +17.8% | fewer than 20 cases or 3 blocks in a half (7 cases, 3 blocks / 21 cases, 7 blocks)
+[4890s] - TIP-TURN: TOO FEW CASES | older 0 (0d) avg n/a stress n/a edge n/a own n/a no2 n/a tB undefined /yr n/a SPY n/a | newer 10 (10d) avg +14.4% stress +14.0% edge -2.5% own +23.6% no2 -7.8% tB -0.66 /yr +17.0% SPY +21.9% | fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 10 cases, 3 blocks)
+[4890s] - TIP-DIPLEAD-100: TOO FEW CASES | older 26 (10d) avg +32.9% stress +32.5% edge +16.9% own +13.4% no2 +17.2% tB null /yr +29.4% SPY +22.1% | newer 11 (3d) avg +50.0% stress +49.6% edge -3.2% own -1.1% no2 +24.6% tB null /yr +49.1% SPY +36.9% | fewer than 20 cases or 3 blocks in a half (26 cases, 2 blocks / 11 cases, 2 blocks)
+[4890s] - TIP-THEME-100: TOO FEW CASES | older 0 (0d) avg n/a stress n/a edge n/a own n/a no2 n/a tB undefined /yr n/a SPY n/a | newer 3 (2d) avg +10.2% stress +9.8% edge +2.9% own -24.5% no2 -1.8% tB null /yr +13.9% SPY +22.8% | fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 3 cases, 2 blocks)
+[4890s] - TIP-TURN-100: TOO FEW CASES | older 0 (0d) avg n/a stress n/a edge n/a own n/a no2 n/a tB undefined /yr n/a SPY n/a | newer 0 (0d) avg n/a stress n/a edge n/a own n/a no2 n/a tB undefined /yr n/a SPY n/a | fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 0 cases, 0 blocks)
+[4892s] reconstruction: NVDA, INTC
+[4892s] paper lane: scanned 0 new session(s); 0 new signals; 0 in all
+TIPSTER LAB 2021-10-12 to 2026-10-23 | bar 4.02 | frozen 0/6 | INCOMPLETE: pre | funds ok, pre MISSING, facts ok, insider ok, scan ok, turn ok
