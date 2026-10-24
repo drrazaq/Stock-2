@@ -20,10 +20,10 @@ import { execFileSync } from 'node:child_process';
 import { freezeEach, latestBlock } from './first-run.mjs';
 import { halfStat, TIER2_T } from './value-core.mjs';
 import { judgeHold } from './hold-core.mjs';
-import { fundamentals, splitFix, sharesAt, cikFromSpans, artifactJumps, hasArtifact } from './squad4-core.mjs';
+import { fundamentals, cikFromSpans, artifactJumps, hasArtifact } from './squad4-core.mjs';
 import { RULES, IDS, COST, STRESS, SIDE, SIDE_STRESS, SPLIT, PAPER_START, BLOCK, YEAR, CAP, BIG, TOPN, EWN, QUALN, MOMBUF, NEWIN_LOOK, NEWIN_MONTHS, NEWIN_MAXW, SHN, PIT_LAG,
   byCap, mom121, bufferSelect, newEntrant, qualityPick, debtCashAt, shariahOk, aboveMA, simulate, equalW, capW, pathStats, monthly, monthStarts, monthEnds, isQuarterMonth,
-  preRegister, boardStats, paperReady, mean, median, r4, halfOf, addDays, periodPieces, periodHold, usCompany } from './squad5-core.mjs';
+  preRegister, boardStats, paperReady, mean, median, r4, halfOf, addDays, periodPieces, periodHold, usCompany, capAt } from './squad5-core.mjs';
 const env = process.env, DIAG = !!env.DIAG, OFFLINE = !!env.OFFLINE, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', NQ = local(env.NASDAQ_BASE) || 'https://api.nasdaq.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ5_CACHE || 'squad5-cache', SC4 = env.SQ4_CACHE || 'squad4-cache';
@@ -155,34 +155,41 @@ const NEED = new Set(); for (const t of MS) for (const i of liqList(t)) { const 
   log('SEC facts: ' + JSON.stringify(STATUS.facts)); }
 const coMemo = new Map(); const coOf = (cik) => { if (!cik) return null; if (coMemo.has(cik)) return coMemo.get(cik); const a = FX.c[cik]; let o = null;
   if (hasRev(a)) { o = {}; for (const [g, tags] of Object.entries(TAGS)) { o[g] = {}; for (const t of tags) if (a[t]) o[g][t] = a[t].map(([s0, e, v, f]) => ({ s: s0, e, v, f })); } } coMemo.set(cik, o); return o; };
-const shMemo = new Map(), shRows = (cik) => { if (!shMemo.has(cik)) { const a = SH.c[cik] && SH.c[cik].length ? SH.c[cik] : (FX.c[cik] && FX.c[cik]._sh) || null; shMemo.set(cik, a && a.length ? splitFix(a) : null); } return shMemo.get(cik); };
+const coverRows = (cik) => SH.c[cik] && SH.c[cik].length ? SH.c[cik] : (FX.c[cik] && FX.c[cik]._sh) || null;   // as reported (no split repair: splits are applied by capAt)
 
 // ================= 4. UNIVERSE + market value ranks =================
 // ---- alternative share counts for companies without a cover-page count (multi-class companies): SEC balance-sheet / weighted-average
 // shares, keyed by their FILING date (known from then), the current period of each filing; own cache ----
 const SUBS = J(SC + '/subs.json', {});
-const ALT = J(SC + '/alt-shares-v2.json', {}), ALT_TAGS = ['WeightedAverageNumberOfSharesOutstandingBasic', 'WeightedAverageNumberOfDilutedSharesOutstanding', 'CommonStockSharesOutstanding'];
-function altFrom(j) { const g = j && j.facts && j.facts['us-gaap']; if (!g) return [];
-  for (const tag of ALT_TAGS) { const u = g[tag] && g[tag].units && g[tag].units.shares; if (!Array.isArray(u)) continue; const m = new Map();
+const ALT = J(SC + '/alt-shares-v3.json', {}), ALT_TAGS = ['WeightedAverageNumberOfSharesOutstandingBasic', 'WeightedAverageNumberOfDilutedSharesOutstanding', 'CommonStockSharesOutstanding'];
+// per filing: the current period's count of each tag; the LARGEST of the tags (a multi-class company may report one class under one tag)
+function altFrom(j) { const g = j && j.facts && j.facts['us-gaap']; if (!g) return []; const m = new Map();
+  for (const tag of ALT_TAGS) { const u = g[tag] && g[tag].units && g[tag].units.shares; if (!Array.isArray(u)) continue; const cur = new Map();
     for (const x of u) { if (!x || !x.filed || !x.end || !(x.val > 0) || x.end < '2019-01-01') continue; if (x.start) { const dd = (Date.parse(x.end) - Date.parse(x.start)) / 864e5 + 1; if (!((dd >= 80 && dd <= 100) || (dd >= 350 && dd <= 380))) continue; }
-      const o = m.get(x.filed); if (!o || x.end > o[1]) m.set(x.filed, [x.filed, x.end, x.val]); }
-    const rows = [...m.values()].sort((a, b) => a[0] < b[0] ? -1 : 1).map(r => [r[0], r[2]]); if (rows.length >= 2) return rows; }
-  return []; }
-const altMemo = new Map(), altRows = (cik) => { if (!altMemo.has(cik)) { const a = ALT[cik]; altMemo.set(cik, a && a.length ? splitFix(a) : null); } return altMemo.get(cik); };
-// the cover-page count; when the financial-statement count known that day differs from it by more than 3x, the cover-page count is a unit
-// error (seen in the DIAG check: x1000 rows) and the financial-statement count is used
-const shAt = (cik, d) => { const a = sharesAt(shRows(cik), d, 30), b = sharesAt(altRows(cik), d, 1); return a && b && (a / b > 3 || b / a > 3) ? b : a || b; };
-// (rowsAt is defined below; function declarations are hoisted) the financial-statement count is fetched for every company without a cover-page
-// count and for every company in the provisional 700 largest at any month start
-{ const want = new Set(); for (const t of [...MS, T - 1]) { for (const i of liqList(t)) { const cik = cikAt(i, D[t]); if (cik && coOf(cik) && !sharesAt(shRows(cik), D[t], 30) && !(cik in ALT)) want.add(cik); }
+      const o = cur.get(x.filed); if (!o || x.end > o[1] || (x.end === o[1] && x.val > o[2])) cur.set(x.filed, [x.filed, x.end, x.val]); }
+    for (const [f, r] of cur) { const o = m.get(f); if (!o || r[1] > o[1] || (r[1] === o[1] && r[2] > o[2])) m.set(f, r); } }
+  return [...m.values()].sort((a, b) => a[0] < b[0] ? -1 : 1); }
+// ---- the split list (Massive; own cache, refreshed every run): ticker -> [[execution date, new shares per old share]] ----
+const SPL = new Map(); { let rows = J(SC + '/splits.json', null), pages = 0;
+  if (!OFFLINE) { const got = []; let path = '/stocks/v1/splits?execution_date.gte=2021-01-01&limit=1000', ok2 = false;
+    while (path && pages < 80) { const j = await api(path); pages++; if (!j || j.refused || !Array.isArray(j.results)) break; got.push(...j.results); if (!j.next_url) { ok2 = true; break; } path = String(j.next_url).replace(/^https?:\/\/[^/]+/, ''); }
+    if (ok2 && got.length > 500) { rows = got.map(x => [String(x.ticker || '').toUpperCase(), String(x.execution_date || ''), +x.split_from, +x.split_to, String(x.adjustment_type || '')]); W(SC + '/splits.json', rows); } }
+  for (const [t, d, f, to, kind] of rows || []) { if (!t || !d || !(f > 0) || !(to > 0) || f === to || /dividend/i.test(kind)) continue; (SPL.get(t) || SPL.set(t, []).get(t)).push([d, to / f]); }
+  for (const a of SPL.values()) a.sort((x, y) => x[0] < y[0] ? -1 : 1);
+  STATUS.splits = { ok: (rows || []).length > 500, rows: (rows || []).length, tickers: SPL.size, pagesNow: pages }; log('split list: ' + JSON.stringify(STATUS.splits)); }
+const capOf = (i, cik, t) => { const r = capAt({ adjClose: CC(i, t), d: D[t], splits: SPL.get(SYMS[i]) || SPL.get(SYMS[i].replace(/\./g, '-')), cover: coverRows(cik), alt: ALT[cik] }); return r ? r.cap : null; };
+const coverOk = (cik, d) => { const lim = addDays(d, -30); return (coverRows(cik) || []).some(([e, n]) => e <= lim && n > 0); };
+// the financial-statement count is fetched for every company without a usable cover-page count and for every company in the provisional 700
+// largest at any month start (rowsAt is a hoisted function declaration)
+{ const want = new Set(); for (const t of [...MS, T - 1]) { for (const i of liqList(t)) { const cik = cikAt(i, D[t]); if (cik && coOf(cik) && !coverOk(cik, D[t]) && !(cik in ALT)) want.add(cik); }
     if (t >= 19) for (const r of byCap(rowsAt(t, false).rows).slice(0, 700)) if (!(r.cik in ALT)) want.add(r.cik); }
   let got = 0; if (!OFFLINE) for (const c of want) { if (left() < 75 * 60e3) break; await sleep(local(env.SEC_BASE) ? 0 : 110); let r = null; try { r = await fetch(SECD + '/api/xbrl/companyfacts/CIK' + c.padStart(10, '0') + '.json', { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60000) }); } catch (e) {}
     if (r && r.ok) { const j = await r.json().catch(() => null); if (j) { ALT[c] = altFrom(j); got++; } } else if (r && r.status === 404) ALT[c] = []; }
-  if (got) W(SC + '/alt-shares-v2.json', ALT); altMemo.clear(); STATUS.altShares = { wanted: want.size, fetchedNow: got, known: Object.values(ALT).filter(a => a.length).length }; log('alternative share counts: ' + JSON.stringify(STATUS.altShares)); }
+  if (got) W(SC + '/alt-shares-v3.json', ALT); STATUS.altShares = { ok: [...want].filter(c => !(c in ALT)).length <= Math.max(5, want.size * 0.02), wanted: want.size, fetchedNow: got, known: Object.values(ALT).filter(a => a.length).length }; log('statement share counts: ' + JSON.stringify(STATUS.altShares)); }
 // ---- domicile (SEC submissions: business address + 20-F / 40-F filings; also the SIC code); own cache ----
 function rowsAt(t, useDom) { const rows = new Map(); let noCik = 0, noFacts = 0, noShares = 0, foreign = 0;
-  for (const i of liqList(t)) { const cik = cikAt(i, D[t]); if (!cik) { noCik++; continue; } if (!coOf(cik)) { noFacts++; continue; } if (useDom && SUBS[cik] && SUBS[cik].us === false) { foreign++; continue; } const sh = shAt(cik, D[t]); if (!sh) noShares++;
-    const r = { key: i, i, cik, dv: DV20[i * T + t], close: CC(i, t), cap: sh ? CC(i, t) * sh : null }, o = rows.get(cik); if (!o || r.dv > o.dv) rows.set(cik, r); }
+  for (const i of liqList(t)) { const cik = cikAt(i, D[t]); if (!cik) { noCik++; continue; } if (!coOf(cik)) { noFacts++; continue; } if (useDom && SUBS[cik] && SUBS[cik].us === false) { foreign++; continue; } const cap = capOf(i, cik, t); if (!cap) noShares++;
+    const r = { key: i, i, cik, dv: DV20[i * T + t], close: CC(i, t), cap }, o = rows.get(cik); if (!o || r.dv > o.dv) rows.set(cik, r); }
   return { rows: [...rows.values()], noCik, noFacts, noShares, foreign }; }
 { const want = new Set(); for (const t of [...MS.filter(x => x >= 19), T - 1]) for (const r of byCap(rowsAt(t, false).rows).slice(0, 700)) if (!(r.cik in SUBS)) want.add(r.cik);
   let got = 0, fail = 0; if (!OFFLINE) for (const c of want) { if (left() < 70 * 60e3) break; await sleep(local(env.SEC_BASE) ? 0 : 110); let r = null; try { r = await fetch(SECD + '/submissions/CIK' + c.padStart(10, '0') + '.json', { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60000) }); } catch (e) {}
@@ -211,7 +218,8 @@ const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {})
 const DIAGS = { window: [D[0], D[T - 1]], sessions: T, stocks: NS, data: STATUS };
 { let g = 0, gc = 0, a = 0, ac = 0; for (const t of MS) for (const i of liqList(t)) { const c = cikAt(i, D[t]); if (vanishedI(i)) { g++; if (c) gc++; } else { a++; if (c) ac++; } }
   STATUS.cikCover = { ok: g === 0 || gc / g >= 0.75, vanished: g, vanishedWithCik: gc, alive: a, aliveWithCik: ac, vanishedShare: r4(g ? gc / g : null), aliveShare: r4(a ? ac / a : null) };
-  const snap = (t) => { const U = universe(t); return { date: D[t], liquid: U.liquid, companies: U.companies, ranked: U.ranked.length, noCik: U.noCik, noFacts: U.noFacts, noShares: U.noShares, foreign: U.foreign, top30: U.ranked.slice(0, 30).map(r => SYMS[r.i] + ' ' + (r.cap / 1e9).toFixed(0) + 'B'), rank500Cap: U.ranked[499] ? r4(U.ranked[499].cap / 1e9) : null, vanishedInTop500: U.ranked.slice(0, 500).filter(r => vanishedI(r.i)).length }; };
+  const snap = (t) => { const U = universe(t); return { date: D[t], liquid: U.liquid, companies: U.companies, ranked: U.ranked.length, noCik: U.noCik, noFacts: U.noFacts, noShares: U.noShares, foreign: U.foreign, top30: U.ranked.slice(0, 30).map(r => SYMS[r.i] + ' ' + (r.cap / 1e9).toFixed(0) + 'B'), rank500Cap: U.ranked[499] ? r4(U.ranked[499].cap / 1e9) : null, vanishedInTop500: U.ranked.slice(0, 500).filter(r => vanishedI(r.i)).length,
+    probe: Object.fromEntries(['GOOGL', 'META', 'BRK.B', 'NVDA', 'AVGO', 'WMT', 'CMG', 'SIRI', 'BYND', 'PARA', 'NFE', 'SPCX', 'PLTR'].map(sy => { const r = U.ranked.find(z => SYMS[z.i] === sy); return [sy, r ? (r.cap / 1e9).toFixed(1) + 'B #' + (r.rank + 1) : 'not ranked'] })) }; };
   DIAGS.snapshots = [...QS.filter(t => D[t].slice(5, 7) === '01'), T - 1].map(snap); }
 if (DIAG) { console.log('SQUAD 5 DIAGNOSTICS (coverage and the largest companies only; nothing judged or written)'); console.log(JSON.stringify(DIAGS, null, 1).slice(0, 30000)); process.exit(0); }
 
@@ -329,7 +337,7 @@ for (const id of IDS) { const B = build(id); if (B.start === null) { RES[id] = {
   log('- ' + id + ': ' + RES[id].verdict + ' | trades older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | PORTFOLIO older ' + ph('older') + ' | newer ' + ph('newer') + ' | beats SPY both halves: ' + P.beatsSpyBothHalves + ' | ' + String(RES[id].why).slice(0, 250)); }
 
 // ================= 8. FREEZE =================
-const complete = T >= 1000 && STATUS.facts.ok && STATUS.cikCover.ok && STATUS.sic.ok && STATUS.tickerMap.ok && STATUS.domicile.ok;
+const complete = T >= 1000 && STATUS.facts.ok && STATUS.cikCover.ok && STATUS.sic.ok && STATUS.tickerMap.ok && STATUS.domicile.ok && STATUS.splits.ok && STATUS.altShares.ok;
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k, r]) => need.includes(k) && complete && r.results).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], to: D[T - 1], bar: BAR, ...r }])), (r) => r.verdict !== 'TOO FEW CASES');
 
 // ================= 9. TODAY (current members) + PAPER LANE =================

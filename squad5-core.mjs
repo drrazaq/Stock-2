@@ -14,7 +14,10 @@
 //     are out), one ticker per company (the most traded). MARKET VALUE = close x the SEC share count known 30+ days before t (split-
 //     repaired; the same split basis as the adjusted closes); a company without such a count uses its SEC balance-sheet / weighted-average
 //     share count known from its filing date (multi-class companies such as Alphabet and Meta report no single cover-page count).
-//     DATA GUARDS (set after the DIAG coverage check of 24 Oct 2026, which showed share-count errors, BEFORE any rule result): only US
+//     MARKET VALUE = the close AS TRADED that day (the adjusted close x every later split in the split list) x the share count as reported,
+//     corrected for splits between its date and that day (cover-page count 30+ days old, else / when 3x+ different the financial-statement
+//     count from its filing date: per filing, the largest of weighted-average basic, diluted and balance-sheet shares of the current period).
+//     DATA GUARDS (set after the DIAG coverage checks of 24 Oct 2026, which showed share-count errors, BEFORE any rule result): only US
 //     companies (SEC business address in a US state / DC / PR and no 20-F / 40-F filings: the index domicile rule; an ADR's SEC share
 //     count is per ordinary share, so its market value is wrong; the address is the CURRENT one in SEC submissions); a market value is
 //     used only if the 20-session average traded value is at least 0.02% of it (a share count off by 100x+ fails) and it is under
@@ -134,6 +137,19 @@ export function shariahOk({ sic, debt, cash, cap }) {
   if (!(cap > 0)) return { ok: false, why: 'no market value' }; if (!ok(debt)) return { ok: false, why: 'debt unknown' }; if (!ok(cash)) return { ok: false, why: 'cash unknown' };
   if (!(debt / cap < SH_RATIO - EPS)) return { ok: false, why: 'debt 33%+ of market value' }; if (!(cash / cap < SH_RATIO - EPS)) return { ok: false, why: 'cash 33%+ of market value' };
   return { ok: true, why: null };
+}
+// ---- market value from AS-TRADED numbers (DIAG 3 showed that split-adjusted prices x as-reported share counts break when a split or
+// reverse split happened after the share count's date, e.g. after a merger under a new SEC company) ----
+// splits [[date, r]] (r = new shares per old share, from the split list): the product of r over splits executed after a and on / before b
+export function splitRatio(splits, a, b) { let f = 1; for (const [d, r] of splits || []) if (d > a && d <= b && r > 0) f *= r; return f; }
+// cover = [[asOfDate, shares]] (cover-page counts, usable 30+ days after their date); alt = [[filed, periodEnd, shares]] (financial-statement
+// counts, usable after their filing date). Price as traded on d = adjusted close x every later split; shares x the splits between their date
+// and d. When both counts exist and differ by more than 3x, the financial-statement count is used. Returns { cap, src } or null.
+export function capAt({ adjClose, d, splits, cover, alt }) {
+  if (!(adjClose > 0)) return null; const px = adjClose * splitRatio(splits, d, '9999-12-31'), lim = addDays(d, -30);
+  let a = null, b = null; for (const [e, n] of cover || []) if (e <= lim && n > 0) a = n * splitRatio(splits, e, d);
+  for (const [f, e, n] of alt || []) if (f < d && n > 0) b = n * splitRatio(splits, e, d);
+  const sh = a && b && (a / b > 3 || b / a > 3) ? b : a || b; return sh ? { cap: px * sh, src: sh === a ? 'cover' : 'statements' } : null;
 }
 // US company from SEC submissions: business address state code (US state, DC, PR) and no 20-F / 40-F among its filings
 export const US_STATES = new Set('AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR'.split(' '));

@@ -5,7 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { byCap, topByCap, mom121, bufferSelect, newEntrant, qualityPick, haramSic, shariahOk, debtCashAt, aboveMA, simulate, equalW, capW, pathStats, monthly, monthStarts, monthEnds,
-  isQuarterMonth, preRegister, IDS, RULES, MAX_CAP, usCompany, boardStats, paperReady, periodPieces, periodHold } from '../squad5-core.mjs';
+  isQuarterMonth, preRegister, IDS, RULES, MAX_CAP, usCompany, splitRatio, capAt, boardStats, paperReady, periodPieces, periodHold } from '../squad5-core.mjs';
 
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;
 // px helper: closes / opens per stock (arrays), stock "dead" or "gone" flags
@@ -120,4 +120,16 @@ test('holding periods: a holding is cut at every review it lives through; first 
 test('data guards: a market value far above its traded value is a unit error; US domicile', () => {
   assert.deepEqual(byCap([{ key: 1, cap: 1e12, dv: 1e9 }, { key: 2, cap: 2e12, dv: 1e7 }]).map(r => r.key), [1]);
   assert.equal(usCompany('CA', ['10-K', '10-Q']), true); assert.equal(usCompany('K3', ['10-K']), false); assert.equal(usCompany('NY', ['20-F']), false); assert.equal(usCompany(null, []), false);
+});
+
+test('market value from as-traded numbers: later splits restore the traded price; counts follow splits after their date', () => {
+  const splits = [['2024-06-10', 10], ['2025-09-10', 0.1]];   // a 10-for-1 split, later a 1-for-10 reverse split
+  assert.equal(splitRatio(splits, '2024-01-01', '2024-12-31'), 10); assert.equal(splitRatio(splits, '2024-06-10', '9999-12-31'), 0.1);
+  // on 2024-03-01: adjusted close 50 -> traded 50 x 10 x 0.1 = 50; cover count 1,000 (as of 2024-01-15) -> cap 50,000
+  assert.equal(capAt({ adjClose: 50, d: '2024-03-01', splits, cover: [['2024-01-15', 1000]] }).cap, 50000);
+  // on 2024-08-01 the count is from before the 10-for-1 split: 1,000 x 10 shares at the traded price 50 x 0.1 = 5
+  assert.equal(capAt({ adjClose: 50, d: '2024-08-01', splits, cover: [['2024-05-01', 1000]] }).cap, 50000);
+  // a cover count 1000x off is replaced by the statement count
+  const r = capAt({ adjClose: 10, d: '2024-03-01', splits: [], cover: [['2024-01-01', 1e9]], alt: [['2024-02-01', '2023-12-31', 1e6]] }); assert.equal(r.cap, 1e7); assert.equal(r.src, 'statements');
+  assert.equal(capAt({ adjClose: 10, d: '2024-03-01', splits: [], cover: [['2024-02-15', 5]] }), null, 'cover count under 30 days old is not usable yet');
 });
