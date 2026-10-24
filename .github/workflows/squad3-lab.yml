@@ -1,0 +1,68 @@
+name: Squad 3 lab
+# SQUAD 3, MONEY MANAGEMENT (squad3-lab.mjs; 4-squad competition, 24 Oct 2026). Money-management POLICIES (SQ3-*, pre-registered in
+# squad3-core.mjs and data/strategy-library.json before any run) applied to the rules that made money in both halves, in a realistic
+# cash account (10,000 / 25,000 / 50,000 USD, 3 USD per buy and per sale + 0.8% cost), against plain 1,000 USD tickets and SPUS.
+# Run once: the first complete verdicts are frozen in data/squad3-lab.json firstRun; later runs only write `latest` (monitoring).
+# The whole-market price cache of the Sunday job is RESTORED READ ONLY (never saved here). Commits only its own files and its own
+# library entries. Never places an order. A policy is not a buy signal: data/squad3-today.json carries methods = {}.
+# Start by hand: change run-squad3-now.txt (or run the workflow).
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad3-now.txt']
+permissions:
+  contents: write
+concurrency: squad3-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - name: Unit tests of the account engine
+        run: node test/squad3-core.test.mjs
+      - name: Squad 3 lab
+        shell: bash
+        timeout-minutes: 90
+        run: |
+          set -o pipefail
+          node squad3-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log 2>/dev/null | cut -c1-3000 > data/squad3-run.log || true
+          FILES="data/squad3-lab.json data/squad3-today.json data/squad3-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad3 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 3 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad3-lab-log
+          path: run.log
+          if-no-files-found: ignore

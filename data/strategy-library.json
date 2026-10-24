@@ -15406,6 +15406,105 @@
    "agent": "tipster",
    "libraryCheck": "Overlaps: HOLD-AVGDOWN (averaging down on any / quality stocks: not proven), ANOM-52WH / DEC-FROG / ANOM-RESMOM (momentum: the opposite side, buying strength), M13 (strong stock dips in a weak market: autolab near miss), T22 / B-SIF1 / CHAIN-MOM1 / ANOM-INDMOM (industry strength), E3 / ANOM-INSIDER / C-INS3 (insider buying). New here: market-cap DOMINANCE of an industry as the filter, market-wide fear as the timing, 12-month holds with one add, and the strategic-investment trigger.",
    "note": "Pre-registered 24 Oct 2026 BEFORE any run (tipster-core.mjs = the exact rule; hold 252 sessions). 5-year one-shot by tipster-lab.mjs, first complete verdict frozen in data/tipster-lab.json; forward paper lane (data/tipster-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ3-VOLRISK",
+   "family": "Money management (squad 3)",
+   "name": "Volatility-targeted size (same risk per trade)",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Volatility-targeted size (same risk per trade)\",\"size\":{\"kind\":\"vol\",\"riskPct\":0.01,\"sigmaMult\":3,\"sigmaLookback\":20,\"capPct\":0.2,\"minUsd\":250}}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-PYRAMID",
+   "family": "Money management (squad 3)",
+   "name": "Pyramid: add 50% once at +10% above the 20-day",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Pyramid: add 50% once at +10% above the 20-day\",\"size\":{\"kind\":\"fixed\",\"usd\":1000},\"pyramid\":{\"trigger\":0.1,\"sma\":20,\"addFrac\":0.5,\"maxAdds\":1}}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-CUTRUN",
+   "family": "Money management (squad 3)",
+   "name": "Cut losers at -8%, let winners run on a 50-day trail",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Cut losers at -8%, let winners run on a 50-day trail\",\"size\":{\"kind\":\"fixed\",\"usd\":1000},\"exit\":{\"cut\":0.08,\"trailSma\":50,\"maxSessions\":252}}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-REGIME",
+   "family": "Money management (squad 3)",
+   "name": "Market-regime exposure (SPY 200-day + breadth; none in a crash)",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Market-regime exposure (SPY 200-day + breadth; none in a crash)\",\"size\":{\"kind\":\"fixed\",\"usd\":1000},\"regime\":{\"spySma\":200,\"breadthMin\":0.5,\"crashDd\":0.15,\"crashLookback\":252,\"full\":1,\"weak\":0.5,\"crash\":0}}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-ROTATE",
+   "family": "Money management (squad 3)",
+   "name": "Rank-and-rotate: hold the top 10 live signals by 6-month strength",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Rank-and-rotate: hold the top 10 live signals by 6-month strength\",\"size\":{\"kind\":\"equity\",\"frac\":0.1},\"rotate\":{\"n\":10,\"keepRank\":20,\"every\":5,\"lookback\":126,\"stop\":0.15,\"cooldown\":21}}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-FAMEQ",
+   "family": "Money management (squad 3)",
+   "name": "Equal risk across rule families (4 sleeves x 25%)",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Equal risk across rule families (4 sleeves x 25%)\",\"size\":{\"kind\":\"equity\",\"frac\":0.08333333333333333},\"familyCap\":0.25}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-SECTOR",
+   "family": "Money management (squad 3)",
+   "name": "At most 25% of equity per sector",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"At most 25% of equity per sector\",\"size\":{\"kind\":\"fixed\",\"usd\":1000},\"sectorCap\":0.25}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-DDBRAKE",
+   "family": "Money management (squad 3)",
+   "name": "Drawdown brake: half size after a 10% equity drop",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Drawdown brake: half size after a 10% equity drop\",\"size\":{\"kind\":\"fixed\",\"usd\":1000},\"brake\":{\"dd\":0.1,\"factor\":0.5,\"resume\":0.05}}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-SLOT10",
+   "family": "Money management (squad 3)",
+   "name": "Compounding slots: 10% of equity per position",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Compounding slots: 10% of equity per position\",\"size\":{\"kind\":\"equity\",\"frac\":0.1}}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-SLOT5",
+   "family": "Money management (squad 3)",
+   "name": "Concentrated compounding slots: 20% of equity per position",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Concentrated compounding slots: 20% of equity per position\",\"size\":{\"kind\":\"equity\",\"frac\":0.2}}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
+  },
+  {
+   "id": "SQ3-COMBO",
+   "family": "Money management (squad 3)",
+   "name": "Combo: 10% slots x regime x brake, cut -8% / 50-day trail, 25% sector cap",
+   "explain": "Money-management policy, NOT a buy signal. Exact parameters: {\"name\":\"Combo: 10% slots x regime x brake, cut -8% / 50-day trail, 25% sector cap\",\"size\":{\"kind\":\"equity\",\"frac\":0.1},\"regime\":{\"spySma\":200,\"breadthMin\":0.5,\"crashDd\":0.15,\"crashLookback\":252,\"full\":1,\"weak\":0.5,\"crash\":0},\"brake\":{\"dd\":0.1,\"factor\":0.5,\"resume\":0.05},\"exit\":{\"cut\":0.08,\"trailSma\":50,\"maxSessions\":252},\"sectorCap\":0.25}. Applied to the frozen 5-year signal lists of B-FCF1 (VALUE, hold 63); B-BASK1_3m (VALUE, hold 63); DEC-FROG (MOMENTUM, hold 126); ANOM-52WH (MOMENTUM, hold 126); ANOM-RESMOM (MOMENTUM, hold 63); ANOM-SUESURGE (EARNINGS, hold 60); MACRO-GOLD-S20 (MACRO, hold 20); MACRO-USD-E60 (MACRO, hold 60) (each rule's own hold and stop unless the policy changes the exit), in a cash account of 10,000 / 25,000 / 50,000 USD with 3 USD per buy and per sale + 0.8% cost, full size (or what the cash covers if at least half, else skip), sales before buys, most liquid signal first, ZAD not-halal stocks out, halal-unknown in and flagged.",
+   "status": "pre-registered 2026-10-24 (squad 3); one-shot pending",
+   "agent": "squad3",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad3-core.mjs header = the exact rules). Gates in BOTH halves (separate accounts: buys 2021-10-12..2023-12-29 and 2024-01-02..the last complete signal session, T-1-126) at ALL three capitals: profit > the same rules on plain 1,000 USD tickets; profit > SPUS held with the same capital; max drawdown no worse than SPUS by more than 5 points; profit without its 2 best trades > plain tickets. First complete verdict frozen in data/squad3-lab.json firstRun."
   }
  ]
 }
