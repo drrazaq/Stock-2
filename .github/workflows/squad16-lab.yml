@@ -1,0 +1,109 @@
+name: Squad 16 lab
+# SQUAD 16: "WHERE WINNING STOCK METHODS ARE PUBLISHED" (squad16-lab.mjs; 24 Oct 2026). A wide sweep of books, fund rulebooks, screen sites
+# and papers; ten NEW rules pre-registered in squad16-core.mjs and data/strategy-library.json before any run (Greenblatt magic formula,
+# Carlisle acquirer's multiple, Gray-Carlisle quantitative value, Novy-Marx profitable value, MSCI USA Quality, Faber shareholder yield,
+# AQR value + momentum, O'Shaughnessy cornerstone growth, 12-0 industry momentum, IBD RS-line blue dot), all on large caps by point-in-time
+# market value. Each one's 5-year test runs ONCE (first complete verdict frozen in data/squad16-lab.json firstRun); baskets also as one
+# account vs SPY / SPUS. Forward PAPER ledger from Monday 26 Oct 2026. The price cache, Squad 4's, 5's, 11's and 14's caches are RESTORED
+# READ ONLY (never saved under their keys); their files are copied into this lab's own cache (squad16-cache), the only cache saved.
+# Commits only its own output files and its own library entries. Never places an order. Start by hand: change run-squad16-now.txt (a last
+# line containing DIAG = data check only, nothing judged or written) or run the workflow.
+on:
+  schedule:
+    - cron: '23 16 * * 0'    # Sunday, after the Sunday studies
+    - cron: '19 0 * * 2-6'   # weekday evenings after the close: paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad16-now.txt']
+permissions:
+  contents: write
+concurrency: squad16-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad4-cache
+          key: squad4-cache-none
+          restore-keys: squad4-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad5-cache
+          key: squad5-cache-none
+          restore-keys: squad5-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad11-cache
+          key: squad11-cache-none
+          restore-keys: squad11-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad14-cache
+          key: squad14-cache-none
+          restore-keys: squad14-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad16-cache
+          key: squad16-cache-${{ github.run_id }}
+          restore-keys: squad16-cache-
+      - shell: bash
+        run: |
+          mkdir -p squad16-cache
+          if [ -d squad14-cache ]; then cp -rn squad14-cache/. squad16-cache/ || true; fi
+          if [ -d squad11-cache ]; then cp -rn squad11-cache/. squad16-cache/ || true; fi
+          if [ -d squad5-cache ]; then cp -rn squad5-cache/. squad16-cache/ || true; fi
+          du -sh study-cache squad4-cache squad5-cache squad11-cache squad14-cache squad16-cache 2>/dev/null || true
+      - shell: bash
+        timeout-minutes: 185
+        run: |
+          set -o pipefail
+          if tail -n 1 run-squad16-now.txt | grep -q DIAG && [ "${{ github.event_name }}" = "push" ]; then export DIAG=1; fi
+          node squad16-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SQ16_MINUTES: '170'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad16-cache
+          key: squad16-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad16-run.log 2>/dev/null || true
+          FILES="data/squad16-lab.json data/squad16-paper.jsonl data/squad16-today.json data/squad16-board.json data/squad16-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 16 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 16 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad16-lab-log
+          path: run.log
