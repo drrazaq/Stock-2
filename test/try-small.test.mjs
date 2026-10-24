@@ -141,3 +141,7 @@ test('a rule that loses to the S&P 500 per year does not qualify', () => {
   assert.deepEqual(q({ A: { ...r, perYear: { older: { rule: 0.25, spy: 0.189 }, newer: { rule: 0.2, spy: 0.158 } } } }), ['A']);
   assert.deepEqual(q({ A: r }), ['A']);
 });
+test('SQ1-BBAUTH is paused until its corrected run exists (survivorship bug found by the independent re-check)', () => {
+  const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
+  assert.deepEqual(q({ 'SQ1-BBAUTH': r }), []);
+});

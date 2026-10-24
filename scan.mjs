@@ -2256,7 +2256,9 @@ const TRY_USD = 1000, TRY_MAX = 2;   // 1,000 USD: owner's choice 24 Oct (at 300
 // (24 Oct, engine audit) a lab's corrected re-run (correctedRun[id], firstRun untouched) replaces that rule's frozen first run here
 const labRuns = (j) => { if (!j) return {}; const out = { ...(j.firstRun || {}) }; for (const [k, r] of Object.entries(j.correctedRun || {})) if (r && r.results) out[k] = { ...r, corrected: true }; return out; };
 // paused until its corrected re-run exists: ANOM-SUESURGE (engine audit AUD-2, 24 Oct: its revenue-surprise cut-off used filings made after the buy)
-const TRY_PAUSED = new Set(['ANOM-SUESURGE']);
+// SQ1-BBAUTH paused 24 Oct 2026: the independent re-check (verify-lab) found squad1-lab looked up share counts by today's ticker list,
+// silently dropping taken-over / renamed companies (survivorship); corrected, its older half loses after costs. Off until a corrected run exists.
+const TRY_PAUSED = new Set(['ANOM-SUESURGE', 'SQ1-BBAUTH']);
 // (24 Oct 2026) a rule whose lab measured its return per year of capital against the S&P 500 must beat it in BOTH halves:
 // otherwise simply holding SPUS did better, and a 1,000 USD ticket adds risk without adding money. Rules without that measure are unaffected.
 const beatsIndex = (py) => !py || ['older', 'newer'].every(h => !py[h] || typeof py[h].rule !== 'number' || typeof py[h].spy !== 'number' || py[h].rule > py[h].spy);
