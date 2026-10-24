@@ -21902,66 +21902,354 @@
    "family": "Options: long calls on the large, liquid winners (Squad 15)",
    "name": "At-the-money call (150-270 days) on each SQ11-PB12 leader pullback",
    "explain": "RULE: At-the-money call (150-270 days) on each SQ11-PB12 leader pullback. Signals: SQ11-PB12 trades (data/squad11-lab.json, all kept). Contract: ATM. Common (squad15-core.mjs header): LONG CALLS ONLY, one contract per signal, one open call per stock per rule. Expiry = the longest STANDARD MONTHLY expiry 150-270 calendar days after the entry session whose ATM area traded that session (amended after DIAG 2, before any result: weeklies listed later were being picked); ATM = strike nearest the raw open (first of the 8 nearest with a daily bar that session, at its open); ITM70 / DEEP85 = delta nearest 0.70 / 0.85 using the ATM pick's Black-Scholes implied vol (rate 4.5%, no dividends). Exit = the stock rule's sell session or the last session on/before expiry - 30 days, whichever first, at the contract's close (else its first close within 5 sessions, else intrinsic). Costs: half-spread h = max(1%, median OPRA (ask-bid)/mid / 2 of the 4 contracts nearest the same target today, 150-270 days) applied to the past (no historical option quotes exist: Alpaca v1beta1/options/quotes 404), stress 1.5x h, ZAD fee 5 USD per contract each side. Option era from 2024-01-19 (Alpaca option bars start 2024-01-18); halves 2024 vs 2025-26 by entry; 20+ trades and 3+ 63-session blocks per half; judged per half: > 0 after h and fees and at 1.5x, beats the same stock bought with the same money over the same days (0.8% round trip), > 0 without the half's 2 best, block t >= 2.5. Per-year return (call, stock, SPY) and premium per contract (median, quartiles, share <= 300 USD) reported.",
-   "status": "pre-registered 2026-10-24 (squad 15); one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad15",
    "registered": "2026-10-24",
    "libraryCheck": "Not OPT-LH1 (calls 60-90 days on V15 mid-cap picks), OPT-CAT1 (calls before biotech catalysts), OPT-FOLLOW1 (options calls of followed traders) or OPT-UOA1 (unusual option activity): different signals, large liquid names only, 150-270 day calls, delta-chosen contracts, judged against the same stock with the same money.",
-   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen)."
+   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen).",
+   "tested": "2026-10-23",
+   "study": "squad15-lab.mjs -> data/squad15-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     93,
+     128
+    ],
+    "avg": [
+     0.512,
+     0.6773
+    ],
+    "stress": [
+     0.4411,
+     0.5974
+    ],
+    "stock": [
+     0.1537,
+     0.1983
+    ],
+    "edge": [
+     0.3583,
+     0.479
+    ],
+    "noTop2": [
+     0.3127,
+     0.503
+    ],
+    "tBlock": [
+     1.14,
+     3.04
+    ],
+    "perYear": [
+     {
+      "call": 1.052,
+      "stock": 0.3158,
+      "spy": 0.1624
+     },
+     {
+      "call": 1.4141,
+      "stock": 0.414,
+      "spy": 0.2208
+     }
+    ],
+    "premiumMedian": 2290.235,
+    "why": "block t 1.14 under 2.5 in the older half",
+    "frozenAt": "2026-10-24T10:49:17.653Z"
+   }
   },
   {
    "id": "SQ15-PB12-ITM",
    "family": "Options: long calls on the large, liquid winners (Squad 15)",
    "name": "0.70-delta call (150-270 days) on each SQ11-PB12 leader pullback",
    "explain": "RULE: 0.70-delta call (150-270 days) on each SQ11-PB12 leader pullback. Signals: SQ11-PB12 trades (data/squad11-lab.json, all kept). Contract: ITM70. Common (squad15-core.mjs header): LONG CALLS ONLY, one contract per signal, one open call per stock per rule. Expiry = the longest STANDARD MONTHLY expiry 150-270 calendar days after the entry session whose ATM area traded that session (amended after DIAG 2, before any result: weeklies listed later were being picked); ATM = strike nearest the raw open (first of the 8 nearest with a daily bar that session, at its open); ITM70 / DEEP85 = delta nearest 0.70 / 0.85 using the ATM pick's Black-Scholes implied vol (rate 4.5%, no dividends). Exit = the stock rule's sell session or the last session on/before expiry - 30 days, whichever first, at the contract's close (else its first close within 5 sessions, else intrinsic). Costs: half-spread h = max(1%, median OPRA (ask-bid)/mid / 2 of the 4 contracts nearest the same target today, 150-270 days) applied to the past (no historical option quotes exist: Alpaca v1beta1/options/quotes 404), stress 1.5x h, ZAD fee 5 USD per contract each side. Option era from 2024-01-19 (Alpaca option bars start 2024-01-18); halves 2024 vs 2025-26 by entry; 20+ trades and 3+ 63-session blocks per half; judged per half: > 0 after h and fees and at 1.5x, beats the same stock bought with the same money over the same days (0.8% round trip), > 0 without the half's 2 best, block t >= 2.5. Per-year return (call, stock, SPY) and premium per contract (median, quartiles, share <= 300 USD) reported.",
-   "status": "pre-registered 2026-10-24 (squad 15); one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad15",
    "registered": "2026-10-24",
    "libraryCheck": "Not OPT-LH1 (calls 60-90 days on V15 mid-cap picks), OPT-CAT1 (calls before biotech catalysts), OPT-FOLLOW1 (options calls of followed traders) or OPT-UOA1 (unusual option activity): different signals, large liquid names only, 150-270 day calls, delta-chosen contracts, judged against the same stock with the same money.",
-   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen)."
+   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen).",
+   "tested": "2026-10-23",
+   "study": "squad15-lab.mjs -> data/squad15-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     76,
+     101
+    ],
+    "avg": [
+     0.5809,
+     0.8288
+    ],
+    "stress": [
+     0.5177,
+     0.7551
+    ],
+    "stock": [
+     0.1836,
+     0.2493
+    ],
+    "edge": [
+     0.3973,
+     0.5795
+    ],
+    "noTop2": [
+     0.3599,
+     0.635
+    ],
+    "tBlock": [
+     1.17,
+     2.99
+    ],
+    "perYear": [
+     {
+      "call": 1.1875,
+      "stock": 0.3754,
+      "spy": 0.1662
+     },
+     {
+      "call": 1.7205,
+      "stock": 0.5175,
+      "spy": 0.2205
+     }
+    ],
+    "premiumMedian": 2543.3904,
+    "why": "block t 1.17 under 2.5 in the older half",
+    "frozenAt": "2026-10-24T10:49:17.653Z"
+   }
   },
   {
    "id": "SQ15-MOM-ATM",
    "family": "Options: long calls on the large, liquid winners (Squad 15)",
    "name": "At-the-money call (150-270 days) on each SQ6-MTUM / SQ6-QMOM pick with 500M USD+ daily trading",
    "explain": "RULE: At-the-money call (150-270 days) on each SQ6-MTUM / SQ6-QMOM pick with 500M USD+ daily trading. Signals: SQ6-MTUM (hold 126) + SQ6-QMOM (hold 63) picks from Squad 6's own code re-run offline keeping all trades, only stocks with a 63-session average traded value >= 500M USD at formation (a pick in both counts once, as MTUM). Contract: ATM. Common (squad15-core.mjs header): LONG CALLS ONLY, one contract per signal, one open call per stock per rule. Expiry = the longest STANDARD MONTHLY expiry 150-270 calendar days after the entry session whose ATM area traded that session (amended after DIAG 2, before any result: weeklies listed later were being picked); ATM = strike nearest the raw open (first of the 8 nearest with a daily bar that session, at its open); ITM70 / DEEP85 = delta nearest 0.70 / 0.85 using the ATM pick's Black-Scholes implied vol (rate 4.5%, no dividends). Exit = the stock rule's sell session or the last session on/before expiry - 30 days, whichever first, at the contract's close (else its first close within 5 sessions, else intrinsic). Costs: half-spread h = max(1%, median OPRA (ask-bid)/mid / 2 of the 4 contracts nearest the same target today, 150-270 days) applied to the past (no historical option quotes exist: Alpaca v1beta1/options/quotes 404), stress 1.5x h, ZAD fee 5 USD per contract each side. Option era from 2024-01-19 (Alpaca option bars start 2024-01-18); halves 2024 vs 2025-26 by entry; 20+ trades and 3+ 63-session blocks per half; judged per half: > 0 after h and fees and at 1.5x, beats the same stock bought with the same money over the same days (0.8% round trip), > 0 without the half's 2 best, block t >= 2.5. Per-year return (call, stock, SPY) and premium per contract (median, quartiles, share <= 300 USD) reported.",
-   "status": "pre-registered 2026-10-24 (squad 15); one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad15",
    "registered": "2026-10-24",
    "libraryCheck": "Not OPT-LH1 (calls 60-90 days on V15 mid-cap picks), OPT-CAT1 (calls before biotech catalysts), OPT-FOLLOW1 (options calls of followed traders) or OPT-UOA1 (unusual option activity): different signals, large liquid names only, 150-270 day calls, delta-chosen contracts, judged against the same stock with the same money.",
-   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen)."
+   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen).",
+   "tested": "2026-10-23",
+   "study": "squad15-lab.mjs -> data/squad15-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     73,
+     132
+    ],
+    "avg": [
+     0.4049,
+     0.6921
+    ],
+    "stress": [
+     0.3493,
+     0.6188
+    ],
+    "stock": [
+     0.0938,
+     0.2638
+    ],
+    "edge": [
+     0.3111,
+     0.4282
+    ],
+    "noTop2": [
+     0.299,
+     0.5289
+    ],
+    "tBlock": [
+     1.63,
+     1.13
+    ],
+    "perYear": [
+     {
+      "call": 0.9342,
+      "stock": 0.2165,
+      "spy": 0.1154
+     },
+     {
+      "call": 1.6968,
+      "stock": 0.6469,
+      "spy": 0.2407
+     }
+    ],
+    "premiumMedian": 2342.26,
+    "why": "block t 1.63 under 2.5 in the older half; block t 1.13 under 2.5 in the newer half",
+    "frozenAt": "2026-10-24T10:49:17.653Z"
+   }
   },
   {
    "id": "SQ15-MOM-ITM",
    "family": "Options: long calls on the large, liquid winners (Squad 15)",
    "name": "0.70-delta call (150-270 days) on each SQ6-MTUM / SQ6-QMOM pick with 500M USD+ daily trading",
    "explain": "RULE: 0.70-delta call (150-270 days) on each SQ6-MTUM / SQ6-QMOM pick with 500M USD+ daily trading. Signals: SQ6-MTUM (hold 126) + SQ6-QMOM (hold 63) picks from Squad 6's own code re-run offline keeping all trades, only stocks with a 63-session average traded value >= 500M USD at formation (a pick in both counts once, as MTUM). Contract: ITM70. Common (squad15-core.mjs header): LONG CALLS ONLY, one contract per signal, one open call per stock per rule. Expiry = the longest STANDARD MONTHLY expiry 150-270 calendar days after the entry session whose ATM area traded that session (amended after DIAG 2, before any result: weeklies listed later were being picked); ATM = strike nearest the raw open (first of the 8 nearest with a daily bar that session, at its open); ITM70 / DEEP85 = delta nearest 0.70 / 0.85 using the ATM pick's Black-Scholes implied vol (rate 4.5%, no dividends). Exit = the stock rule's sell session or the last session on/before expiry - 30 days, whichever first, at the contract's close (else its first close within 5 sessions, else intrinsic). Costs: half-spread h = max(1%, median OPRA (ask-bid)/mid / 2 of the 4 contracts nearest the same target today, 150-270 days) applied to the past (no historical option quotes exist: Alpaca v1beta1/options/quotes 404), stress 1.5x h, ZAD fee 5 USD per contract each side. Option era from 2024-01-19 (Alpaca option bars start 2024-01-18); halves 2024 vs 2025-26 by entry; 20+ trades and 3+ 63-session blocks per half; judged per half: > 0 after h and fees and at 1.5x, beats the same stock bought with the same money over the same days (0.8% round trip), > 0 without the half's 2 best, block t >= 2.5. Per-year return (call, stock, SPY) and premium per contract (median, quartiles, share <= 300 USD) reported.",
-   "status": "pre-registered 2026-10-24 (squad 15); one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad15",
    "registered": "2026-10-24",
    "libraryCheck": "Not OPT-LH1 (calls 60-90 days on V15 mid-cap picks), OPT-CAT1 (calls before biotech catalysts), OPT-FOLLOW1 (options calls of followed traders) or OPT-UOA1 (unusual option activity): different signals, large liquid names only, 150-270 day calls, delta-chosen contracts, judged against the same stock with the same money.",
-   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen)."
+   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen).",
+   "tested": "2026-10-23",
+   "study": "squad15-lab.mjs -> data/squad15-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     61,
+     117
+    ],
+    "avg": [
+     0.41,
+     0.6601
+    ],
+    "stress": [
+     0.3608,
+     0.5947
+    ],
+    "stock": [
+     0.096,
+     0.2743
+    ],
+    "edge": [
+     0.3139,
+     0.3859
+    ],
+    "noTop2": [
+     0.3191,
+     0.4818
+    ],
+    "tBlock": [
+     1.67,
+     1.01
+    ],
+    "perYear": [
+     {
+      "call": 0.9437,
+      "stock": 0.221,
+      "spy": 0.1292
+     },
+     {
+      "call": 1.5959,
+      "stock": 0.6631,
+      "spy": 0.2438
+     }
+    ],
+    "premiumMedian": 2839.58,
+    "why": "block t 1.67 under 2.5 in the older half; block t 1.01 under 2.5 in the newer half",
+    "frozenAt": "2026-10-24T10:49:17.653Z"
+   }
   },
   {
    "id": "SQ15-REPL",
    "family": "Options: long calls on the large, liquid winners (Squad 15)",
    "name": "Stock replacement: 0.85-delta call instead of the stock on PB12 + MTUM / QMOM signals",
    "explain": "RULE: Stock replacement: 0.85-delta call instead of the stock on PB12 + MTUM / QMOM signals. Signals: SQ11-PB12 trades (data/squad11-lab.json, all kept) + SQ6-MTUM (hold 126) + SQ6-QMOM (hold 63) picks from Squad 6's own code re-run offline keeping all trades, only stocks with a 63-session average traded value >= 500M USD at formation (a pick in both counts once, as MTUM). Contract: DEEP85. Common (squad15-core.mjs header): LONG CALLS ONLY, one contract per signal, one open call per stock per rule. Expiry = the longest STANDARD MONTHLY expiry 150-270 calendar days after the entry session whose ATM area traded that session (amended after DIAG 2, before any result: weeklies listed later were being picked); ATM = strike nearest the raw open (first of the 8 nearest with a daily bar that session, at its open); ITM70 / DEEP85 = delta nearest 0.70 / 0.85 using the ATM pick's Black-Scholes implied vol (rate 4.5%, no dividends). Exit = the stock rule's sell session or the last session on/before expiry - 30 days, whichever first, at the contract's close (else its first close within 5 sessions, else intrinsic). Costs: half-spread h = max(1%, median OPRA (ask-bid)/mid / 2 of the 4 contracts nearest the same target today, 150-270 days) applied to the past (no historical option quotes exist: Alpaca v1beta1/options/quotes 404), stress 1.5x h, ZAD fee 5 USD per contract each side. Option era from 2024-01-19 (Alpaca option bars start 2024-01-18); halves 2024 vs 2025-26 by entry; 20+ trades and 3+ 63-session blocks per half; judged per half: > 0 after h and fees and at 1.5x, beats the same stock bought with the same money over the same days (0.8% round trip), > 0 without the half's 2 best, block t >= 2.5. Per-year return (call, stock, SPY) and premium per contract (median, quartiles, share <= 300 USD) reported.",
-   "status": "pre-registered 2026-10-24 (squad 15); one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad15",
    "registered": "2026-10-24",
    "libraryCheck": "Not OPT-LH1 (calls 60-90 days on V15 mid-cap picks), OPT-CAT1 (calls before biotech catalysts), OPT-FOLLOW1 (options calls of followed traders) or OPT-UOA1 (unusual option activity): different signals, large liquid names only, 150-270 day calls, delta-chosen contracts, judged against the same stock with the same money.",
-   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen)."
+   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen).",
+   "tested": "2026-10-23",
+   "study": "squad15-lab.mjs -> data/squad15-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     83,
+     136
+    ],
+    "avg": [
+     0.4266,
+     0.4593
+    ],
+    "stress": [
+     0.3783,
+     0.4036
+    ],
+    "stock": [
+     0.1717,
+     0.2384
+    ],
+    "edge": [
+     0.2549,
+     0.221
+    ],
+    "noTop2": [
+     0.3212,
+     0.3871
+    ],
+    "tBlock": [
+     2.98,
+     2.41
+    ],
+    "perYear": [
+     {
+      "call": 0.9274,
+      "stock": 0.3732,
+      "spy": 0.1547
+     },
+     {
+      "call": 1.0619,
+      "stock": 0.551,
+      "spy": 0.2286
+     }
+    ],
+    "premiumMedian": 3934.632,
+    "why": "block t 2.41 under 2.5 in the newer half",
+    "frozenAt": "2026-10-24T10:49:17.653Z"
+   }
   },
   {
    "id": "SQ15-DIP",
    "family": "Options: long calls on the large, liquid winners (Squad 15)",
    "name": "INFORMATION: 0.70-delta call on each TIP-DIPLEAD signal (market 15% under its high, buy leaders)",
    "explain": "RULE: INFORMATION: 0.70-delta call on each TIP-DIPLEAD signal (market 15% under its high, buy leaders). Signals: TIP-DIPLEAD trades (data/tipster-lab.json). Contract: ITM70. Common (squad15-core.mjs header): LONG CALLS ONLY, one contract per signal, one open call per stock per rule. Expiry = the longest STANDARD MONTHLY expiry 150-270 calendar days after the entry session whose ATM area traded that session (amended after DIAG 2, before any result: weeklies listed later were being picked); ATM = strike nearest the raw open (first of the 8 nearest with a daily bar that session, at its open); ITM70 / DEEP85 = delta nearest 0.70 / 0.85 using the ATM pick's Black-Scholes implied vol (rate 4.5%, no dividends). Exit = the stock rule's sell session or the last session on/before expiry - 30 days, whichever first, at the contract's close (else its first close within 5 sessions, else intrinsic). Costs: half-spread h = max(1%, median OPRA (ask-bid)/mid / 2 of the 4 contracts nearest the same target today, 150-270 days) applied to the past (no historical option quotes exist: Alpaca v1beta1/options/quotes 404), stress 1.5x h, ZAD fee 5 USD per contract each side. Option era from 2024-01-19 (Alpaca option bars start 2024-01-18); halves 2024 vs 2025-26 by entry; 20+ trades and 3+ 63-session blocks per half; judged per half: > 0 after h and fees and at 1.5x, beats the same stock bought with the same money over the same days (0.8% round trip), > 0 without the half's 2 best, block t >= 2.5. Per-year return (call, stock, SPY) and premium per contract (median, quartiles, share <= 300 USD) reported. INFORMATION ONLY (few cases in the option era); never a verdict.",
-   "status": "pre-registered 2026-10-24 (squad 15); one-shot pending",
+   "status": "tested: information (too few cases); forward paper lane from 26 Oct 2026",
    "agent": "squad15",
    "registered": "2026-10-24",
    "libraryCheck": "Not OPT-LH1 (calls 60-90 days on V15 mid-cap picks), OPT-CAT1 (calls before biotech catalysts), OPT-FOLLOW1 (options calls of followed traders) or OPT-UOA1 (unusual option activity): different signals, large liquid names only, 150-270 day calls, delta-chosen contracts, judged against the same stock with the same money.",
-   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen)."
+   "note": "Pre-registered 2026-10-24 after the data probe and BEFORE any run (squad15-core.mjs = the exact rule; one version). One-shot by squad15-lab.mjs, first complete verdict frozen; forward paper lane (data/squad15-paper.jsonl) from 26 Oct 2026. Never wired into scan.mjs by this squad. Expiry rule amended 24 Oct 2026 after DIAG 2 (data check, no return seen).",
+   "tested": "2026-10-23",
+   "study": "squad15-lab.mjs -> data/squad15-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "INFORMATION (TOO FEW CASES)",
+    "n": [
+     0,
+     46
+    ],
+    "avg": [
+     null,
+     1.3517
+    ],
+    "stress": [
+     null,
+     1.2118
+    ],
+    "stock": [
+     null,
+     0.5273
+    ],
+    "edge": [
+     null,
+     0.8244
+    ],
+    "noTop2": [
+     null,
+     1.1483
+    ],
+    "tBlock": [
+     null,
+     null
+    ],
+    "perYear": [
+     {
+      "call": null,
+      "stock": null,
+      "spy": null
+     },
+     {
+      "call": 2.6255,
+      "stock": 1.0243,
+      "spy": 0.6412
+     }
+    ],
+    "premiumMedian": 1338.1315,
+    "why": "too few in the older half (0 priced trades, 0 blocks; 20 and 3 needed); too few in the newer half (46 priced trades, 1 blocks; 20 and 3 needed)",
+    "frozenAt": "2026-10-24T10:49:17.653Z"
+   }
   },
   {
    "id": "SQ14-PB12M",

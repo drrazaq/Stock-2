@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24T10:28:28.275Z",
+ "generatedAt": "2026-10-24T10:49:17.653Z",
  "preRegistered": "squad15-core.mjs header + RULES (24 Oct 2026, after the data probe, before any run) + data/strategy-library.json SQ15-*",
  "window": [
   "2024-01-19",
@@ -9,8 +9,8 @@
  "halves": "older = entries in 2024, newer = entries in 2025-2026",
  "costs": "half-spread h measured today on OPRA (floor 1%) applied to the past; stress 1.5x h; ZAD fee 5 USD per contract each side; stock 0.8% round trip",
  "data": {
-  "complete": false,
-  "failedRequests": 4,
+  "complete": true,
+  "failedRequests": 0,
   "requests": 245,
   "sources": {
    "PB12": {
@@ -89,12 +89,12 @@
   "spreadsMeasured": 238,
   "stocksPriced": 241,
   "medianHalfSpread": {
-   "ATM": 0.0549,
+   "ATM": 0.055,
    "ITM70": 0.0465,
    "DEEP85": 0.0383
   },
   "p75HalfSpread": {
-   "ATM": 0.0868,
+   "ATM": 0.0861,
    "ITM70": 0.0744,
    "DEEP85": 0.0641
   }
@@ -157,44 +157,1387 @@
    "name": "INFORMATION: 0.70-delta call on each TIP-DIPLEAD signal (market 15% under its high, buy leaders)"
   }
  },
- "firstRun": {},
+ "firstRun": {
+  "SQ15-PB12-ATM": {
+   "at": "2026-10-24T10:49:17.653Z",
+   "window": [
+    "2024-01-19",
+    "2026-10-23"
+   ],
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "block t 1.14 under 2.5 in the older half",
+   "results": {
+    "older": {
+     "n": 93,
+     "days": 63,
+     "stocks": 85,
+     "win": 0.4624,
+     "avg": 0.512,
+     "median": -0.2154,
+     "avgStress": 0.4411,
+     "stock": 0.1537,
+     "edge": 0.3583,
+     "edgeStress": 0.2874,
+     "callBeatStockShare": 0.4516,
+     "noTop2": 0.3127,
+     "best": 13.6806,
+     "worst": -1,
+     "lostHalfOrMore": 0.3871,
+     "blocks": 5,
+     "tBlock": 1.14,
+     "tBlockEdge": 0.9,
+     "perYear": {
+      "call": 1.052,
+      "stock": 0.3158,
+      "spy": 0.1624
+     },
+     "h": 0.0435,
+     "premium": {
+      "median": 2161.319,
+      "p25": 1373.5399,
+      "p75": 3916.4865,
+      "atOrUnder300": 0.0108
+     },
+     "exits": {
+      "close": 55,
+      "intrinsic": 15,
+      "lateClose": 23
+     }
+    },
+    "newer": {
+     "n": 128,
+     "days": 84,
+     "stocks": 116,
+     "win": 0.4766,
+     "avg": 0.6773,
+     "median": -0.0339,
+     "avgStress": 0.5974,
+     "stock": 0.1983,
+     "edge": 0.479,
+     "edgeStress": 0.3992,
+     "callBeatStockShare": 0.4297,
+     "noTop2": 0.503,
+     "best": 13.5162,
+     "worst": -1,
+     "lostHalfOrMore": 0.3828,
+     "blocks": 6,
+     "tBlock": 3.04,
+     "tBlockEdge": 3.04,
+     "perYear": {
+      "call": 1.4141,
+      "stock": 0.414,
+      "spy": 0.2208
+     },
+     "h": 0.0494,
+     "premium": {
+      "median": 2510.3708,
+      "p25": 1224.988,
+      "p75": 4970.464,
+      "atOrUnder300": 0.0234
+     },
+     "exits": {
+      "close": 70,
+      "lateClose": 31,
+      "intrinsic": 27
+     }
+    },
+    "all": {
+     "n": 221,
+     "days": 147,
+     "stocks": 159,
+     "win": 0.4706,
+     "avg": 0.6077,
+     "median": -0.1115,
+     "avgStress": 0.5317,
+     "stock": 0.1795,
+     "edge": 0.4282,
+     "edgeStress": 0.3521,
+     "callBeatStockShare": 0.4389,
+     "noTop2": 0.4891,
+     "best": 13.6806,
+     "worst": -1,
+     "lostHalfOrMore": 0.3846,
+     "blocks": 10,
+     "tBlock": 2.86,
+     "tBlockEdge": 2.58,
+     "perYear": {
+      "call": 1.2603,
+      "stock": 0.3723,
+      "spy": 0.196
+     },
+     "h": 0.047,
+     "premium": {
+      "median": 2290.235,
+      "p25": 1294.42,
+      "p75": 4262.12,
+      "atOrUnder300": 0.0181
+     },
+     "exits": {
+      "close": 125,
+      "intrinsic": 42,
+      "lateClose": 54
+     }
+    }
+   },
+   "name": "At-the-money call (150-270 days) on each SQ11-PB12 leader pullback",
+   "kind": "ATM",
+   "sources": [
+    "PB12"
+   ],
+   "counts": {
+    "PB12": {
+     "signals": 252,
+     "expiryRank0": 77,
+     "pricedATM": 221,
+     "pricedITM70": 177,
+     "pricedDEEP85": 116,
+     "expiryRank2": 46,
+     "noDEEP85Traded": 107,
+     "noITM70Traded": 45,
+     "expiryRank1": 87,
+     "expiryRank3": 19,
+     "noAtmTraded": 19,
+     "splitDuringHoldATM": 8,
+     "splitDuringHoldITM70": 7,
+     "splitDuringHoldDEEP85": 6,
+     "noContracts": 3,
+     "noStockPrice": 1
+    }
+   },
+   "hMedian": 0.055,
+   "sensitivity": {
+    "note": "INFORMATION ONLY, never a second chance: the registered verdict is above",
+    "atMidFeesOnly": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 93,
+      "avg": 0.6655,
+      "stock": 0.1537,
+      "edge": 0.5119,
+      "tBlock": 1.52
+     },
+     "newer": {
+      "n": 128,
+      "avg": 0.854,
+      "stock": 0.1983,
+      "edge": 0.6558,
+      "tBlock": 3.89
+     }
+    },
+    "closeExitsOnly": {
+     "wouldBe": "REJECTED",
+     "older": {
+      "n": 55,
+      "avg": -0.0099,
+      "stock": 0.0809,
+      "edge": -0.0908,
+      "tBlock": -1.77
+     },
+     "newer": {
+      "n": 70,
+      "avg": 0.1603,
+      "stock": 0.0831,
+      "edge": 0.0771,
+      "tBlock": 0.63
+     }
+    },
+    "withoutTheFee": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 93,
+      "avg": 0.5204,
+      "stock": 0.1537,
+      "edge": 0.3667,
+      "tBlock": 1.17
+     },
+     "newer": {
+      "n": 128,
+      "avg": 0.6862,
+      "stock": 0.1983,
+      "edge": 0.488,
+      "tBlock": 3.08
+     }
+    }
+   },
+   "frozenAt": "2026-10-24T10:49:17.653Z"
+  },
+  "SQ15-PB12-ITM": {
+   "at": "2026-10-24T10:49:17.653Z",
+   "window": [
+    "2024-01-19",
+    "2026-10-23"
+   ],
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "block t 1.17 under 2.5 in the older half",
+   "results": {
+    "older": {
+     "n": 76,
+     "days": 57,
+     "stocks": 71,
+     "win": 0.5132,
+     "avg": 0.5809,
+     "median": 0.055,
+     "avgStress": 0.5177,
+     "stock": 0.1836,
+     "edge": 0.3973,
+     "edgeStress": 0.3341,
+     "callBeatStockShare": 0.4868,
+     "noTop2": 0.3599,
+     "best": 12.1521,
+     "worst": -1,
+     "lostHalfOrMore": 0.3026,
+     "blocks": 5,
+     "tBlock": 1.17,
+     "tBlockEdge": 0.97,
+     "perYear": {
+      "call": 1.1875,
+      "stock": 0.3754,
+      "spy": 0.1662
+     },
+     "h": 0.0383,
+     "premium": {
+      "median": 2317.5885,
+      "p25": 1454.214,
+      "p75": 4531.292,
+      "atOrUnder300": 0
+     },
+     "exits": {
+      "close": 38,
+      "lateClose": 26,
+      "intrinsic": 12
+     }
+    },
+    "newer": {
+     "n": 101,
+     "days": 69,
+     "stocks": 93,
+     "win": 0.5644,
+     "avg": 0.8288,
+     "median": 0.2593,
+     "avgStress": 0.7551,
+     "stock": 0.2493,
+     "edge": 0.5795,
+     "edgeStress": 0.5058,
+     "callBeatStockShare": 0.5248,
+     "noTop2": 0.635,
+     "best": 12.8438,
+     "worst": -1,
+     "lostHalfOrMore": 0.3069,
+     "blocks": 6,
+     "tBlock": 2.99,
+     "tBlockEdge": 3.1,
+     "perYear": {
+      "call": 1.7205,
+      "stock": 0.5175,
+      "spy": 0.2205
+     },
+     "h": 0.0441,
+     "premium": {
+      "median": 2635.5205,
+      "p25": 1443.536,
+      "p75": 5052.488,
+      "atOrUnder300": 0.0297
+     },
+     "exits": {
+      "close": 49,
+      "lateClose": 27,
+      "intrinsic": 25
+     }
+    },
+    "all": {
+     "n": 177,
+     "days": 126,
+     "stocks": 134,
+     "win": 0.5424,
+     "avg": 0.7224,
+     "median": 0.1951,
+     "avgStress": 0.6532,
+     "stock": 0.2211,
+     "edge": 0.5013,
+     "edgeStress": 0.4321,
+     "callBeatStockShare": 0.5085,
+     "noTop2": 0.5878,
+     "best": 12.8438,
+     "worst": -1,
+     "lostHalfOrMore": 0.3051,
+     "blocks": 10,
+     "tBlock": 2.89,
+     "tBlockEdge": 2.74,
+     "perYear": {
+      "call": 1.4897,
+      "stock": 0.4559,
+      "spy": 0.197
+     },
+     "h": 0.0427,
+     "premium": {
+      "median": 2543.3904,
+      "p25": 1443.536,
+      "p75": 4873.9732,
+      "atOrUnder300": 0.0169
+     },
+     "exits": {
+      "close": 87,
+      "lateClose": 53,
+      "intrinsic": 37
+     }
+    }
+   },
+   "name": "0.70-delta call (150-270 days) on each SQ11-PB12 leader pullback",
+   "kind": "ITM70",
+   "sources": [
+    "PB12"
+   ],
+   "counts": {
+    "PB12": {
+     "signals": 252,
+     "expiryRank0": 77,
+     "pricedATM": 221,
+     "pricedITM70": 177,
+     "pricedDEEP85": 116,
+     "expiryRank2": 46,
+     "noDEEP85Traded": 107,
+     "noITM70Traded": 45,
+     "expiryRank1": 87,
+     "expiryRank3": 19,
+     "noAtmTraded": 19,
+     "splitDuringHoldATM": 8,
+     "splitDuringHoldITM70": 7,
+     "splitDuringHoldDEEP85": 6,
+     "noContracts": 3,
+     "noStockPrice": 1
+    }
+   },
+   "hMedian": 0.0465,
+   "sensitivity": {
+    "note": "INFORMATION ONLY, never a second chance: the registered verdict is above",
+    "atMidFeesOnly": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 76,
+      "avg": 0.7165,
+      "stock": 0.1836,
+      "edge": 0.5329,
+      "tBlock": 1.46
+     },
+     "newer": {
+      "n": 101,
+      "avg": 0.9893,
+      "stock": 0.2493,
+      "edge": 0.74,
+      "tBlock": 3.43
+     }
+    },
+    "closeExitsOnly": {
+     "wouldBe": "REJECTED",
+     "older": {
+      "n": 38,
+      "avg": -0.0276,
+      "stock": 0.0796,
+      "edge": -0.1072,
+      "tBlock": -0.43
+     },
+     "newer": {
+      "n": 49,
+      "avg": -0.0548,
+      "stock": 0.0239,
+      "edge": -0.0787,
+      "tBlock": 0.04
+     }
+    },
+    "withoutTheFee": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 76,
+      "avg": 0.5882,
+      "stock": 0.1836,
+      "edge": 0.4046,
+      "tBlock": 1.19
+     },
+     "newer": {
+      "n": 101,
+      "avg": 0.837,
+      "stock": 0.2493,
+      "edge": 0.5877,
+      "tBlock": 3.01
+     }
+    }
+   },
+   "frozenAt": "2026-10-24T10:49:17.653Z"
+  },
+  "SQ15-MOM-ATM": {
+   "at": "2026-10-24T10:49:17.653Z",
+   "window": [
+    "2024-01-19",
+    "2026-10-23"
+   ],
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "block t 1.63 under 2.5 in the older half; block t 1.13 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 73,
+     "days": 4,
+     "stocks": 57,
+     "win": 0.4932,
+     "avg": 0.4049,
+     "median": -0.0562,
+     "avgStress": 0.3493,
+     "stock": 0.0938,
+     "edge": 0.3111,
+     "edgeStress": 0.2554,
+     "callBeatStockShare": 0.4521,
+     "noTop2": 0.299,
+     "best": 5.0044,
+     "worst": -0.9977,
+     "lostHalfOrMore": 0.3288,
+     "blocks": 4,
+     "tBlock": 1.63,
+     "tBlockEdge": 1.52,
+     "perYear": {
+      "call": 0.9342,
+      "stock": 0.2165,
+      "spy": 0.1154
+     },
+     "h": 0.0361,
+     "premium": {
+      "median": 2175.2798,
+      "p25": 1504.5788,
+      "p75": 5371.92,
+      "atOrUnder300": 0.0137
+     },
+     "exits": {
+      "close": 60,
+      "intrinsic": 4,
+      "lateClose": 9
+     }
+    },
+    "newer": {
+     "n": 132,
+     "days": 6,
+     "stocks": 104,
+     "win": 0.4848,
+     "avg": 0.6921,
+     "median": -0.0609,
+     "avgStress": 0.6188,
+     "stock": 0.2638,
+     "edge": 0.4282,
+     "edgeStress": 0.355,
+     "callBeatStockShare": 0.4318,
+     "noTop2": 0.5289,
+     "best": 12.9417,
+     "worst": -1,
+     "lostHalfOrMore": 0.4015,
+     "blocks": 6,
+     "tBlock": 1.13,
+     "tBlockEdge": 0.76,
+     "perYear": {
+      "call": 1.6968,
+      "stock": 0.6469,
+      "spy": 0.2407
+     },
+     "h": 0.0435,
+     "premium": {
+      "median": 2599.6795,
+      "p25": 1267.47,
+      "p75": 4633.6052,
+      "atOrUnder300": 0.0152
+     },
+     "exits": {
+      "lateClose": 36,
+      "close": 80,
+      "intrinsic": 16
+     }
+    },
+    "all": {
+     "n": 205,
+     "days": 10,
+     "stocks": 133,
+     "win": 0.4878,
+     "avg": 0.5898,
+     "median": -0.0578,
+     "avgStress": 0.5228,
+     "stock": 0.2033,
+     "edge": 0.3865,
+     "edgeStress": 0.3195,
+     "callBeatStockShare": 0.439,
+     "noTop2": 0.4843,
+     "best": 12.9417,
+     "worst": -1,
+     "lostHalfOrMore": 0.3756,
+     "blocks": 9,
+     "tBlock": 1.76,
+     "tBlockEdge": 1.49,
+     "perYear": {
+      "call": 1.4145,
+      "stock": 0.4876,
+      "spy": 0.1943
+     },
+     "h": 0.0415,
+     "premium": {
+      "median": 2342.26,
+      "p25": 1312.211,
+      "p75": 4841.51,
+      "atOrUnder300": 0.0146
+     },
+     "exits": {
+      "close": 140,
+      "intrinsic": 20,
+      "lateClose": 45
+     }
+    }
+   },
+   "name": "At-the-money call (150-270 days) on each SQ6-MTUM / SQ6-QMOM pick with 500M USD+ daily trading",
+   "kind": "ATM",
+   "sources": [
+    "MOM"
+   ],
+   "counts": {
+    "MOM": {
+     "signals": 268,
+     "expiryRank1": 118,
+     "splitDuringHoldATM": 7,
+     "splitDuringHoldITM70": 7,
+     "splitDuringHoldDEEP85": 5,
+     "pricedATM": 252,
+     "pricedITM70": 221,
+     "pricedDEEP85": 173,
+     "noDEEP85Traded": 81,
+     "expiryRank0": 53,
+     "noITM70Traded": 31,
+     "noAtmTraded": 9,
+     "expiryRank2": 80,
+     "expiryRank3": 8
+    }
+   },
+   "hMedian": 0.055,
+   "sensitivity": {
+    "note": "INFORMATION ONLY, never a second chance: the registered verdict is above",
+    "atMidFeesOnly": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 73,
+      "avg": 0.525,
+      "stock": 0.0938,
+      "edge": 0.4311,
+      "tBlock": 1.89
+     },
+     "newer": {
+      "n": 132,
+      "avg": 0.8544,
+      "stock": 0.2638,
+      "edge": 0.5906,
+      "tBlock": 1.45
+     }
+    },
+    "closeExitsOnly": {
+     "wouldBe": "REJECTED",
+     "older": {
+      "n": 60,
+      "avg": 0.1683,
+      "stock": 0.0597,
+      "edge": 0.1087,
+      "tBlock": 0.85
+     },
+     "newer": {
+      "n": 80,
+      "avg": 0.1154,
+      "stock": 0.1188,
+      "edge": -0.0034,
+      "tBlock": 0.19
+     }
+    },
+    "withoutTheFee": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 73,
+      "avg": 0.4129,
+      "stock": 0.0938,
+      "edge": 0.3191,
+      "tBlock": 1.65
+     },
+     "newer": {
+      "n": 132,
+      "avg": 0.6998,
+      "stock": 0.2638,
+      "edge": 0.4359,
+      "tBlock": 1.14
+     }
+    }
+   },
+   "frozenAt": "2026-10-24T10:49:17.653Z"
+  },
+  "SQ15-MOM-ITM": {
+   "at": "2026-10-24T10:49:17.653Z",
+   "window": [
+    "2024-01-19",
+    "2026-10-23"
+   ],
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "block t 1.67 under 2.5 in the older half; block t 1.01 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 61,
+     "days": 4,
+     "stocks": 53,
+     "win": 0.5574,
+     "avg": 0.41,
+     "median": 0.0858,
+     "avgStress": 0.3608,
+     "stock": 0.096,
+     "edge": 0.3139,
+     "edgeStress": 0.2648,
+     "callBeatStockShare": 0.5082,
+     "noTop2": 0.3191,
+     "best": 3.4807,
+     "worst": -0.9973,
+     "lostHalfOrMore": 0.2459,
+     "blocks": 4,
+     "tBlock": 1.67,
+     "tBlockEdge": 1.55,
+     "perYear": {
+      "call": 0.9437,
+      "stock": 0.221,
+      "spy": 0.1292
+     },
+     "h": 0.0311,
+     "premium": {
+      "median": 2835.24,
+      "p25": 1737.47,
+      "p75": 5551.34,
+      "atOrUnder300": 0.0164
+     },
+     "exits": {
+      "close": 40,
+      "lateClose": 17,
+      "intrinsic": 4
+     }
+    },
+    "newer": {
+     "n": 117,
+     "days": 6,
+     "stocks": 95,
+     "win": 0.5043,
+     "avg": 0.6601,
+     "median": 0.0716,
+     "avgStress": 0.5947,
+     "stock": 0.2743,
+     "edge": 0.3859,
+     "edgeStress": 0.3204,
+     "callBeatStockShare": 0.4444,
+     "noTop2": 0.4818,
+     "best": 12.2452,
+     "worst": -1,
+     "lostHalfOrMore": 0.3932,
+     "blocks": 6,
+     "tBlock": 1.01,
+     "tBlockEdge": 0.62,
+     "perYear": {
+      "call": 1.5959,
+      "stock": 0.6631,
+      "spy": 0.2438
+     },
+     "h": 0.0432,
+     "premium": {
+      "median": 2845.475,
+      "p25": 1336.75,
+      "p75": 5166.863,
+      "atOrUnder300": 0
+     },
+     "exits": {
+      "close": 67,
+      "intrinsic": 13,
+      "lateClose": 37
+     }
+    },
+    "all": {
+     "n": 178,
+     "days": 10,
+     "stocks": 125,
+     "win": 0.5225,
+     "avg": 0.5744,
+     "median": 0.0789,
+     "avgStress": 0.5145,
+     "stock": 0.2132,
+     "edge": 0.3612,
+     "edgeStress": 0.3014,
+     "callBeatStockShare": 0.4663,
+     "noTop2": 0.4569,
+     "best": 12.2452,
+     "worst": -1,
+     "lostHalfOrMore": 0.3427,
+     "blocks": 9,
+     "tBlock": 1.52,
+     "tBlockEdge": 1.23,
+     "perYear": {
+      "call": 1.3651,
+      "stock": 0.5067,
+      "spy": 0.2032
+     },
+     "h": 0.0389,
+     "premium": {
+      "median": 2839.58,
+      "p25": 1456.855,
+      "p75": 5466.575,
+      "atOrUnder300": 0.0056
+     },
+     "exits": {
+      "close": 107,
+      "lateClose": 54,
+      "intrinsic": 17
+     }
+    }
+   },
+   "name": "0.70-delta call (150-270 days) on each SQ6-MTUM / SQ6-QMOM pick with 500M USD+ daily trading",
+   "kind": "ITM70",
+   "sources": [
+    "MOM"
+   ],
+   "counts": {
+    "MOM": {
+     "signals": 268,
+     "expiryRank1": 118,
+     "splitDuringHoldATM": 7,
+     "splitDuringHoldITM70": 7,
+     "splitDuringHoldDEEP85": 5,
+     "pricedATM": 252,
+     "pricedITM70": 221,
+     "pricedDEEP85": 173,
+     "noDEEP85Traded": 81,
+     "expiryRank0": 53,
+     "noITM70Traded": 31,
+     "noAtmTraded": 9,
+     "expiryRank2": 80,
+     "expiryRank3": 8
+    }
+   },
+   "hMedian": 0.0465,
+   "sensitivity": {
+    "note": "INFORMATION ONLY, never a second chance: the registered verdict is above",
+    "atMidFeesOnly": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 61,
+      "avg": 0.5157,
+      "stock": 0.096,
+      "edge": 0.4196,
+      "tBlock": 1.93
+     },
+     "newer": {
+      "n": 117,
+      "avg": 0.8045,
+      "stock": 0.2743,
+      "edge": 0.5302,
+      "tBlock": 1.28
+     }
+    },
+    "closeExitsOnly": {
+     "wouldBe": "REJECTED",
+     "older": {
+      "n": 40,
+      "avg": 0.1529,
+      "stock": 0.0454,
+      "edge": 0.1075,
+      "tBlock": 0.77
+     },
+     "newer": {
+      "n": 67,
+      "avg": 0.0773,
+      "stock": 0.1088,
+      "edge": -0.0315,
+      "tBlock": 0.58
+     }
+    },
+    "withoutTheFee": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 61,
+      "avg": 0.4167,
+      "stock": 0.096,
+      "edge": 0.3206,
+      "tBlock": 1.69
+     },
+     "newer": {
+      "n": 117,
+      "avg": 0.6672,
+      "stock": 0.2743,
+      "edge": 0.3929,
+      "tBlock": 1.02
+     }
+    }
+   },
+   "frozenAt": "2026-10-24T10:49:17.653Z"
+  },
+  "SQ15-REPL": {
+   "at": "2026-10-24T10:49:17.653Z",
+   "window": [
+    "2024-01-19",
+    "2026-10-23"
+   ],
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "block t 2.41 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 83,
+     "days": 35,
+     "stocks": 72,
+     "win": 0.6627,
+     "avg": 0.4266,
+     "median": 0.2618,
+     "avgStress": 0.3783,
+     "stock": 0.1717,
+     "edge": 0.2549,
+     "edgeStress": 0.2067,
+     "callBeatStockShare": 0.5783,
+     "noTop2": 0.3212,
+     "best": 6.9701,
+     "worst": -0.9895,
+     "lostHalfOrMore": 0.1807,
+     "blocks": 5,
+     "tBlock": 2.98,
+     "tBlockEdge": 2.16,
+     "perYear": {
+      "call": 0.9274,
+      "stock": 0.3732,
+      "spy": 0.1547
+     },
+     "h": 0.029,
+     "premium": {
+      "median": 3643.106,
+      "p25": 1794.42,
+      "p75": 6042.47,
+      "atOrUnder300": 0
+     },
+     "exits": {
+      "close": 45,
+      "lateClose": 21,
+      "intrinsic": 17
+     }
+    },
+    "newer": {
+     "n": 136,
+     "days": 41,
+     "stocks": 111,
+     "win": 0.5441,
+     "avg": 0.4593,
+     "median": 0.1311,
+     "avgStress": 0.4036,
+     "stock": 0.2384,
+     "edge": 0.221,
+     "edgeStress": 0.1653,
+     "callBeatStockShare": 0.4779,
+     "noTop2": 0.3871,
+     "best": 5.9329,
+     "worst": -0.9854,
+     "lostHalfOrMore": 0.2426,
+     "blocks": 6,
+     "tBlock": 2.41,
+     "tBlockEdge": 2.37,
+     "perYear": {
+      "call": 1.0619,
+      "stock": 0.551,
+      "spy": 0.2286
+     },
+     "h": 0.0347,
+     "premium": {
+      "median": 4298.5575,
+      "p25": 1790.2752,
+      "p75": 8450.978,
+      "atOrUnder300": 0.0074
+     },
+     "exits": {
+      "close": 56,
+      "lateClose": 45,
+      "intrinsic": 35
+     }
+    },
+    "all": {
+     "n": 219,
+     "days": 76,
+     "stocks": 149,
+     "win": 0.589,
+     "avg": 0.4469,
+     "median": 0.1965,
+     "avgStress": 0.394,
+     "stock": 0.2131,
+     "edge": 0.2338,
+     "edgeStress": 0.181,
+     "callBeatStockShare": 0.516,
+     "noTop2": 0.3916,
+     "best": 6.9701,
+     "worst": -0.9895,
+     "lostHalfOrMore": 0.2192,
+     "blocks": 10,
+     "tBlock": 3.13,
+     "tBlockEdge": 2.76,
+     "perYear": {
+      "call": 1.009,
+      "stock": 0.4811,
+      "spy": 0.1995
+     },
+     "h": 0.0328,
+     "premium": {
+      "median": 3934.632,
+      "p25": 1790.2752,
+      "p75": 8105.7605,
+      "atOrUnder300": 0.0046
+     },
+     "exits": {
+      "close": 101,
+      "lateClose": 66,
+      "intrinsic": 52
+     }
+    }
+   },
+   "name": "Stock replacement: 0.85-delta call instead of the stock on PB12 + MTUM / QMOM signals",
+   "kind": "DEEP85",
+   "sources": [
+    "PB12",
+    "MOM"
+   ],
+   "counts": {
+    "PB12": {
+     "signals": 252,
+     "expiryRank0": 77,
+     "pricedATM": 221,
+     "pricedITM70": 177,
+     "pricedDEEP85": 116,
+     "expiryRank2": 46,
+     "noDEEP85Traded": 107,
+     "noITM70Traded": 45,
+     "expiryRank1": 87,
+     "expiryRank3": 19,
+     "noAtmTraded": 19,
+     "splitDuringHoldATM": 8,
+     "splitDuringHoldITM70": 7,
+     "splitDuringHoldDEEP85": 6,
+     "noContracts": 3,
+     "noStockPrice": 1
+    },
+    "MOM": {
+     "signals": 268,
+     "expiryRank1": 118,
+     "splitDuringHoldATM": 7,
+     "splitDuringHoldITM70": 7,
+     "splitDuringHoldDEEP85": 5,
+     "pricedATM": 252,
+     "pricedITM70": 221,
+     "pricedDEEP85": 173,
+     "noDEEP85Traded": 81,
+     "expiryRank0": 53,
+     "noITM70Traded": 31,
+     "noAtmTraded": 9,
+     "expiryRank2": 80,
+     "expiryRank3": 8
+    }
+   },
+   "hMedian": 0.0383,
+   "sensitivity": {
+    "note": "INFORMATION ONLY, never a second chance: the registered verdict is above",
+    "atMidFeesOnly": {
+     "wouldBe": "TRADABLE SMALL",
+     "older": {
+      "n": 83,
+      "avg": 0.5309,
+      "stock": 0.1717,
+      "edge": 0.3592,
+      "tBlock": 3.71
+     },
+     "newer": {
+      "n": 136,
+      "avg": 0.5823,
+      "stock": 0.2384,
+      "edge": 0.3439,
+      "tBlock": 2.79
+     }
+    },
+    "closeExitsOnly": {
+     "wouldBe": "REJECTED",
+     "older": {
+      "n": 45,
+      "avg": 0.0776,
+      "stock": 0.0517,
+      "edge": 0.026,
+      "tBlock": 0.66
+     },
+     "newer": {
+      "n": 56,
+      "avg": -0.1843,
+      "stock": -0.0019,
+      "edge": -0.1824,
+      "tBlock": -0.37
+     }
+    },
+    "withoutTheFee": {
+     "wouldBe": "NOT PROVEN",
+     "older": {
+      "n": 83,
+      "avg": 0.4315,
+      "stock": 0.1717,
+      "edge": 0.2599,
+      "tBlock": 3.01
+     },
+     "newer": {
+      "n": 136,
+      "avg": 0.4647,
+      "stock": 0.2384,
+      "edge": 0.2263,
+      "tBlock": 2.43
+     }
+    }
+   },
+   "frozenAt": "2026-10-24T10:49:17.653Z"
+  },
+  "SQ15-DIP": {
+   "at": "2026-10-24T10:49:17.653Z",
+   "window": [
+    "2024-01-19",
+    "2026-10-23"
+   ],
+   "bar": 4.02,
+   "verdict": "INFORMATION (TOO FEW CASES)",
+   "why": "too few in the older half (0 priced trades, 0 blocks; 20 and 3 needed); too few in the newer half (46 priced trades, 1 blocks; 20 and 3 needed)",
+   "results": {
+    "older": {
+     "n": 0,
+     "days": 0,
+     "stocks": 0,
+     "win": null,
+     "avg": null,
+     "median": null,
+     "avgStress": null,
+     "stock": null,
+     "edge": null,
+     "edgeStress": null,
+     "callBeatStockShare": null,
+     "noTop2": null,
+     "best": null,
+     "worst": null,
+     "lostHalfOrMore": null,
+     "blocks": 0,
+     "tBlock": null,
+     "tBlockEdge": null,
+     "perYear": {
+      "call": null,
+      "stock": null,
+      "spy": null
+     },
+     "h": null,
+     "premium": {
+      "median": null,
+      "p25": null,
+      "p75": null,
+      "atOrUnder300": null
+     },
+     "exits": {}
+    },
+    "newer": {
+     "n": 46,
+     "days": 4,
+     "stocks": 46,
+     "win": 0.7391,
+     "avg": 1.3517,
+     "median": 1.173,
+     "avgStress": 1.2118,
+     "stock": 0.5273,
+     "edge": 0.8244,
+     "edgeStress": 0.6845,
+     "callBeatStockShare": 0.7174,
+     "noTop2": 1.1483,
+     "best": 6.0016,
+     "worst": -1,
+     "lostHalfOrMore": 0.1739,
+     "blocks": 1,
+     "tBlock": null,
+     "tBlockEdge": null,
+     "perYear": {
+      "call": 2.6255,
+      "stock": 1.0243,
+      "spy": 0.6412
+     },
+     "h": 0.0615,
+     "premium": {
+      "median": 1338.1315,
+      "p25": 681.25,
+      "p75": 2386.829,
+      "atOrUnder300": 0.087
+     },
+     "exits": {
+      "lateClose": 11,
+      "intrinsic": 24,
+      "close": 11
+     }
+    },
+    "all": {
+     "n": 46,
+     "days": 4,
+     "stocks": 46,
+     "win": 0.7391,
+     "avg": 1.3517,
+     "median": 1.173,
+     "avgStress": 1.2118,
+     "stock": 0.5273,
+     "edge": 0.8244,
+     "edgeStress": 0.6845,
+     "callBeatStockShare": 0.7174,
+     "noTop2": 1.1483,
+     "best": 6.0016,
+     "worst": -1,
+     "lostHalfOrMore": 0.1739,
+     "blocks": 1,
+     "tBlock": null,
+     "tBlockEdge": null,
+     "perYear": {
+      "call": 2.6255,
+      "stock": 1.0243,
+      "spy": 0.6412
+     },
+     "h": 0.0615,
+     "premium": {
+      "median": 1338.1315,
+      "p25": 681.25,
+      "p75": 2386.829,
+      "atOrUnder300": 0.087
+     },
+     "exits": {
+      "lateClose": 11,
+      "intrinsic": 24,
+      "close": 11
+     }
+    }
+   },
+   "name": "INFORMATION: 0.70-delta call on each TIP-DIPLEAD signal (market 15% under its high, buy leaders)",
+   "kind": "ITM70",
+   "sources": [
+    "DIP"
+   ],
+   "counts": {
+    "DIP": {
+     "signals": 73,
+     "noAtmTraded": 17,
+     "expiryRank0": 24,
+     "pricedATM": 53,
+     "pricedITM70": 46,
+     "pricedDEEP85": 30,
+     "expiryRank1": 4,
+     "noITM70Traded": 8,
+     "noDEEP85Traded": 24,
+     "noContracts": 2,
+     "expiryRank3": 16,
+     "expiryRank2": 10,
+     "splitDuringHoldATM": 1
+    }
+   },
+   "hMedian": 0.0465,
+   "sensitivity": {
+    "note": "INFORMATION ONLY, never a second chance: the registered verdict is above",
+    "atMidFeesOnly": {
+     "wouldBe": "TOO FEW CASES",
+     "older": {
+      "n": 0,
+      "avg": null,
+      "stock": null,
+      "edge": null,
+      "tBlock": null
+     },
+     "newer": {
+      "n": 46,
+      "avg": 1.6986,
+      "stock": 0.5273,
+      "edge": 1.1713,
+      "tBlock": null
+     }
+    },
+    "closeExitsOnly": {
+     "wouldBe": "TOO FEW CASES",
+     "older": {
+      "n": 0,
+      "avg": null,
+      "stock": null,
+      "edge": null,
+      "tBlock": null
+     },
+     "newer": {
+      "n": 11,
+      "avg": -0.1385,
+      "stock": 0.1655,
+      "edge": -0.304,
+      "tBlock": null
+     }
+    },
+    "withoutTheFee": {
+     "wouldBe": "TOO FEW CASES",
+     "older": {
+      "n": 0,
+      "avg": null,
+      "stock": null,
+      "edge": null,
+      "tBlock": null
+     },
+     "newer": {
+      "n": 46,
+      "avg": 1.3712,
+      "stock": 0.5273,
+      "edge": 0.8438,
+      "tBlock": null
+     }
+    }
+   },
+   "atm": {
+    "verdict": "INFORMATION (TOO FEW CASES)",
+    "results": {
+     "older": {
+      "n": 0,
+      "days": 0,
+      "stocks": 0,
+      "win": null,
+      "avg": null,
+      "median": null,
+      "avgStress": null,
+      "stock": null,
+      "edge": null,
+      "edgeStress": null,
+      "callBeatStockShare": null,
+      "noTop2": null,
+      "best": null,
+      "worst": null,
+      "lostHalfOrMore": null,
+      "blocks": 0,
+      "tBlock": null,
+      "tBlockEdge": null,
+      "perYear": {
+       "call": null,
+       "stock": null,
+       "spy": null
+      },
+      "h": null,
+      "premium": {
+       "median": null,
+       "p25": null,
+       "p75": null,
+       "atOrUnder300": null
+      },
+      "exits": {}
+     },
+     "newer": {
+      "n": 53,
+      "days": 4,
+      "stocks": 53,
+      "win": 0.7358,
+      "avg": 1.5915,
+      "median": 1.3106,
+      "avgStress": 1.4138,
+      "stock": 0.5346,
+      "edge": 1.0569,
+      "edgeStress": 0.8792,
+      "callBeatStockShare": 0.717,
+      "noTop2": 1.3331,
+      "best": 8.2625,
+      "worst": -1,
+      "lostHalfOrMore": 0.1887,
+      "blocks": 1,
+      "tBlock": null,
+      "tBlockEdge": null,
+      "perYear": {
+       "call": 3.1351,
+       "stock": 1.053,
+       "spy": 0.6519
+      },
+      "h": 0.079,
+      "premium": {
+       "median": 1187.885,
+       "p25": 546.1075,
+       "p75": 1971.365,
+       "atOrUnder300": 0.0943
+      },
+      "exits": {
+       "lateClose": 17,
+       "intrinsic": 21,
+       "close": 15
+      }
+     },
+     "all": {
+      "n": 53,
+      "days": 4,
+      "stocks": 53,
+      "win": 0.7358,
+      "avg": 1.5915,
+      "median": 1.3106,
+      "avgStress": 1.4138,
+      "stock": 0.5346,
+      "edge": 1.0569,
+      "edgeStress": 0.8792,
+      "callBeatStockShare": 0.717,
+      "noTop2": 1.3331,
+      "best": 8.2625,
+      "worst": -1,
+      "lostHalfOrMore": 0.1887,
+      "blocks": 1,
+      "tBlock": null,
+      "tBlockEdge": null,
+      "perYear": {
+       "call": 3.1351,
+       "stock": 1.053,
+       "spy": 0.6519
+      },
+      "h": 0.079,
+      "premium": {
+       "median": 1187.885,
+       "p25": 546.1075,
+       "p75": 1971.365,
+       "atOrUnder300": 0.0943
+      },
+      "exits": {
+       "lateClose": 17,
+       "intrinsic": 21,
+       "close": 15
+      }
+     }
+    }
+   },
+   "frozenAt": "2026-10-24T10:49:17.653Z"
+  }
+ },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-24T10:28:28.276Z",
+  "at": "2026-10-24T10:49:17.653Z",
   "results": {
    "SQ15-PB12-ATM": {
     "verdict": "NOT PROVEN",
-    "why": "block t 1.15 under 2.5 in the older half",
+    "why": "block t 1.14 under 2.5 in the older half",
     "results": {
      "older": {
       "n": 93,
       "days": 63,
       "stocks": 85,
       "win": 0.4624,
-      "avg": 0.5129,
+      "avg": 0.512,
       "median": -0.2154,
-      "avgStress": 0.4424,
+      "avgStress": 0.4411,
       "stock": 0.1537,
-      "edge": 0.3592,
-      "edgeStress": 0.2888,
+      "edge": 0.3583,
+      "edgeStress": 0.2874,
       "callBeatStockShare": 0.4516,
-      "noTop2": 0.3136,
+      "noTop2": 0.3127,
       "best": 13.6806,
       "worst": -1,
       "lostHalfOrMore": 0.3871,
       "blocks": 5,
-      "tBlock": 1.15,
-      "tBlockEdge": 0.91,
+      "tBlock": 1.14,
+      "tBlockEdge": 0.9,
       "perYear": {
-       "call": 1.0539,
+       "call": 1.052,
        "stock": 0.3158,
        "spy": 0.1624
       },
-      "h": 0.0434,
+      "h": 0.0435,
       "premium": {
        "median": 2161.319,
        "p25": 1373.5399,
-       "p75": 3917.9773,
+       "p75": 3916.4865,
        "atOrUnder300": 0.0108
       },
       "exits": {
@@ -208,14 +1551,14 @@
       "days": 84,
       "stocks": 116,
       "win": 0.4766,
-      "avg": 0.6754,
+      "avg": 0.6773,
       "median": -0.0339,
-      "avgStress": 0.5948,
+      "avgStress": 0.5974,
       "stock": 0.1983,
-      "edge": 0.4771,
-      "edgeStress": 0.3966,
-      "callBeatStockShare": 0.4219,
-      "noTop2": 0.5011,
+      "edge": 0.479,
+      "edgeStress": 0.3992,
+      "callBeatStockShare": 0.4297,
+      "noTop2": 0.503,
       "best": 13.5162,
       "worst": -1,
       "lostHalfOrMore": 0.3828,
@@ -223,13 +1566,13 @@
       "tBlock": 3.04,
       "tBlockEdge": 3.04,
       "perYear": {
-       "call": 1.4102,
+       "call": 1.4141,
        "stock": 0.414,
        "spy": 0.2208
       },
-      "h": 0.0495,
+      "h": 0.0494,
       "premium": {
-       "median": 2511.1748,
+       "median": 2510.3708,
        "p25": 1224.988,
        "p75": 4970.464,
        "atOrUnder300": 0.0234
@@ -245,28 +1588,28 @@
       "days": 147,
       "stocks": 159,
       "win": 0.4706,
-      "avg": 0.607,
+      "avg": 0.6077,
       "median": -0.1115,
-      "avgStress": 0.5307,
+      "avgStress": 0.5317,
       "stock": 0.1795,
-      "edge": 0.4275,
-      "edgeStress": 0.3512,
-      "callBeatStockShare": 0.4344,
-      "noTop2": 0.4884,
+      "edge": 0.4282,
+      "edgeStress": 0.3521,
+      "callBeatStockShare": 0.4389,
+      "noTop2": 0.4891,
       "best": 13.6806,
       "worst": -1,
       "lostHalfOrMore": 0.3846,
       "blocks": 10,
-      "tBlock": 2.87,
+      "tBlock": 2.86,
       "tBlockEdge": 2.58,
       "perYear": {
-       "call": 1.2589,
+       "call": 1.2603,
        "stock": 0.3723,
        "spy": 0.196
       },
-      "h": 0.0468,
+      "h": 0.047,
       "premium": {
-       "median": 2312.968,
+       "median": 2290.235,
        "p25": 1294.42,
        "p75": 4262.12,
        "atOrUnder300": 0.0181
@@ -303,7 +1646,7 @@
       "noStockPrice": 1
      }
     },
-    "hMedian": 0.0549,
+    "hMedian": 0.055,
     "sensitivity": {
      "note": "INFORMATION ONLY, never a second chance: the registered verdict is above",
      "atMidFeesOnly": {
@@ -327,33 +1670,33 @@
       "wouldBe": "REJECTED",
       "older": {
        "n": 55,
-       "avg": -0.0089,
+       "avg": -0.0099,
        "stock": 0.0809,
-       "edge": -0.0897,
+       "edge": -0.0908,
        "tBlock": -1.77
       },
       "newer": {
        "n": 70,
-       "avg": 0.1585,
+       "avg": 0.1603,
        "stock": 0.0831,
-       "edge": 0.0753,
-       "tBlock": 0.62
+       "edge": 0.0771,
+       "tBlock": 0.63
       }
      },
      "withoutTheFee": {
       "wouldBe": "NOT PROVEN",
       "older": {
        "n": 93,
-       "avg": 0.5213,
+       "avg": 0.5204,
        "stock": 0.1537,
-       "edge": 0.3676,
-       "tBlock": 1.18
+       "edge": 0.3667,
+       "tBlock": 1.17
       },
       "newer": {
        "n": 128,
-       "avg": 0.6844,
+       "avg": 0.6862,
        "stock": 0.1983,
-       "edge": 0.4861,
+       "edge": 0.488,
        "tBlock": 3.08
       }
      }
@@ -565,14 +1908,14 @@
       "days": 4,
       "stocks": 57,
       "win": 0.4932,
-      "avg": 0.4053,
+      "avg": 0.4049,
       "median": -0.0562,
-      "avgStress": 0.3498,
+      "avgStress": 0.3493,
       "stock": 0.0938,
-      "edge": 0.3115,
-      "edgeStress": 0.256,
+      "edge": 0.3111,
+      "edgeStress": 0.2554,
       "callBeatStockShare": 0.4521,
-      "noTop2": 0.2994,
+      "noTop2": 0.299,
       "best": 5.0044,
       "worst": -0.9977,
       "lostHalfOrMore": 0.3288,
@@ -580,7 +1923,7 @@
       "tBlock": 1.63,
       "tBlockEdge": 1.52,
       "perYear": {
-       "call": 0.935,
+       "call": 0.9342,
        "stock": 0.2165,
        "spy": 0.1154
       },
@@ -602,14 +1945,14 @@
       "days": 6,
       "stocks": 104,
       "win": 0.4848,
-      "avg": 0.6913,
+      "avg": 0.6921,
       "median": -0.0609,
-      "avgStress": 0.6179,
+      "avgStress": 0.6188,
       "stock": 0.2638,
-      "edge": 0.4275,
-      "edgeStress": 0.354,
+      "edge": 0.4282,
+      "edgeStress": 0.355,
       "callBeatStockShare": 0.4318,
-      "noTop2": 0.5281,
+      "noTop2": 0.5289,
       "best": 12.9417,
       "worst": -1,
       "lostHalfOrMore": 0.4015,
@@ -617,14 +1960,14 @@
       "tBlock": 1.13,
       "tBlockEdge": 0.76,
       "perYear": {
-       "call": 1.695,
+       "call": 1.6968,
        "stock": 0.6469,
        "spy": 0.2407
       },
-      "h": 0.0432,
+      "h": 0.0435,
       "premium": {
        "median": 2599.6795,
-       "p25": 1281.04,
+       "p25": 1267.47,
        "p75": 4633.6052,
        "atOrUnder300": 0.0152
       },
@@ -639,14 +1982,14 @@
       "days": 10,
       "stocks": 133,
       "win": 0.4878,
-      "avg": 0.5895,
+      "avg": 0.5898,
       "median": -0.0578,
-      "avgStress": 0.5224,
+      "avgStress": 0.5228,
       "stock": 0.2033,
-      "edge": 0.3862,
-      "edgeStress": 0.3191,
+      "edge": 0.3865,
+      "edgeStress": 0.3195,
       "callBeatStockShare": 0.439,
-      "noTop2": 0.484,
+      "noTop2": 0.4843,
       "best": 12.9417,
       "worst": -1,
       "lostHalfOrMore": 0.3756,
@@ -654,11 +1997,11 @@
       "tBlock": 1.76,
       "tBlockEdge": 1.49,
       "perYear": {
-       "call": 1.4137,
+       "call": 1.4145,
        "stock": 0.4876,
        "spy": 0.1943
       },
-      "h": 0.0409,
+      "h": 0.0415,
       "premium": {
        "median": 2342.26,
        "p25": 1312.211,
@@ -695,7 +2038,7 @@
       "expiryRank3": 8
      }
     },
-    "hMedian": 0.0549,
+    "hMedian": 0.055,
     "sensitivity": {
      "note": "INFORMATION ONLY, never a second chance: the registered verdict is above",
      "atMidFeesOnly": {
@@ -719,16 +2062,16 @@
       "wouldBe": "REJECTED",
       "older": {
        "n": 60,
-       "avg": 0.1688,
+       "avg": 0.1683,
        "stock": 0.0597,
-       "edge": 0.1091,
+       "edge": 0.1087,
        "tBlock": 0.85
       },
       "newer": {
        "n": 80,
-       "avg": 0.1153,
+       "avg": 0.1154,
        "stock": 0.1188,
-       "edge": -0.0036,
+       "edge": -0.0034,
        "tBlock": 0.19
       }
      },
@@ -736,16 +2079,16 @@
       "wouldBe": "NOT PROVEN",
       "older": {
        "n": 73,
-       "avg": 0.4133,
+       "avg": 0.4129,
        "stock": 0.0938,
-       "edge": 0.3195,
+       "edge": 0.3191,
        "tBlock": 1.65
       },
       "newer": {
        "n": 132,
-       "avg": 0.699,
+       "avg": 0.6998,
        "stock": 0.2638,
-       "edge": 0.4352,
+       "edge": 0.4359,
        "tBlock": 1.14
       }
      }
@@ -1390,14 +2733,14 @@
        "days": 4,
        "stocks": 53,
        "win": 0.7358,
-       "avg": 1.5888,
+       "avg": 1.5915,
        "median": 1.3106,
-       "avgStress": 1.4101,
+       "avgStress": 1.4138,
        "stock": 0.5346,
-       "edge": 1.0542,
-       "edgeStress": 0.8755,
+       "edge": 1.0569,
+       "edgeStress": 0.8792,
        "callBeatStockShare": 0.717,
-       "noTop2": 1.3303,
+       "noTop2": 1.3331,
        "best": 8.2625,
        "worst": -1,
        "lostHalfOrMore": 0.1887,
@@ -1405,14 +2748,14 @@
        "tBlock": null,
        "tBlockEdge": null,
        "perYear": {
-        "call": 3.1298,
+        "call": 3.1351,
         "stock": 1.053,
         "spy": 0.6519
        },
-       "h": 0.0827,
+       "h": 0.079,
        "premium": {
         "median": 1187.885,
-        "p25": 567.873,
+        "p25": 546.1075,
         "p75": 1971.365,
         "atOrUnder300": 0.0943
        },
@@ -1427,14 +2770,14 @@
        "days": 4,
        "stocks": 53,
        "win": 0.7358,
-       "avg": 1.5888,
+       "avg": 1.5915,
        "median": 1.3106,
-       "avgStress": 1.4101,
+       "avgStress": 1.4138,
        "stock": 0.5346,
-       "edge": 1.0542,
-       "edgeStress": 0.8755,
+       "edge": 1.0569,
+       "edgeStress": 0.8792,
        "callBeatStockShare": 0.717,
-       "noTop2": 1.3303,
+       "noTop2": 1.3331,
        "best": 8.2625,
        "worst": -1,
        "lostHalfOrMore": 0.1887,
@@ -1442,14 +2785,14 @@
        "tBlock": null,
        "tBlockEdge": null,
        "perYear": {
-        "call": 3.1298,
+        "call": 3.1351,
         "stock": 1.053,
         "spy": 0.6519
        },
-       "h": 0.0827,
+       "h": 0.079,
        "premium": {
         "median": 1187.885,
-        "p25": 567.873,
+        "p25": 546.1075,
         "p75": 1971.365,
         "atOrUnder300": 0.0943
        },
@@ -1580,9 +2923,9 @@
     "by": "close",
     "iv": 0.4095,
     "d": null,
-    "h": 0.048,
-    "prem": 4097.44,
-    "net": 1.1486,
+    "h": 0.0587,
+    "prem": 4139.2235,
+    "net": 1.103,
     "st": 0.3044,
     "spy": 0.1123
    },
@@ -2000,9 +3343,9 @@
     "by": "lateClose",
     "iv": 0.2716,
     "d": null,
-    "h": 0.0499,
-    "prem": 3917.9773,
-    "net": 0.4118,
+    "h": 0.0495,
+    "prem": 3916.4865,
+    "net": 0.4129,
     "st": 0.1303,
     "spy": 0.1327
    },
@@ -2180,9 +3523,9 @@
     "by": "intrinsic",
     "iv": 0.2137,
     "d": null,
-    "h": 0.0389,
-    "prem": 4603.1714,
-    "net": 3.0271,
+    "h": 0.0423,
+    "prem": 4618.2198,
+    "net": 2.9998,
     "st": 0.2462,
     "spy": 0.1061
    },
@@ -2300,9 +3643,9 @@
     "by": "close",
     "iv": 0.343,
     "d": null,
-    "h": 0.1146,
-    "prem": 668.187,
-    "net": -0.9479,
+    "h": 0.0715,
+    "prem": 642.5425,
+    "net": -0.9428,
     "st": -0.1259,
     "spy": 0.1173
    },
@@ -2400,9 +3743,9 @@
     "by": "close",
     "iv": 0.6925,
     "d": null,
-    "h": 0.0404,
-    "prem": 5522.2412,
-    "net": 0.0928,
+    "h": 0.0487,
+    "prem": 5566.2561,
+    "net": 0.0748,
     "st": 0.1968,
     "spy": 0.0596
    },
@@ -3200,9 +4543,9 @@
     "by": "close",
     "iv": 0.2359,
     "d": null,
-    "h": 0.0499,
-    "prem": 3417.175,
-    "net": -0.5079,
+    "h": 0.0495,
+    "prem": 3415.875,
+    "net": -0.5076,
     "st": 0.0044,
     "spy": 0.0261
    },
@@ -3740,9 +5083,9 @@
     "by": "intrinsic",
     "iv": 0.3005,
     "d": null,
-    "h": 0.0801,
-    "prem": 586.0938,
-    "net": 2.4978,
+    "h": 0.0753,
+    "prem": 583.5114,
+    "net": 2.5317,
     "st": 0.4714,
     "spy": 0.1163
    },
@@ -4000,8 +5343,8 @@
     "by": "lateClose",
     "iv": 0.3916,
     "d": null,
-    "h": 0.0868,
-    "prem": 2501.3796,
+    "h": 0.0861,
+    "prem": 2499.7717,
     "net": -1,
     "st": -0.2796,
     "spy": 0.2992
@@ -4280,9 +5623,9 @@
     "by": "close",
     "iv": 0.5449,
     "d": null,
-    "h": 0.0404,
-    "prem": 6046.6028,
-    "net": -0.99,
+    "h": 0.0487,
+    "prem": 6094.8009,
+    "net": -0.9902,
     "st": -0.4201,
     "spy": 0.1115
    },
@@ -4780,9 +6123,9 @@
     "by": "lateClose",
     "iv": 0.5312,
     "d": null,
-    "h": 0.0868,
-    "prem": 417.984,
-    "net": 1.2056,
+    "h": 0.0861,
+    "prem": 417.718,
+    "net": 1.2087,
     "st": 0.5141,
     "spy": 0.0621
    },
@@ -5080,9 +6423,9 @@
     "by": "lateClose",
     "iv": 0.4631,
     "d": null,
-    "h": 0.0801,
-    "prem": 1463.135,
-    "net": 6.7254,
+    "h": 0.0753,
+    "prem": 1456.655,
+    "net": 6.8003,
     "st": 1.4891,
     "spy": 0.1459
    },
@@ -5300,9 +6643,9 @@
     "by": "close",
     "iv": 0.9405,
     "d": null,
-    "h": 0.1096,
-    "prem": 2312.968,
-    "net": 0.1104,
+    "h": 0.0978,
+    "prem": 2288.424,
+    "net": 0.1372,
     "st": 0.2947,
     "spy": 0.0674
    },
@@ -5580,9 +6923,9 @@
     "by": "lateClose",
     "iv": 0.4726,
     "d": null,
-    "h": 0.0499,
-    "prem": 10813.7205,
-    "net": 0.0293,
+    "h": 0.0495,
+    "prem": 10809.6025,
+    "net": 0.0301,
     "st": 0.1706,
     "spy": 0.1418
    },
@@ -5600,9 +6943,9 @@
     "by": "close",
     "iv": 0.5293,
     "d": null,
-    "h": 0.1146,
-    "prem": 1159.7256,
-    "net": 0.1027,
+    "h": 0.0715,
+    "prem": 1115.074,
+    "net": 0.2029,
     "st": 0.1986,
     "spy": 0.1541
    },
@@ -9684,9 +11027,9 @@
     "by": "close",
     "iv": 0.3992,
     "d": null,
-    "h": 0.048,
-    "prem": 4312.28,
-    "net": -0.5861,
+    "h": 0.0587,
+    "prem": 4356.257,
+    "net": -0.5949,
     "st": -0.0669,
     "spy": 0.0268
    },
@@ -9784,9 +11127,9 @@
     "by": "close",
     "iv": 0.2003,
     "d": null,
-    "h": 0.0499,
-    "prem": 2810.3328,
-    "net": 1.4121,
+    "h": 0.0495,
+    "prem": 2809.264,
+    "net": 1.414,
     "st": 0.1834,
     "spy": 0.139
    },
@@ -9864,9 +11207,9 @@
     "by": "close",
     "iv": 0.7737,
     "d": null,
-    "h": 0.0404,
-    "prem": 6236.996,
-    "net": 0.2316,
+    "h": 0.0487,
+    "prem": 6286.713,
+    "net": 0.2113,
     "st": 0.266,
     "spy": 0.139
    },
@@ -11024,9 +12367,9 @@
     "by": "lateClose",
     "iv": 0.6381,
     "d": null,
-    "h": 0.1096,
-    "prem": 512.0872,
-    "net": 0.2648,
+    "h": 0.0978,
+    "prem": 506.6946,
+    "net": 0.2953,
     "st": 0.2373,
     "spy": -0.0053
    },
@@ -11084,9 +12427,9 @@
     "by": "lateClose",
     "iv": 0.3692,
     "d": null,
-    "h": 0.0221,
-    "prem": 1512.5975,
-    "net": 2.226,
+    "h": 0.0498,
+    "prem": 1553.455,
+    "net": 2.0521,
     "st": 0.4216,
     "spy": 0.1574
    },
@@ -12004,9 +13347,9 @@
     "by": "close",
     "iv": 0.8562,
     "d": null,
-    "h": 0.1096,
-    "prem": 1419.74,
-    "net": -0.5294,
+    "h": 0.0978,
+    "prem": 1404.695,
+    "net": -0.518,
     "st": -0.1066,
     "spy": 0.072
    },
@@ -12384,9 +13727,9 @@
     "by": "lateClose",
     "iv": 0.3193,
     "d": null,
-    "h": 0.0499,
-    "prem": 5840.3442,
-    "net": 3.899,
+    "h": 0.0495,
+    "prem": 5838.121,
+    "net": 3.903,
     "st": 0.5101,
     "spy": 0.0942
    },
@@ -12444,9 +13787,9 @@
     "by": "close",
     "iv": 0.0659,
     "d": null,
-    "h": 0.0868,
-    "prem": 896.176,
-    "net": -0.7101,
+    "h": 0.0861,
+    "prem": 895.602,
+    "net": -0.7097,
     "st": -0.0094,
     "spy": 0.0809
    },
@@ -12484,9 +13827,9 @@
     "by": "lateClose",
     "iv": 0.4065,
     "d": null,
-    "h": 0.0801,
-    "prem": 1355.125,
-    "net": 7.0744,
+    "h": 0.0753,
+    "prem": 1349.125,
+    "net": 7.1526,
     "st": 1.3456,
     "spy": 0.1057
    },
@@ -12764,9 +14107,9 @@
     "by": "lateClose",
     "iv": 1.0184,
     "d": null,
-    "h": 0.0323,
-    "prem": 2907.8276,
-    "net": 3.4823,
+    "h": 0.0312,
+    "prem": 2904.7344,
+    "net": 3.4922,
     "st": 1.3969,
     "spy": 0.0942
    },
@@ -12864,9 +14207,9 @@
     "by": "close",
     "iv": 1.2859,
     "d": null,
-    "h": 0.1488,
-    "prem": 338.152,
-    "net": -0.6246,
+    "h": 0.1553,
+    "prem": 340.037,
+    "net": -0.6297,
     "st": 0.15,
     "spy": 0.0809
    },
@@ -13024,9 +14367,9 @@
     "by": "intrinsic",
     "iv": 0.8658,
     "d": null,
-    "h": 0.1096,
-    "prem": 1281.04,
-    "net": 4.7178,
+    "h": 0.0978,
+    "prem": 1267.47,
+    "net": 4.8557,
     "st": 1.9888,
     "spy": 0.119
    },
@@ -13164,9 +14507,9 @@
     "by": "close",
     "iv": 0.3016,
     "d": null,
-    "h": 0.0868,
-    "prem": 207.1448,
-    "net": -0.0058,
+    "h": 0.0861,
+    "prem": 207.0146,
+    "net": -0.0044,
     "st": 0.1295,
     "spy": 0.0809
    },
@@ -13444,9 +14787,9 @@
     "by": "close",
     "iv": 0.7233,
     "d": null,
-    "h": 0.0801,
-    "prem": 4541.42,
-    "net": -0.6892,
+    "h": 0.0753,
+    "prem": 4521.26,
+    "net": -0.6861,
     "st": -0.1621,
     "spy": 0.0185
    },
