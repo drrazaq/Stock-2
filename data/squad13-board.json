@@ -1,0 +1,345 @@
+{
+ "generatedAt": "2026-10-24T07:48:18.956Z",
+ "lastClose": "2026-10-23",
+ "paperStart": "2026-10-26",
+ "cost": 0.008,
+ "readiness": "30+ resolved paper trades on 10+ distinct signal days, average > 0 after 0.8% cost",
+ "methods": {
+  "SQ13-RPB": {
+   "name": "Runner pullback: a 10-day runner bought on its first 8-15% pullback within 5-15 sessions, above its base and 20-day average (hold 20)",
+   "hold": 20,
+   "family": "pullback",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -4 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.83 under 2.5 in the newer half; return per year of capital tied up -43.5% not above the S&P 500 on the same days in the older half (-7.1%); return per year of capital tied up -1.8% not above the S&P 500 on the same days in the newer half (17.7%)",
+    "perYear": {
+     "older": {
+      "rule": -0.4346,
+      "spy": -0.0706,
+      "avgStock": -0.1582
+     },
+     "newer": {
+      "rule": -0.0184,
+      "spy": 0.1772,
+      "avgStock": 0.0669
+     }
+    }
+   }
+  },
+  "SQ13-RPB-CLEAN": {
+   "name": "Runner pullback with clean supply: share count up at most 1% a year, no reverse split in 3 years (hold 20)",
+   "hold": 20,
+   "family": "pullback+supply",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.43 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.75 under 2.5 in the newer half; return per year of capital tied up -17.1% not above the S&P 500 on the same days in the older half (-2.0%); return per year of capital tied up 6.5% not above the S&P 500 on the same days in the newer half (19.1%)",
+    "perYear": {
+     "older": {
+      "rule": -0.1711,
+      "spy": -0.0203,
+      "avgStock": -0.1168
+     },
+     "newer": {
+      "rule": 0.0649,
+      "spy": 0.191,
+      "avgStock": 0.1104
+     }
+    }
+   }
+  },
+  "SQ13-RPB-BUYBACK": {
+   "name": "Runner pullback with buybacks: share count down 2%+ in a year, no reverse split in 3 years (hold 20)",
+   "hold": 20,
+   "family": "pullback+supply",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.61 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.8 under 2.5 in the newer half; return per year of capital tied up -25.0% not above the S&P 500 on the same days in the older half (-3.8%); return per year of capital tied up 6.4% not above the S&P 500 on the same days in the newer half (21.6%)",
+    "perYear": {
+     "older": {
+      "rule": -0.2496,
+      "spy": -0.0382,
+      "avgStock": -0.1401
+     },
+     "newer": {
+      "rule": 0.0636,
+      "spy": 0.2156,
+      "avgStock": 0.1418
+     }
+    }
+   }
+  },
+  "SQ13-RPB-LARGE": {
+   "name": "Large-cap runner pullback: the same pullback among the 500 largest, held a quarter (hold 63)",
+   "hold": 63,
+   "family": "pullback",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.29 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.23 under 2.5 in the newer half; return per year of capital tied up -33.5% not above the S&P 500 on the same days in the older half (-7.7%); return per year of capital tied up 12.2% not above the S&P 500 on the same days in the newer half (16.0%)",
+    "perYear": {
+     "older": {
+      "rule": -0.3345,
+      "spy": -0.0769,
+      "avgStock": -0.1592
+     },
+     "newer": {
+      "rule": 0.1219,
+      "spy": 0.1603,
+      "avgStock": 0.1053
+     }
+    }
+   }
+  },
+  "SQ13-WAVE-BIG": {
+   "name": "Industry wave among large caps (breadth under 40% -> over 60% within a month): buy its 3 largest, hold 63",
+   "hold": 63,
+   "family": "wave",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 0.62 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.92 under 2.5 in the newer half; return per year of capital tied up 1.6% not above the S&P 500 on the same days in the older half (6.3%); return per year of capital tied up 10.5% not above the S&P 500 on the same days in the newer half (13.0%)",
+    "perYear": {
+     "older": {
+      "rule": 0.0155,
+      "spy": 0.0632,
+      "avgStock": -0.0194
+     },
+     "newer": {
+      "rule": 0.1049,
+      "spy": 0.1301,
+      "avgStock": 0.0577
+     }
+    }
+   }
+  },
+  "SQ13-WAVE-STRONG": {
+   "name": "Industry wave among large caps: buy its 3 strongest members (63-session return), hold 63",
+   "hold": 63,
+   "family": "wave",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.77 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t 0.94 under 2.5 in the newer half; return per year of capital tied up -5.6% not above the S&P 500 on the same days in the older half (6.3%); return per year of capital tied up 2.5% not above the S&P 500 on the same days in the newer half (13.0%)",
+    "perYear": {
+     "older": {
+      "rule": -0.0561,
+      "spy": 0.0632,
+      "avgStock": -0.0194
+     },
+     "newer": {
+      "rule": 0.0247,
+      "spy": 0.1301,
+      "avgStock": 0.0577
+     }
+    }
+   }
+  },
+  "SQ13-LEADF": {
+   "name": "Leader then followers: the industry's largest member makes a new 52-week high right after its results 8-K; buy the next 2-4 largest that have not moved (hold 63)",
+   "hold": 63,
+   "family": "leader",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.23 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t -0.42 under 2.5 in the newer half; return per year of capital tied up -7.6% not above the S&P 500 on the same days in the older half (3.4%); return per year of capital tied up 17.2% not above the S&P 500 on the same days in the newer half (18.6%)",
+    "perYear": {
+     "older": {
+      "rule": -0.0764,
+      "spy": 0.0342,
+      "avgStock": -0.1613
+     },
+     "newer": {
+      "rule": 0.172,
+      "spy": 0.1857,
+      "avgStock": 0.1003
+     }
+    }
+   }
+  },
+  "SQ13-LEADH": {
+   "name": "Leader breakout then followers: the industry's largest member makes its first 52-week high in 63 sessions; buy the next 2-4 largest that have not moved (hold 63)",
+   "hold": 63,
+   "family": "leader-price",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "block t 1.02 under 2.5 in the older half; not better than the average stock in the newer half; block t 0.51 under 2.5 in the newer half",
+    "perYear": {
+     "older": {
+      "rule": 0.2848,
+      "spy": 0.2088,
+      "avgStock": 0.0918
+     },
+     "newer": {
+      "rule": 0.2223,
+      "spy": 0.1833,
+      "avgStock": 0.1423
+     }
+    }
+   }
+  }
+ }
+}

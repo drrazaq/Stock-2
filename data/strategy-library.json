@@ -19710,7 +19710,7 @@
    "family": "Squad 13 (runner pullbacks and industry waves)",
    "name": "Runner pullback: a 10-day runner bought on its first 8-15% pullback within 5-15 sessions, above its base and 20-day average (hold 20)",
    "explain": "RUNNER at the close of t (squad 8 base, unchanged: liquid; 10-session gain +15% to +100%; the first session it crosses +15%; complete data). PULLBACK: H_u = the highest close from t to u; the signal is the FIRST session u in t+5..t+15 with 0.85 x H_u <= close_u <= 0.92 x H_u (8-15% off the post-run high), close_u above the pre-run base (close of t-10) and above its 20-session average, liquid at u. The setup is void if before u any close (t+1..u-1) fell under 0.85 x H or under the pre-run base. Buy the open of u+1; hold 20 sessions; one open trade per stock. Paper(s): Jegadeesh (1990) Evidence of Predictable Behavior of Security Returns, Journal of Finance 45(3) (one-month reversal); Jegadeesh & Titman (1993) Returns to Buying Winners and Selling Losers, Journal of Finance 48(1); O'Neil, How to Make Money in Stocks (4th ed., 2009): buy a leader on its first orderly pullback, not extended (practitioner). Reported: one-month winners reverse (Jegadeesh 1990) while 3-12 month winners continue (Jegadeesh & Titman); practitioners buy a leader on its first orderly pullback rather than extended.",
-   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad13",
    "kind": "buy",
    "hold": 20,
@@ -19720,14 +19720,60 @@
     "https://doi.org/10.1111/j.1540-6261.1993.tb04702.x",
     "https://www.investors.com/how-to-invest/investors-corner/stock-pullbacks-offer-another-chance-to-buy/"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad13-lab.mjs -> data/squad13-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3643,
+     5395
+    ],
+    "avg": [
+     -0.0345,
+     -0.0015
+    ],
+    "stress": [
+     -0.0385,
+     -0.0055
+    ],
+    "edge": [
+     -0.0271,
+     -0.0054
+    ],
+    "vsOwn": [
+     0.0034,
+     0.0226
+    ],
+    "noTop2": [
+     -0.0351,
+     -0.0023
+    ],
+    "tBlock": [
+     -4,
+     -0.83
+    ],
+    "win": [
+     0.3994,
+     0.4576
+    ],
+    "perYear": [
+     -0.4346,
+     -0.0184
+    ],
+    "spyPerYear": [
+     -0.0706,
+     0.1772
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -4 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.83 under 2.5 in the newer half; return per year of capital tied up -43.5% not above the S&P 500 on the same days in the older half (-7.1%); return per year of capital tied up -1.8% not above the S&P 500 on the same days in the newer half (17.7%)"
+   }
   },
   {
    "id": "SQ13-RPB-CLEAN",
    "family": "Squad 13 (runner pullbacks and industry waves)",
    "name": "Runner pullback with clean supply: share count up at most 1% a year, no reverse split in 3 years (hold 20)",
    "explain": "SQ13-RPB signal AND the SEC share count known at u (30 days late, split-repaired, dated within 200 days of its cut-off) is at most 1% above the count known 365 days earlier AND no reverse split (Massive split list, to < from) executed in the 1,095 days up to u. Buy the open of u+1; hold 20; one open trade per stock. Paper(s): Jegadeesh (1990) Evidence of Predictable Behavior of Security Returns, Journal of Finance 45(3) (one-month reversal); Pontiff & Woodgate (2008) Share Issuance and Cross-sectional Returns, Journal of Finance 63(2); Martell & Webb (2008) The performance of stocks that are reverse split, Review of Quantitative Finance and Accounting 30. Reported: issuers lag (Pontiff & Woodgate); reverse-split stocks keep underperforming (Martell & Webb).",
-   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad13",
    "kind": "buy",
    "hold": 20,
@@ -19737,14 +19783,60 @@
     "https://doi.org/10.1111/j.1540-6261.2008.01338.x",
     "https://doi.org/10.1007/s11156-007-0076-y"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad13-lab.mjs -> data/squad13-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     754,
+     1376
+    ],
+    "avg": [
+     -0.0136,
+     0.0052
+    ],
+    "stress": [
+     -0.0176,
+     0.0012
+    ],
+    "edge": [
+     -0.005,
+     -0.0035
+    ],
+    "vsOwn": [
+     0.008,
+     0.0033
+    ],
+    "noTop2": [
+     -0.0165,
+     0.0039
+    ],
+    "tBlock": [
+     -0.43,
+     -0.75
+    ],
+    "win": [
+     0.4456,
+     0.508
+    ],
+    "perYear": [
+     -0.1711,
+     0.0649
+    ],
+    "spyPerYear": [
+     -0.0203,
+     0.191
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.43 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.75 under 2.5 in the newer half; return per year of capital tied up -17.1% not above the S&P 500 on the same days in the older half (-2.0%); return per year of capital tied up 6.5% not above the S&P 500 on the same days in the newer half (19.1%)"
+   }
   },
   {
    "id": "SQ13-RPB-BUYBACK",
    "family": "Squad 13 (runner pullbacks and industry waves)",
    "name": "Runner pullback with buybacks: share count down 2%+ in a year, no reverse split in 3 years (hold 20)",
    "explain": "SQ13-RPB signal AND the SEC share count known at u is at least 2% below (and not below 60% of) the count known 365 days earlier AND no reverse split in the 1,095 days up to u. Buy the open of u+1; hold 20; one open trade per stock. Paper(s): Ikenberry, Lakonishok & Vermaelen (1995) Market underreaction to open market share repurchases, Journal of Financial Economics 39(2-3); Pontiff & Woodgate (2008) Share Issuance and Cross-sectional Returns, Journal of Finance 63(2); Martell & Webb (2008) The performance of stocks that are reverse split, Review of Quantitative Finance and Accounting 30. Reported: firms that buy back shares outperform for years (Ikenberry et al.); net issuance predicts returns with a negative sign (Pontiff & Woodgate).",
-   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad13",
    "kind": "buy",
    "hold": 20,
@@ -19754,14 +19846,60 @@
     "https://doi.org/10.1111/j.1540-6261.2008.01338.x",
     "https://doi.org/10.1007/s11156-007-0076-y"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad13-lab.mjs -> data/squad13-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     220,
+     398
+    ],
+    "avg": [
+     -0.0198,
+     0.005
+    ],
+    "stress": [
+     -0.0238,
+     0.001
+    ],
+    "edge": [
+     -0.0066,
+     -0.0086
+    ],
+    "vsOwn": [
+     0.0052,
+     0.0001
+    ],
+    "noTop2": [
+     -0.0237,
+     0.0023
+    ],
+    "tBlock": [
+     -0.61,
+     -0.8
+    ],
+    "win": [
+     0.4273,
+     0.495
+    ],
+    "perYear": [
+     -0.2496,
+     0.0636
+    ],
+    "spyPerYear": [
+     -0.0382,
+     0.2156
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.61 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.8 under 2.5 in the newer half; return per year of capital tied up -25.0% not above the S&P 500 on the same days in the older half (-3.8%); return per year of capital tied up 6.4% not above the S&P 500 on the same days in the newer half (21.6%)"
+   }
   },
   {
    "id": "SQ13-RPB-LARGE",
    "family": "Squad 13 (runner pullbacks and industry waves)",
    "name": "Large-cap runner pullback: the same pullback among the 500 largest, held a quarter (hold 63)",
    "explain": "RUNNER at the close of t (squad 8 base, unchanged: liquid; 10-session gain +15% to +100%; the first session it crosses +15%; complete data) AND the stock is among the 500 liquid stocks with the highest 63-session average traded value at t. PULLBACK: H_u = the highest close from t to u; the signal is the FIRST session u in t+5..t+15 with 0.85 x H_u <= close_u <= 0.92 x H_u (8-15% off the post-run high), close_u above the pre-run base (close of t-10) and above its 20-session average, liquid at u. The setup is void if before u any close (t+1..u-1) fell under 0.85 x H or under the pre-run base. Buy the open of u+1; hold 63 sessions; one open trade per stock. Paper(s): Jegadeesh & Titman (1993) Returns to Buying Winners and Selling Losers, Journal of Finance 48(1); O'Neil, How to Make Money in Stocks (4th ed., 2009): buy a leader on its first orderly pullback, not extended (practitioner); Hou (2007) Industry Information Diffusion and the Lead-lag Effect in Stock Returns, Review of Financial Studies 20(4) (big firms lead small firms of the same industry). Reported: intermediate momentum holds among large caps; the system's own survivors are large-cap momentum held for months (SQ6-MTUM, SQ6-QMOM).",
-   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad13",
    "kind": "buy",
    "hold": 63,
@@ -19771,14 +19909,60 @@
     "https://www.investors.com/how-to-invest/investors-corner/stock-pullbacks-offer-another-chance-to-buy/",
     "https://doi.org/10.1093/rfs/hhl026"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad13-lab.mjs -> data/squad13-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     378,
+     568
+    ],
+    "avg": [
+     -0.0836,
+     0.0305
+    ],
+    "stress": [
+     -0.0876,
+     0.0265
+    ],
+    "edge": [
+     -0.0261,
+     0.0168
+    ],
+    "vsOwn": [
+     -0.0288,
+     -0.0339
+    ],
+    "noTop2": [
+     -0.0909,
+     0.0236
+    ],
+    "tBlock": [
+     -1.29,
+     1.23
+    ],
+    "win": [
+     0.3624,
+     0.4454
+    ],
+    "perYear": [
+     -0.3345,
+     0.1219
+    ],
+    "spyPerYear": [
+     -0.0769,
+     0.1603
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.29 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.23 under 2.5 in the newer half; return per year of capital tied up -33.5% not above the S&P 500 on the same days in the older half (-7.7%); return per year of capital tied up 12.2% not above the S&P 500 on the same days in the newer half (16.0%)"
+   }
   },
   {
    "id": "SQ13-WAVE-BIG",
    "family": "Squad 13 (runner pullbacks and industry waves)",
    "name": "Industry wave among large caps (breadth under 40% -> over 60% within a month): buy its 3 largest, hold 63",
    "explain": "Daily at the close of t. Universe U_t = the 1,000 liquid stocks with the highest 63-session average traded value; industry = SIC 3-digit; breadth = share of the industry's U_t members (8+ needed, each with a 50-session average) closing above their 50-session average. WAVE at t: breadth > 60% at t AND under 40% on at least one session of t-21..t-1 (8+ members then too) AND no wave of that industry in the 63 sessions before t. Buy the open of t+1 the industry's 3 members of U_t with the highest 63-session average traded value; hold 63 sessions; one open trade per stock. Paper(s): Zweig (1986) Winning on Wall Street: the breadth thrust (advancing share from under 40% to over 61.5% within 10 days) (practitioner); Moskowitz & Grinblatt (1999) Do Industries Explain Momentum? Journal of Finance 54(4); Hou (2007) Industry Information Diffusion and the Lead-lag Effect in Stock Returns, Review of Financial Studies 20(4) (big firms lead small firms of the same industry). Reported: a breadth thrust from under 40% to over 60% in days has preceded strong market advances (Zweig); industry momentum explains much of stock momentum (Moskowitz & Grinblatt); big firms lead their industry (Hou).",
-   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad13",
    "kind": "buy",
    "hold": 63,
@@ -19788,14 +19972,60 @@
     "https://doi.org/10.1111/0022-1082.00146",
     "https://doi.org/10.1093/rfs/hhl026"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad13-lab.mjs -> data/squad13-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     462,
+     576
+    ],
+    "avg": [
+     0.0039,
+     0.0262
+    ],
+    "stress": [
+     -0.0001,
+     0.0222
+    ],
+    "edge": [
+     0.0037,
+     0.0149
+    ],
+    "vsOwn": [
+     0.0049,
+     -0.0453
+    ],
+    "noTop2": [
+     -0.0022,
+     0.021
+    ],
+    "tBlock": [
+     0.62,
+     1.92
+    ],
+    "win": [
+     0.4654,
+     0.5104
+    ],
+    "perYear": [
+     0.0155,
+     0.1049
+    ],
+    "spyPerYear": [
+     0.0632,
+     0.1301
+    ],
+    "why": "lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 0.62 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.92 under 2.5 in the newer half; return per year of capital tied up 1.6% not above the S&P 500 on the same days in the older half (6.3%); return per year of capital tied up 10.5% not above the S&P 500 on the same days in the newer half (13.0%)"
+   }
   },
   {
    "id": "SQ13-WAVE-STRONG",
    "family": "Squad 13 (runner pullbacks and industry waves)",
    "name": "Industry wave among large caps: buy its 3 strongest members (63-session return), hold 63",
    "explain": "Daily at the close of t. Universe U_t = the 1,000 liquid stocks with the highest 63-session average traded value; industry = SIC 3-digit; breadth = share of the industry's U_t members (8+ needed, each with a 50-session average) closing above their 50-session average. WAVE at t: breadth > 60% at t AND under 40% on at least one session of t-21..t-1 (8+ members then too) AND no wave of that industry in the 63 sessions before t. Buy the open of t+1 the industry's 3 members of U_t with the highest 63-session return (close t / close t-63); hold 63 sessions; one open trade per stock. Paper(s): Zweig (1986) Winning on Wall Street: the breadth thrust (advancing share from under 40% to over 61.5% within 10 days) (practitioner); Moskowitz & Grinblatt (1999) Do Industries Explain Momentum? Journal of Finance 54(4); Jegadeesh & Titman (1993) Returns to Buying Winners and Selling Losers, Journal of Finance 48(1). Reported: as SQ13-WAVE-BIG; within a rising industry the stocks with the best intermediate momentum lead (Moskowitz & Grinblatt: industry and stock momentum overlap).",
-   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad13",
    "kind": "buy",
    "hold": 63,
@@ -19805,14 +20035,60 @@
     "https://doi.org/10.1111/0022-1082.00146",
     "https://doi.org/10.1111/j.1540-6261.1993.tb04702.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad13-lab.mjs -> data/squad13-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     462,
+     576
+    ],
+    "avg": [
+     -0.014,
+     0.0062
+    ],
+    "stress": [
+     -0.018,
+     0.0022
+    ],
+    "edge": [
+     -0.0061,
+     -0.0042
+    ],
+    "vsOwn": [
+     -0.0276,
+     -0.0468
+    ],
+    "noTop2": [
+     -0.0179,
+     0.0007
+    ],
+    "tBlock": [
+     -0.77,
+     0.94
+    ],
+    "win": [
+     0.4545,
+     0.474
+    ],
+    "perYear": [
+     -0.0561,
+     0.0247
+    ],
+    "spyPerYear": [
+     0.0632,
+     0.1301
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.77 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t 0.94 under 2.5 in the newer half; return per year of capital tied up -5.6% not above the S&P 500 on the same days in the older half (6.3%); return per year of capital tied up 2.5% not above the S&P 500 on the same days in the newer half (13.0%)"
+   }
   },
   {
    "id": "SQ13-LEADF",
    "family": "Squad 13 (runner pullbacks and industry waves)",
    "name": "Leader then followers: the industry's largest member makes a new 52-week high right after its results 8-K; buy the next 2-4 largest that have not moved (hold 63)",
    "explain": "Industry (SIC 3-digit) with 4+ members in U_t (the 1,000 largest by 63-session traded value). LEADER = its member with the highest 63-session traded value at t. The leader files an 8-K with item 2.02 (results; SEC submissions, filing date F); r0 = the first session on or after F. Signal at the close of the FIRST t in r0+1..r0+3 (always after the filing, whatever its hour) where the leader is still the leader and closes above its PRE-RESULTS 52-week high (the highest close of the 252 sessions before r0, 240+ present). FOLLOWERS = the industry's members ranked 2, 3 and 4 by traded value at t whose return from the close of r0-1 to the close of t is under +2%. Buy them at the open of t+1; hold 63 sessions; one open trade per stock. Paper(s): Hou (2007) Industry Information Diffusion and the Lead-lag Effect in Stock Returns, Review of Financial Studies 20(4) (big firms lead small firms of the same industry); Thomas & Zhang (2008) Overreaction to Intra-industry Information Transfers? Journal of Accounting Research 46(4) (early reporters' news moves later peers); Foster (1981) Intra-industry information transfers associated with earnings releases, Journal of Accounting and Economics 3(3). Reported: news of the industry leader diffuses slowly to its peers (Hou 2007: big-firm returns lead small-firm returns of the same industry); an early reporter's results move its peers (Foster; Thomas & Zhang).",
-   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad13",
    "kind": "buy",
    "hold": 63,
@@ -19822,14 +20098,60 @@
     "https://doi.org/10.1111/j.1475-679X.2008.00297.x",
     "https://doi.org/10.1016/0165-4101(81)90002-2"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad13-lab.mjs -> data/squad13-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     53,
+     195
+    ],
+    "avg": [
+     -0.0191,
+     0.043
+    ],
+    "stress": [
+     -0.0231,
+     0.039
+    ],
+    "edge": [
+     0.0299,
+     0.005
+    ],
+    "vsOwn": [
+     0.0021,
+     -0.0174
+    ],
+    "noTop2": [
+     -0.0393,
+     0.0336
+    ],
+    "tBlock": [
+     1.23,
+     -0.42
+    ],
+    "win": [
+     0.3774,
+     0.5641
+    ],
+    "perYear": [
+     -0.0764,
+     0.172
+    ],
+    "spyPerYear": [
+     0.0342,
+     0.1857
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.23 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t -0.42 under 2.5 in the newer half; return per year of capital tied up -7.6% not above the S&P 500 on the same days in the older half (3.4%); return per year of capital tied up 17.2% not above the S&P 500 on the same days in the newer half (18.6%)"
+   }
   },
   {
    "id": "SQ13-LEADH",
    "family": "Squad 13 (runner pullbacks and industry waves)",
    "name": "Leader breakout then followers: the industry's largest member makes its first 52-week high in 63 sessions; buy the next 2-4 largest that have not moved (hold 63)",
    "explain": "Industry (SIC 3-digit) with 4+ members in U_t; LEADER = the member with the highest 63-session traded value at t. Signal at the close of t when the leader closes above the highest close of its previous 252 sessions (240+ present) and did NOT do so on any of the 63 sessions before t. FOLLOWERS = members ranked 2, 3 and 4 at t whose 10-session return (close t / close t-10) is under +2%. Buy them at the open of t+1; hold 63 sessions; one open trade per stock. (No results filing needed: the price-only twin of SQ13-LEADF.) Paper(s): Hou (2007) Industry Information Diffusion and the Lead-lag Effect in Stock Returns, Review of Financial Studies 20(4) (big firms lead small firms of the same industry); George & Hwang (2004) The 52-Week High and Momentum Investing, Journal of Finance 59(5). Reported: big firms lead their industry (Hou); nearness to the 52-week high predicts returns (George & Hwang).",
-   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad13",
    "kind": "buy",
    "hold": 63,
@@ -19838,7 +20160,53 @@
     "https://doi.org/10.1093/rfs/hhl026",
     "https://doi.org/10.1111/j.1540-6261.2004.00695.x"
    ],
-   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad13-lab.mjs -> data/squad13-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     71,
+     114
+    ],
+    "avg": [
+     0.0712,
+     0.0556
+    ],
+    "stress": [
+     0.0672,
+     0.0516
+    ],
+    "edge": [
+     0.0386,
+     -0.0037
+    ],
+    "vsOwn": [
+     0.0346,
+     0.0059
+    ],
+    "noTop2": [
+     0.0269,
+     0.0424
+    ],
+    "tBlock": [
+     1.02,
+     0.51
+    ],
+    "win": [
+     0.5634,
+     0.5614
+    ],
+    "perYear": [
+     0.2848,
+     0.2223
+    ],
+    "spyPerYear": [
+     0.2088,
+     0.1833
+    ],
+    "why": "block t 1.02 under 2.5 in the older half; not better than the average stock in the newer half; block t 0.51 under 2.5 in the newer half"
+   }
   },
   {
    "id": "SQ10-SH10",
