@@ -19927,6 +19927,409 @@
    "registered": "2026-10-24",
    "libraryCheck": "Builds on SQ5-SHARIAH30 (equal weight, judged; cap-weighted twin info only) and SQ5-TOP20; overlaps P1 / HOLD-DIPFUND (owning SPUS itself = the yardstick), SQ6-MTUM (momentum weighting, whole market, not Shariah). New here: Shariah screen with receivables, short-term investments, interest income and the 36-month average market value; cap / capped weights; 10 / 20 / 30 / 50 sizes; quarterly vs yearly; judged against SPUS first.",
    "note": "Pre-registered 2026-10-24 BEFORE any squad 10 run (squad10-core.mjs = the exact rule). 5-year one-shot by squad10-lab.mjs, first complete verdict frozen in data/squad10-lab.json; forward paper lane (data/squad10-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ11-PB8",
+   "family": "Buy the dip only in proven leaders (Squad 11)",
+   "name": "Leader pullback: first close 8% under its 50-day high, still above its 200-day (hold 63)",
+   "explain": "RULE: Leader (top 20% by 12-1 month return among the 300 largest US companies by market value at the prior month end). Signal: the first close >= 8% under the highest close of the last 50 sessions (today included) while the close is above the 200-session average (the previous close was less than 8% under its own 50-session high). Buy the next open; sell at the close of session 63. Common (squad11-core.mjs header): universe = the 300 largest US operating companies by point-in-time market value at each month-end close (Squad 5's market value: close as traded x the SEC share count known 30+ days earlier, dead stocks included, US domicile, one ticker per company); leader = the top 20% of them by 12-1 month return, used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad11-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, and return per year of capital tied up above SPY on the same days in both halves. Reported: each dip trade vs buying the same leader at the month start for the same hold (the timing question), and per calendar year vs SPY.",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "squad11",
+   "registered": "2026-10-24",
+   "hold": 63,
+   "libraryCheck": "Not among T5 / M6 / M7 / M13 / DEC-PB / DEC2-H2 / DEC2-HOLYG (dips on the whole liquid market or trend templates, no point-in-time market-value universe), SQ4-QUALDIP (quality 20% dip, 12-month plan), TIP-DIPLEAD (industry top-3 30% under its high in a 15% market drawdown), SQ5-MOMBUF / SQ6-MTUM / SQ6-QMOM (momentum baskets on fixed dates: the comparison this squad makes).",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad11-core.mjs = the exact rule; one version). 5-year one-shot by squad11-lab.mjs, first complete verdict frozen; forward paper lane (data/squad11-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad11-lab.mjs -> data/squad11-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     184,
+     487
+    ],
+    "avg": [
+     0.0201,
+     0.061
+    ],
+    "stress": [
+     0.0161,
+     0.057
+    ],
+    "edge": [
+     0.0036,
+     0.0231
+    ],
+    "vsOwn": [
+     -0.0902,
+     -0.061
+    ],
+    "noTop2": [
+     0.0123,
+     0.0536
+    ],
+    "tBlock": [
+     0.39,
+     1.85
+    ],
+    "perYear": [
+     0.0812,
+     0.2439
+    ],
+    "spyPerYear": [
+     0.195,
+     0.1883
+    ],
+    "dipMinusFixedDate": [
+     0.0545,
+     0.0415
+    ],
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.39 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.85 under 2.5 in the newer half; return per year of capital tied up 8.1% not above the S&P 500 on the same days in the older half (19.5%)"
+   }
+  },
+  {
+   "id": "SQ11-PB12",
+   "family": "Buy the dip only in proven leaders (Squad 11)",
+   "name": "Leader pullback: first close 12% under its 50-day high, still above its 200-day (hold 126)",
+   "explain": "RULE: Leader (as SQ11-PB8). Signal: the first close >= 12% under the highest close of the last 50 sessions while the close is above the 200-session average (the previous close was less than 12% under its own 50-session high). Buy the next open; sell at the close of session 126. Common (squad11-core.mjs header): universe = the 300 largest US operating companies by point-in-time market value at each month-end close (Squad 5's market value: close as traded x the SEC share count known 30+ days earlier, dead stocks included, US domicile, one ticker per company); leader = the top 20% of them by 12-1 month return, used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad11-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, and return per year of capital tied up above SPY on the same days in both halves. Reported: each dip trade vs buying the same leader at the month start for the same hold (the timing question), and per calendar year vs SPY.",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "squad11",
+   "registered": "2026-10-24",
+   "hold": 126,
+   "libraryCheck": "Not among T5 / M6 / M7 / M13 / DEC-PB / DEC2-H2 / DEC2-HOLYG (dips on the whole liquid market or trend templates, no point-in-time market-value universe), SQ4-QUALDIP (quality 20% dip, 12-month plan), TIP-DIPLEAD (industry top-3 30% under its high in a 15% market drawdown), SQ5-MOMBUF / SQ6-MTUM / SQ6-QMOM (momentum baskets on fixed dates: the comparison this squad makes).",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad11-core.mjs = the exact rule; one version). 5-year one-shot by squad11-lab.mjs, first complete verdict frozen; forward paper lane (data/squad11-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad11-lab.mjs -> data/squad11-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     99,
+     256
+    ],
+    "avg": [
+     0.1425,
+     0.166
+    ],
+    "stress": [
+     0.1385,
+     0.162
+    ],
+    "edge": [
+     0.0863,
+     0.0484
+    ],
+    "vsOwn": [
+     -0.1039,
+     -0.1102
+    ],
+    "noTop2": [
+     0.1299,
+     0.1437
+    ],
+    "tBlock": [
+     1.24,
+     0.54
+    ],
+    "perYear": [
+     0.2874,
+     0.333
+    ],
+    "spyPerYear": [
+     0.2615,
+     0.2012
+    ],
+    "dipMinusFixedDate": [
+     0.0926,
+     0.0899
+    ],
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.24 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.54 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ11-MA50",
+   "family": "Buy the dip only in proven leaders (Squad 11)",
+   "name": "Leader touches its 50-day average from above (hold 63)",
+   "explain": "RULE: Leader (as SQ11-PB8). Signal: today's low <= the 50-session average of the closes, and each of the 10 previous closes was above its own 50-session average. Buy the next open; sell at the close of session 63. Common (squad11-core.mjs header): universe = the 300 largest US operating companies by point-in-time market value at each month-end close (Squad 5's market value: close as traded x the SEC share count known 30+ days earlier, dead stocks included, US domicile, one ticker per company); leader = the top 20% of them by 12-1 month return, used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad11-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, and return per year of capital tied up above SPY on the same days in both halves. Reported: each dip trade vs buying the same leader at the month start for the same hold (the timing question), and per calendar year vs SPY.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "squad11",
+   "registered": "2026-10-24",
+   "hold": 63,
+   "libraryCheck": "Not among T5 / M6 / M7 / M13 / DEC-PB / DEC2-H2 / DEC2-HOLYG (dips on the whole liquid market or trend templates, no point-in-time market-value universe), SQ4-QUALDIP (quality 20% dip, 12-month plan), TIP-DIPLEAD (industry top-3 30% under its high in a 15% market drawdown), SQ5-MOMBUF / SQ6-MTUM / SQ6-QMOM (momentum baskets on fixed dates: the comparison this squad makes).",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad11-core.mjs = the exact rule; one version). 5-year one-shot by squad11-lab.mjs, first complete verdict frozen; forward paper lane (data/squad11-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad11-lab.mjs -> data/squad11-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     197,
+     482
+    ],
+    "avg": [
+     0.0025,
+     0.0555
+    ],
+    "stress": [
+     -0.0015,
+     0.0515
+    ],
+    "edge": [
+     -0.0108,
+     0.0245
+    ],
+    "vsOwn": [
+     -0.1017,
+     -0.0701
+    ],
+    "noTop2": [
+     -0.0052,
+     0.0477
+    ],
+    "tBlock": [
+     0.14,
+     1.24
+    ],
+    "perYear": [
+     0.01,
+     0.2219
+    ],
+    "spyPerYear": [
+     0.1584,
+     0.2052
+    ],
+    "dipMinusFixedDate": [
+     0.0554,
+     0.0637
+    ],
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.14 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.24 under 2.5 in the newer half; return per year of capital tied up 1.0% not above the S&P 500 on the same days in the older half (15.8%)"
+   }
+  },
+  {
+   "id": "SQ11-3DN",
+   "family": "Buy the dip only in proven leaders (Squad 11)",
+   "name": "Leader after 3 down days in a row (hold 21)",
+   "explain": "RULE: Leader (as SQ11-PB8). Signal: the third down close in a row (close below the previous close on t, t-1 and t-2) and the close of t-3 not below that of t-4. Buy the next open; sell at the close of session 21. Common (squad11-core.mjs header): universe = the 300 largest US operating companies by point-in-time market value at each month-end close (Squad 5's market value: close as traded x the SEC share count known 30+ days earlier, dead stocks included, US domicile, one ticker per company); leader = the top 20% of them by 12-1 month return, used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad11-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, and return per year of capital tied up above SPY on the same days in both halves. Reported: each dip trade vs buying the same leader at the month start for the same hold (the timing question), and per calendar year vs SPY.",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "agent": "squad11",
+   "registered": "2026-10-24",
+   "hold": 21,
+   "libraryCheck": "Not among T5 / M6 / M7 / M13 / DEC-PB / DEC2-H2 / DEC2-HOLYG (dips on the whole liquid market or trend templates, no point-in-time market-value universe), SQ4-QUALDIP (quality 20% dip, 12-month plan), TIP-DIPLEAD (industry top-3 30% under its high in a 15% market drawdown), SQ5-MOMBUF / SQ6-MTUM / SQ6-QMOM (momentum baskets on fixed dates: the comparison this squad makes).",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad11-core.mjs = the exact rule; one version). 5-year one-shot by squad11-lab.mjs, first complete verdict frozen; forward paper lane (data/squad11-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad11-lab.mjs -> data/squad11-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     570,
+     1262
+    ],
+    "avg": [
+     0.0029,
+     0.02
+    ],
+    "stress": [
+     -0.0011,
+     0.016
+    ],
+    "edge": [
+     -0.0102,
+     0.0033
+    ],
+    "vsOwn": [
+     -0.0415,
+     -0.0207
+    ],
+    "noTop2": [
+     0.0016,
+     0.0181
+    ],
+    "tBlock": [
+     -0.74,
+     1.07
+    ],
+    "perYear": [
+     0.0353,
+     0.2406
+    ],
+    "spyPerYear": [
+     0.2157,
+     0.1823
+    ],
+    "dipMinusFixedDate": [
+     0.0257,
+     0.0346
+    ],
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.74 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.07 under 2.5 in the newer half; return per year of capital tied up 3.5% not above the S&P 500 on the same days in the older half (21.6%)"
+   }
+  },
+  {
+   "id": "SQ11-FLUSH",
+   "family": "Buy the dip only in proven leaders (Squad 11)",
+   "name": "Leader drops 5%+ on a day SPY drops 2%+ (market-wide selloff, hold 63)",
+   "explain": "RULE: Leader (as SQ11-PB8). Signal: the leader's close is 5%+ under the previous close on a session when SPY's close is 2%+ under its previous close. Buy the next open; sell at the close of session 63. (No point-in-time news check exists; the SPY condition makes the drop market-wide.) Common (squad11-core.mjs header): universe = the 300 largest US operating companies by point-in-time market value at each month-end close (Squad 5's market value: close as traded x the SEC share count known 30+ days earlier, dead stocks included, US domicile, one ticker per company); leader = the top 20% of them by 12-1 month return, used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad11-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, and return per year of capital tied up above SPY on the same days in both halves. Reported: each dip trade vs buying the same leader at the month start for the same hold (the timing question), and per calendar year vs SPY.",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
+   "agent": "squad11",
+   "registered": "2026-10-24",
+   "hold": 63,
+   "libraryCheck": "Not among T5 / M6 / M7 / M13 / DEC-PB / DEC2-H2 / DEC2-HOLYG (dips on the whole liquid market or trend templates, no point-in-time market-value universe), SQ4-QUALDIP (quality 20% dip, 12-month plan), TIP-DIPLEAD (industry top-3 30% under its high in a 15% market drawdown), SQ5-MOMBUF / SQ6-MTUM / SQ6-QMOM (momentum baskets on fixed dates: the comparison this squad makes).",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad11-core.mjs = the exact rule; one version). 5-year one-shot by squad11-lab.mjs, first complete verdict frozen; forward paper lane (data/squad11-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad11-lab.mjs -> data/squad11-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     12,
+     165
+    ],
+    "avg": [
+     -0.0833,
+     0.1131
+    ],
+    "stress": [
+     -0.0873,
+     0.1091
+    ],
+    "edge": [
+     -0.1281,
+     0.0754
+    ],
+    "vsOwn": [
+     -0.0693,
+     0.0285
+    ],
+    "noTop2": [
+     -0.1158,
+     0.0981
+    ],
+    "tBlock": [
+     null,
+     0.09
+    ],
+    "perYear": [
+     -0.3331,
+     0.4531
+    ],
+    "spyPerYear": [
+     0.1952,
+     0.3679
+    ],
+    "dipMinusFixedDate": [
+     0.0428,
+     0.1107
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (12 cases, 2 blocks / 165 cases, 6 blocks)"
+   }
+  },
+  {
+   "id": "SQ11-20D",
+   "family": "Buy the dip only in proven leaders (Squad 11)",
+   "name": "Leader's first close under its 20-day average after a 3-month run of 20%+ (hold 21)",
+   "explain": "RULE: Leader (as SQ11-PB8). Signal: close below its 20-session average; each of the 20 previous closes at or above its own 20-session average; close of t-1 / close of t-64 - 1 >= 20%. Buy the next open; sell at the close of session 21. Common (squad11-core.mjs header): universe = the 300 largest US operating companies by point-in-time market value at each month-end close (Squad 5's market value: close as traded x the SEC share count known 30+ days earlier, dead stocks included, US domicile, one ticker per company); leader = the top 20% of them by 12-1 month return, used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad11-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, and return per year of capital tied up above SPY on the same days in both halves. Reported: each dip trade vs buying the same leader at the month start for the same hold (the timing question), and per calendar year vs SPY.",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "squad11",
+   "registered": "2026-10-24",
+   "hold": 21,
+   "libraryCheck": "Not among T5 / M6 / M7 / M13 / DEC-PB / DEC2-H2 / DEC2-HOLYG (dips on the whole liquid market or trend templates, no point-in-time market-value universe), SQ4-QUALDIP (quality 20% dip, 12-month plan), TIP-DIPLEAD (industry top-3 30% under its high in a 15% market drawdown), SQ5-MOMBUF / SQ6-MTUM / SQ6-QMOM (momentum baskets on fixed dates: the comparison this squad makes).",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad11-core.mjs = the exact rule; one version). 5-year one-shot by squad11-lab.mjs, first complete verdict frozen; forward paper lane (data/squad11-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad11-lab.mjs -> data/squad11-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     52,
+     270
+    ],
+    "avg": [
+     0.0016,
+     0.0243
+    ],
+    "stress": [
+     -0.0024,
+     0.0203
+    ],
+    "edge": [
+     0.003,
+     0.0101
+    ],
+    "vsOwn": [
+     -0.0417,
+     -0.0159
+    ],
+    "noTop2": [
+     -0.0049,
+     0.0198
+    ],
+    "tBlock": [
+     -0.49,
+     1.06
+    ],
+    "perYear": [
+     0.0187,
+     0.2916
+    ],
+    "spyPerYear": [
+     0.0326,
+     0.1517
+    ],
+    "dipMinusFixedDate": [
+     -0.0032,
+     0.0363
+    ],
+    "why": "lost money after 1.2% costs in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -0.49 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.06 under 2.5 in the newer half; return per year of capital tied up 1.9% not above the S&P 500 on the same days in the older half (3.3%)"
+   }
+  },
+  {
+   "id": "SQ11-MS63",
+   "family": "Buy the dip only in proven leaders (Squad 11)",
+   "name": "CONTROL: buy every leader at the month start (fixed date, hold 63)",
+   "explain": "RULE: Every leader (as SQ11-PB8) bought at the open of the first session after each month end (signal = the month-end close); sell at the close of session 63; one open trade per stock (a leader still held is not bought again). Common (squad11-core.mjs header): universe = the 300 largest US operating companies by point-in-time market value at each month-end close (Squad 5's market value: close as traded x the SEC share count known 30+ days earlier, dead stocks included, US domicile, one ticker per company); leader = the top 20% of them by 12-1 month return, used for the signals of the following month. Buy the next open, sell at the close of the hold session (a stock that stops trading: its last close); one open trade per stock per rule; no stops. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/squad11-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, and return per year of capital tied up above SPY on the same days in both halves. Reported: each dip trade vs buying the same leader at the month start for the same hold (the timing question), and per calendar year vs SPY.",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "agent": "squad11",
+   "registered": "2026-10-24",
+   "hold": 63,
+   "libraryCheck": "Not among T5 / M6 / M7 / M13 / DEC-PB / DEC2-H2 / DEC2-HOLYG (dips on the whole liquid market or trend templates, no point-in-time market-value universe), SQ4-QUALDIP (quality 20% dip, 12-month plan), TIP-DIPLEAD (industry top-3 30% under its high in a 15% market drawdown), SQ5-MOMBUF / SQ6-MTUM / SQ6-QMOM (momentum baskets on fixed dates: the comparison this squad makes).",
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad11-core.mjs = the exact rule; one version). 5-year one-shot by squad11-lab.mjs, first complete verdict frozen; forward paper lane (data/squad11-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad11-lab.mjs -> data/squad11-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     378,
+     697
+    ],
+    "avg": [
+     0.0304,
+     0.0523
+    ],
+    "stress": [
+     0.0264,
+     0.0483
+    ],
+    "edge": [
+     0.0101,
+     0.0207
+    ],
+    "vsOwn": [
+     -0.0797,
+     -0.0472
+    ],
+    "noTop2": [
+     0.0266,
+     0.0461
+    ],
+    "tBlock": [
+     0.49,
+     1.29
+    ],
+    "perYear": [
+     0.122,
+     0.2095
+    ],
+    "spyPerYear": [
+     0.2304,
+     0.1875
+    ],
+    "dipMinusFixedDate": null,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.49 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.29 under 2.5 in the newer half; return per year of capital tied up 12.2% not above the S&P 500 on the same days in the older half (23.0%)"
+   }
   }
  ]
 }
