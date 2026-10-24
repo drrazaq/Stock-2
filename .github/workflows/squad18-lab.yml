@@ -1,0 +1,102 @@
+name: Squad 18 lab
+# SQUAD 18: "THINK LIKE THE HUMANS ON THE OTHER SIDE" (squad18-lab.mjs; 24 Oct 2026). Human-behaviour filters and timing on the rules that
+# already work: stand aside on market-stress closes, Thursday/Friday signals bought on Monday, market accumulation vs distribution, the
+# volume of a leader's pullback, delaying MTUM / QMOM rebalances while stressed, a Friday leader-dip rule, and the timing of the monthly
+# halal-basket contribution. Rules pre-registered in squad18-core.mjs and data/strategy-library.json before any run; each 5-year test runs
+# ONCE (first complete verdict frozen in data/squad18-lab.json firstRun). Forward PAPER ledger from Monday 26 Oct 2026. The price cache and
+# Squads 4 / 5 / 11 caches are RESTORED READ ONLY (Squad 5's and 11's copied into this lab's own squad18-cache, the only cache saved).
+# Commits only its own output files and its own library entries. Never places an order. Start by hand: change run-squad18-now.txt (a last
+# line containing DIAG = data check only, nothing judged or written) or run the workflow.
+on:
+  schedule:
+    - cron: '7 16 * * 0'      # Sunday, after the Sunday studies
+    - cron: '12 0 * * 2-6'    # weekday evenings after the close (UTC next day): paper lane
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad18-now.txt']
+permissions:
+  contents: write
+concurrency: squad18-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad4-cache
+          key: squad4-cache-none
+          restore-keys: squad4-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad5-cache
+          key: squad5-cache-none
+          restore-keys: squad5-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad11-cache
+          key: squad11-cache-none
+          restore-keys: squad11-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad18-cache
+          key: squad18-cache-${{ github.run_id }}
+          restore-keys: squad18-cache-
+      - shell: bash
+        run: |
+          mkdir -p squad18-cache
+          if [ -d squad5-cache ]; then cp -rn squad5-cache/. squad18-cache/ || true; fi
+          if [ -d squad11-cache ]; then cp -rn squad11-cache/. squad18-cache/ || true; fi
+          du -sh study-cache squad4-cache squad5-cache squad11-cache squad18-cache 2>/dev/null || true
+      - shell: bash
+        timeout-minutes: 130
+        run: |
+          set -o pipefail
+          if tail -n 1 run-squad18-now.txt | grep -q DIAG && [ "${{ github.event_name }}" = "push" ]; then export DIAG=1; fi
+          node squad18-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SQ18_MINUTES: '120'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad18-cache
+          key: squad18-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad18-run.log 2>/dev/null || true
+          FILES="data/squad18-lab.json data/squad18-paper.jsonl data/squad18-today.json data/squad18-board.json data/squad18-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 18 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 18 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad18-lab-log
+          path: run.log
