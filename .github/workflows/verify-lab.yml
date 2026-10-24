@@ -1,0 +1,64 @@
+name: Verify lab
+# INDEPENDENT CHECK (verify-lab.mjs, 24 Oct 2026): SQ6-MTUM and SQ1-BBAUTH re-implemented from their written specs (verify-core.mjs, no
+# squad rule code), run on the same whole-market price cache, compared trade by trade with the squads' frozen outputs. The price cache is
+# RESTORED READ ONLY; only this lab's own cache (verify-cache: EDGAR search hits and parsed documents) is saved. Keys only from secrets,
+# never printed. Commits only data/verify-lab.json. Never places an order. Starts on a push of its own files or by hand.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['verify-lab.mjs', 'verify-core.mjs', '.github/workflows/verify-lab.yml']
+permissions:
+  contents: write
+concurrency: verify-lab
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node test/verify-core.test.mjs
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: verify-cache
+          key: verify-cache-${{ github.run_id }}
+          restore-keys: verify-cache-
+      - shell: bash
+        timeout-minutes: 180
+        run: |
+          set -o pipefail
+          node verify-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          VERIFY_MINUTES: '160'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: verify-cache
+          key: verify-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          [ -f data/verify-lab.json ] || { echo "Error: no verify result"; exit 1; }
+          cp data/verify-lab.json "$RUNNER_TEMP/verify-lab.json"
+          git reset -q --hard && git pull -q --rebase
+          cp "$RUNNER_TEMP/verify-lab.json" data/verify-lab.json
+          git add data/verify-lab.json
+          git diff --cached --quiet || git commit -m "verify lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the verify result"; exit 1; }
