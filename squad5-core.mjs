@@ -12,7 +12,13 @@
 //     (the system's liquid bar), dead and delisted stocks included (study-cache), that map to an SEC company number (historical ticker map
 //     from the SEC Form 3/4/5 data sets, else the SEC ticker list) with SEC revenue facts (= an operating company: funds, ETFs and SPACs
 //     are out), one ticker per company (the most traded). MARKET VALUE = close x the SEC share count known 30+ days before t (split-
-//     repaired; the same split basis as the adjusted closes); a value above 5,000B USD is a data error and left out.
+//     repaired; the same split basis as the adjusted closes); a company without such a count uses its SEC balance-sheet / weighted-average
+//     share count known from its filing date (multi-class companies such as Alphabet and Meta report no single cover-page count).
+//     DATA GUARDS (set after the DIAG coverage check of 24 Oct 2026, which showed share-count errors, BEFORE any rule result): only US
+//     companies (SEC business address in a US state / DC / PR and no 20-F / 40-F filings: the index domicile rule; an ADR's SEC share
+//     count is per ordinary share, so its market value is wrong; the address is the CURRENT one in SEC submissions); a market value is
+//     used only if the 20-session average traded value is at least 0.02% of it (a share count off by 100x+ fails) and it is under
+//     20,000B USD.
 //   HALAL: there is NO point-in-time halal (ZAD) status in the repository: data/halal.json holds the owner's ~360 recent marks and
 //     data/zad-list.json one quarterly change list (Oct 2026). Using them on 2021-2026 would be survivorship and look-ahead, so the tests
 //     run on the WHOLE liquid market (reported as such). SQ5-SHARIAH30 uses a point-in-time SHARIAH PROXY instead (below). Today's
@@ -66,7 +72,7 @@
 //                  value and more items: this is a proxy, not the ZAD / S&P status.)
 import { instantAt } from './value-core.mjs';
 export const COST = 0.008, STRESS = 0.012, SIDE = 0.004, SIDE_STRESS = 0.006, SPLIT = '2024-01-01', PAPER_START = '2026-10-26', BLOCK = 63, YEAR = 252, CAP = 3;
-export const MAX_CAP = 5e12, BIG = 500, TOPN = 20, EWN = 100, QUALN = 300, MOMBUF = 40, NEWIN_LOOK = 12, NEWIN_MONTHS = 6, NEWIN_MAXW = 0.05, SH_RATIO = 0.33, SHN = 30, PIT_LAG = 45;
+export const MAX_CAP = 2e13, MIN_TURN = 0.0002, BIG = 500, TOPN = 20, EWN = 100, QUALN = 300, MOMBUF = 40, NEWIN_LOOK = 12, NEWIN_MONTHS = 6, NEWIN_MAXW = 0.05, SH_RATIO = 0.33, SHN = 30, PIT_LAG = 45;
 const EPS = 1e-9, ok = (x) => typeof x === 'number' && isFinite(x);
 export const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
 export const median = (a) => { const s = a.filter(ok).sort((x, y) => x - y); if (!s.length) return null; const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
@@ -82,7 +88,8 @@ export const monthEnds = (D) => { const o = []; for (let t = 0; t < D.length; t+
 
 // ================= selection =================
 // rows [{ key, cap }] -> the rows with a usable market value, largest first (ties: key ascending)
-export function byCap(rows) { return rows.filter(r => ok(r.cap) && r.cap > 0 && r.cap <= MAX_CAP).sort((a, b) => b.cap - a.cap || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)); }
+// rows may carry dv (20-session traded value): a value under MIN_TURN x cap marks the market value as a unit error
+export function byCap(rows) { return rows.filter(r => ok(r.cap) && r.cap > 0 && r.cap <= MAX_CAP && !(ok(r.dv) && r.dv < MIN_TURN * r.cap)).sort((a, b) => b.cap - a.cap || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0)); }
 export const topByCap = (rows, n) => byCap(rows).slice(0, n);
 // 12-1 month return: close 21 sessions ago over the close 252 sessions ago (c = array-like of closes)
 export function mom121(c, t) { if (t < 252) return null; const a = c[t - 252], b = c[t - 21]; return a > 0 && b > 0 ? b / a - 1 : null; }
@@ -127,6 +134,9 @@ export function shariahOk({ sic, debt, cash, cap }) {
   if (!(debt / cap < SH_RATIO - EPS)) return { ok: false, why: 'debt 33%+ of market value' }; if (!(cash / cap < SH_RATIO - EPS)) return { ok: false, why: 'cash 33%+ of market value' };
   return { ok: true, why: null };
 }
+// US company from SEC submissions: business address state code (US state, DC, PR) and no 20-F / 40-F among its filings
+export const US_STATES = new Set('AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY PR'.split(' '));
+export const usCompany = (addrState, forms) => US_STATES.has(String(addrState || '').toUpperCase()) && !(forms || []).some(f => /^(20-F|40-F)/.test(String(f)));
 // SPY trend: close above its n-session average (90%+ present); null when unknown
 export function aboveMA(c, t, n = 200) { if (t - n + 1 < 0 || !(c[t] > 0)) return null; let s = 0, h = 0; for (let k = t - n + 1; k <= t; k++) if (c[k] > 0) { s += c[k]; h++; } return h >= n * 0.9 ? c[t] > s / h : null; }
 
@@ -190,7 +200,7 @@ export function pathStats(lv, a, b, pts = null) {
 export function monthly(lv, me, D) { const out = []; let prev = null; for (const k of me) { if (!(lv[k] > 0)) continue; if (prev !== null) out.push({ m: D[k].slice(0, 7), r: r4(lv[k] / lv[prev] - 1) }); prev = k; } return out; }
 
 // ================= the rules as registered (library text) =================
-const COMMON = 'Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; > 5,000B = data error, left out). Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner\'s recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today\'s members carry the owner\'s ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.';
+const COMMON = 'Universe at the close of formation session t: liquid US stocks (close >= 5 USD, 20-session average traded value >= 5M USD; dead and delisted included) that map to an SEC company with revenue facts (operating companies; ETFs, funds and SPACs out), one ticker per company; market value = close x SEC share count known 30+ days before t (split-repaired; else the balance-sheet / weighted-average count from its filing date). Data guards: US companies only (SEC business address in a US state, no 20-F / 40-F filings; current SEC address), a market value is used only if 20-session traded value >= 0.02% of it and it is < 20,000B. Formation at the first session of the month (quarterly: Jan / Apr / Jul / Oct); trades at the next open; cash at 0%. NO point-in-time halal status exists in the repository (data/halal.json = the owner\'s recent marks, zad-list = one quarterly change list): the test runs on the whole liquid market; today\'s members carry the owner\'s ZAD mark. PORTFOLIO: one account, 0.4% cost per buy and per sale (stress 0.6%), turnover of every rebalance counted, daily marks, dead stock = 0; monthly returns, CAGR, max drawdown, halves (start - end 2023 / 2024 - last close) vs SPY (price, like the stocks), SPUS, HLAL and the equal-weight average liquid stock. PER-TRADE JUDGE: each holding period = one trade (a stock from one review of the rule to its next review: quarter / month / the whole 6-month entry for SQ5-NEWIN; a sale, cash switch, delisting or the last close ends it early; still held = marked at the last close), the full 0.8% cost on every period (1.2% stress; conservative: what a TRY SMALL buy of one member for one period pays), halves by period start before / from 2024-01-01, value-core + hold-core judgeHold: > 0 after both costs, better than the average liquid stock over the same days, better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks), return per year of capital above SPY on the same days in both halves; every gross return (rule and yardsticks) capped at +300% (AUD-1 capBoth). Run once, first complete verdict frozen.';
 export const RULES = {
   'SQ5-TOP20': { name: 'The 20 largest companies, equal weight, quarterly', kind: 'quarterly', short: 'the 20 largest US companies by market value, equal weight, re-formed every quarter (cap-weighted twin reported)',
     rule: 'Quarterly: the 20 largest by market value; equal weight, reset to equal at every quarter. Cap-weighted twin (same members) reported as information.' },

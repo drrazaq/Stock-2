@@ -5,7 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { byCap, topByCap, mom121, bufferSelect, newEntrant, qualityPick, haramSic, shariahOk, debtCashAt, aboveMA, simulate, equalW, capW, pathStats, monthly, monthStarts, monthEnds,
-  isQuarterMonth, preRegister, IDS, RULES, MAX_CAP, boardStats, paperReady, periodPieces, periodHold } from '../squad5-core.mjs';
+  isQuarterMonth, preRegister, IDS, RULES, MAX_CAP, usCompany, boardStats, paperReady, periodPieces, periodHold } from '../squad5-core.mjs';
 
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;
 // px helper: closes / opens per stock (arrays), stock "dead" or "gone" flags
@@ -115,4 +115,9 @@ test('holding periods: a holding is cut at every review it lives through; first 
   assert.deepEqual(P.filter(z => z.i === 2).map(z => [z.te, z.x, z.at, z.kind]), [[40, 80, 'o', 'period'], [80, 99, 'o', 'period'], [99, 99, 'c', 'open']]);
   assert.equal(periodPieces([{ i: 3, te: 5, x: 30, at: 'o', kind: 'sold', pxIn: 1, pxOut: 2 }], []).length, 1);
   assert.equal(periodHold('SQ5-TOP20'), 63); assert.equal(periodHold('SQ5-MOMBUF'), 21); assert.equal(periodHold('SQ5-NEWIN'), 126);
+});
+
+test('data guards: a market value far above its traded value is a unit error; US domicile', () => {
+  assert.deepEqual(byCap([{ key: 1, cap: 1e12, dv: 1e9 }, { key: 2, cap: 2e12, dv: 1e7 }]).map(r => r.key), [1]);
+  assert.equal(usCompany('CA', ['10-K', '10-Q']), true); assert.equal(usCompany('K3', ['10-K']), false); assert.equal(usCompany('NY', ['20-F']), false); assert.equal(usCompany(null, []), false);
 });
