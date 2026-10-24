@@ -1,10 +1,18 @@
 [0s] library: 0 SQ15 entries pre-registered now
 [0s] sessions 2023-06-01 to 2026-10-23 (853)
 [0s] signals in the option era: {"PB12":{"all":355,"frozenN":355,"inEra":252},"DIP":{"all":270,"inEra":73},"MOM":{"file":true,"mtum":840,"qmom":750,"mtumFrozenN":839,"qmomFrozenN":750,"ok":true,"inEra":869,"largest":268,"tooSmall":598,"noTradedValue":3}}
-[2s] priced 100 / 593 signals
-[5s] priced 200 / 593 signals
-[8s] priced 300 / 593 signals
-[11s] priced 400 / 593 signals
-[13s] priced 500 / 593 signals
-[18s] priced: {"PB12":{"signals":252,"expiryRank0":77,"pricedATM":221,"pricedITM70":177,"pricedDEEP85":116,"expiryRank2":46,"noDEEP85Traded":107,"noITM70Traded":45,"expiryRank1":87,"expiryRank3":19,"noAtmTraded":19,"splitDuringHoldATM":8,"splitDuringHoldITM70":7,"splitDuringHoldDEEP85":6,"noContracts":3,"noStockPrice":1},"MOM":{"signals":268,"expiryRank1":118,"splitDuringHoldATM":7,"splitDuringHoldITM70":7,"splitDuringHoldDEEP85":5,"pricedATM":252,"pricedITM70":221,"pricedDEEP85":173,"noDEEP85Traded":81,"expiryRank0":53,"noITM70Traded":31,"noAtmTraded":9,"expiryRank2":80,"expiryRank3":8},"DIP":{"signals":73,"noAtmTraded":17,"expiryRank0":24,"pricedATM":53,"pricedITM70":46,"pricedDEEP85":30,"expiryRank1":4,"noITM70Traded":8,"noDEEP85Traded":24,"noContracts":2,"expiryRank3":16,"expiryRank2":10,"splitDuringHoldATM":1}}
-[18s] DIAG written: {"PB12 ATM older":93,"PB12 ITM70 older":76,"PB12 DEEP85 older":48,"PB12 ATM newer":128,"PB12 ITM70 newer":101,"PB12 DEEP85 newer":68,"MOM ATM older":81,"MOM ITM70 older":71,"MOM DEEP85 older":57,"MOM ATM newer":171,"MOM ITM70 newer":150,"MOM DEEP85 newer":116,"DIP ATM newer":53,"DIP ITM70 newer":46,"DIP DEEP85 newer":30}
+[1s] priced 100 / 593 signals
+[3s] priced 200 / 593 signals
+[5s] priced 300 / 593 signals
+[7s] priced 400 / 593 signals
+[9s] priced 500 / 593 signals
+[13s] priced: {"PB12":{"signals":252,"expiryRank0":77,"pricedATM":221,"pricedITM70":177,"pricedDEEP85":116,"expiryRank2":46,"noDEEP85Traded":107,"noITM70Traded":45,"expiryRank1":87,"expiryRank3":19,"noAtmTraded":19,"splitDuringHoldATM":8,"splitDuringHoldITM70":7,"splitDuringHoldDEEP85":6,"noContracts":3,"noStockPrice":1},"MOM":{"signals":268,"expiryRank1":118,"splitDuringHoldATM":7,"splitDuringHoldITM70":7,"splitDuringHoldDEEP85":5,"pricedATM":252,"pricedITM70":221,"pricedDEEP85":173,"noDEEP85Traded":81,"expiryRank0":53,"noITM70Traded":31,"noAtmTraded":9,"expiryRank2":80,"expiryRank3":8},"DIP":{"signals":73,"noAtmTraded":17,"expiryRank0":24,"pricedATM":53,"pricedITM70":46,"pricedDEEP85":30,"expiryRank1":4,"noITM70Traded":8,"noDEEP85Traded":24,"noContracts":2,"expiryRank3":16,"expiryRank2":10,"splitDuringHoldATM":1}}
+[25s] spreads: 238 / 241 stocks measured; median h {"ATM":0.0549,"ITM70":0.0465,"DEEP85":0.0383}; 75th pct (for unmeasured) {"ATM":0.0868,"ITM70":0.0744,"DEEP85":0.0641}
+[25s] - SQ15-PB12-ATM: NOT PROVEN | 2024 n 93 avg +51.3% stress +44.2% vs stock +15.4% t 1.15 | 2025-26 n 128 avg +67.5% stress +59.5% vs stock +19.8% t 3.04 | premium median 2312.968 USD | block t 1.15 under 2.5 in the older half
+[25s] - SQ15-PB12-ITM: NOT PROVEN | 2024 n 76 avg +58.1% stress +51.8% vs stock +18.4% t 1.17 | 2025-26 n 101 avg +82.9% stress +75.5% vs stock +24.9% t 2.99 | premium median 2543.3904 USD | block t 1.17 under 2.5 in the older half
+[25s] - SQ15-MOM-ATM: NOT PROVEN | 2024 n 73 avg +40.5% stress +35.0% vs stock +9.4% t 1.63 | 2025-26 n 132 avg +69.1% stress +61.8% vs stock +26.4% t 1.13 | premium median 2342.26 USD | block t 1.63 under 2.5 in the older half; block t 1.13 under 2.5 in the newer half
+[25s] - SQ15-MOM-ITM: NOT PROVEN | 2024 n 61 avg +41.0% stress +36.1% vs stock +9.6% t 1.67 | 2025-26 n 117 avg +66.0% stress +59.5% vs stock +27.4% t 1.01 | premium median 2839.58 USD | block t 1.67 under 2.5 in the older half; block t 1.01 under 2.5 in the newer half
+[25s] - SQ15-REPL: NOT PROVEN | 2024 n 83 avg +42.7% stress +37.8% vs stock +17.2% t 2.98 | 2025-26 n 136 avg +45.9% stress +40.4% vs stock +23.8% t 2.41 | premium median 3934.632 USD | block t 2.41 under 2.5 in the newer half
+[25s] - SQ15-DIP: INFORMATION (TOO FEW CASES) | 2024 n 0 avg n/a stress n/a vs stock n/a t null | 2025-26 n 46 avg +135.2% stress +121.2% vs stock +52.7% t null | premium median 1338.1315 USD | too few in the older half (0 priced trades, 0 blocks; 20 and 3 needed); too few in the newer half (46 priced trades, 1 blocks; 20 and 3 needed)
+[25s] paper lane: 0 new signals, 0 fills, 0 results
+SQUAD 15 LAB 2024-01-19 to 2026-10-23 | complete false | SQ15-PB12-ATM NOT PROVEN, SQ15-PB12-ITM NOT PROVEN, SQ15-MOM-ATM NOT PROVEN, SQ15-MOM-ITM NOT PROVEN, SQ15-REPL NOT PROVEN, SQ15-DIP INFORMATION (TOO FEW CASES)
