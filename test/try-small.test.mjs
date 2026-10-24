@@ -107,3 +107,13 @@ test('the angles lab (and any standard lab) feeds TRY SMALL by the same standard
 
 // 24 Oct: owner's choice after the portfolio simulation: 1,000 USD a TRY SMALL trade (at 300 USD the 3 + 3 USD fees ate ~2% a trade).
 test('TRY SMALL trades are 1,000 USD', () => { assert.equal(S.value('TRY_USD'), 1000); });
+
+// 24 Oct: the macro lab showed tryQualifies would accept a rule frozen as TOO FEW CASES (war -> defense stocks: 2 wars in 2021-23).
+// A rule must also have a usable sample in each half: verdict not REJECTED / TOO FEW CASES, 20+ trades and (when reported) 3+ blocks.
+test('too few cases, too few trades or too few blocks never qualify', () => {
+  const ok = (n, blocks) => ({ ...half(0.02, 0.01, 0.015), n, blocks });
+  assert.deepEqual(q({ A: { verdict: 'TOO FEW CASES', results: { older: ok(40, 5), newer: ok(40, 5) } } }), []);
+  assert.deepEqual(q({ A: { verdict: 'NOT PROVEN', results: { older: ok(12, 5), newer: ok(40, 5) } } }), []);
+  assert.deepEqual(q({ A: { verdict: 'NOT PROVEN', results: { older: ok(40, 2), newer: ok(40, 5) } } }), []);
+  assert.deepEqual(q({ A: { verdict: 'NOT PROVEN', results: { older: ok(40, 3), newer: ok(40, 5) } } }), ['A']);
+});

@@ -2254,8 +2254,9 @@ function halalGapLine(pos) {   // holdings with no halal mark of yours (or ZAD l
 // Off with  settings.trySmall = false , or for a rule whose own ledger (kind try:<rule>) averages < 0 after 10+ resolved cases.
 const TRY_USD = 1000, TRY_MAX = 2;   // 1,000 USD: owner's choice 24 Oct (at 300 USD the fees ate ~2% a trade)
 function tryQualifies(firstRun) {
-  const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0;
-  return Object.entries(firstRun || {}).filter(([, r]) => r && r.results && ok(r.results.older) && ok(r.results.newer)).map(([id]) => id);
+  // (24 Oct) also a usable sample in each half: not frozen REJECTED / TOO FEW CASES, 20+ trades, 3+ blocks where reported
+  const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0 && !(typeof h.n === 'number' && h.n < 20) && !(typeof h.blocks === 'number' && h.blocks < 3);
+  return Object.entries(firstRun || {}).filter(([, r]) => r && r.results && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer)).map(([id]) => id);
 }
 function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
