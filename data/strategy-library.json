@@ -19704,6 +19704,141 @@
     "beatsSpyBothHalves": true,
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 1.15 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.63 under 2.5 in the newer half; return per year of capital tied up -1.0% not above the S&P 500 on the same days in the older half (0.6%); return per year of capital tied up 16.2% not above the S&P 500 on the same days in the newer half (18.3%)"
    }
+  },
+  {
+   "id": "SQ13-RPB",
+   "family": "Squad 13 (runner pullbacks and industry waves)",
+   "name": "Runner pullback: a 10-day runner bought on its first 8-15% pullback within 5-15 sessions, above its base and 20-day average (hold 20)",
+   "explain": "RUNNER at the close of t (squad 8 base, unchanged: liquid; 10-session gain +15% to +100%; the first session it crosses +15%; complete data). PULLBACK: H_u = the highest close from t to u; the signal is the FIRST session u in t+5..t+15 with 0.85 x H_u <= close_u <= 0.92 x H_u (8-15% off the post-run high), close_u above the pre-run base (close of t-10) and above its 20-session average, liquid at u. The setup is void if before u any close (t+1..u-1) fell under 0.85 x H or under the pre-run base. Buy the open of u+1; hold 20 sessions; one open trade per stock. Paper(s): Jegadeesh (1990) Evidence of Predictable Behavior of Security Returns, Journal of Finance 45(3) (one-month reversal); Jegadeesh & Titman (1993) Returns to Buying Winners and Selling Losers, Journal of Finance 48(1); O'Neil, How to Make Money in Stocks (4th ed., 2009): buy a leader on its first orderly pullback, not extended (practitioner). Reported: one-month winners reverse (Jegadeesh 1990) while 3-12 month winners continue (Jegadeesh & Titman); practitioners buy a leader on its first orderly pullback rather than extended.",
+   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "agent": "squad13",
+   "kind": "buy",
+   "hold": 20,
+   "libraryCheck": "SQ8-* (runners bought at once: rejected), M7 (6-month leader 12-25% under its 20-day high: failed), T5 (5-12% dip in a full uptrend: failed), DEC-PB (21-EMA pullback). A fresh 10-day runner bought on its first pullback was never run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1990.tb05110.x",
+    "https://doi.org/10.1111/j.1540-6261.1993.tb04702.x",
+    "https://www.investors.com/how-to-invest/investors-corner/stock-pullbacks-offer-another-chance-to-buy/"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ13-RPB-CLEAN",
+   "family": "Squad 13 (runner pullbacks and industry waves)",
+   "name": "Runner pullback with clean supply: share count up at most 1% a year, no reverse split in 3 years (hold 20)",
+   "explain": "SQ13-RPB signal AND the SEC share count known at u (30 days late, split-repaired, dated within 200 days of its cut-off) is at most 1% above the count known 365 days earlier AND no reverse split (Massive split list, to < from) executed in the 1,095 days up to u. Buy the open of u+1; hold 20; one open trade per stock. Paper(s): Jegadeesh (1990) Evidence of Predictable Behavior of Security Returns, Journal of Finance 45(3) (one-month reversal); Pontiff & Woodgate (2008) Share Issuance and Cross-sectional Returns, Journal of Finance 63(2); Martell & Webb (2008) The performance of stocks that are reverse split, Review of Quantitative Finance and Accounting 30. Reported: issuers lag (Pontiff & Woodgate); reverse-split stocks keep underperforming (Martell & Webb).",
+   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "agent": "squad13",
+   "kind": "buy",
+   "hold": 20,
+   "libraryCheck": "SQ8-CLEAN (same filter on runners bought at once, count up to +3%: rejected). On the pullback entry never run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1990.tb05110.x",
+    "https://doi.org/10.1111/j.1540-6261.2008.01338.x",
+    "https://doi.org/10.1007/s11156-007-0076-y"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ13-RPB-BUYBACK",
+   "family": "Squad 13 (runner pullbacks and industry waves)",
+   "name": "Runner pullback with buybacks: share count down 2%+ in a year, no reverse split in 3 years (hold 20)",
+   "explain": "SQ13-RPB signal AND the SEC share count known at u is at least 2% below (and not below 60% of) the count known 365 days earlier AND no reverse split in the 1,095 days up to u. Buy the open of u+1; hold 20; one open trade per stock. Paper(s): Ikenberry, Lakonishok & Vermaelen (1995) Market underreaction to open market share repurchases, Journal of Financial Economics 39(2-3); Pontiff & Woodgate (2008) Share Issuance and Cross-sectional Returns, Journal of Finance 63(2); Martell & Webb (2008) The performance of stocks that are reverse split, Review of Quantitative Finance and Accounting 30. Reported: firms that buy back shares outperform for years (Ikenberry et al.); net issuance predicts returns with a negative sign (Pontiff & Woodgate).",
+   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "agent": "squad13",
+   "kind": "buy",
+   "hold": 20,
+   "libraryCheck": "SQ8-SHRINK (same count filter on runners bought at once: rejected), ANOM-NSI, SQ1-BBAUTH. On the pullback entry never run",
+   "sources": [
+    "https://doi.org/10.1016/0304-405X(95)00826-Z",
+    "https://doi.org/10.1111/j.1540-6261.2008.01338.x",
+    "https://doi.org/10.1007/s11156-007-0076-y"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 20 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ13-RPB-LARGE",
+   "family": "Squad 13 (runner pullbacks and industry waves)",
+   "name": "Large-cap runner pullback: the same pullback among the 500 largest, held a quarter (hold 63)",
+   "explain": "RUNNER at the close of t (squad 8 base, unchanged: liquid; 10-session gain +15% to +100%; the first session it crosses +15%; complete data) AND the stock is among the 500 liquid stocks with the highest 63-session average traded value at t. PULLBACK: H_u = the highest close from t to u; the signal is the FIRST session u in t+5..t+15 with 0.85 x H_u <= close_u <= 0.92 x H_u (8-15% off the post-run high), close_u above the pre-run base (close of t-10) and above its 20-session average, liquid at u. The setup is void if before u any close (t+1..u-1) fell under 0.85 x H or under the pre-run base. Buy the open of u+1; hold 63 sessions; one open trade per stock. Paper(s): Jegadeesh & Titman (1993) Returns to Buying Winners and Selling Losers, Journal of Finance 48(1); O'Neil, How to Make Money in Stocks (4th ed., 2009): buy a leader on its first orderly pullback, not extended (practitioner); Hou (2007) Industry Information Diffusion and the Lead-lag Effect in Stock Returns, Review of Financial Studies 20(4) (big firms lead small firms of the same industry). Reported: intermediate momentum holds among large caps; the system's own survivors are large-cap momentum held for months (SQ6-MTUM, SQ6-QMOM).",
+   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "agent": "squad13",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "SQ6-MTUM / SQ6-QMOM (large-cap 6-12 month momentum, semi-annual / quarterly). A large-cap 10-day runner bought on its pullback was never run",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1993.tb04702.x",
+    "https://www.investors.com/how-to-invest/investors-corner/stock-pullbacks-offer-another-chance-to-buy/",
+    "https://doi.org/10.1093/rfs/hhl026"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ13-WAVE-BIG",
+   "family": "Squad 13 (runner pullbacks and industry waves)",
+   "name": "Industry wave among large caps (breadth under 40% -> over 60% within a month): buy its 3 largest, hold 63",
+   "explain": "Daily at the close of t. Universe U_t = the 1,000 liquid stocks with the highest 63-session average traded value; industry = SIC 3-digit; breadth = share of the industry's U_t members (8+ needed, each with a 50-session average) closing above their 50-session average. WAVE at t: breadth > 60% at t AND under 40% on at least one session of t-21..t-1 (8+ members then too) AND no wave of that industry in the 63 sessions before t. Buy the open of t+1 the industry's 3 members of U_t with the highest 63-session average traded value; hold 63 sessions; one open trade per stock. Paper(s): Zweig (1986) Winning on Wall Street: the breadth thrust (advancing share from under 40% to over 61.5% within 10 days) (practitioner); Moskowitz & Grinblatt (1999) Do Industries Explain Momentum? Journal of Finance 54(4); Hou (2007) Industry Information Diffusion and the Lead-lag Effect in Stock Returns, Review of Financial Studies 20(4) (big firms lead small firms of the same industry). Reported: a breadth thrust from under 40% to over 60% in days has preceded strong market advances (Zweig); industry momentum explains much of stock momentum (Moskowitz & Grinblatt); big firms lead their industry (Hou).",
+   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "agent": "squad13",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "ANOM-EIL20/60 (SIC 2-digit, all liquid stocks, breadth +0.20 to 0.50+, members whose in-industry rank jumped, hold 20/60: rejected), ANOM-INDMOM. A large-cap breadth THRUST buying the group's 3 largest was never run",
+   "sources": [
+    "https://www.investopedia.com/terms/b/breadth-thrust-indicator.asp",
+    "https://doi.org/10.1111/0022-1082.00146",
+    "https://doi.org/10.1093/rfs/hhl026"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ13-WAVE-STRONG",
+   "family": "Squad 13 (runner pullbacks and industry waves)",
+   "name": "Industry wave among large caps: buy its 3 strongest members (63-session return), hold 63",
+   "explain": "Daily at the close of t. Universe U_t = the 1,000 liquid stocks with the highest 63-session average traded value; industry = SIC 3-digit; breadth = share of the industry's U_t members (8+ needed, each with a 50-session average) closing above their 50-session average. WAVE at t: breadth > 60% at t AND under 40% on at least one session of t-21..t-1 (8+ members then too) AND no wave of that industry in the 63 sessions before t. Buy the open of t+1 the industry's 3 members of U_t with the highest 63-session return (close t / close t-63); hold 63 sessions; one open trade per stock. Paper(s): Zweig (1986) Winning on Wall Street: the breadth thrust (advancing share from under 40% to over 61.5% within 10 days) (practitioner); Moskowitz & Grinblatt (1999) Do Industries Explain Momentum? Journal of Finance 54(4); Jegadeesh & Titman (1993) Returns to Buying Winners and Selling Losers, Journal of Finance 48(1). Reported: as SQ13-WAVE-BIG; within a rising industry the stocks with the best intermediate momentum lead (Moskowitz & Grinblatt: industry and stock momentum overlap).",
+   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "agent": "squad13",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "ANOM-EIL20/60, T22 (30%+ in 6 months inside a top-20% industry: failed). The breadth-thrust trigger with the 3 strongest large caps was never run",
+   "sources": [
+    "https://www.investopedia.com/terms/b/breadth-thrust-indicator.asp",
+    "https://doi.org/10.1111/0022-1082.00146",
+    "https://doi.org/10.1111/j.1540-6261.1993.tb04702.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ13-LEADF",
+   "family": "Squad 13 (runner pullbacks and industry waves)",
+   "name": "Leader then followers: the industry's largest member makes a new 52-week high right after its results 8-K; buy the next 2-4 largest that have not moved (hold 63)",
+   "explain": "Industry (SIC 3-digit) with 4+ members in U_t (the 1,000 largest by 63-session traded value). LEADER = its member with the highest 63-session traded value at t. The leader files an 8-K with item 2.02 (results; SEC submissions, filing date F); r0 = the first session on or after F. Signal at the close of the FIRST t in r0+1..r0+3 (always after the filing, whatever its hour) where the leader is still the leader and closes above its PRE-RESULTS 52-week high (the highest close of the 252 sessions before r0, 240+ present). FOLLOWERS = the industry's members ranked 2, 3 and 4 by traded value at t whose return from the close of r0-1 to the close of t is under +2%. Buy them at the open of t+1; hold 63 sessions; one open trade per stock. Paper(s): Hou (2007) Industry Information Diffusion and the Lead-lag Effect in Stock Returns, Review of Financial Studies 20(4) (big firms lead small firms of the same industry); Thomas & Zhang (2008) Overreaction to Intra-industry Information Transfers? Journal of Accounting Research 46(4) (early reporters' news moves later peers); Foster (1981) Intra-industry information transfers associated with earnings releases, Journal of Accounting and Economics 3(3). Reported: news of the industry leader diffuses slowly to its peers (Hou 2007: big-firm returns lead small-firm returns of the same industry); an early reporter's results move its peers (Foster; Thomas & Zhang).",
+   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "agent": "squad13",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "N3 (sympathy after a single-stock event: not proven), N2 / C-PEER1 (queued: surprise spillover), CHAIN-READ1 (same chain layer after revenue + guidance: rejected). The industry leader's post-results 52-week high as a signal for its large peers was never run",
+   "sources": [
+    "https://doi.org/10.1093/rfs/hhl026",
+    "https://doi.org/10.1111/j.1475-679X.2008.00297.x",
+    "https://doi.org/10.1016/0165-4101(81)90002-2"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ13-LEADH",
+   "family": "Squad 13 (runner pullbacks and industry waves)",
+   "name": "Leader breakout then followers: the industry's largest member makes its first 52-week high in 63 sessions; buy the next 2-4 largest that have not moved (hold 63)",
+   "explain": "Industry (SIC 3-digit) with 4+ members in U_t; LEADER = the member with the highest 63-session traded value at t. Signal at the close of t when the leader closes above the highest close of its previous 252 sessions (240+ present) and did NOT do so on any of the 63 sessions before t. FOLLOWERS = members ranked 2, 3 and 4 at t whose 10-session return (close t / close t-10) is under +2%. Buy them at the open of t+1; hold 63 sessions; one open trade per stock. (No results filing needed: the price-only twin of SQ13-LEADF.) Paper(s): Hou (2007) Industry Information Diffusion and the Lead-lag Effect in Stock Returns, Review of Financial Studies 20(4) (big firms lead small firms of the same industry); George & Hwang (2004) The 52-Week High and Momentum Investing, Journal of Finance 59(5). Reported: big firms lead their industry (Hou); nearness to the 52-week high predicts returns (George & Hwang).",
+   "status": "pre-registered 2026-10-24 (squad 13 lab); 5-year one-shot pending",
+   "agent": "squad13",
+   "kind": "buy",
+   "hold": 63,
+   "libraryCheck": "ANOM-52WH (52-week-high deciles: rejected), CHAIN-MOM1. A leader's 52-week high used for its non-moving large peers was never run",
+   "sources": [
+    "https://doi.org/10.1093/rfs/hhl026",
+    "https://doi.org/10.1111/j.1540-6261.2004.00695.x"
+   ],
+   "note": "Pre-registered 2026-10-24 BEFORE any run (squad13-core.mjs RULES + TH = the exact rule; one version; hold 63 sessions). 5-year one-shot by squad13-lab.mjs, first complete verdict frozen in data/squad13-lab.json; forward paper lane (data/squad13-paper.jsonl) from 26 Oct 2026."
   }
  ]
 }
