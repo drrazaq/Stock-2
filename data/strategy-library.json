@@ -22602,7 +22602,7 @@
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "Greenblatt magic formula (EBIT/EV + return on capital, 1000 largest, 10 a quarter, each held a year)",
    "explain": "RULE: Quarterly review. Universe: the 1000 largest, financials and utilities out. Earnings yield = EBIT / EV (EV > 0); return on capital = EBIT / (net working capital + net fixed assets), net working capital = (current assets - cash) - (current liabilities - current debt) floored at 0, net fixed assets = net property, plant and equipment; EBIT > 0 and capital > 0 needed. Rank each (1 = best), add the ranks, lowest sum first (ties: higher earnings yield). Each review buys the 10 best-ranked not held in the three younger sleeves; each sleeve is held one year (sold at the next open after the review four quarters later unless re-picked). About 40 holdings. DEVIATIONS from the published method: EBIT = operating income (no add-backs); a quarterly sleeve of 10 instead of \"5-7 every 2-3 months\"; market-value universe instead of the site's 50M+ screen (the book's 1000-largest version). Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected (each sleeve one year)",
@@ -22616,14 +22616,65 @@
    "claimOutOfSample": "the 2000-2022 study is after the book (out of sample); it lagged 2018-2020",
    "libraryCheck": "V6 (old weekly-researcher magic formula, no point-in-time EV, \"not proven\") and DEC2-GREEN (\"needs data\"): this is the first faithful test with SEC EBIT / EV / capital point in time.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     300,
+     396
+    ],
+    "avg": [
+     0.0451,
+     0.0019
+    ],
+    "stress": [
+     0.0411,
+     -0.0021
+    ],
+    "edge": [
+     0.0279,
+     -0.0252
+    ],
+    "vsOwn": [
+     -0.044,
+     -0.0295
+    ],
+    "noTop2": [
+     0.0413,
+     -0.0009
+    ],
+    "tBlock": [
+     2.64,
+     -1.25
+    ],
+    "perYear": [
+     0.1791,
+     0.0076
+    ],
+    "spyPerYear": [
+     0.1394,
+     0.1592
+    ],
+    "portfolioCagr": [
+     0.1189,
+     0.1178
+    ],
+    "spyCagr": [
+     0.0004,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; loses without its 2 best in the newer half; block t -1.25 under 2.5 in the newer half; return per year of capital tied up 0.8% not above the S&P 500 on the same days in the newer half (15.9%)"
+   }
   },
   {
    "id": "SQ16-ACQM",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "Carlisle Acquirer's Multiple (30 cheapest by EV / EBIT among the 1000 largest, quarterly)",
    "explain": "RULE: Quarterly review. Universe: the 1000 largest, financials and utilities out. Acquirer's multiple = EV / EBIT with EBIT > 0 and EV > 0. Hold the 30 with the lowest multiple (ties: larger EBIT first), equal weight; sold when no longer among the 30 at a review. DEVIATIONS from the published method: EBIT = operating income (Carlisle's \"operating earnings\" adds back depreciation details); equal weight (the paper value-weights with a cap); 30 names (the site's screens show 30). Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected",
@@ -22637,14 +22688,65 @@
    "claimOutOfSample": "partly after the book; drawdowns ~53%",
    "libraryCheck": "No EV/EBIT deep-value rule in the library (DEC2-OSH \"needs data\"; V-series value screens use P/E / P/B).",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     270,
+     300
+    ],
+    "avg": [
+     0.0219,
+     0.011
+    ],
+    "stress": [
+     0.0179,
+     0.007
+    ],
+    "edge": [
+     0.0288,
+     -0.0159
+    ],
+    "vsOwn": [
+     -0.0602,
+     -0.0434
+    ],
+    "noTop2": [
+     0.0179,
+     0.0065
+    ],
+    "tBlock": [
+     1.28,
+     -0.66
+    ],
+    "perYear": [
+     0.0874,
+     0.0436
+    ],
+    "spyPerYear": [
+     0.0608,
+     0.1583
+    ],
+    "portfolioCagr": [
+     0.0355,
+     0.1209
+    ],
+    "spyCagr": [
+     0.0004,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.28 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.66 under 2.5 in the newer half; return per year of capital tied up 4.4% not above the S&P 500 on the same days in the newer half (15.8%)"
+   }
   },
   {
    "id": "SQ16-QVAL",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "Gray & Carlisle Quantitative Value (cheapest 10% by EV/EBIT, then the better half by Piotroski F-score, quarterly)",
    "explain": "RULE: Quarterly review. Universe: the 1000 largest, financials, utilities and REITs (SIC 6798, inside financials) out. Keep the cheapest 10% (ceil) by EV / EBIT among those with EBIT > 0 and EV > 0; of them hold the better half (ceil) by Piotroski F-score (9 tests, each 1 point: net income > 0; operating cash flow > 0; net income / assets up vs a year earlier; operating cash flow > net income; long-term debt / assets down; current ratio up; no common stock issued (TTM proceeds 0 or missing); gross margin up; revenue / assets up; 6+ of the 9 must be computable, a test that cannot be computed scores 0); ties: cheaper first. Equal weight; sold when no longer selected. DEVIATIONS from the published method: Quality = the F-score only (the book adds franchise power: 8-year ROA / margin stability, not available on a 5-year window); EBIT = operating income; universe = 1000 largest (QVAL: top 60% of NYSE by size). Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected",
@@ -22658,14 +22760,65 @@
    "claimOutOfSample": "the ETF since 2014 is out of sample",
    "libraryCheck": "V13-V16 / B-FS2 (F-score on all stocks, no cheapness cut), DEC2-OSH (needs data).",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     251,
+     284
+    ],
+    "avg": [
+     0.008,
+     0.014
+    ],
+    "stress": [
+     0.004,
+     0.01
+    ],
+    "edge": [
+     0.0149,
+     -0.0121
+    ],
+    "vsOwn": [
+     -0.0545,
+     -0.0241
+    ],
+    "noTop2": [
+     0.0037,
+     0.009
+    ],
+    "tBlock": [
+     0.77,
+     -0.47
+    ],
+    "perYear": [
+     0.0321,
+     0.0555
+    ],
+    "spyPerYear": [
+     0.0607,
+     0.1601
+    ],
+    "portfolioCagr": [
+     -0.0133,
+     0.0948
+    ],
+    "spyCagr": [
+     0.0004,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.77 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.47 under 2.5 in the newer half; return per year of capital tied up 3.2% not above the S&P 500 on the same days in the older half (6.1%); return per year of capital tied up 5.5% not above the S&P 500 on the same days in the newer half (16.0%)"
+   }
   },
   {
    "id": "SQ16-GPVAL",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "Novy-Marx profitable value (gross profit / assets rank + book / market rank, 50 of the 500 largest, quarterly)",
    "explain": "RULE: Quarterly review. Universe: the 500 largest, financials out. GP/A = TTM gross profit (or revenue - cost of revenue) / latest total assets; B/M = latest stockholders' equity / market value; both known and equity > 0. Score = percentile rank of GP/A + percentile rank of B/M (each 0..1 within the eligible set); hold the 50 highest (ties: higher GP/A), equal weight; sold when no longer among the 50. DEVIATIONS from the published method: Long only (the paper is long-short); quarterly instead of annual / monthly; a fixed 50 instead of the top tercile / decile. Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected",
@@ -22679,14 +22832,65 @@
    "claimOutOfSample": "later: value lost ~60% 2017-2020 while profitability held; the library's all-stock ANOM-GP was rejected",
    "libraryCheck": "ANOM-GP (GP/A alone, all liquid stocks, top 10%, hold 63: rejected); value alone V-series; the combination on the 500 largest is new.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     450,
+     500
+    ],
+    "avg": [
+     0.0076,
+     0.0057
+    ],
+    "stress": [
+     0.0036,
+     0.0017
+    ],
+    "edge": [
+     0.0149,
+     -0.0213
+    ],
+    "vsOwn": [
+     -0.0238,
+     -0.0245
+    ],
+    "noTop2": [
+     0.004,
+     0.0033
+    ],
+    "tBlock": [
+     1.44,
+     -2.03
+    ],
+    "perYear": [
+     0.0301,
+     0.0226
+    ],
+    "spyPerYear": [
+     0.0592,
+     0.1586
+    ],
+    "portfolioCagr": [
+     0.0011,
+     0.0868
+    ],
+    "spyCagr": [
+     0.0004,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.44 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -2.03 under 2.5 in the newer half; return per year of capital tied up 3.0% not above the S&P 500 on the same days in the older half (5.9%); return per year of capital tied up 2.3% not above the S&P 500 on the same days in the newer half (15.9%)"
+   }
   },
   {
    "id": "SQ16-MSCIQ",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "MSCI USA Quality method (iShares QUAL): ROE, low debt, stable earnings; 125 of the 600 largest, May/November, index-weighted",
    "explain": "RULE: Reviews at the last session of May and November. Universe: the 600 largest. ROE = TTM net income / latest stockholders' equity (equity > 0; required); D/E = debt / equity; earnings variability = standard deviation of the year-on-year growth of annual net income ((NI_y - NI_y-1) / |NI_y-1|) over up to the last 5 fiscal years filed before the review (3+ growth values). Each variable winsorised at its 5th / 95th percentile, z-scored; D/E and variability negated; composite = the average of the available z (ROE + at least one other); quality score = 1 + z when z >= 0, 1 / (1 - z) when z < 0. Select the 125 best composites; a current holding stays while it ranks in the best 150 (MSCI's 20% buffer), the rest filled from the top. Per trade equal weight; in the PORTFOLIO each new holding gets its index weight (quality score x market value, normalised over the 125, capped at 5%). DEVIATIONS from the published method: Net income instead of EPS (no per-share history needed); debt = squad5 debtCashAt; 125 is MSCI USA Quality's usual count (fixed number set at launch); 600 largest = MSCI USA proxy; weights fixed at entry, not re-set at each review. Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected",
@@ -22700,14 +22904,65 @@
    "claimOutOfSample": "live since 2013",
    "libraryCheck": "SQ5-QUAL20 (ROIC + FCF margin, 20 names), ANOM-QMJ (all liquid stocks): MSCI's ROE / leverage / variability composite with buffer and index weights is new.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     625,
+     501
+    ],
+    "avg": [
+     0.0072,
+     0.0486
+    ],
+    "stress": [
+     0.0032,
+     0.0446
+    ],
+    "edge": [
+     0.0199,
+     -0.0241
+    ],
+    "vsOwn": [
+     -0.1742,
+     -0.1198
+    ],
+    "noTop2": [
+     0.0017,
+     0.043
+    ],
+    "tBlock": [
+     2.21,
+     -1.27
+    ],
+    "perYear": [
+     0.0145,
+     0.0974
+    ],
+    "spyPerYear": [
+     0.0632,
+     0.1914
+    ],
+    "portfolioCagr": [
+     -0.0276,
+     0.2133
+    ],
+    "spyCagr": [
+     0.0207,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 2.21 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -1.27 under 2.5 in the newer half; return per year of capital tied up 1.5% not above the S&P 500 on the same days in the older half (6.3%); return per year of capital tied up 9.7% not above the S&P 500 on the same days in the newer half (19.1%)"
+   }
   },
   {
    "id": "SQ16-SHYLD",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "Meb Faber shareholder yield (dividends + net buybacks + debt paydown, top 100 of the 1000 largest, quarterly)",
    "explain": "RULE: Quarterly review. Universe: the 1000 largest, financials out. Shareholder yield = (TTM dividends paid + TTM common stock repurchased - TTM common stock issued) / market value + (debt a year earlier - debt now) / market value (debt paydown; 0 when either debt is unknown); dividends / repurchases / issuance missing = 0; at least one of dividends or repurchases must be reported. Hold the 100 highest (ties: larger market value), equal weight; sold when no longer among the 100. DEVIATIONS from the published method: No value / quality composite (SYLD adds them after the yield rank); 1000 largest instead of SYLD's size floor. Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected",
@@ -22721,14 +22976,65 @@
    "claimOutOfSample": "SYLD live since 2013",
    "libraryCheck": "V11 (shrinking share count in a calm stock, failed discovery), SQ8-SHRINK, SQ1-BB* (buyback events): total payout + debt paydown yield on large caps is new.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     900,
+     1000
+    ],
+    "avg": [
+     0.0135,
+     0.0018
+    ],
+    "stress": [
+     0.0095,
+     -0.0022
+    ],
+    "edge": [
+     0.021,
+     -0.0248
+    ],
+    "vsOwn": [
+     -0.038,
+     -0.0265
+    ],
+    "noTop2": [
+     0.0116,
+     -0.0003
+    ],
+    "tBlock": [
+     1.42,
+     -1.97
+    ],
+    "perYear": [
+     0.0538,
+     0.0071
+    ],
+    "spyPerYear": [
+     0.0589,
+     0.1573
+    ],
+    "portfolioCagr": [
+     0.0248,
+     0.0866
+    ],
+    "spyCagr": [
+     0.0004,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.42 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; loses without its 2 best in the newer half; block t -1.97 under 2.5 in the newer half; return per year of capital tied up 5.4% not above the S&P 500 on the same days in the older half (5.9%); return per year of capital tied up 0.7% not above the S&P 500 on the same days in the newer half (15.7%)"
+   }
   },
   {
    "id": "SQ16-VALMOM",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "AQR value + momentum combined (book/market rank + 12-1 momentum rank, 100 of the 1000 largest, quarterly)",
    "explain": "RULE: Quarterly review. Universe: the 1000 largest (all sectors). Value = latest stockholders' equity / market value (equity > 0); momentum = close 21 sessions before / close 252 sessions before - 1. Score = percentile rank of value + percentile rank of momentum (each 0..1 among stocks with both); hold the 100 highest (ties: higher momentum), equal weight; sold when no longer among the 100. DEVIATIONS from the published method: Long only, quarterly (the paper is long-short, monthly, rank-weighted). Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected",
@@ -22742,14 +23048,65 @@
    "claimOutOfSample": "AQR funds since; value weak 2017-2020",
    "libraryCheck": "ANOM-MOM12 / SQ5-MOMBUF (momentum alone), V-series (value alone): the AQR combination is new.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     500,
+     1000
+    ],
+    "avg": [
+     0.0387,
+     0.0298
+    ],
+    "stress": [
+     0.0347,
+     0.0258
+    ],
+    "edge": [
+     0.0047,
+     0.0011
+    ],
+    "vsOwn": [
+     -0.0638,
+     -0.0353
+    ],
+    "noTop2": [
+     0.0344,
+     0.0266
+    ],
+    "tBlock": [
+     0.32,
+     0.16
+    ],
+    "perYear": [
+     0.1554,
+     0.1184
+    ],
+    "spyPerYear": [
+     0.2624,
+     0.1579
+    ],
+    "portfolioCagr": [
+     0.1223,
+     0.1813
+    ],
+    "spyCagr": [
+     0.245,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.32 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.16 under 2.5 in the newer half; return per year of capital tied up 15.5% not above the S&P 500 on the same days in the older half (26.2%); return per year of capital tied up 11.8% not above the S&P 500 on the same days in the newer half (15.8%)"
+   }
   },
   {
    "id": "SQ16-CORNER",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "O'Shaughnessy Cornerstone Growth (price/sales < 1.5, earnings up, top by 12-month price strength; each held a year)",
    "explain": "RULE: Quarterly review. Universe: the 1000 largest (all sectors). Eligible: price / sales = market value / TTM revenue < 1.5; TTM net income above the TTM net income a year earlier; 12-month price change (close / close 252 sessions before - 1) known. Rank by the 12-month price change (highest first). Each review buys the 13 best-ranked not held in the three younger sleeves (about 50 held, his number); each sleeve is held one year (sold at the next open after the review four quarters later unless re-picked). DEVIATIONS from the published method: Annual rebalance spread over 4 quarterly sleeves; his market-value floor (USD 150M+) replaced by the 1000 largest (the large-cap focus of this sweep). Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected (each sleeve one year)",
@@ -22763,14 +23120,65 @@
    "claimOutOfSample": "later editions and Validea's model are partly out of sample",
    "libraryCheck": "DEC2-OSH (trending value, needs data); no P/S + earnings-up + relative-strength rule in the library.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     182,
+     515
+    ],
+    "avg": [
+     0.106,
+     0.027
+    ],
+    "stress": [
+     0.102,
+     0.023
+    ],
+    "edge": [
+     0.062,
+     -0.0001
+    ],
+    "vsOwn": [
+     -0.0592,
+     -0.0634
+    ],
+    "noTop2": [
+     0.095,
+     0.0209
+    ],
+    "tBlock": [
+     2.47,
+     -0.01
+    ],
+    "perYear": [
+     0.4227,
+     0.107
+    ],
+    "spyPerYear": [
+     0.2804,
+     0.1594
+    ],
+    "portfolioCagr": [
+     0.2116,
+     0.1885
+    ],
+    "spyCagr": [
+     0.245,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 2.47 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.01 under 2.5 in the newer half; return per year of capital tied up 10.7% not above the S&P 500 on the same days in the newer half (15.9%)"
+   }
   },
   {
    "id": "SQ16-IND12",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "Industry momentum 12-0 among the 500 largest (top 5 SIC-2 industries by 12-month return, monthly)",
    "explain": "RULE: Monthly review (every month end with 252 sessions of history). Universe: the 500 largest. Industry = SEC SIC first 2 digits (99, 67 and missing out); industries with 5+ members in the universe. Industry return = market-value-weighted average of members' 12-month return (close / close 252 sessions before - 1, including the last month). Hold every universe member of the 5 industries with the highest return (equal weight); a stock is sold when its industry leaves the top 5 or it leaves the universe. DEVIATIONS from the published method: SIC 2-digit groups instead of Fama-French 48; members of the 500 largest only; equal weight across held stocks (the paper equal-weights industries). Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": "while selected",
@@ -22784,14 +23192,65 @@
    "claimOutOfSample": "the 2026 paper covers 1975-2024 (in sample); ANOM-INDMOM (6-month, all liquid stocks, hold 21) was rejected here",
    "libraryCheck": "ANOM-INDMOM (6-month, all liquid stocks, hold 21: rejected), T21 (failed discovery), SQ13-WAVE-BIG (breadth waves): 12-0 top-5 industries on the 500 largest held while top is new.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1355,
+     2813
+    ],
+    "avg": [
+     0.007,
+     0.0117
+    ],
+    "stress": [
+     0.003,
+     0.0077
+    ],
+    "edge": [
+     -0.0049,
+     -0.0016
+    ],
+    "vsOwn": [
+     -0.0208,
+     -0.0377
+    ],
+    "noTop2": [
+     0.0059,
+     0.011
+    ],
+    "tBlock": [
+     -0.51,
+     -0.1
+    ],
+    "perYear": [
+     0.0806,
+     0.1348
+    ],
+    "spyPerYear": [
+     0.1823,
+     0.1954
+    ],
+    "portfolioCagr": [
+     0.0497,
+     0.132
+    ],
+    "spyCagr": [
+     0.1962,
+     0.1824
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.51 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.1 under 2.5 in the newer half; return per year of capital tied up 8.1% not above the S&P 500 on the same days in the older half (18.2%); return per year of capital tied up 13.5% not above the S&P 500 on the same days in the newer half (19.5%)"
+   }
   },
   {
    "id": "SQ16-RSNH",
    "family": "Published winning methods, wide sweep (Squad 16)",
    "name": "IBD / Moglen \"RS line new high before price\" (blue dot) on the 500 largest, hold 63",
    "explain": "RULE: Daily at the close of t. Universe: the 500 largest at the prior month end, liquid at t. RS line = close / SPY close. Signal: the RS line closes above its highest value of the previous 251 sessions (240+ present) AND did not on any of the 20 sessions before (fresh) AND the close is NOT above its own highest close of the previous 251 sessions (price not yet at a new high) AND the close is within 15% of that high AND above its 50-session average. Buy the next open; sell at the close of session 63; one open trade per stock; no stop. DEVIATIONS from the published method: No base / volume pattern check (the discretionary part of the method); fixed 63-session hold (no published exit). Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
-   "status": "pre-registered 2026-10-24 (squad 16); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "agent": "squad16",
    "registered": "2026-10-24",
    "hold": 63,
@@ -22805,7 +23264,50 @@
    "claimOutOfSample": "n/a",
    "libraryCheck": "DEC-VCP / DEC2-MINTT / ANOM-52WH use price highs; no RS-line-before-price rule in the library.",
    "note": "Pre-registered 2026-10-24 BEFORE any run (squad16-core.mjs = the exact rule; one version; 10 rules in all from a sweep of ~30 sources). 5-year one-shot by squad16-lab.mjs, first complete verdict frozen; forward paper lane (data/squad16-paper.jsonl) from 26 Oct 2026.",
-   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict."
+   "amended": "24 Oct 2026, before any result (the first data check stopped on a missing constant; nothing was computed): baskets judged per review period (Squad 5 periodPieces) instead of per whole holding, so holdings still open today cannot bias the verdict.",
+   "tested": "2026-10-23",
+   "study": "squad16-lab.mjs -> data/squad16-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     261,
+     255
+    ],
+    "avg": [
+     0.019,
+     0.0568
+    ],
+    "stress": [
+     0.015,
+     0.0528
+    ],
+    "edge": [
+     -0.0192,
+     0.0086
+    ],
+    "vsOwn": [
+     -0.0497,
+     -0.008
+    ],
+    "noTop2": [
+     0.0148,
+     0.0436
+    ],
+    "tBlock": [
+     -1.02,
+     -0.53
+    ],
+    "perYear": [
+     0.0765,
+     0.2292
+    ],
+    "spyPerYear": [
+     0.2652,
+     0.2741
+    ],
+    "tryWouldQualify": false,
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -1.02 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t -0.53 under 2.5 in the newer half; return per year of capital tied up 7.6% not above the S&P 500 on the same days in the older half (26.5%); return per year of capital tied up 22.9% not above the S&P 500 on the same days in the newer half (27.4%)"
+   }
   }
  ]
 }
