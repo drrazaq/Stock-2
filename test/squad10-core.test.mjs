@@ -29,8 +29,11 @@ test('balance sheet point in time: filed before the day, debt parts, cash + inve
     intInc: { InvestmentIncomeInterest: [r('2024-06-30', 2, '2024-08-01', '2023-07-01')] }, rev: { Revenues: [r('2024-06-30', 200, '2024-08-01', '2023-07-01')] } };
   const b = balanceAt(co, '2024-08-02'); assert.deepEqual(b, { end: '2024-06-30', debt: 28, cashInv: 11, recv: 11, intInc: 2, rev: 200 });
   const a = balanceAt(co, '2024-08-01'); assert.equal(a.end, '2024-03-31'); assert.equal(a.cashInv, 9); assert.equal(a.debt, 0, 'no debt item filed before the day = none');
+  assert.equal(balanceAt({ ...co, eq: { StockholdersEquity: [r('2019-06-30', 1, '2019-08-01')], StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest: co.eq.StockholdersEquity } }, '2024-08-02').end, '2024-06-30', 'latest equity tag wins');
+  assert.equal(balanceAt({ eq: co.eq, cash: co.cash, nc: { LongTermDebtNoncurrent: [r('2023-12-31', 70, '2024-02-01')] } }, '2024-08-02').debt, 70, 'yearly debt within 400 days');
+  assert.equal(balanceAt({ eq: co.eq, cash: co.cash, nc: { LongTermDebtNoncurrent: [r('2021-12-31', 70, '2022-02-01')] } }, '2024-08-02').debt, 0, 'no debt line for 400+ days = none');
   assert.equal(balanceAt({ eq: co.eq, cash: co.cash }, '2024-08-02').debt, 0, 'never reported debt = none');
-  assert.equal(balanceAt(co, '2025-06-01').end, null, 'a balance sheet 200+ days old is unknown');
+  assert.equal(balanceAt(co, '2025-04-20').end, '2024-06-30'); assert.equal(balanceAt(co, '2025-04-20').cashInv, 11); assert.equal(balanceAt(co, '2025-04-30').end, null, 'a balance sheet 300+ days old is unknown');
   // a bogus total of 0 does not hide the parts; the largest total wins; DebtCurrent replaces current LTD + short-term borrowings
   assert.equal(balanceAt({ ...co, tot: { LongTermDebt: [r('2024-06-30', 0, '2024-08-01')], DebtLongtermAndShorttermCombinedAmount: [r('2024-06-30', 40, '2024-08-01')] } }, '2024-08-02').debt, 40);
   assert.equal(balanceAt({ ...co, debtC: { DebtCurrent: [r('2024-06-30', 6, '2024-08-01')] } }, '2024-08-02').debt, 26);
