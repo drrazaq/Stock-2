@@ -90,6 +90,9 @@ const SECCIK = J('data/sec-ciks.json', {}), sicOf = (s) => { const x = SIC[s]; i
 const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
 const W = weeksOf(D), WK = new Int32Array(T); W.forEach((w, n) => { for (let t = w.s; t <= w.e; t++) WK[t] = n; });
 const LASTWEEK_DONE = isoWeek(nextSession(D[T - 1])) !== isoWeek(D[T - 1]), weekDone = (n) => n < W.length - 1 || LASTWEEK_DONE;   // the newest week counts once its last session is in
+// month ends, plus the newest session when the next NYSE session is in a new month (the paper lane signals that same evening; the 5-year
+// windows never reach the newest session, so this changes no judged trade)
+const monthEndsLive = (months) => { const a = monthEnds(D, months), nx = nextSession(D[T - 1]); if (nx.slice(0, 7) !== D[T - 1].slice(0, 7) && months.includes(+D[T - 1].slice(5, 7)) && !a.includes(T - 1)) a.push(T - 1); return a; };
 const SPY_SMA200 = SPYS ? smaArr(SPYS.c, 200) : null, SPYW = SPYS ? weekly(SPYS, W) : null, SPYW10 = SPYW ? smaArr(SPYW.c, 10) : null;
 const spyWeekUp = (n) => SPYW && SPYW.c[n] > 0 && SPYW10[n] > 0 && SPYW.c[n] > SPYW10[n];
 
@@ -143,12 +146,12 @@ const busy = (m, i, k) => (m.get(i) ?? -1) >= k;
 // ---- fund rules: MTUM, QMOM (formation at month ends) ----
 const wkMemo = new Map(); const wkOf = (i) => { if (!wkMemo.has(i)) wkMemo.set(i, weekly(series(i), W).c); return wkMemo.get(i); };
 const hold = (id, t, i, n, plan) => { const S = series(i), k = t + 1; let r; if (k > T - 1) r = { open: true, k, px0: null, pending: true }; else if (!(S.o[k] > 0)) r = null; else r = walkBracket(S, k, S.o[k], LAST[i], T, null, null, n); add(id, t, i, r, plan); };
-{ for (const t of monthEnds(D, [5, 11])) { if (t < 252) continue; const uni = topN(liqList(t).filter(i => C[i * T + t - 252] > 0).map(i => ({ key: i, v: TV63[i * T + t] })), 600);
+{ for (const t of monthEndsLive([5, 11])) { if (t < 252) continue; const uni = topN(liqList(t).filter(i => C[i * T + t - 252] > 0).map(i => ({ key: i, v: TV63[i * T + t] })), 600);
     const nW = W.findIndex(w => w.e >= t), lastW = W[nW] && W[nW].e === t ? nW : nW - 1;
     const rows = uni.map(i => { const c = ser(C, i), a = c[t - 21], m12 = c[t - 252] > 0 && a > 0 ? a / c[t - 252] - 1 : null, m6 = c[t - 126] > 0 && a > 0 ? a / c[t - 126] - 1 : null, wc = wkOf(i), rr = [];
       for (let w = Math.max(1, lastW - 155); w <= lastW; w++) if (wc[w] > 0 && wc[w - 1] > 0) rr.push(wc[w] / wc[w - 1] - 1); const s = rr.length >= 52 ? sd(rr) * Math.sqrt(52) : null; return { key: i, m6, m12, vol: s }; });
     for (const i of mtumPick(rows, Math.ceil(uni.length * 0.20))) hold('SQ6-MTUM', t, i, 126, 'buy the next open; sell at the close of session 126 (next semi-annual review)'); }
-  for (const t of monthEnds(D, [2, 5, 8, 11])) { if (t < 252) continue; const uni = topN(liqList(t).filter(i => C[i * T + t - 252] > 0 && sicOf(SYMS[i]) !== '6798').map(i => ({ key: i, v: TV63[i * T + t] })), 1000);
+  for (const t of monthEndsLive([2, 5, 8, 11])) { if (t < 252) continue; const uni = topN(liqList(t).filter(i => C[i * T + t - 252] > 0 && sicOf(SYMS[i]) !== '6798').map(i => ({ key: i, v: TV63[i * T + t] })), 1000);
     const rows = uni.map(i => { const c = ser(C, i), m = c[t - 21] > 0 && c[t - 252] > 0 ? c[t - 21] / c[t - 252] - 1 : null; return { key: i, m, fip: m === null ? null : fip(c, t - 251, t - 21, m) }; });
     for (const i of qmomPick(rows)) hold('SQ6-QMOM', t, i, 63, 'buy the next open; sell at the close of session 63 (next quarterly rebalance)'); }
   log('fund rules: MTUM ' + TR['SQ6-MTUM'].length + ', QMOM ' + TR['SQ6-QMOM'].length + ' trades'); }
