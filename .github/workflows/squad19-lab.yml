@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['run-squad19-now.txt', 'run-squad19-judge.txt']
+    paths: ['run-squad19-now.txt', 'run-squad19-judge.txt', 'run-squad19-rh1.txt']
 permissions:
   contents: write
 concurrency: squad19-lab
@@ -29,6 +29,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then echo "stage=paper" >> "$GITHUB_OUTPUT";
           elif git diff --name-only HEAD~1 HEAD | grep -q 'run-squad19-judge.txt'; then echo "stage=judge" >> "$GITHUB_OUTPUT";
+          elif git diff --name-only HEAD~1 HEAD | grep -q 'run-squad19-rh1.txt'; then echo "stage=rh1" >> "$GITHUB_OUTPUT";
           else echo "stage=full" >> "$GITHUB_OUTPUT"; fi
   plan:
     needs: route
@@ -186,6 +187,48 @@ jobs:
           git diff --cached --quiet || git commit -m "squad19 lab $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the squad19 lab result"; exit 1; }
+  rh1:
+    needs: route
+    if: needs.route.outputs.stage == 'rh1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=14336
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: sq19-daily
+          key: sq19-daily-v1-none
+          restore-keys: sq19-daily-v1-
+      - uses: actions/cache/restore@v4
+        with:
+          path: fm-cache
+          key: fm-cache-none
+          restore-keys: fm-cache-
+      - shell: bash
+        run: |
+          ls -la fm-cache sq19-daily | head -5; ls sq19-daily | wc -l
+          node runner-hunter-study.mjs --cache fm-cache/fm.json.gz --out-json data/squad19-rh1-fm.json --out-md data/squad19-rh1-fm.md 2>&1 | tee run.log || true
+          node squad19-lab.mjs rh1raw 2>&1 | tee -a run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          FILES="data/squad19-rh1-fm.json data/squad19-rh1-fm.md data/squad19-rh1-raw.json data/squad19-rh1-raw.md"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad19 RH1 $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save RH1"; exit 1; }
   judge:
     needs: route
     if: needs.route.outputs.stage == 'judge'

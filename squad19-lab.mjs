@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { nyOffset } from './ignition-core.mjs';
 import { freezeEach } from './first-run.mjs';
+import { buildRunnerRows, analyseRunnerRows, renderRunnerReport } from './runner-hunter-core.mjs';
 import { VERSION, SLIP, STRESS, SPLIT_HALF, START, HIST_FROM, MIN_PREV, MAX_PREV, FETCH_UP, OPEN, EXITS, EXIT_IDS, BASE, BASE_IDS, FILTERS, FILTER_IDS, OK_TYPES,
   r4, mean, median, halfOf, commonLike, toNy, dayFacts, trade, after, cumVol, pxAt, classifyNews, secClass, summarize, verdict, RULES, RULE_IDS, ruleTrades, preRegister,
   D_SPLIT, D_FROM, D_SIGNALS, D_COST, D_STRESS, D_SLIP, D_SLIP3, FDA_PHRASES, TOPLINE_PHRASES, DAILY_RULES, DAILY_IDS, SKIPPED_OWNER, dv20, holdTrade, jumpTrade, legsNet, legsGross,
@@ -359,5 +360,13 @@ function mergeDaily() { const X = J(WORK + '/daily-out.json', null), L = J(LAB, 
     e.result = { verdict: r.verdict, n: [r.results.older.n, r.results.newer.n], avg: [r.results.older.avg2, r.results.newer.avg2], stress: [r.results.older.avg3, r.results.newer.avg3], house: [r.results.older.avgHouse, r.results.newer.avgHouse], edge: [r.results.older.edge, r.results.newer.edge], vsOwn: [r.results.older.vsOwn, r.results.newer.vsOwn], noTop2: [r.results.older.noTop2, r.results.newer.noTop2], tBlock: [r.results.older.tBlock, r.results.newer.tBlock] }; }
   fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); log('daily merged: ' + (X ? Object.keys(X.results).map(k => k + ' ' + X.results[k].verdict).join('; ') : 'no daily output')); }
 
-if (MODE === 'daily') await daily(); else if (MODE === 'mergeDaily') mergeDaily(); else if (MODE === 'plan') await plan(); else if (MODE === 'shard') await shard(); else if (MODE === 'sec') await secMode(); else if (MODE === 'report') report(); else if (MODE === 'judge') judgeMode(); else if (MODE === 'paper') paperMode();
+// RH1 (owner's Runner Hunter) on RAW bars from 2021: every symbol's bar on a split day is dropped (no fake +900% next-day highs)
+async function rh1raw() { const splits = await loadSplits(), store = { days: {}, gone: [] }; let dropped = 0;
+  for (const f of fs.readdirSync(DDIR).filter(f => /^\d{4}-\d\d-\d\d\.json\.gz$/.test(f)).sort()) { const d = f.slice(0, 10); if (d < D_FROM) continue; const g = JZ(DDIR + '/' + f, null); if (!g || g.T.length < 2000) continue;
+    const keep = []; for (let j = 0; j < g.T.length; j++) { if ((splits.get(g.T[j]) || []).some(x => x.d === d)) { dropped++; continue; } keep.push(j); }
+    store.days[d] = { T: keep.map(j => g.T[j]), o: keep.map(j => g.o[j]), h: keep.map(j => g.h[j]), l: keep.map(j => g.l[j]), c: keep.map(j => g.c[j]), v: keep.map(j => g.v[j]) }; }
+  const rows = buildRunnerRows(store), res = analyseRunnerRows(rows); res.cache = { source: 'Massive grouped daily, RAW (adjusted=false), ' + D_FROM + ' to latest, split days removed (' + dropped + ' bars)', sessions: Object.keys(store.days).length, rows: rows.length };
+  fs.writeFileSync('data/squad19-rh1-raw.json', JSON.stringify(res, null, 1)); fs.writeFileSync('data/squad19-rh1-raw.md', renderRunnerReport(res) + '\n'); log('RH1 raw: ' + rows.length + ' rows'); }
+
+if (MODE === 'rh1raw') await rh1raw(); else if (MODE === 'daily') await daily(); else if (MODE === 'mergeDaily') mergeDaily(); else if (MODE === 'plan') await plan(); else if (MODE === 'shard') await shard(); else if (MODE === 'sec') await secMode(); else if (MODE === 'report') report(); else if (MODE === 'judge') judgeMode(); else if (MODE === 'paper') paperMode();
 else console.log('unknown mode ' + MODE);
