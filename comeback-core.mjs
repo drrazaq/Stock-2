@@ -6,7 +6,8 @@
 // 1. What counts. A lab rule's frozen first-run verdict (data/<lab>-lab.json firstRun, decoded: data/decoded-history.json) is NEVER
 //    re-run or edited. Only its FORWARD paper record counts here: the 'result' lines of data/<lab>-paper.jsonl whose SIGNAL day is
 //    strictly AFTER the date of that rule's own frozenAt (data the frozen test never saw), resolved by the lab itself at the rule's own
-//    hold and its own exits. Cost 0.8% a round trip (the lab's net), stress 1.2% (net - 0.4%).
+//    hold and its own exits. Cost 0.8% a round trip (the lab's net), stress 1.2% (net - 0.4%). Every stock trade's gross return is capped
+//    at +300%, like the labs' average-stock yardstick (AUD-1, capBoth), so both sides are treated the same.
 // 2. COMEBACK (eligible for TRY SMALL through the 'comeback' lab) needs ALL of, on the forward record alone:
 //    a. 30+ resolved trades on 10+ distinct signal days;
 //    b. average after 1.2% stress > 0;
@@ -32,7 +33,7 @@
 import { halfStat } from './value-core.mjs';
 import { NYSE_HOLIDAYS } from './anomaly-core.mjs';
 
-export const COST = 0.008, STRESS = 0.012, MIN_N = 30, MIN_DAYS = 10, BASE_BAR = 2.5, ALPHA = 0.05, YEAR = 252, SPY_COVER = 0.9, HALF_N = 20, HALF_BLOCKS = 3;
+export const CAP = 3, COST = 0.008, STRESS = 0.012, MIN_N = 30, MIN_DAYS = 10, BASE_BAR = 2.5, ALPHA = 0.05, YEAR = 252, SPY_COVER = 0.9, HALF_N = 20, HALF_BLOCKS = 3;
 export const PAPER_FROM = '2026-10-26', SPEC_ID = 'COMEBACK-1';
 export const LINE = 'Rejected rules keep running on paper; a rule comes back only on its own forward record.';
 // every lab with a forward paper lane and frozen per-rule verdicts (squad3 has no paper lane)
@@ -84,7 +85,7 @@ export function tradeOf(line, lab, byId) {
   const base = byId && byId.get(line.sid || line.id), entry = byId && byId.get('entry:' + line.id);
   const m = line.m || (base && (base.m || base.rule)) || (lab === 'squad15' && line.id ? String(line.id).split('|')[0] : null);
   const d = line.d || (base && base.d) || (entry && entry.entry) || null;
-  const net = fin(line.net) ? line.net : fin(line.g) ? line.g - COST : null;
+  const net0 = fin(line.net) ? line.net : fin(line.g) ? line.g - COST : null, net = net0 === null || lab === 'squad15' ? net0 : Math.min(net0, CAP - COST);   // +300% gross cap, as the labs' yardstick (AUD-1)
   if (!m || !d || net === null) return null;
   const avgStock = lab === 'squad15' ? null : fin(line.avgStock) ? line.avgStock : fin(line.c) ? line.c - COST : null;
   const buy = line.buy || (entry && entry.entry) || null, sell = line.sell || line.exit || line.exitDay || null;
@@ -192,7 +193,7 @@ export function boardText(board) {
   if (!board || !Array.isArray(board.board)) return 'COMEBACK BOARD: not built yet (it runs weekday evenings after the labs\' paper lanes, and on Sunday).';
   const c = board.counts || {}, L = ['COMEBACK BOARD (' + String(board.generatedAt).slice(0, 10) + '): ' + board.rules + ' rules watched on forward paper since ' + board.paperFrom + '.',
     'Status: ' + ['COMEBACK', 'WATCHING', 'FADING', 'TOO EARLY'].map(k => (c[k] || 0) + ' ' + k).join(', ') + '.',
-    'A rule comes back (TRY SMALL, 1,000 USD) only when its forward record alone has 30+ trades on 10+ days, makes money after 1.2% costs, beats the average stock and SPY per year of capital, stays positive without its 2 best trades, and has block t >= ' + board.bar + ' (the luck bar is raised for every rule being watched: Bonferroni over the ' + board.watchedWith30 + ' rule' + (board.watchedWith30 === 1 ? '' : 's') + ' with 30+ forward trades, never under 2.5).'];
+    'A rule comes back (TRY SMALL, 1,000 USD) only when its forward record alone has 30+ trades on 10+ days, makes money after 1.2% costs, beats the average stock and SPY per year of capital, stays positive without its 2 best trades, and has block t >= ' + board.bar + (board.watchedWith30 > 0 ? ' (the luck bar is raised for every rule being watched: Bonferroni over the ' + board.watchedWith30 + ' rule' + (board.watchedWith30 === 1 ? '' : 's') + ' with 30+ forward trades, never under 2.5).' : ' (bar 2.5 until rules reach 30 forward trades; then it rises with every rule that does: Bonferroni).')];
   const shown = board.board.filter(r => r.n > 0).slice(0, 15);
   if (shown.length) { L.push(''); for (const r of shown) L.push('- ' + r.id + ' (' + r.lab + ', frozen ' + (r.frozenVerdict || '?') + '): ' + r.n + ' trades / ' + r.days + ' days, avg ' + pct(r.avg) + ', vs avg stock ' + pct(r.edgeVsAverageStock) + ', vs SPY/yr ' + pct(r.vsSpy && r.vsSpy.rule !== null && r.vsSpy.spy !== null ? r.vsSpy.rule - r.vsSpy.spy : null) + ', t ' + (r.blockT ?? 'n/a') + ' -> ' + r.status); }
   else L.push('', 'No forward paper trade has finished yet: every rule is TOO EARLY.');

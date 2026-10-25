@@ -198,10 +198,16 @@ for (const t of toScan) { const cand = new Map();   // m (or 'base:' + base) -> 
     if (arr.length > cap) capped[m] = (capped[m] || 0) + arr.length - cap; }
   newLines.push({ type: 'day', d: D[t], signals: newLines.filter(x => x.type === 'signal' && x.d === D[t]).reduce((a, x) => a + (x.ms ? x.ms.length : 1), 0) }); }
 // resolve every signal on the newest prices
+// (25 Oct 2026, coordinator, for the COMEBACK board) each resolved paper trade also records the AVERAGE STOCK over the same sessions:
+// the same yardstick as the 5-year run (every 4th liquid stock, bought at the entry session's open, or its close for a close entry, sold
+// at the exit session's close; 50+ stocks), every gross return capped at +300% (capBoth, AUD-1); avgStock = that return - 0.8% cost.
+// Information only: the rules, entries, exits, g / net and the frozen results are unchanged.
+const paperCtrl = (k, x, atClose) => { const v = []; for (let i = 0; i < NS; i += 4) { if (!LIQ[i * T + (atClose ? k : k - 1)]) continue; const e = atClose ? C[i * T + k] : O[i * T + k]; let y = NaN;
+  for (let q = x; q >= k && !(y > 0); q--) y = C[i * T + q]; if (e > 0 && y > 0) yardPush(v, y / e - 1, 'capBoth'); } return yardMean(v, 50); };
 const live = [], board = {}, today = {};
 for (const x of signals) { const r = walk(x); live.push({ x, r });
   if (['closed', 'cancelled', 'expired', 'skipped'].includes(r.state) && !resolved.has(x.id)) { resolved.add(x.id);
-    newLines.push({ type: 'result', id: x.id, m: x.m, sym: x.sym, d: x.d, state: r.state, why: r.why || null, ...(r.state === 'closed' ? { buy: D[r.k], fill: r4(r.fill), sell: D[r.x], g: r4(r.g), net: r4(r.g - COST), ...(M2(x.m) ? { last: r.legs[r.legs.length - 1][3] } : { legs: r.legs.map(([j, q, p, w]) => [D[j], q, p, w]) }) } : {}) }); } }
+    newLines.push({ type: 'result', id: x.id, m: x.m, sym: x.sym, d: x.d, state: r.state, why: r.why || null, ...(r.state === 'closed' ? { buy: D[r.k], fill: r4(r.fill), sell: D[r.x], g: r4(r.g), net: r4(r.g - COST), avgStock: (() => { const c = r.k >= 1 ? paperCtrl(r.k, r.x, ((x.sig && x.sig.entry) || '') === 'close') : null; return c === null ? null : r4(c - COST); })(), ...(M2(x.m) ? { last: r.legs[r.legs.length - 1][3] } : { legs: r.legs.map(([j, q, p, w]) => [D[j], q, p, w]) }) } : {}) }); } }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x)).join('\n') + '\n');
 const HISTF = J(HIST, {}), lastD = D[T - 1];
 for (const m of IDS) { const mine = live.filter(z => z.x.m === m), closed = mine.filter(z => z.r.state === 'closed').map(z => ({ d: z.x.d, sym: z.x.sym, g: z.r.g, halal: z.x.halal }));

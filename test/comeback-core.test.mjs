@@ -127,3 +127,15 @@ test('scoreboard section, bot text and the library entry', async () => {
   const LB = { strategies: [{ id: 'X' }] }; assert.equal(preRegister(LB), 1); assert.equal(preRegister(LB), 0); assert.equal(LB.strategies[1].id, SPEC_ID);
   const lib = JSON.parse(fs.readFileSync(new URL('../data/strategy-library.json', import.meta.url), 'utf8')); assert.ok(lib.strategies.some(e => e.id === SPEC_ID), 'COMEBACK-1 is in the library');
 });
+
+test('cosmetics and the +300% cap: the bar sentence before any rule has 30 trades; a +900% trade counts as +300%', () => {
+  const t0 = boardText(one([], { 'SQ11-A': run() })); assert.match(t0, /bar 2\.5 until rules reach 30 forward trades/); assert.doesNotMatch(t0, /over the 0 rules/);
+  assert.match(boardText(one(ledger('SQ11-A', 0.03), { 'SQ11-A': run() })), /Bonferroni over the 1 rule with 30\+ forward trades/);
+  const f = forwardTrades('squad11', [{ type: 'result', id: 'a', m: 'SQ11-A', sym: 'X', d: '2026-11-02', g: 9, net: 8.992, avgStock: 0 }], { 'SQ11-A': run() });
+  assert.equal(f.trades[0].net, 3 - 0.008);
+});
+
+test('decoded and expert paper lanes record the average stock (capped +300%) on every resolved trade', () => {
+  for (const f of ['decoded-lab.mjs', 'expert-lab.mjs']) { const src = fs.readFileSync(new URL('../' + f, import.meta.url), 'utf8');
+    assert.match(src, /type: 'result'[^\n]*avgStock: \(\(\) => \{ const c = [^\n]*paperCtrl\(/, f); assert.match(src, /const paperCtrl = [\s\S]{0,400}?yardPush\(v, y \/ e - 1, 'capBoth'\)[\s\S]{0,40}?yardMean\(v, 50\)/, f); }
+});

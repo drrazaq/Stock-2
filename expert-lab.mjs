@@ -22,6 +22,7 @@ import readline from 'node:readline';
 import { spawn, execFileSync } from 'node:child_process';
 import { freezeEach, latestBlock } from './first-run.mjs';
 import { halfStat, judge, r4, TIER2_T } from './value-core.mjs';
+import { yardPush, yardMean } from './yardstick.mjs';
 import { RULES, COST, analystEvent, walkHold, markOpen, PITRanker, clusterSignals, normName, valueDollars, holdingChanges, topWeights, parse13FXml, parseForm4Xml, etoroNewLongs, boardStats, trySmallReady, midSplit } from './expert-core.mjs';
 const env = process.env, DIAG = !!env.DIAG, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SECW = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov', FMP = local(env.FMP_BASE) || 'https://financialmodelingprep.com';
@@ -294,11 +295,16 @@ if (!DIAG) {
   paperNote['EXP-CONG1'] = STATUS['EXP-CONG1'].note;
   fs.writeFileSync(EC + '/live.json', JSON.stringify(LIVE)); fs.writeFileSync(EC + '/cusip.json', JSON.stringify(CMAP));
 }
+// (25 Oct 2026, coordinator, for the COMEBACK board) each resolved paper trade also records the AVERAGE STOCK over the same sessions:
+// every 4th liquid stock of the entry eve (sampleAt, as the 5-year run), bought at the entry session's open and sold at the exit session's
+// close, 50+ stocks, every gross return capped at +300% (capBoth, AUD-1); avgStock = that return - 0.8% cost. Information only: the
+// rules, entries, exits, g / net and the frozen results are unchanged.
+const paperCtrl = (k, x) => { const v = []; for (const i of sampleAt(k - 1)) { const e = O[i * T + k]; let y = NaN; for (let q = x; q >= k && !(y > 0); q--) y = C[i * T + q]; if (e > 0 && y > 0) yardPush(v, y / e - 1, 'capBoth'); } return yardMean(v, 50); };
 const allSig = [...lines.filter(x => x.type === 'signal'), ...newLines.filter(x => x.type === 'signal')], live = [];
 for (const x of allSig) { const i = SY.get(x.sym), k = firstAfter(x.d), rule = RULES[x.m]; let st = { state: 'waiting' };
   if (i !== undefined && k < T) { const S = series(i), r = walkHold(S.o, S.c, k, rule.hold, rule.stop); if (r) st = { state: 'closed', k, x: r.x, g: r.g, kind: r.kind }; else { const m = markOpen(S.o, S.c, k, rule.stop); st = m && !m.stopHit ? { state: 'open', k, g: m.g } : m && m.stopHit !== undefined ? { state: 'open', k, g: null } : { state: 'waiting' }; } }
   live.push({ x, r: st });
-  if (st.state === 'closed' && !resolved.has(x.id)) { resolved.add(x.id); newLines.push({ type: 'result', id: x.id, m: x.m, sym: x.sym, d: x.d, buy: D[st.k], sell: D[st.x], exit: st.kind, g: r4(st.g), net: r4(st.g - COST) }); } }
+  if (st.state === 'closed' && !resolved.has(x.id)) { resolved.add(x.id); newLines.push({ type: 'result', id: x.id, m: x.m, sym: x.sym, d: x.d, buy: D[st.k], sell: D[st.x], exit: st.kind, g: r4(st.g), net: r4(st.g - COST), avgStock: (() => { const c = st.k >= 1 ? paperCtrl(st.k, st.x) : null; return c === null ? null : r4(c - COST); })() }); } }
 if (newLines.length && !DIAG) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x)).join('\n') + '\n');
 const tierOf = (id) => { const r = firstRun[id]; return r ? r.verdict : null; }, lastD = D[T - 1], board = {}, today = {};
 for (const m of Object.keys(RULES)) { const mine = live.filter(z => z.x.m === m), closed = mine.filter(z => z.r.state === 'closed').map(z => ({ d: z.x.d, sym: z.x.sym, g: z.r.g, halal: z.x.halal })), all = boardStats(closed);
