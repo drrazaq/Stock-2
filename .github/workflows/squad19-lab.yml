@@ -1,0 +1,266 @@
+name: Squad 19 lab
+# SQUAD 19 (25 Oct 2026): the same-day jump - under-5 USD stocks that jump 40-100%+ in one day (squad19-core.mjs, squad19-lab.mjs).
+# run-squad19-now.txt  -> STAGE 1 case study + the owner's daily-bar candidates (plan -> 8 minute-bar shards + daily -> report).
+# run-squad19-judge.txt -> STAGE 2: the pre-registered intraday rules judged ONCE on the Stage 1 rows (restored from the cache).
+# Weekday evenings: paper lane of the Stage 2 rules (idle until rules exist). Never places an order.
+on:
+  schedule:
+    - cron: '41 23 * * 1-5'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad19-now.txt', 'run-squad19-judge.txt']
+permissions:
+  contents: write
+concurrency: squad19-lab
+env:
+  SHARDS: '8'
+jobs:
+  route:
+    runs-on: ubuntu-latest
+    outputs:
+      stage: ${{ steps.r.outputs.stage }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: r
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then echo "stage=paper" >> "$GITHUB_OUTPUT";
+          elif git diff --name-only HEAD~1 HEAD | grep -q 'run-squad19-judge.txt'; then echo "stage=judge" >> "$GITHUB_OUTPUT";
+          else echo "stage=full" >> "$GITHUB_OUTPUT"; fi
+  plan:
+    needs: route
+    if: needs.route.outputs.stage == 'full'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: sq19-daily
+          key: sq19-daily-v1-${{ github.run_id }}
+          restore-keys: sq19-daily-v1-
+      - shell: bash
+        run: |
+          set -o pipefail
+          node squad19-lab.mjs plan 2>&1 | tee plan.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: sq19-daily
+          key: sq19-daily-v1-${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sq19-plan
+          path: |
+            sq19-work/plan.json.gz
+            plan.log
+          retention-days: 5
+  shard:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/download-artifact@v4
+        with:
+          name: sq19-plan
+      - shell: bash
+        timeout-minutes: 320
+        run: |
+          set -o pipefail
+          node squad19-lab.mjs shard 2>&1 | tee shard.log
+        env:
+          SHARD: ${{ matrix.shard }}
+          SQ19_MINUTES: '300'
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sq19-shard-${{ matrix.shard }}
+          path: |
+            sq19-work/shard-${{ matrix.shard }}.json.gz
+            shard.log
+          retention-days: 5
+  daily:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      NODE_OPTIONS: --max-old-space-size=14336
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: sq19-daily
+          key: sq19-daily-v1-${{ github.run_id }}
+          restore-keys: sq19-daily-v1-
+      - shell: bash
+        run: |
+          set -o pipefail
+          node squad19-lab.mjs daily 2>&1 | tee daily.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: sq19-daily
+          key: sq19-daily-v1-${{ github.run_id }}-d
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sq19-daily-out
+          path: |
+            sq19-work/daily-out.json
+            daily.log
+          retention-days: 5
+  report:
+    needs: [plan, shard, daily]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: sq19-*
+          merge-multiple: true
+      - shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p sq19-work; ls -la sq19-work
+          cat plan.log > run.log 2>/dev/null || true
+          for f in shard.log daily.log; do [ -f "$f" ] && tail -n 40 "$f" >> run.log; done; true
+          node squad19-lab.mjs sec 2>&1 | tee -a run.log
+          node squad19-lab.mjs report 2>&1 | tee -a run.log
+          node squad19-lab.mjs mergeDaily 2>&1 | tee -a run.log
+          node squad19-lab.mjs judge 2>&1 | tee -a run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA }}
+      - uses: actions/cache/save@v4
+        with:
+          path: sq19-work
+          key: sq19-rows-v1-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad19-run.log 2>/dev/null || true
+          FILES="data/squad19-lab.json data/squad19-today.json data/squad19-board.json data/squad19-paper.jsonl data/squad19-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad19 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad19 lab result"; exit 1; }
+  judge:
+    needs: route
+    if: needs.route.outputs.stage == 'judge'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: sq19-work
+          key: sq19-rows-v1-none
+          restore-keys: sq19-rows-v1-
+      - shell: bash
+        run: |
+          set -o pipefail
+          ls -la sq19-work
+          node squad19-lab.mjs judge 2>&1 | tee run.log
+      - shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 200 run.log | cut -c1-2000 > data/squad19-run.log 2>/dev/null || true
+          FILES="data/squad19-lab.json data/squad19-today.json data/squad19-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad19 judge $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad19 judge result"; exit 1; }
+  paper:
+    needs: route
+    if: needs.route.outputs.stage == 'paper'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=8192
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - shell: bash
+        run: |
+          set -o pipefail
+          if node -e "import('./squad19-core.mjs').then(m=>process.exit(m.RULE_IDS.length?0:1))"; then
+            PAPER=1 node squad19-lab.mjs plan 2>&1 | tee run.log
+            SHARDS=1 SHARD=0 node squad19-lab.mjs shard 2>&1 | tee -a run.log
+            node squad19-lab.mjs sec 2>&1 | tee -a run.log
+            node squad19-lab.mjs paper 2>&1 | tee -a run.log
+          else echo "squad19 paper lane: no Stage 2 rules yet" | tee run.log; fi
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA }}
+      - shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          FILES="data/squad19-paper.jsonl data/squad19-today.json data/squad19-board.json"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad19 paper $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad19 paper lane"; exit 1; }
