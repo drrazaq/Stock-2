@@ -389,3 +389,20 @@ export function preRegisterDaily(LB, day) { if (!LB || !Array.isArray(LB.strateg
       spec: 'squad19-core.mjs DAILY_RULES[' + id + ']', note: 'Owner-supplied spec (outside reviewers). Costs: house 0.8%/1.2% and 2%/3% slippage each way; the 2% version decides. Under-5 names are rarely ZAD-marked: check ZAD first.',
       study: 'squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)' }); ch++; }
   if (ch) LB.updated = day; return ch; }
+
+// DIAGNOSTIC twins of sigJump / sigReverse (same tests, same order): the name of the first failing test, or 'SIGNAL'. Changes no verdict.
+export function jumpFunnel(a, rc, t, sec, g) { const R = DAILY_RULES['UNDER5-JUMP'];
+  if (t < 253) return '0 history < 253'; if (!inBand(R, rc, t) || !okN(a.c[t]) || !okN(a.c[t - 1])) return '1 price band'; const dv = dv20(a, t); if (!(dv >= R.dv)) return '2 liquidity';
+  const s200 = avgOf(a.c, t - 200, t - 1, 0.8), lo252 = minOf(a.c, t - 252, t - 1); if (s200 === null || lo252 === null) return '3 history gaps'; if (!(a.c[t - 1] <= 0.6 * s200)) return '4 not 40% under 200-day'; if (!(a.c[t - 1] <= 1.02 * lo252)) return '5 not near 52-week low';
+  const lA = minOf(a.l, t - 9, t), lB = minOf(a.l, t - 29, t - 10); if (lA === null || lB === null || lA < lB) return '6 lower low';
+  const rA = maxOf(a.h, t - 9, t) - lA, rB = maxOf(a.h, t - 29, t - 10) - lB; if (!(rA <= 0.6 * rB)) return '7 range not tight';
+  const vA = avgOf(a.v, t - 9, t), vB = avgOf(a.v, t - 29, t - 10), v50 = avgOf(a.v, t - 50, t - 1, 0.8); if (vA === null || vB === null || v50 === null || !(vA >= 1.2 * vB)) return '8 volume not rising'; if (!(a.v[t] >= 3 * v50)) return '9 day volume < 3x';
+  if (!(a.h[t] > a.l[t]) || (a.c[t] - a.l[t]) / (a.h[t] - a.l[t]) < 0.75) return '10 close not top quarter'; if (bigMove(a.c, t - 21, t - 1, 0.15, false)) return '11 15% day in prior 21';
+  if (!sec) return '12 no SEC history'; if (sec.offer.some(s => s >= t - 19 && s <= t)) return '13 offering filing'; if (g === null || g === undefined) return '14 share count unknown'; if (!(g < 0.05)) return '15 share count +5%';
+  const up = a.c[t] / a.c[t - 1] - 1; if (up >= 0.15) return 'SIGNAL'; if (up < 0.04) return '16 up < 4%';
+  if (sec.s8k.some(([s, it]) => s >= t - 9 && s <= t && /1\.01/.test(it))) return 'SIGNAL'; const any8k = sec.s8k.some(([s]) => s >= t - 9 && s <= t), base = avgOf(a.v, t - 60, t - 11, 0.8), mx = maxOf(a.v, t - 10, t - 1);
+  return !any8k && base !== null && mx !== null && mx <= 1.5 * base ? 'SIGNAL' : '17 no fresh reason'; }
+export function reverseFunnel(a, rc, t, sec, splitIdx) { const R = DAILY_RULES['UNDER5-REVERSE'];
+  if (!inBand(R, rc, t) || !okN(a.c[t])) return '1 price band'; const dv = dv20(a, t); if (!(dv >= R.dv)) return '2 liquidity'; const sp = splitIdx.filter(s => s >= t - 62 && s <= t - 10).pop(); if (sp === undefined || !okN(a.c[sp])) return '3 no reverse split 10-62 sessions ago';
+  if (!sec) return '4 no SEC history'; if (!(a.c[t] <= 0.3 * a.c[sp])) return '5 not down 70% since split'; const lA = minOf(a.l, t - 9, t), lB = minOf(a.l, sp, t - 10); if (lA === null || lB === null || !(lA > lB)) return '6 lower low';
+  const v50 = avgOf(a.v, t - 50, t - 1, 0.8); if (v50 === null || !(a.v[t] >= 2 * v50)) return '7 volume < 2x'; if (!sec.s8k.some(([s, it]) => s >= t - 9 && s <= t && /1\.01/.test(it))) return '8 no 8-K 1.01'; return 'SIGNAL'; }

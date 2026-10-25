@@ -20,7 +20,7 @@ import { buildRunnerRows, analyseRunnerRows, renderRunnerReport } from './runner
 import { VERSION, SLIP, STRESS, SPLIT_HALF, START, HIST_FROM, MIN_PREV, MAX_PREV, FETCH_UP, OPEN, EXITS, EXIT_IDS, BASE, BASE_IDS, FILTERS, FILTER_IDS, OK_TYPES,
   r4, mean, median, halfOf, commonLike, toNy, dayFacts, trade, after, cumVol, pxAt, classifyNews, secClass, summarize, verdict, RULES, RULE_IDS, ruleTrades, preRegister,
   D_SPLIT, D_FROM, D_SIGNALS, D_COST, D_STRESS, D_SLIP, D_SLIP3, FDA_PHRASES, TOPLINE_PHRASES, DAILY_RULES, DAILY_IDS, SKIPPED_OWNER, dv20, holdTrade, jumpTrade, legsNet, legsGross,
-  sigJump, sigReverse, sigEpsLow, sigCat, dSummary, dVerdict, preRegisterDaily } from './squad19-core.mjs';
+  sigJump, sigReverse, sigEpsLow, sigCat, jumpFunnel, reverseFunnel, dSummary, dVerdict, preRegisterDaily } from './squad19-core.mjs';
 const env = process.env, MODE = process.argv[2] || 'report', t0 = Date.now(), log = (...a) => console.log('[' + ((Date.now() - t0) / 1000).toFixed(0) + 's]', ...a);
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }, JZ = (f, d) => { try { return JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString()); } catch (e) { return d; } };
 const WZ = (f, x) => fs.writeFileSync(f, zlib.gzipSync(JSON.stringify(x))), sleep = (ms) => new Promise(r => setTimeout(r, ms)), iso = (ms) => new Date(ms).toISOString().slice(0, 10);
@@ -271,8 +271,7 @@ async function eftsHits(phrase, a, b) { const out = []; for (let from = 0; from 
     if (!j || !j.hits) return null; const tot = (j.hits.total && j.hits.total.value) || 0;
     for (const h of j.hits.hits || []) { const x = h._source || {}; out.push([x.adsh || String(h._id).split(':')[0], String(+((x.ciks || [])[0] || 0)), x.file_date]); }
     if ((j.hits.hits || []).length < 100 || from + 100 >= tot) break; } return out; }
-async function daily() {
-  const L0 = J(LAB, {}); if (L0.dailyFirstRun && DAILY_IDS.every(id => L0.dailyFirstRun[id])) { log('daily rules already frozen: nothing to run'); return; }
+async function dailyLoad() {
   const files = fs.readdirSync(DDIR).filter(f => /^\d{4}-\d\d-\d\d\.json\.gz$/.test(f)).sort(), D = [], G = [];
   for (const f of files) { const d = f.slice(0, 10); if (d < D_FROM) continue; const g = JZ(DDIR + '/' + f, null); if (!g || g.T.length < 2000) continue; D.push(d); G.push(g); }
   const T = D.length; log('daily: ' + T + ' market days ' + D[0] + '..' + D[T - 1]);
@@ -323,13 +322,19 @@ async function daily() {
   const SH = JZ('data/shares.json.gz', { c: {} }).c || {};
   const sharesAt = (cik, d) => { const a = SH[cik]; if (!a) return null; const lim = Date.parse(d) - 45 * 864e5; let v = null; for (const [pd, n] of a) { if (Date.parse(pd) <= lim) v = n; else break; } return v; };
   const growth90 = (cik, d) => { const now = sharesAt(cik, d), then = sharesAt(cik, iso(Date.parse(d) - 90 * 864e5)); return now > 0 && then > 0 ? now / then - 1 : null; };
+  const sigFrom = dIdx.get(D.find(d => d >= D_SIGNALS));
+  return { D, T, syms, NS, A, RC, splitIdx, splitDates, bandDays, need, cikOf, secOf, growth90, ciks, ftMiss, typeA, typeC, sigFrom };
+}
+async function daily() {
+  const L0 = J(LAB, {}); if (L0.dailyFirstRun && DAILY_IDS.every(id => L0.dailyFirstRun[id])) { log('daily rules already frozen: nothing to run'); return; }
+  const { D, T, syms, NS, A, RC, splitIdx, splitDates, bandDays, need, cikOf, secOf, growth90, ciks, ftMiss, typeA, typeC, sigFrom } = await dailyLoad();
   // signals -> trades
   const ctrlCache = new Map(), cap = (x) => Math.min(x, 3);
   const control = (id, t, ent, ex) => { const k = id + '|' + t + '|' + ex; if (ctrlCache.has(k)) return ctrlCache.get(k); const v = [];
     for (const i of bandDays[id][t]) { const a = A[i]; if (a.o[ent] > 0 && a.c[ex] > 0) v.push(cap(a.c[ex] / a.o[ent] - 1)); } const r = v.length >= 20 ? mean(v) : null; ctrlCache.set(k, r); return r; };
   const own = (id, i, t, held) => { const a = A[i], v = []; for (let u = 21; u + held < T; u++) { if (Math.abs(u - t) <= 20) continue; const rc = RC[i][u]; const R = DAILY_RULES[id]; if (!(rc >= R.band[0] && rc < R.band[1])) continue;
       if (a.o[u + 1] > 0 && a.c[u + held] > 0) v.push(cap(a.c[u + held] / a.o[u + 1] - 1)); } return v.length >= 5 ? mean(v) : null; };
-  const sigFrom = dIdx.get(D.find(d => d >= D_SIGNALS)), results = {}, cover = { symbolsInBand: need.size, withCik: [...need.keys()].filter(cikOf).length, ciks: ciks.length, secFound: [...secOf.keys()].length, eftsMissingMonths: ftMiss, typeAHits: typeA.size, typeCHits: typeC.size };
+  const results = {}, cover = { symbolsInBand: need.size, withCik: [...need.keys()].filter(cikOf).length, ciks: ciks.length, secFound: [...secOf.keys()].length, eftsMissingMonths: ftMiss, typeAHits: typeA.size, typeCHits: typeC.size };
   for (const id of DAILY_IDS) { const tr = []; let lastEnd = new Map();
     for (let i = 0; i < NS; i++) { const a = A[i], rc = RC[i], cik = cikOf(syms[i]), sx = cik ? secOf.get(cik) || null : null;
       const cand = []; if (id === 'CAT-HUNTER-SUB5') { if (!sx) continue; for (const [t, pub] of [...sx.catA, ...sx.catC]) cand.push({ t, pub }); }
@@ -362,11 +367,21 @@ function mergeDaily() { const X = J(WORK + '/daily-out.json', null), L = J(LAB, 
 
 // RH1 (owner's Runner Hunter) on RAW bars from 2021: every symbol's bar on a split day is dropped (no fake +900% next-day highs)
 async function rh1raw() { const splits = await loadSplits(), store = { days: {}, gone: [] }; let dropped = 0;
-  for (const f of fs.readdirSync(DDIR).filter(f => /^\d{4}-\d\d-\d\d\.json\.gz$/.test(f)).sort()) { const d = f.slice(0, 10); if (d < D_FROM) continue; const g = JZ(DDIR + '/' + f, null); if (!g || g.T.length < 2000) continue;
-    const keep = []; for (let j = 0; j < g.T.length; j++) { if ((splits.get(g.T[j]) || []).some(x => x.d === d)) { dropped++; continue; } keep.push(j); }
+  const files = fs.readdirSync(DDIR).filter(f => /^\d{4}-\d\d-\d\d\.json\.gz$/.test(f) && f.slice(0, 10) >= D_FROM).sort(), ever = new Set();
+  for (const f of files) { const g = JZ(DDIR + '/' + f, null); if (g && g.T) for (let j = 0; j < g.T.length; j++) if (g.c[j] < 5) ever.add(g.T[j]); }   // memory: only symbols that ever closed under 5 USD can be signals
+  log('RH1 raw: ' + files.length + ' sessions, ' + ever.size + ' symbols ever under 5 USD');
+  for (const f of files) { const d = f.slice(0, 10); const g = JZ(DDIR + '/' + f, null); if (!g || g.T.length < 2000) continue;
+    const keep = []; for (let j = 0; j < g.T.length; j++) { if (!ever.has(g.T[j])) continue; if ((splits.get(g.T[j]) || []).some(x => x.d === d)) { dropped++; continue; } keep.push(j); }
     store.days[d] = { T: keep.map(j => g.T[j]), o: keep.map(j => g.o[j]), h: keep.map(j => g.h[j]), l: keep.map(j => g.l[j]), c: keep.map(j => g.c[j]), v: keep.map(j => g.v[j]) }; }
   const rows = buildRunnerRows(store), res = analyseRunnerRows(rows); res.cache = { source: 'Massive grouped daily, RAW (adjusted=false), ' + D_FROM + ' to latest, split days removed (' + dropped + ' bars)', sessions: Object.keys(store.days).length, rows: rows.length };
   fs.writeFileSync('data/squad19-rh1-raw.json', JSON.stringify(res, null, 1)); fs.writeFileSync('data/squad19-rh1-raw.md', renderRunnerReport(res) + '\n'); log('RH1 raw: ' + rows.length + ' rows'); }
 
-if (MODE === 'rh1raw') await rh1raw(); else if (MODE === 'daily') await daily(); else if (MODE === 'mergeDaily') mergeDaily(); else if (MODE === 'plan') await plan(); else if (MODE === 'shard') await shard(); else if (MODE === 'sec') await secMode(); else if (MODE === 'report') report(); else if (MODE === 'judge') judgeMode(); else if (MODE === 'paper') paperMode();
+// DIAGNOSTIC ONLY (after the frozen run; changes no verdict): where the UNDER5-JUMP / UNDER5-REVERSE candidates drop out
+async function dailyDiag() { const X = await dailyLoad(), out = { at: new Date().toISOString(), note: 'diagnostic only: first failing condition per in-band stock-day; the frozen verdicts are unchanged' };
+  for (const id of ['UNDER5-JUMP', 'UNDER5-REVERSE']) { const f = {}; for (let i = 0; i < X.NS; i++) { const cik = X.cikOf(X.syms[i]), sx = cik ? X.secOf.get(cik) || null : null;
+      for (let t = X.sigFrom; t < X.T - 1; t++) { if (!(X.RC[i][t] > 0)) continue; const why = id === 'UNDER5-JUMP' ? jumpFunnel(X.A[i], X.RC[i], t, sx, cik ? X.growth90(cik, X.D[t]) : null) : reverseFunnel(X.A[i], X.RC[i], t, sx, X.splitIdx[i]); f[why] = (f[why] || 0) + 1; } }
+    out[id] = f; log(id + ' funnel ' + JSON.stringify(f)); }
+  fs.writeFileSync('data/squad19-diag.json', JSON.stringify(out, null, 1)); }
+
+if (MODE === 'dailyDiag') await dailyDiag(); else if (MODE === 'rh1raw') await rh1raw(); else if (MODE === 'daily') await daily(); else if (MODE === 'mergeDaily') mergeDaily(); else if (MODE === 'plan') await plan(); else if (MODE === 'shard') await shard(); else if (MODE === 'sec') await secMode(); else if (MODE === 'report') report(); else if (MODE === 'judge') judgeMode(); else if (MODE === 'paper') paperMode();
 else console.log('unknown mode ' + MODE);

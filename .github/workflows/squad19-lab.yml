@@ -210,17 +210,26 @@ jobs:
           key: fm-cache-none
           restore-keys: fm-cache-
       - shell: bash
+        continue-on-error: true
         run: |
-          ls -la fm-cache sq19-daily | head -5; ls sq19-daily | wc -l
-          node runner-hunter-study.mjs --cache fm-cache/fm.json.gz --out-json data/squad19-rh1-fm.json --out-md data/squad19-rh1-fm.md 2>&1 | tee run.log || true
-          node squad19-lab.mjs rh1raw 2>&1 | tee -a run.log
+          { ls -la fm-cache; ls sq19-daily | wc -l; free -g; } 2>&1 | tee run.log
+          node -e "const z=require('zlib'),fs=require('fs');const s=JSON.parse(z.gunzipSync(fs.readFileSync('fm-cache/fm.json.gz')));const D=Object.keys(s.days).sort();console.log('fm cache',D.length,'sessions',D[0],D[D.length-1],'minPx',s.minPx,'gone',(s.gone||[]).length)" 2>&1 | tee -a run.log
+          node runner-hunter-study.mjs --cache fm-cache/fm.json.gz --out-json data/squad19-rh1-fm.json --out-md data/squad19-rh1-fm.md 2>&1 | tail -n 20 | tee -a run.log
+      - shell: bash
+        continue-on-error: true
+        run: |
+          node squad19-lab.mjs rh1raw 2>&1 | tail -n 30 | tee -a run.log
+          node squad19-lab.mjs dailyDiag 2>&1 | tail -n 12 | tee -a run.log
         env:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
-      - shell: bash
+          SEC_UA: ${{ secrets.SEC_UA }}
+      - if: always()
+        shell: bash
         run: |
+          cp run.log data/squad19-rh1-run.log 2>/dev/null || true
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/squad19-rh1-fm.json data/squad19-rh1-fm.md data/squad19-rh1-raw.json data/squad19-rh1-raw.md"
+          FILES="data/squad19-rh1-fm.json data/squad19-rh1-fm.md data/squad19-rh1-raw.json data/squad19-rh1-raw.md data/squad19-rh1-run.log data/squad19-diag.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
