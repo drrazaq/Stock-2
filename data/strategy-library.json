@@ -28076,6 +28076,51 @@
    "explain": "not tested: needs a history of capital-spending headlines and Asian supplier exposure data; Asian listings are outside the US price data.",
    "sources": [],
    "note": "Outside reviewer, 25 Oct 2026; listed so it is not lost. Needs: a dated history of capital-spending headlines and a supplier-exposure map to Asian companies (and their prices, which the US data does not hold)."
+  },
+  {
+   "id": "RQ-LAZY-63",
+   "family": "Daily researcher (RQ)",
+   "name": "Lazy prices: the 10-K barely changed from last year (top 20% similarity), hold 3 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-25 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the next open after a 10-K whose text is among the 20% most similar to the previous 10-K (cosine similarity percentile >= 0.80 vs all 10-K similarities of the prior 365 days), stock liquid; sell the close 63 sessions later. Text measure, ranking and data rule fixed in research-core.mjs before any run (cosine similarity of 10-K word counts vs the previous 10-K; percentile vs the prior 365 days of 10-K similarities; both documents 10,000+ words).",
+   "sources": [
+    "https://onlinelibrary.wiley.com/doi/10.1111/jofi.12885",
+    "https://www.nber.org/papers/w25084"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026."
+  },
+  {
+   "id": "RQ-LAZY-126",
+   "family": "Daily researcher (RQ)",
+   "name": "Lazy prices: the 10-K barely changed from last year (top 20% similarity), hold 6 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-25 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-LAZY-63, hold 126 sessions. Text measure, ranking and data rule fixed in research-core.mjs before any run (cosine similarity of 10-K word counts vs the previous 10-K; percentile vs the prior 365 days of 10-K similarities; both documents 10,000+ words).",
+   "sources": [
+    "https://onlinelibrary.wiley.com/doi/10.1111/jofi.12885",
+    "https://www.nber.org/papers/w25084"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026."
+  },
+  {
+   "id": "RQ-LAZY-CHG63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: the 10-K changed the most from last year (bottom 20% similarity), 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-10-25 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: stocks whose 10-K is among the 20% least similar to the previous one, bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves. Never a buy. Text measure, ranking and data rule fixed in research-core.mjs before any run (cosine similarity of 10-K word counts vs the previous 10-K; percentile vs the prior 365 days of 10-K similarities; both documents 10,000+ words).",
+   "sources": [
+    "https://onlinelibrary.wiley.com/doi/10.1111/jofi.12885",
+    "https://www.nber.org/papers/w25084"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026."
   }
  ]
 }
