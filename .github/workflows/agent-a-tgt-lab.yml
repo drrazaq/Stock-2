@@ -1,0 +1,65 @@
+name: Agent A targets study
+# A-TGT1 (Agent A, 25 Oct 2026; agent-a-tgt-lab.mjs): profit targets (+10 / +15 / +20%), a 10% trailing stop and a 10% stop from the buy
+# (Han, Zhou & Zhu) against the current exit (the close of the fixed hold) on the live TRY SMALL rules SQ11-PB12, SQ6-MTUM and SQ6-QMOM.
+# Rules pre-registered in agent-a-tgt-core.mjs and data/strategy-library.json (A-TGT-*) before any run; each 5-year test runs ONCE (first
+# complete verdict frozen in data/agent-a-tgt-lab.json firstRun; later runs are monitoring only). The price cache is RESTORED READ ONLY
+# (never saved here). Commits only its own output files and its own library entries. Never places an order; no Telegram.
+# Start by hand: change run-agent-a-tgt-now.txt (a last line containing DIAG = data check only, nothing judged or written) or run the workflow.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-agent-a-tgt-now.txt']
+permissions:
+  contents: write
+concurrency: agent-a-tgt-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - shell: bash
+        timeout-minutes: 70
+        run: |
+          set -o pipefail
+          du -sh study-cache 2>/dev/null || true
+          if tail -n 1 run-agent-a-tgt-now.txt | grep -q DIAG && [ "${{ github.event_name }}" = "push" ]; then export DIAG=1; fi
+          node agent-a-tgt-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 200 run.log | cut -c1-2500 > data/agent-a-tgt-run.log 2>/dev/null || true
+          FILES="data/agent-a-tgt-lab.json data/agent-a-tgt-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "agent A targets study $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the agent A targets result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-a-tgt-log
+          path: run.log
