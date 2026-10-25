@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-10-24T08:00:15.217Z",
+ "generatedAt": "2026-10-25T14:44:59.791Z",
  "preRegistered": "tipster-core.mjs RULES + data/strategy-library.json TIP-* (24 Oct 2026, before any run)",
  "window": [
   "2021-10-12",
   "2026-10-23"
  ],
- "bar": 4.02,
+ "bar": 4.07,
  "split": "2024-01-01",
  "cost": 0.008,
  "stress": 0.012,
@@ -14,8 +14,8 @@
  "data": {
   "funds": {
    "ok": true,
-   "SPUS": 1255,
-   "HLAL": 1255
+   "SPUS": 1254,
+   "HLAL": 1254
   },
   "pre": {
    "ok": true,
@@ -28,16 +28,16 @@
    "noHistoryAndDelistedInWindow": 0,
    "notTriedYet": 0,
    "failedNow": 0,
-   "fetchedNow": 1966,
+   "fetchedNow": 0,
    "note": "tickers without pre-window history (mostly stocks delisted since) can only qualify once the window gives enough sessions: a survivorship gap in the first year of the window"
   },
   "facts": {
    "ok": true,
-   "companies": 2614,
-   "withFacts": 2447,
-   "fetchedNow": 0,
+   "companies": 2613,
+   "withFacts": 2446,
+   "fetchedNow": 1,
    "failed": 0,
-   "anomalyCacheAt": "2026-10-24T05:55:28.047Z"
+   "anomalyCacheAt": "2026-10-25T14:07:45.856Z"
   },
   "insider": {
    "ok": true,
@@ -53,7 +53,7 @@
   "turn": {
    "candidatesPriceGrowth": 5390,
    "stocks": 144,
-   "eightKFetched": 30,
+   "eightKFetched": 0,
    "eightKFailed": 0,
    "priceGrowthStocks": {
     "CCL": {
@@ -477,23 +477,23 @@
    "noHistoryAndDelistedInWindow": 0,
    "notTriedYet": 0,
    "failedNow": 0,
-   "fetchedNow": 1966,
+   "fetchedNow": 0,
    "note": "tickers without pre-window history (mostly stocks delisted since) can only qualify once the window gives enough sessions: a survivorship gap in the first year of the window"
   },
   "spyDDknown": 1264,
   "crashSessions": 150,
   "funds": {
    "ok": true,
-   "SPUS": 1255,
-   "HLAL": 1255
+   "SPUS": 1254,
+   "HLAL": 1254
   },
   "facts": {
    "ok": true,
-   "companies": 2614,
-   "withFacts": 2447,
-   "fetchedNow": 0,
+   "companies": 2613,
+   "withFacts": 2446,
+   "fetchedNow": 1,
    "failed": 0,
-   "anomalyCacheAt": "2026-10-24T05:55:28.047Z"
+   "anomalyCacheAt": "2026-10-25T14:07:45.856Z"
   },
   "insider": {
    "ok": true,
@@ -510,7 +510,7 @@
    "leaders": 300
   }
  },
- "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost per unit of money, better than the average liquid stock over the same unit-weighted days, better than the same stocks with the same plan on their other days, > 0 without the 2 best, block t >= 2.5 (63-session blocks; 12-month holds overlap so t is optimistic) -> TRADABLE SMALL; block t >= 4.02 -> PROVEN; plus return per year of capital tied up above the S&P 500 (SPY) over the same days in both halves",
+ "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost per unit of money, better than the average liquid stock over the same unit-weighted days, better than the same stocks with the same plan on their other days, > 0 without the 2 best, block t >= 2.5 (63-session blocks; 12-month holds overlap so t is optimistic) -> TRADABLE SMALL; block t >= 4.07 -> PROVEN; plus return per year of capital tied up above the S&P 500 (SPY) over the same days in both halves",
  "plan": "REGISTERED: 1 unit at the next open, +0.5 unit after a close 15% under the first buy, 35% stop on the total, 252 sessions. Information plans on the same entries: ONCE (no add), FORGET (no add, no stop), MONTHLY (+0.1 unit every 21 sessions)",
  "firstRun": {
   "TIP-DIPLEAD": {
@@ -3103,7 +3103,7 @@
  "effectiveNote": "readers acting on verdicts use first-run.mjs effectiveRuns(firstRun, correctedRun)",
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-24T08:00:15.217Z",
+  "at": "2026-10-25T14:44:59.792Z",
   "results": {
    "TIP-DIPLEAD": {
     "verdict": "TOO FEW CASES",
@@ -5876,17 +5876,17 @@
      "accelerating": false
     },
     {
+     "ind": "4412",
+     "ret12": 0.5296,
+     "g0": 0.2042,
+     "g1": 0.2204,
+     "accelerating": false
+    },
+    {
      "ind": "2911",
      "ret12": 0.5249,
      "g0": 0.4885,
      "g1": 0.8227,
-     "accelerating": false
-    },
-    {
-     "ind": "4412",
-     "ret12": 0.431,
-     "g0": 0.2042,
-     "g1": 0.2204,
      "accelerating": false
     },
     {
