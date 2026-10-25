@@ -22,7 +22,7 @@ import { judgeHold } from './hold-core.mjs';
 import { ownAverage, nextSession } from './anomaly-core.mjs';
 import { cikFromSpans, artifactJumps, hasArtifact } from './squad4-core.mjs';
 import { RULES, TEST_IDS, TH, COST, SPLIT, PAPER_START, V15_START, V15_FROZEN_AT, V15_HOLD, V15_BLOCK, NOT_TESTED, mean, r4, halfOf, capG, addDays, firstOnOrAfter, eftsHits, mainDoc, hasItem,
-  contractMatch, html2text, dollarValue, signalSession, sharesUp, dilutedAt, exitOf, vol20, deciles, perMonth, perYear, byYear, shapeOf, boardStats, sic35, v15Key, v15Split, preRegister } from './squad21-core.mjs';
+  contractMatch, html2text, dollarValue, dealType, signalSession, sharesUp, dilutedAt, exitOf, vol20, deciles, perMonth, perYear, byYear, shapeOf, boardStats, sic35, v15Key, v15Split, preRegister } from './squad21-core.mjs';
 const env = process.env, DIAG = !!env.DIAG, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov', EFTS = local(env.EFTS_BASE) || 'https://efts.sec.gov';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ21_CACHE || 'squad21-cache', SC4 = env.SQ4_CACHE || 'squad4-cache';
@@ -183,7 +183,7 @@ const DOCS = J(SC + '/docs.json', {}); { let read = 0, miss = 0;
     read++; if (read % 300 === 0) { W(SC + '/docs.json', DOCS); log('documents read: ' + read); } }
   W(SC + '/docs.json', DOCS); STATUS.docs = { ok: FT.complete && miss <= CAND.length * 0.01, candidates: CAND.length, readNow: read, notRead: miss, named: CAND.filter(e => DOCS[e.adsh] && DOCS[e.adsh][0] === 1).length };
   log('documents: ' + CAND.length + ' candidates (' + read + ' read now, ' + miss + ' not read), ' + STATUS.docs.named + ' with a named counterparty'); }
-const SIGS = CAND.filter(e => DOCS[e.adsh] && DOCS[e.adsh][0] === 1).map(e => { const x = DOCS[e.adsh]; return { ...e, k: e.t + 1, stop: LA[e.i * T + e.t], phrase: x[1], cp: x[2], usd: x[3] }; }).sort((a, b) => a.t - b.t || a.i - b.i);
+const SIGS = CAND.filter(e => DOCS[e.adsh] && DOCS[e.adsh][0] === 1).map(e => { const x = DOCS[e.adsh]; return { ...e, k: e.t + 1, stop: LA[e.i * T + e.t], phrase: x[1], cp: x[2], usd: x[3], deal: dealType(x[2], x[4]) }; }).sort((a, b) => a.t - b.t || a.i - b.i);
 STATUS.dataOk = STATUS.price.ok && STATUS.efts.ok && STATUS.master.ok && STATUS.tickerMap.ok && STATUS.docs.ok;
 if (SECFAILS.length) log('SEC requests: ' + secReq + ', failed ' + secFail + ': ' + SECFAILS.slice(0, 3).map(redact).join(' | '));
 const COUNTS = { older: SIGS.filter(z => z.k < T && halfOf(D[z.t]) === 'older').length, newer: SIGS.filter(z => z.k < T && halfOf(D[z.t]) === 'newer').length };
@@ -203,7 +203,7 @@ function tradesOf(sigs, end = T - 1) { const out = [], busy = new Map(), spans =
   for (const z of sigs) { if (z.k > end) continue; if ((busy.get(z.i) ?? -1) >= z.k) continue; const S = series(z.i), ex = exitOf(S, z.k, z.stop, end + 1); if (!ex || ex.open) continue;
     if (artifactIn(z.i, z.t - 29, ex.x)) { artifacts++; continue; } const e = OA[z.i * T + z.k], g = ex.px / e - 1, lc = Math.max(z.k, ex.lastClose), c = ctrlSpan(z.k, lc); if (c === null) { noYard++; continue; }
     busy.set(z.i, ex.x); (spans.get(z.i) || spans.set(z.i, []).get(z.i)).push([z.k, ex.x]);
-    out.push({ t: z.t, s: z.sym, i: z.i, k: z.k, x: ex.x, lc, kind: ex.kind, days: Math.max(1, ex.held), g: capG(g), g0: g, c, c2: sameVol(z.i, z.t, z.k, lc), spy: spyRet(z.k, lc), half: halfOf(D[z.t]), d: z.d, cik: z.cik, cp: z.cp, phrase: z.phrase, usd: z.usd }); }
+    out.push({ t: z.t, s: z.sym, i: z.i, k: z.k, x: ex.x, lc, kind: ex.kind, days: Math.max(1, ex.held), g: capG(g), g0: g, c, c2: sameVol(z.i, z.t, z.k, lc), spy: spyRet(z.k, lc), half: halfOf(D[z.t]), d: z.d, cik: z.cik, cp: z.cp, phrase: z.phrase, usd: z.usd, deal: z.deal }); }
   const ownMemo = new Map();
   for (const z of out) { const len = z.lc - z.k + 1, key = z.i + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 30, to: end, len, step: 10, busy: spans.get(z.i) || [], mode: 'capBoth', okAt: (u) => inU2(z.i, u - 1) && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.i, u, x) }));
     z.own = ownMemo.get(key); }
@@ -228,8 +228,9 @@ for (const id of TEST_IDS) { if (!need.includes(id) && !env.HISTORY) continue;
     withValue: tr.filter(z => z.usd).length, withValueAndRevenue: tr.filter(z => ok(z.mat)).length, material10: sub(z => ok(z.mat) && z.mat >= TH.material), under10: sub(z => ok(z.mat) && z.mat < TH.material), noValue: sub(z => !ok(z.mat)) };
   RES[id] = { ...v, name: RULES[id].name, kind: 'buy', family: RULES[id].family, hold: TH.maxHold, block: B, results: R, sameVolatility: { note: 'the reviewer\'s yardstick (an extra gate): same 20-day volatility decile on the signal day, no item-1.01 8-K in sessions t-10..t, the same buy and sell sessions', older: R2.older, newer: R2.newer, all: R2.all },
     perYear: PY, signalsPerMonth: { trades: { mean: pm.mean, median: pm.median, min: pm.min, max: pm.max, zeroMonths: pm.zeroMonths, months: pm.months }, signalsBeforeOneOpen: { mean: pmSig.mean, median: pmSig.median, min: pmSig.min, max: pmSig.max, zeroMonths: pmSig.zeroMonths }, byMonth: pm.byMonth },
-    materiality, calendarYears: byYear(tr, z => D[z.t].slice(0, 4)), shape: shapeOf(tr), artifactsLeftOut: tr.artifacts, noYardstick: tr.noYard, split: SPLIT, cost: COST, yardstick: 'capBoth (AUD-1: trades and every yardstick capped at +300% alike)',
-    trades: tr.map(z => ({ s: z.s, filed: z.d, sig: D[z.t], buy: D[z.k], sell: D[z.x], exit: z.kind, held: z.days, net: r4(z.g - COST), avgStock: r4(z.c - COST), sameVol: r4(ok(z.c2) ? z.c2 - COST : null), sameStock: r4(ok(z.own) ? z.own - COST : null), spy: r4(z.spy), counterparty: z.cp, phrase: z.phrase, usd: z.usd, mat: r4(z.mat) })) };
+    materiality, dealTypes: { note: 'INFORMATION ONLY, not part of the rule (squad21-core dealType: financing / corporate = lender, bank or fund counterparty, or a credit / underwriting / merger / voting / cooperation / purchase agreement in the sentence; else commercial)', commercial: sub(z => z.deal === 'commercial'), financing: sub(z => z.deal !== 'commercial') },
+    calendarYears: byYear(tr, z => D[z.t].slice(0, 4)), shape: shapeOf(tr), artifactsLeftOut: tr.artifacts, noYardstick: tr.noYard, split: SPLIT, cost: COST, yardstick: 'capBoth (AUD-1: trades and every yardstick capped at +300% alike)',
+    trades: tr.map(z => ({ s: z.s, filed: z.d, sig: D[z.t], buy: D[z.k], sell: D[z.x], exit: z.kind, held: z.days, net: r4(z.g - COST), avgStock: r4(z.c - COST), sameVol: r4(ok(z.c2) ? z.c2 - COST : null), sameStock: r4(ok(z.own) ? z.own - COST : null), spy: r4(z.spy), counterparty: z.cp, phrase: z.phrase, deal: z.deal, usd: z.usd, mat: r4(z.mat) })) };
   const f = (h) => (h.n || 0) + ' (' + (h.days || 0) + 'd, ' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock + ' win ' + pc(h.win);
   log('- ' + id + ': ' + RES[id].verdict + ' | older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | same-vol edge ' + pc(R2.older.edge) + ' / ' + pc(R2.newer.edge) + ' | per year ' + pc(PY.older.rule) + ' vs SPY ' + pc(PY.older.spy) + ' / ' + pc(PY.newer.rule) + ' vs ' + pc(PY.newer.spy) + ' | per month ' + pm.mean + ' | ' + RES[id].why.slice(0, 300)); }
 const strip = (r) => { const { trades, ...rest } = r; return rest; };

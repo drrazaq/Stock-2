@@ -151,6 +151,13 @@ export function dollarValue(sentence) { const s = String(sentence || ''), v = ne
     const x = u === 'billion' || u === 'bn' ? n * 1e9 : u === 'million' || u === 'mm' || u === 'm' ? n * 1e6 : n; if (x >= 1e5) v.add(Math.round(x)); }
   return v.size === 1 ? [...v][0] : null; }
 
+// INFORMATION ONLY (added 25 Oct 2026 after the coverage check showed many financing matches, BEFORE any return was computed; not part of
+// the rule): a match is FINANCING / CORPORATE when the counterparty looks like a lender / bank / fund or the sentence names a financing or
+// corporate-control agreement; else COMMERCIAL (a customer / supply / license / collaboration contract).
+const FIN_CP = /\b(Bank|Banco|Securities|Capital|Credit|Lending|Lender|Finance|Financial|Funding|Fund|Royalty|Investment|Investments|Investors|Management|Markets|Citibank|Citigroup|JPMorgan|Goldman|Morgan Stanley|BofA|Barclays|Wells Fargo|MidCap|Oaktree|Blackstone|Apollo)\b/i;
+const FIN_TXT = /credit agreement|loan agreement|loan and security|credit facility|underwriting agreement|indenture|revolving|term loan|note purchase|notes? due|securities purchase|equity distribution|sales agent|at[- ]the[- ]market|merger agreement|voting|support agreement|cooperation agreement|registration rights|equity purchase|stock purchase|asset purchase|separation|financing agreement|forbearance|amendment no\./i;
+export const dealType = (counterparty, sentence) => FIN_CP.test(String(counterparty || '')) || FIN_TXT.test(String(sentence || '')) ? 'financing/corporate' : 'commercial';
+
 // ---------------- prices: the signal test and the exit ----------------
 // S = { o, h, l, c, v } arrays (NaN = no bar); dv20(t) = 20-session average traded value or NaN; f = filing session.
 // x = { sharesUp(t) -> fraction or null, diluted(t) -> bool } (both point in time). -> the first signal session t or -1
