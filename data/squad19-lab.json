@@ -34482,5 +34482,1865 @@
   "DEC-EPS-REV": "needs point-in-time analyst estimate history (ANOM-REVISION / C-REV1: needs data); none of the keys provides it historically",
   "DEC-SUPPLIER-ASIA": "already in the library as DEC2-ASIA-SUPPLIER: needs data (supplier links with dates)",
   "DEC-SHORT-CATALYST": "needs historical short interest for dead stocks (C-SQZ1 / S5: needs data); the related ANOM-SILOW / ANOM-SIDROP were REJECTED"
+ },
+ "firstRun": {
+  "SQ19-FAST-PM": {
+   "name": "Fast ignition (+10% to +20% within 10 minutes, not a gap) after a pre-market of 1x a normal day's volume; stop 15%, sell at the close",
+   "rule": "Under-5 USD stock (prior close 0.10-5). The 09:30 open is under +10%; it crosses +10% and then +20% within 10 minutes; trigger = the +20% minute; pre-market volume (04:00-09:29) >= the 20-session average daily volume. Buy the next bar's open; stop 15% under the fill; else sell at the 15:59 close. Older part (chosen on it): 178 trades, +1.2% a trade after 2% each way, -5.6% without the 2 best.",
+   "base": "FAST",
+   "filters": [
+    "PMRV1"
+   ],
+   "exit": "S15",
+   "results": {
+    "older": {
+     "n": 178,
+     "days": 133,
+     "stocks": 169,
+     "avg": 0.0123,
+     "avgStress": -0.0077,
+     "median": -0.1111,
+     "win": 0.2697,
+     "noTop2": -0.0559,
+     "best": 10.955,
+     "worst3": [
+      -0.2681,
+      -0.2005,
+      -0.1922
+     ],
+     "ctrl": -0.0462,
+     "edge": 0.0585,
+     "ctrlCovered": 178,
+     "blocks": 69,
+     "tBlock": -0.5791,
+     "weeksWithSignal": 69,
+     "months": 18
+    },
+    "newer": {
+     "n": 179,
+     "days": 127,
+     "stocks": 163,
+     "avg": -0.0767,
+     "avgStress": -0.095,
+     "median": -0.1658,
+     "win": 0.1899,
+     "noTop2": -0.0876,
+     "best": 1.0876,
+     "worst3": [
+      -0.2004,
+      -0.1993,
+      -0.1977
+     ],
+     "ctrl": -0.0517,
+     "edge": -0.025,
+     "ctrlCovered": 179,
+     "blocks": 63,
+     "tBlock": -5.4156,
+     "weeksWithSignal": 63,
+     "months": 16
+    }
+   },
+   "frequency": {
+    "older": {
+     "perWeek": 2.2532,
+     "perMonth": 9.8889,
+     "weeksWithSignal": 69,
+     "weeks": 79
+    },
+    "newer": {
+     "perWeek": 2.5942,
+     "perMonth": 11.1875,
+     "weeksWithSignal": 63,
+     "weeks": 69
+    }
+   },
+   "verdict": "REJECTED",
+   "why": "loses after 3% each way in the older part; loses without its 2 best trades in the older part; weekly block t -0.5791 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -5.4156 under 2.5 in the newer part",
+   "worstTrades": [
+    {
+     "d": "2025-04-08",
+     "s": "SVRE",
+     "g2": -0.2681
+    },
+    {
+     "d": "2024-05-23",
+     "s": "GPAK",
+     "g2": -0.2005
+    },
+    {
+     "d": "2026-06-09",
+     "s": "MSGY",
+     "g2": -0.2004
+    },
+    {
+     "d": "2026-08-03",
+     "s": "NEXR",
+     "g2": -0.1993
+    },
+    {
+     "d": "2025-12-30",
+     "s": "ZCMD",
+     "g2": -0.1977
+    }
+   ],
+   "bestTrades": [
+    {
+     "d": "2024-10-15",
+     "s": "DRUG",
+     "g2": 10.955
+    },
+    {
+     "d": "2026-01-27",
+     "s": "XHLD",
+     "g2": 1.0876
+    },
+    {
+     "d": "2025-05-08",
+     "s": "VEEE",
+     "g2": 1.0789
+    },
+    {
+     "d": "2024-10-14",
+     "s": "DRUG",
+     "g2": 0.8269
+    },
+    {
+     "d": "2025-06-13",
+     "s": "OP",
+     "g2": 0.8
+    }
+   ],
+   "window": {
+    "from": "2024-01-02",
+    "to": "2026-10-23"
+   },
+   "frozenAt": "2026-10-25T07:42:58.654Z"
+  },
+  "SQ19-FAST-PM-RV3": {
+   "name": "Fast ignition with pre-market volume 1x and 3x a normal day traded by the trigger; stop 15%, close",
+   "rule": "SQ19-FAST-PM plus: volume from 04:00 to the trigger minute >= 3x the 20-session average daily volume. Older part (chosen on it): 134 trades, +5.2% a trade after 2% each way, -3.8% without the 2 best.",
+   "base": "FAST",
+   "filters": [
+    "PMRV1",
+    "RV3"
+   ],
+   "exit": "S15",
+   "results": {
+    "older": {
+     "n": 134,
+     "days": 107,
+     "stocks": 129,
+     "avg": 0.052,
+     "avgStress": 0.0312,
+     "median": -0.0946,
+     "win": 0.306,
+     "noTop2": -0.0384,
+     "best": 10.955,
+     "worst3": [
+      -0.2681,
+      -0.2005,
+      -0.1922
+     ],
+     "ctrl": -0.0458,
+     "edge": 0.0978,
+     "ctrlCovered": 134,
+     "blocks": 62,
+     "tBlock": -0.0186,
+     "weeksWithSignal": 62,
+     "months": 18
+    },
+    "newer": {
+     "n": 115,
+     "days": 88,
+     "stocks": 109,
+     "avg": -0.0547,
+     "avgStress": -0.0734,
+     "median": -0.1279,
+     "win": 0.2261,
+     "noTop2": -0.0714,
+     "best": 1.0876,
+     "worst3": [
+      -0.1951,
+      -0.184,
+      -0.1833
+     ],
+     "ctrl": -0.0524,
+     "edge": -0.0023,
+     "ctrlCovered": 115,
+     "blocks": 49,
+     "tBlock": -1.091,
+     "weeksWithSignal": 49,
+     "months": 16
+    }
+   },
+   "frequency": {
+    "older": {
+     "perWeek": 1.6962,
+     "perMonth": 7.4444,
+     "weeksWithSignal": 62,
+     "weeks": 79
+    },
+    "newer": {
+     "perWeek": 1.6667,
+     "perMonth": 7.1875,
+     "weeksWithSignal": 49,
+     "weeks": 69
+    }
+   },
+   "verdict": "REJECTED",
+   "why": "loses without its 2 best trades in the older part; weekly block t -0.0186 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -1.091 under 2.5 in the newer part",
+   "worstTrades": [
+    {
+     "d": "2025-04-08",
+     "s": "SVRE",
+     "g2": -0.2681
+    },
+    {
+     "d": "2024-05-23",
+     "s": "GPAK",
+     "g2": -0.2005
+    },
+    {
+     "d": "2025-11-21",
+     "s": "SCAG",
+     "g2": -0.1951
+    },
+    {
+     "d": "2024-07-18",
+     "s": "JCSE",
+     "g2": -0.1922
+    },
+    {
+     "d": "2025-06-09",
+     "s": "MNY",
+     "g2": -0.1879
+    }
+   ],
+   "bestTrades": [
+    {
+     "d": "2024-10-15",
+     "s": "DRUG",
+     "g2": 10.955
+    },
+    {
+     "d": "2026-01-27",
+     "s": "XHLD",
+     "g2": 1.0876
+    },
+    {
+     "d": "2025-05-08",
+     "s": "VEEE",
+     "g2": 1.0789
+    },
+    {
+     "d": "2024-10-14",
+     "s": "DRUG",
+     "g2": 0.8269
+    },
+    {
+     "d": "2025-06-13",
+     "s": "OP",
+     "g2": 0.8
+    }
+   ],
+   "window": {
+    "from": "2024-01-02",
+    "to": "2026-10-23"
+   },
+   "frozenAt": "2026-10-25T07:42:58.654Z"
+  },
+  "SQ19-FAST-PM-REPEAT": {
+   "name": "Fast ignition with pre-market volume, in a stock that already had a +40% day in the prior 90 sessions; stop 15%, close",
+   "rule": "SQ19-FAST-PM plus: at least one session in the prior 90 whose high was 40%+ over its prior close. Older part (chosen on it): 102 trades, +7.0% a trade after 2% each way, -4.9% without the 2 best.",
+   "base": "FAST",
+   "filters": [
+    "PMRV1",
+    "REPEAT"
+   ],
+   "exit": "S15",
+   "results": {
+    "older": {
+     "n": 102,
+     "days": 89,
+     "stocks": 98,
+     "avg": 0.0696,
+     "avgStress": 0.0484,
+     "median": -0.117,
+     "win": 0.3039,
+     "noTop2": -0.0494,
+     "best": 10.955,
+     "worst3": [
+      -0.2681,
+      -0.2005,
+      -0.1922
+     ],
+     "ctrl": -0.0467,
+     "edge": 0.1162,
+     "ctrlCovered": 102,
+     "blocks": 53,
+     "tBlock": -0.0252,
+     "weeksWithSignal": 53,
+     "months": 17
+    },
+    "newer": {
+     "n": 116,
+     "days": 92,
+     "stocks": 106,
+     "avg": -0.0701,
+     "avgStress": -0.0885,
+     "median": -0.1833,
+     "win": 0.2069,
+     "noTop2": -0.0869,
+     "best": 1.0876,
+     "worst3": [
+      -0.2004,
+      -0.1993,
+      -0.1977
+     ],
+     "ctrl": -0.0513,
+     "edge": -0.0188,
+     "ctrlCovered": 116,
+     "blocks": 55,
+     "tBlock": -4.158,
+     "weeksWithSignal": 55,
+     "months": 16
+    }
+   },
+   "frequency": {
+    "older": {
+     "perWeek": 1.2911,
+     "perMonth": 5.6667,
+     "weeksWithSignal": 53,
+     "weeks": 79
+    },
+    "newer": {
+     "perWeek": 1.6812,
+     "perMonth": 7.25,
+     "weeksWithSignal": 55,
+     "weeks": 69
+    }
+   },
+   "verdict": "REJECTED",
+   "why": "loses without its 2 best trades in the older part; weekly block t -0.0252 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -4.158 under 2.5 in the newer part",
+   "worstTrades": [
+    {
+     "d": "2025-04-08",
+     "s": "SVRE",
+     "g2": -0.2681
+    },
+    {
+     "d": "2024-05-23",
+     "s": "GPAK",
+     "g2": -0.2005
+    },
+    {
+     "d": "2026-06-09",
+     "s": "MSGY",
+     "g2": -0.2004
+    },
+    {
+     "d": "2026-08-03",
+     "s": "NEXR",
+     "g2": -0.1993
+    },
+    {
+     "d": "2025-12-30",
+     "s": "ZCMD",
+     "g2": -0.1977
+    }
+   ],
+   "bestTrades": [
+    {
+     "d": "2024-10-15",
+     "s": "DRUG",
+     "g2": 10.955
+    },
+    {
+     "d": "2026-01-27",
+     "s": "XHLD",
+     "g2": 1.0876
+    },
+    {
+     "d": "2025-05-08",
+     "s": "VEEE",
+     "g2": 1.0789
+    },
+    {
+     "d": "2024-10-14",
+     "s": "DRUG",
+     "g2": 0.8269
+    },
+    {
+     "d": "2025-04-17",
+     "s": "SXTC",
+     "g2": 0.7863
+    }
+   ],
+   "window": {
+    "from": "2024-01-02",
+    "to": "2026-10-23"
+   },
+   "frozenAt": "2026-10-25T07:42:58.654Z"
+  },
+  "SQ19-FAST-EARLY-RV3": {
+   "name": "Fast ignition before 10:00 with 3x a normal day traded by the trigger; stop 15%, close",
+   "rule": "FAST trigger at 09:30-09:59 and volume from 04:00 to the trigger >= 3x the 20-session average daily volume. Buy the next bar's open; stop 15%; else the 15:59 close. Older part (chosen on it): 130 trades, +4.4% a trade after 2% each way, -4.9% without the 2 best.",
+   "base": "FAST",
+   "filters": [
+    "T_PRE10",
+    "RV3"
+   ],
+   "exit": "S15",
+   "results": {
+    "older": {
+     "n": 130,
+     "days": 105,
+     "stocks": 128,
+     "avg": 0.0444,
+     "avgStress": 0.0237,
+     "median": -0.0987,
+     "win": 0.3,
+     "noTop2": -0.0489,
+     "best": 10.955,
+     "worst3": [
+      -0.1922,
+      -0.1879,
+      -0.1852
+     ],
+     "ctrl": -0.051,
+     "edge": 0.0954,
+     "ctrlCovered": 130,
+     "blocks": 62,
+     "tBlock": 0.2538,
+     "weeksWithSignal": 62,
+     "months": 18
+    },
+    "newer": {
+     "n": 86,
+     "days": 78,
+     "stocks": 83,
+     "avg": -0.0165,
+     "avgStress": -0.036,
+     "median": -0.08,
+     "win": 0.2674,
+     "noTop2": -0.0498,
+     "best": 1.6784,
+     "worst3": [
+      -0.1951,
+      -0.1847,
+      -0.1833
+     ],
+     "ctrl": -0.0508,
+     "edge": 0.0343,
+     "ctrlCovered": 86,
+     "blocks": 50,
+     "tBlock": -0.1381,
+     "weeksWithSignal": 50,
+     "months": 16
+    }
+   },
+   "frequency": {
+    "older": {
+     "perWeek": 1.6456,
+     "perMonth": 7.2222,
+     "weeksWithSignal": 62,
+     "weeks": 79
+    },
+    "newer": {
+     "perWeek": 1.2464,
+     "perMonth": 5.375,
+     "weeksWithSignal": 50,
+     "weeks": 69
+    }
+   },
+   "verdict": "REJECTED",
+   "why": "loses without its 2 best trades in the older part; weekly block t 0.2538 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; loses without its 2 best trades in the newer part; weekly block t -0.1381 under 2.5 in the newer part",
+   "worstTrades": [
+    {
+     "d": "2025-11-21",
+     "s": "SCAG",
+     "g2": -0.1951
+    },
+    {
+     "d": "2024-07-18",
+     "s": "JCSE",
+     "g2": -0.1922
+    },
+    {
+     "d": "2025-06-09",
+     "s": "MNY",
+     "g2": -0.1879
+    },
+    {
+     "d": "2024-02-14",
+     "s": "FRES",
+     "g2": -0.1852
+    },
+    {
+     "d": "2026-07-01",
+     "s": "CTW",
+     "g2": -0.1847
+    }
+   ],
+   "bestTrades": [
+    {
+     "d": "2024-10-15",
+     "s": "DRUG",
+     "g2": 10.955
+    },
+    {
+     "d": "2025-09-29",
+     "s": "BQ",
+     "g2": 1.6784
+    },
+    {
+     "d": "2026-01-27",
+     "s": "XHLD",
+     "g2": 1.0876
+    },
+    {
+     "d": "2025-05-08",
+     "s": "VEEE",
+     "g2": 1.0789
+    },
+    {
+     "d": "2024-10-14",
+     "s": "DRUG",
+     "g2": 0.8269
+    }
+   ],
+   "window": {
+    "from": "2024-01-02",
+    "to": "2026-10-23"
+   },
+   "frozenAt": "2026-10-25T07:42:58.654Z"
+  },
+  "SQ19-FAST-2TO5-PM": {
+   "name": "Fast ignition in a 2-5 USD stock with pre-market volume 1x; stop 10%, close",
+   "rule": "SQ19-FAST-PM restricted to prior close 2-5 USD, stop 10% under the fill. Older part (chosen on it): 38 trades, +25.5% a trade after 2% each way, -6.5% without the 2 best.",
+   "base": "FAST",
+   "filters": [
+    "P_2_5",
+    "PMRV1"
+   ],
+   "exit": "S10",
+   "results": {
+    "older": {
+     "n": 38,
+     "days": 37,
+     "stocks": 38,
+     "avg": 0.255,
+     "avgStress": 0.2302,
+     "median": -0.1353,
+     "win": 0.2632,
+     "noTop2": -0.0651,
+     "best": 10.955,
+     "worst3": [
+      -0.1618,
+      -0.1392,
+      -0.1369
+     ],
+     "ctrl": -0.0409,
+     "edge": 0.2959,
+     "ctrlCovered": 38,
+     "blocks": 30,
+     "tBlock": 0.9289,
+     "weeksWithSignal": 30,
+     "months": 16
+    },
+    "newer": {
+     "n": 46,
+     "days": 45,
+     "stocks": 46,
+     "avg": -0.0452,
+     "avgStress": -0.0641,
+     "median": -0.1353,
+     "win": 0.2609,
+     "noTop2": -0.0714,
+     "best": 0.691,
+     "worst3": [
+      -0.1687,
+      -0.1656,
+      -0.1506
+     ],
+     "ctrl": -0.0431,
+     "edge": -0.0022,
+     "ctrlCovered": 46,
+     "blocks": 32,
+     "tBlock": -0.8216,
+     "weeksWithSignal": 32,
+     "months": 14
+    }
+   },
+   "frequency": {
+    "older": {
+     "perWeek": 0.481,
+     "perMonth": 2.1111,
+     "weeksWithSignal": 30,
+     "weeks": 79
+    },
+    "newer": {
+     "perWeek": 0.6667,
+     "perMonth": 2.875,
+     "weeksWithSignal": 32,
+     "weeks": 69
+    }
+   },
+   "verdict": "REJECTED",
+   "why": "loses without its 2 best trades in the older part; weekly block t 0.9289 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -0.8216 under 2.5 in the newer part",
+   "worstTrades": [
+    {
+     "d": "2026-02-02",
+     "s": "IBG",
+     "g2": -0.1687
+    },
+    {
+     "d": "2026-06-12",
+     "s": "CDTG",
+     "g2": -0.1656
+    },
+    {
+     "d": "2025-03-06",
+     "s": "MDCX",
+     "g2": -0.1618
+    },
+    {
+     "d": "2026-07-06",
+     "s": "SONM",
+     "g2": -0.1506
+    },
+    {
+     "d": "2025-02-06",
+     "s": "UPXI",
+     "g2": -0.1392
+    }
+   ],
+   "bestTrades": [
+    {
+     "d": "2024-10-15",
+     "s": "DRUG",
+     "g2": 10.955
+    },
+    {
+     "d": "2025-05-08",
+     "s": "VEEE",
+     "g2": 1.0789
+    },
+    {
+     "d": "2025-07-08",
+     "s": "BTCS",
+     "g2": 0.691
+    },
+    {
+     "d": "2026-09-23",
+     "s": "ARTL",
+     "g2": 0.3699
+    },
+    {
+     "d": "2024-05-07",
+     "s": "GSUN",
+     "g2": 0.3662
+    }
+   ],
+   "window": {
+    "from": "2024-01-02",
+    "to": "2026-10-23"
+   },
+   "frozenAt": "2026-10-25T07:42:58.654Z"
+  },
+  "SQ19-GAP20-8K-NONEWS": {
+   "name": "Opens 20%+ up on an overnight 8-K / 6-K with no news headline at all; buy 09:31, stop 15%, close",
+   "rule": "Under-5 USD stock opens (09:30 bar) 20%+ over the prior close; an 8-K or 6-K was accepted between the prior session's 16:00 and the open; no Benzinga headline (catalyst or reaction) before the open. Buy the 09:31 bar open; stop 15%; else the 15:59 close. Older part (chosen on it): 46 trades, +4.8% a trade after 2% each way, -0.1% without the 2 best.",
+   "base": "GAP20",
+   "filters": [
+    "NEWS_NONE",
+    "SEC_PRE"
+   ],
+   "exit": "S15",
+   "results": {
+    "older": {
+     "n": 46,
+     "days": 42,
+     "stocks": 44,
+     "avg": 0.048,
+     "avgStress": 0.0272,
+     "median": -0.1833,
+     "win": 0.2826,
+     "noTop2": -0.0015,
+     "best": 1.2185,
+     "worst3": [
+      -0.2181,
+      -0.2177,
+      -0.2122
+     ],
+     "ctrl": -0.0559,
+     "edge": 0.1039,
+     "ctrlCovered": 46,
+     "blocks": 32,
+     "tBlock": 0.2752,
+     "weeksWithSignal": 32,
+     "months": 15
+    },
+    "newer": {
+     "n": 35,
+     "days": 34,
+     "stocks": 34,
+     "avg": -0.0296,
+     "avgStress": -0.0489,
+     "median": -0.0606,
+     "win": 0.2857,
+     "noTop2": -0.0733,
+     "best": 1.0375,
+     "worst3": [
+      -0.1997,
+      -0.1833,
+      -0.1833
+     ],
+     "ctrl": -0.0219,
+     "edge": -0.0077,
+     "ctrlCovered": 35,
+     "blocks": 31,
+     "tBlock": -1.7867,
+     "weeksWithSignal": 31,
+     "months": 14
+    }
+   },
+   "frequency": {
+    "older": {
+     "perWeek": 0.5823,
+     "perMonth": 2.5556,
+     "weeksWithSignal": 32,
+     "weeks": 79
+    },
+    "newer": {
+     "perWeek": 0.5072,
+     "perMonth": 2.1875,
+     "weeksWithSignal": 31,
+     "weeks": 69
+    }
+   },
+   "verdict": "REJECTED",
+   "why": "loses without its 2 best trades in the older part; weekly block t 0.2752 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -1.7867 under 2.5 in the newer part",
+   "worstTrades": [
+    {
+     "d": "2024-06-20",
+     "s": "MGOL",
+     "g2": -0.2181
+    },
+    {
+     "d": "2025-04-25",
+     "s": "RETO",
+     "g2": -0.2177
+    },
+    {
+     "d": "2024-02-05",
+     "s": "HCTI",
+     "g2": -0.2122
+    },
+    {
+     "d": "2026-10-05",
+     "s": "AMOD",
+     "g2": -0.1997
+    },
+    {
+     "d": "2024-01-09",
+     "s": "TRNR",
+     "g2": -0.1833
+    }
+   ],
+   "bestTrades": [
+    {
+     "d": "2025-02-20",
+     "s": "MNDR",
+     "g2": 1.2185
+    },
+    {
+     "d": "2025-05-01",
+     "s": "KIDZ",
+     "g2": 1.0545
+    },
+    {
+     "d": "2026-02-09",
+     "s": "BRLS",
+     "g2": 1.0375
+    },
+    {
+     "d": "2024-01-23",
+     "s": "RVSN",
+     "g2": 1.0101
+    },
+    {
+     "d": "2024-05-01",
+     "s": "SYT",
+     "g2": 0.9534
+    }
+   ],
+   "window": {
+    "from": "2024-01-02",
+    "to": "2026-10-23"
+   },
+   "frozenAt": "2026-10-25T07:42:58.654Z"
+  },
+  "SQ19-HODBRK-LIVENEWS": {
+   "name": "Second leg: after reaching +20% and pulling back 10%+, breaks the high of day within 30 minutes of a fresh in-session catalyst headline; liquid; stop 15%, close",
+   "rule": "Under-5 USD stock with a 20-day average traded value >= 1M USD; reached +20% on the prior close, pulled back 10%+ from its high, then a minute breaks the high of day (trigger); a catalyst headline (not a reaction article) was published during the session in the 30 minutes before the trigger. Buy the next bar's open; stop 15%; else the 15:59 close. Older part (chosen on it): 72 trades, +0.8% a trade after 2% each way, -3.8% without the 2 best.",
+   "base": "HODBRK",
+   "filters": [
+    "NEWS_LIVE30",
+    "DV1M"
+   ],
+   "exit": "S15",
+   "results": {
+    "older": {
+     "n": 72,
+     "days": 68,
+     "stocks": 69,
+     "avg": 0.008,
+     "avgStress": -0.012,
+     "median": -0.1833,
+     "win": 0.2222,
+     "noTop2": -0.038,
+     "best": 1.6891,
+     "worst3": [
+      -0.1974,
+      -0.1833,
+      -0.1833
+     ],
+     "ctrl": -0.0396,
+     "edge": 0.0476,
+     "ctrlCovered": 72,
+     "blocks": 50,
+     "tBlock": 0.5396,
+     "weeksWithSignal": 50,
+     "months": 18
+    },
+    "newer": {
+     "n": 64,
+     "days": 62,
+     "stocks": 62,
+     "avg": -0.0674,
+     "avgStress": -0.0859,
+     "median": -0.1833,
+     "win": 0.25,
+     "noTop2": -0.0959,
+     "best": 1.1448,
+     "worst3": [
+      -0.1833,
+      -0.1833,
+      -0.1833
+     ],
+     "ctrl": -0.0351,
+     "edge": -0.0324,
+     "ctrlCovered": 64,
+     "blocks": 39,
+     "tBlock": -2.6165,
+     "weeksWithSignal": 39,
+     "months": 15
+    }
+   },
+   "frequency": {
+    "older": {
+     "perWeek": 0.9114,
+     "perMonth": 4,
+     "weeksWithSignal": 50,
+     "weeks": 79
+    },
+    "newer": {
+     "perWeek": 0.9275,
+     "perMonth": 4,
+     "weeksWithSignal": 39,
+     "weeks": 69
+    }
+   },
+   "verdict": "REJECTED",
+   "why": "loses after 3% each way in the older part; loses without its 2 best trades in the older part; weekly block t 0.5396 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -2.6165 under 2.5 in the newer part",
+   "worstTrades": [
+    {
+     "d": "2024-11-05",
+     "s": "ZCAR",
+     "g2": -0.1974
+    },
+    {
+     "d": "2024-01-03",
+     "s": "SNTG",
+     "g2": -0.1833
+    },
+    {
+     "d": "2024-01-05",
+     "s": "ACON",
+     "g2": -0.1833
+    },
+    {
+     "d": "2024-01-11",
+     "s": "NUBI",
+     "g2": -0.1833
+    },
+    {
+     "d": "2024-02-14",
+     "s": "MIMO",
+     "g2": -0.1833
+    }
+   ],
+   "bestTrades": [
+    {
+     "d": "2024-07-22",
+     "s": "MIRA",
+     "g2": 1.6891
+    },
+    {
+     "d": "2024-10-24",
+     "s": "MNPR",
+     "g2": 1.5511
+    },
+    {
+     "d": "2025-04-04",
+     "s": "AREB",
+     "g2": 1.1531
+    },
+    {
+     "d": "2025-07-28",
+     "s": "PFSA",
+     "g2": 1.1448
+    },
+    {
+     "d": "2024-12-16",
+     "s": "SIDU",
+     "g2": 0.7653
+    }
+   ],
+   "window": {
+    "from": "2024-01-02",
+    "to": "2026-10-23"
+   },
+   "frozenAt": "2026-10-25T07:42:58.654Z"
+  }
+ },
+ "lastRun": {
+  "at": "2026-10-25T07:42:58.654Z",
+  "results": {
+   "SQ19-FAST-PM": {
+    "name": "Fast ignition (+10% to +20% within 10 minutes, not a gap) after a pre-market of 1x a normal day's volume; stop 15%, sell at the close",
+    "rule": "Under-5 USD stock (prior close 0.10-5). The 09:30 open is under +10%; it crosses +10% and then +20% within 10 minutes; trigger = the +20% minute; pre-market volume (04:00-09:29) >= the 20-session average daily volume. Buy the next bar's open; stop 15% under the fill; else sell at the 15:59 close. Older part (chosen on it): 178 trades, +1.2% a trade after 2% each way, -5.6% without the 2 best.",
+    "base": "FAST",
+    "filters": [
+     "PMRV1"
+    ],
+    "exit": "S15",
+    "results": {
+     "older": {
+      "n": 178,
+      "days": 133,
+      "stocks": 169,
+      "avg": 0.0123,
+      "avgStress": -0.0077,
+      "median": -0.1111,
+      "win": 0.2697,
+      "noTop2": -0.0559,
+      "best": 10.955,
+      "worst3": [
+       -0.2681,
+       -0.2005,
+       -0.1922
+      ],
+      "ctrl": -0.0462,
+      "edge": 0.0585,
+      "ctrlCovered": 178,
+      "blocks": 69,
+      "tBlock": -0.5791,
+      "weeksWithSignal": 69,
+      "months": 18
+     },
+     "newer": {
+      "n": 179,
+      "days": 127,
+      "stocks": 163,
+      "avg": -0.0767,
+      "avgStress": -0.095,
+      "median": -0.1658,
+      "win": 0.1899,
+      "noTop2": -0.0876,
+      "best": 1.0876,
+      "worst3": [
+       -0.2004,
+       -0.1993,
+       -0.1977
+      ],
+      "ctrl": -0.0517,
+      "edge": -0.025,
+      "ctrlCovered": 179,
+      "blocks": 63,
+      "tBlock": -5.4156,
+      "weeksWithSignal": 63,
+      "months": 16
+     }
+    },
+    "frequency": {
+     "older": {
+      "perWeek": 2.2532,
+      "perMonth": 9.8889,
+      "weeksWithSignal": 69,
+      "weeks": 79
+     },
+     "newer": {
+      "perWeek": 2.5942,
+      "perMonth": 11.1875,
+      "weeksWithSignal": 63,
+      "weeks": 69
+     }
+    },
+    "verdict": "REJECTED",
+    "why": "loses after 3% each way in the older part; loses without its 2 best trades in the older part; weekly block t -0.5791 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -5.4156 under 2.5 in the newer part",
+    "worstTrades": [
+     {
+      "d": "2025-04-08",
+      "s": "SVRE",
+      "g2": -0.2681
+     },
+     {
+      "d": "2024-05-23",
+      "s": "GPAK",
+      "g2": -0.2005
+     },
+     {
+      "d": "2026-06-09",
+      "s": "MSGY",
+      "g2": -0.2004
+     },
+     {
+      "d": "2026-08-03",
+      "s": "NEXR",
+      "g2": -0.1993
+     },
+     {
+      "d": "2025-12-30",
+      "s": "ZCMD",
+      "g2": -0.1977
+     }
+    ],
+    "bestTrades": [
+     {
+      "d": "2024-10-15",
+      "s": "DRUG",
+      "g2": 10.955
+     },
+     {
+      "d": "2026-01-27",
+      "s": "XHLD",
+      "g2": 1.0876
+     },
+     {
+      "d": "2025-05-08",
+      "s": "VEEE",
+      "g2": 1.0789
+     },
+     {
+      "d": "2024-10-14",
+      "s": "DRUG",
+      "g2": 0.8269
+     },
+     {
+      "d": "2025-06-13",
+      "s": "OP",
+      "g2": 0.8
+     }
+    ],
+    "window": {
+     "from": "2024-01-02",
+     "to": "2026-10-23"
+    }
+   },
+   "SQ19-FAST-PM-RV3": {
+    "name": "Fast ignition with pre-market volume 1x and 3x a normal day traded by the trigger; stop 15%, close",
+    "rule": "SQ19-FAST-PM plus: volume from 04:00 to the trigger minute >= 3x the 20-session average daily volume. Older part (chosen on it): 134 trades, +5.2% a trade after 2% each way, -3.8% without the 2 best.",
+    "base": "FAST",
+    "filters": [
+     "PMRV1",
+     "RV3"
+    ],
+    "exit": "S15",
+    "results": {
+     "older": {
+      "n": 134,
+      "days": 107,
+      "stocks": 129,
+      "avg": 0.052,
+      "avgStress": 0.0312,
+      "median": -0.0946,
+      "win": 0.306,
+      "noTop2": -0.0384,
+      "best": 10.955,
+      "worst3": [
+       -0.2681,
+       -0.2005,
+       -0.1922
+      ],
+      "ctrl": -0.0458,
+      "edge": 0.0978,
+      "ctrlCovered": 134,
+      "blocks": 62,
+      "tBlock": -0.0186,
+      "weeksWithSignal": 62,
+      "months": 18
+     },
+     "newer": {
+      "n": 115,
+      "days": 88,
+      "stocks": 109,
+      "avg": -0.0547,
+      "avgStress": -0.0734,
+      "median": -0.1279,
+      "win": 0.2261,
+      "noTop2": -0.0714,
+      "best": 1.0876,
+      "worst3": [
+       -0.1951,
+       -0.184,
+       -0.1833
+      ],
+      "ctrl": -0.0524,
+      "edge": -0.0023,
+      "ctrlCovered": 115,
+      "blocks": 49,
+      "tBlock": -1.091,
+      "weeksWithSignal": 49,
+      "months": 16
+     }
+    },
+    "frequency": {
+     "older": {
+      "perWeek": 1.6962,
+      "perMonth": 7.4444,
+      "weeksWithSignal": 62,
+      "weeks": 79
+     },
+     "newer": {
+      "perWeek": 1.6667,
+      "perMonth": 7.1875,
+      "weeksWithSignal": 49,
+      "weeks": 69
+     }
+    },
+    "verdict": "REJECTED",
+    "why": "loses without its 2 best trades in the older part; weekly block t -0.0186 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -1.091 under 2.5 in the newer part",
+    "worstTrades": [
+     {
+      "d": "2025-04-08",
+      "s": "SVRE",
+      "g2": -0.2681
+     },
+     {
+      "d": "2024-05-23",
+      "s": "GPAK",
+      "g2": -0.2005
+     },
+     {
+      "d": "2025-11-21",
+      "s": "SCAG",
+      "g2": -0.1951
+     },
+     {
+      "d": "2024-07-18",
+      "s": "JCSE",
+      "g2": -0.1922
+     },
+     {
+      "d": "2025-06-09",
+      "s": "MNY",
+      "g2": -0.1879
+     }
+    ],
+    "bestTrades": [
+     {
+      "d": "2024-10-15",
+      "s": "DRUG",
+      "g2": 10.955
+     },
+     {
+      "d": "2026-01-27",
+      "s": "XHLD",
+      "g2": 1.0876
+     },
+     {
+      "d": "2025-05-08",
+      "s": "VEEE",
+      "g2": 1.0789
+     },
+     {
+      "d": "2024-10-14",
+      "s": "DRUG",
+      "g2": 0.8269
+     },
+     {
+      "d": "2025-06-13",
+      "s": "OP",
+      "g2": 0.8
+     }
+    ],
+    "window": {
+     "from": "2024-01-02",
+     "to": "2026-10-23"
+    }
+   },
+   "SQ19-FAST-PM-REPEAT": {
+    "name": "Fast ignition with pre-market volume, in a stock that already had a +40% day in the prior 90 sessions; stop 15%, close",
+    "rule": "SQ19-FAST-PM plus: at least one session in the prior 90 whose high was 40%+ over its prior close. Older part (chosen on it): 102 trades, +7.0% a trade after 2% each way, -4.9% without the 2 best.",
+    "base": "FAST",
+    "filters": [
+     "PMRV1",
+     "REPEAT"
+    ],
+    "exit": "S15",
+    "results": {
+     "older": {
+      "n": 102,
+      "days": 89,
+      "stocks": 98,
+      "avg": 0.0696,
+      "avgStress": 0.0484,
+      "median": -0.117,
+      "win": 0.3039,
+      "noTop2": -0.0494,
+      "best": 10.955,
+      "worst3": [
+       -0.2681,
+       -0.2005,
+       -0.1922
+      ],
+      "ctrl": -0.0467,
+      "edge": 0.1162,
+      "ctrlCovered": 102,
+      "blocks": 53,
+      "tBlock": -0.0252,
+      "weeksWithSignal": 53,
+      "months": 17
+     },
+     "newer": {
+      "n": 116,
+      "days": 92,
+      "stocks": 106,
+      "avg": -0.0701,
+      "avgStress": -0.0885,
+      "median": -0.1833,
+      "win": 0.2069,
+      "noTop2": -0.0869,
+      "best": 1.0876,
+      "worst3": [
+       -0.2004,
+       -0.1993,
+       -0.1977
+      ],
+      "ctrl": -0.0513,
+      "edge": -0.0188,
+      "ctrlCovered": 116,
+      "blocks": 55,
+      "tBlock": -4.158,
+      "weeksWithSignal": 55,
+      "months": 16
+     }
+    },
+    "frequency": {
+     "older": {
+      "perWeek": 1.2911,
+      "perMonth": 5.6667,
+      "weeksWithSignal": 53,
+      "weeks": 79
+     },
+     "newer": {
+      "perWeek": 1.6812,
+      "perMonth": 7.25,
+      "weeksWithSignal": 55,
+      "weeks": 69
+     }
+    },
+    "verdict": "REJECTED",
+    "why": "loses without its 2 best trades in the older part; weekly block t -0.0252 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -4.158 under 2.5 in the newer part",
+    "worstTrades": [
+     {
+      "d": "2025-04-08",
+      "s": "SVRE",
+      "g2": -0.2681
+     },
+     {
+      "d": "2024-05-23",
+      "s": "GPAK",
+      "g2": -0.2005
+     },
+     {
+      "d": "2026-06-09",
+      "s": "MSGY",
+      "g2": -0.2004
+     },
+     {
+      "d": "2026-08-03",
+      "s": "NEXR",
+      "g2": -0.1993
+     },
+     {
+      "d": "2025-12-30",
+      "s": "ZCMD",
+      "g2": -0.1977
+     }
+    ],
+    "bestTrades": [
+     {
+      "d": "2024-10-15",
+      "s": "DRUG",
+      "g2": 10.955
+     },
+     {
+      "d": "2026-01-27",
+      "s": "XHLD",
+      "g2": 1.0876
+     },
+     {
+      "d": "2025-05-08",
+      "s": "VEEE",
+      "g2": 1.0789
+     },
+     {
+      "d": "2024-10-14",
+      "s": "DRUG",
+      "g2": 0.8269
+     },
+     {
+      "d": "2025-04-17",
+      "s": "SXTC",
+      "g2": 0.7863
+     }
+    ],
+    "window": {
+     "from": "2024-01-02",
+     "to": "2026-10-23"
+    }
+   },
+   "SQ19-FAST-EARLY-RV3": {
+    "name": "Fast ignition before 10:00 with 3x a normal day traded by the trigger; stop 15%, close",
+    "rule": "FAST trigger at 09:30-09:59 and volume from 04:00 to the trigger >= 3x the 20-session average daily volume. Buy the next bar's open; stop 15%; else the 15:59 close. Older part (chosen on it): 130 trades, +4.4% a trade after 2% each way, -4.9% without the 2 best.",
+    "base": "FAST",
+    "filters": [
+     "T_PRE10",
+     "RV3"
+    ],
+    "exit": "S15",
+    "results": {
+     "older": {
+      "n": 130,
+      "days": 105,
+      "stocks": 128,
+      "avg": 0.0444,
+      "avgStress": 0.0237,
+      "median": -0.0987,
+      "win": 0.3,
+      "noTop2": -0.0489,
+      "best": 10.955,
+      "worst3": [
+       -0.1922,
+       -0.1879,
+       -0.1852
+      ],
+      "ctrl": -0.051,
+      "edge": 0.0954,
+      "ctrlCovered": 130,
+      "blocks": 62,
+      "tBlock": 0.2538,
+      "weeksWithSignal": 62,
+      "months": 18
+     },
+     "newer": {
+      "n": 86,
+      "days": 78,
+      "stocks": 83,
+      "avg": -0.0165,
+      "avgStress": -0.036,
+      "median": -0.08,
+      "win": 0.2674,
+      "noTop2": -0.0498,
+      "best": 1.6784,
+      "worst3": [
+       -0.1951,
+       -0.1847,
+       -0.1833
+      ],
+      "ctrl": -0.0508,
+      "edge": 0.0343,
+      "ctrlCovered": 86,
+      "blocks": 50,
+      "tBlock": -0.1381,
+      "weeksWithSignal": 50,
+      "months": 16
+     }
+    },
+    "frequency": {
+     "older": {
+      "perWeek": 1.6456,
+      "perMonth": 7.2222,
+      "weeksWithSignal": 62,
+      "weeks": 79
+     },
+     "newer": {
+      "perWeek": 1.2464,
+      "perMonth": 5.375,
+      "weeksWithSignal": 50,
+      "weeks": 69
+     }
+    },
+    "verdict": "REJECTED",
+    "why": "loses without its 2 best trades in the older part; weekly block t 0.2538 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; loses without its 2 best trades in the newer part; weekly block t -0.1381 under 2.5 in the newer part",
+    "worstTrades": [
+     {
+      "d": "2025-11-21",
+      "s": "SCAG",
+      "g2": -0.1951
+     },
+     {
+      "d": "2024-07-18",
+      "s": "JCSE",
+      "g2": -0.1922
+     },
+     {
+      "d": "2025-06-09",
+      "s": "MNY",
+      "g2": -0.1879
+     },
+     {
+      "d": "2024-02-14",
+      "s": "FRES",
+      "g2": -0.1852
+     },
+     {
+      "d": "2026-07-01",
+      "s": "CTW",
+      "g2": -0.1847
+     }
+    ],
+    "bestTrades": [
+     {
+      "d": "2024-10-15",
+      "s": "DRUG",
+      "g2": 10.955
+     },
+     {
+      "d": "2025-09-29",
+      "s": "BQ",
+      "g2": 1.6784
+     },
+     {
+      "d": "2026-01-27",
+      "s": "XHLD",
+      "g2": 1.0876
+     },
+     {
+      "d": "2025-05-08",
+      "s": "VEEE",
+      "g2": 1.0789
+     },
+     {
+      "d": "2024-10-14",
+      "s": "DRUG",
+      "g2": 0.8269
+     }
+    ],
+    "window": {
+     "from": "2024-01-02",
+     "to": "2026-10-23"
+    }
+   },
+   "SQ19-FAST-2TO5-PM": {
+    "name": "Fast ignition in a 2-5 USD stock with pre-market volume 1x; stop 10%, close",
+    "rule": "SQ19-FAST-PM restricted to prior close 2-5 USD, stop 10% under the fill. Older part (chosen on it): 38 trades, +25.5% a trade after 2% each way, -6.5% without the 2 best.",
+    "base": "FAST",
+    "filters": [
+     "P_2_5",
+     "PMRV1"
+    ],
+    "exit": "S10",
+    "results": {
+     "older": {
+      "n": 38,
+      "days": 37,
+      "stocks": 38,
+      "avg": 0.255,
+      "avgStress": 0.2302,
+      "median": -0.1353,
+      "win": 0.2632,
+      "noTop2": -0.0651,
+      "best": 10.955,
+      "worst3": [
+       -0.1618,
+       -0.1392,
+       -0.1369
+      ],
+      "ctrl": -0.0409,
+      "edge": 0.2959,
+      "ctrlCovered": 38,
+      "blocks": 30,
+      "tBlock": 0.9289,
+      "weeksWithSignal": 30,
+      "months": 16
+     },
+     "newer": {
+      "n": 46,
+      "days": 45,
+      "stocks": 46,
+      "avg": -0.0452,
+      "avgStress": -0.0641,
+      "median": -0.1353,
+      "win": 0.2609,
+      "noTop2": -0.0714,
+      "best": 0.691,
+      "worst3": [
+       -0.1687,
+       -0.1656,
+       -0.1506
+      ],
+      "ctrl": -0.0431,
+      "edge": -0.0022,
+      "ctrlCovered": 46,
+      "blocks": 32,
+      "tBlock": -0.8216,
+      "weeksWithSignal": 32,
+      "months": 14
+     }
+    },
+    "frequency": {
+     "older": {
+      "perWeek": 0.481,
+      "perMonth": 2.1111,
+      "weeksWithSignal": 30,
+      "weeks": 79
+     },
+     "newer": {
+      "perWeek": 0.6667,
+      "perMonth": 2.875,
+      "weeksWithSignal": 32,
+      "weeks": 69
+     }
+    },
+    "verdict": "REJECTED",
+    "why": "loses without its 2 best trades in the older part; weekly block t 0.9289 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -0.8216 under 2.5 in the newer part",
+    "worstTrades": [
+     {
+      "d": "2026-02-02",
+      "s": "IBG",
+      "g2": -0.1687
+     },
+     {
+      "d": "2026-06-12",
+      "s": "CDTG",
+      "g2": -0.1656
+     },
+     {
+      "d": "2025-03-06",
+      "s": "MDCX",
+      "g2": -0.1618
+     },
+     {
+      "d": "2026-07-06",
+      "s": "SONM",
+      "g2": -0.1506
+     },
+     {
+      "d": "2025-02-06",
+      "s": "UPXI",
+      "g2": -0.1392
+     }
+    ],
+    "bestTrades": [
+     {
+      "d": "2024-10-15",
+      "s": "DRUG",
+      "g2": 10.955
+     },
+     {
+      "d": "2025-05-08",
+      "s": "VEEE",
+      "g2": 1.0789
+     },
+     {
+      "d": "2025-07-08",
+      "s": "BTCS",
+      "g2": 0.691
+     },
+     {
+      "d": "2026-09-23",
+      "s": "ARTL",
+      "g2": 0.3699
+     },
+     {
+      "d": "2024-05-07",
+      "s": "GSUN",
+      "g2": 0.3662
+     }
+    ],
+    "window": {
+     "from": "2024-01-02",
+     "to": "2026-10-23"
+    }
+   },
+   "SQ19-GAP20-8K-NONEWS": {
+    "name": "Opens 20%+ up on an overnight 8-K / 6-K with no news headline at all; buy 09:31, stop 15%, close",
+    "rule": "Under-5 USD stock opens (09:30 bar) 20%+ over the prior close; an 8-K or 6-K was accepted between the prior session's 16:00 and the open; no Benzinga headline (catalyst or reaction) before the open. Buy the 09:31 bar open; stop 15%; else the 15:59 close. Older part (chosen on it): 46 trades, +4.8% a trade after 2% each way, -0.1% without the 2 best.",
+    "base": "GAP20",
+    "filters": [
+     "NEWS_NONE",
+     "SEC_PRE"
+    ],
+    "exit": "S15",
+    "results": {
+     "older": {
+      "n": 46,
+      "days": 42,
+      "stocks": 44,
+      "avg": 0.048,
+      "avgStress": 0.0272,
+      "median": -0.1833,
+      "win": 0.2826,
+      "noTop2": -0.0015,
+      "best": 1.2185,
+      "worst3": [
+       -0.2181,
+       -0.2177,
+       -0.2122
+      ],
+      "ctrl": -0.0559,
+      "edge": 0.1039,
+      "ctrlCovered": 46,
+      "blocks": 32,
+      "tBlock": 0.2752,
+      "weeksWithSignal": 32,
+      "months": 15
+     },
+     "newer": {
+      "n": 35,
+      "days": 34,
+      "stocks": 34,
+      "avg": -0.0296,
+      "avgStress": -0.0489,
+      "median": -0.0606,
+      "win": 0.2857,
+      "noTop2": -0.0733,
+      "best": 1.0375,
+      "worst3": [
+       -0.1997,
+       -0.1833,
+       -0.1833
+      ],
+      "ctrl": -0.0219,
+      "edge": -0.0077,
+      "ctrlCovered": 35,
+      "blocks": 31,
+      "tBlock": -1.7867,
+      "weeksWithSignal": 31,
+      "months": 14
+     }
+    },
+    "frequency": {
+     "older": {
+      "perWeek": 0.5823,
+      "perMonth": 2.5556,
+      "weeksWithSignal": 32,
+      "weeks": 79
+     },
+     "newer": {
+      "perWeek": 0.5072,
+      "perMonth": 2.1875,
+      "weeksWithSignal": 31,
+      "weeks": 69
+     }
+    },
+    "verdict": "REJECTED",
+    "why": "loses without its 2 best trades in the older part; weekly block t 0.2752 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -1.7867 under 2.5 in the newer part",
+    "worstTrades": [
+     {
+      "d": "2024-06-20",
+      "s": "MGOL",
+      "g2": -0.2181
+     },
+     {
+      "d": "2025-04-25",
+      "s": "RETO",
+      "g2": -0.2177
+     },
+     {
+      "d": "2024-02-05",
+      "s": "HCTI",
+      "g2": -0.2122
+     },
+     {
+      "d": "2026-10-05",
+      "s": "AMOD",
+      "g2": -0.1997
+     },
+     {
+      "d": "2024-01-09",
+      "s": "TRNR",
+      "g2": -0.1833
+     }
+    ],
+    "bestTrades": [
+     {
+      "d": "2025-02-20",
+      "s": "MNDR",
+      "g2": 1.2185
+     },
+     {
+      "d": "2025-05-01",
+      "s": "KIDZ",
+      "g2": 1.0545
+     },
+     {
+      "d": "2026-02-09",
+      "s": "BRLS",
+      "g2": 1.0375
+     },
+     {
+      "d": "2024-01-23",
+      "s": "RVSN",
+      "g2": 1.0101
+     },
+     {
+      "d": "2024-05-01",
+      "s": "SYT",
+      "g2": 0.9534
+     }
+    ],
+    "window": {
+     "from": "2024-01-02",
+     "to": "2026-10-23"
+    }
+   },
+   "SQ19-HODBRK-LIVENEWS": {
+    "name": "Second leg: after reaching +20% and pulling back 10%+, breaks the high of day within 30 minutes of a fresh in-session catalyst headline; liquid; stop 15%, close",
+    "rule": "Under-5 USD stock with a 20-day average traded value >= 1M USD; reached +20% on the prior close, pulled back 10%+ from its high, then a minute breaks the high of day (trigger); a catalyst headline (not a reaction article) was published during the session in the 30 minutes before the trigger. Buy the next bar's open; stop 15%; else the 15:59 close. Older part (chosen on it): 72 trades, +0.8% a trade after 2% each way, -3.8% without the 2 best.",
+    "base": "HODBRK",
+    "filters": [
+     "NEWS_LIVE30",
+     "DV1M"
+    ],
+    "exit": "S15",
+    "results": {
+     "older": {
+      "n": 72,
+      "days": 68,
+      "stocks": 69,
+      "avg": 0.008,
+      "avgStress": -0.012,
+      "median": -0.1833,
+      "win": 0.2222,
+      "noTop2": -0.038,
+      "best": 1.6891,
+      "worst3": [
+       -0.1974,
+       -0.1833,
+       -0.1833
+      ],
+      "ctrl": -0.0396,
+      "edge": 0.0476,
+      "ctrlCovered": 72,
+      "blocks": 50,
+      "tBlock": 0.5396,
+      "weeksWithSignal": 50,
+      "months": 18
+     },
+     "newer": {
+      "n": 64,
+      "days": 62,
+      "stocks": 62,
+      "avg": -0.0674,
+      "avgStress": -0.0859,
+      "median": -0.1833,
+      "win": 0.25,
+      "noTop2": -0.0959,
+      "best": 1.1448,
+      "worst3": [
+       -0.1833,
+       -0.1833,
+       -0.1833
+      ],
+      "ctrl": -0.0351,
+      "edge": -0.0324,
+      "ctrlCovered": 64,
+      "blocks": 39,
+      "tBlock": -2.6165,
+      "weeksWithSignal": 39,
+      "months": 15
+     }
+    },
+    "frequency": {
+     "older": {
+      "perWeek": 0.9114,
+      "perMonth": 4,
+      "weeksWithSignal": 50,
+      "weeks": 79
+     },
+     "newer": {
+      "perWeek": 0.9275,
+      "perMonth": 4,
+      "weeksWithSignal": 39,
+      "weeks": 69
+     }
+    },
+    "verdict": "REJECTED",
+    "why": "loses after 3% each way in the older part; loses without its 2 best trades in the older part; weekly block t 0.5396 under 2.5 in the older part; loses after 2% slippage each way in the newer part; loses after 3% each way in the newer part; not better than the matched same-minute runners in the newer part; loses without its 2 best trades in the newer part; weekly block t -2.6165 under 2.5 in the newer part",
+    "worstTrades": [
+     {
+      "d": "2024-11-05",
+      "s": "ZCAR",
+      "g2": -0.1974
+     },
+     {
+      "d": "2024-01-03",
+      "s": "SNTG",
+      "g2": -0.1833
+     },
+     {
+      "d": "2024-01-05",
+      "s": "ACON",
+      "g2": -0.1833
+     },
+     {
+      "d": "2024-01-11",
+      "s": "NUBI",
+      "g2": -0.1833
+     },
+     {
+      "d": "2024-02-14",
+      "s": "MIMO",
+      "g2": -0.1833
+     }
+    ],
+    "bestTrades": [
+     {
+      "d": "2024-07-22",
+      "s": "MIRA",
+      "g2": 1.6891
+     },
+     {
+      "d": "2024-10-24",
+      "s": "MNPR",
+      "g2": 1.5511
+     },
+     {
+      "d": "2025-04-04",
+      "s": "AREB",
+      "g2": 1.1531
+     },
+     {
+      "d": "2025-07-28",
+      "s": "PFSA",
+      "g2": 1.1448
+     },
+     {
+      "d": "2024-12-16",
+      "s": "SIDU",
+      "g2": 0.7653
+     }
+    ],
+    "window": {
+     "from": "2024-01-02",
+     "to": "2026-10-23"
+    }
+   }
+  }
  }
 }
