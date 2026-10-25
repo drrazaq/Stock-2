@@ -27989,6 +27989,46 @@
     ],
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -0.96 under 2.5 in the older half; block t 0.59 under 2.5 in the newer half; return per year of capital tied up -17.9% not above the S&P 500 on the same days in the older half (3.5%)"
    }
+  },
+  {
+   "id": "SQ21-CONTRACT10D",
+   "family": "Squad 21 (outside reviewer rules)",
+   "name": "Fresh 8-K 1.01 contract with a named counterparty, quiet clean base 1-10 sessions later; stop the signal low, exit under the 10-day average",
+   "agent": "squad21",
+   "kind": "buy",
+   "hold": 120,
+   "explain": "RULE (squad21-core.mjs header RULE 1, exact): an 8-K listing Item 1.01 filed 1-10 sessions before the signal session whose main document says agreement with / contract with / order from / purchase order from followed by a NAMED counterparty; close 2 USD+, 20-day average traded value 2M USD+; SEC share count up < 5% in 90 days (30-day reporting lag); no 424B5 / S-1 / 8-K Item 3.02 by the same CIK in the prior 20 sessions; NO close-to-close +15% day in the prior 21 sessions; since the filing no lower low in the last 3 sessions; average volume t-9..t >= 1.0x t-29..t-10. Buy the next open (valid 1 session); stop = the signal-day low; exit at the next open after a close below the 10-day average; max hold 120 sessions. Materiality (contract >= 10% of revenue) NOT a condition (data/chain-graph.json covers ~47 big buyers chosen with today's knowledge: survivorship); reported as information only where one dollar value parses reliably. Yardsticks: the average stock on the same days; same-volatility stocks without a fresh 8-K 1.01 (an extra gate); the same stock on other days; per year vs SPY. Signals per month reported.",
+   "status": "pre-registered 2026-10-25 (squad 21 lab); 5-year one-shot pending",
+   "libraryCheck": "DEC2-CONTRACT (1.01 + small cap + +4% on 2x volume: rejected), C-QK1 (1.01 then 3 quiet days: rejected), E15 (Friday-evening 1.01: queued), C-CT1 (contract size vs company: pre-registered). New here: a named counterparty in the text, a clean supply filter (no share growth, no shelf / S-1 / 3.02), NO prior +15% day, a higher-low base 3+ sessions after the filing on rising volume, a 10-day-average exit, 120-session max.",
+   "sources": [
+    "https://efts.sec.gov/LATEST/search-index",
+    "https://www.sec.gov/Archives/edgar/full-index/"
+   ],
+   "note": "Sent by the owner's outside reviewer, 25 Oct 2026. Pre-registered BEFORE any run (one version); run ONCE by squad21-lab.mjs, first complete verdict frozen in data/squad21-lab.json firstRun; forward paper lane (data/squad21-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "V15-NO35",
+   "family": "Squad 21 (outside reviewer rules)",
+   "name": "V15 F-score uptrend without SIC 35/36/38 (forward paper only, never backtested)",
+   "agent": "squad21",
+   "kind": "forward-only",
+   "hold": 126,
+   "explain": "V15 (F-score 8-9 above its 200-day average) WITHOUT SEC SIC 35xx / 36xx / 38xx. FORWARD ONLY: the exclusion was chosen because those sectors lost in V15's own older-half results, so a historical test on the same 5 years cannot validate it (fitted to the result) and none is run. From 27 Oct 2026 the squad 21 lab records V15's live picks (data/quality.json fscoreUpToday) on paper at a formation that day and on the first session of each month, with (V15-REF) and without (V15-NO35) SIC 35/36/38 side by side (data/squad21-paper.jsonl, data/squad21-board.json); buy next open, hold 126 sessions; the comeback board (COMEBACK-1) judges V15-NO35 on that unseen record only.",
+   "status": "forward paper only from 27 Oct 2026 (registered 2026-10-25; never backtested)",
+   "libraryCheck": "V15 (F-score uptrend: tradable small, LONGER HOLDS). The sector-excluded version was never run and is never backtested here.",
+   "sources": [],
+   "note": "Outside reviewer, 25 Oct 2026. Not a backtest result and never one: the first possible judgement needs 30+ resolved forward trades on 10+ monthly formation days (the 10th monthly formation is in July 2027; its 126-session hold resolves around January 2028)."
+  },
+  {
+   "id": "DEC-CONTRACT-10D-WIDE",
+   "family": "Squad 21 (outside reviewer rules)",
+   "name": "Contract filing within 10 days, widened by capital-spending headlines and Asian supplier exposure",
+   "agent": "squad21",
+   "kind": "buy",
+   "status": "not tested: needs data",
+   "explain": "not tested: needs a history of capital-spending headlines and Asian supplier exposure data; Asian listings are outside the US price data.",
+   "sources": [],
+   "note": "Outside reviewer, 25 Oct 2026; listed so it is not lost. Needs: a dated history of capital-spending headlines and a supplier-exposure map to Asian companies (and their prices, which the US data does not hold)."
   }
  ]
 }

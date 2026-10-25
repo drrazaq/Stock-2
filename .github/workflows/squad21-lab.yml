@@ -1,0 +1,92 @@
+name: Squad 21 lab
+# SQUAD 21 (squad21-lab.mjs; 25 Oct 2026): two rules sent by the owner's outside reviewer, pre-registered in squad21-core.mjs and
+# data/strategy-library.json before any run. SQ21-CONTRACT10D (a fresh 8-K Item 1.01 with a named counterparty on a quiet clean base) is
+# tested ONCE on 5 years (first complete verdict frozen in data/squad21-lab.json firstRun), then recorded on paper from 26 Oct 2026.
+# V15-NO35 (V15 without SIC 35/36/38) is FORWARD ONLY: never backtested; V15's live picks are recorded on paper with and without those
+# sectors from 27 Oct 2026 (data/squad21-paper.jsonl) for the comeback board. The price cache and Squad 4's Form 3/4/5 ticker map are
+# RESTORED READ ONLY; only this lab's own cache (squad21-cache) is saved. Commits only its own output files and its own library entries.
+# Never places an order. Start by hand: change run-squad21-now.txt (a last line containing DIAG = coverage check only) or run the workflow.
+on:
+  schedule:
+    - cron: '35 23 * * 1-5'   # weekday evenings after the close: paper lanes (cached data, only new days and filings are fetched)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'diag = coverage check only; run = full run; empty = the last line of run-squad21-now.txt decides'
+        required: false
+        default: ''
+  push:
+    branches: [main]
+    paths: ['run-squad21-now.txt']
+permissions:
+  contents: write
+concurrency: squad21-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad4-cache
+          key: squad4-cache-none
+          restore-keys: squad4-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad21-cache
+          key: squad21-cache-${{ github.run_id }}
+          restore-keys: squad21-cache-
+      - shell: bash
+        run: du -sh study-cache squad4-cache squad21-cache 2>/dev/null || true
+      - shell: bash
+        timeout-minutes: 300
+        run: |
+          set -o pipefail
+          MODE="${{ github.event.inputs.mode }}"
+          if [ "$MODE" = "diag" ] || { [ -z "$MODE" ] && [ "${{ github.event_name }}" != "schedule" ] && tail -n 1 run-squad21-now.txt | grep -q DIAG; }; then export DIAG=1; fi
+          node squad21-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SQ21_MINUTES: '285'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad21-cache
+          key: squad21-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad21-run.log 2>/dev/null || true
+          FILES="data/squad21-lab.json data/squad21-paper.jsonl data/squad21-today.json data/squad21-board.json data/squad21-diag.json data/squad21-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 21 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 21 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad21-lab-log
+          path: run.log
