@@ -29289,13 +29289,19 @@
    "agent": "A",
    "family": "Targets and trailing exits on the live rules (Agent A)",
    "name": "TARGETS STUDY: +10/+15/+20% targets, 10% trailing stop, 10% stop from the buy vs the current exit on SQ11-PB12, SQ6-MTUM, SQ6-QMOM",
-   "status": "pre-registered 2026-10-25 (Agent A); 15 rules A-TGT-*; 5-year one-shot pending",
+   "status": "tested: rejected as an exit change (0 of 15 adopted; keep the current fixed-hold exits)",
    "registered": "2026-10-25",
    "kind": "exit",
    "explain": "Umbrella entry for the 15 exit rules A-TGT-<exit>-<base> (agent-a-tgt-core.mjs header = the exact rules and the adoption test). The SWITCH is not re-tuned (live tier-2 exit rule; no adaptive levels); T1 keeps no trade list, SQ6-MTUM stands in for the 6-month leaders.",
    "sources": [
     "https://alphaarchitect.com/2016/08/taming-the-momentum-roller-coaster-fact-or-fiction/"
-   ]
+   ],
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json",
+   "result": {
+    "verdict": "no exit adopted",
+    "summary": "Every target / trailing / stop exit LOWERED the same-window average in BOTH halves on all 3 rules (15 of 15; t -1.5 to -8.6). Targets raise the win rate and median but cut the big winners; the 10% trail and the 10% stop cut the worst trade (e.g. PB12 -56% -> -21% / -33%) but cost 1.5 to 18 points per trade on average."
+   }
   }
  ]
 }
