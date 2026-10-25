@@ -29319,13 +29319,60 @@
    "kind": "buy",
    "hold": 126,
    "explain": "RULE (squad22-core.mjs header RULE 1, exact): on the SEC filing date F that first makes a new quarter end E0 known (companyfacts filed dates; usable the day after): TTM operating cash flow / TTM net income at E2 < E1 < E0 (3 months apart) strictly rising and >= 1.0 at E0, TTM net income > 0 at all three; TTM gross margin at E0 above a year earlier; weighted diluted shares of the E0 period up <= 2% on a year earlier. Liquid (close 5 USD+, 20-day traded value 5M USD+) the session before entry. Buy the next open after F; stop 35% under the entry; else sell at the close of the 126th session. Extra gate: beat V15 picks bought and sold on the same sessions in both halves. Yardsticks: average stock same days; same stock other days; per year vs SPY.",
-   "status": "pre-registered 2026-10-25 (squad 22 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "libraryCheck": "ANOM-ACC (accrual level decile: rejected), ANOM-CFOA (cash profitability level: rejected), V15 (F-score uptrend: live). New: a filing-date EVENT of a two-quarter rise in cash conversion to 1.0+, with gross margin up and diluted shares flat; must beat V15 on the same sessions.",
    "sources": [
     "https://www.jstor.org/stable/248290",
     "https://doi.org/10.2307/2672906"
    ],
-   "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun.",
+   "tested": "2026-10-23",
+   "study": "squad22-lab.mjs -> data/squad22-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     367,
+     559
+    ],
+    "avg": [
+     0.0871,
+     0.0317
+    ],
+    "stress": [
+     0.0831,
+     0.0277
+    ],
+    "edge": [
+     0.0525,
+     -0.0404
+    ],
+    "vsOwn": [
+     0.0528,
+     -0.0256
+    ],
+    "noTop2": [
+     0.0824,
+     0.0263
+    ],
+    "tBlock": [
+     3.14,
+     -1.7
+    ],
+    "perYear": [
+     0.178,
+     0.0668
+    ],
+    "spyPerYear": [
+     0.1775,
+     0.1816
+    ],
+    "secondYardstickEdge": [
+     0.0235,
+     -0.0653
+    ],
+    "signalsPerMonth": 15.6949,
+    "why": "not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.7 under 2.5 in the newer half; not better than V15 picks bought and sold on the same sessions in the newer half (-6.5% a trade over 559 trades); return per year of capital tied up 6.7% not above the S&P 500 on the same days in the newer half (18.2%)"
+   }
   },
   {
    "id": "SQ22-SPINOFF",
@@ -29335,12 +29382,56 @@
    "kind": "buy",
    "hold": 126,
    "explain": "RULE (squad22-core.mjs header RULE 2, exact): a CIK filing an original Form 10-12B / 10-12G (EDGAR master index) whose point-in-time ticker first trades on/after the filing date and within 400 days (first regular-way session s1; delisted kept). Buy the open of s1+20 if at s1+19 close 5 USD+ and 20-session traded value 5M USD+; stop 35%; else sell at the close of the 126th session. COUNT FIRST: under 20 cases in a half -> TOO FEW CASES, no return computed.",
-   "status": "pre-registered 2026-10-25 (squad 22 lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "libraryCheck": "ANOM-SPIN (10-12B, 2nd session: TOO FEW CASES 21 / 17), E7 / DEC2-SPINOFF (queued / needs data). New: entry after the forced-selling window, 10-12G added, liquid 5 USD / 5M USD. Count first.",
    "sources": [
     "https://doi.org/10.1016/0304-405X(93)90011-Z"
    ],
-   "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun.",
+   "tested": "2026-10-23",
+   "study": "squad22-lab.mjs -> data/squad22-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     26,
+     16
+    ],
+    "avg": [
+     0.0415,
+     0.235
+    ],
+    "stress": [
+     0.0375,
+     0.231
+    ],
+    "edge": [
+     0.0284,
+     0.1834
+    ],
+    "vsOwn": [
+     -0.1024,
+     0.0323
+    ],
+    "noTop2": [
+     -0.0326,
+     0.119
+    ],
+    "tBlock": [
+     0.5,
+     1.98
+    ],
+    "perYear": [
+     0.0982,
+     0.544
+    ],
+    "spyPerYear": [
+     0.064,
+     0.1879
+    ],
+    "secondYardstickEdge": null,
+    "signalsPerMonth": 0.7119,
+    "why": "fewer than 20 cases or 3 blocks in a half (26 cases, 5 blocks / 16 cases, 5 blocks)"
+   }
   },
   {
    "id": "SQ22-NEGLECTED",
@@ -29350,12 +29441,59 @@
    "kind": "buy",
    "hold": 21,
    "explain": "RULE (owner's outside reviewer, as written; squad22-core.mjs header RULE 3): 63-session return <= -30%; 20-day traded value below that day's market 33rd percentile and >= 0.5M USD; close 1 USD+; volume >= 2x and < 3x its prior 50-session average; close in the top 25% of the range; close +4% to +15%; SEC share count up < 5% in 90 days (30-day lag) and no 424B5 / S-1 in 20 sessions; close within 5% of the 52-week low close; no lower low in the last 10 sessions (vs t-251..t-10). Buy the next open (1 session); stop the signal-day low; exit the next open after a close under the 10-day average, else after 21 sessions. Extra yardstick: same-day crashed neglected stocks without the 2x volume.",
-   "status": "pre-registered 2026-10-25 (squad 22 lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "libraryCheck": "M8 (1-year low + heavy volume + no dilution: failed discovery), DEC-CRASH (rejected), DEC-EP (rejected), UNDER5-JUMP (too few). New: least-traded third, 2-3x volume band, strong up-day close, 52-week-low base with no lower low for 10 sessions; yardstick = same-day crashed stocks without the burst.",
    "sources": [
     "https://doi.org/10.1111/0022-1082.00349"
    ],
-   "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun.",
+   "tested": "2026-10-23",
+   "study": "squad22-lab.mjs -> data/squad22-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     0,
+     0
+    ],
+    "avg": [
+     null,
+     null
+    ],
+    "stress": [
+     null,
+     null
+    ],
+    "edge": [
+     null,
+     null
+    ],
+    "vsOwn": [
+     null,
+     null
+    ],
+    "noTop2": [
+     null,
+     null
+    ],
+    "tBlock": [
+     null,
+     null
+    ],
+    "perYear": [
+     null,
+     null
+    ],
+    "spyPerYear": [
+     null,
+     null
+    ],
+    "secondYardstickEdge": [
+     null,
+     null
+    ],
+    "signalsPerMonth": 0,
+    "why": "fewer than 20 cases or 3 blocks in a half (0 cases, 0 blocks / 0 cases, 0 blocks)"
+   }
   },
   {
    "id": "SQ22-13D",
