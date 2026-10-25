@@ -28241,59 +28241,279 @@
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Leader 12% pullback (SQ11-PB12), sell at a +10% profit target (time exit at 126 kept)",
    "explain": "RULE: SQ11-PB12 trades (buy the next open). Sell at buy x 1.10 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: not proven; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     99,
+     256
+    ],
+    "avg": [
+     0.052,
+     0.0467
+    ],
+    "median": [
+     0.092,
+     0.092
+    ],
+    "stress": [
+     0.048,
+     0.0427
+    ],
+    "edge": [
+     0.033,
+     0.0047
+    ],
+    "vsOwn": [
+     -0.0287,
+     -0.0255
+    ],
+    "noTop2": [
+     0.0499,
+     0.0448
+    ],
+    "tBlock": [
+     0.99,
+     0.62
+    ],
+    "perYear": [
+     0.228,
+     0.2416
+    ],
+    "spyPerYear": [
+     0.2534,
+     0.2039
+    ],
+    "sameWindowDiff": [
+     -0.0906,
+     -0.122
+    ],
+    "fired": [
+     78,
+     203
+    ],
+    "adopt": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.99 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.62 under 2.5 in the newer half; return per year of capital tied up 22.8% not above the S&P 500 on the same days in the older half (25.3%)"
+   }
   },
   {
    "id": "A-TGT-TGT15-PB12",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Leader 12% pullback (SQ11-PB12), sell at a +15% profit target (time exit at 126 kept)",
    "explain": "RULE: SQ11-PB12 trades (buy the next open). Sell at buy x 1.15 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: not proven; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     99,
+     256
+    ],
+    "avg": [
+     0.0751,
+     0.0713
+    ],
+    "median": [
+     0.142,
+     0.142
+    ],
+    "stress": [
+     0.0711,
+     0.0673
+    ],
+    "edge": [
+     0.0442,
+     0.0161
+    ],
+    "vsOwn": [
+     -0.0295,
+     -0.0243
+    ],
+    "noTop2": [
+     0.0725,
+     0.0691
+    ],
+    "tBlock": [
+     1.25,
+     0.61
+    ],
+    "perYear": [
+     0.2539,
+     0.2864
+    ],
+    "spyPerYear": [
+     0.2619,
+     0.2107
+    ],
+    "sameWindowDiff": [
+     -0.0674,
+     -0.0975
+    ],
+    "fired": [
+     69,
+     184
+    ],
+    "adopt": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.25 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.61 under 2.5 in the newer half; return per year of capital tied up 25.4% not above the S&P 500 on the same days in the older half (26.2%)"
+   }
   },
   {
    "id": "A-TGT-TGT20-PB12",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Leader 12% pullback (SQ11-PB12), sell at a +20% profit target (time exit at 126 kept)",
    "explain": "RULE: SQ11-PB12 trades (buy the next open). Sell at buy x 1.20 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: not proven; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     99,
+     256
+    ],
+    "avg": [
+     0.096,
+     0.0847
+    ],
+    "median": [
+     0.192,
+     0.192
+    ],
+    "stress": [
+     0.092,
+     0.0807
+    ],
+    "edge": [
+     0.0509,
+     0.0204
+    ],
+    "vsOwn": [
+     -0.0272,
+     -0.0314
+    ],
+    "noTop2": [
+     0.0933,
+     0.0818
+    ],
+    "tBlock": [
+     1.58,
+     0.23
+    ],
+    "perYear": [
+     0.2836,
+     0.2797
+    ],
+    "spyPerYear": [
+     0.272,
+     0.2141
+    ],
+    "sameWindowDiff": [
+     -0.0465,
+     -0.0841
+    ],
+    "fired": [
+     57,
+     155
+    ],
+    "adopt": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.58 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.23 under 2.5 in the newer half"
+   }
   },
   {
    "id": "A-TGT-TRAIL10-PB12",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Leader 12% pullback (SQ11-PB12), trailing stop 10% under the highest close since the buy (time exit at 126 kept)",
    "explain": "RULE: SQ11-PB12 trades (buy the next open). Sell at the next open after a close 10% or more under the highest close since the buy (the buy price counts as the first high); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: not proven; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     99,
+     256
+    ],
+    "avg": [
+     0.0496,
+     0.0283
+    ],
+    "median": [
+     -0.0053,
+     -0.0331
+    ],
+    "stress": [
+     0.0456,
+     0.0243
+    ],
+    "edge": [
+     0.0375,
+     0.0073
+    ],
+    "vsOwn": [
+     -0.0434,
+     -0.0205
+    ],
+    "noTop2": [
+     0.0376,
+     0.0227
+    ],
+    "tBlock": [
+     1,
+     -0.01
+    ],
+    "perYear": [
+     0.2239,
+     0.1804
+    ],
+    "spyPerYear": [
+     0.2314,
+     0.1743
+    ],
+    "sameWindowDiff": [
+     -0.093,
+     -0.1405
+    ],
+    "fired": [
+     83,
+     243
+    ],
+    "adopt": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t -0.01 under 2.5 in the newer half; return per year of capital tied up 22.4% not above the S&P 500 on the same days in the older half (23.1%)"
+   }
   },
   {
    "id": "A-TGT-STOP10-PB12",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Leader 12% pullback (SQ11-PB12), stop 10% under the buy price (Han, Zhou & Zhu), then cash (time exit at 126 kept)",
    "explain": "RULE: SQ11-PB12 trades (buy the next open). Sell at the next open after a close 10% or more under the buy price (money then in cash); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: not proven; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
@@ -28303,66 +28523,341 @@
     "https://alphaarchitect.com/2016/08/taming-the-momentum-roller-coaster-fact-or-fiction/",
     "https://www.cxoadvisory.com/?p=25071"
    ],
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     99,
+     256
+    ],
+    "avg": [
+     0.077,
+     0.0878
+    ],
+    "median": [
+     -0.0261,
+     -0.103
+    ],
+    "stress": [
+     0.073,
+     0.0838
+    ],
+    "edge": [
+     0.0576,
+     0.0221
+    ],
+    "vsOwn": [
+     -0.0983,
+     -0.0623
+    ],
+    "noTop2": [
+     0.0634,
+     0.0681
+    ],
+    "tBlock": [
+     1.11,
+     0.15
+    ],
+    "perYear": [
+     0.2236,
+     0.2898
+    ],
+    "spyPerYear": [
+     0.2202,
+     0.1812
+    ],
+    "sameWindowDiff": [
+     -0.0656,
+     -0.0795
+    ],
+    "fired": [
+     45,
+     146
+    ],
+    "adopt": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 1.11 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.15 under 2.5 in the newer half"
+   }
   },
   {
    "id": "A-TGT-TGT10-MTUM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "MSCI-style momentum (SQ6-MTUM), sell at a +10% profit target (time exit at 126 kept)",
    "explain": "RULE: SQ6-MTUM trades (buy the next open). Sell at buy x 1.10 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     360,
+     479
+    ],
+    "avg": [
+     0.0183,
+     0.0346
+    ],
+    "median": [
+     0.092,
+     0.092
+    ],
+    "stress": [
+     0.0143,
+     0.0306
+    ],
+    "edge": [
+     -0.0256,
+     0.0018
+    ],
+    "vsOwn": [
+     -0.0335,
+     -0.0233
+    ],
+    "noTop2": [
+     0.0174,
+     0.0338
+    ],
+    "tBlock": [
+     -2.93,
+     0.05
+    ],
+    "perYear": [
+     0.0695,
+     0.1405
+    ],
+    "spyPerYear": [
+     0.2063,
+     0.1939
+    ],
+    "sameWindowDiff": [
+     -0.0546,
+     -0.1596
+    ],
+    "fired": [
+     231,
+     347
+    ],
+    "adopt": false,
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -2.93 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.05 under 2.5 in the newer half; return per year of capital tied up 7.0% not above the S&P 500 on the same days in the older half (20.6%); return per year of capital tied up 14.1% not above the S&P 500 on the same days in the newer half (19.4%)"
+   }
   },
   {
    "id": "A-TGT-TGT15-MTUM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "MSCI-style momentum (SQ6-MTUM), sell at a +15% profit target (time exit at 126 kept)",
    "explain": "RULE: SQ6-MTUM trades (buy the next open). Sell at buy x 1.15 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     360,
+     479
+    ],
+    "avg": [
+     0.0328,
+     0.05
+    ],
+    "median": [
+     0.142,
+     0.142
+    ],
+    "stress": [
+     0.0288,
+     0.046
+    ],
+    "edge": [
+     -0.0113,
+     0.0046
+    ],
+    "vsOwn": [
+     -0.0461,
+     -0.028
+    ],
+    "noTop2": [
+     0.0312,
+     0.049
+    ],
+    "tBlock": [
+     -0.61,
+     0.13
+    ],
+    "perYear": [
+     0.1022,
+     0.1572
+    ],
+    "spyPerYear": [
+     0.2066,
+     0.1931
+    ],
+    "sameWindowDiff": [
+     -0.0401,
+     -0.1443
+    ],
+    "fired": [
+     193,
+     284
+    ],
+    "adopt": false,
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.61 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.13 under 2.5 in the newer half; return per year of capital tied up 10.2% not above the S&P 500 on the same days in the older half (20.7%); return per year of capital tied up 15.7% not above the S&P 500 on the same days in the newer half (19.3%)"
+   }
   },
   {
    "id": "A-TGT-TGT20-MTUM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "MSCI-style momentum (SQ6-MTUM), sell at a +20% profit target (time exit at 126 kept)",
    "explain": "RULE: SQ6-MTUM trades (buy the next open). Sell at buy x 1.20 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     360,
+     479
+    ],
+    "avg": [
+     0.0374,
+     0.0696
+    ],
+    "median": [
+     0.0662,
+     0.192
+    ],
+    "stress": [
+     0.0334,
+     0.0656
+    ],
+    "edge": [
+     -0.0074,
+     0.0186
+    ],
+    "vsOwn": [
+     -0.0792,
+     -0.0162
+    ],
+    "noTop2": [
+     0.0359,
+     0.0686
+    ],
+    "tBlock": [
+     -0.39,
+     0.49
+    ],
+    "perYear": [
+     0.1,
+     0.1941
+    ],
+    "spyPerYear": [
+     0.2023,
+     0.188
+    ],
+    "sameWindowDiff": [
+     -0.0354,
+     -0.1246
+    ],
+    "fired": [
+     147,
+     245
+    ],
+    "adopt": false,
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.39 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.49 under 2.5 in the newer half; return per year of capital tied up 10.0% not above the S&P 500 on the same days in the older half (20.2%)"
+   }
   },
   {
    "id": "A-TGT-TRAIL10-MTUM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "MSCI-style momentum (SQ6-MTUM), trailing stop 10% under the highest close since the buy (time exit at 126 kept)",
    "explain": "RULE: SQ6-MTUM trades (buy the next open). Sell at the next open after a close 10% or more under the highest close since the buy (the buy price counts as the first high); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     360,
+     479
+    ],
+    "avg": [
+     0.0257,
+     0.0117
+    ],
+    "median": [
+     -0.0247,
+     -0.0418
+    ],
+    "stress": [
+     0.0217,
+     0.0077
+    ],
+    "edge": [
+     -0.0148,
+     -0.0106
+    ],
+    "vsOwn": [
+     -0.0755,
+     -0.0314
+    ],
+    "noTop2": [
+     0.0211,
+     0.006
+    ],
+    "tBlock": [
+     -0.58,
+     -0.72
+    ],
+    "perYear": [
+     0.1082,
+     0.0596
+    ],
+    "spyPerYear": [
+     0.1673,
+     0.1688
+    ],
+    "sameWindowDiff": [
+     -0.0471,
+     -0.1826
+    ],
+    "fired": [
+     301,
+     414
+    ],
+    "adopt": false,
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.58 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.72 under 2.5 in the newer half; return per year of capital tied up 10.8% not above the S&P 500 on the same days in the older half (16.7%); return per year of capital tied up 6.0% not above the S&P 500 on the same days in the newer half (16.9%)"
+   }
   },
   {
    "id": "A-TGT-STOP10-MTUM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "MSCI-style momentum (SQ6-MTUM), stop 10% under the buy price (Han, Zhou & Zhu), then cash (time exit at 126 kept)",
    "explain": "RULE: SQ6-MTUM trades (buy the next open). Sell at the next open after a close 10% or more under the buy price (money then in cash); otherwise sell at the close of session 126. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: not proven; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 126,
@@ -28372,66 +28867,341 @@
     "https://alphaarchitect.com/2016/08/taming-the-momentum-roller-coaster-fact-or-fiction/",
     "https://www.cxoadvisory.com/?p=25071"
    ],
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     360,
+     479
+    ],
+    "avg": [
+     0.0582,
+     0.0939
+    ],
+    "median": [
+     -0.0233,
+     -0.0987
+    ],
+    "stress": [
+     0.0542,
+     0.0899
+    ],
+    "edge": [
+     0.0164,
+     0.0473
+    ],
+    "vsOwn": [
+     -0.1242,
+     -0.0166
+    ],
+    "noTop2": [
+     0.0471,
+     0.0827
+    ],
+    "tBlock": [
+     0.41,
+     0.89
+    ],
+    "perYear": [
+     0.1698,
+     0.2974
+    ],
+    "spyPerYear": [
+     0.1791,
+     0.1884
+    ],
+    "sameWindowDiff": [
+     -0.0146,
+     -0.0992
+    ],
+    "fired": [
+     164,
+     259
+    ],
+    "adopt": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.41 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.89 under 2.5 in the newer half; return per year of capital tied up 17.0% not above the S&P 500 on the same days in the older half (17.9%)"
+   }
   },
   {
    "id": "A-TGT-TGT10-QMOM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Quantitative momentum (SQ6-QMOM), sell at a +10% profit target (time exit at 63 kept)",
    "explain": "RULE: SQ6-QMOM trades (buy the next open). Sell at buy x 1.10 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 63. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 63,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     250,
+     500
+    ],
+    "avg": [
+     0.0027,
+     0.018
+    ],
+    "median": [
+     0.092,
+     0.092
+    ],
+    "stress": [
+     -0.0013,
+     0.014
+    ],
+    "edge": [
+     -0.0111,
+     0.0075
+    ],
+    "vsOwn": [
+     -0.0786,
+     -0.0379
+    ],
+    "noTop2": [
+     0.0014,
+     0.0168
+    ],
+    "tBlock": [
+     -0.5,
+     0.62
+    ],
+    "perYear": [
+     0.0164,
+     0.1357
+    ],
+    "spyPerYear": [
+     0.1602,
+     0.1485
+    ],
+    "sameWindowDiff": [
+     -0.0444,
+     -0.0346
+    ],
+    "fired": [
+     140,
+     340
+    ],
+    "adopt": false,
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.5 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.62 under 2.5 in the newer half; return per year of capital tied up 1.6% not above the S&P 500 on the same days in the older half (16.0%); return per year of capital tied up 13.6% not above the S&P 500 on the same days in the newer half (14.8%)"
+   }
   },
   {
    "id": "A-TGT-TGT15-QMOM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Quantitative momentum (SQ6-QMOM), sell at a +15% profit target (time exit at 63 kept)",
    "explain": "RULE: SQ6-QMOM trades (buy the next open). Sell at buy x 1.15 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 63. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 63,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     250,
+     500
+    ],
+    "avg": [
+     -0.0005,
+     0.0259
+    ],
+    "median": [
+     0.0383,
+     0.142
+    ],
+    "stress": [
+     -0.0045,
+     0.0219
+    ],
+    "edge": [
+     -0.016,
+     0.008
+    ],
+    "vsOwn": [
+     -0.1104,
+     -0.0562
+    ],
+    "noTop2": [
+     -0.0019,
+     0.0246
+    ],
+    "tBlock": [
+     -0.69,
+     0.67
+    ],
+    "perYear": [
+     -0.0024,
+     0.156
+    ],
+    "spyPerYear": [
+     0.1763,
+     0.1562
+    ],
+    "sameWindowDiff": [
+     -0.0476,
+     -0.0267
+    ],
+    "fired": [
+     98,
+     281
+    ],
+    "adopt": false,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -0.69 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.67 under 2.5 in the newer half; return per year of capital tied up -0.2% not above the S&P 500 on the same days in the older half (17.6%); return per year of capital tied up 15.6% not above the S&P 500 on the same days in the newer half (15.6%)"
+   }
   },
   {
    "id": "A-TGT-TGT20-QMOM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Quantitative momentum (SQ6-QMOM), sell at a +20% profit target (time exit at 63 kept)",
    "explain": "RULE: SQ6-QMOM trades (buy the next open). Sell at buy x 1.20 on the first session whose high reaches it (at the open if the stock opened above it); otherwise sell at the close of session 63. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 63,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     250,
+     500
+    ],
+    "avg": [
+     0.0043,
+     0.0298
+    ],
+    "median": [
+     0.0176,
+     0.0791
+    ],
+    "stress": [
+     0.0003,
+     0.0258
+    ],
+    "edge": [
+     -0.0152,
+     0.0066
+    ],
+    "vsOwn": [
+     -0.1295,
+     -0.0647
+    ],
+    "noTop2": [
+     0.0022,
+     0.0284
+    ],
+    "tBlock": [
+     -0.57,
+     0.61
+    ],
+    "perYear": [
+     0.02,
+     0.1577
+    ],
+    "spyPerYear": [
+     0.1892,
+     0.1613
+    ],
+    "sameWindowDiff": [
+     -0.0427,
+     -0.0228
+    ],
+    "fired": [
+     72,
+     222
+    ],
+    "adopt": false,
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.57 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.61 under 2.5 in the newer half; return per year of capital tied up 2.0% not above the S&P 500 on the same days in the older half (18.9%); return per year of capital tied up 15.8% not above the S&P 500 on the same days in the newer half (16.1%)"
+   }
   },
   {
    "id": "A-TGT-TRAIL10-QMOM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Quantitative momentum (SQ6-QMOM), trailing stop 10% under the highest close since the buy (time exit at 63 kept)",
    "explain": "RULE: SQ6-QMOM trades (buy the next open). Sell at the next open after a close 10% or more under the highest close since the buy (the buy price counts as the first high); otherwise sell at the close of session 63. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 63,
    "kind": "exit",
    "libraryCheck": "Library check 25 Oct 2026: SQ20-X* (sell on a +25% / +40% DAY: do not adopt), SQ3-CUTRUN (-8% cut + 50-day trail on an account: rejected), DEC2-X-* (stop / trail grid on breakout entries), HOLD-GETEVEN (sell 5-10% over the buy, no stop): none is a fixed % target, a % trailing stop or a % stop from the buy on SQ11-PB12 / SQ6-MTUM / SQ6-QMOM.",
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     250,
+     500
+    ],
+    "avg": [
+     0.0013,
+     -0.0123
+    ],
+    "median": [
+     -0.0689,
+     -0.0617
+    ],
+    "stress": [
+     -0.0027,
+     -0.0163
+    ],
+    "edge": [
+     -0.0034,
+     -0.0153
+    ],
+    "vsOwn": [
+     -0.0698,
+     -0.0459
+    ],
+    "noTop2": [
+     -0.0053,
+     -0.0149
+    ],
+    "tBlock": [
+     -0.13,
+     -1.24
+    ],
+    "perYear": [
+     0.0102,
+     -0.1289
+    ],
+    "spyPerYear": [
+     0.1308,
+     0.0943
+    ],
+    "sameWindowDiff": [
+     -0.0458,
+     -0.065
+    ],
+    "fired": [
+     191,
+     446
+    ],
+    "adopt": false,
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t -0.13 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; loses without its 2 best in the newer half; block t -1.24 under 2.5 in the newer half; return per year of capital tied up 1.0% not above the S&P 500 on the same days in the older half (13.1%); return per year of capital tied up -12.9% not above the S&P 500 on the same days in the newer half (9.4%)"
+   }
   },
   {
    "id": "A-TGT-STOP10-QMOM",
    "family": "Targets and trailing exits on the live rules (Agent A, A-TGT1)",
    "name": "Quantitative momentum (SQ6-QMOM), stop 10% under the buy price (Han, Zhou & Zhu), then cash (time exit at 63 kept)",
    "explain": "RULE: SQ6-QMOM trades (buy the next open). Sell at the next open after a close 10% or more under the buy price (money then in cash); otherwise sell at the close of session 63. Judged under the full standard; ADOPT only if, in both halves, it fired on 10+ trades, improved the same-window average over all trades (cash 0% after an early sale) and did not lower the per-year return of capital. Common (agent-a-tgt-core.mjs header, pre-registered 25 Oct 2026 before any run): the base rule rebuilt exactly as squad20-lab.mjs did (SQ11-PB12 from data/squad11-lab.json; SQ6-MTUM / SQ6-QMOM with squad6-core), buy the next open, the original exit = the close of the hold; the new exit applied to the SAME trades with the time exit kept as the backstop. Cost 0.8% (1.2% stress). Judged once (first complete run frozen in data/agent-a-tgt-lab.json firstRun) with hold-core judgeHold on both halves (signal before / from 2024-01-01). ADOPT only if in BOTH halves the exit fired on 10+ trades, the same-window average change over all trades (cash 0% after an early sale) is > 0, and the per-year return of capital is not below the base rule's.",
-   "status": "pre-registered 2026-10-25 (Agent A); 5-year one-shot pending",
+   "status": "tested: rejected; do not adopt (exit)",
    "agent": "A",
    "registered": "2026-10-25",
    "hold": 63,
@@ -28441,7 +29211,62 @@
     "https://alphaarchitect.com/2016/08/taming-the-momentum-roller-coaster-fact-or-fiction/",
     "https://www.cxoadvisory.com/?p=25071"
    ],
-   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test."
+   "note": "Pre-registered 2026-10-25 BEFORE any run (agent-a-tgt-core.mjs = the exact rule; one version). 5-year one-shot by agent-a-tgt-lab.mjs, first complete verdict frozen; an exit overlay (no buy signal), adoption decided by the pre-registered test.",
+   "tested": "2026-10-23",
+   "study": "agent-a-tgt-lab.mjs -> data/agent-a-tgt-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     250,
+     500
+    ],
+    "avg": [
+     0.0313,
+     0.0101
+    ],
+    "median": [
+     -0.103,
+     -0.1069
+    ],
+    "stress": [
+     0.0273,
+     0.0061
+    ],
+    "edge": [
+     0.0211,
+     -0.0037
+    ],
+    "vsOwn": [
+     -0.0679,
+     -0.0584
+    ],
+    "noTop2": [
+     0.0139,
+     0.0037
+    ],
+    "tBlock": [
+     0.46,
+     -0.19
+    ],
+    "perYear": [
+     0.2018,
+     0.0704
+    ],
+    "spyPerYear": [
+     0.1825,
+     0.1194
+    ],
+    "sameWindowDiff": [
+     -0.0154,
+     -0.0426
+    ],
+    "fired": [
+     137,
+     308
+    ],
+    "adopt": false,
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.46 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.19 under 2.5 in the newer half; return per year of capital tied up 7.0% not above the S&P 500 on the same days in the newer half (11.9%)"
+   }
   },
   {
    "id": "A-RMOM1",
