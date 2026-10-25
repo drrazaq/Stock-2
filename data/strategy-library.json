@@ -28083,14 +28083,52 @@
    "name": "Lazy prices: the 10-K barely changed from last year (top 20% similarity), hold 3 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-25 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "Buy the next open after a 10-K whose text is among the 20% most similar to the previous 10-K (cosine similarity percentile >= 0.80 vs all 10-K similarities of the prior 365 days), stock liquid; sell the close 63 sessions later. Text measure, ranking and data rule fixed in research-core.mjs before any run (cosine similarity of 10-K word counts vs the previous 10-K; percentile vs the prior 365 days of 10-K similarities; both documents 10,000+ words).",
    "sources": [
     "https://onlinelibrary.wiley.com/doi/10.1111/jofi.12885",
     "https://www.nber.org/papers/w25084"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026."
+   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1296,
+     1540
+    ],
+    "avg": [
+     -0.0801,
+     -0.012
+    ],
+    "stress": [
+     -0.0841,
+     -0.016
+    ],
+    "edge": [
+     -0.0082,
+     -0.0068
+    ],
+    "vsOwn": [
+     -0.0721,
+     -0.0116
+    ],
+    "noTop2": [
+     -0.0817,
+     -0.0151
+    ],
+    "tBlock": [
+     -0.38,
+     -0.74
+    ],
+    "win": [
+     0.304,
+     0.4208
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.38 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.74 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-LAZY-126",
@@ -28098,14 +28136,52 @@
    "name": "Lazy prices: the 10-K barely changed from last year (top 20% similarity), hold 6 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-25 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-LAZY-63, hold 126 sessions. Text measure, ranking and data rule fixed in research-core.mjs before any run (cosine similarity of 10-K word counts vs the previous 10-K; percentile vs the prior 365 days of 10-K similarities; both documents 10,000+ words).",
    "sources": [
     "https://onlinelibrary.wiley.com/doi/10.1111/jofi.12885",
     "https://www.nber.org/papers/w25084"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026."
+   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1296,
+     1523
+    ],
+    "avg": [
+     -0.0428,
+     0.066
+    ],
+    "stress": [
+     -0.0468,
+     0.062
+    ],
+    "edge": [
+     -0.0017,
+     0.0048
+    ],
+    "vsOwn": [
+     -0.1177,
+     0.0092
+    ],
+    "noTop2": [
+     -0.0459,
+     0.0631
+    ],
+    "tBlock": [
+     -0.27,
+     -0.13
+    ],
+    "win": [
+     0.3781,
+     0.587
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.27 under 2.5 in the older half; block t -0.13 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-LAZY-CHG63",
@@ -28113,14 +28189,52 @@
    "name": "AVOID check: the 10-K changed the most from last year (bottom 20% similarity), 63 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-10-25 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: stocks whose 10-K is among the 20% least similar to the previous one, bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves. Never a buy. Text measure, ranking and data rule fixed in research-core.mjs before any run (cosine similarity of 10-K word counts vs the previous 10-K; percentile vs the prior 365 days of 10-K similarities; both documents 10,000+ words).",
    "sources": [
     "https://onlinelibrary.wiley.com/doi/10.1111/jofi.12885",
     "https://www.nber.org/papers/w25084"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026."
+   "note": "Daily researcher 2026-10-25: Cohen, Malloy and Nguyen (2020, Journal of Finance) Lazy Prices, 10-K only (the paper reports similar 10-K-only results). New information source (SEC filing text), not a chart shape. Tests the text-change half of C-DIFF1; C-DIFF1 itself is unchanged. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     572,
+     909
+    ],
+    "avg": [
+     -0.098,
+     0.0206
+    ],
+    "stress": [
+     -0.102,
+     0.0166
+    ],
+    "edge": [
+     -0.04,
+     -0.0006
+    ],
+    "vsOwn": [
+     -0.051,
+     0.0214
+    ],
+    "noTop2": [
+     -0.1028,
+     0.0162
+    ],
+    "tBlock": [
+     -2.38,
+     -0.56
+    ],
+    "win": [
+     0.2885,
+     0.4708
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   }
  ]
 }
