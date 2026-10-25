@@ -27998,13 +27998,60 @@
    "kind": "buy",
    "hold": 120,
    "explain": "RULE (squad21-core.mjs header RULE 1, exact): an 8-K listing Item 1.01 filed 1-10 sessions before the signal session whose main document says agreement with / contract with / order from / purchase order from followed by a NAMED counterparty; close 2 USD+, 20-day average traded value 2M USD+; SEC share count up < 5% in 90 days (30-day reporting lag); no 424B5 / S-1 / 8-K Item 3.02 by the same CIK in the prior 20 sessions; NO close-to-close +15% day in the prior 21 sessions; since the filing no lower low in the last 3 sessions; average volume t-9..t >= 1.0x t-29..t-10. Buy the next open (valid 1 session); stop = the signal-day low; exit at the next open after a close below the 10-day average; max hold 120 sessions. Materiality (contract >= 10% of revenue) NOT a condition (data/chain-graph.json covers ~47 big buyers chosen with today's knowledge: survivorship); reported as information only where one dollar value parses reliably. Yardsticks: the average stock on the same days; same-volatility stocks without a fresh 8-K 1.01 (an extra gate); the same stock on other days; per year vs SPY. Signals per month reported.",
-   "status": "pre-registered 2026-10-25 (squad 21 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "libraryCheck": "DEC2-CONTRACT (1.01 + small cap + +4% on 2x volume: rejected), C-QK1 (1.01 then 3 quiet days: rejected), E15 (Friday-evening 1.01: queued), C-CT1 (contract size vs company: pre-registered). New here: a named counterparty in the text, a clean supply filter (no share growth, no shelf / S-1 / 3.02), NO prior +15% day, a higher-low base 3+ sessions after the filing on rising volume, a 10-day-average exit, 120-session max.",
    "sources": [
     "https://efts.sec.gov/LATEST/search-index",
     "https://www.sec.gov/Archives/edgar/full-index/"
    ],
-   "note": "Sent by the owner's outside reviewer, 25 Oct 2026. Pre-registered BEFORE any run (one version); run ONCE by squad21-lab.mjs, first complete verdict frozen in data/squad21-lab.json firstRun; forward paper lane (data/squad21-paper.jsonl) from 26 Oct 2026."
+   "note": "Sent by the owner's outside reviewer, 25 Oct 2026. Pre-registered BEFORE any run (one version); run ONCE by squad21-lab.mjs, first complete verdict frozen in data/squad21-lab.json firstRun; forward paper lane (data/squad21-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-10-23",
+   "study": "squad21-lab.mjs -> data/squad21-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     839,
+     1025
+    ],
+    "avg": [
+     -0.0108,
+     -0.0104
+    ],
+    "stress": [
+     -0.0148,
+     -0.0144
+    ],
+    "edge": [
+     -0.0103,
+     -0.0101
+    ],
+    "sameVolEdge": [
+     -0.0093,
+     -0.0108
+    ],
+    "vsOwn": [
+     -0.0005,
+     -0.0031
+    ],
+    "noTop2": [
+     -0.0123,
+     -0.0123
+    ],
+    "tBlock": [
+     -4.64,
+     -4.46
+    ],
+    "perYear": [
+     -0.7927,
+     -0.8076
+    ],
+    "spyPerYear": [
+     0.0193,
+     0.1132
+    ],
+    "signalsPerMonth": 31.1186,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.64 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -4.46 under 2.5 in the newer half; not better than same-volatility stocks without a fresh 8-K 1.01 in the older half (-0.9%, 839 trades with that yardstick); not better than same-volatility stocks without a fresh 8-K 1.01 in the newer half (-1.1%, 1025 trades with that yardstick); return per year of capital tied up -79.3% not above the S&P 500 on the same days in the older half (1.9%); return per year of capital tied up -80.8% not above the S&P 500 on the same days in the newer half (11.3%)"
+   }
   },
   {
    "id": "V15-NO35",

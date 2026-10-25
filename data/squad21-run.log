@@ -1,31 +1,15 @@
-[0s] squad 21 lab (DIAG: coverage only, no returns); frozen already: 
-[4s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
-[5s] splits since 2026-10-19: 71 listed, 0 repaired
-[5s] window 2021-10-12..2026-10-23 (1264 sessions, 8599 stocks), rows with high/low +100.0%
-[6s] ticker map: {"ok":true,"quarters":23,"fromSquad4Cache":23,"downloadedNow":0,"missing":[],"ciks":9139}
-[216s] full-text search: 55675 item-1.01 hits, 16493 item-3.02 hits, 126 phrase-months fetched now
-[269s] master index: 32499 Form 424B5 / S-1 filings
-[271s] item-1.01 8-K filings: 54210 (main document), 39787 tied to a stock with prices, 14423 not
-[271s] price / supply / dilution conditions met by 5994 filings (4275 filings without a share count series)
-[310s] documents read: 300
-[348s] documents read: 600
-[389s] documents read: 900
-[428s] documents read: 1200
-[467s] documents read: 1500
-[505s] documents read: 1800
-[543s] documents read: 2100
-[582s] documents read: 2400
-[621s] documents read: 2700
-[660s] documents read: 3000
-[698s] documents read: 3300
-[736s] documents read: 3600
-[774s] documents read: 3900
-[816s] documents read: 4200
-[856s] documents read: 4500
-[897s] documents read: 4800
-[937s] documents read: 5100
-[978s] documents read: 5400
-[1017s] documents read: 5700
-[1055s] documents: 5994 candidates (5994 read now, 0 not read), 1884 with a named counterparty
-[1055s] signals (before one-open): older 848, newer 1036; phrases {"agreement with":1858,"order from":3,"contract with":23}
-SQUAD 21 DIAG 2021-10-12 to 2026-10-23 | price ok, tickerMap ok, efts ok, master ok, events ok, docs ok
+[0s] squad 21 lab; frozen already: 
+[0s] library: 0 squad 21 entries written now
+[5s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23
+[7s] splits since 2026-10-19: 71 listed, 0 repaired
+[7s] window 2021-10-12..2026-10-23 (1264 sessions, 8599 stocks), rows with high/low +100.0%
+[8s] ticker map: {"ok":true,"quarters":23,"fromSquad4Cache":23,"downloadedNow":0,"missing":[],"ciks":9139}
+[10s] full-text search: 55675 item-1.01 hits, 16493 item-3.02 hits, 2 phrase-months fetched now
+[10s] master index: 32499 Form 424B5 / S-1 filings
+[13s] item-1.01 8-K filings: 54210 (main document), 39787 tied to a stock with prices, 14423 not
+[14s] price / supply / dilution conditions met by 5994 filings (4275 filings without a share count series)
+[14s] documents: 5994 candidates (0 read now, 0 not read), 1884 with a named counterparty
+[14s] signals (before one-open): older 848, newer 1036; phrases {"agreement with":1858,"order from":3,"contract with":23}
+[17s] - SQ21-CONTRACT10D: REJECTED | older 839 (371d, 26bl) avg -1.1% stress -1.5% edge -1.0% own -0.1% no2 -1.2% tBlock -4.64 win +15.1% | newer 1025 (476d, 35bl) avg -1.0% stress -1.4% edge -1.0% own -0.3% no2 -1.2% tBlock -4.46 win +15.2% | same-vol edge -0.9% / -1.1% | per year -79.3% vs SPY +1.9% / -80.8% vs +11.3% | per month 31.1186 | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.64 under 2.5 in the older h
+[17s] paper: 0 new signal lines, 0 new results; formations 0
+SQUAD 21 LAB 2021-10-12 to 2026-10-23 | bar 4.07 | SQ21-CONTRACT10D REJECTED, V15-NO35 FORWARD ONLY (not backtested) | price ok, efts ok, master ok, tickerMap ok, docs ok
