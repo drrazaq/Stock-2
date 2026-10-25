@@ -20,7 +20,7 @@ import { judgeHold } from './hold-core.mjs';
 import { ownAverage, nextSession } from './anomaly-core.mjs';
 import { artifactJumps, hasArtifact } from './squad4-core.mjs';
 import { RULES, TEST_IDS, NOT_RUN, TH, COST, SPLIT, PAPER_START, mean, r4, halfOf, capG, addDays, XTAGS, compactFacts, factsOf, cashConvAt, filingDates, v15Fscore, v15Year, v15Pick,
-  exitHold, exitNegl, quantile, crashedBase, neglPrice, quietCrashed, sharesUp, dilutedAt, spinCases, perMonth, perYear, shapeOf, boardStats, preRegister } from './squad22-core.mjs';
+  exitHold, exitNegl, quantile, crashedBase, neglPrice, neglWhy, quietCrashed, sharesUp, dilutedAt, spinCases, perMonth, perYear, shapeOf, boardStats, preRegister } from './squad22-core.mjs';
 const env = process.env, DIAG = !!env.DIAG, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SEC_BASE) || 'https://data.sec.gov';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ22_CACHE || 'squad22-cache', SC4 = env.SQ4_CACHE || 'squad4-cache';
@@ -182,17 +182,18 @@ const SIGS = {};
   STATUS.spinoff = { form10Ciks: new Set(FORM10.map(r => r[0])).size, newListings: cases.length, notLiquid: notLiq, missingSessions: noData, cases: cnt, sample: out.slice(0, 60).map(z => [z.sym, z.form, z.filed, D[Math.min(z.s1, T - 1)]]) };
   log('SPINOFF: ' + cases.length + ' new listings after a Form 10; liquid cases by entry half ' + JSON.stringify(cnt)); }
 // ---- RULE 3: SQ22-NEGLECTED (+ the same-day quiet crashed yardstick pool) ----
-const QUIET = new Map(); { const out = [], N0 = TH.negl; let base = 0, price = 0, supply = 0, noShares = 0; const sessOf = (d) => firstOnOrAfter(d);
+const QUIET = new Map(), NWHY = {}; { const out = [], N0 = TH.negl; let base = 0, price = 0, supply = 0, noShares = 0; const sessOf = (d) => firstOnOrAfter(d);
   for (let i = 0; i < NS; i++) { if (i === spyI) continue; const b = i * T; let S = null; const cik = todayCik(SYMS[i]);
     for (let t = 252; t < T; t++) { const c = CA[b + t], dv = DVA[b + t]; if (!(c >= N0.minClose) || !(dv >= N0.minDv) || !(dv < P33[t])) continue; const c63 = CA[b + t - 63]; if (!(c63 > 0) || !(c / c63 - 1 <= N0.r63)) continue;
       if (!S) S = series(i); if (!crashedBase(S, t, dv, P33[t])) continue; base++;
       if (quietCrashed(S, t)) (QUIET.get(t) || QUIET.set(t, []).get(t)).push(i);
+      if (DIAG) { const w = neglWhy(S, t) || 'passed'; NWHY[w] = (NWHY[w] || 0) + 1; if (MAIN[b + t]) NWHY.mainRow = (NWHY.mainRow || 0) + 1; }
       if (!neglPrice(S, t)) continue; price++;
       const cikT = symCikAt(SYMS[i], D[t]) || cik, sh = cikT ? SH.c[cikT] : null; if (!sh) noShares++; const up = sh ? sharesUp(sh, D[t]) : null; if (up === null || !(up < N0.shareUp)) continue;
       if (cikT && dilutedAt(DIL.get(cikT), t, sessOf, N0.dilSess)) continue; supply++;
       out.push({ id: 'SQ22-NEGLECTED', sym: SYMS[i], i, t, k: t + 1, stop: LA[b + t], cik: cikT }); } }
   SIGS['SQ22-NEGLECTED'] = out.sort((a, b) => a.t - b.t || a.i - b.i);
-  STATUS.neglected = { baseStockDays: base, priceStockDays: price, signals: supply, noShareSeries: noShares, quietDays: QUIET.size, older: out.filter(z => halfOf(D[z.t]) === 'older').length, newer: out.filter(z => halfOf(D[z.t]) === 'newer').length };
+  STATUS.neglected = { baseStockDays: base, priceStockDays: price, signals: supply, noShareSeries: noShares, quietDays: QUIET.size, baseDayReasons: DIAG ? NWHY : undefined, older: out.filter(z => halfOf(D[z.t]) === 'older').length, newer: out.filter(z => halfOf(D[z.t]) === 'newer').length };
   log('NEGLECTED: ' + JSON.stringify(STATUS.neglected)); }
 // the CIK of a ticker on a date: a Form 3/4/5 span of that ticker covering the date (most filings), else null (the caller falls back on today's list)
 function symCikAt(sym, d) { if (!SYMCIK) { SYMCIK = new Map(); for (const [cik, sp] of CIKMAP) for (const [s, f, l, n] of sp) (SYMCIK.get(s) || SYMCIK.set(s, []).get(s)).push([cik, f, l, n]); }
@@ -202,7 +203,8 @@ STATUS.dataOk = !!(STATUS.price.ok && STATUS.tickerMap.ok && STATUS.master.ok &&
 const COUNTS = Object.fromEntries(TEST_IDS.map(id => { const a = SIGS[id] || [], h = id === 'SQ22-SPINOFF' ? (z) => D[Math.min(z.k, T - 1)] : (z) => D[z.t]; return [id, { older: a.filter(z => z.k < T && halfOf(h(z)) === 'older').length, newer: a.filter(z => z.k < T && halfOf(h(z)) === 'newer').length }]; }));
 log('signals (before one-open-per-stock): ' + JSON.stringify(COUNTS));
 if (DIAG) { const samp = (id, f) => (SIGS[id] || []).filter((z, j, a) => j % Math.max(1, Math.floor(a.length / 25)) === 0).slice(0, 25).map(f);
-  W('data/squad22-diag.json', { generatedAt: new Date().toISOString(), note: 'DIAG: data coverage, case counts and samples only; no returns computed, no verdict', window: [D[0], D[T - 1]], data: STATUS, signals: COUNTS,
+  const perYr = Object.fromEntries(TEST_IDS.map(id => [id, (SIGS[id] || []).reduce((a, z) => { const y = D[Math.min(z.t, T - 1)].slice(0, 4); a[y] = (a[y] || 0) + 1; return a; }, {})]));
+  W('data/squad22-diag.json', { generatedAt: new Date().toISOString(), note: 'DIAG: data coverage, case counts and samples only; no returns computed, no verdict', window: [D[0], D[T - 1]], data: STATUS, signals: COUNTS, signalsByYear: perYr,
     sample: { cashconv: samp('SQ22-CASHCONV', z => ({ sym: z.sym, cik: z.cik, filed: z.F, E0: z.E0, r: z.r, gm: z.gm, dil: z.dil })), neglected: samp('SQ22-NEGLECTED', z => ({ sym: z.sym, d: D[z.t], close: r4(CA[z.i * T + z.t]) })) } });
   console.log('SQUAD 22 DIAG ' + D[0] + ' to ' + D[T - 1] + ' | ' + ['price', 'tickerMap', 'master', 'facts', 'fund'].map(k => k + (STATUS[k] && STATUS[k].ok ? ' ok' : ' MISSING')).join(', ') + ' | ' + JSON.stringify(COUNTS)); process.exit(0); }
 

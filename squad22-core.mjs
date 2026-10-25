@@ -236,6 +236,11 @@ export function neglPrice(S, t) { const { h, l, c, v } = S, N = TH.negl, va = va
   if (!(c[t - 1] > 0)) return false; const up = c[t] / c[t - 1] - 1; if (!(up >= N.upLo && up <= N.upHi)) return false;
   let a = Infinity, b = Infinity; for (let k = t - N.noLow + 1; k <= t; k++) if (l[k] > 0) a = Math.min(a, l[k]); for (let k = t - 251; k <= t - N.noLow; k++) if (l[k] > 0) b = Math.min(b, l[k]);
   return isFinite(a) && isFinite(b) && a >= b; }
+// DIAGNOSTIC ONLY (coverage check, no returns): the first RULE 3 price condition that fails at t, or null when all pass
+export function neglWhy(S, t) { const { h, l, c, v } = S, N = TH.negl, va = vavg50(v, t); if (!(va > 0)) return 'no 50-session volume'; if (!(v[t] >= N.volLo * va)) return 'volume under 2x'; if (!(v[t] < N.volHi * va)) return 'volume 3x+';
+  if (!(h[t] > 0) || !(l[t] > 0)) return 'no high/low'; if (!(h[t] > l[t])) return 'no range'; if (!((c[t] - l[t]) / (h[t] - l[t]) >= N.top)) return 'close not in the top quarter';
+  if (!(c[t - 1] > 0)) return 'no prior close'; const up = c[t] / c[t - 1] - 1; if (!(up >= N.upLo && up <= N.upHi)) return 'up day not +4..15%';
+  return neglPrice(S, t) ? null : 'lower low in the last 10 sessions'; }
 // the yardstick of RULE 3: base true and volume < 2x its 50-session average
 export function quietCrashed(S, t) { const va = vavg50(S.v, t); return va > 0 && S.v[t] >= 0 && S.v[t] < TH.negl.volLo * va; }
 // share count growth: count known on d (lag days late) vs the count known `days` earlier -> fraction or null
