@@ -34,6 +34,12 @@
 //   at the stop. In the fill bar the open comes first, so a low under the stop in that bar is a stop (worst case).
 //   MATCHED CONTROL for a trade at minute T: every OTHER fetched stock that day that is up 10%+ on its prior close at minute T (last bar
 //   close at or before T), bought the same way at its next bar after T, same exit: the "any under-5 runner at that minute" yardstick.
+// STAGE 3 (DESIGN ONLY, NOT WIRED; written 25 Oct 2026 after Stage 2). No Stage 2 rule passed, so nothing is to be wired. IF a rule ever
+//   passes a future frozen test, it would alert like this in ignition-watch.mjs: compute the rule's base trigger and filters each minute on
+//   the SIP snapshot + Alpaca news stream; on a hit send a PAPER alert ("PAPER ONLY - not a buy; intraday entry, never a next-open TRY
+//   SMALL order"; symbol, minute, trigger price, stop level, the rule's frozen older/newer averages) and log it to data/squad19-paper.jsonl;
+//   every alert says "Check ZAD first - most under-5 USD names are not ZAD-marked; this alert is not a halal ruling". Live alerts only after
+//   60+ paper alerts stay positive after 3% slippage each way without their 2 best.
 export const VERSION = 1, SLIP = 0.02, STRESS = 0.03, SPLIT_HALF = '2025-07-01', START = '2024-01-02', HIST_FROM = '2023-08-01';
 export const MIN_PREV = 0.10, MAX_PREV = 5, FETCH_UP = 0.08, LAST_ENTRY = 930, OPEN = 570, LAST = 959, PM_FROM = 240;
 export const EXITS = { S10: { stop: 0.10 }, S15: { stop: 0.15 }, TR15: { stop: 0.10, trail: 0.15 }, TP20: { stop: 0.10, target: 0.20 } };
