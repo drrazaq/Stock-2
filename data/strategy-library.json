@@ -29544,55 +29544,235 @@
    "family": "Second halal basket / diversifier of Basket 1 (Squad 23)",
    "name": "Halal next 30 (Shariah ranks 21-50), cap-weighted, max 10%, quarterly",
    "explain": "the Shariah-screened US companies ranked 21-50 by market value, cap-weighted with no stock above 10%, re-formed every quarter. Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT ZAD; companies by SEC CIK, implied splits, FB->META etc., wider debt tags), walked until 500 companies pass. Quarterly formation (first session of Jan / Apr / Jul / Oct), trades next open, weights drift, cash 0%; funds held as securities, price only. No overlap with Basket 1 (SQ10-SH20-C15 = Shariah ranks 1-20) at any formation. JUDGED (1) ALONE as an account vs SPUS and SPY: CAGR both halves (start - end 2023 / 2024 - last close) after 0.4% per side on real turnover (stress 0.6%), max drawdown, worst year; (2) KEY TEST: 70% Basket 1 + 30% candidate, one account reset to 70/30 every quarter, vs Basket 1 alone from the same session: CAGR / |max drawdown| higher in BOTH halves at 0.4% and 0.6% per side (if a CAGR <= 0: higher CAGR and no deeper drawdown); correlation of monthly returns with Basket 1 reported. EARNS ITS PLACE = passes (2). Run once, first complete verdict frozen. Basket study: not used for TRY SMALL.",
-   "status": "pre-registered 2026-10-25 (squad 23); 5-year one-shot pending",
+   "status": "tested: does not earn its place (as 30% next to Basket 1); alone did not beat SPUS in both halves",
    "agent": "squad23",
    "registered": "2026-10-25",
    "libraryCheck": "Already tested as stand-alone pickers / accounts (not as a 30% diversifier of Basket 1): low volatility / low beta (ANOM-LOWVOL, ANOM-LOWBETA, ANOM-LOWIVOL rejected), dividends (ANOM-DIVINIT, ANG-DIVG, SQ16-SHYLD rejected), value / quality incl. gross profitability (V2, ANOM-GP, ANOM-QMJ, SQ5-QUAL20, SQ16-GPVAL, SQ16-MSCIQ rejected), equal weight (X6, SQ5-EW100 not proven), sector rotation (R4), large-cap momentum (SQ6-MTUM survived; SQ10-SH30-MOM, SQ17-SHMOM30 incl. the giants), gold only as a trend switch (A-ROT2 rejected) and as miner trades (MACRO-GOLD-*). New here: Shariah names OUTSIDE Basket 1 only (ranks 21+), a halal world ex-US fund and a gold sleeve, each judged as 30% added to Basket 1 vs Basket 1 alone (return per unit of max drawdown in both halves) with the correlation.",
-   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab."
+   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab.",
+   "tested": "2026-10-23",
+   "study": "squad23-lab.mjs -> data/squad23-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "DOES NOT EARN ITS PLACE",
+    "start": "2022-01-03",
+    "aloneCagr": [
+     -0.0387,
+     0.1242
+    ],
+    "spusCagr": [
+     0.0052,
+     0.2124
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1824
+    ],
+    "aloneMaxDD": [
+     -0.2874,
+     -0.1835
+    ],
+    "comboRatio": [
+     0.0406,
+     1.0401
+    ],
+    "basket1Ratio": [
+     0.0865,
+     1.0825
+    ],
+    "corrWithBasket1": [
+     0.8752,
+     0.4578
+    ],
+    "passesTest2": false,
+    "why": "70/30 not better than Basket 1 alone in the older half (return/maxDD 0.0406 vs 0.0865; CAGR +1.2% vs +2.9%, max fall -30.3% vs -33.1%); 70/30 not better than Basket 1 alone in the newer half (return/maxDD 1.0401 vs 1.0825; CAGR +22.8% vs +26.8%, max fall -21.9% vs -24.7%)"
+   }
   },
   {
    "id": "SQ23-MIDQ",
    "family": "Second halal basket / diversifier of Basket 1 (Squad 23)",
    "name": "Halal mid-cap quality: the 30 most gross-profitable of Shariah ranks 101-500, equal weight, quarterly",
    "explain": "among the Shariah-screened companies ranked 101-500 by market value, the 30 with the highest point-in-time gross profit / total assets, equal weight, quarterly. Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT ZAD; companies by SEC CIK, implied splits, FB->META etc., wider debt tags), walked until 500 companies pass. Quarterly formation (first session of Jan / Apr / Jul / Oct), trades next open, weights drift, cash 0%; funds held as securities, price only. No overlap with Basket 1 (SQ10-SH20-C15 = Shariah ranks 1-20) at any formation. JUDGED (1) ALONE as an account vs SPUS and SPY: CAGR both halves (start - end 2023 / 2024 - last close) after 0.4% per side on real turnover (stress 0.6%), max drawdown, worst year; (2) KEY TEST: 70% Basket 1 + 30% candidate, one account reset to 70/30 every quarter, vs Basket 1 alone from the same session: CAGR / |max drawdown| higher in BOTH halves at 0.4% and 0.6% per side (if a CAGR <= 0: higher CAGR and no deeper drawdown); correlation of monthly returns with Basket 1 reported. EARNS ITS PLACE = passes (2). Run once, first complete verdict frozen. Basket study: not used for TRY SMALL.",
-   "status": "pre-registered 2026-10-25 (squad 23); 5-year one-shot pending",
+   "status": "tested: does not earn its place (as 30% next to Basket 1); alone did not beat SPUS in both halves",
    "agent": "squad23",
    "registered": "2026-10-25",
    "libraryCheck": "Already tested as stand-alone pickers / accounts (not as a 30% diversifier of Basket 1): low volatility / low beta (ANOM-LOWVOL, ANOM-LOWBETA, ANOM-LOWIVOL rejected), dividends (ANOM-DIVINIT, ANG-DIVG, SQ16-SHYLD rejected), value / quality incl. gross profitability (V2, ANOM-GP, ANOM-QMJ, SQ5-QUAL20, SQ16-GPVAL, SQ16-MSCIQ rejected), equal weight (X6, SQ5-EW100 not proven), sector rotation (R4), large-cap momentum (SQ6-MTUM survived; SQ10-SH30-MOM, SQ17-SHMOM30 incl. the giants), gold only as a trend switch (A-ROT2 rejected) and as miner trades (MACRO-GOLD-*). New here: Shariah names OUTSIDE Basket 1 only (ranks 21+), a halal world ex-US fund and a gold sleeve, each judged as 30% added to Basket 1 vs Basket 1 alone (return per unit of max drawdown in both halves) with the correlation.",
-   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab."
+   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab.",
+   "tested": "2026-10-23",
+   "study": "squad23-lab.mjs -> data/squad23-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "DOES NOT EARN ITS PLACE",
+    "start": "2022-01-03",
+    "aloneCagr": [
+     -0.0128,
+     0.1064
+    ],
+    "spusCagr": [
+     0.0052,
+     0.2124
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1824
+    ],
+    "aloneMaxDD": [
+     -0.3311,
+     -0.2224
+    ],
+    "comboRatio": [
+     0.0613,
+     0.9441
+    ],
+    "basket1Ratio": [
+     0.0865,
+     1.0825
+    ],
+    "corrWithBasket1": [
+     0.8302,
+     0.4484
+    ],
+    "passesTest2": false,
+    "why": "70/30 not better than Basket 1 alone in the older half (return/maxDD 0.0613 vs 0.0865; CAGR +1.9% vs +2.9%, max fall -31.8% vs -33.1%); 70/30 not better than Basket 1 alone in the newer half (return/maxDD 0.9441 vs 1.0825; CAGR +22.0% vs +26.8%, max fall -23.3% vs -24.7%)"
+   }
   },
   {
    "id": "SQ23-WORLD",
    "family": "Second halal basket / diversifier of Basket 1 (Squad 23)",
    "name": "Halal world ex-US fund (UMMA, Wahed Dow Jones Islamic World) held",
    "explain": "the Wahed Dow Jones Islamic World ETF (UMMA) bought once and held (SPWO listed only Dec 2023: too short for the older half, shown for information; HLAL = US giants, no diversification). Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT ZAD; companies by SEC CIK, implied splits, FB->META etc., wider debt tags), walked until 500 companies pass. Quarterly formation (first session of Jan / Apr / Jul / Oct), trades next open, weights drift, cash 0%; funds held as securities, price only. No overlap with Basket 1 (SQ10-SH20-C15 = Shariah ranks 1-20) at any formation. JUDGED (1) ALONE as an account vs SPUS and SPY: CAGR both halves (start - end 2023 / 2024 - last close) after 0.4% per side on real turnover (stress 0.6%), max drawdown, worst year; (2) KEY TEST: 70% Basket 1 + 30% candidate, one account reset to 70/30 every quarter, vs Basket 1 alone from the same session: CAGR / |max drawdown| higher in BOTH halves at 0.4% and 0.6% per side (if a CAGR <= 0: higher CAGR and no deeper drawdown); correlation of monthly returns with Basket 1 reported. EARNS ITS PLACE = passes (2). Run once, first complete verdict frozen. Basket study: not used for TRY SMALL.",
-   "status": "pre-registered 2026-10-25 (squad 23); 5-year one-shot pending",
+   "status": "tested: does not earn its place (as 30% next to Basket 1); alone did not beat SPUS in both halves",
    "agent": "squad23",
    "registered": "2026-10-25",
    "libraryCheck": "Already tested as stand-alone pickers / accounts (not as a 30% diversifier of Basket 1): low volatility / low beta (ANOM-LOWVOL, ANOM-LOWBETA, ANOM-LOWIVOL rejected), dividends (ANOM-DIVINIT, ANG-DIVG, SQ16-SHYLD rejected), value / quality incl. gross profitability (V2, ANOM-GP, ANOM-QMJ, SQ5-QUAL20, SQ16-GPVAL, SQ16-MSCIQ rejected), equal weight (X6, SQ5-EW100 not proven), sector rotation (R4), large-cap momentum (SQ6-MTUM survived; SQ10-SH30-MOM, SQ17-SHMOM30 incl. the giants), gold only as a trend switch (A-ROT2 rejected) and as miner trades (MACRO-GOLD-*). New here: Shariah names OUTSIDE Basket 1 only (ranks 21+), a halal world ex-US fund and a gold sleeve, each judged as 30% added to Basket 1 vs Basket 1 alone (return per unit of max drawdown in both halves) with the correlation.",
-   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab."
+   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab.",
+   "tested": "2026-10-23",
+   "study": "squad23-lab.mjs -> data/squad23-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "DOES NOT EARN ITS PLACE",
+    "start": "2022-04-01",
+    "aloneCagr": [
+     0.0023,
+     0.1669
+    ],
+    "spusCagr": [
+     0.0537,
+     0.2124
+    ],
+    "spyCagr": [
+     0.0282,
+     0.1824
+    ],
+    "aloneMaxDD": [
+     -0.2768,
+     -0.1894
+    ],
+    "comboRatio": [
+     0.2197,
+     1.0992
+    ],
+    "basket1Ratio": [
+     0.2747,
+     1.0825
+    ],
+    "corrWithBasket1": [
+     0.7829,
+     0.5124
+    ],
+    "passesTest2": false,
+    "why": "70/30 not better than Basket 1 alone in the older half (return/maxDD 0.2197 vs 0.2747; CAGR +6.0% vs +7.9%, max fall -27.4% vs -28.7%)"
+   }
   },
   {
    "id": "SQ23-GOLD",
    "family": "Second halal basket / diversifier of Basket 1 (Squad 23)",
    "name": "Gold sleeve (GLD price as the physical-gold proxy) held",
    "explain": "physical-gold exposure through the GLD price series, bought once and held; mainly judged as the fixed 30% sleeve; halal status of any gold product = the owner's ZAD decision. Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT ZAD; companies by SEC CIK, implied splits, FB->META etc., wider debt tags), walked until 500 companies pass. Quarterly formation (first session of Jan / Apr / Jul / Oct), trades next open, weights drift, cash 0%; funds held as securities, price only. No overlap with Basket 1 (SQ10-SH20-C15 = Shariah ranks 1-20) at any formation. JUDGED (1) ALONE as an account vs SPUS and SPY: CAGR both halves (start - end 2023 / 2024 - last close) after 0.4% per side on real turnover (stress 0.6%), max drawdown, worst year; (2) KEY TEST: 70% Basket 1 + 30% candidate, one account reset to 70/30 every quarter, vs Basket 1 alone from the same session: CAGR / |max drawdown| higher in BOTH halves at 0.4% and 0.6% per side (if a CAGR <= 0: higher CAGR and no deeper drawdown); correlation of monthly returns with Basket 1 reported. EARNS ITS PLACE = passes (2). Run once, first complete verdict frozen. Basket study: not used for TRY SMALL.",
-   "status": "pre-registered 2026-10-25 (squad 23); 5-year one-shot pending",
+   "status": "tested: earns its place (as 30% next to Basket 1); alone beat SPUS in both halves",
    "agent": "squad23",
    "registered": "2026-10-25",
    "libraryCheck": "Already tested as stand-alone pickers / accounts (not as a 30% diversifier of Basket 1): low volatility / low beta (ANOM-LOWVOL, ANOM-LOWBETA, ANOM-LOWIVOL rejected), dividends (ANOM-DIVINIT, ANG-DIVG, SQ16-SHYLD rejected), value / quality incl. gross profitability (V2, ANOM-GP, ANOM-QMJ, SQ5-QUAL20, SQ16-GPVAL, SQ16-MSCIQ rejected), equal weight (X6, SQ5-EW100 not proven), sector rotation (R4), large-cap momentum (SQ6-MTUM survived; SQ10-SH30-MOM, SQ17-SHMOM30 incl. the giants), gold only as a trend switch (A-ROT2 rejected) and as miner trades (MACRO-GOLD-*). New here: Shariah names OUTSIDE Basket 1 only (ranks 21+), a halal world ex-US fund and a gold sleeve, each judged as 30% added to Basket 1 vs Basket 1 alone (return per unit of max drawdown in both halves) with the correlation.",
-   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab."
+   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab.",
+   "tested": "2026-10-23",
+   "study": "squad23-lab.mjs -> data/squad23-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "EARNS ITS PLACE",
+    "start": "2022-01-03",
+    "aloneCagr": [
+     0.0623,
+     0.2616
+    ],
+    "spusCagr": [
+     0.0052,
+     0.2124
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1824
+    ],
+    "aloneMaxDD": [
+     -0.2103,
+     -0.264
+    ],
+    "comboRatio": [
+     0.172,
+     1.7165
+    ],
+    "basket1Ratio": [
+     0.0865,
+     1.0825
+    ],
+    "corrWithBasket1": [
+     0.2862,
+     -0.0622
+    ],
+    "passesTest2": true,
+    "why": "the 70/30 account had a higher return per unit of max drawdown than Basket 1 alone in both halves, also at 0.6% per side"
+   }
   },
   {
    "id": "SQ23-NEXT30-MOM",
    "family": "Second halal basket / diversifier of Basket 1 (Squad 23)",
    "name": "Halal momentum 30 of Shariah ranks 21-100 (best 12-1), cap-weighted, max 10%, quarterly",
    "explain": "among the Shariah-screened companies ranked 21-100, the 30 with the best 12-1 month return, cap-weighted with no stock above 10%, quarterly (starts Jan 2023). Squad 10 data and Shariah screen unchanged (point-in-time proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT ZAD; companies by SEC CIK, implied splits, FB->META etc., wider debt tags), walked until 500 companies pass. Quarterly formation (first session of Jan / Apr / Jul / Oct), trades next open, weights drift, cash 0%; funds held as securities, price only. No overlap with Basket 1 (SQ10-SH20-C15 = Shariah ranks 1-20) at any formation. JUDGED (1) ALONE as an account vs SPUS and SPY: CAGR both halves (start - end 2023 / 2024 - last close) after 0.4% per side on real turnover (stress 0.6%), max drawdown, worst year; (2) KEY TEST: 70% Basket 1 + 30% candidate, one account reset to 70/30 every quarter, vs Basket 1 alone from the same session: CAGR / |max drawdown| higher in BOTH halves at 0.4% and 0.6% per side (if a CAGR <= 0: higher CAGR and no deeper drawdown); correlation of monthly returns with Basket 1 reported. EARNS ITS PLACE = passes (2). Run once, first complete verdict frozen. Basket study: not used for TRY SMALL.",
-   "status": "pre-registered 2026-10-25 (squad 23); 5-year one-shot pending",
+   "status": "tested: does not earn its place (as 30% next to Basket 1); alone did not beat SPUS in both halves",
    "agent": "squad23",
    "registered": "2026-10-25",
    "libraryCheck": "Already tested as stand-alone pickers / accounts (not as a 30% diversifier of Basket 1): low volatility / low beta (ANOM-LOWVOL, ANOM-LOWBETA, ANOM-LOWIVOL rejected), dividends (ANOM-DIVINIT, ANG-DIVG, SQ16-SHYLD rejected), value / quality incl. gross profitability (V2, ANOM-GP, ANOM-QMJ, SQ5-QUAL20, SQ16-GPVAL, SQ16-MSCIQ rejected), equal weight (X6, SQ5-EW100 not proven), sector rotation (R4), large-cap momentum (SQ6-MTUM survived; SQ10-SH30-MOM, SQ17-SHMOM30 incl. the giants), gold only as a trend switch (A-ROT2 rejected) and as miner trades (MACRO-GOLD-*). New here: Shariah names OUTSIDE Basket 1 only (ranks 21+), a halal world ex-US fund and a gold sleeve, each judged as 30% added to Basket 1 vs Basket 1 alone (return per unit of max drawdown in both halves) with the correlation.",
-   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab."
+   "note": "Pre-registered 2026-10-25 BEFORE any squad 23 run (squad23-core.mjs = the exact rule). 5-year one-shot by squad23-lab.mjs, first complete verdict frozen in data/squad23-lab.json; basket study, not a TRY SMALL lab.",
+   "tested": "2026-10-23",
+   "study": "squad23-lab.mjs -> data/squad23-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "DOES NOT EARN ITS PLACE",
+    "start": "2023-01-03",
+    "aloneCagr": [
+     0.1163,
+     0.1495
+    ],
+    "spusCagr": [
+     0.347,
+     0.2124
+    ],
+    "spyCagr": [
+     0.2515,
+     0.1824
+    ],
+    "aloneMaxDD": [
+     -0.1211,
+     -0.2025
+    ],
+    "comboRatio": [
+     4.4181,
+     1.0455
+    ],
+    "basket1Ratio": [
+     6.0862,
+     1.0825
+    ],
+    "corrWithBasket1": [
+     0.5298,
+     0.4511
+    ],
+    "passesTest2": false,
+    "why": "70/30 not better than Basket 1 alone in the older half (return/maxDD 4.4181 vs 6.0862; CAGR +42.1% vs +55.8%, max fall -9.5% vs -9.2%); 70/30 not better than Basket 1 alone in the newer half (return/maxDD 1.0455 vs 1.0825; CAGR +23.7% vs +26.8%, max fall -22.6% vs -24.7%)"
+   }
   }
  ]
 }
