@@ -1,0 +1,48 @@
+name: Comeback board
+# COMEBACK BOARD (comeback-lab.mjs; rule = comeback-core.mjs header = data/strategy-library.json COMEBACK-1, pre-registered 25 Oct 2026
+# before any forward result). Reads every lab's frozen verdicts (never written here) and forward paper ledger and writes
+# data/comeback-board.json, data/comeback-lab.json (COMEBACK rules only, read by scan.mjs TRY SMALL as lab 'comeback') and
+# data/comeback-today.json. Runs after the labs' weekday paper lanes (the last ones start at 00:41 UTC: squad15) and on Sunday after the
+# Sunday lab runs. Commits only its own files. Never places an order.
+on:
+  schedule:
+    - cron: '35 1 * * 2-6'    # weekday evenings (New York) after every lab's paper lane
+    - cron: '45 17 * * 0'     # Sunday, after the Sunday lab runs (the last starts 16:29 UTC)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: comeback-board
+jobs:
+  board:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - shell: bash
+        run: |
+          set -o pipefail
+          node comeback-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          FILES="data/comeback-board.json data/comeback-lab.json data/comeback-today.json data/comeback-spy.json"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "comeback board $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the comeback board"; exit 1; }

@@ -23985,6 +23985,16 @@
     "t": -1.95,
     "why": "basket monthly advantage older -0.5%, newer -2.1% (t over all months -1.95); account older 28992.5427 vs plain 29155.8959, newer 43593.8755 vs plain 44635.7278"
    }
+  },
+  {
+   "id": "COMEBACK-1",
+   "family": "Comeback board (forward paper records)",
+   "name": "COMEBACK BOARD: a rejected / not-proven rule can come back to TRY SMALL on its own forward paper record only",
+   "explain": "RULE (comeback-core.mjs header): every lab rule with a frozen first-run verdict keeps its forward paper lane; only paper trades whose signal day is after that rule's frozenAt count (resolved by the lab at the rule's own hold and exits, 0.8% cost, 1.2% stress). COMEBACK = 30+ resolved trades on 10+ distinct signal days, average after 1.2% > 0, beats the average stock on the same days, beats SPY per year of capital, > 0 without its 2 best, block t >= max(2.5, one-sided z for 0.05 / N) where N = rules on the board with 30+ forward trades (Bonferroni), and both date halves of the forward record pass the TRY SMALL half gates. Near-copies of live rules (TRY_DUPLICATE), paused rules, baskets, intraday and options rules never come back. Frozen verdicts are never re-run or edited.",
+   "status": "pre-registered 25 Oct 2026 before any forward result (forward paper lanes start 26 Oct 2026)",
+   "agent": "comeback",
+   "sources": [],
+   "note": "Owner, 25 Oct 2026: \"Don't reject all, work them out, maybe with time the average will decide differently.\" Outputs data/comeback-board.json, data/comeback-lab.json (COMEBACK rules only, recomputed each run), data/comeback-today.json (lab 'comeback' in scan.mjs TRY SMALL)."
   }
  ]
 }
