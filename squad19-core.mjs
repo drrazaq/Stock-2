@@ -223,8 +223,28 @@ export function verdict(R) { const H = ['older', 'newer'].map(k => R[k] || { n: 
   return { verdict: H.every(h => h.avg > 0 && h.edge > 0) ? 'NOT PROVEN' : 'REJECTED', why: why.join('; ') }; }
 
 // ---------- STAGE 2 RULES ----------
-// Pre-registered AFTER Stage 1 (older part only) and BEFORE the Stage 2 run. Empty until then: the Stage 1 run judges nothing.
-export const RULES = {};
+// Pre-registered 25 Oct 2026 AFTER the Stage 1 run (data/squad19-lab.json caseStudy.triggersOlder / pairsOlder, OLDER part only:
+// signal days 2024-01-02..2025-06-30) and BEFORE any Stage 2 run; never seen on the newer part. Chosen = the strongest older-part cells by
+// average after 2% slippage each way with 25+ older trades, one exit each (the best of the four in the older part). Warning written
+// before the run: in the older part EVERY one of them is negative without its 2 best trades and none has a weekly block t above 1, so
+// they are expected to fail; they are run once so the owner sees the out-of-sample answer, not a guess.
+const OLDER_NOTE = (n, avg, nt2) => ' Older part (chosen on it): ' + n + ' trades, ' + avg + ' a trade after 2% each way, ' + nt2 + ' without the 2 best.';
+export const RULES = {
+  'SQ19-FAST-PM': { base: 'FAST', filters: ['PMRV1'], exit: 'S15', name: 'Fast ignition (+10% to +20% within 10 minutes, not a gap) after a pre-market of 1x a normal day\'s volume; stop 15%, sell at the close',
+    rule: 'Under-5 USD stock (prior close 0.10-5). The 09:30 open is under +10%; it crosses +10% and then +20% within 10 minutes; trigger = the +20% minute; pre-market volume (04:00-09:29) >= the 20-session average daily volume. Buy the next bar\'s open; stop 15% under the fill; else sell at the 15:59 close.' + OLDER_NOTE(178, '+1.2%', '-5.6%') },
+  'SQ19-FAST-PM-RV3': { base: 'FAST', filters: ['PMRV1', 'RV3'], exit: 'S15', name: 'Fast ignition with pre-market volume 1x and 3x a normal day traded by the trigger; stop 15%, close',
+    rule: 'SQ19-FAST-PM plus: volume from 04:00 to the trigger minute >= 3x the 20-session average daily volume.' + OLDER_NOTE(134, '+5.2%', '-3.8%') },
+  'SQ19-FAST-PM-REPEAT': { base: 'FAST', filters: ['PMRV1', 'REPEAT'], exit: 'S15', name: 'Fast ignition with pre-market volume, in a stock that already had a +40% day in the prior 90 sessions; stop 15%, close',
+    rule: 'SQ19-FAST-PM plus: at least one session in the prior 90 whose high was 40%+ over its prior close.' + OLDER_NOTE(102, '+7.0%', '-4.9%') },
+  'SQ19-FAST-EARLY-RV3': { base: 'FAST', filters: ['T_PRE10', 'RV3'], exit: 'S15', name: 'Fast ignition before 10:00 with 3x a normal day traded by the trigger; stop 15%, close',
+    rule: 'FAST trigger at 09:30-09:59 and volume from 04:00 to the trigger >= 3x the 20-session average daily volume. Buy the next bar\'s open; stop 15%; else the 15:59 close.' + OLDER_NOTE(130, '+4.4%', '-4.9%') },
+  'SQ19-FAST-2TO5-PM': { base: 'FAST', filters: ['P_2_5', 'PMRV1'], exit: 'S10', name: 'Fast ignition in a 2-5 USD stock with pre-market volume 1x; stop 10%, close',
+    rule: 'SQ19-FAST-PM restricted to prior close 2-5 USD, stop 10% under the fill.' + OLDER_NOTE(38, '+25.5%', '-6.5%') },
+  'SQ19-GAP20-8K-NONEWS': { base: 'GAP20', filters: ['NEWS_NONE', 'SEC_PRE'], exit: 'S15', name: 'Opens 20%+ up on an overnight 8-K / 6-K with no news headline at all; buy 09:31, stop 15%, close',
+    rule: 'Under-5 USD stock opens (09:30 bar) 20%+ over the prior close; an 8-K or 6-K was accepted between the prior session\'s 16:00 and the open; no Benzinga headline (catalyst or reaction) before the open. Buy the 09:31 bar open; stop 15%; else the 15:59 close.' + OLDER_NOTE(46, '+4.8%', '-0.1%') },
+  'SQ19-HODBRK-LIVENEWS': { base: 'HODBRK', filters: ['NEWS_LIVE30', 'DV1M'], exit: 'S15', name: 'Second leg: after reaching +20% and pulling back 10%+, breaks the high of day within 30 minutes of a fresh in-session catalyst headline; liquid; stop 15%, close',
+    rule: 'Under-5 USD stock with a 20-day average traded value >= 1M USD; reached +20% on the prior close, pulled back 10%+ from its high, then a minute breaks the high of day (trigger); a catalyst headline (not a reaction article) was published during the session in the 30 minutes before the trigger. Buy the next bar\'s open; stop 15%; else the 15:59 close.' + OLDER_NOTE(72, '+0.8%', '-3.8%') },
+};
 export const RULE_IDS = Object.keys(RULES);
 export function ruleTrades(rows, R) { const out = [];
   for (const r of rows) { const t = r.t && r.t[R.base]; if (!t || !t.x || !t.x[R.exit]) continue; if (!R.filters.every(f => FILTERS[f].fn(r, t))) continue;
