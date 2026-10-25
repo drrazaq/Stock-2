@@ -24001,52 +24001,196 @@
    "family": "Under-5 USD daily-bar ideas from the owner's outside reviewers (squad 19)",
    "name": "Under-5 primary-source catalyst hunter (FDA designation or positive topline 8-K), clean supply, hold 10 / stop 25%",
    "explain": "Raw close 1-5 USD on the signal session t, 20-day average traded value >= 1M USD. Signal: an 8-K public in session t whose text contains an FDA designation phrase (Breakthrough Device/Therapy, Fast Track, Orphan Drug, Rare Pediatric Disease designation) [type A], or a positive-topline / primary-endpoint-met phrase in an 8-K carrying item 8.01 or 2.02 [type C]. Exclude: reverse split in the 60 days before t; 424B5 / S-1 / S-1/A / S-3 / S-3/A public in sessions t-19..t; any close-to-close move of 15%+ (either way) in t-21..t-1; already up 40%+ on the prior close when public (open for a pre-open filing, close for a filing in the session). Buy t+1 open; sell at the close of session 10 (entry day = 1) or a 25% stop under the fill. Deviations and data: squad19-core.mjs DAILY section header.",
-   "status": "pre-registered 2026-10-25 (squad 19) before any run; one-shot on 5 years of daily bars pending",
+   "status": "tested: REJECTED (squad 19, daily bars, 2% slippage each way decides)",
    "agent": "squad19",
    "libraryCheck": "DEC-CRASH, DEC2-CONTRACT, C-CT1, E13/E16, catalyst lane CAT-*",
    "sources": [],
    "spec": "squad19-core.mjs DAILY_RULES[CAT-HUNTER-SUB5]",
    "note": "Owner-supplied spec (outside reviewers). Costs: house 0.8%/1.2% and 2%/3% slippage each way; the 2% version decides. Under-5 names are rarely ZAD-marked: check ZAD first.",
-   "study": "squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)"
+   "study": "squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)",
+   "tested": "2026-10-25",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     203,
+     284
+    ],
+    "avg": [
+     -0.0524,
+     -0.0306
+    ],
+    "stress": [
+     -0.0712,
+     -0.0498
+    ],
+    "house": [
+     -0.0217,
+     0.001
+    ],
+    "edge": [
+     -0.0292,
+     -0.0222
+    ],
+    "vsOwn": [
+     -0.0036,
+     -0.0031
+    ],
+    "noTop2": [
+     -0.0599,
+     -0.0359
+    ],
+    "tBlock": [
+     -1.9859,
+     -1.0433
+    ]
+   }
   },
   {
    "id": "UNDER5-JUMP",
    "family": "Under-5 USD daily-bar ideas from the owner's outside reviewers (squad 19)",
    "name": "Crashed and stabilising under-5 stock that jumps on 3x volume with a fresh reason, clean supply (sell half at +20%, rest by day 3)",
    "explain": "Raw close 0.50-5 USD, 20-day average traded value >= 0.5M USD. At t-1: close <= 60% of its 200-day average and within 2% of the lowest close of 252 sessions. Lowest low of t-9..t >= lowest low of t-29..t-10; high-low range of t-9..t <= 0.6x that of t-29..t-10; average volume of t-9..t >= 1.2x that of t-29..t-10. Day t: volume >= 3x its 50-session average, close in the top 25% of the day range, close +15% on the prior close, or +4% with a fresh reason (see deviations). Share count up < 5% over 90 days; no 424B5 / S-1 / S-1/A / 8-K item 3.02 public in t-19..t; no close-to-close rise of 15%+ in t-21..t-1. Buy t+1 open (skip if it opens at or under the day-t low); stop = day-t low; at the first close 20%+ over the fill sell half at that close and move the stop to the fill; sell the rest at the next open after a close under the 10-day average, else at the close of session 3. Deviations and data: squad19-core.mjs DAILY section header.",
-   "status": "pre-registered 2026-10-25 (squad 19) before any run; one-shot on 5 years of daily bars pending",
+   "status": "tested: TOO FEW CASES (squad 19, daily bars, 2% slippage each way decides)",
    "agent": "squad19",
    "libraryCheck": "DEC-CRASH, DEC2-CONTRACT, C-CT1, E13/E16, catalyst lane CAT-*",
    "sources": [],
    "spec": "squad19-core.mjs DAILY_RULES[UNDER5-JUMP]",
    "note": "Owner-supplied spec (outside reviewers). Costs: house 0.8%/1.2% and 2%/3% slippage each way; the 2% version decides. Under-5 names are rarely ZAD-marked: check ZAD first.",
-   "study": "squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)"
+   "study": "squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)",
+   "tested": "2026-10-25",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     0,
+     0
+    ],
+    "avg": [
+     null,
+     null
+    ],
+    "stress": [
+     null,
+     null
+    ],
+    "house": [
+     null,
+     null
+    ],
+    "edge": [
+     null,
+     null
+    ],
+    "vsOwn": [
+     null,
+     null
+    ],
+    "noTop2": [
+     null,
+     null
+    ],
+    "tBlock": [
+     null,
+     null
+    ]
+   }
   },
   {
    "id": "UNDER5-REVERSE",
    "family": "Under-5 USD daily-bar ideas from the owner's outside reviewers (squad 19)",
    "name": "Down 70%+ since a recent reverse split, no new low for 10 sessions, 2x volume and a fresh 8-K 1.01 (hold 10)",
    "explain": "Raw close 0.50-5 USD, 20-day average traded value >= 0.5M USD. A reverse split executed in sessions t-62..t-10; close t <= 30% of the first post-split close; the lowest low since the split was set before t-9 (no lower low in t-9..t); volume t >= 2x its 50-session average; an 8-K with item 1.01 public in t-9..t. Buy t+1 open (skip if at or under the day-t low); stop = day-t low; sell at the close of session 10. Deviations and data: squad19-core.mjs DAILY section header.",
-   "status": "pre-registered 2026-10-25 (squad 19) before any run; one-shot on 5 years of daily bars pending",
+   "status": "tested: TOO FEW CASES (squad 19, daily bars, 2% slippage each way decides)",
    "agent": "squad19",
    "libraryCheck": "DEC-CRASH, DEC2-CONTRACT, C-CT1, E13/E16, catalyst lane CAT-*",
    "sources": [],
    "spec": "squad19-core.mjs DAILY_RULES[UNDER5-REVERSE]",
    "note": "Owner-supplied spec (outside reviewers). Costs: house 0.8%/1.2% and 2%/3% slippage each way; the 2% version decides. Under-5 names are rarely ZAD-marked: check ZAD first.",
-   "study": "squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)"
+   "study": "squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)",
+   "tested": "2026-10-25",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     2,
+     1
+    ],
+    "avg": [
+     -0.0821,
+     -0.1728
+    ],
+    "stress": [
+     -0.1003,
+     -0.1892
+    ],
+    "house": [
+     -0.0526,
+     -0.1471
+    ],
+    "edge": [
+     -0.0706,
+     -0.2227
+    ],
+    "vsOwn": [
+     -0.0356,
+     -0.0478
+    ],
+    "noTop2": [
+     null,
+     null
+    ],
+    "tBlock": [
+     null,
+     null
+    ]
+   }
   },
   {
    "id": "UNDER5-EPS-LOW",
    "family": "Under-5 USD daily-bar ideas from the owner's outside reviewers (squad 19)",
    "name": "Under-5 earnings gap-up of 5%+, then 3 quiet days holding above the gap midpoint (buy day 4, hold 10)",
    "explain": "Gap session g: an 8-K with item 2.02 public before the open of g; raw prior close 0.50-5 USD; 20-day average traded value >= 0.5M USD; open g >= 1.05x the prior close. Midpoint = (prior close + open g) / 2. Sessions g+1..g+3 each: low above the midpoint and volume under the gap day volume. Buy the open of g+4 (skip if at or under the midpoint); stop = midpoint; sell at the close of session 10. Deviations and data: squad19-core.mjs DAILY section header.",
-   "status": "pre-registered 2026-10-25 (squad 19) before any run; one-shot on 5 years of daily bars pending",
+   "status": "tested: REJECTED (squad 19, daily bars, 2% slippage each way decides)",
    "agent": "squad19",
    "libraryCheck": "DEC-CRASH, DEC2-CONTRACT, C-CT1, E13/E16, catalyst lane CAT-*",
    "sources": [],
    "spec": "squad19-core.mjs DAILY_RULES[UNDER5-EPS-LOW]",
    "note": "Owner-supplied spec (outside reviewers). Costs: house 0.8%/1.2% and 2%/3% slippage each way; the 2% version decides. Under-5 names are rarely ZAD-marked: check ZAD first.",
-   "study": "squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)"
+   "study": "squad19-lab.mjs daily -> data/squad19-lab.json dailyFirstRun (run once as written, first complete run frozen)",
+   "tested": "2026-10-25",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     207,
+     346
+    ],
+    "avg": [
+     -0.0519,
+     -0.0349
+    ],
+    "stress": [
+     -0.0707,
+     -0.0541
+    ],
+    "house": [
+     -0.0212,
+     -0.0035
+    ],
+    "edge": [
+     -0.0317,
+     -0.0284
+    ],
+    "vsOwn": [
+     -0.0152,
+     -0.005
+    ],
+    "noTop2": [
+     -0.057,
+     -0.0401
+    ],
+    "tBlock": [
+     -2.5994,
+     -2.4204
+    ]
+   }
   }
  ]
 }
