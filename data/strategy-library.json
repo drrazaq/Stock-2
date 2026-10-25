@@ -29310,6 +29310,96 @@
       "explain": "2+ distinct insiders buy within 5 sessions, total >= 200k USD (Form 4, filing date), AND the B-FCF1 company check point-in-time (FCF yield >5% trailing 4Q (OCF-capex)/mcap, revenue growth >=10% YoY, debt/equity <0.5, close above 200-day), close 5$+ and 20d traded value 5M$+. Buy next open, hold 63, stop 15%. Yardsticks: average stock same days; V15 same dates; same stock other days. Differs from SQ1-INSCLU (no quality) and DEC2-INSQ (too few cases): check case count first; if under 20 per half say TOO FEW before any return is computed.",
       "status": "queued (Agent C)",
       "agent": "C"
+    },
+    {
+      "id": "SQ22-CASHCONV",
+      "family": "Squad 22 (new mechanisms, Value)",
+      "name": "Cash-conversion inflection: operating cash flow / net income rising 2 quarters to 1.0+, gross margin up, no dilution (SEC filing date)",
+      "agent": "squad22",
+      "kind": "buy",
+      "hold": 126,
+      "explain": "RULE (squad22-core.mjs header RULE 1, exact): on the SEC filing date F that first makes a new quarter end E0 known (companyfacts filed dates; usable the day after): TTM operating cash flow / TTM net income at E2 < E1 < E0 (3 months apart) strictly rising and >= 1.0 at E0, TTM net income > 0 at all three; TTM gross margin at E0 above a year earlier; weighted diluted shares of the E0 period up <= 2% on a year earlier. Liquid (close 5 USD+, 20-day traded value 5M USD+) the session before entry. Buy the next open after F; stop 35% under the entry; else sell at the close of the 126th session. Extra gate: beat V15 picks bought and sold on the same sessions in both halves. Yardsticks: average stock same days; same stock other days; per year vs SPY.",
+      "status": "pre-registered 2026-10-25 (squad 22 lab); 5-year one-shot pending",
+      "libraryCheck": "ANOM-ACC (accrual level decile: rejected), ANOM-CFOA (cash profitability level: rejected), V15 (F-score uptrend: live). New: a filing-date EVENT of a two-quarter rise in cash conversion to 1.0+, with gross margin up and diluted shares flat; must beat V15 on the same sessions.",
+      "sources": [
+        "https://www.jstor.org/stable/248290",
+        "https://doi.org/10.2307/2672906"
+      ],
+      "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun."
+    },
+    {
+      "id": "SQ22-SPINOFF",
+      "family": "Squad 22 (new mechanisms, Value)",
+      "name": "Spin-off bought on its 21st regular-way session (after index-fund selling), hold 126, stop 35%",
+      "agent": "squad22",
+      "kind": "buy",
+      "hold": 126,
+      "explain": "RULE (squad22-core.mjs header RULE 2, exact): a CIK filing an original Form 10-12B / 10-12G (EDGAR master index) whose point-in-time ticker first trades on/after the filing date and within 400 days (first regular-way session s1; delisted kept). Buy the open of s1+20 if at s1+19 close 5 USD+ and 20-session traded value 5M USD+; stop 35%; else sell at the close of the 126th session. COUNT FIRST: under 20 cases in a half -> TOO FEW CASES, no return computed.",
+      "status": "pre-registered 2026-10-25 (squad 22 lab); 5-year one-shot pending",
+      "libraryCheck": "ANOM-SPIN (10-12B, 2nd session: TOO FEW CASES 21 / 17), E7 / DEC2-SPINOFF (queued / needs data). New: entry after the forced-selling window, 10-12G added, liquid 5 USD / 5M USD. Count first.",
+      "sources": [
+        "https://doi.org/10.1016/0304-405X(93)90011-Z"
+      ],
+      "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun."
+    },
+    {
+      "id": "SQ22-NEGLECTED",
+      "family": "Squad 22 (new mechanisms, Timing)",
+      "name": "Neglected-then-noticed: crashed, least-traded third, at a 52-week-low base, +4-15% up day on 2-3x volume closing strong; stop the day low, exit under the 10-day average, max 21",
+      "agent": "squad22",
+      "kind": "buy",
+      "hold": 21,
+      "explain": "RULE (owner's outside reviewer, as written; squad22-core.mjs header RULE 3): 63-session return <= -30%; 20-day traded value below that day's market 33rd percentile and >= 0.5M USD; close 1 USD+; volume >= 2x and < 3x its prior 50-session average; close in the top 25% of the range; close +4% to +15%; SEC share count up < 5% in 90 days (30-day lag) and no 424B5 / S-1 in 20 sessions; close within 5% of the 52-week low close; no lower low in the last 10 sessions (vs t-251..t-10). Buy the next open (1 session); stop the signal-day low; exit the next open after a close under the 10-day average, else after 21 sessions. Extra yardstick: same-day crashed neglected stocks without the 2x volume.",
+      "status": "pre-registered 2026-10-25 (squad 22 lab); 5-year one-shot pending",
+      "libraryCheck": "M8 (1-year low + heavy volume + no dilution: failed discovery), DEC-CRASH (rejected), DEC-EP (rejected), UNDER5-JUMP (too few). New: least-traded third, 2-3x volume band, strong up-day close, 52-week-low base with no lower low for 10 sessions; yardstick = same-day crashed stocks without the burst.",
+      "sources": [
+        "https://doi.org/10.1111/0022-1082.00349"
+      ],
+      "note": "Pre-registered 2026-10-25 BEFORE any run (one version); run ONCE by squad22-lab.mjs, first complete verdict frozen in data/squad22-lab.json firstRun."
+    },
+    {
+      "id": "SQ22-13D",
+      "family": "Squad 22 (new mechanisms)",
+      "name": "First-ever SC 13D by the filer (activist ownership disclosure), clean supply, hold 63, stop 15%",
+      "agent": "squad22",
+      "kind": "buy",
+      "status": "not run: duplicate of ANOM-13D (rejected 23 Oct 2026)",
+      "explain": "ANOM-13D (original SC 13D, next open, hold 63) was REJECTED in both halves (edge -3.9% / -3.4% a trade). A first-ever 13D is in practice the same original filing; adding liquidity, supply filters and a stop makes a variant of a failed rule, which the owner's anti-fixation rules (25 Oct 2026) forbid. The 13G (passive) information version is not run either..",
+      "sources": [],
+      "note": "Listed 2026-10-25 by squad 22 so it is not lost or repeated."
+    },
+    {
+      "id": "REV-QUALITY",
+      "family": "Squad 22 (new mechanisms)",
+      "name": "Revenue quality (owner reviewer)",
+      "agent": "squad22",
+      "kind": "buy",
+      "status": "needs data",
+      "explain": "needs a point-in-time history of analyst revenue estimates (what the consensus was on each past day); the system has only today's estimates.",
+      "sources": [],
+      "note": "Listed 2026-10-25 by squad 22 so it is not lost or repeated."
+    },
+    {
+      "id": "SUPPLIER-ASIA",
+      "family": "Squad 22 (new mechanisms)",
+      "name": "Asian supplier of a capex announcer (owner reviewer)",
+      "agent": "squad22",
+      "kind": "buy",
+      "status": "needs data",
+      "explain": "needs a dated history of capital-spending headlines and Asian listings with prices; the US price data has neither.",
+      "sources": [],
+      "note": "Listed 2026-10-25 by squad 22 so it is not lost or repeated."
+    },
+    {
+      "id": "BUYBACK-INSIDER-CASH",
+      "family": "Squad 22 (new mechanisms)",
+      "name": "Buyback + insider buying + cash-rich (owner reviewer)",
+      "agent": "squad22",
+      "kind": "buy",
+      "status": "left to Agent C (overlaps C-INSQ1)",
+      "explain": "overlaps C-INSQ1 (insider cluster + cash-rich quality, queued for Agent C). Its \"NOT SIC 35/36/38\" clause comes from V15's own past losses (fitted to the result) and must not be used..",
+      "sources": [],
+      "note": "Listed 2026-10-25 by squad 22 so it is not lost or repeated."
     }
   ]
 }
