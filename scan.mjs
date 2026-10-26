@@ -2547,13 +2547,22 @@ function optionsLabTicketText(tk, rule, tier, r) { const why = { 'OPT-LH1': 'a n
     'Cost: about ' + Math.round(tk.ask * 100 + 5) + ' USD with the 5 USD ZAD fee = the most you can lose. Stock now ' + tk.spot.toFixed(2) + '.',
     'SELL TO CLOSE (limit at the bid) on ' + tk.sellBy + ' (the rule\u2019s exit' + (rule === 'OPT-CAT1' ? ', 2 sessions before the event; never hold through it' : '') + '). Never hold it to expiry.',
     'Why: ' + why + '. ' + tk.sym + ' is marked halal in ZAD (yours). If you place it, send:  bought option ' + tk.sym + ' ' + tk.k + ' ' + tk.exp + ' ' + tk.ask.toFixed(2) + ' . Whether options are allowed is ZAD\u2019s Sharia view: check it once.'].join('\n'); }
-function optionsLabText() { const B = readJson0('data/options-lab.json'); if (!B || !B.verdicts) return 'OPTIONS LANE: has not run yet (options-lab.yml, weekly on Saturday).';
+// the two affordable-call forward paper boards (squad15b-lab.mjs -> data/squad15b-board.json): 3 lines each, information only
+function squad15bLines() { const B = readJson0('data/squad15b-board.json'), M = (B && B.methods) || {}, out = [], p = (x) => typeof x === 'number' ? pcs(x) : 'n/a';
+  for (const [id, cap, from] of [['SQ15-PB12-300', '300 USD', '27 Oct'], ['SQ15-PB12-2000', '2,000 USD, delta <= 0.85', '28 Oct']]) { const a = M[id] && M[id].all, c = (a && a.closed) || {};
+    if (!a) { out.push(id + ' (paper from ' + from + ', <= ' + cap + '): no board yet'); continue; }
+    out.push(id + ' (paper from ' + from + ', highest-delta call <= ' + cap + ' all-in): ' + a.signals + ' signals, ' + a.filled + ' filled, ' + a.open + ' open');
+    out.push('  closed ' + (c.n || 0) + ': median ' + p(c.median) + ', mean ' + p(c.mean) + ' a call | same-dollar stock median ' + p(c.stockMedian) + ', call minus stock median ' + p(c.callMinusStockMedian) + (c.n >= 20 ? '' : ' (no verdict before 20)'));
+    out.push('  skips: ' + (Object.entries(a.skips || {}).map(([k, v]) => k + ' ' + v).join(', ') || 'none')); }
+  return out; }
+function optionsLabText() { const B = readJson0('data/options-lab.json'); if (!B || !B.verdicts) return ['OPTIONS LANE: has not run yet (options-lab.yml, weekly on Saturday).', '', 'AFFORDABLE-CALL PAPER BOARDS (forward, paper only):', ...squad15bLines()].join('\n');
   const L = B.latest || {}, c = (B.coverage && B.coverage.alpaca) || {}, live = Object.keys(B.verdicts).filter(id => optionsLabTier(id));
   const line = (id) => { const r = L[id] || {}; return id + ': ' + B.verdicts[id] + (typeof r.n === 'number' && r.n ? ' | ' + r.n + ' trades, ' + pcs(r.avg) + ' a call after the spread and ZAD fees vs the same stock with the same money ' + pcs(r.stock) + ', block t ' + r.tBlock : '') + (r.why ? ' | ' + r.why : ''); };
   return ['OPTIONS LANE (long calls only, 1 contract, SEPARATE from your stocks; ' + (B.window || []).join(' to ') + ', run ' + String(B.generatedAt || '').slice(0, 10) + ')', '', ...Object.keys(B.verdicts).map(line), '',
     'Options traders (explicit options calls, scored with real call prices): ' + ((B.leaderboard || []).slice(0, 5).map(t => t.name + ' ' + t.level + ' (' + t.priced + ' priced on ' + t.days + ' days' + (t.avg !== null && t.avg !== undefined ? ', ' + pcs(t.avg) + ' a call' : '') + ')').join('; ') || 'none found'),
     'Data: Alpaca daily option bars ' + (c.firstOptionBar || '?') + ' to ' + (c.lastOptionBar || '?') + ' (' + (c.optionSeriesCached || 0) + ' contracts priced, ' + (c.contractsCached || 0) + ' listed). ' + ((B.coverage && B.coverage.note) || ''),
-    live.length ? 'LIVE: ' + live.join(', ') + ' feed the options ticket (halal ok only, at most 300 USD, at most 2 open).' : 'LIVE: no options rule has reached tier 2 or proven, so no new options ticket is shown. Sharia: options are ZAD\u2019s view to confirm.'].join('\n'); }
+    live.length ? 'LIVE: ' + live.join(', ') + ' feed the options ticket (halal ok only, at most 300 USD, at most 2 open).' : 'LIVE: no options rule has reached tier 2 or proven, so no new options ticket is shown. Sharia: options are ZAD\u2019s view to confirm.',
+    '', 'AFFORDABLE-CALL PAPER BOARDS (forward, paper only, not a buy):', ...squad15bLines()].join('\n'); }
 async function stockMap(sym, sig, pos, short) { const CS = readJson0('data/chains-status.json'), CH = (readJson0('data/chains.json') || {}).chains || {}, QY = readJson0('data/quality.json'), up = [], down = [], out = [];
   const ex = (r, b) => r === null || r === undefined || b === null || b === undefined ? null : r - b, vs = (r) => r === null || r === undefined ? 'n/a' : pcs(r) + (CS && CS.spy && CS.spy.r3 !== null ? ' (S&P ' + pcs(CS.spy.r3) + ')' : '');
   const si = await secIndustry(sym, true).catch(() => null);

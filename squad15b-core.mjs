@@ -37,8 +37,21 @@
 //   same-dollar stock (mean, median), call minus stock (mean, median), share of calls beating the stock, infeasible exits, and the same
 //   figures at 1.5x costs. Averages are never shown alone. No verdict before 20 closed calls; information for the owner, not a buy, never
 //   wired into scan.mjs by this squad.
+//
+// SQ15-PB12-2000 (v1) - PRE-REGISTERED 27 Oct 2026 (owner decision 27 Oct), BEFORE ANY OF ITS SIGNALS; forward paper only from 28 Oct 2026
+//   (signals dated 28 Oct 2026 or later). Runs SIDE BY SIDE with SQ15-PB12-300 v1 and is IDENTICAL to it in every respect (signals, ZAD
+//   filter, de-duplication, 'already holding' per rule, entry session, usable-quote checks, 45-180 days, full spread <= 5%, choice and
+//   tie-breaks, all eligible alternatives stored, fill at ask, exits, 5 USD fee each way provisional, same-dollar stock, 1.5x-cost stress,
+//   board) EXCEPT: (1) BUDGET ask x 100 + 5 USD <= 2,000 USD all-in (premium <= 1,995); (2) DELTA CAP: the eligible call must have
+//   0.30 <= delta <= 0.85 (the owner's 27 Oct spec lists delta >= 0.30; v1 of the 300 rule has no floor and is left unchanged), and the
+//   chosen call is the highest delta <= 0.85 within the budget. Each signal produces one record per rule (or a SKIP with its reason);
+//   ledger ids are RULE|SYM|DATE so the two rules never share a record. The board shows each rule separately.
 export const RULE = 'SQ15-PB12-300', VERSION = 'v1', FEE = 5, CAP = 300, LO = 45, HI = 180, MAX_SPREAD = 0.05, MAX_AGE_MIN = 15, EXIT_BEFORE = 30, EXIT_GRACE = 5,
   STOCK_COST = 0.008, STRESS_X = 1.5, START = '2026-10-27', MIN_N = 20;
+// the two side-by-side rules; RULE / CAP above stay the 300 rule's values (the first rule is the default everywhere)
+export const RULES = [{ id: 'SQ15-PB12-300', version: 'v1', cap: 300, minDelta: null, maxDelta: null, start: '2026-10-27' },
+  { id: 'SQ15-PB12-2000', version: 'v1', cap: 2000, minDelta: 0.30, maxDelta: 0.85, start: '2026-10-28' }];
+export const ruleOf = (id) => RULES.find(r => id === r.id || String(id).startsWith(r.id + '|')) || null;
 export const SOURCES = [['PB12', 'data/squad11-today.json', 'SQ11-PB12', 126], ['MTUM', 'data/squad6-today.json', 'SQ6-MTUM', 126], ['QMOM', 'data/squad6-today.json', 'SQ6-QMOM', 63]];
 const ok = (x) => typeof x === 'number' && isFinite(x);
 export const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
@@ -53,10 +66,12 @@ export const fullSpread = (r) => (r.ap - r.bp) / ((r.ap + r.bp) / 2);
 export function quoteProblem(r, nowMs) { if (!(r.bp > 0 && r.ap > 0)) return 'one-sided or missing'; if (r.ap < r.bp) return 'crossed'; if (r.ap === r.bp) return 'locked';
   if (!(r.bs > 0 && r.as > 0)) return 'missing size'; const a = ageMin(r.qt, nowMs); if (a === null || !(a <= MAX_AGE_MIN)) return 'stale'; return null; }
 // rows [{ occ, exp, k, delta, ap, bp, as, bs, qt }] (already filtered to the stock's own root) -> { pick, eligible, rejected, inWindow, stale, dataFailure }
-export function choose(rows, day, nowMs) { const rej = {}, el = [], bump = (k) => { rej[k] = (rej[k] || 0) + 1; }; let inWindow = 0, stale = 0;
+export function choose(rows, day, nowMs, rule = RULES[0]) { const cap = rule.cap, lo = rule.minDelta, hi = rule.maxDelta; const rej = {}, el = [], bump = (k) => { rej[k] = (rej[k] || 0) + 1; }; let inWindow = 0, stale = 0;
   for (const r of rows || []) { const n = dayDiff(day, r.exp); if (!(n >= LO && n <= HI)) continue; inWindow++;
     const qp = quoteProblem(r, nowMs); if (qp) { bump(qp); if (qp === 'stale') stale++; continue; }
-    if (!(fullSpread(r) <= MAX_SPREAD)) { bump('spread > 5%'); continue; } if (!ok(r.delta)) { bump('no delta'); continue; } if (!(cost(r.ap) <= CAP)) { bump('over 300 USD all-in'); continue; }
+    if (!(fullSpread(r) <= MAX_SPREAD)) { bump('spread > 5%'); continue; } if (!ok(r.delta)) { bump('no delta'); continue; }
+    if (ok(lo) && !(r.delta >= lo)) { bump('delta < ' + lo.toFixed(2)); continue; } if (ok(hi) && !(r.delta <= hi)) { bump('delta > ' + hi.toFixed(2)); continue; }
+    if (!(cost(r.ap) <= cap)) { bump('over ' + cap + ' USD all-in'); continue; }
     el.push({ ...r, days: n, ageMin: r4(ageMin(r.qt, nowMs)), spread: r4(fullSpread(r)), allIn: r4(cost(r.ap)) }); }
   el.sort((a, b) => b.delta - a.delta || a.ap - b.ap || (a.exp < b.exp ? -1 : a.exp > b.exp ? 1 : 0) || a.k - b.k);
   return { pick: el[0] || null, eligible: el, rejected: rej, inWindow, stale, dataFailure: inWindow === 0 || stale > inWindow / 2 }; }
@@ -93,4 +108,11 @@ export const LIB_ENTRY = { id: RULE, version: VERSION, family: 'Options: long ca
   status: 'forward paper only from 27 Oct 2026', agent: 'squad15b', registered: '2026-10-27',
   libraryCheck: 'Not SQ15-PB12-ATM / -ITM / -MOM-* / -REPL (those pick by delta target 150-270 days with no cost cap and were back-tested); this one is capped at the owner\'s 300 USD all-in live cap, 45-180 days, highest delta that fits, forward paper only, no backtest.',
   note: 'Pre-registered 27 Oct 2026 before any signal (v1 = with the owner-review corrections: full spread <= 5%, 300 USD all-in, stale / crossed / locked / missing-size quotes rejected, chosen + all eligible alternatives stored, first executable bid after the exit trigger, drawdown / losing streak / 1.5x costs on the board). FORWARD PAPER ONLY: no backtest exists or is claimed (no option bid/ask history). squad15b-lab.mjs -> data/squad15b-paper.jsonl, data/squad15b-board.json, data/squad15b-today.json. Never places an order; never wired into scan.mjs by this squad.' };
-export function preRegister(LB) { if (!LB || !Array.isArray(LB.strategies) || LB.strategies.some(e => e.id === RULE)) return 0; LB.strategies.push({ ...LIB_ENTRY }); LB.updated = START; return 1; }
+export const LIB_ENTRY_2000 = { id: 'SQ15-PB12-2000', version: 'v1', family: LIB_ENTRY.family,
+  name: 'Call within 2,000 USD all-in (highest delta <= 0.85, delta >= 0.30, 45-180 days, full spread <= 5%) on each SQ11-PB12 / SQ6-MTUM / SQ6-QMOM signal on a ZAD-halal-ok stock',
+  explain: 'RULE v1 (squad15b-core.mjs header = the exact text). IDENTICAL to SQ15-PB12-300 v1 in every respect (signals, ZAD filter, de-duplication, entry session and live OPRA snapshot, usable-quote checks, 45-180 days, FULL spread (ask-bid)/mid <= 5%, OPRA delta present, tie-breaks, chosen + ALL eligible alternatives stored, fill at the ask, exit trigger and first executable bid, 5 USD fee each way provisional, same-dollar stock at 0.8% round trip, 1.5x-cost stress, the same board metrics incl. mean AND median, % losing 25/50/100%, without the 2 best, distinct days / underlyings, max drawdown, longest losing streak) EXCEPT: budget ask x 100 + 5 USD <= 2,000 USD all-in, and delta 0.30 to 0.85 (chosen = the highest delta <= 0.85 within the budget). Runs side by side with SQ15-PB12-300: each signal gives one record per rule (or a SKIP with its reason). Signals dated 28 Oct 2026 or later. No verdict before 20 closed calls.',
+  status: "forward paper only from 28 Oct 2026; owner decision 27 Oct", agent: 'squad15b', registered: '2026-10-27',
+  libraryCheck: 'Twin of SQ15-PB12-300 v1 with a 2,000 USD all-in budget and a 0.85 delta cap (plus delta >= 0.30); not SQ15-PB12-ATM / -ITM / -MOM-* / -REPL (delta targets, 150-270 days, back-tested).',
+  note: 'Pre-registered 27 Oct 2026 before any of its signals (owner decision 27 Oct). FORWARD PAPER ONLY: no backtest exists or is claimed. Same files as SQ15-PB12-300 (data/squad15b-paper.jsonl, data/squad15b-board.json, data/squad15b-today.json), records keyed by rule. Never places an order; the bot shows its board under options lab (information only).' };
+export function preRegister(LB, entry = LIB_ENTRY) { if (!LB || !Array.isArray(LB.strategies) || LB.strategies.some(e => e.id === entry.id)) return 0; LB.strategies.push({ ...entry }); LB.updated = entry.registered; return 1; }
+export const preRegisterAll = (LB) => preRegister(LB, LIB_ENTRY) + preRegister(LB, LIB_ENTRY_2000);

@@ -29893,6 +29893,18 @@
    "registered": "2026-10-27",
    "libraryCheck": "Not SQ15-PB12-ATM / -ITM / -MOM-* / -REPL (those pick by delta target 150-270 days with no cost cap and were back-tested); this one is capped at the owner's 300 USD all-in live cap, 45-180 days, highest delta that fits, forward paper only, no backtest.",
    "note": "Pre-registered 27 Oct 2026 before any signal (v1 = with the owner-review corrections: full spread <= 5%, 300 USD all-in, stale / crossed / locked / missing-size quotes rejected, chosen + all eligible alternatives stored, first executable bid after the exit trigger, drawdown / losing streak / 1.5x costs on the board). FORWARD PAPER ONLY: no backtest exists or is claimed (no option bid/ask history). squad15b-lab.mjs -> data/squad15b-paper.jsonl, data/squad15b-board.json, data/squad15b-today.json. Never places an order; never wired into scan.mjs by this squad."
+  },
+  {
+   "id": "SQ15-PB12-2000",
+   "version": "v1",
+   "family": "Options: long calls on the large, liquid winners (Squad 15)",
+   "name": "Call within 2,000 USD all-in (highest delta <= 0.85, delta >= 0.30, 45-180 days, full spread <= 5%) on each SQ11-PB12 / SQ6-MTUM / SQ6-QMOM signal on a ZAD-halal-ok stock",
+   "explain": "RULE v1 (squad15b-core.mjs header = the exact text). IDENTICAL to SQ15-PB12-300 v1 in every respect (signals, ZAD filter, de-duplication, entry session and live OPRA snapshot, usable-quote checks, 45-180 days, FULL spread (ask-bid)/mid <= 5%, OPRA delta present, tie-breaks, chosen + ALL eligible alternatives stored, fill at the ask, exit trigger and first executable bid, 5 USD fee each way provisional, same-dollar stock at 0.8% round trip, 1.5x-cost stress, the same board metrics incl. mean AND median, % losing 25/50/100%, without the 2 best, distinct days / underlyings, max drawdown, longest losing streak) EXCEPT: budget ask x 100 + 5 USD <= 2,000 USD all-in, and delta 0.30 to 0.85 (chosen = the highest delta <= 0.85 within the budget). Runs side by side with SQ15-PB12-300: each signal gives one record per rule (or a SKIP with its reason). Signals dated 28 Oct 2026 or later. No verdict before 20 closed calls.",
+   "status": "forward paper only from 28 Oct 2026; owner decision 27 Oct",
+   "agent": "squad15b",
+   "registered": "2026-10-27",
+   "libraryCheck": "Twin of SQ15-PB12-300 v1 with a 2,000 USD all-in budget and a 0.85 delta cap (plus delta >= 0.30); not SQ15-PB12-ATM / -ITM / -MOM-* / -REPL (delta targets, 150-270 days, back-tested).",
+   "note": "Pre-registered 27 Oct 2026 before any of its signals (owner decision 27 Oct). FORWARD PAPER ONLY: no backtest exists or is claimed. Same files as SQ15-PB12-300 (data/squad15b-paper.jsonl, data/squad15b-board.json, data/squad15b-today.json), records keyed by rule. Never places an order; the bot shows its board under options lab (information only)."
   }
  ]
 }

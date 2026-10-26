@@ -2,7 +2,7 @@
 // corrections: full spread <= 5%, 300 USD all-in, stale / crossed / locked / missing-size quotes rejected). Run: node test/squad15b-core.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { choose, exitTrigger, exitProblem, callNet, callNetStress, stockNet, dedupe, boardStats, preRegister, RULE } from '../squad15b-core.mjs';
+import { choose, exitTrigger, exitProblem, callNet, callNetStress, stockNet, dedupe, boardStats, preRegister, preRegisterAll, RULE, RULES, ruleOf } from '../squad15b-core.mjs';
 const NOW = Date.parse('2026-10-27T15:00:00Z'), fresh = '2026-10-27T14:55:00Z';
 const row = (o) => ({ occ: 'X', exp: '2027-01-15', k: 100, delta: 0.5, ap: 2.5, bp: 2.45, as: 10, bs: 10, qt: fresh, ...o });
 test('highest delta within 300 USD all-in, 45-180 days, full spread <= 5%, usable quote; alternatives kept', () => {
@@ -38,3 +38,21 @@ test('board: median, losses, drawdown and streak beside the mean', () => {
   assert.equal(b.atStress1_5x.n, 4);
 });
 test('library pre-registration is idempotent', () => { const L = { strategies: [] }; assert.equal(preRegister(L), 1); assert.equal(preRegister(L), 0); assert.equal(L.strategies[0].id, RULE); assert.match(L.strategies[0].status, /forward paper only from 27 Oct 2026/); });
+test('SQ15-PB12-2000: 2,000 USD all-in budget, highest delta <= 0.85 (and >= 0.30); same quote/spread/window checks', () => {
+  const day = '2026-10-27', R2 = RULES[1]; assert.equal(R2.id, 'SQ15-PB12-2000'); assert.equal(R2.cap, 2000); assert.equal(R2.maxDelta, 0.85); assert.equal(R2.start, '2026-10-28');
+  const rows = [row({ occ: 'A', delta: 0.62, ap: 2.95, bp: 2.9 }), row({ occ: 'C', delta: 0.9, ap: 2.96, bp: 2.95 }), row({ occ: 'M', delta: 0.84, ap: 19.95, bp: 19.6 }),
+    row({ occ: 'N', delta: 0.85, ap: 19.96, bp: 19.6 }), row({ occ: 'P', delta: 0.851, ap: 10, bp: 9.9 }), row({ occ: 'Q', delta: 0.8, ap: 15, bp: 14 }), row({ occ: 'S', delta: 0.25, ap: 0.5, bp: 0.49 })];
+  const c = choose(rows, day, NOW, R2);
+  assert.equal(c.pick.occ, 'M'); // N 2,001 all-in; C and P over 0.85; Q spread 6.9%; S under 0.30
+  assert.deepEqual(c.eligible.map(r => r.occ), ['M', 'A']); assert.equal(c.pick.allIn, 2000);
+  assert.equal(c.rejected['over 2000 USD all-in'], 1); assert.equal(c.rejected['delta > 0.85'], 2); assert.equal(c.rejected['delta < 0.30'], 1); assert.equal(c.rejected['spread > 5%'], 1);
+  assert.equal(choose([row({ delta: 0.85, ap: 19.5, bp: 19.4 })], day, NOW, R2).pick.delta, 0.85); // exactly 0.85 is allowed
+  // the 300 rule on the same rows is unchanged (default rule): A, with C over 300 and no delta cap
+  const c3 = choose(rows, day, NOW); assert.equal(c3.pick.occ, 'A'); assert.equal(c3.rejected['over 300 USD all-in'], 4); assert.equal(c3.rejected['delta > 0.85'], undefined);
+  assert.equal(choose(rows, day, NOW, RULES[0]).pick.occ, 'A');
+  assert.equal(choose([row({ delta: 0.95, ap: 5, bp: 4.9 })], day, NOW, R2).pick, null);
+  assert.equal(ruleOf('SQ15-PB12-2000|NVDA|2026-10-28').id, 'SQ15-PB12-2000'); assert.equal(ruleOf('SQ15-PB12-300|NVDA|2026-10-28').id, 'SQ15-PB12-300');
+});
+test('both rules pre-registered, idempotent, 2000 status as decided', () => { const L = { strategies: [] }; assert.equal(preRegisterAll(L), 2); assert.equal(preRegisterAll(L), 0);
+  const e = L.strategies.find(x => x.id === 'SQ15-PB12-2000'); assert.equal(e.version, 'v1'); assert.equal(e.status, 'forward paper only from 28 Oct 2026; owner decision 27 Oct');
+  const L2 = { strategies: [{ id: RULE }] }; assert.equal(preRegisterAll(L2), 1); });

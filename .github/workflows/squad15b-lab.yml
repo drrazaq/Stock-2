@@ -1,9 +1,9 @@
 name: Squad 15b affordable call lane
-# SQ15-PB12-300 v1 (squad15b-lab.mjs / squad15b-core.mjs; pre-registered 27 Oct 2026 before any signal, owner-review corrections applied).
+# SQ15-PB12-300 v1 + SQ15-PB12-2000 v1 from 28 Oct (budget 2,000 USD, delta <= 0.85) (squad15b-lab.mjs / squad15b-core.mjs; pre-registered 27 Oct 2026 before any signal, owner-review corrections applied).
 # FORWARD PAPER LANE ONLY, LONG CALLS ONLY: on each new SQ11-PB12 / SQ6-MTUM / SQ6-QMOM signal on a ZAD-halal-ok stock, the highest-delta
 # call that costs <= 300 USD all-in (45-180 days, full spread <= 5%, live quote <= 15 min) is recorded during the entry session; exit at
 # the first executable bid from the stock rule's sell session (or expiry - 30 days). No backtest. Never places an order. Commits only its
-# own files (data/squad15b-*) and its one library entry. Runs three times each weekday during the session so quotes are live.
+# own files (data/squad15b-*) and its two library entries. Runs three times each weekday during the session so quotes are live.
 on:
   schedule:
     - cron: '7 15 * * 1-5'
