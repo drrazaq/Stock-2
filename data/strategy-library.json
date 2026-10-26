@@ -29773,6 +29773,38 @@
     "passesTest2": false,
     "why": "70/30 not better than Basket 1 alone in the older half (return/maxDD 4.4181 vs 6.0862; CAGR +42.1% vs +55.8%, max fall -9.5% vs -9.2%); 70/30 not better than Basket 1 alone in the newer half (return/maxDD 1.0455 vs 1.0825; CAGR +23.7% vs +26.8%, max fall -22.6% vs -24.7%)"
    }
+  },
+  {
+   "id": "RQ-TENDER-3-15",
+   "family": "Daily researcher (RQ)",
+   "name": "Cash tender offer target, spread 3-15%, held to the deal close (max 120 sessions)",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the next open after an original SC TO-T (third-party all-cash tender offer) when offer / filing-day close - 1 is 3% to 15% and the target is liquid; sell at the last close before it stops trading (deal closed), at the first close 10%+ under the filing-day close (deal break), or 120 sessions after entry. Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.",
+   "sources": [
+    "https://www.johnhcochrane.com/s/mitchell-pulvino-characteristics-of-risk-and-return-JF.pdf",
+    "https://doi.org/10.1111/0022-1082.00402",
+    "https://doi.org/10.1016/S0304-405X(02)00072-7"
+   ],
+   "hold": 120,
+   "note": "Daily researcher 2026-10-26: part 1 of C-SPEC1 (queued 23 Oct from the owner's sources), Mitchell and Pulvino (2001, JF) risk arbitrage. New information source (SEC Schedule TO-T filings and their offer price), not a chart shape. E11 (\"not for this system\") was never tested; this is its first test. Run once on 5 years incl. dead stocks (delisted targets keep their last close) with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 27 Oct 2026. C-SPEC1 part 2 (index additions) is unchanged."
+  },
+  {
+   "id": "RQ-TENDER-ALL",
+   "family": "Daily researcher (RQ)",
+   "name": "Cash tender offer target, any positive spread up to 15%, held to the deal close (max 120 sessions)",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-TENDER-3-15 with a spread above 0% up to 15%. Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.",
+   "sources": [
+    "https://www.johnhcochrane.com/s/mitchell-pulvino-characteristics-of-risk-and-return-JF.pdf",
+    "https://doi.org/10.1111/0022-1082.00402",
+    "https://doi.org/10.1016/S0304-405X(02)00072-7"
+   ],
+   "hold": 120,
+   "note": "Daily researcher 2026-10-26: part 1 of C-SPEC1 (queued 23 Oct from the owner's sources), Mitchell and Pulvino (2001, JF) risk arbitrage. New information source (SEC Schedule TO-T filings and their offer price), not a chart shape. E11 (\"not for this system\") was never tested; this is its first test. Run once on 5 years incl. dead stocks (delisted targets keep their last close) with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 27 Oct 2026. C-SPEC1 part 2 (index additions) is unchanged."
   }
  ]
 }

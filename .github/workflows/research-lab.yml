@@ -4,7 +4,8 @@ name: Research lab
 # data/research-lab.json firstRun); a forward PAPER ledger records new signals from Monday 26 Oct 2026 (data/research-paper.jsonl,
 # research-today.json, research-board.json; the TRY SMALL lane in scan.mjs reads 'research'). Idea 1: LAZY PRICES (10-K text change,
 # official SEC EDGAR files). The 10-K collection is cached in research-cache and may take more than one run; no verdict until the
-# pre-registered data rule passes. The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
+# pre-registered data rule passes. Idea 2 (26 Oct 2026): CASH TENDER OFFERS (RQ-TENDER-*; SEC daily index + Schedule TO-T filings, cached in
+# research-cache/to). The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
 # research-cache is saved. Commits only its own output files and its own library entries. Never places an order.
 # Start by hand: change run-research-now.txt (or run the workflow).
 on:

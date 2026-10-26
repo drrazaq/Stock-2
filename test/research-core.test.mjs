@@ -4,11 +4,11 @@
 // No network. Run: node --test test/research-core.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { RULES, IDS, BUY_IDS, LP, termFreq, cosine, tenKs, docUrl, pairPrev, pairSim, makeRanker, sideOf, dataComplete, avoidVerdict, preRegister, halfOf, addDays, firstAfter, capG } from '../research-core.mjs';
+import { RULES, IDS, BUY_IDS, LAZY_IDS, LP, termFreq, cosine, tenKs, docUrl, pairPrev, pairSim, makeRanker, sideOf, dataComplete, avoidVerdict, preRegister, halfOf, addDays, firstAfter, capG } from '../research-core.mjs';
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;
 
 test('registry: two buy rules (63 / 126 sessions) and one avoid check; ids RQ-', () => {
-  assert.deepEqual(IDS, ['RQ-LAZY-63', 'RQ-LAZY-126', 'RQ-LAZY-CHG63']); assert.deepEqual(BUY_IDS, ['RQ-LAZY-63', 'RQ-LAZY-126']);
+  assert.deepEqual(LAZY_IDS, ['RQ-LAZY-63', 'RQ-LAZY-126', 'RQ-LAZY-CHG63']); assert.deepEqual(BUY_IDS.filter(id => LAZY_IDS.includes(id)), ['RQ-LAZY-63', 'RQ-LAZY-126']); assert.deepEqual(IDS.slice(0, 3), LAZY_IDS);
   assert.equal(RULES['RQ-LAZY-63'].hold, 63); assert.equal(RULES['RQ-LAZY-126'].hold, 126); assert.equal(RULES['RQ-LAZY-CHG63'].kind, 'avoid');
   assert.equal(halfOf('2023-12-29'), 'older'); assert.equal(halfOf('2024-01-02'), 'newer'); assert.equal(capG(5), 3);
 });
@@ -75,9 +75,9 @@ test('avoid verdict: never a buy; confirmed only with negative edge and block t 
   assert.match(avoidVerdict({ older: { n: 5, blocks: 1 }, newer: h(-0.01, -3) }).verdict, /TOO FEW/);
 });
 
-test('library pre-registration: adds the 3 RQ entries once, never touches others', () => {
+test('library pre-registration: adds every RQ entry once (3 lazy + 2 tender), never touches others', () => {
   const LB = { strategies: [{ id: 'C-DIFF1', status: 'queued (Agent C)' }] };
-  assert.equal(preRegister(LB), 3); assert.equal(preRegister(LB), 0); assert.equal(LB.strategies.length, 4); assert.equal(LB.strategies[0].status, 'queued (Agent C)');
+  assert.equal(preRegister(LB), 5); assert.equal(preRegister(LB), 0); assert.equal(LB.strategies.length, 6); assert.equal(LB.strategies[0].status, 'queued (Agent C)');
   const e = LB.strategies.find(x => x.id === 'RQ-LAZY-126'); assert.equal(e.hold, 126); assert.match(e.status, /pre-registered/); assert.ok(e.sources.length >= 1);
 });
 
