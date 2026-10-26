@@ -29780,7 +29780,7 @@
    "name": "Cash tender offer target, spread 3-15%, held to the deal close (max 120 sessions)",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "explain": "Buy the next open after an original SC TO-T (third-party all-cash tender offer) when offer / filing-day close - 1 is 3% to 15% and the target is liquid; sell at the last close before it stops trading (deal closed), at the first close 10%+ under the filing-day close (deal break), or 120 sessions after entry. Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.",
    "sources": [
     "https://www.johnhcochrane.com/s/mitchell-pulvino-characteristics-of-risk-and-return-JF.pdf",
@@ -29788,7 +29788,45 @@
     "https://doi.org/10.1016/S0304-405X(02)00072-7"
    ],
    "hold": 120,
-   "note": "Daily researcher 2026-10-26: part 1 of C-SPEC1 (queued 23 Oct from the owner's sources), Mitchell and Pulvino (2001, JF) risk arbitrage. New information source (SEC Schedule TO-T filings and their offer price), not a chart shape. E11 (\"not for this system\") was never tested; this is its first test. Run once on 5 years incl. dead stocks (delisted targets keep their last close) with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 27 Oct 2026. C-SPEC1 part 2 (index additions) is unchanged."
+   "note": "Daily researcher 2026-10-26: part 1 of C-SPEC1 (queued 23 Oct from the owner's sources), Mitchell and Pulvino (2001, JF) risk arbitrage. New information source (SEC Schedule TO-T filings and their offer price), not a chart shape. E11 (\"not for this system\") was never tested; this is its first test. Run once on 5 years incl. dead stocks (delisted targets keep their last close) with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 27 Oct 2026. C-SPEC1 part 2 (index additions) is unchanged.",
+   "tested": "2026-10-23",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     2,
+     4
+    ],
+    "avg": [
+     0.0292,
+     -0.0132
+    ],
+    "stress": [
+     0.0252,
+     -0.0172
+    ],
+    "edge": [
+     0.0848,
+     0.0132
+    ],
+    "vsOwn": [
+     -0.1672,
+     -0.1076
+    ],
+    "noTop2": [
+     null,
+     -0.0734
+    ],
+    "tBlock": [
+     null,
+     -0.35
+    ],
+    "win": [
+     1,
+     0.5
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 4 cases, 3 blocks)"
+   }
   },
   {
    "id": "RQ-TENDER-ALL",
@@ -29796,7 +29834,7 @@
    "name": "Cash tender offer target, any positive spread up to 15%, held to the deal close (max 120 sessions)",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-TENDER-3-15 with a spread above 0% up to 15%. Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.",
    "sources": [
     "https://www.johnhcochrane.com/s/mitchell-pulvino-characteristics-of-risk-and-return-JF.pdf",
@@ -29804,7 +29842,45 @@
     "https://doi.org/10.1016/S0304-405X(02)00072-7"
    ],
    "hold": 120,
-   "note": "Daily researcher 2026-10-26: part 1 of C-SPEC1 (queued 23 Oct from the owner's sources), Mitchell and Pulvino (2001, JF) risk arbitrage. New information source (SEC Schedule TO-T filings and their offer price), not a chart shape. E11 (\"not for this system\") was never tested; this is its first test. Run once on 5 years incl. dead stocks (delisted targets keep their last close) with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 27 Oct 2026. C-SPEC1 part 2 (index additions) is unchanged."
+   "note": "Daily researcher 2026-10-26: part 1 of C-SPEC1 (queued 23 Oct from the owner's sources), Mitchell and Pulvino (2001, JF) risk arbitrage. New information source (SEC Schedule TO-T filings and their offer price), not a chart shape. E11 (\"not for this system\") was never tested; this is its first test. Run once on 5 years incl. dead stocks (delisted targets keep their last close) with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 27 Oct 2026. C-SPEC1 part 2 (index additions) is unchanged.",
+   "tested": "2026-10-23",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     16,
+     31
+    ],
+    "avg": [
+     0.0022,
+     -0.0077
+    ],
+    "stress": [
+     -0.0018,
+     -0.0117
+    ],
+    "edge": [
+     0.0004,
+     -0.0129
+    ],
+    "vsOwn": [
+     -0.0642,
+     -0.086
+    ],
+    "noTop2": [
+     -0.0017,
+     -0.0115
+    ],
+    "tBlock": [
+     -0.22,
+     -1.34
+    ],
+    "win": [
+     0.25,
+     0.129
+    ],
+    "why": "fewer than 20 cases or 3 blocks in a half (16 cases, 5 blocks / 31 cases, 7 blocks)"
+   }
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T09:47:52.553Z",
+ "generatedAt": "2026-10-26T09:27:18.611Z",
  "lastClose": "2026-10-23",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -96,6 +96,68 @@
    "fiveYear": {
     "verdict": "AVOID WEAK (REJECTED AS A BUY)",
     "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
+  },
+  "RQ-TENDER-3-15": {
+   "name": "Cash tender offer target, spread 3-15%, held to the deal close (max 120 sessions)",
+   "kind": "buy",
+   "hold": 120,
+   "family": "tender",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "TOO FEW CASES",
+    "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 4 cases, 3 blocks)"
+   }
+  },
+  "RQ-TENDER-ALL": {
+   "name": "Cash tender offer target, any positive spread up to 15%, held to the deal close (max 120 sessions)",
+   "kind": "buy",
+   "hold": 120,
+   "family": "tender",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "TOO FEW CASES",
+    "why": "fewer than 20 cases or 3 blocks in a half (16 cases, 5 blocks / 31 cases, 7 blocks)"
    }
   }
  }
