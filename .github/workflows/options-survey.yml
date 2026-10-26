@@ -1,0 +1,42 @@
+name: Options spread survey
+# ONE-OFF INFORMATION SURVEY (options-survey.mjs; 27 Oct 2026): today's OPRA call quotes (45-180 days) on the 30 most liquid ZAD-halal-ok
+# US stocks: ATM cost and half-spread, the cheapest call <= 300 USD with delta >= 0.30. Writes data/options-spread-survey.json / .md only.
+# Never places an order. Start by hand: workflow_dispatch, or change run-options-survey-now.txt.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-options-survey-now.txt']
+permissions:
+  contents: write
+concurrency: options-survey
+jobs:
+  survey:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - shell: bash
+        run: |
+          set -o pipefail
+          node options-survey.mjs 2>&1 | tee run.log
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+      - shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          OUTD="$RUNNER_TEMP/out"; mkdir -p "$OUTD"
+          cp data/options-spread-survey.json data/options-spread-survey.md "$OUTD/"
+          git reset -q --hard && git pull -q --rebase
+          cp "$OUTD/options-spread-survey.json" "$OUTD/options-spread-survey.md" data/
+          git add data/options-spread-survey.json data/options-spread-survey.md
+          git diff --cached --quiet || git commit -m "options spread survey $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the survey"; exit 1; }
