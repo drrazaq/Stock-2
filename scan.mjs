@@ -1047,7 +1047,7 @@ const savePos = (p) => fs.writeFileSync(POS_FILE, JSON.stringify(p, null, 1));
 // part sales as system trades. The kind is now clean and the row carries part / half instead.
 { const ST = readSettings(); if (ST && !ST.tradesMig1022) { try { const MT0 = 'data/my-trades.jsonl'; if (fs.existsSync(MT0)) { const L = fs.readFileSync(MT0, 'utf8').split('\n').filter(Boolean).map(l => { try { const t = JSON.parse(l); const m = String(t.kind || '').match(/^(.*)-(part|half)$/); if (m) { t.kind = m[1] || 'manual'; if (m[2] === 'half') t.half = true; else t.part = t.part || true; } return JSON.stringify(t); } catch (e) { return l; } }); fs.writeFileSync(MT0, L.join('\n') + (L.length ? '\n' : '')); }
     updateSettings(s => { s.tradesMig1022 = new Date().toISOString(); }); } catch (e) { } } }
-const HELP = 'You do not need these. Tap the buttons in the bar (send  menu  to show it again), or write or forward anything. For reference, you can ask in plain words:\nways   (your ways to trade, one line each: THE BASKET, TRY SMALL, options paper lane)\nfrom ClayTrader what to buy   (any source or channel you logged)\nwhen to sell VRTX\nreview   (HOLD or SELL study of every stock you own, from its own past)\nreview ZETA   (one stock)\nshould I buy more VRTX\nwhen to buy LPG\npenny stock for today\nlook for energy stocks\nwhat to buy today\nstrongest stocks\n\nOr use the commands:\nbasket   (THE BASKET, your long-term core: this month\u2019s 1,000 USD in two ZAD baskets: Basket 1 = 20 stocks 35% (whole-number % and dollars per stock) + Basket 2 = SPUS 54% / gold IAUM 46% 65%, ZAD checks)\nbasket 2000   (the same split for another amount)\nleaders   (the strongest stocks to ride, with buy range, stop and exit rule)\nradar   (today\u2019s early-wave board: buy reviews, pre-wave watches, do-not-chase; new rules, paper only)\ntoday   (the short plan: what to buy, stop, when to sell, with live prices)\ndetails   (the long version with every setup)\nreport   (last night\u2019s full scan report)\nmarket   (indexes, sectors and headlines right now)\nday trades   (fast movers: which day-trade and overnight rules passed five years of tests, and today\u2019s list)\nnews watch   (the latest threat headlines about your stocks, their competitors and their industry; checked every 15 minutes)\nmovers   (stocks up 20%+ right now, with the news: investigate, do not chase)\nhalal BFLY no   (BFLY is not halal in ZAD: never offered again;  halal BFLY yes  to undo)\ncheck LPG   (analyses ANY ticker now: tested rules, plus news, earnings, analysts, insiders; adds it to my nightly scan)\nremove LPG   (takes it off)\ntips SOURCE NAME + the tickers or the pasted message   (logs a source\u2019s tips, checks each, scores the source)\nsources   (scoreboard of the sources you logged)\nname SOURCE NAME   (gives a name to tips you pasted without one)\nfollow NAME CHANNEL-ID   (follow a YouTube channel: its stock mentions are logged, checked and scored)\nunfollow NAME   |   channels\nbought option HQY 95 2026-11-21 2.40   (the options trial: 1 contract; the bot tells you when to sell;  sold option HQY 95 2026-11-21 PRICE  to close)\nbought VRTX 500.55 20 shares   (with the shares: kept encrypted, used to learn your usual buy size)\nbought VRTX 500.55\nbought VRTX   (uses the current price)\nbought TTD 20.16 stop 10.50 target 15\nfee 3   (your broker fee per buy and per sell, in USD)\nstop VRTX 480\nstop placed   (you placed ALL stops at your broker;  stop placed VRTX  for one. Unconfirmed stops show RISK UNPROTECTED)\ntarget VRTX 516\nsold VRTX 520.10   (records the result in your real record)\nsold half VRTX 520.10   (after target 1: half sold, the rest runs with a trailing stop)\nsold VRTX 520.10 5 shares   (you sold only part)\nadded VRTX 480 5 shares   (you bought more of a stock you hold: I update the average price)\nmy stocks   (what to do with each stock you own: SELL ALL, SELL PART, HOLD or BUY A LITTLE MORE)\nmarket today   (is today a buying day, a selling day or a nothing-to-do day? from the tests and your stocks)\nactions   (the one message to act on: sell, buy with amount and stop, hold)\ndays   (does the buy day matter? Monday to Friday results of the tested rules)\nthemes   (where the money is going: the strongest industries now, the supply chain, and whether following them has worked)\nevents   (company news from SEC filings and the FDA: which kinds of news were followed by gains or by losses, tested)\ntiming   (buy and sell at the open or near the close? and the pre-market / after-hours rules)\nshadow   (the forward paper record of every system signal, bought or not)\npaper   (the Alpaca PAPER account: real fills on every proven buy, fake money)\nquiet on / quiet off   (on = only action messages and alerts; off = every message)\ngoals   (your money goals: back to zero, then 10K, 25K, 50K, 100K, 250K, 500K, 1M, with a timeline plan)\nbudget 5000   (your total trading money: each buy gets 1,000 to 5,000 USD by its evidence, private)\nbudget open   (no budget limit: every proven buy is listed, you decide; size still follows the evidence)\nsize 1000   (your base buy amount for the goals timeline, private)\ntrades 15   (how many buys a month to plan with)\npnl -2000 TTD   (adds a sale result in dollars, when I did not know the shares)\nrecord   (your real results, by kind of trade)\nwinners   (what this week\u2019s winners study learned)\nscore   (every stock scored 0 to 100, and whether the score has worked)\nscore NVDA   (one stock\u2019s score and rank)\nlab   (this week\u2019s hunting lab: new ways to catch moves, tested on two years of the whole market)\nlessons   (what the system learned from its finished trades, and which rules it demoted)\npositions\n\nPaste or forward any market message or advice (Arabic or English): I check its warning signs, what my data says about the themes it names, and which of those stocks have tested support.\n\nI usually reply within a minute. You do not need commands: anything you write or forward is studied, and the important things (buys, sells, stops, targets, the weekly review of your stocks) are sent to you without asking.';
+const HELP = 'You do not need these. Tap the buttons in the bar (send  menu  to show it again), or write or forward anything. For reference, you can ask in plain words:\nways   (your ways to trade, one line each: THE BASKET, TRY SMALL, options paper lane)\nfrom ClayTrader what to buy   (any source or channel you logged)\nwhen to sell VRTX\nreview   (HOLD or SELL study of every stock you own, from its own past)\nreview ZETA   (one stock)\nshould I buy more VRTX\nwhen to buy LPG\npenny stock for today\nlook for energy stocks\nwhat to buy today\nstrongest stocks\n\nOr use the commands:\nbasket   (THE BASKET, your long-term core: this month 65% of 1,000 USD in ZAD Basket 2 = SPUS 54% / gold IAUM 46%, and 35% kept as cash for Basket 1 = the halal top 10, bought 3 times a year: first trading day of Jan, May, Sep)\nbasket 2000   (the same split for another amount)\nbasket buy 1400   (Basket 1 buy day: the top-10 whole-number % and dollars for the cash you saved, with the ZAD fee check)\nleaders   (the strongest stocks to ride, with buy range, stop and exit rule)\nradar   (today\u2019s early-wave board: buy reviews, pre-wave watches, do-not-chase; new rules, paper only)\ntoday   (the short plan: what to buy, stop, when to sell, with live prices)\ndetails   (the long version with every setup)\nreport   (last night\u2019s full scan report)\nmarket   (indexes, sectors and headlines right now)\nday trades   (fast movers: which day-trade and overnight rules passed five years of tests, and today\u2019s list)\nnews watch   (the latest threat headlines about your stocks, their competitors and their industry; checked every 15 minutes)\nmovers   (stocks up 20%+ right now, with the news: investigate, do not chase)\nhalal BFLY no   (BFLY is not halal in ZAD: never offered again;  halal BFLY yes  to undo)\ncheck LPG   (analyses ANY ticker now: tested rules, plus news, earnings, analysts, insiders; adds it to my nightly scan)\nremove LPG   (takes it off)\ntips SOURCE NAME + the tickers or the pasted message   (logs a source\u2019s tips, checks each, scores the source)\nsources   (scoreboard of the sources you logged)\nname SOURCE NAME   (gives a name to tips you pasted without one)\nfollow NAME CHANNEL-ID   (follow a YouTube channel: its stock mentions are logged, checked and scored)\nunfollow NAME   |   channels\nbought option HQY 95 2026-11-21 2.40   (the options trial: 1 contract; the bot tells you when to sell;  sold option HQY 95 2026-11-21 PRICE  to close)\nbought VRTX 500.55 20 shares   (with the shares: kept encrypted, used to learn your usual buy size)\nbought VRTX 500.55\nbought VRTX   (uses the current price)\nbought TTD 20.16 stop 10.50 target 15\nfee 3   (your broker fee per buy and per sell, in USD)\nstop VRTX 480\nstop placed   (you placed ALL stops at your broker;  stop placed VRTX  for one. Unconfirmed stops show RISK UNPROTECTED)\ntarget VRTX 516\nsold VRTX 520.10   (records the result in your real record)\nsold half VRTX 520.10   (after target 1: half sold, the rest runs with a trailing stop)\nsold VRTX 520.10 5 shares   (you sold only part)\nadded VRTX 480 5 shares   (you bought more of a stock you hold: I update the average price)\nmy stocks   (what to do with each stock you own: SELL ALL, SELL PART, HOLD or BUY A LITTLE MORE)\nmarket today   (is today a buying day, a selling day or a nothing-to-do day? from the tests and your stocks)\nactions   (the one message to act on: sell, buy with amount and stop, hold)\ndays   (does the buy day matter? Monday to Friday results of the tested rules)\nthemes   (where the money is going: the strongest industries now, the supply chain, and whether following them has worked)\nevents   (company news from SEC filings and the FDA: which kinds of news were followed by gains or by losses, tested)\ntiming   (buy and sell at the open or near the close? and the pre-market / after-hours rules)\nshadow   (the forward paper record of every system signal, bought or not)\npaper   (the Alpaca PAPER account: real fills on every proven buy, fake money)\nquiet on / quiet off   (on = only action messages and alerts; off = every message)\ngoals   (your money goals: back to zero, then 10K, 25K, 50K, 100K, 250K, 500K, 1M, with a timeline plan)\nbudget 5000   (your total trading money: each buy gets 1,000 to 5,000 USD by its evidence, private)\nbudget open   (no budget limit: every proven buy is listed, you decide; size still follows the evidence)\nsize 1000   (your base buy amount for the goals timeline, private)\ntrades 15   (how many buys a month to plan with)\npnl -2000 TTD   (adds a sale result in dollars, when I did not know the shares)\nrecord   (your real results, by kind of trade)\nwinners   (what this week\u2019s winners study learned)\nscore   (every stock scored 0 to 100, and whether the score has worked)\nscore NVDA   (one stock\u2019s score and rank)\nlab   (this week\u2019s hunting lab: new ways to catch moves, tested on two years of the whole market)\nlessons   (what the system learned from its finished trades, and which rules it demoted)\npositions\n\nPaste or forward any market message or advice (Arabic or English): I check its warning signs, what my data says about the themes it names, and which of those stocks have tested support.\n\nI usually reply within a minute. You do not need commands: anything you write or forward is studied, and the important things (buys, sells, stops, targets, the weekly review of your stocks) are sent to you without asking.';
 // ONE-TAP MENU. Telegram shows these in the "/" menu (bottom-left Menu button) and as a keyboard bar under the typing box.
 // Every entry sends a normal command, so tapping and typing do the same thing.
 const MENU = [
@@ -1100,16 +1100,16 @@ const MENU = [
   ['report', 'report', 'Last night’s full scan report'],
   ['quieton', 'quiet on', 'Only action messages and alerts'],
   ['quietoff', 'quiet off', 'Every message'],
-  ['basket', 'basket', 'THE BASKET: Basket 1 20 stocks 35% + Basket 2 SPUS/IAUM 65% (long-term core)'],
+  ['basket', 'basket', 'THE BASKET: monthly SPUS/IAUM 65% + 35% cash; halal top 10 bought Jan/May/Sep'],
   ['ways', 'ways', 'Your ways to trade: basket, TRY SMALL, options paper lane'],
   ['help', 'help', 'All commands explained'],
   ['menu', 'menu', 'Show the button bar again'],
-], MENU_V = 15;
+], MENU_V = 16;
 const MENU_KB = [['actions', 'my stocks', 'market today'], ['check a stock', 'i bought', 'i sold'], ['market', 'movers', 'day trades'], ['leaders', 'themes', 'events', 'calendar'], ['basket', 'record', 'goals', 'paper'], ['today', 'review', 'help']];
 const MENU_TEXT = ['MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.', '',
   'EVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today', 'AFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)',
   'ANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)', 'MARKET NOW: market | movers | day trades (fast movers, tested) | radar',
-  'IDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score', 'YOUR RESULTS: record | goals | paper | shadow | review', 'WAYS TO TRADE (ways): a) THE BASKET, core (basket) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)', '',
+  'IDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score', 'YOUR RESULTS: record | goals | paper | shadow | review', 'WAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)', '',
   'You can still type anything in plain words (Arabic or English), or forward a message.'].join('\n');
 async function sendMenu() {
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
@@ -2716,38 +2716,57 @@ async function watchdog(sig) {
   console.log('watchdog: ' + out.length + ' warning(s) sent');
 }
 // THE BASKET (owner's decision 24 Oct 2026): one of the system's ways to trade, the long-term core, beside the TRY SMALL 1,000 USD buys and
-// the options paper lane. Owner's decision 26 Oct 2026 (final, same day): TWO ZAD baskets per amount. Basket 1 = ONLY the halal top-20 stocks,
-// 35% of the amount; Basket 2 = SPUS 54% + gold fund IAUM 46%, 65% of the amount (keeps the overall SPUS 35 / stocks 35 / gold 30 split)
-// (Squad 23, data/squad23-lab.json: 30% gold improved return per unit of worst fall; NOT PROVEN). ZAD takes WHOLE-NUMBER percentages only,
-// minimum 1% per holding: Basket 1's percentages are the basket weights rounded by largest remainder to whole numbers that sum to exactly 100
-// (min 1% each); they change only at the quarterly update.
-// The 20 stocks are the halal top-20 basket
-// SQ10-SH20-C15 (the 20 largest Shariah-screened US companies by market value, cap-weighted, max 15% each, re-formed quarterly; squad10-lab.mjs
-// -> data/squad10-today.json, refreshed every weekday evening) at the TESTED percentages (weights set at the last quarterly review), bought
-// by the owner himself as a ZAD stock basket with fractional shares. Never an automatic order.
+// the options paper lane. Owner's decision 26 Oct 2026 (third, same day; replaces the 20-stock Basket 1 bought monthly of c9aa0e0): ZAD
+// charges about 3 USD per stock per order, so a 20-stock basket bought every month cost ~60 USD each time. Now:
+// - EVERY MONTH the owner buys only ZAD Basket 2 = SPUS 54% + gold fund IAUM 46% with 65% of his monthly amount, and keeps 35% as CASH.
+// - Basket 1 = the HALAL TOP 10 (SQ10-SH10-C15: the 10 largest Shariah-screened US companies by market value, cap-weighted, max 15% each,
+//   re-formed quarterly; squad10-lab.mjs -> data/squad10-today.json) is bought ONLY 3 TIMES A YEAR, on the first US trading day of
+//   January, May and September, with the cash set aside since the last buy (overall still SPUS 35 / stocks 35 / gold 30 over time).
+//   If squad10-today.json has no SH10-C15 list, the top 10 are the 10 largest of SQ10-SH20-C15, re-capped at 15% (iteratively).
+// - ZAD takes WHOLE-NUMBER percentages only, min 1% per holding: largest-remainder rounding of the basket weights, total exactly 100.
+// - Fees: FEE() per stock per order (default 3 USD,  fee 3 ); a Basket 1 buy warns when its fees are above 2% of the buy.
 // ZAD marks (HALALM: data/halal.json + the ZAD list): a member marked NOT halal is replaced by the first reserve marked halal (reserves in
-// line order: today's Shariah list minus the members, from squad10 freshAtLastClose and squad17 SQ17-MIX50, then squad10's own reserves);
-// a member not yet checked in ZAD is listed under CHECK IN ZAD FIRST and its dollars go to Basket 2's SPUS line until it is marked; a NOT halal member with
-// no halal reserve left is dropped. Basket weights are renormalised to 100% after replacements and drops.
-// Rebalance notice: data/basket-state.json keeps the last formation the owner was told about; a new quarterly list (members or weights)
-// is sent once. Monthly reminder: the first US trading day of each month, after the US open (Kuwait evening), once; in Jan/Apr/Jul/Oct it
-// carries the quarterly check line.
-const BASKET_ID = 'SQ10-SH20-C15', BASKET_STATE = 'data/basket-state.json', BASKET_STOCKS = 35, BASKET_GOLD = 30, BASKET_GOLD_SYM = 'IAUM', B2_SPUS = 54, B2_GOLD = 46;
-const BASKET_RECORD = ['Tested 2022-01 to now: the 50/50 mix about 14.2% a year vs SPUS 12.0%; worst fall -30% vs -29%.',
-  'The basket alone 16.2% a year, worst fall -33%. NOT PROVEN by the luck test: a long-term choice, not a sure edge.',
-  'With 30% gold (Squad 23 test, 70% basket + 30% gold): ~17.5% a year vs 16.2%, worst fall -26% vs -33%; NOT PROVEN by the luck test'];
-const BASKET_MONTHLY = 'Monthly basket day: Basket 1 (20 stocks) 35% + Basket 2 (SPUS 54% / IAUM 46%) 65%. Send  basket 1000  for the amounts.';
-const BASKET_QUARTERLY = 'Quarterly check: if the mix drifted, new money goes to whatever is below its %; the basket % may have changed - send basket.';
+// line order: today's Shariah list minus the members, the rest of the top 20 when derived, squad17 SQ17-MIX50, then squad10's own reserves);
+// a member not yet checked in ZAD is listed under CHECK IN ZAD FIRST and on a buy its dollars go to SPUS until it is marked; a NOT halal
+// member with no halal reserve left is dropped. Basket weights are renormalised to 100% after replacements and drops.
+// Rebalance notice: data/basket-state.json keeps the last top-10 formation the owner was told about; a new quarterly list (members or
+// weights) is sent once, with the % for the NEXT Basket 1 buy; old holdings are never sold (no extra commissions). Monthly reminder: the
+// first US trading day of each month, after the US open (Kuwait evening), once; in Jan / May / Sep it adds the Basket 1 buy-day line.
+// Tested record: squad10-lab.json SQ10-SH10-C15 portfolio (NOT PROVEN) and squad23-lab.json SQ23-GOLD (30% gold, tested on the top 20).
+const BASKET_ID = 'SQ10-SH10-C15', BASKET_ID20 = 'SQ10-SH20-C15', BASKET_STATE = 'data/basket-state.json', BASKET_STOCKS = 35, BASKET_GOLD = 30, BASKET_GOLD_SYM = 'IAUM', B2_SPUS = 54, B2_GOLD = 46;
+const B1_N = 10, B1_CAP = 0.15, B1_MONTHS = [1, 5, 9], B1_FEE_MAX = 2;
+const BASKET_RECORD = ['Tested 2022-01 to 23 Oct 2026 (Squad 10, the top 10 alone): about 16.7% a year vs SPUS 12.2%; it beat SPUS in both halves (2022-23: 0.8% vs 0.5% a year; 2024-26: 29.5% vs 21.2%); worst fall -42% vs -28%. NOT PROVEN by the luck test: a long-term choice, not a sure edge.',
+  'More fragile than the top 20: without NVDA, AAPL or MSFT it lost to SPUS in 2022-23 (the top 20 did not), and its worst fall was deeper (-42% vs -33%).',
+  'With 30% gold (Squad 23 test, run on the top-20 basket: 70% basket + 30% gold): ~17.5% a year vs 16.2%, worst fall -26% vs -33%; NOT PROVEN by the luck test, and not re-run on the top 10.',
+  'The buying schedule (Basket 2 monthly, Basket 1 three times a year) was not tested itself; it is there to keep ZAD fees low.'];
+const BASKET_MONTHLY = 'Monthly basket day: Basket 2 (SPUS 54% / IAUM 46%) with 65% of your amount; keep 35% as cash for Basket 1. Send  basket 1000 .';
+const BASKET_BUYDAY = 'Basket 1 buy day: buy the top 10 with your saved cash. Send  basket buy AMOUNT .';
 const usd0 = (x) => (Math.round(x * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: x % 1 ? 2 : 0, maximumFractionDigits: 2 });
 const usd2 = (x) => (Math.round(x * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const longDate = (d) => { const t = new Date(String(d).slice(0, 10) + 'T12:00:00Z'); return isNaN(t) ? String(d || '') : t.getUTCDate() + ' ' + t.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }) + ' ' + t.getUTCFullYear(); };
-// the basket's members at the last review (the tested percentages) and the reserves in line order
-function basketSource(T10, T17) { const m = T10 && T10.methods && T10.methods[BASKET_ID]; if (!m || !Array.isArray(m.members) || !m.members.length) return null;
-  const members = m.members.map(x => ({ sym: x.sym, w: +(x.weightAtReview > 0 ? x.weightAtReview : x.weightNow) || 0 })).filter(x => x.w > 0).sort((a, b) => b.w - a.w || (a.sym < b.sym ? -1 : 1));
+const bCents = (x) => Math.round(x * 100) / 100, bByW = (a, b) => b.w - a.w || (a.sym < b.sym ? -1 : 1);
+// cap-weighting with a maximum (pure): weights scaled to 100%, anything above the cap is cut to it and the excess re-spread pro rata over
+// the others, repeated until none is above (squad10-core capWeights rule); sorted largest first
+function basketCap(items, cap = B1_CAP) { const n = items.length; if (!n) return []; const tot = items.reduce((a, r) => a + r.w, 0) || 1, R = items.map(r => ({ ...r, w: r.w / tot }));
+  const c = Math.max(cap, 1 / n);
+  for (let k = 0; k <= n; k++) { const over = R.filter(r => r.w > c + 1e-12); if (!over.length) break; let ex = 0; for (const r of over) { ex += r.w - c; r.w = c; }
+    const free = R.filter(r => r.w < c - 1e-12), fw = free.reduce((a, r) => a + r.w, 0); if (!fw) break; for (const r of free) r.w += ex * r.w / fw; }
+  return R.sort(bByW); }
+// the top 10 at the last review (the tested percentages) and the reserves in line order
+function basketSource(T10, T17) { const M = (T10 && T10.methods) || {}, has = (m) => m && Array.isArray(m.members) && m.members.length;
+  const wOf = (x) => +(x.weightAtReview > 0 ? x.weightAtReview : x.weightNow) || 0, list = (m) => m.members.map(x => ({ sym: x.sym, w: wOf(x) })).filter(x => x.w > 0).sort(bByW);
+  let m, members, rest = [], derived = false;
+  if (has(M[BASKET_ID])) { m = M[BASKET_ID]; members = list(m); }
+  else if (has(M[BASKET_ID20])) { m = M[BASKET_ID20]; derived = true; const all = list(m); members = basketCap(all.slice(0, B1_N)); rest = all.slice(B1_N).map(x => x.sym); }
+  else return null;
   const inM = new Set(members.map(x => x.sym)), mix = T17 && T17.methods && T17.methods['SQ17-MIX50'], same = mix && (!mix.lastReview || mix.lastReview === m.lastReview);
-  const line = [...(m.freshAtLastClose || []).map(x => x.sym), ...(same ? (mix.reserves || []).map(x => x.sym) : []), ...(m.reserves || []).map(x => x.sym)];
-  return { members, reserves: [...new Set(line)].filter(s => s && !inM.has(s)), lastReview: m.lastReview || null, lastClose: T10.lastClose || null, tier: m.tier || null }; }
-// the plan for one amount: ZAD Basket 1 = the halal stocks, 35% (whole-number %, total 100); ZAD Basket 2 = SPUS 54% + IAUM 46%, 65% (pure: marks = { SYM: 'ok'|'fail'|... })
+  const line = [...(m.freshAtLastClose || []).map(x => x.sym), ...rest, ...(same ? (mix.reserves || []).map(x => x.sym) : []), ...(m.reserves || []).map(x => x.sym)];
+  return { members, reserves: [...new Set(line)].filter(s => s && !inM.has(s)), lastReview: m.lastReview || null, lastClose: (T10 && T10.lastClose) || null, tier: m.tier || null, derived }; }
+// the monthly split (pure): Basket 2 = 65% of the amount (IAUM 46% of it, SPUS the rest to the cent); 35% set aside in cash for Basket 1
+function basketMonth(amount = 1000) { const b2 = bCents(amount * (100 - BASKET_STOCKS) / 100), gold = bCents(b2 * B2_GOLD / 100);
+  return { amount, b2, spus: bCents(b2 - gold), gold, aside: bCents(amount - b2) }; }
+// a Basket 1 buy with `amount` (pure: marks = { SYM: 'ok'|'fail'|... }): the top 10 after ZAD replacement in whole-number % (total 100, min 1%)
+// and dollars; an unmarked member's share goes to SPUS until it is marked
 function basketPlan(src, marks, amount = 1000) { if (!src) return null; const mk = (s) => { const v = marks[s]; return v === 'ok' || v === 'fail' ? v : 'unmarked'; };
   const used = new Set(), replaced = [], dropped = [], skipped = [], rows = [];
   for (const x of src.members) { const z = mk(x.sym);
@@ -2755,18 +2774,14 @@ function basketPlan(src, marks, amount = 1000) { if (!src) return null; const mk
     let rep = null; for (const r of src.reserves) { if (used.has(r) || src.members.some(y => y.sym === r)) continue; const rz = mk(r); if (rz === 'ok') { rep = r; break; } if (!skipped.some(y => y.sym === r)) skipped.push({ sym: r, zad: rz }); }
     if (rep) { used.add(rep); replaced.push({ out: x.sym, in: rep }); rows.push({ sym: rep, w: x.w, zad: 'ok', replaces: x.sym }); } else dropped.push(x.sym); }
   const tot = rows.reduce((a, r) => a + r.w, 0) || 1; for (const r of rows) r.w = r.w / tot;   // renormalised to 100% of the basket
-  // Basket 1 = the halal stocks (35% of the amount); Basket 2 = SPUS 54% + IAUM 46% (65%). A stock not yet checked in ZAD keeps its dollars out
-  // of Basket 1; they go to Basket 2's SPUS line until it is marked (IAUM stays 46% of the planned 65%).
-  const ok = rows.filter(r => r.zad === 'ok'), un = rows.filter(r => r.zad !== 'ok'), cents = (x) => Math.round(x * 100) / 100;
-  const unmarked = un.map(r => ({ sym: r.sym, w: r.w, usd: cents(amount * BASKET_STOCKS * r.w / 100) })), extra = cents(unmarked.reduce((a, r) => a + r.usd, 0));
-  const b1Plan = cents(amount * BASKET_STOCKS / 100), basketUsd = ok.length ? cents(b1Plan - extra) : 0, b2Plan = cents(amount - b1Plan);
-  const goldUsd = cents(b2Plan * B2_GOLD / 100), spusUsd = cents(amount - basketUsd - goldUsd), extraSpus = cents(spusUsd - (b2Plan - goldUsd)) || 0;
-  // Basket 1 percentages: whole numbers summing to exactly 100, minimum 1% each (largest-remainder rounding of the basket weights)
+  const ok = rows.filter(r => r.zad === 'ok'), un = rows.filter(r => r.zad !== 'ok');
+  const unmarked = un.map(r => ({ sym: r.sym, w: r.w, usd: bCents(amount * r.w) })), spusUsd = ok.length ? bCents(unmarked.reduce((a, r) => a + r.usd, 0)) : bCents(amount);
+  const basketUsd = bCents(amount - spusUsd);
   const out = basketWholePct(ok.map(r => ({ sym: r.sym, w: r.w, zad: 'ok', replaces: r.replaces || null })));
-  // dollars follow the whole percentages to the cent; any cent left over by rounding goes to the biggest holding so the basket adds up exactly
-  for (const r of out) r.usd = cents(basketUsd * r.pct / 100);
-  if (out.length) { const diff = cents(basketUsd - out.reduce((a, r) => a + r.usd, 0)); if (diff) out[0].usd = cents(out[0].usd + diff); }
-  return { amount, basketUsd, b2: { usd: cents(spusUsd + goldUsd), plan: b2Plan, extra: extraSpus, spusPct: B2_SPUS, goldPct: B2_GOLD }, spusUsd, gold: { sym: BASKET_GOLD_SYM, pct: B2_GOLD, usd: goldUsd }, rows: out, unmarked, raised: out.filter(r => r.raised).map(r => r.sym), replaced, dropped, skipped, lastReview: src.lastReview, lastClose: src.lastClose }; }
+  // dollars follow the whole percentages to the cent; any cent left over by rounding goes to the biggest holding so the buy adds up exactly
+  for (const r of out) r.usd = bCents(basketUsd * r.pct / 100);
+  if (out.length) { const diff = bCents(basketUsd - out.reduce((a, r) => a + r.usd, 0)); if (diff) out[0].usd = bCents(out[0].usd + diff); }
+  return { amount, basketUsd, spusUsd, rows: out, unmarked, raised: out.filter(r => r.raised).map(r => r.sym), replaced, dropped, skipped, lastReview: src.lastReview, lastClose: src.lastClose, derived: !!src.derived }; }
 // whole-number % (pure): floor of 100 x weight with a 1% minimum, then the points left go one each to the largest remainders (points over 100,
 // from the 1% minimum, come off the holdings above 1% with the smallest remainders); sorted largest first
 function basketWholePct(items) { const n = items.length; if (!n) return []; const tw = items.reduce((a, r) => a + r.w, 0) || 1;
@@ -2775,51 +2790,76 @@ function basketWholePct(items) { const n = items.length; if (!n) return []; cons
   while (left > 0) { const order = [...R].sort((a, b) => (b.exact - b.pct) - (a.exact - a.pct) || b.exact - a.exact || a.i - b.i); for (const r of order) { if (left <= 0) break; r.pct++; left--; } }
   while (left < 0) { const order = R.filter(r => r.pct > 1).sort((a, b) => (a.exact - a.pct) - (b.exact - b.pct) || a.exact - b.exact || b.i - a.i); if (!order.length) break; for (const r of order) { if (left >= 0) break; r.pct--; left++; } }
   return R.map(r => ({ ...r, exact: +r.exact.toFixed(2), raised: r.exact < 1 && r.pct === 1 })).map(({ i, w, ...r }) => r).sort((a, b) => b.pct - a.pct || b.exact - a.exact || (a.sym < b.sym ? -1 : 1)); }
-// first trading session of the quarter month after the last review (Jan / Apr / Jul / Oct)
-function basketNextReview(last) { if (!/^\d{4}-\d{2}/.test(String(last || ''))) return null; let y = +last.slice(0, 4), q = Math.floor((+last.slice(5, 7) - 1) / 3) + 1; if (q === 4) { y++; q = 0; }
-  let d = y + '-' + String(q * 3 + 1).padStart(2, '0') + '-01'; while (!isSession(d)) d = nextDay(d); return d; }
+// the fee check of a Basket 1 buy (pure): one order per stock (+ one SPUS order for unmarked money), FEE() USD each
+function basketFee(P, fee = FEE()) { const orders = P.rows.length + (P.rows.length && P.spusUsd > 0 ? 1 : 0), usd = bCents(orders * fee), pct = P.amount > 0 ? 100 * usd / P.amount : 0;
+  return { orders, stocks: P.rows.length, fee, usd, pct, high: pct > B1_FEE_MAX, minAmount: Math.ceil(usd * 100 / B1_FEE_MAX) }; }
 const firstSessionOfMonth = (d) => { if (!isSession(d)) return false; for (let x = d.slice(0, 8) + '01'; x < d; x = nextDay(x)) if (isSession(x)) return false; return true; };
+const firstSessionIn = (y, m) => { let d = y + '-' + String(m).padStart(2, '0') + '-01'; while (!isSession(d)) d = nextDay(d); return d; };
+// the next Basket 1 buy day on or after d: first US trading day of January, May or September
+function basketNextBuy(d) { let y = +String(d).slice(0, 4); for (let k = 0; k < 8; k++, y++) for (const m of B1_MONTHS) { const x = firstSessionIn(y, m); if (x >= String(d).slice(0, 10)) return x; } return null; }
+// first trading session of the quarter month after the last review (Jan / Apr / Jul / Oct): when the top-10 list may change
+function basketNextReview(last) { if (!/^\d{4}-\d{2}/.test(String(last || ''))) return null; let y = +last.slice(0, 4), q = Math.floor((+last.slice(5, 7) - 1) / 3) + 1; if (q === 4) { y++; q = 0; }
+  return firstSessionIn(y, q * 3 + 1); }
 const basketMarks = () => { const H = HALALM(), o = {}; for (const [k, v] of Object.entries(H)) if (v && (v.s === 'ok' || v.s === 'fail')) o[k] = v.s; return o; };
+const basketSrcNow = () => basketSource(readJson0('data/squad10-today.json'), readJson0('data/squad17-today.json'));
+// ZAD replacement / drop lines shared by both texts
+function basketZadLines(P, onBuy) { const out = [];
+  for (const x of P.replaced) out.push('REPLACED: ' + x.out + ' is NOT halal in ZAD, so ' + x.in + ' (the first reserve marked halal) takes its place.');
+  if (P.replaced.length && P.skipped.length) out.push('Reserves passed over: ' + P.skipped.map(x => x.sym + (x.zad === 'fail' ? ' (NOT halal in ZAD)' : ' (not checked in ZAD)')).join(', ') + '.');
+  if (P.dropped.length) out.push('LEFT OUT: ' + P.dropped.join(', ') + ' (NOT halal in ZAD, no halal reserve left); the others are scaled up.');
+  out.push('CHECK IN ZAD FIRST: ' + (P.unmarked.length ? P.unmarked.map(x => x.sym + (onBuy ? ' (' + usd2(x.usd) + ' USD, in SPUS until you mark it)' : '')).join(', ') + (onBuy ? '' : ' (on the buy day its share goes to SPUS until you mark it)') + '. After checking, send  halal SYM yes  or  halal SYM no .' : 'none (every stock above is marked halal in ZAD).'));
+  return out; }
 function basketText(amount = 1000, now = Date.now()) {
-  const src = basketSource(readJson0('data/squad10-today.json'), readJson0('data/squad17-today.json'));
-  if (!src) return 'THE BASKET (one of the system’s ways: long-term core)\nThe halal top-20 list is not ready yet (squad10-lab.mjs writes it every weekday evening). Until then: put the whole amount in Basket 2 at ' + (100 - BASKET_GOLD) + '% SPUS + ' + BASKET_GOLD + '% ' + BASKET_GOLD_SYM + ' (gold fund - your ZAD choice).';
-  const P = basketPlan(src, basketMarks(), amount), nx = basketNextReview(src.lastReview);
-  const out = ['THE BASKET (one of the system’s ways: long-term core)', 'For ' + usd0(amount) + ' USD (' + longDate(ny(now).d) + '): TWO ZAD baskets = Basket 1, the halal top-20 stocks, ' + BASKET_STOCKS + '% + Basket 2, SPUS ' + B2_SPUS + '% / gold fund ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '%, ' + (100 - BASKET_STOCKS) + '% (overall SPUS 35 / stocks 35 / gold 30; top-20 = 20 largest halal US companies by market value, max 15% each; list formed ' + longDate(src.lastReview) + ').', '',
-    'ZAD BASKET 1 (' + P.rows.length + ' stocks): ' + usd0(P.basketUsd) + ' USD', 'Enter these WHOLE-NUMBER percentages in ZAD (total 100%):',
-    ...P.rows.map(r => '- ' + r.sym + ' ' + r.pct + '% = ' + usd2(r.usd) + ' USD (ZAD halal' + (r.replaces ? '; replaces ' + r.replaces : '') + (r.raised ? '; rounded up to 1%' : '') + ')'),
-    'These percentages only change at the quarterly update.', '',
-    'ZAD BASKET 2 (SPUS ' + B2_SPUS + '% + ' + P.gold.sym + ' ' + B2_GOLD + '%): ' + usd0(P.b2.usd) + ' USD',
-    '- SPUS ' + B2_SPUS + '% = ' + usd2(P.spusUsd) + ' USD' + (P.b2.extra ? ' (' + usd2(P.spusUsd - P.b2.extra) + ' + ' + usd2(P.b2.extra) + ' held for the stocks not yet checked in ZAD)' : ''),
-    '- ' + P.gold.sym + ' ' + B2_GOLD + '% = ' + usd2(P.gold.usd) + ' USD (gold fund - your ZAD choice)'];
-  if (P.b2.extra) out.push('Note: this month Basket 2 gets ' + usd2(P.b2.extra) + ' USD more for ' + P.unmarked.map(x => x.sym).join(', ') + ' (not yet checked in ZAD): invest ' + usd0(P.b2.plan) + ' at 54/46 and add the ' + usd2(P.b2.extra) + ' to SPUS.');
-  out.push('', 'Total: ' + usd2(amount) + ' USD = ' + usd2(P.basketUsd) + ' (Basket 1) + ' + usd2(P.b2.usd) + ' (Basket 2).');
-  if (P.raised.length) out.push('', 'Small names are rounded up to 1% of Basket 1 (ZAD minimum), slightly more than their exact share: ' + P.rows.filter(r => r.raised).map(r => r.sym + ' ' + r.exact.toFixed(2) + '%').join(', ') + '.');
-  if (P.replaced.length || P.dropped.length) { out.push('');
-    for (const x of P.replaced) out.push('REPLACED: ' + x.out + ' is NOT halal in ZAD, so ' + x.in + ' (the first reserve marked halal) takes its place.');
-    if (P.skipped.length) out.push('Reserves passed over: ' + P.skipped.map(x => x.sym + (x.zad === 'fail' ? ' (NOT halal in ZAD)' : ' (not checked in ZAD)')).join(', ') + '.');
-    if (P.dropped.length) out.push('LEFT OUT: ' + P.dropped.join(', ') + ' (NOT halal in ZAD, no halal reserve left); the others are scaled up.'); }
-  out.push('', 'CHECK IN ZAD FIRST: ' + (P.unmarked.length ? P.unmarked.map(x => x.sym + ' (' + usd2(x.usd) + ' USD, in Basket 2 SPUS until you mark it)').join(', ') + '. After checking, send  halal SYM yes  or  halal SYM no , then  basket  again.' : 'none (every stock above is marked halal in ZAD).'),
-    '', 'In ZAD: Basket 1 holds ONLY the 20 stocks and Basket 2 ONLY SPUS + ' + BASKET_GOLD_SYM + '; enter THESE percentages, not an equal split (fractional shares are fine).',
-    'Next rebalance: ' + (nx ? 'about ' + longDate(nx) + ' (first trading days of the quarter)' : 'first trading days of the next quarter') + '. I message you when the list changes; old holdings need no selling.',
-    '', ...BASKET_RECORD, '', 'Your orders, your choice: I never place a trade. Other amounts:  basket 1500');
+  const d = ny(now).d, M = basketMonth(amount), buy = basketNextBuy(d), head = 'THE BASKET (one of the system’s ways: long-term core)';
+  const month = ['This month: Basket 2 = ' + (100 - BASKET_STOCKS) + '% of ' + usd0(amount) + ' USD = ' + usd2(M.b2) + ' USD (SPUS ' + B2_SPUS + '% = ' + usd2(M.spus) + ' USD, ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '% = ' + usd2(M.gold) + ' USD). Set aside ' + BASKET_STOCKS + '% = ' + usd2(M.aside) + ' USD in cash for Basket 1.',
+    'Basket 1 (top 10) is bought on ' + (buy ? longDate(buy) : 'the first trading day of January, May or September') + (buy === d ? ' (TODAY)' : '') + '; with 4 months saved that is about ' + usd0(bCents(4 * M.aside)) + ' USD. On that day send  basket buy ' + Math.round(4 * M.aside) + '  (or your real saved amount).'];
+  const src = basketSrcNow();
+  if (!src) return [head, ...month, '', 'The halal top-10 list is not ready yet (squad10-lab.mjs writes it every weekday evening); keep the cash until it is.'].join('\n');
+  const P = basketPlan(src, basketMarks(), 1000), nx = basketNextReview(src.lastReview);
+  const out = [head, ...month, '',
+    'ZAD BASKET 2 (every month): SPUS ' + B2_SPUS + '% = ' + usd2(M.spus) + ' USD + ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '% = ' + usd2(M.gold) + ' USD (gold fund - your ZAD choice). 2 funds = 2 orders.', '',
+    'ZAD BASKET 1 = THE HALAL TOP 10 (the 10 largest halal US companies by market value, max 15% each; list formed ' + longDate(src.lastReview) + (src.derived ? ', taken from the top 20' : '') + '). Percentages for your next Basket 1 buy (whole numbers, total 100%):',
+    P.rows.map(r => r.sym + ' ' + r.pct + '%').join(', ') + '.'];
+  if (P.raised.length) out.push('Small names are rounded up to 1% (ZAD minimum): ' + P.rows.filter(r => r.raised).map(r => r.sym + ' ' + r.exact.toFixed(2) + '%').join(', ') + '.');
+  out.push(...basketZadLines(P, false), '',
+    'Why 3 times a year: ZAD charges about ' + usd0(FEE()) + ' USD per stock per order, so 10 stocks cost ' + usd0(10 * FEE()) + ' USD a buy; saving 4 months keeps that near 2% of the buy.',
+    'List changes: checked at the quarterly update (next about ' + (nx ? longDate(nx) : 'the next quarter') + '). I message you the new % for the next Basket 1 buy; old holdings are never sold (no extra commissions).',
+    '', ...BASKET_RECORD, '', 'Your orders, your choice: I never place a trade. Other amounts:  basket 1500 . Buy day:  basket buy 1400');
   return out.join('\n'); }
-// the formation the owner was told about vs the current one (pure)
-function basketFormation(T10) { const m = T10 && T10.methods && T10.methods[BASKET_ID]; if (!m || !Array.isArray(m.members) || !m.members.length) return null;
-  return { review: m.lastReview || null, w: Object.fromEntries(m.members.map(x => [x.sym, +(+(x.weightAtReview > 0 ? x.weightAtReview : x.weightNow) || 0).toFixed(4)])) }; }
+// the Basket 1 purchase: the top-10 dollar split for the cash the owner saved, with the ZAD fee check
+function basketBuyText(amount, now = Date.now()) {
+  const d = ny(now).d, buy = basketNextBuy(d), src = basketSrcNow(), head = 'THE BASKET: BASKET 1 BUY (halal top 10) with ' + usd0(amount) + ' USD saved';
+  if (!src) return head + '\nThe halal top-10 list is not ready yet (squad10-lab.mjs writes it every weekday evening); keep the cash until it is.';
+  const P = basketPlan(src, basketMarks(), amount), F = basketFee(P);
+  const out = [head + ' (' + longDate(d) + (buy === d ? ', a Basket 1 buy day' : '; buy days: first trading day of January, May and September, next ' + longDate(buy)) + ')',
+    'List formed ' + longDate(src.lastReview) + (src.derived ? ' (taken from the top 20)' : '') + '. Enter these WHOLE-NUMBER percentages in ZAD Basket 1 (total 100%):',
+    ...P.rows.map(r => '- ' + r.sym + ' ' + r.pct + '% = ' + usd2(r.usd) + ' USD (ZAD halal' + (r.replaces ? '; replaces ' + r.replaces : '') + (r.raised ? '; rounded up to 1%' : '') + ')')];
+  if (P.spusUsd > 0) out.push('- SPUS (Basket 2) = ' + usd2(P.spusUsd) + ' USD for ' + (P.unmarked.map(x => x.sym).join(', ') || 'the stocks') + ' until checked in ZAD');
+  out.push('Total: ' + usd2(amount) + ' USD = ' + usd2(P.basketUsd) + ' (Basket 1)' + (P.spusUsd > 0 ? ' + ' + usd2(P.spusUsd) + ' (SPUS)' : '') + '.', '',
+    'Fees: ' + (F.orders > F.stocks ? F.stocks + ' stocks + 1 SPUS order = ' + F.orders + ' orders' : F.stocks + ' stocks') + ' x ' + usd0(F.fee) + ' USD = ' + usd0(F.usd) + ' USD = ' + F.pct.toFixed(2) + '% of this buy.');
+  if (F.high) out.push('WARNING: the fees are above ' + B1_FEE_MAX + '% of this buy: save longer before buying (' + usd0(F.minAmount) + ' USD or more keeps them at ' + B1_FEE_MAX + '% or less).');
+  if (P.raised.length) out.push('Small names are rounded up to 1% (ZAD minimum), slightly more than their exact share: ' + P.rows.filter(r => r.raised).map(r => r.sym + ' ' + r.exact.toFixed(2) + '%').join(', ') + '.');
+  out.push('', ...basketZadLines(P, true), '',
+    'Old holdings are never sold: this buy adds to what you hold (no extra commissions). Fractional shares are fine.',
+    'Your orders, your choice: I never place a trade.');
+  return out.join('\n'); }
+// the formation the owner was told about vs the current one (pure): the top 10 actually used (capped when derived from the top 20)
+function basketFormation(T10) { const s = basketSource(T10, null); if (!s) return null;
+  return { id: BASKET_ID, review: s.lastReview || null, w: Object.fromEntries(s.members.map(x => [x.sym, +x.w.toFixed(4)])) }; }
 function basketChange(prev, cur) { if (!prev || !cur) return null; const a = prev.w || {}, b = cur.w || {};
   const ins = Object.keys(b).filter(s => !(s in a)), outs = Object.keys(a).filter(s => !(s in b)), moved = Object.keys(b).filter(s => s in a && Math.abs(b[s] - a[s]) >= 0.001);
   const big = moved.some(s => Math.abs(b[s] - a[s]) >= 0.005), newReview = prev.review !== cur.review;
   if (!ins.length && !outs.length && !big && !(newReview && moved.length)) return null; return { ins, outs, moved, review: cur.review }; }
-function basketRebalanceText(ch, P) { const pc = (x) => (x * 100).toFixed(1) + '%';
-  return ['THE BASKET: NEW QUARTERLY LIST (formed ' + longDate(ch.review) + ')', '',
+function basketRebalanceText(ch, P, buy) { const pc = (x) => (x * 100).toFixed(1) + '%';
+  return ['THE BASKET: NEW TOP-10 LIST (formed ' + longDate(ch.review) + ')', '',
     'IN: ' + (ch.ins.length ? ch.ins.join(', ') : 'none'), 'OUT: ' + (ch.outs.length ? ch.outs.join(', ') : 'none'), ...(ch.moved.length ? ['NEW WEIGHT: ' + ch.moved.map(s => s + ' ' + pc(ch.wOld[s]) + ' -> ' + pc(ch.wNew[s])).join(', ')] : []), '',
-    ...(P ? ['NEW PERCENTAGES for ZAD Basket 1, the 20 stocks (whole numbers, total 100%, after ZAD checks):', P.rows.map(r => r.sym + ' ' + r.pct + '%').join(', ') + (P.unmarked.length ? '. Check in ZAD first: ' + P.unmarked.map(x => x.sym).join(', ') + ' (in Basket 2 SPUS until marked).' : '.'), 'Basket 2 stays SPUS ' + B2_SPUS + '% / ' + P.gold.sym + ' ' + B2_GOLD + '%.', ''] : []),
-    'New money from now on uses the new percentages. You do NOT need to sell what you already hold; only if you want your basket to match the new list exactly, and that is your choice.',
-    'Send  basket  for the dollar amounts.'].join('\n'); }
-// what is due now (pure): { msgs, state } ; first sight of a formation = the baseline, stored without a message
+    ...(P ? ['NEW PERCENTAGES for your next Basket 1 buy' + (buy ? ' (' + longDate(buy) + ')' : '') + ' (whole numbers, total 100%, after ZAD checks):', P.rows.map(r => r.sym + ' ' + r.pct + '%').join(', ') + (P.unmarked.length ? '. Check in ZAD first: ' + P.unmarked.map(x => x.sym).join(', ') + ' (in SPUS until marked).' : '.'), 'Basket 2 stays SPUS ' + B2_SPUS + '% / ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '% every month.', ''] : []),
+    'Old holdings are never sold (no extra commissions): keep what you have; only the next Basket 1 buy uses the new percentages.',
+    'Send  basket  for this month, or  basket buy AMOUNT  on the buy day.'].join('\n'); }
+// what is due now (pure): { msgs, state } ; first sight of a formation (or an old top-20 one) = the baseline, stored without a message
 function basketDue(now, S0, T10, T17, marks) { const S = { ...(S0 || {}) }, msgs = [], n = ny(now), f = basketFormation(T10);
-  if (f) { if (!S.formation) S.formation = f; else { const ch = basketChange(S.formation, f); if (ch) { ch.wOld = S.formation.w; ch.wNew = f.w; msgs.push(basketRebalanceText(ch, basketPlan(basketSource(T10, T17), marks || {}, 1000))); S.formation = f; S.rebalanceSent = n.d; } else if (S.formation.review !== f.review) S.formation = f; } }
-  const ym = n.d.slice(0, 7); if (firstSessionOfMonth(n.d) && n.mins >= 570 && S.monthly !== ym) { msgs.push(BASKET_MONTHLY + ([1, 4, 7, 10].includes(+n.d.slice(5, 7)) ? '\n' + BASKET_QUARTERLY : '')); S.monthly = ym; }
+  if (f) { if (!S.formation || S.formation.id !== BASKET_ID) S.formation = f; else { const ch = basketChange(S.formation, f); if (ch) { ch.wOld = S.formation.w; ch.wNew = f.w; msgs.push(basketRebalanceText(ch, basketPlan(basketSource(T10, T17), marks || {}, 1000), basketNextBuy(n.d))); S.formation = f; S.rebalanceSent = n.d; } else if (S.formation.review !== f.review) S.formation = f; } }
+  const ym = n.d.slice(0, 7); if (firstSessionOfMonth(n.d) && n.mins >= 570 && S.monthly !== ym) { msgs.push(BASKET_MONTHLY + (B1_MONTHS.includes(+n.d.slice(5, 7)) ? '\n' + BASKET_BUYDAY : '')); S.monthly = ym; }
   return { msgs, state: S }; }
 // run by the bot's full check every 5 minutes (intraday(true)); an action reminder, so it is sent in quiet mode too
 async function basketNotices(now = Date.now()) { try {
@@ -2830,7 +2870,7 @@ async function basketNotices(now = Date.now()) { try {
 } catch (e) { console.log('basket notices failed: ' + e.message); } }
 // the system's ways to trade, one line each
 function waysText() { return ['YOUR WAYS TO TRADE (each one separate; you place every order yourself)',
-  'a) THE BASKET (core): every ~1,000 USD a month in two ZAD baskets: Basket 1 = the halal top-20 stocks (whole-number %) 35% + Basket 2 = SPUS 54% / gold fund IAUM 46% 65%. Send  basket',
+  'a) THE BASKET (core): every month 65% of ~1,000 USD in ZAD Basket 2 = SPUS 54% / gold fund IAUM 46%, and 35% kept as cash; Basket 1 = the halal top 10 (whole-number %) is bought with that cash 3 times a year (first trading day of Jan, May, Sep) to keep ZAD fees low. Send  basket  (buy day:  basket buy AMOUNT )',
   'b) TRY SMALL: ' + usd0(TRY_USD) + ' USD buys from rules that made money in both test halves but did not pass the luck test; max ' + TRY_MAX + ' open, own stop and time exit. They appear in  actions',
   'c) OPTIONS PAPER LANE: long calls tested on paper only; a 1-contract ticket only if a rule earns it. Send  options lab'].join('\n'); }
 async function tgCommands(sig) {
@@ -2870,6 +2910,7 @@ async function tgCommands(sig) {
     { const sl = m.text.trim().match(/^\/([a-z_]+)(?:@\w+)?\s*([\s\S]*)$/i); if (sl) { const e = MENU.find(x => x[0] === sl[1].toLowerCase()), base = e ? e[1] : sl[1].toLowerCase() === 'start' ? 'menu' : sl[1];
       m.text = sl[2] ? (/^(check|bought|sold)$/i.test(sl[1]) ? sl[1].toLowerCase() : base) + ' ' + sl[2].trim() : base; } }
     { const t0 = m.text.trim().toLowerCase(); if (ASK[t0]) { out.push(ASK[t0]); continue; }
+      { const bb = t0.match(/^(?:the\s+)?basket\s*1?\s+buy(?:\s+(?:for\s+|with\s+)?\$?\s*(\d[\d,]*(?:\.\d+)?)\s*(?:usd|\$|dollars?)?)?\s*\??$/); if (bb) { const amt = bb[1] ? +bb[1].replace(/,/g, "") : 0; out.push(amt >= 1 && amt <= 1e7 ? basketBuyText(amt) : "Send the cash you saved for Basket 1, for example  basket buy 1400 ."); continue; } }   // Basket 1 buy day (26 Oct)
       { const bk = t0.match(/^(?:the\s+)?basket(?:\s+(?:for\s+)?\$?\s*(\d[\d,]*(?:\.\d+)?)\s*(?:usd|\$|dollars?)?)?\s*\??$/); if (bk) { const amt = bk[1] ? +bk[1].replace(/,/g, "") : 1000; out.push(amt >= 1 && amt <= 1e7 ? basketText(amt) : "Send an amount in USD, for example  basket 1000  or  basket 2000 ."); continue; } }   // THE BASKET (24 Oct)
       if (/^(ways|my ways|lanes|my lanes|ways to trade|(what are )?my ways to trade|how (can|do) i trade)\s*\??$/.test(t0)) { out.push(waysText()); continue; }
       if (/^(news ?watch|my news|news alerts?|threats?)\s*\??$/.test(t0)) { out.push(newsText()); continue; }
