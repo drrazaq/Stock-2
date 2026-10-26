@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24T06:05:35.062Z",
+ "generatedAt": "2026-10-26T23:43:50.052Z",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Every SQ2 rule ENTERS INTRADAY (buy-stop / VWAP reclaim during the session), so newSignals is always empty: scan.mjs TRY SMALL places next-open orders, which these rules are not. A rule that passes needs a live intraday alert path (coordinator). Halal = the owner's ZAD mark.",
  "methods": {
@@ -9,7 +9,24 @@
    "tier": "REJECTED",
    "intradayOnly": true,
    "newSignals": [],
-   "todayTriggers": [],
+   "todayTriggers": [
+    {
+     "sym": "RRC",
+     "d": "2026-10-26",
+     "entryMin": 590,
+     "fill": 52.8011,
+     "stop": 50,
+     "halal": "unknown"
+    },
+    {
+     "sym": "HHH",
+     "d": "2026-10-26",
+     "entryMin": 578,
+     "fill": 74.7,
+     "stop": 72.68,
+     "halal": "unknown"
+    }
+   ],
    "watch": [],
    "open": []
   },
@@ -19,7 +36,24 @@
    "tier": "REJECTED",
    "intradayOnly": true,
    "newSignals": [],
-   "todayTriggers": [],
+   "todayTriggers": [
+    {
+     "sym": "RRC",
+     "d": "2026-10-26",
+     "entryMin": 600,
+     "fill": 53.22,
+     "stop": 50,
+     "halal": "unknown"
+    },
+    {
+     "sym": "SGRY",
+     "d": "2026-10-26",
+     "entryMin": 773,
+     "fill": 23.145,
+     "stop": 22.94,
+     "halal": "unknown"
+    }
+   ],
    "watch": [],
    "open": []
   },
@@ -49,7 +83,72 @@
    "tier": "REJECTED",
    "intradayOnly": true,
    "newSignals": [],
-   "todayTriggers": [],
+   "todayTriggers": [
+    {
+     "sym": "XP",
+     "d": "2026-10-26",
+     "entryMin": 586,
+     "fill": 15.75,
+     "stop": 13.78,
+     "halal": "unknown"
+    },
+    {
+     "sym": "TEAM",
+     "d": "2026-10-26",
+     "entryMin": 615,
+     "fill": 224.03,
+     "stop": 219.905,
+     "halal": "unknown"
+    },
+    {
+     "sym": "MRNA",
+     "d": "2026-10-26",
+     "entryMin": 575,
+     "fill": 187.68,
+     "stop": 181.65,
+     "halal": "unknown"
+    },
+    {
+     "sym": "IOVA",
+     "d": "2026-10-26",
+     "entryMin": 675,
+     "fill": 13.755,
+     "stop": 13.3234,
+     "halal": "unknown"
+    },
+    {
+     "sym": "LIFE",
+     "d": "2026-10-26",
+     "entryMin": 575,
+     "fill": 42.2998,
+     "stop": 42.19,
+     "halal": "unknown"
+    },
+    {
+     "sym": "ASST",
+     "d": "2026-10-26",
+     "entryMin": 620,
+     "fill": 27.37,
+     "stop": 26.7011,
+     "halal": "unknown"
+    },
+    {
+     "sym": "IBTA",
+     "d": "2026-10-26",
+     "entryMin": 596,
+     "fill": 48.27,
+     "stop": 47,
+     "halal": "unknown"
+    },
+    {
+     "sym": "EFOR",
+     "d": "2026-10-26",
+     "entryMin": 610,
+     "fill": 42.95,
+     "stop": 42.5,
+     "halal": "unknown"
+    }
+   ],
    "watch": [],
    "open": []
   },
@@ -59,7 +158,16 @@
    "tier": "REJECTED",
    "intradayOnly": true,
    "newSignals": [],
-   "todayTriggers": [],
+   "todayTriggers": [
+    {
+     "sym": "RRC",
+     "d": "2026-10-26",
+     "entryMin": 663,
+     "fill": 52.545,
+     "stop": 52.3038,
+     "halal": "unknown"
+    }
+   ],
    "watch": [],
    "open": []
   },
@@ -77,11 +185,6 @@
      "halal": "unknown"
     },
     {
-     "sym": "XP",
-     "level": 32.73,
-     "halal": "unknown"
-    },
-    {
      "sym": "KOD",
      "level": 104,
      "halal": "unknown"
@@ -94,6 +197,11 @@
     {
      "sym": "BMBL",
      "level": 5.98,
+     "halal": "unknown"
+    },
+    {
+     "sym": "IOVA",
+     "level": 15.37,
      "halal": "unknown"
     }
    ],
@@ -115,10 +223,42 @@
    "tier": "REJECTED",
    "intradayOnly": true,
    "newSignals": [],
-   "todayTriggers": [],
+   "todayTriggers": [
+    {
+     "sym": "RRC",
+     "d": "2026-10-26",
+     "entryMin": 590,
+     "fill": 52.8011,
+     "stop": 50,
+     "halal": "unknown"
+    },
+    {
+     "sym": "HHH",
+     "d": "2026-10-26",
+     "entryMin": 578,
+     "fill": 74.7,
+     "stop": 72.68,
+     "halal": "unknown"
+    }
+   ],
    "watch": [],
-   "open": []
+   "open": [
+    {
+     "sym": "RRC",
+     "signal": "2026-10-26",
+     "fill": 52.8011,
+     "stop": 50,
+     "halal": "unknown"
+    },
+    {
+     "sym": "HHH",
+     "signal": "2026-10-26",
+     "fill": 74.7,
+     "stop": 72.68,
+     "halal": "unknown"
+    }
+   ]
   }
  },
- "lastClose": "2026-10-23"
+ "lastClose": "2026-10-26"
 }
