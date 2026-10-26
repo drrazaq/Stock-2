@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-10-25",
+ "updated": "2026-10-27",
  "strategies": [
   {
    "id": "T1",
@@ -29881,6 +29881,18 @@
     ],
     "why": "fewer than 20 cases or 3 blocks in a half (16 cases, 5 blocks / 31 cases, 7 blocks)"
    }
+  },
+  {
+   "id": "SQ15-PB12-300",
+   "version": "v1",
+   "family": "Options: long calls on the large, liquid winners (Squad 15)",
+   "name": "Affordable call (<= 300 USD all-in, highest delta, 45-180 days, full spread <= 5%) on each SQ11-PB12 / SQ6-MTUM / SQ6-QMOM signal on a ZAD-halal-ok stock",
+   "explain": "RULE v1 (squad15b-core.mjs header = the exact text; owner-review corrections applied before any signal). SIGNALS: new SQ11-PB12, SQ6-MTUM, SQ6-QMOM signals dated 27 Oct 2026 or later; stored with the signal-file timestamp and the ZAD status at signal time; only ZAD-halal-ok stocks traded (others EXCLUDED, counted); same stock same day once; a stock already held -> SKIP: already holding. ENTRY on the first open-market run of the entry session (session after the signal) from a live OPRA snapshot. Usable quote: bid > 0, ask > bid (not crossed or locked), bid and ask sizes > 0, quote <= 15 minutes old. Eligible: standard calls (root = the stock) 45-180 days to expiry, usable quote, FULL spread (ask-bid)/mid <= 5%, OPRA delta present, ask x 100 + 5 USD <= 300 USD all-in (premium <= 295; the 5 USD fee is provisional until ZAD confirms). Chosen = highest delta (tie: lower cost, nearer expiry, lower strike). The chosen contract and ALL eligible alternatives, quote ages and rejection counts are stored; never substituted later. None -> SKIP: no affordable contract (counted). More than half the window stale = data failure, retried within the session; session over with no usable snapshot -> MISSED (counted). Fill at the ask (+5 USD). EXIT trigger: the stock rule's own sell session (PB12 / MTUM 126 sessions, QMOM 63, counted from entry) or the last session <= expiry - 30 days, whichever first; the first executable bid after the trigger (bid > 0, bid size > 0, not crossed, <= 15 minutes old) is the exit, its quote age stored, feasible = true; none within 5 sessions -> last bid seen, feasible = false (counted). 5 USD fee on exit. Same-dollar stock at the stock's latest trade at the same runs, 0.8% round trip. Stress = 1.5x costs (1.5x half-spread each side, 7.50 USD fees, stock 1.2%). Board overall and per source: signals, distinct signal days and underlyings, skips by reason, open; closed: n, mean AND median return per call, win rate, % losing 25/50/100% of premium, worst, best, mean/median without the 2 best, max drawdown (cumulative USD, one contract each, exit order), longest losing streak, same-dollar stock (mean, median), call minus stock (mean, median), share beating the stock, infeasible exits, and all of it at 1.5x costs. No verdict before 20 closed calls.",
+   "status": "forward paper only from 27 Oct 2026",
+   "agent": "squad15b",
+   "registered": "2026-10-27",
+   "libraryCheck": "Not SQ15-PB12-ATM / -ITM / -MOM-* / -REPL (those pick by delta target 150-270 days with no cost cap and were back-tested); this one is capped at the owner's 300 USD all-in live cap, 45-180 days, highest delta that fits, forward paper only, no backtest.",
+   "note": "Pre-registered 27 Oct 2026 before any signal (v1 = with the owner-review corrections: full spread <= 5%, 300 USD all-in, stale / crossed / locked / missing-size quotes rejected, chosen + all eligible alternatives stored, first executable bid after the exit trigger, drawdown / losing streak / 1.5x costs on the board). FORWARD PAPER ONLY: no backtest exists or is claimed (no option bid/ask history). squad15b-lab.mjs -> data/squad15b-paper.jsonl, data/squad15b-board.json, data/squad15b-today.json. Never places an order; never wired into scan.mjs by this squad."
   }
  ]
 }
