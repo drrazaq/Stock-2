@@ -931,7 +931,7 @@ async function paperText() {
   return ['PAPER ACCOUNT (Alpaca, fake money; real fills and timing)', acct && !acct.error ? 'Equity ' + money(+acct.equity) + (A.start ? ' (started ' + money(A.start.equity) + ' on ' + A.start.d + ': ' + pcs(+acct.equity / A.start.equity - 1) + ')' : '') : 'account not reachable right now',
     'Finished trades: ' + (c.length ? c.length + ', ' + Math.round(w.length / c.length * 100) + '% won, average ' + pcs(avg) + ' after your $6 fees' + (gaps ? ', ' + gaps + ' gapped through the stop' : '') : 'none yet'),
     'Open: ' + ((Array.isArray(pos) && pos.length) ? pos.map(p => p.symbol + ' ' + pcs(+p.unrealized_plpc)).join(', ') : 'none') + (Object.keys(A.pendingBuy || {}).length ? ' | buy orders waiting: ' + Object.keys(A.pendingBuy).join(', ') : ''),
-    '', 'Only fully proven buys are placed, with their stop attached; each closes on its own tested exit. Compare with  shadow  and  record.'].join('\n'); }
+    '', 'PRACTICE ONLY: this account tests the system\'s UNPROVEN engines with fake money. Its buys are NOT recommendations; judge it by the account total, not by one winner. Compare with  shadow  and  record.'].join('\n'); }
 const barClosed = (d, now) => { const n = ny(now); return d < n.d || (d === n.d && n.mins >= 970); };
 // US stock market holidays, worked out from the exchange's standing rules (New Year, Martin Luther King Jr. Day, Presidents' Day,
 // Good Friday, Memorial Day, Juneteenth, Independence Day, Labor Day, Thanksgiving, Christmas, with the weekend-observance rule).
@@ -2457,6 +2457,11 @@ function ldipCloseFlags(P, c) { const since = P.boughtSession || P.since, held =
   return { held, fl }; }
 // ACTIONS: the ONE message to act on. Sells first, then buys (strongest first, with amount, range and stop), then one line of
 // holds and the goal. Everything else the system sends is information. Send  details  for the full cards, or  review SYM .
+// (27 Oct 2026) owner asked why the Alpaca practice account's +8% trades were 'hidden': show its trades and its TOTAL in ACTIONS, labelled practice
+function practiceLine(lastPx) { try { const A = readJson0(ALP_FILE); if (!A || !A.start) return '';
+  const c = (A.closed || []).filter(t => typeof t.net === 'number'), w = c.filter(t => t.net > 0).length, eq = A.equity && A.equity.equity;
+  const open = Object.entries(A.plans || {}).map(([s0, p]) => s0 + (lastPx && lastPx[s0] > 0 && p.entry > 0 ? ' ' + pcs(lastPx[s0] / p.entry - 1) : ''));
+  return 'PRACTICE ACCOUNT (Alpaca, fake money, unproven engines: NOT buys for you): ' + (eq ? money(eq) + ' (' + pcs(eq / A.start.equity - 1) + ' since ' + A.start.d + ')' : '') + '. Closed ' + c.length + ': ' + w + ' won, ' + (c.length - w) + ' lost' + (c.length ? ', average ' + pcs(c.reduce((a, t) => a + t.net, 0) / c.length) : '') + '. Open: ' + (open.join(', ') || 'none') + '. Send  paper  for details.'; } catch (e) { return ''; } }
 async function actionsText(sig, pos, px, title) {
   const h = await holdingsText(sig, pos, null, true), plan = planText(sig, pos, px, 'x', null, null, { actions: true });
   const out = [title || 'ACTIONS'];
@@ -2530,6 +2535,7 @@ async function actionsText(sig, pos, px, title) {
     if (rows.length || LS) out.push('RESEARCH (Sunday): ' + (rows.length ? (pass.length ? 'NEW idea passed: ' + pass.map(r => r.name).join(', ') + ' (paper first)' : 'none of ' + rows.length + ' new ideas passed') : 'not run yet') + (LS && LS.liveVerdict ? '; LEADERS ' + String(LS.liveVerdict).toLowerCase() : '') + (rOnly.length ? '; works in RISING markets only: ' + rOnly.join(', ') : '') + (smUp ? '; insider buying works in rising markets (' + pcs(SM.rising.older.avg) + ' / ' + pcs(SM.rising.newer.avg) + ' a trade)' : '') + '. Send  lab  for details.'); }
   if (!FOCUS) { let ob = ''; try { ob = opportunitiesText(sig, true); } catch (e) {} if (ob) out.push('', ob); } else out.push('', 'Other ideas (information only): send  opportunities');   // FOCUS on: one working kind does not open the whole ungated board (review S-14)
   { const lc = liveConclusions(); if (lc.length) out.push('', ...lc); }
+  { const lp = {}; for (const x of [...((sig && sig.stocks) || []), ...((sig && sig.uni) || [])]) if (x.last > 0 && !lp[x.sym]) lp[x.sym] = x.last; const pl = practiceLine(lp); if (pl) out.push('', pl); }
   out.push('', 'This is the one message to act on. Check ZAD, buy inside the range, set the stop. After: bought / sold SYMBOL PRICE SHARES. Why and details: send  details  or  review SYM');
   return out.join('\n');
 }
@@ -2838,6 +2844,7 @@ const BASKET_RECORD = ['Tested 2022-01 to 23 Oct 2026 (Squad 10, the top 10 alon
   'With 30% gold (Squad 23 test, run on the top-20 basket: 70% basket + 30% gold): ~17.5% a year vs 16.2%, worst fall -26% vs -33%; NOT PROVEN by the luck test, and not re-run on the top 10.',
   'The buying schedule (Basket 2 monthly, Basket 1 three times a year) was not tested itself; it is there to keep ZAD fees low.'];
 const BASKET_MONTHLY = 'Monthly basket day: Basket 2 (SPUS 54% / IAUM 46%) with 65% of your amount; keep 35% as cash for Basket 1. Send  basket 1000 .';
+const BASKET_MONTHLY_B2 = 'Monthly basket day: put your monthly amount in SPUS 54% + IAUM 46% (2 orders in ZAD). Send  basket 1000  for the exact dollars.';
 const BASKET_BUYDAY = 'Basket 1 buy day: buy the top 10 with your saved cash. Send  basket buy AMOUNT .';
 const usd0 = (x) => (Math.round(x * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: x % 1 ? 2 : 0, maximumFractionDigits: 2 });
 const usd2 = (x) => (Math.round(x * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -2861,7 +2868,8 @@ function basketSource(T10, T17) { const M = (T10 && T10.methods) || {}, has = (m
   const line = [...(m.freshAtLastClose || []).map(x => x.sym), ...rest, ...(same ? (mix.reserves || []).map(x => x.sym) : []), ...(m.reserves || []).map(x => x.sym)];
   return { members, reserves: [...new Set(line)].filter(s => s && !inM.has(s)), lastReview: m.lastReview || null, lastClose: (T10 && T10.lastClose) || null, tier: m.tier || null, derived }; }
 // the monthly split (pure): Basket 2 = 65% of the amount (IAUM 46% of it, SPUS the rest to the cent); 35% set aside in cash for Basket 1
-function basketMonth(amount = 1000) { const b2 = bCents(amount * (100 - BASKET_STOCKS) / 100), gold = bCents(b2 * B2_GOLD / 100);
+// (27 Oct 2026) owner: "no basket, I will buy SPUS and IAUM": with Basket 1 off (B1_ON false) the WHOLE monthly amount goes to Basket 2
+function basketMonth(amount = 1000, b1 = B1_ON()) { const b2 = b1 ? bCents(amount * (100 - BASKET_STOCKS) / 100) : bCents(amount), gold = bCents(b2 * B2_GOLD / 100);
   return { amount, b2, spus: bCents(b2 - gold), gold, aside: bCents(amount - b2) }; }
 // a Basket 1 buy with `amount` (pure: marks = { SYM: 'ok'|'fail'|... }): the top 10 after ZAD replacement in whole-number % (total 100, min 1%)
 // and dollars; an unmarked member's share goes to SPUS until it is marked
@@ -2909,6 +2917,7 @@ function basketZadLines(P, onBuy) { const out = [];
   return out; }
 function basketText(amount = 1000, now = Date.now()) {
   const d = ny(now).d, M = basketMonth(amount), buy = basketNextBuy(d), head = 'THE BASKET (one of the system’s ways: long-term core)';
+  if (!B1_ON()) return [head, 'Every month (your choice, 27 Oct): your whole amount in SPUS ' + B2_SPUS + '% + ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '%.', 'For ' + usd0(amount) + ' USD: SPUS ' + usd2(M.spus) + ' USD + ' + BASKET_GOLD_SYM + ' ' + usd2(M.gold) + ' USD. 2 orders in ZAD.', 'The halal top-10 basket (Basket 1) is OFF. Your trading lane is LEADER DIP (3 slots of 1,000 USD).', '', ...BASKET_RECORD, '', 'Your orders, your choice: I never place a trade. Other amounts:  basket 1500 .'].join('\n');
   const month = ['This month: Basket 2 = ' + (100 - BASKET_STOCKS) + '% of ' + usd0(amount) + ' USD = ' + usd2(M.b2) + ' USD (SPUS ' + B2_SPUS + '% = ' + usd2(M.spus) + ' USD, ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '% = ' + usd2(M.gold) + ' USD). Set aside ' + BASKET_STOCKS + '% = ' + usd2(M.aside) + ' USD in cash for Basket 1.',
     'Basket 1 (top 10) is bought on ' + (buy ? longDate(buy) : 'the first trading day of January, May or September') + (buy === d ? ' (TODAY)' : '') + '; with 4 months saved that is about ' + usd0(bCents(4 * M.aside)) + ' USD. On that day send  basket buy ' + Math.round(4 * M.aside) + '  (or your real saved amount).'];
   const src = basketSrcNow();
@@ -2961,7 +2970,7 @@ function basketRebalanceText(ch, P, buy) { const pc = (x) => (x * 100).toFixed(1
 const B1_ON = () => (readJson0('data/settings.json') || {}).basket1 === true;
 function basketDue(now, S0, T10, T17, marks, b1 = B1_ON()) { const S = { ...(S0 || {}) }, msgs = [], n = ny(now), f = basketFormation(T10);
   if (f) { if (!S.formation || S.formation.id !== BASKET_ID) S.formation = f; else { const ch = basketChange(S.formation, f); if (ch && !b1) S.formation = f; else if (ch) { ch.wOld = S.formation.w; ch.wNew = f.w; msgs.push(basketRebalanceText(ch, basketPlan(basketSource(T10, T17), marks || {}, 1000), basketNextBuy(n.d))); S.formation = f; S.rebalanceSent = n.d; } else if (S.formation.review !== f.review) S.formation = f; } }
-  const ym = n.d.slice(0, 7); if (firstSessionOfMonth(n.d) && n.mins >= 570 && S.monthly !== ym) { msgs.push(BASKET_MONTHLY + (b1 && B1_MONTHS.includes(+n.d.slice(5, 7)) ? '\n' + BASKET_BUYDAY : '')); S.monthly = ym; }
+  const ym = n.d.slice(0, 7); if (firstSessionOfMonth(n.d) && n.mins >= 570 && S.monthly !== ym) { msgs.push((b1 ? BASKET_MONTHLY : BASKET_MONTHLY_B2) + (b1 && B1_MONTHS.includes(+n.d.slice(5, 7)) ? '\n' + BASKET_BUYDAY : '')); S.monthly = ym; }
   return { msgs, state: S }; }
 // run by the bot's full check every 5 minutes (intraday(true)); an action reminder, so it is sent in quiet mode too
 async function basketNotices(now = Date.now()) { try {

@@ -9,7 +9,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { loadScan, blocked } from './load-scan.mjs';
+import { loadScan as loadScan0, blocked } from './load-scan.mjs';
+// (27 Oct 2026) Basket 1 is off by default (owner: "no basket, I will buy SPUS and IAUM"). This file pins the Basket 1 ON behaviour, so it
+// switches it on unless a test sets settings itself. The default-off behaviour is pinned in test/leader-dip.test.mjs.
+const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'data/settings.json': { basket1: true, ...(((o.files || {})['data/settings.json']) || {}) } } });
 
 let sent = [], queue = [], uid = 100;
 const server = http.createServer((req, res) => { let body = ''; req.on('data', c => body += c); req.on('end', () => {

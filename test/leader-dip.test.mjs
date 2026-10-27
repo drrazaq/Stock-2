@@ -147,7 +147,8 @@ test('SQ11-PB12 is no longer in the TRY SMALL list (it is the LEADER DIP lane); 
   }
 });
 
-test('Basket 1 reminders are OFF by default; Basket 2 monthly reminder unchanged; settings.basket1 = true turns Basket 1 back on', async () => {
+test('Basket 1 reminders are OFF by default; Basket 2 monthly reminder takes the whole amount; settings.basket1 = true turns Basket 1 back on', async () => {
+  const MONTHLY0 = 'Monthly basket day: put your monthly amount in SPUS 54% + IAUM 46% (2 orders in ZAD). Send  basket 1000  for the exact dollars.';
   const MONTHLY = 'Monthly basket day: Basket 2 (SPUS 54% / IAUM 46%) with 65% of your amount; keep 35% as cash for Basket 1. Send  basket 1000 .';
   const BUYDAY = 'Basket 1 buy day: buy the top 10 with your saved cash. Send  basket buy AMOUNT .';
   const mem = (sym, w) => ({ sym, weightAtReview: w, weightNow: w });
@@ -157,8 +158,9 @@ test('Basket 1 reminders are OFF by default; Basket 2 monthly reminder unchanged
   const base = due(SAT, {}, A, null, {}).state;
   const r = due(SAT, base, Bn, null, {});   // a new top-10 list: no message by default, but followed silently
   assert.deepEqual(r.msgs, []); assert.equal(r.state.formation.review, '2027-01-04');
-  assert.deepEqual(due(Date.parse('2027-01-04T16:00:00Z'), base, A, null, {}).msgs, [MONTHLY]);   // January: Basket 2 only, no Basket 1 buy day
-  assert.deepEqual(due(Date.parse('2026-12-01T16:00:00Z'), base, A, null, {}).msgs, [MONTHLY]);
+  assert.deepEqual(due(Date.parse('2027-01-04T16:00:00Z'), base, A, null, {}).msgs, [MONTHLY0]);   // January: Basket 2 only, no Basket 1 buy day
+  assert.deepEqual(due(Date.parse('2026-12-01T16:00:00Z'), base, A, null, {}).msgs, [MONTHLY0]);
+  const M = S.fn('basketMonth')(1000); assert.equal(M.b2, 1000); assert.equal(M.aside, 0);   // whole amount to SPUS + IAUM
   const S2 = await loadScan({ files: { 'data/settings.json': { basket1: true } } }), due2 = S2.fn('basketDue');
   assert.deepEqual(due2(Date.parse('2027-01-04T16:00:00Z'), base, A, null, {}).msgs, [MONTHLY + '\n' + BUYDAY]);
   assert.match(due2(SAT, base, Bn, null, {}).msgs[0], /^THE BASKET: NEW TOP-10 LIST/);
@@ -174,3 +176,13 @@ test('nightly close checks: leader dip exits are flagged (also for a short histo
 });
 
 test('no network was used', () => assert.deepEqual(blocked, []));
+
+// 27 Oct 2026: the owner asked why the Alpaca practice account's winners were "hidden". ACTIONS shows its trades AND its total, labelled practice.
+test('practice line shows the Alpaca paper total, wins and losses, labelled not a buy', async () => {
+  const S = await loadScan({ files: { 'data/alpaca-paper.json': { start: { d: '2026-10-12', equity: 100000 }, equity: { d: '2026-10-26', equity: 99645.41 },
+    plans: { WGO: { entry: 25.5 } }, closed: [{ sym: 'ROIV', net: 0.0377 }, { sym: 'CLS', net: -0.2187 }] } } });
+  const t = S.fn('practiceLine')({ WGO: 28.11 });
+  assert.match(t, /PRACTICE ACCOUNT .*NOT buys for you/);
+  assert.match(t, /Closed 2: 1 won, 1 lost/);
+  assert.match(t, /WGO \+10\.2%/);
+});
