@@ -30512,7 +30512,7 @@
   {
    "family": "Squad 27 (odd-lot issuer tender arbitrage)",
    "agent": "squad27",
-   "status": "pre-registered 2026-10-27 (squad 27 lab); one-shot pending; information / paper lane only, not a scan rule",
+   "status": "tested 2026-10-27: TOO FEW (information only)",
    "sources": [
     "https://www.sec.gov/Archives/edgar/full-index/ (SC TO-I, SC TO-I/A)",
     "https://www.ecfr.gov/current/title-17/section-240.13e-4 (Rule 13e-4(f)(3)(i) odd-lot priority)",
@@ -30524,12 +30524,171 @@
    "hold": 5,
    "name": "Odd-lot issuer tender arbitrage: buy 99 shares at the close 2 sessions before the expiry when the close is under the minimum tender price; tender all 99 (odd-lot priority)",
    "explain": "RULE (squad27-core.mjs header, exact): every SC TO-I 2019..now (EDGAR quarterly index), Offer to Purchase read for ticker, price or range, odd-lot priority clause, expiry and conditions; amendments for extensions, termination and the final price. 99 shares at the close 2 sessions before the expiry in force, only if that close < the minimum price; 0.8% on the buy, 3 USD commission and a 25 USD corporate-action fee (both ASSUMED); payout 99 x final price (actual) or 99 x range minimum (conservative); terminated = shares valued at the close 5 sessions later. Halves before / from 2024.",
-   "note": "Squad 27, 27 Oct 2026. Pre-registered BEFORE any run; run ONCE by squad27-lab.mjs; first complete result frozen in data/squad27-lab.json firstRun; current offers in data/squad27-board.json (weekly, record only)."
+   "note": "Squad 27, 27 Oct 2026. Pre-registered BEFORE any run; run ONCE by squad27-lab.mjs; first complete result frozen in data/squad27-lab.json firstRun; current offers in data/squad27-board.json (weekly, record only).",
+   "result": {
+    "n": 12,
+    "older": {
+     "n": 9,
+     "avg": 274.12,
+     "median": 28.96,
+     "worst": -37.12,
+     "best": 2141.29,
+     "total": 2467.07,
+     "wins": 6,
+     "avgCapital": 2622.48,
+     "avgDays": 10.11,
+     "annPool": 3.5246,
+     "annMedian": 0.4446,
+     "years": {
+      "2019": {
+       "n": 4,
+       "total": 57.47
+      },
+      "2020": {
+       "n": 1,
+       "total": 2141.29
+      },
+      "2021": {
+       "n": 3,
+       "total": 239.35
+      },
+      "2023": {
+       "n": 1,
+       "total": 28.96
+      }
+     }
+    },
+    "newer": {
+     "n": 3,
+     "avg": 21.74,
+     "median": 40.79,
+     "worst": -29.42,
+     "best": 53.85,
+     "total": 65.22,
+     "wins": 2,
+     "avgCapital": 1843.83,
+     "avgDays": 10.67,
+     "annPool": 0.47,
+     "annMedian": 0.3193,
+     "years": {
+      "2024": {
+       "n": 1,
+       "total": 40.79
+      },
+      "2025": {
+       "n": 1,
+       "total": -29.42
+      },
+      "2026": {
+       "n": 1,
+       "total": 53.85
+      }
+     }
+    },
+    "conservativeMin": {
+     "n": 13,
+     "avg": 154.53,
+     "median": 6.17,
+     "worst": -37.12,
+     "total": 2008.93
+    },
+    "offersPerYear": {
+     "2019": {
+      "scToI": 464,
+      "listedCashShares": 18,
+      "oddLot": 7,
+      "oddLotCompleted": 7,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 4
+     },
+     "2020": {
+      "scToI": 396,
+      "listedCashShares": 13,
+      "oddLot": 8,
+      "oddLotCompleted": 7,
+      "oddLotTerminated": 1,
+      "oddLotUnknown": 0,
+      "gapAtE2": 1
+     },
+     "2021": {
+      "scToI": 374,
+      "listedCashShares": 12,
+      "oddLot": 8,
+      "oddLotCompleted": 8,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 3
+     },
+     "2022": {
+      "scToI": 383,
+      "listedCashShares": 9,
+      "oddLot": 8,
+      "oddLotCompleted": 7,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 1,
+      "gapAtE2": 0
+     },
+     "2023": {
+      "scToI": 461,
+      "listedCashShares": 8,
+      "oddLot": 5,
+      "oddLotCompleted": 5,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 1
+     },
+     "2024": {
+      "scToI": 579,
+      "listedCashShares": 8,
+      "oddLot": 4,
+      "oddLotCompleted": 3,
+      "oddLotTerminated": 1,
+      "oddLotUnknown": 0,
+      "gapAtE2": 1
+     },
+     "2025": {
+      "scToI": 577,
+      "listedCashShares": 8,
+      "oddLot": 2,
+      "oddLotCompleted": 2,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 1
+     },
+     "2026": {
+      "scToI": 478,
+      "listedCashShares": 9,
+      "oddLot": 6,
+      "oddLotCompleted": 4,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 2
+     }
+    },
+    "headline": {
+     "listedOffers": 85,
+     "oddLotOffers": 48,
+     "oddLotShare": 0.5647,
+     "completionRateListed": 0.975,
+     "completionRateOddLot": 0.9556,
+     "outcomeUnknownOddLot": 1,
+     "typeCounts": {
+      "fixed": 39,
+      "dutch": 46
+     },
+     "oddLotByType": {
+      "fixed": 15,
+      "dutch": 33
+     },
+     "dutchActualPriceMissing": 1
+    }
+   }
   },
   {
    "family": "Squad 27 (odd-lot issuer tender arbitrage)",
    "agent": "squad27",
-   "status": "pre-registered 2026-10-27 (squad 27 lab); one-shot pending; information / paper lane only, not a scan rule",
+   "status": "tested 2026-10-27: TOO FEW (information only)",
    "sources": [
     "https://www.sec.gov/Archives/edgar/full-index/ (SC TO-I, SC TO-I/A)",
     "https://www.ecfr.gov/current/title-17/section-240.13e-4 (Rule 13e-4(f)(3)(i) odd-lot priority)",
@@ -30540,7 +30699,162 @@
    "kind": "variant",
    "hold": 30,
    "name": "Same, bought at the close of the first session after the SC TO-I filing (information)",
-   "explain": "Pre-registered variant of SQ27-ODDLOT: the entry is the first session after the original filing; same gate, costs and payout. More days of capital tied up."
+   "explain": "Pre-registered variant of SQ27-ODDLOT: the entry is the first session after the original filing; same gate, costs and payout. More days of capital tied up.",
+   "result": {
+    "n": 12,
+    "older": {
+     "n": 10,
+     "avg": 88.8,
+     "median": -3.58,
+     "worst": -103.79,
+     "best": 750.19,
+     "total": 887.99,
+     "wins": 4,
+     "avgCapital": 2300.91,
+     "avgDays": 36.5,
+     "annPool": 0.3792,
+     "annMedian": -0.016,
+     "years": {
+      "2019": {
+       "n": 3,
+       "total": -28.92
+      },
+      "2020": {
+       "n": 3,
+       "total": 642.92
+      },
+      "2021": {
+       "n": 3,
+       "total": 55.42
+      },
+      "2023": {
+       "n": 1,
+       "total": 218.57
+      }
+     }
+    },
+    "newer": {
+     "n": 2,
+     "avg": 42.15,
+     "median": 42.15,
+     "worst": -29.42,
+     "best": 113.72,
+     "total": 84.3,
+     "wins": 1,
+     "avgCapital": 145.2,
+     "avgDays": 36.5,
+     "annPool": 2.8929,
+     "annMedian": 4.5007,
+     "years": {
+      "2024": {
+       "n": 1,
+       "total": -29.42
+      },
+      "2026": {
+       "n": 1,
+       "total": 113.72
+      }
+     }
+    },
+    "conservativeMin": {
+     "n": 13,
+     "avg": 51.13,
+     "median": -3.69,
+     "worst": -103.79,
+     "total": 664.69
+    },
+    "offersPerYear": {
+     "2019": {
+      "scToI": 464,
+      "listedCashShares": 18,
+      "oddLot": 7,
+      "oddLotCompleted": 7,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 4
+     },
+     "2020": {
+      "scToI": 396,
+      "listedCashShares": 13,
+      "oddLot": 8,
+      "oddLotCompleted": 7,
+      "oddLotTerminated": 1,
+      "oddLotUnknown": 0,
+      "gapAtE2": 1
+     },
+     "2021": {
+      "scToI": 374,
+      "listedCashShares": 12,
+      "oddLot": 8,
+      "oddLotCompleted": 8,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 3
+     },
+     "2022": {
+      "scToI": 383,
+      "listedCashShares": 9,
+      "oddLot": 8,
+      "oddLotCompleted": 7,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 1,
+      "gapAtE2": 0
+     },
+     "2023": {
+      "scToI": 461,
+      "listedCashShares": 8,
+      "oddLot": 5,
+      "oddLotCompleted": 5,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 1
+     },
+     "2024": {
+      "scToI": 579,
+      "listedCashShares": 8,
+      "oddLot": 4,
+      "oddLotCompleted": 3,
+      "oddLotTerminated": 1,
+      "oddLotUnknown": 0,
+      "gapAtE2": 1
+     },
+     "2025": {
+      "scToI": 577,
+      "listedCashShares": 8,
+      "oddLot": 2,
+      "oddLotCompleted": 2,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 1
+     },
+     "2026": {
+      "scToI": 478,
+      "listedCashShares": 9,
+      "oddLot": 6,
+      "oddLotCompleted": 4,
+      "oddLotTerminated": 0,
+      "oddLotUnknown": 0,
+      "gapAtE2": 2
+     }
+    },
+    "headline": {
+     "listedOffers": 85,
+     "oddLotOffers": 48,
+     "oddLotShare": 0.5647,
+     "completionRateListed": 0.975,
+     "completionRateOddLot": 0.9556,
+     "outcomeUnknownOddLot": 1,
+     "typeCounts": {
+      "fixed": 39,
+      "dutch": 46
+     },
+     "oddLotByType": {
+      "fixed": 15,
+      "dutch": 33
+     },
+     "dutchActualPriceMissing": 1
+    }
+   }
   },
   {
    "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
