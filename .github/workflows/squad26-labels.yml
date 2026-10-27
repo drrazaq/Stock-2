@@ -1,0 +1,36 @@
+name: Squad 26 label input
+# INFORMATION ONLY (lead request, 27 Oct 2026): text of every traded SQ26 event for blind party labels (squad26-labels.mjs). No returns,
+# no change to the frozen SQ26-FIRSTMIN result. squad26-cache is RESTORED READ ONLY (adsh -> filer CIK). Push run-squad26-labels.txt.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad26-labels.txt']
+permissions:
+  contents: write
+concurrency: squad26-labels
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad26-cache
+          key: squad26-cache-none
+          restore-keys: squad26-cache-
+      - shell: bash
+        run: node squad26-labels.mjs
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+      - shell: bash
+        run: |
+          git config user.name "scanner"; git config user.email "scanner@users.noreply.github.com"
+          git add data/squad26-label-input.json; git diff --cached --quiet || git commit -m "squad 26 label input $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done; [ "$ok" = 1 ]
