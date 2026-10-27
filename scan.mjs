@@ -2301,6 +2301,11 @@ function halalGapLine(pos) {   // holdings with no halal mark of yours (or ZAD l
 // FROZEN first run made money after the 1.2% stress cost in BOTH halves, beat the average stock in both, and stayed positive without its
 // 2 best trades in both. The luck bar is not required. 300 USD, max 2 open, ZAD-ok stocks only, stop 15%, sold after ~3 months.
 // Off with  settings.trySmall = false , or for a rule whose own ledger (kind try:<rule>) averages < 0 after 10+ resolved cases.
+// (27 Oct 2026, owner decision after the 2-slot account replay: the real lane did not reliably beat holding SPY, +7.5% vs +18.6% a year
+// in 2024-26, and 43% of 200 pick-order shuffles beat SPY) TRY SMALL is PAPER ONLY unless settings.trySmallReal === true. Picks are still
+// shown and logged in the tier-2 ledger, so the forward paper record keeps growing; the money goes to Basket 2 instead. Open TRY positions
+// keep their normal exits.
+const TRY_REAL = () => (readJson0('data/settings.json') || {}).trySmallReal === true;
 const TRY_USD = 1000, TRY_MAX = 2;   // 1,000 USD: owner's choice 24 Oct (at 300 USD the fees ate ~2% a trade)
 // (24 Oct, engine audit) a lab's corrected re-run (correctedRun[id], firstRun untouched) replaces that rule's frozen first run here
 const labRuns = (j) => { if (!j) return {}; const out = { ...(j.firstRun || {}) }; for (const [k, r] of Object.entries(j.correctedRun || {})) if (r && r.results) out[k] = { ...r, corrected: true }; return out; };
@@ -2375,6 +2380,9 @@ function trySmallLines(pos, lastPx, exclude, session) {
       if (slots <= 0 || buys.some(b => b.sym === p.sym)) continue; slots--; if (px) tier2Log(p.sym, 'try:' + S0.id, px, { hold: S0.hold, stopPct: S0.stopPct, shownAt: new Date().toISOString() }); buys.push({ sym: p.sym, id: S0.id, px, stopPct: S0.stopPct, hold: S0.hold, what: S0.what }); } }
   if (!buys.length && !mark.length) return later.length ? ['TRY SMALL: no buy today (a pick is bought only within 5 sessions of its formation, as tested). Next ' + later.join(', ') + '.'] : [];
   const out = ['TRY SMALL (weaker proof: made money after costs in BOTH 5-year test halves and beat the average stock, but did NOT pass the luck test. Small on purpose: ' + TRY_USD + ' USD each, max ' + TRY_MAX + ' open. Switches itself off if its first 10 results lose on average.)'];
+  if (!TRY_REAL()) { out[0] = 'TRY SMALL: PAPER ONLY (not a buy; your decision 27 Oct after the account replay: 2 slots of 1,000 USD did not reliably beat holding SPY. Put that money in Basket 2. These picks are recorded to build the live paper record):';
+    for (const b of buys) out.push('- PAPER ' + b.sym + (b.px ? ' at about ' + money(b.px) : '') + ', hold ' + b.hold + ' sessions. Rule ' + b.id + ' (' + b.what + ').');
+    return out; }
   for (const b of buys) out.push('- BUY ' + b.sym + ' ' + TRY_USD + ' USD ' + (b.px ? 'up to ' + money(b.px * 1.03) + '. STOP ' + money(b.px * (1 - b.stopPct)) + ' at your broker (' + Math.round(b.stopPct * 100) + '%).' : 'at the next open (no recent price here: check the live price first). STOP ' + Math.round(b.stopPct * 100) + '% under your buy price at your broker; the bot works it out when you send  bought ' + b.sym + ' PRICE .') + ' SELL after about ' + (Math.max(1, Math.round(b.hold / 21)) + ' month' + (Math.round(b.hold / 21) > 1 ? 's' : '')) + ' (' + b.hold + ' sessions); the bot reminds you. Rule ' + b.id + ' (' + b.what + ').');
   if (mark.length) out.push('MARK HALAL FIRST (picks of this lane, no ZAD mark of yours yet): ' + mark.slice(0, 6).join(', ') + '. Check ZAD, send  halal SYM yes  and they can be bought next time.');
   return out;

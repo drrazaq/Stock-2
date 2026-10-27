@@ -7,7 +7,10 @@
 // Run: node test/try-small.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { loadScan, blocked } from './load-scan.mjs';
+import { loadScan as loadScan0, blocked } from './load-scan.mjs';
+// (27 Oct 2026) TRY SMALL is paper-only by default now; these tests pin the REAL-money lane, so they switch it on unless a test sets settings.
+const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'data/settings.json': { trySmallReal: true, ...(((o.files || {})['data/settings.json']) || {}) } } });
+
 
 const half = (avgStress, edge, noTop2) => ({ avgStress, edge, noTop2, avg: avgStress + 0.004 });
 const FR = { 'B-FCF1': { verdict: 'NOT PROVEN', results: { older: half(0.0347, 0.0226, 0.0362), newer: half(0.0532, 0.0289, 0.0474) } },
@@ -170,4 +173,13 @@ test('near-copies of SQ11-PB12 from Squad 14 never trade', () => {
 test('Squad 18 filtered copies of PB12 / QMOM never trade', () => {
   const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
   assert.deepEqual(q({ 'SQ18-PB12-MON': r, 'SQ18-PB12-DRY': r, 'SQ18-QMOM-CALM': r }), []);
+});
+
+// 27 Oct 2026: owner decision after the 2-slot account replay. Without settings.trySmallReal the lane shows PAPER lines, never a BUY.
+test('TRY SMALL is paper only by default (no BUY line, picks still logged)', async () => {
+  const S = await loadScan0({ files });
+  const t = S.fn('trySmallLines')({}, {}).join('\n');
+  assert.doesNotMatch(t, /- BUY /);
+  assert.match(t, /PAPER ONLY/);
+  assert.match(t, /- PAPER /);
 });

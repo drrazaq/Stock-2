@@ -12,7 +12,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import fs from 'node:fs';
-import { loadScan, blocked } from './load-scan.mjs';
+import { loadScan as loadScan0, blocked } from './load-scan.mjs';
+// (27 Oct 2026) TRY SMALL is paper-only by default now; these tests pin the REAL-money lane, so they switch it on unless a test sets settings.
+const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'data/settings.json': { trySmallReal: true, ...(((o.files || {})['data/settings.json']) || {}) } } });
+
 
 const half = (avgStress, edge, noTop2) => ({ avgStress, edge, noTop2, avg: avgStress + 0.004 });
 const good = (hold) => ({ verdict: 'NOT PROVEN', hold, results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } });
