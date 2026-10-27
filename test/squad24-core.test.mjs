@@ -22,6 +22,7 @@ test('counterparty: alias + optional corporate form, no further name word, in a 
   assert.equal(counterpartyMatch('a hosting agreement with Amazon Web Services, Inc.', COS), null, 'Amazon Web Services is not the alias');
   assert.equal(counterpartyMatch('Our software runs on Microsoft Azure and we sell to many customers.', COS), null, 'no deal word / product mention');
   assert.equal(counterpartyMatch('We use Microsoft products. The weather was nice.', COS), null);
+  assert.equal(counterpartyMatch('entered into a Credit Agreement with Microsoft as lender for $50 million.', COS), null, 'a financing sentence does not count');
   assert.equal(counterpartyMatch('The Amazonian rain forest supply agreement', COS), null, 'whole words only');
   assert.equal(counterpartyMatch("pursuant to Amazon's warrant, Amazon may acquire shares", COS).cik, '1018724', 'possessive allowed');
   assert.equal(nameEnds(' Corporation ("X")'), true); assert.equal(nameEnds(', Inc., a Delaware'), true); assert.equal(nameEnds(' Ireland Ltd'), false); assert.equal(nameEnds('.'), true); assert.equal(nameEnds(''), true);

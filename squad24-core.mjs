@@ -20,19 +20,23 @@
 //   US-listed companies by market value on the first session of that quarter (common stock and ADRs; ETFs / funds left out; one entry per
 //   company: share classes merged by CIK), market value from Massive ticker details on that date (point in time), else close x the SEC
 //   share count known 30 days earlier. Each company: CIK, legal name, up to 2 ALIASES written by hand before the run. Non-listed namesakes
-//   (SpaceX, OpenAI, Anthropic, xAI, Samsung, Bosch, Huawei, ByteDance, TikTok, Starlink, Waymo ...) are NOT in the list. The file's SHA-256
+//   (OpenAI, Anthropic, xAI, Samsung, Bosch, Huawei, ByteDance, TikTok, Starlink, Waymo ...) are NOT in the list; SpaceX is in it only from
+//   the quarter after its own US listing (2026-07-01), never before. Known gap: Berkshire Hathaway (BRK.A / BRK.B: dotted tickers are not
+//   in the price cache) is missing. The file's SHA-256
 //   is MEGACAP_SHA below; the lab refuses to run on any other file.
 // EVENT: an SEC 8-K (form exactly 8-K, no amendments) whose items list Item 1.01, filed 2021-11-15 .. today, found by EDGAR full-text search
 //   of each alias (forms 8-K, case-insensitive search, then the exact test below on the document text). The filer (CIK) is not itself on any
 //   quarter's list. COUNTERPARTY TEST (exact, case-sensitive; the alias as written or in CAPITALS): in a document of the filing (the main
 //   8-K, an EX-99.x or an EX-10.x) an alias of a company on the list of the latest quarter start on or before the filing date appears
 //   (a) as a whole word (no letter or digit right before or after; a possessive 's is allowed), (b) followed only by an optional corporate
-//   form (Inc / Incorporated / Corp / Corporation / Co / Company / LLC / L.L.C. / Ltd / Limited / plc / N.V. / S.A. / SE / AG / L.P. / LP,
-//   up to two, commas allowed) and then by NO further capitalised name word: the next word must be lower case, a connector (and / or / of
+//   form (Inc / Incorporated / Corp / Corporation / Co / Company / LLC / L.L.C. / Ltd / Limited / plc / p.l.c. / N.V. / S.A. / SE / AG /
+//   L.P. / LP / A/S / ASA / S.p.A. / GmbH / AB / Oyj / K.K. / Pty, up to two, commas allowed) and then by NO further capitalised name word: the next word must be lower case, a connector (and / or / of
 //   / the / to / for / by / in / with / as / on / under / pursuant / dated / which / that / its), a bracket or quote, punctuation, or the
 //   end ("Amazon Web Services" fails for the alias "Amazon.com"; "Microsoft Ireland Operations Limited" fails; "NVIDIA Corporation (" and
 //   "Google LLC," pass), (c) inside a sentence that holds a deal word: agreement / contract / order / supply / licen(s|c)e / collaborat /
-//   partnership / statement of work / warrant.
+//   partnership / statement of work / warrant, and (d) that sentence is NOT a financing sentence (credit agreement / credit facility / loan
+//   agreement / loan and security / term loan / revolving / indenture / underwriting / underwriter(s) / sales agent / equity distribution /
+//   at-the-market / administrative agent / collateral agent / lender(s)): a giant's bank lending to the company is not a deal with a giant.
 // FILING SESSION f (sec-time.mjs, New York clock, from the SEC ACCEPTANCE-DATETIME of the filing's header, Eastern time): accepted before
 //   09:30 -> that day's session; 09:30-15:59 -> that day's session; 16:00 or later (or a non-trading day) -> the next session.
 // FILTERS at the close of f: close 1-10 USD; 20-session average traded value (close x volume, sessions f-19..f) >= 0.5M USD (dead stocks
@@ -62,7 +66,7 @@
 export const COST = 0.008, STRESS = 0.012, SLIP = 0.02, SPLIT = '2024-01-01', PAPER_START = '2026-10-28', CAP = 3, YEAR = 252;
 export const EVENT_FROM = '2021-11-15', LIST_FROM = '2021-10-01';
 // SHA-256 of data/squad24-megacaps.json (written after the BUILD run, which computes no returns; before the rule run)
-export const MEGACAP_SHA = 'PENDING';
+export const MEGACAP_SHA = '5530f8200c39cf831750e157cedd32b4f3038b33345a802c152542e5048864da';
 export const TH = { minClose: 1, maxClose: 10, minDv: 5e5, dvSess: 20, move: 0.15, moveSess: 21, rsDays: 60, dilSess: 20, sizeMin: 0.20, minUsd: 1e5,
   shareLag: 30, shareMaxAge: 400, hold: 10, stop: 0.25, block: 10, top: 100 };
 export const DIL_FORMS = ['424B5', 'S-1', 'S-1/A', 'S-3', 'S-3/A'];
@@ -70,7 +74,7 @@ export const ID = 'SQ24-MEGADEAL';
 export const RULES = { [ID]: { kind: 'buy', family: 'event', hold: TH.hold, block: TH.block,
   name: 'Small company (1-10 USD) signs a dollar-stated deal >= 20% of its market value with a top-100 US-listed company (8-K 1.01); buy the open after the reaction session, hold 10, 25% stop',
   rule: 'see squad24-core.mjs header RULE (the exact text, pre-registered 27 Oct 2026 before any result)' } };
-export const NOT_LISTED = ['SpaceX', 'Space Exploration Technologies', 'OpenAI', 'Anthropic', 'xAI', 'Samsung', 'Bosch', 'Huawei', 'ByteDance', 'TikTok', 'Starlink', 'Waymo', 'Stripe', 'Databricks'];
+export const NOT_LISTED = ['SpaceX before 2026-07-01', 'OpenAI', 'Anthropic', 'xAI', 'Samsung', 'Bosch', 'Huawei', 'ByteDance', 'TikTok', 'Starlink', 'Waymo', 'Stripe', 'Databricks'];
 
 // ---------------- small maths ----------------
 const ok = (x) => typeof x === 'number' && isFinite(x);
@@ -93,10 +97,11 @@ export function topByCap(rows, n = TH.top) { const by = new Map(); for (const r 
   return [...by.values()].sort((a, b) => b.cap - a.cap).slice(0, n); }
 
 // ---------------- the counterparty test ----------------
-const FORM = String.raw`(?:Inc\.?|Incorporated|Corp\.?|Corporation|Co\.?|Company|LLC|L\.L\.C\.|Ltd\.?|Limited|plc|PLC|N\.V\.|S\.A\.|SE|AG|L\.P\.|LP)`;
+const FORM = String.raw`(?:Inc\.?|Incorporated|Corp\.?|Corporation|Co\.?|Company|LLC|L\.L\.C\.|Ltd\.?|Limited|plc|PLC|p\.l\.c\.|N\.V\.|S\.A\.|SE|AG|L\.P\.|LP|A\/S|ASA|S\.p\.A\.|GmbH|AB|Oyj|K\.K\.|Pty)`;
 const FORM_RE = new RegExp('^(?:,?\\s*' + FORM + '(?![A-Za-z0-9])){0,2}', 'i');
 const CONNECT = new Set(['and', 'or', 'of', 'the', 'to', 'for', 'by', 'in', 'with', 'as', 'on', 'under', 'pursuant', 'dated', 'which', 'that', 'its', 'a', 'an', 'at', 'from', 'is', 'will', 'has', 'have', 'was', 'were', 'be', 'shall', 'may']);
 export const DEAL_RE = /agreement|contract|\border|supply|licen[sc]e|collaborat|partnership|statement of work|warrant/i;
+export const FIN_RE = /credit agreement|credit facility|loan agreement|loan and security|term loan|revolving|indenture|underwrit|sales agent|equity distribution|at[- ]the[- ]market|administrative agent|collateral agent|\blenders?\b/i;
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // does the text right after an alias end the name? -> boolean
 export function nameEnds(rest) { let r = String(rest || ''); if (/^[A-Za-z0-9]/.test(r)) return false;
@@ -118,7 +123,7 @@ function matcherOf(companies) { const key = (companies || []).map(c => c.cik + '
   if (MATCHERS.size > 200) MATCHERS.clear(); MATCHERS.set(key, m); return m; }
 export function counterpartyMatch(text, companies) { const t = String(text || ''), M = matcherOf(companies); if (!M.re) return null; const re = new RegExp(M.re.source, 'g'); let m;
   while ((m = re.exec(t))) { const form = m[0], end = m.index + form.length, who = M.forms.get(form); if (!who) continue; if (!nameEnds(t.slice(end, end + 80))) continue;
-    const s = sentenceAt(t, m.index, form.length); if (!DEAL_RE.test(s)) continue; return { cik: who.cik, alias: who.alias, at: m.index, sentence: s.slice(0, 500) }; }
+    const s = sentenceAt(t, m.index, form.length); if (!DEAL_RE.test(s) || FIN_RE.test(s)) continue; return { cik: who.cik, alias: who.alias, at: m.index, sentence: s.slice(0, 500) }; }
   return null; }
 
 // ---------------- the dollar value ----------------
@@ -183,7 +188,7 @@ export function boardStats(rows) { const net = rows.map(r => capG(r.g) - COST);
 // ---------------- library (before any run; idempotent, append only) ----------------
 export function preRegister(LB, date = '2026-10-27') { if (!LB || !Array.isArray(LB.strategies)) return 0; if (LB.strategies.some(x => x.id === ID)) return 0;
   LB.strategies.push({ id: ID, family: 'Squad 24 (deal with a giant)', name: RULES[ID].name, agent: 'squad24', kind: 'buy', hold: TH.hold,
-    explain: 'RULE (squad24-core.mjs header, exact): an 8-K listing Item 1.01 whose main document / EX-99 / EX-10 names, as a counterparty in a deal sentence, a company on a FROZEN list of the 100 largest US-listed companies by market value at the latest quarter start (data/squad24-megacaps.json, CIK + legal name + up to 2 hand-written aliases, SHA-256 in the header; non-listed namesakes such as SpaceX excluded; an alias followed by an extra name word such as a country or "International Ltd" fails). Filing session from the SEC acceptance time (sec-time.mjs: before 16:00 = that day, after = next session). At the close of that session: close 1-10 USD, 20-day average traded value >= 0.5M USD (dead stocks included); no 15%+ close-to-close move up or down in the 21 sessions before; no reverse split in 60 days; no 424B5 / S-1 / S-1/A / S-3 / S-3/A in the 20 sessions to the filing session. The filing must state a dollar value and the LARGEST stated value (not per share / unit; trillions ignored) must be >= 20% of the market value at that close (shares known 30 days earlier). Buy the next open; sell the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way slippage version (an extra gate). Yardsticks: the average 1-10 USD stock on the same days; the same stock on other days; per year vs SPY. Information: the average liquid stock; a first-open variant.',
+    explain: 'RULE (squad24-core.mjs header, exact): an 8-K listing Item 1.01 whose main document / EX-99 / EX-10 names, as a counterparty in a deal sentence that is not a financing sentence (credit / loan / underwriting / sales-agent / lender wording), a company on a FROZEN list of the 100 largest US-listed companies by market value at the latest quarter start (data/squad24-megacaps.json, CIK + legal name + up to 2 hand-written aliases, SHA-256 in the header; never-listed namesakes such as OpenAI excluded, SpaceX only after its own 2026 listing; an alias followed by an extra name word such as a country or "International Ltd" fails). Filing session from the SEC acceptance time (sec-time.mjs: before 16:00 = that day, after = next session). At the close of that session: close 1-10 USD, 20-day average traded value >= 0.5M USD (dead stocks included); no 15%+ close-to-close move up or down in the 21 sessions before; no reverse split in 60 days; no 424B5 / S-1 / S-1/A / S-3 / S-3/A in the 20 sessions to the filing session. The filing must state a dollar value and the LARGEST stated value (not per share / unit; trillions ignored) must be >= 20% of the market value at that close (shares known 30 days earlier). Buy the next open; sell the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way slippage version (an extra gate). Yardsticks: the average 1-10 USD stock on the same days; the same stock on other days; per year vs SPY. Information: the average liquid stock; a first-open variant.',
     status: 'pre-registered ' + date + ' (squad 24 lab); 5-year one-shot pending', sources: ['https://efts.sec.gov/LATEST/search-index', 'https://www.sec.gov/Archives/edgar/full-index/'],
     libraryCheck: 'SQ21-CONTRACT10D (any named counterparty, bought 1-10 sessions later: rejected), DEC2-CONTRACT (rejected), CAT-HUNTER-SUB5 and same-day jump chasing (squad 19: rejected). New: the counterparty must be a top-100 US-listed company, a stated dollar value >= 20% of the filer\'s market value, a quiet stock before, entry the open after the reaction session, 10-session hold.',
     note: 'The owner\'s +93% day (a small company announcing a deal with a big company; possibly SOUN, Feb 2024). Pre-registered BEFORE any run (one version); run ONCE by squad24-lab.mjs, first complete verdict frozen in data/squad24-lab.json firstRun; forward paper lane from 28 Oct 2026.' });
