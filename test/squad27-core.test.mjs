@@ -30,6 +30,7 @@ test('text: entities and curly quotes; dates', () => {
   assert.deepEqual(datesIn('on MARCH 3, 2022 and Sept. 9, 2021').map(x => x.d), ['2022-03-03', '2021-09-09']);
 });
 
+const ORIG0 = { acc: 'a0', date: '2022-02-01', expiry: '2022-03-03' };
 test('offer fields: Dutch range, ticker, odd lot, expiry, conditions', () => {
   const f = offerFields(OFFER, '2022-02-01');
   assert.equal(f.type, 'dutch'); assert.equal(f.min, 24.5); assert.equal(f.max, 27); assert.equal(f.ticker, 'ACME'); assert.equal(f.security, 'common');
@@ -38,6 +39,8 @@ test('offer fields: Dutch range, ticker, odd lot, expiry, conditions', () => {
   assert.deepEqual(priceTerms('at a price of $12.50 per Share, net to the seller in cash'), { type: 'fixed', min: 12.5, max: 12.5 });
   assert.deepEqual(priceTerms('at a price not less than $10.00 nor greater than $11.50 per Share'), { type: 'dutch', min: 10, max: 11.5 });
   assert.equal(priceTerms('at a price equal to 98% of the net asset value per Share').type, 'nav');
+  assert.equal(priceTerms('at a price not greater than Cdn$94.00 nor less than Cdn$78.50 per Share').type, 'foreign');
+  assert.equal(timeline({ ...ORIG0, type: 'fixed', min: 6, max: 6 }, [{ date: '2022-03-04', fields: { accepted: true, finalPrice: 600 } }], '2026-10-27').finalPrice, 6, 'insane price then fixed fallback');
   assert.equal(tickerOf('listed on the NYSE under the symbol "XY.B"'), 'XY.B'); assert.equal(tickerOf('a fund not listed on any exchange'), null);
   assert.equal(tickerOf('trades under the symbol "ZZZ" on the New York Stock Exchange'), 'ZZZ');
   assert.equal(securityOf('OFFER TO EXCHANGE ELIGIBLE OPTIONS FOR NEW OPTIONS'), 'other'); assert.equal(securityOf('Offer to purchase for cash up to $100 million of its 2.5% Convertible Senior Notes due 2026'), 'other');

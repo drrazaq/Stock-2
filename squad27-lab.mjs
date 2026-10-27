@@ -27,10 +27,10 @@ log('squad 27 lab; today ' + TODAY + '; frozen already: ' + (Object.keys(FROZEN)
 
 // ================= 1. NETWORK =================
 let lastSec = 0, secReq = 0, secFail = 0, bytes = 0; const SECFAILS = [];
-async function sec(url, kind = 'text') { for (let a = 0; a < 4; a++) { const w = (local(env.SEC_BASE) ? 0 : 125) - (Date.now() - lastSec); if (w > 0) await sleep(w); lastSec = Date.now(); secReq++;
+const CODES = {}; async function sec(url, kind = 'text') { for (let a = 0; a < 8; a++) { const w = (local(env.SEC_BASE) ? 0 : 150) - (Date.now() - lastSec); if (w > 0) await sleep(w); lastSec = Date.now(); secReq++;
     try { const r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept-Encoding': 'gzip, deflate' }, signal: AbortSignal.timeout(120000) }); if (r.status === 404 || r.status === 410) return null;
-      if (r.status === 429 || r.status === 403 || r.status >= 500) { await sleep(4000 * (a + 1)); continue; } if (!r.ok) { secFail++; if (SECFAILS.length < 20) SECFAILS.push('HTTP ' + r.status + ' ' + url.slice(0, 160)); return undefined; }
-      if (kind === 'buf') { const b = Buffer.from(await r.arrayBuffer()); bytes += b.length; return b; } const txt = await r.text(); bytes += txt.length; return txt; } catch (e) { await sleep(2000 * (a + 1)); } }
+      CODES[r.status] = (CODES[r.status] || 0) + 1; if (r.status === 429 || r.status === 403 || r.status >= 500) { await sleep(Math.min(60000, 10000 * (a + 1))); continue; } if (!r.ok) { secFail++; if (SECFAILS.length < 20) SECFAILS.push('HTTP ' + r.status + ' ' + url.slice(0, 160)); return undefined; }
+      if (kind === 'buf') { const b = Buffer.from(await r.arrayBuffer()); bytes += b.length; return b; } const txt = await r.text(); bytes += txt.length; return txt; } catch (e) { CODES[e.name] = (CODES[e.name] || 0) + 1; await sleep(3000 * (a + 1)); } }
   secFail++; if (SECFAILS.length < 20) SECFAILS.push('gave up ' + url.slice(0, 160)); return undefined; }
 let alpReq = 0, mvReq = 0;
 async function alp(path) { if (!env.ALPACA_KEY) return null; for (let a = 0; a < 4; a++) { alpReq++; try { const r = await fetch(AD + path, { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET }, signal: AbortSignal.timeout(60000) });
@@ -62,9 +62,9 @@ async function readDocs(row, pick) { const idx = await sec(SEC + indexUrl(row.ci
   const list = Array.isArray(chosen) ? chosen : [chosen.doc]; let text = '', urls = [];
   for (const d of list) { const h = await sec(SEC + d.href); if (h === undefined) return undefined; if (h) { text += '\n' + html2text(h); urls.push(SEC + d.href); } }
   return { text, urls, how: Array.isArray(chosen) ? 'amendment' : chosen.how }; }
-async function doOriginal(row) { const prev = J(ffile(row.acc), null); if (prev) return prev;
+async function doOriginal(row) { const prev = J(ffile(row.acc), null); if (prev && (prev.v === 2 || prev.miss || !prev.ticker)) return prev;   // v2 = currency check; listed records are re-read once
   const r = await readDocs(row, pickOfferDoc); if (r === undefined) return undefined;
-  const rec = r.miss ? { acc: row.acc, miss: r.miss, types: r.types } : { acc: row.acc, how: r.how, url: r.urls[0], ...offerFields(r.text, row.date), chars: r.text.length };
+  const rec = r.miss ? { acc: row.acc, miss: r.miss, types: r.types } : { v: 2, acc: row.acc, how: r.how, url: r.urls[0], ...offerFields(r.text, row.date), chars: r.text.length };
   W(ffile(row.acc), rec); return rec; }
 async function doAmend(row, expiryNow) { const prev = J(ffile(row.acc), null); if (prev && prev.v === 1) return prev;
   const r = await readDocs(row, pickAmendDocs); if (r === undefined) return undefined;
@@ -72,7 +72,7 @@ async function doAmend(row, expiryNow) { const prev = J(ffile(row.acc), null); i
   W(ffile(row.acc), rec); return rec; }
 async function pool(items, fn, n = 4, reserve = 20 * 60e3) { const q = [...items]; await Promise.all(Array.from({ length: n }, async () => { while (q.length && left() > reserve) { const x = q.shift(); try { await fn(x); } catch (e) { log('error ' + (x.acc || '') + ': ' + e.message); } } })); }
 const OREC = new Map(); let done = 0;
-await pool(ORIGS, async (row) => { const r = await doOriginal(row); if (r) OREC.set(row.acc, r); if (++done % 500 === 0) log('originals ' + done + '/' + ORIGS.length + ', SEC ' + secReq + ' requests, ' + (bytes / 1e9).toFixed(2) + ' GB, failures ' + secFail); });
+await pool(ORIGS, async (row) => { const r = await doOriginal(row); if (r) OREC.set(row.acc, r); if (++done % 500 === 0) log('originals ' + done + '/' + ORIGS.length + ', SEC ' + secReq + ' requests, ' + (bytes / 1e9).toFixed(2) + ' GB, failures ' + secFail + ' ' + JSON.stringify(CODES)); });
 ST.origNeed = ORIGS.length; ST.origRead = OREC.size;
 // offers worth following: listed common-stock cash buybacks with a dollar price (amendments are read for these only)
 const OFF = []; for (const row of ORIGS) { const r = OREC.get(row.acc); if (!r || r.miss) continue; OFF.push({ ...row, ...r, date: row.date, cik: row.cik, name: row.name, source: SEC + indexUrl(row.cik, row.acc) }); }
@@ -120,7 +120,7 @@ const headline = { listedOffers: listed.length, oddLotOffers: eligible.length, o
   typeCounts: listed.reduce((m, o) => (m[o.type] = (m[o.type] || 0) + 1, m), {}), oddLotByType: eligible.reduce((m, o) => (m[o.type] = (m[o.type] || 0) + 1, m), {}), dutchActualPriceMissing: TRADES.E2.filter(t => t.profitActual === null).length };
 const results = (how) => ({ actual: byHalf(TRADES[how], 'profitActual'), min: byHalf(TRADES[how], 'profitMin'), skips: SKIPS[how], halalOk: summarize(TRADES[how].filter(t => t.halal === 'ok'), 'profitActual'), haveHalalMark: TRADES[how].filter(t => t.halal !== 'unknown').length });
 const COMPL = isComplete(ST), VER = (how) => { const R = results(how), a = R.actual.all; return { verdict: !a.n ? 'TOO FEW' : a.n < 20 ? 'TOO FEW (information only)' : 'INFORMATION ONLY (not a scan rule)', results: R, headline, years,
-    assumptions: { shares: SHARES, buyCost: BUY_COST, commissionUSD: COMMISSION + ' (ASSUMED: scan.mjs default ZAD stock fee)', corporateActionFeeUSD: CA_FEE + ' (ASSUMED: ZAD fee unknown)', cashDate: PAY_LAG + ' sessions after the final expiry (ASSUMED)', split: SPLIT }, data: { ...ST, complete: COMPL.ok, why: COMPL.why, secRequests: secReq, secFailures: secFail, failSample: SECFAILS.slice(0, 5) } }; };
+    assumptions: { shares: SHARES, buyCost: BUY_COST, commissionUSD: COMMISSION + ' (ASSUMED: scan.mjs default ZAD stock fee)', corporateActionFeeUSD: CA_FEE + ' (ASSUMED: ZAD fee unknown)', cashDate: PAY_LAG + ' sessions after the final expiry (ASSUMED)', split: SPLIT }, data: { ...ST, complete: COMPL.ok, why: COMPL.why, secRequests: secReq, secFailures: secFail, httpCodes: CODES, failSample: SECFAILS.slice(0, 5) } }; };
 const RES = { [ID]: VER('E2'), [ID_A1]: VER('A1') };
 const firstRun = COMPL.ok ? freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), ...r }]))) : FROZEN;
 

@@ -57,6 +57,11 @@
 //   daily aggregates unadjusted as the fallback for symbols Alpaca lacks). Missing prices = a data gap (counted, never filled).
 // COMPLETE (freeze rule): every quarter index read; >= 97% of originals read; >= 97% of linked amendments read; prices for >= 90% of
 //   eligible odd-lot offers. Then firstRun is frozen once and never re-run.
+// DATA-INTEGRITY FIXES (27 Oct 2026, after the first COLLECTING run, before any freeze; written down here, not tuned on profit):
+//   (1) CURRENCY: an offer whose first 12,000 characters price it in Canadian dollars (Cdn$ / C$ / CAD / "Canadian dollars") is
+//       type 'foreign' and excluded: its price cannot be compared with the US-dollar close (Imperial Oil 2023: C$78.50 vs a 54.98 USD
+//       close gave a false +2,257 USD). (2) ORDER: the final-price sanity check (0.5x min .. 2x max) now runs BEFORE a completed
+//       fixed-price offer falls back to its fixed price (a fixed offer had lost its price). Same rule otherwise.
 // This is NOT a scan.mjs rule: it is a paper/information lane. Nothing here becomes a TRY SMALL buy.
 
 export const ID = 'SQ27-ODDLOT', ID_A1 = 'SQ27-ODDLOT-A1';
@@ -121,6 +126,7 @@ const R_MINMAX = new RegExp('not (?:less|lower) than ' + P + '\\s*(?:per share\\
 const R_RANGE = new RegExp('(?:price|range|prices) of ' + P + '\\s*(?:to|and)\\s*' + P + '\\s*per (?:share|Share)', 'i');
 const R_FIXED = new RegExp('(?:purchase price|price|cash) of ' + P + '\\s*per (?:share|Share)', 'i'), R_FIXED2 = new RegExp('at ' + P + '\\s*per (?:share|Share),? net to the seller', 'i');
 export function priceTerms(text) { const t = String(text).slice(0, 12000).replace(/\n/g, ' '); let m;
+  if (/Cdn\s?\$|\bC\$|\bCAD\b|Canadian dollars/.test(t)) return { type: 'foreign', min: null, max: null };
   if ((m = t.match(R_MAXMIN))) { const max = num(m[1]), min = num(m[2]); if (min > 0 && max >= min) return { type: 'dutch', min, max }; }
   if ((m = t.match(R_MINMAX))) { const min = num(m[1]), max = num(m[2]); if (min > 0 && max >= min) return { type: 'dutch', min, max }; }
   if ((m = t.match(R_RANGE))) { const a = num(m[1]), b = num(m[2]); if (a > 0 && b > a) return { type: 'dutch', min: a, max: b }; }
@@ -167,8 +173,8 @@ export function timeline(orig, amends, today) { const hist = [{ from: orig.date,
     if (f.accepted) accepted = true;
     if (f.finalPrice !== null && f.finalPrice !== undefined && (!f.preliminary || finalPrice === null)) { finalPrice = f.finalPrice; finalQuote = f.finalQuote; } }
   if (termDate) status = 'terminated'; else if (accepted || finalPrice !== null) status = 'completed'; else if (exp && exp >= today) status = 'open'; else status = 'unknown';
-  if (status === 'completed' && finalPrice === null && orig.type === 'fixed') finalPrice = orig.min;
   if (finalPrice !== null && orig.min && (finalPrice < orig.min * 0.5 || finalPrice > (orig.max || orig.min) * 2)) finalPrice = null;   // a sentence about another price (sanity)
+  if (status === 'completed' && finalPrice === null && orig.type === 'fixed') finalPrice = orig.min;
   return { expiryHist: hist, finalExpiry: exp, status, finalPrice, finalQuote, termDate }; }
 export const expiryAsOf = (hist, d) => { let e = hist[0].expiry; for (const h of hist) if (h.from <= d && h.expiry) e = h.expiry; return e; };
 
