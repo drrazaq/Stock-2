@@ -149,6 +149,7 @@ const SOURCES = { lazy: ['https://onlinelibrary.wiley.com/doi/10.1111/jofi.12885
 const TENDER_NOTE = 'Daily researcher 2026-10-26: part 1 of C-SPEC1 (queued 23 Oct from the owner\'s sources), Mitchell and Pulvino (2001, JF) risk arbitrage. New information source (SEC Schedule TO-T filings and their offer price), not a chart shape. E11 ("not for this system") was never tested; this is its first test. Run once on 5 years incl. dead stocks (delisted targets keep their last close) with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 27 Oct 2026. C-SPEC1 part 2 (index additions) is unchanged.';
 export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
   for (const id of IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    if (R.family === 'isc') { ch += preRegisterIsc(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -192,3 +193,59 @@ export function tenderDataRule({ idxNeed, idxRead, filNeed, filRead, subjPriced,
   if (!(r.read >= TO_DATA.read)) why.push('SC TO-T filings read ' + (r.read * 100).toFixed(1) + '% (95% needed)');
   if (!(r.priced >= TO_DATA.priced)) why.push('offer price found ' + (r.priced * 100).toFixed(1) + '% of priced-target filings (50% needed)');
   return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), why: why.join('; ') || null }; }
+
+// ---------------- IDEA 3 (pre-registered 27 Oct 2026, before any run): INFORMATION-SHOCK CONTINUATION (C-ISC1) ----------------
+// Source: Jiang and Zhu, "Information Shocks and Short-Term Market Underreaction", Journal of Financial Economics 124(1), 2017, 43-64
+// (SSRN 2891216): stocks with a positive price JUMP (a large information shock) keep rising over the next one to three months; the
+// effect goes beyond earnings surprises and is linked to limited attention. C-ISC1 (queued 21 Oct) asks for a version where the jump
+// day is a VERIFIED company-news day, earnings and non-earnings news apart, and it must add something beyond the lottery rule M15 and
+// the jump tests of Squads 19-20 (those were under-5 USD runners and jump filters/exits on other rules; this is liquid stocks, 5 USD+,
+// with an SEC 8-K behind the move). Counter-evidence to watch: later papers report overreaction to OVERNIGHT jumps in recent years.
+// Long only (positive shocks); no short leg.
+// SHOCK on session t (fixed now, no tuning): AR(t) = the stock's close-to-close return minus the average return of all liquid stocks
+// that session (liquid on t-1). SIGMA = the sample standard deviation of the stock's AR over the 60 sessions t-60..t-1 (50+ values
+// needed). SHOCK = AR(t) >= max(4 x SIGMA, +4%). The stock must be liquid (system rule: close 5 USD+, 20-day traded value 5M USD+) on t.
+// NEWS = at least one original form '8-K' (not '8-K/A') of the company whose REACTION SESSION is t: SEC acceptance time (UTC, read on
+// the New York clock with sec-time.mjs) before 16:00 -> that date's session (or the next session if that date is not one); 16:00 or
+// later -> the next session. EARNINGS news = one of those 8-Ks lists item 2.02 (Results of Operations); NON-EARNINGS = none does.
+// ENTRY the open of t+1; EXIT the close `hold` sessions later (hold counts the entry session). One open trade per stock per rule.
+//   RQ-ISC-21     any 8-K news shock, hold 21 sessions (one month: the paper's shortest horizon)
+//   RQ-ISC-63     any 8-K news shock, hold 63 sessions (three months: the paper's longest horizon)
+//   RQ-ISC-E-21   earnings 8-K (item 2.02) shock, hold 21
+//   RQ-ISC-NE-21  non-earnings 8-K shock (no item 2.02), hold 21
+// Judged with the same judge as ideas 1-2 (blocks = hold). Diagnostic only (not a filter): the share of trades with AR >= 15% (M15's
+// lottery jumps).
+// DATA RULE (fixed now): no verdict until (a) 95%+ of the universe companies (liquid at a month start, mapped to an SEC number) have
+// their 8-K list read from data.sec.gov submissions, (b) 85%+ of liquid stock-months map to an SEC company number.
+export const ISC = { k: 4, minAR: 0.04, win: 60, minObs: 50, lottery: 0.15, from: '2021-09-01' };
+export const ISC_DATA = { subs: 0.95, map: 0.85 };
+RULES['RQ-ISC-21'] = { kind: 'buy', hold: 21, side: 'isc', news: 'any', family: 'isc', name: 'Information shock: a jump of 4+ sigma (and 4%+) above the average stock on an 8-K news day, hold 1 month',
+  rule: 'Buy the next open after a session where the stock beat the average liquid stock by max(4 x its own 60-session sigma, 4%) and an original 8-K of the company was accepted for that session (before 16:00 New York, or after the prior close); stock liquid, 5 USD+; sell the close 21 sessions later.' };
+RULES['RQ-ISC-63'] = { kind: 'buy', hold: 63, side: 'isc', news: 'any', family: 'isc', name: 'Information shock on an 8-K news day, hold 3 months', rule: 'As RQ-ISC-21, hold 63 sessions.' };
+RULES['RQ-ISC-E-21'] = { kind: 'buy', hold: 21, side: 'isc', news: 'E', family: 'isc', name: 'Information shock on an EARNINGS 8-K day (item 2.02), hold 1 month', rule: 'As RQ-ISC-21, but one of the session\'s 8-Ks lists item 2.02 (earnings).' };
+RULES['RQ-ISC-NE-21'] = { kind: 'buy', hold: 21, side: 'isc', news: 'NE', family: 'isc', name: 'Information shock on a NON-EARNINGS 8-K day (no item 2.02), hold 1 month', rule: 'As RQ-ISC-21, but none of the session\'s 8-Ks lists item 2.02 (contracts, deals, approvals, guidance, management news...).' };
+export const ISC_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'isc');
+for (const id of ISC_IDS) { if (!IDS.includes(id)) IDS.push(id); if (!BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// sample standard deviation of the finite values; null if fewer than minObs
+export function sdOf(a, minObs = ISC.minObs) { const v = (a || []).filter(ok); if (v.length < minObs) return null; const m = mean(v); return Math.sqrt(v.reduce((s, x) => s + (x - m) * (x - m), 0) / (v.length - 1)); }
+export const isShock = (ar, sigma) => ok(ar) && ok(sigma) && ar >= Math.max(ISC.k * sigma, ISC.minAR);
+// SEC submissions columns -> [[acceptance (ISO, UTC), items string]] for original form '8-K' filed from `from`
+export function eightKs(cols, from = ISC.from) { const out = []; if (!cols || !Array.isArray(cols.form)) return out;
+  for (let j = 0; j < cols.form.length; j++) { if (cols.form[j] !== '8-K') continue; const date = String((cols.filingDate || [])[j] || ''); if (!date || date < from) continue;
+    out.push([String((cols.acceptanceDateTime || [])[j] || date), String((cols.items || [])[j] || '')]); }
+  return out; }
+// the calendar date whose session (or the next session) reacts to a filing: New York clock, 16:00 or later -> the next day
+export function reactionDate(accept, ny) { const x = ny(accept); if (!x) return null; if (!x.hm) return x.d; return x.hm < '16:00' ? x.d : addDays(x.d, 1); }
+export const isEarnings = (items) => /(^|[^0-9.])2\.02([^0-9]|$)/.test(String(items || ''));
+export const newsOk = (id, kinds) => { const n = RULES[id].news; if (!kinds || !kinds.length) return false; const e = kinds.some(Boolean); return n === 'any' ? true : n === 'E' ? e : !e; };
+export function iscDataRule({ ciks, subsOk, liqMonths, liqMapped }) { const r = { subs: ciks ? subsOk / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.subs >= ISC_DATA.subs)) why.push('8-K lists read ' + (r.subs * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= ISC_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), why: why.join('; ') || null }; }
+const ISC_SOURCES = ['https://doi.org/10.1016/j.jfineco.2016.06.011', 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2891216', 'https://ideas.repec.org/a/eee/jfinec/v124y2017i1p43-64.html'];
+const ISC_NOTE = 'Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day\'s move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock\'s own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026.';
+export function preRegisterIsc(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of ISC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-27 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Shock size, sigma window, news window and data rule fixed in research-core.mjs (IDEA 3) before any run.', sources: ISC_SOURCES, hold: R.hold, note: ISC_NOTE }); ch++; }
+  return ch; }
