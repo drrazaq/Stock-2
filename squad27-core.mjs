@@ -62,6 +62,11 @@
 //       type 'foreign' and excluded: its price cannot be compared with the US-dollar close (Imperial Oil 2023: C$78.50 vs a 54.98 USD
 //       close gave a false +2,257 USD). (2) ORDER: the final-price sanity check (0.5x min .. 2x max) now runs BEFORE a completed
 //       fixed-price offer falls back to its fixed price (a fixed offer had lost its price). Same rule otherwise.
+// BUG SQ27-B1 (found 27 Oct 2026 AFTER the first complete run was frozen; firstRun is NOT touched; the fixed run goes to correctedRun):
+//   the ticker reader TICK_A used [^"] between the exchange name and "symbol", so the common wording 'New York Stock Exchange ("NYSE")
+//   under the symbol "GME"' never matched: about 50 listed offers (GameStop, DaVita, MGM, MicroStrategy, Marathon Petroleum, Coca-Cola
+//   Consolidated, ...) were wrongly counted as NOT LISTED. Fix: any characters (max 200) between the exchange name and the symbol, and
+//   an unquoted 'under the symbol XYZ' next to an exchange name. Records read before are re-read once (cache v3). Nothing else changes.
 // This is NOT a scan.mjs rule: it is a paper/information lane. Nothing here becomes a TRY SMALL buy.
 
 export const ID = 'SQ27-ODDLOT', ID_A1 = 'SQ27-ODDLOT-A1';
@@ -119,7 +124,10 @@ export function sentences(text) { return String(text).replace(/\n/g, ' ').split(
 const EXCH = '(?:New York Stock Exchange|NYSE(?: American| Arca| MKT)?|Nasdaq|NASDAQ|Cboe|CBOE|BATS)';
 const TICK_A = new RegExp(EXCH + '[^"]{0,200}?(?:symbol|ticker)s?\\s*(?:of\\s*)?"\\s*([A-Z]{1,5}(?:[.\\-][A-Z]{1,2})?)\\.?\\s*,?"', 'i');
 const TICK_B = /(?:symbol|ticker)s?\s*"\s*([A-Z]{1,5}(?:[.\-][A-Z]{1,2})?)\.?\s*,?"[^.]{0,120}?(?:New York Stock Exchange|NYSE|Nasdaq|NASDAQ|Cboe|CBOE)/i;
-export function tickerOf(text) { const t = String(text); for (const re of [TICK_A, TICK_B]) { const m = t.match(re); if (m && /^[A-Z]/.test(m[1]) && m[1] === m[1].toUpperCase()) return m[1].replace('-', '.'); } return null; }
+const TICK_A2 = new RegExp(EXCH + '[\\s\\S]{0,200}?(?:symbol|ticker)s?\\s*(?:of\\s*)?"\\s*([A-Z]{1,5}(?:[.\\-][A-Z]{1,2})?)\\.?\\s*,?"', 'i');
+const TICK_C = new RegExp(EXCH + '[\\s\\S]{0,200}?(?:under the|trading|ticker) symbol\\s+([A-Z]{1,5}(?:[.\\-][A-Z]{1,2})?)\\b');
+export function tickerOfV1(text) { const t = String(text); for (const re of [TICK_A, TICK_B]) { const m = t.match(re); if (m && /^[A-Z]/.test(m[1]) && m[1] === m[1].toUpperCase()) return m[1].replace('-', '.'); } return null; }
+export function tickerOf(text) { const t = String(text); for (const re of [TICK_A2, TICK_B, TICK_C]) { const m = t.match(re); if (m && /^[A-Z]/.test(m[1]) && m[1] === m[1].toUpperCase()) return m[1].replace('-', '.'); } return null; }
 const P = '\\$\\s*([\\d,]+(?:\\.\\d+)?)';
 const R_MAXMIN = new RegExp('not (?:greater|more|higher) than ' + P + '\\s*(?:per share\\s*)?,?\\s*(?:nor|or|and not|and)\\s*(?:less|lower) than ' + P, 'i');
 const R_MINMAX = new RegExp('not (?:less|lower) than ' + P + '\\s*(?:per share\\s*)?,?\\s*(?:nor|or|and not|and)\\s*(?:greater|more|higher) than ' + P, 'i');

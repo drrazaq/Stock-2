@@ -2,7 +2,7 @@
 // readers, the timeline, the entry, the gate, the payout and the summaries. Run: node --test test/squad27-core.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseMaster, parseIndexHtm, pickOfferDoc, pickAmendDocs, html2text, datesIn, tickerOf, priceTerms, securityOf, oddLotOf, expiryOf, conditionsOf, offerFields,
+import { tickerOfV1, parseMaster, parseIndexHtm, pickOfferDoc, pickAmendDocs, html2text, datesIn, tickerOf, priceTerms, securityOf, oddLotOf, expiryOf, conditionsOf, offerFields,
   amendmentFields, timeline, expiryAsOf, entryIndex, arbTrade, summarize, byHalf, isComplete, halalMark, preRegister, ID, ID_A1 } from '../squad27-core.mjs';
 
 const OFFER = `OFFER TO PURCHASE FOR CASH BY ACME CORP. OF UP TO $50,000,000 OF ITS SHARES OF COMMON STOCK AT A PURCHASE PRICE NOT GREATER THAN $27.00 PER SHARE NOR LESS THAN $24.50 PER SHARE.
@@ -43,6 +43,9 @@ test('offer fields: Dutch range, ticker, odd lot, expiry, conditions', () => {
   assert.equal(timeline({ ...ORIG0, type: 'fixed', min: 6, max: 6 }, [{ date: '2022-03-04', fields: { accepted: true, finalPrice: 600 } }], '2026-10-27').finalPrice, 6, 'insane price then fixed fallback');
   assert.equal(tickerOf('listed on the NYSE under the symbol "XY.B"'), 'XY.B'); assert.equal(tickerOf('a fund not listed on any exchange'), null);
   assert.equal(tickerOf('trades under the symbol "ZZZ" on the New York Stock Exchange'), 'ZZZ');
+  const gme = 'Our Class A Common Stock is listed on the New York Stock Exchange ("NYSE") under the symbol "GME."';
+  assert.equal(tickerOfV1(gme), null, 'bug SQ27-B1 reproduced'); assert.equal(tickerOf(gme), 'GME', 'bug SQ27-B1 fixed');
+  assert.equal(tickerOf('The Shares trade on the Nasdaq Global Select Market under the symbol MSTR.'), 'MSTR');
   assert.equal(securityOf('OFFER TO EXCHANGE ELIGIBLE OPTIONS FOR NEW OPTIONS'), 'other'); assert.equal(securityOf('Offer to purchase for cash up to $100 million of its 2.5% Convertible Senior Notes due 2026'), 'other');
   assert.equal(oddLotOf('Holders of odd lots are welcome.').oddLot, false, 'no priority context');
   assert.equal(expiryOf('The offer will expire on January 1, 2020.', '2022-02-01'), null, 'date out of window');
