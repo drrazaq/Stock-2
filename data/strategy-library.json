@@ -29914,13 +29914,59 @@
    "kind": "buy",
    "hold": 10,
    "explain": "RULE (squad24-core.mjs header, exact): an 8-K listing Item 1.01 whose main document / EX-99 / EX-10 names, as a counterparty in a deal sentence that is not a financing sentence (credit / loan / underwriting / sales-agent / lender wording), a company on a FROZEN list of the 100 largest US-listed companies by market value at the latest quarter start (data/squad24-megacaps.json, CIK + legal name + up to 2 hand-written aliases, SHA-256 in the header; never-listed namesakes such as OpenAI excluded, SpaceX only after its own 2026 listing; an alias followed by an extra name word such as a country or \"International Ltd\" fails). Filing session from the SEC acceptance time (sec-time.mjs: before 16:00 = that day, after = next session). At the close of that session: close 1-10 USD, 20-day average traded value >= 0.5M USD (dead stocks included); no 15%+ close-to-close move up or down in the 21 sessions before; no reverse split in 60 days; no 424B5 / S-1 / S-1/A / S-3 / S-3/A in the 20 sessions to the filing session. The filing must state a dollar value and the LARGEST stated value (not per share / unit; trillions ignored) must be >= 20% of the market value at that close (shares known 30 days earlier). Buy the next open; sell the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way slippage version (an extra gate). Yardsticks: the average 1-10 USD stock on the same days; the same stock on other days; per year vs SPY. Information: the average liquid stock; a first-open variant.",
-   "status": "pre-registered 2026-10-27 (squad 24 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 2026-10-28",
    "sources": [
     "https://efts.sec.gov/LATEST/search-index",
     "https://www.sec.gov/Archives/edgar/full-index/"
    ],
    "libraryCheck": "SQ21-CONTRACT10D (any named counterparty, bought 1-10 sessions later: rejected), DEC2-CONTRACT (rejected), CAT-HUNTER-SUB5 and same-day jump chasing (squad 19: rejected). New: the counterparty must be a top-100 US-listed company, a stated dollar value >= 20% of the filer's market value, a quiet stock before, entry the open after the reaction session, 10-session hold.",
-   "note": "The owner's +93% day (a small company announcing a deal with a big company; possibly SOUN, Feb 2024). Pre-registered BEFORE any run (one version); run ONCE by squad24-lab.mjs, first complete verdict frozen in data/squad24-lab.json firstRun; forward paper lane from 28 Oct 2026."
+   "note": "The owner's +93% day (a small company announcing a deal with a big company; possibly SOUN, Feb 2024). Pre-registered BEFORE any run (one version); run ONCE by squad24-lab.mjs, first complete verdict frozen in data/squad24-lab.json firstRun; forward paper lane from 28 Oct 2026.",
+   "tested": "2026-10-26",
+   "study": "squad24-lab.mjs -> data/squad24-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     108,
+     156
+    ],
+    "avg": [
+     0.0121,
+     -0.0022
+    ],
+    "stress": [
+     0.0081,
+     -0.0062
+    ],
+    "slippage": [
+     -0.0279,
+     -0.0416
+    ],
+    "edge": [
+     0.0112,
+     -0.0077
+    ],
+    "vsOwn": [
+     0.0209,
+     0.0014
+    ],
+    "noTop2": [
+     0.0003,
+     -0.0117
+    ],
+    "tBlock": [
+     0.28,
+     -1.38
+    ],
+    "perYear": [
+     0.3116,
+     -0.057
+    ],
+    "spyPerYear": [
+     0.12,
+     0.2232
+    ],
+    "why": "block t 0.28 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.38 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-2.8%); loses with 2% slippage each way in the newer half (-4.2%); return per year of capital tied up -5.7% not above the S&P 500 on the same days in the newer half (22.3%)"
+   }
   },
   {
    "family": "Squad 24 (deal with a giant)",

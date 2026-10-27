@@ -1,24 +1,11 @@
 [0s] squad 24 lab, mode RUN; frozen already: none
 [0s] library: 0 squad 24 entry written now
-[7s] splits after the cache: 2 repaired
-[7s] window 2021-10-12..2026-10-26 (1265 sessions, 8599 stocks)
-[8s] ticker map: {"ok":true,"quarters":23,"ciks":9139}
-[8s] frozen list: 21 quarters, 165 companies, 222 aliases
-[533s] alias months fetched: 1500
-[4525s] full-text search: 21809 8-K item-1.01 filings mention an alias; fetched 12907 alias-months, INCOMPLETE 18
-[4538s] master index: 49869 dilution filings
-[4602s] submissions read: 300
-[4662s] submissions read: 600
-[4718s] submissions read: 900
-[4766s] submissions read: 1200
-[4821s] submissions read: 1500
-[4868s] submissions read: 1800
-[4917s] submissions read: 2100
-[4976s] submissions read: 2400
-[5025s] submissions read: 2700
-[5076s] submissions read: 3000
-[5119s] submissions read: 3300
-[5168s] submissions read: 3600
-[5177s] funnel {"filings":21809,"filerIsMegacap":572,"noStock":4454,"prefilter":3611,"read":3611,"notRead":0,"noAccept":0,"notItem101":0,"filters":{"close":759,"prior 15% move":898,"traded value":121,"dilution filing":182,"reverse split":10,"missing bar":20},"noCounterparty":1282,"noUsd":17,"noShares":0,"small":50,"events":272} | CASE COUNTS (before one-open): older 109, newer 163
-[5177s] - SQ24-MEGADEAL: NOT RUN (data)
-SQUAD 24 LAB 2021-10-12 to 2026-10-26 | cases older 109 newer 163 |  | price ok, efts MISSING, master ok, tickerMap ok, docs ok, megacaps ok
+[6s] splits after the cache: 2 repaired
+[6s] window 2021-10-12..2026-10-26 (1265 sessions, 8599 stocks)
+[7s] ticker map: {"ok":true,"quarters":23,"ciks":9139}
+[7s] frozen list: 21 quarters, 165 companies, 222 aliases
+[70s] full-text search: 21810 8-K item-1.01 filings mention an alias; fetched 240 alias-months
+[71s] master index: 49869 dilution filings
+[71s] funnel {"filings":21810,"filerIsMegacap":572,"noStock":4454,"prefilter":3611,"read":0,"notRead":0,"noAccept":0,"notItem101":0,"filters":{"close":759,"prior 15% move":898,"traded value":121,"dilution filing":182,"reverse split":10,"missing bar":20},"noCounterparty":1282,"noUsd":17,"noShares":0,"small":50,"events":272} | CASE COUNTS (before one-open): older 109, newer 163
+[72s] - SQ24-MEGADEAL: REJECTED | older 108 (47bl) avg +1.2% stress +0.8% edge +1.1% own +2.1% no2 +0.0% tBlock 0.28 | newer 156 (68bl) avg -0.2% stress -0.6% edge -0.8% own +0.1% no2 -1.2% tBlock -1.38 | slippage -2.8% / -4.2% | block t 0.28 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.38 under 2.5 in the newer half; loses with 2% slippage e
+SQUAD 24 LAB 2021-10-12 to 2026-10-26 | cases older 109 newer 163 | SQ24-MEGADEAL REJECTED | price ok, efts ok, master ok, tickerMap ok, docs ok, megacaps ok
