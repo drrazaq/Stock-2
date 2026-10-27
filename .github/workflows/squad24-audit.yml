@@ -1,0 +1,51 @@
+name: Squad 24 audit evidence
+# STOCK-2 LABEL AUDIT (27 Oct 2026): re-reads the 272 frozen SQ24-MEGADEAL filings from EDGAR and runs the FIXED extractor
+# (squad24-audit-core.mjs, pre-registered) -> data/squad24-audit-evidence.json for the blind hand review. EVIDENCE ONLY: no price cache is
+# restored, no return is computed. The corrected re-runs themselves are MODE=AUDIT of squad24-lab.mjs / squad25-lab.mjs (their own workflows).
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['run-squad24-audit-now.txt']
+permissions:
+  contents: write
+concurrency: squad24-audit
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad24-audit-cache
+          key: squad24-audit-cache-${{ github.run_id }}
+          restore-keys: squad24-audit-cache-
+      - shell: bash
+        run: |
+          set -o pipefail
+          node squad24-audit-extract.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad24-audit-cache
+          key: squad24-audit-cache-${{ github.run_id }}
+      - if: success()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          cp data/squad24-audit-evidence.json "$RUNNER_TEMP/ev.json"
+          git reset -q --hard && git pull -q --rebase
+          cp "$RUNNER_TEMP/ev.json" data/squad24-audit-evidence.json
+          git add data/squad24-audit-evidence.json
+          git diff --cached --quiet || git commit -m "squad 24 audit evidence $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the evidence"; exit 1; }
