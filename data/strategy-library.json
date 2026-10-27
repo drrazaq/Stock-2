@@ -30302,7 +30302,7 @@
    "family": "Squad 26 (first minutes after a deal with a giant)",
    "agent": "squad26",
    "kind": "buy",
-   "status": "pre-registered 2026-10-27 (squad 26 lab); one-shot pending",
+   "status": "tested: rejected",
    "sources": [
     "https://efts.sec.gov/LATEST/search-index",
     "https://data.alpaca.markets (SIP 1-minute bars)"
@@ -30312,13 +30312,55 @@
    "hold": 3,
    "name": "First minute after an 8-K 1.01 naming a top-100 US-listed company as a commercial counterparty (1-10 USD filer): buy the first SIP minute >= 1 min after the SEC acceptance at its high + 1%/3% slippage, sell the close of session 3",
    "explain": "RULE (squad26-core.mjs header, exact): 8-K Item 1.01 (2021-11-15..2026-10-23) whose main document / EX-99 / EX-10 names a company on Squad 24's frozen top-100 list (SHA-256 checked; banks, brokers, asset managers and insurers excluded) in a sentence with a commercial term (supply / purchase / license / collaboration / customer / order / partnership / distribution / hosting / commercial ...) and with no financing term in that sentence or 300 characters around it; EX-10 financing documents skipped whole. Prior raw close 1-10 USD, 20-day traded value >= 0.5M USD. Entry: the first Alpaca SIP 1-minute bar starting >= 60 s after the EDGAR acceptance (within 30 min, else skipped), at its HIGH x 1.01 (regular) or x 1.03 (extended hours). Exit: close of session 3 (session 1 = the first close after the entry) x 0.99; then 0.8% / 1.2% costs. Judged in both halves vs the average 1-10 USD stock over the same window, the same stock on other days, no-top-2, block t, SPY per year. Variants (exits close / 10 sessions + 25% stop, the 8.01 + EX-99.1 press-release set, the next-open control) reported for information only.",
-   "note": "Squad 24 cases: SOUN +65% and WULF +38% came in the first minutes; ELVA -35%. Pre-registered BEFORE any run; run ONCE by squad26-lab.mjs; first complete verdict frozen in data/squad26-lab.json firstRun; forward paper watcher squad26-watch.mjs (record only, no alerts)."
+   "note": "Squad 24 cases: SOUN +65% and WULF +38% came in the first minutes; ELVA -35%. Pre-registered BEFORE any run; run ONCE by squad26-lab.mjs; first complete verdict frozen in data/squad26-lab.json firstRun; forward paper watcher squad26-watch.mjs (record only, no alerts).",
+   "tested": "2026-10-19",
+   "study": "squad26-lab.mjs -> data/squad26-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     108,
+     130
+    ],
+    "avg": [
+     -0.0328,
+     -0.0771
+    ],
+    "stress": [
+     -0.0368,
+     -0.0811
+    ],
+    "edge": [
+     -0.0315,
+     -0.0744
+    ],
+    "vsOwn": [
+     -0.0087,
+     -0.0694
+    ],
+    "noTop2": [
+     -0.0558,
+     -0.0878
+    ],
+    "tBlock": [
+     -1.53,
+     -3.87
+    ],
+    "perYear": [
+     -2.758,
+     -6.4741
+    ],
+    "spyPerYear": [
+     0.1141,
+     0.1416
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.53 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.87 under 2.5 in the newer half; return per year of capital tied up -275.8% not above the S&P 500 on the same days in the older half (11.4%); return per year of capital tied up -647.4% not above the S&P 500 on the same days in the newer half (14.2%)"
+   }
   },
   {
    "family": "Squad 26 (first minutes after a deal with a giant)",
    "agent": "squad26",
    "kind": "variant",
-   "status": "pre-registered 2026-10-27 (squad 26 lab); one-shot pending",
+   "status": "tested: rejected (information only; cannot qualify)",
    "sources": [
     "https://efts.sec.gov/LATEST/search-index",
     "https://data.alpaca.markets (SIP 1-minute bars)"
@@ -30327,13 +30369,55 @@
    "id": "SQ26-V-801-first-3d",
    "hold": 3,
    "name": "Same, for an 8-K 8.01 (no 1.01) whose EX-99.1 press release names the giant as a commercial counterparty (information only)",
-   "explain": "Pre-registered variant of SQ26-FIRSTMIN (squad26-core.mjs header): items 8.01 and not 1.01, an EX-99.1, the counterparty context test inside the EX-99.1; same entry and exits. Reported for information; cannot qualify from this run."
+   "explain": "Pre-registered variant of SQ26-FIRSTMIN (squad26-core.mjs header): items 8.01 and not 1.01, an EX-99.1, the counterparty context test inside the EX-99.1; same entry and exits. Reported for information; cannot qualify from this run.",
+   "tested": "2026-10-19",
+   "study": "squad26-lab.mjs -> data/squad26-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     112,
+     152
+    ],
+    "avg": [
+     -0.0412,
+     -0.0791
+    ],
+    "stress": [
+     -0.0452,
+     -0.0831
+    ],
+    "edge": [
+     -0.0437,
+     -0.0777
+    ],
+    "vsOwn": [
+     -0.0219,
+     -0.0737
+    ],
+    "noTop2": [
+     -0.0516,
+     -0.087
+    ],
+    "tBlock": [
+     -1.95,
+     -6.72
+    ],
+    "perYear": [
+     -3.4584,
+     -6.6461
+    ],
+    "spyPerYear": [
+     0.0666,
+     0.3201
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.95 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -6.72 under 2.5 in the newer half; return per year of capital tied up -345.8% not above the S&P 500 on the same days in the older half (6.7%); return per year of capital tied up -664.6% not above the S&P 500 on the same days in the newer half (32.0%)"
+   }
   },
   {
    "family": "Squad 26 (first minutes after a deal with a giant)",
    "agent": "squad26",
    "kind": "control",
-   "status": "pre-registered 2026-10-27 (squad 26 lab); one-shot pending",
+   "status": "tested: rejected (information only; cannot qualify)",
    "sources": [
     "https://efts.sec.gov/LATEST/search-index",
     "https://data.alpaca.markets (SIP 1-minute bars)"
@@ -30342,7 +30426,49 @@
    "id": "SQ26-V-101-open-3d",
    "hold": 3,
    "name": "Control: the same 8-K 1.01 events bought at the next regular open (+1% slippage), sold at the close of session 3",
-   "explain": "Pre-registered control of SQ26-FIRSTMIN (squad26-core.mjs header): the open of the first session opening >= 1 minute after the acceptance, x 1.01; the same exits counted from that session. Information only."
+   "explain": "Pre-registered control of SQ26-FIRSTMIN (squad26-core.mjs header): the open of the first session opening >= 1 minute after the acceptance, x 1.01; the same exits counted from that session. Information only.",
+   "tested": "2026-10-19",
+   "study": "squad26-lab.mjs -> data/squad26-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     145,
+     165
+    ],
+    "avg": [
+     -0.0091,
+     -0.0409
+    ],
+    "stress": [
+     -0.0131,
+     -0.0449
+    ],
+    "edge": [
+     -0.0131,
+     -0.0404
+    ],
+    "vsOwn": [
+     0.0013,
+     -0.0336
+    ],
+    "noTop2": [
+     -0.0242,
+     -0.0507
+    ],
+    "tBlock": [
+     -1.03,
+     -2.26
+    ],
+    "perYear": [
+     -0.767,
+     -3.4384
+    ],
+    "spyPerYear": [
+     0.1933,
+     0.2582
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.03 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.26 under 2.5 in the newer half; return per year of capital tied up -76.7% not above the S&P 500 on the same days in the older half (19.3%); return per year of capital tied up -343.8% not above the S&P 500 on the same days in the newer half (25.8%)"
+   }
   },
   {
    "family": "Squad 27 (odd-lot issuer tender arbitrage)",
