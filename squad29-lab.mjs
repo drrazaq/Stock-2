@@ -241,7 +241,10 @@ const verdictOf = (f) => { const r = firstRun[FAMILIES[f].id]; return r ? r.verd
 const flagRow = (e) => ({ sym: e.sym || null, cik: e.cik, company: e.name, flag: e.fam, id: FAMILIES[e.fam].id, what: FAMILIES[e.fam].name, verdict: verdictOf(e.fam), accepted: nyStamp(e.acc || e.fd), filed: e.fd,
   entrySession: e.k < T ? D[e.k] : 'next session', form: e.form, items: e.items || null, url: SEC + '/Archives/edgar/data/' + e.cik + '/' + e.adsh.replace(/-/g, '') + '/' + (e.doc || ''),
   inUniverse3: e.i !== undefined ? inView('v3', e.i, Math.min(e.k, T) - 1) : false, inUniverse1: e.i !== undefined ? inView('v1', e.i, Math.min(e.k, T) - 1) : false, held: e.held || null,
-  text: DOCS[e.adsh + '|' + e.fam] && DOCS[e.adsh + '|' + e.fam][1] || null });
+  text: DOCS[e.adsh + '|' + e.fam] && DOCS[e.adsh + '|' + e.fam][1] || null,
+  // label only (added after the frozen run, changes no verdict): an 8-K that also carries 2.01 (completed acquisition) and 5.01 (change in control) is a
+  // merger closing; its 3.01 delisting is the cash-out, not a distress notice. The frozen F6 result counts these stops as -100% (see the lab note).
+  likelyMergerClose: e.fam === 'F6' && /\b2\.01\b/.test(e.items || '') && /\b5\.01\b/.test(e.items || '') });
 const recent = FLAGS.filter(e => e.ny && e.ny.d >= todayFrom && (e.sym || e.held)).sort((a, b) => String(b.acc).localeCompare(String(a.acc))).map(flagRow);
 const heldFlags = FLAGS.filter(e => e.held && e.fd >= holdFrom).sort((a, b) => String(b.acc).localeCompare(String(a.acc))).map(flagRow);
 const unknownText = CAND.filter(e => e.held && e.fd >= holdFrom && (e.fam === 'F2' || e.fam === 'F3' || e.fam === 'F5') && !((e.adsh + '|' + e.fam) in DOCS)).length;
@@ -252,11 +255,12 @@ W(TODAY, { generatedAt: nowIso, note: 'RECORD ONLY (squad 29): official SEC red-
 log('flags in the last ' + TODAY_SESS + ' sessions: ' + recent.length + '; held stocks with a flag in ' + HOLD_DAYS + ' days: ' + (heldFlags.map(f => f.sym + ' ' + f.flag + ' ' + f.filed).join(', ') || 'none'));
 
 // ================= 8. OUTPUT =================
+const F6CAVEAT = 'Added 27 Oct 2026 after the frozen run (verdicts unchanged): about 30% of F6 (8-K 3.01) events stopped trading within days and were counted -100% as pre-registered, but most are MERGER CLOSINGS (3.01 filed with 2.01 / 3.03 / 5.01: holders were cashed out, not wiped out). In the 400-event sample at 20 sessions, events that kept trading still lagged the average stock by -5.3% (median -4.5%), so a real warning remains, but the frozen -33% / -41% sizes are inflated. flags-today marks likelyMergerClose; the lead should not send a SELL warning for those.';
 if (MODE === 'lab' || !fs.existsSync(OUT)) {
   W(OUT, { generatedAt: nowIso, about: 'Squad 29: do official red-flag SEC filings predict that a stock does worse afterwards? Each family judged ONCE (firstRun); SELL-WARNING families warn holders and block new buys; INFO families are information only. Long only; never an order.',
     preRegistered: 'squad29-core.mjs header (27 Oct 2026, before any result) + data/strategy-library.json SQ29-F1..F6', window: [D[0], D[T - 1]], split: SPLIT, horizons: HS, bar: BAR, data: STATUS, eventCounts: COUNTS,
-    families: verdicts, firstRun, latest: latestBlock({ at: nowIso, mode: MODE, eventCounts: COUNTS }), holdings: HOLDINGS });
-} else { const prev = J(OUT, {}); prev.holdings = HOLDINGS; prev.families = verdicts; prev.latest = latestBlock({ at: nowIso, mode: MODE, eventCounts: COUNTS, data: STATUS }); W(OUT, prev); }
+    families: verdicts, firstRun, caveat: F6CAVEAT, latest: latestBlock({ at: nowIso, mode: MODE, eventCounts: COUNTS }), holdings: HOLDINGS });
+} else { const prev = J(OUT, {}); prev.caveat = F6CAVEAT; prev.holdings = HOLDINGS; prev.families = verdicts; prev.latest = latestBlock({ at: nowIso, mode: MODE, eventCounts: COUNTS, data: STATUS }); W(OUT, prev); }
 if (MODE === 'lab') try { const LB = J(LIB, null); let ch = false;
   for (const f of FAM_KEYS) { const id = FAMILIES[f].id, e = LB && LB.strategies.find(x => x.id === id), r = firstRun[id]; if (!e || !r || e.tested) continue;
     const h = (H, half) => r.results[H] && r.results[H][half] ? pc(r.results[H][half].excess) + ' (t ' + r.results[H][half].blockT + ', n ' + r.results[H][half].n + ')' : 'n/a';

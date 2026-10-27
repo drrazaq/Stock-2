@@ -30501,7 +30501,8 @@
    "tested": "2026-10-27",
    "verdict": "SELL-WARNING",
    "why": "underperformed the average stock by 3%+ with block t <= -2.5 and n >= 20 in both halves over 20 and 60 sessions",
-   "result": "vs the average stock, older / newer: 20 sessions -33.1% (t -18.0832, n 445) / -40.7% (t -20.3951, n 641); 60 sessions -38.5% (t -12.417, n 441) / -50.3% (t -20.0186, n 598)"
+   "result": "vs the average stock, older / newer: 20 sessions -33.1% (t -18.0832, n 445) / -40.7% (t -20.3951, n 641); 60 sessions -38.5% (t -12.417, n 441) / -50.3% (t -20.0186, n 598)",
+   "note": "CAVEAT (27 Oct 2026, after the frozen run; verdict unchanged): ~30% of events stopped trading and counted -100% as pre-registered, but most were merger closings (3.01 with 2.01/5.01: cash-out, not a loss). Events that kept trading still lagged the average stock by -5.3% over 20 sessions (sample of ~280). Do not warn on an 8-K that also carries 2.01 and 5.01 (flags-today likelyMergerClose)."
   },
   {
    "id": "SQ28-SUPDRIFT",
