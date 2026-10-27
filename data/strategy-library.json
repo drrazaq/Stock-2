@@ -30381,7 +30381,7 @@
    "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
    "agent": "squad29",
    "kind": "risk",
-   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "status": "information only (squad 29, frozen 2026-10-27): did not meet the SELL-WARNING bar",
    "sources": [
     "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
     "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
@@ -30392,13 +30392,17 @@
    "id": "SQ29-F1-RESTATE",
    "flag": "F1",
    "hold": 60,
-   "name": "RED FLAG F1: 8-K Item 4.02: past financial statements can no longer be relied on (a restatement)"
+   "name": "RED FLAG F1: 8-K Item 4.02: past financial statements can no longer be relied on (a restatement)",
+   "tested": "2026-10-27",
+   "verdict": "INFO",
+   "why": "20 sessions: older block t -1.1646 not <= -2.5; newer block t -2.228 not <= -2.5 | 60 sessions: newer block t -1.7786 not <= -2.5",
+   "result": "vs the average stock, older / newer: 20 sessions -6.7% (t -1.1646, n 127) / -5.6% (t -2.228, n 91); 60 sessions -10.4% (t -3.7135, n 127) / -7.9% (t -1.7786, n 90)"
   },
   {
    "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
    "agent": "squad29",
    "kind": "risk",
-   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "status": "information only (squad 29, frozen 2026-10-27): did not meet the SELL-WARNING bar",
    "sources": [
     "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
     "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
@@ -30409,13 +30413,17 @@
    "id": "SQ29-F2-AUDRESIGN",
    "flag": "F2",
    "hold": 60,
-   "name": "RED FLAG F2: 8-K Item 4.01: the auditor RESIGNED or declined to stand (not a routine dismissal)"
+   "name": "RED FLAG F2: 8-K Item 4.01: the auditor RESIGNED or declined to stand (not a routine dismissal)",
+   "tested": "2026-10-27",
+   "verdict": "INFO",
+   "why": "20 sessions: older excess -0.1% not <= -3%; older block t -0.4637 not <= -2.5; newer excess -0.4% not <= -3%; newer block t -1.4149 not <= -2.5 | 60 sessions: older excess 2.5% not <= -3%; older block t -0.5933 not <= -2.5",
+   "result": "vs the average stock, older / newer: 20 sessions -0.1% (t -0.4637, n 24) / -0.4% (t -1.4149, n 36); 60 sessions +2.5% (t -0.5933, n 24) / -15.5% (t -2.6184, n 34)"
   },
   {
    "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
    "agent": "squad29",
    "kind": "risk",
-   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "status": "information only (squad 29, frozen 2026-10-27): did not meet the SELL-WARNING bar",
    "sources": [
     "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
     "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
@@ -30426,13 +30434,17 @@
    "id": "SQ29-F3-EXECGONE",
    "flag": "F3",
    "hold": 60,
-   "name": "RED FLAG F3: 8-K Item 5.02: the CEO or CFO leaves within 30 days with no successor named"
+   "name": "RED FLAG F3: 8-K Item 5.02: the CEO or CFO leaves within 30 days with no successor named",
+   "tested": "2026-10-27",
+   "verdict": "INFO",
+   "why": "20 sessions: older excess -0.8% not <= -3%; older block t -1.1085 not <= -2.5; newer excess -1.7% not <= -3% | 60 sessions: older excess -2.0% not <= -3%; older block t -2.4454 not <= -2.5; newer block t -1.4686 not <= -2.5",
+   "result": "vs the average stock, older / newer: 20 sessions -0.8% (t -1.1085, n 627) / -1.7% (t -3.089, n 766); 60 sessions -2.0% (t -2.4454, n 626) / -3.4% (t -1.4686, n 713)"
   },
   {
    "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
    "agent": "squad29",
    "kind": "risk",
-   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "status": "risk rule: SELL WARNING (squad 29, frozen 2026-10-27)",
    "sources": [
     "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
     "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
@@ -30443,13 +30455,17 @@
    "id": "SQ29-F4-LATEFILE",
    "flag": "F4",
    "hold": 60,
-   "name": "RED FLAG F4: NT 10-K / NT 10-Q: the company says its annual or quarterly report will be late"
+   "name": "RED FLAG F4: NT 10-K / NT 10-Q: the company says its annual or quarterly report will be late",
+   "tested": "2026-10-27",
+   "verdict": "SELL-WARNING",
+   "why": "underperformed the average stock by 3%+ with block t <= -2.5 and n >= 20 in both halves over 60 sessions",
+   "result": "vs the average stock, older / newer: 20 sessions -5.2% (t -2.2085, n 333) / -10.5% (t -3.7836, n 380); 60 sessions -12.5% (t -5.7897, n 332) / -16.3% (t -6.2229, n 363)"
   },
   {
    "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
    "agent": "squad29",
    "kind": "risk",
-   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "status": "information only (squad 29, frozen 2026-10-27): did not meet the SELL-WARNING bar",
    "sources": [
     "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
     "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
@@ -30460,13 +30476,17 @@
    "id": "SQ29-F5-GOINGCONCERN",
    "flag": "F5",
    "hold": 60,
-   "name": "RED FLAG F5: First-time going-concern doubt in a 10-K / 10-Q (not in the previous report)"
+   "name": "RED FLAG F5: First-time going-concern doubt in a 10-K / 10-Q (not in the previous report)",
+   "tested": "2026-10-27",
+   "verdict": "INFO",
+   "why": "20 sessions: older block t -1.3056 not <= -2.5; newer excess 2.0% not <= -3%; newer block t 0.5769 not <= -2.5 | 60 sessions: older block t -2.3169 not <= -2.5; newer block t -0.1714 not <= -2.5",
+   "result": "vs the average stock, older / newer: 20 sessions -5.4% (t -1.3056, n 132) / +2.0% (t 0.5769, n 138); 60 sessions -13.6% (t -2.3169, n 131) / -3.2% (t -0.1714, n 132)"
   },
   {
    "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
    "agent": "squad29",
    "kind": "risk",
-   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "status": "risk rule: SELL WARNING (squad 29, frozen 2026-10-27)",
    "sources": [
     "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
     "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
@@ -30477,7 +30497,11 @@
    "id": "SQ29-F6-DELISTNOTICE",
    "flag": "F6",
    "hold": 60,
-   "name": "RED FLAG F6: 8-K Item 3.01: notice of delisting or failure to meet a listing standard"
+   "name": "RED FLAG F6: 8-K Item 3.01: notice of delisting or failure to meet a listing standard",
+   "tested": "2026-10-27",
+   "verdict": "SELL-WARNING",
+   "why": "underperformed the average stock by 3%+ with block t <= -2.5 and n >= 20 in both halves over 20 and 60 sessions",
+   "result": "vs the average stock, older / newer: 20 sessions -33.1% (t -18.0832, n 445) / -40.7% (t -20.3951, n 641); 60 sessions -38.5% (t -12.417, n 441) / -50.3% (t -20.0186, n 598)"
   },
   {
    "id": "SQ28-SUPDRIFT",
