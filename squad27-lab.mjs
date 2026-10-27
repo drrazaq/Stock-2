@@ -63,9 +63,9 @@ async function readDocs(row, pick) { const idx = await sec(SEC + indexUrl(row.ci
   for (const d of list) { const h = await sec(SEC + d.href); if (h === undefined) return undefined; if (h) { text += '\n' + html2text(h); urls.push(SEC + d.href); } }
   return { text, urls, how: Array.isArray(chosen) ? 'amendment' : chosen.how }; }
 async function doOriginal(row) { const prev = J(ffile(row.acc), null); const cand = (x) => !x.ticker && x.security === 'common' && (x.type === 'dutch' || x.type === 'fixed');
-  if (prev && (prev.miss || (prev.v >= 3 && !cand(prev)) || prev.v >= 4 || (!prev.ticker && !cand(prev)))) return prev;   // v2 currency check; v3 = bug SQ27-B1 ticker reader: candidates re-read once
+  if (prev && (prev.miss || (prev.v >= 3 && !cand(prev)) || prev.v >= 5 || (!prev.ticker && !cand(prev)))) return prev;   // v2 currency check; v3 = bug SQ27-B1 ticker reader: candidates re-read once
   const r = await readDocs(row, pickOfferDoc); if (r === undefined) return undefined;
-  const rec = r.miss ? { acc: row.acc, miss: r.miss, types: r.types } : { v: 4, acc: row.acc, how: r.how, url: r.urls[0], ...offerFields(r.text, row.date), chars: r.text.length };
+  const rec = r.miss ? { acc: row.acc, miss: r.miss, types: r.types } : { v: 5, acc: row.acc, how: r.how, url: r.urls[0], ...offerFields(r.text, row.date), chars: r.text.length };
   if (!r.miss && cand(rec)) rec.symbolCtx = [...r.text.matchAll(/symbol|NYSE|Nasdaq|NASDAQ|New York Stock Exchange/g)].slice(0, 3).map(m => r.text.slice(Math.max(0, m.index - 120), m.index + 160).replace(/\s+/g, ' '));
   W(ffile(row.acc), rec); return rec; }
 async function doAmend(row, expiryNow) { const prev = J(ffile(row.acc), null); if (prev && prev.v === 1) return prev;
@@ -126,8 +126,8 @@ const COMPL = isComplete(ST), VER = (how) => { const R = results(how), a = R.act
 const RES = { [ID]: VER('E2'), [ID_A1]: VER('A1') };
 const firstRun = COMPL.ok ? freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), ...r }]))) : FROZEN;
 // corrected run (bug SQ27-B1, squad27-core.mjs header): frozen once, next to firstRun, on the same rule and window
-const BUGS = { bugs: ['SQ27-B1'], explanation: 'Ticker reader missed \'New York Stock Exchange ("NYSE") under the symbol "X"\' (a quote between the exchange and the symbol), so about 50 listed offers were counted as NOT LISTED. Fixed reader; candidates re-read; same rule, costs, entries and window.' };
-const B1_READY = env.SQ27_B1_READY === '1';   // the corrected run is frozen only once the fixed reader is shown to work (a void freeze happened once: see voidedCorrectedRun)
+const BUGS = { bugs: ['SQ27-B1'], explanation: 'Ticker reader missed the symbol in Windows-1252 documents (curly quotes arrived as U+0093/U+0094, not mapped to plain quotes) and when a quote stood between the exchange name and the symbol, so many listed offers (GameStop, DaVita, MGM, MicroStrategy, Marathon Petroleum, Box, Coca-Cola Consolidated, ...) were counted as NOT LISTED. Fixed html2text and reader; candidates re-read; same rule, costs, entries and window.' };
+const B1_READY = env.SQ27_B1_READY === '1' || listed.length > ((FROZEN[ID] && FROZEN[ID].headline && FROZEN[ID].headline.listedOffers) || Infinity);   // frozen only when the fix demonstrably finds more listed offers   // the corrected run is frozen only once the fixed reader is shown to work (a void freeze happened once: see voidedCorrectedRun)
 const correctedRun = B1_READY && COMPL.ok && Object.keys(FROZEN).length ? freezeEach(PREV.correctedRun || {}, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), ...BUGS, ...r }]))) : (PREV.correctedRun || {});
 
 // ================= 6. BOARD (open offers now) =================

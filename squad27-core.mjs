@@ -66,7 +66,10 @@
 //   the ticker reader TICK_A used [^"] between the exchange name and "symbol", so the common wording 'New York Stock Exchange ("NYSE")
 //   under the symbol "GME"' never matched: about 50 listed offers (GameStop, DaVita, MGM, MicroStrategy, Marathon Petroleum, Coca-Cola
 //   Consolidated, ...) were wrongly counted as NOT LISTED. Fix: any characters (max 200) between the exchange name and the symbol, and
-//   an unquoted 'under the symbol XYZ' next to an exchange name. Records read before are re-read once (cache v3). Nothing else changes.
+//   an unquoted 'under the symbol XYZ' next to an exchange name. ROOT CAUSE (found by a diagnostic run, same day): many offers are
+//   Windows-1252 documents whose curly quotes arrive as the C1 characters U+0093 / U+0094 (and U+0091 / U+0092 / U+0096 / U+0097),
+//   which html2text did not turn into plain quotes / dashes, so no quoted symbol matched. html2text now maps them. Candidate records
+//   (no ticker, common shares, a dollar price) are re-read once (cache v5). Nothing else in the rule changes.
 // This is NOT a scan.mjs rule: it is a paper/information lane. Nothing here becomes a TRY SMALL buy.
 
 export const ID = 'SQ27-ODDLOT', ID_A1 = 'SQ27-ODDLOT-A1';
@@ -112,7 +115,7 @@ export function pickAmendDocs(docs) { const h = docs.filter(isHtmlish), out = []
 const ENT = { amp: '&', nbsp: ' ', quot: '"', apos: "'", lt: '<', gt: '>', ldquo: '"', rdquo: '"', lsquo: "'", rsquo: "'", mdash: '-', ndash: '-', sect: '§', hellip: '...' };
 export function html2text(html) { let s = String(html).replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<br\s*\/?>|<\/(p|div|tr|li|h\d|td)>/gi, '\n').replace(/<[^>]+>/g, ' ');
   s = s.replace(/&#(\d+);/g, (m, d) => String.fromCodePoint(+d)).replace(/&#x([0-9a-f]+);/gi, (m, h) => String.fromCodePoint(parseInt(h, 16))).replace(/&([a-z]+);/gi, (m, n) => ENT[n.toLowerCase()] ?? ' ');
-  return s.replace(/[“”„‟″]/g, '"').replace(/[‘’′]/g, "'").replace(/[–—‑‐]/g, '-').replace(/[    ​]/g, ' ')
+  return s.replace(/[\u0093\u0094]/g, '"').replace(/[\u0091\u0092]/g, "'").replace(/[\u0096\u0097]/g, '-').replace(/[“”„‟″]/g, '"').replace(/[‘’′]/g, "'").replace(/[–—‑‐]/g, '-').replace(/[    ​]/g, ' ')
     .replace(/[ \t\r\f\v]+/g, ' ').replace(/\s*\n\s*/g, '\n').replace(/\n{2,}/g, '\n').trim(); }
 export function datesIn(s) { const out = []; for (const m of String(s).matchAll(DATE_RE)) { let mo = m[1].toLowerCase().replace(/\./g, ''); if (mo === 'sept') mo = 'september';
     const k = MONTHS.indexOf(mo), d = +m[2], y = +m[3]; if (k < 0 || d < 1 || d > 31 || y < 1990 || y > 2100) continue;

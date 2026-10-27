@@ -46,6 +46,8 @@ test('offer fields: Dutch range, ticker, odd lot, expiry, conditions', () => {
   const gme = 'Our Class A Common Stock is listed on the New York Stock Exchange ("NYSE") under the symbol "GME."';
   assert.equal(tickerOfV1(gme), null, 'bug SQ27-B1 reproduced'); assert.equal(tickerOf(gme), 'GME', 'bug SQ27-B1 fixed');
   assert.equal(tickerOf('The Shares trade on the Nasdaq Global Select Market under the symbol MSTR.'), 'MSTR');
+  const cp = html2text('The Shares are listed on the New York Stock Exchange (\u0093NYSE\u0094) and trade under the symbol \u0093GME.\u0094 On June 7');
+  assert.equal(tickerOf(cp), 'GME', 'Windows-1252 quotes (root cause of SQ27-B1)');
   assert.equal(securityOf('OFFER TO EXCHANGE ELIGIBLE OPTIONS FOR NEW OPTIONS'), 'other'); assert.equal(securityOf('Offer to purchase for cash up to $100 million of its 2.5% Convertible Senior Notes due 2026'), 'other');
   assert.equal(oddLotOf('Holders of odd lots are welcome.').oddLot, false, 'no priority context');
   assert.equal(expiryOf('The offer will expire on January 1, 2020.', '2022-02-01'), null, 'date out of window');
