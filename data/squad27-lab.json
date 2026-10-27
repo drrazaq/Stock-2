@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-27T12:40:36.264Z",
+ "updated": "2026-10-27T12:48:01.127Z",
  "what": "Squad 27: odd-lot issuer tender arbitrage (SQ27-ODDLOT). Rule = squad27-core.mjs header. Information / paper lane only; not read by scan.mjs.",
  "status": "complete",
  "firstRun": {
@@ -676,9 +676,14 @@
   }
  },
  "correctedRun": {},
+ "voidedCorrectedRun": {
+  "at": "2026-10-27",
+  "reason": "Voided by squad 27: the corrected run of 27 Oct 12:34 UTC was frozen although the fixed ticker reader found no new listed offers (85 before and after): it was a copy of firstRun, not a fix (identical numbers). The corrected run is frozen only after the reader is verified on the real wording.",
+  "frozenAt": "2026-10-27T12:40:35.796Z"
+ },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-27T12:40:36.264Z",
+  "at": "2026-10-27T12:48:01.127Z",
   "results": {
    "SQ27-ODDLOT": {
     "verdict": "TOO FEW (information only)",
@@ -1010,10 +1015,10 @@
      "pxOk": 45,
      "complete": true,
      "why": "complete",
-     "secRequests": 755,
+     "secRequests": 231,
      "secFailures": 1,
      "httpCodes": {
-      "200": 747,
+      "200": 223,
       "403": 8
      },
      "failSample": [
@@ -1334,10 +1339,10 @@
      "pxOk": 45,
      "complete": true,
      "why": "complete",
-     "secRequests": 755,
+     "secRequests": 231,
      "secFailures": 1,
      "httpCodes": {
-      "200": 747,
+      "200": 223,
       "403": 8
      },
      "failSample": [
@@ -1350,10 +1355,5 @@
  "board": {
   "count": 2,
   "file": "data/squad27-board.json"
- },
- "voidedCorrectedRun": {
-  "at": "2026-10-27",
-  "reason": "Voided by squad 27: the corrected run of 27 Oct 12:34 UTC was frozen although the fixed ticker reader found no new listed offers (85 before and after): it was a copy of firstRun, not a fix (identical numbers). The corrected run is frozen only after the reader is verified on the real wording.",
-  "frozenAt": "2026-10-27T12:40:35.796Z"
  }
 }
