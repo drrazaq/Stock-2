@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-27T06:51:01.281Z",
+ "generatedAt": "2026-10-27T06:57:47.314Z",
  "squad": 25,
  "philosophy": "a giant (NVIDIA, Alphabet, Amazon ...) newly shows a stake in a 1 USD+, under-10B company (13F-HR first appearance, or 13D / 13G); bought at the next open (A) or the first minute after the SEC acceptance (B); held 10 sessions",
  "preRegistered": "squad25-core.mjs header (27 Oct 2026, before any run) + data/strategy-library.json SQ25-GIANTSTAKE-A, SQ25-GIANTSTAKE-B, SQ25-GIANTWIDE-A, SQ25-GIANTWIDE-B; frozen giants data/squad25-giants.json sha256 f1d4342104f4a1b0dad7b7195af4b9454354e549f71a50a3df977786963124a3",
@@ -29,20 +29,13 @@
    "ciks": 9139
   },
   "ftd": {
-   "ok": false,
-   "files": 177,
+   "ok": true,
+   "files": 148,
    "missing": [
-    "201910a",
-    "202002a",
-    "202002b",
-    "202003a",
-    "202003b",
-    "202004a",
-    "202004b",
     "202605a",
     "202605b"
    ],
-   "cusips": 74410
+   "cusips": 69086
   },
   "master": {
    "ok": true,
@@ -52,12 +45,13 @@
    "rows": 1156119
   },
   "filings": {
-   "ok": false,
+   "ok": true,
    "giantFilings": 7295,
-   "readNow": 6551,
-   "notRead": 744
+   "readNow": 744,
+   "notRead": 0,
+   "examples": []
   },
-  "dataOk": false
+  "dataOk": true
  },
  "caseCounts": {
   "base": {
@@ -66,50 +60,1282 @@
   },
   "wide": {
    "older": 162,
-   "newer": 72
+   "newer": 71
   }
  },
  "funnel": {
   "f13Filings": 485,
   "f13New": 1682,
-  "dgFilings": 6066,
-  "dgAsSubject": 4652,
-  "dgEvents": 550,
-  "raw": 2232,
-  "before": 1592,
+  "dgFilings": 6810,
+  "dgAsSubject": 5283,
+  "dgEvents": 590,
+  "raw": 2272,
+  "before": 1632,
   "noSym": 28,
   "noPx": 48,
   "giantIssuer": 28,
-  "alreadyPublic": 104,
+  "alreadyPublic": 105,
   "filters": {
    "traded value": 81,
    "market value 10B+": 66,
    "price under 1": 5
   },
-  "events": 280
+  "events": 279
  },
  "standard": "both halves (acceptance session before / from 2024-01-01): > 0 after 0.8% and 1.2%, > 0 with 2% slippage each way, better than the average stock (1 USD+, 0.5M USD+ a day) over the same sessions, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks of 10 sessions, block t >= 2.5, return per year above SPY -> TRADABLE SMALL; block t >= 4.07 -> PROVEN. +300% cap on every gross return (AUD-1).",
- "firstRun": {},
- "fallbackInfo": null,
+ "firstRun": {
+  "SQ25-GIANTSTAKE-A": {
+   "at": "2026-10-27T06:57:47.308Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.47 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.92 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-13.5%); return per year of capital tied up -268.4% not above the S&P 500 on the same days in the older half (-37.7%)",
+   "name": "A named giant (NVIDIA, Alphabet/GV, Amazon, Microsoft, Apple, Meta, Intel, Qualcomm, Salesforce, Cisco, Oracle, Samsung, Sony, Toyota) newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "group": "base",
+   "entry": "A",
+   "caseCounts": {
+    "older": 83,
+    "newer": 32
+   },
+   "results": {
+    "older": {
+     "n": 61,
+     "days": 12,
+     "stocks": 61,
+     "avg": -0.0993,
+     "median": -0.1281,
+     "avgStress": -0.1033,
+     "ctrl": -0.0319,
+     "edge": -0.0295,
+     "tDay": -0.81,
+     "blocks": 10,
+     "tBlock": -0.47,
+     "vsOwn": -0.0255,
+     "ownCovered": 12,
+     "noTop2": -0.1147,
+     "best": 0.4315,
+     "worst": -0.2763,
+     "win": 0.1475
+    },
+    "newer": {
+     "n": 28,
+     "days": 19,
+     "stocks": 28,
+     "avg": 0.0919,
+     "median": -0.0457,
+     "avgStress": 0.0879,
+     "ctrl": -0.0136,
+     "edge": 0.1658,
+     "tDay": 1.02,
+     "blocks": 15,
+     "tBlock": 0.92,
+     "vsOwn": 0.1536,
+     "ownCovered": 19,
+     "noTop2": -0.0485,
+     "best": 2.992,
+     "worst": -0.258,
+     "win": 0.3571
+    },
+    "all": {
+     "n": 89,
+     "days": 31,
+     "stocks": 88,
+     "avg": -0.0392,
+     "median": -0.1168,
+     "avgStress": -0.0432,
+     "ctrl": -0.0261,
+     "edge": 0.0902,
+     "tDay": 0.9,
+     "blocks": 25,
+     "tBlock": 0.85,
+     "vsOwn": 0.0843,
+     "ownCovered": 31,
+     "noTop2": -0.0841,
+     "best": 2.992,
+     "worst": -0.2763,
+     "win": 0.2135
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 61,
+     "avg": -0.135
+    },
+    "newer": {
+     "n": 28,
+     "avg": 0.0502
+    },
+    "all": {
+     "n": 89,
+     "avg": -0.0767
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -2.6835,
+     "spy": -0.3767,
+     "avgStock": -0.6455
+    },
+    "newer": {
+     "rule": 2.4755,
+     "spy": 0.1304,
+     "avgStock": -0.1495
+    }
+   },
+   "underTwoBillion": {
+    "note": "information: market value under 2B USD at the last close before acceptance",
+    "older": {
+     "n": 36,
+     "avg": -0.1192,
+     "stress": -0.1232,
+     "slip": -0.1541,
+     "edge": -0.0871
+    },
+    "newer": {
+     "n": 9,
+     "avg": 0.42,
+     "stress": 0.416,
+     "slip": 0.3685,
+     "edge": 0.4219
+    },
+    "all": {
+     "n": 45,
+     "avg": -0.0114,
+     "stress": -0.0154,
+     "slip": -0.0496,
+     "edge": 0.0147
+    }
+   },
+   "byForm": {
+    "13F-HR": {
+     "n": 74,
+     "avg": -0.0749,
+     "slip": -0.1115,
+     "edge": -0.0496
+    },
+    "SC 13D": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G": {
+     "n": 14,
+     "avg": 0.1486,
+     "slip": 0.1062,
+     "edge": 0.1797
+    },
+    "SC 13D/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G/A": {
+     "n": 1,
+     "avg": -0.0228,
+     "slip": -0.0614,
+     "edge": -0.0078
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 61,
+     "edge": -0.0695
+    },
+    "newer": {
+     "n": 28,
+     "edge": 0.0992
+    },
+    "all": {
+     "n": 89,
+     "edge": -0.0164
+    }
+   },
+   "extHoursFills": 0,
+   "shape": {
+    "trades": 89,
+    "win": 0.2135,
+    "avgWin": 0.3417,
+    "avgLoss": -0.1425,
+    "pf": 0.6507,
+    "exits": {
+     "time": 76,
+     "stop": 13
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "noMinuteFill": 0,
+   "noMinuteWhy": {},
+   "funnel": {
+    "raw": 2272,
+    "before": 1632,
+    "noSym": 28,
+    "noPx": 48,
+    "giantIssuer": 28,
+    "alreadyPublic": 105,
+    "filters": {
+     "traded value": 81,
+     "market value 10B+": 66,
+     "price under 1": 5
+    },
+    "events": 279
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)",
+   "frozenAt": "2026-10-27T06:57:47.308Z"
+  },
+  "SQ25-GIANTSTAKE-B": {
+   "at": "2026-10-27T06:57:47.308Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.56 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.94 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-15.1%); return per year of capital tied up -309.3% not above the S&P 500 on the same days in the older half (-35.1%)",
+   "name": "A named giant newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "group": "base",
+   "entry": "B",
+   "caseCounts": {
+    "older": 83,
+    "newer": 32
+   },
+   "results": {
+    "older": {
+     "n": 61,
+     "days": 12,
+     "stocks": 61,
+     "avg": -0.1161,
+     "median": -0.1364,
+     "avgStress": -0.1201,
+     "ctrl": -0.0312,
+     "edge": -0.0623,
+     "tDay": -2.01,
+     "blocks": 10,
+     "tBlock": -1.56,
+     "vsOwn": -0.0563,
+     "ownCovered": 12,
+     "noTop2": -0.1302,
+     "best": 0.3312,
+     "worst": -0.3071,
+     "win": 0.1475
+    },
+    "newer": {
+     "n": 28,
+     "days": 19,
+     "stocks": 28,
+     "avg": 0.1586,
+     "median": -0.0128,
+     "avgStress": 0.1546,
+     "ctrl": -0.015,
+     "edge": 0.1862,
+     "tDay": 1.11,
+     "blocks": 15,
+     "tBlock": 0.94,
+     "vsOwn": 0.1742,
+     "ownCovered": 19,
+     "noTop2": -0.0258,
+     "best": 2.992,
+     "worst": -0.2874,
+     "win": 0.3571
+    },
+    "all": {
+     "n": 89,
+     "days": 31,
+     "stocks": 88,
+     "avg": -0.0297,
+     "median": -0.1244,
+     "avgStress": -0.0337,
+     "ctrl": -0.0261,
+     "edge": 0.09,
+     "tDay": 0.86,
+     "blocks": 25,
+     "tBlock": 0.75,
+     "vsOwn": 0.085,
+     "ownCovered": 31,
+     "noTop2": -0.0891,
+     "best": 2.992,
+     "worst": -0.3071,
+     "win": 0.2135
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 61,
+     "avg": -0.1511
+    },
+    "newer": {
+     "n": 28,
+     "avg": 0.1184
+    },
+    "all": {
+     "n": 89,
+     "avg": -0.0663
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -3.0932,
+     "spy": -0.3515,
+     "avgStock": -0.6193
+    },
+    "newer": {
+     "rule": 4.0242,
+     "spy": 0.1117,
+     "avgStock": -0.1772
+    }
+   },
+   "underTwoBillion": {
+    "note": "information: market value under 2B USD at the last close before acceptance",
+    "older": {
+     "n": 36,
+     "avg": -0.1343,
+     "stress": -0.1383,
+     "slip": -0.1686,
+     "edge": -0.1033
+    },
+    "newer": {
+     "n": 9,
+     "avg": 0.6507,
+     "stress": 0.6467,
+     "slip": 0.6031,
+     "edge": 0.6525
+    },
+    "all": {
+     "n": 45,
+     "avg": 0.0227,
+     "stress": 0.0187,
+     "slip": -0.0143,
+     "edge": 0.0479
+    }
+   },
+   "byForm": {
+    "13F-HR": {
+     "n": 74,
+     "avg": -0.0598,
+     "slip": -0.097,
+     "edge": -0.0342
+    },
+    "SC 13D": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G": {
+     "n": 14,
+     "avg": 0.129,
+     "slip": 0.0956,
+     "edge": 0.1585
+    },
+    "SC 13D/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G/A": {
+     "n": 1,
+     "avg": -0.0228,
+     "slip": -0.0614,
+     "edge": -0.0078
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 61,
+     "edge": -0.087
+    },
+    "newer": {
+     "n": 28,
+     "edge": 0.1668
+    },
+    "all": {
+     "n": 89,
+     "edge": -0.0072
+    }
+   },
+   "extHoursFills": 68,
+   "shape": {
+    "trades": 89,
+    "win": 0.2135,
+    "avgWin": 0.4175,
+    "avgLoss": -0.1511,
+    "pf": 0.7501,
+    "exits": {
+     "time": 78,
+     "stop": 11
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "noMinuteFill": 0,
+   "noMinuteWhy": {},
+   "funnel": {
+    "raw": 2272,
+    "before": 1632,
+    "noSym": 28,
+    "noPx": 48,
+    "giantIssuer": 28,
+    "alreadyPublic": 105,
+    "filters": {
+     "traded value": 81,
+     "market value 10B+": 66,
+     "price under 1": 5
+    },
+    "events": 279
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)",
+   "frozenAt": "2026-10-27T06:57:47.308Z"
+  }
+ },
+ "fallbackInfo": {
+  "SQ25-GIANTWIDE-A": {
+   "verdict": "INFORMATION ONLY (fallback not needed: SQ25-GIANTSTAKE-A had enough cases)",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.98 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; loses without its 2 best in the newer half; block t 0.84 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-8.4%); loses with 2% slippage each way in the newer half (-4.0%); return per year of capital tied up -122.2% not above the S&P 500 on the same days in the older half (-27.5%); return per year of capital tied up -3.3% not above the S&P 500 on the same days in the newer half (2.3%)",
+   "name": "FALLBACK: a giant (named giants + non-financial top-100 US-listed, point in time) newly shows a stake in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "group": "wide",
+   "entry": "A",
+   "caseCounts": {
+    "older": 162,
+    "newer": 71
+   },
+   "results": {
+    "older": {
+     "n": 136,
+     "days": 49,
+     "stocks": 129,
+     "avg": -0.0467,
+     "median": -0.0799,
+     "avgStress": -0.0507,
+     "ctrl": -0.0221,
+     "edge": -0.0076,
+     "tDay": -0.48,
+     "blocks": 26,
+     "tBlock": -0.98,
+     "vsOwn": 0.0125,
+     "ownCovered": 49,
+     "noTop2": -0.0541,
+     "best": 0.4687,
+     "worst": -0.3118,
+     "win": 0.3382
+    },
+    "newer": {
+     "n": 66,
+     "days": 43,
+     "stocks": 61,
+     "avg": -0.0012,
+     "median": -0.0589,
+     "avgStress": -0.0052,
+     "ctrl": -0.0172,
+     "edge": 0.0577,
+     "tDay": 0.79,
+     "blocks": 26,
+     "tBlock": 0.84,
+     "vsOwn": 0.0586,
+     "ownCovered": 43,
+     "noTop2": -0.0611,
+     "best": 2.992,
+     "worst": -0.258,
+     "win": 0.3485
+    },
+    "all": {
+     "n": 202,
+     "days": 92,
+     "stocks": 185,
+     "avg": -0.0318,
+     "median": -0.0717,
+     "avgStress": -0.0358,
+     "ctrl": -0.0205,
+     "edge": 0.0229,
+     "tDay": 0.65,
+     "blocks": 52,
+     "tBlock": 0.69,
+     "vsOwn": 0.034,
+     "ownCovered": 92,
+     "noTop2": -0.0513,
+     "best": 2.992,
+     "worst": -0.3118,
+     "win": 0.3416
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 136,
+     "avg": -0.0844
+    },
+    "newer": {
+     "n": 66,
+     "avg": -0.0401
+    },
+    "all": {
+     "n": 202,
+     "avg": -0.0699
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -1.2221,
+     "spy": -0.2751,
+     "avgStock": -0.3698
+    },
+    "newer": {
+     "rule": -0.0327,
+     "spy": 0.0229,
+     "avgStock": -0.2532
+    }
+   },
+   "underTwoBillion": {
+    "note": "information: market value under 2B USD at the last close before acceptance",
+    "older": {
+     "n": 94,
+     "avg": -0.0413,
+     "stress": -0.0453,
+     "slip": -0.0793,
+     "edge": -0.0218
+    },
+    "newer": {
+     "n": 34,
+     "avg": 0.0511,
+     "stress": 0.0471,
+     "slip": 0.0108,
+     "edge": 0.0645
+    },
+    "all": {
+     "n": 128,
+     "avg": -0.0168,
+     "stress": -0.0208,
+     "slip": -0.0553,
+     "edge": 0.0011
+    }
+   },
+   "byForm": {
+    "13F-HR": {
+     "n": 136,
+     "avg": -0.0498,
+     "slip": -0.0874,
+     "edge": -0.027
+    },
+    "SC 13D": {
+     "n": 11,
+     "avg": -0.0205,
+     "slip": -0.0592,
+     "edge": -0.026
+    },
+    "SC 13G": {
+     "n": 50,
+     "avg": 0.019,
+     "slip": -0.0205,
+     "edge": 0.0387
+    },
+    "SC 13D/A": {
+     "n": 1,
+     "avg": 0.0153,
+     "slip": -0.0249,
+     "edge": 0.002
+    },
+    "SC 13G/A": {
+     "n": 4,
+     "avg": -0.0989,
+     "slip": -0.1346,
+     "edge": -0.0656
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 136,
+     "edge": -0.0264
+    },
+    "newer": {
+     "n": 66,
+     "edge": 0.0107
+    },
+    "all": {
+     "n": 202,
+     "edge": -0.0143
+    }
+   },
+   "extHoursFills": 0,
+   "shape": {
+    "trades": 202,
+    "win": 0.3416,
+    "avgWin": 0.1757,
+    "avgLoss": -0.1395,
+    "pf": 0.6533,
+    "exits": {
+     "time": 177,
+     "stop": 25
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "noMinuteFill": 0,
+   "noMinuteWhy": {},
+   "funnel": {
+    "raw": 2272,
+    "before": 1632,
+    "noSym": 28,
+    "noPx": 48,
+    "giantIssuer": 28,
+    "alreadyPublic": 105,
+    "filters": {
+     "traded value": 81,
+     "market value 10B+": 66,
+     "price under 1": 5
+    },
+    "events": 279
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)"
+  },
+  "SQ25-GIANTWIDE-B": {
+   "verdict": "INFORMATION ONLY (fallback not needed: SQ25-GIANTSTAKE-B had enough cases)",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.75 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.85 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-10.5%); loses with 2% slippage each way in the newer half (-0.6%); return per year of capital tied up -177.8% not above the S&P 500 on the same days in the older half (-23.1%)",
+   "name": "FALLBACK: a giant (named giants + non-financial top-100 US-listed, point in time) newly shows a stake in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "group": "wide",
+   "entry": "B",
+   "caseCounts": {
+    "older": 162,
+    "newer": 71
+   },
+   "results": {
+    "older": {
+     "n": 134,
+     "days": 47,
+     "stocks": 127,
+     "avg": -0.0682,
+     "median": -0.0937,
+     "avgStress": -0.0722,
+     "ctrl": -0.0206,
+     "edge": -0.0408,
+     "tDay": -2.63,
+     "blocks": 26,
+     "tBlock": -2.75,
+     "vsOwn": -0.0185,
+     "ownCovered": 47,
+     "noTop2": -0.0761,
+     "best": 0.4687,
+     "worst": -0.3078,
+     "win": 0.2985
+    },
+    "newer": {
+     "n": 66,
+     "days": 43,
+     "stocks": 61,
+     "avg": 0.0322,
+     "median": -0.0377,
+     "avgStress": 0.0282,
+     "ctrl": -0.0168,
+     "edge": 0.0662,
+     "tDay": 0.86,
+     "blocks": 26,
+     "tBlock": 0.85,
+     "vsOwn": 0.0679,
+     "ownCovered": 43,
+     "noTop2": -0.0467,
+     "best": 2.992,
+     "worst": -0.2874,
+     "win": 0.3182
+    },
+    "all": {
+     "n": 200,
+     "days": 90,
+     "stocks": 183,
+     "avg": -0.0351,
+     "median": -0.0859,
+     "avgStress": -0.0391,
+     "ctrl": -0.0194,
+     "edge": 0.0103,
+     "tDay": 0.27,
+     "blocks": 52,
+     "tBlock": 0.43,
+     "vsOwn": 0.0227,
+     "ownCovered": 90,
+     "noTop2": -0.0613,
+     "best": 2.992,
+     "worst": -0.3078,
+     "win": 0.305
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 134,
+     "avg": -0.1051
+    },
+    "newer": {
+     "n": 66,
+     "avg": -0.0063
+    },
+    "all": {
+     "n": 200,
+     "avg": -0.0725
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -1.7776,
+     "spy": -0.2314,
+     "avgStock": -0.3295
+    },
+    "newer": {
+     "rule": 0.8451,
+     "spy": 0.0387,
+     "avgStock": -0.2301
+    }
+   },
+   "underTwoBillion": {
+    "note": "information: market value under 2B USD at the last close before acceptance",
+    "older": {
+     "n": 92,
+     "avg": -0.0619,
+     "stress": -0.0659,
+     "slip": -0.099,
+     "edge": -0.0444
+    },
+    "newer": {
+     "n": 34,
+     "avg": 0.1245,
+     "stress": 0.1205,
+     "slip": 0.0847,
+     "edge": 0.1379
+    },
+    "all": {
+     "n": 126,
+     "avg": -0.0116,
+     "stress": -0.0156,
+     "slip": -0.0495,
+     "edge": 0.0048
+    }
+   },
+   "byForm": {
+    "13F-HR": {
+     "n": 135,
+     "avg": -0.0455,
+     "slip": -0.0832,
+     "edge": -0.024
+    },
+    "SC 13D": {
+     "n": 11,
+     "avg": -0.0542,
+     "slip": -0.0916,
+     "edge": -0.0584
+    },
+    "SC 13G": {
+     "n": 49,
+     "avg": 0.004,
+     "slip": -0.0325,
+     "edge": 0.0224
+    },
+    "SC 13D/A": {
+     "n": 1,
+     "avg": 0.0153,
+     "slip": -0.0249,
+     "edge": 0.002
+    },
+    "SC 13G/A": {
+     "n": 4,
+     "avg": -0.124,
+     "slip": -0.1587,
+     "edge": -0.0908
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 134,
+     "edge": -0.0497
+    },
+    "newer": {
+     "n": 66,
+     "edge": 0.0437
+    },
+    "all": {
+     "n": 200,
+     "edge": -0.0189
+    }
+   },
+   "extHoursFills": 135,
+   "shape": {
+    "trades": 200,
+    "win": 0.305,
+    "avgWin": 0.2142,
+    "avgLoss": -0.1445,
+    "pf": 0.6505,
+    "exits": {
+     "time": 177,
+     "stop": 23
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "noMinuteFill": 2,
+   "noMinuteWhy": {
+    "no minute bar": 2
+   },
+   "funnel": {
+    "raw": 2272,
+    "before": 1632,
+    "noSym": 28,
+    "noPx": 48,
+    "giantIssuer": 28,
+    "alreadyPublic": 105,
+    "filters": {
+     "traded value": 81,
+     "market value 10B+": 66,
+     "price under 1": 5
+    },
+    "events": 279
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)"
+  }
+ },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-27T06:51:01.281Z",
+  "at": "2026-10-27T06:57:47.314Z",
   "results": {
    "SQ25-GIANTSTAKE-A": {
-    "verdict": "NOT RUN",
-    "why": "data not complete this run: {\"master\":true,\"tickerMap\":true,\"filings\":{\"ok\":false,\"giantFilings\":7295,\"readNow\":6551,\"notRead\":744},\"ftd\":false}"
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.47 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.92 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-13.5%); return per year of capital tied up -268.4% not above the S&P 500 on the same days in the older half (-37.7%)",
+    "name": "A named giant (NVIDIA, Alphabet/GV, Amazon, Microsoft, Apple, Meta, Intel, Qualcomm, Salesforce, Cisco, Oracle, Samsung, Sony, Toyota) newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
+    "kind": "buy",
+    "family": "event",
+    "hold": 10,
+    "block": 10,
+    "group": "base",
+    "entry": "A",
+    "caseCounts": {
+     "older": 83,
+     "newer": 32
+    },
+    "results": {
+     "older": {
+      "n": 61,
+      "days": 12,
+      "stocks": 61,
+      "avg": -0.0993,
+      "median": -0.1281,
+      "avgStress": -0.1033,
+      "ctrl": -0.0319,
+      "edge": -0.0295,
+      "tDay": -0.81,
+      "blocks": 10,
+      "tBlock": -0.47,
+      "vsOwn": -0.0255,
+      "ownCovered": 12,
+      "noTop2": -0.1147,
+      "best": 0.4315,
+      "worst": -0.2763,
+      "win": 0.1475
+     },
+     "newer": {
+      "n": 28,
+      "days": 19,
+      "stocks": 28,
+      "avg": 0.0919,
+      "median": -0.0457,
+      "avgStress": 0.0879,
+      "ctrl": -0.0136,
+      "edge": 0.1658,
+      "tDay": 1.02,
+      "blocks": 15,
+      "tBlock": 0.92,
+      "vsOwn": 0.1536,
+      "ownCovered": 19,
+      "noTop2": -0.0485,
+      "best": 2.992,
+      "worst": -0.258,
+      "win": 0.3571
+     },
+     "all": {
+      "n": 89,
+      "days": 31,
+      "stocks": 88,
+      "avg": -0.0392,
+      "median": -0.1168,
+      "avgStress": -0.0432,
+      "ctrl": -0.0261,
+      "edge": 0.0902,
+      "tDay": 0.9,
+      "blocks": 25,
+      "tBlock": 0.85,
+      "vsOwn": 0.0843,
+      "ownCovered": 31,
+      "noTop2": -0.0841,
+      "best": 2.992,
+      "worst": -0.2763,
+      "win": 0.2135
+     }
+    },
+    "slippage": {
+     "older": {
+      "n": 61,
+      "avg": -0.135
+     },
+     "newer": {
+      "n": 28,
+      "avg": 0.0502
+     },
+     "all": {
+      "n": 89,
+      "avg": -0.0767
+     }
+    },
+    "perYear": {
+     "older": {
+      "rule": -2.6835,
+      "spy": -0.3767,
+      "avgStock": -0.6455
+     },
+     "newer": {
+      "rule": 2.4755,
+      "spy": 0.1304,
+      "avgStock": -0.1495
+     }
+    },
+    "underTwoBillion": {
+     "note": "information: market value under 2B USD at the last close before acceptance",
+     "older": {
+      "n": 36,
+      "avg": -0.1192,
+      "stress": -0.1232,
+      "slip": -0.1541,
+      "edge": -0.0871
+     },
+     "newer": {
+      "n": 9,
+      "avg": 0.42,
+      "stress": 0.416,
+      "slip": 0.3685,
+      "edge": 0.4219
+     },
+     "all": {
+      "n": 45,
+      "avg": -0.0114,
+      "stress": -0.0154,
+      "slip": -0.0496,
+      "edge": 0.0147
+     }
+    },
+    "byForm": {
+     "13F-HR": {
+      "n": 74,
+      "avg": -0.0749,
+      "slip": -0.1115,
+      "edge": -0.0496
+     },
+     "SC 13D": {
+      "n": 0,
+      "avg": null,
+      "slip": null,
+      "edge": null
+     },
+     "SC 13G": {
+      "n": 14,
+      "avg": 0.1486,
+      "slip": 0.1062,
+      "edge": 0.1797
+     },
+     "SC 13D/A": {
+      "n": 0,
+      "avg": null,
+      "slip": null,
+      "edge": null
+     },
+     "SC 13G/A": {
+      "n": 1,
+      "avg": -0.0228,
+      "slip": -0.0614,
+      "edge": -0.0078
+     }
+    },
+    "liquidYardstick": {
+     "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+     "older": {
+      "n": 61,
+      "edge": -0.0695
+     },
+     "newer": {
+      "n": 28,
+      "edge": 0.0992
+     },
+     "all": {
+      "n": 89,
+      "edge": -0.0164
+     }
+    },
+    "extHoursFills": 0,
+    "shape": {
+     "trades": 89,
+     "win": 0.2135,
+     "avgWin": 0.3417,
+     "avgLoss": -0.1425,
+     "pf": 0.6507,
+     "exits": {
+      "time": 76,
+      "stop": 13
+     }
+    },
+    "artifactsLeftOut": 0,
+    "noYardstick": 0,
+    "noEntryOpen": 0,
+    "noMinuteFill": 0,
+    "noMinuteWhy": {},
+    "funnel": {
+     "raw": 2272,
+     "before": 1632,
+     "noSym": 28,
+     "noPx": 48,
+     "giantIssuer": 28,
+     "alreadyPublic": 105,
+     "filters": {
+      "traded value": 81,
+      "market value 10B+": 66,
+      "price under 1": 5
+     },
+     "events": 279
+    },
+    "split": "2024-01-01",
+    "cost": 0.008,
+    "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)"
    },
    "SQ25-GIANTSTAKE-B": {
-    "verdict": "NOT RUN",
-    "why": "data not complete this run: {\"master\":true,\"tickerMap\":true,\"filings\":{\"ok\":false,\"giantFilings\":7295,\"readNow\":6551,\"notRead\":744},\"ftd\":false}"
-   },
-   "SQ25-GIANTWIDE-A": {
-    "verdict": "NOT RUN",
-    "why": "data not complete this run: {\"master\":true,\"tickerMap\":true,\"filings\":{\"ok\":false,\"giantFilings\":7295,\"readNow\":6551,\"notRead\":744},\"ftd\":false}"
-   },
-   "SQ25-GIANTWIDE-B": {
-    "verdict": "NOT RUN",
-    "why": "data not complete this run: {\"master\":true,\"tickerMap\":true,\"filings\":{\"ok\":false,\"giantFilings\":7295,\"readNow\":6551,\"notRead\":744},\"ftd\":false}"
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.56 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.94 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-15.1%); return per year of capital tied up -309.3% not above the S&P 500 on the same days in the older half (-35.1%)",
+    "name": "A named giant newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
+    "kind": "buy",
+    "family": "event",
+    "hold": 10,
+    "block": 10,
+    "group": "base",
+    "entry": "B",
+    "caseCounts": {
+     "older": 83,
+     "newer": 32
+    },
+    "results": {
+     "older": {
+      "n": 61,
+      "days": 12,
+      "stocks": 61,
+      "avg": -0.1161,
+      "median": -0.1364,
+      "avgStress": -0.1201,
+      "ctrl": -0.0312,
+      "edge": -0.0623,
+      "tDay": -2.01,
+      "blocks": 10,
+      "tBlock": -1.56,
+      "vsOwn": -0.0563,
+      "ownCovered": 12,
+      "noTop2": -0.1302,
+      "best": 0.3312,
+      "worst": -0.3071,
+      "win": 0.1475
+     },
+     "newer": {
+      "n": 28,
+      "days": 19,
+      "stocks": 28,
+      "avg": 0.1586,
+      "median": -0.0128,
+      "avgStress": 0.1546,
+      "ctrl": -0.015,
+      "edge": 0.1862,
+      "tDay": 1.11,
+      "blocks": 15,
+      "tBlock": 0.94,
+      "vsOwn": 0.1742,
+      "ownCovered": 19,
+      "noTop2": -0.0258,
+      "best": 2.992,
+      "worst": -0.2874,
+      "win": 0.3571
+     },
+     "all": {
+      "n": 89,
+      "days": 31,
+      "stocks": 88,
+      "avg": -0.0297,
+      "median": -0.1244,
+      "avgStress": -0.0337,
+      "ctrl": -0.0261,
+      "edge": 0.09,
+      "tDay": 0.86,
+      "blocks": 25,
+      "tBlock": 0.75,
+      "vsOwn": 0.085,
+      "ownCovered": 31,
+      "noTop2": -0.0891,
+      "best": 2.992,
+      "worst": -0.3071,
+      "win": 0.2135
+     }
+    },
+    "slippage": {
+     "older": {
+      "n": 61,
+      "avg": -0.1511
+     },
+     "newer": {
+      "n": 28,
+      "avg": 0.1184
+     },
+     "all": {
+      "n": 89,
+      "avg": -0.0663
+     }
+    },
+    "perYear": {
+     "older": {
+      "rule": -3.0932,
+      "spy": -0.3515,
+      "avgStock": -0.6193
+     },
+     "newer": {
+      "rule": 4.0242,
+      "spy": 0.1117,
+      "avgStock": -0.1772
+     }
+    },
+    "underTwoBillion": {
+     "note": "information: market value under 2B USD at the last close before acceptance",
+     "older": {
+      "n": 36,
+      "avg": -0.1343,
+      "stress": -0.1383,
+      "slip": -0.1686,
+      "edge": -0.1033
+     },
+     "newer": {
+      "n": 9,
+      "avg": 0.6507,
+      "stress": 0.6467,
+      "slip": 0.6031,
+      "edge": 0.6525
+     },
+     "all": {
+      "n": 45,
+      "avg": 0.0227,
+      "stress": 0.0187,
+      "slip": -0.0143,
+      "edge": 0.0479
+     }
+    },
+    "byForm": {
+     "13F-HR": {
+      "n": 74,
+      "avg": -0.0598,
+      "slip": -0.097,
+      "edge": -0.0342
+     },
+     "SC 13D": {
+      "n": 0,
+      "avg": null,
+      "slip": null,
+      "edge": null
+     },
+     "SC 13G": {
+      "n": 14,
+      "avg": 0.129,
+      "slip": 0.0956,
+      "edge": 0.1585
+     },
+     "SC 13D/A": {
+      "n": 0,
+      "avg": null,
+      "slip": null,
+      "edge": null
+     },
+     "SC 13G/A": {
+      "n": 1,
+      "avg": -0.0228,
+      "slip": -0.0614,
+      "edge": -0.0078
+     }
+    },
+    "liquidYardstick": {
+     "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+     "older": {
+      "n": 61,
+      "edge": -0.087
+     },
+     "newer": {
+      "n": 28,
+      "edge": 0.1668
+     },
+     "all": {
+      "n": 89,
+      "edge": -0.0072
+     }
+    },
+    "extHoursFills": 68,
+    "shape": {
+     "trades": 89,
+     "win": 0.2135,
+     "avgWin": 0.4175,
+     "avgLoss": -0.1511,
+     "pf": 0.7501,
+     "exits": {
+      "time": 78,
+      "stop": 11
+     }
+    },
+    "artifactsLeftOut": 0,
+    "noYardstick": 0,
+    "noEntryOpen": 0,
+    "noMinuteFill": 0,
+    "noMinuteWhy": {},
+    "funnel": {
+     "raw": 2272,
+     "before": 1632,
+     "noSym": 28,
+     "noPx": 48,
+     "giantIssuer": 28,
+     "alreadyPublic": 105,
+     "filters": {
+      "traded value": 81,
+      "market value 10B+": 66,
+      "price under 1": 5
+     },
+     "events": 279
+    },
+    "split": "2024-01-01",
+    "cost": 0.008,
+    "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)"
    }
   }
  },
@@ -152,8 +1378,34 @@
     "marketCap": 56049811,
     "under2B": true,
     "base": true,
-    "A": null,
-    "B": null
+    "A": {
+     "buy": "2022-08-10",
+     "fill": "open",
+     "ext": false,
+     "sell": "2022-08-23",
+     "exit": "time",
+     "held": 10,
+     "gross": -0.0792,
+     "net": -0.0872,
+     "netSlip": -0.1233,
+     "avgStock": -0.0312,
+     "sameStock": 0.0024,
+     "spy": -0.0154
+    },
+    "B": {
+     "buy": "2022-08-10",
+     "fill": "2022-08-10 08:43",
+     "ext": true,
+     "sell": "2022-08-23",
+     "exit": "time",
+     "held": 10,
+     "gross": -0.1315,
+     "net": -0.1395,
+     "netSlip": -0.1735,
+     "avgStock": -0.0312,
+     "sameStock": 0.0024,
+     "spy": -0.0154
+    }
    },
    {
     "sym": "SOUN",
@@ -172,8 +1424,34 @@
     "marketCap": 577038526,
     "under2B": true,
     "base": true,
-    "A": null,
-    "B": null
+    "A": {
+     "buy": "2024-02-15",
+     "fill": "open",
+     "ext": false,
+     "sell": "2024-02-29",
+     "exit": "time",
+     "held": 10,
+     "gross": 0.8504,
+     "net": 0.8424,
+     "netSlip": 0.7698,
+     "avgStock": 0.0065,
+     "sameStock": 0.0076,
+     "spy": 0.0176
+    },
+    "B": {
+     "buy": "2024-02-15",
+     "fill": "2024-02-14 16:14",
+     "ext": true,
+     "sell": "2024-02-29",
+     "exit": "time",
+     "held": 10,
+     "gross": 2.1274,
+     "net": 2.1194,
+     "netSlip": 1.9968,
+     "avgStock": 0.0065,
+     "sameStock": 0.0076,
+     "spy": 0.0176
+    }
    }
   ]
  },
@@ -195,8 +1473,34 @@
    "marketCap": 444728132,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2021-12-13",
+    "fill": "open",
+    "ext": false,
+    "sell": "2021-12-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1695,
+    "net": 0.1615,
+    "netSlip": 0.1157,
+    "avgStock": 0.0014,
+    "sameStock": -0.0192,
+    "spy": 0.015
+   },
+   "B": {
+    "buy": "2021-12-13",
+    "fill": "2021-12-13 08:18",
+    "ext": true,
+    "sell": "2021-12-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.22,
+    "net": 0.212,
+    "netSlip": 0.1641,
+    "avgStock": 0.0014,
+    "sameStock": -0.0192,
+    "spy": 0.015
+   }
   },
   {
    "sym": "SNCE",
@@ -215,8 +1519,34 @@
    "marketCap": 2428741684,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2021-12-21",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-01-04",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0353,
+    "net": 0.0273,
+    "netSlip": -0.0133,
+    "avgStock": 0.0313,
+    "sameStock": -0.0947,
+    "spy": 0.0413
+   },
+   "B": {
+    "buy": "2021-12-21",
+    "fill": "2021-12-21 09:30",
+    "ext": false,
+    "sell": "2022-01-04",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0353,
+    "net": 0.0273,
+    "netSlip": -0.0133,
+    "avgStock": 0.0313,
+    "sameStock": -0.0947,
+    "spy": 0.0413
+   }
   },
   {
    "sym": "GLBE",
@@ -235,8 +1565,34 @@
    "marketCap": 7242730494,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-01-07",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-01-20",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.3038,
+    "net": -0.3118,
+    "netSlip": -0.3391,
+    "avgStock": -0.0766,
+    "sameStock": 0.0074,
+    "spy": -0.0453
+   },
+   "B": {
+    "buy": "2022-01-07",
+    "fill": "2022-01-06 19:31",
+    "ext": true,
+    "sell": "2022-01-18",
+    "exit": "stop",
+    "held": 7,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0523,
+    "sameStock": 0.0035,
+    "spy": -0.0245
+   }
   },
   {
    "sym": "NPCE",
@@ -255,8 +1611,34 @@
    "marketCap": 262591226,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-01-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-01-28",
+    "exit": "stop",
+    "held": 10,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0936,
+    "sameStock": 0.0395,
+    "spy": -0.0417
+   },
+   "B": {
+    "buy": "2022-01-14",
+    "fill": "2022-01-14 09:30",
+    "ext": false,
+    "sell": "2022-01-28",
+    "exit": "stop",
+    "held": 10,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0936,
+    "sameStock": 0.0395,
+    "spy": -0.0417
+   }
   },
   {
    "sym": "DNAY",
@@ -275,8 +1657,34 @@
    "marketCap": 216287132,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-02",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.3068,
+    "net": 0.2988,
+    "netSlip": 0.2475,
+    "avgStock": -0.0047,
+    "sameStock": -0.0494,
+    "spy": -0.0206
+   },
+   "B": {
+    "buy": "2022-02-02",
+    "fill": "2022-02-01 17:32",
+    "ext": true,
+    "sell": "2022-02-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2421,
+    "net": 0.2341,
+    "netSlip": 0.1854,
+    "avgStock": -0.0047,
+    "sameStock": -0.0494,
+    "spy": -0.0206
+   }
   },
   {
    "sym": "ISO",
@@ -295,8 +1703,34 @@
    "marketCap": 244637075,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-02",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-15",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0755,
+    "net": -0.0835,
+    "netSlip": -0.1197,
+    "avgStock": -0.0047,
+    "sameStock": -0.1188,
+    "spy": -0.0206
+   },
+   "B": {
+    "buy": "2022-02-02",
+    "fill": "2022-02-02 09:30",
+    "ext": false,
+    "sell": "2022-02-15",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0755,
+    "net": -0.0835,
+    "netSlip": -0.1197,
+    "avgStock": -0.0047,
+    "sameStock": -0.1188,
+    "spy": -0.0206
+   }
   },
   {
    "sym": "IONQ",
@@ -315,8 +1749,34 @@
    "marketCap": 2211676781,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-03",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-16",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.4395,
+    "net": 0.4315,
+    "netSlip": 0.375,
+    "avgStock": 0.0286,
+    "sameStock": -0.0082,
+    "spy": -0.0096
+   },
+   "B": {
+    "buy": "2022-02-03",
+    "fill": "2022-02-02 16:17",
+    "ext": true,
+    "sell": "2022-02-16",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.3392,
+    "net": 0.3312,
+    "netSlip": 0.2787,
+    "avgStock": 0.0286,
+    "sameStock": -0.0082,
+    "spy": -0.0096
+   }
   },
   {
    "sym": "AUR",
@@ -335,8 +1795,34 @@
    "marketCap": 3162918225,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-03",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-16",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1164,
+    "net": 0.1084,
+    "netSlip": 0.0646,
+    "avgStock": 0.0286,
+    "sameStock": -0.0153,
+    "spy": -0.0096
+   },
+   "B": {
+    "buy": "2022-02-03",
+    "fill": "2022-02-02 16:44",
+    "ext": true,
+    "sell": "2022-02-16",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0217,
+    "net": 0.0137,
+    "netSlip": -0.0264,
+    "avgStock": 0.0286,
+    "sameStock": -0.0153,
+    "spy": -0.0096
+   }
   },
   {
    "sym": "ARIS",
@@ -355,7 +1841,20 @@
    "marketCap": 247020577,
    "under2B": true,
    "base": false,
-   "A": null,
+   "A": {
+    "buy": "2022-02-07",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-18",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1128,
+    "net": 0.1048,
+    "netSlip": 0.0612,
+    "avgStock": -0.0144,
+    "sameStock": -0.0177,
+    "spy": -0.034
+   },
    "B": null
   },
   {
@@ -375,8 +1874,34 @@
    "marketCap": 163424780,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-08",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-22",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0337,
+    "net": -0.0417,
+    "netSlip": -0.0795,
+    "avgStock": -0.0345,
+    "sameStock": 0.0136,
+    "spy": -0.0384
+   },
+   "B": {
+    "buy": "2022-02-07",
+    "fill": "2022-02-07 13:42",
+    "ext": false,
+    "sell": "2022-02-18",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0166,
+    "net": -0.0246,
+    "netSlip": -0.0631,
+    "avgStock": -0.0145,
+    "sameStock": 0.0136,
+    "spy": -0.034
+   }
   },
   {
    "sym": "ICVX",
@@ -395,8 +1920,34 @@
    "marketCap": 633743047,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-08",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-22",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1223,
+    "net": 0.1143,
+    "netSlip": 0.0703,
+    "avgStock": -0.0347,
+    "sameStock": -0.0205,
+    "spy": -0.0384
+   },
+   "B": {
+    "buy": "2022-02-08",
+    "fill": "2022-02-08 09:30",
+    "ext": false,
+    "sell": "2022-02-22",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1223,
+    "net": 0.1143,
+    "netSlip": 0.0703,
+    "avgStock": -0.0347,
+    "sameStock": -0.0205,
+    "spy": -0.0384
+   }
   },
   {
    "sym": "AVDX",
@@ -415,8 +1966,34 @@
    "marketCap": 2168154140,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-09",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1988,
+    "net": -0.2068,
+    "netSlip": -0.2382,
+    "avgStock": -0.0731,
+    "sameStock": -0.013,
+    "spy": -0.0731
+   },
+   "B": {
+    "buy": "2022-02-09",
+    "fill": "2022-02-09 09:30",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1988,
+    "net": -0.2068,
+    "netSlip": -0.2382,
+    "avgStock": -0.0731,
+    "sameStock": -0.013,
+    "spy": -0.0731
+   }
   },
   {
    "sym": "DADA",
@@ -435,8 +2012,34 @@
    "marketCap": 2395464722,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-09",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1506,
+    "net": -0.1586,
+    "netSlip": -0.1919,
+    "avgStock": -0.0731,
+    "sameStock": -0.0242,
+    "spy": -0.0731
+   },
+   "B": {
+    "buy": "2022-02-09",
+    "fill": "2022-02-09 09:14",
+    "ext": true,
+    "sell": "2022-02-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1854,
+    "net": -0.1934,
+    "netSlip": -0.2254,
+    "avgStock": -0.0731,
+    "sameStock": -0.0242,
+    "spy": -0.0731
+   }
   },
   {
    "sym": "DOCS",
@@ -455,8 +2058,34 @@
    "marketCap": 9339929145,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-09",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0147,
+    "net": -0.0227,
+    "netSlip": -0.0613,
+    "avgStock": -0.0731,
+    "sameStock": -0.0191,
+    "spy": -0.0731
+   },
+   "B": {
+    "buy": "2022-02-09",
+    "fill": "2022-02-09 09:09",
+    "ext": true,
+    "sell": "2022-02-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0502,
+    "net": -0.0582,
+    "netSlip": -0.0954,
+    "avgStock": -0.0731,
+    "sameStock": -0.0191,
+    "spy": -0.0731
+   }
   },
   {
    "sym": "IMCR",
@@ -475,8 +2104,34 @@
    "marketCap": 1112581180,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1146,
+    "net": -0.1226,
+    "netSlip": -0.1573,
+    "avgStock": -0.0332,
+    "sameStock": 0.0151,
+    "spy": -0.0259
+   },
+   "B": {
+    "buy": "2022-02-11",
+    "fill": "2022-02-11 09:30",
+    "ext": false,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1146,
+    "net": -0.1226,
+    "netSlip": -0.1573,
+    "avgStock": -0.0332,
+    "sameStock": 0.0151,
+    "spy": -0.0259
+   }
   },
   {
    "sym": "AGLE",
@@ -495,8 +2150,34 @@
    "marketCap": 178538219,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-24",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.2652,
+    "net": -0.2732,
+    "netSlip": -0.302,
+    "avgStock": -0.0518,
+    "sameStock": -0.074,
+    "spy": -0.047
+   },
+   "B": {
+    "buy": "2022-02-11",
+    "fill": "2022-02-10 17:04",
+    "ext": true,
+    "sell": "2022-02-24",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.2998,
+    "net": -0.3078,
+    "netSlip": -0.3353,
+    "avgStock": -0.0518,
+    "sameStock": -0.074,
+    "spy": -0.047
+   }
   },
   {
    "sym": "SURF",
@@ -515,8 +2196,34 @@
    "marketCap": 167932297,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0084,
+    "net": 0.0004,
+    "netSlip": -0.0392,
+    "avgStock": -0.0332,
+    "sameStock": -0.0846,
+    "spy": -0.0259
+   },
+   "B": {
+    "buy": "2022-02-11",
+    "fill": "2022-02-10 17:33",
+    "ext": true,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0575,
+    "net": -0.0655,
+    "netSlip": -0.1024,
+    "avgStock": -0.0332,
+    "sameStock": -0.0846,
+    "spy": -0.0259
+   }
   },
   {
    "sym": "FMTX",
@@ -535,8 +2242,34 @@
    "marketCap": 531879636,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.092,
+    "net": -0.1,
+    "netSlip": -0.1356,
+    "avgStock": -0.0332,
+    "sameStock": 0.0256,
+    "spy": -0.0259
+   },
+   "B": {
+    "buy": "2022-02-11",
+    "fill": "2022-02-11 09:30",
+    "ext": false,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.092,
+    "net": -0.1,
+    "netSlip": -0.1356,
+    "avgStock": -0.0332,
+    "sameStock": 0.0256,
+    "spy": -0.0259
+   }
   },
   {
    "sym": "AGEN",
@@ -555,8 +2288,34 @@
    "marketCap": 647214593,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0521,
+    "net": 0.0441,
+    "netSlip": 0.0028,
+    "avgStock": -0.0332,
+    "sameStock": -0.0313,
+    "spy": -0.0259
+   },
+   "B": {
+    "buy": "2022-02-11",
+    "fill": "2022-02-10 16:54",
+    "ext": true,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.018,
+    "net": 0.01,
+    "netSlip": -0.0299,
+    "avgStock": -0.0332,
+    "sameStock": -0.0313,
+    "spy": -0.0259
+   }
   },
   {
    "sym": "LYEL",
@@ -575,8 +2334,34 @@
    "marketCap": 1565469428,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0712,
+    "net": 0.0632,
+    "netSlip": 0.0212,
+    "avgStock": -0.0332,
+    "sameStock": -0.0213,
+    "spy": -0.0259
+   },
+   "B": {
+    "buy": "2022-02-11",
+    "fill": "2022-02-11 09:29",
+    "ext": true,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0276,
+    "net": 0.0196,
+    "netSlip": -0.0207,
+    "avgStock": -0.0332,
+    "sameStock": -0.0213,
+    "spy": -0.0259
+   }
   },
   {
    "sym": "IONQ",
@@ -615,8 +2400,34 @@
    "marketCap": 4617822716,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0966,
+    "net": -0.1046,
+    "netSlip": -0.14,
+    "avgStock": -0.0332,
+    "sameStock": -0.0193,
+    "spy": -0.0259
+   },
+   "B": {
+    "buy": "2022-02-11",
+    "fill": "2022-02-10 19:10",
+    "ext": true,
+    "sell": "2022-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1107,
+    "net": -0.1187,
+    "netSlip": -0.1536,
+    "avgStock": -0.0332,
+    "sameStock": -0.0193,
+    "spy": -0.0259
+   }
   },
   {
    "sym": "CYN",
@@ -635,8 +2446,34 @@
    "marketCap": 5226781858,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2857,
+    "net": 0.2777,
+    "netSlip": 0.2273,
+    "avgStock": -0.015,
+    "sameStock": -0.109,
+    "spy": -0.0075
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-11 17:56",
+    "ext": true,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2623,
+    "net": 0.2543,
+    "netSlip": 0.2048,
+    "avgStock": -0.015,
+    "sameStock": -0.109,
+    "spy": -0.0075
+   }
   },
   {
    "sym": "KD",
@@ -655,8 +2492,34 @@
    "marketCap": 3451694946,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.04,
+    "net": 0.032,
+    "netSlip": -0.0088,
+    "avgStock": -0.015,
+    "sameStock": 0.0078,
+    "spy": -0.0075
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-14 09:20",
+    "ext": true,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0163,
+    "net": -0.0243,
+    "netSlip": -0.0628,
+    "avgStock": -0.015,
+    "sameStock": 0.0078,
+    "spy": -0.0075
+   }
   },
   {
    "sym": "PYXS",
@@ -675,8 +2538,34 @@
    "marketCap": 247039707,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "stop",
+    "held": 7,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.059,
+    "sameStock": -0.0267,
+    "spy": -0.0408
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-14 09:30",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "stop",
+    "held": 7,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.059,
+    "sameStock": -0.0267,
+    "spy": -0.0408
+   }
   },
   {
    "sym": "MTTR",
@@ -695,8 +2584,34 @@
    "marketCap": 1908508498,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-24",
+    "exit": "stop",
+    "held": 8,
+    "gross": -0.2621,
+    "net": -0.2701,
+    "netSlip": -0.299,
+    "avgStock": -0.0371,
+    "sameStock": -0.0285,
+    "spy": -0.0264
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-11 16:43",
+    "ext": true,
+    "sell": "2022-02-24",
+    "exit": "stop",
+    "held": 8,
+    "gross": -0.2991,
+    "net": -0.3071,
+    "netSlip": -0.3345,
+    "avgStock": -0.0371,
+    "sameStock": -0.0285,
+    "spy": -0.0264
+   }
   },
   {
    "sym": "SPIR",
@@ -715,8 +2630,34 @@
    "marketCap": 451947561,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-18",
+    "exit": "stop",
+    "held": 5,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0247,
+    "sameStock": -0.0291,
+    "spy": -0.0129
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-11 16:48",
+    "ext": true,
+    "sell": "2022-02-18",
+    "exit": "stop",
+    "held": 5,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0247,
+    "sameStock": -0.0291,
+    "spy": -0.0129
+   }
   },
   {
    "sym": "CYN",
@@ -755,8 +2696,34 @@
    "marketCap": 2926432318,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0806,
+    "net": -0.0886,
+    "netSlip": -0.1246,
+    "avgStock": -0.015,
+    "sameStock": -0.0186,
+    "spy": -0.0075
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-14 09:30",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0806,
+    "net": -0.0886,
+    "netSlip": -0.1246,
+    "avgStock": -0.015,
+    "sameStock": -0.0186,
+    "spy": -0.0075
+   }
   },
   {
    "sym": "NCNO",
@@ -775,8 +2742,34 @@
    "marketCap": 4555930532,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0148,
+    "net": -0.0228,
+    "netSlip": -0.0614,
+    "avgStock": -0.015,
+    "sameStock": -0.0151,
+    "spy": -0.0075
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-14 09:30",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0148,
+    "net": -0.0228,
+    "netSlip": -0.0614,
+    "avgStock": -0.015,
+    "sameStock": -0.0151,
+    "spy": -0.0075
+   }
   },
   {
    "sym": "RERE",
@@ -835,8 +2828,34 @@
    "marketCap": 1589682320,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1224,
+    "net": -0.1304,
+    "netSlip": -0.1648,
+    "avgStock": -0.0335,
+    "sameStock": -0.0036,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-14 12:38",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0382,
+    "net": -0.0462,
+    "netSlip": -0.0839,
+    "avgStock": -0.015,
+    "sameStock": -0.0036,
+    "spy": -0.0075
+   }
   },
   {
    "sym": "KLTR",
@@ -855,8 +2874,34 @@
    "marketCap": 436448091,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0626,
+    "sameStock": -0.0094,
+    "spy": -0.0491
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-14 13:36",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "stop",
+    "held": 7,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.059,
+    "sameStock": -0.0168,
+    "spy": -0.0408
+   }
   },
   {
    "sym": "XNCR",
@@ -875,8 +2920,34 @@
    "marketCap": 1966149951,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.091,
+    "net": -0.099,
+    "netSlip": -0.1346,
+    "avgStock": -0.0335,
+    "sameStock": -0.0135,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-14 15:29",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0663,
+    "net": -0.0743,
+    "netSlip": -0.111,
+    "avgStock": -0.015,
+    "sameStock": -0.0135,
+    "spy": -0.0075
+   }
   },
   {
    "sym": "NNOX",
@@ -895,8 +2966,34 @@
    "marketCap": 537077237,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0614,
+    "net": -0.0694,
+    "netSlip": -0.1062,
+    "avgStock": -0.0335,
+    "sameStock": -0.0098,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-14",
+    "fill": "2022-02-14 15:28",
+    "ext": false,
+    "sell": "2022-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.012,
+    "net": 0.004,
+    "netSlip": -0.0357,
+    "avgStock": -0.015,
+    "sameStock": -0.0098,
+    "spy": -0.0075
+   }
   },
   {
    "sym": "FRSH",
@@ -915,8 +3012,34 @@
    "marketCap": 5370420193,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0607,
+    "net": -0.0687,
+    "netSlip": -0.1055,
+    "avgStock": -0.0338,
+    "sameStock": -0.0034,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-14 16:09",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0823,
+    "net": -0.0903,
+    "netSlip": -0.1262,
+    "avgStock": -0.0338,
+    "sameStock": -0.0034,
+    "spy": -0.031
+   }
   },
   {
    "sym": "ROIV",
@@ -935,8 +3058,34 @@
    "marketCap": 1603222510,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1108,
+    "net": -0.1188,
+    "netSlip": -0.1537,
+    "avgStock": -0.0338,
+    "sameStock": 0.0133,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-14 17:25",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1185,
+    "net": -0.1265,
+    "netSlip": -0.161,
+    "avgStock": -0.0338,
+    "sameStock": 0.0133,
+    "spy": -0.031
+   }
   },
   {
    "sym": "LILM",
@@ -955,8 +3104,34 @@
    "marketCap": 1230196534,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2237,
+    "net": -0.2317,
+    "netSlip": -0.2622,
+    "avgStock": -0.0338,
+    "sameStock": -0.0548,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-14 16:37",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2388,
+    "net": -0.2468,
+    "netSlip": -0.2767,
+    "avgStock": -0.0338,
+    "sameStock": -0.0548,
+    "spy": -0.031
+   }
   },
   {
    "sym": "CELU",
@@ -975,8 +3150,34 @@
    "marketCap": 679052605,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2813,
+    "net": 0.2733,
+    "netSlip": 0.223,
+    "avgStock": -0.0338,
+    "sameStock": -0.0721,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-14 19:38",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2331,
+    "net": 0.2251,
+    "netSlip": 0.1768,
+    "avgStock": -0.0338,
+    "sameStock": -0.0721,
+    "spy": -0.031
+   }
   },
   {
    "sym": "BKSY",
@@ -995,8 +3196,34 @@
    "marketCap": 314675644,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1135,
+    "net": -0.1215,
+    "netSlip": -0.1562,
+    "avgStock": -0.0338,
+    "sameStock": -0.0191,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-15 08:51",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1452,
+    "net": -0.1532,
+    "netSlip": -0.1867,
+    "avgStock": -0.0338,
+    "sameStock": -0.0191,
+    "spy": -0.031
+   }
   },
   {
    "sym": "BRDS",
@@ -1015,8 +3242,34 @@
    "marketCap": 891638124,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0346,
+    "net": 0.0266,
+    "netSlip": -0.014,
+    "avgStock": -0.0338,
+    "sameStock": -0.1197,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-15 09:30",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0346,
+    "net": 0.0266,
+    "netSlip": -0.014,
+    "avgStock": -0.0338,
+    "sameStock": -0.1197,
+    "spy": -0.031
+   }
   },
   {
    "sym": "EMBK",
@@ -1035,8 +3288,34 @@
    "marketCap": 4895549921,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0629,
+    "net": -0.0709,
+    "netSlip": -0.1076,
+    "avgStock": -0.0338,
+    "sameStock": -0.0778,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-15 09:22",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1376,
+    "net": -0.1456,
+    "netSlip": -0.1794,
+    "avgStock": -0.0338,
+    "sameStock": -0.0778,
+    "spy": -0.031
+   }
   },
   {
    "sym": "WEJO",
@@ -1055,8 +3334,34 @@
    "marketCap": 393651364,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-02-23",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0627,
+    "sameStock": -0.0748,
+    "spy": -0.0491
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-14 17:30",
+    "ext": true,
+    "sell": "2022-02-23",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0627,
+    "sameStock": -0.0748,
+    "spy": -0.0491
+   }
   },
   {
    "sym": "PEAR",
@@ -1075,8 +3380,34 @@
    "marketCap": 538794954,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1454,
+    "net": 0.1374,
+    "netSlip": 0.0924,
+    "avgStock": -0.0338,
+    "sameStock": -0.0522,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-15 08:46",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0164,
+    "net": 0.0084,
+    "netSlip": -0.0315,
+    "avgStock": -0.0338,
+    "sameStock": -0.0522,
+    "spy": -0.031
+   }
   },
   {
    "sym": "BOXD",
@@ -1095,8 +3426,34 @@
    "marketCap": 645860322,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0115,
+    "net": 0.0035,
+    "netSlip": -0.0362,
+    "avgStock": -0.0338,
+    "sameStock": -0.1268,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-14 16:30",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0117,
+    "net": -0.0197,
+    "netSlip": -0.0585,
+    "avgStock": -0.0338,
+    "sameStock": -0.1268,
+    "spy": -0.031
+   }
   },
   {
    "sym": "ADTH",
@@ -1115,8 +3472,34 @@
    "marketCap": 553048745,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2229,
+    "net": 0.2149,
+    "netSlip": 0.167,
+    "avgStock": -0.0338,
+    "sameStock": -0.0361,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-15 09:30",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2229,
+    "net": 0.2149,
+    "netSlip": 0.167,
+    "avgStock": -0.0338,
+    "sameStock": -0.0361,
+    "spy": -0.031
+   }
   },
   {
    "sym": "DUOL",
@@ -1135,8 +3518,34 @@
    "marketCap": 3565865252,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1456,
+    "net": -0.1536,
+    "netSlip": -0.1871,
+    "avgStock": -0.0338,
+    "sameStock": 0.0141,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-15 09:30",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1456,
+    "net": -0.1536,
+    "netSlip": -0.1871,
+    "avgStock": -0.0338,
+    "sameStock": 0.0141,
+    "spy": -0.031
+   }
   },
   {
    "sym": "OSCR",
@@ -1155,8 +3564,34 @@
    "marketCap": 1393280156,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0915,
+    "net": 0.0835,
+    "netSlip": 0.0407,
+    "avgStock": -0.0338,
+    "sameStock": 0.0081,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-14 18:59",
+    "ext": true,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0502,
+    "net": 0.0422,
+    "netSlip": 0.001,
+    "avgStock": -0.0338,
+    "sameStock": 0.0081,
+    "spy": -0.031
+   }
   },
   {
    "sym": "FSBC",
@@ -1175,8 +3610,34 @@
    "marketCap": 526876289,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0318,
+    "net": -0.0398,
+    "netSlip": -0.0778,
+    "avgStock": -0.0338,
+    "sameStock": -0.0072,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-15 09:44",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0318,
+    "net": -0.0398,
+    "netSlip": -0.0778,
+    "avgStock": -0.0338,
+    "sameStock": -0.0072,
+    "spy": -0.031
+   }
   },
   {
    "sym": "AUR",
@@ -1215,8 +3676,34 @@
    "marketCap": 1425380193,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0159,
+    "net": 0.0079,
+    "netSlip": -0.032,
+    "avgStock": -0.0338,
+    "sameStock": -0.0042,
+    "spy": -0.031
+   },
+   "B": {
+    "buy": "2022-02-15",
+    "fill": "2022-02-15 09:30",
+    "ext": false,
+    "sell": "2022-03-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0159,
+    "net": 0.0079,
+    "netSlip": -0.032,
+    "avgStock": -0.0338,
+    "sameStock": -0.0042,
+    "spy": -0.031
+   }
   },
   {
    "sym": "DADA",
@@ -1255,8 +3742,34 @@
    "marketCap": 402811177,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-04-25",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-06",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1547,
+    "net": -0.1627,
+    "netSlip": -0.1958,
+    "avgStock": -0.054,
+    "sameStock": -0.013,
+    "spy": -0.0291
+   },
+   "B": {
+    "buy": "2022-04-25",
+    "fill": "2022-04-22 16:33",
+    "ext": true,
+    "sell": "2022-05-06",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.203,
+    "net": -0.211,
+    "netSlip": -0.2423,
+    "avgStock": -0.054,
+    "sameStock": -0.013,
+    "spy": -0.0291
+   }
   },
   {
    "sym": "MTTR",
@@ -1275,8 +3788,34 @@
    "marketCap": 1311402858,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-13",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-26",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0679,
+    "net": 0.0599,
+    "netSlip": 0.018,
+    "avgStock": 0.0352,
+    "sameStock": -0.041,
+    "spy": 0.0217
+   },
+   "B": {
+    "buy": "2022-05-13",
+    "fill": "2022-05-12 16:23",
+    "ext": true,
+    "sell": "2022-05-26",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0634,
+    "net": 0.0554,
+    "netSlip": 0.0137,
+    "avgStock": 0.0352,
+    "sameStock": -0.041,
+    "spy": 0.0217
+   }
   },
   {
    "sym": "HCAT",
@@ -1295,8 +3834,34 @@
    "marketCap": 732417957,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-16",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0851,
+    "net": -0.0931,
+    "netSlip": -0.1289,
+    "avgStock": 0.0418,
+    "sameStock": -0.0254,
+    "spy": 0.0382
+   },
+   "B": {
+    "buy": "2022-05-13",
+    "fill": "2022-05-13 15:06",
+    "ext": false,
+    "sell": "2022-05-26",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1038,
+    "net": -0.1118,
+    "netSlip": -0.147,
+    "avgStock": 0.0352,
+    "sameStock": -0.0254,
+    "spy": 0.0217
+   }
   },
   {
    "sym": "RELY",
@@ -1315,8 +3880,34 @@
    "marketCap": 1411710821,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-16",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.3474,
+    "net": 0.3394,
+    "netSlip": 0.2866,
+    "avgStock": 0.0417,
+    "sameStock": -0.0082,
+    "spy": 0.0382
+   },
+   "B": {
+    "buy": "2022-05-16",
+    "fill": "2022-05-13 17:01",
+    "ext": true,
+    "sell": "2022-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2751,
+    "net": 0.2671,
+    "netSlip": 0.2171,
+    "avgStock": 0.0417,
+    "sameStock": -0.0082,
+    "spy": 0.0382
+   }
   },
   {
    "sym": "MQ",
@@ -1335,8 +3926,34 @@
    "marketCap": 4803815244,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-16",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2731,
+    "net": 0.2651,
+    "netSlip": 0.2152,
+    "avgStock": 0.0417,
+    "sameStock": -0.0283,
+    "spy": 0.0382
+   },
+   "B": {
+    "buy": "2022-05-16",
+    "fill": "2022-05-13 16:53",
+    "ext": true,
+    "sell": "2022-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1875,
+    "net": 0.1795,
+    "netSlip": 0.1329,
+    "avgStock": 0.0417,
+    "sameStock": -0.0283,
+    "spy": 0.0382
+   }
   },
   {
    "sym": "BTRS",
@@ -1355,8 +3972,34 @@
    "marketCap": 770378617,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-16",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1194,
+    "net": 0.1114,
+    "netSlip": 0.0675,
+    "avgStock": 0.0417,
+    "sameStock": 0.0119,
+    "spy": 0.0382
+   },
+   "B": {
+    "buy": "2022-05-16",
+    "fill": "2022-05-16 09:30",
+    "ext": false,
+    "sell": "2022-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1194,
+    "net": 0.1114,
+    "netSlip": 0.0675,
+    "avgStock": 0.0417,
+    "sameStock": 0.0119,
+    "spy": 0.0382
+   }
   },
   {
    "sym": "DCFC",
@@ -1375,8 +4018,34 @@
    "marketCap": 1088460788,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-17",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1453,
+    "net": 0.1373,
+    "netSlip": 0.0924,
+    "avgStock": 0.0173,
+    "sameStock": -0.0844,
+    "spy": 0.0157
+   },
+   "B": {
+    "buy": "2022-05-17",
+    "fill": "2022-05-17 08:00",
+    "ext": true,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1796,
+    "net": 0.1716,
+    "netSlip": 0.1253,
+    "avgStock": 0.0173,
+    "sameStock": -0.0844,
+    "spy": 0.0157
+   }
   },
   {
    "sym": "NRGV",
@@ -1395,8 +4064,34 @@
    "marketCap": 1384440818,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-17",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.4767,
+    "net": 0.4687,
+    "netSlip": 0.4108,
+    "avgStock": 0.0173,
+    "sameStock": -0.0349,
+    "spy": 0.0157
+   },
+   "B": {
+    "buy": "2022-05-17",
+    "fill": "2022-05-17 09:30",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.4767,
+    "net": 0.4687,
+    "netSlip": 0.4108,
+    "avgStock": 0.0173,
+    "sameStock": -0.0349,
+    "spy": 0.0157
+   }
   },
   {
    "sym": "RGTI",
@@ -1415,8 +4110,34 @@
    "marketCap": 849024730,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-17",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2403,
+    "net": 0.2323,
+    "netSlip": 0.1837,
+    "avgStock": 0.0173,
+    "sameStock": -0.0746,
+    "spy": 0.0157
+   },
+   "B": {
+    "buy": "2022-05-17",
+    "fill": "2022-05-16 16:32",
+    "ext": true,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2101,
+    "net": 0.2021,
+    "netSlip": 0.1546,
+    "avgStock": 0.0173,
+    "sameStock": -0.0746,
+    "spy": 0.0157
+   }
   },
   {
    "sym": "ALLG",
@@ -1435,8 +4156,34 @@
    "marketCap": 2499543326,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-17",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1571,
+    "net": -0.1651,
+    "netSlip": -0.1981,
+    "avgStock": 0.0173,
+    "sameStock": -0.0741,
+    "spy": 0.0157
+   },
+   "B": {
+    "buy": "2022-05-17",
+    "fill": "2022-05-16 18:00",
+    "ext": true,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1876,
+    "net": -0.1956,
+    "netSlip": -0.2274,
+    "avgStock": 0.0173,
+    "sameStock": -0.0741,
+    "spy": 0.0157
+   }
   },
   {
    "sym": "STRY",
@@ -1455,8 +4202,34 @@
    "marketCap": 1428715532,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-17",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0625,
+    "net": 0.0545,
+    "netSlip": 0.0128,
+    "avgStock": 0.0173,
+    "sameStock": -0.1855,
+    "spy": 0.0157
+   },
+   "B": {
+    "buy": "2022-05-17",
+    "fill": "2022-05-17 09:30",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0625,
+    "net": 0.0545,
+    "netSlip": 0.0128,
+    "avgStock": 0.0173,
+    "sameStock": -0.1855,
+    "spy": 0.0157
+   }
   },
   {
    "sym": "DMRC",
@@ -1475,8 +4248,34 @@
    "marketCap": 277867971,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-26",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-06-09",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0971,
+    "net": 0.0891,
+    "netSlip": 0.0461,
+    "avgStock": 0.0191,
+    "sameStock": 0.0008,
+    "spy": 0.0069
+   },
+   "B": {
+    "buy": "2022-05-26",
+    "fill": "2022-05-26 09:30",
+    "ext": false,
+    "sell": "2022-06-09",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0971,
+    "net": 0.0891,
+    "netSlip": 0.0461,
+    "avgStock": 0.0191,
+    "sameStock": 0.0008,
+    "spy": 0.0069
+   }
   },
   {
    "sym": "CTV",
@@ -1495,8 +4294,34 @@
    "marketCap": 666497414,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-26",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "stop",
+    "held": 3,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": 0.0291,
+    "sameStock": -0.0229,
+    "spy": 0.0358
+   },
+   "B": {
+    "buy": "2022-05-26",
+    "fill": "2022-05-26 09:30",
+    "ext": false,
+    "sell": "2022-05-31",
+    "exit": "stop",
+    "held": 3,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": 0.0291,
+    "sameStock": -0.0229,
+    "spy": 0.0358
+   }
   },
   {
    "sym": "HCP",
@@ -1515,8 +4340,34 @@
    "marketCap": 5963079493,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-26",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-06-09",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0596,
+    "net": -0.0676,
+    "netSlip": -0.1045,
+    "avgStock": 0.0191,
+    "sameStock": -0.0164,
+    "spy": 0.0069
+   },
+   "B": {
+    "buy": "2022-05-26",
+    "fill": "2022-05-25 16:22",
+    "ext": true,
+    "sell": "2022-06-09",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0973,
+    "net": -0.1053,
+    "netSlip": -0.1407,
+    "avgStock": 0.0191,
+    "sameStock": -0.0164,
+    "spy": 0.0069
+   }
   },
   {
    "sym": "CRDO",
@@ -1535,8 +4386,34 @@
    "marketCap": 1449484069,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-05-26",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-06-09",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2772,
+    "net": 0.2692,
+    "netSlip": 0.2191,
+    "avgStock": 0.0191,
+    "sameStock": 0.0057,
+    "spy": 0.0069
+   },
+   "B": {
+    "buy": "2022-05-26",
+    "fill": "2022-05-26 09:30",
+    "ext": false,
+    "sell": "2022-06-09",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2772,
+    "net": 0.2692,
+    "netSlip": 0.2191,
+    "avgStock": 0.0191,
+    "sameStock": 0.0057,
+    "spy": 0.0069
+   }
   },
   {
    "sym": "DTIL",
@@ -1555,8 +4432,34 @@
    "marketCap": 108037735,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-06-28",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-07-12",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1517,
+    "net": -0.1597,
+    "netSlip": -0.193,
+    "avgStock": -0.0396,
+    "sameStock": -0.0751,
+    "spy": -0.0241
+   },
+   "B": {
+    "buy": "2022-06-28",
+    "fill": "2022-06-27 16:39",
+    "ext": true,
+    "sell": "2022-07-12",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1985,
+    "net": -0.2065,
+    "netSlip": -0.2379,
+    "avgStock": -0.0396,
+    "sameStock": -0.0751,
+    "spy": -0.0241
+   }
   },
   {
    "sym": "AKRO",
@@ -1575,8 +4478,34 @@
    "marketCap": 343224770,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-06-29",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-07-13",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1787,
+    "net": 0.1707,
+    "netSlip": 0.1245,
+    "avgStock": -0.011,
+    "sameStock": 0.0135,
+    "spy": -0.0063
+   },
+   "B": {
+    "buy": "2022-06-29",
+    "fill": "2022-06-28 16:21",
+    "ext": true,
+    "sell": "2022-07-13",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0996,
+    "net": 0.0916,
+    "netSlip": 0.0484,
+    "avgStock": -0.011,
+    "sameStock": 0.0135,
+    "spy": -0.0063
+   }
   },
   {
    "sym": "VALN",
@@ -1595,8 +4524,34 @@
    "marketCap": 2518253995,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-06-30",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-07-14",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1392,
+    "net": -0.1472,
+    "netSlip": -0.1809,
+    "avgStock": 0.0023,
+    "sameStock": -0.0872,
+    "spy": 0.0044
+   },
+   "B": {
+    "buy": "2022-06-30",
+    "fill": "2022-06-30 09:30",
+    "ext": false,
+    "sell": "2022-07-14",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1392,
+    "net": -0.1472,
+    "netSlip": -0.1809,
+    "avgStock": 0.0023,
+    "sameStock": -0.0872,
+    "spy": 0.0044
+   }
   },
   {
    "sym": "HCP",
@@ -1615,8 +4570,34 @@
    "marketCap": 7283163576,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-08-04",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-08-17",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0607,
+    "net": 0.0527,
+    "netSlip": 0.0111,
+    "avgStock": 0.0301,
+    "sameStock": -0.0248,
+    "spy": 0.0296
+   },
+   "B": {
+    "buy": "2022-08-04",
+    "fill": "2022-08-04 07:07",
+    "ext": true,
+    "sell": "2022-08-17",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0269,
+    "net": -0.0349,
+    "netSlip": -0.0731,
+    "avgStock": 0.0301,
+    "sameStock": -0.0248,
+    "spy": 0.0296
+   }
   },
   {
    "sym": "SOUN",
@@ -1635,8 +4616,34 @@
    "marketCap": 56049811,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-08-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-08-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0792,
+    "net": -0.0872,
+    "netSlip": -0.1233,
+    "avgStock": -0.0312,
+    "sameStock": 0.0024,
+    "spy": -0.0154
+   },
+   "B": {
+    "buy": "2022-08-10",
+    "fill": "2022-08-10 08:43",
+    "ext": true,
+    "sell": "2022-08-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1315,
+    "net": -0.1395,
+    "netSlip": -0.1735,
+    "avgStock": -0.0312,
+    "sameStock": 0.0024,
+    "spy": -0.0154
+   }
   },
   {
    "sym": "ADT",
@@ -1655,8 +4662,34 @@
    "marketCap": 7477121454,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-08-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-08-26",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0735,
+    "net": -0.0815,
+    "netSlip": -0.1179,
+    "avgStock": -0.0609,
+    "sameStock": -0.0105,
+    "spy": -0.0458
+   },
+   "B": {
+    "buy": "2022-08-15",
+    "fill": "2022-08-15 08:07",
+    "ext": true,
+    "sell": "2022-08-26",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1164,
+    "net": -0.1244,
+    "netSlip": -0.159,
+    "avgStock": -0.0609,
+    "sameStock": -0.0105,
+    "spy": -0.0458
+   }
   },
   {
    "sym": "SNTI",
@@ -1675,8 +4708,34 @@
    "marketCap": 92116434,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-08-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-08-26",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0483,
+    "net": -0.0563,
+    "netSlip": -0.0936,
+    "avgStock": -0.0609,
+    "sameStock": 0.1211,
+    "spy": -0.0458
+   },
+   "B": {
+    "buy": "2022-08-15",
+    "fill": "2022-08-15 06:50",
+    "ext": true,
+    "sell": "2022-08-26",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0812,
+    "net": -0.0892,
+    "netSlip": -0.1252,
+    "avgStock": -0.0609,
+    "sameStock": 0.1211,
+    "spy": -0.0458
+   }
   },
   {
    "sym": "MSPR",
@@ -1695,7 +4754,20 @@
    "marketCap": 23916229,
    "under2B": true,
    "base": false,
-   "A": null,
+   "A": {
+    "buy": "2022-08-16",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-08-29",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1198,
+    "net": 0.1118,
+    "netSlip": 0.0678,
+    "avgStock": -0.0741,
+    "sameStock": -0.0916,
+    "spy": -0.0587
+   },
    "B": null
   },
   {
@@ -1715,8 +4787,34 @@
    "marketCap": 4419561831,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-09-16",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-09-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1437,
+    "net": -0.1517,
+    "netSlip": -0.1852,
+    "avgStock": -0.0977,
+    "sameStock": -0.0119,
+    "spy": -0.0556
+   },
+   "B": {
+    "buy": "2022-09-16",
+    "fill": "2022-09-15 16:59",
+    "ext": true,
+    "sell": "2022-09-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1827,
+    "net": -0.1907,
+    "netSlip": -0.2227,
+    "avgStock": -0.0977,
+    "sameStock": -0.0119,
+    "spy": -0.0556
+   }
   },
   {
    "sym": "HYLN",
@@ -1755,8 +4853,34 @@
    "marketCap": 486333115,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-10-28",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-10",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0121,
+    "net": 0.0041,
+    "netSlip": -0.0356,
+    "avgStock": 0.0213,
+    "sameStock": 0.0152,
+    "spy": 0.039
+   },
+   "B": {
+    "buy": "2022-10-28",
+    "fill": "2022-10-28 09:30",
+    "ext": false,
+    "sell": "2022-11-10",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0121,
+    "net": 0.0041,
+    "netSlip": -0.0356,
+    "avgStock": 0.0213,
+    "sameStock": 0.0152,
+    "spy": 0.039
+   }
   },
   {
    "sym": "ME",
@@ -1795,8 +4919,34 @@
    "marketCap": 386142861,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0833,
+    "net": -0.0913,
+    "netSlip": -0.1273,
+    "avgStock": 0.0154,
+    "sameStock": -0.0406,
+    "spy": 0.037
+   },
+   "B": {
+    "buy": "2022-11-09",
+    "fill": "2022-11-09 14:54",
+    "ext": false,
+    "sell": "2022-11-22",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0797,
+    "net": -0.0877,
+    "netSlip": -0.1238,
+    "avgStock": 0.0237,
+    "sameStock": -0.0406,
+    "spy": 0.0526
+   }
   },
   {
    "sym": "EVLV",
@@ -1815,8 +4965,34 @@
    "marketCap": 388341585,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-23",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2667,
+    "net": 0.2587,
+    "netSlip": 0.209,
+    "avgStock": 0.0154,
+    "sameStock": -0.0065,
+    "spy": 0.037
+   },
+   "B": {
+    "buy": "2022-11-09",
+    "fill": "2022-11-09 14:54",
+    "ext": false,
+    "sell": "2022-11-22",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.4487,
+    "net": 0.4407,
+    "netSlip": 0.3839,
+    "avgStock": 0.0237,
+    "sameStock": -0.0065,
+    "spy": 0.0526
+   }
   },
   {
    "sym": "QBTS",
@@ -1835,8 +5011,34 @@
    "marketCap": 162619600,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0435,
+    "net": -0.0515,
+    "netSlip": -0.089,
+    "avgStock": 0.0154,
+    "sameStock": -0.0532,
+    "spy": 0.037
+   },
+   "B": {
+    "buy": "2022-11-09",
+    "fill": "2022-11-09 14:58",
+    "ext": false,
+    "sell": "2022-11-22",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0603,
+    "net": -0.0683,
+    "netSlip": -0.1052,
+    "avgStock": 0.0237,
+    "sameStock": -0.0532,
+    "spy": 0.0526
+   }
   },
   {
    "sym": "MP",
@@ -1855,8 +5057,34 @@
    "marketCap": 5752106148,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-25",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0015,
+    "net": -0.0065,
+    "netSlip": -0.0458,
+    "avgStock": -0.0087,
+    "sameStock": -0.0192,
+    "spy": 0.017
+   },
+   "B": {
+    "buy": "2022-11-11",
+    "fill": "2022-11-10 16:49",
+    "ext": true,
+    "sell": "2022-11-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0146,
+    "net": -0.0226,
+    "netSlip": -0.0613,
+    "avgStock": -0.0087,
+    "sameStock": -0.0192,
+    "spy": 0.017
+   }
   },
   {
    "sym": "ME",
@@ -1875,8 +5103,34 @@
    "marketCap": 1512608405,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1808,
+    "net": -0.1888,
+    "netSlip": -0.2209,
+    "avgStock": -0.0441,
+    "sameStock": -0.0462,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 16:05",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1917,
+    "net": -0.1997,
+    "netSlip": -0.2314,
+    "avgStock": -0.0441,
+    "sameStock": -0.0462,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "RBT",
@@ -1895,8 +5149,34 @@
    "marketCap": 657799976,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1479,
+    "net": -0.1559,
+    "netSlip": -0.1893,
+    "avgStock": -0.0441,
+    "sameStock": -0.0953,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 16:46",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.203,
+    "net": -0.211,
+    "netSlip": -0.2422,
+    "avgStock": -0.0441,
+    "sameStock": -0.0953,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "ALEC",
@@ -1915,8 +5195,34 @@
    "marketCap": 707572778,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1503,
+    "net": -0.1583,
+    "netSlip": -0.1916,
+    "avgStock": -0.0441,
+    "sameStock": -0.0188,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:30",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1503,
+    "net": -0.1583,
+    "netSlip": -0.1916,
+    "avgStock": -0.0441,
+    "sameStock": -0.0188,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "HOOD",
@@ -1935,8 +5241,34 @@
    "marketCap": 8415997071,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0737,
+    "net": -0.0817,
+    "netSlip": -0.118,
+    "avgStock": -0.0441,
+    "sameStock": -0.0095,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 18:39",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0898,
+    "net": -0.0978,
+    "netSlip": -0.1335,
+    "avgStock": -0.0441,
+    "sameStock": -0.0095,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "FULC",
@@ -1955,8 +5287,34 @@
    "marketCap": 279274298,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1137,
+    "net": -0.1217,
+    "netSlip": -0.1564,
+    "avgStock": -0.0441,
+    "sameStock": 0.0108,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:25",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1247,
+    "net": -0.1327,
+    "netSlip": -0.1671,
+    "avgStock": -0.0441,
+    "sameStock": 0.0108,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "RAPT",
@@ -1975,8 +5333,34 @@
    "marketCap": 5397504112,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-22",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0387,
+    "sameStock": 0.0022,
+    "spy": -0.0031
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:30",
+    "ext": false,
+    "sell": "2022-11-22",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0387,
+    "sameStock": 0.0022,
+    "spy": -0.0031
+   }
   },
   {
    "sym": "SANA",
@@ -1995,8 +5379,34 @@
    "marketCap": 1135683257,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-17",
+    "exit": "stop",
+    "held": 3,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0409,
+    "sameStock": -0.0029,
+    "spy": -0.0172
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 08:43",
+    "ext": true,
+    "sell": "2022-11-22",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0387,
+    "sameStock": -0.0146,
+    "spy": -0.0031
+   }
   },
   {
    "sym": "PATH",
@@ -2015,8 +5425,34 @@
    "marketCap": 6622761394,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.123,
+    "net": -0.131,
+    "netSlip": -0.1653,
+    "avgStock": -0.0441,
+    "sameStock": -0.0166,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 18:36",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1061,
+    "net": -0.1141,
+    "netSlip": -0.1491,
+    "avgStock": -0.0441,
+    "sameStock": -0.0166,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "BEAM",
@@ -2035,8 +5471,34 @@
    "marketCap": 3499437624,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1797,
+    "net": -0.1877,
+    "netSlip": -0.2199,
+    "avgStock": -0.0441,
+    "sameStock": -0.0201,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 19:50",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1615,
+    "net": -0.1695,
+    "netSlip": -0.2024,
+    "avgStock": -0.0441,
+    "sameStock": -0.0201,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "AMPL",
@@ -2055,8 +5517,34 @@
    "marketCap": 1658767529,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0949,
+    "net": -0.1029,
+    "netSlip": -0.1384,
+    "avgStock": -0.0441,
+    "sameStock": -0.0267,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 08:25",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1372,
+    "net": -0.1452,
+    "netSlip": -0.179,
+    "avgStock": -0.0441,
+    "sameStock": -0.0267,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "ME",
@@ -2075,8 +5563,34 @@
    "marketCap": 1512608405,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1808,
+    "net": -0.1888,
+    "netSlip": -0.2209,
+    "avgStock": -0.0441,
+    "sameStock": -0.0462,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 19:02",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1868,
+    "net": -0.1948,
+    "netSlip": -0.2267,
+    "avgStock": -0.0441,
+    "sameStock": -0.0462,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "RLAY",
@@ -2095,8 +5609,34 @@
    "marketCap": 2152915151,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1109,
+    "net": -0.1189,
+    "netSlip": -0.1538,
+    "avgStock": -0.0441,
+    "sameStock": -0.0119,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:26",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1284,
+    "net": -0.1364,
+    "netSlip": -0.1706,
+    "avgStock": -0.0441,
+    "sameStock": -0.0119,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "LYFT",
@@ -2115,8 +5655,34 @@
    "marketCap": 4568030977,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2059,
+    "net": -0.2139,
+    "netSlip": -0.245,
+    "avgStock": -0.0441,
+    "sameStock": -0.0118,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 18:37",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2011,
+    "net": -0.2091,
+    "netSlip": -0.2404,
+    "avgStock": -0.0441,
+    "sameStock": -0.0118,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "NVTA",
@@ -2135,8 +5701,34 @@
    "marketCap": 745793482,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-22",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0387,
+    "sameStock": -0.0343,
+    "spy": -0.0031
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 18:50",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2171,
+    "net": -0.2251,
+    "netSlip": -0.2558,
+    "avgStock": -0.0441,
+    "sameStock": -0.0463,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "GLUE",
@@ -2155,8 +5747,34 @@
    "marketCap": 440045017,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1088,
+    "net": -0.1168,
+    "netSlip": -0.1517,
+    "avgStock": -0.0441,
+    "sameStock": -0.0156,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:30",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1088,
+    "net": -0.1168,
+    "netSlip": -0.1517,
+    "avgStock": -0.0441,
+    "sameStock": -0.0156,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "NEWR",
@@ -2175,8 +5793,34 @@
    "marketCap": 4024757753,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.149,
+    "net": -0.157,
+    "netSlip": -0.1904,
+    "avgStock": -0.0441,
+    "sameStock": -0.0082,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 08:30",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1742,
+    "net": -0.1822,
+    "netSlip": -0.2146,
+    "avgStock": -0.0441,
+    "sameStock": -0.0082,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "LYEL",
@@ -2195,8 +5839,34 @@
    "marketCap": 1164779098,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1473,
+    "net": -0.1553,
+    "netSlip": -0.1887,
+    "avgStock": -0.0441,
+    "sameStock": -0.0186,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:18",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1773,
+    "net": -0.1853,
+    "netSlip": -0.2176,
+    "avgStock": -0.0441,
+    "sameStock": -0.0186,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "EXAS",
@@ -2215,8 +5885,34 @@
    "marketCap": 7929557365,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1201,
+    "net": -0.1281,
+    "netSlip": -0.1626,
+    "avgStock": -0.0441,
+    "sameStock": -0.0068,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 08:10",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1401,
+    "net": -0.1481,
+    "netSlip": -0.1818,
+    "avgStock": -0.0441,
+    "sameStock": -0.0068,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "OPRT",
@@ -2235,8 +5931,34 @@
    "marketCap": 202832434,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1108,
+    "net": -0.1188,
+    "netSlip": -0.1537,
+    "avgStock": -0.0441,
+    "sameStock": -0.0307,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 19:34",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0892,
+    "net": -0.0972,
+    "netSlip": -0.1329,
+    "avgStock": -0.0441,
+    "sameStock": -0.0307,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "VERA",
@@ -2255,8 +5977,34 @@
    "marketCap": 439149705,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0296,
+    "net": -0.0376,
+    "netSlip": -0.0756,
+    "avgStock": -0.0441,
+    "sameStock": 0.0013,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:30",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0296,
+    "net": -0.0376,
+    "netSlip": -0.0756,
+    "avgStock": -0.0441,
+    "sameStock": 0.0013,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "TSHA",
@@ -2275,8 +6023,34 @@
    "marketCap": 95336126,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0886,
+    "net": -0.0966,
+    "netSlip": -0.1323,
+    "avgStock": -0.0441,
+    "sameStock": -0.048,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 19:36",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.128,
+    "net": -0.136,
+    "netSlip": -0.1702,
+    "avgStock": -0.0441,
+    "sameStock": -0.048,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "FHTX",
@@ -2295,8 +6069,34 @@
    "marketCap": 357665332,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2378,
+    "net": -0.2458,
+    "netSlip": -0.2757,
+    "avgStock": -0.0441,
+    "sameStock": 0.0018,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:30",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2378,
+    "net": -0.2458,
+    "netSlip": -0.2757,
+    "avgStock": -0.0441,
+    "sameStock": 0.0018,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "EDIT",
@@ -2315,8 +6115,34 @@
    "marketCap": 888772663,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-17",
+    "exit": "stop",
+    "held": 3,
+    "gross": -0.2683,
+    "net": -0.2763,
+    "netSlip": -0.305,
+    "avgStock": -0.0409,
+    "sameStock": -0.0117,
+    "spy": -0.0172
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 07:01",
+    "ext": true,
+    "sell": "2022-11-17",
+    "exit": "stop",
+    "held": 3,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0409,
+    "sameStock": -0.0117,
+    "spy": -0.0172
+   }
   },
   {
    "sym": "DNLI",
@@ -2335,8 +6161,34 @@
    "marketCap": 3823793208,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0702,
+    "net": -0.0782,
+    "netSlip": -0.1147,
+    "avgStock": -0.0441,
+    "sameStock": -0.0169,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:29",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0967,
+    "net": -0.1047,
+    "netSlip": -0.1401,
+    "avgStock": -0.0441,
+    "sameStock": -0.0169,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "DBX",
@@ -2355,8 +6207,34 @@
    "marketCap": 8401280746,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0305,
+    "net": -0.0385,
+    "netSlip": -0.0766,
+    "avgStock": -0.0441,
+    "sameStock": -0.0021,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 04:00",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.046,
+    "net": -0.054,
+    "netSlip": -0.0914,
+    "avgStock": -0.0441,
+    "sameStock": -0.0021,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "GRTS",
@@ -2375,8 +6253,34 @@
    "marketCap": 214640355,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0395,
+    "net": -0.0475,
+    "netSlip": -0.0851,
+    "avgStock": -0.0441,
+    "sameStock": -0.0213,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:16",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0648,
+    "net": -0.0728,
+    "netSlip": -0.1095,
+    "avgStock": -0.0441,
+    "sameStock": -0.0213,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "ALEC",
@@ -2435,8 +6339,34 @@
    "marketCap": 668198634,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0132,
+    "net": -0.0212,
+    "netSlip": -0.0599,
+    "avgStock": -0.0441,
+    "sameStock": 0.0037,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 08:35",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0562,
+    "net": -0.0642,
+    "netSlip": -0.1012,
+    "avgStock": -0.0441,
+    "sameStock": 0.0037,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "FULC",
@@ -2495,8 +6425,34 @@
    "marketCap": 3561327075,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0018,
+    "net": -0.0098,
+    "netSlip": -0.049,
+    "avgStock": -0.0441,
+    "sameStock": -0.0247,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:30",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0018,
+    "net": -0.0098,
+    "netSlip": -0.049,
+    "avgStock": -0.0441,
+    "sameStock": -0.0247,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "SDGR",
@@ -2515,8 +6471,34 @@
    "marketCap": 1537049001,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2206,
+    "net": -0.2286,
+    "netSlip": -0.2591,
+    "avgStock": -0.0441,
+    "sameStock": -0.0001,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 06:52",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2551,
+    "net": -0.2631,
+    "netSlip": -0.2924,
+    "avgStock": -0.0441,
+    "sameStock": -0.0001,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "BEAM",
@@ -2555,8 +6537,34 @@
    "marketCap": 3271241934,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0041,
+    "net": -0.0121,
+    "netSlip": -0.0512,
+    "avgStock": -0.0441,
+    "sameStock": 0.0072,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 09:27",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0386,
+    "net": -0.0466,
+    "netSlip": -0.0843,
+    "avgStock": -0.0441,
+    "sameStock": 0.0072,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "LMND",
@@ -2575,8 +6583,34 @@
    "marketCap": 1500945047,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1585,
+    "net": -0.1665,
+    "netSlip": -0.1995,
+    "avgStock": -0.0441,
+    "sameStock": -0.0103,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-14 19:59",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1615,
+    "net": -0.1695,
+    "netSlip": -0.2024,
+    "avgStock": -0.0441,
+    "sameStock": -0.0103,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "RLAY",
@@ -2635,8 +6669,34 @@
    "marketCap": 1138103674,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1422,
+    "net": -0.1502,
+    "netSlip": -0.1838,
+    "avgStock": -0.0441,
+    "sameStock": -0.011,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 04:06",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1289,
+    "net": -0.1369,
+    "netSlip": -0.171,
+    "avgStock": -0.0441,
+    "sameStock": -0.011,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "TWLO",
@@ -2655,8 +6715,34 @@
    "marketCap": 9676350127,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1884,
+    "net": -0.1964,
+    "netSlip": -0.2282,
+    "avgStock": -0.0441,
+    "sameStock": -0.0247,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 06:14",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1836,
+    "net": -0.1916,
+    "netSlip": -0.2236,
+    "avgStock": -0.0441,
+    "sameStock": -0.0247,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "UPST",
@@ -2675,8 +6761,34 @@
    "marketCap": 1672514898,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1304,
+    "net": -0.1384,
+    "netSlip": -0.1725,
+    "avgStock": -0.0441,
+    "sameStock": 0.0019,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 04:11",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1449,
+    "net": -0.1529,
+    "netSlip": -0.1865,
+    "avgStock": -0.0441,
+    "sameStock": 0.0019,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "NEWR",
@@ -2755,8 +6867,34 @@
    "marketCap": 706911480,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2065,
+    "net": -0.2145,
+    "netSlip": -0.2456,
+    "avgStock": -0.0441,
+    "sameStock": -0.0552,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 07:01",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2069,
+    "net": -0.2149,
+    "netSlip": -0.246,
+    "avgStock": -0.0441,
+    "sameStock": -0.0552,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "PATH",
@@ -2935,8 +7073,34 @@
    "marketCap": 5118281839,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1995,
+    "net": -0.2075,
+    "netSlip": -0.2389,
+    "avgStock": -0.0441,
+    "sameStock": -0.0104,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 07:00",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2142,
+    "net": -0.2222,
+    "netSlip": -0.253,
+    "avgStock": -0.0441,
+    "sameStock": -0.0104,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "ME",
@@ -2995,8 +7159,34 @@
    "marketCap": 2128106160,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1378,
+    "net": -0.1458,
+    "netSlip": -0.1796,
+    "avgStock": -0.0441,
+    "sameStock": -0.0995,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 07:19",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1414,
+    "net": -0.1494,
+    "netSlip": -0.183,
+    "avgStock": -0.0441,
+    "sameStock": -0.0995,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "KIND",
@@ -3015,8 +7205,34 @@
    "marketCap": 930792078,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2022-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1811,
+    "net": -0.1891,
+    "netSlip": -0.2212,
+    "avgStock": -0.0441,
+    "sameStock": -0.027,
+    "spy": -0.0148
+   },
+   "B": {
+    "buy": "2022-11-15",
+    "fill": "2022-11-15 08:12",
+    "ext": true,
+    "sell": "2022-11-29",
+    "exit": "stop",
+    "held": 10,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0441,
+    "sameStock": -0.027,
+    "spy": -0.0148
+   }
   },
   {
    "sym": "ERAS",
@@ -3035,8 +7251,34 @@
    "marketCap": 544509168,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-12-20",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-01-04",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0137,
+    "net": 0.0057,
+    "netSlip": -0.0341,
+    "avgStock": 0.0319,
+    "sameStock": -0.0373,
+    "spy": 0.0119
+   },
+   "B": {
+    "buy": "2022-12-20",
+    "fill": "2022-12-20 09:30",
+    "ext": false,
+    "sell": "2023-01-04",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0137,
+    "net": 0.0057,
+    "netSlip": -0.0341,
+    "avgStock": 0.0319,
+    "sameStock": -0.0373,
+    "spy": 0.0119
+   }
   },
   {
    "sym": "ORIC",
@@ -3055,8 +7297,34 @@
    "marketCap": 208964757,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2022-12-30",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-01-13",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1004,
+    "net": 0.0924,
+    "netSlip": 0.0492,
+    "avgStock": 0.096,
+    "sameStock": -0.0223,
+    "spy": 0.0469
+   },
+   "B": {
+    "buy": "2022-12-30",
+    "fill": "2022-12-29 16:44",
+    "ext": true,
+    "sell": "2023-01-13",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0553,
+    "net": 0.0473,
+    "netSlip": 0.0059,
+    "avgStock": 0.096,
+    "sameStock": -0.0223,
+    "spy": 0.0469
+   }
   },
   {
    "sym": "WVE",
@@ -3095,8 +7363,34 @@
    "marketCap": 1409025629,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-02-07",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-02-21",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1425,
+    "net": -0.1505,
+    "netSlip": -0.1841,
+    "avgStock": -0.0531,
+    "sameStock": 0.0375,
+    "spy": -0.0239
+   },
+   "B": {
+    "buy": "2023-02-07",
+    "fill": "2023-02-07 09:29",
+    "ext": true,
+    "sell": "2023-02-21",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1764,
+    "net": -0.1844,
+    "netSlip": -0.2167,
+    "avgStock": -0.0531,
+    "sameStock": 0.0375,
+    "spy": -0.0239
+   }
   },
   {
    "sym": "CVRX",
@@ -3135,8 +7429,34 @@
    "marketCap": 20649370,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-02-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-02-24",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0643,
+    "net": -0.0723,
+    "netSlip": -0.109,
+    "avgStock": -0.036,
+    "sameStock": null,
+    "spy": -0.0234
+   },
+   "B": {
+    "buy": "2023-02-10",
+    "fill": "2023-02-10 08:19",
+    "ext": true,
+    "sell": "2023-02-24",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.101,
+    "net": -0.109,
+    "netSlip": -0.1442,
+    "avgStock": -0.036,
+    "sameStock": null,
+    "spy": -0.0234
+   }
   },
   {
    "sym": "MBLY",
@@ -3155,8 +7475,34 @@
    "marketCap": 2274779661,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-02-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-02-24",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1288,
+    "net": -0.1368,
+    "netSlip": -0.171,
+    "avgStock": -0.036,
+    "sameStock": 0.0061,
+    "spy": -0.0234
+   },
+   "B": {
+    "buy": "2023-02-10",
+    "fill": "2023-02-10 04:50",
+    "ext": true,
+    "sell": "2023-02-24",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1597,
+    "net": -0.1677,
+    "netSlip": -0.2007,
+    "avgStock": -0.036,
+    "sameStock": 0.0061,
+    "spy": -0.0234
+   }
   },
   {
    "sym": "PRME",
@@ -3175,8 +7521,34 @@
    "marketCap": 1916948437,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-02-13",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-02-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1216,
+    "net": -0.1296,
+    "netSlip": -0.1641,
+    "avgStock": -0.0359,
+    "sameStock": -0.0222,
+    "spy": -0.0269
+   },
+   "B": {
+    "buy": "2023-02-13",
+    "fill": "2023-02-13 09:30",
+    "ext": false,
+    "sell": "2023-02-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1216,
+    "net": -0.1296,
+    "netSlip": -0.1641,
+    "avgStock": -0.0359,
+    "sameStock": -0.0222,
+    "spy": -0.0269
+   }
   },
   {
    "sym": "GCT",
@@ -3255,8 +7627,34 @@
    "marketCap": 71984495,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-05-08",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-05-19",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1478,
+    "net": 0.1398,
+    "netSlip": 0.0948,
+    "avgStock": -0.0039,
+    "sameStock": -0.0404,
+    "spy": 0.0137
+   },
+   "B": {
+    "buy": "2023-05-05",
+    "fill": "2023-05-05 15:16",
+    "ext": false,
+    "sell": "2023-05-18",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0634,
+    "net": 0.0554,
+    "netSlip": 0.0137,
+    "avgStock": 0.0168,
+    "sameStock": -0.0404,
+    "spy": 0.0252
+   }
   },
   {
    "sym": "PATH",
@@ -3275,8 +7673,34 @@
    "marketCap": 7720305813,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-05-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-05-23",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1728,
+    "net": 0.1648,
+    "netSlip": 0.1188,
+    "avgStock": -0.0001,
+    "sameStock": -0.0232,
+    "spy": 0.0005
+   },
+   "B": {
+    "buy": "2023-05-10",
+    "fill": "2023-05-10 08:25",
+    "ext": true,
+    "sell": "2023-05-23",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1536,
+    "net": 0.1456,
+    "netSlip": 0.1004,
+    "avgStock": -0.0001,
+    "sameStock": -0.0232,
+    "spy": 0.0005
+   }
   },
   {
    "sym": "HCP",
@@ -3295,8 +7719,34 @@
    "marketCap": 5860604520,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-05-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-05-23",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0487,
+    "net": 0.0407,
+    "netSlip": -0.0005,
+    "avgStock": -0.0001,
+    "sameStock": -0.0248,
+    "spy": 0.0005
+   },
+   "B": {
+    "buy": "2023-05-10",
+    "fill": "2023-05-10 08:30",
+    "ext": true,
+    "sell": "2023-05-23",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0276,
+    "net": 0.0196,
+    "netSlip": -0.0207,
+    "avgStock": -0.0001,
+    "sameStock": -0.0248,
+    "spy": 0.0005
+   }
   },
   {
    "sym": "APLM",
@@ -3315,8 +7765,34 @@
    "marketCap": 383637604,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-05-12",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-05-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0631,
+    "net": -0.0711,
+    "netSlip": -0.1078,
+    "avgStock": -0.0145,
+    "sameStock": 0.0508,
+    "spy": 0.003
+   },
+   "B": {
+    "buy": "2023-05-11",
+    "fill": "2023-05-11 11:00",
+    "ext": false,
+    "sell": "2023-05-24",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0794,
+    "net": -0.0874,
+    "netSlip": -0.1235,
+    "avgStock": -0.002,
+    "sameStock": 0.0508,
+    "spy": -0.0021
+   }
   },
   {
    "sym": "NEXT",
@@ -3335,8 +7811,34 @@
    "marketCap": 1194051667,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-06-26",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-07-10",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0768,
+    "net": 0.0688,
+    "netSlip": 0.0266,
+    "avgStock": 0.029,
+    "sameStock": 0.0119,
+    "spy": 0.0163
+   },
+   "B": {
+    "buy": "2023-06-26",
+    "fill": "2023-06-23 16:30",
+    "ext": true,
+    "sell": "2023-07-10",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0087,
+    "net": 0.0007,
+    "netSlip": -0.0389,
+    "avgStock": 0.029,
+    "sameStock": 0.0119,
+    "spy": 0.0163
+   }
   },
   {
    "sym": "SGTX",
@@ -3355,8 +7857,34 @@
    "marketCap": 716865550,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-07-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-07-21",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0373,
+    "net": -0.0453,
+    "netSlip": -0.083,
+    "avgStock": 0.0357,
+    "sameStock": -0.1303,
+    "spy": 0.032
+   },
+   "B": {
+    "buy": "2023-07-10",
+    "fill": "2023-07-07 17:34",
+    "ext": true,
+    "sell": "2023-07-21",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1071,
+    "net": -0.1151,
+    "netSlip": -0.1501,
+    "avgStock": 0.0357,
+    "sameStock": -0.1303,
+    "spy": 0.032
+   }
   },
   {
    "sym": "CRBU",
@@ -3375,8 +7903,34 @@
    "marketCap": 445035742,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-07-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-07-21",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1126,
+    "net": -0.1206,
+    "netSlip": -0.1554,
+    "avgStock": 0.0357,
+    "sameStock": -0.0284,
+    "spy": 0.032
+   },
+   "B": {
+    "buy": "2023-07-10",
+    "fill": "2023-07-10 09:12",
+    "ext": true,
+    "sell": "2023-07-21",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1729,
+    "net": -0.1809,
+    "netSlip": -0.2133,
+    "avgStock": 0.0357,
+    "sameStock": -0.0284,
+    "spy": 0.032
+   }
   },
   {
    "sym": "NIR",
@@ -3395,8 +7949,34 @@
    "marketCap": 77896675,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-07-24",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-08-03",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0115,
+    "sameStock": -0.1931,
+    "spy": -0.01
+   },
+   "B": {
+    "buy": "2023-07-24",
+    "fill": "2023-07-21 17:30",
+    "ext": true,
+    "sell": "2023-08-03",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0115,
+    "sameStock": -0.1931,
+    "spy": -0.01
+   }
   },
   {
    "sym": "OLO",
@@ -3415,8 +7995,34 @@
    "marketCap": 1122554782,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-08-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-08-24",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0768,
+    "net": -0.0848,
+    "netSlip": -0.121,
+    "avgStock": -0.0495,
+    "sameStock": -0.0242,
+    "spy": -0.0159
+   },
+   "B": {
+    "buy": "2023-08-10",
+    "fill": "2023-08-10 10:44",
+    "ext": false,
+    "sell": "2023-08-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0764,
+    "net": -0.0844,
+    "netSlip": -0.1206,
+    "avgStock": -0.0464,
+    "sameStock": -0.0234,
+    "spy": -0.0115
+   }
   },
   {
    "sym": "EVLV",
@@ -3435,8 +8041,34 @@
    "marketCap": 862624821,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-08-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-08-24",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0032,
+    "net": -0.0112,
+    "netSlip": -0.0503,
+    "avgStock": -0.0499,
+    "sameStock": -0.0065,
+    "spy": -0.0159
+   },
+   "B": {
+    "buy": "2023-08-11",
+    "fill": "2023-08-10 16:29",
+    "ext": true,
+    "sell": "2023-08-24",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.042,
+    "net": -0.05,
+    "netSlip": -0.0876,
+    "avgStock": -0.0499,
+    "sameStock": -0.0065,
+    "spy": -0.0159
+   }
   },
   {
    "sym": "DBTX",
@@ -3455,8 +8087,34 @@
    "marketCap": 125575219,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-08-21",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-09-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0261,
+    "net": 0.0181,
+    "netSlip": -0.0221,
+    "avgStock": 0.0149,
+    "sameStock": -0.0491,
+    "spy": 0.0312
+   },
+   "B": {
+    "buy": "2023-08-21",
+    "fill": "2023-08-18 17:18",
+    "ext": true,
+    "sell": "2023-09-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0648,
+    "net": -0.0728,
+    "netSlip": -0.1095,
+    "avgStock": 0.0149,
+    "sameStock": -0.0491,
+    "spy": 0.0312
+   }
   },
   {
    "sym": "GWH",
@@ -3475,8 +8133,34 @@
    "marketCap": 4084241490,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-09-26",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-10-09",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0718,
+    "net": 0.0638,
+    "netSlip": 0.0218,
+    "avgStock": -0.0251,
+    "sameStock": -0.0523,
+    "spy": 0.0075
+   },
+   "B": {
+    "buy": "2023-09-26",
+    "fill": "2023-09-25 17:03",
+    "ext": true,
+    "sell": "2023-10-09",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0651,
+    "net": 0.0571,
+    "netSlip": 0.0153,
+    "avgStock": -0.0251,
+    "sameStock": -0.0523,
+    "spy": 0.0075
+   }
   },
   {
    "sym": "ASMB",
@@ -3515,8 +8199,34 @@
    "marketCap": 315537176,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-11-06",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-11-17",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0662,
+    "net": 0.0582,
+    "netSlip": 0.0164,
+    "avgStock": 0.0041,
+    "sameStock": -0.0247,
+    "spy": 0.0352
+   },
+   "B": {
+    "buy": "2023-11-06",
+    "fill": "2023-11-06 08:25",
+    "ext": true,
+    "sell": "2023-11-17",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.073,
+    "net": 0.065,
+    "netSlip": 0.023,
+    "avgStock": 0.0041,
+    "sameStock": -0.0247,
+    "spy": 0.0352
+   }
   },
   {
    "sym": "NMRA",
@@ -3535,8 +8245,34 @@
    "marketCap": 1610660476,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-11-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-11-24",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1224,
+    "net": 0.1144,
+    "netSlip": 0.0704,
+    "avgStock": 0.059,
+    "sameStock": 0.1278,
+    "spy": 0.0443
+   },
+   "B": {
+    "buy": "2023-11-10",
+    "fill": "2023-11-10 09:30",
+    "ext": false,
+    "sell": "2023-11-24",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1224,
+    "net": 0.1144,
+    "netSlip": 0.0704,
+    "avgStock": 0.059,
+    "sameStock": 0.1278,
+    "spy": 0.0443
+   }
   },
   {
    "sym": "CLLS",
@@ -3555,8 +8291,34 @@
    "marketCap": 109622328,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-11-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-11-24",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1279,
+    "net": 0.1199,
+    "netSlip": 0.0757,
+    "avgStock": 0.059,
+    "sameStock": -0.0568,
+    "spy": 0.0443
+   },
+   "B": {
+    "buy": "2023-11-10",
+    "fill": "2023-11-09 17:09",
+    "ext": true,
+    "sell": "2023-11-24",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1274,
+    "net": 0.1194,
+    "netSlip": 0.0752,
+    "avgStock": 0.059,
+    "sameStock": -0.0568,
+    "spy": 0.0443
+   }
   },
   {
    "sym": "NMRA",
@@ -3575,8 +8337,34 @@
    "marketCap": 1610660476,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-11-10",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-11-24",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1224,
+    "net": 0.1144,
+    "netSlip": 0.0704,
+    "avgStock": 0.059,
+    "sameStock": 0.1278,
+    "spy": 0.0443
+   },
+   "B": {
+    "buy": "2023-11-10",
+    "fill": "2023-11-10 09:30",
+    "ext": false,
+    "sell": "2023-11-24",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1224,
+    "net": 0.1144,
+    "netSlip": 0.0704,
+    "avgStock": 0.059,
+    "sameStock": 0.1278,
+    "spy": 0.0443
+   }
   },
   {
    "sym": "CDLX",
@@ -3595,8 +8383,34 @@
    "marketCap": 325182679,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.09,
+    "net": -0.098,
+    "netSlip": -0.1337,
+    "avgStock": 0.0067,
+    "sameStock": -0.0185,
+    "spy": 0.01
+   },
+   "B": {
+    "buy": "2023-11-15",
+    "fill": "2023-11-14 16:14",
+    "ext": true,
+    "sell": "2023-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1206,
+    "net": -0.1286,
+    "netSlip": -0.1631,
+    "avgStock": 0.0067,
+    "sameStock": -0.0185,
+    "spy": 0.01
+   }
   },
   {
    "sym": "RNA",
@@ -3615,8 +8429,34 @@
    "marketCap": 595033050,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2023-12-05",
+    "fill": "open",
+    "ext": false,
+    "sell": "2023-12-18",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1019,
+    "net": 0.0939,
+    "netSlip": 0.0507,
+    "avgStock": 0.0331,
+    "sameStock": -0.0179,
+    "spy": 0.0367
+   },
+   "B": {
+    "buy": "2023-12-05",
+    "fill": "2023-12-04 16:21",
+    "ext": true,
+    "sell": "2023-12-18",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0521,
+    "net": 0.0441,
+    "netSlip": 0.0028,
+    "avgStock": 0.0331,
+    "sameStock": -0.0179,
+    "spy": 0.0367
+   }
   },
   {
    "sym": "KVYO",
@@ -3655,8 +8495,34 @@
    "marketCap": 3328575342,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-02-09",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-02-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0249,
+    "net": -0.0329,
+    "netSlip": -0.0712,
+    "avgStock": 0.006,
+    "sameStock": 0.0253,
+    "spy": 0.0181
+   },
+   "B": {
+    "buy": "2024-02-09",
+    "fill": "2024-02-09 09:30",
+    "ext": false,
+    "sell": "2024-02-23",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0249,
+    "net": -0.0329,
+    "netSlip": -0.0712,
+    "avgStock": 0.006,
+    "sameStock": 0.0253,
+    "spy": 0.0181
+   }
   },
   {
    "sym": "SWAV",
@@ -3675,8 +8541,34 @@
    "marketCap": 8553035527,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1172,
+    "net": 0.1092,
+    "netSlip": 0.0654,
+    "avgStock": 0.0159,
+    "sameStock": 0.0408,
+    "spy": 0.0191
+   },
+   "B": {
+    "buy": "2024-02-14",
+    "fill": "2024-02-14 08:26",
+    "ext": true,
+    "sell": "2024-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.092,
+    "net": 0.084,
+    "netSlip": 0.0412,
+    "avgStock": 0.0159,
+    "sameStock": 0.0408,
+    "spy": 0.0191
+   }
   },
   {
    "sym": "BMR",
@@ -3695,8 +8587,34 @@
    "marketCap": 183501888,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-02-15",
+    "exit": "stop",
+    "held": 2,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": 0.0214,
+    "sameStock": -0.0332,
+    "spy": 0.0105
+   },
+   "B": {
+    "buy": "2024-02-14",
+    "fill": "2024-02-14 07:33",
+    "ext": true,
+    "sell": "2024-02-15",
+    "exit": "stop",
+    "held": 2,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": 0.0214,
+    "sameStock": -0.0332,
+    "spy": 0.0105
+   }
   },
   {
    "sym": "NNOX",
@@ -3715,8 +8633,34 @@
    "marketCap": 367472082,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-02-15",
+    "exit": "stop",
+    "held": 1,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": 0.0059,
+    "sameStock": -0.007,
+    "spy": 0.0054
+   },
+   "B": {
+    "buy": "2024-02-15",
+    "fill": "2024-02-14 16:16",
+    "ext": true,
+    "sell": "2024-02-29",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.6806,
+    "net": 0.6726,
+    "netSlip": 0.6067,
+    "avgStock": 0.0065,
+    "sameStock": -0.0426,
+    "spy": 0.0176
+   }
   },
   {
    "sym": "RXRX",
@@ -3735,8 +8679,34 @@
    "marketCap": 2357341869,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-02-29",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.07,
+    "net": 0.062,
+    "netSlip": 0.02,
+    "avgStock": 0.0065,
+    "sameStock": -0.0151,
+    "spy": 0.0176
+   },
+   "B": {
+    "buy": "2024-02-15",
+    "fill": "2024-02-14 16:18",
+    "ext": true,
+    "sell": "2024-02-29",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1853,
+    "net": 0.1773,
+    "netSlip": 0.1309,
+    "avgStock": 0.0065,
+    "sameStock": -0.0151,
+    "spy": 0.0176
+   }
   },
   {
    "sym": "SOUN",
@@ -3755,8 +8725,34 @@
    "marketCap": 577038526,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-02-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-02-29",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.8504,
+    "net": 0.8424,
+    "netSlip": 0.7698,
+    "avgStock": 0.0065,
+    "sameStock": 0.0076,
+    "spy": 0.0176
+   },
+   "B": {
+    "buy": "2024-02-15",
+    "fill": "2024-02-14 16:14",
+    "ext": true,
+    "sell": "2024-02-29",
+    "exit": "time",
+    "held": 10,
+    "gross": 2.1274,
+    "net": 2.1194,
+    "netSlip": 1.9968,
+    "avgStock": 0.0065,
+    "sameStock": 0.0076,
+    "spy": 0.0176
+   }
   },
   {
    "sym": "LIFW",
@@ -3775,8 +8771,34 @@
    "marketCap": 9873684,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-04-02",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-04-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1213,
+    "net": 0.1133,
+    "netSlip": 0.0693,
+    "avgStock": -0.0611,
+    "sameStock": -0.084,
+    "spy": -0.0266
+   },
+   "B": {
+    "buy": "2024-04-02",
+    "fill": "2024-04-01 16:36",
+    "ext": true,
+    "sell": "2024-04-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.3692,
+    "net": 0.3612,
+    "netSlip": 0.3075,
+    "avgStock": -0.0611,
+    "sameStock": -0.084,
+    "spy": -0.0266
+   }
   },
   {
    "sym": "XLO",
@@ -3815,8 +8837,34 @@
    "marketCap": 679298706,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-04-19",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-05-02",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0083,
+    "net": -0.0163,
+    "netSlip": -0.0552,
+    "avgStock": 0.0324,
+    "sameStock": 0.0593,
+    "spy": 0.0112
+   },
+   "B": {
+    "buy": "2024-04-18",
+    "fill": "2024-04-18 14:36",
+    "ext": false,
+    "sell": "2024-05-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0299,
+    "net": -0.0379,
+    "netSlip": -0.076,
+    "avgStock": 0.0098,
+    "sameStock": 0.0593,
+    "spy": -0.0032
+   }
   },
   {
    "sym": "LPTX",
@@ -3855,8 +8903,34 @@
    "marketCap": 309922889,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-05-03",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-05-16",
+    "exit": "time",
+    "held": 10,
+    "gross": 0,
+    "net": -0.008,
+    "netSlip": -0.0472,
+    "avgStock": 0.0183,
+    "sameStock": -0.0511,
+    "spy": 0.0343
+   },
+   "B": {
+    "buy": "2024-05-03",
+    "fill": "2024-05-03 09:30",
+    "ext": false,
+    "sell": "2024-05-16",
+    "exit": "time",
+    "held": 10,
+    "gross": 0,
+    "net": -0.008,
+    "netSlip": -0.0472,
+    "avgStock": 0.0183,
+    "sameStock": -0.0511,
+    "spy": 0.0343
+   }
   },
   {
    "sym": "PUMP",
@@ -3875,8 +8949,34 @@
    "marketCap": 999298113,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-05-06",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-05-17",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0233,
+    "net": 0.0153,
+    "netSlip": -0.0249,
+    "avgStock": 0.0133,
+    "sameStock": -0.001,
+    "spy": 0.0306
+   },
+   "B": {
+    "buy": "2024-05-06",
+    "fill": "2024-05-06 09:30",
+    "ext": false,
+    "sell": "2024-05-17",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0233,
+    "net": 0.0153,
+    "netSlip": -0.0249,
+    "avgStock": 0.0133,
+    "sameStock": -0.001,
+    "spy": 0.0306
+   }
   },
   {
    "sym": "LAB",
@@ -3895,8 +8995,34 @@
    "marketCap": 909265683,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-05-13",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-05-24",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0583,
+    "net": 0.0503,
+    "netSlip": 0.0088,
+    "avgStock": -0.014,
+    "sameStock": -0.0139,
+    "spy": 0.0132
+   },
+   "B": {
+    "buy": "2024-05-13",
+    "fill": "2024-05-10 18:40",
+    "ext": true,
+    "sell": "2024-05-24",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0429,
+    "net": 0.0349,
+    "netSlip": -0.006,
+    "avgStock": -0.014,
+    "sameStock": -0.0139,
+    "spy": 0.0132
+   }
   },
   {
    "sym": "ZH",
@@ -3915,8 +9041,34 @@
    "marketCap": 357894453,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-05-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-05-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1135,
+    "net": -0.1215,
+    "netSlip": -0.1562,
+    "avgStock": -0.0208,
+    "sameStock": -0.0068,
+    "spy": 0.0167
+   },
+   "B": {
+    "buy": "2024-05-14",
+    "fill": "2024-05-13 16:03",
+    "ext": true,
+    "sell": "2024-05-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1251,
+    "net": -0.1331,
+    "netSlip": -0.1674,
+    "avgStock": -0.0208,
+    "sameStock": -0.0068,
+    "spy": 0.0167
+   }
   },
   {
    "sym": "SERV",
@@ -3935,8 +9087,34 @@
    "marketCap": 65310304,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-07-19",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-08-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 3.0422,
+    "net": 2.992,
+    "netSlip": 2.8756,
+    "avgStock": -0.0239,
+    "sameStock": -0.021,
+    "spy": -0.017
+   },
+   "B": {
+    "buy": "2024-07-19",
+    "fill": "2024-07-18 17:17",
+    "ext": true,
+    "sell": "2024-08-01",
+    "exit": "time",
+    "held": 10,
+    "gross": 3.9355,
+    "net": 2.992,
+    "netSlip": 2.992,
+    "avgStock": -0.0239,
+    "sameStock": -0.021,
+    "spy": -0.017
+   }
   },
   {
    "sym": "RBRK",
@@ -3955,8 +9133,34 @@
    "marketCap": 6250043975,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-07-29",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-08-09",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0929,
+    "net": -0.1009,
+    "netSlip": -0.1364,
+    "avgStock": -0.0909,
+    "sameStock": 0.0232,
+    "spy": -0.0239
+   },
+   "B": {
+    "buy": "2024-07-29",
+    "fill": "2024-07-29 08:00",
+    "ext": true,
+    "sell": "2024-08-09",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1214,
+    "net": -0.1294,
+    "netSlip": -0.1639,
+    "avgStock": -0.0909,
+    "sameStock": 0.0232,
+    "spy": -0.0239
+   }
   },
   {
    "sym": "TEM",
@@ -3975,8 +9179,34 @@
    "marketCap": 6474624720,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-08-02",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-08-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.2421,
+    "net": 0.2341,
+    "netSlip": 0.1854,
+    "avgStock": -0.0102,
+    "sameStock": 0.0172,
+    "spy": 0.0323
+   },
+   "B": {
+    "buy": "2024-08-02",
+    "fill": "2024-08-02 04:00",
+    "ext": true,
+    "sell": "2024-08-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1452,
+    "net": 0.1372,
+    "netSlip": 0.0923,
+    "avgStock": -0.0102,
+    "sameStock": 0.0172,
+    "spy": 0.0323
+   }
   },
   {
    "sym": "RAPP",
@@ -3995,8 +9225,34 @@
    "marketCap": 674275252,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-08-12",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-08-23",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1818,
+    "net": 0.1738,
+    "netSlip": 0.1274,
+    "avgStock": 0.0552,
+    "sameStock": 0.0074,
+    "spy": 0.0523
+   },
+   "B": {
+    "buy": "2024-08-12",
+    "fill": "2024-08-12 09:30",
+    "ext": false,
+    "sell": "2024-08-23",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1818,
+    "net": 0.1738,
+    "netSlip": 0.1274,
+    "avgStock": 0.0552,
+    "sameStock": 0.0074,
+    "spy": 0.0523
+   }
   },
   {
    "sym": "PRME",
@@ -4035,8 +9291,34 @@
    "marketCap": 28845518,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-10-09",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-10-22",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0979,
+    "net": -0.1059,
+    "netSlip": -0.1412,
+    "avgStock": 0.0193,
+    "sameStock": -0.044,
+    "spy": 0.0177
+   },
+   "B": {
+    "buy": "2024-10-09",
+    "fill": "2024-10-09 04:00",
+    "ext": true,
+    "sell": "2024-10-22",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.122,
+    "net": -0.13,
+    "netSlip": -0.1645,
+    "avgStock": 0.0193,
+    "sameStock": -0.044,
+    "spy": 0.0177
+   }
   },
   {
    "sym": "IBTA",
@@ -4055,8 +9337,34 @@
    "marketCap": 2081052851,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-10-17",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-10-30",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1082,
+    "net": 0.1002,
+    "netSlip": 0.0567,
+    "avgStock": -0.0241,
+    "sameStock": -0.0116,
+    "spy": -0.0101
+   },
+   "B": {
+    "buy": "2024-10-17",
+    "fill": "2024-10-17 09:06",
+    "ext": true,
+    "sell": "2024-10-30",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0785,
+    "net": 0.0705,
+    "netSlip": 0.0282,
+    "avgStock": -0.0241,
+    "sameStock": -0.0116,
+    "spy": -0.0101
+   }
   },
   {
    "sym": "RAPP",
@@ -4075,8 +9383,34 @@
    "marketCap": 949159087,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-10-21",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-11-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0513,
+    "net": -0.0593,
+    "netSlip": -0.0965,
+    "avgStock": -0.0411,
+    "sameStock": 0.0074,
+    "spy": -0.0219
+   },
+   "B": {
+    "buy": "2024-10-21",
+    "fill": "2024-10-21 09:30",
+    "ext": false,
+    "sell": "2024-11-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0513,
+    "net": -0.0593,
+    "netSlip": -0.0965,
+    "avgStock": -0.0411,
+    "sameStock": 0.0074,
+    "spy": -0.0219
+   }
   },
   {
    "sym": "MNPR",
@@ -4095,8 +9429,34 @@
    "marketCap": 59599781,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-10-28",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-11-08",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1506,
+    "net": 0.1426,
+    "netSlip": 0.0975,
+    "avgStock": 0.0345,
+    "sameStock": 0.0517,
+    "spy": 0.0268
+   },
+   "B": {
+    "buy": "2024-10-28",
+    "fill": "2024-10-28 06:02",
+    "ext": true,
+    "sell": "2024-11-08",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1847,
+    "net": 0.1767,
+    "netSlip": 0.1302,
+    "avgStock": 0.0345,
+    "sameStock": 0.0517,
+    "spy": 0.0268
+   }
   },
   {
    "sym": "WGS",
@@ -4115,8 +9475,34 @@
    "marketCap": 2025040745,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-11-08",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-11-21",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0505,
+    "net": -0.0585,
+    "netSlip": -0.0957,
+    "avgStock": -0.0237,
+    "sameStock": 0.0547,
+    "spy": -0.0042
+   },
+   "B": {
+    "buy": "2024-11-08",
+    "fill": "2024-11-08 08:15",
+    "ext": true,
+    "sell": "2024-11-21",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0847,
+    "net": -0.0927,
+    "netSlip": -0.1286,
+    "avgStock": -0.0237,
+    "sameStock": 0.0547,
+    "spy": -0.0042
+   }
   },
   {
    "sym": "QTTB",
@@ -4155,8 +9541,34 @@
    "marketCap": 1477363626,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-11-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2024-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.4408,
+    "net": 0.4328,
+    "netSlip": 0.3763,
+    "avgStock": 0.0322,
+    "sameStock": 0.0242,
+    "spy": 0.0218
+   },
+   "B": {
+    "buy": "2024-11-15",
+    "fill": "2024-11-14 16:20",
+    "ext": true,
+    "sell": "2024-11-29",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.3962,
+    "net": 0.3882,
+    "netSlip": 0.3335,
+    "avgStock": 0.0322,
+    "sameStock": 0.0242,
+    "spy": 0.0218
+   }
   },
   {
    "sym": "PSNL",
@@ -4175,8 +9587,34 @@
    "marketCap": 406226483,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2024-12-23",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-01-07",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0205,
+    "net": 0.0125,
+    "netSlip": -0.0275,
+    "avgStock": 0.0227,
+    "sameStock": 0.0277,
+    "spy": -0.0038
+   },
+   "B": {
+    "buy": "2024-12-23",
+    "fill": "2024-12-23 07:51",
+    "ext": true,
+    "sell": "2025-01-07",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0295,
+    "net": -0.0375,
+    "netSlip": -0.0755,
+    "avgStock": 0.0227,
+    "sameStock": 0.0277,
+    "spy": -0.0038
+   }
   },
   {
    "sym": "BLUE",
@@ -4255,8 +9693,34 @@
    "marketCap": 6238730877,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1446,
+    "net": -0.1526,
+    "netSlip": -0.1862,
+    "avgStock": -0.0517,
+    "sameStock": 0.0509,
+    "spy": -0.0138
+   },
+   "B": {
+    "buy": "2025-02-11",
+    "fill": "2025-02-10 18:39",
+    "ext": true,
+    "sell": "2025-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1889,
+    "net": -0.1969,
+    "netSlip": -0.2287,
+    "avgStock": -0.0517,
+    "sameStock": 0.0509,
+    "spy": -0.0138
+   }
   },
   {
    "sym": "ZK",
@@ -4275,8 +9739,34 @@
    "marketCap": 6137623080,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-13",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0645,
+    "net": 0.0565,
+    "netSlip": 0.0147,
+    "avgStock": -0.0657,
+    "sameStock": -0.0002,
+    "spy": -0.0321
+   },
+   "B": {
+    "buy": "2025-02-13",
+    "fill": "2025-02-12 19:04",
+    "ext": true,
+    "sell": "2025-02-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0133,
+    "net": 0.0053,
+    "netSlip": -0.0344,
+    "avgStock": -0.0657,
+    "sameStock": -0.0002,
+    "spy": -0.0321
+   }
   },
   {
    "sym": "LYEL",
@@ -4295,8 +9785,34 @@
    "marketCap": 149885630,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1749,
+    "net": 0.1669,
+    "netSlip": 0.1208,
+    "avgStock": -0.0717,
+    "sameStock": -0.0279,
+    "spy": -0.0258
+   },
+   "B": {
+    "buy": "2025-02-13",
+    "fill": "2025-02-13 15:12",
+    "ext": false,
+    "sell": "2025-02-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.3041,
+    "net": 0.2961,
+    "netSlip": 0.2449,
+    "avgStock": -0.0657,
+    "sameStock": -0.0279,
+    "spy": -0.0321
+   }
   },
   {
    "sym": "GLPG",
@@ -4355,8 +9871,34 @@
    "marketCap": 9818449410,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-25",
+    "exit": "stop",
+    "held": 7,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0647,
+    "sameStock": 0.0467,
+    "spy": -0.0257
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 06:14",
+    "ext": true,
+    "sell": "2025-02-27",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0778,
+    "sameStock": 0.0464,
+    "spy": -0.0408
+   }
   },
   {
    "sym": "WRD",
@@ -4375,8 +9917,34 @@
    "marketCap": 4713036452,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-21",
+    "exit": "stop",
+    "held": 5,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0443,
+    "sameStock": -0.0242,
+    "spy": -0.0164
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 06:17",
+    "ext": true,
+    "sell": "2025-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0063,
+    "net": -0.0143,
+    "netSlip": -0.0533,
+    "avgStock": -0.0719,
+    "sameStock": -0.0341,
+    "spy": -0.0258
+   }
   },
   {
    "sym": "PONY",
@@ -4395,8 +9963,34 @@
    "marketCap": 5205347217,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0972,
+    "net": -0.1052,
+    "netSlip": -0.1406,
+    "avgStock": -0.0719,
+    "sameStock": -0.0006,
+    "spy": -0.0258
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 07:29",
+    "ext": true,
+    "sell": "2025-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1891,
+    "net": -0.1971,
+    "netSlip": -0.2289,
+    "avgStock": -0.0719,
+    "sameStock": -0.0006,
+    "spy": -0.0258
+   }
   },
   {
    "sym": "VRDN",
@@ -4415,8 +10009,34 @@
    "marketCap": 1348200990,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-03-03",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1277,
+    "net": -0.1357,
+    "netSlip": -0.1699,
+    "avgStock": -0.0983,
+    "sameStock": 0.0026,
+    "spy": -0.0444
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 11:16",
+    "ext": false,
+    "sell": "2025-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0808,
+    "net": -0.0888,
+    "netSlip": -0.1248,
+    "avgStock": -0.0719,
+    "sameStock": 0.0036,
+    "spy": -0.0258
+   }
   },
   {
    "sym": "KYMR",
@@ -4435,8 +10055,34 @@
    "marketCap": 2372352056,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-03-03",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1953,
+    "net": -0.2033,
+    "netSlip": -0.2348,
+    "avgStock": -0.0983,
+    "sameStock": 0.0263,
+    "spy": -0.0444
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 11:16",
+    "ext": false,
+    "sell": "2025-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1522,
+    "net": -0.1602,
+    "netSlip": -0.1935,
+    "avgStock": -0.0719,
+    "sameStock": 0.0268,
+    "spy": -0.0258
+   }
   },
   {
    "sym": "ABSI",
@@ -4455,8 +10101,34 @@
    "marketCap": 574278795,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-24",
+    "exit": "stop",
+    "held": 5,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.055,
+    "sameStock": 0.0048,
+    "spy": -0.0224
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 11:16",
+    "ext": false,
+    "sell": "2025-02-25",
+    "exit": "stop",
+    "held": 7,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0647,
+    "sameStock": 0.0169,
+    "spy": -0.0257
+   }
   },
   {
    "sym": "XLO",
@@ -4475,8 +10147,34 @@
    "marketCap": 56705906,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-24",
+    "exit": "stop",
+    "held": 5,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.055,
+    "sameStock": -0.0275,
+    "spy": -0.0224
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 11:16",
+    "ext": false,
+    "sell": "2025-02-24",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0559,
+    "sameStock": -0.0346,
+    "spy": -0.0209
+   }
   },
   {
    "sym": "IGMS",
@@ -4635,8 +10333,34 @@
    "marketCap": 173174927,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-03-03",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2099,
+    "net": -0.2179,
+    "netSlip": -0.2489,
+    "avgStock": -0.0983,
+    "sameStock": -0.0111,
+    "spy": -0.0444
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 14:10",
+    "ext": false,
+    "sell": "2025-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.167,
+    "net": -0.175,
+    "netSlip": -0.2077,
+    "avgStock": -0.0719,
+    "sameStock": -0.0142,
+    "spy": -0.0258
+   }
   },
   {
    "sym": "BHVN",
@@ -4655,8 +10379,34 @@
    "marketCap": 4225898753,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-03-03",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2275,
+    "net": -0.2355,
+    "netSlip": -0.2658,
+    "avgStock": -0.0983,
+    "sameStock": -0.0095,
+    "spy": -0.0444
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 14:10",
+    "ext": false,
+    "sell": "2025-02-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1071,
+    "net": -0.1151,
+    "netSlip": -0.1501,
+    "avgStock": -0.0719,
+    "sameStock": -0.0102,
+    "spy": -0.0258
+   }
   },
   {
    "sym": "SENS",
@@ -4675,8 +10425,34 @@
    "marketCap": 776340292,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-24",
+    "exit": "stop",
+    "held": 5,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.055,
+    "sameStock": 0.0012,
+    "spy": -0.0224
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 14:10",
+    "ext": false,
+    "sell": "2025-02-24",
+    "exit": "stop",
+    "held": 6,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0559,
+    "sameStock": 0.0039,
+    "spy": -0.0209
+   }
   },
   {
    "sym": "DNA",
@@ -4695,8 +10471,34 @@
    "marketCap": 778839174,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-20",
+    "exit": "stop",
+    "held": 3,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0206,
+    "sameStock": -0.0058,
+    "spy": -0.0008
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 14:10",
+    "ext": false,
+    "sell": "2025-02-21",
+    "exit": "stop",
+    "held": 5,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0443,
+    "sameStock": -0.0062,
+    "spy": -0.0164
+   }
   },
   {
    "sym": "CELC",
@@ -4715,28 +10517,34 @@
    "marketCap": 468574992,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
-  },
-  {
-   "sym": "GDOT",
-   "giant": "W104169",
-   "giantCik": "104169",
-   "form": "13F-HR",
-   "adsh": "0001123292-25-000099",
-   "acceptedNY": "2025-02-14 16:29",
-   "phase": "after",
-   "issuer": "GREEN DOT CORP",
-   "cusip": "39304D102",
-   "subjectCik": null,
-   "mappedVia": "ftd",
-   "firstEver13F": true,
-   "lastClose": 9.51,
-   "marketCap": 511512899,
-   "under2B": true,
-   "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-02-26",
+    "exit": "stop",
+    "held": 7,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0607,
+    "sameStock": 0.018,
+    "spy": -0.0267
+   },
+   "B": {
+    "buy": "2025-02-14",
+    "fill": "2025-02-14 14:10",
+    "ext": false,
+    "sell": "2025-02-27",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0778,
+    "sameStock": 0.0178,
+    "spy": -0.0408
+   }
   },
   {
    "sym": "JOBY",
@@ -4755,8 +10563,34 @@
    "marketCap": 5990619822,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-03-03",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1823,
+    "net": -0.1903,
+    "netSlip": -0.2223,
+    "avgStock": -0.0979,
+    "sameStock": 0.0016,
+    "spy": -0.0444
+   },
+   "B": {
+    "buy": "2025-02-18",
+    "fill": "2025-02-14 17:23",
+    "ext": true,
+    "sell": "2025-03-03",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2053,
+    "net": -0.2133,
+    "netSlip": -0.2445,
+    "avgStock": -0.0979,
+    "sameStock": 0.0016,
+    "spy": -0.0444
+   }
   },
   {
    "sym": "XLO",
@@ -4795,8 +10629,34 @@
    "marketCap": 5227875552,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-05-02",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-05-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0778,
+    "net": 0.0698,
+    "netSlip": 0.0276,
+    "avgStock": 0.0338,
+    "sameStock": 0.0534,
+    "spy": 0.0456
+   },
+   "B": {
+    "buy": "2025-05-02",
+    "fill": "2025-05-01 17:42",
+    "ext": true,
+    "sell": "2025-05-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.09,
+    "net": 0.082,
+    "netSlip": 0.0392,
+    "avgStock": 0.0338,
+    "sameStock": 0.0534,
+    "spy": 0.0456
+   }
   },
   {
    "sym": "MAZE",
@@ -4815,8 +10675,34 @@
    "marketCap": 463598204,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-05-02",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-05-15",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1419,
+    "net": -0.1499,
+    "netSlip": -0.1836,
+    "avgStock": 0.0338,
+    "sameStock": 0.0248,
+    "spy": 0.0456
+   },
+   "B": {
+    "buy": "2025-05-02",
+    "fill": "2025-05-02 08:04",
+    "ext": true,
+    "sell": "2025-05-15",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1592,
+    "net": -0.1672,
+    "netSlip": -0.2002,
+    "avgStock": 0.0338,
+    "sameStock": 0.0248,
+    "spy": 0.0456
+   }
   },
   {
    "sym": "MTSR",
@@ -4835,8 +10721,34 @@
    "marketCap": 2453973180,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-05-02",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-05-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0496,
+    "net": 0.0416,
+    "netSlip": 0.0004,
+    "avgStock": 0.0338,
+    "sameStock": 0.0572,
+    "spy": 0.0456
+   },
+   "B": {
+    "buy": "2025-05-02",
+    "fill": "2025-05-02 04:52",
+    "ext": true,
+    "sell": "2025-05-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0015,
+    "net": -0.0065,
+    "netSlip": -0.0458,
+    "avgStock": 0.0338,
+    "sameStock": 0.0572,
+    "spy": 0.0456
+   }
   },
   {
    "sym": "MAZE",
@@ -4895,8 +10807,34 @@
    "marketCap": 2094837646,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-07-30",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-08-12",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1551,
+    "net": -0.1631,
+    "netSlip": -0.1963,
+    "avgStock": -0.0103,
+    "sameStock": -0.0172,
+    "spy": 0.0106
+   },
+   "B": {
+    "buy": "2025-07-30",
+    "fill": "2025-07-29 19:44",
+    "ext": true,
+    "sell": "2025-08-12",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1715,
+    "net": -0.1795,
+    "netSlip": -0.212,
+    "avgStock": -0.0103,
+    "sameStock": -0.0172,
+    "spy": 0.0106
+   }
   },
   {
    "sym": "PONY",
@@ -4935,8 +10873,34 @@
    "marketCap": 124052324,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-08-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-08-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0136,
+    "net": -0.0216,
+    "netSlip": -0.0603,
+    "avgStock": 0.0176,
+    "sameStock": 0.0032,
+    "spy": 0.006
+   },
+   "B": {
+    "buy": "2025-08-14",
+    "fill": "2025-08-13 17:10",
+    "ext": true,
+    "sell": "2025-08-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0224,
+    "net": -0.0304,
+    "netSlip": -0.0687,
+    "avgStock": 0.0176,
+    "sameStock": 0.0032,
+    "spy": 0.006
+   }
   },
   {
    "sym": "CVAC",
@@ -4975,8 +10939,34 @@
    "marketCap": 2893902686,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-08-15",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-08-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0241,
+    "net": 0.0161,
+    "netSlip": -0.024,
+    "avgStock": 0.0149,
+    "sameStock": -0.0091,
+    "spy": 0.0045
+   },
+   "B": {
+    "buy": "2025-08-15",
+    "fill": "2025-08-14 16:12",
+    "ext": true,
+    "sell": "2025-08-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0127,
+    "net": -0.0207,
+    "netSlip": -0.0594,
+    "avgStock": 0.0149,
+    "sameStock": -0.0091,
+    "spy": 0.0045
+   }
   },
   {
    "sym": "IMRX",
@@ -5015,8 +11005,34 @@
    "marketCap": 970159698,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-11-07",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-11-20",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0033,
+    "net": -0.0113,
+    "netSlip": -0.0504,
+    "avgStock": -0.0498,
+    "sameStock": -0.0484,
+    "spy": -0.023
+   },
+   "B": {
+    "buy": "2025-11-07",
+    "fill": "2025-11-07 09:30",
+    "ext": false,
+    "sell": "2025-11-20",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0033,
+    "net": -0.0113,
+    "netSlip": -0.0504,
+    "avgStock": -0.0498,
+    "sameStock": -0.0484,
+    "spy": -0.023
+   }
   },
   {
    "sym": "LCID",
@@ -5035,8 +11051,34 @@
    "marketCap": 4362942714,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2025-11-17",
+    "fill": "open",
+    "ext": false,
+    "sell": "2025-12-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1021,
+    "net": -0.1101,
+    "netSlip": -0.1453,
+    "avgStock": 0.0133,
+    "sameStock": -0.0233,
+    "spy": 0.0158
+   },
+   "B": {
+    "buy": "2025-11-17",
+    "fill": "2025-11-14 16:12",
+    "ext": true,
+    "sell": "2025-12-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1548,
+    "net": -0.1628,
+    "netSlip": -0.1959,
+    "avgStock": 0.0133,
+    "sameStock": -0.0233,
+    "spy": 0.0158
+   }
   },
   {
    "sym": "AVR",
@@ -5075,8 +11117,34 @@
    "marketCap": 3840835435,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-02-11",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0656,
+    "net": -0.0736,
+    "netSlip": -0.1102,
+    "avgStock": -0.0219,
+    "sameStock": -0.029,
+    "spy": -0.0047
+   },
+   "B": {
+    "buy": "2026-02-11",
+    "fill": "2026-02-10 16:16",
+    "ext": true,
+    "sell": "2026-02-25",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0001,
+    "net": -0.0081,
+    "netSlip": -0.0473,
+    "avgStock": -0.0219,
+    "sameStock": -0.029,
+    "spy": -0.0047
+   }
   },
   {
    "sym": "BETA",
@@ -5215,8 +11283,34 @@
    "marketCap": 7955960230,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-03-03",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0595,
+    "net": -0.0675,
+    "netSlip": -0.1044,
+    "avgStock": -0.0135,
+    "sameStock": 0.017,
+    "spy": -0.0054
+   },
+   "B": {
+    "buy": "2026-02-17",
+    "fill": "2026-02-17 09:59",
+    "ext": false,
+    "sell": "2026-03-02",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0013,
+    "net": -0.0067,
+    "netSlip": -0.0459,
+    "avgStock": 0.0037,
+    "sameStock": 0.0161,
+    "spy": 0.0092
+   }
   },
   {
    "sym": "ABSI",
@@ -5235,8 +11329,34 @@
    "marketCap": 383447397,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-02-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-03-03",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0375,
+    "net": -0.0455,
+    "netSlip": -0.0832,
+    "avgStock": -0.0135,
+    "sameStock": 0.0215,
+    "spy": -0.0054
+   },
+   "B": {
+    "buy": "2026-02-17",
+    "fill": "2026-02-17 09:59",
+    "ext": false,
+    "sell": "2026-03-02",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.098,
+    "net": 0.09,
+    "netSlip": 0.047,
+    "avgStock": 0.0037,
+    "sameStock": 0.0186,
+    "spy": 0.0092
+   }
   },
   {
    "sym": "ACLX",
@@ -5255,8 +11375,34 @@
    "marketCap": 3707024295,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-02-23",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-03-06",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0017,
+    "net": -0.0063,
+    "netSlip": -0.0456,
+    "avgStock": -0.0287,
+    "sameStock": 0.0002,
+    "spy": -0.0225
+   },
+   "B": {
+    "buy": "2026-02-23",
+    "fill": "2026-02-23 06:53",
+    "ext": true,
+    "sell": "2026-03-06",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.038,
+    "net": -0.046,
+    "netSlip": -0.0838,
+    "avgStock": -0.0287,
+    "sameStock": 0.0002,
+    "spy": -0.0225
+   }
   },
   {
    "sym": "WRD",
@@ -5275,8 +11421,34 @@
    "marketCap": 2381675884,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-03-30",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-04-13",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0256,
+    "net": 0.0176,
+    "netSlip": -0.0226,
+    "avgStock": 0.0629,
+    "sameStock": -0.0412,
+    "spy": 0.0718
+   },
+   "B": {
+    "buy": "2026-03-30",
+    "fill": "2026-03-30 06:11",
+    "ext": true,
+    "sell": "2026-04-13",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0106,
+    "net": -0.0186,
+    "netSlip": -0.0574,
+    "avgStock": 0.0629,
+    "sameStock": -0.0379,
+    "spy": 0.0718
+   }
   },
   {
    "sym": "LCID",
@@ -5295,8 +11467,34 @@
    "marketCap": 2188137085,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-04-21",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-05-04",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0682,
+    "net": -0.0762,
+    "netSlip": -0.1128,
+    "avgStock": -0.0242,
+    "sameStock": -0.0233,
+    "spy": 0.0109
+   },
+   "B": {
+    "buy": "2026-04-21",
+    "fill": "2026-04-20 16:20",
+    "ext": true,
+    "sell": "2026-05-04",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0561,
+    "net": -0.0641,
+    "netSlip": -0.1012,
+    "avgStock": -0.0242,
+    "sameStock": -0.0233,
+    "spy": 0.0109
+   }
   },
   {
    "sym": "LIFE",
@@ -5315,8 +11513,34 @@
    "marketCap": 1172519004,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-05-04",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-05-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1622,
+    "net": 0.1542,
+    "netSlip": 0.1086,
+    "avgStock": -0.0289,
+    "sameStock": 0.0477,
+    "spy": 0.0265
+   },
+   "B": {
+    "buy": "2026-05-04",
+    "fill": "2026-05-01 17:56",
+    "ext": true,
+    "sell": "2026-05-15",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1411,
+    "net": 0.1331,
+    "netSlip": 0.0883,
+    "avgStock": -0.0289,
+    "sameStock": 0.0477,
+    "spy": 0.0265
+   }
   },
   {
    "sym": "AGMB",
@@ -5375,8 +11599,34 @@
    "marketCap": 412739387,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-05-13",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0234,
+    "net": -0.0314,
+    "netSlip": -0.0697,
+    "avgStock": 0.0106,
+    "sameStock": -0.0317,
+    "spy": 0.0162
+   },
+   "B": {
+    "buy": "2026-05-13",
+    "fill": "2026-05-13 09:33",
+    "ext": false,
+    "sell": "2026-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0234,
+    "net": -0.0314,
+    "netSlip": -0.0697,
+    "avgStock": 0.0106,
+    "sameStock": -0.0317,
+    "spy": 0.0162
+   }
   },
   {
    "sym": "XNDU",
@@ -5395,8 +11645,34 @@
    "marketCap": 4828841110,
    "under2B": false,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-05-13",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1965,
+    "net": 0.1885,
+    "netSlip": 0.1416,
+    "avgStock": 0.0106,
+    "sameStock": -0.1645,
+    "spy": 0.0162
+   },
+   "B": {
+    "buy": "2026-05-13",
+    "fill": "2026-05-12 17:02",
+    "ext": true,
+    "sell": "2026-05-27",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.1629,
+    "net": 0.1549,
+    "netSlip": 0.1093,
+    "avgStock": 0.0106,
+    "sameStock": -0.1645,
+    "spy": 0.0162
+   }
   },
   {
    "sym": "AKTS",
@@ -5415,8 +11691,34 @@
    "marketCap": 1079540357,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-05-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-05-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.036,
+    "net": 0.028,
+    "netSlip": -0.0126,
+    "avgStock": 0.0178,
+    "sameStock": -0.0074,
+    "spy": 0.0147
+   },
+   "B": {
+    "buy": "2026-05-14",
+    "fill": "2026-05-14 09:30",
+    "ext": false,
+    "sell": "2026-05-28",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.036,
+    "net": 0.028,
+    "netSlip": -0.0126,
+    "avgStock": 0.0178,
+    "sameStock": -0.0074,
+    "spy": 0.0147
+   }
   },
   {
    "sym": "EIKN",
@@ -5435,8 +11737,34 @@
    "marketCap": 666445635,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-05-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-05-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.176,
+    "net": -0.184,
+    "netSlip": -0.2163,
+    "avgStock": 0.0178,
+    "sameStock": -0.0321,
+    "spy": 0.0147
+   },
+   "B": {
+    "buy": "2026-05-14",
+    "fill": "2026-05-13 17:27",
+    "ext": true,
+    "sell": "2026-05-28",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2013,
+    "net": -0.2093,
+    "netSlip": -0.2406,
+    "avgStock": 0.0178,
+    "sameStock": -0.0321,
+    "spy": 0.0147
+   }
   },
   {
    "sym": "GENB",
@@ -5455,8 +11783,34 @@
    "marketCap": 2039203216,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-05-18",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-06-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1495,
+    "net": -0.1575,
+    "netSlip": -0.1909,
+    "avgStock": 0.0377,
+    "sameStock": 0.0156,
+    "spy": 0.0253
+   },
+   "B": {
+    "buy": "2026-05-18",
+    "fill": "2026-05-15 16:12",
+    "ext": true,
+    "sell": "2026-06-01",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2317,
+    "net": -0.2397,
+    "netSlip": -0.2699,
+    "avgStock": 0.0377,
+    "sameStock": 0.0156,
+    "spy": 0.0253
+   }
   },
   {
    "sym": "SRFM",
@@ -5475,8 +11829,34 @@
    "marketCap": 80072979,
    "under2B": true,
    "base": false,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-07-02",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-07-13",
+    "exit": "stop",
+    "held": 7,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0359,
+    "sameStock": -0.0071,
+    "spy": 0.0024
+   },
+   "B": {
+    "buy": "2026-07-02",
+    "fill": "2026-07-02 04:00",
+    "ext": true,
+    "sell": "2026-07-16",
+    "exit": "stop",
+    "held": 10,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.036,
+    "sameStock": -0.025,
+    "spy": 0.0044
+   }
   },
   {
    "sym": "NAVN",
@@ -5495,8 +11875,34 @@
    "marketCap": 6645675663,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-07-14",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-07-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0088,
+    "net": -0.0168,
+    "netSlip": -0.0557,
+    "avgStock": -0.0285,
+    "sameStock": 0.0211,
+    "spy": -0.0157
+   },
+   "B": {
+    "buy": "2026-07-14",
+    "fill": "2026-07-13 16:29",
+    "ext": true,
+    "sell": "2026-07-27",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.0455,
+    "net": -0.0535,
+    "netSlip": -0.0909,
+    "avgStock": -0.0285,
+    "sameStock": 0.0211,
+    "spy": -0.0157
+   }
   },
   {
    "sym": "TRAX",
@@ -5555,8 +11961,34 @@
    "marketCap": 1791459300,
    "under2B": true,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-08-07",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-08-20",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.206,
+    "net": -0.214,
+    "netSlip": -0.2451,
+    "avgStock": -0.011,
+    "sameStock": -0.002,
+    "spy": -0.0109
+   },
+   "B": {
+    "buy": "2026-08-07",
+    "fill": "2026-08-06 16:28",
+    "ext": true,
+    "sell": "2026-08-20",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.2548,
+    "net": -0.2628,
+    "netSlip": -0.2921,
+    "avgStock": -0.011,
+    "sameStock": -0.002,
+    "spy": -0.0109
+   }
   },
   {
    "sym": "XE",
@@ -5575,8 +12007,34 @@
    "marketCap": 5984890754,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-08-07",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-08-20",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1457,
+    "net": -0.1537,
+    "netSlip": -0.1872,
+    "avgStock": -0.011,
+    "sameStock": -0.1272,
+    "spy": -0.0109
+   },
+   "B": {
+    "buy": "2026-08-07",
+    "fill": "2026-08-06 16:28",
+    "ext": true,
+    "sell": "2026-08-20",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1699,
+    "net": -0.1779,
+    "netSlip": -0.2105,
+    "avgStock": -0.011,
+    "sameStock": -0.1272,
+    "spy": -0.0109
+   }
   },
   {
    "sym": "XE",
@@ -5615,8 +12073,34 @@
    "marketCap": 6776834402,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-08-07",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-08-19",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.25,
+    "net": -0.258,
+    "netSlip": -0.2874,
+    "avgStock": -0.0009,
+    "sameStock": -0.1118,
+    "spy": -0.0025
+   },
+   "B": {
+    "buy": "2026-08-07",
+    "fill": "2026-08-06 17:44",
+    "ext": true,
+    "sell": "2026-08-19",
+    "exit": "stop",
+    "held": 9,
+    "gross": -0.2794,
+    "net": -0.2874,
+    "netSlip": -0.3157,
+    "avgStock": -0.0009,
+    "sameStock": -0.1118,
+    "spy": -0.0025
+   }
   },
   {
    "sym": "PBLS",
@@ -5635,8 +12119,34 @@
    "marketCap": 4351877053,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-08-07",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-08-20",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0934,
+    "net": 0.0854,
+    "netSlip": 0.0425,
+    "avgStock": -0.011,
+    "sameStock": -0.0767,
+    "spy": -0.0109
+   },
+   "B": {
+    "buy": "2026-08-07",
+    "fill": "2026-08-07 04:08",
+    "ext": true,
+    "sell": "2026-08-20",
+    "exit": "time",
+    "held": 10,
+    "gross": 0.0566,
+    "net": 0.0486,
+    "netSlip": 0.0072,
+    "avgStock": -0.011,
+    "sameStock": -0.0767,
+    "spy": -0.0109
+   }
   },
   {
    "sym": "WLTH",
@@ -5755,8 +12265,34 @@
    "marketCap": 7853766862,
    "under2B": false,
    "base": true,
-   "A": null,
-   "B": null
+   "A": {
+    "buy": "2026-09-28",
+    "fill": "open",
+    "ext": false,
+    "sell": "2026-10-09",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1116,
+    "net": -0.1196,
+    "netSlip": -0.1545,
+    "avgStock": -0.0253,
+    "sameStock": 0.0382,
+    "spy": 0.0133
+   },
+   "B": {
+    "buy": "2026-09-28",
+    "fill": "2026-09-25 16:17",
+    "ext": true,
+    "sell": "2026-10-09",
+    "exit": "time",
+    "held": 10,
+    "gross": -0.1525,
+    "net": -0.1605,
+    "netSlip": -0.1937,
+    "avgStock": -0.0253,
+    "sameStock": 0.0382,
+    "spy": 0.0133
+   }
   },
   {
    "sym": "LIFE",

@@ -30038,14 +30038,60 @@
    "kind": "buy",
    "hold": 10,
    "explain": "RULE (squad25-core.mjs header, exact): a giant on the frozen list data/squad25-giants.json (the owner's named giants) files an original 13F-HR whose holdings show an issuer that was not in its previous 13F (first appearance; first-ever 13F: all), or a Schedule 13D/13G on an issuer (an amendment only if it is the giant's first filing on it). Issuer mapped point in time (CUSIP via SEC fails-to-deliver files; subject CIK via Form 3/4/5 spans). At the last close before the SEC acceptance second: close >= 1 USD, market value < 10B USD, 20-day traded value >= 0.5M USD. Entry A: the next regular-session open after acceptance. Sell at the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way stress version (extra gate). Yardsticks: the average stock (1 USD+, 0.5M USD+ a day) on the same sessions; the same stock on other days; per year vs SPY.",
-   "status": "pre-registered 2026-10-27 (squad 25 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 2026-10-28 (record only)",
    "sources": [
     "https://www.sec.gov/Archives/edgar/full-index/",
     "https://www.sec.gov/Archives/edgar/daily-index/",
     "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
    ],
    "libraryCheck": "SQ24-MEGADEAL (the small company's own 8-K naming a top-100 company, bought after the reaction: rejected), SQ21-CONTRACT10D, squad 1 information-edge filings (insiders, 13D activists by funds). New: the filer is the GIANT itself (13F first appearance / 13D / 13G), entry at the first realistic moment after the acceptance second.",
-   "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only)."
+   "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only).",
+   "tested": "2026-10-26",
+   "study": "squad25-lab.mjs -> data/squad25-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     61,
+     28
+    ],
+    "avg": [
+     -0.0993,
+     0.0919
+    ],
+    "stress": [
+     -0.1033,
+     0.0879
+    ],
+    "slippage": [
+     -0.135,
+     0.0502
+    ],
+    "edge": [
+     -0.0295,
+     0.1658
+    ],
+    "vsOwn": [
+     -0.0255,
+     0.1536
+    ],
+    "noTop2": [
+     -0.1147,
+     -0.0485
+    ],
+    "tBlock": [
+     -0.47,
+     0.92
+    ],
+    "perYear": [
+     -2.6835,
+     2.4755
+    ],
+    "spyPerYear": [
+     -0.3767,
+     0.1304
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.47 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.92 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-13.5%); return per year of capital tied up -268.4% not above the S&P 500 on the same days in the older half (-37.7%)"
+   }
   },
   {
    "id": "SQ25-GIANTSTAKE-B",
@@ -30055,14 +30101,60 @@
    "kind": "buy",
    "hold": 10,
    "explain": "RULE (squad25-core.mjs header, exact): a giant on the frozen list data/squad25-giants.json (the owner's named giants) files an original 13F-HR whose holdings show an issuer that was not in its previous 13F (first appearance; first-ever 13F: all), or a Schedule 13D/13G on an issuer (an amendment only if it is the giant's first filing on it). Issuer mapped point in time (CUSIP via SEC fails-to-deliver files; subject CIK via Form 3/4/5 spans). At the last close before the SEC acceptance second: close >= 1 USD, market value < 10B USD, 20-day traded value >= 0.5M USD. Entry B: the first Alpaca SIP minute bar starting 60+ seconds after acceptance (extended hours included), +2% worse fill and -2% sale when that bar is outside 09:30-16:00. Sell at the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way stress version (extra gate). Yardsticks: the average stock (1 USD+, 0.5M USD+ a day) on the same sessions; the same stock on other days; per year vs SPY.",
-   "status": "pre-registered 2026-10-27 (squad 25 lab); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 2026-10-28 (record only)",
    "sources": [
     "https://www.sec.gov/Archives/edgar/full-index/",
     "https://www.sec.gov/Archives/edgar/daily-index/",
     "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
    ],
    "libraryCheck": "SQ24-MEGADEAL (the small company's own 8-K naming a top-100 company, bought after the reaction: rejected), SQ21-CONTRACT10D, squad 1 information-edge filings (insiders, 13D activists by funds). New: the filer is the GIANT itself (13F first appearance / 13D / 13G), entry at the first realistic moment after the acceptance second.",
-   "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only)."
+   "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only).",
+   "tested": "2026-10-26",
+   "study": "squad25-lab.mjs -> data/squad25-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     61,
+     28
+    ],
+    "avg": [
+     -0.1161,
+     0.1586
+    ],
+    "stress": [
+     -0.1201,
+     0.1546
+    ],
+    "slippage": [
+     -0.1511,
+     0.1184
+    ],
+    "edge": [
+     -0.0623,
+     0.1862
+    ],
+    "vsOwn": [
+     -0.0563,
+     0.1742
+    ],
+    "noTop2": [
+     -0.1302,
+     -0.0258
+    ],
+    "tBlock": [
+     -1.56,
+     0.94
+    ],
+    "perYear": [
+     -3.0932,
+     4.0242
+    ],
+    "spyPerYear": [
+     -0.3515,
+     0.1117
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.56 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.94 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-15.1%); return per year of capital tied up -309.3% not above the S&P 500 on the same days in the older half (-35.1%)"
+   }
   },
   {
    "id": "SQ25-GIANTWIDE-A",
@@ -30072,7 +30164,7 @@
    "kind": "buy",
    "hold": 10,
    "explain": "RULE (squad25-core.mjs header, exact): a giant on the frozen list data/squad25-giants.json (FALLBACK wide list: named giants + non-financial top-100 US-listed companies, point in time; judged only if the base rule of the same entry version is TOO FEW CASES) files an original 13F-HR whose holdings show an issuer that was not in its previous 13F (first appearance; first-ever 13F: all), or a Schedule 13D/13G on an issuer (an amendment only if it is the giant's first filing on it). Issuer mapped point in time (CUSIP via SEC fails-to-deliver files; subject CIK via Form 3/4/5 spans). At the last close before the SEC acceptance second: close >= 1 USD, market value < 10B USD, 20-day traded value >= 0.5M USD. Entry A: the next regular-session open after acceptance. Sell at the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way stress version (extra gate). Yardsticks: the average stock (1 USD+, 0.5M USD+ a day) on the same sessions; the same stock on other days; per year vs SPY.",
-   "status": "pre-registered 2026-10-27 (squad 25 lab); 5-year one-shot pending",
+   "status": "not judged: fallback not needed (SQ25-GIANTSTAKE-A had enough cases); information result in data/squad25-lab.json fallbackInfo",
    "sources": [
     "https://www.sec.gov/Archives/edgar/full-index/",
     "https://www.sec.gov/Archives/edgar/daily-index/",
@@ -30089,7 +30181,7 @@
    "kind": "buy",
    "hold": 10,
    "explain": "RULE (squad25-core.mjs header, exact): a giant on the frozen list data/squad25-giants.json (FALLBACK wide list: named giants + non-financial top-100 US-listed companies, point in time; judged only if the base rule of the same entry version is TOO FEW CASES) files an original 13F-HR whose holdings show an issuer that was not in its previous 13F (first appearance; first-ever 13F: all), or a Schedule 13D/13G on an issuer (an amendment only if it is the giant's first filing on it). Issuer mapped point in time (CUSIP via SEC fails-to-deliver files; subject CIK via Form 3/4/5 spans). At the last close before the SEC acceptance second: close >= 1 USD, market value < 10B USD, 20-day traded value >= 0.5M USD. Entry B: the first Alpaca SIP minute bar starting 60+ seconds after acceptance (extended hours included), +2% worse fill and -2% sale when that bar is outside 09:30-16:00. Sell at the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way stress version (extra gate). Yardsticks: the average stock (1 USD+, 0.5M USD+ a day) on the same sessions; the same stock on other days; per year vs SPY.",
-   "status": "pre-registered 2026-10-27 (squad 25 lab); 5-year one-shot pending",
+   "status": "not judged: fallback not needed (SQ25-GIANTSTAKE-B had enough cases); information result in data/squad25-lab.json fallbackInfo",
    "sources": [
     "https://www.sec.gov/Archives/edgar/full-index/",
     "https://www.sec.gov/Archives/edgar/daily-index/",
