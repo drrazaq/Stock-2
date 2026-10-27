@@ -95,3 +95,15 @@ test('stats helpers', () => {
   assert.equal(precisionOf([{ ok: true }, { ok: false }, null, { ok: true }, { ok: true }]), 0.75); assert.equal(precisionOf([]), null);
   assert.ok(Math.abs(perYear([{ g: 0.108, days: 252 }]) - 0.1) < 1e-9);
 });
+
+test('v2 extractor: rejects the failure kinds found in the first hand check', () => {
+  const W = ['Walmart'], A = ['Amazon.com', 'Amazon'];
+  assert.equal(linkSentence('Sales to Walmart represented approximately 28%, 28% and 29%, sales to Lowe\'s represented approximately 24% of our Garden segment\'s net sales in fiscal 2020.', W, 2020), null, 'segment share');
+  assert.equal(linkSentence('Sales of our spray via Amazon comprised 67% of total Avenova Spray net revenue during 2023.', A, 2024), null, 'channel / product share');
+  assert.equal(linkSentence('Walmart Inc. and the major drug store chains accounted for 66.5% of our gross sales during 2021.', W, 2022), null, 'combined group');
+  assert.equal(linkSentence('Amazon accounted for 13% of total revenue for the year ended December 31, 2022.', A, 2025), null, 'stale year');
+  assert.equal(linkSentence('Amazon accounted for 13% of total revenue for the year ended December 31, 2024.', A, 2025).pct, 13, 'current year');
+  assert.equal(linkSentence('Under the agreement Walmart retains 100% of revenue and reimburses costs.', W, 2025), null, 'retains');
+  assert.equal(linkSentence('Products manufactured by Walmart represented approximately 40% of our technology segment net sales.', W, 2023), null, 'segment');
+  assert.equal(linkSentence('Sales to Walmart represented 100% of the net revenue of Scilex Pharma in 2020.', W, 2021), null, 'a subsidiary\'s revenue');
+});

@@ -37,6 +37,15 @@
 //     largest customer); the FIRST percentage after the alias in that sentence (N% / N percent) must be >= 10 and <= 100 and not preceded by
 //     "less than / under / below / fewer than / not more than"; in a sentence about receivables the percentage must be the one followed by a
 //     revenue / sales word. The supplier is the filer's CIK (never the customer itself).
+//   VERIFICATION v2 (27 Oct 2026, added after the FIRST hand check scored 35/50 = 70% < 90%, BEFORE any return was computed; the v1 links
+//     and labels are kept in data/squad28-linkcheck-v1.json): in addition, the sentence must not speak of market share / a right of first
+//     refusal / revenue a party "retains"; the latest year named in the sentence must be >= the 10-K's filing year - 1 (no stale figures);
+//     the text from the alias to the percentage must be <= 150 characters, hold a verb (accounted for / represent / comprise / constitute /
+//     were / was / totaled / amounted to / made up), and hold no grouping words (and the / and other / together with / collectively /
+//     combined / in the aggregate), no amount with thousands separators and no dollar sign; between the percentage and the revenue / sales
+//     word only plain words (of / our / the / total / net / consolidated / Company's / respectively / years / other percentages ...); after
+//     the revenue word no "of|from <Name>" and no channel / segment / category / product line / division. A new random 50 (seed 28) is
+//     hand-checked on the v2 links before any return.
 //   ACTIVE on a session date d: the supplier's LATEST 10-K filed strictly before d (EDGAR quarterly master index, forms 10-K / 10-K405 /
 //     10-KT, by CIK) is a verified 10-K for that customer CIK, filed at most 400 days before d. A later 10-K without the sentence ends it.
 //   SUPPLIER TICKER on the event date: the SEC Form 3/4/5 issuer-ticker spans of the CIK (squad 4 cache), then the 10-K's own cover ticker
@@ -143,15 +152,25 @@ const REV = /\b(?:revenues?|net sales|sales|net revenues?)\b/i, CONC = /accounte
 const PCT = /(\d{1,3}(?:\.\d+)?)\s*(?:%|percent\b|per cent\b)/gi, LESS = /(?:less than|under|below|fewer than|not more than|up to)\s*(?:approximately\s*)?$/i;
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // -> { sentence, pct } for the first qualifying sentence that names the alias, or null
-export function linkSentence(text, aliases) { const t = String(text || ''); const forms = []; for (const a of aliases || []) for (const f of [a, a.toUpperCase()]) if (!forms.includes(f)) forms.push(f);
-  if (!forms.length) return null; forms.sort((a, b) => b.length - a.length); const re = new RegExp('(?<![A-Za-z0-9&])(?:' + forms.map(esc).join('|') + ')', 'g'); let m, seen = 0, best = null;
+const VERB = /accounted for|represent|comprise|constitut|\bwere\b|\bwas\b|totaled|totalled|amounted to|made up/i, GROUP = /\b(?:and the|and other|together with|collectively|combined|in the aggregate)\b/i;
+const BADSENT = /market share|right of first refusal|\bretains?\b/i, BADPOST = /channel|segment|category|product line|division/i;
+const WL = new Set(('of our the its total net consolidated companys company annual gross operating and or more respectively approximately about in for each during fiscal year years ended both a an '
+  + 'greater than at least over percent per cent to').split(' '));
+const gapOk = (gap) => gap.toLowerCase().replace(/[^\x20-\x7e]/g, '').replace(/[(),;:"“”’'\-]/g, ' ').split(/\s+/).filter(Boolean).every(w => WL.has(w.replace(/\.$/, '')) || /^[\d.,%]+$/.test(w) || w.length === 1);
+// v2 (27 Oct 2026, after the first hand check scored 70%; written BEFORE any return): -> { sentence, pct } for the first qualifying
+// sentence that names the alias, or null. filedYear (the 10-K's filing year) drops stale figures: the latest year named in the sentence
+// must be >= filedYear - 1.
+export function linkSentence(text, aliases, filedYear = null) { const t = String(text || ''); const forms = []; for (const a of aliases || []) for (const f of [a, a.toUpperCase()]) if (!forms.includes(f)) forms.push(f);
+  if (!forms.length) return null; forms.sort((a, b) => b.length - a.length); const re = new RegExp('(?<![A-Za-z0-9&])(?:' + forms.map(esc).join('|') + ')', 'g'); let m, seen = 0;
   while ((m = re.exec(t)) && seen < 400) { seen++; const end = m.index + m[0].length; if (!nameEnds(t.slice(end, end + 80))) continue;
-    const S = sentenceAt(t, m.index, m[0].length), s = S.text, rel = m.index - S.start + m[0].length; if (!REV.test(s) || !CONC.test(s)) continue;
+    const S = sentenceAt(t, m.index, m[0].length), s = S.text, rel = m.index - S.start + m[0].length; if (!REV.test(s) || !CONC.test(s) || BADSENT.test(s)) continue;
+    if (filedYear) { const ys = [...s.matchAll(/\b(20\d\d)\b/g)].map(x => +x[1]); if (ys.length && Math.max(...ys) < filedYear - 1) continue; }
     const after = s.slice(rel); PCT.lastIndex = 0; let p, pct = null;
-    while ((p = PCT.exec(after))) { const v = +p[1], pre = after.slice(Math.max(0, p.index - 30), p.index); if (/receivable/i.test(s)) { const nxt = after.slice(p.index, p.index + 90); const cut = nxt.slice(p[0].length).search(/\d{1,3}(?:\.\d+)?\s*(?:%|percent)/i); const seg = cut >= 0 ? nxt.slice(0, p[0].length + cut) : nxt; if (!REV.test(seg) || /receivable/i.test(seg)) continue; }
-      pct = LESS.test(pre) ? -v : v; break; }
-    if (pct === null) continue; if (pct >= TH.minPct && pct <= 100) return { sentence: s.trim().slice(0, 500), pct };
-    if (!best) best = { sentence: s.trim().slice(0, 500), pct, below: true }; }
+    while ((p = PCT.exec(after))) { const between = after.slice(0, p.index); if (between.length > 150 || !VERB.test(between) || GROUP.test(between) || /\d{1,3},\d{3}|\$/.test(between)) break;
+      const tail = after.slice(p.index + p[0].length, p.index + p[0].length + 140), rm = /\b(?:net revenues?|revenues?|net sales|sales)\b/i.exec(tail); if (!rm) continue;
+      if (!gapOk(tail.slice(0, rm.index))) continue; const post = tail.slice(rm.index + rm[0].length, rm.index + rm[0].length + 50); if (/^\s*(?:of|from|to)\s+[A-Z]/.test(post) || BADPOST.test(post)) continue;
+      const pre = after.slice(Math.max(0, p.index - 30), p.index); pct = LESS.test(pre) ? -+p[1] : +p[1]; break; }
+    if (pct !== null && pct >= TH.minPct && pct <= 100) return { sentence: s.trim().slice(0, 500), pct }; }
   return null; }
 // the 10-K cover page ticker (inline XBRL dei:TradingSymbol), or null
 export function coverTicker(html) { const m = /name="dei:TradingSymbol"[^>]*>(?:\s*<[^>]+>)*\s*([A-Z][A-Z0-9.\-]{0,6})\s*</i.exec(String(html || '').slice(0, 3e6)); return m ? m[1].toUpperCase().replace(/-/g, '.') : null; }
