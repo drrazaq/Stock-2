@@ -30376,6 +30376,108 @@
    "hold": 30,
    "name": "Same, bought at the close of the first session after the SC TO-I filing (information)",
    "explain": "Pre-registered variant of SQ27-ODDLOT: the entry is the first session after the original filing; same gate, costs and payout. More days of capital tied up."
+  },
+  {
+   "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
+   "agent": "squad29",
+   "kind": "risk",
+   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "sources": [
+    "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
+    "https://www.sec.gov/Archives/edgar/"
+   ],
+   "libraryCheck": "events-study RESTATE / AUDITOR / DELIST (8-K 4.02 / 4.01 / 3.01 after a same-day jump on ~2,400 stocks: n 0-15 per half, no verdict), MGMT (any 5.02 as a buy: rejected), news-watch going-concern headline words (untested), risk rules E12, S4, S2 / C-NSI1. New: whole market incl. dead stocks, acceptance time, -100% for a stock that stops trading, text rules for a RESIGNED auditor and an abrupt CEO/CFO exit without successor, FIRST-time going-concern language, judged as a SELL warning for holders.",
+   "explain": "RULE (squad29-core.mjs header, exact): entry the next open after the EDGAR acceptance; returns over 5 / 20 / 60 sessions vs the equal-weight average stock of the same universe (close 3+ USD, 20-day traded value 2M+ USD, whole market incl. dead stocks) on the same sessions; a stock that stops trading = -100% (event and yardstick alike); +300% cap both sides; one event per stock per family per 60 sessions. SELL WARNING if over 20 or 60 sessions (same horizon) BOTH halves (before / from 2024) have n >= 20, mean underperformance <= -3% and block t <= -2.5; else information only.",
+   "id": "SQ29-F1-RESTATE",
+   "flag": "F1",
+   "hold": 60,
+   "name": "RED FLAG F1: 8-K Item 4.02: past financial statements can no longer be relied on (a restatement)"
+  },
+  {
+   "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
+   "agent": "squad29",
+   "kind": "risk",
+   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "sources": [
+    "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
+    "https://www.sec.gov/Archives/edgar/"
+   ],
+   "libraryCheck": "events-study RESTATE / AUDITOR / DELIST (8-K 4.02 / 4.01 / 3.01 after a same-day jump on ~2,400 stocks: n 0-15 per half, no verdict), MGMT (any 5.02 as a buy: rejected), news-watch going-concern headline words (untested), risk rules E12, S4, S2 / C-NSI1. New: whole market incl. dead stocks, acceptance time, -100% for a stock that stops trading, text rules for a RESIGNED auditor and an abrupt CEO/CFO exit without successor, FIRST-time going-concern language, judged as a SELL warning for holders.",
+   "explain": "RULE (squad29-core.mjs header, exact): entry the next open after the EDGAR acceptance; returns over 5 / 20 / 60 sessions vs the equal-weight average stock of the same universe (close 3+ USD, 20-day traded value 2M+ USD, whole market incl. dead stocks) on the same sessions; a stock that stops trading = -100% (event and yardstick alike); +300% cap both sides; one event per stock per family per 60 sessions. SELL WARNING if over 20 or 60 sessions (same horizon) BOTH halves (before / from 2024) have n >= 20, mean underperformance <= -3% and block t <= -2.5; else information only.",
+   "id": "SQ29-F2-AUDRESIGN",
+   "flag": "F2",
+   "hold": 60,
+   "name": "RED FLAG F2: 8-K Item 4.01: the auditor RESIGNED or declined to stand (not a routine dismissal)"
+  },
+  {
+   "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
+   "agent": "squad29",
+   "kind": "risk",
+   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "sources": [
+    "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
+    "https://www.sec.gov/Archives/edgar/"
+   ],
+   "libraryCheck": "events-study RESTATE / AUDITOR / DELIST (8-K 4.02 / 4.01 / 3.01 after a same-day jump on ~2,400 stocks: n 0-15 per half, no verdict), MGMT (any 5.02 as a buy: rejected), news-watch going-concern headline words (untested), risk rules E12, S4, S2 / C-NSI1. New: whole market incl. dead stocks, acceptance time, -100% for a stock that stops trading, text rules for a RESIGNED auditor and an abrupt CEO/CFO exit without successor, FIRST-time going-concern language, judged as a SELL warning for holders.",
+   "explain": "RULE (squad29-core.mjs header, exact): entry the next open after the EDGAR acceptance; returns over 5 / 20 / 60 sessions vs the equal-weight average stock of the same universe (close 3+ USD, 20-day traded value 2M+ USD, whole market incl. dead stocks) on the same sessions; a stock that stops trading = -100% (event and yardstick alike); +300% cap both sides; one event per stock per family per 60 sessions. SELL WARNING if over 20 or 60 sessions (same horizon) BOTH halves (before / from 2024) have n >= 20, mean underperformance <= -3% and block t <= -2.5; else information only.",
+   "id": "SQ29-F3-EXECGONE",
+   "flag": "F3",
+   "hold": 60,
+   "name": "RED FLAG F3: 8-K Item 5.02: the CEO or CFO leaves within 30 days with no successor named"
+  },
+  {
+   "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
+   "agent": "squad29",
+   "kind": "risk",
+   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "sources": [
+    "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
+    "https://www.sec.gov/Archives/edgar/"
+   ],
+   "libraryCheck": "events-study RESTATE / AUDITOR / DELIST (8-K 4.02 / 4.01 / 3.01 after a same-day jump on ~2,400 stocks: n 0-15 per half, no verdict), MGMT (any 5.02 as a buy: rejected), news-watch going-concern headline words (untested), risk rules E12, S4, S2 / C-NSI1. New: whole market incl. dead stocks, acceptance time, -100% for a stock that stops trading, text rules for a RESIGNED auditor and an abrupt CEO/CFO exit without successor, FIRST-time going-concern language, judged as a SELL warning for holders.",
+   "explain": "RULE (squad29-core.mjs header, exact): entry the next open after the EDGAR acceptance; returns over 5 / 20 / 60 sessions vs the equal-weight average stock of the same universe (close 3+ USD, 20-day traded value 2M+ USD, whole market incl. dead stocks) on the same sessions; a stock that stops trading = -100% (event and yardstick alike); +300% cap both sides; one event per stock per family per 60 sessions. SELL WARNING if over 20 or 60 sessions (same horizon) BOTH halves (before / from 2024) have n >= 20, mean underperformance <= -3% and block t <= -2.5; else information only.",
+   "id": "SQ29-F4-LATEFILE",
+   "flag": "F4",
+   "hold": 60,
+   "name": "RED FLAG F4: NT 10-K / NT 10-Q: the company says its annual or quarterly report will be late"
+  },
+  {
+   "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
+   "agent": "squad29",
+   "kind": "risk",
+   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "sources": [
+    "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
+    "https://www.sec.gov/Archives/edgar/"
+   ],
+   "libraryCheck": "events-study RESTATE / AUDITOR / DELIST (8-K 4.02 / 4.01 / 3.01 after a same-day jump on ~2,400 stocks: n 0-15 per half, no verdict), MGMT (any 5.02 as a buy: rejected), news-watch going-concern headline words (untested), risk rules E12, S4, S2 / C-NSI1. New: whole market incl. dead stocks, acceptance time, -100% for a stock that stops trading, text rules for a RESIGNED auditor and an abrupt CEO/CFO exit without successor, FIRST-time going-concern language, judged as a SELL warning for holders.",
+   "explain": "RULE (squad29-core.mjs header, exact): entry the next open after the EDGAR acceptance; returns over 5 / 20 / 60 sessions vs the equal-weight average stock of the same universe (close 3+ USD, 20-day traded value 2M+ USD, whole market incl. dead stocks) on the same sessions; a stock that stops trading = -100% (event and yardstick alike); +300% cap both sides; one event per stock per family per 60 sessions. SELL WARNING if over 20 or 60 sessions (same horizon) BOTH halves (before / from 2024) have n >= 20, mean underperformance <= -3% and block t <= -2.5; else information only.",
+   "id": "SQ29-F5-GOINGCONCERN",
+   "flag": "F5",
+   "hold": 60,
+   "name": "RED FLAG F5: First-time going-concern doubt in a 10-K / 10-Q (not in the previous report)"
+  },
+  {
+   "family": "Squad 29 (red-flag SEC filings as SELL warnings)",
+   "agent": "squad29",
+   "kind": "risk",
+   "status": "pre-registered 2026-10-27 (squad 29 lab); one-shot pending",
+   "sources": [
+    "https://data.sec.gov/submissions/ (EDGAR submissions: form, items, acceptanceDateTime)",
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search)",
+    "https://www.sec.gov/Archives/edgar/"
+   ],
+   "libraryCheck": "events-study RESTATE / AUDITOR / DELIST (8-K 4.02 / 4.01 / 3.01 after a same-day jump on ~2,400 stocks: n 0-15 per half, no verdict), MGMT (any 5.02 as a buy: rejected), news-watch going-concern headline words (untested), risk rules E12, S4, S2 / C-NSI1. New: whole market incl. dead stocks, acceptance time, -100% for a stock that stops trading, text rules for a RESIGNED auditor and an abrupt CEO/CFO exit without successor, FIRST-time going-concern language, judged as a SELL warning for holders.",
+   "explain": "RULE (squad29-core.mjs header, exact): entry the next open after the EDGAR acceptance; returns over 5 / 20 / 60 sessions vs the equal-weight average stock of the same universe (close 3+ USD, 20-day traded value 2M+ USD, whole market incl. dead stocks) on the same sessions; a stock that stops trading = -100% (event and yardstick alike); +300% cap both sides; one event per stock per family per 60 sessions. SELL WARNING if over 20 or 60 sessions (same horizon) BOTH halves (before / from 2024) have n >= 20, mean underperformance <= -3% and block t <= -2.5; else information only.",
+   "id": "SQ29-F6-DELISTNOTICE",
+   "flag": "F6",
+   "hold": 60,
+   "name": "RED FLAG F6: 8-K Item 3.01: notice of delisting or failure to meet a listing standard"
   }
  ]
 }
