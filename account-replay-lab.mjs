@@ -11,7 +11,7 @@ import { nextSession } from './anomaly-core.mjs';
 import { mtumPick, qmomPick, fip, weekly, weeksOf, topN, sd as sd6, monthEnds as monthEnds6 } from './squad6-core.mjs';
 import { monthEnds } from './squad11-core.mjs';
 import { holdFrom, holdStop } from './squad20-core.mjs';
-import { RULES, MAIN_IDS, COST, STRESS, CASH0, LATE_SHIFT, SHUFFLES, SPLIT, OLDER_END, ALL_ACTIVE, REGISTERED, r4, r2, mean, simulate, buyHold, shuffleWithin, rng, shiftStats, pct, netOf } from './account-replay-core.mjs';
+import { PB12T, targetExit, tradeStats, RULES, MAIN_IDS, COST, STRESS, CASH0, LATE_SHIFT, SHUFFLES, SPLIT, OLDER_END, ALL_ACTIVE, REGISTERED, r4, r2, mean, simulate, buyHold, shuffleWithin, rng, shiftStats, pct, netOf } from './account-replay-core.mjs';
 const env = process.env, OFFLINE = !!env.OFFLINE, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com';
 const OUT = env.AR_OUT || 'data/account-replay.json', TRADES_OUT = env.AR_TRADES || 'data/account-replay-trades.jsonl';
@@ -75,7 +75,7 @@ async function extraSeries(sym) { if (EXTRA.has(sym)) return EXTRA.get(sym); con
   if (j && Array.isArray(j.results) && j.results.length > 200) { const o = new Float64Array(T).fill(NaN), c = new Float64Array(T).fill(NaN), v = new Float64Array(T).fill(NaN); let last = -1;
     for (const b of j.results) { const t = tOf.get(iso(b.t)); if (t !== undefined) { o[t] = b.o; c[t] = b.c; v[t] = b.v; if (t > last) last = t; } } s = { o, c, v, last, art: new Set(artifactJumps(c)) }; }
   EXTRA.set(sym, s); return s; }
-const SER = new Map(); const seriesOf = (i) => { if (!SER.has(i)) SER.set(i, { o: ser(OA, i), c: ser(CA, i), l: ser(LA, i), v: ser(VA, i), last: lastI[i], art: artOf(i) }); return SER.get(i); };
+const SER = new Map(); const seriesOf = (i) => { if (!SER.has(i)) SER.set(i, { o: ser(OA, i), h: ser(HA, i), c: ser(CA, i), l: ser(LA, i), v: ser(VA, i), last: lastI[i], art: artOf(i) }); return SER.get(i); };
 
 // ================= 6. BASE RULES: the trade lists =================
 const VL = J('data/value-lab.json', {}), DH = J('data/decoded-history.json', {}), AL = J('data/anomaly-lab.json', {}), ML = J('data/macro-lab.json', {}), S11 = J('data/squad11-lab.json', {}), S6 = J('data/squad6-lab.json', {});
@@ -139,12 +139,53 @@ for (const R of RULES) { const b = R.base, sig = SIGNALS[b] || [], note = { sign
   note.frozenAvg = fr && fr.results && fr.results.all ? fr.results.all.avg : null; note.savedNetCompared = cmpN; note.savedNetMatch = cmpN ? r4(cmpOk / cmpN) : null;
   STATUS.rules[R.id] = note; log('rule ' + R.id + ': ' + JSON.stringify(note)); }
 
+const closeOf = (() => { const memo = new Map(); return (sym, t) => { const S = SERIES.get(sym); if (!S) return null; for (let q = t; q >= 0; q--) if (S.c[q] > 0) return S.c[q]; return null; }; })();
+// ================= 7b. REPLAY-PB12T20 (MODE=pb12t20; pre-registered in account-replay-core.mjs header) =================
+if (env.MODE === 'pb12t20') {
+  const R = RULES.find(x => x.id === PB12T.rule), OUTP = env.AR_PB_OUT || 'data/account-replay-pb12t20.json', TRP = env.AR_PB_TRADES || 'data/account-replay-pb12t20-trades.jsonl';
+  const HALOK = (() => { const H = J('data/halal.json', {}); return new Set(Object.entries(H).filter(([, v]) => v && v.s === 'ok').map(([s]) => s)); })();
+  const cutT = sessionOf(STATUS.rules[R.id].completeThrough), CUTP = D[cutT];
+  const W = { older: [0, sessionOf(OLDER_END)], newer: [D.findIndex(d => d >= SPLIT), cutT], full: [0, cutT], olderFromFirstSignal: [D.findIndex(d => d >= ALL_ACTIVE), sessionOf(OLDER_END)] };
+  const byP = {}, check = {};
+  for (const p of [PB12T.target, ...PB12T.infoTargets]) { const out = [], dayIdx = new Map(), chk = { older: [], newer: [] };
+    for (const [sym, d] of SIGNALS[R.base]) { const t = sessionOf(d); if (t < 0) continue; const S = await seriesBySym(sym); if (!S) continue;
+      const base = holdFrom(S, t + 1, S.last, T, R.hold); if (!base || base.pending || base.open) continue; if (artIn(S, base.k, base.x)) continue;
+      const tg = targetExit(S, base, p), z = tg ? { k: base.k, x: tg.q, px0: base.px0, px1: tg.px, kind: tg.how, exitAt: 'c' } : { k: base.k, x: base.x, px0: base.px0, px1: base.px1, kind: base.kind, exitAt: 'c' };
+      const key = D[t], ord = dayIdx.get(key) || 0; dayIdx.set(key, ord + 1);
+      out.push({ id: R.id, sym, t, sig: D[t], ord, ...z }); chk[D[t] < SPLIT ? 'older' : 'newer'].push(z.px1 / z.px0 - 1 - COST); }
+    byP[p] = out; check['TGT' + Math.round(p * 100)] = Object.fromEntries(['older', 'newer'].map(h => [h, { n: chk[h].length, win: r4(chk[h].filter(x => x > 0).length / Math.max(1, chk[h].length)), avg: r4(mean(chk[h])) }])); }
+  // reproduce agent-a-tgt-lab A-TGT-TGT20-PB12 (frozen n / win per half; saved trade rows compared where present)
+  { const AT = J('data/agent-a-tgt-lab.json', {}), fr = (AT.firstRun || {})['A-TGT-TGT20-PB12'], rows = (AT.trades || {})['A-TGT-TGT20-PB12'] || [], mine = new Map(byP[PB12T.target].map(z => [z.sym + '|' + z.sig, z]));
+    let cmp = 0, same = 0; for (const z of rows) { const m = mine.get(z.s + '|' + z.sig); if (!m) continue; cmp++; if (Math.abs((m.px1 / m.px0 - 1 - COST) - z.net) < 0.002 && D[m.x] === z.sell) same++; }
+    check.agentA = { frozen: fr && fr.results ? { older: { n: fr.results.older.n, win: fr.results.older.win }, newer: { n: fr.results.newer.n, win: fr.results.newer.win } } : null, savedRowsCompared: cmp, savedRowsSame: cmp ? r4(same / cmp) : null }; }
+  log('PB12 target check: ' + JSON.stringify(check));
+  const SPUSP = (await extraSeries('SPUS')) || (SY.get('SPUS') !== undefined ? seriesOf(SY.get('SPUS')) : null), SPYS2 = { o: Float64Array.from(OA.subarray(spyI * T, spyI * T + T)), c: SPYCD };
+  const strip2 = (s) => { const { equity, closed, ...rest } = s; return rest; }, rows = [];
+  function acct(label, cands, cost, cash0, maxOpen) { const o = {};
+    for (const [w, [a, z]] of Object.entries(W)) { const s = simulate({ cands, D, closeOf, start: a, end: z, priority: [R.id], cost, cash0, maxOpen, perBuy: PB12T.perBuy }), spy = buyHold({ o: SPYS2.o, c: SPYS2.c, D, start: a, end: z, cash0, cost }), spus = SPUSP ? buyHold({ o: SPUSP.o, c: SPUSP.c, D, start: a, end: z, cash0, cost }) : null;
+      o[w] = { account: strip2(s), stats: tradeStats(s.closed), spy: spy && strip2(spy), spus: spus && strip2(spus), beatsSpy: !!(spy && s.v1 > spy.v1), beatsSpus: spus ? s.v1 > spus.v1 : null };
+      for (const q of s.closed) rows.push({ replay: label, window: w, ...q }); for (const q of s.openAtEnd) rows.push({ replay: label, window: w, ...q, open: true });
+      log(label + ' ' + w + ': ' + s.start + '..' + s.end + ' ' + cash0 + ' -> ' + s.v1 + ' (' + pc(s.perYear) + '/yr, DD ' + pc(s.maxDD) + ', ' + s.trades + ' trades, win ' + pc(o[w].stats.winRate) + ', full-slot skips ' + s.skipped.fullSlots + ') | SPY ' + (spy && spy.v1) + ' (' + pc(spy && spy.perYear) + ', DD ' + pc(spy && spy.maxDD) + ')' + (spus ? ' | SPUS ' + spus.v1 + ' (' + pc(spus.perYear) + ')' : ' | SPUS n/a')); }
+    return o; }
+  const RESP = {}, A3 = [PB12T.cash0, PB12T.maxOpen], A2 = [PB12T.info2.cash0, PB12T.info2.maxOpen], hal = (c) => c.filter(z => HALOK.has(z.sym));
+  RESP['REPLAY-PB12T20'] = acct('REPLAY-PB12T20', byP[0.2], COST, ...A3);
+  RESP['REPLAY-PB12T20 stress 1.2%'] = acct('REPLAY-PB12T20-STRESS', byP[0.2], STRESS, ...A3);
+  RESP['INFO TGT15'] = acct('INFO-TGT15', byP[0.15], COST, ...A3);
+  RESP['INFO TGT10'] = acct('INFO-TGT10', byP[0.1], COST, ...A3);
+  RESP['INFO 2 slots, 2,000 USD'] = acct('INFO-2SLOT', byP[0.2], COST, ...A2);
+  RESP["INFO today's ZAD-ok marks only (hindsight)"] = acct('INFO-HALAL-TODAY', hal(byP[0.2]), COST, ...A3);
+  const SENSP = {}; for (const [w, [a, z]] of Object.entries(W)) { const spy = buyHold({ o: SPYS2.o, c: SPYS2.c, D, start: a, end: z, cash0: PB12T.cash0, cost: COST }), ends = [], beat = [];
+    for (let s = 1; s <= SHUFFLES; s++) { const r = simulate({ cands: shuffleWithin(byP[0.2], rng(s)), D, closeOf, start: a, end: z, priority: [R.id], cost: COST, cash0: PB12T.cash0, maxOpen: PB12T.maxOpen, perBuy: PB12T.perBuy }); ends.push(r.v1); beat.push(r.v1 > spy.v1 ? 1 : 0); }
+    SENSP[w] = { shuffles: SHUFFLES, endMedian: r2(pct(ends, 0.5)), endP10: r2(pct(ends, 0.1)), endP90: r2(pct(ends, 0.9)), shareBeatingSpy: r4(mean(beat)), spyEnd: spy.v1 }; log('PB12T20 order sensitivity ' + w + ': ' + JSON.stringify(SENSP[w])); }
+  fs.writeFileSync(OUTP, JSON.stringify({ generatedAt: new Date().toISOString(), registered: REGISTERED, policy: 'account-replay-core.mjs header, SECOND REPLAY (pre-registered 27 Oct 2026 before it was run)', cut: CUTP,
+    windows: Object.fromEntries(Object.entries(W).map(([k, [a, z]]) => [k, [D[a], D[z]]])), halal: "main runs: full universe (past ZAD marks unknown); the halal variant uses TODAY's marks only (hindsight)", check, results: RESP, orderSensitivity: SENSP }));
+  fs.writeFileSync(TRP, rows.map(x => JSON.stringify(x)).join('\n') + '\n'); log('written ' + OUTP + ' and ' + TRP); process.exit(0); }
+
 // ================= 8. THE REPLAYS =================
 const mainRules = RULES.filter(R => !R.infoOnly);
 const CUT_T = Math.min(...mainRules.map(R => sessionOf(STATUS.rules[R.id].completeThrough))), CUT = D[CUT_T];
 const tStart = 0, tNewer = D.findIndex(d => d >= SPLIT), tOlderEnd = sessionOf(OLDER_END), tActive = D.findIndex(d => d >= ALL_ACTIVE);
 log('CUT (every main rule\'s list complete through) = ' + CUT + '; older ' + D[tStart] + '..' + D[tOlderEnd] + ', newer ' + D[tNewer] + '..' + CUT);
-const closeOf = (() => { const memo = new Map(); return (sym, t) => { const S = SERIES.get(sym); if (!S) return null; for (let q = t; q >= 0; q--) if (S.c[q] > 0) return S.c[q]; return null; }; })();
 const SPYS = { o: Float64Array.from(OA.subarray(spyI * T, spyI * T + T)), c: SPYCD };
 // (27 Oct, after the first run: SPUS was null for windows from 2021-10-12 because the cache has no SPUS bar that day; benchmark data only, the
 // account is unchanged) SPUS from Massive daily bars first, the cache as fallback

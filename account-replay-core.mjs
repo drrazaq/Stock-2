@@ -53,7 +53,38 @@
 // Halal: past ZAD marks cannot be known; the replay runs on the full universe (data/halal.json marks are TODAY's only). Said plainly in
 //   the result. Dividends are not in the price data (split-adjusted only) for the stocks or for SPY / SPUS alike.
 
+//
+// SECOND REPLAY, PRE-REGISTERED 27 Oct 2026 (coordinator's request) BEFORE IT WAS RUN (same machinery; run ONCE with MODE=pb12t20):
+// REPLAY-PB12T20 (primary): ONE rule, SQ11-PB12 entries exactly as squad11 tested (data/squad11-lab.json trade list: first close 12% under
+//   the 50-day high, still above the 200-day, top-300 leaders; buy the open after the signal close). EXIT = agent-a-tgt-core targetExit
+//   with p = 20% (A-TGT-TGT20-PB12): a SELL LIMIT at buy x 1.20, filled at the target on the first session k..x whose HIGH reaches it (no
+//   high: its close), or at that session's OPEN when the stock opens at or above it (gap over); else sold at the close of session 126 counted
+//   from the buy (a stock whose bars stop early: its last close). NO stop. A target sale frees the slot for the NEXT session's entries.
+//   Account: 3,000 USD start, at most 3 open, 1,000 USD per buy (or all remaining cash if less), whole shares, signals in the lab's own
+//   pick order within a day (no ranking by returns), held symbols skipped, cost 0.8% round trip (1.2% stress), the 10-result switch-off
+//   kept as in the live lane. Windows as the first replay: OLDER 2021-10-12..2023-12-29, NEWER 2024-01-02..CUT, FULL 2021-10-12..CUT
+//   (CUT = SQ11-PB12's list complete-through date), plus INFORMATION older from 2022-11-01 (PB12's first signals). Benchmarks SPY and SPUS
+//   bought with the same 3,000 USD at the open of the same start day (SPUS n/a when it has no bar that day).
+//   Reported per window: end USD, per year vs SPY / SPUS, max drawdown vs SPY, trades, WIN RATE (net after cost > 0, closed trades),
+//   average win, average loss, worst trade, share of closed trades reaching the target (target or gap over), signals skipped for full
+//   slots; and 200 seeded shuffles of the same-day pick order: median end USD and share of shuffles ending above SPY.
+//   CHECK: the rebuilt PB12 +20% trades must reproduce agent-a-tgt-lab A-TGT-TGT20-PB12 (n 99 / 256, win 72.7% / 74.6%).
+//   INFORMATION variants (same account): (a) TGT15 and TGT10 exits; (b) 2 slots / 2,000 USD instead of 3 / 3,000; (c) only stocks marked
+//   ok in TODAY's data/halal.json, labelled "today's marks only, hindsight".
+// VERDICT QUESTION (pre-registered): does the 3-slot PB12 +20% account end above SPY in BOTH halves AND have a 70%+ win rate in both?
 export const REGISTERED = '2026-10-27';
+export const PB12T = { rule: 'SQ11-PB12', hold: 126, target: 0.20, infoTargets: [0.15, 0.10], cash0: 3000, maxOpen: 3, perBuy: 1000, info2: { cash0: 2000, maxOpen: 2 } };
+// the profit target (agent-a-tgt-core targetExit, copied): first session k..x whose high (else close) reaches L = px0 (1 + p); a gap over
+// L after the buy day sells at that open. Returns { q, px, how } or null when the target was not reached by x.
+export function targetExit(S, tr, p) { const L = tr.px0 * (1 + p);
+  for (let q = tr.k; q <= tr.x; q++) { const o = S.o[q], h = S.h ? S.h[q] : NaN, c = S.c[q];
+    if (q > tr.k && o > 0 && o >= L) return { q, px: o, how: 'gap' };
+    const top = h > 0 ? h : c; if (top > 0 && top >= L - 1e-12) return { q, px: L, how: 'target' }; }
+  return null; }
+// closed-trade statistics of an account (net after cost)
+export function tradeStats(closed) { const n = closed.map(z => z.net).filter(x => typeof x === 'number'), w = n.filter(x => x > 0), l = n.filter(x => x <= 0);
+  return { closed: n.length, winRate: n.length ? r4(w.length / n.length) : null, avgWin: w.length ? r4(mean(w)) : null, avgLoss: l.length ? r4(mean(l)) : null, worst: n.length ? r4(Math.min(...n)) : null,
+    avgNet: n.length ? r4(mean(n)) : null, hitTarget: closed.length ? r4(closed.filter(z => z.kind === 'target' || z.kind === 'gap').length / closed.length) : null }; }
 export const COST = 0.008, STRESS = 0.012, CASH0 = 2000, PER_BUY = 1000, MAX_OPEN = 2, OFF_N = 10, LATE_SHIFT = 5, YEAR = 252;
 export const SHUFFLES = 200, SPLIT = '2024-01-01', OLDER_END = '2023-12-29', ALL_ACTIVE = '2022-11-01';
 // priority order = scan.mjs src order; base = squad20-core BASES key; hold = the rule's tested hold; liveStop = scan.mjs stopPct

@@ -5,6 +5,11 @@ name: Account replay
 # The price cache is RESTORED READ ONLY. Commits only data/account-replay.json and data/account-replay-trades.jsonl. Never places an order.
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'empty = the first replay; pb12t20 = the PB12 +20% target account'
+        required: false
+        default: ''
 permissions:
   contents: write
 concurrency: account-replay
@@ -35,12 +40,13 @@ jobs:
           node account-replay-lab.mjs 2>&1 | tee run.log
         env:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          MODE: ${{ github.event.inputs.mode }}
       - if: success()
         shell: bash
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/account-replay.json data/account-replay-trades.jsonl"
+          if [ "${{ github.event.inputs.mode }}" = "pb12t20" ]; then FILES="data/account-replay-pb12t20.json data/account-replay-pb12t20-trades.jsonl"; else FILES="data/account-replay.json data/account-replay-trades.jsonl"; fi
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           git reset -q --hard && git clean -fdq data && git pull -q --rebase

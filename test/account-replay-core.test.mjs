@@ -74,3 +74,14 @@ test('shuffleWithin keeps each rule/day group and only reorders it; shiftStats n
   const st = shiftStats([{ g: 0.1 }, { g: -0.1 }], 0.012); assert.equal(st.n, 2); assert.ok(near(st.avg, ((1.1 * 0.994 / 1.006 - 1) + (0.9 * 0.994 / 1.006 - 1)) / 2, 1e-4));
   assert.equal(pct([3, 1, 2], 0.5), 2);
 });
+
+test('PB12T20: target exit at the limit (high), at the open on a gap over, none when not reached; trade stats', async () => {
+  const { targetExit, tradeStats, PB12T } = await import('../account-replay-core.mjs');
+  assert.equal(PB12T.cash0, 3000); assert.equal(PB12T.maxOpen, 3); assert.equal(PB12T.target, 0.2);
+  const S = { o: [10, 10, 11, 13, 11], h: [10, 10.5, 12.1, 13.5, 11], c: [10, 10.2, 11.5, 13, 11] };
+  assert.deepEqual(targetExit(S, { k: 1, x: 4, px0: 10 }, 0.2), { q: 2, px: 12, how: 'target' });
+  const G = { o: [10, 10, 13], h: [10, 11, 14], c: [10, 10.5, 13.5] }; assert.deepEqual(targetExit(G, { k: 1, x: 2, px0: 10 }, 0.2), { q: 2, px: 13, how: 'gap' });
+  assert.equal(targetExit(S, { k: 1, x: 1, px0: 10 }, 0.2), null);
+  const st = tradeStats([{ net: 0.19, kind: 'target' }, { net: -0.1, kind: 'max' }, { net: 0.05, kind: 'max' }, { net: -0.3, kind: 'gone' }]);
+  assert.equal(st.winRate, 0.5); assert.equal(st.avgWin, 0.12); assert.equal(st.avgLoss, -0.2); assert.equal(st.worst, -0.3); assert.equal(st.hitTarget, 0.25);
+});
