@@ -138,3 +138,49 @@ export function fcfCheck(co, asOf, px, shares) {
   if (inv && inv.val > 0 && !(out.dio !== null && out.dio < 60)) why.push('inventory days');
   out.ok = !why.length; out.why = why.join(', ') || null; return out;
 }
+
+// ---- B-CR1 / B-CR1-AVOID: CASH RUNWAY on one day (pre-registered 27 Oct 2026, value-lab.mjs header, before any run) ----
+// co: { cfo, cash, sti } each { tag: facts } in priority order. Operating cash flow = TTM (ttmAt, the B-FCF1 code), its period ending
+// under 200 days before the day (else stale -> null). Cash = the first cash tag's latest balance known before the day (instantAt), its
+// date within 5 days of the cash-flow period end (else unknown -> null); plus short-term investments (first sti tag) only when reported
+// for that same date (within 5 days). A company with TTM operating cash flow >= 0 is not burning cash: runway null, burner false.
+// Burner: quarterly burn = -TTM operating cash flow / 4; runway = cash / quarterly burn (in quarters).
+export function runwayAt(co, asOf) {
+  const cfo = firstOf(co.cfo, f => ttmAt(f, asOf)); if (!cfo || days(cfo.end, asOf) > STALE_DAYS) return null;
+  const cash = firstOf(co.cash, f => { const r = instantAt(f, asOf); return r && near(r.end, cfo.end, 5) ? r : null; }); if (!cash) return null;
+  const sti = firstOf(co.sti, f => { const r = instantAt(f, asOf); return r && near(r.end, cash.end, 5) ? r : null; });
+  const total = cash.val + (sti && sti.val > 0 ? sti.val : 0);
+  if (!(cfo.val < 0)) return { burner: false, cfo: cfo.val, cash: total, runway: null, end: cfo.end };
+  return { burner: true, cfo: cfo.val, cash: total, runway: total / (-cfo.val / 4), end: cfo.end };
+}
+// AVOID judge (B-CR1-AVOID; the squad 29 AVOID standard): per half, the excess = the stock's gross return minus the average stock's gross
+// return over the same window (no cost on either side: an AVOID block saves the whole move), one average per formation day; block t over
+// non-overlapping blocks of the hold length. CONFIRMED (an AVOID block) only if in BOTH halves: 20+ cases and 3+ blocks, excess <= -3%,
+// block t <= -2.5, and worse than the same stocks on their other days (vsOwn < 0). Else NO AVOID (or TOO FEW CASES).
+export function avoidStat(a, hold) {
+  if (!a || !a.length) return { n: 0 };
+  const ed = new Map(), ov = new Map(); for (const z of a) { const x = z.g - z.c; if (isFinite(x)) (ed.get(z.t) || ed.set(z.t, []).get(z.t)).push(x); if (typeof z.own === 'number') (ov.get(z.t) || ov.set(z.t, []).get(z.t)).push(z.g - z.own); }
+  const dv = [...ed.values()].map(mean), blk = new Map(); for (const [t, v] of ed) { const k = Math.floor(t / hold); (blk.get(k) || blk.set(k, []).get(k)).push(mean(v)); }
+  const bv = [...blk.values()].map(mean), ovv = [...ov.values()].map(mean);
+  return { n: a.length, days: ed.size, stocks: new Set(a.map(z => z.s)).size, mean: r4(mean(a.map(z => z.g))), median: r4(median(a.map(z => z.g))), avgStock: r4(mean(a.map(z => z.c))),
+    excess: r4(mean(dv)), medianExcess: r4(median(a.map(z => z.g - z.c))), blocks: bv.length, tBlock: bv.length >= 3 ? tOf(bv) : null, vsOwn: ovv.length ? r4(mean(ovv)) : null,
+    worst: r4(Math.min(...a.map(z => z.g))), pctUnder: r4(a.filter(z => z.g < z.c).length / a.length) };
+}
+export const AVOID_BAR = { excess: -0.03, t: -2.5, n: MIN_PER_HALF };
+export function avoidJudge(R) {
+  const H = ['older', 'newer'].map(k => R[k] || {}), why = [];
+  if (!H.every(r => r.n >= AVOID_BAR.n && r.blocks >= 3)) return { verdict: 'TOO FEW CASES', why: 'fewer than ' + AVOID_BAR.n + ' cases or 3 blocks in a half (' + H.map(r => (r.n || 0) + ' cases, ' + (r.blocks || 0) + ' blocks').join(' / ') + ')' };
+  H.forEach((r, j) => { const hf = j ? 'newer' : 'older';
+    if (!(r.excess <= AVOID_BAR.excess)) why.push('excess ' + r.excess + ' not <= ' + AVOID_BAR.excess + ' in the ' + hf + ' half');
+    if (!(r.tBlock <= AVOID_BAR.t)) why.push('block t ' + r.tBlock + ' not <= ' + AVOID_BAR.t + ' in the ' + hf + ' half');
+    if (!(r.vsOwn < 0)) why.push('not worse than the same stocks on their other days in the ' + hf + ' half'); });
+  return why.length ? { verdict: 'NO AVOID', why: why.join('; ') } : { verdict: 'AVOID CONFIRMED', why: 'both halves: excess <= -3%, block t <= -2.5, worse than the same stocks on other days' };
+}
+// V15-SN: SECTOR-NEUTRAL cap on one formation day's V15 picks (pre-registered 27 Oct 2026). picks: [{ i, f (F-score), dv (20-day traded
+// value), g (SIC 2-digit group, null = its own group '?') }] = exactly V15's picks that day. share = { group: its share of that day's
+// liquid stocks }. K = picks.length; each group keeps at most max(1, round(K x share)) names, best F-score first, then the larger dv.
+export function sectorCap(picks, share) {
+  const K = picks.length, by = new Map(); for (const p of picks) { const g = p.g || '?'; (by.get(g) || by.set(g, []).get(g)).push(p); }
+  const out = []; for (const [g, a] of by) { const cap = Math.max(1, Math.round(K * (share[g] || 0))); a.sort((x, y) => y.f - x.f || y.dv - x.dv); out.push(...a.slice(0, cap)); }
+  return out;
+}

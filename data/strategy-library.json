@@ -1855,9 +1855,10 @@
    "family": "Quality and value",
    "name": "Cash runway",
    "explain": "Cash covers 8+ quarters of cash burn and no ATM / 424B5 in 90 days; hold 60 days. Also as AVOID: under 4 quarters of runway.",
-   "status": "queued (Agent B)",
+   "status": "queued (Agent B; pre-registered 27 Oct, built, run once)",
    "agent": "B",
-   "note": "From the outside review of 20 Oct. Not built on 20 Oct: needs QUARTERLY operating cash flow (SEC frames CYyyyyQn, not in the yearly fund cache) plus the offering-events cache (424B5 / ATM) joined by month; about 40 extra SEC frame calls a run. B-FS2 was run first because its inputs were already in the cache. Next for Agent B."
+   "note": "From the outside review of 20 Oct. Not built on 20 Oct: needs QUARTERLY operating cash flow (SEC frames CYyyyyQn, not in the yearly fund cache) plus the offering-events cache (424B5 / ATM) joined by month; about 40 extra SEC frame calls a run. B-FS2 was run first because its inputs were already in the cache. Next for Agent B.",
+   "built": "Pre-registered 27 Oct 2026 in value-lab.mjs header before any run: each 21-session formation, liquid stocks (5 USD+, 5M USD+ a day), financials (SIC 6xxx) left out. Cash burner = TTM operating cash flow < 0 (SEC companyfacts as filed, period ended under 200 days before). Cash = CashAndCashEquivalentsAtCarryingValue (else CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents) at that period end + same-date short-term investments (ShortTermInvestments, else MarketableSecuritiesCurrent, else AvailableForSaleSecuritiesDebtSecuritiesCurrent). Runway = cash / (-TTM operating cash flow / 4) >= 8 quarters AND no Form 424B5 by the same CIK (EDGAR quarterly master index) in the 90 calendar days up to the formation day. Buy next open, sell the close 60 sessions later. Gates: value-core judge (both halves: >0 after 0.8% and 1.2%, beats the average stock, beats the same stocks on other days, >0 without the 2 best, block t >= 2.5 tier 2 / >= league bar PROVEN) + beats SPY bought the same dates in both halves. Yardstick AUD-1 corrected (capBoth). The AVOID side is its own entry, B-CR1-AVOID."
   },
   {
    "id": "B-FS2",
@@ -31067,6 +31068,26 @@
     ],
     "why": "block t -0.06 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.78 under 2.5 in the newer half"
    }
+  },
+  {
+   "id": "B-CR1-AVOID",
+   "family": "Quality and value",
+   "name": "Cash runway under 4 quarters (AVOID block)",
+   "explain": "A liquid non-financial cash burner (TTM operating cash flow < 0) whose cash + short-term investments cover under 4 quarters of burn (same data as B-CR1, no 424B5 condition). Held 60 sessions from the next open. AVOID CONFIRMED only if in BOTH halves: 20+ cases, 3+ blocks of 60 sessions, gross excess over the average stock <= -3%, block t <= -2.5, and worse than the same stocks on their other formation days (the squad 29 AVOID standard). Never a short.",
+   "status": "queued (Agent B; pre-registered 27 Oct, built, run once)",
+   "agent": "B",
+   "note": "Pre-registered 27 Oct 2026 (value-lab.mjs header) before any run. Sources: Huang and Ritter, Corporate Cash Shortfalls and Financing Decisions (RFS 2021); DeAngelo, DeAngelo and Stulz (JFE 2010, NBER w13285): firms short of cash issue equity. Counts as a new trial for the luck bar.",
+   "registered": "2026-10-27"
+  },
+  {
+   "id": "V15-SN",
+   "family": "Quality and value",
+   "name": "V15 sector-neutral (F-score uptrend, each SIC group capped at its market share)",
+   "explain": "Each 21-session formation: V15 picks exactly (F-score 8-9 above the 200-day, else the 10 best scores). K = their number; each SEC SIC 2-digit group keeps at most max(1, round(K x the group share of that day liquid stocks)), best F-score then larger 20-day traded value. Buy next open, sell the close 126 sessions later. Gates: value-core judge (block t 2.5 tier 2, league bar PROVEN) + beats V15 itself on the same dates + beats SPY bought the same dates, both halves. Yardstick AUD-1 corrected (capBoth).",
+   "status": "queued (Agent B; pre-registered 27 Oct, built, run once)",
+   "agent": "B",
+   "note": "Pre-registered 27 Oct 2026 (value-lab.mjs header) before any run. Disclosed: the V15 deep check of 20 Oct already showed the 2021-23 shortfall sat in SIC 35/36/38, so this is a NEW league trial, not a V15 version and not a rescue; no sector is chosen or dropped (that version is V15-NO35, squad 21, forward paper only). V15 at 12 months with full gates is not built: 252-session blocks give at most 2 per half on the 5-year cache.",
+   "registered": "2026-10-27"
   }
  ]
 }

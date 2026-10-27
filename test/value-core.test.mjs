@@ -105,3 +105,28 @@ test('B-FCF1 company check: FCF yield > 5%, revenue +10%, debt/equity < 0.5, inv
   assert.equal(fcfCheck(co, '2024-12-01', 15, 100).ok, false);                                                      // 11 months old: stale
   assert.equal(fcfCheck(co, '2024-03-01', 2, 100).ok, false);                                                       // 50% yield: a data error (quality.mjs bound)
 });
+
+import { runwayAt, avoidStat, avoidJudge, sectorCap } from '../value-core.mjs';
+// B-CR1 (27 Oct 2026): FY2023 operating cash flow -400 (burn 100 a quarter); cash 600 + short-term investments 300 at 2023-12-31 -> 9 quarters
+test('cash runway: cash + same-date short-term investments over a quarter of TTM burn, point in time; non-burners have no runway', () => {
+  const c = { cfo: { A: [y(2023, -400, '2024-02-15')] }, cash: { A: [i(2023, 600, '2024-02-15')] }, sti: { A: [i(2023, 300, '2024-02-15')] } };
+  assert.deepEqual(runwayAt(c, '2024-03-01'), { burner: true, cfo: -400, cash: 900, runway: 9, end: '2023-12-31' });
+  assert.equal(runwayAt(c, '2024-02-15'), null);                                                                     // not public yet
+  assert.equal(runwayAt(c, '2024-12-01'), null);                                                                     // stale
+  assert.equal(runwayAt({ ...c, sti: { A: [i(2022, 300, '2023-02-15')] } }, '2024-03-01').runway, 6);                  // investments of another date ignored
+  assert.equal(runwayAt({ ...c, cash: { A: [i(2022, 600, '2023-02-15')] } }, '2024-03-01'), null);                     // cash of another date: unknown
+  assert.equal(runwayAt({ ...c, cfo: { A: [y(2023, 50, '2024-02-15')] } }, '2024-03-01').burner, false);
+});
+test('AVOID judge: both halves excess <= -3%, block t <= -2.5, worse than the same stocks on other days', () => {
+  const mk = (t0, ex) => Array.from({ length: 24 }, (_, k) => ({ t: t0 + k * 10, s: 'S' + k, g: ex + ((k * 7) % 5) * 0.003, c: 0, own: 0.01 }));
+  const bad = { older: avoidStat(mk(0, -0.08), 60), newer: avoidStat(mk(1000, -0.06), 60) };
+  assert.equal(avoidJudge(bad).verdict, 'AVOID CONFIRMED');
+  assert.equal(avoidJudge({ older: bad.older, newer: avoidStat(mk(1000, 0.01), 60) }).verdict, 'NO AVOID');
+  assert.equal(avoidJudge({ older: avoidStat(mk(0, -0.08).slice(0, 5), 60), newer: bad.newer }).verdict, 'TOO FEW CASES');
+});
+test('V15-SN sector cap: each SIC group keeps max(1, round(K x its share)) names, best F-score then traded value', () => {
+  const p = [{ i: 1, f: 9, dv: 5, g: '36' }, { i: 2, f: 8, dv: 9, g: '36' }, { i: 3, f: 8, dv: 1, g: '36' }, { i: 4, f: 8, dv: 1, g: '36' }, { i: 5, f: 8, dv: 1, g: '28' }, { i: 6, f: 9, dv: 1, g: null }];
+  const out = sectorCap(p, { 36: 0.2, 28: 0.1 }).map(x => x.i).sort();
+  assert.deepEqual(out, [1, 5, 6]);                                                   // K 6: group 36 keeps round(1.2) = 1 (the F 9), 28 keeps 1, unknown keeps 1
+  assert.deepEqual(sectorCap(p, { 36: 0.5, 28: 0.1 }).map(x => x.i).sort(), [1, 2, 3, 5, 6]);   // round(3) = 3 of 36: F 9, then dv 9, then dv 1 (first of the ties)
+});
