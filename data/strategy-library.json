@@ -5231,7 +5231,7 @@
    "family": "Decoded traders (batch 2)",
    "name": "Connors TPS: RSI(2) < 25 twice, scale in 10/20/30/40% on lower closes, out at RSI(2) > 70",
    "explain": "Larry Connors (High Probability ETF Trading (2009)). RULE: Connors TPS: close above the 200-day, RSI(2) < 25 two days running: buy 10% at the close; add 20%, 30%, 40% at each later close under the last buy; sell everything at the close when RSI(2) > 70. No stop. Max 60. RECORD: published backtests only. SOURCE: https://wl6.wealth-lab.com/Forum/Posts/Connors-TPS-Strategy-40197. EARLIER TEST: none (scale-in never tested).",
-   "status": "live paper (decoded lane, batch 2)",
+   "status": "live paper (decoded lane, batch 2); per-trade verdict PROVEN, but it fails the budget test (loses per dollar planned, decoded-check.json), so it is blocked from TRY SMALL (label clarified 27 Oct 2026)",
    "agent": "decoded",
    "note": "Pre-registered 23 Oct 2026 BEFORE any run (decoded2-core.mjs header = the exact rule; one version). 5-year one-shot by decoded-lab.mjs, first complete verdict frozen in data/decoded-history.json; information only: the paper lane (data/decoded-paper.jsonl, data/decoded-board.json) records regardless, from the first session after it was added (at most 10 new signals a day, most liquid first). TRY SMALL consideration only after 30+ resolved paper trades on 10+ days, positive after 0.8% cost.",
    "tested": "2026-10-23",
