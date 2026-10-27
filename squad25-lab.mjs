@@ -169,16 +169,16 @@ const symFor = (cik, d) => { const t = Math.min(firstOnOrAfter(D, d), T - 1), c 
 const SPANCIK = new Map(); for (const [cik, a] of CIKMAP) for (const [sym, f, l, n] of a) (SPANCIK.get(sym) || SPANCIK.set(sym, []).get(sym)).push([cik, f, l, n]);
 const cikOn = (sym, d) => { const a = (SPANCIK.get(sym) || []).filter(s => d >= addDays(s[1], -400) && d <= addDays(s[2], 400)).sort((x, y) => y[3] - x[3]); return a.length ? String(+a[0][0]) : todayCik(sym); };
 const splitFactorAfter = (sym, d) => (SPLITS.get(sym) || []).filter(x => x.d > d && x.d <= D[T - 1]).reduce((a, x) => a * x.r, 1);
-// fails-to-deliver: cusip -> [[date, sym]] (one per file and symbol change), from 2019
+// fails-to-deliver: cusip -> [[date, sym]] (one per file and symbol change), from 2020-07 (events start Nov 2021; 400-day look-back)
 const FTD = new Map(); { const fail = []; let files = 0;
-  for (let y = 2019; y <= new Date().getUTCFullYear(); y++) for (let m = 1; m <= 12; m++) for (const h of ['a', 'b']) { const key = y + String(m).padStart(2, '0') + h, cf = SC + '/ftd/' + key + '.json.gz';
+  for (let y = 2020; y <= new Date().getUTCFullYear(); y++) for (let m = 1; m <= 12; m++) for (const h of ['a', 'b']) { if (y === 2020 && m < 7) continue; const key = y + String(m).padStart(2, '0') + h, cf = SC + '/ftd/' + key + '.json.gz';
     if (Date.UTC(y, m - 1, h === 'a' ? 20 : 35) > Date.now() - 10 * 864e5) continue; let x = JZ(cf, null);
     if (!x) { const zf = SC + '/ftd.zip'; if (download(SEC + '/files/data/fails-deliver-data/cnsfails' + key + '.zip', zf)) { let txt = null; try { txt = execFileSync('unzip', ['-p', zf], { maxBuffer: 512e6 }).toString('latin1'); } catch (e) {} try { fs.unlinkSync(zf); } catch (e) {}
         if (txt) { const o = {}; for (const line of txt.split('\n')) { const p = line.split('|'); if (p.length < 5 || !/^\d{8}$/.test(p[0].trim())) continue; const c = p[1].trim().toUpperCase(), s = p[2].trim().toUpperCase(), d = p[0].trim(); if (!c || !s) continue; const dd = d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6); if (!o[c] || o[c][0] > dd) o[c] = [dd, s]; }
           x = Object.entries(o).map(([c, [d, s]]) => [c, d, s]); if (x.length > 500) WZ(cf, x); else x = null; } } }
     if (!x) { fail.push(key); continue; } files++; for (const [c, d, s] of x) { const a = FTD.get(c) || FTD.set(c, []).get(c); a.push([d, s]); const c8 = c.slice(0, 8); if (c8 !== c) { const b = FTD.get(c8) || FTD.set(c8, []).get(c8); b.push([d, s]); } } }
   for (const a of FTD.values()) a.sort((x, y) => x[0] < y[0] ? -1 : 1);
-  STATUS.ftd = { ok: fail.length <= 3, files, missing: fail.slice(0, 20), cusips: FTD.size }; log('fails-to-deliver: ' + files + ' files, ' + FTD.size + ' CUSIP keys' + (fail.length ? ', missing ' + fail.length + ' ' + fail.slice(0, 6).join(' ') : '')); }
+  STATUS.ftd = { ok: fail.length <= 3, files, missing: fail, cusips: FTD.size }; log('fails-to-deliver: ' + files + ' files, ' + FTD.size + ' CUSIP keys' + (fail.length ? ', missing ' + fail.length + ' ' + fail.join(' ') : '')); }
 
 // ================= 7. GIANT FILINGS =================
 const rows = masterRows(); const GROWS = new Map();   // adsh -> { adsh, ciks:Set (giant ciks), form, date }
@@ -189,15 +189,15 @@ for (const [cik, , form, d, file] of rows) { if (!GCIK.has(cik)) continue; const
     for (let k = 0; k < (R.form || []).length; k++) { const form = R.form[k], d = R.filingDate[k], a = R.accessionNumber[k]; if (!FORMS.has(form) || d < since) continue; const o = GROWS.get(a) || GROWS.set(a, { adsh: a, ciks: new Set(), form, date: d, fileCik: cik }).get(a); if (!o.ciks.has(cik)) { o.ciks.add(cik); fresh++; } } }
   log('submissions JSON: ' + fresh + ' recent giant filings added'); }
 // headers (cached): adsh -> { a: accept, f: form, p: period, by: [..], sub: [..], fil: [..], nm: { cik: name } }
-const HDR = J(SC + '/headers.json', {}), INFO = J(SC + '/info13f.json', {}), CUS = J(SC + '/cusips.json', {}); let hdrNow = 0, hdrMiss = 0;
+const HMISS = [], HDR = J(SC + '/headers.json', {}), INFO = J(SC + '/info13f.json', {}), CUS = J(SC + '/cusips.json', {}); let hdrNow = 0, hdrMiss = 0;
 const want = [...GROWS.values()].filter(o => (is13F(o.form) && o.date >= '2019-01-01') || isDG(o.form));
 for (const o of want) { if (o.adsh in HDR && (!is13F(o.form) || o.adsh in INFO)) continue; if (left() < 60 * 60e3) { hdrMiss++; continue; }
   if (is13F(o.form)) { const txt = await sec(txtUrl(o.fileCik, o.adsh), 'text'); if (!txt) { hdrMiss++; continue; } const h = parseHeader(txt); HDR[o.adsh] = { a: h.accept, f: h.form, p: h.period, by: h.filedBy, sub: h.subject, fil: h.filer, nm: h.names };
     INFO[o.adsh] = [...equityIssuers(parseInfoTable(txt))].map(([k, v]) => [k, v.cusip, v.name]); }
-  else { const txt = await sec(hdrUrl(o.fileCik, o.adsh), 'text'); if (!txt) { hdrMiss++; continue; } const h = parseHeader(txt.replace(/&lt;/g, '<').replace(/&gt;/g, '>')); HDR[o.adsh] = { a: h.accept, f: h.form, p: h.period, by: h.filedBy, sub: h.subject, fil: h.filer, nm: h.names }; }
+  else { let txt = await sec(hdrUrl(o.fileCik, o.adsh), 'text'); if (!txt) txt = await sec(txtUrl(o.fileCik, o.adsh), 'text'); if (!txt) { hdrMiss++; if (HMISS.length < 30) HMISS.push(o.adsh + ' ' + o.fileCik + ' ' + o.form); continue; } const h = parseHeader(txt.replace(/&lt;/g, '<').replace(/&gt;/g, '>')); HDR[o.adsh] = { a: h.accept, f: h.form, p: h.period, by: h.filedBy, sub: h.subject, fil: h.filer, nm: h.names }; }
   hdrNow++; if (hdrNow % 400 === 0) { W(SC + '/headers.json', HDR); W(SC + '/info13f.json', INFO); log('headers read: ' + hdrNow); } }
 W(SC + '/headers.json', HDR); W(SC + '/info13f.json', INFO);
-STATUS.filings = { ok: hdrMiss <= Math.max(3, want.length * 0.005), giantFilings: want.length, readNow: hdrNow, notRead: hdrMiss }; log('giant filings: ' + want.length + ' (13F since 2019 + all 13D/13G since 2013), headers read now ' + hdrNow + ', not read ' + hdrMiss);
+STATUS.filings = { ok: hdrMiss <= Math.max(3, want.length * 0.005), giantFilings: want.length, readNow: hdrNow, notRead: hdrMiss, examples: HMISS }; log('giant filings: ' + want.length + ' (13F since 2019 + all 13D/13G since 2013), headers read now ' + hdrNow + ', not read ' + hdrMiss);
 
 // ================= 8. EVENTS =================
 const accIsoOf = (a) => etToIso(a, nyParts), RAW = [], FUN = { f13Filings: 0, f13New: 0, dgFilings: 0, dgAsSubject: 0, dgEvents: 0 };
