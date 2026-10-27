@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-27T07:56:27.417Z",
+ "generatedAt": "2026-10-27T07:59:03.748Z",
  "squad": 24,
  "philosophy": "a small company (1-10 USD) states a deal worth >= 20% of its market value with a top-100 US-listed company in an 8-K 1.01; bought the open after the reaction session, held 10 sessions",
  "preRegistered": "squad24-core.mjs header (27 Oct 2026, before any run) + data/strategy-library.json SQ24-MEGADEAL; frozen list data/squad24-megacaps.json sha256 5530f8200c39cf831750e157cedd32b4f3038b33345a802c152542e5048864da",
@@ -257,9 +257,406 @@
    "frozenAt": "2026-10-27T05:35:58.063Z"
   }
  },
+ "correctedRun": {
+  "SQ24-MEGADEAL": {
+   "at": "2026-10-27T07:53:55.879Z",
+   "frozenAt": "2026-10-27T05:35:58.063Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "bugs": [
+    "SQ24-LABEL"
+   ],
+   "name": "Small company (1-10 USD) signs a dollar-stated deal >= 20% of its market value with a top-100 US-listed company (8-K 1.01); buy the open after the reaction session, hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): the frozen counterparty test matched an alias anywhere in the filing (a CEO named Apple, wet AMD, About/forward-looking boilerplate, bank credit-agreement definitions) and the size used the largest dollar amount anywhere (a 26.54 trillion USD unit error, an asset manager's AUM, capital and surplus). Fixed rule-based entity resolution + agreement-passage amounts + event families + a blind hand review (squad24-audit-core.mjs header, pre-registered before this run); counted families: COMMERCIAL_CUSTOMER, LICENSE, EQUITY_INVESTMENT_BY_GIANT. Same events, filters, entry, exit, costs, yardsticks and bars as the frozen run.",
+   "labelsSha": "233225c59227b350592df2c58fa749ca8dbadc368ee3f613fd50a33f4f71a43d",
+   "caseCounts": {
+    "older": 2,
+    "newer": 5
+   },
+   "decisions": {
+    "extractor: no party hit": 202,
+    "size gate: no classified passage amount >= 20% of the market": 51,
+    "hand review: SVFC: SPAC deck table; $405MM is all committed ": 1,
+    "family INCIDENTAL is not counted": 2,
+    "counted": 7,
+    "hand review: BRSP: repo facility covenant amendment; $2.105B": 1,
+    "family ACQUISITION is not counted": 1,
+    "hand review: MGTX: earnings release recapping a 2019 Janssen": 1,
+    "hand review: EDIT: sale of Vertex license fees to DRI Health": 1,
+    "hand review: SLQT: senior preferred stock bought by a Morgan": 1,
+    "hand review: MGTX: earnings release recapping the 2023 asset": 1,
+    "hand review: ARRY: convertible notes, Goldman Sachs as initi": 1,
+    "hand review: BRSP: repo facility covenant text": 1,
+    "hand review: ARVN: Arvinas and Pfizer out-license to Rigel; ": 1
+   },
+   "families": {
+    "INCIDENTAL": 13,
+    "UNCLEAR": 4,
+    "LICENSE": 19,
+    "CREDIT": 23,
+    "COMMERCIAL_CUSTOMER": 3,
+    "ACQUISITION": 5,
+    "EQUITY_INVESTMENT_BY_GIANT": 3
+   },
+   "reproducedFrozen": {
+    "older": 108,
+    "newer": 156,
+    "frozen": {
+     "older": 108,
+     "newer": 156
+    },
+    "matchesFrozen": true
+   },
+   "verdict": "TOO FEW CASES",
+   "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 5 cases, 5 blocks)",
+   "results": {
+    "older": {
+     "n": 2,
+     "days": 2,
+     "stocks": 2,
+     "avg": 0.022,
+     "median": 0.022,
+     "avgStress": 0.018,
+     "ctrl": -0.0866,
+     "edge": 0.1006,
+     "tDay": 0.66,
+     "blocks": 2,
+     "tBlock": null,
+     "vsOwn": 0.0767,
+     "ownCovered": 2,
+     "noTop2": null,
+     "best": 0.1499,
+     "worst": -0.106,
+     "win": 0.5
+    },
+    "newer": {
+     "n": 5,
+     "days": 5,
+     "stocks": 4,
+     "avg": -0.0183,
+     "median": 0.0291,
+     "avgStress": -0.0223,
+     "ctrl": -0.0007,
+     "edge": -0.0256,
+     "tDay": -0.76,
+     "blocks": 5,
+     "tBlock": -0.76,
+     "vsOwn": -0.0264,
+     "ownCovered": 5,
+     "noTop2": -0.0735,
+     "best": 0.0654,
+     "worst": -0.2239,
+     "win": 0.6
+    },
+    "all": {
+     "n": 7,
+     "days": 7,
+     "stocks": 6,
+     "avg": -0.0068,
+     "median": 0.0291,
+     "avgStress": -0.0108,
+     "ctrl": -0.0252,
+     "edge": 0.0105,
+     "tDay": 0.22,
+     "blocks": 7,
+     "tBlock": 0.22,
+     "vsOwn": 0.003,
+     "ownCovered": 7,
+     "noTop2": -0.0526,
+     "best": 0.1499,
+     "worst": -0.2239,
+     "win": 0.5714
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 2,
+     "avg": -0.0184
+    },
+    "newer": {
+     "n": 5,
+     "avg": -0.0571
+    },
+    "all": {
+     "n": 7,
+     "avg": -0.0461
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": 0.5532,
+     "spy": -1.1614,
+     "avgStock": -1.9815
+    },
+    "newer": {
+     "rule": -0.4608,
+     "spy": 0.2971,
+     "avgStock": 0.1841
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 2,
+     "edge": 0.0991
+    },
+    "newer": {
+     "n": 5,
+     "edge": -0.0176
+    },
+    "all": {
+     "n": 7,
+     "edge": 0.0158
+    }
+   },
+   "shape": {
+    "trades": 7,
+    "win": 0.5714,
+    "avgWin": 0.077,
+    "avgLoss": -0.1186,
+    "pf": 0.8664,
+    "exits": {
+     "time": 7
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "familyInfo": {
+    "note": "INFORMATION ONLY: each family (extractor-accepted, size gate passed, hand label accept) on its own, never a verdict",
+    "COMMERCIAL_CUSTOMER": {
+     "counted": true,
+     "cases": {
+      "older": 1,
+      "newer": 0
+     },
+     "older": {
+      "n": 1,
+      "avg": -0.106,
+      "stress": -0.11,
+      "slip": -0.1414,
+      "edge": -0.0447,
+      "win": 0
+     },
+     "newer": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     },
+     "all": {
+      "n": 1,
+      "avg": -0.106,
+      "stress": -0.11,
+      "slip": -0.1414,
+      "edge": -0.0447,
+      "win": 0
+     }
+    },
+    "LICENSE": {
+     "counted": true,
+     "cases": {
+      "older": 1,
+      "newer": 5
+     },
+     "older": {
+      "n": 1,
+      "avg": 0.1499,
+      "stress": 0.1459,
+      "slip": 0.1045,
+      "edge": 0.2618,
+      "win": 1
+     },
+     "newer": {
+      "n": 5,
+      "avg": -0.0183,
+      "stress": -0.0223,
+      "slip": -0.0571,
+      "edge": -0.0176,
+      "win": 0.6
+     },
+     "all": {
+      "n": 6,
+      "avg": 0.0097,
+      "stress": 0.0057,
+      "slip": -0.0302,
+      "edge": 0.029,
+      "win": 0.6667
+     }
+    },
+    "EQUITY_INVESTMENT_BY_GIANT": {
+     "counted": true,
+     "cases": {
+      "older": 0,
+      "newer": 0
+     },
+     "older": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     },
+     "newer": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     },
+     "all": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     }
+    },
+    "ACQUISITION": {
+     "counted": false,
+     "cases": {
+      "older": 1,
+      "newer": 0
+     },
+     "older": {
+      "n": 1,
+      "avg": -0.0611,
+      "stress": -0.0651,
+      "slip": -0.0983,
+      "edge": -0.1508,
+      "win": 0
+     },
+     "newer": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     },
+     "all": {
+      "n": 1,
+      "avg": -0.0611,
+      "stress": -0.0651,
+      "slip": -0.0983,
+      "edge": -0.1508,
+      "win": 0
+     }
+    },
+    "CREDIT": {
+     "counted": false,
+     "cases": {
+      "older": 0,
+      "newer": 0
+     },
+     "older": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     },
+     "newer": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     },
+     "all": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     }
+    },
+    "INCIDENTAL": {
+     "counted": false,
+     "cases": {
+      "older": 1,
+      "newer": 1
+     },
+     "older": {
+      "n": 1,
+      "avg": -0.1003,
+      "stress": -0.1043,
+      "slip": -0.1359,
+      "edge": -0.0112,
+      "win": 0
+     },
+     "newer": {
+      "n": 1,
+      "avg": 0.0049,
+      "stress": 0.0009,
+      "slip": -0.0348,
+      "edge": -0.0588,
+      "win": 1
+     },
+     "all": {
+      "n": 2,
+      "avg": -0.0477,
+      "stress": -0.0517,
+      "slip": -0.0853,
+      "edge": -0.035,
+      "win": 0.5
+     }
+    },
+    "UNCLEAR": {
+     "counted": false,
+     "cases": {
+      "older": 0,
+      "newer": 0
+     },
+     "older": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     },
+     "newer": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     },
+     "all": {
+      "n": 0,
+      "avg": null,
+      "stress": null,
+      "slip": null,
+      "edge": null,
+      "win": null
+     }
+    }
+   },
+   "cost": 0.008,
+   "split": "2024-01-01",
+   "yardstick": "average 1-10 USD stock (20-day traded value >= 0.5M USD) on the same sessions; capBoth (AUD-1)"
+  }
+ },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-27T07:56:27.417Z",
+  "at": "2026-10-27T07:59:03.748Z",
   "results": {}
  },
  "cases": [
@@ -6106,403 +6503,6 @@
    "reactionDay": 0.0014
   }
  ],
- "correctedRun": {
-  "SQ24-MEGADEAL": {
-   "at": "2026-10-27T07:53:55.879Z",
-   "frozenAt": "2026-10-27T05:35:58.063Z",
-   "window": [
-    "2021-10-12",
-    "2026-10-26"
-   ],
-   "bar": 4.07,
-   "bugs": [
-    "SQ24-LABEL"
-   ],
-   "name": "Small company (1-10 USD) signs a dollar-stated deal >= 20% of its market value with a top-100 US-listed company (8-K 1.01); buy the open after the reaction session, hold 10, 25% stop",
-   "kind": "buy",
-   "family": "event",
-   "hold": 10,
-   "block": 10,
-   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): the frozen counterparty test matched an alias anywhere in the filing (a CEO named Apple, wet AMD, About/forward-looking boilerplate, bank credit-agreement definitions) and the size used the largest dollar amount anywhere (a 26.54 trillion USD unit error, an asset manager's AUM, capital and surplus). Fixed rule-based entity resolution + agreement-passage amounts + event families + a blind hand review (squad24-audit-core.mjs header, pre-registered before this run); counted families: COMMERCIAL_CUSTOMER, LICENSE, EQUITY_INVESTMENT_BY_GIANT. Same events, filters, entry, exit, costs, yardsticks and bars as the frozen run.",
-   "labelsSha": "233225c59227b350592df2c58fa749ca8dbadc368ee3f613fd50a33f4f71a43d",
-   "caseCounts": {
-    "older": 2,
-    "newer": 5
-   },
-   "decisions": {
-    "extractor: no party hit": 202,
-    "size gate: no classified passage amount >= 20% of the market": 51,
-    "hand review: SVFC: SPAC deck table; $405MM is all committed ": 1,
-    "family INCIDENTAL is not counted": 2,
-    "counted": 7,
-    "hand review: BRSP: repo facility covenant amendment; $2.105B": 1,
-    "family ACQUISITION is not counted": 1,
-    "hand review: MGTX: earnings release recapping a 2019 Janssen": 1,
-    "hand review: EDIT: sale of Vertex license fees to DRI Health": 1,
-    "hand review: SLQT: senior preferred stock bought by a Morgan": 1,
-    "hand review: MGTX: earnings release recapping the 2023 asset": 1,
-    "hand review: ARRY: convertible notes, Goldman Sachs as initi": 1,
-    "hand review: BRSP: repo facility covenant text": 1,
-    "hand review: ARVN: Arvinas and Pfizer out-license to Rigel; ": 1
-   },
-   "families": {
-    "INCIDENTAL": 13,
-    "UNCLEAR": 4,
-    "LICENSE": 19,
-    "CREDIT": 23,
-    "COMMERCIAL_CUSTOMER": 3,
-    "ACQUISITION": 5,
-    "EQUITY_INVESTMENT_BY_GIANT": 3
-   },
-   "reproducedFrozen": {
-    "older": 108,
-    "newer": 156,
-    "frozen": {
-     "older": 108,
-     "newer": 156
-    },
-    "matchesFrozen": true
-   },
-   "verdict": "TOO FEW CASES",
-   "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 5 cases, 5 blocks)",
-   "results": {
-    "older": {
-     "n": 2,
-     "days": 2,
-     "stocks": 2,
-     "avg": 0.022,
-     "median": 0.022,
-     "avgStress": 0.018,
-     "ctrl": -0.0866,
-     "edge": 0.1006,
-     "tDay": 0.66,
-     "blocks": 2,
-     "tBlock": null,
-     "vsOwn": 0.0767,
-     "ownCovered": 2,
-     "noTop2": null,
-     "best": 0.1499,
-     "worst": -0.106,
-     "win": 0.5
-    },
-    "newer": {
-     "n": 5,
-     "days": 5,
-     "stocks": 4,
-     "avg": -0.0183,
-     "median": 0.0291,
-     "avgStress": -0.0223,
-     "ctrl": -0.0007,
-     "edge": -0.0256,
-     "tDay": -0.76,
-     "blocks": 5,
-     "tBlock": -0.76,
-     "vsOwn": -0.0264,
-     "ownCovered": 5,
-     "noTop2": -0.0735,
-     "best": 0.0654,
-     "worst": -0.2239,
-     "win": 0.6
-    },
-    "all": {
-     "n": 7,
-     "days": 7,
-     "stocks": 6,
-     "avg": -0.0068,
-     "median": 0.0291,
-     "avgStress": -0.0108,
-     "ctrl": -0.0252,
-     "edge": 0.0105,
-     "tDay": 0.22,
-     "blocks": 7,
-     "tBlock": 0.22,
-     "vsOwn": 0.003,
-     "ownCovered": 7,
-     "noTop2": -0.0526,
-     "best": 0.1499,
-     "worst": -0.2239,
-     "win": 0.5714
-    }
-   },
-   "slippage": {
-    "older": {
-     "n": 2,
-     "avg": -0.0184
-    },
-    "newer": {
-     "n": 5,
-     "avg": -0.0571
-    },
-    "all": {
-     "n": 7,
-     "avg": -0.0461
-    }
-   },
-   "perYear": {
-    "older": {
-     "rule": 0.5532,
-     "spy": -1.1614,
-     "avgStock": -1.9815
-    },
-    "newer": {
-     "rule": -0.4608,
-     "spy": 0.2971,
-     "avgStock": 0.1841
-    }
-   },
-   "liquidYardstick": {
-    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
-    "older": {
-     "n": 2,
-     "edge": 0.0991
-    },
-    "newer": {
-     "n": 5,
-     "edge": -0.0176
-    },
-    "all": {
-     "n": 7,
-     "edge": 0.0158
-    }
-   },
-   "shape": {
-    "trades": 7,
-    "win": 0.5714,
-    "avgWin": 0.077,
-    "avgLoss": -0.1186,
-    "pf": 0.8664,
-    "exits": {
-     "time": 7
-    }
-   },
-   "artifactsLeftOut": 0,
-   "noYardstick": 0,
-   "noEntryOpen": 0,
-   "familyInfo": {
-    "note": "INFORMATION ONLY: each family (extractor-accepted, size gate passed, hand label accept) on its own, never a verdict",
-    "COMMERCIAL_CUSTOMER": {
-     "counted": true,
-     "cases": {
-      "older": 1,
-      "newer": 0
-     },
-     "older": {
-      "n": 1,
-      "avg": -0.106,
-      "stress": -0.11,
-      "slip": -0.1414,
-      "edge": -0.0447,
-      "win": 0
-     },
-     "newer": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     },
-     "all": {
-      "n": 1,
-      "avg": -0.106,
-      "stress": -0.11,
-      "slip": -0.1414,
-      "edge": -0.0447,
-      "win": 0
-     }
-    },
-    "LICENSE": {
-     "counted": true,
-     "cases": {
-      "older": 1,
-      "newer": 5
-     },
-     "older": {
-      "n": 1,
-      "avg": 0.1499,
-      "stress": 0.1459,
-      "slip": 0.1045,
-      "edge": 0.2618,
-      "win": 1
-     },
-     "newer": {
-      "n": 5,
-      "avg": -0.0183,
-      "stress": -0.0223,
-      "slip": -0.0571,
-      "edge": -0.0176,
-      "win": 0.6
-     },
-     "all": {
-      "n": 6,
-      "avg": 0.0097,
-      "stress": 0.0057,
-      "slip": -0.0302,
-      "edge": 0.029,
-      "win": 0.6667
-     }
-    },
-    "EQUITY_INVESTMENT_BY_GIANT": {
-     "counted": true,
-     "cases": {
-      "older": 0,
-      "newer": 0
-     },
-     "older": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     },
-     "newer": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     },
-     "all": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     }
-    },
-    "ACQUISITION": {
-     "counted": false,
-     "cases": {
-      "older": 1,
-      "newer": 0
-     },
-     "older": {
-      "n": 1,
-      "avg": -0.0611,
-      "stress": -0.0651,
-      "slip": -0.0983,
-      "edge": -0.1508,
-      "win": 0
-     },
-     "newer": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     },
-     "all": {
-      "n": 1,
-      "avg": -0.0611,
-      "stress": -0.0651,
-      "slip": -0.0983,
-      "edge": -0.1508,
-      "win": 0
-     }
-    },
-    "CREDIT": {
-     "counted": false,
-     "cases": {
-      "older": 0,
-      "newer": 0
-     },
-     "older": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     },
-     "newer": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     },
-     "all": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     }
-    },
-    "INCIDENTAL": {
-     "counted": false,
-     "cases": {
-      "older": 1,
-      "newer": 1
-     },
-     "older": {
-      "n": 1,
-      "avg": -0.1003,
-      "stress": -0.1043,
-      "slip": -0.1359,
-      "edge": -0.0112,
-      "win": 0
-     },
-     "newer": {
-      "n": 1,
-      "avg": 0.0049,
-      "stress": 0.0009,
-      "slip": -0.0348,
-      "edge": -0.0588,
-      "win": 1
-     },
-     "all": {
-      "n": 2,
-      "avg": -0.0477,
-      "stress": -0.0517,
-      "slip": -0.0853,
-      "edge": -0.035,
-      "win": 0.5
-     }
-    },
-    "UNCLEAR": {
-     "counted": false,
-     "cases": {
-      "older": 0,
-      "newer": 0
-     },
-     "older": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     },
-     "newer": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     },
-     "all": {
-      "n": 0,
-      "avg": null,
-      "stress": null,
-      "slip": null,
-      "edge": null,
-      "win": null
-     }
-    }
-   },
-   "cost": 0.008,
-   "split": "2024-01-01",
-   "yardstick": "average 1-10 USD stock (20-day traded value >= 0.5M USD) on the same sessions; capBoth (AUD-1)"
-  }
- },
  "auditCases": [
   {
    "sym": "SWN",
