@@ -107,3 +107,16 @@ test('v2 extractor: rejects the failure kinds found in the first hand check', ()
   assert.equal(linkSentence('Products manufactured by Walmart represented approximately 40% of our technology segment net sales.', W, 2023), null, 'segment');
   assert.equal(linkSentence('Sales to Walmart represented 100% of the net revenue of Scilex Pharma in 2020.', W, 2021), null, 'a subsidiary\'s revenue');
 });
+
+test('v3 extractor: lists, respectively, combined figures, the year of the figure, vendors', () => {
+  const W = ['Walmart'], A = ['Amazon.com', 'Amazon'], M = ['Medtronic'];
+  assert.equal(linkSentence('In 2023, Target, Amazon and Walmart accounted for approximately 31%, 30% and 7% of our total revenue, respectively.', W, 2024), null, 'its own share is 7%');
+  assert.equal(linkSentence('In 2023, Target, Amazon and Walmart accounted for approximately 31%, 30% and 7% of our total revenue, respectively.', A, 2024).pct, 30);
+  assert.equal(linkSentence('Revenue from Abbott and Medtronic represented approximately 19% and 14%, respectively, of our consolidated revenue for fiscal 2020.', M, 2020).pct, 14);
+  assert.equal(linkSentence('For 2024 the largest two customers, Walmart and Home Depot, accounted for 40.9% of total revenues.', W, 2025), null, 'combined (alias first)');
+  assert.equal(linkSentence('In 2022 our top accounts, Spotify, YouTube and Walmart, accounted for approximately 40% of our total revenue.', W, 2022), null, 'combined (alias last)');
+  assert.equal(linkSentence('In fiscal 2024, revenues from Walmart, Samsung and Xiaomi each comprised 10% or more of our consolidated revenues.', W, 2024).pct, 10, 'each');
+  assert.equal(linkSentence('In 2025 Microsoft accounted for 28.8% of our revenue, and in 2024, Walmart accounted for 12.4% of our revenue.', W, 2026), null, 'the figure is a stale year');
+  assert.equal(linkSentence('In 2025, one customer, Amazon.com, Inc. and its affiliates, represented approximately 10.6% of our consolidated revenues.', A, 2026).pct, 10.6, 'corporate form + affiliates is not a list');
+  assert.equal(linkSentence('During 2024, 74% of our inventory was purchased from one vendor, Walmart, who accounted for approximately 73% of our net sales.', W, 2024), null, 'vendor');
+});

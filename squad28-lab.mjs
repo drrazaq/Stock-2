@@ -155,7 +155,7 @@ async function buildLinks(FWD = null) {   // FWD = the frozen links file: forwar
   STATUS.efts = { ok: FT.complete, jobs: jobs.length, fetchedNow: FT.fetched, missing: FT.missing.slice(0, 20), missingN: FT.missing.length, docs: HITS.size };
   log('full-text search: ' + HITS.size + ' 10-K documents name a customer phrase; ' + (FT.complete ? 'complete' : 'INCOMPLETE ' + FT.missing.length));
   // 5c. verification on the document text (one fetch per document; every customer whose phrase hit it is checked)
-  const VF = SC + '/verified-v2.json', VER = J(VF, {}); let read = 0, notRead = 0, saved = Date.now();
+  const VF = SC + '/verified-v3.json', VER = J(VF, {}); let read = 0, notRead = 0, saved = Date.now();
   const todo = [...HITS.entries()].filter(([k, e]) => !VER[k] || [...e.custs].some(c => !(c in VER[k].m)));
   log('documents to read: ' + todo.length + ' (cached ' + (HITS.size - todo.length) + ')');
   await pool(todo, 4, async ([k, e]) => { if (left() < 25 * 60e3) { notRead++; return; } const html = await sec(SEC + '/Archives/edgar/data/' + e.cik + '/' + e.adsh.replace(/-/g, '') + '/' + e.file, 'text');
