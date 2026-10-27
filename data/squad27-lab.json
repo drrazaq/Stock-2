@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-27T12:48:01.127Z",
+ "updated": "2026-10-27T13:05:38.530Z",
  "what": "Squad 27: odd-lot issuer tender arbitrage (SQ27-ODDLOT). Rule = squad27-core.mjs header. Information / paper lane only; not read by scan.mjs.",
  "status": "complete",
  "firstRun": {
@@ -675,7 +675,727 @@
    "frozenAt": "2026-10-27T12:32:11.047Z"
   }
  },
- "correctedRun": {},
+ "correctedRun": {
+  "SQ27-ODDLOT": {
+   "at": "2026-10-27T13:05:38.229Z",
+   "bugs": [
+    "SQ27-B1"
+   ],
+   "explanation": "Ticker reader missed the symbol in Windows-1252 documents (curly quotes arrived as U+0093/U+0094, not mapped to plain quotes) and when a quote stood between the exchange name and the symbol, so many listed offers (GameStop, DaVita, MGM, MicroStrategy, Marathon Petroleum, Box, Coca-Cola Consolidated, ...) were counted as NOT LISTED. Fixed html2text and reader; candidates re-read; same rule, costs, entries and window.",
+   "verdict": "TOO FEW (information only)",
+   "results": {
+    "actual": {
+     "older": {
+      "n": 15,
+      "avg": 117.03,
+      "median": 28.96,
+      "worst": -1200.79,
+      "best": 2141.29,
+      "total": 1755.44,
+      "wins": 10,
+      "avgCapital": 2232.58,
+      "avgDays": 11.67,
+      "annPool": 1.5993,
+      "annMedian": 0.4446,
+      "years": {
+       "2019": {
+        "n": 4,
+        "total": 57.47
+       },
+       "2020": {
+        "n": 2,
+        "total": 940.5
+       },
+       "2021": {
+        "n": 4,
+        "total": 236.46
+       },
+       "2022": {
+        "n": 4,
+        "total": 492.05
+       },
+       "2023": {
+        "n": 1,
+        "total": 28.96
+       }
+      }
+     },
+     "newer": {
+      "n": 3,
+      "avg": 21.74,
+      "median": 40.79,
+      "worst": -29.42,
+      "best": 53.85,
+      "total": 65.22,
+      "wins": 2,
+      "avgCapital": 1843.83,
+      "avgDays": 10.67,
+      "annPool": 0.47,
+      "annMedian": 0.3193,
+      "years": {
+       "2024": {
+        "n": 1,
+        "total": 40.79
+       },
+       "2025": {
+        "n": 1,
+        "total": -29.42
+       },
+       "2026": {
+        "n": 1,
+        "total": 53.85
+       }
+      }
+     },
+     "all": {
+      "n": 18,
+      "avg": 101.15,
+      "median": 29.33,
+      "worst": -1200.79,
+      "best": 2141.29,
+      "total": 1820.66,
+      "wins": 12,
+      "avgCapital": 2167.79,
+      "avgDays": 11.5,
+      "annPool": 1.4725,
+      "annMedian": 0.3823,
+      "years": {
+       "2019": {
+        "n": 4,
+        "total": 57.47
+       },
+       "2020": {
+        "n": 2,
+        "total": 940.5
+       },
+       "2021": {
+        "n": 4,
+        "total": 236.46
+       },
+       "2022": {
+        "n": 4,
+        "total": 492.05
+       },
+       "2023": {
+        "n": 1,
+        "total": 28.96
+       },
+       "2024": {
+        "n": 1,
+        "total": 40.79
+       },
+       "2025": {
+        "n": 1,
+        "total": -29.42
+       },
+       "2026": {
+        "n": 1,
+        "total": 53.85
+       }
+      }
+     }
+    },
+    "min": {
+     "older": {
+      "n": 15,
+      "avg": 63.7,
+      "median": 6.17,
+      "worst": -1200.79,
+      "best": 1844.29,
+      "total": 955.52,
+      "wins": 8,
+      "avgCapital": 2232.58,
+      "avgDays": 11.67,
+      "annPool": 0.8705,
+      "annMedian": 0.0836,
+      "years": {
+       "2019": {
+        "n": 4,
+        "total": 57.47
+       },
+       "2020": {
+        "n": 2,
+        "total": 643.5
+       },
+       "2021": {
+        "n": 4,
+        "total": 13.71
+       },
+       "2022": {
+        "n": 4,
+        "total": 211.88
+       },
+       "2023": {
+        "n": 1,
+        "total": 28.96
+       }
+      }
+     },
+     "newer": {
+      "n": 4,
+      "avg": 15.4,
+      "median": 18.59,
+      "worst": -29.42,
+      "best": 53.85,
+      "total": 61.61,
+      "wins": 2,
+      "avgCapital": 1519.84,
+      "avgDays": 10.25,
+      "annPool": 0.4046,
+      "annMedian": 0.026,
+      "years": {
+       "2024": {
+        "n": 1,
+        "total": 40.79
+       },
+       "2025": {
+        "n": 1,
+        "total": -29.42
+       },
+       "2026": {
+        "n": 2,
+        "total": 50.24
+       }
+      }
+     },
+     "all": {
+      "n": 19,
+      "avg": 53.53,
+      "median": 6.17,
+      "worst": -1200.79,
+      "best": 1844.29,
+      "total": 1017.13,
+      "wins": 10,
+      "avgCapital": 2082.53,
+      "avgDays": 11.37,
+      "annPool": 0.8137,
+      "annMedian": 0.0836,
+      "years": {
+       "2019": {
+        "n": 4,
+        "total": 57.47
+       },
+       "2020": {
+        "n": 2,
+        "total": 643.5
+       },
+       "2021": {
+        "n": 4,
+        "total": 13.71
+       },
+       "2022": {
+        "n": 4,
+        "total": 211.88
+       },
+       "2023": {
+        "n": 1,
+        "total": 28.96
+       },
+       "2024": {
+        "n": 1,
+        "total": 40.79
+       },
+       "2025": {
+        "n": 1,
+        "total": -29.42
+       },
+       "2026": {
+        "n": 2,
+        "total": 50.24
+       }
+      }
+     }
+    },
+    "skips": {
+     "no gap": 63,
+     "terminated before entry": 1,
+     "outcome unknown": 2,
+     "open": 2
+    },
+    "halalOk": {
+     "n": 0
+    },
+    "haveHalalMark": 0
+   },
+   "headline": {
+    "listedOffers": 135,
+    "oddLotOffers": 87,
+    "oddLotShare": 0.6444,
+    "completionRateListed": 0.9685,
+    "completionRateOddLot": 0.9639,
+    "outcomeUnknownOddLot": 2,
+    "typeCounts": {
+     "fixed": 47,
+     "dutch": 88
+    },
+    "oddLotByType": {
+     "fixed": 18,
+     "dutch": 69
+    },
+    "dutchActualPriceMissing": 1
+   },
+   "years": {
+    "2019": {
+     "scToI": 464,
+     "listedCashShares": 29,
+     "oddLot": 15,
+     "oddLotCompleted": 15,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 0,
+     "gapAtE2": 4
+    },
+    "2020": {
+     "scToI": 396,
+     "listedCashShares": 23,
+     "oddLot": 16,
+     "oddLotCompleted": 14,
+     "oddLotTerminated": 2,
+     "oddLotUnknown": 0,
+     "gapAtE2": 2
+    },
+    "2021": {
+     "scToI": 374,
+     "listedCashShares": 24,
+     "oddLot": 19,
+     "oddLotCompleted": 18,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 1,
+     "gapAtE2": 4
+    },
+    "2022": {
+     "scToI": 383,
+     "listedCashShares": 19,
+     "oddLot": 15,
+     "oddLotCompleted": 14,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 1,
+     "gapAtE2": 4
+    },
+    "2023": {
+     "scToI": 461,
+     "listedCashShares": 13,
+     "oddLot": 8,
+     "oddLotCompleted": 8,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 0,
+     "gapAtE2": 1
+    },
+    "2024": {
+     "scToI": 579,
+     "listedCashShares": 10,
+     "oddLot": 6,
+     "oddLotCompleted": 5,
+     "oddLotTerminated": 1,
+     "oddLotUnknown": 0,
+     "gapAtE2": 1
+    },
+    "2025": {
+     "scToI": 577,
+     "listedCashShares": 8,
+     "oddLot": 2,
+     "oddLotCompleted": 2,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 0,
+     "gapAtE2": 1
+    },
+    "2026": {
+     "scToI": 478,
+     "listedCashShares": 9,
+     "oddLot": 6,
+     "oddLotCompleted": 4,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 0,
+     "gapAtE2": 2
+    }
+   },
+   "assumptions": {
+    "shares": 99,
+    "buyCost": 0.008,
+    "commissionUSD": "3 (ASSUMED: scan.mjs default ZAD stock fee)",
+    "corporateActionFeeUSD": "25 (ASSUMED: ZAD fee unknown)",
+    "cashDate": "5 sessions after the final expiry (ASSUMED)",
+    "split": "2024-01-01"
+   },
+   "data": {
+    "quartersNeed": 32,
+    "quartersRead": 32,
+    "origNeed": 3713,
+    "origRead": 3713,
+    "amendNeed": 426,
+    "amendRead": 422,
+    "pxNeed": 83,
+    "pxOk": 83,
+    "complete": true,
+    "why": "complete",
+    "secRequests": 704,
+    "secFailures": 5,
+    "httpCodes": {
+     "200": 636,
+     "403": 8,
+     "429": 60
+    },
+    "failSample": [
+     "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261027.idx",
+     "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521190669/0001193125-21-190669-index.htm",
+     "gave up https://www.sec.gov/Archives/edgar/data/1372612/000138713121006398/0001387131-21-006398-index.htm",
+     "gave up https://www.sec.gov/Archives/edgar/data/1421182/000119312521188902/d179340dsctoia.htm",
+     "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521192723/0001193125-21-192723-index.htm"
+    ]
+   },
+   "frozenAt": "2026-10-27T13:05:38.229Z"
+  },
+  "SQ27-ODDLOT-A1": {
+   "at": "2026-10-27T13:05:38.229Z",
+   "bugs": [
+    "SQ27-B1"
+   ],
+   "explanation": "Ticker reader missed the symbol in Windows-1252 documents (curly quotes arrived as U+0093/U+0094, not mapped to plain quotes) and when a quote stood between the exchange name and the symbol, so many listed offers (GameStop, DaVita, MGM, MicroStrategy, Marathon Petroleum, Box, Coca-Cola Consolidated, ...) were counted as NOT LISTED. Fixed html2text and reader; candidates re-read; same rule, costs, entries and window.",
+   "verdict": "TOO FEW (information only)",
+   "results": {
+    "actual": {
+     "older": {
+      "n": 14,
+      "avg": 97.55,
+      "median": 16.95,
+      "worst": -103.79,
+      "best": 750.19,
+      "total": 1365.74,
+      "wins": 8,
+      "avgCapital": 2101.34,
+      "avgDays": 38.36,
+      "annPool": 0.4415,
+      "annMedian": 0.1741,
+      "years": {
+       "2019": {
+        "n": 3,
+        "total": -28.92
+       },
+       "2020": {
+        "n": 3,
+        "total": 642.92
+       },
+       "2021": {
+        "n": 4,
+        "total": 155.31
+       },
+       "2022": {
+        "n": 3,
+        "total": 377.86
+       },
+       "2023": {
+        "n": 1,
+        "total": 218.57
+       }
+      }
+     },
+     "newer": {
+      "n": 2,
+      "avg": 42.15,
+      "median": 42.15,
+      "worst": -29.42,
+      "best": 113.72,
+      "total": 84.3,
+      "wins": 1,
+      "avgCapital": 145.2,
+      "avgDays": 36.5,
+      "annPool": 2.8929,
+      "annMedian": 4.5007,
+      "years": {
+       "2024": {
+        "n": 1,
+        "total": -29.42
+       },
+       "2026": {
+        "n": 1,
+        "total": 113.72
+       }
+      }
+     },
+     "all": {
+      "n": 16,
+      "avg": 90.63,
+      "median": 16.95,
+      "worst": -103.79,
+      "best": 750.19,
+      "total": 1450.04,
+      "wins": 9,
+      "avgCapital": 1856.82,
+      "avgDays": 38.13,
+      "annPool": 0.4643,
+      "annMedian": 0.1741,
+      "years": {
+       "2019": {
+        "n": 3,
+        "total": -28.92
+       },
+       "2020": {
+        "n": 3,
+        "total": 642.92
+       },
+       "2021": {
+        "n": 4,
+        "total": 155.31
+       },
+       "2022": {
+        "n": 3,
+        "total": 377.86
+       },
+       "2023": {
+        "n": 1,
+        "total": 218.57
+       },
+       "2024": {
+        "n": 1,
+        "total": -29.42
+       },
+       "2026": {
+        "n": 1,
+        "total": 113.72
+       }
+      }
+     }
+    },
+    "min": {
+     "older": {
+      "n": 14,
+      "avg": 56.33,
+      "median": 16.23,
+      "worst": -103.79,
+      "best": 453.19,
+      "total": 788.57,
+      "wins": 8,
+      "avgCapital": 2101.34,
+      "avgDays": 38.36,
+      "annPool": 0.2549,
+      "annMedian": 0.1063,
+      "years": {
+       "2019": {
+        "n": 3,
+        "total": -28.92
+       },
+       "2020": {
+        "n": 3,
+        "total": 345.92
+       },
+       "2021": {
+        "n": 4,
+        "total": 155.31
+       },
+       "2022": {
+        "n": 3,
+        "total": 97.69
+       },
+       "2023": {
+        "n": 1,
+        "total": 218.57
+       }
+      }
+     },
+     "newer": {
+      "n": 3,
+      "avg": 24.57,
+      "median": -10.6,
+      "worst": -29.42,
+      "best": 113.72,
+      "total": 73.7,
+      "wins": 1,
+      "avgCapital": 281.75,
+      "avgDays": 38.33,
+      "annPool": 0.7926,
+      "annMedian": -0.166,
+      "years": {
+       "2024": {
+        "n": 1,
+        "total": -29.42
+       },
+       "2026": {
+        "n": 2,
+        "total": 103.12
+       }
+      }
+     },
+     "all": {
+      "n": 17,
+      "avg": 50.72,
+      "median": 7.16,
+      "worst": -103.79,
+      "best": 453.19,
+      "total": 862.27,
+      "wins": 9,
+      "avgCapital": 1780.24,
+      "avgDays": 38.35,
+      "annPool": 0.2706,
+      "annMedian": 0.0797,
+      "years": {
+       "2019": {
+        "n": 3,
+        "total": -28.92
+       },
+       "2020": {
+        "n": 3,
+        "total": 345.92
+       },
+       "2021": {
+        "n": 4,
+        "total": 155.31
+       },
+       "2022": {
+        "n": 3,
+        "total": 97.69
+       },
+       "2023": {
+        "n": 1,
+        "total": 218.57
+       },
+       "2024": {
+        "n": 1,
+        "total": -29.42
+       },
+       "2026": {
+        "n": 2,
+        "total": 103.12
+       }
+      }
+     }
+    },
+    "skips": {
+     "no gap": 66,
+     "outcome unknown": 2,
+     "open": 2
+    },
+    "halalOk": {
+     "n": 0
+    },
+    "haveHalalMark": 0
+   },
+   "headline": {
+    "listedOffers": 135,
+    "oddLotOffers": 87,
+    "oddLotShare": 0.6444,
+    "completionRateListed": 0.9685,
+    "completionRateOddLot": 0.9639,
+    "outcomeUnknownOddLot": 2,
+    "typeCounts": {
+     "fixed": 47,
+     "dutch": 88
+    },
+    "oddLotByType": {
+     "fixed": 18,
+     "dutch": 69
+    },
+    "dutchActualPriceMissing": 1
+   },
+   "years": {
+    "2019": {
+     "scToI": 464,
+     "listedCashShares": 29,
+     "oddLot": 15,
+     "oddLotCompleted": 15,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 0,
+     "gapAtE2": 4
+    },
+    "2020": {
+     "scToI": 396,
+     "listedCashShares": 23,
+     "oddLot": 16,
+     "oddLotCompleted": 14,
+     "oddLotTerminated": 2,
+     "oddLotUnknown": 0,
+     "gapAtE2": 2
+    },
+    "2021": {
+     "scToI": 374,
+     "listedCashShares": 24,
+     "oddLot": 19,
+     "oddLotCompleted": 18,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 1,
+     "gapAtE2": 4
+    },
+    "2022": {
+     "scToI": 383,
+     "listedCashShares": 19,
+     "oddLot": 15,
+     "oddLotCompleted": 14,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 1,
+     "gapAtE2": 4
+    },
+    "2023": {
+     "scToI": 461,
+     "listedCashShares": 13,
+     "oddLot": 8,
+     "oddLotCompleted": 8,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 0,
+     "gapAtE2": 1
+    },
+    "2024": {
+     "scToI": 579,
+     "listedCashShares": 10,
+     "oddLot": 6,
+     "oddLotCompleted": 5,
+     "oddLotTerminated": 1,
+     "oddLotUnknown": 0,
+     "gapAtE2": 1
+    },
+    "2025": {
+     "scToI": 577,
+     "listedCashShares": 8,
+     "oddLot": 2,
+     "oddLotCompleted": 2,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 0,
+     "gapAtE2": 1
+    },
+    "2026": {
+     "scToI": 478,
+     "listedCashShares": 9,
+     "oddLot": 6,
+     "oddLotCompleted": 4,
+     "oddLotTerminated": 0,
+     "oddLotUnknown": 0,
+     "gapAtE2": 2
+    }
+   },
+   "assumptions": {
+    "shares": 99,
+    "buyCost": 0.008,
+    "commissionUSD": "3 (ASSUMED: scan.mjs default ZAD stock fee)",
+    "corporateActionFeeUSD": "25 (ASSUMED: ZAD fee unknown)",
+    "cashDate": "5 sessions after the final expiry (ASSUMED)",
+    "split": "2024-01-01"
+   },
+   "data": {
+    "quartersNeed": 32,
+    "quartersRead": 32,
+    "origNeed": 3713,
+    "origRead": 3713,
+    "amendNeed": 426,
+    "amendRead": 422,
+    "pxNeed": 83,
+    "pxOk": 83,
+    "complete": true,
+    "why": "complete",
+    "secRequests": 704,
+    "secFailures": 5,
+    "httpCodes": {
+     "200": 636,
+     "403": 8,
+     "429": 60
+    },
+    "failSample": [
+     "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261027.idx",
+     "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521190669/0001193125-21-190669-index.htm",
+     "gave up https://www.sec.gov/Archives/edgar/data/1372612/000138713121006398/0001387131-21-006398-index.htm",
+     "gave up https://www.sec.gov/Archives/edgar/data/1421182/000119312521188902/d179340dsctoia.htm",
+     "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521192723/0001193125-21-192723-index.htm"
+    ]
+   },
+   "frozenAt": "2026-10-27T13:05:38.229Z"
+  }
+ },
  "voidedCorrectedRun": {
   "at": "2026-10-27",
   "reason": "Voided by squad 27: the corrected run of 27 Oct 12:34 UTC was frozen although the fixed ticker reader found no new listed offers (85 before and after): it was a copy of firstRun, not a fix (identical numbers). The corrected run is frozen only after the reader is verified on the real wording.",
@@ -683,23 +1403,23 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-27T12:48:01.127Z",
+  "at": "2026-10-27T13:05:38.530Z",
   "results": {
    "SQ27-ODDLOT": {
     "verdict": "TOO FEW (information only)",
     "results": {
      "actual": {
       "older": {
-       "n": 9,
-       "avg": 274.12,
+       "n": 15,
+       "avg": 117.03,
        "median": 28.96,
-       "worst": -37.12,
+       "worst": -1200.79,
        "best": 2141.29,
-       "total": 2467.07,
-       "wins": 6,
-       "avgCapital": 2622.48,
-       "avgDays": 10.11,
-       "annPool": 3.5246,
+       "total": 1755.44,
+       "wins": 10,
+       "avgCapital": 2232.58,
+       "avgDays": 11.67,
+       "annPool": 1.5993,
        "annMedian": 0.4446,
        "years": {
         "2019": {
@@ -707,12 +1427,16 @@
          "total": 57.47
         },
         "2020": {
-         "n": 1,
-         "total": 2141.29
+         "n": 2,
+         "total": 940.5
         },
         "2021": {
-         "n": 3,
-         "total": 239.35
+         "n": 4,
+         "total": 236.46
+        },
+        "2022": {
+         "n": 4,
+         "total": 492.05
         },
         "2023": {
          "n": 1,
@@ -748,29 +1472,33 @@
        }
       },
       "all": {
-       "n": 12,
-       "avg": 211.02,
-       "median": 34.88,
-       "worst": -37.12,
+       "n": 18,
+       "avg": 101.15,
+       "median": 29.33,
+       "worst": -1200.79,
        "best": 2141.29,
-       "total": 2532.29,
-       "wins": 8,
-       "avgCapital": 2427.82,
-       "avgDays": 10.25,
-       "annPool": 3.0192,
-       "annMedian": 0.3819,
+       "total": 1820.66,
+       "wins": 12,
+       "avgCapital": 2167.79,
+       "avgDays": 11.5,
+       "annPool": 1.4725,
+       "annMedian": 0.3823,
        "years": {
         "2019": {
          "n": 4,
          "total": 57.47
         },
         "2020": {
-         "n": 1,
-         "total": 2141.29
+         "n": 2,
+         "total": 940.5
         },
         "2021": {
-         "n": 3,
-         "total": 239.35
+         "n": 4,
+         "total": 236.46
+        },
+        "2022": {
+         "n": 4,
+         "total": 492.05
         },
         "2023": {
          "n": 1,
@@ -793,16 +1521,16 @@
      },
      "min": {
       "older": {
-       "n": 9,
-       "avg": 216.37,
+       "n": 15,
+       "avg": 63.7,
        "median": 6.17,
-       "worst": -37.12,
+       "worst": -1200.79,
        "best": 1844.29,
-       "total": 1947.32,
-       "wins": 5,
-       "avgCapital": 2622.48,
-       "avgDays": 10.11,
-       "annPool": 2.7821,
+       "total": 955.52,
+       "wins": 8,
+       "avgCapital": 2232.58,
+       "avgDays": 11.67,
+       "annPool": 0.8705,
        "annMedian": 0.0836,
        "years": {
         "2019": {
@@ -810,12 +1538,16 @@
          "total": 57.47
         },
         "2020": {
-         "n": 1,
-         "total": 1844.29
+         "n": 2,
+         "total": 643.5
         },
         "2021": {
-         "n": 3,
-         "total": 16.6
+         "n": 4,
+         "total": 13.71
+        },
+        "2022": {
+         "n": 4,
+         "total": 211.88
         },
         "2023": {
          "n": 1,
@@ -851,16 +1583,16 @@
        }
       },
       "all": {
-       "n": 13,
-       "avg": 154.53,
+       "n": 19,
+       "avg": 53.53,
        "median": 6.17,
-       "worst": -37.12,
+       "worst": -1200.79,
        "best": 1844.29,
-       "total": 2008.93,
-       "wins": 7,
-       "avgCapital": 2283.21,
-       "avgDays": 10.15,
-       "annPool": 2.3573,
+       "total": 1017.13,
+       "wins": 10,
+       "avgCapital": 2082.53,
+       "avgDays": 11.37,
+       "annPool": 0.8137,
        "annMedian": 0.0836,
        "years": {
         "2019": {
@@ -868,12 +1600,16 @@
          "total": 57.47
         },
         "2020": {
-         "n": 1,
-         "total": 1844.29
+         "n": 2,
+         "total": 643.5
         },
         "2021": {
-         "n": 3,
-         "total": 16.6
+         "n": 4,
+         "total": 13.71
+        },
+        "2022": {
+         "n": 4,
+         "total": 211.88
         },
         "2023": {
          "n": 1,
@@ -895,9 +1631,9 @@
       }
      },
      "skips": {
-      "no gap": 31,
+      "no gap": 63,
       "terminated before entry": 1,
-      "outcome unknown": 1,
+      "outcome unknown": 2,
       "open": 2
      },
      "halalOk": {
@@ -906,73 +1642,73 @@
      "haveHalalMark": 0
     },
     "headline": {
-     "listedOffers": 85,
-     "oddLotOffers": 48,
-     "oddLotShare": 0.5647,
-     "completionRateListed": 0.975,
-     "completionRateOddLot": 0.9556,
-     "outcomeUnknownOddLot": 1,
+     "listedOffers": 135,
+     "oddLotOffers": 87,
+     "oddLotShare": 0.6444,
+     "completionRateListed": 0.9685,
+     "completionRateOddLot": 0.9639,
+     "outcomeUnknownOddLot": 2,
      "typeCounts": {
-      "fixed": 39,
-      "dutch": 46
+      "fixed": 47,
+      "dutch": 88
      },
      "oddLotByType": {
-      "fixed": 15,
-      "dutch": 33
+      "fixed": 18,
+      "dutch": 69
      },
      "dutchActualPriceMissing": 1
     },
     "years": {
      "2019": {
       "scToI": 464,
-      "listedCashShares": 18,
-      "oddLot": 7,
-      "oddLotCompleted": 7,
+      "listedCashShares": 29,
+      "oddLot": 15,
+      "oddLotCompleted": 15,
       "oddLotTerminated": 0,
       "oddLotUnknown": 0,
       "gapAtE2": 4
      },
      "2020": {
       "scToI": 396,
-      "listedCashShares": 13,
-      "oddLot": 8,
-      "oddLotCompleted": 7,
-      "oddLotTerminated": 1,
+      "listedCashShares": 23,
+      "oddLot": 16,
+      "oddLotCompleted": 14,
+      "oddLotTerminated": 2,
       "oddLotUnknown": 0,
-      "gapAtE2": 1
+      "gapAtE2": 2
      },
      "2021": {
       "scToI": 374,
-      "listedCashShares": 12,
-      "oddLot": 8,
-      "oddLotCompleted": 8,
+      "listedCashShares": 24,
+      "oddLot": 19,
+      "oddLotCompleted": 18,
       "oddLotTerminated": 0,
-      "oddLotUnknown": 0,
-      "gapAtE2": 3
+      "oddLotUnknown": 1,
+      "gapAtE2": 4
      },
      "2022": {
       "scToI": 383,
-      "listedCashShares": 9,
-      "oddLot": 8,
-      "oddLotCompleted": 7,
+      "listedCashShares": 19,
+      "oddLot": 15,
+      "oddLotCompleted": 14,
       "oddLotTerminated": 0,
       "oddLotUnknown": 1,
-      "gapAtE2": 0
+      "gapAtE2": 4
      },
      "2023": {
       "scToI": 461,
-      "listedCashShares": 8,
-      "oddLot": 5,
-      "oddLotCompleted": 5,
+      "listedCashShares": 13,
+      "oddLot": 8,
+      "oddLotCompleted": 8,
       "oddLotTerminated": 0,
       "oddLotUnknown": 0,
       "gapAtE2": 1
      },
      "2024": {
       "scToI": 579,
-      "listedCashShares": 8,
-      "oddLot": 4,
-      "oddLotCompleted": 3,
+      "listedCashShares": 10,
+      "oddLot": 6,
+      "oddLotCompleted": 5,
       "oddLotTerminated": 1,
       "oddLotUnknown": 0,
       "gapAtE2": 1
@@ -1009,20 +1745,25 @@
      "quartersRead": 32,
      "origNeed": 3713,
      "origRead": 3713,
-     "amendNeed": 260,
-     "amendRead": 260,
-     "pxNeed": 45,
-     "pxOk": 45,
+     "amendNeed": 426,
+     "amendRead": 422,
+     "pxNeed": 83,
+     "pxOk": 83,
      "complete": true,
      "why": "complete",
-     "secRequests": 231,
-     "secFailures": 1,
+     "secRequests": 704,
+     "secFailures": 5,
      "httpCodes": {
-      "200": 223,
-      "403": 8
+      "200": 636,
+      "403": 8,
+      "429": 60
      },
      "failSample": [
-      "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261027.idx"
+      "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261027.idx",
+      "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521190669/0001193125-21-190669-index.htm",
+      "gave up https://www.sec.gov/Archives/edgar/data/1372612/000138713121006398/0001387131-21-006398-index.htm",
+      "gave up https://www.sec.gov/Archives/edgar/data/1421182/000119312521188902/d179340dsctoia.htm",
+      "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521192723/0001193125-21-192723-index.htm"
      ]
     }
    },
@@ -1031,17 +1772,17 @@
     "results": {
      "actual": {
       "older": {
-       "n": 10,
-       "avg": 88.8,
-       "median": -3.58,
+       "n": 14,
+       "avg": 97.55,
+       "median": 16.95,
        "worst": -103.79,
        "best": 750.19,
-       "total": 887.99,
-       "wins": 4,
-       "avgCapital": 2300.91,
-       "avgDays": 36.5,
-       "annPool": 0.3792,
-       "annMedian": -0.016,
+       "total": 1365.74,
+       "wins": 8,
+       "avgCapital": 2101.34,
+       "avgDays": 38.36,
+       "annPool": 0.4415,
+       "annMedian": 0.1741,
        "years": {
         "2019": {
          "n": 3,
@@ -1052,8 +1793,12 @@
          "total": 642.92
         },
         "2021": {
+         "n": 4,
+         "total": 155.31
+        },
+        "2022": {
          "n": 3,
-         "total": 55.42
+         "total": 377.86
         },
         "2023": {
          "n": 1,
@@ -1085,17 +1830,17 @@
        }
       },
       "all": {
-       "n": 12,
-       "avg": 81.02,
-       "median": -3.58,
+       "n": 16,
+       "avg": 90.63,
+       "median": 16.95,
        "worst": -103.79,
        "best": 750.19,
-       "total": 972.29,
-       "wins": 5,
-       "avgCapital": 1941.63,
-       "avgDays": 36.5,
-       "annPool": 0.4101,
-       "annMedian": -0.016,
+       "total": 1450.04,
+       "wins": 9,
+       "avgCapital": 1856.82,
+       "avgDays": 38.13,
+       "annPool": 0.4643,
+       "annMedian": 0.1741,
        "years": {
         "2019": {
          "n": 3,
@@ -1106,8 +1851,12 @@
          "total": 642.92
         },
         "2021": {
+         "n": 4,
+         "total": 155.31
+        },
+        "2022": {
          "n": 3,
-         "total": 55.42
+         "total": 377.86
         },
         "2023": {
          "n": 1,
@@ -1126,17 +1875,17 @@
      },
      "min": {
       "older": {
-       "n": 10,
-       "avg": 59.1,
-       "median": -3.58,
+       "n": 14,
+       "avg": 56.33,
+       "median": 16.23,
        "worst": -103.79,
        "best": 453.19,
-       "total": 590.99,
-       "wins": 4,
-       "avgCapital": 2300.91,
-       "avgDays": 36.5,
-       "annPool": 0.2523,
-       "annMedian": -0.016,
+       "total": 788.57,
+       "wins": 8,
+       "avgCapital": 2101.34,
+       "avgDays": 38.36,
+       "annPool": 0.2549,
+       "annMedian": 0.1063,
        "years": {
         "2019": {
          "n": 3,
@@ -1147,8 +1896,12 @@
          "total": 345.92
         },
         "2021": {
+         "n": 4,
+         "total": 155.31
+        },
+        "2022": {
          "n": 3,
-         "total": 55.42
+         "total": 97.69
         },
         "2023": {
          "n": 1,
@@ -1180,17 +1933,17 @@
        }
       },
       "all": {
-       "n": 13,
-       "avg": 51.13,
-       "median": -3.69,
+       "n": 17,
+       "avg": 50.72,
+       "median": 7.16,
        "worst": -103.79,
        "best": 453.19,
-       "total": 664.69,
-       "wins": 5,
-       "avgCapital": 1834.95,
-       "avgDays": 36.92,
-       "annPool": 0.273,
-       "annMedian": -0.017,
+       "total": 862.27,
+       "wins": 9,
+       "avgCapital": 1780.24,
+       "avgDays": 38.35,
+       "annPool": 0.2706,
+       "annMedian": 0.0797,
        "years": {
         "2019": {
          "n": 3,
@@ -1201,8 +1954,12 @@
          "total": 345.92
         },
         "2021": {
+         "n": 4,
+         "total": 155.31
+        },
+        "2022": {
          "n": 3,
-         "total": 55.42
+         "total": 97.69
         },
         "2023": {
          "n": 1,
@@ -1220,8 +1977,8 @@
       }
      },
      "skips": {
-      "no gap": 32,
-      "outcome unknown": 1,
+      "no gap": 66,
+      "outcome unknown": 2,
       "open": 2
      },
      "halalOk": {
@@ -1230,73 +1987,73 @@
      "haveHalalMark": 0
     },
     "headline": {
-     "listedOffers": 85,
-     "oddLotOffers": 48,
-     "oddLotShare": 0.5647,
-     "completionRateListed": 0.975,
-     "completionRateOddLot": 0.9556,
-     "outcomeUnknownOddLot": 1,
+     "listedOffers": 135,
+     "oddLotOffers": 87,
+     "oddLotShare": 0.6444,
+     "completionRateListed": 0.9685,
+     "completionRateOddLot": 0.9639,
+     "outcomeUnknownOddLot": 2,
      "typeCounts": {
-      "fixed": 39,
-      "dutch": 46
+      "fixed": 47,
+      "dutch": 88
      },
      "oddLotByType": {
-      "fixed": 15,
-      "dutch": 33
+      "fixed": 18,
+      "dutch": 69
      },
      "dutchActualPriceMissing": 1
     },
     "years": {
      "2019": {
       "scToI": 464,
-      "listedCashShares": 18,
-      "oddLot": 7,
-      "oddLotCompleted": 7,
+      "listedCashShares": 29,
+      "oddLot": 15,
+      "oddLotCompleted": 15,
       "oddLotTerminated": 0,
       "oddLotUnknown": 0,
       "gapAtE2": 4
      },
      "2020": {
       "scToI": 396,
-      "listedCashShares": 13,
-      "oddLot": 8,
-      "oddLotCompleted": 7,
-      "oddLotTerminated": 1,
+      "listedCashShares": 23,
+      "oddLot": 16,
+      "oddLotCompleted": 14,
+      "oddLotTerminated": 2,
       "oddLotUnknown": 0,
-      "gapAtE2": 1
+      "gapAtE2": 2
      },
      "2021": {
       "scToI": 374,
-      "listedCashShares": 12,
-      "oddLot": 8,
-      "oddLotCompleted": 8,
+      "listedCashShares": 24,
+      "oddLot": 19,
+      "oddLotCompleted": 18,
       "oddLotTerminated": 0,
-      "oddLotUnknown": 0,
-      "gapAtE2": 3
+      "oddLotUnknown": 1,
+      "gapAtE2": 4
      },
      "2022": {
       "scToI": 383,
-      "listedCashShares": 9,
-      "oddLot": 8,
-      "oddLotCompleted": 7,
+      "listedCashShares": 19,
+      "oddLot": 15,
+      "oddLotCompleted": 14,
       "oddLotTerminated": 0,
       "oddLotUnknown": 1,
-      "gapAtE2": 0
+      "gapAtE2": 4
      },
      "2023": {
       "scToI": 461,
-      "listedCashShares": 8,
-      "oddLot": 5,
-      "oddLotCompleted": 5,
+      "listedCashShares": 13,
+      "oddLot": 8,
+      "oddLotCompleted": 8,
       "oddLotTerminated": 0,
       "oddLotUnknown": 0,
       "gapAtE2": 1
      },
      "2024": {
       "scToI": 579,
-      "listedCashShares": 8,
-      "oddLot": 4,
-      "oddLotCompleted": 3,
+      "listedCashShares": 10,
+      "oddLot": 6,
+      "oddLotCompleted": 5,
       "oddLotTerminated": 1,
       "oddLotUnknown": 0,
       "gapAtE2": 1
@@ -1333,20 +2090,25 @@
      "quartersRead": 32,
      "origNeed": 3713,
      "origRead": 3713,
-     "amendNeed": 260,
-     "amendRead": 260,
-     "pxNeed": 45,
-     "pxOk": 45,
+     "amendNeed": 426,
+     "amendRead": 422,
+     "pxNeed": 83,
+     "pxOk": 83,
      "complete": true,
      "why": "complete",
-     "secRequests": 231,
-     "secFailures": 1,
+     "secRequests": 704,
+     "secFailures": 5,
      "httpCodes": {
-      "200": 223,
-      "403": 8
+      "200": 636,
+      "403": 8,
+      "429": 60
      },
      "failSample": [
-      "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261027.idx"
+      "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261027.idx",
+      "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521190669/0001193125-21-190669-index.htm",
+      "gave up https://www.sec.gov/Archives/edgar/data/1372612/000138713121006398/0001387131-21-006398-index.htm",
+      "gave up https://www.sec.gov/Archives/edgar/data/1421182/000119312521188902/d179340dsctoia.htm",
+      "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521192723/0001193125-21-192723-index.htm"
      ]
     }
    }
