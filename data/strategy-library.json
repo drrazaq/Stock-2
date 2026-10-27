@@ -1694,7 +1694,7 @@
    "family": "Quality and value",
    "name": "F-score in an uptrend",
    "explain": "F-score 8-9, only stocks above their own 200-day average.",
-   "status": "tradable small (tier 2)",
+   "status": "LONGER HOLDS only (owner's labelled choice, max 3, not proven); not a TRY SMALL rule (status corrected 27 Oct 2026)",
    "note": "Closest buy rule, still NOT PROVEN (deep check run 20 Oct, Agent B): beat the average stock in both halves (6 months t 5.5 / 2.6; 12 months t 4.6 / 2.0) and beat the S&P 500 in 2024-26 (+9.7% vs +7.6%; 12 months +18.3% vs +15.1%), not in 2021-23 (+5.8% vs +9.1%; 12 months +17.4% vs +21.8%). Month by month it beat the S&P in only 5 of 17 older months and 14 of 27 (6 m) / 10 of 21 (12 m) newer months. The 2021-23 shortfall was almost all ONE sector group: machinery, electronics and instruments (SIC 35/36/38: tech hardware, semis, instruments), 124 of 410 trades, +7.9% vs S&P +21.3% at 12 months, 94% of the shortfall; other manufacturing (+27% vs +24%) and retail (+32% vs +20%) beat the S&P. By size the middle third (33-95M USD a day) beat the S&P (+28% vs +21%), the large and small thirds lost. It does NOT beat the same stocks on their other days in 2024-26 (6 m +9.7% vs +11.1%, 12 m +18.3% vs +28.0%): the newer-half edge is the stocks, not the timing. Under the league bar (3.9) in the newer half. No new version: dropping a sector would be a new pre-registered rule. 22 Oct: t 5.5 / 2.6 vs the average stock, below the 4.0 bar; shown as LONGER HOLDS at 1,000 USD; off if the league's 3-month score turns negative.",
    "tested": "2026-10-16",
    "agent": "B",
@@ -3018,7 +3018,7 @@
    "family": "Testing method",
    "name": "Weekly web scout: new ideas from research and public traders",
    "explain": "Every agent run starts by searching for new, sourced ideas: recent papers (SSRN, arXiv q-fin, journals via the research search), practitioner write-ups with stated rules, and public traders who post dated calls. Each idea that has a precise rule and a named source is registered once (pre-registered, one version) and tested at the same gates; tier 2 or proven decides use. Public traders are not copied: their dated calls are logged and scored forward (tip-score); a source with a positive forward record over 30+ calls on 10+ days becomes a FOLLOW source at tier 2. Up to 5 new ideas per agent per week.",
-   "status": "in use (agents)",
+   "status": "in use (research process for agents; not a trading or risk rule)",
    "agent": "A,B,C",
    "note": "From the owner's request of 22 Oct: test far more of what is out there. Tier 2 uses each rule's own bar, so more ideas do not raise it; the live auto-off is the guard against luck."
   },
