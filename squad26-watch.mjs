@@ -44,6 +44,7 @@ const today = nyNow().d, prev = J(TODAY, {}), same = prev.date === today;
 const ST = { date: today, seen: new Set(same ? prev.seen || [] : []), lags: same ? prev.lagsSec || [] : [], candLags: same ? prev.candLagsSec || [] : [], events: same ? prev.events || [] : [], polls: same ? prev.polls || 0 : 0, newFilings: same ? prev.newFilings || 0 : 0,
   candidates: same ? prev.candidates || 0 : 0, gaps: same ? prev.gaps || 0 : 0, feedErrors: same ? prev.feedErrors || 0 : 0, runs: [...(same ? prev.runs || [] : []), { startedAt: new Date(t0).toISOString(), until: new Date(STOP).toISOString() }] };
 const pending = [];   // lines to append
+if (!fs.existsSync(PAPER)) fs.writeFileSync(PAPER, '');   // git add needs the file (it was missing until the first event)
 let dirty = false, lastCommit = Date.now();
 // ticker map: SEC company_tickers.json (official), CIK -> ticker
 const TK = new Map(); { const j = await sec(SEC + '/files/company_tickers.json', 'json'); if (j) for (const v of Object.values(j)) if (v && v.cik_str && v.ticker && !TK.has(String(v.cik_str))) TK.set(String(v.cik_str), String(v.ticker).toUpperCase()); log('ticker map: ' + TK.size + ' CIKs'); }
