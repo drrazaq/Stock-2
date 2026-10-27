@@ -1,0 +1,64 @@
+name: Squad 26 watcher
+# SQUAD 26 forward PAPER watcher (squad26-watch.mjs): RECORD ONLY, no Telegram, no buy messages, never places an order. Polls the
+# official EDGAR current-filings Atom feed (8-K) once a minute with SEC_UA and records the acceptance time, its own detection time
+# (the true detection lag) and, for a qualifying deal 8-K (the frozen squad26-core.mjs test), the Alpaca latest trade / quote, the
+# first-minute fills 35 minutes later and the Finnhub news time. Three weekday runs (07:50, 13:30, 19:10 UTC; GitHub delays cron 5-20
+# min); each loops until 15 minutes after the next slot (the next run waits in the concurrency queue, so there is no gap) or 20:05
+# New York, at most 352 minutes. Commits at most once every 30 minutes. A push of run-squad26-watch.txt starts a short live test
+# (minutes on its last line).
+on:
+  schedule:
+    - cron: '50 7 * * 1-5'
+    - cron: '30 13 * * 1-5'
+    - cron: '10 19 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: 'loop minutes (empty = until the next slot)'
+        required: false
+        default: ''
+  push:
+    branches: [main]
+    paths: ['run-squad26-watch.txt']
+permissions:
+  contents: write
+concurrency:
+  group: squad26-watch
+  cancel-in-progress: false
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 358
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - shell: bash
+        timeout-minutes: 356
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          MIN="${{ github.event.inputs.minutes }}"
+          if [ -z "$MIN" ] && [ "${{ github.event_name }}" = "push" ]; then MIN=$(tail -n 1 run-squad26-watch.txt | tr -dc '0-9'); fi
+          UNTIL=$(node -e '
+            const n = Date.now(), d = new Date(n), slots = [[7, 50], [13, 30], [19, 10]]; let next = Infinity;
+            for (let k = 0; k < 4; k++) for (const [h, m] of slots) { const t = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + k, h, m) + 15 * 60e3; if (t > n + 30 * 60e3 && t < next) next = t; }
+            const hm = (x) => new Intl.DateTimeFormat("en-GB", { timeZone: "America/New_York", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(x));
+            let ny = n; while (hm(ny) !== "20:05" && ny < n + 30 * 3600e3) ny += 60e3;
+            console.log(new Date(Math.min(next, ny, n + 352 * 60e3)).toISOString());')
+          echo "until $UNTIL (minutes override: ${MIN:-none})"
+          export WATCH_UNTIL="$UNTIL"; if [ -n "$MIN" ]; then export WATCH_MINUTES="$MIN"; fi
+          node squad26-watch.mjs 2>&1 | tee watch.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad26-watch-log
+          path: watch.log

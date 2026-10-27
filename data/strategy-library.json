@@ -30097,6 +30097,52 @@
    ],
    "libraryCheck": "SQ24-MEGADEAL (the small company's own 8-K naming a top-100 company, bought after the reaction: rejected), SQ21-CONTRACT10D, squad 1 information-edge filings (insiders, 13D activists by funds). New: the filer is the GIANT itself (13F first appearance / 13D / 13G), entry at the first realistic moment after the acceptance second.",
    "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only)."
+  },
+  {
+   "family": "Squad 26 (first minutes after a deal with a giant)",
+   "agent": "squad26",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-27 (squad 26 lab); one-shot pending",
+   "sources": [
+    "https://efts.sec.gov/LATEST/search-index",
+    "https://data.alpaca.markets (SIP 1-minute bars)"
+   ],
+   "libraryCheck": "SQ24-MEGADEAL (open after the reaction session: rejected), its first-open variant (flat after slippage), SQ21-CONTRACT10D, SQ19 jump chasing (rejected). New: entry the first SIP minute bar >= 1 minute after the SEC acceptance (extended hours), filled at that bar's HIGH + 1% (regular) / 3% (extended), no size filter, a stricter commercial-context counterparty test and lenders excluded.",
+   "id": "SQ26-FIRSTMIN",
+   "hold": 3,
+   "name": "First minute after an 8-K 1.01 naming a top-100 US-listed company as a commercial counterparty (1-10 USD filer): buy the first SIP minute >= 1 min after the SEC acceptance at its high + 1%/3% slippage, sell the close of session 3",
+   "explain": "RULE (squad26-core.mjs header, exact): 8-K Item 1.01 (2021-11-15..2026-10-23) whose main document / EX-99 / EX-10 names a company on Squad 24's frozen top-100 list (SHA-256 checked; banks, brokers, asset managers and insurers excluded) in a sentence with a commercial term (supply / purchase / license / collaboration / customer / order / partnership / distribution / hosting / commercial ...) and with no financing term in that sentence or 300 characters around it; EX-10 financing documents skipped whole. Prior raw close 1-10 USD, 20-day traded value >= 0.5M USD. Entry: the first Alpaca SIP 1-minute bar starting >= 60 s after the EDGAR acceptance (within 30 min, else skipped), at its HIGH x 1.01 (regular) or x 1.03 (extended hours). Exit: close of session 3 (session 1 = the first close after the entry) x 0.99; then 0.8% / 1.2% costs. Judged in both halves vs the average 1-10 USD stock over the same window, the same stock on other days, no-top-2, block t, SPY per year. Variants (exits close / 10 sessions + 25% stop, the 8.01 + EX-99.1 press-release set, the next-open control) reported for information only.",
+   "note": "Squad 24 cases: SOUN +65% and WULF +38% came in the first minutes; ELVA -35%. Pre-registered BEFORE any run; run ONCE by squad26-lab.mjs; first complete verdict frozen in data/squad26-lab.json firstRun; forward paper watcher squad26-watch.mjs (record only, no alerts)."
+  },
+  {
+   "family": "Squad 26 (first minutes after a deal with a giant)",
+   "agent": "squad26",
+   "kind": "variant",
+   "status": "pre-registered 2026-10-27 (squad 26 lab); one-shot pending",
+   "sources": [
+    "https://efts.sec.gov/LATEST/search-index",
+    "https://data.alpaca.markets (SIP 1-minute bars)"
+   ],
+   "libraryCheck": "SQ24-MEGADEAL (open after the reaction session: rejected), its first-open variant (flat after slippage), SQ21-CONTRACT10D, SQ19 jump chasing (rejected). New: entry the first SIP minute bar >= 1 minute after the SEC acceptance (extended hours), filled at that bar's HIGH + 1% (regular) / 3% (extended), no size filter, a stricter commercial-context counterparty test and lenders excluded.",
+   "id": "SQ26-V-801-first-3d",
+   "hold": 3,
+   "name": "Same, for an 8-K 8.01 (no 1.01) whose EX-99.1 press release names the giant as a commercial counterparty (information only)",
+   "explain": "Pre-registered variant of SQ26-FIRSTMIN (squad26-core.mjs header): items 8.01 and not 1.01, an EX-99.1, the counterparty context test inside the EX-99.1; same entry and exits. Reported for information; cannot qualify from this run."
+  },
+  {
+   "family": "Squad 26 (first minutes after a deal with a giant)",
+   "agent": "squad26",
+   "kind": "control",
+   "status": "pre-registered 2026-10-27 (squad 26 lab); one-shot pending",
+   "sources": [
+    "https://efts.sec.gov/LATEST/search-index",
+    "https://data.alpaca.markets (SIP 1-minute bars)"
+   ],
+   "libraryCheck": "SQ24-MEGADEAL (open after the reaction session: rejected), its first-open variant (flat after slippage), SQ21-CONTRACT10D, SQ19 jump chasing (rejected). New: entry the first SIP minute bar >= 1 minute after the SEC acceptance (extended hours), filled at that bar's HIGH + 1% (regular) / 3% (extended), no size filter, a stricter commercial-context counterparty test and lenders excluded.",
+   "id": "SQ26-V-101-open-3d",
+   "hold": 3,
+   "name": "Control: the same 8-K 1.01 events bought at the next regular open (+1% slippage), sold at the close of session 3",
+   "explain": "Pre-registered control of SQ26-FIRSTMIN (squad26-core.mjs header): the open of the first session opening >= 1 minute after the acceptance, x 1.01; the same exits counted from that session. Information only."
   }
  ]
 }
