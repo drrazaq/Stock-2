@@ -1,0 +1,110 @@
+name: Squad 28 lab
+# SQUAD 28 (squad28-lab.mjs; 27 Oct 2026): supplier drift after the CUSTOMER's earnings. SQ28-SUPDRIFT and SQ28-SUPDRIFT-ANY are
+# pre-registered in squad28-core.mjs and data/strategy-library.json before any run. MODE (last line of run-squad28-now.txt):
+# LINKS = the point-in-time 10-K major-customer links + the 50-link hand-check sample (no returns computed); RUN = the one-shot 5-year test
+# (only with the frozen links file whose SHA-256 is in the core header and a 90%+ hand check), first complete verdict frozen in
+# data/squad28-lab.json firstRun; schedule = PAPER (forward lane, record only). The price cache, squad 4's Form 3/4/5 ticker map, squad 24's
+# ticker details and the anomaly / agent-A Nasdaq calendars are RESTORED READ ONLY; only squad28-cache is saved. Never places an order.
+on:
+  schedule:
+    - cron: '20 23 * * 1-5'   # weekday evenings after the close: paper lane (cached data, only new days and filings are fetched)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'LINKS / RUN / PAPER; empty = the last line of run-squad28-now.txt decides'
+        required: false
+        default: ''
+  push:
+    branches: [main]
+    paths: ['run-squad28-now.txt']
+permissions:
+  contents: write
+concurrency: squad28-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad4-cache
+          key: squad4-cache-none
+          restore-keys: squad4-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad24-cache
+          key: squad24-cache-none
+          restore-keys: squad24-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: anomaly-cache
+          key: anomaly-cache-none
+          restore-keys: anomaly-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: a-cache
+          key: a-cache-none
+          restore-keys: a-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad28-cache
+          key: squad28-cache-${{ github.run_id }}
+          restore-keys: squad28-cache-
+      - shell: bash
+        run: du -sh study-cache squad4-cache squad24-cache anomaly-cache a-cache squad28-cache 2>/dev/null || true
+      - shell: bash
+        timeout-minutes: 300
+        run: |
+          set -o pipefail
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then if [ "${{ github.event_name }}" = "schedule" ]; then MODE=PAPER; else MODE=$(tail -n 1 run-squad28-now.txt | tr -dc 'A-Za-z'); fi; fi
+          export MODE; echo "mode $MODE"; echo "MODE=$MODE" >> "$GITHUB_ENV"
+          node squad28-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          SQ28_MINUTES: '285'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad28-cache
+          key: squad28-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/squad28-run.log 2>/dev/null || true
+          FILES="data/squad28-lab.json data/squad28-paper.jsonl data/squad28-today.json data/squad28-board.json data/squad28-links-forward.json data/squad28-run.log"
+          # the frozen links and the hand-check file are written by the LINKS mode only (never overwritten by a later run)
+          if [ "$MODE" = "LINKS" ]; then FILES="$FILES data/squad28-links.json data/squad28-linkcheck.json data/squad28-links-progress.json"; fi
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          if [ "$MODE" = "LINKS" ]; then for f in data/squad28-links.json data/squad28-linkcheck.json; do [ -f "$f" ] && rm -f "$OUTD/$f"; done; fi; true
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 28 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 28 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad28-lab-log
+          path: run.log

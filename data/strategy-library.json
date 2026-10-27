@@ -30478,6 +30478,38 @@
    "flag": "F6",
    "hold": 60,
    "name": "RED FLAG F6: 8-K Item 3.01: notice of delisting or failure to meet a listing standard"
+  },
+  {
+   "id": "SQ28-SUPDRIFT",
+   "family": "Squad 28 (supplier drift)",
+   "name": "Supplier drift after its major customer's strong earnings (SUE top 30%, positive reaction day)",
+   "agent": "squad28",
+   "kind": "buy",
+   "hold": 20,
+   "explain": "LINKS: a supplier's own 10-K (filed before the day, point in time; the supplier's latest 10-K must show it, at most 400 days old) names a US-listed customer (one of the 1,000 most traded stocks at a quarter start; its CIK and legal name from Massive) in a major-customer revenue sentence with a first percentage >= 10%; strict names (legal name minus corporate form, no acronyms, no person names, no hand aliases), found by EDGAR full-text search and verified on the document text; 50 random links hand-checked before any return. EVENT: the customer reports (Nasdaq calendar) with SUE = (actual - consensus EPS) / close in the top 30% of liquid reports of the previous 63 sessions (ANOM-SUE definition). ENTRY: the supplier at the next open after the customer's reaction session, if close 3 USD+, 20-day traded value 2M USD+, and no own report (Nasdaq calendar or 10-Q/10-K filing) in sessions r-4..r+20. EXIT: 20 sessions, 20% stop. One open trade per stock. Placebo: the same supplier on a random non-event session of the same quarter (seed 28), reported as a yardstick. AND the customer's reaction-session return > 0. Paper(s): Pandit, Wasley & Zach (2011) Information Externalities along the Supply Chain: The Economic Determinants of Suppliers' Stock Price Reaction to Their Major Customers' Earnings Announcements, Contemporary Accounting Research 28(4); Cohen & Frazzini (2008) Economic Links and Predictable Returns, Journal of Finance 63(4); Menzly & Ozbas (2010) Market Segmentation and Cross-predictability of Returns, Journal of Finance 65(4).",
+   "status": "pre-registered 2026-10-27 (squad 28 lab); 5-year one-shot pending",
+   "sources": [
+    "https://doi.org/10.1111/j.1911-3846.2011.01088.x",
+    "https://ideas.repec.org/a/bla/jfinan/v63y2008i4p1977-2011.html",
+    "https://doi.org/10.1111/j.1540-6261.2010.01570.x"
+   ],
+   "libraryCheck": "SQ1-CUSTMOM (monthly customer momentum; 47 hand-chosen customers, 10% not enforced: rejected), N4 (not proven), CHAIN-READ1 (same-layer read-through: rejected), ANOM-SUE (own surprise: not proven). New: event-driven read-through from the CUSTOMER's surprise to its 10%+ suppliers (Pandit, Wasley & Zach 2011).",
+   "note": "Pre-registered 2026-10-27 BEFORE any run (squad28-core.mjs header = the exact rule; one version + one variant). Run ONCE by squad28-lab.mjs, first complete verdict frozen in data/squad28-lab.json firstRun; forward paper lane (data/squad28-paper.jsonl, record only) from 2026-10-28."
+  },
+  {
+   "id": "SQ28-SUPDRIFT-ANY",
+   "family": "Squad 28 (supplier drift)",
+   "name": "Supplier drift after its major customer's strong earnings (SUE top 30%, any reaction)",
+   "agent": "squad28",
+   "kind": "buy",
+   "hold": 20,
+   "explain": "LINKS: a supplier's own 10-K (filed before the day, point in time; the supplier's latest 10-K must show it, at most 400 days old) names a US-listed customer (one of the 1,000 most traded stocks at a quarter start; its CIK and legal name from Massive) in a major-customer revenue sentence with a first percentage >= 10%; strict names (legal name minus corporate form, no acronyms, no person names, no hand aliases), found by EDGAR full-text search and verified on the document text; 50 random links hand-checked before any return. EVENT: the customer reports (Nasdaq calendar) with SUE = (actual - consensus EPS) / close in the top 30% of liquid reports of the previous 63 sessions (ANOM-SUE definition). ENTRY: the supplier at the next open after the customer's reaction session, if close 3 USD+, 20-day traded value 2M USD+, and no own report (Nasdaq calendar or 10-Q/10-K filing) in sessions r-4..r+20. EXIT: 20 sessions, 20% stop. One open trade per stock. Placebo: the same supplier on a random non-event session of the same quarter (seed 28), reported as a yardstick. VARIANT: no condition on the customer's reaction-session return. Paper(s): Pandit, Wasley & Zach (2011) Information Externalities along the Supply Chain: The Economic Determinants of Suppliers' Stock Price Reaction to Their Major Customers' Earnings Announcements, Contemporary Accounting Research 28(4); Cohen & Frazzini (2008) Economic Links and Predictable Returns, Journal of Finance 63(4).",
+   "status": "pre-registered 2026-10-27 (squad 28 lab); 5-year one-shot pending",
+   "sources": [
+    "https://doi.org/10.1111/j.1911-3846.2011.01088.x"
+   ],
+   "libraryCheck": "SQ1-CUSTMOM (monthly customer momentum; 47 hand-chosen customers, 10% not enforced: rejected), N4 (not proven), CHAIN-READ1 (same-layer read-through: rejected), ANOM-SUE (own surprise: not proven). New: event-driven read-through from the CUSTOMER's surprise to its 10%+ suppliers (Pandit, Wasley & Zach 2011).",
+   "note": "Pre-registered 2026-10-27 BEFORE any run (squad28-core.mjs header = the exact rule; one version + one variant). Run ONCE by squad28-lab.mjs, first complete verdict frozen in data/squad28-lab.json firstRun; forward paper lane (data/squad28-paper.jsonl, record only) from 2026-10-28."
   }
  ]
 }
