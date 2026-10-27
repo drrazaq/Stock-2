@@ -1,0 +1,55 @@
+name: Account replay
+# ACCOUNT REPLAY (account-replay-lab.mjs; 27 Oct 2026): the live TRY SMALL lane replayed as ONE real 2-slot account (2,000 USD, 1,000 USD a
+# buy, max 2 open, scan.mjs priority order, 10-result switch-off, duplicate skip) versus SPY / SPUS with the same 2,000 USD; plus B-FCF1
+# bought up to 5 sessions late. Policy pre-registered in account-replay-core.mjs before any result; run ONCE by hand (workflow_dispatch).
+# The price cache is RESTORED READ ONLY. Commits only data/account-replay.json and data/account-replay-trades.jsonl. Never places an order.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: account-replay
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      NODE_OPTIONS: --max-old-space-size=13000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - shell: bash
+        timeout-minutes: 75
+        run: |
+          set -o pipefail
+          du -sh study-cache 2>/dev/null || true
+          node --test test/account-replay-core.test.mjs
+          node account-replay-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          FILES="data/account-replay.json data/account-replay-trades.jsonl"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          for f in $FILES; do [ -f "$OUTD/$f" ] && cp "$OUTD/$f" "$f" && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "account replay $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the account replay result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: account-replay-log
+          path: run.log
