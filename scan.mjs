@@ -2415,7 +2415,11 @@ function ldipAppend(row) { try { fs.appendFileSync(LDIP_FILE, JSON.stringify(row
 function ldipOfferLog(sym, px, session, real) { const d = ny(Date.now()).d; if (ldipRows().some(r => r.kind === 'offer' && r.sym === sym && r.d === d)) return;
   ldipAppend({ d, sym, kind: 'offer', rule: LDIP_RULE, px: px > 0 ? +px : null, session: session || null, target: LDIP_TGT, hold: LDIP_HOLD, real: !!real, shownAt: new Date().toISOString() }); }
 // the LEADER DIP pick shown for this stock in the last 10 sessions (used by 'bought SYM PRICE')
-function ldipHit(sym) { const today = ny(Date.now()).d, a = ldipRows().filter(r => r.kind === 'offer' && r.sym === sym && r.d && sessionsAfter(String(r.d).slice(0, 10), today) <= 10); return a.length ? a[a.length - 1] : null; }
+// (27 Oct 2026) also a pick in today's SQ11-PB12 list counts: the owner bought TGT from the list before the bot had shown it (MARK HALAL first),
+// and it was tagged as a manual buy with a 35% stop instead of the lane's +20% target
+function ldipHit(sym) { const today = ny(Date.now()).d, a = ldipRows().filter(r => r.kind === 'offer' && r.sym === sym && r.d && sessionsAfter(String(r.d).slice(0, 10), today) <= 10); if (a.length) return a[a.length - 1];
+  const T = readJson0('data/squad11-today.json'), M = T && T.methods && T.methods['SQ11-PB12'], p = M && (M.newSignals || []).find(x => x && x.sym === sym), d = p && (p.d || T.lastClose);
+  return p && d && sessionsAfter(String(d).slice(0, 10), today) <= 10 ? { kind: 'offer', sym, d, px: p.close, rule: 'SQ11-PB12' } : null; }
 // finished trades the owner actually bought and sold (kind 'result', written by 'sold SYM PRICE')
 const ldipResults = () => ldipRows().filter(r => r.kind === 'result' && typeof r.pct === 'number');
 function ldipOff() { const a = ldipResults(); return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; }
