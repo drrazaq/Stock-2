@@ -146,8 +146,10 @@ const tStart = 0, tNewer = D.findIndex(d => d >= SPLIT), tOlderEnd = sessionOf(O
 log('CUT (every main rule\'s list complete through) = ' + CUT + '; older ' + D[tStart] + '..' + D[tOlderEnd] + ', newer ' + D[tNewer] + '..' + CUT);
 const closeOf = (() => { const memo = new Map(); return (sym, t) => { const S = SERIES.get(sym); if (!S) return null; for (let q = t; q >= 0; q--) if (S.c[q] > 0) return S.c[q]; return null; }; })();
 const SPYS = { o: Float64Array.from(OA.subarray(spyI * T, spyI * T + T)), c: SPYCD };
-const SPUS = SY.get('SPUS') !== undefined ? seriesOf(SY.get('SPUS')) : await extraSeries('SPUS');
-STATUS.spus = { ok: !!(SPUS && SPUS.c.filter(x => x > 0).length > T * 0.9), from: 'cache or Massive daily bars' };
+// (27 Oct, after the first run: SPUS was null for windows from 2021-10-12 because the cache has no SPUS bar that day; benchmark data only, the
+// account is unchanged) SPUS from Massive daily bars first, the cache as fallback
+const SPUS = (await extraSeries('SPUS')) || (SY.get('SPUS') !== undefined ? seriesOf(SY.get('SPUS')) : null);
+STATUS.spus = { ok: !!(SPUS && SPUS.c.filter(x => x > 0).length > T * 0.9), firstOpen: SPUS ? D[SPUS.o.findIndex(x => x > 0)] : null, from: 'Massive daily bars, else the cache' };
 const strip = (s) => { const { equity, closed, ...rest } = s; return rest; };
 const WINDOWS = { older: [tStart, tOlderEnd], newer: [tNewer, CUT_T], full: [tStart, CUT_T], olderFromActive: [tActive, tOlderEnd], fullToNewestINCOMPLETE: [tStart, T - 1] };
 const RES = {}, TRADE_ROWS = [];
