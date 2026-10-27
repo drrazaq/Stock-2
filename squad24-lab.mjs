@@ -21,6 +21,7 @@ import { ownAverage, nextSession } from './anomaly-core.mjs';
 import { artifactJumps, hasArtifact } from './squad4-core.mjs';
 import { eftsHits, html2text } from './squad21-core.mjs';
 import { secNY, nyParts } from './sec-time.mjs';
+import { auditFiling, submissionDocs, sizeOk as auditSizeOk, decide as auditDecide, COUNTED as AUDIT_COUNTED, FAMILIES as AUDIT_FAMILIES, LABELS_SHA } from './squad24-audit-core.mjs';
 import { ID, RULES, TH, COST, SLIP, SPLIT, PAPER_START, MEGACAP_SHA, EVENT_FROM, LIST_FROM, DIL_FORMS, mean, r4, halfOf, capG, addDays, firstOnOrAfter, quarterOf, listOn, allCiks, topByCap,
   counterpartyMatch, largestUsd, etToIso, SIDE, pathStats, insiderCluster, preRegisterSide, filingSession, firstOpenSession, priceFail, reverseSplitNear, dilutedAt, sharesKnown, exitOf, slipped, perYear, shapeOf, boardStats, preRegister } from './squad24-core.mjs';
 const env = process.env, MODE = String(env.MODE || 'PAPER').toUpperCase(), local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -280,6 +281,53 @@ function tradesOf(evs, end = T - 1) { const out = [], busy = new Map(), spans = 
   for (const z of out) { const len = z.lc - z.k + 1, key = z.i + '|' + len + '|' + z.half; if (!ownMemo.has(key)) ownMemo.set(key, ownAverage({ from: 30, to: end, len, step: 5, busy: spans.get(z.i) || [], mode: 'capBoth', okAt: (u) => inU(z.i, u - 1) && halfOf(D[u]) === z.half, ret: (u, x) => ret(z.i, u, x) }));
     z.own = ownMemo.get(key); }
   out.artifacts = artifacts; out.noYard = noYard; out.noOpen = noOpen; return out; }
+// ================= 9a. LABEL AUDIT (MODE=AUDIT; squad24-audit-core.mjs header, pre-registered 27 Oct 2026): the ONE corrected re-run =====
+// The frozen event set, kept only if the fixed extractor accepts it (party + passage amount >= 20% of the market value) AND the blind hand
+// label (data/squad24-labels.json, SHA-256 = LABELS_SHA) accepts it in a COUNTED family. Same window as the frozen run, same bars.
+// Written to correctedRun (firstRun is never touched); never re-run once frozen.
+if (MODE === 'AUDIT') {
+  const LRAW = (() => { try { return fs.readFileSync('data/squad24-labels.json'); } catch (e) { return null; } })(), LSHA = LRAW ? crypto.createHash('sha256').update(LRAW).digest('hex') : null;
+  const fr = FROZEN[ID], CR = { ...(PREV.correctedRun || {}) };
+  if (!LRAW || !LABELS_SHA || LSHA !== LABELS_SHA) { log('AUDIT: labels missing or not the registered file (' + LSHA + ' vs ' + LABELS_SHA + '): nothing run'); process.exit(0); }
+  if (!fr || !fr.results) { log('AUDIT: no frozen first run: nothing to correct'); process.exit(0); }
+  if (CR[ID]) { log('AUDIT: correctedRun already frozen at ' + CR[ID].at + ': not re-run'); process.exit(0); }
+  if (!STATUS.dataOk) { log('AUDIT: data not complete this run: ' + JSON.stringify({ efts: STATUS.efts.ok, master: STATUS.master.ok, tickerMap: STATUS.tickerMap.ok, docs: STATUS.docs, megacaps: STATUS.megacaps.ok })); process.exit(0); }
+  const end = tOf.get(String(fr.window[1])); if (end === undefined) { log('AUDIT: frozen window end not in the data'); process.exit(0); }
+  const LAB = JSON.parse(LRAW.toString()).labels || {}, why = {}, fam = {}, keepEv = [], byFam = Object.fromEntries(AUDIT_FAMILIES.map(f => [f, []]));
+  for (const z of EVENTS) { const L = LAB[z.adsh], g = L && L.gate ? { usd: L.gate.usd, cls: L.gate.cls, ratio: L.gate.usd / z.cap } : null;
+    const d = auditDecide(L && L.extractorAccepted ? { gate: g, family: L.extractorFamily } : null, L && L.hand ? { accept: L.hand.accept, family: L.hand.family, note: L.hand.note } : null);
+    z.audit = { keep: d.keep, family: d.family, why: d.why }; why[d.why.slice(0, 60)] = (why[d.why.slice(0, 60)] || 0) + 1;
+    if (d.family) fam[d.family] = (fam[d.family] || 0) + 1;
+    if (L && L.extractorAccepted && auditSizeOk(g) && L.hand && L.hand.accept && byFam[L.hand.family]) byFam[L.hand.family].push(z);
+    if (d.keep) keepEv.push(z); }
+  const half = (evs) => ({ older: evs.filter(z => halfOf(D[z.f]) === 'older' && z.f + 1 <= end).length, newer: evs.filter(z => halfOf(D[z.f]) === 'newer' && z.f + 1 <= end).length });
+  const CC = half(keepEv); log('AUDIT case counts FIRST: older ' + CC.older + ', newer ' + CC.newer + ' (of the frozen ' + EVENTS.length + ' events) | decisions ' + JSON.stringify(why) + ' | families ' + JSON.stringify(fam));
+  // reproduction of the frozen run on the frozen event set (a check that the corrected run uses the same engine)
+  const trAll = tradesOf(EVENTS, end), rep = { older: trAll.filter(z => z.half === 'older').length, newer: trAll.filter(z => z.half === 'newer').length, frozen: { older: fr.results.older.n, newer: fr.results.newer.n } };
+  rep.matchesFrozen = rep.older === rep.frozen.older && rep.newer === rep.frozen.newer;
+  const judgeOf = (tr) => { const B = TH.block, R = { older: halfStat(tr.filter(z => z.half === 'older'), B), newer: halfStat(tr.filter(z => z.half === 'newer'), B), all: halfStat(tr, B) };
+    const slipH = Object.fromEntries(['older', 'newer', 'all'].map(h => { const a = tr.filter(z => h === 'all' || z.half === h); return [h, { n: a.length, avg: r4(mean(a.map(z => z.gs - COST))) }]; }));
+    const liqH = Object.fromEntries(['older', 'newer', 'all'].map(h => { const a = tr.filter(z => (h === 'all' || z.half === h) && ok(z.liq)); return [h, { n: a.length, edge: r4(mean(a.map(z => z.g - z.liq))) }]; }));
+    const PY = Object.fromEntries(['older', 'newer'].map(h => { const a = tr.filter(z => z.half === h); return [h, { rule: r4(perYear(a)), spy: r4(perYear(a.filter(z => ok(z.spy)).map(z => ({ g: z.spy, days: z.days })), 'g', 0)), avgStock: r4(perYear(a.map(z => ({ g: z.c, days: z.days })), 'g', 0)) }]; }));
+    const extra = []; for (const h of ['older', 'newer']) if (!(slipH[h].avg > 0)) extra.push('loses with 2% slippage each way in the ' + h + ' half (' + pc(slipH[h].avg) + ')');
+    const v = judgeHold(R, { bar: fr.bar || BAR, ownName: 'the same stocks on their other days', perYear: { older: [PY.older.rule, PY.older.spy], newer: [PY.newer.rule, PY.newer.spy] }, extra });
+    return { ...v, results: R, slippage: slipH, perYear: PY, liquidYardstick: { note: 'information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)', ...liqH }, shape: shapeOf(tr), artifactsLeftOut: tr.artifacts, noYardstick: tr.noYard, noEntryOpen: tr.noOpen }; };
+  const trC = tradesOf(keepEv, end), J0 = judgeOf(trC);
+  const famInfo = Object.fromEntries(AUDIT_FAMILIES.map(f => { const tr = tradesOf(byFam[f], end), st = (h) => { const a = tr.filter(z => h === 'all' || z.half === h); return { n: a.length, avg: r4(mean(a.map(z => z.g - COST))), stress: r4(mean(a.map(z => z.g - 0.012))), slip: r4(mean(a.map(z => z.gs - COST))), edge: r4(mean(a.map(z => z.g - z.c))), win: a.length ? r4(a.filter(z => z.g - COST > 0).length / a.length) : null }; };
+    return [f, { counted: AUDIT_COUNTED.includes(f), cases: half(byFam[f]), older: st('older'), newer: st('newer'), all: st('all') }]; }));
+  CR[ID] = { at: new Date().toISOString(), frozenAt: fr.frozenAt || fr.at || null, window: [D[0], D[end]], bar: fr.bar || BAR, bugs: ['SQ24-LABEL'], name: RULES[ID].name, kind: 'buy', family: RULES[ID].family, hold: TH.hold, block: TH.block,
+    reason: 'Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): the frozen counterparty test matched an alias anywhere in the filing (a CEO named Apple, wet AMD, About/forward-looking boilerplate, bank credit-agreement definitions) and the size used the largest dollar amount anywhere (a 26.54 trillion USD unit error, an asset manager\'s AUM, capital and surplus). Fixed rule-based entity resolution + agreement-passage amounts + event families + a blind hand review (squad24-audit-core.mjs header, pre-registered before this run); counted families: ' + AUDIT_COUNTED.join(', ') + '. Same events, filters, entry, exit, costs, yardsticks and bars as the frozen run.',
+    labelsSha: LSHA, caseCounts: CC, decisions: why, families: fam, reproducedFrozen: rep, ...J0, familyInfo: { note: 'INFORMATION ONLY: each family (extractor-accepted, size gate passed, hand label accept) on its own, never a verdict', ...famInfo }, cost: COST, split: SPLIT,
+    yardstick: 'average 1-10 USD stock (20-day traded value >= 0.5M USD) on the same sessions; capBoth (AUD-1)' };
+  const c = CR[ID]; log('AUDIT ' + ID + ': frozen ' + fr.verdict + ' -> corrected ' + c.verdict + ' (reproduced: ' + rep.matchesFrozen + ') | older ' + (c.results.older.n || 0) + ' avg ' + pc(c.results.older.avg) + ' stress ' + pc(c.results.older.avgStress) + ' edge ' + pc(c.results.older.edge) + ' no2 ' + pc(c.results.older.noTop2) + ' t ' + c.results.older.tBlock +
+    ' | newer ' + (c.results.newer.n || 0) + ' avg ' + pc(c.results.newer.avg) + ' stress ' + pc(c.results.newer.avgStress) + ' edge ' + pc(c.results.newer.edge) + ' no2 ' + pc(c.results.newer.noTop2) + ' t ' + c.results.newer.tBlock + ' | slippage ' + pc(c.slippage.older.avg) + ' / ' + pc(c.slippage.newer.avg) + ' | ' + String(c.why).slice(0, 300));
+  log('AUDIT families: ' + JSON.stringify(Object.fromEntries(Object.entries(famInfo).map(([k, v]) => [k, [v.older.n, v.older.avg, v.newer.n, v.newer.avg]]))));
+  const tb = new Map(trC.map(z => [z.ev.adsh, z]));
+  const auditCases = EVENTS.map(z => { const t = tb.get(z.adsh), L = LAB[z.adsh] || {}; return { sym: z.sym, adsh: z.adsh, filingSession: D[z.f], keep: z.audit.keep, family: z.audit.family, why: z.audit.why, counterparty: L.counterparty || null, gate: L.gate || null, ratio: L.gate ? r4(L.gate.usd / z.cap) : null, oldCounterparty: z.cp,
+    trade: t ? { buy: D[t.k], sell: D[t.x], exit: t.kind, net: r4(t.g - COST), netSlip: r4(t.gs - COST), avg1to10: r4(t.c - COST) } : null }; });
+  fs.writeFileSync(OUT, JSON.stringify({ ...PREV, generatedAt: new Date().toISOString(), correctedRun: CR, auditCases }, null, 1));
+  try { const LB = J(LIB, null), e = LB && LB.strategies.find(x => x.id === ID), R = c.results; if (e) { e.corrected = { at: c.at, bugs: c.bugs, verdict: c.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg ?? null, R.newer.avg ?? null], stress: [R.older.avgStress ?? null, R.newer.avgStress ?? null], slippage: [c.slippage.older.avg, c.slippage.newer.avg], edge: [R.older.edge ?? null, R.newer.edge ?? null], noTop2: [R.older.noTop2 ?? null, R.newer.noTop2 ?? null], tBlock: [R.older.tBlock ?? null, R.newer.tBlock ?? null], note: 'corrected run (label audit SQ24-LABEL); firstRun unchanged' }; fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); } } catch (e) { log('library not updated: ' + e.message); }
+  process.exit(0); }
 const RES = {}, need = FROZEN[ID] ? [] : [ID]; let TR = null;
 if (need.length || env.HISTORY) {
   if (!STATUS.dataOk) { RES[ID] = { verdict: 'NOT RUN', why: 'data not complete this run: ' + JSON.stringify({ efts: STATUS.efts.ok, master: STATUS.master.ok, tickerMap: STATUS.tickerMap.ok, docs: STATUS.docs, megacaps: STATUS.megacaps.ok }).slice(0, 400) }; log('- ' + ID + ': NOT RUN (data)'); }
@@ -339,8 +387,15 @@ const caseList = EVENTS.map(caseRow), belowSize = ALLCASES.filter(z => z.size < 
 const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
 const sigIds = new Set(lines.filter(x => x.type === 'signal').map(x => x.id)), resolved = new Set(lines.filter(x => x.type === 'result').map(x => x.id)), newLines = [], lastT = T - 1;
+// LABEL AUDIT (27 Oct 2026): the forward lane uses the FIXED extractor (squad24-audit-core.mjs): the giant must be a party in the agreement
+// sentence, the size comes from that agreement passage (>= 20% of the market value, <= 50x, <= 1T USD) and the family must be a COUNTED one
+// (no hand review is possible live: extractor only). Rejected filings are listed in data/squad24-today.json auditSkipped.
+const AUDIT_SKIP = [], AUDITC = J(SC + '/audit-paper.json', {});
 if (STATUS.efts.ok && STATUS.docs.ok) for (const z of EVENTS) { if (D[z.f] < PAPER_START) continue; const id = ID + '|' + z.sym + '|' + D[z.f]; if (sigIds.has(id)) continue; const late = z.f + 1 <= lastT;
-  const line = { type: 'signal', id, m: ID, sym: z.sym, d: D[z.f], adsh: z.adsh, counterparty: z.cp, usd: z.usd, size: r4(z.size), close: r4(CA[z.i * T + z.f]), halal: halal(z.sym), hold: TH.hold, entryDate: late ? D[z.f + 1] : nextSession(D[lastT]), late, recordedAfter: D[lastT],
+  if (!(z.adsh in AUDITC)) { const txt = await sec(subUrl(z.cik, z.adsh), 'text'); if (!txt) continue; const pd = submissionDocs(txt), cos = listOn(MC, z.d).map(String).map(c => ({ cik: c, name: (MC.companies[c] || {}).name, aliases: (MC.companies[c] || {}).aliases || [] }));
+    const b = auditFiling(pd.docs, cos, z.cap).best; AUDITC[z.adsh] = b ? { family: b.family, cp: b.name, gate: b.gate, sentence: String(b.sentence || '').slice(0, 300) } : null; W(SC + '/audit-paper.json', AUDITC); }
+  const au = AUDITC[z.adsh]; if (!au || !auditSizeOk(au.gate) || !AUDIT_COUNTED.includes(au.family)) { AUDIT_SKIP.push({ sym: z.sym, d: D[z.f], adsh: z.adsh, oldCounterparty: z.cp, audit: au ? { family: au.family, counterparty: au.cp, ratio: au.gate ? r4(au.gate.ratio) : null } : 'no party hit' }); continue; }
+  const line = { type: 'signal', id, m: ID, sym: z.sym, d: D[z.f], adsh: z.adsh, counterparty: au.cp || z.cp, usd: au.gate.usd, size: r4(au.gate.ratio), family: au.family, auditSentence: au.sentence, close: r4(CA[z.i * T + z.f]), halal: halal(z.sym), hold: TH.hold, entryDate: late ? D[z.f + 1] : nextSession(D[lastT]), late, recordedAfter: D[lastT],
     plan: (late ? 'LATE (seen after the entry session; recorded for the board only); ' : '') + 'buy at the open of ' + (late ? D[z.f + 1] : nextSession(D[lastT])) + ' (that session only); stop 25% under the entry; sell at the close of the 10th session' };
   sigIds.add(id); newLines.push(line); lines.push(line); }
 for (const x of lines.filter(x => x.type === 'signal')) { const i = SY.get(x.sym), k = tOf.get(x.entryDate); if (i === undefined || k === undefined) { x._state = 'waiting'; continue; } const ex = exitOf(series(i), k, T); if (!ex) { x._state = 'void'; continue; }
@@ -348,7 +403,7 @@ for (const x of lines.filter(x => x.type === 'signal')) { const i = SY.get(x.sym
   if (!resolved.has(x.id)) { resolved.add(x.id); newLines.push({ type: 'result', id: x.id, m: ID, sym: x.sym, d: x.d, buy: D[k], sell: D[ex.x], exit: ex.kind, held: ex.held, g: r4(g), net: r4(capG(g) - COST), avg1to10: c === null ? null : r4(c - COST), spy: r4(spyRet(k, lc)) }); } }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x, (k, v) => k[0] === '_' ? undefined : v)).join('\n') + '\n');
 const mine = lines.filter(x => x.type === 'signal'), closed = mine.filter(x => x._state === 'closed').map(x => ({ d: x.d, sym: x.sym, g: x._g, c: x._c }));
-fs.writeFileSync(TODAY, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[lastT], paperStart: PAPER_START, note: 'PAPER ONLY. SQ24-MEGADEAL is a buy only if its frozen 5-year verdict meets the TRY SMALL standard (data/squad24-lab.json firstRun). Halal = the owner\'s ZAD mark; "unknown" must be checked before any real buy.',
+fs.writeFileSync(TODAY, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[lastT], paperStart: PAPER_START, note: 'PAPER ONLY. SQ24-MEGADEAL is a buy only if its frozen 5-year verdict meets the TRY SMALL standard (data/squad24-lab.json firstRun). Halal = the owner\'s ZAD mark; "unknown" must be checked before any real buy.', auditSkipped: AUDIT_SKIP,
   methods: { [ID]: { name: RULES[ID].name, hold: TH.hold, tier: firstRun[ID] ? firstRun[ID].verdict : null, newSignals: mine.filter(x => x.recordedAfter === D[lastT] && !x.late).map(x => ({ sym: x.sym, close: x.close, halal: x.halal, d: x.d, counterparty: x.counterparty, plan: x.plan })),
     open: mine.filter(x => x._state === 'open').map(x => ({ sym: x.sym, halal: x.halal, signal: x.d, sinceBuy: r4(x._mark ?? NaN) })) } } }, null, 1));
 fs.writeFileSync(BOARD, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[lastT], paperStart: PAPER_START, cost: COST, methods: { [ID]: { name: RULES[ID].name, hold: TH.hold, signals: mine.length, open: mine.filter(x => x._state === 'open').length, waiting: mine.filter(x => x._state === 'waiting').length, closed: boardStats(closed), frozen: firstRun[ID] ? { verdict: firstRun[ID].verdict, frozenAt: firstRun[ID].frozenAt } : null } } }, null, 1));

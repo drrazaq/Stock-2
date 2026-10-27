@@ -80,7 +80,7 @@ export const FAMILIES = ['COMMERCIAL_CUSTOMER', 'LICENSE', 'EQUITY_INVESTMENT_BY
 export const AMOUNT_CLASSES = ['UPFRONT', 'COMMITTED_PURCHASE', 'CONTINGENT_MILESTONE', 'CEILING', 'FINANCING', 'ACQUISITION_CONSIDERATION', 'UNKNOWN'];
 export const MAX_USD = 1e12, MAX_RATIO = 50, SIZE_MIN = 0.20;
 // SHA-256 of data/squad24-labels.json (hand labels, written after the evidence run and BEFORE the corrected run); null = not labelled yet
-export const LABELS_SHA = null;
+export const LABELS_SHA = '233225c59227b350592df2c58fa749ca8dbadc368ee3f613fd50a33f4f71a43d';
 
 // ---------------- A2: ambiguous aliases -> the full name that must appear in the same filing ----------------
 export const AMBIG = {

@@ -21,6 +21,7 @@ import { judgeHold } from './hold-core.mjs';
 import { ownAverage, nextSession } from './anomaly-core.mjs';
 import { artifactJumps, hasArtifact } from './squad4-core.mjs';
 import { nyParts } from './sec-time.mjs';
+import { classifyEvent, counted as auditCounted, CLASSES as AUDIT_CLASSES, COUNTED as AUDIT_COUNTED } from './squad25-audit-core.mjs';
 import { IDS, RULES, FALLBACK_OF, TH, COST, STRESS, SLIP, EXT_SLIP, SPLIT, PAPER_START, GIANTS_SHA, FORMS, is13F, isDG, isAmend, mean, r4, halfOf, capG, addDays, firstOnOrAfter,
   masterRow, adshOf, parseHeader, parseInfoTable, equityIssuers, firstAppearances, coverCusip, dgEvents, ftdSym, etToIso, sessionsOf, isExtHm, fillBar, bSession, sharesKnown,
   universeFail, exitFrom, grossSlip, perYear, shapeOf, boardStats, giantIndex, giantOn, preRegister } from './squad25-core.mjs';
@@ -234,6 +235,10 @@ for (const e of RAW) { const accIso = accIsoOf(e.accept); if (!accIso) continue;
 W(SC + '/details.json', DET); W(SC + '/cusipq.json', CUSQ); W(SC + '/cusips.json', CUS);
 EVENTS.sort((a, b) => a.accMs - b.accMs || a.i - b.i);
 STATUS.dataOk = STATUS.price.ok && STATUS.master.ok && STATUS.tickerMap.ok && STATUS.filings.ok && STATUS.ftd.ok && STATUS.giants.ok;
+// LABEL AUDIT (27 Oct 2026, squad25-audit-core.mjs): every 13F-HR / 13F-HR/A of each giant CIK (accept, period, issuers) for the event classes
+const F13BY = new Map(); for (const o of want) { if (!is13F(o.form)) continue; const h = HDR[o.adsh], inf = INFO[o.adsh]; if (!h || !h.a || !inf) continue;
+  for (const c of o.ciks) (F13BY.get(c) || F13BY.set(c, []).get(c)).push({ adsh: o.adsh, form: h.f || o.form, accept: h.a, period: h.p, issuers: new Set(inf.map(([k]) => k)) }); }
+for (const z of EVENTS) z.audit = classifyEvent(z, F13BY.get(z.cik) || []);
 const inGroup = (z, grp) => giantOn(z.g, grp, z.ny.d);
 const evOf = (grp) => { const seen = new Set(); return EVENTS.filter(z => inGroup(z, grp)).filter(z => { const k = z.sym + '|' + z.accMs; if (seen.has(k)) return false; seen.add(k); return true; }); };
 const countsOf = (evs) => ({ older: evs.filter(z => halfOf(D[z.p]) === 'older').length, newer: evs.filter(z => halfOf(D[z.p]) === 'newer').length });
@@ -281,6 +286,38 @@ function judgeTrades(id, tr, counts) { const B = TH.block, R = { older: halfStat
     underTwoBillion: { note: 'information: market value under 2B USD at the last close before acceptance', ...smallH }, byForm: kindH, liquidYardstick: { note: 'information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)', ...liqH },
     extHoursFills: tr.filter(z => z.ext).length, shape: shapeOf(tr), artifactsLeftOut: tr.artifacts, noYardstick: tr.noYard, noEntryOpen: tr.noOpen, noMinuteFill: tr.noB, noMinuteWhy: tr.noBWhy,
     funnel: COUNT, split: SPLIT, cost: COST, yardstick: 'average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)' }; }
+// ================= 10a. LABEL AUDIT (MODE=AUDIT; squad25-audit-core.mjs header, pre-registered 27 Oct 2026): the ONE corrected re-run ====
+// The frozen event set, kept only for the COUNTED classes (NEW_POSITION_CONFIRMED, 13D/13G_FIRST); same window, same bars; written to
+// correctedRun (firstRun never touched); the WIDE fallback is judged only for an entry version whose corrected BASE rule is TOO FEW CASES.
+if (MODE === 'AUDIT') {
+  const strip = (r) => { const { trades, ...rest } = r; return rest; }, tRowA = (t) => t ? { buy: D[t.k], fill: t.fill ? t.fill.d + ' ' + t.fill.hm : 'open', ext: t.ext, sell: D[t.x], exit: t.kind, net: r4(t.g - COST), netSlip: r4(t.gs - COST), avgStock: r4(t.c - COST) } : null;
+  const CR = { ...(PREV.correctedRun || {}) }, frA = FROZEN[IDS.A];
+  if (!frA || !frA.results) { log('AUDIT: no frozen first run: nothing to correct'); process.exit(0); }
+  if (CR[IDS.A] && CR[IDS.B]) { log('AUDIT: correctedRun already frozen: not re-run'); process.exit(0); }
+  if (!STATUS.dataOk) { log('AUDIT: data not complete: ' + JSON.stringify({ master: STATUS.master.ok, tickerMap: STATUS.tickerMap.ok, filings: STATUS.filings, ftd: STATUS.ftd.ok })); process.exit(0); }
+  const end = tOf.get(String(frA.window[1])); if (end === undefined) { log('AUDIT: frozen window end not in the data'); process.exit(0); }
+  const inWin = (z) => z.kA <= end, halfC = (evs) => ({ older: evs.filter(z => halfOf(D[z.p]) === 'older' && inWin(z)).length, newer: evs.filter(z => halfOf(D[z.p]) === 'newer' && inWin(z)).length });
+  const classCounts = Object.fromEntries(['base', 'wide'].map(grp => [grp, Object.fromEntries(AUDIT_CLASSES.map(c => [c, halfC(EV[grp].filter(z => z.audit.cls === c))]))]));
+  const EVC = { base: EV.base.filter(z => auditCounted(z.audit.cls)), wide: EV.wide.filter(z => auditCounted(z.audit.cls)) }, CC = { base: halfC(EVC.base), wide: halfC(EVC.wide) };
+  log('AUDIT case counts FIRST: base older ' + CC.base.older + ', newer ' + CC.base.newer + ' | wide older ' + CC.wide.older + ', newer ' + CC.wide.newer + ' | classes ' + JSON.stringify(classCounts));
+  const reason = 'Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): "new holding" in a 13F-HR was measured against the same filer\'s previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything "new"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.';
+  const rep = {}; for (const ver of ['A', 'B']) { const id = IDS[ver], tr = await tradesOf(EV.base, ver, end); rep[id] = { older: tr.filter(z => z.half === 'older').length, newer: tr.filter(z => z.half === 'newer').length, frozen: FROZEN[id] ? { older: FROZEN[id].results.older.n, newer: FROZEN[id].results.newer.n } : null }; rep[id].matchesFrozen = !!rep[id].frozen && rep[id].older === rep[id].frozen.older && rep[id].newer === rep[id].frozen.newer; }
+  const info = {}, TRC = {};
+  for (const id of [IDS.A, IDS.B, IDS.WA, IDS.WB]) { if (CR[id]) continue; const R = RULES[id], tr = TRC[id] = await tradesOf(EVC[R.group], R.entry, end), r = judgeTrades(id, tr, CC[R.group]);
+    const entry = { at: new Date().toISOString(), frozenAt: (FROZEN[id] || {}).frozenAt || null, window: [D[0], D[end]], bar: (FROZEN[id] || frA).bar || BAR, bugs: ['SQ25-BASELINE'], reason, classCounts: classCounts[R.group], reproducedFrozen: rep[id] || null, ...strip(r) };
+    if (FALLBACK_OF[id]) { const base = CR[FALLBACK_OF[id]]; if (!base || base.verdict !== 'TOO FEW CASES') { info[id] = { ...entry, verdict: 'INFORMATION ONLY (fallback not needed: corrected ' + FALLBACK_OF[id] + ' had enough cases)', judgedVerdict: r.verdict }; continue; } }
+    CR[id] = entry; }
+  for (const [id, c] of Object.entries(CR)) if (c && c.results && c.bugs && c.bugs.includes('SQ25-BASELINE')) log('AUDIT ' + id + ': ' + c.verdict + ' | older ' + (c.results.older.n || 0) + ' avg ' + pc(c.results.older.avg) + ' stress ' + pc(c.results.older.avgStress) + ' edge ' + pc(c.results.older.edge) + ' no2 ' + pc(c.results.older.noTop2) + ' t ' + c.results.older.tBlock +
+    ' | newer ' + (c.results.newer.n || 0) + ' avg ' + pc(c.results.newer.avg) + ' stress ' + pc(c.results.newer.avgStress) + ' edge ' + pc(c.results.newer.edge) + ' no2 ' + pc(c.results.newer.noTop2) + ' t ' + c.results.newer.tBlock + ' | slippage ' + pc(c.slippage.older.avg) + ' / ' + pc(c.slippage.newer.avg) + ' | ' + String(c.why).slice(0, 300));
+  for (const [id, c] of Object.entries(info)) log('AUDIT (information) ' + id + ': ' + c.judgedVerdict + ' | older ' + (c.results.older.n || 0) + ' avg ' + pc(c.results.older.avg) + ' | newer ' + (c.results.newer.n || 0) + ' avg ' + pc(c.results.newer.avg));
+  const tA = new Map((TRC[IDS.A] || []).map(z => [z.ev.adsh + '|' + z.s, z])), tB = new Map((TRC[IDS.B] || []).map(z => [z.ev.adsh + '|' + z.s, z]));
+  const auditCases = EVENTS.map(z => ({ sym: z.sym, giant: z.giant, giantCik: z.cik, form: z.kind, adsh: z.adsh, acceptedNY: z.ny.d + ' ' + z.ny.hm, base: inGroup(z, 'base'), cls: z.audit.cls, why: z.audit.why, counted: auditCounted(z.audit.cls),
+    A: tRowA(tA.get(z.adsh + '|' + z.sym)), B: tRowA(tB.get(z.adsh + '|' + z.sym)) }));
+  fs.writeFileSync(OUT, JSON.stringify({ ...PREV, generatedAt: new Date().toISOString(), correctedRun: CR, correctedFallbackInfo: Object.keys(info).length ? info : (PREV.correctedFallbackInfo || null), auditClassCounts: classCounts, auditCases }, null, 1));
+  try { const LB = J(LIB, null); let ch = 0; for (const [id, c] of Object.entries(CR)) { const e = LB && LB.strategies.find(x => x.id === id), R = c.results; if (!e || !R || (e.corrected && e.corrected.at === c.at)) continue;
+      e.corrected = { at: c.at, bugs: c.bugs, verdict: c.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg ?? null, R.newer.avg ?? null], stress: [R.older.avgStress ?? null, R.newer.avgStress ?? null], slippage: [c.slippage.older.avg, c.slippage.newer.avg], edge: [R.older.edge ?? null, R.newer.edge ?? null], noTop2: [R.older.noTop2 ?? null, R.newer.noTop2 ?? null], tBlock: [R.older.tBlock ?? null, R.newer.tBlock ?? null], note: 'corrected run (label audit SQ25-BASELINE); firstRun unchanged' }; ch++; }
+    if (ch) fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); } catch (e) { log('library not updated: ' + e.message); }
+  W(SC + '/minutes.json', MB); process.exit(0); }
 const RES = {}, INFO2 = {}, TRS = {}; const need = Object.values(IDS).filter(id => !FROZEN[id]);
 const fmt = (h) => (h.n || 0) + ' (' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock;
 if (need.length || env.HISTORY || MODE === 'RUN') {
@@ -309,10 +346,11 @@ log('SOUN: ' + JSON.stringify(soun).slice(0, 900));
 const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
 const sigIds = new Set(lines.filter(x => x.type === 'signal').map(x => x.id)), resolved = new Set(lines.filter(x => x.type === 'result').map(x => x.id)), newLines = [], lastT = T - 1;
-if (STATUS.filings.ok) for (const z of EVENTS) { if (z.ny.d < PAPER_START) continue;
+// LABEL AUDIT (27 Oct 2026): the forward lane only records COUNTED classes (NEW_POSITION_CONFIRMED, 13D/13G_FIRST; squad25-audit-core.mjs)
+if (STATUS.filings.ok) for (const z of EVENTS) { if (z.ny.d < PAPER_START) continue; if (!auditCounted(z.audit.cls)) continue;
   for (const id of Object.values(IDS)) { const R = RULES[id]; if (!inGroup(z, R.group)) continue; const sid = id + '|' + z.sym + '|' + z.adsh; if (sigIds.has(sid)) continue; const late = R.entry === 'A' ? z.kA <= lastT : true;
     let b = null; if (R.entry === 'B') { try { b = await bFill(z); } catch (e) {} }
-    const line = { type: 'signal', id: sid, m: id, sym: z.sym, d: z.ny.d, acceptedNY: z.ny.d + ' ' + z.ny.hm, giant: z.giant, form: z.kind, adsh: z.adsh, close: r4(z.close), marketCap: Math.round(z.cap), halal: halal(z.sym), hold: TH.hold, recordedAfter: D[lastT],
+    const line = { type: 'signal', id: sid, m: id, sym: z.sym, d: z.ny.d, acceptedNY: z.ny.d + ' ' + z.ny.hm, giant: z.giant, form: z.kind, eventClass: z.audit.cls, adsh: z.adsh, close: r4(z.close), marketCap: Math.round(z.cap), halal: halal(z.sym), hold: TH.hold, recordedAfter: D[lastT],
       entryDate: R.entry === 'A' ? (z.kA <= lastT ? D[z.kA] : nextSession(D[lastT])) : (b && b.s1) || null, fill: R.entry === 'B' && b && b.bar ? { at: b.bar.d + ' ' + b.bar.hm, price: b.bar.o, ext: isExtHm(b.bar.hm) } : null, late,
       plan: 'PAPER ONLY (record, no alert): ' + (R.entry === 'A' ? 'buy at the open of ' + (z.kA <= lastT ? D[z.kA] : nextSession(D[lastT])) : 'buy the first minute after acceptance' + (b && b.bar ? ' (' + b.bar.d + ' ' + b.bar.hm + ' at ' + b.bar.o + ')' : '')) + '; stop 25% under the fill; sell at the close of the 10th session' };
     sigIds.add(sid); newLines.push(line); lines.push(line); } }
