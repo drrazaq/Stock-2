@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-27T09:32:03.298Z",
+ "generatedAt": "2026-10-27T09:39:09.335Z",
  "squad": 28,
  "philosophy": "limited attention along the supply chain: a supplier drifts after its 10%+ customer reports a strong surprise (Pandit, Wasley & Zach 2011); event-driven, bought the open after the customer's reaction session, held 20 sessions with a 20% stop",
  "preRegistered": "squad28-core.mjs header (27 Oct 2026, before any run) + data/strategy-library.json SQ28-SUPDRIFT, SQ28-SUPDRIFT-ANY; frozen links data/squad28-links.json sha256 93ca6a0d65d2bfe0788aef2e2a8ad6897fc11a6f62532db05e4c59f625b5290d",
@@ -6147,5 +6147,5357 @@
    }
   ]
  },
- "customerEvents": 626
+ "customerEvents": 626,
+ "correctedRun": {
+  "SQ28-SUPDRIFT": {
+   "at": "2026-10-27T09:39:09.218Z",
+   "frozenAt": "2026-10-27T09:32:03.297Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "bugs": [
+    "SQ28-TIMING"
+   ],
+   "reason": "Reaction-day timing bug (found after the frozen run, confirmed by the lead 27 Oct 2026): the Nasdaq calendar often has no report time, and the frozen rule then used the NEXT session, so before-the-open reports (e.g. Walmart 2024-02-20, Dollar General 2025-03-13) were judged a day late (wrong reaction sign, late entry). Corrected: each linked customer's report timed from its own SEC 8-K Item 2.02 acceptance time (before 09:30 ET -> that session; during market hours -> that session; 16:00 or later -> the next session); no 8-K within 3 days -> the calendar rule. Rule, gates, links (same SHA), window, costs, yardsticks and placebo seed unchanged.",
+   "timing": {
+    "customerReports": 2240,
+    "by8K": 1980,
+    "noFiling": 260,
+    "sameSession": 789,
+    "moved": 1191,
+    "movedEarlier": 1191,
+    "examples": [
+     {
+      "sym": "C",
+      "date": "2021-10-14",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-14 09:34",
+      "calendarSession": "2021-10-15",
+      "corrected": "2021-10-14"
+     },
+     {
+      "sym": "GS",
+      "date": "2021-10-15",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-15 08:34",
+      "calendarSession": "2021-10-18",
+      "corrected": "2021-10-15"
+     },
+     {
+      "sym": "JNJ",
+      "date": "2021-10-19",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-19 08:01",
+      "calendarSession": "2021-10-20",
+      "corrected": "2021-10-19"
+     },
+     {
+      "sym": "VZ",
+      "date": "2021-10-20",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-20 07:32",
+      "calendarSession": "2021-10-21",
+      "corrected": "2021-10-20"
+     },
+     {
+      "sym": "ABT",
+      "date": "2021-10-20",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-20 07:47",
+      "calendarSession": "2021-10-21",
+      "corrected": "2021-10-20"
+     },
+     {
+      "sym": "BIIB",
+      "date": "2021-10-20",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-20 07:09",
+      "calendarSession": "2021-10-21",
+      "corrected": "2021-10-20"
+     },
+     {
+      "sym": "VLO",
+      "date": "2021-10-21",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-21 08:19",
+      "calendarSession": "2021-10-22",
+      "corrected": "2021-10-21"
+     },
+     {
+      "sym": "POOL",
+      "date": "2021-10-21",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-21 10:13",
+      "calendarSession": "2021-10-22",
+      "corrected": "2021-10-21"
+     },
+     {
+      "sym": "CROX",
+      "date": "2021-10-21",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-21 07:04",
+      "calendarSession": "2021-10-22",
+      "corrected": "2021-10-21"
+     },
+     {
+      "sym": "GE",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-26 06:21",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "RTX",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-26 06:56",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "LMT",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-26 07:31",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "PCAR",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-26 08:06",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "CNC",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-25 20:50",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "BA",
+      "date": "2021-10-27",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-27 07:33",
+      "calendarSession": "2021-10-28",
+      "corrected": "2021-10-27"
+     },
+     {
+      "sym": "BMY",
+      "date": "2021-10-27",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-27 09:46",
+      "calendarSession": "2021-10-28",
+      "corrected": "2021-10-27"
+     },
+     {
+      "sym": "GM",
+      "date": "2021-10-27",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-27 09:14",
+      "calendarSession": "2021-10-28",
+      "corrected": "2021-10-27"
+     },
+     {
+      "sym": "BG",
+      "date": "2021-10-27",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-27 06:42",
+      "calendarSession": "2021-10-28",
+      "corrected": "2021-10-27"
+     },
+     {
+      "sym": "CMCSA",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 07:07",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "NOC",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 06:30",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "RS",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 06:55",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "TXT",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 06:32",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "BC",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 06:31",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "CVX",
+      "date": "2021-10-29",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-29 06:02",
+      "calendarSession": "2021-11-01",
+      "corrected": "2021-10-29"
+     },
+     {
+      "sym": "IMO",
+      "date": "2021-10-29",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-29 08:14",
+      "calendarSession": "2021-11-01",
+      "corrected": "2021-10-29"
+     }
+    ]
+   },
+   "reproducedFrozen": {
+    "older": 75,
+    "newer": 11,
+    "frozen": {
+     "older": 75,
+     "newer": 11
+    },
+    "matchesFrozen": true
+   },
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.29 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t 0.13 under 2.5 in the newer half; return per year of capital tied up -18.1% not above the S&P 500 on the same days in the older half (-4.9%); return per year of capital tied up -3.2% not above the S&P 500 on the same days in the newer half (21.3%)",
+   "name": "Supplier drift after its major customer's strong earnings (SUE top 30%, positive reaction day)",
+   "kind": "buy",
+   "family": "event",
+   "hold": 20,
+   "block": 20,
+   "caseCounts": {
+    "older": 93,
+    "newer": 39
+   },
+   "results": {
+    "older": {
+     "n": 92,
+     "days": 23,
+     "stocks": 39,
+     "avg": -0.0142,
+     "median": -0.0186,
+     "avgStress": -0.0182,
+     "ctrl": -0.0314,
+     "edge": 0.0433,
+     "tDay": 2.07,
+     "blocks": 16,
+     "tBlock": 1.29,
+     "vsOwn": 0.0177,
+     "ownCovered": 23,
+     "noTop2": -0.0248,
+     "best": 0.5976,
+     "worst": -0.208,
+     "win": 0.3478
+    },
+    "newer": {
+     "n": 39,
+     "days": 21,
+     "stocks": 27,
+     "avg": -0.0025,
+     "median": 0.0027,
+     "avgStress": -0.0065,
+     "ctrl": -0.008,
+     "edge": -0.0026,
+     "tDay": -0.16,
+     "blocks": 18,
+     "tBlock": 0.13,
+     "vsOwn": -0.0032,
+     "ownCovered": 21,
+     "noTop2": -0.0105,
+     "best": 0.1748,
+     "worst": -0.2139,
+     "win": 0.5128
+    },
+    "all": {
+     "n": 131,
+     "days": 44,
+     "stocks": 49,
+     "avg": -0.0107,
+     "median": -0.0106,
+     "avgStress": -0.0147,
+     "ctrl": -0.0244,
+     "edge": 0.0214,
+     "tDay": 1.57,
+     "blocks": 34,
+     "tBlock": 1.17,
+     "vsOwn": 0.0077,
+     "ownCovered": 44,
+     "noTop2": -0.0181,
+     "best": 0.5976,
+     "worst": -0.2139,
+     "win": 0.3969
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -0.1815,
+     "spy": -0.0493,
+     "avgStock": -0.299
+    },
+    "newer": {
+     "rule": -0.032,
+     "spy": 0.2132,
+     "avgStock": 0.0005
+    }
+   },
+   "placebo": {
+    "note": "YARDSTICK (not a gate): the same supplier on a random non-event session of the same quarter (seed 28), same filters and exit",
+    "older": {
+     "n": 86,
+     "ruleAvg": -0.0138,
+     "placeboAvg": 0.0072,
+     "placeboEdge": -0.018,
+     "ruleMinusPlacebo": -0.0211,
+     "tPaired": -1.3948
+    },
+    "newer": {
+     "n": 33,
+     "ruleAvg": -0.0025,
+     "placeboAvg": -0.0134,
+     "placeboEdge": -0.0006,
+     "ruleMinusPlacebo": 0.011,
+     "tPaired": 0.6187
+    },
+    "all": {
+     "n": 119,
+     "ruleAvg": -0.0107,
+     "placeboAvg": 0.0015,
+     "placeboEdge": -0.0132,
+     "ruleMinusPlacebo": -0.0122,
+     "tPaired": -1.0142
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 92,
+     "edge": 0.0125
+    },
+    "newer": {
+     "n": 39,
+     "edge": 0.0002
+    },
+    "all": {
+     "n": 131,
+     "edge": 0.0088
+    }
+   },
+   "shape": {
+    "trades": 131,
+    "win": 0.3969,
+    "avgWin": 0.0732,
+    "avgLoss": -0.0659,
+    "pf": 0.7307,
+    "exits": {
+     "time": 125,
+     "stop": 6
+    },
+    "byYear": {
+     "2021": {
+      "n": 3,
+      "avg": 0.0115
+     },
+     "2022": {
+      "n": 43,
+      "avg": -0.0361
+     },
+     "2023": {
+      "n": 46,
+      "avg": 0.0047
+     },
+     "2024": {
+      "n": 19,
+      "avg": 0.0017
+     },
+     "2025": {
+      "n": 16,
+      "avg": -0.025
+     },
+     "2026": {
+      "n": 4,
+      "avg": 0.0671
+     }
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "funnel": {
+    "reports": 39590,
+    "withSue": 39513,
+    "top30": 11977,
+    "top30Up": 6870,
+    "noCustomerCik": 8,
+    "noLinkedSupplier": 11341,
+    "linkInactive": 643,
+    "supplierNoTicker": 55,
+    "supplierFilter": 130,
+    "ownReport": 287,
+    "sameCompany": 0
+   },
+   "linkPrecision": {
+    "ok": true,
+    "checked": 50,
+    "precision": 0.9
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock with close 3 USD+ and 20-day traded value 2M USD+ on the signal session, same sessions; capBoth (AUD-1)",
+   "trades": [
+    {
+     "sym": "WHR",
+     "customer": "LOW",
+     "signal": "2021-11-17",
+     "buy": "2021-11-18",
+     "sell": "2021-12-16",
+     "exit": "time",
+     "react": 0.0039,
+     "net": 0.014,
+     "avgStock": -0.1108,
+     "placebo": {
+      "d": "2021-12-21",
+      "net": -0.097
+     }
+    },
+    {
+     "sym": "SMP",
+     "customer": "AZO",
+     "signal": "2021-12-07",
+     "buy": "2021-12-08",
+     "sell": "2022-01-05",
+     "exit": "time",
+     "react": 0.0764,
+     "net": 0.0276,
+     "avgStock": -0.0454,
+     "placebo": null
+    },
+    {
+     "sym": "FRTA",
+     "customer": "CNM",
+     "signal": "2021-12-07",
+     "buy": "2021-12-08",
+     "sell": "2022-01-05",
+     "exit": "time",
+     "react": 0.0931,
+     "net": -0.0072,
+     "avgStock": -0.0454,
+     "placebo": null
+    },
+    {
+     "sym": "AEHR",
+     "customer": "STM",
+     "signal": "2022-01-28",
+     "buy": "2022-01-31",
+     "sell": "2022-02-28",
+     "exit": "time",
+     "react": 0.0367,
+     "net": 0.1767,
+     "avgStock": 0.0296,
+     "placebo": {
+      "d": "2022-03-11",
+      "net": -0.1142
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "AMZN",
+     "signal": "2022-02-04",
+     "buy": "2022-02-07",
+     "sell": "2022-03-07",
+     "exit": "time",
+     "react": 0.1354,
+     "net": 0.0379,
+     "avgStock": -0.0548,
+     "placebo": {
+      "d": "2022-03-08",
+      "net": 0.0111
+     }
+    },
+    {
+     "sym": "MEI",
+     "customer": "GM",
+     "signal": "2022-04-27",
+     "buy": "2022-04-28",
+     "sell": "2022-05-25",
+     "exit": "time",
+     "react": 0.0163,
+     "net": -0.014,
+     "avgStock": -0.0762,
+     "placebo": null
+    },
+    {
+     "sym": "AEHR",
+     "customer": "STM",
+     "signal": "2022-04-28",
+     "buy": "2022-04-29",
+     "sell": "2022-05-26",
+     "exit": "time",
+     "react": 0.05,
+     "net": -0.0293,
+     "avgStock": -0.0597,
+     "placebo": {
+      "d": "2022-06-10",
+      "net": -0.0714
+     }
+    },
+    {
+     "sym": "PBF",
+     "customer": "SHEL",
+     "signal": "2022-05-06",
+     "buy": "2022-05-09",
+     "sell": "2022-06-06",
+     "exit": "time",
+     "react": 0.0133,
+     "net": 0.33,
+     "avgStock": 0.0221,
+     "placebo": {
+      "d": "2022-06-08",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "WMS",
+     "customer": "FERG",
+     "signal": "2022-06-15",
+     "buy": "2022-06-16",
+     "sell": "2022-07-15",
+     "exit": "time",
+     "react": 0.0025,
+     "net": 0.0529,
+     "avgStock": 0.0246,
+     "placebo": {
+      "d": "2022-04-20",
+      "net": -0.1433
+     }
+    },
+    {
+     "sym": "CHD",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1276,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-21",
+      "net": -0.0184
+     }
+    },
+    {
+     "sym": "MGI",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": 0.0007,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-29",
+      "net": -0.0003
+     }
+    },
+    {
+     "sym": "GDOT",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1447,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-28",
+      "net": 0.0108
+     }
+    },
+    {
+     "sym": "KHC",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1014,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-27",
+      "net": 0.1133
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0907,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-07-01",
+      "net": 0.0234
+     }
+    },
+    {
+     "sym": "MRTN",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-08",
+     "exit": "stop",
+     "react": 0.0511,
+     "net": -0.208,
+     "avgStock": -0.082,
+     "placebo": {
+      "d": "2022-09-15",
+      "net": 0.0292
+     }
+    },
+    {
+     "sym": "BGS",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1675,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-29",
+      "net": -0.0591
+     }
+    },
+    {
+     "sym": "CL",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.081,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-28",
+      "net": -0.001
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1258,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-07-01",
+      "net": 0.0391
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1325,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-15",
+      "net": 0.0334
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0306,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-30",
+      "net": 0.0925
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0714,
+     "avgStock": -0.0845,
+     "placebo": null
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0474,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-07-13",
+      "net": 0.0243
+     }
+    },
+    {
+     "sym": "KTB",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1373,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-15",
+      "net": -0.0326
+     }
+    },
+    {
+     "sym": "KDP",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0666,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-21",
+      "net": 0.0073
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0964,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-20",
+      "net": 0.0878
+     }
+    },
+    {
+     "sym": "NWL",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-06",
+     "exit": "stop",
+     "react": 0.0511,
+     "net": -0.208,
+     "avgStock": -0.1109,
+     "placebo": {
+      "d": "2022-09-19",
+      "net": -0.0922
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.079,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-20",
+      "net": -0.0783
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-08-26",
+     "exit": "stop",
+     "react": 0.0511,
+     "net": -0.208,
+     "avgStock": -0.0599,
+     "placebo": {
+      "d": "2022-09-20",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "ARLO",
+     "customer": "BBY",
+     "signal": "2022-08-30",
+     "buy": "2022-08-31",
+     "sell": "2022-09-22",
+     "exit": "stop",
+     "react": 0.0161,
+     "net": -0.208,
+     "avgStock": -0.0899,
+     "placebo": {
+      "d": "2022-07-12",
+      "net": 0.1652
+     }
+    },
+    {
+     "sym": "MEI",
+     "customer": "GM",
+     "signal": "2022-10-25",
+     "buy": "2022-10-26",
+     "sell": "2022-11-22",
+     "exit": "time",
+     "react": 0.0361,
+     "net": 0.1208,
+     "avgStock": 0.0271,
+     "placebo": {
+      "d": "2022-12-21",
+      "net": 0.0232
+     }
+    },
+    {
+     "sym": "CHD",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0743,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-16",
+      "net": 0.0172
+     }
+    },
+    {
+     "sym": "MGI",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0193,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-15",
+      "net": -0.0062
+     }
+    },
+    {
+     "sym": "KHC",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0701,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-27",
+      "net": -0.0423
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0356,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-23",
+      "net": 0.0439
+     }
+    },
+    {
+     "sym": "MRTN",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0184,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-15",
+      "net": -0.0367
+     }
+    },
+    {
+     "sym": "CL",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0402,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-28",
+      "net": -0.1051
+     }
+    },
+    {
+     "sym": "LANC",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0348,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-28",
+      "net": -0.0542
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0204,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-29",
+      "net": -0.0736
+     }
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.1118,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-10-14",
+      "net": -0.0195
+     }
+    },
+    {
+     "sym": "KTB",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0094,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-10-05",
+      "net": -0.0478
+     }
+    },
+    {
+     "sym": "KDP",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0042,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-21",
+      "net": -0.0581
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0106,
+     "avgStock": -0.0314,
+     "placebo": null
+    },
+    {
+     "sym": "NWL",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0131,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-27",
+      "net": 0.2052
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0721,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-16",
+      "net": -0.0334
+     }
+    },
+    {
+     "sym": "BHE",
+     "customer": "AMAT",
+     "signal": "2022-11-18",
+     "buy": "2022-11-21",
+     "sell": "2022-12-19",
+     "exit": "time",
+     "react": 0.0024,
+     "net": -0.0518,
+     "avgStock": -0.0522,
+     "placebo": {
+      "d": "2022-12-28",
+      "net": 0.0312
+     }
+    },
+    {
+     "sym": "ARLO",
+     "customer": "BBY",
+     "signal": "2022-11-22",
+     "buy": "2022-11-23",
+     "sell": "2022-12-16",
+     "exit": "stop",
+     "react": 0.1278,
+     "net": -0.208,
+     "avgStock": -0.0463,
+     "placebo": {
+      "d": "2022-10-11",
+      "net": 0.0413
+     }
+    },
+    {
+     "sym": "MEI",
+     "customer": "GM",
+     "signal": "2023-01-31",
+     "buy": "2023-02-01",
+     "sell": "2023-03-01",
+     "exit": "time",
+     "react": 0.0835,
+     "net": 0.0259,
+     "avgStock": -0.0449,
+     "placebo": {
+      "d": "2023-03-21",
+      "net": 0.0038
+     }
+    },
+    {
+     "sym": "NE",
+     "customer": "SHEL",
+     "signal": "2023-02-03",
+     "buy": "2023-02-06",
+     "sell": "2023-03-06",
+     "exit": "time",
+     "react": 0.0116,
+     "net": 0.1396,
+     "avgStock": -0.0534,
+     "placebo": {
+      "d": "2023-03-16",
+      "net": 0.0555
+     }
+    },
+    {
+     "sym": "KMB",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0187,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-22",
+      "net": 0.0874
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.006,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-23",
+      "net": 0.0113
+     }
+    },
+    {
+     "sym": "LANC",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": 0.0265,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-29",
+      "net": 0.0417
+     }
+    },
+    {
+     "sym": "HBI",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0654,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-01-06",
+      "net": -0.1886
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0504,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-24",
+      "net": 0.0493
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0789,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-22",
+      "net": 0.0958
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0518,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-29",
+      "net": 0.0099
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0007,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-24",
+      "net": 0.025
+     }
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0045,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-01-09",
+      "net": -0.1117
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0201,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-01-18",
+      "net": 0.0621
+     }
+    },
+    {
+     "sym": "HAIN",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.112,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-29",
+      "net": 0.0579
+     }
+    },
+    {
+     "sym": "REYN",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.042,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-23",
+      "net": 0.0181
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": 0.0213,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-22",
+      "net": 0.0378
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": 0.2487,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-22",
+      "net": 0.2846
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2023-02-28",
+     "buy": "2023-03-01",
+     "sell": "2023-03-28",
+     "exit": "time",
+     "react": 0.0101,
+     "net": 0.0925,
+     "avgStock": -0.0807,
+     "placebo": {
+      "d": "2023-03-30",
+      "net": 0.0678
+     }
+    },
+    {
+     "sym": "CHD",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.006,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-21",
+      "net": -0.0047
+     }
+    },
+    {
+     "sym": "GDOT",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.0841,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-30",
+      "net": 0.0397
+     }
+    },
+    {
+     "sym": "KHC",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0608,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-23",
+      "net": 0.0037
+     }
+    },
+    {
+     "sym": "KMB",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0524,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-20",
+      "net": -0.0163
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0462,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-23",
+      "net": 0.0938
+     }
+    },
+    {
+     "sym": "MRTN",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0001,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-20",
+      "net": 0.0222
+     }
+    },
+    {
+     "sym": "BGS",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.0356,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-21",
+      "net": -0.0378
+     }
+    },
+    {
+     "sym": "CL",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0342,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-23",
+      "net": 0.0028
+     }
+    },
+    {
+     "sym": "PRGO",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.0155,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-29",
+      "net": 0.0699
+     }
+    },
+    {
+     "sym": "LANC",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.12,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-22",
+      "net": -0.0072
+     }
+    },
+    {
+     "sym": "HBI",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.114,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-29",
+      "net": 0.133
+     }
+    },
+    {
+     "sym": "FRPT",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0389,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-30",
+      "net": 0.109
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0002,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-04",
+      "net": 0.0042
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0202,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-23",
+      "net": -0.0791
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0036,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-26",
+      "net": -0.003
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0414,
+     "avgStock": 0.0345,
+     "placebo": null
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0934,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-12",
+      "net": 0.0249
+     }
+    },
+    {
+     "sym": "KTB",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.0271,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-30",
+      "net": -0.0023
+     }
+    },
+    {
+     "sym": "KDP",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0027,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-20",
+      "net": -0.0096
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0521,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-14",
+      "net": 0.0934
+     }
+    },
+    {
+     "sym": "NWL",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0614,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-28",
+      "net": 0.1385
+     }
+    },
+    {
+     "sym": "HAIN",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0942,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-03",
+      "net": 0.0095
+     }
+    },
+    {
+     "sym": "REYN",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.015,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-06",
+      "net": -0.0152
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0272,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-28",
+      "net": 0.0164
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.5976,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-27",
+      "net": 0.0443
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "TGT",
+     "signal": "2023-08-16",
+     "buy": "2023-08-17",
+     "sell": "2023-09-14",
+     "exit": "time",
+     "react": 0.0296,
+     "net": -0.0532,
+     "avgStock": -0.0194,
+     "placebo": {
+      "d": "2023-09-20",
+      "net": -0.0634
+     }
+    },
+    {
+     "sym": "NXPI",
+     "customer": "AVT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": 0.0808,
+     "net": 0.0171,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-21",
+      "net": -0.0469
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "NKE",
+     "signal": "2023-09-29",
+     "buy": "2023-10-02",
+     "sell": "2023-10-27",
+     "exit": "time",
+     "react": 0.0668,
+     "net": -0.051,
+     "avgStock": -0.0932,
+     "placebo": {
+      "d": "2023-07-12",
+      "net": 0.0585
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2023-11-15",
+     "buy": "2023-11-16",
+     "sell": "2023-12-14",
+     "exit": "time",
+     "react": 0.1775,
+     "net": 0.0829,
+     "avgStock": 0.0948,
+     "placebo": {
+      "d": "2023-12-29",
+      "net": 0.0382
+     }
+    },
+    {
+     "sym": "KMB",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0377,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-22",
+      "net": 0.022
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0621,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-27",
+      "net": -0.0439
+     }
+    },
+    {
+     "sym": "LANC",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0224,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-25",
+      "net": -0.0954
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0471,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-25",
+      "net": 0.0339
+     }
+    },
+    {
+     "sym": "CENT",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.0423,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-04",
+      "net": -0.0601
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.0278,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-08",
+      "net": 0.0283
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.0079,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-03",
+      "net": 0.0262
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0029,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-21",
+      "net": -0.0016
+     }
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0295,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-09",
+      "net": -0.0132
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0082,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-18",
+      "net": -0.1498
+     }
+    },
+    {
+     "sym": "HAIN",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.1411,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-05",
+      "net": 0.0068
+     }
+    },
+    {
+     "sym": "REYN",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.0305,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-26",
+      "net": 0.0033
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0086,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-20",
+      "net": -0.0376
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0707,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-20",
+      "net": -0.1667
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2024-03-05",
+     "buy": "2024-03-06",
+     "sell": "2024-04-03",
+     "exit": "time",
+     "react": 0.1202,
+     "net": 0.0146,
+     "avgStock": -0.0027,
+     "placebo": {
+      "d": "2024-01-02",
+      "net": 0.01
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "CROX",
+     "signal": "2024-05-07",
+     "buy": "2024-05-08",
+     "sell": "2024-06-05",
+     "exit": "time",
+     "react": 0.0779,
+     "net": 0.0517,
+     "avgStock": -0.0041,
+     "placebo": {
+      "d": "2024-06-21",
+      "net": 0.0334
+     }
+    },
+    {
+     "sym": "NXPI",
+     "customer": "AVT",
+     "signal": "2024-08-08",
+     "buy": "2024-08-09",
+     "sell": "2024-09-06",
+     "exit": "time",
+     "react": 0.0687,
+     "net": -0.0727,
+     "avgStock": -0.0059,
+     "placebo": {
+      "d": "2024-09-16",
+      "net": 0.0397
+     }
+    },
+    {
+     "sym": "JAKK",
+     "customer": "TGT",
+     "signal": "2024-08-21",
+     "buy": "2024-08-22",
+     "sell": "2024-09-19",
+     "exit": "time",
+     "react": 0.1034,
+     "net": 0.1134,
+     "avgStock": 0.0132,
+     "placebo": null
+    },
+    {
+     "sym": "ELF",
+     "customer": "ULTA",
+     "signal": "2024-12-06",
+     "buy": "2024-12-09",
+     "sell": "2025-01-07",
+     "exit": "time",
+     "react": 0.0899,
+     "net": -0.114,
+     "avgStock": -0.0569,
+     "placebo": {
+      "d": "2024-10-01",
+      "net": 0.0655
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "CROX",
+     "signal": "2025-02-13",
+     "buy": "2025-02-14",
+     "sell": "2025-03-14",
+     "exit": "time",
+     "react": 0.2389,
+     "net": -0.1357,
+     "avgStock": -0.1124,
+     "placebo": {
+      "d": "2025-01-14",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2025-03-13",
+     "buy": "2025-03-14",
+     "sell": "2025-04-10",
+     "exit": "time",
+     "react": 0.0681,
+     "net": -0.0455,
+     "avgStock": -0.1076,
+     "placebo": {
+      "d": "2025-01-06",
+      "net": -0.0445
+     }
+    },
+    {
+     "sym": "NTST",
+     "customer": "DG",
+     "signal": "2025-03-13",
+     "buy": "2025-03-14",
+     "sell": "2025-04-10",
+     "exit": "time",
+     "react": 0.0681,
+     "net": 0.0027,
+     "avgStock": -0.1076,
+     "placebo": {
+      "d": "2025-01-14",
+      "net": -0.0312
+     }
+    },
+    {
+     "sym": "ELF",
+     "customer": "ULTA",
+     "signal": "2025-03-14",
+     "buy": "2025-03-17",
+     "sell": "2025-04-04",
+     "exit": "stop",
+     "react": 0.1368,
+     "net": -0.2139,
+     "avgStock": -0.122,
+     "placebo": null
+    },
+    {
+     "sym": "TGI",
+     "customer": "BA",
+     "signal": "2025-04-23",
+     "buy": "2025-04-24",
+     "sell": "2025-05-21",
+     "exit": "time",
+     "react": 0.0606,
+     "net": 0.0151,
+     "avgStock": 0.0622,
+     "placebo": {
+      "d": "2025-06-16",
+      "net": -0.003
+     }
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2025-06-03",
+     "buy": "2025-06-04",
+     "sell": "2025-07-02",
+     "exit": "time",
+     "react": 0.1585,
+     "net": 0.0773,
+     "avgStock": 0.0396,
+     "placebo": null
+    },
+    {
+     "sym": "NTST",
+     "customer": "DG",
+     "signal": "2025-06-03",
+     "buy": "2025-06-04",
+     "sell": "2025-07-02",
+     "exit": "time",
+     "react": 0.1585,
+     "net": 0.0399,
+     "avgStock": 0.0396,
+     "placebo": null
+    },
+    {
+     "sym": "WMS",
+     "customer": "FERG",
+     "signal": "2025-06-03",
+     "buy": "2025-06-04",
+     "sell": "2025-07-02",
+     "exit": "time",
+     "react": 0.1723,
+     "net": 0.0586,
+     "avgStock": 0.0396,
+     "placebo": {
+      "d": "2025-04-07",
+      "net": 0.0981
+     }
+    },
+    {
+     "sym": "CCRD",
+     "customer": "GS",
+     "signal": "2025-07-16",
+     "buy": "2025-07-17",
+     "sell": "2025-08-13",
+     "exit": "time",
+     "react": 0.009,
+     "net": -0.0062,
+     "avgStock": 0.0203,
+     "placebo": {
+      "d": "2025-08-21",
+      "net": -0.0146
+     }
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2025-08-28",
+     "buy": "2025-08-29",
+     "sell": "2025-09-26",
+     "exit": "time",
+     "react": 0.0046,
+     "net": -0.0971,
+     "avgStock": 0.0061,
+     "placebo": {
+      "d": "2025-09-29",
+      "net": 0.0453
+     }
+    },
+    {
+     "sym": "NTST",
+     "customer": "DG",
+     "signal": "2025-08-28",
+     "buy": "2025-08-29",
+     "sell": "2025-09-26",
+     "exit": "time",
+     "react": 0.0046,
+     "net": -0.0212,
+     "avgStock": 0.0061,
+     "placebo": null
+    },
+    {
+     "sym": "WMS",
+     "customer": "FERG",
+     "signal": "2025-09-16",
+     "buy": "2025-09-17",
+     "sell": "2025-10-14",
+     "exit": "time",
+     "react": 0.0793,
+     "net": -0.0344,
+     "avgStock": 0.0091,
+     "placebo": {
+      "d": "2025-07-09",
+      "net": -0.0554
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "NKE",
+     "signal": "2025-10-01",
+     "buy": "2025-10-02",
+     "sell": "2025-10-29",
+     "exit": "time",
+     "react": 0.0641,
+     "net": -0.1277,
+     "avgStock": -0.0154,
+     "placebo": {
+      "d": "2025-12-23",
+      "net": 0.0487
+     }
+    },
+    {
+     "sym": "PUMP",
+     "customer": "EOG",
+     "signal": "2025-11-07",
+     "buy": "2025-11-10",
+     "sell": "2025-12-08",
+     "exit": "time",
+     "react": 0.0039,
+     "net": -0.0226,
+     "avgStock": 0.0091,
+     "placebo": {
+      "d": "2025-12-18",
+      "net": 0.1167
+     }
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2025-12-04",
+     "buy": "2025-12-05",
+     "sell": "2026-01-05",
+     "exit": "time",
+     "react": 0.1401,
+     "net": 0.1112,
+     "avgStock": -0.006,
+     "placebo": {
+      "d": "2025-10-02",
+      "net": -0.0484
+     }
+    },
+    {
+     "sym": "NTST",
+     "customer": "DG",
+     "signal": "2025-12-04",
+     "buy": "2025-12-05",
+     "sell": "2026-01-05",
+     "exit": "time",
+     "react": 0.1401,
+     "net": 0,
+     "avgStock": -0.006,
+     "placebo": {
+      "d": "2025-11-04",
+      "net": -0.0551
+     }
+    },
+    {
+     "sym": "ACA",
+     "customer": "GEV",
+     "signal": "2026-01-28",
+     "buy": "2026-01-29",
+     "sell": "2026-02-26",
+     "exit": "time",
+     "react": 0.0273,
+     "net": 0.1145,
+     "avgStock": -0.0159,
+     "placebo": {
+      "d": "2026-03-12",
+      "net": 0.0276
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2026-03-03",
+     "buy": "2026-03-04",
+     "sell": "2026-03-31",
+     "exit": "time",
+     "react": 0.0674,
+     "net": -0.0131,
+     "avgStock": -0.0614,
+     "placebo": null
+    },
+    {
+     "sym": "THRM",
+     "customer": "LEA",
+     "signal": "2026-05-01",
+     "buy": "2026-05-04",
+     "sell": "2026-06-01",
+     "exit": "time",
+     "react": 0.0415,
+     "net": 0.1748,
+     "avgStock": 0.0191,
+     "placebo": {
+      "d": "2026-06-17",
+      "net": -0.0174
+     }
+    },
+    {
+     "sym": "NXPI",
+     "customer": "AVT",
+     "signal": "2026-08-05",
+     "buy": "2026-08-06",
+     "sell": "2026-09-02",
+     "exit": "time",
+     "react": 0.0507,
+     "net": -0.008,
+     "avgStock": -0.0148,
+     "placebo": {
+      "d": "2026-09-10",
+      "net": -0.0026
+     }
+    }
+   ]
+  },
+  "SQ28-SUPDRIFT-ANY": {
+   "at": "2026-10-27T09:39:09.335Z",
+   "frozenAt": "2026-10-27T09:32:03.297Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "bugs": [
+    "SQ28-TIMING"
+   ],
+   "reason": "Reaction-day timing bug (found after the frozen run, confirmed by the lead 27 Oct 2026): the Nasdaq calendar often has no report time, and the frozen rule then used the NEXT session, so before-the-open reports (e.g. Walmart 2024-02-20, Dollar General 2025-03-13) were judged a day late (wrong reaction sign, late entry). Corrected: each linked customer's report timed from its own SEC 8-K Item 2.02 acceptance time (before 09:30 ET -> that session; during market hours -> that session; 16:00 or later -> the next session); no 8-K within 3 days -> the calendar rule. Rule, gates, links (same SHA), window, costs, yardsticks and placebo seed unchanged.",
+   "timing": {
+    "customerReports": 2240,
+    "by8K": 1980,
+    "noFiling": 260,
+    "sameSession": 789,
+    "moved": 1191,
+    "movedEarlier": 1191,
+    "examples": [
+     {
+      "sym": "C",
+      "date": "2021-10-14",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-14 09:34",
+      "calendarSession": "2021-10-15",
+      "corrected": "2021-10-14"
+     },
+     {
+      "sym": "GS",
+      "date": "2021-10-15",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-15 08:34",
+      "calendarSession": "2021-10-18",
+      "corrected": "2021-10-15"
+     },
+     {
+      "sym": "JNJ",
+      "date": "2021-10-19",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-19 08:01",
+      "calendarSession": "2021-10-20",
+      "corrected": "2021-10-19"
+     },
+     {
+      "sym": "VZ",
+      "date": "2021-10-20",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-20 07:32",
+      "calendarSession": "2021-10-21",
+      "corrected": "2021-10-20"
+     },
+     {
+      "sym": "ABT",
+      "date": "2021-10-20",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-20 07:47",
+      "calendarSession": "2021-10-21",
+      "corrected": "2021-10-20"
+     },
+     {
+      "sym": "BIIB",
+      "date": "2021-10-20",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-20 07:09",
+      "calendarSession": "2021-10-21",
+      "corrected": "2021-10-20"
+     },
+     {
+      "sym": "VLO",
+      "date": "2021-10-21",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-21 08:19",
+      "calendarSession": "2021-10-22",
+      "corrected": "2021-10-21"
+     },
+     {
+      "sym": "POOL",
+      "date": "2021-10-21",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-21 10:13",
+      "calendarSession": "2021-10-22",
+      "corrected": "2021-10-21"
+     },
+     {
+      "sym": "CROX",
+      "date": "2021-10-21",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-21 07:04",
+      "calendarSession": "2021-10-22",
+      "corrected": "2021-10-21"
+     },
+     {
+      "sym": "GE",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-26 06:21",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "RTX",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-26 06:56",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "LMT",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-26 07:31",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "PCAR",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-26 08:06",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "CNC",
+      "date": "2021-10-26",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-25 20:50",
+      "calendarSession": "2021-10-27",
+      "corrected": "2021-10-26"
+     },
+     {
+      "sym": "BA",
+      "date": "2021-10-27",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-27 07:33",
+      "calendarSession": "2021-10-28",
+      "corrected": "2021-10-27"
+     },
+     {
+      "sym": "BMY",
+      "date": "2021-10-27",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-27 09:46",
+      "calendarSession": "2021-10-28",
+      "corrected": "2021-10-27"
+     },
+     {
+      "sym": "GM",
+      "date": "2021-10-27",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-27 09:14",
+      "calendarSession": "2021-10-28",
+      "corrected": "2021-10-27"
+     },
+     {
+      "sym": "BG",
+      "date": "2021-10-27",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-27 06:42",
+      "calendarSession": "2021-10-28",
+      "corrected": "2021-10-27"
+     },
+     {
+      "sym": "CMCSA",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 07:07",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "NOC",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 06:30",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "RS",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 06:55",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "TXT",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 06:32",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "BC",
+      "date": "2021-10-28",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-28 06:31",
+      "calendarSession": "2021-10-29",
+      "corrected": "2021-10-28"
+     },
+     {
+      "sym": "CVX",
+      "date": "2021-10-29",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-29 06:02",
+      "calendarSession": "2021-11-01",
+      "corrected": "2021-10-29"
+     },
+     {
+      "sym": "IMO",
+      "date": "2021-10-29",
+      "calendarTime": null,
+      "acceptedNY": "2021-10-29 08:14",
+      "calendarSession": "2021-11-01",
+      "corrected": "2021-10-29"
+     }
+    ]
+   },
+   "reproducedFrozen": {
+    "older": 126,
+    "newer": 55,
+    "frozen": {
+     "older": 126,
+     "newer": 55
+    },
+    "matchesFrozen": true
+   },
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.84 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t 0.2 under 2.5 in the newer half; return per year of capital tied up -22.5% not above the S&P 500 on the same days in the older half (0.8%); return per year of capital tied up -1.3% not above the S&P 500 on the same days in the newer half (17.8%)",
+   "name": "Supplier drift after its major customer's strong earnings (SUE top 30%, any reaction)",
+   "kind": "buy",
+   "family": "event",
+   "hold": 20,
+   "block": 20,
+   "caseCounts": {
+    "older": 123,
+    "newer": 56
+   },
+   "results": {
+    "older": {
+     "n": 121,
+     "days": 29,
+     "stocks": 43,
+     "avg": -0.0177,
+     "median": -0.0184,
+     "avgStress": -0.0217,
+     "ctrl": -0.0261,
+     "edge": 0.0465,
+     "tDay": 2.49,
+     "blocks": 17,
+     "tBlock": 1.84,
+     "vsOwn": 0.0179,
+     "ownCovered": 29,
+     "noTop2": -0.0258,
+     "best": 0.5976,
+     "worst": -0.208,
+     "win": 0.3388
+    },
+    "newer": {
+     "n": 55,
+     "days": 37,
+     "stocks": 34,
+     "avg": -0.001,
+     "median": 0.0027,
+     "avgStress": -0.005,
+     "ctrl": -0.0068,
+     "edge": -0.002,
+     "tDay": -0.07,
+     "blocks": 23,
+     "tBlock": 0.2,
+     "vsOwn": -0.004,
+     "ownCovered": 37,
+     "noTop2": -0.0202,
+     "best": 0.8419,
+     "worst": -0.2313,
+     "win": 0.5091
+    },
+    "all": {
+     "n": 176,
+     "days": 66,
+     "stocks": 57,
+     "avg": -0.0124,
+     "median": -0.0131,
+     "avgStress": -0.0164,
+     "ctrl": -0.02,
+     "edge": 0.0193,
+     "tDay": 1.09,
+     "blocks": 40,
+     "tBlock": 0.91,
+     "vsOwn": 0.0056,
+     "ownCovered": 66,
+     "noTop2": -0.0209,
+     "best": 0.8419,
+     "worst": -0.2313,
+     "win": 0.392
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -0.2252,
+     "spy": 0.0076,
+     "avgStock": -0.2305
+    },
+    "newer": {
+     "rule": -0.0125,
+     "spy": 0.1777,
+     "avgStock": 0.0163
+    }
+   },
+   "placebo": {
+    "note": "YARDSTICK (not a gate): the same supplier on a random non-event session of the same quarter (seed 28), same filters and exit",
+    "older": {
+     "n": 113,
+     "ruleAvg": -0.0183,
+     "placeboAvg": 0.0024,
+     "placeboEdge": -0.0045,
+     "ruleMinusPlacebo": -0.0207,
+     "tPaired": -1.4887
+    },
+    "newer": {
+     "n": 44,
+     "ruleAvg": 0.0104,
+     "placeboAvg": 0.0055,
+     "placeboEdge": 0.0181,
+     "ruleMinusPlacebo": 0.0049,
+     "tPaired": 0.2082
+    },
+    "all": {
+     "n": 157,
+     "ruleAvg": -0.0103,
+     "placeboAvg": 0.0032,
+     "placeboEdge": 0.0018,
+     "ruleMinusPlacebo": -0.0135,
+     "tPaired": -1.1274
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 121,
+     "edge": 0.0037
+    },
+    "newer": {
+     "n": 55,
+     "edge": 0.0007
+    },
+    "all": {
+     "n": 176,
+     "edge": 0.0028
+    }
+   },
+   "shape": {
+    "trades": 176,
+    "win": 0.392,
+    "avgWin": 0.0794,
+    "avgLoss": -0.0717,
+    "pf": 0.7145,
+    "exits": {
+     "time": 167,
+     "stop": 9
+    },
+    "byYear": {
+     "2021": {
+      "n": 3,
+      "avg": 0.0115
+     },
+     "2022": {
+      "n": 49,
+      "avg": -0.0268
+     },
+     "2023": {
+      "n": 69,
+      "avg": -0.0125
+     },
+     "2024": {
+      "n": 24,
+      "avg": -0.0171
+     },
+     "2025": {
+      "n": 22,
+      "avg": -0.0409
+     },
+     "2026": {
+      "n": 9,
+      "avg": 0.1398
+     }
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "funnel": {
+    "reports": 39590,
+    "withSue": 39513,
+    "top30": 11977,
+    "top30Up": 6870,
+    "noCustomerCik": 8,
+    "noLinkedSupplier": 11341,
+    "linkInactive": 643,
+    "supplierNoTicker": 55,
+    "supplierFilter": 130,
+    "ownReport": 287,
+    "sameCompany": 0
+   },
+   "linkPrecision": {
+    "ok": true,
+    "checked": 50,
+    "precision": 0.9
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock with close 3 USD+ and 20-day traded value 2M USD+ on the signal session, same sessions; capBoth (AUD-1)",
+   "trades": [
+    {
+     "sym": "WHR",
+     "customer": "LOW",
+     "signal": "2021-11-17",
+     "buy": "2021-11-18",
+     "sell": "2021-12-16",
+     "exit": "time",
+     "react": 0.0039,
+     "net": 0.014,
+     "avgStock": -0.1108,
+     "placebo": {
+      "d": "2021-12-21",
+      "net": -0.097
+     }
+    },
+    {
+     "sym": "SMP",
+     "customer": "AZO",
+     "signal": "2021-12-07",
+     "buy": "2021-12-08",
+     "sell": "2022-01-05",
+     "exit": "time",
+     "react": 0.0764,
+     "net": 0.0276,
+     "avgStock": -0.0454,
+     "placebo": null
+    },
+    {
+     "sym": "FRTA",
+     "customer": "CNM",
+     "signal": "2021-12-07",
+     "buy": "2021-12-08",
+     "sell": "2022-01-05",
+     "exit": "time",
+     "react": 0.0931,
+     "net": -0.0072,
+     "avgStock": -0.0454,
+     "placebo": null
+    },
+    {
+     "sym": "AEHR",
+     "customer": "STM",
+     "signal": "2022-01-28",
+     "buy": "2022-01-31",
+     "sell": "2022-02-28",
+     "exit": "time",
+     "react": 0.0367,
+     "net": 0.1767,
+     "avgStock": 0.0296,
+     "placebo": {
+      "d": "2022-03-11",
+      "net": -0.1142
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "AMZN",
+     "signal": "2022-02-04",
+     "buy": "2022-02-07",
+     "sell": "2022-03-07",
+     "exit": "time",
+     "react": 0.1354,
+     "net": 0.0379,
+     "avgStock": -0.0548,
+     "placebo": {
+      "d": "2022-03-08",
+      "net": 0.0111
+     }
+    },
+    {
+     "sym": "LPG",
+     "customer": "POOL",
+     "signal": "2022-04-21",
+     "buy": "2022-04-22",
+     "sell": "2022-05-19",
+     "exit": "time",
+     "react": -0.0107,
+     "net": 0.0341,
+     "avgStock": -0.1132,
+     "placebo": {
+      "d": "2022-06-15",
+      "net": -0.0106
+     }
+    },
+    {
+     "sym": "MEI",
+     "customer": "GM",
+     "signal": "2022-04-27",
+     "buy": "2022-04-28",
+     "sell": "2022-05-25",
+     "exit": "time",
+     "react": 0.0163,
+     "net": -0.014,
+     "avgStock": -0.0762,
+     "placebo": null
+    },
+    {
+     "sym": "AEHR",
+     "customer": "STM",
+     "signal": "2022-04-28",
+     "buy": "2022-04-29",
+     "sell": "2022-05-26",
+     "exit": "time",
+     "react": 0.05,
+     "net": -0.0293,
+     "avgStock": -0.0597,
+     "placebo": {
+      "d": "2022-05-31",
+      "net": -0.1169
+     }
+    },
+    {
+     "sym": "PBF",
+     "customer": "SHEL",
+     "signal": "2022-05-06",
+     "buy": "2022-05-09",
+     "sell": "2022-06-06",
+     "exit": "time",
+     "react": 0.0133,
+     "net": 0.33,
+     "avgStock": 0.0221,
+     "placebo": {
+      "d": "2022-06-28",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "WMS",
+     "customer": "FERG",
+     "signal": "2022-06-15",
+     "buy": "2022-06-16",
+     "sell": "2022-07-15",
+     "exit": "time",
+     "react": 0.0025,
+     "net": 0.0529,
+     "avgStock": 0.0246,
+     "placebo": {
+      "d": "2022-04-08",
+      "net": -0.1242
+     }
+    },
+    {
+     "sym": "CVGW",
+     "customer": "KR",
+     "signal": "2022-06-16",
+     "buy": "2022-06-17",
+     "sell": "2022-07-18",
+     "exit": "time",
+     "react": -0.0208,
+     "net": 0.0745,
+     "avgStock": 0.0366,
+     "placebo": {
+      "d": "2022-05-02",
+      "net": -0.0491
+     }
+    },
+    {
+     "sym": "VITL",
+     "customer": "KR",
+     "signal": "2022-06-16",
+     "buy": "2022-06-17",
+     "sell": "2022-07-18",
+     "exit": "time",
+     "react": -0.0208,
+     "net": -0.0125,
+     "avgStock": 0.0366,
+     "placebo": {
+      "d": "2022-05-17",
+      "net": -0.0953
+     }
+    },
+    {
+     "sym": "NXPI",
+     "customer": "AVT",
+     "signal": "2022-08-11",
+     "buy": "2022-08-12",
+     "sell": "2022-09-09",
+     "exit": "time",
+     "react": -0.0631,
+     "net": -0.0831,
+     "avgStock": -0.0577,
+     "placebo": {
+      "d": "2022-09-29",
+      "net": -0.0389
+     }
+    },
+    {
+     "sym": "CHD",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1276,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-15",
+      "net": -0.0599
+     }
+    },
+    {
+     "sym": "MGI",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": 0.0007,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-16",
+      "net": 0.0065
+     }
+    },
+    {
+     "sym": "GDOT",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1447,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-29",
+      "net": -0.0214
+     }
+    },
+    {
+     "sym": "KHC",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1014,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-27",
+      "net": 0.1133
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0907,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-07-01",
+      "net": 0.0234
+     }
+    },
+    {
+     "sym": "MRTN",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-08",
+     "exit": "stop",
+     "react": 0.0511,
+     "net": -0.208,
+     "avgStock": -0.082,
+     "placebo": {
+      "d": "2022-09-15",
+      "net": 0.0292
+     }
+    },
+    {
+     "sym": "BGS",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1675,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-30",
+      "net": -0.0219
+     }
+    },
+    {
+     "sym": "CL",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.081,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-16",
+      "net": -0.063
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1258,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-15",
+      "net": -0.0972
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1325,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-16",
+      "net": 0.0304
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0306,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-19",
+      "net": -0.0109
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0714,
+     "avgStock": -0.0845,
+     "placebo": null
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0474,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-07-12",
+      "net": 0.0094
+     }
+    },
+    {
+     "sym": "KTB",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.1373,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-28",
+      "net": 0.0326
+     }
+    },
+    {
+     "sym": "KDP",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0666,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-19",
+      "net": -0.0053
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.0964,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-20",
+      "net": 0.0878
+     }
+    },
+    {
+     "sym": "NWL",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-06",
+     "exit": "stop",
+     "react": 0.0511,
+     "net": -0.208,
+     "avgStock": -0.1109,
+     "placebo": {
+      "d": "2022-09-23",
+      "net": 0.0257
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-09-14",
+     "exit": "time",
+     "react": 0.0511,
+     "net": -0.079,
+     "avgStock": -0.0845,
+     "placebo": {
+      "d": "2022-09-15",
+      "net": -0.089
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2022-08-16",
+     "buy": "2022-08-17",
+     "sell": "2022-08-26",
+     "exit": "stop",
+     "react": 0.0511,
+     "net": -0.208,
+     "avgStock": -0.0599,
+     "placebo": {
+      "d": "2022-09-21",
+      "net": 0.0367
+     }
+    },
+    {
+     "sym": "ARLO",
+     "customer": "BBY",
+     "signal": "2022-08-30",
+     "buy": "2022-08-31",
+     "sell": "2022-09-22",
+     "exit": "stop",
+     "react": 0.0161,
+     "net": -0.208,
+     "avgStock": -0.0899,
+     "placebo": {
+      "d": "2022-07-12",
+      "net": 0.1652
+     }
+    },
+    {
+     "sym": "MEI",
+     "customer": "GM",
+     "signal": "2022-10-25",
+     "buy": "2022-10-26",
+     "sell": "2022-11-22",
+     "exit": "time",
+     "react": 0.0361,
+     "net": 0.1208,
+     "avgStock": 0.0271,
+     "placebo": {
+      "d": "2022-12-22",
+      "net": 0.0462
+     }
+    },
+    {
+     "sym": "AEHR",
+     "customer": "ON",
+     "signal": "2022-10-31",
+     "buy": "2022-11-01",
+     "sell": "2022-11-29",
+     "exit": "time",
+     "react": -0.0897,
+     "net": 0.2244,
+     "avgStock": -0.0136,
+     "placebo": {
+      "d": "2022-11-30",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "CHD",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0743,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-29",
+      "net": -0.0192
+     }
+    },
+    {
+     "sym": "MGI",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0193,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-27",
+      "net": -0.0098
+     }
+    },
+    {
+     "sym": "KHC",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0701,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-29",
+      "net": -0.0129
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0356,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-23",
+      "net": 0.0439
+     }
+    },
+    {
+     "sym": "MRTN",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0184,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-15",
+      "net": -0.0367
+     }
+    },
+    {
+     "sym": "CL",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0402,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-20",
+      "net": -0.0411
+     }
+    },
+    {
+     "sym": "LANC",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0348,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-28",
+      "net": -0.0542
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0204,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-27",
+      "net": -0.0834
+     }
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.1118,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-10-13",
+      "net": -0.0017
+     }
+    },
+    {
+     "sym": "KTB",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0094,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-23",
+      "net": 0.1571
+     }
+    },
+    {
+     "sym": "KDP",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0042,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-22",
+      "net": -0.0475
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0106,
+     "avgStock": -0.0314,
+     "placebo": null
+    },
+    {
+     "sym": "NWL",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": -0.0131,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-21",
+      "net": 0.2387
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2022-11-15",
+     "buy": "2022-11-16",
+     "sell": "2022-12-14",
+     "exit": "time",
+     "react": 0.0654,
+     "net": 0.0721,
+     "avgStock": -0.0314,
+     "placebo": {
+      "d": "2022-12-15",
+      "net": -0.0075
+     }
+    },
+    {
+     "sym": "BHE",
+     "customer": "AMAT",
+     "signal": "2022-11-18",
+     "buy": "2022-11-21",
+     "sell": "2022-12-19",
+     "exit": "time",
+     "react": 0.0024,
+     "net": -0.0518,
+     "avgStock": -0.0522,
+     "placebo": {
+      "d": "2022-12-22",
+      "net": 0.057
+     }
+    },
+    {
+     "sym": "ARLO",
+     "customer": "BBY",
+     "signal": "2022-11-22",
+     "buy": "2022-11-23",
+     "sell": "2022-12-16",
+     "exit": "stop",
+     "react": 0.1278,
+     "net": -0.208,
+     "avgStock": -0.0463,
+     "placebo": {
+      "d": "2022-12-27",
+      "net": 0.0671
+     }
+    },
+    {
+     "sym": "ELF",
+     "customer": "ULTA",
+     "signal": "2022-12-02",
+     "buy": "2022-12-05",
+     "sell": "2023-01-03",
+     "exit": "time",
+     "react": -0.0025,
+     "net": 0.0061,
+     "avgStock": -0.0692,
+     "placebo": {
+      "d": "2022-10-03",
+      "net": 0.0925
+     }
+    },
+    {
+     "sym": "MEI",
+     "customer": "GM",
+     "signal": "2023-01-31",
+     "buy": "2023-02-01",
+     "sell": "2023-03-01",
+     "exit": "time",
+     "react": 0.0835,
+     "net": 0.0259,
+     "avgStock": -0.0449,
+     "placebo": {
+      "d": "2023-03-22",
+      "net": 0.0204
+     }
+    },
+    {
+     "sym": "NE",
+     "customer": "SHEL",
+     "signal": "2023-02-03",
+     "buy": "2023-02-06",
+     "sell": "2023-03-06",
+     "exit": "time",
+     "react": 0.0116,
+     "net": 0.1396,
+     "avgStock": -0.0534,
+     "placebo": {
+      "d": "2023-03-15",
+      "net": 0.0822
+     }
+    },
+    {
+     "sym": "KMB",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0187,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-24",
+      "net": 0.0793
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.006,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-31",
+      "net": -0.0085
+     }
+    },
+    {
+     "sym": "LANC",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": 0.0265,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-23",
+      "net": 0.0022
+     }
+    },
+    {
+     "sym": "HBI",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0654,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-23",
+      "net": 0.0147
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0504,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-30",
+      "net": 0.0593
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0789,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-23",
+      "net": 0.1125
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0518,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-31",
+      "net": 0.0068
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0007,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-01-03",
+      "net": -0.0518
+     }
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0045,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-01-17",
+      "net": -0.0827
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.0201,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-01-13",
+      "net": 0.0357
+     }
+    },
+    {
+     "sym": "HAIN",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.112,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-31",
+      "net": 0.0398
+     }
+    },
+    {
+     "sym": "REYN",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": -0.042,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-22",
+      "net": 0.0238
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": 0.0213,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-22",
+      "net": 0.0378
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2023-02-21",
+     "buy": "2023-02-22",
+     "sell": "2023-03-21",
+     "exit": "time",
+     "react": 0.0061,
+     "net": 0.2487,
+     "avgStock": -0.073,
+     "placebo": {
+      "d": "2023-03-28",
+      "net": 0.3945
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2023-02-28",
+     "buy": "2023-03-01",
+     "sell": "2023-03-28",
+     "exit": "time",
+     "react": 0.0101,
+     "net": 0.0925,
+     "avgStock": -0.0807,
+     "placebo": {
+      "d": "2023-03-31",
+      "net": 0.0622
+     }
+    },
+    {
+     "sym": "MEI",
+     "customer": "GM",
+     "signal": "2023-04-25",
+     "buy": "2023-04-26",
+     "sell": "2023-05-23",
+     "exit": "time",
+     "react": -0.0402,
+     "net": 0.0477,
+     "avgStock": 0.0121,
+     "placebo": null
+    },
+    {
+     "sym": "CHD",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.006,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-23",
+      "net": 0.003
+     }
+    },
+    {
+     "sym": "GDOT",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.0841,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-30",
+      "net": 0.0397
+     }
+    },
+    {
+     "sym": "KHC",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0608,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-22",
+      "net": -0.0019
+     }
+    },
+    {
+     "sym": "KMB",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0524,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-23",
+      "net": -0.0063
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0462,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-30",
+      "net": 0.095
+     }
+    },
+    {
+     "sym": "MRTN",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0001,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-20",
+      "net": 0.0222
+     }
+    },
+    {
+     "sym": "BGS",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.0356,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-26",
+      "net": -0.03
+     }
+    },
+    {
+     "sym": "CL",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0342,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-26",
+      "net": 0.0107
+     }
+    },
+    {
+     "sym": "PRGO",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.0155,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-04",
+      "net": 0.0345
+     }
+    },
+    {
+     "sym": "LANC",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.12,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-23",
+      "net": -0.0347
+     }
+    },
+    {
+     "sym": "HBI",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.114,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-30",
+      "net": 0.1502
+     }
+    },
+    {
+     "sym": "FRPT",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0389,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-03",
+      "net": 0.0006
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0002,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-06",
+      "net": 0.0139
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0202,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-29",
+      "net": -0.0566
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0036,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-03",
+      "net": -0.0167
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0414,
+     "avgStock": 0.0345,
+     "placebo": null
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0934,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-17",
+      "net": 0.0289
+     }
+    },
+    {
+     "sym": "KTB",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.0271,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-26",
+      "net": -0.0075
+     }
+    },
+    {
+     "sym": "KDP",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0027,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-26",
+      "net": 0.0306
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0521,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-04-17",
+      "net": 0.0995
+     }
+    },
+    {
+     "sym": "NWL",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0614,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-21",
+      "net": 0.2265
+     }
+    },
+    {
+     "sym": "HAIN",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0942,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-30",
+      "net": 0.0024
+     }
+    },
+    {
+     "sym": "REYN",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.015,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-27",
+      "net": -0.0112
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": -0.0272,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-29",
+      "net": 0.0359
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2023-05-18",
+     "buy": "2023-05-19",
+     "sell": "2023-06-16",
+     "exit": "time",
+     "react": 0.013,
+     "net": 0.5976,
+     "avgStock": 0.0345,
+     "placebo": {
+      "d": "2023-06-27",
+      "net": 0.0443
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "TGT",
+     "signal": "2023-08-16",
+     "buy": "2023-08-17",
+     "sell": "2023-09-14",
+     "exit": "time",
+     "react": 0.0296,
+     "net": -0.0532,
+     "avgStock": -0.0194,
+     "placebo": {
+      "d": "2023-09-19",
+      "net": -0.0695
+     }
+    },
+    {
+     "sym": "CHD",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": 0.0289,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-20",
+      "net": -0.059
+     }
+    },
+    {
+     "sym": "GDOT",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0557,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-19",
+      "net": -0.1423
+     }
+    },
+    {
+     "sym": "KHC",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0092,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-19",
+      "net": -0.0861
+     }
+    },
+    {
+     "sym": "KMB",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0213,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-25",
+      "net": -0.0167
+     }
+    },
+    {
+     "sym": "NXPI",
+     "customer": "AVT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": 0.0808,
+     "net": 0.0171,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-22",
+      "net": -0.0582
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0408,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-25",
+      "net": 0.0073
+     }
+    },
+    {
+     "sym": "MRTN",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0546,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-20",
+      "net": -0.0494
+     }
+    },
+    {
+     "sym": "BGS",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.1516,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-27",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "CL",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0141,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-26",
+      "net": 0.0047
+     }
+    },
+    {
+     "sym": "PRGO",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.123,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-19",
+      "net": -0.0912
+     }
+    },
+    {
+     "sym": "HBI",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.149,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-29",
+      "net": 0.0558
+     }
+    },
+    {
+     "sym": "FRPT",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0888,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-25",
+      "net": -0.0995
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": 0.0016,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-07-10",
+      "net": 0.0528
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": 0.0423,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-25",
+      "net": -0.0884
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0101,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-07-03",
+      "net": -0.0351
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0003,
+     "avgStock": -0.0046,
+     "placebo": null
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0728,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-07-14",
+      "net": -0.035
+     }
+    },
+    {
+     "sym": "KTB",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0903,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-22",
+      "net": 0.1008
+     }
+    },
+    {
+     "sym": "KDP",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0175,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-18",
+      "net": -0.1655
+     }
+    },
+    {
+     "sym": "NWL",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.073,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-22",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "REYN",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.0774,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-07-06",
+      "net": -0.0022
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": 0.0042,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-19",
+      "net": -0.0568
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2023-08-17",
+     "buy": "2023-08-18",
+     "sell": "2023-09-15",
+     "exit": "time",
+     "react": -0.0224,
+     "net": -0.1516,
+     "avgStock": -0.0046,
+     "placebo": {
+      "d": "2023-09-22",
+      "net": 0.3542
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "NKE",
+     "signal": "2023-09-29",
+     "buy": "2023-10-02",
+     "sell": "2023-10-27",
+     "exit": "time",
+     "react": 0.0668,
+     "net": -0.051,
+     "avgStock": -0.0932,
+     "placebo": {
+      "d": "2023-07-05",
+      "net": 0.1015
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2023-11-15",
+     "buy": "2023-11-16",
+     "sell": "2023-12-14",
+     "exit": "time",
+     "react": 0.1775,
+     "net": 0.0829,
+     "avgStock": 0.0948,
+     "placebo": {
+      "d": "2023-12-15",
+      "net": 0.03
+     }
+    },
+    {
+     "sym": "KMB",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0377,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-21",
+      "net": 0.0047
+     }
+    },
+    {
+     "sym": "PBH",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0621,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-25",
+      "net": -0.0197
+     }
+    },
+    {
+     "sym": "LANC",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0224,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-26",
+      "net": -0.0854
+     }
+    },
+    {
+     "sym": "TSN",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0471,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-21",
+      "net": 0.0233
+     }
+    },
+    {
+     "sym": "CENT",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.0423,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-27",
+      "net": -0.0621
+     }
+    },
+    {
+     "sym": "EPC",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.0278,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-02",
+      "net": 0.0101
+     }
+    },
+    {
+     "sym": "POST",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.0079,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-20",
+      "net": -0.0287
+     }
+    },
+    {
+     "sym": "PEP",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0029,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-09",
+      "net": 0.0213
+     }
+    },
+    {
+     "sym": "GIS",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0295,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-17",
+      "net": -0.0136
+     }
+    },
+    {
+     "sym": "SMPL",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0082,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-16",
+      "net": -0.1609
+     }
+    },
+    {
+     "sym": "HAIN",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.1411,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-01-03",
+      "net": 0.0217
+     }
+    },
+    {
+     "sym": "REYN",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": -0.0305,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-26",
+      "net": 0.0033
+     }
+    },
+    {
+     "sym": "PG",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0086,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-20",
+      "net": -0.0376
+     }
+    },
+    {
+     "sym": "SYM",
+     "customer": "WMT",
+     "signal": "2024-02-20",
+     "buy": "2024-02-21",
+     "sell": "2024-03-19",
+     "exit": "time",
+     "react": 0.0323,
+     "net": 0.0707,
+     "avgStock": 0.0046,
+     "placebo": {
+      "d": "2024-03-27",
+      "net": -0.1313
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2024-03-05",
+     "buy": "2024-03-06",
+     "sell": "2024-04-03",
+     "exit": "time",
+     "react": 0.1202,
+     "net": 0.0146,
+     "avgStock": -0.0027,
+     "placebo": {
+      "d": "2024-01-02",
+      "net": 0.01
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "CROX",
+     "signal": "2024-05-07",
+     "buy": "2024-05-08",
+     "sell": "2024-06-05",
+     "exit": "time",
+     "react": 0.0779,
+     "net": 0.0517,
+     "avgStock": -0.0041,
+     "placebo": {
+      "d": "2024-06-18",
+      "net": 0.0374
+     }
+    },
+    {
+     "sym": "CVGW",
+     "customer": "KR",
+     "signal": "2024-06-20",
+     "buy": "2024-06-21",
+     "sell": "2024-07-19",
+     "exit": "time",
+     "react": -0.0327,
+     "net": 0.0162,
+     "avgStock": 0.0452,
+     "placebo": {
+      "d": "2024-04-05",
+      "net": 0.0885
+     }
+    },
+    {
+     "sym": "SLQT",
+     "customer": "HUM",
+     "signal": "2024-07-31",
+     "buy": "2024-08-01",
+     "sell": "2024-08-05",
+     "exit": "stop",
+     "react": -0.1061,
+     "net": -0.2313,
+     "avgStock": -0.0941,
+     "placebo": {
+      "d": "2024-07-01",
+      "net": 0.3352
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "CROX",
+     "signal": "2024-08-01",
+     "buy": "2024-08-02",
+     "sell": "2024-08-29",
+     "exit": "time",
+     "react": -0.0265,
+     "net": 0.0736,
+     "avgStock": 0.0231,
+     "placebo": {
+      "d": "2024-07-02",
+      "net": 0.16
+     }
+    },
+    {
+     "sym": "NXPI",
+     "customer": "AVT",
+     "signal": "2024-08-08",
+     "buy": "2024-08-09",
+     "sell": "2024-09-06",
+     "exit": "time",
+     "react": 0.0687,
+     "net": -0.0727,
+     "avgStock": -0.0059,
+     "placebo": {
+      "d": "2024-09-23",
+      "net": -0.027
+     }
+    },
+    {
+     "sym": "JAKK",
+     "customer": "TGT",
+     "signal": "2024-08-21",
+     "buy": "2024-08-22",
+     "sell": "2024-09-19",
+     "exit": "time",
+     "react": 0.1034,
+     "net": 0.1134,
+     "avgStock": 0.0132,
+     "placebo": null
+    },
+    {
+     "sym": "SCVL",
+     "customer": "NKE",
+     "signal": "2024-10-02",
+     "buy": "2024-10-03",
+     "sell": "2024-10-30",
+     "exit": "time",
+     "react": -0.0677,
+     "net": -0.1533,
+     "avgStock": 0.0106,
+     "placebo": null
+    },
+    {
+     "sym": "ELF",
+     "customer": "ULTA",
+     "signal": "2024-12-06",
+     "buy": "2024-12-09",
+     "sell": "2025-01-07",
+     "exit": "time",
+     "react": 0.0899,
+     "net": -0.114,
+     "avgStock": -0.0569,
+     "placebo": {
+      "d": "2024-10-02",
+      "net": 0.0353
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "NKE",
+     "signal": "2024-12-20",
+     "buy": "2024-12-23",
+     "sell": "2025-01-23",
+     "exit": "time",
+     "react": -0.0021,
+     "net": -0.1477,
+     "avgStock": 0.0284,
+     "placebo": null
+    },
+    {
+     "sym": "LFUS",
+     "customer": "ARW",
+     "signal": "2025-02-06",
+     "buy": "2025-02-07",
+     "sell": "2025-03-07",
+     "exit": "time",
+     "react": -0.0452,
+     "net": -0.0662,
+     "avgStock": -0.096,
+     "placebo": {
+      "d": "2025-03-31",
+      "net": -0.2196
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "CROX",
+     "signal": "2025-02-13",
+     "buy": "2025-02-14",
+     "sell": "2025-03-14",
+     "exit": "time",
+     "react": 0.2389,
+     "net": -0.1357,
+     "avgStock": -0.1124,
+     "placebo": {
+      "d": "2025-03-31",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2025-03-13",
+     "buy": "2025-03-14",
+     "sell": "2025-04-10",
+     "exit": "time",
+     "react": 0.0681,
+     "net": -0.0455,
+     "avgStock": -0.1076,
+     "placebo": {
+      "d": "2025-01-06",
+      "net": -0.0445
+     }
+    },
+    {
+     "sym": "NTST",
+     "customer": "DG",
+     "signal": "2025-03-13",
+     "buy": "2025-03-14",
+     "sell": "2025-04-10",
+     "exit": "time",
+     "react": 0.0681,
+     "net": 0.0027,
+     "avgStock": -0.1076,
+     "placebo": {
+      "d": "2025-01-14",
+      "net": -0.0312
+     }
+    },
+    {
+     "sym": "ELF",
+     "customer": "ULTA",
+     "signal": "2025-03-14",
+     "buy": "2025-03-17",
+     "sell": "2025-04-04",
+     "exit": "stop",
+     "react": 0.1368,
+     "net": -0.2139,
+     "avgStock": -0.122,
+     "placebo": null
+    },
+    {
+     "sym": "TGI",
+     "customer": "BA",
+     "signal": "2025-04-23",
+     "buy": "2025-04-24",
+     "sell": "2025-05-21",
+     "exit": "time",
+     "react": 0.0606,
+     "net": 0.0151,
+     "avgStock": 0.0622,
+     "placebo": {
+      "d": "2025-06-13",
+      "net": -0.0068
+     }
+    },
+    {
+     "sym": "THRM",
+     "customer": "LEA",
+     "signal": "2025-05-06",
+     "buy": "2025-05-07",
+     "sell": "2025-06-04",
+     "exit": "time",
+     "react": -0.0248,
+     "net": 0.044,
+     "avgStock": 0.05,
+     "placebo": {
+      "d": "2025-06-09",
+      "net": 0.0845
+     }
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2025-06-03",
+     "buy": "2025-06-04",
+     "sell": "2025-07-02",
+     "exit": "time",
+     "react": 0.1585,
+     "net": 0.0773,
+     "avgStock": 0.0396,
+     "placebo": null
+    },
+    {
+     "sym": "NTST",
+     "customer": "DG",
+     "signal": "2025-06-03",
+     "buy": "2025-06-04",
+     "sell": "2025-07-02",
+     "exit": "time",
+     "react": 0.1585,
+     "net": 0.0399,
+     "avgStock": 0.0396,
+     "placebo": null
+    },
+    {
+     "sym": "WMS",
+     "customer": "FERG",
+     "signal": "2025-06-03",
+     "buy": "2025-06-04",
+     "sell": "2025-07-02",
+     "exit": "time",
+     "react": 0.1723,
+     "net": 0.0586,
+     "avgStock": 0.0396,
+     "placebo": {
+      "d": "2025-04-10",
+      "net": 0.105
+     }
+    },
+    {
+     "sym": "CCRD",
+     "customer": "GS",
+     "signal": "2025-07-16",
+     "buy": "2025-07-17",
+     "sell": "2025-08-13",
+     "exit": "time",
+     "react": 0.009,
+     "net": -0.0062,
+     "avgStock": 0.0203,
+     "placebo": {
+      "d": "2025-08-26",
+      "net": -0.0069
+     }
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2025-08-28",
+     "buy": "2025-08-29",
+     "sell": "2025-09-26",
+     "exit": "time",
+     "react": 0.0046,
+     "net": -0.0971,
+     "avgStock": 0.0061,
+     "placebo": {
+      "d": "2025-09-29",
+      "net": 0.0453
+     }
+    },
+    {
+     "sym": "NTST",
+     "customer": "DG",
+     "signal": "2025-08-28",
+     "buy": "2025-08-29",
+     "sell": "2025-09-26",
+     "exit": "time",
+     "react": 0.0046,
+     "net": -0.0212,
+     "avgStock": 0.0061,
+     "placebo": null
+    },
+    {
+     "sym": "WMS",
+     "customer": "FERG",
+     "signal": "2025-09-16",
+     "buy": "2025-09-17",
+     "sell": "2025-10-14",
+     "exit": "time",
+     "react": 0.0793,
+     "net": -0.0344,
+     "avgStock": 0.0091,
+     "placebo": {
+      "d": "2025-08-15",
+      "net": 0.0184
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "NKE",
+     "signal": "2025-10-01",
+     "buy": "2025-10-02",
+     "sell": "2025-10-29",
+     "exit": "time",
+     "react": 0.0641,
+     "net": -0.1277,
+     "avgStock": -0.0154,
+     "placebo": null
+    },
+    {
+     "sym": "FEIM",
+     "customer": "NOC",
+     "signal": "2025-10-21",
+     "buy": "2025-10-22",
+     "sell": "2025-11-07",
+     "exit": "stop",
+     "react": -0.0044,
+     "net": -0.208,
+     "avgStock": -0.041,
+     "placebo": {
+      "d": "2025-12-24",
+      "net": -0.0911
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "CROX",
+     "signal": "2025-10-30",
+     "buy": "2025-10-31",
+     "sell": "2025-11-28",
+     "exit": "time",
+     "react": -0.0254,
+     "net": -0.1067,
+     "avgStock": -0.0032,
+     "placebo": null
+    },
+    {
+     "sym": "PUMP",
+     "customer": "EOG",
+     "signal": "2025-11-07",
+     "buy": "2025-11-10",
+     "sell": "2025-12-08",
+     "exit": "time",
+     "react": 0.0039,
+     "net": -0.0226,
+     "avgStock": 0.0091,
+     "placebo": {
+      "d": "2025-12-12",
+      "net": -0.0283
+     }
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2025-12-04",
+     "buy": "2025-12-05",
+     "sell": "2026-01-05",
+     "exit": "time",
+     "react": 0.1401,
+     "net": 0.1112,
+     "avgStock": -0.006,
+     "placebo": {
+      "d": "2025-10-01",
+      "net": 0.0207
+     }
+    },
+    {
+     "sym": "NTST",
+     "customer": "DG",
+     "signal": "2025-12-04",
+     "buy": "2025-12-05",
+     "sell": "2026-01-05",
+     "exit": "time",
+     "react": 0.1401,
+     "net": 0,
+     "avgStock": -0.006,
+     "placebo": {
+      "d": "2025-11-04",
+      "net": -0.0551
+     }
+    },
+    {
+     "sym": "AAOI",
+     "customer": "ORCL",
+     "signal": "2025-12-11",
+     "buy": "2025-12-12",
+     "sell": "2025-12-16",
+     "exit": "stop",
+     "react": -0.1083,
+     "net": -0.208,
+     "avgStock": -0.038,
+     "placebo": {
+      "d": "2025-10-06",
+      "net": -0.208
+     }
+    },
+    {
+     "sym": "SCVL",
+     "customer": "NKE",
+     "signal": "2025-12-19",
+     "buy": "2025-12-22",
+     "sell": "2026-01-21",
+     "exit": "time",
+     "react": -0.1054,
+     "net": 0.0437,
+     "avgStock": 0.0351,
+     "placebo": null
+    },
+    {
+     "sym": "ACA",
+     "customer": "GEV",
+     "signal": "2026-01-28",
+     "buy": "2026-01-29",
+     "sell": "2026-02-26",
+     "exit": "time",
+     "react": 0.0273,
+     "net": 0.1145,
+     "avgStock": -0.0159,
+     "placebo": {
+      "d": "2026-03-10",
+      "net": 0.0123
+     }
+    },
+    {
+     "sym": "NKTR",
+     "customer": "PFE",
+     "signal": "2026-02-03",
+     "buy": "2026-02-04",
+     "sell": "2026-03-04",
+     "exit": "time",
+     "react": -0.0334,
+     "net": 0.8419,
+     "avgStock": -0.0169,
+     "placebo": {
+      "d": "2026-03-23",
+      "net": 0.3259
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2026-03-03",
+     "buy": "2026-03-04",
+     "sell": "2026-03-31",
+     "exit": "time",
+     "react": 0.0674,
+     "net": -0.0131,
+     "avgStock": -0.0614,
+     "placebo": null
+    },
+    {
+     "sym": "WERN",
+     "customer": "DG",
+     "signal": "2026-03-12",
+     "buy": "2026-03-13",
+     "sell": "2026-04-10",
+     "exit": "time",
+     "react": -0.0614,
+     "net": 0.1428,
+     "avgStock": 0.011,
+     "placebo": {
+      "d": "2026-01-07",
+      "net": 0.1829
+     }
+    },
+    {
+     "sym": "THRM",
+     "customer": "LEA",
+     "signal": "2026-05-01",
+     "buy": "2026-05-04",
+     "sell": "2026-06-01",
+     "exit": "time",
+     "react": 0.0415,
+     "net": 0.1748,
+     "avgStock": 0.0191,
+     "placebo": {
+      "d": "2026-06-17",
+      "net": -0.0174
+     }
+    },
+    {
+     "sym": "PBF",
+     "customer": "SHEL",
+     "signal": "2026-05-08",
+     "buy": "2026-05-11",
+     "sell": "2026-06-08",
+     "exit": "time",
+     "react": -0.0032,
+     "net": 0.013,
+     "avgStock": -0.0216,
+     "placebo": {
+      "d": "2026-06-11",
+      "net": 0.4026
+     }
+    },
+    {
+     "sym": "JBSS",
+     "customer": "TGT",
+     "signal": "2026-05-20",
+     "buy": "2026-05-21",
+     "sell": "2026-06-18",
+     "exit": "time",
+     "react": -0.0386,
+     "net": 0.035,
+     "avgStock": 0.0282,
+     "placebo": {
+      "d": "2026-06-30",
+      "net": -0.0338
+     }
+    },
+    {
+     "sym": "THRM",
+     "customer": "LEA",
+     "signal": "2026-07-31",
+     "buy": "2026-08-03",
+     "sell": "2026-08-28",
+     "exit": "time",
+     "react": -0.1072,
+     "net": -0.0428,
+     "avgStock": 0.0178,
+     "placebo": {
+      "d": "2026-09-02",
+      "net": -0.1664
+     }
+    },
+    {
+     "sym": "NXPI",
+     "customer": "AVT",
+     "signal": "2026-08-05",
+     "buy": "2026-08-06",
+     "sell": "2026-09-02",
+     "exit": "time",
+     "react": 0.0507,
+     "net": -0.008,
+     "avgStock": -0.0148,
+     "placebo": {
+      "d": "2026-09-25",
+      "net": -0.0238
+     }
+    }
+   ]
+  }
+ }
 }
