@@ -1,0 +1,95 @@
+name: Squad 25 lab
+# SQUAD 25 (squad25-lab.mjs; 27 Oct 2026): "a giant newly owns a small company" (13F-HR first appearance / 13D / 13G filed by a giant).
+# SQ25-GIANTSTAKE-A/-B (+ the one fallback SQ25-GIANTWIDE-A/-B) are pre-registered in squad25-core.mjs and data/strategy-library.json before
+# any run. MODE (last line of run-squad25-now.txt): BUILD = giant CIK candidates from EDGAR (no prices, no returns) -> data/squad25-giants-build.json;
+# RUN = the one-shot 5-year test (only with the frozen giants list whose SHA-256 is in the core header), first complete verdict frozen in
+# data/squad25-lab.json firstRun; schedule = PAPER (forward lane, RECORD ONLY: no Telegram, no buy message). The price cache and Squad 4's
+# Form 3/4/5 ticker map are RESTORED READ ONLY; only squad25-cache is saved. Never places an order.
+on:
+  schedule:
+    - cron: '41 23 * * 1-5'   # weekday evenings after the close
+    - cron: '47 11 * * 1-5'   # weekday mornings before the open (after-hours filings of the evening before)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'BUILD / RUN / PAPER; empty = the last line of run-squad25-now.txt decides'
+        required: false
+        default: ''
+  push:
+    branches: [main]
+    paths: ['run-squad25-now.txt']
+permissions:
+  contents: write
+concurrency: squad25-lab
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad4-cache
+          key: squad4-cache-none
+          restore-keys: squad4-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad25-cache
+          key: squad25-cache-${{ github.run_id }}
+          restore-keys: squad25-cache-
+      - shell: bash
+        run: du -sh study-cache squad4-cache squad25-cache 2>/dev/null || true
+      - shell: bash
+        timeout-minutes: 300
+        run: |
+          set -o pipefail
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then if [ "${{ github.event_name }}" = "schedule" ]; then MODE=PAPER; else MODE=$(tail -n 1 run-squad25-now.txt | tr -dc 'A-Za-z'); fi; fi
+          export MODE; echo "mode $MODE"
+          node squad25-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          SQ25_MINUTES: '285'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: squad25-cache
+          key: squad25-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-4000 > data/squad25-run.log 2>/dev/null || true
+          FILES="data/squad25-lab.json data/squad25-paper.jsonl data/squad25-today.json data/squad25-board.json data/squad25-giants-build.json data/squad25-run.log"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 25 lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the squad 25 lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: squad25-lab-log
+          path: run.log

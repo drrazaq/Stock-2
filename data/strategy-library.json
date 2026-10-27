@@ -1677,7 +1677,7 @@
    "name": "Customer momentum (Cohen & Frazzini 2008)",
    "explain": "Buy suppliers whose customers rose most last month: customer news reaches supplier prices with a delay.",
    "status": "tested: not proven",
-   "note": "Uses value-chain layers as the customer map (today\u2019s knowledge). A real 10-K customer map is queued for the researcher.",
+   "note": "Uses value-chain layers as the customer map (today’s knowledge). A real 10-K customer map is queued for the researcher.",
    "tested": "2026-10-19"
   },
   {
@@ -12250,7 +12250,7 @@
    "id": "ANOM-13FBEST",
    "family": "Published anomalies",
    "name": "13F best ideas of active managers",
-   "explain": "For each 13F-HR (filed by the 45-day deadline) with 20-300 share positions (no options): the stock with the largest weight above its weight in the sum of all 13F filings that quarter = that manager's best idea. Formation = first session after the deadline; every liquid best-idea stock; hold 63. CUSIP -> ticker via Massive. Paper(s): Cohen, Polk & Silli (2010) Best Ideas, SSRN 1364827. Reported: managers' best ideas beat the market by ~1-2.5% a quarter. Replication: Ant\u00f3n, Cohen & Polk (2021) confirm with newer data.",
+   "explain": "For each 13F-HR (filed by the 45-day deadline) with 20-300 share positions (no options): the stock with the largest weight above its weight in the sum of all 13F filings that quarter = that manager's best idea. Formation = first session after the deadline; every liquid best-idea stock; hold 63. CUSIP -> ticker via Massive. Paper(s): Cohen, Polk & Silli (2010) Best Ideas, SSRN 1364827. Reported: managers' best ideas beat the market by ~1-2.5% a quarter. Replication: Antón, Cohen & Polk (2021) confirm with newer data.",
    "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "anomaly",
    "libraryCheck": "C-13F1 (new positions by concentrated funds: queued) is different",
@@ -30029,6 +30029,74 @@
     ],
     "note": "data/squad24-side.json; loses with 2% slippage each way in both halves"
    }
+  },
+  {
+   "id": "SQ25-GIANTSTAKE-A",
+   "family": "Squad 25 (a giant newly owns a small company)",
+   "name": "A named giant (NVIDIA, Alphabet/GV, Amazon, Microsoft, Apple, Meta, Intel, Qualcomm, Salesforce, Cisco, Oracle, Samsung, Sony, Toyota) newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
+   "agent": "squad25",
+   "kind": "buy",
+   "hold": 10,
+   "explain": "RULE (squad25-core.mjs header, exact): a giant on the frozen list data/squad25-giants.json (the owner's named giants) files an original 13F-HR whose holdings show an issuer that was not in its previous 13F (first appearance; first-ever 13F: all), or a Schedule 13D/13G on an issuer (an amendment only if it is the giant's first filing on it). Issuer mapped point in time (CUSIP via SEC fails-to-deliver files; subject CIK via Form 3/4/5 spans). At the last close before the SEC acceptance second: close >= 1 USD, market value < 10B USD, 20-day traded value >= 0.5M USD. Entry A: the next regular-session open after acceptance. Sell at the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way stress version (extra gate). Yardsticks: the average stock (1 USD+, 0.5M USD+ a day) on the same sessions; the same stock on other days; per year vs SPY.",
+   "status": "pre-registered 2026-10-27 (squad 25 lab); 5-year one-shot pending",
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/full-index/",
+    "https://www.sec.gov/Archives/edgar/daily-index/",
+    "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
+   ],
+   "libraryCheck": "SQ24-MEGADEAL (the small company's own 8-K naming a top-100 company, bought after the reaction: rejected), SQ21-CONTRACT10D, squad 1 information-edge filings (insiders, 13D activists by funds). New: the filer is the GIANT itself (13F first appearance / 13D / 13G), entry at the first realistic moment after the acceptance second.",
+   "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only)."
+  },
+  {
+   "id": "SQ25-GIANTSTAKE-B",
+   "family": "Squad 25 (a giant newly owns a small company)",
+   "name": "A named giant newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
+   "agent": "squad25",
+   "kind": "buy",
+   "hold": 10,
+   "explain": "RULE (squad25-core.mjs header, exact): a giant on the frozen list data/squad25-giants.json (the owner's named giants) files an original 13F-HR whose holdings show an issuer that was not in its previous 13F (first appearance; first-ever 13F: all), or a Schedule 13D/13G on an issuer (an amendment only if it is the giant's first filing on it). Issuer mapped point in time (CUSIP via SEC fails-to-deliver files; subject CIK via Form 3/4/5 spans). At the last close before the SEC acceptance second: close >= 1 USD, market value < 10B USD, 20-day traded value >= 0.5M USD. Entry B: the first Alpaca SIP minute bar starting 60+ seconds after acceptance (extended hours included), +2% worse fill and -2% sale when that bar is outside 09:30-16:00. Sell at the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way stress version (extra gate). Yardsticks: the average stock (1 USD+, 0.5M USD+ a day) on the same sessions; the same stock on other days; per year vs SPY.",
+   "status": "pre-registered 2026-10-27 (squad 25 lab); 5-year one-shot pending",
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/full-index/",
+    "https://www.sec.gov/Archives/edgar/daily-index/",
+    "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
+   ],
+   "libraryCheck": "SQ24-MEGADEAL (the small company's own 8-K naming a top-100 company, bought after the reaction: rejected), SQ21-CONTRACT10D, squad 1 information-edge filings (insiders, 13D activists by funds). New: the filer is the GIANT itself (13F first appearance / 13D / 13G), entry at the first realistic moment after the acceptance second.",
+   "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only)."
+  },
+  {
+   "id": "SQ25-GIANTWIDE-A",
+   "family": "Squad 25 (a giant newly owns a small company)",
+   "name": "FALLBACK: a giant (named giants + non-financial top-100 US-listed, point in time) newly shows a stake in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
+   "agent": "squad25",
+   "kind": "buy",
+   "hold": 10,
+   "explain": "RULE (squad25-core.mjs header, exact): a giant on the frozen list data/squad25-giants.json (FALLBACK wide list: named giants + non-financial top-100 US-listed companies, point in time; judged only if the base rule of the same entry version is TOO FEW CASES) files an original 13F-HR whose holdings show an issuer that was not in its previous 13F (first appearance; first-ever 13F: all), or a Schedule 13D/13G on an issuer (an amendment only if it is the giant's first filing on it). Issuer mapped point in time (CUSIP via SEC fails-to-deliver files; subject CIK via Form 3/4/5 spans). At the last close before the SEC acceptance second: close >= 1 USD, market value < 10B USD, 20-day traded value >= 0.5M USD. Entry A: the next regular-session open after acceptance. Sell at the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way stress version (extra gate). Yardsticks: the average stock (1 USD+, 0.5M USD+ a day) on the same sessions; the same stock on other days; per year vs SPY.",
+   "status": "pre-registered 2026-10-27 (squad 25 lab); 5-year one-shot pending",
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/full-index/",
+    "https://www.sec.gov/Archives/edgar/daily-index/",
+    "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
+   ],
+   "libraryCheck": "SQ24-MEGADEAL (the small company's own 8-K naming a top-100 company, bought after the reaction: rejected), SQ21-CONTRACT10D, squad 1 information-edge filings (insiders, 13D activists by funds). New: the filer is the GIANT itself (13F first appearance / 13D / 13G), entry at the first realistic moment after the acceptance second.",
+   "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only)."
+  },
+  {
+   "id": "SQ25-GIANTWIDE-B",
+   "family": "Squad 25 (a giant newly owns a small company)",
+   "name": "FALLBACK: a giant (named giants + non-financial top-100 US-listed, point in time) newly shows a stake in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
+   "agent": "squad25",
+   "kind": "buy",
+   "hold": 10,
+   "explain": "RULE (squad25-core.mjs header, exact): a giant on the frozen list data/squad25-giants.json (FALLBACK wide list: named giants + non-financial top-100 US-listed companies, point in time; judged only if the base rule of the same entry version is TOO FEW CASES) files an original 13F-HR whose holdings show an issuer that was not in its previous 13F (first appearance; first-ever 13F: all), or a Schedule 13D/13G on an issuer (an amendment only if it is the giant's first filing on it). Issuer mapped point in time (CUSIP via SEC fails-to-deliver files; subject CIK via Form 3/4/5 spans). At the last close before the SEC acceptance second: close >= 1 USD, market value < 10B USD, 20-day traded value >= 0.5M USD. Entry B: the first Alpaca SIP minute bar starting 60+ seconds after acceptance (extended hours included), +2% worse fill and -2% sale when that bar is outside 09:30-16:00. Sell at the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way stress version (extra gate). Yardsticks: the average stock (1 USD+, 0.5M USD+ a day) on the same sessions; the same stock on other days; per year vs SPY.",
+   "status": "pre-registered 2026-10-27 (squad 25 lab); 5-year one-shot pending",
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/full-index/",
+    "https://www.sec.gov/Archives/edgar/daily-index/",
+    "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
+   ],
+   "libraryCheck": "SQ24-MEGADEAL (the small company's own 8-K naming a top-100 company, bought after the reaction: rejected), SQ21-CONTRACT10D, squad 1 information-edge filings (insiders, 13D activists by funds). New: the filer is the GIANT itself (13F first appearance / 13D / 13G), entry at the first realistic moment after the acceptance second.",
+   "note": "The owner's +93% day was probably SOUN after NVIDIA's first 13F-HR (accepted 14 Feb 2024 16:12 New York). Pre-registered BEFORE any run; run ONCE by squad25-lab.mjs, first complete verdict frozen in data/squad25-lab.json firstRun; forward paper lane from 2026-10-28 (record only)."
   }
  ]
 }
