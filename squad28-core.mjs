@@ -95,7 +95,7 @@ export const TH = { custTop: 1000, linkDays: 400, searchBack: 430, minPct: 10, s
   minClose: 3, minDv: 2e6, dvSess: 20, ownBefore: 4, ownAfter: 20, hold: 20, block: 20, stop: 0.2, sample: 50, minPrecision: 0.9 };
 export const ID = 'SQ28-SUPDRIFT', VAR = 'SQ28-SUPDRIFT-ANY', IDS = [ID, VAR];
 // SHA-256 of the frozen data/squad28-links.json (set after the LINKS build, before any return; the lab refuses to run on any other file)
-export const LINKS_SHA = '';
+export const LINKS_SHA = '93ca6a0d65d2bfe0788aef2e2a8ad6897fc11a6f62532db05e4c59f625b5290d';
 const PWZ = 'Pandit, Wasley & Zach (2011) Information Externalities along the Supply Chain: The Economic Determinants of Suppliers\' Stock Price Reaction to Their Major Customers\' Earnings Announcements, Contemporary Accounting Research 28(4)';
 const CF = 'Cohen & Frazzini (2008) Economic Links and Predictable Returns, Journal of Finance 63(4)', MO = 'Menzly & Ozbas (2010) Market Segmentation and Cross-predictability of Returns, Journal of Finance 65(4)';
 export const RULES = {
