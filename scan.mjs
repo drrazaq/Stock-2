@@ -28,7 +28,15 @@ function evFams(form, items, sic, ES) { const map = (ES && ES.map && ES.map.item
 function evReact(p) { const d = p.slice(0, 10), wd = new Date(d + 'T12:00:00Z').getUTCDay(), nx = (x) => { let ms = Date.parse(x + 'T12:00:00Z'); do { ms += 864e5; } while ([0, 6].includes(new Date(ms).getUTCDay())); return new Date(ms).toISOString().slice(0, 10); };
   if (wd === 0 || wd === 6) return nx(d); return p.length >= 16 && p.slice(11, 16) >= '16:00' ? nx(d) : d; }
 // recent events on a stock that the Sunday study proved to be followed by losses (information for holders)
-function eventWarn(sym) { const ES = readJson0('data/events-study.json'), ER = readJson0('data/events-recent.json'); if (!ES || !ES.fam || !ER) return '';
+// DANGER FILINGS (Squad 29, 27 Oct 2026): late-filing notices (NT 10-K/10-Q, F4) and delisting notices (8-K 3.01, F6) passed the
+// pre-registered SELL-WARNING bar (60-session lag vs the average stock in both halves, block t <= -2.5). F6 merger closings (8-K also 2.01/5.01) are skipped.
+function dangerFlag(sym) { try { const A = (readJson0('data/squad29-lab.json') || {}).holdings, T = readJson0('data/squad29-flags-today.json') || {};
+  const fl = [...((A && A.flags) || []), ...(T.flags || [])].filter(x => x && x.sym === sym && x.verdict === 'SELL-WARNING');
+  for (const x of fl) { const age = (Date.now() - Date.parse(x.accepted || x.filed)) / 864e5; if (!(age >= 0)) continue;
+    if (x.flag === 'F4' && age <= 90) return 'late-filing notice (' + x.form + ', ' + x.filed + '): such stocks lagged the average stock by about 12-16% over the next 60 sessions in 5 years of tests (SEC: ' + x.url + ')';
+    if (x.flag === 'F6' && age <= 60 && !x.likelyMergerClose && !/2\.01|5\.01/.test(String(x.items || ''))) return 'delisting / listing-standard notice (8-K 3.01, ' + x.filed + '): such stocks lagged the average stock heavily in 5 years of tests (SEC: ' + x.url + ')'; }
+  } catch (e) {} return ''; }
+function eventWarn(sym) { { const dg = dangerFlag(sym); if (dg) return ' | DANGER FILING: ' + dg + '. Do not buy'; } const ES = readJson0('data/events-study.json'), ER = readJson0('data/events-recent.json'); if (!ES || !ES.fam || !ER) return '';
   const hits = (ER.events || []).filter(e => e.sym === sym).flatMap(e => e.f.split(',').filter(k => ES.fam[k] && ES.fam[k].warn).map(k => ({ k, d: e.p.slice(0, 10) })));
   if (!hits.length) return ''; const h = hits[0], F = ES.fam[h.k];
   return ' | NEWS WARNING ' + h.d + ': ' + F.name + '; after such filings stocks lagged other stocks by ' + Math.abs(Math.round((F.drift.newer.vs || 0) * 1000) / 10) + '% over 20 sessions (' + F.drift.newer.n + ' tested cases). Keep your stop firm'; }
@@ -171,6 +179,7 @@ async function sellCheckText(sig) { const pos = loadPos(), syms = Object.keys(po
     if (bad.has(sym)) R.push(['MUST', 'not halal on the ZAD list (from ' + ((Z && Z.effective) || 'the new list') + ')']);
     if (P.stop && px && px <= P.stop) R.push(['TESTED', 'at or under your stop ' + money(P.stop)]);
     { const es = eventSell(sym); if (es) R.push(['TESTED', es.replace(/^SELL at the next open\. /, '')]); }
+    { const dg = dangerFlag(sym); if (dg) R.push(['TESTED', dg]); }
     if (verdict === 'TAKE PROFIT OPTION') R.push(['OPTION', ((r.match(/^Why: (.+)$/m) || [])[1] || 'stretched far above its average').split('. Tested')[0] + ': selling and buying back 10% lower beat holding on 5 years of history (not yet confirmed live)']);
     if (earn) { const days = Math.round((Date.parse(earn) - Date.now()) / 864e5); if (days >= 0 && days <= 10) R.push(['INFO', 'earnings in ' + days + ' day' + (days === 1 ? '' : 's') + ' (' + earn + '): the price can jump past your stop that day']); }
     { const dl = dilutionLine(sym); if (/^DILUTION/.test(dl)) R.push(['INFO', dl.replace(/^DILUTION: /, '').split('.')[0] + ' (new shares)']); }
