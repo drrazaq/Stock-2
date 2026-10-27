@@ -3049,12 +3049,12 @@
    "family": "Crowd",
    "name": "US Congress members' stock purchases (STOCK Act reports)",
    "explain": "Each purchase in a House or Senate periodic transaction report is a call dated on its DISCLOSURE (filing) date, not the trade date; bought the next open, 20 and 60 sessions, vs the average stock and the S&P 500. Tested as a tip source (FOLLOW / FADE, tier 2 rules) and as a historical test 2021-2026 with the same gates.",
-   "status": "needs data",
+   "status": "queued (Agent C): data route found 27 Oct 2026",
    "agent": "C",
    "source": "https://www.nber.org/papers/w35041 (Capital in the Capitol, 2012-2023: after the STOCK Act legislators' portfolios trail or at best match the market); https://www.nber.org/papers/w26975",
    "data": "needs data: House Clerk financial-disclosure ZIP/XML (disclosures-clerk.house.gov, public, no login) gives filing dates and PDF links; trades are in PDFs (parsing needed). Alternative: Alpha Vantage CONGRESS_TRADES (key exists, 25 calls/day) if it returns the disclosure date.",
    "queue": "after C-ARK1 historical test",
-   "note": "WEB SCOUT 22 Oct. Published post-2012 result is no edge, so the expected outcome is NO EDGE or FADE; worth scoring because the crowd follows these trades."
+   "note": "WEB SCOUT 22 Oct. Published post-2012 result is no edge, so the expected outcome is NO EDGE or FADE; worth scoring because the crowd follows these trades. | 27 Oct 2026 (owner shared trader-skill, MIT, github.com/Jakeschincariol/trader-skill): official House Clerk source = https://disclosures-clerk.house.gov/public_disc/financial-pdfs/<YEAR>FD.zip (index: member, FilingType P = PTR, FilingDate, DocID) + PTR PDFs at /public_disc/ptr-pdfs/<YEAR>/<DocID>.pdf, read with pdftotext -layout; its parser trader-pelosi/ptr.py (MIT, may be adapted with credit). Use the FILING date (not the trade date) as the signal date: PTRs are 30-45 days late. Senate: efdsearch.senate.gov is manual only (no bulk route): House only. Pre-register before any result."
   },
   {
    "id": "C-CUST1",
@@ -8697,9 +8697,9 @@
    "family": "Ranked experts",
    "name": "Purchase by a top-10% Congress member, ranked by earlier disclosed purchases (hold 126)",
    "explain": "Each purchase on its DISCLOSURE date; member = top 10% by earlier purchases (126-session excess; min 5 resolved). Hold 126.",
-   "status": "needs data",
+   "status": "queued (Agent C): data route found 27 Oct 2026",
    "agent": "expert",
-   "note": "Overlaps C-CONG1 (needs data) and the follow lane (Congress members scored as tip sources). Evidence: Belmont et al. (J Public Econ 2022, 2012-2020) no edge. Unlock: FMP Starter senate/house trades or an Alpha Vantage premium key (the free 25 calls a day are used by follow-lane and earnings-study). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json)."
+   "note": "Overlaps C-CONG1 (needs data) and the follow lane (Congress members scored as tip sources). Evidence: Belmont et al. (J Public Econ 2022, 2012-2020) no edge. Unlock: FMP Starter senate/house trades or an Alpha Vantage premium key (the free 25 calls a day are used by follow-lane and earnings-study). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json). | 27 Oct 2026 (owner shared trader-skill, MIT, github.com/Jakeschincariol/trader-skill): official House Clerk source = https://disclosures-clerk.house.gov/public_disc/financial-pdfs/<YEAR>FD.zip (index: member, FilingType P = PTR, FilingDate, DocID) + PTR PDFs at /public_disc/ptr-pdfs/<YEAR>/<DocID>.pdf, read with pdftotext -layout; its parser trader-pelosi/ptr.py (MIT, may be adapted with credit). Use the FILING date (not the trade date) as the signal date: PTRs are 30-45 days late. Senate: efdsearch.senate.gov is manual only (no bulk route): House only. Pre-register before any result."
   },
   {
    "id": "EXP-ETORO1",
