@@ -129,3 +129,11 @@ test('giants: groups and point in time', () => {
   assert.equal(giantOn(I.get('78003'), 'wide', '2022-02-01'), true); assert.equal(giantOn(I.get('78003'), 'wide', '2021-05-01'), true, 'before the first list: the first list');
   assert.equal(giantOn(I.get('78003'), 'wide', '2024-02-01'), false, 'off the list that quarter');
 });
+
+test('SGML header form (index-headers page) and new-format 13G CUSIP', () => {
+  const s = '<HTML><!--\n<SEC-HEADER>x\n<ACCEPTANCE-DATETIME>20260428105113\n<TYPE>SCHEDULE 13G\n<SUBJECT-COMPANY>\n<COMPANY-DATA>\n<CONFORMED-NAME>SMALLCO INC\n<CIK>0001111111\n</COMPANY-DATA>\n</SUBJECT-COMPANY>\n<FILED-BY>\n<COMPANY-DATA>\n<CONFORMED-NAME>NVIDIA CORP\n<CIK>0001045810\n</COMPANY-DATA>\n</FILED-BY>\n</SEC-HEADER>';
+  const h = parseHeader(s); assert.equal(h.accept, '20260428105113'); assert.equal(h.form, 'SCHEDULE 13G'); assert.deepEqual(h.subject, ['1111111']); assert.deepEqual(h.filedBy, ['1045810']); assert.equal(h.names['1111111'], 'SMALLCO INC');
+  assert.equal(coverCusip('<coverPageHeader><issuerInfo><issuerCusips><issuerCusipNumber>67066G104</issuerCusipNumber></issuerCusips></issuerInfo>'), '67066G104');
+  assert.equal(coverCusip('CUSIP No. G6683N103 (Ordinary Shares)'), 'G6683N103');
+  assert.equal(coverCusip('CUSIP NUMBER: NONE'), null);
+});

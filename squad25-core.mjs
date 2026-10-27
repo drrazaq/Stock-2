@@ -63,7 +63,7 @@
 //   through the same rule -> data/squad25-paper.jsonl and data/squad25-today.json. RECORD ONLY: no Telegram, no buy message from this lab.
 export const COST = 0.008, STRESS = 0.012, SLIP = 0.02, EXT_SLIP = 0.02, SPLIT = '2024-01-01', PAPER_START = '2026-10-28', CAP = 3, YEAR = 252;
 // SHA-256 of data/squad25-giants.json (written after the BUILD run, which computes no returns; before the rule run)
-export const GIANTS_SHA = '';
+export const GIANTS_SHA = 'f1d4342104f4a1b0dad7b7195af4b9454354e549f71a50a3df977786963124a3';
 export const TH = { minClose: 1, maxCap: 10e9, smallCap: 2e9, minDv: 5e5, dvSess: 20, hold: 10, stop: 0.25, block: 10, shareLag: 30, shareMaxAge: 400,
   delayMs: 60000, ftdBack: 400, ftdFwd: 90 };
 export const IDS = { A: 'SQ25-GIANTSTAKE-A', B: 'SQ25-GIANTSTAKE-B', WA: 'SQ25-GIANTWIDE-A', WB: 'SQ25-GIANTWIDE-B' };
@@ -103,6 +103,11 @@ export function parseHeader(txt) { const s = String(txt || ''), end = s.search(/
   const re = /^[ \t]*(SUBJECT COMPANY|FILED BY|FILER|REPORTING-OWNER|ISSUER):/gim, marks = []; let m; while ((m = re.exec(hdr))) marks.push([m.index, m[1].toUpperCase()]);
   marks.forEach(([at, kind], j) => { const seg = hdr.slice(at, j + 1 < marks.length ? marks[j + 1][0] : hdr.length), ck = /CENTRAL INDEX KEY:\s*(\d+)/i.exec(seg), nm = /COMPANY CONFORMED NAME:\s*([^\n\r]+)/i.exec(seg); if (!ck) return;
     const c = String(+ck[1]); if (nm) out.names[c] = nm[1].trim(); const k = kind === 'SUBJECT COMPANY' ? 'subject' : kind === 'FILED BY' ? 'filedBy' : kind === 'FILER' ? 'filer' : null; if (k && !out[k].includes(c)) out[k].push(c); });
+  // the SGML form of the same header (the -index-headers.html page): <SUBJECT-COMPANY> / <FILED-BY> / <FILER> blocks with <CIK> and <CONFORMED-NAME>
+  if (!out.form) { const t = /<TYPE>([^\n\r<]+)/i.exec(hdr); if (t) out.form = t[1].trim(); }
+  if (!out.period) { const p = /<PERIOD>\s*(\d{8})/i.exec(hdr); if (p) out.period = p[1].slice(0, 4) + '-' + p[1].slice(4, 6) + '-' + p[1].slice(6); }
+  for (const [tg, k] of [['SUBJECT-COMPANY', 'subject'], ['FILED-BY', 'filedBy'], ['FILER', 'filer']]) { const re2 = new RegExp('<' + tg + '>([\\s\\S]*?)</' + tg + '>', 'gi'); let b;
+    while ((b = re2.exec(hdr))) { const ck = /<CIK>\s*(\d+)/i.exec(b[1]), nm = /<CONFORMED-NAME>\s*([^\n\r<]+)/i.exec(b[1]); if (!ck) continue; const c = String(+ck[1]); if (nm && !out.names[c]) out.names[c] = nm[1].trim(); if (!out[k].includes(c)) out[k].push(c); } }
   return out; }
 
 // ---------------- the 13F information table ----------------
@@ -125,9 +130,10 @@ export function firstAppearances(filings) { const fs = [...filings].filter(f => 
 
 // ---------------- 13D / 13G ----------------
 // the CUSIP on a Schedule 13D / 13G (structured XML from Dec 2024, or the cover page text) -> 9 (or 8) characters or null
-export function coverCusip(txt) { const s = String(txt || ''); let m = /<(?:\w+:)?(?:issuerCusip|cusipNumber|issuerCUSIP)>\s*([0-9A-Za-z]{6}[0-9A-Za-z\s]{2,4})\s*</i.exec(s);
-  if (!m) m = /CUSIP\s*(?:No\.?|Number|#)?\s*(?:\(s\))?\s*[:.\-]?\s*([0-9][0-9A-Z]{5}\s?[0-9A-Z]{2}\s?[0-9A-Z]?)\b/i.exec(s.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;/gi, ' ').slice(0, 400000));
-  if (!m) return null; const c = m[1].toUpperCase().replace(/[^0-9A-Z]/g, ''); return c.length >= 8 ? c.slice(0, 9) : null; }
+export function coverCusip(txt) { const s = String(txt || ''); let m = /<(?:\w+:)?[A-Za-z]*cusip[A-Za-z]*>\s*([0-9A-Za-z]{6}[0-9A-Za-z ]{2,4})\s*</i.exec(s);
+  if (!m) { const t = s.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;/gi, ' ').slice(0, 400000), re = /CUSIP\s*(?:No\.?|Number|#)?\s*(?:\(s\))?\s*[:.\-]?\s*([0-9A-Z]{6}\s?[0-9A-Z]{2}\s?[0-9A-Z]?)\b/gi; let x;
+    while ((x = re.exec(t))) if (/\d/.test(x[1]) && x[1].replace(/\s/g, '').length >= 8) { m = x; break; } }
+  if (!m) return null; const c = m[1].toUpperCase().replace(/[^0-9A-Z]/g, ''); return c.length >= 8 && /\d/.test(c) ? c.slice(0, 9) : null; }
 // group filings [{ adsh, form, accept, subject }] (one giant group, all CIKs) -> events: originals always; an amendment only when it is the
 // group's first filing on that subject
 export function dgEvents(filings) { const fs = [...filings].filter(f => f && f.accept && f.subject).sort((a, b) => a.accept < b.accept ? -1 : a.accept > b.accept ? 1 : 0), seen = new Set(), done = new Set(), out = [];
