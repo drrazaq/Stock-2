@@ -1,21 +1,21 @@
 {
- "generatedAt": "2026-10-24T06:45:05.648Z",
+ "generatedAt": "2026-10-27T01:06:39.802Z",
  "preRegistered": "squad9-core.mjs RULES (24 Oct 2026, before any run) + data/strategy-library.json SQ9-*",
  "window": [
   "2021-10-12",
-  "2026-10-23"
+  "2026-10-26"
  ],
- "bar": 4.02,
+ "bar": 4.07,
  "split": "2024-01-01",
  "cost": 0.008,
  "data": {
   "price": {
    "ok": true,
-   "sessions": 1264,
+   "sessions": 1265,
    "from": "2021-10-12",
-   "to": "2026-10-23",
+   "to": "2026-10-26",
    "stocks": 8600,
-   "xDays": 1255,
+   "xDays": 1256,
    "hlMissing": 0,
    "qqq": true
   },
@@ -24,39 +24,39 @@
    "everLiquid": 5065,
    "counts": {
     "SQ9-DT-3ST": {
-     "signals": 15727,
-     "trades": 15593,
-     "open": 126,
+     "signals": 15730,
+     "trades": 15601,
+     "open": 121,
      "notFilled": 8
     },
     "SQ9-DT-KST": {
-     "signals": 16383,
-     "trades": 15823,
-     "open": 555,
+     "signals": 16392,
+     "trades": 15845,
+     "open": 542,
      "notFilled": 5
     },
     "SQ9-DT-MACD": {
-     "signals": 15538,
-     "trades": 15009,
-     "open": 525,
+     "signals": 15544,
+     "trades": 15029,
+     "open": 511,
      "notFilled": 4
     },
     "SQ9-DT-WQM": {
-     "signals": 157588,
-     "trades": 156732,
-     "open": 822,
+     "signals": 157761,
+     "trades": 156922,
+     "open": 805,
      "notFilled": 34
     },
     "SQ9-DT-SSLW": {
-     "signals": 28468,
-     "trades": 27825,
-     "open": 636,
+     "signals": 28487,
+     "trades": 27845,
+     "open": 635,
      "notFilled": 7
     },
     "SQ9-DT-HDIV": {
-     "signals": 7764,
-     "trades": 7538,
-     "open": 222,
+     "signals": 7773,
+     "trades": 7550,
+     "open": 219,
      "notFilled": 4
     },
     "SQ9-TMA-3LS": {
@@ -66,27 +66,27 @@
      "notFilled": 0
     },
     "SQ9-TMA-TREND": {
-     "signals": 21574,
-     "trades": 21307,
-     "open": 262,
+     "signals": 21585,
+     "trades": 21326,
+     "open": 254,
      "notFilled": 5
     },
     "SQ9-TMA-FIB": {
-     "signals": 68559,
-     "trades": 21195,
-     "open": 346,
-     "notFilled": 47018
+     "signals": 68649,
+     "trades": 21213,
+     "open": 407,
+     "notFilled": 47029
     },
     "SQ9-QG-KALMAN": {
-     "signals": 11809,
-     "trades": 11620,
-     "open": 183,
+     "signals": 11824,
+     "trades": 11628,
+     "open": 190,
      "notFilled": 6
     }
    }
   }
  },
- "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (capped at +300% like the rule, AUD-1), better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 (blocks = the rule's max hold) -> TRADABLE SMALL; block t >= 4.02 -> PROVEN",
+ "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (capped at +300% like the rule, AUD-1), better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 (blocks = the rule's max hold) -> TRADABLE SMALL; block t >= 4.07 -> PROVEN",
  "timeframeNote": "Every channel rule was published for 1-minute to 1-hour crypto / forex charts; here they run on DAILY bars of US stocks (the replication label of each rule says how close that is). Intraday 1-minute SIP bars were not used: none of the 10 rules is a US-stock session method.",
  "research": {
   "channels": [
@@ -1623,7 +1623,7 @@
   "SPY": {
    "buyHold": {
     "older": 0.1662,
-    "newer": 0.6096,
+    "newer": 0.621,
     "note": "buy at the open of session 200 (the first session any rule can signal) / of the first 2024 session, sell at the last close of the half"
    },
    "rules": {
@@ -2142,7 +2142,7 @@
   "QQQ": {
    "buyHold": {
     "older": 0.3152,
-    "newer": 0.7357,
+    "newer": 0.7549,
     "note": "buy at the open of session 200 (the first session any rule can signal) / of the first 2024 session, sell at the last close of the half"
    },
    "rules": {
@@ -4206,7 +4206,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-24T06:45:05.648Z",
+  "at": "2026-10-27T01:06:39.803Z",
   "results": {}
  },
  "trades": {}
