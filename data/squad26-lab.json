@@ -1,0 +1,138 @@
+{
+ "generatedAt": "2026-10-27T09:57:05.819Z",
+ "squad": 26,
+ "question": "does buying in the FIRST MINUTES after a material deal filing with a top-100 company pay, after honest costs?",
+ "preRegistered": "squad26-core.mjs header (27 Oct 2026, before any run) + data/strategy-library.json SQ26-FIRSTMIN; frozen list data/squad24-megacaps.json sha256 5530f8200c39cf831750e157cedd32b4f3038b33345a802c152542e5048864da",
+ "window": [
+  "2021-10-12",
+  "2026-10-19"
+ ],
+ "events": [
+  "2021-11-15",
+  "2026-10-23"
+ ],
+ "bar": 4.07,
+ "split": "2024-01-01",
+ "cost": 0.008,
+ "data": {
+  "price": {
+   "ok": true,
+   "sessions": 1260,
+   "from": "2021-10-12",
+   "to": "2026-10-19",
+   "stocks": 8487
+  },
+  "tickerMap": {
+   "ok": true,
+   "quarters": 23,
+   "ciks": 9139
+  },
+  "megacaps": {
+   "ok": true,
+   "sha": "5530f8200c39cf831750e157cedd32b4f3038b33345a802c152542e5048864da"
+  },
+  "efts": {
+   "ok": true,
+   "fetchedNow": 12900,
+   "missing": [],
+   "filings": 30875
+  },
+  "docs": {
+   "ok": false,
+   "candidates": 9742,
+   "notRead": 7026
+  },
+  "alpaca": {
+   "ok": false,
+   "needed": 508,
+   "fetchedNow": 375,
+   "missing": 133,
+   "errors": 0,
+   "requests": 750
+  },
+  "dataOk": false
+ },
+ "eventCounts": {
+  "101": {
+   "older": 118,
+   "newer": 133
+  },
+  "801": {
+   "older": 113,
+   "newer": 148
+  }
+ },
+ "funnel": {
+  "filings": 30875,
+  "filerIsMegacap": 1299,
+  "noStock": 5857,
+  "prefilterOut": 13977,
+  "candidates": 9742,
+  "notRead": 7026,
+  "notPlain8K": 0,
+  "noAccept": 0,
+  "noCounterparty": 2204,
+  "set101": 251,
+  "set801": 261,
+  "readNow": 2716
+ },
+ "standard": "primary SQ26-FIRSTMIN only: both halves > 0 after slippage (1% regular / 3% extended each way) and 0.8% / 1.2% costs, better than the average 1-10 USD stock over the same window, better than the same stock on other days, > 0 without its 2 best, 20+ trades and 3+ blocks a half, block t >= 2.5, return per year above SPY. +300% cap (AUD-1).",
+ "firstRun": {},
+ "paired": null,
+ "latest": {
+  "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
+  "at": "2026-10-27T09:57:05.819Z",
+  "results": {
+   "SQ26-V-101-first-close": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-FIRSTMIN": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-101-first-10d": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-101-open-close": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-101-open-3d": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-101-open-10d": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-801-first-close": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-801-first-3d": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-801-first-10d": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-801-open-close": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-801-open-3d": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   },
+   "SQ26-V-801-open-10d": {
+    "verdict": "NOT RUN",
+    "why": "data not complete this run: {\"efts\":true,\"docs\":{\"ok\":false,\"candidates\":9742,\"notRead\":7026},\"alpaca\":{\"ok\":false,\"needed\":508,\"fetchedNow\":375,\"missing\":133,\"errors\":0,\"requests\":750},\"tickerMap\":true}"
+   }
+  }
+ },
+ "cases": [],
+ "events801": []
+}
