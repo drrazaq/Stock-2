@@ -113,11 +113,11 @@ log('frozen list: ' + Object.keys(MC.quarters).length + ' quarters, ' + MCALL.si
 // ================= 5. EDGAR: 8-K hits per alias and month (items 1.01, or 8.01 in an EX-99.1) =================
 const FT = { complete: true, fetched: 0, missing: [] }, HITS = new Map();
 for (const al of ALIASES) { for (const m of monthsFrom(EVENT_FROM.slice(0, 7), EVENT_TO.slice(0, 7))) { const f = SC + '/efts/' + slug(al) + '/' + m + '.json'; let h = J(f, null);
-    if (!h) { if (left() < 150 * 60e3) { FT.complete = false; if (FT.missing.length < 50) FT.missing.push(al + ' ' + m); continue; }
+    if (!h) { if (left() < 12 * 60e3) { FT.complete = false; if (FT.missing.length < 50) FT.missing.push(al + ' ' + m); continue; }
       const x = await efts(al, m === EVENT_FROM.slice(0, 7) ? EVENT_FROM : m + '-01', m === EVENT_TO.slice(0, 7) ? EVENT_TO : monthEnd(m), '&forms=8-K'); FT.fetched++;
       if (!x) { FT.complete = false; if (FT.missing.length < 50) FT.missing.push(al + ' ' + m); continue; }
       h = x.filter(z => (!z[6] || z[6] === '8-K') && ((z[4] || []).some(it => String(it).trim() === '1.01') || ((z[4] || []).some(it => String(it).trim() === '8.01') && /^EX-99\.1$/i.test(z[5] || '')))).map(z => [z[0], z[1], z[2], z[3], z[4], z[7]]); W(f, h);
-      if (FT.fetched % 500 === 0) log('alias-months fetched: ' + FT.fetched + ' (' + al + ' ' + m + ')'); }
+      if (FT.fetched % 500 === 0) { log('memory ' + Math.round(process.memoryUsage().rss / 1e6) + ' MB'); } if (FT.fetched % 500 === 0) log('alias-months fetched: ' + FT.fetched + ' (' + al + ' ' + m + ')'); }
     for (const z of h) { if (!z[1] || !z[2]) continue; const o = HITS.get(z[1]) || HITS.set(z[1], { adsh: z[1], cik: String(+z[2]), d: z[3], items: (z[4] || []).map(x => String(x).trim()), tickers: z[5] || [] }).get(z[1]); } } }
 STATUS.efts = { ok: FT.complete, fetchedNow: FT.fetched, missing: FT.missing.slice(0, 20), filings: HITS.size };
 log('full-text search: ' + HITS.size + ' filings; fetched now ' + FT.fetched + (FT.complete ? '' : ', INCOMPLETE (' + FT.missing.length + '+ missing)'));
@@ -129,7 +129,7 @@ for (const h of HITS.values()) { if (MCALL.has(h.cik)) { COUNT.filerIsMegacap++;
   let pre = false; for (const f of [s0 - 2, s0 - 1, s0]) if (f >= 0 && f < T) { const c = CA[i * T + f]; if ((c >= 0.5 && c <= 20) || (c * fac >= 0.5 && c * fac <= 20)) if (DV[i * T + f] >= 2.5e5) pre = true; }
   if (!pre) { COUNT.prefilterOut++; continue; } COUNT.candidates++; CAND.push({ ...h, sym, i }); }
 const SUBS = J(SC + '/subs.json', {});   // adsh -> { a, f, ev: { set, cik, alias, sentence, doc } | null }
-{ let read = 0; for (const e of CAND) { if (e.adsh in SUBS) continue; if (left() < 60 * 60e3) { COUNT.notRead++; continue; }
+{ let read = 0; for (const e of CAND) { if (e.adsh in SUBS) continue; if (left() < 8 * 60e3) { COUNT.notRead++; continue; }
     const txt = await sec(subUrl(e.cik, e.adsh), 'text'); if (txt === undefined || !txt) { COUNT.notRead++; continue; } const p = parseSubmission(txt);
     const cos = listOn(MC, e.d).map(String).map(COS), ev = eventOf({ items: e.items, docs: p.docs }, cos);
     SUBS[e.adsh] = { a: p.accept, f: p.form, ev: ev ? { set: ev.set, cik: ev.match.cik, alias: ev.match.alias, sentence: ev.match.sentence.slice(0, 400), doc: ev.doc } : null }; read++;
@@ -149,7 +149,7 @@ const regularAt = (ms) => isRegular(nyParts(ms), isSession);
 const nyIso = (d, hm) => etToIso(d.replace(/-/g, '') + hm.replace(':', '') + '00', nyParts);
 const AL = { needed: 0, fetchedNow: 0, missing: 0, errors: 0 };
 for (const e of EVENTS) { const p = priorSession(D, e.acc), s1 = sessionAfter(D, e.acc), k0 = openSessionAfter(D, e.acc); e.p = p; e.s1 = s1; e.k0 = k0; if (p < 25 || s1 >= T) continue; AL.needed++;
-  if (AC[e.adsh] && !AC[e.adsh].err) continue; if (left() < 25 * 60e3) { AL.missing++; continue; }
+  if (AC[e.adsh] && !AC[e.adsh].err) continue; if (left() < 4 * 60e3) { AL.missing++; continue; }
   const lastQ = Math.min(T - 1, Math.max(s1, k0) + 12), dly = await alpBars(e.sym, '1Day', addDays(D[p - 30] || D[0], 0) + 'T00:00:00Z', D[lastQ] + 'T23:59:00Z');
   const sEnd = e.acc.hm >= '15:29' && e.acc.hm < '16:00' && s1 + 1 < T ? s1 + 1 : s1, mins = await alpBars(e.sym, '1Min', new Date(e.accMs).toISOString(), nyIso(D[sEnd], '16:00'));
   AC[e.adsh] = { daily: dly.bars.map(b => [nyParts(Date.parse(b.t)).d, b.o, b.h, b.l, b.c, b.v]), mins: mins.bars.map(b => [Date.parse(b.t), b.o, b.h, b.l, b.c, b.v]), err: dly.err || mins.err || null }; AL.fetchedNow++;

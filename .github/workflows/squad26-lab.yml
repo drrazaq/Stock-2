@@ -3,10 +3,11 @@ name: Squad 26 lab
 # pre-registered in squad26-core.mjs and data/strategy-library.json before any run. One-shot: the run resumes from squad26-cache (EDGAR
 # full-text hits, submissions read, Alpaca bars) until every input is complete; the first complete verdict is frozen in
 # data/squad26-lab.json firstRun and never re-run. Triggered by a push of run-squad26-now.txt (and twice a day until frozen; it exits at
-# once when every version is frozen). The price cache and Squad 4's ticker map are RESTORED READ ONLY. Never places an order.
+# once when every version is frozen). Runs are short (80 min of work) and resume from the cache, which is saved even on failure:
+# the first 5-hour run lost its runner after 89 minutes (memory / CPU starvation) and with it the unsaved cache. The price cache and Squad 4's ticker map are RESTORED READ ONLY. Never places an order.
 on:
   schedule:
-    - cron: '17 2,14 * * *'
+    - cron: '17 */2 * * *'
   workflow_dispatch:
   push:
     branches: [main]
@@ -17,9 +18,9 @@ concurrency: squad26-lab
 jobs:
   lab:
     runs-on: ubuntu-latest
-    timeout-minutes: 340
+    timeout-minutes: 120
     env:
-      NODE_OPTIONS: --max-old-space-size=12288
+      NODE_OPTIONS: --max-old-space-size=6144
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,7 +47,7 @@ jobs:
       - shell: bash
         run: du -sh study-cache squad4-cache squad26-cache 2>/dev/null || true
       - shell: bash
-        timeout-minutes: 320
+        timeout-minutes: 95
         run: |
           set -o pipefail
           node squad26-lab.mjs 2>&1 | tee run.log
@@ -54,13 +55,13 @@ jobs:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
-          SQ26_MINUTES: '300'
-      - if: success() || failure()
+          SQ26_MINUTES: '80'
+      - if: always()
         uses: actions/cache/save@v4
         with:
           path: squad26-cache
           key: squad26-cache-${{ github.run_id }}
-      - if: success() || failure()
+      - if: always()
         shell: bash
         run: |
           git config user.name "scanner"
@@ -77,7 +78,7 @@ jobs:
           git diff --cached --quiet || git commit -m "squad 26 lab $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the squad 26 lab result"; exit 1; }
-      - if: success() || failure()
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: squad26-lab-log
