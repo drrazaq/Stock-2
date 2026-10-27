@@ -127,10 +127,17 @@ test('a corrected run replaces the frozen first run for TRY SMALL', async () => 
     'data/anomaly-today.json': { generatedAt: now, methods: { 'ANOM-X': { hold: 60, newSignals: [{ sym: 'TPC', close: 78 }] } } } } });
   assert.deepEqual(S8.fn('trySmallLines')({}, { TPC: 78 }), []);
 });
-test('ANOM-SUESURGE is paused until its corrected run exists', () => {
+// 27 Oct 2026 (account replay): a pause is hard. A correctedRun no longer lifts it; un-pausing needs an explicit owner decision.
+test('ANOM-SUESURGE stays paused even with a corrected run', () => {
   const r = { verdict: 'NOT PROVEN', results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } };
   assert.deepEqual(q({ 'ANOM-SUESURGE': r }), []);
-  assert.deepEqual(q({ 'ANOM-SUESURGE': { ...r, corrected: true } }), ['ANOM-SUESURGE']);
+  assert.deepEqual(q({ 'ANOM-SUESURGE': { ...r, corrected: true } }), []);
+});
+test('squad20 filter/exit versions of live rules are not read by TRY SMALL (27 Oct)', async () => {
+  const fs = await import('node:fs');
+  const src = fs.readFileSync(new URL('../scan.mjs', import.meta.url), 'utf8');
+  const loop = src.split('\n').find(l => l.includes("'squad18', 'squad21'") && l.includes('// (27 Oct) squad20 left out'));
+  assert.ok(loop, 'the TRY SMALL lab loop must skip squad20');
 });
 // 24 Oct: Squad 4's SQ4-GROWLEAD passed the per-trade checks but earned less per year than the S&P 500 in both halves (15.3% vs 18.9%,
 // 12.1% vs 15.8%). Holding SPUS did better, so TRY SMALL must not buy it. Rules without a per-year measure are unaffected.
