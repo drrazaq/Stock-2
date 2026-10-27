@@ -180,6 +180,7 @@ async function sellCheckText(sig) { const pos = loadPos(), syms = Object.keys(po
     if (P.stop && px && px <= P.stop) R.push(['TESTED', 'at or under your stop ' + money(P.stop)]);
     { const es = eventSell(sym); if (es) R.push(['TESTED', es.replace(/^SELL at the next open\. /, '')]); }
     { const dg = dangerFlag(sym); if (dg) R.push(['TESTED', dg]); }
+    if (P.src === 'leader dip' && P.exitFlag && P.exitFlag.d >= (P.boughtSession || P.since || '')) R.push(['TESTED', 'leader dip rule: ' + P.exitFlag.why]);   // (27 Oct) +20% target reached / time exit
     if (verdict === 'TAKE PROFIT OPTION') R.push(['OPTION', ((r.match(/^Why: (.+)$/m) || [])[1] || 'stretched far above its average').split('. Tested')[0] + ': selling and buying back 10% lower beat holding on 5 years of history (not yet confirmed live)']);
     if (earn) { const days = Math.round((Date.parse(earn) - Date.now()) / 864e5); if (days >= 0 && days <= 10) R.push(['INFO', 'earnings in ' + days + ' day' + (days === 1 ? '' : 's') + ' (' + earn + '): the price can jump past your stop that day']); }
     { const dl = dilutionLine(sym); if (/^DILUTION/.test(dl)) R.push(['INFO', dl.replace(/^DILUTION: /, '').split('.')[0] + ' (new shares)']); }
@@ -190,7 +191,7 @@ async function sellCheckText(sig) { const pos = loadPos(), syms = Object.keys(po
     const head = sym + (px ? ' ' + money(px) + ' (' + pcs(px / P.entry - 1) + ' from your ' + money(P.entry) + ')' : ''), body = R.map(([k, w]) => '   ' + k + ': ' + w);
     if (R.some(x => x[0] === 'MUST' || x[0] === 'TESTED')) { sells.push([head + ': SELL', ...body]); noteSell(sym, R.filter(x => x[0] === 'MUST' || x[0] === 'TESTED').map(x => x[1]).join('; ')); }
     else if (R.some(x => x[0] === 'OPTION')) options.push([head + ': TAKE PROFIT OPTION (your choice)', ...body]);
-    else holds.push([head + ': HOLD' + (P.stop ? ', stop ' + money(P.stop) : ', SET A STOP'), ...(body.length ? body : ['   no sell reason found: trend, filings, news, quality and size checked'])]); }
+    else holds.push([head + ': HOLD' + (P.src === 'leader dip' && !P.stop ? ', target ' + money(P.target) + ' (sell limit at your broker), time exit about ' + ldipExitDay(P.boughtSession || P.since, P.ldHold || LDIP_HOLD) + '; no stop by design' : P.stop ? ', stop ' + money(P.stop) : ', SET A STOP'), ...(body.length ? body : ['   no sell reason found: trend, filings, news, quality and size checked'])]); }
   const out = ['WHAT TO SELL AND WHY (' + syms.length + ' stocks checked: stop, halal, SEC filings, stretch, earnings, dilution, quality, your sources, news, size)', ''];
   if (sells.length) out.push('SELL', ...sells.flat(), ''); if (options.length) out.push('OPTION', ...options.flat(), ''); if (holds.length) out.push('HOLD', ...holds.flat(), '');
   out.push('MUST = your rules. TESTED = passed a 5-year test. OPTION = passed on history, live check running. INFO = a real risk, not a tested sell signal: weigh it, the stop still decides.', 'After you sell: sold SYM PRICE. Not financial advice, not a halal ruling.');
@@ -621,6 +622,7 @@ function scoreboardText() { const now = Date.now(), d7 = new Date(now - 7 * 864e
     let T2 = []; try { T2 = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const t2w = T2.filter(r => r.d >= d7); if (t2w.length) W.push('- TRADABLE SMALL instructions this week: ' + t2w.map(r => r.sym + ' (' + r.kind + ')').join(', ') + '.');
     if (W.length > 2) L.push(...W); } catch (e) {}
   try { const sd = sellDiscipline(mt); if (sd.line) L.push('', sd.line); } catch (e) {}
+  try { L.push('', ldipRecordLine()); } catch (e) {}   // (27 Oct) the LEADER DIP live record: real trades bought and sold
   try { L.push(...comebackLines()); } catch (e) {}
   return L.join('\n'); }
 // COMEBACK (25 Oct 2026, comeback-core.mjs / COMEBACK-1): rules frozen as rejected / not proven keep a forward paper record; the weekly
@@ -1146,7 +1148,7 @@ function planFor(sym, entry, sig) {   // levels for a new position, scaled from 
   return { kind: 'manual', stop: null, t1: null, t2: null };
 }
 const stopTag = (sym, P, short) => !P.stop ? (short ? ' NO STOP' : ' (NO STOP: send  stop ' + sym + ' PRICE)') : P.stopOk && P.stopOk.price === P.stop ? '' : short ? ' UNCONFIRMED' : ' (RISK UNPROTECTED until the stop is at your broker: then send  stop placed ' + sym + ')';
-const posLine = (sym, P, price) => sym + ': bought ' + money(P.entry) + (price ? ', now ' + money(price) + ' (' + (price >= P.entry ? '+' : '') + ((price / P.entry - 1) * 100).toFixed(1) + '%)' : '') + '\n  stop ' + (P.stop ? money(P.stop) : 'NOT SET') + ', target 1 ' + (P.t1 ? money(P.t1) : 'not set') + (P.t2 ? ', target 2 ' + money(P.t2) : '') + (P.ownT ? '\n  target 1 is your own' : P.t1 && P.tmode ? '\n  target tested: ' + (P.tmode === 'half' ? 'sell HALF there, the rest on the exit rule' : 'sell ALL there') + (P.tnote ? ' (' + P.tnote + ')' : '') : P.tnote ? '\n  no target: ' + P.tnote + '. Sell on the exit rule' : '') + (P.kind === 'entry' ? '\n  swing trade: ' + (P.exitBelow ? 'also sell on a daily close under ~' + money(P.exitBelow) + '; ' : '') + (P.maxHold ? 'sell after ' + P.maxHold + ' sessions at the latest' : 'no time limit') : '') + (P.kind === 'manual' ? '\n  your own pick: no tested target or time limit; the stop protects it and I check it every night' : '') + (P.kind === 'leader' ? '\n  leader trade: no fixed target. I raise the stop as it climbs; also sell on a close under its 50 day average' : '') + (P.kind === 'radar' ? '\n  early-wave trade: sell at target 1 or after 5 sessions, whichever comes first' : '') + (P.kind === 'quick' ? '\n  quick trade: also sell on the first close ' + (P.q === 'gap' ? 'below' : 'above') + ' its 5 day average, or after ' + (P.maxHold || 5) + ' sessions' : '');
+const posLine = (sym, P, price) => sym + ': bought ' + money(P.entry) + (price ? ', now ' + money(price) + ' (' + (price >= P.entry ? '+' : '') + ((price / P.entry - 1) * 100).toFixed(1) + '%)' : '') + (P.src === 'leader dip' && !P.stop ? '\n  leader dip: no stop by design, sell limit ' + money(P.target || P.entry * 1.2) : '\n  stop ' + (P.stop ? money(P.stop) : 'NOT SET') + ', target 1 ' + (P.t1 ? money(P.t1) : 'not set')) + (P.t2 ? ', target 2 ' + money(P.t2) : '') + (P.ownT ? '\n  target 1 is your own' : P.t1 && P.tmode ? '\n  target tested: ' + (P.tmode === 'half' ? 'sell HALF there, the rest on the exit rule' : 'sell ALL there') + (P.tnote ? ' (' + P.tnote + ')' : '') : P.tnote ? '\n  no target: ' + P.tnote + '. Sell on the exit rule' : '') + (P.kind === 'entry' ? '\n  swing trade: ' + (P.exitBelow ? 'also sell on a daily close under ~' + money(P.exitBelow) + '; ' : '') + (P.maxHold ? 'sell after ' + P.maxHold + ' sessions at the latest' : 'no time limit') : '') + (P.kind === 'manual' ? '\n  your own pick: no tested target or time limit; the stop protects it and I check it every night' : '') + (P.kind === 'leader' ? '\n  leader trade: no fixed target. I raise the stop as it climbs; also sell on a close under its 50 day average' : '') + (P.kind === 'radar' ? '\n  early-wave trade: sell at target 1 or after 5 sessions, whichever comes first' : '') + (P.kind === 'quick' ? '\n  quick trade: also sell on the first close ' + (P.q === 'gap' ? 'below' : 'above') + ' its 5 day average, or after ' + (P.maxHold || 5) + ' sessions' : '');
 // "today": the short-trade list. Only setups that passed the tests at the last close, re-priced now.
 // ---- YOUR REAL RECORD: every sale you report, split by the kind of trade, so paper and real results can be compared.
 const MY_TRADES = 'data/my-trades.jsonl';
@@ -2252,11 +2254,20 @@ async function holdingsText(sig, pos, title, raw) {
     const ew = eventWarn(sym), tail = (earn ? ' | EARNINGS ' + earn + ': decide before' : '') + ew;
     // TWO PRICES (user, 20 Oct): the profit line (30% above the 50-day: the tested SWITCH sell, then buy back 10% lower) and the loss line
     // (a close under the 50-day for trend trades, else the stop). Shown on every HOLD line so "when to sell" never needs decoding.
-    let two = ''; try { const dd = await loadDaily(sym), cc = dd && dd.candles; if (cc && cc.length >= 31) { CL[sym] = cc.map(x => x.c); if (sh > 0 && px) DL[sym] = sh * px; } if (cc && cc.length >= 50) { const m50 = cc.slice(-50).reduce((q, x) => q + x.c, 0) / 50, RBt = readJson0('data/rebuy.json'), sw = RBt && RBt.status === 'OK' && swWins(RBt.results['STRETCH/LOWER10']);
+    let two = '', ldFl = null; try { const dd = await loadDaily(sym), cc = dd && dd.candles; if (P.src === 'leader dip' && cc && cc.length) ldFl = ldipCloseFlags(P, cc).fl; if (cc && cc.length >= 31) { CL[sym] = cc.map(x => x.c); if (sh > 0 && px) DL[sym] = sh * px; } if (cc && cc.length >= 50) { const m50 = cc.slice(-50).reduce((q, x) => q + x.c, 0) / 50, RBt = readJson0('data/rebuy.json'), sw = RBt && RBt.status === 'OK' && swWins(RBt.results['STRETCH/LOWER10']);
       const lossLine = lossLineFor(P, px, m50);
       two = (sw ? ' SELL WITH PROFIT at ' + money(m50 * 1.3) + ' (then buy back ~' + money(m50 * 1.3 * 0.9) + ')' : '') + (lossLine ? ' | SELL if it closes under ' + money(lossLine) : '') + (P.t1 && P.ownT ? ' | your target ' + money(P.t1) : ''); } } catch (e) {}
     // A trade the system chose follows ITS OWN tested exit and stop. The general hold-or-sell study (trend under the averages)
     // is for your own picks only: a dip-buy is below its short averages by design, so "trend broken" would contradict the buy.
+    // LEADER DIP (27 Oct): its own exits only (the +20% sell limit and the 126-session time exit), plus the SELL reasons of any holding
+    // (not halal in ZAD, a danger / tested warning filing). No stop by design, so never a 'set a stop' line.
+    if (P.src === 'leader dip') {
+      const Zh = readJson0('data/zad-list.json'), xf = P.exitFlag && P.exitFlag.d >= (P.boughtSession || P.since || '') ? P.exitFlag.why : null;
+      const why = [...(ldFl || (xf ? [xf] : [])), myHalal(sym) === 'fail' || (Zh && (Zh.notHalal || []).includes(sym)) ? 'NOT HALAL (ZAD): SELL' : '', (() => { try { const d0 = dangerFlag(sym); return d0 ? 'DANGER FILING: ' + d0 : eventSell(sym); } catch (e) { return ''; } })()].filter(Boolean);
+      if (why.length) { mark(sym, 'SELL ALL', why[0]); acts.sell.push(sym + chg + ': SELL ALL. ' + why.map(w => w.replace(/\.\s*$/, '')).join(' | ') + ' (leader dip rule).' + tail); continue; }
+      const tx = 'target ' + money(P.target) + ' (sell limit at your broker), time exit about ' + ldipExitDay(P.boughtSession || P.since, P.ldHold || LDIP_HOLD);
+      mark(sym, 'HOLD', 'leader dip rule'); acts.hold.push(sym + chg + ': HOLD, ' + tx + '. No stop by design (tested without one).' + tail);
+      (acts.holdShort = acts.holdShort || []).push(sym + chg + ': ' + tx + (earn ? ' EARNINGS ' + earn : '') + (ew ? ' NEWS WARNING' : '')); continue; }
     if (['quick', 'entry', 'radar', 'leader'].includes(P.kind) || P.src === 'try small') {
       const stopHit = P.stop && px && px <= P.stop, xf = P.exitFlag && (!P.since || P.exitFlag.d >= P.since) ? P.exitFlag.why : null;
       if (stopHit || xf) { mark(sym, 'SELL ALL', stopHit ? 'stop reached' : 'its tested exit'); acts.sell.push(sym + chg + ': SELL ALL. ' + (stopHit ? 'the stop ' + money(P.stop) + ' is reached' : xf.replace(/^[A-Z -]+: /, '').toLowerCase().replace(/\.$/, '')) + ' (its own tested exit).' + tail); continue; }
@@ -2369,7 +2380,8 @@ function trySmallLines(pos, lastPx, exclude, session) {
   const DC = readJson0('data/decoded-check.json'), failsBudget = (id) => !!(DC && DC.budget && new RegExp('\\b' + id + '\\b').test(DC.label || '') && tryQualifies({ x: { results: DC.budget } }).length === 0);   // DEC2-TPS: proven per dollar invested, loses per dollar planned
   if (DH && fresh(DT) && DT.methods && sigFresh(DT.lastClose, DT.generatedAt)) for (const id of tryQualifies(labRuns(DH)).filter(i => !failsBudget(i))) { const M = DT.methods[id]; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.close }, DT.lastClose, DT.generatedAt) })), stopPct: 0.35, hold: 126, what: id === 'DEC-FROG' ? 'frog in the pan: a 12-month winner that climbed steadily' : 'decoded trader method' }); }
   for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4', 'squad6', 'squad7', 'squad8', 'squad9', 'squad11', 'squad12', 'squad13', 'squad14', 'squad16', 'squad18', 'squad21', 'squad22', 'squad24', 'squad25', 'squad26', 'squad28', 'comeback']) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json');   // (27 Oct) squad20 left out: its AV/XH/XA rules are filter/exit versions of the live rules (the same trades again, and a SUESURGE copy got around its pause). standard labs (23-24 Oct): same standard, each rule's own hold
-    if (AL && fresh(AT) && AT.methods) { const runs = labRuns(AL); for (const id of tryQualifies(runs)) { if (lab === 'comeback' && src.some(x => x.id === id)) continue; const M = AT.methods[id], hold = +((runs[id] || {}).hold || (M && M.hold) || 63), sd = AT.lastClose || null; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.filter(p => p && sigFresh(sd || p.d, AT.generatedAt)).map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.close }, sd || p.d, AT.generatedAt) })), stopPct: hold > 100 ? 0.35 : 0.15, hold, what: M.name || 'published market pattern' }); } } }
+    if (AL && fresh(AT) && AT.methods) { const runs = labRuns(AL); for (const id of tryQualifies(runs)) { if (lab === 'comeback' && src.some(x => x.id === id)) continue; if (id === LDIP_RULE) continue;   // (27 Oct) SQ11-PB12 is the LEADER DIP lane now: never shown twice
+      const M = AT.methods[id], hold = +((runs[id] || {}).hold || (M && M.hold) || 63), sd = AT.lastClose || null; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.filter(p => p && sigFresh(sd || p.d, AT.generatedAt)).map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.close }, sd || p.d, AT.generatedAt) })), stopPct: hold > 100 ? 0.35 : 0.15, hold, what: M.name || 'published market pattern' }); } } }
   if (!src.length) return later.length ? ['TRY SMALL: no buy today (a pick is bought only within 5 sessions of its formation, as tested). Next ' + later.join(', ') + '.'] : [];
   const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);   // exclude: already a BUY elsewhere in this message
   let slots = TRY_MAX - Object.values(pos || {}).filter(P => P && P.src === 'try small').length; const buys = [], mark = [];
@@ -2387,6 +2399,62 @@ function trySmallLines(pos, lastPx, exclude, session) {
   if (mark.length) out.push('MARK HALAL FIRST (picks of this lane, no ZAD mark of yours yet): ' + mark.slice(0, 6).join(', ') + '. Check ZAD, send  halal SYM yes  and they can be bought next time.');
   return out;
 }
+// LEADER DIP (owner's decision 27 Oct 2026: "a real trading lane", 3,000 USD pot). Rule SQ11-PB12 with a +20% sell limit, exactly as tested
+// (A-TGT-TGT20-PB12 in data/agent-a-tgt-lab.json; 3-slot account in data/account-replay-pb12t20.json): a top-300 leader's FIRST close 12%
+// under its 50-day high, still above its 200-day; buy at the next open; a sell limit at entry x 1.20, else sell at the close of session 126.
+// NO stop (it was tested without one). Tested: 73% / 75% of trades won; as a 3 x 1,000 USD account about equal to SPY (2024-26 +19.6% a
+// year vs SPY +18.6%, SPUS +22%); worst trade -55.6%. Source: data/squad11-today.json methods['SQ11-PB12'].newSignals, fresh lists only.
+// Max 3 open (P.src === 'leader dip'), 1,000 USD each, picks in list order. On by default; settings.leaderDip = false shows PAPER lines.
+// Offers and finished trades go to data/leaderdip-ledger.jsonl; new buys switch off when 10+ finished REAL trades average below 0.
+const LDIP_USD = 1000, LDIP_MAX = 3, LDIP_RULE = 'SQ11-PB12', LDIP_TGT = 0.20, LDIP_HOLD = 126, LDIP_FILE = 'data/leaderdip-ledger.jsonl';
+const LDIP_REAL = () => (readJson0('data/settings.json') || {}).leaderDip !== false;
+const LDIP_WHAT = 'Rule: leader dip (a top-300 company 12% off its high, still in its uptrend). Tested: 3 of 4 trades won; as an account about equal to SPY; some losers fell 20–55%.';
+function ldipRows() { try { return fs.readFileSync(LDIP_FILE, 'utf8').trim().split('\n').filter(Boolean).map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(Boolean); } catch (e) { return []; } }
+function ldipAppend(row) { try { fs.appendFileSync(LDIP_FILE, JSON.stringify(row) + '\n'); } catch (e) {} }
+// one offer row per stock per day (the date, price and rule that were shown)
+function ldipOfferLog(sym, px, session, real) { const d = ny(Date.now()).d; if (ldipRows().some(r => r.kind === 'offer' && r.sym === sym && r.d === d)) return;
+  ldipAppend({ d, sym, kind: 'offer', rule: LDIP_RULE, px: px > 0 ? +px : null, session: session || null, target: LDIP_TGT, hold: LDIP_HOLD, real: !!real, shownAt: new Date().toISOString() }); }
+// the LEADER DIP pick shown for this stock in the last 10 sessions (used by 'bought SYM PRICE')
+function ldipHit(sym) { const today = ny(Date.now()).d, a = ldipRows().filter(r => r.kind === 'offer' && r.sym === sym && r.d && sessionsAfter(String(r.d).slice(0, 10), today) <= 10); return a.length ? a[a.length - 1] : null; }
+// finished trades the owner actually bought and sold (kind 'result', written by 'sold SYM PRICE')
+const ldipResults = () => ldipRows().filter(r => r.kind === 'result' && typeof r.pct === 'number');
+function ldipOff() { const a = ldipResults(); return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; }
+function ldipRecordLine() { const a = ldipResults(); if (!a.length) return 'LEADER DIP record: no finished trade yet.';
+  return 'LEADER DIP record: ' + a.length + ' finished, ' + a.filter(r => r.pct > 0).length + ' won, average ' + pcs(a.reduce((x, r) => x + r.pct, 0) / a.length) + ' after costs' + (a.length >= 10 && ldipOff() ? ' (below 0 after 10+: new buys are OFF)' : '') + '.'; }
+// the time-exit day: the close of session 126 counting the buy day
+const ldipExitDay = (buyDay, hold = LDIP_HOLD) => sessionPlus(buyDay, hold - 1);
+// a new-signal list is valid for the next open only (same rule as TRY SMALL): its close must be the newest session the scan knows
+function ldipFresh(d, gen, session) { return d ? (session ? String(d) >= String(session) : true) && sessionsAfter(String(d).slice(0, 10), ny(Date.now()).d) <= 5 : !!gen && sessionsAfter(new Date(Date.parse(gen) - 864e5).toISOString().slice(0, 10), ny(Date.now()).d) <= 5; }
+function ldipLines(pos, lastPx, exclude, session) {
+  const T = readJson0('data/squad11-today.json'), M = T && T.methods && T.methods[LDIP_RULE];
+  if (!M || !Array.isArray(M.newSignals) || !(Date.now() - Date.parse(T.generatedAt || 0) <= 10 * 864e5)) return [];
+  const sd = T.lastClose || null, picks = M.newSignals.filter(p => p && p.sym && ldipFresh(sd || p.d, T.generatedAt, session));
+  if (!picks.length) return [];
+  if (ldipOff()) { const a = ldipResults(); return ['LEADER DIP: new buys are OFF. Its ' + a.length + ' finished trades average ' + pcs(a.reduce((x, r) => x + r.pct, 0) / a.length) + ' (below 0). Open positions keep their sell limit and time exit.']; }
+  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);
+  const open = Object.values(pos || {}).filter(P => P && P.src === 'leader dip').length; let slots = LDIP_MAX - open; const buys = [], mark = [], full = [];
+  for (const p of picks) { if (held.has(p.sym) || bad.has(p.sym) || buys.some(b => b.sym === p.sym)) continue; const h = myHalal(p.sym); if (h === 'fail') continue;
+    let ew = ''; try { ew = eventWarn(p.sym) || dangerFlag(p.sym); } catch (e) {} if (ew) continue;
+    if (h !== 'ok') { if (!mark.includes(p.sym)) mark.push(p.sym); continue; }
+    if (slots <= 0) { full.push(p.sym); continue; } slots--;
+    const px = (lastPx && lastPx[p.sym] > 0) ? lastPx[p.sym] : (p.close > 0 ? p.close : null); buys.push({ sym: p.sym, px }); }
+  if (!buys.length && !mark.length && !full.length) return [];
+  const exitDay = ldipExitDay(sessionPlus(sd || session || ny(Date.now()).d, 1)), real = LDIP_REAL();
+  for (const b of buys) ldipOfferLog(b.sym, b.px, sd || session, real);
+  const out = [];
+  if (!real) { out.push('LEADER DIP: PAPER ONLY (switched off with settings.leaderDip = false; not a buy. These picks are recorded to build the live paper record):');
+    for (const b of buys) out.push('- PAPER ' + b.sym + (b.px ? ' at about ' + money(b.px) + ', sell limit ' + money(b.px * (1 + LDIP_TGT)) : ', sell limit +20%') + ', or sell after ' + LDIP_HOLD + ' sessions (about ' + exitDay + '). Rule leader dip (' + LDIP_RULE + ').'); }
+  else { out.push('LEADER DIP (your trading lane, 27 Oct: 3 slots of 1,000 USD, sell at +20%)');
+    for (const b of buys) out.push('- BUY ' + b.sym + ' 1,000 USD at the open (' + (b.px ? 'up to ' + money(b.px * 1.03) : 'no recent price here: check the live price first') + '). Right after you buy, put a SELL LIMIT at your buy price +20% (good-till-cancelled) in ZAD. No stop: this rule was tested without one. If it has not sold by about ' + exitDay + ' (6 months, 126 sessions), sell; the bot reminds you. ' + LDIP_WHAT + ' Then send  bought ' + b.sym + ' PRICE .'); }
+  if (full.length) out.push('LEADER DIP: all ' + LDIP_MAX + ' slots are in use, so no buy of ' + full.join(', ') + ' (the rule takes no late entries).');
+  if (mark.length) out.push('MARK HALAL FIRST (leader dip picks, no ZAD mark of yours yet): ' + mark.slice(0, 6).join(', ') + '. Check ZAD, send  halal SYM yes  and they can be bought next time.');
+  return out;
+}
+// the two LEADER DIP exits at a daily close: a day's HIGH at or above the +20% target since the buy, and the time exit
+function ldipCloseFlags(P, c) { const since = P.boughtSession || P.since, held = c.filter(k => k.d > since).length, fl = [], i = c.length - 1, h = P.ldHold || LDIP_HOLD; if (i < 0) return { held, fl };
+  if (P.target > 0 && c.some(k => k.d >= since && k.h >= P.target)) fl.push('TARGET +20% REACHED: if your sell limit did not fill, SELL at the next open (target ' + money(P.target) + ').');
+  if (held + 1 >= h) fl.push('TIME EXIT: SELL at the next open (' + h + ' sessions are up, counting your buy day).');
+  return { held, fl }; }
 // ACTIONS: the ONE message to act on. Sells first, then buys (strongest first, with amount, range and stop), then one line of
 // holds and the goal. Everything else the system sends is information. Send  details  for the full cards, or  review SYM .
 async function actionsText(sig, pos, px, title) {
@@ -2423,6 +2491,8 @@ async function actionsText(sig, pos, px, title) {
         ...picks.map(x => (tier2Log(x.sym, 'longer hold', last[x.sym]), x)).map(x => '- BUY ' + x.sym + (last[x.sym] ? ' up to ' + money(last[x.sym] * 1.02) + ' (2% above the last close)' : ' at the next open') + ', F-score ' + x.fs + '/9. STOP 25% under your buy at your broker. SELL when it is 30%+ above its 50-day average (the bot tells you; buy back 10% lower), or TRIM when it passes 15% of your money. Review at 6 months. Check ZAD first; send  bought ' + x.sym + ' PRICE .'),
         'Why these: in the 5-year test this rule made +9.7% in 6 months vs the S&P 500 +7.6% in 2024-26, but +5.8% vs +9.1% in 2021-23. It beat the average stock in both. The league scores these same picks monthly.'); } }
   { try { const lp = {}; for (const x of [...((sig && sig.stocks) || []), ...((sig && sig.uni) || [])]) if (x.last > 0 && !lp[x.sym]) lp[x.sym] = x.last;   // (audit 24 Oct) sig.uni too: value picks are rarely in sig.stocks
+      { const ex0 = new Set([...(out.join('\n') + '\n' + (FOCUS && !working ? '' : buyPart)).matchAll(/\bBUY ([A-Z][A-Z.\-]{0,7})\b/g)].map(m => m[1]));   // LEADER DIP (27 Oct): the owner's real lane, before TRY SMALL
+        try { const ld = ldipLines(pos, lp, ex0, sig && sig.session); if (ld.length) out.push('', ...ld); } catch (e) {} }
       const ex = new Set([...(out.join('\n') + '\n' + (FOCUS && !working ? '' : buyPart)).matchAll(/\bBUY ([A-Z][A-Z.\-]{0,7})\b/g)].map(m => m[1]));   // never a 2nd buy of a stock already a BUY in this message
       const tl = trySmallLines(pos, lp, ex, sig && sig.session); if (tl.length) out.push('', ...tl); } catch (e) {} }   // TRY SMALL (23 Oct)
   { const cl = catalystLines(sig, pos); if (cl.length) out.push('', ...cl); }   // CATALYST RUN-UP: only when a catalyst rule reached tier 2 or proven (23 Oct)
@@ -2885,9 +2955,13 @@ function basketRebalanceText(ch, P, buy) { const pc = (x) => (x * 100).toFixed(1
     'Old holdings are never sold (no extra commissions): keep what you have; only the next Basket 1 buy uses the new percentages.',
     'Send  basket  for this month, or  basket buy AMOUNT  on the buy day.'].join('\n'); }
 // what is due now (pure): { msgs, state } ; first sight of a formation (or an old top-20 one) = the baseline, stored without a message
-function basketDue(now, S0, T10, T17, marks) { const S = { ...(S0 || {}) }, msgs = [], n = ny(now), f = basketFormation(T10);
-  if (f) { if (!S.formation || S.formation.id !== BASKET_ID) S.formation = f; else { const ch = basketChange(S.formation, f); if (ch) { ch.wOld = S.formation.w; ch.wNew = f.w; msgs.push(basketRebalanceText(ch, basketPlan(basketSource(T10, T17), marks || {}, 1000), basketNextBuy(n.d))); S.formation = f; S.rebalanceSent = n.d; } else if (S.formation.review !== f.review) S.formation = f; } }
-  const ym = n.d.slice(0, 7); if (firstSessionOfMonth(n.d) && n.mins >= 570 && S.monthly !== ym) { msgs.push(BASKET_MONTHLY + (B1_MONTHS.includes(+n.d.slice(5, 7)) ? '\n' + BASKET_BUYDAY : '')); S.monthly = ym; }
+// (27 Oct 2026, owner: "no basket, I will buy SPUS and IAUM") Basket 1 (the halal top 10) reminders are OFF by default: no Basket 1 buy-day
+// line and no new-list (rebalance) notice unless settings.basket1 === true. The list is still followed silently, so turning it back on does
+// not send an old change. The Basket 2 monthly reminder (SPUS 54% + IAUM 46%) is unchanged. No code removed; only gated.
+const B1_ON = () => (readJson0('data/settings.json') || {}).basket1 === true;
+function basketDue(now, S0, T10, T17, marks, b1 = B1_ON()) { const S = { ...(S0 || {}) }, msgs = [], n = ny(now), f = basketFormation(T10);
+  if (f) { if (!S.formation || S.formation.id !== BASKET_ID) S.formation = f; else { const ch = basketChange(S.formation, f); if (ch && !b1) S.formation = f; else if (ch) { ch.wOld = S.formation.w; ch.wNew = f.w; msgs.push(basketRebalanceText(ch, basketPlan(basketSource(T10, T17), marks || {}, 1000), basketNextBuy(n.d))); S.formation = f; S.rebalanceSent = n.d; } else if (S.formation.review !== f.review) S.formation = f; } }
+  const ym = n.d.slice(0, 7); if (firstSessionOfMonth(n.d) && n.mins >= 570 && S.monthly !== ym) { msgs.push(BASKET_MONTHLY + (b1 && B1_MONTHS.includes(+n.d.slice(5, 7)) ? '\n' + BASKET_BUYDAY : '')); S.monthly = ym; }
   return { msgs, state: S }; }
 // run by the bot's full check every 5 minutes (intraday(true)); an action reminder, so it is sent in quiet mode too
 async function basketNotices(now = Date.now()) { try {
@@ -3045,11 +3119,15 @@ async function tgCommands(sig) {
       if (!entry) { const j = await liveQ((sym)); entry = +j.price || null; }
       if (!entry) { out.push(sym + ': I could not get a price. Send it with the price, for example: bought ' + sym + ' 12.50'); continue; }
       const P = { entry, since: ny(Date.now()).d, ...planFor(sym, entry, sig) }; { const md = moodOf(text); if (md) P.mood = md; }
-      { const Qh = readJson0('data/quality.json'); if (((Qh && Qh.fscoreUpToday) || []).some(x => x.sym === sym)) P.src = 'longer hold'; }   // counts toward the 3 open LONGER HOLDS
+      // LEADER DIP (27 Oct): a pick of the owner's real lane shown in the last 10 sessions. First, so it wins over TRY SMALL (PB12 is also a
+      // TRY SMALL rule) and over any plan from tonight's lists: its own exits only, a +20% sell limit and a 126-session time exit, NO stop.
+      { const lh = ldipHit(sym); if (lh) { for (const f of ['stop', 't1', 't2', 'tmode', 'tnote', 'maxHold', 'exitBelow', 'exitMA', 'key', 'q']) delete P[f];
+        Object.assign(P, { kind: 'leader dip', src: 'leader dip', target: +(entry * (1 + LDIP_TGT)).toFixed(2), ldHold: LDIP_HOLD, boughtSession: ny(Date.now()).d, own: true, stopWhy: 'no stop by design (tested without one)' }); } }
+      if (!P.src) { const Qh = readJson0('data/quality.json'); if (((Qh && Qh.fscoreUpToday) || []).some(x => x.sym === sym)) P.src = 'longer hold'; }   // counts toward the 3 open LONGER HOLDS
       if (!P.src) { const tl = tryLedgerHit(sym); if (tl && tl.hold > 0) { const sp = tl.stopPct > 0 ? tl.stopPct : (tl.hold > 100 ? 0.35 : 0.15); P.src = 'try small'; P.stop = +(entry * (1 - sp)).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, ' + Math.round(sp * 100) + '% under your buy (fixed, never moved by the bot)'; P.tryHold = tl.hold || 63; } }   // (audit 24 Oct) the buy as it was SHOWN, even if the lab's file changed since
       if (!P.src) { const VT = readJson0('data/value-today.json'), VL = readJson0('data/value-lab.json'), q = VL ? tryQualifies(labRuns(VL)) : [];   // TRY SMALL buy: its own 15% stop and ~3-month exit
         if (VT && VT.rules && q.some(id => ((VT.rules[id.replace(/_\w+$/, '')] || {}).picks || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.85).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, 15% under your buy (fixed, never moved by the bot)'; P.tryHold = 63; } 
-        for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4', 'squad6', 'squad7', 'squad8', 'squad9', 'squad11', 'squad12', 'squad13', 'squad14', 'squad16', 'squad18', 'squad20', 'squad21', 'squad22', 'squad24', 'squad25', 'squad26', 'squad28', 'comeback']) if (!P.src) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json'), aq = AL ? tryQualifies(labRuns(AL)) : [], hit = AT && AT.methods ? aq.find(id => ((AT.methods[id] || {}).newSignals || []).some(x => x.sym === sym)) : null;
+        for (const lab of ['anomaly', 'expert', 'confluence', 'ml', 'angles', 'macro', 'tipster', 'research', 'squad1', 'squad2', 'squad3', 'squad4', 'squad6', 'squad7', 'squad8', 'squad9', 'squad11', 'squad12', 'squad13', 'squad14', 'squad16', 'squad18', 'squad20', 'squad21', 'squad22', 'squad24', 'squad25', 'squad26', 'squad28', 'comeback']) if (!P.src) { const AL = readJson0('data/' + lab + '-lab.json'), AT = readJson0('data/' + lab + '-today.json'), aq = AL ? tryQualifies(labRuns(AL)) : [], hit = AT && AT.methods ? aq.find(id => id !== LDIP_RULE && ((AT.methods[id] || {}).newSignals || []).some(x => x.sym === sym)) : null;
           if (hit) { const hold = +((labRuns(AL)[hit] || {}).hold || 63), sp = hold > 100 ? 0.35 : 0.15; P.src = 'try small'; P.stop = +(entry * (1 - sp)).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, ' + Math.round(sp * 100) + '% under your buy (fixed, never moved by the bot)'; P.tryHold = hold; } }
         if (!P.src) { const DH = readJson0('data/decoded-history.json'), DT = readJson0('data/decoded-today.json'), dq = DH ? tryQualifies(labRuns(DH)) : [];
           if (DT && DT.methods && dq.some(id => ((DT.methods[id] || {}).newSignals || []).some(x => x.sym === sym))) { P.src = 'try small'; P.stop = +(entry * 0.65).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop for a 6-month hold, 35% under your buy (fixed, never moved by the bot)'; P.tryHold = 126; } } }
@@ -3069,7 +3147,8 @@ async function tgCommands(sig) {
       pos[sym] = P;
       if (shares > 0) { const pv = privRead(); pv.buys = (pv.buys || []).concat({ sym, usd: +(shares * entry).toFixed(2), d: ny(Date.now()).d }).slice(-50); pv.shares = pv.shares || {}; pv.shares[sym] = shares;
         const saved = privWrite(pv); out.push('Noted ' + shares + ' shares, about ' + money(shares * entry) + ' USD' + (P.stop ? '; at the stop this position would lose about ' + money(shares * (entry - P.stop)) + ' USD' : '') + '. ' + (saved ? 'Kept encrypted (only your PRIVATE_KEY secret can read it); I learn your usual buy size from it.' : 'Not stored: add the GitHub secret PRIVATE_KEY (any long password) and I will keep share counts encrypted and learn your usual buy size.')); }
-      out.push('Tracking ' + posLine(sym, P) + (P.stopWhy ? '\n  Suggested stop ' + money(P.stop) + ': ' + P.stopWhy + ' To change it: stop ' + sym + ' <price>' : P.kind === 'manual' && !P.stop ? '\n  I could not load enough price history to suggest a stop. Send: stop ' + sym + ' <price>' : '') + '\n  I check your positions about every 15 minutes in market hours. Place the stop with your broker too: my alerts can be late.');
+      if (P.src === 'leader dip' && !P.stop) out.push('Tracking ' + sym + ' as LEADER DIP: bought ' + money(entry) + '. Put a SELL LIMIT at ' + money(P.target) + ' (your buy +20%, good-till-cancelled) in ZAD now. No stop by design (tested without one). Time exit about ' + ldipExitDay(P.boughtSession, P.ldHold) + ' (126 sessions); the bot reminds you.');
+      else out.push('Tracking ' + posLine(sym, P) + (P.stopWhy ? '\n  Suggested stop ' + money(P.stop) + ': ' + P.stopWhy + ' To change it: stop ' + sym + ' <price>' : P.kind === 'manual' && !P.stop ? '\n  I could not load enough price history to suggest a stop. Send: stop ' + sym + ' <price>' : '') + '\n  I check your positions about every 15 minutes in market hours. Place the stop with your broker too: my alerts can be late.');
       if (P.kind === 'manual') { try { out.push(await secondOpinion(sym, entry, sig, pos)); } catch (e) { } }
       try { out.push(await stockMap(sym, sig, pos, true)); } catch (e) { }
     } else if ((k = text.match(/^(?:i\s+)?sold\s+half\s+([a-z.\-]{1,6})(?:\s+(?:at\s+)?(\d+(?:\.\d+)?))?/i))) {
@@ -3087,6 +3166,7 @@ async function tgCommands(sig) {
         if (ix < 0 || (!k[2] && !shSaid)) { out.push('I was not tracking ' + sym + '.'); continue; }
         const r = JSON.parse(rows[ix]); if (k[2]) { r.exit = +k[2]; r.pct = +(r.exit / r.entry - 1 - MY_COST).toFixed(5); r.priced = 'you'; }
         rows[ix] = JSON.stringify(r); fs.writeFileSync(MY_TRADES, rows.join('\n') + '\n');
+        if (r.src === 'leader dip' && k[2]) { try { const LR = ldipRows(); for (let j = LR.length - 1; j >= 0; j--) if (LR[j].kind === 'result' && LR[j].sym === sym && LR[j].out === today) { LR[j].exit = r.exit; LR[j].pct = r.pct; LR[j].priced = 'you'; fs.writeFileSync(LDIP_FILE, LR.map(x => JSON.stringify(x)).join('\n') + '\n'); break; } } catch (e) {} }
         let msg = sym + ': sale already recorded today. Updated with your price ' + money(r.exit) + ', result ' + pcs(r.pct) + ' after about 0.8% costs.';
         const pv = privRead(), key = sym + '|' + today, was = (pv.soldUsd || {})[key], n = shSaid || (was && was.sh);   // dollars and shares stay only in the encrypted file
         if (n && r.entry) { const usd = n * (r.exit - r.entry) - 2 * FEE() - n * r.entry * 0.002, prev = was ? was.usd : 0;
@@ -3101,7 +3181,10 @@ async function tgCommands(sig) {
         { const nz = sellNoticeBefore(sym, P.since); t.sysSell = nz ? { d: nz.d, why: nz.why } : null; out.push(nz ? 'The system had said SELL on ' + nz.d + ' (' + nz.why + ').' : 'No SELL notice had been sent for ' + sym + ' while you held it: this sale was your own call.'); }
         // LOSS LEDGER: why each losing trade lost (gaps through the stop are the hidden cost to watch)
         if (t.pct <= 0) t.lossType = P.stop && exit < P.stop * 0.995 ? 'sold below the stop (' + pcs(exit / P.stop - 1) + ' past it)' : P.stop && exit <= P.stop * 1.01 ? 'stop hit (normal)' : t.mkt.atSale === 'weak' ? 'sold in a weak market' : P.kind === 'manual' ? 'own pick, sold early' : 'sold on the rule exit or early';
+        if (P.src) t.src = P.src;
         fs.appendFileSync(MY_TRADES, JSON.stringify(t) + '\n');
+        if (P.src === 'leader dip') { ldipAppend({ d: t.out, sym, kind: 'result', rule: LDIP_RULE, entry: P.entry, exit, since: P.boughtSession || P.since || null, out: t.out, pct: t.pct, priced: t.priced, why: P.exitFlag ? P.exitFlag.why : 'owner sale' });   // (27 Oct) the LEADER DIP live record
+          try { out.push(ldipRecordLine()); } catch (e) {} }
         { const pv = privRead(), sh = (pv.shares && pv.shares[sym]) || shSaid; if (sh) { const usd = sh * (exit - P.entry) - 2 * FEE() - sh * P.entry * 0.002; addRealized(pv, sym, usd, t.out); if (pv.shares) delete pv.shares[sym]; pv.soldUsd = { ...(pv.soldUsd || {}), [sym + '|' + t.out]: { usd: +usd.toFixed(2), sh } }; const news = goalNews(pv); privWrite(pv); out.push('In money: about ' + (usd >= 0 ? '+' : '') + money(usd) + ' USD on ' + sh + ' shares (private, encrypted). Since your goals started: ' + (pv.realized - pv.goals.base >= 0 ? '+' : '') + money(pv.realized - pv.goals.base) + ' USD. Send  goals  for the ladder.' + news); }
           else out.push('I do not know how many ' + sym + ' shares you had, so this sale is not in your dollar goals. Send the result in dollars, for example:  pnl -2000 ' + sym); }
         out.push('Sold ' + sym + ' at ' + money(exit) + ' (' + (k[2] ? 'your price' : 'price now; send  sold ' + sym + ' PRICE  next time for your exact fill') + '). Result ' + pcs(t.pct) + ' after about 0.8% costs. Recorded.\nWHY: ' + t.lesson + '\n' + myRecord());
@@ -3434,7 +3517,7 @@ async function daily() {
     if (d.candles.length < 600) { if (DISC.has(sym)) refLine(sym, d);
       // (audit 24 Oct) a TRY SMALL holding with under ~2.5 years of history (e.g. a 2025 listing) skipped every exit check below:
       // its stop-at-the-close and its time exit were never flagged, so the SELL never reached ACTIONS. The two lane exits only:
-      { const P = myPos[sym], c = d.candles, i = c.length - 1; if (P && P.src === 'try small' && i >= 0) { const { held, fl } = trySmallCloseFlags(P, c);
+      { const P = myPos[sym], c = d.candles, i = c.length - 1; if (P && (P.src === 'try small' || P.src === 'leader dip') && i >= 0) { const { held, fl } = P.src === 'leader dip' ? ldipCloseFlags(P, c) : trySmallCloseFlags(P, c);
         if (fl.length) { P.exitFlag = { d: c[i].d, why: fl[0].replace(/ Sell.*$/, '') }; posVerdict[sym] = fl[0].replace(/ Sell.*$/, '').toLowerCase(); } else delete P.exitFlag;
         myLines.push(posLine(sym, P, d.last) + (fl.length ? '\n  ' + fl.join('\n  ') : '\n  no exit signal at this close') + '\n  held ' + held + ' session' + (held === 1 ? '' : 's')); } }
       continue; }
@@ -3450,14 +3533,15 @@ async function daily() {
         if (lv) P.exitBelow = +lv.toFixed(2);
         if (vv && L.exitAt ? L.exitAt(ind, c, vv, i) : (lv && c[i].c < lv)) flags.push('SWING TRADE EXIT: it closed under ~' + money(P.exitBelow) + ', the tested exit line. Sell at the next open.'); }
       if (P.stop && c[i].c <= P.stop) flags.push('CLOSED AT OR BELOW YOUR STOP ' + money(P.stop) + '. Sell / reassess at the next open.');
+      if (P.src === 'leader dip') flags.push(...ldipCloseFlags(P, c).fl);   // (27 Oct) LEADER DIP: the day's HIGH at the +20% target, and the 126-session time exit
       if (P.src === 'try small') flags.push(...trySmallCloseFlags(P, c).fl.filter(f => /TIME EXIT/.test(f)));   // (audit 24 Oct) one rule for the time exit, no longer a session late
       if (held >= 1 && P.t1 && c[i].h >= P.t1) flags.push('Target 1 ' + money(P.t1) + ' was reached today.');
       const gapT = P.q === 'gap', hit = gapT ? c[i].c < ind.sma5[i] : c[i].c > ind.sma5[i];
       if (P.trail) { if (c.filter(k => k.d > (P.halfSince || P.since)).length >= 30) flags.push('RUNNING HALF TIME EXIT: 30 sessions have passed. Sell the rest at the next open.'); }
       else if (P.kind === 'quick' && held >= 1 && hit) flags.push('QUICK TRADE EXIT: it closed ' + (gapT ? 'below' : 'above') + ' its 5 day average. Sell at the next open.');
       else if ((P.kind === 'quick' || P.kind === 'radar' || (P.kind === 'entry' && P.maxHold)) && held >= (P.maxHold || 5)) flags.push((P.kind === 'radar' ? 'EARLY-WAVE' : P.kind === 'entry' ? 'SWING TRADE' : 'QUICK TRADE') + ' TIME EXIT: ' + (P.maxHold || 5) + ' sessions have passed. Sell at the next open.');
-      { const xf = flags.find(f => /STOP|EXIT/.test(f)); if (xf) P.exitFlag = { d: c[i].d, why: xf.replace(/ Sell.*$/, '') }; else delete P.exitFlag; }   // a system trade's own exit, kept for the YOUR STOCKS message
-      if (flags.some(f => /STOP|EXIT/.test(f))) posVerdict[sym] = flags.find(f => /STOP|EXIT/.test(f)).replace(/ Sell.*$/, '').replace(/^(QUICK TRADE (TIME )?|LEADER )EXIT: /, '').toLowerCase();
+      { const xf = flags.find(f => /STOP|EXIT|TARGET \+20%/.test(f)); if (xf) P.exitFlag = { d: c[i].d, why: xf.replace(/ Sell.*$/, '') }; else delete P.exitFlag; }   // a system trade's own exit, kept for the YOUR STOCKS message
+      if (flags.some(f => /STOP|EXIT|TARGET \+20%/.test(f))) posVerdict[sym] = flags.find(f => /STOP|EXIT|TARGET \+20%/.test(f)).replace(/ Sell.*$/, '').replace(/^(QUICK TRADE (TIME )?|LEADER )EXIT: /, '').toLowerCase();
       { const bc = L.bearishCandle ? L.bearishCandle(c, i) : 0; if (bc) flags.push('Candle warning: a ' + L.BEAR_NAMES[bc] + ' at this close. Weak evidence alone; check your stop.'); }
       if (P.raised === c[i].d) flags.push('Stop raised to ' + money(P.stop) + (P.entry && c[i].c > P.entry ? ' as the stock rose' : ' (it is still below your entry; the stop only tightened)') + '. Move it at your broker too.');
       myLines.push(posLine(sym, P, d.last) + (flags.length ? '\n  ' + flags.join('\n  ') : '\n  no exit signal at this close') + '\n  held ' + held + ' session' + (held === 1 ? '' : 's'));
@@ -3896,7 +3980,7 @@ async function intraday(onlyMine) {
     st.sent.__open = 1;
     const kt = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
     const posL = Object.entries(myPos).filter(([k]) => seen[k]).map(([k, P]) => { const p = seen[k], g = p / P.entry - 1;
-      return k + ' ' + money(p) + ' (' + (g >= 0 ? '+' : '') + (g * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' + (P.stop ? ' | stop ' + money(P.stop) + ' (' + ((P.stop / p - 1) * 100).toFixed(1) + '%)' : ' | NO STOP SET') + (P.t1 ? ' | target ' + money(P.t1) + ' (+' + ((P.t1 / p - 1) * 100).toFixed(1) + '%)' : '') + ': ' + (P.stop && p <= P.stop ? 'SELL NOW: the stop is reached' : P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '') ? P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ')' : 'HOLD'); });
+      return k + ' ' + money(p) + ' (' + (g >= 0 ? '+' : '') + (g * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' + (P.stop ? ' | stop ' + money(P.stop) + ' (' + ((P.stop / p - 1) * 100).toFixed(1) + '%)' : P.src === 'leader dip' ? ' | leader dip: sell limit ' + money(P.target) + ', no stop by design' : ' | NO STOP SET') + (P.t1 ? ' | target ' + money(P.t1) + ' (+' + ((P.t1 / p - 1) * 100).toFixed(1) + '%)' : '') + ': ' + (P.stop && p <= P.stop ? 'SELL NOW: the stop is reached' : P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '') ? P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ')' : 'HOLD'); });
     const buyL = planBuys.filter(x => seen[x.sym] && !myPos[x.sym]).map(x => { const p = seen[x.sym]; return x.sym + ' ' + money(p) + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (p > x.hi ? 'ABOVE the range, do not chase' : p < x.lo ? 'below the range, wait' : 'INSIDE the range'); });
     openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PROVEN BUYS TODAY', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.'].join('\n');
   }

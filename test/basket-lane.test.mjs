@@ -134,7 +134,9 @@ test('rebalance change detection: members in/out or a weight change at a new for
 });
 
 test('rebalance notice: baseline silent (also over an old top-20 state); a new top-10 list is sent once with the % for the next Basket 1 buy and no selling', async () => {
-  const due = S.fn('basketDue'), SAT = Date.parse('2026-10-24T15:00:00Z');
+  // (27 Oct 2026, owner-approved: "no basket, I will buy SPUS and IAUM") Basket 1 notices are OFF by default; this test pins them with
+  // settings.basket1 === true (the 6th argument). The default-off behaviour is pinned in test/leader-dip.test.mjs.
+  const due = (...a) => S.fn('basketDue')(...a.slice(0, 5), true), SAT = Date.parse('2026-10-24T15:00:00Z');
   let r = due(SAT, {}, T10(FOUR), T17, {});
   assert.equal(r.msgs.length, 0); assert.equal(r.state.formation.review, '2026-10-02'); assert.equal(r.state.formation.id, 'SQ10-SH10-C15');
   const old = due(SAT, { formation: { review: '2026-10-02', w: Object.fromEntries(LIVE20.map(m => [m.sym, m.weightAtReview])) }, monthly: '2026-10' }, T10(FOUR), T17, {});
@@ -150,7 +152,8 @@ test('rebalance notice: baseline silent (also over an old top-20 state); a new t
 });
 
 test('monthly reminder: first US trading day of each month after the open, once; Jan / May / Sep add the Basket 1 buy-day line', async () => {
-  const due = S.fn('basketDue'), first = S.fn('firstSessionOfMonth');
+  // (27 Oct 2026, owner-approved) the Basket 1 buy-day line now needs settings.basket1 === true (6th argument); Basket 2 is unchanged.
+  const due = (...a) => S.fn('basketDue')(...a.slice(0, 5), true), first = S.fn('firstSessionOfMonth');
   assert.equal(first('2026-11-02'), true); assert.equal(first('2026-11-03'), false); assert.equal(first('2026-11-01'), false);
   const base = due(Date.parse('2026-10-24T15:00:00Z'), {}, T10(FOUR), T17, {}).state;
   assert.equal(due(Date.parse('2026-11-02T13:00:00Z'), base, T10(FOUR), T17, {}).msgs.length, 0);   // before the open
