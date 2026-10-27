@@ -30487,14 +30487,61 @@
    "kind": "buy",
    "hold": 20,
    "explain": "LINKS: a supplier's own 10-K (filed before the day, point in time; the supplier's latest 10-K must show it, at most 400 days old) names a US-listed customer (one of the 1,000 most traded stocks at a quarter start; its CIK and legal name from Massive) in a major-customer revenue sentence with a first percentage >= 10%; strict names (legal name minus corporate form, no acronyms, no person names, no hand aliases), found by EDGAR full-text search and verified on the document text; 50 random links hand-checked before any return. EVENT: the customer reports (Nasdaq calendar) with SUE = (actual - consensus EPS) / close in the top 30% of liquid reports of the previous 63 sessions (ANOM-SUE definition). ENTRY: the supplier at the next open after the customer's reaction session, if close 3 USD+, 20-day traded value 2M USD+, and no own report (Nasdaq calendar or 10-Q/10-K filing) in sessions r-4..r+20. EXIT: 20 sessions, 20% stop. One open trade per stock. Placebo: the same supplier on a random non-event session of the same quarter (seed 28), reported as a yardstick. AND the customer's reaction-session return > 0. Paper(s): Pandit, Wasley & Zach (2011) Information Externalities along the Supply Chain: The Economic Determinants of Suppliers' Stock Price Reaction to Their Major Customers' Earnings Announcements, Contemporary Accounting Research 28(4); Cohen & Frazzini (2008) Economic Links and Predictable Returns, Journal of Finance 63(4); Menzly & Ozbas (2010) Market Segmentation and Cross-predictability of Returns, Journal of Finance 65(4).",
-   "status": "pre-registered 2026-10-27 (squad 28 lab); 5-year one-shot pending",
+   "status": "tested: too few cases; forward paper lane from 2026-10-28",
    "sources": [
     "https://doi.org/10.1111/j.1911-3846.2011.01088.x",
     "https://ideas.repec.org/a/bla/jfinan/v63y2008i4p1977-2011.html",
     "https://doi.org/10.1111/j.1540-6261.2010.01570.x"
    ],
    "libraryCheck": "SQ1-CUSTMOM (monthly customer momentum; 47 hand-chosen customers, 10% not enforced: rejected), N4 (not proven), CHAIN-READ1 (same-layer read-through: rejected), ANOM-SUE (own surprise: not proven). New: event-driven read-through from the CUSTOMER's surprise to its 10%+ suppliers (Pandit, Wasley & Zach 2011).",
-   "note": "Pre-registered 2026-10-27 BEFORE any run (squad28-core.mjs header = the exact rule; one version + one variant). Run ONCE by squad28-lab.mjs, first complete verdict frozen in data/squad28-lab.json firstRun; forward paper lane (data/squad28-paper.jsonl, record only) from 2026-10-28."
+   "note": "Pre-registered 2026-10-27 BEFORE any run (squad28-core.mjs header = the exact rule; one version + one variant). Run ONCE by squad28-lab.mjs, first complete verdict frozen in data/squad28-lab.json firstRun; forward paper lane (data/squad28-paper.jsonl, record only) from 2026-10-28.",
+   "tested": "2026-10-26",
+   "study": "squad28-lab.mjs -> data/squad28-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "n": [
+     75,
+     11
+    ],
+    "avg": [
+     -0.0379,
+     0.0535
+    ],
+    "stress": [
+     -0.0419,
+     0.0495
+    ],
+    "edge": [
+     0.0563,
+     0.0583
+    ],
+    "vsOwn": [
+     0.0331,
+     0.0529
+    ],
+    "noTop2": [
+     -0.0482,
+     -0.047
+    ],
+    "tBlock": [
+     1.67,
+     0.6
+    ],
+    "perYear": [
+     -0.4872,
+     0.6893
+    ],
+    "spyPerYear": [
+     -0.2453,
+     0.032
+    ],
+    "placebo": [
+     -0.0155,
+     -0.0235
+    ],
+    "linkPrecision": 0.9,
+    "why": "fewer than 20 cases or 3 blocks in a half (75 cases, 12 blocks / 11 cases, 10 blocks)"
+   }
   },
   {
    "id": "SQ28-SUPDRIFT-ANY",
@@ -30504,12 +30551,59 @@
    "kind": "buy",
    "hold": 20,
    "explain": "LINKS: a supplier's own 10-K (filed before the day, point in time; the supplier's latest 10-K must show it, at most 400 days old) names a US-listed customer (one of the 1,000 most traded stocks at a quarter start; its CIK and legal name from Massive) in a major-customer revenue sentence with a first percentage >= 10%; strict names (legal name minus corporate form, no acronyms, no person names, no hand aliases), found by EDGAR full-text search and verified on the document text; 50 random links hand-checked before any return. EVENT: the customer reports (Nasdaq calendar) with SUE = (actual - consensus EPS) / close in the top 30% of liquid reports of the previous 63 sessions (ANOM-SUE definition). ENTRY: the supplier at the next open after the customer's reaction session, if close 3 USD+, 20-day traded value 2M USD+, and no own report (Nasdaq calendar or 10-Q/10-K filing) in sessions r-4..r+20. EXIT: 20 sessions, 20% stop. One open trade per stock. Placebo: the same supplier on a random non-event session of the same quarter (seed 28), reported as a yardstick. VARIANT: no condition on the customer's reaction-session return. Paper(s): Pandit, Wasley & Zach (2011) Information Externalities along the Supply Chain: The Economic Determinants of Suppliers' Stock Price Reaction to Their Major Customers' Earnings Announcements, Contemporary Accounting Research 28(4); Cohen & Frazzini (2008) Economic Links and Predictable Returns, Journal of Finance 63(4).",
-   "status": "pre-registered 2026-10-27 (squad 28 lab); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 2026-10-28",
    "sources": [
     "https://doi.org/10.1111/j.1911-3846.2011.01088.x"
    ],
    "libraryCheck": "SQ1-CUSTMOM (monthly customer momentum; 47 hand-chosen customers, 10% not enforced: rejected), N4 (not proven), CHAIN-READ1 (same-layer read-through: rejected), ANOM-SUE (own surprise: not proven). New: event-driven read-through from the CUSTOMER's surprise to its 10%+ suppliers (Pandit, Wasley & Zach 2011).",
-   "note": "Pre-registered 2026-10-27 BEFORE any run (squad28-core.mjs header = the exact rule; one version + one variant). Run ONCE by squad28-lab.mjs, first complete verdict frozen in data/squad28-lab.json firstRun; forward paper lane (data/squad28-paper.jsonl, record only) from 2026-10-28."
+   "note": "Pre-registered 2026-10-27 BEFORE any run (squad28-core.mjs header = the exact rule; one version + one variant). Run ONCE by squad28-lab.mjs, first complete verdict frozen in data/squad28-lab.json firstRun; forward paper lane (data/squad28-paper.jsonl, record only) from 2026-10-28.",
+   "tested": "2026-10-26",
+   "study": "squad28-lab.mjs -> data/squad28-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     126,
+     55
+    ],
+    "avg": [
+     -0.022,
+     0.0128
+    ],
+    "stress": [
+     -0.026,
+     0.0088
+    ],
+    "edge": [
+     0.0449,
+     0.0131
+    ],
+    "vsOwn": [
+     0.0202,
+     0.0193
+    ],
+    "noTop2": [
+     -0.0311,
+     -0.0134
+    ],
+    "tBlock": [
+     1.83,
+     0.28
+    ],
+    "perYear": [
+     -0.2815,
+     0.1671
+    ],
+    "spyPerYear": [
+     -0.0743,
+     0.1984
+    ],
+    "placebo": [
+     -0.032,
+     0.0136
+    ],
+    "linkPrecision": 0.9,
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.83 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.28 under 2.5 in the newer half; return per year of capital tied up -28.1% not above the S&P 500 on the same days in the older half (-7.4%); return per year of capital tied up 16.7% not above the S&P 500 on the same days in the newer half (19.8%)"
+   }
   },
   {
    "id": "RQ-ISC-21",

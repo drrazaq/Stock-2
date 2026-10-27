@@ -1,14 +1,13 @@
-[0s] squad 28 lab, mode LINKS; frozen already: none
+[0s] squad 28 lab, mode RUN; frozen already: none
 [0s] library: 0 squad 28 entries written now
-[6s] splits after the cache: 2 repaired
-[6s] window 2021-10-12..2026-10-26 (1265 sessions, 8599 stocks)
-[7s] ticker map: {"ok":true,"quarters":23,"ciks":9139}
-[7s] master index: 200102 10-K / 10-Q filings
-[7s] customer universe: {"tickers":1943,"companies":1921,"withAliases":1827,"noDetails":6,"fundsDropped":0,"massiveCalls":0}
-[8s] full-text search: 1725 10-K documents name a customer phrase; complete
-[8s] documents to read: 1725 (cached 0)
-[128s] documents read: 920 of 1725
-[232s] documents: read now 1725, not read 0
-[232s] links written: {"rows":844,"pairs":280,"suppliers":228,"customers":129,"documentsSearched":1725,"customersSearched":1827}
-[232s] hand-check sample written: data/squad28-linkcheck.json
-[232s] LINKS done; SEC requests 1725 failed 0 
+[7s] splits after the cache: 2 repaired
+[7s] window 2021-10-12..2026-10-26 (1265 sessions, 8599 stocks)
+[8s] ticker map: {"ok":true,"quarters":23,"ciks":9139}
+[19s] master index: 200102 10-K / 10-Q filings
+[19s] forward links (paper lane only): 0
+[19s] frozen links: 844 rows, 280 pairs; hand check precision +90.0% of 50
+[101s] Nasdaq calendar: {"ok":true,"days":1322,"missing":0,"fetchedNow":34,"fromOtherCaches":1316,"reports":69187}
+[103s] funnel {"reports":39591,"withSue":39516,"top30":11984,"top30Up":6807,"noCustomerCik":8,"noLinkedSupplier":11350,"linkInactive":646,"supplierNoTicker":53,"supplierFilter":134,"ownReport":281,"sameCompany":0} | CASE COUNTS (before one-open): {"SQ28-SUPDRIFT":{"older":76,"newer":11},"SQ28-SUPDRIFT-ANY":{"older":128,"newer":55}}
+[103s] - SQ28-SUPDRIFT: TOO FEW CASES | older 75 (12bl) avg -3.8% stress -4.2% edge +5.6% own +3.3% no2 -4.8% tBlock 1.67 | newer 11 (10bl) avg +5.3% stress +5.0% edge +5.8% own +5.3% no2 -4.7% tBlock 0.6 | perYear {"older":{"rule":-0.4872,"spy":-0.2453,"avgStock":-0.4285},"newer":{"rule":0.6893,"spy":0.032,"avgStock":-0.0214}} | placebo {"n":81,"ruleAvg":-0.0236,"placeboAvg":-0.0071,"placeboEdge":-0.0122,"ruleMinusPlacebo":-0.0165,"tPaired":-0.6153} | fewer than 20 cases or 3 blocks in a half (75 cases, 12 blocks / 11 cases, 10 blocks)
+[103s] - SQ28-SUPDRIFT-ANY: NOT PROVEN | older 126 (18bl) avg -2.2% stress -2.6% edge +4.5% own +2.0% no2 -3.1% tBlock 1.83 | newer 55 (22bl) avg +1.3% stress +0.9% edge +1.3% own +1.9% no2 -1.3% tBlock 0.28 | perYear {"older":{"rule":-0.2815,"spy":-0.0743,"avgStock":-0.2987},"newer":{"rule":0.1671,"spy":0.1984,"avgStock":0.1094}} | placebo {"n":161,"ruleAvg":-0.0092,"placeboAvg":0.0106,"placeboEdge":0.011,"ruleMinusPlacebo":-0.0198,"tPaired":-1.4231} | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.83 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.28 under 2.5 in the newer half; return per year of capital tied up
+SQUAD 28 LAB 2021-10-12 to 2026-10-26 | cases {"SQ28-SUPDRIFT":{"older":76,"newer":11},"SQ28-SUPDRIFT-ANY":{"older":128,"newer":55}} | SQ28-SUPDRIFT TOO FEW CASES, SQ28-SUPDRIFT-ANY NOT PROVEN | price ok, master ok, tickerMap ok, earn ok, links ok, handCheck ok
