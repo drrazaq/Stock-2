@@ -30343,6 +30343,39 @@
    "hold": 3,
    "name": "Control: the same 8-K 1.01 events bought at the next regular open (+1% slippage), sold at the close of session 3",
    "explain": "Pre-registered control of SQ26-FIRSTMIN (squad26-core.mjs header): the open of the first session opening >= 1 minute after the acceptance, x 1.01; the same exits counted from that session. Information only."
+  },
+  {
+   "family": "Squad 27 (odd-lot issuer tender arbitrage)",
+   "agent": "squad27",
+   "status": "pre-registered 2026-10-27 (squad 27 lab); one-shot pending; information / paper lane only, not a scan rule",
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/full-index/ (SC TO-I, SC TO-I/A)",
+    "https://www.ecfr.gov/current/title-17/section-240.13e-4 (Rule 13e-4(f)(3)(i) odd-lot priority)",
+    "https://data.alpaca.markets (SIP daily raw)"
+   ],
+   "libraryCheck": "Different from RQ-TENDER-3-15, RQ-TENDER-ALL and C-SPEC1 (third-party SC TO-T cash tender TARGET spread, whole position, proration and deal-break risk). Here: the company buys its OWN shares (SC TO-I) and the odd-lot clause (fewer than 100 shares, all tendered) removes proration; 99 shares only.",
+   "id": "SQ27-ODDLOT",
+   "kind": "buy",
+   "hold": 5,
+   "name": "Odd-lot issuer tender arbitrage: buy 99 shares at the close 2 sessions before the expiry when the close is under the minimum tender price; tender all 99 (odd-lot priority)",
+   "explain": "RULE (squad27-core.mjs header, exact): every SC TO-I 2019..now (EDGAR quarterly index), Offer to Purchase read for ticker, price or range, odd-lot priority clause, expiry and conditions; amendments for extensions, termination and the final price. 99 shares at the close 2 sessions before the expiry in force, only if that close < the minimum price; 0.8% on the buy, 3 USD commission and a 25 USD corporate-action fee (both ASSUMED); payout 99 x final price (actual) or 99 x range minimum (conservative); terminated = shares valued at the close 5 sessions later. Halves before / from 2024.",
+   "note": "Squad 27, 27 Oct 2026. Pre-registered BEFORE any run; run ONCE by squad27-lab.mjs; first complete result frozen in data/squad27-lab.json firstRun; current offers in data/squad27-board.json (weekly, record only)."
+  },
+  {
+   "family": "Squad 27 (odd-lot issuer tender arbitrage)",
+   "agent": "squad27",
+   "status": "pre-registered 2026-10-27 (squad 27 lab); one-shot pending; information / paper lane only, not a scan rule",
+   "sources": [
+    "https://www.sec.gov/Archives/edgar/full-index/ (SC TO-I, SC TO-I/A)",
+    "https://www.ecfr.gov/current/title-17/section-240.13e-4 (Rule 13e-4(f)(3)(i) odd-lot priority)",
+    "https://data.alpaca.markets (SIP daily raw)"
+   ],
+   "libraryCheck": "Different from RQ-TENDER-3-15, RQ-TENDER-ALL and C-SPEC1 (third-party SC TO-T cash tender TARGET spread, whole position, proration and deal-break risk). Here: the company buys its OWN shares (SC TO-I) and the odd-lot clause (fewer than 100 shares, all tendered) removes proration; 99 shares only.",
+   "id": "SQ27-ODDLOT-A1",
+   "kind": "variant",
+   "hold": 30,
+   "name": "Same, bought at the close of the first session after the SC TO-I filing (information)",
+   "explain": "Pre-registered variant of SQ27-ODDLOT: the entry is the first session after the original filing; same gate, costs and payout. More days of capital tied up."
   }
  ]
 }
