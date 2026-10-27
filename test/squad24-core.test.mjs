@@ -79,3 +79,11 @@ test('the frozen list: quarter of a date, list in force, top by cap merged by CI
   assert.deepEqual(listOn(MC, '2024-03-31'), ['1', '2']); assert.deepEqual(listOn(MC, '2024-04-01'), ['2', '3']); assert.deepEqual(listOn(MC, '2023-12-31'), []); assert.equal(allCiks(MC).size, 3);
   const top = topByCap([{ cik: '5', cap: 10, sym: 'GOOGL' }, { cik: '5', cap: 12, sym: 'GOOG' }, { cik: '6', cap: 11 }, { cik: null, cap: 99 }], 2); assert.deepEqual(top.map(r => r.sym || r.cik), ['GOOG', '6']);
 });
+
+test('addendum helpers: path stats 1/3/5/10 and max favourable / adverse; insider cluster window f-10..f-1', async () => {
+  const { pathStats, insiderCluster } = await import('../squad24-core.mjs');
+  const S = flat(40, 4); S.o[20] = 4; S.c[22] = 4.4; S.h[25] = 6; S.l[27] = 3; const p = pathStats(S, 20);
+  assert.equal(p.d1, 0); assert.equal(p.d3, 0.1); assert.equal(p.d10, 0); assert.equal(p.mfe, 0.5); assert.equal(p.mae, -0.25);
+  const D = Array.from({ length: 30 }, (_, i) => 'd' + String(i).padStart(2, '0')), sessOf = (d) => D.indexOf(d);
+  assert.equal(insiderCluster([['d10', 'a'], ['d19', 'b'], ['d19', 'b']], 20, sessOf), 2); assert.equal(insiderCluster([['d09', 'a'], ['d20', 'b']], 20, sessOf), 0, 'outside the window (f itself excluded)');
+});
