@@ -2,7 +2,8 @@ name: Squad 24 lab
 # SQUAD 24 (squad24-lab.mjs; 27 Oct 2026): "a small company announces a deal with a giant". SQ24-MEGADEAL is pre-registered in
 # squad24-core.mjs and data/strategy-library.json before any run. MODE (last line of run-squad24-now.txt): BUILD = mega-cap candidates per
 # quarter (market values only) + the case studies (data/squad24-cases.json); RUN = the one-shot 5-year test (only with the frozen list whose
-# SHA-256 is in the core header), first complete verdict frozen in data/squad24-lab.json firstRun; schedule = PAPER (forward lane).
+# SHA-256 is in the core header), first complete verdict frozen in data/squad24-lab.json firstRun; SIDE = reviewer addendum reporting and
+# exploratory side tests (data/squad24-side.json; squad1-cache Form 4 purchases RESTORED READ ONLY); schedule = PAPER (forward lane).
 # The price cache and Squad 4's Form 3/4/5 ticker map are RESTORED READ ONLY; only squad24-cache is saved. Never places an order.
 on:
   schedule:
@@ -45,6 +46,11 @@ jobs:
           restore-keys: squad4-cache-
       - uses: actions/cache/restore@v4
         with:
+          path: squad1-cache
+          key: squad1-cache-none
+          restore-keys: squad1-cache-
+      - uses: actions/cache/restore@v4
+        with:
           path: squad24-cache
           key: squad24-cache-${{ github.run_id }}
           restore-keys: squad24-cache-
@@ -75,7 +81,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/squad24-run.log 2>/dev/null || true
-          FILES="data/squad24-lab.json data/squad24-paper.jsonl data/squad24-today.json data/squad24-board.json data/squad24-megacaps-build.json data/squad24-cases.json data/squad24-run.log"
+          FILES="data/squad24-lab.json data/squad24-paper.jsonl data/squad24-today.json data/squad24-board.json data/squad24-megacaps-build.json data/squad24-cases.json data/squad24-side.json data/squad24-run.log"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"

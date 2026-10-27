@@ -22,7 +22,7 @@ import { artifactJumps, hasArtifact } from './squad4-core.mjs';
 import { eftsHits, html2text } from './squad21-core.mjs';
 import { secNY, nyParts } from './sec-time.mjs';
 import { ID, RULES, TH, COST, SLIP, SPLIT, PAPER_START, MEGACAP_SHA, EVENT_FROM, LIST_FROM, DIL_FORMS, mean, r4, halfOf, capG, addDays, firstOnOrAfter, quarterOf, listOn, allCiks, topByCap,
-  counterpartyMatch, largestUsd, etToIso, filingSession, firstOpenSession, priceFail, reverseSplitNear, dilutedAt, sharesKnown, exitOf, slipped, perYear, shapeOf, boardStats, preRegister } from './squad24-core.mjs';
+  counterpartyMatch, largestUsd, etToIso, SIDE, pathStats, insiderCluster, preRegisterSide, filingSession, firstOpenSession, priceFail, reverseSplitNear, dilutedAt, sharesKnown, exitOf, slipped, perYear, shapeOf, boardStats, preRegister } from './squad24-core.mjs';
 const env = process.env, MODE = String(env.MODE || 'PAPER').toUpperCase(), local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', EFTS = local(env.EFTS_BASE) || 'https://efts.sec.gov', AD = local(env.ALPACA_DATA_BASE) || 'https://data.alpaca.markets';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ24_CACHE || 'squad24-cache', SC4 = env.SQ4_CACHE || 'squad4-cache';
@@ -38,7 +38,7 @@ const PREV = J(OUT, {}), FROZEN = PREV.firstRun || {}, LEAGUE = J('data/agent-le
 log('squad 24 lab, mode ' + MODE + '; frozen already: ' + (Object.keys(FROZEN).join(', ') || 'none'));
 
 // ================= 0. PRE-REGISTRATION (before any computation; idempotent) =================
-{ const LB = J(LIB, null), ch = preRegister(LB); if (ch) fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); log('library: ' + ch + ' squad 24 entry written now'); }
+{ const LB = J(LIB, null), ch = preRegister(LB) + preRegisterSide(LB); if (ch) fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); log('library: ' + ch + ' squad 24 entry written now'); }
 
 // ================= 1. NETWORK =================
 let mvGap = 0, mvCalls = 0;
@@ -191,6 +191,13 @@ async function runCases() { const out = { generatedAt: new Date().toISOString(),
         firstMinute: firstAfter ? { ny: firstAfter.ny, price: firstAfter.o, vsLastBefore: lastBefore ? r4(firstAfter.o / lastBefore.c - 1) : null, toReactionClose: react ? r4(react.c / firstAfter.o - 1) : null, toPeakClose10: r4(peak / firstAfter.o - 1), closes1to10: path(firstAfter.o, 0) } : null,
         nextRegularOpen: e2 ? { day: e2.d, price: e2.o, gapVsPrev: R.before ? r4(e2.o / R.before.lastClose - 1) : null, toThatClose: r4(e2.c / e2.o - 1), toPeakClose10: r4(peak / e2.o - 1), closes1to10: path(e2.o, after.indexOf(e2)) } : null,
         openAfterReaction: e3 ? { day: e3.d, price: e3.o, toPeakClose10: r4(peak / e3.o - 1), closes1to10: path(e3.o, 1), session10Close: after[10] ? r4(after[10].c / e3.o - 1) : null, minLowNext10: r4(Math.min(...after.slice(1, 11).map(b => b.l)) / e3.o - 1) } : null };
+      // H2 timeline (reviewer addendum): T-10 / T-5 / T-3 / T-1 closes and volumes (T-1 = the last close before public), the first minute
+      // >= 5% from that close (on the public day or after), and H3 path stats for each entry (1/3/5/10 sessions, max favourable / adverse)
+      const tbk = (n) => before[before.length - n] ? { d: before[before.length - n].d, c: before[before.length - n].c, v: before[before.length - n].v } : null;
+      const pc0 = R.before ? R.before.lastClose : null, dayStart = Date.parse(etToIso(pd.replace(/-/g, '') + '040000', nyParts)), fr = pc0 ? M.find(b => b.ms >= dayStart && Math.abs(b.c / pc0 - 1) >= 0.05) : null;
+      const ps = (e, from) => { const a = after.slice(from, from + 10); if (!a.length) return null; const at = (j) => a[j - 1] ? r4(a[j - 1].c / e - 1) : null; return { d1: at(1), d3: at(3), d5: at(5), d10: at(10), mfe: r4(Math.max(...a.map(b => b.h)) / e - 1), mae: r4(Math.min(...a.map(b => b.l)) / e - 1) }; };
+      R.timeline = { 'T-10': tbk(10), 'T-5': tbk(5), 'T-3': tbk(3), 'T-1': tbk(1), firstFormal: R.publicNY, firstReactionMinute5pct: fr ? { ny: fr.ny, c: fr.c, vsPrev: r4(fr.c / pc0 - 1), beforeFormal: fr.ms < pub } : null,
+        path: { firstMinute: firstAfter ? ps(firstAfter.o, 0) : null, nextRegularOpen: e2 ? ps(e2.o, after.indexOf(e2)) : null, openAfterReaction: e3 ? ps(e3.o, 1) : null } };
       // which live Stock-2 universes the stock was in on the session before (information: the live rules are big-company / monthly / quarterly rules)
       const i = SY.get(C.sym), tb = prev ? tOf.get(prev.d) : undefined; R.liveRuleCheck = i !== undefined && tb !== undefined ? { liquidUniverse: !!LIQ[i * T + tb], close: r4(CA[i * T + tb]), dv20: Math.round(DV[i * T + tb] || 0) } : { note: 'not in the price cache' }; }
     } catch (e) { R.error = String(e && e.message || e).slice(0, 300); }
@@ -288,6 +295,37 @@ if (need.length || env.HISTORY) {
       funnel: COUNT, split: SPLIT, cost: COST, yardstick: 'average 1-10 USD stock (20-day traded value >= 0.5M USD) on the same sessions; capBoth (AUD-1)' };
     const f = (h) => (h.n || 0) + ' (' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock;
     log('- ' + ID + ': ' + RES[ID].verdict + ' | older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | slippage ' + pc(slipH.older.avg) + ' / ' + pc(slipH.newer.avg) + ' | ' + RES[ID].why.slice(0, 300)); } }
+// ================= 9b. SIDE (reviewer addendum; reporting + exploratory side tests; firstRun untouched) =================
+if (MODE === 'SIDE') { const tr = tradesOf(EVENTS), H = ['older', 'newer', 'all'], inH = (z, h) => h === 'all' || z.half === h;
+  const stat = (a) => ({ n: a.length, avg: r4(mean(a.map(z => z.g - COST))), stress: r4(mean(a.map(z => z.g - 0.012))), slip: r4(mean(a.map(z => z.gs - COST))), edge1to10: r4(mean(a.map(z => z.g - z.c))), win: a.length ? r4(a.filter(z => z.g - COST > 0).length / a.length) : null });
+  // H1 (ii) size-matched no-deal stocks: 1-10 universe on f, traded value 0.5x-2x, no alias-matched 8-K in f-10..f
+  const dealAt = new Map(); for (const h of HITS.values()) { const sym = symFor(h.cik, h.tickers, h.d); if (!sym) continue; const i = SY.get(sym); (dealAt.get(i) || dealAt.set(i, []).get(i)).push(sessOf(h.d)); }
+  for (const z of tr) { const dv0 = DV[z.i * T + z.t], v = []; for (const j of uList(z.t)) { if (j === z.i) continue; const r = DV[j * T + z.t] / dv0; if (!(r >= SIDE.dvLo && r <= SIDE.dvHi)) continue;
+      if ((dealAt.get(j) || []).some(q => q >= z.t - 10 && q <= z.t)) continue; if (artifactIn(j, z.k - 1, z.lc)) continue; const g = ret(j, z.k, z.lc); if (g !== null && isFinite(g)) v.push(capG(g)); }
+    z.cm = v.length >= SIDE.ctlMin ? mean(v) : null; z.ps = pathStats(series(z.i), z.k); }
+  const h1 = Object.fromEntries(H.map(h => { const a = tr.filter(z => inH(z, h)), m = a.filter(z => ok(z.cm)), mv = a.filter(z => Math.abs(z.react) >= SIDE.noMove), nm = a.filter(z => Math.abs(z.react) < SIDE.noMove), fo = a.filter(z => ok(z.first));
+    return [h, { base: stat(a), sizeMatched: { n: m.length, edge: r4(mean(m.map(z => z.g - z.cm))), controlAvg: r4(mean(m.map(z => z.cm - COST))) }, dealsThatMoved: stat(mv), dealsWithNoMove: stat(nm),
+      firstOpenBeforeReaction: { n: fo.length, avg: r4(mean(fo.map(z => z.first - COST))), avgSlip: r4(mean(fo.map(z => (1 + z.first) * 0.98 / 1.02 - 1 - COST))) } }]; }));
+  const h3 = Object.fromEntries(H.map(h => { const a = tr.filter(z => inH(z, h) && z.ps); const m = (k) => r4(mean(a.map(z => z.ps[k]).filter(ok))), md = (k) => { const v = a.map(z => z.ps[k]).filter(ok).sort((x, y) => x - y); return v.length ? v[v.length >> 1] : null; };
+    return [h, { n: a.length, avgD1: m('d1'), avgD3: m('d3'), avgD5: m('d5'), avgD10: m('d10'), avgMFE: m('mfe'), medMFE: md('mfe'), avgMAE: m('mae'), medMAE: md('mae'), stopped: a.filter(z => z.kind === 'stop').length, gone: a.filter(z => z.kind === 'gone').length, note: 'gross from the entry open; costs and slippage in H1 base (avg / stress / slip)' }]; }));
+  // SIDE-FIRST: earlier 8-K 1.01 by the same filer naming the same mega-cap since 2020
+  const PRIOR = J(SC + '/prior.json', {});
+  for (const z of tr) { const e = z.ev, key = e.adsh, cik = e.cpCik; if (key in PRIOR) { z.prior = PRIOR[key]; continue; } let found = 0, okAll = true;
+    for (const al of (MC.companies[cik] || {}).aliases || []) { const hs = await efts(al, SIDE.firstFrom, addDays(e.d, -1), '&forms=8-K&ciks=' + String(e.cik).padStart(10, '0')); if (!hs) { okAll = false; continue; }
+      for (const h of hs) { if (found || !h[1] || h[1] === e.adsh || !(h[4] || []).some(it => String(it).trim() === '1.01')) continue; const txt = await sec(subUrl(e.cik, h[1]), 'text'); if (!txt) continue;
+        const p = parseSubmission(txt); if (p.docs.some(dc => { const m = counterpartyMatch(dc.text, [{ cik, aliases: (MC.companies[cik] || {}).aliases || [] }]); return !!m; })) found = 1; } if (found) break; }
+    z.prior = PRIOR[key] = okAll || found ? found : null; }
+  W(SC + '/prior.json', PRIOR);
+  // SIDE-INSIDER: squad 1's Form 4 purchase cache (read only)
+  const BUY = new Map(); let insQ = 0; for (const f of (() => { try { return fs.readdirSync((env.SQ1_CACHE || 'squad1-cache') + '/insider2'); } catch (e) { return []; } })()) { const x = J((env.SQ1_CACHE || 'squad1-cache') + '/insider2/' + f, null); if (!x) continue; insQ++;
+    for (const r of x.rows || []) { const c = String(+r[6]); (BUY.get(c) || BUY.set(c, []).get(c)).push([r[1], r[2]]); } }
+  for (const z of tr) z.ins = insQ ? insiderCluster(BUY.get(z.ev.cik), z.t, sessOf) : null;
+  const sideOf = (f) => Object.fromEntries(['older', 'newer', 'all'].map(h => [h, stat(tr.filter(z => inH(z, h) && f(z)))]));
+  const sides = { [SIDE.first]: { note: 'EXPLORATORY: base trades whose filer had no earlier 8-K 1.01 naming the same mega-cap since 2020', unknown: tr.filter(z => z.prior === null).length, kept: sideOf(z => z.prior === 0), dropped: sideOf(z => z.prior === 1) },
+    [SIDE.insider]: { note: 'EXPLORATORY: base trades with 2+ different insiders buying (Form 4 code P) in the 10 sessions before the filing session', insiderQuarters: insQ, kept: sideOf(z => z.ins >= SIDE.insMin), dropped: sideOf(z => z.ins !== null && z.ins < SIDE.insMin) } };
+  const rows = tr.map(z => ({ sym: z.s, filingSession: D[z.t], buy: D[z.k], counterparty: z.ev.cp, size: r4(z.ev.size), reaction: r4(z.react), net: r4(z.g - COST), slip: r4(z.gs - COST), avg1to10: r4(z.c - COST), sizeMatched: r4(ok(z.cm) ? z.cm - COST : null), firstOpen: r4(ok(z.first) ? z.first - COST : null), ...z.ps, exit: z.kind, priorDealSame: z.prior, insiders10: z.ins }));
+  W('data/squad24-side.json', { generatedAt: new Date().toISOString(), note: 'Reviewer addendum (27 Oct 2026): REPORTING ONLY. SQ24-MEGADEAL entry/exit/verdict unchanged (data/squad24-lab.json firstRun). Side tests are exploratory, each alone against the base, never stacked, never a verdict. No option data used.', caseCounts: COUNTS, H1: h1, H3: h3, sideTests: sides, trades: rows }, true);
+  await runCases(); log('SIDE done: ' + tr.length + ' base trades; ' + JSON.stringify(h1.all.base)); process.exit(0); }
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k]) => need.includes(k)).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, ...strip(r) }])), (r) => r && r.verdict && r.verdict !== 'NOT RUN');
 // every case, traded or not (the owner's list): trades with results; filtered-in events that were not traded say why; size-failures listed apart
