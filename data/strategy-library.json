@@ -30517,7 +30517,7 @@
    "name": "Information shock: a jump of 4+ sigma (and 4%+) above the average stock on an 8-K news day, hold 1 month",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-27 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "Buy the next open after a session where the stock beat the average liquid stock by max(4 x its own 60-session sigma, 4%) and an original 8-K of the company was accepted for that session (before 16:00 New York, or after the prior close); stock liquid, 5 USD+; sell the close 21 sessions later. Shock size, sigma window, news window and data rule fixed in research-core.mjs (IDEA 3) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2016.06.011",
@@ -30525,7 +30525,45 @@
     "https://ideas.repec.org/a/eee/jfinec/v124y2017i1p43-64.html"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day's move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock's own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026."
+   "note": "Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day's move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock's own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026.",
+   "tested": "2026-10-26",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2458,
+     4320
+    ],
+    "avg": [
+     0.0063,
+     0.0003
+    ],
+    "stress": [
+     0.0023,
+     -0.0037
+    ],
+    "edge": [
+     -0.0013,
+     -0.013
+    ],
+    "vsOwn": [
+     0.0057,
+     0.0088
+    ],
+    "noTop2": [
+     0.0054,
+     -0.0001
+    ],
+    "tBlock": [
+     -0.48,
+     -2.17
+    ],
+    "win": [
+     0.4992,
+     0.4782
+    ],
+    "why": "not better than the average stock in the older half; block t -0.48 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.17 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-ISC-63",
@@ -30533,7 +30571,7 @@
    "name": "Information shock on an 8-K news day, hold 3 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-27 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-ISC-21, hold 63 sessions. Shock size, sigma window, news window and data rule fixed in research-core.mjs (IDEA 3) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2016.06.011",
@@ -30541,7 +30579,45 @@
     "https://ideas.repec.org/a/eee/jfinec/v124y2017i1p43-64.html"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day's move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock's own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026."
+   "note": "Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day's move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock's own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026.",
+   "tested": "2026-10-26",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2321,
+     3779
+    ],
+    "avg": [
+     0.0088,
+     0.021
+    ],
+    "stress": [
+     0.0048,
+     0.017
+    ],
+    "edge": [
+     0.0011,
+     -0.0155
+    ],
+    "vsOwn": [
+     0.0184,
+     0.042
+    ],
+    "noTop2": [
+     0.0072,
+     0.0196
+    ],
+    "tBlock": [
+     0.18,
+     -1.39
+    ],
+    "win": [
+     0.5028,
+     0.5015
+    ],
+    "why": "block t 0.18 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.39 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-ISC-E-21",
@@ -30549,7 +30625,7 @@
    "name": "Information shock on an EARNINGS 8-K day (item 2.02), hold 1 month",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-27 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-ISC-21, but one of the session's 8-Ks lists item 2.02 (earnings). Shock size, sigma window, news window and data rule fixed in research-core.mjs (IDEA 3) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2016.06.011",
@@ -30557,7 +30633,45 @@
     "https://ideas.repec.org/a/eee/jfinec/v124y2017i1p43-64.html"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day's move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock's own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026."
+   "note": "Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day's move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock's own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026.",
+   "tested": "2026-10-26",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2117,
+     3755
+    ],
+    "avg": [
+     0.0068,
+     0.0029
+    ],
+    "stress": [
+     0.0028,
+     -0.0011
+    ],
+    "edge": [
+     -0.0029,
+     -0.0054
+    ],
+    "vsOwn": [
+     0.0002,
+     0.0124
+    ],
+    "noTop2": [
+     0.0058,
+     0.0024
+    ],
+    "tBlock": [
+     -0.37,
+     -1.38
+    ],
+    "win": [
+     0.5021,
+     0.4916
+    ],
+    "why": "not better than the average stock in the older half; block t -0.37 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t -1.38 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-ISC-NE-21",
@@ -30565,7 +30679,7 @@
    "name": "Information shock on a NON-EARNINGS 8-K day (no item 2.02), hold 1 month",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-27 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-ISC-21, but none of the session's 8-Ks lists item 2.02 (contracts, deals, approvals, guidance, management news...). Shock size, sigma window, news window and data rule fixed in research-core.mjs (IDEA 3) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.jfineco.2016.06.011",
@@ -30573,7 +30687,45 @@
     "https://ideas.repec.org/a/eee/jfinec/v124y2017i1p43-64.html"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day's move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock's own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026."
+   "note": "Daily researcher 2026-10-27: C-ISC1 (queued 21 Oct), Jiang and Zhu (2017, JFE) information shocks. New combination of information: an SEC 8-K behind the day's move (official data.sec.gov submissions: acceptance time and 8-K items) plus the size of the move against the stock's own volatility; not tested before (Squad 19 = under-5 USD runners; Squad 20 = jumps as filters/exits of other rules; M15 = lottery). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 28 Oct 2026.",
+   "tested": "2026-10-26",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     352,
+     583
+    ],
+    "avg": [
+     0.0058,
+     -0.0166
+    ],
+    "stress": [
+     0.0018,
+     -0.0206
+    ],
+    "edge": [
+     0.0032,
+     -0.0288
+    ],
+    "vsOwn": [
+     0.0101,
+     -0.0089
+    ],
+    "noTop2": [
+     0.0032,
+     -0.0203
+    ],
+    "tBlock": [
+     -0.06,
+     -2.78
+    ],
+    "win": [
+     0.4886,
+     0.3859
+    ],
+    "why": "block t -0.06 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.78 under 2.5 in the newer half"
+   }
   }
  ]
 }

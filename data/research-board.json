@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-26T23:15:14.998Z",
+ "generatedAt": "2026-10-27T09:28:14.298Z",
  "lastClose": "2026-10-26",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -11,8 +11,8 @@
    "hold": 63,
    "family": "lazy",
    "dataOk": true,
-   "signals": 0,
-   "waiting": 0,
+   "signals": 1,
+   "waiting": 1,
    "open": 0,
    "closed": {
     "n": 0,
@@ -42,8 +42,8 @@
    "hold": 126,
    "family": "lazy",
    "dataOk": true,
-   "signals": 0,
-   "waiting": 0,
+   "signals": 1,
+   "waiting": 1,
    "open": 0,
    "closed": {
     "n": 0,
@@ -158,6 +158,130 @@
    "fiveYear": {
     "verdict": "TOO FEW CASES",
     "why": "fewer than 20 cases or 3 blocks in a half (16 cases, 5 blocks / 31 cases, 7 blocks)"
+   }
+  },
+  "RQ-ISC-21": {
+   "name": "Information shock: a jump of 4+ sigma (and 4%+) above the average stock on an 8-K news day, hold 1 month",
+   "kind": "buy",
+   "hold": 21,
+   "family": "isc",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "not better than the average stock in the older half; block t -0.48 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.17 under 2.5 in the newer half"
+   }
+  },
+  "RQ-ISC-63": {
+   "name": "Information shock on an 8-K news day, hold 3 months",
+   "kind": "buy",
+   "hold": 63,
+   "family": "isc",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "block t 0.18 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.39 under 2.5 in the newer half"
+   }
+  },
+  "RQ-ISC-E-21": {
+   "name": "Information shock on an EARNINGS 8-K day (item 2.02), hold 1 month",
+   "kind": "buy",
+   "hold": 21,
+   "family": "isc",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "not better than the average stock in the older half; block t -0.37 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t -1.38 under 2.5 in the newer half"
+   }
+  },
+  "RQ-ISC-NE-21": {
+   "name": "Information shock on a NON-EARNINGS 8-K day (no item 2.02), hold 1 month",
+   "kind": "buy",
+   "hold": 21,
+   "family": "isc",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "block t -0.06 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.78 under 2.5 in the newer half"
    }
   }
  }

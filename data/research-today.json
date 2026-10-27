@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-26T23:15:14.998Z",
+ "generatedAt": "2026-10-27T09:28:14.298Z",
  "lastClose": "2026-10-26",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Daily-researcher rules (RQ-*) recording forward from 26 Oct 2026. Nothing here is a buy by itself: a rule needs a frozen 5-year verdict that meets the TRY SMALL standard (data/research-lab.json firstRun) or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
@@ -8,7 +8,16 @@
    "name": "Lazy prices: the 10-K barely changed from last year (top 20% similarity), hold 3 months",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": [],
+   "newSignals": [
+    {
+     "sym": "AZO",
+     "close": 3190.0701,
+     "halal": "unknown",
+     "d": "2026-10-26",
+     "pct": 0.9375,
+     "plan": "buy at the open of 2026-10-27, hold 63 sessions"
+    }
+   ],
    "late": [],
    "open": []
   },
@@ -16,7 +25,16 @@
    "name": "Lazy prices: the 10-K barely changed from last year (top 20% similarity), hold 6 months",
    "hold": 126,
    "tier": "REJECTED",
-   "newSignals": [],
+   "newSignals": [
+    {
+     "sym": "AZO",
+     "close": 3190.0701,
+     "halal": "unknown",
+     "d": "2026-10-26",
+     "pct": 0.9375,
+     "plan": "buy at the open of 2026-10-27, hold 126 sessions"
+    }
+   ],
    "late": [],
    "open": []
   },
@@ -32,6 +50,38 @@
    "name": "Cash tender offer target, any positive spread up to 15%, held to the deal close (max 120 sessions)",
    "hold": 120,
    "tier": "TOO FEW CASES",
+   "newSignals": [],
+   "late": [],
+   "open": []
+  },
+  "RQ-ISC-21": {
+   "name": "Information shock: a jump of 4+ sigma (and 4%+) above the average stock on an 8-K news day, hold 1 month",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "late": [],
+   "open": []
+  },
+  "RQ-ISC-63": {
+   "name": "Information shock on an 8-K news day, hold 3 months",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "late": [],
+   "open": []
+  },
+  "RQ-ISC-E-21": {
+   "name": "Information shock on an EARNINGS 8-K day (item 2.02), hold 1 month",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [],
+   "late": [],
+   "open": []
+  },
+  "RQ-ISC-NE-21": {
+   "name": "Information shock on a NON-EARNINGS 8-K day (no item 2.02), hold 1 month",
+   "hold": 21,
+   "tier": "REJECTED",
    "newSignals": [],
    "late": [],
    "open": []
