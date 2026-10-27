@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-27T07:55:40.713Z",
+ "generatedAt": "2026-10-27T07:58:45.837Z",
  "squad": 25,
  "philosophy": "a giant (NVIDIA, Alphabet, Amazon ...) newly shows a stake in a 1 USD+, under-10B company (13F-HR first appearance, or 13D / 13G); bought at the next open (A) or the first minute after the SEC acceptance (B); held 10 sessions",
  "preRegistered": "squad25-core.mjs header (27 Oct 2026, before any run) + data/strategy-library.json SQ25-GIANTSTAKE-A, SQ25-GIANTSTAKE-B, SQ25-GIANTWIDE-A, SQ25-GIANTWIDE-B; frozen giants data/squad25-giants.json sha256 f1d4342104f4a1b0dad7b7195af4b9454354e549f71a50a3df977786963124a3",
@@ -509,6 +509,1056 @@
    "frozenAt": "2026-10-27T06:57:47.308Z"
   }
  },
+ "correctedRun": {
+  "SQ25-GIANTSTAKE-A": {
+   "at": "2026-10-27T07:53:15.363Z",
+   "frozenAt": "2026-10-27T06:57:47.308Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "bugs": [
+    "SQ25-BASELINE"
+   ],
+   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): \"new holding\" in a 13F-HR was measured against the same filer's previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything \"new\"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.",
+   "classCounts": {
+    "NEW_POSITION_CONFIRMED": {
+     "older": 12,
+     "newer": 21
+    },
+    "13D/13G_FIRST": {
+     "older": 9,
+     "newer": 8
+    },
+    "FIRST_OBSERVED_NO_BASELINE": {
+     "older": 60,
+     "newer": 3
+    },
+    "LATE_FILING": {
+     "older": 0,
+     "newer": 0
+    },
+    "AMENDED_OR_CONFIDENTIAL": {
+     "older": 1,
+     "newer": 0
+    },
+    "13D/13G_REPEAT": {
+     "older": 1,
+     "newer": 0
+    }
+   },
+   "reproducedFrozen": {
+    "older": 61,
+    "newer": 28,
+    "frozen": {
+     "older": 61,
+     "newer": 28
+    },
+    "matchesFrozen": true
+   },
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.12 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.88 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-4.7%)",
+   "name": "A named giant (NVIDIA, Alphabet/GV, Amazon, Microsoft, Apple, Meta, Intel, Qualcomm, Salesforce, Cisco, Oracle, Samsung, Sony, Toyota) newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "group": "base",
+   "entry": "A",
+   "caseCounts": {
+    "older": 21,
+    "newer": 29
+   },
+   "results": {
+    "older": {
+     "n": 21,
+     "days": 11,
+     "stocks": 21,
+     "avg": -0.0078,
+     "median": -0.0676,
+     "avgStress": -0.0118,
+     "ctrl": -0.0135,
+     "edge": -0.015,
+     "tDay": -0.39,
+     "blocks": 9,
+     "tBlock": -0.12,
+     "vsOwn": -0.0088,
+     "ownCovered": 11,
+     "noTop2": -0.046,
+     "best": 0.4315,
+     "worst": -0.258,
+     "win": 0.4286
+    },
+    "newer": {
+     "n": 25,
+     "days": 18,
+     "stocks": 25,
+     "avg": 0.0771,
+     "median": -0.0585,
+     "avgStress": 0.0731,
+     "ctrl": -0.0159,
+     "edge": 0.1638,
+     "tDay": 0.96,
+     "blocks": 15,
+     "tBlock": 0.88,
+     "vsOwn": 0.1499,
+     "ownCovered": 18,
+     "noTop2": -0.0651,
+     "best": 2.992,
+     "worst": -0.258,
+     "win": 0.32
+    },
+    "all": {
+     "n": 46,
+     "days": 29,
+     "stocks": 46,
+     "avg": 0.0383,
+     "median": -0.063,
+     "avgStress": 0.0343,
+     "ctrl": -0.0148,
+     "edge": 0.096,
+     "tDay": 0.9,
+     "blocks": 24,
+     "tBlock": 0.85,
+     "vsOwn": 0.0897,
+     "ownCovered": 29,
+     "noTop2": -0.0378,
+     "best": 2.992,
+     "worst": -0.258,
+     "win": 0.3696
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 21,
+     "avg": -0.047
+    },
+    "newer": {
+     "n": 25,
+     "avg": 0.0362
+    },
+    "all": {
+     "n": 46,
+     "avg": -0.0018
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -0.2091,
+     "spy": -0.3607,
+     "avgStock": -0.1475
+    },
+    "newer": {
+     "rule": 2.0154,
+     "spy": 0.0993,
+     "avgStock": -0.2075
+    }
+   },
+   "underTwoBillion": {
+    "note": "information: market value under 2B USD at the last close before acceptance",
+    "older": {
+     "n": 13,
+     "avg": -0.0364,
+     "stress": -0.0404,
+     "slip": -0.0745,
+     "edge": -0.0225
+    },
+    "newer": {
+     "n": 7,
+     "avg": 0.4565,
+     "stress": 0.4525,
+     "slip": 0.4049,
+     "edge": 0.4607
+    },
+    "all": {
+     "n": 20,
+     "avg": 0.1361,
+     "stress": 0.1321,
+     "slip": 0.0933,
+     "edge": 0.1466
+    }
+   },
+   "byForm": {
+    "13F-HR": {
+     "n": 32,
+     "avg": -0.0099,
+     "slip": -0.0491,
+     "edge": -0.0022
+    },
+    "SC 13D": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G": {
+     "n": 14,
+     "avg": 0.1486,
+     "slip": 0.1062,
+     "edge": 0.1797
+    },
+    "SC 13D/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 21,
+     "edge": 0.0063
+    },
+    "newer": {
+     "n": 25,
+     "edge": 0.0858
+    },
+    "all": {
+     "n": 46,
+     "edge": 0.0495
+    }
+   },
+   "extHoursFills": 0,
+   "shape": {
+    "trades": 46,
+    "win": 0.3696,
+    "avgWin": 0.3287,
+    "avgLoss": -0.1319,
+    "pf": 1.461,
+    "exits": {
+     "time": 40,
+     "stop": 6
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "noMinuteFill": 0,
+   "noMinuteWhy": {},
+   "funnel": {
+    "raw": 2272,
+    "before": 1632,
+    "noSym": 28,
+    "noPx": 48,
+    "giantIssuer": 28,
+    "alreadyPublic": 105,
+    "filters": {
+     "traded value": 81,
+     "market value 10B+": 66,
+     "price under 1": 5
+    },
+    "events": 279
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)"
+  },
+  "SQ25-GIANTSTAKE-B": {
+   "at": "2026-10-27T07:53:15.392Z",
+   "frozenAt": "2026-10-27T06:57:47.308Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "bugs": [
+    "SQ25-BASELINE"
+   ],
+   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): \"new holding\" in a 13F-HR was measured against the same filer's previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything \"new\"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.",
+   "classCounts": {
+    "NEW_POSITION_CONFIRMED": {
+     "older": 12,
+     "newer": 21
+    },
+    "13D/13G_FIRST": {
+     "older": 9,
+     "newer": 8
+    },
+    "FIRST_OBSERVED_NO_BASELINE": {
+     "older": 60,
+     "newer": 3
+    },
+    "LATE_FILING": {
+     "older": 0,
+     "newer": 0
+    },
+    "AMENDED_OR_CONFIDENTIAL": {
+     "older": 1,
+     "newer": 0
+    },
+    "13D/13G_REPEAT": {
+     "older": 1,
+     "newer": 0
+    }
+   },
+   "reproducedFrozen": {
+    "older": 61,
+    "newer": 28,
+    "frozen": {
+     "older": 61,
+     "newer": 28
+    },
+    "matchesFrozen": true
+   },
+   "verdict": "REJECTED",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.11 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.78 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-7.0%); return per year of capital tied up -85.1% not above the S&P 500 on the same days in the older half (-30.4%)",
+   "name": "A named giant newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "group": "base",
+   "entry": "B",
+   "caseCounts": {
+    "older": 21,
+    "newer": 29
+   },
+   "results": {
+    "older": {
+     "n": 21,
+     "days": 11,
+     "stocks": 21,
+     "avg": -0.032,
+     "median": -0.0892,
+     "avgStress": -0.036,
+     "ctrl": -0.0115,
+     "edge": -0.0482,
+     "tDay": -1.43,
+     "blocks": 9,
+     "tBlock": -1.11,
+     "vsOwn": -0.0392,
+     "ownCovered": 11,
+     "noTop2": -0.067,
+     "best": 0.3312,
+     "worst": -0.2874,
+     "win": 0.4286
+    },
+    "newer": {
+     "n": 25,
+     "days": 18,
+     "stocks": 25,
+     "avg": 0.0588,
+     "median": -0.0329,
+     "avgStress": 0.0548,
+     "ctrl": -0.0176,
+     "edge": 0.1424,
+     "tDay": 0.83,
+     "blocks": 15,
+     "tBlock": 0.78,
+     "vsOwn": 0.128,
+     "ownCovered": 18,
+     "noTop2": -0.0831,
+     "best": 2.992,
+     "worst": -0.2874,
+     "win": 0.28
+    },
+    "all": {
+     "n": 46,
+     "days": 29,
+     "stocks": 46,
+     "avg": 0.0174,
+     "median": -0.0499,
+     "avgStress": 0.0134,
+     "ctrl": -0.0148,
+     "edge": 0.0701,
+     "tDay": 0.65,
+     "blocks": 24,
+     "tBlock": 0.64,
+     "vsOwn": 0.0645,
+     "ownCovered": 29,
+     "noTop2": -0.0587,
+     "best": 2.992,
+     "worst": -0.2874,
+     "win": 0.3478
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 21,
+     "avg": -0.0703
+    },
+    "newer": {
+     "n": 25,
+     "avg": 0.0232
+    },
+    "all": {
+     "n": 46,
+     "avg": -0.0194
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -0.8507,
+     "spy": -0.304,
+     "avgStock": -0.0926
+    },
+    "newer": {
+     "rule": 1.4937,
+     "spy": 0.0716,
+     "avgStock": -0.2429
+    }
+   },
+   "underTwoBillion": {
+    "note": "information: market value under 2B USD at the last close before acceptance",
+    "older": {
+     "n": 13,
+     "avg": -0.0484,
+     "stress": -0.0524,
+     "slip": -0.0861,
+     "edge": -0.0378
+    },
+    "newer": {
+     "n": 7,
+     "avg": 0.4377,
+     "stress": 0.4337,
+     "slip": 0.4034,
+     "edge": 0.4419
+    },
+    "all": {
+     "n": 20,
+     "avg": 0.1217,
+     "stress": 0.1177,
+     "slip": 0.0853,
+     "edge": 0.1301
+    }
+   },
+   "byForm": {
+    "13F-HR": {
+     "n": 32,
+     "avg": -0.0315,
+     "slip": -0.0698,
+     "edge": -0.0231
+    },
+    "SC 13D": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G": {
+     "n": 14,
+     "avg": 0.129,
+     "slip": 0.0956,
+     "edge": 0.1585
+    },
+    "SC 13D/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 21,
+     "edge": -0.0201
+    },
+    "newer": {
+     "n": 25,
+     "edge": 0.0686
+    },
+    "all": {
+     "n": 46,
+     "edge": 0.0281
+    }
+   },
+   "extHoursFills": 33,
+   "shape": {
+    "trades": 46,
+    "win": 0.3478,
+    "avgWin": 0.3102,
+    "avgLoss": -0.1389,
+    "pf": 1.1916,
+    "exits": {
+     "time": 41,
+     "stop": 5
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "noMinuteFill": 0,
+   "noMinuteWhy": {},
+   "funnel": {
+    "raw": 2272,
+    "before": 1632,
+    "noSym": 28,
+    "noPx": 48,
+    "giantIssuer": 28,
+    "alreadyPublic": 105,
+    "filters": {
+     "traded value": 81,
+     "market value 10B+": 66,
+     "price under 1": 5
+    },
+    "events": 279
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)"
+  }
+ },
+ "correctedFallbackInfo": {
+  "SQ25-GIANTWIDE-A": {
+   "at": "2026-10-27T07:53:15.484Z",
+   "frozenAt": null,
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "bugs": [
+    "SQ25-BASELINE"
+   ],
+   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): \"new holding\" in a 13F-HR was measured against the same filer's previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything \"new\"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.",
+   "classCounts": {
+    "NEW_POSITION_CONFIRMED": {
+     "older": 37,
+     "newer": 33
+    },
+    "13D/13G_FIRST": {
+     "older": 39,
+     "newer": 20
+    },
+    "FIRST_OBSERVED_NO_BASELINE": {
+     "older": 76,
+     "newer": 15
+    },
+    "LATE_FILING": {
+     "older": 0,
+     "newer": 0
+    },
+    "AMENDED_OR_CONFIDENTIAL": {
+     "older": 4,
+     "newer": 1
+    },
+    "13D/13G_REPEAT": {
+     "older": 6,
+     "newer": 2
+    }
+   },
+   "reproducedFrozen": null,
+   "verdict": "INFORMATION ONLY (fallback not needed: corrected SQ25-GIANTSTAKE-A had enough cases)",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.05 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.81 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-4.4%); loses with 2% slippage each way in the newer half (-0.6%)",
+   "name": "FALLBACK: a giant (named giants + non-financial top-100 US-listed, point in time) newly shows a stake in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "group": "wide",
+   "entry": "A",
+   "caseCounts": {
+    "older": 76,
+    "newer": 53
+   },
+   "results": {
+    "older": {
+     "n": 74,
+     "days": 46,
+     "stocks": 71,
+     "avg": -0.0042,
+     "median": -0.0169,
+     "avgStress": -0.0082,
+     "ctrl": -0.0133,
+     "edge": -0.0053,
+     "tDay": -0.33,
+     "blocks": 25,
+     "tBlock": -1.05,
+     "vsOwn": 0.0147,
+     "ownCovered": 46,
+     "noTop2": -0.0169,
+     "best": 0.4687,
+     "worst": -0.3118,
+     "win": 0.473
+    },
+    "newer": {
+     "n": 49,
+     "days": 38,
+     "stocks": 45,
+     "avg": 0.0337,
+     "median": -0.0216,
+     "avgStress": 0.0297,
+     "ctrl": -0.008,
+     "edge": 0.0643,
+     "tDay": 0.78,
+     "blocks": 25,
+     "tBlock": 0.81,
+     "vsOwn": 0.0685,
+     "ownCovered": 38,
+     "noTop2": -0.0377,
+     "best": 2.992,
+     "worst": -0.258,
+     "win": 0.4082
+    },
+    "all": {
+     "n": 123,
+     "days": 84,
+     "stocks": 115,
+     "avg": 0.0109,
+     "median": -0.0216,
+     "avgStress": 0.0069,
+     "ctrl": -0.0111,
+     "edge": 0.0262,
+     "tDay": 0.69,
+     "blocks": 50,
+     "tBlock": 0.64,
+     "vsOwn": 0.0391,
+     "ownCovered": 84,
+     "noTop2": -0.0175,
+     "best": 2.992,
+     "worst": -0.3118,
+     "win": 0.4472
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 74,
+     "avg": -0.0436
+    },
+    "newer": {
+     "n": 49,
+     "avg": -0.0063
+    },
+    "all": {
+     "n": 123,
+     "avg": -0.0288
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -0.1094,
+     "spy": -0.2123,
+     "avgStock": -0.1354
+    },
+    "newer": {
+     "rule": 0.8912,
+     "spy": 0.1674,
+     "avgStock": 0.001
+    }
+   },
+   "underTwoBillion": {
+    "note": "information: market value under 2B USD at the last close before acceptance",
+    "older": {
+     "n": 52,
+     "avg": 0.0032,
+     "stress": -0.0008,
+     "slip": -0.0365,
+     "edge": 0.0131
+    },
+    "newer": {
+     "n": 23,
+     "avg": 0.1229,
+     "stress": 0.1189,
+     "slip": 0.0803,
+     "edge": 0.1246
+    },
+    "all": {
+     "n": 75,
+     "avg": 0.0399,
+     "stress": 0.0359,
+     "slip": -0.0007,
+     "edge": 0.0473
+    }
+   },
+   "byForm": {
+    "13F-HR": {
+     "n": 68,
+     "avg": 0.004,
+     "slip": -0.0357,
+     "edge": 0.0117
+    },
+    "SC 13D": {
+     "n": 7,
+     "avg": -0.0143,
+     "slip": -0.0533,
+     "edge": -0.0177
+    },
+    "SC 13G": {
+     "n": 48,
+     "avg": 0.0243,
+     "slip": -0.0154,
+     "edge": 0.0424
+    },
+    "SC 13D/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 74,
+     "edge": 0.0081
+    },
+    "newer": {
+     "n": 49,
+     "edge": 0.0376
+    },
+    "all": {
+     "n": 123,
+     "edge": 0.0198
+    }
+   },
+   "extHoursFills": 0,
+   "shape": {
+    "trades": 123,
+    "win": 0.4472,
+    "avgWin": 0.1776,
+    "avgLoss": -0.124,
+    "pf": 1.1586,
+    "exits": {
+     "time": 113,
+     "stop": 10
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "noMinuteFill": 0,
+   "noMinuteWhy": {},
+   "funnel": {
+    "raw": 2272,
+    "before": 1632,
+    "noSym": 28,
+    "noPx": 48,
+    "giantIssuer": 28,
+    "alreadyPublic": 105,
+    "filters": {
+     "traded value": 81,
+     "market value 10B+": 66,
+     "price under 1": 5
+    },
+    "events": 279
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)",
+   "judgedVerdict": "REJECTED"
+  },
+  "SQ25-GIANTWIDE-B": {
+   "at": "2026-10-27T07:53:15.565Z",
+   "frozenAt": null,
+   "window": [
+    "2021-10-12",
+    "2026-10-26"
+   ],
+   "bar": 4.07,
+   "bugs": [
+    "SQ25-BASELINE"
+   ],
+   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): \"new holding\" in a 13F-HR was measured against the same filer's previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything \"new\"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.",
+   "classCounts": {
+    "NEW_POSITION_CONFIRMED": {
+     "older": 37,
+     "newer": 33
+    },
+    "13D/13G_FIRST": {
+     "older": 39,
+     "newer": 20
+    },
+    "FIRST_OBSERVED_NO_BASELINE": {
+     "older": 76,
+     "newer": 15
+    },
+    "LATE_FILING": {
+     "older": 0,
+     "newer": 0
+    },
+    "AMENDED_OR_CONFIDENTIAL": {
+     "older": 4,
+     "newer": 1
+    },
+    "13D/13G_REPEAT": {
+     "older": 6,
+     "newer": 2
+    }
+   },
+   "reproducedFrozen": null,
+   "verdict": "INFORMATION ONLY (fallback not needed: corrected SQ25-GIANTSTAKE-B had enough cases)",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.48 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.76 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-6.3%); loses with 2% slippage each way in the newer half (-1.4%); return per year of capital tied up -62.8% not above the S&P 500 on the same days in the older half (-13.3%)",
+   "name": "FALLBACK: a giant (named giants + non-financial top-100 US-listed, point in time) newly shows a stake in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
+   "kind": "buy",
+   "family": "event",
+   "hold": 10,
+   "block": 10,
+   "group": "wide",
+   "entry": "B",
+   "caseCounts": {
+    "older": 76,
+    "newer": 53
+   },
+   "results": {
+    "older": {
+     "n": 72,
+     "days": 44,
+     "stocks": 69,
+     "avg": -0.0243,
+     "median": -0.0374,
+     "avgStress": -0.0283,
+     "ctrl": -0.0102,
+     "edge": -0.0364,
+     "tDay": -2.2,
+     "blocks": 25,
+     "tBlock": -2.48,
+     "vsOwn": -0.0139,
+     "ownCovered": 44,
+     "noTop2": -0.038,
+     "best": 0.4687,
+     "worst": -0.2874,
+     "win": 0.4444
+    },
+    "newer": {
+     "n": 49,
+     "days": 38,
+     "stocks": 45,
+     "avg": 0.0233,
+     "median": -0.0314,
+     "avgStress": 0.0193,
+     "ctrl": -0.0091,
+     "edge": 0.0538,
+     "tDay": 0.65,
+     "blocks": 25,
+     "tBlock": 0.76,
+     "vsOwn": 0.0572,
+     "ownCovered": 38,
+     "noTop2": -0.0476,
+     "best": 2.992,
+     "worst": -0.2874,
+     "win": 0.3265
+    },
+    "all": {
+     "n": 121,
+     "days": 82,
+     "stocks": 113,
+     "avg": -0.005,
+     "median": -0.0329,
+     "avgStress": -0.009,
+     "ctrl": -0.0098,
+     "edge": 0.0054,
+     "tDay": 0.14,
+     "blocks": 50,
+     "tBlock": 0.35,
+     "vsOwn": 0.0191,
+     "ownCovered": 82,
+     "noTop2": -0.0342,
+     "best": 2.992,
+     "worst": -0.2874,
+     "win": 0.3967
+    }
+   },
+   "slippage": {
+    "older": {
+     "n": 72,
+     "avg": -0.0629
+    },
+    "newer": {
+     "n": 49,
+     "avg": -0.0139
+    },
+    "all": {
+     "n": 121,
+     "avg": -0.0431
+    }
+   },
+   "perYear": {
+    "older": {
+     "rule": -0.6281,
+     "spy": -0.1331,
+     "avgStock": -0.0573
+    },
+    "newer": {
+     "rule": 0.6078,
+     "spy": 0.1408,
+     "avgStock": -0.0295
+    }
+   },
+   "underTwoBillion": {
+    "note": "information: market value under 2B USD at the last close before acceptance",
+    "older": {
+     "n": 50,
+     "avg": -0.012,
+     "stress": -0.016,
+     "slip": -0.051,
+     "edge": -0.0061
+    },
+    "newer": {
+     "n": 23,
+     "avg": 0.1257,
+     "stress": 0.1217,
+     "slip": 0.0881,
+     "edge": 0.1281
+    },
+    "all": {
+     "n": 73,
+     "avg": 0.0314,
+     "stress": 0.0274,
+     "slip": -0.0072,
+     "edge": 0.0362
+    }
+   },
+   "byForm": {
+    "13F-HR": {
+     "n": 67,
+     "avg": -0.0116,
+     "slip": -0.0507,
+     "edge": -0.0057
+    },
+    "SC 13D": {
+     "n": 7,
+     "avg": -0.0391,
+     "slip": -0.0771,
+     "edge": -0.0393
+    },
+    "SC 13G": {
+     "n": 47,
+     "avg": 0.0095,
+     "slip": -0.0271,
+     "edge": 0.0262
+    },
+    "SC 13D/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    },
+    "SC 13G/A": {
+     "n": 0,
+     "avg": null,
+     "slip": null,
+     "edge": null
+    }
+   },
+   "liquidYardstick": {
+    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
+    "older": {
+     "n": 72,
+     "edge": -0.0154
+    },
+    "newer": {
+     "n": 49,
+     "edge": 0.0281
+    },
+    "all": {
+     "n": 121,
+     "edge": 0.0022
+    }
+   },
+   "extHoursFills": 83,
+   "shape": {
+    "trades": 121,
+    "win": 0.3967,
+    "avgWin": 0.1864,
+    "avgLoss": -0.1309,
+    "pf": 0.9363,
+    "exits": {
+     "time": 112,
+     "stop": 9
+    }
+   },
+   "artifactsLeftOut": 0,
+   "noYardstick": 0,
+   "noEntryOpen": 0,
+   "noMinuteFill": 2,
+   "noMinuteWhy": {
+    "no minute bar": 2
+   },
+   "funnel": {
+    "raw": 2272,
+    "before": 1632,
+    "noSym": 28,
+    "noPx": 48,
+    "giantIssuer": 28,
+    "alreadyPublic": 105,
+    "filters": {
+     "traded value": 81,
+     "market value 10B+": 66,
+     "price under 1": 5
+    },
+    "events": 279
+   },
+   "split": "2024-01-01",
+   "cost": 0.008,
+   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)",
+   "judgedVerdict": "REJECTED"
+  }
+ },
+ "auditClassCounts": {
+  "base": {
+   "NEW_POSITION_CONFIRMED": {
+    "older": 12,
+    "newer": 21
+   },
+   "13D/13G_FIRST": {
+    "older": 9,
+    "newer": 8
+   },
+   "FIRST_OBSERVED_NO_BASELINE": {
+    "older": 60,
+    "newer": 3
+   },
+   "LATE_FILING": {
+    "older": 0,
+    "newer": 0
+   },
+   "AMENDED_OR_CONFIDENTIAL": {
+    "older": 1,
+    "newer": 0
+   },
+   "13D/13G_REPEAT": {
+    "older": 1,
+    "newer": 0
+   }
+  },
+  "wide": {
+   "NEW_POSITION_CONFIRMED": {
+    "older": 37,
+    "newer": 33
+   },
+   "13D/13G_FIRST": {
+    "older": 39,
+    "newer": 20
+   },
+   "FIRST_OBSERVED_NO_BASELINE": {
+    "older": 76,
+    "newer": 15
+   },
+   "LATE_FILING": {
+    "older": 0,
+    "newer": 0
+   },
+   "AMENDED_OR_CONFIDENTIAL": {
+    "older": 4,
+    "newer": 1
+   },
+   "13D/13G_REPEAT": {
+    "older": 6,
+    "newer": 2
+   }
+  }
+ },
  "fallbackInfo": {
   "SQ25-GIANTWIDE-A": {
    "verdict": "INFORMATION ONLY (fallback not needed: SQ25-GIANTSTAKE-A had enough cases)",
@@ -925,7 +1975,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-27T07:55:40.713Z",
+  "at": "2026-10-27T07:58:45.837Z",
   "results": {
    "SQ25-GIANTSTAKE-A": {
     "verdict": "REJECTED",
@@ -12315,1056 +13365,6 @@
    "B": null
   }
  ],
- "correctedRun": {
-  "SQ25-GIANTSTAKE-A": {
-   "at": "2026-10-27T07:53:15.363Z",
-   "frozenAt": "2026-10-27T06:57:47.308Z",
-   "window": [
-    "2021-10-12",
-    "2026-10-26"
-   ],
-   "bar": 4.07,
-   "bugs": [
-    "SQ25-BASELINE"
-   ],
-   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): \"new holding\" in a 13F-HR was measured against the same filer's previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything \"new\"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.",
-   "classCounts": {
-    "NEW_POSITION_CONFIRMED": {
-     "older": 12,
-     "newer": 21
-    },
-    "13D/13G_FIRST": {
-     "older": 9,
-     "newer": 8
-    },
-    "FIRST_OBSERVED_NO_BASELINE": {
-     "older": 60,
-     "newer": 3
-    },
-    "LATE_FILING": {
-     "older": 0,
-     "newer": 0
-    },
-    "AMENDED_OR_CONFIDENTIAL": {
-     "older": 1,
-     "newer": 0
-    },
-    "13D/13G_REPEAT": {
-     "older": 1,
-     "newer": 0
-    }
-   },
-   "reproducedFrozen": {
-    "older": 61,
-    "newer": 28,
-    "frozen": {
-     "older": 61,
-     "newer": 28
-    },
-    "matchesFrozen": true
-   },
-   "verdict": "REJECTED",
-   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.12 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.88 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-4.7%)",
-   "name": "A named giant (NVIDIA, Alphabet/GV, Amazon, Microsoft, Apple, Meta, Intel, Qualcomm, Salesforce, Cisco, Oracle, Samsung, Sony, Toyota) newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
-   "kind": "buy",
-   "family": "event",
-   "hold": 10,
-   "block": 10,
-   "group": "base",
-   "entry": "A",
-   "caseCounts": {
-    "older": 21,
-    "newer": 29
-   },
-   "results": {
-    "older": {
-     "n": 21,
-     "days": 11,
-     "stocks": 21,
-     "avg": -0.0078,
-     "median": -0.0676,
-     "avgStress": -0.0118,
-     "ctrl": -0.0135,
-     "edge": -0.015,
-     "tDay": -0.39,
-     "blocks": 9,
-     "tBlock": -0.12,
-     "vsOwn": -0.0088,
-     "ownCovered": 11,
-     "noTop2": -0.046,
-     "best": 0.4315,
-     "worst": -0.258,
-     "win": 0.4286
-    },
-    "newer": {
-     "n": 25,
-     "days": 18,
-     "stocks": 25,
-     "avg": 0.0771,
-     "median": -0.0585,
-     "avgStress": 0.0731,
-     "ctrl": -0.0159,
-     "edge": 0.1638,
-     "tDay": 0.96,
-     "blocks": 15,
-     "tBlock": 0.88,
-     "vsOwn": 0.1499,
-     "ownCovered": 18,
-     "noTop2": -0.0651,
-     "best": 2.992,
-     "worst": -0.258,
-     "win": 0.32
-    },
-    "all": {
-     "n": 46,
-     "days": 29,
-     "stocks": 46,
-     "avg": 0.0383,
-     "median": -0.063,
-     "avgStress": 0.0343,
-     "ctrl": -0.0148,
-     "edge": 0.096,
-     "tDay": 0.9,
-     "blocks": 24,
-     "tBlock": 0.85,
-     "vsOwn": 0.0897,
-     "ownCovered": 29,
-     "noTop2": -0.0378,
-     "best": 2.992,
-     "worst": -0.258,
-     "win": 0.3696
-    }
-   },
-   "slippage": {
-    "older": {
-     "n": 21,
-     "avg": -0.047
-    },
-    "newer": {
-     "n": 25,
-     "avg": 0.0362
-    },
-    "all": {
-     "n": 46,
-     "avg": -0.0018
-    }
-   },
-   "perYear": {
-    "older": {
-     "rule": -0.2091,
-     "spy": -0.3607,
-     "avgStock": -0.1475
-    },
-    "newer": {
-     "rule": 2.0154,
-     "spy": 0.0993,
-     "avgStock": -0.2075
-    }
-   },
-   "underTwoBillion": {
-    "note": "information: market value under 2B USD at the last close before acceptance",
-    "older": {
-     "n": 13,
-     "avg": -0.0364,
-     "stress": -0.0404,
-     "slip": -0.0745,
-     "edge": -0.0225
-    },
-    "newer": {
-     "n": 7,
-     "avg": 0.4565,
-     "stress": 0.4525,
-     "slip": 0.4049,
-     "edge": 0.4607
-    },
-    "all": {
-     "n": 20,
-     "avg": 0.1361,
-     "stress": 0.1321,
-     "slip": 0.0933,
-     "edge": 0.1466
-    }
-   },
-   "byForm": {
-    "13F-HR": {
-     "n": 32,
-     "avg": -0.0099,
-     "slip": -0.0491,
-     "edge": -0.0022
-    },
-    "SC 13D": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    },
-    "SC 13G": {
-     "n": 14,
-     "avg": 0.1486,
-     "slip": 0.1062,
-     "edge": 0.1797
-    },
-    "SC 13D/A": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    },
-    "SC 13G/A": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    }
-   },
-   "liquidYardstick": {
-    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
-    "older": {
-     "n": 21,
-     "edge": 0.0063
-    },
-    "newer": {
-     "n": 25,
-     "edge": 0.0858
-    },
-    "all": {
-     "n": 46,
-     "edge": 0.0495
-    }
-   },
-   "extHoursFills": 0,
-   "shape": {
-    "trades": 46,
-    "win": 0.3696,
-    "avgWin": 0.3287,
-    "avgLoss": -0.1319,
-    "pf": 1.461,
-    "exits": {
-     "time": 40,
-     "stop": 6
-    }
-   },
-   "artifactsLeftOut": 0,
-   "noYardstick": 0,
-   "noEntryOpen": 0,
-   "noMinuteFill": 0,
-   "noMinuteWhy": {},
-   "funnel": {
-    "raw": 2272,
-    "before": 1632,
-    "noSym": 28,
-    "noPx": 48,
-    "giantIssuer": 28,
-    "alreadyPublic": 105,
-    "filters": {
-     "traded value": 81,
-     "market value 10B+": 66,
-     "price under 1": 5
-    },
-    "events": 279
-   },
-   "split": "2024-01-01",
-   "cost": 0.008,
-   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)"
-  },
-  "SQ25-GIANTSTAKE-B": {
-   "at": "2026-10-27T07:53:15.392Z",
-   "frozenAt": "2026-10-27T06:57:47.308Z",
-   "window": [
-    "2021-10-12",
-    "2026-10-26"
-   ],
-   "bar": 4.07,
-   "bugs": [
-    "SQ25-BASELINE"
-   ],
-   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): \"new holding\" in a 13F-HR was measured against the same filer's previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything \"new\"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.",
-   "classCounts": {
-    "NEW_POSITION_CONFIRMED": {
-     "older": 12,
-     "newer": 21
-    },
-    "13D/13G_FIRST": {
-     "older": 9,
-     "newer": 8
-    },
-    "FIRST_OBSERVED_NO_BASELINE": {
-     "older": 60,
-     "newer": 3
-    },
-    "LATE_FILING": {
-     "older": 0,
-     "newer": 0
-    },
-    "AMENDED_OR_CONFIDENTIAL": {
-     "older": 1,
-     "newer": 0
-    },
-    "13D/13G_REPEAT": {
-     "older": 1,
-     "newer": 0
-    }
-   },
-   "reproducedFrozen": {
-    "older": 61,
-    "newer": 28,
-    "frozen": {
-     "older": 61,
-     "newer": 28
-    },
-    "matchesFrozen": true
-   },
-   "verdict": "REJECTED",
-   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.11 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.78 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-7.0%); return per year of capital tied up -85.1% not above the S&P 500 on the same days in the older half (-30.4%)",
-   "name": "A named giant newly shows a stake (13F-HR first appearance or 13D/13G) in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
-   "kind": "buy",
-   "family": "event",
-   "hold": 10,
-   "block": 10,
-   "group": "base",
-   "entry": "B",
-   "caseCounts": {
-    "older": 21,
-    "newer": 29
-   },
-   "results": {
-    "older": {
-     "n": 21,
-     "days": 11,
-     "stocks": 21,
-     "avg": -0.032,
-     "median": -0.0892,
-     "avgStress": -0.036,
-     "ctrl": -0.0115,
-     "edge": -0.0482,
-     "tDay": -1.43,
-     "blocks": 9,
-     "tBlock": -1.11,
-     "vsOwn": -0.0392,
-     "ownCovered": 11,
-     "noTop2": -0.067,
-     "best": 0.3312,
-     "worst": -0.2874,
-     "win": 0.4286
-    },
-    "newer": {
-     "n": 25,
-     "days": 18,
-     "stocks": 25,
-     "avg": 0.0588,
-     "median": -0.0329,
-     "avgStress": 0.0548,
-     "ctrl": -0.0176,
-     "edge": 0.1424,
-     "tDay": 0.83,
-     "blocks": 15,
-     "tBlock": 0.78,
-     "vsOwn": 0.128,
-     "ownCovered": 18,
-     "noTop2": -0.0831,
-     "best": 2.992,
-     "worst": -0.2874,
-     "win": 0.28
-    },
-    "all": {
-     "n": 46,
-     "days": 29,
-     "stocks": 46,
-     "avg": 0.0174,
-     "median": -0.0499,
-     "avgStress": 0.0134,
-     "ctrl": -0.0148,
-     "edge": 0.0701,
-     "tDay": 0.65,
-     "blocks": 24,
-     "tBlock": 0.64,
-     "vsOwn": 0.0645,
-     "ownCovered": 29,
-     "noTop2": -0.0587,
-     "best": 2.992,
-     "worst": -0.2874,
-     "win": 0.3478
-    }
-   },
-   "slippage": {
-    "older": {
-     "n": 21,
-     "avg": -0.0703
-    },
-    "newer": {
-     "n": 25,
-     "avg": 0.0232
-    },
-    "all": {
-     "n": 46,
-     "avg": -0.0194
-    }
-   },
-   "perYear": {
-    "older": {
-     "rule": -0.8507,
-     "spy": -0.304,
-     "avgStock": -0.0926
-    },
-    "newer": {
-     "rule": 1.4937,
-     "spy": 0.0716,
-     "avgStock": -0.2429
-    }
-   },
-   "underTwoBillion": {
-    "note": "information: market value under 2B USD at the last close before acceptance",
-    "older": {
-     "n": 13,
-     "avg": -0.0484,
-     "stress": -0.0524,
-     "slip": -0.0861,
-     "edge": -0.0378
-    },
-    "newer": {
-     "n": 7,
-     "avg": 0.4377,
-     "stress": 0.4337,
-     "slip": 0.4034,
-     "edge": 0.4419
-    },
-    "all": {
-     "n": 20,
-     "avg": 0.1217,
-     "stress": 0.1177,
-     "slip": 0.0853,
-     "edge": 0.1301
-    }
-   },
-   "byForm": {
-    "13F-HR": {
-     "n": 32,
-     "avg": -0.0315,
-     "slip": -0.0698,
-     "edge": -0.0231
-    },
-    "SC 13D": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    },
-    "SC 13G": {
-     "n": 14,
-     "avg": 0.129,
-     "slip": 0.0956,
-     "edge": 0.1585
-    },
-    "SC 13D/A": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    },
-    "SC 13G/A": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    }
-   },
-   "liquidYardstick": {
-    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
-    "older": {
-     "n": 21,
-     "edge": -0.0201
-    },
-    "newer": {
-     "n": 25,
-     "edge": 0.0686
-    },
-    "all": {
-     "n": 46,
-     "edge": 0.0281
-    }
-   },
-   "extHoursFills": 33,
-   "shape": {
-    "trades": 46,
-    "win": 0.3478,
-    "avgWin": 0.3102,
-    "avgLoss": -0.1389,
-    "pf": 1.1916,
-    "exits": {
-     "time": 41,
-     "stop": 5
-    }
-   },
-   "artifactsLeftOut": 0,
-   "noYardstick": 0,
-   "noEntryOpen": 0,
-   "noMinuteFill": 0,
-   "noMinuteWhy": {},
-   "funnel": {
-    "raw": 2272,
-    "before": 1632,
-    "noSym": 28,
-    "noPx": 48,
-    "giantIssuer": 28,
-    "alreadyPublic": 105,
-    "filters": {
-     "traded value": 81,
-     "market value 10B+": 66,
-     "price under 1": 5
-    },
-    "events": 279
-   },
-   "split": "2024-01-01",
-   "cost": 0.008,
-   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)"
-  }
- },
- "correctedFallbackInfo": {
-  "SQ25-GIANTWIDE-A": {
-   "at": "2026-10-27T07:53:15.484Z",
-   "frozenAt": null,
-   "window": [
-    "2021-10-12",
-    "2026-10-26"
-   ],
-   "bar": 4.07,
-   "bugs": [
-    "SQ25-BASELINE"
-   ],
-   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): \"new holding\" in a 13F-HR was measured against the same filer's previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything \"new\"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.",
-   "classCounts": {
-    "NEW_POSITION_CONFIRMED": {
-     "older": 37,
-     "newer": 33
-    },
-    "13D/13G_FIRST": {
-     "older": 39,
-     "newer": 20
-    },
-    "FIRST_OBSERVED_NO_BASELINE": {
-     "older": 76,
-     "newer": 15
-    },
-    "LATE_FILING": {
-     "older": 0,
-     "newer": 0
-    },
-    "AMENDED_OR_CONFIDENTIAL": {
-     "older": 4,
-     "newer": 1
-    },
-    "13D/13G_REPEAT": {
-     "older": 6,
-     "newer": 2
-    }
-   },
-   "reproducedFrozen": null,
-   "verdict": "INFORMATION ONLY (fallback not needed: corrected SQ25-GIANTSTAKE-A had enough cases)",
-   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.05 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.81 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-4.4%); loses with 2% slippage each way in the newer half (-0.6%)",
-   "name": "FALLBACK: a giant (named giants + non-financial top-100 US-listed, point in time) newly shows a stake in a 1 USD+, under-10B company; buy the next regular open after acceptance, hold 10, 25% stop",
-   "kind": "buy",
-   "family": "event",
-   "hold": 10,
-   "block": 10,
-   "group": "wide",
-   "entry": "A",
-   "caseCounts": {
-    "older": 76,
-    "newer": 53
-   },
-   "results": {
-    "older": {
-     "n": 74,
-     "days": 46,
-     "stocks": 71,
-     "avg": -0.0042,
-     "median": -0.0169,
-     "avgStress": -0.0082,
-     "ctrl": -0.0133,
-     "edge": -0.0053,
-     "tDay": -0.33,
-     "blocks": 25,
-     "tBlock": -1.05,
-     "vsOwn": 0.0147,
-     "ownCovered": 46,
-     "noTop2": -0.0169,
-     "best": 0.4687,
-     "worst": -0.3118,
-     "win": 0.473
-    },
-    "newer": {
-     "n": 49,
-     "days": 38,
-     "stocks": 45,
-     "avg": 0.0337,
-     "median": -0.0216,
-     "avgStress": 0.0297,
-     "ctrl": -0.008,
-     "edge": 0.0643,
-     "tDay": 0.78,
-     "blocks": 25,
-     "tBlock": 0.81,
-     "vsOwn": 0.0685,
-     "ownCovered": 38,
-     "noTop2": -0.0377,
-     "best": 2.992,
-     "worst": -0.258,
-     "win": 0.4082
-    },
-    "all": {
-     "n": 123,
-     "days": 84,
-     "stocks": 115,
-     "avg": 0.0109,
-     "median": -0.0216,
-     "avgStress": 0.0069,
-     "ctrl": -0.0111,
-     "edge": 0.0262,
-     "tDay": 0.69,
-     "blocks": 50,
-     "tBlock": 0.64,
-     "vsOwn": 0.0391,
-     "ownCovered": 84,
-     "noTop2": -0.0175,
-     "best": 2.992,
-     "worst": -0.3118,
-     "win": 0.4472
-    }
-   },
-   "slippage": {
-    "older": {
-     "n": 74,
-     "avg": -0.0436
-    },
-    "newer": {
-     "n": 49,
-     "avg": -0.0063
-    },
-    "all": {
-     "n": 123,
-     "avg": -0.0288
-    }
-   },
-   "perYear": {
-    "older": {
-     "rule": -0.1094,
-     "spy": -0.2123,
-     "avgStock": -0.1354
-    },
-    "newer": {
-     "rule": 0.8912,
-     "spy": 0.1674,
-     "avgStock": 0.001
-    }
-   },
-   "underTwoBillion": {
-    "note": "information: market value under 2B USD at the last close before acceptance",
-    "older": {
-     "n": 52,
-     "avg": 0.0032,
-     "stress": -0.0008,
-     "slip": -0.0365,
-     "edge": 0.0131
-    },
-    "newer": {
-     "n": 23,
-     "avg": 0.1229,
-     "stress": 0.1189,
-     "slip": 0.0803,
-     "edge": 0.1246
-    },
-    "all": {
-     "n": 75,
-     "avg": 0.0399,
-     "stress": 0.0359,
-     "slip": -0.0007,
-     "edge": 0.0473
-    }
-   },
-   "byForm": {
-    "13F-HR": {
-     "n": 68,
-     "avg": 0.004,
-     "slip": -0.0357,
-     "edge": 0.0117
-    },
-    "SC 13D": {
-     "n": 7,
-     "avg": -0.0143,
-     "slip": -0.0533,
-     "edge": -0.0177
-    },
-    "SC 13G": {
-     "n": 48,
-     "avg": 0.0243,
-     "slip": -0.0154,
-     "edge": 0.0424
-    },
-    "SC 13D/A": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    },
-    "SC 13G/A": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    }
-   },
-   "liquidYardstick": {
-    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
-    "older": {
-     "n": 74,
-     "edge": 0.0081
-    },
-    "newer": {
-     "n": 49,
-     "edge": 0.0376
-    },
-    "all": {
-     "n": 123,
-     "edge": 0.0198
-    }
-   },
-   "extHoursFills": 0,
-   "shape": {
-    "trades": 123,
-    "win": 0.4472,
-    "avgWin": 0.1776,
-    "avgLoss": -0.124,
-    "pf": 1.1586,
-    "exits": {
-     "time": 113,
-     "stop": 10
-    }
-   },
-   "artifactsLeftOut": 0,
-   "noYardstick": 0,
-   "noEntryOpen": 0,
-   "noMinuteFill": 0,
-   "noMinuteWhy": {},
-   "funnel": {
-    "raw": 2272,
-    "before": 1632,
-    "noSym": 28,
-    "noPx": 48,
-    "giantIssuer": 28,
-    "alreadyPublic": 105,
-    "filters": {
-     "traded value": 81,
-     "market value 10B+": 66,
-     "price under 1": 5
-    },
-    "events": 279
-   },
-   "split": "2024-01-01",
-   "cost": 0.008,
-   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)",
-   "judgedVerdict": "REJECTED"
-  },
-  "SQ25-GIANTWIDE-B": {
-   "at": "2026-10-27T07:53:15.565Z",
-   "frozenAt": null,
-   "window": [
-    "2021-10-12",
-    "2026-10-26"
-   ],
-   "bar": 4.07,
-   "bugs": [
-    "SQ25-BASELINE"
-   ],
-   "reason": "Label audit (outside reviewer, confirmed by the lead, 27 Oct 2026): \"new holding\" in a 13F-HR was measured against the same filer's previous filing even when that filing was accepted the same evening (Alphabet CIK 1652044 filed a batch of catch-up first 13Fs on 2022-11-14: 36 of the 61 older-half trades) or did not exist (a first-ever 13F: everything \"new\"). Each event classified (squad25-audit-core.mjs header, pre-registered before this run): NEW_POSITION_CONFIRMED / 13D/13G_FIRST counted; FIRST_OBSERVED_NO_BASELINE, LATE_FILING, AMENDED_OR_CONFIDENTIAL, 13D/13G_REPEAT dropped. Same filters, entries, exits, costs, yardsticks and bars as the frozen run.",
-   "classCounts": {
-    "NEW_POSITION_CONFIRMED": {
-     "older": 37,
-     "newer": 33
-    },
-    "13D/13G_FIRST": {
-     "older": 39,
-     "newer": 20
-    },
-    "FIRST_OBSERVED_NO_BASELINE": {
-     "older": 76,
-     "newer": 15
-    },
-    "LATE_FILING": {
-     "older": 0,
-     "newer": 0
-    },
-    "AMENDED_OR_CONFIDENTIAL": {
-     "older": 4,
-     "newer": 1
-    },
-    "13D/13G_REPEAT": {
-     "older": 6,
-     "newer": 2
-    }
-   },
-   "reproducedFrozen": null,
-   "verdict": "INFORMATION ONLY (fallback not needed: corrected SQ25-GIANTSTAKE-B had enough cases)",
-   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.48 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.76 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-6.3%); loses with 2% slippage each way in the newer half (-1.4%); return per year of capital tied up -62.8% not above the S&P 500 on the same days in the older half (-13.3%)",
-   "name": "FALLBACK: a giant (named giants + non-financial top-100 US-listed, point in time) newly shows a stake in a 1 USD+, under-10B company; buy the first minute after acceptance (extended hours, +2% each way when outside 09:30-16:00), hold 10, 25% stop",
-   "kind": "buy",
-   "family": "event",
-   "hold": 10,
-   "block": 10,
-   "group": "wide",
-   "entry": "B",
-   "caseCounts": {
-    "older": 76,
-    "newer": 53
-   },
-   "results": {
-    "older": {
-     "n": 72,
-     "days": 44,
-     "stocks": 69,
-     "avg": -0.0243,
-     "median": -0.0374,
-     "avgStress": -0.0283,
-     "ctrl": -0.0102,
-     "edge": -0.0364,
-     "tDay": -2.2,
-     "blocks": 25,
-     "tBlock": -2.48,
-     "vsOwn": -0.0139,
-     "ownCovered": 44,
-     "noTop2": -0.038,
-     "best": 0.4687,
-     "worst": -0.2874,
-     "win": 0.4444
-    },
-    "newer": {
-     "n": 49,
-     "days": 38,
-     "stocks": 45,
-     "avg": 0.0233,
-     "median": -0.0314,
-     "avgStress": 0.0193,
-     "ctrl": -0.0091,
-     "edge": 0.0538,
-     "tDay": 0.65,
-     "blocks": 25,
-     "tBlock": 0.76,
-     "vsOwn": 0.0572,
-     "ownCovered": 38,
-     "noTop2": -0.0476,
-     "best": 2.992,
-     "worst": -0.2874,
-     "win": 0.3265
-    },
-    "all": {
-     "n": 121,
-     "days": 82,
-     "stocks": 113,
-     "avg": -0.005,
-     "median": -0.0329,
-     "avgStress": -0.009,
-     "ctrl": -0.0098,
-     "edge": 0.0054,
-     "tDay": 0.14,
-     "blocks": 50,
-     "tBlock": 0.35,
-     "vsOwn": 0.0191,
-     "ownCovered": 82,
-     "noTop2": -0.0342,
-     "best": 2.992,
-     "worst": -0.2874,
-     "win": 0.3967
-    }
-   },
-   "slippage": {
-    "older": {
-     "n": 72,
-     "avg": -0.0629
-    },
-    "newer": {
-     "n": 49,
-     "avg": -0.0139
-    },
-    "all": {
-     "n": 121,
-     "avg": -0.0431
-    }
-   },
-   "perYear": {
-    "older": {
-     "rule": -0.6281,
-     "spy": -0.1331,
-     "avgStock": -0.0573
-    },
-    "newer": {
-     "rule": 0.6078,
-     "spy": 0.1408,
-     "avgStock": -0.0295
-    }
-   },
-   "underTwoBillion": {
-    "note": "information: market value under 2B USD at the last close before acceptance",
-    "older": {
-     "n": 50,
-     "avg": -0.012,
-     "stress": -0.016,
-     "slip": -0.051,
-     "edge": -0.0061
-    },
-    "newer": {
-     "n": 23,
-     "avg": 0.1257,
-     "stress": 0.1217,
-     "slip": 0.0881,
-     "edge": 0.1281
-    },
-    "all": {
-     "n": 73,
-     "avg": 0.0314,
-     "stress": 0.0274,
-     "slip": -0.0072,
-     "edge": 0.0362
-    }
-   },
-   "byForm": {
-    "13F-HR": {
-     "n": 67,
-     "avg": -0.0116,
-     "slip": -0.0507,
-     "edge": -0.0057
-    },
-    "SC 13D": {
-     "n": 7,
-     "avg": -0.0391,
-     "slip": -0.0771,
-     "edge": -0.0393
-    },
-    "SC 13G": {
-     "n": 47,
-     "avg": 0.0095,
-     "slip": -0.0271,
-     "edge": 0.0262
-    },
-    "SC 13D/A": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    },
-    "SC 13G/A": {
-     "n": 0,
-     "avg": null,
-     "slip": null,
-     "edge": null
-    }
-   },
-   "liquidYardstick": {
-    "note": "information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)",
-    "older": {
-     "n": 72,
-     "edge": -0.0154
-    },
-    "newer": {
-     "n": 49,
-     "edge": 0.0281
-    },
-    "all": {
-     "n": 121,
-     "edge": 0.0022
-    }
-   },
-   "extHoursFills": 83,
-   "shape": {
-    "trades": 121,
-    "win": 0.3967,
-    "avgWin": 0.1864,
-    "avgLoss": -0.1309,
-    "pf": 0.9363,
-    "exits": {
-     "time": 112,
-     "stop": 9
-    }
-   },
-   "artifactsLeftOut": 0,
-   "noYardstick": 0,
-   "noEntryOpen": 0,
-   "noMinuteFill": 2,
-   "noMinuteWhy": {
-    "no minute bar": 2
-   },
-   "funnel": {
-    "raw": 2272,
-    "before": 1632,
-    "noSym": 28,
-    "noPx": 48,
-    "giantIssuer": 28,
-    "alreadyPublic": 105,
-    "filters": {
-     "traded value": 81,
-     "market value 10B+": 66,
-     "price under 1": 5
-    },
-    "events": 279
-   },
-   "split": "2024-01-01",
-   "cost": 0.008,
-   "yardstick": "average stock (close 1 USD+, 20-day traded value 0.5M USD+) on the same sessions; capBoth (AUD-1)",
-   "judgedVerdict": "REJECTED"
-  }
- },
- "auditClassCounts": {
-  "base": {
-   "NEW_POSITION_CONFIRMED": {
-    "older": 12,
-    "newer": 21
-   },
-   "13D/13G_FIRST": {
-    "older": 9,
-    "newer": 8
-   },
-   "FIRST_OBSERVED_NO_BASELINE": {
-    "older": 60,
-    "newer": 3
-   },
-   "LATE_FILING": {
-    "older": 0,
-    "newer": 0
-   },
-   "AMENDED_OR_CONFIDENTIAL": {
-    "older": 1,
-    "newer": 0
-   },
-   "13D/13G_REPEAT": {
-    "older": 1,
-    "newer": 0
-   }
-  },
-  "wide": {
-   "NEW_POSITION_CONFIRMED": {
-    "older": 37,
-    "newer": 33
-   },
-   "13D/13G_FIRST": {
-    "older": 39,
-    "newer": 20
-   },
-   "FIRST_OBSERVED_NO_BASELINE": {
-    "older": 76,
-    "newer": 15
-   },
-   "LATE_FILING": {
-    "older": 0,
-    "newer": 0
-   },
-   "AMENDED_OR_CONFIDENTIAL": {
-    "older": 4,
-    "newer": 1
-   },
-   "13D/13G_REPEAT": {
-    "older": 6,
-    "newer": 2
-   }
-  }
- },
  "auditCases": [
   {
    "sym": "FHTX",
