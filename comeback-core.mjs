@@ -38,7 +38,7 @@ export const PAPER_FROM = '2026-10-26', SPEC_ID = 'COMEBACK-1';
 export const LINE = 'Rejected rules keep running on paper; a rule comes back only on its own forward record.';
 // every lab with a forward paper lane and frozen per-rule verdicts (squad3 has no paper lane)
 export const LABS = ['anomaly', 'angles', 'macro', 'tipster', 'decoded', 'expert', 'confluence', 'ml', 'squad1', 'squad2', 'squad4', 'squad5', 'squad6', 'squad7', 'squad8', 'squad9',
-  'squad10', 'squad11', 'squad12', 'squad13', 'squad14', 'squad15', 'squad16', 'squad17', 'squad18', 'squad19', 'squad20', 'squad21', 'squad22', 'squad24', 'squad25', 'squad26'];
+  'squad10', 'squad11', 'squad12', 'squad13', 'squad14', 'squad15', 'squad16', 'squad17', 'squad18', 'squad19', 'squad20', 'squad21', 'squad22', 'squad24', 'squad25', 'squad26', 'squad28'];
 export const verdictFile = (lab) => lab === 'decoded' ? 'data/decoded-history.json' : 'data/' + lab + '-lab.json';
 export const paperFile = (lab) => 'data/' + lab + '-paper.jsonl';
 export const todayPath = (lab) => 'data/' + lab + '-today.json';
