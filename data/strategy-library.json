@@ -1677,7 +1677,7 @@
    "name": "Customer momentum (Cohen & Frazzini 2008)",
    "explain": "Buy suppliers whose customers rose most last month: customer news reaches supplier prices with a delay.",
    "status": "tested: not proven",
-   "note": "Uses value-chain layers as the customer map (today’s knowledge). A real 10-K customer map is queued for the researcher.",
+   "note": "Uses value-chain layers as the customer map (today\u2019s knowledge). A real 10-K customer map is queued for the researcher.",
    "tested": "2026-10-19"
   },
   {
@@ -12250,7 +12250,7 @@
    "id": "ANOM-13FBEST",
    "family": "Published anomalies",
    "name": "13F best ideas of active managers",
-   "explain": "For each 13F-HR (filed by the 45-day deadline) with 20-300 share positions (no options): the stock with the largest weight above its weight in the sum of all 13F filings that quarter = that manager's best idea. Formation = first session after the deadline; every liquid best-idea stock; hold 63. CUSIP -> ticker via Massive. Paper(s): Cohen, Polk & Silli (2010) Best Ideas, SSRN 1364827. Reported: managers' best ideas beat the market by ~1-2.5% a quarter. Replication: Antón, Cohen & Polk (2021) confirm with newer data.",
+   "explain": "For each 13F-HR (filed by the 45-day deadline) with 20-300 share positions (no options): the stock with the largest weight above its weight in the sum of all 13F filings that quarter = that manager's best idea. Formation = first session after the deadline; every liquid best-idea stock; hold 63. CUSIP -> ticker via Massive. Paper(s): Cohen, Polk & Silli (2010) Best Ideas, SSRN 1364827. Reported: managers' best ideas beat the market by ~1-2.5% a quarter. Replication: Ant\u00f3n, Cohen & Polk (2021) confirm with newer data.",
    "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "agent": "anomaly",
    "libraryCheck": "C-13F1 (new positions by concentrated funds: queued) is different",
@@ -29973,22 +29973,62 @@
    "agent": "squad24",
    "kind": "exploratory",
    "hold": 10,
-   "status": "pre-registered 2026-10-27 as EXPLORATORY side test (never a verdict, never TRY SMALL); written before the SQ24-MEGADEAL result was seen",
+   "status": "exploratory side test run 27 Oct 2026 (never a verdict, never TRY SMALL)",
    "sources": [],
    "id": "SQ24-SIDE-FIRST",
    "name": "SQ24-MEGADEAL trades where it is the first-ever deal with that mega-cap (no earlier 8-K 1.01 naming it since 2020)",
-   "explain": "Side test (owner's reviewer, 27 Oct 2026), alone against the base SQ24-MEGADEAL trades, not stacked: keep a trade only if the filer had no earlier 8-K Item 1.01 since 2020-01-01 that passes the same counterparty test for the same mega-cap CIK. Reported as n / average / slippage / edge per half; exploratory only."
+   "explain": "Side test (owner's reviewer, 27 Oct 2026), alone against the base SQ24-MEGADEAL trades, not stacked: keep a trade only if the filer had no earlier 8-K Item 1.01 since 2020-01-01 that passes the same counterparty test for the same mega-cap CIK. Reported as n / average / slippage / edge per half; exploratory only.",
+   "result": {
+    "verdict": "EXPLORATORY ONLY",
+    "n": [
+     58,
+     73
+    ],
+    "avg": [
+     0.0154,
+     0.0172
+    ],
+    "slippage": [
+     -0.0247,
+     -0.023
+    ],
+    "edge": [
+     0.0251,
+     0.0135
+    ],
+    "note": "data/squad24-side.json; loses with 2% slippage each way in both halves"
+   }
   },
   {
    "family": "Squad 24 (deal with a giant)",
    "agent": "squad24",
    "kind": "exploratory",
    "hold": 10,
-   "status": "pre-registered 2026-10-27 as EXPLORATORY side test (never a verdict, never TRY SMALL); written before the SQ24-MEGADEAL result was seen",
+   "status": "exploratory side test run 27 Oct 2026 (never a verdict, never TRY SMALL)",
    "sources": [],
    "id": "SQ24-SIDE-INSIDER",
    "name": "SQ24-MEGADEAL trades with 2+ insider buys in the 10 sessions before the filing",
-   "explain": "Side test (owner's reviewer, 27 Oct 2026), alone against the base: keep a trade only if 2+ different insiders filed Form 4 open-market purchases (code P) of the filer with filing dates in sessions f-10..f-1. Exploratory only."
+   "explain": "Side test (owner's reviewer, 27 Oct 2026), alone against the base: keep a trade only if 2+ different insiders filed Form 4 open-market purchases (code P) of the filer with filing dates in sessions f-10..f-1. Exploratory only.",
+   "result": {
+    "verdict": "EXPLORATORY ONLY",
+    "n": [
+     1,
+     1
+    ],
+    "avg": [
+     0.0366,
+     -0.258
+    ],
+    "slippage": [
+     -0.0043,
+     -0.2874
+    ],
+    "edge": [
+     0.0146,
+     -0.1066
+    ],
+    "note": "data/squad24-side.json; loses with 2% slippage each way in both halves"
+   }
   }
  ]
 }
