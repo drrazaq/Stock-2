@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-10-24T00:03:10.162Z",
+ "generatedAt": "2026-10-27T00:07:57.272Z",
  "preRegistered": "angles-core.mjs header + ANGLES (24 Oct 2026, before any run) + data/strategy-library.json ANG-*",
  "window": [
   "2021-10-12",
-  "2026-10-23"
+  "2026-10-26"
  ],
- "bar": 4.02,
+ "bar": 4.07,
  "split": "2024-01-01",
  "cost": 0.008,
  "data": {
@@ -42,20 +42,20 @@
   },
   "earn": {
    "ok": true,
-   "days": 1314,
+   "days": 1315,
    "missing": 0,
    "fetchedNow": 5,
-   "reports": 65130
+   "reports": 65202
   },
   "fund": {
    "ok": true,
-   "companies": 11016
+   "companies": 11017
   },
   "facts": {
    "ok": true,
-   "companies": 3874,
-   "withFacts": 3857,
-   "at": "2026-10-24T00:02:58.392Z",
+   "companies": 3875,
+   "withFacts": 3858,
+   "at": "2026-10-27T00:06:53.932Z",
    "diag": {
     "checked": 59020,
     "streak5": 12598,
@@ -69,16 +69,16 @@
   },
   "funds": {
    "ok": true,
-   "SPUS": 1720,
-   "HLAL": 1732
+   "SPUS": 1721,
+   "HLAL": 1733
   },
   "news": {
    "ok": true,
    "companies": 768,
    "withFilings": 768,
-   "requests": 0,
+   "requests": 284,
    "failed": 0,
-   "fetchedNow": 0,
+   "fetchedNow": 220,
    "unknownLeftOut": {
     "ANG-LCREV-W": 0,
     "ANG-LCREV-M": 0
@@ -91,7 +91,7 @@
    "failed": 0
   }
  },
- "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (SPUS rules: SPUS over all same-length windows), better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.02 -> PROVEN",
+ "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (SPUS rules: SPUS over all same-length windows), better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.07 -> PROVEN",
  "skipped": {
   "Net buyback yield (XBRL repurchases minus issuance, top decile)": "covered: ANOM-BBY (TTM repurchases / market value, top 10% of repurchasers, hold 63: REJECTED 23 Oct) and ANOM-NSI (shrinking share count: REJECTED), V11 (FAILED). Net = the same ranking minus issuance; V17 (net payout yield) stays queued with Agent B.",
   "Pre-holiday drift on SPUS": "covered: ANOM-PREHOL (SPY, the same days: REJECTED, avg -0.6% after 0.8% cost in both halves). SPUS moves with SPY on those days; a 1-session trade cannot pay 0.8%.",
@@ -105,33 +105,33 @@
    "why": "one path per fund: no statistics",
    "window": {
     "from": "2021-10-12",
-    "to": "2026-10-22",
+    "to": "2026-10-23",
     "dca": {
      "invested": 61,
-     "value": 98.31643570755374
+     "value": 98.06567112064448
     },
     "dip": {
      "invested": 61,
-     "value": 98.19575202758043,
+     "value": 97.95294701475714,
      "cash": 3,
      "buys": 35
     },
-    "dipVsDca": -0.0012
+    "dipVsDca": -0.0011
    },
    "sinceFirst": {
     "from": "2019-12-18",
-    "to": "2026-10-22",
+    "to": "2026-10-23",
     "dca": {
      "invested": 83,
-     "value": 153.59643601733146
+     "value": 153.20467500045336
     },
     "dip": {
      "invested": 83,
-     "value": 152.8936423711369,
+     "value": 152.5113256502447,
      "cash": 3,
      "buys": 47
     },
-    "dipVsDca": -0.0046
+    "dipVsDca": -0.0045
    }
   },
   "ANG-DIP5/HLAL": {
@@ -139,33 +139,33 @@
    "why": "one path per fund: no statistics",
    "window": {
     "from": "2021-10-12",
-    "to": "2026-10-22",
+    "to": "2026-10-23",
     "dca": {
      "invested": 61,
-     "value": 93.91914700317363
+     "value": 93.6608079934001
     },
     "dip": {
      "invested": 61,
-     "value": 93.96195663764142,
-     "cash": 3,
-     "buys": 34
+     "value": 93.68985341315303,
+     "cash": 0,
+     "buys": 35
     },
-    "dipVsDca": 0.0005
+    "dipVsDca": 0.0003
    },
    "sinceFirst": {
     "from": "2019-12-02",
-    "to": "2026-10-22",
+    "to": "2026-10-23",
     "dca": {
      "invested": 83,
-     "value": 146.3405171923385
+     "value": 145.937985168704
     },
     "dip": {
      "invested": 83,
-     "value": 146.6177144902692,
-     "cash": 3,
-     "buys": 47
+     "value": 146.20077353272447,
+     "cash": 0,
+     "buys": 48
     },
-    "dipVsDca": 0.0019
+    "dipVsDca": 0.0018
    }
   }
  },
@@ -1497,7 +1497,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-24T00:03:10.162Z",
+  "at": "2026-10-27T00:07:57.272Z",
   "results": {}
  },
  "trades": {}
