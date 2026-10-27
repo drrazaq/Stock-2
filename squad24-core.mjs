@@ -63,12 +63,34 @@
 //   usual yardstick) and a FIRST-OPEN variant (buy the first open after the filing became public: the open of f for a filing accepted
 //   outside market hours, of f+1 otherwise; same exit length and stop).
 // REPORT: case counts per half FIRST; under 20 a half = TOO FEW CASES, said plainly, and EVERY case listed with its result.
+//
+// ================= ADDENDUM (owner's reviewer, 27 Oct 2026, written WHILE the one-shot was running and BEFORE any of its result was seen) ==
+// It changes NOTHING in SQ24-MEGADEAL's entry, exit or verdict. It adds REPORTING (MODE=SIDE, data/squad24-side.json; firstRun untouched):
+// H1 deal quality: the rule trades vs (i) the average 1-10 USD stock (the frozen yardstick), (ii) SIZE-MATCHED NO-DEAL stocks: 1-10 USD
+//   universe stocks on f whose 20-day traded value is 0.5x-2x the event stock's, with no alias-matched 8-K in sessions f-10..f, bought and
+//   sold on the same sessions (20+ needed), (iii) deals that produced NO move (|reaction-session close-to-close| < 5%) vs deals that moved,
+//   (iv) the FIRST-OPEN variant (bought before the reaction for filings outside market hours) vs the rule entry (detected only after the
+//   reaction). Failed / delisted names stay in (a stock that stops trading is sold at its last close).
+// H2 early discoverability (case studies): timeline T-10 / T-5 / T-3 / T-1, earliest verifiable public clue, first formal announcement
+//   (SEC acceptance time / wire time, never backdated), first price reaction (first minute >= 5% from the prior close), earliest realistic
+//   Stock-2 alert (what its own feeds would have caught), and ONE class of: 1 early and actionable; 2 public evidence existed but Stock-2
+//   lacked access; 3 evidence too weak or ambiguous; 4 first actionable evidence too late; 5 no advance public evidence; 6 insufficient data.
+// H3 tradable profit: closes 1 / 3 / 5 / 10 sessions after the entry, the max favourable (highest high) and max adverse (lowest low) move
+//   over the 10 sessions, with 0.8% / 1.2% costs and 2%-each-way slippage. Options: NO option data is used; no option return is inferred.
+// SIDE TESTS (EXPLORATORY ONLY, each alone against the base SQ24-MEGADEAL trades, never stacked, never a verdict, never TRY SMALL):
+//   SQ24-SIDE-FIRST: keep a base trade only if the filer had NO earlier 8-K (Item 1.01) since 2020-01-01 naming the SAME mega-cap (same
+//     CIK) under the same counterparty test (EDGAR full-text search of the filer's 8-Ks for each alias of that mega-cap, 2020-01-01 to the
+//     day before the filing; each hit's submission read and tested).
+//   SQ24-SIDE-INSIDER: keep a base trade only if 2+ DIFFERENT insiders (reporting owners) filed Form 4 open-market purchases (code P,
+//     acquired) of the filer's stock with Form 4 filing dates in the 10 sessions f-10..f-1 (SEC insider data sets, squad 1's cache).
+//   Each reported as n / average after 0.8% / with slippage / edge vs the average 1-10 USD stock, per half, beside the base.
 export const COST = 0.008, STRESS = 0.012, SLIP = 0.02, SPLIT = '2024-01-01', PAPER_START = '2026-10-28', CAP = 3, YEAR = 252;
 export const EVENT_FROM = '2021-11-15', LIST_FROM = '2021-10-01';
 // SHA-256 of data/squad24-megacaps.json (written after the BUILD run, which computes no returns; before the rule run)
 export const MEGACAP_SHA = '5530f8200c39cf831750e157cedd32b4f3038b33345a802c152542e5048864da';
 export const TH = { minClose: 1, maxClose: 10, minDv: 5e5, dvSess: 20, move: 0.15, moveSess: 21, rsDays: 60, dilSess: 20, sizeMin: 0.20, minUsd: 1e5,
   shareLag: 30, shareMaxAge: 400, hold: 10, stop: 0.25, block: 10, top: 100 };
+export const SIDE = { first: 'SQ24-SIDE-FIRST', insider: 'SQ24-SIDE-INSIDER', firstFrom: '2020-01-01', insSess: 10, insMin: 2, noMove: 0.05, dvLo: 0.5, dvHi: 2, ctlMin: 20, react: 0.05 };
 export const DIL_FORMS = ['424B5', 'S-1', 'S-1/A', 'S-3', 'S-3/A'];
 export const ID = 'SQ24-MEGADEAL';
 export const RULES = { [ID]: { kind: 'buy', family: 'event', hold: TH.hold, block: TH.block,
@@ -174,6 +196,12 @@ export function exitOf(S, k, T = S.c.length, hold = TH.hold, stopPct = TH.stop) 
     if (c[q] > 0) lastQ = q;
     if (q === k + hold - 1) { if (!(c[q] > 0)) return { x: lastQ, px: c[lastQ], kind: 'time', held: hold, lastClose: lastQ }; return { x: q, px: c[q], kind: 'time', held: hold, lastClose: q }; } }
   return null; }
+// H3: closes 1/3/5/10 sessions after entry k (entry = open of k; session 1 = k) + max favourable / adverse over 10 sessions
+export function pathStats(S, k, n = 10) { const e = S.o[k]; if (!(e > 0)) return null; const at = (j) => { const q = k + j - 1; return S.c[q] > 0 ? r4(S.c[q] / e - 1) : null; };
+  let hi = -Infinity, lo = Infinity; for (let q = k; q < k + n && q < S.c.length; q++) { if (S.h[q] > 0) hi = Math.max(hi, S.h[q]); if (S.l[q] > 0) lo = Math.min(lo, S.l[q]); }
+  return { d1: at(1), d3: at(3), d5: at(5), d10: at(10), mfe: isFinite(hi) ? r4(hi / e - 1) : null, mae: isFinite(lo) ? r4(lo / e - 1) : null }; }
+// SIDE-INSIDER: purchases [[filingDate, ownerCik]] -> distinct owners with filing session in f-n..f-1
+export function insiderCluster(buys, f, sessOf, n = SIDE.insSess) { const o = new Set(); for (const [d, w] of buys || []) { const s = sessOf(d); if (s >= f - n && s <= f - 1) o.add(String(w)); } return o.size; }
 export const slipped = (entry, exit) => (exit * (1 - SLIP)) / (entry * (1 + SLIP)) - 1;
 
 // ---------------- reporting ----------------
@@ -193,3 +221,9 @@ export function preRegister(LB, date = '2026-10-27') { if (!LB || !Array.isArray
     libraryCheck: 'SQ21-CONTRACT10D (any named counterparty, bought 1-10 sessions later: rejected), DEC2-CONTRACT (rejected), CAT-HUNTER-SUB5 and same-day jump chasing (squad 19: rejected). New: the counterparty must be a top-100 US-listed company, a stated dollar value >= 20% of the filer\'s market value, a quiet stock before, entry the open after the reaction session, 10-session hold.',
     note: 'The owner\'s +93% day (a small company announcing a deal with a big company; possibly SOUN, Feb 2024). Pre-registered BEFORE any run (one version); run ONCE by squad24-lab.mjs, first complete verdict frozen in data/squad24-lab.json firstRun; forward paper lane from 28 Oct 2026.' });
   LB.updated = date; return 1; }
+export function preRegisterSide(LB, date = '2026-10-27') { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  const add = (e) => { if (LB.strategies.some(x => x.id === e.id)) return; LB.strategies.push(e); ch++; };
+  const base = { family: 'Squad 24 (deal with a giant)', agent: 'squad24', kind: 'exploratory', hold: TH.hold, status: 'pre-registered ' + date + ' as EXPLORATORY side test (never a verdict, never TRY SMALL); written before the SQ24-MEGADEAL result was seen', sources: [] };
+  add({ ...base, id: SIDE.first, name: 'SQ24-MEGADEAL trades where it is the first-ever deal with that mega-cap (no earlier 8-K 1.01 naming it since 2020)', explain: 'Side test (owner\'s reviewer, 27 Oct 2026), alone against the base SQ24-MEGADEAL trades, not stacked: keep a trade only if the filer had no earlier 8-K Item 1.01 since 2020-01-01 that passes the same counterparty test for the same mega-cap CIK. Reported as n / average / slippage / edge per half; exploratory only.' });
+  add({ ...base, id: SIDE.insider, name: 'SQ24-MEGADEAL trades with 2+ insider buys in the 10 sessions before the filing', explain: 'Side test (owner\'s reviewer, 27 Oct 2026), alone against the base: keep a trade only if 2+ different insiders filed Form 4 open-market purchases (code P) of the filer with filing dates in sessions f-10..f-1. Exploratory only.' });
+  if (ch) LB.updated = date; return ch; }

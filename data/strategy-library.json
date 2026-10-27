@@ -29921,6 +29921,28 @@
    ],
    "libraryCheck": "SQ21-CONTRACT10D (any named counterparty, bought 1-10 sessions later: rejected), DEC2-CONTRACT (rejected), CAT-HUNTER-SUB5 and same-day jump chasing (squad 19: rejected). New: the counterparty must be a top-100 US-listed company, a stated dollar value >= 20% of the filer's market value, a quiet stock before, entry the open after the reaction session, 10-session hold.",
    "note": "The owner's +93% day (a small company announcing a deal with a big company; possibly SOUN, Feb 2024). Pre-registered BEFORE any run (one version); run ONCE by squad24-lab.mjs, first complete verdict frozen in data/squad24-lab.json firstRun; forward paper lane from 28 Oct 2026."
+  },
+  {
+   "family": "Squad 24 (deal with a giant)",
+   "agent": "squad24",
+   "kind": "exploratory",
+   "hold": 10,
+   "status": "pre-registered 2026-10-27 as EXPLORATORY side test (never a verdict, never TRY SMALL); written before the SQ24-MEGADEAL result was seen",
+   "sources": [],
+   "id": "SQ24-SIDE-FIRST",
+   "name": "SQ24-MEGADEAL trades where it is the first-ever deal with that mega-cap (no earlier 8-K 1.01 naming it since 2020)",
+   "explain": "Side test (owner's reviewer, 27 Oct 2026), alone against the base SQ24-MEGADEAL trades, not stacked: keep a trade only if the filer had no earlier 8-K Item 1.01 since 2020-01-01 that passes the same counterparty test for the same mega-cap CIK. Reported as n / average / slippage / edge per half; exploratory only."
+  },
+  {
+   "family": "Squad 24 (deal with a giant)",
+   "agent": "squad24",
+   "kind": "exploratory",
+   "hold": 10,
+   "status": "pre-registered 2026-10-27 as EXPLORATORY side test (never a verdict, never TRY SMALL); written before the SQ24-MEGADEAL result was seen",
+   "sources": [],
+   "id": "SQ24-SIDE-INSIDER",
+   "name": "SQ24-MEGADEAL trades with 2+ insider buys in the 10 sessions before the filing",
+   "explain": "Side test (owner's reviewer, 27 Oct 2026), alone against the base: keep a trade only if 2+ different insiders filed Form 4 open-market purchases (code P) of the filer with filing dates in sessions f-10..f-1. Exploratory only."
   }
  ]
 }
