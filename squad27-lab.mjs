@@ -62,9 +62,11 @@ async function readDocs(row, pick) { const idx = await sec(SEC + indexUrl(row.ci
   const list = Array.isArray(chosen) ? chosen : [chosen.doc]; let text = '', urls = [];
   for (const d of list) { const h = await sec(SEC + d.href); if (h === undefined) return undefined; if (h) { text += '\n' + html2text(h); urls.push(SEC + d.href); } }
   return { text, urls, how: Array.isArray(chosen) ? 'amendment' : chosen.how }; }
-async function doOriginal(row) { const prev = J(ffile(row.acc), null); if (prev && (prev.v === 3 || prev.miss || (!prev.ticker && !(prev.security === 'common' && (prev.type === 'dutch' || prev.type === 'fixed'))))) return prev;   // v2 currency check; v3 = bug SQ27-B1 ticker reader: candidates re-read once
+async function doOriginal(row) { const prev = J(ffile(row.acc), null); const cand = (x) => !x.ticker && x.security === 'common' && (x.type === 'dutch' || x.type === 'fixed');
+  if (prev && (prev.miss || (prev.v >= 3 && !cand(prev)) || prev.v >= 4 || (!prev.ticker && !cand(prev)))) return prev;   // v2 currency check; v3 = bug SQ27-B1 ticker reader: candidates re-read once
   const r = await readDocs(row, pickOfferDoc); if (r === undefined) return undefined;
-  const rec = r.miss ? { acc: row.acc, miss: r.miss, types: r.types } : { v: 3, acc: row.acc, how: r.how, url: r.urls[0], ...offerFields(r.text, row.date), chars: r.text.length };
+  const rec = r.miss ? { acc: row.acc, miss: r.miss, types: r.types } : { v: 4, acc: row.acc, how: r.how, url: r.urls[0], ...offerFields(r.text, row.date), chars: r.text.length };
+  if (!r.miss && cand(rec)) rec.symbolCtx = [...r.text.matchAll(/symbol|NYSE|Nasdaq|NASDAQ|New York Stock Exchange/g)].slice(0, 3).map(m => r.text.slice(Math.max(0, m.index - 120), m.index + 160).replace(/\s+/g, ' '));
   W(ffile(row.acc), rec); return rec; }
 async function doAmend(row, expiryNow) { const prev = J(ffile(row.acc), null); if (prev && prev.v === 1) return prev;
   const r = await readDocs(row, pickAmendDocs); if (r === undefined) return undefined;
@@ -125,7 +127,8 @@ const RES = { [ID]: VER('E2'), [ID_A1]: VER('A1') };
 const firstRun = COMPL.ok ? freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), ...r }]))) : FROZEN;
 // corrected run (bug SQ27-B1, squad27-core.mjs header): frozen once, next to firstRun, on the same rule and window
 const BUGS = { bugs: ['SQ27-B1'], explanation: 'Ticker reader missed \'New York Stock Exchange ("NYSE") under the symbol "X"\' (a quote between the exchange and the symbol), so about 50 listed offers were counted as NOT LISTED. Fixed reader; candidates re-read; same rule, costs, entries and window.' };
-const correctedRun = COMPL.ok && Object.keys(FROZEN).length ? freezeEach(PREV.correctedRun || {}, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), ...BUGS, ...r }]))) : (PREV.correctedRun || {});
+const B1_READY = env.SQ27_B1_READY === '1';   // the corrected run is frozen only once the fixed reader is shown to work (a void freeze happened once: see voidedCorrectedRun)
+const correctedRun = B1_READY && COMPL.ok && Object.keys(FROZEN).length ? freezeEach(PREV.correctedRun || {}, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), ...BUGS, ...r }]))) : (PREV.correctedRun || {});
 
 // ================= 6. BOARD (open offers now) =================
 const board = []; for (const o of OFF.filter(o => o.oddLot && o.ticker && dayDiff(o.date, TODAY) <= 60)) { const exp = expiryAsOf(o.expiryHist || [{ from: o.date, expiry: o.expiry }], TODAY);
@@ -147,10 +150,10 @@ const slim = (o) => ({ acc: o.acc, cik: o.cik, name: o.name, filed: o.date, tick
   expiry: o.expiry, finalExpiry: o.finalExpiry, extensions: o.expiryHist ? o.expiryHist.length - 1 : undefined, financingCondition: o.financingCondition, minimumCondition: o.minimumCondition, status: o.status, finalPrice: o.finalPrice, finalQuote: o.finalQuote || undefined, termDate: o.termDate || undefined,
   halal: o.ticker ? halalMark(o.ticker, HAL, ZBAD) : undefined, e2: o.e2, a1: o.a1, source: o.source, offerDoc: o.url, amendments: o.amendments });
 W(OFFERS, { at: new Date().toISOString(), note: 'Every SC TO-I original 2019..now whose offer document was read. listed = a ticker quoted next to an exchange in the offer; only listed common-stock cash offers with a dollar price have amendments read and a status.', count: OFF.length,
-  listed: listed.map(slim), notListedOrOther: OFF.filter(o => !listed.includes(o)).map(o => ({ acc: o.acc, cik: o.cik, name: o.name, filed: o.date, ticker: o.ticker || null, security: o.security, type: o.type, oddLot: o.oddLot, source: o.source })),
+  listed: listed.map(slim), notListedOrOther: OFF.filter(o => !listed.includes(o)).map(o => ({ acc: o.acc, cik: o.cik, name: o.name, filed: o.date, ticker: o.ticker || null, security: o.security, type: o.type, oddLot: o.oddLot, source: o.source, symbolCtx: o.symbolCtx })),
   unread: ORIGS.filter(r => !OREC.has(r.acc) || OREC.get(r.acc).miss).map(r => ({ acc: r.acc, name: r.name, filed: r.date, why: OREC.get(r.acc) ? OREC.get(r.acc).miss : 'not read yet' })) });
 W(OUT, { updated: new Date().toISOString(), what: 'Squad 27: odd-lot issuer tender arbitrage (SQ27-ODDLOT). Rule = squad27-core.mjs header. Information / paper lane only; not read by scan.mjs.', status: COMPL.ok ? 'complete' : 'collecting: ' + COMPL.why,
-  firstRun, correctedRun, latest: latestBlock({ at: new Date().toISOString(), results: RES }), board: { count: board.length, file: BOARD } }, true);
+  firstRun, correctedRun, voidedCorrectedRun: PREV.voidedCorrectedRun, latest: latestBlock({ at: new Date().toISOString(), results: RES }), board: { count: board.length, file: BOARD } }, true);
 
 // library result (once, from firstRun)
 try { const LB = J(LIB, null); let ch = 0; for (const id of [ID, ID_A1]) { const e = LB && LB.strategies.find(x => x.id === id), r = firstRun[id]; if (!e || !r || e.result) continue; const a = r.results.actual, m = r.results.min;
