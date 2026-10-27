@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ID, VAR, IDS, RULES, TH, LINKS_SHA, aliasesOf, aliasOk, customerQuery, linkSentence, coverTicker, linkActiveOn, sueCut, sueOf, quantile, ownNear, reactionIdx, exitOf,
-  placeboPick, mulberry32, sampleOf, quarterKey, precisionOf, perYear, preRegister } from '../squad28-core.mjs';
+  placeboPick, mulberry32, sessionOfAcceptance, pick202, sampleOf, quarterKey, precisionOf, perYear, preRegister } from '../squad28-core.mjs';
 
 test('registry and pre-registration', () => {
   assert.deepEqual(IDS, [ID, VAR]); assert.equal(RULES[ID].hold, 20); assert.equal(TH.stop, 0.2); assert.equal(TH.minClose, 3); assert.equal(TH.minDv, 2e6); assert.equal(typeof LINKS_SHA, 'string');
@@ -119,4 +119,15 @@ test('v3 extractor: lists, respectively, combined figures, the year of the figur
   assert.equal(linkSentence('In 2025 Microsoft accounted for 28.8% of our revenue, and in 2024, Walmart accounted for 12.4% of our revenue.', W, 2026), null, 'the figure is a stale year');
   assert.equal(linkSentence('In 2025, one customer, Amazon.com, Inc. and its affiliates, represented approximately 10.6% of our consolidated revenues.', A, 2026).pct, 10.6, 'corporate form + affiliates is not a list');
   assert.equal(linkSentence('During 2024, 74% of our inventory was purchased from one vendor, Walmart, who accounted for approximately 73% of our net sales.', W, 2024), null, 'vendor');
+});
+
+test('correctedRun SQ28-TIMING: reaction session from the 8-K Item 2.02 acceptance time', () => {
+  const D = ['2024-02-16', '2024-02-20', '2024-02-21', '2024-02-22'];
+  assert.equal(sessionOfAcceptance(D, { d: '2024-02-20', hm: '06:59' }), 1, 'before the open: that session');
+  assert.equal(sessionOfAcceptance(D, { d: '2024-02-20', hm: '11:00' }), 1, 'during the session: that session');
+  assert.equal(sessionOfAcceptance(D, { d: '2024-02-20', hm: '16:05' }), 2, 'after the close: the next session');
+  assert.equal(sessionOfAcceptance(D, { d: '2024-02-19', hm: '16:30' }), 1, 'holiday evening: the next session');
+  assert.equal(sessionOfAcceptance(D, { d: '2024-02-22', hm: '17:00' }), -1);
+  const F = [{ d: '2023-11-16', hm: '07:00' }, { d: '2024-02-20', hm: '07:00' }, { d: '2024-02-22', hm: '16:10' }];
+  assert.deepEqual(pick202(F, '2024-02-20'), F[1]); assert.deepEqual(pick202(F, '2024-02-21'), F[1], 'tie: the earlier'); assert.equal(pick202(F, '2024-03-10'), null);
 });

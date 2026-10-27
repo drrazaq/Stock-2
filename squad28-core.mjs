@@ -209,6 +209,16 @@ export const sueOf = (actual, est, px) => ok(actual) && ok(est) && px > 0 ? ((ac
 export const ownNear = (sessions, r) => (sessions || []).some(s => s >= r - TH.ownBefore && s <= r + TH.ownAfter);
 export const reactionIdx = (D, d, time) => { const lo = firstOnOrAfter(D, d); if (lo >= D.length) return -1; if (time === 'bmo') return lo; return D[lo] === d ? (lo + 1 < D.length ? lo + 1 : -1) : lo; };
 
+// ---------------- correctedRun SQ28-TIMING: the reaction session from the SEC 8-K Item 2.02 acceptance time ----------------
+// ny = { d: New York date, hm: 'HH:MM' } -> before 09:30 -> the first session on/after d; 09:30-15:59 -> that session (a non-trading day:
+// the next session); 16:00 or later -> the session after d. -1 if none.
+export function sessionOfAcceptance(D, ny) { if (!ny || !ny.d || !ny.hm) return -1; const i = firstOnOrAfter(D, ny.d); if (i >= D.length) return -1;
+  if (ny.hm >= '16:00' && D[i] === ny.d) return i + 1 < D.length ? i + 1 : -1; return i; }
+// filings = [{ d: New York date, hm }] of the company's 8-Ks listing Item 2.02; repDate = the calendar's report date -> the filing closest
+// to the report date within maxDays calendar days (ties: the earlier one), or null
+export function pick202(filings, repDate, maxDays = 3) { let best = null, bd = Infinity; for (const f of filings || []) { const g = Math.abs(daysBetween(repDate, f.d)); if (g > maxDays) continue;
+    if (g < bd || (g === bd && f.d + f.hm < best.d + best.hm)) { best = f; bd = g; } } return best; }
+
 // ---------------- exit (squad 24 exitOf with hold 20, stop 20%) ----------------
 export function exitOf(S, k, T = S.c.length, hold = TH.hold, stopPct = TH.stop) { const { o, l, c } = S, e = o[k]; if (!(e > 0)) return null; const stop = e * (1 - stopPct);
   let last = -1; for (let q = T - 1; q >= 0; q--) if (c[q] > 0) { last = q; break; } const gone = last < T - 6; let lastQ = k;

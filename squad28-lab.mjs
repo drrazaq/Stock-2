@@ -22,9 +22,10 @@ import { ownAverage, nextSession } from './anomaly-core.mjs';
 import { artifactJumps, hasArtifact } from './squad4-core.mjs';
 import { html2text } from './squad21-core.mjs';
 import { ID, VAR, IDS, RULES, TH, COST, STRESS, SPLIT, PAPER_START, LINKS_SHA, SEED, mean, r4, halfOf, capG, addDays, firstOnOrAfter, mulberry32, sampleOf, aliasesOf, customerQuery, linkSentence,
-  coverTicker, linkActiveOn, sueCut, sueOf, ownNear, reactionIdx, exitOf, placeboPick, quarterKey, perYear, shapeOf, boardStats, precisionOf, preRegister } from './squad28-core.mjs';
+  coverTicker, linkActiveOn, sueCut, sueOf, ownNear, reactionIdx, exitOf, placeboPick, quarterKey, perYear, shapeOf, boardStats, precisionOf, preRegister, sessionOfAcceptance, pick202 } from './squad28-core.mjs';
+import { secNY } from './sec-time.mjs';
 const env = process.env, MODE = String(env.MODE || 'PAPER').toUpperCase(), local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
-const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', EFTS = local(env.EFTS_BASE) || 'https://efts.sec.gov', NQ = local(env.NASDAQ_BASE) || 'https://api.nasdaq.com';
+const SECD = local(env.SEC_BASE) || 'https://data.sec.gov', PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', EFTS = local(env.EFTS_BASE) || 'https://efts.sec.gov', NQ = local(env.NASDAQ_BASE) || 'https://api.nasdaq.com';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.SQ28_CACHE || 'squad28-cache', SC4 = env.SQ4_CACHE || 'squad4-cache';
 const OUT = 'data/squad28-lab.json', PAPER = 'data/squad28-paper.jsonl', TODAY = 'data/squad28-today.json', BOARD = 'data/squad28-board.json', LIB = 'data/strategy-library.json';
 const LINKS = 'data/squad28-links.json', CHECK = 'data/squad28-linkcheck.json';
@@ -210,9 +211,10 @@ const ownSessions = (sym, cik) => { const a = [...(OWNREP.get(sym) || [])]; for 
 STATUS.dataOk = STATUS.price.ok && STATUS.master.ok && STATUS.tickerMap.ok && STATUS.earn.ok && STATUS.links.ok && STATUS.handCheck.ok;
 
 // ================= 8. EVENTS =================
-const COUNT = { reports: 0, withSue: 0, top30: 0, top30Up: 0, noCustomerCik: 0, noLinkedSupplier: 0, linkInactive: 0, supplierNoTicker: 0, supplierFilter: 0, ownReport: 0, sameCompany: 0 };
+// retime(report, calendarSession) -> the reaction session to use (correctedRun: SEC 8-K Item 2.02 acceptance time); null = the calendar rule
+function buildEvents(retime = null) { const COUNT = { reports: 0, withSue: 0, top30: 0, top30Up: 0, noCustomerCik: 0, noLinkedSupplier: 0, linkInactive: 0, supplierNoTicker: 0, supplierFilter: 0, ownReport: 0, sameCompany: 0 };
 const EV = { [ID]: [], [VAR]: [] }, CUSTEV = [];
-{ const reps = REPORTS.filter(r => SY.has(r.sym) && ok(r.e) && ok(r.a)).map(r => ({ ...r, i: SY.get(r.sym), r: reactionIdx(D, r.d, r.time) })).filter(r => r.r > 0 && r.r < T).sort((a, b) => a.r - b.r);
+{ const reps = REPORTS.filter(r => SY.has(r.sym) && ok(r.e) && ok(r.a)).map(r => { const c = reactionIdx(D, r.d, r.time); return { ...r, i: SY.get(r.sym), r: retime && c > 0 ? retime(r, c) : c }; }).filter(r => r.r > 0 && r.r < T).sort((a, b) => a.r - b.r);
   const hist = [], cutMemo = new Map(), seen = new Set();
   for (const rp of reps) { const p = CA[rp.i * T + rp.r - 1]; if (!(p > 0) || !LIQ[rp.i * T + rp.r - 1]) continue; const s = sueOf(rp.a, rp.e, p); if (!ok(s) || Math.abs(s) > 1) continue;
     const key = rp.sym + '|' + rp.r; if (seen.has(key)) continue; seen.add(key); COUNT.reports++;
@@ -226,7 +228,9 @@ const EV = { [ID]: [], [VAR]: [] }, CUSTEV = [];
       const ev = { r: rp.r, i, sym, scik, sname: (SUPP.get(scik) || {}).name, ccik, csym: rp.sym, sue: s, react, pct: Math.max(...[...LX.links.filter(z => z.s === scik && z.c === ccik && z.filed < D[rp.r])].map(z => z.pct).concat([0])) };
       EV[VAR].push(ev); if (up) EV[ID].push(ev); } }
   for (const id of IDS) { const m = new Map(); for (const e of EV[id]) { const k = e.i + '|' + e.r; if (!m.has(k)) m.set(k, e); } EV[id] = [...m.values()].sort((a, b) => a.r - b.r || a.i - b.i); } }
-const COUNTS = Object.fromEntries(IDS.map(id => [id, { older: EV[id].filter(z => halfOf(D[z.r]) === 'older' && z.r + 1 < T).length, newer: EV[id].filter(z => halfOf(D[z.r]) === 'newer' && z.r + 1 < T).length }]));
+return { EV, COUNT, CUSTEV }; }
+const countsOf = (EVx, end = T - 1) => Object.fromEntries(IDS.map(id => [id, { older: EVx[id].filter(z => halfOf(D[z.r]) === 'older' && z.r + 1 <= end).length, newer: EVx[id].filter(z => halfOf(D[z.r]) === 'newer' && z.r + 1 <= end).length }]));
+const { EV, COUNT, CUSTEV } = buildEvents(), COUNTS = countsOf(EV);
 log('funnel ' + JSON.stringify(COUNT) + ' | CASE COUNTS (before one-open): ' + JSON.stringify(COUNTS));
 
 // ================= 9. TRADES, PLACEBO AND THE ONE-SHOT =================
@@ -252,16 +256,60 @@ function tradesOf(evs, end = T - 1, seed = SEED) { const out = [], busy = new Ma
   out.artifacts = artifacts; out.noYard = noYard; out.noOpen = noOpen; return out; }
 const placeboStats = (tr) => Object.fromEntries(['older', 'newer', 'all'].map(h => { const a = tr.filter(z => (h === 'all' || z.half === h) && z.pl), d = a.map(z => z.g - z.pl.g), sd = d.length > 1 ? Math.sqrt(d.reduce((u, w) => u + (w - mean(d)) ** 2, 0) / (d.length - 1)) : null;
   return [h, { n: a.length, ruleAvg: r4(mean(a.map(z => z.g - COST))), placeboAvg: r4(mean(a.map(z => z.pl.g - COST))), placeboEdge: r4(mean(a.filter(z => ok(z.pl.c)).map(z => z.pl.g - z.pl.c))), ruleMinusPlacebo: r4(mean(d)), tPaired: sd > 0 ? r4(mean(d) / (sd / Math.sqrt(d.length))) : null }]; }));
-const RES = {}, TRS = {}, need = IDS.filter(id => !FROZEN[id]);
-if (need.length || env.HISTORY) for (const id of IDS) {
-  if (!STATUS.dataOk) { RES[id] = { verdict: 'NOT RUN', why: 'data not complete this run: ' + JSON.stringify({ master: STATUS.master.ok, tickerMap: STATUS.tickerMap.ok, earn: STATUS.earn, links: STATUS.links.ok, hand: STATUS.handCheck }).slice(0, 400) }; log('- ' + id + ': NOT RUN (data)'); continue; }
-  const tr = TRS[id] = tradesOf(EV[id]), B = TH.block, R = { older: halfStat(tr.filter(z => z.half === 'older'), B), newer: halfStat(tr.filter(z => z.half === 'newer'), B), all: halfStat(tr, B) };
+function evalRule(id, tr, counts, funnel) {
+  const B = TH.block, R = { older: halfStat(tr.filter(z => z.half === 'older'), B), newer: halfStat(tr.filter(z => z.half === 'newer'), B), all: halfStat(tr, B) };
   const liqH = Object.fromEntries(['older', 'newer', 'all'].map(h => { const a = tr.filter(z => (h === 'all' || z.half === h) && ok(z.liq)); return [h, { n: a.length, edge: r4(mean(a.map(z => z.g - z.liq))) }]; }));
   const PY = Object.fromEntries(['older', 'newer'].map(h => { const a = tr.filter(z => z.half === h); return [h, { rule: r4(perYear(a)), spy: r4(perYear(a.filter(z => ok(z.spy)).map(z => ({ g: z.spy, days: z.days })), 'g', 0)), avgStock: r4(perYear(a.map(z => ({ g: z.c, days: z.days })), 'g', 0)) }]; }));
   const v = judgeHold(R, { bar: BAR, ownName: 'the same stocks on their other days', perYear: { older: [PY.older.rule, PY.older.spy], newer: [PY.newer.rule, PY.newer.spy] } });
-  RES[id] = { ...v, name: RULES[id].name, kind: 'buy', family: RULES[id].family, hold: TH.hold, block: B, caseCounts: COUNTS[id], results: R, perYear: PY, placebo: { note: 'YARDSTICK (not a gate): the same supplier on a random non-event session of the same quarter (seed ' + SEED + '), same filters and exit', ...placeboStats(tr) },
-    liquidYardstick: { note: 'information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)', ...liqH }, shape: shapeOf(tr), artifactsLeftOut: tr.artifacts, noYardstick: tr.noYard, noEntryOpen: tr.noOpen, funnel: COUNT, linkPrecision: STATUS.handCheck,
+  return { ...v, name: RULES[id].name, kind: 'buy', family: RULES[id].family, hold: TH.hold, block: B, caseCounts: counts, results: R, perYear: PY, placebo: { note: 'YARDSTICK (not a gate): the same supplier on a random non-event session of the same quarter (seed ' + SEED + '), same filters and exit', ...placeboStats(tr) },
+    liquidYardstick: { note: 'information: edge vs the average liquid stock (5 USD+, 5M USD+ a day)', ...liqH }, shape: shapeOf(tr), artifactsLeftOut: tr.artifacts, noYardstick: tr.noYard, noEntryOpen: tr.noOpen, funnel, linkPrecision: STATUS.handCheck,
     split: SPLIT, cost: COST, yardstick: 'average stock with close 3 USD+ and 20-day traded value 2M USD+ on the signal session, same sessions; capBoth (AUD-1)' };
+}
+// ================= 9a. CORRECTED RUN SQ28-TIMING (MODE=CORRECT; firstRun untouched; run once) =================
+// Bug found after the frozen run (27 Oct 2026, confirmed by the lead): the Nasdaq calendar often has NO report time; the frozen rule then
+// took the NEXT session as the reaction session, so a before-the-open report (e.g. Walmart 20 Feb 2024, Dollar General 13 Mar 2025) was
+// judged on the day AFTER its reaction (the reaction sign read on the wrong day, the entry one day late). Fix: every report of a company
+// that is a linked customer is timed from its own SEC 8-K listing Item 2.02 (the 8-K closest to the calendar date, within 3 calendar
+// days; acceptance time, New York clock): before 09:30 -> that session; 09:30-15:59 -> that session; 16:00 or later -> the next session.
+// A report with no such 8-K keeps the calendar rule. Rule, gates, links, window, costs, yardsticks, placebo seed: unchanged.
+if (MODE === 'CORRECT') {
+  const CR = { ...(PREV.correctedRun || {}) }, todo = IDS.filter(id => FROZEN[id] && !CR[id]);
+  if (!todo.length) { log('CORRECT: nothing to do (no frozen first run, or the corrected run is frozen already)'); process.exit(0); }
+  if (!STATUS.dataOk) { log('CORRECT: data not complete: ' + JSON.stringify(STATUS).slice(0, 400)); process.exit(0); }
+  const fr0 = FROZEN[todo[0]], end = tOf.get(String(fr0.window[1])); if (end === undefined) { log('CORRECT: frozen window end not in the data'); process.exit(0); }
+  // 8-K Item 2.02 acceptance times of every linked customer CIK (SEC submissions JSON + its older pages)
+  const F202 = new Map(), SUBF = J(SC + '/subs202.json', {}); let fail = 0;
+  for (const cik of BYCUST.keys()) { if (!SUBF[cik]) { const pad = 'CIK' + String(cik).padStart(10, '0'), rows = [], take = (r) => { if (!r || !r.form) return; for (let j = 0; j < r.form.length; j++) if (/^8-K/.test(r.form[j]) && r.form[j] !== '8-K/A' && /\b2\.02\b/.test(String((r.items || [])[j] || ''))) rows.push(String(r.acceptanceDateTime[j] || '')); };
+      const j = await sec(SECD + '/submissions/' + pad + '.json'); if (!j || !j.filings) { fail++; continue; } take(j.filings.recent);
+      let okAll = true; for (const f of j.filings.files || []) { if (String(f.filingTo || '') < '2021-06-01') continue; const x = await sec(SECD + '/submissions/' + f.name); if (!x) { okAll = false; break; } take(x); }
+      if (!okAll) { fail++; continue; } SUBF[cik] = rows; }
+    F202.set(cik, SUBF[cik].map(a => secNY(a)).filter(x => x && x.hm)); }
+  W(SC + '/subs202.json', SUBF);
+  if (fail) { log('CORRECT: ' + fail + ' customer filing lists not read: nothing frozen'); process.exit(0); }
+  const TIM = { customerReports: 0, by8K: 0, noFiling: 0, sameSession: 0, moved: 0, movedEarlier: 0, examples: [] };
+  const retime = (rp, cal) => { const ccik = cikOn(rp.sym, rp.d); if (!ccik || !BYCUST.has(ccik)) return cal; TIM.customerReports++; const f = pick202(F202.get(ccik), rp.d); if (!f) { TIM.noFiling++; return cal; }
+    const k = sessionOfAcceptance(D, f); if (k < 0) { TIM.noFiling++; return cal; } TIM.by8K++; if (k === cal) TIM.sameSession++; else { TIM.moved++; if (k < cal) TIM.movedEarlier++; if (TIM.examples.length < 25) TIM.examples.push({ sym: rp.sym, date: rp.d, calendarTime: rp.time, acceptedNY: f.d + ' ' + f.hm, calendarSession: D[cal], corrected: D[k] }); } return k; };
+  const B2 = buildEvents(retime), C2 = countsOf(B2.EV, end), A0 = buildEvents(), rep = {};
+  log('CORRECT timing: ' + JSON.stringify({ ...TIM, examples: TIM.examples.slice(0, 6) }) + ' | CASE COUNTS FIRST (corrected): ' + JSON.stringify(C2));
+  for (const id of todo) { const t0r = tradesOf(A0.EV[id], end); rep[id] = { older: t0r.filter(z => z.half === 'older').length, newer: t0r.filter(z => z.half === 'newer').length, frozen: { older: FROZEN[id].results.older.n || 0, newer: FROZEN[id].results.newer.n || 0 } };
+    rep[id].matchesFrozen = rep[id].older === rep[id].frozen.older && rep[id].newer === rep[id].frozen.newer;
+    const tr = tradesOf(B2.EV[id], end), r = evalRule(id, tr, C2[id], B2.COUNT);
+    CR[id] = { at: new Date().toISOString(), frozenAt: FROZEN[id].frozenAt || null, window: [D[0], D[end]], bar: BAR, bugs: ['SQ28-TIMING'],
+      reason: 'Reaction-day timing bug (found after the frozen run, confirmed by the lead 27 Oct 2026): the Nasdaq calendar often has no report time, and the frozen rule then used the NEXT session, so before-the-open reports (e.g. Walmart 2024-02-20, Dollar General 2025-03-13) were judged a day late (wrong reaction sign, late entry). Corrected: each linked customer\'s report timed from its own SEC 8-K Item 2.02 acceptance time (before 09:30 ET -> that session; during market hours -> that session; 16:00 or later -> the next session); no 8-K within 3 days -> the calendar rule. Rule, gates, links (same SHA), window, costs, yardsticks and placebo seed unchanged.',
+      timing: TIM, reproducedFrozen: rep[id], ...r, trades: tr.map(z => ({ sym: z.s, customer: z.ev.csym, signal: D[z.t], buy: D[z.k], sell: D[z.x], exit: z.kind, react: r4(z.ev.react), net: r4(z.g - COST), avgStock: r4(z.c - COST), placebo: z.pl ? { d: z.pl.d, net: r4(z.pl.g - COST) } : null })) };
+    const R = r.results, f = (h) => (h.n || 0) + ' (' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock;
+    log('CORRECT ' + id + ': frozen ' + FROZEN[id].verdict + ' -> corrected ' + r.verdict + ' (reproduced frozen: ' + rep[id].matchesFrozen + ') | older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | perYear ' + JSON.stringify(r.perYear) + ' | placebo ' + JSON.stringify({ older: r.placebo.older, newer: r.placebo.newer }) + ' | ' + String(r.why).slice(0, 300)); }
+  fs.writeFileSync(OUT, JSON.stringify({ ...PREV, generatedAt: new Date().toISOString(), correctedRun: CR }, null, 1));
+  try { const LB = J(LIB, null); for (const id of todo) { const e = LB && LB.strategies.find(x => x.id === id), c = CR[id], R = c.results; if (!e) continue;
+      e.corrected = { at: c.at, bugs: c.bugs, verdict: c.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg ?? null, R.newer.avg ?? null], stress: [R.older.avgStress ?? null, R.newer.avgStress ?? null], edge: [R.older.edge ?? null, R.newer.edge ?? null],
+        vsOwn: [R.older.vsOwn ?? null, R.newer.vsOwn ?? null], noTop2: [R.older.noTop2 ?? null, R.newer.noTop2 ?? null], tBlock: [R.older.tBlock ?? null, R.newer.tBlock ?? null], perYear: [c.perYear.older.rule, c.perYear.newer.rule], spyPerYear: [c.perYear.older.spy, c.perYear.newer.spy],
+        placebo: [c.placebo.older.ruleMinusPlacebo, c.placebo.newer.ruleMinusPlacebo], note: 'corrected run (SQ28-TIMING: report time from the SEC 8-K Item 2.02 acceptance time); firstRun unchanged' }; }
+    fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); } catch (e) { log('library not updated: ' + e.message); }
+  process.exit(0); }
+const RES = {}, TRS = {}, need = IDS.filter(id => !FROZEN[id]);
+if (need.length || env.HISTORY) for (const id of IDS) {
+  if (!STATUS.dataOk) { RES[id] = { verdict: 'NOT RUN', why: 'data not complete this run: ' + JSON.stringify({ master: STATUS.master.ok, tickerMap: STATUS.tickerMap.ok, earn: STATUS.earn, links: STATUS.links.ok, hand: STATUS.handCheck }).slice(0, 400) }; log('- ' + id + ': NOT RUN (data)'); continue; }
+  const tr = TRS[id] = tradesOf(EV[id]); RES[id] = evalRule(id, tr, COUNTS[id], COUNT); const R = RES[id].results, PY = RES[id].perYear;
   const f = (h) => (h.n || 0) + ' (' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock;
   log('- ' + id + ': ' + RES[id].verdict + ' | older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | perYear ' + JSON.stringify(PY) + ' | placebo ' + JSON.stringify(RES[id].placebo.all) + ' | ' + RES[id].why.slice(0, 300)); }
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
