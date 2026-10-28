@@ -38,3 +38,16 @@ test('materiality requires quantified value to be meaningful relative to scale',
   const base = {eventKind:'material_partnership_upfront', publicAt:'2026-01-01T12:00:00Z', sourceUrl:'https://sec.gov/test', verifiedPrimarySource:true, isGenuinelyNew:true, cashRunwayMonths:18, marketCapUsd:1000000000, upfrontPaymentUsd:1000000, shareSaleWithin30Days:false, competitorContextVerified:true, priceReactionMeasured:true};
   assert.ok(assessCatalystImpact(base).blockers.includes('stated economic value is below pre-registered materiality (5% of market cap or 25% of annual revenue)'));
 });
+test('runup study rejects an exit at or before entry',()=>{
+ const b={announcedAt:'2026-10-01T12:00:00Z',entryAt:'2026-10-21T13:30:00Z',eventDate:'2026-11-20',plannedExitAt:'2026-10-21T13:30:00Z'};
+ assert.equal(checkRunupEligibility(b).code,'EXIT_NOT_AFTER_ENTRY');
+ assert.equal(checkRunupEligibility({...b,plannedExitAt:'2026-10-20T13:30:00Z'}).eligible,false);
+});
+test('impact evidence rejects coercible numbers and invalid source timestamps',()=>{
+ const b={eventKind:'material_contract',publicAt:'2026-01-01T12:00:00Z',sourceUrl:'https://sec.gov/test',verifiedPrimarySource:true,isGenuinelyNew:true,cashRunwayMonths:18,marketCapUsd:100000000,contractValueUsd:10000000,shareSaleWithin30Days:false,competitorContextVerified:true,priceReactionMeasured:true};
+ assert.equal(assessCatalystImpact(b).status,'ELIGIBLE_FOR_FROZEN_BACKTEST_ONLY');
+ for(const change of [{upfrontPaymentUsd:null,contractValueUsd:null},{cashRunwayMonths:'18'},{marketCapUsd:true},{publicAt:'not-a-date'},{sourceUrl:'javascript:alert(1)'},{contractValueUsd:-1}])
+  assert.equal(assessCatalystImpact({...b,...change}).status,'RESEARCH_ONLY_NOT_ELIGIBLE');
+ // A missing upfront payment must not mask an explicitly quantified contract.
+ assert.equal(assessCatalystImpact({...b,upfrontPaymentUsd:null}).status,'ELIGIBLE_FOR_FROZEN_BACKTEST_ONLY');
+});

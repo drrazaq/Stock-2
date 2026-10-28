@@ -28,6 +28,7 @@ import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from
 import { isFreshPriceAge } from './ignition-gates.mjs';
 import { selectLiveRefreshSymbols } from './live-refresh-universe.mjs';
 import { approvedQuoteGate } from './approved-quote-gate.mjs';
+import { zadApproved } from './zad-compliance.mjs';
 import { paperRecordApproved, earlyPaperEligible } from './paper-gates.mjs';
 import { sessionCoverage } from './session-coverage.mjs';
 import { sendTelegramMessage } from './telegram-delivery.mjs';
@@ -145,6 +146,7 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
   if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
   if (!isFreshPriceAge(rd)) { flag(r.sym, 'noLive', 'price age ' + (typeof rd !== 'number' || !Number.isFinite(rd) ? 'unknown' : rd < 0 ? 'invalid (future timestamp)' : Math.round(rd) + ' minutes') + ': not fresh enough to alert'); return; }
+  if (!early && !zadApproved(r.sym, halal, zadNot)) { t.blocked = ['ZAD_NOT_CONFIRMED']; flag(r.sym, 'halalUnknown', 'approved alert withheld: confirm halal in ZAD first'); return; }
   // Only an approved BUY needs an executable quote; unproven paper setups remain research.
   let approvedQuote = null;
   if (!early) { approvedQuote = approvedQuoteGate({ price: r.price, bid: r.bid, ask: r.ask, quoteAgeSec: r.qt > 0 ? (Date.now() - r.qt) / 1000 : null });

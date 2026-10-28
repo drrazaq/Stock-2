@@ -37,3 +37,7 @@
 5. Confirm ZAD status independently for any proposed trade, validate Telegram message acknowledgment in production, and review privacy before any merge.
 
 **Progress indicator:** Prior overall **~45% subjective maturity estimate retained**. This is not an audited percentage of code complete and says nothing about expected profits. A passing CI run verifies code/test execution only, not live-market trading edge.
+
+## Continued review — 28 October, safety repair batch
+
+See [engineering dashboard](engineering-progress.md) for current acceptance counts, commits, CI and remaining work; [inventory](audit-inventory-2026-10-28.md) lists every root script and workflow. The earlier ~45% maturity statement is a historical subjective estimate, not the current comprehensive-audit completion percentage. This batch fixes unknown-ZAD approved-alert wording, overflowed spread arithmetic, missing pre-ignition ledger persistence and catalyst-study evidence/chronology validation. All 1,177 local tests pass; remote final-commit CI remains separate. No historical results, strategy thresholds, owner files or holdouts were changed.

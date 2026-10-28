@@ -92,3 +92,7 @@ test('(owner approved 28 Oct) the alert shows the REAL spread and the gross move
   const { EA, sent } = make(); EA.noteLead(lead('GOOD', { bid: 11.99, ask: 12.01, qAgeSec: 2 })); await EA.process(); assert.match(sent[0], /Spread now 0\.17% \(bid \$11\.99 \/ ask \$12\.01/);
   assert.equal(EA.S.seen['lead|GOOD'].decision, 'SENT');   // display only: the decision is unchanged
 });
+test('overflowing quote sum cannot be displayed as a fresh zero spread',async()=>{
+ const {spreadHurdle}=await import('../early-alerts.mjs');
+ assert.match(spreadHurdle({price:1e308,bid:1e308,ask:1.7e308,qAgeSec:1}),/^Spread: no fresh quote/);
+});

@@ -11,3 +11,6 @@ test('wide spread blocks even a price that moved dramatically',()=>{
   assert.equal(approvedQuoteGate({price:10,bid:9.85,ask:10.15,quoteAgeSec:1}).reason,'SPREAD_TOO_WIDE');
 });
 test('under-dollar quotes are not approved',()=>assert.equal(approvedQuoteGate({price:0.5,bid:0.49,ask:0.51,quoteAgeSec:1}).ok,false));
+test('finite extreme quotes cannot overflow midpoint and hide a wide spread',()=>{
+ assert.equal(approvedQuoteGate({price:1e308,bid:1e308,ask:1.7e308,quoteAgeSec:1}).reason,'SPREAD_TOO_WIDE');
+});
