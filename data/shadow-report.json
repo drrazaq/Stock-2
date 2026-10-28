@@ -1,0 +1,1090 @@
+{
+ "generatedAt": "2026-10-28T21:15:33.767Z",
+ "feed": "sip",
+ "preRegistered": "shadow-eval.mjs header, 28 Oct 2026",
+ "shadowSessions": 1,
+ "filters": {
+  "day": {
+   "sessions": 1,
+   "candidates": 568,
+   "base": {
+    "n": 0
+   },
+   "gates": {
+    "window": {
+     "rejected": 20,
+     "n": 20,
+     "avg": -0.0053,
+     "median": -0.0051,
+     "win": 0.3,
+     "hit2": 0,
+     "worst": -0.0379,
+     "noTop2": -0.0072,
+     "pf": 0.2743,
+     "verdict": "COLLECTING"
+    },
+    "chgMin": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "chgMax": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "score": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "dollarVol": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    }
+   }
+  },
+  "d1": {
+   "sessions": 1,
+   "candidates": 568,
+   "base": {
+    "n": 0
+   },
+   "gates": {
+    "window": {
+     "rejected": 20,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "chgMin": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "chgMax": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "score": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "dollarVol": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    }
+   }
+  },
+  "d5": {
+   "sessions": 1,
+   "candidates": 568,
+   "base": {
+    "n": 0
+   },
+   "gates": {
+    "window": {
+     "rejected": 20,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "chgMin": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "chgMax": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "score": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    },
+    "dollarVol": {
+     "rejected": 0,
+     "n": 0,
+     "verdict": "COLLECTING"
+    }
+   }
+  }
+ },
+ "alerts5d": {
+  "delivered": {
+   "n": 0
+  },
+  "notDelivered": {
+   "n": 0
+  }
+ },
+ "ranking": {
+  "frozen": {
+   "date": "2026-10-28",
+   "evalFrom": "2026-10-29",
+   "cap": 5,
+   "minSessions": 20,
+   "minPicks": 50,
+   "controlsPerDay": 10
+  },
+  "models": {
+   "A": {
+    "name": "existing: first come",
+    "stream": "E",
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null
+   },
+   "B": {
+    "name": "opportunity-first",
+    "stream": "E",
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null,
+    "verdict": "COLLECTING (0 of 20 sessions, 0 of 50 picks)"
+   },
+   "C": {
+    "name": "simple baseline (volume pace + spread)",
+    "stream": "E",
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null,
+    "verdict": "COLLECTING (0 of 20 sessions, 0 of 50 picks)"
+   },
+   "R": {
+    "name": "random control",
+    "stream": "E",
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null
+   },
+   "D": {
+    "name": "fresh company filing before the move",
+    "stream": "F",
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null,
+    "verdict": "COLLECTING (0 of 20 sessions, 0 of 50 picks)"
+   },
+   "R0": {
+    "name": "no-information control",
+    "stream": "N",
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null
+   }
+  },
+  "streams": {
+   "E": {
+    "candidates": 0,
+    "sessions": 0,
+    "all": {
+     "picks": 0,
+     "sessions": 0,
+     "m30": {
+      "n": 0
+     },
+     "day": {
+      "n": 0
+     },
+     "d1": {
+      "n": 0
+     },
+     "d5": {
+      "n": 0
+     },
+     "dayDelayed": {
+      "n": 0
+     },
+     "dayStress": {
+      "n": 0
+     },
+     "d5Stress": {
+      "n": 0
+     },
+     "portfolioUsd": 0,
+     "maxDrawdownUsd": 0,
+     "medianMinute": null,
+     "medianMoveAtPick": null,
+     "assumedSpreadShare": null
+    }
+   },
+   "F": {
+    "candidates": 0,
+    "sessions": 0,
+    "all": {
+     "picks": 0,
+     "sessions": 0,
+     "m30": {
+      "n": 0
+     },
+     "day": {
+      "n": 0
+     },
+     "d1": {
+      "n": 0
+     },
+     "d5": {
+      "n": 0
+     },
+     "dayDelayed": {
+      "n": 0
+     },
+     "dayStress": {
+      "n": 0
+     },
+     "d5Stress": {
+      "n": 0
+     },
+     "portfolioUsd": 0,
+     "maxDrawdownUsd": 0,
+     "medianMinute": null,
+     "medianMoveAtPick": null,
+     "assumedSpreadShare": null
+    }
+   },
+   "N": {
+    "candidates": 0,
+    "sessions": 0,
+    "all": {
+     "picks": 0,
+     "sessions": 0,
+     "m30": {
+      "n": 0
+     },
+     "day": {
+      "n": 0
+     },
+     "d1": {
+      "n": 0
+     },
+     "d5": {
+      "n": 0
+     },
+     "dayDelayed": {
+      "n": 0
+     },
+     "dayStress": {
+      "n": 0
+     },
+     "d5Stress": {
+      "n": 0
+     },
+     "portfolioUsd": 0,
+     "maxDrawdownUsd": 0,
+     "medianMinute": null,
+     "medianMoveAtPick": null,
+     "assumedSpreadShare": null
+    }
+   }
+  },
+  "capCost": {
+   "firstFive": {
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null
+   },
+   "afterCap": {
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null
+   },
+   "hindsightBestFive": {
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null
+   }
+  }
+ },
+ "rankingPilot": {
+  "frozen": {
+   "date": "2026-10-28",
+   "evalFrom": "2026-10-29",
+   "cap": 5,
+   "minSessions": 20,
+   "minPicks": 50,
+   "controlsPerDay": 10
+  },
+  "models": {
+   "A": {
+    "name": "existing: first come",
+    "stream": "E",
+    "picks": 5,
+    "sessions": 1,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 5,
+     "avg": -0.0153,
+     "median": -0.0036,
+     "win": 0.4,
+     "hit2": 0,
+     "worst": -0.0777,
+     "noTop2": -0.0297,
+     "pf": 0.1437
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 5,
+     "avg": -0.0172,
+     "median": -0.0056,
+     "win": 0.2,
+     "hit2": 0,
+     "worst": -0.0796,
+     "noTop2": -0.0317,
+     "pf": 0.1095
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": -76,
+    "maxDrawdownUsd": -76,
+    "medianMinute": 587,
+    "medianMoveAtPick": 0.0384,
+    "assumedSpreadShare": 0
+   },
+   "B": {
+    "name": "opportunity-first",
+    "stream": "E",
+    "picks": 5,
+    "sessions": 1,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 5,
+     "avg": 0.0059,
+     "median": -0.0013,
+     "win": 0.4,
+     "hit2": 0.2,
+     "worst": -0.0078,
+     "noTop2": -0.0042,
+     "pf": 3.3386
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 5,
+     "avg": 0.0039,
+     "median": -0.0033,
+     "win": 0.2,
+     "hit2": 0.2,
+     "worst": -0.0098,
+     "noTop2": -0.0062,
+     "pf": 1.9561
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 30,
+    "maxDrawdownUsd": 0,
+    "medianMinute": 605,
+    "medianMoveAtPick": 0.0384,
+    "assumedSpreadShare": 0,
+    "verdict": "COLLECTING (1 of 20 sessions, 5 of 50 picks)"
+   },
+   "C": {
+    "name": "simple baseline (volume pace + spread)",
+    "stream": "E",
+    "picks": 5,
+    "sessions": 1,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 5,
+     "avg": 0.0087,
+     "median": 0.0002,
+     "win": 0.6,
+     "hit2": 0.2,
+     "worst": -0.0078,
+     "noTop2": -0.0037,
+     "pf": 4.8246
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 5,
+     "avg": 0.0067,
+     "median": -0.0018,
+     "win": 0.4,
+     "hit2": 0.2,
+     "worst": -0.0098,
+     "noTop2": -0.0057,
+     "pf": 2.9477
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 44,
+    "maxDrawdownUsd": 0,
+    "medianMinute": 591,
+    "medianMoveAtPick": 0.0384,
+    "assumedSpreadShare": 0,
+    "verdict": "COLLECTING (1 of 20 sessions, 5 of 50 picks)"
+   },
+   "R": {
+    "name": "random control",
+    "stream": "E",
+    "picks": 5,
+    "sessions": 1,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 5,
+     "avg": 0.027,
+     "median": -0.0013,
+     "win": 0.4,
+     "hit2": 0.4,
+     "worst": -0.0078,
+     "noTop2": -0.0045,
+     "pf": 10.9412
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 5,
+     "avg": 0.0232,
+     "median": -0.0033,
+     "win": 0.4,
+     "hit2": 0.4,
+     "worst": -0.0098,
+     "noTop2": -0.0065,
+     "pf": 6.9184
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 135,
+    "maxDrawdownUsd": 0,
+    "medianMinute": 608,
+    "medianMoveAtPick": 0.0362,
+    "assumedSpreadShare": 0
+   },
+   "D": {
+    "name": "fresh company filing before the move",
+    "stream": "F",
+    "picks": 0,
+    "sessions": 0,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 0,
+    "maxDrawdownUsd": 0,
+    "medianMinute": null,
+    "medianMoveAtPick": null,
+    "assumedSpreadShare": null,
+    "verdict": "COLLECTING (0 of 20 sessions, 0 of 50 picks)"
+   },
+   "R0": {
+    "name": "no-information control",
+    "stream": "N",
+    "picks": 5,
+    "sessions": 1,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 5,
+     "avg": -0.0053,
+     "median": -0.0055,
+     "win": 0,
+     "hit2": 0,
+     "worst": -0.0063,
+     "noTop2": -0.0058,
+     "pf": 0
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 5,
+     "avg": -0.0059,
+     "median": -0.0048,
+     "win": 0,
+     "hit2": 0,
+     "worst": -0.0104,
+     "noTop2": -0.0072,
+     "pf": 0
+    },
+    "dayStress": {
+     "n": 5,
+     "avg": -0.0073,
+     "median": -0.0075,
+     "win": 0,
+     "hit2": 0,
+     "worst": -0.0083,
+     "noTop2": -0.0078,
+     "pf": 0
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": -26,
+    "maxDrawdownUsd": -26,
+    "medianMinute": 899,
+    "medianMoveAtPick": 0.0016,
+    "assumedSpreadShare": 0
+   }
+  },
+  "streams": {
+   "E": {
+    "candidates": 22,
+    "sessions": 1,
+    "all": {
+     "picks": 22,
+     "sessions": 1,
+     "m30": {
+      "n": 0
+     },
+     "day": {
+      "n": 22,
+      "avg": 0.0124,
+      "median": 0.0002,
+      "win": 0.5455,
+      "hit2": 0.2727,
+      "worst": -0.0777,
+      "noTop2": 0.0027,
+      "pf": 2.5058
+     },
+     "d1": {
+      "n": 0
+     },
+     "d5": {
+      "n": 0
+     },
+     "dayDelayed": {
+      "n": 0
+     },
+     "dayStress": {
+      "n": 22,
+      "avg": 0.0099,
+      "median": -0.0018,
+      "win": 0.5,
+      "hit2": 0.2727,
+      "worst": -0.0796,
+      "noTop2": 0.0007,
+      "pf": 2.0806
+     },
+     "d5Stress": {
+      "n": 0
+     },
+     "portfolioUsd": 272,
+     "maxDrawdownUsd": 0,
+     "medianMinute": 620,
+     "medianMoveAtPick": 0.0446,
+     "assumedSpreadShare": 0
+    }
+   },
+   "F": {
+    "candidates": 0,
+    "sessions": 0,
+    "all": {
+     "picks": 0,
+     "sessions": 0,
+     "m30": {
+      "n": 0
+     },
+     "day": {
+      "n": 0
+     },
+     "d1": {
+      "n": 0
+     },
+     "d5": {
+      "n": 0
+     },
+     "dayDelayed": {
+      "n": 0
+     },
+     "dayStress": {
+      "n": 0
+     },
+     "d5Stress": {
+      "n": 0
+     },
+     "portfolioUsd": 0,
+     "maxDrawdownUsd": 0,
+     "medianMinute": null,
+     "medianMoveAtPick": null,
+     "assumedSpreadShare": null
+    }
+   },
+   "N": {
+    "candidates": 10,
+    "sessions": 1,
+    "all": {
+     "picks": 10,
+     "sessions": 1,
+     "m30": {
+      "n": 0
+     },
+     "day": {
+      "n": 10,
+      "avg": -0.007,
+      "median": -0.0055,
+      "win": 0.1,
+      "hit2": 0,
+      "worst": -0.0208,
+      "noTop2": -0.0086,
+      "pf": 0.0142
+     },
+     "d1": {
+      "n": 0
+     },
+     "d5": {
+      "n": 0
+     },
+     "dayDelayed": {
+      "n": 10,
+      "avg": -0.0067,
+      "median": -0.0048,
+      "win": 0.1,
+      "hit2": 0,
+      "worst": -0.0203,
+      "noTop2": -0.009,
+      "pf": 0.094
+     },
+     "dayStress": {
+      "n": 10,
+      "avg": -0.0097,
+      "median": -0.0075,
+      "win": 0,
+      "hit2": 0,
+      "worst": -0.03,
+      "noTop2": -0.0116,
+      "pf": 0
+     },
+     "d5Stress": {
+      "n": 0
+     },
+     "portfolioUsd": -69,
+     "maxDrawdownUsd": -69,
+     "medianMinute": 899,
+     "medianMoveAtPick": 0.0019,
+     "assumedSpreadShare": 0
+    }
+   }
+  },
+  "capCost": {
+   "firstFive": {
+    "picks": 5,
+    "sessions": 1,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 5,
+     "avg": -0.0153,
+     "median": -0.0036,
+     "win": 0.4,
+     "hit2": 0,
+     "worst": -0.0777,
+     "noTop2": -0.0297,
+     "pf": 0.1437
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 5,
+     "avg": -0.0172,
+     "median": -0.0056,
+     "win": 0.2,
+     "hit2": 0,
+     "worst": -0.0796,
+     "noTop2": -0.0317,
+     "pf": 0.1095
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": -76,
+    "maxDrawdownUsd": -76,
+    "medianMinute": 587,
+    "medianMoveAtPick": 0.0384,
+    "assumedSpreadShare": 0
+   },
+   "afterCap": {
+    "picks": 17,
+    "sessions": 1,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 17,
+     "avg": 0.0205,
+     "median": 0.0114,
+     "win": 0.5882,
+     "hit2": 0.3529,
+     "worst": -0.0309,
+     "noTop2": 0.0087,
+     "pf": 4.8035
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 17,
+     "avg": 0.0179,
+     "median": 0.0093,
+     "win": 0.5882,
+     "hit2": 0.3529,
+     "worst": -0.0329,
+     "noTop2": 0.0067,
+     "pf": 3.8909
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 348,
+    "maxDrawdownUsd": 0,
+    "medianMinute": 625,
+    "medianMoveAtPick": 0.0446,
+    "assumedSpreadShare": 0
+   },
+   "hindsightBestFive": {
+    "picks": 5,
+    "sessions": 1,
+    "m30": {
+     "n": 0
+    },
+    "day": {
+     "n": 5,
+     "avg": 0.0736,
+     "median": 0.0698,
+     "win": 1,
+     "hit2": 1,
+     "worst": 0.0385,
+     "noTop2": 0.0502,
+     "pf": null
+    },
+    "d1": {
+     "n": 0
+    },
+    "d5": {
+     "n": 0
+    },
+    "dayDelayed": {
+     "n": 0
+    },
+    "dayStress": {
+     "n": 5,
+     "avg": 0.0697,
+     "median": 0.0677,
+     "win": 1,
+     "hit2": 1,
+     "worst": 0.0364,
+     "noTop2": 0.0481,
+     "pf": null
+    },
+    "d5Stress": {
+     "n": 0
+    },
+    "portfolioUsd": 368,
+    "maxDrawdownUsd": 0,
+    "medianMinute": 621,
+    "medianMoveAtPick": 0.0357,
+    "assumedSpreadShare": 0
+   }
+  }
+ },
+ "dFeed": {
+  "filingsDecided": 0,
+  "dEligible": 0,
+  "topReasons": []
+ }
+}
