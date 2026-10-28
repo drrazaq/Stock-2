@@ -55,7 +55,7 @@ test('daily cap: 5 leads, the rest logged as LIMIT; level paper mutes leads but 
 test('paper setups: separate message with the rule record, the without-2-best figure and the 5-year verdict; none after 11:30', async () => {
   const { EA, sent } = make();
   EA.notePaper({ sym: 'GOOD', rule: 'IG1', m: 590, price: 3.1 }, 0.12); EA.notePaper({ sym: 'LATE', rule: 'IG1', m: 700, price: 5 }, 0.12); await EA.process();
-  assert.equal(sent.length, 1); assert.match(sent[0], /^EARLY WATCH: PAPER SETUP \(NOT AN APPROVED BUY\)/); assert.match(sent[0], /68 paper trades, \+2\.1% a trade after costs, -0\.2% without its 2 best; 5-year test REJECTED/);
+  assert.equal(sent.length, 1); assert.match(sent[0], /^EARLY WATCH: PAPER SETUP \(NOT AN APPROVED BUY\)/); assert.match(sent[0], /68 paper trades, \+2\.1% a trade after costs, -0\.2% without its 2 best; minute-bar history verdict REJECTED/);
   assert.match(EA.S.seen['paper|LATE'].decision, /after 11:30/);
 });
 test('a failed Telegram send is recorded as SEND FAILED, not as delivered; latency is measured', async () => {
