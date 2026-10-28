@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-27T03:05:40.368Z",
- "lastClose": "2026-10-26",
+ "generatedAt": "2026-10-28T00:15:04.034Z",
+ "lastClose": "2026-10-27",
  "paperStart": "2026-10-23",
- "inputsSeen": 20,
+ "inputsSeen": 40,
  "note": "PAPER ONLY. A stock picked by 2+ (CONF-3: 3+) different rule families within 5 sessions. Nothing here is a buy by itself: a version needs a TRADABLE SMALL / PROVEN frozen 5-year verdict (data/confluence-lab.json firstRun), or the TRY SMALL gates, or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
   "CONF-2": {
@@ -10,7 +10,25 @@
    "hold": 63,
    "tier": "REJECTED",
    "holdNote": "each signal carries its own hold (sessions) and stopPct",
-   "newSignals": [],
+   "newSignals": [
+    {
+     "sym": "SHOP",
+     "close": 165.81,
+     "halal": "unknown",
+     "d": "2026-10-27",
+     "hold": 10,
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ],
+     "rules": [
+      "DEC2-MINTT",
+      "DEC2-TPS"
+     ],
+     "plan": "buy at the open of 2026-10-28 (the next session after 2026-10-27), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+    }
+   ],
    "open": []
   },
   "CONF-3": {
