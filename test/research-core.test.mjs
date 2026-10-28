@@ -75,9 +75,9 @@ test('avoid verdict: never a buy; confirmed only with negative edge and block t 
   assert.match(avoidVerdict({ older: { n: 5, blocks: 1 }, newer: h(-0.01, -3) }).verdict, /TOO FEW/);
 });
 
-test('library pre-registration: adds every RQ entry once (3 lazy + 2 tender + 4 info-shock), never touches others', () => {
+test('library pre-registration: adds every RQ entry once (3 lazy + 2 tender + 4 info-shock + 3 backlog), never touches others', () => {
   const LB = { strategies: [{ id: 'C-DIFF1', status: 'queued (Agent C)' }] };
-  assert.equal(preRegister(LB), 9); assert.equal(preRegister(LB), 0); assert.equal(LB.strategies.length, 10); assert.equal(LB.strategies[0].status, 'queued (Agent C)');
+  assert.equal(preRegister(LB), 12); assert.equal(preRegister(LB), 0); assert.equal(LB.strategies.length, 13); assert.equal(LB.strategies[0].status, 'queued (Agent C)');
   const e = LB.strategies.find(x => x.id === 'RQ-LAZY-126'); assert.equal(e.hold, 126); assert.match(e.status, /pre-registered/); assert.ok(e.sources.length >= 1);
 });
 

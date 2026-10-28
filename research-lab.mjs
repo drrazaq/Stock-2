@@ -21,7 +21,8 @@ import { halfStat, judge, TIER2_T } from './value-core.mjs';
 import { parseDailyIdx } from './squad1-core.mjs';
 import { RULES, IDS, LAZY_IDS, TENDER_IDS, TO, parseSubmission, offerPrice, spreadOf, saneSpread, inSpread, tenderExit, tenderDataRule, ONE_OPEN, COST, SPLIT, PAPER_START, LP, mean, r4, halfOf, capG, addDays, firstAfter as fAfter, nextSession, ownAverage, pitPick, avoidVerdict, boardStats, paperReady, shapeOf,
   preRegister, termFreq, tenKs, docUrl, pairPrev, pairSim, makeRanker, sideOf, dataComplete,
-  ISC, ISC_IDS, sdOf, isShock, eightKs, reactionDate, isEarnings, newsOk, iscDataRule } from './research-core.mjs';
+  ISC, ISC_IDS, sdOf, isShock, eightKs, reactionDate, isEarnings, newsOk, iscDataRule, RPO, RPO_IDS, rpoRows, rpoEvents, rpoDataRule } from './research-core.mjs';
+import { execFileSync } from 'node:child_process';
 import { secNY } from './sec-time.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', SECD = local(env.SECD_BASE) || 'https://data.sec.gov';
@@ -263,9 +264,41 @@ for (const id of ISC_IDS.filter(x => !FROZEN[x])) { if (!IDATA.ok) { RES[id] = {
     trades: tr.map(z => ({ s: z.s, sig: D[z.t], buy: D[z.k], sell: D[z.x], ar: z.p, net: r4(z.g - COST), avgStock: r4(z.c - COST), sameStock: r4(z.own === null || z.own === undefined ? null : z.own - COST) })) };
   const f = (h) => (h.n || 0) + ' (' + (h.days || 0) + 'd, ' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock + ' win ' + pc(h.win);
   log('- ' + id + ': ' + RES[id].verdict + ' | older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | ' + JSON.stringify(lotterySplit) + ' | ' + RES[id].why.slice(0, 300)); }
+// ================= 5d. IDEA 4: ORDER BACKLOG (RPO) GROWTH (pre-registered 28 Oct 2026; research-core.mjs IDEA 4) =================
+// Data: us-gaap:RevenueRemainingPerformanceObligation from the official SEC bulk company facts file (companyfacts.zip, read once into
+// research-cache/rpo.json.gz; only the universe companies, only this tag). Paper lane: companyconcept JSON for companies that filed a
+// 10-Q/10-K on a day since the paper start (SEC daily index).
+const RPOF = RC + '/rpo.json.gz', RSTAT = { companies: CIKS.length, looked: 0, withRpo: 0, rows: 0, events: 0, liqMonths, liqMapped, noSym: 0, notLiquid: 0, ranked: 0, top: 0, bottom: 0 };
+let RX = JZ(RPOF, { at: null, c: {} });
+{ const todo = CIKS.filter(c => RX.c[c] === undefined);
+  if (todo.length && left() > 50 * 60e3 && !local(env.SEC_BASE)) { const zip = RC + '/companyfacts.zip';
+    let zipOk = false; try { execFileSync('curl', ['-sS', '-f', '-L', '--retry', '3', '-A', UA, '-o', zip, SEC + '/Archives/edgar/daily-index/xbrl/companyfacts.zip'], { stdio: ['ignore', 'ignore', 'pipe'], timeout: 40 * 60e3 }); zipOk = fs.statSync(zip).size > 1e8; } catch (e) { log('companyfacts.zip download failed: ' + String(e.message).slice(0, 200)); }
+    if (zipOk) { let n = 0; const names = new Set(execFileSync('unzip', ['-Z1', zip], { maxBuffer: 1 << 26 }).toString().split('\n').filter(Boolean));
+      for (const c of todo) { if (left() < 30 * 60e3) break; const name = 'CIK' + pad(c) + '.json'; if (!names.has(name)) { RX.c[c] = []; continue; }
+        try { RX.c[c] = rpoRows(JSON.parse(execFileSync('unzip', ['-p', zip, name], { maxBuffer: 1 << 30, stdio: ['ignore', 'pipe', 'ignore'] }).toString())); } catch (e) { continue; }
+        if (++n % 1000 === 0) log('company facts (RPO): ' + n + ' read'); }
+      try { fs.unlinkSync(zip); } catch (e) {} RX.at = new Date().toISOString(); fs.writeFileSync(RPOF, zlib.gzipSync(JSON.stringify(RX))); } } }
+const REV = [];   // every growth event (reference set for the ranker), with the company
+for (const c of CIKS) { const rows = RX.c[c]; if (rows === undefined) continue; RSTAT.looked++; if (!rows.length) continue; RSTAT.withRpo++; RSTAT.rows += rows.length;
+  for (const e of rpoEvents(rows)) REV.push({ cik: c, ...e, s: e.g }); }
+RSTAT.events = REV.filter(e => e.d >= RPO.eventsFrom && e.d <= D[T - 1]).length;
+const RDATA = rpoDataRule({ ...RSTAT, ciks: CIKS.length }); RSTAT.complete = RDATA.ok; RSTAT.ratios = RDATA.ratios; RSTAT.why = RDATA.why;
+const rrank = makeRanker(REV), REVENTS = { top: [], bottom: [] };
+for (const z of REV) { if (z.d < RPO.eventsFrom) continue; const p = rrank(z.d, z.g), side = sideOf(p); if (p === null) continue; RSTAT.ranked++; if (side !== 'top' && side !== 'bottom') continue;
+  const sym = symFor(z.cik, z.d); if (!sym) { RSTAT.noSym++; continue; } const i = SY.get(sym), k = firstAfter(z.d), t = Math.min(k - 1, T - 1); if (t < 1) continue; if (!liqOn(i, t)) { RSTAT.notLiquid++; continue; }
+  RSTAT[side]++; REVENTS[side].push({ t, i, k, d: z.d, p: r4(p), g: z.g, end: z.end, future: k >= T }); }
+log('backlog (RPO) data: ' + JSON.stringify(RSTAT));
+const rpoSignals = (id) => REVENTS[RULES[id].side].map(z => ({ ...z, x: z.k + H(id) - 1 }));
+for (const id of RPO_IDS.filter(x => !FROZEN[x])) { if (!RDATA.ok) { RES[id] = { verdict: 'NOT RUN', why: 'backlog data rule not met yet: ' + RDATA.why }; continue; } if (left() < 6 * 60e3) { RES[id] = { verdict: 'NOT RUN', why: 'time budget used up this run' }; continue; }
+  const tr = tradesOf(id, rpoSignals(id)), hold = H(id), R = { older: halfStat(tr.filter(z => z.half === 'older'), hold), newer: halfStat(tr.filter(z => z.half === 'newer'), hold), all: halfStat(tr, hold) };
+  const v = RULES[id].kind === 'avoid' ? avoidVerdict(R) : judge(R, { bar: BAR });
+  RES[id] = { ...v, results: R, shape: shapeOf(tr, z => D[z.t].slice(0, 4)), hold, kind: RULES[id].kind, family: 'rpo', name: RULES[id].name, split: SPLIT, cost: COST, yardstick: 'capBoth (AUD-1); the average liquid stock over the same entry-to-exit sessions',
+    trades: tr.map(z => ({ s: z.s, sig: D[z.t], buy: D[z.k], sell: D[z.x], pct: z.p, net: r4(z.g - COST), avgStock: r4(z.c - COST), sameStock: r4(z.own === null || z.own === undefined ? null : z.own - COST) })) };
+  const f = (h) => (h.n || 0) + ' (' + (h.days || 0) + 'd, ' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock + ' win ' + pc(h.win);
+  log('- ' + id + ': ' + RES[id].verdict + ' | older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | ' + RES[id].why.slice(0, 300)); }
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
 const isJudged = (r) => r && r.verdict && r.verdict !== 'NOT RUN';
-const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, data: RULES[k].family === 'tender' ? { ...TSTAT } : RULES[k].family === 'isc' ? { ...ISTAT } : { ...STATUS, failSample: undefined }, ...strip(r) }])), isJudged);
+const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, data: RULES[k].family === 'tender' ? { ...TSTAT } : RULES[k].family === 'isc' ? { ...ISTAT } : RULES[k].family === 'rpo' ? { ...RSTAT } : { ...STATUS, failSample: undefined }, ...strip(r) }])), isJudged);
 
 // ================= 6. PAPER LANE (from 26 Oct 2026; only once the data rule has passed, so the ranking has its full reference set) =================
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
@@ -312,6 +345,26 @@ if (IDATA.ok && ISC_IDS.some(id => firstRun[id])) { const checked = J(RC + '/isc
           plan: (late ? 'LATE (found after the rule\'s entry): buy at the next open after ' + D[lastT] : 'buy at the open of ' + entryDate) + ', hold ' + H(id) + ' sessions (the stock beat the average stock by ' + (ar * 100).toFixed(1) + '% on ' + D[t] + ', ' + (ar / sg).toFixed(1) + ' sigma, with an 8-K)', entryDate, late, recordedAfter: D[lastT] };
         if (sigIds.has(line.id)) continue; sigIds.add(line.id); newLines.push(line); sigLines.push(line); openBy.set(okey, true); } } }
   W(RC + '/isc-paper.json', checked); log('info-shock paper: ' + reads + ' fresh 8-K list reads'); }
+// backlog paper (idea 4, filings from 27 Oct 2026): 10-Q/10-K filers of each day (SEC daily index), their RPO facts read fresh from
+// data.sec.gov companyconcept (cached once per company and day), ranked against the 5-year reference set plus the paper events.
+const RPO_PAPER_FROM = '2026-10-27';
+if (RDATA.ok && RPO_IDS.some(id => firstRun[id])) { const P = J(RC + '/rpo-paper.json', { days: [], refs: [] }), done = new Set(P.days), uniSet = new Set(CIKS); let reads = 0;
+  for (let d = RPO_PAPER_FROM; d <= iso(Date.now()) && left() > 5 * 60e3; d = addDays(d, 1)) { const wd = new Date(d + 'T00:00:00Z').getUTCDay(); if (wd === 0 || wd === 6 || done.has(d)) continue;
+    const q = Math.floor((+d.slice(5, 7) - 1) / 3) + 1, idx = await sec(SEC + '/Archives/edgar/daily-index/' + d.slice(0, 4) + '/QTR' + q + '/master.' + d.replace(/-/g, '') + '.idx', 'text');
+    if (idx === undefined) break; if (idx === null) { if (d < iso(Date.now() - 2 * 864e5)) done.add(d); continue; }
+    let bad = false; const ciks = [...new Set(parseDailyIdx(idx, new Set(['10-Q', '10-K']), (r) => uniSet.has(r.cik) || !!symFor(r.cik, d)).map(r => r.cik))];
+    for (const c of ciks) { const j = await sec(SECD + '/api/xbrl/companyconcept/CIK' + pad(c) + '/us-gaap/' + RPO.tag + '.json'); reads++; if (j === undefined) { bad = true; break; } if (!j) continue;
+      for (const e of rpoEvents(rpoRows(j))) if (e.d === d && !P.refs.some(z => z.cik === c && z.d === d)) P.refs.push({ cik: c, ...e, s: e.g }); }
+    if (!bad) done.add(d); else break; }
+  P.days = [...done].sort(); W(RC + '/rpo-paper.json', P);
+  const seenRef = new Set(REV.map(z => z.cik + '|' + z.d)), prank = makeRanker([...REV, ...P.refs.filter(z => !seenRef.has(z.cik + '|' + z.d))]);
+  for (const z of P.refs) { const p = prank(z.d, z.g), side = sideOf(p), sym = symFor(z.cik, z.d); if (!sym || side !== 'top') continue; const i = SY.get(sym), k = firstAfter(z.d), t = Math.min(k - 1, lastT); if (!liqOn(i, t)) continue;
+    for (const id of RPO_IDS.filter(x => RULES[x].side === side && RULES[x].kind === 'buy')) { const key = id + '|' + sym; if (openBy.get(key)) continue;
+      const late = k <= lastT, entryDate = late ? null : (z.d >= D[lastT] ? nextSession(z.d) : nextSession(D[lastT]));
+      const line = { type: 'signal', id: id + '|' + sym + '|' + z.d, m: id, sym, d: z.d, event: z.form + ' backlog ' + z.end, growth: z.g, pct: r4(p), close: r4(C[i * T + t] > 0 ? C[i * T + t] : closeAt(i, t, t - 5)), halal: halal(sym), hold: H(id),
+        plan: (late ? 'LATE (found after the rule\'s entry): buy at the next open after ' + D[lastT] : 'buy at the open of ' + entryDate) + ', hold ' + H(id) + ' sessions (backlog +' + (z.g * 100).toFixed(0) + '% on a year before)', entryDate, late, recordedAfter: D[lastT] };
+      if (sigIds.has(line.id)) continue; sigIds.add(line.id); newLines.push(line); sigLines.push(line); openBy.set(key, true); } }
+  log('backlog paper: ' + reads + ' companyconcept reads, ' + P.refs.length + ' paper events'); }
 const board = {}, today = {};
 for (const x of sigLines) { const k = x.entryDate ? tOf.get(x.entryDate) : x.late ? firstAfter(x.recordedAfter) : undefined; if (k === undefined || k >= T) { x._state = 'waiting'; continue; } const i = SY.get(x.sym);
   let xi = k + x.hold - 1; if (RULES[x.m] && RULES[x.m].family === 'tender') { const ex = i === undefined ? null : tenderExit({ k, c0: x.c0, T, px: tPx(i) }); xi = ex ? ex.x : T; }
@@ -320,7 +373,7 @@ for (const x of sigLines) { const k = x.entryDate ? tOf.get(x.entryDate) : x.lat
   if (!resolved.has(x.id) && g !== null) { resolved.add(x.id); newLines.push({ type: 'result', id: x.id, m: x.m, sym: x.sym, d: x.d, buy: D[k], sell: D[xi], g: r4(g), net: r4(capG(g) - COST), avgStock: c === null ? null : r4(c - COST) }); } }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x, (k, v) => k[0] === '_' ? undefined : v)).join('\n') + '\n');
 for (const id of IDS) { const mine = sigLines.filter(x => x.m === id), closed = mine.filter(x => x._state === 'closed' && x._g !== null).map(x => ({ d: x.d, sym: x.sym, g: x._g, c: x._c, halal: x.halal })), fr = firstRun[id], st = boardStats(closed);
-  board[id] = { name: RULES[id].name, kind: RULES[id].kind, hold: H(id), family: RULES[id].family, dataOk: RULES[id].family === 'tender' ? TDATA.ok : RULES[id].family === 'isc' ? IDATA.ok : DATA.ok, signals: mine.length, waiting: mine.filter(x => x._state === 'waiting').length, open: mine.filter(x => x._state === 'open').length, closed: st, halalOk: boardStats(closed.filter(z => z.halal === 'ok')), ready: RULES[id].kind === 'buy' && paperReady(st),
+  board[id] = { name: RULES[id].name, kind: RULES[id].kind, hold: H(id), family: RULES[id].family, dataOk: RULES[id].family === 'tender' ? TDATA.ok : RULES[id].family === 'isc' ? IDATA.ok : RULES[id].family === 'rpo' ? RDATA.ok : DATA.ok, signals: mine.length, waiting: mine.filter(x => x._state === 'waiting').length, open: mine.filter(x => x._state === 'open').length, closed: st, halalOk: boardStats(closed.filter(z => z.halal === 'ok')), ready: RULES[id].kind === 'buy' && paperReady(st),
     fiveYear: fr ? { verdict: fr.verdict, why: fr.why } : null };
   if (RULES[id].kind !== 'buy') continue;
   today[id] = { name: RULES[id].name, hold: H(id), tier: fr ? fr.verdict : null, newSignals: mine.filter(x => x.recordedAfter === D[lastT] && !x.late).map(x => ({ sym: x.sym, close: x.close, halal: x.halal, d: x.d, pct: x.pct, plan: x.plan })),
@@ -332,7 +385,7 @@ log('paper lane: ' + newLines.filter(x => x.type === 'signal').length + ' new si
 
 // ================= 7. OUTPUT + LIBRARY =================
 const out = { generatedAt: new Date().toISOString(), lab: 'daily researcher', preRegistered: 'research-core.mjs RULES (25 Oct 2026, before any run) + data/strategy-library.json RQ-*',
-  window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, data: STATUS, tenderData: TSTAT, signalCounts: COUNTS,
+  window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, data: STATUS, tenderData: TSTAT, rpoData: RSTAT, signalCounts: COUNTS,
   standard: 'both halves (signal before / from ' + SPLIT + '): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= ' + TIER2_T + ' -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN. Gross returns capped at +300% for trades and yardsticks alike (AUD-1). The avoid check is never a buy.',
   firstRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }),
   trades: Object.fromEntries(Object.entries(RES).filter(([, r]) => r.trades).map(([k, r]) => [k, r.trades.slice(-400)])) };
@@ -342,4 +395,4 @@ try { const LB = J('data/strategy-library.json', null); let ch = false;
     e.status = 'tested: ' + r.verdict.toLowerCase() + (r.verdict === 'TRADABLE SMALL' ? ' (tier 2)' : '') + '; forward paper lane from 26 Oct 2026'; e.tested = String(r.window[1]); e.study = 'research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)';
     e.result = { verdict: r.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg, R.newer.avg], stress: [R.older.avgStress, R.newer.avgStress], edge: [R.older.edge, R.newer.edge], vsOwn: [R.older.vsOwn, R.newer.vsOwn], noTop2: [R.older.noTop2, R.newer.noTop2], tBlock: [R.older.tBlock, R.newer.tBlock], win: [R.older.win, R.newer.win], why: r.why }; ch = true; }
   if (ch) fs.writeFileSync('data/strategy-library.json', JSON.stringify(LB, null, 1)); } catch (e) { console.log('research-lab: library not updated: ' + e.message); }
-console.log('RESEARCH LAB ' + D[0] + ' to ' + D[T - 1] + ' | bar ' + BAR + ' | data ' + (DATA.ok ? 'complete' : 'collecting (' + DATA.why + ')') + ' | tender data ' + (TDATA.ok ? 'complete' : 'collecting (' + TDATA.why + ')') + ' | frozen ' + Object.keys(firstRun).length + '/' + IDS.length);
+console.log('RESEARCH LAB ' + D[0] + ' to ' + D[T - 1] + ' | bar ' + BAR + ' | data ' + (DATA.ok ? 'complete' : 'collecting (' + DATA.why + ')') + ' | tender data ' + (TDATA.ok ? 'complete' : 'collecting (' + TDATA.why + ')') + ' | backlog data ' + (RDATA.ok ? 'complete' : 'collecting (' + RDATA.why + ')') + ' | frozen ' + Object.keys(firstRun).length + '/' + IDS.length);

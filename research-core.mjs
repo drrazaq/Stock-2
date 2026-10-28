@@ -150,6 +150,7 @@ const TENDER_NOTE = 'Daily researcher 2026-10-26: part 1 of C-SPEC1 (queued 23 O
 export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
   for (const id of IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     if (R.family === 'isc') { ch += preRegisterIsc(LB); continue; }
+    if (R.family === 'rpo') { ch += preRegisterRpo(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -248,4 +249,66 @@ export function preRegisterIsc(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of ISC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-27 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Shock size, sigma window, news window and data rule fixed in research-core.mjs (IDEA 3) before any run.', sources: ISC_SOURCES, hold: R.hold, note: ISC_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 4 (pre-registered 28 Oct 2026, before any run): ORDER BACKLOG GROWTH (remaining performance obligations) ----------------
+// Sources: Rajgopal, Shevlin and Venkatachalam, "Does the Stock Market Fully Appreciate the Implications of Leading Indicators for Future
+// Earnings? Evidence from Order Backlog", Review of Accounting Studies 8(4), 2003, 461-492 (backlog predicts earnings, but the market
+// OVERweights it: their hedge is against high-backlog firms); Banker, Barber, Hollie and Park, Review of Quantitative Finance and
+// Accounting 62(4), 2024, 1733-1753 (backlog is a leading indicator of earnings, conditional on fundamentals). Practitioners (software and
+// industrial investors) call RPO growth "the superior metric". Since ASC 606 (2018) US companies tag their backlog in XBRL as
+// us-gaap:RevenueRemainingPerformanceObligation, so the test can use the official SEC company facts. NEW information (contracted future
+// revenue), not a chart shape; nothing in the library uses it. The papers point both ways, so the buy test and the avoid check are both
+// written now; long only (the avoid check is never a buy).
+// MEASURE (fixed now, no tuning): rows of us-gaap:RevenueRemainingPerformanceObligation, unit USD, instant values (no start date), form
+// 10-Q or 10-K (no amendments), period end from 2019-06-01. Read in order of the SEC 'filed' date. A filing date F is an EVENT when its
+// latest period end E is later than every end the company reported before F, and F - E <= 120 days (a timely report). CURRENT = that
+// filing's value for E. PRIOR = the value (the latest filed on or before F) for the end closest to E - 365 days within E-385..E-345.
+// GROWTH = CURRENT / PRIOR - 1, only when PRIOR >= 5M USD and CURRENT > 0.
+// RANK (point in time, the lazy-prices ranker): GROWTH's percentile among ALL growth events filed in the 365 days before F (300+ needed).
+//   RQ-RPO-63     BUY the next open after a filing whose backlog growth is in the top 20% (percentile >= 0.80); sell the close 63 later.
+//   RQ-RPO-126    the same, hold 126 sessions (6 months).
+//   RQ-RPO-LOW63  AVOID check: bottom 20% backlog growth (percentile <= 0.20), 63 sessions, judged with the avoid verdict (never a buy).
+// Public on the 'filed' date (no time in company facts): bought at the OPEN of the first session strictly AFTER that date (conservative).
+// The stock must be liquid (system rule) on the session before entry. One open trade per stock per rule.
+// DATA RULE (fixed now): no verdict until (a) 95%+ of the universe companies were looked up in the SEC bulk company facts file (absent =
+// no XBRL facts = looked up), (b) 85%+ of liquid stock-months map to an SEC company number, (c) 2,000+ growth events from 2021-10-01
+// (fewer means the reader is broken: fix it, no verdict).
+export const RPO = { tag: 'RevenueRemainingPerformanceObligation', endFrom: '2019-06-01', maxLag: 120, prevLo: 345, prevHi: 385, minPrior: 5e6, eventsFrom: '2021-10-01' };
+export const RPO_DATA = { looked: 0.95, map: 0.85, events: 2000 };
+RULES['RQ-RPO-63'] = { kind: 'buy', hold: 63, side: 'top', family: 'rpo', name: 'Order backlog (RPO) growth in the top 20%, hold 3 months',
+  rule: 'Buy the next open after a 10-Q/10-K whose remaining performance obligations (contracted backlog, SEC XBRL) grew year on year by a top-20% amount (percentile >= 0.80 vs all backlog-growth filings of the prior 365 days; prior-year backlog 5M USD+; filed within 120 days of the quarter end); stock liquid; sell the close 63 sessions later.' };
+RULES['RQ-RPO-126'] = { kind: 'buy', hold: 126, side: 'top', family: 'rpo', name: 'Order backlog (RPO) growth in the top 20%, hold 6 months', rule: 'As RQ-RPO-63, hold 126 sessions.' };
+RULES['RQ-RPO-LOW63'] = { kind: 'avoid', hold: 63, side: 'bottom', family: 'rpo', name: 'AVOID check: order backlog (RPO) growth in the bottom 20%, 63 sessions',
+  rule: 'Information only: stocks whose backlog growth is among the 20% lowest (percentile <= 0.20), bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves. Never a buy.' };
+export const RPO_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'rpo');
+for (const id of RPO_IDS) { if (!IDS.includes(id)) IDS.push(id); if (RULES[id].kind === 'buy' && !BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// companyfacts JSON (or a companyconcept JSON) -> [[end, val, filed, form]] of the RPO tag, sorted by filed then end
+export function rpoRows(j) { const u = j && (j.facts ? j.facts['us-gaap'] && j.facts['us-gaap'][RPO.tag] && j.facts['us-gaap'][RPO.tag].units : j.units);
+  const a = u && Array.isArray(u.USD) ? u.USD : []; const out = [], seen = new Set();
+  for (const x of a) { if (!x || x.start || !x.end || !x.filed || !ok(x.val) || x.val < 0 || (x.form !== '10-Q' && x.form !== '10-K') || x.end < RPO.endFrom) continue;
+    const k = x.end + '|' + x.val + '|' + x.filed; if (seen.has(k)) continue; seen.add(k); out.push([x.end, x.val, x.filed, x.form]); }
+  return out.sort((p, q) => p[2] < q[2] ? -1 : p[2] > q[2] ? 1 : p[0] < q[0] ? -1 : p[0] > q[0] ? 1 : 0); }
+// rows -> growth events [{ d (filed), end, cur, prior, g, form }]
+export function rpoEvents(rows) { const out = [], known = []; let maxEnd = '';
+  const byF = new Map(); for (const r of rows || []) (byF.get(r[2]) || byF.set(r[2], []).get(r[2])).push(r);
+  for (const F of [...byF.keys()].sort()) { const here = byF.get(F); known.push(...here); const E = here.reduce((m, r) => r[0] > m ? r[0] : m, '');
+    if (E > maxEnd && daysBetween(E, F) <= RPO.maxLag && daysBetween(E, F) >= 0) { const cur = here.filter(r => r[0] === E).pop()[1];
+      const target = addDays(E, -365); let best = null;
+      for (const r of known) { const gap = daysBetween(r[0], E); if (gap < RPO.prevLo || gap > RPO.prevHi) continue;
+        if (!best || Math.abs(daysBetween(r[0], target)) < Math.abs(daysBetween(best[0], target)) || (r[0] === best[0] && r[2] >= best[2])) best = r; }
+      if (best && best[1] >= RPO.minPrior && cur > 0) out.push({ d: F, end: E, cur, prior: best[1], g: r4(cur / best[1] - 1), form: here.find(r => r[0] === E)[3] }); }
+    if (E > maxEnd) maxEnd = E; }
+  return out; }
+export function rpoDataRule({ ciks, looked, liqMonths, liqMapped, events }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= RPO_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= RPO_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= RPO_DATA.events)) why.push('backlog growth events ' + events + ' (2,000 needed: reader check)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const RPO_SOURCES = ['https://doi.org/10.1023/A:1027364031775', 'https://ideas.repec.org/a/spr/reaccs/v8y2003i4d10.1023_a1027364031775.html', 'https://doi.org/10.1007/s11156-024-01248-6'];
+const RPO_NOTE = 'Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026.';
+export function preRegisterRpo(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of RPO_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-28 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Measure, event timing, ranking and data rule fixed in research-core.mjs (IDEA 4) before any run.', sources: RPO_SOURCES, hold: R.hold, note: RPO_NOTE }); ch++; }
   return ch; }

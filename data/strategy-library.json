@@ -31834,6 +31834,54 @@
     ],
     "why": "not better than the same stocks on their other days in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t 0.1 under 2.5 in the newer half; not better than V15 itself on the same dates in the newer half (+3.7% vs +9.1%); not better than SPY bought the same dates in the older half (+8.3% after cost vs +10.1%); not better than SPY bought the same dates in the newer half (+3.7% after cost vs +5.9%)"
    }
+  },
+  {
+   "id": "RQ-RPO-63",
+   "family": "Daily researcher (RQ)",
+   "name": "Order backlog (RPO) growth in the top 20%, hold 3 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-28 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the next open after a 10-Q/10-K whose remaining performance obligations (contracted backlog, SEC XBRL) grew year on year by a top-20% amount (percentile >= 0.80 vs all backlog-growth filings of the prior 365 days; prior-year backlog 5M USD+; filed within 120 days of the quarter end); stock liquid; sell the close 63 sessions later. Measure, event timing, ranking and data rule fixed in research-core.mjs (IDEA 4) before any run.",
+   "sources": [
+    "https://doi.org/10.1023/A:1027364031775",
+    "https://ideas.repec.org/a/spr/reaccs/v8y2003i4d10.1023_a1027364031775.html",
+    "https://doi.org/10.1007/s11156-024-01248-6"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026."
+  },
+  {
+   "id": "RQ-RPO-126",
+   "family": "Daily researcher (RQ)",
+   "name": "Order backlog (RPO) growth in the top 20%, hold 6 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-28 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-RPO-63, hold 126 sessions. Measure, event timing, ranking and data rule fixed in research-core.mjs (IDEA 4) before any run.",
+   "sources": [
+    "https://doi.org/10.1023/A:1027364031775",
+    "https://ideas.repec.org/a/spr/reaccs/v8y2003i4d10.1023_a1027364031775.html",
+    "https://doi.org/10.1007/s11156-024-01248-6"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026."
+  },
+  {
+   "id": "RQ-RPO-LOW63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: order backlog (RPO) growth in the bottom 20%, 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-10-28 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: stocks whose backlog growth is among the 20% lowest (percentile <= 0.20), bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves. Never a buy. Measure, event timing, ranking and data rule fixed in research-core.mjs (IDEA 4) before any run.",
+   "sources": [
+    "https://doi.org/10.1023/A:1027364031775",
+    "https://ideas.repec.org/a/spr/reaccs/v8y2003i4d10.1023_a1027364031775.html",
+    "https://doi.org/10.1007/s11156-024-01248-6"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026."
   }
  ]
 }
