@@ -5,6 +5,7 @@
 // message is the owner's chosen exception (28 Oct 2026), and every unproven line in it says NOT AN APPROVED BUY.
 import fs from 'node:fs';
 import { radarOn, buildMidday, buildClose, halalMap, netOf } from './radar-v3-core.mjs';
+import { scorecardText } from './early-alerts.mjs';
 const env = process.env, MODE = process.argv[2] || 'close', LEDGER = 'data/radar-v3-ledger.jsonl';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org';
 const readJson = (f, d = null) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -47,5 +48,6 @@ if (MODE === 'midday') {
 } else {
   let ledger = readLines(LEDGER); const s5 = await score5(ledger, today);
   if (s5.length) { fs.appendFileSync(LEDGER, s5.map(x => JSON.stringify(x)).join('\n') + '\n'); ledger = ledger.concat(s5); }
-  await telegram(buildClose(today, readJson('data/ignition-live.json'), ledger, ctx)); console.log('radar close: ' + s5.length + ' 5-session scores added');
+  const od = readLines('data/opp-days.jsonl').filter(x => x.day === today).pop();   // DELIVERY SCORECARD from the live watcher (early-alerts.mjs)
+  await telegram(buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od)); console.log('radar close: ' + s5.length + ' 5-session scores added');
 }

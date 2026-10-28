@@ -16,6 +16,7 @@ import { snapshots, feedUsed } from './alpaca-feed.mjs';
 import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
 import { stopHits } from './stop-watch.mjs';
+import { createEarlyAlerts, alertLevel } from './early-alerts.mjs';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import zlib from 'node:zlib';
@@ -160,6 +161,13 @@ const buildMissed = () => { const movers = Object.values(vis).filter(v => v.maxC
 // ---- DAILY OPPORTUNITY RADAR (owner, 28 Oct 2026): at 11:15 New York, a snapshot of what the watcher already knows goes to
 // data/radar-v3-snap.json and opportunity-radar.mjs sends it (four labelled panels; rules in radar-v3-core.mjs). Never an alert or a buy.
 const RADAR = { done: false, mkt: null };
+// ---- EARLY ALERTS (owner, 28 Oct 2026): prompt RESEARCH LEAD / PAPER SETUP messages, separate from approved alerts, and the per-candidate
+// log behind the DELIVERY SCORECARD (rules, hard blocks and caps in early-alerts.mjs). Approved alerts still come only from maybeAlert.
+async function tgSend(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[early alert, not sent: no Telegram token]\n' + text); return { ok: false, why: 'no Telegram token' }; }
+  try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(0, 3900), disable_web_page_preview: true }) }); const j = await r.json().catch(() => ({}));
+    return { ok: !!(r.ok && j.ok), why: r.ok ? (j.description || '') : 'HTTP ' + r.status }; } catch (e) { return { ok: false, why: e.message }; } }
+const EA = createEarlyAlerts({ day, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
+  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock() });
 const medChg = () => { const a = Object.values(vis).filter(v => v.last >= 1 && v.lastC !== undefined).map(v => v.lastC).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
 function radarSnap(m, scanned, live) {
   const ms = buildMissed(), tl = {}; for (const x of ms) tl[x.code] = (tl[x.code] || 0) + 1;
@@ -175,7 +183,7 @@ while (Date.now() - START < MAXMS) {
   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
   const rows = await snap(); loops++;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
-  try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
+  try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
     const pxNow = {}, tNow = Date.now(); for (const r of rows) if (HELD.pos[r.sym] && r.price > 0 && isFreshPriceAge(r.t > 0 ? (tNow - r.t) / 60000 : null)) pxNow[r.sym] = r.price;
     for (const h of stopHits(HELD.pos, pxNow, STOP_SENT)) await tg(h.text); } catch (e) { console.log('stop watch: ' + e.message); } const nowMs = Date.now(); let liveN = 0, evald = 0; const ages = [], vages = [], cf = curveAt(m); let sumV = 0, sumA = 0;
   for (const r of rows) { if (!(r.prevC > 0) || !(r.price > 0)) continue; evald++; const chg = r.price / r.prevC - 1, rd = r.t > 0 ? (nowMs - r.t) / 60000 : null, live = isFreshPriceAge(rd);
@@ -187,7 +195,8 @@ while (Date.now() - START < MAXMS) {
     if (live && chg >= 0.05 && v.l5 === undefined) v.l5 = m; if (chg >= 0.10 && v.c10 === undefined) { v.c10 = m; v.c10live = live; }
     const M = meta(r.sym), av = avgVol.get(r.sym) || (r.prevV > 0 ? r.prevV : 0), rv = r.vol !== null && av > 0 ? r.vol / av : null, hits = [], rvT = rv !== null && cf ? rv / cf : null;
     // EARLY-WAVE OBSERVATION (23 Oct): +2% to +15% with elevated volume pace, sub-$1 included; logged only, never an alert or a buy
-    try { updateEarlyWaveCandidate(earlyWave, r.sym, scoreEarlyWaveCandidate({ change: chg, rv, rvT, live, price: r.price, oneMinuteChange: prevSeenPx > 0 ? r.price / prevSeenPx - 1 : null }), fmtM(m)); } catch (e) {}
+    try { const ewc = scoreEarlyWaveCandidate({ change: chg, rv, rvT, live, price: r.price, oneMinuteChange: prevSeenPx > 0 ? r.price / prevSeenPx - 1 : null }); updateEarlyWaveCandidate(earlyWave, r.sym, ewc, fmtM(m));
+      if (ewc) EA.noteLead({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rvT, dollarVol: r.vol > 0 ? r.vol * r.price : 0, live }); } catch (e) {}
     if (!(r.prevC >= 1)) { if (chg >= 0.10) flag(r.sym, 'under1', 'under 1 USD (never traded by these rules)'); continue; }
     if (r.vol > 0 && avgVol.has(r.sym)) { sumV += r.vol; sumA += avgVol.get(r.sym); }   // no 20-day history (new listing, was under 1 USD): yesterday's volume stands in
     // minute price series from live quotes (for the build-up rule)
@@ -201,7 +210,7 @@ while (Date.now() - START < MAXMS) {
       seen[r.sym + k] = 1;
       if (m >= R.by) { flag(r.sym, 'after11', 'first reached +' + Math.round(R.trig * 100) + '% after 11:00 New York'); continue; }
       if (!passes(R, r.prevC, M)) continue;
-      if (rv === null || rv < R.rv) { flag(r.sym, rv === null ? 'noVolHist' : rv < 0.05 ? 'volLate' : 'lowVol', rv === null ? 'no normal-volume history' : rv < 0.05 ? 'volume figure late (' + rv.toFixed(2) + 'x shown: the delayed feed had not counted the trading yet)' : 'volume only ' + rv.toFixed(1) + 'x a normal day when it crossed'); triggers.push({ v: IG_VERSION, d: day, sym: r.sym, rule: k, m, price: r.price, prevC: r.prevC, rv, mode, delay: rd, logged: rv === null ? 'volume unknown' : 'volume too low' }); continue; }
+      if (rv === null || rv < R.rv) { flag(r.sym, rv === null ? 'noVolHist' : rv < 0.05 ? 'volLate' : 'lowVol', rv === null ? 'no normal-volume history' : rv < 0.05 ? 'volume figure late (' + rv.toFixed(2) + 'x shown: the delayed feed had not counted the trading yet)' : 'volume so far only ' + rv.toFixed(1) + 'x a FULL normal day when it crossed (this rule needs ' + R.rv + 'x' + (rvT !== null ? '; time-of-day pace ' + rvT.toFixed(1) + 'x normal' : '') + ')'); triggers.push({ v: IG_VERSION, d: day, sym: r.sym, rule: k, m, price: r.price, prevC: r.prevC, rv, mode, delay: rd, logged: rv === null ? 'volume unknown' : 'volume too low' }); continue; }
       hits.push({ R, extra: {} }); }
     // IG8 quiet build-up (live-only rule): needs 15+ minutes of live prices
     if (IG8 && live && (!seen[r.sym + 'IG8'] || (IG8T && !seen[r.sym + 'IG8T'])) && m >= 585 && m < 840 && r.price >= 1 && r.open > 0 && av > 0 && r.vol !== null) { const S = ser[r.sym] || [], n = S.length, p0 = S.find(x => x.m >= m - 16 && x.m <= m - 14);
@@ -220,7 +229,8 @@ while (Date.now() - START < MAXMS) {
             if (prev.length === 3 && r.price > Math.max(...prev) && r.price > ps.low) { seen[r.sym + 'IG9'] = 1; hits.push({ R: R9, extra: { stop: +ps.low.toFixed(4), hi: +ps.hi.toFixed(4) } }); } } } } }
     for (const h of hits) { const t = { v: IG_VERSION, d: day, sym: r.sym, rule: h.R.id, m, price: r.price, prevC: r.prevC, rv: rv === null ? null : +rv.toFixed(2), rvT: rvT === null ? null : +rvT.toFixed(2), float: M.float || null, age: M.age, adr5: avgRange5.get(r.sym) && r.hi > 0 && r.lo > 0 ? +((Math.max(r.hi, r.price) - Math.min(r.lo, r.price)) / avgRange5.get(r.sym)).toFixed(2) : null, mode, delay: rd === null ? null : +rd.toFixed(1), ...h.extra }; triggers.push(t);
       if (vis[r.sym] && !vis[r.sym].caught) vis[r.sym].caught = h.R.id + ' at ' + fmtM(m);
-      await maybeAlert(r, t, h.R, chg, rd, rv, M, h.extra, !!h.liveOnly); } }
+      await maybeAlert(r, t, h.R, chg, rd, rv, M, h.extra, !!h.liveOnly); if (!(vis[r.sym] && vis[r.sym].flags.alerted)) EA.notePaper(t, chg); } }
+  try { await EA.process(); } catch (e) { console.log('early alerts: ' + e.message); }
   if (sumA > 0) vcToday[Math.floor(m / 5) * 5] = +(sumV / sumA).toFixed(4);   // the market's share of a normal day traded by now
   const sa = ages.sort((a, b) => a - b), q = (a, f) => a.length ? +a[Math.min(a.length - 1, Math.floor(a.length * f))].toFixed(1) : null;
   beat.push({ m, mode, received: rows.length, evaluated: evald, live: liveN, ageP50: q(sa, 0.5), ageP95: q(sa, 0.95), volAgeP50: q(vages.sort((a, b) => a - b), 0.5), alerts });   // heartbeat: proves the watcher ran this minute
@@ -246,6 +256,10 @@ const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISI
 fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, procStart: PROC_START, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
 { const ewl = Object.values(earlyWave).sort((x, y) => y.score - x.score); if (ewl.length) fs.appendFileSync('data/early-wave-obs.jsonl', JSON.stringify({ day, mode, src, n: ewl.length, top: ewl.slice(0, 300) }) + '\n'); }   // judged later against matched stocks; not a signal
 fs.appendFileSync('data/ignition-paper.jsonl', triggers.filter(t => !t.logged).map(t => JSON.stringify(t) + '\n').join(''));
+// DELIVERY SCORECARD: every candidate that met an alert trigger (or was a rule hit) with its decision and 15:00 result; soft misses are
+// counted in the day's summary only (about 1,500 a day would bloat the public repo)
+try { const lastPx = {}; for (const v of Object.values(vis)) if (v.last > 0) lastPx[v.sym] = v.last; const E = EA.finish(lastPx, null, alerts), keep = E.rows.filter(r => !/^SOFT/.test(r.decision));
+  if (keep.length) fs.appendFileSync('data/opp-ledger.jsonl', keep.map(r => JSON.stringify(r)).join('\n') + '\n'); fs.appendFileSync('data/opp-days.jsonl', JSON.stringify(E.summary) + '\n'); } catch (e) { console.log('delivery scorecard: ' + e.message); }
 // OPPORTUNITY RADAR same-day score (pre-registered in radar-v3-core.mjs): each line listed at 11:15 gets its last watched price and the
 // median $1+ stock's move over the same minutes, so the radar is judged against the average stock, not only against zero.
 try { if (RADAR.done) { const L = fs.existsSync('data/radar-v3-ledger.jsonl') ? fs.readFileSync('data/radar-v3-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)) : [], mEnd = medChg();
