@@ -103,7 +103,7 @@ export function leadText(items, ctx = {}) {
 export function paperText(items) {
   return ['EARLY WATCH: PAPER SETUP' + (items.length > 1 ? 'S' : '') + ' (NOT AN APPROVED BUY) ' + fm(items[0].m) + ' New York', ...items.map(c => { const r = c.record;
     return '- ' + c.sym + ': ' + c.rule + ' at ' + usd(c.price) + ' (' + pct(c.chg) + ' today). Rule record: ' + (r ? r.n + ' paper trades, ' + pct(r.avg, 1) + ' a trade after costs' + (r.noTop2 !== null && r.noTop2 !== undefined ? ', ' + pct(r.noTop2, 1) + ' without its 2 best' : '') : 'none yet')
-      + '; 5-year test ' + (c.history || 'not tested') + '.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  ' + spreadHurdle(c) + '\n  Paper only: logged and scored, not a buy. ' + (c.halalOk ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.'); }),
+      + '; minute-bar history verdict ' + (c.history || 'not tested') + '.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  ' + spreadHurdle(c) + '\n  Paper only: logged and scored, not a buy. ' + (c.halalOk ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.'); }),
     'Fewer messages: alerts approved  or  alerts off.'].join('\n');
 }
 
