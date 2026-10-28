@@ -27,4 +27,9 @@ jobs:
             if node "$f"; then echo "PASS $f"; else echo "::error file=$f::test file failed"; failed=1; fi
             echo "::endgroup::"
           done
+          for f in tests/*.test.mjs; do
+            echo "::group::$f"
+            if node "$f"; then echo "PASS $f"; else echo "::error file=$f::test file failed"; failed=1; fi
+            echo "::endgroup::"
+          done
           exit $failed
