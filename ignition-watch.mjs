@@ -25,6 +25,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from './ignition-core.mjs';
 import { isFreshPriceAge } from './ignition-gates.mjs';
+import { selectLiveRefreshSymbols } from './live-refresh-universe.mjs';
 import { paperRecordApproved, earlyPaperEligible } from './paper-gates.mjs';
 import { sessionCoverage } from './session-coverage.mjs';
 import { sendTelegramMessage } from './telegram-delivery.mjs';
@@ -89,7 +90,7 @@ async function snap() {
   const m = env.MASSIVE_KEY ? await snapMassive() : null, now = Date.now();
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
   if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
-  if (m && m.length) { const live = await alpacaAll(m.filter(r => r.prevC >= 1).map(r => r.sym));
+  if (m && m.length) { const live = await alpacaAll(selectLiveRefreshSymbols(m)); // includes up to 250 liquid sub-$1 symbols for research; BUY hard block unchanged
     if (live) { let n = 0; for (const r of m) { const x = live.get(r.sym); if (x && x.t > r.t) { r.price = x.price; r.t = x.t; if (x.open > 0) r.open = x.open; if (x.vol > 0) { r.vol = x.vol; r.vt = x.t; } n++; } if (x && x.ask > 0 && x.qt >= (r.qt || 0)) { r.bid = x.bid; r.ask = x.ask; r.qt = x.qt; } }
       src = 'alpaca live prices (' + feedUsed().toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (feedUsed() === 'sip' ? 'live SIP volume' : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
   const a = await snapTop50();
