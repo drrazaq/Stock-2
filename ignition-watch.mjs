@@ -25,6 +25,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from './ignition-core.mjs';
 import { isFreshPriceAge } from './ignition-gates.mjs';
+import { paperRecordApproved, earlyPaperEligible } from './paper-gates.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const MV = local(env.MASSIVE_BASE) || 'https://api.massive.com', ALPD = local(env.ALPACA_DATA) || 'https://data.alpaca.markets', TG = local(env.TG_BASE) || 'https://api.telegram.org';
 const SEC_WWW = local(env.SEC_BASE) || 'https://www.sec.gov', SEC_DATA = local(env.SEC_BASE) || 'https://data.sec.gov', SEC_UA = env.SEC_UA || 'stock-signal-board admin@users.noreply.github.com';
@@ -58,8 +59,7 @@ const floats = readJson(CDIR + '/floats.json', {}), meta = (s) => ({ float: floa
 const LAB = readJson('data/ignition-lab.json', null), PREC = (readJson('data/ignition-results.json', {}) || {}).record || {};
 const passed = LAB && LAB.rules ? Object.values(LAB.rules).filter(x => x.verdict === 'PROMISING' && (LAB.version === undefined || LAB.version === IG_VERSION)) : [];
 // live paper record must hold at 1.5x costs and without its 2 best trades; the live-only rule needs a longer record (no history test)
-const paperOk = (rule, exit, liveOnly) => { const r = PREC[rule + '/' + exit]; if (!r) return false; const need = liveOnly ? 60 : 30;
-  return r.n >= need && r.avg > 0 && (r.stress === null || r.stress === undefined || r.stress > 0) && (r.noTop2 === null || r.noTop2 === undefined || r.noTop2 > 0) && (!liveOnly || (r.days >= 30 && r.stocks >= 20 && (r.pf || 0) >= 1.2)); };
+const paperOk = (rule, exit, liveOnly) => paperRecordApproved(PREC[rule + '/' + exit], liveOnly);
 const halal = readJson('data/halal.json', {}), zadNot = new Set((readJson('data/zad-list.json', {}) || {}).notHalal || []), notHalal = (s) => (halal[s] && halal[s].s === 'fail') || zadNot.has(s);
 const LOTT = (readJson('data/signals.json', {}) || {}).lottery || {};   // tested 19 Oct: a 15%+ one-day jump in the last month lagged the average stock ~3% over the next month (t -5): never alerted   // your ZAD checks + ZAD's own not-halal list
 // ---- data
@@ -131,7 +131,7 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
   // 1.5x costs) but not yet proven (60 trades over 30 days) still alerts, clearly labelled, max 3 a day, minimum size. It stops by itself
   // the moment its paper record turns negative.
   let ok = ok0.filter(p => paperOk(p.rule, p.exit, liveOnly)), early = false;
-  if (!ok.length) { const e = liveOnly ? ok0.filter(p => { const q = PREC[p.rule + '/' + p.exit]; return q && q.n >= 20 && q.avg > 0 && (q.stress === null || q.stress === undefined || q.stress > 0); }) : [];
+  if (!ok.length) { const e = liveOnly ? ok0.filter(p => { const q = PREC[p.rule + '/' + p.exit]; return earlyPaperEligible(q); }) : [];
     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
   if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
   if (!isFreshPriceAge(rd)) { flag(r.sym, 'noLive', 'price age ' + (typeof rd !== 'number' || !Number.isFinite(rd) ? 'unknown' : rd < 0 ? 'invalid (future timestamp)' : Math.round(rd) + ' minutes') + ': not fresh enough to alert'); return; }
