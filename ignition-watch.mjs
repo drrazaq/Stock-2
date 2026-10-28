@@ -303,8 +303,8 @@ const movers = Object.values(vis).filter(v => v.maxC >= 0.15), missed = buildMis
 const tally = {}; for (const x of missed) tally[x.code] = (tally[x.code] || 0) + 1;
 const modes = {}; for (const b of beat) modes[b.mode] = (modes[b.mode] || 0) + 1;
 const med = (a) => { const s = a.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
-const scheduled = Math.max(1, Math.min(900, clock()) - 570);   // (outside review, 22 Oct) coverage counts from the 09:30 open, so a late start shows as missed minutes
-const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(beat[0].m), lastMinute: fmtM(beat[beat.length - 1].m), minutesCompletedRate: +(Math.min(1, beat.length / scheduled)).toFixed(3), modes,
+const scheduled = 330;   // Full intended 09:30–15:00 NY session. Never shrink denominator when the watcher ends early.
+const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(beat[0].m), lastMinute: fmtM(beat[beat.length - 1].m), minutesCompletedRate: +(Math.min(1, beat.filter(b => b.m >= 570 && b.m < 900).length / scheduled)).toFixed(3), completeSession: beat.some(b => b.m >= 570 && b.m <= 575) && beat.some(b => b.m >= 895 && b.m <= 900) && beat.filter(b => b.m >= 570 && b.m < 900).length >= 315, modes,
   receivedMedian: med(beat.map(b => b.received)), evaluatedMedian: med(beat.map(b => b.evaluated)), liveMedian: med(beat.map(b => b.live)), liveRate: med(beat.map(b => b.evaluated ? +(b.live / b.evaluated).toFixed(3) : null)),
   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
