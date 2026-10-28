@@ -22,5 +22,6 @@ jobs:
           node --check paper-gates.mjs
           node --check session-coverage.mjs
           node --check trade-plan.mjs
+          node --check telegram-delivery.mjs
       - name: Run targeted safety regression tests
-        run: node --test tests/quote-freshness-safety.test.mjs tests/paper-gates-safety.test.mjs tests/session-coverage.test.mjs tests/ignition-replay.test.mjs tests/watcher-schedule.test.mjs tests/trade-plan.test.mjs
+        run: node --test tests/quote-freshness-safety.test.mjs tests/paper-gates-safety.test.mjs tests/session-coverage.test.mjs tests/ignition-replay.test.mjs tests/watcher-schedule.test.mjs tests/trade-plan.test.mjs tests/telegram-delivery.test.mjs
