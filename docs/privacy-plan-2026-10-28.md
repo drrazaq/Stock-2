@@ -36,7 +36,7 @@ Share counts and money amounts are already **encrypted** in `data/private.enc` (
    - This removes the web copies of every other file. It does not remove the GitHub copies.
 2. **Move the owner files to a second PRIVATE repository (recommended; about half a day of work, no billing change).**
    - Files: `my-positions.json`, `settings.json`, `halal.json`, `alpaca-paper.json`, `private.enc`.
-   - Workflows keep running in the public repository, where Actions minutes are free. They check out the private one with a read/write token stored as a secret (for example `PRIVATE_REPO_TOKEN`), and save the files back there.
+   - Workflows keep running in the public repository, where Actions minutes are free. They check out the private one with a read/write token stored as a secret (for example `PRIVATE_DATA_TOKEN`), and save the files back there.
    - About 16 scripts and their workflows read these files. The stop alerts depend on `my-positions.json`, so this needs tests and one careful switch-over day.
 3. **Encrypt the owner files in place** with the existing `PRIVATE_KEY`, as `private.enc` already is.
    - Less moving parts than 2, but every workflow that reads a file needs the key.

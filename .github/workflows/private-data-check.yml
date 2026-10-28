@@ -1,0 +1,37 @@
+name: Private data connection check
+# Privacy migration, owner approved 28 Oct 2026. Run this ONCE after adding the secret PRIVATE_DATA_TOKEN (Actions tab -> this workflow ->
+# Run workflow). It reads and writes the private repository drrazaq/stock-2-private-data, copies the owner's private files there, reads
+# them back and compares checksums, and reports the token's expiry date. It prints file NAMES and counts only, never contents or the
+# token. Production keeps reading THIS repository; after a pass the bot and the nightly scan also keep a copy there (mirror).
+# Nothing is deleted here. Script and tests: .github/private-data.sh, test/private-data.test.mjs.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [run-private-data-check-now.txt]
+permissions:
+  contents: read
+concurrency: private-data-check
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - id: c
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: |
+          set -o pipefail
+          bash .github/private-data.sh check 2>&1 | tee check.log
+      - if: always()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+          OK: ${{ steps.c.outcome }}
+        run: |
+          L=$(grep -E "of .* private files|expires|Error" check.log 2>/dev/null | head -3 | cut -c1-200 | tr '\n' ' ')
+          if [ "$OK" = success ]; then T="PRIVATE DATA CONNECTION: PASSED. $L Nothing switched yet: production still reads the public repository."; else T="PRIVATE DATA CONNECTION: FAILED. $L Nothing changed. Send this message to Claude."; fi
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=$T" "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true

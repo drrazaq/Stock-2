@@ -108,7 +108,7 @@ Spread now 2.00% (bid $4.95 / ask $5.05, quote 3 s old): +2% net on 1,000 USD ne
 | `ignition-watch.mjs` | Passes the quote and its age to the early alerts (display only) |
 | `premarket-check.mjs`, `intraday-radar.mjs` | Kuwait open time from the New York calendar |
 | `.github/workflows/pages.yml` (new) | Publishes ONLY `index.html` (a guard fails the run if anything else is in the site). Inert until the owner changes one setting (below) |
-| `.github/actions/private-data/action.yml` (new) | Pull / push of the owner files from a private repository. Inert without the token; not yet used by any workflow |
+| `.github/actions/private-data/action.yml` (new, later replaced) | Replaced the same day by `.github/private-data.sh`; see docs/private-data-migration-2026-10-28.md |
 | Tests | `test/bot-actions.test.mjs` (8), `test/bot-commands.test.mjs` (12), added cases in `test/early-alerts.test.mjs`, `test/leader-dip.test.mjs`, `test/focus-per-kind.test.mjs` |
 
 ## 4. Tests
@@ -177,8 +177,8 @@ Spread now 2.00% (bid $4.95 / ask $5.05, quote 3 s old): +2% net on 1,000 USD ne
 1. **Mark halal in ZAD** for WST, HQY, MMSI (LONGER HOLDS) and VLO (LEADER DIP). Until then they are correctly not buys.
 2. **Website:** Settings → Pages → Build and deployment → Source: **GitHub Actions**. After that only `index.html` is published, and `.../data/my-positions.json` stops being a web page. One setting; undo by switching back.
 3. **Private data repository** (approved; two steps only the owner can do):
-   1. Create a private repository `Stock-2-private` (empty is fine).
-   2. Create a fine-grained token with Contents read/write on that repository only. Add it to Stock-2 → Settings → Secrets → Actions as `PRIVATE_REPO_TOKEN`.
+   1. Create a private repository `stock-2-private-data` (empty is fine).
+   2. Create a fine-grained token with Contents read/write on that repository only. Add it to Stock-2 → Settings → Secrets → Actions as `PRIVATE_DATA_TOKEN`.
 
    Then Claude will:
    - copy the 5 files across;

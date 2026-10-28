@@ -50,6 +50,12 @@ jobs:
           # file keeps this run's copy as before; see .github/save-data.sh and test/save-data.test.mjs
           set -o pipefail
           bash .github/save-data.sh "scan $(date -u +%FT%RZ)" 2>&1 | tee -a run.log
+      # privacy migration stage 1 (28 Oct): copy the owner's private files to the private repository (mirror only; production still
+      # reads this repository). Does nothing without PRIVATE_DATA_TOKEN or before the connection check; never fails the scan.
+      - continue-on-error: true
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-data.sh mirror || true
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()
         env:

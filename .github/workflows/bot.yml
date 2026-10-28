@@ -32,6 +32,9 @@ jobs:
             for i in 1 2 3 4 5; do if git pull -q --rebase -X theirs && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
             echo "Error: could not save the data folder to the repository" | tee -a run.log
           }
+          # privacy migration stage 1 (28 Oct): keep a copy of the owner's private files in the private repository. Does nothing
+          # without the PRIVATE_DATA_TOKEN secret or before the connection check passed; never stops the bot.
+          mirror() { bash .github/private-data.sh mirror >> run.log 2>&1 || true; }
           end=$(( $(date +%s) + 330*60 )); last_full=0; : > run.log
           while [ "$(date +%s)" -lt "$end" ]; do
             git pull -q --rebase -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
@@ -45,12 +48,13 @@ jobs:
               # in between: wait up to 25 seconds for a message and answer it at once
               BOT_ONLY=1 TG_WAIT=25 node scan.mjs >> run.log 2>&1 || { echo "reply failed" >> run.log; sleep 5; }
             fi
-            save
+            save; mirror
             tail -c 200000 run.log > run.tmp && mv run.tmp run.log
           done
         env:
           MODE: chat
           GITHUB_TOKEN: ${{ github.token }}
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}

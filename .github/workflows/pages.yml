@@ -1,8 +1,7 @@
 name: Website (publish only the website files)
 # Owner approved 28 Oct 2026 (privacy plan option 1). The classic Pages setting publishes the WHOLE repository as a website, including
 # data/my-positions.json, data/settings.json and data/halal.json. This workflow publishes ONLY the files on the list below.
-# IT DOES NOTHING until the owner switches Settings -> Pages -> Build and deployment -> Source to "GitHub Actions" (one setting). After that
-# the classic deployment stops and this is the only thing that publishes. To undo: switch the Source back to "Deploy from a branch".
+# The owner switched Settings -> Pages -> Source to "GitHub Actions" (28 Oct; first deploy 09:09 UTC): this is the only thing that publishes. To undo: switch the Source back to "Deploy from a branch".
 # Only index.html is published: on github.io the page reads its data from raw.githubusercontent.com (the repository itself). signals.json
 # carries sell advice for the owner's holdings, so a website copy of it is not made (the repository copy goes with the private-data move).
 on:
