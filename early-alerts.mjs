@@ -89,7 +89,7 @@ export const levelAllows = (level, kind) => (kind === 'lead' ? level === 'all' :
 // 1,000 USD: 0.6% fees + the full spread once (buying at the ask pays half, selling at the bid the other half). A quote older than 2 minutes
 // or a spread of 10%+ is not trusted: the assumed spread is used and said. A quote is not a fill: the message says the hurdle is a minimum.
 export function spreadHurdle(c) {
-  const sp = c.bid > 0 && c.ask >= c.bid ? (c.ask - c.bid) / ((c.ask + c.bid) / 2) : null, fresh = sp !== null && Number.isFinite(c.qAgeSec) && c.qAgeSec <= 120 && sp < 0.10;
+  const sp = Number.isFinite(c.bid) && Number.isFinite(c.ask) && c.bid > 0 && c.ask >= c.bid ? (c.ask - c.bid) / ((c.ask + c.bid) / 2) : null, fresh = sp !== null && Number.isFinite(c.qAgeSec) && c.qAgeSec >= 0 && c.qAgeSec <= 120 && sp < 0.10;
   if (fresh) return 'Spread now ' + (sp * 100).toFixed(2) + '% (bid ' + usd(c.bid) + ' / ask ' + usd(c.ask) + ', quote ' + Math.round(c.qAgeSec) + ' s old): +2% net on 1,000 USD needs at least ' + pct(0.026 + sp, 1) + ' gross.';
   return 'Spread: no fresh quote' + (sp !== null ? ' (last ' + (sp * 100).toFixed(1) + '%, ' + (Number.isFinite(c.qAgeSec) ? Math.round(c.qAgeSec) + ' s old' : 'age unknown') + ')' : '') + '; at an assumed ' + (c.price < 5 ? '1%' : '0.3%') + ' spread +2% net needs at least ' + pct(netHurdle(c.price), 1) + ' gross.';
 }
