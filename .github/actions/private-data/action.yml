@@ -1,0 +1,25 @@
+name: Private owner data (pull / push)
+description: >
+  Owner approved 28 Oct 2026 (privacy plan option 2), STAGED, NOT YET WIRED INTO ANY WORKFLOW. Copies the owner's private files between a
+  separate PRIVATE repository and this checkout. pull: before a job runs, the private copies replace data/<file>. push: after the job,
+  changed copies are written back to the private repository. With no token (the secret PRIVATE_REPO_TOKEN is not set yet) both modes do
+  nothing and say so, so adding this step to a workflow changes nothing until the owner finishes his two steps (see
+  docs/telegram-bot-repair-2026-10-28.md, "private data"). Workflows keep running in this public repository: no billing change.
+inputs:
+  mode: { description: 'pull or push', required: true }
+  token: { description: 'secrets.PRIVATE_REPO_TOKEN (fine-grained, contents read/write on the private repository only)', required: false, default: '' }
+  repo: { description: 'owner/name of the private repository', required: false, default: 'drrazaq/Stock-2-private' }
+  files: { description: 'files under data/ that live privately', required: false, default: 'my-positions.json settings.json halal.json alpaca-paper.json private.enc' }
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env: { MODE: '${{ inputs.mode }}', TOKEN: '${{ inputs.token }}', REPO: '${{ inputs.repo }}', FILES: '${{ inputs.files }}' }
+      run: |
+        if [ -z "$TOKEN" ]; then echo "private data: no PRIVATE_REPO_TOKEN yet, using the files in this repository (nothing changed)"; exit 0; fi
+        rm -rf .private && git clone -q --depth 1 "https://x-access-token:${TOKEN}@github.com/${REPO}.git" .private
+        if [ "$MODE" = pull ]; then for f in $FILES; do [ -f ".private/data/$f" ] && cp ".private/data/$f" "data/$f"; done; echo "private data: pulled"; exit 0; fi
+        for f in $FILES; do [ -f "data/$f" ] && mkdir -p .private/data && cp "data/$f" ".private/data/$f"; done
+        cd .private && git config user.name scanner && git config user.email scanner@users.noreply.github.com && git add data
+        git diff --cached --quiet && { echo "private data: no change"; exit 0; }
+        git commit -qm "private data $(date -u +%FT%RZ)" && for i in 1 2 3 4 5; do git pull -q --rebase -X theirs && git push -q && break; sleep 5; done; echo "private data: pushed"

@@ -1,4 +1,4 @@
-// PRE-MARKET CHECK (every trading day, about 8:40 New York = 3:40 pm Kuwait, before the open): one short message about the stocks YOU
+// PRE-MARKET CHECK (every trading day, about 8:40 New York = 3:40 pm Kuwait in summer, 4:40 pm in winter, before the open): one short message about the stocks YOU
 // hold: their pre-market price, the change since yesterday's close, the distance to your stop, and a plain decision:
 //   SELL (at the open, after the first 15 minutes): the pre-market price is at/under your stop, or last night's scan already said sell.
 //   WATCH: within 3% of your stop.  HOLD: otherwise.
@@ -29,7 +29,9 @@ for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade
   else if (pv[s] && !(/stop/i.test(pv[s]) && stop && px && px > stop)) rows.sell.push('- ' + tag + ': SELL today, as last night’s scan said: ' + pv[s].replace(/\.$/, '') + '.');
   else if (stop && px && toStop < 0.03) rows.watch.push('- ' + tag + ': WATCH. Within 3% of your stop; your broker stop does the work.');
   else rows.hold.push('- ' + tag + ': HOLD.'); }
-const msg = ['PRE-MARKET CHECK ' + ny + ' (your stocks, before the open: 4:30 pm Kuwait)' + (note ? ' [' + note + ']' : ''), '',
+// (28 Oct) Kuwait time of 9:30 New York on that New York day: Kuwait is UTC+3 all year, New York moves on 1 Nov (never a fixed string)
+const openKuwait = (d) => { const noon = new Date(d + 'T12:00:00Z'), h = +new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', hourCycle: 'h23' }).format(noon), k = 570 - (h - 12) * 60 + 180; return (Math.floor(k / 60) % 12 || 12) + ':' + String(k % 60).padStart(2, '0') + ' pm'; };
+const msg = ['PRE-MARKET CHECK ' + ny + ' (your stocks, before the open: ' + openKuwait(ny) + ' Kuwait)' + (note ? ' [' + note + ']' : ''), '',
   ...(rows.sell.length ? ['SELL', ...rows.sell, ''] : ['SELL: nothing.', '']), ...(rows.watch.length ? ['WATCH', ...rows.watch, ''] : []), ...(rows.hold.length ? ['HOLD', ...rows.hold, ''] : []),
   'Do not trade in the pre-market itself (thin, wide spreads, often reversed at the open). Act in the regular session; keep every stop at your broker. After you sell, send  sold SYM PRICE .'];
 console.log(msg.join('\n'));

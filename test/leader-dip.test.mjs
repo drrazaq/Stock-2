@@ -45,7 +45,7 @@ test('halal: unknown -> MARK HALAL FIRST; NOT halal (your mark or the ZAD list) 
   const S = await loadScan({ files: sig(['UNK', 'BAD', 'ZZL', 'AAA'], LAST, { 'data/halal.json': { ...HAL, BAD: fail }, 'data/zad-list.json': { effective: '2026-10-22', notHalal: ['ZZL'] } }) });
   const t = S.fn('ldipLines')({}, {}, null, LAST).join('\n');
   assert.match(t, /- BUY AAA/); assert.doesNotMatch(t, /BUY (UNK|BAD|ZZL)/);
-  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet\): UNK\./); assert.doesNotMatch(t, /BAD|ZZL/);
+  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet: not a buy until you mark them\): UNK\./); assert.match(t, /\nhalal UNK yes   or   halal UNK no/); assert.doesNotMatch(t, /halal SYM/);   // (28 Oct) the exact command, never a generic one assert.doesNotMatch(t, /BAD|ZZL/);
   const S2 = await loadScan({ files: sig(['AAA'], LAST, { 'data/squad29-flags-today.json': { flags: [{ sym: 'AAA', verdict: 'SELL-WARNING', flag: 'F4', form: 'NT 10-K', filed: new Date().toISOString().slice(0, 10), url: 'x' }] } }) });
   assert.match(S2.fn('dangerFlag')('AAA'), /late-filing notice/);
   assert.deepEqual(S2.fn('ldipLines')({}, {}, null, LAST), []);

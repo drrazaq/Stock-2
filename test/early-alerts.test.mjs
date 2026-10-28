@@ -82,3 +82,13 @@ test('a lead that never met the trigger keeps the reason that blocked it inside 
   const { EA } = make(); EA.noteLead(lead('LOW', { score: 60 })); EA.noteLead(lead('LOW', { score: 60, m: 700 }));
   assert.equal(EA.S.seen['lead|LOW'].decision, 'SOFT: early-wave score under 80 (until 11:30)');
 });
+
+test('(owner approved 28 Oct) the alert shows the REAL spread and the gross move +2% net needs; a stale quote falls back to the assumed spread and says so', async () => {
+  const { spreadHurdle } = await import('../early-alerts.mjs');
+  assert.equal(spreadHurdle({ price: 5, bid: 4.95, ask: 5.05, qAgeSec: 3 }), 'Spread now 2.00% (bid $4.95 / ask $5.05, quote 3 s old): +2% net on 1,000 USD needs at least +4.6% gross.');
+  assert.match(spreadHurdle({ price: 50, bid: 49.99, ask: 50.01, qAgeSec: 10 }), /Spread now 0\.04%.*needs at least \+2\.6% gross/);
+  assert.match(spreadHurdle({ price: 5, bid: 4.95, ask: 5.05, qAgeSec: 400 }), /^Spread: no fresh quote \(last 2\.0%, 400 s old\); at an assumed 0\.3% spread \+2% net needs at least \+2\.9% gross/);
+  assert.match(spreadHurdle({ price: 3 }), /no fresh quote; at an assumed 1% spread \+2% net needs at least \+3\.6% gross/);
+  const { EA, sent } = make(); EA.noteLead(lead('GOOD', { bid: 11.99, ask: 12.01, qAgeSec: 2 })); await EA.process(); assert.match(sent[0], /Spread now 0\.17% \(bid \$11\.99 \/ ask \$12\.01/);
+  assert.equal(EA.S.seen['lead|GOOD'].decision, 'SENT');   // display only: the decision is unchanged
+});

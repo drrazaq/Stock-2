@@ -85,17 +85,25 @@ export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours =
 }
 export const levelAllows = (level, kind) => (kind === 'lead' ? level === 'all' : kind === 'paper' ? level === 'all' || level === 'paper' : false);
 
+// (28 Oct, owner approved) the REAL spread and the real gross move needed for +2% net, from the quote recorded at detection. Round trip on
+// 1,000 USD: 0.6% fees + the full spread once (buying at the ask pays half, selling at the bid the other half). A quote older than 2 minutes
+// or a spread of 10%+ is not trusted: the assumed spread is used and said. A quote is not a fill: the message says the hurdle is a minimum.
+export function spreadHurdle(c) {
+  const sp = c.bid > 0 && c.ask >= c.bid ? (c.ask - c.bid) / ((c.ask + c.bid) / 2) : null, fresh = sp !== null && Number.isFinite(c.qAgeSec) && c.qAgeSec <= 120 && sp < 0.10;
+  if (fresh) return 'Spread now ' + (sp * 100).toFixed(2) + '% (bid ' + usd(c.bid) + ' / ask ' + usd(c.ask) + ', quote ' + Math.round(c.qAgeSec) + ' s old): +2% net on 1,000 USD needs at least ' + pct(0.026 + sp, 1) + ' gross.';
+  return 'Spread: no fresh quote' + (sp !== null ? ' (last ' + (sp * 100).toFixed(1) + '%, ' + (Number.isFinite(c.qAgeSec) ? Math.round(c.qAgeSec) + ' s old' : 'age unknown') + ')' : '') + '; at an assumed ' + (c.price < 5 ? '1%' : '0.3%') + ' spread +2% net needs at least ' + pct(netHurdle(c.price), 1) + ' gross.';
+}
 export function leadText(items, ctx = {}) {
   return ['EARLY WATCH: RESEARCH LEAD' + (items.length > 1 ? 'S' : '') + ' (NOT AN APPROVED BUY) ' + fm(items[0].m) + ' New York', ...items.map(c =>
     '- ' + c.sym + ' ' + pct(c.chg, 1) + ' at ' + usd(c.price) + ', volume pace ' + (c.rvT ? c.rvT.toFixed(1) + 'x' : '?') + ', ' + (c.dollarVol / 1e6).toFixed(1) + 'M USD traded so far. '
-      + (ctx.halalOk && ctx.halalOk(c.sym) ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.') + ' SEC: no danger filing in 30 days.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  For +2% net on 1,000 USD it needs ' + pct(netHurdle(c.price), 1) + ' gross.'
+      + (ctx.halalOk && ctx.halalOk(c.sym) ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.') + ' SEC: no danger filing in 30 days.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  ' + spreadHurdle(c)
       + (c.price < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : '')),
     'Trigger EW-ALERT-1 is UNPROVEN: on its first 2 days only about 1 in 10 such stocks reached that gross move. At most 5 a day; the after-close radar scores every one. Fewer messages: alerts paper  or  alerts off.'].join('\n');
 }
 export function paperText(items) {
   return ['EARLY WATCH: PAPER SETUP' + (items.length > 1 ? 'S' : '') + ' (NOT AN APPROVED BUY) ' + fm(items[0].m) + ' New York', ...items.map(c => { const r = c.record;
     return '- ' + c.sym + ': ' + c.rule + ' at ' + usd(c.price) + ' (' + pct(c.chg) + ' today). Rule record: ' + (r ? r.n + ' paper trades, ' + pct(r.avg, 1) + ' a trade after costs' + (r.noTop2 !== null && r.noTop2 !== undefined ? ', ' + pct(r.noTop2, 1) + ' without its 2 best' : '') : 'none yet')
-      + '; 5-year test ' + (c.history || 'not tested') + '.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  Paper only: logged and scored, not a buy. ' + (c.halalOk ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.'); }),
+      + '; 5-year test ' + (c.history || 'not tested') + '.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  ' + spreadHurdle(c) + '\n  Paper only: logged and scored, not a buy. ' + (c.halalOk ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.'); }),
     'Fewer messages: alerts approved  or  alerts off.'].join('\n');
 }
 
@@ -112,7 +120,7 @@ export function createEarlyAlerts(opts) {
       if (soft) { const prev = S.seen[k], keep = soft === 'after 11:30' && prev && /^SOFT/.test(prev.decision) && !/after 11:30/.test(prev.decision);   // keep the reason that blocked it inside the window
         const row = decide('lead', c, keep ? prev.decision + ' (until 11:30)' : 'SOFT: ' + soft); if (/extended|after 11:30/.test(soft)) row.final = true; return; }
       const row = decide('lead', c, 'PENDING'); row.final = true; row.c = c; S.queue.lead.push(row); },
-    notePaper(t, chg) { const k = 'paper|' + t.sym; if (S.seen[k]) return; const c = { sym: t.sym, m: t.m, price: t.price, chg, rule: t.rule };
+    notePaper(t, chg, q = {}) { const k = 'paper|' + t.sym; if (S.seen[k]) return; const c = { sym: t.sym, m: t.m, price: t.price, chg, rule: t.rule, bid: q.bid, ask: q.ask, qAgeSec: q.qAgeSec };
       const row = decide('paper', c, t.m > PAPER.to ? 'SOFT: after 11:30' : 'PENDING'); row.final = true; if (row.decision === 'PENDING') { row.c = c; S.queue.paper.push(row); } },
     // once a minute: hard rules, level, daily caps, then one message per kind
     async process() {

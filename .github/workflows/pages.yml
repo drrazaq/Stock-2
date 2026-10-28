@@ -1,0 +1,40 @@
+name: Website (publish only the website files)
+# Owner approved 28 Oct 2026 (privacy plan option 1). The classic Pages setting publishes the WHOLE repository as a website, including
+# data/my-positions.json, data/settings.json and data/halal.json. This workflow publishes ONLY the files on the list below.
+# IT DOES NOTHING until the owner switches Settings -> Pages -> Build and deployment -> Source to "GitHub Actions" (one setting). After that
+# the classic deployment stops and this is the only thing that publishes. To undo: switch the Source back to "Deploy from a branch".
+# Only index.html is published: on github.io the page reads its data from raw.githubusercontent.com (the repository itself). signals.json
+# carries sell advice for the owner's holdings, so a website copy of it is not made (the repository copy goes with the private-data move).
+on:
+  push:
+    branches: [main]
+    paths: [index.html, .github/workflows/pages.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy only the approved website files
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          echo "Published files:"; find _site -type f | sort
+          # guard: nothing else may be published (any other file here fails the run)
+          if find _site -type f | grep -vE '^_site/index\.html$'; then echo "unexpected file in the website"; exit 1; fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -252,7 +252,7 @@ while (Date.now() - START < MAXMS) {
     // EARLY-WAVE OBSERVATION (23 Oct): +2% to +15% with elevated volume pace, sub-$1 included; logged only, never an alert or a buy
     try { const ewc = scoreEarlyWaveCandidate({ change: chg, rv, rvT, live, price: r.price, oneMinuteChange: prevSeenPx > 0 ? r.price / prevSeenPx - 1 : null }); updateEarlyWaveCandidate(earlyWave, r.sym, ewc, fmtM(m));
       const dv = r.vol > 0 ? r.vol * r.price : 0; SR.tick({ sym: r.sym, m, price: r.price, live });
-      if (ewc) { EA.noteLead({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rvT, dollarVol: dv, live, bid: r.bid, ask: r.ask });
+      if (ewc) { EA.noteLead({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rvT, dollarVol: dv, live, bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (nowMs - r.qt) / 1000 : null });
         SR.early({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rv, rvT, dollarVol: dv, live, bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (nowMs - r.qt) / 1000 : null, fc: v.fc, hard: { under1: r.price < 1, halalFail: notHalal(r.sym), lottery: LOTT[r.sym] || 0 } }); } } catch (e) {}
     if (!(r.prevC >= 1)) { if (chg >= 0.10) flag(r.sym, 'under1', 'under 1 USD (never traded by these rules)'); continue; }
     if (r.vol > 0 && avgVol.has(r.sym)) { sumV += r.vol; sumA += avgVol.get(r.sym); }   // no 20-day history (new listing, was under 1 USD): yesterday's volume stands in
@@ -286,7 +286,7 @@ while (Date.now() - START < MAXMS) {
             if (prev.length === 3 && r.price > Math.max(...prev) && r.price > ps.low) { seen[r.sym + 'IG9'] = 1; hits.push({ R: R9, extra: { stop: +ps.low.toFixed(4), hi: +ps.hi.toFixed(4) } }); } } } } }
     for (const h of hits) { const t = { v: IG_VERSION, d: day, sym: r.sym, rule: h.R.id, m, price: r.price, prevC: r.prevC, rv: rv === null ? null : +rv.toFixed(2), rvT: rvT === null ? null : +rvT.toFixed(2), float: M.float || null, age: M.age, adr5: avgRange5.get(r.sym) && r.hi > 0 && r.lo > 0 ? +((Math.max(r.hi, r.price) - Math.min(r.lo, r.price)) / avgRange5.get(r.sym)).toFixed(2) : null, mode, delay: rd === null ? null : +rd.toFixed(1), ...h.extra }; triggers.push(t);
       if (vis[r.sym] && !vis[r.sym].caught) vis[r.sym].caught = h.R.id + ' at ' + fmtM(m);
-      await maybeAlert(r, t, h.R, chg, rd, rv, M, h.extra, !!h.liveOnly); if (!(vis[r.sym] && vis[r.sym].flags.alerted)) EA.notePaper(t, chg); } }
+      await maybeAlert(r, t, h.R, chg, rd, rv, M, h.extra, !!h.liveOnly); if (!(vis[r.sym] && vis[r.sym].flags.alerted)) EA.notePaper(t, chg, { bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (Date.now() - r.qt) / 1000 : null }); } }
   const bySym = new Map(rows.map(x => [x.sym, x]));
   try { await pollEdgar(m); await decideFilings(m, bySym); controlSample(m, rows); } catch (e) { console.log('sec feed / control: ' + e.message); }   // D and R0 (rank-models.mjs)
   if (triggers.length > tStart) {   // shadow stream: every rule trigger this minute, including the held-back ones
