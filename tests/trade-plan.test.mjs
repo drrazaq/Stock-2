@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {assessTradePlan,HORIZONS} from '../trade-plan.mjs';
+const good={n:80,winRate:.57,avgNet:.025,stressNet:.012,noTop2Net:.009,benchmarkExcess:.01,outOfSample:true};
+const base={symbol:'ABCD',entry:3.2,stop:3.02,targets:{1:3.68,3:3.8},stats:{1:good,3:{...good,avgNet:.03}},halalStatus:'approved',quoteAgeSec:10};
+test('compares seven holding horizons, ranks proven candidates',()=>{const r=assessTradePlan(base);assert.equal(r.plans.length,HORIZONS.length);assert.equal(r.preferred.sessions,3);assert.equal(r.decision,'RESEARCH CANDIDATE');});
+test('no halal approval means no buy',()=>assert.equal(assessTradePlan({...base,halalStatus:'unknown'}).decision,'NO BUY'));
+test('future or stale quote blocks',()=>{for(const age of [-1,121,null])assert.equal(assessTradePlan({...base,quoteAgeSec:age}).decision,'NO BUY');});
+test('no out-of-sample edge blocks all horizons',()=>{const r=assessTradePlan({...base,stats:{1:{...good,outOfSample:false},3:{...good,stressNet:-.01}}});assert.equal(r.decision,'NO BUY');});
+test('targets below entry or missing evidence cannot become buy',()=>{const r=assessTradePlan({...base,targets:{1:3,3:3.8},stats:{3:{...good,n:20}}});assert.equal(r.decision,'NO BUY');});
+test('net targets and stops include round trip fee',()=>{const r=assessTradePlan(base).preferred;assert.ok(r.netTarget>0);assert.ok(r.netStop<0);});
