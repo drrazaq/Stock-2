@@ -31,12 +31,23 @@ export function createShadow({ day }) {
     // an early-wave observation this minute (ewc from early-wave-discovery.mjs); q: { sym, m, price, chg, score, rv, rvT, dollarVol, live, bid, ask, qAgeSec, fc, hard: {...} }
     early(q) { let row = book.get(q.sym);
       if (!row) { row = { d: day, sym: q.sym, src: 'early', m0: q.m, px0: r4(q.price), chg0: r4(q.chg), score0: q.score, rv0: r4(q.rv), rvT0: r4(q.rvT), dv0: Math.round(q.dollarVol || 0), firstSeenChg: r4(q.fc), spr0: spreadPct(q.bid, q.ask), hard: q.hard, v: {}, ig: [], last: r4(q.price), lastM: q.m }; book.set(q.sym, row); }
-      else if (row.src === 'ig') row.src = 'ig+early';
+      else if (!/early/.test(row.src)) row.src += '+early';
       for (const v of VARIANTS) if (!row.v[v] && variantPass(v, q)) row.v[v] = entry(q); },
     // an intraday rule trigger (t from ignition-watch.mjs, including the ones held back: t.logged = 'volume too low' ...)
     trigger(t, q) { let row = book.get(t.sym);
       if (!row) { row = { d: day, sym: t.sym, src: 'ig', m0: t.m, px0: r4(t.price), chg0: r4(t.price / t.prevC - 1), score0: null, rv0: r4(t.rv), rvT0: r4(t.rvT), dv0: Math.round(q.dollarVol || 0), firstSeenChg: r4(q.fc), spr0: spreadPct(q.bid, q.ask), hard: q.hard, v: {}, ig: [], last: r4(t.price), lastM: t.m }; book.set(t.sym, row); }
       if (!row.ig.some(x => x.rule === t.rule)) row.ig.push({ rule: t.rule, held: t.logged || null, ...entry({ ...q, m: t.m, price: t.price }) }); },
+    // (28 Oct, owner items 2-3) D: a fresh 8-K / 6-K from the SEC live feed, decided at the first live minute after acceptance (rank-models.mjs
+    // dEligible gives f.eligible / f.why); every decided filing keeps an entry, eligible or not, so already-moved filers are measured too
+    filing(q) { let row = book.get(q.sym);
+      if (!row) { row = { d: day, sym: q.sym, src: 'filing', m0: q.m, px0: r4(q.price), chg0: r4(q.chg), score0: null, rv0: null, rvT0: null, dv0: Math.round(q.prevDollarVol || 0), firstSeenChg: r4(q.fc), spr0: spreadPct(q.bid, q.ask), hard: q.hard, v: {}, ig: [], last: r4(q.price), lastM: q.m }; book.set(q.sym, row); }
+      else if (!/filing/.test(row.src)) row.src += '+filing';
+      if (row.f) return; row.f = q.f; row.v.D = entry(q); },
+    // R0: the no-information control (9:45 New York, liquid stocks that have not moved), same entry rules
+    control(q) { let row = book.get(q.sym);
+      if (!row) { row = { d: day, sym: q.sym, src: 'control', m0: q.m, px0: r4(q.price), chg0: r4(q.chg), score0: null, rv0: null, rvT0: null, dv0: Math.round(q.prevDollarVol || 0), firstSeenChg: r4(q.fc), spr0: spreadPct(q.bid, q.ask), hard: q.hard, v: {}, ig: [], last: r4(q.price), lastM: q.m }; book.set(q.sym, row); }
+      else if (!/control/.test(row.src)) row.src += '+control';
+      if (!row.v.R0) row.v.R0 = entry(q); },
     rows() { return [...book.values()]; },
   };
 }

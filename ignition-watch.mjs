@@ -17,7 +17,9 @@ import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
 import { stopHits } from './stop-watch.mjs';
 import { createEarlyAlerts, alertLevel, classifyCatalyst } from './early-alerts.mjs';
-import { createShadow } from './shadow-stream.mjs';
+import { createShadow, spreadPct } from './shadow-stream.mjs';
+import { parseAtom, nyMinuteOf } from './edgar-feed.mjs';
+import { dEligible, hash, FROZEN as RANK } from './rank-models.mjs';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import zlib from 'node:zlib';
@@ -173,7 +175,49 @@ async function tgSend(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('
     return { ok: !!(r.ok && j.ok), why: r.ok ? (j.description || '') : 'HTTP ' + r.status }; } catch (e) { return { ok: false, why: e.message }; } }
 const EA = createEarlyAlerts({ day, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
   lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
-const SR = createShadow({ day });   // (28 Oct, Phase 1) every candidate with each soft gate removed, for the filter shadow test (shadow-stream.mjs)
+const SR = createShadow({ day });
+// ---- SEC LIVE FEED for the D shadow model and the R0 control (owner, 28 Oct 2026; rules frozen in rank-models.mjs). Research only.
+// EDGAR's latest-filings feed, about every 2 minutes until 11:00 New York (first poll pages back to 4:00); each 8-K / 6-K is decided at the
+// first live minute after its acceptance (9:30 at the earliest). SEC company checks only for filings that pass the cheap D checks, at
+// most 15 a minute (the rest wait a minute and say so in decM), so the minute loop stays fast.
+const EF = { seen: new Set(), pending: [], last: 0, first: true, polls: 0, fails: 0, filings: 0, lat: [], decided: 0, eligible: 0, noPrice: 0, firstOkM: null, ctlDone: false, cik: null }, DAY4 = Date.parse(day + 'T04:00:00Z') - nyOffset(day) * 60000;
+async function pollEdgar(m) {
+  if (m > 660 || Date.now() - EF.last < 110000) return; EF.last = Date.now();
+  if (!TICK) await secRisk('SPY').catch(() => {}); if (!TICK) { EF.fails++; return; }
+  if (!EF.cik) { EF.cik = new Map(); for (const [t, c] of Object.entries(TICK)) if (/^[A-Z]{1,5}$/.test(t)) { const k = +c; if (!EF.cik.has(k)) EF.cik.set(k, []); EF.cik.get(k).push(t); } }
+  const H = { headers: { 'User-Agent': SEC_UA, Accept: 'application/atom+xml' } };
+  for (const type of ['8-K', '6-K']) for (let start = 0; start < (EF.first ? 800 : 200); start += 100) {
+    const r = await fetch(SEC_WWW + '/cgi-bin/browse-edgar?action=getcurrent&type=' + encodeURIComponent(type) + '&company=&dateb=&owner=include&start=' + start + '&count=100&output=atom', H).catch(() => null);
+    EF.polls++; if (!r || !r.ok) { EF.fails++; break; } if (EF.firstOkM === null) EF.firstOkM = m;
+    const ents = parseAtom(await r.text()); let older = false;
+    for (const e of ents) { const t = Date.parse(e.at); if (!(t >= DAY4)) { older = true; continue; } const k = e.acc + '|' + e.cik; if (EF.seen.has(k)) continue; EF.seen.add(k); EF.filings++; if (!EF.first) EF.lat.push(Math.round((Date.now() - t) / 1000));
+      for (const sym of EF.cik.get(e.cik) || []) EF.pending.push({ sym, acc: e.acc, form: e.form, items: e.items, at: e.at, atM: nyMinuteOf(e.at) }); }
+    if (older || ents.length < 100) break; }
+  EF.first = false;
+}
+async function decideFilings(m, bySym) {
+  if (!EF.pending.length || m < 570) return; const keep = []; let secCalls = 0;
+  for (const p of EF.pending) { const r = bySym.get(p.sym);
+    if (m <= p.atM) { keep.push(p); continue; }
+    const live = r && r.prevC > 0 && r.price > 0 && isFreshPriceAge(r.t > 0 ? (Date.now() - r.t) / 60000 : null);
+    if (!live) { if (m <= 660) keep.push(p); else EF.noPrice++; continue; }
+    const chg = r.price / r.prevC - 1, sp = spreadPct(r.bid, r.ask), qAge = r.qt > 0 ? (Date.now() - r.qt) / 1000 : null, hard = { under1: r.price < 1, halalFail: notHalal(p.sym), lottery: LOTT[p.sym] || 0 };
+    const q = { form: p.form, items: p.items, atM: p.atM, decM: m, chg, price: r.price, prevDollarVol: (r.prevC || 0) * (r.prevV || 0), spread: sp, spreadFresh: sp !== null && qAge !== null && qAge <= 120, halalFail: hard.halalFail, lottery: hard.lottery };
+    let sec = EA.S.sec[p.sym] || null;
+    if (!sec && dEligible({ ...q, sec: { known: true, tags: [] } }).eligible) { if (secCalls >= 15) { keep.push(p); continue; } secCalls++; sec = EA.S.sec[p.sym] = await secRisk(p.sym).catch(() => ({ known: false, tags: [] })); }
+    const D = dEligible({ ...q, sec: sec || { known: true, tags: [] } }); if (!sec) D.why.push('SEC not checked (failed another D rule first)');
+    EF.decided++; if (D.eligible) EF.eligible++;
+    SR.filing({ sym: p.sym, m, price: r.price, chg, bid: r.bid, ask: r.ask, qAgeSec: qAge, fc: vis[p.sym] ? vis[p.sym].fc : null, prevDollarVol: q.prevDollarVol, hard,
+      f: { acc: p.acc, form: p.form, items: p.items, atM: p.atM, decM: m, chg: +chg.toFixed(4), prevDollarVol: Math.round(q.prevDollarVol), spread: sp, eligible: D.eligible, why: D.why } }); }
+  EF.pending = keep;
+}
+// R0 control at 9:45: liquid 1 USD+ stocks that have not moved, by a fixed hash (no information, no choice)
+function controlSample(m, rows) {
+  if (EF.ctlDone || m < 585) return; EF.ctlDone = true;
+  const pool = rows.filter(r => r.prevC >= 1 && r.price >= 1 && r.prevC * (r.prevV || 0) >= 1e6 && Math.abs(r.price / r.prevC - 1) <= 0.03 && isFreshPriceAge(r.t > 0 ? (Date.now() - r.t) / 60000 : null) && !notHalal(r.sym) && !((LOTT[r.sym] || 0) >= 0.15))
+    .sort((a, b) => hash(day + a.sym) - hash(day + b.sym)).slice(0, RANK.controlsPerDay);
+  for (const r of pool) SR.control({ sym: r.sym, m, price: r.price, chg: r.price / r.prevC - 1, bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (Date.now() - r.qt) / 1000 : null, fc: vis[r.sym] ? vis[r.sym].fc : null, prevDollarVol: r.prevC * (r.prevV || 0), hard: { under1: false, halalFail: false, lottery: LOTT[r.sym] || 0 } });
+}   // (28 Oct, Phase 1) every candidate with each soft gate removed, for the filter shadow test (shadow-stream.mjs)
 const medChg = () => { const a = Object.values(vis).filter(v => v.last >= 1 && v.lastC !== undefined).map(v => v.lastC).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
 async function radarSnap(m, scanned, live) {
   const ms = buildMissed(), tl = {}; for (const x of ms) tl[x.code] = (tl[x.code] || 0) + 1;
@@ -243,7 +287,9 @@ while (Date.now() - START < MAXMS) {
     for (const h of hits) { const t = { v: IG_VERSION, d: day, sym: r.sym, rule: h.R.id, m, price: r.price, prevC: r.prevC, rv: rv === null ? null : +rv.toFixed(2), rvT: rvT === null ? null : +rvT.toFixed(2), float: M.float || null, age: M.age, adr5: avgRange5.get(r.sym) && r.hi > 0 && r.lo > 0 ? +((Math.max(r.hi, r.price) - Math.min(r.lo, r.price)) / avgRange5.get(r.sym)).toFixed(2) : null, mode, delay: rd === null ? null : +rd.toFixed(1), ...h.extra }; triggers.push(t);
       if (vis[r.sym] && !vis[r.sym].caught) vis[r.sym].caught = h.R.id + ' at ' + fmtM(m);
       await maybeAlert(r, t, h.R, chg, rd, rv, M, h.extra, !!h.liveOnly); if (!(vis[r.sym] && vis[r.sym].flags.alerted)) EA.notePaper(t, chg); } }
-  if (triggers.length > tStart) { const bySym = new Map(rows.map(x => [x.sym, x]));   // shadow stream: every rule trigger this minute, including the held-back ones
+  const bySym = new Map(rows.map(x => [x.sym, x]));
+  try { await pollEdgar(m); await decideFilings(m, bySym); controlSample(m, rows); } catch (e) { console.log('sec feed / control: ' + e.message); }   // D and R0 (rank-models.mjs)
+  if (triggers.length > tStart) {   // shadow stream: every rule trigger this minute, including the held-back ones
     for (const t of triggers.slice(tStart)) { const x = bySym.get(t.sym) || {}; try { SR.trigger(t, { bid: x.bid, ask: x.ask, qAgeSec: x.qt > 0 ? (Date.now() - x.qt) / 1000 : null, dollarVol: x.vol > 0 ? x.vol * x.price : 0, fc: vis[t.sym] ? vis[t.sym].fc : null, hard: { under1: t.price < 1, halalFail: notHalal(t.sym), lottery: LOTT[t.sym] || 0 } }); } catch (e) {} } }
   try { await EA.process(); } catch (e) { console.log('early alerts: ' + e.message); }
   if (sumA > 0) vcToday[Math.floor(m / 5) * 5] = +(sumV / sumA).toFixed(4);   // the market's share of a normal day traded by now
@@ -268,7 +314,8 @@ fs.writeFileSync('data/ignition-live.json', JSON.stringify({ version: IG_VERSION
 // at the open AND not gapped 20%+ before 9:25 (a gap happens before any feed can help). Real-time cannot fix the rest.
 const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISIBLE_TOO_LATE', 'VOLUME_FIGURE_LATE']), dataMiss = missed.filter(x => DATA_CODES.has(x.code)),
   gapLike = (x) => (x.preMarketGap !== null && x.preMarketGap >= 0.2) || (x.openGap !== null && x.openGap >= 0.10) || (/^0?9:3[0-5]/.test(String(x.firstSeen)) && x.firstSeenUp >= 0.10), feedFix = dataMiss.filter(x => !gapLike(x));
-fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, procStart: PROC_START, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
+const edgar = { polls: EF.polls, fails: EF.fails, firstOk: EF.firstOkM === null ? null : fmtM(EF.firstOkM), filings: EF.filings, decided: EF.decided, eligibleD: EF.eligible, noLivePrice: EF.noPrice, medianLatencySec: EF.lat.length ? EF.lat.sort((a, b) => a - b)[Math.floor(EF.lat.length / 2)] : null };   // feed readiness, measured
+fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, procStart: PROC_START, edgar, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
 { const ewl = Object.values(earlyWave).sort((x, y) => y.score - x.score); if (ewl.length) fs.appendFileSync('data/early-wave-obs.jsonl', JSON.stringify({ day, mode, src, n: ewl.length, top: ewl.slice(0, 300) }) + '\n'); }   // judged later against matched stocks; not a signal
 fs.appendFileSync('data/ignition-paper.jsonl', triggers.filter(t => !t.logged).map(t => JSON.stringify(t) + '\n').join(''));
 // SHADOW STREAM (Phase 1): the day's candidates, gzipped (about 1,000-2,000 rows); outcomes are added after the close by shadow-outcomes.mjs

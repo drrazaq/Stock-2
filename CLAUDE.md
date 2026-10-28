@@ -6,7 +6,7 @@ For the owner, and for any Claude working in this repo. Claude Code reads this f
 
 ## 1. What Stock-2 is
 
-- **Owner:** Abdulrazaq, a dental surgeon in Kuwait (UTC+3). Not a programmer. Wants **short, results-first messages**: "buy this, sell this, target reached, next". He wants to trade and win, not read information.
+- **Owner:** based in Kuwait (UTC+3). Not a programmer. (Personal details removed from this public file on 28 Oct at the owner's request; see `docs/privacy-plan-2026-10-28.md`.) Wants **short, results-first messages**: "buy this, sell this, target reached, next". He wants to trade and win, not read information.
 - **The system:** a halal, long-only **US-stock decision system**.
   - It runs on **GitHub Actions** (repo `drrazaq/Stock-2`, public) and talks to the owner through a **Telegram bot**.
   - **It never places orders.** The owner trades by hand in his broker, **ZAD** (built on Alpaca).
@@ -37,12 +37,9 @@ For the owner, and for any Claude working in this repo. Claude Code reads this f
 - **Safety brake:** new buys switch off if 10+ finished trades average below 0.
 - **In the code:** functions `ldip*` in `scan.mjs`; records in `data/leaderdip-ledger.jsonl`.
 
-### 2b. Current holdings (`data/my-positions.json`, edited only on the owner's instruction)
+### 2b. Current holdings
 
-TTD, RKLB, LLY, RELL, IESC, COHR, SYM, CIEN, APP, CCJ, GRML, TGT.
-
-- **TGT:** a LEADER DIP buy at $149.12 on 27 Oct, target $178.94, time exit about late April 2027.
-- **Advised SELL:** GRML (late-filing danger flag) and CIEN.
+- In `data/my-positions.json`, edited only on the owner's instruction. Not repeated here (public file); the nightly ACTIONS message is the live view, including any advised SELLs.
 
 ## 3. What the bot sends (Telegram)
 
@@ -58,6 +55,7 @@ TTD, RKLB, LLY, RELL, IESC, COHR, SYM, CIEN, APP, CCJ, GRML, TGT.
 - **Health check:** "SYSTEM HEALTH: N problems". The owner forwards it to Claude to fix.
 - **EARLY WATCH alerts** (28 Oct, `early-alerts.mjs`, sent by the live watcher): RESEARCH LEAD (trigger EW-ALERT-1, max 5/day) and PAPER SETUP (IG rule hits, max 4/day), always labelled NOT AN APPROVED BUY; hard rules block both. `alerts all|paper|approved|off`. Every candidate's decision and 15:00 result: `data/opp-ledger.jsonl`; daily funnel `data/opp-days.jsonl` (DELIVERY SCORECARD in the after-close radar). Design, gate register and pre-registered success test: `docs/opportunity-pipeline-v5.md`.
 - **Phase 1 measurement** (owner approved 28 Oct): `shadow-stream.mjs` records every candidate with each soft gate removed, bid/ask, +1/+30 min prices (`data/shadow/DAY.jsonl.gz`); `shadow-outcomes.mjs` adds 1/5/10-session outcomes and writes `data/shadow-report.json` (scoring pre-registered in `shadow-eval.mjs`); early alerts carry a catalyst check (`classifyCatalyst`). Plan and approvals: `docs/phase1-plan-2026-10-28.md`.
+- **Ranking shadow experiment** (owner approved 28 Oct; live ranking stays first come): frozen models A/B/C/D + controls R/R0 in `rank-models.mjs`, counted from 29 Oct, verdict after 20 sessions, then a separate confirmation period. D reads the SEC live filing feed (`edgar-feed.mjs`). Report: `docs/ranking-experiment-2026-10-28.md`; privacy plan: `docs/privacy-plan-2026-10-28.md`.
 - **Watcher guard** (`watcher-guard.mjs`, every 5 min in `bot.yml`): starts the live watcher if GitHub has not by 9:10 New York; alerts WATCHER LATE / WAITING / STOPPED EARLY / DOWN; real starts in `data/watcher-starts.jsonl`.
 - **OPPORTUNITY RADAR** (V3.0, owner approved 28 Oct): a research message at 11:15 New York (sent by `ignition-watch.mjs` via `opportunity-radar.mjs midday`) and one after the close (`opportunity-radar.yml`). Panels: A live research leads, B short setups (PAPER), C approved signals (zero allowed), D runners missed. Every A/B line says NOT AN APPROVED BUY; hard blocks (under $1, NOT HALAL, SEC danger, one-day-jump AVOID) are never leads. Rules and the pre-registered scorecard are in `radar-v3-core.mjs`; ledger `data/radar-v3-ledger.jsonl`. It ignores `quiet` / `opportunitiesOnly` / `focus`; `radar off` stops it. Audit: `docs/v3-opportunity-audit-2026-10-28.md`.
 - **Owner commands** (plain words work too):

@@ -34,22 +34,54 @@ export function hardReason({ price, halalFail, lottery, sec }) {
   if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
   return null;
 }
-// CATALYST CHECK (owner approved 28 Oct, Phase 1). Earliest credible source first; never invents a reason.
-//   VERIFIED     an SEC filing (8-K, 6-K, 13D, merger 425 / DEFA14A) ACCEPTED in the 24 h before the check (SEC acceptance time)
-//   UNCONFIRMED  no such filing, but a Finnhub headline in the 24 h before (an aggregator headline: plausible, not verified)
-//   NONE         SEC and news both checked, nothing in 24 h
-//   UNAVAILABLE  a source failed (said which); never read as "no catalyst"
-// Contradictory evidence is NOT assessed yet (said in the doc).
+// CATALYST CHECK (owner approved 28 Oct; classes refined the same day, owner item 5, before any live alert used them). Never invents a
+// reason; never reads a failed source as "no catalyst". Three separate answers:
+//   SOURCE     SEC (a filing with its SEC acceptance time: authentic, from the company, via the regulator)
+//              ISSUER_WIRE (a headline whose source is a press-release wire: GlobeNewswire, Business Wire, PR Newswire, Accesswire,
+//                           Newsfile: the company's own words, not checked by anyone) / AGGREGATOR (any other headline: unverified)
+//              NONE (both checked, nothing) / UNAVAILABLE (a source failed; said which)
+//   DIRECTION  DILUTION (financing: 8-K 2.03 / 3.02 / 3.03, a prospectus or registration 424B / S-1 / S-3 / F-1 / F-3, or headline words
+//              offering, placement, priced, warrants, ATM, convertible) / NEGATIVE (8-K 1.02 1.03 2.04 2.05 2.06 3.01 4.01 4.02, or
+//              headline words delisting, downgrade, misses, cuts guidance, lawsuit, investigation, recall, bankruptcy, going concern,
+//              resigns, terminates, restatement) / POSITIVE (ONLY from headline words: award, contract, approval, clearance, partnership,
+//              collaboration, acquired by, beats, record revenue, raises guidance, wins, order: wording, not verified meaning) /
+//              AMBIGUOUS (an SEC item that does not say which way, e.g. 1.01, 2.02, 7.01, 8.01, or positive and negative words together)
+//              / UNKNOWN (nothing found)
+//   FRESHNESS  FRESH (in the 24 h before the check) / RECYCLED (only 24-72 h old, or an amended filing /A: old news moving now)
+// cls (kept for the ledger): VERIFIED (SEC, fresh) / UNCONFIRMED (headline only, fresh) / RECYCLED / NONE / UNAVAILABLE.
 const nyHM = (ms) => new Date(ms).toLocaleTimeString('en-GB', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit' });
-export function classifyCatalyst({ sec, news, nowMs, hours = 24 }) {
-  const since = nowMs - hours * 3600e3, inWin = (t) => t !== null && t !== undefined && Number.isFinite(t) && t >= since && t <= nowMs;
-  const f = sec && sec.known ? (sec.filings || []).map(x => ({ ...x, t: x.at ? Date.parse(x.at) : null })).filter(x => inWin(x.t) && /^(8-K|6-K|SC 13D|425|DEFA14A)/.test(x.form)).sort((a, b) => a.t - b.t) : [];
-  if (f.length) { const x = f[0]; return { cls: 'VERIFIED', text: 'VERIFIED: SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' }; }
-  const n = news && news.ok ? (news.items || []).filter(x => inWin(x.at)).sort((a, b) => a.at - b.at) : [];
-  if (n.length) { const x = n[0]; return { cls: 'UNCONFIRMED', text: 'PLAUSIBLE, UNCONFIRMED: earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }; }
-  if (!sec || !sec.known) return { cls: 'UNAVAILABLE', text: 'SOURCE UNAVAILABLE: the SEC check failed' + (news && news.ok ? '; no headline in 24 h' : '') };
-  if (!news || !news.ok) return { cls: 'UNAVAILABLE', text: 'NO SEC filing in 24 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' };
-  return { cls: 'NONE', text: 'NONE FOUND: no SEC filing and no headline in 24 h' };
+export const NEG_ITEMS = ['1.02', '1.03', '2.04', '2.05', '2.06', '3.01', '4.01', '4.02'], DIL_ITEMS = ['2.03', '3.02', '3.03'];
+export const DIL_FORMS = /^(424B|S-1|S-3|F-1|F-3)/, EVENT_FORMS = /^(8-K|6-K|SC 13D|425|DEFA14A)/;
+const DIL_W = /\b(offering|private placement|registered direct|priced at|pricing of|warrants?|at-the-market|ATM program|convertible|shelf)\b/i;
+const NEG_W = /\b(delist\w*|downgrade\w*|miss(es|ed)?|cuts? (guidance|outlook)|lawsuit|investigation|recall\w*|bankrupt\w*|going concern|resign\w*|terminat\w*|restat\w*|subpoena|halt\w*)\b/i;
+const POS_W = /\b(award\w*|contract|approv\w*|clearance|partnership|collaborat\w*|acquired by|to be acquired|beats?|record (revenue|quarter|sales)|raises? (guidance|outlook)|wins?|purchase order|orders? from)\b/i;
+const WIRE = /globe ?newswire|business ?wire|pr ?newswire|accesswire|newsfile|globenewswire/i;
+export function itemsOf(s) { return String(s || '').split(/[,\s]+/).filter(x => /^\d\.\d\d$/.test(x)); }
+export function filingDirection(f) {
+  const it = itemsOf(f.items); if (DIL_FORMS.test(f.form) || it.some(x => DIL_ITEMS.includes(x))) return 'DILUTION';
+  if (it.some(x => NEG_ITEMS.includes(x))) return 'NEGATIVE'; return 'AMBIGUOUS';
+}
+export function headlineDirection(h) {
+  const t = String(h || ''); if (DIL_W.test(t)) return 'DILUTION'; const n = NEG_W.test(t), p = POS_W.test(t);
+  return n && p ? 'AMBIGUOUS' : n ? 'NEGATIVE' : p ? 'POSITIVE' : 'AMBIGUOUS';
+}
+export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours = 72 }) {
+  const t0 = nowMs - hours * 3600e3, t1 = nowMs - recycledHours * 3600e3, ok = (t) => t !== null && t !== undefined && Number.isFinite(t) && t <= nowMs;
+  const F = sec && sec.known ? (sec.filings || []).map(x => ({ ...x, t: x.at ? Date.parse(x.at) : null })).filter(x => ok(x.t) && x.t >= t1 && (EVENT_FORMS.test(x.form) || DIL_FORMS.test(x.form))).sort((a, b) => a.t - b.t) : [];
+  const N = news && news.ok ? (news.items || []).filter(x => ok(x.at) && x.at >= t1).sort((a, b) => a.at - b.at) : [];
+  const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0);
+  const worst = (ds) => ['DILUTION', 'NEGATIVE', 'POSITIVE', 'AMBIGUOUS'].find(d => ds.includes(d)) || 'UNKNOWN';
+  const hDir = fN.length ? (() => { const ds = fN.map(x => headlineDirection(x.headline)); return ds.includes('DILUTION') ? 'DILUTION' : ds.includes('NEGATIVE') && ds.includes('POSITIVE') ? 'AMBIGUOUS' : worst(ds); })() : null;
+  const tag = (o) => ({ ...o, text: o.text + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
+  if (fF.length) { const x = fF[0], fd = worst(fF.map(filingDirection)), dir = fd !== 'AMBIGUOUS' ? fd : hDir && hDir !== 'AMBIGUOUS' ? hDir : 'AMBIGUOUS';
+    return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
+  if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
+    return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
+  if (F.length || N.length) { const x = F[0] || null, h = N[0] || null;
+    return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + new Date(x.t).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : '"' + h.headline + '"') }); }
+  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'the SEC check failed' + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
+  if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
+  return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing and no headline in 72 h' });
 }
 export const levelAllows = (level, kind) => (kind === 'lead' ? level === 'all' : kind === 'paper' ? level === 'all' || level === 'paper' : false);
 
@@ -71,7 +103,8 @@ export function paperText(items) {
 export function createEarlyAlerts(opts) {
   const S = { level: opts.level || 'all', seen: {}, queue: { lead: [], paper: [] }, sent: { lead: 0, paper: 0 }, rows: [], sec: {} };
   const secOf = async (sym) => S.sec[sym] || (S.sec[sym] = await opts.secRisk(sym).catch(() => ({ known: false, tags: [] })));
-  const decide = (kind, c, decision) => { const k = kind + '|' + c.sym; const row = { d: opts.day, kind, sym: c.sym, m: c.m, px: c.price, chg: c.chg !== undefined ? +(+c.chg).toFixed(4) : null, rule: c.rule, decision, bid: c.bid > 0 ? c.bid : null, ask: c.ask > 0 ? c.ask : null }; S.seen[k] = row; return row; };
+  // decide(): one ledger row per candidate; quote, quote age, volume pace, dollar volume and score are the A/B/C shadow-ranking inputs
+  const decide = (kind, c, decision) => { const k = kind + '|' + c.sym; const row = { d: opts.day, kind, sym: c.sym, m: c.m, px: c.price, chg: c.chg !== undefined ? +(+c.chg).toFixed(4) : null, rule: c.rule, decision, bid: c.bid > 0 ? c.bid : null, ask: c.ask > 0 ? c.ask : null, qAgeSec: Number.isFinite(c.qAgeSec) ? Math.round(c.qAgeSec) : null, rvT: Number.isFinite(c.rvT) ? +(+c.rvT).toFixed(2) : null, dollarVol: Number.isFinite(c.dollarVol) ? Math.round(c.dollarVol) : null, score: Number.isFinite(c.score) ? c.score : null }; S.seen[k] = row; return row; };
   return {
     S, setLevel(l) { if (LEVELS.includes(l)) S.level = l; },
     // called every minute for every early-wave observation; only the first decision per stock counts (soft misses are re-checked until final)
@@ -87,7 +120,7 @@ export function createEarlyAlerts(opts) {
         for (const row of q) { const c = row.c; delete row.c;
           const hard = hardReason({ price: c.price, halalFail: opts.notHalal(c.sym), lottery: (opts.lottery || {})[c.sym], sec: await secOf(c.sym) });
           if (hard) { row.decision = 'HARD: ' + hard; continue; }
-          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catText = c.cat.text; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
+          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catText = c.cat.text; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
           if (!levelAllows(S.level, kind)) { row.decision = 'MUTED: alerts ' + S.level; continue; }
           if (S.sent[kind] + out.length >= (kind === 'lead' ? LEAD.perDay : PAPER.perDay)) { row.decision = 'LIMIT: ' + (kind === 'lead' ? LEAD.perDay : PAPER.perDay) + ' a day reached'; continue; }
           if (kind === 'paper') { const r = (opts.record || {})[c.rule + '/close']; c.record = r; c.history = ((opts.lab || {})[c.rule + '/close'] || {}).verdict; c.halalOk = opts.halalOk(c.sym); }

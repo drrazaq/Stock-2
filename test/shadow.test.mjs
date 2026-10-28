@@ -48,12 +48,30 @@ test('filter table: a gate is judged only on the candidates it alone rejects; ha
   assert.equal(t.gates.window.rejected, 0);
   assert.equal(filterTable(rows.slice(0, 5), out).gates.score.verdict, 'COLLECTING');
 });
-test('catalyst: SEC filing accepted in 24 h = VERIFIED; headline only = UNCONFIRMED; nothing = NONE; a failed source = UNAVAILABLE, never NONE', () => {
-  const now = Date.parse('2026-10-29T14:00:00Z');
-  assert.match(classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00.000Z' }] }, news: { ok: true, items: [] }, nowMs: now }).text, /^VERIFIED: SEC 8-K item 8\.01 accepted 07:02 New York/);
-  const u = classifyCatalyst({ sec: { known: true, filings: [{ form: '10-Q', at: '2026-10-29T11:00:00Z' }] }, news: { ok: true, items: [{ at: now - 3600e3, source: 'Benzinga', headline: 'X wins contract' }] }, nowMs: now });
-  assert.equal(u.cls, 'UNCONFIRMED'); assert.match(u.text, /09:00 New York \(Benzinga\): "X wins contract"/);
-  assert.equal(classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', at: '2026-10-27T11:00:00Z' }] }, news: { ok: true, items: [{ at: now + 60e3, headline: 'future' }] }, nowMs: now }).cls, 'NONE');   // old filing and a headline after the check do not count
-  assert.match(classifyCatalyst({ sec: { known: false }, news: { ok: true, items: [] }, nowMs: now }).text, /SOURCE UNAVAILABLE/);
-  assert.match(classifyCatalyst({ sec: { known: true, filings: [] }, news: { ok: false, why: 'HTTP 429' }, nowMs: now }).text, /news source unavailable \(HTTP 429\)/);
+test('catalyst classes: source, direction and freshness are separate; a failed source is UNAVAILABLE, never NONE; no reason is invented', () => {
+  const now = Date.parse('2026-10-29T14:00:00Z'), ok = { known: true, filings: [] }, noNews = { ok: true, items: [] };
+  let c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00.000Z' }] }, news: noNews, nowMs: now });
+  assert.equal(c.cls, 'VERIFIED'); assert.equal(c.source, 'SEC'); assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.freshness, 'FRESH'); assert.match(c.text, /SEC 8-K item 8\.01 accepted 07:02 New York/);
+  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00Z' }] }, news: { ok: true, items: [{ at: now - 3e6, source: 'GlobeNewswire', headline: 'X wins $40M Army contract' }] }, nowMs: now });
+  assert.equal(c.direction, 'POSITIVE'); assert.match(c.text, /headline wording, not verified/);   // positive only ever comes from wording, and says so
+  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '1.01,3.02', at: '2026-10-29T11:02:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
+  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '424B5', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
+  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '3.01', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'NEGATIVE');
+  c = classifyCatalyst({ sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Business Wire', headline: 'X announces pricing of $10M registered direct offering' }] }, nowMs: now });
+  assert.equal(c.cls, 'UNCONFIRMED'); assert.equal(c.source, 'ISSUER_WIRE'); assert.equal(c.direction, 'DILUTION');
+  c = classifyCatalyst({ sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Benzinga', headline: 'Stocks moving in pre-market' }] }, nowMs: now }); assert.equal(c.source, 'AGGREGATOR'); assert.equal(c.direction, 'AMBIGUOUS');
+  c = classifyCatalyst({ sec: ok, news: { ok: true, items: [{ at: now - 40 * 3600e3, source: 'Reuters', headline: 'X wins contract' }] }, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.equal(c.freshness, 'RECYCLED');
+  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K/A', items: '2.02', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.match(c.text, /amended filing/);
+  c = classifyCatalyst({ sec: ok, news: { ok: true, items: [{ at: now + 60e3, headline: 'future' }] }, nowMs: now }); assert.equal(c.cls, 'NONE');   // nothing after the check time counts
+  assert.equal(classifyCatalyst({ sec: { known: false }, news: noNews, nowMs: now }).cls, 'UNAVAILABLE');
+  assert.match(classifyCatalyst({ sec: ok, news: { ok: false, why: 'HTTP 429' }, nowMs: now }).text, /news source unavailable \(HTTP 429\)/);
+});
+
+test('(owner item 6) spread counted once: ask entry pays half going in, half coming out; last-trade entry pays both halves; stress adds slippage', () => {
+  const ask = entryOf({ px: 10, bid: 9.9, ask: 10.1, qAgeSec: 3 }), last = entryOf({ px: 10, bid: 9.9, ask: 10.1, qAgeSec: 999 });
+  // mid 10, spread 2%: ask entry 10.1 (half spread in), exit at a mid of 10 minus half (9.90): one full spread in total, then 0.6% fees
+  assert.equal(netExit(ask, 10), -0.0258); assert.equal(ask.half, 0.01);   // 10 x 0.99 / 10.1 - 1 - 0.6%
+  assert.equal(last.assumedSpread, true); assert.equal(netExit(last, 10), -0.009);   // stale quote: the assumed 0.15% half in and 0.15% half out, once each
+  const s = score({ px: 10, bid: 9.99, ask: 10.01, qAgeSec: 5 }, { c0: 10.5 });
+  assert.ok(s.dayStress < s.day); assert.equal(s.dayStress, 0.0398);
 });

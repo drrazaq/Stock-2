@@ -9,8 +9,10 @@
 //    early-alert ledger's results at 5 sessions (delivered vs eligible-but-not-delivered), all after costs.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
-import { filterTable, stats, FEE } from './shadow-eval.mjs';
-const env = process.env, readJson = (f, d = null) => { try { return JSON.parse(/\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
+import { filterTable, stats, entryOf, netExit } from './shadow-eval.mjs';
+import { evaluate } from './rank-models.mjs';
+const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
+const env = process.env, ALPD = local(process.env.ALPACA_DATA) || 'https://data.alpaca.markets', readJson = (f, d = null) => { try { return JSON.parse(/\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const readLines = (f) => { try { const t = /\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8'); return t.trim().split('\n').filter(Boolean).map(l => JSON.parse(l)); } catch (e) { return []; } };
 const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }), since = new Date(Date.now() - 32 * 864e5).toISOString().slice(0, 10);
 const SD = 'data/shadow', OD = 'data/shadow-outcomes';
@@ -26,7 +28,7 @@ async function bars(syms, start) {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null; const H = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } };
   for (const feed of ['sip', 'iex']) { const out = {}; let ok = true;
     for (let i = 0; i < syms.length && ok; i += 200) { let tok = '';
-      do { const r = await fetch('https://data.alpaca.markets/v2/stocks/bars?symbols=' + syms.slice(i, i + 200).map(encodeURIComponent).join(',') + '&timeframe=1Day&start=' + start + '&adjustment=raw&feed=' + feed + '&limit=10000' + (tok ? '&page_token=' + tok : ''), H).catch(() => null);
+      do { const r = await fetch(ALPD + '/v2/stocks/bars?symbols=' + syms.slice(i, i + 200).map(encodeURIComponent).join(',') + '&timeframe=1Day&start=' + start + '&adjustment=raw&feed=' + feed + '&limit=10000' + (tok ? '&page_token=' + tok : ''), H).catch(() => null);
         if (!r || !r.ok) { ok = false; break; } const j = await r.json(); for (const [s, b] of Object.entries(j.bars || {})) (out[s] || (out[s] = [])).push(...b.map(x => ({ d: String(x.t).slice(0, 10), h: x.h, l: x.l, c: x.c }))); tok = j.next_page_token || ''; } while (tok); }
     if (ok) return { out, feed }; }
   return null;
@@ -44,10 +46,20 @@ for (const [d, set] of [...want.entries()].sort()) {
 }
 // the report
 const outcomes = {}; for (const f of fs.readdirSync(OD)) { const j = readJson(OD + '/' + f); if (j && j.o) for (const [s, x] of Object.entries(j.o)) if (x) outcomes[j.d + '|' + s] = x; }
-const net = (px, exit) => (px > 0 && exit > 0 ? exit / px - 1 - FEE - (px < 5 ? 0.01 : 0.003) : null);   // ledger rows have no recorded quote at the close: assumed spread, as the radar
-const oppEl = opp.filter(r => !/^(SOFT|HARD)/.test(r.decision)), d5 = (r) => net(r.ask > 0 ? r.ask : r.px, (outcomes[r.d + '|' + r.sym] || {}).c5);
+// (28 Oct fix, owner item 6) the old line entered at the ASK and still took the FULL assumed spread: half the spread counted twice. Ledger
+// rows now go through shadow-eval.mjs entryOf / netExit, which count the spread once (ask entry -> exit half only).
+const oppEl = opp.filter(r => !/^(SOFT|HARD)/.test(r.decision)), d5 = (r) => netExit(entryOf({ px: r.px, bid: r.bid, ask: r.ask, qAgeSec: r.qAgeSec }), (outcomes[r.d + '|' + r.sym] || {}).c5);
 const report = { generatedAt: new Date().toISOString(), feed: feedUsed, preRegistered: 'shadow-eval.mjs header, 28 Oct 2026', shadowSessions: shadowDays.length,
   filters: { day: filterTable(shadowRows, outcomes, 'day'), d1: filterTable(shadowRows, outcomes, 'd1'), d5: filterTable(shadowRows, outcomes, 'd5') },
   alerts5d: { delivered: stats(oppEl.filter(r => r.decision === 'SENT').map(d5)), notDelivered: stats(oppEl.filter(r => r.decision !== 'SENT').map(d5)) } };
+// RANKING EXPERIMENT (rank-models.mjs, frozen 28 Oct): the three candidate streams, built only from what was recorded at decision time
+const SH = new Map(shadowRows.map(r => [r.d + '|' + r.sym, r]));
+const E = oppEl.filter(r => r.kind === 'lead').map(r => { const sh = SH.get(r.d + '|' + r.sym), base = sh && sh.v && sh.v.base;
+  return { d: r.d, sym: r.sym, m: r.m, chg: r.chg, cat: r.cat, rvT: r.rvT, dollarVol: r.dollarVol, bid: r.bid, ask: r.ask, decision: r.decision, e: base && base.m === r.m ? base : { m: r.m, px: r.px, bid: r.bid, ask: r.ask, qAgeSec: r.qAgeSec, next: null, px30: null }, last: sh ? sh.last : r.px15 }; });
+const F = shadowRows.filter(r => r.f && r.v && r.v.D).map(r => ({ d: r.d, sym: r.sym, m: r.f.decM, chg: r.f.chg, dEligible: r.f.eligible, why: r.f.why, e: r.v.D, last: r.last }));
+const N = shadowRows.filter(r => r.v && r.v.R0).map(r => ({ d: r.d, sym: r.sym, m: r.v.R0.m, chg: r.chg0, e: r.v.R0, last: r.last }));
+report.ranking = evaluate({ E, F, N }, outcomes);
+report.rankingPilot = evaluate({ E, F, N }, outcomes, '2026-10-28');   // includes the first live day (28 Oct, code deployed that morning): a pilot, never counted in the verdict
+report.dFeed = { filingsDecided: F.length, dEligible: F.filter(r => r.dEligible).length, topReasons: Object.entries(F.flatMap(r => r.why || []).reduce((o, w) => (o[w.replace(/ [\d.,]+$/, '')] = (o[w.replace(/ [\d.,]+$/, '')] || 0) + 1, o), {})).sort((a, b) => b[1] - a[1]).slice(0, 6) };
 fs.writeFileSync('data/shadow-report.json', JSON.stringify(report, null, 1));
 console.log('shadow outcomes: ' + fetched + ' day files updated; ' + shadowRows.length + ' shadow candidates over ' + shadowDays.length + ' sessions; ' + Object.keys(outcomes).length + ' outcomes');

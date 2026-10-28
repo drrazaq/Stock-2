@@ -6,6 +6,10 @@
 //           assumed half spread (0.5% under 5 USD, 0.15% above) and the trade is flagged 'assumedSpread'. Delay test: the next minute's price.
 //   exit  = the horizon's price minus half the entry spread (the bid side is not recorded at the close: an estimate, said so).
 //   fees  = 3 USD + 3 USD on 1,000 USD (0.6%).
+//   SPREAD IS COUNTED ONCE (checked 28 Oct, owner item 6): relative spread s = (ask - bid) / mid. Buying at the ASK already pays s/2 over the
+//   mid; selling pays the other s/2. So an ask entry subtracts only the exit half; a last-trade entry (about mid, side unknown) adds s/2 on
+//   entry AND subtracts s/2 on exit. A recorded quote is NOT a guaranteed fill: 'stress' adds slippage of 0.5% each way under 5 USD
+//   (0.1% above) on top, and 'dayDelayed' enters one minute later. Both are reported next to the base figure, never instead of it.
 // HORIZONS: 30 minutes, the same day's close, 1, 5 and 10 sessions later (closes from daily bars); 5-session best high / worst low as
 // excursions (reported, never used as returns: touching +2% is not capturing it).
 // FILTER TEST: for each soft gate g, the candidates that pass 'no_g' but NOT 'base' are exactly the ones g rejects. Their outcomes say
@@ -13,6 +17,7 @@
 // Verdict needs 10+ sessions and 30+ rejected candidates; before that it says COLLECTING.
 export const FEE = 0.006, MAX_Q_AGE = 120, MAX_SPREAD = 0.10;
 export const assumedHalf = (px) => (px < 5 ? 0.005 : 0.0015);
+export const slip = (px) => (px < 5 ? 0.005 : 0.001);
 export const GATES = ['window', 'chgMin', 'chgMax', 'score', 'dollarVol'];
 const r4 = (x) => (x === null || x === undefined || !Number.isFinite(x) ? null : +x.toFixed(4));
 export function entryOf(e, delayed = false) {
@@ -22,12 +27,13 @@ export function entryOf(e, delayed = false) {
   if (delayed && !(base > 0)) return null;
   return { price: delayed ? base * (1 + half) : fresh ? e.ask : e.px * (1 + half), half, assumedSpread: !fresh };
 }
+export const netStress = (en, exitPx) => (en && exitPx > 0 ? r4(exitPx * (1 - en.half - slip(en.price)) / (en.price * (1 + slip(en.price))) - 1 - FEE) : null);
 export const netExit = (en, exitPx) => (en && exitPx > 0 ? r4(exitPx * (1 - en.half) / en.price - 1 - FEE) : null);
 // one candidate entry (a variant or a rule trigger) -> net results per horizon; o = daily outcome for the stock { c0, c1, c5, c10, h5, l5 }
 export function score(e, o = {}, row = {}) {
   const en = entryOf(e), ed = entryOf(e, true);
   return { assumedSpread: en ? en.assumedSpread : null, m30: netExit(en, e.px30), day: netExit(en, o.c0 > 0 ? o.c0 : row.last), d1: netExit(en, o.c1), d5: netExit(en, o.c5), d10: netExit(en, o.c10),
-    dayDelayed: netExit(ed, o.c0 > 0 ? o.c0 : row.last), mfe5: en && o.h5 > 0 ? r4(o.h5 / en.price - 1) : null, mae5: en && o.l5 > 0 ? r4(o.l5 / en.price - 1) : null };
+    dayDelayed: netExit(ed, o.c0 > 0 ? o.c0 : row.last), dayStress: netStress(en, o.c0 > 0 ? o.c0 : row.last), d5Stress: netStress(en, o.c5), mfe5: en && o.h5 > 0 ? r4(o.h5 / en.price - 1) : null, mae5: en && o.l5 > 0 ? r4(o.l5 / en.price - 1) : null };
 }
 export function stats(vals) {
   const v = vals.filter(x => x !== null && x !== undefined && Number.isFinite(x)).sort((a, b) => b - a), n = v.length;
