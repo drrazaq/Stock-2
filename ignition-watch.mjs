@@ -26,6 +26,7 @@ import zlib from 'node:zlib';
 import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from './ignition-core.mjs';
 import { isFreshPriceAge } from './ignition-gates.mjs';
 import { selectLiveRefreshSymbols } from './live-refresh-universe.mjs';
+import { approvedQuoteGate } from './approved-quote-gate.mjs';
 import { paperRecordApproved, earlyPaperEligible } from './paper-gates.mjs';
 import { sessionCoverage } from './session-coverage.mjs';
 import { sendTelegramMessage } from './telegram-delivery.mjs';
@@ -143,13 +144,17 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
   if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
   if (!isFreshPriceAge(rd)) { flag(r.sym, 'noLive', 'price age ' + (typeof rd !== 'number' || !Number.isFinite(rd) ? 'unknown' : rd < 0 ? 'invalid (future timestamp)' : Math.round(rd) + ' minutes') + ': not fresh enough to alert'); return; }
+  // Only an approved BUY needs an executable quote; unproven paper setups remain research.
+  let approvedQuote = null;
+  if (!early) { approvedQuote = approvedQuoteGate({ price: r.price, bid: r.bid, ask: r.ask, quoteAgeSec: r.qt > 0 ? (Date.now() - r.qt) / 1000 : null });
+    if (!approvedQuote.ok) { t.blocked = ['QUOTE_' + approvedQuote.reason]; flag(r.sym, 'quoteBlocked', 'approved alert withheld: ' + approvedQuote.reason + (approvedQuote.spreadPct !== undefined ? ' (' + (approvedQuote.spreadPct * 100).toFixed(1) + '% spread)' : '')); return; } }
   const risk = await secRisk(r.sym); if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
   if (risk.tags.length) { t.blocked = risk.tags; flag(r.sym, 'secBlocked', 'alert blocked: ' + risk.tags.join(', ')); return; }
   t.early = early;
   const ex = ok.sort((a, b) => ((PREC[b.rule + '/' + b.exit] || {}).avg || 0) - ((PREC[a.rule + '/' + a.exit] || {}).avg || 0))[0], pr = PREC[ex.rule + '/' + ex.exit], stop = R.orb ? extra.orL : R.pull ? Math.max(extra.stop * 0.995, r.price * 0.88) : r.price * 0.92, hist = !liveOnly && ex.results ? ex.results.newer : null;
   if (!sendAlert({ early }, (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')); } catch (e) { return {}; } })())) return;   // recorded as an early paper alert (t.alerted), not sent: opportunities only
   const delivered = await tg([(early ? 'EARLY WAVE ALERT [PAPER, NOT PROVEN] | only ' + pr.n + ' paper trades on ' + (pr.days || '?') + ' day(s). RESEARCH ONLY: NO BUY. This rule has not passed the promotion gate; track its entry, spread, stop and outcome in paper trading.' : 'IGNITION ALERT | FAST DAY TRADE, separate from the tested swing buys in ACTIONS'), r.sym + ' ' + pc(chg) + ' at ' + fmtM(clock()) + ' New York (' + kuwait(clock()) + ' Kuwait, ' + (rd < 1 ? 'live' : Math.round(rd) + ' min old') + ' price). Coverage: ' + mode,
-    'Price ' + r.price.toFixed(2) + ' | volume ' + (rv === null ? 'n/a' : rv.toFixed(1) + 'x a normal day (late figure)') + (M.float ? ' | float ' + (M.float / 1e6).toFixed(1) + 'M shares' : '') + (M.age !== null && M.age < 250 ? ' | traded only ' + M.age + ' sessions' : '') + ' | SEC: no share sale or delisting notice in 30 days',
+    'Price ' + r.price.toFixed(2) + (approvedQuote ? ' | live spread ' + (approvedQuote.spreadPct * 100).toFixed(2) + '%' : '') + ' | volume ' + (rv === null ? 'n/a' : rv.toFixed(1) + 'x a normal day (late figure)') + (M.float ? ' | float ' + (M.float / 1e6).toFixed(1) + 'M shares' : '') + (M.age !== null && M.age < 250 ? ' | traded only ' + M.age + ' sessions' : '') + ' | SEC: no share sale or delisting notice in 30 days',
     (early ? 'PAPER ENTRY REFERENCE ' + r.price.toFixed(2) + ' (not an order). PAPER STOP ' + stop.toFixed(2) + '. PAPER EXIT: ' + ex.exitName : 'BUY only up to ' + (r.price * 1.03).toFixed(2) + ' (3% above now; higher = skip). STOP ' + stop.toFixed(2) + '. EXIT: ' + ex.exitName) + ' (sell before 11 pm Kuwait at the latest).',
     'Rule: ' + R.name + '. ' + (hist ? 'History test: ' + Math.round(hist.win * 100) + '% won, average ' + pc(hist.avg) + ' (' + hist.n + ' trades). ' : 'Forward-tested only. ') + 'Live paper: ' + pr.n + ' trades, ' + pc(pr.avg) + ' (' + pc(pr.stress) + ' at 1.5x costs).',
     'Check ZAD first. 1,000 USD at most. Not financial advice, not a halal ruling.'].join('\n'));
@@ -169,7 +174,7 @@ if ((env.IG_PM_TEST || !env.IG_FAKE_MIN) && env.MASSIVE_KEY && clock() < 570) { 
 // ---- the audit: every stock that ran 15%+ (moved above the loop on 28 Oct so the 11:15 OPPORTUNITY RADAR snapshot can use it too), one deterministic code (data and safety reasons first, so they are never blamed on a rule)
 const codeOf = (v) => { const f = v.flags;
   if (f.alerted) return 'ALERTED'; if (f.deliveryFailed) return 'TELEGRAM_DELIVERY_FAILED'; if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.lottery) return 'LOTTERY_AVOID'; if (f.alertCap) return 'ALERT_CAP_REACHED';
-  if (f.noLive) return 'NO_LIVE_PRICE_AT_SIGNAL'; if (f.volLate && !f.paperGate && !f.ruleNotPassed) return 'VOLUME_FIGURE_LATE'; if (f.paperGate) return 'CAUGHT_PAPER_GATE_NOT_MET'; if (f.ruleNotPassed) return 'CAUGHT_RULE_NOT_PASSED';
+  if (f.quoteBlocked) return 'QUOTE_EXECUTION_BLOCKED'; if (f.noLive) return 'NO_LIVE_PRICE_AT_SIGNAL'; if (f.volLate && !f.paperGate && !f.ruleNotPassed) return 'VOLUME_FIGURE_LATE'; if (f.paperGate) return 'CAUGHT_PAPER_GATE_NOT_MET'; if (f.ruleNotPassed) return 'CAUGHT_RULE_NOT_PASSED';
   if ((v.fm <= 575 && v.fc >= 0.10) || v.fo >= 0.10) return 'GAPPED_AT_OPEN'; if (v.lm === undefined) return 'NOT_VISIBLE_LIVE';   // opened 10%+ up = the move happened before the open: no feed can fix that
   if (v.lc >= 0.25) return 'VISIBLE_TOO_LATE'; if (f.noVolHist) return 'NO_VOLUME_HISTORY';
   if (f.after11) return 'AFTER_11_00'; if (f.lowVol) return 'LOW_VOLUME'; return 'NO_RULE_FIT'; };
