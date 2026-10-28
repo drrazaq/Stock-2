@@ -1,6 +1,6 @@
 # Stock-2 V3.0 opportunity audit (28 Oct 2026)
 
-Status: audit and proposal only. **Nothing has been changed, deployed or pushed.** Every number below comes from files in this repo, read on 28 Oct 2026. Where a fact could not be checked, it says UNVERIFIED.
+Status: audit written 28 Oct 2026. **Owner approved fixes 1, 2 and 3 the same day ("do 1, 2, 3"); they are implemented** in `ignition.yml`, `ignition-watch.mjs`, `radar-v3-core.mjs`, `opportunity-radar.mjs`, `opportunity-radar.yml` and `scan.mjs` (`actionsText`, `radar on/off`), with tests. The rest of this file is the audit as written before the change. Every number below comes from files in this repo, read on 28 Oct 2026. Where a fact could not be checked, it says UNVERIFIED.
 
 ---
 
@@ -20,7 +20,7 @@ Status: audit and proposal only. **Nothing has been changed, deployed or pushed.
 4. **Seeing a runner is not the same as being able to profit from it.**
    - **After a gap:** stocks that were already up 20%+ when first seen (n=469, $1+) **fell a median 19% from there to the close**. Only 4% closed 2.6%+ above the first-seen price.
    - **Across all quiet-build-up signals:** the unbiased sample (IG8, 973 paper trades, 624 stocks) averaged **−0.7% a trade after costs**, with a 40% win rate.
-   - **One near-qualifier:** IG1 (the opening run rule) is the only intraday rule with a positive live paper record so far: 68 trades, +2.1% a trade after costs, +1.2% at stress cost, but only 8 days. It needs 10+ days to meet the paper bar. It is NOT PROVEN.
+   - **One positive paper record, on a rejected rule:** IG1 (the opening run rule) has 68 live paper trades at +2.1% a trade after costs (+1.2% at stress cost), over only 8 days. But IG1 was **REJECTED** in its 5-year history test (`data/ignition-lab.json`). It cannot become an approved signal; at most it can earn a place on the comeback board under that board's own bar. (Corrected 28 Oct: an earlier draft called it a near-qualifier.)
 
 ---
 
@@ -186,5 +186,5 @@ No panel becomes a BUY from this. Promotion stays under the existing bar: 30+ tr
 ## What could we be wrong about?
 
 1. **The ledger is selected on winners** (15%+ movers only). Early sightings look great because of that. Only the paper ledger (every signal) is a fair test, and it is negative for most rules.
-2. **IG1's +2.1% comes from 8 days in one market mood** (late Oct, small caps running). It may vanish; it is not proven.
+2. **IG1's +2.1% comes from 8 days in one market mood** (late Oct, small caps running), on a rule its 5-year test rejected. It may vanish.
 3. **Catalysts are unverified here.** Sending more leads may mostly send more noise and promoter-driven names. The radar's own scorecard (Deliverable 5) must show whether reading it is worth your time.

@@ -1,10 +1,12 @@
 name: Ignition watcher
 on:
   schedule:
-    # 9:05 New York in summer (GitHub often starts 15-30 minutes late; if early, the script waits for 9:25);
-    # the second start covers winter time (the first then exits at once: 8:05 New York is outside the window)
-    - cron: '5 13 * * 1-5'
-    - cron: '5 14 * * 1-5'
+    # 8:45 New York in summer. GitHub starts these 35-45 minutes late (first watched minute was 9:38-9:49 every day 16-27 Oct, 11:10 on
+    # 26 Oct), so the old 9:05 start missed the open and the 9:25 pre-market record. If early, the script waits for 9:25 (it accepts
+    # starts from 8:40). The second start covers winter time (from 2 Nov); in summer it queues behind the first (concurrency) and exits.
+    # Trade-off: on a day GitHub starts on time (8:45), the 345-minute run limit ends the watch at about 14:30 instead of 15:00.
+    - cron: '45 12 * * 1-5'
+    - cron: '45 13 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
@@ -47,7 +49,7 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl; do [ -f "$f" ] && git add "$f"; done; true
+          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
           for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
       - if: failure()

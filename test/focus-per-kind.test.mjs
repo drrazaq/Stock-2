@@ -85,6 +85,16 @@ test('ACTIONS: a POSITIVE tier-2 ledger alone keeps the FOCUS MODE notice and do
   assert.doesNotMatch(t, /OPPORTUNITIES BEYOND/);
 });
 
+test('ACTIONS (V3.0 fix 3, 28 Oct): long-term advice sits under its own LONG-TERM heading at the end, never in the trading part', async () => {
+  const S = await loadScan({ files: { 'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': sig(), 'data/tier2-ledger.jsonl': tier2Ledger } });
+  const t = await S.fn('actionsText')(sig(), {}, {}), lt = t.indexOf('LONG-TERM (separate from trading');
+  assert.ok(lt > 0, 'LONG-TERM heading present');
+  assert.ok(t.indexOf('BEST USE OF YOUR NEXT 1,000 USD') > lt, 'index-fund advice after the heading');
+  assert.ok(t.indexOf('What to do instead of engine buys') > lt);
+  assert.doesNotMatch(t.slice(0, lt), /index fund/i);
+  assert.match(t.slice(0, lt), /OPPORTUNITY RADAR at 11:15 New York/);
+});
+
 test('CONCLUSION: with only quick trades working, the same stock as a swing setup is not printed as a swing BUY', async () => {
   const s = sig({ quickRecord: quickFull, stocks: [swing('AAA')] });
   const S = await loadScan({ files: { 'data/settings.json': { focus: true }, 'data/signals.json': s } });

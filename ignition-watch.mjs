@@ -147,6 +147,29 @@ if ((env.IG_PM_TEST || !env.IG_FAKE_MIN) && env.MASSIVE_KEY && clock() < 570) { 
     const keep = [...all].filter(r => r.x !== null).sort((a, b) => b.x - a.x).slice(0, 600), ks = new Set(keep.map(r => r.s)); for (const r of all) if (!ks.has(r.s) && Math.abs(r.gap) >= 0.05) keep.push(r);
     fs.appendFileSync('data/premarket.jsonl', JSON.stringify({ day, at: fmtM(clock()), priceAgeMin: ageMed, stocks: all.length, rows: keep }) + '\n');
     console.log('pre-market record: ' + all.length + ' stocks traded before the open, ' + keep.length + ' saved (heaviest volume + gaps of 5%+), data about ' + ageMed + ' min old'); } }
+// ---- the audit: every stock that ran 15%+ (moved above the loop on 28 Oct so the 11:15 OPPORTUNITY RADAR snapshot can use it too), one deterministic code (data and safety reasons first, so they are never blamed on a rule)
+const codeOf = (v) => { const f = v.flags;
+  if (f.alerted) return 'ALERTED'; if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.lottery) return 'LOTTERY_AVOID'; if (f.alertCap) return 'ALERT_CAP_REACHED';
+  if (f.noLive) return 'NO_LIVE_PRICE_AT_SIGNAL'; if (f.volLate && !f.paperGate && !f.ruleNotPassed) return 'VOLUME_FIGURE_LATE'; if (f.paperGate) return 'CAUGHT_PAPER_GATE_NOT_MET'; if (f.ruleNotPassed) return 'CAUGHT_RULE_NOT_PASSED';
+  if ((v.fm <= 575 && v.fc >= 0.10) || v.fo >= 0.10) return 'GAPPED_AT_OPEN'; if (v.lm === undefined) return 'NOT_VISIBLE_LIVE';   // opened 10%+ up = the move happened before the open: no feed can fix that
+  if (v.lc >= 0.25) return 'VISIBLE_TOO_LATE'; if (f.noVolHist) return 'NO_VOLUME_HISTORY';
+  if (f.after11) return 'AFTER_11_00'; if (f.lowVol) return 'LOW_VOLUME'; return 'NO_RULE_FIT'; };
+const fromFirst = (x, v) => +((1 + x) / (1 + v.fc) - 1).toFixed(3);   // bought at the first-seen price: best, worst and last move after that (no costs)
+const buildMissed = () => { const movers = Object.values(vis).filter(v => v.maxC >= 0.15); return movers.map(v => ({ sym: v.sym, code: codeOf(v), openGap: v.fo === null || v.fo === undefined ? null : +v.fo.toFixed(3), maxUp: +v.maxC.toFixed(3), preMarketVolX: pm.has(v.sym) ? pm.get(v.sym).x : null, preMarketGap: pm.has(v.sym) ? pm.get(v.sym).gap : null, firstSeen: fmtM(v.fm), firstSeenUp: +v.fc.toFixed(3), afterFirstSeen: { best: fromFirst(v.maxC, v), worst: fromFirst(v.minC, v), last: fromFirst(v.lastC === undefined ? v.fc : v.lastC, v) }, firstQuoteAgeMin: v.fAge === null ? null : +v.fAge.toFixed(1), firstLive: v.lm === undefined ? null : fmtM(v.lm), firstLiveUp: v.lc === undefined ? null : +v.lc.toFixed(3), liveAt5pct: v.l5 === undefined ? null : fmtM(v.l5), crossed10: v.c10 === undefined ? null : fmtM(v.c10) + (v.c10live ? ' (live)' : ' (old price)'), result: v.caught ? 'caught (' + v.caught + ')' : 'not caught', why: v.notes.join('; ') || (v.fm <= 575 && v.fc >= 0.10 ? 'already +' + Math.round(v.fc * 100) + '% at the open (gap)' : 'no rule fired') })).sort((a, b) => b.maxUp - a.maxUp); };
+// ---- DAILY OPPORTUNITY RADAR (owner, 28 Oct 2026): at 11:15 New York, a snapshot of what the watcher already knows goes to
+// data/radar-v3-snap.json and opportunity-radar.mjs sends it (four labelled panels; rules in radar-v3-core.mjs). Never an alert or a buy.
+const RADAR = { done: false, mkt: null };
+const medChg = () => { const a = Object.values(vis).filter(v => v.last >= 1 && v.lastC !== undefined).map(v => v.lastC).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
+function radarSnap(m, scanned, live) {
+  const ms = buildMissed(), tl = {}; for (const x of ms) tl[x.code] = (tl[x.code] || 0) + 1;
+  const hits = triggers.filter(t => !t.logged).map(t => ({ sym: t.sym, rule: t.rule, m: t.m, price: t.price }));
+  const early = Object.values(earlyWave).sort((x, y) => y.score - x.score).slice(0, 40).map(e => ({ sym: e.sym, change: e.change, rvT: e.rvT, price: e.price, score: e.score, firstMinute: e.firstMinute }));
+  const now = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.map(e => e.sym)])) if (vis[s] && vis[s].last > 0) now[s] = { px: vis[s].last, chg: +vis[s].lastC.toFixed(4) };
+  RADAR.mkt = medChg();
+  fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, mkt: RADAR.mkt, tally: tl,
+    movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
+  if (!env.IG_NO_RADAR) execSync('node opportunity-radar.mjs midday', { stdio: 'inherit', timeout: 120000 });
+}
 while (Date.now() - START < MAXMS) {
   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
   const rows = await snap(); loops++;
@@ -200,19 +223,11 @@ while (Date.now() - START < MAXMS) {
   if (sumA > 0) vcToday[Math.floor(m / 5) * 5] = +(sumV / sumA).toFixed(4);   // the market's share of a normal day traded by now
   const sa = ages.sort((a, b) => a - b), q = (a, f) => a.length ? +a[Math.min(a.length - 1, Math.floor(a.length * f))].toFixed(1) : null;
   beat.push({ m, mode, received: rows.length, evaluated: evald, live: liveN, ageP50: q(sa, 0.5), ageP95: q(sa, 0.95), volAgeP50: q(vages.sort((a, b) => a - b), 0.5), alerts });   // heartbeat: proves the watcher ran this minute
+  if (m >= 675 && !RADAR.done) { RADAR.done = true; try { radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
   const wait = 60000 - (Date.now() - nowMs); if (wait > 0) await sleep(wait);
 }
-// ---- the audit: every stock that ran 15%+, one deterministic code (data and safety reasons first, so they are never blamed on a rule)
-const codeOf = (v) => { const f = v.flags;
-  if (f.alerted) return 'ALERTED'; if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.lottery) return 'LOTTERY_AVOID'; if (f.alertCap) return 'ALERT_CAP_REACHED';
-  if (f.noLive) return 'NO_LIVE_PRICE_AT_SIGNAL'; if (f.volLate && !f.paperGate && !f.ruleNotPassed) return 'VOLUME_FIGURE_LATE'; if (f.paperGate) return 'CAUGHT_PAPER_GATE_NOT_MET'; if (f.ruleNotPassed) return 'CAUGHT_RULE_NOT_PASSED';
-  if ((v.fm <= 575 && v.fc >= 0.10) || v.fo >= 0.10) return 'GAPPED_AT_OPEN'; if (v.lm === undefined) return 'NOT_VISIBLE_LIVE';   // opened 10%+ up = the move happened before the open: no feed can fix that
-  if (v.lc >= 0.25) return 'VISIBLE_TOO_LATE'; if (f.noVolHist) return 'NO_VOLUME_HISTORY';
-  if (f.after11) return 'AFTER_11_00'; if (f.lowVol) return 'LOW_VOLUME'; return 'NO_RULE_FIT'; };
-const movers = Object.values(vis).filter(v => v.maxC >= 0.15);
-const fromFirst = (x, v) => +((1 + x) / (1 + v.fc) - 1).toFixed(3);   // bought at the first-seen price: best, worst and last move after that (no costs)
-const missed = movers.map(v => ({ sym: v.sym, code: codeOf(v), openGap: v.fo === null || v.fo === undefined ? null : +v.fo.toFixed(3), maxUp: +v.maxC.toFixed(3), preMarketVolX: pm.has(v.sym) ? pm.get(v.sym).x : null, preMarketGap: pm.has(v.sym) ? pm.get(v.sym).gap : null, firstSeen: fmtM(v.fm), firstSeenUp: +v.fc.toFixed(3), afterFirstSeen: { best: fromFirst(v.maxC, v), worst: fromFirst(v.minC, v), last: fromFirst(v.lastC === undefined ? v.fc : v.lastC, v) }, firstQuoteAgeMin: v.fAge === null ? null : +v.fAge.toFixed(1), firstLive: v.lm === undefined ? null : fmtM(v.lm), firstLiveUp: v.lc === undefined ? null : +v.lc.toFixed(3), liveAt5pct: v.l5 === undefined ? null : fmtM(v.l5), crossed10: v.c10 === undefined ? null : fmtM(v.c10) + (v.c10live ? ' (live)' : ' (old price)'), result: v.caught ? 'caught (' + v.caught + ')' : 'not caught', why: v.notes.join('; ') || (v.fm <= 575 && v.fc >= 0.10 ? 'already +' + Math.round(v.fc * 100) + '% at the open (gap)' : 'no rule fired') })).sort((a, b) => b.maxUp - a.maxUp);
+const movers = Object.values(vis).filter(v => v.maxC >= 0.15), missed = buildMissed();
 const tally = {}; for (const x of missed) tally[x.code] = (tally[x.code] || 0) + 1;
 const modes = {}; for (const b of beat) modes[b.mode] = (modes[b.mode] || 0) + 1;
 const med = (a) => { const s = a.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
@@ -230,4 +245,10 @@ const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISI
 fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
 { const ewl = Object.values(earlyWave).sort((x, y) => y.score - x.score); if (ewl.length) fs.appendFileSync('data/early-wave-obs.jsonl', JSON.stringify({ day, mode, src, n: ewl.length, top: ewl.slice(0, 300) }) + '\n'); }   // judged later against matched stocks; not a signal
 fs.appendFileSync('data/ignition-paper.jsonl', triggers.filter(t => !t.logged).map(t => JSON.stringify(t) + '\n').join(''));
+// OPPORTUNITY RADAR same-day score (pre-registered in radar-v3-core.mjs): each line listed at 11:15 gets its last watched price and the
+// median $1+ stock's move over the same minutes, so the radar is judged against the average stock, not only against zero.
+try { if (RADAR.done) { const L = fs.existsSync('data/radar-v3-ledger.jsonl') ? fs.readFileSync('data/radar-v3-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)) : [], mEnd = medChg();
+  const mkt = RADAR.mkt !== null && mEnd !== null ? +((1 + mEnd) / (1 + RADAR.mkt) - 1).toFixed(4) : null, have = new Set(L.filter(r => r.type === 'close' && r.d === day).map(r => r.sym));
+  const rows = [...new Set(L.filter(r => r.type === 'list' && r.d === day).map(r => r.sym))].filter(s => !have.has(s) && vis[s] && vis[s].last > 0).map(s => JSON.stringify({ type: 'close', d: day, sym: s, px: vis[s].last, mkt }));
+  if (rows.length) fs.appendFileSync('data/radar-v3-ledger.jsonl', rows.join('\n') + '\n'); } } catch (e) { console.log('radar close rows: ' + e.message); }
 console.log('ignition watcher: ' + loops + ' minutes, modes ' + JSON.stringify(modes) + (note ? ' [' + note + ']' : '') + ', ' + triggers.length + ' ignitions, ' + alerts + ' alerts, ' + missed.length + ' movers of 15%+ audited ' + JSON.stringify(tally));

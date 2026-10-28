@@ -56,6 +56,7 @@ TTD, RKLB, LLY, RELL, IESC, COHR, SYM, CIEN, APP, CCJ, GRML, TGT.
 
   It also warns about earnings within 10 days, dilution, news threats and size over 15%.
 - **Health check:** "SYSTEM HEALTH: N problems". The owner forwards it to Claude to fix.
+- **OPPORTUNITY RADAR** (V3.0, owner approved 28 Oct): a research message at 11:15 New York (sent by `ignition-watch.mjs` via `opportunity-radar.mjs midday`) and one after the close (`opportunity-radar.yml`). Panels: A live research leads, B short setups (PAPER), C approved signals (zero allowed), D runners missed. Every A/B line says NOT AN APPROVED BUY; hard blocks (under $1, NOT HALAL, SEC danger, one-day-jump AVOID) are never leads. Rules and the pre-registered scorecard are in `radar-v3-core.mjs`; ledger `data/radar-v3-ledger.jsonl`. It ignores `quiet` / `opportunitiesOnly` / `focus`; `radar off` stops it. Audit: `docs/v3-opportunity-audit-2026-10-28.md`.
 - **Owner commands** (plain words work too):
   - **Buys and sells:**
     - `bought SYM PRICE SHARES`
@@ -133,6 +134,7 @@ TTD, RKLB, LLY, RELL, IESC, COHR, SYM, CIEN, APP, CCJ, GRML, TGT.
 - **The bot and nightly scan:**
   - `scan.mjs`: one big file, owned by the main session (agents don't edit it).
   - Workflows: `main.yml` (nightly scan, 21:30 UTC weekdays) and `bot.yml` (Telegram replies every 30 min).
+  - Live watcher: `ignition.yml` starts at 12:45 / 13:45 UTC (GitHub adds 35-45 min; the script waits for 9:25 New York) so the open and the pre-market record are covered.
 - **Health:** `health.mjs` defines every data file's expected age.
 - **Owner files** (only edit on the owner's instruction):
   - `data/my-positions.json`

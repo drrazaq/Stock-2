@@ -1,0 +1,44 @@
+name: Opportunity radar (after the close)
+# The 11:15 New York radar is sent by the ignition watcher itself (it holds the live data). This job sends the after-the-close part:
+# the day's radar lines scored at 15:00, the runners we missed and the radar's own scorecard (5-session scores from Alpaca daily bars).
+# 20:40 UTC = 4:40 pm New York in summer, 3:40 pm in winter: after the watcher has saved the day (it stops at 15:00 New York).
+on:
+  schedule:
+    - cron: '40 20 * * 1-5'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: opportunity-radar
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - shell: bash
+        run: |
+          set -o pipefail
+          node opportunity-radar.mjs close 2>&1 | tee run.log
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+      - run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          [ -f data/radar-v3-ledger.jsonl ] && git add data/radar-v3-ledger.jsonl; true
+          git diff --cached --quiet || git commit -m "radar v3 $(date -u +%FT%RZ)"
+          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+      - if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          WHY=$(grep -iE "error|missing|cannot|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
