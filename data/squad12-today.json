@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-10-27T01:00:45.227Z",
- "lastClose": "2026-10-26",
+ "generatedAt": "2026-10-28T01:10:18.350Z",
+ "lastClose": "2026-10-27",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Squad 12: events in the 300 largest US companies (SQ12-*). newSignals = signals on the last close (buy at the next open, hold 63 sessions). Nothing here is a buy by itself: a rule needs a frozen 5-year verdict that qualifies (data/squad12-lab.json firstRun). Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
@@ -20,19 +20,43 @@
    "name": "Big company 10-Q: revenue AND diluted EPS both up 10%+ on the same quarter last year",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": []
+   "newSignals": [
+    {
+     "sym": "WELL",
+     "close": 226.72,
+     "halal": "unknown",
+     "rank": 69,
+     "ev": "10-Q 2026-10-27 q 2026-09-30 rev +38.4% eps +31.7%"
+    }
+   ]
   },
   "SQ12-ACCEL2": {
    "name": "Big company whose revenue growth accelerated two quarters in a row (10-Q / 10-K)",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": []
+   "newSignals": [
+    {
+     "sym": "SHW",
+     "close": 326.01,
+     "halal": "unknown",
+     "rank": 143,
+     "ev": "10-Q 2026-10-27 q 2026-09-30 growth +7.9% > +7.5% > +6.8%"
+    }
+   ]
   },
   "SQ12-RAISECONF": {
    "name": "Big company raises its guidance (8-K) and the market confirms with a higher close",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": []
+   "newSignals": [
+    {
+     "sym": "PSA",
+     "close": 312.47,
+     "halal": "unknown",
+     "rank": 217,
+     "ev": "8-K 2026-10-26 0001628280-26-067283"
+    }
+   ]
   },
   "SQ12-INVDAY": {
    "name": "Big company investor / analyst day (8-K) followed by a higher close",
