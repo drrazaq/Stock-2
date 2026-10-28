@@ -20,9 +20,9 @@ Updated: 28 October 2026 (Kuwait). Development branch: `Stock2-safety-fixes`. PR
 ## Verified results and fixes
 
 - Baseline head: `27259f8621e0145bfa5b7e0974e79e21ed35f590`.
-- Baseline local tests: **1,170 passed, zero failures**. Post-fix: **1,177 passed, zero failures**, using `node --test test/*.test.mjs tests/*.test.mjs` on Node **24.22.1**. Remote workflows use Node 20; remote confirmation is a separate check.
+- Baseline local tests: **1,170 passed, zero failures**. Post-fix: **1,178 passed, zero failures**, using `node --test test/*.test.mjs tests/*.test.mjs` on Node **24.22.1**. Remote workflows use Node 20; remote confirmation is a separate check.
 - All **204** baseline root scripts passed syntax checks; all **78** workflow files parsed. See [full inventory](audit-inventory-2026-10-28.md). Static checks do not substitute for behavioral review.
-- Approved ignition alerts previously blocked explicit halal failures but allowed unknown ZAD marks to reach BUY wording. `zad-compliance.mjs` now requires an affirmative owner mark before the approved path; paper/research labels remain separate. Existing exclusion and SEC checks remain in force.
+- Approved ignition alerts previously blocked explicit halal failures but allowed unknown ZAD marks to reach BUY wording. `zad-compliance.mjs` now requires an affirmative owner mark with a valid, nonfuture date within 90 days before the approved path; paper/research labels remain separate. Existing exclusion and SEC checks remain in force.
 - The pre-ignition outcome ledger was written by the watcher but absent from the workflow's explicit staged-file list. The save list now includes `data/pre-ignition-days.jsonl`.
 - Extreme finite bid/ask values could overflow their sum, producing a false zero spread. Both approved quote gating and the early-alert spread display now use an overflow-safe midpoint. Regression fixtures reproduce the original defect.
 - Catalyst study eligibility accepted exits before entry and coerced null/boolean/string economic inputs. Strict nonnegative finite numeric evidence, valid public timestamps/HTTPS source shape, and entry-before-exit checks fix those cases. A syntactically valid URL is not proof of source authenticity. Study thresholds and frozen results are unchanged.
@@ -32,7 +32,8 @@ Updated: 28 October 2026 (Kuwait). Development branch: `Stock2-safety-fixes`. PR
 | Commit | Status / evidence |
 |---|---|
 | `27259f8` (existing) | Tests passed: [40740182976](https://github.com/drrazaq/Stock-2/actions/runs/40740182976), [40740173362](https://github.com/drrazaq/Stock-2/actions/runs/40740173362); safety checks passed: [40740172984](https://github.com/drrazaq/Stock-2/actions/runs/40740172984) |
-| Current repair batch | Local verification passed; publication and remote CI pending. The commit containing this dashboard identifies the exact repair SHA through Git history. |
+| `c853ef4` | Published first repair batch; targeted safety CI [40750195609](https://github.com/drrazaq/Stock-2/actions/runs/40750195609) passed. Full runs pending at dashboard update. |
+| ZAD date-validation follow-up | 1,178 local tests passed; remote CI pending. Exact SHA is the commit containing this update. |
 
 ## Findings that limit opportunity discovery
 
@@ -46,6 +47,8 @@ Updated: 28 October 2026 (Kuwait). Development branch: `Stock2-safety-fixes`. PR
 
 The frozen `data/ignition-lab.json` reports **48 variants: 33 REJECTED, 15 NOT PROVEN, zero passing**, window **25 October 2024–23 October 2026**, with **23,913 / 73,864 candidate stock-days tested (32.4%)**. This is partial two-year minute history, not a five-year whole-market result. No frozen experiment was rerun, no final holdout consumed, and no profitability conclusion is justified.
 
-Blockers: final-commit CI; unresolved PR mergeability (GitHub reported false at initial inspection); branch-only integration validation; prospective full-session data and executable-cost evidence; whole-market premarket ingestion; full ZAD 90-day persistence audit; all-path Telegram validation; authorized privacy migration. Existing research, rejected rules, Agent C/Squad 26 work, settings, holdings, ZAD marks and frozen results are preserved.
+Blockers: final-commit CI; PR initially reported unmergeable, then mergeable after `c853ef4` (no merge performed); branch-only integration validation; prospective full-session data and executable-cost evidence; whole-market premarket ingestion; full ZAD 90-day persistence audit; all-path Telegram validation; authorized privacy migration. Existing research, rejected rules, Agent C/Squad 26 work, settings, holdings, ZAD marks and frozen results are preserved.
 
 Next work is ordered: publish verified safety repairs and confirm CI; complete provider/funnel and recommendation-path audits; implement branch-only research ingestion and runtime integration; then run pre-registered prospective/matched evaluation. Never relax halal, stale-data, liquidity, rejection or risk protections to manufacture candidates or passing results. Merge/deploy/live execution still require owner approval.
+
+Additional source review: `scan.mjs` sends practice orders only to a hardcoded paper endpoint or localhost test override; option labs inspected here use account endpoints for read-only contracts/calendar queries. This is a limited path review, not a completed audit of every execution route. `news-watch.mjs` and `premarket-check.mjs` still have direct Telegram sends that swallow failures, so acknowledgment tests for the ignition helper cannot establish all-channel delivery reliability.
