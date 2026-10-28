@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-10-27T23:22:10.298Z",
- "lastClose": "2026-10-27",
+ "generatedAt": "2026-10-28T23:26:24.510Z",
+ "lastClose": "2026-10-28",
  "paperStart": "2026-10-23",
  "stopPct": 0.35,
  "note": "PAPER ONLY. Expert-follow rules (EXP-*): signals of experts ranked by the lab itself, point in time. Nothing here is a buy unless a rule's frozen 5-year verdict passes the TRY SMALL test (data/expert-lab.json firstRun) or its paper record has 30+ resolved trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked first.",
@@ -9,7 +9,7 @@
    "tier": null,
    "newSignals": [],
    "open": [],
-   "note": "off until the analyst history is complete (collecting: 120 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run.)"
+   "note": "off until the analyst history is complete (collecting: 140 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run.)"
   },
   "EXP-AN2": {
    "tier": null,
@@ -19,56 +19,141 @@
   },
   "EXP-13F1": {
    "tier": "NOT PROVEN",
-   "newSignals": [],
+   "newSignals": [
+    {
+     "sym": "CRWD",
+     "close": 266.66,
+     "halal": "unknown",
+     "signal": "2026-10-28",
+     "info": {
+      "manager": "PRIMORIS WEALTH ADVISORS, LLC",
+      "cik": "1909619",
+      "kind": "add",
+      "weight": 0.0192
+     }
+    },
+    {
+     "sym": "DELL",
+     "close": 493.79,
+     "halal": "unknown",
+     "signal": "2026-10-28",
+     "info": {
+      "manager": "PRIMORIS WEALTH ADVISORS, LLC",
+      "cik": "1909619",
+      "kind": "add",
+      "weight": 0.0219
+     }
+    },
+    {
+     "sym": "FNV",
+     "close": 238.8,
+     "halal": "unknown",
+     "signal": "2026-10-28",
+     "info": {
+      "manager": "PRIMORIS WEALTH ADVISORS, LLC",
+      "cik": "1909619",
+      "kind": "new",
+      "weight": 0.0144
+     }
+    },
+    {
+     "sym": "IGV",
+     "close": 111.91,
+     "halal": "unknown",
+     "signal": "2026-10-28",
+     "info": {
+      "manager": "PRIMORIS WEALTH ADVISORS, LLC",
+      "cik": "1909619",
+      "kind": "new",
+      "weight": 0.0108
+     }
+    },
+    {
+     "sym": "META",
+     "close": 612.49,
+     "halal": "ok",
+     "signal": "2026-10-28",
+     "info": {
+      "manager": "PRIMORIS WEALTH ADVISORS, LLC",
+      "cik": "1909619",
+      "kind": "add",
+      "weight": 0.0204
+     }
+    },
+    {
+     "sym": "SNOW",
+     "close": 339.91,
+     "halal": "unknown",
+     "signal": "2026-10-28",
+     "info": {
+      "manager": "PRIMORIS WEALTH ADVISORS, LLC",
+      "cik": "1909619",
+      "kind": "new",
+      "weight": 0.0187
+     }
+    },
+    {
+     "sym": "XOM",
+     "close": 182.02,
+     "halal": "ok",
+     "signal": "2026-10-28",
+     "info": {
+      "manager": "Glass Wealth Management Co LLC",
+      "cik": "2017692",
+      "kind": "new",
+      "weight": 0.0395
+     }
+    }
+   ],
    "open": [
     {
      "sym": "ANET",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0734
+     "sinceBuy": 0.0718
     },
     {
      "sym": "AVGO",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0548
+     "sinceBuy": 0.0841
     },
     {
      "sym": "NET",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0004
+     "sinceBuy": -0.0281
     },
     {
      "sym": "FIGS",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0124
+     "sinceBuy": 0.0213
     },
     {
      "sym": "SGOV",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0001
+     "sinceBuy": 0.0003
     },
     {
      "sym": "MRVL",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0635
+     "sinceBuy": 0.0988
     },
     {
      "sym": "NVDA",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0227
+     "sinceBuy": 0.0107
     },
     {
      "sym": "BIL",
@@ -82,391 +167,406 @@
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0379
+     "sinceBuy": 0.0448
     },
     {
      "sym": "CLS",
      "halal": "ok",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0357
+     "sinceBuy": 0.1228
     },
     {
      "sym": "HPE",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0633
+     "sinceBuy": 0.0544
     },
     {
      "sym": "FMDE",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0058
+     "sinceBuy": 0.0053
     },
     {
      "sym": "SMMD",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.01
+     "sinceBuy": 0.0142
     },
     {
      "sym": "JIRE",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0049
+     "sinceBuy": 0.0069
     },
     {
      "sym": "TMSL",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0082
+     "sinceBuy": 0.0112
     },
     {
      "sym": "VWO",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0128
+     "sinceBuy": 0.0162
     },
     {
      "sym": "VUG",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.016
+     "sinceBuy": 0.0202
     },
     {
      "sym": "VTV",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0029
+     "sinceBuy": 0.0062
     },
     {
      "sym": "GOOGL",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.001
+     "sinceBuy": 0.0125
     },
     {
      "sym": "AMZN",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0146
+     "sinceBuy": 0.0206
     },
     {
      "sym": "AAPL",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0092
+     "sinceBuy": -0.0003
     },
     {
      "sym": "CAT",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0407
+     "sinceBuy": 0.0408
     },
     {
      "sym": "XOM",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0107
+     "sinceBuy": 0.0009
     },
     {
      "sym": "PXH",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0035
+     "sinceBuy": 0.0025
     },
     {
      "sym": "EEM",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0201
+     "sinceBuy": 0.0364
     },
     {
      "sym": "QUAL",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0001
+     "sinceBuy": -0.0002
     },
     {
      "sym": "SHY",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0004
+     "sinceBuy": -0.0001
     },
     {
      "sym": "IWV",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0093
+     "sinceBuy": 0.0125
     },
     {
      "sym": "EFA",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0046
+     "sinceBuy": 0.0054
     },
     {
      "sym": "JNJ",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0075
+     "sinceBuy": 0.0161
     },
     {
      "sym": "JPM",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0054
+     "sinceBuy": 0.0159
     },
     {
      "sym": "META",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0285
+     "sinceBuy": -0.0405
     },
     {
      "sym": "MSFT",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0075
+     "sinceBuy": 0.0068
     },
     {
      "sym": "GLD",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0136
+     "sinceBuy": 0.0169
     },
     {
      "sym": "SDY",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0014
+     "sinceBuy": -0.0038
     },
     {
      "sym": "SPY",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0097
+     "sinceBuy": 0.0132
     },
     {
      "sym": "VB",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0104
+     "sinceBuy": 0.0117
     },
     {
      "sym": "VTI",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0099
+     "sinceBuy": 0.0133
     },
     {
      "sym": "WMT",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0028
+     "sinceBuy": -0.0074
     },
     {
      "sym": "AMD",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0717
+     "sinceBuy": 0.1065
     },
     {
      "sym": "APH",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0499
+     "sinceBuy": 0.0869
     },
     {
      "sym": "ADI",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0821
+     "sinceBuy": 0.0895
     },
     {
      "sym": "ARM",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.071
+     "sinceBuy": 0.1149
     },
     {
      "sym": "COST",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0092
+     "sinceBuy": -0.0186
     },
     {
      "sym": "ETN",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0391
+     "sinceBuy": 0.0625
     },
     {
      "sym": "GRMN",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0172
+     "sinceBuy": -0.0743
     },
     {
      "sym": "GS",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0285
+     "sinceBuy": 0.0436
     },
     {
      "sym": "EWY",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0424
+     "sinceBuy": 0.0983
     },
     {
      "sym": "LRCX",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0403
+     "sinceBuy": 0.0963
     },
     {
      "sym": "DRS",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0378
+     "sinceBuy": 0.0236
     },
     {
      "sym": "NVMI",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0397
+     "sinceBuy": 0.0623
     },
     {
      "sym": "PH",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0178
+     "sinceBuy": 0.0304
     },
     {
      "sym": "PM",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0141
+     "sinceBuy": 0.0142
     },
     {
      "sym": "PWR",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0484
+     "sinceBuy": 0.0992
     },
     {
      "sym": "SXT",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0071
+     "sinceBuy": -0.0093
     },
     {
      "sym": "SPYM",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0099
+     "sinceBuy": 0.0133
     },
     {
      "sym": "VOT",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": 0.0151
+     "sinceBuy": 0.0199
     },
     {
      "sym": "LLY",
      "halal": "ok",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0035
+     "sinceBuy": 0.0015
     },
     {
      "sym": "VGIT",
      "halal": "unknown",
      "signal": "2026-10-23",
      "buy": "2026-10-26",
-     "sinceBuy": -0.0006
+     "sinceBuy": -0.002
     }
    ],
-   "note": "576 top managers checked, 5 new 13F filings since 2026-10-23"
+   "note": "576 top managers checked, 8 new 13F filings since 2026-10-23"
   },
   "EXP-13F2": {
    "tier": "NOT PROVEN",
-   "newSignals": [],
-   "open": [],
-   "note": "0 clusters of 2+ top managers since 2026-10-23"
-  },
-  "EXP-INS1": {
-   "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "LYCA",
-     "close": 26.11,
-     "halal": "unknown",
-     "signal": "2026-10-27",
+     "sym": "XOM",
+     "close": 182.02,
+     "halal": "ok",
+     "signal": "2026-10-28",
      "info": {
-      "insider": "VHCP Management III, LLC",
-      "usd": 37653863
+      "managers": 2
+     }
+    },
+    {
+     "sym": "META",
+     "close": 612.49,
+     "halal": "ok",
+     "signal": "2026-10-28",
+     "info": {
+      "managers": 2
      }
     }
    ],
+   "open": [],
+   "note": "2 clusters of 2+ top managers since 2026-10-23"
+  },
+  "EXP-INS1": {
+   "tier": "REJECTED",
+   "newSignals": [],
    "open": [
     {
      "sym": "OPTU",
      "halal": "unknown",
      "signal": "2026-10-26",
      "buy": "2026-10-27",
-     "sinceBuy": -0.2024
+     "sinceBuy": -0.1279
+    },
+    {
+     "sym": "LYCA",
+     "halal": "unknown",
+     "signal": "2026-10-27",
+     "buy": "2026-10-28",
+     "sinceBuy": -0.054
     }
    ],
-   "note": "528 top insiders checked, 2 new Form 4 since 2026-10-23"
+   "note": "528 top insiders checked, 0 new Form 4 since 2026-10-23"
   },
   "EXP-CONG1": {
    "tier": null,
