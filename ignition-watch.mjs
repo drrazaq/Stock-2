@@ -16,7 +16,8 @@ import { snapshots, feedUsed } from './alpaca-feed.mjs';
 import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
 import { stopHits } from './stop-watch.mjs';
-import { createEarlyAlerts, alertLevel } from './early-alerts.mjs';
+import { createEarlyAlerts, alertLevel, classifyCatalyst } from './early-alerts.mjs';
+import { createShadow } from './shadow-stream.mjs';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import zlib from 'node:zlib';
@@ -63,8 +64,8 @@ const LOTT = (readJson('data/signals.json', {}) || {}).lottery || {};   // teste
 let src = null, mode = 'NO_USABLE_MARKET_DATA', note = '';
 async function snapMassive() {
   try { const r = await fetch(MV + '/v2/snapshot/locale/us/markets/stocks/tickers?apiKey=' + encodeURIComponent(env.MASSIVE_KEY || '')); if (r.status === 401 || r.status === 403) { note = 'Massive snapshot not in the plan (HTTP ' + r.status + ')'; return null; } if (!r.ok) return []; const j = await r.json();
-    return (j.tickers || []).filter(x => /^[A-Z]{1,5}$/.test(x.ticker || '')).map(x => { const lt = x.lastTrade || {}, mn = x.min || {}, dy = x.day || {}, pd = x.prevDay || {}, tms = lt.t ? lt.t / 1e6 : mn.t || (x.updated ? x.updated / 1e6 : 0);
-      return { sym: x.ticker, price: +(lt.p || mn.c || dy.c || 0), prevC: +(pd.c || 0), prevV: +(pd.v || 0), open: +(dy.o || 0), hi: +(dy.h || 0), lo: +(dy.l || 0), vol: +(mn.av || dy.v || 0), t: tms, vt: tms }; }); } catch (e) { return []; } }
+    return (j.tickers || []).filter(x => /^[A-Z]{1,5}$/.test(x.ticker || '')).map(x => { const lt = x.lastTrade || {}, mn = x.min || {}, dy = x.day || {}, pd = x.prevDay || {}, lq = x.lastQuote || {}, tms = lt.t ? lt.t / 1e6 : mn.t || (x.updated ? x.updated / 1e6 : 0);
+      return { sym: x.ticker, price: +(lt.p || mn.c || dy.c || 0), prevC: +(pd.c || 0), prevV: +(pd.v || 0), open: +(dy.o || 0), hi: +(dy.h || 0), lo: +(dy.l || 0), vol: +(mn.av || dy.v || 0), t: tms, vt: tms, bid: +(lq.p || 0), ask: +(lq.P || 0), qt: lq.t ? lq.t / 1e6 : 0 }; }); } catch (e) { return []; } }
 const AH = () => ({ headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } });
 async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
@@ -76,7 +77,7 @@ async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a req
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
     try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = feedUsed() === 'sip';   // SIP = every exchange, so its day volume is the real one
-      for (const [s, x] of Object.entries(sj || {})) { const lt = (x && x.latestTrade) || {}, db = (x && x.dailyBar) || {}; if (lt.p > 0) out.set(s, { price: +lt.p, t: lt.t ? Date.parse(lt.t) : 0, open: +(db.o || 0), vol: sip && db.v ? +db.v : null }); } } catch (e) { fails++; } } }));
+      for (const [s, x] of Object.entries(sj || {})) { const lt = (x && x.latestTrade) || {}, db = (x && x.dailyBar) || {}, lq = (x && x.latestQuote) || {}; if (lt.p > 0) out.set(s, { price: +lt.p, t: lt.t ? Date.parse(lt.t) : 0, open: +(db.o || 0), vol: sip && db.v ? +db.v : null, bid: +(lq.bp || 0), ask: +(lq.ap || 0), qt: lq.t ? Date.parse(lq.t) : 0 }); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
 async function snap() {
@@ -84,7 +85,7 @@ async function snap() {
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
   if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
   if (m && m.length) { const live = await alpacaAll(m.filter(r => r.prevC >= 1).map(r => r.sym));
-    if (live) { let n = 0; for (const r of m) { const x = live.get(r.sym); if (x && x.t > r.t) { r.price = x.price; r.t = x.t; if (x.open > 0) r.open = x.open; if (x.vol > 0) { r.vol = x.vol; r.vt = x.t; } n++; } }
+    if (live) { let n = 0; for (const r of m) { const x = live.get(r.sym); if (x && x.t > r.t) { r.price = x.price; r.t = x.t; if (x.open > 0) r.open = x.open; if (x.vol > 0) { r.vol = x.vol; r.vt = x.t; } n++; } if (x && x.ask > 0 && x.qt >= (r.qt || 0)) { r.bid = x.bid; r.ask = x.ask; r.qt = x.qt; } }
       src = 'alpaca live prices (' + feedUsed().toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (feedUsed() === 'sip' ? 'live SIP volume' : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
   const a = await snapTop50();
   if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
@@ -103,10 +104,14 @@ async function secRisk(sym) {
   const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
   try { if (!TICK) { const r = await fetch(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return { known: false, tags: [] }; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
     const cik = TICK[sym]; if (!cik) return { known: false, tags: [] };
-    const r = await fetch(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return { known: false, tags: [] }; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), tags = new Set();
-    for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || '');
+    const r = await fetch(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return { known: false, tags: [] }; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [];
+    for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
       if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) tags.add('share sale / registration (' + f + ')'); if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
-    return { known: true, tags: [...tags] }; } catch (e) { return { known: false, tags: [] }; } }
+    return { known: true, tags: [...tags], filings }; } catch (e) { return { known: false, tags: [] }; } }
+// headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
+async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
+  try { const to = new Date().toISOString().slice(0, 10), from = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10), r = await fetch('https://finnhub.io/api/v1/company-news?symbol=' + encodeURIComponent(sym) + '&from=' + from + '&to=' + to + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
+    if (!r.ok) return { ok: false, why: 'HTTP ' + r.status }; const j = await r.json(); return { ok: true, items: (Array.isArray(j) ? j : []).map(x => ({ at: x.datetime ? x.datetime * 1000 : null, source: x.source || '', headline: String(x.headline || '').slice(0, 140) })) }; } catch (e) { return { ok: false, why: e.message }; } }
 async function tg(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[alert]\n' + text); return; } await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text, disable_web_page_preview: true }) }).catch(() => {}); }
 // ---- the loop
 const HELD = { at: 0, pos: {} }, STOP_SENT = {};   // live stop watch (23 Oct)
@@ -167,21 +172,27 @@ async function tgSend(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('
   try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(0, 3900), disable_web_page_preview: true }) }); const j = await r.json().catch(() => ({}));
     return { ok: !!(r.ok && j.ok), why: r.ok ? (j.description || '') : 'HTTP ' + r.status }; } catch (e) { return { ok: false, why: e.message }; } }
 const EA = createEarlyAlerts({ day, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
-  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock() });
+  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
+const SR = createShadow({ day });   // (28 Oct, Phase 1) every candidate with each soft gate removed, for the filter shadow test (shadow-stream.mjs)
 const medChg = () => { const a = Object.values(vis).filter(v => v.last >= 1 && v.lastC !== undefined).map(v => v.lastC).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
-function radarSnap(m, scanned, live) {
+async function radarSnap(m, scanned, live) {
   const ms = buildMissed(), tl = {}; for (const x of ms) tl[x.code] = (tl[x.code] || 0) + 1;
   const hits = triggers.filter(t => !t.logged).map(t => ({ sym: t.sym, rule: t.rule, m: t.m, price: t.price }));
   const early = Object.values(earlyWave).sort((x, y) => y.score - x.score).slice(0, 40).map(e => ({ sym: e.sym, change: e.change, rvT: e.rvT, price: e.price, score: e.score, firstMinute: e.firstMinute }));
   const now = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.map(e => e.sym)])) if (vis[s] && vis[s].last > 0) now[s] = { px: vis[s].last, chg: +vis[s].lastC.toFixed(4) };
   RADAR.mkt = medChg();
-  fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, mkt: RADAR.mkt, tally: tl,
+  // (28 Oct fix) the live SEC check for every stock the radar may name (cached by the alert system when it already ran); a lead needs it
+  const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s).catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [] }; }
+  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catText) cat[r.sym] = r.catText;
+  { let nq = 0; for (const s of [...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)]) { if (cat[s] || !sec[s] || !sec[s].known || sec[s].tags.length) continue;   // the radar's own catalyst check for names it may list
+      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = classifyCatalyst({ sec: EA.S.sec[s], news, nowMs: Date.now() }).text; } }
+  fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, mkt: RADAR.mkt, tally: tl, sec, cat,
     movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
   if (!env.IG_NO_RADAR) execSync('node opportunity-radar.mjs midday', { stdio: 'inherit', timeout: 120000 });
 }
 while (Date.now() - START < MAXMS) {
   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
-  const rows = await snap(); loops++;
+  const rows = await snap(); loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
     const pxNow = {}, tNow = Date.now(); for (const r of rows) if (HELD.pos[r.sym] && r.price > 0 && isFreshPriceAge(r.t > 0 ? (tNow - r.t) / 60000 : null)) pxNow[r.sym] = r.price;
@@ -196,7 +207,9 @@ while (Date.now() - START < MAXMS) {
     const M = meta(r.sym), av = avgVol.get(r.sym) || (r.prevV > 0 ? r.prevV : 0), rv = r.vol !== null && av > 0 ? r.vol / av : null, hits = [], rvT = rv !== null && cf ? rv / cf : null;
     // EARLY-WAVE OBSERVATION (23 Oct): +2% to +15% with elevated volume pace, sub-$1 included; logged only, never an alert or a buy
     try { const ewc = scoreEarlyWaveCandidate({ change: chg, rv, rvT, live, price: r.price, oneMinuteChange: prevSeenPx > 0 ? r.price / prevSeenPx - 1 : null }); updateEarlyWaveCandidate(earlyWave, r.sym, ewc, fmtM(m));
-      if (ewc) EA.noteLead({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rvT, dollarVol: r.vol > 0 ? r.vol * r.price : 0, live }); } catch (e) {}
+      const dv = r.vol > 0 ? r.vol * r.price : 0; SR.tick({ sym: r.sym, m, price: r.price, live });
+      if (ewc) { EA.noteLead({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rvT, dollarVol: dv, live, bid: r.bid, ask: r.ask });
+        SR.early({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rv, rvT, dollarVol: dv, live, bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (nowMs - r.qt) / 1000 : null, fc: v.fc, hard: { under1: r.price < 1, halalFail: notHalal(r.sym), lottery: LOTT[r.sym] || 0 } }); } } catch (e) {}
     if (!(r.prevC >= 1)) { if (chg >= 0.10) flag(r.sym, 'under1', 'under 1 USD (never traded by these rules)'); continue; }
     if (r.vol > 0 && avgVol.has(r.sym)) { sumV += r.vol; sumA += avgVol.get(r.sym); }   // no 20-day history (new listing, was under 1 USD): yesterday's volume stands in
     // minute price series from live quotes (for the build-up rule)
@@ -230,11 +243,13 @@ while (Date.now() - START < MAXMS) {
     for (const h of hits) { const t = { v: IG_VERSION, d: day, sym: r.sym, rule: h.R.id, m, price: r.price, prevC: r.prevC, rv: rv === null ? null : +rv.toFixed(2), rvT: rvT === null ? null : +rvT.toFixed(2), float: M.float || null, age: M.age, adr5: avgRange5.get(r.sym) && r.hi > 0 && r.lo > 0 ? +((Math.max(r.hi, r.price) - Math.min(r.lo, r.price)) / avgRange5.get(r.sym)).toFixed(2) : null, mode, delay: rd === null ? null : +rd.toFixed(1), ...h.extra }; triggers.push(t);
       if (vis[r.sym] && !vis[r.sym].caught) vis[r.sym].caught = h.R.id + ' at ' + fmtM(m);
       await maybeAlert(r, t, h.R, chg, rd, rv, M, h.extra, !!h.liveOnly); if (!(vis[r.sym] && vis[r.sym].flags.alerted)) EA.notePaper(t, chg); } }
+  if (triggers.length > tStart) { const bySym = new Map(rows.map(x => [x.sym, x]));   // shadow stream: every rule trigger this minute, including the held-back ones
+    for (const t of triggers.slice(tStart)) { const x = bySym.get(t.sym) || {}; try { SR.trigger(t, { bid: x.bid, ask: x.ask, qAgeSec: x.qt > 0 ? (Date.now() - x.qt) / 1000 : null, dollarVol: x.vol > 0 ? x.vol * x.price : 0, fc: vis[t.sym] ? vis[t.sym].fc : null, hard: { under1: t.price < 1, halalFail: notHalal(t.sym), lottery: LOTT[t.sym] || 0 } }); } catch (e) {} } }
   try { await EA.process(); } catch (e) { console.log('early alerts: ' + e.message); }
   if (sumA > 0) vcToday[Math.floor(m / 5) * 5] = +(sumV / sumA).toFixed(4);   // the market's share of a normal day traded by now
   const sa = ages.sort((a, b) => a - b), q = (a, f) => a.length ? +a[Math.min(a.length - 1, Math.floor(a.length * f))].toFixed(1) : null;
   beat.push({ m, mode, received: rows.length, evaluated: evald, live: liveN, ageP50: q(sa, 0.5), ageP95: q(sa, 0.95), volAgeP50: q(vages.sort((a, b) => a - b), 0.5), alerts });   // heartbeat: proves the watcher ran this minute
-  if (m >= 675 && !RADAR.done) { RADAR.done = true; try { radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
+  if (m >= 675 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
   const wait = 60000 - (Date.now() - nowMs); if (wait > 0) await sleep(wait);
 }
@@ -256,6 +271,8 @@ const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISI
 fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, procStart: PROC_START, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
 { const ewl = Object.values(earlyWave).sort((x, y) => y.score - x.score); if (ewl.length) fs.appendFileSync('data/early-wave-obs.jsonl', JSON.stringify({ day, mode, src, n: ewl.length, top: ewl.slice(0, 300) }) + '\n'); }   // judged later against matched stocks; not a signal
 fs.appendFileSync('data/ignition-paper.jsonl', triggers.filter(t => !t.logged).map(t => JSON.stringify(t) + '\n').join(''));
+// SHADOW STREAM (Phase 1): the day's candidates, gzipped (about 1,000-2,000 rows); outcomes are added after the close by shadow-outcomes.mjs
+try { const rs = SR.rows(); if (rs.length) { fs.mkdirSync('data/shadow', { recursive: true }); fs.writeFileSync('data/shadow/' + day + '.jsonl.gz', zlib.gzipSync(rs.map(x => JSON.stringify(x)).join('\n') + '\n')); console.log('shadow stream: ' + rs.length + ' candidates saved'); } } catch (e) { console.log('shadow stream: ' + e.message); }
 // DELIVERY SCORECARD: every candidate that met an alert trigger (or was a rule hit) with its decision and 15:00 result; soft misses are
 // counted in the day's summary only (about 1,500 a day would bloat the public repo)
 try { const lastPx = {}; for (const v of Object.values(vis)) if (v.last > 0) lastPx[v.sym] = v.last; const E = EA.finish(lastPx, null, alerts), keep = E.rows.filter(r => !/^SOFT/.test(r.decision));

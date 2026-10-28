@@ -23,7 +23,8 @@ jobs:
       - shell: bash
         run: |
           set -o pipefail
-          node opportunity-radar.mjs close 2>&1 | tee run.log
+          node shadow-outcomes.mjs 2>&1 | tee run.log || echo 'shadow outcomes failed' | tee -a run.log   # Phase 1 (28 Oct): 1/5/10-session outcomes + filter shadow report
+          node opportunity-radar.mjs close 2>&1 | tee -a run.log
         env:
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
@@ -32,7 +33,7 @@ jobs:
       - run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          [ -f data/radar-v3-ledger.jsonl ] && git add data/radar-v3-ledger.jsonl; true
+          [ -f data/radar-v3-ledger.jsonl ] && git add data/radar-v3-ledger.jsonl; [ -d data/shadow-outcomes ] && git add data/shadow-outcomes; [ -f data/shadow-report.json ] && git add data/shadow-report.json; true
           git diff --cached --quiet || git commit -m "radar v3 $(date -u +%FT%RZ)"
           for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
       - if: failure()

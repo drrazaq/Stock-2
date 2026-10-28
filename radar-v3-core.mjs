@@ -32,6 +32,9 @@ export function blockOf(sym, price, ctx = {}) {
   const ev = ((ctx.events || {})[sym] || []).filter(e => DANGER.test(e.f));
   if (ev.length) return 'SEC danger filing: ' + [...new Set(ev.flatMap(e => e.f.split(',').filter(k => DANGER.test(k))))].join(', ').toLowerCase();
   const j = (ctx.lottery || {})[sym]; if (j >= 0.15) return 'AVOID list: jumped ' + pct(j) + ' in one day this month';
+  // (28 Oct fix) the LIVE SEC check from the watcher (same check as alerts: share sale / registration, delisting notice, late report in 30
+  // days). When the snapshot carries it, a stock without a successful check is blocked, never shown as a lead.
+  if (ctx.sec) { const x = ctx.sec[sym]; if (!x || !x.known) return 'SEC check failed or not done'; if (x.tags && x.tags.length) return 'SEC danger filing: ' + x.tags.join(', '); }
   return null;
 }
 // ZAD marks, same merge as scan.mjs HALALM: the ZAD list fills in, the owner's own mark wins when newer, a mark older than 90 days expires
@@ -44,6 +47,7 @@ export function halalMap(zad, marks = {}, now = Date.now()) {
 }
 export const halalWord =(sym, ctx = {}) => ((ctx.halal || {})[sym] === 'ok' ? 'halal (your ZAD mark)' : 'HALAL UNKNOWN: check ZAD first');
 export function catalystOf(sym, ctx = {}) {
+  if (ctx.cat && ctx.cat[sym]) return ctx.cat[sym];   // (28 Oct) the alert system's live catalyst check (SEC acceptance time + headline), when it ran
   const ev = ((ctx.events || {})[sym] || []).filter(e => !DANGER.test(e.f));
   return ev.length ? 'SEC 8-K ' + ev.map(e => e.f.split(',')[0].toLowerCase() + ' ' + String(e.p).slice(5, 10)).slice(0, 2).join(', ')
     : 'NO VERIFIED CATALYST (no SEC 8-K in 10 days; headlines not checked)';
@@ -89,7 +93,8 @@ export function runnerLines(movers = [], n = 5, withAfter = false) {
 // ---- MIDDAY (about 11:15 New York) from the watcher's snapshot
 // snap: { day, at, firstMinute, scanned, live, alerts, movers: [{sym, code, maxUp, firstSeen, firstSeenUp, px}], hits: [{sym, rule, m, price}],
 //         early: [{sym, change, rvT, price, score, firstMinute}], now: {SYM: {px, chg}}, tally, mkt }
-export function buildMidday(snap, ctx = {}) {
+export function buildMidday(snap, ctx0 = {}) {
+  const ctx = { ...ctx0, ...(snap.sec ? { sec: snap.sec } : {}), ...(snap.cat ? { cat: snap.cat } : {}) };
   const now = snap.now || {}, rows = [], blocked = [], text = [];
   const fm = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
   text.push('OPPORTUNITY RADAR ' + snap.at + ' New York (' + snap.day + '). Research list: nothing in A or B is an approved buy.');

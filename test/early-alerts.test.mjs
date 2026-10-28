@@ -77,3 +77,8 @@ test('scorecard: funnel counts, results after costs at 15:00, and every eligible
   assert.match(t, /NOT delivered: S5 10:00 \+7\.4% \(limit: 5 a day reached\)/);
   assert.match(scorecardText(null), /no record for today/);
 });
+
+test('a lead that never met the trigger keeps the reason that blocked it inside the window, not "after 11:30"', () => {
+  const { EA } = make(); EA.noteLead(lead('LOW', { score: 60 })); EA.noteLead(lead('LOW', { score: 60, m: 700 }));
+  assert.equal(EA.S.seen['lead|LOW'].decision, 'SOFT: early-wave score under 80 (until 11:30)');
+});

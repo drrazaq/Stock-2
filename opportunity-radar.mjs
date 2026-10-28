@@ -49,5 +49,7 @@ if (MODE === 'midday') {
   let ledger = readLines(LEDGER); const s5 = await score5(ledger, today);
   if (s5.length) { fs.appendFileSync(LEDGER, s5.map(x => JSON.stringify(x)).join('\n') + '\n'); ledger = ledger.concat(s5); }
   const od = readLines('data/opp-days.jsonl').filter(x => x.day === today).pop();   // DELIVERY SCORECARD from the live watcher (early-alerts.mjs)
-  await telegram(buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od)); console.log('radar close: ' + s5.length + ' 5-session scores added');
+  const SRp = readJson('data/shadow-report.json'), pc = (x) => (x === null || x === undefined ? '?' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%');   // Phase 1 shadow test (shadow-outcomes.mjs runs just before)
+  const shadowLine = SRp ? 'FILTER SHADOW TEST: ' + SRp.shadowSessions + ' session' + (SRp.shadowSessions === 1 ? '' : 's') + ' collected (verdicts after 10). ' + (SRp.alerts5d && SRp.alerts5d.delivered.n ? 'Alerts after 5 sessions, net: delivered ' + SRp.alerts5d.delivered.n + ' avg ' + pc(SRp.alerts5d.delivered.avg) + ' (median ' + pc(SRp.alerts5d.delivered.median) + '); eligible not delivered ' + SRp.alerts5d.notDelivered.n + ' avg ' + pc(SRp.alerts5d.notDelivered.avg) + '.' : 'No alert has 5 sessions yet.') : '';
+  await telegram(buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
 }

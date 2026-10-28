@@ -74,3 +74,10 @@ test('after the close: scores today, lists missed runners with reasons, says whe
   assert.match(t, /C\. APPROVED SIGNALS today: 0/); assert.match(t, /RADAR SCORECARD \(1 session; verdict after 10\)/);
   assert.match(buildClose('2026-10-29', live, [], {}), /saved no results for today/);
 });
+
+test('(28 Oct fix) with the live SEC check in the snapshot: a share-sale filing or a failed / missing check blocks a lead; the live catalyst is shown', () => {
+  const t = buildMidday(snap({ hits: [], sec: { NEWSY: { known: true, tags: [] }, SHR: { known: true, tags: ['share sale / registration (S-1)'] } }, cat: { NEWSY: 'VERIFIED: SEC 8-K item 8.01 accepted 07:02 New York' },
+    early: [{ sym: 'NEWSY', change: 0.04, rvT: 3, price: 12, score: 90, firstMinute: '09:40' }, { sym: 'SHR', change: 0.05, rvT: 3, price: 12, score: 91, firstMinute: '09:40' }, { sym: 'NOCHK', change: 0.05, rvT: 3, price: 12, score: 92, firstMinute: '09:40' }] }), ctx).text;
+  assert.match(t, /- NEWSY \+4%/); assert.match(t, /VERIFIED: SEC 8-K item 8\.01 accepted 07:02/);
+  assert.doesNotMatch(t, /- SHR /); assert.match(t, /SHR \(SEC danger filing: share sale/); assert.doesNotMatch(t, /- NOCHK /); assert.match(t, /NOCHK \(SEC check failed or not done\)/);
+});

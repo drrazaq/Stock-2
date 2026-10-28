@@ -38,6 +38,7 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}   # (28 Oct) catalyst headlines for early-alert candidates only
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
@@ -49,7 +50,7 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; true
+          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; true
           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
           for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
       - if: failure()

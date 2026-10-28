@@ -34,19 +34,36 @@ export function hardReason({ price, halalFail, lottery, sec }) {
   if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
   return null;
 }
+// CATALYST CHECK (owner approved 28 Oct, Phase 1). Earliest credible source first; never invents a reason.
+//   VERIFIED     an SEC filing (8-K, 6-K, 13D, merger 425 / DEFA14A) ACCEPTED in the 24 h before the check (SEC acceptance time)
+//   UNCONFIRMED  no such filing, but a Finnhub headline in the 24 h before (an aggregator headline: plausible, not verified)
+//   NONE         SEC and news both checked, nothing in 24 h
+//   UNAVAILABLE  a source failed (said which); never read as "no catalyst"
+// Contradictory evidence is NOT assessed yet (said in the doc).
+const nyHM = (ms) => new Date(ms).toLocaleTimeString('en-GB', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit' });
+export function classifyCatalyst({ sec, news, nowMs, hours = 24 }) {
+  const since = nowMs - hours * 3600e3, inWin = (t) => t !== null && t !== undefined && Number.isFinite(t) && t >= since && t <= nowMs;
+  const f = sec && sec.known ? (sec.filings || []).map(x => ({ ...x, t: x.at ? Date.parse(x.at) : null })).filter(x => inWin(x.t) && /^(8-K|6-K|SC 13D|425|DEFA14A)/.test(x.form)).sort((a, b) => a.t - b.t) : [];
+  if (f.length) { const x = f[0]; return { cls: 'VERIFIED', text: 'VERIFIED: SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' }; }
+  const n = news && news.ok ? (news.items || []).filter(x => inWin(x.at)).sort((a, b) => a.at - b.at) : [];
+  if (n.length) { const x = n[0]; return { cls: 'UNCONFIRMED', text: 'PLAUSIBLE, UNCONFIRMED: earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }; }
+  if (!sec || !sec.known) return { cls: 'UNAVAILABLE', text: 'SOURCE UNAVAILABLE: the SEC check failed' + (news && news.ok ? '; no headline in 24 h' : '') };
+  if (!news || !news.ok) return { cls: 'UNAVAILABLE', text: 'NO SEC filing in 24 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' };
+  return { cls: 'NONE', text: 'NONE FOUND: no SEC filing and no headline in 24 h' };
+}
 export const levelAllows = (level, kind) => (kind === 'lead' ? level === 'all' : kind === 'paper' ? level === 'all' || level === 'paper' : false);
 
 export function leadText(items, ctx = {}) {
   return ['EARLY WATCH: RESEARCH LEAD' + (items.length > 1 ? 'S' : '') + ' (NOT AN APPROVED BUY) ' + fm(items[0].m) + ' New York', ...items.map(c =>
     '- ' + c.sym + ' ' + pct(c.chg, 1) + ' at ' + usd(c.price) + ', volume pace ' + (c.rvT ? c.rvT.toFixed(1) + 'x' : '?') + ', ' + (c.dollarVol / 1e6).toFixed(1) + 'M USD traded so far. '
-      + (ctx.halalOk && ctx.halalOk(c.sym) ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.') + ' SEC: no danger filing in 30 days. Catalyst: not verified.\n  For +2% net on 1,000 USD it needs ' + pct(netHurdle(c.price), 1) + ' gross.'
+      + (ctx.halalOk && ctx.halalOk(c.sym) ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.') + ' SEC: no danger filing in 30 days.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  For +2% net on 1,000 USD it needs ' + pct(netHurdle(c.price), 1) + ' gross.'
       + (c.price < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : '')),
     'Trigger EW-ALERT-1 is UNPROVEN: on its first 2 days only about 1 in 10 such stocks reached that gross move. At most 5 a day; the after-close radar scores every one. Fewer messages: alerts paper  or  alerts off.'].join('\n');
 }
 export function paperText(items) {
   return ['EARLY WATCH: PAPER SETUP' + (items.length > 1 ? 'S' : '') + ' (NOT AN APPROVED BUY) ' + fm(items[0].m) + ' New York', ...items.map(c => { const r = c.record;
     return '- ' + c.sym + ': ' + c.rule + ' at ' + usd(c.price) + ' (' + pct(c.chg) + ' today). Rule record: ' + (r ? r.n + ' paper trades, ' + pct(r.avg, 1) + ' a trade after costs' + (r.noTop2 !== null && r.noTop2 !== undefined ? ', ' + pct(r.noTop2, 1) + ' without its 2 best' : '') : 'none yet')
-      + '; 5-year test ' + (c.history || 'not tested') + '.\n  Paper only: logged and scored, not a buy. ' + (c.halalOk ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.'); }),
+      + '; 5-year test ' + (c.history || 'not tested') + '.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  Paper only: logged and scored, not a buy. ' + (c.halalOk ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.'); }),
     'Fewer messages: alerts approved  or  alerts off.'].join('\n');
 }
 
@@ -54,12 +71,13 @@ export function paperText(items) {
 export function createEarlyAlerts(opts) {
   const S = { level: opts.level || 'all', seen: {}, queue: { lead: [], paper: [] }, sent: { lead: 0, paper: 0 }, rows: [], sec: {} };
   const secOf = async (sym) => S.sec[sym] || (S.sec[sym] = await opts.secRisk(sym).catch(() => ({ known: false, tags: [] })));
-  const decide = (kind, c, decision) => { const k = kind + '|' + c.sym; const row = { d: opts.day, kind, sym: c.sym, m: c.m, px: c.price, chg: c.chg !== undefined ? +(+c.chg).toFixed(4) : null, rule: c.rule, decision }; S.seen[k] = row; return row; };
+  const decide = (kind, c, decision) => { const k = kind + '|' + c.sym; const row = { d: opts.day, kind, sym: c.sym, m: c.m, px: c.price, chg: c.chg !== undefined ? +(+c.chg).toFixed(4) : null, rule: c.rule, decision, bid: c.bid > 0 ? c.bid : null, ask: c.ask > 0 ? c.ask : null }; S.seen[k] = row; return row; };
   return {
     S, setLevel(l) { if (LEVELS.includes(l)) S.level = l; },
     // called every minute for every early-wave observation; only the first decision per stock counts (soft misses are re-checked until final)
     noteLead(c) { const k = 'lead|' + c.sym; if (S.seen[k] && S.seen[k].final) return; const soft = leadSoftReason(c);
-      if (soft) { const row = decide('lead', c, 'SOFT: ' + soft); if (/extended|after 11:30/.test(soft)) row.final = true; return; }
+      if (soft) { const prev = S.seen[k], keep = soft === 'after 11:30' && prev && /^SOFT/.test(prev.decision) && !/after 11:30/.test(prev.decision);   // keep the reason that blocked it inside the window
+        const row = decide('lead', c, keep ? prev.decision + ' (until 11:30)' : 'SOFT: ' + soft); if (/extended|after 11:30/.test(soft)) row.final = true; return; }
       const row = decide('lead', c, 'PENDING'); row.final = true; row.c = c; S.queue.lead.push(row); },
     notePaper(t, chg) { const k = 'paper|' + t.sym; if (S.seen[k]) return; const c = { sym: t.sym, m: t.m, price: t.price, chg, rule: t.rule };
       const row = decide('paper', c, t.m > PAPER.to ? 'SOFT: after 11:30' : 'PENDING'); row.final = true; if (row.decision === 'PENDING') { row.c = c; S.queue.paper.push(row); } },
@@ -69,6 +87,7 @@ export function createEarlyAlerts(opts) {
         for (const row of q) { const c = row.c; delete row.c;
           const hard = hardReason({ price: c.price, halalFail: opts.notHalal(c.sym), lottery: (opts.lottery || {})[c.sym], sec: await secOf(c.sym) });
           if (hard) { row.decision = 'HARD: ' + hard; continue; }
+          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catText = c.cat.text; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
           if (!levelAllows(S.level, kind)) { row.decision = 'MUTED: alerts ' + S.level; continue; }
           if (S.sent[kind] + out.length >= (kind === 'lead' ? LEAD.perDay : PAPER.perDay)) { row.decision = 'LIMIT: ' + (kind === 'lead' ? LEAD.perDay : PAPER.perDay) + ' a day reached'; continue; }
           if (kind === 'paper') { const r = (opts.record || {})[c.rule + '/close']; c.record = r; c.history = ((opts.lab || {})[c.rule + '/close'] || {}).verdict; c.halalOk = opts.halalOk(c.sym); }
@@ -98,8 +117,10 @@ export function summarize(day, rows) {
     delivered: sent.length, medianLatencyMin: sent.length ? sent.map(r => r.latencyMin).sort((a, b) => a - b)[Math.floor(sent.length / 2)] : null,
     deliveredScored: scored(sent).length, deliveredWon: win(sent), deliveredAvgNet: scored(sent).length ? +(scored(sent).reduce((a, r) => a + r.net, 0) / scored(sent).length).toFixed(4) : null,
     eligibleScored: scored(elig).length, eligibleWon: win(elig), eligibleAvgNet: scored(elig).length ? +(scored(elig).reduce((a, r) => a + r.net, 0) / scored(elig).length).toFixed(4) : null,
-    missedGood };
+    missedGood, best: pick(sent, 1), worst: pick(sent, -1), bestUndelivered: pick(elig.filter(r => r.decision !== 'SENT'), 1), worstUndelivered: pick(elig.filter(r => r.decision !== 'SENT'), -1) };
 }
+// best / worst by same-day net after costs (Part 9: delivered vs eligible-but-not-delivered)
+function pick(a, dir) { const s = a.filter(r => r.net !== null && r.net !== undefined).sort((x, y) => dir * (y.net - x.net))[0]; return s ? { sym: s.sym, kind: s.kind, net: s.net, why: s.decision } : null; }
 export function scorecardText(d) {
   if (!d) return 'DELIVERY SCORECARD: no record for today (the live watcher did not save one).';
   const h = Object.entries(d.hard || {}).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => k + ' ' + v).join(', ');
@@ -108,5 +129,6 @@ export function scorecardText(d) {
     + (d.medianLatencyMin !== null ? ' (median ' + d.medianLatencyMin + ' min after detection)' : '') + '; approved alerts ' + (d.approved || 0) + '.',
     'After costs at 15:00: delivered ' + (d.deliveredScored ? d.deliveredWon + ' of ' + d.deliveredScored + ' positive, average ' + pct(d.deliveredAvgNet, 1) : 'none scored')
       + '; all eligible ' + (d.eligibleScored ? d.eligibleWon + ' of ' + d.eligibleScored + ' positive, average ' + pct(d.eligibleAvgNet, 1) : 'none scored') + '.',
+    'Best / worst delivered: ' + (d.best ? d.best.sym + ' ' + pct(d.best.net, 1) + ' / ' + d.worst.sym + ' ' + pct(d.worst.net, 1) : 'none') + '. Best / worst eligible NOT delivered: ' + (d.bestUndelivered ? d.bestUndelivered.sym + ' ' + pct(d.bestUndelivered.net, 1) + ' / ' + d.worstUndelivered.sym + ' ' + pct(d.worstUndelivered.net, 1) : 'none') + '.',
     d.missedGood && d.missedGood.length ? 'Eligible and +2% net by 15:00 but NOT delivered: ' + d.missedGood.slice(0, 5).map(x => x.sym + ' ' + x.m + ' ' + pct(x.net, 1) + ' (' + x.why.toLowerCase() + ')').join('; ') + '.' : 'No eligible candidate made +2% net by 15:00 without being delivered.'].join('\n');
 }
