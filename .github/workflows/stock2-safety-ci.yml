@@ -1,0 +1,24 @@
+name: Stock2 safety checks
+on:
+  push:
+    branches:
+      - Stock2-safety-fixes
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Syntax-check modified production modules
+        run: |
+          node --check ignition-watch.mjs
+          node --check early-alerts.mjs
+          node --check paper-gates.mjs
+      - name: Run targeted safety regression tests
+        run: node --test tests/quote-freshness-safety.test.mjs tests/paper-gates-safety.test.mjs
