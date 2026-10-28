@@ -54,7 +54,7 @@ export const NEG_ITEMS = ['1.02', '1.03', '2.04', '2.05', '2.06', '3.01', '4.01'
 export const DIL_FORMS = /^(424B|S-1|S-3|F-1|F-3)/, EVENT_FORMS = /^(8-K|6-K|SC 13D|425|DEFA14A)/;
 const DIL_W = /\b(offering|private placement|registered direct|priced at|pricing of|warrants?|at-the-market|ATM program|convertible|shelf)\b/i;
 const NEG_W = /\b(delist\w*|downgrade\w*|miss(es|ed)?|cuts? (guidance|outlook)|lawsuit|investigation|recall\w*|bankrupt\w*|going concern|resign\w*|terminat\w*|restat\w*|subpoena|halt\w*)\b/i;
-const POS_W = /\b(award\w*|contract|approv\w*|clearance|partnership|collaborat\w*|acquired by|to be acquired|beats?|record (revenue|quarter|sales)|raises? (guidance|outlook)|wins?|purchase order|orders? from)\b/i;
+const POS_W = /\b(award\w*|contract|approv\w*|clearance|partnership|collaborat\w*|acquired by|to be acquired|beats?|record (revenue|quarter|sales)|raises? (guidance|outlook)|wins?|purchase order|orders? from|(?:accelerated )?share repurchase|buybacks?|repurchase (?:program|authorization))\b/i;
 const WIRE = /globe ?newswire|business ?wire|pr ?newswire|accesswire|newsfile|globenewswire/i;
 export function itemsOf(s) { return String(s || '').split(/[,\s]+/).filter(x => /^\d\.\d\d$/.test(x)); }
 export function filingDirection(f) {
@@ -63,17 +63,21 @@ export function filingDirection(f) {
 }
 export function headlineDirection(h) {
   const t = String(h || ''); if (DIL_W.test(t)) return 'DILUTION'; const n = NEG_W.test(t), p = POS_W.test(t);
-  return n && p ? 'AMBIGUOUS' : n ? 'NEGATIVE' : p ? 'POSITIVE' : 'AMBIGUOUS';
+  return n && p ? 'MIXED' : n ? 'NEGATIVE' : p ? 'POSITIVE' : 'AMBIGUOUS';
 }
 export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours = 72 }) {
   const t0 = nowMs - hours * 3600e3, t1 = nowMs - recycledHours * 3600e3, ok = (t) => t !== null && t !== undefined && Number.isFinite(t) && t <= nowMs;
   const F = sec && sec.known ? (sec.filings || []).map(x => ({ ...x, t: x.at ? Date.parse(x.at) : null })).filter(x => ok(x.t) && x.t >= t1 && (EVENT_FORMS.test(x.form) || DIL_FORMS.test(x.form))).sort((a, b) => a.t - b.t) : [];
   const N = news && news.ok ? (news.items || []).filter(x => ok(x.at) && x.at >= t1).sort((a, b) => a.at - b.at) : [];
   const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0);
-  const worst = (ds) => ['DILUTION', 'NEGATIVE', 'POSITIVE', 'AMBIGUOUS'].find(d => ds.includes(d)) || 'UNKNOWN';
-  const hDir = fN.length ? (() => { const ds = fN.map(x => headlineDirection(x.headline)); return ds.includes('DILUTION') ? 'DILUTION' : ds.includes('NEGATIVE') && ds.includes('POSITIVE') ? 'AMBIGUOUS' : worst(ds); })() : null;
-  const tag = (o) => ({ ...o, text: o.text + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
-  if (fF.length) { const x = fF[0], fd = worst(fF.map(filingDirection)), dir = fd !== 'AMBIGUOUS' ? fd : hDir && hDir !== 'AMBIGUOUS' ? hDir : 'AMBIGUOUS';
+  const combine = (ds) => ds.includes('DILUTION') ? 'DILUTION' : ds.includes('MIXED') || (ds.includes('NEGATIVE') && ds.includes('POSITIVE')) ? 'MIXED' : ds.includes('NEGATIVE') ? 'NEGATIVE' : ds.includes('POSITIVE') ? 'POSITIVE' : 'AMBIGUOUS';
+  const hDir = fN.length ? combine(fN.map(x => headlineDirection(x.headline))) : null;
+  const evidence = [...F.map(x=>({source:'SEC',publicAt:new Date(x.t).toISOString(),form:x.form,items:x.items||'',sourceId:x.accession||null,url:x.url||null,direction:filingDirection(x)})),
+    ...N.map(x=>({source:WIRE.test(x.source||'')?'ISSUER_WIRE':'AGGREGATOR',publisher:x.source||null,publicAt:new Date(x.at).toISOString(),headline:x.headline,sourceId:x.id||null,url:x.url||null,direction:headlineDirection(x.headline)}))];
+  const tag = (o) => ({ ...o, evidence, checkedAt:new Date(nowMs).toISOString(), sourceAvailability:{sec:sec?.known===true,news:news?.ok===true},
+    interpretation:'Direction is a rule-based interpretation, not verified economic impact or trade eligibility.',
+    text: o.text + ' [source ' + o.source + ', direction ' + o.direction + (['POSITIVE','MIXED'].includes(o.direction) ? ' (headline wording, not verified impact)' : '') + ', ' + o.freshness + ']' });
+  if (fF.length) { const x = fF[0], fd = combine(fF.map(filingDirection)), dir = combine([fd, hDir]);
     return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
   if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
     return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
@@ -128,7 +132,7 @@ export function createEarlyAlerts(opts) {
         for (const row of q) { const c = row.c; delete row.c;
           const hard = hardReason({ price: c.price, halalFail: opts.notHalal(c.sym), lottery: (opts.lottery || {})[c.sym], sec: await secOf(c.sym) });
           if (hard) { row.decision = 'HARD: ' + hard; continue; }
-          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catText = c.cat.text; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
+          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catText = c.cat.text; row.catEvidence = c.cat.evidence; row.catCheckedAt = c.cat.checkedAt; row.catSources = c.cat.sourceAvailability; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
           if (!levelAllows(S.level, kind)) { row.decision = 'MUTED: alerts ' + S.level; continue; }
           if (S.sent[kind] + out.length >= (kind === 'lead' ? LEAD.perDay : PAPER.perDay)) { row.decision = 'LIMIT: ' + (kind === 'lead' ? LEAD.perDay : PAPER.perDay) + ' a day reached'; continue; }
           if (kind === 'paper') { const r = (opts.record || {})[c.rule + '/close']; c.record = r; c.history = ((opts.lab || {})[c.rule + '/close'] || {}).verdict; c.halalOk = opts.halalOk(c.sym); }

@@ -1,0 +1,154 @@
+{
+  "updated": "2026-10-28",
+  "branch": "Stock2-safety-fixes",
+  "pr": 1,
+  "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
+  "inventory": {
+    "modules": 206,
+    "workflows": 78,
+    "datasetsChecked": 335,
+    "datasetFailures": 0,
+    "missingImportModules": 0
+  },
+  "reviewedWholeSmallModules": [
+    "approved-quote-gate.mjs",
+    "catalyst-integrity.mjs",
+    "live-refresh-universe.mjs",
+    "pre-ignition-discovery.mjs",
+    "session-coverage.mjs",
+    "watcher-session.mjs",
+    "zad-compliance.mjs",
+    "alpaca-feed.mjs",
+    "sec-time.mjs",
+    "telegram-delivery.mjs",
+    "multi-angle-discovery.mjs"
+  ],
+  "reviewedTargetedPathsOnly": [
+    "ignition-watch.mjs",
+    "opportunity-radar.mjs",
+    "radar-v3-core.mjs",
+    "watcher-guard-core.mjs",
+    "watcher-guard.mjs",
+    "scan.mjs",
+    "news-watch.mjs",
+    "premarket-check.mjs",
+    "rank-models.mjs",
+    "shadow-stream.mjs",
+    "shadow-eval.mjs"
+  ],
+  "reviewCounts": {
+    "smallModulesReviewed": 11,
+    "largeModulesTargetedReview": 11,
+    "unreviewedModules": 184,
+    "note": "Reading, syntax checks and fixtures are not exhaustive behavioral certification"
+  },
+  "engineeringAcceptance": {
+    "complete": 15,
+    "total": 40,
+    "percent": 37.5,
+    "basis": "Existing acceptance checklist in engineering-progress.md; no credit for partially completed checks"
+  },
+  "strategyValidation": {
+    "earlyEnginePromotionChecksPassed": 0,
+    "requiredChecks": 8,
+    "percent": 0,
+    "checks": [
+      "representative five-year point-in-time data",
+      "delisted/corporate-action integrity",
+      "independent older/newer out-of-sample success",
+      "realistic executable costs and liquidity",
+      "same-date market/peer/SP500 controls",
+      "survival without two largest winners",
+      "stress/drawdown/false-positive evidence",
+      "independent prospective paper confirmation"
+    ],
+    "note": "0% means no new early engine has completed promotion evidence, not that all past research is unfinished. Frozen ignition: 33 rejected, 15 not proven, zero passing."
+  },
+  "defects": [
+    {
+      "id": "INC-01",
+      "severity": "P1",
+      "description": "Queued duplicate overwrites canonical day and shadow evidence",
+      "status": "FIXED_LOCAL_VERIFIED",
+      "evidence": "tests/watcher-session.test.mjs"
+    },
+    {
+      "id": "INC-02",
+      "severity": "P1",
+      "description": "After-close scorecard uses last duplicate rather than richest observed session",
+      "status": "FIXED_LOCAL_VERIFIED",
+      "evidence": "tests/watcher-session.test.mjs"
+    },
+    {
+      "id": "INC-03",
+      "severity": "P2",
+      "description": "Run creation time reported as actual job/watcher start",
+      "status": "OPEN"
+    },
+    {
+      "id": "INC-04",
+      "severity": "P2",
+      "description": "Displayed top-20 movers reported as total and minute test called five-year",
+      "status": "FIXED_LOCAL_VERIFIED",
+      "evidence": "test/radar-v3-core.test.mjs"
+    },
+    {
+      "id": "INC-05",
+      "severity": "P2",
+      "description": "Repurchase wording absent; conflicting catalyst directions lose attribution",
+      "status": "FIXED_LOCAL_VERIFIED",
+      "evidence": "tests/catalyst-direction.test.mjs"
+    },
+    {
+      "id": "INC-06",
+      "severity": "P2",
+      "description": "Snapshot price/volume/open fields inherit timestamps of different fields",
+      "status": "OPEN"
+    },
+    {
+      "id": "INC-07",
+      "severity": "P2",
+      "description": "Received/evaluated symbol count is not a verified tradable universe",
+      "status": "OPEN"
+    },
+    {
+      "id": "INC-08",
+      "severity": "P2",
+      "description": "Regular-session paper rules can fire before 09:30",
+      "status": "OPEN"
+    },
+    {
+      "id": "INC-09",
+      "severity": "P2",
+      "description": "Some Telegram send paths swallow HTTP/API failure and mark news seen",
+      "status": "OPEN"
+    },
+    {
+      "id": "INC-10",
+      "severity": "P2",
+      "description": "No runtime consumer for multi-angle research registry",
+      "status": "OPEN"
+    }
+  ],
+  "tests": {
+    "passed": 1190,
+    "failed": 0,
+    "scope": "node --test test/*.test.mjs tests/*.test.mjs",
+    "runtime": "Node 24.22.1",
+    "remoteCI": "Pending new commit; earlier 9c6f39e CI passed"
+  },
+  "blockers": [
+    "Production corrections remain undeployed pending owner approval",
+    "Original PRG news payload/catalyst inputs were not persisted",
+    "Whole-market premarket and full/extended-session observation not yet integrated",
+    "Live end-to-end telemetry needs authorized deployment and subsequent real sessions",
+    "No five-year point-in-time executable data established for early engines"
+  ],
+  "next": [
+    "Provider field/timestamp normalization and telemetry",
+    "Actual job start and heartbeat health",
+    "All-channel Telegram acknowledgments and failure-safe deduplication",
+    "Connect observation-only discovery routes",
+    "Broader historical semantic and recommendation path audit"
+  ]
+}

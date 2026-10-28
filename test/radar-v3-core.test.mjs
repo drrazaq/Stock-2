@@ -41,11 +41,11 @@ test('midday: labelled panels, hard blocks shown as BLOCKED never as leads, one 
   const r = buildMidday(snap(), ctx), t = r.text;
   for (const p of ['A. LIVE RESEARCH LEADS (' + NOT_APPROVED, 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED, 'C. APPROVED SIGNALS: 0 so far today', 'D. RUNNERS SO FAR']) assert.ok(t.includes(p), p);
   assert.match(t, /- GOOD: IG1 at 09:49 \$3\.10, now \$3\.40/); assert.equal((t.match(/- GOOD:/g) || []).length, 1);
-  assert.match(t, /5-year test REJECTED/); assert.match(t, /halal \(your ZAD mark\)/);
+  assert.match(t, /minute-bar history verdict REJECTED/); assert.match(t, /halal \(your ZAD mark\)/);
   assert.match(t, /- NEWSY \+4%.*HALAL UNKNOWN/); assert.match(t, /SEC 8-K contract/);
   assert.match(t, /BLOCKED by hard rules \(not leads\):.*BAD \(NOT HALAL/); assert.match(t, /DIL \(SEC danger filing: offering\)/); assert.match(t, /JUMP \(AVOID list/); assert.match(t, /PENNY \(under 1 USD\)/);
   assert.doesNotMatch(t, /- HOT /); assert.doesNotMatch(t, /- PENNY /); assert.doesNotMatch(t, /- BAD:/);
-  assert.match(t, /Closest: IG1.*Missing: its 5-year history test \(REJECTED\)/); assert.match(t, /RUNR up to \+60%.*gapped up before the open/);
+  assert.match(t, /Closest: IG1.*Missing: its minute-bar history test \(REJECTED\)/); assert.match(t, /RUNR up to \+60%.*gapped up before the open/);
   assert.match(t, /Top reason for silence: gapped up before the open \(5, timing problem\)/);
   assert.doesNotMatch(t.split(NOT_APPROVED).join(''), /\bBUY\b/);   // the only BUY word is inside the label assert.doesNotMatch(t, /index fund/i);
   assert.deepEqual(r.rows.map(x => x.panel + x.sym), ['BGOOD', 'ANEWSY']); assert.equal(r.rows[0].px, 3.4);
@@ -54,7 +54,7 @@ test('midday: an empty day still says 0 approved, no leads, and why; a late watc
   const t = buildMidday(snap({ firstMinute: '11:10', hits: [], early: [], movers: [], tally: {} }), {}).text;
   assert.match(t, /WATCHER STARTED LATE today \(11:10\)/);
   assert.doesNotMatch(t, /NO MARKET DATA/);
-  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Scanned 0 stocks \(5400/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. LIVE RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. APPROVED SIGNALS: 0 so far today\./);
+  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Received 0 stocks \(0/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. LIVE RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. APPROVED SIGNALS: 0 so far today\./);
 });
 test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. APPROVED SIGNALS: 2 tested alerts sent today/));
 
