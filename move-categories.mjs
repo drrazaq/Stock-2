@@ -13,8 +13,11 @@ export function classifyPotentialMove(move) {
 }
 export function categorizeCandidate({entry,validatedTarget,halalApproved=false,quoteFresh=false,spreadPct=null}) {
   if (!Number.isFinite(entry)||entry<=0||!Number.isFinite(validatedTarget)||validatedTarget<=entry) return {category:null,decision:'NO BUY',reason:'NO_VALIDATED_TARGET'};
-  const c=classifyPotentialMove(validatedTarget/entry-1);
-  if (c.category===null) return {...c,decision:'NO BUY'};
+  const move=validatedTarget/entry-1;
+  const c=classifyPotentialMove(move);
+  if (move < MOVE_CATEGORIES[0].min) return {...c,decision:'NO BUY',reason:'BELOW_CATEGORY_0'};
+  // Transition gaps (5-7%, 10-11%, 20-25%) stay visible in research.
+  // They must not become BUY signals just because the owner-defined bands have gaps.
   if (!halalApproved) return {...c,decision:'NO BUY',reason:'ZAD_NOT_CONFIRMED'};
   if (!quoteFresh||!Number.isFinite(spreadPct)||spreadPct<0) return {...c,decision:'NO BUY',reason:'EXECUTION_NOT_VERIFIED'};
   return {...c,decision:'RESEARCH CANDIDATE',reason:'REQUIRES_PROVEN_ENTRY_AND_RISK'};
