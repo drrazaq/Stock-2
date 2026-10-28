@@ -18,7 +18,7 @@ export function variantPass(v, c) {
   return (v === 'no_window' || win) && (v === 'no_chgMin' || lo) && (v === 'no_chgMax' || hi) && (v === 'no_score' || sc) && (v === 'no_dollarVol' || dv);
 }
 const r4 = (x) => (x === null || x === undefined || !Number.isFinite(x) ? null : +(+x).toFixed(4));
-export const spreadPct = (bid, ask) => (bid > 0 && ask >= bid ? r4((ask - bid) / ((ask + bid) / 2)) : null);
+export const spreadPct = (bid, ask) => (Number.isFinite(bid) && Number.isFinite(ask) && bid > 0 && ask >= bid ? r4((ask - bid) / (ask / 2 + bid / 2)) : null);
 
 export function createShadow({ day }) {
   const book = new Map();   // sym -> row

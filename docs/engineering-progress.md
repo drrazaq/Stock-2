@@ -20,7 +20,7 @@ Updated: 28 October 2026 (Kuwait). Development branch: `Stock2-safety-fixes`. PR
 ## Verified results and fixes
 
 - Baseline head: `27259f8621e0145bfa5b7e0974e79e21ed35f590`.
-- Baseline local tests: **1,170 passed, zero failures**. Post-fix: **1,178 passed, zero failures**, using `node --test test/*.test.mjs tests/*.test.mjs` on Node **24.22.1**. Remote workflows use Node 20; remote confirmation is a separate check.
+- Baseline local tests: **1,170 passed, zero failures**. Post-fix: **1,181 passed, zero failures**, using `node --test test/*.test.mjs tests/*.test.mjs` on Node **24.22.1**. Remote workflows use Node 20; remote confirmation is a separate check.
 - All **204** baseline root scripts passed syntax checks; all **78** workflow files parsed. See [full inventory](audit-inventory-2026-10-28.md). Static checks do not substitute for behavioral review.
 - Approved ignition alerts previously blocked explicit halal failures but allowed unknown ZAD marks to reach BUY wording. `zad-compliance.mjs` now requires an affirmative owner mark with a valid, nonfuture date within 90 days before the approved path; paper/research labels remain separate. Existing exclusion and SEC checks remain in force.
 - The pre-ignition outcome ledger was written by the watcher but absent from the workflow's explicit staged-file list. The save list now includes `data/pre-ignition-days.jsonl`.
@@ -32,8 +32,8 @@ Updated: 28 October 2026 (Kuwait). Development branch: `Stock2-safety-fixes`. PR
 | Commit | Status / evidence |
 |---|---|
 | `27259f8` (existing) | Tests passed: [40740182976](https://github.com/drrazaq/Stock-2/actions/runs/40740182976), [40740173362](https://github.com/drrazaq/Stock-2/actions/runs/40740173362); safety checks passed: [40740172984](https://github.com/drrazaq/Stock-2/actions/runs/40740172984) |
-| `c853ef4` | Published first repair batch; targeted safety CI [40750195609](https://github.com/drrazaq/Stock-2/actions/runs/40750195609) passed. Full runs pending at dashboard update. |
-| ZAD date-validation follow-up | 1,178 local tests passed; remote CI pending. Exact SHA is the commit containing this update. |
+| `c853ef4` | Published first repair batch; targeted safety CI [40750195609](https://github.com/drrazaq/Stock-2/actions/runs/40750195609) passed. Both full runs also passed (40750205327, 40750195524). |
+| ZAD date-validation follow-up | Published as `4c3e629`; both full tests and safety CI passed (runs 40750427084, 40750411512, 40750411506). |
 
 ## Findings that limit opportunity discovery
 
@@ -52,3 +52,7 @@ Blockers: final-commit CI; PR initially reported unmergeable, then mergeable aft
 Next work is ordered: publish verified safety repairs and confirm CI; complete provider/funnel and recommendation-path audits; implement branch-only research ingestion and runtime integration; then run pre-registered prospective/matched evaluation. Never relax halal, stale-data, liquidity, rejection or risk protections to manufacture candidates or passing results. Merge/deploy/live execution still require owner approval.
 
 Additional source review: `scan.mjs` sends practice orders only to a hardcoded paper endpoint or localhost test override; option labs inspected here use account endpoints for read-only contracts/calendar queries. This is a limited path review, not a completed audit of every execution route. `news-watch.mjs` and `premarket-check.mjs` still have direct Telegram sends that swallow failures, so acknowledgment tests for the ignition helper cannot establish all-channel delivery reliability.
+
+## Shadow evidence-integrity correction
+
+Related quote arithmetic defects also existed in `rank-models.mjs`, `shadow-stream.mjs` and `shadow-eval.mjs`. Corrected calculations reject nonfinite quotes, prevent midpoint overflow and never treat future/invalid quote ages as fresh observed fills. Unknown quotes retain the existing explicitly flagged assumed-spread model; invalid entry or delayed prices are unscored. Three regressions cover these defects. No model thresholds, costs, ranking criteria, `FROZEN` metadata, stored outcomes or verdicts were changed, and no experiment rerun was performed. Future evaluations must identify the corrected code version; never silently overwrite a first verdict. This follow-up has 1,181 passing local tests; remote CI is pending at this dashboard snapshot.

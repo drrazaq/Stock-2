@@ -75,3 +75,17 @@ test('(owner item 6) spread counted once: ask entry pays half going in, half com
   const s = score({ px: 10, bid: 9.99, ask: 10.01, qAgeSec: 5 }, { c0: 10.5 });
   assert.ok(s.dayStress < s.day); assert.equal(s.dayStress, 0.0398);
 });
+test('future or malformed quote ages never become observed executable research fills',()=>{
+ for(const qAgeSec of [-1,NaN,Infinity,'5',false,null,undefined]){
+  const en=entryOf({px:10,bid:9.99,ask:10.01,qAgeSec});
+  assert.equal(en.assumedSpread,true);assert.equal(en.price,10*1.0015);
+ }
+ assert.equal(entryOf({px:Infinity}),null);
+ assert.equal(entryOf({px:10,next:Infinity},true),null);
+ assert.equal(entryOf({px:1e308,bid:1e308,ask:1.7e308,qAgeSec:1}).assumedSpread,true);
+});
+test('shadow spread rejects nonfinite quotes and avoids midpoint overflow',async()=>{
+ const {spreadPct}=await import('../shadow-stream.mjs');
+ assert.equal(spreadPct(Infinity,Infinity),null);
+ assert.ok(spreadPct(1e308,1.7e308)>0.5);
+});

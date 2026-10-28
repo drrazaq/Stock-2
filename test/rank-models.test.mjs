@@ -50,3 +50,9 @@ test('SEC feed parser: form, CIK, items, accession and acceptance time; New York
   assert.deepEqual(a[0], { acc: '0001234567-26-000123', form: '8-K', cik: 1234567, name: 'ACME ROBOTICS INC', role: 'Filer', at: '2026-10-29T07:02:11-04:00', items: '1.01,9.01' });
   assert.equal(nyMinuteOf(a[0].at), 7 * 60 + 2); assert.equal(nyMinuteOf('2026-11-02T08:00:00-05:00'), 8 * 60);
 });
+test('malformed or overflowing quotes cannot manufacture a narrow-spread ranking advantage',()=>{
+ assert.equal(spr({bid:Infinity,ask:Infinity}),null);
+ assert.equal(spr({bid:'10',ask:'10.01'}),null);
+ assert.ok(spr({bid:1e308,ask:1.7e308})>0.5);
+ for(const model of [MODELS.B,MODELS.C])assert.equal(model.accept(e({bid:1e308,ask:1.7e308})),false);
+});

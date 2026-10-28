@@ -21,10 +21,10 @@ export const slip = (px) => (px < 5 ? 0.005 : 0.001);
 export const GATES = ['window', 'chgMin', 'chgMax', 'score', 'dollarVol'];
 const r4 = (x) => (x === null || x === undefined || !Number.isFinite(x) ? null : +x.toFixed(4));
 export function entryOf(e, delayed = false) {
-  if (!e || !(e.px > 0)) return null;
-  const spr = e.bid > 0 && e.ask >= e.bid ? (e.ask - e.bid) / ((e.ask + e.bid) / 2) : null, fresh = spr !== null && e.qAgeSec !== null && e.qAgeSec !== undefined && e.qAgeSec <= MAX_Q_AGE && spr < MAX_SPREAD;
+  if (!e || !Number.isFinite(e.px) || !(e.px > 0)) return null;
+  const spr = Number.isFinite(e.bid) && Number.isFinite(e.ask) && e.bid > 0 && e.ask >= e.bid ? (e.ask - e.bid) / (e.ask / 2 + e.bid / 2) : null, fresh = spr !== null && Number.isFinite(e.qAgeSec) && e.qAgeSec >= 0 && e.qAgeSec <= MAX_Q_AGE && spr < MAX_SPREAD;
   const half = +(fresh ? spr / 2 : assumedHalf(e.px)).toFixed(6), base = delayed ? e.next : (fresh ? null : e.px);
-  if (delayed && !(base > 0)) return null;
+  if (delayed && (!Number.isFinite(base) || !(base > 0))) return null;
   return { price: delayed ? base * (1 + half) : fresh ? e.ask : e.px * (1 + half), half, assumedSpread: !fresh };
 }
 export const netStress = (en, exitPx) => (en && exitPx > 0 ? r4(exitPx * (1 - en.half - slip(en.price)) / (en.price * (1 + slip(en.price))) - 1 - FEE) : null);

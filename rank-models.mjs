@@ -24,7 +24,7 @@ import { score, stats, entryOf } from './shadow-eval.mjs';
 import { NEG_ITEMS, DIL_ITEMS, itemsOf } from './early-alerts.mjs';
 
 export const FROZEN = { date: '2026-10-28', evalFrom: '2026-10-29', cap: 5, minSessions: 20, minPicks: 50, controlsPerDay: 10 };
-export const spr = (r) => (r.bid > 0 && r.ask >= r.bid ? (r.ask - r.bid) / ((r.ask + r.bid) / 2) : null);
+export const spr = (r) => (Number.isFinite(r.bid) && Number.isFinite(r.ask) && r.bid > 0 && r.ask >= r.bid ? (r.ask - r.bid) / (r.ask / 2 + r.bid / 2) : null);
 export const hash = (s) => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
 export const MODELS = {
   A: { stream: 'E', name: 'existing: first come', accept: () => true },
