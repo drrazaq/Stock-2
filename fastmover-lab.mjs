@@ -285,7 +285,7 @@ fs.writeFileSync(LIVE, JSON.stringify({ updated: new Date().toISOString(), day: 
 console.log('fast-mover live: ' + today.length + ' paper candidates for ' + nextDay + ', ' + list.length + ' from passed rules; paper record: ' + RULES.map(r => r.id + ' ' + (paper[r.id].n ? paper[r.id].n + ' / ' + pc(paper[r.id].avg) : '0')).join(', '));
 if (list.length && env.TG_TOKEN && env.TG_CHAT) {
   const name = (id) => (LAB.rules[id] || {}).name || id, t = (id) => (LAB.rules[id] || {}).results;
-  const msg = ['DAY-TRADE LIST for ' + nextDay + ' (rules that passed the 5-year fast-mover test; paper keeps checking them)', '',
+  const msg = ['DAY-TRADE LIST for ' + nextDay + ' (rules that passed the minute-bar ignition test ' + (LAB?.window || 'window not recorded') + '; paper keeps checking them)', '',
     ...list.map(x => x.sym + ' (closed ' + x.prev + ', ' + pc(x.chg) + ' yesterday): BUY AT THE OPEN only if it opens between ' + x.lo + ' and ' + x.hi + '. STOP 8% under your price. SELL AT THE CLOSE (before 11 pm Kuwait), same day.\n  rule: ' + name(x.rule) + ' | tested: ' + (t(x.rule) ? Math.round(t(x.rule).newer.win * 100) + '% won, average ' + pc(t(x.rule).newer.avg) + ' a trade' : 'n/a')),
     '', 'Check ZAD first. 1,000 USD per trade at most: these are the riskiest trades in the system. Not financial advice, not a halal ruling.'];
   await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
