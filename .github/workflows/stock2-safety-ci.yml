@@ -22,4 +22,4 @@ jobs:
           node --check paper-gates.mjs
           node --check session-coverage.mjs
       - name: Run targeted safety regression tests
-        run: node --test tests/quote-freshness-safety.test.mjs tests/paper-gates-safety.test.mjs tests/session-coverage.test.mjs
+        run: node --test tests/quote-freshness-safety.test.mjs tests/paper-gates-safety.test.mjs tests/session-coverage.test.mjs tests/ignition-replay.test.mjs
