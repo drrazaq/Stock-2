@@ -8,26 +8,6 @@
    "qty": 66,
    "since": "2026-10-16"
   },
-  "EFXT": {
-   "kind": "quick",
-   "q": "low",
-   "maxHold": 10,
-   "stop": 21.5427,
-   "kindName": "quick trade",
-   "entry": 24.39525,
-   "qty": 40,
-   "since": "2026-10-21"
-  },
-  "TEVA": {
-   "kind": "quick",
-   "q": "down",
-   "maxHold": 5,
-   "stop": 38.3582,
-   "kindName": "quick trade",
-   "entry": 40.117083,
-   "qty": 24,
-   "since": "2026-10-22"
-  },
   "WGO": {
    "kind": "entry",
    "exitMA": 20,
@@ -56,26 +36,7 @@
   }
  },
  "pendingBuy": {},
- "pendingExit": {
-  "EFXT": {
-   "id": "5100a7ed-a08f-4766-803b-92973f05ee59",
-   "entry": 24.39525,
-   "qty": 40,
-   "kind": "quick",
-   "kindName": "quick trade",
-   "why": "rule exit (5 day average)",
-   "since": "2026-10-21"
-  },
-  "TEVA": {
-   "id": "63b7fcb8-b46e-4c0a-9531-cc29396f0e05",
-   "entry": 40.117083,
-   "qty": 24,
-   "kind": "quick",
-   "kindName": "quick trade",
-   "why": "rule exit (5 day average)",
-   "since": "2026-10-22"
-  }
- },
+ "pendingExit": {},
  "closed": [
   {
    "sym": "ALNT",
@@ -146,6 +107,30 @@
    "why": "time limit",
    "in": "2026-10-13",
    "out": "2026-10-23"
+  },
+  {
+   "sym": "EFXT",
+   "kind": "quick",
+   "engine": "quick trade",
+   "entry": 24.39525,
+   "exit": 24.18,
+   "pct": -0.00882,
+   "net": -0.01497,
+   "why": "rule exit (5 day average)",
+   "in": "2026-10-21",
+   "out": "2026-10-28"
+  },
+  {
+   "sym": "TEVA",
+   "kind": "quick",
+   "engine": "quick trade",
+   "entry": 40.117083,
+   "exit": 39.623333,
+   "pct": -0.01231,
+   "net": -0.01854,
+   "why": "rule exit (5 day average)",
+   "in": "2026-10-22",
+   "out": "2026-10-28"
   }
  ],
  "start": {
@@ -153,7 +138,7 @@
   "equity": 100000
  },
  "equity": {
-  "d": "2026-10-27",
-  "equity": 99797.62
+  "d": "2026-10-28",
+  "equity": 99833.84
  }
 }
