@@ -179,7 +179,7 @@ Never print, paste or commit a key.
 2. **Nothing moves.**
    - The bot, the nightly scan and all labs run on **GitHub Actions**, not in a chat, so they keep working.
    - Keys stay in GitHub secrets. You don't need them on your computer, except to run a lab locally (optional).
-3. **Scheduled research** (Agents A/B/C and the daily researcher) is set up as claude.ai scheduled tasks on your account. They keep running. To run one by hand in Claude Code, say for example: *"Run Agent C (Crowd) using the league prompts"*. Copy the project docs "Stock-2 - Agent prompts (league)" and "Agent prompts UPDATE (22 Oct 2026)" into a `docs/` folder first, because Claude Code cannot read claude.ai project docs.
+3. **Scheduled research** (Agents A/B/C and the daily researcher) is set up as claude.ai scheduled tasks on your account. They keep running. To run one by hand in Claude Code, say for example: *"Run Agent C (Crowd) using the league prompts"*. The agent prompts are already in the repo: `docs/agent-prompts-league.md` and `docs/agent-prompts-update-22oct.md`.
 4. **First message to Claude Code:** *"Read CLAUDE.md, run the tests, and tell me the system health."* Then forward any bot message, such as SYSTEM HEALTH or a question, just like here.
 
 ## 11. Open items
