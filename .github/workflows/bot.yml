@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write   # (28 Oct) the watcher guard may start ignition.yml when GitHub has not started it by 9:10 New York
 concurrency: bot
 jobs:
   reply:
@@ -38,6 +39,7 @@ jobs:
             if [ $((now - last_full)) -ge 300 ]; then
               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages
               node scan.mjs >> run.log 2>&1 || echo "full check failed" >> run.log
+              node watcher-guard.mjs >> run.log 2>&1 || echo "watcher guard failed" >> run.log   # (28 Oct) is the live watcher running? start it if not
               last_full=$now
             else
               # in between: wait up to 25 seconds for a message and answer it at once
@@ -48,6 +50,7 @@ jobs:
           done
         env:
           MODE: chat
+          GITHUB_TOKEN: ${{ github.token }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}

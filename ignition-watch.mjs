@@ -30,8 +30,9 @@ const pc = (x) => x === null || x === undefined ? 'n/a' : (x >= 0 ? '+' : '') + 
 const nyDay = () => new Date(Date.now() + nyOffset(new Date().toISOString().slice(0, 10)) * 60000).toISOString().slice(0, 10);
 const nyMin = () => { const d = new Date(Date.now() + nyOffset(nyDay()) * 60000); return d.getUTCHours() * 60 + d.getUTCMinutes(); };
 const day = env.IG_DAY || nyDay(), wd = new Date(day + 'T12:00:00Z').getUTCDay(), START = Date.now(), MAXMS = +(env.IG_RUN_MIN || 345) * 60000;
-let loops = 0;   // test hook: IG_FAKE_MIN starts a fake clock, IG_FAKE_STEP moves it that many minutes each check
+let loops = 0, PROC_START = null;   // test hook: IG_FAKE_MIN starts a fake clock, IG_FAKE_STEP moves it that many minutes each check
 const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loops * +env.IG_FAKE_STEP : Math.floor((Date.now() - START) / 60000)) : nyMin();
+PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
 const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
 if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
@@ -242,7 +243,7 @@ fs.writeFileSync('data/ignition-live.json', JSON.stringify({ version: IG_VERSION
 // at the open AND not gapped 20%+ before 9:25 (a gap happens before any feed can help). Real-time cannot fix the rest.
 const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISIBLE_TOO_LATE', 'VOLUME_FIGURE_LATE']), dataMiss = missed.filter(x => DATA_CODES.has(x.code)),
   gapLike = (x) => (x.preMarketGap !== null && x.preMarketGap >= 0.2) || (x.openGap !== null && x.openGap >= 0.10) || (/^0?9:3[0-5]/.test(String(x.firstSeen)) && x.firstSeenUp >= 0.10), feedFix = dataMiss.filter(x => !gapLike(x));
-fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
+fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, procStart: PROC_START, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
 { const ewl = Object.values(earlyWave).sort((x, y) => y.score - x.score); if (ewl.length) fs.appendFileSync('data/early-wave-obs.jsonl', JSON.stringify({ day, mode, src, n: ewl.length, top: ewl.slice(0, 300) }) + '\n'); }   // judged later against matched stocks; not a signal
 fs.appendFileSync('data/ignition-paper.jsonl', triggers.filter(t => !t.logged).map(t => JSON.stringify(t) + '\n').join(''));
 // OPPORTUNITY RADAR same-day score (pre-registered in radar-v3-core.mjs): each line listed at 11:15 gets its last watched price and the

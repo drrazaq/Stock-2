@@ -53,6 +53,10 @@ for (const [f, name, how, lim, check] of CHECKS) {
   const age = lim.biz ? bizHours(t) : (now - t) / 864e5, stale = lim.biz ? age > lim.biz : age > lim.days;
   if (stale) problems.push(name + ': last result ' + new Date(t).toISOString().slice(0, 16).replace('T', ' ') + ' UTC; it should update ' + how + '. The job is probably failing.');
   else { const c = check ? check(j) : null; if (c) problems.push(name + ': ' + c); else ok.push(name); } }
+// WATCHER START (28 Oct, owner item 4): the live watcher must be watching by 9:35 New York. GitHub's cron started it 9:38-9:49 every day and
+// 11:10 on 26 Oct; the watcher guard (watcher-guard.mjs, in the bot job) now starts it when GitHub has not. This reads the last watched day.
+try { const L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n'), j = JSON.parse(L[L.length - 1]);
+  if (j.firstMinute && j.firstMinute > '09:35') problems.push('live watcher started late on ' + j.day + ': first watched minute ' + j.firstMinute + ' New York' + (j.procStart ? ' (process started ' + j.procStart + ')' : '') + '; it should watch from 9:30. The open was not watched.'); else ok.push('live watcher start'); } catch (e) {}
 // MISSING SCRIPTS: every 'node X.mjs' named in a workflow must exist. A file deleted during an upload (shares.mjs, 16 Oct 2026) made
 // a 'continue on error' step fail silently every day; this catches it the same evening.
 try { const W = '.github/workflows', seen = new Set();
