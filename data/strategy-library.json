@@ -31841,7 +31841,7 @@
    "name": "Order backlog (RPO) growth in the top 20%, hold 3 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-28 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "Buy the next open after a 10-Q/10-K whose remaining performance obligations (contracted backlog, SEC XBRL) grew year on year by a top-20% amount (percentile >= 0.80 vs all backlog-growth filings of the prior 365 days; prior-year backlog 5M USD+; filed within 120 days of the quarter end); stock liquid; sell the close 63 sessions later. Measure, event timing, ranking and data rule fixed in research-core.mjs (IDEA 4) before any run.",
    "sources": [
     "https://doi.org/10.1023/A:1027364031775",
@@ -31849,7 +31849,45 @@
     "https://doi.org/10.1007/s11156-024-01248-6"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026."
+   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026.",
+   "tested": "2026-10-27",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     526,
+     619
+    ],
+    "avg": [
+     -0.0309,
+     0.0572
+    ],
+    "stress": [
+     -0.0349,
+     0.0532
+    ],
+    "edge": [
+     -0.0081,
+     0.0167
+    ],
+    "vsOwn": [
+     -0.1069,
+     -0.0072
+    ],
+    "noTop2": [
+     -0.0341,
+     0.0525
+    ],
+    "tBlock": [
+     -0.44,
+     0.72
+    ],
+    "win": [
+     0.4297,
+     0.5493
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.44 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.72 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-RPO-126",
@@ -31857,7 +31895,7 @@
    "name": "Order backlog (RPO) growth in the top 20%, hold 6 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-28 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-RPO-63, hold 126 sessions. Measure, event timing, ranking and data rule fixed in research-core.mjs (IDEA 4) before any run.",
    "sources": [
     "https://doi.org/10.1023/A:1027364031775",
@@ -31865,7 +31903,45 @@
     "https://doi.org/10.1007/s11156-024-01248-6"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026."
+   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026.",
+   "tested": "2026-10-27",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     377,
+     398
+    ],
+    "avg": [
+     -0.038,
+     0.0861
+    ],
+    "stress": [
+     -0.042,
+     0.0821
+    ],
+    "edge": [
+     -0.0149,
+     -0.0034
+    ],
+    "vsOwn": [
+     -0.1283,
+     -0.0443
+    ],
+    "noTop2": [
+     -0.0438,
+     0.077
+    ],
+    "tBlock": [
+     -0.56,
+     -1.1
+    ],
+    "win": [
+     0.4615,
+     0.5402
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.56 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.1 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-RPO-LOW63",
@@ -31873,7 +31949,7 @@
    "name": "AVOID check: order backlog (RPO) growth in the bottom 20%, 63 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-10-28 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: stocks whose backlog growth is among the 20% lowest (percentile <= 0.20), bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves. Never a buy. Measure, event timing, ranking and data rule fixed in research-core.mjs (IDEA 4) before any run.",
    "sources": [
     "https://doi.org/10.1023/A:1027364031775",
@@ -31881,7 +31957,45 @@
     "https://doi.org/10.1007/s11156-024-01248-6"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026."
+   "note": "Daily researcher 2026-10-28: order backlog (remaining performance obligations, ASC 606) from the official SEC XBRL company facts. Rajgopal, Shevlin and Venkatachalam (2003, RAST) find the market OVERweights backlog (hedge against high-backlog firms); practitioners treat RPO growth as a buy signal; both directions written before any run (buy top 20% growth; avoid check bottom 20%). New information family, not in the library. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen; forward paper from 28 Oct 2026.",
+   "tested": "2026-10-27",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "n": [
+     478,
+     500
+    ],
+    "avg": [
+     -0.0104,
+     0.0234
+    ],
+    "stress": [
+     -0.0144,
+     0.0194
+    ],
+    "edge": [
+     0.0023,
+     -0.0161
+    ],
+    "vsOwn": [
+     -0.0743,
+     0.0148
+    ],
+    "noTop2": [
+     -0.0188,
+     0.0165
+    ],
+    "tBlock": [
+     0.11,
+     -0.84
+    ],
+    "win": [
+     0.4519,
+     0.494
+    ],
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
   }
  ]
 }

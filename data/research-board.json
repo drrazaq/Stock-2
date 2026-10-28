@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-27T23:15:39.180Z",
+ "generatedAt": "2026-10-28T09:24:20.126Z",
  "lastClose": "2026-10-27",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -282,6 +282,99 @@
    "fiveYear": {
     "verdict": "REJECTED",
     "why": "block t -0.06 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -2.78 under 2.5 in the newer half"
+   }
+  },
+  "RQ-RPO-63": {
+   "name": "Order backlog (RPO) growth in the top 20%, hold 3 months",
+   "kind": "buy",
+   "hold": 63,
+   "family": "rpo",
+   "dataOk": true,
+   "signals": 2,
+   "waiting": 2,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.44 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.72 under 2.5 in the newer half"
+   }
+  },
+  "RQ-RPO-126": {
+   "name": "Order backlog (RPO) growth in the top 20%, hold 6 months",
+   "kind": "buy",
+   "hold": 126,
+   "family": "rpo",
+   "dataOk": true,
+   "signals": 2,
+   "waiting": 2,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.56 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.1 under 2.5 in the newer half"
+   }
+  },
+  "RQ-RPO-LOW63": {
+   "name": "AVOID check: order backlog (RPO) growth in the bottom 20%, 63 sessions",
+   "kind": "avoid",
+   "hold": 63,
+   "family": "rpo",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
    }
   }
  }
