@@ -1,8 +1,12 @@
 import fs from 'node:fs';
 // Existing intraday state, not a new permission or external service. Never store bodies.
+export function validAlertBook(book){
+ const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
+ return object(book)&&object(book.sent)&&Object.values(book.sent).every(x=>x===1||x===true)&&(book.delivery===undefined||object(book.delivery)&&Object.values(book.delivery).every(x=>object(x)&&['PENDING','UNKNOWN','ACK'].includes(x.status)));
+}
 export function readAlertState(file,day){
  let book;if(!fs.existsSync(file))book={day,sent:{}};else book=JSON.parse(fs.readFileSync(file,'utf8'));
- if(!book||typeof book!=='object'||Array.isArray(book)||!book.sent||typeof book.sent!=='object'||Array.isArray(book.sent)||book.delivery!==undefined&&(!book.delivery||typeof book.delivery!=='object'||Array.isArray(book.delivery)))throw Error('ALERT_STATE_UNREADABLE');
+ if(!validAlertBook(book))throw Error('ALERT_STATE_UNREADABLE');
  if(book.day!==day){book.day=day;book.sent={};book.delivery={};}book.delivery||={};return book;
 }
 export function saveAlertState(file,book){
@@ -11,6 +15,7 @@ export function saveAlertState(file,book){
 }
 export const alertAvailable=(book,key)=>!book.sent[key]&&!['PENDING','UNKNOWN','ACK'].includes(book.delivery?.[key]?.status);
 export async function deliverAlertOnce({book,keys,send,save,at=new Date().toISOString()}){
+ if(!validAlertBook(book)||!Array.isArray(keys)||keys.some(k=>typeof k!=='string'||!k))return {ok:false,reason:'INVALID_DELIVERY_STATE'};
  if(!keys.length||keys.some(k=>!alertAvailable(book,k)))return {ok:false,reason:'ALREADY_RESERVED_OR_ACKED'};
  for(const key of keys)book.delivery[key]={status:'PENDING',at};
  try{save();}catch{return {ok:false,reason:'INTENT_NOT_DURABLE'};}

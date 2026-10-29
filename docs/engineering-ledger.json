@@ -4,8 +4,8 @@
   "pr": 1,
   "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
   "inventory": {
-    "modules": 206,
-    "workflows": 78,
+    "modules": 221,
+    "workflows": 84,
     "datasetsChecked": 335,
     "datasetFailures": 0,
     "missingImportModules": 0
@@ -1885,7 +1885,7 @@
     ]
   },
   "regularQuoteEvidenceMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_HOSTED_ON_8446_PENDING_ADDITIONAL_CHECKPOINT_GUARD",
     "scope": "Recorder integrated into watcher using existing normalized BBOs; no new provider/API/order/Telegram requests",
     "limits": {
       "events": 1000,
@@ -1896,6 +1896,94 @@
     "identity": "Optional public research identity input, first-ingestion timestamps retained; missing/ambiguous identity never invented",
     "liquidity": "Explicit independently clocked dollar volume required; last-price times aggregate volume is not substituted",
     "prospectiveCases": 0,
+    "acceptanceCredit": 0,
+    "verifiedSource": "8446e809478f0feb2789e712cf13917b76a40f94",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854951903/job/123383611802"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854960387/job/123383511455"
+      },
+      {
+        "name": "test",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854960381/job/123383511343"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854960387/job/123383511334"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854960387/job/123383510994"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854960346/job/123383510866"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854960386/job/123383510842"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854960349/job/123383510804"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854951903/job/123383483915"
+      },
+      {
+        "name": "safety",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854951903/job/123383483302"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854951895/job/123383483148"
+      },
+      {
+        "name": "test",
+        "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854951879/job/123383482990"
+      }
+    ]
+  },
+  "catalystOwnerGateMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "defect": "catalystLines accepted any owner status except fail, allowing missing/stale/third-party marks to generate unconditional BUY lines; calendar repeated derived halal labels",
+    "fix": "Affirmative current owner ZAD status required; calendar wording uses current owner policy only",
+    "remaining": "All other recommendation paths and cached rendered text still require full audit; no full-path acceptance credit",
+    "acceptanceCredit": 0
+  },
+  "nestedDeliveryStateMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "defect": "Malformed nested delivery status could be treated available; corrupt sent markers were not structurally rejected",
+    "fix": "Validate nested states and ACK markers before reset/reservation; block all network on malformed book",
     "acceptanceCredit": 0
   }
 }

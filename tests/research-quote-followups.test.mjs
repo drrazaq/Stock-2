@@ -47,3 +47,9 @@ test('premarket identity availability is retained before the first regular-sessi
  captureResearchQuotes(s,{events:[],rows:[{...row,qt:Date.parse(open)}],identities:[identity],cutoff:open});
  assert.equal(Object.values(s.metadata)[0].asOf,pre);
 });
+
+test('malformed checkpoint components fail before mutating observed evidence',()=>{
+ for(const change of [s=>s.events=[],s=>s.counters.cycles=null,s=>s.lastCycleAt='invalid',s=>s.sourceStatus=null]){
+  const state=quoteEvidenceState();change(state);const before=JSON.stringify(state);assert.throws(()=>captureResearchQuotes(state,{events:[event],rows:[row],cutoff:at}),/INVALID_QUOTE_EVIDENCE_INPUT/);assert.equal(JSON.stringify(state),before);
+ }
+});

@@ -20,7 +20,8 @@ export function readResearchIdentities(readText){
  catch(error){return {records:[],status:error?.code==='ENOENT'?'MISSING':'MISSING_OR_MALFORMED'};}
 }
 export function captureResearchQuotes(state,{events,rows,identities=[],identityStatus='UNVERIFIED',cutoff,maxEvents=1000,maxSymbols=250,maxQuotes=30000}){
- const now=stamp(cutoff);if(!Number.isFinite(now)||!state||state.version!==1||!state.events||!state.quotes||!state.metadata||!state.counters||!Array.isArray(events)||!Array.isArray(rows)||!Array.isArray(identities))throw Error('INVALID_QUOTE_EVIDENCE_INPUT');
+ const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
+ const now=stamp(cutoff);if(!Number.isFinite(now)||!object(state)||state.version!==1||!['events','quotes','metadata','counters','sourceStatus'].every(k=>object(state[k]))||!(state.lastCycleAt===null||Number.isFinite(stamp(state.lastCycleAt)))||Object.keys(quoteEvidenceState().counters).some(k=>!Number.isInteger(state.counters[k])||state.counters[k]<0)||!Array.isArray(events)||!Array.isArray(rows)||!Array.isArray(identities)||typeof identityStatus!=='string'||!identityStatus||identityStatus.length>80||['__proto__','constructor','prototype'].includes(identityStatus))throw Error('INVALID_QUOTE_EVIDENCE_INPUT');
  for(const [n,limit]of [[maxEvents,1000],[maxSymbols,250],[maxQuotes,30000]])if(!Number.isInteger(n)||n<1||n>limit)throw Error('INVALID_QUOTE_EVIDENCE_BUDGET');
  if(Number.isFinite(stamp(state.lastCycleAt))&&now<=stamp(state.lastCycleAt)){state.counters.duplicateOrRetrograde++;return [];}
  state.lastCycleAt=cutoff;state.counters.cycles++;state.sourceStatus[identityStatus]=(state.sourceStatus[identityStatus]||0)+1;

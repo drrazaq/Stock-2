@@ -22,3 +22,10 @@ test('failed persistence blocks the network and malformed stored data never sile
  let calls=0;const book={sent:{},delivery:{}};assert.equal((await deliverAlertOnce({book,keys:['key'],save:()=>{throw Error('disk');},send:async()=>{calls++;}})).reason,'INTENT_NOT_DURABLE');assert.equal(calls,0);
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'s2-alert-')),file=path.join(dir,'state.json');try{fs.writeFileSync(file,'{broken');assert.throws(()=>readAlertState(file,'2026-10-29'));assert.equal(fs.readFileSync(file,'utf8'),'{broken');}finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
+
+test('malformed nested delivery markers cannot reset uncertainty or permit network sends',async()=>{
+ for(const book of [{sent:{},delivery:{key:{}}},{sent:{},delivery:{key:{status:'unexpected'}}},{sent:{key:'unverified'},delivery:{}}]){
+  let calls=0;const r=await deliverAlertOnce({book,keys:['key'],save:()=>{},send:async()=>{calls++;return {ok:true};}});assert.equal(r.reason,'INVALID_DELIVERY_STATE');assert.equal(calls,0);
+ }
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'s2-invalid-nested-')),file=path.join(dir,'state.json');try{fs.writeFileSync(file,JSON.stringify({day:'2026-10-29',sent:{},delivery:{key:{status:'unexpected'}}}));assert.throws(()=>readAlertState(file,'2026-10-30'),/UNREADABLE/);}finally{fs.rmSync(dir,{recursive:true,force:true});}
+});

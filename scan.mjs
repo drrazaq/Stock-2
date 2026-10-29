@@ -426,7 +426,7 @@ function catalystLines(sig, pos) { const C = readJson0('data/catalyst-today.json
   const tiers = { 'CAT-RUN1': catalystTier('CAT-RUN1'), 'CAT-NEWS1': catalystTier('CAT-NEWS1') }; if (!tiers['CAT-RUN1'] && !tiers['CAT-NEWS1']) return [];
   const after = (sig && sig.session) || ny(Date.now()).d, next = (C.sessions || []).find(d => d > after); if (!next) return [];
   const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
-  const ok = (sym, hal) => sym && hal !== 'fail' && !bad.has(sym) && myHalal(sym) !== 'fail' && !(lot[sym] >= 0.15) && !held.has(sym);
+  const ok = (sym, hal) => sym && hal !== 'fail' && !bad.has(sym) && myHalal(sym) === 'ok' && !(lot[sym] >= 0.15) && !held.has(sym);
   const run = tiers['CAT-RUN1'] ? (C.upcoming || []).filter(u => u.buy === next && !u.entryPassed && !u.blocked && ok(u.sym, u.halal)).slice(0, 3) : [];
   const nw = tiers['CAT-NEWS1'] ? (C.news || []).filter(u => u.buy === next && ok(u.sym, u.halal)).slice(0, 3) : [];
   if (!run.length && !nw.length) return [];
@@ -445,7 +445,7 @@ function catalystCalendarText() { const C = readJson0('data/catalyst-today.json'
   return ['CATALYST CALENDAR (from company 8-Ks: FDA decision dates, advisory committees, expected trial readouts; week of ' + C.lastClose + ')', '',
     'Rules: run-up into the date (CAT-RUN1) ' + v('CAT-RUN1') + '; news build-up (CAT-NEWS1) ' + v('CAT-NEWS1') + '.', qual ? 'A rule qualified: its buys appear in ACTIONS on their buy day.' : 'INFORMATION ONLY: no catalyst rule passed its test, so nothing here is a buy.', '',
     up.length ? 'Coming up (buy day = 30 sessions before, sell day = 2 sessions before):' : 'No upcoming dated catalyst passes the gates (price, volume, no recent share sale, no 15% one-day jump).',
-    ...up.map(u => '- ' + u.sym + ': ' + kind(u) + ' ' + u.event + (u.precision !== 'day' ? ' (earliest day of the stated ' + u.precision + ')' : '') + '; buy day ' + u.buy + ', sell day ' + u.sell + (u.halal === 'ok' ? ' (halal per ZAD)' : ' (check ZAD)')),
+    ...up.map(u => '- ' + u.sym + ': ' + kind(u) + ' ' + u.event + (u.precision !== 'day' ? ' (earliest day of the stated ' + u.precision + ')' : '') + '; buy day ' + u.buy + ', sell day ' + u.sell + (myHalal(u.sym) === 'ok' ? ' (current owner ZAD mark)' : ' (CHECK ZAD — NOT AN APPROVED BUY)')),
     ...(inWin.length ? ['', 'Already inside the window (buy day passed): ' + inWin.map(u => u.sym + ' ' + kind(u) + ' ' + u.event).join(', ') + '.'] : []),
     '', 'Never hold through the decision day: the result is a coin toss that can halve a small company. Research only.'].join('\n'); }
 // CHAIN DECODER (owner, 23 Oct 2026: "follow the source"; chain-decoder.mjs, pre-registered CHAIN-MOM1 / CHAIN-DEMAND1 / CHAIN-LAG1 /
