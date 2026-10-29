@@ -51,8 +51,7 @@ Expected GitHub-reported ZIP digest (not independently checked by the engineerin
 Stop on a digest mismatch. Extract only the named challenge from the GitHub ZIP:
 
 ```sh
-mkdir encrypted-key-proof
-unzip -p key-proof.zip key-check.txt.enc > encrypted-key-proof/key-check.txt.enc
+mkdir encrypted-key-proof && unzip -p key-proof.zip key-check.txt.enc > encrypted-key-proof/key-check.txt.enc
 ```
 
 Do not paste the encrypted file into chat. If ZIP extraction fails, fix the download first; do not enter a key.
