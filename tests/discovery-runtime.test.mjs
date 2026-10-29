@@ -102,3 +102,15 @@ test('null derived records do not poison other valid records; oversized input re
  const r=collectDiscovery({readText:read(files),cutoff});assert.equal(r.observations.length,8);assert.equal(r.sources.find(x=>x.lane==='SEC_EVENT').rejected,1);assert.equal(r.sources.find(x=>x.lane==='MARKET_DISLOCATION').rejected,1);
  const huge=collectDiscovery({readText:()=> 'x'.repeat(8*1024*1024+1),cutoff});assert.ok(huge.sources.slice(1).every(x=>x.status==='INPUT_BUDGET_OR_TYPE_BLOCKED'));
 });
+
+test('missing comeback method collection is unavailable, distinct from observed empty methods',()=>{
+ for(const methods of [undefined,null,[],42,'']){
+  const files={'data/comeback-today.json':{generatedAt, ...(methods!==undefined?{methods}:{})}},r=collectDiscovery({readText:read(files),cutoff});assert.equal(r.sources.find(s=>s.lane==='MARKET_DISLOCATION').status,'MALFORMED');assert.equal(r.observations.length,0);
+ }
+ const empty=collectDiscovery({readText:read({'data/comeback-today.json':{generatedAt,methods:{}}}),cutoff});assert.equal(empty.sources.find(s=>s.lane==='MARKET_DISLOCATION').status,'READ');
+});
+test('explicit malformed generated clocks cannot be hidden by a valid fallback update clock',()=>{
+ for(const generatedAt of [null,'',0,false,'bad']){
+  const r=collectDiscovery({readText:read({'data/events-recent.json':{generatedAt,updated:'2026-10-29T13:30:00Z',events:[{sym:'AAA',p:'2026-10-29T13:00:00Z'}]}}),cutoff});assert.equal(r.observations.length,0);assert.equal(r.sources.find(s=>s.lane==='SEC_EVENT').status,'MISSING_OUTPUT_TIMESTAMP');
+ }
+});

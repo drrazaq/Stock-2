@@ -30,3 +30,7 @@ The real SEC child-process producer/export/consumer path now retains accession a
 ## FDA and final report continuation
 
 Actual producer failures/invalid schemas no longer set a weekly successful FDA marker. Partial results preserve valid siblings but remain retryable. Future markers do not suppress a fetch; all FDA attempts count. Source status is retained through discovery reliability and ranked observations preserve accession/origin/upstream/capture fields. Materiality and independent-source authentication are not inferred by labels. Fourteen real caller cases pass; original source fails seven FDA cases while seven SEC controls pass. Complete source revision/body bounds and cross-job provenance still require work; see remaining-engineering-resume.md.
+
+## Source-shape caller regression
+
+Missing Comeback method collections no longer imply observed empty results. Malformed explicitly supplied generated clocks cannot be hidden by a valid updated clock. Fourteen runtime caller cases pass; original source fails two and passes twelve controls. This is partial contract progress, not full source/revision authentication.

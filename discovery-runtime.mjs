@@ -27,7 +27,7 @@ function rowsOf(lane,doc) {
   case 'INDUSTRY_RIPPLE':return doc.todayMovers||[];
   case 'SUPPLY_SHIFT':return doc.now||[];
   case 'TECHNICAL_BUILDUP':return doc.buys||[];
-  case 'MARKET_DISLOCATION':if(doc.methods!==undefined&&!object(doc.methods))throw Error('invalid methods');return Object.entries(doc.methods||{}).flatMap(([rule,m])=>!object(m)?[null]:m.newSignals===undefined?[]:Array.isArray(m.newSignals)?m.newSignals.map(r=>object(r)?{...r,rule}:null):[null]);
+  case 'MARKET_DISLOCATION':if(!object(doc.methods))throw Error('invalid methods');return Object.entries(doc.methods||{}).flatMap(([rule,m])=>!object(m)?[null]:m.newSignals===undefined?[]:Array.isArray(m.newSignals)?m.newSignals.map(r=>object(r)?{...r,rule}:null):[null]);
   default:return [];
  }
 }
@@ -53,7 +53,7 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
     }
     if(!parsedObjects&&preRejected){sources.push({...source,status:'MALFORMED',rows:0,inputRows,rejected:preRejected,malformedLines,truncated:inputTruncated,rejectionReasons});continue;}
     rows.sort((a,b)=>b.t-a.t);
-   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt||doc.updated;rows=rowsOf(source.lane,doc);if(source.lane==='SEC_EVENT'){producerStatus={};for(const name of ['SEC','OPENFDA']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN'].includes(v.status)?v.status:'UNKNOWN'};}}}
+   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt!==undefined?doc.generatedAt:doc.updated;rows=rowsOf(source.lane,doc);if(source.lane==='SEC_EVENT'){producerStatus={};for(const name of ['SEC','OPENFDA']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN'].includes(v.status)?v.status:'UNKNOWN'};}}}
    if(!Array.isArray(rows))throw Error('invalid rows');
    if(source.lane!=='NEWS_CATALYST'&&!clock(generated)){sources.push({...source,status:'MISSING_OUTPUT_TIMESTAMP',rows:rows.length});continue;}
    if(generated&&(Date.parse(generated)>at||at-Date.parse(generated)>source.hours*3600000)){sources.push({...source,status:Date.parse(generated)>at?'FUTURE':'STALE',rows:rows.length});continue;}
