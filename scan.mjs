@@ -1,3 +1,4 @@
+import {telegramFetch,splitTelegramText} from './telegram-delivery.mjs';
 // Cloud scanner for the US stock signal board. Runs on GitHub Actions (free), so it works while your phone is off.
 // It reuses the exact rules inside index.html, writes data/signals.json and an append-only journal, and sends Telegram alerts.
 // Read only: it holds no broker login and cannot trade.
@@ -1028,15 +1029,16 @@ async function loadWide(syms, loaded, now) {
 // SYSTEM HEALTH line of ACTIONS counts the last 24 hours, so a failed delivery is never silent.
 function tgFailed(status, why, text) { try { fs.appendFileSync('data/tg-failures.jsonl', JSON.stringify({ at: new Date().toISOString(), status, why: String(why || '').slice(0, 200), head: String(text || '').split('\n')[0].slice(0, 80) }) + '\n'); } catch (e) {} }
 async function telegram(text, buttons) {   // buttons: optional rows of { text, data } shown under the last part
+  const post=(u,o)=>telegramFetch(u,o,{recordFailure:false,retry429:false});
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent]\n' + text); return; }
-  const parts = []; { let rest = text; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest); }   // split long messages between paragraphs, never mid-word
+  const parts=splitTelegramText(text,3800); // Preserve Unicode and every character across parts.
   for (let i = 0; i < parts.length; i++) {
-    for (let a = 0; a < 3; a++) {   // a dropped connection is retried, so a message is not lost and the run does not stop
-      try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
-        if (r.status === 429 && a < 2) { let w = 5; try { w = Math.min(30, +((await r.json()).parameters || {}).retry_after || 5); } catch (e) {} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }   // (28 Oct) too many messages: wait as told, retry
+    for (let a = 0; a < 3; a++) {   // Retry only an explicit rate-limit refusal; ambiguous outcomes are not replayed
+      try { const r = await post(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
+        if (r.status === 429 && a < 2) { let w = 5; try { w = +((await r.json()).parameters || {}).retry_after || 5; } catch (e) {} if(w>30){tgFailed(429,'rate limit deferred '+w+' seconds',parts[i]);break;} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }   // (28 Oct) too many messages: wait as told, retry
         if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, parts[i]); }   // (28 Oct) a refused message is recorded, so SYSTEM HEALTH can say so
         break; }
-      catch (e) { console.error('Telegram connection error, retrying', e.message); if (a === 2) tgFailed('network', e.message, parts[i]); await sleep(FAST ? 50 : 3000); }
+      catch (e) { console.error('Telegram delivery unconfirmed; not blindly replayed');tgFailed('network','outcome unknown',parts[i]);break; }
     }
     if (i + 1 < parts.length) await sleep(FAST ? 0 : 700);   // keeps the parts in order on your phone
   }
@@ -1136,7 +1138,7 @@ const MENU_TEXT = ['MENU: tap a button in the bar under the typing box, or the  
   'You can still type anything in plain words (Arabic or English), or forward a message.'].join('\n');
 async function sendMenu() {
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
-  const post = (m, b) => fetch(TG + '/bot' + env.TG_TOKEN + '/' + m, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }).then(r => r.json()).catch(() => null);
+  const post = (m, b) => (m==='sendMessage'?telegramFetch:fetch)(TG + '/bot' + env.TG_TOKEN + '/' + m, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }).then(r => r.json()).catch(() => null);
   await post('setMyCommands', { commands: MENU.map(([c, , d]) => ({ command: c, description: d.slice(0, 256) })) });
   await post('setChatMenuButton', { chat_id: env.TG_CHAT, menu_button: { type: 'commands' } });
   await post('sendMessage', { chat_id: env.TG_CHAT, text: MENU_TEXT, reply_markup: { keyboard: MENU_KB.map(r => r.map(t => ({ text: t }))), resize_keyboard: true, is_persistent: true, input_field_placeholder: 'Tap a button or type a command' } });
@@ -3082,7 +3084,7 @@ async function tgCommands(sig) {
     if (u.callback_query) {   // a tapped button: Bought / Sold / Skipped
       const cq = u.callback_query, chatId = cq.message && cq.message.chat ? cq.message.chat.id : (cq.from && cq.from.id); let txt = null, note = 'Recorded';
       const [kind, sym, sh, cpx] = String(cq.data || '').split('|');
-      const ask = async (text, rows) => { try { await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text, ...(rows ? { reply_markup: { inline_keyboard: rows } } : {}) }) }); } catch (e) {} };
+      const ask = async (text, rows) => { try { await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text, ...(rows ? { reply_markup: { inline_keyboard: rows } } : {}) }) }); } catch (e) {} };
       if (String(chatId) === String(env.TG_CHAT) && sym) {
         // (28 Oct) a first tap records nothing: it asks for confirmation with the exact shares and price
         if (kind === 'b') { let p = null; try { const j = await liveQ(sym); p = +j.price || null; } catch (e) {} const n = p ? Math.max(1, Math.floor(1000 / p)) : null; note = 'Not recorded yet: confirm first';
@@ -3095,7 +3097,7 @@ async function tgCommands(sig) {
         else if (kind === 's') { let px = null; try { const j = await liveQ(sym); px = +j.price || null; } catch (e) { }
           fs.appendFileSync('data/skipped.jsonl', JSON.stringify({ sym, d: ny(Date.now()).d, ts: Date.now(), px }) + '\n'); note = 'Skipped ' + sym + ': noted';
           // ask why, with one tap: the system later shows whether your skips were right (send  skips )
-          try { await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: 'Why did you skip ' + sym + '? (one tap; used to check later whether skipping was right)', reply_markup: { inline_keyboard: [[{ text: 'My tip says wait', callback_data: 'r|' + sym + '|tip' }, { text: 'Not halal / unsure', callback_data: 'r|' + sym + '|halal' }], [{ text: 'No money now', callback_data: 'r|' + sym + '|money' }, { text: 'Do not trust it', callback_data: 'r|' + sym + '|trust' }, { text: 'Other', callback_data: 'r|' + sym + '|other' }]] } }) }); } catch (e) { } }
+          try { await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: 'Why did you skip ' + sym + '? (one tap; used to check later whether skipping was right)', reply_markup: { inline_keyboard: [[{ text: 'My tip says wait', callback_data: 'r|' + sym + '|tip' }, { text: 'Not halal / unsure', callback_data: 'r|' + sym + '|halal' }], [{ text: 'No money now', callback_data: 'r|' + sym + '|money' }, { text: 'Do not trust it', callback_data: 'r|' + sym + '|trust' }, { text: 'Other', callback_data: 'r|' + sym + '|other' }]] } }) }); } catch (e) { } }
         else if (kind === 'r') { fs.appendFileSync('data/skipped.jsonl', JSON.stringify({ sym, why: sh, ts: Date.now() }) + '\n'); note = 'Reason saved for ' + sym; }
       }
       try { await fetch(TG + '/bot' + env.TG_TOKEN + '/answerCallbackQuery', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ callback_query_id: cq.id, text: note }) }); } catch (e) {}

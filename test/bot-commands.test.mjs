@@ -15,7 +15,7 @@ const server = http.createServer((req, res) => { let body = ''; req.on('data', c
   else if (/\/sendMessage/.test(req.url)) { let j = {}; try { j = JSON.parse(body); } catch (e) {}
     if (/^FAIL400/.test(j.text || '')) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ ok: false, description: 'Bad Request: message is too long' })); }
     if (/^RATE429/.test(j.text || '') && !rateOnce++) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ ok: false, parameters: { retry_after: 1 } })); }
-    sent.push({ text: j.text, rows: j.reply_markup && j.reply_markup.inline_keyboard }); }
+    out={ok:true,result:{message_id:++uid}}; sent.push({ text: j.text, rows: j.reply_markup && j.reply_markup.inline_keyboard }); }
   else if (/\/answerCallbackQuery/.test(req.url)) { try { answers.push(JSON.parse(body).text); } catch (e) {} }
   else if (/\/price\?symbol=/.test(req.url)) out = { price: '101.50' };
   res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(out)); }); });

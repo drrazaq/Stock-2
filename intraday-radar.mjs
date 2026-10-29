@@ -1,3 +1,4 @@
+import {telegramFetch} from './telegram-delivery.mjs';
 // Early-wave radar for Stock-2. Runs on GitHub Actions about every 15 minutes while the US market is open.
 // It follows the stocks the morning whole-market sweep found in strong uptrends and walks each one through a ladder:
 //   PRE-WAVE WATCH  ->  BREAKOUT CONFIRMATION  ->  PULLBACK BUY REVIEW  ->  DO NOT CHASE
@@ -37,7 +38,7 @@ async function telegram(text) {
   const parts = []; let cur = '';
   for (const ln of text.split('\n')) { if ((cur + '\n' + ln).length > 3800) { parts.push(cur); cur = ln; } else cur = cur ? cur + '\n' + ln : ln; }
   if (cur) parts.push(cur);
-  for (const part of parts) await fetch(`${TG}/bot${env.TG_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }).catch(() => {});
+  for (const part of parts) await telegramFetch(`${TG}/bot${env.TG_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }).catch(() => {});
 }
 
 // ---- Settings, all in one place

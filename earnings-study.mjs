@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // EARNINGS SURPRISE DRIFT (post-earnings announcement drift, "PEAD"). Read-only research; never places an order.
 // Idea (well documented in finance research): after a clearly better-than-expected earnings report, the price often keeps
 // drifting the same way for weeks. Stock-2 only uses it if it passes the same fair test as every other rule.
@@ -196,4 +198,4 @@ const msg = ['EARNINGS SURPRISE DRIFT, fair test ' + D[T - 1], 'Earnings history
   'Research, not an order. Not financial advice, not a halal ruling.'];
 console.log(msg.join('\n'));
 const changed = PREV.verdict !== out.verdict;
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || changed)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || changed)) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

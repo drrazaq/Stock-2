@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // TipRanks radar for the US stock signal board. Runs on GitHub Actions twice a week.
 // It asks TipRanks (through its official MCP API, with YOUR key) for trending stocks, analysts' top rated stocks and top
 // Smart Score stocks, shortlists the names that appear most, adds a buy range and sell prices to each, and sends the result
@@ -73,7 +75,7 @@ const pick = (o, re) => { for (const [k, v] of Object.entries(o)) if (re.test(k)
 const shape = (d) => Array.isArray(d) ? 'list of ' + d.length : d && typeof d === 'object' ? 'object with keys ' + Object.keys(d).slice(0, 12).join(', ') : typeof d;
 
 async function telegram(text) {
-  if (!QUIET) for (let i = 0; i < text.length; i += 3800) { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(i, i + 3800), disable_web_page_preview: true }) }); if (!r.ok) console.error('Telegram error', r.status); }
+  if (!QUIET) for (let i = 0; i < text.length; i += 3800) { const r = await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(i, i + 3800), disable_web_page_preview: true }) }); if (!r.ok) console.error('Telegram error', r.status); }
 }
 let used = 0;
 async function candles(sym) {

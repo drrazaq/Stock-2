@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // DEALS AND NEW LISTINGS. One message each market morning (Kuwait ~3 pm, before the open):
 //   1. UPCOMING IPOs (next 14 days): companies about to join the US market, with date, price range and deal size.
 //   2. RECENT IPOs (last 120 days): how each has done since listing, and which are building a base above their IPO price.
@@ -104,5 +106,5 @@ msg.push('A company being bought usually jumps to just under the offer price at 
 msg.push('', 'Check every company in ZAD. Research only, not an order. Not financial advice, not a halal ruling.');
 fs.writeFileSync('data/deals.json', JSON.stringify({ generatedAt: new Date().toISOString(), upcoming: upcoming.slice(0, 20), recent: rows, deals }, null, 1));
 const text = msg.join('\n');
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET) for (let i = 0; i < text.length; i += 3800) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(i, i + 3800), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET) for (let i = 0; i < text.length; i += 3800) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(i, i + 3800), disable_web_page_preview: true }) }).catch(() => {});
 console.log(text);

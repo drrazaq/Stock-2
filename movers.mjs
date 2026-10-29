@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // Movers radar for the US stock signal board. Runs on GitHub Actions each night.
 // It answers, with real numbers from the last 45 sessions of the WHOLE US market, the question behind every gainers list:
 // "If I buy a stock the morning after it jumps 20% or more, what usually happens?"  It also lists the day's movers with the
@@ -35,7 +37,7 @@ async function telegram(text) {      // long messages are split between lines, n
   const parts = []; let cur = '';
   for (const ln of text.split('\n')) { if ((cur + '\n' + ln).length > 3800) { parts.push(cur); cur = ln; } else cur = cur ? cur + '\n' + ln : ln; }
   if (cur) parts.push(cur);
-  if (!QUIET) for (const part of parts) { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }); if (!r.ok) console.error('Telegram error', r.status); }
+  if (!QUIET) for (const part of parts) { const r = await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }); if (!r.ok) console.error('Telegram error', r.status); }
 }
 
 // ---- 1. Load the last 45 sessions of the whole market, oldest first

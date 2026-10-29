@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // OCTOPUS: many angles at once. Read-only research; never places an order.
 // Instead of testing one rule at a time, this links 26 angles together (and the economic calendar's surprises with each of them) (momentum, volume, quiet bases, gaps, the stock's
 // industry, what its industry did today, company news from the SEC, earnings days, fast-mover memory, the market's mood) plus
@@ -163,7 +165,7 @@ if (MODE === 'daily') {
     live ? 'Both gates passed: these may be considered as buys (your stop, your halal check, your decision).' : 'Not a buy list yet: ' + (pass ? 'needs 30+ positive live paper picks over 10+ days.' : 'the 5-year test has not passed.')];
   fs.writeFileSync(DAILY, JSON.stringify(DP));
   console.log(msg.join('\n'));
-  if (pass && env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
+  if (pass && env.TG_TOKEN && env.TG_CHAT) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
   process.exit(0);
 }
 
@@ -230,4 +232,4 @@ const msg = ['OCTOPUS (26 angles + 325 combinations + 78 links to economic surpr
   verdict === 'PROMISING' ? 'Top now (paper only until the live record passes): ' + now.slice(0, P_.K).map(z => z.sym).join(', ') : 'Not a buy list. Research only.'];
 console.log(msg.join('\n'));
 const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

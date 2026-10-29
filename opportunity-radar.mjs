@@ -1,3 +1,4 @@
+import {telegramFetch} from './telegram-delivery.mjs';
 // DAILY OPPORTUNITY RADAR runner (rules and wording in radar-v3-core.mjs). Research and routing only; never places an order.
 //   node opportunity-radar.mjs midday   called by ignition-watch.mjs at about 11:15 New York, after it writes data/radar-v3-snap.json
 //   node opportunity-radar.mjs close    .github/workflows/opportunity-radar.yml after the watcher has saved the day (scores 5-session rows too)
@@ -15,7 +16,7 @@ const nyDay = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/
 async function telegram(text) {
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return; }
   const parts = []; let cur = ''; for (const l of text.split('\n')) { if ((cur + l).length > 3800) { parts.push(cur); cur = ''; } cur += l + '\n'; } if (cur) parts.push(cur);
-  for (const p of parts) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: p, disable_web_page_preview: true }) }).catch(e => console.log('telegram: ' + e.message));
+  for (const p of parts) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: p, disable_web_page_preview: true }) }).catch(e => console.log('telegram: ' + e.message));
 }
 function context() {
   const events = {}; for (const e of ((readJson('data/events-recent.json') || {}).events || [])) (events[e.sym] || (events[e.sym] = [])).push(e);

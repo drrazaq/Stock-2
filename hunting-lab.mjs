@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // HUNTING LAB. New ways to catch moves, each written as a complete trade (entry, stop, exit) and tested on two years of the
 // WHOLE US market, stocks that later collapsed included, after costs. The rules are fixed in advance (no tuning), and each must
 // make money in BOTH the older and the newer half, beat the S&P 500 over the same days, and beat buying a random stock the same
@@ -368,5 +370,5 @@ const msg = ['HUNTING LAB, ' + D[T - 1], RULES.length + ' new ways to catch move
   'Daily prices only; fills at the open or the stated level are assumed. Research, not an order. Not financial advice, not a halal ruling.'];
 fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), status: 'OK', from: D[0], to: D[T - 1], splitAt: D[mid], exitTest: EX, scoreTest: SCT, persistence: PER, quickFilters: QF, rules: rows, base: { older: bOld, newer: bNew }, text: msg.join('\n') }, null, 1));
 if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || QF.best || /PREDICTS/.test(SCT.verdict) || rows.some(r => r.verdict === 'PROMISING' || r.market.risingOnly) || Object.values(FP.rules).some(p => p.status === 'GRADUATED'))) { let rest = msg.join('\n'); const parts = []; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest);
-  for (const part of parts) { await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }).catch(() => {}); await new Promise(r => setTimeout(r, 700)); } }
+  for (const part of parts) { await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }).catch(() => {}); await new Promise(r => setTimeout(r, 700)); } }
 console.log(msg.join('\n'));

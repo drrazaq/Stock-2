@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // AUTOLAB: the system invents its own trading rules, tests them, and keeps only what survives. Read-only; never places an order.
 // Every Sunday it builds NEW candidate rules by combining fixed building blocks (trend, momentum, pullback depth, short drop, volume,
 // distance from the 1-year high and low, daily swing size, market state, share-count change = dilution, market dispersion) with a holding period, and puts each through three gates that are
@@ -189,4 +191,4 @@ const nLib = fresh.filter(r => r.lib).length, nBred = fresh.filter(r => r.from).
   '', 'Only PROVEN LIVE rules (30+ paper trades, profitable and better than an average stock) reach your ACTIONS. Research only.'];
 console.log(msg.join('\n'));
 const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

@@ -1,3 +1,4 @@
+import {telegramFetch} from './telegram-delivery.mjs';
 // SYSTEM HEALTH: every evening, checks that every job actually produced fresh results, and tells you on Telegram when one
 // silently stopped (a step that "continues on error", a crash after a code change, a key that expired, an API that changed).
 // Today's smart-money crash ran unnoticed for a day; this is what catches that. Read-only; sends a message only when something is wrong.
@@ -70,5 +71,5 @@ console.log('health: ' + ok.length + ' fine, ' + problems.length + ' problems' +
 const recovered = !problems.length && H.problems && H.problems.length;
 if ((problems.length && (H.sentKey !== key || H.sentDay !== today)) || recovered) {
   const msg = problems.length ? ['SYSTEM HEALTH: ' + problems.length + ' problem' + (problems.length > 1 ? 's' : '') + ' (' + ok.length + ' parts fine)', '', ...problems.map(p => '- ' + p), '', 'Your ACTIONS may be missing information until this is fixed. Send this message to Claude.'] : ['SYSTEM HEALTH: all ' + ok.length + ' parts are running again.'];
-  if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+  if (env.TG_TOKEN && env.TG_CHAT) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
   const J = readJson('data/health.json'); J.sentKey = key; J.sentDay = today; J.problems = problems; fs.writeFileSync('data/health.json', JSON.stringify(J, null, 1)); }

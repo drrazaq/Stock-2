@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // WINNERS STUDY. Learns from the stocks that became big winners, without fooling itself.
 // 1. AUTOPSY: every stock that rose 30%+ within 20 sessions, on the whole US market (dead stocks included): what did it look
 //    like the day before the move started, compared with all stocks on all days? (common among winners is NOT the same as
@@ -143,5 +145,5 @@ const msg = ['WINNERS STUDY, ' + D[T - 1], 'Whole US market ' + D[0] + ' to ' + 
   promising.length ? 'RESULT: ' + promising.length + ' pattern(s) passed. They go on paper first; nothing becomes a BUY before its live paper record passes too.' : 'RESULT: no winner pattern passed the fair test. Nothing to act on. The study repeats every week as new days come in.',
   'About ' + Math.round((Date.parse(D[T - 1]) - Date.parse(D[0])) / 3.156e10) + ' years of data (first 210 sessions used only to warm up the averages), one market climate. Every pair of looks is tested, not only single looks. Daily prices only. Research, not an order. Not financial advice, not a halal ruling.'];
 { const j = JSON.parse(fs.readFileSync(OUT, 'utf8')); j.text = msg.join('\n'); fs.writeFileSync(OUT, JSON.stringify(j, null, 1)); }
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || promising.length)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || promising.length)) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
 console.log(msg.join('\n'));

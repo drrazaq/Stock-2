@@ -1,3 +1,4 @@
+import {telegramFetch} from './telegram-delivery.mjs';
 // STOP STUDY: where should the stop go on a stock you buy yourself (or one a source names)? Read-only; never places an order.
 // The system's old default for your own buys (2 daily ranges under the price, or the 50-day average if closer) was never tested,
 // and in the 15 Oct drop it was hit on almost every stock. This tests 10 stop rules, fixed in advance, on 5 years of the whole US
@@ -74,4 +75,4 @@ for (const pool of POOLS) { const P = RES[pool], R = P.rules, rec = P.recommende
 msg.push(NT + ' versions. Research only. New buys you record get the recommended stop; existing stops are shown side by side in  stops .');
 console.log(msg.join('\n'));
 const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

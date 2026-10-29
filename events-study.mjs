@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // EVENT-TO-TRADE EVIDENCE ENGINE. Read-only research; never places an order.
 // Question it answers: when a company announces something (a big contract, an acquisition, an FDA approval, an activist stake,
 // a share sale, a restatement, faster earnings growth...), what did its stock do AFTERWARDS, compared with the market and with
@@ -340,4 +342,4 @@ const msg = ['EVENT STUDY (company news -> what the stock did next), fair test '
   pass.length ? 'PASSED: ' + pass.map(([, x]) => x.name).join('; ') + '. These now go on the nightly list as "event drift" buys (paper account follows them too).' : 'Nothing passed yet, so nothing changes in your ACTIONS. The test repeats every Sunday as the SEC history fills in.',
   'Research, not an order. Not financial advice, not a halal ruling.'];
 console.log(msg.join('\n'));
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length || warns.length)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length || warns.length)) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

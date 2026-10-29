@@ -43,10 +43,10 @@
     "note": "Reading, syntax checks and fixtures are not exhaustive behavioral certification"
   },
   "engineeringAcceptance": {
-    "complete": 16,
+    "complete": 17,
     "total": 40,
-    "percent": 40,
-    "basis": "40-check dashboard; one new completed check: nine-lane research runtime with availability provenance and guarded E2E, exact-commit CI passed. Prospective evaluation not credited."
+    "percent": 42.5,
+    "basis": "One additional Telegram timeout/429/length/retry transport policy check verified. All-path behavior/dedup and authorized delivery remain open. Provider spot probes and paper fixtures earn no live/prospective acceptance credit."
   },
   "strategyValidation": {
     "earlyEnginePromotionChecksPassed": 0,
@@ -532,10 +532,10 @@
     ],
     "publishedCommit": "1c2031495c839e7d8469cb127821ec1650ca09aa"
   },
-  "remainingAcceptanceChecks": 24,
+  "remainingAcceptanceChecks": 23,
   "providerReadinessMilestone": {
     "base": "4f00ffb8ace4b6ff5397c1b6dca8193823a811cd",
-    "status": "ISOLATED_LOCAL_VERIFIED",
+    "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "testsPassed": 1240,
     "codeRepairs": [
       "Per-response SIP/IEX provenance under concurrency",
@@ -544,17 +544,81 @@
     ],
     "accountEntitlements": "Existing GitHub bindings observed HTTP 200 for Massive snapshot, SIP, IEX, Finnhub general news and SEC; overnight targeted probe is not whole-session entitlement proof",
     "probeSafety": "At most 5 GETs, no retries/orders/Telegram/raw payloads/data commits; contents read; development branch only",
-    "remoteCI": "PENDING",
+    "remoteCI": {
+      "push": "https://github.com/drrazaq/Stock-2/actions/runs/40819160562",
+      "pr": "https://github.com/drrazaq/Stock-2/actions/runs/40819166039",
+      "safety": "https://github.com/drrazaq/Stock-2/actions/runs/40819160556",
+      "probe": "https://github.com/drrazaq/Stock-2/actions/runs/40819160719",
+      "conclusion": "success"
+    },
     "publishedCommit": "62bcd65cdc095ecbd068f478301ec1db4e498a5f",
     "observedEvidence": "docs/provider-observed-2026-10-29.json"
   },
   "funnelPaperMilestone": {
-    "status": "LOCAL_VERIFIED",
+    "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "testsPassed": 1247,
     "coverage": "390-cycle nine-lane missing/stale/duplicate/interrupted-feed fixtures; observation-only funnel and last-trade drawdown",
     "paperProtocol": "DISCOVERY_PAPER_V1; next observed ask/bid, whole shares, $3 each order, liquidity/quote freshness, point-time security metadata, deterministic same-time industry/liquidity controls; missing exits stay unresolved",
     "actualProspectiveResolvedCases": 0,
     "profitability": "NOT_ESTABLISHED",
-    "remoteCI": "PENDING"
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40820234784/job/123270827061",
+        "sha": "c3363e06423291c25382cf6cbebe546b88ef9afb"
+      },
+      {
+        "name": "test",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40820240785/job/123270762137",
+        "sha": "c3363e06423291c25382cf6cbebe546b88ef9afb"
+      },
+      {
+        "name": "safety",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40820234784/job/123270743288",
+        "sha": "c3363e06423291c25382cf6cbebe546b88ef9afb"
+      },
+      {
+        "name": "probe",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40820234849/job/123270743226",
+        "sha": "c3363e06423291c25382cf6cbebe546b88ef9afb"
+      },
+      {
+        "name": "test",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40820234840/job/123270743177",
+        "sha": "c3363e06423291c25382cf6cbebe546b88ef9afb"
+      },
+      {
+        "name": "fixture-open",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40820234784/job/123270743060",
+        "sha": "c3363e06423291c25382cf6cbebe546b88ef9afb"
+      }
+    ],
+    "publishedCommit": "c3363e06423291c25382cf6cbebe546b88ef9afb"
+  },
+  "telegramPolicyMilestone": {
+    "status": "LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "rootMessagePaths": 29,
+    "failureNotificationWorkflows": 16,
+    "researchQualifiedAdapters": 19,
+    "evidence": "docs/telegram-path-audit-2026-10-29.json",
+    "repairs": [
+      "API ACK vs HTTP success distinguished across message transports",
+      "10-second timeout, bounded explicit 429 retry, Unicode-safe splitting",
+      "News/macros ACK-only state; unknown/partial outcomes quarantined",
+      "Current-price SELL requires fresh quote; previous close reference-only; future/stale scan evidence rejected"
+    ],
+    "completeBehavioralReview": false,
+    "realTelegramMessagesSent": 0,
+    "testsPassed": 1258,
+    "staticChecks": {
+      "rootModules": 214,
+      "workflows": 79
+    }
   }
 }

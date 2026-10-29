@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // FAST-MOVER LAB. Can the system catch the stocks that jump 20-80% in a day, in and out the same day or overnight, and make money
 // AFTER costs? It answers with five years of the WHOLE US market including 1-3 USD stocks (the LEADERS cache drops stocks under
 // 3 USD, so most runners were invisible to the other tests). Read-only; never places an order.
@@ -176,7 +178,7 @@ if (MODE === 'intraday') {
     variants + ' rule/exit versions were tested, so ' + Math.max(1, Math.round(variants * 0.05)) + ' could pass by luck alone: a pass still needs 30+ positive live paper trades (at 1.5x costs) before any alert.',
     pass.length ? 'PASSED THE HISTORY TEST: ' + pass.map(x => x.rule + '/' + x.exit).join(', ') + '. Now on live paper.' : 'Nothing passed yet: the live watcher logs every ignition on PAPER only.', 'Research, not an order. Not financial advice, not a halal ruling.'];
   console.log(msg.join('\n'));
-  if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+  if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length)) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
   process.exit(0);
 }
 
@@ -243,7 +245,7 @@ if (MODE === 'study') {
     pass.length ? 'PASSED: ' + pass.map(x => x.name).join('; ') + '. From tomorrow its candidates come each morning as a DAY-TRADE LIST (paper record keeps checking).' : 'Nothing passed. Each morning the candidates are still logged on PAPER, so a rule can prove itself on new days. Nothing changes in ACTIONS.',
     'Note the gap between "best moment of the day" and the real result: that is the money a chart shows but a trader rarely gets.', 'Research, not an order. Not financial advice, not a halal ruling.'];
   console.log(msg.join('\n'));
-  if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+  if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length)) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
   process.exit(0);
 }
 
@@ -288,5 +290,5 @@ if (list.length && env.TG_TOKEN && env.TG_CHAT) {
   const msg = ['DAY-TRADE LIST for ' + nextDay + ' (rules that passed the 5-year DAILY fast-mover test; paper keeps checking them)', '',
     ...list.map(x => x.sym + ' (closed ' + x.prev + ', ' + pc(x.chg) + ' yesterday): BUY AT THE OPEN only if it opens between ' + x.lo + ' and ' + x.hi + '. STOP 8% under your price. SELL AT THE CLOSE (before 11 pm Kuwait), same day.\n  rule: ' + name(x.rule) + ' | tested: ' + (t(x.rule) ? Math.round(t(x.rule).newer.win * 100) + '% won, average ' + pc(t(x.rule).newer.avg) + ' a trade' : 'n/a')),
     '', 'Check ZAD first. 1,000 USD per trade at most: these are the riskiest trades in the system. Not financial advice, not a halal ruling.'];
-  await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+  await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
 }
