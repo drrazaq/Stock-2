@@ -140,7 +140,7 @@
     }
   ],
   "tests": {
-    "passed": 1260,
+    "passed": 1288,
     "failed": 0,
     "skipped": 0,
     "scope": "node --test test/*.test.mjs tests/*.test.mjs",
@@ -889,7 +889,7 @@
     ]
   },
   "historicalIntegrityMilestone": {
-    "status": "FULL_LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "testsPassed": 1278,
     "registryEntries": 747,
     "uniqueRegistryIds": 747,
@@ -904,6 +904,69 @@
       "docs/frozen-study-metadata-audit-2026-10-29.json",
       "docs/strategy-registry-audit-2026-10-29.json",
       "docs/historical-integrity-review-2026-10-29.md"
+    ],
+    "publishedCommit": "3a0a44f5fbefd6751410e12287c4c24c45d1f156",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825555355/job/123287761790",
+        "sha": "3a0a44f5fbefd6751410e12287c4c24c45d1f156"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825563338/job/123287687892",
+        "sha": "3a0a44f5fbefd6751410e12287c4c24c45d1f156"
+      },
+      {
+        "name": "research-fixtures",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825563359/job/123287687834",
+        "sha": "3a0a44f5fbefd6751410e12287c4c24c45d1f156"
+      },
+      {
+        "name": "safety",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825555355/job/123287664944",
+        "sha": "3a0a44f5fbefd6751410e12287c4c24c45d1f156"
+      },
+      {
+        "name": "fixture-open",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825555355/job/123287664520",
+        "sha": "3a0a44f5fbefd6751410e12287c4c24c45d1f156"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825555376/job/123287664279",
+        "sha": "3a0a44f5fbefd6751410e12287c4c24c45d1f156"
+      }
     ]
+  },
+  "messageStatePrivacyMilestone": {
+    "status": "FULL_LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "testsPassed": 1288,
+    "rootModulesSyntax": 218,
+    "workflowParses": 80,
+    "repairs": [
+      "ACK-only menu version",
+      "Atomic pre-send intraday reservation and ACK/unknown state; failed explicit sends retry safely",
+      "Strict intraday quote time and owner ZAD gate; unverified quotes cannot trigger SELL or healthy-open status",
+      "Unknown-ZAD chain/discovered/follow lines labelled research, no buy-record prompt",
+      "Leading research qualification cannot be bypassed by footer",
+      "Unicode-safe legacy report slicing",
+      "Authenticated/encrypted research artifact copies; no plaintext upload path in proposal",
+      "Premarket execution-window flags do not claim tradable-universe coverage"
+    ],
+    "crossJobDurability": "PARTIAL; existing Git saves required, read-only premarket and universal report/reply outbox remain open",
+    "liveValidation": false
   }
 }

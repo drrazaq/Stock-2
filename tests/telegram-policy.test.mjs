@@ -22,3 +22,7 @@ test('research qualification and rich reply markup survive the send facade',asyn
  let body;const r=await telegramFetch(url,opts('Study result'),{recordFailure:false,research:true,fetcher:async(u,o)=>{body=JSON.parse(o.body);assert.ok(o.signal);return {ok:true,json:async()=>({ok:true,result:{message_id:4}})};}});
  assert.equal(r.ok,true);assert.match(body.text,/^RESEARCH REPORT — NOT AN APPROVED BUY/);assert.deepEqual(body.reply_markup,{inline_keyboard:[]});
 });
+test('a research footer cannot leave an unapproved BUY-looking header unqualified',async()=>{
+ let text;await telegramFetch(url,opts('BUY AAA\nStudy text\nPAPER ONLY'),{recordFailure:false,research:true,fetcher:async(u,o)=>{text=JSON.parse(o.body).text;return {ok:true,json:async()=>({ok:true,result:{message_id:5}})};}});
+ assert.match(text,/^RESEARCH REPORT — NOT AN APPROVED BUY/);
+});

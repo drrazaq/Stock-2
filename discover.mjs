@@ -1,4 +1,4 @@
-import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+import {telegramFetch as sharedTelegramFetch,splitTelegramText} from './telegram-delivery.mjs';
 const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // Discovery engine for the US stock signal board. Runs on GitHub Actions.
 // Each night it sweeps the WHOLE US market for strong price trends, then checks the strongest against official SEC filings
@@ -92,7 +92,7 @@ async function frame(taxonomy, tag, unit, period) {
 }
 async function telegram(text) {
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent]\n' + text); return; }
-  if (!QUIET) for (let i = 0; i < text.length; i += 3800) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(i, i + 3800), disable_web_page_preview: true }) });
+  if (!QUIET) for (const part of splitTelegramText(text,3800)) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) });
 }
 
 // ---- sweep

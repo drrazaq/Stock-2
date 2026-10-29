@@ -39,7 +39,7 @@ test('the trader’s own stop is used when he gave one', async () => {
 test('halal fail is removed; unknown halal is shown with "check ZAD first"', async () => {
   const { text } = await show([call('BADH'), call('UNKN')]);
   assert.doesNotMatch(text, /BADH/);
-  assert.match(text, /BUY UNKN .*check ZAD first/);
+  assert.match(text, /RESEARCH ONLY — MARK HALAL FIRST: UNKN .*check ZAD first/);
 });
 
 test('a lottery-like stock is removed', async () => {

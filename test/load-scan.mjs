@@ -33,7 +33,7 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   const src = fs.readFileSync(process.env.SCAN_SRC || path.join(REPO, 'scan.mjs'), 'utf8').trimEnd().split('\n');
   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
-  for(const name of ['telegram-delivery.mjs','zad-compliance.mjs','paper-transport.mjs'])fs.copyFileSync(path.join(REPO,name),path.join(dir,name));
+  for(const name of ['telegram-delivery.mjs','zad-compliance.mjs','paper-transport.mjs','alert-delivery-state.mjs'])fs.copyFileSync(path.join(REPO,name),path.join(dir,name));
   fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
   fs.mkdirSync(path.join(dir, 'data'));
   // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags

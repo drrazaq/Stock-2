@@ -50,7 +50,7 @@ test('halal unknown -> shown with "check ZAD first"; ZAD not halal, lottery-like
   const ev = { events: [{ sym: 'OFFR', f: 'OFFERING 424B5', p: new Date().toISOString() }] };
   const S = await loadScan({ files: files({ 'CHAIN-MOM1': 'TRADABLE SMALL' }, { 'data/events-recent.json': ev, 'data/halal.json': {} }, bs) });
   const out = S.fn('chainLines')({ ...sig, lottery: { LOTT: 0.2 } }, { HELD: { entry: 5 } }).join('\n');
-  assert.match(out, /BUY WDC[^\n]*check ZAD first/);
+  assert.match(out, /RESEARCH ONLY — MARK HALAL FIRST: WDC[^\n]*check ZAD first/);
   for (const s of ['NOTH', 'LOTT', 'OFFR', 'HELD', 'LATE']) assert.doesNotMatch(out, new RegExp('BUY ' + s));
 });
 

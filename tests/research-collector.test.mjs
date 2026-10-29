@@ -23,7 +23,7 @@ test('full 330-minute fixture records stale/future prices, duplicate symbols, ne
  let final;
  for(let m=0;m<330;m++){now=at(m);final=await c.cycle({now});if(m===0){assert.equal(final.metrics.uniqueSymbols,3);assert.equal(final.metrics.duplicateSymbols,1);assert.equal(final.metrics.invalidRows,2);assert.equal(final.metrics.freshPrices,1);assert.equal(final.metrics.futurePriceClocks,1);assert.equal(final.news.length,1);}}
  assert.equal(c.state.minutes.length,330);assert.equal(c.state.requests,396);assert.equal(c.state.sourceCounts['MASSIVE_FULL_SNAPSHOT:HTTP_ERROR'],10);assert.equal(final.claims.approvedBuy,false);
- const r=c.report(new Date(at(329)).toISOString());assert.equal(r.lanes.find(x=>x.lane==='NEWS_CATALYST').beforeObservedPlus10,1);assert.equal(r.priceCoverage.noFreshPriceCycles,10);
+ const r=c.report(new Date(at(329)).toISOString());assert.equal(r.lanes.find(x=>x.lane==='NEWS_CATALYST').beforeObservedPlus10,1);assert.equal(r.priceCoverage.noFreshPriceCycles,10);assert.equal(r.completeSession,false);assert.equal(r.premarketClockWindowComplete,true);assert.equal(r.tradableUniverseCoverage,'UNVERIFIED');
  assert.equal(final.discovery.sources[0].status,'NOT_APPLICABLE_PREMARKET');
  const n=calls.length;assert.equal((await c.cycle({now})).status,'DUPLICATE_CYCLE');assert.equal(calls.length,n);
 });

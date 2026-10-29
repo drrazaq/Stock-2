@@ -22,7 +22,7 @@ export function splitTelegramText(text,limit=3900){
 export async function telegramFetch(url,options,{fetcher=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),recordFailure=true,research=false,retry429=true}={}){
  const u=new URL(url);if(!((u.protocol==='https:'&&u.hostname==='api.telegram.org')||(u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname))))throw Error('invalid Telegram host');
  const m=/^\/bot([^/]+)\/sendMessage$/.exec(u.pathname);if(!m)throw Error('not a Telegram message endpoint');
- const body=JSON.parse(options.body),text=(research&&!/NOT AN APPROVED BUY|RESEARCH ONLY|PAPER ONLY/i.test(body.text)?'RESEARCH REPORT — NOT AN APPROVED BUY\n':'')+String(body.text||'');
+ const body=JSON.parse(options.body),text=(research&&!/^(?:RESEARCH REPORT|RESEARCH ONLY|PAPER ONLY|NOT AN APPROVED BUY)\b/i.test(String(body.text||''))?'RESEARCH REPORT — NOT AN APPROVED BUY\n':'')+String(body.text||'');
  const parts=splitTelegramText(text);let result={ok:false,reason:'INVALID_TEXT_LENGTH'},deliveredParts=0;
  for(let i=0;i<parts.length;i++){
   for(let attempt=0;attempt<3;attempt++){

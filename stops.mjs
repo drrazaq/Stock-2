@@ -1,4 +1,5 @@
-import {telegramFetch} from './telegram-delivery.mjs';
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // STOP STUDY: where should the stop go on a stock you buy yourself (or one a source names)? Read-only; never places an order.
 // The system's old default for your own buys (2 daily ranges under the price, or the 50-day average if closer) was never tested,
 // and in the 15 Oct drop it was hit on almost every stock. This tests 10 stop rules, fixed in advance, on 5 years of the whole US

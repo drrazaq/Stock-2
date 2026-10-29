@@ -43,7 +43,9 @@ for(let i=0;i<manifest.maxCycles;i++){
  if(mode==='--collect')await new Promise(resolve=>setTimeout(resolve,Math.max(1,60000-(Date.now()-ms))));
 }
 summary.termination||='CYCLE_LIMIT';summary.bytes=bytes;summary.requests=collector.state.requests;summary.uniqueMinutes=collector.state.minutes.length;
-summary.fullPremarketObserved=summary.uniqueMinutes===330&&summary.observedCycles===330&&!summary.lateStart;
+summary.executionWindowComplete=summary.uniqueMinutes===330&&!summary.lateStart;
+summary.allMinutesHadSomeFreshPrices=summary.executionWindowComplete&&summary.observedCycles===330;
+summary.tradableUniverseCoverage='UNVERIFIED';
 summary.lastSuccessfulCycle=collector.state.lastSuccessfulCycle;
 if(lastAt)fs.writeFileSync(path.join(out,'discovery.json'),JSON.stringify(collector.report(lastAt)));
 fs.writeFileSync(path.join(out,'summary.json'),JSON.stringify(summary,null,2));console.log(JSON.stringify(summary));

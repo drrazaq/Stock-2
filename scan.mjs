@@ -1,3 +1,4 @@
+import {readAlertState,saveAlertState,alertAvailable,deliverAlertOnce} from './alert-delivery-state.mjs';
 import {paperRequest} from './paper-transport.mjs';
 import {resolveZad} from './zad-compliance.mjs';
 import {telegramFetch,splitTelegramText} from './telegram-delivery.mjs';
@@ -380,7 +381,7 @@ function followSection(sig, pos) { if (!TIER2_ON()) return []; const FT = readJs
     if (hal === 'fail' || lot[x.sym] >= 0.15 || eventWarn(x.sym) || followOffering(x.sym) || tier2LedgerNegative(kind)) continue; seen.add(x.sym);
     const px = x.last > 0 ? x.last : last[x.sym], H = x.H || 20, own = x.st > 0 && px > 0 && x.st < px;
     if (px > 0) tier2Log(x.sym, kind, px);
-    rows.push('- BUY ' + x.sym + (px > 0 ? ' at the next open, only up to ' + money(px * 1.03) + ' (last close ' + money(px) + ' +3%)' : ' at the next open (no recent price: only near the open)') + ', 1,000 USD. ' + (own ? 'STOP ' + money(x.st) + ' (the trader’s own)' : 'STOP 15% under your buy') + ' at your broker. SELL at the close of the ' + ordinal(H) + ' session after you buy (' + (H === 1 ? 'the same day: he day-trades' : 'his horizon') + ')' + (x.tg > 0 ? '; his target ' + money(x.tg) + ' is information only' : '') + '. From ' + x.trader + (x.source ? ' [' + x.source + ']' : '') + (x.title ? ' ("' + String(x.title).slice(0, 60) + '", ' + String(x.pub || '').slice(0, 10) + ')' : '') + '. His record: ' + x.record + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + ' Send  bought ' + x.sym + ' PRICE .');
+    rows.push((hal==='ok'?'- BUY ':'- RESEARCH ONLY — MARK HALAL FIRST: ') + x.sym + (px > 0 ? ' at the next open, only up to ' + money(px * 1.03) + ' (last close ' + money(px) + ' +3%)' : ' at the next open (no recent price: only near the open)') + ', 1,000 USD. ' + (own ? 'STOP ' + money(x.st) + ' (the trader’s own)' : 'STOP 15% under your buy') + ' at your broker. SELL at the close of the ' + ordinal(H) + ' session after you buy (' + (H === 1 ? 'the same day: he day-trades' : 'his horizon') + ')' + (x.tg > 0 ? '; his target ' + money(x.tg) + ' is information only' : '') + '. From ' + x.trader + (x.source ? ' [' + x.source + ']' : '') + (x.title ? ' ("' + String(x.title).slice(0, 60) + '", ' + String(x.pub || '').slice(0, 10) + ')' : '') + '. His record: ' + x.record + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + (hal==='ok'?' Send  bought '+x.sym+' PRICE .':' Not an approved BUY.'));
     if (rows.length >= 5) break; }
   return rows.length ? ['FOLLOWING (traders whose own call history wins; tier 2, 1,000 USD, stop 15% unless the trader gave one)', ...rows, 'Why these: each trader passed the tier-2 test on his own full call history (30+ calls on 10+ days, both halves, after the 1.2% cost, t 2.5+), below the 4.0 proof bar. Send  traders  for the leaderboard.'] : []; }
 function tradersText() { const B = readJson0('data/follow-board.json'); if (!B || !Array.isArray(B.traders)) return 'TRADERS: the follow lane has not run yet (it runs each night after the US close and in full on Sunday).';
@@ -463,10 +464,10 @@ function chainLines(sig, pos) { const C = readJson0('data/chain-today.json'); if
   const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
   const rows = [], seen = new Set();
   for (const b of C.buys) { if (!b || !b.sym || !tiers[b.rule] || b.buy !== next || seen.has(b.sym) || held.has(b.sym)) continue;
-    const hal = bad.has(b.sym) || b.halal === 'fail' || myHalal(b.sym) === 'fail' ? 'fail' : myHalal(b.sym) === 'ok' || b.halal === 'ok' ? 'ok' : 'unknown';
+    const hal = bad.has(b.sym) || b.halal === 'fail' || myHalal(b.sym) === 'fail' ? 'fail' : myHalal(b.sym) === 'ok' ? 'ok' : 'unknown';
     if (hal === 'fail' || lot[b.sym] >= 0.15 || followOffering(b.sym) || eventWarn(b.sym)) continue; seen.add(b.sym);
     const px = last[b.sym] || b.lastClose; tier2Log(b.sym, 'chain:' + b.rule, px);
-    rows.push('- BUY ' + b.sym + ' at the open on ' + next + (px ? ', up to ' + money(px * 1.03) + ' (3% above the last close ' + money(px) + ')' : '') + '. ' + (b.stopPct ? 'STOP ' + Math.round(b.stopPct * 100) + '% under your buy' : 'STOP 15% under your buy (safety stop; the test held without one)') + ' at your broker. SELL at the close on ' + b.sell + '. ' + CHAIN_NAMES[b.rule] + ' (' + b.rule + ', ' + (tiers[b.rule] === 'proven' ? 'PROVEN' : 'tier 2') + '): ' + chainLayerName(b.chainLayer) + '; ' + b.event + (b.source ? ' (' + b.source + ')' : '') + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + ' Send  bought ' + b.sym + ' PRICE .');
+    rows.push((hal==='ok'?'- BUY ':'- RESEARCH ONLY — MARK HALAL FIRST: ') + b.sym + ' at the open on ' + next + (px ? ', up to ' + money(px * 1.03) + ' (3% above the last close ' + money(px) + ')' : '') + '. ' + (b.stopPct ? 'STOP ' + Math.round(b.stopPct * 100) + '% under your buy' : 'STOP 15% under your buy (safety stop; the test held without one)') + ' at your broker. SELL at the close on ' + b.sell + '. ' + CHAIN_NAMES[b.rule] + ' (' + b.rule + ', ' + (tiers[b.rule] === 'proven' ? 'PROVEN' : 'tier 2') + '): ' + chainLayerName(b.chainLayer) + '; ' + b.event + (b.source ? ' (' + b.source + ')' : '') + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + (hal==='ok'?' Send  bought '+b.sym+' PRICE .':' Not an approved BUY.'));
     if (rows.length >= 5) break; }
   if (!rows.length) return [];
   const proven = CHAIN_RULES.filter(r => tiers[r] === 'proven').length, small = CHAIN_RULES.filter(r => tiers[r] === 'small').length;
@@ -491,10 +492,10 @@ function discoveryLines(sig, pos) { if (!TIER2_ON()) return []; const C = readJs
   const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
   const rows = [], seen = new Set();
   for (const b of C.buys) { if (!b || !b.sym || !on(b.rule) || b.buy !== next || seen.has(b.sym) || held.has(b.sym)) continue;
-    const hal = bad.has(b.sym) || b.halal === 'fail' || myHalal(b.sym) === 'fail' ? 'fail' : myHalal(b.sym) === 'ok' || b.halal === 'ok' ? 'ok' : 'unknown';
+    const hal = bad.has(b.sym) || b.halal === 'fail' || myHalal(b.sym) === 'fail' ? 'fail' : myHalal(b.sym) === 'ok' ? 'ok' : 'unknown';
     if (hal === 'fail' || lot[b.sym] >= 0.15 || followOffering(b.sym) || eventWarn(b.sym)) continue; seen.add(b.sym);
     const px = last[b.sym] || b.lastClose; tier2Log(b.sym, 'discovery:' + b.rule, px);
-    rows.push('- BUY ' + b.sym + ' at the open on ' + next + (px ? ', up to ' + money(px * 1.03) + ' (3% above the last close ' + money(px) + ')' : '') + '. STOP ' + Math.round((b.stopPct || 0.15) * 100) + '% under your buy at your broker. SELL at the close on ' + b.sell + ' (hold ' + b.hold + ' sessions). Rule ' + b.rule + ': ' + b.combo + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + ' Send  bought ' + b.sym + ' PRICE .');
+    rows.push((hal==='ok'?'- BUY ':'- RESEARCH ONLY — MARK HALAL FIRST: ') + b.sym + ' at the open on ' + next + (px ? ', up to ' + money(px * 1.03) + ' (3% above the last close ' + money(px) + ')' : '') + '. STOP ' + Math.round((b.stopPct || 0.15) * 100) + '% under your buy at your broker. SELL at the close on ' + b.sell + ' (hold ' + b.hold + ' sessions). Rule ' + b.rule + ': ' + b.combo + '.' + (hal === 'ok' ? '' : ' Halal not checked: check ZAD first.') + (hal==='ok'?' Send  bought '+b.sym+' PRICE .':' Not an approved BUY.'));
     if (rows.length >= 5) break; }
   return rows.length ? ['DISCOVERED (tier 2, TRADABLE SMALL: a rule the system found on 2021-2023 and passed its one test on 2024-2026 after the higher cost, below the 4.0 proof bar; 1,000 USD each, switched off if its live record turns negative):', ...rows] : []; }
 // SUPPLY-CHAIN result (Agent C, 22 Oct): it has no luck test and no costs, so a PROMISING there is information only, never a pass.
@@ -982,7 +983,7 @@ async function liveQ(sym) {
     if (Date.now() - fhStart > 60000) { fhStart = Date.now(); fhUsed = 0; }
     if (fhUsed >= 50) { await sleep(FAST ? 5 : Math.max(0, 61000 - (Date.now() - fhStart))); fhStart = Date.now(); fhUsed = 0; }
     fhUsed++;
-    try { const r = await fetch(FH + '/quote?symbol=' + encodeURIComponent(sym) + '&token=' + encodeURIComponent(env.FINNHUB_KEY)); if (r.ok) { const j = await r.json(); if (j && +j.c > 0) return { price: +j.c, src: 'finnhub', t: +j.t > 0 ? +j.t * 1000 : null }; } } catch (e) {}
+    try { const r = await fetch(FH + '/quote?symbol=' + encodeURIComponent(sym) + '&token=' + encodeURIComponent(env.FINNHUB_KEY)); if (r.ok) { const j = await r.json(); if (j && Number.isFinite(j.c)&&j.c>0) return { price:j.c,src:'finnhub',t:Number.isFinite(j.t)&&j.t>0?j.t*1000:null }; } } catch (e) {}
   }
   return td('/price?symbol=' + encodeURIComponent(sym));
 }
@@ -1030,18 +1031,19 @@ async function loadWide(syms, loaded, now) {
 function tgFailed(status, why, text) { try { fs.appendFileSync('data/tg-failures.jsonl', JSON.stringify({ at: new Date().toISOString(), status, why: String(why || '').slice(0, 200), head: String(text || '').split('\n')[0].slice(0, 80) }) + '\n'); } catch (e) {} }
 async function telegram(text, buttons) {   // buttons: optional rows of { text, data } shown under the last part
   const post=(u,o)=>telegramFetch(u,o,{recordFailure:false,retry429:false});
-  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent]\n' + text); return; }
+  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent]\n' + text); return {ok:false,reason:'MISSING_CREDENTIALS'}; }
   const parts=splitTelegramText(text,3800); // Preserve Unicode and every character across parts.
   for (let i = 0; i < parts.length; i++) {
     for (let a = 0; a < 3; a++) {   // Retry only an explicit rate-limit refusal; ambiguous outcomes are not replayed
       try { const r = await post(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
-        if (r.status === 429 && a < 2) { let w = 5; try { w = +((await r.json()).parameters || {}).retry_after || 5; } catch (e) {} if(w>30){tgFailed(429,'rate limit deferred '+w+' seconds',parts[i]);break;} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }   // (28 Oct) too many messages: wait as told, retry
-        if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, parts[i]); }   // (28 Oct) a refused message is recorded, so SYSTEM HEALTH can say so
+        if (r.status === 429 && a < 2) { let w = 5; try { w = +((await r.json()).parameters || {}).retry_after || 5; } catch (e) {} if(w>30){tgFailed(429,'rate limit deferred '+w+' seconds',parts[i]);return {ok:false,reason:'HTTP_429',deliveredParts:i};} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }   // (28 Oct) too many messages: wait as told, retry
+        if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, parts[i]);return {ok:false,reason:(await r.json()).description||'HTTP_'+r.status,deliveredParts:i+(r.deliveredParts||0)}; }   // (28 Oct) a refused message is recorded, so SYSTEM HEALTH can say so
         break; }
-      catch (e) { console.error('Telegram delivery unconfirmed; not blindly replayed');tgFailed('network','outcome unknown',parts[i]);break; }
+      catch (e) { console.error('Telegram delivery unconfirmed; not blindly replayed');tgFailed('network','outcome unknown',parts[i]);return {ok:false,reason:'NETWORK_ERROR',deliveredParts:i}; }
     }
     if (i + 1 < parts.length) await sleep(FAST ? 0 : 700);   // keeps the parts in order on your phone
   }
+  return {ok:true};
 }
 const FOOT = '\nTested signals, not instructions. Not financial advice, not a halal ruling.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : '');
 
@@ -1141,7 +1143,8 @@ async function sendMenu() {
   const post = (m, b) => (m==='sendMessage'?telegramFetch:fetch)(TG + '/bot' + env.TG_TOKEN + '/' + m, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }).then(r => r.json()).catch(() => null);
   await post('setMyCommands', { commands: MENU.map(([c, , d]) => ({ command: c, description: d.slice(0, 256) })) });
   await post('setChatMenuButton', { chat_id: env.TG_CHAT, menu_button: { type: 'commands' } });
-  await post('sendMessage', { chat_id: env.TG_CHAT, text: MENU_TEXT, reply_markup: { keyboard: MENU_KB.map(r => r.map(t => ({ text: t }))), resize_keyboard: true, is_persistent: true, input_field_placeholder: 'Tap a button or type a command' } });
+  const delivered=await post('sendMessage', { chat_id: env.TG_CHAT, text: MENU_TEXT, reply_markup: { keyboard: MENU_KB.map(r => r.map(t => ({ text: t }))), resize_keyboard: true, is_persistent: true, input_field_placeholder: 'Tap a button or type a command' } });
+  return delivered?.ok===true;
 }
 // commands that need a ticker or a price: tapped alone, show exactly what to send
 const ASK = { 'check a stock': 'Send:  check NVDA   (any ticker). I check the tested rules, news, SEC filings, analysts, insiders, earnings date and halal.', 'check': 'Send:  check NVDA   (any ticker).',
@@ -2508,7 +2511,8 @@ const hurdleText = (px) => { if (!(px > 0)) return '+2% net needs about +2.9% gr
 function healthLine() { const out = [];
   try { const H = readJson0('data/health.json'); if (H && Array.isArray(H.problems)) out.push(H.problems.length ? H.problems.length + ' problem' + (H.problems.length > 1 ? 's' : '') + ': ' + H.problems.slice(0, 2).map(x => String(x).replace(/\. The job is probably failing\.?$/, ' (job probably failing)').slice(0, 170)).join(' | ') + (H.problems.length > 2 ? ' (send  health )' : '') : 'checks OK'); } catch (e) {}
   try { const L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n'), j = JSON.parse(L[L.length - 1]); if (j.firstMinute) out.push('live watcher on ' + j.day + ': first minute ' + j.firstMinute + ' New York (' + kwt(+j.firstMinute.slice(0, 2) * 60 + +j.firstMinute.slice(3), j.day) + ' Kuwait)' + (j.firstMinute > '09:35' ? ' LATE: the open was not watched' : '')); } catch (e) {}
-  try { const F = fs.readFileSync('data/tg-failures.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(x => Date.now() - Date.parse(x.at) < 24 * 3600e3); if (F.length) out.push('TELEGRAM: ' + F.length + ' message' + (F.length > 1 ? 's' : '') + ' NOT delivered in the last 24 h (last: "' + F[F.length - 1].head + '", ' + F[F.length - 1].status + ')'); } catch (e) {}
+  try { const F = fs.readFileSync('data/tg-failures.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(x => Date.now() - Date.parse(x.at) < 24 * 3600e3); if (F.length) out.push('TELEGRAM: ' + F.length + ' message' + (F.length > 1 ? 's' : '') + ' delivery unconfirmed in the last 24 h (last: "' + F[F.length - 1].head + '", ' + F[F.length - 1].status + ')'); } catch (e) {}
+  try{const state=readJson0('data/alert-state.json'),n=Object.values(state?.delivery||{}).filter(x=>['PENDING','UNKNOWN'].includes(x?.status)).length;if(n)out.push('ALERT DELIVERY: '+n+' pending/unknown outcomes; review before replay');}catch{}
   return out.length ? 'SYSTEM HEALTH: ' + out.join('; ') + '.' : ''; }
 async function actionsText(sig, pos, px, title) {
   const h = await holdingsText(sig, pos, null, true), plan = planText(sig, pos, px, 'x', null, null, { actions: true });
@@ -3110,7 +3114,7 @@ async function tgCommands(sig) {
     if (lines.length > 1 && lines.every(x => CMD_LINE.test(x))) lines.forEach(x => queue.push({ update_id: u.update_id, message: { ...m, text: x } }));
     else { if (m && m.text && lines.length === 1) m.text = lines[0]; queue.push(u); }
   }
-  if (state.menuV !== MENU_V) { await sendMenu(); state.menuV = MENU_V; }   // the one-tap menu appears by itself once (and after each change)
+  if (state.menuV !== MENU_V) { if(await sendMenu())state.menuV = MENU_V; }   // the one-tap menu appears by itself once (and after each change)
   for (const u of queue) {
     state.offset = u.update_id + 1;
     const m = u.message; if (!m || !m.text || String(m.chat.id) !== String(env.TG_CHAT)) continue;      // only you
@@ -4044,15 +4048,17 @@ async function intraday(onlyMine) {
   if (!marketOpen(now) && !env.FORCE) { console.log('Market closed. Nothing to do.'); return; }
   if (!sig) { console.log('No daily scan yet.'); return; }
   const myPos = loadPos();
-  const st = readJson('data/alert-state.json', { day: '', sent: {} }), day = ny(now).d; if (st.day !== day) { st.day = day; st.sent = {}; }
-  const OKI = new Set(planCands(sig, loadPos()).filter(x => x.ok).map(x => x.sym)), buys = sig.stocks.filter(s => s.state === 'Buy watch' && OKI.has(s.sym)), trig = sig.stocks.filter(s => s.state !== 'Buy watch' && s.proven && s.trigger && s.trigger / s.last < 1.03);
-  const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
+  let st;try{st=readAlertState('data/alert-state.json',ny(now).d);}catch{console.error('ALERT STATE UNREADABLE: no intraday messages attempted');return;}
+  const alertKeys=new Set(),save=()=>saveAlertState('data/alert-state.json',st),deliver=(keys,text,buttons)=>deliverAlertOnce({book:st,keys,save,send:()=>telegram(text,buttons)});
+  const OKI = new Set(planCands(sig, loadPos()).filter(x => x.ok && myHalal(x.sym)==='ok').map(x => x.sym)), buys = sig.stocks.filter(s => s.state === 'Buy watch' && OKI.has(s.sym)), trig = sig.stocks.filter(s => s.state !== 'Buy watch' && s.proven && s.trigger && s.trigger / s.last < 1.03);
+  const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok && myHalal(x.sym)==='ok');
   const buyNowCards = [];
   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
   const seen = {};
   for (const sym of watch) {
-    const j = await liveQ((sym)), p = +j.price; if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
-    const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
+    const j = await liveQ((sym)), p = +j.price; const fresh = Number.isFinite(p)&&p>0&&Number.isFinite(j.t) && j.t>0 && Date.now()-j.t>=0 && Date.now()-j.t<=180000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
+    const say = (k, text) => {const key=sym+k;if(alertAvailable(st,key)&&!alertKeys.has(key)){alertKeys.add(key);alerts.push(sym+' at '+money(p)+': '+text);}};
+    if(!fresh){if(myPos[sym])say('priceUnknown','YOUR POSITION: PRICE UNVERIFIED. Check your broker and keep its stop; no current-price SELL/HOLD inference.');continue;}seen[sym]=p;
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
     if (mp) {   // you told the bot you bought this one
       const chg = ' You bought at ' + money(mp.entry) + ' (' + (p >= mp.entry ? '+' : '') + ((p / mp.entry - 1) * 100).toFixed(1) + '%).';
@@ -4061,8 +4067,8 @@ async function intraday(onlyMine) {
       else if (mp.t1 && p >= mp.t1 && !mp.trail) say('myt1', 'YOUR POSITION: ' + t1Text(sym, mp) + chg);
     }
     const pb = mp ? null : planBuys.find(x => x.sym === sym);
-    if (pb && fresh && p >= pb.lo && p <= pb.hi && !st.sent[sym + 'buynow']) { st.sent[sym + 'buynow'] = 1; buyNowCards.push({ sym, p, text: planText(sig, myPos, { [sym]: p }, sym + ' is inside its buy range now', [sym]) }); }
-    const qs = mp || (pb && st.sent[sym + 'buynow']) ? null : qs0;
+    if (pb && fresh && p >= pb.lo && p <= pb.hi && alertAvailable(st,sym+'buynow')) { buyNowCards.push({ sym, p, text: planText(sig, myPos, { [sym]: p }, sym + ' is inside its buy range now', [sym]) }); }
+    const qs = mp || (pb && (st.sent[sym+'buynow']||buyNowCards.some(x=>x.sym===sym))) ? null : qs0;
     if (qs) {   // a quick trade setup from last night's close
       if (p > qs.buyHi) say('qhi', 'QUICK TRADE: above its entry range (' + money(qs.buyLo) + ' to ' + money(qs.buyHi) + '). The dip is gone. Skip it.');
       else if (p <= qs.stop) say('qlo', 'QUICK TRADE: already at its invalidation level ' + money(qs.stop) + '. The setup has failed.');
@@ -4087,21 +4093,20 @@ async function intraday(onlyMine) {
   }
   // ONE MARKET-OPEN CHECK a day, so you always know the system is running and where each holding stands, even when no alert fires.
   let openMsg = null;
-  if (!onlyMine && !st.sent.__open && Object.keys(seen).length) {
-    st.sent.__open = 1;
+  if (!onlyMine && alertAvailable(st,'__open') && Object.keys(seen).length) {
     const kt = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
     const posL = Object.entries(myPos).filter(([k]) => seen[k]).map(([k, P]) => { const p = seen[k], g = p / P.entry - 1;
       return k + ' ' + money(p) + ' (' + (g >= 0 ? '+' : '') + (g * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' + (P.stop ? ' | stop ' + money(P.stop) + ' (' + ((P.stop / p - 1) * 100).toFixed(1) + '%)' : P.src === 'leader dip' ? ' | leader dip: sell limit ' + money(P.target) + ', no stop by design' : ' | NO STOP SET') + (P.t1 ? ' | target ' + money(P.t1) + ' (+' + ((P.t1 / p - 1) * 100).toFixed(1) + '%)' : '') + ': ' + (P.stop && p <= P.stop ? 'SELL NOW: the stop is reached' : P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '') ? P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ')' : 'HOLD'); });
     const buyL = planBuys.filter(x => seen[x.sym] && !myPos[x.sym]).map(x => { const p = seen[x.sym]; return x.sym + ' ' + money(p) + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (p > x.hi ? 'ABOVE the range, do not chase' : p < x.lo ? 'below the range, wait' : 'INSIDE the range'); });
-    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PROVEN BUYS TODAY', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.'].join('\n');
+    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PLAN CANDIDATES (current gates; not a new proof verdict)', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.'].join('\n');
   }
-  fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
-  if (openMsg) await telegram(openMsg + '\n' + FOOT);
+  save();
+  if (openMsg) await deliver(['__open'],openMsg+'\n'+FOOT);
   alerts.sort((a, b) => (b.includes('YOUR POSITION') ? 1 : 0) - (a.includes('YOUR POSITION') ? 1 : 0));
   for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
-    await telegram('BUY NOW: a proven setup is inside its buy range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
+    await deliver([bc.sym+'buynow'],'ENTRY REVIEW: a permitted plan setup is inside its range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
       [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
-  if (alerts.length) await telegram('Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
+  if (alerts.length) await deliver([...alertKeys],'Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
   console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
 }
 

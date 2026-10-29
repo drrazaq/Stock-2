@@ -1,6 +1,6 @@
 {
   "reviewedAt": "2026-10-29",
-  "scope": "Static endpoint inventory plus policy and targeted state-machine tests; not a certification of every message state machine",
+  "scope": "Endpoint inventory, transport policy and targeted message-state/intraday integrations; unresolved cross-job durability is explicit",
   "rootMessagePaths": [
     "autolab.mjs",
     "deals.mjs",
@@ -42,6 +42,7 @@
     "fastmover-lab.mjs",
     "horizons.mjs",
     "hunting-lab.mjs",
+    "intraday-radar.mjs",
     "leaders-study.mjs",
     "movers.mjs",
     "octopus.mjs",
@@ -50,6 +51,7 @@
     "rebuy.mjs",
     "score-study.mjs",
     "smart-money.mjs",
+    "stops.mjs",
     "tipranks.mjs",
     "winners-study.mjs"
   ],
@@ -84,14 +86,22 @@
     "macro threshold ACK-only",
     "ambiguous news outcomes quarantined, not delivered",
     "stale/future news evidence and current-price stop instructions guarded",
-    "existing watcher and guard message state tests retained"
+    "existing watcher and guard message state tests retained",
+    "Menu version advances only after message ACK",
+    "Intraday keys reserve atomically before send; ACK-only sent state; unknown outcomes quarantined",
+    "Known explicit intraday refusals remain retryable without consuming alert keys",
+    "Malformed intraday state fails closed; no automatic dedup reset",
+    "Missing/future/stale intraday quote clocks cannot produce current-price SELL or healthy open-check",
+    "Unknown owner ZAD cannot become chain/discovered/follow BUY wording",
+    "Research footer never bypasses leading unapproved qualification"
   ],
   "open": [
-    "Cross-run/report-level deduplication in every legacy module remains incomplete",
-    "Premarket workflow is contents:read; no durable ACK store added and permissions unchanged",
-    "Ambiguous news delivery quarantine needs operator review; no exactly-once delivery claim",
-    "Legacy per-line report splitters and all recommendation wording need full behavioral review",
-    "Failure ledger in ephemeral/read-only jobs is not guaranteed durable; job logs remain evidence",
-    "Authorized real Telegram delivery has not been performed"
-  ]
+    "Read-only premarket workflow has no durable cross-job ACK store; permissions unchanged",
+    "Scheduled report reruns do not have universal report-level durable deduplication",
+    "Bot command update offset can advance independently of an unacknowledged reply; replaying commands could duplicate owner actions and is not a safe retry policy",
+    "Intraday local atomic state survives process restart, but cross-run continuity depends on existing workflow Git saves; an unsaved runner crash remains a gap",
+    "Unknown news/intraday outcomes require operator review; no exactly-once promise",
+    "Authorized real Telegram delivery remains unperformed"
+  ],
+  "wordingReview": "Known unknown-ZAD BUY paths corrected; complete all-recommendation behavioral certification remains open. Explicit owner-authorized lanes preserved."
 }

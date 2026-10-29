@@ -80,5 +80,5 @@ export function createResearchCollector({env={},fetcher=fetch,maxRequests=420}={
   return {kind:'RESEARCH_ONLY',status:freshRows.length?'OBSERVED':'NO_FRESH_PRICES',at,session,metrics,providers,sourceStatus:Object.fromEntries(sourceStatus),lastSuccessfulCycle:state.lastSuccessfulCycle,requests:state.requests,
    quotes:rows,news:newsRows,discovery:{added,sources:ingress.sources,funnel:state.discovery.funnel,priceCoverage:state.discovery.priceCoverage},claims:{approvedBuy:false,orders:false,filledTrades:false,profitability:'NOT_ESTABLISHED'}};
  }
- return {cycle,state,report:cutoff=>discoveryReport(state.discovery,{cutoff,sources:[],completeSession:state.minutes.length===330})};
+ return {cycle,state,report:cutoff=>({...discoveryReport(state.discovery,{cutoff,sources:[],completeSession:false}),sessionWindow:'PREMARKET',premarketClockMinutes:state.minutes.length,premarketClockWindowComplete:state.minutes.length===330,tradableUniverseCoverage:'UNVERIFIED'})};
 }

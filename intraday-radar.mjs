@@ -1,4 +1,5 @@
-import {telegramFetch} from './telegram-delivery.mjs';
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // Early-wave radar for Stock-2. Runs on GitHub Actions about every 15 minutes while the US market is open.
 // It follows the stocks the morning whole-market sweep found in strong uptrends and walks each one through a ladder:
 //   PRE-WAVE WATCH  ->  BREAKOUT CONFIRMATION  ->  PULLBACK BUY REVIEW  ->  DO NOT CHASE
