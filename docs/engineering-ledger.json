@@ -140,33 +140,47 @@
     }
   ],
   "tests": {
-    "passed": 1231,
+    "passed": 1258,
     "failed": 0,
     "skipped": 0,
     "scope": "node --test test/*.test.mjs tests/*.test.mjs",
     "runtime": "Node 24.19.0 local / Node 20 CI",
-    "codeSha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+    "codeSha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e",
     "remoteCI": [
       {
-        "id": "40817037197",
-        "event": "pull_request",
-        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "name": "fixture-close",
+        "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817037197"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821656515/job/123275364113",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
       },
       {
-        "id": "40817031943",
-        "event": "push",
-        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "name": "test",
+        "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031943"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821661294/job/123275286321",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
       },
       {
-        "id": "40817031883",
-        "event": "push",
-        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "name": "fixture-open",
+        "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031883"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821656515/job/123275271139",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
+      },
+      {
+        "name": "safety",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821656515/job/123275270877",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821656538/job/123275270796",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
       }
     ],
     "additionalHostedChecks": [
@@ -602,7 +616,7 @@
     "publishedCommit": "c3363e06423291c25382cf6cbebe546b88ef9afb"
   },
   "telegramPolicyMilestone": {
-    "status": "LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "rootMessagePaths": 29,
     "failureNotificationWorkflows": 16,
     "researchQualifiedAdapters": 19,
@@ -616,6 +630,57 @@
     "completeBehavioralReview": false,
     "realTelegramMessagesSent": 0,
     "testsPassed": 1258,
+    "staticChecks": {
+      "rootModules": 214,
+      "workflows": 79
+    },
+    "publishedCommit": "a8acf65b0734ac73fea14c5635b82b55498bfb1e",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821656515/job/123275364113",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821661294/job/123275286321",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
+      },
+      {
+        "name": "fixture-open",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821656515/job/123275271139",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
+      },
+      {
+        "name": "safety",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821656515/job/123275270877",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40821656538/job/123275270796",
+        "sha": "a8acf65b0734ac73fea14c5635b82b55498bfb1e"
+      }
+    ]
+  },
+  "discoveryFaultFollowup": {
+    "status": "FULL_LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "tests": "9 targeted tests passed",
+    "fix": "Reject out-of-range news timestamp per row instead of dropping valid source records; reject invalid cycle cutoff before mutating state",
+    "simulation": "541 cycles 04:00\u201313:00 NY including half-day closing boundary, all real adapters, stale news, feed interruptions, duplicate events",
+    "realWorldEntitlementEvidence": false,
+    "testsPassed": 1260,
+    "failures": 0,
     "staticChecks": {
       "rootModules": 214,
       "workflows": 79

@@ -44,7 +44,10 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
    let accepted=0,rejected=0;
    for(const row of rows.slice(0,500)){
     const sym=row.sym||row.symbol;if(!symbol(sym)){rejected++;continue;}
-    const rawPublic=source.lane==='NEWS_CATALYST'&&typeof row.t==='number'&&Number.isFinite(row.t)?new Date(row.t).toISOString():source.lane==='SEC_EVENT'?row.p:null;
+    // A finite number can still exceed JavaScript's representable date range.
+    // Reject that row without making every valid headline in the file unavailable.
+    const newsTime=source.lane==='NEWS_CATALYST'&&typeof row.t==='number'&&Number.isFinite(row.t)&&Math.abs(row.t)<=8640000000000000?row.t:null;
+    const rawPublic=newsTime!==null?new Date(newsTime).toISOString():source.lane==='SEC_EVENT'?row.p:null;
     // Generated output time is conservative availability of DERIVED analysis;
     // it is never passed off as the original earnings/insider publication time.
     const primary=clock(rawPublic),asOf=primary?rawPublic:generated;
@@ -63,6 +66,7 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
 }
 export const discoveryState=()=>({observations:{},crossings:{},firstFresh:{},capacityDroppedAttempts:0,funnel:{attempts:0,accepted:0,duplicates:0,invalid:0,unknownPrice:0},suppressed:{},sourceReliability:{}});
 export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
+ if(!clock(cutoff))throw new TypeError('discovery cutoff needs timezone');
  state.funnel||={attempts:0,accepted:0,duplicates:0,invalid:0,unknownPrice:0};state.suppressed||={};state.sourceReliability||={};
  for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;}
  const suppress=(o,reason)=>{const key=hash([o?.symbol,o?.lane,o?.sourceId,reason]);if(!state.suppressed[key]&&Object.keys(state.suppressed).length<5000)state.suppressed[key]={symbol:o?.symbol||null,lane:o?.lane||null,sourceId:o?.sourceId||null,reason,firstObservedAt:cutoff};};

@@ -44,3 +44,31 @@ test('bounded news ingestion prioritizes current appended reports over old histo
  const files={'data/news-log.jsonl':[...Array.from({length:500},()=>JSON.stringify(old)),JSON.stringify({...old,h:'current fixture',t:Date.parse(generatedAt)})].join('\n')};
  const r=collectDiscovery({readText:read(files),cutoff});assert.equal(r.observations.length,1);assert.equal(r.sources.find(s=>s.lane==='NEWS_CATALYST').truncated,1);
 });
+test('out-of-range news dates reject only the bad row; invalid cycle clocks do not mutate state',()=>{
+ const files=sources();files['data/news-log.jsonl']+='\n'+JSON.stringify({sym:'BAD',h:'invalid clock',t:1e100});
+ const r=collectDiscovery({readText:read(files),cutoff}),news=r.sources.find(x=>x.lane==='NEWS_CATALYST');
+ assert.equal(news.status,'READ');assert.equal(news.accepted,1);assert.equal(news.rejected,1);
+ const state=discoveryState(),before=JSON.stringify(state);
+ assert.throws(()=>updateDiscovery(state,{observations:[live],rows:[],cutoff:'2026-10-29'}),/timezone/);assert.equal(JSON.stringify(state),before);
+});
+test('all adapters survive a 04:00–13:00 half-day fixture with outages, stale news and duplicates',()=>{
+ const start=Date.parse('2026-11-27T09:00:00Z'),base=new Date(start).toISOString(),state=discoveryState();let ingress;
+ for(let m=0;m<=540;m++){
+  const cycle=new Date(start+m*60000).toISOString(),files=sources();
+  for(const [path,doc] of Object.entries(files))if(typeof doc==='object'){
+   doc.generatedAt=base;doc.updated=base;
+   if(path==='data/events-recent.json')doc.events[0].p=base;
+  }
+  files['data/news-log.jsonl']=JSON.stringify({sym:'AAA',h:'fixture headline',t:m>=60&&m<90?start-100*3600000:start,at:base});
+  if(m>=120&&m<140)delete files['data/share-supply.json'];
+  ingress=collectDiscovery({readText:read(files),cutoff:cycle,live:[{...live,asOf:base,observedAt:cycle}]});
+  const rows=m>=300&&m<310?[]:[{sym:'AAA',price:m<400?10.1:11.2,prevC:10,t:start+m*60000}];
+  updateDiscovery(state,{...ingress,rows,cutoff:cycle});
+ }
+ const r=discoveryReport(state,{cutoff:new Date(start+540*60000).toISOString(),sources:ingress.sources,completeSession:true});
+ assert.equal(r.priceCoverage.cycles,541);assert.equal(r.priceCoverage.noFreshPriceCycles,10);
+ assert.equal(r.sourceReliability.SUPPLY_SHIFT.statusCounts.MISSING,20);
+ assert.equal(r.sourceReliability.NEWS_CATALYST.rejectedAttempts,30);
+ assert.equal(r.lanes.every(x=>x.beforeObservedPlus10===1),true);assert.ok(r.funnel.duplicates>4000);
+ assert.ok(r.detections.every(x=>x.status==='NOT AN APPROVED BUY'));
+});
