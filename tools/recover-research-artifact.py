@@ -10,7 +10,11 @@ if len(sys.argv) != 4:
 if not sys.stdin.isatty():
     raise SystemExit("Use a local interactive terminal; never pipe or paste a key into chat or argv.")
 secret = getpass.getpass("Research artifact recovery key (hidden, local only): ")
-env = os.environ.copy()
+# Offline child needs no inherited credentials, proxy secrets or Node preloads.
+# In particular, do not read or forward the legacy PRIVATE_KEY.
+env = {name: os.environ[name] for name in
+       ("PATH", "SystemRoot", "WINDIR", "TEMP", "TMP", "TMPDIR")
+       if name in os.environ}
 env["RESEARCH_ARTIFACT_KEY"] = secret
 script = pathlib.Path(__file__).with_suffix(".mjs")
 try:
