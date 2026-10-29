@@ -42,7 +42,7 @@ test('a future observation is rejected and later prices never backfill first det
 test('bounded news ingestion prioritizes current appended reports over old history',()=>{
  const old={sym:'AAA',h:'old fixture',t:Date.parse('2020-01-01T00:00:00Z'),at:generatedAt};
  const files={'data/news-log.jsonl':[...Array.from({length:500},()=>JSON.stringify(old)),JSON.stringify({...old,h:'current fixture',t:Date.parse(generatedAt)})].join('\n')};
- const r=collectDiscovery({readText:read(files),cutoff});assert.equal(r.observations.length,1);assert.equal(r.sources.find(s=>s.lane==='NEWS_CATALYST').truncated,1);
+ const r=collectDiscovery({readText:read(files),cutoff});assert.equal(r.observations.length,1);const news=r.sources.find(s=>s.lane==='NEWS_CATALYST');assert.equal(news.truncated,0);assert.equal(news.rejected,500);assert.equal(news.inputRows,501);
 });
 test('out-of-range news dates reject only the bad row; invalid cycle clocks do not mutate state',()=>{
  const files=sources();files['data/news-log.jsonl']+='\n'+JSON.stringify({sym:'BAD',h:'invalid clock',t:1e100});
@@ -86,4 +86,19 @@ test('out-of-order cycles and overflowed relative prices cannot fabricate an ear
  assert.equal(Object.keys(state.observations).length,0);assert.equal(state.rejectedOutOfOrderCycles,1);
  const invalid=discoveryState();updateDiscovery(invalid,{observations:[live],rows:[{...quote(cutoff),price:1e308,prevC:1e-308}],cutoff});
  assert.equal(Object.values(invalid.observations)[0].priceAtDetection,null);assert.deepEqual(invalid.crossings,{});
+});
+test('one malformed/null news row cannot hide valid headlines or fabricate source completeness',()=>{
+ const good={sym:'AAA',h:'valid fixture catalyst',t:Date.parse(generatedAt),at:generatedAt},files={'data/news-log.jsonl':['{broken','null',JSON.stringify(good)].join('\n')};
+ const r=collectDiscovery({readText:read(files),cutoff}),news=r.sources.find(x=>x.lane==='NEWS_CATALYST');assert.equal(r.observations.length,1);assert.equal(news.status,'READ');assert.equal(news.accepted,1);assert.equal(news.rejected,2);assert.equal(news.malformedLines,1);assert.equal(news.partial,true);
+ const state=discoveryState();updateDiscovery(state,{...r,rows:[quote(cutoff)],cutoff});assert.equal(Object.values(state.observations)[0].observedAt,cutoff);assert.equal(state.sourceReliability.NEWS_CATALYST.rejectedAttempts,2);
+});
+test('future/stale/malformed stories cannot consume the latest500 eligible slots; ingestion clocks are not backfilled',()=>{
+ const good={sym:'AAA',h:'valid fixture',t:Date.parse(generatedAt),at:generatedAt},future={...good,sym:'BAD',t:Date.parse(cutoff)+1000};
+ const lines=[...Array.from({length:600},()=>JSON.stringify(future)),JSON.stringify({...good,sym:'BBB',at:'2026-10-30T00:00:00Z'}),JSON.stringify({...good,sym:'CCC',at:'2026-10-01T00:00:00Z'}),JSON.stringify(good)];
+ const r=collectDiscovery({readText:read({'data/news-log.jsonl':lines.join('\n')}),cutoff}),news=r.sources.find(x=>x.lane==='NEWS_CATALYST');assert.deepEqual(r.observations.map(x=>x.symbol),['AAA']);assert.equal(news.rejected,602);assert.equal(news.rejectionReasons.FUTURE_PUBLICATION,600);assert.equal(news.rejectionReasons.INVALID_OR_FUTURE_INGESTION_CLOCK,2);
+});
+test('null derived records do not poison other valid records; oversized input remains explicitly unavailable',()=>{
+ const files=sources();files['data/events-recent.json'].events.unshift(null);files['data/insider-study.json'].recent.unshift(null);files['data/earnings-recent.json'].reports.unshift(null);files['data/comeback-today.json'].methods.bad=null;
+ const r=collectDiscovery({readText:read(files),cutoff});assert.equal(r.observations.length,8);assert.equal(r.sources.find(x=>x.lane==='SEC_EVENT').rejected,1);assert.equal(r.sources.find(x=>x.lane==='MARKET_DISLOCATION').rejected,1);
+ const huge=collectDiscovery({readText:()=> 'x'.repeat(8*1024*1024+1),cutoff});assert.ok(huge.sources.slice(1).every(x=>x.status==='INPUT_BUDGET_OR_TYPE_BLOCKED'));
 });

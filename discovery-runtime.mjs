@@ -6,6 +6,7 @@ import {isFreshPriceAge} from './ignition-gates.mjs';
 const clock=x=>typeof x==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
 const symbol=x=>typeof x==='string'&&/^[A-Z][A-Z0-9.\-]{0,9}$/.test(x);
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
+const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
 export const DISCOVERY_SOURCES=Object.freeze([
  {lane:'NEWS_CATALYST',path:'data/news-log.jsonl',hours:72},
  {lane:'SEC_EVENT',path:'data/events-recent.json',hours:240},
@@ -19,12 +20,12 @@ export const DISCOVERY_SOURCES=Object.freeze([
 function rowsOf(lane,doc) {
  switch(lane) {
   case 'SEC_EVENT':return doc.events||[];
-  case 'INSIDER_CLUSTER':return (doc.recent||[]).filter(r=>Number.isInteger(r.n)&&r.n>=2);
-  case 'EARNINGS_SURPRISE':return (doc.reports||[]).filter(r=>Number.isFinite(r.a)&&Number.isFinite(r.e)&&r.a!==r.e);
+  case 'INSIDER_CLUSTER':return (doc.recent||[]).filter(r=>object(r)&&Number.isInteger(r.n)&&r.n>=2);
+  case 'EARNINGS_SURPRISE':return (doc.reports||[]).filter(r=>object(r)&&Number.isFinite(r.a)&&Number.isFinite(r.e)&&r.a!==r.e);
   case 'INDUSTRY_RIPPLE':return doc.todayMovers||[];
   case 'SUPPLY_SHIFT':return doc.now||[];
   case 'TECHNICAL_BUILDUP':return doc.buys||[];
-  case 'MARKET_DISLOCATION':return Object.entries(doc.methods||{}).flatMap(([rule,m])=>(m.newSignals||[]).map(r=>({...r,rule})));
+  case 'MARKET_DISLOCATION':if(doc.methods!==undefined&&!object(doc.methods))throw Error('invalid methods');return Object.entries(doc.methods||{}).flatMap(([rule,m])=>!object(m)?[null]:m.newSignals===undefined?[]:Array.isArray(m.newSignals)?m.newSignals.map(r=>object(r)?{...r,rule}:null):[null]);
   default:return [];
  }
 }
@@ -34,15 +35,29 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
  for(const source of DISCOVERY_SOURCES){
   let text;try{text=readText(source.path);}catch{sources.push({...source,status:'MISSING',rows:0});continue;}
   try{
-   let rows,generated;
+   if(typeof text!=='string'||Buffer.byteLength(text,'utf8')>8*1024*1024){sources.push({...source,status:'INPUT_BUDGET_OR_TYPE_BLOCKED',rows:0});continue;}
+   let rows,generated,preRejected=0,malformedLines=0,inputRows=null,inputTruncated=0,parsedObjects=0;const rejectionReasons={};
+   const reject=reason=>{preRejected++;rejectionReasons[reason]=(rejectionReasons[reason]||0)+1;};
    if(source.lane==='NEWS_CATALYST'){
-    rows=text.split(/\r?\n/).filter(Boolean).map(x=>JSON.parse(x)).filter(x=>x.h&&x.sym).sort((a,b)=>(b.t||0)-(a.t||0));
-   }else{const doc=JSON.parse(text);generated=doc.generatedAt||doc.updated;rows=rowsOf(source.lane,doc);}
+    const lines=text.split(/\r?\n/).filter(x=>x.trim());inputRows=lines.length;inputTruncated=Math.max(0,lines.length-10000);rows=[];
+    for(const line of lines.slice(-10000)){
+     let row;try{row=JSON.parse(line);}catch{malformedLines++;reject('MALFORMED_JSON_LINE');continue;}
+     if(!object(row)){reject('NON_OBJECT_ROW');continue;}parsedObjects++;
+     if(typeof row.h!=='string'||!row.h.trim()||!symbol(row.sym)){reject('NOT_A_VALID_HEADLINE_RECORD');continue;}
+     if(typeof row.t!=='number'||!Number.isFinite(row.t)||row.t<=0||row.t>8640000000000000){reject('INVALID_PUBLICATION_CLOCK');continue;}
+     if(row.t>at||at-row.t>source.hours*3600000){reject(row.t>at?'FUTURE_PUBLICATION':'STALE_PUBLICATION');continue;}
+     if(row.at!==undefined&&(!clock(row.at)||Date.parse(row.at)>at||Date.parse(row.at)<row.t)){reject('INVALID_OR_FUTURE_INGESTION_CLOCK');continue;}
+     rows.push(row);
+    }
+    if(!parsedObjects&&preRejected){sources.push({...source,status:'MALFORMED',rows:0,inputRows,rejected:preRejected,malformedLines,truncated:inputTruncated,rejectionReasons});continue;}
+    rows.sort((a,b)=>b.t-a.t);
+   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');generated=doc.generatedAt||doc.updated;rows=rowsOf(source.lane,doc);}
    if(!Array.isArray(rows))throw Error('invalid rows');
    if(source.lane!=='NEWS_CATALYST'&&!clock(generated)){sources.push({...source,status:'MISSING_OUTPUT_TIMESTAMP',rows:rows.length});continue;}
    if(generated&&(Date.parse(generated)>at||at-Date.parse(generated)>source.hours*3600000)){sources.push({...source,status:Date.parse(generated)>at?'FUTURE':'STALE',rows:rows.length});continue;}
-   let accepted=0,rejected=0;
+   let accepted=0,rejected=preRejected;
    for(const row of rows.slice(0,500)){
+    if(!object(row)){rejected++;continue;}
     const sym=row.sym||row.symbol;if(!symbol(sym)){rejected++;continue;}
     // A finite number can still exceed JavaScript's representable date range.
     // Reject that row without making every valid headline in the file unavailable.
@@ -59,7 +74,7 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
      caveat:primary?'Source report; materiality/direction not established by lane presence':'Original public event time unavailable; generatedAt is derived output availability only',
      sourcePath:source.path,sourceCapturedAt:source.lane==='NEWS_CATALYST'?row.at:generated});accepted++;
    }
-   sources.push({...source,status:'READ',rows:rows.length,accepted,rejected,truncated:Math.max(0,rows.length-500),generatedAt:generated||null});
+   sources.push({...source,status:'READ',rows:rows.length,accepted,rejected,truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
   }catch{sources.push({...source,status:'MALFORMED',rows:0});}
  }
  return {observations,sources};

@@ -1,11 +1,11 @@
 {
   "updated": "2026-10-29",
-  "sourceCheckpoint": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+  "sourceCheckpoint": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
   "score": {
-    "complete": 22,
+    "complete": 23,
     "total": 40,
-    "percent": 55,
-    "remaining": 18
+    "percent": 57.5,
+    "remaining": 17
   },
   "principle": "A new module or passing test does not by itself complete an operational/empirical acceptance check. Engineering completion and profitability are distinct.",
   "completed": [
@@ -162,6 +162,16 @@
       "status": "COMPLETE",
       "evidence": "docs/engineering-progress.md",
       "basis": "Prior artifact review distinguishes partial two-year minute evidence from five-year daily studies; rejected variants preserved."
+    },
+    {
+      "id": "EXEC-04",
+      "title": "All-path fail-closed execution fault injection",
+      "status": "COMPLETE",
+      "requiredVerification": "Inject errors/timeouts/redirects/config ambiguity/duplicate or resumed jobs on every mutation path. Prove no live broker host, method override or default opt-in mutation; unknown outcomes do not trigger blind retries. No actual order is needed or authorized.",
+      "evidence": "docs/execution-mutation-fault-matrix.md; docs/execution-account-quarantine.md",
+      "verifiedSource": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+      "basis": "All currently wired broker routes inventoried and fault-injected through actual adapter/composed private CAS protocol. Default off, PAPER-only, strict schemas, remote intent+ACK, account quarantine across client IDs, races/restarts, timeouts/redirects/refusals and no blind retry verified. No actual broker/private write or deployment required or performed.",
+      "remainingLimit": "Future new routes must extend the matrix. Actual order approval, migration, fills, plan evidence and profits remain separate."
     }
   ],
   "remaining": [
@@ -244,13 +254,6 @@
       "status": "OPEN",
       "actionability": "SAFE_BRANCH",
       "requiredVerification": "Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity."
-    },
-    {
-      "id": "EXEC-04",
-      "title": "All-path fail-closed execution fault injection",
-      "status": "OPEN",
-      "actionability": "SAFE_BRANCH",
-      "requiredVerification": "Inject errors/timeouts/redirects/config ambiguity/duplicate or resumed jobs on every mutation path. Prove no live broker host, method override or default opt-in mutation; unknown outcomes do not trigger blind retries. No actual order is needed or authorized."
     },
     {
       "id": "TELEGRAM-03",

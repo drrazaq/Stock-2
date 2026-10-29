@@ -43,10 +43,11 @@
     "note": "Reading, syntax checks and fixtures are not exhaustive behavioral certification"
   },
   "engineeringAcceptance": {
-    "complete": 22,
+    "complete": 23,
     "total": 40,
-    "percent": 55,
-    "basis": "Added complete baseline authority/preservation map, actual exact-source protected metadata verification and enforced publication policy. This closes ownership-map item only; every-script behavior and real historical/performance evidence remain open."
+    "percent": 57.5,
+    "remaining": 17,
+    "basis": "Added EXEC04 closure for all currently wired broker mutation paths after exact-source full fault/integration/static CI; no trading advantage or real orders implied."
   },
   "strategyValidation": {
     "earlyEnginePromotionChecksPassed": 0,
@@ -4375,7 +4376,7 @@
     ]
   },
   "executionFaultClosureCandidate": {
-    "status": "PENDING_FULL_EXACT_COMMIT_CI_ACCOUNT_QUARANTINE_FOLLOWUP",
+    "status": "VERIFIED_COMPLETE_CURRENT_BROKER_ROUTES",
     "proposedCheck": "EXEC-04",
     "scope": "All current broker mutation paths only: POST buy,POST sell,DELETE order; no actual broker/private-journal operation",
     "inventory": "236 baseline source/HTML files checked against remote blobs; only intended scan edit differs. One broker adapter consumer; options-lab/squad15/squad15b trade-origin endpoints are reference GETs. No workflow order-enable flag.",
@@ -4387,6 +4388,102 @@
     },
     "privacy": "Only opaque operation/content hashes, status,time and order UUID in existing private-data repository; no payload/token/owner amounts. No permission or secret changed; no private API request performed in engineering.",
     "deployment": "Not merged/installed/enabled. Future paper order activation and corresponding private-journal writes still require owner approval.",
-    "accountWideFollowup": "Unknown or refused operation also retains an account-wide CAS quarantine; a fresh date/client order ID cannot bypass it. Only remotely durable operation ACK plus durable account-lock release permits later distinct mutations."
+    "accountWideFollowup": "Unknown or refused operation also retains an account-wide CAS quarantine; a fresh date/client order ID cannot bypass it. Only remotely durable operation ACK plus durable account-lock release permits later distinct mutations.",
+    "verifiedSource": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901450099/job/123544721166"
+      },
+      {
+        "name": "test",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901456813/job/123544558959"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901456213/job/123544557977"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901456213/job/123544556745"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901456213/job/123544556439"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901456507/job/123544555705"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901456427/job/123544555610"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901456264/job/123544555163"
+      },
+      {
+        "name": "test",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901450296/job/123544533493"
+      },
+      {
+        "name": "safety",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901450099/job/123544532611"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901450179/job/123544532422"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40901450099/job/123544532003"
+      }
+    ],
+    "nodeTests": {
+      "files": 169,
+      "tap": 1443,
+      "standalone": 2,
+      "total": 1445
+    },
+    "acceptanceClosed": "EXEC-04"
+  },
+  "catalystRowIsolationMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "defect": "One broken JSONL/null row could poison valid headlines; future/stale rows could consume500-row eligibility budget",
+    "repair": "Isolated line parsing, pre-budget eligibility filtering, independent ingestion clock checks, explicit input/partial/rejection/truncation metrics; null-safe derived rows;8MiB parse bound and10000line intake bound",
+    "localTests": {
+      "discovery": 12,
+      "hybridSession": 7,
+      "researchCollector": 5,
+      "hybridRunner": 3
+    },
+    "allSourceAuditComplete": false,
+    "firstDetection": "Actual cutoff retained; never backfilled",
+    "dataFilesModified": 0
   }
 }
