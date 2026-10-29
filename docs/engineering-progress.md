@@ -1,3 +1,9 @@
+## Frozen-save private-clone integration correction — 29 October 2026
+
+Source4c9e478 full push40877866052 and PR40877876353 failed private-data integration: the new frozen-registry lookup used caller CWD, while private-data push delegates from a separate private clone. Correction anchors policy to the public save-script checkout, so the private clone neither needs a copied registry nor can substitute its own policy. The disposable public-checkout fixture now includes the real metadata dependency. Production .github/private-data.sh and sensitive permissions remain untouched.
+
+Corrected local tests:8 shared-save and9 private-data fixtures all pass; Bash syntax passes. Exact-commit full push/PR/safety CI pending. No production/private repository is accessed; tests use only disposable local repositories and synthetic sentinels. Acceptance22/40,18 open;prospective cases0. All original owner-conflict controls and frozen result blobs are preserved.
+
 ## Shared save barrier verified; frozen-conflict guard continuation — 29 October 2026
 
 Source69db8a5f319e05296887a406f5039739118962da passes all12 exact-commit checks; hosted Node161files/1393tests. Stage/commit/pull failures no longer report successful save. Four prior owner-conflict controls are retained.

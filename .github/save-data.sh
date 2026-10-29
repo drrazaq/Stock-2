@@ -8,10 +8,11 @@
 OWNER_FILES=" data/my-positions.json data/my-trades.jsonl data/tg-state.json "
 # This branch's explicit frozen registry is metadata only. Missing/corrupt policy
 # cannot silently revert to job-wins for a frozen firstRun/correctedRun artifact.
-FROZEN_FILES=$(node - <<'NODE'
+SAVE_POLICY_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd) || exit 1
+FROZEN_FILES=$(node - "$SAVE_POLICY_ROOT/docs/repository-ownership.json" <<'NODE'
 const fs=require('node:fs');
 try {
- const m=JSON.parse(fs.readFileSync('docs/repository-ownership.json','utf8'));
+ const m=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
  if(!Array.isArray(m.frozenRegistry)||!m.frozenRegistry.length)throw Error();
  const paths=m.frozenRegistry.map(x=>x?.path);
  if(paths.some(p=>typeof p!=='string'||!/^data\/[A-Za-z0-9_.-]+$/.test(p))||new Set(paths).size!==paths.length)throw Error();

@@ -3472,6 +3472,14 @@
     "missingPolicy": "BLOCK_BEFORE_COMMIT",
     "localDisposableGitTests": 8,
     "allWorkflowsComplete": false,
-    "productionDeployment": false
+    "productionDeployment": false,
+    "failedSource": {
+      "sha": "4c9e4785a7cd4a4d6261dcf57af3099813aebab5",
+      "push": 40877866052,
+      "pr": 40877876353,
+      "reason": "Policy lookup used caller working directory; private-data delegation uses a separate clone without public registry"
+    },
+    "correction": "Anchor metadata to public save-script checkout; private clone cannot substitute policy; fixture includes actual source-checkout registry",
+    "localPrivateDataFixtureTests": 9
   }
 }
