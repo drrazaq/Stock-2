@@ -2859,9 +2859,11 @@ function tradeButtons(sig, pos, max, text) {
 }
 const QUIET = () => { const st = readJson0('data/settings.json') || {}; return st.quiet !== false; };   // quiet unless you send  quiet off
 // "Should I buy more of X?" for a stock you already hold. The answer follows the plan, not the mood of the day.
-async function addReply(sym, pos) {
+async function addReply(sym, pos, at = Date.now()) {
   const P = pos[sym]; let p = null;
-  if (marketOpen(Date.now())) { const j = await liveQ((sym)); p = +j.price || null; }
+  if(!P)return 'NO ADD APPROVAL: no holding is recorded for '+sym+'.';
+  if(myHalal(sym)!=='ok')return 'NO ADD APPROVAL: '+sym+' has no current affirmative owner ZAD mark (missing, expired or rejected). No new purchase is approved. Review its existing holding-specific exit and stop instructions; the holding record is unchanged.';
+  if (marketOpen(at)) { const j = await liveQ((sym)); p = ['number','string'].includes(typeof j?.price)&&Number.isFinite(Number(j.price))&&Number(j.price)>0?Number(j.price):null; }
   const now = p ? ' You bought at ' + money(P.entry) + ', now ' + money(p) + ' (' + (p >= P.entry ? '+' : '') + ((p / P.entry - 1) * 100).toFixed(1) + '%).' : ' You bought at ' + money(P.entry) + '.';
   const plan = 'Your plan is unchanged: HOLD | STOP ' + (P.stop ? money(P.stop) : 'none set') + ' | SELL ' + (P.t1 ? money(P.t1) + (P.t2 ? ' then ' + money(P.t2) : '') : 'no target set') + (P.kind === 'quick' ? ' | or on the rule exit, or after ' + (P.maxHold || 5) + ' sessions.' : '.');
   const SG = readJson('data/signals.json', null), out = ['SHOULD YOU BUY MORE ' + sym + '?'], b = buyToday(sym, SG), b0s = SG && SG.session;   // adds: a NEW, fully PROVEN signal on a stock already in profit. Never early evidence, never to lower an average.
@@ -2870,8 +2872,8 @@ async function addReply(sym, pos) {
   else if (p && P.stop && p <= P.stop) out.push('No. It has reached your stop at ' + money(P.stop) + '.' + now, 'The plan says sell or reassess here, not add.');
   else if (p && p < P.entry) out.push('No.' + now, 'It is below your entry. Buying more now is adding to a losing trade: it doubles the bet at the moment the trade is going against you, and it is how a small planned loss becomes a large one.', plan);
   else if (P.kind === 'quick') out.push('No.' + now, 'A quick trade is a single entry. Its edge is small, so the plan is to take the bounce and leave, not to build a bigger position.', plan);
-  else if (p) out.push('Only as a planned second stage.' + now, 'It is above your entry, so adding is allowed by the rules if: it has made a daily close above your entry, you then move the stop on ALL shares up to your entry price, and your total open risk stays under 2% of the account. Otherwise, no.', plan);
-  else out.push('The market is closed, so I cannot see the price.' + now, 'The rule either way: never add while it is below your entry. Above your entry, only as a planned second stage with the stop moved up to your entry price.', plan);
+  else if (p) out.push('RESEARCH ONLY — NO ADD APPROVAL.' + now, 'Being above your entry is not a new qualifying buy signal. No additional purchase is approved by this fallback.', plan);
+  else out.push('RESEARCH ONLY — NO ADD APPROVAL.' + now, 'A current usable price is unavailable. No additional purchase is approved; do not infer an entry from the recorded buy price.', plan);
   return out.join('\n');
 }
 // "From SOURCE what to buy?"  Lists what that source recommended, and which of it your tested rules support today.
@@ -2916,21 +2918,30 @@ async function natural(text, sig, pos) {
 }
 // ---- Watchdog. The bot wakes every few minutes, so it can notice when one of the nightly programs did NOT do its job
 // (crashed, was cancelled, or never started) and tell you once, instead of you discovering a missing message days later.
-async function watchdog(sig) {
+async function watchdog(sig, now = Date.now()) { try {
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
-  const now = Date.now(), n = ny(now);
+  const n = ny(now);
   let expected = ''; for (let k = 0; k < 10; k++) { const x = ny(now - k * 86400000); if (x.weekend || isHoliday(x.d) || (k === 0 && x.mins < 970)) continue; expected = x.d; break; }
   if (!expected) return;
-  const later = n.d > expected, st = readJson('data/tg-state.json', { offset: 0 }), warned = st.warned || {}, out = [];
-  const late = (key, have, due, what, name) => { if (due && (have || '') < expected && warned[key] !== expected) { warned[key] = expected; out.push(what + ' for the ' + expected + ' close has not completed' + (have ? ' (its last result is from ' + have + ')' : '') + '. In GitHub open Actions, then ' + name + '. If the newest run is red, cancelled or missing, tap Run workflow, and send Claude the red lines if it fails again.'); } };
-  late('scan', sig && sig.session, later || n.mins >= 1230, 'The nightly scan', 'Stock scanner');                         // due by 8:30 pm New York
-  late('disc', DISCMETA && DISCMETA.session, later && n.mins >= 150, 'The discovery engine', 'Discovery engine');        // due by 2:30 am New York
-  late('movers', (readJson('data/movers-state.json', {}) || {}).session, later && n.mins >= 210, 'The movers radar', 'Movers radar');   // due by 3:30 am New York
-  if (!out.length) return;
-  st.warned = warned; fs.writeFileSync('data/tg-state.json', JSON.stringify(st));
-  await telegram('WATCHDOG\n' + out.join('\n\n') + '');
-  console.log('watchdog: ' + out.length + ' warning(s) sent');
-}
+  const file='data/tg-state.json',st=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{offset:0};
+  const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
+  if(!object(st)||!Number.isSafeInteger(st.offset)||st.offset<0||st.warned!==undefined&&(!object(st.warned)||Object.values(st.warned).some(v=>typeof v!=='string'||!/^\d{4}-\d\d-\d\d$/.test(v))))throw Error('WATCHDOG_STATE_UNREADABLE');
+  const book=Object.hasOwn(st,'watchdogDelivery')?st.watchdogDelivery:{sent:{},delivery:{}};
+  if(!validAlertBook(book))throw Error('WATCHDOG_DELIVERY_STATE_UNREADABLE');book.delivery||={};st.watchdogDelivery=book;st.warned||={};
+  const save=()=>saveAlertState(file,st),key=k=>'watchdog|'+expected+'|'+k;
+  let reconciled=false;for(const k of ['scan','disc','movers'])if((book.sent[key(k)]||book.delivery[key(k)]?.status==='ACK')&&st.warned[k]!==expected){st.warned[k]=expected;reconciled=true;}
+  const later=n.d>expected,out=[],keys=[],pending=[];
+  const late=(k,have,due,what,name)=>{if(due&&(have||'')<expected&&st.warned[k]!==expected){if(!alertAvailable(book,key(k))){pending.push(k);return;}keys.push(key(k));out.push(what+' for the '+expected+' close has not completed'+(have?' (its last result is from '+have+')':'')+'. In GitHub open Actions, then '+name+'. If the newest run is red, cancelled or missing, tap Run workflow, and send Claude the red lines if it fails again.');}};
+  late('scan',sig&&sig.session,later||n.mins>=1230,'The nightly scan','Stock scanner');
+  late('disc',DISCMETA&&DISCMETA.session,later&&n.mins>=150,'The discovery engine','Discovery engine');
+  late('movers',(readJson('data/movers-state.json',{})||{}).session,later&&n.mins>=210,'The movers radar','Movers radar');
+  if(!out.length){if(reconciled)save();return pending.length?{ok:false,reason:'WATCHDOG_DELIVERY_QUARANTINED'}:{ok:true,deduplicated:true};}
+  if(Object.keys(book.delivery).length+keys.length>2000)throw Error('WATCHDOG_DELIVERY_CAPACITY');
+  const result=await deliverAlertOnce({book,keys,save,send:()=>telegram('WATCHDOG\n'+out.join('\n\n')),at:new Date(now).toISOString()});
+  if(!result?.ok){console.error('WATCHDOG DELIVERY UNCONFIRMED: '+result?.reason);return result;}
+  for(const k of keys)st.warned[k.split('|')[2]]=expected;save();
+  console.log('watchdog: '+out.length+' warning(s) acknowledged');return {ok:true};
+} catch {console.error('watchdog state/delivery persistence unconfirmed');return {ok:false,reason:'WATCHDOG_STATE_OR_SAVE_FAILED'};}}
 // THE BASKET (owner's decision 24 Oct 2026): one of the system's ways to trade, the long-term core, beside the TRY SMALL 1,000 USD buys and
 // the options paper lane. Owner's decision 26 Oct 2026 (third, same day; replaces the 20-stock Basket 1 bought monthly of c9aa0e0): ZAD
 // charges about 3 USD per stock per order, so a 20-stock basket bought every month cost ~60 USD each time. Now:

@@ -4119,6 +4119,97 @@
         }
       }
     },
-    "limitations": "One nonrepresentative hash sample; HTTP200 accepts200-symbol request, not full coverage. Missing11 symbols retained. No plan/quota, whole-market/premarket, fills or profitability verification."
+    "limitations": "One nonrepresentative hash sample; HTTP200 accepts200-symbol request, not full coverage. Missing11 symbols retained. No plan/quota, whole-market/premarket, fills or profitability verification.",
+    "retirementVerifiedSource": "468856ff43c5c933a60c11e44e0743626086d901",
+    "retirementChecks": [
+      {
+        "name": "fixture-close",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887005356/job/123493495641"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887018884/job/123493376524"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887018884/job/123493376422"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887018952/job/123493376296"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887018807/job/123493376022"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887018884/job/123493375979"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887018866/job/123493375422"
+      },
+      {
+        "name": "test",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887018783/job/123493375316"
+      },
+      {
+        "name": "safety",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887005356/job/123493339066"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887005356/job/123493338633"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887005463/job/123493337984"
+      },
+      {
+        "name": "test",
+        "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40887005448/job/123493337409"
+      }
+    ]
+  },
+  "watchdogDeliveryMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "defect": "warned date and success log advanced before Telegram acknowledgment",
+    "repair": "Atomic pre-send intent, ACK-gated warned date, restored UNKNOWN quarantine, ACK reconciliation, offset preservation, malformed-state/disk-fault block",
+    "localTests": 4,
+    "scope": "Existing non-sensitive tg-state metadata only; no raw body, key, owner amounts or new permissions",
+    "remaining": "Local intent can be lost before remote save. All-route journal adoption/command-offset reply durability remains open."
+  },
+  "addReplyOwnerPolicyMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "defect": "Fallback conditional add instruction existed without a qualifying signal/current owner gate",
+    "repair": "Explicit owner yes before price lookup; unsupported current/no-price fallback is research-only no-add; finite price parsing; holdings unchanged",
+    "localTests": 3,
+    "inheritedBuyTodayTests": 8,
+    "remaining": "Existing primary buyToday evidence/freshness and complete ZAD route audit still require independent review; no new strategy approval"
   }
 }
