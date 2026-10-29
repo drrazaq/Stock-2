@@ -292,10 +292,13 @@ function rebalanceText(sig) { const pos = loadPos(), pv = privRead(), sh = pv.sh
   const br = budgetRoom(), room = br ? br.room + fix.reduce((a, r) => a + r.usd, 0) : null, low = okR.filter(r => r.usd / tot < tgt * 0.7 && !heavy.some(h => h[0] === r.ind)).sort((a, b) => a.usd - b.usd);
   // single stocks are not funds: new cash goes only to an underweight holding that is NOT falling (in profit or in an uptrend, and 8%+ above
   // its stop). Adding to a falling stock to lower the average is never advised by this system.
-  const healthy = (r) => (r.g >= 0 || (r.up && r.up.uptrend)) && (!r.P.stop || r.px >= r.P.stop * 1.08), under = low.filter(healthy), falling = low.filter(r => !healthy(r));
+  const healthy = (r) => (r.g >= 0 || (r.up && r.up.uptrend)) && (!r.P.stop || r.px >= r.P.stop * 1.08);
+  const addApproved = r => myHalal(r.k)==='ok' && typeof last[r.k]==='number' && Number.isFinite(last[r.k]) && last[r.k]>0;
+  const under = low.filter(r=>healthy(r)&&addApproved(r)), falling = low.filter(r => !healthy(r)), unapproved = low.filter(r=>healthy(r)&&!addApproved(r));
   const cashWord = !cashR ? '' : /SAFER|BETTER/.test(cashR.verdict) ? ' (tested: new cash into the smallest holding lowered the worst fall' + (/LESS PROFIT/.test(cashR.verdict) ? ', at some cost in profit)' : ')') : cashR.verdict === 'WORSE' ? ' (tested: adding to the winners made more; this is a risk choice)' : '';
   out.push('', 'NEW CASH' + cashWord + ':', ...(room && room >= 1000 ? (under.length ? under.slice(0, 3).map(r => '- ' + r.k + ': ADD up to ' + m0(Math.max(1000, tgt * tot - r.usd)) + ' USD (now ' + Math.round(r.usd / tot * 100) + '%), only while it holds above its stop ' + (r.P.stop ? money(r.P.stop) : '(set one)') + '.') : ['- no healthy holding is underweight; put new cash into the tested buys in ACTIONS.']) : ['- no budget room now' + (br ? ' (' + m0(br.room) + ' USD free)' : ' (send  budget 20000  to set yours)') + '. Selling the SELL FIRST stocks frees cash.']));
   if (falling.length) out.push('NOT ADDING TO (underweight because they fell; adding would only lower your average): ' + falling.map(r => r.k + ' ' + pcs(r.g)).join(', ') + '. They stay on their stops.');
+  if(unapproved.length)out.push('NO ADD APPROVAL: '+unapproved.map(r=>r.k+' ('+(myHalal(r.k)!=='ok'?'current affirmative owner ZAD mark missing/expired/rejected':'recent price unavailable')+')').join(', ')+'. Existing holdings are unchanged; no new purchase is approved here.');
   out.push('', 'Tested buys in ACTIONS come before rebalancing buys. Fees: 3 USD a trade; no trade under 1,000 USD. Research only, not financial advice.');
   return out.join('\n'); }
 // LIVE PAPER CHECK of "sell a stretched stock, buy it back 10% lower" (rebuy.mjs passed it on 5 years of history). Every stock in the

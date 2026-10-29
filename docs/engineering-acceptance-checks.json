@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-29",
-  "sourceCheckpoint": "c9ea79413fd67b7d4c6f33a6e820ca9d0fa1a395",
+  "sourceCheckpoint": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
   "score": {
     "complete": 22,
     "total": 40,
@@ -184,14 +184,16 @@
       "title": "Actual provider entitlements and coverage",
       "status": "OPEN",
       "actionability": "LIVE_AND_PROVIDER_EVIDENCE",
-      "requiredVerification": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials."
+      "requiredVerification": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.",
+      "partialEvidence": "Owner-confirmed Massive Starter15minute delay; authorized actual SIP/IEX endpoint samples and official SDK symbol-request contract. Alpaca account contract/full universe still unverified."
     },
     {
       "id": "MARKET-03",
       "title": "All-provider symbol/session normalization",
       "status": "OPEN",
       "actionability": "SAFE_BRANCH",
-      "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths."
+      "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
+      "partialEvidence": "Independent clock/provider/feed repairs and explicit-universe offline session contracts; all-provider audit remains open."
     },
     {
       "id": "MARKET-04",
@@ -205,7 +207,7 @@
       "title": "Whole-market premarket discovery verified",
       "status": "OPEN",
       "actionability": "PHASE_A_APPROVAL_AND_LIVE_EVIDENCE",
-      "requiredVerification": "Separately approved dated Phase A, exact installed workflow/source, actual broad provider snapshots, retention/recovery and response/freshness evaluation. Received10k symbols alone is not verified complete tradable-universe coverage."
+      "requiredVerification": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence."
     },
     {
       "id": "DISCOVERY-04",
@@ -233,7 +235,8 @@
       "title": "Every approved recommendation and cached-render path",
       "status": "OPEN",
       "actionability": "SAFE_BRANCH",
-      "requiredVerification": "Enumerate all current BUY/entry/action channels, monthly/basket/owner lanes, options, callbacks and cached reports. With missing/stale/expired/rejected/malformed/third-party marks, prove no approved BUY; test valid owner yes separately. Catalyst/cache repairs alone are partial."
+      "requiredVerification": "Enumerate all current BUY/entry/action channels, monthly/basket/owner lanes, options, callbacks and cached reports. With missing/stale/expired/rejected/malformed/third-party marks, prove no approved BUY; test valid owner yes separately. Catalyst/cache repairs alone are partial.",
+      "partialEvidence": "Catalyst, cached leaders and rebalancing ADD owner gates repaired; remaining core/monthly/basket/options/callback/report paths still require full matrix."
     },
     {
       "id": "EXEC-03",
@@ -254,7 +257,8 @@
       "title": "All send paths, stable IDs and cross-job durability",
       "status": "OPEN",
       "actionability": "SAFE_BRANCH",
-      "requiredVerification": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally."
+      "requiredVerification": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.",
+      "partialEvidence": "Basket intent/ACK/quarantine repaired on branch; remote journal still opt-in, all-route delivery/persistence not complete."
     },
     {
       "id": "TELEGRAM-04",
@@ -294,7 +298,7 @@
   ],
   "separatePrerequisites": {
     "researchKeyRecovery": "VERIFIED_BY_OWNER_ACTUAL_GITHUB_ARTIFACT_ON_IPAD",
-    "phaseA": "NOT_INSTALLED_NOT_DISPATCHED_NOT_APPROVED",
+    "phaseA": "OLD_DELAYED_COLLECTOR_NOT_REALTIME_PROOF; revised design/infrastructure not live-authorized",
     "phaseASource": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
     "phaseAWorkflowSHA256": "94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa",
     "session": "2026-10-30",

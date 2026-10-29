@@ -1,3 +1,9 @@
+## Offline hybrid session verified; rebalancing owner-gate repair — 29 October 2026
+
+Sourcef03e48c514f15d6bc74c5d56ba8355ac25051639 passed all12 exact-commit checks. Hosted Node160files/1386tests. Full330-minute hybrid admission is verified with fixtures only; no live collector/CLI, encrypted checkpoint implementation, production installation or Phase A approval is implied.
+
+Next repaired ZAD04 defect: rebalancing NEW CASH could print ADD for an underweight holding without a current affirmative owner mark, or substitute recorded entry when a recent price was unavailable. The branch now requires current owner yes plus actual finite recent price before ADD, with explicit no-approval wording otherwise. Three new tests cover missing/stale/future/malformed/rejected/third-party marks, quarterly exclusion, corrupt list, missing/nonfinite/string prices and a valid-owner control. Disposable synthetic encryption key/holdings only; no existing PRIVATE_KEY or owner data accessed/changed. Hosted full CI pending. This is partial ZAD04 progress, not all recommendation paths completed. Acceptance22/40(55%),18 open;actual prospective cases0.
+
 ## Basket durability verified; offline hybrid session milestone — 29 October 2026
 
 Basket source2d22e49c47065dfd7abadbceb22845723bcf57c3 passed all13 exact-commit checks, including push/PR full suites, delivery fixtures and safety/artifact continuity. Hosted Node159files/1379tests. Basket delivery is fixed on the branch only; actual Telegram test remains unauthorized and cross-job remote-CAS/all-route work remains open.

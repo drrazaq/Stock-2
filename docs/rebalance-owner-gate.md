@@ -1,0 +1,5 @@
+# Rebalancing ADD owner gate
+
+The portfolio rebalancing renderer used profit/trend/weight/stop conditions to recommend adding cash, but omitted the shared current owner ZAD gate and could use a recorded entry as though it were an available recent price. The branch now requires myHalal(symbol)==ok and a finite positive numeric price actually present in the supplied current signal set. Missing/stale/future/malformed/third-party marks, quarterly exclusions and malformed exclusion documents cannot authorize ADD. Missing/nonfinite/string prices cannot authorize ADD even with a current mark.
+
+The valid-owner fixture retains existing weight/stop logic. This does not authenticate a signal timestamp, prove price freshness, approve the underlying allocation strategy, alter owner holdings or complete all ZAD routes. Tests create only disposable synthetic holdings/encryption state; no real key or production private data is read. All40 evidence requirements remain in engineering-acceptance-checks.json; score22/40.

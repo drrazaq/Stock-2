@@ -3083,7 +3083,7 @@
     }
   },
   "hybridResearchSessionMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_OFFLINE_BRANCH_INFRASTRUCTURE",
     "module": "hybrid-research-session.mjs",
     "scope": "PURE_OFFLINE_FIXTURE_ONLY; no live transport/CLI/workflow/approval",
     "localTests": 7,
@@ -3100,6 +3100,95 @@
       "liveAuthorized": false
     },
     "oldPhaseA": "NOT_INSTALLED_NOT_DISPATCHED_NOT_APPROVED",
-    "noNewAcceptanceCredit": true
+    "noNewAcceptanceCredit": true,
+    "verifiedSha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876255713/job/123455870882"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876262645/job/123455744377"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876262645/job/123455744232"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876262773/job/123455744218"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876262724/job/123455743974"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876262645/job/123455743798"
+      },
+      {
+        "name": "test",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876262653/job/123455743580"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876262681/job/123455743300"
+      },
+      {
+        "name": "safety",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876255713/job/123455718738"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876255713/job/123455718378"
+      },
+      {
+        "name": "test",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876255747/job/123455718292"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876255703/job/123455717972"
+      }
+    ],
+    "nodeTests": {
+      "files": 160,
+      "tap": 1384,
+      "standalone": 2,
+      "total": 1386
+    }
+  },
+  "rebalanceOwnerGateMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "defect": "ADD instructions used no current affirmative owner ZAD gate and could substitute an old recorded entry for an available finite recent price",
+    "repair": "Current owner yes plus actual finite recent price required; unsupported allocation disclosed, no owner-data writes",
+    "localTests": 3,
+    "remaining": "All other recommendation routes and actual point-in-time price/source integrity remain open",
+    "noApprovalOrDeployment": true
   }
 }
