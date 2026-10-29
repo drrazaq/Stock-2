@@ -1,3 +1,9 @@
+## Actual200-symbol probe verified; diagnostic retired —29October2026
+
+Source2128b6a passed all14 exact-commit checks, including authorized probe40886478340 at13:55:57UTC (09:55EDT, REGULAR). Exactly3GETs,6,472,447 asset bytes+219,028 snapshot bytes; no retry or provider error. Both SIP/IEX accepted200 requested symbols but returned189; identical11 missing symbols remain in denominator. SIP87/200 fresh trades and166/200 fresh BBO<=180s; IEX49/200 and111/200. SIP fresh-quote spread p95~520bp; IEX~3010.89bp. Current tradable reference13,491 includes instruments not proven supported by these feeds. This is not a fresh whole-market/premarket discovery or tradability/fill/profitability result. Reported10000 limit/9999 remaining are headers only, not verified contractual throughput/quota.
+
+The temporary diagnostic workflow is now retired: manual informational record only, no keys, push/schedule, checkout or provider command. New regression enforces retirement. All actual observations, source, gaps and conservative120s BBO review counts are retained in validation/alpaca-batch-probe-2026-10-29.observed.json. No source filter is silently changed to inflate freshness. A14k reference is not a verified SIP universe; sample11 missing and wide spreads remain operational blockers to broad eligibility. Old Phase A and key proof remain unchanged/unapproved. Acceptance22/40,18open;prospective cases0. Continue watchdog/Telegram ACK durability and source-state integration; do not rerun historical probe jobs.
+
 ## Broker fault repair verified; bounded200-symbol access probe —29October2026
 
 Broker/caller source3b4025b passes all13 exact-commit checks. No real orders occurred; fixtures inject only localhost/mocked responses. Cross-job unknown-outcome execution reconciliation remains OPEN, not silently certified.

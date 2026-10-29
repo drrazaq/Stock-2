@@ -3988,12 +3988,137 @@
     ]
   },
   "batchAccessProbeMilestone": {
-    "status": "BOUNDED_READ_ONLY_OBSERVATION_PENDING",
+    "status": "VERIFIED_BOUNDED_REGULAR_SESSION_OBSERVATION",
     "authorization": "Owner standing authorization for safe read-only provider access checks",
     "scope": "One asset reference plus one SIP and one IEX snapshot batch of200 supplied symbols; max3GET; no loop/order/messages/account/position reads",
     "expiresUTC": "2026-10-29T15:00:00Z",
     "localTests": 3,
-    "temporaryTrigger": true,
-    "phaseA": false
+    "temporaryTrigger": "RETIRED_THIS_COMMIT; no push/schedule/bindings/diagnostic execution",
+    "phaseA": false,
+    "verifiedSource": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886478251/job/123491612066"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886490735/job/123491484429"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886490735/job/123491484318"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886490735/job/123491483929"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886490532/job/123491483518"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886490694/job/123491482795"
+      },
+      {
+        "name": "test",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886490535/job/123491482070"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886490522/job/123491481779"
+      },
+      {
+        "name": "probe",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886478340/job/123491441070"
+      },
+      {
+        "name": "safety",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886478251/job/123491440761"
+      },
+      {
+        "name": "test",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886478170/job/123491440468"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886478251/job/123491439973"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886478106/job/123491439791"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40886477945/job/123491438909"
+      }
+    ],
+    "actual": {
+      "at": "2026-10-29T13:55:57.244Z",
+      "session": "REGULAR",
+      "GETs": 3,
+      "assetsBytes": 6472447,
+      "snapshotsBytes": 219028,
+      "referenceTradable": 13491,
+      "symbolsRequestedPerFeed": 200,
+      "SIP": {
+        "returned": 189,
+        "freshTrades": 87,
+        "freshBbo180s": 166,
+        "freshBboSpreadP95Bps": 520
+      },
+      "IEX": {
+        "returned": 189,
+        "freshTrades": 49,
+        "freshBbo180s": 111,
+        "freshBboSpreadP95Bps": 3010.890454836644
+      },
+      "conservativeQuoteReview": {
+        "sip": {
+          "requested": 200,
+          "validBboWithin120s": 164,
+          "bboWithin120sAndSpreadAtMost200bp": 145,
+          "trade180sAndBbo120sAndSpread200bp": 77,
+          "executionEligibility": "NOT_ESTABLISHED; identity,price,displayed size/liquidity and approved strategy remain absent"
+        },
+        "iex": {
+          "requested": 200,
+          "validBboWithin120s": 108,
+          "bboWithin120sAndSpreadAtMost200bp": 85,
+          "trade180sAndBbo120sAndSpread200bp": 38,
+          "executionEligibility": "NOT_ESTABLISHED; identity,price,displayed size/liquidity and approved strategy remain absent"
+        }
+      }
+    },
+    "limitations": "One nonrepresentative hash sample; HTTP200 accepts200-symbol request, not full coverage. Missing11 symbols retained. No plan/quota, whole-market/premarket, fills or profitability verification."
   }
 }

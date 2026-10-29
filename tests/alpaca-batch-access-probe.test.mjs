@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {probeAlpacaBatch} from '../tools/alpaca-batch-access-probe.mjs';
 const now=Date.parse('2026-10-29T14:00:00Z'),env={ALPACA_KEY:'fixture-key-not-output',ALPACA_SECRET:'fixture-key-not-output'};
 const assets=Array.from({length:250},(_,i)=>({symbol:'S'+String(i).padStart(5,'0'),id:'fixture-'+i,status:'active',class:'us_equity',tradable:true}));
@@ -13,4 +14,7 @@ test('missing credentials, insufficient reference or asset refusal cannot lead t
 });
 test('a SIP rate/auth refusal prevents later IEX rather than hidden retries or downgrade',async()=>{
  for(const status of [401,403,429]){let calls=0;const r=await probeAlpacaBatch({env,now:()=>now,fetcher:async()=>{calls++;return calls===1?new Response(JSON.stringify(assets)):new Response('{}',{status});}});assert.equal(calls,2);assert.equal(r.requests,2);assert.equal(r.results.length,1);assert.ok(r.transport.halted);}
+});
+test('completed batch probe has no automatic trigger or bound provider credentials',()=>{
+ const w=fs.readFileSync(new URL('../.github/workflows/alpaca-batch-probe.yml',import.meta.url),'utf8');assert.match(w,/RETIRED/);assert.match(w,/workflow_dispatch:/);assert.doesNotMatch(w,/push:|schedule:|secrets\.|node tools\//);
 });

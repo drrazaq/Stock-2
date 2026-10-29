@@ -1,30 +1,13 @@
-name: Dated read-only Alpaca batch access probe
-# Standing owner authorization: read-only provider access checks. Not Phase A.
+name: Completed Alpaca batch access record
+# RETIRED: one bounded authorized probe completed; no keys or automatic trigger remains.
 on:
-  push:
-    branches: [Stock2-safety-fixes]
-    paths: [docs/validation/alpaca-batch-probe-2026-10-29.request.json]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  probe:
-    if: github.repository == 'drrazaq/Stock-2' && github.ref_name == 'Stock2-safety-fixes' && github.run_attempt == 1
+  record:
+    if: github.repository == 'drrazaq/Stock-2' && github.ref_name == 'Stock2-safety-fixes'
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 1
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: node tools/alpaca-batch-access-probe.mjs
-        env:
-          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
-          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: alpaca-batch-probe-${{ github.sha }}
-          path: probe-output/alpaca-batch-probe.json
-          retention-days: 3
-          if-no-files-found: error
+      - run: echo 'Completed read-only probe40886478340. See docs/validation/alpaca-batch-probe-2026-10-29.observed.json. No provider operation is available in this retired job.'
