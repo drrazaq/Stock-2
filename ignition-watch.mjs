@@ -27,7 +27,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from './ignition-core.mjs';
 import { isFreshPriceAge } from './ignition-gates.mjs';
-import { selectLiveRefreshSymbols } from './live-refresh-universe.mjs';
+import { selectStaleRefreshSymbols } from './live-refresh-universe.mjs';
 import { approvedQuoteGate } from './approved-quote-gate.mjs';
 import { zadApproved } from './zad-compliance.mjs';
 import { paperRecordApproved, earlyPaperEligible } from './paper-gates.mjs';
@@ -95,10 +95,12 @@ async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a req
 async function snap() {
   const m = env.MASSIVE_KEY ? await snapMassive() : null, now = Date.now();
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
-  if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
-  if (m && m.length) { const live = await alpacaAll(selectLiveRefreshSymbols(m)); // includes up to 250 liquid sub-$1 symbols for research; BUY hard block unchanged
+  const refresh = selectStaleRefreshSymbols(m, now);
+  if (m && m.length && !refresh.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
+  if (m && m.length) { const live = refresh.length ? await alpacaAll(refresh) : null; // refresh per-symbol staleness; penny research cap and BUY hard block unchanged
     if (live) { let n = 0; for (const r of m) if (mergeLiveSnapshot(r, live.get(r.sym))) n++;
-      src = 'alpaca live prices (' + feedUsed().toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (feedUsed() === 'sip' ? 'SIP aggregate volume (own bar timestamp)' : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
+      src = 'alpaca price updates (' + feedUsed().toUpperCase() + ' feed): ' + n + ' updated of ' + refresh.length + ' stale refresh targets (' + m.length + ' received); freshness measured per symbol + ' + (feedUsed() === 'sip' ? 'SIP aggregate volume (own bar timestamp)' : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; }
+    if (late <= 3) { src = 'massive (fresh median; stale-symbol refresh unavailable)'; mode = 'FULL_SNAPSHOT'; return m; } }
   const a = await snapTop50();
   if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
   src = 'alpaca top-50 gainers only'; mode = 'PARTIAL_TOP50_FALLBACK';

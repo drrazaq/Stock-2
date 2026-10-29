@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {selectLiveRefreshSymbols, MAX_PENNY_RESEARCH_REFRESH} from '../live-refresh-universe.mjs';
+import {selectLiveRefreshSymbols, selectStaleRefreshSymbols, MAX_PENNY_RESEARCH_REFRESH} from '../live-refresh-universe.mjs';
 const r=(sym,prevC,price,vol)=>({sym,prevC,price,vol});
 test('preserves all dollar-plus symbols and adds active pennies for research',()=>{
   assert.deepEqual(selectLiveRefreshSymbols([r('AAA',1,1.2,100),r('PEN',0.5,0.55,1e6),r('LOW',0.02,0.03,1e8),r('NO',0.8,0.9,0)]),['AAA','PEN']);
@@ -20,4 +20,11 @@ test('never exceeds bounded penny budget or duplicates symbols',()=>{
 });
 test('rejects malformed or non-finite research rows',()=>{
   assert.deepEqual(selectLiveRefreshSymbols([r('AAA',0.5,NaN,100),r('BBB',0.5,0.6,Infinity),r('ccc',0.5,0.6,100),r('GOOD',0.5,0.6,100)]),['GOOD']);
+});
+test('fresh majority does not hide stale, unknown or future-dated stocks',()=>{
+  const now=1800000000000;
+  const row=(sym,t)=>({...r(sym,10,10,1000),t});
+  const fresh=Array.from({length:10},(_,i)=>row('F'+String.fromCharCode(65+i),now-60000));
+  assert.deepEqual(selectStaleRefreshSymbols([...fresh,row('OLD',now-4*60000),row('MISS',0),row('FUT',now+60000)],now),['OLD','MISS','FUT']);
+  assert.deepEqual(selectStaleRefreshSymbols(fresh,now),[]);
 });

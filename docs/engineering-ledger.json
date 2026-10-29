@@ -128,6 +128,13 @@
       "severity": "P2",
       "description": "No runtime consumer for multi-angle research registry",
       "status": "OPEN"
+    },
+    {
+      "id": "INC-11",
+      "severity": "P2",
+      "description": "Fresh whole-market median skips stale minority; future price clock pins refresh",
+      "status": "FIXED_LOCAL_VERIFIED",
+      "evidence": "tests/watcher-refresh.test.mjs; tests/live-refresh-universe.test.mjs; tests/snapshot-fields.test.mjs"
     }
   ],
   "tests": {
@@ -212,5 +219,14 @@
       "testInputHashMismatches": 0
     },
     "publishedCommit": "352316eb0dae144eead342c99be1c2a969ce7034"
+  },
+  "freshnessMilestone": {
+    "base": "43084d62424ba7caabfaa1c28af318b0ab2653bd",
+    "testsPassed": 1198,
+    "testsFailed": 0,
+    "testsSkipped": 0,
+    "changedJSSyntaxChecks": 6,
+    "remoteCI": "Pending publication",
+    "coverageClaim": "Fixture coverage only; production observation/entitlements not established"
   }
 }

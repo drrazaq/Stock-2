@@ -2,7 +2,15 @@
 // All >=$1 stocks retain their existing live-price refresh. A bounded number
 // of actively traded sub-$1 stocks gain visibility for missed-runner research.
 // This does NOT change the under-$1 BUY/alert eligibility rules.
+import { isFreshPriceAge } from './ignition-gates.mjs';
 export const MAX_PENNY_RESEARCH_REFRESH = 250;
+// A fresh median is not proof that each stock is fresh. Refresh eligible stale,
+// missing-clock and future-clock rows even when most of the snapshot is current.
+export function selectStaleRefreshSymbols(rows, nowMs = Date.now()) {
+  if (!Array.isArray(rows) || !Number.isFinite(nowMs)) return [];
+  return selectLiveRefreshSymbols(rows.filter(r => r && !isFreshPriceAge(
+    typeof r.t === 'number' && r.t > 0 ? (nowMs - r.t) / 60000 : null)));
+}
 export function selectLiveRefreshSymbols(rows, pennyCap = MAX_PENNY_RESEARCH_REFRESH) {
   if (!Array.isArray(rows)) return [];
   const cap = Number.isInteger(pennyCap) && pennyCap >= 0 ? Math.min(pennyCap, MAX_PENNY_RESEARCH_REFRESH) : 0;

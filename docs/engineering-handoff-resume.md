@@ -17,3 +17,7 @@ Frozen research and remote data unchanged. Synthetic no-credential smoke outputs
 Published repair commit `352316eb0dae144eead342c99be1c2a969ce7034` to Stock2-safety-fixes using a non-forced expected-head update from a06032c. Seven explicit files only; no data changes. Local full suite 1,195 passed, zero failures/skips. Twelve targeted tests, Python watcher integration, 207 syntax checks and 78 workflow parses passed. Exact-commit remote CI pending. Do not republish the old bundle or claim the branch remains a06032c.
 
 Exact repair-commit CI verified successful on 29 October: pull_request 40811340889, push 40811335253, push 40811335260. Recovery and publication are complete. Continue fresh-price coverage, monitoring and discovery integration; do not repeat recovery.
+
+## Next independent milestone
+
+Per-symbol stale refresh and future-clock recovery implemented; 1,198 tests passed and six changed JS files parsed. New mocked-provider real-watcher integration passes. Publish only ignition-watch.mjs, live-refresh-universe.mjs, snapshot-fields.mjs, tests/live-refresh-universe.test.mjs, tests/snapshot-fields.test.mjs, tests/watcher-refresh.test.mjs and the three engineering documents. Base is documentation checkpoint 43084d62424ba7caabfaa1c28af318b0ab2653bd; use its tree. CI for that documentation checkpoint also passed all three checks. No data file belongs in this patch.

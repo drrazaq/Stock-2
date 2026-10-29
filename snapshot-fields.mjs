@@ -19,10 +19,11 @@ export function alpacaSnapshot(symbol,x={},sip=false) {
     prevC:number(pb.c),open:number(db.o),vol:volume?db.v:null,vt:volume?isoTime(db.t):0,
     bid:number(q.bp),ask:number(q.ap),qt:isoTime(q.t)};
 }
-export function mergeLiveSnapshot(row, live) {
+export function mergeLiveSnapshot(row, live, nowMs = Date.now()) {
   if (!live) return false;
   let refreshed=false;
-  if (positive(live.price) && live.t > row.t) {
+  if (positive(live.price) && positive(live.t) && live.t <= nowMs &&
+      (live.t > row.t || row.t > nowMs || !positive(row.t))) {
     row.price=live.price;row.t=live.t;refreshed=true;
     if (live.open > 0) row.open=live.open;
   }

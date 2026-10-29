@@ -24,3 +24,10 @@ test('malformed numeric provider fields are not coerced into evidence',()=>{
  const row=massiveSnapshot({lastTrade:{p:'12',t:Infinity},min:{c:NaN,av:'500'},day:{c:Infinity}});
  assert.equal(row.price,0);assert.equal(row.t,0);assert.equal(row.vol,0);
 });
+test('a future-dated price cannot pin a symbol against a real current refresh',()=>{
+ const now=1800000000000,row={price:20,t:now+60000,vt:0,qt:0};
+ assert.equal(mergeLiveSnapshot(row,{price:10,t:now-1000},now),true);
+ assert.equal(row.price,10);
+ assert.equal(mergeLiveSnapshot(row,{price:30,t:now+120000},now),false);
+ assert.equal(row.price,10);
+});

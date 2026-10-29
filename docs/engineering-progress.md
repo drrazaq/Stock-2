@@ -91,3 +91,9 @@ Publication and exact-commit CI are recorded in the next checkpoint update; do n
 Final recovery validation: **1,195 passed, zero failed, zero skipped** using `node --test test/*.test.mjs tests/*.test.mjs` on Node 24.19.0. Twelve targeted tests, the Python watcher integration, 207 root syntax checks and 78 workflow parses passed. New-commit remote CI pending.
 
 Published repair: **352316eb0dae144eead342c99be1c2a969ce7034**. Exact-commit CI all successful: pull_request [40811340889](https://github.com/drrazaq/Stock-2/actions/runs/40811340889), push [40811335253](https://github.com/drrazaq/Stock-2/actions/runs/40811335253), push [40811335260](https://github.com/drrazaq/Stock-2/actions/runs/40811335260). Draft PR #1 remains open; no merge or deploy. Only seven intended files changed; no data changes. Recovery/publication acceptance for this milestone is complete; full-system acceptance remains 15/40.
+
+## Per-symbol freshness milestone
+
+A fresh median previously returned the Massive snapshot before refreshing any stale minority. The watcher now selects eligible stale, missing-clock and future-clock symbols individually. Already fresh symbols avoid unnecessary refresh requests; penny research caps and BUY safeguards are unchanged. A bad future timestamp no longer pins the old price against a valid current trade. Source text reports updates and refresh targets separately from measured live-price coverage.
+
+New real-watcher localhost integration proves that two fresh stocks do not hide a stale third stock: only the third is requested, all three are subsequently measured fresh, and aggregate volume keeps its older clock. An external-fetch guard prevents accidental service access. Full suite: **1,198 passed, zero failed/skipped**; six changed JS files parse. Exact-commit CI pending publication. This is not a live coverage measurement and does not establish entitlements or executable fills. Acceptance remains 15/40 (37.5%).
