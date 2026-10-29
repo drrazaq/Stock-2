@@ -2063,16 +2063,98 @@
     "sourceCommit": "add8c2f50d933baec70fb1d60cc654fb40ab38a9"
   },
   "historicalPriceIdentityMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_HOSTED_ADMISSION_ONLY",
     "revision": "ENTRY_EXIT_IDENTITY_V2",
     "scope": "New historical evidence admission checks entry/exit symbol-security continuity and explicit delisting terminal security; malformed IDs rejected",
     "actualHistoricalDatasetCertified": false,
-    "acceptanceCredit": 0
+    "acceptanceCredit": 0,
+    "sourceCommit": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856438823/job/123388602731",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "delivery-fixtures",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856448286/job/123388507095",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "research-fixtures",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856448276/job/123388507024",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856448217/job/123388506789",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856448217/job/123388506749",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "test",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856448291/job/123388506591",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "source-preservation",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856448197/job/123388506514",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856448217/job/123388506320",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "source-preservation",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856438997/job/123388476599",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "test",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856438903/job/123388476309",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "safety",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856438823/job/123388476224",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      },
+      {
+        "name": "fixture-open",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40856438823/job/123388475788",
+        "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+      }
+    ]
   },
   "paperCapacityMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_HOSTED_QUOTE_MODEL_ONLY",
     "scope": "Separate recorded-quote paper outcomes from sufficient displayed entry/exit size; no size inference or fill claim",
     "actualProspectiveCases": 0,
+    "acceptanceCredit": 0,
+    "sourceCommit": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020"
+  },
+  "cachedLeadersMessageMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "defect": "leadersText replayed cached imperative BUY text without current ZAD, price or strategy approval context",
+    "fix": "Typed research-only summary replaces raw cached action text; current owner status reported, no entry instructions or stored-data mutation",
     "acceptanceCredit": 0
   }
 }

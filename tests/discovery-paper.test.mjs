@@ -53,4 +53,5 @@ test('quoted paper returns never imply sufficient displayed size or an actual fi
  const enough=evaluatePaperEvidence([event],prices.map(q=>({...q,bidSizeShares:200,askSizeShares:200})),meta,{cutoff:t(32)});
  assert.equal(enough.counts.resolvedWithVerifiedDisplayedSize,1);assert.match(enough.cases[0].candidate.fillClaim,/NONE/);
  const small=evaluatePaperEvidence([event],prices.map(q=>({...q,bidSizeShares:1,askSizeShares:1})),meta,{cutoff:t(32)});assert.equal(small.counts.resolvedWithVerifiedDisplayedSize,0);
+ const conflict=evaluatePaperEvidence([event],prices.map(q=>({...q,bidSizeShares:200,askSizeShares:200})).concat({...prices[0],bidSizeShares:1,askSizeShares:1}),meta,{cutoff:t(32)});assert.equal(conflict.counts.resolved,0);assert.equal(conflict.quoteIntegrity.conflictingClocks,1);
 });

@@ -38,7 +38,7 @@ function normalizeQuotes(input){
  const map=new Map(),conflicts=new Set();let duplicates=0,invalid=0;
  for(const q of input){
   if(!q||typeof q!=='object'||typeof q.symbol!=='string'||!Number.isFinite(time(q.at))){invalid++;continue;}
-  const key=JSON.stringify([q.symbol,q.at]),signature=JSON.stringify([q.securityId,q.bid,q.ask,q.quoteAsOf,q.dollarVolume,q.dollarVolumeAsOf]);
+  const key=JSON.stringify([q.symbol,q.at]),signature=JSON.stringify([q.securityId,q.bid,q.ask,q.quoteAsOf,q.dollarVolume,q.dollarVolumeAsOf,q.bidSizeShares,q.askSizeShares]);
   if(map.has(key)){if(map.get(key).signature===signature)duplicates++;else conflicts.add(key);}
   else map.set(key,{q,signature});
  }

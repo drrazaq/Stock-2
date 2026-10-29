@@ -3552,7 +3552,15 @@ function leadLedger(dn) {
   return ' Winners averaged ' + (w.length ? pc(sum(w) / w.length) : 'none yet') + ', losers ' + (l.length ? pc(sum(l) / l.length) : 'none yet') + '. Profit factor ' + (l.length && sum(l) < 0 ? (sum(w) / -sum(l)).toFixed(2) : 'not yet measurable') + ' (above 1 means it earns). Best ' + pc(Math.max(...dn.map(p => p.pct))) + ', worst ' + pc(Math.min(...dn.map(p => p.pct))) + '. Deepest fall of the paper account ' + (dd * 100).toFixed(1) + '%.' + (dn.length < 20 ? ' Under 20 finished trades: too few to judge.' : '');
 }
 const leadLine = (r) => r.sym + ': BUY ' + money(r.buyLo) + ' to ' + money(r.buyHi) + ' | STOP ' + money(r.stop) + ' | SELL when it closes under its trailing stop or its 50 day average (now ~' + money(r.e50) + ') | trend trade, weeks';
-const leadersText = () => { const s = readJson(LEAD_FILE, null); return s && s.text ? s.text : 'The LEADERS list is built by the nightly scan. None has run on this version yet; it arrives after tonight’s close.'; };
+const leadersText = () => {
+ const s=readJson(LEAD_FILE,null);if(!s)return 'LEADERS — RESEARCH ONLY. No saved research snapshot is available.';
+ const rows=(Array.isArray(s.paper)?s.paper:[]).filter(p=>p&&typeof p.sym==='string'&&/^[A-Z][A-Z0-9.\-]{0,9}$/.test(p.sym));
+ const session=typeof s.session==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s.session)?s.session:'unverified';
+ return ['LEADERS — RESEARCH ONLY, NOT AN APPROVED BUY','Saved research session: '+session+'. Cached action text is withheld; it is not current trade authorization.',
+  ...rows.slice(0,20).map(p=>p.sym+': paper/watch record; '+(myHalal(p.sym)==='ok'?'current owner ZAD mark exists':myHalal(p.sym)==='fail'?'ZAD BLOCKED':'ZAD UNKNOWN OR EXPIRED')+'. No approved entry is supplied.'),
+  rows.length>20?'Additional paper records omitted from this summary.':'',
+  'These records are not your holdings. Use the current ACTIONS/holding review for approved instructions; research and fitted backtests do not establish profitability.'].filter(Boolean).join('\n');
+};
 
 // NIGHTLY STOP RAISE for one of your positions (moved out of daily() unchanged on 22 Oct so the regression tests can reach it).
 // P: the position (changed in place), c: daily candles, ind: L.indicators(c), i: the last candle.

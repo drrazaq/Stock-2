@@ -1,3 +1,9 @@
+## Cached-message and historical/capacity evidence continuation
+
+Historical identity continuity and displayed-size source4a7a99c2edd8316c8853a326ee0dae0fd23cd020 passed all12 exact-commit checks. NEW historical evidence must keep entry/exit security identity or explicit same-security terminal evidence; paper quote outcomes expose whether displayed size was actually sufficient. No source authenticity, survivor-free denominator, executed fill or profitability is inferred.
+
+The next verified defect is cached LEADERS text: it could replay old imperative BUY lines after ZAD changes, with stale prices and no current approval. A typed research-only summary now withholds the cached action body, reports current owner status and never rewrites the saved archive. Conflicting displayed-size observations at one quote clock are also excluded instead of selecting a favorable size. Hosted verification pending for this batch. Acceptance22/40,18 remaining; actual prospective cases0. Phase A exact pin/workflow remain unchanged and unapproved. No live message, production data/key change, trade or main merge occurred.
+
 ## Historical identity continuity and displayed capacity continuation
 
 Verified sourceadd8c2f50d933baec70fb1d60cc654fb40ab38a9 passed all12 exact-commit checks, including all-root/tool static parse, full suites, source-preservation and delivery fixtures. Catalyst BUY now requires current affirmative owner ZAD; corrupt nested delivery/checkpoint state fails closed. These are branch repairs only, not production deployment or completion of the entire recommendation audit.
