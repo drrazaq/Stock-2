@@ -4,7 +4,7 @@
 // Missing data NEVER becomes a negative finding; no synthetic evidence is created.
 export const LANES = Object.freeze([
   {id:'PRE_IGNITION',name:'Early unusual activity',source:'pre-ignition-discovery.mjs',horizon:'intraday'},
-  {id:'NEWS_CATALYST',name:'Verified material company news',source:'news-watch.mjs / catalyst-core.mjs',horizon:'intraday to 10 sessions'},
+  {id:'NEWS_CATALYST',name:'Company news observations (materiality unverified)',source:'news-watch.mjs / catalyst-core.mjs',horizon:'intraday to 10 sessions'},
   {id:'SEC_EVENT',name:'Dated SEC catalyst',source:'catalyst-core.mjs / catalyst-integrity.mjs',horizon:'1 to 60 sessions'},
   {id:'INSIDER_CLUSTER',name:'Multiple open-market insider purchases',source:'insider-study.mjs',horizon:'20 to 60 sessions'},
   {id:'EARNINGS_SURPRISE',name:'Earnings surprise and reaction',source:'earnings-study.mjs',horizon:'1 to 40 sessions'},
@@ -32,7 +32,8 @@ export function assembleMultiAngle(observations=[],{cutoff,limit=100}={}) {
     const row=grouped.get(o.symbol)||{symbol:o.symbol,lanes:new Map()};
     const prior=row.lanes.get(o.lane);
     const ev={lane:o.lane,asOf:o.asOf,observedAt:o.observedAt,sourceId:o.sourceId,description:o.description,score,
-      publicationBasis:o.publicationBasis||null,caveat:o.caveat||null,sourcePath:o.sourcePath||null};
+      publicationBasis:o.publicationBasis||null,caveat:o.caveat||null,sourcePath:o.sourcePath||null,
+      sourceOrigin:o.sourceOrigin||null,upstreamStatus:o.upstreamStatus||null,sourceCapturedAt:o.sourceCapturedAt||null,reportedSourceId:o.reportedSourceId||null,sourceNamespace:o.sourceNamespace||null,outputAvailableAt:o.outputAvailableAt||null};
     // Keep most recent evidence per lane; never count repeated headlines as independent confirmation.
     if(!prior || Date.parse(ev.observedAt)>Date.parse(prior.observedAt))row.lanes.set(o.lane,ev);
     grouped.set(o.symbol,row);
@@ -40,9 +41,9 @@ export function assembleMultiAngle(observations=[],{cutoff,limit=100}={}) {
   const candidates=[...grouped.values()].map(x=>{
     const evidence=[...x.lanes.values()].sort((a,b)=>a.lane.localeCompare(b.lane));
     const independentLanes=evidence.length;
-    return {symbol:x.symbol,independentLanes,laneCount:evidence.length,distinctSourceCount:new Set(evidence.map(e=>e.sourceId)).size,evidence,classification:'RESEARCH ONLY',
+    return {symbol:x.symbol,independentLanes,laneCount:evidence.length,distinctSourceCount:new Set(evidence.map(e=>e.sourceId)).size,evidence,evidenceIndependence:'UNVERIFIED_CORRELATED_LANES',classification:'RESEARCH ONLY',
       status:'NOT AN APPROVED BUY'};
   }).sort((a,b)=>b.independentLanes-a.independentLanes || a.symbol.localeCompare(b.symbol));
   return {cutoff,candidates:candidates.slice(0,Math.max(0,Math.floor(limit))),count:candidates.length,ignored,
-    note:'Lane count is breadth of distinct evidence, NOT predicted returns or a trading score.'};
+    note:'Lane count measures route breadth; source authenticity, materiality and statistical independence are unverified. It is not predicted returns or a trading score.'};
 }

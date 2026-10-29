@@ -26,3 +26,7 @@ Catalyst-lab, discovery2 and chain-decoder actual save blocks: initial reset/cle
 ## SEC caller continuation
 
 The real SEC child-process producer/export/consumer path now retains accession and exact reported publication metadata. New cache rows retain first access; legacy rows remain UNKNOWN. Separate same-minute filings remain distinct. All retry attempts consume the caller budget; 503/429/malformed archive states remain incomplete. Seven caller cases pass; prior source fails four, with three controls passing. Independent source authenticity, complete revisions and FDA schema/refresh failures remain open. Comeback adds the same exact-block publication contract, raising reviewed lab callers to four; leaders-study remains unreviewed for its mixed encrypted/public snapshot scope.
+
+## FDA and final report continuation
+
+Actual producer failures/invalid schemas no longer set a weekly successful FDA marker. Partial results preserve valid siblings but remain retryable. Future markers do not suppress a fetch; all FDA attempts count. Source status is retained through discovery reliability and ranked observations preserve accession/origin/upstream/capture fields. Materiality and independent-source authentication are not inferred by labels. Fourteen real caller cases pass; original source fails seven FDA cases while seven SEC controls pass. Complete source revision/body bounds and cross-job provenance still require work; see remaining-engineering-resume.md.

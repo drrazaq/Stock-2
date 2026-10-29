@@ -124,19 +124,25 @@ if (MODE === 'fetch') {
     if (!S.old) { let ok = true; for (const fl of j.filings.files || []) { if (String(fl.filingTo || '') < cut) continue; const o = await sec(SEC_DATA + '/submissions/' + fl.name); if (validSecFilings(o)) addRows(S, o); else {ok = false;sourceFailures++;} } S.old = ok; }
     if (S.old) S.t = iso(Date.now()); done++; }
   // 3. FDA approvals for drug makers (openFDA, no key: 1,000 requests a day), each company weekly
-  let fda = 0; const STOP = new Set(['AMERICAN', 'UNITED', 'FIRST', 'GLOBAL', 'INTERNATIONAL', 'GENERAL', 'NATIONAL', 'PACIFIC', 'NEW', 'BIO', 'PHARMA', 'THE', 'ADVANCED', 'APPLIED']);
+  let fda = 0, fdaFailures=0, fdaRejected=0; const STOP = new Set(['AMERICAN', 'UNITED', 'FIRST', 'GLOBAL', 'INTERNATIONAL', 'GENERAL', 'NATIONAL', 'PACIFIC', 'NEW', 'BIO', 'PHARMA', 'THE', 'ADVANCED', 'APPLIED']);
   for (const [sym, S] of Object.entries(cache.syms)) { if (!/^283[3-6]$/.test(String(S.sic || '')) || fda >= +(env.FDA_CALLS || 150) || Date.now() - t0 > MAXMS) continue;
-    if (S.fdaT && Date.now() - Date.parse(S.fdaT) < 7 * 864e5) continue;
-    const tok = String(S.name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').trim().split(/\s+/)[0] || ''; S.fdaT = new Date().toISOString(); if (tok.length < 4 || STOP.has(tok)) continue;
-    let j = null; try { const r = await fetch(FDA + '/drug/drugsfda.json?search=sponsor_name:' + encodeURIComponent(tok) + '&limit=100'); fda++; j = r.ok ? await r.json() : null; } catch (e) {}
+    if (S.fdaT && Date.now() - Date.parse(S.fdaT) >= 0 && Date.now() - Date.parse(S.fdaT) < 7 * 864e5) continue;
+    const tok = String(S.name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').trim().split(/\s+/)[0] || ''; if (tok.length < 4 || STOP.has(tok)) continue;
+    let j = null; fda++;try { const r = await fetch(FDA + '/drug/drugsfda.json?search=sponsor_name:' + encodeURIComponent(tok) + '&limit=100',{redirect:'error',signal:AbortSignal.timeout(15000)}); j = r.ok ? await r.json() : null; } catch (e) {}
     if (!FAST) await sleep(300);
+    if(!j||!Array.isArray(j.results)){fdaFailures++;continue;}
+    let partial=false;
+    const validApps=j.results.filter(app=>{
+      const ok=app&&typeof app==='object'&&!Array.isArray(app)&&typeof app.sponsor_name==='string'&&typeof app.application_number==='string'&&Array.isArray(app.submissions);
+      if(!ok){fdaRejected++;partial=true;}return ok;
+    });
     const have = new Set(S.ev.map(e => e.a));
-    for (const app of (j && j.results) || []) { if (!String(app.sponsor_name || '').toUpperCase().startsWith(tok) || /^ANDA/.test(String(app.application_number || ''))) continue;
-      for (const s of app.submissions || []) { if (s.submission_status !== 'AP' || !/^\d{8}$/.test(String(s.submission_status_date || ''))) continue;
+    for (const app of validApps) { if (!String(app.sponsor_name || '').toUpperCase().startsWith(tok) || /^ANDA/.test(String(app.application_number || ''))) continue;
+      for (const s of app.submissions || []) { if(!s||typeof s!=='object'||Array.isArray(s)){fdaRejected++;partial=true;continue;} if(typeof s.submission_status!=='string'){fdaRejected++;partial=true;continue;}if(s.submission_status!=='AP')continue;if(!/^\d{8}$/.test(String(s.submission_status_date||''))||typeof s.submission_type!=='string'||s.submission_number==null){fdaRejected++;partial=true;continue;}
         const kind = s.submission_type === 'ORIG' ? 'FDA_APPROVAL' : s.submission_type === 'SUPPL' && /EFFICACY/i.test(String(s.submission_class_code || '')) ? 'FDA_NEW_USE' : null; if (!kind) continue;
-        const d = s.submission_status_date, p = d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8), a = 'fda-' + app.application_number + '-' + s.submission_type + '-' + s.submission_number; if (have.has(a) || p < cut) continue;
+        const d = s.submission_status_date;const day=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);const parsed=Date.parse(day+'T00:00:00Z');if(!Number.isFinite(parsed)||iso(parsed)!==day||day>iso(Date.now())){fdaRejected++;partial=true;continue;}const p = d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8), a = 'fda-' + app.application_number + '-' + s.submission_type + '-' + s.submission_number; if (have.has(a) || p < cut) continue;
         S.ev.push({ p, f: kind, a, firstObservedAt:new Date().toISOString() }); have.add(a); } }
-    S.ev.sort((x, y) => x.p < y.p ? -1 : 1); }
+    S.ev.sort((x, y) => x.p < y.p ? -1 : 1); if(!partial)S.fdaT=new Date().toISOString();else fdaFailures++; }
   // 4. small public files: ticker -> [SEC number, industry code], and the last 10 days of events (for check, holdings, the nightly scan)
   const ck = {}; for (const sym of uni) ck[sym] = [cache.ciks[sym][0], (cache.syms[sym] || {}).sic || null];
   fs.writeFileSync(CIKS, JSON.stringify(ck));
@@ -145,7 +151,7 @@ if (MODE === 'fetch') {
   // converted), or a date only 'YYYY-MM-DD'. p.slice(0, 10) is the New York calendar date (scan.mjs reads that); Date.parse(p) is exact.
   for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) { const p = nyStamp(e.p); if (p && p.slice(0, 10) >= since) recent.push({ sym, p, f: e.f, sourceId:typeof e.a==='string'?e.a:null, sourceNamespace:String(e.a||'').startsWith('fda-')?'OPENFDA':/^\d{10}-\d{2}-\d{6}$/.test(e.a||'')?'SEC_EDGAR':'UNKNOWN', firstObservedAt:e.firstObservedAt||null, ...(e.publicationAt?{publicationAt:e.publicationAt}:{}), ms: (secNY(e.p) || {}).ms || null }); }
   recent.sort((x, y) => (x.ms || Date.parse(x.p.slice(0, 10) + 'T12:00:00Z')) < (y.ms || Date.parse(y.p.slice(0, 10) + 'T12:00:00Z')) ? 1 : -1); for (const r of recent) delete r.ms;
-  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), events: recent }, null, 1));
+  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), events: recent,sourceStatus:{SEC:{status:note||sourceFailures?'UNKNOWN':done?'OBSERVED':'NOT_FETCHED',failures:sourceFailures,calls},OPENFDA:{status:fdaFailures?'PARTIAL_OR_UNKNOWN':fda?'OBSERVED':'NOT_FETCHED',attempts:fda,failures:fdaFailures,rejectedRows:fdaRejected}} }, null, 1));
   save();
   const nev = Object.values(cache.syms).reduce((a, S) => a + S.ev.length, 0);
   secStatus(!note&&!sourceFailures, note || (sourceFailures?'UNKNOWN: '+sourceFailures+' failed or malformed SEC sources':'ok: '+calls+' SEC calls'));
