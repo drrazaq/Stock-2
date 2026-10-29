@@ -532,5 +532,18 @@
     ],
     "publishedCommit": "1c2031495c839e7d8469cb127821ec1650ca09aa"
   },
-  "remainingAcceptanceChecks": 24
+  "remainingAcceptanceChecks": 24,
+  "providerReadinessMilestone": {
+    "base": "4f00ffb8ace4b6ff5397c1b6dca8193823a811cd",
+    "status": "ISOLATED_LOCAL_VERIFIED",
+    "testsPassed": 1240,
+    "codeRepairs": [
+      "Per-response SIP/IEX provenance under concurrency",
+      "422/429 not treated as entitlement fallback; rate-limit cooldown",
+      "Share-class symbol syntax retained without alias or eligibility inference"
+    ],
+    "accountEntitlements": "Awaiting sanitized branch-only GET probe with existing bindings",
+    "probeSafety": "At most 5 GETs, no retries/orders/Telegram/raw payloads/data commits; contents read; development branch only",
+    "remoteCI": "PENDING"
+  }
 }

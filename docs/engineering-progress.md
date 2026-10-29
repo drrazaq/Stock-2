@@ -159,3 +159,11 @@ Hosted artifact validation adds two branch-only, five-minute CI jobs using the s
 Six independently published repair/test milestones since 925149a changed no files under data/. Local baseline data hashes remain unchanged. Source and workflow changes are on Stock2-safety-fixes only; PR #1 remains draft. No production dispatch, Telegram message, deployment, trade, secret/permission change or paid service occurred. Runtime artifact transport is verified with generated CI data; actual market-session reliability and predictive performance still require authorized deployment and prospective evidence.
 
 Current acceptance **16/40 (40%)**, with 24 checks remaining. The only new broad acceptance credit is nine-lane runtime integration with explicit timing provenance and guarded end-to-end tests. Software calendar/heartbeat/dispatch/artifact repairs are verified milestones, not fabricated live-session or profitability evidence.
+
+## Provider provenance and read-only readiness audit
+
+Reproduced/fixed concurrent SIP/IEX global-label contamination: each response now retains its actual feed, and only a SIP payload supplies consolidated volume. Feed failures/malformed payloads do not establish entitlement; 422/429 no longer trigger an assumed IEX permission fallback. Rate-limit responses defer later batches instead of creating a retry burst. Share-class punctuation survives syntax normalization without issuer aliasing or a new tradability/halal assertion.
+
+Official provider capability documentation and premarket limitations are recorded in [provider readiness](provider-readiness-2026-10-29.md). A branch-only read-only diagnostic uses existing GitHub bindings for at most five whitelisted GETs. It does not trade, send Telegram, expose raw responses/keys, mutate production data, change permissions or buy a plan. Out-of-session freshness is labelled as such. No configured credentials exist in the managed workspace; that alone does not prove the GitHub account lacks access. The diagnostic result is pending.
+
+The provider patch was isolated from ongoing funnel work and passed **1,240 tests**, zero failures/skips. The new workflow/probe has secret-free endpoint-whitelist, redaction, rate-limit and session-context fixtures. Exact-commit CI and sanitized endpoint observations are pending publication. Acceptance remains 16/40 pending evidence.

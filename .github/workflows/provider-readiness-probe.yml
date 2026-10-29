@@ -1,0 +1,35 @@
+name: Read-only provider readiness probe
+on:
+  push:
+    branches: [Stock2-safety-fixes]
+    paths:
+      - 'tools/provider-readiness-probe.mjs'
+      - '.github/workflows/provider-readiness-probe.yml'
+      - 'run-provider-probe.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    if: github.ref_name == 'Stock2-safety-fixes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Observe existing endpoint access without trading or messaging
+        run: node tools/provider-readiness-probe.mjs
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+          SEC_UA: ${{ secrets.SEC_UA }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: provider-readiness-${{ github.sha }}
+          path: probe-output/provider-readiness.json
+          retention-days: 7
+          if-no-files-found: error

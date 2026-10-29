@@ -12,8 +12,9 @@
 // Alpaca snapshots (IEX, free) for the whole snapshot universe; thin stocks may have no recent IEX trade (never alerted; the audit
 // says so). Volume stays the late Massive figure (can only undercount). Last fallback: Alpaca's top-50 gainers (PARTIAL coverage).
 // Read-only; never places an order.
-import { snapshots, feedUsed } from './alpaca-feed.mjs';
+import { snapshots, feedUsed, snapshotFeed } from './alpaca-feed.mjs';
 import {marketSession} from './market-session.mjs';
+import {marketSymbol} from './market-symbol.mjs';
 import {collectDiscovery,discoveryState,updateDiscovery,discoveryReport} from './discovery-runtime.mjs';
 import {cycleHeartbeat,writeRuntimeJson,publishHeartbeat} from './watcher-heartbeat.mjs';
 import {readCheckpoint,saveCheckpoint} from './watcher-checkpoint.mjs';
@@ -89,19 +90,19 @@ const LOTT = (readJson('data/signals.json', {}) || {}).lottery || {};   // teste
 let src = null, mode = 'NO_USABLE_MARKET_DATA', note = '';
 async function snapMassive() {
   try { const r = await request(MV + '/v2/snapshot/locale/us/markets/stocks/tickers?apiKey=' + encodeURIComponent(env.MASSIVE_KEY || '')); if (r.status === 401 || r.status === 403) { note = 'Massive snapshot not in the plan (HTTP ' + r.status + ')'; return null; } if (!r.ok) return []; const j = await r.json();
-    return (j.tickers || []).filter(x => /^[A-Z]{1,5}$/.test(x.ticker || '')).map(massiveSnapshot); } catch (e) { return []; } }
+    return (j.tickers || []).filter(x => marketSymbol(x.ticker)).map(x=>massiveSnapshot({...x,ticker:marketSymbol(x.ticker)})); } catch (e) { return []; } }
 const AH = () => ({ headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } });
 async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
-  try { const r = await request(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
-    const sj = (await snapshots(ALPD, syms, AH(), request)) || {}, sip = feedUsed() === 'sip';
+  try { const r = await request(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).map(marketSymbol).filter(Boolean); if (!syms.length) return [];
+    const sj = (await snapshots(ALPD, syms, AH(), request)) || {}, sip = snapshotFeed(sj) === 'sip';
     return syms.map(s => alpacaSnapshot(s, sj[s], sip)); } catch (e) { return null; } }
 async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
-    try { const sj = await snapshots(ALPD, part, AH(), request); if (!sj) { fails++; continue; } const sip = feedUsed() === 'sip';   // SIP = every exchange, so its day volume is the real one
-      for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x, sip); if (row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
+    try { const sj = await snapshots(ALPD, part, AH(), request); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one
+      for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(marketSymbol(s), x, sip);row.feed=snapshotFeed(sj); if (row.sym && row.price > 0) out.set(row.sym, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
 async function snap() {
@@ -111,7 +112,7 @@ async function snap() {
   if (m && m.length && !refresh.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
   if (m && m.length) { const live = refresh.length ? await alpacaAll(refresh) : null; // refresh per-symbol staleness; penny research cap and BUY hard block unchanged
     if (live) { let n = 0; for (const r of m) if (mergeLiveSnapshot(r, live.get(r.sym))) n++;
-      src = 'alpaca price updates (' + feedUsed().toUpperCase() + ' feed): ' + n + ' updated of ' + refresh.length + ' stale refresh targets (' + m.length + ' received); freshness measured per symbol + ' + (feedUsed() === 'sip' ? 'SIP aggregate volume (own bar timestamp)' : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; }
+      src = 'alpaca price updates (' + feedUsed().toUpperCase() + ' feed): ' + n + ' updated of ' + refresh.length + ' stale refresh targets (' + m.length + ' received); freshness measured per symbol + ' + 'per-response SIP volume only; each aggregate retains its own bar timestamp'; mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; }
     if (late <= 3) { src = 'massive (fresh median; stale-symbol refresh unavailable)'; mode = 'FULL_SNAPSHOT'; return m; } }
   const a = await snapTop50();
   if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
@@ -222,7 +223,7 @@ const EF = { seen: new Set(), pending: [], last: 0, first: true, polls: 0, fails
 async function pollEdgar(m) {
   if (m > 660 || Date.now() - EF.last < 110000) return; EF.last = Date.now();
   if (!TICK) await secRisk('SPY').catch(() => {}); if (!TICK) { EF.fails++; return; }
-  if (!EF.cik) { EF.cik = new Map(); for (const [t, c] of Object.entries(TICK)) if (/^[A-Z]{1,5}$/.test(t)) { const k = +c; if (!EF.cik.has(k)) EF.cik.set(k, []); EF.cik.get(k).push(t); } }
+  if (!EF.cik) { EF.cik = new Map(); for (const [t, c] of Object.entries(TICK)) if (marketSymbol(t)) { const k = +c; if (!EF.cik.has(k)) EF.cik.set(k, []); EF.cik.get(k).push(t); } }
   const H = { headers: { 'User-Agent': SEC_UA, Accept: 'application/atom+xml' } };
   for (const type of ['8-K', '6-K']) for (let start = 0; start < (EF.first ? 800 : 200); start += 100) {
     const r = await request(SEC_WWW + '/cgi-bin/browse-edgar?action=getcurrent&type=' + encodeURIComponent(type) + '&company=&dateb=&owner=include&start=' + start + '&count=100&output=atom', H).catch(() => null);
