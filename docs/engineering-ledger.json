@@ -128,7 +128,8 @@
       "id": "INC-10",
       "severity": "P2",
       "description": "No runtime consumer for multi-angle research registry",
-      "status": "OPEN"
+      "status": "FIXED_LOCAL_VERIFIED",
+      "evidence": "discovery-runtime.mjs; real watcher nine-lane ingress fixture; original-public-time vs derived-availability provenance retained; prospective matched evaluation still open"
     },
     {
       "id": "INC-11",
@@ -335,6 +336,44 @@
       "Deployment/prospective full-session evidence requires approval and real sessions",
       "Artifact checkpoint delivery itself not yet production-observed"
     ],
-    "remoteCI": "PENDING"
+    "remoteCI": [
+      {
+        "id": "40814880096",
+        "event": "pull_request",
+        "sha": "1b3a7518240be6c7f9e252f80e0bd1955f68e6d7",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40814880096"
+      },
+      {
+        "id": "40814875183",
+        "event": "push",
+        "sha": "1b3a7518240be6c7f9e252f80e0bd1955f68e6d7",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40814875183"
+      },
+      {
+        "id": "40814875121",
+        "event": "push",
+        "sha": "1b3a7518240be6c7f9e252f80e0bd1955f68e6d7",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40814875121"
+      }
+    ],
+    "publishedCommit": "1b3a7518240be6c7f9e252f80e0bd1955f68e6d7"
+  },
+  "discoveryRuntimeMilestone": {
+    "status": "LOCAL_VERIFIED",
+    "base": "1b3a7518240be6c7f9e252f80e0bd1955f68e6d7",
+    "testsPassed": 1230,
+    "failed": 0,
+    "skipped": 0,
+    "rootModulesParsed": 212,
+    "workflowsParsed": 78,
+    "remoteCI": "PENDING",
+    "lanesConnected": 9,
+    "measurements": "first actual ingestion vs first observed fresh +10% crossing; entry below +5%; no stale/unknown/backfilled price credit",
+    "sourceLimits": "Derived file availability is not original event disclosure time; dated quarterly summaries remain labelled context; missing/stale/future sources explicit",
+    "realProspectiveEvidence": "NOT YET COLLECTED; fixture results are not performance claims",
+    "promotion": "RESEARCH ONLY / NOT AN APPROVED BUY; no strategy verdict changed"
   }
 }

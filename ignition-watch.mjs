@@ -14,6 +14,7 @@
 // Read-only; never places an order.
 import { snapshots, feedUsed } from './alpaca-feed.mjs';
 import {marketSession} from './market-session.mjs';
+import {collectDiscovery,discoveryState,updateDiscovery,discoveryReport} from './discovery-runtime.mjs';
 import {cycleHeartbeat,writeRuntimeJson,publishHeartbeat} from './watcher-heartbeat.mjs';
 import {readCheckpoint,saveCheckpoint} from './watcher-checkpoint.mjs';
 import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot } from './snapshot-fields.mjs';
@@ -144,6 +145,7 @@ async function tg(message) {
  return outcome.ok;
 }
 // ---- the loop
+const DISCOVERY=discoveryState(),discoveryLive=[];let discoverySources=[];
 const ANCHOR={minute:null,prices:{},market:null}; // Preserve the pre-registered 15:00 research endpoint.
 const HELD = { at: 0, pos: {} }, STOP_SENT = {};   // live stop watch (23 Oct)
 const seen = {}, orb = {}, triggers = [], beat = [], vis = {}, ser = {}, pull = {}, earlyWave = {}, preIgnition = {}; let alerts = 0;   // earlyWave: observation only (23 Oct)
@@ -227,7 +229,7 @@ async function pollEdgar(m) {
     EF.polls++; if (!r || !r.ok) { EF.fails++; break; } if (EF.firstOkM === null) EF.firstOkM = m;
     const ents = parseAtom(await r.text()); let older = false;
     for (const e of ents) { const t = Date.parse(e.at); if (!(t >= DAY4)) { older = true; continue; } const k = e.acc + '|' + e.cik; if (EF.seen.has(k)) continue; EF.seen.add(k); EF.filings++; if (!EF.first) EF.lat.push(Math.round((Date.now() - t) / 1000));
-      for (const sym of EF.cik.get(e.cik) || []) EF.pending.push({ sym, acc: e.acc, form: e.form, items: e.items, at: e.at, atM: nyMinuteOf(e.at) }); }
+      for (const sym of EF.cik.get(e.cik) || []) {EF.pending.push({ sym, acc: e.acc, form: e.form, items: e.items, at: e.at, atM: nyMinuteOf(e.at) });discoveryLive.push({symbol:sym,lane:'SEC_EVENT',asOf:e.at,observedAt:new Date().toISOString(),sourceId:'sec:'+e.acc+':'+sym,description:'SEC '+e.form+' '+(e.items||''),publicationBasis:'SOURCE_PUBLIC_TIMESTAMP',caveat:'SEC event presence is not a positive catalyst or approved BUY'});}  }
     if (older || ents.length < 100) break; }
   EF.first = false;
 }
@@ -271,22 +273,22 @@ async function radarSnap(m, scanned, live) {
   if (!env.IG_NO_RADAR) execSync('node opportunity-radar.mjs midday', { stdio: 'inherit', timeout: 120000 });
 }
 if(RESUME) {
- const targets={seen,orb,vis,ser,pull,earlyWave,preIgnition,STOP_SENT,vcToday,RADAR,ANCHOR};
+ const targets={seen,orb,vis,ser,pull,earlyWave,preIgnition,STOP_SENT,vcToday,RADAR,ANCHOR,DISCOVERY};
  for(const [key,target] of Object.entries(targets))Object.assign(target,RESUME.state[key]||{});
  triggers.push(...(RESUME.state.triggers||[]));beat.push(...RESUME.beat);
  alerts=RESUME.state.alerts||0;earlyAlerts=RESUME.state.earlyAlerts||0;
- Object.assign(EA.S,RESUME.early);EA.S.queue={lead:[],paper:[]};
+ const currentLevel=EA.S.level;Object.assign(EA.S,RESUME.early);EA.S.level=currentLevel;EA.S.queue={lead:[],paper:[]};
  for(const [key,row] of RESUME.shadow)SR.book.set(key,row);
  for(const [key,value] of RESUME.pm||[])pm.set(key,value);
  if(RESUME.edgar){const {seen:es,cik:ec,...stats}=RESUME.edgar;Object.assign(EF,stats);EF.seen=new Set(es||[]);EF.cik=ec?new Map(ec):null;}
  console.log('RESUMED_COMPLETED_CYCLES '+RESUME.beat.length);
 }
 const checkpoint=()=>saveCheckpoint(CP_FILE,{day,sourceSha:CODE_SHA,runId:RUN_ID,lastHeartbeat,edgar:{...EF,seen:[...EF.seen],cik:EF.cik?[...EF.cik]:null},
- state:{seen,orb,vis,ser,pull,earlyWave,preIgnition,STOP_SENT,vcToday,RADAR,ANCHOR,triggers,alerts,earlyAlerts},
+ state:{seen,orb,vis,ser,pull,earlyWave,preIgnition,STOP_SENT,vcToday,RADAR,ANCHOR,DISCOVERY,triggers,alerts,earlyAlerts},
  beat,early:EA.S,shadow:[...SR.book],pm:[...pm]});
 while (Date.now() - RUN_START < MAXMS) {
   const m = clock(); if (m >= SEGMENT_END) break; if (m < 568) { await sleep(30000); continue; }
-  const cycleStart=Date.now();requests.length=0;
+  const cycleStart=Date.now();requests.length=0;discoveryLive.length=0;
   const rows = await snap(); loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
@@ -302,7 +304,9 @@ while (Date.now() - RUN_START < MAXMS) {
     const M = meta(r.sym), av = avgVol.get(r.sym) || (r.prevV > 0 ? r.prevV : 0), rv = r.vol !== null && av > 0 ? r.vol / av : null, hits = [], rvT = rv !== null && cf ? rv / cf : null;
     // PRE-IGNITION RESEARCH: detect high-volume activity before +2% extension; retain all subsequent prices for outcome audit.
     // No BUY or Telegram alert is generated by this observation lane.
-    recordPreIgnition(preIgnition,r.sym,detectPreIgnition({change:chg,rvT,price:r.price,live,dollarVol:r.vol>0?r.vol*r.price:0,minute:m}),m,live?r.price:null);
+    const preSignal=detectPreIgnition({change:chg,rvT,price:r.price,live,dollarVol:r.vol>0?r.vol*r.price:0,minute:m});
+    if(preSignal&&!preIgnition[r.sym]){const at=new Date().toISOString();discoveryLive.push({symbol:r.sym,lane:'PRE_IGNITION',asOf:at,observedAt:at,sourceId:'snapshot:'+day+':'+r.sym+':'+m,description:'Derived unusual activity before +2% extension',publicationBasis:'DERIVED_RUNTIME',caveat:'Unproven snapshot analysis, not a trade recommendation',score:preSignal.score});}
+    recordPreIgnition(preIgnition,r.sym,preSignal,m,live?r.price:null);
     // EARLY-WAVE OBSERVATION (23 Oct): +2% to +15% with elevated volume pace, sub-$1 included; logged only, never an alert or a buy
     try { const ewc = scoreEarlyWaveCandidate({ change: chg, rv, rvT, live, price: r.price, oneMinuteChange: prevSeenPx > 0 ? r.price / prevSeenPx - 1 : null }); updateEarlyWaveCandidate(earlyWave, r.sym, ewc, fmtM(m));
       const dv = r.vol > 0 ? r.vol * r.price : 0; if(m<=900)SR.tick({ sym: r.sym, m, price: r.price, live });
@@ -352,6 +356,11 @@ while (Date.now() - RUN_START < MAXMS) {
   beat.push({ m, mode, received: rows.length, evaluated: evald, live: liveN, ageP50: q(sa, 0.5), ageP95: q(sa, 0.95), volAgeP50: q(vages.sort((a, b) => a - b), 0.5), alerts });   // heartbeat: proves the watcher ran this minute
   if (m >= 675 && m <= 690 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
+  const discoveryCutoff=new Date().toISOString();
+  const ingress=collectDiscovery({readText:f=>fs.readFileSync(f,'utf8'),cutoff:discoveryCutoff,live:discoveryLive});discoverySources=ingress.sources;
+  const added=updateDiscovery(DISCOVERY,{observations:ingress.observations,rows,cutoff:discoveryCutoff});
+  if(added.length){const dir='data/discovery-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.appendFileSync(dir+'/'+RUN_ID+'.jsonl',added.map(x=>JSON.stringify({...x,runId:RUN_ID,sourceSha:CODE_SHA})).join('\n')+'\n');}
+  writeRuntimeJson('runtime/discovery-live.json',discoveryReport(DISCOVERY,{cutoff:discoveryCutoff,sources:discoverySources}));
   lastHeartbeat=cycleHeartbeat({day,runId:RUN_ID,sourceSha:CODE_SHA,startedAt:new Date(cycleStart).toISOString(),completedAt:new Date().toISOString(),minute:m,received:rows.length,evaluated:evald,fresh:liveN,priceAgeP50Min:q(sa,.5),priceAgeP95Min:q(sa,.95),requests,lastSuccessfulCycle:lastHeartbeat?.lastSuccessfulCycle});
   Object.assign(beat.at(-1),{runId:RUN_ID,sourceSha:CODE_SHA,startedAt:lastHeartbeat.startedAt,completedAt:lastHeartbeat.completedAt});
   writeRuntimeJson('runtime/watcher-heartbeat.json',lastHeartbeat);checkpoint();
@@ -381,7 +390,10 @@ fs.writeFileSync(archiveDir + '/' + RUN_ID + '.json', JSON.stringify(runSnapshot
 fs.writeFileSync(archiveDir+'/'+RUN_ID+'.shadow.jsonl.gz',zlib.gzipSync(SR.rows().map(x=>JSON.stringify(x)).join('\n')+'\n'),{flag:'wx'});
 const attemptPx=ANCHOR.prices;
 fs.writeFileSync(archiveDir+'/'+RUN_ID+'.delivery.json',JSON.stringify(EA.finish(attemptPx,null,alerts)),{flag:'wx'});
+const discoverySummary=discoveryReport(DISCOVERY,{cutoff:new Date().toISOString(),sources:discoverySources,completeSession:session.complete});
+fs.writeFileSync(archiveDir+'/'+RUN_ID+'.discovery.json',JSON.stringify(discoverySummary),{flag:'wx'});
 if (!preferSession(readJson('data/ignition-live.json', null), runSnapshot)) { console.log('watcher: archived partial run ' + RUN_ID + '; retained richer existing session'); process.exit(0); }
+fs.writeFileSync('data/discovery-live.json',JSON.stringify(discoverySummary));
 if (Object.keys(vcToday).length >= 12) { VC.days[day] = vcToday; for (const d of Object.keys(VC.days).sort().slice(0, -25)) delete VC.days[d]; fs.writeFileSync('data/vol-curve.json', JSON.stringify(VC)); }
 fs.writeFileSync('data/ignition-live.json', JSON.stringify(runSnapshot, null, 1));
 // FEED-FIXABLE: a data-feed miss that real-time prices could actually have helped = not visible/late live AND not already up 10%+

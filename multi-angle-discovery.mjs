@@ -31,7 +31,8 @@ export function assembleMultiAngle(observations=[],{cutoff,limit=100}={}) {
     const score=finite(o.score)?Math.max(0,Math.min(100,o.score)):null;
     const row=grouped.get(o.symbol)||{symbol:o.symbol,lanes:new Map()};
     const prior=row.lanes.get(o.lane);
-    const ev={lane:o.lane,asOf:o.asOf,observedAt:o.observedAt,sourceId:o.sourceId,description:o.description,score};
+    const ev={lane:o.lane,asOf:o.asOf,observedAt:o.observedAt,sourceId:o.sourceId,description:o.description,score,
+      publicationBasis:o.publicationBasis||null,caveat:o.caveat||null,sourcePath:o.sourcePath||null};
     // Keep most recent evidence per lane; never count repeated headlines as independent confirmation.
     if(!prior || Date.parse(ev.observedAt)>Date.parse(prior.observedAt))row.lanes.set(o.lane,ev);
     grouped.set(o.symbol,row);
@@ -39,7 +40,7 @@ export function assembleMultiAngle(observations=[],{cutoff,limit=100}={}) {
   const candidates=[...grouped.values()].map(x=>{
     const evidence=[...x.lanes.values()].sort((a,b)=>a.lane.localeCompare(b.lane));
     const independentLanes=evidence.length;
-    return {symbol:x.symbol,independentLanes,evidence,classification:'RESEARCH ONLY',
+    return {symbol:x.symbol,independentLanes,laneCount:evidence.length,distinctSourceCount:new Set(evidence.map(e=>e.sourceId)).size,evidence,classification:'RESEARCH ONLY',
       status:'NOT AN APPROVED BUY'};
   }).sort((a,b)=>b.independentLanes-a.independentLanes || a.symbol.localeCompare(b.symbol));
   return {cutoff,candidates:candidates.slice(0,Math.max(0,Math.floor(limit))),count:candidates.length,ignored,

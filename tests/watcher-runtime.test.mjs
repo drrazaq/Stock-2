@@ -12,11 +12,11 @@ const repo=new URL('../',import.meta.url).pathname;
 async function fixture(day='2026-10-29') {
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'s2-runtime-'));
  fs.mkdirSync(path.join(dir,'data'));
- const state={stale:false,tgStatus:200,dispatchStatus:403,running:true,sends:0,requests:0,pendingObserved:false};
+ const state={stale:false,tgStatus:200,dispatchStatus:403,running:true,sends:0,requests:0,pendingObserved:false,price:10,volume:1000};
  const baseTime=Date.parse(day+'T19:00:00Z');
  const server=http.createServer((req,res)=>{
   state.requests++;const u=new URL(req.url,'http://localhost');res.setHeader('Content-Type','application/json');
-  if(u.pathname.includes('/snapshot/locale/'))return res.end(JSON.stringify({tickers:[{ticker:'AAA',lastTrade:{p:10,t:(baseTime-(state.stale?20*60000:1000))*1e6},prevDay:{c:10,v:1000000},min:{av:1000,t:baseTime-15*60000},day:{o:10,v:1000}}]}));
+  if(u.pathname.includes('/snapshot/locale/'))return res.end(JSON.stringify({tickers:[{ticker:'AAA',lastTrade:{p:state.price,t:(baseTime-(state.stale?20*60000:1000))*1e6},prevDay:{c:10,v:1000000},min:{av:state.volume,t:baseTime-15*60000},day:{o:10,v:state.volume}}]}));
   if(u.pathname.endsWith('/ignition.yml/runs'))return res.end(JSON.stringify({workflow_runs:state.running?[{id:1,run_attempt:1,status:'in_progress',created_at:day+'T13:10:00Z'}]:[]}));
   if(u.pathname.endsWith('/1/jobs'))return res.end(JSON.stringify({jobs:[{name:'watch',status:'completed',started_at:day+'T13:10:00Z',completed_at:day+'T18:00:00Z'},{name:'close',status:'in_progress',started_at:day+'T18:01:00Z'}]}));
   if(u.pathname.includes('/contents/data/watcher-heartbeats/')){
@@ -47,10 +47,12 @@ test('two bounded watcher segments preserve 390 minute evidence, checkpoint stat
   await f.run('ignition-watch.mjs',{IG_SEGMENT:'open',IG_FAKE_MIN:'570',IG_FAKE_STEP:'1'});
   assert.equal(f.read('runtime/watcher-checkpoint.json').beat.length,270);
   assert.equal(f.read('data/ignition-live.json').coverage.completeSession,false);
+  fs.writeFileSync(path.join(f.dir,'data/settings.json'),JSON.stringify({alerts:'off'}));
   await f.run('ignition-watch.mjs',{IG_SEGMENT:'close',IG_RESUME:'1',IG_FAKE_MIN:'840',IG_FAKE_STEP:'1'});
   const day=f.read('data/ignition-live.json');assert.equal(day.coverage.observedMinutes,390);assert.equal(day.coverage.completeSession,true);
   assert.equal(day.heartbeat.at(-1).m,959);assert.equal(f.read('runtime/watcher-heartbeat.json').freshPct,100);
   assert.equal(f.read('runtime/watcher-checkpoint.json').state.ANCHOR.minute,900);
+  assert.equal(f.read('runtime/watcher-checkpoint.json').early.level,'off');
   assert.ok(fs.existsSync(path.join(f.dir,'data/ignition-runs/2026-10-29/1-1-open.delivery.json')));
   assert.ok(fs.existsSync(path.join(f.dir,'data/ignition-runs/2026-10-29/1-1-close.shadow.jsonl.gz')));
   const before=fs.readFileSync(path.join(f.dir,'data/ignition-live.json'),'utf8'),count=f.state.requests;
@@ -93,5 +95,27 @@ test('real guard persists request intent and refuses to report HTTP 403 as a res
   f.state.running=false;const output=await f.guard();const s=f.read('data/watcher-guard.json');
   assert.equal(f.state.pendingObserved,true);assert.equal(s.attempts[0].status,'REJECTED');assert.deepEqual(s.dispatched,[]);
   assert.doesNotMatch(output,/started the watcher|started it itself/);assert.equal(s.notifications.length,0);
+ }finally{await f.close();}
+});
+test('real watcher consumes all nine research lanes without issuing a recommendation',async()=>{
+ const f=await fixture();try{
+  const generatedAt='2026-10-29T19:00:00Z';
+  const files={
+   'data/vol-curve.json':{days:Object.fromEntries(['2026-10-22','2026-10-23','2026-10-26','2026-10-27','2026-10-28'].map(d=>[d,{'600':.1}]))},
+   'data/news-log.jsonl':JSON.stringify({sym:'AAA',h:'Unconfirmed fixture guidance cut',t:Date.parse('2026-10-29T18:59:00Z'),at:generatedAt}),
+   'data/events-recent.json':{updated:generatedAt,events:[{sym:'AAA',p:'2026-10-29T18:30:00Z',f:'8-K'}]},
+   'data/insider-study.json':{generatedAt,recent:[{sym:'AAA',d:'2026-10-01',n:2}]},
+   'data/earnings-recent.json':{updated:generatedAt,reports:[{sym:'AAA',d:'2026-10-29',a:2,e:1}]},
+   'data/chain-ripple.json':{generatedAt,todayMovers:[{sym:'AAA',chain:'fixture'}]},
+   'data/share-supply.json':{generatedAt,now:[{sym:'AAA',filed:'2026-10-28',rule:'S-8 filed'}]},
+   'data/discovery2-today.json':{generatedAt,buys:[{sym:'AAA',rule:'unproven'}]},
+   'data/comeback-today.json':{generatedAt,methods:{fixture:{newSignals:[{sym:'AAA',d:'2026-10-28'}]}}}
+  };
+  for(const [file,value]of Object.entries(files))fs.writeFileSync(path.join(f.dir,file),typeof value==='string'?value:JSON.stringify(value));
+  f.state.price=10.08;f.state.volume=250000;
+  await f.run('ignition-watch.mjs',{IG_SEGMENT:'open',IG_FAKE_MIN:'600',IG_FAKE_STEP:'400'});
+  const report=f.read('data/discovery-live.json');assert.equal(report.sources.length,9);assert.equal(report.candidates[0].laneCount,9);
+  assert.equal(report.candidates[0].status,'NOT AN APPROVED BUY');assert.equal(report.lanes.every(x=>x.symbols===1),true);assert.equal(f.state.sends,0);
+  assert.ok(fs.existsSync(path.join(f.dir,'data/discovery-runs/2026-10-29/1-1-open.jsonl')));
  }finally{await f.close();}
 });
