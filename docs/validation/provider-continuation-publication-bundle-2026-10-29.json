@@ -1,0 +1,610 @@
+{
+  "format": "STOCK2_PROVIDER_CONTINUATION_RECOVERY_MANIFEST_V1",
+  "repository": "drrazaq/Stock-2",
+  "branch": "Stock2-safety-fixes",
+  "base": "b64ca5fcc7f19705f341d1a78211546a186faa3a",
+  "verifiedSource": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+  "verifiedTree": "b52394b5489d8d4146be7d87e1dc19c17d164ccc",
+  "actualPublishedCommits": [
+    {
+      "sha": "09b5d93a4bf6333c3fabe1e96eebaec6879837d8",
+      "message": "Harden provider diagnostic scope and independent freshness evidence",
+      "parents": [
+        "b64ca5fcc7f19705f341d1a78211546a186faa3a"
+      ]
+    },
+    {
+      "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+      "message": "Integrate bounded Alpaca audit while preserving concurrent provider hardening\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "09b5d93a4bf6333c3fabe1e96eebaec6879837d8"
+      ]
+    },
+    {
+      "sha": "16529b15ee3b95c4cedd96cf571ace8320889566",
+      "message": "Save verified diagnostic CI and preserve concurrent Alpaca audit handoff",
+      "parents": [
+        "a31340002c54ffcc056854b6464c689757a2f5eb"
+      ]
+    },
+    {
+      "sha": "eae4c456ccff9308ae684add1f9e602e32f5a014",
+      "message": "Preserve hybrid field provenance and verify bounded Alpaca access; retire audit trigger\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "16529b15ee3b95c4cedd96cf571ace8320889566"
+      ]
+    },
+    {
+      "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+      "message": "Correct integration quote fixtures and cover independent BBO refresh\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "eae4c456ccff9308ae684add1f9e602e32f5a014"
+      ]
+    },
+    {
+      "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+      "message": "Persist basket reminder intent and require acknowledged delivery before state advancement\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "0c58716026e39e2374a8a2a54662f6690404a9fd"
+      ]
+    },
+    {
+      "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+      "message": "Add offline explicit-universe hybrid session admission and full premarket fixtures\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "2d22e49c47065dfd7abadbceb22845723bcf57c3"
+      ]
+    },
+    {
+      "sha": "194619012541541a011e620e266f8833a697c00c",
+      "message": "Require current owner ZAD approval and available price before rebalancing ADD\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "f03e48c514f15d6bc74c5d56ba8355ac25051639"
+      ]
+    },
+    {
+      "sha": "5a03637949f14f58487683d26e746a5c76c19ed4",
+      "message": "Reject malformed historical membership and pre-boundary holdout decisions\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "194619012541541a011e620e266f8833a697c00c"
+      ]
+    },
+    {
+      "sha": "69db8a5f319e05296887a406f5039739118962da",
+      "message": "Fail scanner publication on staging, commit or pull transport errors\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "5a03637949f14f58487683d26e746a5c76c19ed4"
+      ]
+    },
+    {
+      "sha": "4c9e4785a7cd4a4d6261dcf57af3099813aebab5",
+      "message": "Block automatic frozen-research conflict resolution in scanner publication\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "69db8a5f319e05296887a406f5039739118962da"
+      ]
+    },
+    {
+      "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+      "message": "Anchor frozen preservation policy to script checkout across private-clone saves\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "parents": [
+        "4c9e4785a7cd4a4d6261dcf57af3099813aebab5"
+      ]
+    }
+  ],
+  "unpublishedDetachedCommit": {
+    "sha": "e35e1cf30c84929752e09ec6f57a23f711fc6684",
+    "status": "NOT_PUBLISHED; reconciled onto09b5d93 as a313400; do not install or force-push this orphan"
+  },
+  "files": [
+    {
+      "path": ".github/save-data.sh",
+      "status": "modified",
+      "blobSha": "d9ec606139b42805fe1ae95c69c6fa2d5bff3565",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/alpaca-access-audit.yml",
+      "status": "added",
+      "blobSha": "4b1b1d1e11ccb9de6ad3d04eb7b83519855c5316",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/engineering-targeted-tests.yml",
+      "status": "modified",
+      "blobSha": "7321bcdb0c48a42311e17b22cf5f37bfdfc5b4f9",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/basket-delivery-durability.md",
+      "status": "added",
+      "blobSha": "72cbc5a0e1e6e2138a452c8a5918d4c0fec30f80",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-acceptance-checks.json",
+      "status": "modified",
+      "blobSha": "45a35649012116fa81341f868da6c123fab4e73a",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-handoff-resume.md",
+      "status": "modified",
+      "blobSha": "0d9fbdd340c33c3e0a51cc215f0c7d92d13d6dd8",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-ledger.json",
+      "status": "modified",
+      "blobSha": "df1bac0f21cc024ec027924a169c3498b5239c2f",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-progress.md",
+      "status": "modified",
+      "blobSha": "8f6301761eed75dfdbc2a816cd0711cff2464b5b",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/frozen-save-conflict-guard.md",
+      "status": "added",
+      "blobSha": "b1a3ec2698e0c14262fecdbcb85f2f4971aaadbb",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/historical-holdout-admission-v3.md",
+      "status": "added",
+      "blobSha": "14534cd9d8be4c4f24fa742200e3e24ba2627838",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/hybrid-provider-readiness-2026-10-29.md",
+      "status": "added",
+      "blobSha": "c63a10252742822a6dd588fcbefa4eec7795d85a",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/hybrid-session-offline-contract.md",
+      "status": "added",
+      "blobSha": "0d5697494046d6b5642c22d523261b0063bfcea8",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/provider-readiness-2026-10-29.md",
+      "status": "modified",
+      "blobSha": "69fc26a23f3d2bdf49d79b5e42606232ca3eb38c",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/rebalance-owner-gate.md",
+      "status": "added",
+      "blobSha": "381607a9679e8d3e22b17618775a85f83ff82090",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/shared-save-failure-barrier.md",
+      "status": "added",
+      "blobSha": "ace4c226e3332ce0af3b55c5c9b986037f59db04",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/alpaca-access-2026-10-29.observed.json",
+      "status": "added",
+      "blobSha": "d9314b40edc95663e86901927a46adae5f5bf60f",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/alpaca-access-2026-10-29.request.json",
+      "status": "added",
+      "blobSha": "212d4405f1f4d89d943f7bbac612a4fc2ee49962",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/alpaca-official-sdk-request-contract.json",
+      "status": "added",
+      "blobSha": "a6b8057b874531d11dd7528bcfdf6556834f4057",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/frozen-save-integration-correction.md",
+      "status": "added",
+      "blobSha": "0823bc0d4365e1c580cea1faa36006b3c2c56929",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/hybrid-fixture-correction.md",
+      "status": "added",
+      "blobSha": "c01f784364c51b105e7cde7058f7faabcb662582",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/phase-a-final-preflight-2026-10-29.json",
+      "status": "modified",
+      "blobSha": "abe570ec0f5db0ce315e0ea4143b5b883bf8a337",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/phase-a-final-preflight.md",
+      "status": "modified",
+      "blobSha": "91fe2158d897ea5da3e8504e0f61d9470efd9d40",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/provider-diagnostic-2026-10-29T114413Z.json",
+      "status": "added",
+      "blobSha": "b9237020df140e76541f29c8b30411eb728be710",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/provider-diagnostic-continuation-ci.json",
+      "status": "added",
+      "blobSha": "37883b4b21221cd991a0cf32b8455bc995d2ab47",
+      "mode": "100644"
+    },
+    {
+      "path": "historical-integrity.mjs",
+      "status": "modified",
+      "blobSha": "34976d816e95facc95573d2edd36fc13505bc2bb",
+      "mode": "100644"
+    },
+    {
+      "path": "hybrid-research-session.mjs",
+      "status": "added",
+      "blobSha": "abfdde7088506a7341a201b4dd693a971d011ffe",
+      "mode": "100644"
+    },
+    {
+      "path": "ignition-watch.mjs",
+      "status": "modified",
+      "blobSha": "80f96082bd77e2df46885e34896e4ceef93eb1c2",
+      "mode": "100644"
+    },
+    {
+      "path": "live-refresh-universe.mjs",
+      "status": "modified",
+      "blobSha": "4296e395af6ba8fa622922bc013c5376a93cdafd",
+      "mode": "100644"
+    },
+    {
+      "path": "research-quote-followups.mjs",
+      "status": "modified",
+      "blobSha": "c160dbe00d358b32619ab06214513cd94e28b031",
+      "mode": "100644"
+    },
+    {
+      "path": "scan.mjs",
+      "status": "modified",
+      "blobSha": "a0a90fc752345b0307cb1e5cd86268613627d440",
+      "mode": "100644"
+    },
+    {
+      "path": "snapshot-fields.mjs",
+      "status": "modified",
+      "blobSha": "ae4bff8834d7662a62e3ef16bab8f28d87668a15",
+      "mode": "100644"
+    },
+    {
+      "path": "test/basket-lane.test.mjs",
+      "status": "modified",
+      "blobSha": "38214a1a054ea0611c8e97f9e8a134214752467e",
+      "mode": "100644"
+    },
+    {
+      "path": "test/private-data.test.mjs",
+      "status": "modified",
+      "blobSha": "b20b4c86a2bb31919797862f1df47393627d9fbb",
+      "mode": "100644"
+    },
+    {
+      "path": "test/save-data.test.mjs",
+      "status": "modified",
+      "blobSha": "13f8a321de5de74dc808f317387230404cac516f",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/alpaca-access-audit.test.mjs",
+      "status": "added",
+      "blobSha": "ffb8984397f05b544560dce711864e49a9443a47",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/basket-delivery.test.mjs",
+      "status": "added",
+      "blobSha": "b2241347ab0ee84976012f3e65e319ea8c05826f",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/historical-integrity.test.mjs",
+      "status": "modified",
+      "blobSha": "4e706dbd0325745d529c51332a9c5bddc00d25b4",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/hybrid-research-session.test.mjs",
+      "status": "added",
+      "blobSha": "c3df79d6b394247a3fdf1efb4481530270816c8e",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/live-refresh-universe.test.mjs",
+      "status": "modified",
+      "blobSha": "45c80a870b2876c1c330ae2389ea0efabeca52c8",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/provider-probe.test.mjs",
+      "status": "modified",
+      "blobSha": "5a1d90b683f7d7c0b4bb86b7ac08fc0a08c349b3",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/rebalance-owner-gate.test.mjs",
+      "status": "added",
+      "blobSha": "24792c68daa965d20042e0316a00ad15fd314605",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/research-quote-followups.test.mjs",
+      "status": "modified",
+      "blobSha": "7ec230e37038308f0f62610c508c29d8922eb8fb",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/snapshot-fields.test.mjs",
+      "status": "modified",
+      "blobSha": "97440273d0acf8bd9914f9b9f116e64bb4db45d8",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/watcher-refresh.test.mjs",
+      "status": "modified",
+      "blobSha": "562178b44ede3bf39106f2191c75fec3be7336f8",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/alpaca-access-audit.mjs",
+      "status": "added",
+      "blobSha": "d3951e03960f01f173be3d608d6843684767adc6",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/provider-readiness-probe.mjs",
+      "status": "modified",
+      "blobSha": "23050596531c90067714050d56a4a6acfc3b929f",
+      "mode": "100644"
+    }
+  ],
+  "verification": {
+    "date": "2026-10-29",
+    "verifiedSource": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+    "verifiedTree": "b52394b5489d8d4146be7d87e1dc19c17d164ccc",
+    "acceptance": {
+      "complete": 22,
+      "total": 40,
+      "percent": 55,
+      "remaining": 18
+    },
+    "node": {
+      "files": 161,
+      "tap": 1393,
+      "standalone": 2,
+      "total": 1395
+    },
+    "static": {
+      "moduleSyntaxChecks": 230,
+      "workflowParses": 85,
+      "bashSaveSyntax": "PASS"
+    },
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123463073431"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952992"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952988"
+      },
+      {
+        "name": "test",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363160/job/123462952889"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952622"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363165/job/123462952595"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363046/job/123462952534"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363099/job/123462952217"
+      },
+      {
+        "name": "test",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354272/job/123462922754"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123462922581"
+      },
+      {
+        "name": "safety",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123462921988"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354109/job/123462921829"
+      }
+    ],
+    "dataPreservation": {
+      "baselineDataBlobs": 399,
+      "allUnchanged": true,
+      "frozenRegistryCount": 51,
+      "ownerSecretsReadOrModified": false
+    },
+    "liveDiagnostics": {
+      "phaseARequests": 0,
+      "authorizedExistingDiagnosticGETs": 5,
+      "authorizedAlpacaAuditGETs": 11,
+      "actualPaperTrades": 0,
+      "telegramMessages": 0,
+      "orders": 0
+    },
+    "massive": "Owner-confirmed Stocks Starter15minute delayed; not a real-time premarket source",
+    "hybrid": "Targeted SIP confirmation observed; whole-market real-time discovery remains unverified",
+    "phaseA": "OLD_RUNTIME_UNCHANGED; revised design + offline admission only; no approved/reviewed live replacement",
+    "unpublishedIntendedEngineeringChanges": false,
+    "workspace": "/workspace/stock2-engineering-b64 is isolated test materialization, NOT a Git checkout; canonical branch/commits are authoritative"
+  },
+  "failedAttempts": [
+    {
+      "sha": "eae4c456ccff9308ae684add1f9e602e32f5a014",
+      "push": 40872347539,
+      "pr": 40872357972,
+      "reason": "Old watcher-refresh fixture omitted BBO; current prices correctly triggered quote-aware refresh. Corrected in0c58716."
+    },
+    {
+      "sha": "4c9e4785a7cd4a4d6261dcf57af3099813aebab5",
+      "push": 40877866052,
+      "pr": 40877876353,
+      "reason": "CWD policy lookup incompatible with delegated private clone; corrected source anchoring and fixture dependency in234f419."
+    },
+    {
+      "local": "First watcher-runtime test attempt",
+      "reason": "Sandbox localhost EPERM; rerun with permitted localhost networking passed8/8"
+    }
+  ],
+  "remainingAcceptance": [
+    {
+      "id": "REPO-03",
+      "title": "Behavioral review of every script",
+      "requiredVerification": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this."
+    },
+    {
+      "id": "ACTIONS-04",
+      "title": "All workflow failure/write/concurrency semantics",
+      "requiredVerification": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch."
+    },
+    {
+      "id": "MARKET-02",
+      "title": "Actual provider entitlements and coverage",
+      "requiredVerification": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials."
+    },
+    {
+      "id": "MARKET-03",
+      "title": "All-provider symbol/session normalization",
+      "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths."
+    },
+    {
+      "id": "MARKET-04",
+      "title": "Measured full-session freshness and latency",
+      "requiredVerification": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this."
+    },
+    {
+      "id": "DISCOVERY-03",
+      "title": "Whole-market premarket discovery verified",
+      "requiredVerification": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence."
+    },
+    {
+      "id": "DISCOVERY-04",
+      "title": "Prospective matched lead/false-positive evaluation",
+      "requiredVerification": "Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping."
+    },
+    {
+      "id": "CATALYST-03",
+      "title": "All-source ingestion and deduplication",
+      "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence."
+    },
+    {
+      "id": "CATALYST-04",
+      "title": "Independent point-in-time catalyst/missing-source audit",
+      "requiredVerification": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability."
+    },
+    {
+      "id": "ZAD-04",
+      "title": "Every approved recommendation and cached-render path",
+      "requiredVerification": "Enumerate all current BUY/entry/action channels, monthly/basket/owner lanes, options, callbacks and cached reports. With missing/stale/expired/rejected/malformed/third-party marks, prove no approved BUY; test valid owner yes separately. Catalyst/cache repairs alone are partial."
+    },
+    {
+      "id": "EXEC-03",
+      "title": "Cross-lane entry/stop/gap/cost consistency",
+      "requiredVerification": "Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity."
+    },
+    {
+      "id": "EXEC-04",
+      "title": "All-path fail-closed execution fault injection",
+      "requiredVerification": "Inject errors/timeouts/redirects/config ambiguity/duplicate or resumed jobs on every mutation path. Prove no live broker host, method override or default opt-in mutation; unknown outcomes do not trigger blind retries. No actual order is needed or authorized."
+    },
+    {
+      "id": "TELEGRAM-03",
+      "title": "All send paths, stable IDs and cross-job durability",
+      "requiredVerification": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally."
+    },
+    {
+      "id": "TELEGRAM-04",
+      "title": "Authorized actual non-BUY delivery validation",
+      "requiredVerification": "After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this."
+    },
+    {
+      "id": "STRATEGY-04",
+      "title": "Independent realistic after-cost replay",
+      "requiredVerification": "Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained."
+    },
+    {
+      "id": "HISTORY-02",
+      "title": "Actual identity/ticker/delisting/survivorship audit",
+      "requiredVerification": "Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness."
+    },
+    {
+      "id": "HISTORY-03",
+      "title": "All performance claims and windows validated",
+      "requiredVerification": "Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results."
+    },
+    {
+      "id": "HISTORY-04",
+      "title": "Benchmark/capacity/drawdown/uncertainty report",
+      "requiredVerification": "Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability."
+    }
+  ],
+  "recovery": [
+    "Inspect actual branch ref and latest handoff first; preserve any newer concurrent work.",
+    "Fetch exact verifiedSource or each listed Git blob. This manifest contains no credentials or owner data; all intended engineering changes are published.",
+    "Do not copy the older /workspace/Stock-2 directory or the isolated test materialization wholesale over current source/data. Neither is a usable Git checkout.",
+    "Reconstruct only reviewed code/test/docs paths. Preserve all existing data, source modes, private-data scripts/config, key-proof workflow and old Phase A candidate bytes.",
+    "Run relevant local fixtures plus exact-source hosted full push/PR, safety/artifact, preservation, delivery, research and Python recovery checks.",
+    "Do not rerun historical audit jobs: old source retains dated code; current audit workflow is retired and has no provider bindings.",
+    "No Phase A install/dispatch, new source substitution, real message/order, merge or sensitive permission change without required separate owner approval."
+  ]
+}

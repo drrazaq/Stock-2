@@ -96,15 +96,16 @@
     "phaseADispatched": false,
     "keyProofInstalled": true,
     "keyProofTriggered": true,
-    "providerRequests": 5,
+    "providerRequests": 21,
     "telegram": 0,
     "orders": 0,
     "merge": false,
     "servicesPurchased": false,
     "phaseAProviderRequests": 0,
-    "standaloneDiagnosticRequests": 5,
+    "standaloneDiagnosticRequests": 21,
     "authorizedAlpacaAuditGETs": 11,
-    "authorizedDiagnosticRepeatGETs": 5
+    "authorizedDiagnosticRepeatGETs": 5,
+    "requestAccounting": "Engineering diagnostics: prior automatic5GET + authorized repeat5GET + authorized Alpaca audit11GET. Phase A0GET. Excludes unrelated existing production schedules."
   },
   "acceptance": {
     "complete": 22,
@@ -376,5 +377,120 @@
     "run": 40871506655,
     "results": "Targeted SIP access observed; supplied24 fresh19trades/21BBO; no-symbol HTTP400. Broad real-time discovery not verified.",
     "evidence": "docs/validation/alpaca-access-2026-10-29.observed.json"
+  },
+  "latestEngineeringContinuation": {
+    "date": "2026-10-29",
+    "verifiedSource": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+    "verifiedTree": "b52394b5489d8d4146be7d87e1dc19c17d164ccc",
+    "acceptance": {
+      "complete": 22,
+      "total": 40,
+      "percent": 55,
+      "remaining": 18
+    },
+    "node": {
+      "files": 161,
+      "tap": 1393,
+      "standalone": 2,
+      "total": 1395
+    },
+    "static": {
+      "moduleSyntaxChecks": 230,
+      "workflowParses": 85,
+      "bashSaveSyntax": "PASS"
+    },
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123463073431"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952992"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952988"
+      },
+      {
+        "name": "test",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363160/job/123462952889"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952622"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363165/job/123462952595"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363046/job/123462952534"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363099/job/123462952217"
+      },
+      {
+        "name": "test",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354272/job/123462922754"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123462922581"
+      },
+      {
+        "name": "safety",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123462921988"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354109/job/123462921829"
+      }
+    ],
+    "dataPreservation": {
+      "baselineDataBlobs": 399,
+      "allUnchanged": true,
+      "frozenRegistryCount": 51,
+      "ownerSecretsReadOrModified": false
+    },
+    "liveDiagnostics": {
+      "phaseARequests": 0,
+      "authorizedExistingDiagnosticGETs": 5,
+      "authorizedAlpacaAuditGETs": 11,
+      "actualPaperTrades": 0,
+      "telegramMessages": 0,
+      "orders": 0
+    },
+    "massive": "Owner-confirmed Stocks Starter15minute delayed; not a real-time premarket source",
+    "hybrid": "Targeted SIP confirmation observed; whole-market real-time discovery remains unverified",
+    "phaseA": "OLD_RUNTIME_UNCHANGED; revised design + offline admission only; no approved/reviewed live replacement",
+    "unpublishedIntendedEngineeringChanges": false,
+    "workspace": "/workspace/stock2-engineering-b64 is isolated test materialization, NOT a Git checkout; canonical branch/commits are authoritative"
   }
 }
