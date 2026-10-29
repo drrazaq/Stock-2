@@ -3,6 +3,8 @@
 // day's measured start to data/watcher-starts.jsonl. Read-only on the market; never places an order.
 import fs from 'node:fs';
 import { guardDecide, nyParts, fmt, watcherJobEvidence } from './watcher-guard-core.mjs';
+import { dispatchGuard } from './guard-dispatch.mjs';
+import { sendTelegramMessage } from './telegram-delivery.mjs';
 const env = process.env, REPO = env.GITHUB_REPOSITORY, TOKEN = env.GITHUB_TOKEN, API = 'https://api.github.com/repos/' + REPO + '/actions/workflows/ignition.yml';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org';
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -25,10 +27,18 @@ for (const run of rawRuns) {
   runs.push(watcherJobEvidence(run,jobs));
 }
 const S0 = readJson('data/watcher-guard.json', {}), out = guardDecide(Date.now(), runs, S0);
-if (out.dispatch) { const d = await fetch(API + '/dispatches', { method: 'POST', ...H, body: JSON.stringify({ ref: 'main' }) }).catch(e => ({ ok: false, status: e.message }));
-  if (!d.ok) out.alerts.push('WATCHER GUARD could not start the watcher (GitHub answered ' + d.status + '). The bot job may lack the actions: write permission. Send this to Claude.'); }
-for (const a of out.alerts) if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: a }) }).catch(() => {}); else console.log('[guard] ' + a);
+const persist = state => {fs.mkdirSync('data',{recursive:true});fs.writeFileSync('data/watcher-guard.json.tmp',JSON.stringify(state));fs.renameSync('data/watcher-guard.json.tmp','data/watcher-guard.json');};
+// Notifications are durable before dispatch and consumed only on Telegram ACK.
+out.state.notifications=[...new Set([...(S0.d===out.state.d?S0.notifications||[]:[]),...out.alerts])];
+await dispatchGuard(out,{url:API+'/dispatches',headers:H.headers,persist});
+out.state.notifications=[...new Set([...out.state.notifications,...out.alerts])];
+persist(out.state);
+for (const a of [...out.state.notifications]) {
+ const result=await sendTelegramMessage({base:TG,token:env.TG_TOKEN,chat:env.TG_CHAT,text:a});
+ if(result.ok) {out.state.notifications=out.state.notifications.filter(x=>x!==a);persist(out.state);}
+ else console.log('[guard, delivery unconfirmed: '+result.reason+'] '+a);
+}
 if (out.state.started !== null && (S0.d !== out.state.d || S0.started === null || S0.started === undefined || S0.startedSource !== 'github_job'))
   fs.appendFileSync('data/watcher-starts.jsonl', JSON.stringify({ d: out.state.d, started: fmt(out.state.started), source:'github_job', marketCoverage:'UNVERIFIED', byGuard: out.state.dispatched.length > 0, dispatched: out.state.dispatched.map(fmt) }) + '\n');
-fs.writeFileSync('data/watcher-guard.json', JSON.stringify(out.state));
-console.log('watcher guard ' + fmt(n.min) + ' New York: ' + out.why + (out.dispatch ? ' -> started the watcher' : ''));
+persist(out.state);
+console.log('watcher guard ' + fmt(n.min) + ' New York: ' + out.why + (out.dispatch ? ' -> start request '+out.state.attempts.at(-1).status+'; execution unconfirmed' : ''));

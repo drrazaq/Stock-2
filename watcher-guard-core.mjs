@@ -36,6 +36,11 @@ export function watcherJobEvidence(run, jobs, nowMs = Date.now()) {
 export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) {
   const n = nyParts(nowMs), alerts = []; let dispatch = false;
   const state = state0 && state0.d === n.d ? { ...state0, dispatched: [...(state0.dispatched || [])], alerted: { ...(state0.alerted || {}) } } : { d: n.d, started: null, dispatched: [], alerted: {} };
+  // Old `dispatched` entries were recorded before HTTP acknowledgment. Retain
+  // them as unknown attempts for rate limiting, never as accepted requests.
+  state.attempts = state.version===2 ? (state.attempts||[]).map(x=>({...x})) : state.dispatched.map(min=>({min,status:'UNCONFIRMED_LEGACY'}));
+  if(state.version!==2) state.dispatched=[];
+  state.version=2;
   if (state.startedSource !== 'github_job') state.started = null;
   if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > WINDOW.to) return { state, dispatch, alerts, why: 'outside the check window' };
   const today = runs.filter(r => Number.isFinite(Date.parse(r?.created_at)) && nyParts(Date.parse(r.created_at)).d === n.d);
@@ -66,11 +71,11 @@ export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) 
     if (n.min >= WINDOW.wantBy && !state.alerted.queued) { state.alerted.queued = true; alerts.push('WATCHER WAITING: GitHub has the live watcher queued but has not started it (' + fmt(n.min) + ' New York). Nothing is watched until it starts.'); }
     return { state, dispatch, alerts, why: 'queued' };
   }
-  const last = state.dispatched.length ? state.dispatched[state.dispatched.length - 1] : null;
+  const last = state.attempts.length ? state.attempts[state.attempts.length - 1].min : null;
   if (n.min > WINDOW.startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
-  if (state.dispatched.length < 3 && (last === null || n.min - last >= 15)) {
-    dispatch = true; state.dispatched.push(n.min);
-    alerts.push('WATCHER NOT STARTED by ' + fmt(n.min) + ' New York: GitHub had not started it, so Stock-2 started it itself (attempt ' + state.dispatched.length + ' of 3).');
-  } else if (state.dispatched.length >= 3 && !state.alerted.gaveUp) { state.alerted.gaveUp = true; alerts.push('WATCHER DOWN: 3 start attempts failed (last ' + fmt(last) + ' New York). No live watch today unless it starts. Send this to Claude.'); }
+  if (state.attempts.length < 3 && (last === null || n.min - last >= 15)) {
+    dispatch = true; state.attempts.push({min:n.min,status:'PENDING'});
+    alerts.push('WATCHER NOT STARTED by ' + fmt(n.min) + ' New York: requesting a start (attempt ' + state.attempts.length + ' of 3); execution is not confirmed.');
+  } else if (state.attempts.length >= 3 && !state.alerted.gaveUp) { state.alerted.gaveUp = true; alerts.push('WATCHER DOWN: 3 start attempts without confirmed execution (last ' + fmt(last) + ' New York). No live watch confirmed. Send this to Claude.'); }
   return { state, dispatch, alerts, why: 'not running' };
 }

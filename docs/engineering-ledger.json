@@ -297,5 +297,18 @@
     ],
     "remaining": "Guard window ends at 14:55; watcher window ends at 15:00. Full 16:00/half-day calendar and heartbeat coverage not yet implemented.",
     "publishedCommit": "812f0c79e165c49ab493baba8bf75b9251974106"
+  },
+  "dispatchIntegrityMilestone": {
+    "base": "925149a3a929859d24044f8d64156f29dabb70bd",
+    "status": "LOCAL_VERIFIED",
+    "testsPassed": 1213,
+    "targetedTests": 23,
+    "remoteCI": "PENDING",
+    "changes": [
+      "Persist pending intent before HTTP",
+      "Only HTTP 204 records accepted request; never confirmed execution",
+      "Failed and timed-out attempts retained for throttle",
+      "Telegram guard notifications retained until ACK"
+    ]
   }
 }
