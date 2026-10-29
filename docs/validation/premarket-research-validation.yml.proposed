@@ -1,0 +1,102 @@
+# NON-ACTIVE PROPOSAL. Installing this workflow on main requires owner approval.
+name: One-session premarket research validation
+on:
+  workflow_dispatch:
+    inputs:
+      approval_json:
+        description: Owner-approved expiring RESEARCH_ONLY manifest (no credentials)
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: premarket-research-validation
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 7dd702d5d2ed3578f7558bc4f7fcc211f3619669
+          path: code
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /research-collector.mjs
+            /market-session.mjs
+            /market-symbol.mjs
+            /snapshot-fields.mjs
+            /discovery-runtime.mjs
+            /multi-angle-discovery.mjs
+            /ignition-gates.mjs
+            /tools/research-collector.mjs
+            /tools/seal-research-artifact.mjs
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: public-inputs
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /data/news-log.jsonl
+            /data/events-recent.json
+            /data/insider-study.json
+            /data/earnings-recent.json
+            /data/chain-ripple.json
+            /data/share-supply.json
+            /data/discovery2-today.json
+            /data/comeback-today.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Stage only public research inputs and record provenance
+        env:
+          APPROVED_MANIFEST: ${{ inputs.approval_json }}
+        run: |
+          python - <<'PY'
+          import json,os,pathlib,shutil,subprocess
+          p=pathlib.Path('code');(p/'data').mkdir(exist_ok=True);(p/'research-output').mkdir(exist_ok=True)
+          names=['news-log.jsonl','events-recent.json','insider-study.json','earnings-recent.json','chain-ripple.json','share-supply.json','discovery2-today.json','comeback-today.json']
+          for n in names:
+            src=pathlib.Path('public-inputs/data')/n
+            if src.is_file(): shutil.copyfile(src,p/'data'/n)
+          sha=subprocess.run(['git','-C','public-inputs','rev-parse','HEAD'],check=True,capture_output=True,text=True).stdout.strip()
+          (p/'research-output/input-source.json').write_text(json.dumps({'sourceSha':'7dd702d5d2ed3578f7558bc4f7fcc211f3619669','inputSha':sha,'allowedFiles':names}))
+          (p/'approved-manifest.json').write_text(json.dumps(json.loads(os.environ['APPROVED_MANIFEST'])))
+          PY
+      - name: Verify encryption before any provider request
+        working-directory: code
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: |
+          node --input-type=module - <<'JS'
+          import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
+          const input=Buffer.from('preflight fixture'),sealed=sealResearch(input,process.env.PRIVATE_KEY,{sourceSha:'7dd702d5d2ed3578f7558bc4f7fcc211f3619669',path:'preflight'});
+          if(!openResearch(sealed,process.env.PRIVATE_KEY).equals(input))throw Error('encryption preflight failed');
+          console.log('Encryption roundtrip verified; no provider request performed');
+          JS
+      - name: Collect research only (no Telegram or broker bindings)
+        id: collection
+        working-directory: code
+        env:
+          STOCK2_SOURCE_SHA: 7dd702d5d2ed3578f7558bc4f7fcc211f3619669
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
+        run: node tools/research-collector.mjs --collect approved-manifest.json
+      - name: Seal artifacts before any upload
+        if: always()
+        working-directory: code
+        env:
+          STOCK2_SOURCE_SHA: 7dd702d5d2ed3578f7558bc4f7fcc211f3619669
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: node tools/seal-research-artifact.mjs research-output sealed-research
+      - name: Upload encrypted evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-premarket-${{ github.run_id }}-${{ github.run_attempt }}
+          path: code/sealed-research/
+          retention-days: 3
+          if-no-files-found: error
