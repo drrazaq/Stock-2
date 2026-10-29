@@ -1,3 +1,4 @@
+import {saveAlertState,alertAvailable,deliverAlertOnce} from './alert-delivery-state.mjs';
 import {telegramFetch} from './telegram-delivery.mjs';
 // NEWS WATCH: every 15 minutes from before the US open to the close, reads the news for the stocks you HOLD and the stocks on
 // today's BUY list, plus their competitors (Finnhub peer list) and their industry words (e.g. memory, DRAM, HBM for a memory
@@ -55,12 +56,27 @@ const mentions = (t, s) => new RegExp('\\b' + esc(s) + '\\b').test(t) || (keyWor
 const indHit = (t, s) => { const w = (meta[s] || {}).words || []; return w.filter(x => new RegExp('\\b' + esc(x) + '\\b', 'i').test(t)); };
 // ---- read the news (last 2 hours; each headline once)
 const SEEN = 'data/news-seen.json', seen = readJson(SEEN, {}); for (const k of Object.keys(seen)) if (now - seen[k] > 3 * 864e5) delete seen[k];
-const DELIVERY='data/news-delivery.json',delivery=readJson(DELIVERY,{unknown:{}});delivery.unknown||={};
+const DELIVERY='data/news-delivery.json';
+const delivery=fs.existsSync(DELIVERY)?JSON.parse(fs.readFileSync(DELIVERY,'utf8')):{unknown:{}};
+const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
+if(!object(delivery)||!object(delivery.unknown)||delivery.sent!==undefined&&!object(delivery.sent)||delivery.delivery!==undefined&&!object(delivery.delivery))throw Error('NEWS_DELIVERY_STATE_UNREADABLE');
+delivery.sent||={};delivery.delivery||={};
+for(const [key,value]of Object.entries(delivery.unknown)){if(!object(value))throw Error('NEWS_DELIVERY_STATE_UNREADABLE');delivery.delivery[key]||={status:'UNKNOWN',at:value.at||null};}
+let deliveryFailures=0;
+const unconfirmed=r=>!r.ok&&!/^HTTP_(?:400|401|403|404|429)$/.test(r.reason||'');
+const saveDelivery=()=>saveAlertState(DELIVERY,delivery);
 const queued=new Set();
-async function deliver(text){if(!env.TG_TOKEN||!env.TG_CHAT){console.log(text);return {ok:false,reason:'MISSING_CREDENTIALS',deliveredParts:0};}const r=await telegramFetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{body:JSON.stringify({chat_id:env.TG_CHAT,text})});const b=await r.json();return {ok:r.ok,reason:b.description||null,deliveredParts:r.deliveredParts};}
+async function deliver(text,keys){
+ const result=await deliverAlertOnce({book:delivery,keys,save:saveDelivery,send:async()=>{
+  if(!env.TG_TOKEN||!env.TG_CHAT){console.log(text);return {ok:false,reason:'MISSING_CREDENTIALS',deliveredParts:0};}
+  const r=await telegramFetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{body:JSON.stringify({chat_id:env.TG_CHAT,text})});const b=await r.json();return {ok:r.ok,reason:b.description||null,deliveredParts:r.deliveredParts};
+ }});
+ if(!result.ok){deliveryFailures++;console.error('NEWS DELIVERY UNCONFIRMED: '+result.reason);}
+ return result;
+}
 const since = now - 2 * 3600e3, from = iso(now - 864e5), to = iso(now), alerts = [];
 const fresh = (a) => Array.isArray(a) ? a.filter(x => x && x.headline && typeof x.datetime==='number' && Number.isFinite(x.datetime) && x.datetime*1000<=now && x.datetime * 1000 >= since && !seen[x.id || x.headline]) : [];
-const add = (sym, why, x, th, kind) => { const sourceId=String(x.id||x.headline+'|'+x.datetime),key=sym+'|'+sourceId;if(seen[key]||delivery.unknown[key]||queued.has(key))return;queued.add(key);alerts.push({key,sourceId,sym,why,kind,th,h:String(x.headline).slice(0,180),src:x.source||'',t:x.datetime*1000,url:x.url||''}); };
+const add = (sym, why, x, th, kind) => { const sourceId=String(x.id||x.headline+'|'+x.datetime),key=sym+'|'+sourceId;if(seen[key]||delivery.unknown[key]||!alertAvailable(delivery,key)||queued.has(key))return;queued.add(key);alerts.push({key,sourceId,sym,why,kind,th,h:String(x.headline).slice(0,180),src:x.source||'',t:x.datetime*1000,url:x.url||''}); };
 // ---- MARKET SHOCK (Trump, China, the Fed, Europe, the UK, wars, tariffs...): the S&P 500's move today + the big headlines behind it.
 // Sent once per level per day (S&P 500 down or up 1.5%, then 2.5%), or for a top-tier headline (tariff, sanctions, export
 // controls, a surprise rate move, war) even before the market moves. It also says what the 5-year test found on days like this.
@@ -81,10 +97,11 @@ if (MS.day !== today) { MS.day = today; MS.sent = []; MS.heads = []; }
       ...(show.length ? ['Why (headlines):', ...show.map(x => '- "' + String(x.headline).slice(0, 160) + '" (' + (x.source || '') + ')')] : ['No big headline found yet; the move may be flows, data or rumours.']), '',
       r ? 'Stored market-day study summary (window not independently verified here), when the S&P 500 had ' + (k === 'bigDown' ? 'a big drop (1.5%+)' : 'a big rise (1.5%+)') + ' that day: the system’s tested buys made ' + pcx(r.newer.avg) + ' a trade on average (' + r.newer.n + ' unseen trades) vs ' + (allN !== null ? pcx(allN) : 'n/a') + ' on all days: ' + r.verdict + '.' : 'The market has not moved 1.5% yet; this is a heads-up on the news only.',
       'Research context, not a new approved signal. Not financial advice.'];
-    const outcome=await deliver(lines.join('\n'));if(!outcome.ok){MS.sent=beforeSent;MS.heads=beforeHeads;if(outcome.reason==='NETWORK_ERROR'||outcome.deliveredParts>0){if(lvl)delivery.unknown['macro-level|'+today+'|'+lvl]={at:new Date(now).toISOString(),reason:outcome.reason};for(const x of show)delivery.unknown['macro-head|'+(x.id||x.headline)]={at:new Date(now).toISOString(),reason:outcome.reason};}}
+    const macroKeys=[...(why.includes('move')&&lvl?['macro-level|'+today+'|'+lvl]:[]),...show.map(x=>'macro-head|'+(x.id||x.headline))];
+    const outcome=await deliver(lines.join('\n'),macroKeys);if(!outcome.ok){MS.sent=beforeSent;MS.heads=beforeHeads;if(unconfirmed(outcome)||outcome.deliveredParts>0){if(lvl)delivery.unknown['macro-level|'+today+'|'+lvl]={at:new Date(now).toISOString(),reason:outcome.reason};for(const x of show)delivery.unknown['macro-head|'+(x.id||x.headline)]={at:new Date(now).toISOString(),reason:outcome.reason};}}
     fs.appendFileSync('data/macro-log.jsonl', JSON.stringify({ at: new Date(now).toISOString(), dp, kind: k, why, deliveryConfirmed:outcome.ok, deliveryReason:outcome.reason, heads: show.map(x => x.headline) }) + '\n'); }
   MS.lastDp = dp; MS.at = new Date(now).toISOString(); fs.writeFileSync('data/macro-state.json', JSON.stringify(MS)); }
-if (!watch.length) { fs.writeFileSync(DELIVERY,JSON.stringify(delivery));console.log('news watch: nothing to watch; market shock check done'); process.exit(0); }
+if (!watch.length) { saveDelivery();if(deliveryFailures)process.exitCode=2;console.log('news watch: nothing to watch; market shock check done'); process.exit(process.exitCode||0); }
 for (const s of watch) {   // 1. the stock's own news
   for (const x of fresh(await fh('/company-news?symbol=' + encodeURIComponent(s) + '&from=' + from + '&to=' + to))) { const t = x.headline + ' ' + (x.summary || ''), th = sameSentence(t, s); if (th.length) add(s, 'its own news', x, th, 'own'); } }
 for (const s of held) { const m = meta[s] || {};   // 2. competitors' news that touches your stock's business (held stocks only, to save calls)
@@ -113,6 +130,6 @@ if (alerts.length) { const by = new Map(); for (const a of alerts) { if (!by.has
     lines.push('', sym + (p ? ' (you hold)' : '') + ': ' + d, 'Why (' + A[0].why + '): ' + why); dec.push({ sym, d: d.split(/[ .(]/)[0] === 'SELL' ? 'SELL' : d.startsWith('HOLD') ? 'HOLD' : d.startsWith('PRICE UNVERIFIED') ? 'PRICE UNVERIFIED' : 'NO BUY' }); }
   lines.push('', 'Decided by the system. News is a precaution, not a tested signal; your stop is the tested protection.');
   fs.appendFileSync('data/news-log.jsonl', dec.map(x => JSON.stringify({ at: new Date(now).toISOString(), decision: x.d, sym: x.sym }) + '\n').join(''));
-  const outcome=await deliver(lines.join('\n'));if(outcome.ok)for(const key of deliveredKeys)seen[key]=now;else if(outcome.reason==='NETWORK_ERROR'||outcome.deliveredParts>0)for(const key of deliveredKeys)delivery.unknown[key]={at:new Date(now).toISOString(),reason:outcome.reason}; }
-fs.writeFileSync(SEEN,JSON.stringify(seen));fs.writeFileSync(DELIVERY,JSON.stringify(delivery));
+  const outcome=await deliver(lines.join('\n'),deliveredKeys);if(outcome.ok)for(const key of deliveredKeys)seen[key]=now;else if(unconfirmed(outcome)||outcome.deliveredParts>0)for(const key of deliveredKeys)delivery.unknown[key]={at:new Date(now).toISOString(),reason:outcome.reason}; }
+fs.writeFileSync(SEEN,JSON.stringify(seen));saveDelivery();if(deliveryFailures)process.exitCode=2;
 console.log('news watch: ' + watch.length + ' stocks (' + held.length + ' held), ' + calls + ' calls, ' + alerts.length + ' alerts');

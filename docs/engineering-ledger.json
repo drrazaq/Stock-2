@@ -1758,5 +1758,20 @@
       "Authorized actual delivery and runner-loss recovery validation remain open"
     ],
     "acceptanceCredit": 0
+  },
+  "newsDeliveryMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "changes": [
+      "Atomic local intent saved before every news/macro send",
+      "HTTP200 without acknowledgment and pending/recovered intent suppress replay",
+      "Malformed stored delivery data aborts instead of resetting deduplication",
+      "Unconfirmed attempted sends exit2 after saving state",
+      "News workflow attempts state publication after failure and exposes exhausted retries; -X theirs removed"
+    ],
+    "remainingLimits": [
+      "Local intent cannot survive lost VM or unpublished Git state; opt-in remote journal not enabled",
+      "Other Telegram paths, actual delivery and all-workflow conflict semantics remain open"
+    ],
+    "acceptanceCredit": 0
   }
 }

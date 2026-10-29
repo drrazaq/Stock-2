@@ -26,12 +26,14 @@ jobs:
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
-      - run: |
+      - if: always() && hashFiles('data/news-delivery.json') != ''
+        run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           for f in data/news-seen.json data/news-meta.json data/news-log.jsonl data/macro-state.json data/macro-log.jsonl data/news-delivery.json data/tg-failures.jsonl; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "news $(date -u +%FT%RZ)"
-          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo 'Error: news state was not published; do not blindly replay alerts'; exit 1; }
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
