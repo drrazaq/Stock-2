@@ -199,7 +199,8 @@
       "title": "All workflow failure/write/concurrency semantics",
       "status": "OPEN",
       "actionability": "SAFE_BRANCH",
-      "requiredVerification": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch."
+      "requiredVerification": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch.",
+      "partialEvidence": "Smart-money exact-block disposable-Git false-success/conflict regression and repair in 2b96707; broad all-workflow review remains OPEN. docs/validation/smart-money-publication-rehearsal.json."
     },
     {
       "id": "MARKET-02",
@@ -243,7 +244,8 @@
       "title": "All-source ingestion and deduplication",
       "status": "OPEN",
       "actionability": "SAFE_BRANCH",
-      "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence."
+      "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
+      "partialEvidence": "Verified bb93fb2: 55 reconstructed source regressions, malformed/failed/empty source distinctions and SEC structural coverage. Full identity/revision/persistence evidence remains OPEN; docs/validation/catalyst-source-ci.json."
     },
     {
       "id": "CATALYST-04",
@@ -315,9 +317,8 @@
   "nextSafeSequence": [
     "ACTIONS-04: expand conflict/failure review beyond repaired news/watcher jobs; never use -X theirs to discard research",
     "TELEGRAM-03: finish route inventory and stable event-ID integration; remote journal remains explicitly opt-in",
-    "ZAD-04: finish current/revoked owner gates across monthly/basket/options and remaining cached/reply paths",
     "MARKET-03 and CATALYST-03: per-provider/source units, identities, clocks, normalization and durable deduplication",
-    "EXEC-03/04: lane plan/test consistency and complete mutation fault injection",
+    "EXEC-03: lane plan/test consistency; preserve completed EXEC-04 mutation closure",
     "REPO-03/HISTORY-03: remaining module behavior and numerical claim provenance"
   ]
 }

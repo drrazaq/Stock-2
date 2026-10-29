@@ -2,7 +2,7 @@
   "source": "bb93fb291338b0f12c4bf27e5f6aa5803d14c596",
   "workflow": ".github/workflows/Smart-money.yml",
   "scope": "Exact publication run block; disposable local Git only; no dispatch/network/secrets",
-  "status": "BASELINE_DEFECTS_REPRODUCED_BRANCH_REPAIR_LOCAL_FOCUSED_PASS",
+  "status": "REPAIR_VERIFIED_EXACT_SOURCE_CI",
   "cases": [
     {
       "fault": "commit_refused",
@@ -29,7 +29,7 @@
       "failAsExpected": 3
     },
     "behavior": "Explicit stage/commit failure barriers; require confirmed push; abort conflicts instead of job-wins selection.",
-    "exactHostedCI": "PENDING new source publication",
+    "exactHostedCI": "All 12 applicable checks passed on 2b96707b242e4ac55cc8ec006211a00ebe2867b9",
     "acceptanceCredit": 0,
     "fullLocal": {
       "files": 172,
@@ -37,6 +37,8 @@
       "standalone": 2,
       "python": 27,
       "failedFiles": 0
-    }
+    },
+    "verifiedSource": "2b96707b242e4ac55cc8ec006211a00ebe2867b9",
+    "ciEvidence": "docs/validation/smart-money-publication-ci.json"
   }
 }
