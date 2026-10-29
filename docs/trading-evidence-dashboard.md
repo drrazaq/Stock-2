@@ -2,7 +2,7 @@
 
 Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
 
-Updated29October2026; verified engineering source 86b25cc (13 exact-commit checks passed); precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
+Updated29October2026; verified plan source 5fce3f9 (12 exact-commit checks passed); Share-supply source candidate locally verified; precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|
@@ -29,3 +29,5 @@ Probe evidence: [batch report](alpaca-batch-access-observed-2026-10-29.md), [act
 Historical frozen experiments remain historical and may be rejected; metadata/fixtures are not independently authenticated replay. Never reinterpret these zeros as zero false positives or zero losses. Future evaluation must pre-register sample/days, horizon, control selection, end date, cost/liquidity model and uncertainty before collection; no optional stopping or tuning on confirmation data. No real/paper broker orders are needed for local paper calculations.
 
 Next evidence path: official non-secret Alpaca entitlements, separately reviewed/pinned/approved bounded broad research diagnostic, then approved complete-session observation and a separately frozen prospective matched protocol. See [minimum proposal](minimum-live-research-validation.md). No workflow/collection/alert/order is authorized by this dashboard.
+
+Readiness for the owner's combined aims: full engineering **FAIL** (24/40); bounded research **FAIL** (missing live runtime/pin and entitlement); prospective paper **FAIL**; limited owner alerts **FAIL**. Profitability/real latency/whole-universe recall **NOT ESTABLISHED**. See the linked aim plan for proposed thresholds, minimum cohorts and exact dependency/approval boundaries. These decisions do not change acceptance scores.

@@ -25,6 +25,7 @@
 // WEEKLY: a run at least 6 days after the last batch adds the next 10 UNTESTED rules of the frozen pool; the luck bar uses every rule
 //    tested so far (counter testedTotal), so each new batch faces a higher bar. The pool itself is never re-learned.
 import fs from 'node:fs';
+import {createSupplySource} from './share-supply-source.mjs';
 import zlib from 'node:zlib';
 import { secNY } from './sec-time.mjs';
 import { freezeEach, latestBlock } from './first-run.mjs';
@@ -38,7 +39,14 @@ const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, r
 const pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(2) + '%';
 const W = (f, o) => { fs.mkdirSync(f.replace(/\/[^/]+$/, '') || '.', { recursive: true }); fs.writeFileSync(f, JSON.stringify(o, null, 1)); };
 const secs = () => Math.round((Date.now() - T0) / 1000);
-const PREV = J(OUT, {}) || {};
+let PREV={};try{if(fs.existsSync(OUT)){const b=fs.readFileSync(OUT);if(b.length>8*1024*1024)throw Error();PREV=JSON.parse(b.toString());if(!PREV||typeof PREV!=='object'||Array.isArray(PREV))throw Error();}}catch{console.error('discovery2: unreadable frozen output; original preserved');process.exit(1);}
+function unavailableSupply(why,sources=null){
+ const sourceStatus={SEC_INDEX:{status:'UNKNOWN'}},at=new Date().toISOString();
+ const priorToday=J(TODAY_OUT,{})||{};
+ W(OUT,{...PREV,status:'NOT RUN: '+why,sourceStatus,lastAttempt:{at},...(sources?{sources}:{})});
+ W(TODAY_OUT,{...priorToday,status:'NOT RUN',sourceStatus,retainedBuys:[...(priorToday.buys||[]),...(priorToday.retainedBuys||[])].slice(0,500),buys:[],lastAttempt:{at}});
+ console.log('discovery2: '+why+'; no new discovery/testing/buys');process.exit(0);
+}
 
 // ---- 4. COST REALITY and the diagnosis (no price cache needed) ------------------------------------------------------------------------
 function costRows() {
@@ -76,10 +84,7 @@ function diagnosis() {
 // ---- 1. prices (read only) -----------------------------------------------------------------------------------------------------------
 let store = gz(env.CACHE || CDIR + '/grouped.json.gz');
 const D = store && store.days ? Object.keys(store.days).sort() : [], T = D.length;
-if (T < 600) {
-  const out = { ...PREV, generatedAt: new Date().toISOString(), status: 'NO PRICE CACHE (' + T + ' sessions): nothing discovered or tested this run; earlier frozen results kept', costReality: costBlock(), diagnosis: diagnosis() };
-  W(OUT, out); console.log('discovery2: ' + out.status); process.exit(0);
-}
+if(T<600)unavailableSupply('price cache unavailable/insufficient; frozen state retained');
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, SYMS = [...SY.keys()], N = NS * T, Om = new Float32Array(N).fill(NaN), Hm = new Float32Array(N).fill(NaN), Lm = new Float32Array(N).fill(NaN), Cm = new Float32Array(N).fill(NaN), Vm = new Float32Array(N).fill(NaN), MAIN = new Uint8Array(N);
 // merged series: the main rows (3 USD+, 1M USD+: the only rows an entry may use) and the x rows (a stock that fell out of the filter
@@ -112,22 +117,19 @@ const FAMF = { CONTRACT: 'eCon', ACQUIRED: 'eAcq', EARN: 'eEarn', MGMT: 'eMgmt',
 const ES = gz(env.EARN || 'data/earnings-cache.json.gz'); SRC.earnings = ES && ES.syms ? Object.keys(ES.syms).length + ' companies' : null;
 const INS = new Map(); { let n = 0; try { for (const f of fs.readdirSync(CDIR + '/insider').filter(f => f.endsWith('.json'))) for (const b of J(CDIR + '/insider/' + f, [])) { if (!SY.has(b[0])) continue; const s = firstOnOrAfter(D, String(b[1]).slice(0, 10)); if (s >= T) continue; (INS.get(b[0]) || INS.set(b[0], []).get(b[0])).push([s, b[2]]); n++; } } catch (e) {} SRC.insider = n ? n + ' purchase filings' : null; }
 const SH = gz(env.SHARES || 'data/shares.json.gz'); SRC.shares = SH && SH.t ? Object.keys(SH.t).length + ' tickers' : null;
-const cikOf = (s) => SH && SH.t ? (SH.t[s] || SH.t[s.replace(/\./g, '-')] || null) : null;
-// the S-8 / 424B4 half of the EDGAR full index (study-cache/edgar-idx, written by share-supply.mjs): quarters not yet in the restored
-// cache are fetched here in the same format (official SEC file, declared User-Agent; only when SEC_UA is set, never in tests)
-if (env.SEC_UA) { const dir = CDIR + '/edgar-idx', now = new Date(); fs.mkdirSync(dir, { recursive: true }); let got = 0, failed = 0;
-  for (let y = +D[0].slice(0, 4); y <= now.getUTCFullYear(); y++) for (let q = 1; q <= 4; q++) { if (y === now.getUTCFullYear() && (q - 1) * 3 > now.getUTCMonth()) continue;
-    const f = dir + '/' + y + 'Q' + q + '.json', cur = y === now.getUTCFullYear() && Math.floor(now.getUTCMonth() / 3) + 1 === q; if (fs.existsSync(f) && !cur) continue;
-    let buf = null; for (let a = 0; a < 3 && !buf; a++) { try { const r = await fetch('https://www.sec.gov/Archives/edgar/full-index/' + y + '/QTR' + q + '/master.gz', { headers: { 'User-Agent': env.SEC_UA } }); if (r.ok) buf = Buffer.from(await r.arrayBuffer()); else await new Promise(s => setTimeout(s, 3000 * (a + 1))); } catch (e) { await new Promise(s => setTimeout(s, 3000 * (a + 1))); } }
-    if (!buf) { failed++; continue; } let txt; try { txt = zlib.gunzipSync(buf).toString('latin1'); } catch (e) { txt = buf.toString('latin1'); }
-    const rows = []; for (const line of txt.split('\n')) { const p = line.split('|'); if (p.length < 5) continue; const form = p[2].trim(); if (form === 'S-8' || form === '424B4') rows.push([+p[0], form, p[3].trim()]); }
-    fs.writeFileSync(f, JSON.stringify(rows)); got++; await new Promise(s => setTimeout(s, 250)); }
-  if (got || failed) console.log('discovery2: EDGAR index quarters fetched now ' + got + (failed ? ', failed ' + failed : '')); }
+const cikOf = (s) => SH && SH.t ? (SH.t[s] || null) : null;
+// Shared verified index contract; never reinterpret legacy compact arrays or
+// let a second writer replace them with a malformed successful empty response.
+const supplySource=createSupplySource({dir:CDIR+'/edgar-idx',base:env.SEC_BASE,ua:env.SEC_UA||'stock-2 research admin@users.noreply.github.com'}),supplyQuarters=[];
+for(let y=+D[0].slice(0,4);y<=new Date().getUTCFullYear();y++)for(let q=1;q<=4;q++){if(y===new Date().getUTCFullYear()&&(q-1)*3>new Date().getUTCMonth())continue;const result=await supplySource.quarter(y+'Q'+q,{allowFetch:!!env.SEC_UA});supplyQuarters.push({quarter:y+'Q'+q,...result});}
+const supplyComplete=supplyQuarters.length>0&&supplyQuarters.every(x=>x.status==='OBSERVED');
+SRC.secIndexStatus=supplyComplete?'OBSERVED':'UNKNOWN_OR_CONFLICT';
 const IDX = new Map(); { let q1 = 0, q2 = 0; const symsByCik = new Map(); if (SH && SH.t) for (const [s, c] of Object.entries(SH.t)) if (SY.has(s)) (symsByCik.get(+c) || symsByCik.set(+c, []).get(+c)).push(s);
-  const addRows = (rows) => { for (const [cik, form, d] of rows || []) { const ss = symsByCik.get(+cik); if (!ss) continue; const s = firstOnOrAfter(D, d); if (s >= T) continue; const kind = form === '424B4' || form === '424B5' ? 'off' : form === 'S-8' ? 's8' : /^S-[13]/.test(form) ? 'shelf' : null; if (!kind) continue; for (const sym of ss) (IDX.get(sym) || IDX.set(sym, []).get(sym)).push([s, kind]); } };
+  const addRows = (rows) => { for (const [cik, form, d] of rows || []) { const ss = symsByCik.get(+cik); if (!ss||ss.length!==1) continue; const s = firstOnOrAfter(D, d); if (s >= T) continue; const kind = form === '424B4' || form === '424B5' ? 'off' : form === 'S-8' ? 's8' : /^S-[13]/.test(form) ? 'shelf' : null; if (!kind) continue; for (const sym of ss) (IDX.get(sym) || IDX.set(sym, []).get(sym)).push([s, kind]); } };
   try { for (const f of fs.readdirSync(CATD + '/idx').filter(f => /^\d{4}Q\d\.json$/.test(f))) { addRows(J(CATD + '/idx/' + f, [])); q1++; } } catch (e) {}
-  try { for (const f of fs.readdirSync(CDIR + '/edgar-idx').filter(f => /^\d{4}Q\d\.json$/.test(f))) { addRows(J(CDIR + '/edgar-idx/' + f, [])); q2++; } } catch (e) {}
+  for(const q of supplyQuarters)if(q.status==='OBSERVED'){addRows(q.rows);q2++;}
   SRC.edgarIndex = q1 && q2 ? q1 + ' quarters (424B5, S-1, S-3) + ' + q2 + ' quarters (424B4, S-8)' : null; SRC.edgarIndexParts = { catCache: q1, studyCache: q2 }; }
+if(!supplyComplete)unavailableSupply('SEC index unavailable/conflicting; frozen state retained',SRC);
 const FUND = gz(env.FUND_CACHE || CDIR + '/fund.json.gz'); SRC.fund = FUND && FUND.v ? Object.keys(FUND.v).length + ' companies' : null;
 const GRAPH = J(env.CHAIN_GRAPH || 'data/chain-graph.json', null); SRC.chainGraph = GRAPH && GRAPH.chains ? (GRAPH.counts && GRAPH.counts.pointInTime) + ' point-in-time memberships' : null;
 const BOARD = J('data/follow-board.json', {}) || {}, tracked = new Set((BOARD.traders || []).filter(t => t.level === 'FOLLOW' || t.level === 'WATCH').map(t => t.tr));

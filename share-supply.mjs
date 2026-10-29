@@ -28,29 +28,25 @@
 //   Otherwise NOT PROVEN (negative in both halves but weaker) or REJECTED (not worse than the average stock in a half).
 //   20+ cases per half are needed for any verdict.
 import fs from 'node:fs';
+import {createSupplySource,supplyBase} from './share-supply-source.mjs';
 import zlib from 'node:zlib';
 import { freezeEach, latestBlock } from './first-run.mjs';
-const env = process.env, OUT = env.OUT || 'data/share-supply.json', IDIR = (env.CACHE_DIR || 'study-cache') + '/edgar-idx', SEC = env.SEC_BASE && /^http:\/\/(127\.0\.0\.1|localhost)/.test(env.SEC_BASE) ? env.SEC_BASE : 'https://www.sec.gov';
+const env = process.env, OUT = env.OUT || 'data/share-supply.json', IDIR = (env.CACHE_DIR || 'study-cache') + '/edgar-idx', SEC = supplyBase(env.SEC_BASE);
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', TIER2_T = 2.5, LEAGUE_FLOOR = 4.0, NV = 4;
 const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }, gz = (f) => { try { return JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString()); } catch (e) { return null; } };
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const PREV = J(OUT, {});
-let store = gz(env.CACHE || 'study-cache/grouped.json.gz'); if (!store) { console.log('share-supply: no price cache'); process.exit(0); }
+let PREV={};try{if(fs.existsSync(OUT)){const b=fs.readFileSync(OUT);if(b.length>8*1024*1024)throw Error();PREV=JSON.parse(b.toString());if(!PREV||typeof PREV!=='object'||Array.isArray(PREV))throw Error();}}catch{console.error('share-supply: prior output unreadable; original preserved');process.exit(1);}
+const unavailable=why=>{fs.mkdirSync(OUT.slice(0,OUT.lastIndexOf('/'))||'.',{recursive:true});fs.writeFileSync(OUT,JSON.stringify({...PREV,status:'NOT RUN',sourceStatus:{SEC_INDEX:{status:'UNKNOWN'},SEC_TICKERS:{status:'UNKNOWN'}},lastAttempt:{at:new Date().toISOString(),why}}));console.log('share-supply: '+why);process.exit(0);};
+let store = gz(env.CACHE || 'study-cache/grouped.json.gz'); if (!store) unavailable('no price cache');
 const SHR = gz(env.SHARES || 'data/shares.json.gz');
-const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 300) { console.log('share-supply: too few sessions'); process.exit(0); }
+const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 300) unavailable('too few sessions');
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN), CX = new Float32Array(NS * T).fill(NaN), FIRST = new Int32Array(NS).fill(-1);
 D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j++) { const q = SY.get(x.T[j]), k = q * T + t; O[k] = x.o[j]; C[k] = x.c[j]; V[k] = x.v[j]; if (FIRST[q] < 0) FIRST[q] = t; } if (x.x) for (let j = 0; j < x.x.T.length; j++) { const q = SY.get(x.x.T[j]); if (q !== undefined) CX[q * T + t] = x.x.c[j]; } }); store = null;
 const spyI = SY.get('SPY');
 fs.mkdirSync(IDIR, { recursive: true });
-async function get(url, bin) { for (let a = 0; a < 3; a++) { try { const r = await fetch(url, { headers: { 'User-Agent': UA } }); if (r.ok) return bin ? Buffer.from(await r.arrayBuffer()) : await r.json(); console.log('share-supply: HTTP ' + r.status + ' ' + url); if (r.status === 404) return null; } catch (e) { console.log('share-supply: ' + (e.message || e)); } await sleep(4000 * (a + 1)); } return null; }
-// ---- 1. EDGAR quarterly index: S-8 and 424B4 rows only, cached per quarter (a past quarter never changes; the current one is re-read) ----
-async function quarterRows(y, q) { const f = IDIR + '/' + y + 'Q' + q + '.json', cur = new Date(), curQ = cur.getUTCFullYear() === y && Math.floor(cur.getUTCMonth() / 3) + 1 === q, had = J(f, null);
-  if (had && !curQ) return had; await sleep(200); const buf = await get(SEC + '/Archives/edgar/full-index/' + y + '/QTR' + q + '/master.gz', true); if (!buf) return had;
-  let txt; try { txt = zlib.gunzipSync(buf).toString('latin1'); } catch (e) { txt = buf.toString('latin1'); }
-  const rows = []; for (const line of txt.split('\n')) { const p = line.split('|'); if (p.length < 5) continue; const form = p[2].trim(); if (form !== 'S-8' && form !== '424B4') continue; rows.push([+p[0], form, p[3].trim()]); }
-  fs.writeFileSync(f, JSON.stringify(rows)); return rows; }
+const SOURCE=createSupplySource({dir:IDIR,base:env.SEC_BASE,ua:UA});
 // ---- 2. statistics ----
 const firstOnOrAfter = (d) => { let lo = 0, hi = T; while (lo < hi) { const m = (lo + hi) >> 1; if (D[m] < d) lo = m + 1; else hi = m; } return lo; };
 const addDays = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10);
@@ -67,22 +63,24 @@ const stat = (a) => { if (a.length < 20) return { n: a.length };
   const v = byDay(a, z => z.g - z.c), ov = byDay(a, z => typeof z.ob === 'number' ? z.g - z.ob : null), sv = byDay(a, z => typeof z.sp === 'number' ? z.g - z.sp : null), ex = a.map(z => z.g - z.c).sort((x, y) => x - y);
   return { n: a.length, days: v.length, stocks: new Set(a.map(z => z.s)).size, avg: +mean(a.map(z => z.g)).toFixed(4), ctrl: +mean(a.map(z => z.c)).toFixed(4), edge: +mean(v).toFixed(4), t: tOf(v), vsSpy: sv.length ? +mean(sv).toFixed(4) : null, tSpy: tOf(sv), vsOwn: ov.length ? +mean(ov).toFixed(4) : null, tOwn: tOf(ov), lagged: +(ex.filter(x => x < 0).length / ex.length).toFixed(3), noWorst2: +mean(ex.slice(2)).toFixed(4) }; };
 (async () => {
-  const y0 = +D[0].slice(0, 4) - 1, now = new Date(), rows = []; let qOk = 0, qAll = 0;   // one year earlier than prices: 424B4 dates of IPOs whose lock-up ends inside the window
-  for (let y = y0; y <= now.getUTCFullYear(); y++) for (let q = 1; q <= 4; q++) { if (y === now.getUTCFullYear() && (q - 1) * 3 > now.getUTCMonth()) continue; qAll++; const r = await quarterRows(y, q); if (r) { qOk++; rows.push(...r); } }
-  let tick = J(IDIR + '/tickers.json', null); if (!tick || Date.now() - Date.parse(tick.at || 0) > 7 * 864e5) { const j = await get(SEC + '/files/company_tickers.json'); if (j) { tick = { at: new Date().toISOString(), m: {} }; for (const x of Object.values(j)) { const s = String(x.ticker || '').toUpperCase().replace(/-/g, '.'); if (SY.has(s)) (tick.m[x.cik_str] = tick.m[x.cik_str] || []).push(s); } fs.writeFileSync(IDIR + '/tickers.json', JSON.stringify(tick)); } }
-  const base = { generatedAt: new Date().toISOString(), agent: 'C', ids: ['C-S8', 'C-LOCK'], preRegistered: '2026-10-22', window: [D[START], D[T - 1]], indexQuarters: qOk + ' of ' + qAll, universe: 'companies in today\'s SEC ticker list that are in the price cache (delisted companies are missing: their S-8 and lock-up events are not counted)' };
-  if (!tick || qOk < qAll) { fs.writeFileSync(OUT, JSON.stringify({ ...base, status: 'data loading', why: !tick ? 'SEC company list not read' : 'EDGAR index quarters read: ' + qOk + ' of ' + qAll + '; no verdict until all are in', firstRun: PREV.firstRun || null }, null, 1)); console.log('share-supply: data loading (' + qOk + '/' + qAll + ' quarters)'); return; }
-  const byCik = {}; for (const [cik, form, d] of rows) { const s = tick.m[cik]; if (!s || s.length !== 1) continue; (byCik[s[0]] = byCik[s[0]] || []).push([form, d]); }
+  const y0 = +D[0].slice(0, 4) - 1, now = new Date(), rows = [],sourceArtifacts=[],conflicts=[]; let qOk = 0, qAll = 0;   // one year earlier than prices: 424B4 dates of IPOs whose lock-up ends inside the window
+  for (let y = y0; y <= now.getUTCFullYear(); y++) for (let q = 1; q <= 4; q++) { if (y === now.getUTCFullYear() && (q - 1) * 3 > now.getUTCMonth()) continue; qAll++;const quarter=y+'Q'+q,r=await SOURCE.quarter(quarter);sourceArtifacts.push({quarter,status:r.status,reason:r.reason,firstObservedAt:r.firstObservedAt,rejectedRows:r.rejectedRows});if(r.status==='OBSERVED')qOk++;rows.push(...r.rows);conflicts.push(...r.conflicts); }
+  const tick=await SOURCE.tickers(),sourceComplete=qOk===qAll&&tick.status==='OBSERVED';
+  for(const row of rows)if(tick.conflicts?.includes(String(row[0])))conflicts.push(row[3]);
+  const quarantinedSourceIds=[...new Set([...(Array.isArray(PREV.quarantinedSourceIds)?PREV.quarantinedSourceIds:[]),...conflicts.flatMap(id=>['SEC_INDEX:'+id+':S8','SEC_INDEX:'+id+':LOCK180'])])];
+  const sourceStatus={SEC_INDEX:{status:qOk===qAll?'OBSERVED':'PARTIAL_OR_UNKNOWN',quarters:qAll,completeQuarters:qOk},SEC_TICKERS:{status:tick.status}};
+  const base = { sourceStatus,sourceArtifacts,sourceTelemetry:SOURCE.telemetry(),quarantinedSourceIds,identityCaveat:'Current SEC literal ticker mapping is not authenticated historical security/class identity; no hyphen/dot guessing.',generatedAt: new Date().toISOString(), agent: 'C', ids: ['C-S8', 'C-LOCK'], preRegistered: '2026-10-22', window: [D[START], D[T - 1]], indexQuarters: qOk + ' of ' + qAll, universe: 'companies in today\'s SEC ticker list that are in the price cache (delisted companies are missing: their S-8 and lock-up events are not counted)' };
+  const byCik = {};for(const [cik,form,d,filingPath,firstObservedAt,revisionId] of rows){const ss=tick.m?.[cik];if(!ss||ss.length!==1||tick.conflicts?.includes(String(cik))||!SY.has(ss[0]))continue;(byCik[ss[0]]??=[]).push([form,d,filingPath,firstObservedAt,revisionId]);}
   const VERS = { S8A: 20, S8B: 20, L180: 10, L180W: 7, L90: 10 }, trades = {}, counts = {}; for (const k in VERS) { trades[k] = []; counts[k] = 0; }
   const add = (k, i, t, extra) => { counts[k]++; const h = VERS[k], g = fwd(i, t, h), c0 = ctrl(t, h), ob = own(i, t, h), sp = spyF(t, h); if (g === null || c0 === null || Math.abs(g) > 3) return; trades[k].push({ t, s: SYMS[i], g, c: c0, ob, sp, ...extra }); };
   const nowList = [];
   for (const [sym, list] of Object.entries(byCik)) { const i = SY.get(sym); if (i === undefined || i === spyI) continue; const A = SHR && SHR.c && SHR.t && sym in SHR.t ? SHR.c[SHR.t[sym]] : null; list.sort((x, y) => x[1] < y[1] ? -1 : 1);
     // S-8: the trade is bought at the open after the first session on/after the filing date (t = that session; fwd buys t+1)
-    let lastS8 = -999; for (const [form, d] of list) { if (form !== 'S-8') continue; const t = firstOnOrAfter(d); if (t < START || t >= T) continue; if (t >= T - 21) nowList.push({ sym, rule: 'S-8 filed', filed: d }); if (t - lastS8 <= 60 || !tradable(i, t) || t + 1 >= T) continue; lastS8 = t; add('S8A', i, t, { d });
+    let lastS8 = -999; for (const [form, d,filingPath,firstObservedAt,revisionId] of list) { if (form !== 'S-8') continue; const t = firstOnOrAfter(d); if (t < START || t >= T) continue; if (t >= T - 21) nowList.push({sym,rule:'S-8 filed',filed:d,publicationDay:d,filingPath,firstObservedAt,sourceId:'SEC_INDEX:'+filingPath+':S8',sourceRevisionId:revisionId,derivedAvailableAt:firstObservedAt,sourceIdentityBasis:'REPORTED_SEC_INDEX_PATH_CURRENT_LITERAL_TICKER',sourceClockBasis:'FILING_DAY_ONLY_ACCESS_KNOWN',materiality:'NOT_ESTABLISHED',sourceDataDay:D[T-1]}); if (t - lastS8 <= 60 || !tradable(i, t) || t + 1 >= T) continue; lastS8 = t; add('S8A', i, t, { d });
       if (A) { const ms = Date.parse(D[t]), n1 = sharesKnown(A, ms), n0 = sharesKnown(A, ms - 90 * 864e5); if (n1 > 0 && n0 > 0 && n1 / n0 - 1 > 0.02) add('S8B', i, t, { d, up: +(n1 / n0 - 1).toFixed(3) }); } }
     // IPO: the first 424B4, and the stock first appears in the price cache within 15 sessions after it (not before it)
     const ipo = list.find(([form]) => form === '424B4'); if (!ipo) continue; const tI = firstOnOrAfter(ipo[1]); if (!(FIRST[i] >= tI && FIRST[i] - tI <= 15 && tI > 0)) continue;
-    for (const [k, days] of [['L180', 180], ['L90', 90]]) { const ex = addDays(ipo[1], days), te = firstOnOrAfter(ex); if (te >= T) { if (k === 'L180' && te - T < 30) nowList.push({ sym, rule: 'lock-up expiry about ' + ex, ipo: ipo[1] }); continue; } if (te < START + 6) continue;
+    for (const [k, days] of [['L180', 180], ['L90', 90]]) { const ex = addDays(ipo[1], days), te = firstOnOrAfter(ex); if (te >= T) { if (k === 'L180' && te - T < 30) nowList.push({sym,rule:'lock-up expiry about '+ex,ipo:ipo[1],publicationDay:ipo[1],filingPath:ipo[2],firstObservedAt:ipo[3],sourceId:'SEC_INDEX:'+ipo[2]+':LOCK180',sourceRevisionId:ipo[4],derivedAvailableAt:ipo[3],sourceIdentityBasis:'REPORTED_SEC_INDEX_PATH_CURRENT_LITERAL_TICKER',sourceClockBasis:'FILING_DAY_ONLY_ACCESS_KNOWN',materiality:'NOT_ESTABLISHED',hypothesis:'IPO_DATE_PLUS180_NOT_VERIFIED_LOCKUP',sourceDataDay:D[T-1]}); continue; } if (te < START + 6) continue;
       if (te - 1 >= 0 && tradable(i, te - 1)) add(k, i, te - 1, { ipo: ipo[1], expiry: ex });   // fwd buys the open of session te
       if (k === 'L180' && te - 6 >= START && tradable(i, te - 6)) add('L180W', i, te - 6, { ipo: ipo[1], expiry: ex }); } }   // buys the open 5 sessions before expiry, sells the close of the session after
   const OWN_BAR = 2.4 + 0.1 * NV / 2, LG = J('data/agent-league.json', {}), BAR = Math.max(OWN_BAR, typeof LG.bar === 'number' ? LG.bar : 0, LEAGUE_FLOOR);
@@ -99,12 +97,12 @@ const stat = (a) => { if (a.length < 20) return { n: a.length };
     const level = verdict === 'PROVEN AVOID' ? 'PROVEN' : verdict !== 'TOO FEW CASES' && !why2.length ? 'TRADABLE SMALL (tier 2) avoid' : 'NONE';
     RES[k] = { name: NAMES[k], signals: counts[k], info: k === 'L90', verdict: k === 'L90' ? 'INFORMATION: ' + verdict : verdict, level: k === 'L90' ? 'information only' : level, why: why.join('; ') || 'every gate passed', whyTier2: why2.join('; ') || 'tier-2 test passed', results: R }; }
   const thisRun = { at: new Date().toISOString(), from: D[START], to: D[T - 1], bar: +BAR.toFixed(2), results: RES };
-  const frozen = freezeEach(PREV.firstRun && PREV.firstRun.results, RES, (r) => !/TOO FEW/.test(r.verdict)), firstRun = Object.keys(frozen).length ? { at: (PREV.firstRun && PREV.firstRun.at) || thisRun.at, bar: (PREV.firstRun && PREV.firstRun.bar) || thisRun.bar, to: (PREV.firstRun && PREV.firstRun.to) || thisRun.to, results: frozen } : null;
-  fs.writeFileSync(OUT, JSON.stringify({ ...base, status: 'OK', versions: NV, bar: +BAR.toFixed(2), firstRun, latest: latestBlock(thisRun), now: nowList.slice(-60), examples: Object.fromEntries(Object.entries(trades).map(([k, a]) => [k, a.slice(-6).map(z => ({ s: z.s, d: D[z.t], ret: +z.g.toFixed(3), avgStock: +z.c.toFixed(3) }))])) }, null, 1));
+  const frozen = freezeEach(PREV.firstRun && PREV.firstRun.results, RES, (r) => sourceComplete&&!/TOO FEW/.test(r.verdict)), firstRun = Object.keys(frozen).length ? { at: (PREV.firstRun && PREV.firstRun.at) || thisRun.at, bar: (PREV.firstRun && PREV.firstRun.bar) || thisRun.bar, to: (PREV.firstRun && PREV.firstRun.to) || thisRun.to, results: frozen } : null;
+  fs.writeFileSync(OUT, JSON.stringify({ ...base, status:sourceComplete?'OK':'PARTIAL_OR_UNKNOWN', versions: NV, bar: +BAR.toFixed(2), firstRun, latest: latestBlock(thisRun), now: nowList.slice(-60), examples: Object.fromEntries(Object.entries(trades).map(([k, a]) => [k, a.slice(-6).map(z => ({ s: z.s, d: D[z.t], ret: +z.g.toFixed(3), avgStock: +z.c.toFixed(3) }))])) }, null, 1));
   console.log('SHARE SUPPLY (avoid blocks), ' + D[START] + ' to ' + D[T - 1] + ', bar t ' + BAR.toFixed(2));
   for (const k of Object.keys(RES)) { const f = (firstRun && firstRun.results[k]) || RES[k], o = f.results.older, n = f.results.newer; console.log('- ' + k + ' ' + f.verdict + ' / ' + f.level + ' | ' + f.signals + ' signals | older ' + (o.n || 0) + ' edge ' + pc(o.edge) + ' t ' + o.t + ' | newer ' + (n.n || 0) + ' edge ' + pc(n.edge) + ' t ' + n.t + (f.verdict === 'PROVEN AVOID' ? '' : ' (' + f.why.split(';')[0] + ')')); }
   // library: C-S8 <- S8B, C-LOCK <- L180 (frozen first run only; the other versions are reported in the result)
-  try { const LB = J('data/strategy-library.json', null); if (LB && firstRun) { let ch = false;
+  try { const LB = J('data/strategy-library.json', null); if (LB && firstRun&&sourceComplete) { let ch = false;
     for (const [id, main, alt] of [['C-S8', 'S8B', 'S8A'], ['C-LOCK', 'L180', 'L180W']]) { const e = LB.strategies.find(x => x.id === id), r = firstRun.results[main]; if (!e || !r || /^tested/.test(e.status || '')) continue; const R = r.results, a2 = firstRun.results[alt];
       e.agent = 'C'; e.status = 'tested: ' + r.verdict.toLowerCase() + (r.level !== 'NONE' ? ' (' + r.level + ')' : ''); e.tested = firstRun.to; e.study = 'share-supply.mjs -> data/share-supply.json (run once, first run frozen)';
       e.result = { version: main, level: r.level, t: R.newer.t, tOlder: R.older.t, edge: R.newer.edge, edgeOlder: R.older.edge, vsSpy: R.newer.vsSpy, vsOwn: R.newer.vsOwn, n: [R.older.n || 0, R.newer.n || 0], bar: firstRun.bar, why: main + ' ' + r.verdict + ': ' + r.why.split(';')[0] + (a2 ? ' | ' + alt + ' ' + a2.verdict + ' / ' + a2.level : '') }; ch = true; }

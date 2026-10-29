@@ -1,3 +1,15 @@
+## Owner aims and Share-supply continuation
+
+[The owner aim-to-evidence plan](aim-to-evidence-acceptance-plan.md) separates early intraday/premarket, medium and longer holds, with measured clocks, tradability, proposed utility/risk thresholds, frozen uncertainty/stopping rules and readiness gates. All numerical additions await owner agreement. Readiness remains FAIL for full engineering, bounded collection, prospective paper and limited owner alerts; aim profitability is NOT ESTABLISHED. The concrete C0 review manifest pins preparation kernels, not a missing live collector; entitlement/runtime/workflow pin and dated approval remain blockers. No execution is authorized.
+
+Plan commit5fce3f9d0eadfc9dd03387c662c7e72850cbed28 passed all12 exact-commit checks (validation/aim-plan-ci.json). New Share-supply/Discovery2 candidate passes182Nodefiles/1,673reportedcases+2standalone,27Python and241module/86YAML/329shell/9Python checks. Twenty-eight actual source caller cases and the three existing Discovery2 planted-pattern/split/frozen controls pass. Full run initially failed the legacy-only Discovery2 fixture; its source preparation now uses actual strict synthetic index responses without weakening assertions.
+
+Changed requirements: reported SEC index paths/access clocks, literal classes and conflict quarantine survive restored processes; failed/malformed/partial refresh cannot become complete empty coverage or freeze new results; the second writer cannot bypass the contract with D2_ALLOW_MISSING. Missing price/index data leaves original frozen output/clocks and retires actionable Discovery2 buys into retained context. Legacy caches are not overwritten/backfilled. See validation/share-supply-source-caller.json for limits. Current mappings do not authenticate historical membership or filing bodies.
+
+Acceptance remains **24/40;16OPEN**. CATALYST-03 and ACTIONS-04 retain their full criteria. Next safe writer task: Confluence lab save block (pre-pull reset/clean/library merge and job-wins rebase); review public recovery scope and use actual Git fault/race/publication controls without dispatch. Then other writer/cache/cancellation variants, remaining AV/FMP/discovery/comeback sources, normalization, command durability and renderer/spec comparisons. Shortest readiness route remains official entitlement plus dedicated bounded runtime/pin/recovery review before seeking dated C0 approval; no profitability date is promised.
+
+No main writes/merge/deploy/dispatch/live provider collection/real delivery/orders/purchases/secrets/permission changes or frozen-data writes. Massive Starter remains15-minute delayed, broad SIP unverified and prospective cases0. Lost code/tests remain reconstructed, not recovered.
+
 ## Verified session resume checkpoint
 
 Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.

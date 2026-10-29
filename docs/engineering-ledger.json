@@ -5000,8 +5000,8 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "source": "86b25ccb61abe1be1b91b9f41c280f74b73d51d1",
-    "ciEvidence": "docs/validation/recorded-plan-contract-ci.json",
+    "source": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
+    "ciEvidence": "docs/validation/aim-plan-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
@@ -5011,9 +5011,9 @@
     "resume": "docs/resume-precise-checkpoint.md"
   },
   "revisionIdentityMission": {
-    "base": "60be0ee112a6ea6f8b1bc7c74ae3508dac207a4c",
+    "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
     "nearestClosure": "CATALYST-03",
-    "status": "HOSTED_VERIFIED_PARTIAL",
+    "status": "SUPPLY_CALLER_LOCAL_VERIFIED_HOSTED_PENDING",
     "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
     "sourceMatrix": [
       {
@@ -5049,8 +5049,8 @@
       {
         "lane": "SUPPLY_SHIFT",
         "producer": "share-supply.mjs",
-        "changedRequirement": "Existing adapter controls preserved; no new acceptance claim.",
-        "stillUnmet": "Complete actual producer identity/revision/schema/clock/error contract and independent-job persistence matrix."
+        "changedRequirement": "Actual Share-supply and secondary Discovery2 writer use the same strict SEC index contract; legacy compact arrays/ticker maps are not rewritten or credited with missing IDs/clocks. Literal class punctuation, unique current CIK mapping, first access clocks and reported filing paths survive restored processes. Revisions, withdrawn filings and ticker-map changes preserve originals and latch quarantine through reversion. Header/schema/error/empty/partial distinctions, body/gzip/row/time/request bounds and429 pause prevent false complete coverage. Malformed/future manifests remain unmodified and unavailable. Incomplete sources cannot freeze even sufficient-case historical fixtures. Discovery2 refuses new testing/buys on shared-index failure despite its missing-source override; unavailable prices clear actionable buys into retained context without retiming original output. Actual discovery consumer retains day precision, first access and UNKNOWN/CONFLICT producer status, rejects unavailable input and revokes matching prior source IDs.",
+        "stillUnmet": "Reported SEC index identity is not independently archived filing-body authenticity or historical security/class membership. A current CIK mapping is not a historical common-stock universe.; Cache restore/save races/corruption/retention, every source/writer and complete plan/delivery behavior are not certified. Bounded quarantine/output capacities need broader all-source reconciliation review.; Discovery2 other side sources, cat-cache index and remaining price/session/corporate-action/method contracts remain unfinished. Source-shape complete is not strategy profitability."
       },
       {
         "lane": "TECHNICAL_BUILDUP",
@@ -5088,7 +5088,12 @@
       "Actual Chain-ripple input failures preserve frozen output and generatedAt, expose UNKNOWN and cannot admit retained observations; explicit unavailable Insider output likewise cannot admit retained context.",
       "Chain rows isolate malformed siblings; bounded price/chain shapes reject future/bad daily bars without retiming old evidence. Incomplete input cannot freeze a verdict even when the actual historical fixture has enough judged cases in both halves.",
       "Per-symbol/chain/layer/day identity keeps original raw price evidence hashes and derived first-observed time across jobs. Sub-Float32 price revisions, withdrawn movers and removed membership latch conflicts, preserve originals and revoke old discovery credit across reversion.",
-      "Fresh report generation cannot revive stale underlying daily bars. Generated output, derived first observation, daily-bar day, original publication uncertainty and corporate-action basis uncertainty stay separate."
+      "Fresh report generation cannot revive stale underlying daily bars. Generated output, derived first observation, daily-bar day, original publication uncertainty and corporate-action basis uncertainty stay separate.",
+      "Actual Share-supply and secondary Discovery2 writer use the same strict SEC index contract; legacy compact arrays/ticker maps are not rewritten or credited with missing IDs/clocks.",
+      "Literal class punctuation, unique current CIK mapping, first access clocks and reported filing paths survive restored processes. Revisions, withdrawn filings and ticker-map changes preserve originals and latch quarantine through reversion.",
+      "Header/schema/error/empty/partial distinctions, body/gzip/row/time/request bounds and429 pause prevent false complete coverage. Malformed/future manifests remain unmodified and unavailable.",
+      "Incomplete sources cannot freeze even sufficient-case historical fixtures. Discovery2 refuses new testing/buys on shared-index failure despite its missing-source override; unavailable prices clear actionable buys into retained context without retiming original output.",
+      "Actual discovery consumer retains day precision, first access and UNKNOWN/CONFLICT producer status, rejects unavailable input and revokes matching prior source IDs."
     ],
     "local": {
       "nodeFiles": 180,
@@ -5297,5 +5302,52 @@
     "verified": true,
     "handoff": "docs/resume-precise-checkpoint.md",
     "nextExecutable": "Share-supply actual ticker/index/cache source identity, schema/errors/empty, revisions and clocks; preserve frozen output and verify actual discovery/publication callers."
+  },
+  "shareSupplyCaller": {
+    "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
+    "status": "LOCAL_VERIFIED_HOSTED_PENDING",
+    "acceptanceAdded": 0,
+    "changedRequirements": [
+      "Actual Share-supply and secondary Discovery2 writer use the same strict SEC index contract; legacy compact arrays/ticker maps are not rewritten or credited with missing IDs/clocks.",
+      "Literal class punctuation, unique current CIK mapping, first access clocks and reported filing paths survive restored processes. Revisions, withdrawn filings and ticker-map changes preserve originals and latch quarantine through reversion.",
+      "Header/schema/error/empty/partial distinctions, body/gzip/row/time/request bounds and429 pause prevent false complete coverage. Malformed/future manifests remain unmodified and unavailable.",
+      "Incomplete sources cannot freeze even sufficient-case historical fixtures. Discovery2 refuses new testing/buys on shared-index failure despite its missing-source override; unavailable prices clear actionable buys into retained context without retiming original output.",
+      "Actual discovery consumer retains day precision, first access and UNKNOWN/CONFLICT producer status, rejects unavailable input and revokes matching prior source IDs."
+    ],
+    "local": {
+      "nodeFiles": 182,
+      "nodeReportedCases": 1673,
+      "standaloneScripts": 2,
+      "pythonTests": 27,
+      "moduleSyntax": 241,
+      "workflowYaml": 86,
+      "shellBlocks": 329,
+      "pythonSyntax": 9,
+      "shareSupplyCallerCases": 28,
+      "discovery2OriginalIntegrationControls": 3,
+      "priorSourceCasesFailed": 28
+    },
+    "remaining": [
+      "Reported SEC index identity is not independently archived filing-body authenticity or historical security/class membership. A current CIK mapping is not a historical common-stock universe.",
+      "Cache restore/save races/corruption/retention, every source/writer and complete plan/delivery behavior are not certified. Bounded quarantine/output capacities need broader all-source reconciliation review.",
+      "Discovery2 other side sources, cat-cache index and remaining price/session/corporate-action/method contracts remain unfinished. Source-shape complete is not strategy profitability."
+    ],
+    "initialVerificationIssue": "Full-suite Discovery2 integration fixture had no verified index metadata. It now supplies strict synthetic header-only SEC responses through the actual source reader, with no network, preserving its original planted-pattern/time-split/frozen assertions. Initial full run failed this fixture; focused and complete rerun pass.",
+    "realProviderRequests": 0,
+    "realMessagesOrders": 0,
+    "prospectiveCases": 0
+  },
+  "ownerAimEvidencePlan": {
+    "path": "docs/aim-to-evidence-acceptance-plan.md",
+    "collectionProposal": "docs/validation/aim-collection-review.proposed.json",
+    "ownerAgreement": false,
+    "engineeringReadiness": "FAIL",
+    "boundedCollectionReadiness": "FAIL",
+    "prospectivePaperReadiness": "FAIL",
+    "limitedOwnerAlertReadiness": "FAIL",
+    "profitability": "NOT ESTABLISHED",
+    "prospectiveCases": 0,
+    "liveRuntimePin": null,
+    "approvalGranted": false
   }
 }

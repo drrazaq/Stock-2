@@ -1,0 +1,113 @@
+{
+  "kind": "AIM_C0_REVIEW_PROPOSAL_NOT_AUTHORIZATION",
+  "status": "BLOCKED_NO_LIVE_RUNTIME_PIN_OR_APPROVAL",
+  "ownerThresholdAgreement": false,
+  "reviewSourceSha": "2e785f0314bbefe1a2562c646086bee678525b24",
+  "preparationKernels": [
+    {
+      "path": "alpaca-feed.mjs",
+      "sha256": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568"
+    },
+    {
+      "path": "hybrid-research-session.mjs",
+      "sha256": "d49dfe71eed4f8b101ee1d233d97e1f8cc945b97ff9b9a28a274d5535e7e9a3d"
+    },
+    {
+      "path": "hybrid-research-checkpoint.mjs",
+      "sha256": "18eb8f776c028cb5a633f7690a6461af4638f53367891662c1d60d1dbb599ea0"
+    },
+    {
+      "path": "tools/recover-hybrid-checkpoints.py",
+      "sha256": "21b61fae3f33d04cec5a85c68301ea9634173ca29588ad3f1749fcff3501ac2a"
+    },
+    {
+      "path": "tools/seal-research-artifact.mjs",
+      "sha256": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2"
+    }
+  ],
+  "liveRuntime": {
+    "sourceSha": null,
+    "entryPoint": null,
+    "workflowSha256": null,
+    "requiredBeforeApproval": true,
+    "retired7ddRuntimeAllowed": false,
+    "offlineFixtureAllowedAsLive": false
+  },
+  "entitlement": {
+    "broadSip": "NOT_ESTABLISHED",
+    "extendedHours": "NOT_ESTABLISHED",
+    "officialRateWindow": "NOT_ESTABLISHED",
+    "retentionRights": "NOT_ESTABLISHED"
+  },
+  "window": {
+    "day": "2026-11-16",
+    "timezone": "America/New_York",
+    "start": "08:45",
+    "expires": "09:00",
+    "utcStart": "2026-11-16T13:45:00Z",
+    "utcExpiry": "2026-11-16T14:00:00Z",
+    "cycles": [
+      "08:45",
+      "08:50",
+      "08:55"
+    ],
+    "rollDateOrRerun": false
+  },
+  "universe": {
+    "maxAssets": 20000,
+    "policy": "ONE_FROZEN_CURRENT_ACTIVE_TRADABLE_REFERENCE_ORIGINAL_IDS_CLASSES_MISSING_ROWS_RETAINED",
+    "historicalCommonStockAuthenticated": false,
+    "postOutcomeSelectionAllowed": false
+  },
+  "requests": {
+    "assetGets": 1,
+    "sipSnapshotGets": 300,
+    "massiveDelayedBaselineGets": 3,
+    "massiveBaselineOptionalOnlyIfFinalManifestIncludes": true,
+    "fallbackIex": false,
+    "totalAttempts": 400,
+    "perMinute": 60,
+    "batchSize": 200,
+    "method": "GET",
+    "redirect": "error",
+    "timeoutMs": 15000,
+    "stopOnHttp": [
+      401,
+      403,
+      429
+    ],
+    "perBodyBytes": 8388608,
+    "allBodyBytes": 134217728
+  },
+  "storage": {
+    "compressedBytes": 67108864,
+    "encryptedBytes": 100663296,
+    "retentionDays": 3,
+    "uploadAfterEachCycle": true,
+    "plaintextUpload": false,
+    "unuploadedCycleLossPossible": true
+  },
+  "capabilities": {
+    "repositoryWrite": false,
+    "dispatch": false,
+    "orders": false,
+    "telegram": false,
+    "ownerPrivateData": false,
+    "secretChanges": false,
+    "permissionChanges": false
+  },
+  "approval": {
+    "granted": false,
+    "requiredFields": [
+      "exactLiveRuntimeSha",
+      "exactWorkflowSha256",
+      "officialFeedScopeAndLimits",
+      "exactDateAndWindow",
+      "approvedExistingBindings",
+      "requestStorageBounds",
+      "recoveryShutdown",
+      "ownerAgreementDate"
+    ],
+    "currentDocumentAuthorizesExecution": false
+  }
+}
