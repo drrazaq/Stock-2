@@ -1,3 +1,11 @@
+## Alpaca access audit continuation — 29 October 2026
+
+Owner confirms Massive Stocks Starter ($29/month): 15-minute-delayed US stocks, five years history, unlimited calls under plan terms. Zero real-time-fresh premarket rows are consistent with this subscription, not evidence of a provider defect. The old Phase A cannot establish real-time discovery and remains uninstalled/unapproved.
+
+Authorized read-only existing diagnostic run40859412224 attempt2 at11:44:13UTC (07:44EDT): SIP HTTP200,3 returned,2 fresh under180s; IEX HTTP200,3 returned,0 fresh. These are targeted snapshot price observations only, not independent BBO clocks or whole-market confirmation. No credentials/raw payloads retained. Next explicitly requested one-pass branch diagnostic caps11 GETs, fixed24-symbol sample, independent trade/quote clocks and spreads, broad snapshot and current asset-list comparison, two bounded recent-history pages. New temporary branch-only push trigger expires13:00UTC29October, no schedule/retry/order/Telegram/Phase A, existing Alpaca bindings only. Remove trigger after run. Local9 new plus15 existing targeted tests pass; full exact-commit CI pending. Acceptance22/40,18 open,prospective cases0.
+
+Concurrent provider hardening09b5d93 is preserved unchanged. Detached e35e1cf was not published; this commit reconciles the branch rather than forcing it.
+
 ## Provider diagnostic evidence continuation — 29 October 2026
 
 Resumed from verified GitHub HEAD b64ca5fcc7f19705f341d1a78211546a186faa3a; no newer branch work was discarded. Fixed diagnostic admission of unsolicited/malformed Alpaca symbol maps, retained empty/partial response and missing-symbol evidence, and separated price/BBO/volume freshness and future/unknown clocks. Massive diagnostic counts now distinguish raw rows, unique valid symbols, invalid symbols and duplicates. These are observation denominators, not a verified tradable universe. Existing GET-only destinations, five-request bound, 429 stop, credential redaction and manual-only live workflow remain unchanged. No new workflow or binding was added.
