@@ -1,3 +1,9 @@
+## Provider ingress and diagnostics continuation
+
+Bot publication sourceebbccbee2b5c9217e91f86e8aceea30a58d58d62 passed all12 exact-commit checks, including full suites and real disposable-Git conflict/nonconflict, refused push and blocked commit fixtures. State sync/save failures now stop the bot loop; both conflicting commits are retained instead of automatic -X theirs resolution. This is a development-branch repair only, not a production change or all-workflow completion.
+
+The next batch pins Alpaca credential destinations, forces GET and redirect refusal despite caller overrides, validates explicit symbol scope, counts failed network attempts, rejects error-shaped/unsolicited response maps, and excludes future clocks from provider age percentiles while counting them separately. No live provider probe ran; account plan/actual coverage/latency remains unverified. Hosted verification pending. Acceptance remains22/40(55%),18 open; actual prospective cases0. All production data/frozen studies and the Phase A pin/reviewed workflow remain unchanged.
+
 ## Workflow publication barrier continuation
 
 Cached-message sourcec9ea79413fd67b7d4c6f33a6e820ca9d0fa1a395 passed all12 checks; hosted full suite155 files /1335 TAP cases plus2 standalone assertions =1,337 Node tests. Current root/tool syntax, source metadata, watcher/research/delivery and Python recovery checks passed. Acceptance stays22/40(55%),18 open; exact requirements are now enumerated in engineering-acceptance-checks.json rather than inferred from code existence.

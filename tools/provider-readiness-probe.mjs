@@ -17,8 +17,8 @@ export async function probeProviders({env={},fetcher=fetch,now=Date.now()}={}) {
   }catch{return {provider,status:'NETWORK_OR_PARSE_ERROR',latencyMs:Date.now()-started};}
  };
  const quoteStats=rows=>{
-  const ages=rows.filter(r=>r.t>0).map(r=>(now-r.t)/60000).sort((a,b)=>a-b),fresh=rows.filter(r=>r.price>0&&r.t>0&&now-r.t>=0&&now-r.t<=180000).length;
-  return {received:rows.length,fresh,unknownTimestamp:rows.filter(r=>!r.t).length,freshPct:rows.length?+(100*fresh/rows.length).toFixed(2):null,priceAgeP95Min:ages.length?ages[Math.min(ages.length-1,Math.floor(ages.length*.95))]:null};
+  const ages=rows.filter(r=>r.t>0&&r.t<=now).map(r=>(now-r.t)/60000).sort((a,b)=>a-b),fresh=rows.filter(r=>r.price>0&&r.t>0&&now-r.t>=0&&now-r.t<=180000).length;
+  return {received:rows.length,fresh,unknownTimestamp:rows.filter(r=>!r.t).length,futureTimestamp:rows.filter(r=>r.t>now).length,freshPct:rows.length?+(100*fresh/rows.length).toFixed(2):null,priceAgeP95Min:ages.length?ages[Math.min(ages.length-1,Math.floor(ages.length*.95))]:null};
  };
  if(env.MASSIVE_KEY)results.push(await get('MASSIVE_SNAPSHOT','https://api.massive.com/v2/snapshot/locale/us/markets/stocks/tickers?apiKey='+encodeURIComponent(env.MASSIVE_KEY),{},j=>{if(!Array.isArray(j.tickers))throw Error();return quoteStats(j.tickers.map(massiveSnapshot));}));
  else results.push({provider:'MASSIVE_SNAPSHOT',status:'NOT_CONFIGURED'});

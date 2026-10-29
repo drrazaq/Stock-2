@@ -15,3 +15,8 @@ test('freshness measurements retain regular versus outside-session context',asyn
   const r=await probeProviders({now:Date.parse(at),fetcher:async()=>({ok:false,status:403})});assert.equal(r.session.state,state);
  }
 });
+
+test('future price clocks are counted separately and never lower measured provider age',async()=>{
+ const now=Date.parse('2026-10-29T14:00:00Z'),r=await probeProviders({env:{MASSIVE_KEY:'fixture'},now,fetcher:async u=>({ok:true,status:200,json:async()=>String(u).includes('massive')?{tickers:[{ticker:'AAA',lastTrade:{p:10,t:(now+60000)*1e6}},{ticker:'BBB',lastTrade:{p:10,t:(now-60000)*1e6}}]}:{}})});
+ const p=r.results.find(x=>x.provider==='MASSIVE_SNAPSHOT');assert.equal(p.futureTimestamp,1);assert.equal(p.fresh,1);assert.equal(p.priceAgeP95Min,1);
+});

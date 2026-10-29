@@ -2241,7 +2241,7 @@
   },
   "engineeringAcceptanceMatrix": "docs/engineering-acceptance-checks.json",
   "botPublicationMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_HOSTED_REAL_DISPOSABLE_GIT",
     "defects": [
       "Bot suppressed failed pre-cycle sync and continued effects on stale state",
       "Automatic -X theirs could discard owner/research updates",
@@ -2249,6 +2249,94 @@
     ],
     "fix": "Fail closed before side effects or after unconfirmed save, preserve conflicting local/remote commits, no automatic conflict preference",
     "verificationRequired": "Real disposable local Git nonconflict/conflict/push-refusal/commit-failure fixtures plus full CI",
+    "acceptanceCredit": 0,
+    "sourceCommit": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858521220/job/123395656626"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858529062/job/123395551048"
+      },
+      {
+        "name": "test",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858529087/job/123395543215"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858529003/job/123395542573"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858529003/job/123395542455"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858529096/job/123395542269"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858529003/job/123395542246"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858528949/job/123395541884"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858521220/job/123395514242"
+      },
+      {
+        "name": "test",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858521388/job/123395514100"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858521180/job/123395513881"
+      },
+      {
+        "name": "safety",
+        "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40858521220/job/123395513744"
+      }
+    ]
+  },
+  "providerIngressMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "defects": [
+      "Alpaca snapshot options allowed redirect-following and arbitrary base/destination",
+      "Failed transport attempts were omitted from request counters",
+      "Error-shaped/unsolicited symbol maps could be labelled observed feed",
+      "Probe future clocks distorted measured age percentiles"
+    ],
+    "fix": "Pin credential destinations, force GET/refuse redirects, validate canonical requested symbol scope, count failed attempts and separate future-clock age diagnostics",
+    "liveRequests": 0,
+    "accountPlanInferred": false,
     "acceptanceCredit": 0
   }
 }
