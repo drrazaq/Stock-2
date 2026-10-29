@@ -1,3 +1,11 @@
+## Basket durability verified; offline hybrid session milestone — 29 October 2026
+
+Basket source2d22e49c47065dfd7abadbceb22845723bcf57c3 passed all13 exact-commit checks, including push/PR full suites, delivery fixtures and safety/artifact continuity. Hosted Node159files/1379tests. Basket delivery is fixed on the branch only; actual Telegram test remains unauthorized and cross-job remote-CAS/all-route work remains open.
+
+New pure/offline hybrid-research-session.mjs freezes an as-known provider-ID universe, rejects conflicting aliases, plans explicit batches against request/pacing budgets, measures every declared symbol including missing/stale feeds, rejects duplicate/out-of-order cycles and future-at-ingestion clocks, and feeds existing research-only discovery adapters. A330-minute simulation with stale news, a feed interruption and JSON-restored state preserves first detection and observed+25 crossing; clock-window completeness stays separate from missing-symbol/data completeness. Seven local tests pass; hosted full CI pending. No live fetch, credentials, CLI, workflow or Phase A activation is added. A68-batch/330-cycle fixture plan needs22,440 snapshot requests plus500 modeled reserved requests=22,940; batch200 capacity and actual quotas remain unverified. Official Alpaca SDK request source confirms explicit symbol input, not a whole-market endpoint or entitlement contract.
+
+Acceptance remains22/40(55%),18 open; prospective cases0. Revised live collector/wrapper, encrypted checkpoints, exact pin/digest and dated owner approval remain required. No production data, owner marks, frozen studies, keys, main branch or live behavior changed. All published code is recoverable by exact commits.
+
 ## Verified hybrid freshness repair; basket delivery continuation — 29 October 2026
 
 Source 0c58716026e39e2374a8a2a54662f6690404a9fd passes all12 exact-commit checks. Hosted Node158files/1374tests. Audit sourcea313400 also passed13 checks; actual11-request Alpaca results, retired trigger and truthful delayed-Massive/SIP/IEX boundaries are retained. Failed eae4c45 full-suite fixture and original sandbox localhost EPERM are recorded;8 full-session watcher and2 price/BBO refresh integrations now pass locally with permitted localhost networking.

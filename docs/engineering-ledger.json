@@ -2985,7 +2985,7 @@
     }
   },
   "basketDeliveryMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_FIX",
     "intentBeforeSend": true,
     "explicitACKRequired": true,
     "ambiguousOutcomeQuarantined": true,
@@ -2993,6 +2993,113 @@
     "journal": "Nested hashes/states in existing encrypted basket-state; no raw message bodies",
     "localFaultTests": 5,
     "existingBasketTests": 12,
-    "limitation": "Local atomic intent plus existing private-state transfer; not a remote CAS guarantee, not all-route durability or authorized actual delivery. Workflow termination before owner-state publication can still lose local intent."
+    "limitation": "Local atomic intent plus existing private-state transfer; not a remote CAS guarantee, not all-route durability or authorized actual delivery. Workflow termination before owner-state publication can still lose local intent.",
+    "verifiedSha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875454172/job/123453150173"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875463285/job/123453017670"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875463285/job/123453017603"
+      },
+      {
+        "name": "test",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875463235/job/123453017382"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875463285/job/123453017346"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875463327/job/123453017257"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875463234/job/123453016677"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875463176/job/123453016071"
+      },
+      {
+        "name": "test",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875454191/job/123452985616"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875454172/job/123452985600"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875454264/job/123452985371"
+      },
+      {
+        "name": "safety",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875454172/job/123452985043"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40875454210/job/123452985041"
+      }
+    ],
+    "nodeTests": {
+      "files": 159,
+      "tap": 1377,
+      "standalone": 2,
+      "total": 1379
+    }
+  },
+  "hybridResearchSessionMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "module": "hybrid-research-session.mjs",
+    "scope": "PURE_OFFLINE_FIXTURE_ONLY; no live transport/CLI/workflow/approval",
+    "localTests": 7,
+    "fullPremarketFixtureMinutes": 330,
+    "declaredUniverseTests": 13488,
+    "identity": "CURRENT_PROVIDER_REFERENCE_NOT_AUTHENTICATED_HISTORY",
+    "requestPlan": {
+      "batchesPerSweep": 68,
+      "cycles": 330,
+      "snapshotRequests": 22440,
+      "reserved": 500,
+      "total": 22940,
+      "endpoint200SymbolCapacity": "NOT_VERIFIED",
+      "liveAuthorized": false
+    },
+    "oldPhaseA": "NOT_INSTALLED_NOT_DISPATCHED_NOT_APPROVED",
+    "noNewAcceptanceCredit": true
   }
 }
