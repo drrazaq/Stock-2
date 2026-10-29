@@ -9,7 +9,9 @@ const phase=process.argv[2];assert.ok(['open','close'].includes(phase));
 const dir=path.resolve('fixture-state');
 if(phase==='open'){assert.equal(fs.existsSync(dir),false);fs.mkdirSync(path.join(dir,'data'),{recursive:true});}
 else assert.ok(fs.existsSync(path.join(dir,'runtime/watcher-checkpoint.json')),'artifact did not restore runtime/ checkpoint path');
-const now=Date.parse('2026-10-29T19:00:00Z');
+const parent=phase==='close'?JSON.parse(fs.readFileSync(path.join(dir,'runtime/watcher-checkpoint.json'))):null;
+const inheritedClock=parent?Math.max(...[parent.state?.DISCOVERY?.lastCycleAt,parent.state?.DISCOVERY?.paperQuoteEvidence?.lastCycleAt,parent.lastHeartbeat?.completedAt].map(x=>Date.parse(x)).filter(Number.isFinite)):null;
+const now=phase==='close'?Math.max(Date.parse('2026-10-29T19:00:00Z'),inheritedClock+60000):Date.parse('2026-10-29T19:00:00Z');
 const server=http.createServer((req,res)=>{
  res.setHeader('Content-Type','application/json');
  if(req.url.startsWith('/v2/snapshot/locale/'))res.end(JSON.stringify({tickers:[{ticker:'AAA',lastTrade:{p:10,t:(now-1000)*1e6},prevDay:{c:10,v:1000000},min:{t:now-15*60000,av:1000},day:{o:10,v:1000}}]}));

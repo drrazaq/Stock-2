@@ -64,3 +64,12 @@ test('finite quote inputs cannot overflow into resolved or profitable paper evid
  const extreme=prices.map(q=>q.symbol==='AAA'&&q.at===t(31)?{...q,bid:1e308,ask:1.001e308}:q);
  const r=evaluatePaperEvidence([event],extreme,meta,{cutoff:t(32)});assert.equal(r.counts.resolved,0);assert.equal(r.cases[0].candidate.reason,'NONFINITE_PAPER_ARITHMETIC');
 });
+
+test('correlated lane IDs for the same security/entry do not inflate economic paper samples',()=>{
+ const second={...event,eventId:'fixture-2'},r=evaluatePaperEvidence([second,event],prices,meta,{cutoff:t(32)});
+ assert.equal(r.counts.resolved,1);assert.equal(r.cases[0].eventId,event.eventId);assert.equal(r.cases[1].reason,'DUPLICATE_ECONOMIC_ENTRY');assert.match(r.evidenceAdmissionRevision,/EXPOSURE_V3/);
+});
+test('equivalent quote clock representations cannot create extra entries or false conflicts',()=>{
+ const equivalent={...prices[0],at:'2026-10-29T10:01:00-04:00',quoteAsOf:'2026-10-29T10:01:00-04:00',dollarVolumeAsOf:'2026-10-29T10:01:00-04:00'};
+ const r=evaluatePaperEvidence([event],prices.concat(equivalent),meta,{cutoff:t(32)});assert.equal(r.counts.resolved,1);assert.equal(r.quoteIntegrity.duplicates,1);assert.equal(r.quoteIntegrity.conflictingClocks,0);
+});

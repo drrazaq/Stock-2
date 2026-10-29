@@ -2605,11 +2605,25 @@
     "status": "IMPLEMENTED_PENDING_HOSTED_CI",
     "fix": "Watcher requires valid research substate before resumed sends; reject malformed discovery/quote records, counters/clocks and >128MiB checkpoint input",
     "verificationRequired": "Real watcher full-session/half-day artifact integration plus corrupt/oversized checkpoint fixtures",
-    "acceptanceCredit": 0
+    "acceptanceCredit": 0,
+    "initialFailure": {
+      "sourceCommit": "7382853e82620944886f87e9e9ba5ae1904bc942",
+      "run": 40861748714,
+      "fullPush": 40861748749,
+      "fullPR": 40861753417,
+      "reason": "Accelerated child fixtures reset wall clock on each process/job, making valid parent research timestamps future-dated; production future-date rejection retained. Fix clocks, not assertions."
+    }
   },
   "paperArithmeticMilestone": {
     "status": "IMPLEMENTED_PENDING_HOSTED_CI",
     "fix": "Unrepresentable integer quantities and nonfinite equity/return arithmetic cannot become resolved paper outcomes",
+    "acceptanceCredit": 0
+  },
+  "paperExposureMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "revision": "IDENTITY_EVENT_QUOTES_EXPOSURE_V3",
+    "fix": "Different lane IDs cannot count the same security/entry clock as multiple economic paper outcomes; quote time representations normalized without backfilling",
+    "actualProspectiveCases": 0,
     "acceptanceCredit": 0
   }
 }

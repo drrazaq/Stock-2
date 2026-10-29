@@ -1,3 +1,4 @@
+import zlib from 'node:zlib';
 // Secret-free end-to-end lifecycle. Every outbound fetch is confined to one
 // localhost server. No workflow dispatch, live feed, order or real Telegram.
 import test from 'node:test';
@@ -12,11 +13,11 @@ const repo=new URL('../',import.meta.url).pathname;
 async function fixture(day='2026-10-29') {
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'s2-runtime-'));
  fs.mkdirSync(path.join(dir,'data'));
- const state={stale:false,tgStatus:200,dispatchStatus:403,running:true,sends:0,requests:0,pendingObserved:false,price:10,volume:1000};
- const baseTime=Date.parse(day+'T19:00:00Z');
+ const state={stale:false,tgStatus:200,dispatchStatus:403,running:true,sends:0,requests:0,pendingObserved:false,withQuotes:false,price:10,volume:1000};
+ const baseTime=Date.parse(day+'T19:00:00Z'),fixtureEpoch=Date.now();
  const server=http.createServer((req,res)=>{
   state.requests++;const u=new URL(req.url,'http://localhost');res.setHeader('Content-Type','application/json');
-  if(u.pathname.includes('/snapshot/locale/'))return res.end(JSON.stringify({tickers:[{ticker:'AAA',lastTrade:{p:state.price,t:(baseTime-(state.stale?20*60000:1000))*1e6},prevDay:{c:10,v:1000000},min:{av:state.volume,t:baseTime-15*60000},day:{o:10,v:state.volume}}]}));
+  if(u.pathname.includes('/snapshot/locale/'))return res.end(JSON.stringify({tickers:[{ticker:'AAA',...(state.withQuotes?{lastQuote:{p:state.price-.01,P:state.price+.01,t:baseTime*1e6}}:{}),lastTrade:{p:state.price,t:(baseTime-(state.stale?20*60000:1000))*1e6},prevDay:{c:10,v:1000000},min:{av:state.volume,t:baseTime-15*60000},day:{o:10,v:state.volume}}]}));
   if(u.pathname.endsWith('/ignition.yml/runs'))return res.end(JSON.stringify({workflow_runs:state.running?[{id:1,run_attempt:1,status:'in_progress',created_at:day+'T13:10:00Z'}]:[]}));
   if(u.pathname.endsWith('/1/jobs'))return res.end(JSON.stringify({jobs:[{name:'watch',status:'completed',started_at:day+'T13:10:00Z',completed_at:day+'T18:00:00Z'},{name:'close',status:'in_progress',started_at:day+'T18:01:00Z'}]}));
   if(u.pathname.includes('/contents/data/watcher-heartbeats/')){
@@ -32,7 +33,7 @@ async function fixture(day='2026-10-29') {
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const base='http://127.0.0.1:'+server.address().port,preload=path.join(dir,'fixture-preload.mjs');
- fs.writeFileSync(preload,`const D=Date,start=D.now(),at=${baseTime};globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[at+D.now()-start]));}static now(){return at+D.now()-start;}};const f=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(base+'/')}))throw Error('external fixture request blocked');return f(u,o);};`);
+ fs.writeFileSync(preload,`const D=Date,start=${fixtureEpoch},at=${baseTime};globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[at+D.now()-start]));}static now(){return at+D.now()-start;}};const f=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(base+'/')}))throw Error('external fixture request blocked');return f(u,o);};`);
  async function run(script,extra={}) {
   const child=spawn(process.execPath,['--import',preload,path.join(repo,script)],{cwd:dir,env:{PATH:process.env.PATH,GITHUB_ACTIONS:'true',GITHUB_REF_NAME:'Stock2-safety-fixes',GITHUB_SHA:'fixture-code',GITHUB_RUN_ID:'1',GITHUB_RUN_ATTEMPT:'1',IG_DAY:day,IG_NO_RADAR:'1',MASSIVE_KEY:'fixture',ALPACA_KEY:'fixture',ALPACA_SECRET:'fixture',MASSIVE_BASE:base,ALPACA_DATA:base,SEC_BASE:base,TG_BASE:base,...extra},stdio:['ignore','pipe','pipe']});
   let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>output+=x);
@@ -120,10 +121,11 @@ test('real watcher consumes all nine research lanes without issuing a recommenda
    'data/comeback-today.json':{generatedAt,methods:{fixture:{newSignals:[{sym:'AAA',d:'2026-10-28'}]}}}
   };
   for(const [file,value]of Object.entries(files))fs.writeFileSync(path.join(f.dir,file),typeof value==='string'?value:JSON.stringify(value));
-  f.state.price=10.08;f.state.volume=250000;
+  f.state.price=10.08;f.state.volume=250000;f.state.withQuotes=true;
   await f.run('ignition-watch.mjs',{IG_SEGMENT:'open',IG_FAKE_MIN:'600',IG_FAKE_STEP:'400'});
   const report=f.read('data/discovery-live.json');assert.equal(report.sources.length,9);assert.equal(report.candidates[0].laneCount,9);
   assert.equal(report.candidates[0].status,'NOT AN APPROVED BUY');assert.equal(report.lanes.every(x=>x.symbols===1),true);assert.equal(f.state.sends,0);
   assert.ok(fs.existsSync(path.join(f.dir,'data/discovery-runs/2026-10-29/1-1-open.jsonl')));
+  assert.ok(report.paperQuoteEvidence.quotes>0);const paper=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(f.dir,'data/discovery-runs/2026-10-29/1-1-open.paper-quotes.json.gz'))));assert.equal(paper.kind,'RESEARCH_ONLY');assert.ok(paper.quotes[0].bid>0);assert.equal(paper.quotes[0].securityId,null);assert.equal(paper.quotes[0].dollarVolume,null);
  }finally{await f.close();}
 });
