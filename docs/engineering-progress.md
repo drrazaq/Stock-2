@@ -89,3 +89,5 @@ Re-ran 12 targeted tests and the Python-launched real watcher integration: all p
 Publication and exact-commit CI are recorded in the next checkpoint update; do not infer success from this preparation entry. Acceptance stays 15/40 (37.5%).
 
 Final recovery validation: **1,195 passed, zero failed, zero skipped** using `node --test test/*.test.mjs tests/*.test.mjs` on Node 24.19.0. Twelve targeted tests, the Python watcher integration, 207 root syntax checks and 78 workflow parses passed. New-commit remote CI pending.
+
+Published repair: **352316eb0dae144eead342c99be1c2a969ce7034**. Exact-commit CI all successful: pull_request [40811340889](https://github.com/drrazaq/Stock-2/actions/runs/40811340889), push [40811335253](https://github.com/drrazaq/Stock-2/actions/runs/40811335253), push [40811335260](https://github.com/drrazaq/Stock-2/actions/runs/40811335260). Draft PR #1 remains open; no merge or deploy. Only seven intended files changed; no data changes. Recovery/publication acceptance for this milestone is complete; full-system acceptance remains 15/40.
