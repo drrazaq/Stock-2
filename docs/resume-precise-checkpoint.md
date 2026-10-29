@@ -1,5 +1,7 @@
 # Precise resume checkpoint — 29 October 2026
 
+Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
+
 This is a session checkpoint, not the end of the engineering mission. Resume from the **latest remote Stock2-safety-fixes HEAD**, preserving any newer work. Latest verified source: **86b25ccb61abe1be1b91b9f41c280f74b73d51d1**, all **13** applicable exact-commit checks passed; evidence: validation/recorded-plan-contract-ci.json. A following evidence/documentation commit has its own CI and must be verified at its actual SHA.
 
 ## Requirements changed and already verified

@@ -1,5 +1,7 @@
 ## Verified session resume checkpoint
 
+Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
+
 Latest verified source: **86b25ccb61abe1be1b91b9f41c280f74b73d51d1**, all **13** applicable exact-commit checks passed; validation/recorded-plan-contract-ci.json. Earlier source milestones5cc2dbb,691bbf9,60be0ee,7bcf591 passed all14/13/12/12 applicable checks respectively. Local full suite181Nodefiles/1,645reportedcases+2standalone,27Python; all required static checks pass.
 
 **Acceptance remains24/40;16OPEN.** This checkpoint supersedes older candidate/pending headings below; it does not end the mission. Resume immediately with **[resume-precise-checkpoint.md](resume-precise-checkpoint.md)**. Its next executable task is Share-supply actual ticker/index/cache identity, error/empty, clock and revision handling; precise failure cases and completion criteria are listed. Continue independent writer, normalization, command durability and renderer/spec work. Original code/tests were reconstructed, not recovered. No frozen data changed.
