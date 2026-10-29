@@ -47,3 +47,7 @@ After approval, stop by cancelling that exact run, then revert/delete only the n
 Approval is requested **only after the earliest valid time** for: installation of the exact revised one-file main workflow and one30October research-only session within the stated limits, existing collection/research-key bindings and three-day encrypted artifact retention. Approval must acknowledge the documented hard-cancellation/upload-loss limitation. All other production files remain outside the change.
 
 **Phase B, BUY/Telegram alerts, orders, recurring collection, services, secret changes and merging PR1 remain unauthorized.** Acceptance remains21/40(52.5%); prospective matched paper cases remain0. Key recovery closes a deployment prerequisite, not a trading-performance acceptance check.
+
+## Verified engineering checkpoint
+
+Source **f65686fb7634d37010fc64e232383570503a5c01** passed all12 exact-commit checks: push/PR Node suites, six Python matrix jobs, safety, watcher fixture-open/close and research fixtures. Local totals1,300 Node /22 unique Python /9 targeted preflight/recovery tests; machine evidence in [phase-a-owner-confirmed-preflight-evidence.json](phase-a-owner-confirmed-preflight-evidence.json). No failed/ skipped local tests. The current documentation checkpoint does not change the reviewed candidate bytes or runtime pin.

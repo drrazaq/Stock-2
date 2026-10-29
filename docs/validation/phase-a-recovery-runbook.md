@@ -23,7 +23,14 @@ apk add --no-cache py3-cryptography
 python3 -c 'from cryptography.hazmat.primitives.ciphers.aead import AESGCM; from cryptography.hazmat.primitives.kdf.scrypt import Scrypt; print("Crypto ready")'
 ```
 
-Download the public tool before disconnecting. Keep its exact commit/hash from the engineering evidence. Activate Airplane Mode and turn Wi-Fi off. From the folder containing the script and encrypted artifact directory, use a local interactive terminal:
+Download the tested public tool before disconnecting (source f65686fb7634d37010fc64e232383570503a5c01):
+
+```sh
+curl --fail --location -o recover-phase-a.py https://raw.githubusercontent.com/drrazaq/Stock-2/f65686fb7634d37010fc64e232383570503a5c01/tools/recover-phase-a.py
+sha256sum recover-phase-a.py
+```
+
+Expected tool SHA256: `2dff726f47410aa4856368833da87f1cb3d929b5180aa6fa9ffb3d75054b9a95`. Keep the exact commit/hash with the encrypted archive. Activate Airplane Mode and turn Wi-Fi off. From the folder containing the script and encrypted artifact directory, use a local interactive terminal:
 
 ```sh
 umask 077
