@@ -19,7 +19,15 @@ Use iSH's **existing configured Alpine repositories**. Do not add another Alpine
 
 ## 2. Download the public tool and unchanged encrypted artifact
 
-Download the public `tools/recover-key-proof.py` from the exact **published commit linked with this guide**, not an arbitrary branch revision. Save as `/root/stock2-key-proof/recover-key-proof.py`. GitHub's Raw/Download button in Safari may be used. The accompanying message provides an exact `curl` command with the immutable commit SHA. No other Stock-2 script is required.
+Download the public tool from tested source commit `ace165d2585c0e9015096b1cba05f9ad63f8769d`:
+
+```sh
+cd /root/stock2-key-proof
+curl --fail --location --proto '=https' --tlsv1.2 -o recover-key-proof.py https://raw.githubusercontent.com/drrazaq/Stock-2/ace165d2585c0e9015096b1cba05f9ad63f8769d/tools/recover-key-proof.py
+sha256sum recover-key-proof.py
+```
+
+Expected tool SHA256: `0d0fb60d5435955a096058037593e53e9c87161212aaf1e31f057e95542cc556`. GitHub's Raw/Download button in Safari may also be used; save as `/root/stock2-key-proof/recover-key-proof.py`. No other Stock-2 script is required.
 
 In Safari, while signed into GitHub, download this encrypted ZIP:
 
