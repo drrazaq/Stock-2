@@ -1,3 +1,13 @@
+## Provider diagnostic evidence continuation — 29 October 2026
+
+Resumed from verified GitHub HEAD b64ca5fcc7f19705f341d1a78211546a186faa3a; no newer branch work was discarded. Fixed diagnostic admission of unsolicited/malformed Alpaca symbol maps, retained empty/partial response and missing-symbol evidence, and separated price/BBO/volume freshness and future/unknown clocks. Massive diagnostic counts now distinguish raw rows, unique valid symbols, invalid symbols and duplicates. These are observation denominators, not a verified tradable universe. Existing GET-only destinations, five-request bound, 429 stop, credential redaction and manual-only live workflow remain unchanged. No new workflow or binding was added.
+
+Local targeted validation: nine provider-probe tests pass with Node24.19.0 using --test-isolation=none; changed diagnostic syntax passes. Workspace is a connector-recovered partial source tree, not a Git checkout; full regression and protected-tree checks require hosted CI. Hosted verification for this milestone is PENDING until exact-source checks are observed. No full local suite pass is claimed.
+
+Owner-supplied Massive Starter information ($29/month,15-minute delayed,five years,broad US tickers) is recorded as product capability, not verified account enrollment. Existing explicit SIP/IEX HTTP200 and targeted SIP2/3 fresh evidence is retained. No subscription recommendation or new live probe. Actual provider entitlements, broad/session coverage, point-in-time history and prospective profitability remain unverified. Acceptance stays22/40(55%),18 open; actual prospective cases0.
+
+Continue from ACTIONS-04 workflow failure/write/concurrency review, TELEGRAM-03 opt-in durable IDs/journal adoption, ZAD-04 remaining recommendation paths, and MARKET-03 normalization. Independent identity/liquidity and regular-session quotes remain required for prospective paper evidence. Phase A research-key recovery VERIFIED; Phase A unapproved/uninstalled/undispatched with original7dd702d runtime/wrapper pin unchanged. No production write, message, trade, service purchase, key or sensitive-permission change, merge or deployment occurred.
+
 ## Verified publication and recovery checkpoint — 2026-10-29
 
 Verified source: 868db1c0276eebf5d1a8e7b6d88f467e749735ff. All 12 exact-commit checks passed, including push/PR full suites, safety, artifact open/close, preservation, delivery, research and Python recovery. Hosted Node: 157 files, 1,352 TAP cases plus 2 standalone assertion scripts = 1,354 passing tests. Static checks cover 228 root/tool modules. No local test claim: the managed workspace is unavailable.
@@ -242,3 +252,4 @@ Recovery hardening source **d5c8c3259502054fd3864cb359c52de140d6498c** passed al
 ## Python-only iSH key recovery — 29 October 2026
 
 Added tools/recover-key-proof.py and the iSH guide docs/validation/owner-key-proof-recovery-ish.md. Existing Node-sealed envelope format, scrypt parameters and authenticated source SHA are preserved. AES-256-GCM authentication and exact challenge marker are required before any plaintext output. Interactive hidden prompt fails closed; no network, subprocess, env-key lookup, legacy data or Phase A access. Fourteen Python fixture/adversarial tests pass on actual Python3.9.16; all1,299 Node tests still pass. Physical iSH not tested; attempted32-bit Alpine execution failed with exec format error. New branch-scoped secret-free CI tests Python3.9.16/3.12. Recovery remains PENDING until owner decrypts actual GitHub artifact12879798326. Acceptance unchanged21/40. Publication/CI evidence to follow on the exact source commit.
+

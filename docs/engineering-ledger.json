@@ -759,7 +759,7 @@
     "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "tests": "9 targeted tests passed",
     "fix": "Reject out-of-range news timestamp per row instead of dropping valid source records; reject invalid cycle cutoff before mutating state",
-    "simulation": "541 cycles 04:00–13:00 NY including half-day closing boundary, all real adapters, stale news, feed interruptions, duplicate events",
+    "simulation": "541 cycles 04:00\u201313:00 NY including half-day closing boundary, all real adapters, stale news, feed interruptions, duplicate events",
     "realWorldEntitlementEvidence": false,
     "testsPassed": 1260,
     "failures": 0,
@@ -1120,8 +1120,8 @@
   "phaseAFinalPreflight": {
     "status": "KEY_VERIFIED_PREMARKET_FRESHNESS_BLOCKER_DATED_AUTHORIZATION_PENDING",
     "date": "2026-10-29",
-    "candidateSession": "2026-10-30 04:00–09:30 America/New_York (EDT)",
-    "candidateUTC": "08:00–13:30",
+    "candidateSession": "2026-10-30 04:00\u201309:30 America/New_York (EDT)",
+    "candidateUTC": "08:00\u201313:30",
     "sourcePin": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
     "encryptionBinding": "Actual GitHub challenge encryption/same-key roundtrip PASSED; owner independent decryption PENDING",
     "ownerRecoveryCopy": "VERIFIED_ACTUAL_GITHUB_ARTIFACT_ON_IPAD_ISH",
@@ -2710,5 +2710,34 @@
       "percent": 55
     },
     "actualProspectiveCases": 0
+  },
+  "providerDiagnosticContinuation": {
+    "base": "b64ca5fcc7f19705f341d1a78211546a186faa3a",
+    "status": "LOCAL_TARGETED_PASS_HOSTED_PENDING",
+    "localTests": {
+      "passed": 9,
+      "failed": 0,
+      "command": "node --test --test-isolation=none tests/provider-probe.test.mjs",
+      "scope": "partial recovered source tree; full suite not run locally"
+    },
+    "repairs": [
+      "Reject unsolicited/malformed Alpaca diagnostic rows",
+      "Retain empty/partial responses and missing symbols",
+      "Independent price/BBO/volume freshness clocks",
+      "Raw/valid/duplicate/invalid Massive denominators"
+    ],
+    "liveRequests": 0,
+    "acceptanceCredit": 0,
+    "actualProspectiveCases": 0,
+    "massiveStarter": {
+      "source": "OWNER_SUPPLIED_PRODUCT_INFORMATION",
+      "monthlyUSD": 29,
+      "delayMinutes": 15,
+      "historyYears": 5,
+      "coverage": "broad US tickers",
+      "accountEnrollment": "NOT_VERIFIED"
+    },
+    "alpacaEvidence": "Existing run40859412224 explicit SIP/IEX HTTP200; targeted SIP2/3 fresh, IEX0/3; broad entitlement not established",
+    "phaseA": "NO_GO_NOT_AUTHORIZED_UNCHANGED_PIN"
   }
 }
