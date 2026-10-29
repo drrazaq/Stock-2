@@ -1,3 +1,4 @@
+import {deliverTelegramDurably} from './telegram-delivery-ledger.mjs';
 import fs from 'node:fs';
 // Telegram delivery must be acknowledged. A resolved HTTP request is not proof of delivery.
 export async function sendTelegramMessage({fetcher=fetch,base='https://api.telegram.org',token,chat,text,replyMarkup,timeoutMs=10000}) {
@@ -19,10 +20,17 @@ export function splitTelegramText(text,limit=3900){
 // Compatibility facade for scheduled reports and rich bot replies. API failure
 // becomes ok:false even if HTTP was 200; only explicit 429 is retried. An
 // ambiguous network outcome is never automatically resent.
-export async function telegramFetch(url,options,{fetcher=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),recordFailure=true,research=false,retry429=true}={}){
+export async function telegramFetch(url,options,{fetcher=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),recordFailure=true,research=false,retry429=true,durability=null}={}){
  const u=new URL(url);if(!((u.protocol==='https:'&&u.hostname==='api.telegram.org')||(u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname))))throw Error('invalid Telegram host');
  const m=/^\/bot([^/]+)\/sendMessage$/.exec(u.pathname);if(!m)throw Error('not a Telegram message endpoint');
- const body=JSON.parse(options.body),text=(research&&!/^(?:RESEARCH REPORT|RESEARCH ONLY|PAPER ONLY|NOT AN APPROVED BUY)\b/i.test(String(body.text||''))?'RESEARCH REPORT — NOT AN APPROVED BUY\n':'')+String(body.text||'');
+ const body=JSON.parse(options.body);
+ if(durability){
+  const result=await deliverTelegramDurably({store:durability.store,scope:JSON.stringify([String(body.chat_id),durability.scope||'message']),eventId:durability.eventId,message:JSON.stringify([body.text,body.reply_markup??null,research]),
+   send:async()=>{const r=await telegramFetch(url,options,{fetcher,sleep,recordFailure,research,retry429});const b=await r.json();return {ok:r.ok,messageId:b?.result?.message_id,reason:b.description,deliveredParts:r.deliveredParts,totalParts:r.totalParts};}});
+  const response=result.ok?{ok:true,result:{message_id:result.messageId}}:{ok:false,description:result.reason};
+  return {ok:result.ok,status:result.ok?200:409,json:async()=>response,text:async()=>JSON.stringify(response),deliveredParts:result.deliveredParts||0,totalParts:result.totalParts||0,deduplicated:result.deduplicated===true,deliveryReason:result.reason||null};
+ }
+ const text=(research&&!/^(?:RESEARCH REPORT|RESEARCH ONLY|PAPER ONLY|NOT AN APPROVED BUY)\b/i.test(String(body.text||''))?'RESEARCH REPORT — NOT AN APPROVED BUY\n':'')+String(body.text||'');
  const parts=splitTelegramText(text);let result={ok:false,reason:'INVALID_TEXT_LENGTH'},deliveredParts=0;
  for(let i=0;i<parts.length;i++){
   for(let attempt=0;attempt<3;attempt++){

@@ -1747,5 +1747,16 @@
       }
     ],
     "nodeTests": 1305
+  },
+  "telegramCrossJobJournalMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "activation": "OPT_IN_ONLY_NO_WORKFLOW_OR_PERMISSION_CHANGE",
+    "scope": "Explicit shared facade durability option backed by conditional GitHub contents journal; mocked API tests only",
+    "verificationRequired": [
+      "Hosted regressions must pass",
+      "Wire each logical message path to reviewed stable event IDs before deployment",
+      "Authorized actual delivery and runner-loss recovery validation remain open"
+    ],
+    "acceptanceCredit": 0
   }
 }
