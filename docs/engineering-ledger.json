@@ -83,7 +83,8 @@
       "id": "INC-03",
       "severity": "P2",
       "description": "Run creation time reported as actual job/watcher start",
-      "status": "OPEN"
+      "status": "FIXED_LOCAL_VERIFIED",
+      "evidence": "test/watcher-guard.test.mjs; actual watch-job timing, not run_started_at; job timing is not heartbeat coverage"
     },
     {
       "id": "INC-04",
@@ -226,7 +227,28 @@
     "testsFailed": 0,
     "testsSkipped": 0,
     "changedJSSyntaxChecks": 6,
+    "remoteCI": {
+      "status": "ALL_SUCCESS",
+      "runs": [
+        "40811856454",
+        "40811851330",
+        "40811851254"
+      ]
+    },
+    "coverageClaim": "Fixture coverage only; production observation/entitlements not established",
+    "publishedCommit": "2d276c3f63356356cb91776d8069c13f3d0bc614"
+  },
+  "guardTimingMilestone": {
+    "base": "2d276c3f63356356cb91776d8069c13f3d0bc614",
+    "targetedGuardTests": 14,
+    "fullSuite": {
+      "passed": 1204,
+      "failed": 0,
+      "skipped": 0,
+      "command": "node --test test/*.test.mjs tests/*.test.mjs",
+      "node": "24.19.0"
+    },
     "remoteCI": "Pending publication",
-    "coverageClaim": "Fixture coverage only; production observation/entitlements not established"
+    "remaining": "Guard window ends at 14:55; watcher window ends at 15:00. Full 16:00/half-day calendar and heartbeat coverage not yet implemented."
   }
 }

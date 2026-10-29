@@ -2,7 +2,7 @@
 // for ignition.yml with the job's own token, starts the watcher when it is missing, writes data/watcher-guard.json and appends each
 // day's measured start to data/watcher-starts.jsonl. Read-only on the market; never places an order.
 import fs from 'node:fs';
-import { guardDecide, nyParts, fmt } from './watcher-guard-core.mjs';
+import { guardDecide, nyParts, fmt, watcherJobEvidence } from './watcher-guard-core.mjs';
 const env = process.env, REPO = env.GITHUB_REPOSITORY, TOKEN = env.GITHUB_TOKEN, API = 'https://api.github.com/repos/' + REPO + '/actions/workflows/ignition.yml';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org';
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -11,11 +11,24 @@ const n = nyParts(Date.now()); if (n.min < 545 || n.min > 900) process.exit(0); 
 const H = { headers: { Authorization: 'Bearer ' + TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } };
 const r = await fetch(API + '/runs?per_page=10', H).catch(e => ({ ok: false, status: e.message }));
 if (!r.ok) { console.log('watcher guard: run list failed (' + r.status + ')'); process.exit(0); }
-const runs = (await r.json()).workflow_runs || [], S0 = readJson('data/watcher-guard.json', {}), out = guardDecide(Date.now(), runs, S0);
+const rawRuns = (await r.json()).workflow_runs || [], runs = [];
+for (const run of rawRuns) {
+  // Read the current attempt's jobs. Never substitute queue/run creation time
+  // when the jobs endpoint fails or the watch job has not actually started.
+  let jobs=null;
+  if (/^\d+$/.test(String(run.id)) && Number.isFinite(Date.parse(run.created_at)) && nyParts(Date.parse(run.created_at)).d===n.d) {
+    try {
+      const jr=await fetch('https://api.github.com/repos/'+REPO+'/actions/runs/'+run.id+'/jobs?filter=latest&per_page=100',{...H,signal:AbortSignal.timeout(10000)});
+      if(jr.ok) jobs=(await jr.json()).jobs;
+    }catch{}
+  }
+  runs.push(watcherJobEvidence(run,jobs));
+}
+const S0 = readJson('data/watcher-guard.json', {}), out = guardDecide(Date.now(), runs, S0);
 if (out.dispatch) { const d = await fetch(API + '/dispatches', { method: 'POST', ...H, body: JSON.stringify({ ref: 'main' }) }).catch(e => ({ ok: false, status: e.message }));
   if (!d.ok) out.alerts.push('WATCHER GUARD could not start the watcher (GitHub answered ' + d.status + '). The bot job may lack the actions: write permission. Send this to Claude.'); }
 for (const a of out.alerts) if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: a }) }).catch(() => {}); else console.log('[guard] ' + a);
-if (out.state.started !== null && (S0.d !== out.state.d || S0.started === null || S0.started === undefined))   // first sighting of today's run: one line a day
-  fs.appendFileSync('data/watcher-starts.jsonl', JSON.stringify({ d: out.state.d, started: fmt(out.state.started), byGuard: out.state.dispatched.length > 0, dispatched: out.state.dispatched.map(fmt) }) + '\n');
+if (out.state.started !== null && (S0.d !== out.state.d || S0.started === null || S0.started === undefined || S0.startedSource !== 'github_job'))
+  fs.appendFileSync('data/watcher-starts.jsonl', JSON.stringify({ d: out.state.d, started: fmt(out.state.started), source:'github_job', marketCoverage:'UNVERIFIED', byGuard: out.state.dispatched.length > 0, dispatched: out.state.dispatched.map(fmt) }) + '\n');
 fs.writeFileSync('data/watcher-guard.json', JSON.stringify(out.state));
 console.log('watcher guard ' + fmt(n.min) + ' New York: ' + out.why + (out.dispatch ? ' -> started the watcher' : ''));

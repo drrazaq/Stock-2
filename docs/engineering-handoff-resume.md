@@ -21,3 +21,9 @@ Exact repair-commit CI verified successful on 29 October: pull_request 408113408
 ## Next independent milestone
 
 Per-symbol stale refresh and future-clock recovery implemented; 1,198 tests passed and six changed JS files parsed. New mocked-provider real-watcher integration passes. Publish only ignition-watch.mjs, live-refresh-universe.mjs, snapshot-fields.mjs, tests/live-refresh-universe.test.mjs, tests/snapshot-fields.test.mjs, tests/watcher-refresh.test.mjs and the three engineering documents. Base is documentation checkpoint 43084d62424ba7caabfaa1c28af318b0ab2653bd; use its tree. CI for that documentation checkpoint also passed all three checks. No data file belongs in this patch.
+
+## Guard timing milestone
+
+Freshness commit 2d276c3f63356356cb91776d8069c13f3d0bc614 passed all three CI checks (40811856454, 40811851330, 40811851254). Next patch fixes INC-03 using actual latest-attempt watch-job start/end instead of run creation. Three code/test files: watcher-guard-core.mjs, watcher-guard.mjs, test/watcher-guard.test.mjs; three engineering docs. Fourteen targeted guard tests and full 1,204-test suite passed; no skips. Publish from freshness commit tree 228bfba66f0a90406e80fbfca6dd892eceff85e7, then verify exact-commit CI. Do not reapply old patches or include any restored data.
+
+Remaining priority: full 16:00/half-day session observation (guard still ends 14:55, watcher 15:00), live heartbeat freshness, all-attempt shadow/delivery archives, nine-lane runtime integration with point-in-time provenance, all-channel Telegram acknowledgment, and broader strategy/compliance acceptance. No new approved strategy. Full engineering acceptance stays 15/40.
