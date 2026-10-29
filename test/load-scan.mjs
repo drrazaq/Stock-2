@@ -17,7 +17,7 @@ if (!globalThis.__scanTestFetchGuard) {
 }
 // one-time migrations in scan.mjs are marked done, so they never rewrite a fixture
 const DONE = { stopPlan1018: '2026-10-18T00:00:00.000Z', stopRestore1022: '2026-10-22T00:00:00.000Z', tradesMig1022: '2026-10-22T00:00:00.000Z' };
-const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHUB_KEY', 'ALPACA_KEY', 'ALPACA_SECRET', 'MASSIVE_KEY', 'FMP_KEY', 'ZOYA_KEY', 'PRIVATE_KEY', 'GITHUB_WORKFLOW','STOCK2_ENABLE_PAPER_ORDERS','ALPACA_BASE'];
+const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHUB_KEY', 'ALPACA_KEY', 'ALPACA_SECRET', 'MASSIVE_KEY', 'FMP_KEY', 'ZOYA_KEY', 'PRIVATE_KEY', 'PRIVATE_DATA_TOKEN', 'GITHUB_REPOSITORY', 'GITHUB_REF_NAME', 'GITHUB_WORKFLOW','STOCK2_ENABLE_PAPER_ORDERS','ALPACA_BASE'];
 let seq = 0; const DIRS = [];
 process.on('exit', () => { process.chdir(os.tmpdir()); for (const d of DIRS) try { fs.rmSync(d, { recursive: true, force: true }); } catch (e) {} });
 

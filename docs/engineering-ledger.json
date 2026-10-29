@@ -4197,19 +4197,195 @@
     ]
   },
   "watchdogDeliveryMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_FIX",
     "defect": "warned date and success log advanced before Telegram acknowledgment",
     "repair": "Atomic pre-send intent, ACK-gated warned date, restored UNKNOWN quarantine, ACK reconciliation, offset preservation, malformed-state/disk-fault block",
     "localTests": 4,
     "scope": "Existing non-sensitive tg-state metadata only; no raw body, key, owner amounts or new permissions",
-    "remaining": "Local intent can be lost before remote save. All-route journal adoption/command-offset reply durability remains open."
+    "remaining": "Local intent can be lost before remote save. All-route journal adoption/command-offset reply durability remains open.",
+    "verifiedSource": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864528/job/123500044940"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876881/job/123499908399"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876888/job/123499908376"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876881/job/123499908230"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876870/job/123499908186"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876881/job/123499907936"
+      },
+      {
+        "name": "test",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876968/job/123499907801"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876890/job/123499907428"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864528/job/123499861873"
+      },
+      {
+        "name": "safety",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864528/job/123499861600"
+      },
+      {
+        "name": "test",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864611/job/123499861589"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864447/job/123499861253"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864443/job/123499860918"
+      }
+    ]
   },
   "addReplyOwnerPolicyMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_FIX",
     "defect": "Fallback conditional add instruction existed without a qualifying signal/current owner gate",
     "repair": "Explicit owner yes before price lookup; unsupported current/no-price fallback is research-only no-add; finite price parsing; holdings unchanged",
     "localTests": 3,
     "inheritedBuyTodayTests": 8,
-    "remaining": "Existing primary buyToday evidence/freshness and complete ZAD route audit still require independent review; no new strategy approval"
+    "remaining": "Existing primary buyToday evidence/freshness and complete ZAD route audit still require independent review; no new strategy approval",
+    "verifiedSource": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864528/job/123500044940"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876881/job/123499908399"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876888/job/123499908376"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876881/job/123499908230"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876870/job/123499908186"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876881/job/123499907936"
+      },
+      {
+        "name": "test",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876968/job/123499907801"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888876890/job/123499907428"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864528/job/123499861873"
+      },
+      {
+        "name": "safety",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864528/job/123499861600"
+      },
+      {
+        "name": "test",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864611/job/123499861589"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864447/job/123499861253"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40888864443/job/123499860918"
+      }
+    ]
+  },
+  "executionFaultClosureCandidate": {
+    "status": "PENDING_FULL_EXACT_COMMIT_CI",
+    "proposedCheck": "EXEC-04",
+    "scope": "All current broker mutation paths only: POST buy,POST sell,DELETE order; no actual broker/private-journal operation",
+    "inventory": "236 baseline source/HTML files checked against remote blobs; only intended scan edit differs. One broker adapter consumer; options-lab/squad15/squad15b trade-origin endpoints are reference GETs. No workflow order-enable flag.",
+    "guard": "Default disabled; future opt-in also requires trusted repository/ref and existing private token. Private CAS intent read-back before broker; ACK read-back before success; unknown/refused/ACK operations cannot replay after job loss; content conflicts/racing actors fail closed.",
+    "tests": {
+      "journal": 11,
+      "transport": 6,
+      "caller": 7
+    },
+    "privacy": "Only opaque operation/content hashes, status,time and order UUID in existing private-data repository; no payload/token/owner amounts. No permission or secret changed; no private API request performed in engineering.",
+    "deployment": "Not merged/installed/enabled. Future paper order activation and corresponding private-journal writes still require owner approval."
   }
 }

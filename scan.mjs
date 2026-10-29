@@ -1,5 +1,6 @@
 import {readAlertState,saveAlertState,alertAvailable,deliverAlertOnce,validAlertBook} from './alert-delivery-state.mjs';
 import {paperRequest} from './paper-transport.mjs';
+import {paperMutationOnce,createPrivatePaperJournal} from './paper-mutation-journal.mjs';
 import {resolveZad} from './zad-compliance.mjs';
 import {telegramFetch,splitTelegramText} from './telegram-delivery.mjs';
 // Cloud scanner for the US stock signal board. Runs on GitHub Actions (free), so it works while your phone is off.
@@ -889,7 +890,11 @@ function dowText() {
 // The address is fixed to Alpaca's PAPER server, so no real money can ever move. Secrets: ALPACA_KEY, ALPACA_SECRET.
 const ALP = local(env.ALPACA_BASE) || 'https://paper-api.alpaca.markets', ALP_FILE = 'data/alpaca-paper.json';
 async function alp(method, path, body) {
-  return paperRequest({base:ALP,method,path,body,key:env.ALPACA_KEY,secret:env.ALPACA_SECRET,enableOrders:env.STOCK2_ENABLE_PAPER_ORDERS==='1'});
+  const enabled=env.STOCK2_ENABLE_PAPER_ORDERS==='1',send=()=>paperRequest({base:ALP,method,path,body,key:env.ALPACA_KEY,secret:env.ALPACA_SECRET,enableOrders:enabled});
+  if(method==='GET'||!enabled)return send();
+  if(!env.PRIVATE_DATA_TOKEN||env.GITHUB_REPOSITORY!=='drrazaq/Stock-2'||!['main','Stock2-safety-fixes'].includes(env.GITHUB_REF_NAME))return {error:'PRIVATE_PAPER_JOURNAL_REQUIRED'};
+  const store=createPrivatePaperJournal({token:env.PRIVATE_DATA_TOKEN});
+  return paperMutationOnce({enabled,accountKey:env.ALPACA_KEY,method,path,body,store,send});
 }
 async function alpacaPaper(sig, loaded, session) {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !sig) return;

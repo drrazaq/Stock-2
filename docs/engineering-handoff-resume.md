@@ -1,3 +1,9 @@
+## Delivery/owner gates verified; all-current-path broker fault closure candidate —29October2026
+
+Sourcea48aadc passed all13 exact-commit checks. Watchdog ACK/offset/quarantine and unsupported add-reply owner/fallback repairs are verified on branch. All-route command outbox and complete ZAD route evidence remain OPEN.
+
+Next EXEC04 closure candidate: all three current broker mutations (POST buy,POST sell,DELETE order) now require remotely confirmed private CAS intent before a future separately approved paper request, and durable ACK before success. Unknown, refused, duplicate, already-recorded and content-conflicting operations cannot be blindly retried after job loss; racing actors permit one request. Runtime opt-in alone is insufficient without trusted repository/ref and existing private journal token. No workflow enables orders. Journal uses existing private-data service/permissions only when future orders are explicitly enabled; no real private-store write/order or permission change was performed. Tests use mocked stores/API and localhost. Source inventory verifies only scan consumes adapter and reference trade-host calls are GET-only;236 baseline source/HTML blobs match except intended scan changes. Eleven journal, six adapter and seven caller contracts cover all current routes, reservation/ACK loss, errors/timeouts/redirects/config ambiguity/races/restarts and cancellation follow-on suppression. Full exact-commit CI pending; acceptance stays22/40 until closure evidence passes. Actual prospective cases0.
+
 ## Probe retirement verified; watchdog/add-reply delivery and owner gates —29October2026
 
 Retirement source468856f passed all12 exact-commit checks. The one-shot3GET sample at09:55EDT and all gaps are saved; current probe workflow has no keys or automatic provider execution. No further live probe occurred.
