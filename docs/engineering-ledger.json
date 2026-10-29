@@ -2421,7 +2421,7 @@
     ]
   },
   "providerIngressMilestone": {
-    "status": "SOURCE_TESTS_PENDING_NEW_MIXED_SCOPE_AND_TRIGGER_GUARD",
+    "status": "VERIFIED_HOSTED_INPUT_AND_MANUAL_TRIGGER_ONLY",
     "defects": [
       "Alpaca snapshot options allowed redirect-following and arbitrary base/destination",
       "Failed transport attempts were omitted from request counters",
@@ -2523,6 +2523,93 @@
         }
       ],
       "correction": "Earlier no-live-probe statements were incorrect for this automatically triggered run. Remove all push triggers; manual only thereafter."
-    }
+    },
+    "sourceCommit": "c4018c972652ed7acf024316f4a12d33d32749d3",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860297766/job/123401649910"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860304538/job/123401551248"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860304538/job/123401551109"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860304538/job/123401550828"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860304418/job/123401550159"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860304415/job/123401550087"
+      },
+      {
+        "name": "test",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860304401/job/123401549982"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860304411/job/123401549962"
+      },
+      {
+        "name": "safety",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860297766/job/123401528810"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860297766/job/123401528449"
+      },
+      {
+        "name": "test",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860297714/job/123401528132"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40860297828/job/123401528040"
+      }
+    ],
+    "automaticDiagnosticTriggers": "REMOVED; no further diagnostic dispatch authorized by code edits"
+  },
+  "scientificCheckpointMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "fix": "Watcher requires valid research substate before resumed sends; reject malformed discovery/quote records, counters/clocks and >128MiB checkpoint input",
+    "verificationRequired": "Real watcher full-session/half-day artifact integration plus corrupt/oversized checkpoint fixtures",
+    "acceptanceCredit": 0
+  },
+  "paperArithmeticMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "fix": "Unrepresentable integer quantities and nonfinite equity/return arithmetic cannot become resolved paper outcomes",
+    "acceptanceCredit": 0
   }
 }

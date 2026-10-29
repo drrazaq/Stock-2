@@ -55,3 +55,12 @@ test('quoted paper returns never imply sufficient displayed size or an actual fi
  const small=evaluatePaperEvidence([event],prices.map(q=>({...q,bidSizeShares:1,askSizeShares:1})),meta,{cutoff:t(32)});assert.equal(small.counts.resolvedWithVerifiedDisplayedSize,0);
  const conflict=evaluatePaperEvidence([event],prices.map(q=>({...q,bidSizeShares:200,askSizeShares:200})).concat({...prices[0],bidSizeShares:1,askSizeShares:1}),meta,{cutoff:t(32)});assert.equal(conflict.counts.resolved,0);assert.equal(conflict.quoteIntegrity.conflictingClocks,1);
 });
+
+test('unrepresentable whole-share quantities remain blocked, never infinite paper positions',()=>{
+ const tiny=prices.map(q=>({...q,bid:9.999e-309,ask:1e-308}));
+ const r=evaluatePaperEvidence([event],tiny,meta,{cutoff:t(32)});assert.equal(r.counts.resolved,0);assert.equal(r.cases[0].candidate.reason,'NOTIONAL_QUANTITY_UNREPRESENTABLE');
+});
+test('finite quote inputs cannot overflow into resolved or profitable paper evidence',()=>{
+ const extreme=prices.map(q=>q.symbol==='AAA'&&q.at===t(31)?{...q,bid:1e308,ask:1.001e308}:q);
+ const r=evaluatePaperEvidence([event],extreme,meta,{cutoff:t(32)});assert.equal(r.counts.resolved,0);assert.equal(r.cases[0].candidate.reason,'NONFINITE_PAPER_ARITHMETIC');
+});

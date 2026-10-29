@@ -63,7 +63,7 @@ if (clock() < 540 || clock() > SESSION.close) { console.log('ignition watcher: o
 if (sessionFinished(readJson('data/ignition-live.json', null), day)) { console.log('watcher: session already recorded for ' + day + '; skipping duplicate run'); process.exit(0); }
 const RUN_ID = runIdentity(env), CODE_SHA = env.GITHUB_SHA || (() => { try { return execSync('git rev-parse HEAD', {stdio:['ignore','pipe','ignore']}).toString().trim(); } catch { return null; } })();
 const RUN_START = Date.now();   // Runtime begins after the early 09:25 wait, not at cron startup.
-const CP_FILE='runtime/watcher-checkpoint.json',RESUME=env.IG_RESUME?readCheckpoint(CP_FILE,{day,sourceSha:CODE_SHA,beforeMinute:clock()}):null;
+const CP_FILE='runtime/watcher-checkpoint.json',RESUME=env.IG_RESUME?readCheckpoint(CP_FILE,{day,sourceSha:CODE_SHA,beforeMinute:clock(),requireResearch:true}):null;
 const ALLOW_SEND=!env.IG_RESUME||!!RESUME;
 if(env.IG_RESUME&&!RESUME)console.error('CHECKPOINT_UNAVAILABLE: monitoring research only; outbound trade/stop messages disabled');
 let lastHeartbeat=RESUME?.lastHeartbeat||null,lastPublish=0;

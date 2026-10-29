@@ -1,3 +1,9 @@
+## Scientific resume integrity and paper arithmetic continuation
+
+Provider transport/source-trigger fixc4018c972652ed7acf024316f4a12d33d32749d3 passed all12 exact-commit checks. Invalid symbols no longer poison valid snapshot batches; credential-bearing diagnostic source edits no longer trigger live API use. The automatic d993124 diagnostic and actual zero-fresh Massive premarket sample are recorded, not erased. Phase A current preflight is NO-GO pending provider freshness clarification and separate dated approval; original source/workflow/date/limits remain unchanged and uninstalled.
+
+Next safe branch batch: scientific discovery/quote checkpoint state is validated before a resumed watcher can enable sends; corrupt/missing research objects, counters, quote records/clocks and oversized (>128MiB) input fail closed. Paper arithmetic rejects nonrepresentable quantities or overflowing returns instead of emitting resolved evidence. Hosted verification pending. Acceptance22/40(55%),18 open; actual prospective cases0. No local test pass is claimed while the execution workspace is unavailable. No further live provider probe, message, order, production data/key change or merge occurred.
+
 ## Provider diagnostic trigger correction and premarket readiness blocker
 
 An existing branch workflow automatically ran its fixed5-GET provider diagnostic when tools/provider-readiness-probe.mjs changed ind993124. Earlier statements that no live probe ran were incorrect for that commit. Exact run40859412224 completed; its report retained aggregates only, no raw prices/payloads or credentials. No Phase A, Telegram, order, deployment, purchase, secret change or manual diagnostic dispatch occurred. This batch removes every push trigger from that credential-bearing diagnostic; source edits now run only secret-free fixtures. It also isolates invalid symbols instead of dropping otherwise valid snapshot batches.

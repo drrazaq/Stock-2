@@ -16,15 +16,18 @@ function quoteOk(q,decision,{entry=false}={}) {
 }
 function pathOutcome(symbol,securityId,entry,quotes,cutoff) {
  const p=PAPER_PROTOCOL,qty=Math.floor((p.notional-p.feePerOrder)/entry.ask);
+ if(!Number.isSafeInteger(qty))return {status:'BLOCKED',reason:'NOTIONAL_QUANTITY_UNREPRESENTABLE'};
  if(qty<1)return {status:'BLOCKED',reason:'NOTIONAL_TOO_SMALL'};
  const from=time(entry.at),due=from+p.holdMinutes*60000;
  const observed=quotes.filter(q=>q.symbol===symbol&&q.securityId===securityId&&time(q.at)>=from&&time(q.at)<=Math.min(cutoff,due+p.maxExitWaitMinutes*60000)&&quoteOk(q,cutoff)).sort((a,b)=>time(a.at)-time(b.at));
  const exit=observed.find(q=>time(q.at)>=due&&time(q.at)<=due+p.maxExitWaitMinutes*60000);
- let peak=p.notional,drawdown=0,maxBid=entry.bid;
- for(const q of observed.filter(q=>!exit||time(q.at)<=time(exit.at))){const equity=p.notional-p.feePerOrder+qty*(q.bid-entry.ask)-p.feePerOrder;peak=Math.max(peak,equity);drawdown=Math.min(drawdown,equity/peak-1);maxBid=Math.max(maxBid,q.bid);}
+ let peak=p.notional,drawdown=0,maxBid=entry.bid,numericOverflow=false;
+ for(const q of observed.filter(q=>!exit||time(q.at)<=time(exit.at))){const equity=p.notional-p.feePerOrder+qty*(q.bid-entry.ask)-p.feePerOrder;if(!Number.isFinite(equity)){numericOverflow=true;break;}peak=Math.max(peak,equity);drawdown=Math.min(drawdown,equity/peak-1);maxBid=Math.max(maxBid,q.bid);}
  const common={symbol,entryDisplayedSizeVerified:Number.isInteger(entry.askSizeShares)&&entry.askSizeShares>=qty,liquidationAssumption:'FULL_QUANTITY_AT_DISPLAYED_BID; displayed capacity recorded separately; not a fill',entryAt:entry.at,entryAsk:entry.ask,quantity:qty,entrySpread:(entry.ask-entry.bid)/(entry.ask/2+entry.bid/2),observedLiquidationDrawdown:drawdown,maxObservedGrossMove:maxBid/entry.ask-1,fillClaim:'NONE — recorded quote paper assumption'};
+ if(numericOverflow||!Number.isFinite(common.maxObservedGrossMove)||!Number.isFinite(common.observedLiquidationDrawdown))return {...common,status:'UNRESOLVED',reason:'NONFINITE_PAPER_ARITHMETIC'};
  if(!exit)return {...common,status:'UNRESOLVED',reason:'NO_FRESH_HORIZON_EXIT'};
  const net=qty*(exit.bid-entry.ask)-2*p.feePerOrder,stress=qty*(exit.bid*(1-p.stressSlippagePerSide)-entry.ask*(1+p.stressSlippagePerSide))-2*p.feePerOrder;
+ if(!Number.isFinite(net)||!Number.isFinite(stress))return {...common,status:'UNRESOLVED',reason:'NONFINITE_PAPER_ARITHMETIC'};
  return {...common,status:'PAPER_RESOLVED',exitDisplayedSizeVerified:Number.isInteger(exit.bidSizeShares)&&exit.bidSizeShares>=qty,exitAt:exit.at,exitBid:exit.bid,netAfterSpreadAndFees:net/p.notional,stressNet:stress/p.notional,observedTargetHit:maxBid>=entry.ask*1.1};
 }
 // Evidence admission revision only: frozen V1 thresholds/costs/horizons are unchanged.

@@ -1,5 +1,5 @@
 {
-  "status": "KEY_VERIFIED_AWAITING_EXACT_REVISED_WORKFLOW_AND_DATED_AUTHORIZATION",
+  "status": "NO_GO_PREMARKET_FRESHNESS_UNRESOLVED_AND_SEPARATE_DATED_APPROVAL_PENDING",
   "reportDate": "2026-10-29",
   "developmentBase": "2c0a557050c862daca89c58ea672e3cf98d26350",
   "collectionSource": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
@@ -8,9 +8,9 @@
     "dispatchNY": "03:55 EDT",
     "dispatchUTC": "07:55",
     "dispatchKuwait": "10:55",
-    "collectionNY": "04:00\u201309:30 EDT",
-    "collectionUTC": "08:00\u201313:30",
-    "collectionKuwait": "11:00\u201316:30",
+    "collectionNY": "04:00–09:30 EDT",
+    "collectionUTC": "08:00–13:30",
+    "collectionKuwait": "11:00–16:30",
     "expiryUTC": "2026-10-30T13:35:00Z",
     "earliestApprovalUTC": "2026-10-29T13:35:00Z",
     "authorizationIssued": false
@@ -96,19 +96,21 @@
     "phaseADispatched": false,
     "keyProofInstalled": true,
     "keyProofTriggered": true,
-    "providerRequests": 0,
+    "providerRequests": 5,
     "telegram": 0,
     "orders": 0,
     "merge": false,
-    "servicesPurchased": false
+    "servicesPurchased": false,
+    "phaseAProviderRequests": 0,
+    "standaloneDiagnosticRequests": 5
   },
   "acceptance": {
-    "complete": 21,
+    "complete": 22,
     "total": 40,
-    "percent": 52.5,
-    "remaining": 19
+    "percent": 55,
+    "remaining": 18
   },
-  "nextRequirement": "Separate owner approval of exact revised wrapper and Oct30 session, issued no earlier than2026-10-29T13:35:00Z. No approval manifest or installation until authorized.",
+  "nextRequirement": "Resolve or explicitly assess observed Massive premarket freshness blocker; then separate exact revised workflow/date approval no earlier than2026-10-29T13:35:00Z. Do not install/dispatch or replace7dd702d/94824b7 silently.",
   "concurrentCommitPreserved": "4c919aaa6fcbd9b3b4810c9a65c70f7953940960",
   "tests": {
     "fullPassed": 1300,
@@ -252,5 +254,110 @@
     "Freshness denominator is received symbols, not a verified tradable universe",
     "One-shot consumption relies on retained exhaustive GitHub run history; never delete runs to bypass it",
     "Full iSH Phase A recovery tested on Python3.9.16 fixture sets, not yet on a live collection artifact"
-  ]
+  ],
+  "providerDiagnostic": {
+    "sourceCommit": "d99312477048ff7c0820ccb36ea19d9ac380e8da",
+    "runId": 40859412224,
+    "url": "https://github.com/drrazaq/Stock-2/actions/runs/40859412224",
+    "report": {
+      "kind": "READ_ONLY_PROVIDER_PROBE",
+      "observedAt": "2026-10-29T10:40:40.006Z",
+      "session": {
+        "day": "2026-10-29",
+        "minute": 400,
+        "state": "PREMARKET"
+      },
+      "results": [
+        {
+          "provider": "MASSIVE_SNAPSHOT",
+          "httpStatus": 200,
+          "latencyMs": 182,
+          "rateLimit": {
+            "limit": null,
+            "remaining": null,
+            "reset": null
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 13238,
+          "fresh": 0,
+          "unknownTimestamp": 10751,
+          "futureTimestamp": 0,
+          "freshPct": 0,
+          "priceAgeP95Min": 158.66676666666666
+        },
+        {
+          "provider": "ALPACA_SIP",
+          "httpStatus": 200,
+          "latencyMs": 44,
+          "rateLimit": {
+            "limit": 10000,
+            "remaining": 9999,
+            "reset": 1793270440
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 3,
+          "fresh": 2,
+          "unknownTimestamp": 0,
+          "futureTimestamp": 0,
+          "freshPct": 66.67,
+          "priceAgeP95Min": 17.158466666666666,
+          "requestedSymbols": 3,
+          "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+        },
+        {
+          "provider": "ALPACA_IEX",
+          "httpStatus": 200,
+          "latencyMs": 9,
+          "rateLimit": {
+            "limit": 10000,
+            "remaining": 9999,
+            "reset": 1793270440
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 3,
+          "fresh": 0,
+          "unknownTimestamp": 0,
+          "futureTimestamp": 0,
+          "freshPct": 0,
+          "priceAgeP95Min": 880.72125,
+          "requestedSymbols": 3,
+          "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+        },
+        {
+          "provider": "FINNHUB_GENERAL_NEWS",
+          "httpStatus": 200,
+          "latencyMs": 205,
+          "rateLimit": {
+            "limit": 60,
+            "remaining": 59,
+            "reset": 1793270500
+          },
+          "status": "RESPONSE_OBSERVED",
+          "records": 100,
+          "knownPublicationTimestamp": 100
+        },
+        {
+          "provider": "SEC_TICKER_MAP",
+          "httpStatus": 200,
+          "latencyMs": 57,
+          "rateLimit": {
+            "limit": null,
+            "remaining": null,
+            "reset": null
+          },
+          "status": "RESPONSE_OBSERVED",
+          "records": 10430
+        }
+      ],
+      "claims": {
+        "accountPlan": "NOT_INFERRED",
+        "tradableUniverseCoverage": "NOT_ESTABLISHED",
+        "executionFills": "NOT_TESTED",
+        "profitability": "NOT_TESTED"
+      },
+      "note": "HTTP status/targeted freshness are observations, not evidence of full-session or premarket entitlement. Outside-session old trades do not alone establish an outage. No raw payloads or credentials retained."
+    },
+    "triggerCorrection": "Existing push-on-source-change diagnostic ran automatically; all push triggers removed inc4018c9; no manual dispatch or Phase A run",
+    "conclusion": "MASSIVE_SNAPSHOT 0/13238 fresh vs targeted SIP2/3 at06:40EDT; provider cause/permissions/delay/schema unresolved, no full-session inference"
+  }
 }
