@@ -194,3 +194,12 @@ Telegram code **a8acf65b0734ac73fea14c5635b82b55498bfb1e** passed all five exact
 Discovery fault follow-up: a finite numeric news timestamp outside the representable date range previously made the entire news source malformed. It now rejects only that row, preserving valid headlines. Invalid cycle clocks throw before state mutation. A 541-cycle adapter-level fixture covers 04:00–13:00 New York on the November 27 half-day, including close, with stale news, missing source files, interrupted price feeds and duplicate events. Together with the 390-cycle regular-session funnel fixture and watcher lifecycle fixtures, this broadens simulation coverage. It does not demonstrate real premarket permissions, fresh-price coverage or profitable discovery. Acceptance remains 17/40.
 
 Discovery follow-up full local suite: **1,260 passed**, zero failures/skips; no additional acceptance credit. All-source provider limitations and working existing bindings are reconciled in provider-readiness-2026-10-29.md.
+
+
+## Verified publication checkpoint
+
+**16a062d2fd2d65a1143e54a09170a35f44917168** passed all five exact-commit checks: [PR tests 40821983077](https://github.com/drrazaq/Stock-2/actions/runs/40821983077), [push tests 40821977466](https://github.com/drrazaq/Stock-2/actions/runs/40821977466), [safety plus fixture-open/fixture-close 40821977388](https://github.com/drrazaq/Stock-2/actions/runs/40821977388). The hosted push log verifies all **140 test files passed**: 1,258 TAP tests plus two standalone assertion scripts (event-orb-retest-core and sec-time). Local `node --test` counts those scripts as two additional tests, giving **1,260 passed**, zero failures/skips. This reconciles the runner totals rather than claiming a different test count.
+
+Latest static scope: 214 root modules, 79 workflows; baseline inventory and frozen dataset metadata remain preserved. All 15 local original data files still match baseline Git blob IDs. Branch publications preserve all unrelated files; no production data path was committed. Detailed recoverable bundles are saved in /workspace/scratch, with source SHA and test evidence in the ledger and handoff.
+
+Acceptance: **17/40 (42.5%), 23 open**. No new strategy approval. The remaining owner-gated steps are operational deployment/collection and real Telegram validation. Working overnight provider bindings do not justify a subscription purchase. Many remaining behavioral/history/ZAD reviews can continue safely on this development branch; they are not falsely marked complete or all classified as approval blockers.
