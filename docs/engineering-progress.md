@@ -1,3 +1,9 @@
+## Workflow publication barrier continuation
+
+Cached-message sourcec9ea79413fd67b7d4c6f33a6e820ca9d0fa1a395 passed all12 checks; hosted full suite155 files /1335 TAP cases plus2 standalone assertions =1,337 Node tests. Current root/tool syntax, source metadata, watcher/research/delivery and Python recovery checks passed. Acceptance stays22/40(55%),18 open; exact requirements are now enumerated in engineering-acceptance-checks.json rather than inferred from code existence.
+
+Next batch repairs the bot workflow state publication barrier: no side effects after failed sync, no -X theirs state preference, and no successful return after failed staging/commit/exhausted push. Disposable local Git fixtures exercise both preserved conflict sides and nonconflicting merges, without real remotes or owner data. Hosted verification pending. All changes remain on the development branch; main, secrets, production data, Phase A and live messages/orders are untouched. Execution workspace remains unavailable; use exact GitHub source/CI for recovery.
+
 ## Cached-message and historical/capacity evidence continuation
 
 Historical identity continuity and displayed-size source4a7a99c2edd8316c8853a326ee0dae0fd23cd020 passed all12 exact-commit checks. NEW historical evidence must keep entry/exit security identity or explicit same-security terminal evidence; paper quote outcomes expose whether displayed size was actually sufficient. No source authenticity, survivor-free denominator, executed fill or profitability is inferred.
