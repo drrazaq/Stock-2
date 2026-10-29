@@ -1,3 +1,4 @@
+import {readNewsSource} from './news-source.mjs';
 import {saveAlertState,alertAvailable,deliverAlertOnce} from './alert-delivery-state.mjs';
 import {telegramFetch} from './telegram-delivery.mjs';
 // NEWS WATCH: every 15 minutes from before the US open to the close, reads the news for the stocks you HOLD and the stocks on
@@ -13,8 +14,8 @@ const FH = local(env.FH_BASE) || 'https://finnhub.io/api/v1', TG = local(env.TG_
 const sleep = (ms) => new Promise(r => setTimeout(r, FAST ? 0 : ms)), readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 if (!env.FINNHUB_KEY) { console.log('news watch: no FINNHUB_KEY'); process.exit(0); }
 const iso = (ms) => new Date(ms).toISOString().slice(0, 10), now = Date.now();
-let calls = 0;
-async function fh(p) { if (calls) await sleep(1100); calls++; try { const r = await fetch(FH + p + (p.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY)); return r.ok ? await r.json() : null; } catch (e) { return null; } }
+let calls = 0;const newsSources=[];
+async function fh(p) { if (calls) await sleep(1100); calls++; if(/^\/(?:company-news|news)\?/.test(p)){const r=await readNewsSource(fetch,FH+p+(p.includes('?')?'&':'?')+'token='+encodeURIComponent(env.FINNHUB_KEY));const {rows,...evidence}=r;newsSources.push({...evidence,source:p.split('&from=')[0]});console.log('news source: '+JSON.stringify(newsSources.at(-1)));return rows;} try { const r = await fetch(FH + p + (p.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY)); return r.ok ? await r.json() : null; } catch (e) { return null; } }
 // ---- whom to watch: what you hold (with your stop) and today's buy list
 const pos = readJson('data/my-positions.json', {}), sig = readJson('data/signals.json', {});
 const held = Object.keys(pos).filter(s => /^[A-Z.]{1,6}$/.test(s));
@@ -94,14 +95,14 @@ if (MS.day !== today) { MS.day = today; MS.sent = []; MS.heads = []; }
     const show = (why.includes('move') ? heads : t1).slice(0, 4); for (const x of show) MS.heads.push(x.id || x.headline);
     const DEC = 'RESEARCH CONTEXT ONLY: no new BUY and no instruction to override holding-specific stops, SELLs or ZAD exclusions. Review the current ACTIONS message and broker orders.';
     const lines = [(why.includes('move') ? 'MARKET SHOCK' : 'MARKET NEWS (heads-up)') + (dp !== null ? ': S&P 500 ' + (dp >= 0 ? '+' : '') + dp.toFixed(1) + '% today' : ''), DEC, '',
-      ...(show.length ? ['Why (headlines):', ...show.map(x => '- "' + String(x.headline).slice(0, 160) + '" (' + (x.source || '') + ')')] : ['No big headline found yet; the move may be flows, data or rumours.']), '',
+      ...(show.length ? ['Why (headlines):', ...show.map(x => '- "' + String(x.headline).slice(0, 160) + '" (' + (x.source || '') + ')')] : ['No verified headline available; source availability may be UNKNOWN. The cause of the move is unverified.']), '',
       r ? 'Stored market-day study summary (window not independently verified here), when the S&P 500 had ' + (k === 'bigDown' ? 'a big drop (1.5%+)' : 'a big rise (1.5%+)') + ' that day: the system’s tested buys made ' + pcx(r.newer.avg) + ' a trade on average (' + r.newer.n + ' unseen trades) vs ' + (allN !== null ? pcx(allN) : 'n/a') + ' on all days: ' + r.verdict + '.' : 'The market has not moved 1.5% yet; this is a heads-up on the news only.',
       'Research context, not a new approved signal. Not financial advice.'];
     const macroKeys=[...(why.includes('move')&&lvl?['macro-level|'+today+'|'+lvl]:[]),...show.map(x=>'macro-head|'+(x.id||x.headline))];
     const outcome=await deliver(lines.join('\n'),macroKeys);if(!outcome.ok){MS.sent=beforeSent;MS.heads=beforeHeads;if(unconfirmed(outcome)||outcome.deliveredParts>0){if(lvl)delivery.unknown['macro-level|'+today+'|'+lvl]={at:new Date(now).toISOString(),reason:outcome.reason};for(const x of show)delivery.unknown['macro-head|'+(x.id||x.headline)]={at:new Date(now).toISOString(),reason:outcome.reason};}}
     fs.appendFileSync('data/macro-log.jsonl', JSON.stringify({ at: new Date(now).toISOString(), dp, kind: k, why, deliveryConfirmed:outcome.ok, deliveryReason:outcome.reason, heads: show.map(x => x.headline) }) + '\n'); }
   MS.lastDp = dp; MS.at = new Date(now).toISOString(); fs.writeFileSync('data/macro-state.json', JSON.stringify(MS)); }
-if (!watch.length) { saveDelivery();if(deliveryFailures)process.exitCode=2;console.log('news watch: nothing to watch; market shock check done'); process.exit(process.exitCode||0); }
+if (!watch.length) { saveDelivery();if(deliveryFailures||newsSources.some(x=>!['OBSERVED','PARTIAL'].includes(x.status)))process.exitCode=2;console.log('news watch: nothing to watch; market shock check done'); process.exit(process.exitCode||0); }
 for (const s of watch) {   // 1. the stock's own news
   for (const x of fresh(await fh('/company-news?symbol=' + encodeURIComponent(s) + '&from=' + from + '&to=' + to))) { const t = x.headline + ' ' + (x.summary || ''), th = sameSentence(t, s); if (th.length) add(s, 'its own news', x, th, 'own'); } }
 for (const s of held) { const m = meta[s] || {};   // 2. competitors' news that touches your stock's business (held stocks only, to save calls)
@@ -131,5 +132,5 @@ if (alerts.length) { const by = new Map(); for (const a of alerts) { if (!by.has
   lines.push('', 'Decided by the system. News is a precaution, not a tested signal; your stop is the tested protection.');
   fs.appendFileSync('data/news-log.jsonl', dec.map(x => JSON.stringify({ at: new Date(now).toISOString(), decision: x.d, sym: x.sym }) + '\n').join(''));
   const outcome=await deliver(lines.join('\n'),deliveredKeys);if(outcome.ok)for(const key of deliveredKeys)seen[key]=now;else if(unconfirmed(outcome)||outcome.deliveredParts>0)for(const key of deliveredKeys)delivery.unknown[key]={at:new Date(now).toISOString(),reason:outcome.reason}; }
-fs.writeFileSync(SEEN,JSON.stringify(seen));saveDelivery();if(deliveryFailures)process.exitCode=2;
+fs.writeFileSync(SEEN,JSON.stringify(seen));saveDelivery();if(deliveryFailures||newsSources.some(x=>!['OBSERVED','PARTIAL'].includes(x.status)))process.exitCode=2;
 console.log('news watch: ' + watch.length + ' stocks (' + held.length + ' held), ' + calls + ' calls, ' + alerts.length + ' alerts');

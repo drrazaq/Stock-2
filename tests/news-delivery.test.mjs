@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
 const root=path.resolve(import.meta.dirname,'..');
-async function fixture(t,{stale=false,future=false,macro=false,unknown=false,premarket=false,unacknowledged=false,corrupt=false}={}){
+async function fixture(t,{stale=false,future=false,macro=false,unknown=false,premarket=false,unacknowledged=false,corrupt=false,sourceFailure=null}={}){
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'news-delivery-'));fs.mkdirSync(path.join(dir,'data'));
  const put=(name,value)=>fs.writeFileSync(path.join(dir,'data',name),JSON.stringify(value));
  put('my-positions.json',macro?{}:{AAA:{entry:10,stop:9}});
@@ -17,6 +17,7 @@ async function fixture(t,{stale=false,future=false,macro=false,unknown=false,pre
   if(u.pathname.includes('/sendMessage')){if(!premarket){const book=JSON.parse(fs.readFileSync(path.join(dir,'data/news-delivery.json'),'utf8'));assert.ok(Object.values(book.delivery).some(x=>x.status==='PENDING'));}messages.push(JSON.parse(raw).text);if(unknown&&!ack){res.destroy();return;}res.statusCode=ack||unacknowledged?200:403;body=ack?{ok:true,result:{message_id:messages.length}}:unacknowledged?{ok:true,result:{}}:{ok:false,error_code:403,description:'refused'};}
   else if(u.pathname.includes('/snapshots'))body={AAA:{latestTrade:{p:8,t:new Date(Date.now()-(stale?3600000:1000)).toISOString()},prevDailyBar:{c:8}}};
   else if(u.pathname==='/news')body=[];
+  else if(u.pathname==='/company-news'&&sourceFailure){res.statusCode=sourceFailure;body={error:'fixture source failure'};}
   else if(u.pathname==='/company-news')body=[{id:1,headline:'AAA offering',datetime:Math.floor(Date.now()/1000)+(future?3600:-30)}];
   else if(u.pathname==='/quote')body={c:8,dp:u.searchParams.get('symbol')==='SPY'?(macro?-3:0):-20,t:Math.floor(Date.now()/1000)-30-(stale?3600:0)};
   res.setHeader('Content-Type','application/json');res.end(JSON.stringify(body));});
@@ -59,3 +60,5 @@ test('news workflow saves state after failure and cannot conceal exhausted publi
  const workflow=fs.readFileSync(path.join(root,'.github/workflows/news.yml'),'utf8');
  assert.match(workflow,/if: always\(\) && hashFiles/);assert.doesNotMatch(workflow,/rebase -X theirs/);assert.match(workflow,/\[ "\$ok" = 1 \]/);
 });
+
+for(const status of [429,503])test('news fetch failure '+status+' is unavailable without delivery/seen credit',async t=>{const f=await fixture(t,{sourceFailure:status});f.ack();const out=await f.run({allowDeliveryFailure:true});assert.match(out,status===429?/RATE_LIMITED/:/HTTP_ERROR/);assert.equal(f.messages.length,0);assert.deepEqual(f.read('news-seen.json'),{});});

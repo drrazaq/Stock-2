@@ -18,6 +18,8 @@ export const DISCOVERY_SOURCES=Object.freeze([
  {lane:'MARKET_DISLOCATION',path:'data/comeback-today.json',hours:72}
 ]);
 function rowsOf(lane,doc) {
+ const fields={SEC_EVENT:'events',INSIDER_CLUSTER:'recent',EARNINGS_SURPRISE:'reports',INDUSTRY_RIPPLE:'todayMovers',SUPPLY_SHIFT:'now',TECHNICAL_BUILDUP:'buys'};
+ if(fields[lane]&&!Array.isArray(doc[fields[lane]]))throw Error('missing or invalid rows');
  switch(lane) {
   case 'SEC_EVENT':return doc.events||[];
   case 'INSIDER_CLUSTER':return (doc.recent||[]).filter(r=>object(r)&&Number.isInteger(r.n)&&r.n>=2);
@@ -51,7 +53,7 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
     }
     if(!parsedObjects&&preRejected){sources.push({...source,status:'MALFORMED',rows:0,inputRows,rejected:preRejected,malformedLines,truncated:inputTruncated,rejectionReasons});continue;}
     rows.sort((a,b)=>b.t-a.t);
-   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');generated=doc.generatedAt||doc.updated;rows=rowsOf(source.lane,doc);}
+   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt||doc.updated;rows=rowsOf(source.lane,doc);}
    if(!Array.isArray(rows))throw Error('invalid rows');
    if(source.lane!=='NEWS_CATALYST'&&!clock(generated)){sources.push({...source,status:'MISSING_OUTPUT_TIMESTAMP',rows:rows.length});continue;}
    if(generated&&(Date.parse(generated)>at||at-Date.parse(generated)>source.hours*3600000)){sources.push({...source,status:Date.parse(generated)>at?'FUTURE':'STALE',rows:rows.length});continue;}
@@ -65,6 +67,7 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
     const rawPublic=newsTime!==null?new Date(newsTime).toISOString():source.lane==='SEC_EVENT'?row.p:null;
     // Generated output time is conservative availability of DERIVED analysis;
     // it is never passed off as the original earnings/insider publication time.
+    if(source.lane==='SEC_EVENT'&&row.p!==undefined&&!clock(row.p)){rejected++;continue;}
     const primary=clock(rawPublic),asOf=primary?rawPublic:generated;
     if(!clock(asOf)||Date.parse(asOf)>at||at-Date.parse(asOf)>source.hours*3600000){rejected++;continue;}
     const eventKey=[source.path,sym,row.sourceId||row.id||row.url||row.rule||'',row.p||row.d||row.filed||row.signalDay||'',row.h||row.f||row.chain||''];

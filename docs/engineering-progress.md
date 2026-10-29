@@ -1,3 +1,13 @@
+## Catalyst source reconstruction — 29 October 2026
+
+Base `3c4e432f42b4e3c1295f3457c415715941be54f6`. Old workspace was empty; unpublished `tests/catalyst-source-errors.test.mjs` and its implementation were not recovered. This file now contains 28 newly reconstructed regressions, not the original tests. Published handoff predates the lost changes. A reconstructed 55-test focused group passes; this is not a rerun of the lost original tests.
+
+Local full suite: 171 Node files, 1492 reported cases plus two standalone scripts, no failed files; 27 Python tests; 55 reconstructed focused cases. Static: 238 modules, 86 workflow YAML documents, 334 embedded shell blocks and Python syntax pass. Initial sandbox localhost EPERM failures are retained separately; permitted full rerun passed. Exact hosted CI is pending publication.
+
+Missing source arrays/error envelopes no longer look like valid empty observations; invalid explicit SEC publication clocks cannot fall back to output generation time. SEC recent/archive column schemas are checked before structural coverage is credited; failed archive responses leave coverage incomplete and permit retry. Existing cached coverage is not independently authenticated. Full news-watch, source authenticity, revision identity and all-source coverage remain unfinished.
+
+Acceptance stays **24/40; 16 remaining**. CATALYST-03 remains OPEN. ZAD-04 closure preserved. No live providers, messages, trades, secrets, main merge or deployment. Evidence: docs/validation/catalyst-source-reconstruction.json.
+
 ## Acceptance closure verified —29October2026
 
 **24/40 (60%);16 remaining.** Source0d89349dcfec8577623e033bbcf9a5f91db85f1e passed all13 exact-commit checks. Node170files /1462TAP +2standalone =1464tests; full push and PR suites, safety, watcher fixtures, delivery/research/source-preservation and Python recovery compatibility checks passed. Two browser script blocks also parsed locally. New route group16/16; deliberate core-gate removal caught11/15cases. Initial local full failures remain documented rather than rewritten as success.

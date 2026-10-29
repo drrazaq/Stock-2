@@ -1,3 +1,4 @@
+import {validSecFilings,validSecArchiveList} from './sec-filing-schema.mjs';
 import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
 const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // EVENT-TO-TRADE EVIDENCE ENGINE. Read-only research; never places an order.
@@ -86,7 +87,7 @@ const save = () => fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(cache)))
 
 if (MODE === 'fetch') {
   const t0 = Date.now(), MAXMS = +(env.EV_MINUTES || 45) * 60000, MAXC = +(env.EV_CALLS || 1500);
-  let calls = 0, note = '';
+  let calls = 0, note = '', sourceFailures=0;
   async function sec(url) {
     if (note) return null; await sleep(FAST ? 0 : 150); calls++;   // SEC fair-use limit: 10 requests a second
     const go = () => fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } });
@@ -118,10 +119,10 @@ if (MODE === 'fetch') {
   let done = 0;
   for (const sym of order) { if (calls >= MAXC || Date.now() - t0 > MAXMS || note) break;
     const S = cache.syms[sym] || (cache.syms[sym] = { cik: cache.ciks[sym][0], ev: [] }); if (S.t === iso(Date.now())) continue;
-    const j = await sec(SEC_DATA + '/submissions/CIK' + String(S.cik).padStart(10, '0') + '.json'); if (!j || !j.filings) continue;
+    const j = await sec(SEC_DATA + '/submissions/CIK' + String(S.cik).padStart(10, '0') + '.json'); if (!j || !validSecFilings(j.filings?.recent) || !validSecArchiveList(j.filings?.files)) { sourceFailures++; S.old=false; continue; }
     S.sic = j.sic || S.sic || null; S.name = String(j.name || '').slice(0, 60); addRows(S, j.filings.recent || {});
-    if (!S.old) { let ok = true; for (const fl of j.filings.files || []) { if (String(fl.filingTo || '') < cut) continue; const o = await sec(SEC_DATA + '/submissions/' + fl.name); if (o) addRows(S, o); else ok = false; } S.old = ok; }
-    S.t = iso(Date.now()); done++; }
+    if (!S.old) { let ok = true; for (const fl of j.filings.files || []) { if (String(fl.filingTo || '') < cut) continue; const o = await sec(SEC_DATA + '/submissions/' + fl.name); if (validSecFilings(o)) addRows(S, o); else {ok = false;sourceFailures++;} } S.old = ok; }
+    if (S.old) S.t = iso(Date.now()); done++; }
   // 3. FDA approvals for drug makers (openFDA, no key: 1,000 requests a day), each company weekly
   let fda = 0; const STOP = new Set(['AMERICAN', 'UNITED', 'FIRST', 'GLOBAL', 'INTERNATIONAL', 'GENERAL', 'NATIONAL', 'PACIFIC', 'NEW', 'BIO', 'PHARMA', 'THE', 'ADVANCED', 'APPLIED']);
   for (const [sym, S] of Object.entries(cache.syms)) { if (!/^283[3-6]$/.test(String(S.sic || '')) || fda >= +(env.FDA_CALLS || 150) || Date.now() - t0 > MAXMS) continue;
@@ -147,7 +148,7 @@ if (MODE === 'fetch') {
   fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), events: recent }, null, 1));
   save();
   const nev = Object.values(cache.syms).reduce((a, S) => a + S.ev.length, 0);
-  secStatus(!note, note || 'ok: ' + calls + ' SEC calls');
+  secStatus(!note&&!sourceFailures, note || (sourceFailures?'UNKNOWN: '+sourceFailures+' failed or malformed SEC sources':'ok: '+calls+' SEC calls'));
   console.log('events: ' + Object.keys(cache.syms).length + ' stocks, ' + nev + ' events stored | today ' + done + ' stocks refreshed, ' + calls + ' SEC calls, ' + fda + ' FDA calls | ' + recent.length + ' events in the last 10 days' + (note ? ' | ' + note : '') + ' | still never fetched: ' + uni.filter(s => !(cache.syms[s] || {}).t).length);
   process.exit(0);
 }
