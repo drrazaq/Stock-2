@@ -50,3 +50,12 @@ test('closed identity intervals require explicit same-security delisting termina
 test('malformed trade IDs cannot create independent historical sample identities',()=>{
  const x=evidence();x.trades[0].id={arbitrary:'object'};assert.ok(auditHistoricalEvidence(x).errors.some(e=>e.reason==='MISSING_OR_DUPLICATE_TRADE_ID'));
 });
+test('malformed universe rows produce explicit blockers instead of crashing or hiding beside a valid member',()=>{
+ for(const row of [null,[],{},'bad',{securityId:'security',knownAt:old,validFrom:old,validTo:'2020-01-01T00:00:00Z',source}]){
+  const x=evidence();x.universe.push(row);const r=auditHistoricalEvidence(x);assert.equal(r.status,'INELIGIBLE_FOR_PERFORMANCE_CLAIM');assert.ok(r.errors.some(e=>e.reason==='MALFORMED_POINT_IN_TIME_UNIVERSE_RECORD'));
+ }
+});
+test('a pre-holdout decision cannot be relabelled holdout merely by entering after the boundary',()=>{
+ const x=evidence();x.trades[0].decisionAt='2023-12-29T14:00:00Z';assert.ok(auditHistoricalEvidence(x).errors.some(e=>e.reason==='HOLDOUT_OUTSIDE_REGISTERED_BOUNDARY'));
+ x.trades[0].decisionAt='2024-01-01T00:00:00Z';assert.equal(auditHistoricalEvidence(x).status,'STRUCTURE_VALID_ONLY');
+});

@@ -3184,11 +3184,108 @@
     }
   },
   "rebalanceOwnerGateMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_FIX",
     "defect": "ADD instructions used no current affirmative owner ZAD gate and could substitute an old recorded entry for an available finite recent price",
     "repair": "Current owner yes plus actual finite recent price required; unsupported allocation disclosed, no owner-data writes",
     "localTests": 3,
     "remaining": "All other recommendation routes and actual point-in-time price/source integrity remain open",
-    "noApprovalOrDeployment": true
+    "noApprovalOrDeployment": true,
+    "verifiedSha": "194619012541541a011e620e266f8833a697c00c",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876695481/job/123457370157"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876703892/job/123457249774"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876703740/job/123457249684"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876703740/job/123457249359"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876703740/job/123457249137"
+      },
+      {
+        "name": "test",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876703644/job/123457248878"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876703688/job/123457248776"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876703624/job/123457248316"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876695527/job/123457221111"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876695574/job/123457220626"
+      },
+      {
+        "name": "test",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876695477/job/123457220534"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876695481/job/123457220137"
+      },
+      {
+        "name": "safety",
+        "sha": "194619012541541a011e620e266f8833a697c00c",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40876695481/job/123457219631"
+      }
+    ],
+    "nodeTests": {
+      "files": 161,
+      "tap": 1387,
+      "standalone": 2,
+      "total": 1389
+    }
+  },
+  "historicalHoldoutAdmissionMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "revision": "ENTRY_EXIT_HOLDOUT_IDENTITY_V3",
+    "newEvidenceOnly": true,
+    "malformedUniverse": "Explicit blocking errors, no crash or silently passing beside a valid member",
+    "holdoutDecisionBoundary": "Decision and entry must both lie at/after registered holdout start",
+    "localHistoricalTests": 10,
+    "actualIndependentHistoricalUniverse": "NOT_VERIFIED",
+    "frozenResults": "UNCHANGED"
   }
 }

@@ -16,6 +16,8 @@ export function auditHistoricalEvidence({protocol,trades,identities,universe,cut
  if(end===null||reg===null||train===null||hold===null||reg>hold||train>=hold||holdEnd===null||holdEnd<hold||holdEnd>end)reject('INVALID_OR_UNREGISTERED_HOLDOUT_BOUNDARY');
  if(typeof p.parameterHash!=='string'||!/^[a-f0-9]{64}$/.test(p.parameterHash)||p.parameterHash!==p.registeredParameterHash||p.selectedUsingHoldout!==false)reject('PARAMETER_SELECTION_OR_REGISTRATION_UNVERIFIED');
  if(p.universeBasis!=='POINT_IN_TIME'||!Array.isArray(universe)||!universe.length)reject('SURVIVORSHIP_DENOMINATOR_UNVERIFIED');
+ const validMembership=u=>u&&typeof u==='object'&&!Array.isArray(u)&&typeof u.securityId==='string'&&u.securityId.length>0&&timestamp(u.knownAt)!==null&&timestamp(u.validFrom)!==null&&(u.validTo===null||timestamp(u.validTo)!==null&&timestamp(u.validTo)>timestamp(u.validFrom))&&source(u.source);
+ for(const u of Array.isArray(universe)?universe:[])if(!validMembership(u))reject('MALFORMED_POINT_IN_TIME_UNIVERSE_RECORD');
  if(!Array.isArray(trades)||!trades.length)reject('MISSING_TRADES');
  const ids=new Set();
  for(const t of Array.isArray(trades)?trades:[]){
@@ -24,7 +26,7 @@ export function auditHistoricalEvidence({protocol,trades,identities,universe,cut
   if(entry===null||exit===null||decision===null||decision>entry||exit<entry||end===null||exit>end){reject('INVALID_OR_UNRESOLVED_TRADE_CLOCK',id);continue;}
   if(t.split==='train'&&(train===null||decision>train||entry>train))reject('TRAINING_SAMPLE_AFTER_TRAIN_END',id);
   if(t.split==='train'&&(hold===null||exit>=hold))reject('TRAINING_OUTCOME_OVERLAPS_HOLDOUT',id);
-  else if(t.split==='holdout'&&(hold===null||entry<hold||holdEnd===null||exit>holdEnd))reject('HOLDOUT_OUTSIDE_REGISTERED_BOUNDARY',id);
+  else if(t.split==='holdout'&&(hold===null||decision<hold||entry<hold||holdEnd===null||exit>holdEnd))reject('HOLDOUT_OUTSIDE_REGISTERED_BOUNDARY',id);
   else if(!['train','holdout'].includes(t.split))reject('UNDECLARED_SAMPLE_SPLIT',id);
   const identity=identityAt(t.symbol,t.decisionAt,identities);
   if(identity.status!=='DOCUMENTED_MAPPING'||identity.securityId!==t.securityId)reject(identity.reason||'SECURITY_ID_MISMATCH',id);
@@ -36,13 +38,13 @@ export function auditHistoricalEvidence({protocol,trades,identities,universe,cut
    const documentedTerminal=t.delisted===true&&t.terminalSecurityId===t.securityId&&source(t.terminalSource)&&Number.isFinite(t.exitPrice)&&t.exitPrice>=0&&timestamp(t.terminalKnownAt)!==null&&timestamp(t.terminalKnownAt)<=end;
    if(!documentedTerminal)reject('EXIT_OR_TERMINAL_SECURITY_IDENTITY_UNVERIFIED',id);
   }
-  const member=(Array.isArray(universe)?universe:[]).some(u=>u.securityId===t.securityId&&timestamp(u.knownAt)!==null&&timestamp(u.knownAt)<=decision&&timestamp(u.validFrom)!==null&&timestamp(u.validFrom)<=decision&&(u.validTo===null||timestamp(u.validTo)!==null&&decision<timestamp(u.validTo))&&source(u.source));
+  const member=(Array.isArray(universe)?universe:[]).some(u=>validMembership(u)&&u.securityId===t.securityId&&timestamp(u.knownAt)<=decision&&timestamp(u.validFrom)<=decision&&(u.validTo===null||decision<timestamp(u.validTo)));
   if(!member)reject('NOT_IN_DOCUMENTED_POINT_IN_TIME_UNIVERSE',id);
   if(t.delisted===true&&(!source(t.terminalSource)||!Number.isFinite(t.exitPrice)||t.exitPrice<0||timestamp(t.terminalKnownAt)===null||timestamp(t.terminalKnownAt)>end))reject('DELISTING_TERMINAL_VALUE_UNVERIFIED',id);
   if(!['raw','split_adjusted','total_return'].includes(t.priceBasis)||t.entryPriceBasis!==t.priceBasis||t.exitPriceBasis!==t.priceBasis)reject('CORPORATE_ACTION_PRICE_BASIS_MISMATCH',id);
   if(!Number.isFinite(t.entryPrice)||t.entryPrice<=0||!Number.isFinite(t.exitPrice)||t.exitPrice<0||!Number.isFinite(t.costs)||t.costs<0)reject('INVALID_PRICE_OR_COST_EVIDENCE',id);
  }
- return {structureRevision:'ENTRY_EXIT_IDENTITY_V2',status:errors.length?'INELIGIBLE_FOR_PERFORMANCE_CLAIM':'STRUCTURE_VALID_ONLY',errors,trades:Array.isArray(trades)?trades.length:0,approvedBuy:false,
+ return {structureRevision:'ENTRY_EXIT_HOLDOUT_IDENTITY_V3',status:errors.length?'INELIGIBLE_FOR_PERFORMANCE_CLAIM':'STRUCTURE_VALID_ONLY',errors,trades:Array.isArray(trades)?trades.length:0,approvedBuy:false,
   limitation:'No source-authenticity, universe-completeness or profitability certification. Missing delisting outcomes are unresolved; neither dropped winners/losers nor automatic -100% imputations are permitted.'};
 }
 export function auditFrozenDocument(doc){

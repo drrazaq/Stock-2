@@ -1,0 +1,5 @@
+# New-evidence historical admission revision V3
+
+`ENTRY_EXIT_HOLDOUT_IDENTITY_V3` adds two fail-closed checks for newly submitted evidence. Every point-in-time membership row must have well-shaped security ID, source URL and valid known/effective interval; null or malformed rows produce explicit errors rather than throwing or being ignored beside an otherwise valid member. A trade labelled holdout must have both decision and entry at or after the registered holdout start. Entry after the boundary cannot relabel a pre-boundary decision as an untouched holdout observation.
+
+Existing same-security ticker-change, delisting terminal-value, price-basis and chronological checks remain. No study is replayed, no original firstRun/correctedRun or rejected result is changed, and no historical profit is recalculated. This is a stricter structure-admission revision, not source authentication, a historical universe, delisting research or profitability certification. All valid outputs remain STRUCTURE_VALID_ONLY with approvedBuy=false. Ten historical tests pass locally; exact hosted CI is required for published source.

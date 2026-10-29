@@ -1,3 +1,9 @@
+## Rebalancing owner gate verified; historical admission continuation — 29 October 2026
+
+Source194619012541541a011e620e266f8833a697c00c passed all13 exact-commit checks; hosted Node161files/1389tests. Current owner ZAD and available finite recent price are now required before rebalancing ADD. No owner holdings, marks or production behavior was changed.
+
+Next historical admission defects repaired for NEW evidence only: malformed/null point-in-time universe records previously could crash the report (or pass hidden beside a valid member), and a decision from before holdout could be labelled holdout merely because entry came later. Explicit blocking errors and decision+entry boundary checks now apply under revision ENTRY_EXIT_HOLDOUT_IDENTITY_V3. Ten local historical tests pass, plus7 hybrid session and8 quote-evidence tests; hosted full CI pending. No frozen study or strategy verdict rerun/overwrite. Actual independent historical source authentication, delisted universe completeness and performance reproduction remain OPEN. Acceptance22/40,18 remaining;prospective cases0.
+
 ## Offline hybrid session verified; rebalancing owner-gate repair — 29 October 2026
 
 Sourcef03e48c514f15d6bc74c5d56ba8355ac25051639 passed all12 exact-commit checks. Hosted Node160files/1386tests. Full330-minute hybrid admission is verified with fixtures only; no live collector/CLI, encrypted checkpoint implementation, production installation or Phase A approval is implied.
