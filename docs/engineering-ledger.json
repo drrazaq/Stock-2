@@ -752,7 +752,7 @@
     "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "tests": "9 targeted tests passed",
     "fix": "Reject out-of-range news timestamp per row instead of dropping valid source records; reject invalid cycle cutoff before mutating state",
-    "simulation": "541 cycles 04:00\u201313:00 NY including half-day closing boundary, all real adapters, stale news, feed interruptions, duplicate events",
+    "simulation": "541 cycles 04:00–13:00 NY including half-day closing boundary, all real adapters, stale news, feed interruptions, duplicate events",
     "realWorldEntitlementEvidence": false,
     "testsPassed": 1260,
     "failures": 0,
@@ -1113,8 +1113,8 @@
   "phaseAFinalPreflight": {
     "status": "KEY_VERIFIED_DATED_AUTHORIZATION_PENDING",
     "date": "2026-10-29",
-    "candidateSession": "2026-10-30 04:00\u201309:30 America/New_York (EDT)",
-    "candidateUTC": "08:00\u201313:30",
+    "candidateSession": "2026-10-30 04:00–09:30 America/New_York (EDT)",
+    "candidateUTC": "08:00–13:30",
     "sourcePin": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
     "encryptionBinding": "Actual GitHub challenge encryption/same-key roundtrip PASSED; owner independent decryption PENDING",
     "ownerRecoveryCopy": "VERIFIED_ACTUAL_GITHUB_ARTIFACT_ON_IPAD_ISH",
@@ -1676,5 +1676,18 @@
       }
     ],
     "status": "PUBLISHED_ALL12_CHECKS_PASSED_DATED_APPROVAL_PENDING"
+  },
+  "researchEvidenceAdmissionMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "base": "0af32e1fc26926aab2733a36c7dad9311177ee19",
+    "localExecution": "UNAVAILABLE: managed execution environment disconnected before edits",
+    "changes": [
+      "Paper event-ID deduplication; ambiguous metadata and conflicting quote clocks rejected",
+      "Paper quotes must match explicit securityId across entry/control/exit",
+      "Observed +5/+10/+20/+25 crossing funnel; retrograde cycles and ratio overflow rejected"
+    ],
+    "prospectiveCases": 0,
+    "acceptanceCredit": 0,
+    "phaseASourceUnchanged": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669"
   }
 }

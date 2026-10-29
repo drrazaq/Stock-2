@@ -4,7 +4,7 @@ import {evaluatePaperEvidence} from '../discovery-paper.mjs';
 const t=m=>new Date(Date.parse('2026-10-29T14:00:00Z')+m*60000).toISOString();
 const event={symbol:'AAA',eventId:'fixture-1',observedAt:t(0)};
 const meta=['AAA','BBB'].map((symbol,i)=>({symbol,securityId:'fixture-security-'+i,industry:'fixture-sector',asOf:t(-1)}));
-const q=(symbol,m,bid,ask,extra={})=>({symbol,at:t(m),bid,ask,quoteAsOf:t(m),dollarVolume:2e6,dollarVolumeAsOf:t(m),...extra});
+const q=(symbol,m,bid,ask,extra={})=>({symbol,securityId:'fixture-security-'+(symbol==='AAA'?0:1),at:t(m),bid,ask,quoteAsOf:t(m),dollarVolume:2e6,dollarVolumeAsOf:t(m),...extra});
 const prices=[q('AAA',1,9.99,10.01),q('BBB',1,9.99,10.01),q('AAA',15,8.99,9.01),q('AAA',31,10.99,11.01),q('BBB',31,10.19,10.21)];
 test('matched paper uses next observed ask, actual bid, whole shares, two fees and stressed slippage',()=>{
  const r=evaluatePaperEvidence([event],prices,meta,{cutoff:t(32)}),c=r.cases[0];assert.equal(c.status,'MATCHED_PAPER_RESOLVED');assert.equal(c.candidate.quantity,99);
@@ -24,4 +24,25 @@ test('future discovery membership cannot change an earlier matched-control choic
 });
 test('a wide exit remains a loss instead of being filtered away',()=>{
  const quotes=prices.map(x=>x.symbol==='AAA'&&x.at===t(31)?{...x,bid:8,ask:11}:x);const c=evaluatePaperEvidence([event],quotes,meta,{cutoff:t(32)}).cases[0];assert.ok(c.candidate.netAfterSpreadAndFees<0);assert.equal(c.candidate.exitBid,8);
+});
+
+test('duplicate discoveries cannot inflate resolved paper sample counts',()=>{
+ const r=evaluatePaperEvidence([event,{...event},null],prices,meta,{cutoff:t(32)});
+ assert.equal(r.counts.resolved,1);assert.equal(r.cases[1].reason,'DUPLICATE_DISCOVERY_EVENT');assert.equal(r.cases[2].reason,'INVALID_DISCOVERY_EVENT');
+});
+test('ticker ambiguity and conflicting quote clocks cannot select favorable paper prices',()=>{
+ const ambiguous=meta.concat({...meta[0],securityId:'other-share-class'});
+ assert.equal(evaluatePaperEvidence([event],prices,ambiguous,{cutoff:t(32)}).cases[0].reason,'NO_POINT_IN_TIME_SECURITY_METADATA');
+ const conflicted=prices.concat({...prices[0],ask:9.5});
+ const r=evaluatePaperEvidence([event],conflicted,meta,{cutoff:t(32)});
+ assert.equal(r.counts.resolved,0);assert.equal(r.quoteIntegrity.conflictingClocks,1);
+ const identical=evaluatePaperEvidence([event],prices.concat({...prices[0]}),meta,{cutoff:t(32)});
+ assert.equal(identical.counts.resolved,1);assert.equal(identical.quoteIntegrity.duplicates,1);
+});
+test('quotes from an unverified or reused security identity never become entries or exits',()=>{
+ assert.equal(evaluatePaperEvidence([event],prices.map(({securityId,...q})=>q),meta,{cutoff:t(32)}).counts.resolved,0);
+ const wrongExit=prices.map(q=>q.symbol==='AAA'&&q.at===t(31)?{...q,securityId:'reused-ticker'}:q);
+ assert.equal(evaluatePaperEvidence([event],wrongExit,meta,{cutoff:t(32)}).cases[0].status,'UNRESOLVED');
+ const newer=meta.concat({...meta[0],securityId:'replacement-security',asOf:t(0)});
+ assert.equal(evaluatePaperEvidence([event],prices,newer,{cutoff:t(32)}).counts.resolved,0);
 });

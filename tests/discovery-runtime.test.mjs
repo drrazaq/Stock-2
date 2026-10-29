@@ -72,3 +72,18 @@ test('all adapters survive a 04:00–13:00 half-day fixture with outages, stale 
  assert.equal(r.lanes.every(x=>x.beforeObservedPlus10===1),true);assert.ok(r.funnel.duplicates>4000);
  assert.ok(r.detections.every(x=>x.status==='NOT AN APPROVED BUY'));
 });
+
+test('crossing funnel reports +5,+10,+20,+25 without backfilling unknown detection prices',()=>{
+ const state=discoveryState();updateDiscovery(state,{observations:[live],rows:[quote(cutoff)],cutoff});
+ for(const [m,price]of [[1,10.6],[2,11.1],[3,12.1],[4,12.6]]){const at=new Date(Date.parse(cutoff)+m*60000).toISOString();updateDiscovery(state,{observations:[],rows:[quote(at,price)],cutoff:at});}
+ const r=discoveryReport(state,{cutoff:'2026-10-29T14:04:00Z',sources:[]}),thresholds=r.lanes[0].thresholds;
+ assert.deepEqual(thresholds.map(x=>x.percent),[5,10,20,25]);assert.deepEqual(thresholds.map(x=>x.detectionsBeforeCrossing),[1,1,1,1]);assert.deepEqual(thresholds.map(x=>x.leadMinutes),[[1],[2],[3],[4]]);
+});
+test('out-of-order cycles and overflowed relative prices cannot fabricate an early lead',()=>{
+ const state=discoveryState(),later='2026-10-29T14:10:00Z';
+ updateDiscovery(state,{observations:[],rows:[quote(later,12.6)],cutoff:later});
+ updateDiscovery(state,{observations:[live],rows:[quote(cutoff)],cutoff});
+ assert.equal(Object.keys(state.observations).length,0);assert.equal(state.rejectedOutOfOrderCycles,1);
+ const invalid=discoveryState();updateDiscovery(invalid,{observations:[live],rows:[{...quote(cutoff),price:1e308,prevC:1e-308}],cutoff});
+ assert.equal(Object.values(invalid.observations)[0].priceAtDetection,null);assert.deepEqual(invalid.crossings,{});
+});

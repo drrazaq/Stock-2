@@ -1,3 +1,7 @@
+## Current research-evidence engineering batch — 29 October 2026
+
+Continued from0af32e1. Execution workspace became unavailable before this batch was edited; changes are published explicitly through GitHub, and verification must come from hosted CI. No local test execution is claimed. Added paper event/quote/security-identity admission regressions and +5/+10/+20/+25 observed crossing metrics. Source publication is initially UNVERIFIED pending CI; no acceptance credit is taken (21/40). No prospective cases or profitability claims exist. Phase A remains uninstalled/unapproved, pinned to7dd702d and exact workflow hash94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa. New development intentionally differs from that old pin; never substitute the development runtime into Phase A. Preserve all original data/frozen research and the independently verified research-key status.
+
 ## Current Phase A checkpoint — 29 October 2026
 
 **Research-key recovery VERIFIED** by owner independent offline decryption of actual GitHub artifact12879798326 on iPad/iSH. Authentication, exact marker, one file and source7dd702d matched; no secret disclosed. This closes the key prerequisite only. **Phase A NOT AUTHORIZED / NOT INSTALLED / NOT DISPATCHED.** No proof rerun, main merge/change, secret change, provider request, Telegram or order was performed.

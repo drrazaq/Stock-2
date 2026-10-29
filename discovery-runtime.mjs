@@ -71,13 +71,15 @@ export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
  for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;}
  const suppress=(o,reason)=>{const key=hash([o?.symbol,o?.lane,o?.sourceId,reason]);if(!state.suppressed[key]&&Object.keys(state.suppressed).length<5000)state.suppressed[key]={symbol:o?.symbol||null,lane:o?.lane||null,sourceId:o?.sourceId||null,reason,firstObservedAt:cutoff};};
  const now=Date.parse(cutoff),fresh=new Map();
+ if(clock(state.lastCycleAt)&&now<Date.parse(state.lastCycleAt)){state.rejectedOutOfOrderCycles=(state.rejectedOutOfOrderCycles||0)+1;return [];}
+ state.lastCycleAt=cutoff;
  state.priceCoverage||={cycles:0,noFreshPriceCycles:0,quoteAttempts:0,freshQuoteAttempts:0};state.priceCoverage.cycles++;state.priceCoverage.quoteAttempts+=rows.length;
  for(const r of rows){
   if(!symbol(r.sym)||!Number.isFinite(r.price)||r.price<=0||!Number.isFinite(r.prevC)||r.prevC<=0||!Number.isFinite(r.t)||!isFreshPriceAge(r.t>0?(now-r.t)/60000:null))continue;
-  const change=r.price/r.prevC-1;fresh.set(r.sym,{price:r.price,change,bid:r.bid??null,ask:r.ask??null,quoteAgeSec:Number.isFinite(r.qt)&&r.qt>0?(now-r.qt)/1000:null,priceAsOf:new Date(r.t).toISOString()});
+  const change=r.price/r.prevC-1;if(!Number.isFinite(change))continue;fresh.set(r.sym,{price:r.price,change,bid:r.bid??null,ask:r.ask??null,quoteAgeSec:Number.isFinite(r.qt)&&r.qt>0?(now-r.qt)/1000:null,priceAsOf:new Date(r.t).toISOString()});
   if(!state.firstFresh[r.sym])state.firstFresh[r.sym]={at:cutoff,change};
   const crossings=state.crossings[r.sym]||(state.crossings[r.sym]={});
-  for(const level of [5,10,15])if(change>=level/100&&!crossings[level])crossings[level]={at:cutoff,change,sourceStates:sources.map(s=>({lane:s.lane,status:s.status}))};
+  for(const level of [5,10,15,20,25])if(change>=level/100&&!crossings[level])crossings[level]={at:cutoff,change,sourceStates:sources.map(s=>({lane:s.lane,status:s.status}))};
  }
  state.priceCoverage.freshQuoteAttempts+=fresh.size;if(!fresh.size)state.priceCoverage.noFreshPriceCycles++;
  // Follow only actually observed fresh prices. Gaps remain gaps; this is
@@ -107,7 +109,8 @@ export function discoveryReport(state,{cutoff,sources,completeSession=false}) {
  const lanes=LANES.map(l=>{
   const a=records.filter(x=>x.lane===l.id),bySymbol=new Map();for(const x of a)if(!bySymbol.has(x.symbol)||x.observedAt<bySymbol.get(x.symbol).observedAt)bySymbol.set(x.symbol,x);
   const first=[...bySymbol.values()],before=first.filter(x=>x.changeAtDetection!==null&&x.changeAtDetection<.05&&state.crossings[x.symbol]?.[10]&&Date.parse(x.observedAt)<Date.parse(state.crossings[x.symbol][10].at));
-  return {lane:l.id,events:a.length,symbols:first.length,pricedAtDetection:first.filter(x=>x.priceAtDetection!==null).length,
+  const thresholds=[5,10,20,25].map(percent=>{const crossing=first.filter(x=>state.crossings[x.symbol]?.[percent]),before=crossing.filter(x=>x.changeAtDetection!==null&&x.changeAtDetection<percent/100&&Date.parse(x.observedAt)<Date.parse(state.crossings[x.symbol][percent].at));return {percent,observedCrossings:crossing.length,detectionsBeforeCrossing:before.length,earlyBelowPlus5BeforeCrossing:before.filter(x=>x.changeAtDetection<.05).length,leadMinutes:before.map(x=>(Date.parse(state.crossings[x.symbol][percent].at)-Date.parse(x.observedAt))/60000),noObservedCrossing:first.length-crossing.length};});
+  return {lane:l.id,events:a.length,thresholds,symbols:first.length,pricedAtDetection:first.filter(x=>x.priceAtDetection!==null).length,
    beforeObservedPlus10:before.length,leadMinutes:before.map(x=>+( (Date.parse(state.crossings[x.symbol][10].at)-Date.parse(x.observedAt))/60000).toFixed(3)),
    alreadyPlus5AtDetection:first.filter(x=>x.changeAtDetection!==null&&x.changeAtDetection>=.05).length,
    noObservedPlus10Yet:first.filter(x=>!state.crossings[x.symbol]?.[10]).length};
@@ -120,5 +123,6 @@ export function discoveryReport(state,{cutoff,sources,completeSession=false}) {
  return {...board,sources,lanes,completeSession,funnel:state.funnel||null,priceCoverage:state.priceCoverage||null,sourceReliability:state.sourceReliability||{},suppressionReasons:Object.values(state.suppressed||{}),
   detectionCount:records.length,displayedDetections:Math.min(records.length,1000),detections:records.slice(0,1000),missedCount:missed.length,missedCandidates:missed.slice(0,100),dedupScope:'CURRENT_SESSION',
   capacityDroppedAttempts:state.capacityDroppedAttempts||0,observedPlus10Symbols:Object.keys(state.crossings).filter(s=>state.crossings[s][10]).length,
+  rejectedOutOfOrderCycles:state.rejectedOutOfOrderCycles||0,identityScope:'CURRENT_SESSION_SYMBOL; independent security identity remains unverified',
   measurementNote:'Prospective first-ingestion vs first OBSERVED fresh +10% crossing, requiring detection below +5%. Unknown/stale prices earn no lead credit. No observed crossing is unresolved, not a false-positive verdict. Lane breadth is correlated evidence, not independent confirmation, profitability or BUY eligibility.'};
 }
