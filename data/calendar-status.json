@@ -1,6 +1,6 @@
 {
- "at": "2026-10-28T21:18:23.713Z",
- "tipranks": "ok: 70 US events read (all sizes), 14 major",
+ "at": "2026-10-29T21:20:28.261Z",
+ "tipranks": "kept (fetched 2026-10-28, refreshed every 6 days to save calls)",
  "massive": "ok: 12 holidays, dividends for 3 of 12 held stocks",
  "official": {
   "cpi": "14 release dates",
@@ -9,93 +9,8 @@
   "realer": "14 release dates",
   "fomc": "57 meeting dates"
  },
- "officialUpcoming": 2,
+ "officialUpcoming": 1,
  "alphaVantage": "kept (refreshed weekly, last 2026-10-27)",
- "toolArgs": [
-  "daysBack",
-  "daysForward",
-  "fromDate",
-  "toDate",
-  "countries",
-  "impact",
-  "limit"
- ],
- "toolSchema": {
-  "daysBack": {
-   "type": "integer",
-   "desc": "",
-   "required": false
-  },
-  "daysForward": {
-   "type": "integer",
-   "desc": "",
-   "required": false
-  },
-  "fromDate": {
-   "type": "string",
-   "desc": "",
-   "required": false
-  },
-  "toDate": {
-   "type": "string",
-   "desc": "",
-   "required": false
-  },
-  "countries": {
-   "type": "string",
-   "desc": "Comma-separated country names to keep (default 'US'); pass '' to keep all. Examples: 'US','UK','Germany','Japan','China'.",
-   "required": false
-  },
-  "impact": {
-   "type": "string",
-   "desc": "Comma-separated impact levels to keep: High, Medium, Low (default 'High,Medium'); pass '' to keep all.",
-   "required": false
-  },
-  "limit": {
-   "type": "integer",
-   "desc": "",
-   "required": false
-  }
- },
- "lastArgs": {
-  "daysBack": 3,
-  "daysForward": 10,
-  "countries": "US",
-  "limit": 500,
-  "impact": ""
- },
- "replyShape": {
-  "totalMatched": "number",
-  "returned": "number",
-  "filters": {
-   "countries": "string",
-   "impact": "string",
-   "limit": "number"
-  },
-  "economicCalendar": [
-   "list of 70",
-   {
-    "eventId": "number",
-    "actual": "number",
-    "country": "string",
-    "estimate": "number",
-    "event": "string",
-    "impact": "string",
-    "prev": "number",
-    "time": "string",
-    "unit": "string",
-    "vsEstimate": "object"
-   }
-  ],
-  "note": "string",
-  "_quota_notice": "string"
- },
- "rowsFound": 70,
- "countriesSeen": [
-  "US"
- ],
- "tipranksCallsLeft": 0,
- "history": "178 past releases (all sizes) with an actual, back to 2026-10-13",
- "econUpcoming": 38,
- "econUpcomingOfficial": 2
+ "econUpcoming": 14,
+ "econUpcomingOfficial": 1
 }
