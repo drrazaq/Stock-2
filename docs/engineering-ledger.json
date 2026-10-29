@@ -43,10 +43,10 @@
     "note": "Reading, syntax checks and fixtures are not exhaustive behavioral certification"
   },
   "engineeringAcceptance": {
-    "complete": 20,
+    "complete": 21,
     "total": 40,
-    "percent": 50,
-    "basis": "Added rejection persistence/recheck audit, missing/malformed compliance integration and broker endpoint/permission audit. Complete recommendation-path compliance remains open."
+    "percent": 52.5,
+    "basis": "Added frozen experiment/holdout metadata registry audit: 747 IDs and all51 pinned study blobs. Actual historical identity, survivorship, after-cost replay and performance acceptance remain open."
   },
   "strategyValidation": {
     "earlyEnginePromotionChecksPassed": 0,
@@ -557,7 +557,7 @@
     ],
     "publishedCommit": "1c2031495c839e7d8469cb127821ec1650ca09aa"
   },
-  "remainingAcceptanceChecks": 20,
+  "remainingAcceptanceChecks": 19,
   "providerReadinessMilestone": {
     "base": "4f00ffb8ace4b6ff5397c1b6dca8193823a811cd",
     "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
@@ -819,7 +819,7 @@
     ]
   },
   "premarketCollectorMilestone": {
-    "status": "FULL_LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "testsPassed": 1273,
     "publishedScopeRootModules": 216,
     "workflowsParsed": 80,
@@ -834,6 +834,76 @@
       "No partial IEX substitution for failed whole-market feed",
       "Pre-ignition frozen rule inactive before regular open",
       "Actual prospective matched cases remain zero"
+    ],
+    "publishedCommit": "a555cd1f92c0875d798adacec259294242e39323",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825015725/job/123286044117",
+        "sha": "a555cd1f92c0875d798adacec259294242e39323"
+      },
+      {
+        "name": "research-fixtures",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825021014/job/123285969072",
+        "sha": "a555cd1f92c0875d798adacec259294242e39323"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825021013/job/123285969060",
+        "sha": "a555cd1f92c0875d798adacec259294242e39323"
+      },
+      {
+        "name": "research-fixtures",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825015779/job/123285952322",
+        "sha": "a555cd1f92c0875d798adacec259294242e39323"
+      },
+      {
+        "name": "safety",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825015725/job/123285952237",
+        "sha": "a555cd1f92c0875d798adacec259294242e39323"
+      },
+      {
+        "name": "fixture-open",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825015725/job/123285951896",
+        "sha": "a555cd1f92c0875d798adacec259294242e39323"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40825015702/job/123285951844",
+        "sha": "a555cd1f92c0875d798adacec259294242e39323"
+      }
+    ]
+  },
+  "historicalIntegrityMilestone": {
+    "status": "FULL_LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "testsPassed": 1278,
+    "registryEntries": 747,
+    "uniqueRegistryIds": 747,
+    "frozenFilesMetadataAudited": 51,
+    "sourceBytes": 35367699,
+    "sourceCommit": "e717c657ff3a726bbb1f8e6e3d232c2a3b1c9b6b",
+    "historicalTradeArraysCertified": false,
+    "frozenResultsModified": false,
+    "studiesRerun": 0,
+    "newEvidenceAdmission": "Identity validity/known-at, security/issuer separation, holdout boundaries/selection, point-in-time membership, terminal delisting values and consistent price bases; structural validity never BUY approval",
+    "evidence": [
+      "docs/frozen-study-metadata-audit-2026-10-29.json",
+      "docs/strategy-registry-audit-2026-10-29.json",
+      "docs/historical-integrity-review-2026-10-29.md"
     ]
   }
 }

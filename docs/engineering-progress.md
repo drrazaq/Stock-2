@@ -2,7 +2,7 @@
 
 Updated: 29 October 2026 (UTC). Development branch: `Stock2-safety-fixes`. PR: [draft #1](https://github.com/drrazaq/Stock-2/pull/1). No merge, deployment, workflow dispatch, Telegram message or trade performed in this review.
 
-**Completion: 50% (20 of 40 acceptance checks)** for the comprehensive engineering audit, repair and verification scope below. Each of ten workstreams has four equally weighted checks. Only the named completed checks count; in-progress work gets zero credit. This measures documented acceptance work, not percentage of code reviewed, product maturity or probability of trading profit. Earlier ~45% subjective maturity estimates are superseded for this audit. Production acceptance remains blocked.
+**Completion: 52.5% (21 of 40 acceptance checks)** for the comprehensive engineering audit, repair and verification scope below. Each of ten workstreams has four equally weighted checks. Only the named completed checks count; in-progress work gets zero credit. This measures documented acceptance work, not percentage of code reviewed, product maturity or probability of trading profit. Earlier ~45% subjective maturity estimates are superseded for this audit. Production acceptance remains blocked.
 
 | Workstream | Complete / 4 | Completed acceptance checks | Remaining acceptance checks |
 |---|---:|---|---|
@@ -14,7 +14,7 @@ Updated: 29 October 2026 (UTC). Development branch: `Stock2-safety-fixes`. PR: [
 | ZAD compliance | 3 | Approved ignition owner yes/exclusion gate; rejection persistence/recheck; malformed/stale/missing-file bot integration | Complete all other recommendation-path audit |
 | Execution safeguards | 2 | Finite-quote overflow repair; broker order-endpoint/permission audit with default-off paper mutations | Entry/stop/gap/cost consistency across lanes; complete fail-closed fault injection |
 | Telegram | 2 | Existing acknowledgment/failure and cap/mute tests; shared timeout/429/length/retry policy verified | Complete behavioral review/deduplication of all send paths; authorized delivery validation |
-| Strategy testing | 2 | Run complete baseline suite; run complete post-fix suite | Frozen experiment/holdout registry audit; realistic after-cost independent replay acceptance |
+| Strategy testing | 3 | Baseline/post-fix suites; frozen experiment/holdout metadata registry audit (747 IDs, 51 pinned study blobs) | Realistic after-cost independent replay acceptance |
 | Historical performance | 1 | Re-read frozen ignition artifact and separate it from five-year daily experiments | Survivorship/delisting/CIK audit; validate all performance claims/windows; benchmark/capacity/drawdown/uncertainty report |
 
 ## Verified results and fixes
@@ -221,3 +221,12 @@ Compliance/order **efee6bf36ffa356cfd0d36e0d584adcbde334927** passed all five ex
 research-collector.mjs and tools/research-collector.mjs implement 04:00–09:30 NY observation only. A 330-cycle half-day fixture tests actual full-snapshot ingestion, 10 interrupted minutes, stale/future prices, duplicate symbols/events, fresh-price and BBO counts, latency, source errors and no partial fallback claim. GET-only endpoints are fixed to Massive full snapshot and optional Finnhub general news; one snapshot per minute and news every fifth cycle, at most 420 requests. HTTP429 respects bounded cooldown, no retry or broker/TG call occurs. Published-scope full suite **1,273 passed**, zero failures/skips; new source/CLI/test syntax and new workflow parse passed. Published root scope is 216 modules and 80 workflows.
 
 The CLI writes compressed run/attempt-specific artifacts under research-output only, with budgets, actual cycles, last success and a truthful incomplete-session flag. Live mode requires a separately approved, expiring manifest pinned to source and trading date; no live manifest was created or executed. The new workflow runs fixtures only, carries no secrets and has no schedule or dispatch. Existing workflows and production data remain untouched. Current early pre-ignition rules require regular-session minutes and are explicitly inactive premarket. Other lanes keep existing source availability/derived-time caveats. Collector samples do not establish verified common-stock coverage or historical identity; missing previous-close session IDs remain explicit. Prospective paper cases still zero. Acceptance stays **20/40** until representative real-session evidence exists.
+
+
+Premarket collector **a555cd1f92c0875d798adacec259294242e39323** passed all seven exact-commit checks: [PR tests](https://github.com/drrazaq/Stock-2/actions/runs/40825021013), [push tests](https://github.com/drrazaq/Stock-2/actions/runs/40825015702), [safety/artifact](https://github.com/drrazaq/Stock-2/actions/runs/40825015725), [PR fixture-only collector](https://github.com/drrazaq/Stock-2/actions/runs/40825021014), [push fixture-only collector](https://github.com/drrazaq/Stock-2/actions/runs/40825015779). No live collection occurred.
+
+## Frozen registry and historical evidence admission
+
+All 747 strategy IDs are unique. All 51 frozen study/result blobs (35,367,699 bytes) have pinned hash and metadata audits; eight large connector-truncated files were recovered read-only and hash checked. No result was rerun, retuned or rewritten. Missing structured registration, identity or holdout fields remain UNVERIFIED, not evidence the work never occurred elsewhere. Individual historical trade arrays and source authenticity are not certified. New evidence validation rejects ticker reuse/ambiguous security lineage, future-known mappings, holdout leakage/retuning, undocumented membership and missing delisting terminal values. Structural validity never approves profitability or BUY.
+
+Full local suite **1,278 passed**, zero failures/skips. Acceptance **21/40 (52.5%), 19 open**; only the named registry-audit check is added. Historical performance and independent after-cost replay checks remain open. See historical-integrity-review-2026-10-29.md and the two audit manifests.
