@@ -61,24 +61,40 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
  }
  return {observations,sources};
 }
-export const discoveryState=()=>({observations:{},crossings:{},firstFresh:{},capacityDroppedAttempts:0});
-export function updateDiscovery(state,{observations,rows,cutoff}) {
+export const discoveryState=()=>({observations:{},crossings:{},firstFresh:{},capacityDroppedAttempts:0,funnel:{attempts:0,accepted:0,duplicates:0,invalid:0,unknownPrice:0},suppressed:{},sourceReliability:{}});
+export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
+ state.funnel||={attempts:0,accepted:0,duplicates:0,invalid:0,unknownPrice:0};state.suppressed||={};state.sourceReliability||={};
+ for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;}
+ const suppress=(o,reason)=>{const key=hash([o?.symbol,o?.lane,o?.sourceId,reason]);if(!state.suppressed[key]&&Object.keys(state.suppressed).length<5000)state.suppressed[key]={symbol:o?.symbol||null,lane:o?.lane||null,sourceId:o?.sourceId||null,reason,firstObservedAt:cutoff};};
  const now=Date.parse(cutoff),fresh=new Map();
+ state.priceCoverage||={cycles:0,noFreshPriceCycles:0,quoteAttempts:0,freshQuoteAttempts:0};state.priceCoverage.cycles++;state.priceCoverage.quoteAttempts+=rows.length;
  for(const r of rows){
   if(!symbol(r.sym)||!Number.isFinite(r.price)||r.price<=0||!Number.isFinite(r.prevC)||r.prevC<=0||!Number.isFinite(r.t)||!isFreshPriceAge(r.t>0?(now-r.t)/60000:null))continue;
-  const change=r.price/r.prevC-1;fresh.set(r.sym,{price:r.price,change});
+  const change=r.price/r.prevC-1;fresh.set(r.sym,{price:r.price,change,bid:r.bid??null,ask:r.ask??null,quoteAgeSec:Number.isFinite(r.qt)&&r.qt>0?(now-r.qt)/1000:null,priceAsOf:new Date(r.t).toISOString()});
   if(!state.firstFresh[r.sym])state.firstFresh[r.sym]={at:cutoff,change};
   const crossings=state.crossings[r.sym]||(state.crossings[r.sym]={});
-  for(const level of [5,10,15])if(change>=level/100&&!crossings[level])crossings[level]={at:cutoff,change};
+  for(const level of [5,10,15])if(change>=level/100&&!crossings[level])crossings[level]={at:cutoff,change,sourceStates:sources.map(s=>({lane:s.lane,status:s.status}))};
+ }
+ state.priceCoverage.freshQuoteAttempts+=fresh.size;if(!fresh.size)state.priceCoverage.noFreshPriceCycles++;
+ // Follow only actually observed fresh prices. Gaps remain gaps; this is
+ // last-trade path measurement, not executable returns or an intrabar low.
+ for(const o of Object.values(state.observations)){
+  const q=fresh.get(o.symbol);if(!q||o.priceAtDetection===null||Date.parse(cutoff)<=Date.parse(o.observedAt))continue;
+  const f=o.followup||={peak:o.priceAtDetection,trough:o.priceAtDetection,maxDrawdown:0};
+  f.peak=Math.max(f.peak,q.price);f.trough=Math.min(f.trough,q.price);f.maxDrawdown=Math.min(f.maxDrawdown,q.price/f.peak-1);f.lastPrice=q.price;f.lastObservedAt=cutoff;f.observedRise=f.peak/o.priceAtDetection-1;f.worstVsDetection=f.trough/o.priceAtDetection-1;
  }
  const added=[];let count=Object.keys(state.observations).length;
  for(const o of observations){
-  if(assembleMultiAngle([o],{cutoff}).count!==1)continue;
-  const key=hash([o.symbol,o.lane,o.sourceId]);if(state.observations[key])continue;
-  if(count>=20000){state.capacityDroppedAttempts=(state.capacityDroppedAttempts||0)+1;continue;}
+  state.funnel.attempts++;
+  const valid=assembleMultiAngle([o],{cutoff});
+  if(valid.count!==1){state.funnel.invalid++;suppress(o,valid.ignored.future?'FUTURE_OR_INVALID_CHRONOLOGY':valid.ignored.unknownLane?'UNKNOWN_LANE':'INVALID_EVIDENCE');continue;}
+  const key=hash([o.symbol,o.lane,o.sourceId]);if(state.observations[key]){state.funnel.duplicates++;continue;}
+  if(count>=20000){state.capacityDroppedAttempts=(state.capacityDroppedAttempts||0)+1;suppress(o,'SESSION_CAPACITY_LIMIT');continue;}
   const q=fresh.get(o.symbol);
-  const record={...o,eventId:key,observedAt:cutoff,priceAtDetection:q?.price??null,changeAtDetection:q?.change??null,classification:'RESEARCH ONLY',status:'NOT AN APPROVED BUY'};
-  state.observations[key]=record;added.push(record);count++;
+  const record={...o,eventId:key,observedAt:cutoff,priceAtDetection:q?.price??null,changeAtDetection:q?.change??null,quoteAtDetection:q||null,classification:'RESEARCH ONLY',status:'NOT AN APPROVED BUY'};
+  if(!q){state.funnel.unknownPrice++;suppress(o,'NO_FRESH_PRICE_AT_FIRST_DETECTION');}
+  if(q?.change>=.05)suppress(o,'ALREADY_EXTENDED_AT_FIRST_DETECTION');
+  state.observations[key]=record;added.push(record);count++;state.funnel.accepted++;
  }
  return added;
 }
@@ -92,6 +108,13 @@ export function discoveryReport(state,{cutoff,sources,completeSession=false}) {
    alreadyPlus5AtDetection:first.filter(x=>x.changeAtDetection!==null&&x.changeAtDetection>=.05).length,
    noObservedPlus10Yet:first.filter(x=>!state.crossings[x.symbol]?.[10]).length};
  });
- return {...board,sources,lanes,completeSession,capacityDroppedAttempts:state.capacityDroppedAttempts||0,observedPlus10Symbols:Object.keys(state.crossings).filter(s=>state.crossings[s][10]).length,
+ const missed=Object.entries(state.crossings).filter(([,x])=>x[10]).flatMap(([symbol,c])=>{
+  const a=records.filter(x=>x.symbol===symbol),early=a.some(x=>x.changeAtDetection!==null&&x.changeAtDetection<.05&&Date.parse(x.observedAt)<Date.parse(c[10].at));if(early)return [];
+  const reason=!a.length?'NO_DISCOVERY_OBSERVED':a.every(x=>x.changeAtDetection===null)?'NO_FRESH_DETECTION_PRICE':a.every(x=>Date.parse(x.observedAt)>=Date.parse(c[10].at))?'DISCOVERY_AT_OR_AFTER_OBSERVED_MOVE':'ALREADY_EXTENDED_AT_DETECTION';
+  return [{symbol,reason,firstObservedPlus10:c[10]}];
+ });
+ return {...board,sources,lanes,completeSession,funnel:state.funnel||null,priceCoverage:state.priceCoverage||null,sourceReliability:state.sourceReliability||{},suppressionReasons:Object.values(state.suppressed||{}),
+  detectionCount:records.length,displayedDetections:Math.min(records.length,1000),detections:records.slice(0,1000),missedCount:missed.length,missedCandidates:missed.slice(0,100),dedupScope:'CURRENT_SESSION',
+  capacityDroppedAttempts:state.capacityDroppedAttempts||0,observedPlus10Symbols:Object.keys(state.crossings).filter(s=>state.crossings[s][10]).length,
   measurementNote:'Prospective first-ingestion vs first OBSERVED fresh +10% crossing, requiring detection below +5%. Unknown/stale prices earn no lead credit. No observed crossing is unresolved, not a false-positive verdict. Lane breadth is correlated evidence, not independent confirmation, profitability or BUY eligibility.'};
 }

@@ -34,7 +34,7 @@ export async function probeProviders({env={},fetcher=fetch,now=Date.now()}={}) {
  results.push(await get('SEC_TICKER_MAP','https://www.sec.gov/files/company_tickers.json',{'User-Agent':env.SEC_UA||'Stock2 engineering admin@users.noreply.github.com'},j=>{if(!j||typeof j!=='object'||Array.isArray(j))throw Error();return {records:Object.keys(j).length};}));
  const p={};new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(now)).forEach(x=>p[x.type]=x.value);
  const day=p.year+'-'+p.month+'-'+p.day,minute=Number(p.hour)*60+Number(p.minute),schedule=marketSession(day);
- const session={day,minute,state:schedule.closed?'CLOSED':minute<570?'PREMARKET':minute<schedule.close?'REGULAR':'POSTMARKET'};
+ const session={day,minute,state:schedule.closed?'CLOSED':minute<240?'OVERNIGHT':minute<570?'PREMARKET':minute<schedule.close?'REGULAR':'POSTMARKET'};
  return {kind:'READ_ONLY_PROVIDER_PROBE',observedAt:new Date(now).toISOString(),session,results,claims:{accountPlan:'NOT_INFERRED',tradableUniverseCoverage:'NOT_ESTABLISHED',executionFills:'NOT_TESTED',profitability:'NOT_TESTED'},note:'HTTP status/targeted freshness are observations, not evidence of full-session or premarket entitlement. Outside-session old trades do not alone establish an outage. No raw payloads or credentials retained.'};
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){

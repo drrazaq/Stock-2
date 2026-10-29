@@ -11,7 +11,7 @@ test('probe skips unavailable secrets and stops the Alpaca sequence on rate limi
  assert.equal(r.results.find(x=>x.provider==='MASSIVE_SNAPSHOT').status,'NOT_CONFIGURED');
 });
 test('freshness measurements retain regular versus outside-session context',async()=>{
- for(const [at,state] of [['2026-10-29T14:00:00Z','REGULAR'],['2026-10-29T22:00:00Z','POSTMARKET']]){
+ for(const [at,state] of [['2026-10-29T04:41:00Z','OVERNIGHT'],['2026-10-29T14:00:00Z','REGULAR'],['2026-10-29T22:00:00Z','POSTMARKET']]){
   const r=await probeProviders({now:Date.parse(at),fetcher:async()=>({ok:false,status:403})});assert.equal(r.session.state,state);
  }
 });

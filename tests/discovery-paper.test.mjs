@@ -1,0 +1,27 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {evaluatePaperEvidence} from '../discovery-paper.mjs';
+const t=m=>new Date(Date.parse('2026-10-29T14:00:00Z')+m*60000).toISOString();
+const event={symbol:'AAA',eventId:'fixture-1',observedAt:t(0)};
+const meta=['AAA','BBB'].map((symbol,i)=>({symbol,securityId:'fixture-security-'+i,industry:'fixture-sector',asOf:t(-1)}));
+const q=(symbol,m,bid,ask,extra={})=>({symbol,at:t(m),bid,ask,quoteAsOf:t(m),dollarVolume:2e6,dollarVolumeAsOf:t(m),...extra});
+const prices=[q('AAA',1,9.99,10.01),q('BBB',1,9.99,10.01),q('AAA',15,8.99,9.01),q('AAA',31,10.99,11.01),q('BBB',31,10.19,10.21)];
+test('matched paper uses next observed ask, actual bid, whole shares, two fees and stressed slippage',()=>{
+ const r=evaluatePaperEvidence([event],prices,meta,{cutoff:t(32)}),c=r.cases[0];assert.equal(c.status,'MATCHED_PAPER_RESOLVED');assert.equal(c.candidate.quantity,99);
+ assert.ok(Math.abs(c.candidate.netAfterSpreadAndFees-(99*(10.99-10.01)-6)/1000)<1e-12);assert.ok(c.candidate.stressNet<c.candidate.netAfterSpreadAndFees);assert.ok(c.candidate.observedLiquidationDrawdown<-.1);assert.match(r.conclusion,/NO STRATEGY VERDICT/);
+});
+test('future metadata, stale entry and absent controls earn no matched result',()=>{
+ for(const [metadata,quotes,reason] of [[meta.map(x=>({...x,asOf:t(2)})),prices,'NO_POINT_IN_TIME_SECURITY_METADATA'],[meta,prices.map(x=>({...x,quoteAsOf:t(-10)})),'NO_FRESH_EXECUTABLE_ENTRY_EVIDENCE'],[meta.slice(0,1),prices,'NO_SAME_TIME_INDUSTRY_LIQUIDITY_CONTROL']]){
+  const r=evaluatePaperEvidence([event],quotes,metadata,{cutoff:t(32)});assert.equal(r.cases[0].reason,reason);assert.equal(r.counts.resolved,0);
+ }
+});
+test('missing horizon quote stays unresolved; a later recovery cannot be backfilled',()=>{
+ const r=evaluatePaperEvidence([event],prices.filter(x=>x.at!==t(31)).concat(q('AAA',40,12,12.02)),meta,{cutoff:t(45)});assert.equal(r.counts.resolved,0);assert.equal(r.cases[0].status,'UNRESOLVED');assert.equal(r.cases[0].matchedEdge,null);assert.ok(r.cases[0].candidate.maxObservedGrossMove<.01);
+});
+test('future discovery membership cannot change an earlier matched-control choice',()=>{
+ const future={symbol:'BBB',eventId:'future',observedAt:t(20)};
+ const r=evaluatePaperEvidence([event,future],prices,meta,{cutoff:t(32)});assert.equal(r.cases[0].status,'MATCHED_PAPER_RESOLVED');assert.equal(r.cases[0].control.symbol,'BBB');
+});
+test('a wide exit remains a loss instead of being filtered away',()=>{
+ const quotes=prices.map(x=>x.symbol==='AAA'&&x.at===t(31)?{...x,bid:8,ask:11}:x);const c=evaluatePaperEvidence([event],quotes,meta,{cutoff:t(32)}).cases[0];assert.ok(c.candidate.netAfterSpreadAndFees<0);assert.equal(c.candidate.exitBid,8);
+});
