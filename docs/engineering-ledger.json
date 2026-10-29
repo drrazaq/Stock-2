@@ -760,7 +760,7 @@
     }
   ],
   "complianceOrderMilestone": {
-    "status": "FULL_LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "base": "e717c657ff3a726bbb1f8e6e3d232c2a3b1c9b6b",
     "testsPassed": 1268,
     "syntaxModules": 215,
@@ -778,6 +778,62 @@
       "All broker mutations default disabled; explicit paper-only opt-in, no redirects or unknown-outcome retries",
       "Options GET client no arbitrary live-host override"
     ],
-    "remaining": "Complete legacy recommendation and message-state audit remains open; no actual broker request made"
+    "remaining": "Complete legacy recommendation and message-state audit remains open; no actual broker request made",
+    "publishedCommit": "efee6bf36ffa356cfd0d36e0d584adcbde334927",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "conclusion": "success",
+        "status": "completed",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40823672655/job/123281771706",
+        "sha": "efee6bf36ffa356cfd0d36e0d584adcbde334927"
+      },
+      {
+        "name": "test",
+        "conclusion": "success",
+        "status": "completed",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40823678008/job/123281707027",
+        "sha": "efee6bf36ffa356cfd0d36e0d584adcbde334927"
+      },
+      {
+        "name": "fixture-open",
+        "conclusion": "success",
+        "status": "completed",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40823672655/job/123281690195",
+        "sha": "efee6bf36ffa356cfd0d36e0d584adcbde334927"
+      },
+      {
+        "name": "safety",
+        "conclusion": "success",
+        "status": "completed",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40823672655/job/123281689883",
+        "sha": "efee6bf36ffa356cfd0d36e0d584adcbde334927"
+      },
+      {
+        "name": "test",
+        "conclusion": "success",
+        "status": "completed",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40823672640/job/123281689824",
+        "sha": "efee6bf36ffa356cfd0d36e0d584adcbde334927"
+      }
+    ]
+  },
+  "premarketCollectorMilestone": {
+    "status": "FULL_LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "testsPassed": 1273,
+    "publishedScopeRootModules": 216,
+    "workflowsParsed": 80,
+    "mode": "RESEARCH_ONLY",
+    "window": "04:00 inclusive to 09:30 exclusive America/New_York on reviewed trading days",
+    "requests": "At most 420 GETs per attempt; 330 snapshots and up to 66 Finnhub news requests in a complete fixture",
+    "data": "Compressed attempt-specific artifacts only; no data/ writes; no broker or Telegram imports/bindings",
+    "activation": "Fixture-only workflow; live CLI requires separately approved expiring source-pinned manifest and GitHub runner; none executed",
+    "limitations": [
+      "Tradable/security-type denominator unverified",
+      "Previous close session identity unverified",
+      "No partial IEX substitution for failed whole-market feed",
+      "Pre-ignition frozen rule inactive before regular open",
+      "Actual prospective matched cases remain zero"
+    ]
   }
 }

@@ -1,0 +1,28 @@
+name: Research collector fixtures only
+on:
+  push:
+    branches: [Stock2-safety-fixes]
+    paths:
+      - 'research-collector.mjs'
+      - 'tools/research-collector.mjs'
+      - 'tests/research-collector.test.mjs'
+      - '.github/workflows/research-collector-fixtures.yml'
+  pull_request:
+    paths:
+      - 'research-collector.mjs'
+      - 'tools/research-collector.mjs'
+      - 'tests/research-collector.test.mjs'
+      - '.github/workflows/research-collector-fixtures.yml'
+permissions:
+  contents: read
+jobs:
+  research-fixtures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node --test tests/research-collector.test.mjs
+        # No secrets, workflow dispatch, schedule, collection or external delivery.
