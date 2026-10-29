@@ -247,7 +247,7 @@
       "actionability": "SAFE_BRANCH",
       "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
       "partialEvidence": "Verified bb93fb2: 55 reconstructed source regressions, malformed/failed/empty source distinctions and SEC structural coverage. Full identity/revision/persistence evidence remains OPEN; docs/validation/catalyst-source-ci.json.",
-      "continuationEvidence": "f54a454 and 905d5eb exact-source verified; further FDA/ranked-lineage caller repair pending. All source/revision and global durability requirements remain open. docs/remaining-engineering-resume.md."
+      "continuationEvidence": "Caller-level source repairs verified through 04f6b6db144118a21bd17c0245ac89028e8968a8; all-source/revision and global durability criteria still unmet. docs/validation/continuation-04f6b6d-ci.json; docs/remaining-engineering-resume.md."
     },
     {
       "id": "CATALYST-04",
@@ -322,5 +322,7 @@
     "MARKET-03 and CATALYST-03: per-provider/source units, identities, clocks, normalization and durable deduplication",
     "EXEC-03: lane plan/test consistency; preserve completed EXEC-04 mutation closure",
     "REPO-03/HISTORY-03: remaining module behavior and numerical claim provenance"
-  ]
+  ],
+  "latestVerifiedEngineeringSource": "04f6b6db144118a21bd17c0245ac89028e8968a8",
+  "remainingWorkResume": "docs/remaining-engineering-resume.md"
 }

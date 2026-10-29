@@ -1,6 +1,6 @@
 # Actual trading evidence dashboard
 
-Updated29October2026; verified engineering baseline 905d5eb; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
+Updated29October2026; verified engineering baseline 04f6b6d; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|

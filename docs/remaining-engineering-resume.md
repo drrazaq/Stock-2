@@ -1,6 +1,6 @@
 # Remaining engineering work and evidence dependencies
 
-Acceptance stays 24/40 (60%), 16 OPEN. Passing tests below are partial contracts, not row closure. The original unpublished catalyst tests/code were unavailable; bb93fb2 and later repairs are reconstructed from published code and reproducible failures. They were not recovered.
+Verified code04f6b6d and preceding three source milestones are exact-CI green; evidence: validation/continuation-04f6b6d-ci.json. Acceptance stays 24/40 (60%), 16 OPEN. Passing tests below are partial contracts, not row closure. The original unpublished catalyst tests/code were unavailable; bb93fb2 and later repairs are reconstructed from published code and reproducible failures. They were not recovered.
 
 ## Safe work, in dependency order
 
