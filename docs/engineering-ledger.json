@@ -3776,7 +3776,7 @@
     ]
   },
   "hybridEncryptedCheckpointMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_INFRASTRUCTURE_SYNTHETIC_ONLY",
     "format": "Existing AES256GCM V1 envelope/KDF; immutable per-cycle compressed checkpoint",
     "budgets": "96MiB maximum sealed journal,8MiB max checkpoint JSON; byte/request/minute/time budgets survive client resume",
     "localTests": {
@@ -3786,6 +3786,124 @@
     "keysUsed": "PUBLIC_SYNTHETIC_FIXTURE_KEYS_ONLY",
     "legacyRecovery": "Old pinned tools and owner challenge untouched; new separate Python3.9 offline recovery requires reviewed expected SHA",
     "limitations": "No remote upload or live cancellation evidence. Files not uploaded before runner loss are not recoverable. Python authenticates compressed files only, not completeness.",
-    "actualProspectiveCases": 0
+    "actualProspectiveCases": 0,
+    "verifiedSource": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+    "nodeTests": {
+      "files": 164,
+      "tap": 1410,
+      "standalone": 2,
+      "total": 1412
+    },
+    "pythonUniqueTests": 27,
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791575/job/123482137097"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883799043/job/123482008260"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883798894/job/123482007524"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883798894/job/123482007497"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883798798/job/123482007157"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883798894/job/123482007113"
+      },
+      {
+        "name": "test",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883798913/job/123482007038"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883798684/job/123482006553"
+      },
+      {
+        "name": "test",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791876/job/123481984111"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791510/job/123481983527"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791936/job/123481983243"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791510/job/123481983211"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791510/job/123481982790"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791727/job/123481982588"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791575/job/123481982489"
+      },
+      {
+        "name": "safety",
+        "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40883791575/job/123481982120"
+      }
+    ]
+  },
+  "paperCallerFaultMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "adapter": "Strict boolean opt-in; fixed paper origin; supported methods/path/body; finite qty/prices/stops/capital; bounded response/time and no retries; actual order identity ACK required; DELETE204 acknowledged",
+    "caller": "Corrupt book/blocked account/failed or invalid positions do not become empty account. Missing exit and pending fill evidence retained, no invented quantity or vanished paper history. Follow-on exit withheld on unconfirmed cancel.",
+    "localTests": {
+      "adapter": 6,
+      "caller": 6
+    },
+    "realOrders": 0,
+    "frozenResults": "UNCHANGED",
+    "acceptance": "EXEC04 remains open for complete cross-job unknown-outcome quarantine/reconciliation and all-path audit; no extra score credit"
   }
 }

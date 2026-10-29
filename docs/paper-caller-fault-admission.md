@@ -1,0 +1,9 @@
+# Paper broker and caller failure admission
+
+Only scan.mjs calls the broker mutation adapter; reviewed runtime writes are order POST for entry/exit and order-ID DELETE for cancellation. options-lab/squad15/squad15b trade-origin calls are contract/reference GETs, not orders. No real broker call was made in this audit. User authorization for actual real/paper orders remains absent; fixtures use localhost or injected responses exclusively.
+
+The adapter now requires literal boolean true, supports only GET/POST/DELETE, pins the PAPER host, blocks arbitrary mutation paths, validates the actual market-sell/limit-OTO-buy schemas (finite prices, stops, quantity and capital), refuses body method overrides and bounds response parsing/time. An ambiguous POST cannot become an order ACK without matching UUID, symbol, side and client-order ID. DELETE204 is acknowledged instead of being mistaken for invalid JSON. No automatic retry is added.
+
+Caller faults previously let failed/malformed positions stand in for no positions, malformed state default to empty, or missing closed-order evidence remove a tracked trade. Pending open/unresolved fills could vanish, and missing filled quantity became one share. The branch now retains unresolved records, refuses corrupt state/account/position responses before side effects, and withholds follow-on exit when order cancellation is unconfirmed. It does not rewrite old closed/frozen results or invent an exit/quantity.
+
+Six adapter plus six localhost caller tests cover negative and valid controls, corrupt state, provider refusals, unknown acknowledgments, hung bodies, finite order fields, unresolved history and default gates. EXEC04 is NOT closed: cross-job unknown-order quarantine/reconciliation and the complete behavioral mutation-route review remain required. No environment switch, paper order, live recommendation, production behavior, owner holding or secret is changed by this development publication.

@@ -893,27 +893,40 @@ async function alp(method, path, body) {
 }
 async function alpacaPaper(sig, loaded, session) {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !sig) return;
-  const A = readJson(ALP_FILE, { plans: {}, pendingBuy: {}, pendingExit: {}, closed: [], start: null }), today = session;
-  const acct = await alp('GET', '/v2/account'); if (!acct || acct.error) { console.log('Alpaca paper: account not reachable, skipped.'); return; }
+  let A;try{A=fs.existsSync(ALP_FILE)?JSON.parse(fs.readFileSync(ALP_FILE,'utf8')):{plans:{},pendingBuy:{},pendingExit:{},closed:[],start:null};
+    if(!A||typeof A!=='object'||Array.isArray(A)||['plans','pendingBuy','pendingExit'].some(k=>A[k]!==undefined&&(!A[k]||typeof A[k]!=='object'||Array.isArray(A[k])||Object.values(A[k]).some(v=>!v||typeof v!=='object'||Array.isArray(v))))||A.closed!==undefined&&!Array.isArray(A.closed))throw Error();
+    for(const k of ['plans','pendingBuy','pendingExit'])A[k]||={};A.closed||=[];
+  }catch{console.error('Alpaca paper: local state unreadable; no account mutation or state overwrite.');return;}
+  const today = session;
+  const acct = await alp('GET', '/v2/account'); if (!acct || acct.error || !['number','string'].includes(typeof acct.equity) || !Number.isFinite(Number(acct.equity)) || Number(acct.equity)<=0 || acct.trading_blocked===true || acct.account_blocked===true) { console.log('Alpaca paper: account unavailable or blocked, skipped.'); return; }
   if (!A.start) A.start = { d: today, equity: +acct.equity };
-  const posL = await alp('GET', '/v2/positions'), held = {}; for (const p of Array.isArray(posL) ? posL : []) held[p.symbol] = p;
+  const posL = await alp('GET', '/v2/positions'), held = {};
+  if(!Array.isArray(posL)||posL.some(p=>!p||typeof p.symbol!=='string'||!/^[A-Z][A-Z0-9.\-]{0,9}$/.test(p.symbol)||!['number','string'].includes(typeof p.qty)||!Number.isFinite(Number(p.qty))||Number(p.qty)<=0||!['number','string'].includes(typeof p.avg_entry_price)||!Number.isFinite(Number(p.avg_entry_price))||Number(p.avg_entry_price)<=0)||new Set(posL.map(p=>p.symbol)).size!==posL.length){console.error('Alpaca paper: positions unavailable/malformed; no mutation or state overwrite.');return;}
+  for(const p of posL)held[p.symbol]=p;
   // 1. finished exits from the last run: record the real fill
   for (const [sym, x] of Object.entries(A.pendingExit)) { const o = await alp('GET', '/v2/orders/' + x.id); if (o && o.status === 'filled') { const ex = +o.filled_avg_price, pct = ex / x.entry - 1;
+    if(!Number.isFinite(ex)||ex<=0||!Number.isFinite(Number(x.entry))||Number(x.entry)<=0||!Number.isFinite(Number(x.qty))||Number(x.qty)<=0){console.error('Alpaca paper: fill evidence malformed; pending exit retained.');continue;}
     A.closed.push({ sym, kind: x.kind, engine: x.kindName || x.kind, entry: x.entry, exit: ex, pct: +pct.toFixed(5), net: +(pct - 2 * FEE() / (x.entry * x.qty)).toFixed(5), why: x.why, in: x.since, out: String(o.filled_at || '').slice(0, 10) }); delete A.pendingExit[sym]; delete A.plans[sym]; }
     else if (o && ['canceled', 'expired', 'rejected'].includes(o.status)) delete A.pendingExit[sym]; }
   // 2. stops the broker filled by itself (position gone, no exit sent by us)
   for (const [sym, P] of Object.entries(A.plans)) if (!held[sym] && !A.pendingExit[sym]) {
-    const os = await alp('GET', '/v2/orders?status=closed&limit=20&symbols=' + sym), st = (Array.isArray(os) ? os : []).find(o => o.side === 'sell' && o.status === 'filled');
-    if (st) { const ex = +st.filled_avg_price, pct = ex / P.entry - 1; A.closed.push({ sym, kind: P.kind, engine: P.kindName || P.kind, entry: P.entry, exit: ex, pct: +pct.toFixed(5), net: +(pct - 2 * FEE() / (P.entry * P.qty)).toFixed(5), why: ex < P.stop * 0.995 ? 'stop (gapped through)' : 'stop', in: P.since, out: String(st.filled_at || '').slice(0, 10) }); }
-    delete A.plans[sym]; }
+    const os = await alp('GET', '/v2/orders?status=closed&limit=20&symbols=' + sym);
+    if(!Array.isArray(os)){console.error('Alpaca paper: closed-order evidence unavailable; state retained.');return;}
+    const st = os.find(o => o.side === 'sell' && o.status === 'filled');
+    if (st && Number.isFinite(Number(st.filled_avg_price)) && Number(st.filled_avg_price)>0 && Number.isFinite(Number(P.entry)) && Number(P.entry)>0 && Number.isFinite(Number(P.qty)) && Number(P.qty)>0) { const ex = +st.filled_avg_price, pct = ex / P.entry - 1; A.closed.push({ sym, kind: P.kind, engine: P.kindName || P.kind, entry: P.entry, exit: ex, pct: +pct.toFixed(5), net: +(pct - 2 * FEE() / (P.entry * P.qty)).toFixed(5), why: ex < P.stop * 0.995 ? 'stop (gapped through)' : 'stop', in: P.since, out: String(st.filled_at || '').slice(0, 10) });delete A.plans[sym]; }
+    else A.plans[sym].reconciliationStatus='MISSING_OR_INVALID_EXIT_EVIDENCE'; }
   // 3. new fills become tracked paper positions with their own exit rule
   for (const [sym, b] of Object.entries(A.pendingBuy)) { if (held[sym] && !A.plans[sym]) { A.plans[sym] = { ...b.plan, entry: +held[sym].avg_entry_price, qty: +held[sym].qty, since: today }; delete A.pendingBuy[sym]; continue; }
     if (b.d >= today) continue;
     // filled and stopped out the same day (audit 22 Oct: these, the worst trades, were dropped from the record)
-    const bo = await alp('GET', '/v2/orders/' + b.id + '?nested=true'); if (bo && bo.status === 'filled' && +bo.filled_avg_price > 0) { const en = +bo.filled_avg_price, q = +bo.filled_qty || 1, legs = Array.isArray(bo.legs) ? bo.legs : [], sl = legs.find(o => o.side === 'sell' && o.status === 'filled');
+    const bo = await alp('GET', '/v2/orders/' + b.id + '?nested=true');
+    if(!bo||bo.error||Array.isArray(bo)){console.error('Alpaca paper: buy-order evidence unavailable; pending state retained.');return;}
+    if(!['filled','canceled','expired','rejected'].includes(bo.status))continue;
+    let reconciled=bo.status!=='filled';
+    if (bo.status === 'filled' && Number.isFinite(Number(bo.filled_avg_price)) && +bo.filled_avg_price > 0 && Number.isFinite(Number(bo.filled_qty)) && +bo.filled_qty>0) { const en = +bo.filled_avg_price, q = +bo.filled_qty, legs = Array.isArray(bo.legs) ? bo.legs : [], sl = legs.find(o => o.side === 'sell' && o.status === 'filled');
       let ex = sl ? +sl.filled_avg_price : null, outD = sl ? String(sl.filled_at || '').slice(0, 10) : null; if (!ex) { const os = await alp('GET', '/v2/orders?status=closed&limit=20&symbols=' + sym), st = (Array.isArray(os) ? os : []).find(o => o.side === 'sell' && o.status === 'filled' && o.filled_at >= bo.filled_at); if (st) { ex = +st.filled_avg_price; outD = String(st.filled_at || '').slice(0, 10); } }
-      if (ex) { const pct = ex / en - 1; A.closed.push({ sym, kind: b.plan.kind, engine: b.plan.kindName || b.plan.kind, entry: en, exit: ex, pct: +pct.toFixed(5), net: +(pct - 2 * FEE() / (en * q)).toFixed(5), why: 'stop, same day as the fill', in: String(bo.filled_at || '').slice(0, 10), out: outD }); } }
-    delete A.pendingBuy[sym]; }
+      if (Number.isFinite(ex)&&ex>0) { const pct = ex / en - 1; A.closed.push({ sym, kind: b.plan.kind, engine: b.plan.kindName || b.plan.kind, entry: en, exit: ex, pct: +pct.toFixed(5), net: +(pct - 2 * FEE() / (en * q)).toFixed(5), why: 'stop, same day as the fill', in: String(bo.filled_at || '').slice(0, 10), out: outD });reconciled=true; } }
+    if(reconciled)delete A.pendingBuy[sym]; }
   // 4. tonight's exits, by each trade's own tested rule (stops sit at the broker already)
   for (const [sym, P] of Object.entries(A.plans)) { const d = loaded[sym]; if (!d || !held[sym] || A.pendingExit[sym]) continue;
     const c = d.candles, i = c.length - 1, ind = L.indicators(c, null), n = c.filter(k => k.d > P.since).length; let why = null;
@@ -921,7 +934,10 @@ async function alpacaPaper(sig, loaded, session) {
     else if (P.kind === 'leader') { if (c[i].c < ind.e[50][i]) why = 'closed under its 50 day average'; }
     else { const vv = P.key ? L.VARIANTS.find(x => L.vkey(x) === P.key) : null, lv = P.exitMA ? c.slice(-P.exitMA).reduce((a, x) => a + x.c, 0) / P.exitMA : null;
       if (vv && L.exitAt(ind, c, vv, i)) why = 'rule exit'; else if (lv && c[i].c < lv) why = 'closed under its ' + P.exitMA + ' day average'; else if (P.maxHold && n >= P.maxHold) why = 'time limit'; }
-    if (why) { const oo = await alp('GET', '/v2/orders?status=open&symbols=' + sym); for (const o of Array.isArray(oo) ? oo : []) await alp('DELETE', '/v2/orders/' + o.id);
+    if (why) { const oo = await alp('GET', '/v2/orders?status=open&symbols=' + sym);
+      if(!Array.isArray(oo)){console.error('Alpaca paper: open-order evidence unavailable; exit skipped.');continue;}
+      let cancelled=true;for(const order of oo){if(!order||typeof order.id!=='string'){cancelled=false;break;}const result=await alp('DELETE','/v2/orders/'+order.id);if(!result||result.error||!(result.cancelled===true||result.status==='canceled')){cancelled=false;break;}}
+      if(!cancelled){console.error('Alpaca paper: cancellation unconfirmed; no follow-on exit order.');continue;}
       const o = await alp('POST', '/v2/orders', { symbol: sym, qty: String(P.qty), side: 'sell', type: 'market', time_in_force: 'day', client_order_id: 's2x-' + sym + '-' + today });
       if (o && o.id) A.pendingExit[sym] = { id: o.id, entry: P.entry, qty: P.qty, kind: P.kind, kindName: P.kindName, why, since: P.since }; } }
   // 5. tonight's proven buys become paper orders for the next session
