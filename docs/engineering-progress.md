@@ -1,3 +1,11 @@
+## Verified session resume checkpoint
+
+Latest verified source: **86b25ccb61abe1be1b91b9f41c280f74b73d51d1**, all **13** applicable exact-commit checks passed; validation/recorded-plan-contract-ci.json. Earlier source milestones5cc2dbb,691bbf9,60be0ee,7bcf591 passed all14/13/12/12 applicable checks respectively. Local full suite181Nodefiles/1,645reportedcases+2standalone,27Python; all required static checks pass.
+
+**Acceptance remains24/40;16OPEN.** This checkpoint supersedes older candidate/pending headings below; it does not end the mission. Resume immediately with **[resume-precise-checkpoint.md](resume-precise-checkpoint.md)**. Its next executable task is Share-supply actual ticker/index/cache identity, error/empty, clock and revision handling; precise failure cases and completion criteria are listed. Continue independent writer, normalization, command durability and renderer/spec work. Original code/tests were reconstructed, not recovered. No frozen data changed.
+
+Massive Starter stays15-minute delayed, broad SIP unverified, prospective cases0 and profitability NOT ESTABLISHED. All no-main/merge/deploy/dispatch/live collection/real delivery/orders/purchases/secrets/permission restrictions persist. The evidence/approval dependency table remains canonical in remaining-engineering-resume.md.
+
 ## Recorded execution-plan continuation
 
 Verified preceding source **7bcf591d4414248362d96819a8ffe118a794fa47** passed all 12 applicable exact-commit checks (validation/chain-source-caller-ci.json). This next candidate is locally verified: **181 Node files / 1,645 reported cases plus two standalone scripts; 27 Python tests; 240 module, 86 YAML, 329 shell and 9 Python syntax checks**. Hosted verification follows publication.

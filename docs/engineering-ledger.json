@@ -5000,15 +5000,15 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "source": "7bcf591d4414248362d96819a8ffe118a794fa47",
-    "ciEvidence": "docs/validation/chain-source-caller-ci.json",
+    "source": "86b25ccb61abe1be1b91b9f41c280f74b73d51d1",
+    "ciEvidence": "docs/validation/recorded-plan-contract-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
       "remaining": 16,
       "added": 0
     },
-    "resume": "docs/remaining-engineering-resume.md"
+    "resume": "docs/resume-precise-checkpoint.md"
   },
   "revisionIdentityMission": {
     "base": "60be0ee112a6ea6f8b1bc7c74ae3508dac207a4c",
@@ -5257,7 +5257,7 @@
   },
   "recordedPlanContract": {
     "base": "7bcf591d4414248362d96819a8ffe118a794fa47",
-    "status": "LOCAL_VERIFIED_HOSTED_PENDING",
+    "status": "HOSTED_VERIFIED_PARTIAL",
     "acceptanceAdded": 0,
     "changedRequirements": [
       "Actual owner fill command validates numeric tokens before normalization: zero, negative, nonfinite, overflowing, exponent-form and invalid share values cannot become quote fallback or replace an existing position. Invalid confirmation callbacks do not claim a recorded fill.",
@@ -5288,6 +5288,14 @@
     ],
     "realProviderRequests": 0,
     "realMessagesOrders": 0,
-    "prospectiveCases": 0
+    "prospectiveCases": 0,
+    "verifiedSource": "86b25ccb61abe1be1b91b9f41c280f74b73d51d1",
+    "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
+  },
+  "latestSessionCheckpoint": {
+    "source": "86b25ccb61abe1be1b91b9f41c280f74b73d51d1",
+    "verified": true,
+    "handoff": "docs/resume-precise-checkpoint.md",
+    "nextExecutable": "Share-supply actual ticker/index/cache source identity, schema/errors/empty, revisions and clocks; preserve frozen output and verify actual discovery/publication callers."
   }
 }

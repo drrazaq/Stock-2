@@ -1,6 +1,6 @@
 # Actual trading evidence dashboard
 
-Updated29October2026; verified engineering source 7bcf591 (12 exact-commit checks passed); owner recording/spec follow-up locally verified; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
+Updated29October2026; verified engineering source 86b25cc (13 exact-commit checks passed); precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|

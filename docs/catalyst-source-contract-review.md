@@ -1,3 +1,9 @@
+## Continuation review and next source findings
+
+News, SEC/earnings metadata, Insider and Chain caller requirements progressed through verified86b25cc; exact changed/unmet requirements are in catalyst03-closure-matrix.json and resume-precise-checkpoint.md. This supersedes older table gaps only where the new caller evidence actually applies. No full REPO-03/MARKET-03/CATALYST-03/ACTIONS-04 closure is inferred.
+
+Targeted share-supply.mjs review found fresh dash-to-dot guessing, unverifiable legacy ticker identity, future/invalid refresh clocks, malformed index text becoming successful empty coverage, failed current-quarter refresh reusing old coverage, missing filing/access clocks and unbounded redirect-following source transport. These are source findings to reproduce/repair next, not completed protections. The precise resume lists actual producer fixtures and completion criteria. No market collection or frozen study was run for this review.
+
 # Catalyst source contracts reviewed after publication
 
 Verified source: bb93fb291338b0f12c4bf27e5f6aa5803d14c596. This is partial REPO-03, MARKET-03, CATALYST-03 and ACTIONS-04 work; no new acceptance credit.
