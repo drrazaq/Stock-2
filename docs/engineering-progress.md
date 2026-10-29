@@ -1,3 +1,11 @@
+## Smart-money writer continuation — local verification
+
+After verified catalyst source bb93fb2, the exact Smart-money publication block was fault-injected in disposable Git repositories. Refused commit and exhausted push falsely succeeded; conflicting frozen results were selected automatically. Branch repair fails staging/commit/publication errors and aborts conflicts with both commits retained. Four regression cases pass; original block fails three and passes the success control. Full local 172 Node files / 1,496 reported cases plus two standalone scripts, and 27 Python tests pass. Changed workflow YAML/Bash parse; prior complete static checks retained. Hosted verification pending this follow-up source. Broad ACTIONS-04 remains OPEN; acceptance 24/40, 16 remaining. No dispatch, main merge, deployment or actual data changes.
+
+## Catalyst source milestone verified
+
+Source `bb93fb291338b0f12c4bf27e5f6aa5803d14c596` passed all 13 exact-commit hosted checks (push, PR, safety, preservation, delivery/research and Python compatibility). GitHub tree matches the 11-path local publication tree exactly. Evidence: [validation/catalyst-source-ci.json](validation/catalyst-source-ci.json). Acceptance remains 24/40, 16 open; CATALYST-03 remains OPEN.
+
 ## Catalyst source reconstruction — 29 October 2026
 
 Base `3c4e432f42b4e3c1295f3457c415715941be54f6`. Old workspace was empty; unpublished `tests/catalyst-source-errors.test.mjs` and its implementation were not recovered. This file now contains 28 newly reconstructed regressions, not the original tests. Published handoff predates the lost changes. A reconstructed 55-test focused group passes; this is not a rerun of the lost original tests.
