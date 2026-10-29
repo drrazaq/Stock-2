@@ -1,3 +1,5 @@
+> **Current status (29 October2026): VERIFIED.** The owner independently decrypted actual GitHub artifact12879798326 on iPad/iSH using the saved research key, reporting authenticated=true, challengeMatched=true, files=1 and source7dd702d. The instructions below are retained as the completed procedure; earlier PENDING language is historical and superseded. Phase A remains unauthorized.
+
 # Recover the GitHub-produced key challenge offline
 
 The authorized isolated job succeeded. **Owner-side key recovery is still PENDING, not VERIFIED.** No Phase A collection is approved by this result.

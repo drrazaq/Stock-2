@@ -299,7 +299,7 @@
     "No five-year point-in-time executable data established for early engines"
   ],
   "next": [
-    "Owner review of the pinned Phase A proposal; do not install/dispatch without approval",
+    "Owner separate review/approval of exact revised Phase A wrapper and Oct30 session after13:35UTC Oct29; do not install/dispatch before explicit approval",
     "Complete cross-job/reply/report Telegram durability and all recommendation-path behavioral review; preserve ambiguous outcome quarantine",
     "Point-in-time security/industry and liquidity capture plus regular-session quote followups for matched paper protocol",
     "Independent historical identity/delisting/survivorship, after-cost replay and performance-claim validation",
@@ -1086,10 +1086,10 @@
     ]
   },
   "productionValidationProposal": {
-    "status": "NO_GO_PENDING_ACTUAL_KEY_PROOF_AND_REVISED_REVIEW",
+    "status": "KEY_RECOVERY_VERIFIED_EXACT_DATED_APPROVAL_PENDING",
     "sourceSha": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
     "plan": "docs/production-validation-approval.md",
-    "nonActiveWorkflow": "docs/validation/premarket-research-validation.yml.proposed",
+    "nonActiveWorkflow": "docs/validation/premarket-research-validation.preflight-revision.yml.proposed",
     "nonActiveManifestExample": "docs/validation/research-approval.example.json",
     "rehearsal": "docs/validation/production-rehearsal.json",
     "mainChangesProposed": [
@@ -1098,7 +1098,11 @@
     "scope": "One manual research-only premarket session; no Telegram, approved alerts, broker credentials/orders, production data writes, recurring schedule or purchase",
     "dataProtection": "Separate RESEARCH_ARTIFACT_KEY proposed only for preflight/sealing; pinned CLI PRIVATE_KEY local alias does not read legacy GitHub secret; no binding activated by this work",
     "approvalRequired": true,
-    "preflight": "docs/validation/phase-a-final-preflight.md"
+    "preflight": "docs/validation/phase-a-final-preflight.md",
+    "workflowSha256": "94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa",
+    "sessionDay": "2026-10-30",
+    "earliestApprovalUTC": "2026-10-29T13:35:00Z",
+    "keyRecoveryVerified": true
   },
   "dataIntegrity": {
     "base": "e717c657ff3a726bbb1f8e6e3d232c2a3b1c9b6b",
@@ -1107,13 +1111,13 @@
     "newDataPaths": 0
   },
   "phaseAFinalPreflight": {
-    "status": "NO_GO_PENDING_OWNER_OFFLINE_DECRYPTION_AND_DATED_PHASE_A_APPROVAL",
+    "status": "KEY_VERIFIED_DATED_AUTHORIZATION_PENDING",
     "date": "2026-10-29",
     "candidateSession": "2026-10-30 04:00\u201309:30 America/New_York (EDT)",
     "candidateUTC": "08:00\u201313:30",
     "sourcePin": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
     "encryptionBinding": "Actual GitHub challenge encryption/same-key roundtrip PASSED; owner independent decryption PENDING",
-    "ownerRecoveryCopy": "EXPLICITLY_CONFIRMED_BY_OWNER; actual binding decryption challenge pending",
+    "ownerRecoveryCopy": "VERIFIED_ACTUAL_GITHUB_ARTIFACT_ON_IPAD_ISH",
     "originalProposalUnchanged": false,
     "revisedWrapper": "docs/validation/premarket-research-validation.preflight-revision.yml.proposed; not approved/installed",
     "findings": [
@@ -1123,7 +1127,7 @@
       "Offline recovery now tested for authentication, wrong keys/tampering, source/path and missing cycles",
       "Read77 existing main workflows; only existing Tests CI matches proposed installation push; no workflow_run downstream"
     ],
-    "testsPassed": 1296,
+    "testsPassed": 1300,
     "codeScope": "Safe branch tools/tests/proposals only; pinned runtime and every active workflow unchanged",
     "evidence": [
       "docs/validation/phase-a-final-preflight.md",
@@ -1196,13 +1200,16 @@
       "keyProofInstalled": false
     },
     "keyProofInstalled": true,
-    "keyRecoveryVerified": false,
-    "ownerOfflineDecryption": "PENDING"
+    "keyRecoveryVerified": true,
+    "ownerOfflineDecryption": "VERIFIED_OWNER_CONFIRMED",
+    "revisedWrapperSha256": "94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa",
+    "mainWorkflowInventoryObserved": "c1991e71a79713cbdbb28f123eb500081c7c96c2",
+    "pythonRecoveryTests": 22
   },
   "isolatedResearchKeyProof": {
-    "status": "GITHUB_BINDING_ROUNDTRIP_PASSED_OWNER_RECOVERY_PENDING",
-    "keyRecoveryVerified": false,
-    "ownerOfflineDecryption": "PENDING_OWNER_CONFIRMATION",
+    "status": "KEY_RECOVERY_VERIFIED_OWNER_CONFIRMED",
+    "keyRecoveryVerified": true,
+    "ownerOfflineDecryption": "VERIFIED_OWNER_CONFIRMED",
     "ownerIndependentCopyConfirmed": true,
     "authorization": "Explicit user authorization limited to reviewed branch-only RESEARCH_ARTIFACT_KEY challenge and encrypted three-day artifact",
     "installCommit": "bcfc3151a0bbfd8f00192abaa688a3a8b7baedac",
@@ -1301,7 +1308,7 @@
     ],
     "recoveryToolsSource": "d5c8c3259502054fd3864cb359c52de140d6498c",
     "expectedNonSensitivePlaintext": "Stock2 Phase A recovery challenge v1",
-    "note": "Server-side same-key roundtrip does not establish owner independent recovery. Do not change keyRecoveryVerified until the owner reports successful offline decryption of this GitHub-produced artifact.",
+    "note": "Owner independently decrypted the actual GitHub-produced challenge on iPad/iSH with the saved research key and reported exact authentication, source SHA and marker success. This closes key recovery only; no collection authorization.",
     "recoveryToolsCI": {
       "checks": [
         {
@@ -1355,10 +1362,26 @@
       }
     },
     "proofRunsObserved": 1,
-    "subsequentProofReruns": 0
+    "subsequentProofReruns": 0,
+    "ownerRecoveryConfirmation": {
+      "status": "VERIFIED",
+      "basis": "OWNER_CONFIRMED_INDEPENDENT_OFFLINE_DECRYPTION_OF_ACTUAL_GITHUB_ARTIFACT",
+      "reportedDate": "2026-10-29",
+      "device": "iPad iSH",
+      "runId": 40834596544,
+      "runAttempt": 1,
+      "artifactId": 12879798326,
+      "authenticated": true,
+      "challengeMatched": true,
+      "files": 1,
+      "recoveryStatus": "AUTHENTICATED_CHALLENGE_ONLY",
+      "sourceSha": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
+      "secretsShared": false,
+      "collectionAuthorized": false
+    }
   },
   "pythonOfflineKeyRecovery": {
-    "status": "PUBLISHED_EXACT_COMMIT_CI_PASSED_OWNER_RECOVERY_PENDING",
+    "status": "OWNER_IPAD_RECOVERY_VERIFIED",
     "base": "809d3f5b9228a96840ea8440f5cf93dc7ca73a73",
     "tool": "tools/recover-key-proof.py",
     "guide": "docs/validation/owner-key-proof-recovery-ish.md",
@@ -1372,8 +1395,8 @@
       "ishHardwareTested": false,
       "alpineContainerLimitation": "32-bit image failed with exec format error"
     },
-    "keyRecoveryVerified": false,
-    "ownerOfflineDecryption": "PENDING_OWNER_CONFIRMATION",
+    "keyRecoveryVerified": true,
+    "ownerOfflineDecryption": "VERIFIED_OWNER_CONFIRMED",
     "acceptanceUnchanged": "21/40 (52.5%)",
     "initialPublication": "ace165d2585c0e9015096b1cba05f9ad63f8769d",
     "ciSetupFailure": {
@@ -1482,6 +1505,42 @@
       "phaseAInstalled": false,
       "dataBlobsPreserved": 399,
       "acceptance": "21/40 (52.5%)"
+    },
+    "ownerRecoveryConfirmation": {
+      "status": "VERIFIED",
+      "basis": "OWNER_CONFIRMED_INDEPENDENT_OFFLINE_DECRYPTION_OF_ACTUAL_GITHUB_ARTIFACT",
+      "reportedDate": "2026-10-29",
+      "device": "iPad iSH",
+      "runId": 40834596544,
+      "runAttempt": 1,
+      "artifactId": 12879798326,
+      "authenticated": true,
+      "challengeMatched": true,
+      "files": 1,
+      "recoveryStatus": "AUTHENTICATED_CHALLENGE_ONLY",
+      "sourceSha": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
+      "secretsShared": false,
+      "collectionAuthorized": false
     }
+  },
+  "phaseARecoveryEngineering": {
+    "tool": "tools/recover-phase-a.py",
+    "python": "3.9.16",
+    "cryptoVersions": [
+      "3.3.2",
+      "46.0.3"
+    ],
+    "pythonTests": 22,
+    "nodeTests": 1300,
+    "candidateWorkflowSha256": "94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa",
+    "changes": [
+      "Full artifact offline authenticated recovery without Node",
+      "Fail closed on malformed/duplicate snapshot evidence, impossible freshness, nonfinite latency",
+      "Main/manual-only guard in dormant revised candidate"
+    ],
+    "installation": false,
+    "dispatch": false,
+    "keyRecoveryVerified": true,
+    "prospectivePaperCases": 0
   }
 }

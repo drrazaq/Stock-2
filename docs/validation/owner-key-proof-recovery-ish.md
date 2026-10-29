@@ -1,3 +1,5 @@
+> **Current status (29 October2026): VERIFIED.** The owner independently decrypted actual GitHub artifact12879798326 on iPad/iSH using the saved research key, reporting authenticated=true, challengeMatched=true, files=1 and source7dd702d. The instructions below are retained as the completed procedure; earlier PENDING language is historical and superseded. Phase A remains unauthorized.
+
 # iPad/iSH: Python-only offline challenge recovery
 
 No Node upgrade is needed. This tool uses the packaged `cryptography` library's AES-256-GCM and scrypt implementation. It opens the **existing** GitHub challenge without changing its format. It is deliberately restricted to this single non-sensitive challenge, not owner data or market-session artifacts. Independent owner recovery remains **PENDING** until you confirm success. Phase A remains unauthorized.

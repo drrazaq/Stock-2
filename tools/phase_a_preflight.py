@@ -1,6 +1,7 @@
 """Pure preflight rules for the proposed one-day wrapper, not an activation tool."""
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
+import math
 
 SOURCE = "7dd702d5d2ed3578f7558bc4f7fcc211f3619669"
 SESSION_DAY = "2026-10-30"
@@ -39,35 +40,56 @@ def check_session(manifest, history, now, run_id, attempt):
 def evaluate_collection(summary, cycles):
     """Fails the validation job on incomplete coverage; never approves a strategy."""
     problems = []
+    if not isinstance(summary, dict) or not isinstance(cycles, list):
+        return {"status": "VALIDATION_FAILED", "problems": ["MALFORMED_COLLECTION_EVIDENCE"], "approvedBuy": False}
     if summary.get("sourceSha") != SOURCE or summary.get("executionWindowComplete") is not True or summary.get("uniqueMinutes") != 330 or summary.get("cycles") != 330 or len(cycles) != 330:
         problems.append("INCOMPLETE_EXECUTION_WINDOW")
     if type(summary.get("requests")) is not int or not 0 <= summary["requests"] <= 420 or type(summary.get("bytes")) is not int or not 0 <= summary["bytes"] <= 67108864:
         problems.append("BUDGET_EVIDENCE_INVALID")
     minutes, latencies, observed, usable = set(), [], 0, 0
     for row in cycles:
-        if row.get("kind") != "RESEARCH_ONLY" or row.get("claims", {}).get("orders") is not False or row.get("claims", {}).get("approvedBuy") is not False:
+        if not isinstance(row, dict):
+            problems.append("MALFORMED_CYCLE_EVIDENCE")
+            continue
+        claims = row.get("claims")
+        if row.get("kind") != "RESEARCH_ONLY" or not isinstance(claims, dict) or claims.get("orders") is not False or claims.get("approvedBuy") is not False:
             problems.append("UNEXPECTED_COLLECTION_SCOPE")
-        session = row.get("session", {})
-        if session.get("day") != SESSION_DAY or type(session.get("minute")) is not int or not 240 <= session["minute"] < 570:
+        session = row.get("session")
+        if not isinstance(session, dict) or session.get("day") != SESSION_DAY or type(session.get("minute")) is not int or not 240 <= session["minute"] < 570:
             problems.append("UNEXPECTED_OBSERVATION_MINUTE")
         else:
             minutes.add(session["minute"])
-        metrics = row.get("metrics", {})
-        if type(metrics.get("uniqueSymbols")) is int and metrics["uniqueSymbols"] >= 10000 and type(metrics.get("freshPrices")) is int and metrics["freshPrices"] > 0:
-            usable += 1
-        for provider in row.get("providers", []):
-            if provider.get("provider") == "MASSIVE_FULL_SNAPSHOT":
-                if provider.get("status") == "RESPONSE_OBSERVED":
-                    observed += 1
-                latency = provider.get("requestLatencyMs")
-                if type(latency) in (int, float) and latency >= 0:
-                    latencies.append(latency)
+        metrics = row.get("metrics")
+        if not isinstance(metrics, dict):
+            problems.append("MALFORMED_PRICE_EVIDENCE")
+        else:
+            symbols, fresh = metrics.get("uniqueSymbols"), metrics.get("freshPrices")
+            if type(symbols) is not int or type(fresh) is not int or not 0 <= fresh <= symbols <= 30000:
+                problems.append("MALFORMED_PRICE_EVIDENCE")
+            elif symbols >= 10000 and fresh > 0:
+                usable += 1
+        providers = row.get("providers")
+        if not isinstance(providers, list) or any(not isinstance(p, dict) for p in providers):
+            problems.append("MALFORMED_PROVIDER_EVIDENCE")
+            continue
+        snapshots = [p for p in providers if p.get("provider") == "MASSIVE_FULL_SNAPSHOT"]
+        if len(snapshots) != 1:
+            problems.append("MISSING_OR_DUPLICATE_SNAPSHOT_EVIDENCE")
+            continue
+        provider = snapshots[0]
+        if provider.get("status") == "RESPONSE_OBSERVED":
+            observed += 1
+        latency = provider.get("requestLatencyMs")
+        if type(latency) in (int, float) and math.isfinite(latency) and latency >= 0:
+            latencies.append(latency)
+        else:
+            problems.append("MALFORMED_LATENCY_EVIDENCE")
     if minutes != set(range(240, 570)):
         problems.append("MISSING_OR_DUPLICATE_CLOCK_MINUTES")
     if usable < 314:
         problems.append("BROAD_SNAPSHOT_WITH_SOME_FRESH_DATA_BELOW_95_PERCENT")
     if observed < 314:
         problems.append("SNAPSHOT_VALID_RESPONSE_RATE_BELOW_95_PERCENT")
-    if len(latencies) != 330 or sorted(latencies)[min(len(latencies)-1, int(len(latencies)*.95))] >= 10000:
+    if len(latencies) != 330 or sorted(latencies)[math.ceil(len(latencies) * .95) - 1] >= 10000:
         problems.append("REQUEST_LATENCY_NOT_ESTABLISHED_BELOW_10_SECONDS")
     return {"status": "COLLECTION_CHECKS_PASSED_ONLY" if not problems else "VALIDATION_FAILED", "problems": sorted(set(problems)), "tradableUniverseCoverage": "UNVERIFIED", "profitability": "NOT_TESTED", "approvedBuy": False}

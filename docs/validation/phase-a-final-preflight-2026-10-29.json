@@ -1,7 +1,7 @@
 {
-  "status": "NO_GO_PENDING_OWNER_OFFLINE_RECOVERY_AND_SEPARATE_DATED_AUTHORIZATION",
+  "status": "KEY_VERIFIED_AWAITING_EXACT_REVISED_WORKFLOW_AND_DATED_AUTHORIZATION",
   "reportDate": "2026-10-29",
-  "developmentBase": "4c919aaa6fcbd9b3b4810c9a65c70f7953940960",
+  "developmentBase": "2c0a557050c862daca89c58ea672e3cf98d26350",
   "collectionSource": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
   "candidateSession": {
     "date": "2026-10-30",
@@ -17,29 +17,45 @@
   },
   "encryption": {
     "existingBindingUsable": "PASSED_NON_SENSITIVE_GITHUB_CHALLENGE",
-    "ownerRecoveryCopy": "OWNER_CONFIRMED_INDEPENDENT_RECOVERY_COPY; actual binding match still UNVERIFIED",
+    "ownerRecoveryCopy": "VERIFIED: owner saved copy independently decrypted actual GitHub artifact",
     "realKeyTestPerformed": true,
     "workspaceCredentialBindings": 0,
     "fixtureCryptoAndRecovery": "PASS; does not prove the existing key",
     "secretValueReadPrintedOrChanged": false,
     "bindingName": "RESEARCH_ARTIFACT_KEY",
     "legacyPrivateKey": "NOT_READ_NOT_ROTATED_NOT_EXPORTED",
-    "ownerOfflineDecryption": "PENDING_OWNER_CONFIRMATION",
-    "keyRecoveryVerified": false
+    "ownerOfflineDecryption": "VERIFIED_OWNER_CONFIRMED",
+    "keyRecoveryVerified": true,
+    "ownerRecoveryConfirmation": {
+      "status": "VERIFIED",
+      "basis": "OWNER_CONFIRMED_INDEPENDENT_OFFLINE_DECRYPTION_OF_ACTUAL_GITHUB_ARTIFACT",
+      "reportedDate": "2026-10-29",
+      "device": "iPad iSH",
+      "runId": 40834596544,
+      "runAttempt": 1,
+      "artifactId": 12879798326,
+      "authenticated": true,
+      "challengeMatched": true,
+      "files": 1,
+      "recoveryStatus": "AUTHENTICATED_CHALLENGE_ONLY",
+      "sourceSha": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
+      "secretsShared": false,
+      "collectionAuthorized": false
+    }
   },
   "workflow": {
     "installed": false,
     "reviewedBaselineSha256": "548ee15e3879696c228bd3ea6ca3e43b9e21c3d94714823a19fd5a09aa60f62b",
-    "preflightRevisionSha256": "5c6fafea3a3f81d6b084d5be28a53c118f6dd1cee73faad0c5136a94232e881f",
+    "preflightRevisionSha256": "94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa",
     "baselineUnchanged": false,
     "revisionApproved": false,
     "corePinUnchanged": true,
     "currentDormantProposalSha256": "b4807b68247ce6e873c1f549f0ecf44410484aa3eaf8cf712f8b6acb09e3547e",
-    "reasonForChange": "Concurrent4c919aa artifact-key separation preserved; owner review required",
+    "reasonForChange": "Separate research binding retained; malformed acceptance evidence fails closed; main/manual-only guard. Exact revised wrapper requires separate owner approval.",
     "currentDormantProposalFrom4cPreserved": true
   },
   "production": {
-    "mainObserved": "cf4c08f5022c7a9292893e0f28399f11777bbb4f",
+    "mainObserved": "c1991e71a79713cbdbb28f123eb500081c7c96c2",
     "existingWorkflowsReviewed": 77,
     "existingProductionFilesChanged": 0,
     "installationWouldTrigger": [
@@ -50,7 +66,8 @@
       "MASSIVE_KEY (collection only)",
       "FINNHUB_KEY (collection only)",
       "RESEARCH_ARTIFACT_KEY (preflight and sealer only; PRIVATE_KEY is merely the pinned CLI local alias, never legacy GitHub secret)"
-    ]
+    ],
+    "workflowRunDownstream": []
   },
   "limits": {
     "providerRequests": 420,
@@ -67,7 +84,8 @@
     "runbook": "docs/validation/phase-a-recovery-runbook.md",
     "offlineTools": [
       "tools/recover-research-artifact.mjs",
-      "tools/recover-research-artifact.py"
+      "tools/recover-research-artifact.py",
+      "tools/recover-phase-a.py (Python3.9+, no Node; full Phase A artifacts)"
     ],
     "wrongKeyAndTamperingFailBeforeOutput": true,
     "partialEvidenceAlwaysLabelledIncomplete": true,
@@ -90,10 +108,10 @@
     "percent": 52.5,
     "remaining": 19
   },
-  "nextRequirement": "Owner offline decryption of actual GitHub artifact, then revised-workflow review and separate explicit dated Phase A approval. Do not rerun proof or activate collection automatically.",
+  "nextRequirement": "Separate owner approval of exact revised wrapper and Oct30 session, issued no earlier than2026-10-29T13:35:00Z. No approval manifest or installation until authorized.",
   "concurrentCommitPreserved": "4c919aaa6fcbd9b3b4810c9a65c70f7953940960",
   "tests": {
-    "fullPassed": 1296,
+    "fullPassed": 1300,
     "failed": 0,
     "skipped": 0,
     "targetedPreflightRecoveryPassed": 6,
@@ -102,7 +120,8 @@
       "passedFiles": 150,
       "TAPTests": 1294,
       "failed": 0
-    }
+    },
+    "pythonRecoveryPassed": 22
   },
   "verifiedEngineeringCommit": "889dcb2193dc26f91a5611f3e9277fca2b99b40c",
   "remoteCI": [
@@ -151,11 +170,11 @@
   ],
   "runtimeIntegrity": {
     "pinnedSource": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
-    "head": "889dcb2193dc26f91a5611f3e9277fca2b99b40c",
+    "head": "2c0a557050c862daca89c58ea672e3cf98d26350",
     "identicalRuntimeBlobs": 9,
     "activeWorkflowChanges": 0,
     "phaseAInstalled": false,
-    "keyProofInstalled": false
+    "keyProofInstalled": true
   },
   "keyProofRun": {
     "id": 40834596544,
@@ -174,5 +193,19 @@
     "retentionDays": 3,
     "githubReportedDigest": "sha256:2ee46a7fe6896e34f899be793043a5ef36b0240e2cc8924c6fd78f72a14ebff8",
     "expectedFile": "key-check.txt.enc"
-  }
+  },
+  "remainingConditions": [
+    "Owner review/approval of exact revised workflow hash",
+    "Dated approval issued at/after2026-10-29T13:35:00Z",
+    "Recheck default branch trigger inventory and deployed byte identity immediately before authorized installation/dispatch",
+    "Available artifact quota and provider entitlements established only by authorized collection; no purchase",
+    "Accept documented hard-cancellation/upload-loss limitations; no silent source replacement"
+  ],
+  "residualLimits": [
+    "Pinned source has no encrypted intermediate uploads; hard cancel/runner loss can lose all unuploaded evidence",
+    "64MiB applies to compressed cycles; not a raw HTTP response or total runner RAM limit",
+    "Freshness denominator is received symbols, not a verified tradable universe",
+    "One-shot consumption relies on retained exhaustive GitHub run history; never delete runs to bypass it",
+    "Full iSH Phase A recovery tested on Python3.9.16 fixture sets, not yet on a live collection artifact"
+  ]
 }

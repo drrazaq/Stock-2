@@ -4,12 +4,16 @@ on:
     branches: [Stock2-safety-fixes]
     paths:
       - 'tools/recover-key-proof.py'
+      - 'tools/recover-phase-a.py'
+      - 'tests/test_phase_a_recovery.py'
       - 'tests/test_key_proof_python.py'
       - 'tests/fixtures/key-proof-node-v1.json'
       - '.github/workflows/python-key-recovery-tests.yml'
   pull_request:
     paths:
       - 'tools/recover-key-proof.py'
+      - 'tools/recover-phase-a.py'
+      - 'tests/test_phase_a_recovery.py'
       - 'tests/test_key_proof_python.py'
       - 'tests/fixtures/key-proof-node-v1.json'
       - '.github/workflows/python-key-recovery-tests.yml'
@@ -40,4 +44,4 @@ jobs:
       - name: Install authenticated crypto implementation for fixture tests
         run: python -m pip install 'cryptography==${{ matrix.crypto }}'
       - name: Offline public-fixture recovery tests (no owner key or data)
-        run: python -B -m unittest discover -s tests -p test_key_proof_python.py -v
+        run: python -B -m unittest discover -s tests -p 'test_*.py' -v

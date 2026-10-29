@@ -1,7 +1,7 @@
 {
-  "status": "GITHUB_BINDING_ROUNDTRIP_PASSED_OWNER_RECOVERY_PENDING",
-  "keyRecoveryVerified": false,
-  "ownerOfflineDecryption": "PENDING_OWNER_CONFIRMATION",
+  "status": "KEY_RECOVERY_VERIFIED_OWNER_CONFIRMED",
+  "keyRecoveryVerified": true,
+  "ownerOfflineDecryption": "VERIFIED_OWNER_CONFIRMED",
   "ownerIndependentCopyConfirmed": true,
   "authorization": "Explicit user authorization limited to reviewed branch-only RESEARCH_ARTIFACT_KEY challenge and encrypted three-day artifact",
   "installCommit": "bcfc3151a0bbfd8f00192abaa688a3a8b7baedac",
@@ -100,7 +100,7 @@
   ],
   "recoveryToolsSource": "d5c8c3259502054fd3864cb359c52de140d6498c",
   "expectedNonSensitivePlaintext": "Stock2 Phase A recovery challenge v1",
-  "note": "Server-side same-key roundtrip does not establish owner independent recovery. Do not change keyRecoveryVerified until the owner reports successful offline decryption of this GitHub-produced artifact.",
+  "note": "Owner independently decrypted the actual GitHub-produced challenge on iPad/iSH with the saved research key and reported exact authentication, source SHA and marker success. This closes key recovery only; no collection authorization.",
   "recoveryToolsCI": {
     "checks": [
       {
@@ -154,5 +154,21 @@
     }
   },
   "proofRunsObserved": 1,
-  "subsequentProofReruns": 0
+  "subsequentProofReruns": 0,
+  "ownerRecoveryConfirmation": {
+    "status": "VERIFIED",
+    "basis": "OWNER_CONFIRMED_INDEPENDENT_OFFLINE_DECRYPTION_OF_ACTUAL_GITHUB_ARTIFACT",
+    "reportedDate": "2026-10-29",
+    "device": "iPad iSH",
+    "runId": 40834596544,
+    "runAttempt": 1,
+    "artifactId": 12879798326,
+    "authenticated": true,
+    "challengeMatched": true,
+    "files": 1,
+    "recoveryStatus": "AUTHENTICATED_CHALLENGE_ONLY",
+    "sourceSha": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
+    "secretsShared": false,
+    "collectionAuthorized": false
+  }
 }

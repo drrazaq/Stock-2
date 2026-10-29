@@ -1,3 +1,15 @@
+## Current Phase A checkpoint — 29 October 2026
+
+**Research-key recovery VERIFIED** by owner independent offline decryption of actual GitHub artifact12879798326 on iPad/iSH. Authentication, exact marker, one file and source7dd702d matched; no secret disclosed. This closes the key prerequisite only. **Phase A NOT AUTHORIZED / NOT INSTALLED / NOT DISPATCHED.** No proof rerun, main merge/change, secret change, provider request, Telegram or order was performed.
+
+Prepared exact revised wrapper SHA256 **94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa**, pinned runtime7dd702d5d2ed3578f7558bc4f7fcc211f3619669. Proposed Friday30October04:00–09:30EDT (08:00–13:30UTC /11:00–16:30Kuwait); dispatch03:55EDT; expiry13:35UTC. Approval covering that expiry must be issued no earlier than29October13:35UTC; candidate remains approvedAt:null. Only future production change proposed is the one new manual workflow file on main, after explicit approval. Preserve all existing workflow/data/source files. Main inventory77workflows atc1991e71a79713cbdbb28f123eb500081c7c96c2: only existing secret-free Tests matches installation push, no workflow_run downstream. Recheck at authorized installation time.
+
+Safe branch repairs: full-artifact Python3.9 offline authenticated recovery without Node, and malformed/duplicate/nonfinite acceptance evidence rejected. All9runtimeblobs still match source7dd702d. Local verification:1,300 Node tests,22 Python tests on actual3.9.16 with cryptography3.3.2/46.0.3,9 targeted preflight/recovery tests, and active/proposed YAML/JSON/Python3.9 grammar checks passed. Exact-source publication/CI evidence will be recorded after push. Acceptance remains21/40(52.5%),19 open; actual prospective matched paper cases0.
+
+Authoritative proposal: docs/validation/phase-a-final-preflight.md; structured findings: phase-a-final-preflight-2026-10-29.json; key confirmation: phase-a-owner-key-verification.json. Full iSH recovery: tools/recover-phase-a.py and phase-a-recovery-runbook.md. The original challenge script is unchanged. Hard cancellation/runner/upload loss can destroy unuploaded evidence (no intermediate encrypted checkpoints in pinned source); compressed-cycle64MiB is not a raw-response/total-runner-memory limit. These limitations require review, not a false guarantee or hidden source substitution. Never install the old baseline proposal.
+
+Earlier PENDING key entries below are historical and superseded by this owner's actual-artifact confirmation.
+
 ## Latest Python-only recovery checkpoint — 29 October 2026
 
 Verified source **3ef17e9148bf6ba8a70c7156d9ccaa182864e8f8** (implementation ace165d2585c0e9015096b1cba05f9ad63f8769d). All12 exact-commit checks passed: push/PR Node tests, six Python matrix jobs, safety, watcher-open/close, research fixtures. Local tests:14 Python recovery tests on actual3.9.16 with cryptography3.3.2/46.0.3,14 on3.12.14/50.0.0, and1,299 Node tests;82 workflow YAML parses. Initial hosted attempt failed setup only because ubuntu-latest26.04 has no3.9.16 build; corrected new fixture-only CI pins22.04. Physical iPad/iSH not tested.
