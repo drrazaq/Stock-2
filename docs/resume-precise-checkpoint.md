@@ -1,11 +1,13 @@
 <!-- CURRENT-STATUS:BEGIN -->
 ## Current verified status — 29 October 2026
 
-**da99aa5378ff9abd1c7adc1b83fbbb9d6767d461: all 12 exact-commit checks passed.** The [canonical status record](current-engineering-status.json) and ledger identify the latest verified source; older checkpoint sections below are historical evidence, not current pending work. Acceptance stays **24/40;16 OPEN**; CATALYST-03 and ACTIONS-04 remain open.
+**413a91ca966fb1eb8e24a2113f23b4246752ca2e: all 12 exact-commit checks passed.** [Canonical status](current-engineering-status.json) supersedes historical checkpoint/pending text below. Acceptance **24/40; 16 OPEN**; CATALYST-03 and ACTIONS-04 remain open. Lost code/tests were reconstructed, not recovered.
 
-The [aim-to-evidence plan](aim-to-evidence-acceptance-plan.md) is committed and PR1 describes this source. C0 dedicated runtime, encrypted recovery and inactive proposed workflow preparation is underway locally. Entitlement, an agreed date and dated owner authorization are absent.16November and all proposed evaluation thresholds remain unapproved. The diagnostic concerns operational coverage/recovery, not profitable trading; prospective cases0.
+Confluence publication now preserves original baseline and conflicting frozen/library evidence; 48 actual Git fault/race cases across six workflows, including eight Confluence cases. No study execution/dispatch. Public recovery excludes raw signals/operational output.
 
-Confluence save-block repair passes48 actual Git cases across six workflows (8 new Confluence cases). Publication CI follows; no workflow dispatch or study execution. Recovery excludes raw signal/operational outputs. Next finish C0 tests, pin its exact published source/workflow bytes, document official non-secret evidence needed and reassess the date/effort estimate. Preserve existing restrictions and the reconstructed-not-recovered correction.
+[C0 review package](c0-diagnostic-review.md) has 44 focused cases, complete 183-file Node suite (1,725 reported cases plus two standalone scripts), 27 Python tests and static checks passing offline. Dedicated guarded runtime, encrypted persistent budgets/recovery and inactive proposed workflow await source publication/immutable pin and its CI. No live collection or active workflow exists. [Official evidence still needed](c0-alpaca-entitlement-evidence.md) is account-specific SIP/extended-hours rights, latest-endpoint allocation and retention terms. Date **UNSET**; 16 November and aim-plan thresholds are unapproved. Existing key recovery is preserved; remote C0 uploads remain unobserved.
+
+Next executable: publish C0 source, verify exact CI, pin proposed workflow and dependency bytes, then complete the entitlement review. Continue independent source/admission/writer work. Engineering/collection/paper/alerts readiness remain FAIL; operational diagnostic is not trading-profit evidence. Massive remains 15-minute delayed; broad SIP unverified; prospective cases zero. No main/merge/deploy/dispatch/messages/orders/purchases/secrets/permission changes.
 <!-- CURRENT-STATUS:END -->
 
 Historical checkpoints follow; the current block above supersedes their status/pending wording.

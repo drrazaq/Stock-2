@@ -1,0 +1,119 @@
+# INACTIVE REVIEW COPY. No installation/dispatch is authorized.
+# Replace the reviewed runtime pin only with a new owner-reviewed proposal.
+name: Stock-2 C0 diagnostic (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      approval_json:
+        description: Non-secret dated approved manifest; never credentials
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: stock2-c0-one-session
+  cancel-in-progress: false
+jobs:
+  diagnostic:
+    if: github.ref_name == 'Stock2-safety-fixes' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Read the actual installed workflow bytes
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: review
+          sparse-checkout: .github/workflows/c0-diagnostic.yml
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Checkout only the reviewed runtime source
+        uses: actions/checkout@v4
+        with:
+          ref: C0_RUNTIME_PIN_PENDING_PUBLICATION
+          path: code
+          sparse-checkout: |
+            c0-diagnostic.mjs
+            tools/c0-diagnostic.mjs
+            tools/seal-research-artifact.mjs
+            tools/recover-c0-diagnostic.py
+            market-session.mjs
+            market-symbol.mjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Prepare bounded non-secret approval file
+        working-directory: code
+        env:
+          C0_APPROVAL_JSON: ${{ inputs.approval_json }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          value = os.environ['C0_APPROVAL_JSON']
+          if len(value.encode()) > 65536:
+              raise SystemExit('approval input budget')
+          with open('c0-approval.json', 'x') as handle:
+              json.dump(json.loads(value), handle)
+          PY
+      - name: C0 cycle 0
+        id: collect0
+        working-directory: code
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          C0_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
+        run: node tools/c0-diagnostic.mjs --collect-cycle 0 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml C0_RUNTIME_PIN_PENDING_PUBLICATION
+      - name: Upload cycle 0 encrypted checkpoint files
+        id: upload0
+        uses: actions/upload-artifact@v4
+        with:
+          name: c0-${{ github.run_id }}-cycle-0
+          path: code/sealed-c0/cycle-0/
+          if-no-files-found: error
+          retention-days: 3
+      - name: C0 cycle 1
+        id: collect1
+        working-directory: code
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          C0_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
+          C0_PREVIOUS_UPLOAD_CONFIRMED: ${{ steps.upload0.outcome == 'success' }}
+        run: node tools/c0-diagnostic.mjs --collect-cycle 1 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml C0_RUNTIME_PIN_PENDING_PUBLICATION
+      - name: Upload cycle 1 encrypted checkpoint files
+        id: upload1
+        uses: actions/upload-artifact@v4
+        with:
+          name: c0-${{ github.run_id }}-cycle-1
+          path: code/sealed-c0/cycle-1/
+          if-no-files-found: error
+          retention-days: 3
+      - name: C0 cycle 2
+        id: collect2
+        working-directory: code
+        env:
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          C0_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
+          C0_PREVIOUS_UPLOAD_CONFIRMED: ${{ steps.upload1.outcome == 'success' }}
+        run: node tools/c0-diagnostic.mjs --collect-cycle 2 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml C0_RUNTIME_PIN_PENDING_PUBLICATION
+      - name: Upload cycle 2 encrypted checkpoint files
+        id: upload2
+        uses: actions/upload-artifact@v4
+        with:
+          name: c0-${{ github.run_id }}-cycle-2
+          path: code/sealed-c0/cycle-2/
+          if-no-files-found: error
+          retention-days: 3
+      # No more collection follows failure. Recovery upload is best effort;
+      # hard cancellation or quota failure may lose the latest cycle.
+      - name: Recover encrypted failed-cycle files
+        if: failure() && (steps.collect0.outcome == 'failure' || steps.collect1.outcome == 'failure' || steps.collect2.outcome == 'failure')
+        uses: actions/upload-artifact@v4
+        with:
+          name: c0-${{ github.run_id }}-incomplete-recovery
+          path: ${{ steps.collect2.outcome == 'failure' && 'code/sealed-c0/cycle-2/' || steps.collect1.outcome == 'failure' && 'code/sealed-c0/cycle-1/' || 'code/sealed-c0/cycle-0/' }}
+          if-no-files-found: ignore
+          retention-days: 3

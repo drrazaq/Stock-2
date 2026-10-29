@@ -2,7 +2,7 @@
 
 Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
 
-Updated29October2026; verified engineering source da99aa5 (12 exact-commit checks passed); canonical status: current-engineering-status.json; precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
+Updated29October2026; verified engineering source 413a91c (12 exact-commit checks passed); canonical status: current-engineering-status.json; precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|
@@ -15,6 +15,8 @@ Updated29October2026; verified engineering source da99aa5 (12 exact-commit check
 | Session/funnel/checkpoint/paper fixtures | Synthetic tests with explicit missing/stale/duplicate/interruption/cost behavior | Observed detection leads or prospective returns |
 
 Probe evidence: [batch report](alpaca-batch-access-observed-2026-10-29.md), [actual aggregate JSON](validation/alpaca-batch-probe-2026-10-29.observed.json), [run](https://github.com/drrazaq/Stock-2/actions/runs/40886478340). The diagnostic is retired; it was not rerun in this continuation. Existing observations and rejected/frozen studies are preserved.
+
+[Inactive C0 diagnostic review](c0-diagnostic-review.md) and [exact entitlement evidence needed](c0-alpaca-entitlement-evidence.md): offline preparation only; date UNSET, no approval or observed C0 results.
 
 | Prospective measurement | Admitted cases | Current result |
 |---|---:|---|
