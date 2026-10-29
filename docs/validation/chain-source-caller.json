@@ -1,0 +1,41 @@
+{
+  "base": "60be0ee112a6ea6f8b1bc7c74ae3508dac207a4c",
+  "status": "LOCAL_VERIFIED_HOSTED_PENDING",
+  "acceptanceAdded": 0,
+  "changedRequirements": [
+    "Actual Chain-ripple input failures preserve frozen output and generatedAt, expose UNKNOWN and cannot admit retained observations; explicit unavailable Insider output likewise cannot admit retained context.",
+    "Chain rows isolate malformed siblings; bounded price/chain shapes reject future/bad daily bars without retiming old evidence. Incomplete input cannot freeze a verdict even when the actual historical fixture has enough judged cases in both halves.",
+    "Per-symbol/chain/layer/day identity keeps original raw price evidence hashes and derived first-observed time across jobs. Sub-Float32 price revisions, withdrawn movers and removed membership latch conflicts, preserve originals and revoke old discovery credit across reversion.",
+    "Fresh report generation cannot revive stale underlying daily bars. Generated output, derived first observation, daily-bar day, original publication uncertainty and corporate-action basis uncertainty stay separate."
+  ],
+  "callerMap": {
+    "chain-ripple.mjs": "Writes public research output/library; no provider or delivery call. Synthetic fixtures only.",
+    "discovery-runtime.mjs": "Admits derived observations and revokes conflicts; carries day/clock/price basis. No BUY eligibility or delivery.",
+    "discovery2.mjs:costRows": "Reads firstRun results (fallback results), report-only cost comparison. Frozen results preserved.",
+    "scan.mjs": "No direct chain-ripple.json/todayMovers reader found. Its separate chain-decoder channels are not represented as covered by these tests.",
+    ".github/workflows/leaders-study.yml": "Publication dependency already repaired; 40 actual save-block cases across five workflows from60be0ee."
+  },
+  "local": {
+    "nodeFiles": 180,
+    "nodeReportedCases": 1619,
+    "standaloneScripts": 2,
+    "pythonTests": 27,
+    "moduleSyntax": 240,
+    "workflowYaml": 86,
+    "shellBlocks": 329,
+    "pythonSyntax": 9,
+    "chainCallerCases": 12,
+    "priorSourceNegativeControl": {
+      "failed": 12,
+      "passed": 0
+    }
+  },
+  "initialTestIssue": "A first clock assertion compared ISO string formatting (Z vs .000Z); it now compares the same UTC instant. No production clock behavior was changed to satisfy formatting.",
+  "remaining": [
+    "Legacy Chain-ripple observations without the new identity/clock fields remain unverified; historical current-chain membership and source corporate-action/session basis are not authenticated.",
+    "Price snapshots are derived daily data, not original news/filing events or independently confirmed material causes. Full source/consumer evidence for all eight lanes remains unfinished.",
+    "Revision-book capacity/schema failures stop admission with UNKNOWN; no automatic identity pruning/reconciliation is claimed."
+  ],
+  "realProviderRequests": 0,
+  "prospectiveCases": 0
+}

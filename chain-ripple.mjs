@@ -6,15 +6,26 @@
 // 2 best trades. Caveat written into the output: chain membership is TODAY's knowledge (a company listed in 2025 cannot appear earlier;
 // a company that left a chain is missing), so a pass goes to live paper first. Output: data/chain-ripple.json. Research only.
 import fs from 'node:fs';
+import {createHash} from 'node:crypto';
+import {marketSymbol} from './market-symbol.mjs';
 import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 import { freezeEach, latestBlock } from './first-run.mjs';   // run once per version: first judged verdict frozen (22 Oct 2026)
 const env = process.env, OUT = 'data/chain-ripple.json', COST = 0.008, STRESS = 0.012, HOLDS = [3, 10, 20];
 const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, pc = (x) => x === null || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
-let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE || 'study-cache/grouped.json.gz')).toString()); } catch (e) { console.log('chain-ripple: no price cache'); process.exit(0); }
-const CH = JSON.parse(fs.readFileSync('data/chains.json', 'utf8')).chains;
-const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 300) { console.log('chain-ripple: too few sessions'); process.exit(0); }
+let PREV={};try{if(fs.existsSync(OUT)){const bytes=fs.readFileSync(OUT);if(bytes.length>8*1024*1024)throw Error();const x=JSON.parse(bytes.toString());if(!x||typeof x!=='object'||Array.isArray(x))throw Error();PREV=x;}}catch{console.error('chain-ripple: prior output unreadable; preserve original for review');process.exit(1);}
+const unavailable=why=>{fs.mkdirSync('data',{recursive:true});fs.writeFileSync(OUT,JSON.stringify({...PREV,status:'NOT RUN',sourceStatus:{CHAIN_ANALYSIS:{status:'UNKNOWN'}},lastAttempt:{at:new Date().toISOString(),why}}));console.log('chain-ripple: '+why);process.exit(0);};
+let store;try{const bytes=fs.readFileSync(env.CACHE||'study-cache/grouped.json.gz');if(bytes.length>512*1024*1024)throw Error();store=JSON.parse(zlib.gunzipSync(bytes,{maxOutputLength:1024*1024*1024}).toString());}catch{unavailable('price cache unavailable/schema/budget');}
+const day=d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)&&Number.isFinite(Date.parse(d))&&new Date(d).toISOString().slice(0,10)===d;
+if(!store||!store.days||typeof store.days!=='object'||Array.isArray(store.days))unavailable('price days schema');
+const D=Object.keys(store.days).sort(),T=D.length;if(T<300||T>2000)unavailable('price session count');
+let cells=0;for(const d of D){const x=store.days[d];if(!day(d)||d>new Date().toISOString().slice(0,10)||!x||!Array.isArray(x.T)||x.T.length>20000||new Set(x.T).size!==x.T.length||x.T.some(s=>marketSymbol(s)!==s)||['o','c','v'].some(k=>!Array.isArray(x[k])||x[k].length!==x.T.length||x[k].some(v=>typeof v!=='number'||!Number.isFinite(v)||v<0)))unavailable('price date/bar schema');cells+=x.T.length;if(cells>16000000)unavailable('price cell budget');if(x.x&&(!Array.isArray(x.x.T)||!Array.isArray(x.x.c)||x.x.T.length!==x.x.c.length||x.x.T.some(s=>marketSymbol(s)!==s)||x.x.c.some(v=>typeof v!=='number'||!Number.isFinite(v)||v<0)))unavailable('exit-only price schema');}
+let rawChains;try{const b=fs.readFileSync('data/chains.json');if(b.length>8*1024*1024)throw Error();rawChains=JSON.parse(b.toString()).chains;}catch{unavailable('chains unavailable/schema/budget');}
+if(!rawChains||typeof rawChains!=='object'||Array.isArray(rawChains))unavailable('chains schema');
+const CH=Object.create(null);let rejectedChainRows=0,memberCount=0;for(const [chain,layers] of Object.entries(rawChains)){if(!chain||chain.length>200||!Array.isArray(layers)){rejectedChainRows++;continue;}const good=[];for(const L of layers){if(!L||typeof L.layer!=='string'||!L.layer||L.layer.length>200||!Array.isArray(L.syms)||good.some(x=>x.layer===L.layer)){rejectedChainRows++;continue;}const syms=[];for(const raw of L.syms){const sym=marketSymbol(raw);if(!sym){rejectedChainRows++;continue;}if(!syms.includes(sym))syms.push(sym);}memberCount+=syms.length;if(memberCount>10000)unavailable('chain member budget');good.push({...L,syms:syms.sort()});}CH[chain]=good;}
+const sourceComplete=rejectedChainRows===0;
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
+const rawRecent=new Map([...SY.keys()].map(s=>[s,D.slice(-21).map(d=>{const x=store.days[d],i=x.T.indexOf(s);return i<0?null:[x.c[i],x.v[i]];})]));
 const NS = SY.size, O = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
 // CX: closes of a stock AFTER it fell out of the cache's 3 USD / 1M USD filter (study-cache x rows, 22 Oct 2026). Used only to value an
 // exit (a held stock that collapsed under 3 USD keeps its real price); never for an entry.
@@ -67,15 +78,29 @@ for (const [k, a] of Object.entries(trades)) { const R = { older: stat(a.filter(
   if (R.stress.n >= 20 && !(R.stress.avg > 0)) why.push('loses at 1.2% costs');
   RES.CUSTOMER_TOP_21 = { name: 'Customer momentum (Cohen-Frazzini): suppliers whose customers rose most last month, held 1 month', verdict: !(R.older.n >= 20 && R.newer.n >= 20) ? 'TOO FEW CASES' : !why.length ? 'PROMISING' : R.older.edge > 0 && R.newer.edge > 0 ? 'NOT PROVEN' : 'REJECTED', why: why.join('; ') || 'beat the average stock and the bottom group in both halves, beyond luck', results: R }; }
 // today's ripple candidates (watch list): chain members that jumped today, and the connected names that have not moved
-const tL = T - 1, todayMovers = members.filter(m => { const r = r1(m.i, tL), x = vx(m.i, tL); return r !== null && r >= 0.06 && x !== null && x >= 2; }).map(m => ({ sym: m.s, chain: m.chain, layer: CH[m.chain][m.li].layer, move: +r1(m.i, tL).toFixed(3) }));
+const tL = T - 1, computedMovers = members.filter(m => { const r = r1(m.i, tL), x = vx(m.i, tL); return r !== null && r >= 0.06 && x !== null && x >= 2; }).map(m => ({ sym: m.s, chain: m.chain, layer: CH[m.chain][m.li].layer, move: +r1(m.i, tL).toFixed(3) }));
+const digest=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
+if(PREV.sourceRevisions!==undefined&&(!PREV.sourceRevisions||typeof PREV.sourceRevisions!=='object'||Array.isArray(PREV.sourceRevisions)))unavailable('revision identity schema');
+const sourceRevisions=PREV.sourceRevisions&&typeof PREV.sourceRevisions==='object'&&!Array.isArray(PREV.sourceRevisions)?structuredClone(PREV.sourceRevisions):{};
+if(Object.keys(sourceRevisions).length>10000)unavailable('revision identity capacity');
+const todayMovers=[],quarantinedSourceIds=new Set(Array.isArray(PREV.quarantinedSourceIds)?PREV.quarantinedSourceIds:[]);
+const candidates=[...computedMovers];for(const [key,prior] of Object.entries(sourceRevisions)){if(!/^RIPPLE:[0-9a-f]{64}$/.test(key)||!prior||typeof prior!=='object'||!prior.row||prior.row.sourceId!==key||!/^[0-9a-f]{64}$/.test(prior.revisionId)||prior.row.sourceRevisionId!==prior.revisionId||!day(prior.row.sourceDataDay)||typeof prior.firstObservedAt!=='string'||!/T.*Z$/.test(prior.firstObservedAt)||!Number.isFinite(Date.parse(prior.firstObservedAt))||Date.parse(prior.firstObservedAt)>Date.now()||!['CONFLICT',undefined].includes(prior.status))unavailable('revision identity schema');const r=prior.row;if(r.sourceDataDay===D[tL]&&!candidates.some(x=>x.sym===r.sym&&x.chain===r.chain&&x.layer===r.layer))candidates.push(r);}
+for(const row of candidates){const i=SY.get(row.sym),sourceId='RIPPLE:'+digest([row.sym,row.chain,row.layer,D[tL]]),sourceRevisionId=digest([row.sym,row.chain,row.layer,D[tL],CH[row.chain],rawRecent.get(row.sym)]);
+ const prior=sourceRevisions[sourceId];if(prior&&(!prior.row||typeof prior.revisionId!=='string'||!Number.isFinite(Date.parse(prior.firstObservedAt))))unavailable('revision identity schema');
+ if(!prior&&Object.keys(sourceRevisions).length>=10000)unavailable('revision identity capacity');
+ const original=prior||{revisionId:sourceRevisionId,firstObservedAt:new Date().toISOString(),row:{...row,sourceDataDay:D[tL],sourceId,sourceRevisionId,sourceIdentityBasis:'DERIVED_DAILY_PRICE_AND_CURRENT_CHAIN_NOT_ORIGINAL_NEWS',sourceClockBasis:'DAILY_BAR_DATE_ONLY_SESSION_FINALITY_UNKNOWN',priceBasis:'UNVERIFIED_CORPORATE_ACTION_BASIS'}};
+ if(quarantinedSourceIds.has(sourceId)||prior&&(prior.status==='CONFLICT'||prior.revisionId!==sourceRevisionId)){original.status='CONFLICT';quarantinedSourceIds.add(sourceId);}
+ sourceRevisions[sourceId]=original;
+ todayMovers.push({...original.row,derivedAvailableAt:original.firstObservedAt,...(original.status==='CONFLICT'?{revisionStatus:'CONFLICT'}:{})});
+}
 for (const r of Object.values(RES)) if (r.verdict === 'PROMISING') { const lw = belowLeague([r.results.older.t, r.results.newer.t], BAR); if (lw) { r.verdict = BELOW; r.why = 'beat the average stock in both halves; ' + lw; } }
 // RUN ONCE per version: a version's first run with 20+ cases in both halves is frozen in firstRun.results and never overwritten;
 // this run's numbers go to `latest` (monitoring only). The library (N1, N3, N4) reads firstRun only.
-const PREV = (() => { try { return JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch (e) { return {}; } })() || {};
-const FR = freezeEach(PREV.firstRun && PREV.firstRun.results, RES, (r) => r.verdict !== 'TOO FEW CASES');
+
+const FR = freezeEach(PREV.firstRun && PREV.firstRun.results, RES, (r) => sourceComplete&&!quarantinedSourceIds.size&&r.verdict !== 'TOO FEW CASES');
 const firstRun = Object.keys(FR).length ? { at: (PREV.firstRun && PREV.firstRun.at) || new Date().toISOString(), bar: (PREV.firstRun && PREV.firstRun.bar) || +BAR.toFixed(2), results: FR } : null;
 const RESF = Object.fromEntries(Object.keys(RES).map(k => [k, FR[k] || { ...RES[k], verdict: 'NO VERDICT YET (' + RES[k].verdict + ')' }]));
-const out = { generatedAt: new Date().toISOString(), from: D[21], to: D[tL], events, versions: NV, bar: +BAR.toFixed(2), caveat: 'Chain membership is today’s knowledge (not point in time): a pass goes to live paper first. results = the frozen first verdict of each version (firstRun); latest = monitoring only.', results: RESF, firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[tL], bar: +BAR.toFixed(2), results: RES }), todayMovers };
+const out = { status:sourceComplete&&!quarantinedSourceIds.size?'OK':'PARTIAL_OR_UNKNOWN',sourceStatus:{CHAIN_ANALYSIS:{status:sourceComplete&&!quarantinedSourceIds.size?'OBSERVED':'PARTIAL_OR_UNKNOWN',rejectedRows:rejectedChainRows}},sourceRevisions,quarantinedSourceIds:[...quarantinedSourceIds],sourceClockBasis:'DAILY_BAR_DATE_ONLY_SESSION_FINALITY_UNKNOWN',safetyVariant:'schema-validated current chain membership; historical frozen verdicts retained',generatedAt: new Date().toISOString(), from: D[21], to: D[tL], events, versions: NV, bar: +BAR.toFixed(2), caveat: 'Chain membership is today’s knowledge (not point in time): a pass goes to live paper first. results = the frozen first verdict of each version (firstRun); latest = monitoring only.', results: RESF, firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[tL], bar: +BAR.toFixed(2), results: RES }), todayMovers };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 console.log('CHAIN RIPPLE (' + out.from + ' to ' + out.to + ', ' + events + ' chain-member jumps)');
 for (const r of Object.values(RESF)) console.log('- ' + r.name + ': ' + r.verdict + (r.results.newer.n ? ' | newer half ' + r.results.newer.n + ' trades, ' + pc(r.results.newer.avg) + ' a trade, ' + pc(r.results.newer.edge) + ' vs an average stock, t ' + r.results.newer.t + (typeof r.results.newer.vsOwn === 'number' ? ', ' + pc(r.results.newer.vsOwn) + ' vs the same stock on other days (t ' + r.results.newer.tOwn + ')' : '') : '') + (r.verdict !== 'PROMISING' ? ' (' + r.why.split(';')[0] + ')' : ''));
