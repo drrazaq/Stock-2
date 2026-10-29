@@ -31,3 +31,37 @@ jobs:
         run: node --test tests/quote-freshness-safety.test.mjs tests/paper-gates-safety.test.mjs tests/session-coverage.test.mjs tests/ignition-replay.test.mjs tests/watcher-schedule.test.mjs tests/trade-plan.test.mjs tests/telegram-delivery.test.mjs tests/live-refresh-universe.test.mjs tests/approved-quote-gate.test.mjs tests/move-categories.test.mjs
       - name: Secret-free branch watcher lifecycle integration
         run: node --test tests/watcher-runtime.test.mjs tests/market-heartbeat.test.mjs tests/guard-dispatch.test.mjs
+  fixture-open:
+    if: github.ref_name == 'Stock2-safety-fixes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node tools/watcher-artifact-fixture.mjs open
+      - uses: actions/upload-artifact@v4
+        with:
+          name: watcher-fixture-${{ github.run_id }}
+          path: |
+            fixture-state/runtime/watcher-checkpoint.json
+            fixture-state/runtime/watcher-heartbeat.json
+            fixture-state/data/ignition-runs/
+          retention-days: 1
+          if-no-files-found: error
+  fixture-close:
+    needs: fixture-open
+    if: github.ref_name == 'Stock2-safety-fixes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/download-artifact@v4
+        with:
+          name: watcher-fixture-${{ github.run_id }}
+          path: fixture-state
+      - run: node tools/watcher-artifact-fixture.mjs close
