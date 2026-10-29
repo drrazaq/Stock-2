@@ -1,5 +1,5 @@
 {
-  "status": "NO_GO_PENDING_KEY_PROOF_AND_REVISED_REVIEW",
+  "status": "NO_GO_PENDING_OWNER_OFFLINE_RECOVERY_AND_SEPARATE_DATED_AUTHORIZATION",
   "reportDate": "2026-10-29",
   "developmentBase": "4c919aaa6fcbd9b3b4810c9a65c70f7953940960",
   "collectionSource": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
@@ -16,14 +16,16 @@
     "authorizationIssued": false
   },
   "encryption": {
-    "existingBindingUsable": "UNVERIFIED",
+    "existingBindingUsable": "PASSED_NON_SENSITIVE_GITHUB_CHALLENGE",
     "ownerRecoveryCopy": "OWNER_CONFIRMED_INDEPENDENT_RECOVERY_COPY; actual binding match still UNVERIFIED",
-    "realKeyTestPerformed": false,
+    "realKeyTestPerformed": true,
     "workspaceCredentialBindings": 0,
     "fixtureCryptoAndRecovery": "PASS; does not prove the existing key",
     "secretValueReadPrintedOrChanged": false,
     "bindingName": "RESEARCH_ARTIFACT_KEY",
-    "legacyPrivateKey": "NOT_READ_NOT_ROTATED_NOT_EXPORTED"
+    "legacyPrivateKey": "NOT_READ_NOT_ROTATED_NOT_EXPORTED",
+    "ownerOfflineDecryption": "PENDING_OWNER_CONFIRMATION",
+    "keyRecoveryVerified": false
   },
   "workflow": {
     "installed": false,
@@ -74,8 +76,8 @@
   "actionsPerformed": {
     "phaseAInstalled": false,
     "phaseADispatched": false,
-    "keyProofInstalled": false,
-    "keyProofTriggered": false,
+    "keyProofInstalled": true,
+    "keyProofTriggered": true,
     "providerRequests": 0,
     "telegram": 0,
     "orders": 0,
@@ -88,7 +90,7 @@
     "percent": 52.5,
     "remaining": 19
   },
-  "nextRequirement": "Separately authorize the zero-provider actual RESEARCH_ARTIFACT_KEY challenge and verify owner offline decryption; then review revised wrapper and explicitly approve the exact dated session in its validity window.",
+  "nextRequirement": "Owner offline decryption of actual GitHub artifact, then revised-workflow review and separate explicit dated Phase A approval. Do not rerun proof or activate collection automatically.",
   "concurrentCommitPreserved": "4c919aaa6fcbd9b3b4810c9a65c70f7953940960",
   "tests": {
     "fullPassed": 1296,
@@ -154,5 +156,23 @@
     "activeWorkflowChanges": 0,
     "phaseAInstalled": false,
     "keyProofInstalled": false
+  },
+  "keyProofRun": {
+    "id": 40834596544,
+    "attempt": 1,
+    "event": "push",
+    "conclusion": "success",
+    "url": "https://github.com/drrazaq/Stock-2/actions/runs/40834596544"
+  },
+  "keyProofArtifact": {
+    "id": 12879798326,
+    "name": "phase-a-key-proof-40834596544-1",
+    "url": "https://github.com/drrazaq/Stock-2/actions/runs/40834596544/artifacts/12879798326",
+    "sizeBytes": 348,
+    "createdAt": "2026-10-29T07:18:44Z",
+    "expiresAt": "2026-11-01T07:18:43Z",
+    "retentionDays": 3,
+    "githubReportedDigest": "sha256:2ee46a7fe6896e34f899be793043a5ef36b0240e2cc8924c6fd78f72a14ebff8",
+    "expectedFile": "key-check.txt.enc"
   }
 }

@@ -1,6 +1,6 @@
 # Production validation proposal — approval required
 
-Status: **NO-GO pending actual research-key proof and revised-wrapper review; not deployed or dispatched.** See [final preflight](validation/phase-a-final-preflight.md). Approving this document does not approve a strategy, a BUY alert or a trade.
+Status: **NO-GO pending owner offline recovery confirmation and revised/datetimed Phase A approval; not deployed or dispatched.** See [final preflight](validation/phase-a-final-preflight.md). Approving this document does not approve a strategy, a BUY alert or a trade.
 
 ## Phase A: one research-only premarket session
 

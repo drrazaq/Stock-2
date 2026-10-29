@@ -32,3 +32,8 @@ Once key proof, revised-workflow review and acceptable cancellation/recovery ter
 Owner confirmation received: an independently recoverable external copy of RESEARCH_ARTIFACT_KEY exists. This closes backup-location confirmation only; it authorizes neither the key-proof job nor Phase A and does not establish a match to the current GitHub binding.
 
 Safe engineering commit **889dcb2193dc26f91a5611f3e9277fca2b99b40c** passed all6exact-commit checks: [PR](https://github.com/drrazaq/Stock-2/actions/runs/40833408726), [push](https://github.com/drrazaq/Stock-2/actions/runs/40833401827), [safety/artifact](https://github.com/drrazaq/Stock-2/actions/runs/40833402077), [research fixtures](https://github.com/drrazaq/Stock-2/actions/runs/40833408701). Hosted150files/1294TAPtests plus2standalone scripts reconcile with local1296. All9pinnedruntimeblobs are identical to7dd702d, with0activeworkflowchanges. These checks do not exercise the actual research key.
+
+
+## Explicitly authorized isolated key proof — owner recovery pending
+
+The owner subsequently approved installing/running only the reviewed branch-only key challenge. Exact workflow installed inbcfc315; run40834596544/attempt1 succeeded and uploaded encrypted artifact12879798326, phase-a-key-proof-40834596544-1, expiring2026-11-01T07:18:43Z. Only RESEARCH_ARTIFACT_KEY was bound. No legacy key, owner data, provider, Telegram, broker, main or Phase A activity occurred. Server binding usability is now demonstrated for the challenge; **independent recovery remains PENDING, not VERIFIED**, until owner decryption with the saved copy. [Exact owner instructions](owner-key-proof-recovery.md). No collection permission follows from this authorization.
