@@ -1781,5 +1781,25 @@
       "Other Telegram paths, actual delivery and all-workflow conflict semantics remain open"
     ],
     "acceptanceCredit": 0
+  },
+  "repositoryOwnershipMilestone": {
+    "status": "MAPPED_PENDING_HOSTED_VERIFICATION",
+    "baselineCommit": "695dd37ba08bde1da888025a751842aab22f2e80",
+    "counts": {
+      "blobs": 972,
+      "rootModules": 219,
+      "workflows": 83,
+      "productionData": 399,
+      "frozenStudies": 51
+    },
+    "manifest": "docs/repository-ownership.json",
+    "enforcement": "Publication checks explicit paths against owner/frozen/activation/data preservation before commit",
+    "acceptanceCredit": 0,
+    "verificationRequired": [
+      "Hosted push checks every protected branch blob/mode; PR checks frozen studies and policy coverage",
+      "All972 baseline paths assigned authority, conservative classification for additions",
+      "Deliberate protected writes/deletions/modes/activation rejected",
+      "No claim all219 scripts were behaviorally reviewed"
+    ]
   }
 }
