@@ -18,7 +18,10 @@ test('real Git tree metadata preserves all production and frozen baseline blobs 
  const map=new Map(current.map(x=>[x.path,x]));
  // PR merge fixtures can contain authorized concurrent main data updates. Push CI
  // validates every protected branch blob; PR CI validates frozen study blobs.
- const protectedPolicies=process.env.GITHUB_HEAD_REF?['FROZEN_RESEARCH']:['OWNER_PRIVATE_DATA','FROZEN_RESEARCH','PRODUCTION_DATA','OWNER_ACTIVATION','OWNER_SECURITY_CONFIGURATION'];
+ // Exact-source checkout is verified by the dedicated preservation CI job.
+ // The ordinary PR merge checkout may legitimately have newer main data blobs.
+ if(process.env.GITHUB_HEAD_REF&&process.env.STOCK2_EXACT_SOURCE_TREE!=='1'){assert.ok(current.every(x=>repositoryPolicy(x.path,policy)!=='INVALID_PATH'));return;}
+ const protectedPolicies=['OWNER_PRIVATE_DATA','FROZEN_RESEARCH','PRODUCTION_DATA','OWNER_ACTIVATION','OWNER_SECURITY_CONFIGURATION'];
  for(const e of manifest.entries.filter(x=>protectedPolicies.includes(x.policy))){assert.equal(map.get(e.path)?.blobSha,e.blobSha,e.path);assert.equal(map.get(e.path)?.mode,e.mode,e.path);}
  for(const frozen of manifest.frozenRegistry)assert.equal(map.get(frozen.path)?.blobSha,frozen.sha,frozen.path);
  assert.ok(current.every(x=>repositoryPolicy(x.path,policy)!=='INVALID_PATH'));

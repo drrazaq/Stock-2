@@ -1796,10 +1796,15 @@
     "enforcement": "Publication checks explicit paths against owner/frozen/activation/data preservation before commit",
     "acceptanceCredit": 0,
     "verificationRequired": [
-      "Hosted push checks every protected branch blob/mode; PR checks frozen studies and policy coverage",
+      "Dedicated exact-source push/PR job checks all protected branch metadata; ordinary PR merge suite checks policy grammar only",
       "All972 baseline paths assigned authority, conservative classification for additions",
       "Deliberate protected writes/deletions/modes/activation rejected",
       "No claim all219 scripts were behaviorally reviewed"
-    ]
+    ],
+    "initialPRFailure": {
+      "commit": "0ae9258fca602ff3de7fedbe6e7ece23c2e15bdb",
+      "run": "https://github.com/drrazaq/Stock-2/actions/runs/40853346138",
+      "reason": "PR merge tree contains different full live study-output blob angles-lab.json from main; branch push preserved all baseline blobs. Correct verification must explicitly check the source commit, not conflate merged live output and frozen source snapshot."
+    }
   }
 }
