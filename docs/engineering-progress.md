@@ -2,7 +2,7 @@
 
 Updated: 29 October 2026 (UTC). Development branch: `Stock2-safety-fixes`. PR: [draft #1](https://github.com/drrazaq/Stock-2/pull/1). No merge, deployment, workflow dispatch, Telegram message or trade performed in this review.
 
-**Completion: 42.5% (17 of 40 acceptance checks)** for the comprehensive engineering audit, repair and verification scope below. Each of ten workstreams has four equally weighted checks. Only the named completed checks count; in-progress work gets zero credit. This measures documented acceptance work, not percentage of code reviewed, product maturity or probability of trading profit. Earlier ~45% subjective maturity estimates are superseded for this audit. Production acceptance remains blocked.
+**Completion: 50% (20 of 40 acceptance checks)** for the comprehensive engineering audit, repair and verification scope below. Each of ten workstreams has four equally weighted checks. Only the named completed checks count; in-progress work gets zero credit. This measures documented acceptance work, not percentage of code reviewed, product maturity or probability of trading profit. Earlier ~45% subjective maturity estimates are superseded for this audit. Production acceptance remains blocked.
 
 | Workstream | Complete / 4 | Completed acceptance checks | Remaining acceptance checks |
 |---|---:|---|---|
@@ -11,8 +11,8 @@ Updated: 29 October 2026 (UTC). Development branch: `Stock2-safety-fixes`. PR: [
 | Market data | 1 | Inventory literal provider hosts and inspect watcher fallback path | Per-source entitlement/coverage audit; symbol/session normalization; full session freshness/latency measurement |
 | Early discovery | 2 | Verify pre-ignition runtime call; connect nine-lane research runtime with explicit availability provenance and guarded E2E (local/CI, not deployed) | Whole-market premarket discovery; matched prospective lead-time/false-positive evaluation |
 | Catalyst intelligence | 2 | Inspect timestamp/materiality boundaries; regression fixes for chronology and invalid/coerced evidence | All-source ingestion/deduplication review; independent point-in-time audit and missing-source measurements |
-| ZAD compliance | 1 | Approved ignition wording now requires explicit owner ZAD yes and honors exclusion set | Audit all other recommendation paths; verify 90-day rejection persistence/recheck; malformed/stale/missing-file integration tests |
-| Execution safeguards | 1 | Reproduce/fix finite-quote midpoint overflow in approved gate and display | Full order-endpoint/permission audit; entry/stop/gap/cost consistency across lanes; end-to-end fail-closed fault injection |
+| ZAD compliance | 3 | Approved ignition owner yes/exclusion gate; rejection persistence/recheck; malformed/stale/missing-file bot integration | Complete all other recommendation-path audit |
+| Execution safeguards | 2 | Finite-quote overflow repair; broker order-endpoint/permission audit with default-off paper mutations | Entry/stop/gap/cost consistency across lanes; complete fail-closed fault injection |
 | Telegram | 2 | Existing acknowledgment/failure and cap/mute tests; shared timeout/429/length/retry policy verified | Complete behavioral review/deduplication of all send paths; authorized delivery validation |
 | Strategy testing | 2 | Run complete baseline suite; run complete post-fix suite | Frozen experiment/holdout registry audit; realistic after-cost independent replay acceptance |
 | Historical performance | 1 | Re-read frozen ignition artifact and separate it from five-year daily experiments | Survivorship/delisting/CIK audit; validate all performance claims/windows; benchmark/capacity/drawdown/uncertainty report |
@@ -203,3 +203,12 @@ Discovery follow-up full local suite: **1,260 passed**, zero failures/skips; no 
 Latest static scope: 214 root modules, 79 workflows; baseline inventory and frozen dataset metadata remain preserved. All 15 local original data files still match baseline Git blob IDs. Branch publications preserve all unrelated files; no production data path was committed. Detailed recoverable bundles are saved in /workspace/scratch, with source SHA and test evidence in the ledger and handoff.
 
 Acceptance: **17/40 (42.5%), 23 open**. No new strategy approval. The remaining owner-gated steps are operational deployment/collection and real Telegram validation. Working overnight provider bindings do not justify a subscription purchase. Many remaining behavioral/history/ZAD reviews can continue safely on this development branch; they are not falsely marked complete or all classified as approval blockers.
+
+
+## Compliance and broker boundary continuation
+
+ZAD policy is consolidated across scan/replies, watcher and research radar: strict nonfuture owner approval dates, 90-day affirmative review, no list-supplied owner approval, current exclusion precedence. Rejections remain blocked after 90 days with recheck metadata rather than disappearing. Owner mark commands update raw records, preserve unrelated history and refuse corrupt existing files. Unknown marks cannot make reply/plan BUY wording. Remaining recommendation paths are still under review.
+
+Broker audit covers root/browser endpoint literals and all 79 workflow permission/ref/concurrency declarations (order-permission-audit-2026-10-29.json). The sole order mutation adapter is now default read-only, including paper. STOCK2_ENABLE_PAPER_ORDERS=1 can opt in only to the fixed paper host; the engineering task never sets it or submits orders. Redirects, arbitrary live hosts, non-order mutation paths and malformed quantities are blocked. Unknown outcomes are not retried. Existing options read client can no longer accept arbitrary live-host overrides. No existing workflow permissions changed.
+
+Local validation: **1,268 passed**, zero failures/skips; 215 root modules syntax checked; 79 workflows parsed. One prior news fixture raced the second boundary and gave a future quote; its fixture time now has a conservative 30-second offset. Production future-price protection remains strict. Acceptance **20/40 (50%), 20 open**: credit only the two named compliance checks and broker endpoint audit. Code publication CI pending.

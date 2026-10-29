@@ -17,7 +17,7 @@ async function fixture(t,{stale=false,future=false,macro=false,unknown=false,pre
   else if(u.pathname.includes('/snapshots'))body={AAA:{latestTrade:{p:8,t:new Date(Date.now()-(stale?3600000:1000)).toISOString()},prevDailyBar:{c:8}}};
   else if(u.pathname==='/news')body=[];
   else if(u.pathname==='/company-news')body=[{id:1,headline:'AAA offering',datetime:Math.floor(Date.now()/1000)+(future?3600:-30)}];
-  else if(u.pathname==='/quote')body={c:8,dp:u.searchParams.get('symbol')==='SPY'?(macro?-3:0):-20,t:Math.floor(Date.now()/1000)-(stale?3600:0)};
+  else if(u.pathname==='/quote')body={c:8,dp:u.searchParams.get('symbol')==='SPY'?(macro?-3:0):-20,t:Math.floor(Date.now()/1000)-30-(stale?3600:0)};
   res.setHeader('Content-Type','application/json');res.end(JSON.stringify(body));});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});});
  const base='http://127.0.0.1:'+server.address().port;

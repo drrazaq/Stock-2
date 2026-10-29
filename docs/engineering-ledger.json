@@ -43,10 +43,10 @@
     "note": "Reading, syntax checks and fixtures are not exhaustive behavioral certification"
   },
   "engineeringAcceptance": {
-    "complete": 17,
+    "complete": 20,
     "total": 40,
-    "percent": 42.5,
-    "basis": "One additional Telegram timeout/429/length/retry transport policy check verified. All-path behavior/dedup and authorized delivery remain open. Provider spot probes and paper fixtures earn no live/prospective acceptance credit."
+    "percent": 50,
+    "basis": "Added rejection persistence/recheck audit, missing/malformed compliance integration and broker endpoint/permission audit. Complete recommendation-path compliance remains open."
   },
   "strategyValidation": {
     "earlyEnginePromotionChecksPassed": 0,
@@ -557,7 +557,7 @@
     ],
     "publishedCommit": "1c2031495c839e7d8469cb127821ec1650ca09aa"
   },
-  "remainingAcceptanceChecks": 23,
+  "remainingAcceptanceChecks": 20,
   "providerReadinessMilestone": {
     "base": "4f00ffb8ace4b6ff5397c1b6dca8193823a811cd",
     "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
@@ -758,5 +758,26 @@
       "evidence": "Protocol requires point-in-time security/industry metadata, next fresh ask/bid and liquidity. Actual resolved cases = 0",
       "ownerAction": "Approve operational collection separately when ready; fixtures and last trades cannot establish performance."
     }
-  ]
+  ],
+  "complianceOrderMilestone": {
+    "status": "FULL_LOCAL_VERIFIED_PENDING_PUBLICATION",
+    "base": "e717c657ff3a726bbb1f8e6e3d232c2a3b1c9b6b",
+    "testsPassed": 1268,
+    "syntaxModules": 215,
+    "workflowsParsed": 79,
+    "evidence": [
+      "test/zad-policy-integration.test.mjs",
+      "tests/paper-transport.test.mjs",
+      "docs/order-permission-audit-2026-10-29.json"
+    ],
+    "repairs": [
+      "Strict dates/shapes and owner-only affirmative marks; exclusions dominate",
+      "Rejection retained after 90 days, explicit recheck needed",
+      "Mark commands preserve raw unrelated records and reject corrupt existing files",
+      "Reply/plan wording blocks unknown ZAD approvals",
+      "All broker mutations default disabled; explicit paper-only opt-in, no redirects or unknown-outcome retries",
+      "Options GET client no arbitrary live-host override"
+    ],
+    "remaining": "Complete legacy recommendation and message-state audit remains open; no actual broker request made"
+  }
 }

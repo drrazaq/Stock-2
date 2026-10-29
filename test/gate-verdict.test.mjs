@@ -10,7 +10,7 @@ import { loadScan, blocked } from './load-scan.mjs';
 
 const quick = (sym, o = {}) => ({ sym, n: 60, avgPct: 0.02, win: 0.6, last: 50, buyLo: 49, buyHi: 51, stop: 45, maxHold: 5, ...o });
 const sig = (extra = {}) => ({ session: '2026-10-21', market: { above50: true, up: true }, quick: [quick('AAA')], ...extra });
-const gv = async (s, files = {}) => (await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/signals.json': s, ...files } })).fn('gateVerdict')('AAA', s);
+const gv = async (s, files = {}) => (await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/signals.json': s, 'data/halal.json':{AAA:{s:'ok',d:new Date().toISOString().slice(0,10)}}, ...files } })).fn('gateVerdict')('AAA', s);
 
 test('control: focus off, a proven quick trade with no block passes the gate', async () => {
   assert.equal(await gv(sig()), null);

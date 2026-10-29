@@ -38,7 +38,7 @@ test('a POSITIVE Alpaca record of another kind does not lift FOCUS for quick or 
 
 test('the quick-trade record POSITIVE under the full bar lifts FOCUS for quick trades only', async () => {
   const s = sig({ quickRecord: quickFull });
-  const S = await loadScan({ files: { 'data/settings.json': { focus: true }, 'data/signals.json': s } });
+  const S = await loadScan({ files: { 'data/halal.json':{AAA:{s:'ok',d:new Date().toISOString().slice(0,10)}}, 'data/settings.json': { focus: true }, 'data/signals.json': s } });
   assert.deepEqual(ok(S, s), { AAA: true, BBB: false });
   assert.equal(S.fn('gateVerdict')('AAA', s), null);
   assert.match(S.fn('gateVerdict')('BBB', s), /focus mode/);

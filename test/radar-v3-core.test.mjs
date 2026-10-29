@@ -25,10 +25,10 @@ test('hard blocks: under 1 USD, NOT HALAL, SEC danger, one-day-jump AVOID; a nor
   assert.match(blockOf('X', 0.9, ctx), /under 1 USD/); assert.match(blockOf('BAD', 5, ctx), /NOT HALAL/); assert.match(blockOf('DIL', 5, ctx), /offering/); assert.match(blockOf('JUMP', 5, ctx), /AVOID/);
   assert.equal(blockOf('NEWSY', 5, ctx), null); assert.match(catalystOf('NEWSY', ctx), /SEC 8-K contract/); assert.match(catalystOf('GOOD', ctx), /NO VERIFIED CATALYST/);
 });
-test('halal map: ZAD list fills in, a newer own mark wins, marks older than 90 days expire', () => {
+test('halal map: exclusion dominates, list never grants owner approval, rejection survives expiry', () => {
   const now = Date.parse('2026-10-28');
   const m = halalMap({ effective: '2026-10-22', notHalal: ['A', 'B'], newHalal: ['C'] }, { B: { s: 'ok', d: '2026-10-25' }, A: { s: 'ok', d: '2026-10-01' }, OLD: { s: 'fail', d: '2026-06-01' } }, now);
-  assert.equal(m.A, 'fail'); assert.equal(m.B, 'ok'); assert.equal(m.C, 'ok'); assert.equal(m.OLD, undefined);
+  assert.equal(m.A, 'fail'); assert.equal(m.B, 'fail'); assert.equal(m.C, undefined); assert.equal(m.OLD, 'fail');
 });
 test('closest rule names its history verdict and what is missing; a rejected rule is never called approvable', () => {
   const c = closestRule(ctx.record, ctx.lab); assert.equal(c.rule, 'IG1'); assert.equal(c.history, 'REJECTED');

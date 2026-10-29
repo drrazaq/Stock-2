@@ -1,3 +1,5 @@
+import {paperRequest} from './paper-transport.mjs';
+import {resolveZad} from './zad-compliance.mjs';
 import {telegramFetch,splitTelegramText} from './telegram-delivery.mjs';
 // Cloud scanner for the US stock signal board. Runs on GitHub Actions (free), so it works while your phone is off.
 // It reuses the exact rules inside index.html, writes data/signals.json and an append-only journal, and sends Telegram alerts.
@@ -740,9 +742,10 @@ const myHalal = (sym) => { const m = HALALM()[sym]; return m && (m.s === 'fail' 
 // ZAD's published list (data/zad-list.json, from its quarterly Sharia review) fills in every stock it names; your own mark wins
 // only when it is newer than the list. Stocks the list removes are NOT HALAL right away (a trade bought now would still be held
 // on the date they stop being compliant).
-const ZADL = () => { const z = readJson0('data/zad-list.json'); if (!z) return {}; const o = {}, d = z.effective || z.received;
-  for (const s of z.notHalal || []) o[s] = { s: 'fail', d, by: 'ZAD list (not compliant from ' + z.effective + ')' }; for (const s of [...(z.halalAgain || []), ...(z.newHalal || [])]) o[s] = { s: 'ok', d, by: 'ZAD list (' + z.effective + ')' }; return o; };
-const HALALM = () => { const z = ZADL(), m0 = readJson0(HALAL_FILE) || {}, m = { ...z }; for (const [k, v] of Object.entries(m0)) if (!z[k] || !v.d || v.d >= z[k].d) m[k] = v; const out = {}; for (const [k, v] of Object.entries(m)) out[k] = v && (v.s === 'fail' || v.s === 'ok') && v.d && Date.now() - Date.parse(v.d) > HALAL_DAYS * 86400000 ? { ...v, was: v.s, s: 'expired' } : v; return out; };
+const ZADPOLICY = () => resolveZad(readJson0(HALAL_FILE),readJson0('data/zad-list.json'));
+const ZADL = () => Object.fromEntries([...ZADPOLICY().excluded].map(sym=>[sym,{s:'fail',by:'ZAD list'}]));
+const HALALM = () => ZADPOLICY().marks;
+const ownerMarksForUpdate=()=>fs.existsSync(HALAL_FILE)?readJson0(HALAL_FILE):{};
 // ZOYA (AAOIFI) halal pre-check. Secret ZOYA_KEY holds the key WITH its prefix ("live-..." or "sandbox-..."). Each stock on
 // the buy list is checked about weekly and remembered in data/zoya.json. The result is SHOWN only, never used to drop a stock
 // from the buy list; your own ZAD mark always wins. Sandbox data are dummy values: shown, never acted on.
@@ -882,10 +885,7 @@ function dowText() {
 // The address is fixed to Alpaca's PAPER server, so no real money can ever move. Secrets: ALPACA_KEY, ALPACA_SECRET.
 const ALP = local(env.ALPACA_BASE) || 'https://paper-api.alpaca.markets', ALP_FILE = 'data/alpaca-paper.json';
 async function alp(method, path, body) {
-  if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
-  try { const r = await fetch(ALP + path, { method, headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET, 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
-    const t = await r.text(); let j = null; try { j = t ? JSON.parse(t) : {}; } catch (e) {} if (!r.ok) { console.log('Alpaca paper ' + method + ' ' + path + ': HTTP ' + r.status + ' ' + String(t).slice(0, 160)); return { error: r.status, j }; } return j; }
-  catch (e) { console.log('Alpaca paper: ' + e.message); return null; }
+  return paperRequest({base:ALP,method,path,body,key:env.ALPACA_KEY,secret:env.ALPACA_SECRET,enableOrders:env.STOCK2_ENABLE_PAPER_ORDERS==='1'});
 }
 async function alpacaPaper(sig, loaded, session) {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !sig) return;
@@ -933,7 +933,7 @@ async function alpacaPaper(sig, loaded, session) {
 }
 async function paperText() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return 'PAPER ACCOUNT: not connected. This bot run sees: ALPACA_KEY ' + (env.ALPACA_KEY ? 'present' : 'MISSING') + ', ALPACA_SECRET ' + (env.ALPACA_SECRET ? 'present' : 'MISSING') + '. If you added them, this bot run started before: cancel it in Actions and run the workflow again.';
-  { const t = await alp('GET', '/v2/account'); if (!t || t.error) return 'PAPER ACCOUNT: keys found (ALPACA_KEY starts ' + String(env.ALPACA_KEY).slice(0, 2) + ', ' + String(env.ALPACA_KEY).length + ' characters; ALPACA_SECRET ' + String(env.ALPACA_SECRET).length + ' characters), but Alpaca ' + (t && (t.error === 401 || t.error === 403) ? 'REJECTED them (HTTP ' + t.error + '). Use the PAPER keys from the Paper Trading dashboard; Key ID in ALPACA_KEY, Secret Key in ALPACA_SECRET, and the newest pair if you regenerated.' : 'could not be reached right now (' + (t ? 'HTTP ' + t.error : 'no answer') + '). Try again in a few minutes.'); }
+  { const t = await alp('GET', '/v2/account'); if (!t || t.error) return 'PAPER ACCOUNT: configured credentials, but Alpaca ' + (t && (t.error === 401 || t.error === 403) ? 'REJECTED them (HTTP ' + t.error + '). Use the PAPER keys from the Paper Trading dashboard; Key ID in ALPACA_KEY, Secret Key in ALPACA_SECRET, and the newest pair if you regenerated.' : 'could not be reached right now (' + (t ? 'HTTP ' + t.error : 'no answer') + '). Try again in a few minutes.'); }
   const A = readJson(ALP_FILE, { closed: [], plans: {}, pendingBuy: {} }), acct = await alp('GET', '/v2/account'), pos = await alp('GET', '/v2/positions'), c = A.closed || [];
   const w = c.filter(t => t.net > 0), avg = c.length ? c.reduce((a, t) => a + t.net, 0) / c.length : null, gaps = c.filter(t => /gapped/.test(t.why || '')).length;
   return ['PAPER ACCOUNT (Alpaca, fake money; real fills and timing)', acct && !acct.error ? 'Equity ' + money(+acct.equity) + (A.start ? ' (started ' + money(A.start.equity) + ' on ' + A.start.d + ': ' + pcs(+acct.equity / A.start.equity - 1) + ')' : '') : 'account not reachable right now',
@@ -1323,9 +1323,10 @@ function gateVerdict(sym, sig) { try { sig = sig || readJson0('data/signals.json
   const ew = eventWarn(sym); if (ew) return ew.replace(/^\s*\|\s*/, '').slice(0, 140);
   if (BIOBLOCK.has(sym)) return 'dilution / trial-risk block (' + String(BIOBLOCK.get(sym)).slice(0, 100) + ')';   // review S-5
   // (review S-5, 22 Oct) every plan block gives a reason; before, the blocks without an avoid text fell through and passed with focus off
-  const pc = sig ? planCands(sig, {}).find(x => x.sym === sym) : null; if (pc && pc.ok) return null;
+  const pc = sig ? planCands(sig, {}).find(x => x.sym === sym) : null; if (pc && pc.ok) return myHalal(sym)==='ok'?null:'ZAD approval missing, malformed or expired: check ZAD first';
   if (pc && !pc.ok) return pc.avoid ? pc.avoid.replace(/^(AVOID|PAPER ONLY):\s*/, '') : pc.threatBlock ? 'threat headline in the last 24 hours' : pc.macroBlock ? 'macro: ' + pc.macroBlock : pc.watch ? 'early evidence (under 30 unseen trades): watch only' : pc.newsBlock ? 'bad-news filing' : pc.regBlock ? 'falling market (no record of its own in falling markets)' : 'not cleared by the plan gates';
   const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS && !(pc && workingKinds().has(pc.kind))) return 'focus mode: ' + (pc ? 'the ' + pc.kind + ' engine has not' : 'no tested engine for this stock has') + ' proven itself live yet';   // per kind (review S-14)
+  if(myHalal(sym)!=='ok')return 'ZAD approval missing, malformed or expired: check ZAD first';
   return null; } catch (e) { return 'gate check failed (' + String(e && e.message).slice(0, 60) + ')'; } }   // an error means blocked (review S-5)
 const gateLines = (lines, gv) => gv ? lines.map(l => /^CONCLUSION/.test(l) && /\bBUY\b/.test(l) ? 'CONCLUSION: PAPER ONLY (' + gv + '). Levels for the record: ' + l.replace(/^CONCLUSION[^:]*:\s*/, '').replace(/\b(ENTRY CONFIRMED\.\s*)?BUY\b/g, 'range') : l) : lines;
 function planCands0(sig, held0) {
@@ -1502,7 +1503,7 @@ function planText(sig, pos, px, title, only, full, opts) {
   const short = !only && !full;   // the everyday message: 2 to 3 lines per buy; send  details  for the full cards
   const held = pos || {}, out = [title || 'PLAN'];
   if (!sig) return out.concat('No scan has run yet.').join('\n');
-  const c = planCands(sig, held), pick = c.filter(x => x.ok && (!only || only.includes(x.sym))).sort((a, b) => b.score - a.score), skipped = [];
+  const c = planCands(sig, held), pick = c.filter(x => x.ok && myHalal(x.sym)==='ok' && (!only || only.includes(x.sym))).sort((a, b) => b.score - a.score), skipped = [];
   for (const x of pick) { const g = secGroup(x.sector), first = g && pick.find(p => p !== x && secGroup(p.sector) === g && pick.indexOf(p) < pick.indexOf(x)); if (first) x.sameAs = first.sym; }
   const pv = sig.posVerdict || {}, sells = [], holds = [];
   for (const sym of Object.keys(held)) { const P = held[sym], p = px && px[sym], now = p ? ' Now ' + money(p) + ' (' + pcs(p / P.entry - 1) + ').' : '';
@@ -1519,6 +1520,7 @@ function planText(sig, pos, px, title, only, full, opts) {
   const PG = protectWhy(held, px, sig);
   if (PG.length && !only) out.push('', 'CAUTION (protect advice, your decision): ' + PG.join('; ') + '.', 'Suggested: deal with the stops first and buy smaller. Every opportunity is still listed below.');
   if (sells.length && !only) out.push('', 'SELL', ...sells);
+  const needZad=c.filter(x=>x.ok&&myHalal(x.sym)!=='ok');if(needZad.length)out.push('', 'MARK HALAL FIRST (not approved buys): '+needZad.map(x=>x.sym).join(', ')+'. Confirm a current owner mark in ZAD.');
   const mk = sig.market || {};
   if (!only && (mk.above50 === false || mk.up === false)) out.push('', 'MARKET: ' + (mk.up === false ? 'the S&P 500 is in a downtrend' : 'the S&P 500 is under its 50 day average (' + pcs(mk.spyVs50) + ')') + '. Dips fail more often in a weak market: consider smaller size.');
   for (const x of c) x.rank = rankOf(x);
@@ -3129,10 +3131,10 @@ async function tgCommands(sig) {
         const known = !src ? [...new Set(readTips().map(t => t.src))].filter(n => n && n.length >= 3 && n !== 'Unnamed source').find(n => text.includes(n)) : null;   // a source you logged before, named in the pasted text
         out.push(await opinionReply(text, sig, src || known || null)); continue; } }
     { const h1 = text.match(/^(?:halal|zad)\s+([a-z.\-]{1,6})\s+(yes|ok|halal|pass|no|not(?:\s+halal)?|fail|haram)\s*$/i), h2 = text.match(/^([a-z.\-]{1,6})\s+(?:is\s+)?(not\s+halal|haram|halal)(?:\s+(?:in|on)\s+zad)?\s*$/i), h3 = text.match(/^(?:not\s+halal|haram)\s+([a-z.\-]{1,6})\s*$/i);
-      if (!h1 && !h2 && !h3) { const hb = halalBatch(text); if (hb.length >= 2) { const mk = HALALM(), d = ny(Date.now()).d; for (const [sym, bad] of hb) mk[sym] = { s: bad ? 'fail' : 'ok', d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
+      if (!h1 && !h2 && !h3) { const hb = halalBatch(text); if (hb.length >= 2) { const mk = ownerMarksForUpdate(), d = ny(Date.now()).d;if(!mk||typeof mk!=='object'||Array.isArray(mk)){out.push('ZAD marks unreadable: no changes saved. Restore the file before retrying.');continue;} for (const [sym, bad] of hb) mk[sym] = { s: bad ? 'fail' : 'ok', d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
         out.push('Recorded ' + hb.length + ' ZAD marks.\nHALAL: ' + (hb.filter(x => !x[1]).map(x => x[0]).join(', ') || 'none') + '\nNOT HALAL: ' + (hb.filter(x => x[1]).map(x => x[0]).join(', ') || 'none') + '\nTo change one, send it again with the other answer, for example:  halal ' + hb[0][0] + (hb[0][1] ? ' yes' : ' no')); continue; } }
       const hm = h1 ? [h1[1], !/^(yes|ok|halal|pass)$/i.test(h1[2])] : h2 ? [h2[1], !/^halal$/i.test(h2[2])] : h3 ? [h3[1], true] : null;
-      if (hm) { const sym = hm[0].toUpperCase(), mk = HALALM(); mk[sym] = { s: hm[1] ? 'fail' : 'ok', d: ny(Date.now()).d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
+      if (hm) { const sym = hm[0].toUpperCase(), mk = ownerMarksForUpdate();if(!mk||typeof mk!=='object'||Array.isArray(mk)){out.push('ZAD marks unreadable: no changes saved. Restore the file before retrying.');continue;} mk[sym] = { s: hm[1] ? 'fail' : 'ok', d: ny(Date.now()).d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
         out.push(sym + (hm[1] ? ': marked NOT HALAL (ZAD). I will not offer it as a buy anywhere: plan, BUY NOW, radar or checks.' + (pos[sym] ? ' You hold it: decide yourself whether to sell.' : '') : ': marked HALAL (checked in ZAD). Thank you.') + ' To change it: halal ' + sym + (hm[1] ? ' yes' : ' no')); continue; } }
     if (/^traders?\s*$/i.test(text)) { out.push(tradersText()); continue; }
     if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl) { out.push(nl); continue; } }   // a forwarded message is someone else's words: treat it as a tip, not as your question

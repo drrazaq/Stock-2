@@ -1,3 +1,4 @@
+import {resolveZad} from './zad-compliance.mjs';
 // DAILY OPPORTUNITY RADAR (V3.0, owner approved 28 Oct 2026: "do 1, 2, 3"). Pure functions, no network, no files; opportunity-radar.mjs
 // reads and writes. Research and routing only: it adds NO buy rule, lowers NO gate and places NO order.
 // WHY: the audit (docs/v3-opportunity-audit-2026-10-28.md) found the system SAW the day's runners (BRAI, AEYE, OWLS on 27 Oct) but the
@@ -39,11 +40,7 @@ export function blockOf(sym, price, ctx = {}) {
 }
 // ZAD marks, same merge as scan.mjs HALALM: the ZAD list fills in, the owner's own mark wins when newer, a mark older than 90 days expires
 export function halalMap(zad, marks = {}, now = Date.now()) {
-  const m = {}, d = zad && (zad.effective || zad.received);
-  if (zad) { for (const s of zad.notHalal || []) m[s] = { s: 'fail', d }; for (const s of [...(zad.halalAgain || []), ...(zad.newHalal || [])]) m[s] = { s: 'ok', d }; }
-  for (const [k, v] of Object.entries(marks || {})) if (!m[k] || !v.d || v.d >= m[k].d) m[k] = v;
-  const out = {}; for (const [k, v] of Object.entries(m)) if (v && (v.s === 'ok' || v.s === 'fail') && v.d && now - Date.parse(v.d) <= 90 * 86400000) out[k] = v.s;
-  return out;
+  return Object.fromEntries(Object.entries(resolveZad(marks,zad,now).marks).filter(([,v])=>v.s==='ok'||v.s==='fail').map(([s,v])=>[s,v.s]));
 }
 export const halalWord =(sym, ctx = {}) => ((ctx.halal || {})[sym] === 'ok' ? 'halal (your ZAD mark)' : 'HALAL UNKNOWN: check ZAD first');
 export function catalystOf(sym, ctx = {}) {

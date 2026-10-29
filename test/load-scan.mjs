@@ -17,7 +17,7 @@ if (!globalThis.__scanTestFetchGuard) {
 }
 // one-time migrations in scan.mjs are marked done, so they never rewrite a fixture
 const DONE = { stopPlan1018: '2026-10-18T00:00:00.000Z', stopRestore1022: '2026-10-22T00:00:00.000Z', tradesMig1022: '2026-10-22T00:00:00.000Z' };
-const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHUB_KEY', 'ALPACA_KEY', 'ALPACA_SECRET', 'MASSIVE_KEY', 'FMP_KEY', 'ZOYA_KEY', 'PRIVATE_KEY', 'GITHUB_WORKFLOW'];
+const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHUB_KEY', 'ALPACA_KEY', 'ALPACA_SECRET', 'MASSIVE_KEY', 'FMP_KEY', 'ZOYA_KEY', 'PRIVATE_KEY', 'GITHUB_WORKFLOW','STOCK2_ENABLE_PAPER_ORDERS','ALPACA_BASE'];
 let seq = 0; const DIRS = [];
 process.on('exit', () => { process.chdir(os.tmpdir()); for (const d of DIRS) try { fs.rmSync(d, { recursive: true, force: true }); } catch (e) {} });
 
@@ -33,11 +33,12 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   const src = fs.readFileSync(process.env.SCAN_SRC || path.join(REPO, 'scan.mjs'), 'utf8').trimEnd().split('\n');
   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
-  fs.copyFileSync(path.join(REPO, 'telegram-delivery.mjs'), path.join(dir, 'telegram-delivery.mjs'));
+  for(const name of ['telegram-delivery.mjs','zad-compliance.mjs','paper-transport.mjs'])fs.copyFileSync(path.join(REPO,name),path.join(dir,name));
   fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
   fs.mkdirSync(path.join(dir, 'data'));
   // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
   const st0 = files['data/settings.json']; writeFixture(dir, 'data/settings.json', typeof st0 === 'string' ? st0 : { ...DONE, ...(st0 || {}) });
+  writeFixture(dir,'data/zad-list.json',{notHalal:[]}); // Explicit valid fixture, not production missing-file behavior.
   for (const [k, v] of Object.entries(files)) if (k !== 'data/settings.json') writeFixture(dir, k, v);
   const file = path.join(dir, 'scan-under-test-' + (++seq) + '.mjs');
   fs.writeFileSync(file, src.join('\n') + '\nexport const __get = (name) => eval(name);\n');

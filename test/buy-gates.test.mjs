@@ -19,7 +19,7 @@ const working = { n: 40, winRate: 0.6, avgPct: 0.02, avgSpy: 0.005, days: 12, st
 const find = (S, s, sym) => S.fn('planCands')(s, {}).find(x => x.sym === sym);
 
 test('control: with focus off and no other gate, the proven quick trade is a buy', async () => {
-  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/signals.json': sig() } });
+  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/halal.json':{AAA:{s:'ok',d:today}}, 'data/signals.json': sig() } });
   const x = find(S, sig(), 'AAA');
   assert.equal(x.ok, true);
   assert.equal(S.fn('gateVerdict')('AAA', sig()), null);

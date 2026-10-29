@@ -34,7 +34,7 @@ import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from
 import { isFreshPriceAge } from './ignition-gates.mjs';
 import { selectStaleRefreshSymbols } from './live-refresh-universe.mjs';
 import { approvedQuoteGate } from './approved-quote-gate.mjs';
-import { zadApproved } from './zad-compliance.mjs';
+import { zadApproved, resolveZad } from './zad-compliance.mjs';
 import { paperRecordApproved, earlyPaperEligible } from './paper-gates.mjs';
 import { sessionCoverage } from './session-coverage.mjs';
 import { sessionFinished, preferSession, runIdentity } from './watcher-session.mjs';
@@ -84,7 +84,8 @@ const LAB = readJson('data/ignition-lab.json', null), PREC = (readJson('data/ign
 const passed = LAB && LAB.rules ? Object.values(LAB.rules).filter(x => x.verdict === 'PROMISING' && (LAB.version === undefined || LAB.version === IG_VERSION)) : [];
 // live paper record must hold at 1.5x costs and without its 2 best trades; the live-only rule needs a longer record (no history test)
 const paperOk = (rule, exit, liveOnly) => paperRecordApproved(PREC[rule + '/' + exit], liveOnly);
-const halal = readJson('data/halal.json', {}), zadNot = new Set((readJson('data/zad-list.json', {}) || {}).notHalal || []), notHalal = (s) => (halal[s] && halal[s].s === 'fail') || zadNot.has(s);
+const zadPolicy=resolveZad(readJson('data/halal.json',null),readJson('data/zad-list.json',null));
+const halal=zadPolicy.marks,zadNot=zadPolicy.excluded,notHalal=s=>!zadPolicy.valid||halal[s]?.s==='fail'||zadNot.has(s);
 const LOTT = (readJson('data/signals.json', {}) || {}).lottery || {};   // tested 19 Oct: a 15%+ one-day jump in the last month lagged the average stock ~3% over the next month (t -5): never alerted   // your ZAD checks + ZAD's own not-halal list
 // ---- data
 let src = null, mode = 'NO_USABLE_MARKET_DATA', note = '';
@@ -212,7 +213,7 @@ const RADAR = { done: false, mkt: null };
 async function tgSend(text) { if(!ALLOW_SEND)return {ok:false,why:'checkpoint unavailable'}; if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[early alert, not sent: no Telegram token]\n' + text); return { ok: false, why: 'no Telegram token' }; }
   try { const r = await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text, disable_web_page_preview: true }) }); const j = await r.json().catch(() => ({}));
     return { ok: !!(r.ok && j.ok), why: r.ok ? (j.description || '') : 'HTTP ' + r.status }; } catch (e) { return { ok: false, why: e.message }; } }
-const EA = createEarlyAlerts({ day, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
+const EA = createEarlyAlerts({ day, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => zadPolicy.valid && zadApproved(s,halal,zadNot),
   lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
 const SR = createShadow({ day });
 // ---- SEC LIVE FEED for the D shadow model and the R0 control (owner, 28 Oct 2026; rules frozen in rank-models.mjs). Research only.
