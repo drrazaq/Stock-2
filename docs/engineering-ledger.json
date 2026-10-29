@@ -43,10 +43,10 @@
     "note": "Reading, syntax checks and fixtures are not exhaustive behavioral certification"
   },
   "engineeringAcceptance": {
-    "complete": 15,
+    "complete": 16,
     "total": 40,
-    "percent": 37.5,
-    "basis": "Existing acceptance checklist in engineering-progress.md; no credit for partially completed checks"
+    "percent": 40,
+    "basis": "40-check dashboard; one new completed check: nine-lane research runtime with availability provenance and guarded E2E, exact-commit CI passed. Prospective evaluation not credited."
   },
   "strategyValidation": {
     "earlyEnginePromotionChecksPassed": 0,
@@ -140,33 +140,33 @@
     }
   ],
   "tests": {
-    "passed": 1204,
+    "passed": 1230,
     "failed": 0,
     "skipped": 0,
     "scope": "node --test test/*.test.mjs tests/*.test.mjs",
-    "runtime": "Node 24.19.0 locally; Node 20 CI",
-    "codeSha": "812f0c79e165c49ab493baba8bf75b9251974106",
+    "runtime": "Node 24.19.0 local / Node 20 CI",
+    "codeSha": "2e37078b7ea4abbcd3ff29158da43262ecc45c35",
     "remoteCI": [
       {
-        "id": "40812268162",
+        "id": "40816080789",
         "event": "pull_request",
-        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "sha": "2e37078b7ea4abbcd3ff29158da43262ecc45c35",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812268162"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816080789"
       },
       {
-        "id": "40812262721",
+        "id": "40816074277",
         "event": "push",
-        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "sha": "2e37078b7ea4abbcd3ff29158da43262ecc45c35",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812262721"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816074277"
       },
       {
-        "id": "40812262652",
+        "id": "40816074355",
         "event": "push",
-        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "sha": "2e37078b7ea4abbcd3ff29158da43262ecc45c35",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812262652"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816074355"
       }
     ]
   },
@@ -369,11 +369,40 @@
     "skipped": 0,
     "rootModulesParsed": 212,
     "workflowsParsed": 78,
-    "remoteCI": "PENDING",
+    "remoteCI": [
+      {
+        "id": "40816080789",
+        "event": "pull_request",
+        "sha": "2e37078b7ea4abbcd3ff29158da43262ecc45c35",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816080789"
+      },
+      {
+        "id": "40816074277",
+        "event": "push",
+        "sha": "2e37078b7ea4abbcd3ff29158da43262ecc45c35",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816074277"
+      },
+      {
+        "id": "40816074355",
+        "event": "push",
+        "sha": "2e37078b7ea4abbcd3ff29158da43262ecc45c35",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816074355"
+      }
+    ],
     "lanesConnected": 9,
     "measurements": "first actual ingestion vs first observed fresh +10% crossing; entry below +5%; no stale/unknown/backfilled price credit",
     "sourceLimits": "Derived file availability is not original event disclosure time; dated quarterly summaries remain labelled context; missing/stale/future sources explicit",
     "realProspectiveEvidence": "NOT YET COLLECTED; fixture results are not performance claims",
-    "promotion": "RESEARCH ONLY / NOT AN APPROVED BUY; no strategy verdict changed"
+    "promotion": "RESEARCH ONLY / NOT AN APPROVED BUY; no strategy verdict changed",
+    "publishedCommit": "2e37078b7ea4abbcd3ff29158da43262ecc45c35"
+  },
+  "closeBoundaryFollowup": {
+    "status": "LOCAL_VERIFIED",
+    "testsPassed": 1230,
+    "purpose": "Include a snapshot cycle at exactly 16:00/13:00 in addition to scheduled 390/210 regular minutes; not proof of an exchange auction fill",
+    "remoteCI": "PENDING"
   }
 }

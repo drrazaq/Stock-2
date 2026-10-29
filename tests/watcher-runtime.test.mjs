@@ -50,7 +50,7 @@ test('two bounded watcher segments preserve 390 minute evidence, checkpoint stat
   fs.writeFileSync(path.join(f.dir,'data/settings.json'),JSON.stringify({alerts:'off'}));
   await f.run('ignition-watch.mjs',{IG_SEGMENT:'close',IG_RESUME:'1',IG_FAKE_MIN:'840',IG_FAKE_STEP:'1'});
   const day=f.read('data/ignition-live.json');assert.equal(day.coverage.observedMinutes,390);assert.equal(day.coverage.completeSession,true);
-  assert.equal(day.heartbeat.at(-1).m,959);assert.equal(f.read('runtime/watcher-heartbeat.json').freshPct,100);
+  assert.equal(day.heartbeat.at(-1).m,960);assert.equal(f.read('runtime/watcher-heartbeat.json').freshPct,100);
   assert.equal(f.read('runtime/watcher-checkpoint.json').state.ANCHOR.minute,900);
   assert.equal(f.read('runtime/watcher-checkpoint.json').early.level,'off');
   assert.ok(fs.existsSync(path.join(f.dir,'data/ignition-runs/2026-10-29/1-1-open.delivery.json')));
@@ -77,7 +77,7 @@ test('missing continuation checkpoint permits observation but suppresses outboun
 test('half-day watcher observes 210 minutes and stops at the reviewed 13:00 close',async()=>{
  const f=await fixture('2026-11-27');try{
   await f.run('ignition-watch.mjs',{IG_SEGMENT:'open',IG_FAKE_MIN:'570',IG_FAKE_STEP:'1'});
-  const s=f.read('data/ignition-live.json');assert.equal(s.coverage.expectedMinutes,210);assert.equal(s.coverage.completeSession,true);assert.equal(s.heartbeat.at(-1).m,779);
+  const s=f.read('data/ignition-live.json');assert.equal(s.coverage.expectedMinutes,210);assert.equal(s.coverage.completeSession,true);assert.equal(s.heartbeat.at(-1).m,780);
  }finally{await f.close();}
 });
 test('stale cycles preserve last success, guard reads real persisted telemetry and Telegram 429 stays retryable',async()=>{

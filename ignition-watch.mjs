@@ -57,7 +57,7 @@ const SESSION=marketSession(day),SEGMENT_END=Math.min(SESSION.close||960,env.IG_
 if (SESSION.closed) { console.log('ignition watcher: closed or unsupported calendar day'); process.exit(0); }
 if (env.GITHUB_ACTIONS && env.GITHUB_REF_NAME!=='main' && !FAST) {console.log('branch watcher: live I/O disabled; use fixture integration tests');process.exit(0);}
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
-if (clock() < 540 || clock() >= SESSION.close) { console.log('ignition watcher: outside scheduled session New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
+if (clock() < 540 || clock() > SESSION.close) { console.log('ignition watcher: outside scheduled session New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
 if (sessionFinished(readJson('data/ignition-live.json', null), day)) { console.log('watcher: session already recorded for ' + day + '; skipping duplicate run'); process.exit(0); }
 const RUN_ID = runIdentity(env), CODE_SHA = env.GITHUB_SHA || (() => { try { return execSync('git rev-parse HEAD', {stdio:['ignore','pipe','ignore']}).toString().trim(); } catch { return null; } })();
 const RUN_START = Date.now();   // Runtime begins after the early 09:25 wait, not at cron startup.
@@ -287,7 +287,7 @@ const checkpoint=()=>saveCheckpoint(CP_FILE,{day,sourceSha:CODE_SHA,runId:RUN_ID
  state:{seen,orb,vis,ser,pull,earlyWave,preIgnition,STOP_SENT,vcToday,RADAR,ANCHOR,DISCOVERY,triggers,alerts,earlyAlerts},
  beat,early:EA.S,shadow:[...SR.book],pm:[...pm]});
 while (Date.now() - RUN_START < MAXMS) {
-  const m = clock(); if (m >= SEGMENT_END) break; if (m < 568) { await sleep(30000); continue; }
+  const m = clock(); if (m > SEGMENT_END || (m===SEGMENT_END && SEGMENT_END<SESSION.close)) break; // Include one close-boundary scan; do not count it as an extra regular minute. if (m < 568) { await sleep(30000); continue; }
   const cycleStart=Date.now();requests.length=0;discoveryLive.length=0;
   const rows = await snap(); loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
