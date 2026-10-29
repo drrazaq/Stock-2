@@ -15,3 +15,5 @@ test('changed historical quarter is quarantined and prior admission credit revok
 test('malformed existing quarter cannot masquerade as a successful empty artifact',t=>{const f=fixture(t),out=f.run('{broken');assert.equal(out.status,'PARTIAL_OR_UNKNOWN');assert.equal(out.sourceArtifacts.find(x=>x.quarter==='2026q3').status,'UNKNOWN');assert.equal(out.recent.length,0);});
 
 test('missing price cache preserves frozen output and reports source unavailable',t=>{const f=fixture(t),firstRun={at:'2020-01-01',results:{fixed:{verdict:'REJECTED'}}};f.seedStudy({firstRun,generatedAt:'2026-10-28T14:00:00Z',recent:[]});f.removePrice();const out=f.run(valid);assert.deepEqual(out.firstRun,firstRun);assert.equal(out.status,'NOT RUN');assert.equal(out.generatedAt,'2026-10-28T14:00:00Z');assert.equal(out.sourceStatus.SEC_FORM4.status,'UNKNOWN');});
+
+test('legacy owner CIK padding cannot count one person as two insiders',t=>{const f=fixture(t),out=f.run([['AAA','2026-09-30','1',1000],['AAA','2026-09-30','0000000001',2000]]);assert.equal(out.status,'OK');assert.equal(out.recent.length,0);});

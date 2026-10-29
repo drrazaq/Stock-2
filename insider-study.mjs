@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+import {marketSymbol} from './market-symbol.mjs';
 // INSIDER CLUSTER BUYING STUDY. When several company insiders (officers, directors) buy shares with their OWN money on the open
 // market within a few days, do the shares beat the market afterwards? Source: the SEC "Insider Transactions Data Sets" (free, official,
 // quarterly ZIPs of every Form 3/4/5 since 2006: www.sec.gov/dera/data/form-345). Only Form 4, transaction code P (open-market
@@ -30,22 +31,35 @@ D.forEach((d, t) => { const x = store.days[d]; for (let j = 0; j < x.T.length; j
 const spyI = SY.get('SPY');
 // ---- 2. insider purchases, quarter by quarter (each finished quarter is downloaded once and kept compact in the cache)
 const MON = { JAN: '01', FEB: '02', MAR: '03', APR: '04', MAY: '05', JUN: '06', JUL: '07', AUG: '08', SEP: '09', OCT: '10', NOV: '11', DEC: '12' };
-const isoD = (s) => { const m = /^(\d{1,2})-([A-Z]{3})-(\d{4})/.exec(String(s || '').toUpperCase()); return m ? m[3] + '-' + MON[m[2]] + '-' + m[1].padStart(2, '0') : null; };
-const tsv = (zip, name) => { let txt; try { txt = execFileSync('unzip', ['-p', zip, name], { maxBuffer: 1 << 30 }).toString(); } catch (e) { return null; } const L = txt.split(/\r?\n/), H = L[0].split('\t'); return { H, rows: L.slice(1).filter(Boolean).map(l => l.split('\t')) }; };
+const isoD = (s) => { const m = /^(\d{1,2})-([A-Z]{3})-(\d{4})$/.exec(String(s || '').toUpperCase()); return m ? m[3] + '-' + MON[m[2]] + '-' + m[1].padStart(2, '0') : null; };
+const ZIP_BYTES=64*1024*1024, TSV_BYTES=64*1024*1024, MAX_ROWS=500000;
+const requiredHeaders={SUBMISSION:['ACCESSION_NUMBER','DOCUMENT_TYPE','FILING_DATE','ISSUERTRADINGSYMBOL'],NONDERIV_TRANS:['ACCESSION_NUMBER','TRANS_CODE','TRANS_ACQUIRED_DISP_CD','TRANS_SHARES','TRANS_PRICEPERSHARE'],REPORTINGOWNER:['ACCESSION_NUMBER','RPTOWNERCIK']};
+const tsv=(zip,name)=>{const txt=execFileSync('unzip',['-p',zip,name+'.tsv'],{maxBuffer:TSV_BYTES,timeout:15000,stdio:['ignore','pipe','pipe']}).toString();const L=txt.split(/\r?\n/),H=L.shift().split('\t');if(new Set(H).size!==H.length||requiredHeaders[name].some(x=>!H.includes(x))||L.length>MAX_ROWS+1)throw Error('TSV_SCHEMA_OR_ROWS');return {H,rows:L.filter(Boolean).map(l=>{const row=l.split('\t');if(row.length!==H.length)throw Error('TSV_ROW_SCHEMA');return row;})};};
+async function zipBody(r){const length=r.headers.get('content-length');if(length!==null&&(!/^\d+$/.test(length)||Number(length)>ZIP_BYTES)){await r.body?.cancel();throw Error('ZIP_BYTE_BUDGET');}if(!r.body)throw Error('ZIP_BODY_MISSING');const reader=r.body.getReader(),chunks=[];let size=0;try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>ZIP_BYTES){await reader.cancel();throw Error('ZIP_BYTE_BUDGET');}chunks.push(value);}return Buffer.concat(chunks,size);}finally{reader.releaseLock();}}
 const now = new Date(), qs = []; for (let y = +D[0].slice(0, 4); y <= now.getUTCFullYear(); y++) for (let q = 1; q <= 4; q++) { const end = new Date(Date.UTC(y, q * 3, 1)); if (end < now) qs.push(y + 'q' + q); }
-let fetched = 0, failed = [];
+let fetched = 0, failed = [], fetchAttempts=0, rateLimited=false;const sourceFetchErrors=[],fetchStarted=performance.now();
 for (const q of qs) { const cf = DIR + '/' + q + '.json'; if (fs.existsSync(cf)) continue;
   let ok = false; for (const path of ['/files/structureddata/data/insider-transactions-data-sets/', '/files/datastandardsinnovation/data/insider-transactions-data-sets/']) {
-    await sleep(local(env.SEC_BASE) ? 0 : 300); let r; try { r = await fetch(BASE + path + q + '_form345.zip', { headers: { 'User-Agent': UA } }); } catch (e) { continue; } if (!r.ok) continue;
-    const zip = DIR + '/' + q + '.zip'; fs.writeFileSync(zip, Buffer.from(await r.arrayBuffer())); fetched++;
-    const S = tsv(zip, 'SUBMISSION.tsv'), N = tsv(zip, 'NONDERIV_TRANS.tsv'), RO = tsv(zip, 'REPORTINGOWNER.tsv'); fs.unlinkSync(zip); if (!S || !N) continue;
-    const own = new Map(); if (RO) { const ri = (n) => RO.H.indexOf(n); for (const x of RO.rows) if (!own.has(x[ri('ACCESSION_NUMBER')])) own.set(x[ri('ACCESSION_NUMBER')], x[ri('RPTOWNERCIK')]); }
-    const si = (n) => S.H.indexOf(n), ni = (n) => N.H.indexOf(n), sub = new Map();
-    for (const x of S.rows) if (x[si('DOCUMENT_TYPE')] === '4') sub.set(x[si('ACCESSION_NUMBER')], { d: isoD(x[si('FILING_DATE')]), sym: String(x[si('ISSUERTRADINGSYMBOL')] || '').toUpperCase().trim().replace(/-/g, '.') });
-    const buys = []; for (const x of N.rows) { if (x[ni('TRANS_CODE')] !== 'P' || x[ni('TRANS_ACQUIRED_DISP_CD')] !== 'A') continue; const s = sub.get(x[ni('ACCESSION_NUMBER')]); if (!s || !s.d || !/^[A-Z][A-Z0-9.]{0,6}$/.test(s.sym)) continue;
-      const sh = +x[ni('TRANS_SHARES')], px = +x[ni('TRANS_PRICEPERSHARE')]; if (!(sh > 0) || !(px > 0)) continue; buys.push([s.sym, s.d, own.get(x[ni('ACCESSION_NUMBER')]) || x[ni('ACCESSION_NUMBER')], Math.round(sh * px)]); }
-    fs.writeFileSync(cf, JSON.stringify(buys)); ok = true; break; }
-  if (!ok) failed.push(q); }
+    if(rateLimited||fetchAttempts>=64||performance.now()-fetchStarted>=180000){sourceFetchErrors.push({quarter:q,reason:rateLimited?'RATE_LIMIT_PAUSE':'REQUEST_TIME_BUDGET'});break;}
+    await sleep(local(env.SEC_BASE) ? 0 : 300);fetchAttempts++;
+    const zip=DIR+'/'+q+'.zip';
+    try {
+      const r=await fetch(BASE+path+q+'_form345.zip',{redirect:'error',signal:AbortSignal.timeout(Math.max(1,Math.min(15000,180000-(performance.now()-fetchStarted)))),headers:{'User-Agent':UA}});
+      if(!r.ok){await r.body?.cancel();sourceFetchErrors.push({quarter:q,reason:'HTTP_'+r.status});if(r.status===429){rateLimited=true;break;}continue;}
+      const bytes=await zipBody(r);fs.writeFileSync(zip,bytes);
+      const S=tsv(zip,'SUBMISSION'),N=tsv(zip,'NONDERIV_TRANS'),RO=tsv(zip,'REPORTINGOWNER');
+      const own=new Map(),ambiguous=new Set(),ri=n=>RO.H.indexOf(n);
+      for(const x of RO.rows){const a=x[ri('ACCESSION_NUMBER')],c=x[ri('RPTOWNERCIK')];if(!a||!/^\d{1,10}$/.test(c)||!(Number(c)>0))throw Error('OWNER_SCHEMA');if(own.has(a)&&own.get(a)!==String(Number(c)))ambiguous.add(a);own.set(a,String(Number(c)));}
+      const si=n=>S.H.indexOf(n),ni=n=>N.H.indexOf(n),sub=new Map();
+      for(const x of S.rows)if(x[si('DOCUMENT_TYPE')]==='4'){const a=x[si('ACCESSION_NUMBER')],d=isoD(x[si('FILING_DATE')]),sym=marketSymbol(x[si('ISSUERTRADINGSYMBOL')]);if(!a||!d||!sym||!Number.isFinite(Date.parse(d))||new Date(d).toISOString().slice(0,10)!==d||d.slice(0,4)!==q.slice(0,4)||Math.floor((+d.slice(5,7)-1)/3)+1!==+q.slice(-1))throw Error('SUBMISSION_SCHEMA');if(sub.has(a)&&JSON.stringify(sub.get(a))!==JSON.stringify({d,sym}))throw Error('SUBMISSION_CONFLICT');sub.set(a,{d,sym});}
+      const buys=[],number=v=>typeof v==='string'&&/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(v)?Number(v):NaN;
+      for(const x of N.rows){if(x[ni('TRANS_CODE')]!=='P'||x[ni('TRANS_ACQUIRED_DISP_CD')]!=='A')continue;const a=x[ni('ACCESSION_NUMBER')],s=sub.get(a);if(!s)continue;const sh=number(x[ni('TRANS_SHARES')]),px=number(x[ni('TRANS_PRICEPERSHARE')]);if(!(sh>0)||!(px>0)||!Number.isFinite(sh*px)||!own.has(a)||ambiguous.has(a))throw Error('PURCHASE_OR_OWNER_UNRESOLVED');buys.push([s.sym,s.d,own.get(a),Math.round(sh*px)]);}
+      fs.writeFileSync(cf,JSON.stringify(buys));fetched++;ok=true;break;
+    }catch(e){sourceFetchErrors.push({quarter:q,reason:['ZIP_BYTE_BUDGET','ZIP_BODY_MISSING','TSV_SCHEMA_OR_ROWS','TSV_ROW_SCHEMA','OWNER_SCHEMA','SUBMISSION_SCHEMA','SUBMISSION_CONFLICT','PURCHASE_OR_OWNER_UNRESOLVED'].includes(e.message)?e.message:'FETCH_ZIP_OR_TSV_UNAVAILABLE'});}
+    finally{try{fs.unlinkSync(zip);}catch{}}
+  }
+  if(!ok)failed.push(q);
+}
 // each purchase: [symbol, filing date, insider (reporting owner CIK), USD]; distinct insiders are counted by their CIK
 const P=[],sourceArtifacts=[],artifactConflicts=[];let rejectedSourceRows=0;
 for(const q of qs){let fd;const prior=Array.isArray(PREV.sourceArtifacts)?PREV.sourceArtifacts.find(x=>x.quarter===q&&x.digest):null;try{
@@ -53,7 +67,7 @@ for(const q of qs){let fd;const prior=Array.isArray(PREV.sourceArtifacts)?PREV.s
  const bytes=fs.readFileSync(fd);if(bytes.length>64*1024*1024)throw Error('cache budget');const rows=JSON.parse(bytes.toString());if(!Array.isArray(rows))throw Error('cache schema');
  const digest=createHash('sha256').update(JSON.stringify(rows.map(x=>JSON.stringify(x)).sort())).digest('hex');
  if(prior&&(prior.status==='CONFLICT'||prior.digest!==digest)){const original=prior.originalDigest||prior.digest;artifactConflicts.push({quarter:q,prior:original,current:digest});sourceArtifacts.push({quarter:q,digest,originalDigest:original,status:'CONFLICT'});continue;}
- let rejected=0;for(const b of rows){const valid=Array.isArray(b)&&typeof b[0]==='string'&&/^[A-Z][A-Z0-9.]{0,6}$/.test(b[0])&&typeof b[1]==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(b[1])&&Number.isFinite(Date.parse(b[1]+'T00:00:00Z'))&&new Date(b[1]+'T00:00:00Z').toISOString().slice(0,10)===b[1]&&b[1].slice(0,4)===q.slice(0,4)&&Math.floor((+b[1].slice(5,7)-1)/3)+1===+q.slice(-1)&&typeof b[2]==='string'&&!!b[2].trim()&&typeof b[3]==='number'&&Number.isFinite(b[3])&&b[3]>=0;if(!valid){rejected++;continue;}P.push({sym:b[0],d:b[1],who:b[2],usd:b[3]});}
+ let rejected=0;for(const b of rows){const valid=Array.isArray(b)&&!!marketSymbol(b[0])&&typeof b[1]==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(b[1])&&Number.isFinite(Date.parse(b[1]+'T00:00:00Z'))&&new Date(b[1]+'T00:00:00Z').toISOString().slice(0,10)===b[1]&&b[1].slice(0,4)===q.slice(0,4)&&Math.floor((+b[1].slice(5,7)-1)/3)+1===+q.slice(-1)&&typeof b[2]==='string'&&/^\d{1,10}$/.test(b[2])&&Number(b[2])>0&&typeof b[3]==='number'&&Number.isFinite(b[3])&&b[3]>=0;if(!valid){rejected++;continue;}P.push({sym:marketSymbol(b[0]),d:b[1],who:String(Number(b[2])),usd:b[3]});}
  rejectedSourceRows+=rejected;sourceArtifacts.push({quarter:q,digest,status:rejected?'PARTIAL_OR_UNKNOWN':'OBSERVED',rejectedRows:rejected});
 }catch{if(prior?.status==='CONFLICT'){artifactConflicts.push({quarter:q,prior:prior.originalDigest||prior.digest,current:null});sourceArtifacts.push({...prior,status:'CONFLICT',lastRead:'UNKNOWN'});}else sourceArtifacts.push({quarter:q,status:'UNKNOWN'});}finally{if(fd!==undefined)fs.closeSync(fd);}}
 const sourceComplete=!failed.length&&sourceArtifacts.length===qs.length&&sourceArtifacts.every(x=>x.status==='OBSERVED');
@@ -91,7 +105,7 @@ const FR = freezeEach(PREV.firstRun && PREV.firstRun.results, RES, (r) => source
 const firstRun = Object.keys(FR).length ? { at: (PREV.firstRun && PREV.firstRun.at) || new Date().toISOString(), bar: (PREV.firstRun && PREV.firstRun.bar) || +BAR.toFixed(2), results: FR } : null;
 const RESF = Object.fromEntries(Object.keys(RES).map(k => [k, FR[k] || { ...RES[k], verdict: 'NO VERDICT YET (' + RES[k].verdict + ')' }]));
 const recent = EV.CLUSTER2.filter(e => e.d >= new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10)).sort((a, b) => b.n - a.n || (a.d < b.d ? 1 : -1)).slice(0, 15);
-fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), status: sourceComplete?'OK':'PARTIAL_OR_UNKNOWN',sourceArtifacts,artifactConflicts,quarantinedSourceIds:[...new Set([...(Array.isArray(PREV.quarantinedSourceIds)?PREV.quarantinedSourceIds:[]),...(artifactConflicts.length?(PREV.recent||[]).map(x=>x.sourceId).filter(Boolean):[])])],sourceStatus:{SEC_FORM4:{status:sourceComplete?'OBSERVED':'PARTIAL_OR_UNKNOWN',rejectedRows:rejectedSourceRows,quarters:qs.length}}, from: D[0], to: D[T - 1], purchases: P.length, events: Object.fromEntries(Object.entries(EV).map(([k, v]) => [k, v.length])), versions: NV, bar: +BAR.toFixed(2), note: 'SEC data sets are quarterly, so the newest weeks appear only after the quarter ends. results = the frozen first verdict of each version (firstRun); latest = monitoring only.', results: RESF, firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], bar: +BAR.toFixed(2), results: RES }), recent }, null, 1));
+fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), status: sourceComplete?'OK':'PARTIAL_OR_UNKNOWN',sourceArtifacts,artifactConflicts,quarantinedSourceIds:[...new Set([...(Array.isArray(PREV.quarantinedSourceIds)?PREV.quarantinedSourceIds:[]),...(artifactConflicts.length?(PREV.recent||[]).map(x=>x.sourceId).filter(Boolean):[])])],sourceStatus:{SEC_FORM4:{status:sourceComplete?'OBSERVED':'PARTIAL_OR_UNKNOWN',rejectedRows:rejectedSourceRows,quarters:qs.length,fetchAttempts,fetchErrors:sourceFetchErrors}}, from: D[0], to: D[T - 1], purchases: P.length, events: Object.fromEntries(Object.entries(EV).map(([k, v]) => [k, v.length])), versions: NV, bar: +BAR.toFixed(2), note: 'SEC data sets are quarterly, so the newest weeks appear only after the quarter ends. results = the frozen first verdict of each version (firstRun); latest = monitoring only.', results: RESF, firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], bar: +BAR.toFixed(2), results: RES }), recent }, null, 1));
 console.log('INSIDER CLUSTER BUYING (' + D[0] + ' to ' + D[T - 1] + '; events: ' + Object.entries(EV).map(([k, v]) => k + ' ' + v.length).join(', ') + ')');
 for (const r of Object.values(RESF)) console.log('- ' + r.name + ': ' + r.verdict + (r.results.newer.n ? ' | newer half ' + r.results.newer.n + ' trades, ' + pc(r.results.newer.avg) + ' a trade, ' + pc(r.results.newer.edge) + ' vs average stock (t ' + r.results.newer.t + '), ' + pc(r.results.newer.vsOwn) + ' vs same stock other days' : '') + (r.verdict !== 'PROMISING' ? ' (' + r.why.split(';')[0] + ')' : ''));
 try { const LB = JSON.parse(fs.readFileSync('data/strategy-library.json', 'utf8')), order = ['PROMISING', 'NOT PROVEN', 'REJECTED', 'TOO FEW CASES'], best = Object.values(FR).map(r => r.verdict).sort((a, b) => order.indexOf(a) - order.indexOf(b))[0];

@@ -5000,8 +5000,8 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "source": "5cc2dbbf30e4d4b766a9906c58e48dfc60660fcc",
-    "ciEvidence": "docs/validation/revision-remote-journal-ci.json",
+    "source": "691bbf92e5e14d1e23506538f13c12be0b565ad0",
+    "ciEvidence": "docs/validation/insider-leaders-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
@@ -5011,9 +5011,9 @@
     "resume": "docs/remaining-engineering-resume.md"
   },
   "revisionIdentityMission": {
-    "base": "5cc2dbbf30e4d4b766a9906c58e48dfc60660fcc",
+    "base": "691bbf92e5e14d1e23506538f13c12be0b565ad0",
     "nearestClosure": "CATALYST-03",
-    "status": "INSIDER_AND_LEADERS_LOCAL_VERIFIED_HOSTED_PENDING",
+    "status": "INSIDER_INGRESS_LOCAL_VERIFIED_HOSTED_PENDING",
     "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
     "sourceMatrix": [
       {
@@ -5037,8 +5037,8 @@
       {
         "lane": "INSIDER_CLUSTER",
         "producer": "insider-study.mjs",
-        "changedRequirement": "INSIDER_CLUSTER retains semantic quarter digests, isolates malformed rows, latches changed artifacts and revoked IDs across repeat/revert/unreadable runs, preserves frozen output on unavailable prices and cannot freeze new results from incomplete source. Derived cluster IDs explicitly are not filing IDs. Discovery revokes prior credit; actual scanner qualifies incomplete sources.",
-        "stillUnmet": "Full filing/accession/transaction identity and download/ZIP/header bounds/schema; aggregate source clocks and price normalization; complete independent-job persistence evidence. Compact legacy quarter rows remain unverified filing identities."
+        "changedRequirement": "INSIDER_CLUSTER retains semantic quarter digests, isolates malformed rows, latches changed artifacts and revoked IDs across repeat/revert/unreadable runs, preserves frozen output on unavailable prices and cannot freeze new results from incomplete source. Derived cluster IDs explicitly are not filing IDs. Discovery revokes prior credit; actual scanner qualifies incomplete sources. Actual SEC ZIP ingress no longer rewrites dash to dot; both share classes remain distinct through price join/cache/cluster/discovery. CIK zero padding cannot count one owner twice. HTTP 429 pauses all later requests; attempt/time/byte/row/decompression budgets, redirect refusal, timeouts and cleanup bound download failures. Required TSV headers, row widths, owner identity and nonfinite/invalid transaction/date rejection prevent a malformed successful response from becoming an observed empty quarter. Valid header-only empty archives stay distinct.",
+        "stillUnmet": "Legacy compact quarter rows omit accession/transaction IDs and original ingestion clocks; new shape validation does not establish filing authenticity. Closed quarters are not continuously re-fetched for source amendments.; Fresh malformed TSV/ambiguous owner makes that quarter unavailable; valid other quarters survive. Within-quarter downloaded malformed-row isolation remains incomplete.; Price-cache normalization/clock/basis bounds and remaining derived producers are unfinished."
       },
       {
         "lane": "INDUSTRY_RIPPLE",
@@ -5080,23 +5080,27 @@
       "Conflicted news revokes prior discovery credit while preserving original observations and clocks; actual collector and scanner consumers qualify or quarantine source conflicts.",
       "INSIDER_CLUSTER retains semantic quarter digests, isolates malformed rows, latches changed artifacts and revoked IDs across repeat/revert/unreadable runs, preserves frozen output on unavailable prices and cannot freeze new results from incomplete source.",
       "Derived cluster IDs explicitly are not filing IDs. Discovery revokes prior credit; actual scanner qualifies incomplete sources.",
-      "Leaders-study commits before pull; never resets/cleans or chooses a conflict winner; checks staging/commit and confirmed non-force publication. Public-only recovery artifact excludes opaque/operational outputs and step logs."
+      "Leaders-study commits before pull; never resets/cleans or chooses a conflict winner; checks staging/commit and confirmed non-force publication. Public-only recovery artifact excludes opaque/operational outputs and step logs.",
+      "Actual SEC ZIP ingress no longer rewrites dash to dot; both share classes remain distinct through price join/cache/cluster/discovery. CIK zero padding cannot count one owner twice.",
+      "HTTP 429 pauses all later requests; attempt/time/byte/row/decompression budgets, redirect refusal, timeouts and cleanup bound download failures.",
+      "Required TSV headers, row widths, owner identity and nonfinite/invalid transaction/date rejection prevent a malformed successful response from becoming an observed empty quarter. Valid header-only empty archives stay distinct.",
+      "Five actual workflow save blocks additionally cover reached staging refusals and conflicting library edits without choosing a winner."
     ],
     "local": {
-      "nodeFiles": 178,
-      "nodeReportedCases": 1582,
+      "nodeFiles": 179,
+      "nodeReportedCases": 1607,
       "standaloneScripts": 2,
       "pythonTests": 27,
-      "modules": 240,
-      "yaml": 86,
-      "shell": 329,
+      "moduleSyntax": 240,
+      "workflowYaml": 86,
+      "shellBlocks": 329,
       "pythonSyntax": 9,
-      "insiderCallerCases": 5,
-      "labPublicationCases": 30,
-      "consumerCases": 5,
+      "insiderZipCallerCases": 14,
+      "insiderCacheCallerCases": 6,
+      "labPublicationCases": 40,
       "priorSourceNegativeControl": {
-        "failed": 5,
-        "passed": 0
+        "failed": 13,
+        "passed": 1
       }
     },
     "acceptance": {
@@ -5160,5 +5164,50 @@
       "secretsOrPermissionsChanged": false,
       "liveCollectionDeliveryOrders": false
     }
+  },
+  "insiderIngress": {
+    "base": "691bbf92e5e14d1e23506538f13c12be0b565ad0",
+    "status": "LOCAL_VERIFIED_HOSTED_PENDING",
+    "acceptanceAdded": 0,
+    "changedRequirements": [
+      "Actual SEC ZIP ingress no longer rewrites dash to dot; both share classes remain distinct through price join/cache/cluster/discovery. CIK zero padding cannot count one owner twice.",
+      "HTTP 429 pauses all later requests; attempt/time/byte/row/decompression budgets, redirect refusal, timeouts and cleanup bound download failures.",
+      "Required TSV headers, row widths, owner identity and nonfinite/invalid transaction/date rejection prevent a malformed successful response from becoming an observed empty quarter. Valid header-only empty archives stay distinct.",
+      "Five actual workflow save blocks additionally cover reached staging refusals and conflicting library edits without choosing a winner."
+    ],
+    "local": {
+      "nodeFiles": 179,
+      "nodeReportedCases": 1607,
+      "standaloneScripts": 2,
+      "pythonTests": 27,
+      "moduleSyntax": 240,
+      "workflowYaml": 86,
+      "shellBlocks": 329,
+      "pythonSyntax": 9,
+      "insiderZipCallerCases": 14,
+      "insiderCacheCallerCases": 6,
+      "labPublicationCases": 40,
+      "priorSourceNegativeControl": {
+        "failed": 13,
+        "passed": 1
+      }
+    },
+    "bounds": {
+      "compressedZipBytes": 67108864,
+      "eachTsvBytes": 67108864,
+      "eachTsvRows": 500000,
+      "eachUnzipTimeoutMs": 15000,
+      "eachFetchTimeoutMs": 15000,
+      "fetchAttempts": 64,
+      "preFetchElapsedBudgetMs": 180000
+    },
+    "budgetLimits": "Pre-fetch elapsed budget is checked before each request; downstream unzip/processing is separately bounded, not an assertion that the whole historical study finishes in180seconds.",
+    "remaining": [
+      "Legacy compact quarter rows omit accession/transaction IDs and original ingestion clocks; new shape validation does not establish filing authenticity. Closed quarters are not continuously re-fetched for source amendments.",
+      "Fresh malformed TSV/ambiguous owner makes that quarter unavailable; valid other quarters survive. Within-quarter downloaded malformed-row isolation remains incomplete.",
+      "Price-cache normalization/clock/basis bounds and remaining derived producers are unfinished."
+    ],
+    "realProviderRequests": 0,
+    "prospectiveCases": 0
   }
 }
