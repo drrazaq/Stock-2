@@ -6,7 +6,8 @@
 # as -X theirs did. Hunks that do not conflict are kept from both sides, as before.
 # Usage: bash .github/save-data.sh "commit message"   (test/save-data.test.mjs drives it on throw-away repositories)
 OWNER_FILES=" data/my-positions.json data/my-trades.jsonl data/tg-state.json "
-T=$(mktemp -d)
+T=$(mktemp -d) || exit 1
+trap 'rm -rf "$T"' EXIT
 has() { git cat-file -e ":$1:$2" 2>/dev/null; }
 # one stopped rebase step: during a rebase stage 2 is origin (upstream), stage 3 is this job's commit
 resolve_step() {
@@ -26,6 +27,8 @@ resolve_step() {
 in_rebase() { [ -d "$(git rev-parse --git-path rebase-merge)" ] || [ -d "$(git rev-parse --git-path rebase-apply)" ]; }
 pull() {
   git pull -q --rebase && return 0
+  # Authentication/network refusal is not a successfully completed rebase.
+  in_rebase || return 1
   local n=0
   while in_rebase && [ $n -lt 20 ]; do
     n=$((n + 1)); resolve_step
@@ -34,8 +37,9 @@ pull() {
   done
   ! in_rebase
 }
-git add data
-git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}"
+git add data || { echo 'Error: could not stage the data folder'; exit 1; }
+if ! git diff --cached --quiet; then
+  git commit -q -m "${1:-scan $(date -u +%FT%RZ)}" || { echo 'Error: data commit failed; refusing an unverified push'; exit 1; }
+fi
 ok=0; for i in 1 2 3 4 5; do if pull && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep "${SAVE_SLEEP:-10}"; done
-rm -rf "$T"
 [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository"; exit 1; }

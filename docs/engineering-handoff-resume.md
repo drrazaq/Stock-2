@@ -1,3 +1,9 @@
+## Historical admission verified; shared save failure barrier — 29 October 2026
+
+Source5a03637949f14f58487683d26e746a5c76c19ed4 passed all12 exact-commit checks; hosted Node161files/1391tests. Static local checks also pass:230 root/tool module parses and85 workflow YAML parses. Original local socket EPERM and sourceeae4c45 fixture failure remain recorded; neither is misreported as an initial pass.
+
+New ACTIONS04 defect repair in .github/save-data.sh: refused staging/commit must stop before push; a pull transport/auth failure without an active rebase cannot masquerade as successful synchronization. Disposable local Git contracts: repaired6/6pass; original script4pass/2fail, reproducing both defects. Prior S1 owner-file conflict resolution and all4 prior tests preserved, not restarted/replaced. No existing production job or data dispatch occurred. Full exact-commit hosted CI pending. Acceptance22/40(55%),18 remaining;prospective cases0. Shared script still has known legacy job-wins behavior for other conflicted data; do not call all workflow/frozen-research conflict safety complete.
+
 ## Rebalancing owner gate verified; historical admission continuation — 29 October 2026
 
 Source194619012541541a011e620e266f8833a697c00c passed all13 exact-commit checks; hosted Node161files/1389tests. Current owner ZAD and available finite recent price are now required before rebalancing ADD. No owner holdings, marks or production behavior was changed.

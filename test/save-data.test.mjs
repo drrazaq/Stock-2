@@ -29,7 +29,7 @@ function setup(base, bot) {
   sh('git add -A && git -c commit.gpgsign=false commit -qm base && git remote add origin ' + bare + ' && git push -q origin main', seed);
   sh('git clone -q ' + bare + ' ' + job, seed); sh('git clone -q ' + bare + ' ' + other, seed);
   for (const [f, s] of Object.entries(bot)) W(other, f, s);
-  sh('git add -A && git -c commit.gpgsign=false commit -qm bot && git push -q origin main', other);
+  if(Object.keys(bot).length)sh('git add -A && git -c commit.gpgsign=false commit -qm bot && git push -q origin main', other);
   return { bare, job };
 }
 const originFile = (bare, f) => sh('git --git-dir=' + bare + ' show main:' + f, os.tmpdir());
@@ -71,4 +71,15 @@ test('control: with no conflict both sides are kept and the commit carries the m
   assert.equal(originFile(bare, 'data/a.json'), '2\n');
   assert.equal(originFile(bare, 'data/b.json'), '3\n');
   assert.match(sh('git --git-dir=' + bare + ' log -1 --format=%s main', os.tmpdir()), /scan test/);
+});
+test('a refused data commit cannot be reported saved by pushing an unchanged branch',()=>{
+ const {bare,job}=setup({'data/a.json':'1\n'},{});
+ W(job,'data/a.json','2\n');const hooks=path.join(job,'.git','hooks');W(job,'.git/hooks/pre-commit','#!/bin/sh\nexit 1\n');fs.chmodSync(path.join(hooks,'pre-commit'),0o755);
+ assert.throws(()=>sh('bash '+SCRIPT+' "must fail"',job));assert.equal(originFile(bare,'data/a.json'),'1\n');assert.equal(R(job,'data/a.json'),'2\n');assert.match(sh('git status --short',job),/data\/a.json/);
+});
+test('pull transport failure without a rebase does not fall through to a successful push',()=>{
+ const {bare,job}=setup({'data/a.json':'1\n'},{});W(job,'data/a.json','2\n');
+ const wrappers=tmp('stock2-git-wrapper-'),realGit=sh('command -v git',job).trim();
+ W(wrappers,'git','#!/bin/sh\nif [ "$1" = pull ]; then exit 42; fi\nexec "$STOCK2_TEST_REAL_GIT" "$@"\n');fs.chmodSync(path.join(wrappers,'git'),0o755);
+ try{assert.throws(()=>execSync('bash '+SCRIPT+' "must not push"',{cwd:job,env:{...ENV,PATH:wrappers+path.delimiter+ENV.PATH,STOCK2_TEST_REAL_GIT:realGit},stdio:'pipe'}));assert.equal(originFile(bare,'data/a.json'),'1\n');assert.equal(R(job,'data/a.json'),'2\n');}finally{fs.rmSync(wrappers,{recursive:true,force:true});}
 });
