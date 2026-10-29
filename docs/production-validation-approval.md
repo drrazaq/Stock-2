@@ -1,6 +1,6 @@
 # Production validation proposal — approval required
 
-Status: **not deployed, not dispatched, no live collection or Telegram validation performed**. Approving this document does not approve a strategy, a BUY alert or a trade.
+Status: **NO-GO pending actual research-key proof and revised-wrapper review; not deployed or dispatched.** See [final preflight](validation/phase-a-final-preflight.md). Approving this document does not approve a strategy, a BUY alert or a trade.
 
 ## Phase A: one research-only premarket session
 
@@ -55,3 +55,4 @@ Freeze the protocol/hash, candidate and control eligibility, sample period, mini
 Cancel the single validation run in Actions; there is no automatic restart or recurring schedule. Revert/delete only `.github/workflows/premarket-research-validation.yml` on main, or retain it disabled without dispatch. Approval expires within 24 hours and the pinned source never changes silently. Preserve encrypted failure evidence for review before deleting artifacts. No data reconciliation, position reversal, order cancellation or frozen-result restoration is required because this workflow writes none of them. Existing production schedules, alerts, settings and research remain untouched.
 
 Requested approval scope, when ready: installation of this one manual, read-only workflow; its listed existing-secret bindings; and one specified trading-day research session. Merge, recurring collection, Telegram delivery, approved BUY alerts, orders, service purchases and Phase B are excluded.
+

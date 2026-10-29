@@ -250,6 +250,12 @@
     ],
     "hostedCounts": {
       "note": "Hosted workflow executes files individually; standalone assertion scripts count as test files rather than TAP test cases. All required exact-commit jobs succeeded."
+    },
+    "latestSafeBranchLocal": {
+      "passed": 1296,
+      "failed": 0,
+      "skipped": 0,
+      "remoteCI": "PENDING_PUBLICATION"
     }
   },
   "blockers": [
@@ -1047,7 +1053,7 @@
     ]
   },
   "productionValidationProposal": {
-    "status": "PREPARED_NOT_AUTHORIZED_NOT_DEPLOYED",
+    "status": "NO_GO_PENDING_ACTUAL_KEY_PROOF_AND_REVISED_REVIEW",
     "sourceSha": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
     "plan": "docs/production-validation-approval.md",
     "nonActiveWorkflow": "docs/validation/premarket-research-validation.yml.proposed",
@@ -1057,13 +1063,46 @@
       ".github/workflows/premarket-research-validation.yml only, installed manually after explicit approval"
     ],
     "scope": "One manual research-only premarket session; no Telegram, approved alerts, broker credentials/orders, production data writes, recurring schedule or purchase",
-    "dataProtection": "Existing PRIVATE_KEY proposed only for preflight/sealing; encrypted artifacts only; this binding is not activated",
-    "approvalRequired": true
+    "dataProtection": "Separate RESEARCH_ARTIFACT_KEY proposed only for preflight/sealing; pinned CLI PRIVATE_KEY local alias does not read legacy GitHub secret; no binding activated by this work",
+    "approvalRequired": true,
+    "preflight": "docs/validation/phase-a-final-preflight.md"
   },
   "dataIntegrity": {
     "base": "e717c657ff3a726bbb1f8e6e3d232c2a3b1c9b6b",
     "originalDataBlobs": 399,
     "changed": 0,
     "newDataPaths": 0
+  },
+  "phaseAFinalPreflight": {
+    "status": "NO_GO",
+    "date": "2026-10-29",
+    "candidateSession": "2026-10-30 04:00\u201309:30 America/New_York (EDT)",
+    "candidateUTC": "08:00\u201313:30",
+    "sourcePin": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
+    "encryptionBinding": "UNVERIFIED; no local binding; no real-key workflow run",
+    "ownerRecoveryCopy": "EXPLICITLY_CONFIRMED_BY_OWNER; actual binding decryption challenge pending",
+    "originalProposalUnchanged": false,
+    "revisedWrapper": "docs/validation/premarket-research-validation.preflight-revision.yml.proposed; not approved/installed",
+    "findings": [
+      "Original wrapper lacked one-attempt guard and could exit0 with incomplete feeds",
+      "Revised dated wrapper rejects reruns/later dispatches, caps soft runtime and evaluates real coverage",
+      "Hard cancellation/runner loss can prevent artifact upload; no guarantee of intermediate recovery under pinned source",
+      "Offline recovery now tested for authentication, wrong keys/tampering, source/path and missing cycles",
+      "Read77 existing main workflows; only existing Tests CI matches proposed installation push; no workflow_run downstream"
+    ],
+    "testsPassed": 1296,
+    "codeScope": "Safe branch tools/tests/proposals only; pinned runtime and every active workflow unchanged",
+    "evidence": [
+      "docs/validation/phase-a-final-preflight.md",
+      "docs/validation/phase-a-final-preflight-2026-10-29.json",
+      "docs/validation/main-trigger-preflight.json",
+      "docs/validation/phase-a-recovery-runbook.md"
+    ],
+    "installation": false,
+    "dispatch": false,
+    "keyProofTriggered": false,
+    "actualProviderRequests": 0,
+    "concurrentCommitPreserved": "4c919aaa6fcbd9b3b4810c9a65c70f7953940960",
+    "artifactBinding": "RESEARCH_ARTIFACT_KEY only; legacy PRIVATE_KEY untouched"
   }
 }
