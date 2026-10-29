@@ -1,8 +1,7 @@
 {
   "kind": "AIM_C0_REVIEW_PROPOSAL_NOT_AUTHORIZATION",
-  "status": "BLOCKED_NO_LIVE_RUNTIME_PIN_OR_APPROVAL",
+  "status": "OFFLINE_PREPARED_ENTITLEMENT_DATE_APPROVAL_MISSING",
   "ownerThresholdAgreement": false,
-  "reviewSourceSha": "2e785f0314bbefe1a2562c646086bee678525b24",
   "preparationKernels": [
     {
       "path": "alpaca-feed.mjs",
@@ -26,32 +25,49 @@
     }
   ],
   "liveRuntime": {
-    "sourceSha": null,
-    "entryPoint": null,
-    "workflowSha256": null,
+    "sourceSha": "c34c8568e910f4e13d2576c5004990716515ceec",
+    "entryPoint": "tools/c0-diagnostic.mjs --collect-cycle",
+    "workflowSha256": "6f393282ee7e024c5b6d855cb4d975a7205a9d716e9455cd9537f349d8dd2878",
     "requiredBeforeApproval": true,
     "retired7ddRuntimeAllowed": false,
-    "offlineFixtureAllowedAsLive": false
+    "offlineFixtureAllowedAsLive": false,
+    "codeFiles": {
+      "c0-diagnostic.mjs": "59798102af034d4d1a0dbe9062eac7caf278403b84eaca80e50c1b359541e47b",
+      "tools/c0-diagnostic.mjs": "7f8d9f766c8bca56cda27a30ef84aa80fac89895c2604022590b6bbd01fcaf1e",
+      "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+      "market-symbol.mjs": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+      "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2"
+    },
+    "workflowPath": "docs/validation/c0-diagnostic.workflow.yml.proposed",
+    "recovery": {
+      "path": "tools/recover-c0-diagnostic.py",
+      "sha256": "26b47dad96d0f6b5dcbc0d4d8ed30e9a57417b000850c767ac9ef76270afb828"
+    },
+    "installed": false,
+    "dispatched": false
   },
   "entitlement": {
     "broadSip": "NOT_ESTABLISHED",
     "extendedHours": "NOT_ESTABLISHED",
-    "officialRateWindow": "NOT_ESTABLISHED",
-    "retentionRights": "NOT_ESTABLISHED"
+    "officialRateWindow": "REQUESTS_PER_MINUTE_PUBLIC_DOCS; ACCOUNT_ALLOCATION_UNKNOWN",
+    "retentionRights": "NOT_ESTABLISHED",
+    "currentQuoteSizeUnits": "SHARES_PUBLIC_DOCS; NO_EXECUTABLE_CAPACITY_INFERENCE",
+    "evidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md"
   },
   "window": {
-    "day": "2026-11-16",
+    "day": null,
     "timezone": "America/New_York",
     "start": "08:45",
     "expires": "09:00",
-    "utcStart": "2026-11-16T13:45:00Z",
-    "utcExpiry": "2026-11-16T14:00:00Z",
+    "utcStart": null,
+    "utcExpiry": null,
     "cycles": [
       "08:45",
       "08:50",
       "08:55"
     ],
-    "rollDateOrRerun": false
+    "rollDateOrRerun": false,
+    "historicalUnapprovedIllustration": "2026-11-16; not selected or reserved"
   },
   "universe": {
     "maxAssets": 20000,
@@ -62,7 +78,7 @@
   "requests": {
     "assetGets": 1,
     "sipSnapshotGets": 300,
-    "massiveDelayedBaselineGets": 3,
+    "massiveDelayedBaselineGets": 0,
     "massiveBaselineOptionalOnlyIfFinalManifestIncludes": true,
     "fallbackIex": false,
     "totalAttempts": 400,
@@ -77,7 +93,11 @@
       429
     ],
     "perBodyBytes": 8388608,
-    "allBodyBytes": 134217728
+    "allBodyBytes": 134217728,
+    "publicGitHubHistoryGets": 3,
+    "selectedNoMassiveMaximumAttempts": 304,
+    "controlPlaneTrafficIncluded": false,
+    "controlPlaneBounds": "20min job and encrypted artifact byte cap; no provider requests from setup"
   },
   "storage": {
     "compressedBytes": 67108864,
@@ -85,7 +105,9 @@
     "retentionDays": 3,
     "uploadAfterEachCycle": true,
     "plaintextUpload": false,
-    "unuploadedCycleLossPossible": true
+    "unuploadedCycleLossPossible": true,
+    "plainFrameBytes": 134217728,
+    "uploadSuccessIsRemoteByteProof": false
   },
   "capabilities": {
     "repositoryWrite": false,
@@ -109,5 +131,7 @@
       "ownerAgreementDate"
     ],
     "currentDocumentAuthorizesExecution": false
-  }
+  },
+  "historicalPreparationBaseline": "2e785f0314bbefe1a2562c646086bee678525b24",
+  "reviewSourceSha": "c34c8568e910f4e13d2576c5004990716515ceec"
 }

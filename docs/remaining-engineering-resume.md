@@ -1,3 +1,21 @@
+<!-- CURRENT-STATUS:BEGIN -->
+## Current verified status — 29 October 2026
+
+**c34c8568e910f4e13d2576c5004990716515ceec: all 12 exact-commit checks passed.** This is the latest verified runtime source; a following review-only pin/status commit has its own SHA/CI. [Canonical status](current-engineering-status.json) supersedes historical checkpoint/pending text below. Acceptance **24/40; 16 OPEN**; CATALYST-03 and ACTIONS-04 remain open. Lost code/tests were reconstructed, not recovered.
+
+Confluence publication repair **413a91ca966fb1eb8e24a2113f23b4246752ca2e** passed all 12 exact-commit checks: commit original baseline before pull, refuse frozen/library conflicts, confirm push, recover only public frozen/library files. 48 actual Git cases across six workflows, eight added for Confluence; no dispatch/study execution.
+
+[Inactive C0 review](c0-diagnostic-review.md) now pins the dedicated runtime, transitive file hashes and proposed workflow bytes; [example](validation/c0-approval.example.json) has granted=false and null dates/references. All 44 focused cases pass including the pinned workflow rerun; complete suite **183 Node files / 1,725 reported cases plus two standalone scripts, 27 Python tests**, static **243 modules, 86 active plus one proposed YAML, 332 shell blocks including proposal, 10 Python syntax**. Actual guarded CLI is exercised with synthetic Git/workflow context and mocked transport; no real provider request. Independent encrypted recovery passes fixtures; actual uploaded bytes/cancellation recovery remain unobserved. No active C0 workflow is installed or dispatched.
+
+**Date UNSET**; 16 November was never approved. The former Share-supply and C0 build estimates are superseded by completed work; allow roughly 1–3 engineer-days for independent review/term-driven corrections and date/preflight preparation after official evidence arrives, with external waiting unknown. [Exact non-secret official evidence](c0-alpaca-entitlement-evidence.md): current account product/SIP and extended-hours scope, latest-endpoint allocation/batch limits and encrypted-retention rights. Public docs already establish requests/minute and current quote sizes in shares. Then owner reviews ONE dated pinned diagnostic and existing bindings. No execution approval is implied.
+
+Engineering, bounded collection, paper and owner alerts readiness remain FAIL for documented remaining gates; narrow offline C0 preparation is verified. C0 measures operational coverage/recovery, not profitable trading. Massive remains 15-minute delayed, broad SIP unverified, prospective cases zero; all numerical aim-plan additions await agreement. No main/merge/deploy/dispatch/messages/orders/purchases/secrets/permission changes.
+
+**Next safe executable:** audit/repair Winners-autopsy pre-registration and final publication blocks, which still reset/clean before committing and use job-wins rebase. Preserve first verdict and original library, abort conflicts and reach actual stage/commit/pull/push failures. Verify 5-year testing is blocked unless the exact pre-registration push succeeded; review failure/paper continuation explicitly. Use disposable Git fixtures and public recovery allowlist (no paper/raw signals), without dispatch or data changes. Then AV/FMP/discovery/comeback source/admission, normalization, command durability and renderer/spec paths. CATALYST-03 retains full source/revision/materiality evidence; ACTIONS-04 retains all writers/cache/cancellation/retention criteria. Continue independent work while external terms/approval remain blocked.
+<!-- CURRENT-STATUS:END -->
+
+Historical checkpoint sections below retain evidence; their next-task and pending wording is superseded above.
+
 ## Verified session resume checkpoint
 
 Latest verified source: **86b25ccb61abe1be1b91b9f41c280f74b73d51d1**, all **13** applicable exact-commit checks passed; validation/recorded-plan-contract-ci.json. Earlier source milestones5cc2dbb,691bbf9,60be0ee,7bcf591 passed all14/13/12/12 applicable checks respectively. Local full suite181Nodefiles/1,645reportedcases+2standalone,27Python; all required static checks pass.

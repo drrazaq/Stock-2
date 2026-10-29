@@ -5000,8 +5000,8 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "source": "413a91ca966fb1eb8e24a2113f23b4246752ca2e",
-    "ciEvidence": "docs/validation/confluence-publication-ci.json",
+    "source": "c34c8568e910f4e13d2576c5004990716515ceec",
+    "ciEvidence": "docs/validation/c0-diagnostic-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
@@ -5298,10 +5298,10 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "source": "413a91ca966fb1eb8e24a2113f23b4246752ca2e",
+    "source": "c34c8568e910f4e13d2576c5004990716515ceec",
     "verified": true,
     "handoff": "docs/resume-precise-checkpoint.md",
-    "nextExecutable": "Publish verified C0 source, verify exact CI, pin inactive review bundle and reconcile account entitlement."
+    "nextExecutable": "Winners-autopsy actual pre-registration and final publication blocks: original baseline/conflict refusal and confirmed publication before test; no dispatch."
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5362,12 +5362,20 @@
     ]
   },
   "c0DiagnosticPreparation": {
-    "status": "OFFLINE_VERIFIED_PUBLICATION_PENDING",
+    "status": "VERIFIED_PUBLISHED_INACTIVE",
     "evidence": "docs/validation/c0-diagnostic.json",
     "proposal": "docs/c0-diagnostic-review.md",
     "entitlement": "docs/c0-alpaca-entitlement-evidence.md",
     "date": null,
     "approvalGranted": false,
-    "acceptanceAdded": 0
+    "acceptanceAdded": 0,
+    "source": "c34c8568e910f4e13d2576c5004990716515ceec",
+    "ciEvidence": "docs/validation/c0-diagnostic-ci.json",
+    "workflowHash": "6f393282ee7e024c5b6d855cb4d975a7205a9d716e9455cd9537f349d8dd2878",
+    "changedRequirements": [
+      "Dedicated read-only caller enforces aggregate request/time/body/storage budgets across three separate processes; failure/unknown previous cycle refuses continuation.",
+      "Authenticated atomic encrypted intent/response frames and independent offline recovery tested; partial evidence never claims remote durability.",
+      "Exact runtime/workflow/dependency pins prepared outside active workflows. Account terms, actual upload/recovery and dated approval still absent."
+    ]
   }
 }

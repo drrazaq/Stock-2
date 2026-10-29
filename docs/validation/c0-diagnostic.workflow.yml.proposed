@@ -30,7 +30,7 @@ jobs:
       - name: Checkout only the reviewed runtime source
         uses: actions/checkout@v4
         with:
-          ref: C0_RUNTIME_PIN_PENDING_PUBLICATION
+          ref: c34c8568e910f4e13d2576c5004990716515ceec
           path: code
           sparse-checkout: |
             c0-diagnostic.mjs
@@ -64,7 +64,7 @@ jobs:
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
           C0_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
-        run: node tools/c0-diagnostic.mjs --collect-cycle 0 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml C0_RUNTIME_PIN_PENDING_PUBLICATION
+        run: node tools/c0-diagnostic.mjs --collect-cycle 0 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml c34c8568e910f4e13d2576c5004990716515ceec
       - name: Upload cycle 0 encrypted checkpoint files
         id: upload0
         uses: actions/upload-artifact@v4
@@ -81,7 +81,7 @@ jobs:
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
           C0_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
           C0_PREVIOUS_UPLOAD_CONFIRMED: ${{ steps.upload0.outcome == 'success' }}
-        run: node tools/c0-diagnostic.mjs --collect-cycle 1 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml C0_RUNTIME_PIN_PENDING_PUBLICATION
+        run: node tools/c0-diagnostic.mjs --collect-cycle 1 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml c34c8568e910f4e13d2576c5004990716515ceec
       - name: Upload cycle 1 encrypted checkpoint files
         id: upload1
         uses: actions/upload-artifact@v4
@@ -98,7 +98,7 @@ jobs:
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
           C0_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
           C0_PREVIOUS_UPLOAD_CONFIRMED: ${{ steps.upload1.outcome == 'success' }}
-        run: node tools/c0-diagnostic.mjs --collect-cycle 2 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml C0_RUNTIME_PIN_PENDING_PUBLICATION
+        run: node tools/c0-diagnostic.mjs --collect-cycle 2 c0-approval.json sealed-c0 ../review/.github/workflows/c0-diagnostic.yml c34c8568e910f4e13d2576c5004990716515ceec
       - name: Upload cycle 2 encrypted checkpoint files
         id: upload2
         uses: actions/upload-artifact@v4
