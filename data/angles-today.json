@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-10-28T00:11:03.110Z",
- "lastClose": "2026-10-27",
+ "generatedAt": "2026-10-29T00:13:22.204Z",
+ "lastClose": "2026-10-28",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Untested angles recording forward from 26 Oct 2026. Nothing here is a buy by itself: a rule needs a TRADABLE SMALL / PROVEN frozen 5-year verdict (data/angles-lab.json firstRun), or the TRY SMALL lane's own standard on that frozen run, or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
@@ -59,21 +59,31 @@
    "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "BDC",
-     "close": 107.48,
+     "sym": "FSLR",
+     "close": 176.3,
      "halal": "unknown",
-     "d": "2026-10-27",
-     "plan": "buy at the open of 2026-10-28, hold 60 sessions"
+     "d": "2026-10-28",
+     "plan": "buy at the open of 2026-10-29, hold 60 sessions"
+    }
+   ],
+   "open": [
+    {
+     "sym": "BDC",
+     "halal": "unknown",
+     "signal": "2026-10-27",
+     "buy": "2026-10-28",
+     "sinceBuy": -0.0179,
+     "exitAfter": "60 sessions"
     },
     {
      "sym": "CTRI",
-     "close": 20.64,
      "halal": "unknown",
-     "d": "2026-10-27",
-     "plan": "buy at the open of 2026-10-28, hold 60 sessions"
+     "signal": "2026-10-27",
+     "buy": "2026-10-28",
+     "sinceBuy": -0.0014,
+     "exitAfter": "60 sessions"
     }
-   ],
-   "open": []
+   ]
   },
   "ANG-LOCKUP": {
    "name": "IPO lock-up expiry bounce: buy 3 sessions after the expiry",
@@ -94,7 +104,16 @@
    "hold": 1,
    "tier": "REJECTED",
    "newSignals": [],
-   "open": []
+   "open": [
+    {
+     "sym": "SPUS",
+     "halal": "ok",
+     "signal": "2026-10-26",
+     "buy": "2026-10-27",
+     "sinceBuy": 0,
+     "exitAfter": "the close of 2026-10-28"
+    }
+   ]
   },
   "ANG-SPLIT": {
    "name": "Forward stock split, first in 3 years (post-split drift)",
