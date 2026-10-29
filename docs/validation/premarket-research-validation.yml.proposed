@@ -69,12 +69,12 @@ jobs:
       - name: Verify encryption before any provider request
         working-directory: code
         env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          RESEARCH_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
         run: |
           node --input-type=module - <<'JS'
           import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
-          const input=Buffer.from('preflight fixture'),sealed=sealResearch(input,process.env.PRIVATE_KEY,{sourceSha:'7dd702d5d2ed3578f7558bc4f7fcc211f3619669',path:'preflight'});
-          if(!openResearch(sealed,process.env.PRIVATE_KEY).equals(input))throw Error('encryption preflight failed');
+          const input=Buffer.from('preflight fixture'),sealed=sealResearch(input,process.env.RESEARCH_ARTIFACT_KEY,{sourceSha:'7dd702d5d2ed3578f7558bc4f7fcc211f3619669',path:'preflight'});
+          if(!openResearch(sealed,process.env.RESEARCH_ARTIFACT_KEY).equals(input))throw Error('encryption preflight failed');
           console.log('Encryption roundtrip verified; no provider request performed');
           JS
       - name: Collect research only (no Telegram or broker bindings)
@@ -90,7 +90,7 @@ jobs:
         working-directory: code
         env:
           STOCK2_SOURCE_SHA: 7dd702d5d2ed3578f7558bc4f7fcc211f3619669
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PRIVATE_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }} # pinned sealer CLI compatibility alias; NOT legacy GitHub secret
         run: node tools/seal-research-artifact.mjs research-output sealed-research
       - name: Upload encrypted evidence only
         if: always()
