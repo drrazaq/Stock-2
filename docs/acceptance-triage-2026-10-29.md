@@ -1,6 +1,6 @@
 # Remaining acceptance triage —29October2026
 
-Source9240d42; initial acceptance23/40. Exact original acceptance conditions, affected files, existing/planned tests, required evidence, gaps and shortest safe unblock routes for **each of the17 checks** are in [acceptance-triage-2026-10-29.json](acceptance-triage-2026-10-29.json). Classes apply to full closure; useful safe partial work continues on blocked empirical checks.
+Initial source9240d42:23/40. Verified continuation 0d89349dcfec8577623e033bbcf9a5f91db85f1e:24/40(60%); ZAD-04 closed. Six safe engineering, six independent-evidence and four authorization checks remain. Exact original acceptance conditions, affected files, existing/planned tests, required evidence, gaps and shortest safe unblock routes for **each of the17 checks** are in [acceptance-triage-2026-10-29.json](acceptance-triage-2026-10-29.json). Classes apply to full closure; useful safe partial work continues on blocked empirical checks.
 
 Seven safe branch checks, six independent/provider/market-evidence checks, four needing explicit authorization before live validation. HISTORY-03 is evidence-blocked despite safe wording work. TELEGRAM-03 remains safe engineering work, but extending actual private secret bindings is a separate approval boundary. Unfinished reviews are labelled unfinished, not disguised as external blockers.
 

@@ -1,6 +1,6 @@
 # ZAD-04 recommendation-path acceptance audit
 
-Base:9240d422547567738ee58128cdeb8a702a46c119. Status:CLOSURE CANDIDATE until exact-source full push/PR/safety CI passes. Scope: current affirmative owner compliance prerequisite, not strategy profitability, fresh-price eligibility, derivative Sharia rulings, or deployment approval.
+Base:9240d422547567738ee58128cdeb8a702a46c119. Status:COMPLETE after all13 exact-source checks on 0d89349dcfec8577623e033bbcf9a5f91db85f1e;170 Node files /1464 tests. Evidence:validation/acceptance-zad-closure-ci.json. Scope: current affirmative owner compliance prerequisite, not strategy profitability, fresh-price eligibility, derivative Sharia rulings, or deployment approval.
 
 ## Acceptance condition retained
 

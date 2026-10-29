@@ -1,6 +1,6 @@
 # Actual trading evidence dashboard
 
-Updated29October2026; engineering baseline9240d42 and consolidated ZAD continuation pending CI. Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
+Updated29October2026; verified engineering source0d89349dcfec8577623e033bbcf9a5f91db85f1e, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|

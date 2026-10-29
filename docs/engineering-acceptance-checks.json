@@ -1,11 +1,11 @@
 {
   "updated": "2026-10-29",
-  "sourceCheckpoint": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+  "sourceCheckpoint": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
   "score": {
-    "complete": 23,
+    "complete": 24,
     "total": 40,
-    "percent": 57.5,
-    "remaining": 17
+    "remaining": 16,
+    "percent": 60
   },
   "principle": "A new module or passing test does not by itself complete an operational/empirical acceptance check. Engineering completion and profitability are distinct.",
   "completed": [
@@ -172,6 +172,18 @@
       "verifiedSource": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
       "basis": "All currently wired broker routes inventoried and fault-injected through actual adapter/composed private CAS protocol. Default off, PAPER-only, strict schemas, remote intent+ACK, account quarantine across client IDs, races/restarts, timeouts/redirects/refusals and no blind retry verified. No actual broker/private write or deployment required or performed.",
       "remainingLimit": "Future new routes must extend the matrix. Actual order approval, migration, fills, plan evidence and profits remain separate."
+    },
+    {
+      "id": "ZAD-04",
+      "title": "Every approved recommendation and cached-render path",
+      "status": "COMPLETE",
+      "actionability": "SAFE_BRANCH",
+      "requiredVerification": "Enumerate all current BUY/entry/action channels, monthly/basket/owner lanes, options, callbacks and cached reports. With missing/stale/expired/rejected/malformed/third-party marks, prove no approved BUY; test valid owner yes separately. Catalyst/cache repairs alone are partial.",
+      "partialEvidence": "Catalyst, cached leaders and rebalancing ADD owner gates repaired; remaining core/monthly/basket/options/callback/report paths still require full matrix.",
+      "evidence": "docs/zad-all-path-acceptance.md; docs/validation/acceptance-zad-closure-ci.json",
+      "verifiedSource": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+      "basis": "Current recommendation surfaces enumerated and gated. Real renderer/watcher/browser adversarial states plus valid controls and mutation check; all13 exact-source hosted checks pass. Current owner yes never inferred from third-party/cached marks, core choice, paper counts or underlying-only derivative evidence.",
+      "remainingLimit": "This closes compliance prerequisite engineering, not independent historical/strategy proof, execution-price evidence, contract-specific Sharia opinions, live delivery or deployment."
     }
   ],
   "remaining": [
@@ -239,14 +251,6 @@
       "status": "OPEN",
       "actionability": "INDEPENDENT_DATA",
       "requiredVerification": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability."
-    },
-    {
-      "id": "ZAD-04",
-      "title": "Every approved recommendation and cached-render path",
-      "status": "OPEN",
-      "actionability": "SAFE_BRANCH",
-      "requiredVerification": "Enumerate all current BUY/entry/action channels, monthly/basket/owner lanes, options, callbacks and cached reports. With missing/stale/expired/rejected/malformed/third-party marks, prove no approved BUY; test valid owner yes separately. Catalyst/cache repairs alone are partial.",
-      "partialEvidence": "Catalyst, cached leaders and rebalancing ADD owner gates repaired; remaining core/monthly/basket/options/callback/report paths still require full matrix."
     },
     {
       "id": "EXEC-03",

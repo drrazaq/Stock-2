@@ -43,11 +43,11 @@
     "note": "Reading, syntax checks and fixtures are not exhaustive behavioral certification"
   },
   "engineeringAcceptance": {
-    "complete": 23,
+    "complete": 24,
     "total": 40,
-    "percent": 57.5,
-    "remaining": 17,
-    "basis": "Added EXEC04 closure for all currently wired broker mutation paths after exact-source full fault/integration/static CI; no trading advantage or real orders implied."
+    "remaining": 16,
+    "percent": 60,
+    "basis": "EXEC04 preserved; ZAD04 current recommendation/compliance path engineering closed after13 exact-source hosted checks. Independent evidence and profitability remain separate."
   },
   "strategyValidation": {
     "earlyEnginePromotionChecksPassed": 0,
@@ -292,12 +292,12 @@
       "codeSha": "d5c8c3259502054fd3864cb359c52de140d6498c"
     },
     "currentHosted": {
-      "files": 169,
-      "TAPTests": 1446,
+      "files": 170,
+      "TAPTests": 1462,
       "standalone": 2,
-      "totalNodeTests": 1448
+      "totalNodeTests": 1464
     },
-    "currentHostedSource": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    "currentHostedSource": "0d89349dcfec8577623e033bbcf9a5f91db85f1e"
   },
   "blockers": [
     "Production corrections remain undeployed pending owner approval",
@@ -2644,108 +2644,115 @@
     "profitabilityVerified": false
   },
   "verifiedCheckpoint": {
-    "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18",
-    "tree": "3d3d40290344526833e1d7714375fface5a90e45",
+    "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+    "tree": "5cb3f8442ad371dc92b55ca6fb89b357fa8f7e5e",
     "tests": {
-      "files": 169,
-      "tap": 1446,
+      "files": 170,
+      "tap": 1462,
       "standalone": 2,
-      "total": 1448
+      "total": 1464
     },
     "checks": [
       {
         "name": "fixture-close",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573684912",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
-      },
-      {
-        "name": "source-preservation",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577433/job/123573558342",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918084936/job/123603765052"
       },
       {
         "name": "test",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577411/job/123573558054",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094740/job/123603603438"
       },
       {
         "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557969",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
-      },
-      {
-        "name": "research-fixtures",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577421/job/123573557732",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
-      },
-      {
-        "name": "offline-recovery (3.9.16, 46.0.3)",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557673",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
-      },
-      {
-        "name": "delivery-fixtures",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577494/job/123573557365",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094894/job/123603600887"
       },
       {
         "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557267",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094894/job/123603600537"
       },
       {
-        "name": "safety",
+        "name": "delivery-fixtures",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573532492",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094981/job/123603600499"
       },
       {
-        "name": "fixture-open",
+        "name": "research-fixtures",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573531936",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094754/job/123603600431"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094894/job/123603600362"
       },
       {
         "name": "source-preservation",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569392/job/123573531633",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094847/job/123603600271"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918085351/job/123603566660"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918085161/job/123603566501"
+      },
+      {
+        "name": "safety",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918084936/job/123603566465"
       },
       {
         "name": "test",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569321/job/123573531395",
-        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918085217/job/123603566268"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918084936/job/123603566219"
       }
     ],
-    "execution": "Exact GitHub push/PR/safety and compatibility CI; local static checks",
     "acceptance": {
-      "complete": 23,
+      "complete": 24,
       "total": 40,
-      "remaining": 17,
-      "percent": 57.5
+      "remaining": 16,
+      "percent": 60
     },
-    "actualProspectiveCases": 0
+    "actualProspectiveCases": 0,
+    "execution": "GitHub-hosted full push/PR/safety/source preservation; local focused/mutation/browser parsing checks. Initial local full failure retained separately."
   },
   "providerDiagnosticContinuation": {
     "base": "b64ca5fcc7f19705f341d1a78211546a186faa3a",
@@ -4664,7 +4671,7 @@
   },
   "acceptancePriorityRevision": {
     "base": "9240d422547567738ee58128cdeb8a702a46c119",
-    "status": "CONSOLIDATED_CANDIDATE_HOSTED_CI_PENDING",
+    "status": "VERIFIED_EXACT_SOURCE_CI",
     "triage": "docs/acceptance-triage-2026-10-29.json",
     "initialClasses": {
       "SAFE_NOW": 7,
@@ -4675,7 +4682,7 @@
     "tradingDashboard": "docs/trading-evidence-dashboard.md",
     "routeAudit": "docs/zad-all-path-acceptance.md",
     "newCandidate": "ZAD-04",
-    "acceptanceCredit": 0,
+    "acceptanceCredit": 1,
     "localFull": {
       "total": 1462,
       "pass": 1458,
@@ -4697,6 +4704,107 @@
       "controlsPassed": 4
     },
     "realProviderCallsThisContinuation": 0,
-    "realProspectiveCases": 0
+    "realProspectiveCases": 0,
+    "verifiedCommit": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918084936/job/123603765052"
+      },
+      {
+        "name": "test",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094740/job/123603603438"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094894/job/123603600887"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094894/job/123603600537"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094981/job/123603600499"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094754/job/123603600431"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094894/job/123603600362"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918094847/job/123603600271"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918085351/job/123603566660"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918085161/job/123603566501"
+      },
+      {
+        "name": "safety",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918084936/job/123603566465"
+      },
+      {
+        "name": "test",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918085217/job/123603566268"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "0d89349dcfec8577623e033bbcf9a5f91db85f1e",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40918084936/job/123603566219"
+      }
+    ],
+    "completed": "ZAD-04",
+    "outstandingClasses": {
+      "SAFE_NOW": 6,
+      "INDEPENDENT_OR_MARKET_EVIDENCE": 6,
+      "OWNER_AUTHORIZATION": 4
+    },
+    "unverifiedWorkPreserved": true
   }
 }
