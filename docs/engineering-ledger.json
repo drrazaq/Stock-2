@@ -403,6 +403,35 @@
     "status": "LOCAL_VERIFIED",
     "testsPassed": 1230,
     "purpose": "Include a snapshot cycle at exactly 16:00/13:00 in addition to scheduled 390/210 regular minutes; not proof of an exchange auction fill",
+    "remoteCI": [
+      {
+        "id": "40816438683",
+        "event": "pull_request",
+        "sha": "6ac9798d38c7732d3fd472a1225cfb5729ea0065",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816438683"
+      },
+      {
+        "id": "40816433488",
+        "event": "push",
+        "sha": "6ac9798d38c7732d3fd472a1225cfb5729ea0065",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816433488"
+      },
+      {
+        "id": "40816433481",
+        "event": "push",
+        "sha": "6ac9798d38c7732d3fd472a1225cfb5729ea0065",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816433481"
+      }
+    ],
+    "publishedCommit": "6ac9798d38c7732d3fd472a1225cfb5729ea0065"
+  },
+  "restartCausalityFollowup": {
+    "status": "LOCAL_VERIFIED",
+    "testsPassed": 1231,
+    "purpose": "An accepted dispatch is not causally attributed to an independently running job; byGuard stays null, guardRequestAccepted is separate",
     "remoteCI": "PENDING"
   }
 }

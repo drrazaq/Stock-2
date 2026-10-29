@@ -97,6 +97,14 @@ test('real guard persists request intent and refuses to report HTTP 403 as a res
   assert.doesNotMatch(output,/started the watcher|started it itself/);assert.equal(s.notifications.length,0);
  }finally{await f.close();}
 });
+test('an accepted dispatch cannot claim causality for an independently running job',async()=>{
+ const f=await fixture();try{
+  f.state.running=false;f.state.dispatchStatus=204;await f.guard();assert.equal(f.read('data/watcher-guard.json').dispatched.length,1);
+  f.state.running=true;await f.guard();
+  const record=JSON.parse(fs.readFileSync(path.join(f.dir,'data/watcher-starts.jsonl'),'utf8').trim().split('\n').at(-1));
+  assert.equal(record.guardRequestAccepted,true);assert.equal(record.byGuard,null);assert.equal(record.restartCausality,'UNVERIFIED');
+ }finally{await f.close();}
+});
 test('real watcher consumes all nine research lanes without issuing a recommendation',async()=>{
  const f=await fixture();try{
   const generatedAt='2026-10-29T19:00:00Z';

@@ -59,6 +59,6 @@ for (const a of [...out.state.notifications]) {
  else console.log('[guard, delivery unconfirmed: '+result.reason+'] '+a);
 }
 if (out.state.started !== null && (S0.d !== out.state.d || S0.started === null || S0.started === undefined || S0.startedSource !== 'github_job'))
-  fs.appendFileSync('data/watcher-starts.jsonl', JSON.stringify({ d: out.state.d, started: fmt(out.state.started), source:'github_job', marketCoverage:'UNVERIFIED', byGuard: out.state.dispatched.length > 0, dispatched: out.state.dispatched.map(fmt) }) + '\n');
+  fs.appendFileSync('data/watcher-starts.jsonl', JSON.stringify({ d: out.state.d, started: fmt(out.state.started), source:'github_job', marketCoverage:'UNVERIFIED', byGuard:null, guardRequestAccepted:out.state.dispatched.length>0, restartCausality:'UNVERIFIED', dispatched: out.state.dispatched.map(fmt) }) + '\n');
 persist(out.state);
 console.log('watcher guard ' + fmt(n.min) + ' New York: ' + out.why + ' | heartbeat '+health.status + (out.dispatch ? ' -> start request '+out.state.attempts.at(-1).status+'; execution unconfirmed' : ''));
