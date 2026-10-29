@@ -35,6 +35,7 @@ export function createHybridSnapshotTransport({fetcher,credentials={},now=Date.n
    const r=await fetcher(u.origin+'/v2/stocks/snapshots?feed='+feed+'&symbols='+symbols.map(encodeURIComponent).join(','),{method:'GET',redirect:'error',headers:{'APCA-API-KEY-ID':credentials.key,'APCA-API-SECRET-KEY':credentials.secret},signal:controller.signal});
    if(controller.signal.aborted){await r.body?.cancel?.().catch(()=>{});throw Error('CANCELLED');}
    result.httpStatus=r.status;
+   result.rateLimit=Object.fromEntries(['limit','remaining','reset'].map(k=>{const raw=r.headers?.get?.('x-ratelimit-'+k),value=raw&&/^\d+$/.test(raw)?Number(raw):null;return [k,Number.isSafeInteger(value)&&value>=0?value:null];}));
    if([401,403,429].includes(r.status)){halt(r.status===429?'RATE_LIMITED':r.status===403?'ACCESS_REFUSED':'AUTHENTICATION_REFUSED');await r.body?.cancel?.();result.status='HTTP_REFUSED';return;}
    if(!r.ok){await r.body?.cancel?.();result.status='HTTP_ERROR';return;}
    const length=r.headers?.get?.('content-length');if(length&&Number(length)>cap.maxResponseBytes){await r.body?.cancel?.();halt('RESPONSE_BYTE_BUDGET');throw Error('RESPONSE_BYTE_BUDGET');}

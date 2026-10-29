@@ -1,3 +1,9 @@
+## Broker fault repair verified; bounded200-symbol access probe —29October2026
+
+Broker/caller source3b4025b passes all13 exact-commit checks. No real orders occurred; fixtures inject only localhost/mocked responses. Cross-job unknown-outcome execution reconciliation remains OPEN, not silently certified.
+
+Under the owner's standing read-only provider-probe authorization, the next dated branch-only diagnostic makes at most3GETs: public active asset reference plus one explicit200-symbol snapshot on SIP and one on IEX. It measures actual batch acceptance, clocks, freshness and reported rate headers during regular session; no collection loop, retry, fallback, account/position read, order, Telegram or Phase A. Hash-selected sample is not verified whole-market/common-stock coverage. Boundaries:8MiB assets +8MiB snapshot bodies,1MiB aggregate report,3minute job,3day artifact, first attempt only and15:00UTC29October expiry. Remove temporary trigger/bindings after the run. Three new probe fixture tests pass; hosted CI/actual observations pending. Old Phase A source/wrapper/key proof remain unchanged. Acceptance22/40,18open;prospective cases0.
+
 ## Encrypted recovery verified; broker/caller fault repairs —29October2026
 
 Encrypted checkpoint sourceedb28f7 passed all16 exact-commit checks, including full push/PR, safety/artifact, research/delivery/preservation and six Python matrix jobs. Hosted Node164files/1412tests;27 unique Python fixture tests pass, including Python3.9.16 crypto3.3.2/46.0.3. Real owner key/challenge/legacy PRIVATE_KEY and original source pins untouched.

@@ -3895,7 +3895,7 @@
     ]
   },
   "paperCallerFaultMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_FIX",
     "adapter": "Strict boolean opt-in; fixed paper origin; supported methods/path/body; finite qty/prices/stops/capital; bounded response/time and no retries; actual order identity ACK required; DELETE204 acknowledged",
     "caller": "Corrupt book/blocked account/failed or invalid positions do not become empty account. Missing exit and pending fill evidence retained, no invented quantity or vanished paper history. Follow-on exit withheld on unconfirmed cancel.",
     "localTests": {
@@ -3904,6 +3904,96 @@
     },
     "realOrders": 0,
     "frozenResults": "UNCHANGED",
-    "acceptance": "EXEC04 remains open for complete cross-job unknown-outcome quarantine/reconciliation and all-path audit; no extra score credit"
+    "acceptance": "EXEC04 remains open for complete cross-job unknown-outcome quarantine/reconciliation and all-path audit; no extra score credit",
+    "verifiedSource": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885668352/job/123488754593"
+      },
+      {
+        "name": "test",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885681259/job/123488617555"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885681023/job/123488617074"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885681099/job/123488617048"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885681081/job/123488616442"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885681023/job/123488616412"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885681023/job/123488616198"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885680966/job/123488615484"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885668736/job/123488574273"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885668352/job/123488573106"
+      },
+      {
+        "name": "safety",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885668352/job/123488572732"
+      },
+      {
+        "name": "test",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885668344/job/123488572517"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40885668365/job/123488572414"
+      }
+    ]
+  },
+  "batchAccessProbeMilestone": {
+    "status": "BOUNDED_READ_ONLY_OBSERVATION_PENDING",
+    "authorization": "Owner standing authorization for safe read-only provider access checks",
+    "scope": "One asset reference plus one SIP and one IEX snapshot batch of200 supplied symbols; max3GET; no loop/order/messages/account/position reads",
+    "expiresUTC": "2026-10-29T15:00:00Z",
+    "localTests": 3,
+    "temporaryTrigger": true,
+    "phaseA": false
   }
 }
