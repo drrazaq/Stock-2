@@ -22,7 +22,7 @@ Use the directory containing the encrypted relative paths as input, not an extra
 
 ## Decrypt offline
 
-Requires local Node20+ and Python3. The tools perform no network requests. Use a fresh output directory outside the repository:
+Requires local Node20+ and Python3. Use recovery tools from verified engineering commit `889dcb2193dc26f91a5611f3e9277fca2b99b40c`: `tools/recover-research-artifact.py`, `tools/recover-research-artifact.mjs`, and its unchanged sibling `tools/seal-research-artifact.mjs`. These offline tools are newer than the pinned collector; do not expect them in the old main checkout. The tools perform no network requests. Use a fresh output directory outside the repository:
 
 ```sh
 python3 tools/recover-research-artifact.py phase-a-encrypted phase-a-recovered 7dd702d5d2ed3578f7558bc4f7fcc211f3619669
