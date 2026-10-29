@@ -33,7 +33,19 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   const src = fs.readFileSync(process.env.SCAN_SRC || path.join(REPO, 'scan.mjs'), 'utf8').trimEnd().split('\n');
   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
-  for(const name of ['telegram-delivery.mjs','zad-compliance.mjs','paper-transport.mjs','alert-delivery-state.mjs'])fs.copyFileSync(path.join(REPO,name),path.join(dir,name));
+  // Copy the transitive local static-module closure, not a fragile seed list.
+  const copied=new Set();
+  const copyImports=(text,parent)=>{
+    for(const m of text.matchAll(/^import(?:\s+.+?\s+from)?\s*['"](\.[^'"]+\.mjs)['"]/gm)){
+      const file=path.resolve(parent,m[1]),relative=path.relative(REPO,file);
+      if(relative.startsWith('..'+path.sep)||path.isAbsolute(relative))throw Error('fixture import escapes repository');
+      if(copied.has(file))continue;copied.add(file);
+      const body=fs.readFileSync(file,'utf8'),target=path.join(dir,relative);
+      fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,body);
+      copyImports(body,path.dirname(file));
+    }
+  };
+  copyImports(src.join('\n'),REPO);
   fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
   fs.mkdirSync(path.join(dir, 'data'));
   // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
@@ -45,7 +57,7 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   for (const k of SECRETS) delete process.env[k];
   Object.assign(process.env, { TWELVE_KEY: 'x', BOT_ONLY: '1', MODE: 'chat' }, env);
   process.chdir(dir);
-  const mod = await import(pathToFileURL(file).href);
+  let mod;try{mod=await import(pathToFileURL(file).href);}catch(error){process.chdir(REPO);throw error;}
   const fn = (name) => { const f = mod.__get(name); if (typeof f !== 'function') throw new Error(name + ' is not a function in scan.mjs'); return f; };
   return { dir, fn, value: (name) => mod.__get(name), write: (name, data) => writeFixture(dir, name, data), read: (name) => fs.readFileSync(path.join(dir, name), 'utf8'), readJson: (name) => JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')) };
 }

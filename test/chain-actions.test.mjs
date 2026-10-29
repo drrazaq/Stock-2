@@ -79,13 +79,14 @@ test('check SYM: the stock\'s chain(s) and layer from the point-in-time graph', 
   assert.equal(S.fn('chainGraphLine')('ZZZZ'), null);
 });
 
-test('the  chains  command is routed by the bot', async () => {
+test('the  chains  command is routed by the bot', async t => {
   let sent = []; const server = http.createServer((req, res) => { let body = ''; req.on('data', c => body += c); req.on('end', () => {
     let out = { ok: true, result: true }; if (/\/getUpdates/.test(req.url)) out = { ok: true, result: [{ update_id: 1, message: { message_id: 1, chat: { id: 42 }, text: 'chains' } }] }; else if (/\/sendMessage/.test(req.url)) { try { sent.push(JSON.parse(body).text); } catch (e) {} }
     res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(out)); }); });
+  t.after(()=>server.close());
   await new Promise(r => server.listen(0, '127.0.0.1', r)); const B = 'http://127.0.0.1:' + server.address().port;
   const S = await loadScan({ files: files({}), env: { TG_TOKEN: 'T', TG_CHAT: '42', TG_BASE: B, TD_BASE: B, FH_BASE: B } });
-  await S.fn('tgCommands')(null); server.close();
+  await S.fn('tgCommands')(null);
   assert.match(sent.join('\n'), /CHAINS \(/);
 });
 

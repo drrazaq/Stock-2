@@ -1757,7 +1757,15 @@
       "Wire each logical message path to reviewed stable event IDs before deployment",
       "Authorized actual delivery and runner-loss recovery validation remain open"
     ],
-    "acceptanceCredit": 0
+    "acceptanceCredit": 0,
+    "fullSuiteFailure": {
+      "commit": "fe6400e6c0cb1f1e3e5b5ea8c08026932c377937",
+      "push": "https://github.com/drrazaq/Stock-2/actions/runs/40851149818",
+      "pr": "https://github.com/drrazaq/Stock-2/actions/runs/40851161070",
+      "status": "FAILED_IMPORT_AND_TIMED_OUT",
+      "reason": "test/load-scan.mjs explicit dependency copy omitted new transitive module; failed chain-actions setup leaked its localhost server",
+      "targetedContracts": "16 delivery tests passed on41dc1c5; not a full-suite pass"
+    }
   },
   "newsDeliveryMilestone": {
     "status": "IMPLEMENTED_PENDING_HOSTED_CI",
