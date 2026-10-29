@@ -1,0 +1,600 @@
+{
+  "format": "STOCK2_PUBLISHED_RECOVERY_MANIFEST_V1",
+  "date": "2026-10-29",
+  "repository": "drrazaq/Stock-2",
+  "branch": "Stock2-safety-fixes",
+  "base": "0af32e1fc26926aab2733a36c7dad9311177ee19",
+  "verifiedSource": "868db1c0276eebf5d1a8e7b6d88f467e749735ff",
+  "verifiedTree": "37873d3cbeafbcdb5d2abcfeceb499adc4019bdd",
+  "publications": [
+    {
+      "sha": "4707fc36901b44249977df7403c73c30912e7d7d",
+      "parent": "3523f229afe5e5de42248e34a955ee4be9705755",
+      "files": [
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/discovery-evidence-admission-ci.json"
+      ]
+    },
+    {
+      "sha": "fe6400e6c0cb1f1e3e5b5ea8c08026932c377937",
+      "parent": "4707fc36901b44249977df7403c73c30912e7d7d",
+      "files": [
+        "telegram-delivery-ledger.mjs",
+        "telegram-delivery.mjs",
+        "tests/telegram-delivery-ledger.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/telegram-cross-job-durability.md"
+      ]
+    },
+    {
+      "sha": "41dc1c5361f4511c7fae80178d14b8360eb2cfe3",
+      "parent": "fe6400e6c0cb1f1e3e5b5ea8c08026932c377937",
+      "files": [
+        "news-watch.mjs",
+        "tests/news-delivery.test.mjs",
+        ".github/workflows/news.yml",
+        ".github/workflows/engineering-targeted-tests.yml",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md"
+      ]
+    },
+    {
+      "sha": "695dd37ba08bde1da888025a751842aab22f2e80",
+      "parent": "41dc1c5361f4511c7fae80178d14b8360eb2cfe3",
+      "files": [
+        "test/load-scan.mjs",
+        "test/chain-actions.test.mjs",
+        "docs/engineering-ledger.json"
+      ]
+    },
+    {
+      "sha": "0ae9258fca602ff3de7fedbe6e7ece23c2e15bdb",
+      "parent": "695dd37ba08bde1da888025a751842aab22f2e80",
+      "files": [
+        "repository-preservation.mjs",
+        "tests/repository-preservation.test.mjs",
+        "docs/repository-ownership.json",
+        "docs/engineering-ledger.json",
+        "docs/repository-ownership.md"
+      ]
+    },
+    {
+      "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+      "parent": "0ae9258fca602ff3de7fedbe6e7ece23c2e15bdb",
+      "files": [
+        "tests/repository-preservation.test.mjs",
+        ".github/workflows/repository-preservation.yml",
+        "docs/engineering-ledger.json",
+        "docs/repository-ownership.md"
+      ]
+    },
+    {
+      "sha": "8446e809478f0feb2789e712cf13917b76a40f94",
+      "parent": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+      "files": [
+        "research-quote-followups.mjs",
+        "tests/research-quote-followups.test.mjs",
+        "ignition-watch.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/regular-session-paper-evidence.md",
+        "docs/validation/repository-and-delivery-milestone-ci.json"
+      ]
+    },
+    {
+      "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+      "parent": "8446e809478f0feb2789e712cf13917b76a40f94",
+      "files": [
+        "scan.mjs",
+        "test/catalyst-actions.test.mjs",
+        "alert-delivery-state.mjs",
+        "tests/alert-delivery-state.test.mjs",
+        "research-quote-followups.mjs",
+        "tests/research-quote-followups.test.mjs",
+        "docs/engineering-ledger.json",
+        ".github/workflows/repository-preservation.yml",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/regular-quote-evidence-ci.json"
+      ]
+    },
+    {
+      "sha": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020",
+      "parent": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+      "files": [
+        "historical-integrity.mjs",
+        "tests/historical-integrity.test.mjs",
+        "discovery-paper.mjs",
+        "tests/discovery-paper.test.mjs",
+        "research-quote-followups.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/zad-delivery-checkpoint-ci.json",
+        "docs/historical-price-identity-admission.md"
+      ]
+    },
+    {
+      "sha": "c9ea79413fd67b7d4c6f33a6e820ca9d0fa1a395",
+      "parent": "4a7a99c2edd8316c8853a326ee0dae0fd23cd020",
+      "files": [
+        "scan.mjs",
+        "tests/cached-leaders-policy.test.mjs",
+        "discovery-paper.mjs",
+        "tests/discovery-paper.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/historical-price-capacity-ci.json"
+      ]
+    },
+    {
+      "sha": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+      "parent": "c9ea79413fd67b7d4c6f33a6e820ca9d0fa1a395",
+      "files": [
+        ".github/workflows/bot.yml",
+        "tests/bot-publication.test.mjs",
+        "docs/engineering-acceptance-checks.json",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/cached-leaders-message-ci.json"
+      ]
+    },
+    {
+      "sha": "d99312477048ff7c0820ccb36ea19d9ac380e8da",
+      "parent": "ebbccbee2b5c9217e91f86e8aceea30a58d58d62",
+      "files": [
+        "alpaca-feed.mjs",
+        "test/alpaca-feed.test.mjs",
+        "tests/provider-provenance.test.mjs",
+        "tools/provider-readiness-probe.mjs",
+        "tests/provider-probe.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/bot-publication-ci.json",
+        "docs/provider-ingress-hardening.md"
+      ]
+    },
+    {
+      "sha": "c4018c972652ed7acf024316f4a12d33d32749d3",
+      "parent": "d99312477048ff7c0820ccb36ea19d9ac380e8da",
+      "files": [
+        "alpaca-feed.mjs",
+        "tests/provider-provenance.test.mjs",
+        "tests/provider-probe.test.mjs",
+        ".github/workflows/provider-readiness-probe.yml",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/provider-diagnostic-2026-10-29T104040Z.json"
+      ]
+    },
+    {
+      "sha": "7382853e82620944886f87e9e9ba5ae1904bc942",
+      "parent": "c4018c972652ed7acf024316f4a12d33d32749d3",
+      "files": [
+        "watcher-checkpoint.mjs",
+        "ignition-watch.mjs",
+        "tests/research-checkpoint-integrity.test.mjs",
+        "discovery-paper.mjs",
+        "tests/discovery-paper.test.mjs",
+        "docs/validation/phase-a-final-preflight-2026-10-29.json",
+        "docs/validation/phase-a-final-preflight.md",
+        "docs/production-validation-approval.md",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/provider-ingress-trigger-ci.json",
+        "docs/scientific-checkpoint-integrity.md"
+      ]
+    },
+    {
+      "sha": "868db1c0276eebf5d1a8e7b6d88f467e749735ff",
+      "parent": "7382853e82620944886f87e9e9ba5ae1904bc942",
+      "files": [
+        "tests/watcher-runtime.test.mjs",
+        "tools/watcher-artifact-fixture.mjs",
+        "discovery-paper.mjs",
+        "tests/discovery-paper.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/scientific-resume-fixture-correction.md"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/bot.yml",
+      "sha": "48da74b801a07456ff6ab06b229ca9e47af224f8",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/engineering-targeted-tests.yml",
+      "sha": "4c8ef7f555f5283ab576276bcf1d72a9b85a0b83",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/news.yml",
+      "sha": "0191eb17dd4d0b4732172fa6730cbc3df18bd593",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/provider-readiness-probe.yml",
+      "sha": "641d4705e0fb42dcfcb05567fa5eb7add9675aa4",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/repository-preservation.yml",
+      "sha": "772ae5ca7841f74da709725419355a85d59b35c2",
+      "mode": "100644"
+    },
+    {
+      "path": "alert-delivery-state.mjs",
+      "sha": "f2cfd6c26d5a5db9ea4134cc1a5b097c443d9492",
+      "mode": "100644"
+    },
+    {
+      "path": "alpaca-feed.mjs",
+      "sha": "0d8f13bde9e2c6222d6432c9ea74d31ede918e99",
+      "mode": "100644"
+    },
+    {
+      "path": "discovery-paper.mjs",
+      "sha": "f737898441d022c40e707b760001ec9f09b05978",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-acceptance-checks.json",
+      "sha": "f815024179c056119d563fbfa6a4c851f9f7d4ec",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-handoff-resume.md",
+      "sha": "d8f4dfc1a2e42a40e3cce44ccdb1345533c1e8b9",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-ledger.json",
+      "sha": "c3421708bd972c71c2089eca25ab2383dfeee0c7",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-progress.md",
+      "sha": "9cd6e7234590902ac59fd60d020b680e80313def",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/historical-price-identity-admission.md",
+      "sha": "0e88095d51a49d04bc0f21c83a23bc14e63e3939",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/production-validation-approval.md",
+      "sha": "4de35f056aecb1afec0ce9b4c8dd299d61714a72",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/provider-ingress-hardening.md",
+      "sha": "38a04a802a16991fe32f7e6c4eb23c52a2a40402",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/regular-session-paper-evidence.md",
+      "sha": "c800943e516125bcbe3dce10105f99b5fd1abf04",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/repository-ownership.json",
+      "sha": "144ed2cc684cbf352883d9ab199d376bebe290a6",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/repository-ownership.md",
+      "sha": "dee736ba2f7320cd2a2956afb171b044821af528",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/scientific-checkpoint-integrity.md",
+      "sha": "c1fd397aa0e352b63114321a0623e42cb3cdccf2",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/scientific-resume-fixture-correction.md",
+      "sha": "d4604562ce81c0880860e6c338de48c09b352b47",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/telegram-cross-job-durability.md",
+      "sha": "0362f673a2e4288b0a8982e7d74151483194a764",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/bot-publication-ci.json",
+      "sha": "c6103d8c731ecb99f8fddc125d568ffe78a5ad11",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/cached-leaders-message-ci.json",
+      "sha": "ca1478ad6c93cf7659f7b1ea17d99a01f05ef096",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/discovery-evidence-admission-ci.json",
+      "sha": "14787667623d910a9b14f3a2e909920c62765e6d",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/historical-price-capacity-ci.json",
+      "sha": "5bff3a37b7f326b6fc1c547d6709a3c29575b341",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/phase-a-final-preflight-2026-10-29.json",
+      "sha": "89a0acdaa5ee0948ca5d2cae6be42aebe46617b6",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/phase-a-final-preflight.md",
+      "sha": "418145b5475fd360ac53f23a46d6f9bb7a4cda1b",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/provider-diagnostic-2026-10-29T104040Z.json",
+      "sha": "2851c0e7ee4851a963c506e13dead20b0fe53816",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/provider-ingress-trigger-ci.json",
+      "sha": "68331f0175d06d13fe4b4e92af83ea290d096922",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/regular-quote-evidence-ci.json",
+      "sha": "da4a2f8cea42fee88c15b8177b9264e28fbdba9e",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/repository-and-delivery-milestone-ci.json",
+      "sha": "a498261ba8a395f4395f65cc8f1fdc6057d97d92",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/zad-delivery-checkpoint-ci.json",
+      "sha": "dc1e0edb6a13cd757785452cb19575e77addab95",
+      "mode": "100644"
+    },
+    {
+      "path": "historical-integrity.mjs",
+      "sha": "d8c72b322ecc5eeff61ecb830c2528ba47dec9e5",
+      "mode": "100644"
+    },
+    {
+      "path": "ignition-watch.mjs",
+      "sha": "37bcfea0fab8df2a6c4a709fca00b0a58b88182e",
+      "mode": "100644"
+    },
+    {
+      "path": "news-watch.mjs",
+      "sha": "a5c4640b17baebecfd7b4a94b7808a5e1c47ab93",
+      "mode": "100644"
+    },
+    {
+      "path": "repository-preservation.mjs",
+      "sha": "836b5fd2f0b72c1009080336a2ec24239a6dba7c",
+      "mode": "100644"
+    },
+    {
+      "path": "research-quote-followups.mjs",
+      "sha": "e216c2cd70ae2a5128becead43b7ea340c14fb0f",
+      "mode": "100644"
+    },
+    {
+      "path": "scan.mjs",
+      "sha": "84f465f0c84baa38b499f9045bc21ce5ca8cc47e",
+      "mode": "100644"
+    },
+    {
+      "path": "telegram-delivery-ledger.mjs",
+      "sha": "bc0433d958a5cb667f7341ea71b15b622099e253",
+      "mode": "100644"
+    },
+    {
+      "path": "telegram-delivery.mjs",
+      "sha": "53aeab4ea9eccb9704ad18744df9d55e5f586a8f",
+      "mode": "100644"
+    },
+    {
+      "path": "test/alpaca-feed.test.mjs",
+      "sha": "bfde13605ae2d10eca023b28251c1509471ee3e3",
+      "mode": "100644"
+    },
+    {
+      "path": "test/catalyst-actions.test.mjs",
+      "sha": "611d74c3ff87468313b3b2f8cd029213ab74995e",
+      "mode": "100644"
+    },
+    {
+      "path": "test/chain-actions.test.mjs",
+      "sha": "5bfee81f045c0981e0eae07bfaf99a68cbbaf0a2",
+      "mode": "100644"
+    },
+    {
+      "path": "test/load-scan.mjs",
+      "sha": "a7fba678f8e6483c534cb2a0026e993ad2a9fc41",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/alert-delivery-state.test.mjs",
+      "sha": "6c08c886f559e3ad347144fb02f15212e99e12d0",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/bot-publication.test.mjs",
+      "sha": "24c4e30a78b2c7c3e831b3de53e5c8c91e7bdcb6",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/cached-leaders-policy.test.mjs",
+      "sha": "4718054f06b36197b3c5d0cef6353fedf36eb3a5",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/discovery-paper.test.mjs",
+      "sha": "a04dd146dd825aae33e4810b0c6d16e415982772",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/historical-integrity.test.mjs",
+      "sha": "d99b247a1c9172b4f935f2fb8016b7bae3158a53",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/news-delivery.test.mjs",
+      "sha": "87648ef70513b6f953e317b1246cba4465e74388",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/provider-probe.test.mjs",
+      "sha": "371e427ad9e01d7e03766ca447e6dd78f8b3f68b",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/provider-provenance.test.mjs",
+      "sha": "7a31fca7c0a1b162732030ebce826dc2ed224b31",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/repository-preservation.test.mjs",
+      "sha": "78736abe626227a4a960e26e86b725ae5e4b4e61",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/research-checkpoint-integrity.test.mjs",
+      "sha": "19f8843462b0ccad287f525e431d0305a15ccc83",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/research-quote-followups.test.mjs",
+      "sha": "e7331f396f184bc20ba41db2d35edb437ee7eecf",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/telegram-delivery-ledger.test.mjs",
+      "sha": "829a1cab4b0d202525873d25a5653af37b3439e7",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/watcher-runtime.test.mjs",
+      "sha": "a4d09fa3e70b37d15bdcfe27e467bb7f0e1cba91",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/provider-readiness-probe.mjs",
+      "sha": "0ba21c100578089c1ebc27a8d67005fcfee3ad24",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/watcher-artifact-fixture.mjs",
+      "sha": "7bf06f479f35b181261214421bae4b7948e55a3b",
+      "mode": "100644"
+    },
+    {
+      "path": "watcher-checkpoint.mjs",
+      "sha": "2537de58acbe02697aa292edaf32258f56c632c4",
+      "mode": "100644"
+    }
+  ],
+  "ci": {
+    "sha": "868db1c0276eebf5d1a8e7b6d88f467e749735ff",
+    "tests": {
+      "files": 157,
+      "tap": 1352,
+      "standalone": 2,
+      "total": 1354
+    },
+    "checks": [
+      {
+        "name": "fixture-close",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410703795"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410584689"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410584133"
+      },
+      {
+        "name": "test",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977758/job/123410583806"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410583680"
+      },
+      {
+        "name": "delivery-fixtures",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977927/job/123410583632"
+      },
+      {
+        "name": "source-preservation",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977748/job/123410583542"
+      },
+      {
+        "name": "research-fixtures",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977773/job/123410583480"
+      },
+      {
+        "name": "source-preservation",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970842/job/123410562518"
+      },
+      {
+        "name": "test",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970824/job/123410560094"
+      },
+      {
+        "name": "fixture-open",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410559785"
+      },
+      {
+        "name": "safety",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410559369"
+      }
+    ],
+    "execution": "GitHub-hosted; managed workspace unavailable; no local test claim",
+    "acceptance": {
+      "complete": 22,
+      "total": 40,
+      "remaining": 18,
+      "percent": 55
+    },
+    "actualProspectiveCases": 0
+  },
+  "unpublishedLocalChanges": false,
+  "recovery": [
+    "Fetch branch without force; inspect actual HEAD and retained checkpoint before work.",
+    "Fetch exact verifiedSource and tree. Every changed file is recoverable from its Git blob SHA; do not apply an old full tree over newer remote changes.",
+    "If branch advanced, reconcile explicit reviewed file diffs; preserve unrelated files, data, frozen research and secrets.",
+    "Run hosted full push/PR, safety/artifact, preservation, delivery, research and Python checks on the exact new commit. Do not infer current HEAD verification from ancestor CI.",
+    "No active Phase A workflow may be installed or dispatched without separate dated owner approval."
+  ],
+  "workspace": "Unavailable; no local patch or secret material in this manifest"
+}

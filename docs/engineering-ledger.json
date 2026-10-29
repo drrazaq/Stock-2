@@ -2602,7 +2602,7 @@
     "automaticDiagnosticTriggers": "REMOVED; no further diagnostic dispatch authorized by code edits"
   },
   "scientificCheckpointMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_BRANCH_FIX",
     "fix": "Watcher requires valid research substate before resumed sends; reject malformed discovery/quote records, counters/clocks and >128MiB checkpoint input",
     "verificationRequired": "Real watcher full-session/half-day artifact integration plus corrupt/oversized checkpoint fixtures",
     "acceptanceCredit": 0,
@@ -2612,7 +2612,10 @@
       "fullPush": 40861748749,
       "fullPR": 40861753417,
       "reason": "Accelerated child fixtures reset wall clock on each process/job, making valid parent research timestamps future-dated; production future-date rejection retained. Fix clocks, not assertions."
-    }
+    },
+    "verifiedSha": "868db1c0276eebf5d1a8e7b6d88f467e749735ff",
+    "failedSource": "7382853e82620944886f87e9e9ba5ae1904bc942",
+    "fixtureCorrection": "Shared monotonic fixture epoch; cross-job clocks beyond parent evidence. Production future-clock checks retained."
   },
   "paperArithmeticMilestone": {
     "status": "IMPLEMENTED_PENDING_HOSTED_CI",
@@ -2620,10 +2623,92 @@
     "acceptanceCredit": 0
   },
   "paperExposureMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_BRANCH_FIX",
     "revision": "IDENTITY_EVENT_QUOTES_EXPOSURE_V3",
     "fix": "Different lane IDs cannot count the same security/entry clock as multiple economic paper outcomes; quote time representations normalized without backfilling",
     "actualProspectiveCases": 0,
-    "acceptanceCredit": 0
+    "acceptanceCredit": 0,
+    "verifiedSha": "868db1c0276eebf5d1a8e7b6d88f467e749735ff",
+    "admissionRevision": "IDENTITY_EVENT_QUOTES_EXPOSURE_V3",
+    "profitabilityVerified": false
+  },
+  "verifiedCheckpoint": {
+    "sha": "868db1c0276eebf5d1a8e7b6d88f467e749735ff",
+    "tests": {
+      "files": 157,
+      "tap": 1352,
+      "standalone": 2,
+      "total": 1354
+    },
+    "checks": [
+      {
+        "name": "fixture-close",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410703795"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410584689"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410584133"
+      },
+      {
+        "name": "test",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977758/job/123410583806"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410583680"
+      },
+      {
+        "name": "delivery-fixtures",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977927/job/123410583632"
+      },
+      {
+        "name": "source-preservation",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977748/job/123410583542"
+      },
+      {
+        "name": "research-fixtures",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977773/job/123410583480"
+      },
+      {
+        "name": "source-preservation",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970842/job/123410562518"
+      },
+      {
+        "name": "test",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970824/job/123410560094"
+      },
+      {
+        "name": "fixture-open",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410559785"
+      },
+      {
+        "name": "safety",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410559369"
+      }
+    ],
+    "execution": "GitHub-hosted; managed workspace unavailable; no local test claim",
+    "acceptance": {
+      "complete": 22,
+      "total": 40,
+      "remaining": 18,
+      "percent": 55
+    },
+    "actualProspectiveCases": 0
   }
 }
