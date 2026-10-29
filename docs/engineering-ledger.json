@@ -43,10 +43,10 @@
     "note": "Reading, syntax checks and fixtures are not exhaustive behavioral certification"
   },
   "engineeringAcceptance": {
-    "complete": 21,
+    "complete": 22,
     "total": 40,
-    "percent": 52.5,
-    "basis": "Added frozen experiment/holdout metadata registry audit: 747 IDs and all51 pinned study blobs. Actual historical identity, survivorship, after-cost replay and performance acceptance remain open."
+    "percent": 55,
+    "basis": "Added complete baseline authority/preservation map, actual exact-source protected metadata verification and enforced publication policy. This closes ownership-map item only; every-script behavior and real historical/performance evidence remain open."
   },
   "strategyValidation": {
     "earlyEnginePromotionChecksPassed": 0,
@@ -621,7 +621,7 @@
     ],
     "publishedCommit": "1c2031495c839e7d8469cb127821ec1650ca09aa"
   },
-  "remainingAcceptanceChecks": 19,
+  "remainingAcceptanceChecks": 18,
   "providerReadinessMilestone": {
     "base": "4f00ffb8ace4b6ff5397c1b6dca8193823a811cd",
     "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
@@ -1749,7 +1749,7 @@
     "nodeTests": 1305
   },
   "telegramCrossJobJournalMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_CONTRACT_FIXTURES_NOT_ACTIVATED",
     "activation": "OPT_IN_ONLY_NO_WORKFLOW_OR_PERMISSION_CHANGE",
     "scope": "Explicit shared facade durability option backed by conditional GitHub contents journal; mocked API tests only",
     "verificationRequired": [
@@ -1765,10 +1765,11 @@
       "status": "FAILED_IMPORT_AND_TIMED_OUT",
       "reason": "test/load-scan.mjs explicit dependency copy omitted new transitive module; failed chain-actions setup leaked its localhost server",
       "targetedContracts": "16 delivery tests passed on41dc1c5; not a full-suite pass"
-    }
+    },
+    "verifiedCombinedCommit": "695dd37ba08bde1da888025a751842aab22f2e80"
   },
   "newsDeliveryMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_BRANCH_FIXTURES_NOT_DEPLOYED",
     "changes": [
       "Atomic local intent saved before every news/macro send",
       "HTTP200 without acknowledgment and pending/recovered intent suppress replay",
@@ -1780,10 +1781,11 @@
       "Local intent cannot survive lost VM or unpublished Git state; opt-in remote journal not enabled",
       "Other Telegram paths, actual delivery and all-workflow conflict semantics remain open"
     ],
-    "acceptanceCredit": 0
+    "acceptanceCredit": 0,
+    "verifiedCombinedCommit": "695dd37ba08bde1da888025a751842aab22f2e80"
   },
   "repositoryOwnershipMilestone": {
-    "status": "MAPPED_PENDING_HOSTED_VERIFICATION",
+    "status": "VERIFIED_EXACT_SOURCE_CI",
     "baselineCommit": "695dd37ba08bde1da888025a751842aab22f2e80",
     "counts": {
       "blobs": 972,
@@ -1794,7 +1796,7 @@
     },
     "manifest": "docs/repository-ownership.json",
     "enforcement": "Publication checks explicit paths against owner/frozen/activation/data preservation before commit",
-    "acceptanceCredit": 0,
+    "acceptanceCredit": 1,
     "verificationRequired": [
       "Dedicated exact-source push/PR job checks all protected branch metadata; ordinary PR merge suite checks policy grammar only",
       "All972 baseline paths assigned authority, conservative classification for additions",
@@ -1805,6 +1807,95 @@
       "commit": "0ae9258fca602ff3de7fedbe6e7ece23c2e15bdb",
       "run": "https://github.com/drrazaq/Stock-2/actions/runs/40853346138",
       "reason": "PR merge tree contains different full live study-output blob angles-lab.json from main; branch push preserved all baseline blobs. Correct verification must explicitly check the source commit, not conflate merged live output and frozen source snapshot."
-    }
+    },
+    "sourceCommit": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40853997765/job/123380430764"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854006720/job/123380316889"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854006720/job/123380316832"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854006756/job/123380316640"
+      },
+      {
+        "name": "test",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854006752/job/123380316632"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854006727/job/123380316621"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854006720/job/123380316532"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40854006716/job/123380316163"
+      },
+      {
+        "name": "safety",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40853997765/job/123380286786"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40853997898/job/123380286612"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40853997765/job/123380286405"
+      },
+      {
+        "name": "test",
+        "sha": "6122e72ffdb6dc4c263d50ea7c49dfbf01df2354",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40853997782/job/123380286021"
+      }
+    ]
+  },
+  "regularQuoteEvidenceMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "scope": "Recorder integrated into watcher using existing normalized BBOs; no new provider/API/order/Telegram requests",
+    "limits": {
+      "events": 1000,
+      "symbolsPerCycle": 250,
+      "quotes": 30000,
+      "metadata": 2000
+    },
+    "identity": "Optional public research identity input, first-ingestion timestamps retained; missing/ambiguous identity never invented",
+    "liquidity": "Explicit independently clocked dollar volume required; last-price times aggregate volume is not substituted",
+    "prospectiveCases": 0,
+    "acceptanceCredit": 0
   }
 }

@@ -1,3 +1,4 @@
+import {quoteEvidenceState,captureResearchQuotes,readResearchIdentities,quoteEvidenceReport} from './research-quote-followups.mjs';
 // IGNITION WATCHER: runs during the US session (09:25 through the scheduled NY close, using bounded checkpointed jobs). Every minute it checks
 // the Massive snapshot universe (about 6,000+ US stocks) for stocks that START to run (rules in ignition-core.mjs, plus the
 // live-only quiet build-up rule IG8). COVERAGE IS MEASURED, NOT ASSUMED: every minute's heartbeat records the coverage mode, how
@@ -362,7 +363,12 @@ while (Date.now() - RUN_START < MAXMS) {
   const ingress=collectDiscovery({readText:f=>fs.readFileSync(f,'utf8'),cutoff:discoveryCutoff,live:discoveryLive});discoverySources=ingress.sources;
   const added=updateDiscovery(DISCOVERY,{observations:ingress.observations,rows,cutoff:discoveryCutoff,sources:discoverySources});
   if(added.length){const dir='data/discovery-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.appendFileSync(dir+'/'+RUN_ID+'.jsonl',added.map(x=>JSON.stringify({...x,runId:RUN_ID,sourceSha:CODE_SHA})).join('\n')+'\n');}
-  writeRuntimeJson('runtime/discovery-live.json',discoveryReport(DISCOVERY,{cutoff:discoveryCutoff,sources:discoverySources}));
+  DISCOVERY.paperQuoteEvidence||=quoteEvidenceState();
+  const identityInput=readResearchIdentities(f=>fs.readFileSync(f,'utf8'));
+  captureResearchQuotes(DISCOVERY.paperQuoteEvidence,{events:added,rows,identities:identityInput.records,identityStatus:identityInput.status,cutoff:discoveryCutoff});
+  const liveDiscoveryReport=discoveryReport(DISCOVERY,{cutoff:discoveryCutoff,sources:discoverySources});
+  liveDiscoveryReport.paperQuoteEvidence=quoteEvidenceReport(DISCOVERY.paperQuoteEvidence);
+  writeRuntimeJson('runtime/discovery-live.json',liveDiscoveryReport);
   lastHeartbeat=cycleHeartbeat({day,runId:RUN_ID,sourceSha:CODE_SHA,startedAt:new Date(cycleStart).toISOString(),completedAt:new Date().toISOString(),minute:m,received:rows.length,evaluated:evald,fresh:liveN,priceAgeP50Min:q(sa,.5),priceAgeP95Min:q(sa,.95),requests,lastSuccessfulCycle:lastHeartbeat?.lastSuccessfulCycle});
   Object.assign(beat.at(-1),{runId:RUN_ID,sourceSha:CODE_SHA,startedAt:lastHeartbeat.startedAt,completedAt:lastHeartbeat.completedAt});
   writeRuntimeJson('runtime/watcher-heartbeat.json',lastHeartbeat);checkpoint();
@@ -397,6 +403,10 @@ fs.writeFileSync(archiveDir+'/'+RUN_ID+'.discovery.json',JSON.stringify(discover
 fs.mkdirSync('data/discovery-runs/'+day,{recursive:true});
 fs.writeFileSync('data/discovery-runs/'+day+'/'+RUN_ID+'.followup.jsonl.gz',zlib.gzipSync(Object.values(DISCOVERY.observations).map(x=>JSON.stringify(x)).join('\n')+'\n'),{flag:'wx'});
 if (!preferSession(readJson('data/ignition-live.json', null), runSnapshot)) { console.log('watcher: archived partial run ' + RUN_ID + '; retained richer existing session'); process.exit(0); }
+if(DISCOVERY.paperQuoteEvidence){
+ discoverySummary.paperQuoteEvidence=quoteEvidenceReport(DISCOVERY.paperQuoteEvidence);
+ fs.writeFileSync('data/discovery-runs/'+day+'/'+RUN_ID+'.paper-quotes.json.gz',zlib.gzipSync(JSON.stringify({kind:'RESEARCH_ONLY',sourceSha:CODE_SHA,runId:RUN_ID,events:Object.values(DISCOVERY.paperQuoteEvidence.events),quotes:Object.values(DISCOVERY.paperQuoteEvidence.quotes),metadata:Object.values(DISCOVERY.paperQuoteEvidence.metadata),report:discoverySummary.paperQuoteEvidence})),{flag:'wx'});
+}
 fs.writeFileSync('data/discovery-live.json',JSON.stringify(discoverySummary));
 if (Object.keys(vcToday).length >= 12) { VC.days[day] = vcToday; for (const d of Object.keys(VC.days).sort().slice(0, -25)) delete VC.days[d]; fs.writeFileSync('data/vol-curve.json', JSON.stringify(VC)); }
 fs.writeFileSync('data/ignition-live.json', JSON.stringify(runSnapshot, null, 1));
