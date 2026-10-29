@@ -15,12 +15,21 @@ export async function paperMutationOnce({enabled=false,accountKey,method,path,bo
  try{observed=await store.read(id);}catch{return {error:'PAPER_INTENT_NOT_REMOTELY_DURABLE'};}
  if(!object(observed)||typeof observed.exists!=='boolean'||observed.exists&&(!hex(observed.sha)||!recordValid(observed.record,id))||!observed.exists&&(observed.sha!==null||observed.record!==null))return {error:'PAPER_JOURNAL_UNREADABLE'};
  if(observed.exists){if(observed.record.contentHash!==contentHash)return {error:'PAPER_OPERATION_CONTENT_CONFLICT'};return {error:observed.record.status==='ACK'?'PAPER_OPERATION_ALREADY_RECORDED':'PAPER_OPERATION_QUARANTINED',brokerId:observed.record.brokerId};}
+ // A new client_order_id must not evade an older unknown account operation.
+ // Hold an account-wide CAS lock until the operation AND its ACK are durable.
+ const lockId=hash([accountKey,'ACCOUNT_EXECUTION_LOCK_V1']);let lock,locked;
+ try{lock=await store.read(lockId);}catch{return {error:'PAPER_INTENT_NOT_REMOTELY_DURABLE'};}
+ if(!object(lock)||typeof lock.exists!=='boolean'||lock.exists&&(!hex(lock.sha)||!recordValid(lock.record,lockId))||!lock.exists&&(lock.sha!==null||lock.record!==null))return {error:'PAPER_JOURNAL_UNREADABLE'};
+ if(lock.exists&&lock.record.status!=='ACK')return {error:'PAPER_ACCOUNT_QUARANTINED'};
+ const accountPending={version:1,operationHash:lockId,contentHash:id,status:'PENDING',at,brokerId:null};
+ try{locked=await store.write(lockId,lock.exists?lock.sha:null,accountPending);if(!hex(locked?.sha))throw Error();}catch{return {error:'PAPER_INTENT_NOT_REMOTELY_DURABLE'};}
  const pending={version:1,operationHash:id,contentHash,status:'PENDING',at,brokerId:null};let reserved;
  try{reserved=await store.write(id,null,pending);if(!hex(reserved?.sha))throw Error();}catch{return {error:'PAPER_INTENT_NOT_REMOTELY_DURABLE'};}
  let result;try{result=await send();}catch{result={error:'BROKER_OUTCOME_UNCONFIRMED'};}
  const ack=method==='POST'?result&&!result.error&&uuid(result.id)&&result.symbol===body.symbol&&result.side===body.side&&result.client_order_id===body.client_order_id:result&&!result.error&&result.id===orderId&&(result.cancelled===true||result.status==='canceled');
  const final={...pending,status:ack?'ACK':[400,401,403,404,422,429].includes(result?.error)?'REFUSED':'UNKNOWN',brokerId:ack?result.id:null};
  try{const saved=await store.write(id,reserved.sha,final);if(!hex(saved?.sha))throw Error();}catch{return {error:'PAPER_ACK_NOT_REMOTELY_DURABLE'};}
+ if(ack){try{const released=await store.write(lockId,locked.sha,{...accountPending,status:'ACK',brokerId:result.id});if(!hex(released?.sha))throw Error();}catch{return {error:'PAPER_ACCOUNT_RELEASE_UNCONFIRMED'};}}
  return ack?result:result?.error?result:{error:'BROKER_OUTCOME_UNCONFIRMED'};
 }
 export function createPrivatePaperJournal({token,fetcher=fetch,base='https://api.github.com',timeoutMs=10000}={}){

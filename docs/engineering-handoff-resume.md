@@ -1,3 +1,7 @@
+## Account-wide execution quarantine followup —29October2026
+
+The per-operation journal candidate is strengthened before acceptance closure: a new date/client ID must not bypass an older unknown account mutation. Private account-wide CAS lock now remains quarantined for every unconfirmed/refused outcome and is released only after durable operation ACK plus confirmed lock release. Read-only data/research continues normally. Twelve journal tests pass, including changed client ID and subsequent valid distinct operation controls, with six adapter and seven caller contracts. No real private-store write/order or new permission. Exact-commit hosted CI pending for this followup; acceptance remains22/40 until closure passes.
+
 ## Delivery/owner gates verified; all-current-path broker fault closure candidate —29October2026
 
 Sourcea48aadc passed all13 exact-commit checks. Watchdog ACK/offset/quarantine and unsupported add-reply owner/fallback repairs are verified on branch. All-route command outbox and complete ZAD route evidence remain OPEN.

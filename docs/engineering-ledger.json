@@ -4375,17 +4375,18 @@
     ]
   },
   "executionFaultClosureCandidate": {
-    "status": "PENDING_FULL_EXACT_COMMIT_CI",
+    "status": "PENDING_FULL_EXACT_COMMIT_CI_ACCOUNT_QUARANTINE_FOLLOWUP",
     "proposedCheck": "EXEC-04",
     "scope": "All current broker mutation paths only: POST buy,POST sell,DELETE order; no actual broker/private-journal operation",
     "inventory": "236 baseline source/HTML files checked against remote blobs; only intended scan edit differs. One broker adapter consumer; options-lab/squad15/squad15b trade-origin endpoints are reference GETs. No workflow order-enable flag.",
     "guard": "Default disabled; future opt-in also requires trusted repository/ref and existing private token. Private CAS intent read-back before broker; ACK read-back before success; unknown/refused/ACK operations cannot replay after job loss; content conflicts/racing actors fail closed.",
     "tests": {
-      "journal": 11,
+      "journal": 12,
       "transport": 6,
       "caller": 7
     },
     "privacy": "Only opaque operation/content hashes, status,time and order UUID in existing private-data repository; no payload/token/owner amounts. No permission or secret changed; no private API request performed in engineering.",
-    "deployment": "Not merged/installed/enabled. Future paper order activation and corresponding private-journal writes still require owner approval."
+    "deployment": "Not merged/installed/enabled. Future paper order activation and corresponding private-journal writes still require owner approval.",
+    "accountWideFollowup": "Unknown or refused operation also retains an account-wide CAS quarantine; a fresh date/client order ID cannot bypass it. Only remotely durable operation ACK plus durable account-lock release permits later distinct mutations."
   }
 }
