@@ -89,10 +89,10 @@ if (MODE === 'fetch') {
   const t0 = Date.now(), MAXMS = +(env.EV_MINUTES || 45) * 60000, MAXC = +(env.EV_CALLS || 1500);
   let calls = 0, note = '', sourceFailures=0;
   async function sec(url) {
-    if (note) return null; await sleep(FAST ? 0 : 150); calls++;   // SEC fair-use limit: 10 requests a second
-    const go = () => fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } });
-    let r; try { r = await go(); } catch (e) { return null; }
-    for (let k = 0; k < 3 && (r.status === 403 || r.status === 429); k++) { await sleep(FAST ? 0 : 4000 + Math.random() * 6000); try { r = await go(); } catch (e) { return null; } }
+    if (note) return null; await sleep(FAST ? 0 : 150);   // SEC fair-use limit: 10 requests a second
+    const go = () => {if(calls>=MAXC||Date.now()-t0>=MAXMS){note='SEC request/time budget exhausted; remaining sources UNKNOWN';return null;}calls++;return fetch(url, { redirect:'error',signal:AbortSignal.timeout(Math.max(1,Math.floor(Math.min(15000,MAXMS-(Date.now()-t0))))),headers: { 'User-Agent': UA, 'Accept': 'application/json' } });};
+    let r; try { r = await go(); } catch (e) { return null; } if(!r)return null;
+    for (let k = 0; k < 3 && (r.status === 403 || r.status === 429); k++) { await sleep(FAST ? 0 : 4000 + Math.random() * 6000); try { r = await go(); } catch (e) { return null; } if(!r)return null; }
     if (r.status === 403 || r.status === 429) { note = 'SEC refused this server (HTTP ' + r.status + ') after 3 retries; the rest waits for the next run'; console.log(note); return null; }
     if (!r.ok) return null; return r.json().catch(() => null);
   }
@@ -111,7 +111,7 @@ if (MODE === 'fetch') {
     for (let k = 0; k < n; k++) { const acc = R.accessionNumber[k]; if (have.has(acc)) continue;
       const f = famsOf(R.form[k], (R.items || [])[k], S.sic); if (!f.length) continue;
       const acc0 = String(R.acceptanceDateTime[k] || ''), p = acc0.length >= 16 ? acc0.slice(0, 16) + 'Z' : String(R.filingDate[k] || '').slice(0, 10); if (!p || p.slice(0, 10) < cut) continue;   // stored in UTC with an explicit Z (older cache rows: same UTC cut without the Z; sec-time.mjs reads both as UTC)
-      S.ev.push({ p, f: f.join(','), a: acc }); have.add(acc); }
+      S.ev.push({ p, f: f.join(','), a: acc, firstObservedAt:new Date().toISOString(), ...(typeof R.acceptanceDateTime[k]==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(R.acceptanceDateTime[k])&&Number.isFinite(Date.parse(R.acceptanceDateTime[k]))?{publicationAt:new Date(R.acceptanceDateTime[k]).toISOString()}:{} ) }); have.add(acc); }
     S.ev.sort((x, y) => x.p < y.p ? -1 : 1);
   };
   // 2. every stock in the scan universe: newest filings (refresh oldest first); five years of older pages once
@@ -135,7 +135,7 @@ if (MODE === 'fetch') {
       for (const s of app.submissions || []) { if (s.submission_status !== 'AP' || !/^\d{8}$/.test(String(s.submission_status_date || ''))) continue;
         const kind = s.submission_type === 'ORIG' ? 'FDA_APPROVAL' : s.submission_type === 'SUPPL' && /EFFICACY/i.test(String(s.submission_class_code || '')) ? 'FDA_NEW_USE' : null; if (!kind) continue;
         const d = s.submission_status_date, p = d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8), a = 'fda-' + app.application_number + '-' + s.submission_type + '-' + s.submission_number; if (have.has(a) || p < cut) continue;
-        S.ev.push({ p, f: kind, a }); have.add(a); } }
+        S.ev.push({ p, f: kind, a, firstObservedAt:new Date().toISOString() }); have.add(a); } }
     S.ev.sort((x, y) => x.p < y.p ? -1 : 1); }
   // 4. small public files: ticker -> [SEC number, industry code], and the last 10 days of events (for check, holdings, the nightly scan)
   const ck = {}; for (const sym of uni) ck[sym] = [cache.ciks[sym][0], (cache.syms[sym] || {}).sic || null];
@@ -143,7 +143,7 @@ if (MODE === 'fetch') {
   const since = iso(Date.now() - 10 * 864e5), recent = [];
   // events-recent.json `p` FORMAT: New York local time WITH its UTC offset, e.g. '2026-10-21T08:05-04:00' (EDGAR's UTC acceptance time
   // converted), or a date only 'YYYY-MM-DD'. p.slice(0, 10) is the New York calendar date (scan.mjs reads that); Date.parse(p) is exact.
-  for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) { const p = nyStamp(e.p); if (p && p.slice(0, 10) >= since) recent.push({ sym, p, f: e.f, ms: (secNY(e.p) || {}).ms || null }); }
+  for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) { const p = nyStamp(e.p); if (p && p.slice(0, 10) >= since) recent.push({ sym, p, f: e.f, sourceId:typeof e.a==='string'?e.a:null, sourceNamespace:String(e.a||'').startsWith('fda-')?'OPENFDA':/^\d{10}-\d{2}-\d{6}$/.test(e.a||'')?'SEC_EDGAR':'UNKNOWN', firstObservedAt:e.firstObservedAt||null, ...(e.publicationAt?{publicationAt:e.publicationAt}:{}), ms: (secNY(e.p) || {}).ms || null }); }
   recent.sort((x, y) => (x.ms || Date.parse(x.p.slice(0, 10) + 'T12:00:00Z')) < (y.ms || Date.parse(y.p.slice(0, 10) + 'T12:00:00Z')) ? 1 : -1); for (const r of recent) delete r.ms;
   fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), events: recent }, null, 1));
   save();

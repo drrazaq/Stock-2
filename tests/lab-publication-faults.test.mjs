@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-for(const workflow of ['catalyst-lab','discovery2','chain-decoder']){
+for(const workflow of ['catalyst-lab','discovery2','chain-decoder','comeback']){
  const text=fs.readFileSync(new URL('../.github/workflows/'+workflow+'.yml',import.meta.url),'utf8');
  const runs=[...text.matchAll(/^        run: \|\n((?:          .*\n|\n)+)/gm)].map(x=>x[1].split('\n').map(l=>l.replace(/^          /,'')).join('\n'));
  const script=runs.find(s=>s.includes('git push'));assert.ok(script,'actual publication block');

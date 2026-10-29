@@ -64,18 +64,20 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
     // A finite number can still exceed JavaScript's representable date range.
     // Reject that row without making every valid headline in the file unavailable.
     const newsTime=source.lane==='NEWS_CATALYST'&&typeof row.t==='number'&&Number.isFinite(row.t)&&Math.abs(row.t)<=8640000000000000?row.t:null;
-    const rawPublic=newsTime!==null?new Date(newsTime).toISOString():source.lane==='SEC_EVENT'?row.p:null;
+    const rawPublic=newsTime!==null?new Date(newsTime).toISOString():source.lane==='SEC_EVENT'?(row.publicationAt??row.p):null;
     // Generated output time is conservative availability of DERIVED analysis;
     // it is never passed off as the original earnings/insider publication time.
-    if(source.lane==='SEC_EVENT'&&row.p!==undefined&&!clock(row.p)){rejected++;continue;}
+    if(source.lane==='SEC_EVENT'&&rawPublic!==undefined&&!clock(rawPublic)){rejected++;continue;}
     const primary=clock(rawPublic),asOf=primary?rawPublic:generated;
+    if(source.lane==='SEC_EVENT'&&row.firstObservedAt!=null&&(!clock(row.firstObservedAt)||Date.parse(row.firstObservedAt)>at||primary&&Date.parse(row.firstObservedAt)<Date.parse(rawPublic))){rejected++;continue;}
     if(!clock(asOf)||Date.parse(asOf)>at||at-Date.parse(asOf)>source.hours*3600000){rejected++;continue;}
     const eventKey=[source.path,sym,row.sourceId||row.id||row.url||row.rule||'',row.p||row.d||row.filed||row.signalDay||'',row.h||row.f||row.chain||''];
     observations.push({symbol:sym,lane:source.lane,asOf,observedAt:cutoff,sourceId:hash(eventKey),
      description:source.lane+': '+String(row.h||row.rule||row.f||row.chain||'derived collector observation').slice(0,400),
      publicationBasis:primary?'SOURCE_PUBLIC_TIMESTAMP':'DERIVED_OUTPUT_AVAILABLE',
      caveat:primary?'Source report; materiality/direction not established by lane presence':'Original public event time unavailable; generatedAt is derived output availability only',
-     sourcePath:source.path,sourceCapturedAt:source.lane==='NEWS_CATALYST'?row.at:generated});accepted++;
+     sourcePath:source.path,sourceCapturedAt:source.lane==='NEWS_CATALYST'?row.at:source.lane==='SEC_EVENT'?(clock(row.firstObservedAt)?row.firstObservedAt:null):generated,
+     ...(source.lane==='SEC_EVENT'?{reportedSourceId:row.sourceId||null,sourceNamespace:row.sourceNamespace||'UNKNOWN',outputAvailableAt:generated}:{} )});accepted++;
    }
    sources.push({...source,status:'READ',rows:rows.length,accepted,rejected,truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
   }catch{sources.push({...source,status:'MALFORMED',rows:0});}

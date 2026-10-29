@@ -1,3 +1,11 @@
+## SEC caller identity and retry continuation — local verification
+
+Prior source f54a454 passed all 13 exact-commit checks; evidence: docs/validation/source-lineage-lab-ci.json. New actual SEC fetch/export/discovery fixtures expose dropped accessions and uncounted retry attempts. The candidate preserves reported accession IDs and exact publication clocks, records first access only for newly fetched rows, leaves legacy ingestion UNKNOWN, rejects contradictory ingestion clocks and budgets every retry. Seven real localhost-backed child-process cases pass; prior source fails four and passes three controls. Comeback publication now uses the tested conflict-abort/snapshot contract; the four lab callers pass 24 cases.
+
+Full local: 175 Node files, 1,536 reported cases plus two standalone scripts; 27 Python tests; static 238 modules, 86 workflows, 330 shell blocks and Python syntax. Hosted verification pending new source. Acceptance stays 24/40, 16 open; no source/revision authenticity or all-workflow closure is inferred. Original unpublished catalyst code/tests were not recovered; reconstructed protections remain labelled. Actual prospective cases remain zero; Massive Starter stays 15-minute delayed and broad Alpaca SIP coverage remains unverified. No main/deploy/dispatch/live collection/message/order/service/secret/permission changes.
+
+Next safe work: FDA error/schema refresh state in events-study; remaining producer revision contracts; remaining lab writer variants, especially leaders-study's pre-pull reset/library field merge and its mixed public/encrypted output list. Audit that list before expanding artifacts. Continue MARKET-03, TELEGRAM-03 and EXEC-03 once their source dependencies are mapped; their unfinished engineering is not an external blocker.
+
 ## Source-lineage and lab publication continuation — local verification
 
 Resumed from verified cf7f964 (all 12 checks green). The real research collector and fixture CLI now preserve upstream news failures alongside cached context; successful empty/rejected live responses no longer resurrect cached headlines. Nine caller/artifact/state cases pass; all nine fail against the prior source. This serialized-state test is not authenticated cross-job deployment proof.

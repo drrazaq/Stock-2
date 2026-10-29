@@ -22,3 +22,7 @@ Continuation repair evidence: validation/smart-money-publication-rehearsal.json 
 Research-collector upstream failure/cached origin is now carried through final source-reliability reports and CLI artifacts; empty successful live responses do not use cache. Nine caller cases and baseline negative control retained. Still no authenticated global cross-job source revision guarantee.
 
 Catalyst-lab, discovery2 and chain-decoder actual save blocks: initial reset/clean/pull was followed by replacing newer output and job-wins retries. Branch repair keeps the original checkout base until local commit, aborts conflicts, and archives public pre-pull snapshots for three days. Eighteen local Git caller cases pass; original conflicting frozen-output cases fail three times. Other writer families remain open; no production dispatch.
+
+## SEC caller continuation
+
+The real SEC child-process producer/export/consumer path now retains accession and exact reported publication metadata. New cache rows retain first access; legacy rows remain UNKNOWN. Separate same-minute filings remain distinct. All retry attempts consume the caller budget; 503/429/malformed archive states remain incomplete. Seven caller cases pass; prior source fails four, with three controls passing. Independent source authenticity, complete revisions and FDA schema/refresh failures remain open. Comeback adds the same exact-block publication contract, raising reviewed lab callers to four; leaders-study remains unreviewed for its mixed encrypted/public snapshot scope.
