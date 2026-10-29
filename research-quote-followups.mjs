@@ -46,7 +46,7 @@ export function captureResearchQuotes(state,{events,rows,identities=[],identityS
  state.counters.targetSymbolObservations+=targets.size;
  for(const row of rows){
   if(!row||!targets.has(row.sym))continue;
-  const signature=JSON.stringify([row.bid,row.ask,row.qt,row.dollarVolume,row.dollarVolumeAsOf]);
+  const signature=JSON.stringify([row.bid,row.ask,row.qt,row.dollarVolume,row.dollarVolumeAsOf,row.bidSizeShares,row.askSizeShares]);
   if(bySymbol.has(row.sym)&&bySymbol.get(row.sym).signature!==signature)conflicts.add(row.sym);else if(!bySymbol.has(row.sym))bySymbol.set(row.sym,{row,signature});
  }
  state.counters.missingSymbolRows+=targets.size-bySymbol.size;
@@ -58,7 +58,7 @@ export function captureResearchQuotes(state,{events,rows,identities=[],identityS
   const securityId=recordMetadata(state,row.sym,cutoff,identityBySymbol.get(row.sym)||[]);if(!securityId)state.counters.unknownIdentity++;
   const vt=stamp(row.dollarVolumeAsOf),liquid=positive(row.dollarVolume)&&Number.isFinite(vt)&&vt<=now&&now-vt<=15*60000&&ny(vt).day===current.day;
   if(!liquid)state.counters.unknownLiquidity++;
-  const q={symbol:row.sym,securityId,at:cutoff,quoteAsOf:new Date(row.qt).toISOString(),bid:row.bid,ask:row.ask,spread:(row.ask-row.bid)/(row.ask/2+row.bid/2),dollarVolume:liquid?row.dollarVolume:null,dollarVolumeAsOf:liquid?row.dollarVolumeAsOf:null,source:'WATCHER_NORMALIZED_BBO',fillClaim:false};
+  const q={symbol:row.sym,securityId,at:cutoff,quoteAsOf:new Date(row.qt).toISOString(),bid:row.bid,ask:row.ask,spread:(row.ask-row.bid)/(row.ask/2+row.bid/2),dollarVolume:liquid?row.dollarVolume:null,dollarVolumeAsOf:liquid?row.dollarVolumeAsOf:null,bidSizeShares:Number.isInteger(row.bidSizeShares)&&row.bidSizeShares>0?row.bidSizeShares:null,askSizeShares:Number.isInteger(row.askSizeShares)&&row.askSizeShares>0?row.askSizeShares:null,source:'WATCHER_NORMALIZED_BBO',fillClaim:false};
   state.quotes[key]=q;added.push(q);state.counters.freshBboObservations++;
  }
  return added;

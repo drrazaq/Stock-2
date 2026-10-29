@@ -22,10 +22,10 @@ function pathOutcome(symbol,securityId,entry,quotes,cutoff) {
  const exit=observed.find(q=>time(q.at)>=due&&time(q.at)<=due+p.maxExitWaitMinutes*60000);
  let peak=p.notional,drawdown=0,maxBid=entry.bid;
  for(const q of observed.filter(q=>!exit||time(q.at)<=time(exit.at))){const equity=p.notional-p.feePerOrder+qty*(q.bid-entry.ask)-p.feePerOrder;peak=Math.max(peak,equity);drawdown=Math.min(drawdown,equity/peak-1);maxBid=Math.max(maxBid,q.bid);}
- const common={symbol,entryAt:entry.at,entryAsk:entry.ask,quantity:qty,entrySpread:(entry.ask-entry.bid)/(entry.ask/2+entry.bid/2),observedLiquidationDrawdown:drawdown,maxObservedGrossMove:maxBid/entry.ask-1,fillClaim:'NONE — recorded quote paper assumption'};
+ const common={symbol,entryDisplayedSizeVerified:Number.isInteger(entry.askSizeShares)&&entry.askSizeShares>=qty,liquidationAssumption:'FULL_QUANTITY_AT_DISPLAYED_BID; displayed capacity recorded separately; not a fill',entryAt:entry.at,entryAsk:entry.ask,quantity:qty,entrySpread:(entry.ask-entry.bid)/(entry.ask/2+entry.bid/2),observedLiquidationDrawdown:drawdown,maxObservedGrossMove:maxBid/entry.ask-1,fillClaim:'NONE — recorded quote paper assumption'};
  if(!exit)return {...common,status:'UNRESOLVED',reason:'NO_FRESH_HORIZON_EXIT'};
  const net=qty*(exit.bid-entry.ask)-2*p.feePerOrder,stress=qty*(exit.bid*(1-p.stressSlippagePerSide)-entry.ask*(1+p.stressSlippagePerSide))-2*p.feePerOrder;
- return {...common,status:'PAPER_RESOLVED',exitAt:exit.at,exitBid:exit.bid,netAfterSpreadAndFees:net/p.notional,stressNet:stress/p.notional,observedTargetHit:maxBid>=entry.ask*1.1};
+ return {...common,status:'PAPER_RESOLVED',exitDisplayedSizeVerified:Number.isInteger(exit.bidSizeShares)&&exit.bidSizeShares>=qty,exitAt:exit.at,exitBid:exit.bid,netAfterSpreadAndFees:net/p.notional,stressNet:stress/p.notional,observedTargetHit:maxBid>=entry.ask*1.1};
 }
 // Evidence admission revision only: frozen V1 thresholds/costs/horizons are unchanged.
 function metadataAt(symbol,at,metadata){
@@ -71,6 +71,6 @@ export function evaluatePaperEvidence(events,quotes,metadata,{cutoff,prospective
  }
  const resolved=cases.filter(x=>x.status==='MATCHED_PAPER_RESOLVED');
  return {protocol:p,evidenceAdmissionRevision:'IDENTITY_EVENT_QUOTES_V2',quoteIntegrity:{duplicates:normalized.duplicates,conflictingClocks:normalized.conflictingClocks,invalid:normalized.invalid},cutoff,provenance:prospective?'DECLARED_PROSPECTIVE_INPUT_REQUIRES_SOURCE_AUDIT':'SIMULATION_OR_UNVERIFIED_INPUT',cases,
-  counts:{attempted:cases.length,blocked:cases.filter(x=>x.status==='BLOCKED').length,unresolved:cases.filter(x=>x.status==='UNRESOLVED').length,resolved:resolved.length,targetNotObserved:resolved.filter(x=>!x.candidate.observedTargetHit).length},
+  counts:{attempted:cases.length,blocked:cases.filter(x=>x.status==='BLOCKED').length,unresolved:cases.filter(x=>x.status==='UNRESOLVED').length,resolved:resolved.length,resolvedWithVerifiedDisplayedSize:resolved.filter(x=>x.candidate.entryDisplayedSizeVerified&&x.candidate.exitDisplayedSizeVerified&&x.control.entryDisplayedSizeVerified&&x.control.exitDisplayedSizeVerified).length,targetNotObserved:resolved.filter(x=>!x.candidate.observedTargetHit).length},
   conclusion:'NO STRATEGY VERDICT — quote assumptions are not fills; fixtures cannot establish profitability, predictive validity or approved BUY eligibility.'};
 }

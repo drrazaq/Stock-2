@@ -1,3 +1,9 @@
+## Historical identity continuity and displayed capacity continuation
+
+Verified sourceadd8c2f50d933baec70fb1d60cc654fb40ab38a9 passed all12 exact-commit checks, including all-root/tool static parse, full suites, source-preservation and delivery fixtures. Catalyst BUY now requires current affirmative owner ZAD; corrupt nested delivery/checkpoint state fails closed. These are branch repairs only, not production deployment or completion of the entire recommendation audit.
+
+Next source batch hardens new historical evidence admission across entry/exit ticker changes and same-security delisting terminal values. It rejects malformed trade IDs and distinguishes quoted paper returns from actually recorded sufficient bid/ask size. No missing terminal loss is invented, no dead stock dropped, and no price-size units guessed. Hosted verification pending. All original399 data blobs and51 study snapshots remain preserved; acceptance stays22/40 with18 open. Actual historical authenticity/survivorship and realistic independent replay remain unverified; prospective cases0.
+
 ## Continuing ZAD, state and quote-evidence repairs
 
 Regular-session quote capture source8446e809478f0feb2789e712cf13917b76a40f94 passed all12 exact-commit checks, including full suites, watcher lifecycle/artifact tests, delivery fixtures and preservation. Actual prospective cases remain0. This next batch fixes an additional approved-catalyst bypass (unknown/expired/third-party ZAD marks must never produce BUY), makes cached calendar compliance wording current-owner based, and rejects malformed nested local delivery state. It also validates malformed quote-checkpoint components before mutation. Hosted verification pending for these additions. Acceptance remains22/40,18 open; these partial repairs do not complete the all-path recommendation or live-delivery audit. No production behavior, Phase A source/workflow, secret or frozen result was changed.

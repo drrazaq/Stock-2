@@ -1,0 +1,7 @@
+# Historical price identity and capacity admission
+
+ENTRY_EXIT_IDENTITY_V2 checks mappings at decision, entry and exit. Ticker changes must explicitly identify the exit symbol of the same security; issuer CIK alone cannot join different share classes. A mapping ending before exit cannot supply a later ticker price unless documented terminal evidence names the same delisted security. Terminal values may be zero or positive only when explicitly documented; missing outcomes remain unresolved, never dropped or automatically imputed. Trade IDs must be nonempty strings. These checks apply to NEW evidence and never rerun/rewrite frozen results.
+
+STRUCTURE_VALID_ONLY remains a shape/admission result, not source authenticity, a complete survivor-free universe, five-year replay or profitability certification. Actual historical identity/delisting/completeness checks remain open until independently sourced data are available and audited.
+
+The paper evaluator separately reports resolvedWithVerifiedDisplayedSize, requiring recorded entry ask and exit bid size sufficient for each modeled whole-share candidate/control position. Missing or tiny size never becomes sufficient capacity. The existing quote-model results and fixed V1 costs/horizon are retained and explicitly labelled conditional assumptions, not fills. The recorder propagates only explicit bidSizeShares/askSizeShares; it never converts unknown lots/units or infers size from volume. Displayed size still is not a guaranteed fill or executed trade. No actual prospective results exist.

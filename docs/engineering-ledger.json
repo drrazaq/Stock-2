@@ -1885,7 +1885,7 @@
     ]
   },
   "regularQuoteEvidenceMilestone": {
-    "status": "VERIFIED_HOSTED_ON_8446_PENDING_ADDITIONAL_CHECKPOINT_GUARD",
+    "status": "VERIFIED_HOSTED_WITH_CHECKPOINT_GUARD",
     "scope": "Recorder integrated into watcher using existing normalized BBOs; no new provider/API/order/Telegram requests",
     "limits": {
       "events": 1000,
@@ -1897,7 +1897,7 @@
     "liquidity": "Explicit independently clocked dollar volume required; last-price times aggregate volume is not substituted",
     "prospectiveCases": 0,
     "acceptanceCredit": 0,
-    "verifiedSource": "8446e809478f0feb2789e712cf13917b76a40f94",
+    "verifiedSource": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
     "remoteCI": [
       {
         "name": "fixture-close",
@@ -1974,16 +1974,105 @@
     ]
   },
   "catalystOwnerGateMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_HOSTED_NOT_DEPLOYED",
     "defect": "catalystLines accepted any owner status except fail, allowing missing/stale/third-party marks to generate unconditional BUY lines; calendar repeated derived halal labels",
     "fix": "Affirmative current owner ZAD status required; calendar wording uses current owner policy only",
     "remaining": "All other recommendation paths and cached rendered text still require full audit; no full-path acceptance credit",
-    "acceptanceCredit": 0
+    "acceptanceCredit": 0,
+    "sourceCommit": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855856205/job/123386660585"
+      },
+      {
+        "name": "test",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855863896/job/123386559519"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855864316/job/123386555779"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855864316/job/123386555649"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855864316/job/123386555337"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855864117/job/123386554800"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855864077/job/123386554439"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855863953/job/123386553881"
+      },
+      {
+        "name": "safety",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855856205/job/123386528407"
+      },
+      {
+        "name": "test",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855856372/job/123386528321"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855856221/job/123386528088"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "add8c2f50d933baec70fb1d60cc654fb40ab38a9",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40855856205/job/123386527955"
+      }
+    ]
   },
   "nestedDeliveryStateMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "VERIFIED_HOSTED_NOT_DEPLOYED",
     "defect": "Malformed nested delivery status could be treated available; corrupt sent markers were not structurally rejected",
     "fix": "Validate nested states and ACK markers before reset/reservation; block all network on malformed book",
+    "acceptanceCredit": 0,
+    "sourceCommit": "add8c2f50d933baec70fb1d60cc654fb40ab38a9"
+  },
+  "historicalPriceIdentityMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "revision": "ENTRY_EXIT_IDENTITY_V2",
+    "scope": "New historical evidence admission checks entry/exit symbol-security continuity and explicit delisting terminal security; malformed IDs rejected",
+    "actualHistoricalDatasetCertified": false,
+    "acceptanceCredit": 0
+  },
+  "paperCapacityMilestone": {
+    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "scope": "Separate recorded-quote paper outcomes from sufficient displayed entry/exit size; no size inference or fill claim",
+    "actualProspectiveCases": 0,
     "acceptanceCredit": 0
   }
 }

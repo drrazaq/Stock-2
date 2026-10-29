@@ -32,3 +32,21 @@ test('frozen metadata audit retains rejected/corrected verdicts without changing
  const doc={firstRun:{A:{verdict:'REJECTED'}},correctedRun:{A:{verdict:'NOT PROVEN',protocol:'documented correction'}}},before=JSON.stringify(doc),r=auditFrozenDocument(doc);
  assert.equal(r.verdictCounts.REJECTED,1);assert.equal(r.firstRunPaths.length,1);assert.equal(r.correctedRunPaths.length,1);assert.equal(JSON.stringify(doc),before);assert.ok(r.warnings.includes('HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE'));
 });
+
+test('ticker changes require same-security entry/exit mappings instead of current-symbol price joins',()=>{
+ const x=evidence(),change='2024-01-04T00:00:00Z';
+ x.identities=[mapping('AAA','security',old,change),mapping('BBB','security',change)];
+ assert.ok(auditHistoricalEvidence(x).errors.some(e=>e.reason==='EXIT_OR_TERMINAL_SECURITY_IDENTITY_UNVERIFIED'));
+ x.trades[0].exitSymbol='BBB';assert.equal(auditHistoricalEvidence(x).status,'STRUCTURE_VALID_ONLY');
+ x.identities[1].securityId='other-share-class';assert.ok(auditHistoricalEvidence(x).errors.some(e=>e.reason==='EXIT_OR_TERMINAL_SECURITY_IDENTITY_UNVERIFIED'));
+});
+test('closed identity intervals require explicit same-security delisting terminal evidence',()=>{
+ const x=evidence();x.identities[0].validTo='2024-01-04T00:00:00Z';
+ Object.assign(x.trades[0],{delisted:true,exitPrice:0,terminalSource:source,terminalKnownAt:'2024-01-05T21:00:00Z'});
+ assert.equal(auditHistoricalEvidence(x).status,'INELIGIBLE_FOR_PERFORMANCE_CLAIM');
+ x.trades[0].terminalSecurityId='security';assert.equal(auditHistoricalEvidence(x).status,'STRUCTURE_VALID_ONLY');
+ x.trades[0].terminalSecurityId='reused-ticker-security';assert.equal(auditHistoricalEvidence(x).status,'INELIGIBLE_FOR_PERFORMANCE_CLAIM');
+});
+test('malformed trade IDs cannot create independent historical sample identities',()=>{
+ const x=evidence();x.trades[0].id={arbitrary:'object'};assert.ok(auditHistoricalEvidence(x).errors.some(e=>e.reason==='MISSING_OR_DUPLICATE_TRADE_ID'));
+});

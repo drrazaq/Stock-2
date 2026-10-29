@@ -46,3 +46,11 @@ test('quotes from an unverified or reused security identity never become entries
  const newer=meta.concat({...meta[0],securityId:'replacement-security',asOf:t(0)});
  assert.equal(evaluatePaperEvidence([event],prices,newer,{cutoff:t(32)}).counts.resolved,0);
 });
+
+test('quoted paper returns never imply sufficient displayed size or an actual fill',()=>{
+ const unverified=evaluatePaperEvidence([event],prices,meta,{cutoff:t(32)});
+ assert.equal(unverified.counts.resolved,1);assert.equal(unverified.counts.resolvedWithVerifiedDisplayedSize,0);assert.equal(unverified.cases[0].candidate.entryDisplayedSizeVerified,false);
+ const enough=evaluatePaperEvidence([event],prices.map(q=>({...q,bidSizeShares:200,askSizeShares:200})),meta,{cutoff:t(32)});
+ assert.equal(enough.counts.resolvedWithVerifiedDisplayedSize,1);assert.match(enough.cases[0].candidate.fillClaim,/NONE/);
+ const small=evaluatePaperEvidence([event],prices.map(q=>({...q,bidSizeShares:1,askSizeShares:1})),meta,{cutoff:t(32)});assert.equal(small.counts.resolvedWithVerifiedDisplayedSize,0);
+});
