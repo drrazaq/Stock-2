@@ -42,3 +42,8 @@ test('successful HTTP cannot authenticate error-shaped or unsolicited symbol sna
   resetFeed();assert.equal(await snapshots('http://127.0.0.1:12345',['AAA'],{},async()=>({ok:true,status:200,json:async()=>body})),null);assert.equal(feedUsed(),'unobserved');
  }
 });
+
+test('invalid symbols are visible but do not poison otherwise valid snapshot requests',async()=>{
+ resetFeed();let url;const payload=await snapshots('http://127.0.0.1:12345',['AAA','BRK/B',null,'AAA'],{},async u=>{url=u;return {ok:true,status:200,json:async()=>({AAA:{latestTrade:{p:10}}})};});
+ assert.ok(payload.AAA);assert.match(url,/symbols=AAA$/);assert.equal(feedEvidence().invalidSymbolInputs,2);assert.equal(feedEvidence().requestedSymbolAttempts,1);assert.equal(feedEvidence().requests,1);
+});

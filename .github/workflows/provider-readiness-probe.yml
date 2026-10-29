@@ -1,11 +1,6 @@
 name: Read-only provider readiness probe
+# Explicit manual diagnostic only. Source edits must never activate bound credentials.
 on:
-  push:
-    branches: [Stock2-safety-fixes]
-    paths:
-      - 'tools/provider-readiness-probe.mjs'
-      - '.github/workflows/provider-readiness-probe.yml'
-      - 'run-provider-probe.txt'
   workflow_dispatch:
 permissions:
   contents: read

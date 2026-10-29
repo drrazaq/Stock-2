@@ -1,20 +1,21 @@
 import {marketSymbol} from './market-symbol.mjs';
 // Request preference never substitutes for provenance of a different response.
-let preferred=null,observed=new Set(),metadata=new WeakMap(),cooldownUntil=0,evidence={requests:0,statuses:{},lastFailure:null};
-export const resetFeed=()=>{preferred=null;observed=new Set();metadata=new WeakMap();cooldownUntil=0;evidence={requests:0,statuses:{},lastFailure:null};};
+let preferred=null,observed=new Set(),metadata=new WeakMap(),cooldownUntil=0,evidence={requests:0,statuses:{},lastFailure:null,invalidSymbolInputs:0,requestedSymbolAttempts:0};
+export const resetFeed=()=>{preferred=null;observed=new Set();metadata=new WeakMap();cooldownUntil=0;evidence={requests:0,statuses:{},lastFailure:null,invalidSymbolInputs:0,requestedSymbolAttempts:0};};
 export const feedUsed=()=>observed.size>1?'mixed':[...observed][0]||'unobserved';
 export const snapshotFeed=payload=>payload&&typeof payload==='object'?metadata.get(payload)||'unknown':'unknown';
 export const feedEvidence=()=>structuredClone(evidence);
 export async function snapshots(base,syms,opts={},fetcher=fetch) {
  let u;try{u=new URL(base);}catch{evidence.lastFailure='INVALID_PROVIDER_BASE';return null;}
  if(!(u.origin==='https://data.alpaca.markets'||u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname))||u.pathname!=='/'||u.search||u.hash||u.username||u.password){evidence.lastFailure='INVALID_PROVIDER_BASE';return null;}
- if(!Array.isArray(syms)||!syms.length||syms.some(x=>typeof x!=='string'||marketSymbol(x)!==x)){evidence.lastFailure='INVALID_SYMBOL_SCOPE';return null;}
- syms=[...new Set(syms)];base=u.origin;const requestedSymbols=new Set(syms);
+ if(!Array.isArray(syms)||!syms.length){evidence.lastFailure='INVALID_SYMBOL_SCOPE';return null;}
+ const valid=syms.filter(x=>typeof x==='string'&&marketSymbol(x)===x);evidence.invalidSymbolInputs+=syms.length-valid.length;
+ syms=[...new Set(valid)];if(!syms.length){evidence.lastFailure='INVALID_SYMBOL_SCOPE';return null;}base=u.origin;const requestedSymbols=new Set(syms);
  const forced=process.env.ALPACA_FEED;
  if(Date.now()<cooldownUntil){evidence.lastFailure='RATE_LIMIT_COOLDOWN';return null;}
  if(forced&&!['sip','iex'].includes(forced)){evidence.lastFailure='INVALID_FEED_CONFIGURATION';return null;}
  const ask=async feed=>{
-  let response;evidence.requests++;
+  let response;evidence.requests++;evidence.requestedSymbolAttempts+=syms.length;
   try{response=await fetcher(base+'/v2/stocks/snapshots?feed='+feed+'&symbols='+syms.map(encodeURIComponent).join(','),{...opts,method:'GET',redirect:'error',signal:opts.signal||AbortSignal.timeout(10000)});}
   catch{evidence.lastFailure='NETWORK_ERROR';const k=feed+':NETWORK_ERROR';evidence.statuses[k]=(evidence.statuses[k]||0)+1;return {status:null};}
   const key=feed+':'+response.status;evidence.statuses[key]=(evidence.statuses[key]||0)+1;

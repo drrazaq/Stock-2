@@ -1118,7 +1118,7 @@
     "newDataPaths": 0
   },
   "phaseAFinalPreflight": {
-    "status": "KEY_VERIFIED_DATED_AUTHORIZATION_PENDING",
+    "status": "KEY_VERIFIED_PREMARKET_FRESHNESS_BLOCKER_DATED_AUTHORIZATION_PENDING",
     "date": "2026-10-29",
     "candidateSession": "2026-10-30 04:00–09:30 America/New_York (EDT)",
     "candidateUTC": "08:00–13:30",
@@ -1257,7 +1257,101 @@
     "ownerOfflineDecryption": "VERIFIED_OWNER_CONFIRMED",
     "revisedWrapperSha256": "94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa",
     "mainWorkflowInventoryObserved": "c1991e71a79713cbdbb28f123eb500081c7c96c2",
-    "pythonRecoveryTests": 22
+    "pythonRecoveryTests": 22,
+    "premarketEvidence": {
+      "sourceCommit": "d99312477048ff7c0820ccb36ea19d9ac380e8da",
+      "runId": 40859412224,
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40859412224",
+      "observedAt": "2026-10-29T10:40:40.006Z",
+      "requests": 5,
+      "trigger": "Existing branch source-change push trigger, not a manual dispatch or Phase A",
+      "rawDataOrCredentialsRetained": false,
+      "results": [
+        {
+          "provider": "MASSIVE_SNAPSHOT",
+          "httpStatus": 200,
+          "latencyMs": 182,
+          "rateLimit": {
+            "limit": null,
+            "remaining": null,
+            "reset": null
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 13238,
+          "fresh": 0,
+          "unknownTimestamp": 10751,
+          "futureTimestamp": 0,
+          "freshPct": 0,
+          "priceAgeP95Min": 158.66676666666666
+        },
+        {
+          "provider": "ALPACA_SIP",
+          "httpStatus": 200,
+          "latencyMs": 44,
+          "rateLimit": {
+            "limit": 10000,
+            "remaining": 9999,
+            "reset": 1793270440
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 3,
+          "fresh": 2,
+          "unknownTimestamp": 0,
+          "futureTimestamp": 0,
+          "freshPct": 66.67,
+          "priceAgeP95Min": 17.158466666666666,
+          "requestedSymbols": 3,
+          "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+        },
+        {
+          "provider": "ALPACA_IEX",
+          "httpStatus": 200,
+          "latencyMs": 9,
+          "rateLimit": {
+            "limit": 10000,
+            "remaining": 9999,
+            "reset": 1793270440
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 3,
+          "fresh": 0,
+          "unknownTimestamp": 0,
+          "futureTimestamp": 0,
+          "freshPct": 0,
+          "priceAgeP95Min": 880.72125,
+          "requestedSymbols": 3,
+          "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+        },
+        {
+          "provider": "FINNHUB_GENERAL_NEWS",
+          "httpStatus": 200,
+          "latencyMs": 205,
+          "rateLimit": {
+            "limit": 60,
+            "remaining": 59,
+            "reset": 1793270500
+          },
+          "status": "RESPONSE_OBSERVED",
+          "records": 100,
+          "knownPublicationTimestamp": 100
+        },
+        {
+          "provider": "SEC_TICKER_MAP",
+          "httpStatus": 200,
+          "latencyMs": 57,
+          "rateLimit": {
+            "limit": null,
+            "remaining": null,
+            "reset": null
+          },
+          "status": "RESPONSE_OBSERVED",
+          "records": 10430
+        }
+      ],
+      "correction": "Earlier no-live-probe statements were incorrect for this automatically triggered run. Remove all push triggers; manual only thereafter."
+    },
+    "standaloneDiagnosticRequests": 5,
+    "actualPhaseAProviderRequests": 0
   },
   "isolatedResearchKeyProof": {
     "status": "KEY_RECOVERY_VERIFIED_OWNER_CONFIRMED",
@@ -2327,7 +2421,7 @@
     ]
   },
   "providerIngressMilestone": {
-    "status": "IMPLEMENTED_PENDING_HOSTED_CI",
+    "status": "SOURCE_TESTS_PENDING_NEW_MIXED_SCOPE_AND_TRIGGER_GUARD",
     "defects": [
       "Alpaca snapshot options allowed redirect-following and arbitrary base/destination",
       "Failed transport attempts were omitted from request counters",
@@ -2335,8 +2429,100 @@
       "Probe future clocks distorted measured age percentiles"
     ],
     "fix": "Pin credential destinations, force GET/refuse redirects, validate canonical requested symbol scope, count failed attempts and separate future-clock age diagnostics",
-    "liveRequests": 0,
+    "liveRequests": 5,
     "accountPlanInferred": false,
-    "acceptanceCredit": 0
+    "acceptanceCredit": 0,
+    "automaticDiagnostic": {
+      "sourceCommit": "d99312477048ff7c0820ccb36ea19d9ac380e8da",
+      "runId": 40859412224,
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40859412224",
+      "observedAt": "2026-10-29T10:40:40.006Z",
+      "requests": 5,
+      "trigger": "Existing branch source-change push trigger, not a manual dispatch or Phase A",
+      "rawDataOrCredentialsRetained": false,
+      "results": [
+        {
+          "provider": "MASSIVE_SNAPSHOT",
+          "httpStatus": 200,
+          "latencyMs": 182,
+          "rateLimit": {
+            "limit": null,
+            "remaining": null,
+            "reset": null
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 13238,
+          "fresh": 0,
+          "unknownTimestamp": 10751,
+          "futureTimestamp": 0,
+          "freshPct": 0,
+          "priceAgeP95Min": 158.66676666666666
+        },
+        {
+          "provider": "ALPACA_SIP",
+          "httpStatus": 200,
+          "latencyMs": 44,
+          "rateLimit": {
+            "limit": 10000,
+            "remaining": 9999,
+            "reset": 1793270440
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 3,
+          "fresh": 2,
+          "unknownTimestamp": 0,
+          "futureTimestamp": 0,
+          "freshPct": 66.67,
+          "priceAgeP95Min": 17.158466666666666,
+          "requestedSymbols": 3,
+          "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+        },
+        {
+          "provider": "ALPACA_IEX",
+          "httpStatus": 200,
+          "latencyMs": 9,
+          "rateLimit": {
+            "limit": 10000,
+            "remaining": 9999,
+            "reset": 1793270440
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 3,
+          "fresh": 0,
+          "unknownTimestamp": 0,
+          "futureTimestamp": 0,
+          "freshPct": 0,
+          "priceAgeP95Min": 880.72125,
+          "requestedSymbols": 3,
+          "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+        },
+        {
+          "provider": "FINNHUB_GENERAL_NEWS",
+          "httpStatus": 200,
+          "latencyMs": 205,
+          "rateLimit": {
+            "limit": 60,
+            "remaining": 59,
+            "reset": 1793270500
+          },
+          "status": "RESPONSE_OBSERVED",
+          "records": 100,
+          "knownPublicationTimestamp": 100
+        },
+        {
+          "provider": "SEC_TICKER_MAP",
+          "httpStatus": 200,
+          "latencyMs": 57,
+          "rateLimit": {
+            "limit": null,
+            "remaining": null,
+            "reset": null
+          },
+          "status": "RESPONSE_OBSERVED",
+          "records": 10430
+        }
+      ],
+      "correction": "Earlier no-live-probe statements were incorrect for this automatically triggered run. Remove all push triggers; manual only thereafter."
+    }
   }
 }

@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {probeProviders} from '../tools/provider-readiness-probe.mjs';
@@ -19,4 +20,9 @@ test('freshness measurements retain regular versus outside-session context',asyn
 test('future price clocks are counted separately and never lower measured provider age',async()=>{
  const now=Date.parse('2026-10-29T14:00:00Z'),r=await probeProviders({env:{MASSIVE_KEY:'fixture'},now,fetcher:async u=>({ok:true,status:200,json:async()=>String(u).includes('massive')?{tickers:[{ticker:'AAA',lastTrade:{p:10,t:(now+60000)*1e6}},{ticker:'BBB',lastTrade:{p:10,t:(now-60000)*1e6}}]}:{}})});
  const p=r.results.find(x=>x.provider==='MASSIVE_SNAPSHOT');assert.equal(p.futureTimestamp,1);assert.equal(p.fresh,1);assert.equal(p.priceAgeP95Min,1);
+});
+
+test('editing diagnostic source cannot automatically activate provider credentials',()=>{
+ const workflow=fs.readFileSync(new URL('../.github/workflows/provider-readiness-probe.yml',import.meta.url),'utf8');
+ assert.match(workflow,/workflow_dispatch:/);assert.doesNotMatch(workflow,/^\s+push:/m);assert.doesNotMatch(workflow,/^\s+schedule:/m);
 });
