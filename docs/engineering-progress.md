@@ -1,3 +1,13 @@
+## Source-lineage and lab publication continuation — local verification
+
+Resumed from verified cf7f964 (all 12 checks green). The real research collector and fixture CLI now preserve upstream news failures alongside cached context; successful empty/rejected live responses no longer resurrect cached headlines. Nine caller/artifact/state cases pass; all nine fail against the prior source. This serialized-state test is not authenticated cross-job deployment proof.
+
+The catalyst-lab, discovery2 and chain-decoder save blocks no longer reset away the job baseline before committing or overwrite concurrent frozen results by job-wins merge. They retain pre-pull public outputs/library in three-day artifacts, stage/commit before rebase, abort conflicts and require a confirmed push. Eighteen exact-block disposable-Git tests pass across commit/pull/push refusal, frozen conflict, disjoint concurrent change and successful publication. Original blocks fail the three conflicting-result cases; fifteen controls remain passing. No studies or frozen data were executed or altered.
+
+Full local: 174 Node files, 1,523 reported tests plus two standalone scripts; 27 Python tests. Static: 238 modules, 86 workflows and 331 shell blocks plus Python syntax pass. Hosted exact-source CI pending this publication. Acceptance remains 24/40, 16 open: CATALYST-03 still lacks complete source/revision identity and durable evidence, ACTIONS-04 still needs other writer/cache/cancellation families. Keep Massive Starter 15-minute delay, broad Alpaca SIP uncertainty and zero prospective cases unchanged. No dispatch, deployment, merge, live collection/message/order, purchase or secret/permission changes.
+
+Evidence: docs/validation/source-lineage-lab-publication.json. Next: review remaining lab save variants and actual source revision identity; retain the closed ZAD-04/EXEC-04 evidence without repeating those repairs.
+
 ## Smart-money writer milestone verified
 
 Verified code `2b96707b242e4ac55cc8ec006211a00ebe2867b9`: all 12 applicable exact-commit checks passed, including full push/PR tests, safety, preservation, delivery/research, artifact fixtures and three Python compatibility jobs. Evidence: [validation/smart-money-publication-ci.json](validation/smart-money-publication-ci.json). Earlier catalyst source bb93fb2 passed all 13 applicable checks. Acceptance remains **24/40 (60%); 16 open**. CATALYST-03 and broad ACTIONS-04 stay OPEN. Continue the six remaining engineering checks using the retained source-contract review; do not repeat completed ZAD-04 or EXEC-04 repairs. GitHub is canonical; the local checkout now contains the actual Git history.

@@ -69,7 +69,17 @@ export function createResearchCollector({env={},fetcher=fetch,maxRequests=420}={
     }}
    }
   }
-  const ingress=collectDiscovery({cutoff:at,readText:path=>path==='data/news-log.jsonl'&&newsRows.length?newsRows.map(x=>JSON.stringify(x)).join('\n'):readText(path)});
+  // A successful empty response is evidence of an empty result, not permission
+  // to replace it with a cached headline. Failed/not-due reads may use cache
+  // as context, retaining upstream availability separately through the report.
+  const liveNewsObserved=news.status==='RESPONSE_OBSERVED';
+  const newsOrigin=liveNewsObserved?'LIVE_PROVIDER':'CACHED_FILE';
+  const ingress=collectDiscovery({cutoff:at,readText:path=>path==='data/news-log.jsonl'&&liveNewsObserved?newsRows.map(x=>JSON.stringify(x)).join('\n'):readText(path)});
+  const newsSource=ingress.sources.find(x=>x.lane==='NEWS_CATALYST');
+  newsSource.origin=newsOrigin;
+  newsSource.upstream={status:news.status,observedAt:at,...(news.httpStatus!==undefined?{httpStatus:news.httpStatus}:{}),...(news.received!==undefined?{received:news.received,rejected:news.rejected,accepted:newsRows.length}:{})};
+  for(const o of ingress.observations)if(o.lane==='NEWS_CATALYST'){o.sourceOrigin=newsOrigin;o.upstreamStatus=news.status;}
+
   const sourceStatus=new Map([['NEWS_CATALYST',news.status==='RESPONSE_OBSERVED'?'HTTP_RESPONSE_OBSERVED':news.status]]);
   // Provider failure is retained alongside file availability; cached/derived
   // adapters are never relabelled live or independent confirmations.

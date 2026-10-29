@@ -21,7 +21,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
       - uses: actions/cache/restore@v4
         with:
           path: study-cache
@@ -48,21 +47,31 @@ jobs:
       - if: success() || failure()
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           FILES="data/catalyst-lab.json data/catalyst-today.json"
+          # Preserve this run before any pull. Never reset/clean computed output
+          # or select a conflicting frozen result automatically.
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
-          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
-          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
-          git reset -q --hard && git clean -fdq data && git pull -q --rebase
-          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
-          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
-          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
-          git diff --cached --quiet || git commit -m "catalyst lab $(date -u +%F)"
-          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
-          [ "$ok" = 1 ] || { echo "Error: could not save the catalyst lab result"; exit 1; }
+          for f in $FILES data/strategy-library.json; do
+            if [ -f "$f" ]; then cp "$f" "$OUTD/$f"; git add -- "$f"; fi
+          done
+          if ! git diff --cached --quiet; then
+            git commit -m "catalyst-lab result $(date -u +%F)"
+          fi
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase && git push; then ok=1; break; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 10
+          done
+          [ "$ok" = 1 ] || { echo 'Error: result publication unconfirmed; retain run-out artifact and both commits for review'; exit 1; }
       - if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 3
           name: catalyst-lab-log
-          path: run.log
+          path: |
+            run.log
+            ${{ runner.temp }}/run-out/

@@ -16,3 +16,9 @@ Next safe ACTIONS-04 fixture: extract the exact Smart-money publication block in
 The remaining six engineering checks are REPO-03, ACTIONS-04, MARKET-03, CATALYST-03, EXEC-03 and TELEGRAM-03. The six independent-evidence and four authorization-dependent checks retain their original criteria in acceptance-triage-2026-10-29.json. ZAD-04 is complete and is not reopened by this review. No criterion is lowered to close a check.
 
 Continuation repair evidence: validation/smart-money-publication-rehearsal.json and tests/workflow-publication-faults.test.mjs. No workflow dispatch or main source change. The broad ACTIONS-04 review remains open.
+
+## Continuation from cf7f964
+
+Research-collector upstream failure/cached origin is now carried through final source-reliability reports and CLI artifacts; empty successful live responses do not use cache. Nine caller cases and baseline negative control retained. Still no authenticated global cross-job source revision guarantee.
+
+Catalyst-lab, discovery2 and chain-decoder actual save blocks: initial reset/clean/pull was followed by replacing newer output and job-wins retries. Branch repair keeps the original checkout base until local commit, aborts conflicts, and archives public pre-pull snapshots for three days. Eighteen local Git caller cases pass; original conflicting frozen-output cases fail three times. Other writer families remain open; no production dispatch.

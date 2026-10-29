@@ -4858,5 +4858,45 @@
     },
     "verifiedSource": "2b96707b242e4ac55cc8ec006211a00ebe2867b9",
     "ciEvidence": "docs/validation/smart-money-publication-ci.json"
+  },
+  "sourceLineageLabPublication": {
+    "base": "cf7f96457847bdd835eb088925657b9175374f60",
+    "status": "LOCAL_VERIFIED_HOSTED_PENDING",
+    "acceptanceCredit": 0,
+    "focus": [
+      "CATALYST-03",
+      "ACTIONS-04"
+    ],
+    "local": {
+      "nodeFiles": 174,
+      "nodeReported": 1523,
+      "standalone": 2,
+      "python": 27,
+      "newsCallerCases": 9,
+      "labCallerCases": 18,
+      "baselineNewsFailAsExpected": 9,
+      "baselineLabFailAsExpected": 3,
+      "baselineLabControlPass": 15,
+      "static": {
+        "modules": 238,
+        "workflowYaml": 86,
+        "shellBlocks": 331,
+        "pythonSyntax": "PASS"
+      }
+    },
+    "changes": [
+      "Successful empty or wholly rejected live news no longer falls back to cached headlines.",
+      "Cached context keeps upstream status and origin in observations, session source reliability and real CLI artifacts.",
+      "Catalyst/discovery2/chain-decoder publication commits before pulling, refuses conflicting results, fails write/publication errors and retains pre-pull public outputs in three-day artifacts."
+    ],
+    "limits": [
+      "News serialized-state fixture is not an authenticated cross-job deployment or global deduplication guarantee.",
+      "Source/revision identity and full producer ingestion audit remain open.",
+      "Three workflow publication callers tested; other writer families, cancelled runners, caches and all-workflow failure semantics remain unfinished.",
+      "Checkout remains main; no dispatch or claim of live branch-runtime verification.",
+      "Original lost catalyst tests/code were unavailable; prior reconstructed distinction is preserved."
+    ],
+    "realProviderRequests": 0,
+    "prospectiveCases": 0
   }
 }

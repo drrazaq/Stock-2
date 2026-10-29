@@ -86,7 +86,10 @@ export const discoveryState=()=>({observations:{},crossings:{},firstFresh:{},cap
 export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
  if(!clock(cutoff))throw new TypeError('discovery cutoff needs timezone');
  state.funnel||={attempts:0,accepted:0,duplicates:0,invalid:0,unknownPrice:0};state.suppressed||={};state.sourceReliability||={};
- for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;}
+ for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;
+  if(source.upstream){r.upstreamStatusCounts||={};r.upstreamStatusCounts[source.upstream.status]=(r.upstreamStatusCounts[source.upstream.status]||0)+1;r.lastUpstream={...source.upstream};}
+  if(source.origin){r.originCounts||={};r.originCounts[source.origin]=(r.originCounts[source.origin]||0)+1;}
+ }
  const suppress=(o,reason)=>{const key=hash([o?.symbol,o?.lane,o?.sourceId,reason]);if(!state.suppressed[key]&&Object.keys(state.suppressed).length<5000)state.suppressed[key]={symbol:o?.symbol||null,lane:o?.lane||null,sourceId:o?.sourceId||null,reason,firstObservedAt:cutoff};};
  const now=Date.parse(cutoff),fresh=new Map();
  if(clock(state.lastCycleAt)&&now<Date.parse(state.lastCycleAt)){state.rejectedOutOfOrderCycles=(state.rejectedOutOfOrderCycles||0)+1;return [];}
