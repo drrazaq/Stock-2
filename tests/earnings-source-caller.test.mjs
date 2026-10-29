@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import http from 'node:http';
+import zlib from 'node:zlib';
+import {spawn} from 'node:child_process';
+import {collectDiscovery} from '../discovery-runtime.mjs';
+const script=new URL('../earnings-study.mjs',import.meta.url).pathname;
+async function fixture(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'s2-eps-'));let body={},status=200;const server=http.createServer((req,res)=>{res.statusCode=status;res.end(JSON.stringify(body));});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});});const run=(b,s=200)=>{body=b;status=s;return new Promise((resolve,reject)=>{const c=spawn(process.execPath,[script],{cwd:dir,env:{PATH:process.env.PATH,FINNHUB_KEY:'fixture',FH_BASE:'http://127.0.0.1:'+server.address().port}});let out='';c.stdout.on('data',x=>out+=x);c.stderr.on('data',x=>out+=x);c.on('error',reject);c.on('exit',code=>code===0?resolve():reject(Error(out)));});};return {run,read:p=>fs.readFileSync(path.join(dir,p),'utf8'),cache:()=>JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(dir,'data/earnings-cache.json.gz'))))};}
+const good=()=>({symbol:'AAA',date:new Date().toISOString().slice(0,10),hour:'bmo',epsActual:2,epsEstimate:1});
+test('actual earnings producer isolates malformed/coerced values and exports only valid observations',async t=>{const f=await fixture(t),g=good();await f.run({earningsCalendar:[null,{...g,symbol:'BAD',epsActual:''},{...g,symbol:'BAD',epsActual:null},{...g,symbol:'BAD',epsActual:false},g]});const doc=JSON.parse(f.read('data/earnings-recent.json'));assert.equal(doc.reports.length,1);assert.equal(doc.reports[0].sym,'AAA');assert.equal(doc.sourceStatus.FINNHUB_CALENDAR.rejectedRows,4);const i=collectDiscovery({readText:f.read,cutoff:new Date().toISOString()});assert.equal(i.observations.length,1);});
+test('empty, unavailable and malformed calendar are distinguished by the real producer',async t=>{const f=await fixture(t);for(const [body,status,expected]of [[{},200,'UNKNOWN'],[{error:'denied'},503,'UNKNOWN'],[{earningsCalendar:[]},200,'OBSERVED']]){await f.run(body,status);const doc=JSON.parse(f.read('data/earnings-recent.json'));assert.equal(doc.sourceStatus.FINNHUB_CALENDAR.status,expected);assert.equal(doc.reports.length,0);}});
+test('earnings revision survives a new process without rewriting original cached report',async t=>{const f=await fixture(t),g=good();await f.run({earningsCalendar:[g]});const first=f.cache().syms.AAA[0];await f.run({earningsCalendar:[{...g,epsActual:9}]});assert.equal(f.cache().syms.AAA[0].a,2);assert.equal(f.cache().syms.AAA[0].firstObservedAt,first.firstObservedAt);assert.ok(f.cache().revisionConflicts['AAA|'+g.date]);assert.equal(JSON.parse(f.read('data/earnings-recent.json')).reports.length,0);await f.run({earningsCalendar:[{...g,epsActual:9}]});assert.equal(f.cache().syms.AAA[0].a,2);await f.run({earningsCalendar:[g]});assert.equal(JSON.parse(f.read('data/earnings-recent.json')).reports.length,0);});

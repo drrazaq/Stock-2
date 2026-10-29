@@ -23,15 +23,21 @@ jobs:
           set -o pipefail
           node news-watch.mjs 2>&1 | tee run.log
         env:
+          NEWS_REMOTE_INTENT_REQUIRED: '1'
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       - if: always() && hashFiles('data/news-delivery.json') != ''
         run: |
+          set -euo pipefail
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/news-seen.json data/news-meta.json data/news-log.jsonl data/macro-state.json data/macro-log.jsonl data/news-delivery.json data/tg-failures.jsonl; do [ -f "$f" ] && git add "$f"; done; true
-          git diff --cached --quiet || git commit -m "news $(date -u +%FT%RZ)"
+          for f in data/news-seen.json data/news-meta.json data/news-log.jsonl data/macro-state.json data/macro-log.jsonl data/news-delivery.json data/tg-failures.jsonl; do
+            if [ -f "$f" ]; then git add -- "$f"; fi
+          done
+          if ! git diff --cached --quiet; then
+            git commit -m "news $(date -u +%FT%RZ)"
+          fi
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo 'Error: news state was not published; do not blindly replay alerts'; exit 1; }
       - if: failure()

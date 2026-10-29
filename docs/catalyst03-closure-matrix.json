@@ -1,0 +1,95 @@
+{
+  "base": "59d3da629874c2c8379fa756f63784a8158d5d57",
+  "nearestClosure": "CATALYST-03",
+  "status": "END_TO_END_LOCAL_VERIFIED_HOSTED_PENDING",
+  "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
+  "sourceMatrix": [
+    {
+      "lane": "NEWS_CATALYST",
+      "producer": "news-watch.mjs / research-collector.mjs",
+      "changedRequirement": "Reported ID revisions captured before own/peer/general/macro filters; ACK/UNKNOWN/legacy state preserved; remote-confirmed CAS intent/ACK with unique reservation ownership, killed-process recovery and refusal/race controls; collector and history admission revoke conflicts.",
+      "stillUnmet": "Full source response bounds, fallback/unknown identifier migration, immutable full body archive/revision evidence and complete source contract review; no claim of live deployment."
+    },
+    {
+      "lane": "SEC_EVENT",
+      "producer": "events-study.mjs",
+      "changedRequirement": "Repeated accession with conflicting family/publication metadata is retained as conflict and excluded without changing original cache.",
+      "stillUnmet": "Full filing body revisions/authenticity, aggregate source/cache validation and remote artifact persistence; metadata comparison is not body identity."
+    },
+    {
+      "lane": "EARNINGS_SURPRISE",
+      "producer": "earnings-study.mjs",
+      "changedRequirement": "Actual calendar isolates malformed/coerced EPS; original report kept, conflicting EPS/time quarantined across processes, empty/unavailable statuses distinct.",
+      "stillUnmet": "All AV/FMP caller shapes/bounds/provenance, independent providers and durable publication; company/date identity is not an authenticated security identifier."
+    },
+    {
+      "lane": "INSIDER_CLUSTER",
+      "producer": "insider-study.mjs",
+      "changedRequirement": "Existing adapter controls preserved; no new acceptance claim.",
+      "stillUnmet": "Complete actual producer identity/revision/schema/clock/error contract and independent-job persistence matrix."
+    },
+    {
+      "lane": "INDUSTRY_RIPPLE",
+      "producer": "chain-ripple.mjs",
+      "changedRequirement": "Existing adapter controls preserved; no new acceptance claim.",
+      "stillUnmet": "Complete actual producer identity/revision/schema/clock/error contract and independent-job persistence matrix."
+    },
+    {
+      "lane": "SUPPLY_SHIFT",
+      "producer": "share-supply.mjs",
+      "changedRequirement": "Existing adapter controls preserved; no new acceptance claim.",
+      "stillUnmet": "Complete actual producer identity/revision/schema/clock/error contract and independent-job persistence matrix."
+    },
+    {
+      "lane": "TECHNICAL_BUILDUP",
+      "producer": "discovery2.mjs",
+      "changedRequirement": "Existing adapter controls preserved; no new acceptance claim.",
+      "stillUnmet": "Complete actual producer identity/revision/schema/clock/error contract and independent-job persistence matrix."
+    },
+    {
+      "lane": "MARKET_DISLOCATION",
+      "producer": "comeback-lab.mjs",
+      "changedRequirement": "Existing adapter controls preserved; no new acceptance claim.",
+      "stillUnmet": "Complete actual producer identity/revision/schema/clock/error contract and independent-job persistence matrix."
+    }
+  ],
+  "fullClosureUnmet": [
+    "Complete actual producer/caller revision/schema/clock/error and identity contracts for all eight lanes, especially five remaining derived producers.",
+    "Full source response byte/row/time limits and conflicting/missing source rules.",
+    "Complete independent-job persistence/publication coverage beyond the repaired news caller.",
+    "Complete threat/materiality statement review and source identity uncertainty; independent historical authenticity belongs to CATALYST-04, not a reason to stop CATALYST-03 engineering."
+  ],
+  "changedRequirements": [
+    "Actual news revisions are visible and quarantined before filtering instead of silently suppressed.",
+    "SEC metadata and earnings revisions no longer overwrite or silently reuse original source evidence.",
+    "News publication fails stage/commit/push errors and conflict rather than claiming publication.",
+    "News remote intent is confirmed before an outbound mocked request; ACK is remotely verified. A lost process leaves PENDING that a separately restored job cannot replay.",
+    "Refused commits/pushes or competing unknown journal bytes prevent outbound requests; isolated worktree publication changes only data/news-delivery.json.",
+    "Conflicted news revokes prior discovery credit while preserving original observations and clocks; actual collector and scanner consumers qualify or quarantine source conflicts."
+  ],
+  "local": {
+    "nodeFiles": 177,
+    "nodeReportedCases": 1570,
+    "standaloneScripts": 2,
+    "pythonTests": 27,
+    "newsCallerCases": 22,
+    "secFdaCallerCases": 16,
+    "earningsCallerCases": 3,
+    "publicationCallerCases": 8,
+    "collectorLineageCases": 10,
+    "consumerCases": 4,
+    "staticModules": 240,
+    "workflowYaml": 86,
+    "shellBlocks": 330
+  },
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "remaining": 16,
+    "added": 0
+  },
+  "criticalInternalDependency": "News now has remote-confirmed CAS intent/ACK publication through the existing repository capability, tested against independent processes, SIGKILL, refusal and competing writers. Deployment/real delivery were not performed. Global coverage still requires remaining producers and consumers.",
+  "realProviderRequests": 0,
+  "prospectiveCases": 0,
+  "initialVerificationIssue": "Publication-refusal fixtures were strengthened with explicit hook/push markers so a generic earlier Git failure could not masquerade as reaching the intended fault. Scanner renderer fixture exposed missing display defaults; production renderer now labels missing context/source explicitly."
+}

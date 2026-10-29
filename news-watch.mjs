@@ -1,3 +1,6 @@
+import {createNewsStatePublication,newsStateDigest} from './news-state-publication.mjs';
+import {randomUUID} from 'node:crypto';
+import {observeNewsRevision,validNewsRevisions} from './news-revision-state.mjs';
 import {readNewsSource} from './news-source.mjs';
 import {saveAlertState,alertAvailable,deliverAlertOnce} from './alert-delivery-state.mjs';
 import {telegramFetch} from './telegram-delivery.mjs';
@@ -15,7 +18,7 @@ const sleep = (ms) => new Promise(r => setTimeout(r, FAST ? 0 : ms)), readJson =
 if (!env.FINNHUB_KEY) { console.log('news watch: no FINNHUB_KEY'); process.exit(0); }
 const iso = (ms) => new Date(ms).toISOString().slice(0, 10), now = Date.now();
 let calls = 0;const newsSources=[];
-async function fh(p) { if (calls) await sleep(1100); calls++; if(/^\/(?:company-news|news)\?/.test(p)){const r=await readNewsSource(fetch,FH+p+(p.includes('?')?'&':'?')+'token='+encodeURIComponent(env.FINNHUB_KEY));const {rows,...evidence}=r;newsSources.push({...evidence,source:p.split('&from=')[0]});console.log('news source: '+JSON.stringify(newsSources.at(-1)));return rows;} try { const r = await fetch(FH + p + (p.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY)); return r.ok ? await r.json() : null; } catch (e) { return null; } }
+async function fh(p) { if (calls) await sleep(1100); calls++; if(/^\/(?:company-news|news)\?/.test(p)){const r=await readNewsSource(fetch,FH+p+(p.includes('?')?'&':'?')+'token='+encodeURIComponent(env.FINNHUB_KEY));let {rows,...evidence}=r;if(rows){rows=rows.filter(x=>{const key='FINNHUB|'+String(x.id||x.url||x.headline+'|'+x.datetime);const v=observeNewsRevision(delivery.sourceRevisions,{key,row:x,at:new Date().toISOString()});if(!v.eligible){evidence.revisionQuarantined=(evidence.revisionQuarantined||0)+1;const audit={recordType:'SOURCE_REVISION_QUARANTINE',at:new Date().toISOString(),reason:v.reason,logicalId:v.logicalId||null,revisionId:v.revision||null,reportedId:['string','number'].includes(typeof x.id)?String(x.id).slice(0,256):null,publicationSeconds:x.datetime,headline:x.headline.slice(0,1024),summary:typeof x.summary==='string'?x.summary.slice(0,4000):null,url:typeof x.url==='string'?x.url.slice(0,2000):null};audit.truncated=x.headline.length>1024||(typeof x.summary==='string'&&x.summary.length>4000)||(typeof x.url==='string'&&x.url.length>2000);fs.appendFileSync('data/news-log.jsonl',JSON.stringify(audit)+'\n');}return v.eligible;});saveDelivery();}newsSources.push({...evidence,source:p.split('&from=')[0]});console.log('news source: '+JSON.stringify(newsSources.at(-1)));return rows;} try { const r = await fetch(FH + p + (p.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY)); return r.ok ? await r.json() : null; } catch (e) { return null; } }
 // ---- whom to watch: what you hold (with your stop) and today's buy list
 const pos = readJson('data/my-positions.json', {}), sig = readJson('data/signals.json', {});
 const held = Object.keys(pos).filter(s => /^[A-Z.]{1,6}$/.test(s));
@@ -58,17 +61,22 @@ const indHit = (t, s) => { const w = (meta[s] || {}).words || []; return w.filte
 // ---- read the news (last 2 hours; each headline once)
 const SEEN = 'data/news-seen.json', seen = readJson(SEEN, {}); for (const k of Object.keys(seen)) if (now - seen[k] > 3 * 864e5) delete seen[k];
 const DELIVERY='data/news-delivery.json';
-const delivery=fs.existsSync(DELIVERY)?JSON.parse(fs.readFileSync(DELIVERY,'utf8')):{unknown:{}};
+const initialDelivery=fs.existsSync(DELIVERY)?fs.readFileSync(DELIVERY):null;
+if(initialDelivery&&initialDelivery.length>8*1024*1024)throw Error('NEWS_DELIVERY_STATE_BUDGET');
+const delivery=initialDelivery?JSON.parse(initialDelivery.toString('utf8')):{unknown:{}};
+const remotePublication=createNewsStatePublication({expectedDigest:newsStateDigest(initialDelivery),allowLocalOrigin:!!local(env.TG_BASE)&&env.NEWS_JOURNAL_LOCAL_FIXTURE==='1'});
 const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
 if(!object(delivery)||!object(delivery.unknown)||delivery.sent!==undefined&&!object(delivery.sent)||delivery.delivery!==undefined&&!object(delivery.delivery))throw Error('NEWS_DELIVERY_STATE_UNREADABLE');
-delivery.sent||={};delivery.delivery||={};
+delivery.sent||={};delivery.delivery||={};if(delivery.sourceRevisions===undefined)delivery.sourceRevisions={};if(!validNewsRevisions(delivery.sourceRevisions))throw Error('NEWS_REVISION_STATE_UNREADABLE');
 for(const [key,value]of Object.entries(delivery.unknown)){if(!object(value))throw Error('NEWS_DELIVERY_STATE_UNREADABLE');delivery.delivery[key]||={status:'UNKNOWN',at:value.at||null};}
 let deliveryFailures=0;
 const unconfirmed=r=>!r.ok&&!/^HTTP_(?:400|401|403|404|429)$/.test(r.reason||'');
 const saveDelivery=()=>saveAlertState(DELIVERY,delivery);
 const queued=new Set();
 async function deliver(text,keys){
- const result=await deliverAlertOnce({book:delivery,keys,save:saveDelivery,send:async()=>{
+ const owner=randomUUID();
+ const durableSave=()=>{for(const key of keys)if(delivery.delivery[key])delivery.delivery[key].reservationOwner=owner;saveDelivery();if(env.NEWS_REMOTE_INTENT_REQUIRED==='1'||env.TG_TOKEN&&env.TG_CHAT&&!local(env.TG_BASE)){const r=remotePublication.publish();if(!r.ok)throw Error(r.reason);}};
+ const result=await deliverAlertOnce({book:delivery,keys,save:durableSave,send:async()=>{
   if(!env.TG_TOKEN||!env.TG_CHAT){console.log(text);return {ok:false,reason:'MISSING_CREDENTIALS',deliveredParts:0};}
   const r=await telegramFetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{body:JSON.stringify({chat_id:env.TG_CHAT,text})});const b=await r.json();return {ok:r.ok,reason:b.description||null,deliveredParts:r.deliveredParts};
  }});
@@ -77,7 +85,7 @@ async function deliver(text,keys){
 }
 const since = now - 2 * 3600e3, from = iso(now - 864e5), to = iso(now), alerts = [];
 const fresh = (a) => Array.isArray(a) ? a.filter(x => x && x.headline && typeof x.datetime==='number' && Number.isFinite(x.datetime) && x.datetime*1000<=now && x.datetime * 1000 >= since && !seen[x.id || x.headline]) : [];
-const add = (sym, why, x, th, kind) => { const sourceId=String(x.id||x.headline+'|'+x.datetime),key=sym+'|'+sourceId;if(seen[key]||delivery.unknown[key]||!alertAvailable(delivery,key)||queued.has(key))return;queued.add(key);alerts.push({key,sourceId,sym,why,kind,th,h:String(x.headline).slice(0,180),src:x.source||'',t:x.datetime*1000,url:x.url||''}); };
+const add = (sym, why, x, th, kind) => { const sourceId=String(x.id||x.headline+'|'+x.datetime),key=sym+'|'+sourceId;const revision=observeNewsRevision(delivery.sourceRevisions,{key,row:x,at:new Date(now).toISOString(),legacyReserved:!!seen[key]||!!delivery.unknown[key]||!alertAvailable(delivery,key)});saveDelivery();if(!revision.eligible){console.log('NEWS REVISION QUARANTINE: '+revision.reason);return;}if(seen[key]||delivery.unknown[key]||!alertAvailable(delivery,key)||queued.has(key))return;queued.add(key);alerts.push({key,sourceId,revisionId:revision.revision,sourceLogicalId:revision.logicalId,sym,why,kind,th,h:String(x.headline).slice(0,180),src:x.source||'',t:x.datetime*1000,url:x.url||''}); };
 // ---- MARKET SHOCK (Trump, China, the Fed, Europe, the UK, wars, tariffs...): the S&P 500's move today + the big headlines behind it.
 // Sent once per level per day (S&P 500 down or up 1.5%, then 2.5%), or for a top-tier headline (tariff, sanctions, export
 // controls, a surprise rate move, war) even before the market moves. It also says what the 5-year test found on days like this.

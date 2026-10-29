@@ -5,6 +5,7 @@ import {LANES,assembleMultiAngle} from './multi-angle-discovery.mjs';
 import {isFreshPriceAge} from './ignition-gates.mjs';
 const clock=x=>typeof x==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
 const symbol=x=>typeof x==='string'&&/^[A-Z][A-Z0-9.\-]{0,9}$/.test(x);
+const observationIdentity=(source,row,sym)=>[source.path,sym,row.sourceId||row.id||row.url||row.rule||'',row.p||row.d||row.filed||row.signalDay||'',row.h||row.f||row.chain||''];
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
 export const DISCOVERY_SOURCES=Object.freeze([
@@ -38,13 +39,15 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
   let text;try{text=readText(source.path);}catch{sources.push({...source,status:'MISSING',rows:0});continue;}
   try{
    if(typeof text!=='string'||Buffer.byteLength(text,'utf8')>8*1024*1024){sources.push({...source,status:'INPUT_BUDGET_OR_TYPE_BLOCKED',rows:0});continue;}
-   let rows,generated,preRejected=0,malformedLines=0,inputRows=null,inputTruncated=0,parsedObjects=0,producerStatus=null;const rejectionReasons={};
+   let rows,generated,preRejected=0,malformedLines=0,inputRows=null,inputTruncated=0,parsedObjects=0,producerStatus=null;const revokedSourceIds=[];const rejectionReasons={};
    const reject=reason=>{preRejected++;rejectionReasons[reason]=(rejectionReasons[reason]||0)+1;};
    if(source.lane==='NEWS_CATALYST'){
     const lines=text.split(/\r?\n/).filter(x=>x.trim());inputRows=lines.length;inputTruncated=Math.max(0,lines.length-10000);rows=[];
+    const quarantinedIds=new Set();for(const line of lines.slice(-10000)){try{const r=JSON.parse(line);if(r?.recordType==='SOURCE_REVISION_QUARANTINE'&&['string','number'].includes(typeof r.reportedId))quarantinedIds.add(String(r.reportedId));}catch{}}
     for(const line of lines.slice(-10000)){
      let row;try{row=JSON.parse(line);}catch{malformedLines++;reject('MALFORMED_JSON_LINE');continue;}
      if(!object(row)){reject('NON_OBJECT_ROW');continue;}parsedObjects++;
+     if(row.sourceId!=null&&quarantinedIds.has(String(row.sourceId))){revokedSourceIds.push(hash(observationIdentity(source,row,row.sym)));reject('SOURCE_REVISION_CONFLICT');continue;}
      if(typeof row.h!=='string'||!row.h.trim()||!symbol(row.sym)){reject('NOT_A_VALID_HEADLINE_RECORD');continue;}
      if(typeof row.t!=='number'||!Number.isFinite(row.t)||row.t<=0||row.t>8640000000000000){reject('INVALID_PUBLICATION_CLOCK');continue;}
      if(row.t>at||at-row.t>source.hours*3600000){reject(row.t>at?'FUTURE_PUBLICATION':'STALE_PUBLICATION');continue;}
@@ -53,13 +56,14 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
     }
     if(!parsedObjects&&preRejected){sources.push({...source,status:'MALFORMED',rows:0,inputRows,rejected:preRejected,malformedLines,truncated:inputTruncated,rejectionReasons});continue;}
     rows.sort((a,b)=>b.t-a.t);
-   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt!==undefined?doc.generatedAt:doc.updated;rows=rowsOf(source.lane,doc);if(source.lane==='SEC_EVENT'){producerStatus={};for(const name of ['SEC','OPENFDA']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN'].includes(v.status)?v.status:'UNKNOWN'};}}}
+   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt!==undefined?doc.generatedAt:doc.updated;rows=rowsOf(source.lane,doc);if(['SEC_EVENT','EARNINGS_SURPRISE'].includes(source.lane)){producerStatus={};for(const name of source.lane==='SEC_EVENT'?['SEC','OPENFDA']:['FINNHUB_CALENDAR']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN'].includes(v.status)?v.status:'UNKNOWN'};}}}
    if(!Array.isArray(rows))throw Error('invalid rows');
    if(source.lane!=='NEWS_CATALYST'&&!clock(generated)){sources.push({...source,status:'MISSING_OUTPUT_TIMESTAMP',rows:rows.length});continue;}
    if(generated&&(Date.parse(generated)>at||at-Date.parse(generated)>source.hours*3600000)){sources.push({...source,status:Date.parse(generated)>at?'FUTURE':'STALE',rows:rows.length});continue;}
    let accepted=0,rejected=preRejected;
    for(const row of rows.slice(0,500)){
     if(!object(row)){rejected++;continue;}
+    if(row.revisionStatus==='CONFLICT'){rejected++;continue;}
     const sym=row.sym||row.symbol;if(!symbol(sym)){rejected++;continue;}
     // A finite number can still exceed JavaScript's representable date range.
     // Reject that row without making every valid headline in the file unavailable.
@@ -71,15 +75,16 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
     const primary=clock(rawPublic),asOf=primary?rawPublic:generated;
     if(source.lane==='SEC_EVENT'&&row.firstObservedAt!=null&&(!clock(row.firstObservedAt)||Date.parse(row.firstObservedAt)>at||primary&&Date.parse(row.firstObservedAt)<Date.parse(rawPublic))){rejected++;continue;}
     if(!clock(asOf)||Date.parse(asOf)>at||at-Date.parse(asOf)>source.hours*3600000){rejected++;continue;}
-    const eventKey=[source.path,sym,row.sourceId||row.id||row.url||row.rule||'',row.p||row.d||row.filed||row.signalDay||'',row.h||row.f||row.chain||''];
+    const eventKey=observationIdentity(source,row,sym);
     observations.push({symbol:sym,lane:source.lane,asOf,observedAt:cutoff,sourceId:hash(eventKey),
      description:source.lane+': '+String(row.h||row.rule||row.f||row.chain||'derived collector observation').slice(0,400),
      publicationBasis:primary?'SOURCE_PUBLIC_TIMESTAMP':'DERIVED_OUTPUT_AVAILABLE',
      caveat:primary?'Source report; materiality/direction not established by lane presence':'Original public event time unavailable; generatedAt is derived output availability only',
      sourcePath:source.path,sourceCapturedAt:source.lane==='NEWS_CATALYST'?row.at:source.lane==='SEC_EVENT'?(clock(row.firstObservedAt)?row.firstObservedAt:null):generated,
+     ...(source.lane==='NEWS_CATALYST'?{reportedSourceId:row.sourceId||row.id||null}:{}),
      ...(source.lane==='SEC_EVENT'?{reportedSourceId:row.sourceId||null,sourceNamespace:row.sourceNamespace||'UNKNOWN',outputAvailableAt:generated}:{} )});accepted++;
    }
-   sources.push({...source,status:'READ',rows:rows.length,accepted,rejected,truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(producerStatus?{producerStatus}:{}),...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
+   sources.push({...source,status:'READ',revokedSourceIds,rows:rows.length,accepted,rejected,truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(producerStatus?{producerStatus}:{}),...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
   }catch{sources.push({...source,status:'MALFORMED',rows:0});}
  }
  return {observations,sources};
@@ -89,8 +94,9 @@ export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
  if(!clock(cutoff))throw new TypeError('discovery cutoff needs timezone');
  state.funnel||={attempts:0,accepted:0,duplicates:0,invalid:0,unknownPrice:0};state.suppressed||={};state.sourceReliability||={};
  for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;
+  for(const o of Object.values(state.observations))if(o.lane===source.lane&&(source.revokedSourceIds?.includes(o.sourceId)||source.revokedReportedIds?.includes(String(o.reportedSourceId)))){o.sourceConflict=true;o.sourceConflictReason='SOURCE_REVISION_CONFLICT';}
   if(source.upstream){r.upstreamStatusCounts||={};r.upstreamStatusCounts[source.upstream.status]=(r.upstreamStatusCounts[source.upstream.status]||0)+1;r.lastUpstream={...source.upstream};}
-  if(source.producerStatus){r.producerStatusCounts||={};for(const name of ['SEC','OPENFDA']){const v=source.producerStatus[name];if(!v)continue;const counts=r.producerStatusCounts[name]||={};counts[v.status]=(counts[v.status]||0)+1;}r.lastProducerStatus=structuredClone(source.producerStatus);}
+  if(source.producerStatus){r.producerStatusCounts||={};for(const name of ['SEC','OPENFDA','FINNHUB_CALENDAR']){const v=source.producerStatus[name];if(!v)continue;const counts=r.producerStatusCounts[name]||={};counts[v.status]=(counts[v.status]||0)+1;}r.lastProducerStatus=structuredClone(source.producerStatus);}
   if(source.origin){r.originCounts||={};r.originCounts[source.origin]=(r.originCounts[source.origin]||0)+1;}
  }
  const suppress=(o,reason)=>{const key=hash([o?.symbol,o?.lane,o?.sourceId,reason]);if(!state.suppressed[key]&&Object.keys(state.suppressed).length<5000)state.suppressed[key]={symbol:o?.symbol||null,lane:o?.lane||null,sourceId:o?.sourceId||null,reason,firstObservedAt:cutoff};};
@@ -129,7 +135,7 @@ export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
  return added;
 }
 export function discoveryReport(state,{cutoff,sources,completeSession=false}) {
- const records=Object.values(state.observations),board=assembleMultiAngle(records,{cutoff});
+ const allRecords=Object.values(state.observations),records=allRecords.filter(x=>!x.sourceConflict),board=assembleMultiAngle(records,{cutoff});
  const lanes=LANES.map(l=>{
   const a=records.filter(x=>x.lane===l.id),bySymbol=new Map();for(const x of a)if(!bySymbol.has(x.symbol)||x.observedAt<bySymbol.get(x.symbol).observedAt)bySymbol.set(x.symbol,x);
   const first=[...bySymbol.values()],before=first.filter(x=>x.changeAtDetection!==null&&x.changeAtDetection<.05&&state.crossings[x.symbol]?.[10]&&Date.parse(x.observedAt)<Date.parse(state.crossings[x.symbol][10].at));
@@ -145,7 +151,7 @@ export function discoveryReport(state,{cutoff,sources,completeSession=false}) {
   return [{symbol,reason,firstObservedPlus10:c[10]}];
  });
  return {...board,sources,lanes,completeSession,funnel:state.funnel||null,priceCoverage:state.priceCoverage||null,sourceReliability:state.sourceReliability||{},suppressionReasons:Object.values(state.suppressed||{}),
-  detectionCount:records.length,displayedDetections:Math.min(records.length,1000),detections:records.slice(0,1000),missedCount:missed.length,missedCandidates:missed.slice(0,100),dedupScope:'CURRENT_SESSION',
+  observedRecordCount:allRecords.length,sourceConflictCount:allRecords.length-records.length,conflictedDetections:allRecords.filter(x=>x.sourceConflict).slice(0,1000),detectionCount:records.length,displayedDetections:Math.min(records.length,1000),detections:records.slice(0,1000),missedCount:missed.length,missedCandidates:missed.slice(0,100),dedupScope:'CURRENT_SESSION',
   capacityDroppedAttempts:state.capacityDroppedAttempts||0,observedPlus10Symbols:Object.keys(state.crossings).filter(s=>state.crossings[s][10]).length,
   rejectedOutOfOrderCycles:state.rejectedOutOfOrderCycles||0,identityScope:'CURRENT_SESSION_SYMBOL; independent security identity remains unverified',
   measurementNote:'Prospective first-ingestion vs first OBSERVED fresh +10% crossing, requiring detection below +5%. Unknown/stale prices earn no lead credit. No observed crossing is unresolved, not a false-positive verdict. Lane breadth is correlated evidence, not independent confirmation, profitability or BUY eligibility.'};

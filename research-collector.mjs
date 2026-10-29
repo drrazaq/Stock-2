@@ -1,3 +1,4 @@
+import {observeNewsRevision} from './news-revision-state.mjs';
 // Whole-snapshot observation only. No broker, Telegram, recommendation or lab imports.
 import {createHash} from 'node:crypto';
 import {marketSymbol} from './market-symbol.mjs';
@@ -18,7 +19,7 @@ function base(value,fallback){if(value===undefined)return fallback;if(typeof val
 export function createResearchCollector({env={},fetcher=fetch,maxRequests=420}={}){
  if(!Number.isInteger(maxRequests)||maxRequests<1||maxRequests>420)throw Error('INVALID_REQUEST_BUDGET');
  const mv=base(env.MASSIVE_BASE,'https://api.massive.com'),fh=base(env.FH_BASE,'https://finnhub.io/api/v1');
- const state={day:null,requests:0,cycles:0,cooldowns:{},discovery:discoveryState(),lastSuccessfulCycle:null,minutes:[],sourceCounts:{}};
+ const state={day:null,requests:0,cycles:0,cooldowns:{},discovery:discoveryState(),lastSuccessfulCycle:null,minutes:[],sourceCounts:{},sourceRevisions:{}};
  async function get(provider,url,now){
   if(state.requests>=maxRequests)return {provider,status:'REQUEST_BUDGET_EXHAUSTED'};
   if((state.cooldowns[provider]||0)>now)return {provider,status:'RATE_LIMIT_COOLDOWN',until:state.cooldowns[provider]};
@@ -57,12 +58,13 @@ export function createResearchCollector({env={},fetcher=fetch,maxRequests=420}={
   const metrics={received:raw.length,uniqueSymbols:rows.length,invalidRows:invalid,duplicateSymbols:duplicates,freshPrices:freshRows.length,freshPricePct:rows.length?100*freshRows.length/rows.length:null,
    freshBidAsk:rows.filter(r=>positive(r.bid)&&positive(r.ask)&&r.ask>=r.bid&&fresh(r.qt,now)).length,unknownPriceClocks:rows.filter(r=>!positive(r.t)).length,futurePriceClocks:rows.filter(r=>r.t>now).length,priceAgeP50Min:q(ages,.5),priceAgeP95Min:q(ages,.95),denominator:'RECEIVED_SYMBOLS; SECURITY_TYPES_AND_TRADABLE_UNIVERSE_UNVERIFIED',previousCloseBasis:'PROVIDER_PREV_DAY; SESSION_IDENTITY_NOT_VERIFIED'};
   if(freshRows.length)state.lastSuccessfulCycle=at;
-  let news={provider:'FINNHUB_GENERAL_NEWS',status:'NOT_DUE'},newsRows=[];
+  let news={provider:'FINNHUB_GENERAL_NEWS',status:'NOT_DUE'},newsRows=[],revokedReportedIds=[];
   if(state.cycles%5===1){news=env.FINNHUB_KEY?await get('FINNHUB_GENERAL_NEWS',fh+'/news?category=general&token='+encodeURIComponent(env.FINNHUB_KEY),now):{provider:'FINNHUB_GENERAL_NEWS',status:'MISSING_CREDENTIALS'};
    if(news.status==='RESPONSE_OBSERVED'){
     if(!Array.isArray(news.payload)||news.payload.length>1000)news.status='INVALID_SCHEMA';
     else {news.received=news.payload.length;news.rejected=0;for(const x of news.payload){
      if(!object(x)||typeof x.headline!=='string'||!positive(x.datetime)||!Number.isFinite(x.datetime*1000)||x.datetime*1000>now||now-x.datetime*1000>7200000){news.rejected++;continue;}
+     const identity=String(x.id||x.headline+'|'+x.datetime);state.sourceRevisions||={};const revision=observeNewsRevision(state.sourceRevisions,{key:'FINNHUB|'+identity,row:x,at});if(!revision.eligible){news.revisionQuarantined=(news.revisionQuarantined||0)+1;revokedReportedIds.push(identity);continue;}
      const symbols=String(x.related||x.symbol||'').split(',').map(x=>x.trim().toUpperCase()).filter(sym).slice(0,20);
      if(!symbols.length){news.rejected++;continue;}
      for(const symbol of new Set(symbols))newsRows.push({sym:symbol,h:x.headline,t:x.datetime*1000,at,sourceId:String(x.id||createHash('sha256').update(x.headline+'|'+x.datetime).digest('hex'))});
@@ -76,7 +78,7 @@ export function createResearchCollector({env={},fetcher=fetch,maxRequests=420}={
   const newsOrigin=liveNewsObserved?'LIVE_PROVIDER':'CACHED_FILE';
   const ingress=collectDiscovery({cutoff:at,readText:path=>path==='data/news-log.jsonl'&&liveNewsObserved?newsRows.map(x=>JSON.stringify(x)).join('\n'):readText(path)});
   const newsSource=ingress.sources.find(x=>x.lane==='NEWS_CATALYST');
-  newsSource.origin=newsOrigin;
+  newsSource.origin=newsOrigin;newsSource.revokedReportedIds=revokedReportedIds;
   newsSource.upstream={status:news.status,observedAt:at,...(news.httpStatus!==undefined?{httpStatus:news.httpStatus}:{}),...(news.received!==undefined?{received:news.received,rejected:news.rejected,accepted:newsRows.length}:{})};
   for(const o of ingress.observations)if(o.lane==='NEWS_CATALYST'){o.sourceOrigin=newsOrigin;o.upstreamStatus=news.status;}
 

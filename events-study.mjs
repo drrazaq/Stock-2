@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 import {validSecFilings,validSecArchiveList} from './sec-filing-schema.mjs';
 import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
 const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
@@ -108,9 +109,18 @@ if (MODE === 'fetch') {
   const cut = iso(Date.now() - 6 * 365 * 864e5);
   const addRows = (S, R) => {   // R = SEC columnar filings object
     const n = (R.form || []).length, have = new Set(S.ev.map(e => e.a));
-    for (let k = 0; k < n; k++) { const acc = R.accessionNumber[k]; if (have.has(acc)) continue;
+    for (let k = 0; k < n; k++) { const acc = R.accessionNumber[k];
       const f = famsOf(R.form[k], (R.items || [])[k], S.sic); if (!f.length) continue;
       const acc0 = String(R.acceptanceDateTime[k] || ''), p = acc0.length >= 16 ? acc0.slice(0, 16) + 'Z' : String(R.filingDate[k] || '').slice(0, 10); if (!p || p.slice(0, 10) < cut) continue;   // stored in UTC with an explicit Z (older cache rows: same UTC cut without the Z; sec-time.mjs reads both as UTC)
+      if(have.has(acc)){
+        const old=S.ev.find(e=>e.a===acc);
+        if(old.f!==f.join(',')||((secNY(old.p)||{}).d&&(secNY(p)||{}).d&&secNY(old.p).d!==secNY(p).d)||((secNY(old.p)||{}).ms!=null&&(secNY(p)||{}).ms!=null&&secNY(old.p).ms!==secNY(p).ms)){
+          S.revisionConflicts||={};const record=S.revisionConflicts[acc]||={firstObservedAt:new Date().toISOString(),revisions:{}};
+          const revision=createHash('sha256').update(JSON.stringify([p,f])).digest('hex');
+          if(Object.keys(record.revisions).length<32)record.revisions[revision]||={observedAt:new Date().toISOString()};
+        }
+        continue;
+      }
       S.ev.push({ p, f: f.join(','), a: acc, firstObservedAt:new Date().toISOString(), ...(typeof R.acceptanceDateTime[k]==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(R.acceptanceDateTime[k])&&Number.isFinite(Date.parse(R.acceptanceDateTime[k]))?{publicationAt:new Date(R.acceptanceDateTime[k]).toISOString()}:{} ) }); have.add(acc); }
     S.ev.sort((x, y) => x.p < y.p ? -1 : 1);
   };
@@ -149,7 +159,7 @@ if (MODE === 'fetch') {
   const since = iso(Date.now() - 10 * 864e5), recent = [];
   // events-recent.json `p` FORMAT: New York local time WITH its UTC offset, e.g. '2026-10-21T08:05-04:00' (EDGAR's UTC acceptance time
   // converted), or a date only 'YYYY-MM-DD'. p.slice(0, 10) is the New York calendar date (scan.mjs reads that); Date.parse(p) is exact.
-  for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) { const p = nyStamp(e.p); if (p && p.slice(0, 10) >= since) recent.push({ sym, p, f: e.f, sourceId:typeof e.a==='string'?e.a:null, sourceNamespace:String(e.a||'').startsWith('fda-')?'OPENFDA':/^\d{10}-\d{2}-\d{6}$/.test(e.a||'')?'SEC_EDGAR':'UNKNOWN', firstObservedAt:e.firstObservedAt||null, ...(e.publicationAt?{publicationAt:e.publicationAt}:{}), ms: (secNY(e.p) || {}).ms || null }); }
+  for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) { const p = nyStamp(e.p); if (p && p.slice(0, 10) >= since) recent.push({ sym, p, f: e.f, sourceId:typeof e.a==='string'?e.a:null, revisionStatus:S.revisionConflicts?.[e.a]?'CONFLICT':'UNVERIFIED', sourceNamespace:String(e.a||'').startsWith('fda-')?'OPENFDA':/^\d{10}-\d{2}-\d{6}$/.test(e.a||'')?'SEC_EDGAR':'UNKNOWN', firstObservedAt:e.firstObservedAt||null, ...(e.publicationAt?{publicationAt:e.publicationAt}:{}), ms: (secNY(e.p) || {}).ms || null }); }
   recent.sort((x, y) => (x.ms || Date.parse(x.p.slice(0, 10) + 'T12:00:00Z')) < (y.ms || Date.parse(y.p.slice(0, 10) + 'T12:00:00Z')) ? 1 : -1); for (const r of recent) delete r.ms;
   fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), events: recent,sourceStatus:{SEC:{status:note||sourceFailures?'UNKNOWN':done?'OBSERVED':'NOT_FETCHED',failures:sourceFailures,calls},OPENFDA:{status:fdaFailures?'PARTIAL_OR_UNKNOWN':fda?'OBSERVED':'NOT_FETCHED',attempts:fda,failures:fdaFailures,rejectedRows:fdaRejected}} }, null, 1));
   save();

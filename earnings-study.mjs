@@ -32,8 +32,9 @@ try { cache = JSON.parse(zlib.gunzipSync(fs.readFileSync(CACHE)).toString()); } 
 cache.syms = cache.syms || {}; cache.tried = cache.tried || {};
 const save = () => fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(cache)));
 // one report: { d: report date, t: 'bmo'|'amc'|null, a: actual EPS, e: estimated EPS }
-const addRep = (sym, r) => { if (!r || !r.d || !isFinite(r.a) || !isFinite(r.e)) return; const L = cache.syms[sym] || (cache.syms[sym] = []); const k = L.findIndex(x => x.d === r.d); if (k >= 0) L[k] = { ...L[k], ...r }; else L.push(r); L.sort((x, y) => x.d < y.d ? -1 : 1); };
-async function getJson(url) { try { const r = await fetch(url); if (r.status === 401 || r.status === 403 || r.status === 402) return { refused: r.status }; if (!r.ok) return null; return await r.json(); } catch (e) { return null; } }
+const eps=x=>typeof x==='number'&&Number.isFinite(x)?x:typeof x==='string'&&/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(x.trim())?Number(x):NaN;
+const addRep = (sym, r) => { if (!r || typeof r.d!=='string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.d)||!Number.isFinite(Date.parse(r.d+'T00:00:00Z'))||iso(Date.parse(r.d+'T00:00:00Z'))!==r.d||r.d>iso(Date.now())||!Number.isFinite(r.a)||!Number.isFinite(r.e)) return false; const L = cache.syms[sym] || (cache.syms[sym] = []); const k = L.findIndex(x => x.d === r.d);if(cache.revisionConflicts?.[sym+'|'+r.d])return false; if (k >= 0) {if(L[k].a!==r.a||L[k].e!==r.e||(L[k].t??null)!==(r.t??null)){cache.revisionConflicts||={};cache.revisionConflicts[sym+'|'+r.d]||={firstObservedAt:new Date().toISOString(),original:{...L[k]},reported:r};return false;}}else L.push({...r,firstObservedAt:new Date().toISOString()}); L.sort((x, y) => x.d < y.d ? -1 : 1);return true; };
+async function getJson(url) { try { const r = await fetch(url,{redirect:'error',signal:AbortSignal.timeout(15000)}); if (r.status === 401 || r.status === 403 || r.status === 402) return { refused: r.status }; if (!r.ok) return null; return await r.json(); } catch (e) { return null; } }
 
 if (MODE === 'fetch') {
   const sig = readJson('data/signals.json', {}), order = [...new Set([...(sig.stocks || []).map(x => x.sym), ...((sig.uni || []).map(x => x.sym))])].filter(s => /^[A-Z]{1,5}$/.test(s));
@@ -43,21 +44,21 @@ if (MODE === 'fetch') {
   if (env.ALPHAVANTAGE_KEY) for (const sym of todo) { if (av >= +(env.AV_CALLS || 25) || avOff) break;
     const j = await getJson(AV + '/query?function=EARNINGS&symbol=' + sym + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)); av++;
     if (j && (j.Note || j.Information)) { avOff = true; console.log('Alpha Vantage limit reached:', String(j.Note || j.Information).slice(0, 120)); break; }
-    if (j && Array.isArray(j.quarterlyEarnings)) { for (const q of j.quarterlyEarnings) addRep(sym, { d: q.reportedDate, t: /pre/i.test(q.reportTime || '') ? 'bmo' : /post/i.test(q.reportTime || '') ? 'amc' : null, a: +q.reportedEPS, e: +q.estimatedEPS }); cache.tried[sym] = today; }
+    if (j && Array.isArray(j.quarterlyEarnings)) { for (const q of j.quarterlyEarnings) addRep(sym, { d: q.reportedDate, t: /pre/i.test(q.reportTime || '') ? 'bmo' : /post/i.test(q.reportTime || '') ? 'amc' : null, a: eps(q.reportedEPS), e: eps(q.estimatedEPS) }); cache.tried[sym] = today; }
     if (!local(env.AV_BASE)) await sleep(13000); }
   // 2. FMP (only if the key's plan includes earnings history): report dates, actual and estimated EPS
   if (env.FMP_KEY) for (const sym of todo.filter(s => cache.tried[s] !== today)) { if (fmp >= +(env.FMP_CALLS || 200) || fmpOff) break;
     const j = await getJson(FMPB + '/stable/earnings?symbol=' + sym + '&limit=40&apikey=' + encodeURIComponent(env.FMP_KEY)); fmp++;
     if (j && j.refused) { fmpOff = true; console.log('FMP earnings history is not in this plan (HTTP ' + j.refused + '); Alpha Vantage and Finnhub only.'); break; }
-    if (Array.isArray(j)) { for (const q of j) addRep(sym, { d: String(q.date || '').slice(0, 10), t: null, a: q.epsActual === null ? NaN : +q.epsActual, e: q.epsEstimated === null ? NaN : +q.epsEstimated }); cache.tried[sym] = today; }
+    if (Array.isArray(j)) { for (const q of j) addRep(sym, { d: String(q.date || '').slice(0, 10), t: null, a: eps(q.epsActual), e: eps(q.epsEstimated) }); cache.tried[sym] = today; }
     if (!local(env.FMP_BASE)) await sleep(300); }
   // 3. Finnhub calendar: the last 10 days of reports for every company (actual vs estimate, before/after the market)
-  let recent = [];
+  let recent = [], calendarStatus='NOT_FETCHED',calendarRejected=0;
   if (env.FINNHUB_KEY) { const j = await getJson(FH + '/calendar/earnings?from=' + iso(Date.now() - 10 * 864e5) + '&to=' + today + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
-    const rows = (j && j.earningsCalendar) || [];
-    for (const q of rows) { if (!/^[A-Z]{1,5}$/.test(q.symbol || '') || q.epsActual === null || q.epsEstimate === null) continue;
-      const r = { d: q.date, t: q.hour === 'bmo' ? 'bmo' : q.hour === 'amc' ? 'amc' : null, a: +q.epsActual, e: +q.epsEstimate }; addRep(q.symbol, r); recent.push({ sym: q.symbol, ...r }); } }
-  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), reports: recent }, null, 1));
+    const rows = j&&!j.error&&Array.isArray(j.earningsCalendar)?j.earningsCalendar:[];calendarStatus=j&&!j.error&&Array.isArray(j.earningsCalendar)?'OBSERVED':'UNKNOWN';
+    for (const q of rows) { if (!q||typeof q!=='object'||!/^[A-Z]{1,5}$/.test(q.symbol || '')) {calendarRejected++;continue;}
+      const r = { d: q.date, t: q.hour === 'bmo' ? 'bmo' : q.hour === 'amc' ? 'amc' : null, a: eps(q.epsActual), e: eps(q.epsEstimate) }; if(!addRep(q.symbol,r)){calendarRejected++;continue;}const stored=cache.syms[q.symbol].find(x=>x.d===r.d);recent.push({ sym: q.symbol,...r,sourceId:q.symbol+'|'+r.d,firstObservedAt:stored.firstObservedAt||null }); } }
+  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), reports: recent,sourceStatus:{FINNHUB_CALENDAR:{status:calendarRejected&&calendarStatus==='OBSERVED'?'PARTIAL_OR_UNKNOWN':calendarStatus,rejectedRows:calendarRejected}} }, null, 1));
   save();
   console.log('earnings history: ' + Object.keys(cache.syms).length + ' stocks (' + Object.values(cache.syms).reduce((a, x) => a + x.length, 0) + ' reports) | today: Alpha Vantage ' + av + ' calls, FMP ' + fmp + (fmpOff ? ' (not in plan)' : '') + ', Finnhub calendar ' + recent.length + ' recent reports | still to fetch ' + todo.filter(s => cache.tried[s] !== today).length);
   process.exit(0);
