@@ -54,6 +54,7 @@ test('button: a tap from another chat is ignored', async () => {
 });
 test('buttons are offered only for the BUYs under TODAY\'S ACTIONS, never for NOT ACTIONABLE names', async () => {
   const S = await load();
+  S.write('data/halal.json',{WST:{s:'ok',d:new Date().toISOString().slice(0,10)}});
   const text = "ACTIONS\n\nTODAY'S ACTIONS\nLONGER HOLDS | ...\n- BUY WST up to 406.26\n\nNOT ACTIONABLE TODAY (x)\n- MARK HALAL FIRST: HQY\n- BUY ZZZ never\n";
   const rows = S.fn('tradeButtons')(null, { TGT: { entry: 1 } }, 5, text).map(r => r.map(b => b.data));
   assert.deepEqual(rows, [['b|WST', 's|WST'], ['x|TGT']]);

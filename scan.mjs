@@ -175,7 +175,7 @@ function stopsText(sig) { const pos = loadPos(), syms = Object.keys(pos), ST = r
 //   MUST    = your own rules (halal per ZAD)          TESTED = passed a 5-year test (stop, warning filing, stretched take-profit)
 //   INFO    = known risk, not tested as a sell signal (earnings soon, dilution, low quality, source sold, news, too big a share)
 async function sellCheckText(sig) { const pos = loadPos(), syms = Object.keys(pos); if (!syms.length) return 'WHAT TO SELL: you have no stocks recorded.';
-  const pv = privRead(), Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), tips = readTips(), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
+  const pv = privRead(), Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, tips = readTips(), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
   let news = []; try { news = fs.readFileSync('data/news-log.jsonl', 'utf8').trim().split('\n').slice(-300).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean); } catch (e) {}
   const Q = readJson0('data/quality.json'), tot = syms.reduce((a, k) => a + ((pv.shares || {})[k] || 0) * (last[k] || pos[k].entry), 0);
   const sells = [], options = [], holds = [];
@@ -429,7 +429,7 @@ function catalystTier(rule) { const C = readJson0('data/catalyst-today.json'), v
 function catalystLines(sig, pos) { const C = readJson0('data/catalyst-today.json'); if (!C) return [];
   const tiers = { 'CAT-RUN1': catalystTier('CAT-RUN1'), 'CAT-NEWS1': catalystTier('CAT-NEWS1') }; if (!tiers['CAT-RUN1'] && !tiers['CAT-NEWS1']) return [];
   const after = (sig && sig.session) || ny(Date.now()).d, next = (C.sessions || []).find(d => d > after); if (!next) return [];
-  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
+  const Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
   const ok = (sym, hal) => sym && hal !== 'fail' && !bad.has(sym) && myHalal(sym) === 'ok' && !(lot[sym] >= 0.15) && !held.has(sym);
   const run = tiers['CAT-RUN1'] ? (C.upcoming || []).filter(u => u.buy === next && !u.entryPassed && !u.blocked && ok(u.sym, u.halal)).slice(0, 3) : [];
   const nw = tiers['CAT-NEWS1'] ? (C.news || []).filter(u => u.buy === next && ok(u.sym, u.halal)).slice(0, 3) : [];
@@ -465,7 +465,7 @@ const chainLayerName = (k) => String(k || '').replace('|', ' > ');
 function chainLines(sig, pos) { const C = readJson0('data/chain-today.json'); if (!C || !Array.isArray(C.buys) || !C.buys.length) return [];
   const tiers = Object.fromEntries(CHAIN_RULES.map(r => [r, chainTier(r)])); if (!CHAIN_RULES.some(r => tiers[r])) return [];
   const after = (sig && sig.session) || ny(Date.now()).d, next = (C.sessions || []).find(d => d > after); if (!next) return [];
-  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
+  const Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
   const rows = [], seen = new Set();
   for (const b of C.buys) { if (!b || !b.sym || !tiers[b.rule] || b.buy !== next || seen.has(b.sym) || held.has(b.sym)) continue;
     const hal = bad.has(b.sym) || b.halal === 'fail' || myHalal(b.sym) === 'fail' ? 'fail' : myHalal(b.sym) === 'ok' ? 'ok' : 'unknown';
@@ -493,7 +493,7 @@ function chainGraphLine(sym) { const C = readJson0('data/chain-today.json'), m =
 function discoveryLines(sig, pos) { if (!TIER2_ON()) return []; const C = readJson0('data/discovery2-today.json'); if (!C || !Array.isArray(C.buys) || !C.buys.length) return [];
   const on = (r) => C.rules && C.rules[r] === 'TRADABLE SMALL' && !tier2LedgerNegative('discovery:' + r);
   const after = (sig && sig.session) || ny(Date.now()).d, next = (C.sessions || []).find(d => d > after); if (!next) return [];
-  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
+  const Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {})), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
   const rows = [], seen = new Set();
   for (const b of C.buys) { if (!b || !b.sym || !on(b.rule) || b.buy !== next || seen.has(b.sym) || held.has(b.sym)) continue;
     const hal = bad.has(b.sym) || b.halal === 'fail' || myHalal(b.sym) === 'fail' ? 'fail' : myHalal(b.sym) === 'ok' ? 'ok' : 'unknown';
@@ -522,7 +522,7 @@ function autolabText() { const AL = readJson0('data/autolab.json'); if (!AL || A
     '', 'Only PROVEN LIVE rules (30+ paper trades, profitable, better than an average stock) appear in your ACTIONS. Check ZAD. Research only.'].join('\n'); }
 // OPPORTUNITY BOARD: everything worth knowing today, wider than the tested buys, each with an honest evidence label.
 //   [TESTED] passed its 5-year test   [EARLY] promising, too few trades yet   [PAPER] on live paper   [INFO] no test supports buying it
-function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 = (x) => money(x).replace(/\.00$/, ''), Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), mine = loadPos(), skip = (s0) => bad.has(s0) || mine[s0];
+function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 = (x) => money(x).replace(/\.00$/, ''), Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, mine = loadPos(), skip = (s0) => bad.has(s0) || mine[s0];
   // 1. what moved today (the whole market, from the live watcher)
   { const G = readJson0('data/ignition-live.json'), mv = G && G.missed ? G.missed.filter(x => x.code !== 'UNDER_1_USD' && !/^[A-Z]{4}[WUR]$/.test(x.sym) && x.maxUp >= 0.15 && x.maxUp < 20 && !skip(x.sym)).slice(0, N) : [];
     if (mv.length) out.push('MOVED TODAY [INFO] (' + G.day + ', 1 USD+ stocks up 15%+ at their high):', ...mv.map(x => '- ' + x.sym + ' up to +' + Math.round(x.maxUp * 100) + '%' + (x.afterFirstSeen ? ', ' + (x.afterFirstSeen.last >= 0 ? 'held' : 'faded') + ' after it showed' : '') + (x.preMarketVolX ? ', pre-market volume ' + x.preMarketVolX.toFixed(1) + 'x' : '')),
@@ -1249,11 +1249,11 @@ function goalsText() {
   for (const g of GOAL_LADDER) { const done = pv.goals.hit.includes(g); lines.push((done ? 'DONE ' : g === next ? 'NEXT ' : '- ') + goalName(g) + (g === next ? ': ' + money(Math.max(0, g - prog)) + ' USD to go' : '')); }
   lines.push(since.length >= 5 && days >= 30 && perMonth > 0 && next !== undefined ? 'Pace: about ' + money(perMonth) + ' USD a month so far, so the next goal in roughly ' + Math.ceil((next - prog) / perMonth) + ' months at this pace (a pace, not a promise).' : 'Pace: too early to measure (needs 5+ sales over a month).');
   // TIMELINE PLAN: your buy size x the expected profit a trade x trades a month
-  { const sg0 = readJson('data/signals.json', null), okc = sg0 ? planCands(sg0, {}).filter(x => x.ok) : [], avgAmt = okc.length ? okc.reduce((t, x) => t + amountFor(x, sg0.market, false).usd, 0) / okc.length : null, ub = usualBuy(), size = ub && ub.set ? ub.usd : avgAmt || (ub ? ub.usd : STD_BUY), mine = (pv.closed || []).filter(x => x.d >= pv.goals.start), buys30 = (pv.buys || []).filter(x => Date.now() - Date.parse(x.d) < 30 * 86400000).length;
+  { const sg0 = readJson('data/signals.json', null), okc = sg0 ? planCands(sg0, {}).filter(x => x.ok && myHalal(x.sym)==='ok') : [], avgAmt = okc.length ? okc.reduce((t, x) => t + amountFor(x, sg0.market, false).usd, 0) / okc.length : null, ub = usualBuy(), size = ub && ub.set ? ub.usd : avgAmt || (ub ? ub.usd : STD_BUY), mine = (pv.closed || []).filter(x => x.d >= pv.goals.start), buys30 = (pv.buys || []).filter(x => Date.now() - Date.parse(x.d) < 30 * 86400000).length;
     const tpm = pv.tradesPerMonth || (buys30 >= 5 ? buys30 : 10);
     let net = null, src = '';
     if (mine.length >= 10) { net = mine.reduce((a, x) => a + x.usd, 0) / mine.length / size; src = 'your own last ' + mine.length + ' sales'; }
-    else { const sg = readJson('data/signals.json', null), ok = sg ? planCands(sg, {}).filter(x => x.ok && !x.thin && typeof x.net === 'number') : []; if (ok.length) { net = ok.reduce((a, x) => a + x.net, 0) / ok.length; src = 'the average of today\u2019s proven buys (tested, not yet your live result)'; } else { net = null; } }
+    else { const sg = readJson('data/signals.json', null), ok = sg ? planCands(sg, {}).filter(x => x.ok && myHalal(x.sym)==='ok' && !x.thin && typeof x.net === 'number') : []; if (ok.length) { net = ok.reduce((a, x) => a + x.net, 0) / ok.length; src = 'the average of today\u2019s proven buys (tested, not yet your live result)'; } else { net = null; } }
     if (net === null) { lines.push('', 'TIMELINE PLAN: NO CURRENT PROVEN SETUP, so no timeline is shown (it is never based on an assumed return). It appears when proven buys exist or after 10+ of your own sales.'); }
     else {
     const at = (sz) => (net + 2 * FEE() / STD_BUY - 2 * FEE() / sz) * sz, month = (sz) => at(sz) * tpm;
@@ -1635,7 +1635,7 @@ function planText(sig, pos, px, title, only, full, opts) {
 function conclusion(sig, pos) {
   const out = ['CONCLUSION'];
   if (!sig) return out.concat('No scan has run yet.');
-  const held = pos || {}, OK = new Set(planCands(sig, held).filter(x => x.ok).map(x => x.kind + '|' + x.sym));   /* kind|sym: FOCUS is per engine kind (review S-14) */   // the same evidence gates as the plan: early, rejected or paper-only setups never show as BUY here
+  const held = pos || {}, OK = new Set(planCands(sig, held).filter(x => x.ok && myHalal(x.sym)==='ok').map(x => x.kind + '|' + x.sym));   /* kind|sym: FOCUS is per engine kind (review S-14) */   // the same evidence gates as the plan: early, rejected or paper-only setups never show as BUY here
   for (const q of (sig.quick || []).filter(x => !held[x.sym] && OK.has('quick trade|' + x.sym)).slice(0, 4)) out.push(q.sym + ': BUY ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ' | STOP ' + money(q.stop) + ' | SELL ' + (q.t1 ? money(q.t1) + (q.t2 ? ' then ' + money(q.t2) : '') : 'on the rule exit') + ' | out after ' + (q.maxHold || 5) + ' sessions at the latest');
   for (const b of (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !held[x.sym] && OK.has('swing trade|' + x.sym)).slice(0, 4)) out.push(b.sym + ': BUY ' + money(b.buyLo) + ' to ' + money(b.buyHi) + ' | STOP ' + money(b.stop) + ' | SELL ' + (b.target ? money(b.target) : 'when it closes below ~' + money(b.exitBelow)) + ' | swing trade, days to weeks');
   for (const r of (sig.leaders || []).filter(x => !held[x.sym] && OK.has('trend trade|' + x.sym)).slice(0, 5)) out.push(leadLine(r));
@@ -1651,7 +1651,7 @@ function conclusion(sig, pos) {
 // The same conclusion, recalculated from the price RIGHT NOW (market hours only): buy near the live price, with the stop and
 // selling prices moved by the same amount. A setup that has run away or failed is marked SKIP or CANCELLED.
 function conclusionLive(sig, pos, px) {
-  const out = ['WHAT TO DO NOW (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait time, live prices)'], held = pos || {}, OK = new Set(planCands(sig, held).filter(x => x.ok).map(x => x.kind + '|' + x.sym));   /* kind|sym: FOCUS is per engine kind (review S-14) */ let any = false;
+  const out = ['WHAT TO DO NOW (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait time, live prices)'], held = pos || {}, OK = new Set(planCands(sig, held).filter(x => x.ok && myHalal(x.sym)==='ok').map(x => x.kind + '|' + x.sym));   /* kind|sym: FOCUS is per engine kind (review S-14) */ let any = false;
   for (const q of (sig.quick || []).filter(x => !held[x.sym] && OK.has('quick trade|' + x.sym)).slice(0, 5)) { const p = px[q.sym]; if (!p) continue; any = true; const k = p / q.buyLo;
     out.push(p > q.buyHi ? q.sym + ': SKIP. Now ' + money(p) + ', above its entry range (' + money(q.buyLo) + ' to ' + money(q.buyHi) + ').' : p <= q.stop ? q.sym + ': CANCELLED. Now ' + money(p) + ', at or below its invalidation level ' + money(q.stop) + '.'
       : q.sym + ': BUY near ' + money(p) + ' | STOP ' + money(p - (q.buyLo - q.stop)) + ' | SELL ' + (q.t1 ? money(q.t1 * k) + (q.t2 ? ' then ' + money(q.t2 * k) : '') : 'on the rule exit') + ' | out after ' + (q.maxHold || 5) + ' sessions at the latest'); }
@@ -1684,7 +1684,7 @@ async function dayText(sig, pos) {
     if (/LOSING|WORSE/.test(r.verdict)) bad.push({ k, r }); if (/BETTER/.test(r.verdict)) good.push({ k, r }); }
   // your actions: tested sells, and the proven buys
   let h = { acts: { sell: [], part: [] } }; try { h = await holdingsText(sig, pos || {}, null, true); } catch (e) {}
-  const sells = [...h.acts.sell, ...h.acts.part].map(l => l.split(/[ :(]/)[0]), buys = planCands(sig, pos || {}).filter(x => x.ok);
+  const sells = [...h.acts.sell, ...h.acts.part].map(l => l.split(/[ :(]/)[0]), buys = planCands(sig, pos || {}).filter(x => x.ok && myHalal(x.sym)==='ok');
   const losing = bad.some(x => /LOSING/.test(x.r.verdict)), head = [];
   if (sells.length) head.push('SELL DAY: ' + sells.length + ' of your stocks hit their tested exit or stop (' + sells.slice(0, 6).join(', ') + '). Sell those first.');
   const PGd = protectWhy(pos || {}, null, sig);
@@ -1709,7 +1709,7 @@ async function hotList(sig) {
 async function detailList(sig) {
   if (!sig) return 'No scan has run yet.';
   const open = marketOpen(Date.now()), pos = loadPos(), px = {};
-  const OK = new Set(planCands(sig, pos).filter(x => x.ok).map(x => x.sym)), qk = (sig.quick || []).filter(x => !pos[x.sym] && OK.has(x.sym)).slice(0, 5), buys = (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !pos[x.sym] && OK.has(x.sym)).slice(0, 4);
+  const OK = new Set(planCands(sig, pos).filter(x => x.ok && myHalal(x.sym)==='ok').map(x => x.sym)), qk = (sig.quick || []).filter(x => !pos[x.sym] && OK.has(x.sym)).slice(0, 5), buys = (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !pos[x.sym] && OK.has(x.sym)).slice(0, 4);
   if (open) for (const sym of [...new Set([...qk.map(q => q.sym), ...buys.map(b => b.sym), ...Object.keys(pos)])].slice(0, 30)) { const j = await liveQ((sym)); if (j && +j.price > 0) px[sym] = +j.price; }
   const out = [...(open ? conclusionLive(sig, pos, px) : conclusion(sig, pos)), '', 'DETAILS, from the ' + sig.session + ' close' + (open ? ', priced now' : ' (market closed: these are the prices to use at the next open)')], live = async (sym, fallback) => px[sym] || fallback;
   if (qk.length) out.push('', 'QUICK TRADES, 2 TO 5 DAYS (' + qk.length + ')');
@@ -1902,8 +1902,8 @@ function checkOne(sym, sig) {
   const q = (sig.quick || []).find(x => x.sym === sym), st = (sig.stocks || []).find(x => x.sym === sym), qOk = q && q.n >= 30 && okEv(q.n, netOf(q.avgPct, q.last), q.win), stOk = st && st.state === 'Buy watch' && (st.n || 0) >= 30 && okEv(st.n || 0, netOf(st.avgPct || 0, st.last), st.win);
   const word = qOk || stOk ? 'BUY: a tested setup is open. Send  today  for the prices.' : st && st.state === 'Buy watch' ? 'WATCH ONLY: entry signal, but under 30 tested trades (early evidence). Paper only.' : q ? 'WATCH: quick setup with too little proof. Paper only.' : st && st.state === 'Blocked' ? 'NO BUY: blocked by earnings or news.' : st && st.proven && st.trigger ? 'WATCH: needs a daily close above ~' + money(st.trigger) + '.' : 'NO BUY: no tested setup.';
   const gv1 = gateVerdict(sym, sig), lines = [sym + ': ' + (myHalal(sym) === 'fail' ? 'NO BUY: you marked it NOT halal in ZAD.' : gv1 && /^BUY/.test(word) ? 'NO BUY (paper only): ' + gv1 + '.' : word), sym + ', from the ' + sig.session + ' close'];
-  if (q) lines.push('Quick trade setup: entry ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ', invalidation ' + money(q.stop) + (q.t1 ? ', target 1 ' + money(q.t1) : '') + '. Past result ' + Math.round(q.win * 100) + '% wins over ' + q.n + ' trades.');
-  if (st) lines.push('Closed ' + money(st.last) + '. ' + (st.uptrend ? 'In an uptrend' : 'Not in an uptrend') + ', ' + (st.mom6 >= 0 ? '+' : '') + Math.round(st.mom6 * 100) + '% over 6 months.', 'Rule: ' + st.rule + '. ' + (st.proven ? 'It passed its tests.' : 'It did not pass its tests, so no signals are given.'), 'State: ' + (st.state === 'Buy watch' ? 'ENTRY CONFIRMED' : st.trigger ? 'BUY WATCH, needs a close above ~' + money(st.trigger) : st.state) + '. ' + st.why, L.HALAL_TEXT[st.halal] || '');
+  if (q) lines.push((gv1?'RESEARCH ONLY — NO BUY APPROVAL. ':'')+'Quick trade setup: entry ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ', invalidation ' + money(q.stop) + (q.t1 ? ', target 1 ' + money(q.t1) : '') + '. Past result ' + Math.round(q.win * 100) + '% wins over ' + q.n + ' trades.');
+  if (st) lines.push('Closed ' + money(st.last) + '. ' + (st.uptrend ? 'In an uptrend' : 'Not in an uptrend') + ', ' + (st.mom6 >= 0 ? '+' : '') + Math.round(st.mom6 * 100) + '% over 6 months.', 'Rule: ' + st.rule + '. ' + (st.proven ? 'It passed its tests.' : 'It did not pass its tests, so no signals are given.'), 'State: ' + (gv1?'RESEARCH ONLY — NO BUY APPROVAL; ':'') + (st.state === 'Buy watch' ? 'ENTRY CONFIRMED' : st.trigger ? 'BUY WATCH, needs a close above ~' + money(st.trigger) : st.state) + '. ' + st.why, L.HALAL_TEXT[myHalal(sym)] || '');
   if (!q && !st) lines.push('Not on the scanned list, or it has under three years of price history. To have me scan it, add it to watchlist.txt in the repository. To check it right away, add it to the watchlist in Setup on the page.');
   return lines.filter(Boolean).join('\n');
 }
@@ -2127,7 +2127,7 @@ async function opinionReply(text, sig, src) {
   const SC = readJson('data/sectors.json', {}), pos = loadPos(), touch = [];
   if (env.FINNHUB_KEY) { let got = 0; for (const sym of Object.keys(pos)) if (SC[sym] === undefined && got < 8) { got++; try { const j = await (await fetch(FH + '/stock/profile2?symbol=' + sym + '&token=' + encodeURIComponent(env.FINNHUB_KEY))).json(); SC[sym] = (j && j.finnhubIndustry) || null; } catch (e) { } } if (got) fs.writeFileSync('data/sectors.json', JSON.stringify(SC)); }
   for (const sym of Object.keys(pos)) { const th = themeOfSector(SC[sym]); if (th && tnames.includes(th)) { const P = pos[sym]; touch.push(sym + ' (yours): in this theme. Plan unchanged: stop ' + (P.stop ? money(P.stop) : 'NOT SET') + '. A message is not a reason to add or to remove the stop.'); } }
-  for (const c of sig ? planCands(sig, pos).filter(x => x.ok) : []) { const th = themeOfSector(c.sector || SC[c.sym]); if (th && tnames.includes(th)) touch.push(c.sym + ': on tonight\u2019s BUY list and in this theme (' + c.kind + '). The plan\u2019s prices and stop still decide.'); }
+  for (const c of sig ? planCands(sig, pos).filter(x => x.ok && myHalal(x.sym)==='ok') : []) { const th = themeOfSector(c.sector || SC[c.sym]); if (th && tnames.includes(th)) touch.push(c.sym + ': on tonight\u2019s BUY list and in this theme (' + c.kind + '). The plan\u2019s prices and stop still decide.'); }
   { const rd = readJson('data/intraday-radar.json', null); if (rd && rd.session === day) for (const c of (rd.candidates || []).filter(x => x.levels)) { const th = themeOfSector(SC[c.sym]); if (th && tnames.includes(th)) touch.push(c.sym + ': on today\u2019s radar (' + c.stage.toLowerCase().replace(/_/g, ' ') + ')' + (c.proven ? ', proven setup' : ', paper only') + '.'); } }
   // 3. CLAIMS THAT CAN BE CHECKED: "earnings season" -> your stocks reporting in the next three weeks
   const earn = [];
@@ -2429,7 +2429,7 @@ function trySmallLines(pos, lastPx, exclude, session) {
     if (AL && fresh(AT) && AT.methods) { const runs = labRuns(AL); for (const id of tryQualifies(runs)) { if (lab === 'comeback' && src.some(x => x.id === id)) continue; if (id === LDIP_RULE) continue;   // (27 Oct) SQ11-PB12 is the LEADER DIP lane now: never shown twice
       const M = AT.methods[id], hold = +((runs[id] || {}).hold || (M && M.hold) || 63), sd = AT.lastClose || null; if (M && Array.isArray(M.newSignals)) src.push({ id, picks: M.newSignals.filter(p => p && sigFresh(sd || p.d, AT.generatedAt)).map(p => ({ sym: p.sym, px: pxOf({ sym: p.sym, px: p.close }, sd || p.d, AT.generatedAt) })), stopPct: hold > 100 ? 0.35 : 0.15, hold, what: M.name || 'published market pattern' }); } } }
   if (!src.length) return later.length ? ['TRY SMALL: no buy today (a pick is bought only within 5 sessions of its formation, as tested). Next ' + later.join(', ') + '.'] : [];
-  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);   // exclude: already a BUY elsewhere in this message
+  const Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);   // exclude: already a BUY elsewhere in this message
   let slots = TRY_MAX - Object.values(pos || {}).filter(P => P && P.src === 'try small').length; const buys = [], mark = [];
   for (const S0 of src) { if (tryLedgerOff('try:' + S0.id)) continue;
     for (const p of S0.picks) { if (!p || p.blocked || held.has(p.sym) || bad.has(p.sym)) continue; const h = myHalal(p.sym); if (h === 'fail') continue; let ew = ''; try { ew = eventWarn(p.sym); } catch (e) {} if (ew) continue;
@@ -2481,7 +2481,7 @@ function ldipLines(pos, lastPx, exclude, session) {
   const sd = T.lastClose || null, picks = M.newSignals.filter(p => p && p.sym && ldipFresh(sd || p.d, T.generatedAt, session));
   if (!picks.length) return [];
   if (ldipOff()) { const a = ldipResults(); return ['LEADER DIP: new buys are OFF. Its ' + a.length + ' finished trades average ' + pcs(a.reduce((x, r) => x + r.pct, 0) / a.length) + ' (below 0). Open positions keep their sell limit and time exit.']; }
-  const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);
+  const Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);
   const open = Object.values(pos || {}).filter(P => P && P.src === 'leader dip').length; let slots = LDIP_MAX - open; const buys = [], mark = [], full = [];
   for (const p of picks) { if (held.has(p.sym) || bad.has(p.sym) || buys.some(b => b.sym === p.sym)) continue; const h = myHalal(p.sym); if (h === 'fail') continue;
     let ew = ''; try { ew = eventWarn(p.sym) || dangerFlag(p.sym); } catch (e) {} if (ew) continue;
@@ -2523,8 +2523,8 @@ function practiceLine(lastPx) { try { const A = readJson0(ALP_FILE); if (!A || !
 const longTermLines = () => { const L = [];
   { const HZ = readJson0('data/horizons.json'), QY = readJson0('data/quality.json'), passed = [...Object.values((HZ && HZ.results) || {}), ...Object.values((QY && QY.results) || {})].some(r => r.verdict === 'PROMISING');
     if ((HZ || QY) && !passed) L.push('YARDSTICK: on 5 years, the S&P 500 beat every long-term stock-picking method tested. Long-term money: a halal index fund (check ZAD).'); }
-  L.push('YOUR MONTHLY CORE (unchanged): SPUS 54% + IAUM 46%, two orders; the bot reminds you on the first trading day of the month.');
-  L.push('If an engine has no proven buy, a spare 1,000 USD can wait in cash or go to the core; that is a long-term choice, separate from trading.');
+  L.push(coreZadBlock() || 'YOUR MONTHLY CORE (unchanged): SPUS 54% + IAUM 46%, two orders; the bot reminds you on the first trading day of the month.');
+  L.push(coreZadBlock() ? 'Unallocated cash stays cash while the core compliance review is incomplete.' : 'If an engine has no proven buy, a spare 1,000 USD can wait in cash or go to the core; that is a long-term choice, separate from trading.');
   return L; };
 function longTermText() { return ['LONGER-TERM (separate from trading; information, not trade instructions):', ...longTermLines().map(l => '- ' + l)].join('\n'); }
 // company names for the cards: SEC's ticker file, cached in data/names.json (a failed lookup just shows the ticker)
@@ -2566,7 +2566,7 @@ async function actionsText(sig, pos, px, title) {
   if (new Date().getUTCDay() === 0) { try { S.records.push(scoreboardText()); } catch (e) {} }
   const buySyms = () => new Set([...S.buys.join('\n').matchAll(/\bBUY ([A-Z][A-Z.\-]{0,7})\b/g)].map(m => m[1]));
   // LONGER HOLDS (owner's labelled choice, 20 Oct): F-score 8-9 in an uptrend; NOT PROVEN; tier 2 when it passed its own test
-  { const Q = readJson0('data/quality.json'), Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {}));
+  { const Q = readJson0('data/quality.json'), Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, lot = (sig && sig.lottery) || {}, held = new Set(Object.keys(pos || {}));
     const TSf = readJson0('data/tip-score.json'), faded = new Set(((TSf && TSf.fade) || []).map(f => f.sym)), lhOpen = Object.values(pos || {}).filter(P => P && P.src === 'longer hold').length;
     const picks = ((Q && Q.fscoreUpToday) || []).filter(x => x && x.sym && !bad.has(x.sym) && myHalal(x.sym) !== 'fail' && !(lot[x.sym] >= 0.15) && !held.has(x.sym) && !faded.has(x.sym) && !eventWarn(x.sym) && !BIOBLOCK.has(x.sym)).slice(0, Math.max(0, 3 - lhOpen));
     const tier = v15Tier(), status = tier === 'small' ? 'YOUR LABELLED CHOICE (20 Oct), tier 2 TRADABLE SMALL: passed its own test against the average stock (t ' + Q.v15.monthly['6m'].t.older.toFixed(1) + ' / ' + Q.v15.monthly['6m'].t.newer.toFixed(1) + '), below the 4.0 proof bar: NOT PROVEN' : tier === 'proven' ? 'PROVEN' : 'NOT PROVEN';
@@ -2623,7 +2623,7 @@ async function actionsText(sig, pos, px, title) {
     { const ml = macroLines(pos, cc); if (ml.length) S.routine.push(...ml); const mb = cc.filter(x => x.macroBlock); if (mb.length) S.notAct.push('HELD BACK (industry lags after ' + mb[0].macroBlock.toLowerCase() + '): ' + mb.slice(0, 8).map(x => x.sym).join(', ') + '.'); }
     { let ml = null; try { const L = fs.readFileSync('data/macro-log.jsonl', 'utf8').trim().split('\n'); ml = JSON.parse(L[L.length - 1]); } catch { } if (ml && Date.now() - Date.parse(ml.at) < 18 * 3600e3 && ml.kind) S.crit.push('MARKET SHOCK TODAY (S&P 500 ' + (ml.dp >= 0 ? '+' : '') + Number(ml.dp).toFixed(1) + '%): ' + (ml.kind === 'bigDown' ? 'HOLD everything, keep every stop; no panic-selling. The buys below stay valid at their prices.' : 'HOLD; do not chase; buy only inside the ranges below.')); }
     if (nb.length) S.notAct.push('HELD BACK (BAD NEWS): ' + nb.slice(0, 8).map(x => x.sym).join(', ') + ' filed news that was followed by losses in the tests (send  check ' + nb[0].sym + ' ).'); }
-  { const AL = readJson0('data/autolab.json'), pr = AL && AL.candidates ? Object.values(AL.candidates).filter(x => x.status === 'PROVEN LIVE' && x.today && x.today.length) : [], Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []);
+  { const AL = readJson0('data/autolab.json'), pr = AL && AL.candidates ? Object.values(AL.candidates).filter(x => x.status === 'PROVEN LIVE' && x.today && x.today.length) : [], Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded;
     if (pr.length) { const pg = protectWhy(pos || {}, px, sig).length; pb(['AUTO-DISCOVERED | rules the system invented, PROVEN ON LIVE PAPER' + (pg ? ' (caution: protect advice is on)' : '') + ':', ...pr.slice(0, 3).map(x => '- ' + x.name + ' (' + x.paper.n + ' paper trades, ' + pcs(x.paper.avg) + ' a trade): ' + x.today.filter(s0 => !bad.has(s0) && !(pos || {})[s0]).slice(0, 6).join(', ') + '. Picks from the last Sunday close; check ZAD; 1,000 USD each; stop: the tested stop.')]); } }
   if (sig && sig.quickHeld && sig.quickHeld.length) S.notAct.push('QUICK TRADES held back (not strong enough; logged on paper): ' + sig.quickHeld.slice(0, 6).map(x => x.sym).join(', ') + '. Why: ' + sig.quickHeld[0].why + '.');
   { const HL = readJson('data/hunting-lab.json', null), LS = readJson('data/leaders-study.json', null), rows = HL && HL.rules ? HL.rules : [], pass = rows.filter(r => r.verdict === 'PROMISING');
@@ -2702,10 +2702,10 @@ async function optionsShadow() { if (!env.ALPACA_KEY || !env.ALPACA_SECRET) retu
   // One ticket a night at most, only while fewer than 2 real contracts are open, only a call bought today under 300 USD, always
   // labelled as the small trial with no evidence yet. Separate message; never inside ACTIONS.
   { const realOpen = (S.real || []).filter(o => !o.closed).length, tk = S.open.filter(o => o.d === today && o.ask * 100 <= 300 && myHalal(o.sym) === 'ok' && !(S.real || []).some(r => !r.closed && r.sym === o.sym)).sort((a, b) => a.ask - b.ask)[0];   // 22 Oct: a real ticket only on a stock ZAD has confirmed halal (TEVA was sent while unchecked)
-    if (tk && realOpen < 2) S.trialSent = today; if (tk && realOpen < 2) await telegram(['OPTIONS TRIAL TICKET (separate from your stocks; 1 contract; no evidence yet, the paper test runs beside it)', '',
-      'In ZAD: ' + tk.sym + ' > Options > choose GOING UP > pick BUY CALL (never "sell put": that can lose more than you pay) > expiry ' + tk.exp + ' > strike ' + tk.strike + ' > quantity 1 > LIMIT ' + tk.ask.toFixed(2) + ' > confirm.', 'Cost: about ' + Math.round(tk.ask * 100) + ' USD + 5 USD ZAD fee = the most you can lose. Stock now ' + tk.under.toFixed(2) + '.',
+    if (tk && realOpen < 2) S.trialSent = today; if (tk && realOpen < 2) await telegram(['OPTIONS RESEARCH ONLY — NOT AN APPROVED BUY (1-contract paper reference; contract-level ZAD eligibility unverified)', '',
+      'PAPER CONTRACT REFERENCE: ' + tk.sym + ', expiry ' + tk.exp + ', strike ' + tk.strike + ', quantity 1, assumed ask ' + tk.ask.toFixed(2) + '. No order-entry instruction or purchase approval.', 'Modelled cost: about ' + Math.round(tk.ask * 100) + ' USD + 5 USD fee. Stock reference ' + tk.under.toFixed(2) + '.',
       'SELL TO CLOSE (limit at the bid) when ' + tk.sym + ' passes ' + (tk.strike * 1.05).toFixed(2) + ', or on ' + new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10) + ', whichever comes first. Never hold it to expiry.',
-      'Why this one: ' + tk.sym + ' is halal in ZAD (your mark), on tonight\u2019s LONGER HOLDS / leaders list, and this is the cheapest clean call 30-60 days out (spread under 15%).', 'If you place it, send:  bought option ' + tk.sym + ' ' + tk.strike + ' ' + tk.exp + ' ' + tk.ask.toFixed(2) + '  so I track it and tell you when to sell. Whether options themselves are allowed is ZAD\u2019s Sharia view: check it once.'].join('\n')); }
+      'Why this one: ' + tk.sym + ' is halal in ZAD (your mark), on tonight\u2019s LONGER HOLDS / leaders list, and this is the cheapest clean call 30-60 days out (spread under 15%).', 'Underlying owner approval is not contract-level Sharia approval. Contract eligibility and independent strategy evidence remain unverified; no new options purchase is approved.'].join('\n')); }
   // 5. OPTIONS LANE tickets (23 Oct 2026; options-lab.mjs): only rules at tier 2 or proven in data/options-lab.json; the same gates as the
   // trial ticket (halal ok in ZAD, at most 300 USD, at most 2 open counting tonight's tickets), labelled with the rule and its record and
   // logged to data/tier2-ledger.jsonl as option:<rule>. Nothing qualifies -> nothing new is shown. Logged tickets are resolved here at
@@ -2738,24 +2738,24 @@ function optionsText() { const OS = readJson0('data/options-shadow.json'); if (!
   return ['OPTIONS LAB (paper only, SEPARATE from your stock trading)', '',
     'Test: a call 30-60 days out on each tested stock BUY signal, bought at the ask, sold at the bid 14 days later, ZAD fee 5 USD a contract each way, next to the same stock over the same days.',
     (OS.cc ? 'Covered calls (paper) on the stocks you hold: ' + (OS.cc.open || []).length + ' open, ' + (OS.cc.done || []).length + ' finished' + ((OS.cc.done || []).length ? ', average income ' + pcs(av(OS.cc.done.map(o => o.incomePct || 0))) + ' of the stock value per 14 days after ZAD fees, while the stocks moved ' + pcs(av(OS.cc.done.filter(o => o.stock !== null).map(o => o.stock))) : '') + '.' : ''),
-    ...((OS.open || []).filter(o => o.ask * 100 <= 300 && myHalal(o.sym) === 'ok' && (OS.real || []).filter(r => !r.closed).length < 2 && !(OS.real || []).some(r => !r.closed && r.sym === o.sym)).slice(0, 2).map(o => 'TICKET (your choice, small trial, NO evidence yet): BUY TO OPEN 1 x ' + o.sym + ' ' + o.exp + ' ' + o.strike + ' CALL, limit ' + o.ask.toFixed(2) + ' (about ' + Math.round(o.ask * 100) + ' USD + 5 USD ZAD fee; the most you can lose). Plan: sell it when the stock passes ' + (o.strike * 1.05).toFixed(2) + ' or on ' + new Date(Date.parse(o.d) + 14 * 864e5).toISOString().slice(0, 10) + ', whichever first.')),
+    ...((OS.open || []).filter(o => o.ask * 100 <= 300 && myHalal(o.sym) === 'ok' && (OS.real || []).filter(r => !r.closed).length < 2 && !(OS.real || []).some(r => !r.closed && r.sym === o.sym)).slice(0, 2).map(o => 'TICKET — PAPER ONLY, NOT AN APPROVED BUY: 1 x ' + o.sym + ' ' + o.exp + ' ' + o.strike + ' CALL, limit ' + o.ask.toFixed(2) + ' (about ' + Math.round(o.ask * 100) + ' USD + 5 USD ZAD fee; the most you can lose). Plan: sell it when the stock passes ' + (o.strike * 1.05).toFixed(2) + ' or on ' + new Date(Date.parse(o.d) + 14 * 864e5).toISOString().slice(0, 10) + ', whichever first.')),
     (OS.cc && OS.cc.open && OS.cc.open.length ? 'COVERED CALL tickets need 100 shares of the stock; with 1,000 USD positions you do not have them, so these stay paper: ' + OS.cc.open.slice(0, 3).map(o => 'SELL TO OPEN 1 x ' + o.sym + ' ' + o.exp + ' ' + o.strike + ' CALL at ' + o.bid.toFixed(2)).join(' | ') : ''),
     (OS.real && OS.real.length ? 'YOUR TRIAL (real, 1 contract each): ' + OS.real.filter(o => !o.closed).map(o => o.sym + ' ' + o.exp + ' ' + o.strike + ' call, paid ' + o.paid.toFixed(2) + ', sell when ' + o.sym + ' passes ' + (o.strike * 1.05).toFixed(2) + ' or on ' + new Date(Date.parse(o.d) + 14 * 864e5).toISOString().slice(0, 10)).join(' | ') + (OS.real.some(o => o.closed) ? ' | closed: ' + OS.real.filter(o => o.closed).length + ', total ' + (OS.real.filter(o => o.closed).reduce((a, z) => a + z.pnl, 0) >= 0 ? '+' : '') + OS.real.filter(o => o.closed).reduce((a, z) => a + z.pnl, 0).toFixed(0) + ' USD' : '') : ''),
     'Open paper calls: ' + (OS.open || []).length + (OS.open && OS.open.length ? ' (' + OS.open.slice(-5).map(o => o.sym + ' ' + o.strike + ' call, exp ' + o.exp).join(', ') + ')' : '') + '.',
     d.length ? 'Finished: ' + d.length + ' on ' + days + ' signal day(s): calls ' + pcs(av(d.map(o => o.ret))) + ' a trade, ' + Math.round(d.filter(o => o.ret > 0).length / d.length * 100) + '% won, worst ' + pcs(Math.min(...d.map(o => o.ret))) + ' | the same stocks ' + (st.length ? pcs(av(st.map(o => o.stock))) : 'n/a') + '.' : 'Finished: none yet (first results 14 days after the first paper call).',
     'Verdict: ' + (d.length < 20 || days < 10 ? 'too early (20+ calls over 10+ days needed).' : av(d.map(o => o.ret)) > 0 && av(d.map(o => o.ret)) > (st.length ? av(st.map(o => o.stock)) : 0) ? 'calls did better than the stocks so far (one period only).' : 'calls did NOT beat simply owning the stock.'),
-    '', (d.length >= 20 && days >= 10 && av(d.map(o => o.ret)) > 0 && av(d.map(o => o.ret)) > (st.length ? av(st.map(o => o.stock)) : 0) ? 'SMALL TRIAL ALLOWED: the paper calls earned it. Rules: 1 contract per trade, at most 300 USD per trade, at most 2 open at once, sell after 14 days or at -50%. Options money is separate from your stock money.' : 'SMALL TRIAL: not yet. When the paper calls beat owning the stock (20+ calls over 10+ days), this line will say so, with the trial rules (1 contract, max 300 USD a trade, max 2 open).'), 'Sharia: per ZAD (options as offered in the ZAD app). The system never places orders.'].join('\n'); }
+    '', (d.length >= 20 && days >= 10 && av(d.map(o => o.ret)) > 0 && av(d.map(o => o.ret)) > (st.length ? av(st.map(o => o.stock)) : 0) ? 'PAPER COMPARISON THRESHOLD REACHED (not strategy or ZAD approval). Model: 1 contract per trade, at most 300 USD per trade, at most 2 open at once, sell after 14 days or at -50%. Options money is separate from your stock money.' : 'PAPER COMPARISON: insufficient cases; no options purchase is approved.'), 'Contract-level ZAD eligibility is unverified. An underlying stock mark and fitted/paper returns cannot approve an option contract. The system never places orders.'].join('\n'); }
 // OPTIONS LANE (options-lab.mjs -> data/options-lab.json, pre-registered 23 Oct 2026): a rule feeds the options ticket only at tier 2
 // (TRADABLE SMALL, while tier 2 is on and its own option ledger is not negative) or PROVEN. Separate from stock trading.
 function optionsLabTier(rule) { const B = readJson0('data/options-lab.json'), v = B && B.verdicts && B.verdicts[rule];
   if (v === 'PROVEN') return 'proven'; if (v !== 'TRADABLE SMALL' || !TIER2_ON() || tier2LedgerNegative('option:' + rule)) return null; return 'small'; }
-function optionsLabTicketText(tk, rule, tier, r) { const why = { 'OPT-LH1': 'a new LONGER HOLDS pick; the at-the-money call 60-90 days out', 'OPT-CAT1': 'a CAT-RUN1 run-up entry; a call expiring after the ' + (tk.event || 'catalyst') + ' date', 'OPT-FOLLOW1': 'a new options call by a trader at FOLLOW; the at-the-money call 30-60 days out' }[rule] || rule;
-  return ['OPTIONS TICKET, rule ' + rule + ' (' + (tier === 'proven' ? 'PROVEN' : 'TRADABLE SMALL, tier 2: passed its pre-registered test on real option prices in both halves, below the 4.0 proof bar') + '; separate from your stocks; 1 contract)',
+function optionsLabTicketText(tk, rule, tier, r) { if(myHalal(tk?.sym)!=='ok')return 'OPTIONS RESEARCH ONLY — NO BUY APPROVAL: current affirmative owner ZAD mark is missing, expired, excluded or rejected.'; const why = { 'OPT-LH1': 'a new LONGER HOLDS pick; the at-the-money call 60-90 days out', 'OPT-CAT1': 'a CAT-RUN1 run-up entry; a call expiring after the ' + (tk.event || 'catalyst') + ' date', 'OPT-FOLLOW1': 'a new options call by a trader at FOLLOW; the at-the-money call 30-60 days out' }[rule] || rule;
+  return ['OPTIONS RESEARCH ONLY — NOT AN APPROVED BUY, rule ' + rule + ' (' + (tier === 'proven' ? 'PROVEN' : 'TRADABLE SMALL, tier 2: passed its pre-registered test on real option prices in both halves, below the 4.0 proof bar') + '; separate from your stocks; 1 contract)',
     'Record of the rule: ' + r.n + ' trades, ' + pcs(r.avg) + ' a call after the spread and ZAD fees, vs ' + pcs(r.stock) + ' for the same stock with the same money, block t ' + r.tBlock + '.', '',
-    'In ZAD: ' + tk.sym + ' > Options > choose GOING UP > pick BUY CALL (never "sell put") > expiry ' + tk.exp + ' > strike ' + tk.k + ' > quantity 1 > LIMIT ' + tk.ask.toFixed(2) + ' > confirm.',
+    'PAPER CONTRACT REFERENCE: ' + tk.sym + ', expiry ' + tk.exp + ', strike ' + tk.k + ', quantity 1, assumed ask ' + tk.ask.toFixed(2) + '. No order-entry instruction or purchase approval.',
     'Cost: about ' + Math.round(tk.ask * 100 + 5) + ' USD with the 5 USD ZAD fee = the most you can lose. Stock now ' + tk.spot.toFixed(2) + '.',
     'SELL TO CLOSE (limit at the bid) on ' + tk.sellBy + ' (the rule\u2019s exit' + (rule === 'OPT-CAT1' ? ', 2 sessions before the event; never hold through it' : '') + '). Never hold it to expiry.',
-    'Why: ' + why + '. ' + tk.sym + ' is marked halal in ZAD (yours). If you place it, send:  bought option ' + tk.sym + ' ' + tk.k + ' ' + tk.exp + ' ' + tk.ask.toFixed(2) + ' . Whether options are allowed is ZAD\u2019s Sharia view: check it once.'].join('\n'); }
+    'Why observed: ' + why + '. Underlying '+tk.sym+' has a current owner mark; contract-level Sharia eligibility and purchase approval remain unverified.'].join('\n'); }
 // the two affordable-call forward paper boards (squad15b-lab.mjs -> data/squad15b-board.json): 3 lines each, information only
 function squad15bLines() { const B = readJson0('data/squad15b-board.json'), M = (B && B.methods) || {}, out = [], p = (x) => typeof x === 'number' ? pcs(x) : 'n/a';
   for (const [id, cap, from] of [['SQ15-PB12-300', '300 USD', '27 Oct'], ['SQ15-PB12-2000', '2,000 USD, delta <= 0.85', '28 Oct']]) { const a = M[id] && M[id].all, c = (a && a.closed) || {};
@@ -2770,7 +2770,7 @@ function optionsLabText() { const B = readJson0('data/options-lab.json'); if (!B
   return ['OPTIONS LANE (long calls only, 1 contract, SEPARATE from your stocks; ' + (B.window || []).join(' to ') + ', run ' + String(B.generatedAt || '').slice(0, 10) + ')', '', ...Object.keys(B.verdicts).map(line), '',
     'Options traders (explicit options calls, scored with real call prices): ' + ((B.leaderboard || []).slice(0, 5).map(t => t.name + ' ' + t.level + ' (' + t.priced + ' priced on ' + t.days + ' days' + (t.avg !== null && t.avg !== undefined ? ', ' + pcs(t.avg) + ' a call' : '') + ')').join('; ') || 'none found'),
     'Data: Alpaca daily option bars ' + (c.firstOptionBar || '?') + ' to ' + (c.lastOptionBar || '?') + ' (' + (c.optionSeriesCached || 0) + ' contracts priced, ' + (c.contractsCached || 0) + ' listed). ' + ((B.coverage && B.coverage.note) || ''),
-    live.length ? 'LIVE: ' + live.join(', ') + ' feed the options ticket (halal ok only, at most 300 USD, at most 2 open).' : 'LIVE: no options rule has reached tier 2 or proven, so no new options ticket is shown. Sharia: options are ZAD\u2019s view to confirm.',
+    live.length ? 'LIVE: ' + live.join(', ') + ' feed PAPER REFERENCE tickets only (not approved purchases; contract-level ZAD eligibility unverified).' : 'LIVE: no options rule has reached tier 2 or proven, so no new options ticket is shown. Sharia: options are ZAD\u2019s view to confirm.',
     '', 'AFFORDABLE-CALL PAPER BOARDS (forward, paper only, not a buy):', ...squad15bLines()].join('\n'); }
 async function stockMap(sym, sig, pos, short) { const CS = readJson0('data/chains-status.json'), CH = (readJson0('data/chains.json') || {}).chains || {}, QY = readJson0('data/quality.json'), up = [], down = [], out = [];
   const ex = (r, b) => r === null || r === undefined || b === null || b === undefined ? null : r - b, vs = (r) => r === null || r === undefined ? 'n/a' : pcs(r) + (CS && CS.spy && CS.spy.r3 !== null ? ' (S&P ' + pcs(CS.spy.r3) + ')' : '');
@@ -2857,7 +2857,7 @@ function tradeWords(t0) {
 // tap on Confirm, or your own  bought / sold  line, records the trade. "Skipped" records only that you passed (no trade).
 function tradeButtons(sig, pos, max, text) {
   const rows = [], act = text ? ((String(text).split("\nNOT ACTIONABLE TODAY")[0].split("TODAY'S ACTIONS")[1]) || '') : '';
-  const syms = [...new Set([...act.matchAll(/^- BUY ([A-Z][A-Z.\-]{0,7})\b/gm), ...act.matchAll(/^\d+\) ([A-Z][A-Z.\-]{0,7})\b/gm)].map(m => m[1]))];
+  const syms = [...new Set([...act.matchAll(/^- BUY ([A-Z][A-Z.\-]{0,7})\b/gm), ...act.matchAll(/^\d+\) ([A-Z][A-Z.\-]{0,7})\b/gm)].map(m => m[1]))].filter(sym=>myHalal(sym)==='ok');
   for (const sym of syms.slice(0, max || 5)) rows.push([{ text: 'I bought ' + sym, data: 'b|' + sym }, { text: 'Skipped ' + sym, data: 's|' + sym }]);
   for (const sym of Object.keys(pos || {}).slice(0, 6)) rows.push([{ text: 'I sold all ' + sym, data: 'x|' + sym }]);
   return rows;
@@ -3043,7 +3043,12 @@ function basketZadLines(P, onBuy) { const out = [];
   if (P.dropped.length) out.push('LEFT OUT: ' + P.dropped.join(', ') + ' (NOT halal in ZAD, no halal reserve left); the others are scaled up.');
   out.push('CHECK IN ZAD FIRST: ' + (P.unmarked.length ? P.unmarked.map(x => x.sym + (onBuy ? ' (' + usd2(x.usd) + ' USD, in SPUS until you mark it)' : '')).join(', ') + (onBuy ? '' : ' (on the buy day its share goes to SPUS until you mark it)') + '. After checking, send one of:\n' + halalAsk(P.unmarked.map(x => x.sym)) : 'none (every stock above is marked halal in ZAD).'));
   return out; }
+function coreZadBlock(marks = basketMarks()) {
+  const missing=['SPUS',BASKET_GOLD_SYM].filter(sym=>!Object.hasOwn(marks||{},sym)||marks[sym]!=='ok');
+  return missing.length ? 'NO CORE PURCHASE APPROVAL: '+missing.join(', ')+' needs a current affirmative owner ZAD mark. Keep that allocation in cash; no substitute purchase is approved. Existing holdings and the saved allocation are unchanged.' : null;
+}
 function basketText(amount = 1000, now = Date.now()) {
+  const blocked=coreZadBlock();if(blocked)return 'THE BASKET — '+blocked;
   const d = ny(now).d, M = basketMonth(amount), buy = basketNextBuy(d), head = 'THE BASKET (one of the system’s ways: long-term core)';
   if (!B1_ON()) return [head, 'Every month (your choice, 27 Oct): your whole amount in SPUS ' + B2_SPUS + '% + ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '%.', 'For ' + usd0(amount) + ' USD: SPUS ' + usd2(M.spus) + ' USD + ' + BASKET_GOLD_SYM + ' ' + usd2(M.gold) + ' USD. 2 orders in ZAD.', 'The halal top-10 basket (Basket 1) is OFF. Your trading lane is LEADER DIP (3 slots of 1,000 USD).', '', ...BASKET_RECORD, '', 'Your orders, your choice: I never place a trade. Other amounts:  basket 1500 .'].join('\n');
   const month = ['This month: Basket 2 = ' + (100 - BASKET_STOCKS) + '% of ' + usd0(amount) + ' USD = ' + usd2(M.b2) + ' USD (SPUS ' + B2_SPUS + '% = ' + usd2(M.spus) + ' USD, ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '% = ' + usd2(M.gold) + ' USD). Set aside ' + BASKET_STOCKS + '% = ' + usd2(M.aside) + ' USD in cash for Basket 1.',
@@ -3066,6 +3071,7 @@ function basketBuyText(amount, now = Date.now()) {
   const d = ny(now).d, buy = basketNextBuy(d), src = basketSrcNow(), head = 'THE BASKET: BASKET 1 BUY (halal top 10) with ' + usd0(amount) + ' USD saved';
   if (!src) return head + '\nThe halal top-10 list is not ready yet (squad10-lab.mjs writes it every weekday evening); keep the cash until it is.';
   const P = basketPlan(src, basketMarks(), amount), F = basketFee(P);
+  if(P.spusUsd>0 && myHalal('SPUS')!=='ok')return 'NO BASKET PURCHASE APPROVAL: the proposed fallback SPUS has no current affirmative owner ZAD mark. Keep the saved amount in cash until review; no substitute purchase is approved.';
   const out = [head + ' (' + longDate(d) + (buy === d ? ', a Basket 1 buy day' : '; buy days: first trading day of January, May and September, next ' + longDate(buy)) + ')',
     'List formed ' + longDate(src.lastReview) + (src.derived ? ' (taken from the top 20)' : '') + '. Enter these WHOLE-NUMBER percentages in ZAD Basket 1 (total 100%):',
     ...P.rows.map(r => '- ' + r.sym + ' ' + r.pct + '% = ' + usd2(r.usd) + ' USD (ZAD halal' + (r.replaces ? '; replaces ' + r.replaces : '') + (r.raised ? '; rounded up to 1%' : '') + ')')];
@@ -3088,7 +3094,7 @@ function basketChange(prev, cur) { if (!prev || !cur) return null; const a = pre
 function basketRebalanceText(ch, P, buy) { const pc = (x) => (x * 100).toFixed(1) + '%';
   return ['THE BASKET: NEW TOP-10 LIST (formed ' + longDate(ch.review) + ')', '',
     'IN: ' + (ch.ins.length ? ch.ins.join(', ') : 'none'), 'OUT: ' + (ch.outs.length ? ch.outs.join(', ') : 'none'), ...(ch.moved.length ? ['NEW WEIGHT: ' + ch.moved.map(s => s + ' ' + pc(ch.wOld[s]) + ' -> ' + pc(ch.wNew[s])).join(', ')] : []), '',
-    ...(P ? ['NEW PERCENTAGES for your next Basket 1 buy' + (buy ? ' (' + longDate(buy) + ')' : '') + ' (whole numbers, total 100%, after ZAD checks):', P.rows.map(r => r.sym + ' ' + r.pct + '%').join(', ') + (P.unmarked.length ? '. Check in ZAD first: ' + P.unmarked.map(x => x.sym).join(', ') + ' (in SPUS until marked).' : '.'), 'Basket 2 stays SPUS ' + B2_SPUS + '% / ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '% every month.', ''] : []),
+    ...(P ? ['NEW PERCENTAGES for your next Basket 1 buy' + (buy ? ' (' + longDate(buy) + ')' : '') + ' (whole numbers, total 100%, after ZAD checks):', P.rows.map(r => r.sym + ' ' + r.pct + '%').join(', ') + (P.unmarked.length ? '. Check in ZAD first: ' + P.unmarked.map(x => x.sym).join(', ') + ' (in SPUS until marked).' : '.'), coreZadBlock() || 'Basket 2 stays SPUS ' + B2_SPUS + '% / ' + BASKET_GOLD_SYM + ' ' + B2_GOLD + '% every month.', ''] : []),
     'Old holdings are never sold (no extra commissions): keep what you have; only the next Basket 1 buy uses the new percentages.',
     'Send  basket  for this month, or  basket buy AMOUNT  on the buy day.'].join('\n'); }
 // what is due now (pure): { msgs, state } ; first sight of a formation (or an old top-20 one) = the baseline, stored without a message
@@ -3098,7 +3104,7 @@ function basketRebalanceText(ch, P, buy) { const pc = (x) => (x * 100).toFixed(1
 const B1_ON = () => (readJson0('data/settings.json') || {}).basket1 === true;
 function basketDue(now, S0, T10, T17, marks, b1 = B1_ON()) { const S = { ...(S0 || {}) }, msgs = [], n = ny(now), f = basketFormation(T10);
   if (f) { if (!S.formation || S.formation.id !== BASKET_ID) S.formation = f; else { const ch = basketChange(S.formation, f); if (ch && !b1) S.formation = f; else if (ch) { ch.wOld = S.formation.w; ch.wNew = f.w; msgs.push(basketRebalanceText(ch, basketPlan(basketSource(T10, T17), marks || {}, 1000), basketNextBuy(n.d))); S.formation = f; S.rebalanceSent = n.d; } else if (S.formation.review !== f.review) S.formation = f; } }
-  const ym = n.d.slice(0, 7); if (firstSessionOfMonth(n.d) && n.mins >= 570 && S.monthly !== ym) { msgs.push((b1 ? BASKET_MONTHLY : BASKET_MONTHLY_B2) + (b1 && B1_MONTHS.includes(+n.d.slice(5, 7)) ? '\n' + BASKET_BUYDAY : '')); S.monthly = ym; }
+  const ym = n.d.slice(0, 7); if (firstSessionOfMonth(n.d) && n.mins >= 570 && S.monthly !== ym) { const blocked=coreZadBlock(marks);msgs.push(blocked ? 'Monthly basket day: '+blocked : (b1 ? BASKET_MONTHLY : BASKET_MONTHLY_B2) + (b1 && B1_MONTHS.includes(+n.d.slice(5, 7)) ? '\n' + BASKET_BUYDAY : '')); S.monthly = ym; }
   return { msgs, state: S }; }
 // run by the bot's full check every 5 minutes (intraday(true)); an action reminder, so it is sent in quiet mode too
 async function basketNotices(now = Date.now()) { try {
@@ -3146,7 +3152,7 @@ async function tgCommands(sig) {
     if (u.callback_query) {   // a tapped button: Bought / Sold / Skipped
       const cq = u.callback_query, chatId = cq.message && cq.message.chat ? cq.message.chat.id : (cq.from && cq.from.id); let txt = null, note = 'Recorded';
       const [kind, sym, sh, cpx] = String(cq.data || '').split('|');
-      const ask = async (text, rows) => { try { await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text, ...(rows ? { reply_markup: { inline_keyboard: rows } } : {}) }) }); } catch (e) {} };
+      const ask = async (text, rows) => { text='RECORDING ONLY — NOT PURCHASE APPROVAL. '+text; try { await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text, ...(rows ? { reply_markup: { inline_keyboard: rows } } : {}) }) }); } catch (e) {} };
       if (String(chatId) === String(env.TG_CHAT) && sym) {
         // (28 Oct) a first tap records nothing: it asks for confirmation with the exact shares and price
         if (kind === 'b') { let p = null; try { const j = await liveQ(sym); p = +j.price || null; } catch (e) {} const n = p ? Math.max(1, Math.floor(1000 / p)) : null; note = 'Not recorded yet: confirm first';
@@ -3250,7 +3256,7 @@ async function tgCommands(sig) {
       continue; }
     if (/^(lab|hunting|hunting lab|hunt)\s*$/i.test(text)) { const w = readJson('data/hunting-lab.json', null); out.push(w && w.text ? w.text : 'The hunting lab runs every Sunday with the fair test. No result yet.'); continue; }
     if (/^(winners?|winner study|patterns?)\s*$/i.test(text)) { const w = readJson('data/winners-study.json', null); out.push(w && w.text ? w.text : 'The winners study runs every Sunday with the fair test. No result yet.'); continue; }
-    if (/^(report|scan|full report)\s*$/i.test(text)) { const r = fs.existsSync('data/scan-report.txt') ? fs.readFileSync('data/scan-report.txt', 'utf8') : ''; out.push(r || 'No nightly report saved yet. It arrives after tonight\u2019s scan.'); continue; }
+    if (/^(report|scan|full report)\s*$/i.test(text)) { const r = fs.existsSync('data/scan-report.txt') ? fs.readFileSync('data/scan-report.txt', 'utf8') : ''; out.push(cachedReportText(r)); continue; }
     if (/^(radar|early|wave)\b/i.test(text)) { const r = readJson('data/intraday-radar.json', null); out.push(r && r.text ? r.text : 'The early-wave radar has not produced a board yet. It runs about every 15 minutes while the US market is open (from ' + kwt(570, sessDay()) + ' Kuwait).'); continue; }
     // WHAT TO SELL AND WHY (before the general "today / sell" list, which only shows stop hits)
     if (/^\s*(sell|sells|sell check|why sell|what\s+(to|should\s+i|do\s+i|can\s+i)\s+sell\b.*|which\s+(stocks?\s+)?(to|should\s+i)\s+sell\b.*|\u0634\u0646\u0648\s+\u0623?\u0627?\u0628\u064A\u0639.*|\u0645\u0627\u0630\u0627\s+\u0623?\u0627?\u0628\u064A\u0639.*)\s*\??\s*$/i.test(text)) { out.push(await sellCheckText(sig)); continue; }
@@ -3608,6 +3614,7 @@ function leadLedger(dn) {
   return ' Winners averaged ' + (w.length ? pc(sum(w) / w.length) : 'none yet') + ', losers ' + (l.length ? pc(sum(l) / l.length) : 'none yet') + '. Profit factor ' + (l.length && sum(l) < 0 ? (sum(w) / -sum(l)).toFixed(2) : 'not yet measurable') + ' (above 1 means it earns). Best ' + pc(Math.max(...dn.map(p => p.pct))) + ', worst ' + pc(Math.min(...dn.map(p => p.pct))) + '. Deepest fall of the paper account ' + (dd * 100).toFixed(1) + '%.' + (dn.length < 20 ? ' Under 20 finished trades: too few to judge.' : '');
 }
 const leadLine = (r) => r.sym + ': BUY ' + money(r.buyLo) + ' to ' + money(r.buyHi) + ' | STOP ' + money(r.stop) + ' | SELL when it closes under its trailing stop or its 50 day average (now ~' + money(r.e50) + ') | trend trade, weeks';
+function cachedReportText(report) { return report ? 'SAVED SCAN — RESEARCH ONLY, NOT AN APPROVED BUY. Cached entry instructions are withheld because current owner ZAD and price evidence must be rechecked. The original saved report is preserved. Send actions or check SYMBOL for a current gated review.' : 'No nightly report saved yet. It arrives after tonight’s scan.'; }
 const leadersText = () => {
  const s=readJson(LEAD_FILE,null);if(!s)return 'LEADERS — RESEARCH ONLY. No saved research snapshot is available.';
  const rows=(Array.isArray(s.paper)?s.paper:[]).filter(p=>p&&typeof p.sym==='string'&&/^[A-Z][A-Z0-9.\-]{0,9}$/.test(p.sym));
@@ -3918,7 +3925,7 @@ async function daily() {
       const e = await earnings(r.sym); if (e.known && e.date && e.days <= 7) { leadSkip.push(r.sym + ' (earnings ' + e.date + ')'); continue; }
       const nr = await newsRisk(r.sym); if (nr.hard) { leadSkip.push(r.sym + ' (' + nr.hard.tag.toLowerCase() + ')'); continue; }
       const row = { sym: r.sym, last: r.px, buyLo: +r.px.toFixed(2), buyHi: +(r.px + 0.5 * r.a).toFixed(2), stop: +(r.px - LEADCFG.ATR * r.a).toFixed(2), e50: +r.e50.toFixed(2), mom: r.mom, earn: earnText(e) + (nr.soft ? '. WARNING, ' + nr.soft.tag.toLowerCase() : ''), earnDays: e.known && e.date ? e.days : null };
-      if (leadOk) leadRows.push(row); LS.paper.push({ sym: r.sym, picked: session, buyHi: row.buyHi, stop: row.stop, mom: r.mom, rule: LC.rule, paperOnly: !leadOk || undefined });
+      if (leadOk && myHalal(row.sym)==='ok') leadRows.push(row); LS.paper.push({ sym: r.sym, picked: session, buyHi: row.buyHi, stop: row.stop, mom: r.mom, rule: LC.rule, paperOnly: !leadOk || undefined });
     }
   }
   {

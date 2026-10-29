@@ -13,7 +13,7 @@ test('only explicit owner ZAD yes is eligible; exclusion takes precedence',()=>{
 test('watcher gates approved wording before quote check and Telegram send',()=>{
  const s=fs.readFileSync(new URL('../ignition-watch.mjs',import.meta.url),'utf8');
  const body=s.slice(s.indexOf('async function maybeAlert'),s.indexOf('// ---- pre-market record'));
- assert.match(body,/if \(!early && !zadApproved\(r.sym, halal, zadNot\)\).*ZAD_NOT_CONFIRMED.*return;/);
+ assert.match(body,/if \(!early && !currentOwnerZadApproved\(r.sym\)\).*ZAD_NOT_CONFIRMED.*return;/);
  assert.ok(body.indexOf('ZAD_NOT_CONFIRMED')<body.indexOf('approvedQuoteGate('));
  assert.ok(body.indexOf('ZAD_NOT_CONFIRMED')<body.indexOf('await tg('));
 });

@@ -123,7 +123,7 @@ export function buildMidday(snap, ctx0 = {}) {
   if (blocked.length) text.push('BLOCKED by hard rules (not leads): ' + blocked.slice(0, 6).join('; ') + (blocked.length > 6 ? '; +' + (blocked.length - 6) + ' more' : '') + '.');
   // C
   const cr = closestRule(ctx.record, ctx.lab);
-  text.push('', 'C. APPROVED SIGNALS: ' + (snap.alerts > 0 ? snap.alerts + ' tested alert' + (snap.alerts > 1 ? 's' : '') + ' sent today (see those messages).' : '0 so far today.'));
+  text.push('', 'C. SIGNAL DELIVERY HISTORY: ' + (Number.isInteger(snap.alerts)&&snap.alerts>=0?snap.alerts:'unknown') + ' watcher messages reported today. This may include early paper alerts; cached counts are not current purchase or ZAD approval.');
   if (!(snap.alerts > 0) && cr) text.push('  Closest: ' + cr.rule + ' (' + cr.n + ' paper trades on ' + cr.days + ' days, ' + pct(cr.avg, 1) + ' a trade). Missing: ' + cr.missing.join('; ') + '.');
   // D
   text.push('', 'D. RUNNERS SO FAR (retrospective, not buys)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers));
@@ -163,12 +163,12 @@ export function buildClose(day, live, ledger = [], ctx = {}) {
       text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
     text.push('', 'D. RUNNERS WE MISSED TODAY (retrospective, not buys):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true));
     const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
-    text.push('', 'C. APPROVED SIGNALS today: ' + (live.alerts || 0) + '. Tested buys for the next session come in ACTIONS tonight.');
+    text.push('', 'C. SIGNAL DELIVERY HISTORY today: ' + (Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown') + '. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.');
   }
   const sb = scoreboard(ledger), P = sb.panels;
   text.push('', 'RADAR SCORECARD (' + sb.sessions + ' session' + (sb.sessions === 1 ? '' : 's') + '; verdict after 10):');
   for (const k of ['A', 'B']) { const p = P[k]; text.push('- ' + k + ': ' + (p && p.n ? p.n + ' lines, same day ' + pct(p.avgNet, 1) + ' net on average, ' + Math.round(p.win * 100) + '% positive' + (p.beatMkt !== null ? ', ' + Math.round(p.beatMkt * 100) + '% beat the average stock' : '') : 'no scored lines yet')
     + (p && p.n5 ? '; 5 sessions ' + pct(p.avgNet5, 1) + ', ' + Math.round(p.beatSpy5 * 100) + '% beat SPY' : '')); }
-  text.push('Nothing here is an approved buy unless it says APPROVED. Research only, not advice.');
+  text.push('Nothing in this research summary is a current approved purchase. Cached delivery history is not authorization. Research only, not advice.');
   return text.join('\n');
 }

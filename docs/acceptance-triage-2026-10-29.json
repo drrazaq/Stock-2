@@ -1,0 +1,414 @@
+{
+  "version": 1,
+  "date": "2026-10-29",
+  "source": "9240d422547567738ee58128cdeb8a702a46c119",
+  "acceptance": {
+    "complete": 23,
+    "total": 40,
+    "percent": 57.5
+  },
+  "classificationCounts": {
+    "SAFE_NOW": 7,
+    "INDEPENDENT_OR_MARKET_EVIDENCE": 6,
+    "OWNER_AUTHORIZATION": 4
+  },
+  "rules": [
+    "Exact original requiredVerification retained; no lowering criteria",
+    "A dependency or unfinished review is not an external blocker",
+    "Safe partial work continues on blocked empirical checks",
+    "No order/alert/deploy/secret binding changes authorized"
+  ],
+  "checks": [
+    {
+      "id": "REPO-03",
+      "title": "Behavioral review of every script",
+      "status": "UNFINISHED_SAFE_ENGINEERING",
+      "actionability": "SAFE_BRANCH",
+      "requiredVerification": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this.",
+      "classification": "SAFE_NOW",
+      "files": [
+        "*.mjs",
+        "tools/*.mjs",
+        "index.html",
+        "docs/engineering-inventory.json"
+      ],
+      "tests": [
+        "Per-script contract review and risk-based regression; tests are not a substitute for reading side effects."
+      ],
+      "evidenceRequired": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this.",
+      "currentGap": "Unreviewed large modules remain real unfinished branch work, not an external blocker.",
+      "shortestSafeRoute": "Review unreviewed modules in shared I/O families, record individual contracts and repair defects; no broad rerun while investigating.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "ACTIONS-04",
+      "title": "All workflow failure/write/concurrency semantics",
+      "status": "UNFINISHED_SAFE_ENGINEERING",
+      "actionability": "SAFE_BRANCH",
+      "requiredVerification": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch.",
+      "classification": "SAFE_NOW",
+      "files": [
+        ".github/workflows/*.yml",
+        ".github/save-data.sh",
+        ".github/private-data.sh"
+      ],
+      "tests": [
+        "test/save-data.test.mjs",
+        "test/private-data.test.mjs",
+        "tests/repository-preservation.test.mjs"
+      ],
+      "evidenceRequired": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch.",
+      "currentGap": "86 workflows and 137 publication/rebase sites have differing failure/conflict policies. Parsed semantic inventory is not a completed behavioral review.",
+      "shortestSafeRoute": "Consolidate conflict contracts by template, inject disposable-Git races/refusals on each distinct writer; retain both frozen results. Do not dispatch production.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "MARKET-02",
+      "title": "Actual provider entitlements and coverage",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "LIVE_AND_PROVIDER_EVIDENCE",
+      "requiredVerification": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.",
+      "partialEvidence": "Owner-confirmed Massive Starter15minute delay; authorized actual SIP/IEX endpoint samples and official SDK symbol-request contract. Alpaca account contract/full universe still unverified.",
+      "classification": "INDEPENDENT_OR_MARKET_EVIDENCE",
+      "files": [
+        "alpaca-feed.mjs",
+        "hybrid-snapshot-transport.mjs",
+        "tools/alpaca-batch-access-probe.mjs",
+        "docs/alpaca-batch-access-observed-2026-10-29.md"
+      ],
+      "tests": [
+        "test/alpaca-feed.test.mjs",
+        "Existing observed HTTP200 SIP/IEX report, not a contract"
+      ],
+      "evidenceRequired": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.",
+      "currentGap": "Official account/endpoint, exchange and extended-hours entitlement evidence remains absent. Existing 200-symbol sample returned189 and cannot establish full coverage.",
+      "shortestSafeRoute": "Obtain a non-secret account/plan/endpoint entitlement description and secure read-only broad response evidence. Never ask for keys; no purchase.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "MARKET-03",
+      "title": "All-provider symbol/session normalization",
+      "status": "UNFINISHED_SAFE_ENGINEERING",
+      "actionability": "SAFE_BRANCH",
+      "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
+      "partialEvidence": "Independent clock/provider/feed repairs and explicit-universe offline session contracts; all-provider audit remains open.",
+      "classification": "SAFE_NOW",
+      "files": [
+        "market-symbol.mjs",
+        "snapshot-fields.mjs",
+        "alpaca-feed.mjs",
+        "scan.mjs",
+        "research-collector.mjs",
+        "historical-integrity.mjs",
+        "index.html"
+      ],
+      "tests": [
+        "Representative provider ingress, share-class/alias, units, timestamp, session/DST/half-day and invalid-data fixtures"
+      ],
+      "evidenceRequired": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
+      "currentGap": "All-ingress normalization review is unfinished; independent historical identity is separately HISTORY-02.",
+      "shortestSafeRoute": "Enumerate each actual ingress and its symbol/units/clock/session contract; route uncertain aliases to explicit rejection; test the ingress rather than just the helper.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "MARKET-04",
+      "title": "Measured full-session freshness and latency",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "APPROVED_LIVE_EVIDENCE",
+      "requiredVerification": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this.",
+      "classification": "OWNER_AUTHORIZATION",
+      "files": [
+        "watcher-heartbeat.mjs",
+        "watcher-session.mjs",
+        "hybrid-research-session.mjs",
+        "docs/minimum-live-research-validation.md"
+      ],
+      "tests": [
+        "Authorized complete regular, premarket and half-day observations; denominators, latency, outages, every-minute evidence"
+      ],
+      "evidenceRequired": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this.",
+      "currentGap": "Current approval excludes live Phase A installation/dispatch; fixtures and short snapshots cannot establish full sessions.",
+      "shortestSafeRoute": "Approve separately dated source-pinned research sessions after readiness. A small diagnostic must not be counted as this full-session acceptance.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "DISCOVERY-03",
+      "title": "Whole-market premarket discovery verified",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "PHASE_A_APPROVAL_AND_LIVE_EVIDENCE",
+      "requiredVerification": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence.",
+      "classification": "OWNER_AUTHORIZATION",
+      "files": [
+        "hybrid-research-session.mjs",
+        "hybrid-snapshot-transport.mjs",
+        "hybrid-research-checkpoint.mjs",
+        "docs/minimum-live-research-validation.md"
+      ],
+      "tests": [
+        "Explicit whole-universe live premarket denominator and measured missing/fresh/latency evidence"
+      ],
+      "evidenceRequired": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence.",
+      "currentGap": "The old7dd702d Massive collector is delayed and invalid as real-time coverage proof. A revised live runtime is not implemented/pinned/approved.",
+      "shortestSafeRoute": "Finish and review the minimal revised collector; obtain exact dated approval before install/dispatch. Individual confirmation is not whole-market discovery.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "DISCOVERY-04",
+      "title": "Prospective matched lead/false-positive evaluation",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "PROSPECTIVE_AND_SEPARATE_APPROVAL",
+      "requiredVerification": "Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping.",
+      "classification": "OWNER_AUTHORIZATION",
+      "files": [
+        "discovery-runtime.mjs",
+        "discovery-paper.mjs",
+        "tools/check-research-evidence.mjs",
+        "docs/trading-evidence-dashboard.md"
+      ],
+      "tests": [
+        "Pre-registered prospective sample/days, matched controls, first-detection/crossing clocks, BBO, costs, misses and uncertainty"
+      ],
+      "evidenceRequired": "Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping.",
+      "currentGap": "Actual prospective cases0; collection requires separately approved live scope. A broker paper order is neither needed nor authorized.",
+      "shortestSafeRoute": "After engineering coverage validation, approve an immutable prospective observation protocol; measure quotes/cost models locally without broker orders and without tuning on the holdout.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "CATALYST-03",
+      "title": "All-source ingestion and deduplication",
+      "status": "UNFINISHED_SAFE_ENGINEERING",
+      "actionability": "SAFE_BRANCH",
+      "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
+      "classification": "SAFE_NOW",
+      "files": [
+        "news-watch.mjs",
+        "discovery-runtime.mjs",
+        "scan.mjs",
+        "radar-v3-core.mjs",
+        "catalyst-integrity.mjs"
+      ],
+      "tests": [
+        "tests/news-delivery.test.mjs",
+        "tests/discovery-runtime.test.mjs",
+        "test/catalyst-integrity.test.mjs",
+        "Cross-job revised-story and conflicting-source fixtures"
+      ],
+      "evidenceRequired": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
+      "currentGap": "All-source ingestion and stable revision identity/durable dedup remain unfinished; derived generatedAt must not be presented as original publication.",
+      "shortestSafeRoute": "Review every source producer plus consumer, test malformed/future/stale/conflicting/revised records and restored jobs; preserve publication vs ingestion clocks.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "CATALYST-04",
+      "title": "Independent point-in-time catalyst/missing-source audit",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "INDEPENDENT_DATA",
+      "requiredVerification": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability.",
+      "classification": "INDEPENDENT_OR_MARKET_EVIDENCE",
+      "files": [
+        "catalyst-integrity.mjs",
+        "catalyst-lab.mjs",
+        "events-study.mjs",
+        "docs/engineering-ledger.json"
+      ],
+      "tests": [
+        "Authenticated contemporaneous primary sources, access times and missing-source denominators"
+      ],
+      "evidenceRequired": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability.",
+      "currentGap": "Current caches cannot independently authenticate what was knowable at historical decision time.",
+      "shortestSafeRoute": "Admit independently archived filings/news with provenance and access clocks; classify missing archives as unresolved, not negative catalysts.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "ZAD-04",
+      "title": "Every approved recommendation and cached-render path",
+      "status": "CLOSURE_CANDIDATE_UNVERIFIED",
+      "actionability": "SAFE_BRANCH",
+      "requiredVerification": "Enumerate all current BUY/entry/action channels, monthly/basket/owner lanes, options, callbacks and cached reports. With missing/stale/expired/rejected/malformed/third-party marks, prove no approved BUY; test valid owner yes separately. Catalyst/cache repairs alone are partial.",
+      "partialEvidence": "Catalyst, cached leaders and rebalancing ADD owner gates repaired; remaining core/monthly/basket/options/callback/report paths still require full matrix.",
+      "classification": "SAFE_NOW",
+      "files": [
+        "zad-compliance.mjs",
+        "scan.mjs",
+        "index.html",
+        "ignition-watch.mjs",
+        "radar-v3-core.mjs",
+        "telegram-delivery.mjs"
+      ],
+      "tests": [
+        "tests/zad-route-closure.test.mjs",
+        "test/zad-policy-integration.test.mjs",
+        "test/basket-lane.test.mjs",
+        "test/options-ticket.test.mjs",
+        "test/options-lab-live.test.mjs",
+        "test/bot-actions.test.mjs",
+        "test/catalyst-actions.test.mjs",
+        "test/chain-actions.test.mjs",
+        "test/discovery-actions.test.mjs",
+        "test/follow-actions.test.mjs"
+      ],
+      "evidenceRequired": "Enumerate all current BUY/entry/action channels, monthly/basket/owner lanes, options, callbacks and cached reports. With missing/stale/expired/rejected/malformed/third-party marks, prove no approved BUY; test valid owner yes separately. Catalyst/cache repairs alone are partial.",
+      "currentGap": "Coordinated repairs and focused controls under verification; no acceptance credit until full exact-source CI and reviewed route matrix pass.",
+      "shortestSafeRoute": "Finish source/renderer route matrix, adversarial mark states and valid controls, then close only the compliance engineering prerequisite; no strategy or Sharia opinion is invented.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "EXEC-03",
+      "title": "Cross-lane entry/stop/gap/cost consistency",
+      "status": "UNFINISHED_SAFE_ENGINEERING",
+      "actionability": "SAFE_BRANCH",
+      "requiredVerification": "Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity.",
+      "classification": "SAFE_NOW",
+      "files": [
+        "scan.mjs",
+        "trade-plan.mjs",
+        "stops.mjs",
+        "early-alerts.mjs",
+        "ignition-watch.mjs",
+        "discovery-paper.mjs"
+      ],
+      "tests": [
+        "test/trade-words.test.mjs",
+        "tests/trade-plan.test.mjs",
+        "Per-lane delivered vs registered entry/stop/exit/hold/fee/gap specification tests"
+      ],
+      "evidenceRequired": "Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity.",
+      "currentGap": "Several owner-lane safety overlays differ from frozen tests; a complete plan/specification comparison has not been performed.",
+      "shortestSafeRoute": "Map every delivered plan to immutable rule specification and label changed safety variants; block missing/nonfinite price plans. Do not rewrite frozen returns to fit new stops.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "TELEGRAM-03",
+      "title": "All send paths, stable IDs and cross-job durability",
+      "status": "UNFINISHED_SAFE_ENGINEERING",
+      "actionability": "SAFE_BRANCH",
+      "requiredVerification": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.",
+      "partialEvidence": "Basket intent/ACK/quarantine repaired on branch; remote journal still opt-in, all-route delivery/persistence not complete.",
+      "classification": "SAFE_NOW",
+      "files": [
+        "telegram-delivery.mjs",
+        "telegram-delivery-ledger.mjs",
+        "alert-delivery-state.mjs",
+        "scan.mjs",
+        "news-watch.mjs",
+        ".github/workflows/bot.yml",
+        ".github/workflows/news.yml"
+      ],
+      "tests": [
+        "tests/telegram-delivery-ledger.test.mjs",
+        "tests/news-delivery.test.mjs",
+        "tests/basket-delivery.test.mjs",
+        "tests/watchdog-delivery.test.mjs",
+        "Independent job/partial ACK/lost save/offset/restart/race fixtures"
+      ],
+      "evidenceRequired": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.",
+      "currentGap": "Command offsets/replies and all-route remote durability remain unfinished. Extending private token bindings/permissions is not authorized; mocks cannot certify that deployment.",
+      "shortestSafeRoute": "Finish state/outbox protocol and branch fixtures with existing capabilities; if all-route activation needs new secret access, present exact bindings for separate approval instead of silently adding them.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "TELEGRAM-04",
+      "title": "Authorized actual non-BUY delivery validation",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "SEPARATE_OWNER_APPROVAL",
+      "requiredVerification": "After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this.",
+      "classification": "OWNER_AUTHORIZATION",
+      "files": [
+        "telegram-delivery.mjs",
+        "telegram-delivery-ledger.mjs",
+        "docs/minimum-live-research-validation.md"
+      ],
+      "tests": [
+        "One approved non-sensitive non-BUY real message, actual ACK and restored independent-job reconciliation"
+      ],
+      "evidenceRequired": "After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this.",
+      "currentGap": "Live Telegram delivery is explicitly not authorized.",
+      "shortestSafeRoute": "Request approval only after a concrete one-message dated proposal with recipient, content, dedup key, failure and rollback is ready. No BUY content.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "STRATEGY-04",
+      "title": "Independent realistic after-cost replay",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "INDEPENDENT_DATA",
+      "requiredVerification": "Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained.",
+      "classification": "INDEPENDENT_OR_MARKET_EVIDENCE",
+      "files": [
+        "historical-integrity.mjs",
+        "discovery-paper.mjs",
+        "account-replay-core.mjs",
+        "data/*-lab.json (read-only frozen evidence)"
+      ],
+      "tests": [
+        "Independent point-in-time source/identity/universe and untouched holdout; realistic executable entry/exit/cost replay"
+      ],
+      "evidenceRequired": "Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained.",
+      "currentGap": "Independent history including delistings, executable quotes and selection provenance is not established.",
+      "shortestSafeRoute": "Acquire available independent archives without purchase; admit complete evidence or explicitly report unvalidated cases; preserve rejected/frozen firstRun results.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "HISTORY-02",
+      "title": "Actual identity/ticker/delisting/survivorship audit",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "INDEPENDENT_DATA",
+      "requiredVerification": "Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness.",
+      "classification": "INDEPENDENT_OR_MARKET_EVIDENCE",
+      "files": [
+        "historical-integrity.mjs",
+        "historical-integrity.mjs",
+        "docs/historical-price-identity-admission.md",
+        "data/ security-reference evidence (read-only)"
+      ],
+      "tests": [
+        "Security IDs and as-known membership at decision/entry/exit, class/ticker actions and terminal delisting values"
+      ],
+      "evidenceRequired": "Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness.",
+      "currentGap": "Admission schemas and current asset lists do not authenticate historical identities or survivorship completeness.",
+      "shortestSafeRoute": "Match archived provider/SEC/exchange identities and terminal events for the actual universe; unresolved identities remain excluded/unresolved with counts.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "HISTORY-03",
+      "title": "All performance claims and windows validated",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "SAFE_REVIEW_PLUS_INDEPENDENT_DATA",
+      "requiredVerification": "Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results.",
+      "classification": "INDEPENDENT_OR_MARKET_EVIDENCE",
+      "files": [
+        "scan.mjs",
+        "index.html",
+        "docs/frozen-study-metadata-audit-2026-10-29.json",
+        "data/*-lab.json (read-only)"
+      ],
+      "tests": [
+        "Every numerical/tested/proven/unseen user-facing claim mapped to source, selection/cost/hold windows; separate reproduction"
+      ],
+      "evidenceRequired": "Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results.",
+      "currentGap": "Wording can be repaired safely, but full closure also requires independent authentication/reproduction of all claims; current source metadata alone is insufficient.",
+      "shortestSafeRoute": "Catalogue claims first; qualify unsupported wording and reproduce from admitted independent sources without touching frozen outputs.",
+      "safePartialWorkAllowed": true
+    },
+    {
+      "id": "HISTORY-04",
+      "title": "Benchmark/capacity/drawdown/uncertainty report",
+      "status": "BLOCKED_FOR_FULL_CLOSURE",
+      "actionability": "OBSERVED_OR_INDEPENDENT_DATA",
+      "requiredVerification": "Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability.",
+      "classification": "INDEPENDENT_OR_MARKET_EVIDENCE",
+      "files": [
+        "discovery-paper.mjs",
+        "discovery-runtime.mjs",
+        "account-replay-core.mjs",
+        "docs/trading-evidence-dashboard.md"
+      ],
+      "tests": [
+        "Observed candidate/control/SPY executable paths, costs/size/capacity/censored gaps/drawdowns, predeclared clustered uncertainty"
+      ],
+      "evidenceRequired": "Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability.",
+      "currentGap": "No admitted prospective candidate/control sample exists. Simulation arithmetic is not empirical risk or profitability.",
+      "shortestSafeRoute": "Collect approved immutable observations, report unresolved gaps, then evaluate matched after-cost returns and uncertainty on untouched confirmation data.",
+      "safePartialWorkAllowed": true
+    }
+  ]
+}

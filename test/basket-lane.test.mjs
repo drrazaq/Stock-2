@@ -12,7 +12,7 @@ import http from 'node:http';
 import { loadScan as loadScan0, blocked } from './load-scan.mjs';
 // (27 Oct 2026) Basket 1 is off by default (owner: "no basket, I will buy SPUS and IAUM"). This file pins the Basket 1 ON behaviour, so it
 // switches it on unless a test sets settings itself. The default-off behaviour is pinned in test/leader-dip.test.mjs.
-const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'data/settings.json': { basket1: true, ...(((o.files || {})['data/settings.json']) || {}) } } });
+const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'data/halal.json': { SPUS:{s:'ok',d:new Date().toISOString().slice(0,10)}, IAUM:{s:'ok',d:new Date().toISOString().slice(0,10)}, ...((o.files||{})['data/halal.json']||{}) }, 'data/settings.json': { basket1: true, ...(((o.files || {})['data/settings.json']) || {}) } } });
 
 let sent = [], queue = [], uid = 100;
 const server = http.createServer((req, res) => { let body = ''; req.on('data', c => body += c); req.on('end', () => {
@@ -139,7 +139,7 @@ test('rebalance change detection: members in/out or a weight change at a new for
 test('rebalance notice: baseline silent (also over an old top-20 state); a new top-10 list is sent once with the % for the next Basket 1 buy and no selling', async () => {
   // (27 Oct 2026, owner-approved: "no basket, I will buy SPUS and IAUM") Basket 1 notices are OFF by default; this test pins them with
   // settings.basket1 === true (the 6th argument). The default-off behaviour is pinned in test/leader-dip.test.mjs.
-  const due = (...a) => S.fn('basketDue')(...a.slice(0, 5), true), SAT = Date.parse('2026-10-24T15:00:00Z');
+  const due = (...a) => S.fn('basketDue')(...a.slice(0, 4), {SPUS:'ok',IAUM:'ok',...(a[4]||{})}, true), SAT = Date.parse('2026-10-24T15:00:00Z');
   let r = due(SAT, {}, T10(FOUR), T17, {});
   assert.equal(r.msgs.length, 0); assert.equal(r.state.formation.review, '2026-10-02'); assert.equal(r.state.formation.id, 'SQ10-SH10-C15');
   const old = due(SAT, { formation: { review: '2026-10-02', w: Object.fromEntries(LIVE20.map(m => [m.sym, m.weightAtReview])) }, monthly: '2026-10' }, T10(FOUR), T17, {});
@@ -156,7 +156,7 @@ test('rebalance notice: baseline silent (also over an old top-20 state); a new t
 
 test('monthly reminder: first US trading day of each month after the open, once; Jan / May / Sep add the Basket 1 buy-day line', async () => {
   // (27 Oct 2026, owner-approved) the Basket 1 buy-day line now needs settings.basket1 === true (6th argument); Basket 2 is unchanged.
-  const due = (...a) => S.fn('basketDue')(...a.slice(0, 5), true), first = S.fn('firstSessionOfMonth');
+  const due = (...a) => S.fn('basketDue')(...a.slice(0, 4), {SPUS:'ok',IAUM:'ok',...(a[4]||{})}, true), first = S.fn('firstSessionOfMonth');
   assert.equal(first('2026-11-02'), true); assert.equal(first('2026-11-03'), false); assert.equal(first('2026-11-01'), false);
   const base = due(Date.parse('2026-10-24T15:00:00Z'), {}, T10(FOUR), T17, {}).state;
   assert.equal(due(Date.parse('2026-11-02T13:00:00Z'), base, T10(FOUR), T17, {}).msgs.length, 0);   // before the open

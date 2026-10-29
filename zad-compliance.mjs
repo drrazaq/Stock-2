@@ -17,7 +17,7 @@ export function resolveZad(marks,list,now=Date.now()) {
   if(!symbol(sym)||!object(m))continue;
   const at=zadDate(m.d),fresh=at!==null&&now>=at&&now-at<=90*86400000;
   if(m.s==='fail')out[sym]={...m,s:'fail',requiresRecheck:!fresh};
-  else if(m.s==='ok')out[sym]=valid&&fresh&&!/ZAD list|Zoya|Halal Terminal|HalalScreener/i.test(String(m.by||''))?{...m,s:'ok'}:{...m,s:'expired',was:'ok',requiresRecheck:true};
+  else if(m.s==='ok')out[sym]=valid&&fresh&&(m.requiresRecheck===undefined||m.requiresRecheck===false)&&(m.by===undefined||typeof m.by==='string')&&!/ZAD list|Zoya|Halal Terminal|HalalScreener/i.test(String(m.by||''))?{...m,s:'ok'}:{...m,s:'expired',was:'ok',requiresRecheck:true};
  }
  for(const sym of excluded)out[sym]={s:'fail',d:list.effective||list.received||null,by:'ZAD list',requiresRecheck:true};
  return {valid,marks:out,excluded,reason:valid?null:!listValid?'MISSING_OR_MALFORMED_ZAD_LIST':'MISSING_OR_MALFORMED_OWNER_MARKS'};
@@ -26,7 +26,7 @@ export function zadApproved(symbol, marks, excluded, nowMs = Date.now()) {
   const date = marks?.[symbol]?.d;
   const markedAt = typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? Date.parse(date + 'T00:00:00Z') : NaN;
   const dated = Number.isFinite(markedAt) && new Date(markedAt).toISOString().slice(0, 10) === date;
-  return typeof symbol === 'string' && !!marks && Object.hasOwn(marks, symbol)
-    && marks[symbol]?.s === 'ok' && dated && Number.isFinite(nowMs)
+  return typeof symbol === 'string' && /^[A-Z][A-Z0-9.\-]{0,9}$/.test(symbol) && object(marks) && Object.hasOwn(marks, symbol) && object(marks[symbol])
+    && marks[symbol]?.s === 'ok' && (marks[symbol]?.requiresRecheck===undefined||marks[symbol]?.requiresRecheck===false) && (marks[symbol]?.by===undefined||typeof marks[symbol]?.by==='string') && !/ZAD list|Zoya|Halal Terminal|HalalScreener/i.test(String(marks[symbol]?.by||'')) && dated && Number.isFinite(nowMs)
     && nowMs >= markedAt && nowMs - markedAt <= 90 * 86400000 && excluded instanceof Set && !excluded.has(symbol);
 }

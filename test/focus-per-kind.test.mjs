@@ -79,14 +79,14 @@ test('control: tier2 on: the ledger row is shown in the scorecard', async () => 
 });
 
 test('ACTIONS: a POSITIVE tier-2 ledger alone keeps the FOCUS MODE notice and does not open the opportunities board', async () => {
-  const S = await loadScan({ files: { 'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': sig(), 'data/tier2-ledger.jsonl': tier2Ledger } });
+  const S = await loadScan({ files: { 'data/halal.json':{SPUS:{s:'ok',d:new Date().toISOString().slice(0,10)},IAUM:{s:'ok',d:new Date().toISOString().slice(0,10)}},'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': sig(), 'data/tier2-ledger.jsonl': tier2Ledger } });
   const t = await S.fn('actionsText')(sig(), {}, {});
   assert.match(t, /POLICY TODAY: focus ON: engine buys PAUSED/);   // (28 Oct bot repair) one policy line replaces the FOCUS MODE block
   assert.doesNotMatch(t, /OPPORTUNITIES BEYOND/);
 });
 
 test('ACTIONS (bot repair 28 Oct): long-term advice is not in ACTIONS at all; one pointer to  longterm , which holds it', async () => {
-  const S = await loadScan({ files: { 'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': sig(), 'data/tier2-ledger.jsonl': tier2Ledger } });
+  const S = await loadScan({ files: { 'data/halal.json':{SPUS:{s:'ok',d:new Date().toISOString().slice(0,10)},IAUM:{s:'ok',d:new Date().toISOString().slice(0,10)}},'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': sig(), 'data/tier2-ledger.jsonl': tier2Ledger } });
   const t = await S.fn('actionsText')(sig(), {}, {});
   assert.doesNotMatch(t, /index fund|BEST USE OF YOUR NEXT|hold cash/i);
   assert.match(t, /LONGER-TERM: kept separate \(send  longterm \)/);
@@ -95,7 +95,7 @@ test('ACTIONS (bot repair 28 Oct): long-term advice is not in ACTIONS at all; on
 
 test('CONCLUSION: with only quick trades working, the same stock as a swing setup is not printed as a swing BUY', async () => {
   const s = sig({ quickRecord: quickFull, stocks: [swing('AAA')] });
-  const S = await loadScan({ files: { 'data/settings.json': { focus: true }, 'data/signals.json': s } });
+  const S = await loadScan({ files: { 'data/halal.json':{AAA:{s:'ok',d:new Date().toISOString().slice(0,10)}},'data/settings.json': { focus: true }, 'data/signals.json': s } });
   const t = S.fn('conclusion')(s, {}).join('\n');
   assert.match(t, /AAA: BUY .*out after 5 sessions/);
   assert.doesNotMatch(t, /AAA: BUY .*swing trade/);

@@ -39,7 +39,7 @@ test('silence reason picks the biggest code and its kind', () => { const t = top
 
 test('midday: labelled panels, hard blocks shown as BLOCKED never as leads, one line per stock, extended stocks left out', () => {
   const r = buildMidday(snap(), ctx), t = r.text;
-  for (const p of ['A. LIVE RESEARCH LEADS (' + NOT_APPROVED, 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED, 'C. APPROVED SIGNALS: 0 so far today', 'D. RUNNERS SO FAR']) assert.ok(t.includes(p), p);
+  for (const p of ['A. LIVE RESEARCH LEADS (' + NOT_APPROVED, 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED, 'C. SIGNAL DELIVERY HISTORY: 0 watcher messages', 'D. RUNNERS SO FAR']) assert.ok(t.includes(p), p);
   assert.match(t, /- GOOD: IG1 at 09:49 \$3\.10, now \$3\.40/); assert.equal((t.match(/- GOOD:/g) || []).length, 1);
   assert.match(t, /minute-bar history verdict REJECTED/); assert.match(t, /halal \(your ZAD mark\)/);
   assert.match(t, /- NEWSY \+4%.*HALAL UNKNOWN/); assert.match(t, /SEC 8-K contract/);
@@ -54,9 +54,9 @@ test('midday: an empty day still says 0 approved, no leads, and why; a late watc
   const t = buildMidday(snap({ firstMinute: '11:10', hits: [], early: [], movers: [], tally: {} }), {}).text;
   assert.match(t, /WATCHER STARTED LATE today \(11:10\)/);
   assert.doesNotMatch(t, /NO MARKET DATA/);
-  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Received 0 stocks \(0/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. LIVE RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. APPROVED SIGNALS: 0 so far today\./);
+  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Received 0 stocks \(0/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. LIVE RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. SIGNAL DELIVERY HISTORY: 0 watcher messages/);
 });
-test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. APPROVED SIGNALS: 2 tested alerts sent today/));
+test('midday: cached watcher counts cannot become approval', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. SIGNAL DELIVERY HISTORY: 2 watcher messages[^\n]*not current purchase or ZAD approval/));
 
 test('scorecard: same-day net after costs vs the market; 5-session net vs SPY', () => {
   const L = [{ type: 'list', d: '2026-10-28', panel: 'A', sym: 'X', px: 10 }, { type: 'close', d: '2026-10-28', sym: 'X', px: 11, mkt: 0.01 },
@@ -71,7 +71,7 @@ test('after the close: scores today, lists missed runners with reasons, says whe
   const t = buildClose('2026-10-28', live, L, {});
   assert.match(t, /- A X: \$10\.00 to \$11\.00, net \+9\.1% \(\+8\.1% vs the average stock\)/); assert.doesNotMatch(t, /- OPENZ/); assert.match(t, /\+1 under 1 USD, mostly warrants/); assert.match(t, /- BRAI up to \+95% \(first seen 09:49 at \+47%; \+28% from there to 15:00\): a rule caught it/);
   assert.match(t, /MSGR up to \+1290% \(LIKELY A SPLIT OR DATA ERROR/); assert.match(t, /Top reason for silence today: under 1 USD \(4 of 4 movers/);
-  assert.match(t, /C\. APPROVED SIGNALS today: 0/); assert.match(t, /RADAR SCORECARD \(1 session; verdict after 10\)/);
+  assert.match(t, /C\. SIGNAL DELIVERY HISTORY today: 0/); assert.match(t, /RADAR SCORECARD \(1 session; verdict after 10\)/);
   assert.match(buildClose('2026-10-29', live, [], {}), /saved no results for today/);
 });
 

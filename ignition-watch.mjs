@@ -158,6 +158,7 @@ const flag = (sym, f, text) => { const v = vis[sym]; if (!v) return; v.flags[f] 
 const IG8_RETIRED = process.env.IG8_ON !== '1';
 const IG8 = IG8_RETIRED ? null : LIVE_RULES.find(r => r.id === 'IG8'), IG8T = IG8_RETIRED ? null : LIVE_RULES.find(r => r.id === 'IG8T');
 let earlyAlerts = 0;
+function currentOwnerZadApproved(sym) { const p=resolveZad(readJson('data/halal.json',null),readJson('data/zad-list.json',null));return p.valid && zadApproved(sym,p.marks,p.excluded); }
 async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
   const ok0 = liveOnly ? [{ rule: R.id, exit: 'trail', exitName: 'stop 8%, then sell when it falls 10% from its high since the buy, else at the close' }, { rule: R.id, exit: 'close', exitName: 'stop 8%, sell at the close' }] : passed.filter(p => p.rule === R.id);
   if (!ok0.length) { flag(r.sym, 'ruleNotPassed', 'caught by ' + R.id + ' (paper only: the rule has not passed its history test)'); return; }
@@ -169,7 +170,7 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
   if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
   if (!isFreshPriceAge(rd)) { flag(r.sym, 'noLive', 'price age ' + (typeof rd !== 'number' || !Number.isFinite(rd) ? 'unknown' : rd < 0 ? 'invalid (future timestamp)' : Math.round(rd) + ' minutes') + ': not fresh enough to alert'); return; }
-  if (!early && !zadApproved(r.sym, halal, zadNot)) { t.blocked = ['ZAD_NOT_CONFIRMED']; flag(r.sym, 'halalUnknown', 'approved alert withheld: confirm halal in ZAD first'); return; }
+  if (!early && !currentOwnerZadApproved(r.sym)) { t.blocked = ['ZAD_NOT_CONFIRMED']; flag(r.sym, 'halalUnknown', 'approved alert withheld: confirm halal in ZAD first'); return; }
   // Only an approved BUY needs an executable quote; unproven paper setups remain research.
   let approvedQuote = null;
   if (!early) { approvedQuote = approvedQuoteGate({ price: r.price, bid: r.bid, ask: r.ask, quoteAgeSec: r.qt > 0 ? (Date.now() - r.qt) / 1000 : null });

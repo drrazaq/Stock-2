@@ -4661,5 +4661,42 @@
       }
     ],
     "prospectiveCases": 0
+  },
+  "acceptancePriorityRevision": {
+    "base": "9240d422547567738ee58128cdeb8a702a46c119",
+    "status": "CONSOLIDATED_CANDIDATE_HOSTED_CI_PENDING",
+    "triage": "docs/acceptance-triage-2026-10-29.json",
+    "initialClasses": {
+      "SAFE_NOW": 7,
+      "INDEPENDENT_OR_MARKET_EVIDENCE": 6,
+      "OWNER_AUTHORIZATION": 4
+    },
+    "engineeringDashboard": "docs/engineering-progress.md",
+    "tradingDashboard": "docs/trading-evidence-dashboard.md",
+    "routeAudit": "docs/zad-all-path-acceptance.md",
+    "newCandidate": "ZAD-04",
+    "acceptanceCredit": 0,
+    "localFull": {
+      "total": 1462,
+      "pass": 1458,
+      "fail": 4,
+      "reason": "3 positive fixtures lacked required marks; real Git metadata unavailable in materialization. Corrections targeted; hosted exact tree required."
+    },
+    "focusedRelated": {
+      "pass": 95,
+      "fail": 0
+    },
+    "newRoutes": {
+      "pass": 16,
+      "fail": 0
+    },
+    "mutation": {
+      "removed": "core gate in disposable source only",
+      "tests": 15,
+      "failedAsExpected": 11,
+      "controlsPassed": 4
+    },
+    "realProviderCallsThisContinuation": 0,
+    "realProspectiveCases": 0
   }
 }

@@ -154,14 +154,14 @@ test('Basket 1 reminders are OFF by default; Basket 2 monthly reminder takes the
   const mem = (sym, w) => ({ sym, weightAtReview: w, weightNow: w });
   const T10 = (members, review = '2026-10-02') => ({ lastClose: '2026-10-23', methods: { 'SQ10-SH10-C15': { lastReview: review, members, reserves: [] } } });
   const A = T10([mem('NVDA', 0.4), mem('AAPL', 0.3), mem('MSFT', 0.2), mem('PLTR', 0.1)]), Bn = T10([mem('NVDA', 0.4), mem('AAPL', 0.3), mem('MSFT', 0.2), mem('ORCL', 0.1)], '2027-01-04');
-  const S = await loadScan({}), due = S.fn('basketDue'), SAT = Date.parse('2026-10-24T15:00:00Z');
+  const S = await loadScan({}), due = (...a)=>S.fn('basketDue')(...a.slice(0,4),{SPUS:'ok',IAUM:'ok',...(a[4]||{})}), SAT = Date.parse('2026-10-24T15:00:00Z');
   const base = due(SAT, {}, A, null, {}).state;
   const r = due(SAT, base, Bn, null, {});   // a new top-10 list: no message by default, but followed silently
   assert.deepEqual(r.msgs, []); assert.equal(r.state.formation.review, '2027-01-04');
   assert.deepEqual(due(Date.parse('2027-01-04T16:00:00Z'), base, A, null, {}).msgs, [MONTHLY0]);   // January: Basket 2 only, no Basket 1 buy day
   assert.deepEqual(due(Date.parse('2026-12-01T16:00:00Z'), base, A, null, {}).msgs, [MONTHLY0]);
   const M = S.fn('basketMonth')(1000); assert.equal(M.b2, 1000); assert.equal(M.aside, 0);   // whole amount to SPUS + IAUM
-  const S2 = await loadScan({ files: { 'data/settings.json': { basket1: true } } }), due2 = S2.fn('basketDue');
+  const S2 = await loadScan({ files: { 'data/settings.json': { basket1: true } } }), due2 = (...a)=>S2.fn('basketDue')(...a.slice(0,4),{SPUS:'ok',IAUM:'ok',...(a[4]||{})});
   assert.deepEqual(due2(Date.parse('2027-01-04T16:00:00Z'), base, A, null, {}).msgs, [MONTHLY + '\n' + BUYDAY]);
   assert.match(due2(SAT, base, Bn, null, {}).msgs[0], /^THE BASKET: NEW TOP-10 LIST/);
 });
