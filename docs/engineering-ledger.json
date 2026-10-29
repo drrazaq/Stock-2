@@ -150,5 +150,44 @@
     "All-channel Telegram acknowledgments and failure-safe deduplication",
     "Connect observation-only discovery routes",
     "Broader historical semantic and recommendation path audit"
-  ]
+  ],
+  "checkpointFollowup": {
+    "base": "a06032cca7c309f486a5215b15bd8a81fc6b1b08",
+    "verifiedBaseCI": [
+      "40755046492",
+      "40755035592",
+      "40755035601"
+    ],
+    "repairs": [
+      "Protect longer legacy session against short heartbeat retry",
+      "Keep price and aggregate volume provider clocks separate; missing clocks remain unknown"
+    ],
+    "tests": {
+      "targetedPassed": 12,
+      "pythonLaunchedWatcherDuplicateIntegration": "PASS; unchanged fixture, no new data files",
+      "nodeSpawnIntegration": "PASS when localhost fixture/network capability granted per command",
+      "fullSuite": "1195 passed, 0 failed, 0 skipped; Node 24.19.0; node --test test/*.test.mjs tests/*.test.mjs",
+      "remoteCI": "Pending recovered-fix publication"
+    },
+    "remaining": [
+      "Review save/rebase concurrency and archive all per-attempt shadow/delivery records",
+      "Provider entitlements, session normalization, telemetry and coverage",
+      "Nine discovery lane runtime adapters",
+      "All-path Telegram delivery and stale quote safeguards",
+      "Strategy validation and remaining 25 acceptance checks"
+    ],
+    "recovery": {
+      "date": "2026-10-29",
+      "bundleSHA256": "e62a4e9fa7e294d711d461ca1d4883c14e8e8e54e9a96d229db34aa07037f152",
+      "bundleAllSevenFilesMatched": true,
+      "remoteBase": "a06032cca7c309f486a5215b15bd8a81fc6b1b08",
+      "conflicts": false,
+      "staticChecks": {
+        "rootModulesParsed": 207,
+        "workflowsParsed": 78
+      },
+      "testInputsRestored": 15,
+      "testInputHashMismatches": 0
+    }
+  }
 }

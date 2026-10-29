@@ -44,3 +44,11 @@ test('a full timer with zero usable data cannot replace richer observations or s
  const empty={...full,heartbeat:full.heartbeat.map(x=>({...x,received:0,evaluated:0}))};
  assert.equal(sessionFinished(empty,full.day),false);assert.equal(preferSession(full,empty),false);
 });
+
+
+test('a two-minute retry cannot overwrite a longer legacy record without heartbeat telemetry',()=>{
+ const legacy={day:full.day,coverage:{minutesWatched:322}};
+ const retry={day:full.day,heartbeat:[{m:898,received:100,evaluated:100},{m:899,received:100,evaluated:100}]};
+ assert.equal(preferSession(legacy,retry),false);
+ assert.equal(preferSession(legacy,full),true);
+});

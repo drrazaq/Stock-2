@@ -21,6 +21,9 @@ export function preferSession(existing, candidate) {
   if (!candidate || !candidate.day) return false;
   if (!existing || existing.day!==candidate.day) return true;
   const a=sessionEvidence(existing),b=sessionEvidence(candidate);
+  // Legacy duration protects the recorded day when heartbeat proof is absent.
+  // A short retry cannot outrank it solely because it has newer telemetry.
+  if ((!Array.isArray(existing.heartbeat) || !existing.heartbeat.length) && b.minutes < a.minutes) return false;
   if(b.usableMinutes!==a.usableMinutes)return b.usableMinutes>a.usableMinutes;
   if(b.minutes!==a.minutes)return b.minutes>a.minutes;
   if(b.first!==null && a.first!==null && b.first!==a.first)return b.first<a.first;

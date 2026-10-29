@@ -66,3 +66,26 @@ Commit `9c6f39e83d60276899aae26387355a5fbaff14bb`: [push full tests 40750736004]
 [Incident reconstruction](incident-2026-10-28.md) establishes an opening-session run followed by a queued two-minute duplicate that overwrote the day. [Machine-readable ledger](engineering-ledger.json) separately lists actual behavioral review scope, severity, fixed/open defects, engineering acceptance and strategy promotion evidence. [Reproducible inventory](engineering-inventory.json) now covers 206 modules, 78 workflows and 335 non-private dataset files; all dataset serialization checks and relative imports pass. This does not establish historical correctness. `python tools/repository-audit.py --syntax --output docs/engineering-inventory.json` regenerates the inventory without network calls or dataset mutations.
 
 Current batch: duplicate protection, immutable run snapshots, coverage-based canonical selection, accurate mover totals/history labels and mixed catalyst attribution. Local tests: 1,190 passing, zero failing. New-commit CI pending. Engineering acceptance remains 15/40 (37.5%) until further acceptance work is complete. New early-engine strategy promotion: 0/8 required evidence checks completed; zero approved variants. No live behavior was changed.
+
+
+## Resumed field-clock and legacy-session repair
+
+Verified base `a06032c`: all three CI checks passed (full tests [40755046492](https://github.com/drrazaq/Stock-2/actions/runs/40755046492), [40755035592](https://github.com/drrazaq/Stock-2/actions/runs/40755035592), safety [40755035601](https://github.com/drrazaq/Stock-2/actions/runs/40755035601)). The earlier pending-CI note is resolved for that base.
+
+A short usable-heartbeat retry could outrank a longer legacy day lacking heartbeats. Publication now protects the legacy duration; an equal or longer observed session can still replace it. The watcher now normalizes Massive and Alpaca fields through `snapshot-fields.mjs`: selected price retains its own timestamp, aggregate volume retains its bar timestamp, missing timestamps remain unknown, and a new trade cannot refresh stale volume. Numeric strings and nonfinite fields are rejected. An Alpaca daily bar timestamp is not evidence of real-time aggregate freshness; the source label now says so.
+
+Validation: 12 targeted tests passed (snapshot fields, session coverage, existing paper freshness); all five changed JavaScript files parsed. The real watcher duplicate-exit integration passed via Python, retaining the exact fixture bytes and creating no other data files. The Node child-process version is blocked locally by sandbox `spawnSync EPERM`; this is not a passing test. New-commit full CI remains pending. No frozen dataset or historical strategy was modified. Acceptance remains **15/40 (37.5%)**.
+
+Workspace recovery: no checkout was provisioned; Git transport could not connect to the configured proxy. Source/tests were reconstructed from the exact GitHub checkpoint using the connector. This directory is a partial materialization, not a complete Git clone. An interrupted no-credential watcher smoke process created local synthetic empty-data outputs; those were quarantined under `/workspace/scratch/stock2-interrupted-fixture/data` and must never be committed as market evidence. No live Telegram send, order, workflow dispatch or production deployment occurred.
+
+Next: verify new-commit CI, add mocked-provider watcher integration, review publication/save races and per-attempt shadow archives, then continue the existing whole-system backlog. The duplicate repair still does not establish complete exchange-session coverage or production acceptance.
+
+## Publication recovery — 29 October 2026
+
+Recovered the original exact bundle (SHA-256 `e62a4e9fa7e294d711d461ca1d4883c14e8e8e54e9a96d229db34aa07037f152`); all seven files matched byte for byte. Re-read remote head `a06032cca7c309f486a5215b15bd8a81fc6b1b08` and base tree `cbc9b75fb0618579cfa9a51f9b9ce2685debe2c5`; no remote conflict. Complete diff saved locally as `/workspace/scratch/stock2-recovery.diff`.
+
+Re-ran 12 targeted tests and the Python-launched real watcher integration: all passed. All 207 root modules parse and all 78 workflows parse. Local integration requires per-command network access for localhost fixture servers; this resolves the earlier sandbox restriction without changing production permissions. The first full run after enabling it passed 1,193/1,195: the two failures were missing reconstruction inputs, not code failures. Restored 15 required input files from remote blobs, verified each Git blob hash, and reran the complete suite. Restored private files and frozen strategy-library bytes are test inputs only and are excluded from the publication patch.
+
+Publication and exact-commit CI are recorded in the next checkpoint update; do not infer success from this preparation entry. Acceptance stays 15/40 (37.5%).
+
+Final recovery validation: **1,195 passed, zero failed, zero skipped** using `node --test test/*.test.mjs tests/*.test.mjs` on Node 24.19.0. Twelve targeted tests, the Python watcher integration, 207 root syntax checks and 78 workflow parses passed. New-commit remote CI pending.
