@@ -1,3 +1,17 @@
+## Insider revision persistence and Leaders publication checkpoint
+
+Verified preceding source 5cc2dbbf30e4d4b766a9906c58e48dfc60660fcc: all 14 exact-commit checks passed (validation/revision-remote-journal-ci.json). Current insider/Leaders candidate is fully locally verified; hosted verification follows publication. Acceptance remains **24/40; 16 OPEN, zero new closures**.
+
+Changed requirements: quarter-cache semantic revisions and malformed siblings are isolated in the actual insider producer; conflicts/revoked IDs persist across reruns, reversion and unreadable caches. Missing prices preserve frozen output; incomplete sources cannot freeze a new result. Derived cluster IDs explicitly are not SEC filing IDs. Discovery revokes conflicting credit and the scanner qualifies incomplete source information. Five actual producer regressions fail against prior code and pass now.
+
+Leaders-study now commits on its original baseline before pulling, aborts conflicts and requires confirmed non-force push. Thirty actual-save-block cases cover five workflows with reached refusal markers, competing frozen edits, disjoint races and success. Its three-day recovery artifact contains only twelve named public research files, excluding calendar ciphertext, uncertain operational outputs and secret-bound step logs. Recovery for those excluded outputs, cancellation and cache races remains unfinished; do not count this as full ACTIONS-04 closure.
+
+Full local: 178 Node files / 1,582 reported cases plus two standalone scripts; 27 Python; 240 modules, 86 YAML, 329 shell blocks and 9 Python syntax checks. Evidence: validation/insider-leaders-publication.json. All market/message fixtures are synthetic; data/frozen research unchanged. These are reconstructed protections, not recovered unpublished code.
+
+Next executable work: insider SEC ZIP/download/TSV header/schema/time limits and actual producer symbol identity (it still rewrites hyphens to dots); prove ambiguous class aliases stay unresolved. Then finish earnings AV/FMP and other derived producer contracts, remaining publication writers, MARKET-03 ingress normalization, TELEGRAM-03 route durability and EXEC-03 renderer/spec matching. Completion requires actual caller failure/retry/revision controls and honest uncertainty, not helper-only tests. Exact external dependencies remain in remaining-engineering-resume.md.
+
+Massive Starter remains 15-minute delayed; broad Alpaca SIP coverage unverified; prospective cases zero and profitability NOT ESTABLISHED. No main changes, merge, deployment/dispatch, live collection or delivery, orders, purchases, secret/permission changes.
+
 ## End-to-end revision and remote journal requirement changes — local verified
 
 Base59d3da6 was remotely verified with all12 checks green. CATALYST-03 remains the nearer full closure target; its original criterion and exact unmet source-by-source matrix are in docs/catalyst03-closure-matrix.json. No acceptance row is closed:24/40,16OPEN.

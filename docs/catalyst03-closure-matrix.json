@@ -1,7 +1,7 @@
 {
-  "base": "59d3da629874c2c8379fa756f63784a8158d5d57",
+  "base": "5cc2dbbf30e4d4b766a9906c58e48dfc60660fcc",
   "nearestClosure": "CATALYST-03",
-  "status": "END_TO_END_LOCAL_VERIFIED_HOSTED_PENDING",
+  "status": "INSIDER_AND_LEADERS_LOCAL_VERIFIED_HOSTED_PENDING",
   "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
   "sourceMatrix": [
     {
@@ -25,8 +25,8 @@
     {
       "lane": "INSIDER_CLUSTER",
       "producer": "insider-study.mjs",
-      "changedRequirement": "Existing adapter controls preserved; no new acceptance claim.",
-      "stillUnmet": "Complete actual producer identity/revision/schema/clock/error contract and independent-job persistence matrix."
+      "changedRequirement": "INSIDER_CLUSTER retains semantic quarter digests, isolates malformed rows, latches changed artifacts and revoked IDs across repeat/revert/unreadable runs, preserves frozen output on unavailable prices and cannot freeze new results from incomplete source. Derived cluster IDs explicitly are not filing IDs. Discovery revokes prior credit; actual scanner qualifies incomplete sources.",
+      "stillUnmet": "Full filing/accession/transaction identity and download/ZIP/header bounds/schema; aggregate source clocks and price normalization; complete independent-job persistence evidence. Compact legacy quarter rows remain unverified filing identities."
     },
     {
       "lane": "INDUSTRY_RIPPLE",
@@ -65,22 +65,27 @@
     "News publication fails stage/commit/push errors and conflict rather than claiming publication.",
     "News remote intent is confirmed before an outbound mocked request; ACK is remotely verified. A lost process leaves PENDING that a separately restored job cannot replay.",
     "Refused commits/pushes or competing unknown journal bytes prevent outbound requests; isolated worktree publication changes only data/news-delivery.json.",
-    "Conflicted news revokes prior discovery credit while preserving original observations and clocks; actual collector and scanner consumers qualify or quarantine source conflicts."
+    "Conflicted news revokes prior discovery credit while preserving original observations and clocks; actual collector and scanner consumers qualify or quarantine source conflicts.",
+    "INSIDER_CLUSTER retains semantic quarter digests, isolates malformed rows, latches changed artifacts and revoked IDs across repeat/revert/unreadable runs, preserves frozen output on unavailable prices and cannot freeze new results from incomplete source.",
+    "Derived cluster IDs explicitly are not filing IDs. Discovery revokes prior credit; actual scanner qualifies incomplete sources.",
+    "Leaders-study commits before pull; never resets/cleans or chooses a conflict winner; checks staging/commit and confirmed non-force publication. Public-only recovery artifact excludes opaque/operational outputs and step logs."
   ],
   "local": {
-    "nodeFiles": 177,
-    "nodeReportedCases": 1570,
+    "nodeFiles": 178,
+    "nodeReportedCases": 1582,
     "standaloneScripts": 2,
     "pythonTests": 27,
-    "newsCallerCases": 22,
-    "secFdaCallerCases": 16,
-    "earningsCallerCases": 3,
-    "publicationCallerCases": 8,
-    "collectorLineageCases": 10,
-    "consumerCases": 4,
-    "staticModules": 240,
-    "workflowYaml": 86,
-    "shellBlocks": 330
+    "modules": 240,
+    "yaml": 86,
+    "shell": 329,
+    "pythonSyntax": 9,
+    "insiderCallerCases": 5,
+    "labPublicationCases": 30,
+    "consumerCases": 5,
+    "priorSourceNegativeControl": {
+      "failed": 5,
+      "passed": 0
+    }
   },
   "acceptance": {
     "complete": 24,

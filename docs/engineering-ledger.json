@@ -760,7 +760,7 @@
     "status": "PUBLISHED_EXACT_COMMIT_CI_VERIFIED",
     "tests": "9 targeted tests passed",
     "fix": "Reject out-of-range news timestamp per row instead of dropping valid source records; reject invalid cycle cutoff before mutating state",
-    "simulation": "541 cycles 04:00–13:00 NY including half-day closing boundary, all real adapters, stale news, feed interruptions, duplicate events",
+    "simulation": "541 cycles 04:00\u201313:00 NY including half-day closing boundary, all real adapters, stale news, feed interruptions, duplicate events",
     "realWorldEntitlementEvidence": false,
     "testsPassed": 1260,
     "failures": 0,
@@ -1121,8 +1121,8 @@
   "phaseAFinalPreflight": {
     "status": "KEY_VERIFIED_PREMARKET_FRESHNESS_BLOCKER_DATED_AUTHORIZATION_PENDING",
     "date": "2026-10-29",
-    "candidateSession": "2026-10-30 04:00–09:30 America/New_York (EDT)",
-    "candidateUTC": "08:00–13:30",
+    "candidateSession": "2026-10-30 04:00\u201309:30 America/New_York (EDT)",
+    "candidateUTC": "08:00\u201313:30",
     "sourcePin": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
     "encryptionBinding": "VERIFIED: owner independently decrypted actual GitHub challenge on iPad/iSH; no secret shared",
     "ownerRecoveryCopy": "VERIFIED_ACTUAL_GITHUB_ARTIFACT_ON_IPAD_ISH",
@@ -5000,8 +5000,8 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "source": "04f6b6db144118a21bd17c0245ac89028e8968a8",
-    "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json",
+    "source": "5cc2dbbf30e4d4b766a9906c58e48dfc60660fcc",
+    "ciEvidence": "docs/validation/revision-remote-journal-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
@@ -5011,9 +5011,9 @@
     "resume": "docs/remaining-engineering-resume.md"
   },
   "revisionIdentityMission": {
-    "base": "59d3da629874c2c8379fa756f63784a8158d5d57",
+    "base": "5cc2dbbf30e4d4b766a9906c58e48dfc60660fcc",
     "nearestClosure": "CATALYST-03",
-    "status": "END_TO_END_LOCAL_VERIFIED_HOSTED_PENDING",
+    "status": "INSIDER_AND_LEADERS_LOCAL_VERIFIED_HOSTED_PENDING",
     "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
     "sourceMatrix": [
       {
@@ -5037,8 +5037,8 @@
       {
         "lane": "INSIDER_CLUSTER",
         "producer": "insider-study.mjs",
-        "changedRequirement": "Existing adapter controls preserved; no new acceptance claim.",
-        "stillUnmet": "Complete actual producer identity/revision/schema/clock/error contract and independent-job persistence matrix."
+        "changedRequirement": "INSIDER_CLUSTER retains semantic quarter digests, isolates malformed rows, latches changed artifacts and revoked IDs across repeat/revert/unreadable runs, preserves frozen output on unavailable prices and cannot freeze new results from incomplete source. Derived cluster IDs explicitly are not filing IDs. Discovery revokes prior credit; actual scanner qualifies incomplete sources.",
+        "stillUnmet": "Full filing/accession/transaction identity and download/ZIP/header bounds/schema; aggregate source clocks and price normalization; complete independent-job persistence evidence. Compact legacy quarter rows remain unverified filing identities."
       },
       {
         "lane": "INDUSTRY_RIPPLE",
@@ -5077,22 +5077,27 @@
       "News publication fails stage/commit/push errors and conflict rather than claiming publication.",
       "News remote intent is confirmed before an outbound mocked request; ACK is remotely verified. A lost process leaves PENDING that a separately restored job cannot replay.",
       "Refused commits/pushes or competing unknown journal bytes prevent outbound requests; isolated worktree publication changes only data/news-delivery.json.",
-      "Conflicted news revokes prior discovery credit while preserving original observations and clocks; actual collector and scanner consumers qualify or quarantine source conflicts."
+      "Conflicted news revokes prior discovery credit while preserving original observations and clocks; actual collector and scanner consumers qualify or quarantine source conflicts.",
+      "INSIDER_CLUSTER retains semantic quarter digests, isolates malformed rows, latches changed artifacts and revoked IDs across repeat/revert/unreadable runs, preserves frozen output on unavailable prices and cannot freeze new results from incomplete source.",
+      "Derived cluster IDs explicitly are not filing IDs. Discovery revokes prior credit; actual scanner qualifies incomplete sources.",
+      "Leaders-study commits before pull; never resets/cleans or chooses a conflict winner; checks staging/commit and confirmed non-force publication. Public-only recovery artifact excludes opaque/operational outputs and step logs."
     ],
     "local": {
-      "nodeFiles": 177,
-      "nodeReportedCases": 1570,
+      "nodeFiles": 178,
+      "nodeReportedCases": 1582,
       "standaloneScripts": 2,
       "pythonTests": 27,
-      "newsCallerCases": 22,
-      "secFdaCallerCases": 16,
-      "earningsCallerCases": 3,
-      "publicationCallerCases": 8,
-      "collectorLineageCases": 10,
-      "consumerCases": 4,
-      "staticModules": 240,
-      "workflowYaml": 86,
-      "shellBlocks": 330
+      "modules": 240,
+      "yaml": 86,
+      "shell": 329,
+      "pythonSyntax": 9,
+      "insiderCallerCases": 5,
+      "labPublicationCases": 30,
+      "consumerCases": 5,
+      "priorSourceNegativeControl": {
+        "failed": 5,
+        "passed": 0
+      }
     },
     "acceptance": {
       "complete": 24,
@@ -5104,5 +5109,56 @@
     "realProviderRequests": 0,
     "prospectiveCases": 0,
     "initialVerificationIssue": "Publication-refusal fixtures were strengthened with explicit hook/push markers so a generic earlier Git failure could not masquerade as reaching the intended fault. Scanner renderer fixture exposed missing display defaults; production renderer now labels missing context/source explicitly."
+  },
+  "insiderLeadersPublication": {
+    "base": "5cc2dbbf30e4d4b766a9906c58e48dfc60660fcc",
+    "status": "LOCAL_VERIFIED_HOSTED_PENDING",
+    "acceptanceAdded": 0,
+    "local": {
+      "nodeFiles": 178,
+      "nodeReportedCases": 1582,
+      "standaloneScripts": 2,
+      "pythonTests": 27,
+      "modules": 240,
+      "yaml": 86,
+      "shell": 329,
+      "pythonSyntax": 9,
+      "insiderCallerCases": 5,
+      "labPublicationCases": 30,
+      "consumerCases": 5,
+      "priorSourceNegativeControl": {
+        "failed": 5,
+        "passed": 0
+      }
+    },
+    "changedRequirements": [
+      "INSIDER_CLUSTER retains semantic quarter digests, isolates malformed rows, latches changed artifacts and revoked IDs across repeat/revert/unreadable runs, preserves frozen output on unavailable prices and cannot freeze new results from incomplete source.",
+      "Derived cluster IDs explicitly are not filing IDs. Discovery revokes prior credit; actual scanner qualifies incomplete sources.",
+      "Leaders-study commits before pull; never resets/cleans or chooses a conflict winner; checks staging/commit and confirmed non-force publication. Public-only recovery artifact excludes opaque/operational outputs and step logs."
+    ],
+    "stillUnmet": [
+      "SEC ZIP size/time/header/schema and full filing identity/revision authenticity; no live producer run.",
+      "All other derived producers, source bounds/clocks, complete threat/materiality review.",
+      "Other publication writers/cache/cancellation/retention and opaque Leaders outputs remain unverified; failure artifact deliberately does not include those outputs."
+    ],
+    "publicRecoveryFiles": [
+      "data/agent-a-lab.json",
+      "data/hunting-lab.json",
+      "data/fastmover-lab.json",
+      "data/pattern-lab.json",
+      "data/swing-lab.json",
+      "data/catalyst-lab.json",
+      "data/insider-study.json",
+      "data/earnings-study.json",
+      "data/events-study.json",
+      "data/chain-ripple.json",
+      "data/share-supply.json",
+      "data/discovery2.json"
+    ],
+    "preservation": {
+      "dataChanged": false,
+      "secretsOrPermissionsChanged": false,
+      "liveCollectionDeliveryOrders": false
+    }
   }
 }

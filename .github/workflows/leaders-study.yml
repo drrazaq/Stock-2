@@ -25,7 +25,6 @@ jobs:
         with:
           node-version: 20
       # The library as it was when this run started: at the end only the entries THIS run changed are re-applied on top of the newest library.
-      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
       # Two years of whole-market prices are kept in the Actions cache, not in the repository.
       - uses: actions/cache/restore@v4
         with:
@@ -464,26 +463,40 @@ jobs:
         with:
           path: study-cache
           key: leaders-study-${{ github.run_id }}
-      # SAVE (runs even if a study failed). Fresh main first, then only this run's own output files (listed below) are copied back,
-      # and data/strategy-library.json gets only the entries/fields this run changed (library-merge.mjs), so library edits pushed
-      # during the 2-hour run are kept. The push loop keeps the old behaviour (pull --rebase -X theirs, 5 tries).
+      # Commit on the observed baseline; conflicting research requires review.
+      # Recovery artifacts include only these public research outputs, never
+      # calendar ciphertext, operational state, or secret-bound step logs.
       - if: success() || failure()
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           FILES="data/agent-a-lab.json data/rot-today.json data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json data/tip-score.json data/gov-awards.json data/gov-awards2.json data/share-supply.json data/missed-runners.json data/orb-study.json data/ignition-missed-history.jsonl data/e16-absorption.json data/catalyst-lab.json data/catalyst-today.json data/chain-decoder.json data/chain-graph.json data/chain-today.json data/chain-decoder-error.json data/discovery2.json data/discovery2-today.json"
+          RECOVERY_FILES="data/agent-a-lab.json data/hunting-lab.json data/fastmover-lab.json data/pattern-lab.json data/swing-lab.json data/catalyst-lab.json data/insider-study.json data/earnings-study.json data/events-study.json data/chain-ripple.json data/share-supply.json data/discovery2.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
-          for f in $FILES; do [ -f "$f" ] && ! git diff --quiet HEAD -- "$f" 2>/dev/null && mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done; true
-          for f in $FILES; do [ -f "$f" ] && ! git ls-files --error-unmatch "$f" >/dev/null 2>&1 && mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done; true
-          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
-          git reset -q --hard && git clean -fdq data && git pull -q --rebase
-          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
-          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json 2>&1 | tee -a run.log || echo "Error: library merge failed; this run's library edits were not saved" | tee -a run.log
-          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
-          git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
-          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
-          [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
+          for f in $RECOVERY_FILES; do
+            if [ -f "$f" ]; then cp "$f" "$OUTD/$f"; fi
+          done
+          for f in $FILES data/strategy-library.json; do
+            if [ -f "$f" ]; then git add -- "$f"; fi
+          done
+          if ! git diff --cached --quiet; then
+            git commit -m "leaders fair test $(date -u +%F)"
+          fi
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase && git push; then ok=1; break; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 10
+          done
+          [ "$ok" = 1 ] || { echo 'Error: study publication unconfirmed; retain public run-out artifact and both commits for review'; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 3
+          name: leaders-public-research
+          path: ${{ runner.temp }}/run-out/
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()
         env:

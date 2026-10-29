@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 // INSIDER CLUSTER BUYING STUDY. When several company insiders (officers, directors) buy shares with their OWN money on the open
 // market within a few days, do the shares beat the market afterwards? Source: the SEC "Insider Transactions Data Sets" (free, official,
 // quarterly ZIPs of every Form 3/4/5 since 2006: www.sec.gov/dera/data/form-345). Only Form 4, transaction code P (open-market
@@ -16,9 +17,10 @@ const env = process.env, OUT = 'data/insider-study.json', DIR = (env.CACHE_DIR |
 const UA = env.SEC_UA || 'stock-signal-board admin@users.noreply.github.com', local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, BASE = local(env.SEC_BASE) || 'https://www.sec.gov';
 const sleep = (ms) => new Promise(r => setTimeout(r, ms)), mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
 fs.mkdirSync(DIR, { recursive: true }); fs.mkdirSync('data', { recursive: true });
+const PREV = (() => { try { return JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch (e) { return {}; } })() || {};
 // ---- 1. prices (the same 5-year whole-market cache as the other studies)
-let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE || 'study-cache/grouped.json.gz')).toString()); } catch (e) { fs.writeFileSync(OUT, JSON.stringify({ status: 'NOT RUN', why: 'no price cache' })); console.log('insider: no price cache'); process.exit(0); }
-const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 300) { console.log('insider: too few sessions'); process.exit(0); }
+let store; try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(env.CACHE || 'study-cache/grouped.json.gz')).toString()); } catch (e) { fs.writeFileSync(OUT, JSON.stringify({...PREV,status:'NOT RUN',sourceStatus:{SEC_FORM4:{status:'UNKNOWN'}},lastAttempt:{at:new Date().toISOString(),why:'no price cache'}})); console.log('insider: no price cache'); process.exit(0); }
+const D = Object.keys(store.days || {}).sort(), T = D.length; if (T < 300) {fs.writeFileSync(OUT,JSON.stringify({...PREV,status:'NOT RUN',sourceStatus:{SEC_FORM4:{status:'UNKNOWN'}},lastAttempt:{at:new Date().toISOString(),why:'too few sessions'}}));console.log('insider: too few sessions'); process.exit(0); }
 const SY = new Map(); for (const d of D) for (const s of store.days[d].T) if (!SY.has(s)) SY.set(s, SY.size);
 const NS = SY.size, SYMS = [...SY.keys()], O = new Float32Array(NS * T).fill(NaN), C = new Float32Array(NS * T).fill(NaN), V = new Float32Array(NS * T).fill(NaN);
 // CX: closes of a stock AFTER it fell out of the cache's 3 USD / 1M USD filter (study-cache x rows, 22 Oct 2026). Used only to value an
@@ -45,7 +47,17 @@ for (const q of qs) { const cf = DIR + '/' + q + '.json'; if (fs.existsSync(cf))
     fs.writeFileSync(cf, JSON.stringify(buys)); ok = true; break; }
   if (!ok) failed.push(q); }
 // each purchase: [symbol, filing date, insider (reporting owner CIK), USD]; distinct insiders are counted by their CIK
-const P = []; for (const q of qs) { try { for (const b of JSON.parse(fs.readFileSync(DIR + '/' + q + '.json', 'utf8'))) P.push({ sym: b[0], d: b[1], who: b[2], usd: b[3] }); } catch (e) {} }
+const P=[],sourceArtifacts=[],artifactConflicts=[];let rejectedSourceRows=0;
+for(const q of qs){let fd;const prior=Array.isArray(PREV.sourceArtifacts)?PREV.sourceArtifacts.find(x=>x.quarter===q&&x.digest):null;try{
+ const file=DIR+'/'+q+'.json';fd=fs.openSync(file,fs.constants.O_RDONLY|fs.constants.O_NOFOLLOW);const st=fs.fstatSync(fd);if(!st.isFile()||st.size>64*1024*1024)throw Error('cache budget/type');
+ const bytes=fs.readFileSync(fd);if(bytes.length>64*1024*1024)throw Error('cache budget');const rows=JSON.parse(bytes.toString());if(!Array.isArray(rows))throw Error('cache schema');
+ const digest=createHash('sha256').update(JSON.stringify(rows.map(x=>JSON.stringify(x)).sort())).digest('hex');
+ if(prior&&(prior.status==='CONFLICT'||prior.digest!==digest)){const original=prior.originalDigest||prior.digest;artifactConflicts.push({quarter:q,prior:original,current:digest});sourceArtifacts.push({quarter:q,digest,originalDigest:original,status:'CONFLICT'});continue;}
+ let rejected=0;for(const b of rows){const valid=Array.isArray(b)&&typeof b[0]==='string'&&/^[A-Z][A-Z0-9.]{0,6}$/.test(b[0])&&typeof b[1]==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(b[1])&&Number.isFinite(Date.parse(b[1]+'T00:00:00Z'))&&new Date(b[1]+'T00:00:00Z').toISOString().slice(0,10)===b[1]&&b[1].slice(0,4)===q.slice(0,4)&&Math.floor((+b[1].slice(5,7)-1)/3)+1===+q.slice(-1)&&typeof b[2]==='string'&&!!b[2].trim()&&typeof b[3]==='number'&&Number.isFinite(b[3])&&b[3]>=0;if(!valid){rejected++;continue;}P.push({sym:b[0],d:b[1],who:b[2],usd:b[3]});}
+ rejectedSourceRows+=rejected;sourceArtifacts.push({quarter:q,digest,status:rejected?'PARTIAL_OR_UNKNOWN':'OBSERVED',rejectedRows:rejected});
+}catch{if(prior?.status==='CONFLICT'){artifactConflicts.push({quarter:q,prior:prior.originalDigest||prior.digest,current:null});sourceArtifacts.push({...prior,status:'CONFLICT',lastRead:'UNKNOWN'});}else sourceArtifacts.push({quarter:q,status:'UNKNOWN'});}finally{if(fd!==undefined)fs.closeSync(fd);}}
+const sourceComplete=!failed.length&&sourceArtifacts.length===qs.length&&sourceArtifacts.every(x=>x.status==='OBSERVED');
+
 console.log('insider: ' + P.length + ' open-market purchases loaded from ' + qs.length + ' quarters (' + fetched + ' downloaded now' + (failed.length ? ', missing ' + failed.join(' ') : '') + ')');
 // ---- 3. events
 const dayIdx = (d) => { let lo = 0, hi = T; while (lo < hi) { const m = (lo + hi) >> 1; if (D[m] <= d) lo = m + 1; else hi = m; } return lo; };   // first session strictly AFTER date d
@@ -53,7 +65,7 @@ const bySym = {}; for (const p of P) if (SY.has(p.sym)) (bySym[p.sym] = bySym[p.
 const EV = { CLUSTER3: [], CLUSTER2: [], BIG1: [] };
 for (const [sym, a] of Object.entries(bySym)) { a.sort((x, y) => x.d < y.d ? -1 : 1); let lastC3 = '0', lastC2 = '0', lastB = '0';
   for (let k = 0; k < a.length; k++) { const p = a[k], from = new Date(Date.parse(p.d) - 10 * 864e5).toISOString().slice(0, 10), win = a.filter(z => z.d >= from && z.d <= p.d);
-    const n = new Set(win.map(z => z.who)).size; const add = (key, last) => { if (p.d <= last) return last; EV[key].push({ sym, d: p.d, n, usd: win.reduce((s, z) => s + z.usd, 0) }); return new Date(Date.parse(p.d) + 30 * 864e5).toISOString().slice(0, 10); };
+    const n = new Set(win.map(z => z.who)).size; const add = (key, last) => { if (p.d <= last) return last; EV[key].push({ sym, d: p.d, n, usd: win.reduce((s, z) => s + z.usd, 0),sourceId:'CLUSTER:'+sym+'|'+p.d,sourceIdentityBasis:'DERIVED_CLUSTER_NOT_FILING_ID',sourceRevisionId:createHash('sha256').update(JSON.stringify(win.map(z=>[z.d,z.who,z.usd]).sort())).digest('hex') }); return new Date(Date.parse(p.d) + 30 * 864e5).toISOString().slice(0, 10); };
     if (n >= 3) lastC3 = add('CLUSTER3', lastC3); if (n >= 2) lastC2 = add('CLUSTER2', lastC2); if (p.usd >= 250000) lastB = add('BIG1', lastB); } }
 // ---- 4. returns and controls
 const liquid = (i, t) => { const c = C[i * T + t]; if (!(c >= 3)) return false; let dv = 0, n = 0; for (let k = Math.max(0, t - 19); k <= t; k++) { const c1 = C[i * T + k], v = V[i * T + k]; if (isFinite(c1) && isFinite(v)) { dv += c1 * v; n++; } } return n >= 15 && dv / n >= 1e6; };
@@ -74,12 +86,12 @@ for (const [k, a] of Object.entries(trades)) { const R = { older: stat(a.filter(
 for (const r of Object.values(RES)) if (r.verdict === 'PROMISING') { const lw = belowLeague([r.results.older.t, r.results.newer.t], BAR); if (lw) { r.verdict = BELOW; r.why = 'beat the average stock and the same stock in both halves; ' + lw; } }
 // RUN ONCE per version: the first run in which a version has 20+ cases in both halves (verdict other than TOO FEW CASES) is frozen in
 // firstRun.results and never overwritten; this run's numbers go to `latest` (monitoring only). The library E3 reads firstRun only.
-const PREV = (() => { try { return JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch (e) { return {}; } })() || {};
-const FR = freezeEach(PREV.firstRun && PREV.firstRun.results, RES, (r) => r.verdict !== 'TOO FEW CASES');
+
+const FR = freezeEach(PREV.firstRun && PREV.firstRun.results, RES, (r) => sourceComplete&&r.verdict !== 'TOO FEW CASES');
 const firstRun = Object.keys(FR).length ? { at: (PREV.firstRun && PREV.firstRun.at) || new Date().toISOString(), bar: (PREV.firstRun && PREV.firstRun.bar) || +BAR.toFixed(2), results: FR } : null;
 const RESF = Object.fromEntries(Object.keys(RES).map(k => [k, FR[k] || { ...RES[k], verdict: 'NO VERDICT YET (' + RES[k].verdict + ')' }]));
 const recent = EV.CLUSTER2.filter(e => e.d >= new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10)).sort((a, b) => b.n - a.n || (a.d < b.d ? 1 : -1)).slice(0, 15);
-fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), status: 'OK', from: D[0], to: D[T - 1], purchases: P.length, events: Object.fromEntries(Object.entries(EV).map(([k, v]) => [k, v.length])), versions: NV, bar: +BAR.toFixed(2), note: 'SEC data sets are quarterly, so the newest weeks appear only after the quarter ends. results = the frozen first verdict of each version (firstRun); latest = monitoring only.', results: RESF, firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], bar: +BAR.toFixed(2), results: RES }), recent }, null, 1));
+fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), status: sourceComplete?'OK':'PARTIAL_OR_UNKNOWN',sourceArtifacts,artifactConflicts,quarantinedSourceIds:[...new Set([...(Array.isArray(PREV.quarantinedSourceIds)?PREV.quarantinedSourceIds:[]),...(artifactConflicts.length?(PREV.recent||[]).map(x=>x.sourceId).filter(Boolean):[])])],sourceStatus:{SEC_FORM4:{status:sourceComplete?'OBSERVED':'PARTIAL_OR_UNKNOWN',rejectedRows:rejectedSourceRows,quarters:qs.length}}, from: D[0], to: D[T - 1], purchases: P.length, events: Object.fromEntries(Object.entries(EV).map(([k, v]) => [k, v.length])), versions: NV, bar: +BAR.toFixed(2), note: 'SEC data sets are quarterly, so the newest weeks appear only after the quarter ends. results = the frozen first verdict of each version (firstRun); latest = monitoring only.', results: RESF, firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], bar: +BAR.toFixed(2), results: RES }), recent }, null, 1));
 console.log('INSIDER CLUSTER BUYING (' + D[0] + ' to ' + D[T - 1] + '; events: ' + Object.entries(EV).map(([k, v]) => k + ' ' + v.length).join(', ') + ')');
 for (const r of Object.values(RESF)) console.log('- ' + r.name + ': ' + r.verdict + (r.results.newer.n ? ' | newer half ' + r.results.newer.n + ' trades, ' + pc(r.results.newer.avg) + ' a trade, ' + pc(r.results.newer.edge) + ' vs average stock (t ' + r.results.newer.t + '), ' + pc(r.results.newer.vsOwn) + ' vs same stock other days' : '') + (r.verdict !== 'PROMISING' ? ' (' + r.why.split(';')[0] + ')' : ''));
 try { const LB = JSON.parse(fs.readFileSync('data/strategy-library.json', 'utf8')), order = ['PROMISING', 'NOT PROVEN', 'REJECTED', 'TOO FEW CASES'], best = Object.values(FR).map(r => r.verdict).sort((a, b) => order.indexOf(a) - order.indexOf(b))[0];
