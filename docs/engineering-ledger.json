@@ -145,28 +145,60 @@
     "skipped": 0,
     "scope": "node --test test/*.test.mjs tests/*.test.mjs",
     "runtime": "Node 24.19.0 local / Node 20 CI",
-    "codeSha": "35eb0bba1a5c76695338288f090385a63bbd7283",
+    "codeSha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
     "remoteCI": [
       {
-        "id": "40816601733",
+        "id": "40817037197",
         "event": "pull_request",
-        "sha": "35eb0bba1a5c76695338288f090385a63bbd7283",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816601733"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817037197"
       },
       {
-        "id": "40816596402",
+        "id": "40817031943",
         "event": "push",
-        "sha": "35eb0bba1a5c76695338288f090385a63bbd7283",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816596402"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031943"
       },
       {
-        "id": "40816596298",
+        "id": "40817031883",
         "event": "push",
-        "sha": "35eb0bba1a5c76695338288f090385a63bbd7283",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
         "conclusion": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40816596298"
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031883"
+      }
+    ],
+    "additionalHostedChecks": [
+      {
+        "name": "fixture-close",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031943/job/123260508288"
+      },
+      {
+        "name": "test",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817037197/job/123260426013"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031943/job/123260408904"
+      },
+      {
+        "name": "safety",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031943/job/123260408569"
+      },
+      {
+        "name": "test",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031883/job/123260408253"
       }
     ]
   },
@@ -178,11 +210,11 @@
     "No five-year point-in-time executable data established for early engines"
   ],
   "next": [
-    "Full regular-session / early-close monitoring, with per-minute heartbeat proof and explicit coverage gaps",
-    "All-attempt shadow/delivery archive integrity and save/rebase race review",
-    "Nine-lane runtime integration using real source/publication/observation timestamps; no inferred midnight chronology",
-    "All-channel Telegram acknowledgments and failure-safe deduplication",
-    "Broader historical semantic and recommendation path audit"
+    "Owner-gated deployment followed by actual regular/half-day telemetry and gap measurements; no production acceptance inferred from fixtures",
+    "Prospective matched discovery lead-time/false-positive evaluation with source timing/coverage strata and daily dedup scope",
+    "All-path Telegram acknowledgment and retry audit (news-watch and premarket remain open)",
+    "ZAD rejection persistence and all recommendation paths; instrument/session normalization and entitlement audit",
+    "Historical corporate-action/survivorship/CIK integrity, holdout/account-cost validation and remaining repository acceptance"
   ],
   "checkpointFollowup": {
     "base": "a06032cca7c309f486a5215b15bd8a81fc6b1b08",
@@ -301,7 +333,7 @@
   },
   "dispatchIntegrityMilestone": {
     "base": "925149a3a929859d24044f8d64156f29dabb70bd",
-    "status": "LOCAL_VERIFIED",
+    "status": "BRANCH_CI_VERIFIED",
     "testsPassed": 1213,
     "targetedTests": 23,
     "remoteCI": {
@@ -322,7 +354,7 @@
   },
   "sessionHeartbeatMilestone": {
     "base": "ae7db3f6d5a0c417779014a359eb730ae254f8af",
-    "status": "LOCAL_VERIFIED",
+    "status": "BRANCH_CI_VERIFIED",
     "testsPassed": 1224,
     "failed": 0,
     "skipped": 0,
@@ -362,7 +394,7 @@
     "publishedCommit": "1b3a7518240be6c7f9e252f80e0bd1955f68e6d7"
   },
   "discoveryRuntimeMilestone": {
-    "status": "LOCAL_VERIFIED",
+    "status": "BRANCH_CI_VERIFIED",
     "base": "1b3a7518240be6c7f9e252f80e0bd1955f68e6d7",
     "testsPassed": 1230,
     "failed": 0,
@@ -400,7 +432,7 @@
     "publishedCommit": "2e37078b7ea4abbcd3ff29158da43262ecc45c35"
   },
   "closeBoundaryFollowup": {
-    "status": "LOCAL_VERIFIED",
+    "status": "BRANCH_CI_VERIFIED",
     "testsPassed": 1230,
     "purpose": "Include a snapshot cycle at exactly 16:00/13:00 in addition to scheduled 390/210 regular minutes; not proof of an exchange auction fill",
     "remoteCI": [
@@ -429,7 +461,7 @@
     "publishedCommit": "6ac9798d38c7732d3fd472a1225cfb5729ea0065"
   },
   "restartCausalityFollowup": {
-    "status": "LOCAL_VERIFIED",
+    "status": "BRANCH_CI_VERIFIED",
     "testsPassed": 1231,
     "purpose": "An accepted dispatch is not causally attributed to an independently running job; byGuard stays null, guardRequestAccepted is separate",
     "remoteCI": [
@@ -458,7 +490,7 @@
     "publishedCommit": "35eb0bba1a5c76695338288f090385a63bbd7283"
   },
   "hostedArtifactFixture": {
-    "status": "LOCAL_ROUNDTRIP_PASSED",
+    "status": "HOSTED_CI_VERIFIED",
     "branchOnly": "Stock2-safety-fixes",
     "phases": [
       "fixture-open",
@@ -466,6 +498,39 @@
     ],
     "data": "Generated synthetic only; JavaScript fetch guard and disabled Git discovery; no secrets forwarded",
     "permissions": "Existing contents: read unchanged",
-    "remoteCI": "PENDING"
-  }
+    "remoteCI": [
+      {
+        "name": "fixture-close",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031943/job/123260508288"
+      },
+      {
+        "name": "test",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817037197/job/123260426013"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031943/job/123260408904"
+      },
+      {
+        "name": "safety",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031943/job/123260408569"
+      },
+      {
+        "name": "test",
+        "sha": "1c2031495c839e7d8469cb127821ec1650ca09aa",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40817031883/job/123260408253"
+      }
+    ],
+    "publishedCommit": "1c2031495c839e7d8469cb127821ec1650ca09aa"
+  },
+  "remainingAcceptanceChecks": 24
 }
