@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28",
+  "updated": "2026-10-29",
   "branch": "Stock2-safety-fixes",
   "pr": 1,
   "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
@@ -139,11 +139,35 @@
     }
   ],
   "tests": {
-    "passed": 1190,
+    "passed": 1204,
     "failed": 0,
+    "skipped": 0,
     "scope": "node --test test/*.test.mjs tests/*.test.mjs",
-    "runtime": "Node 24.22.1",
-    "remoteCI": "Pending new commit; earlier 9c6f39e CI passed"
+    "runtime": "Node 24.19.0 locally; Node 20 CI",
+    "codeSha": "812f0c79e165c49ab493baba8bf75b9251974106",
+    "remoteCI": [
+      {
+        "id": "40812268162",
+        "event": "pull_request",
+        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812268162"
+      },
+      {
+        "id": "40812262721",
+        "event": "push",
+        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812262721"
+      },
+      {
+        "id": "40812262652",
+        "event": "push",
+        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812262652"
+      }
+    ]
   },
   "blockers": [
     "Production corrections remain undeployed pending owner approval",
@@ -153,10 +177,10 @@
     "No five-year point-in-time executable data established for early engines"
   ],
   "next": [
-    "Provider field/timestamp normalization and telemetry",
-    "Actual job start and heartbeat health",
+    "Full regular-session / early-close monitoring, with per-minute heartbeat proof and explicit coverage gaps",
+    "All-attempt shadow/delivery archive integrity and save/rebase race review",
+    "Nine-lane runtime integration using real source/publication/observation timestamps; no inferred midnight chronology",
     "All-channel Telegram acknowledgments and failure-safe deduplication",
-    "Connect observation-only discovery routes",
     "Broader historical semantic and recommendation path audit"
   ],
   "checkpointFollowup": {
@@ -248,7 +272,30 @@
       "command": "node --test test/*.test.mjs tests/*.test.mjs",
       "node": "24.19.0"
     },
-    "remoteCI": "Pending publication",
-    "remaining": "Guard window ends at 14:55; watcher window ends at 15:00. Full 16:00/half-day calendar and heartbeat coverage not yet implemented."
+    "remoteCI": [
+      {
+        "id": "40812268162",
+        "event": "pull_request",
+        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812268162"
+      },
+      {
+        "id": "40812262721",
+        "event": "push",
+        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812262721"
+      },
+      {
+        "id": "40812262652",
+        "event": "push",
+        "sha": "812f0c79e165c49ab493baba8bf75b9251974106",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40812262652"
+      }
+    ],
+    "remaining": "Guard window ends at 14:55; watcher window ends at 15:00. Full 16:00/half-day calendar and heartbeat coverage not yet implemented.",
+    "publishedCommit": "812f0c79e165c49ab493baba8bf75b9251974106"
   }
 }

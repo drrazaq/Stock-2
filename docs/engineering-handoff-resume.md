@@ -1,29 +1,32 @@
-# Interrupted engineering milestone
+# Stock-2 verified continuation checkpoint — 29 October 2026
 
-Branch remains a06032cca7c309f486a5215b15bd8a81fc6b1b08 (re-read GitHub after publication interruption). No new commit or CI was confirmed. Do not claim publication.
+Recovery/publication is COMPLETE. Do not repeat the recovery audit or reapply the old publish bundle.
 
-Seven changed/new files are bundled in /workspace/scratch/stock2-milestone-publish.json with exact base tree and expected branch head. Preserve all other GitHub tree entries. Never create a commit from this partial local source materialization. Use a complete clone or GitHub create_tree with base_tree_sha, then create_commit(parent=expectedHead), then update_ref only Stock2-safety-fixes with the expected-head lease and no force. First inspect the patch.
+## Published milestones
 
-Changes: legacy-duration overwrite protection; separate Massive/Alpaca trade and volume clocks; strict finite provider numeric fields; no inferred timestamp when missing; four provider regressions and one legacy-duration regression. Full details in engineering-progress.md and engineering-ledger.json.
+- `352316eb0dae144eead342c99be1c2a969ce7034`: recovered legacy-session overwrite protection and separate price/volume clocks. Full suite 1,195 passing. Push tests 40811335260, PR tests 40811340889, safety 40811335253 all successful on that exact commit.
+- `43084d62424ba7caabfaa1c28af318b0ab2653bd`: recovery CI dashboard/handoff; all three checks passed.
+- `2d276c3f63356356cb91776d8069c13f3d0bc614`: refresh stale minorities despite a fresh median; recover from future-dated price clocks. Full suite 1,198 passing. PR 40811856454, push tests 40811851254, safety 40811851330 all successful.
+- `812f0c79e165c49ab493baba8bf75b9251974106`: actual watch-job timing, queued/unknown metadata handling and measured provenance. Full suite 1,204 passing, zero failures/skips. PR 40812268162, push tests 40812262721, safety 40812262652 all successful on the exact commit.
 
-Validation: 12 targeted tests passed; five changed JS files parsed. Python-launched real watcher completed-session integration passed with no fixture mutation. Node spawnSync returns EPERM locally, affecting integration tests; do not skip these in CI or call them passing locally. Full suite for new code has not passed yet. Existing base full/safety CI all passed.
+The next documentation-only commit records this checkpoint. Use GitHub branch HEAD as the parent for subsequent work. Commit only to Stock2-safety-fixes with an expected-head lease, no force. Draft PR #1 stays draft. No merge, production deployment, live dispatch/message, trade, secret/permission change or paid service occurred.
 
-Next actions: inspect/publish bundle, verify all new-commit CI; mocked-provider integration; publication/rebase race and incomplete per-attempt shadow archive review; then whole-system backlog. Nine discovery lanes, broader news/Telegram repairs, premarket/full-session coverage, ZAD all-path review, strategy research and remaining acceptance checks are still open. Acceptance stays 15/40 (37.5%); strategy promotion stays zero.
+## Validation and workspace
 
-Frozen research and remote data unchanged. Synthetic no-credential smoke outputs are quarantined in /workspace/scratch/stock2-interrupted-fixture/data; never publish them as research. No merge/deploy/trade/live message/paid service/permission change performed.
+Original seven-file bundle survived exactly (SHA256 e62a4e9fa7e294d711d461ca1d4883c14e8e8e54e9a96d229db34aa07037f152). Base a06032c/tree cbc9b75fb0618579cfa9a51f9b9ce2685debe2c5 matched remote with no conflict. Full diff saved at /workspace/scratch/stock2-recovery.diff. Source is a partial materialization, not a complete Git clone: never commit its entire directory as a new repository tree. Publication used explicit files on each remote base tree, preserving all unrelated paths.
 
-## Recovery publication confirmed
+Twelve recovery targeted tests and Python real-watcher duplicate integration passed again. The Python integration is saved at /workspace/scratch/stock2-duplicate-integration.py. 207 root modules parse and 78 workflows parse. Full suites require per-command localhost network capability in this managed sandbox; without it Node child/listener calls return EPERM. Do not weaken/skip tests. Missing index/static inputs and 15 required data inputs were restored from exact remote blobs; data hashes still match the original baseline. GitHub comparison confirms ZERO data-file changes. Synthetic interrupted smoke outputs remain quarantined at /workspace/scratch/stock2-interrupted-fixture/data and must never be published as market evidence.
 
-Published repair commit `352316eb0dae144eead342c99be1c2a969ce7034` to Stock2-safety-fixes using a non-forced expected-head update from a06032c. Seven explicit files only; no data changes. Local full suite 1,195 passed, zero failures/skips. Twelve targeted tests, Python watcher integration, 207 syntax checks and 78 workflow parses passed. Exact-commit remote CI pending. Do not republish the old bundle or claim the branch remains a06032c.
+Logs: /workspace/scratch/stock2-full-suite-final.log (1195), stock2-freshness-suite.log (1198), stock2-guard-suite.log (1204). New watcher-refresh integration has an external-fetch guard, runs against localhost fixtures, proves stale minority refresh and retained aggregate-volume age. Guard tests include original October 28 timestamps separately from labelled synthetic fixtures.
 
-Exact repair-commit CI verified successful on 29 October: pull_request 40811340889, push 40811335253, push 40811335260. Recovery and publication are complete. Continue fresh-price coverage, monitoring and discovery integration; do not repeat recovery.
+## Remaining engineering work (no extra acceptance credit)
 
-## Next independent milestone
+Acceptance stays 15/40 (37.5%); 25 checks remain. No strategy promotion, profitability or production coverage claim follows from passing software tests.
 
-Per-symbol stale refresh and future-clock recovery implemented; 1,198 tests passed and six changed JS files parsed. New mocked-provider real-watcher integration passes. Publish only ignition-watch.mjs, live-refresh-universe.mjs, snapshot-fields.mjs, tests/live-refresh-universe.test.mjs, tests/snapshot-fields.test.mjs, tests/watcher-refresh.test.mjs and the three engineering documents. Base is documentation checkpoint 43084d62424ba7caabfaa1c28af318b0ab2653bd; use its tree. CI for that documentation checkpoint also passed all three checks. No data file belongs in this patch.
+1. Full session: guard ends 14:55 NY and watcher 15:00; the exchange generally closes 16:00. A 330-minute watcher window is NOT full exchange-session proof. Implement regular/half-day calendar, bounded/segmented monitoring, restart/message-state safeguards and per-minute health. Do not simply extend one GitHub job past its time limit or queue a duplicate that loses state.
+2. Archive every attempt's shadow/delivery evidence as well as its heartbeat summary; audit save/rebase conflicts before canonical publication. Existing legacy protection is published, but broader publication semantics remain open.
+3. Nine discovery lanes: assembleMultiAngle still lacks a runtime consumer. Inspect real collector payloads, preserve public time plus observedAt/source IDs, record unavailable sources, and integrate research only. Insider quarterly output and date-only earnings/supply summaries are not live point-in-time feeds; never invent publication timestamps or promote them to BUY.
+4. All Telegram send paths: news-watch and premarket still swallow failures or consume dedup state too early. Preserve retryable acknowledgment state and current sensitive settings.
+5. Provider entitlement/universe/session normalization and prospective latency measurement, all-path ZAD review, historical corporate-action/survivorship controls, strategy evidence and remaining acceptance checks.
 
-## Guard timing milestone
-
-Freshness commit 2d276c3f63356356cb91776d8069c13f3d0bc614 passed all three CI checks (40811856454, 40811851330, 40811851254). Next patch fixes INC-03 using actual latest-attempt watch-job start/end instead of run creation. Three code/test files: watcher-guard-core.mjs, watcher-guard.mjs, test/watcher-guard.test.mjs; three engineering docs. Fourteen targeted guard tests and full 1,204-test suite passed; no skips. Publish from freshness commit tree 228bfba66f0a90406e80fbfca6dd892eceff85e7, then verify exact-commit CI. Do not reapply old patches or include any restored data.
-
-Remaining priority: full 16:00/half-day session observation (guard still ends 14:55, watcher 15:00), live heartbeat freshness, all-attempt shadow/delivery archives, nine-lane runtime integration with point-in-time provenance, all-channel Telegram acknowledgment, and broader strategy/compliance acceptance. No new approved strategy. Full engineering acceptance stays 15/40.
+Frozen/rejected research, owner settings/holdings/ZAD marks and original datasets are unchanged. Keep them intact. No owner approval is needed to continue authorized branch engineering; approval remains required for merge/deploy/trading/sensitive changes.

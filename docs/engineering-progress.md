@@ -1,6 +1,6 @@
 # Stock-2 engineering progress dashboard
 
-Updated: 28 October 2026 (Kuwait). Development branch: `Stock2-safety-fixes`. PR: [draft #1](https://github.com/drrazaq/Stock-2/pull/1). No merge, deployment, workflow dispatch, Telegram message or trade performed in this review.
+Updated: 29 October 2026 (UTC). Development branch: `Stock2-safety-fixes`. PR: [draft #1](https://github.com/drrazaq/Stock-2/pull/1). No merge, deployment, workflow dispatch, Telegram message or trade performed in this review.
 
 **Completion: 37.5% (15 of 40 acceptance checks)** for the comprehensive engineering audit, repair and verification scope below. Each of ten workstreams has four equally weighted checks. Only the named completed checks count; in-progress work gets zero credit. This measures documented acceptance work, not percentage of code reviewed, product maturity or probability of trading profit. Earlier ~45% subjective maturity estimates are superseded for this audit. Production acceptance remains blocked.
 
@@ -107,3 +107,5 @@ The guard still used run-level `run_started_at` as execution proof. It now reads
 Fourteen guard fixtures pass, including the retained October 28 14:59 job timestamp, a separately labelled synthetic queue scenario, missing metadata and long queue/short job cases. This closes the run-creation attribution defect only. The guard still stops at 14:55 and the watcher at 15:00; **neither proves full regular-session observation through the 16:00 exchange close**. Heartbeat health, segmented full-session/half-day monitoring and all-attempt shadow/delivery archives remain open. No additional acceptance credit; 15/40 (37.5%).
 
 Guard timing full validation: **1,204 passed, zero failed/skipped**. Changed guard modules and tests parse. Remote CI pending publication.
+
+Guard timing repair published as **812f0c79e165c49ab493baba8bf75b9251974106**. Exact-commit CI all successful: pull_request [40812268162](https://github.com/drrazaq/Stock-2/actions/runs/40812268162), push [40812262721](https://github.com/drrazaq/Stock-2/actions/runs/40812262721), push [40812262652](https://github.com/drrazaq/Stock-2/actions/runs/40812262652). Full suite 1,204 passed; no failures/skips. GitHub comparison against a06032c confirms zero data-file changes across recovery, freshness and guard repairs. Remaining full-system acceptance: 25 checks (15/40 complete). Nine-lane runtime integration remains open; quarterly insider output and date-only event summaries must not be treated as timestamped live discovery evidence.
