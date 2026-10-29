@@ -2752,7 +2752,7 @@
     "reconciledBase": "a31340002c54ffcc056854b6464c689757a2f5eb"
   },
   "alpacaAccessAudit": {
-    "status": "BRANCH_DIAGNOSTIC_PENDING",
+    "status": "VERIFIED_BOUNDED_OBSERVATION",
     "base": "b64ca5fcc7f19705f341d1a78211546a186faa3a",
     "ownerAuthorizedReadOnlyCalls": true,
     "maximumGETs": 11,
@@ -2775,6 +2775,126 @@
       "historyYears": 5,
       "apiCalls": "Unlimited under plan terms"
     },
-    "realTimeDiscovery": "NOT_ESTABLISHED"
+    "realTimeDiscovery": "NOT_ESTABLISHED",
+    "verifiedSource": "a31340002c54ffcc056854b6464c689757a2f5eb",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506571/job/123439564723"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516090/job/123439476929"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516090/job/123439476887"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516090/job/123439476573"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516212/job/123439475794"
+      },
+      {
+        "name": "test",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516134/job/123439475589"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516081/job/123439475558"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516072/job/123439475030"
+      },
+      {
+        "name": "audit",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506655/job/123439446169"
+      },
+      {
+        "name": "safety",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506571/job/123439444783"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506637/job/123439444560"
+      },
+      {
+        "name": "test",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506536/job/123439444224"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506571/job/123439444215"
+      }
+    ],
+    "nodeTests": {
+      "files": 158,
+      "tap": 1365,
+      "standalone": 2,
+      "total": 1367
+    },
+    "actual": {
+      "at": "2026-10-29T12:13:44.538Z",
+      "requests": 11,
+      "bytes": 6732892,
+      "SIP": {
+        "requested": 24,
+        "tradesFresh": 19,
+        "quotesFresh": 21
+      },
+      "IEX": {
+        "requested": 24,
+        "tradesFresh": 5,
+        "quotesFresh": 2
+      },
+      "broadNoSymbolStatus": 400,
+      "activeAssets": 14346,
+      "tradableAssets": 13488,
+      "recentPagesTruncated": true
+    },
+    "temporaryTrigger": "REMOVED_IN_THIS_COMMIT; no remaining credentials in retired audit workflow",
+    "wholeMarketDiscovery": "NOT_VERIFIED",
+    "accountPlan": "ALPACA_NOT_INFERRED",
+    "evidence": "docs/validation/alpaca-access-2026-10-29.observed.json"
+  },
+  "hybridFreshnessRepair": {
+    "status": "HOSTED_CI_PENDING",
+    "independentProvenance": true,
+    "futureVolumeAndQuoteRepair": true,
+    "staleBboRefresh": true,
+    "naiveAlpacaClockRejected": true,
+    "plan": "docs/hybrid-provider-readiness-2026-10-29.md",
+    "noProductionDeployment": true,
+    "localWatcherIntegration": "NOT_RUN_TO_COMPLETION: sandbox localhost listen EPERM; hosted integration required"
   }
 }

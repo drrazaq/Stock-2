@@ -59,6 +59,8 @@ export function captureResearchQuotes(state,{events,rows,identities=[],identityS
   const vt=stamp(row.dollarVolumeAsOf),liquid=positive(row.dollarVolume)&&Number.isFinite(vt)&&vt<=now&&now-vt<=15*60000&&ny(vt).day===current.day;
   if(!liquid)state.counters.unknownLiquidity++;
   const q={symbol:row.sym,securityId,at:cutoff,quoteAsOf:new Date(row.qt).toISOString(),bid:row.bid,ask:row.ask,spread:(row.ask-row.bid)/(row.ask/2+row.bid/2),dollarVolume:liquid?row.dollarVolume:null,dollarVolumeAsOf:liquid?row.dollarVolumeAsOf:null,bidSizeShares:Number.isInteger(row.bidSizeShares)&&row.bidSizeShares>0?row.bidSizeShares:null,askSizeShares:Number.isInteger(row.askSizeShares)&&row.askSizeShares>0?row.askSizeShares:null,source:'WATCHER_NORMALIZED_BBO',fillClaim:false};
+  q.provider=['MASSIVE','ALPACA'].includes(row.quoteProvider)?row.quoteProvider:'UNKNOWN';
+  q.feed=q.provider==='ALPACA'&&['sip','iex'].includes(row.quoteFeed)?row.quoteFeed:q.provider==='MASSIVE'?'PLAN_DEPENDENT':'UNKNOWN';
   state.quotes[key]=q;added.push(q);state.counters.freshBboObservations++;
  }
  return added;

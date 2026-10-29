@@ -99,7 +99,7 @@ async function snapTop50() {
   try { const r = await request(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).map(marketSymbol).filter(Boolean); if (!syms.length) return [];
     const sj = (await snapshots(ALPD, syms, AH(), request)) || {}, sip = snapshotFeed(sj) === 'sip';
     return syms.map(s => alpacaSnapshot(s, sj[s], sip)); } catch (e) { return null; } }
-async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
+async function alpacaAll(syms) {   // Targeted per-response SIP/IEX snapshots; freshness is measured, never inferred from feed name.
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
@@ -110,7 +110,7 @@ async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a req
 async function snap() {
   const m = env.MASSIVE_KEY ? await snapMassive() : null, now = Date.now();
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
-  const refresh = selectStaleRefreshSymbols(m, now);
+  const refresh = selectStaleRefreshSymbols(m, now, {requireQuote:true});
   if (m && m.length && !refresh.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
   if (m && m.length) { const live = refresh.length ? await alpacaAll(refresh) : null; // refresh per-symbol staleness; penny research cap and BUY hard block unchanged
     if (live) { let n = 0; for (const r of m) if (mergeLiveSnapshot(r, live.get(r.sym))) n++;

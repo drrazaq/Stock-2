@@ -1,5 +1,5 @@
 {
-  "status": "NO_GO_PREMARKET_FRESHNESS_UNRESOLVED_AND_SEPARATE_DATED_APPROVAL_PENDING",
+  "status": "NO_GO_OLD_COLLECTOR_DELAYED_NOT_REALTIME_REVISED_PLAN_AND_DATED_APPROVAL_REQUIRED",
   "reportDate": "2026-10-29",
   "developmentBase": "2c0a557050c862daca89c58ea672e3cf98d26350",
   "collectionSource": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
@@ -102,7 +102,9 @@
     "merge": false,
     "servicesPurchased": false,
     "phaseAProviderRequests": 0,
-    "standaloneDiagnosticRequests": 5
+    "standaloneDiagnosticRequests": 5,
+    "authorizedAlpacaAuditGETs": 11,
+    "authorizedDiagnosticRepeatGETs": 5
   },
   "acceptance": {
     "complete": 22,
@@ -110,7 +112,7 @@
     "percent": 55,
     "remaining": 18
   },
-  "nextRequirement": "Resolve or explicitly assess observed Massive premarket freshness blocker; then separate exact revised workflow/date approval no earlier than2026-10-29T13:35:00Z. Do not install/dispatch or replace7dd702d/94824b7 silently.",
+  "nextRequirement": "Original collector cannot validate real-time premarket discovery. Review new hybrid implementation, exact source/workflow/limits and evidence prerequisites before separate dated approval; current revised proposal is design-only, not installable.",
   "concurrentCommitPreserved": "4c919aaa6fcbd9b3b4810c9a65c70f7953940960",
   "tests": {
     "fullPassed": 1300,
@@ -359,5 +361,20 @@
     },
     "triggerCorrection": "Existing push-on-source-change diagnostic ran automatically; all push triggers removed inc4018c9; no manual dispatch or Phase A run",
     "conclusion": "MASSIVE_SNAPSHOT 0/13238 fresh vs targeted SIP2/3 at06:40EDT; provider cause/permissions/delay/schema unresolved, no full-session inference"
+  },
+  "providerPlanOwnerConfirmation": {
+    "provider": "Massive",
+    "plan": "Stocks Starter",
+    "delayMinutes": 15,
+    "monthlyUSD": 29,
+    "historyYears": 5,
+    "unlimitedUnderPlanTerms": true,
+    "date": "2026-10-29"
+  },
+  "latestBoundedAlpacaAudit": {
+    "sourceSha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+    "run": 40871506655,
+    "results": "Targeted SIP access observed; supplied24 fresh19trades/21BBO; no-symbol HTTP400. Broad real-time discovery not verified.",
+    "evidence": "docs/validation/alpaca-access-2026-10-29.observed.json"
   }
 }

@@ -4,14 +4,14 @@ import assert from 'node:assert/strict';
 import {captureResearchQuotes,quoteEvidenceState,quoteEvidenceReport} from '../research-quote-followups.mjs';
 const at='2026-10-29T14:00:00Z',ms=Date.parse(at);
 const event={eventId:'fixture-event',symbol:'AAA',observedAt:at};
-const row={sym:'AAA',bid:9.99,ask:10.01,qt:ms,t:ms,price:10,dollarVolume:2e6,dollarVolumeAsOf:at};
+const row={sym:'AAA',bid:9.99,ask:10.01,qt:ms,t:ms,price:10,dollarVolume:2e6,dollarVolumeAsOf:at,quoteProvider:'ALPACA',quoteFeed:'sip'};
 const identity={symbol:'AAA',securityId:'fixture-security',issuerCik:'1234',industry:'fixture-industry',knownAt:'2026-10-01T00:00:00Z',validFrom:'2026-01-01T00:00:00Z',validTo:null,source:'https://www.sec.gov/fixture'};
 test('fresh trades never refresh absent, stale or future bid/ask clocks',()=>{
  for(const qt of [0,ms-121000,ms+1]){const s=quoteEvidenceState();assert.equal(captureResearchQuotes(s,{events:[event],rows:[{...row,qt}],identities:[identity],cutoff:at}).length,0);assert.equal(s.counters.staleOrMissingBbo,1);}
 });
 test('point-in-time identity and independent liquidity clocks accompany actual BBO observations',()=>{
  const s=quoteEvidenceState(),quotes=captureResearchQuotes(s,{events:[event],rows:[row],identities:[identity],cutoff:at});
- assert.equal(quotes[0].securityId,'fixture-security');assert.equal(quotes[0].dollarVolume,2e6);assert.equal(quotes[0].fillClaim,false);assert.equal(Object.values(s.metadata)[0].asOf,at);
+ assert.equal(quotes[0].securityId,'fixture-security');assert.equal(quotes[0].dollarVolume,2e6);assert.equal(quotes[0].fillClaim,false);assert.equal(Object.values(s.metadata)[0].asOf,at);assert.equal(quotes[0].provider,'ALPACA');assert.equal(quotes[0].feed,'sip');
  const unknown=quoteEvidenceState(),q=captureResearchQuotes(unknown,{events:[event],rows:[{...row,dollarVolume:undefined,vol:1e9,vt:ms}],identities:[],cutoff:at})[0];
  assert.equal(q.securityId,null);assert.equal(q.dollarVolume,null);assert.equal(quoteEvidenceReport(unknown).approvedBuy,false);
 });

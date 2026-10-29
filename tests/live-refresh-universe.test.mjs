@@ -28,3 +28,9 @@ test('fresh majority does not hide stale, unknown or future-dated stocks',()=>{
   assert.deepEqual(selectStaleRefreshSymbols([...fresh,row('OLD',now-4*60000),row('MISS',0),row('FUT',now+60000)],now),['OLD','MISS','FUT']);
   assert.deepEqual(selectStaleRefreshSymbols(fresh,now),[]);
 });
+test('fresh trades do not suppress explicitly required stale BBO refreshes',()=>{
+ const now=1800000000000,base={prevC:10,price:10,vol:100,t:now-1000,bid:9,ask:11,qt:now-1000};
+ const rows=[{...base,sym:'GOOD'},{...base,sym:'OLD',qt:now-121000},{...base,sym:'FUT',qt:now+1},{...base,sym:'MISS',qt:0},{...base,sym:'CROSS',bid:12}];
+ assert.deepEqual(selectStaleRefreshSymbols(rows,now),[]);
+ assert.deepEqual(selectStaleRefreshSymbols(rows,now,{requireQuote:true}),['OLD','FUT','MISS','CROSS']);
+});

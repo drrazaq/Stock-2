@@ -1,3 +1,13 @@
+## Verified Alpaca access and hybrid repair — 29 October 2026
+
+Published audit source a31340002c54ffcc056854b6464c689757a2f5eb passed all13 exact-commit checks. Hosted Node158 files /1,365 TAP+2 standalone =1,367 tests. Bounded authorized run40871506655 at08:13EDT used11 GETs/6,732,892 response bytes. SIP24 returned:19 fresh trades and21 fresh BBOs under180s; IEX5 and2. No-symbol snapshots HTTP400 on both feeds; this is not an entitlement refusal. Asset list14,346 active/13,488 tradable; recent AAPL/SPY trades/quotes each1,000 records with more pages, not complete coverage. No actual orders, account/position reads, Telegram or Phase A. Retired audit workflow now has neither push trigger nor provider bindings. Do not rerun old diagnostic jobs; historical source retains its temporary trigger/code.
+
+Massive Starter15minute delay is owner-confirmed. Hybrid is viable for supplied-symbol confirmation, not yet verified whole-market real-time discovery. Existing420-request Phase A cannot silently fund68 explicit200-symbol batches per sweep over330minutes (22,440 snapshot requests alone). Original pin/wrapper remain uninstalled/unapproved. Revised Friday30October design, required files, source-review/limits, success metrics and rollback are in hybrid-provider-readiness-2026-10-29.md. It is NOT APPROVED / NOT INSTALLABLE; no revised runtime SHA is invented.
+
+Next branch fix now published for CI: future BBO/volume clocks cannot pin newer valid evidence; equal-clock BBO conflicts retain the prior observation; per-field source/feed persists across Massive+Alpaca merges; current trade does not hide missing/stale BBO; timezone-free Alpaca clocks fail closed. Local targeted fixtures pass; full hosted results pending for this source. Acceptance remains22/40(55%),18 open; prospective cases0,profitability unverified. Continue ZAD04 remaining paths, Telegram03 durability and historical identity evidence; do not repeat completed ownership/safety investigations.
+
+Local watcher integration attempt could not open127.0.0.1 (EPERM); no local integration pass claimed. Concurrent16529b1 documentation and CI evidence are preserved below.
+
 ## Verified provider diagnostic checkpoint — 29 October 2026
 
 Source09b5d93a4bf6333c3fabe1e96eebaec6879837d8 passed all12 exact-commit hosted checks. Full push log:157 passing files,1,356 TAP cases plus2 standalone assertion scripts=1,358 passing Node tests; zero TAP failures. Local nine targeted provider tests also passed. Evidence: docs/validation/provider-diagnostic-continuation-ci.json. This supersedes the hosted-PENDING statement below for that source. The documentation checkpoint containing this evidence has identical code and must have its own CI inspected.

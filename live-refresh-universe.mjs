@@ -7,10 +7,12 @@ import {marketSymbol} from './market-symbol.mjs';
 export const MAX_PENNY_RESEARCH_REFRESH = 250;
 // A fresh median is not proof that each stock is fresh. Refresh eligible stale,
 // missing-clock and future-clock rows even when most of the snapshot is current.
-export function selectStaleRefreshSymbols(rows, nowMs = Date.now()) {
+export function selectStaleRefreshSymbols(rows, nowMs = Date.now(), {requireQuote=false}={}) {
   if (!Array.isArray(rows) || !Number.isFinite(nowMs)) return [];
   return selectLiveRefreshSymbols(rows.filter(r => r && !isFreshPriceAge(
-    typeof r.t === 'number' && r.t > 0 ? (nowMs - r.t) / 60000 : null)));
+    typeof r.t === 'number' && r.t > 0 ? (nowMs - r.t) / 60000 : null) || r && requireQuote && !(
+      typeof r.bid==='number'&&Number.isFinite(r.bid)&&r.bid>0&&typeof r.ask==='number'&&Number.isFinite(r.ask)&&r.ask>=r.bid&&
+      typeof r.qt==='number'&&Number.isFinite(r.qt)&&r.qt>0&&r.qt<=nowMs&&nowMs-r.qt<=120000)));
 }
 export function selectLiveRefreshSymbols(rows, pennyCap = MAX_PENNY_RESEARCH_REFRESH) {
   if (!Array.isArray(rows)) return [];

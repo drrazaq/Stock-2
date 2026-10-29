@@ -48,6 +48,6 @@ test('sample is fixed and quote width arithmetic remains finite for extreme nume
  assert.equal(AUDIT_SYMBOLS.length,24);const s=summarizeAlpaca({AAPL:{latestQuote:{bp:1,ap:1e308,t:iso(-1)}}},{now:at,requested:['AAPL']}).summary;assert.ok(Number.isFinite(s.freshQuoteSpreadP95Bps));
  assert.equal(auditSession(Date.parse('2026-11-27T18:00:00Z')).state,'POSTMARKET');
 });
-test('dated diagnostic workflow never schedules, writes content or binds trading/messaging secrets',()=>{
- const w=fs.readFileSync(new URL('../.github/workflows/alpaca-access-audit.yml',import.meta.url),'utf8');assert.doesNotMatch(w,/schedule:|contents: write|TG_TOKEN|PRIVATE_KEY|MASSIVE_KEY|FINNHUB_KEY/);assert.match(w,/github.run_attempt == 1/);assert.match(w,/retention-days: 3/);assert.match(w,/timeout-minutes: 4/);
+test('completed diagnostic cannot automatically run or access any credentials',()=>{
+ const w=fs.readFileSync(new URL('../.github/workflows/alpaca-access-audit.yml',import.meta.url),'utf8');assert.doesNotMatch(w,/schedule:|push:|contents: write|secrets\.|node tools\//);assert.match(w,/workflow_dispatch:/);assert.match(w,/RETIRED/);assert.match(w,/timeout-minutes: 1/);
 });
