@@ -4,12 +4,18 @@ on:
     branches: [Stock2-safety-fixes]
     paths:
       - 'research-collector.mjs'
+      - 'hybrid-*.mjs'
+      - 'tools/hybrid-*.mjs'
+      - 'tests/hybrid-*.test.mjs'
       - 'tools/research-collector.mjs'
       - 'tests/research-collector.test.mjs'
       - '.github/workflows/research-collector-fixtures.yml'
   pull_request:
     paths:
       - 'research-collector.mjs'
+      - 'hybrid-*.mjs'
+      - 'tools/hybrid-*.mjs'
+      - 'tests/hybrid-*.test.mjs'
       - 'tools/research-collector.mjs'
       - 'tests/research-collector.test.mjs'
       - '.github/workflows/research-collector-fixtures.yml'
@@ -24,5 +30,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: node --test tests/research-collector.test.mjs
+      - run: node --test tests/research-collector.test.mjs tests/hybrid-*.test.mjs
         # No secrets, workflow dispatch, schedule, collection or external delivery.

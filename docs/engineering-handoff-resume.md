@@ -1,3 +1,9 @@
+## Bounded hybrid transport and offline runner — 29 October 2026
+
+Continued from actual38150db, preserving all verified repairs. Added injected GET-only snapshot transport: fixed data host/symbol/feed scope; actual attempted requests and streamed bytes; request/minute/byte/time budgets; no fallback/retries;401/403/429 stop all later calls; cancellation/backward clock guards and no secrets in reports. Added offline-only CLI/runner connecting explicit batches to nine-lane session evidence; full330-minute fixture covers interruptions, stale BBO, duplicate cycles and truthful first detection. There is no --collect mode, production binding or live Phase A workflow.
+
+Local10 transport +3 runner +7 session tests pass; initial CLI subprocess EPERM was a sandbox restriction, then rerun with permitted sandbox networking. Full exact-commit hosted CI pending. Research fixture CI is extended, remains secret-free/read-only/no schedule. Next: authenticated encrypted intermediate checkpoint and cancellation/restart fixtures using synthetic keys; then remaining ZAD/Telegram/catalyst route work. Acceptance22/40,18open;actual prospective cases0. No live provider calls, actual Telegram/order, subscription, main merge, production deployment or existing-secret access/change this continuation.
+
 ## Verified provider continuation checkpoint — 29 October 2026
 
 **Verified source: 234f4195ba2b3e7ab946e33219563a19ef16a912. Acceptance22/40(55%),18 OPEN.** All12 exact-commit checks passed: push/PR full suites, safety, artifact open/close, source preservation, research, delivery and Python recovery. Hosted Node161files:1,393 TAP cases+2 standalone assertion scripts=**1,395 tests**. Local static230module syntax/85workflow YAML/Bash checks pass. Local8 shared-save and9 private-data contracts pass. Localhost watcher8/8 and price/BBO2/2 pass after explicit sandbox network allowance; initial EPERM and both failed hosted source batches remain recorded.

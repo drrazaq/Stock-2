@@ -3677,5 +3677,21 @@
     "phaseA": "OLD_RUNTIME_UNCHANGED; revised design + offline admission only; no approved/reviewed live replacement",
     "unpublishedIntendedEngineeringChanges": false,
     "workspace": "/workspace/stock2-engineering-b64 is isolated test materialization, NOT a Git checkout; canonical branch/commits are authoritative"
+  },
+  "autonomousTransportMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "base": "38150db02c3a931ae637ecd284af7202d3ddf609",
+    "transport": "Explicit injected GET only; no global fetch/default credentials, fallback or retries",
+    "limits": "Per-response/cumulative actual bytes, requests, minute pacing, per-request and whole-client deadlines, cancellation and backwards clock guard",
+    "httpRefusals": "401/403/429 halt further calls across feeds",
+    "runner": "OFFLINE_FIXTURE_ONLY; no collect mode, provider credentials or workflow activation",
+    "localTests": {
+      "transport": 10,
+      "runner": 3,
+      "session": 7
+    },
+    "localSpawnRestriction": "Initial CLI test blocked by sandbox EPERM; rerun with additional sandbox networking passed",
+    "acceptanceCredit": 0,
+    "prospectiveCases": 0
   }
 }
