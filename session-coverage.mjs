@@ -1,7 +1,9 @@
-// Session coverage is judged against the full 09:30–15:00 NY window, never just elapsed runtime.
-export function sessionCoverage(beat) {
-  const minutes = new Set(beat.map(b => b.m).filter(m => Number.isInteger(m) && m >= 570 && m < 900));
-  const first = [...minutes].some(m => m <= 575);
-  const last = [...minutes].some(m => m >= 895);
-  return { expectedMinutes: 330, observedMinutes: minutes.size, rate: +(minutes.size / 330).toFixed(3), complete: first && last && minutes.size >= 315 };
+import {marketSession} from './market-session.mjs';
+// A complete session means every scheduled minute, including the closing minute
+// bar (15:59 normally; 12:59 on reviewed half days). Gaps remain visible.
+export function sessionCoverage(beat, day) {
+  const s=day?marketSession(day):{closed:false,open:570,close:960};
+  const expected=s.closed?0:s.close-s.open;
+  const minutes = new Set((beat||[]).map(b => b?.m).filter(m => Number.isInteger(m) && !s.closed && m >= s.open && m < s.close));
+  return { expectedMinutes: expected, observedMinutes: minutes.size, rate: expected?+(minutes.size / expected).toFixed(3):0, complete: expected>0 && minutes.size===expected };
 }

@@ -29,3 +29,5 @@ jobs:
           node --check move-categories.mjs
       - name: Run targeted safety regression tests
         run: node --test tests/quote-freshness-safety.test.mjs tests/paper-gates-safety.test.mjs tests/session-coverage.test.mjs tests/ignition-replay.test.mjs tests/watcher-schedule.test.mjs tests/trade-plan.test.mjs tests/telegram-delivery.test.mjs tests/live-refresh-universe.test.mjs tests/approved-quote-gate.test.mjs tests/move-categories.test.mjs
+      - name: Secret-free branch watcher lifecycle integration
+        run: node --test tests/watcher-runtime.test.mjs tests/market-heartbeat.test.mjs tests/guard-dispatch.test.mjs

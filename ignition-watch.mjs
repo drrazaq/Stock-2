@@ -1,4 +1,4 @@
-// IGNITION WATCHER: runs during the US session (about 9:20 to 15:00 New York, a long GitHub Actions job). Every minute it checks
+// IGNITION WATCHER: runs during the US session (09:25 through the scheduled NY close, using bounded checkpointed jobs). Every minute it checks
 // the Massive snapshot universe (about 6,000+ US stocks) for stocks that START to run (rules in ignition-core.mjs, plus the
 // live-only quiet build-up rule IG8). COVERAGE IS MEASURED, NOT ASSUMED: every minute's heartbeat records the coverage mode, how
 // many stocks were received, how many had a live price, and how old the prices were.
@@ -13,6 +13,9 @@
 // says so). Volume stays the late Massive figure (can only undercount). Last fallback: Alpaca's top-50 gainers (PARTIAL coverage).
 // Read-only; never places an order.
 import { snapshots, feedUsed } from './alpaca-feed.mjs';
+import {marketSession} from './market-session.mjs';
+import {cycleHeartbeat,writeRuntimeJson,publishHeartbeat} from './watcher-heartbeat.mjs';
+import {readCheckpoint,saveCheckpoint} from './watcher-checkpoint.mjs';
 import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot } from './snapshot-fields.mjs';
 import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
@@ -38,6 +41,8 @@ const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)
 const MV = local(env.MASSIVE_BASE) || 'https://api.massive.com', ALPD = local(env.ALPACA_DATA) || 'https://data.alpaca.markets', TG = local(env.TG_BASE) || 'https://api.telegram.org';
 const SEC_WWW = local(env.SEC_BASE) || 'https://www.sec.gov', SEC_DATA = local(env.SEC_BASE) || 'https://data.sec.gov', SEC_UA = env.SEC_UA || 'stock-signal-board admin@users.noreply.github.com';
 const FAST = Boolean(local(env.MASSIVE_BASE)), sleep = (ms) => new Promise(r => setTimeout(r, FAST ? 0 : ms));
+const requests=[];
+const request=async(u,o={})=>{const start=Date.now();let status=null;try{const r=await fetch(u,{...o,signal:o.signal||AbortSignal.timeout(10000)});status=r.status;return r;}finally{requests.push({source:new URL(u).hostname,status,ok:status!==null&&status>=200&&status<300,ms:Date.now()-start});}};
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const pc = (x) => x === null || x === undefined ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%', CDIR = env.FM_CACHE_DIR || 'fm-cache';
 const nyDay = () => new Date(Date.now() + nyOffset(new Date().toISOString().slice(0, 10)) * 60000).toISOString().slice(0, 10);
@@ -47,12 +52,18 @@ let loops = 0, PROC_START = null;   // test hook: IG_FAKE_MIN starts a fake cloc
 const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loops * +env.IG_FAKE_STEP : Math.floor((Date.now() - START) / 60000)) : nyMin();
 PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
 const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
-if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
+const SESSION=marketSession(day),SEGMENT_END=Math.min(SESSION.close||960,env.IG_SEGMENT==='open'?840:960);
+if (SESSION.closed) { console.log('ignition watcher: closed or unsupported calendar day'); process.exit(0); }
+if (env.GITHUB_ACTIONS && env.GITHUB_REF_NAME!=='main' && !FAST) {console.log('branch watcher: live I/O disabled; use fixture integration tests');process.exit(0);}
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
-if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
+if (clock() < 540 || clock() >= SESSION.close) { console.log('ignition watcher: outside scheduled session New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
 if (sessionFinished(readJson('data/ignition-live.json', null), day)) { console.log('watcher: session already recorded for ' + day + '; skipping duplicate run'); process.exit(0); }
-const RUN_ID = runIdentity(env), CODE_SHA = (() => { try { return execSync('git rev-parse HEAD', {stdio:['ignore','pipe','ignore']}).toString().trim(); } catch { return null; } })();
+const RUN_ID = runIdentity(env), CODE_SHA = env.GITHUB_SHA || (() => { try { return execSync('git rev-parse HEAD', {stdio:['ignore','pipe','ignore']}).toString().trim(); } catch { return null; } })();
 const RUN_START = Date.now();   // Runtime begins after the early 09:25 wait, not at cron startup.
+const CP_FILE='runtime/watcher-checkpoint.json',RESUME=env.IG_RESUME?readCheckpoint(CP_FILE,{day,sourceSha:CODE_SHA,beforeMinute:clock()}):null;
+const ALLOW_SEND=!env.IG_RESUME||!!RESUME;
+if(env.IG_RESUME&&!RESUME)console.error('CHECKPOINT_UNAVAILABLE: monitoring research only; outbound trade/stop messages disabled');
+let lastHeartbeat=RESUME?.lastHeartbeat||null,lastPublish=0;
 // ---- each stock's normal daily volume (average over the days it traded, 15+ of the last 20 needed), float, time listed
 const avgVol = new Map(), firstSeen = new Map(), avgRange5 = new Map(); let sessions = 0;   // avgRange5: average high-low range of the last 5 sessions (the 'ADR' idea, logged only)
 try { const S = JSON.parse(zlib.gunzipSync(fs.readFileSync(CDIR + '/fm.json.gz')).toString()), D = Object.keys(S.days).sort(); sessions = D.length;
@@ -76,19 +87,19 @@ const LOTT = (readJson('data/signals.json', {}) || {}).lottery || {};   // teste
 // ---- data
 let src = null, mode = 'NO_USABLE_MARKET_DATA', note = '';
 async function snapMassive() {
-  try { const r = await fetch(MV + '/v2/snapshot/locale/us/markets/stocks/tickers?apiKey=' + encodeURIComponent(env.MASSIVE_KEY || '')); if (r.status === 401 || r.status === 403) { note = 'Massive snapshot not in the plan (HTTP ' + r.status + ')'; return null; } if (!r.ok) return []; const j = await r.json();
+  try { const r = await request(MV + '/v2/snapshot/locale/us/markets/stocks/tickers?apiKey=' + encodeURIComponent(env.MASSIVE_KEY || '')); if (r.status === 401 || r.status === 403) { note = 'Massive snapshot not in the plan (HTTP ' + r.status + ')'; return null; } if (!r.ok) return []; const j = await r.json();
     return (j.tickers || []).filter(x => /^[A-Z]{1,5}$/.test(x.ticker || '')).map(massiveSnapshot); } catch (e) { return []; } }
 const AH = () => ({ headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } });
 async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
-  try { const r = await fetch(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
-    const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = feedUsed() === 'sip';
+  try { const r = await request(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
+    const sj = (await snapshots(ALPD, syms, AH(), request)) || {}, sip = feedUsed() === 'sip';
     return syms.map(s => alpacaSnapshot(s, sj[s], sip)); } catch (e) { return null; } }
 async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
-    try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = feedUsed() === 'sip';   // SIP = every exchange, so its day volume is the real one
+    try { const sj = await snapshots(ALPD, part, AH(), request); if (!sj) { fails++; continue; } const sip = feedUsed() === 'sip';   // SIP = every exchange, so its day volume is the real one
       for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x, sip); if (row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
@@ -108,7 +119,7 @@ async function snap() {
   for (const r of a) { const x = byM.get(r.sym); r.vol = x ? x.vol : null; r.vt = x ? x.vt : 0; if (!(r.prevC > 0) && x) r.prevC = x.prevC; if (!(r.open > 0) && x) r.open = x.open; byM.set(r.sym, r); }
   return [...byM.values()];
 }
-async function minuteBars(sym) { try { const r = await fetch(MV + `/v2/aggs/ticker/${sym}/range/1/minute/${day}/${day}?adjusted=true&sort=asc&limit=50000&apiKey=` + encodeURIComponent(env.MASSIVE_KEY || '')); if (!r.ok) return null; return toBars((await r.json()).results, day); } catch (e) { return null; } }
+async function minuteBars(sym) { try { const r = await request(MV + `/v2/aggs/ticker/${sym}/range/1/minute/${day}/${day}?adjusted=true&sort=asc&limit=50000&apiKey=` + encodeURIComponent(env.MASSIVE_KEY || '')); if (!r.ok) return null; return toBars((await r.json()).results, day); } catch (e) { return null; } }
 async function openingRange(sym) {   // first 5 minutes (9:30-9:34) and the pre-market volume, from minute bars
   const b = await minuteBars(sym); if (!b) return null; const o = b.filter(x => x[0] >= 570 && x[0] <= 574);
   if (o.length < 3) return null; return { orH: Math.max(...o.map(x => x[2])), orL: Math.min(...o.map(x => x[3])), pm: b.filter(x => x[0] < 570).reduce((a, x) => a + x[5], 0) }; }
@@ -116,22 +127,24 @@ async function openingRange(sym) {   // first 5 minutes (9:30-9:34) and the pre-
 let TICK = null, secLogged = false;
 async function secRisk(sym) {
   const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
-  try { if (!TICK) { const r = await fetch(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return { known: false, tags: [] }; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
+  try { if (!TICK) { const r = await request(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return { known: false, tags: [] }; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
     const cik = TICK[sym]; if (!cik) return { known: false, tags: [] };
-    const r = await fetch(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return { known: false, tags: [] }; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [];
+    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return { known: false, tags: [] }; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [];
     for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null, accession: (R.accessionNumber || [])[k] || null, url: (R.accessionNumber || [])[k] && (R.primaryDocument || [])[k] ? 'https://www.sec.gov/Archives/edgar/data/' + Number(cik) + '/' + R.accessionNumber[k].replace(/-/g, '') + '/' + encodeURIComponent(R.primaryDocument[k]) : null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
       if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) tags.add('share sale / registration (' + f + ')'); if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
     return { known: true, tags: [...tags], filings }; } catch (e) { return { known: false, tags: [] }; } }
 // headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
 async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
-  try { const to = new Date().toISOString().slice(0, 10), from = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10), r = await fetch('https://finnhub.io/api/v1/company-news?symbol=' + encodeURIComponent(sym) + '&from=' + from + '&to=' + to + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
+  try { const to = new Date().toISOString().slice(0, 10), from = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10), r = await request('https://finnhub.io/api/v1/company-news?symbol=' + encodeURIComponent(sym) + '&from=' + from + '&to=' + to + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
     if (!r.ok) return { ok: false, why: 'HTTP ' + r.status }; const j = await r.json(); return { ok: true, items: (Array.isArray(j) ? j : []).map(x => ({ at: x.datetime ? x.datetime * 1000 : null, source: x.source || '', id: x.id || null, url: x.url || null, headline: String(x.headline || '').slice(0, 600) })) }; } catch (e) { return { ok: false, why: e.message }; } }
 async function tg(message) {
+ if(!ALLOW_SEND)return false;
  const outcome = await sendTelegramMessage({base:TG,token:env.TG_TOKEN,chat:env.TG_CHAT,text:message});
  if (!outcome.ok) console.error('TELEGRAM DELIVERY FAILED: ' + outcome.reason + ' | ' + String(message).slice(0,120));
  return outcome.ok;
 }
 // ---- the loop
+const ANCHOR={minute:null,prices:{},market:null}; // Preserve the pre-registered 15:00 research endpoint.
 const HELD = { at: 0, pos: {} }, STOP_SENT = {};   // live stop watch (23 Oct)
 const seen = {}, orb = {}, triggers = [], beat = [], vis = {}, ser = {}, pull = {}, earlyWave = {}, preIgnition = {}; let alerts = 0;   // earlyWave: observation only (23 Oct)
 const flag = (sym, f, text) => { const v = vis[sym]; if (!v) return; v.flags[f] = true; if (text && !v.notes.includes(text)) v.notes.push(text); };
@@ -193,8 +206,8 @@ const buildMissed = () => { const movers = Object.values(vis).filter(v => v.maxC
 const RADAR = { done: false, mkt: null };
 // ---- EARLY ALERTS (owner, 28 Oct 2026): prompt RESEARCH LEAD / PAPER SETUP messages, separate from approved alerts, and the per-candidate
 // log behind the DELIVERY SCORECARD (rules, hard blocks and caps in early-alerts.mjs). Approved alerts still come only from maybeAlert.
-async function tgSend(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[early alert, not sent: no Telegram token]\n' + text); return { ok: false, why: 'no Telegram token' }; }
-  try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(0, 3900), disable_web_page_preview: true }) }); const j = await r.json().catch(() => ({}));
+async function tgSend(text) { if(!ALLOW_SEND)return {ok:false,why:'checkpoint unavailable'}; if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[early alert, not sent: no Telegram token]\n' + text); return { ok: false, why: 'no Telegram token' }; }
+  try { const r = await request(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(0, 3900), disable_web_page_preview: true }) }); const j = await r.json().catch(() => ({}));
     return { ok: !!(r.ok && j.ok), why: r.ok ? (j.description || '') : 'HTTP ' + r.status }; } catch (e) { return { ok: false, why: e.message }; } }
 const EA = createEarlyAlerts({ day, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
   lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
@@ -210,7 +223,7 @@ async function pollEdgar(m) {
   if (!EF.cik) { EF.cik = new Map(); for (const [t, c] of Object.entries(TICK)) if (/^[A-Z]{1,5}$/.test(t)) { const k = +c; if (!EF.cik.has(k)) EF.cik.set(k, []); EF.cik.get(k).push(t); } }
   const H = { headers: { 'User-Agent': SEC_UA, Accept: 'application/atom+xml' } };
   for (const type of ['8-K', '6-K']) for (let start = 0; start < (EF.first ? 800 : 200); start += 100) {
-    const r = await fetch(SEC_WWW + '/cgi-bin/browse-edgar?action=getcurrent&type=' + encodeURIComponent(type) + '&company=&dateb=&owner=include&start=' + start + '&count=100&output=atom', H).catch(() => null);
+    const r = await request(SEC_WWW + '/cgi-bin/browse-edgar?action=getcurrent&type=' + encodeURIComponent(type) + '&company=&dateb=&owner=include&start=' + start + '&count=100&output=atom', H).catch(() => null);
     EF.polls++; if (!r || !r.ok) { EF.fails++; break; } if (EF.firstOkM === null) EF.firstOkM = m;
     const ents = parseAtom(await r.text()); let older = false;
     for (const e of ents) { const t = Date.parse(e.at); if (!(t >= DAY4)) { older = true; continue; } const k = e.acc + '|' + e.cik; if (EF.seen.has(k)) continue; EF.seen.add(k); EF.filings++; if (!EF.first) EF.lat.push(Math.round((Date.now() - t) / 1000));
@@ -257,8 +270,23 @@ async function radarSnap(m, scanned, live) {
     moverCount: ms.length, movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
   if (!env.IG_NO_RADAR) execSync('node opportunity-radar.mjs midday', { stdio: 'inherit', timeout: 120000 });
 }
+if(RESUME) {
+ const targets={seen,orb,vis,ser,pull,earlyWave,preIgnition,STOP_SENT,vcToday,RADAR,ANCHOR};
+ for(const [key,target] of Object.entries(targets))Object.assign(target,RESUME.state[key]||{});
+ triggers.push(...(RESUME.state.triggers||[]));beat.push(...RESUME.beat);
+ alerts=RESUME.state.alerts||0;earlyAlerts=RESUME.state.earlyAlerts||0;
+ Object.assign(EA.S,RESUME.early);EA.S.queue={lead:[],paper:[]};
+ for(const [key,row] of RESUME.shadow)SR.book.set(key,row);
+ for(const [key,value] of RESUME.pm||[])pm.set(key,value);
+ if(RESUME.edgar){const {seen:es,cik:ec,...stats}=RESUME.edgar;Object.assign(EF,stats);EF.seen=new Set(es||[]);EF.cik=ec?new Map(ec):null;}
+ console.log('RESUMED_COMPLETED_CYCLES '+RESUME.beat.length);
+}
+const checkpoint=()=>saveCheckpoint(CP_FILE,{day,sourceSha:CODE_SHA,runId:RUN_ID,lastHeartbeat,edgar:{...EF,seen:[...EF.seen],cik:EF.cik?[...EF.cik]:null},
+ state:{seen,orb,vis,ser,pull,earlyWave,preIgnition,STOP_SENT,vcToday,RADAR,ANCHOR,triggers,alerts,earlyAlerts},
+ beat,early:EA.S,shadow:[...SR.book],pm:[...pm]});
 while (Date.now() - RUN_START < MAXMS) {
-  const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+  const m = clock(); if (m >= SEGMENT_END) break; if (m < 568) { await sleep(30000); continue; }
+  const cycleStart=Date.now();requests.length=0;
   const rows = await snap(); loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
@@ -277,8 +305,8 @@ while (Date.now() - RUN_START < MAXMS) {
     recordPreIgnition(preIgnition,r.sym,detectPreIgnition({change:chg,rvT,price:r.price,live,dollarVol:r.vol>0?r.vol*r.price:0,minute:m}),m,live?r.price:null);
     // EARLY-WAVE OBSERVATION (23 Oct): +2% to +15% with elevated volume pace, sub-$1 included; logged only, never an alert or a buy
     try { const ewc = scoreEarlyWaveCandidate({ change: chg, rv, rvT, live, price: r.price, oneMinuteChange: prevSeenPx > 0 ? r.price / prevSeenPx - 1 : null }); updateEarlyWaveCandidate(earlyWave, r.sym, ewc, fmtM(m));
-      const dv = r.vol > 0 ? r.vol * r.price : 0; SR.tick({ sym: r.sym, m, price: r.price, live });
-      if (ewc) { EA.noteLead({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rvT, dollarVol: dv, live, bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (nowMs - r.qt) / 1000 : null });
+      const dv = r.vol > 0 ? r.vol * r.price : 0; if(m<=900)SR.tick({ sym: r.sym, m, price: r.price, live });
+      if (ewc && m<=900) { EA.noteLead({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rvT, dollarVol: dv, live, bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (nowMs - r.qt) / 1000 : null });
         SR.early({ sym: r.sym, m, price: r.price, chg, score: ewc.score, rv, rvT, dollarVol: dv, live, bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (nowMs - r.qt) / 1000 : null, fc: v.fc, hard: { under1: r.price < 1, halalFail: notHalal(r.sym), lottery: LOTT[r.sym] || 0 } }); } } catch (e) {}
     if (!(r.prevC >= 1)) { if (chg >= 0.10) flag(r.sym, 'under1', 'under 1 USD (never traded by these rules)'); continue; }
     if (r.vol > 0 && avgVol.has(r.sym)) { sumV += r.vol; sumA += avgVol.get(r.sym); }   // no 20-day history (new listing, was under 1 USD): yesterday's volume stands in
@@ -313,6 +341,7 @@ while (Date.now() - RUN_START < MAXMS) {
     for (const h of hits) { const t = { v: IG_VERSION, d: day, sym: r.sym, rule: h.R.id, m, price: r.price, prevC: r.prevC, rv: rv === null ? null : +rv.toFixed(2), rvT: rvT === null ? null : +rvT.toFixed(2), float: M.float || null, age: M.age, adr5: avgRange5.get(r.sym) && r.hi > 0 && r.lo > 0 ? +((Math.max(r.hi, r.price) - Math.min(r.lo, r.price)) / avgRange5.get(r.sym)).toFixed(2) : null, mode, delay: rd === null ? null : +rd.toFixed(1), ...h.extra }; triggers.push(t);
       if (vis[r.sym] && !vis[r.sym].caught) vis[r.sym].caught = h.R.id + ' at ' + fmtM(m);
       await maybeAlert(r, t, h.R, chg, rd, rv, M, h.extra, !!h.liveOnly); if (!(vis[r.sym] && vis[r.sym].flags.alerted)) EA.notePaper(t, chg, { bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (Date.now() - r.qt) / 1000 : null }); } }
+  if(m===900&&ANCHOR.minute===null){ANCHOR.minute=m;ANCHOR.prices=Object.fromEntries(rows.filter(r=>r.price>0&&isFreshPriceAge(r.t>0?(Date.now()-r.t)/60000:null)).map(r=>[r.sym,r.price]));ANCHOR.market=medChg();}
   const bySym = new Map(rows.map(x => [x.sym, x]));
   try { await pollEdgar(m); await decideFilings(m, bySym); controlSample(m, rows); } catch (e) { console.log('sec feed / control: ' + e.message); }   // D and R0 (rank-models.mjs)
   if (triggers.length > tStart) {   // shadow stream: every rule trigger this minute, including the held-back ones
@@ -323,24 +352,35 @@ while (Date.now() - RUN_START < MAXMS) {
   beat.push({ m, mode, received: rows.length, evaluated: evald, live: liveN, ageP50: q(sa, 0.5), ageP95: q(sa, 0.95), volAgeP50: q(vages.sort((a, b) => a - b), 0.5), alerts });   // heartbeat: proves the watcher ran this minute
   if (m >= 675 && m <= 690 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
-  const wait = 60000 - (Date.now() - nowMs); if (wait > 0) await sleep(wait);
+  lastHeartbeat=cycleHeartbeat({day,runId:RUN_ID,sourceSha:CODE_SHA,startedAt:new Date(cycleStart).toISOString(),completedAt:new Date().toISOString(),minute:m,received:rows.length,evaluated:evald,fresh:liveN,priceAgeP50Min:q(sa,.5),priceAgeP95Min:q(sa,.95),requests,lastSuccessfulCycle:lastHeartbeat?.lastSuccessfulCycle});
+  Object.assign(beat.at(-1),{runId:RUN_ID,sourceSha:CODE_SHA,startedAt:lastHeartbeat.startedAt,completedAt:lastHeartbeat.completedAt});
+  writeRuntimeJson('runtime/watcher-heartbeat.json',lastHeartbeat);checkpoint();
+  console.log('WATCHER_HEARTBEAT '+JSON.stringify(lastHeartbeat));
+  if(!FAST&&env.GITHUB_REF_NAME==='main'&&Date.now()-lastPublish>=180000) {
+    lastPublish=Date.now();const published=await publishHeartbeat(lastHeartbeat,{repo:env.GITHUB_REPOSITORY,branch:env.GITHUB_REF_NAME,token:env.GITHUB_TOKEN});
+    if(!published.ok)console.error('HEARTBEAT_PUBLISH_FAILED '+published.reason);
+  }
+  const wait = 60000 - (Date.now() - cycleStart); if (wait > 0) await sleep(wait);
 }
 const movers = Object.values(vis).filter(v => v.maxC >= 0.15), missed = buildMissed();
 const tally = {}; for (const x of missed) tally[x.code] = (tally[x.code] || 0) + 1;
 const modes = {}; for (const b of beat) modes[b.mode] = (modes[b.mode] || 0) + 1;
 const med = (a) => { const s = a.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
-const session = sessionCoverage(beat);   // Full intended 09:30–15:00 NY session, unique observed minutes.
+const session = sessionCoverage(beat,day);   // Scheduled regular/half-day NY session, unique observed minutes.
 const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(beat[0].m), lastMinute: fmtM(beat[beat.length - 1].m), minutesCompletedRate: session.rate, completeSession: session.complete, expectedMinutes: session.expectedMinutes, observedMinutes: session.observedMinutes, modes,
   receivedMedian: med(beat.map(b => b.received)), evaluatedMedian: med(beat.map(b => b.evaluated)), liveMedian: med(beat.map(b => b.live)), liveRate: med(beat.map(b => b.evaluated ? +(b.live / b.evaluated).toFixed(3) : null)),
   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
-if (!session.complete) console.error('INCOMPLETE WATCHER SESSION: observed ' + session.observedMinutes + '/330 market minutes (rate ' + session.rate + '); do not interpret missed-runner counts or daily coverage as complete.');
-const runSnapshot = { version: IG_VERSION, day, runId: RUN_ID, sourceSha: CODE_SHA, processStart: PROC_START, mode, src, note, loops, coverage, alerts, triggers, missed, tally, heartbeat: beat };
+if (!session.complete) console.error('INCOMPLETE WATCHER SESSION: observed ' + session.observedMinutes + '/' + session.expectedMinutes + ' market minutes (rate ' + session.rate + '); do not interpret missed-runner counts or daily coverage as complete.');
+const runSnapshot = { inheritedFrom:RESUME?.runId||null,inheritedMinutes:RESUME?.beat.length||0,segment:env.IG_SEGMENT||null, version: IG_VERSION, day, runId: RUN_ID, sourceSha: CODE_SHA, processStart: PROC_START, mode, src, note, loops, coverage, alerts, triggers, missed, tally, heartbeat: beat };
 // Archive every attempt before choosing the canonical day. A queued late duplicate must
 // never destroy the opening session, its shadow stream, or its delivery scorecard.
 const archiveDir = 'data/ignition-runs/' + day;
 fs.mkdirSync(archiveDir, {recursive:true});
 fs.writeFileSync(archiveDir + '/' + RUN_ID + '.json', JSON.stringify(runSnapshot), {flag:'wx'});
+fs.writeFileSync(archiveDir+'/'+RUN_ID+'.shadow.jsonl.gz',zlib.gzipSync(SR.rows().map(x=>JSON.stringify(x)).join('\n')+'\n'),{flag:'wx'});
+const attemptPx=ANCHOR.prices;
+fs.writeFileSync(archiveDir+'/'+RUN_ID+'.delivery.json',JSON.stringify(EA.finish(attemptPx,null,alerts)),{flag:'wx'});
 if (!preferSession(readJson('data/ignition-live.json', null), runSnapshot)) { console.log('watcher: archived partial run ' + RUN_ID + '; retained richer existing session'); process.exit(0); }
 if (Object.keys(vcToday).length >= 12) { VC.days[day] = vcToday; for (const d of Object.keys(VC.days).sort().slice(0, -25)) delete VC.days[d]; fs.writeFileSync('data/vol-curve.json', JSON.stringify(VC)); }
 fs.writeFileSync('data/ignition-live.json', JSON.stringify(runSnapshot, null, 1));
@@ -357,12 +397,12 @@ fs.appendFileSync('data/ignition-paper.jsonl', triggers.filter(t => !t.logged).m
 try { const rs = SR.rows(); if (rs.length) { fs.mkdirSync('data/shadow', { recursive: true }); fs.writeFileSync('data/shadow/' + day + '.jsonl.gz', zlib.gzipSync(rs.map(x => JSON.stringify(x)).join('\n') + '\n')); console.log('shadow stream: ' + rs.length + ' candidates saved'); } } catch (e) { console.log('shadow stream: ' + e.message); }
 // DELIVERY SCORECARD: every candidate that met an alert trigger (or was a rule hit) with its decision and 15:00 result; soft misses are
 // counted in the day's summary only (about 1,500 a day would bloat the public repo)
-try { const lastPx = {}; for (const v of Object.values(vis)) if (v.last > 0) lastPx[v.sym] = v.last; const E = EA.finish(lastPx, null, alerts), keep = E.rows.filter(r => !/^SOFT/.test(r.decision));
+try { const lastPx = ANCHOR.prices; const E = EA.finish(lastPx, null, alerts), keep = E.rows.filter(r => !/^SOFT/.test(r.decision));
   if (keep.length) fs.appendFileSync('data/opp-ledger.jsonl', keep.map(r => JSON.stringify(r)).join('\n') + '\n'); fs.appendFileSync('data/opp-days.jsonl', JSON.stringify({ ...E.summary, runId: RUN_ID, sessionMinutes: session.observedMinutes }) + '\n'); } catch (e) { console.log('delivery scorecard: ' + e.message); }
 // OPPORTUNITY RADAR same-day score (pre-registered in radar-v3-core.mjs): each line listed at 11:15 gets its last watched price and the
 // median $1+ stock's move over the same minutes, so the radar is judged against the average stock, not only against zero.
-try { if (RADAR.done) { const L = fs.existsSync('data/radar-v3-ledger.jsonl') ? fs.readFileSync('data/radar-v3-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)) : [], mEnd = medChg();
+try { if (RADAR.done && ANCHOR.minute===900) { const L = fs.existsSync('data/radar-v3-ledger.jsonl') ? fs.readFileSync('data/radar-v3-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)) : [], mEnd = ANCHOR.market;
   const mkt = RADAR.mkt !== null && mEnd !== null ? +((1 + mEnd) / (1 + RADAR.mkt) - 1).toFixed(4) : null, have = new Set(L.filter(r => r.type === 'close' && r.d === day).map(r => r.sym));
-  const rows = [...new Set(L.filter(r => r.type === 'list' && r.d === day).map(r => r.sym))].filter(s => !have.has(s) && vis[s] && vis[s].last > 0).map(s => JSON.stringify({ type: 'close', d: day, sym: s, px: vis[s].last, mkt }));
+  const rows = [...new Set(L.filter(r => r.type === 'list' && r.d === day).map(r => r.sym))].filter(s => !have.has(s) && ANCHOR.prices[s] > 0).map(s => JSON.stringify({ type: 'close', d: day, sym: s, px: ANCHOR.prices[s], mkt }));
   if (rows.length) fs.appendFileSync('data/radar-v3-ledger.jsonl', rows.join('\n') + '\n'); } } catch (e) { console.log('radar close rows: ' + e.message); }
 console.log('ignition watcher: ' + loops + ' minutes, modes ' + JSON.stringify(modes) + (note ? ' [' + note + ']' : '') + ', ' + triggers.length + ' ignitions, ' + alerts + ' alerts, ' + missed.length + ' movers of 15%+ audited ' + JSON.stringify(tally));

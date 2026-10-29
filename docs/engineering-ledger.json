@@ -303,12 +303,38 @@
     "status": "LOCAL_VERIFIED",
     "testsPassed": 1213,
     "targetedTests": 23,
-    "remoteCI": "PENDING",
+    "remoteCI": {
+      "status": "ALL_SUCCESS",
+      "runs": [
+        "40813360425",
+        "40813356276",
+        "40813356188"
+      ]
+    },
     "changes": [
       "Persist pending intent before HTTP",
       "Only HTTP 204 records accepted request; never confirmed execution",
       "Failed and timed-out attempts retained for throttle",
       "Telegram guard notifications retained until ACK"
-    ]
+    ],
+    "publishedCommit": "ae7db3f6d5a0c417779014a359eb730ae254f8af"
+  },
+  "sessionHeartbeatMilestone": {
+    "base": "ae7db3f6d5a0c417779014a359eb730ae254f8af",
+    "status": "LOCAL_VERIFIED",
+    "testsPassed": 1224,
+    "failed": 0,
+    "skipped": 0,
+    "calendar": "NYSE 2026/2027 reviewed; unsupported years fail closed",
+    "sessions": "390 regular minutes / 210 reviewed half-day minutes; every missing minute means incomplete",
+    "heartbeat": "Actual completed scans, last usable cycle, fresh % of evaluated symbols, latency/error counts; 3-minute GitHub transport; guard detects unknown/degraded/stalled",
+    "integration": "Secret-free localhost lifecycle in safety CI; no production dispatch",
+    "research": "Original 15:00 study endpoint retained; missing sample remains unscored; frozen datasets unchanged",
+    "limits": [
+      "GitHub scheduling/handoff gaps remain measurable, not guaranteed absent",
+      "Deployment/prospective full-session evidence requires approval and real sessions",
+      "Artifact checkpoint delivery itself not yet production-observed"
+    ],
+    "remoteCI": "PENDING"
   }
 }

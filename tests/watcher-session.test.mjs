@@ -5,14 +5,14 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {sessionFinished,preferSession,runIdentity,chooseDailySummary,sessionEvidence} from '../watcher-session.mjs';
-const full={day:'2026-10-28',heartbeat:Array.from({length:330},(_,i)=>({m:570+i,received:100,evaluated:100}))};
-const late={day:full.day,heartbeat:[{m:899},{m:900}]};
+const full={day:'2026-10-28',heartbeat:Array.from({length:390},(_,i)=>({m:570+i,received:100,evaluated:100}))};
+const late={day:full.day,heartbeat:[{m:959},{m:960}]};
 test('October 28 queued late run cannot replace opening-session record',()=>{
  assert.equal(preferSession(full,late),false);
  assert.equal(preferSession(late,full),true);
  assert.equal(sessionFinished(full,full.day),true);
  assert.equal(sessionFinished(late,late.day),false);
- assert.equal(sessionEvidence({...full,heartbeat:[...full.heartbeat,...full.heartbeat]}).minutes,330);
+ assert.equal(sessionEvidence({...full,heartbeat:[...full.heartbeat,...full.heartbeat]}).minutes,390);
  assert.equal(preferSession(full,full),false);
 });
 test('different dates and legacy records do not fabricate complete coverage',()=>{
@@ -35,7 +35,7 @@ test('real watcher entry exits before network or writes for an already complete 
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'s2-duplicate-'));
  try {
  fs.mkdirSync(path.join(dir,'data'));const file=path.join(dir,'data/ignition-live.json'),bytes=JSON.stringify(full);fs.writeFileSync(file,bytes);
- const r=spawnSync(process.execPath,[new URL('../ignition-watch.mjs',import.meta.url).pathname],{cwd:dir,env:{PATH:process.env.PATH,IG_DAY:full.day,IG_FAKE_MIN:'899'},encoding:'utf8',timeout:10000});
+ const r=spawnSync(process.execPath,[new URL('../ignition-watch.mjs',import.meta.url).pathname],{cwd:dir,env:{PATH:process.env.PATH,IG_DAY:full.day,IG_FAKE_MIN:'959'},encoding:'utf8',timeout:10000});
  assert.equal(r.status,0,r.stderr);assert.match(r.stdout,/session already recorded/);assert.equal(fs.readFileSync(file,'utf8'),bytes);assert.deepEqual(fs.readdirSync(path.join(dir,'data')),['ignition-live.json']);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });

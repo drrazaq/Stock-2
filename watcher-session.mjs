@@ -1,11 +1,13 @@
 // Session identity and publication policy. Selection uses observation coverage, never returns.
 import { sessionCoverage } from './session-coverage.mjs';
+import {marketSession} from './market-session.mjs';
 export function sessionEvidence(snapshot) {
   if (!snapshot || typeof snapshot.day !== 'string') return {minutes:0,usableMinutes:0,first:null,last:null,complete:false};
+  const session=marketSession(snapshot.day), close=session.close||960;
   if (Array.isArray(snapshot.heartbeat) && snapshot.heartbeat.length) {
-    const ms=[...new Set(snapshot.heartbeat.map(x=>x.m).filter(m=>Number.isInteger(m)&&m>=570&&m<900))].sort((a,b)=>a-b);
-    const c=sessionCoverage(snapshot.heartbeat);
-    const useful=new Set(snapshot.heartbeat.filter(x=>x.received>0&&x.evaluated>0&&Number.isInteger(x.m)&&x.m>=570&&x.m<900).map(x=>x.m)).size;
+    const ms=[...new Set(snapshot.heartbeat.map(x=>x.m).filter(m=>Number.isInteger(m)&&m>=570&&m<close))].sort((a,b)=>a-b);
+    const c=sessionCoverage(snapshot.heartbeat,snapshot.day);
+    const useful=new Set(snapshot.heartbeat.filter(x=>x.received>0&&x.evaluated>0&&Number.isInteger(x.m)&&x.m>=570&&x.m<close).map(x=>x.m)).size;
     return {minutes:ms.length,usableMinutes:useful,first:ms[0]??null,last:ms.at(-1)??null,complete:c.complete};
   }
   // Legacy daily summaries lack per-minute proof. Use their counts only to avoid replacing
@@ -15,7 +17,8 @@ export function sessionEvidence(snapshot) {
 }
 export function sessionFinished(snapshot, day) {
   const e=sessionEvidence(snapshot);
-  return snapshot?.day===day && e.complete && e.usableMinutes>=315 && e.last>=895;
+  const s=marketSession(day);
+  return snapshot?.day===day && !s.closed && e.complete && e.usableMinutes>=s.close-s.open && e.last>=s.close-1;
 }
 export function preferSession(existing, candidate) {
   if (!candidate || !candidate.day) return false;
@@ -33,7 +36,9 @@ export function preferSession(existing, candidate) {
 export function runIdentity(env={}, now=Date.now()) {
   const id=String(env.GITHUB_RUN_ID||'local-'+now),attempt=String(env.GITHUB_RUN_ATTEMPT||1);
   if(!/^[A-Za-z0-9_-]+$/.test(id)||!/^\d+$/.test(attempt))throw new Error('invalid watcher run identity');
-  return id+'-'+attempt;
+  const segment=env.IG_SEGMENT;
+  if(segment && !['open','close'].includes(segment))throw new Error('invalid watcher segment');
+  return id+'-'+attempt+(segment?'-'+segment:'');
 }
 export function chooseDailySummary(rows,day) {
   const same=rows.filter(x=>x?.day===day);

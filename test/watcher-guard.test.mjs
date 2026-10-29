@@ -16,9 +16,9 @@ test('daylight saving: New York is UTC-4 until 1 Nov 2026, UTC-5 after; the 12:4
 test('market days: weekends and NYSE holidays are skipped', () => {
   assert.equal(marketDay(nyParts(at('2026-10-31T14:00:00Z'))), false); assert.equal(marketDay(nyParts(at('2026-11-26T15:00:00Z'))), false); assert.equal(marketDay(nyParts(at('2026-10-29T14:00:00Z'))), true);
 });
-test('nothing is done outside 9:10-14:55 New York; no start after 14:00', () => {
+test('nothing is done outside session check window; no start after 15:30', () => {
   let o = guardDecide(at('2026-10-29T13:00:00Z'), [], {}); assert.equal(o.dispatch, false); assert.deepEqual(o.alerts, []);
-  o = guardDecide(at('2026-10-29T18:05:00Z'), [], {}); assert.equal(o.dispatch, false);
+  o = guardDecide(at('2026-10-29T19:35:00Z'), [], {}); assert.equal(o.dispatch, false);
 });
 test('not running at 9:12 New York: starts it once, then waits 15 minutes before a second attempt, at most 3, then one DOWN alert', () => {
   let o = guardDecide(at('2026-10-29T13:12:00Z'), [], {}); assert.equal(o.dispatch, true); assert.match(o.alerts[0], /WATCHER NOT STARTED by 09:12.*attempt 1 of 3/);
@@ -80,7 +80,7 @@ test('October 28 retained timestamps identify 14:59 job start, not 10:31 queue c
  const r=watcherJobEvidence({id:40706824310,status:'in_progress',created_at:'2026-10-28T14:31:45Z',run_started_at:'2026-10-28T14:31:45Z'},[{name:'watch',status:'in_progress',started_at:'2026-10-28T18:59:07Z'}],at('2026-10-28T19:00:00Z'));
  assert.equal(r.jobStartedAt,'2026-10-28T18:59:07Z');
  assert.equal(nyParts(Date.parse(r.jobStartedAt)).min,899);
- // The current guard window ends at 14:55; this fixture does not claim full-session monitoring.
+ // Job timing still does not claim scan coverage.
 });
 test('legacy run-derived start is cleared when actual job evidence is unavailable',()=>{
  const now=at('2026-10-29T14:00:00Z'),r=watcherJobEvidence({status:'in_progress',created_at:'2026-10-29T13:10:00Z'},null,now);

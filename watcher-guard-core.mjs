@@ -6,14 +6,15 @@
 // New York time comes from Intl (America/New_York), so daylight saving is automatic (summer UTC-4, winter UTC-5 from 1 Nov 2026).
 // Market holidays: the NYSE full-day closures below (update every December); half days still run.
 export const HOLIDAYS = ['2026-11-26', '2026-12-25', '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24'];
-export const WINDOW = { from: 550, to: 895, startUntil: 840, wantBy: 565 };   // check 9:10-14:55 New York, start it until 14:00; it should run by 9:25
+import {marketSession} from './market-session.mjs';
+export const WINDOW = { from: 550, to: 955, startUntil: 930, wantBy: 565 };
 export const fmt = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
 export function nyParts(ms) {
   const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' })
     .formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value);
   return { d: p.year + '-' + p.month + '-' + p.day, min: +p.hour * 60 + +p.minute, wd: p.weekday };
 }
-export const marketDay = (n, holidays = HOLIDAYS) => !['Sat', 'Sun'].includes(n.wd) && !holidays.includes(n.d);
+export const marketDay = (n, holidays = HOLIDAYS) => !marketSession(n.d).closed && !holidays.includes(n.d);
 
 // Run-level run_started_at can equal queue creation (October 28 incident).
 // Only the actual `watch` job establishes job start; it still does not prove
@@ -21,9 +22,10 @@ export const marketDay = (n, holidays = HOLIDAYS) => !['Sat', 'Sun'].includes(n.
 export function watcherJobEvidence(run, jobs, nowMs = Date.now()) {
   const unknown = {...run, jobEvidence:'UNKNOWN', jobStartedAt:null, jobCompletedAt:null};
   if (!Array.isArray(jobs)) return unknown;
-  const matching = jobs.filter(j=>j?.name==='watch');
-  if (matching.length !== 1) return unknown;
-  const job=matching[0], started=Date.parse(job.started_at), completed=Date.parse(job.completed_at);
+  const matching = jobs.filter(j=>['watch','close'].includes(j?.name));
+  if (!matching.length || new Set(matching.map(j=>j.name)).size!==matching.length) return unknown;
+  const job=matching.find(j=>j.status==='in_progress') || matching.find(j=>['queued','waiting','pending'].includes(j.status)) || matching.at(-1);
+  const started=Date.parse(job.started_at), completed=Date.parse(job.completed_at);
   const active=['in_progress','completed'].includes(job.status);
   const measured=active && Number.isFinite(started) && started<=nowMs;
   return {...unknown, jobEvidence:measured?'MEASURED':'UNKNOWN', jobStatus:job.status,
@@ -35,6 +37,7 @@ export function watcherJobEvidence(run, jobs, nowMs = Date.now()) {
 // state: { d, started, dispatched: [min...], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
 export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) {
   const n = nyParts(nowMs), alerts = []; let dispatch = false;
+  const session=marketSession(n.d),windowEnd=session.closed?0:session.close+5,startUntil=session.closed?0:session.close-30;
   const state = state0 && state0.d === n.d ? { ...state0, dispatched: [...(state0.dispatched || [])], alerted: { ...(state0.alerted || {}) } } : { d: n.d, started: null, dispatched: [], alerted: {} };
   // Old `dispatched` entries were recorded before HTTP acknowledgment. Retain
   // them as unknown attempts for rate limiting, never as accepted requests.
@@ -42,7 +45,7 @@ export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) 
   if(state.version!==2) state.dispatched=[];
   state.version=2;
   if (state.startedSource !== 'github_job') state.started = null;
-  if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > WINDOW.to) return { state, dispatch, alerts, why: 'outside the check window' };
+  if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > windowEnd) return { state, dispatch, alerts, why: 'outside the check window' };
   const today = runs.filter(r => Number.isFinite(Date.parse(r?.created_at)) && nyParts(Date.parse(r.created_at)).d === n.d);
   const waiting = r => ['queued','waiting','requested','pending'].includes(r.status) ||
     (r.status==='in_progress' && ['queued','waiting','pending'].includes(r.jobStatus));
@@ -61,9 +64,11 @@ export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) 
     if (sm > WINDOW.wantBy + 10 && !state.alerted.late) { state.alerted.late = true; alerts.push('WATCHER STARTED LATE: the watch job started at ' + fmt(sm) + ' New York (it should run by 9:25). This run cannot establish opening coverage; job activity is not proof of fresh market data' + (state.dispatched.length ? '; the guard requested a start.' : '; GitHub started it late.')); }
     return { state, dispatch, alerts, why: 'watch job running since ' + fmt(sm) + '; market coverage unverified' };
   }
-  if (watchedAlready) { if (!state.alerted.stopped) { state.alerted.stopped = true; alerts.push('WATCHER STOPPED EARLY: today\'s watch job ended before 14:55 New York. Job duration alone does not establish market coverage. No automatic restart; preserve session evidence for recovery review.'); }
+  const closedOnTime=today.some(r=>r.status==='completed'&&r.jobCompletedAt&&nyParts(Date.parse(r.jobCompletedAt)).min>=session.close);
+  if(closedOnTime&&n.min>=session.close)return {state,dispatch,alerts,why:'job ended at scheduled close; inspect heartbeat coverage'};
+  if (watchedAlready && !queued.length) { if (!state.alerted.stopped) { state.alerted.stopped = true; alerts.push('WATCHER STOPPED EARLY: today\'s watch job ended before the scheduled close. Job duration alone does not establish market coverage. No automatic restart; preserve session evidence for recovery review.'); }
     return { state, dispatch, alerts, why: 'watched today, then stopped' }; }
-  if (today.some(r=>r.status==='completed' && (r.jobEvidence!=='MEASURED' || !r.jobCompletedAt))) {
+  if (!queued.length && today.some(r=>r.status==='completed' && (r.jobEvidence!=='MEASURED' || !r.jobCompletedAt))) {
     if(!state.alerted.unverified) {state.alerted.unverified=true;alerts.push('WATCHER JOB UNVERIFIED: a workflow completed without valid watch-job timing. Coverage is unknown; no duplicate start requested.');}
     return {state,dispatch,alerts,why:'completed workflow; job duration unverified'};
   }
@@ -72,7 +77,7 @@ export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) 
     return { state, dispatch, alerts, why: 'queued' };
   }
   const last = state.attempts.length ? state.attempts[state.attempts.length - 1].min : null;
-  if (n.min > WINDOW.startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
+  if (n.min > startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
   if (state.attempts.length < 3 && (last === null || n.min - last >= 15)) {
     dispatch = true; state.attempts.push({min:n.min,status:'PENDING'});
     alerts.push('WATCHER NOT STARTED by ' + fmt(n.min) + ' New York: requesting a start (attempt ' + state.attempts.length + ' of 3); execution is not confirmed.');
