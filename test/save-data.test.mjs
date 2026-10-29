@@ -13,6 +13,7 @@ import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const SCRIPT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.github', 'save-data.sh');
+const MANIFEST=fs.readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..','docs/repository-ownership.json'),'utf8');
 const ENV = { ...process.env, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', SAVE_SLEEP: '0' };
 const sh = (cmd, cwd) => execSync(cmd, { cwd, env: ENV, stdio: ['ignore', 'pipe', 'pipe'] }).toString();
 const W = (dir, f, s) => { fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true }); fs.writeFileSync(path.join(dir, f), s); };
@@ -26,6 +27,7 @@ function setup(base, bot) {
   sh('git init -q --bare -b main ' + bare, seed);
   sh('git init -q -b main && git -c commit.gpgsign=false commit -q --allow-empty -m init', seed);
   for (const [f, s] of Object.entries(base)) W(seed, f, s);
+  W(seed,'docs/repository-ownership.json',MANIFEST);
   sh('git add -A && git -c commit.gpgsign=false commit -qm base && git remote add origin ' + bare + ' && git push -q origin main', seed);
   sh('git clone -q ' + bare + ' ' + job, seed); sh('git clone -q ' + bare + ' ' + other, seed);
   for (const [f, s] of Object.entries(bot)) W(other, f, s);
@@ -82,4 +84,15 @@ test('pull transport failure without a rebase does not fall through to a success
  const wrappers=tmp('stock2-git-wrapper-'),realGit=sh('command -v git',job).trim();
  W(wrappers,'git','#!/bin/sh\nif [ "$1" = pull ]; then exit 42; fi\nexec "$STOCK2_TEST_REAL_GIT" "$@"\n');fs.chmodSync(path.join(wrappers,'git'),0o755);
  try{assert.throws(()=>execSync('bash '+SCRIPT+' "must not push"',{cwd:job,env:{...ENV,PATH:wrappers+path.delimiter+ENV.PATH,STOCK2_TEST_REAL_GIT:realGit},stdio:'pipe'}));assert.equal(originFile(bare,'data/a.json'),'1\n');assert.equal(R(job,'data/a.json'),'2\n');}finally{fs.rmSync(wrappers,{recursive:true,force:true});}
+});
+test('a conflicting frozen lab result preserves both commits instead of job-wins overwrite',()=>{
+ const name='data/agent-a-lab.json',base='{"firstRun":"original"}\n',remote='{"firstRun":"remote independent result"}\n',local='{"firstRun":"local independent result"}\n';
+ const {bare,job}=setup({[name]:base},{[name]:remote});W(job,name,local);
+ assert.throws(()=>sh('bash '+SCRIPT+' "frozen conflict"',job));assert.equal(originFile(bare,name),remote);assert.equal(R(job,name),local);assert.equal(sh('git show HEAD:'+name,job),local);
+});
+test('missing or malformed frozen registry blocks before committing or publishing data',()=>{
+ for(const policy of [null,'{bad',JSON.stringify({frozenRegistry:[]}),JSON.stringify({frozenRegistry:[{path:'../escape'}]})]){
+  const {bare,job}=setup({'data/a.json':'1\n'},{});W(job,'data/a.json','2\n');if(policy===null)fs.unlinkSync(path.join(job,'docs/repository-ownership.json'));else W(job,'docs/repository-ownership.json',policy);
+  assert.throws(()=>sh('bash '+SCRIPT+' "policy fail"',job));assert.equal(originFile(bare,'data/a.json'),'1\n');assert.equal(sh('git show HEAD:data/a.json',job),'1\n');
+ }
 });

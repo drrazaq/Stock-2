@@ -3370,7 +3370,7 @@
     }
   },
   "sharedScannerSaveMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_FAILURE_BARRIER",
     "defects": [
       "Failed staging/commit could continue to an unchanged successful push",
       "Pull transport/authentication failure with no active rebase fell through as synchronized"
@@ -3382,6 +3382,96 @@
       "oldFail": 2
     },
     "priorOwnerConflictPolicy": "PRESERVED; all four prior contracts still pass",
-    "productionJobsDispatched": 0
+    "productionJobsDispatched": 0,
+    "verifiedSha": "69db8a5f319e05296887a406f5039739118962da",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877486727/job/123460096428"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877493233/job/123459962531"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877493007/job/123459962151"
+      },
+      {
+        "name": "test",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877493144/job/123459961855"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877492932/job/123459961495"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877492932/job/123459961465"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877492932/job/123459961247"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877492749/job/123459960271"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877486727/job/123459939960"
+      },
+      {
+        "name": "test",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877486807/job/123459939713"
+      },
+      {
+        "name": "safety",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877486727/job/123459939508"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "69db8a5f319e05296887a406f5039739118962da",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40877486712/job/123459938945"
+      }
+    ],
+    "nodeTests": {
+      "files": 161,
+      "tap": 1391,
+      "standalone": 2,
+      "total": 1393
+    }
+  },
+  "frozenSaveConflictMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "policy": "Explicit docs/repository-ownership.json frozenRegistry read as metadata; no content inspection",
+    "repair": "Any registered frozen-file conflict blocks automatic merge/publication; both local and upstream commits retained",
+    "missingPolicy": "BLOCK_BEFORE_COMMIT",
+    "localDisposableGitTests": 8,
+    "allWorkflowsComplete": false,
+    "productionDeployment": false
   }
 }

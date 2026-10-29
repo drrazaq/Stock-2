@@ -1,3 +1,9 @@
+## Shared save barrier verified; frozen-conflict guard continuation — 29 October 2026
+
+Source69db8a5f319e05296887a406f5039739118962da passes all12 exact-commit checks; hosted Node161files/1393tests. Stage/commit/pull failures no longer report successful save. Four prior owner-conflict controls are retained.
+
+Next branch repair: shared scanner save consults the existing frozenRegistry metadata before any conflict resolution and blocks on a registered frozen-study conflict, retaining both local and remote commits. Missing/malformed/empty registry blocks before committing or pushing rather than silently reverting to job-wins. Node is already installed by the scanner workflow; a future deployment must include the existing registry file. Eight local disposable-Git tests pass, including original controls and both-side frozen preservation. Hosted full CI pending. Other workflows retain legacy conflict behavior; ACTIONS04 remains OPEN. No real scanner/lab dispatch, data edit, rejected-result rewrite or deployment occurred. Acceptance22/40,18 open;prospective cases0.
+
 ## Historical admission verified; shared save failure barrier — 29 October 2026
 
 Source5a03637949f14f58487683d26e746a5c76c19ed4 passed all12 exact-commit checks; hosted Node161files/1391tests. Static local checks also pass:230 root/tool module parses and85 workflow YAML parses. Original local socket EPERM and sourceeae4c45 fixture failure remain recorded; neither is misreported as an initial pass.
