@@ -1,4 +1,4 @@
-import {readAlertState,saveAlertState,alertAvailable,deliverAlertOnce} from './alert-delivery-state.mjs';
+import {readAlertState,saveAlertState,alertAvailable,deliverAlertOnce,validAlertBook} from './alert-delivery-state.mjs';
 import {paperRequest} from './paper-transport.mjs';
 import {resolveZad} from './zad-compliance.mjs';
 import {telegramFetch,splitTelegramText} from './telegram-delivery.mjs';
@@ -3068,10 +3068,31 @@ function basketDue(now, S0, T10, T17, marks, b1 = B1_ON()) { const S = { ...(S0 
 // run by the bot's full check every 5 minutes (intraday(true)); an action reminder, so it is sent in quiet mode too
 async function basketNotices(now = Date.now()) { try {
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
-  const S0 = readJson(BASKET_STATE, {}), { msgs, state } = basketDue(now, S0, readJson0('data/squad10-today.json'), readJson0('data/squad17-today.json'), basketMarks());
-  for (const t of msgs) await telegram(t);
-  if (JSON.stringify(state) !== JSON.stringify(S0)) fs.writeFileSync(BASKET_STATE, JSON.stringify(state, null, 1));
-} catch (e) { console.log('basket notices failed: ' + e.message); } }
+  // This is already an encrypted owner-state file; never create a public body journal.
+  // A corrupt existing state is not an empty state and must not replay reminders.
+  const S0 = fs.existsSync(BASKET_STATE) ? JSON.parse(fs.readFileSync(BASKET_STATE,'utf8')) : {};
+  if(!S0||typeof S0!=='object'||Array.isArray(S0))throw Error('BASKET_STATE_UNREADABLE');
+  if(S0.monthly!==undefined&&(typeof S0.monthly!=='string'||!/^\d{4}-\d\d$/.test(S0.monthly)))throw Error('BASKET_STATE_UNREADABLE');
+  const book=Object.hasOwn(S0,'noticeDelivery')?S0.noticeDelivery:{sent:{},delivery:{}};
+  if(!validAlertBook(book))throw Error('BASKET_DELIVERY_STATE_UNREADABLE');book.delivery||={};S0.noticeDelivery=book;
+  const {msgs,state}=basketDue(now,S0,readJson0('data/squad10-today.json'),readJson0('data/squad17-today.json'),basketMarks());
+  const save=()=>saveAlertState(BASKET_STATE,S0);
+  for(const text of msgs){
+    const monthly=text.startsWith('Monthly basket day:'),key=monthly?'monthly|'+ny(now).d.slice(0,7):'formation|'+crypto.createHash('sha256').update(JSON.stringify(state.formation)).digest('hex');
+    // ACK may be durable even if the following semantic-state save failed.
+    // Reconcile it without resending. UNKNOWN/PENDING remain quarantined.
+    if(!book.sent[key]&&book.delivery[key]?.status!=='ACK'){
+      if(Object.keys(book.delivery).length>=2000)throw Error('BASKET_DELIVERY_CAPACITY');
+      const result=await deliverAlertOnce({book,keys:[key],save,send:()=>telegram(text),at:new Date(now).toISOString()});
+      if(!result?.ok){console.error('BASKET DELIVERY UNCONFIRMED: '+result?.reason);return result;}
+    }
+    if(monthly)S0.monthly=state.monthly;else{S0.formation=state.formation;S0.rebalanceSent=state.rebalanceSent;}
+    save();
+  }
+  if(!msgs.length){Object.assign(S0,state);save();}
+  else if(!S0.formation&&state.formation){S0.formation=state.formation;save();}
+  return {ok:true};
+} catch { console.error('basket notices failed: state or delivery persistence unconfirmed');return {ok:false,reason:'BASKET_STATE_OR_SAVE_FAILED'}; } }
 // the system's ways to trade, one line each
 function waysText() { return ['YOUR WAYS TO TRADE (each one separate; you place every order yourself)',
   'a) THE BASKET (core): every month 65% of ~1,000 USD in ZAD Basket 2 = SPUS 54% / gold fund IAUM 46%, and 35% kept as cash; Basket 1 = the halal top 10 (whole-number %) is bought with that cash 3 times a year (first trading day of Jan, May, Sep) to keep ZAD fees low. Send  basket  (buy day:  basket buy AMOUNT )',

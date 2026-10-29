@@ -5,6 +5,8 @@ on:
     paths:
       - 'telegram-delivery*.mjs'
       - 'news-watch.mjs'
+      - 'scan.mjs'
+      - 'tests/basket-delivery.test.mjs'
       - 'tests/telegram-delivery-ledger.test.mjs'
       - 'tests/news-delivery.test.mjs'
       - '.github/workflows/news.yml'
@@ -13,6 +15,8 @@ on:
     paths:
       - 'telegram-delivery*.mjs'
       - 'news-watch.mjs'
+      - 'scan.mjs'
+      - 'tests/basket-delivery.test.mjs'
       - 'tests/telegram-delivery-ledger.test.mjs'
       - 'tests/news-delivery.test.mjs'
       - '.github/workflows/news.yml'
@@ -32,4 +36,4 @@ jobs:
         with:
           node-version: '20'
       - name: Localhost and mocked API contracts only
-        run: timeout 120s node --test tests/telegram-delivery-ledger.test.mjs tests/news-delivery.test.mjs
+        run: timeout 120s node --test tests/telegram-delivery-ledger.test.mjs tests/news-delivery.test.mjs tests/basket-delivery.test.mjs

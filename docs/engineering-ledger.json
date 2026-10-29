@@ -2888,13 +2888,111 @@
     "evidence": "docs/validation/alpaca-access-2026-10-29.observed.json"
   },
   "hybridFreshnessRepair": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_FIX",
     "independentProvenance": true,
     "futureVolumeAndQuoteRepair": true,
     "staleBboRefresh": true,
     "naiveAlpacaClockRejected": true,
     "plan": "docs/hybrid-provider-readiness-2026-10-29.md",
     "noProductionDeployment": true,
-    "localWatcherIntegration": "NOT_RUN_TO_COMPLETION: sandbox localhost listen EPERM; hosted integration required"
+    "localWatcherIntegration": "8/8 passed after granting sandbox localhost network; initial EPERM retained",
+    "verifiedSha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874232077/job/123448929138"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874239992/job/123448831805"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874239992/job/123448831434"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874240133/job/123448831278"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874239992/job/123448831099"
+      },
+      {
+        "name": "test",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874240049/job/123448831034"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874240096/job/123448830833"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874239973/job/123448830712"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874232104/job/123448803204"
+      },
+      {
+        "name": "test",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874232027/job/123448803109"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874232077/job/123448802708"
+      },
+      {
+        "name": "safety",
+        "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40874232077/job/123448802506"
+      }
+    ],
+    "nodeTests": {
+      "files": 158,
+      "tap": 1372,
+      "standalone": 2,
+      "total": 1374
+    },
+    "failedSource": {
+      "sha": "eae4c456ccff9308ae684add1f9e602e32f5a014",
+      "push": 40872347539,
+      "pr": 40872357972,
+      "reason": "Old stale-price fixture omitted BBO; corrected fixtures retain original assertion and add actual stale-BBO case"
+    }
+  },
+  "basketDeliveryMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "intentBeforeSend": true,
+    "explicitACKRequired": true,
+    "ambiguousOutcomeQuarantined": true,
+    "malformedStateFailClosed": true,
+    "journal": "Nested hashes/states in existing encrypted basket-state; no raw message bodies",
+    "localFaultTests": 5,
+    "existingBasketTests": 12,
+    "limitation": "Local atomic intent plus existing private-state transfer; not a remote CAS guarantee, not all-route durability or authorized actual delivery. Workflow termination before owner-state publication can still lose local intent."
   }
 }

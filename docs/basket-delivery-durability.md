@@ -1,0 +1,7 @@
+# Basket reminder delivery repair
+
+Previously basketNotices saved basketDue state even when telegram returned ok:false. An explicit refusal could permanently suppress a monthly reminder; an ambiguous response was also treated as sent. Existing malformed JSON silently defaulted to empty state, allowing replay.
+
+The repair uses atomic/fsynced intent in existing encrypted data/basket-state.json, stable monthly or hashed formation IDs, no stored bodies, explicit ACK before monthly/formation advancement, UNKNOWN/PENDING quarantine, retry only definite zero-part refusal, and ACK reconciliation after later semantic-save failure. Corrupt/null/array/nested invalid state blocks before send and is not overwritten. Owner selections/amounts/frozen studies are unchanged. Capacity2000 unresolved records blocks rather than discarding state. This is a development-branch source repair only.
+
+Five localhost fault contracts cover refusal/retry, unknown outcome restored to a separate fixture job, malformed state, pre-send disk failure and durable ACK reconciliation;12 existing basket tests pass with a realistic Telegram message_id fixture. Full CI and all-route adoption remain separate requirements. Existing private-data transfer must still confirm persistence; runner loss before publication can lose local intent. This does not claim remote compare-and-swap durability, actual delivery, or completion of TELEGRAM03/04. No message is sent outside localhost in tests.
