@@ -5000,8 +5000,8 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "source": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
-    "ciEvidence": "docs/validation/aim-plan-ci.json",
+    "source": "da99aa5378ff9abd1c7adc1b83fbbb9d6767d461",
+    "ciEvidence": "docs/validation/share-supply-source-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
@@ -5013,7 +5013,7 @@
   "revisionIdentityMission": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
     "nearestClosure": "CATALYST-03",
-    "status": "SUPPLY_CALLER_LOCAL_VERIFIED_HOSTED_PENDING",
+    "status": "HOSTED_VERIFIED_PARTIAL",
     "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
     "sourceMatrix": [
       {
@@ -5120,8 +5120,8 @@
     "realProviderRequests": 0,
     "prospectiveCases": 0,
     "initialVerificationIssue": "Publication-refusal fixtures were strengthened with explicit hook/push markers so a generic earlier Git failure could not masquerade as reaching the intended fault. Scanner renderer fixture exposed missing display defaults; production renderer now labels missing context/source explicitly.",
-    "verifiedSource": "7bcf591d4414248362d96819a8ffe118a794fa47",
-    "ciEvidence": "docs/validation/chain-source-caller-ci.json"
+    "verifiedSource": "da99aa5378ff9abd1c7adc1b83fbbb9d6767d461",
+    "ciEvidence": "docs/validation/share-supply-source-ci.json"
   },
   "insiderLeadersPublication": {
     "base": "5cc2dbbf30e4d4b766a9906c58e48dfc60660fcc",
@@ -5298,14 +5298,14 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "source": "86b25ccb61abe1be1b91b9f41c280f74b73d51d1",
+    "source": "da99aa5378ff9abd1c7adc1b83fbbb9d6767d461",
     "verified": true,
     "handoff": "docs/resume-precise-checkpoint.md",
-    "nextExecutable": "Share-supply actual ticker/index/cache source identity, schema/errors/empty, revisions and clocks; preserve frozen output and verify actual discovery/publication callers."
+    "nextExecutable": "Finish C0 caller/failure/recovery validation, publish immutable runtime pin and inactive workflow hash, then request only exact missing non-secret entitlement evidence."
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
-    "status": "LOCAL_VERIFIED_HOSTED_PENDING",
+    "status": "HOSTED_VERIFIED_PARTIAL",
     "acceptanceAdded": 0,
     "changedRequirements": [
       "Actual Share-supply and secondary Discovery2 writer use the same strict SEC index contract; legacy compact arrays/ticker maps are not rewritten or credited with missing IDs/clocks.",
@@ -5335,7 +5335,9 @@
     "initialVerificationIssue": "Full-suite Discovery2 integration fixture had no verified index metadata. It now supplies strict synthetic header-only SEC responses through the actual source reader, with no network, preserving its original planted-pattern/time-split/frozen assertions. Initial full run failed this fixture; focused and complete rerun pass.",
     "realProviderRequests": 0,
     "realMessagesOrders": 0,
-    "prospectiveCases": 0
+    "prospectiveCases": 0,
+    "verifiedSource": "da99aa5378ff9abd1c7adc1b83fbbb9d6767d461",
+    "ciEvidence": "docs/validation/share-supply-source-ci.json"
   },
   "ownerAimEvidencePlan": {
     "path": "docs/aim-to-evidence-acceptance-plan.md",
@@ -5349,5 +5351,23 @@
     "prospectiveCases": 0,
     "liveRuntimePin": null,
     "approvalGranted": false
+  },
+  "currentStatus": "docs/current-engineering-status.json",
+  "confluencePublication": {
+    "status": "FOCUSED_VERIFIED_HOSTED_PENDING",
+    "base": "da99aa5378ff9abd1c7adc1b83fbbb9d6767d461",
+    "workflow": ".github/workflows/confluence-lab.yml",
+    "cases": 48,
+    "newWorkflowCases": 8,
+    "requirementsChanged": [
+      "Commit on original baseline before pull; never reset/clean job output or choose a conflicting frozen/library winner.",
+      "Staging/commit/pull/push failures are reached and cannot report confirmed publication. Disjoint upstream edits survive.",
+      "Public recovery allowlist contains only confluence-lab.json and strategy-library.json; raw signal/operational files excluded. Existing log upload paths retained, retention3days."
+    ],
+    "remaining": [
+      "Other workflow families/cache/cancellation/retention incomplete. No dispatch or study run.",
+      "Operational/paper/cache outputs deliberately excluded from recovery artifact."
+    ],
+    "invariants": "trigger/ref/concurrency/permission/secret-binding metadata unchanged"
   }
 }

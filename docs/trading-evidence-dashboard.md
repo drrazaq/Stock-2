@@ -2,7 +2,7 @@
 
 Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
 
-Updated29October2026; verified plan source 5fce3f9 (12 exact-commit checks passed); Share-supply source candidate locally verified; precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
+Updated29October2026; verified engineering source da99aa5 (12 exact-commit checks passed); canonical status: current-engineering-status.json; precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|

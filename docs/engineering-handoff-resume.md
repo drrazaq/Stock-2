@@ -1,3 +1,15 @@
+<!-- CURRENT-STATUS:BEGIN -->
+## Current verified status — 29 October 2026
+
+**da99aa5378ff9abd1c7adc1b83fbbb9d6767d461: all 12 exact-commit checks passed.** The [canonical status record](current-engineering-status.json) and ledger identify the latest verified source; older checkpoint sections below are historical evidence, not current pending work. Acceptance stays **24/40;16 OPEN**; CATALYST-03 and ACTIONS-04 remain open.
+
+The [aim-to-evidence plan](aim-to-evidence-acceptance-plan.md) is committed and PR1 describes this source. C0 dedicated runtime, encrypted recovery and inactive proposed workflow preparation is underway locally. Entitlement, an agreed date and dated owner authorization are absent.16November and all proposed evaluation thresholds remain unapproved. The diagnostic concerns operational coverage/recovery, not profitable trading; prospective cases0.
+
+Confluence save-block repair passes48 actual Git cases across six workflows (8 new Confluence cases). Publication CI follows; no workflow dispatch or study execution. Recovery excludes raw signal/operational outputs. Next finish C0 tests, pin its exact published source/workflow bytes, document official non-secret evidence needed and reassess the date/effort estimate. Preserve existing restrictions and the reconstructed-not-recovered correction.
+<!-- CURRENT-STATUS:END -->
+
+Historical checkpoints follow; the current block above supersedes their status/pending wording.
+
 ## Owner aims and Share-supply continuation
 
 [The owner aim-to-evidence plan](aim-to-evidence-acceptance-plan.md) separates early intraday/premarket, medium and longer holds, with measured clocks, tradability, proposed utility/risk thresholds, frozen uncertainty/stopping rules and readiness gates. All numerical additions await owner agreement. Readiness remains FAIL for full engineering, bounded collection, prospective paper and limited owner alerts; aim profitability is NOT ESTABLISHED. The concrete C0 review manifest pins preparation kernels, not a missing live collector; entitlement/runtime/workflow pin and dated approval remain blockers. No execution is authorized.
