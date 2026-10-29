@@ -7,7 +7,7 @@ import http from 'node:http';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 
-test('real watcher refreshes a stale minority despite a fresh whole-market median',async()=>{
+async function verifyRefresh({staleQuote=false}={}){
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'s2-refresh-')),requested=[];
  const now=Date.now(),server=http.createServer((req,res)=>{
   const u=new URL(req.url,'http://localhost');
@@ -15,11 +15,12 @@ test('real watcher refreshes a stale minority despite a fresh whole-market media
   if(u.pathname.includes('/snapshot/locale/')) {
    res.end(JSON.stringify({tickers:['AAA','BBB','CCC'].map((ticker,i)=>({ticker,
     lastTrade:{p:10,t:(now-(i===2?20*60000:60000))*1e6},
+    lastQuote:{p:9.99,P:10.01,t:(now-(staleQuote&&i===0?20*60000:60000))*1e6},
     prevDay:{c:10,v:1000000},day:{o:10,v:1000},min:{t:now-15*60000,av:1000}}))}));
   }else if(u.pathname==='/v2/stocks/snapshots'){
    requested.push(u.searchParams.get('symbols'));
-   res.end(JSON.stringify({CCC:{latestTrade:{p:10,t:new Date(now-1000).toISOString()},
-    dailyBar:{o:10,v:2000,t:new Date(now-6*3600000).toISOString()}}}));
+   res.end(JSON.stringify(Object.fromEntries(u.searchParams.get('symbols').split(',').map(sym=>[sym,{latestTrade:{p:10,t:new Date(now-1000).toISOString()},latestQuote:{bp:9.99,ap:10.01,t:new Date(now-1000).toISOString()},
+    dailyBar:{o:10,v:2000,t:new Date(now-6*3600000).toISOString()}}]))));
   }else{res.statusCode=403;res.end('{}');}
  });
  let child;
@@ -38,7 +39,7 @@ test('real watcher refreshes a stale minority despite a fresh whole-market media
   const timer=setTimeout(()=>child.kill('SIGKILL'),10000);
   let status;try{[status]=await once(child,'close');}finally{clearTimeout(timer);}
   assert.equal(status,0,output);
-  assert.deepEqual(requested,['CCC']);
+  assert.deepEqual(requested,[staleQuote?'AAA,CCC':'CCC']);
   const snapshot=JSON.parse(fs.readFileSync(path.join(dir,'data/ignition-live.json'),'utf8'));
   assert.equal(snapshot.heartbeat.length,1);
   assert.equal(snapshot.heartbeat[0].live,3);
@@ -50,4 +51,6 @@ test('real watcher refreshes a stale minority despite a fresh whole-market media
   await new Promise(resolve=>server.close(resolve));
   fs.rmSync(dir,{recursive:true,force:true});
  }
-});
+}
+test('real watcher refreshes a stale minority despite a fresh whole-market median',()=>verifyRefresh());
+test('real watcher refreshes stale BBO despite current trade and retains other fresh symbols',()=>verifyRefresh({staleQuote:true}));
