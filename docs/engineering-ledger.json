@@ -3679,7 +3679,7 @@
     "workspace": "/workspace/stock2-engineering-b64 is isolated test materialization, NOT a Git checkout; canonical branch/commits are authoritative"
   },
   "autonomousTransportMilestone": {
-    "status": "HOSTED_CI_PENDING",
+    "status": "VERIFIED_BRANCH_INFRASTRUCTURE",
     "base": "38150db02c3a931ae637ecd284af7202d3ddf609",
     "transport": "Explicit injected GET only; no global fetch/default credentials, fallback or retries",
     "limits": "Per-response/cumulative actual bytes, requests, minute pacing, per-request and whole-client deadlines, cancellation and backwards clock guard",
@@ -3692,6 +3692,100 @@
     },
     "localSpawnRestriction": "Initial CLI test blocked by sandbox EPERM; rerun with additional sandbox networking passed",
     "acceptanceCredit": 0,
-    "prospectiveCases": 0
+    "prospectiveCases": 0,
+    "verifiedSource": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882129066/job/123476295627"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882136267/job/123476146806"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882136467/job/123476146489"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882136267/job/123476146254"
+      },
+      {
+        "name": "test",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882136296/job/123476145653"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882136146/job/123476145651"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882136267/job/123476145443"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882136084/job/123476145122"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882128919/job/123476119341"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882128901/job/123476119314"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882129066/job/123476119097"
+      },
+      {
+        "name": "safety",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882129066/job/123476118796"
+      },
+      {
+        "name": "test",
+        "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40882128907/job/123476118645"
+      }
+    ]
+  },
+  "hybridEncryptedCheckpointMilestone": {
+    "status": "HOSTED_CI_PENDING",
+    "format": "Existing AES256GCM V1 envelope/KDF; immutable per-cycle compressed checkpoint",
+    "budgets": "96MiB maximum sealed journal,8MiB max checkpoint JSON; byte/request/minute/time budgets survive client resume",
+    "localTests": {
+      "node": 4,
+      "python": 5
+    },
+    "keysUsed": "PUBLIC_SYNTHETIC_FIXTURE_KEYS_ONLY",
+    "legacyRecovery": "Old pinned tools and owner challenge untouched; new separate Python3.9 offline recovery requires reviewed expected SHA",
+    "limitations": "No remote upload or live cancellation evidence. Files not uploaded before runner loss are not recoverable. Python authenticates compressed files only, not completeness.",
+    "actualProspectiveCases": 0
   }
 }

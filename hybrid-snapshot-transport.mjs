@@ -3,15 +3,19 @@
 import {marketSymbol} from './market-symbol.mjs';
 const integer=(n,min,max)=>Number.isSafeInteger(n)&&n>=min&&n<=max;
 const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
-export function createHybridSnapshotTransport({fetcher,credentials={},now=Date.now,limits={},origin='https://data.alpaca.markets'}={}){
+export function createHybridSnapshotTransport({fetcher,credentials={},now=Date.now,limits={},origin='https://data.alpaca.markets',resume=null}={}){
  if(typeof fetcher!=='function'||typeof now!=='function')throw Error('EXPLICIT_TRANSPORT_REQUIRED');
  const cap={maxRequests:420,requestsPerMinute:80,maxBatchSymbols:200,maxResponseBytes:8*1024*1024,maxTotalBytes:64*1024*1024,maxDurationMs:60000,requestTimeoutMs:10000,...limits};
  if(!object(limits)||Object.keys(limits).some(k=>!['maxRequests','requestsPerMinute','maxBatchSymbols','maxResponseBytes','maxTotalBytes','maxDurationMs','requestTimeoutMs'].includes(k))||!object(credentials))throw Error('INVALID_TRANSPORT_CONFIGURATION');
  for(const [k,min,max]of [['maxRequests',1,30000],['requestsPerMinute',1,1000],['maxBatchSymbols',1,200],['maxResponseBytes',1,32*1024*1024],['maxTotalBytes',1,1024*1024*1024],['maxDurationMs',1,21600000],['requestTimeoutMs',1,60000]])if(!integer(cap[k],min,max))throw Error('INVALID_TRANSPORT_LIMIT');
  if(cap.maxResponseBytes>cap.maxTotalBytes||cap.requestTimeoutMs>cap.maxDurationMs)throw Error('INVALID_TRANSPORT_LIMIT');
  const u=new URL(origin);if(!(u.origin==='https://data.alpaca.markets'||u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname))||u.pathname!=='/'||u.search||u.hash||u.username||u.password)throw Error('INVALID_DATA_ORIGIN');
- const start=now();if(!integer(start,0,8640000000000000))throw Error('INVALID_TRANSPORT_CLOCK');
+ const observed=now(),start=resume?Date.parse(resume.startedAt):observed;if(!integer(start,0,8640000000000000)||!integer(observed,0,8640000000000000))throw Error('INVALID_TRANSPORT_CLOCK');
  const state={startedAt:new Date(start).toISOString(),requests:0,bytes:0,lastClock:start,bucket:Math.floor(start/60000),bucketRequests:0,halted:null,statuses:{}};let busy=false,activeCancel=null;
+ if(resume){
+  if(!object(resume)||resume.kind!=='BOUNDED_RESEARCH_TRANSPORT'||JSON.stringify(resume.limits)!==JSON.stringify(cap)||!integer(resume.requests,0,cap.maxRequests)||!integer(resume.bytes,0,cap.maxTotalBytes)||!integer(resume.lastClock,start,observed)||!integer(resume.bucket,0,Math.floor(observed/60000))||!integer(resume.bucketRequests,0,cap.requestsPerMinute)||resume.bucketRequests>resume.requests||!object(resume.statuses)||Object.values(resume.statuses).some(v=>!integer(v,0,resume.requests))||Object.values(resume.statuses).reduce((a,v)=>a+v,0)!==resume.requests||!(resume.halted===null||['CANCELLED','CLOCK_REGRESSED_OR_INVALID','DEADLINE_EXCEEDED','REQUEST_BUDGET_EXHAUSTED','TOTAL_BYTE_BUDGET','RESPONSE_BYTE_BUDGET','REQUEST_TIMEOUT','RATE_LIMITED','ACCESS_REFUSED','AUTHENTICATION_REFUSED'].includes(resume.halted)))throw Error('INVALID_TRANSPORT_RESUME');
+  for(const k of ['requests','bytes','lastClock','bucket','bucketRequests','halted','statuses'])state[k]=structuredClone(resume[k]);
+ }
  const halt=reason=>{state.halted||=reason;return {status:'BLOCKED',reason:state.halted};};
  const tick=()=>{const t=now();if(!integer(t,0,8640000000000000)||t<state.lastClock){halt('CLOCK_REGRESSED_OR_INVALID');return null;}state.lastClock=t;return t;};
  const cancel=()=>{const result=halt('CANCELLED');activeCancel?.();return result;};
