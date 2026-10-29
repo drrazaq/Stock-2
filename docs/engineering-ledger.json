@@ -1356,5 +1356,24 @@
     },
     "proofRunsObserved": 1,
     "subsequentProofReruns": 0
+  },
+  "pythonOfflineKeyRecovery": {
+    "status": "IMPLEMENTED_LOCAL_VERIFIED_PUBLICATION_PENDING",
+    "base": "809d3f5b9228a96840ea8440f5cf93dc7ca73a73",
+    "tool": "tools/recover-key-proof.py",
+    "guide": "docs/validation/owner-key-proof-recovery-ish.md",
+    "scope": "Existing GitHub challenge only; no Phase A or key-proof rerun",
+    "tests": {
+      "python39Version": "3.9.16",
+      "pythonRecoveryTests": 14,
+      "nodeTests": 1299,
+      "failures": 0,
+      "crypto": "cryptography AESGCM + Scrypt; 46.0.3 and3.3.2 on Python3.9.16; 50.0.0 on3.12.14",
+      "ishHardwareTested": false,
+      "alpineContainerLimitation": "32-bit image failed with exec format error"
+    },
+    "keyRecoveryVerified": false,
+    "ownerOfflineDecryption": "PENDING_OWNER_CONFIRMATION",
+    "acceptanceUnchanged": "21/40 (52.5%)"
   }
 }

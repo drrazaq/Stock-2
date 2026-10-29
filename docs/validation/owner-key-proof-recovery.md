@@ -7,6 +7,8 @@ The authorized isolated job succeeded. **Owner-side key recovery is still PENDIN
 - Download before **1November2026,07:18:43UTC** (10:18:43Kuwait). Retention is three days.
 - GitHub-reported ZIP digest: `sha256:2ee46a7fe6896e34f899be793043a5ef36b0240e2cc8924c6fd78f72a14ebff8`.
 
+For **iPad/iSH with Python 3.9.16 and Node14**, use the [Python-only iSH guide](owner-key-proof-recovery-ish.md). It needs no Node and opens the same existing encrypted challenge. Owner verification remains pending.
+
 ## 1. Prepare public recovery tools
 
 Use local Node20+ and Python3. No key belongs in a browser form, GitHub input, command argument or chat. The recovery command performs no network requests.
