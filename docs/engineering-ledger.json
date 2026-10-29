@@ -292,12 +292,12 @@
       "codeSha": "d5c8c3259502054fd3864cb359c52de140d6498c"
     },
     "currentHosted": {
-      "files": 155,
-      "TAPTests": 1335,
+      "files": 169,
+      "TAPTests": 1446,
       "standalone": 2,
-      "totalNodeTests": 1337
+      "totalNodeTests": 1448
     },
-    "currentHostedSource": "c9ea79413fd67b7d4c6f33a6e820ca9d0fa1a395"
+    "currentHostedSource": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
   },
   "blockers": [
     "Production corrections remain undeployed pending owner approval",
@@ -1124,7 +1124,7 @@
     "candidateSession": "2026-10-30 04:00–09:30 America/New_York (EDT)",
     "candidateUTC": "08:00–13:30",
     "sourcePin": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
-    "encryptionBinding": "Actual GitHub challenge encryption/same-key roundtrip PASSED; owner independent decryption PENDING",
+    "encryptionBinding": "VERIFIED: owner independently decrypted actual GitHub challenge on iPad/iSH; no secret shared",
     "ownerRecoveryCopy": "VERIFIED_ACTUAL_GITHUB_ARTIFACT_ON_IPAD_ISH",
     "originalProposalUnchanged": false,
     "revisedWrapper": "docs/validation/premarket-research-validation.preflight-revision.yml.proposed; not approved/installed",
@@ -1352,7 +1352,17 @@
       "correction": "Earlier no-live-probe statements were incorrect for this automatically triggered run. Remove all push triggers; manual only thereafter."
     },
     "standaloneDiagnosticRequests": 5,
-    "actualPhaseAProviderRequests": 0
+    "actualPhaseAProviderRequests": 0,
+    "latestContinuation": {
+      "source": "14cc16592a89ad7ec15ca87b90ef61a40306ad18",
+      "status": "NO_GO_UNAPPROVED_REALTIME_COVERAGE_NOT_ESTABLISHED",
+      "originalRuntimeUnchanged": true,
+      "wrapperUnchanged": true,
+      "installed": false,
+      "dispatched": false,
+      "probeEvidence": "docs/validation/alpaca-batch-probe-2026-10-29.observed.json",
+      "newHybridLiveRuntimeApproved": false
+    }
   },
   "isolatedResearchKeyProof": {
     "status": "KEY_RECOVERY_VERIFIED_OWNER_CONFIRMED",
@@ -2634,81 +2644,106 @@
     "profitabilityVerified": false
   },
   "verifiedCheckpoint": {
-    "sha": "868db1c0276eebf5d1a8e7b6d88f467e749735ff",
+    "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18",
+    "tree": "3d3d40290344526833e1d7714375fface5a90e45",
     "tests": {
-      "files": 157,
-      "tap": 1352,
+      "files": 169,
+      "tap": 1446,
       "standalone": 2,
-      "total": 1354
+      "total": 1448
     },
     "checks": [
       {
         "name": "fixture-close",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410703795"
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573684912",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       },
       {
-        "name": "offline-recovery (3.9.16, 46.0.3)",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410584689"
-      },
-      {
-        "name": "offline-recovery (3.9.16, 3.3.2)",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410584133"
+        "name": "source-preservation",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577433/job/123573558342",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       },
       {
         "name": "test",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977758/job/123410583806"
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577411/job/123573558054",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       },
       {
         "name": "offline-recovery (3.12, 46.0.3)",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977793/job/123410583680"
-      },
-      {
-        "name": "delivery-fixtures",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977927/job/123410583632"
-      },
-      {
-        "name": "source-preservation",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977748/job/123410583542"
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557969",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       },
       {
         "name": "research-fixtures",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862977773/job/123410583480"
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577421/job/123573557732",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       },
       {
-        "name": "source-preservation",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970842/job/123410562518"
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557673",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       },
       {
-        "name": "test",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970824/job/123410560094"
+        "name": "delivery-fixtures",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577494/job/123573557365",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       },
       {
-        "name": "fixture-open",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410559785"
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557267",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       },
       {
         "name": "safety",
-        "result": "success",
-        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40862970840/job/123410559369"
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573532492",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+      },
+      {
+        "name": "fixture-open",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573531936",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+      },
+      {
+        "name": "source-preservation",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569392/job/123573531633",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569321/job/123573531395",
+        "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
       }
     ],
-    "execution": "GitHub-hosted; managed workspace unavailable; no local test claim",
+    "execution": "Exact GitHub push/PR/safety and compatibility CI; local static checks",
     "acceptance": {
-      "complete": 22,
+      "complete": 23,
       "total": 40,
-      "remaining": 18,
-      "percent": 55
+      "remaining": 17,
+      "percent": 57.5
     },
     "actualProspectiveCases": 0
   },
@@ -4485,5 +4520,146 @@
     "allSourceAuditComplete": false,
     "firstDetection": "Actual cutoff retained; never backfilled",
     "dataFilesModified": 0
+  },
+  "continuationRecovery": {
+    "manifest": "docs/validation/engineering-publication-manifest-2026-10-29.json",
+    "source": "14cc16592a89ad7ec15ca87b90ef61a40306ad18",
+    "preservation": {
+      "checked": 454,
+      "data": 399,
+      "changed": [],
+      "phaseAInstalled": false
+    },
+    "static": {
+      "moduleSyntax": 236,
+      "workflowParses": 86,
+      "pythonSyntax": 9
+    },
+    "remaining": [
+      {
+        "id": "REPO-03",
+        "title": "Behavioral review of every script",
+        "status": "OPEN",
+        "actionability": "SAFE_BRANCH",
+        "requiredVerification": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this."
+      },
+      {
+        "id": "ACTIONS-04",
+        "title": "All workflow failure/write/concurrency semantics",
+        "status": "OPEN",
+        "actionability": "SAFE_BRANCH",
+        "requiredVerification": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch."
+      },
+      {
+        "id": "MARKET-02",
+        "title": "Actual provider entitlements and coverage",
+        "status": "OPEN",
+        "actionability": "LIVE_AND_PROVIDER_EVIDENCE",
+        "requiredVerification": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.",
+        "partialEvidence": "Owner-confirmed Massive Starter15minute delay; authorized actual SIP/IEX endpoint samples and official SDK symbol-request contract. Alpaca account contract/full universe still unverified."
+      },
+      {
+        "id": "MARKET-03",
+        "title": "All-provider symbol/session normalization",
+        "status": "OPEN",
+        "actionability": "SAFE_BRANCH",
+        "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
+        "partialEvidence": "Independent clock/provider/feed repairs and explicit-universe offline session contracts; all-provider audit remains open."
+      },
+      {
+        "id": "MARKET-04",
+        "title": "Measured full-session freshness and latency",
+        "status": "OPEN",
+        "actionability": "APPROVED_LIVE_EVIDENCE",
+        "requiredVerification": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this."
+      },
+      {
+        "id": "DISCOVERY-03",
+        "title": "Whole-market premarket discovery verified",
+        "status": "OPEN",
+        "actionability": "PHASE_A_APPROVAL_AND_LIVE_EVIDENCE",
+        "requiredVerification": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence."
+      },
+      {
+        "id": "DISCOVERY-04",
+        "title": "Prospective matched lead/false-positive evaluation",
+        "status": "OPEN",
+        "actionability": "PROSPECTIVE_AND_SEPARATE_APPROVAL",
+        "requiredVerification": "Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping."
+      },
+      {
+        "id": "CATALYST-03",
+        "title": "All-source ingestion and deduplication",
+        "status": "OPEN",
+        "actionability": "SAFE_BRANCH",
+        "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence."
+      },
+      {
+        "id": "CATALYST-04",
+        "title": "Independent point-in-time catalyst/missing-source audit",
+        "status": "OPEN",
+        "actionability": "INDEPENDENT_DATA",
+        "requiredVerification": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability."
+      },
+      {
+        "id": "ZAD-04",
+        "title": "Every approved recommendation and cached-render path",
+        "status": "OPEN",
+        "actionability": "SAFE_BRANCH",
+        "requiredVerification": "Enumerate all current BUY/entry/action channels, monthly/basket/owner lanes, options, callbacks and cached reports. With missing/stale/expired/rejected/malformed/third-party marks, prove no approved BUY; test valid owner yes separately. Catalyst/cache repairs alone are partial.",
+        "partialEvidence": "Catalyst, cached leaders and rebalancing ADD owner gates repaired; remaining core/monthly/basket/options/callback/report paths still require full matrix."
+      },
+      {
+        "id": "EXEC-03",
+        "title": "Cross-lane entry/stop/gap/cost consistency",
+        "status": "OPEN",
+        "actionability": "SAFE_BRANCH",
+        "requiredVerification": "Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity."
+      },
+      {
+        "id": "TELEGRAM-03",
+        "title": "All send paths, stable IDs and cross-job durability",
+        "status": "OPEN",
+        "actionability": "SAFE_BRANCH",
+        "requiredVerification": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.",
+        "partialEvidence": "Basket intent/ACK/quarantine repaired on branch; remote journal still opt-in, all-route delivery/persistence not complete."
+      },
+      {
+        "id": "TELEGRAM-04",
+        "title": "Authorized actual non-BUY delivery validation",
+        "status": "OPEN",
+        "actionability": "SEPARATE_OWNER_APPROVAL",
+        "requiredVerification": "After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this."
+      },
+      {
+        "id": "STRATEGY-04",
+        "title": "Independent realistic after-cost replay",
+        "status": "OPEN",
+        "actionability": "INDEPENDENT_DATA",
+        "requiredVerification": "Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained."
+      },
+      {
+        "id": "HISTORY-02",
+        "title": "Actual identity/ticker/delisting/survivorship audit",
+        "status": "OPEN",
+        "actionability": "INDEPENDENT_DATA",
+        "requiredVerification": "Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness."
+      },
+      {
+        "id": "HISTORY-03",
+        "title": "All performance claims and windows validated",
+        "status": "OPEN",
+        "actionability": "SAFE_REVIEW_PLUS_INDEPENDENT_DATA",
+        "requiredVerification": "Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results."
+      },
+      {
+        "id": "HISTORY-04",
+        "title": "Benchmark/capacity/drawdown/uncertainty report",
+        "status": "OPEN",
+        "actionability": "OBSERVED_OR_INDEPENDENT_DATA",
+        "requiredVerification": "Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability."
+      }
+    ],
+    "prospectiveCases": 0
   }
 }
