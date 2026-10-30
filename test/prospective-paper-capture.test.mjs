@@ -92,3 +92,9 @@ test('rolling request cap stops a faulty scheduler before a third attempt within
  const r=await runCalibration({plan:x.plan,now:()=>clock,wait:async()=>{clock+=1000;},metadata:x.frames[0].metadata,readEvents:async()=>[],persist:async()=>true,transport:async()=>{calls++;return new Response(x.frames[0].rawResponse);}});
  assert.equal(r.status,'RATE_BUDGET_STOP');assert.equal(calls,2);assert.equal(r.providerAttempts,2);
 });
+
+
+test('late original event handoff cannot select an entry captured before the paper system learned the event',()=>{
+ const x=fixture(),e=x.frames[0].events.shift();x.frames[5].events=[e];const r=finishCapture(build(x));assert.equal(r.evaluation.counts.attempted,1);assert.equal(r.attempts.at(-1).reason,'LATE_EVENT_HANDOFF_NO_RETROSPECTIVE_ENTRY');assert.equal(r.attempts.at(-1).paperHandoffAt,t(5));assert.equal(r.attempts.at(-1).originalObservedAt,t(0));
+ const y=fixture(),timely=y.frames[0].events.shift();timely.observedAt=new Date(Date.parse(t(0))+30000).toISOString();y.frames[1].events=[timely];const s=finishCapture(build(y));assert.equal(s.evaluation.counts.resolved,2);assert.equal(s.evaluation.cases.find(c=>c.eventId===timely.eventId).candidate.entryAt,t(1));
+});

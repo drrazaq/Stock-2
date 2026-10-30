@@ -70,7 +70,7 @@ export function finishCapture(s){
  for(const {frame:f} of s.frames){
   quotes.push(...f.quotes);metadata.push(...f.metadata);
   for(const e of f.events){
-   const base={eventId:e.eventId??null,symbol:e.symbol??null,at:f.at};let reason=null;
+   const base={eventId:e.eventId??null,symbol:e.symbol??null,paperHandoffAt:f.at,originalObservedAt:e.observedAt??null};let reason=null;
    if(conflicts.has(e.eventId))reason='CONFLICTING_EVENT_ID';
    else if(!p.universe.includes(e.symbol))reason='OUTSIDE_FIXED_UNIVERSE';
    else if(e.lane!=='SEC_EVENT'||e.sourceNamespace!=='SEC'||typeof e.sourceId!=='string'||!/^\d{10}-\d{2}-\d{6}$/.test(e.sourceId)||!hash(e.sourceRevisionId))reason='UNVERIFIED_SEC_SOURCE_REVISION';
@@ -78,6 +78,7 @@ export function finishCapture(s){
    else if(Date.parse(e.observedAt)>Date.parse(p.enrollmentEnd))reason='ENROLLMENT_CLOSED_RETAINED_CONTEXT';
    else if(typeof e.eventId!=='string'||!e.eventId)reason='MISSING_ORIGINAL_EVENT_ID';
    else if(seenEvents.has(e.eventId))reason=seenEvents.get(e.eventId)===sha(JSON.stringify(e))?'REPEATED_EVENT_CONTEXT':'CONFLICTING_EVENT_ID';
+   else if(s.frames.some(({frame:prior})=>Date.parse(prior.at)<Date.parse(f.at)&&Date.parse(prior.at)>Date.parse(e.observedAt)&&prior.quotes.some(q=>q.symbol===e.symbol)))reason='LATE_EVENT_HANDOFF_NO_RETROSPECTIVE_ENTRY';
    else {
     seenEvents.set(e.eventId,sha(JSON.stringify(e)));
     const m=metadata.filter(m=>m.symbol===e.symbol&&Date.parse(m.asOf)<=Date.parse(e.observedAt)).at(-1);
