@@ -31,6 +31,8 @@ export function leadSoftReason(c) {
 // hard rules (never bypassed); sec = { known, tags } from the watcher's SEC check
 export function hardReason({ price, halalFail, lottery, sec }) {
   if (!(price >= 1)) return 'under 1 USD'; if (halalFail) return 'NOT HALAL (ZAD)'; if (lottery >= 0.15) return 'AVOID list (one-day jump ' + pct(lottery) + ')';
+  if(sec?.status==='NO_ISSUER_RECORD')return 'NO_ISSUER_RECORD (instrument not inferred; blocked, not a transport failure)';
+  if(sec?.policyExcluded)return 'instrument policy exclusion (not a SEC source failure)';
   if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
   return null;
 }
@@ -72,14 +74,14 @@ export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours =
   const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0);
   const worst = (ds) => ['DILUTION', 'NEGATIVE', 'POSITIVE', 'AMBIGUOUS'].find(d => ds.includes(d)) || 'UNKNOWN';
   const hDir = fN.length ? (() => { const ds = fN.map(x => headlineDirection(x.headline)); return ds.includes('DILUTION') ? 'DILUTION' : ds.includes('NEGATIVE') && ds.includes('POSITIVE') ? 'AMBIGUOUS' : worst(ds); })() : null;
-  const tag = (o) => ({ ...o, text: o.text + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
+  const tag = (o) => ({ ...o, filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED', text: o.text + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
   if (fF.length) { const x = fF[0], fd = worst(fF.map(filingDirection)), dir = fd !== 'AMBIGUOUS' ? fd : hDir && hDir !== 'AMBIGUOUS' ? hDir : 'AMBIGUOUS';
     return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
   if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
     return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
   if (F.length || N.length) { const x = F[0] || null, h = N[0] || null;
     return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + new Date(x.t).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : '"' + h.headline + '"') }); }
-  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'the SEC check failed' + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
+  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
   if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
   return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing and no headline in 72 h' });
 }
@@ -127,6 +129,7 @@ export function createEarlyAlerts(opts) {
       for (const kind of ['paper', 'lead']) { const q = S.queue[kind].splice(0), out = [];
         for (const row of q) { const c = row.c; delete row.c;
           const hard = hardReason({ price: c.price, halalFail: opts.notHalal(c.sym), lottery: (opts.lottery || {})[c.sym], sec: await secOf(c.sym) });
+          row.instrument=S.sec[c.sym]?.instrument||{status:'UNKNOWN'}; row.collectionVersion='WATCHER_CONTEXT_V2'; row.rankingCohort=opts.collectionCohort||'LEGACY_FROZEN_20261028'; row.approvedBuyEligible=false; row.performanceScope='LEGACY_MIXED_INSTRUMENT_RESEARCH'; c.instrument=row.instrument;
           if (hard) { row.decision = 'HARD: ' + hard; continue; }
           if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catText = c.cat.text; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
           if (!levelAllows(S.level, kind)) { row.decision = 'MUTED: alerts ' + S.level; continue; }
@@ -135,7 +138,8 @@ export function createEarlyAlerts(opts) {
           out.push({ row, c }); }
         if (!out.length) continue;
         const text = kind === 'lead' ? leadText(out.map(x => x.c), { halalOk: opts.halalOk }) : paperText(out.map(x => x.c));
-        const r = await opts.send(text).catch(e => ({ ok: false, why: e.message })), at = opts.now();
+        const labelled=text+'\nRESEARCH ONLY. Instrument identity may be UNKNOWN; unverified instruments are retained as context and are excluded from verified common-stock performance claims. This is never approved BUY eligibility.';
+        const r = await opts.send(labelled).catch(e => ({ ok: false, why: e.message })), at = opts.now();
         for (const x of out) { x.row.decision = r && r.ok ? 'SENT' : 'SEND FAILED' + (r && r.why ? ': ' + r.why : ''); x.row.sentM = at; x.row.latencyMin = at - x.row.m; }
         if (r && r.ok) S.sent[kind] += out.length; } },
     // end of the session: one row per candidate with its 15:00 price and net result after the 6 USD round trip and the spread

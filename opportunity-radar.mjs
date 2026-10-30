@@ -1,3 +1,5 @@
+import {appendRadarRows,readRadarLedger,radarLedgerView} from './radar-ledger.mjs';
+import {chooseDailySummary} from './watcher-session.mjs';
 // DAILY OPPORTUNITY RADAR runner (rules and wording in radar-v3-core.mjs). Research and routing only; never places an order.
 //   node opportunity-radar.mjs midday   called by ignition-watch.mjs at about 11:15 New York, after it writes data/radar-v3-snap.json
 //   node opportunity-radar.mjs close    .github/workflows/opportunity-radar.yml after the watcher has saved the day (scores 5-session rows too)
@@ -12,9 +14,12 @@ const readJson = (f, d = null) => { try { return JSON.parse(fs.readFileSync(f, '
 const readLines = (f) => { try { return fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)); } catch (e) { return []; } };
 const nyDay = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
 async function telegram(text) {
-  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return; }
+  text+='\nInstrument identity may be UNKNOWN. Mixed-instrument RESEARCH ONLY; not verified common-stock performance or admitted prospective evidence.';
+  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return {ok:false,definitelyUnsent:true}; }
   const parts = []; let cur = ''; for (const l of text.split('\n')) { if ((cur + l).length > 3800) { parts.push(cur); cur = ''; } cur += l + '\n'; } if (cur) parts.push(cur);
-  for (const p of parts) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: p, disable_web_page_preview: true }) }).catch(e => console.log('telegram: ' + e.message));
+  let ack=0;
+  for(const p of parts){try{const r=await fetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{signal:AbortSignal.timeout(10000),method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text:p,disable_web_page_preview:true})});const j=await r.json();if(!r.ok||j.ok!==true)return {ok:false,definitelyUnsent:ack===0&&r.status>=400&&r.status<500&&j.ok===false};ack++;}catch{return {ok:false};}}
+  return {ok:ack===parts.length};
 }
 function context() {
   const events = {}; for (const e of ((readJson('data/events-recent.json') || {}).events || [])) (events[e.sym] || (events[e.sym] = [])).push(e);
@@ -43,16 +48,16 @@ if (MODE === 'midday') {
   const snap = readJson('data/radar-v3-snap.json');
   if (!snap || snap.day !== today) { console.log('radar midday: no snapshot for ' + today); process.exit(0); }
   const r = buildMidday(snap, ctx);
-  if (r.rows.length) fs.appendFileSync(LEDGER, r.rows.map(x => JSON.stringify(x)).join('\n') + '\n');
-  await telegram(r.text); console.log('radar midday: ' + r.rows.length + ' lines listed');
+  try { appendRadarRows(LEDGER,r.rows); } catch(e) { console.error('radar research persistence failed; message unsent: '+e.message); if(env.IG_RADAR_RESERVED==='1')console.log('RADAR_DELIVERY='+JSON.stringify({ok:false,definitelyUnsent:true})); process.exit(0); }
+  const receipt=await telegram(r.text);if(env.IG_RADAR_RESERVED==='1')console.log('RADAR_DELIVERY='+JSON.stringify(receipt)); console.log('radar midday: ' + r.rows.length + ' lines listed');
 } else {
-  let ledger = readLines(LEDGER); const s5 = await score5(ledger, today);
-  if (s5.length) { fs.appendFileSync(LEDGER, s5.map(x => JSON.stringify(x)).join('\n') + '\n'); ledger = ledger.concat(s5); }
-  const od = readLines('data/opp-days.jsonl').filter(x => x.day === today).pop();   // DELIVERY SCORECARD from the live watcher (early-alerts.mjs)
+  const rawLedger=readRadarLedger(LEDGER),view=radarLedgerView(rawLedger); let ledger=view.rows; const s5 = await score5(ledger, today);
+  if (s5.length) { appendRadarRows(LEDGER,s5); ledger = radarLedgerView(readRadarLedger(LEDGER)).rows; }
+  const od = chooseDailySummary(readLines('data/opp-days.jsonl'),today);   // DELIVERY SCORECARD from the live watcher (early-alerts.mjs)
   const SRp = readJson('data/shadow-report.json'), pc = (x) => (x === null || x === undefined ? '?' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%');   // Phase 1 shadow test (shadow-outcomes.mjs runs just before)
   const shadowLine = SRp ? 'FILTER SHADOW TEST: ' + SRp.shadowSessions + ' session' + (SRp.shadowSessions === 1 ? '' : 's') + ' collected (verdicts after 10). ' + (SRp.alerts5d && SRp.alerts5d.delivered.n ? 'Alerts after 5 sessions, net: delivered ' + SRp.alerts5d.delivered.n + ' avg ' + pc(SRp.alerts5d.delivered.avg) + ' (median ' + pc(SRp.alerts5d.delivered.median) + '); eligible not delivered ' + SRp.alerts5d.notDelivered.n + ' avg ' + pc(SRp.alerts5d.notDelivered.avg) + '.' : 'No alert has 5 sessions yet.') : '';
   const rk = SRp && (SRp.ranking && SRp.ranking.models.A.picks ? SRp.ranking : SRp.rankingPilot), rkLine = rk ? 'RANKING SHADOW TEST (' + (rk === SRp.ranking ? 'counted from ' + rk.frozen.evalFrom : 'PILOT, not counted') + '; same-day net after costs, picks / avg / median): '
     + ['A', 'B', 'C', 'D', 'R', 'R0'].map(k => { const x = rk.models[k]; return k + ' ' + x.picks + ' / ' + pc(x.day.avg) + ' / ' + pc(x.day.median); }).join('; ') + '. '
     + (rk.capCost && rk.capCost.firstFive.picks ? 'First five ' + pc(rk.capCost.firstFive.day.avg) + ' vs after the cap ' + pc(rk.capCost.afterCap.day.avg) + '. ' : '') + 'Verdicts: B ' + rk.models.B.verdict + '; C ' + rk.models.C.verdict + '; D ' + rk.models.D.verdict + '. Live ranking is still first come (no change without your approval).' : '';
-  await telegram(buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '') + (rkLine ? '\n' + rkLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
+  await telegram('Research ledger view '+view.version+': raw listed '+view.rawLists+', logical listed '+view.logicalLists+', exact repeats '+view.exactRepeats+', unknown identity retained '+view.unknownIdentity+'. Original ledger and frozen raw results preserved; corrected secondary view, not admitted prospective evidence.\n'+buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '') + (rkLine ? '\n' + rkLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
 }

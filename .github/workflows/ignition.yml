@@ -48,11 +48,13 @@ jobs:
         run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
       - if: always()
         run: |
+          set -euo pipefail
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; true
+          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/radar-v3-snap.json data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; true
           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
-          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
@@ -60,3 +62,16 @@ jobs:
         run: |
           WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
           curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: watcher-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            data/ignition-runs/
+            data/radar-v3-snap.json
+            data/radar-v3-ledger.jsonl
+            data/radar-v3-ledger.jsonl.pending.json
+            runtime/watcher-message-state/
+          retention-days: 7
+          if-no-files-found: warn
