@@ -4,10 +4,13 @@ No fetch/push, providers, deployment or message dispatch. Tests use existing syn
 """
 import argparse,hashlib,io,json,os,re,subprocess,tarfile,tempfile
 from pathlib import Path
-parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--scope',choices=['watcher','accounting','combined'],required=True);parser.add_argument('--revision',choices=['2','3','4'],default='3');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--scope',choices=['watcher','accounting','combined'],required=True);parser.add_argument('--revision',choices=['2','3','4','5'],default='3');args=parser.parse_args()
 repo=Path(__file__).resolve().parents[1];out=Path(args.output).resolve();out.mkdir(parents=True,exist_ok=True)
 sha=lambda b:hashlib.sha256(b).hexdigest()
 scopes=['watcher','accounting'] if args.scope=='combined' else [args.scope];manifests=[]
+if args.revision=='5':
+ assert args.scope!='accounting','v5 base already contains deployed accounting; use watcher or combined'
+ scopes=['watcher']
 for scope in scopes:
  prefix='watcher-core' if scope=='watcher' else 'accounting'
  m=json.loads((repo/f'docs/validation/{prefix}-production-manifest-v{args.revision}.json').read_text());patch=repo/f'docs/validation/{prefix}-production-fix-v{args.revision}.patch'
@@ -39,5 +42,5 @@ with tempfile.TemporaryDirectory(prefix='stock2-production-review-') as director
   result=subprocess.run(['node','--check',str(file)],cwd=root,capture_output=True,text=True)
   if result.returncode:static.append(file.name)
  assert all(sha((root/f).read_bytes())==digest for f,digest in expected.items()),'tests modified a manifest file/dependency'
- result={'scope':args.scope,'baseMain':base,'patches':[m['patchSha256'] for m,_ in manifests],'originalMainNodeTestFiles':len(original_tests),'originalMainTestsRetained':all(root.joinpath(f).exists() for f in original_tests),'allNodeTestFiles':len(tests),'reportedCases':cases,'failures':failures,'rootModulesChecked':len(list(root.glob('*.mjs'))),'staticFailures':static,'allManifestAndDependencyHashesVerifiedBeforeAndAfter':True,'productionWrites':False,'liveRequestsOrMessaging':False}
+ result={'scope':args.scope,'baseMain':base,'patches':[m['patchSha256'] for m,_ in manifests],'originalMainNodeTestFiles':len(original_tests),'originalMainTestsRetained':all(root.joinpath(f).exists() for f in original_tests),'allNodeTestFiles':len(tests),'reportedCases':cases,'failures':failures,'rootModulesChecked':len(list(root.glob('*.mjs'))),'staticFailures':static,'allManifestAndDependencyHashesVerifiedBeforeAndAfter':True,'productionWrites':False,'liveRequestsOrMessaging':False,'accountingAlreadyInBase':manifests[0][0].get('alreadyDeployedAccounting')}
  (out/'result.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result));raise SystemExit(bool(failures or static))

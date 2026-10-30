@@ -1,4 +1,16 @@
 <!-- CURRENT-STATUS:BEGIN -->
+## Current operational checkpoint — 30 October 2026
+
+Accounting is **deployed by Claude**, commit `bdc984e9d2d995a8523281e3983060df73fcb2be`. Fresh protected preflight `41071146932` succeeded; exact-deployment Tests `41073630210` succeeded. Source maintenance record: `0336d7fd14755f5c7d4381bc6948bc0ded323688`, preserved verbatim in [maintenance record](accounting-maintenance-2026-10-30.md). [Read-only operational addendum](accounting-deployment-passive-status.md) distinguishes reported maintenance evidence from independently observed resumption. Both ordinary workflows are enabled. Bot `41082902012` began the deployed loop at15:40:52Z; scanner `41084736968` completed at15:53:07Z. The81-minute bot gap and missed14:10/14:40Z scans are **unavailable coverage**. Queued commands processed, successful new state/offset saves and real sale recovery remain **NOT VERIFIED**; no test financial command is requested.
+
+[Watcher F1/F2 focused review package](watcher-f1-f2-review.md), [exact23-file patch manifest](validation/watcher-core-production-manifest-v5.json) and [validation](validation/watcher-f1-f2.json) supersede v4 only for this proposed watcher release. Current production accounting is retained; watcher is **NOT DEPLOYED**. Next: focused independent review of persistent bounded retry/finalization, frozen-snapshot recovery and health integration, followed by a separate owner deployment decision. Do not merge the development PR. No unrelated repairs in this release.
+
+Acceptance stays **24/40**, CATALYST-03/ACTIONS-04 OPEN; admitted prospective cases0. The owner’s goal is a **trading mentor and decision guide for intraday, days, weeks and months**, with risk, exits and evidence quality explained alongside opportunity discovery. [Aim-to-evidence plan](aim-to-evidence-acceptance-plan.md) retains this scope. This operational release proves neither profitable trading nor broad real-time coverage. Massive remains15-minute delayed; broad SIP rights/coverage remain unverified. P2, privacy and ZAD policy remain excluded. Earlier missing implementation was reconstructed, not recovered.
+<!-- CURRENT-STATUS:END -->
+
+## Superseded checkpoint evidence (retained; not current instructions)
+
+<!-- HISTORICAL-STATUS:BEGIN -->
 ## Current verified incident checkpoint — 30 October 2026
 
 [Watcher v4 / B2 result](incident-v4-b2-review.md), [accounting-only deployment proposal](accounting-standalone-deployment-proposal.md), [verification](validation/incident-v4.json), [exact source CI](validation/incident-v4-ci.json). Implementation **ef10ec13c52f921740d7b230fd97965278a75545** and subsequent published checkpoint **bd1a4a7e33f059aa4fd48ace321134a3b721d66a** each pass all12 applicable exact-commit checks, including safety. The subsequent evidence-only HEAD is checked at its own SHA and recorded in PR1/final report. Only the separately approved preflight bot.yml amendment is now installed on main; no accounting or watcher deployment occurred.
@@ -14,7 +26,7 @@ Acceptance remains **24/40;16OPEN**; CATALYST-03/ACTIONS-04 OPEN; prospective ad
 **Authorized protected preflight is completed once: BLOCKED.** [Execution and recording-boundary proposal](accounting-preflight-execution-and-boundary.md), [evidence](validation/accounting-preflight-execution.json). Only approved bot.yml amendment installed at main9970e9a12ebb62bb6bc30ee79e6ddcc68072b655. Run41053549859, protected job124055295885, terminal BLOCKED; normal reply job SKIPPED. One dispatch, no retry. Guard/permission/source hashes verified; ordinary production test check passed. No financial write, recovery, real message, provider/broker call or secret change was performed by the preflight. No protected cause/identifier was disclosed. Do not mislabel the failed blocking Actions gate as a PASS.
 
 **Next executable handoff:** stop accounting deployment. Active old bot41029059529 (job123974140613), pending bot41048811072, and independent scanner schedules prevent a safe boundary. Nothing was paused or cancelled. Owner must approve the exact bounded bot/scanner pause, cancellation of only never-started pending writers, natural completion/final-save verification of active writers, protected BLOCKED resolution and one fresh preflight, then scheduled-service resumption after verified success or safe abort. Waiting for the active bot alone is insufficient because queued/scheduled replacements can start. Preserve encrypted state, four transaction stores and tg-state offset; never cancel a financial command mid-flight, restore older balances or invent trades. The original exact five-file accounting approval remains conditional, unchanged; watcher deployment remains unapproved. No automatic retry or unrelated lab work.
-<!-- CURRENT-STATUS:END -->
+<!-- HISTORICAL-STATUS:END -->
 
 Historical checkpoint sections below retain evidence; their next-task and pending wording is superseded above.
 

@@ -1,3 +1,5 @@
+> **Latest watcher proposal:** [F1/F2 v5 focused review](watcher-f1-f2-review.md), prepared against production with accounting already deployed. All older packets below remain historical and must not be deployed.
+
 > **Current: v2 B1/A1 reproduced and repaired in [v3 exact-scope packet](incident-v3-review.md).** Earlier packages remain unapproved; do not deploy them or merge PR1. Historical evidence below is retained. Independent review is not policy/deployment authority.
 
 > **Current review status: CHANGES REQUIRED on v1; do not deploy the old packages.** See [revised exact-scope v2 packet](incident-revision-review.md) and [production-base verification](validation/incident-revision-v2.json). The material below preserves historical incident findings and earlier implementation evidence; its old approval choices are superseded. No production/P2/ZAD-policy deployment is authorized.

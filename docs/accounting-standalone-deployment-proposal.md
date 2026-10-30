@@ -1,3 +1,5 @@
+> **Completed separately by Claude:** exact accounting patch deployed at `bdc984e9d2d995a8523281e3983060df73fcb2be`; [maintenance record](accounting-maintenance-2026-10-30.md) and [passive follow-up](accounting-deployment-passive-status.md). This proposal is historical, not an instruction to deploy again.
+
 # Accounting-only production proposal — prepared, not authorized or deployed
 
 **Current authorization:** the owner subsequently approved this exact five-file patch conditionally. Deployment is BLOCKED: the one authorized protected preflight returned BLOCKED and an old writer remains active; [execution and safe-boundary decision](accounting-preflight-execution-and-boundary.md). The original reviewed proposal is preserved below. The exact isolated preflight workflow amendment and one run were subsequently authorized and completed; no further retry, pause/cancellation or accounting deployment with an unsafe boundary is approved.

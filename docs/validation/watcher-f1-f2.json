@@ -1,0 +1,91 @@
+{
+  "status": "VERIFIED_PREPARED_NOT_DEPLOYED_FOCUSED_REVIEW_REQUIRED",
+  "implementationCommit": "f007a3bbc11ca6b7a49bad2a2257cfd7fb7cc800",
+  "productionBase": "0b76287bf11d6ed8d25047082178380ca2b7dbf7",
+  "patchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+  "packageFiles": 23,
+  "changedFromV4": [
+    "watcher-reporting.mjs",
+    "ignition-watch.mjs",
+    ".github/workflows/ignition.yml",
+    "watcher-messages.mjs",
+    "watcher-message-publish.mjs",
+    "test/watcher-message-publish.test.mjs",
+    "test/watcher-resilience.test.mjs",
+    "test/watcher-retry-recovery.test.mjs"
+  ],
+  "unchangedFromV4": 15,
+  "frozenLedgerAndScoringChanged": false,
+  "historicalLedgerWrites": false,
+  "productionAndCombinedSuite": {
+    "scope": "combined",
+    "baseMain": "0b76287bf11d6ed8d25047082178380ca2b7dbf7",
+    "patches": [
+      "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6"
+    ],
+    "originalMainNodeTestFiles": 115,
+    "originalMainTestsRetained": true,
+    "allNodeTestFiles": 121,
+    "reportedCases": 1199,
+    "failures": [],
+    "rootModulesChecked": 204,
+    "staticFailures": [],
+    "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+    "productionWrites": false,
+    "liveRequestsOrMessaging": false,
+    "accountingAlreadyInBase": "bdc984e9d2d995a8523281e3983060df73fcb2be"
+  },
+  "focusedRetryTests": 9,
+  "actualActionsWatcherTests": 9,
+  "publisherTests": 7,
+  "oldMessageModuleControl": {
+    "failed": 8,
+    "passed": 1,
+    "logSha256": "47fb8e2072baea9ae5f6b0ee5fffcd7fae6631ca33e7bfa02b332ca5e3566f95"
+  },
+  "branchSuiteBeforeFinalThreePublisherCases": {
+    "files": 196,
+    "cases": 1840,
+    "failures": []
+  },
+  "python": {
+    "tests": 30,
+    "failures": 0
+  },
+  "static": {
+    "modules": 251,
+    "yaml": 86,
+    "shellBlocks": 328,
+    "failures": []
+  },
+  "exactHeadCI": "Query exact final published SHA; source CI will be recorded separately after publication",
+  "reproduce": [
+    "python tools/verify-incident-production-package.py --revision 5 --scope combined --output /tmp/stock2-v5-review",
+    "node test/watcher-retry-recovery.test.mjs",
+    "node test/watcher-message-publish.test.mjs"
+  ],
+  "operationalEvidence": "docs/validation/accounting-deployment-passive-status.json",
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "added": 0,
+    "CATALYST-03": "OPEN",
+    "ACTIONS-04": "OPEN",
+    "admittedProspectiveCases": 0
+  },
+  "restrictions": {
+    "productionChanges": false,
+    "dispatches": 0,
+    "realMessages": 0,
+    "protectedExecution": false,
+    "providerCalls": 0,
+    "orders": 0,
+    "secretPermissionChanges": false
+  },
+  "recoveryLimits": [
+    "Hard runner loss may prevent upload; remote RESERVED without verified outcome stays uncertain and suppressed",
+    "No automatic cross-run artifact restoration or manual recovery authorization",
+    "Retries remain subject to actual caller eligibility/window; exhaustion requires review"
+  ],
+  "next": "Focused independent v5 review, then separate owner deployment approval; do not deploy earlier packages or repeat accounting maintenance"
+}

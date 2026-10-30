@@ -1,3 +1,15 @@
+<!-- CURRENT-STATUS:BEGIN -->
+## Current operational checkpoint — 30 October 2026
+
+Accounting is **deployed by Claude**, commit `bdc984e9d2d995a8523281e3983060df73fcb2be`. Fresh protected preflight `41071146932` succeeded; exact-deployment Tests `41073630210` succeeded. Source maintenance record: `0336d7fd14755f5c7d4381bc6948bc0ded323688`, preserved verbatim in [maintenance record](accounting-maintenance-2026-10-30.md). [Read-only operational addendum](accounting-deployment-passive-status.md) distinguishes reported maintenance evidence from independently observed resumption. Both ordinary workflows are enabled. Bot `41082902012` began the deployed loop at15:40:52Z; scanner `41084736968` completed at15:53:07Z. The81-minute bot gap and missed14:10/14:40Z scans are **unavailable coverage**. Queued commands processed, successful new state/offset saves and real sale recovery remain **NOT VERIFIED**; no test financial command is requested.
+
+[Watcher F1/F2 focused review package](watcher-f1-f2-review.md), [exact23-file patch manifest](validation/watcher-core-production-manifest-v5.json) and [validation](validation/watcher-f1-f2.json) supersede v4 only for this proposed watcher release. Current production accounting is retained; watcher is **NOT DEPLOYED**. Next: focused independent review of persistent bounded retry/finalization, frozen-snapshot recovery and health integration, followed by a separate owner deployment decision. Do not merge the development PR. No unrelated repairs in this release.
+
+Acceptance stays **24/40**, CATALYST-03/ACTIONS-04 OPEN; admitted prospective cases0. The owner’s goal is a **trading mentor and decision guide for intraday, days, weeks and months**, with risk, exits and evidence quality explained alongside opportunity discovery. [Aim-to-evidence plan](aim-to-evidence-acceptance-plan.md) retains this scope. This operational release proves neither profitable trading nor broad real-time coverage. Massive remains15-minute delayed; broad SIP rights/coverage remain unverified. P2, privacy and ZAD policy remain excluded. Earlier missing implementation was reconstructed, not recovered.
+<!-- CURRENT-STATUS:END -->
+
+## Superseded checkpoint evidence (retained; not current instructions)
+
 # Authorized protected preflight executed once — BLOCKED
 
 30 October 2026. The owner authorized only the exact existing-workflow amendment SHA256 `f9de4aed791d29994975a58277d4a6ab06f7ce8b6df49c68d39b49ccc7407f5f` and one manual preflight-only run, using checker Git blob `92fc955497950df6e76823eec6e348f1ebfb78b1` / SHA256 `7d009d803cd565f5edecc43f52dd9f8fc579837c8a76612ff2c7c580e8473b48`. This did not authorize cancellation, pausing schedules, retries, recovery, financial writes or accounting deployment with an unsafe recording boundary.
