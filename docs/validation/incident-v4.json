@@ -1,0 +1,138 @@
+{
+  "status": "VERIFIED_PREPARED_NOT_DEPLOYED_WATCHER_REVIEW_REQUIRED",
+  "productionBase": "2bef4296286c943d0bdf7adb8fff9325abb01618",
+  "preservedPreviousHead": "9e49950ad797f35c210484eeb868199d7763da4d",
+  "B2": {
+    "before": {
+      "attempt1": "{\"ok\":false,\"definitelyUnsent\":true}",
+      "listRowsAfter1": 2,
+      "attempt2": "{\"ok\":true}",
+      "listRowsAfter2": 4
+    },
+    "after": {
+      "attempt1": "{\"ok\":false,\"definitelyUnsent\":true}",
+      "listRowsAfter1": 2,
+      "attempt2": "{\"ok\":true}",
+      "listRowsAfter2": 2
+    },
+    "focusedTests": 12,
+    "actualCallers": [
+      "opportunity-radar.mjs midday",
+      "opportunity-radar.mjs close"
+    ],
+    "failureBoundaries": [
+      "intent write",
+      "intent publication",
+      "SIGKILL after partial append",
+      "after complete append",
+      "before pending unlink",
+      "after pending unlink"
+    ],
+    "identity": "canonical complete list observation payload; missing identity retained without guessed merging",
+    "historicalAudit": "docs/validation/radar-ledger-audit-v4.json",
+    "originalLedgerModified": false
+  },
+  "B1": {
+    "review": "Claude v3 CLOSED",
+    "runtimeFilesUnchangedFromV3": true,
+    "actionsTrueActualWatcherCases": 6
+  },
+  "A1": {
+    "review": "Claude v3 CLOSED; accounting PASS",
+    "codeAndPatchUnchanged": true,
+    "accountingSource": "09f16792b373268d70e45a535d6a7b02afecf6a5"
+  },
+  "productionSuites": {
+    "watcher": {
+      "scope": "watcher",
+      "baseMain": "2bef4296286c943d0bdf7adb8fff9325abb01618",
+      "patches": [
+        "bb97f1b8c6122805bec5ef97bef308e2bd2c4d6e1561be86439998f9f7b89171"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 117,
+      "reportedCases": 1157,
+      "failures": [],
+      "rootModulesChecked": 204,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false
+    },
+    "accounting": {
+      "scope": "accounting",
+      "baseMain": "2bef4296286c943d0bdf7adb8fff9325abb01618",
+      "patches": [
+        "f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 115,
+      "reportedCases": 1140,
+      "failures": [],
+      "rootModulesChecked": 195,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false
+    },
+    "combined": {
+      "scope": "combined",
+      "baseMain": "2bef4296286c943d0bdf7adb8fff9325abb01618",
+      "patches": [
+        "bb97f1b8c6122805bec5ef97bef308e2bd2c4d6e1561be86439998f9f7b89171",
+        "f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 120,
+      "reportedCases": 1185,
+      "failures": [],
+      "rootModulesChecked": 204,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false
+    }
+  },
+  "branchNode": {
+    "files": 194,
+    "cases": 1822,
+    "failures": []
+  },
+  "python": {
+    "tests": 30,
+    "failures": 0
+  },
+  "static": {
+    "modules": 250,
+    "activeYaml": 86,
+    "shellBlocks": 328,
+    "pythonSyntax": 9,
+    "failures": []
+  },
+  "initialIntegrationFailure": {
+    "test": "test/watcher-incident-revision.test.mjs",
+    "cause": "explicit fixture module copy list omitted new radar-ledger.mjs",
+    "repair": "include dependency; assertions unchanged",
+    "logsPreserved": "/workspace/milestones/incident-v4/watcher/node.log and combined/node.log"
+  },
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "added": 0,
+    "CATALYST-03": "OPEN",
+    "ACTIONS-04": "OPEN",
+    "admittedProspectiveCases": 0
+  },
+  "restrictions": "No main writes, deployment, dispatch, real messaging/collection, orders, purchases or secret/permission changes",
+  "independentReview": "WATCHER_V4_REQUESTED; ACCOUNTING_V3_REPORTED_PASS; not deployment authority",
+  "reviewAttachmentSha256": {
+    "5-REVIEW-v3_md.md": "1184d7b3f2bb9dd8140a7b78b9eaa1bbb0544280dd4be4c57390ecde285d3003",
+    "4-ldip-losing-sale-sweep_test_mjs.js": "44141817c2440d9a2245625c3129b1907bf3791a5eedf2f309f8023c7b6f8e07",
+    "2-reproduce-watcher-publication_mjs.js": "edee9c44686e6e9e0412a367b17fd099c414cddb7c2822b415c35a4d1eb3cb16",
+    "3-ldip-losing-sale-sweep-output_txt.txt": "62ea669e8090555359d3b65ef738a6bf1e24a418fad9dfe3a1ed2d703d2912d4",
+    "1-reproduce-radar-retry-duplication_mjs.js": "6b6f5eb38f4cad616a921a76d8997ab0406643a00a09e2436cfaed3b3e66031a"
+  }
+}
