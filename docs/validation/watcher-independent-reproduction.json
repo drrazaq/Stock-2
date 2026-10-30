@@ -1,0 +1,141 @@
+{
+  "status": "INDEPENDENTLY_REPRODUCED_AFTER_SCRIPT_INSPECTION",
+  "sourceRepoSnapshot": "b77eac39b7cbdc652458b48256ed6731d728ed24",
+  "normalization": "UTC Z and+00:00 timestamps identify the same instant; all counts/fields otherwise match supplied JSON",
+  "result": {
+    "day": "2026-10-29",
+    "commits": [
+      {
+        "sha": "7c4182d",
+        "committedAt": "2026-10-29T19:00:07Z",
+        "message": "ignition 2026-10-29",
+        "ignitionLive": {
+          "claimedCoverage": {
+            "first": "09:28",
+            "last": "14:58",
+            "minutesWatched": 324,
+            "rate": 0.982
+          },
+          "heartbeat": {
+            "minutes": 324,
+            "first": "09:28",
+            "last": "14:58",
+            "inSession_0930_1500": 322,
+            "of": 331,
+            "gaps": [
+              "10:00",
+              "10:41",
+              "11:25",
+              "12:09",
+              "12:51",
+              "13:34",
+              "14:15",
+              "14:59-15:00"
+            ]
+          },
+          "triggers": 245,
+          "missedRows": 150
+        },
+        "shadow": {
+          "rows": 1853,
+          "firstM0": "09:28",
+          "lastM0": "14:58",
+          "bySource": {
+            "early": 1712,
+            "filing": 228,
+            "ig": 31,
+            "control": 10
+          }
+        }
+      },
+      {
+        "sha": "70ae165",
+        "committedAt": "2026-10-29T19:01:33Z",
+        "message": "ignition 2026-10-29",
+        "ignitionLive": {
+          "claimedCoverage": {
+            "first": "15:00",
+            "last": "15:00",
+            "minutesWatched": 1,
+            "rate": 0.003
+          },
+          "heartbeat": {
+            "minutes": 1,
+            "first": "15:00",
+            "last": "15:00",
+            "inSession_0930_1500": 1,
+            "of": 331,
+            "gaps": [
+              "09:30-14:59"
+            ]
+          },
+          "triggers": 0,
+          "missedRows": 73
+        },
+        "shadow": {
+          "rows": 619,
+          "firstM0": "15:00",
+          "lastM0": "15:00",
+          "bySource": {
+            "early": 610,
+            "control": 10
+          }
+        }
+      }
+    ],
+    "ignitionDaysLines": [
+      {
+        "procStart": "09:14",
+        "firstMinute": "09:28",
+        "minutes": 324,
+        "edgarFilings": 291
+      },
+      {
+        "procStart": "15:00",
+        "firstMinute": "15:00",
+        "minutes": 1,
+        "edgarFilings": 0
+      }
+    ],
+    "oppDaysLines": [
+      {
+        "detected": 1761,
+        "eligible": 84,
+        "delivered": 9
+      },
+      {
+        "detected": 610,
+        "eligible": 0,
+        "delivered": 0
+      }
+    ],
+    "appendOnlyAtHead": {
+      "oppLedgerRows": 133,
+      "ignitionPaperRows": 83,
+      "radarRows": {
+        "list": 15,
+        "close": 14
+      }
+    },
+    "shadowReportAtHead": {
+      "generatedAt": "2026-10-29T21:17:10.232Z",
+      "streams": {
+        "E": {
+          "candidates": 58,
+          "sessions": 1,
+          "medianMinute": 625
+        },
+        "F": {
+          "candidates": 0,
+          "sessions": 0,
+          "medianMinute": null
+        },
+        "N": {
+          "candidates": 10,
+          "sessions": 1,
+          "medianMinute": 900
+        }
+      }
+    }
+  }
+}

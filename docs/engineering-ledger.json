@@ -5000,8 +5000,8 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "source": "49b9b9044335cef3ea0fd686a46cde7a9c516a4e",
-    "ciEvidence": "docs/validation/incident-base-ci.json",
+    "source": "0052f6d2f0231bde22b6b8d278a038c1466b9132",
+    "ciEvidence": "docs/validation/accounting-handoff-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
@@ -5298,10 +5298,10 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "source": "49b9b9044335cef3ea0fd686a46cde7a9c516a4e",
+    "source": "0052f6d2f0231bde22b6b8d278a038c1466b9132",
     "verified": true,
     "handoff": "docs/resume-precise-checkpoint.md",
-    "nextExecutable": "Finish incident source publication/exact CI and owner-facing report, then isolated production scope review; no unrelated labs."
+    "nextExecutable": "Verify consolidated incident SHA/CI, final owner report, then review isolated production and separate accounting scope."
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5379,7 +5379,7 @@
     ]
   },
   "watcherIncident20261029": {
-    "status": "LOCAL_VERIFIED_PUBLICATION_PENDING",
+    "status": "CONSOLIDATED_LOCAL_VERIFIED_CI_PENDING",
     "report": "docs/incident-2026-10-29.md",
     "proposal": "docs/production-incident-fix-proposal.md",
     "validation": "docs/validation/incident-2026-10-29.json",
@@ -5392,6 +5392,18 @@
     "primaryOrConfirmationCreditForRecovery": false,
     "productionChanged": false,
     "acceptanceAdded": 0,
-    "accountingAndPrivacyMigration": "SEPARATE; Claude patch bytes not available, no integration claimed"
+    "accountingAndPrivacyMigration": "Separate0052f6d verified13CI; privacy migration excluded",
+    "verifiedSource": "7988228325b514e3076e362ee09d2efc5a9c663e",
+    "ciEvidence": "docs/validation/watcher-incident-source-ci.json",
+    "classification": "NO_ISSUER_RECORD/SEC_UNAVAILABLE/policy exclusion distinct; actual types/economic filing class unverified",
+    "productionProposalFiles": 16
+  },
+  "accountingHandoffReview": {
+    "source": "0052f6d2f0231bde22b6b8d278a038c1466b9132",
+    "ciEvidence": "docs/validation/accounting-handoff-ci.json",
+    "report": "docs/accounting-handoff-review.md",
+    "originalCommitRecovered": false,
+    "privacyMigration": false,
+    "acceptanceAdded": 0
   }
 }

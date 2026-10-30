@@ -28,5 +28,5 @@ export async function instrumentAwareSec(symbol,lookup,options={}){
  const instrument=readInstrumentType(symbol,options);
  if(instrument.policyExcluded)return {known:false,tags:[],status:'INSTRUMENT_POLICY_EXCLUDED',sourceFailure:false,policyExcluded:true,admissionBlocked:true,instrument};
  let sec;try{sec=await lookup(symbol);}catch{sec={known:false,tags:[]};}
- return {...sec,instrument,admissionBlocked:instrument.status!=='ELIGIBLE_COMMON_STOCK',sourceFailure:sec?.known!==true,status:sec?.known===true?(instrument.status==='ELIGIBLE_COMMON_STOCK'?'SEC_KNOWN':'INSTRUMENT_IDENTITY_UNKNOWN'):'SEC_SOURCE_UNAVAILABLE'};
+ return {...sec,instrument,admissionBlocked:instrument.status!=='ELIGIBLE_COMMON_STOCK'||sec?.status==='NO_ISSUER_RECORD',sourceFailure:sec?.sourceFailure??sec?.known!==true,status:sec?.status==='NO_ISSUER_RECORD'?'NO_ISSUER_RECORD':sec?.known===true?(instrument.status==='ELIGIBLE_COMMON_STOCK'?'SEC_KNOWN':'INSTRUMENT_IDENTITY_UNKNOWN'):'SEC_UNAVAILABLE'};
 }

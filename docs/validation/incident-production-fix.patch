@@ -44,12 +44,13 @@
      const SW = readJson0('data/switch-paper.json'), so = ((SW && SW.open) || []).filter(x => x.ref > 0 && lastPx[x.sym] > 0); if (so.length) { const r = so.map(x => lastPx[x.sym] / x.ref - 1), back = r.filter(x => x <= -0.10).length, away = r.filter(x => x > 0.05).length; A.push('- Switch, ' + so.length + ' open: since the sell signal the stocks moved ' + pcs(av(r)) + ' on average; ' + back + ' reached the buy-back level (10% lower), ' + away + ' ran away 5%+ (a missed rise counts against the switch; not a verdict until round trips finish)'); } } catch (e) {}
    // B. finding
 -  let L = []; try { L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n').map(x => JSON.parse(x)).slice(-20); } catch (e) {}
+-  const B = []; if (L.length) { let n = 0, caught = 0, data = 0, gap = 0, alerts = 0; for (const d of L) { alerts += d.alerts || 0; for (const [k, v] of Object.entries(d.tally || {})) { n += v; if (/^CAUGHT/.test(k) && !/NOT/.test(k)) caught += v; if (/NOT_VISIBLE|NO_LIVE|TOO_LATE|VOLUME_FIGURE_LATE/.test(k)) data += v; if (k === 'GAPPED_AT_OPEN') gap += v; } }
 +  let L = []; try { L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n').map(x => JSON.parse(x)); } catch (e) {}
 +  const pop=missedRunnerPopulation(L);L=pop.rows.slice(-20);
-   const B = []; if (L.length) { let n = 0, caught = 0, data = 0, gap = 0, alerts = 0; for (const d of L) { alerts += d.alerts || 0; for (const [k, v] of Object.entries(d.tally || {})) { n += v; if (/^CAUGHT/.test(k) && !/NOT/.test(k)) caught += v; if (/NOT_VISIBLE|NO_LIVE|TOO_LATE|VOLUME_FIGURE_LATE/.test(k)) data += v; if (k === 'GAPPED_AT_OPEN') gap += v; } }
++  const B = []; if (L.length) { let n = 0, caught = 0, data = 0, gap = 0, alerts = 0; for (const d of L) { alerts += d.alerts || 0; for (const [k, v] of Object.entries(d.tally || {})) { n += v; if (k==='ALERTED'||(/^CAUGHT/.test(k) && !/NOT/.test(k))) caught += v; if (/NOT_VISIBLE|NO_LIVE|TOO_LATE|VOLUME_FIGURE_LATE/.test(k)) data += v; if (k === 'GAPPED_AT_OPEN') gap += v; } }
      const sec = L.reduce((a, d) => a + ((d.tally || {}).SEC_CHECK_UNAVAILABLE || 0), 0); if (sec) B.push('- ' + sec + ' blocked only because the SEC safety check could not be reached (a fault, being fixed; not a market reason).');
 -    B.push('- ' + n + ' stocks ran 15%+ in ' + L.length + ' session' + (L.length === 1 ? '' : 's') + '; caught in time: ' + caught + ' (' + (n ? Math.round(caught / n * 100) : 0) + '%). Missed for late data: ' + data + ', already gapped at the open: ' + gap + '.', '- Alerts sent: ' + alerts + '. Whether those alerts made money is in card A (fast alerts rows).'); }
-+    B.push('- ' + n + ' recorded mover events (mixed instruments; unique security-days NOT ESTABLISHED) in ' + L.length + ' session' + (L.length === 1 ? '' : 's') + '; legacy caught-code count: ' + caught + ' (' + (n ? Math.round(caught / n * 100) : 0) + '%). Missed for late data: ' + data + ', already gapped at the open: ' + gap + '.', '- Duplicate daily summaries excluded: '+pop.duplicates+'. Full-session coverage '+(pop.coverageKnownComplete?'recorded by summaries (not executable coverage proof)':'NOT ESTABLISHED')+'. Delayed prices, warrants/rights/units and unknown identities are not a verified tradable-stock denominator.', '- Recorded alert count (delivery acknowledgment not established): ' + alerts + '. Whether those alerts made money is in card A (fast alerts rows).'); }
++    B.push('- ' + n + ' recorded mover events (mixed instruments; unique security-days NOT ESTABLISHED) in ' + L.length + ' session' + (L.length === 1 ? '' : 's') + '; legacy alerted/caught-code count: ' + caught + ' (' + (n ? Math.round(caught / n * 100) : 0) + '%). Missed for late data: ' + data + ', already gapped at the open: ' + gap + '.', '- Duplicate daily summaries excluded: '+pop.duplicates+'. Full-session coverage '+(pop.coverageKnownComplete?'recorded by summaries (not executable coverage proof)':'NOT ESTABLISHED')+'. Delayed prices, warrants/rights/units and unknown identities are not a verified tradable-stock denominator.', '- Recorded alert count (delivery acknowledgment not established): ' + alerts + '. Whether those alerts made money is in card A (fast alerts rows).'); }
    else B.push('- The daily history starts with the next fast-mover session.');
 -  return ['SCORECARD (future days only, after costs; back-tests are NOT counted here)', '', 'A. MAKING MONEY', ...(A.length ? A : ['- No finished paper trades yet.']), '',
 +  return ['SCORECARD (LEGACY_FORWARD_V1 and owner reports; descriptive, not admitted prospective evaluation)', '', 'A. LEGACY OUTCOMES (assumed execution/costs; not proven returns)', 'Evidence: legacy signal logs are not DISCOVERY_PAPER_V1 admissions. No prospective count is inferred here. Historical-backtest and private owner records are separate.', ...(A.length ? A : ['- No finished paper trades yet.']), '',
@@ -252,14 +253,32 @@
    breakEven, catchable, decision, ig8PaperRecord: ig8, actionsLine, noNewBuyRule: true };
 --- a/early-alerts.mjs
 +++ b/early-alerts.mjs
-@@ -31,6 +31,8 @@
+@@ -31,6 +31,9 @@
  // hard rules (never bypassed); sec = { known, tags } from the watcher's SEC check
  export function hardReason({ price, halalFail, lottery, sec }) {
    if (!(price >= 1)) return 'under 1 USD'; if (halalFail) return 'NOT HALAL (ZAD)'; if (lottery >= 0.15) return 'AVOID list (one-day jump ' + pct(lottery) + ')';
++  if(sec?.status==='NO_ISSUER_RECORD')return 'NO_ISSUER_RECORD (instrument not inferred; blocked, not a transport failure)';
 +  if(sec?.policyExcluded)return 'instrument policy exclusion (not a SEC source failure)';
 +  if(sec?.admissionBlocked)return 'instrument identity UNKNOWN (not admitted)'+(sec.sourceFailure?'; SEC source unavailable':' ; no SEC source failure recorded');
    if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
    return null;
+ }
+@@ -72,14 +75,14 @@
+   const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0);
+   const worst = (ds) => ['DILUTION', 'NEGATIVE', 'POSITIVE', 'AMBIGUOUS'].find(d => ds.includes(d)) || 'UNKNOWN';
+   const hDir = fN.length ? (() => { const ds = fN.map(x => headlineDirection(x.headline)); return ds.includes('DILUTION') ? 'DILUTION' : ds.includes('NEGATIVE') && ds.includes('POSITIVE') ? 'AMBIGUOUS' : worst(ds); })() : null;
+-  const tag = (o) => ({ ...o, text: o.text + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
++  const tag = (o) => ({ ...o, filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED', text: o.text + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
+   if (fF.length) { const x = fF[0], fd = worst(fF.map(filingDirection)), dir = fd !== 'AMBIGUOUS' ? fd : hDir && hDir !== 'AMBIGUOUS' ? hDir : 'AMBIGUOUS';
+     return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
+   if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
+     return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
+   if (F.length || N.length) { const x = F[0] || null, h = N[0] || null;
+     return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + new Date(x.t).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : '"' + h.headline + '"') }); }
+-  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'the SEC check failed' + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
++  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
+   if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
+   return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing and no headline in 72 h' });
  }
 --- a/rank-models.mjs
 +++ b/rank-models.mjs
@@ -273,8 +292,8 @@
    if (q.spreadFresh && q.spread !== null && q.spread > 0.02) why.push('spread over 2%');
    if (q.halalFail) why.push('NOT HALAL'); if (q.lottery >= 0.15) why.push('AVOID list');
 -  if (!q.sec || !q.sec.known) why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
-+  if(q.sec?.policyExcluded)why.push('instrument policy exclusion');else if(q.sec?.admissionBlocked)why.push('instrument identity UNKNOWN');
-+  if ((!q.sec || !q.sec.known)&&!q.sec?.policyExcluded) why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
++  if(q.sec?.status==='NO_ISSUER_RECORD')why.push('NO_ISSUER_RECORD (not inferred instrument type)');else if(q.sec?.policyExcluded)why.push('instrument policy exclusion');else if(q.sec?.admissionBlocked)why.push('instrument identity UNKNOWN');
++  if ((!q.sec || !q.sec.known)&&!q.sec?.policyExcluded&&q.sec?.status!=='NO_ISSUER_RECORD') why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
    return { eligible: why.length === 0, why };
  }
 
@@ -510,7 +529,7 @@
 + const instrument=readInstrumentType(symbol,options);
 + if(instrument.policyExcluded)return {known:false,tags:[],status:'INSTRUMENT_POLICY_EXCLUDED',sourceFailure:false,policyExcluded:true,admissionBlocked:true,instrument};
 + let sec;try{sec=await lookup(symbol);}catch{sec={known:false,tags:[]};}
-+ return {...sec,instrument,admissionBlocked:instrument.status!=='ELIGIBLE_COMMON_STOCK',sourceFailure:sec?.known!==true,status:sec?.known===true?(instrument.status==='ELIGIBLE_COMMON_STOCK'?'SEC_KNOWN':'INSTRUMENT_IDENTITY_UNKNOWN'):'SEC_SOURCE_UNAVAILABLE'};
++ return {...sec,instrument,admissionBlocked:instrument.status!=='ELIGIBLE_COMMON_STOCK'||sec?.status==='NO_ISSUER_RECORD',sourceFailure:sec?.sourceFailure??sec?.known!==true,status:sec?.status==='NO_ISSUER_RECORD'?'NO_ISSUER_RECORD':sec?.known===true?(instrument.status==='ELIGIBLE_COMMON_STOCK'?'SEC_KNOWN':'INSTRUMENT_IDENTITY_UNKNOWN'):'SEC_UNAVAILABLE'};
 +}
 --- /dev/null
 +++ b/ranking-cohort.mjs
@@ -523,7 +542,7 @@
 @@ -1,3 +1,6 @@
 +import {instrumentAwareSec} from './instrument-type.mjs';
 +import {execFileSync} from 'node:child_process';
-+import {sessionFinished,preferSession,runIdentity} from './watcher-session.mjs';
++import {sessionFinished,preferSession,runIdentity,sessionEvidence} from './watcher-session.mjs';
  // IGNITION WATCHER: runs during the US session (about 9:20 to 15:00 New York, a long GitHub Actions job). Every minute it checks
  // the Massive snapshot universe (about 6,000+ US stocks) for stocks that START to run (rules in ignition-core.mjs, plus the
  // live-only quiet build-up rule IG8). COVERAGE IS MEASURED, NOT ASSUMED: every minute's heartbeat records the coverage mode, how
@@ -536,19 +555,25 @@
  if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
  if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
  if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
-@@ -102,7 +107,7 @@
+@@ -102,14 +107,15 @@
    if (o.length < 3) return null; return { orH: Math.max(...o.map(x => x[2])), orL: Math.min(...o.map(x => x[3])), pm: b.filter(x => x[0] < 570).reduce((a, x) => a + x[5], 0) }; }
  // SEC check before any alert. FAIL-CLOSED: if the check cannot be done, the alert is blocked (the ignition stays on paper).
  let TICK = null, secLogged = false;
 -async function secRisk(sym) {
 +async function secRiskIssuer(sym) {
    const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
-   try { if (!TICK) { const r = await fetch(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return { known: false, tags: [] }; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
-     const cik = TICK[sym]; if (!cik) return { known: false, tags: [] };
-@@ -110,6 +115,7 @@
-     for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
-       if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) tags.add('share sale / registration (' + f + ')'); if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
-     return { known: true, tags: [...tags], filings }; } catch (e) { return { known: false, tags: [] }; } }
+-  try { if (!TICK) { const r = await fetch(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return { known: false, tags: [] }; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
+-    const cik = TICK[sym]; if (!cik) return { known: false, tags: [] };
+-    const r = await fetch(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return { known: false, tags: [] }; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [];
+-    for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
+-      if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) tags.add('share sale / registration (' + f + ')'); if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
+-    return { known: true, tags: [...tags], filings }; } catch (e) { return { known: false, tags: [] }; } }
++  try { if (!TICK) { const r = await request(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
++    const cik = TICK[sym]; if (!cik) return {known:false,tags:[],status:'NO_ISSUER_RECORD',sourceFailure:false};
++    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
++    for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null, accession: (R.accessionNumber || [])[k] || null, url: (R.accessionNumber || [])[k] && (R.primaryDocument || [])[k] ? 'https://www.sec.gov/Archives/edgar/data/' + Number(cik) + '/' + R.accessionNumber[k].replace(/-/g, '') + '/' + encodeURIComponent(R.primaryDocument[k]) : null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
++      if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) {const acc=String((R.accessionNumber||[])[k]||''),valid=/^\d{10}-\d{2}-\d{6}$/.test(acc);blockingFilings.push({form:f,filingDate:R.filingDate[k],accession:valid?acc:null,acceptedAt:(R.acceptanceDateTime||[])[k]||null,indexUrl:valid?'https://www.sec.gov/Archives/edgar/data/'+Number(cik)+'/'+acc.replace(/-/g,'')+'/'+acc+'-index.html':null,economicClassification:'UNREVIEWED',blockUnchanged:true});tags.add('registration/prospectus ('+f+'); economic classification UNREVIEWED');} if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
++    return {known:true,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
 +async function secRisk(sym) { return instrumentAwareSec(sym,secRiskIssuer,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256}); }
  // headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
  async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
@@ -597,6 +622,15 @@
  // FEED-FIXABLE: a data-feed miss that real-time prices could actually have helped = not visible/late live AND not already up 10%+
  // at the open AND not gapped 20%+ before 9:25 (a gap happens before any feed can help). Real-time cannot fix the rest.
  const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISIBLE_TOO_LATE', 'VOLUME_FIGURE_LATE']), dataMiss = missed.filter(x => DATA_CODES.has(x.code)),
+@@ -322,7 +335,7 @@
+ try { const rs = SR.rows(); if (rs.length) { fs.mkdirSync('data/shadow', { recursive: true }); fs.writeFileSync('data/shadow/' + day + '.jsonl.gz', zlib.gzipSync(rs.map(x => JSON.stringify(x)).join('\n') + '\n')); console.log('shadow stream: ' + rs.length + ' candidates saved'); } } catch (e) { console.log('shadow stream: ' + e.message); }
+ // DELIVERY SCORECARD: every candidate that met an alert trigger (or was a rule hit) with its decision and 15:00 result; soft misses are
+ // counted in the day's summary only (about 1,500 a day would bloat the public repo)
+-try { const lastPx = {}; for (const v of Object.values(vis)) if (v.last > 0) lastPx[v.sym] = v.last; const E = EA.finish(lastPx, null, alerts), keep = E.rows.filter(r => !/^SOFT/.test(r.decision));
++try { const lastPx = {}; for (const v of Object.values(vis)) if (v.last > 0) lastPx[v.sym] = v.last; const E = EA.finish(lastPx, null, alerts); E.summary.sessionMinutes=sessionEvidence(incidentSnapshot).usableMinutes; const keep = E.rows.filter(r => !/^SOFT/.test(r.decision));
+   if (keep.length) fs.appendFileSync('data/opp-ledger.jsonl', keep.map(r => JSON.stringify(r)).join('\n') + '\n'); fs.appendFileSync('data/opp-days.jsonl', JSON.stringify(E.summary) + '\n'); } catch (e) { console.log('delivery scorecard: ' + e.message); }
+ // OPPORTUNITY RADAR same-day score (pre-registered in radar-v3-core.mjs): each line listed at 11:15 gets its last watched price and the
+ // median $1+ stock's move over the same minutes, so the radar is judged against the average stock, not only against zero.
 --- a/.github/workflows/ignition.yml
 +++ b/.github/workflows/ignition.yml
 @@ -48,11 +48,13 @@
@@ -615,3 +649,19 @@
        - if: failure()
          env:
            TG_TOKEN: ${{ secrets.TG_TOKEN }}
+--- a/opportunity-radar.mjs
++++ b/opportunity-radar.mjs
+@@ -1,3 +1,4 @@
++import {chooseDailySummary} from './watcher-session.mjs';
+ // DAILY OPPORTUNITY RADAR runner (rules and wording in radar-v3-core.mjs). Research and routing only; never places an order.
+ //   node opportunity-radar.mjs midday   called by ignition-watch.mjs at about 11:15 New York, after it writes data/radar-v3-snap.json
+ //   node opportunity-radar.mjs close    .github/workflows/opportunity-radar.yml after the watcher has saved the day (scores 5-session rows too)
+@@ -48,7 +49,7 @@
+ } else {
+   let ledger = readLines(LEDGER); const s5 = await score5(ledger, today);
+   if (s5.length) { fs.appendFileSync(LEDGER, s5.map(x => JSON.stringify(x)).join('\n') + '\n'); ledger = ledger.concat(s5); }
+-  const od = readLines('data/opp-days.jsonl').filter(x => x.day === today).pop();   // DELIVERY SCORECARD from the live watcher (early-alerts.mjs)
++  const od = chooseDailySummary(readLines('data/opp-days.jsonl'),today);   // DELIVERY SCORECARD from the live watcher (early-alerts.mjs)
+   const SRp = readJson('data/shadow-report.json'), pc = (x) => (x === null || x === undefined ? '?' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%');   // Phase 1 shadow test (shadow-outcomes.mjs runs just before)
+   const shadowLine = SRp ? 'FILTER SHADOW TEST: ' + SRp.shadowSessions + ' session' + (SRp.shadowSessions === 1 ? '' : 's') + ' collected (verdicts after 10). ' + (SRp.alerts5d && SRp.alerts5d.delivered.n ? 'Alerts after 5 sessions, net: delivered ' + SRp.alerts5d.delivered.n + ' avg ' + pc(SRp.alerts5d.delivered.avg) + ' (median ' + pc(SRp.alerts5d.delivered.median) + '); eligible not delivered ' + SRp.alerts5d.notDelivered.n + ' avg ' + pc(SRp.alerts5d.notDelivered.avg) + '.' : 'No alert has 5 sessions yet.') : '';
+   const rk = SRp && (SRp.ranking && SRp.ranking.models.A.picks ? SRp.ranking : SRp.rankingPilot), rkLine = rk ? 'RANKING SHADOW TEST (' + (rk === SRp.ranking ? 'counted from ' + rk.frozen.evalFrom : 'PILOT, not counted') + '; same-day net after costs, picks / avg / median): '

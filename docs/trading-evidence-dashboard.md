@@ -2,9 +2,9 @@
 
 Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
 
-Current priority: [October29 incident and verified recovery](incident-2026-10-29.md), [isolated production proposal](production-incident-fix-proposal.md) and [minimal prospective protocol](minimal-existing-stream-prospective-protocol.md). Owner decision30October excludes29October from primary ranking;28October remains pilot. Recovery is secondary only. Local incident validation passes; publication CI pending. Production unchanged; acceptance24/40, prospective cases0.
+Current priority: [October29 incident and verified recovery](incident-2026-10-29.md), [isolated production proposal](production-incident-fix-proposal.md) and [minimal prospective protocol](minimal-existing-stream-prospective-protocol.md). Owner decision30October excludes29October from primary ranking;28October remains pilot. Recovery is secondary only. Incident7988228 and separate accounting0052f6d each pass13 exact-commit checks; consolidated follow-up publication CI follows. Production unchanged; acceptance24/40, prospective cases0.
 
-Updated29October2026; verified engineering runtime source c34c856 (12 exact-commit checks passed); canonical status: current-engineering-status.json; precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
+Updated30October2026; verified engineering source0052f6d (13 exact-commit checks passed); canonical status: current-engineering-status.json; precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|

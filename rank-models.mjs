@@ -48,8 +48,8 @@ export function dEligible(q) {
   if (!(q.price >= 1)) why.push('under 1 USD'); if (!(q.prevDollarVol >= 1e6)) why.push('under 1M USD traded the day before');
   if (q.spreadFresh && q.spread !== null && q.spread > 0.02) why.push('spread over 2%');
   if (q.halalFail) why.push('NOT HALAL'); if (q.lottery >= 0.15) why.push('AVOID list');
-  if(q.sec?.policyExcluded)why.push('instrument policy exclusion');else if(q.sec?.admissionBlocked)why.push('instrument identity UNKNOWN');
-  if ((!q.sec || !q.sec.known)&&!q.sec?.policyExcluded) why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
+  if(q.sec?.status==='NO_ISSUER_RECORD')why.push('NO_ISSUER_RECORD (not inferred instrument type)');else if(q.sec?.policyExcluded)why.push('instrument policy exclusion');else if(q.sec?.admissionBlocked)why.push('instrument identity UNKNOWN');
+  if ((!q.sec || !q.sec.known)&&!q.sec?.policyExcluded&&q.sec?.status!=='NO_ISSUER_RECORD') why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
   return { eligible: why.length === 0, why };
 }
 

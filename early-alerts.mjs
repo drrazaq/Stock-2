@@ -31,6 +31,7 @@ export function leadSoftReason(c) {
 // hard rules (never bypassed); sec = { known, tags } from the watcher's SEC check
 export function hardReason({ price, halalFail, lottery, sec }) {
   if (!(price >= 1)) return 'under 1 USD'; if (halalFail) return 'NOT HALAL (ZAD)'; if (lottery >= 0.15) return 'AVOID list (one-day jump ' + pct(lottery) + ')';
+  if(sec?.status==='NO_ISSUER_RECORD')return 'NO_ISSUER_RECORD (instrument not inferred; blocked, not a transport failure)';
   if(sec?.policyExcluded)return 'instrument policy exclusion (not a SEC source failure)';
   if(sec?.admissionBlocked)return 'instrument identity UNKNOWN (not admitted)'+(sec.sourceFailure?'; SEC source unavailable':' ; no SEC source failure recorded');
   if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
@@ -77,15 +78,16 @@ export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours =
   const evidence = [...F.map(x=>({source:'SEC',publicAt:new Date(x.t).toISOString(),form:x.form,items:x.items||'',sourceId:x.accession||null,url:x.url||null,direction:filingDirection(x)})),
     ...N.map(x=>({source:WIRE.test(x.source||'')?'ISSUER_WIRE':'AGGREGATOR',publisher:x.source||null,publicAt:new Date(x.at).toISOString(),headline:x.headline,sourceId:x.id||null,url:x.url||null,direction:headlineDirection(x.headline)}))];
   const tag = (o) => ({ ...o, evidence, checkedAt:new Date(nowMs).toISOString(), sourceAvailability:{sec:sec?.known===true,news:news?.ok===true},
+    filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED',
     interpretation:'Direction is a rule-based interpretation, not verified economic impact or trade eligibility.',
-    text: o.text + ' [source ' + o.source + ', direction ' + o.direction + (['POSITIVE','MIXED'].includes(o.direction) ? ' (headline wording, not verified impact)' : '') + ', ' + o.freshness + ']' });
+    text: o.text + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' [source ' + o.source + ', direction ' + o.direction + (['POSITIVE','MIXED'].includes(o.direction) ? ' (headline wording, not verified impact)' : '') + ', ' + o.freshness + ']' });
   if (fF.length) { const x = fF[0], fd = combine(fF.map(filingDirection)), dir = combine([fd, hDir]);
     return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
   if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
     return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
   if (F.length || N.length) { const x = F[0] || null, h = N[0] || null;
     return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + new Date(x.t).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : '"' + h.headline + '"') }); }
-  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'the SEC check failed' + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
+  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
   if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
   return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing and no headline in 72 h' });
 }
