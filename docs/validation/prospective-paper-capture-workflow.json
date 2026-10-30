@@ -2,10 +2,10 @@
   "kind": "INACTIVE_CAPTURE_WORKFLOW_SPEC_V1",
   "installable": false,
   "reason": "Live approval/source-reference validation and acknowledged artifact adapter not implemented; specification only",
-  "runtimeSourceSha": "ef04952e3c899265c82ec8ddfcb18314cdbea840",
+  "runtimeSourceSha": "822a6ca0aa6b99465841896f9764d5b1b264a0f4",
   "runtimeFiles": {
-    "prospective-paper-capture.mjs": "1c21798321d4dda70c3b56b7d810570d6d61e0bf771364e7b7d60125cd11ed07",
-    "prospective-capture-transport.mjs": "50c2f68499f9fa9b32ebca5c01cfbe3cd4f1561ca2e782f55948e5c16a72822a",
+    "prospective-paper-capture.mjs": "7379ccb07f264ea5ead3827f19daf397328340583986b30785dfe15268234cba",
+    "prospective-capture-transport.mjs": "5ede54bc5bb34889444feb97d5222bb977688f432256cfda168e241a70ad8e41",
     "tools/replay-prospective-capture.mjs": "8323f76b1cfb8cef3584b49d2130f15ce80af74952e50554e8da072b774bc017",
     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
@@ -72,8 +72,8 @@
   ],
   "budgets": {
     "snapshotAttempts": 41,
-    "referencePreparationAttempts": 7,
-    "totalProviderAttempts": 48,
+    "referencePreparationAttempts": 12,
+    "totalProviderAttempts": 53,
     "providerRequestTimeoutMs": 10000,
     "requestsPerRollingMinute": 2,
     "concurrentRequests": 1,
@@ -87,5 +87,16 @@
     "retentionDays": 3
   },
   "liveAuthorized": false,
-  "evaluationAuthorized": false
+  "evaluationAuthorized": false,
+  "referenceEndpoints": {
+    "MassiveTickerDetails": {
+      "attempts": 6,
+      "maxResponseBytes": 262144
+    },
+    "AlpacaSingleAsset": {
+      "attempts": 6,
+      "maxResponseBytes": 32768
+    },
+    "referencePlainTotalBytes": 2097152
+  }
 }
