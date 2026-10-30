@@ -1,0 +1,66 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {prepareCaptureGuard,runGuardedCapture,recoverUploadedCapture} from '../paper-capture-wrapper.mjs';
+import {validateReferenceBundle} from '../paper-capture-references.mjs';
+import {fixtureZip,openCaptureZip} from '../capture-artifact.mjs';
+import {captureJson} from '../capture-json.mjs';
+import {sha} from '../prospective-paper-capture.mjs';
+import {wrapperFixture,updateReference,fixtureGit,t,fixtureKey} from './capture-wrapper-fixture.mjs';
+const guard=f=>prepareCaptureGuard({...f,now:f.nowMs});
+function mocks(f,change={}){
+ let clock=f.nowMs,calls=0,uploads=0,historyCalls=0;const archives=new Map();
+ const ports={history:async()=>{historyCalls++;return f.history;},events:async()=>JSON.stringify({events:clock===f.nowMs?f.events:[]}),provider:async(url,o)=>{calls++;assert.equal(o.method,'GET');assert.equal(o.redirect,'error');assert.equal(new URL(url).hostname,'data.alpaca.markets');assert.equal(new URL(url).searchParams.get('symbols'),f.universe.join(','));assert.equal(new URL(url).searchParams.get('feed'),'sip');const minute=Math.floor((clock-f.nowMs)/60000),q=Object.fromEntries(f.universe.map((s,i)=>[s,{latestQuote:{t:new Date(clock).toISOString(),bp:minute>=31&&i===0?10.99:minute>=31&&i===3?8.99:9.99,ap:minute>=31&&i===0?11.01:minute>=31&&i===3?9.01:10.01,bs:1000,as:1000},minuteBar:{t:t(minute-1),l:9,h:11,v:250000}}]));return new Response(JSON.stringify(q));},upload:async x=>{uploads++;const zip=fixtureZip(x.name,x.bytes),id=uploads;archives.set(id,zip);return {success:true,artifactId:id,archiveSha256:sha(zip),archiveBytes:zip.length,fileSha256:x.sha256,fileBytes:x.bytes.length,retentionDays:3};},...change};
+ return {ports,archives,now:()=>clock,wait:async ms=>{clock+=ms;},counts:()=>({calls,uploads,historyCalls})};
+}
+const run=(f,m)=>runGuardedCapture({...f,key:fixtureKey,now:m.now,wait:m.wait,ports:m.ports});
+function recover(f,r,m,extra={}){const raw=JSON.stringify(r.receiptManifest);return recoverUploadedCapture({archives:m.archives,receiptRaw:raw,expectedReceiptSha256:sha(raw),expectedApprovalHash:sha(fs.readFileSync(f.approvalFile)),expectedSourceSha:f.approval.plan.sourceSha,key:fixtureKey,...extra});}
+let complete;
+test('actual guarded caller:41mock cycles, durable receipt chain, recovered candidate/control winner and loser',async()=>{
+ const f=wrapperFixture();try{const m=mocks(f),r=await run(f,m);assert.equal(r.status,'COMPLETE');assert.deepEqual(m.counts(),{calls:41,uploads:41,historyCalls:1});assert.equal(r.confirmedUploads,41);assert.equal(r.pendingFiles,0);assert.equal(r.genuineAdmissions,0);assert.equal(r.simulationReport.evaluation.counts.resolved,2);assert.equal(r.simulationReport.evaluation.counts.resolvedWithVerifiedDisplayedSize,2);assert.ok(r.simulationReport.evaluation.cases[0].candidate.netAfterSpreadAndFees>0);assert.ok(r.simulationReport.evaluation.cases[1].candidate.netAfterSpreadAndFees<0);const x=recover(f,r,m);assert.equal(x.status,'AUTHENTICATED_COMPLETE');assert.equal(x.frames,41);assert.equal(x.automaticResumeAuthorized,false);assert.deepEqual(x.report.evaluation,r.simulationReport.evaluation);complete={f,r,m};}catch(e){f.cleanup();throw e;}
+});
+test('invalid approvals/context/limits/dependency sets reject before any external operation',async()=>{
+ const f=wrapperFixture();try{const raw=fs.readFileSync(f.approvalFile),ctx=structuredClone(f.context);for(const mutate of [a=>a.granted=false,a=>a.approvedAt=t(1),a=>a.entitlements.latestSip=false,a=>a.entitlements.evidenceSha256='bad',a=>a.recoveryProofVerified=false,a=>a.plan.cohort='EVALUATION',a=>a.plan.universe.reverse(),a=>a.limits.providerAttempts=42,a=>delete a.runtimeFiles['capture-json.mjs']]){const a=JSON.parse(raw);mutate(a);fs.writeFileSync(f.approvalFile,JSON.stringify(a));const m=mocks(f);await assert.rejects(run(f,m));assert.deepEqual(m.counts(),{calls:0,uploads:0,historyCalls:0});assert.equal(fs.existsSync(f.output),false);}fs.writeFileSync(f.approvalFile,raw);for(const patch of [{attempt:2},{actor:'other'},{refName:'main'},{eventName:'schedule'},{permissions:{contents:'write',actions:'read'}}]){f.context={...ctx,...patch};assert.throws(()=>guard(f),/CONTEXT|PERMISSIONS/);}}finally{f.cleanup();}
+});
+test('complete single-attempt run history rejects pagination gaps, duplicates and retries',()=>{
+ const f=wrapperFixture();try{for(const change of [x=>x.total_count=101,x=>x.total_count=2,x=>{x.workflow_runs.push({...x.workflow_runs[0],id:124});x.total_count=2;},x=>x.workflow_runs[0].run_attempt=2,x=>x.workflow_runs[0].head_sha='f'.repeat(40)]){const h=structuredClone(f.history);change(h);assert.throws(()=>prepareCaptureGuard({...f,history:h,now:f.nowMs}),/HISTORY|ATTEMPT/);}}finally{f.cleanup();}
+});
+test('final HEAD/all-dependency checks catch mutation, same-byte symlink/inode replacement and input changes',()=>{
+ for(const kind of ['content','symlink','inode','head','approval','reference']){const f=wrapperFixture();try{const g=guard(f),file=path.join(f.root,'capture-json.mjs');if(kind==='content')fs.appendFileSync(file,'\n// mutation');if(kind==='symlink'){const p=path.join(f.dir,'copy');fs.copyFileSync(file,p);fs.unlinkSync(file);fs.symlinkSync(p,file);}if(kind==='inode'){const b=fs.readFileSync(file);fs.unlinkSync(file);fs.writeFileSync(file,b);}if(kind==='head')fixtureGit(f.root,['commit','--allow-empty','-qm','moved']);if(kind==='approval')fs.appendFileSync(f.approvalFile,' ');if(kind==='reference')fs.appendFileSync(f.referenceFile,' ');assert.throws(()=>g.revalidate(),/CHANGED|SYMLINK/);}finally{f.cleanup();}}
+});
+test('missing promisor blob refuses rather than lazily fetching dependencies',()=>{
+ const f=wrapperFixture();try{const id=fixtureGit(f.root,['rev-parse','HEAD:capture-json.mjs']);fs.unlinkSync(path.join(f.root,'.git/objects',id.slice(0,2),id.slice(2)));fixtureGit(f.root,['config','extensions.partialClone','origin']);fixtureGit(f.root,['config','remote.origin.promisor','true']);const marker=path.join(f.dir,'fetch-marker');fixtureGit(f.root,['config','remote.origin.url','ext::sh -c touch% '+marker]);assert.throws(()=>guard(f));assert.equal(fs.existsSync(marker),false);}finally{f.cleanup();}
+});
+test('reviewed raw provenance pins distinguish unknown identity, instrument exclusion, ZAD and stale source',()=>{
+ const f=wrapperFixture();try{const original=fs.readFileSync(f.referenceFile,'utf8');assert.equal(validateReferenceBundle(original,f.approval).metadata.length,6);fs.appendFileSync(f.referenceFile,' ');assert.throws(()=>guard(f),/PIN/);fs.writeFileSync(f.referenceFile,original);
+ let raw=updateReference(f,rs=>{const m=JSON.parse(rs[0].massive.raw);m.type='WARRANT';rs[0].massive.raw=JSON.stringify(m);});let x=validateReferenceBundle(raw,f.approval);assert.equal(x.reasons[0].reason,'INSTRUMENT_POLICY_EXCLUDED');assert.equal(x.metadata.length,6);assert.equal(x.metadata[0].securityId,null);
+ raw=updateReference(f,rs=>{const m=JSON.parse(rs[0].massive.raw);m.type='CS';delete m.cik;rs[0].massive.raw=JSON.stringify(m);rs[0].sec.raw='null';rs[0].sec.url=null;rs[1].zad.status='UNKNOWN';});x=validateReferenceBundle(raw,f.approval);assert.equal(x.reasons[0].reason,'IDENTITY_CLASS_OR_INDUSTRY_CONFLICT');assert.equal(x.reasons[1].reason,'CURRENT_ZAD_UNKNOWN');assert.equal(x.metadata.length,6);
+ raw=updateReference(f,rs=>rs[2].massive.capturedAt=t(-2000));assert.throws(()=>validateReferenceBundle(raw,f.approval),/FRESHNESS/);}finally{f.cleanup();}
+});
+test('upload rejection/uncertainty/wrong hashes/retention/caps/interruption preserve pending bytes and suppress next request',async()=>{
+ for(const kind of ['rejected','uncertain','hash','retention','size','interrupted']){const f=wrapperFixture();try{let attempts=0;const m=mocks(f,{upload:async x=>{attempts++;if(kind==='interrupted')throw Error('interruption');const z=fixtureZip(x.name,x.bytes);return {success:kind!=='rejected'&&kind!=='uncertain',artifactId:1,archiveSha256:sha(z),archiveBytes:kind==='size'?20*1024*1024:z.length,fileSha256:kind==='hash'?'0'.repeat(64):x.sha256,fileBytes:x.bytes.length,retentionDays:kind==='retention'?7:3};}}),r=await run(f,m);assert.notEqual(r.status,'COMPLETE');assert.equal(m.counts().calls,1);assert.equal(attempts,1);assert.equal(r.confirmedUploads,0);assert.equal(r.pendingFiles,1);assert.ok(fs.statSync(path.join(f.output,'checkpoint-000.enc')).size>100);assert.equal(r.genuineAdmissions,0);assert.throws(()=>recover(f,r,m),/SCOPE/);}finally{f.cleanup();}}
+});
+test('source mutation during provider or upload retains observations but cannot certify or continue changed runtime',async()=>{
+ for(const phase of ['provider','upload']){const f=wrapperFixture();try{const m=mocks(f),original=m.ports[phase];m.ports[phase]=async(...args)=>{const value=await original(...args);fs.appendFileSync(path.join(f.root,'capture-json.mjs'),'\n// mutation');return value;};const r=await run(f,m);assert.equal(r.status,'BLOCKED');assert.equal(m.counts().calls,1);assert.ok(fs.existsSync(path.join(f.output,'checkpoint-000.enc')));}finally{f.cleanup();}}
+});
+test('strict JSON refuses duplicate/prototype keys, depth, nonfinite values and oversized input',()=>{
+ for(const raw of ['{"x":1,"x":2}','{"__proto__":{}}','['.repeat(66)+'0'+']'.repeat(66),'1e999'])assert.throws(()=>captureJson(raw));assert.throws(()=>captureJson(' '.repeat(8*1024*1024+1)));
+});
+test('actual stored and Python-deflated/data-descriptor ZIP layouts validate; traversal/truncation/CRC fail',()=>{
+ const name='checkpoint-000.enc',body=Buffer.from('synthetic ciphertext format');assert.deepEqual(openCaptureZip(fixtureZip(name,body),name),body);
+ const py="import io,sys,zipfile\nclass Pipe(io.BytesIO):\n def seekable(self):return False\n def seek(self,*a):raise io.UnsupportedOperation()\nb=Pipe()\nwith zipfile.ZipFile(b,'w',compression=zipfile.ZIP_DEFLATED) as z:z.writestr('checkpoint-000.enc',sys.stdin.buffer.read())\nsys.stdout.buffer.write(b.getvalue())\n";
+ const z=execFileSync('python3',['-c',py],{input:body,maxBuffer:1024*1024});assert.deepEqual(openCaptureZip(z,name),body);for(const b of [fixtureZip('../escape',body),Buffer.concat([z,Buffer.from('trailing')]),z.subarray(0,z.length-1)])assert.throws(()=>openCaptureZip(b,name));const bad=fixtureZip(name,body);bad[30+name.length]^=1;assert.throws(()=>openCaptureZip(bad,name));
+});
+test('authenticated downloaded-artifact recovery rejects wrong key/truncation/reordering and labels incomplete prefix',()=>{
+ assert.ok(complete,'complete synthetic capture required');const {f,r,m}=complete,z=m.archives.get(1);assert.throws(()=>recover(f,r,m,{key:'incorrect-synthetic-key'}));m.archives.set(1,z.subarray(0,z.length-1));assert.throws(()=>recover(f,r,m),/DIGEST/);m.archives.set(1,z);
+ const changed=structuredClone(r.receiptManifest);changed.receipts.reverse();let raw=JSON.stringify(changed);assert.throws(()=>recover(f,r,m,{receiptRaw:raw,expectedReceiptSha256:sha(raw)}),/ORDER/);
+ const prefix=structuredClone(r.receiptManifest);prefix.receipts=prefix.receipts.slice(0,40);raw=JSON.stringify(prefix);const x=recover(f,r,m,{receiptRaw:raw,expectedReceiptSha256:sha(raw)});assert.equal(x.status,'AUTHENTICATED_INCOMPLETE');assert.equal(x.automaticResumeAuthorized,false);assert.equal(fs.readFileSync(path.join(f.output,'receipts.json'),'utf8'),JSON.stringify(r.receiptManifest));
+});
+test('actual offline wrapper/recovery CLIs preserve original inputs and refuse output reuse',()=>{
+ const f=wrapperFixture();try{const file=path.join(f.dir,'simulation.json');fs.writeFileSync(file,JSON.stringify({...f,fixtureMarker:'STOCK2_SYNTHETIC_CAPTURE_ONLY'}));const refs=fs.readFileSync(f.referenceFile),approval=fs.readFileSync(f.approvalFile);
+ const x=JSON.parse(execFileSync(process.execPath,['tools/run-paper-capture-workflow.mjs','--simulate',file,f.output],{encoding:'utf8',timeout:120000}));assert.equal(x.status,'COMPLETE');assert.equal(x.providerRequests,0);assert.equal(x.simulatedProviderRequests,41);
+ const args=['tools/recover-paper-capture.mjs','--fixture',path.join(f.output,'mock-downloads'),path.join(f.output,'receipts.json'),x.receiptManifestSha256,sha(approval),f.approval.plan.sourceSha,path.join(f.dir,'recovered')];const result=JSON.parse(execFileSync(process.execPath,args,{encoding:'utf8',timeout:120000}));assert.equal(result.status,'AUTHENTICATED_COMPLETE');assert.equal(result.genuineAdmissions,0);assert.throws(()=>execFileSync(process.execPath,args,{stdio:'pipe'}));assert.deepEqual(fs.readFileSync(f.referenceFile),refs);assert.deepEqual(fs.readFileSync(f.approvalFile),approval);
+ }finally{f.cleanup();complete?.f.cleanup();}
+});
