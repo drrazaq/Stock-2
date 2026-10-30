@@ -1476,15 +1476,21 @@ function finishPendingSale(pv,pos) {
  if(!tx||typeof tx!=='object'||!/^[a-f0-9]{64}$/.test(tx.id||'')||typeof tx.sym!=='string'||!tx.row||tx.row.saleId!==tx.id||tx.row.sym!==tx.sym||!(tx.position===null||tx.position&&typeof tx.position==='object'))throw Error('invalid pending sale');
  const raw=fs.existsSync(MY_TRADES)?fs.readFileSync(MY_TRADES,'utf8'):'',rows=raw.split('\n').filter(x=>x.trim());
  if(!rows.some(line=>JSON.parse(line).saleId===tx.id))atomicOwnerWrite(MY_TRADES,raw+(raw&&!raw.endsWith('\n')?'\n':'')+JSON.stringify(tx.row)+'\n');
+ // A completed LEADER DIP result is part of the sale transaction, including its safety-brake evidence.
+ const strategy=tx.strategyRow||(tx.position===null&&tx.row.src==='leader dip'?{d:tx.row.out,sym:tx.sym,kind:'result',rule:LDIP_RULE,entry:tx.row.entry,exit:tx.row.exit,since:tx.row.since||null,out:tx.row.out,pct:tx.row.pct,priced:tx.row.priced,why:'Recovered reported sale; original strategy-exit detail UNKNOWN',saleId:tx.id}:null);
+ if(strategy){if(strategy.saleId!==tx.id||strategy.sym!==tx.sym||strategy.kind!=='result')throw Error('invalid pending strategy result');
+  const prior=fs.existsSync(LDIP_FILE)?fs.readFileSync(LDIP_FILE,'utf8'):'',existing=prior.split('\n').filter(x=>x.trim());
+  if(!existing.some(line=>JSON.parse(line).saleId===tx.id))atomicOwnerWrite(LDIP_FILE,prior+(prior&&!prior.endsWith('\n')?'\n':'')+JSON.stringify(strategy)+'\n');
+ }
  if(tx.position===null)delete pos[tx.sym];else pos[tx.sym]=tx.position;
  atomicOwnerWrite(POS_FILE,JSON.stringify(pos,null,1));
  const done={...pv,saleReceipts:[...(pv.saleReceipts||[]),tx.id].slice(-500)};delete done.pendingSale;
  if(!privWrite(done))throw Error('sale completion persistence unconfirmed');
 }
-function recordPartialSale(pv,pos,{id,sym,row,position}) {
- pv.pendingSale={id,sym,row:{...row,saleId:id},position};
+function recordPartialSale(pv,pos,{id,sym,row,position,strategyRow}) {
+ pv.pendingSale={id,sym,row:{...row,saleId:id},position,...(strategyRow?{strategyRow:{...strategyRow,saleId:id}}:{})};
  if(!privWrite(pv))return false;
- const before=JSON.parse(JSON.stringify(pos));try{finishPendingSale(pv,pos);return true;}catch{for(const k of Object.keys(pos))delete pos[k];Object.assign(pos,before);return false;}
+ const before=JSON.parse(JSON.stringify(pos));try{finishPendingSale(pv,pos);return true;}catch{try{if((saleState().saleReceipts||[]).includes(id))return true;}catch{}for(const k of Object.keys(pos))delete pos[k];Object.assign(pos,before);return false;}
 }
 // Your usual buy, learned from what you actually buy (the median of your last 10 buys in USD). Sizes are suggested relative to it.
 // what happens at the stop: a loss when the stop is under the buy price, a kept gain when it is above (never "would lose -30 USD"); the
@@ -3441,10 +3447,10 @@ async function tgCommands(sig) {
         if(sh){const usd=sh*(exit-P.entry)-2*FEE()-sh*P.entry*0.002;addRealized(pv,sym,usd,t.out);if(pv.shares)delete pv.shares[sym];pv.soldUsd={...(pv.soldUsd||{}),[sym+'|'+t.out]:{usd:+usd.toFixed(2),sh}};cash='In money: about '+(usd>=0?'+':'')+money(usd)+' USD on '+sh+' shares (private, encrypted).'+goalNews(pv);}
         else cash='Share count unknown: sale is excluded from dollar goals until you clarify the actual quantity.';
         const id=crypto.createHash('sha256').update(String(u.update_id)+'|'+text).digest('hex');
-        if(!recordPartialSale(pv,pos,{id,sym,row:t,position:null})){out.push('Sale recording unconfirmed: storage failed. Do not repeat the trade. Position alerts retained; retry recording to recover the pending transaction.');continue;}
+        const strategyRow=P.src==='leader dip'?{d:t.out,sym,kind:'result',rule:LDIP_RULE,entry:P.entry,exit,since:P.boughtSession||P.since||null,out:t.out,pct:t.pct,priced:t.priced,why:P.exitFlag?P.exitFlag.why:'owner sale'}:null;
+        if(!recordPartialSale(pv,pos,{id,sym,row:t,position:null,strategyRow})){out.push('Sale recording unconfirmed: storage failed. Do not repeat the trade. Position alerts retained; retry recording to recover the pending transaction.');continue;}
         out.push(cash);
-        if (P.src === 'leader dip') { ldipAppend({ d: t.out, sym, kind: 'result', rule: LDIP_RULE, entry: P.entry, exit, since: P.boughtSession || P.since || null, out: t.out, pct: t.pct, priced: t.priced, why: P.exitFlag ? P.exitFlag.why : 'owner sale' });   // (27 Oct) the LEADER DIP live record
-          try { out.push(ldipRecordLine()); } catch (e) {} }
+        if(P.src==='leader dip'){try{out.push(ldipRecordLine());}catch{}}
         out.push('Sold ' + sym + ' at ' + money(exit) + ' (' + (k[2] ? 'your price' : 'price now; send  sold ' + sym + ' PRICE  next time for your exact fill') + '). Result ' + pcs(t.pct) + ' after about 0.8% costs. Recorded.\nWHY: ' + t.lesson + '\n' + myRecord());
       } else out.push('Stopped tracking ' + sym + '. I could not get a price, so this sale is not in your record. Next time send: sold ' + sym + ' PRICE');
     } else if ((k = text.match(/^focus\s+(on|off)\s*$/i))) { const st = updateSettings(s => { s.focus = k[1].toLowerCase() === 'on'; }); if (!st) out.push(SETTINGS_BAD); else out.push(st.focus ? 'FOCUS ON: engine buys (swing / quick rules) are paused until one has a positive live record; they are listed under NOT ACTIONABLE TODAY. Your own lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT), sells and stops continue.' : 'FOCUS OFF: presentation expanded; unproven engine candidates remain paper only. Evidence, safety and current ZAD approval are still required.');
