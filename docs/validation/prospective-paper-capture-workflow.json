@@ -1,0 +1,91 @@
+{
+  "kind": "INACTIVE_CAPTURE_WORKFLOW_SPEC_V1",
+  "installable": false,
+  "reason": "Live approval/source-reference validation and acknowledged artifact adapter not implemented; specification only",
+  "runtimeSourceSha": "ef04952e3c899265c82ec8ddfcb18314cdbea840",
+  "runtimeFiles": {
+    "prospective-paper-capture.mjs": "1c21798321d4dda70c3b56b7d810570d6d61e0bf771364e7b7d60125cd11ed07",
+    "prospective-capture-transport.mjs": "50c2f68499f9fa9b32ebca5c01cfbe3cd4f1561ca2e782f55948e5c16a72822a",
+    "tools/replay-prospective-capture.mjs": "8323f76b1cfb8cef3584b49d2130f15ce80af74952e50554e8da072b774bc017",
+    "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
+    "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+    "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2"
+  },
+  "event": "workflow_dispatch_only",
+  "branch": "Stock2-safety-fixes",
+  "attempt": 1,
+  "permissions": {
+    "contents": "read",
+    "actions": "read_proposed_for_run_history_requires_approval"
+  },
+  "concurrency": {
+    "group": "stock2-sec-30m-calibration-2026-11-05",
+    "cancel-in-progress": false
+  },
+  "timeoutMinutes": 45,
+  "bindingsProposed": [
+    "ALPACA_KEY",
+    "ALPACA_SECRET",
+    "RESEARCH_ARTIFACT_KEY"
+  ],
+  "forbiddenBindings": [
+    "PRIVATE_KEY",
+    "TELEGRAM",
+    "BROKER_ORDER_CREDENTIALS"
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "name": "Guard",
+      "contract": "Require dated non-secret exact owner-approved manifest, source/workflow/input hashes, CALIBRATION, fixed date/universe/bounds, attempt1/manual/branch; refuse missing rights or expiry; enumerate complete run history, refuse other starts; do not log approval inputs"
+    },
+    {
+      "order": 2,
+      "name": "Immutable sparse checkout",
+      "contract": "Pinned source commit and six file hashes; persist-credentials false; no normal bot/data checkout; verify bytes before credential-bearing execution"
+    },
+    {
+      "order": 3,
+      "name": "Authenticate reference inputs",
+      "contract": "Only pinned reviewed six-record package; raw official mapping/hash/knownAt/validity/class/CIK/industry/exchange and current unchanged ZAD; refuse conflicts/unknowns for enrollment; preserve research; no financial records"
+    },
+    {
+      "order": 4,
+      "name": "Capture",
+      "contract": "Run reviewed injected transport via future endpoint-specific credential adapter; 41 GET-only SIP attempts; no provider/broker/TG fallback; stop on limits/errors; source existing SEC events only; no source-history backfill"
+    },
+    {
+      "order": 5,
+      "name": "Checkpoint",
+      "contract": "Every frame encrypted before disk publication, exclusive immutable file; upload acknowledgement and total sealed bytes enforced before next cycle; retention3days; no plaintext/raw logs"
+    },
+    {
+      "order": 6,
+      "name": "Finalization",
+      "contract": "Always attempt retained encrypted-file upload without additional provider calls; log aggregates only; do not promise survival after SIGKILL/runner loss; no automatic retries"
+    },
+    {
+      "order": 7,
+      "name": "Recovery review",
+      "contract": "Authenticate contiguous source/cohort/plan chain; retain corrupt originals; never query missing history; independent source audit before admissions"
+    }
+  ],
+  "budgets": {
+    "snapshotAttempts": 41,
+    "referencePreparationAttempts": 7,
+    "totalProviderAttempts": 48,
+    "providerRequestTimeoutMs": 10000,
+    "requestsPerRollingMinute": 2,
+    "concurrentRequests": 1,
+    "symbols": 6,
+    "rawResponseBytes": 65536,
+    "frameBytes": 131072,
+    "frames": 41,
+    "frameTotalBytes": 8388608,
+    "sealedCaptureBytes": 167772160,
+    "wholeArtifactBytes": 171966464,
+    "retentionDays": 3
+  },
+  "liveAuthorized": false,
+  "evaluationAuthorized": false
+}

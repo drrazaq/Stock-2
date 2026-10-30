@@ -86,3 +86,9 @@ test('never-resolving provider is interrupted at ten seconds, no retry or specul
  const r=await runCalibration({plan:x.plan,now:()=>Date.parse(t(0)),wait:async()=>{},metadata:[],readEvents:async()=>[],persist:async()=>true,transport:async(_,o)=>{signal=o.signal;return new Promise(()=>{});}});
  assert.equal(r.status,'REQUEST_TIMEOUT_STOP');assert.equal(signal.aborted,true);assert.equal(r.providerAttempts,1);assert.equal(r.evaluation.counts.attempted,0);
 });
+
+test('rolling request cap stops a faulty scheduler before a third attempt within sixty seconds',async()=>{
+ const {runCalibration}=await import('../prospective-capture-transport.mjs');const x=fixture();let clock=Date.parse(t(0)),calls=0;
+ const r=await runCalibration({plan:x.plan,now:()=>clock,wait:async()=>{clock+=1000;},metadata:x.frames[0].metadata,readEvents:async()=>[],persist:async()=>true,transport:async()=>{calls++;return new Response(x.frames[0].rawResponse);}});
+ assert.equal(r.status,'RATE_BUDGET_STOP');assert.equal(calls,2);assert.equal(r.providerAttempts,2);
+});

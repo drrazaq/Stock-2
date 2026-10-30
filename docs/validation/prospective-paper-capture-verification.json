@@ -1,0 +1,66 @@
+{
+  "status": "INACTIVE_REVIEW_PACKAGE_NO_LIVE_COLLECTION",
+  "basisCommit": "6b1f3cde948ccf8ace15bdd1882a76c852b4dced",
+  "runtimeSourceSha": "ef04952e3c899265c82ec8ddfcb18314cdbea840",
+  "manifest": "docs/validation/prospective-paper-capture-manifest.json",
+  "proposal": "docs/prospective-paper-capture-proposal.md",
+  "focused": {
+    "captureAndTransport": 13,
+    "packagePins": 1,
+    "failures": 0
+  },
+  "fullNode": {
+    "files": 201,
+    "cases": 1885,
+    "failures": []
+  },
+  "static": {
+    "modules": 258,
+    "failures": []
+  },
+  "synthetic": {
+    "matchedCases": 2,
+    "capacityVerifiedCases": 2,
+    "includesWinnerAndLoser": true,
+    "genuineAdmissions": 0,
+    "providerRequests": 0,
+    "encryptedCheckpointFilesPerCompleteReplay": 41
+  },
+  "retainedAuditGenuineAdmissions": 0,
+  "unchanged": [
+    "discovery-paper.mjs",
+    "data/**",
+    ".github/workflows/**",
+    "scan.mjs",
+    "mentor-plan.mjs",
+    "frozen protocols and original artifacts"
+  ],
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "added": 0
+  },
+  "calibration": {
+    "proposedDay": "2026-11-05",
+    "approved": false,
+    "evaluationEnrollment": false,
+    "autoRollover": false
+  },
+  "implementationRemaining": [
+    "Guarded live workflow/source/input approval validation",
+    "Authenticated reference-input validation and source audit",
+    "Acknowledged capped encrypted artifact upload and actual-format recovery rehearsal"
+  ],
+  "passiveWatcher": {
+    "checkedAt": "2026-10-30T21:39:52.364472+00:00",
+    "latestRunId": 41072889693,
+    "newPostDeploymentRunObserved": false,
+    "DST": "PENDING_NATURALLY_SCHEDULED_EVIDENCE",
+    "manualDispatches": 0
+  },
+  "productionChanged": false,
+  "newCollection": false,
+  "realSecretAccess": false,
+  "localFailureHistory": "Initial restricted-sandbox child-process test returned EPERM; authorized subprocess environment passed. An intermediate transport aggregate-key collision was corrected before publication; final13 tests/full suite pass. Earlier logs retained under /workspace/milestones/paper-capture.",
+  "exactCommitCI": "Pending publication; verify final SHA without borrowing previous checks."
+}
