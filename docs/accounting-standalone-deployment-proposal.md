@@ -1,6 +1,6 @@
 # Accounting-only production proposal — prepared, not authorized or deployed
 
-**Current authorization:** the owner subsequently approved this exact five-file patch conditionally. Deployment is BLOCKED until protected preflight passes; [current compatibility/tests and protected execution proposal](accounting-protected-preflight-proposal.md). The original reviewed proposal is preserved below. No workflow installation/dispatch or secret-binding change is approved.
+**Current authorization:** the owner subsequently approved this exact five-file patch conditionally. Deployment is BLOCKED: the one authorized protected preflight returned BLOCKED and an old writer remains active; [execution and safe-boundary decision](accounting-preflight-execution-and-boundary.md). The original reviewed proposal is preserved below. The exact isolated preflight workflow amendment and one run were subsequently authorized and completed; no further retry, pause/cancellation or accounting deployment with an unsafe boundary is approved.
 
 30 October 2026. Claude's v3 independent review reports accounting PASS and A1 closed. This is evidence, not deployment authority. The accounting implementation remains source commit `09f16792b373268d70e45a535d6a7b02afecf6a5`; no accounting code was changed for B2.
 

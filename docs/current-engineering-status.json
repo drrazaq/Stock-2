@@ -11,7 +11,7 @@
   "aimPlan": "docs/aim-to-evidence-acceptance-plan.md",
   "confluence": "VERIFIED_PUBLISHED; 48 actual Git fault/race cases across six workflows",
   "c0": "OFFLINE_VERIFIED_PUBLISHED_INACTIVE; runtime and workflow/dependency bytes pinned. Date UNSET; entitlement/date/approval and actual upload evidence absent.",
-  "next": "Owner decision on a separately scoped protected preflight route; no accounting deployment while pending-sale status UNKNOWN. Watcher v4 re-review remains separate and no watcher deployment is approved.",
+  "next": "Owner approval of bounded pause/drain/resume and protected BLOCKED resolution plus one fresh preflight; no accounting deployment while active old writer or gate BLOCKED. Do not redispatch the exhausted single run.",
   "c0Review": "docs/c0-diagnostic-review.md",
   "entitlementEvidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md",
   "incident": {
@@ -26,7 +26,7 @@
     "watcherFiles": 22,
     "accountingFiles": 5,
     "ownerDecision": "October29 excluded primary;October28 excluded pilot;reconstruction secondary",
-    "nextDecision": "Owner decision on a separately scoped protected preflight route; no accounting deployment while pending-sale status UNKNOWN. Watcher v4 re-review remains separate and no watcher deployment is approved."
+    "nextDecision": "Owner approval of bounded pause/drain/resume and protected BLOCKED resolution plus one fresh preflight; no accounting deployment while active old writer or gate BLOCKED. Do not redispatch the exhausted single run."
   },
   "instrumentReference": {
     "status": "PREPARED_NOT_AUTHORIZED_NOT_ACTIVATED",
@@ -37,15 +37,80 @@
     "identityAndZadSafeguardsUnchanged": true
   },
   "accountingDeploymentAuthorization": {
-    "status": "APPROVED_EXACT_FIVE_FILE_PATCH_CONDITIONAL_PREFLIGHT_BLOCKED",
+    "status": "APPROVED_EXACT_FIVE_FILE_PATCH_BLOCKED_PREFLIGHT_AND_WRITER_BOUNDARY",
     "approvedCheckpoint": "bd1a4a7e33f059aa4fd48ace321134a3b721d66a",
     "patchSha256": "f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27",
     "currentMainTested": "6c19520ba81f169aaa0978e60d41d6bb880ca80f",
     "productionFiles": 115,
     "reportedCases": 1140,
-    "protectedPreflight": "BLOCKED_EXISTING_PRIVATE_KEY_UNAVAILABLE",
+    "protectedPreflight": "BLOCKED_AUTHORIZED_RUN_COMPLETED",
     "proposal": "docs/accounting-protected-preflight-proposal.md",
     "deployed": false,
-    "additionalWorkflowAuthorization": false
+    "additionalWorkflowAuthorization": true,
+    "pendingSaleStatus": "UNKNOWN_STATUS_ONLY_GATE",
+    "installedWorkflowCommit": "9970e9a12ebb62bb6bc30ee79e6ddcc68072b655",
+    "preflightRunId": 41053549859,
+    "dispatchAttempts": 1
+  },
+  "accountingPreflightExecution": {
+    "baseMain": "6c19520ba81f169aaa0978e60d41d6bb880ca80f",
+    "approvedPatchSha256": "f9de4aed791d29994975a58277d4a6ab06f7ce8b6df49c68d39b49ccc7407f5f",
+    "resultWorkflowSha256": "1d25e6fec025f7a7e5e7a254cd61a9df4ecd7df97423b74a84fabd68ab6061e8",
+    "approvedCheckerBlob": "92fc955497950df6e76823eec6e348f1ebfb78b1",
+    "checkerSha256": "7d009d803cd565f5edecc43f52dd9f8fc579837c8a76612ff2c7c580e8473b48",
+    "guardPermissionsShellAndExactScopeChecks": "PASS",
+    "normalBotUnchangedExceptManualModeGuard": true,
+    "changedFiles": [
+      ".github/workflows/bot.yml"
+    ],
+    "worktree": "/workspace/scratch/accounting-preflight-install",
+    "installed": true,
+    "dispatchAttempted": true,
+    "installedCommit": "9970e9a12ebb62bb6bc30ee79e6ddcc68072b655",
+    "installationParent": "20a1486fe9b96e15a4d680649726739768e9e4b5",
+    "dispatchAttempts": 1,
+    "run": {
+      "runId": 41053549859,
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/41053549859",
+      "jobId": 124055295885,
+      "result": "BLOCKED",
+      "replyJob": "skipped",
+      "attempts": 1,
+      "accountingDeployed": false,
+      "verifiedVia": "GitHub connector job-log status-only filter",
+      "normalReplyJob": "skipped",
+      "automaticRetry": false
+    },
+    "accountingDeployed": false,
+    "watcherDeployed": false,
+    "boundary": "NOT_ESTABLISHED_ACTIVE_OLD_WRITER",
+    "activeWriterRun": 41029059529,
+    "activeWriterJob": 123974140613,
+    "pendingWriterRun": 41048811072,
+    "activeScannerAtInspection": false,
+    "anyWriterCancelled": false,
+    "anySchedulePaused": false,
+    "nextApproval": "Bounded bot/scanner pause; pending-only cancellation; active natural drain; protected BLOCKED resolution and one fresh preflight; then conditional exact accounting deployment and scheduled-service resume",
+    "proposal": "docs/accounting-preflight-execution-and-boundary.md",
+    "installationCommitChecks": [
+      {
+        "name": "reply",
+        "status": "completed",
+        "conclusion": "skipped",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/41053549859/job/124055297412"
+      },
+      {
+        "name": "accounting-preflight",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/41053549859/job/124055295885"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/41053509514/job/124055154888"
+      }
+    ]
   }
 }
