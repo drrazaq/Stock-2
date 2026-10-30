@@ -1,12 +1,12 @@
 {
- "generatedAt": "2026-10-29T21:17:10.232Z",
+ "generatedAt": "2026-10-30T21:14:47.649Z",
  "feed": "sip",
  "preRegistered": "shadow-eval.mjs header, 28 Oct 2026",
- "shadowSessions": 2,
+ "shadowSessions": 3,
  "filters": {
   "day": {
-   "sessions": 2,
-   "candidates": 1171,
+   "sessions": 3,
+   "candidates": 1440,
    "base": {
     "n": 0
    },
@@ -46,8 +46,8 @@
    }
   },
   "d1": {
-   "sessions": 2,
-   "candidates": 1171,
+   "sessions": 3,
+   "candidates": 1440,
    "base": {
     "n": 0
    },
@@ -87,8 +87,8 @@
    }
   },
   "d5": {
-   "sessions": 2,
-   "candidates": 1171,
+   "sessions": 3,
+   "candidates": 1440,
    "base": {
     "n": 0
    },
@@ -130,6 +130,9 @@
   }
  },
  "ranking": {
+  "instrumentScope": "LEGACY_MIXED_INSTRUMENT_RESEARCH",
+  "prospectiveAdmission": "NOT_ESTABLISHED",
+  "unapprovedCohortRows": 0,
   "frozen": {
    "date": "2026-10-28",
    "evalFrom": "2026-10-29",
@@ -137,6 +140,20 @@
    "minSessions": 20,
    "minPicks": 50,
    "controlsPerDay": 10
+  },
+  "cohort": "PRIMARY",
+  "admissionDecision": {
+   "recordedAt": "2026-10-30",
+   "authority": "OWNER_INSTRUCTION_IN_SESSION",
+   "excludedPrimaryDays": [
+    "2026-10-28",
+    "2026-10-29"
+   ],
+   "reasons": {
+    "2026-10-28": "ORIGINAL_PILOT; duplicate overwrite, incomplete coverage, retrospective recovery",
+    "2026-10-29": "OWNER_EXCLUDED_PRIMARY; duplicate overwrite and incomplete observation coverage"
+   },
+   "recoveredEvidence": "SECONDARY_RECONSTRUCTION_ONLY_NOT_UNTOUCHED_CONFIRMATION"
   },
   "models": {
    "A": {
@@ -149,13 +166,13 @@
     },
     "day": {
      "n": 5,
-     "avg": -0.0076,
-     "median": -0.0138,
-     "win": 0.4,
-     "hit2": 0.4,
-     "worst": -0.0614,
-     "noTop2": -0.0393,
-     "pf": 0.6788
+     "avg": -0.0097,
+     "median": -0.0225,
+     "win": 0.2,
+     "hit2": 0.2,
+     "worst": -0.0403,
+     "noTop2": -0.0292,
+     "pf": 0.5081
     },
     "d1": {
      "n": 0
@@ -168,21 +185,21 @@
     },
     "dayStress": {
      "n": 5,
-     "avg": -0.0128,
-     "median": -0.0158,
-     "win": 0.4,
+     "avg": -0.0117,
+     "median": -0.0245,
+     "win": 0.2,
      "hit2": 0.2,
-     "worst": -0.0708,
-     "noTop2": -0.0438,
-     "pf": 0.5145
+     "worst": -0.0422,
+     "noTop2": -0.0312,
+     "pf": 0.4505
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -38,
-    "maxDrawdownUsd": -38,
-    "medianMinute": 592,
-    "medianMoveAtPick": 0.0412,
+    "portfolioUsd": -48,
+    "maxDrawdownUsd": -48,
+    "medianMinute": 590,
+    "medianMoveAtPick": 0.045,
     "assumedSpreadShare": 0
    },
    "B": {
@@ -195,13 +212,13 @@
     },
     "day": {
      "n": 5,
-     "avg": -0.0076,
-     "median": -0.0138,
-     "win": 0.4,
-     "hit2": 0.4,
-     "worst": -0.0614,
-     "noTop2": -0.0393,
-     "pf": 0.6788
+     "avg": -0.0198,
+     "median": -0.0225,
+     "win": 0.2,
+     "hit2": 0,
+     "worst": -0.0403,
+     "noTop2": -0.0292,
+     "pf": 0.05
     },
     "d1": {
      "n": 0
@@ -214,21 +231,21 @@
     },
     "dayStress": {
      "n": 5,
-     "avg": -0.0128,
-     "median": -0.0158,
-     "win": 0.4,
-     "hit2": 0.2,
-     "worst": -0.0708,
-     "noTop2": -0.0438,
-     "pf": 0.5145
+     "avg": -0.0217,
+     "median": -0.0245,
+     "win": 0.2,
+     "hit2": 0,
+     "worst": -0.0422,
+     "noTop2": -0.0312,
+     "pf": 0.0286
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -38,
-    "maxDrawdownUsd": -38,
-    "medianMinute": 592,
-    "medianMoveAtPick": 0.0412,
+    "portfolioUsd": -99,
+    "maxDrawdownUsd": -99,
+    "medianMinute": 596,
+    "medianMoveAtPick": 0.045,
     "assumedSpreadShare": 0,
     "verdict": "COLLECTING (1 of 20 sessions, 5 of 50 picks)"
    },
@@ -242,13 +259,13 @@
     },
     "day": {
      "n": 5,
-     "avg": -0.0076,
-     "median": -0.0138,
-     "win": 0.4,
-     "hit2": 0.4,
-     "worst": -0.0614,
-     "noTop2": -0.0393,
-     "pf": 0.6788
+     "avg": -0.0097,
+     "median": -0.0225,
+     "win": 0.2,
+     "hit2": 0.2,
+     "worst": -0.0403,
+     "noTop2": -0.0292,
+     "pf": 0.5081
     },
     "d1": {
      "n": 0
@@ -261,21 +278,21 @@
     },
     "dayStress": {
      "n": 5,
-     "avg": -0.0128,
-     "median": -0.0158,
-     "win": 0.4,
+     "avg": -0.0117,
+     "median": -0.0245,
+     "win": 0.2,
      "hit2": 0.2,
-     "worst": -0.0708,
-     "noTop2": -0.0438,
-     "pf": 0.5145
+     "worst": -0.0422,
+     "noTop2": -0.0312,
+     "pf": 0.4505
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -38,
-    "maxDrawdownUsd": -38,
-    "medianMinute": 592,
-    "medianMoveAtPick": 0.0412,
+    "portfolioUsd": -48,
+    "maxDrawdownUsd": -48,
+    "medianMinute": 590,
+    "medianMoveAtPick": 0.045,
     "assumedSpreadShare": 0,
     "verdict": "COLLECTING (1 of 20 sessions, 5 of 50 picks)"
    },
@@ -289,13 +306,13 @@
     },
     "day": {
      "n": 5,
-     "avg": -0.0101,
-     "median": -0.0085,
-     "win": 0.4,
-     "hit2": 0,
-     "worst": -0.0425,
-     "noTop2": -0.0216,
-     "pf": 0.2176
+     "avg": -0.0322,
+     "median": -0.0403,
+     "win": 0.2,
+     "hit2": 0.2,
+     "worst": -0.0716,
+     "noTop2": -0.0524,
+     "pf": 0.1622
     },
     "d1": {
      "n": 0
@@ -308,21 +325,21 @@
     },
     "dayStress": {
      "n": 5,
-     "avg": -0.0121,
-     "median": -0.0105,
+     "avg": -0.0342,
+     "median": -0.0422,
      "win": 0.2,
-     "hit2": 0,
-     "worst": -0.0444,
-     "noTop2": -0.0236,
-     "pf": 0.1641
+     "hit2": 0.2,
+     "worst": -0.0734,
+     "noTop2": -0.0543,
+     "pf": 0.1456
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -51,
-    "maxDrawdownUsd": -51,
-    "medianMinute": 631,
-    "medianMoveAtPick": 0.0393,
+    "portfolioUsd": -161,
+    "maxDrawdownUsd": -161,
+    "medianMinute": 613,
+    "medianMoveAtPick": 0.0395,
     "assumedSpreadShare": 0
    },
    "D": {
@@ -368,13 +385,13 @@
     },
     "day": {
      "n": 5,
-     "avg": -0.0033,
-     "median": -0.0031,
-     "win": 0.2,
+     "avg": -0.0062,
+     "median": -0.0072,
+     "win": 0,
      "hit2": 0,
-     "worst": -0.0061,
-     "noTop2": -0.005,
-     "pf": 0.0409
+     "worst": -0.0091,
+     "noTop2": -0.0081,
+     "pf": 0
     },
     "d1": {
      "n": 0
@@ -387,43 +404,43 @@
     },
     "dayStress": {
      "n": 5,
-     "avg": -0.0053,
-     "median": -0.0051,
+     "avg": -0.0082,
+     "median": -0.0092,
      "win": 0,
      "hit2": 0,
-     "worst": -0.0081,
-     "noTop2": -0.007,
+     "worst": -0.0111,
+     "noTop2": -0.0101,
      "pf": 0
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -16,
-    "maxDrawdownUsd": -16,
+    "portfolioUsd": -31,
+    "maxDrawdownUsd": -31,
     "medianMinute": 900,
-    "medianMoveAtPick": 0.0096,
+    "medianMoveAtPick": -0.007,
     "assumedSpreadShare": 0
    }
   },
   "streams": {
    "E": {
-    "candidates": 58,
+    "candidates": 28,
     "sessions": 1,
     "all": {
-     "picks": 58,
+     "picks": 28,
      "sessions": 1,
      "m30": {
       "n": 0
      },
      "day": {
-      "n": 58,
-      "avg": -0.0094,
-      "median": -0.0105,
-      "win": 0.3621,
-      "hit2": 0.1552,
-      "worst": -0.0819,
-      "noTop2": -0.012,
-      "pf": 0.46
+      "n": 28,
+      "avg": -0.0121,
+      "median": -0.0144,
+      "win": 0.2857,
+      "hit2": 0.1429,
+      "worst": -0.0716,
+      "noTop2": -0.0165,
+      "pf": 0.3552
      },
      "d1": {
       "n": 0
@@ -435,23 +452,23 @@
       "n": 0
      },
      "dayStress": {
-      "n": 58,
-      "avg": -0.0124,
-      "median": -0.0125,
-      "win": 0.3276,
-      "hit2": 0.1207,
-      "worst": -0.0837,
-      "noTop2": -0.015,
-      "pf": 0.3526
+      "n": 28,
+      "avg": -0.0144,
+      "median": -0.0164,
+      "win": 0.25,
+      "hit2": 0.1429,
+      "worst": -0.0734,
+      "noTop2": -0.0185,
+      "pf": 0.2882
      },
      "d5Stress": {
       "n": 0
      },
-     "portfolioUsd": -546,
-     "maxDrawdownUsd": -546,
-     "medianMinute": 625,
-     "medianMoveAtPick": 0.0349,
-     "assumedSpreadShare": 0
+     "portfolioUsd": -339,
+     "maxDrawdownUsd": -339,
+     "medianMinute": 615,
+     "medianMoveAtPick": 0.042,
+     "assumedSpreadShare": 0.036
     }
    },
    "F": {
@@ -499,13 +516,13 @@
      },
      "day": {
       "n": 10,
-      "avg": -0.003,
-      "median": -0.0036,
+      "avg": -0.0024,
+      "median": -0.0042,
       "win": 0.2,
       "hit2": 0,
-      "worst": -0.0061,
-      "noTop2": -0.0043,
-      "pf": 0.1283
+      "worst": -0.0091,
+      "noTop2": -0.0051,
+      "pf": 0.4234
      },
      "d1": {
       "n": 0
@@ -518,21 +535,21 @@
      },
      "dayStress": {
       "n": 10,
-      "avg": -0.005,
-      "median": -0.0056,
+      "avg": -0.0052,
+      "median": -0.0081,
       "win": 0.1,
       "hit2": 0,
-      "worst": -0.0081,
-      "noTop2": -0.0063,
-      "pf": 0.0329
+      "worst": -0.0111,
+      "noTop2": -0.0081,
+      "pf": 0.2269
      },
      "d5Stress": {
       "n": 0
      },
-     "portfolioUsd": -30,
-     "maxDrawdownUsd": -30,
+     "portfolioUsd": -24,
+     "maxDrawdownUsd": -24,
      "medianMinute": 900,
-     "medianMoveAtPick": 0.0094,
+     "medianMoveAtPick": -0.007,
      "assumedSpreadShare": 0
     }
    }
@@ -546,13 +563,13 @@
     },
     "day": {
      "n": 5,
-     "avg": -0.0076,
-     "median": -0.0138,
-     "win": 0.4,
-     "hit2": 0.4,
-     "worst": -0.0614,
-     "noTop2": -0.0393,
-     "pf": 0.6788
+     "avg": -0.0097,
+     "median": -0.0225,
+     "win": 0.2,
+     "hit2": 0.2,
+     "worst": -0.0403,
+     "noTop2": -0.0292,
+     "pf": 0.5081
     },
     "d1": {
      "n": 0
@@ -565,38 +582,38 @@
     },
     "dayStress": {
      "n": 5,
-     "avg": -0.0128,
-     "median": -0.0158,
-     "win": 0.4,
+     "avg": -0.0117,
+     "median": -0.0245,
+     "win": 0.2,
      "hit2": 0.2,
-     "worst": -0.0708,
-     "noTop2": -0.0438,
-     "pf": 0.5145
+     "worst": -0.0422,
+     "noTop2": -0.0312,
+     "pf": 0.4505
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -38,
-    "maxDrawdownUsd": -38,
-    "medianMinute": 592,
-    "medianMoveAtPick": 0.0412,
+    "portfolioUsd": -48,
+    "maxDrawdownUsd": -48,
+    "medianMinute": 590,
+    "medianMoveAtPick": 0.045,
     "assumedSpreadShare": 0
    },
    "afterCap": {
-    "picks": 53,
+    "picks": 23,
     "sessions": 1,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 53,
-     "avg": -0.0096,
-     "median": -0.0099,
-     "win": 0.3585,
-     "hit2": 0.1321,
-     "worst": -0.0819,
-     "noTop2": -0.0122,
-     "pf": 0.4311
+     "n": 23,
+     "avg": -0.0126,
+     "median": -0.0134,
+     "win": 0.3043,
+     "hit2": 0.1304,
+     "worst": -0.0716,
+     "noTop2": -0.0172,
+     "pf": 0.3201
     },
     "d1": {
      "n": 0
@@ -608,23 +625,23 @@
      "n": 0
     },
     "dayStress": {
-     "n": 53,
-     "avg": -0.0123,
-     "median": -0.0118,
-     "win": 0.3208,
-     "hit2": 0.1132,
-     "worst": -0.0837,
-     "noTop2": -0.015,
-     "pf": 0.3308
+     "n": 23,
+     "avg": -0.015,
+     "median": -0.0154,
+     "win": 0.2609,
+     "hit2": 0.1304,
+     "worst": -0.0734,
+     "noTop2": -0.0192,
+     "pf": 0.2508
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -509,
-    "maxDrawdownUsd": -509,
-    "medianMinute": 625,
-    "medianMoveAtPick": 0.0342,
-    "assumedSpreadShare": 0
+    "portfolioUsd": -291,
+    "maxDrawdownUsd": -291,
+    "medianMinute": 623,
+    "medianMoveAtPick": 0.0395,
+    "assumedSpreadShare": 0.043
    },
    "hindsightBestFive": {
     "picks": 5,
@@ -634,12 +651,12 @@
     },
     "day": {
      "n": 5,
-     "avg": 0.0506,
-     "median": 0.0446,
+     "avg": 0.0337,
+     "median": 0.0312,
      "win": 1,
-     "hit2": 1,
-     "worst": 0.0364,
-     "noTop2": 0.0417,
+     "hit2": 0.8,
+     "worst": 0.0176,
+     "noTop2": 0.0265,
      "pf": null
     },
     "d1": {
@@ -653,26 +670,29 @@
     },
     "dayStress": {
      "n": 5,
-     "avg": 0.0451,
-     "median": 0.0425,
+     "avg": 0.03,
+     "median": 0.0288,
      "win": 1,
-     "hit2": 1,
-     "worst": 0.026,
-     "noTop2": 0.034,
+     "hit2": 0.8,
+     "worst": 0.0156,
+     "noTop2": 0.0243,
      "pf": null
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": 253,
+    "portfolioUsd": 168,
     "maxDrawdownUsd": 0,
-    "medianMinute": 619,
-    "medianMoveAtPick": 0.0453,
+    "medianMinute": 633,
+    "medianMoveAtPick": 0.0401,
     "assumedSpreadShare": 0
    }
   }
  },
  "rankingPilot": {
+  "instrumentScope": "LEGACY_MIXED_INSTRUMENT_RESEARCH",
+  "prospectiveAdmission": "NOT_ESTABLISHED",
+  "unapprovedCohortRows": 0,
   "frozen": {
    "date": "2026-10-28",
    "evalFrom": "2026-10-29",
@@ -681,34 +701,48 @@
    "minPicks": 50,
    "controlsPerDay": 10
   },
+  "cohort": "SECONDARY_RECONSTRUCTION",
+  "admissionDecision": {
+   "recordedAt": "2026-10-30",
+   "authority": "OWNER_INSTRUCTION_IN_SESSION",
+   "excludedPrimaryDays": [
+    "2026-10-28",
+    "2026-10-29"
+   ],
+   "reasons": {
+    "2026-10-28": "ORIGINAL_PILOT; duplicate overwrite, incomplete coverage, retrospective recovery",
+    "2026-10-29": "OWNER_EXCLUDED_PRIMARY; duplicate overwrite and incomplete observation coverage"
+   },
+   "recoveredEvidence": "SECONDARY_RECONSTRUCTION_ONLY_NOT_UNTOUCHED_CONFIRMATION"
+  },
   "models": {
    "A": {
     "name": "existing: first come",
     "stream": "E",
-    "picks": 10,
-    "sessions": 2,
+    "picks": 15,
+    "sessions": 3,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 10,
-     "avg": -0.0114,
-     "median": -0.0078,
-     "win": 0.4,
+     "n": 15,
+     "avg": -0.0108,
+     "median": -0.0105,
+     "win": 0.3333,
      "hit2": 0.2,
      "worst": -0.0777,
-     "noTop2": -0.0243,
-     "pf": 0.4486
+     "noTop2": -0.0208,
+     "pf": 0.4677
     },
     "d1": {
-     "n": 5,
-     "avg": 0.001,
-     "median": 0.0096,
-     "win": 0.6,
-     "hit2": 0.4,
-     "worst": -0.0375,
-     "noTop2": -0.0165,
-     "pf": 1.0878
+     "n": 10,
+     "avg": -0.0277,
+     "median": -0.0217,
+     "win": 0.4,
+     "hit2": 0.2,
+     "worst": -0.1076,
+     "noTop2": -0.0415,
+     "pf": 0.2157
     },
     "d5": {
      "n": 0
@@ -717,51 +751,52 @@
      "n": 0
     },
     "dayStress": {
-     "n": 10,
-     "avg": -0.015,
-     "median": -0.0098,
-     "win": 0.3,
-     "hit2": 0.1,
+     "n": 15,
+     "avg": -0.0139,
+     "median": -0.0125,
+     "win": 0.2667,
+     "hit2": 0.1333,
      "worst": -0.0796,
-     "noTop2": -0.0272,
-     "pf": 0.3427
+     "noTop2": -0.024,
+     "pf": 0.3769
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -114,
-    "maxDrawdownUsd": -114,
-    "medianMinute": 591,
+    "portfolioUsd": -163,
+    "maxDrawdownUsd": -163,
+    "medianMinute": 590,
     "medianMoveAtPick": 0.0412,
-    "assumedSpreadShare": 0
+    "assumedSpreadShare": 0,
+    "verdict": "SECONDARY ONLY: no primary or confirmation verdict"
    },
    "B": {
     "name": "opportunity-first",
     "stream": "E",
-    "picks": 10,
-    "sessions": 2,
+    "picks": 15,
+    "sessions": 3,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 10,
-     "avg": -0.0008,
-     "median": -0.0036,
-     "win": 0.4,
-     "hit2": 0.3,
+     "n": 15,
+     "avg": -0.0071,
+     "median": -0.0078,
+     "win": 0.3333,
+     "hit2": 0.2,
      "worst": -0.0614,
-     "noTop2": -0.0136,
-     "pf": 0.9373
+     "noTop2": -0.0159,
+     "pf": 0.5441
     },
     "d1": {
-     "n": 5,
-     "avg": -0.0023,
-     "median": -0.0096,
-     "win": 0.4,
-     "hit2": 0.2,
-     "worst": -0.0217,
-     "noTop2": -0.0162,
-     "pf": 0.768
+     "n": 10,
+     "avg": -0.0294,
+     "median": -0.0195,
+     "win": 0.3,
+     "hit2": 0.1,
+     "worst": -0.1076,
+     "noTop2": -0.0417,
+     "pf": 0.1436
     },
     "d5": {
      "n": 0
@@ -770,52 +805,52 @@
      "n": 0
     },
     "dayStress": {
-     "n": 10,
-     "avg": -0.0044,
-     "median": -0.0056,
-     "win": 0.3,
-     "hit2": 0.2,
+     "n": 15,
+     "avg": -0.0102,
+     "median": -0.0098,
+     "win": 0.2667,
+     "hit2": 0.1333,
      "worst": -0.0708,
-     "noTop2": -0.0175,
-     "pf": 0.709
+     "noTop2": -0.0191,
+     "pf": 0.4206
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -8,
-    "maxDrawdownUsd": -38,
+    "portfolioUsd": -107,
+    "maxDrawdownUsd": -137,
     "medianMinute": 593,
-    "medianMoveAtPick": 0.0412,
+    "medianMoveAtPick": 0.0439,
     "assumedSpreadShare": 0,
-    "verdict": "COLLECTING (2 of 20 sessions, 10 of 50 picks)"
+    "verdict": "SECONDARY ONLY: no primary or confirmation verdict"
    },
    "C": {
     "name": "simple baseline (volume pace + spread)",
     "stream": "E",
-    "picks": 10,
-    "sessions": 2,
+    "picks": 15,
+    "sessions": 3,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 10,
-     "avg": 0.0006,
-     "median": -0.0036,
-     "win": 0.5,
-     "hit2": 0.3,
+     "n": 15,
+     "avg": -0.0028,
+     "median": -0.0078,
+     "win": 0.4,
+     "hit2": 0.2667,
      "worst": -0.0614,
-     "noTop2": -0.0118,
-     "pf": 1.044
+     "noTop2": -0.0116,
+     "pf": 0.8128
     },
     "d1": {
-     "n": 5,
-     "avg": 0.0051,
-     "median": 0.0096,
-     "win": 0.6,
-     "hit2": 0.4,
-     "worst": -0.0217,
-     "noTop2": -0.0098,
-     "pf": 1.6471
+     "n": 10,
+     "avg": -0.0257,
+     "median": -0.0195,
+     "win": 0.4,
+     "hit2": 0.2,
+     "worst": -0.1076,
+     "noTop2": -0.039,
+     "pf": 0.2287
     },
     "d5": {
      "n": 0
@@ -824,52 +859,52 @@
      "n": 0
     },
     "dayStress": {
-     "n": 10,
-     "avg": -0.003,
-     "median": -0.0056,
-     "win": 0.4,
+     "n": 15,
+     "avg": -0.0059,
+     "median": -0.0098,
+     "win": 0.3333,
      "hit2": 0.2,
      "worst": -0.0708,
-     "noTop2": -0.0158,
-     "pf": 0.7961
+     "noTop2": -0.0148,
+     "pf": 0.6521
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": 6,
-    "maxDrawdownUsd": -38,
-    "medianMinute": 592,
+    "portfolioUsd": -43,
+    "maxDrawdownUsd": -86,
+    "medianMinute": 591,
     "medianMoveAtPick": 0.0412,
     "assumedSpreadShare": 0,
-    "verdict": "COLLECTING (2 of 20 sessions, 10 of 50 picks)"
+    "verdict": "SECONDARY ONLY: no primary or confirmation verdict"
    },
    "R": {
     "name": "random control",
     "stream": "E",
-    "picks": 10,
-    "sessions": 2,
+    "picks": 15,
+    "sessions": 3,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 10,
-     "avg": 0.0084,
-     "median": -0.0045,
-     "win": 0.4,
+     "n": 15,
+     "avg": -0.0051,
+     "median": -0.0078,
+     "win": 0.3333,
      "hit2": 0.2,
-     "worst": -0.0425,
-     "noTop2": -0.008,
-     "pf": 2.0778
+     "worst": -0.0716,
+     "noTop2": -0.0173,
+     "pf": 0.717
     },
     "d1": {
-     "n": 5,
-     "avg": 0.0039,
-     "median": -0.0174,
-     "win": 0.2,
-     "hit2": 0.2,
-     "worst": -0.0383,
-     "noTop2": -0.0258,
-     "pf": 1.2253
+     "n": 10,
+     "avg": -0.0016,
+     "median": -0.0109,
+     "win": 0.3,
+     "hit2": 0.1,
+     "worst": -0.047,
+     "noTop2": -0.0176,
+     "pf": 0.8954
     },
     "d5": {
      "n": 0
@@ -878,23 +913,24 @@
      "n": 0
     },
     "dayStress": {
-     "n": 10,
-     "avg": 0.0055,
-     "median": -0.0065,
-     "win": 0.3,
+     "n": 15,
+     "avg": -0.0077,
+     "median": -0.0098,
+     "win": 0.2667,
      "hit2": 0.2,
-     "worst": -0.0444,
-     "noTop2": -0.01,
-     "pf": 1.6015
+     "worst": -0.0734,
+     "noTop2": -0.0193,
+     "pf": 0.6048
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": 84,
-    "maxDrawdownUsd": -51,
-    "medianMinute": 631,
+    "portfolioUsd": -77,
+    "maxDrawdownUsd": -212,
+    "medianMinute": 623,
     "medianMoveAtPick": 0.0393,
-    "assumedSpreadShare": 0
+    "assumedSpreadShare": 0,
+    "verdict": "SECONDARY ONLY: no primary or confirmation verdict"
    },
    "D": {
     "name": "fresh company filing before the move",
@@ -927,35 +963,35 @@
     "medianMinute": null,
     "medianMoveAtPick": null,
     "assumedSpreadShare": null,
-    "verdict": "COLLECTING (0 of 20 sessions, 0 of 50 picks)"
+    "verdict": "SECONDARY ONLY: no primary or confirmation verdict"
    },
    "R0": {
     "name": "no-information control",
     "stream": "N",
-    "picks": 10,
-    "sessions": 2,
+    "picks": 15,
+    "sessions": 3,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 10,
-     "avg": -0.0043,
+     "n": 15,
+     "avg": -0.0049,
      "median": -0.0055,
-     "win": 0.1,
+     "win": 0.0667,
      "hit2": 0,
-     "worst": -0.0063,
-     "noTop2": -0.0052,
-     "pf": 0.0161
+     "worst": -0.0091,
+     "noTop2": -0.0055,
+     "pf": 0.0094
     },
     "d1": {
-     "n": 5,
-     "avg": -0.0036,
+     "n": 10,
+     "avg": -0.0033,
      "median": -0.0052,
-     "win": 0.4,
-     "hit2": 0,
-     "worst": -0.0169,
-     "noTop2": -0.0097,
-     "pf": 0.3849
+     "win": 0.3,
+     "hit2": 0.1,
+     "worst": -0.0465,
+     "noTop2": -0.0118,
+     "pf": 0.665
     },
     "d5": {
      "n": 0
@@ -971,54 +1007,55 @@
      "pf": 0
     },
     "dayStress": {
-     "n": 10,
-     "avg": -0.0063,
+     "n": 15,
+     "avg": -0.0069,
      "median": -0.0075,
      "win": 0,
      "hit2": 0,
-     "worst": -0.0083,
-     "noTop2": -0.0072,
+     "worst": -0.0111,
+     "noTop2": -0.0075,
      "pf": 0
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -43,
-    "maxDrawdownUsd": -43,
+    "portfolioUsd": -74,
+    "maxDrawdownUsd": -74,
     "medianMinute": 900,
-    "medianMoveAtPick": 0.0029,
-    "assumedSpreadShare": 0
+    "medianMoveAtPick": 0.0012,
+    "assumedSpreadShare": 0,
+    "verdict": "SECONDARY ONLY: no primary or confirmation verdict"
    }
   },
   "streams": {
    "E": {
-    "candidates": 80,
-    "sessions": 2,
+    "candidates": 108,
+    "sessions": 3,
     "all": {
-     "picks": 80,
-     "sessions": 2,
+     "picks": 108,
+     "sessions": 3,
      "m30": {
       "n": 0
      },
      "day": {
-      "n": 80,
-      "avg": -0.0034,
-      "median": -0.0045,
-      "win": 0.4125,
-      "hit2": 0.1875,
+      "n": 108,
+      "avg": -0.0057,
+      "median": -0.0085,
+      "win": 0.3796,
+      "hit2": 0.1759,
       "worst": -0.0819,
-      "noTop2": -0.0063,
-      "pf": 0.77
+      "noTop2": -0.0078,
+      "pf": 0.643
      },
      "d1": {
-      "n": 22,
-      "avg": 0.0368,
-      "median": 0.0096,
-      "win": 0.5909,
-      "hit2": 0.4545,
-      "worst": -0.0383,
-      "noTop2": 0.0161,
-      "pf": 5.4674
+      "n": 80,
+      "avg": -0.015,
+      "median": -0.014,
+      "win": 0.35,
+      "hit2": 0.225,
+      "worst": -0.404,
+      "noTop2": -0.0216,
+      "pf": 0.5553
      },
      "d5": {
       "n": 0
@@ -1027,23 +1064,23 @@
       "n": 0
      },
      "dayStress": {
-      "n": 80,
-      "avg": -0.0062,
-      "median": -0.0065,
-      "win": 0.375,
-      "hit2": 0.1625,
+      "n": 108,
+      "avg": -0.0084,
+      "median": -0.0105,
+      "win": 0.3426,
+      "hit2": 0.1574,
       "worst": -0.0837,
-      "noTop2": -0.009,
-      "pf": 0.6191
+      "noTop2": -0.0104,
+      "pf": 0.5193
      },
      "d5Stress": {
       "n": 0
      },
-     "portfolioUsd": -274,
-     "maxDrawdownUsd": -546,
+     "portfolioUsd": -613,
+     "maxDrawdownUsd": -886,
      "medianMinute": 623,
-     "medianMoveAtPick": 0.0362,
-     "assumedSpreadShare": 0
+     "medianMoveAtPick": 0.038,
+     "assumedSpreadShare": 0.009
     }
    },
    "F": {
@@ -1081,33 +1118,33 @@
     }
    },
    "N": {
-    "candidates": 20,
-    "sessions": 2,
+    "candidates": 30,
+    "sessions": 3,
     "all": {
-     "picks": 20,
-     "sessions": 2,
+     "picks": 30,
+     "sessions": 3,
      "m30": {
       "n": 0
      },
      "day": {
-      "n": 20,
-      "avg": -0.005,
-      "median": -0.005,
-      "win": 0.15,
+      "n": 30,
+      "avg": -0.0041,
+      "median": -0.0042,
+      "win": 0.1667,
       "hit2": 0,
       "worst": -0.0208,
-      "noTop2": -0.0058,
-      "pf": 0.0515
+      "noTop2": -0.0051,
+      "pf": 0.1563
      },
      "d1": {
-      "n": 10,
-      "avg": 0.008,
-      "median": -0.0052,
-      "win": 0.5,
-      "hit2": 0.3,
+      "n": 20,
+      "avg": -0.0032,
+      "median": -0.007,
+      "win": 0.3,
+      "hit2": 0.2,
       "worst": -0.0686,
-      "noTop2": -0.01,
-      "pf": 1.7074
+      "noTop2": -0.0132,
+      "pf": 0.7945
      },
      "d5": {
       "n": 0
@@ -1123,52 +1160,52 @@
       "pf": 0.094
      },
      "dayStress": {
-      "n": 20,
-      "avg": -0.0074,
+      "n": 30,
+      "avg": -0.0066,
       "median": -0.007,
-      "win": 0.05,
+      "win": 0.0667,
       "hit2": 0,
       "worst": -0.03,
-      "noTop2": -0.0082,
-      "pf": 0.0114
+      "noTop2": -0.0077,
+      "pf": 0.0782
      },
      "d5Stress": {
       "n": 0
      },
-     "portfolioUsd": -99,
-     "maxDrawdownUsd": -99,
+     "portfolioUsd": -123,
+     "maxDrawdownUsd": -123,
      "medianMinute": 900,
-     "medianMoveAtPick": 0.0029,
+     "medianMoveAtPick": 0.0012,
      "assumedSpreadShare": 0
     }
    }
   },
   "capCost": {
    "firstFive": {
-    "picks": 10,
-    "sessions": 2,
+    "picks": 15,
+    "sessions": 3,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 10,
-     "avg": -0.0114,
-     "median": -0.0078,
-     "win": 0.4,
+     "n": 15,
+     "avg": -0.0108,
+     "median": -0.0105,
+     "win": 0.3333,
      "hit2": 0.2,
      "worst": -0.0777,
-     "noTop2": -0.0243,
-     "pf": 0.4486
+     "noTop2": -0.0208,
+     "pf": 0.4677
     },
     "d1": {
-     "n": 5,
-     "avg": 0.001,
-     "median": 0.0096,
-     "win": 0.6,
-     "hit2": 0.4,
-     "worst": -0.0375,
-     "noTop2": -0.0165,
-     "pf": 1.0878
+     "n": 10,
+     "avg": -0.0277,
+     "median": -0.0217,
+     "win": 0.4,
+     "hit2": 0.2,
+     "worst": -0.1076,
+     "noTop2": -0.0415,
+     "pf": 0.2157
     },
     "d5": {
      "n": 0
@@ -1177,49 +1214,49 @@
      "n": 0
     },
     "dayStress": {
-     "n": 10,
-     "avg": -0.015,
-     "median": -0.0098,
-     "win": 0.3,
-     "hit2": 0.1,
+     "n": 15,
+     "avg": -0.0139,
+     "median": -0.0125,
+     "win": 0.2667,
+     "hit2": 0.1333,
      "worst": -0.0796,
-     "noTop2": -0.0272,
-     "pf": 0.3427
+     "noTop2": -0.024,
+     "pf": 0.3769
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -114,
-    "maxDrawdownUsd": -114,
-    "medianMinute": 591,
+    "portfolioUsd": -163,
+    "maxDrawdownUsd": -163,
+    "medianMinute": 590,
     "medianMoveAtPick": 0.0412,
     "assumedSpreadShare": 0
    },
    "afterCap": {
-    "picks": 70,
-    "sessions": 2,
+    "picks": 93,
+    "sessions": 3,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 70,
-     "avg": -0.0023,
-     "median": -0.0045,
-     "win": 0.4143,
-     "hit2": 0.1857,
+     "n": 93,
+     "avg": -0.0048,
+     "median": -0.0078,
+     "win": 0.3871,
+     "hit2": 0.172,
      "worst": -0.0819,
-     "noTop2": -0.0056,
-     "pf": 0.8375
+     "noTop2": -0.0073,
+     "pf": 0.6809
     },
     "d1": {
-     "n": 17,
-     "avg": 0.0473,
-     "median": 0.0122,
-     "win": 0.5882,
-     "hit2": 0.4706,
-     "worst": -0.0383,
-     "noTop2": 0.0212,
-     "pf": 7.5961
+     "n": 70,
+     "avg": -0.0132,
+     "median": -0.0127,
+     "win": 0.3429,
+     "hit2": 0.2286,
+     "worst": -0.404,
+     "noTop2": -0.0208,
+     "pf": 0.6064
     },
     "d5": {
      "n": 0
@@ -1228,49 +1265,49 @@
      "n": 0
     },
     "dayStress": {
-     "n": 70,
-     "avg": -0.005,
-     "median": -0.0065,
-     "win": 0.3857,
-     "hit2": 0.1714,
+     "n": 93,
+     "avg": -0.0075,
+     "median": -0.0098,
+     "win": 0.3548,
+     "hit2": 0.1613,
      "worst": -0.0837,
-     "noTop2": -0.0081,
-     "pf": 0.6774
+     "noTop2": -0.0099,
+     "pf": 0.5502
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": -160,
-    "maxDrawdownUsd": -509,
+    "portfolioUsd": -451,
+    "maxDrawdownUsd": -799,
     "medianMinute": 625,
-    "medianMoveAtPick": 0.0362,
-    "assumedSpreadShare": 0
+    "medianMoveAtPick": 0.0367,
+    "assumedSpreadShare": 0.011
    },
    "hindsightBestFive": {
-    "picks": 10,
-    "sessions": 2,
+    "picks": 15,
+    "sessions": 3,
     "m30": {
      "n": 0
     },
     "day": {
-     "n": 10,
-     "avg": 0.0621,
-     "median": 0.0446,
+     "n": 15,
+     "avg": 0.0526,
+     "median": 0.0441,
      "win": 1,
-     "hit2": 1,
-     "worst": 0.0364,
-     "noTop2": 0.0504,
+     "hit2": 0.9333,
+     "worst": 0.0176,
+     "noTop2": 0.044,
      "pf": null
     },
     "d1": {
-     "n": 5,
-     "avg": 0.1215,
-     "median": 0.1066,
-     "win": 0.8,
-     "hit2": 0.8,
-     "worst": -0.0174,
-     "noTop2": 0.0483,
-     "pf": 35.9195
+     "n": 10,
+     "avg": 0.0696,
+     "median": 0.0496,
+     "win": 0.6,
+     "hit2": 0.6,
+     "worst": -0.0492,
+     "noTop2": 0.0289,
+     "pf": 7.653
     },
     "d5": {
      "n": 0
@@ -1279,22 +1316,22 @@
      "n": 0
     },
     "dayStress": {
-     "n": 10,
-     "avg": 0.0574,
-     "median": 0.0425,
+     "n": 15,
+     "avg": 0.0482,
+     "median": 0.0401,
      "win": 1,
-     "hit2": 1,
-     "worst": 0.026,
-     "noTop2": 0.0462,
+     "hit2": 0.9333,
+     "worst": 0.0156,
+     "noTop2": 0.04,
      "pf": null
     },
     "d5Stress": {
      "n": 0
     },
-    "portfolioUsd": 621,
+    "portfolioUsd": 789,
     "maxDrawdownUsd": 0,
     "medianMinute": 621,
-    "medianMoveAtPick": 0.0453,
+    "medianMoveAtPick": 0.0401,
     "assumedSpreadShare": 0
    }
   }
