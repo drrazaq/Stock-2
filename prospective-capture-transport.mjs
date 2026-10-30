@@ -1,7 +1,7 @@
 // Dependency-injected, offline-tested transport preparation. No default fetcher or key lookup.
 import {newCapture,appendCapture,frameFromSnapshots,finishCapture} from './prospective-paper-capture.mjs';
 export async function runCalibration({plan,transport,now,wait,readEvents,metadata,persist}){
- let state=newCapture(plan),attempts=0,bytes=0,status='INCOMPLETE';
+ let state=newCapture(plan),attempts=0,bytes=0,status='INCOMPLETE';const starts=[];
  const start=Date.parse(plan.start),end=Date.parse(plan.end);
  const bounded=async fn=>{let timer;try{return await Promise.race([fn(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('LOCAL_CALLBACK_TIMEOUT_STOP')),10000);})]);}finally{clearTimeout(timer);}};
  try{
@@ -10,7 +10,8 @@ export async function runCalibration({plan,transport,now,wait,readEvents,metadat
    const due=i===40?end-10000:start+i*60000;
    if(now()<due)await wait(due-now());
    if(now()>end-10000){status='TIME_LIMIT';break;}
-   const requestedAt=new Date(now()).toISOString();attempts++;
+   const requestClock=now();if(starts.filter(t=>requestClock-t<60000).length>=2){status='RATE_BUDGET_STOP';break;}starts.push(requestClock);
+   const requestedAt=new Date(requestClock).toISOString();attempts++;
    const controller=new AbortController();let timer;
    const operation=(async()=>{
     const response=await transport('https://data.alpaca.markets/v2/stocks/snapshots?symbols='+plan.universe.join(',')+'&feed=sip',{method:'GET',redirect:'error',signal:controller.signal});
