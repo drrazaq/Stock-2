@@ -4,13 +4,13 @@ No fetch/push, providers, deployment or message dispatch. Tests use existing syn
 """
 import argparse,hashlib,io,json,os,re,subprocess,tarfile,tempfile
 from pathlib import Path
-parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--scope',choices=['watcher','accounting','combined'],required=True);args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--scope',choices=['watcher','accounting','combined'],required=True);parser.add_argument('--revision',choices=['2','3'],default='3');args=parser.parse_args()
 repo=Path(__file__).resolve().parents[1];out=Path(args.output).resolve();out.mkdir(parents=True,exist_ok=True)
 sha=lambda b:hashlib.sha256(b).hexdigest()
 scopes=['watcher','accounting'] if args.scope=='combined' else [args.scope];manifests=[]
 for scope in scopes:
  prefix='watcher-core' if scope=='watcher' else 'accounting'
- m=json.loads((repo/f'docs/validation/{prefix}-production-manifest-v2.json').read_text());patch=repo/f'docs/validation/{prefix}-production-fix-v2.patch'
+ m=json.loads((repo/f'docs/validation/{prefix}-production-manifest-v{args.revision}.json').read_text());patch=repo/f'docs/validation/{prefix}-production-fix-v{args.revision}.patch'
  assert sha(patch.read_bytes())==m['patchSha256'];assert all(not f.startswith(('data/','fm-cache/')) for f in m['files']);manifests.append((m,patch))
 base=manifests[0][0]['baseMain'];assert all(m['baseMain']==base for m,_ in manifests)
 raw=subprocess.check_output(['git','archive',base],cwd=repo)
@@ -26,6 +26,7 @@ with tempfile.TemporaryDirectory(prefix='stock2-production-review-') as director
  originals=subprocess.check_output(['git','ls-tree','-r','--name-only',base,'test','tests'],cwd=repo,text=True).splitlines();original_tests=[f for f in originals if f.endswith('.test.mjs')]
  tests=sorted([*root.glob('test/*.test.mjs'),*root.glob('tests/*.test.mjs')]);failures=[];cases=0
  env={k:v for k,v in os.environ.items() if k in ['PATH','HOME','NODE_EXTRA_CA_CERTS','SSL_CERT_FILE','HTTP_PROXY','HTTPS_PROXY','ALL_PROXY','NO_PROXY']}
+ temp=root/'isolated-test-temp';temp.mkdir();env['TMPDIR']=str(temp)
  if args.scope!='accounting':env['INCIDENT_WATCHER_SRC']=str(root/'ignition-watch.mjs')
  with (out/'node.log').open('w') as log:
   for file in tests:

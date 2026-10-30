@@ -15,9 +15,11 @@ const readLines = (f) => { try { return fs.readFileSync(f, 'utf8').trim().split(
 const nyDay = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
 async function telegram(text) {
   text+='\nInstrument identity may be UNKNOWN. Mixed-instrument RESEARCH ONLY; not verified common-stock performance or admitted prospective evidence.';
-  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return; }
+  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return {ok:false,definitelyUnsent:true}; }
   const parts = []; let cur = ''; for (const l of text.split('\n')) { if ((cur + l).length > 3800) { parts.push(cur); cur = ''; } cur += l + '\n'; } if (cur) parts.push(cur);
-  for (const p of parts) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: p, disable_web_page_preview: true }) }).catch(e => console.log('telegram: ' + e.message));
+  let ack=0;
+  for(const p of parts){try{const r=await telegramFetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{signal:AbortSignal.timeout(10000),method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text:p,disable_web_page_preview:true})});const j=await r.json();if(!r.ok||j.ok!==true)return {ok:false,definitelyUnsent:ack===0&&r.status>=400&&r.status<500&&j.ok===false};ack++;}catch{return {ok:false};}}
+  return {ok:ack===parts.length};
 }
 function context() {
   const events = {}; for (const e of ((readJson('data/events-recent.json') || {}).events || [])) (events[e.sym] || (events[e.sym] = [])).push(e);
@@ -47,7 +49,7 @@ if (MODE === 'midday') {
   if (!snap || snap.day !== today) { console.log('radar midday: no snapshot for ' + today); process.exit(0); }
   const r = buildMidday(snap, ctx);
   if (r.rows.length) fs.appendFileSync(LEDGER, r.rows.map(x => JSON.stringify(x)).join('\n') + '\n');
-  await telegram(r.text); console.log('radar midday: ' + r.rows.length + ' lines listed');
+  const receipt=await telegram(r.text);if(env.IG_RADAR_RESERVED==='1')console.log('RADAR_DELIVERY='+JSON.stringify(receipt)); console.log('radar midday: ' + r.rows.length + ' lines listed');
 } else {
   let ledger = readLines(LEDGER); const s5 = await score5(ledger, today);
   if (s5.length) { fs.appendFileSync(LEDGER, s5.map(x => JSON.stringify(x)).join('\n') + '\n'); ledger = ledger.concat(s5); }
