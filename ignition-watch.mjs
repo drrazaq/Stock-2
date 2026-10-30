@@ -311,6 +311,7 @@ const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mk
 process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
 saveObservationProgress();
 while (Date.now() - RUN_START < MAXMS) {
+  MESSAGE_STATE.maintain();
   const m = clock(); if (m > SEGMENT_END || (m===SEGMENT_END && SEGMENT_END<SESSION.close)) break; // Include one close-boundary scan; do not count it as an extra regular minute. if (m < 568) { await sleep(30000); continue; }
   const cycleStart=Date.now();requests.length=0;discoveryLive.length=0;
   const rows = await snap(); loops++; const tStart = triggers.length;
