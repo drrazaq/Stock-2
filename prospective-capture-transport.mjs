@@ -10,6 +10,8 @@ export async function runCalibration({plan,transport,now,wait,readEvents,metadat
    const due=i===40?end-10000:start+i*60000;
    if(now()<due)await wait(due-now());
    if(now()>end-10000){status='TIME_LIMIT';break;}
+   const events=await bounded(()=>readEvents(new Date(now()).toISOString())),sourceHandoffAt=new Date(now()).toISOString();
+   if(now()>end-10000){status='TIME_LIMIT';break;}
    const requestClock=now();if(starts.filter(t=>requestClock-t<60000).length>=2){status='RATE_BUDGET_STOP';break;}starts.push(requestClock);
    const requestedAt=new Date(requestClock).toISOString();attempts++;
    const controller=new AbortController();let timer;
@@ -24,7 +26,7 @@ export async function runCalibration({plan,transport,now,wait,readEvents,metadat
    try{rawResponse=await Promise.race([operation,new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('REQUEST_TIMEOUT_STOP'));},10000);})]);}finally{clearTimeout(timer);controller.abort();}
    if(now()>end){status='TIME_LIMIT';break;}
    const receivedAt=new Date(now()).toISOString();
-   state=appendCapture(state,frameFromSnapshots({sequence:state.frames.length,requestedAt,receivedAt,rawResponse,events:await bounded(()=>readEvents(receivedAt)),metadata,universe:plan.universe}));
+   state=appendCapture(state,frameFromSnapshots({sequence:state.frames.length,requestedAt,receivedAt,rawResponse,events,sourceHandoffAt,metadata,universe:plan.universe,priorFrames:state.frames}));
    // Mandatory authenticated encrypted checkpoint upload ACK before another provider request.
    if(await bounded(()=>persist(state))!==true){status='CHECKPOINT_UNCONFIRMED_STOP';break;}
    status=i===40?'CAPTURE_COMPLETE':'INCOMPLETE';

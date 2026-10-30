@@ -21,9 +21,9 @@ export function validatePlan(p){
  return p;
 }
 // Actual Alpaca snapshot schema: quote clocks and sizes come from latestQuote,
-// never latestTrade. A completed minute low * volume is a conservative lower
-// bound on same-session traded dollars, not last-price * cumulative shares.
-export function frameFromSnapshots({sequence,requestedAt,receivedAt,rawResponse,events=[],metadata=[],universe}){
+// never latestTrade. Contiguous completed minute low/high * volume sums bound
+// cumulative session dollars. A missing/revised minute invalidates those bounds.
+export function frameFromSnapshots({sequence,requestedAt,receivedAt,rawResponse,events=[],metadata=[],universe,priorFrames=[],sourceHandoffAt=receivedAt}){
  assert(typeof rawResponse==='string'&&Buffer.byteLength(rawResponse)<=65536,'RAW_RESPONSE_BUDGET');
  assert(iso(receivedAt)&&iso(requestedAt),'SNAPSHOT_CLOCK');
  const body=JSON.parse(rawResponse);assert(body&&typeof body==='object'&&!Array.isArray(body)&&!body.error&&!body.message,'SNAPSHOT_ERROR_ENVELOPE');
@@ -32,13 +32,24 @@ export function frameFromSnapshots({sequence,requestedAt,receivedAt,rawResponse,
  const minuteAt=ms=>{const x=ny(ms);return Number(x.hour)*60+Number(x.minute);};
  const quotes=[];for(const symbol of universe){
   const snap=body[symbol];if(!snap)continue;
-  const q=snap.latestQuote||{},bar=snap.minuteBar||{},barAt=iso(bar.t)?Date.parse(bar.t):NaN,now=Date.parse(receivedAt);
-  const id=metadata.filter(m=>m.symbol===symbol&&iso(m.asOf)&&Date.parse(m.asOf)<=now).at(-1);
-  const lower=Number.isFinite(bar.l)&&bar.l>0&&Number.isSafeInteger(bar.v)&&bar.v>0?bar.l*bar.v:null;
-  const liquid=Number.isFinite(lower)&&Number.isFinite(barAt)&&barAt+60000<=now&&now-barAt<=15*60000&&dayAt(barAt)===dayAt(now)&&minuteAt(barAt)>=570;
-  quotes.push({symbol,securityId:id?.securityId??null,at:receivedAt,quoteAsOf:iso(q.t)?q.t:null,bid:q.bp??null,ask:q.ap??null,bidSizeShares:Number.isInteger(q.bs)&&q.bs>=0?q.bs:null,askSizeShares:Number.isInteger(q.as)&&q.as>=0?q.as:null,dollarVolume:liquid?lower:null,dollarVolumeAsOf:liquid?bar.t:null,dollarVolumeBasis:'COMPLETED_SIP_MINUTE_LOW_X_VOLUME_LOWER_BOUND',provider:'ALPACA',feed:'sip'});
+  const q=snap.latestQuote||{},now=Date.parse(receivedAt),id=metadata.filter(m=>m.symbol===symbol&&iso(m.asOf)&&Date.parse(m.asOf)<=now).at(-1);
+  const bars=new Map();let conflict=false;
+  for(const f of [...priorFrames.map(x=>x.frame||x),{rawResponse}]){
+   const bar=JSON.parse(f.rawResponse)[symbol]?.minuteBar;if(!bar||!iso(bar.t))continue;
+   const at=Date.parse(bar.t);if(at+60000>now||dayAt(at)!==dayAt(now)||minuteAt(at)<570)continue;
+   const signature=JSON.stringify([bar.l,bar.h,bar.v]);if(bars.has(at)&&bars.get(at).signature!==signature)conflict=true;else bars.set(at,{...bar,signature});
+  }
+  let lower=0,upper=0,latest=null,complete=!conflict&&minuteAt(now)>570;
+  for(let minute=570;minute<minuteAt(now);minute++){
+   const at=now-(minuteAt(now)-minute)*60000-new Date(now).getUTCSeconds()*1000-new Date(now).getUTCMilliseconds(),bar=bars.get(at);
+   if(!bar||!Number.isFinite(bar.l)||bar.l<=0||!Number.isFinite(bar.h)||bar.h<bar.l||!Number.isSafeInteger(bar.v)||bar.v<0){complete=false;break;}
+   lower+=bar.l*bar.v;upper+=bar.h*bar.v;latest=bar.t;
+  }
+  const liquid=complete&&Number.isFinite(lower)&&Number.isFinite(upper)&&lower>0;
+
+  quotes.push({symbol,securityId:id?.securityId??null,at:receivedAt,quoteAsOf:iso(q.t)?q.t:null,bid:q.bp??null,ask:q.ap??null,bidSizeShares:Number.isInteger(q.bs)&&q.bs>=0?q.bs:null,askSizeShares:Number.isInteger(q.as)&&q.as>=0?q.as:null,dollarVolume:liquid?lower:null,dollarVolumeUpperBound:liquid?upper:null,dollarVolumeAsOf:liquid?latest:null,dollarVolumeBasis:'CONTIGUOUS_SESSION_MINUTE_LOW_HIGH_VOLUME_BOUNDS',provider:'ALPACA',feed:'sip'});
  }
- return {sequence,at:receivedAt,requestedAt,receivedAt,provider:'ALPACA',feed:'sip',rawResponse,rawResponseSha256:sha(rawResponse),events,metadata,quotes};
+ return {sequence,at:receivedAt,requestedAt,receivedAt,sourceHandoffAt,provider:'ALPACA',feed:'sip',rawResponse,rawResponseSha256:sha(rawResponse),events,metadata,quotes};
 }
 export function newCapture(p){validatePlan(p);return {version:1,plan:p,frames:[],bytes:0,chain:'0'.repeat(64)};}
 export function appendCapture(s,frame){
@@ -46,6 +57,7 @@ export function appendCapture(s,frame){
  assert(s.frames.length<CAPTURE_LIMITS.frames&&bytes.length<=CAPTURE_LIMITS.frameBytes&&s.bytes+bytes.length<=CAPTURE_LIMITS.totalBytes,'CAPTURE_BUDGET_STOP');
  assert(frame&&Number.isInteger(frame.sequence)&&frame.sequence===s.frames.length&&iso(frame.at)&&iso(frame.requestedAt)&&iso(frame.receivedAt),'FRAME_CLOCK_OR_SEQUENCE');
  assert(Date.parse(frame.at)===Date.parse(frame.receivedAt)&&Date.parse(frame.requestedAt)<=Date.parse(frame.at)&&Date.parse(frame.at)-Date.parse(frame.requestedAt)<=10000,'FRAME_REQUEST_WINDOW');
+ assert((frame.sourceHandoffAt===undefined||iso(frame.sourceHandoffAt)&&Date.parse(frame.sourceHandoffAt)<=Date.parse(frame.requestedAt)),'FRAME_SOURCE_HANDOFF_CLOCK');
  assert(Date.parse(frame.at)>=Date.parse(s.plan.start)&&Date.parse(frame.at)<=Date.parse(s.plan.end)&&(!s.frames.length||Date.parse(frame.at)>Date.parse(s.frames.at(-1).frame.at)),'FRAME_OUTSIDE_WINDOW_OR_REPLAY');
  assert(frame.provider==='ALPACA'&&frame.feed==='sip'&&hash(frame.rawResponseSha256)&&typeof frame.rawResponse==='string'&&Buffer.byteLength(frame.rawResponse)<=65536&&sha(frame.rawResponse)===frame.rawResponseSha256,'FRAME_FEED_PROVENANCE');
  assert(Array.isArray(frame.quotes)&&frame.quotes.length<=6&&Array.isArray(frame.events)&&frame.events.length<=20&&Array.isArray(frame.metadata)&&frame.metadata.length<=6,'FRAME_ARRAY_LIMIT');
@@ -70,11 +82,11 @@ export function finishCapture(s){
  for(const {frame:f} of s.frames){
   quotes.push(...f.quotes);metadata.push(...f.metadata);
   for(const e of f.events){
-   const base={eventId:e.eventId??null,symbol:e.symbol??null,paperHandoffAt:f.at,originalObservedAt:e.observedAt??null};let reason=null;
+   const base={eventId:e.eventId??null,symbol:e.symbol??null,paperHandoffAt:f.sourceHandoffAt||f.at,originalObservedAt:e.observedAt??null};let reason=null;
    if(conflicts.has(e.eventId))reason='CONFLICTING_EVENT_ID';
    else if(!p.universe.includes(e.symbol))reason='OUTSIDE_FIXED_UNIVERSE';
    else if(e.lane!=='SEC_EVENT'||e.sourceNamespace!=='SEC'||typeof e.sourceId!=='string'||!/^\d{10}-\d{2}-\d{6}$/.test(e.sourceId)||!hash(e.sourceRevisionId))reason='UNVERIFIED_SEC_SOURCE_REVISION';
-   else if(!iso(e.sourceAt)||!iso(e.firstIngestedAt)||!iso(e.observedAt)||Date.parse(e.sourceAt)>Date.parse(e.firstIngestedAt)||Date.parse(e.firstIngestedAt)>Date.parse(e.observedAt)||Date.parse(e.observedAt)>Date.parse(f.at)||Date.parse(e.observedAt)<Date.parse(p.start))reason='NONCONTEMPORANEOUS_EVENT_CLOCKS';
+   else if(!iso(e.sourceAt)||!iso(e.firstIngestedAt)||!iso(e.observedAt)||Date.parse(e.sourceAt)>Date.parse(e.firstIngestedAt)||Date.parse(e.firstIngestedAt)>Date.parse(e.observedAt)||Date.parse(e.observedAt)>Date.parse(f.sourceHandoffAt||f.at)||Date.parse(e.observedAt)<Date.parse(p.start))reason='NONCONTEMPORANEOUS_EVENT_CLOCKS';
    else if(Date.parse(e.observedAt)>Date.parse(p.enrollmentEnd))reason='ENROLLMENT_CLOSED_RETAINED_CONTEXT';
    else if(typeof e.eventId!=='string'||!e.eventId)reason='MISSING_ORIGINAL_EVENT_ID';
    else if(seenEvents.has(e.eventId))reason=seenEvents.get(e.eventId)===sha(JSON.stringify(e))?'REPEATED_EVENT_CONTEXT':'CONFLICTING_EVENT_ID';
@@ -92,10 +104,25 @@ export function finishCapture(s){
  // All records survive in original encrypted frames. Only contemporaneously eligible metadata enters matching.
  const eligible=metadata.filter(m=>m.instrumentType==='CS'&&m.identityAudit==='DOCUMENTED_SOURCE_REVIEW'&&m.zad==='PASS'&&m.securityId&&m.industry&&hash(m.referenceSha256));
  const evaluation=evaluatePaperEvidence(events,quotes,eligible,{cutoff:p.end,prospective:false});
+ const liquidityMatching=evaluation.cases.map(c=>{
+  if(!c.candidate?.entryAt||!c.control?.entryAt)return {eventId:c.eventId,status:'UNRESOLVED',reason:'NO_MATCHED_PATH'};
+  const e=events.find(e=>e.eventId===c.eventId),cq=quotes.find(q=>q.symbol===c.candidate.symbol&&Date.parse(q.at)===Date.parse(c.candidate.entryAt)),mq=eligible.find(m=>m.symbol===e.symbol);
+  const uncertain=[];
+  for(const sym of new Set(eligible.filter(m=>m.industry===mq?.industry&&m.symbol!==e.symbol&&!events.some(x=>x.symbol===m.symbol&&Date.parse(x.observedAt)<=Date.parse(e.observedAt))).map(m=>m.symbol))){
+   const q=quotes.find(q=>q.symbol===sym&&Date.parse(q.at)===Date.parse(cq?.at));if(!q)continue;
+   if(q.ask<cq.ask/2||q.ask>cq.ask*2)continue;
+   if(!Number.isFinite(q.dollarVolumeUpperBound)||!Number.isFinite(cq.dollarVolumeUpperBound)||!q.dollarVolume||!cq.dollarVolume){uncertain.push(sym);continue;}
+   const minRatio=q.dollarVolume/cq.dollarVolumeUpperBound,maxRatio=q.dollarVolumeUpperBound/cq.dollarVolume;
+   const excluded=q.dollarVolumeUpperBound<1e6||maxRatio<.2||minRatio>5;
+   const included=q.dollarVolume>=1e6&&minRatio>=.2&&maxRatio<=5;
+   if(!excluded&&!included)uncertain.push(sym);
+  }
+  return {eventId:c.eventId,status:uncertain.length?'UNRESOLVED':'BOUNDED_MATCH_ELIGIBILITY_VERIFIED',reason:uncertain.length?'CUMULATIVE_LIQUIDITY_POOL_AMBIGUOUS':null,uncertainSymbols:uncertain};
+ });
  const gaps=[];for(let i=0;i<40;i++){const expected=Date.parse(p.start)+i*60000;if(!s.frames.some(x=>Date.parse(x.frame.at)>=expected&&Date.parse(x.frame.at)<expected+60000))gaps.push(i);}
  const missingSymbols=s.frames.flatMap(({frame:f})=>p.universe.filter(sym=>!f.quotes.some(q=>q.symbol===sym)).map(symbol=>({sequence:f.sequence,symbol})));
  const invalidOrStaleQuotes=s.frames.flatMap(({frame:f})=>f.quotes.filter(q=>!Number.isFinite(q.bid)||q.bid<=0||!Number.isFinite(q.ask)||q.ask<q.bid||!iso(q.quoteAsOf)||Date.parse(q.quoteAsOf)>Date.parse(f.at)||Date.parse(f.at)-Date.parse(q.quoteAsOf)>120000).map(q=>({sequence:f.sequence,symbol:q.symbol})));
  const finalWindowObserved=s.frames.some(x=>Date.parse(x.frame.at)>=Date.parse(p.end)-10000);
  const missingSize=evaluation.counts.resolved-evaluation.counts.resolvedWithVerifiedDisplayedSize;
- return {kind:'OFFLINE_PREPARATION_NOT_REAL_ADMISSIONS',cohort:p.cohort,chain:s.chain,attempts,evaluation,coverage:{missingMinuteSlots:gaps,missingSymbols,invalidOrStaleQuotes,finalWindowObserved,continuousPathVerified:finalWindowObserved&&gaps.length===0&&missingSymbols.length===0&&invalidOrStaleQuotes.length===0},displayedCapacityUnverified:missingSize,genuineAdmissions:0,requires:['OFFICIAL_ENTITLEMENTS','INDEPENDENT_SOURCE_AUDIT','DATED_OWNER_APPROVAL','LIVE_ADAPTER_REVIEW'],confirmationEligible:false};
+ return {kind:'OFFLINE_PREPARATION_NOT_REAL_ADMISSIONS',cohort:p.cohort,chain:s.chain,attempts,evaluation,coverage:{missingMinuteSlots:gaps,missingSymbols,invalidOrStaleQuotes,finalWindowObserved,sampleScheduleComplete:finalWindowObserved&&gaps.length===0&&missingSymbols.length===0&&invalidOrStaleQuotes.length===0},liquidityMatching,displayedCapacityUnverified:missingSize,genuineAdmissions:0,requires:['OFFICIAL_ENTITLEMENTS','INDEPENDENT_SOURCE_AUDIT','DATED_OWNER_APPROVAL','LIVE_ADAPTER_REVIEW'],confirmationEligible:false};
 }

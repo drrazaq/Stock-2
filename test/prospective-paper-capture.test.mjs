@@ -13,16 +13,16 @@ function fixture(cohort='CALIBRATION'){
  const plan={rule:'EXISTING_STREAM_SEC_30M_V1',cohort,day:'2026-11-05',start:t(0),enrollmentEnd:t(4),end:t(40),universe,sourceSha:'a'.repeat(40),enrollmentManifestSha256:'b'.repeat(64)};
  const metadata=universe.map((symbol,i)=>({symbol,securityId:'synthetic-security-'+i,industry:'synthetic-industry-'+Math.floor(i/2),asOf:t(-1),instrumentType:'CS',identityAudit:'DOCUMENTED_SOURCE_REVIEW',zad:'PASS',referenceSha256:'c'.repeat(64)}));
  const events=[0,2].map(i=>({eventId:'synthetic-original-'+i,symbol:universe[i],lane:'SEC_EVENT',sourceNamespace:'SEC',sourceId:'0000000001-26-000001',sourceRevisionId:'d'.repeat(64),sourceAt:t(-1),firstIngestedAt:t(0),observedAt:t(0)}));
- const frames=Array.from({length:41},(_,i)=>{
+ const frames=[];for(let i=0;i<41;i++){
   const quotes=metadata.map((m,j)=>({symbol:m.symbol,securityId:m.securityId,at:t(i),quoteAsOf:t(i),bid:i>=31&&j===0?10.99:i>=31&&j===2?8.99:9.99,ask:11.01,dollarVolume:2e6,dollarVolumeAsOf:t(i),bidSizeShares:1000,askSizeShares:1000}));
   for(const q of quotes)if(q.bid===9.99)q.ask=10.01;if(i>=31)quotes[2].ask=9.01;
-  const rawResponse=JSON.stringify(Object.fromEntries(quotes.map(q=>[q.symbol,{latestQuote:{t:q.quoteAsOf,bp:q.bid,ap:q.ask,bs:q.bidSizeShares,as:q.askSizeShares},minuteBar:{t:t(i-1),l:9,v:250000}}])));
-  const frame=frameFromSnapshots({sequence:i,requestedAt:t(i),receivedAt:t(i),rawResponse,events:i===0?events:[],metadata,universe});frame.metadata=i===0?metadata:[];return frame;
- });return {synthetic:true,plan,frames};
+  const rawResponse=JSON.stringify(Object.fromEntries(quotes.map(q=>[q.symbol,{latestQuote:{t:q.quoteAsOf,bp:q.bid,ap:q.ask,bs:q.bidSizeShares,as:q.askSizeShares},minuteBar:{t:t(i-1),l:9,h:11,v:250000}}])));
+  const frame=frameFromSnapshots({sequence:i,requestedAt:t(i),receivedAt:t(i),rawResponse,events:i===0?events:[],metadata,universe,priorFrames:frames});frame.metadata=i===0?metadata:[];frames.push(frame);
+ }return {synthetic:true,plan,frames};
 }
 const build=x=>x.frames.reduce(appendCapture,newCapture(x.plan));
 test('complete synthetic candidate/control paths retain winners and losers, exact fees and capacity, no admissions',()=>{
- const r=finishCapture(build(fixture()));assert.equal(r.evaluation.counts.resolved,2);assert.equal(r.evaluation.counts.resolvedWithVerifiedDisplayedSize,2);assert.equal(r.genuineAdmissions,0);assert.equal(r.confirmationEligible,false);assert.equal(r.coverage.continuousPathVerified,true);
+ const r=finishCapture(build(fixture()));assert.equal(r.evaluation.counts.resolved,2);assert.equal(r.evaluation.counts.resolvedWithVerifiedDisplayedSize,2);assert.equal(r.genuineAdmissions,0);assert.equal(r.confirmationEligible,false);assert.equal(r.coverage.sampleScheduleComplete,true);
  assert.equal(r.evaluation.cases[0].candidate.netAfterSpreadAndFees,(99*(10.99-10.01)-6)/1000);assert.ok(r.evaluation.cases[1].candidate.netAfterSpreadAndFees<0);assert.ok(r.evaluation.cases[0].candidate.stressNet<r.evaluation.cases[0].candidate.netAfterSpreadAndFees);
 });
 test('authenticated restart preserves identical result; tamper, wrong key, cohort/source drift refused',()=>{
@@ -31,7 +31,7 @@ test('authenticated restart preserves identical result; tamper, wrong key, cohor
  const broken=structuredClone(sealed);broken.ciphertext=Buffer.from('interrupted').toString('base64');assert.throws(()=>recoverCapture(broken,key,x.plan));
 });
 test('missing horizon remains unresolved; skipped frames and missing controls remain visible, no late backfill',()=>{
- const x=fixture();for(const f of x.frames.filter(f=>f.sequence>=31&&f.sequence<=34))f.quotes=f.quotes.filter(q=>q.symbol!=='AAA');const r=finishCapture(build(x));assert.equal(r.evaluation.counts.resolved,1);assert.equal(r.evaluation.cases[0].candidate.reason,'NO_FRESH_HORIZON_EXIT');assert.equal(r.coverage.continuousPathVerified,false);assert.equal(r.coverage.missingSymbols.length,4);
+ const x=fixture();for(const f of x.frames.filter(f=>f.sequence>=31&&f.sequence<=34))f.quotes=f.quotes.filter(q=>q.symbol!=='AAA');const r=finishCapture(build(x));assert.equal(r.evaluation.counts.resolved,1);assert.equal(r.evaluation.cases[0].candidate.reason,'NO_FRESH_HORIZON_EXIT');assert.equal(r.coverage.sampleScheduleComplete,false);assert.equal(r.coverage.missingSymbols.length,4);
  const y=fixture();y.frames.splice(5,1);y.frames.forEach((f,i)=>f.sequence=i);assert.deepEqual(finishCapture(build(y)).coverage.missingMinuteSlots,[5]);
 });
 test('unknown identity retains original research; metadata cannot backfill an earlier detection',()=>{
@@ -50,7 +50,7 @@ test('offline actual CLI, encrypted write/recovery, overwrite refusal and interr
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'paper-capture-'));try{
   const input=path.join(dir,'fixture.json'),out=path.join(dir,'sealed');fs.writeFileSync(input,JSON.stringify(fixture()));const original=fs.readFileSync(input);
   const cli=JSON.parse(execFileSync(process.execPath,['tools/replay-prospective-capture.mjs','--synthetic',input,out],{encoding:'utf8'}));assert.equal(cli.simulatedResolved,2);assert.equal(cli.providerRequests,0);assert.equal(fs.readdirSync(out).length,41);assert.deepEqual(fs.readFileSync(input),original);
-  assert.throws(()=>replayFixture(input,out,key));const p=fixture().plan;const good=JSON.parse(fs.readFileSync(path.join(out,'39.enc')));fs.writeFileSync(path.join(out,'40.enc'),'interrupted');const recovered=recoverCapture(good,key,p);assert.equal(recovered.frames.length,40);assert.equal(finishCapture(recovered).coverage.continuousPathVerified,false);assert.throws(()=>JSON.parse(fs.readFileSync(path.join(out,'40.enc'))));
+  assert.throws(()=>replayFixture(input,out,key));const p=fixture().plan;const good=JSON.parse(fs.readFileSync(path.join(out,'39.enc')));fs.writeFileSync(path.join(out,'40.enc'),'interrupted');const recovered=recoverCapture(good,key,p);assert.equal(recovered.frames.length,40);assert.equal(finishCapture(recovered).coverage.sampleScheduleComplete,false);assert.throws(()=>JSON.parse(fs.readFileSync(path.join(out,'40.enc'))));
   assert.ok(!fs.readFileSync(path.join(out,'0.enc'),'utf8').includes('synthetic-security'));assert.equal(fs.readdirSync(dir).length,2);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
@@ -68,8 +68,8 @@ test('insufficient displayed capacity is recorded rather than called executable;
 });
 
 test('injected bounded transport executes raw snapshots through checkpoint ACK and unchanged evaluator',async()=>{
- const {runCalibration}=await import('../prospective-capture-transport.mjs');const x=fixture();let clock=Date.parse(t(0)),calls=0,uploads=0;
- const r=await runCalibration({plan:x.plan,now:()=>clock,wait:async ms=>{clock+=ms;},metadata:x.frames[0].metadata,readEvents:async at=>at===t(0)?x.frames[0].events:[],persist:async s=>{uploads++;assert.equal(recoverCapture(checkpointCapture(s,key),key,x.plan).chain,s.chain);return true;},transport:async(url,options)=>{assert.equal(options.method,'GET');assert.equal(options.redirect,'error');assert.match(url,/^https:\/\/data.alpaca.markets\/v2\/stocks\/snapshots\?/);assert.equal(new URL(url).searchParams.get('feed'),'sip');return new Response(x.frames[calls++].rawResponse,{status:200});}});
+ const {runCalibration}=await import('../prospective-capture-transport.mjs');const x=fixture();let clock=Date.parse(t(0)),calls=0,uploads=0,sourceReads=0;
+ const r=await runCalibration({plan:x.plan,now:()=>clock,wait:async ms=>{clock+=ms;},metadata:x.frames[0].metadata,readEvents:async at=>{sourceReads++;return at===t(0)?x.frames[0].events:[];},persist:async s=>{uploads++;assert.equal(recoverCapture(checkpointCapture(s,key),key,x.plan).chain,s.chain);return true;},transport:async(url,options)=>{assert.equal(sourceReads,calls+1);assert.equal(options.method,'GET');assert.equal(options.redirect,'error');assert.match(url,/^https:\/\/data.alpaca.markets\/v2\/stocks\/snapshots\?/);assert.equal(new URL(url).searchParams.get('feed'),'sip');const raw=JSON.parse(x.frames[calls++].rawResponse);for(const row of Object.values(raw))row.latestQuote.t=new Date(clock).toISOString();return new Response(JSON.stringify(raw),{status:200});}});
  assert.equal(r.status,'CAPTURE_COMPLETE');assert.equal(r.providerAttempts,41);assert.equal(uploads,41);assert.equal(r.evaluation.counts.resolved,2);assert.equal(r.genuineAdmissions,0);
 });
 test('rate limits, malformed/oversized responses, unconfirmed checkpoint and failed upload stop without retries',async()=>{
@@ -97,4 +97,12 @@ test('rolling request cap stops a faulty scheduler before a third attempt within
 test('late original event handoff cannot select an entry captured before the paper system learned the event',()=>{
  const x=fixture(),e=x.frames[0].events.shift();x.frames[5].events=[e];const r=finishCapture(build(x));assert.equal(r.evaluation.counts.attempted,1);assert.equal(r.attempts.at(-1).reason,'LATE_EVENT_HANDOFF_NO_RETROSPECTIVE_ENTRY');assert.equal(r.attempts.at(-1).paperHandoffAt,t(5));assert.equal(r.attempts.at(-1).originalObservedAt,t(0));
  const y=fixture(),timely=y.frames[0].events.shift();timely.observedAt=new Date(Date.parse(t(0))+30000).toISOString();y.frames[1].events=[timely];const s=finishCapture(build(y));assert.equal(s.evaluation.counts.resolved,2);assert.equal(s.evaluation.cases.find(c=>c.eventId===timely.eventId).candidate.entryAt,t(1));
+});
+
+
+test('cumulative liquidity needs every completed minute; ambiguous matching bounds are not verified',()=>{
+ const x=fixture();assert.equal(x.frames[3].quotes[0].dollarVolume,6750000);assert.equal(x.frames[3].quotes[0].dollarVolumeUpperBound,8250000);
+ assert.equal(finishCapture(build(x)).liquidityMatching.every(x=>x.status==='BOUNDED_MATCH_ELIGIBILITY_VERIFIED'),true);
+ const f=x.frames[3];const gap=frameFromSnapshots({...f,metadata:x.frames[0].metadata,universe:x.plan.universe,priorFrames:x.frames.slice(0,1)});assert.equal(gap.quotes[0].dollarVolume,null);
+ const y=fixture();y.frames[1].quotes[1].dollarVolumeUpperBound=100000000;const r=finishCapture(build(y));assert.equal(r.liquidityMatching[0].status,'UNRESOLVED');assert.equal(r.liquidityMatching[0].reason,'CUMULATIVE_LIQUIDITY_POOL_AMBIGUOUS');assert.equal(r.genuineAdmissions,0);
 });
