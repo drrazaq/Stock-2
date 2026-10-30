@@ -1,0 +1,48 @@
+{
+  "status": "APPROVED_NOT_DEPLOYED_BOUNDARY_BLOCKED",
+  "checkedAt": "2026-10-30T17:00:52.029648+00:00",
+  "approvalSource": "16be57ee9903971d686ac4cf19224564db718d53",
+  "approvedPatchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+  "mainTested": "3945cee7e536c90b57dd1ed12742f21a74f68333",
+  "tests": {
+    "baseMain": "3945cee7e536c90b57dd1ed12742f21a74f68333",
+    "approvedSource": "16be57ee9903971d686ac4cf19224564db718d53",
+    "patchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+    "files": 23,
+    "allManifestDependencyAndAccountingHashesMatchBeforeAndAfter": true,
+    "productionTestFilesRetained": 115,
+    "allProductionTestsRetained": true,
+    "testFiles": 121,
+    "cases": 1199,
+    "failures": [],
+    "staticFailures": [],
+    "productionWrites": false,
+    "deployment": "BLOCKED_ACTIVE_WATCHER_AND_MARKET_WINDOW"
+  },
+  "activeWatcher": {
+    "runId": 41061535419,
+    "jobId": 124082233084,
+    "status": "in_progress",
+    "jobStartedAt": "2026-10-30T13:14:11Z",
+    "watcherStepStartedAt": "2026-10-30T13:14:23Z"
+  },
+  "pendingWatcher": {
+    "runId": 41072889693,
+    "status": "pending",
+    "jobsStarted": 0
+  },
+  "boundary": "NOT_ESTABLISHED_ACTIVE_AND_PENDING_WATCHERS_DURING_MARKET_SESSION",
+  "nextPreferredAssessment": "2026-10-30T20:00:00Z_or_later",
+  "nextAssessmentCondition": "Both watcher runs terminal, no new active/pending watcher, final publication inspected; current code/dependency hashes revalidated. Time alone does not establish a boundary.",
+  "productionMutations": 0,
+  "dispatches": 0,
+  "runsCancelled": 0,
+  "workflowsDisabled": 0,
+  "deliverySuppressed": false,
+  "deployedSha": null,
+  "localPreparedCheckout": "/workspace/watcher-v5-deployment",
+  "localPreparedCommitCreated": false,
+  "localPreparedChanges": "Only exact23-file approved patch, uncommitted; all data and accounting unchanged.",
+  "postDeploymentChecks": "NOT_OBSERVABLE_NOT_DEPLOYED",
+  "authorization": "Exact approval remains conditional and unconsumed; no duplicate approval needed when conditions are freshly met."
+}

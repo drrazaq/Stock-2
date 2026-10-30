@@ -306,7 +306,7 @@
     "Live end-to-end telemetry needs authorized deployment and subsequent real sessions",
     "No five-year point-in-time executable data established for early engines"
   ],
-  "next": "Focused independent review of watcher F1/F2 v5 patch against current accounting production; no watcher deployment without separate approval. Passive bot save/offset and queued-command processing evidence remains unverified.",
+  "next": "Reassess natural watcher-only boundary at/after2026-10-30 20:00Z; require all watcher runs terminal and final persistence inspected. Approval already granted for unchanged exact v5 patch; no deployment around active/pending runs.",
   "checkpointFollowup": {
     "base": "a06032cca7c309f486a5215b15bd8a81fc6b1b08",
     "verifiedBaseCI": [
@@ -5355,11 +5355,11 @@
     "aimPlan": "docs/aim-to-evidence-acceptance-plan.md",
     "confluence": "VERIFIED_PUBLISHED; 48 actual Git fault/race cases across six workflows",
     "c0": "OFFLINE_VERIFIED_PUBLISHED_INACTIVE; runtime and workflow/dependency bytes pinned. Date UNSET; entitlement/date/approval and actual upload evidence absent.",
-    "next": "Focused independent review of watcher F1/F2 v5 patch against current accounting production; no watcher deployment without separate approval. Passive bot save/offset and queued-command processing evidence remains unverified.",
+    "next": "Reassess natural watcher-only boundary at/after2026-10-30 20:00Z; require all watcher runs terminal and final persistence inspected. Approval already granted for unchanged exact v5 patch; no deployment around active/pending runs.",
     "c0Review": "docs/c0-diagnostic-review.md",
     "entitlementEvidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md",
     "incident": {
-      "status": "V5_F1_F2_PREPARED_NOT_DEPLOYED_REVIEW_REQUIRED",
+      "status": "OWNER_APPROVED_BOUNDARY_BLOCKED_NOT_DEPLOYED",
       "sourceSha": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a",
       "accountingSource": "09f16792b373268d70e45a535d6a7b02afecf6a5",
       "productionBase": "0b76287bf11d6ed8d25047082178380ca2b7dbf7",
@@ -5370,7 +5370,7 @@
       "watcherFiles": 23,
       "accountingFiles": 5,
       "ownerDecision": "October29 excluded primary;October28 excluded pilot;reconstruction secondary",
-      "nextDecision": "Focused independent review of watcher F1/F2 v5 patch against current accounting production; no watcher deployment without separate approval. Passive bot save/offset and queued-command processing evidence remains unverified."
+      "nextDecision": "Reassess natural watcher-only boundary at/after2026-10-30 20:00Z; require all watcher runs terminal and final persistence inspected. Approval already granted for unchanged exact v5 patch; no deployment around active/pending runs."
     },
     "instrumentReference": {
       "status": "PREPARED_NOT_AUTHORIZED_NOT_ACTIVATED",
@@ -5496,7 +5496,55 @@
     },
     "ciNote": "All five applicable exact-source checks passed at verifiedSource; later evidence-only checkpoints require their own SHA checks.",
     "priorVerifiedSource": "bd1a4a7e33f059aa4fd48ace321134a3b721d66a",
-    "priorCiEvidence": "docs/validation/incident-v4-head-ci.json"
+    "priorCiEvidence": "docs/validation/incident-v4-head-ci.json",
+    "watcherDeploymentAttempt": {
+      "status": "APPROVED_NOT_DEPLOYED_BOUNDARY_BLOCKED",
+      "checkedAt": "2026-10-30T17:00:52.029648+00:00",
+      "approvalSource": "16be57ee9903971d686ac4cf19224564db718d53",
+      "approvedPatchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+      "mainTested": "3945cee7e536c90b57dd1ed12742f21a74f68333",
+      "tests": {
+        "baseMain": "3945cee7e536c90b57dd1ed12742f21a74f68333",
+        "approvedSource": "16be57ee9903971d686ac4cf19224564db718d53",
+        "patchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+        "files": 23,
+        "allManifestDependencyAndAccountingHashesMatchBeforeAndAfter": true,
+        "productionTestFilesRetained": 115,
+        "allProductionTestsRetained": true,
+        "testFiles": 121,
+        "cases": 1199,
+        "failures": [],
+        "staticFailures": [],
+        "productionWrites": false,
+        "deployment": "BLOCKED_ACTIVE_WATCHER_AND_MARKET_WINDOW"
+      },
+      "activeWatcher": {
+        "runId": 41061535419,
+        "jobId": 124082233084,
+        "status": "in_progress",
+        "jobStartedAt": "2026-10-30T13:14:11Z",
+        "watcherStepStartedAt": "2026-10-30T13:14:23Z"
+      },
+      "pendingWatcher": {
+        "runId": 41072889693,
+        "status": "pending",
+        "jobsStarted": 0
+      },
+      "boundary": "NOT_ESTABLISHED_ACTIVE_AND_PENDING_WATCHERS_DURING_MARKET_SESSION",
+      "nextPreferredAssessment": "2026-10-30T20:00:00Z_or_later",
+      "nextAssessmentCondition": "Both watcher runs terminal, no new active/pending watcher, final publication inspected; current code/dependency hashes revalidated. Time alone does not establish a boundary.",
+      "productionMutations": 0,
+      "dispatches": 0,
+      "runsCancelled": 0,
+      "workflowsDisabled": 0,
+      "deliverySuppressed": false,
+      "deployedSha": null,
+      "localPreparedCheckout": "/workspace/watcher-v5-deployment",
+      "localPreparedCommitCreated": false,
+      "localPreparedChanges": "Only exact23-file approved patch, uncommitted; all data and accounting unchanged.",
+      "postDeploymentChecks": "NOT_OBSERVABLE_NOT_DEPLOYED",
+      "authorization": "Exact approval remains conditional and unconsumed; no duplicate approval needed when conditions are freshly met."
+    }
   },
   "confluencePublication": {
     "source": "413a91ca966fb1eb8e24a2113f23b4246752ca2e",
@@ -6226,5 +6274,53 @@
     "status": "VERIFIED_PREPARED_NOT_DEPLOYED_WATCHER_REVIEW_REQUIRED",
     "evidence": "docs/validation/incident-v4.json",
     "acceptanceAdded": 0
+  },
+  "watcherDeploymentAttempt": {
+    "status": "APPROVED_NOT_DEPLOYED_BOUNDARY_BLOCKED",
+    "checkedAt": "2026-10-30T17:00:52.029648+00:00",
+    "approvalSource": "16be57ee9903971d686ac4cf19224564db718d53",
+    "approvedPatchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+    "mainTested": "3945cee7e536c90b57dd1ed12742f21a74f68333",
+    "tests": {
+      "baseMain": "3945cee7e536c90b57dd1ed12742f21a74f68333",
+      "approvedSource": "16be57ee9903971d686ac4cf19224564db718d53",
+      "patchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+      "files": 23,
+      "allManifestDependencyAndAccountingHashesMatchBeforeAndAfter": true,
+      "productionTestFilesRetained": 115,
+      "allProductionTestsRetained": true,
+      "testFiles": 121,
+      "cases": 1199,
+      "failures": [],
+      "staticFailures": [],
+      "productionWrites": false,
+      "deployment": "BLOCKED_ACTIVE_WATCHER_AND_MARKET_WINDOW"
+    },
+    "activeWatcher": {
+      "runId": 41061535419,
+      "jobId": 124082233084,
+      "status": "in_progress",
+      "jobStartedAt": "2026-10-30T13:14:11Z",
+      "watcherStepStartedAt": "2026-10-30T13:14:23Z"
+    },
+    "pendingWatcher": {
+      "runId": 41072889693,
+      "status": "pending",
+      "jobsStarted": 0
+    },
+    "boundary": "NOT_ESTABLISHED_ACTIVE_AND_PENDING_WATCHERS_DURING_MARKET_SESSION",
+    "nextPreferredAssessment": "2026-10-30T20:00:00Z_or_later",
+    "nextAssessmentCondition": "Both watcher runs terminal, no new active/pending watcher, final publication inspected; current code/dependency hashes revalidated. Time alone does not establish a boundary.",
+    "productionMutations": 0,
+    "dispatches": 0,
+    "runsCancelled": 0,
+    "workflowsDisabled": 0,
+    "deliverySuppressed": false,
+    "deployedSha": null,
+    "localPreparedCheckout": "/workspace/watcher-v5-deployment",
+    "localPreparedCommitCreated": false,
+    "localPreparedChanges": "Only exact23-file approved patch, uncommitted; all data and accounting unchanged.",
+    "postDeploymentChecks": "NOT_OBSERVABLE_NOT_DEPLOYED",
+    "authorization": "Exact approval remains conditional and unconsumed; no duplicate approval needed when conditions are freshly met."
   }
 }

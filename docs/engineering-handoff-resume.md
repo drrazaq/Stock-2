@@ -1,3 +1,5 @@
+> **Latest deployment status:** Owner approved exact watcher v5; compatibility/hash checks and fresh production tests pass, but deployment is **blocked** by active41061535419 and pending41072889693. No production change. Reassess after20:00Z30October with fresh terminal-run/final-publication evidence. [Precise status and resume conditions](watcher-v5-deployment-status.md). Older review/approval-needed language below is historical.
+
 <!-- CURRENT-STATUS:BEGIN -->
 ## Current operational checkpoint — 30 October 2026
 
