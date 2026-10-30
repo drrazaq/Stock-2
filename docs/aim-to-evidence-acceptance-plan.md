@@ -4,6 +4,8 @@
 
 Current evidence: engineering **24/40**, sixteen rows open; early-engine promotion **0/8**; admitted prospective cases **zero**. The ledger retains 33 rejected and 15 unproven frozen ignition versions, zero passing. Examples of retained findings include Horizons LEADER_20 REJECTED and PB_UP_60 NOT PROVEN, Chain-ripple SAME_LAYER_3 REJECTED, and Share-supply S8B REJECTED. This plan does not relabel them. See the [ledger](engineering-ledger.json), [dashboard](trading-evidence-dashboard.md), [source matrix](catalyst03-closure-matrix.json) and [minimum research proposal](minimum-live-research-validation.md).
 
+[Trading-mentor capability/gap map](trading-mentor-capability-gap-map.md) now connects the existing lanes to one development entry-to-exit workflow. It changes none of the proposed evaluation thresholds or enrollment permissions.
+
 ## Owner scope clarification — 30 October 2026
 
 The product goal is a **trading mentor and decision guide across intraday, days, weeks and months**. It should explain candidate quality, uncertainty, position risk, exits and alternatives, and retain negative research findings. Runner detection is one input to this goal. Accounting deployment and watcher resilience support trustworthy records and continuity; neither establishes a strategy’s value. The existing separate horizon/evidence criteria and unapproved proposed thresholds below are unchanged. This clarification authorizes no new collection, messaging or trading.

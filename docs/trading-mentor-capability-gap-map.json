@@ -1,0 +1,124 @@
+{
+  "version": "TRADING_MENTOR_CAPABILITY_MAP_V1",
+  "basisCommit": "9394abe555ad87036cb1a0869ee2d7d0f9973261",
+  "selectedDevelopmentLane": {
+    "signal": "SQ11-PB12",
+    "exit": "A-TGT-TGT20-PB12",
+    "horizonSessions": 126,
+    "purpose": "Existing owner-lane contract explanation and gap repair, not profitability or new strategy approval",
+    "frozenVerdict": "NOT PROVEN",
+    "adopted": false,
+    "older": {
+      "n": 99,
+      "win": 0.7273,
+      "avg": 0.096,
+      "avgStress": 0.092,
+      "tBlock": 1.58,
+      "vsOwn": -0.0272
+    },
+    "newer": {
+      "n": 256,
+      "win": 0.7461,
+      "avg": 0.0847,
+      "avgStress": 0.0807,
+      "tBlock": 0.23,
+      "vsOwn": -0.0314,
+      "worst": -0.5606
+    },
+    "accountReplay": {
+      "older": {
+        "annualized": 0.0527,
+        "drawdown": -0.2248,
+        "closedTrades": 9,
+        "spyAnnualized": 0.0335,
+        "beatsSpus": null
+      },
+      "newer": {
+        "annualized": 0.1964,
+        "drawdown": -0.1188,
+        "closedTrades": 19,
+        "spyAnnualized": 0.1856,
+        "beatsSpus": false
+      },
+      "full": {
+        "annualized": 0.1155,
+        "drawdown": -0.2248,
+        "closedTrades": 29,
+        "spyAnnualized": 0.1024,
+        "beatsSpus": null
+      },
+      "olderFromFirstSignal": {
+        "annualized": 0.1031,
+        "drawdown": -0.2248,
+        "closedTrades": 9,
+        "spyAnnualized": 0.1663,
+        "beatsSpus": false
+      }
+    }
+  },
+  "evidence": [
+    {
+      "path": "agent-a-tgt-core.mjs",
+      "sha256": "79c7a0c438d497616d4ced2c3db22816432ccafe6f448dbe0865431ca074006f",
+      "blob": "e71f593c726dcbf1fd9272cf41ce5e9475ae9f80"
+    },
+    {
+      "path": "data/agent-a-tgt-lab.json",
+      "sha256": "3acc7c47e2132fcea92caf3edf016290915d70ef798ebfa3ddd2e646145041ac",
+      "blob": "8ad5a56f3f3af14608c2c5c74322922e508adf6f"
+    },
+    {
+      "path": "data/account-replay-pb12t20.json",
+      "sha256": "0389cd1cf9c50044434a9506045bc100010ab43401710f7540ec0c7b97fe4b53",
+      "blob": "e4b02368ec7ec9446a83778c156d06cc6700669a"
+    },
+    {
+      "path": "data/leaders-study.json",
+      "sha256": "2e5fea7cba614c6a0bd8c048fbf02edef4e666a1f973b214af3f1b0ecbdda81c",
+      "blob": "91a91c48d970310ae50d986d2e3d965089019da0"
+    },
+    {
+      "path": "data/earnings-study.json",
+      "sha256": "a46ec6700fc7dbb8a38c7489a77197b4a2d7aada07e0f30b9cc0625ba3fbbb1c",
+      "blob": "bb63d68955083595bcc5db547a10b76e2aeefa36"
+    },
+    {
+      "path": "data/horizons.json",
+      "sha256": "85915bc40881808c629f65ebbe5700230e6b4fae0652d2f53c71a320a945d4ad",
+      "blob": "a6f4fc13f6661a37cb280446129c2441b241fd42"
+    },
+    {
+      "path": "trade-plan.mjs",
+      "sha256": "97e73a0ec8369d44ab3ac64eaa2b0ef1504c1bd9fc2bbdcca79a61774ffc6376",
+      "blob": "bdbde16c790ba3b1e66ca7495020a82bfae3230a"
+    }
+  ],
+  "implementation": {
+    "command": "mentor SYMBOL",
+    "mode": "DEVELOPMENT_ONLY_EXPLANATION_NOT_BUY_OR_HOLD_APPROVAL",
+    "module": "mentor-plan.mjs",
+    "actualCaller": "scan.mjs tgCommands -> mentorText",
+    "financialMutations": false,
+    "newProviderCalls": false,
+    "approvalGatesChanged": false,
+    "existingExitReminderChanged": false,
+    "frozenResearchChanged": false,
+    "financialMutationsNote": "Mentor-only reads do not mutate financial state; existing new owner-fill recording additionally stores contract metadata. No historical record changed.",
+    "newOwnerFillContractSnapshot": true,
+    "savedSourceChecksumIsAuthentication": false
+  },
+  "remainingReadiness": [
+    "Full frozen-bar evidence and negative adoption retained",
+    "Trusted identity/current ZAD/executable bid-ask/depth/halts/corporate actions",
+    "Original provider event/revision and exact execution evidence still missing; local source/contract snapshot implemented for new records only",
+    "Next-open price/expiry and actual limit-fill evidence",
+    "Close-of126th-session versus existing next-open reminder timing resolution",
+    "Prospective admitted quote/entry/exit/cost/control/portfolio evidence",
+    "Owner agreement before any new evaluation thresholds or source collection scope"
+  ],
+  "acceptanceAdded": 0,
+  "admittedProspectiveCases": 0,
+  "liveWatcherVerification": "PENDING_NATURALLY_SCHEDULED_POST_DEPLOYMENT_RUN; DST not observed",
+  "implementationCommit": "9a04971b17466a73585ba098cc961828ca95d216",
+  "validation": "docs/validation/trading-mentor-workflow.json"
+}

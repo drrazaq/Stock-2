@@ -1,0 +1,74 @@
+{
+  "status": "DEVELOPMENT_VERIFIED_NOT_DEPLOYED",
+  "implementationCommit": "9a04971b17466a73585ba098cc961828ca95d216",
+  "capabilityMap": "docs/trading-mentor-capability-gap-map.md",
+  "selectedLane": "SQ11-PB12 / A-TGT-TGT20-PB12;126sessions;NOT_PROVEN_AND_TARGET_NOT_ADOPTED",
+  "requirementsChanged": [
+    "One actual mentor caller now explains source/entry expiry/recorded fill/whole-share notional/no-stop risk/target/time exit and missing checks",
+    "New LEADER DIP owner-fill records retain a versioned source/contract snapshot; later source replacement cannot rewrite that reference",
+    "Legacy holdings do not borrow current signals as original evidence",
+    "Mentor-only commands preserve positions/encrypted accounting/strategy-ledger bytes; normal command offset still advances",
+    "Registered126th-session close versus legacy next-open mismatch explicitly exposed; no exit-policy change"
+  ],
+  "focusedTests": 11,
+  "actualCallerControls": [
+    "mentor command with synthetic Telegram localhost transport",
+    "bought command snapshot capture with synthetic fill only",
+    "later source replacement and mentor re-read without financial mutation",
+    "conflicting producer dates and missing/legacy source",
+    "registered evidence NOT_PROVEN/adoption=false preserved"
+  ],
+  "existingLeaderDipControls": 14,
+  "existingRecordedPlanControls": 26,
+  "node": {
+    "files": 197,
+    "cases": 1854,
+    "failures": []
+  },
+  "python": {
+    "tests": 30,
+    "failures": 0
+  },
+  "static": {
+    "modules": 252,
+    "yaml": 86,
+    "shellBlocks": 328,
+    "failures": []
+  },
+  "frozenResearchChanged": false,
+  "strategyOrExecutionGatesChanged": false,
+  "productionDeployment": false,
+  "realMessages": 0,
+  "realOrders": 0,
+  "providerCollectionExpansion": false,
+  "acceptanceAdded": 0,
+  "wholeMissionAcceptance": {
+    "complete": 24,
+    "total": 40,
+    "CATALYST-03": "OPEN",
+    "ACTIONS-04": "OPEN",
+    "EXEC-03": "OPEN",
+    "admittedProspectiveCases": 0
+  },
+  "deploymentPreservation": {
+    "accountingSha": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+    "watcherSha": "be3159015708be8f4f8df1384453b97fad1198db",
+    "mainAtPassiveCheck": "3aba5a1788e6d965109a34af642e62976710b5bd",
+    "allWatcherAndAccountingHashesStillMatch": true,
+    "existingEvidence": "docs/validation/watcher-v5-deployment-result.json"
+  },
+  "passiveWatcher": {
+    "checkedAt": "2026-10-30T20:31:48Z",
+    "newPostDeploymentIgnitionRunObserved": false,
+    "latestCompletedIgnitionRuns": [
+      41072889693,
+      41061535419
+    ],
+    "archivesSnapshotDuplicateHealthPublication": "PENDING_NATURAL_RUN",
+    "novemberDST": "PENDING_ACTUAL_NATURAL_RUN;offline calendar test is not live evidence",
+    "nextOrdinaryWeekday": "2026-11-02",
+    "manualDispatches": 0
+  },
+  "remaining": "Original provider revision/identity, executable quotes/size/costs, next-open constraint and close-timed exit reconciliation, portfolio limits and admitted prospective evaluation remain unmet. No source activation or new evaluation thresholds authorized.",
+  "exactPublishedCI": "Use exact published SHA in PR1/GitHub checks; no historical CI borrowed."
+}
