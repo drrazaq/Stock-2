@@ -1474,8 +1474,8 @@ function saleState() {
 function finishPendingSale(pv,pos) {
  const tx=pv.pendingSale;if(!tx)return;
  if(!tx||typeof tx!=='object'||!/^[a-f0-9]{64}$/.test(tx.id||'')||typeof tx.sym!=='string'||!tx.row||tx.row.saleId!==tx.id||tx.row.sym!==tx.sym||!(tx.position===null||tx.position&&typeof tx.position==='object'))throw Error('invalid pending sale');
- const rows=fs.existsSync(MY_TRADES)?fs.readFileSync(MY_TRADES,'utf8').split('\n').filter(Boolean):[];
- if(!rows.some(line=>JSON.parse(line).saleId===tx.id))atomicOwnerWrite(MY_TRADES,rows.concat(JSON.stringify(tx.row)).join('\n')+'\n');
+ const raw=fs.existsSync(MY_TRADES)?fs.readFileSync(MY_TRADES,'utf8'):'',rows=raw.split('\n').filter(x=>x.trim());
+ if(!rows.some(line=>JSON.parse(line).saleId===tx.id))atomicOwnerWrite(MY_TRADES,raw+(raw&&!raw.endsWith('\n')?'\n':'')+JSON.stringify(tx.row)+'\n');
  if(tx.position===null)delete pos[tx.sym];else pos[tx.sym]=tx.position;
  atomicOwnerWrite(POS_FILE,JSON.stringify(pos,null,1));
  const done={...pv,saleReceipts:[...(pv.saleReceipts||[]),tx.id].slice(-500)};delete done.pendingSale;
