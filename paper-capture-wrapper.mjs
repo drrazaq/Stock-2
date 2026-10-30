@@ -35,7 +35,7 @@ export function prepareCaptureGuard({root,reviewRoot,approvalFile,referenceFile,
  ok(a.runtimeFiles&&Object.keys(a.runtimeFiles).sort().join('|')===[...WRAPPER_FILES].sort().join('|'),'COMPLETE_DEPENDENCY_SET');
  for(const file of WRAPPER_FILES){const s=remember(path.join(root,file),1024*1024);ok(s.hash===a.runtimeFiles[file],'RUNTIME_FILE_PIN');const blob=execFileSync('git',['--no-replace-objects','-c','protocol.allow=never','show',p.sourceSha+':'+file],{cwd:root,timeout:5000,maxBuffer:1024*1024,stdio:['ignore','pipe','ignore'],env:{PATH:process.env.PATH,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}});ok(sha(blob)===s.hash,'RUNTIME_GIT_BLOB_PIN');}
  const ref=remember(referenceFile,WRAPPER_CAPS.referenceBytes);ok(ref.hash===a.referenceSha256&&p.enrollmentManifestSha256===inputFingerprint(ref.hash,p),'INPUT_MANIFEST_PIN');
- const references=validateReferenceBundle(ref.bytes.toString(),a);const initialHead=p.sourceSha,workflowHead=a.workflowCommitSha;let historyVerified=false;
+ const references=validateReferenceBundle(ref.bytes.toString(),a);references.inputIngestedAt=new Date(now).toISOString();for(const m of references.metadata){m.sourceCapturedAt=m.asOf;m.asOf=references.inputIngestedAt;}const initialHead=p.sourceSha,workflowHead=a.workflowCommitSha;let historyVerified=false;
  function verifyHistory(h){
  ok(h&&Number.isInteger(h.total_count)&&h.total_count>=1&&h.total_count<=100&&Array.isArray(h.workflow_runs)&&h.total_count===h.workflow_runs.length,'COMPLETE_RUN_HISTORY_REQUIRED');
  const window=h.workflow_runs.filter(r=>r.event==='workflow_dispatch'&&r.head_branch==='Stock2-safety-fixes'&&stamp(r.created_at)>=Date.parse(p.start)-86400000&&stamp(r.created_at)<=now);
@@ -64,7 +64,7 @@ export async function runGuardedCapture({root,reviewRoot,approvalFile,referenceF
   persist:async state=>{try{
    const sequence=state.frames.length-1,name='checkpoint-'+String(sequence).padStart(3,'0')+'.enc';
    const contextTag={kind:'GUARDED_PAPER_CAPTURE_V1',sourceSha:a.plan.sourceSha,approvalHash:guard.approvalHash,referenceHash:guard.references.sha256,runId:context.runId,cohort:'CALIBRATION',sequence,chain:state.chain};
-   const payload=Buffer.from(JSON.stringify({approvalRaw:guard.approvalRaw,referenceRaw:guard.references.raw,eventBatches,state}));ok(payload.length<=8*1024*1024,'CHECKPOINT_PLAIN_BUDGET');
+   const payload=Buffer.from(JSON.stringify({approvalRaw:guard.approvalRaw,referenceRaw:guard.references.raw,inputIngestedAt:guard.references.inputIngestedAt,eventBatches,state}));ok(payload.length<=8*1024*1024,'CHECKPOINT_PLAIN_BUDGET');
    const body=Buffer.from(JSON.stringify(sealResearch(payload,key,contextTag)));
    sealedBytes+=body.length;ok(body.length<=16*1024*1024&&sealedBytes<=WRAPPER_CAPS.sealedBytes&&receipts.length<41,'SEALED_UPLOAD_BUDGET');
    const file=path.join(absolute,name);fs.writeFileSync(file,body,{flag:'wx',mode:0o600});pending.push(name);guard.revalidate();
@@ -83,7 +83,7 @@ export async function runGuardedCapture({root,reviewRoot,approvalFile,referenceF
 export function recoverUploadedCapture({archives,receiptRaw,expectedReceiptSha256,expectedApprovalHash,expectedSourceSha,key}){
  ok(Buffer.byteLength(receiptRaw)<=65536&&sha(receiptRaw)===expectedReceiptSha256,'RECEIPT_MANIFEST_PIN');const m=captureJson(receiptRaw);
  ok(m.version===1&&m.sourceSha===expectedSourceSha&&m.approvalHash===expectedApprovalHash&&m.cohort==='CALIBRATION'&&Number.isSafeInteger(m.runId)&&m.runId>0&&Array.isArray(m.receipts)&&m.receipts.length>=1&&m.receipts.length<=41,'RECOVERY_MANIFEST_SCOPE');
- let total=0,last=null,previousChain='0'.repeat(64);const seen=new Set();
+ let total=0,last=null,lastPayload=null,previousChain='0'.repeat(64);const seen=new Set();
  for(let i=0;i<m.receipts.length;i++){
   const r=m.receipts[i],name='checkpoint-'+String(i).padStart(3,'0')+'.enc',zip=archives.get(r.artifactId);ok(r.sequence===i&&r.name===name&&!seen.has(r.artifactId)&&r.retentionDays===3&&r.success===true,'RECOVERY_ORDER_OR_RECEIPT');seen.add(r.artifactId);
   ok(Buffer.isBuffer(zip)&&zip.length===r.archiveBytes&&sha(zip)===r.archiveSha256,'DOWNLOADED_ARTIFACT_DIGEST');total+=zip.length;ok(total<=WRAPPER_CAPS.archiveBytes,'RECOVERY_ARCHIVE_BUDGET');
@@ -91,8 +91,8 @@ export function recoverUploadedCapture({archives,receiptRaw,expectedReceiptSha25
   ok(c?.kind==='GUARDED_PAPER_CAPTURE_V1'&&c.sourceSha===m.sourceSha&&c.approvalHash===m.approvalHash&&c.runId===m.runId&&c.cohort===m.cohort&&c.sequence===i,'RECOVERY_CONTEXT');
   const p=captureJson(openResearch(envelope,key).toString());ok(sha(p.approvalRaw)===m.approvalHash&&sha(p.referenceRaw)===c.referenceHash,'RECOVERY_INPUT_PIN');
   const a=captureJson(p.approvalRaw);validateReferenceBundle(p.referenceRaw,a);ok(a.plan.sourceSha===m.sourceSha&&a.plan.cohort==='CALIBRATION'&&a.plan.enrollmentManifestSha256===inputFingerprint(c.referenceHash,a.plan),'RECOVERY_PLAN');
-  const state=recoverCapture(checkpointCapture(p.state,key),key,a.plan);ok(Array.isArray(p.eventBatches)&&p.eventBatches.length===state.frames.length&&p.eventBatches.every((b,j)=>sha(b.raw)===b.sha256&&JSON.stringify(captureJson(b.raw).events)===JSON.stringify(state.frames[j].frame.events)),'RECOVERY_EVENT_SOURCE_BYTES');ok(state.frames.length===i+1&&state.frames[i].previous===previousChain&&state.chain===c.chain,'RECOVERY_CONTIGUOUS_CHAIN');
-  if(last)ok(JSON.stringify(state.frames.slice(0,-1))===JSON.stringify(last.frames),'RECOVERY_PREFIX_CHANGED');last=state;previousChain=state.chain;
+  const state=recoverCapture(checkpointCapture(p.state,key),key,a.plan);ok(Number.isFinite(stamp(p.inputIngestedAt))&&stamp(p.inputIngestedAt)<=Date.parse(a.plan.start)&&state.frames.every(x=>x.frame.metadata.every(m=>m.asOf===p.inputIngestedAt&&stamp(m.sourceCapturedAt)<=stamp(m.asOf))),'RECOVERY_METADATA_INGESTION_CLOCK');ok(Array.isArray(p.eventBatches)&&p.eventBatches.length===state.frames.length&&p.eventBatches.every((b,j)=>sha(b.raw)===b.sha256&&JSON.stringify(captureJson(b.raw).events)===JSON.stringify(state.frames[j].frame.events)),'RECOVERY_EVENT_SOURCE_BYTES');ok(state.frames.length===i+1&&state.frames[i].previous===previousChain&&state.chain===c.chain,'RECOVERY_CONTIGUOUS_CHAIN');
+  if(last)ok(JSON.stringify(state.frames.slice(0,-1))===JSON.stringify(last.frames),'RECOVERY_PREFIX_CHANGED');last=state;lastPayload=p;previousChain=state.chain;
  }
- return {status:last.frames.length===41?'AUTHENTICATED_COMPLETE':'AUTHENTICATED_INCOMPLETE',frames:last.frames.length,state:last,report:finishCapture(last),genuineAdmissions:0,automaticResumeAuthorized:false};
+ return {status:last.frames.length===41?'AUTHENTICATED_COMPLETE':'AUTHENTICATED_INCOMPLETE',frames:last.frames.length,state:last,originalInputs:{approvalRaw:lastPayload.approvalRaw,referenceRaw:lastPayload.referenceRaw,eventBatches:lastPayload.eventBatches},report:finishCapture(last),genuineAdmissions:0,automaticResumeAuthorized:false};
 }
