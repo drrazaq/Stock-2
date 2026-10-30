@@ -1,0 +1,176 @@
+{
+  "status": "VERIFIED_PREPARED_NOT_DEPLOYED_INDEPENDENT_REVIEW_REQUIRED",
+  "sourceSha": "1b5769432bf6f991c0b75e5bffa3f5be65e60a30",
+  "accountingSource": "09f16792b373268d70e45a535d6a7b02afecf6a5",
+  "productionBase": "840fb269fe3f829237ed2a96d25a6136d1db059e",
+  "reviewAttachments": {
+    "3-REVIEW-v2_md.md": "909bf373c10e59e1234fda9c2310544469857b21844228136e44eb8d2875080a",
+    "4-probe-ldip-recovery-output_txt.txt": "e43ccd4b12f30cf57825f363b3ed102de09235b2e2c50b87fc9e5a08878d632d",
+    "1-reproduce-reservation-crash_mjs.js": "8cf5a124c452d643ccfb3f688a5f247d3ad6a9f4db22255e3dfcf3cf3c63d28e",
+    "2-probe-ldip-recovery_test_mjs.js": "1f4448c26068ac532c35843ba624b5735f4895dfbfce6954ec9ccb6b24d260f1"
+  },
+  "B1": {
+    "independentlyReproducedBeforeEdit": true,
+    "before": {
+      "actions": true,
+      "exit": 1,
+      "snapshots": 1,
+      "messages": 0,
+      "archives": 0
+    },
+    "afterSamePublicationRefusal": {
+      "exit": 0,
+      "snapshots": 1,
+      "messages": 0,
+      "archives": [
+        "progress",
+        "final",
+        "shadow"
+      ]
+    },
+    "actualProductionWatcherCases": 6,
+    "helperStateCases": 1,
+    "actionsTrue": true,
+    "realDisposableRemotes": true,
+    "scenarios": [
+      "moved remote",
+      "competing senders",
+      "publication refusal then retry",
+      "SIGKILL after progress; unconfirmed messages unsent",
+      "lost response; no automatic resend",
+      "explicit rejection; known-unsent retry"
+    ],
+    "publicationMechanism": "isolated index/private ref, bounded normal fast-forward CAS; active source/HEAD/index unchanged",
+    "publicationBounds": {
+      "attempts": 3,
+      "budgetMs": 4000,
+      "cleanupMs": 1000,
+      "perKeyRetryCooldownMs": 60000
+    },
+    "states": [
+      "UNSENT",
+      "RESERVED",
+      "ACKNOWLEDGED",
+      "UNCERTAIN"
+    ]
+  },
+  "A1": {
+    "independentlyReproducedBeforeEdit": true,
+    "beforeRecovery": {
+      "journal": 1,
+      "strategyResults": 0,
+      "positionRemoved": true
+    },
+    "afterRecovery": {
+      "journal": 1,
+      "strategyResults": 1,
+      "positionRemoved": true
+    },
+    "losingSaleWriteBoundaryCases": 10,
+    "boundaries": [
+      "encrypted prepare before/after",
+      "journal before/after",
+      "strategy ledger before/after",
+      "position before/after",
+      "encrypted receipt before/after"
+    ],
+    "idempotence": "same sale ID across journal, strategy result and encrypted receipt; one negative realized result",
+    "historicalFinancialFilesModified": false
+  },
+  "productionBaseFullSuites": {
+    "watcher": {
+      "scope": "watcher",
+      "baseMain": "840fb269fe3f829237ed2a96d25a6136d1db059e",
+      "patches": [
+        "ab20578eac345d17634e230d8b577d1bac14ebb987029aa7da19e06959d24e91"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 116,
+      "reportedCases": 1145,
+      "failures": [],
+      "rootModulesChecked": 203,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false
+    },
+    "accounting": {
+      "scope": "accounting",
+      "baseMain": "840fb269fe3f829237ed2a96d25a6136d1db059e",
+      "patches": [
+        "f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 115,
+      "reportedCases": 1140,
+      "failures": [],
+      "rootModulesChecked": 195,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false
+    },
+    "combined": {
+      "scope": "combined",
+      "baseMain": "840fb269fe3f829237ed2a96d25a6136d1db059e",
+      "patches": [
+        "ab20578eac345d17634e230d8b577d1bac14ebb987029aa7da19e06959d24e91",
+        "f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 119,
+      "reportedCases": 1173,
+      "failures": [],
+      "rootModulesChecked": 203,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false
+    }
+  },
+  "branchSuite": {
+    "files": 193,
+    "reportedCases": 1810,
+    "failures": [],
+    "tempIsolation": true
+  },
+  "pythonTests": 30,
+  "static": {
+    "modules": 249,
+    "activeYaml": 86,
+    "proposedYaml": 1,
+    "shellBlocks": 332,
+    "pythonSyntax": 13,
+    "failures": []
+  },
+  "initialFailuresPreserved": {
+    "accountingScope": [
+      "test/tier2-ledger.test.mjs"
+    ],
+    "branch": [
+      "leader-dip-sale-recovery.test.mjs"
+    ],
+    "cause": "Concurrent scopes reused the existing /tmp/logic-Date.now.cjs name and observed the same truncated file; isolated-temp reruns pass. No production cache-policy change bundled."
+  },
+  "ciEvidence": "docs/validation/incident-v3-ci.json",
+  "instrumentReference": {
+    "status": "PREPARED_NOT_AUTHORIZED_NOT_ACTIVATED",
+    "offlineContractCases": 4,
+    "proposal": "docs/instrument-reference-bounded-proposal.json",
+    "readiness": "NOT_ESTABLISHED; zero approved alerts is not completion",
+    "unknownResearchRetained": true,
+    "identityAndZadSafeguardsUnchanged": true
+  },
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "changed": 0
+  },
+  "prospectiveAdmissions": 0,
+  "productionChanges": false,
+  "P2PrivacyZadPolicyChanges": false,
+  "realMessagesOrProductionFinancialTestEvents": false
+}

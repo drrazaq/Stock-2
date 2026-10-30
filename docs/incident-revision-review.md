@@ -1,3 +1,5 @@
+> **Current: v2 B1/A1 reproduced and repaired in [v3 exact-scope packet](incident-v3-review.md).** Earlier packages remain unapproved; do not deploy them or merge PR1. Historical evidence below is retained. Independent review is not policy/deployment authority.
+
 # Incident repair v2 — independent re-review requested, not deployment
 
 30 October 2026. Claude returned **CHANGES REQUIRED** on the earlier packages. Neither v1 package is approved. This revision replaces the proposed watcher-only scope and supplies an independently applicable accounting patch. The 16-file/P2 proposal remains separate and blocked. No production, collection, messaging, permission or secret changes have been executed.

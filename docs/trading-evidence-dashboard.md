@@ -2,11 +2,11 @@
 
 Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
 
-Current priority: [V2 incident repair — independent re-review required](incident-revision-review.md). Claude rejected the earlier packages; do not deploy v1 or merge PR1. Watcher source0b497caff2a98d56e22f244cf9aa5fcfc151b3da passes12 exact CI checks; separate accountingec0960e62675a7706843fe5f0c33d594ae160ff1 passes13. Production base66dd28ecd66d28f8db3449d157b650762c9ebeeb is read-only; all112 original tests retained in each exact-scope run (watcher115, accounting114, combined117 files, all pass). [Results](validation/incident-revision-v2.json), [handoff](resume-precise-checkpoint.md).
+Current priority: [incident v3 B1/A1 review](incident-v3-review.md). Separate watcher20-file/accounting5-file scopes preserve observations during publication failures and restore losing-sale strategy evidence on recovery. All112 production tests retained; full scopes116/115/119 files pass on main840fb269fe3f829237ed2a96d25a6136d1db059e. Source1b5769432bf6f991c0b75e5bffa3f5be65e60a30 passes12 exact CI checks; accounting09f16792b373268d70e45a535d6a7b02afecf6a5 passes13. [Verification](validation/incident-v3.json), [handoff](resume-precise-checkpoint.md).
 
-UNKNOWN instruments remain research context; approved BUY stays blocked. Explicit classified enrollment gets a distinct cohort, excluded from the old primary. The configured331-minute window is separate from390-minute cash-session coverage. October29 primary exclusion and October28 excluded pilot remain; reconstruction is secondary only. No ZAD policy/mark changes;170 list-sourced positives need separate provenance/owner-confirmation review.
+[Bounded authoritative instrument-reference preparation](instrument-reference-readiness.md) remains unactivated: rights, trusted capture/provenance, private encrypted storage and dated scope/binding approval are missing. Identity UNKNOWN retains research and blocks approved BUY. Permanent zero approved alerts is not completion. P2, ZAD policy and privacy remain excluded;170 list-sourced positives are not automatically approved/revoked.
 
-Acceptance24/40;16OPEN; CATALYST-03/ACTIONS-04 open. Prospective cases0; validated trading advantage NOT ESTABLISHED. Next decision is Claude re-review, **not deployment**. Earlier milestone sections below are historical; canonical status is current-engineering-status.json.
+Acceptance24/40;16OPEN; CATALYST-03/ACTIONS-04 open. Prospective admissions0; profitability NOT ESTABLISHED; Massive15-minute delayed; broad SIP rights/coverage unverified. October29 excluded primary and October28 excluded pilot; recovery secondary only. Next decision: independent v3 re-review, not deployment. Earlier entries are historical.
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|
