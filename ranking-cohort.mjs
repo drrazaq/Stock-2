@@ -1,3 +1,6 @@
 // Dated owner decision changes evidence admission, never the frozen ranking rules.
 export const RANKING_COHORT_DECISION=Object.freeze({recordedAt:'2026-10-30',authority:'OWNER_INSTRUCTION_IN_SESSION',excludedPrimaryDays:['2026-10-28','2026-10-29'],reasons:{'2026-10-28':'ORIGINAL_PILOT; duplicate overwrite, incomplete coverage, retrospective recovery','2026-10-29':'OWNER_EXCLUDED_PRIMARY; duplicate overwrite and incomplete observation coverage'},recoveredEvidence:'SECONDARY_RECONSTRUCTION_ONLY_NOT_UNTOUCHED_CONFIRMATION'});
 export const primaryRankingDay=day=>!RANKING_COHORT_DECISION.excludedPrimaryDays.includes(day);
+
+// An instrument-classified enrollment policy requires a separately frozen, approved cohort.
+export const primaryRankingRow=r=>primaryRankingDay(r?.d)&&(!r?.rankingCohort||r.rankingCohort==='LEGACY_FROZEN_20261028');

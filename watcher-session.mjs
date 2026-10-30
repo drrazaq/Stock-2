@@ -15,10 +15,11 @@ export function sessionEvidence(snapshot) {
   const c=snapshot.coverage||snapshot, minutes=Number.isFinite(c.observedMinutes)?c.observedMinutes:Number.isFinite(c.minutesWatched)?c.minutesWatched:Number.isFinite(c.minutes)?c.minutes:0;
   return {minutes:Math.max(0,minutes),usableMinutes:0,first:null,last:null,complete:false};
 }
-export function sessionFinished(snapshot, day) {
-  const e=sessionEvidence(snapshot);
+export function sessionFinished(snapshot, day, {open=570,endExclusive=marketSession(day).close}={}) {
   const s=marketSession(day);
-  return snapshot?.day===day && !s.closed && e.complete && e.usableMinutes>=s.close-s.open && e.last>=s.close-1;
+  if(snapshot?.day!==day||!s.known||s.closed||!Number.isInteger(open)||!Number.isInteger(endExclusive)||endExclusive<=open||endExclusive>s.close)return false;
+  const usable=new Set((snapshot.heartbeat||[]).filter(x=>Number.isInteger(x?.m)&&x.received>0&&x.evaluated>0).map(x=>x.m));
+  return Array.from({length:endExclusive-open},(_,i)=>open+i).every(m=>usable.has(m));
 }
 export function preferSession(existing, candidate) {
   if (!candidate || !candidate.day) return false;

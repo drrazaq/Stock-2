@@ -1,4 +1,4 @@
-import {RANKING_COHORT_DECISION,primaryRankingDay} from './ranking-cohort.mjs';
+import {RANKING_COHORT_DECISION,primaryRankingDay,primaryRankingRow} from './ranking-cohort.mjs';
 // SHADOW RANKING EXPERIMENT (owner approved A/B/C on 28 Oct 2026; D added at the owner's request and FROZEN here the same day, before any
 // D candidate existed; R and R0 are no-skill controls). Shadow only: nothing here changes which alert is sent (live ranking stays A,
 // first come, until the owner approves a change after a separate confirmation period). Pure functions; shadow-outcomes.mjs runs them.
@@ -48,7 +48,7 @@ export function dEligible(q) {
   if (!(q.price >= 1)) why.push('under 1 USD'); if (!(q.prevDollarVol >= 1e6)) why.push('under 1M USD traded the day before');
   if (q.spreadFresh && q.spread !== null && q.spread > 0.02) why.push('spread over 2%');
   if (q.halalFail) why.push('NOT HALAL'); if (q.lottery >= 0.15) why.push('AVOID list');
-  if(q.sec?.status==='NO_ISSUER_RECORD')why.push('NO_ISSUER_RECORD (not inferred instrument type)');else if(q.sec?.policyExcluded)why.push('instrument policy exclusion');else if(q.sec?.admissionBlocked)why.push('instrument identity UNKNOWN');
+  if(q.sec?.status==='NO_ISSUER_RECORD')why.push('NO_ISSUER_RECORD (not inferred instrument type)');else if(q.sec?.policyExcluded)why.push('instrument policy exclusion');
   if ((!q.sec || !q.sec.known)&&!q.sec?.policyExcluded&&q.sec?.status!=='NO_ISSUER_RECORD') why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
   return { eligible: why.length === 0, why };
 }
@@ -70,13 +70,13 @@ function summarizePicks(rows, outcomes) {
 }
 // streams: { E: rows, F: rows, N: rows } with r = { d, sym, m, chg, e: {px,bid,ask,qAgeSec,next,px30}, last, ...model inputs }
 export function evaluate(streams, outcomes = {}, from = FROZEN.evalFrom, {secondary=false}={}) {
-  const out = { frozen: FROZEN,cohort:secondary?'SECONDARY_RECONSTRUCTION':'PRIMARY',admissionDecision:RANKING_COHORT_DECISION, models: {}, streams: {} };
-  for (const [k, rows] of Object.entries(streams)) { const rs = rows.filter(r => r.d >= from && (secondary||primaryRankingDay(r.d))); out.streams[k] = { candidates: rs.length, sessions: new Set(rs.map(r => r.d)).size, all: summarizePicks(rs.filter(r => k !== 'F' || r.dEligible), outcomes) }; }
-  for (const [id, M] of Object.entries(MODELS)) { const rs = (streams[M.stream] || []).filter(r => r.d >= from && (secondary||primaryRankingDay(r.d))), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r);
+  const out = { instrumentScope:'LEGACY_MIXED_INSTRUMENT_RESEARCH',prospectiveAdmission:'NOT_ESTABLISHED',unapprovedCohortRows:Object.values(streams).flat().filter(r=>r.rankingCohort&&r.rankingCohort!=='LEGACY_FROZEN_20261028').length, frozen: FROZEN,cohort:secondary?'SECONDARY_RECONSTRUCTION':'PRIMARY',admissionDecision:RANKING_COHORT_DECISION, models: {}, streams: {} };
+  for (const [k, rows] of Object.entries(streams)) { const rs = rows.filter(r => r.d >= from && (secondary||primaryRankingRow(r))); out.streams[k] = { candidates: rs.length, sessions: new Set(rs.map(r => r.d)).size, all: summarizePicks(rs.filter(r => k !== 'F' || r.dEligible), outcomes) }; }
+  for (const [id, M] of Object.entries(MODELS)) { const rs = (streams[M.stream] || []).filter(r => r.d >= from && (secondary||primaryRankingRow(r))), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r);
     out.models[id] = { name: M.name, stream: M.stream, ...summarizePicks(Object.values(byDay).flatMap(d => pick(d, M)), outcomes) }; }
   // alert-cap opportunity cost (stream E): what A's first five did vs the eligible candidates that arrived after the cap, and a hindsight
   // best five (an upper bound nobody could pick live, shown only to size what first-come gives up)
-  { const rs = (streams.E || []).filter(r => r.d >= from && (secondary||primaryRankingDay(r.d))), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r); const first = [], after = [], best = [];
+  { const rs = (streams.E || []).filter(r => r.d >= from && (secondary||primaryRankingRow(r))), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r); const first = [], after = [], best = [];
     for (const d of Object.values(byDay)) { const a = pick(d, MODELS.A), set = new Set(a.map(x => x.sym)); first.push(...a); after.push(...d.filter(x => !set.has(x.sym)));
       best.push(...d.map(r => ({ r, v: scoreRow(r, outcomes).day })).filter(x => x.v !== null).sort((x, y) => y.v - x.v).slice(0, FROZEN.cap).map(x => x.r)); }
     out.capCost = { firstFive: summarizePicks(first, outcomes), afterCap: summarizePicks(after, outcomes), hindsightBestFive: summarizePicks(best, outcomes) }; }

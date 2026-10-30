@@ -33,7 +33,6 @@ export function hardReason({ price, halalFail, lottery, sec }) {
   if (!(price >= 1)) return 'under 1 USD'; if (halalFail) return 'NOT HALAL (ZAD)'; if (lottery >= 0.15) return 'AVOID list (one-day jump ' + pct(lottery) + ')';
   if(sec?.status==='NO_ISSUER_RECORD')return 'NO_ISSUER_RECORD (instrument not inferred; blocked, not a transport failure)';
   if(sec?.policyExcluded)return 'instrument policy exclusion (not a SEC source failure)';
-  if(sec?.admissionBlocked)return 'instrument identity UNKNOWN (not admitted)'+(sec.sourceFailure?'; SEC source unavailable':' ; no SEC source failure recorded');
   if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
   return null;
 }
@@ -135,6 +134,7 @@ export function createEarlyAlerts(opts) {
       for (const kind of ['paper', 'lead']) { const q = S.queue[kind].splice(0), out = [];
         for (const row of q) { const c = row.c; delete row.c;
           const hard = hardReason({ price: c.price, halalFail: opts.notHalal(c.sym), lottery: (opts.lottery || {})[c.sym], sec: await secOf(c.sym) });
+          row.instrument=S.sec[c.sym]?.instrument||{status:'UNKNOWN'}; row.collectionVersion='WATCHER_CONTEXT_V2'; row.rankingCohort=opts.collectionCohort||'LEGACY_FROZEN_20261028'; row.approvedBuyEligible=false; row.performanceScope='LEGACY_MIXED_INSTRUMENT_RESEARCH'; c.instrument=row.instrument;
           if (hard) { row.decision = 'HARD: ' + hard; continue; }
           if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catText = c.cat.text; row.catEvidence = c.cat.evidence; row.catCheckedAt = c.cat.checkedAt; row.catSources = c.cat.sourceAvailability; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
           if (!levelAllows(S.level, kind)) { row.decision = 'MUTED: alerts ' + S.level; continue; }
@@ -143,7 +143,8 @@ export function createEarlyAlerts(opts) {
           out.push({ row, c }); }
         if (!out.length) continue;
         const text = kind === 'lead' ? leadText(out.map(x => x.c), { halalOk: opts.halalOk }) : paperText(out.map(x => x.c));
-        const r = await opts.send(text).catch(e => ({ ok: false, why: e.message })), at = opts.now();
+        const labelled=text+'\nRESEARCH ONLY. Instrument identity may be UNKNOWN; unverified instruments are retained as context and are excluded from verified common-stock performance claims. This is never approved BUY eligibility.';
+        const r = await opts.send(labelled).catch(e => ({ ok: false, why: e.message })), at = opts.now();
         for (const x of out) { x.row.decision = r && r.ok ? 'SENT' : 'SEND FAILED' + (r && r.why ? ': ' + r.why : ''); x.row.sentM = at; x.row.latencyMin = at - x.row.m; }
         if (r && r.ok) S.sent[kind] += out.length; } },
     // end of the session: one row per candidate with its 15:00 price and net result after the 6 USD round trip and the spread

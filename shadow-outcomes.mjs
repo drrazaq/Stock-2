@@ -55,9 +55,9 @@ const report = { generatedAt: new Date().toISOString(), feed: feedUsed, preRegis
 // RANKING EXPERIMENT (rank-models.mjs, frozen 28 Oct): the three candidate streams, built only from what was recorded at decision time
 const SH = new Map(shadowRows.map(r => [r.d + '|' + r.sym, r]));
 const E = oppEl.filter(r => r.kind === 'lead').map(r => { const sh = SH.get(r.d + '|' + r.sym), base = sh && sh.v && sh.v.base;
-  return { d: r.d, sym: r.sym, m: r.m, chg: r.chg, cat: r.cat, rvT: r.rvT, dollarVol: r.dollarVol, bid: r.bid, ask: r.ask, decision: r.decision, e: base && base.m === r.m ? base : { m: r.m, px: r.px, bid: r.bid, ask: r.ask, qAgeSec: r.qAgeSec, next: null, px30: null }, last: sh ? sh.last : r.px15 }; });
-const F = shadowRows.filter(r => r.f && r.v && r.v.D).map(r => ({ d: r.d, sym: r.sym, m: r.f.decM, chg: r.f.chg, dEligible: r.f.eligible, why: r.f.why, e: r.v.D, last: r.last }));
-const N = shadowRows.filter(r => r.v && r.v.R0).map(r => ({ d: r.d, sym: r.sym, m: r.v.R0.m, chg: r.chg0, e: r.v.R0, last: r.last }));
+  return { rankingCohort:r.rankingCohort||sh?.rankingCohort,instrument:r.instrument||sh?.instrument, d: r.d, sym: r.sym, m: r.m, chg: r.chg, cat: r.cat, rvT: r.rvT, dollarVol: r.dollarVol, bid: r.bid, ask: r.ask, decision: r.decision, e: base && base.m === r.m ? base : { m: r.m, px: r.px, bid: r.bid, ask: r.ask, qAgeSec: r.qAgeSec, next: null, px30: null }, last: sh ? sh.last : r.px15 }; });
+const F = shadowRows.filter(r => r.f && r.v && r.v.D).map(r => ({ rankingCohort:r.rankingCohort,instrument:r.instrument, d: r.d, sym: r.sym, m: r.f.decM, chg: r.f.chg, dEligible: r.f.eligible, why: r.f.why, e: r.v.D, last: r.last }));
+const N = shadowRows.filter(r => r.v && r.v.R0).map(r => ({ rankingCohort:r.rankingCohort,instrument:r.instrument, d: r.d, sym: r.sym, m: r.v.R0.m, chg: r.chg0, e: r.v.R0, last: r.last }));
 report.ranking = evaluate({ E, F, N }, outcomes);
 report.rankingPilot = evaluate({ E, F, N }, outcomes, '2026-10-28', {secondary:true});   // includes the first live day (28 Oct, code deployed that morning): a pilot, never counted in the verdict
 report.dFeed = { filingsDecided: F.length, dEligible: F.filter(r => r.dEligible).length, topReasons: Object.entries(F.flatMap(r => r.why || []).reduce((o, w) => (o[w.replace(/ [\d.,]+$/, '')] = (o[w.replace(/ [\d.,]+$/, '')] || 0) + 1, o), {})).sort((a, b) => b[1] - a[1]).slice(0, 6) };

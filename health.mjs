@@ -58,7 +58,7 @@ for (const [f, name, how, lim, check] of CHECKS) {
 // WATCHER START (28 Oct, owner item 4): the live watcher must be watching by 9:35 New York. GitHub's cron started it 9:38-9:49 every day and
 // 11:10 on 26 Oct; the watcher guard (watcher-guard.mjs, in the bot job) now starts it when GitHub has not. This reads the last watched day.
 const watcherEvidence=readWatcherReport();
-if(!watcherEvidence.complete)problems.push(watcherEvidence.text);else ok.push('live watcher minute coverage');
+if(watcherEvidence.actionable)problems.push(watcherEvidence.text);else ok.push(watcherEvidence.text);
 // MISSING SCRIPTS: every 'node X.mjs' named in a workflow must exist. A file deleted during an upload (shares.mjs, 16 Oct 2026) made
 // a 'continue on error' step fail silently every day; this catches it the same evening.
 try { const W = '.github/workflows', seen = new Set();
@@ -66,7 +66,8 @@ try { const W = '.github/workflows', seen = new Set();
     if (seen.has(m[1])) continue; seen.add(m[1]); if (!fs.existsSync(m[1])) problems.push('the script ' + m[1] + ' is missing from the main folder, but the workflow ' + f + ' runs it. Upload it again (it was probably deleted during an upload).'); }
   if (seen.size) ok.push('workflow scripts present'); } catch (e) {}
 const H = readJson('data/health.json') || {}, key = problems.join('|'), today = new Date().toISOString().slice(0, 10);
-fs.writeFileSync('data/health.json', JSON.stringify({ at: new Date().toISOString(), ok: ok.length, problems, sentKey: H.sentKey, sentDay: H.sentDay }, null, 1));
+fs.writeFileSync('data/health.json', JSON.stringify({ at: new Date().toISOString(), ok: ok.length, watcher:watcherEvidence, problems, sentKey: H.sentKey, sentDay: H.sentDay }, null, 1));
+console.log(watcherEvidence.text);
 console.log('health: ' + ok.length + ' fine, ' + problems.length + ' problems' + (problems.length ? '\n- ' + problems.join('\n- ') : ''));
 // tell the owner once per day per set of problems (and once when everything is fine again)
 const recovered = !problems.length && H.problems && H.problems.length;

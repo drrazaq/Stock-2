@@ -14,6 +14,7 @@ const readJson = (f, d = null) => { try { return JSON.parse(fs.readFileSync(f, '
 const readLines = (f) => { try { return fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)); } catch (e) { return []; } };
 const nyDay = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
 async function telegram(text) {
+  text+='\nInstrument identity may be UNKNOWN. Mixed-instrument RESEARCH ONLY; not verified common-stock performance or admitted prospective evidence.';
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return; }
   const parts = []; let cur = ''; for (const l of text.split('\n')) { if ((cur + l).length > 3800) { parts.push(cur); cur = ''; } cur += l + '\n'; } if (cur) parts.push(cur);
   for (const p of parts) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: p, disable_web_page_preview: true }) }).catch(e => console.log('telegram: ' + e.message));
