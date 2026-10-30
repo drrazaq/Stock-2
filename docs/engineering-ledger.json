@@ -306,7 +306,7 @@
     "Live end-to-end telemetry needs authorized deployment and subsequent real sessions",
     "No five-year point-in-time executable data established for early engines"
   ],
-  "next": "Accounting-only owner decision under its protected preflight/passive proposal; independent watcher v4 re-review of exact22-file package. Neither is deployed. No unrelated lab work before bounded incident handoff.",
+  "next": "Owner decision on a separately scoped protected preflight route; no accounting deployment while pending-sale status UNKNOWN. Watcher v4 re-review remains separate and no watcher deployment is approved.",
   "checkpointFollowup": {
     "base": "a06032cca7c309f486a5215b15bd8a81fc6b1b08",
     "verifiedBaseCI": [
@@ -5288,10 +5288,10 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "sourceSha": "ef10ec13c52f921740d7b230fd97965278a75545",
+    "status": "ACCOUNTING_CONDITIONALLY_APPROVED_BUT_PREFLIGHT_BLOCKED",
+    "evidence": "docs/validation/accounting-approved-preflight.json",
+    "sourceSha": "bd1a4a7e33f059aa4fd48ace321134a3b721d66a",
     "ciChecksPassed": 12,
-    "status": "VERIFIED_PREPARED_NOT_DEPLOYED_WATCHER_REVIEW_REQUIRED",
-    "evidence": "docs/validation/incident-v4.json",
     "acceptanceAdded": 0
   },
   "shareSupplyCaller": {
@@ -5344,9 +5344,9 @@
     "approvalGranted": false
   },
   "currentStatus": {
-    "verifiedSource": "ef10ec13c52f921740d7b230fd97965278a75545",
+    "verifiedSource": "bd1a4a7e33f059aa4fd48ace321134a3b721d66a",
     "ciChecksPassed": 12,
-    "ciEvidence": "docs/validation/incident-v4-ci.json",
+    "ciEvidence": "docs/validation/incident-v4-head-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
@@ -5356,7 +5356,7 @@
     "aimPlan": "docs/aim-to-evidence-acceptance-plan.md",
     "confluence": "VERIFIED_PUBLISHED; 48 actual Git fault/race cases across six workflows",
     "c0": "OFFLINE_VERIFIED_PUBLISHED_INACTIVE; runtime and workflow/dependency bytes pinned. Date UNSET; entitlement/date/approval and actual upload evidence absent.",
-    "next": "Accounting-only owner decision under its protected preflight/passive proposal; independent watcher v4 re-review of exact22-file package. Neither is deployed. No unrelated lab work before bounded incident handoff.",
+    "next": "Owner decision on a separately scoped protected preflight route; no accounting deployment while pending-sale status UNKNOWN. Watcher v4 re-review remains separate and no watcher deployment is approved.",
     "c0Review": "docs/c0-diagnostic-review.md",
     "entitlementEvidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md",
     "incident": {
@@ -5371,7 +5371,7 @@
       "watcherFiles": 22,
       "accountingFiles": 5,
       "ownerDecision": "October29 excluded primary;October28 excluded pilot;reconstruction secondary",
-      "nextDecision": "Accounting-only owner approval separate from watcher v4 independent re-review; no deployment authorization"
+      "nextDecision": "Owner decision on a separately scoped protected preflight route; no accounting deployment while pending-sale status UNKNOWN. Watcher v4 re-review remains separate and no watcher deployment is approved."
     },
     "instrumentReference": {
       "status": "PREPARED_NOT_AUTHORIZED_NOT_ACTIVATED",
@@ -5380,6 +5380,18 @@
       "readiness": "NOT_ESTABLISHED; zero approved alerts is not completion",
       "unknownResearchRetained": true,
       "identityAndZadSafeguardsUnchanged": true
+    },
+    "accountingDeploymentAuthorization": {
+      "status": "APPROVED_EXACT_FIVE_FILE_PATCH_CONDITIONAL_PREFLIGHT_BLOCKED",
+      "approvedCheckpoint": "bd1a4a7e33f059aa4fd48ace321134a3b721d66a",
+      "patchSha256": "f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27",
+      "currentMainTested": "6c19520ba81f169aaa0978e60d41d6bb880ca80f",
+      "productionFiles": 115,
+      "reportedCases": 1140,
+      "protectedPreflight": "BLOCKED_EXISTING_PRIVATE_KEY_UNAVAILABLE",
+      "proposal": "docs/accounting-protected-preflight-proposal.md",
+      "deployed": false,
+      "additionalWorkflowAuthorization": false
     }
   },
   "confluencePublication": {
@@ -5920,5 +5932,54 @@
     "status": "VERIFIED_PREPARED_NOT_DEPLOYED_INDEPENDENT_REVIEW_REQUIRED",
     "evidence": "docs/validation/incident-v3.json",
     "acceptanceAdded": 0
+  },
+  "accountingApprovedPreflight": {
+    "approvedCheckpoint": "bd1a4a7e33f059aa4fd48ace321134a3b721d66a",
+    "currentMain": "6c19520ba81f169aaa0978e60d41d6bb880ca80f",
+    "patchSha256": "f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27",
+    "patchAuthenticated": true,
+    "sourceAndDependencyCompatibility": true,
+    "mismatchedPaths": [],
+    "protectedPendingSalePreflight": "NOT_COMPLETED_EXISTING_PRIVATE_KEY_UNAVAILABLE",
+    "deployed": false,
+    "productionTests": {
+      "scope": "accounting",
+      "baseMain": "6c19520ba81f169aaa0978e60d41d6bb880ca80f",
+      "patches": [
+        "f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 115,
+      "reportedCases": 1140,
+      "failures": [],
+      "rootModulesChecked": 195,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false
+    },
+    "checker": {
+      "path": "tools/accounting-pending-preflight.mjs",
+      "sha256": "7d009d803cd565f5edecc43f52dd9f8fc579837c8a76612ff2c7c580e8473b48",
+      "gitBlob": "92fc955497950df6e76823eec6e348f1ebfb78b1",
+      "syntheticCases": 9,
+      "realProtectedExecution": false,
+      "status": "PREPARED_NOT_INSTALLED_NOT_DISPATCHED"
+    },
+    "workflowInspection": {
+      "revision": "6c19520ba81f169aaa0978e60d41d6bb880ca80f",
+      "existingSafeModeAvailable": false,
+      "existingProtectedWorkflowExamples": [
+        ".github/workflows/bot.yml",
+        ".github/workflows/main.yml",
+        ".github/workflows/calendar.yml",
+        ".github/workflows/movers.yml",
+        ".github/workflows/leaders-study.yml"
+      ],
+      "anyWorkflowModifiedOrDispatched": false
+    },
+    "additionalAuthorization": "Existing bot workflow isolated manual preflight-mode amendment, separate approval to install/run, read-only token, existing PRIVATE_KEY use; alternative authorized protected offline shell",
+    "proposal": "docs/accounting-protected-preflight-proposal.md"
   }
 }
