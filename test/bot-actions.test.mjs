@@ -55,7 +55,7 @@ test('sections come in order of importance; CRITICAL (a holding leaving the ZAD 
 });
 test('records are kept apart and labelled: the practice account is fake money, the paper record is not your trades', async () => {
   const { t } = await render({ 'data/alpaca-paper.json': { start: { d: '2026-10-12', equity: 100000 }, equity: { equity: 99797.62 }, closed: [{ net: 0.02 }, { net: -0.05 }], plans: {} } });
-  const r = section(t, 'RECORDS'); assert.match(r, /YOUR REAL TRADES \(what you reported\)/); assert.match(r, /PRACTICE ACCOUNT \(Alpaca, fake money, unproven engines: NOT buys for you\)/);
+  const r = section(t, 'RECORDS'); assert.match(r, /YOUR REPORTED RETURN JOURNAL \(all retained qualifying rows/); assert.match(r, /PRACTICE ACCOUNT \(Alpaca, fake money, unproven engines: NOT buys for you\)/);
 });
 test('Kuwait times follow the New York calendar: 4:30 pm in summer, 5:30 pm from 2 Nov 2026; holidays and weekends roll to the next session', async () => {
   const { S } = await render({});

@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { MODELS, FROZEN, pick, dEligible, evaluate, spr } from '../rank-models.mjs';
 import { parseAtom, nyMinuteOf } from '../edgar-feed.mjs';
 
-const e = (o = {}) => ({ d: '2026-10-29', sym: 'S', m: 600, chg: 0.04, cat: 'VERIFIED', rvT: 4, dollarVol: 3e6, bid: 9.99, ask: 10.01, e: { m: 600, px: 10, bid: 9.99, ask: 10.01, qAgeSec: 5 }, last: 10, ...o });
+const e = (o = {}) => ({ d: '2026-10-30', sym: 'S', m: 600, chg: 0.04, cat: 'VERIFIED', rvT: 4, dollarVol: 3e6, bid: 9.99, ask: 10.01, e: { m: 600, px: 10, bid: 9.99, ask: 10.01, qAgeSec: 5 }, last: 10, ...o });
 
 test('frozen as approved: dates, cap, B and C criteria', () => {
   assert.deepEqual(FROZEN, { date: '2026-10-28', evalFrom: '2026-10-29', cap: 5, minSessions: 20, minPicks: 50, controlsPerDay: 10 });
@@ -39,7 +39,7 @@ test('evaluate: only counted sessions; COLLECTING before 20 sessions; cap cost s
   assert.equal(v.models.A.picks, 5); assert.equal(v.streams.E.candidates, 8); assert.ok(v.models.A.day.avg < 0);
   assert.ok(v.capCost.afterCap.day.avg > 0); assert.equal(v.capCost.afterCap.picks, 3); assert.ok(v.capCost.hindsightBestFive.day.avg > v.capCost.firstFive.day.avg);
   assert.match(v.models.B.verdict, /^COLLECTING \(1 of 20 sessions/);
-  assert.equal(evaluate({ E, F: [], N: [] }, out, '2026-10-28').streams.E.candidates, 9);   // the pilot view includes 28 Oct
+  assert.equal(evaluate({ E, F: [], N: [] }, out, '2026-10-28',{secondary:true}).streams.E.candidates, 9);   // the pilot view includes 28 Oct
 });
 test('SEC feed parser: form, CIK, items, accession and acceptance time; New York minute', () => {
   const xml = `<feed><entry><title>8-K - ACME ROBOTICS INC (0001234567) (Filer)</title><link rel="alternate" type="text/html" href="https://www.sec.gov/Archives/edgar/data/1234567/000123456726000123/0001234567-26-000123-index.htm"/>
@@ -56,3 +56,5 @@ test('malformed or overflowing quotes cannot manufacture a narrow-spread ranking
  assert.ok(spr({bid:1e308,ask:1.7e308})>0.5);
  for(const model of [MODELS.B,MODELS.C])assert.equal(model.accept(e({bid:1e308,ask:1.7e308})),false);
 });
+
+test('dated owner exclusion applies even with explicit primary start; reconstruction is secondary only',()=>{const rows=['2026-10-28','2026-10-29','2026-10-30'].map(d=>e({d}));const a=evaluate({E:rows,F:[],N:[]},{},'2026-10-28');assert.equal(a.streams.E.candidates,1);const b=evaluate({E:rows,F:[],N:[]},{},'2026-10-28',{secondary:true});assert.equal(b.streams.E.candidates,3);assert.match(b.models.B.verdict,/SECONDARY ONLY/);assert.equal(b.admissionDecision.recordedAt,'2026-10-30');});

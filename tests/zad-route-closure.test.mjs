@@ -6,7 +6,7 @@ import vm from 'node:vm';
 import {loadScan,blocked} from '../test/load-scan.mjs';
 const today=new Date().toISOString().slice(0,10),ok={s:'ok',d:today,by:'ZAD (you)'},iso=new Date().toISOString();
 const q={sym:'AAA',last:20,n:60,win:.65,avgPct:.05,buyLo:20,buyHi:20.5,stop:18,maxHold:5,q:'dip',pcts:Array(60).fill(.04)};
-const sig={session:today,market:{up:true,above50:true},quick:[q],stocks:[],lottery:{}};
+const sig={quickRecord:{n:40,winRate:.6,avgPct:.02,avgSpy:.005,days:12,stocks:25},session:today,market:{up:true,above50:true},quick:[q],stocks:[],lottery:{}};
 const states=[
  ['missing',{}],['rejected',{AAA:{...ok,s:'fail'}}],['expired',{AAA:{...ok,d:'2025-01-01'}}],
  ['pending-recheck',{AAA:{...ok,requiresRecheck:true}}],['malformed-author',{AAA:{...ok,by:{owner:true}}}],['future',{AAA:{...ok,d:'2099-01-01'}}],['malformed',null],['third-party',{AAA:{...ok,by:'Zoya'}}],

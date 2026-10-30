@@ -90,7 +90,7 @@ test('"traders" shows FOLLOW, FADE and the closest others with numbers, the coun
 
 // FADE -> AVOID: a buy call by a FADE trader in the last 20 sessions blocks that stock everywhere (planCands, gateVerdict, the ACTIONS AVOID line)
 const quick = (sym) => ({ sym, n: 60, avgPct: 0.02, win: 0.6, last: 50, buyLo: 49, buyHi: 51, stop: 45, maxHold: 5 });
-const sigQ = { session: '2026-10-21', market: { above50: true, up: true }, quick: [quick('AAA'), quick('BBB')] };
+const sigQ = {quickRecord:{n:40,winRate:.6,avgPct:.02,avgSpy:.005,days:12,stocks:25}, session: '2026-10-21', market: { above50: true, up: true }, quick: [quick('AAA'), quick('BBB')] };
 const until = (d) => new Date(Date.now() + d * 864e5).toISOString().slice(0, 10);
 test('a stock a FADE trader called in the last 20 sessions is not a buy, says why, and is listed under AVOID', async () => {
   const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/signals.json': sigQ, 'data/follow-fade.json': { at: recent, avoid: { AAA: { trader: 'Hot Trades', pub: recent, until: until(20) }, BBB: { trader: 'Old Fade', pub: recent, until: until(-1) } } } } });

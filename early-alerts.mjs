@@ -31,6 +31,8 @@ export function leadSoftReason(c) {
 // hard rules (never bypassed); sec = { known, tags } from the watcher's SEC check
 export function hardReason({ price, halalFail, lottery, sec }) {
   if (!(price >= 1)) return 'under 1 USD'; if (halalFail) return 'NOT HALAL (ZAD)'; if (lottery >= 0.15) return 'AVOID list (one-day jump ' + pct(lottery) + ')';
+  if(sec?.policyExcluded)return 'instrument policy exclusion (not a SEC source failure)';
+  if(sec?.admissionBlocked)return 'instrument identity UNKNOWN (not admitted)'+(sec.sourceFailure?'; SEC source unavailable':' ; no SEC source failure recorded');
   if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
   return null;
 }

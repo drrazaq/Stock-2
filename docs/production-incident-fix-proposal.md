@@ -1,0 +1,47 @@
+# Narrow production incident fix — owner review, inactive
+
+**Not deployed or authorized to deploy.** Do not merge PR1 or copy the development scan wholesale. No collection expansion, new provider requests, real messages/orders, purchases or secret/permission changes are part of this package. Accounting implementation and privacy migration are separate.
+
+## Exact review material and compatibility
+
+The [unified patch](validation/incident-production-fix.patch) was generated and successfully applied to **main b77eac39b7cbdc652458b48256ed6731d728ed24** in a disposable local repository. [Manifest](validation/incident-production-manifest.json) records the patch SHA256 and all15 resulting file hashes, with no unmatched edits. It preserves other production code and data. Runtime and workflow bytes in the patch are the review target; do not substitute entire newer development files. Recheck the current production versions of affected files before any application; a new data-only main commit is not permission to ignore changed code. Any conflict requires a new reviewed patch.
+
+Source/CI evidence is linked from the [incident report](incident-2026-10-29.md) and canonical status. Immutable published engineering SHA is recorded in the final validation checkpoint. The package is a backport of existing watcher preservation plus the specifically tested incident changes, not an assertion that all production engineering is complete.
+
+## Proposed file groups
+
+**P1: preservation, classification, cohort integrity and accurate health (recommended first review).**
+
+- ignition-watch.mjs: per-attempt exclusive snapshot/shadow archive BEFORE canonical publication; preserve richer usable same-day observations; stop a duplicate if the complete session already exists. Retain full mover rows in the archive. Label the actual checked-out Git source, not job creation time. Instrument classification precedes issuer SEC evaluation where an authenticated reviewed reference exists. The mapping bootstrap is separate from issuer evaluation.
+- watcher-session.mjs, session-coverage.mjs, market-session.mjs: exact dependencies for canonical ranking/duplicate and reviewed holiday/half-day coverage. Selection never uses returns. Do not infer full-session coverage from elapsed runtime or legacy counts.
+- instrument-type.mjs: read-only, bounded reference reader; exact digest of independently reviewed official capture, literal ticker and stable class/security identifier required. Known non-common instruments are policy exclusions, not source outages. Unknown identity does not become common stock by suffix or us_equity. No new API call or reference file is installed. The proposed new non-secret file path/digest configuration would itself require review; without it identity is UNKNOWN and approval stays blocked. A self-declared URL or shape alone does not establish source authenticity.
+- early-alerts.mjs: preserve separate policy-exclusion, identity-unknown and genuine SEC-source failure reasons through the actual hard gate.
+- ranking-cohort.mjs, rank-models.mjs, shadow-outcomes.mjs: enforce the30October owner decision excluding October29 from primary counting and retaining October28 as excluded pilot. Explicit secondary reports cannot produce primary/confirmation verdicts. Frozen ranking rules/exit thresholds are preserved.
+- health.mjs, watcher-reporting.mjs: use retained/archived observation evidence, separate legacy summaries from proof, and report opening/session UNKNOWN rather than falsely saying the last run was the day's start.
+- .github/workflows/ignition.yml: stage only the new public watcher archive alongside the existing allowlist; fail loudly if stage/commit/pull/push fails; reject conflicting canonical data and preserve disjoint upstream changes. Existing triggers, cron, main checkout, concurrency, secret bindings and permission metadata are unchanged. The patch remains an inactive document; no workflow was installed/dispatched.
+
+**P2: the two remaining production files in the same review patch, separable for approval.** scan.mjs and missed-runners.mjs backport only incident rendering/admission fixes and their existing zad-compliance.mjs dependency (the fifteenth file): consistent next-open SELL wording, minimum engine evidence in both focus states, no unmatched BUY fallback, current affirmative ZAD resolution, legacy versus prospective labels, same-horizon win rate, non-duplicated day/symbol denominators and conservative UNKNOWN scope. These edits are applied to the production scan, preserving unrelated production functions. No owner ledger/position/stop file is changed. Accounting calculations are not migrated; a normalized sum and private realized-dollar baseline are explicitly different. Review Claude's separate patch only after authenticating its attachment bytes and tests.
+
+The full patch includes both P1 and P2, so approval must explicitly cover the chosen groups. To approve only P1, generate/retest a patch omitting the three P2 files; do not hand-edit hunks during deployment. No full-PR merge is needed.
+
+## Tested boundaries
+
+- Fifteen incident cases run against the actual proposed production scan using isolated synthetic fixtures: recovered/legacy heartbeat semantics, opening UNKNOWN versus observed, health executable, duplicates, focus-off planner/direct gate/ACTIONS, ZAD controls, mismatched horizon hit rate, accounting labels, rule direction, next-open wording and split idempotence.
+- Eleven package cases verify exact patch hash and reach actual disposable Git stage/commit/pull/push failures, canonical conflict, disjoint race and successful archive push. The exact backported archive/canonical block runs with real temporary filesystem output, testing richer retention, richer replacement and exclusive archive collision. No network provider or real Telegram call occurs.
+- Instrument caller regressions execute the watcher's actual wrapper with controlled reference/SEC transport: policy-excluded instruments make zero issuer lookups; unknown identity stays unknown; real source failure is a separate fact. Synthetic reference provenance is not a claim of an actual licensed provider capture.
+- Three Python recovery tests prove byte-identical copies, missing-file reporting, no original mutation and refusal of existing output, bad refs, duplicates and symlinks. Original four incident commits were then recovered into a new secondary-only directory; only their non-private manifest is committed.
+- Complete branch Node/Python and static checks plus exact-commit hosted CI must pass before review is called verified. See validation/incident-2026-10-29.json. This does not simulate the entire live provider session or cancellation/upload environment.
+
+## Historical recovery and rollback
+
+The tool copies original bytes from exact Git objects into a new output root. Owner may review that secondary archive without replacing production ignition-live.json, shadow data, paper ledgers, original studies or primary outcomes. Preserve both runs and the dated exclusion forever. No reconstructed row becomes untouched prospective confirmation.
+
+Before a later authorized deployment, retain pre-change versions/hashes of only the15 affected production files and the actual production commit. Rollback would revert only the chosen code/workflow changes at that deployment commit; keep all new run archives and original source objects. Do not reset main, delete evidence or restore old financial datasets. Retain the cohort exclusion or disable primary ranking if rolling back its consumer; never silently readmit the two compromised days. A classification rollback must not grant unknown instruments BUY approval. No rollback action is executed now.
+
+## Post-deployment verification and remaining risks
+
+Use the next naturally scheduled, separately authorized production run; no extra dispatch or collection is proposed. Inspect actual checkout/source identity and per-attempt snapshot/shadow archives, successful publication SHA and preserved prior same-day canonical data. Verify recorded09:30 minute evidence or explicit UNKNOWN, full expected-session denominator and gaps; compare a queued late attempt against the earlier archive. Verify no live-alert eligibility changed by focus off, no excluded/unknown instrument is admitted, actual SEC outages remain separately visible, and both dates remain excluded from primary ranking. Check private renderings without copying owner excerpts into public logs.
+
+This small preservation backport **does not extend the current production15:00 observation endpoint to16:00**, prove whole-market SIP coverage, repair historical quote histories, guarantee cancellation recovery, authenticate a missing instrument source or establish profitability. Larger checkpointed/segmented close coverage already exists in development but requires its own bounded deployment review. Massive remains15-minute delayed. Reference absence can conservatively suppress approvals; that is an explicit review risk, not a reason to invent metadata. No date, new service or budget is assumed.
+
+**Concrete owner decision after exact CI review:** whether to authorize the isolated P1/P2 production backport, or request a newly tested P1-only patch first. This is a code-change review decision; it does not approve new data capture, reference ingestion, prospective enrollment, real messaging or trading. The separate prospective protocol/feed-rights/dated collection scope remains unapproved.

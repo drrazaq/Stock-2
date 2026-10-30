@@ -1,0 +1,617 @@
+--- a/health.mjs
++++ b/health.mjs
+@@ -1,3 +1,4 @@
++import {readWatcherReport} from './watcher-reporting.mjs';
+ // SYSTEM HEALTH: every evening, checks that every job actually produced fresh results, and tells you on Telegram when one
+ // silently stopped (a step that "continues on error", a crash after a code change, a key that expired, an API that changed).
+ // Today's smart-money crash ran unnoticed for a day; this is what catches that. Read-only; sends a message only when something is wrong.
+@@ -55,8 +56,8 @@
+   else { const c = check ? check(j) : null; if (c) problems.push(name + ': ' + c); else ok.push(name); } }
+ // WATCHER START (28 Oct, owner item 4): the live watcher must be watching by 9:35 New York. GitHub's cron started it 9:38-9:49 every day and
+ // 11:10 on 26 Oct; the watcher guard (watcher-guard.mjs, in the bot job) now starts it when GitHub has not. This reads the last watched day.
+-try { const L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n'), j = JSON.parse(L[L.length - 1]);
+-  if (j.firstMinute && j.firstMinute > '09:35') problems.push('live watcher started late on ' + j.day + ': first watched minute ' + j.firstMinute + ' New York' + (j.procStart ? ' (process started ' + j.procStart + ')' : '') + '; it should watch from 9:30. The open was not watched.'); else ok.push('live watcher start'); } catch (e) {}
++const watcherEvidence=readWatcherReport();
++if(!watcherEvidence.complete)problems.push(watcherEvidence.text);else ok.push('live watcher minute coverage');
+ // MISSING SCRIPTS: every 'node X.mjs' named in a workflow must exist. A file deleted during an upload (shares.mjs, 16 Oct 2026) made
+ // a 'continue on error' step fail silently every day; this catches it the same evening.
+ try { const W = '.github/workflows', seen = new Set();
+--- a/scan.mjs
++++ b/scan.mjs
+@@ -1,3 +1,5 @@
++import {resolveZad} from './zad-compliance.mjs';
++import {readWatcherReport,missedRunnerPopulation} from './watcher-reporting.mjs';
+ // Cloud scanner for the US stock signal board. Runs on GitHub Actions (free), so it works while your phone is off.
+ // It reuses the exact rules inside index.html, writes data/signals.json and an append-only journal, and sends Telegram alerts.
+ // Read only: it holds no broker login and cannot trade.
+@@ -548,11 +550,11 @@
+ function scorecardText() { const A = [], av = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null; SC_ROWS = [];
+   const verdict = (n, avg, bench, days, stocks) => { const ex = bench === null || bench === undefined ? avg : avg - bench; if (!n || avg === null) return 'no finished trades yet'; if (n < 10) return 'too early (' + n + ')';
+     if (avg < 0 && ex < 0) return n >= 20 ? 'LOSING: do not act on these' : 'losing so far'; if (avg > 0 && ex > 0 && typeof days === 'number' && days < 10) return 'positive, but all from ' + days + ' trading day' + (days === 1 ? '' : 's') + ': not evidence yet (10+ days needed)'; if (avg > 0 && ex > 0 && typeof stocks === 'number' && stocks < 20) return 'positive, but on only ' + stocks + ' stock' + (stocks === 1 ? '' : 's') + ': not evidence yet (20+ needed; 22 Oct)'; if (avg > 0 && ex > 0) return n >= 30 ? 'POSITIVE so far (one market period only; not proof yet)' : 'positive so far, too few'; return 'mixed: no edge shown'; };
+-  const row = (name, n, win, avg, bench, extra, days, stocks) => { SC_ROWS.push({ engine: name, n: n || 0, win: typeof win === 'number' && isFinite(win) ? +win.toFixed(3) : null, avg: typeof avg === 'number' && isFinite(avg) ? +avg.toFixed(4) : null, days: typeof days === 'number' ? days : null, stocks: typeof stocks === 'number' ? stocks : null, verdict: verdict(n, avg, bench, days, stocks) }); return A.push('- ' + name + ': ' + (n ? n + ' finished, ' + (win === null || win === undefined || !isFinite(win) ? '' : Math.round(win * 100) + '% won, ') + 'average ' + pcs(avg) + (bench !== null && bench !== undefined ? ' vs S&P ' + pcs(bench) : '') + (extra ? ' ' + extra : '') + ' => ' : '') + verdict(n, avg, bench, days, stocks)); };
++  const row = (name, n, win, avg, bench, extra, days, stocks) => { SC_ROWS.push({ evidenceStandard:'LEGACY_FORWARD_V1',executionEvidence:'ASSUMED_OR_UNVERIFIED_NOT_PROSPECTIVE_ADMISSION',engine: name, n: n || 0, win: typeof win === 'number' && isFinite(win) ? +win.toFixed(3) : null, avg: typeof avg === 'number' && isFinite(avg) ? +avg.toFixed(4) : null, days: typeof days === 'number' ? days : null, stocks: typeof stocks === 'number' ? stocks : null, verdict: verdict(n, avg, bench, days, stocks) }); return A.push('- ' + name + ': ' + (n ? n + ' finished, ' + (win === null || win === undefined || !isFinite(win) ? '' : Math.round(win * 100) + '% won, ') + 'average ' + pcs(avg) + (bench !== null && bench !== undefined ? ' vs S&P ' + pcs(bench) : '') + (extra ? ' ' + extra : '') + ' => ' : '') + verdict(n, avg, bench, days, stocks)); };
+   const sg = readJson0('data/signals.json') || {}, q = sg.quickRecord; if (q) row('Quick trades (ACTIONS)', q.n, q.winRate, q.avgPct, q.avgSpy, sg.quickPaused ? '(paused by the system)' : '', q.days, q.stocks);
+-  const oc = readJson0('data/outcomes.json'); if (oc && oc.horizons) { const h = oc.horizons['3'] || oc.horizons['1']; row('Swing buys (ACTIONS), 3 days after the signal', h ? h.n : 0, oc.winRate, h ? h.avgReturn : null, h ? h.avgBenchmark : null, typeof oc.avgR === 'number' ? '(finished trades: ' + oc.finished + ', average ' + oc.avgR.toFixed(2) + 'R)' : ''); }
++  const oc = readJson0('data/outcomes.json'); if (oc && oc.horizons) { const h = oc.horizons['3'] || oc.horizons['1']; row('Swing buys (ACTIONS), '+(oc.horizons['3']?'3':'1')+' sessions after the signal', h ? h.n : 0, h&&typeof h.winRate==='number'?h.winRate:null, h ? h.avgReturn : null, h ? h.avgBenchmark : null, typeof oc.avgR === 'number' ? '(finished trades: ' + oc.finished + ', average ' + oc.avgR.toFixed(2) + 'R)' : ''); }
+   const rr = readJson0('data/radar-record.json'); if (rr && rr.groups) for (const g of Object.values(rr.groups)) if (g.n) row('Early-wave radar, ' + g.name, g.n, g.win, g.avg, null);
+-  const ir = readJson0('data/ignition-results.json'); if (ir && ir.done) { const by = {}; for (const v of Object.values(ir.done)) if (typeof v.close === 'number') (by[v.rule] = by[v.rule] || []).push(v); for (const [k, a] of Object.entries(by)) row('Fast alerts rule ' + k + ' (paper, at the alert price, sold at the close)', a.length, a.filter(x => x.close > 0).length / a.length, av(a.map(x => x.close)), null, '(' + pcs(av(a.map(x => x.close_s))) + ' at 1.5x costs, ' + new Set(a.map(x => x.d)).size + ' day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks)', new Set(a.map(x => x.d)).size, new Set(a.map(x => x.sym)).size); }
++  const ir = readJson0('data/ignition-results.json'); if (ir && ir.done) { const by = {}; for (const v of Object.values(ir.done)) if (typeof v.close === 'number') (by[v.rule] = by[v.rule] || []).push(v); for (const [k, a] of Object.entries(by)) row('Fast alerts rule ' + k + ' (LEGACY paper; fill/version provenance unverified, close exit)', a.length, a.filter(x => x.close > 0).length / a.length, av(a.map(x => x.close)), null, '(' + pcs(av(a.map(x => x.close_s))) + ' at 1.5x costs, ' + new Set(a.map(x => x.d)).size + ' day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks)', new Set(a.map(x => x.d)).size, new Set(a.map(x => x.sym)).size); }
+   { const AP = readJson0(ALP_FILE); if (AP && Array.isArray(AP.closed)) { const by = {}; for (const t of AP.closed) if (typeof t.net === 'number') (by[t.engine || t.kind] = by[t.engine || t.kind] || []).push(t);
+     for (const [k, a] of Object.entries(by)) row('Alpaca paper, ' + k + ' (filled at the open, after fees)', a.length, a.filter(x => x.net > 0).length / a.length, av(a.map(x => x.net)), null, '(' + new Set(a.map(x => x.out)).size + ' exit day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks)', new Set(a.map(x => x.out)).size, new Set(a.map(x => x.sym)).size); } }
+   // tier2 off = exactly as before tier 2: its ledger rows are not shown and not counted (review S-14, 22 Oct)
+@@ -569,14 +571,15 @@
+     const LD = readJson0('data/leaders.json'), lp = ((LD && LD.paper) || []).filter(x => x.entry > 0 && lastPx[x.sym] > 0); if (lp.length) { const r = lp.map(x => lastPx[x.sym] / x.entry - 1); A.push('- Leaders list (T1), ' + lp.length + ' open paper positions marked to market: average ' + pcs(av(r)) + ' before costs, ' + r.filter(x => x > 0).length + ' up (scored by the league at 1 and 3 months; not a verdict)'); }
+     const SW = readJson0('data/switch-paper.json'), so = ((SW && SW.open) || []).filter(x => x.ref > 0 && lastPx[x.sym] > 0); if (so.length) { const r = so.map(x => lastPx[x.sym] / x.ref - 1), back = r.filter(x => x <= -0.10).length, away = r.filter(x => x > 0.05).length; A.push('- Switch, ' + so.length + ' open: since the sell signal the stocks moved ' + pcs(av(r)) + ' on average; ' + back + ' reached the buy-back level (10% lower), ' + away + ' ran away 5%+ (a missed rise counts against the switch; not a verdict until round trips finish)'); } } catch (e) {}
+   // B. finding
+-  let L = []; try { L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n').map(x => JSON.parse(x)).slice(-20); } catch (e) {}
++  let L = []; try { L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n').map(x => JSON.parse(x)); } catch (e) {}
++  const pop=missedRunnerPopulation(L);L=pop.rows.slice(-20);
+   const B = []; if (L.length) { let n = 0, caught = 0, data = 0, gap = 0, alerts = 0; for (const d of L) { alerts += d.alerts || 0; for (const [k, v] of Object.entries(d.tally || {})) { n += v; if (/^CAUGHT/.test(k) && !/NOT/.test(k)) caught += v; if (/NOT_VISIBLE|NO_LIVE|TOO_LATE|VOLUME_FIGURE_LATE/.test(k)) data += v; if (k === 'GAPPED_AT_OPEN') gap += v; } }
+     const sec = L.reduce((a, d) => a + ((d.tally || {}).SEC_CHECK_UNAVAILABLE || 0), 0); if (sec) B.push('- ' + sec + ' blocked only because the SEC safety check could not be reached (a fault, being fixed; not a market reason).');
+-    B.push('- ' + n + ' stocks ran 15%+ in ' + L.length + ' session' + (L.length === 1 ? '' : 's') + '; caught in time: ' + caught + ' (' + (n ? Math.round(caught / n * 100) : 0) + '%). Missed for late data: ' + data + ', already gapped at the open: ' + gap + '.', '- Alerts sent: ' + alerts + '. Whether those alerts made money is in card A (fast alerts rows).'); }
++    B.push('- ' + n + ' recorded mover events (mixed instruments; unique security-days NOT ESTABLISHED) in ' + L.length + ' session' + (L.length === 1 ? '' : 's') + '; legacy caught-code count: ' + caught + ' (' + (n ? Math.round(caught / n * 100) : 0) + '%). Missed for late data: ' + data + ', already gapped at the open: ' + gap + '.', '- Duplicate daily summaries excluded: '+pop.duplicates+'. Full-session coverage '+(pop.coverageKnownComplete?'recorded by summaries (not executable coverage proof)':'NOT ESTABLISHED')+'. Delayed prices, warrants/rights/units and unknown identities are not a verified tradable-stock denominator.', '- Recorded alert count (delivery acknowledgment not established): ' + alerts + '. Whether those alerts made money is in card A (fast alerts rows).'); }
+   else B.push('- The daily history starts with the next fast-mover session.');
+-  return ['SCORECARD (future days only, after costs; back-tests are NOT counted here)', '', 'A. MAKING MONEY', ...(A.length ? A : ['- No finished paper trades yet.']), '',
++  return ['SCORECARD (LEGACY_FORWARD_V1 and owner reports; descriptive, not admitted prospective evaluation)', '', 'A. LEGACY OUTCOMES (assumed execution/costs; not proven returns)', 'Evidence: legacy signal logs are not DISCOVERY_PAPER_V1 admissions. No prospective count is inferred here. Historical-backtest and private owner records are separate.', ...(A.length ? A : ['- No finished paper trades yet.']), '',
+     'B. FINDING OPPORTUNITIES', ...B, '',
+-    'Rules: a "POSITIVE" record from one market period is not proof. A rule that is changed starts a new record; it never keeps the old one. LOSING engines stay visible, they are not hidden. Research only.'].join('\n'); }
++    'Execution: legacy paper uses assumed reference/open or alert-price fills, no executable bid/ask/depth guarantee; IG costs are price-dependent, with 1.5x stress. Unresolved/missing paths are excluded from finished averages, not wins. Partial session/delayed prices and rule/source revisions limit conclusions.', 'Rules: a "POSITIVE" record from one market period is not proof. A rule that is changed starts a new record; it never keeps the old one. LOSING engines stay visible, they are not hidden. Research only.'].join('\n'); }
+ // ENGINE HISTORY (22 Oct): one line a day per engine in data/engine-history.jsonl, so the trajectory is kept, not only tonight's snapshot.
+ function engineHistorySnapshot() { try { scorecardText(); const d = new Date().toISOString().slice(0, 10), f = 'data/engine-history.jsonl'; let have = false; try { const L = fs.readFileSync(f, 'utf8').trim().split('\n'); have = L.length > 0 && JSON.parse(L[L.length - 1]).d === d; } catch (e) {}
+   if (!have && SC_ROWS.length) fs.appendFileSync(f, SC_ROWS.map(r => JSON.stringify({ d, ...r })).join('\n') + '\n'); } catch (e) {} }
+@@ -658,7 +661,7 @@
+ function liveConclusions() { let t = ''; try { t = scorecardText(); } catch (e) { return []; }
+   const A = (t.split('\nB. ')[0] || '').split('\n').filter(l => /^- /.test(l) && / => /.test(l)), nm = (l) => l.slice(2, l.indexOf(':')).replace(/ \(.*?\)/g, '').replace(/, 3 days after the signal/, '').replace(/^Early-wave radar, /, 'early-wave '), stop = [], care = [], work = [];
+   for (const l of A) { const v = l.split(' => ')[1]; if (/^LOSING/.test(v)) stop.push(nm(l)); else if (/^losing so far/.test(v)) care.push(nm(l)); else if (/^POSITIVE/.test(v)) work.push(nm(l)); }
+-  const out = ['LIVE RECORD (what really happened on future days, after costs):'];
++  const out = ['LIVE RECORD (legacy forward logs; assumed execution/costs, not admitted prospective evidence):'];
+   if (stop.length) out.push('- STOP using: ' + stop.join('; ') + '. They lost money on 20+ live trades.');
+   if (care.length) out.push('- CAUTION: ' + care.join('; ') + ': losing so far. If you buy one, use half your usual amount until the record turns positive.');
+   if (work.length) out.push('- WORKING so far: ' + work.join('; ') + ' (one market period only: keep amounts normal, not bigger).');
+@@ -739,9 +742,9 @@
+ // ZAD's published list (data/zad-list.json, from its quarterly Sharia review) fills in every stock it names; your own mark wins
+ // only when it is newer than the list. Stocks the list removes are NOT HALAL right away (a trade bought now would still be held
+ // on the date they stop being compliant).
+-const ZADL = () => { const z = readJson0('data/zad-list.json'); if (!z) return {}; const o = {}, d = z.effective || z.received;
+-  for (const s of z.notHalal || []) o[s] = { s: 'fail', d, by: 'ZAD list (not compliant from ' + z.effective + ')' }; for (const s of [...(z.halalAgain || []), ...(z.newHalal || [])]) o[s] = { s: 'ok', d, by: 'ZAD list (' + z.effective + ')' }; return o; };
+-const HALALM = () => { const z = ZADL(), m0 = readJson0(HALAL_FILE) || {}, m = { ...z }; for (const [k, v] of Object.entries(m0)) if (!z[k] || !v.d || v.d >= z[k].d) m[k] = v; const out = {}; for (const [k, v] of Object.entries(m)) out[k] = v && (v.s === 'fail' || v.s === 'ok') && v.d && Date.now() - Date.parse(v.d) > HALAL_DAYS * 86400000 ? { ...v, was: v.s, s: 'expired' } : v; return out; };
++const ZADPOLICY = () => resolveZad(readJson0(HALAL_FILE),readJson0('data/zad-list.json'));
++const ZADL = () => Object.fromEntries([...ZADPOLICY().excluded].map(sym=>[sym,{s:'fail',by:'ZAD list'}]));
++const HALALM = () => ZADPOLICY().marks;
+ // ZOYA (AAOIFI) halal pre-check. Secret ZOYA_KEY holds the key WITH its prefix ("live-..." or "sandbox-..."). Each stock on
+ // the buy list is checked about weekly and remembered in data/zoya.json. The result is SHOWN only, never used to drop a stock
+ // from the buy list; your own ZAD mark always wins. Sandbox data are dummy values: shown, never acted on.
+@@ -1309,10 +1312,10 @@
+     for (const r of SC_ROWS) { if (!/^LOSING/.test(r.verdict || '')) continue; const e = r.engine, k = scRowKind(e);
+       if (k && !lose.has(k)) lose.set(k, e.replace(/ \(.*?\)/g, '') + ': ' + r.n + ' trades, average ' + pcs(r.avg)); }
+     for (const x of c0) if (x.ok && lose.has(x.kind)) { x.ok = false; x.losingLive = true; x.avoid = 'PAPER ONLY: this engine is LOSING on its live record (' + lose.get(x.kind) + ')'; } } catch (e) {}
+-  // FOCUS MODE inside the gate (audit 22 Oct): while no engine is proven live, engine trades are paper only on EVERY path (alerts,
++  // Engine evidence is mandatory in BOTH focus states; focus is never execution or evidence approval.
+   // buttons, replies), not only in ACTIONS. Earnings drift stays as the owner's labelled choice (21 Oct).
+   // (review S-14) per kind: only the kinds in workingKinds() are lifted
+-  { const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS) for (const x of c0) if (x.ok && x.kind !== 'earnings drift' && !WK.has(x.kind)) { x.ok = false; x.paperOnly = true; x.avoid = 'PAPER ONLY: focus mode, ' + (WK.size ? 'the ' + x.kind + ' engine has not' : 'no buy engine has') + ' proven itself live yet (its ' + x.kind + ' is logged on paper)'; } }
++  { const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; for (const x of c0) if (x.ok && x.kind !== 'earnings drift' && !WK.has(x.kind)) { x.ok = false; x.paperOnly = true; x.avoid = 'PAPER ONLY: evidence gate (focus cannot override), ' + (WK.size ? 'the ' + x.kind + ' engine has not' : 'no buy engine has') + ' proven itself live yet (its ' + x.kind + ' is logged on paper)'; } }
+   return c0; }
+ // ONE GATE FOR EVERY REPLY (audit 22 Oct): null when a buy line may be shown for this stock, otherwise the reason it may not.
+ function gateVerdict(sym, sig) { try { sig = sig || readJson0('data/signals.json'); if (myHalal(sym) === 'fail') return 'you marked it NOT halal in ZAD';
+@@ -1321,10 +1324,11 @@
+   const ew = eventWarn(sym); if (ew) return ew.replace(/^\s*\|\s*/, '').slice(0, 140);
+   if (BIOBLOCK.has(sym)) return 'dilution / trial-risk block (' + String(BIOBLOCK.get(sym)).slice(0, 100) + ')';   // review S-5
+   // (review S-5, 22 Oct) every plan block gives a reason; before, the blocks without an avoid text fell through and passed with focus off
+-  const pc = sig ? planCands(sig, {}).find(x => x.sym === sym) : null; if (pc && pc.ok) return null;
++  const pc = sig ? planCands(sig, {}).find(x => x.sym === sym) : null; if (pc && pc.ok) return myHalal(sym)==='ok'?null:'ZAD approval missing, malformed or expired: check ZAD first';
+   if (pc && !pc.ok) return pc.avoid ? pc.avoid.replace(/^(AVOID|PAPER ONLY):\s*/, '') : pc.threatBlock ? 'threat headline in the last 24 hours' : pc.macroBlock ? 'macro: ' + pc.macroBlock : pc.watch ? 'early evidence (under 30 unseen trades): watch only' : pc.newsBlock ? 'bad-news filing' : pc.regBlock ? 'falling market (no record of its own in falling markets)' : 'not cleared by the plan gates';
+   const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS && !(pc && workingKinds().has(pc.kind))) return 'focus mode: ' + (pc ? 'the ' + pc.kind + ' engine has not' : 'no tested engine for this stock has') + ' proven itself live yet';   // per kind (review S-14)
+-  return null; } catch (e) { return 'gate check failed (' + String(e && e.message).slice(0, 60) + ')'; } }   // an error means blocked (review S-5)
++  if(myHalal(sym)!=='ok')return 'ZAD approval missing, malformed or expired: check ZAD first';
++  return 'no cleared strategy plan for this stock; research only'; } catch (e) { return 'gate check failed (' + String(e && e.message).slice(0, 60) + ')'; } }   // an error means blocked (review S-5)
+ const gateLines = (lines, gv) => gv ? lines.map(l => /^CONCLUSION/.test(l) && /\bBUY\b/.test(l) ? 'CONCLUSION: PAPER ONLY (' + gv + '). Levels for the record: ' + l.replace(/^CONCLUSION[^:]*:\s*/, '').replace(/\b(ENTRY CONFIRMED\.\s*)?BUY\b/g, 'range') : l) : lines;
+ function planCands0(sig, held0) {
+   const c = [], HM = HALALM(), held = new Proxy(held0 || {}, { get: (o, k) => o[k] || (HM[k] && HM[k].s === 'fail' ? { notHalal: true } : undefined) });   // not halal in ZAD: never offered
+@@ -1460,7 +1464,7 @@
+   const last20 = rows.slice(-20).reduce((a, z) => a + z.r, 0), down = n >= 20 && last20 < 0 && lv > 0; if (down) lv--;
+   const need = lv === 0 ? '30+ sales on 10+ days (now ' + n + ' on ' + days + '), total positive, profit factor 1.2+ (now ' + pf.toFixed(2) + ')' : lv === 1 ? '80+ sales over 3+ months (now ' + n + ', ' + ms.length + ' months), profit factor 1.3+, 2 of the last 3 months positive' : lv === 2 ? '200+ sales over 6+ months, profit factor 1.3+, 4 of the last 6 months positive' : 'top level';
+   return (LADDER_C = { level: lv + 1, max: LADDER[lv], next: LADDER[lv + 1] || null, need, n, days, tot, pf, down,
+-    text: 'SIZE LEVEL ' + (lv + 1) + ': up to ' + LADDER[lv].toLocaleString('en-US') + ' USD a trade' + (down ? ' (stepped down: your last 20 sales lost money)' : '') + '. Your record: ' + n + ' sales on ' + days + ' days, ' + (tot >= 0 ? '+' : '') + (tot * 100).toFixed(1) + '% in total per 1,000 USD traded after costs (' + ((tot + rows.length * 0.008) >= 0 ? '+' : '') + ((tot + rows.length * 0.008) * 100).toFixed(1) + '% before the 0.8% a trade cost).' + (LADDER[lv + 1] ? ' Next: ' + LADDER[lv + 1].toLocaleString('en-US') + ' USD a trade after ' + need + '.' : '') }); }
++    text: 'SIZE LEVEL ' + (lv + 1) + ': up to ' + LADDER[lv].toLocaleString('en-US') + ' USD a trade' + (down ? ' (stepped down: your last 20 sales lost money)' : '') + '. Your record: ' + n + ' sales on ' + days + ' days, ' + (tot >= 0 ? '+' : '') + (tot * 100).toFixed(1) + '% summed normalized net return per hypothetical 1,000 USD full trade, not account return or dollar P&L (' + ((tot + rows.length * 0.008) >= 0 ? '+' : '') + ((tot + rows.length * 0.008) * 100).toFixed(1) + '% legacy gross reconstruction before assumed 0.8% cost; partial-sale gross remains under review).' + (LADDER[lv + 1] ? ' Next: ' + LADDER[lv + 1].toLocaleString('en-US') + ' USD a trade after ' + need + '.' : '') }); }
+ // HOW MUCH TO PUT IN EACH BUY: one of 1,000 / 1,500 / 2,000 / 3,000 / 5,000 USD, from the strength of the evidence.
+ // Never under 1,000 (the 6 USD fees eat a smaller buy). Your budget (send  budget 5000 ) caps the total open at once.
+ function amountFor(x, mk, top) {
+@@ -2503,7 +2507,7 @@
+ const hurdleText = (px) => { if (!(px > 0)) return '+2% net needs about +2.9% gross (price unknown here)'; const sp = px < 5 ? 0.01 : 0.003; return 'spread not recorded overnight; +2% net on 1,000 USD needs about +' + ((0.02 + 0.006 + sp) * 100).toFixed(1) + '% gross at an assumed ' + (sp * 100).toFixed(1) + '% spread (check the live bid/ask in ZAD)'; };
+ function healthLine() { const out = [];
+   try { const H = readJson0('data/health.json'); if (H && Array.isArray(H.problems)) out.push(H.problems.length ? H.problems.length + ' problem' + (H.problems.length > 1 ? 's' : '') + ': ' + H.problems.slice(0, 2).map(x => String(x).replace(/\. The job is probably failing\.?$/, ' (job probably failing)').slice(0, 170)).join(' | ') + (H.problems.length > 2 ? ' (send  health )' : '') : 'checks OK'); } catch (e) {}
+-  try { const L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n'), j = JSON.parse(L[L.length - 1]); if (j.firstMinute) out.push('live watcher on ' + j.day + ': first minute ' + j.firstMinute + ' New York (' + kwt(+j.firstMinute.slice(0, 2) * 60 + +j.firstMinute.slice(3), j.day) + ' Kuwait)' + (j.firstMinute > '09:35' ? ' LATE: the open was not watched' : '')); } catch (e) {}
++  try { out.push(readWatcherReport().text); } catch {out.push('watcher coverage UNKNOWN');}
+   try { const F = fs.readFileSync('data/tg-failures.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(x => Date.now() - Date.parse(x.at) < 24 * 3600e3); if (F.length) out.push('TELEGRAM: ' + F.length + ' message' + (F.length > 1 ? 's' : '') + ' NOT delivered in the last 24 h (last: "' + F[F.length - 1].head + '", ' + F[F.length - 1].status + ')'); } catch (e) {}
+   return out.length ? 'SYSTEM HEALTH: ' + out.join('; ') + '.' : ''; }
+ async function actionsText(sig, pos, px, title) {
+@@ -2516,7 +2520,7 @@
+   const D = sessDay(), K = (m) => kwt(m, D), pb = (o) => { const f = gateLines(o), n = f.filter(l => /^- BUY /.test(l)).length; if (n || !o.some(l => /^- BUY /.test(l))) S.buys.push('', ...f); return n; };
+   const planSells = (plan.match(/\nSELL\n([\s\S]*?)(\n\n|$)/) || [])[1] || '', soldSyms = new Set(planSells.split('\n').map(l => l.replace(/^- /, '').split(/[ :]/)[0]));
+   const sells = [...(planSells ? planSells.split('\n') : []), ...h.acts.sell.filter(l => !soldSyms.has(l.split(/[ :]/)[0]))];
+-  if (sells.length) S.sells.push('SELL (exits your rules call for; at the open after the first 15 minutes, ' + K(585) + ' Kuwait, unless the line says otherwise):', ...sells.map(l => '- ' + l));
++  if (sells.length) S.sells.push('SELL (close-based rule exits: next regular-session open, ' + K(570) + ' Kuwait; no automatic 15-minute delay. Existing broker stop orders remain active):', ...sells.map(l => '- ' + l));
+   { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; for (const x of (sig && sig.uni) || []) if (x.last && !lp[x.sym]) lp[x.sym] = x.last;
+     const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) S.crit.push('SELLS NOT DONE YET (' + un.length + ')', ...un.map(l => '- ' + l)); }
+   { const hg = halalGapLine(pos); if (hg) S.holds.push(hg); }
+@@ -2526,11 +2530,11 @@
+   const buyPart = plan.replace(/\nSELL\n[\s\S]*?(\n\n|$)/, '\n').trim();
+   if (sig) { const fd = planCands(sig, pos).filter(x => x.fade); if (fd.length) S.notAct.push('DO NOT BUY (tipped by a FADE source whose tips lag the market; 20 sessions after the tip): ' + fd.slice(0, 8).map(x => x.sym + ' (' + x.fade + ')').join(', ') + '.'); }
+   if (sig) { const av = planCands(sig, pos).filter(x => x.lottery); if (av.length) S.notAct.push('DO NOT BUY (one-day jump of 15%+ this month, tested to lag about 3% a month): ' + av.slice(0, 8).map(x => x.sym + ' +' + Math.round(x.lottery * 100) + '%').join(', ') + '.'); }
+-  const FOCUS = (readJson0('data/settings.json') || {}).focus !== false, working = FOCUS ? workingKinds().size > 0 : true, enginePaused = FOCUS && !working;   // a kind proven under the full live bar (review S-14)
++  const FOCUS = (readJson0('data/settings.json') || {}).focus !== false, working = workingKinds().size > 0, enginePaused = !working;   // a kind proven under the full live bar (review S-14)
+   try { await tryLedgerResolve(); } catch (e) {}   // TRY SMALL rows: priced at their own hold / stop, every stock (audit 24 Oct)
+   engineHistorySnapshot(); if (sig) { const lp = {}; for (const x of sig.stocks || []) if (x.last) lp[x.sym] = x.last; tier2Resolve(lp); }
+   if (sig) { try { const lastPx = {}; for (const x of sig.stocks || []) if (x.last) lastPx[x.sym] = x.last; const pc = planCands(sig, pos); avoidLedger([...pc.filter(x => x.lottery).map(x => ({ sym: x.sym, why: 'lottery' })), ...pc.filter(x => x.fade).map(x => ({ sym: x.sym, why: 'faded tipster' }))], lastPx); } catch (e) {} }
+-  S.records.push('YOUR REAL TRADES (what you reported): ' + ladder().text.replace(/^SIZE LEVEL/, 'size level'));
++  S.records.push('YOUR REPORTED RETURN JOURNAL (all retained qualifying rows, normalized model costs; not private cash accounting): ' + ladder().text.replace(/^SIZE LEVEL/, 'size level'));
+   if (new Date().getUTCDay() === 0) { try { S.records.push(scoreboardText()); } catch (e) {} }
+   const buySyms = () => new Set([...S.buys.join('\n').matchAll(/\bBUY ([A-Z][A-Z.\-]{0,7})\b/g)].map(m => m[1]));
+   // LONGER HOLDS (owner's labelled choice, 20 Oct): F-score 8-9 in an uptrend; NOT PROVEN; tier 2 when it passed its own test
+@@ -2567,12 +2571,12 @@
+       ...ed.map(x => '- BUY ' + x.sym + ' from ' + money(x.lo) + ' to ' + money(x.hi) + ' at the open. STOP ' + money(x.stop) + ' at your broker. SELL ' + x.sell + '. ' + hurdleText(x.hi) + '. Past test: ' + x.expect + (x.outsideTest ? '. NOTE: this company was not in the tested set (smaller or newer): treat it as the weaker of the two' : '') + '. After:  bought ' + x.sym + ' PRICE')]);
+       S.lanes.push('EARNINGS DRIFT: ' + (kept ? kept + ' buy' + (kept > 1 ? 's' : '') + ' above' : 'no buy today') + (ed.length > kept ? '; ' + (ed.length - kept) + ' need your ZAD mark first' : '') + '.'); } }
+   { const fl = followSection(sig, pos); if (fl.length) { if (fl.some(l => /- BUY /.test(l))) pb(fl); else S.shortT.push(...fl); } }   // FOLLOWING (follow-lane.mjs, tier 2)
+-  // ENGINE buys (swing / quick rules): actions only when focus is off or a kind is proven live; otherwise NOT ACTIONABLE, named
++  // ENGINE buys: their own existing minimum evidence bar applies in either focus state.
+   if (enginePaused) { const eng = sig ? [...new Set(planCands(sig, pos || {}).filter(x => !x.ok && !x.watch && !x.lottery && !x.fade && !x.regBlock && !x.newsBlock && !x.threatBlock && !x.macroBlock && x.kind !== 'earnings drift').map(x => x.sym))].filter(x => !buySyms().has(x)) : [];   // the engine cards are numbered '1) SYM', not 'BUY SYM': read the planner
+-    S.notAct.push('ENGINE BUYS PAUSED by focus mode (no engine kind proven on live paper yet; logged on paper): ' + (eng.length ? eng.slice(0, 8).join(', ') : 'none today') + '.  focus off  shows them as buys.');
+-    S.lanes.push('ENGINE (swing / quick rules): paused by focus mode until a kind shows a positive live record.'); }
++    S.notAct.push('ENGINE BUYS PAUSED by evidence gate (minimum legacy bar not met; logged on paper): ' + (eng.length ? eng.slice(0, 8).join(', ') : 'none today') + '. Focus changes presentation only; evidence and ZAD gates remain active.');
++    S.lanes.push('ENGINE (swing / quick rules): paused by the evidence gate until its own record meets the existing minimum bar (not proof of profitability).'); }
+   else if (buyPart) { const cards = buyPart.replace(/^\n+/, '').split(/\n(?=\n?\d+\) [A-Z])/), keep = cards.filter(c => { const m = c.replace(/^\n/, '').match(/^\d+\) ([A-Z][A-Z.\-]{0,7})\b/); if (m && isUnmarked(m[1])) { unmarked.add(m[1]); return false; } return true; });
+-    S.buys.push('', 'ENGINE BUYS | horizon: per card | ' + (FOCUS ? 'focus on: only kinds proven on live paper' : 'focus OFF: every engine buy, including unproven kinds (labelled on each card)'), keep.join('\n')); S.lanes.push('ENGINE: ' + (keep.some(c => /^\n?\d+\) /.test(c)) ? 'buys above' : 'no buy with your ZAD mark today') + '.'); }
++    S.buys.push('', 'ENGINE BUYS | horizon: per card | ' + (FOCUS ? 'focus on: only kinds proven on live paper' : 'focus OFF: evidence and compliance gates still apply'), keep.join('\n')); S.lanes.push('ENGINE: ' + (keep.some(c => /^\n?\d+\) /.test(c)) ? 'buys above' : 'no buy with your ZAD mark today') + '.'); }
+   if (h.acts.add.length) pb(['ADD TO A STOCK YOU OWN', ...h.acts.add.map(l => '- ' + l)]);
+   { const IR = readJson0('data/ignition-results.json'), r8 = IR && IR.record && IR.record['IG8/close'];
+     if (r8 && r8.n >= 20) S.shortT.push('EARLY WAVE (intraday, paper): ' + r8.n + ' paper trades, ' + Math.round(r8.win * 100) + '% won, ' + pcs(r8.avg) + ' a trade after costs (' + pcs(r8.stress) + ' at 1.5x costs) on ' + r8.days + ' day' + (r8.days === 1 ? '' : 's') + (r8.avg > 0 ? '; not evidence until 10+ days' : '; negative: its alerts stay paused') + '.'); }
+@@ -2582,7 +2586,7 @@
+     if (unc.length) S.holds.unshift('STOPS NOT CONFIRMED at your broker: ' + unc.join(', ') + '. Place them, then send  stop placed .');
+     S.holds.push('HOLD: ' + h.holdShort.map(x => x.replace(/ \(stop not confirmed at broker\)/g, '').replace(/ UNCONFIRMED/g, '')).join(' | ')); }
+   { const dn = buyDayNote(), tn = timingNote(); if (tn) S.when.push(tn); if (dn) S.when.push(dn); }
+-  { const g = goalsText().split('\n'); if (/^MONEY GOALS \((?!they start)/.test(g[0])) S.records.push('GOAL (accounting only): ' + (g.find(x => /^NEXT /.test(x)) || '').replace(/^NEXT\s+/, '') + ' | ' + g[1].replace(/^Now: /, 'now ')); }
++  { const g = goalsText().split('\n'); if (/^MONEY GOALS \((?!they start)/.test(g[0])) S.records.push('GOAL (private cash accounting since '+privRead().goals.start+'; actual reported size/fees, separate population from normalized journal): ' + (g.find(x => /^NEXT /.test(x)) || '').replace(/^NEXT\s+/, '') + ' | ' + g[1].replace(/^Now: /, 'now ')); }
+   { const cc = planCands(sig, pos || {}), w = cc.filter(x => x.watch), rb = cc.filter(x => x.regBlock), nb = cc.filter(x => x.newsBlock);
+     if (w.length) S.shortT.push('WATCH ONLY (15-29 tested trades; paper until proven, NOT a buy): ' + w.slice(0, 8).map(x => x.sym).join(', ') + '.');
+     if (rb.length) S.notAct.push('NOT IN THIS MARKET (no winning record in falling markets): ' + rb.slice(0, 8).map(x => x.sym).join(', ') + '.');
+@@ -2605,7 +2609,7 @@
+   { const lp = {}; for (const x of [...((sig && sig.stocks) || []), ...((sig && sig.uni) || [])]) if (x.last > 0 && !lp[x.sym]) lp[x.sym] = x.last; const pl = practiceLine(lp); if (pl) S.records.push(pl); }
+   if (unmarked.size) { const u = [...unmarked]; S.notAct.unshift('MARK HALAL FIRST (rule picks with no ZAD mark of yours: not a buy until you mark them): ' + u.join(', ') + '. Check ZAD, then send one of:\n' + halalAsk(u)); }
+   // ---- assemble, most important first
+-  const out = [title || 'ACTIONS', 'POLICY TODAY: ' + (enginePaused ? 'focus ON: engine buys PAUSED; your own lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT) active.' : FOCUS ? 'focus ON, a proven engine kind is working: its buys are actions.' : 'focus OFF: every engine buy is shown, unproven ones labelled.') + ' Research and paper are never buys.'];
++  const out = [title || 'ACTIONS', 'POLICY TODAY: ' + (enginePaused ? 'focus '+(FOCUS?'ON':'OFF')+': engine buys PAUSED; your own lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT) active.' : FOCUS ? 'focus ON, a proven engine kind is working: its buys are actions.' : 'focus OFF: evidence and compliance gates still apply.') + ' Research and paper are never buys.'];
+   const sec = (name, lines) => { if (lines.length) out.push('', name, ...lines); };
+   sec('CRITICAL', S.crit);
+   const acts = [...S.sells, ...(S.sells.length && S.buys.length ? [''] : []), ...S.buys.filter((l, i) => !(i === 0 && l === ''))];
+@@ -3295,7 +3299,7 @@
+           else out.push('I do not know how many ' + sym + ' shares you had, so this sale is not in your dollar goals. Send the result in dollars, for example:  pnl -2000 ' + sym); }
+         out.push('Sold ' + sym + ' at ' + money(exit) + ' (' + (k[2] ? 'your price' : 'price now; send  sold ' + sym + ' PRICE  next time for your exact fill') + '). Result ' + pcs(t.pct) + ' after about 0.8% costs. Recorded.\nWHY: ' + t.lesson + '\n' + myRecord());
+       } else out.push('Stopped tracking ' + sym + '. I could not get a price, so this sale is not in your record. Next time send: sold ' + sym + ' PRICE');
+-    } else if ((k = text.match(/^focus\s+(on|off)\s*$/i))) { const st = updateSettings(s => { s.focus = k[1].toLowerCase() === 'on'; }); if (!st) out.push(SETTINGS_BAD); else out.push(st.focus ? 'FOCUS ON: engine buys (swing / quick rules) are paused until one has a positive live record; they are listed under NOT ACTIONABLE TODAY. Your own lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT), sells and stops continue.' : 'FOCUS OFF: ACTIONS shows every engine buy again, unproven ones labelled. A stock without your ZAD halal mark is still never a buy.');
++    } else if ((k = text.match(/^focus\s+(on|off)\s*$/i))) { const st = updateSettings(s => { s.focus = k[1].toLowerCase() === 'on'; }); if (!st) out.push(SETTINGS_BAD); else out.push(st.focus ? 'FOCUS ON: engine buys (swing / quick rules) are paused until one has a positive live record; they are listed under NOT ACTIONABLE TODAY. Your own lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT), sells and stops continue.' : 'FOCUS OFF: presentation expanded; unproven engine candidates remain paper only. Evidence, safety and current ZAD approval are still required.');
+     } else if ((k = text.match(/^decision\s+([\s\S]{10,600})$/i))) { const st = readSettings(); if (!st) out.push(SETTINGS_BAD); else if (st.decision && st.decision.text && Date.parse(st.decision.due) > Date.now()) out.push('You already wrote your decision on ' + st.decision.set + ' (due ' + st.decision.due + '): ' + st.decision.text + '\nIt stays as written until its date; that is the point of writing it before the result is known.'); else { const set = new Date().toISOString().slice(0, 10), due = new Date(Date.now() + 90 * 864e5).toISOString().slice(0, 10); st.decision = { text: k[1].trim(), set, due }; if (!updateSettings(s => { if (!(s.decision && s.decision.text && Date.parse(s.decision.due) > Date.now())) s.decision = st.decision; })) out.push(SETTINGS_BAD); else out.push('Saved. Your decision, due ' + due + ': ' + st.decision.text + '\nIt is shown in every Sunday SCOREBOARD with the days left.'); }
+     } else if ((k = text.match(/^tier\s*2\s+(on|off)\s*$/i))) { const st = updateSettings(s => { s.tier2 = k[1].toLowerCase() === 'on'; }); if (!st) out.push(SETTINGS_BAD); else out.push(st.tier2 ? 'TRADABLE SMALL is ON: rules that passed their own test (t 2.5+, both halves, higher cost) are shown in their own section at 1,000 USD with a stop, with their own record.' : 'TRADABLE SMALL is OFF: the system is back to proven-only, exactly as before. Its ledger is kept.');
+     } else if ((k = text.match(/^quiet\s+(on|off)\s*$/i))) { const st = updateSettings(s => { s.quiet = k[1].toLowerCase() === 'on'; }); if (!st) out.push(SETTINGS_BAD); else out.push(st.quiet ? 'QUIET ON: you get ONE action message each night and morning, plus BUY NOW, stop and target alerts; the older research messages (movers, discovery, early-wave cards) are kept in the system. The OPPORTUNITY RADAR and EARLY WATCH messages have their own switches ( radar on/off ,  alerts all/paper/approved/off ). Send  quiet off  to get everything again.' : 'QUIET OFF: you get every message again (plan, your stocks, radar paper alerts, movers, smart money, deals, Sunday studies).');
+@@ -3672,7 +3676,7 @@
+         if (isQ) qFin.push({ sym, d: c[y.t.exitIdx].d, pct: y.t.pct, spy: ind.bench && ind.bench[y.t.sigIdx] ? ind.bench[y.t.exitIdx] / ind.bench[y.t.sigIdx] - 1 : null }); else results.push(y.t.r);
+         if (y.t.exitIdx === i) exits.push(sym + (isQ ? ' (quick trade)' : '') + ': paper trade from ' + y.x.d + ' ended by ' + y.t.reason.replace('_', ' ') + ' (' + (y.t.pct >= 0 ? '+' : '') + (y.t.pct * 100).toFixed(1) + '%)');
+       }
+-      if (!isQ) { const o = L.barOutcomes(y.x, c, ind); for (const h in o) { const g = horizons[h] || (horizons[h] = { n: 0, ret: 0, bench: 0 }); g.n++; g.ret += o[h].ret; g.bench += o[h].bench || 0; } }
++      if (!isQ) { const o = L.barOutcomes(y.x, c, ind); for (const h in o) { const g = horizons[h] || (horizons[h] = { n: 0, ret: 0, bench: 0, wins:0 }); g.n++; if(o[h].ret>0)g.wins++; g.ret += o[h].ret; g.bench += o[h].bench || 0; } }
+     }
+     if (only) uni.push({ sym, last: d.last, uptrend: T.up, mom6: +T.mom6.toFixed(4) });
+     if (!only) {
+@@ -3908,7 +3912,7 @@
+
+   const fin = results.length, wins = results.filter(r => r > 0).length;
+   const outcomes = { updated: new Date(now).toISOString(), finished: fin, winRate: fin ? wins / fin : null, avgR: fin ? results.reduce((a, b) => a + b, 0) / fin : null,
+-    horizons: Object.fromEntries(Object.entries(horizons).map(([h, g]) => [h, { n: g.n, avgReturn: g.ret / g.n, avgBenchmark: g.bench / g.n }])) };
++    horizons: Object.fromEntries(Object.entries(horizons).map(([h, g]) => [h, { n: g.n, avgReturn: g.ret / g.n, avgBenchmark: g.bench / g.n, winRate: typeof g.wins==='number'?g.wins/g.n:null }])) };
+   fs.writeFileSync('data/outcomes.json', JSON.stringify(outcomes, null, 1));
+   fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
+   { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
+--- a/missed-runners.mjs
++++ b/missed-runners.mjs
+@@ -1,3 +1,4 @@
++import {uniqueWatcherDays,uniqueMoverRows} from './watcher-reporting.mjs';
+ // MISSED-RUNNER AUTOPSY (library A-MISS1, Agent A - Timing). Research only; never places an order; no Telegram.
+ // QUESTION: when a stock ran 15%+ and Stock-2 did not trade it, WHY? Four-way diagnosis for every runner: COVERAGE (the system
+ // never saw it), TIMING (it saw it too late: delayed feed, move before the open, after the 11:00 cut-off), ELIGIBILITY (a block:
+@@ -41,10 +42,11 @@
+
+ // ---- 1. ledger: merge today's per-stock audit (data/ignition-live.json) into the durable history, one line per mover per day
+ let hist = JL(HIST); { const live = J('data/ignition-live.json', null), have = new Set(hist.map(x => x.d + '|' + x.sym));
+-  if (live && live.day && Array.isArray(live.missed)) { const add = live.missed.filter(x => !have.has(live.day + '|' + x.sym)).map(x => ({ d: live.day, mode: live.mode, ...x }));
++  if (live && live.day && Array.isArray(live.missed)) { const add = uniqueMoverRows(live.missed.map(x=>({d:live.day,...x}))).rows.filter(x => {const k=live.day+'|'+x.sym;if(have.has(k))return false;have.add(k);return true;}).map(x => ({ d: live.day, mode: live.mode, ...x }));
+     if (add.length) { fs.appendFileSync(HIST, add.map(x => JSON.stringify(x) + '\n').join('')); hist = hist.concat(add); console.log('missed-runner ledger: +' + add.length + ' movers from ' + live.day); } } }
+ if (env.MR_LEDGER_ONLY) process.exit(0);
+-const dayRows = JL(DAYS), watched = new Set(dayRows.map(x => x.day));
++const dayPopulation=uniqueWatcherDays(JL(DAYS)),dayRows = dayPopulation.rows, watched = new Set(dayRows.map(x => x.day));
++const moverPopulation=uniqueMoverRows(hist);hist=moverPopulation.rows;
+ const byKey = new Map(hist.map(x => [x.d + '|' + x.sym, x]));
+
+ // ---- 2. codes -> diagnosis and decision-tree groups (fixed before the numbers)
+@@ -177,14 +179,15 @@
+ else if (big[0] === 'ruleNotFired') { branch = 'NO_NEW_RULE'; why = 'rule did not fire (or fired without a validated record) is the biggest cause: ' + big[1] + ' of ' + misses + ' (' + pc(big[1] / misses) + '); late data ' + pc(lateShare) + ' (' + pc(lateAllShare) + ' counting gap-like), blocked ' + pc(share('blocked')) + '. ORB (IG5/IG7) fired on ' + pc(orbShare) + ' of the audited movers (10% asked)'; }
+ else if (big[0] === 'blocked') { const policy = blockedRunnerPolicy({ blockedIsLargest: true, sampleN: blockedRuns.length, fadeShare }); branch = policy.branch; why = 'blocked is the biggest cause: ' + big[1] + ' of ' + misses + ' (' + pc(big[1] / misses) + '); ' + policy.reason; }
+ else { branch = 'FEED_TRIAL'; why = 'late data is the biggest cause (' + pc(lateShare) + ') though under 40%'; }
+-const decision = { branch, why, caughtInTime: { rows: caughtInTimeRows.length, share: r4(caughtShare), branch4: caughtShare >= 0.20 ? 'SCORE_THEM: 20%+ caught in time; size the engine only if its paper record is positive after costs' : 'under 20% caught in time: no sizing' },
++const legacyDecision={branch,why};branch='UNKNOWN_DENOMINATOR';why='Mixed/unknown instrument identity, incomplete session coverage and delayed prices prevent a tradable-security miss rate or feed-purchase decision. Legacy tree is descriptive only.';
++const decision = { branch, why, legacyDecision, caughtInTime: { rows: caughtInTimeRows.length, share: r4(caughtShare), branch4: 'NOT_ESTABLISHED: mixed instrument/session denominator; no sizing recommendation' },
+   groupsOfMisses: { lateDataFeedFixable: lateFixable, lateDataAll: groups.lateData || 0, ruleNotFired: groups.ruleNotFired || 0, blocked: groups.blocked || 0, moveBeforeOpen: (groups.moveBeforeOpen || 0) + feedGapLike, misses, movers, alerted: tally.ALERTED || 0 },
+   orbFiredShare: r4(orbShare), blockedFade5: { dailySample: fadeShare, n: blockedRuns.length, minimumN: 30, fadeBar: 0.55, ledgerSameSessionNegative, nLedger: blockedLedger.length, note: 'Only dailySample is a 5-session outcome. ledgerSameSessionNegative is same-session and must not be interpreted as a 5-session fade.' } };
+ const ig8 = ((J('data/ignition-results.json', {}) || {}).record || {})['IG8/close'] || null;
+ const actionsLine = 'Missed runners (' + dayRows.length + ' watched days, ' + movers + ' movers of 15%+): ' + Object.entries(tally).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => k + ' ' + v).join(', ') + '. Decision: ' + branch + '.';
+ const asOfDay = dayRows.length ? dayRows.map(x => x.day).sort().slice(-1)[0] : null;   // (outside review, 23 Oct) readers compare this with the newest watcher day; older = stale
+ const out = { generatedAt: new Date().toISOString(), asOfDay, staleRule: 'stale if data/ignition-days.jsonl has a later day than asOfDay; re-run before using the decision', agent: 'A', library: 'A-MISS1', preRegistered: '2026-10-21 (decision tree written before the numbers)', window: { watchedDays: dayRows.length, days: dayRows.map(x => x.day), dailyCache: T ? D[W0] + ' to ' + D[T - 1] : 'none' },
+-  ledger: { movers, alerted: tally.ALERTED || 0, misses, tally, feedFix, feedGapLike, perStockRows: hist.length, rowsPerDay, note: 'tallies cover every 15%+ intraday mover; per-stock rows the 150 biggest a day' },
++  ledger: { movers, alerted: tally.ALERTED || 0, misses, tally, feedFix, feedGapLike, perStockRows: hist.length, rowsPerDay, duplicateDailySummaries:dayPopulation.duplicates,duplicateLiteralSymbolDays:moverPopulation.duplicates,conflictingLiteralSymbolDays:moverPopulation.conflicts,identity:moverPopulation.identity,tradableUniverseVerified:false,sessionCoverage:'NOT_ESTABLISHED',note: 'Selected one longer daily summary per date; literal symbol/day rows deduplicated without proving security identity. Mixed instruments/delayed quotes and missing session minutes invalidate a whole-market stock denominator. Legacy detailed rows may be capped at 150.' },
+   diagnosis: { allMovers: diag, runnerSample: count(runners, 'diagnosis') }, groups, runners: { n: runners.length, codes: count(runners, 'code'), groups: count(runners, 'group'), named, list: runners.slice(0, 400) }, controls: { n: controls.length, list: controls.slice(0, 400) }, knowable,
+   latency: { ig8Unbiased: { ...latA, note: 'IG8 signals from the paper ledger, every signal, stop 8% then the close, fills delayed by minutes, after costs' }, moversHindsight: { ...latB, note: 'ONLY stocks that ran 15%+ (hindsight): from the signal minute to the close, no stop, after costs; not a forecast' }, calls, refused, budget: BUDGET, cached: Object.keys(mc).length },
+   breakEven, catchable, decision, ig8PaperRecord: ig8, actionsLine, noNewBuyRule: true };
+--- a/early-alerts.mjs
++++ b/early-alerts.mjs
+@@ -31,6 +31,8 @@
+ // hard rules (never bypassed); sec = { known, tags } from the watcher's SEC check
+ export function hardReason({ price, halalFail, lottery, sec }) {
+   if (!(price >= 1)) return 'under 1 USD'; if (halalFail) return 'NOT HALAL (ZAD)'; if (lottery >= 0.15) return 'AVOID list (one-day jump ' + pct(lottery) + ')';
++  if(sec?.policyExcluded)return 'instrument policy exclusion (not a SEC source failure)';
++  if(sec?.admissionBlocked)return 'instrument identity UNKNOWN (not admitted)'+(sec.sourceFailure?'; SEC source unavailable':' ; no SEC source failure recorded');
+   if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
+   return null;
+ }
+--- a/rank-models.mjs
++++ b/rank-models.mjs
+@@ -1,3 +1,4 @@
++import {RANKING_COHORT_DECISION,primaryRankingDay} from './ranking-cohort.mjs';
+ // SHADOW RANKING EXPERIMENT (owner approved A/B/C on 28 Oct 2026; D added at the owner's request and FROZEN here the same day, before any
+ // D candidate existed; R and R0 are no-skill controls). Shadow only: nothing here changes which alert is sent (live ranking stays A,
+ // first come, until the owner approves a change after a separate confirmation period). Pure functions; shadow-outcomes.mjs runs them.
+@@ -47,7 +48,8 @@
+   if (!(q.price >= 1)) why.push('under 1 USD'); if (!(q.prevDollarVol >= 1e6)) why.push('under 1M USD traded the day before');
+   if (q.spreadFresh && q.spread !== null && q.spread > 0.02) why.push('spread over 2%');
+   if (q.halalFail) why.push('NOT HALAL'); if (q.lottery >= 0.15) why.push('AVOID list');
+-  if (!q.sec || !q.sec.known) why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
++  if(q.sec?.policyExcluded)why.push('instrument policy exclusion');else if(q.sec?.admissionBlocked)why.push('instrument identity UNKNOWN');
++  if ((!q.sec || !q.sec.known)&&!q.sec?.policyExcluded) why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
+   return { eligible: why.length === 0, why };
+ }
+
+@@ -67,14 +69,14 @@
+     assumedSpreadShare: sc.length ? +(sc.filter(x => x.s.assumedSpread).length / sc.length).toFixed(3) : null };
+ }
+ // streams: { E: rows, F: rows, N: rows } with r = { d, sym, m, chg, e: {px,bid,ask,qAgeSec,next,px30}, last, ...model inputs }
+-export function evaluate(streams, outcomes = {}, from = FROZEN.evalFrom) {
+-  const out = { frozen: FROZEN, models: {}, streams: {} };
+-  for (const [k, rows] of Object.entries(streams)) { const rs = rows.filter(r => r.d >= from); out.streams[k] = { candidates: rs.length, sessions: new Set(rs.map(r => r.d)).size, all: summarizePicks(rs.filter(r => k !== 'F' || r.dEligible), outcomes) }; }
+-  for (const [id, M] of Object.entries(MODELS)) { const rs = (streams[M.stream] || []).filter(r => r.d >= from), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r);
++export function evaluate(streams, outcomes = {}, from = FROZEN.evalFrom, {secondary=false}={}) {
++  const out = { frozen: FROZEN,cohort:secondary?'SECONDARY_RECONSTRUCTION':'PRIMARY',admissionDecision:RANKING_COHORT_DECISION, models: {}, streams: {} };
++  for (const [k, rows] of Object.entries(streams)) { const rs = rows.filter(r => r.d >= from && (secondary||primaryRankingDay(r.d))); out.streams[k] = { candidates: rs.length, sessions: new Set(rs.map(r => r.d)).size, all: summarizePicks(rs.filter(r => k !== 'F' || r.dEligible), outcomes) }; }
++  for (const [id, M] of Object.entries(MODELS)) { const rs = (streams[M.stream] || []).filter(r => r.d >= from && (secondary||primaryRankingDay(r.d))), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r);
+     out.models[id] = { name: M.name, stream: M.stream, ...summarizePicks(Object.values(byDay).flatMap(d => pick(d, M)), outcomes) }; }
+   // alert-cap opportunity cost (stream E): what A's first five did vs the eligible candidates that arrived after the cap, and a hindsight
+   // best five (an upper bound nobody could pick live, shown only to size what first-come gives up)
+-  { const rs = (streams.E || []).filter(r => r.d >= from), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r); const first = [], after = [], best = [];
++  { const rs = (streams.E || []).filter(r => r.d >= from && (secondary||primaryRankingDay(r.d))), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r); const first = [], after = [], best = [];
+     for (const d of Object.values(byDay)) { const a = pick(d, MODELS.A), set = new Set(a.map(x => x.sym)); first.push(...a); after.push(...d.filter(x => !set.has(x.sym)));
+       best.push(...d.map(r => ({ r, v: scoreRow(r, outcomes).day })).filter(x => x.v !== null).sort((x, y) => y.v - x.v).slice(0, FROZEN.cap).map(x => x.r)); }
+     out.capCost = { firstFive: summarizePicks(first, outcomes), afterCap: summarizePicks(after, outcomes), hindsightBestFive: summarizePicks(best, outcomes) }; }
+@@ -83,5 +85,6 @@
+   for (const id of ['B', 'C', 'D']) { const m = out.models[id], ref = id === 'D' ? [out.models.R0] : [out.models.A, out.models.R];
+     m.verdict = m.sessions < FROZEN.minSessions || m.picks < FROZEN.minPicks ? 'COLLECTING (' + m.sessions + ' of ' + FROZEN.minSessions + ' sessions, ' + m.picks + ' of ' + FROZEN.minPicks + ' picks)'
+       : ref.every(b => v(m, b)) ? 'PROMISING: propose a separate 20-session confirmation period' : 'NOT BETTER than ' + (id === 'D' ? 'the no-information control' : 'first come / random'); }
++  if(secondary)for(const m of Object.values(out.models))m.verdict='SECONDARY ONLY: no primary or confirmation verdict';
+   return out;
+ }
+--- a/shadow-outcomes.mjs
++++ b/shadow-outcomes.mjs
+@@ -59,7 +59,7 @@
+ const F = shadowRows.filter(r => r.f && r.v && r.v.D).map(r => ({ d: r.d, sym: r.sym, m: r.f.decM, chg: r.f.chg, dEligible: r.f.eligible, why: r.f.why, e: r.v.D, last: r.last }));
+ const N = shadowRows.filter(r => r.v && r.v.R0).map(r => ({ d: r.d, sym: r.sym, m: r.v.R0.m, chg: r.chg0, e: r.v.R0, last: r.last }));
+ report.ranking = evaluate({ E, F, N }, outcomes);
+-report.rankingPilot = evaluate({ E, F, N }, outcomes, '2026-10-28');   // includes the first live day (28 Oct, code deployed that morning): a pilot, never counted in the verdict
++report.rankingPilot = evaluate({ E, F, N }, outcomes, '2026-10-28', {secondary:true});   // includes the first live day (28 Oct, code deployed that morning): a pilot, never counted in the verdict
+ report.dFeed = { filingsDecided: F.length, dEligible: F.filter(r => r.dEligible).length, topReasons: Object.entries(F.flatMap(r => r.why || []).reduce((o, w) => (o[w.replace(/ [\d.,]+$/, '')] = (o[w.replace(/ [\d.,]+$/, '')] || 0) + 1, o), {})).sort((a, b) => b[1] - a[1]).slice(0, 6) };
+ fs.writeFileSync('data/shadow-report.json', JSON.stringify(report, null, 1));
+ console.log('shadow outcomes: ' + fetched + ' day files updated; ' + shadowRows.length + ' shadow candidates over ' + shadowDays.length + ' sessions; ' + Object.keys(outcomes).length + ' outcomes');
+--- /dev/null
++++ b/watcher-reporting.mjs
+@@ -0,0 +1,44 @@
++// Read-only reporting. A process start, a summary count and an observed market minute are distinct evidence.
++import fs from 'node:fs';
++import path from 'node:path';
++import {marketSession} from './market-session.mjs';
++const day=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\d$/.test(x)&&Number.isFinite(Date.parse(x))&&new Date(x).toISOString().slice(0,10)===x;
++const minute=x=>typeof x==='string'&&/^\d\d:\d\d$/.test(x)&&+x.slice(0,2)<24&&+x.slice(3)<60?+x.slice(0,2)*60+ +x.slice(3):null;
++export const watchMinute=m=>m===null?'UNKNOWN':String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
++export function uniqueWatcherDays(rows){
++ const by=new Map();let rejected=0,duplicates=0;
++ for(const x of rows||[]){if(!x||!day(x.day)){rejected++;continue;}const prior=by.get(x.day);if(prior)duplicates++;
++  const count=r=>Number.isSafeInteger(r.minutes)&&r.minutes>=0?r.minutes:0;
++  // A poorer late duplicate cannot replace the longer recorded population. Ties retain the first, never best P&L.
++  if(!prior||count(x)>count(prior))by.set(x.day,x);
++ }
++ return {rows:[...by.values()].sort((a,b)=>a.day.localeCompare(b.day)),duplicates,rejected};
++}
++export function watcherReport(summaries=[],snapshots=[]){
++ const u=uniqueWatcherDays(summaries),days=[...u.rows.map(x=>x.day),...snapshots.filter(x=>day(x?.day)).map(x=>x.day)].sort(),latest=days.at(-1);
++ if(!latest)return {day:null,opening:'UNKNOWN',complete:false,text:'watcher coverage UNKNOWN: no dated observation evidence'};
++ const s=marketSession(latest),open=s.open||570,close=s.close||960,beats=new Map();
++ for(const x of snapshots.filter(x=>x?.day===latest))for(const b of Array.isArray(x.heartbeat)?x.heartbeat:[]){if(Number.isInteger(b?.m)&&b.m>=0&&b.m<1440&&b.received>0&&b.evaluated>0)beats.set(b.m,b);}
++ const minutes=[...beats.keys()].sort((a,b)=>a-b),regular=minutes.filter(m=>m>=open&&m<close),missing=Array.from({length:close-open},(_,i)=>open+i).filter(m=>!beats.has(m));
++ const daily=u.rows.find(x=>x.day===latest),firsts=summaries.filter(x=>x?.day===latest).map(x=>minute(x.firstMinute)).filter(x=>x!==null),firstReported=firsts.length?Math.min(...firsts):null;
++ const opening=beats.has(open)?'OBSERVED':'UNKNOWN',complete=s.known&&!s.closed&&missing.length===0;
++ const legacyOnly=!!daily&&(daily.minutes||0)>regular.length;
++ const text='watcher evidence on '+latest+': opening minute '+opening+'; '+regular.length+'/'+(close-open)+' usable retained regular-session minutes'+(minutes.length?'; first retained observation '+watchMinute(minutes[0])+' New York':'')+(firstReported!==null?'; daily summaries report first '+watchMinute(firstReported)+' (summary only)':'')+(legacyOnly?'; earlier summary has additional minutes without retained heartbeat proof':'')+'; '+(complete?'full-session minute coverage observed':'full-session coverage NOT ESTABLISHED')+(u.duplicates?'; '+u.duplicates+' duplicate daily summaries excluded':'');
++ return {day:latest,opening,complete,regularMinutes:regular.length,expected:close-open,first:minutes[0]??null,missing,firstReported,legacyOnly,duplicateSummaries:u.duplicates,text};
++}
++export function readWatcherReport(directory='data'){
++ const read=p=>{try{return JSON.parse(fs.readFileSync(p,'utf8'));}catch{return null;}}, rows=[];
++ try{for(const l of fs.readFileSync(path.join(directory,'ignition-days.jsonl'),'utf8').split('\n')){try{rows.push(JSON.parse(l));}catch{}}}catch{}
++ const snapshots=[read(path.join(directory,'ignition-live.json'))].filter(Boolean),date=uniqueWatcherDays(rows).rows.at(-1)?.day||snapshots[0]?.day;
++ if(day(date)){const dir=path.join(directory,'ignition-runs',date);try{for(const f of fs.readdirSync(dir).filter(f=>/^[A-Za-z0-9_-]+\.json$/.test(f))){const x=read(path.join(dir,f));if(x)snapshots.push(x);}}catch{}}
++ return watcherReport(rows,snapshots);
++}
++export function missedRunnerPopulation(rows){
++ const u=uniqueWatcherDays(rows),tally={};for(const r of u.rows)for(const [k,v]of Object.entries(r.tally||{}))if(Number.isSafeInteger(v)&&v>=0)tally[k]=(tally[k]||0)+v;
++ return {...u,tally,count:Object.values(tally).reduce((a,b)=>a+b,0),alerts:u.rows.reduce((n,x)=>n+(Number.isSafeInteger(x.alerts)&&x.alerts>=0?x.alerts:0),0),coverageKnownComplete:u.rows.length>0&&u.rows.every(x=>x.sessionComplete===true),instrumentScope:'UNVERIFIED_MIXED_INSTRUMENTS',uniqueSecurityDays:'NOT_ESTABLISHED_FROM_AGGREGATE_TALLIES'};
++}
++export function uniqueMoverRows(rows){
++ const by=new Map();let duplicates=0,rejected=0,conflicts=0;
++ for(const x of rows||[]){if(!x||!day(x.d)||typeof x.sym!=='string'||!/^[A-Z][A-Z0-9.\-]{0,14}$/.test(x.sym)){rejected++;continue;}const k=x.d+'|'+x.sym;if(by.has(k)){duplicates++;if(JSON.stringify(by.get(k))!==JSON.stringify(x))conflicts++;continue;}by.set(k,x);}
++ return {rows:[...by.values()],duplicates,rejected,conflicts,identity:'LITERAL_SYMBOL_DAY_ONLY_NOT_AUTHENTICATED_SECURITY'};
++}
+--- /dev/null
++++ b/market-session.mjs
+@@ -0,0 +1,9 @@
++// NYSE cash-equity calendar, explicitly bounded to reviewed 2026/2027 dates.
++// Source: https://www.nyse.com/markets/hours-calendars . Unknown years fail closed.
++const holidays=new Set(['2026-01-01','2026-01-19','2026-02-16','2026-04-03','2026-05-25','2026-06-19','2026-07-03','2026-09-07','2026-11-26','2026-12-25','2027-01-01','2027-01-18','2027-02-15','2027-03-26','2027-05-31','2027-06-18','2027-07-05','2027-09-06','2027-11-25','2027-12-24']);
++const early=new Set(['2026-11-27','2026-12-24','2027-11-26']);
++export function marketSession(day) {
++ const valid=typeof day==='string'&&/^202[67]-\d{2}-\d{2}$/.test(day)&&Number.isFinite(Date.parse(day+'T12:00:00Z'))&&new Date(day+'T12:00:00Z').toISOString().slice(0,10)===day;
++ const closed=!valid||[0,6].includes(new Date(day+'T12:00:00Z').getUTCDay())||holidays.has(day);
++ return {day,known:valid,closed,open:closed?null:570,close:closed?null:early.has(day)?780:960};
++}
+--- /dev/null
++++ b/zad-compliance.mjs
+@@ -0,0 +1,32 @@
++// Only the owner's affirmative ZAD mark can authorize approved BUY wording.
++// Third-party screens, missing files and unknown marks never count as approval.
++const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
++const symbol=x=>typeof x==='string'&&/^[A-Z][A-Z0-9.\-]{0,9}$/.test(x);
++export function zadDate(date) {
++ const t=typeof date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(date)?Date.parse(date+'T00:00:00Z'):NaN;
++ return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===date?t:null;
++}
++// Rejections remain recheck-required until an explicit valid owner update.
++// A quarterly list may block, but can never supply the owner's affirmative mark.
++// A malformed exclusion file cannot be silently interpreted as an empty list.
++export function resolveZad(marks,list,now=Date.now()) {
++ const listValid=object(list)&&Array.isArray(list.notHalal)&&list.notHalal.every(symbol)
++  &&['newHalal','halalAgain'].every(k=>list[k]===undefined||Array.isArray(list[k])&&list[k].every(symbol));
++ const valid=object(marks)&&listValid&&Number.isFinite(now),out=Object.create(null),excluded=new Set(listValid?list.notHalal:[]);
++ if(object(marks))for(const [sym,m] of Object.entries(marks)){
++  if(!symbol(sym)||!object(m))continue;
++  const at=zadDate(m.d),fresh=at!==null&&now>=at&&now-at<=90*86400000;
++  if(m.s==='fail')out[sym]={...m,s:'fail',requiresRecheck:!fresh};
++  else if(m.s==='ok')out[sym]=valid&&fresh&&(m.requiresRecheck===undefined||m.requiresRecheck===false)&&(m.by===undefined||typeof m.by==='string')&&!/ZAD list|Zoya|Halal Terminal|HalalScreener/i.test(String(m.by||''))?{...m,s:'ok'}:{...m,s:'expired',was:'ok',requiresRecheck:true};
++ }
++ for(const sym of excluded)out[sym]={s:'fail',d:list.effective||list.received||null,by:'ZAD list',requiresRecheck:true};
++ return {valid,marks:out,excluded,reason:valid?null:!listValid?'MISSING_OR_MALFORMED_ZAD_LIST':'MISSING_OR_MALFORMED_OWNER_MARKS'};
++}
++export function zadApproved(symbol, marks, excluded, nowMs = Date.now()) {
++  const date = marks?.[symbol]?.d;
++  const markedAt = typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) ? Date.parse(date + 'T00:00:00Z') : NaN;
++  const dated = Number.isFinite(markedAt) && new Date(markedAt).toISOString().slice(0, 10) === date;
++  return typeof symbol === 'string' && /^[A-Z][A-Z0-9.\-]{0,9}$/.test(symbol) && object(marks) && Object.hasOwn(marks, symbol) && object(marks[symbol])
++    && marks[symbol]?.s === 'ok' && (marks[symbol]?.requiresRecheck===undefined||marks[symbol]?.requiresRecheck===false) && (marks[symbol]?.by===undefined||typeof marks[symbol]?.by==='string') && !/ZAD list|Zoya|Halal Terminal|HalalScreener/i.test(String(marks[symbol]?.by||'')) && dated && Number.isFinite(nowMs)
++    && nowMs >= markedAt && nowMs - markedAt <= 90 * 86400000 && excluded instanceof Set && !excluded.has(symbol);
++}
+--- /dev/null
++++ b/watcher-session.mjs
+@@ -0,0 +1,52 @@
++// Session identity and publication policy. Selection uses observation coverage, never returns.
++import { sessionCoverage } from './session-coverage.mjs';
++import {marketSession} from './market-session.mjs';
++export function sessionEvidence(snapshot) {
++  if (!snapshot || typeof snapshot.day !== 'string') return {minutes:0,usableMinutes:0,first:null,last:null,complete:false};
++  const session=marketSession(snapshot.day), close=session.close||960;
++  if (Array.isArray(snapshot.heartbeat) && snapshot.heartbeat.length) {
++    const ms=[...new Set(snapshot.heartbeat.map(x=>x.m).filter(m=>Number.isInteger(m)&&m>=570&&m<close))].sort((a,b)=>a-b);
++    const c=sessionCoverage(snapshot.heartbeat,snapshot.day);
++    const useful=new Set(snapshot.heartbeat.filter(x=>x.received>0&&x.evaluated>0&&Number.isInteger(x.m)&&x.m>=570&&x.m<close).map(x=>x.m)).size;
++    return {minutes:ms.length,usableMinutes:useful,first:ms[0]??null,last:ms.at(-1)??null,complete:c.complete};
++  }
++  // Legacy daily summaries lack per-minute proof. Use their counts only to avoid replacing
++  // an existing longer record; never upgrade them to a verified complete session.
++  const c=snapshot.coverage||snapshot, minutes=Number.isFinite(c.observedMinutes)?c.observedMinutes:Number.isFinite(c.minutesWatched)?c.minutesWatched:Number.isFinite(c.minutes)?c.minutes:0;
++  return {minutes:Math.max(0,minutes),usableMinutes:0,first:null,last:null,complete:false};
++}
++export function sessionFinished(snapshot, day) {
++  const e=sessionEvidence(snapshot);
++  const s=marketSession(day);
++  return snapshot?.day===day && !s.closed && e.complete && e.usableMinutes>=s.close-s.open && e.last>=s.close-1;
++}
++export function preferSession(existing, candidate) {
++  if (!candidate || !candidate.day) return false;
++  if (!existing || existing.day!==candidate.day) return true;
++  const a=sessionEvidence(existing),b=sessionEvidence(candidate);
++  // Legacy duration protects the recorded day when heartbeat proof is absent.
++  // A short retry cannot outrank it solely because it has newer telemetry.
++  if ((!Array.isArray(existing.heartbeat) || !existing.heartbeat.length) && b.minutes < a.minutes) return false;
++  if(b.usableMinutes!==a.usableMinutes)return b.usableMinutes>a.usableMinutes;
++  if(b.minutes!==a.minutes)return b.minutes>a.minutes;
++  if(b.first!==null && a.first!==null && b.first!==a.first)return b.first<a.first;
++  // An equal-size rerun must not overwrite earlier evidence or duplicate its messages.
++  return false;
++}
++export function runIdentity(env={}, now=Date.now()) {
++  const id=String(env.GITHUB_RUN_ID||'local-'+now),attempt=String(env.GITHUB_RUN_ATTEMPT||1);
++  if(!/^[A-Za-z0-9_-]+$/.test(id)||!/^\d+$/.test(attempt))throw new Error('invalid watcher run identity');
++  const segment=env.IG_SEGMENT;
++  if(segment && !['open','close'].includes(segment))throw new Error('invalid watcher segment');
++  return id+'-'+attempt+(segment?'-'+segment:'');
++}
++export function chooseDailySummary(rows,day) {
++  const same=rows.filter(x=>x?.day===day);
++  return same.reduce((best,x)=>{
++    if(!best)return x;
++    // Never select by P&L. Legacy summaries use discovery counts only when duration
++    // was not recorded; this fallback is explicitly measurement quality, not coverage proof.
++    const rank=r=>[Number.isFinite(r.sessionMinutes)?r.sessionMinutes:0,Number.isFinite(r.detected)?r.detected:0];
++    const a=rank(best),b=rank(x);return b[0]>a[0]||(b[0]===a[0]&&b[1]>a[1])?x:best;
++  },null);
++}
+--- /dev/null
++++ b/session-coverage.mjs
+@@ -0,0 +1,9 @@
++import {marketSession} from './market-session.mjs';
++// A complete session means every scheduled minute, including the closing minute
++// bar (15:59 normally; 12:59 on reviewed half days). Gaps remain visible.
++export function sessionCoverage(beat, day) {
++  const s=day?marketSession(day):{closed:false,open:570,close:960};
++  const expected=s.closed?0:s.close-s.open;
++  const minutes = new Set((beat||[]).map(b => b?.m).filter(m => Number.isInteger(m) && !s.closed && m >= s.open && m < s.close));
++  return { expectedMinutes: expected, observedMinutes: minutes.size, rate: expected?+(minutes.size / expected).toFixed(3):0, complete: expected>0 && minutes.size===expected };
++}
+--- /dev/null
++++ b/instrument-type.mjs
+@@ -0,0 +1,32 @@
++// Admission uses an explicitly reviewed digest of archived official reference bytes.
++// No ticker-suffix guesses, API calls, or new collection permissions are introduced.
++import fs from 'node:fs';
++import {createHash} from 'node:crypto';
++const sha=x=>createHash('sha256').update(x).digest('hex');
++const unknown=reason=>({status:'UNKNOWN',reason,policyExcluded:false,sourceFailure:false,securityId:null});
++export function instrumentType(symbol,{bytes,pinnedSha256,now=Date.now()}={}){
++ if(!Buffer.isBuffer(bytes)||bytes.length>4*1024*1024||!/^[a-f0-9]{64}$/.test(pinnedSha256||'')||sha(bytes)!==pinnedSha256)return unknown('UNAUTHENTICATED_OR_UNAVAILABLE_REFERENCE');
++ let ref;try{ref=JSON.parse(bytes.toString('utf8'));}catch{return unknown('MALFORMED_REFERENCE');}
++ if(ref?.kind!=='REVIEWED_OFFICIAL_INSTRUMENT_CAPTURE_V1'||!Array.isArray(ref.records)||ref.records.length>20000)return unknown('MALFORMED_REFERENCE');
++ const rows=ref.records.filter(x=>x?.raw?.results?.ticker===symbol);
++ if(rows.length!==1)return unknown(rows.length?'AMBIGUOUS_REFERENCE_IDENTITY':'MISSING_REFERENCE_IDENTITY');
++ const r=rows[0],x=r.raw.results,at=typeof r.observedAt==='string'&&/T.*Z$/.test(r.observedAt)?Date.parse(r.observedAt):NaN;
++ let url;try{url=new URL(r.url);}catch{return unknown('UNSUPPORTED_REFERENCE_ORIGIN');}
++ if(url.protocol!=='https:'||!['api.massive.com','api.polygon.io'].includes(url.hostname)||url.port||url.username||url.password||url.search||url.hash||url.pathname!=='/v3/reference/tickers/'+encodeURIComponent(symbol)||r.transport!=='HTTPS_OFFICIAL_CAPTURE'||r.raw.status!=='OK')return unknown('UNSUPPORTED_REFERENCE_ORIGIN');
++ if(!Number.isFinite(now)||!Number.isFinite(at)||at>now||now-at>7*86400000)return unknown('STALE_FUTURE_OR_MISSING_REFERENCE_CLOCK');
++ const identity=x.share_class_figi||x.composite_figi;
++ if(x.market!=='stocks'||x.locale!=='us'||typeof identity!=='string'||!/^[A-Z0-9]{12}$/.test(identity))return unknown('UNSUPPORTED_OR_AMBIGUOUS_SECURITY_IDENTITY');
++ const common={type:x.type,securityId:identity,sourceUrl:r.url,observedAt:r.observedAt,referenceSha256:pinnedSha256,sourceFailure:false};
++ if(x.type==='CS')return {...common,status:'ELIGIBLE_COMMON_STOCK',policyExcluded:false,reason:'OFFICIAL_COMMON_STOCK_TYPE; NOT_ZAD_OR_EXECUTION_APPROVAL'};
++ if(['WARRANT','RIGHT','RT','UNIT','ETF','ETN','ETV','PFD','ADRW','ADRR','ADRP'].includes(x.type))return {...common,status:'POLICY_EXCLUDED',policyExcluded:true,reason:'COMMON_STOCK_ONLY_POLICY:'+x.type};
++ return {...unknown('UNSUPPORTED_INSTRUMENT_TYPE'),...common};
++}
++export function readInstrumentType(symbol,{file,pinnedSha256,now=Date.now()}={}){
++ try{if(!file)return unknown('REFERENCE_NOT_CONFIGURED');const st=fs.lstatSync(file);if(!st.isFile()||st.isSymbolicLink()||st.size>4*1024*1024)return unknown('REFERENCE_FILE_UNUSABLE');return instrumentType(symbol,{bytes:fs.readFileSync(file),pinnedSha256,now});}catch{return unknown('REFERENCE_FILE_UNAVAILABLE');}
++}
++export async function instrumentAwareSec(symbol,lookup,options={}){
++ const instrument=readInstrumentType(symbol,options);
++ if(instrument.policyExcluded)return {known:false,tags:[],status:'INSTRUMENT_POLICY_EXCLUDED',sourceFailure:false,policyExcluded:true,admissionBlocked:true,instrument};
++ let sec;try{sec=await lookup(symbol);}catch{sec={known:false,tags:[]};}
++ return {...sec,instrument,admissionBlocked:instrument.status!=='ELIGIBLE_COMMON_STOCK',sourceFailure:sec?.known!==true,status:sec?.known===true?(instrument.status==='ELIGIBLE_COMMON_STOCK'?'SEC_KNOWN':'INSTRUMENT_IDENTITY_UNKNOWN'):'SEC_SOURCE_UNAVAILABLE'};
++}
+--- /dev/null
++++ b/ranking-cohort.mjs
+@@ -0,0 +1,3 @@
++// Dated owner decision changes evidence admission, never the frozen ranking rules.
++export const RANKING_COHORT_DECISION=Object.freeze({recordedAt:'2026-10-30',authority:'OWNER_INSTRUCTION_IN_SESSION',excludedPrimaryDays:['2026-10-28','2026-10-29'],reasons:{'2026-10-28':'ORIGINAL_PILOT; duplicate overwrite, incomplete coverage, retrospective recovery','2026-10-29':'OWNER_EXCLUDED_PRIMARY; duplicate overwrite and incomplete observation coverage'},recoveredEvidence:'SECONDARY_RECONSTRUCTION_ONLY_NOT_UNTOUCHED_CONFIRMATION'});
++export const primaryRankingDay=day=>!RANKING_COHORT_DECISION.excludedPrimaryDays.includes(day);
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -1,3 +1,6 @@
++import {instrumentAwareSec} from './instrument-type.mjs';
++import {execFileSync} from 'node:child_process';
++import {sessionFinished,preferSession,runIdentity} from './watcher-session.mjs';
+ // IGNITION WATCHER: runs during the US session (about 9:20 to 15:00 New York, a long GitHub Actions job). Every minute it checks
+ // the Massive snapshot universe (about 6,000+ US stocks) for stocks that START to run (rules in ignition-core.mjs, plus the
+ // live-only quiet build-up rule IG8). COVERAGE IS MEASURED, NOT ASSUMED: every minute's heartbeat records the coverage mode, how
+@@ -38,6 +41,8 @@
+ const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loops * +env.IG_FAKE_STEP : Math.floor((Date.now() - START) / 60000)) : nyMin();
+ PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
+ const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
++const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
++if(sessionFinished(readJson('data/ignition-live.json',null),day)){console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
+ if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
+ if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
+ if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
+@@ -102,7 +107,7 @@
+   if (o.length < 3) return null; return { orH: Math.max(...o.map(x => x[2])), orL: Math.min(...o.map(x => x[3])), pm: b.filter(x => x[0] < 570).reduce((a, x) => a + x[5], 0) }; }
+ // SEC check before any alert. FAIL-CLOSED: if the check cannot be done, the alert is blocked (the ignition stays on paper).
+ let TICK = null, secLogged = false;
+-async function secRisk(sym) {
++async function secRiskIssuer(sym) {
+   const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
+   try { if (!TICK) { const r = await fetch(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return { known: false, tags: [] }; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
+     const cik = TICK[sym]; if (!cik) return { known: false, tags: [] };
+@@ -110,6 +115,7 @@
+     for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
+       if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) tags.add('share sale / registration (' + f + ')'); if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
+     return { known: true, tags: [...tags], filings }; } catch (e) { return { known: false, tags: [] }; } }
++async function secRisk(sym) { return instrumentAwareSec(sym,secRiskIssuer,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256}); }
+ // headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
+ async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
+   try { const to = new Date().toISOString().slice(0, 10), from = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10), r = await fetch('https://finnhub.io/api/v1/company-news?symbol=' + encodeURIComponent(sym) + '&from=' + from + '&to=' + to + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
+@@ -135,7 +141,7 @@
+     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
+   if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
+   if (!isFreshPriceAge(rd)) { flag(r.sym, 'noLive', 'price age ' + (typeof rd !== 'number' || !Number.isFinite(rd) ? 'unknown' : rd < 0 ? 'invalid (future timestamp)' : Math.round(rd) + ' minutes') + ': not fresh enough to alert'); return; }
+-  const risk = await secRisk(r.sym); if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
++  const risk = await secRisk(r.sym); if(risk.admissionBlocked){t.blocked=[risk.policyExcluded?'INSTRUMENT_POLICY_EXCLUDED':'INSTRUMENT_IDENTITY_UNKNOWN'];flag(r.sym,risk.policyExcluded?'instrumentExcluded':'instrumentUnknown','not admitted: '+risk.status);if(risk.sourceFailure){t.blocked.push('SEC_SOURCE_UNAVAILABLE');flag(r.sym,'secUnavailable','SEC source unavailable as well as instrument identity');}return;} if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
+   if (risk.tags.length) { t.blocked = risk.tags; flag(r.sym, 'secBlocked', 'alert blocked: ' + risk.tags.join(', ')); return; }
+   alerts++; if (early) earlyAlerts++; t.alerted = true; t.early = early; flag(r.sym, 'alerted', 'ALERTED (' + R.id + (early ? ', early paper' : '') + ')');
+   const ex = ok.sort((a, b) => ((PREC[b.rule + '/' + b.exit] || {}).avg || 0) - ((PREC[a.rule + '/' + a.exit] || {}).avg || 0))[0], pr = PREC[ex.rule + '/' + ex.exit], stop = R.orb ? extra.orL : R.pull ? Math.max(extra.stop * 0.995, r.price * 0.88) : r.price * 0.92, hist = !liveOnly && ex.results ? ex.results.newer : null;
+@@ -158,7 +164,7 @@
+     console.log('pre-market record: ' + all.length + ' stocks traded before the open, ' + keep.length + ' saved (heaviest volume + gaps of 5%+), data about ' + ageMed + ' min old'); } }
+ // ---- the audit: every stock that ran 15%+ (moved above the loop on 28 Oct so the 11:15 OPPORTUNITY RADAR snapshot can use it too), one deterministic code (data and safety reasons first, so they are never blamed on a rule)
+ const codeOf = (v) => { const f = v.flags;
+-  if (f.alerted) return 'ALERTED'; if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.lottery) return 'LOTTERY_AVOID'; if (f.alertCap) return 'ALERT_CAP_REACHED';
++  if (f.alerted) return 'ALERTED'; if(f.instrumentExcluded)return 'INSTRUMENT_POLICY_EXCLUDED';if(f.instrumentUnknown)return 'INSTRUMENT_IDENTITY_UNKNOWN';if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.lottery) return 'LOTTERY_AVOID'; if (f.alertCap) return 'ALERT_CAP_REACHED';
+   if (f.noLive) return 'NO_LIVE_PRICE_AT_SIGNAL'; if (f.volLate && !f.paperGate && !f.ruleNotPassed) return 'VOLUME_FIGURE_LATE'; if (f.paperGate) return 'CAUGHT_PAPER_GATE_NOT_MET'; if (f.ruleNotPassed) return 'CAUGHT_RULE_NOT_PASSED';
+   if ((v.fm <= 575 && v.fc >= 0.10) || v.fo >= 0.10) return 'GAPPED_AT_OPEN'; if (v.lm === undefined) return 'NOT_VISIBLE_LIVE';   // opened 10%+ up = the move happened before the open: no feed can fix that
+   if (v.lc >= 0.25) return 'VISIBLE_TOO_LATE'; if (f.noVolHist) return 'NO_VOLUME_HISTORY';
+@@ -183,7 +189,7 @@
+ const EF = { seen: new Set(), pending: [], last: 0, first: true, polls: 0, fails: 0, filings: 0, lat: [], decided: 0, eligible: 0, noPrice: 0, firstOkM: null, ctlDone: false, cik: null }, DAY4 = Date.parse(day + 'T04:00:00Z') - nyOffset(day) * 60000;
+ async function pollEdgar(m) {
+   if (m > 660 || Date.now() - EF.last < 110000) return; EF.last = Date.now();
+-  if (!TICK) await secRisk('SPY').catch(() => {}); if (!TICK) { EF.fails++; return; }
++  if (!TICK) await secRiskIssuer('').catch(() => {}); if (!TICK) { EF.fails++; return; }
+   if (!EF.cik) { EF.cik = new Map(); for (const [t, c] of Object.entries(TICK)) if (/^[A-Z]{1,5}$/.test(t)) { const k = +c; if (!EF.cik.has(k)) EF.cik.set(k, []); EF.cik.get(k).push(t); } }
+   const H = { headers: { 'User-Agent': SEC_UA, Accept: 'application/atom+xml' } };
+   for (const type of ['8-K', '6-K']) for (let start = 0; start < (EF.first ? 800 : 200); start += 100) {
+@@ -308,8 +314,15 @@
+   receivedMedian: med(beat.map(b => b.received)), evaluatedMedian: med(beat.map(b => b.evaluated)), liveMedian: med(beat.map(b => b.live)), liveRate: med(beat.map(b => b.evaluated ? +(b.live / b.evaluated).toFixed(3) : null)),
+   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
+   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
++// Incident backport: archive on original observation basis before any canonical end-of-run publication.
++const incidentSnapshot={version:IG_VERSION,day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat};
++const incidentArchive='data/ignition-runs/'+day;
++fs.mkdirSync(incidentArchive,{recursive:true});
++fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.json',JSON.stringify(incidentSnapshot),{flag:'wx'});
++fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.shadow.jsonl.gz',zlib.gzipSync(SR.rows().map(x=>JSON.stringify(x)).join('\n')+'\n'),{flag:'wx'});
++if(!preferSession(readJson('data/ignition-live.json',null),incidentSnapshot)){console.log('watcher: retained richer existing session; attempt archived');process.exit(0);}
+ if (Object.keys(vcToday).length >= 12) { VC.days[day] = vcToday; for (const d of Object.keys(VC.days).sort().slice(0, -25)) delete VC.days[d]; fs.writeFileSync('data/vol-curve.json', JSON.stringify(VC)); }
+-fs.writeFileSync('data/ignition-live.json', JSON.stringify({ version: IG_VERSION, day, mode, src, note, loops, coverage, alerts, triggers, missed: missed.slice(0, 150), tally, heartbeat: beat }, null, 1));
++fs.writeFileSync('data/ignition-live.json', JSON.stringify(incidentSnapshot,null,1));
+ // FEED-FIXABLE: a data-feed miss that real-time prices could actually have helped = not visible/late live AND not already up 10%+
+ // at the open AND not gapped 20%+ before 9:25 (a gap happens before any feed can help). Real-time cannot fix the rest.
+ const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISIBLE_TOO_LATE', 'VOLUME_FIGURE_LATE']), dataMiss = missed.filter(x => DATA_CODES.has(x.code)),
+--- a/.github/workflows/ignition.yml
++++ b/.github/workflows/ignition.yml
+@@ -48,11 +48,13 @@
+         run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
+       - if: always()
+         run: |
++          set -euo pipefail
+           git config user.name "scanner"
+           git config user.email "scanner@users.noreply.github.com"
+-          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; true
++          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; true
+           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
+-          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
++          ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
++          [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
+       - if: failure()
+         env:
+           TG_TOKEN: ${{ secrets.TG_TOKEN }}

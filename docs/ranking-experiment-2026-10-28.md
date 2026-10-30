@@ -1,3 +1,5 @@
+> Current admission decision,30October2026: owner excludes29October from the primary cohort;28October remains the excluded pilot. Recovered evidence is secondary only, never untouched confirmation. See [incident report](incident-2026-10-29.md) and ranking-cohort.mjs. The original frozen proposal below is preserved as history.
+
 # Ranking experiment, D model, universe audit and the seven questions (28 Oct 2026)
 
 **Owner approvals (28 Oct):**

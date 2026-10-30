@@ -1,3 +1,4 @@
+import {uniqueWatcherDays,uniqueMoverRows} from './watcher-reporting.mjs';
 // MISSED-RUNNER AUTOPSY (library A-MISS1, Agent A - Timing). Research only; never places an order; no Telegram.
 // QUESTION: when a stock ran 15%+ and Stock-2 did not trade it, WHY? Four-way diagnosis for every runner: COVERAGE (the system
 // never saw it), TIMING (it saw it too late: delayed feed, move before the open, after the 11:00 cut-off), ELIGIBILITY (a block:
@@ -41,10 +42,11 @@ fs.mkdirSync('data', { recursive: true }); fs.mkdirSync(CDIR, { recursive: true 
 
 // ---- 1. ledger: merge today's per-stock audit (data/ignition-live.json) into the durable history, one line per mover per day
 let hist = JL(HIST); { const live = J('data/ignition-live.json', null), have = new Set(hist.map(x => x.d + '|' + x.sym));
-  if (live && live.day && Array.isArray(live.missed)) { const add = live.missed.filter(x => !have.has(live.day + '|' + x.sym)).map(x => ({ d: live.day, mode: live.mode, ...x }));
+  if (live && live.day && Array.isArray(live.missed)) { const add = uniqueMoverRows(live.missed.map(x=>({d:live.day,...x}))).rows.filter(x => {const k=live.day+'|'+x.sym;if(have.has(k))return false;have.add(k);return true;}).map(x => ({ d: live.day, mode: live.mode, ...x }));
     if (add.length) { fs.appendFileSync(HIST, add.map(x => JSON.stringify(x) + '\n').join('')); hist = hist.concat(add); console.log('missed-runner ledger: +' + add.length + ' movers from ' + live.day); } } }
 if (env.MR_LEDGER_ONLY) process.exit(0);
-const dayRows = JL(DAYS), watched = new Set(dayRows.map(x => x.day));
+const dayPopulation=uniqueWatcherDays(JL(DAYS)),dayRows = dayPopulation.rows, watched = new Set(dayRows.map(x => x.day));
+const moverPopulation=uniqueMoverRows(hist);hist=moverPopulation.rows;
 const byKey = new Map(hist.map(x => [x.d + '|' + x.sym, x]));
 
 // ---- 2. codes -> diagnosis and decision-tree groups (fixed before the numbers)
@@ -177,14 +179,15 @@ else if (lateShare >= 0.40) { branch = 'FEED_TRIAL'; why = 'feed-fixable late da
 else if (big[0] === 'ruleNotFired') { branch = 'NO_NEW_RULE'; why = 'rule did not fire (or fired without a validated record) is the biggest cause: ' + big[1] + ' of ' + misses + ' (' + pc(big[1] / misses) + '); late data ' + pc(lateShare) + ' (' + pc(lateAllShare) + ' counting gap-like), blocked ' + pc(share('blocked')) + '. ORB (IG5/IG7) fired on ' + pc(orbShare) + ' of the audited movers (10% asked)'; }
 else if (big[0] === 'blocked') { const policy = blockedRunnerPolicy({ blockedIsLargest: true, sampleN: blockedRuns.length, fadeShare }); branch = policy.branch; why = 'blocked is the biggest cause: ' + big[1] + ' of ' + misses + ' (' + pc(big[1] / misses) + '); ' + policy.reason; }
 else { branch = 'FEED_TRIAL'; why = 'late data is the biggest cause (' + pc(lateShare) + ') though under 40%'; }
-const decision = { branch, why, caughtInTime: { rows: caughtInTimeRows.length, share: r4(caughtShare), branch4: caughtShare >= 0.20 ? 'SCORE_THEM: 20%+ caught in time; size the engine only if its paper record is positive after costs' : 'under 20% caught in time: no sizing' },
+const legacyDecision={branch,why};branch='UNKNOWN_DENOMINATOR';why='Mixed/unknown instrument identity, incomplete session coverage and delayed prices prevent a tradable-security miss rate or feed-purchase decision. Legacy tree is descriptive only.';
+const decision = { branch, why, legacyDecision, caughtInTime: { rows: caughtInTimeRows.length, share: r4(caughtShare), branch4: 'NOT_ESTABLISHED: mixed instrument/session denominator; no sizing recommendation' },
   groupsOfMisses: { lateDataFeedFixable: lateFixable, lateDataAll: groups.lateData || 0, ruleNotFired: groups.ruleNotFired || 0, blocked: groups.blocked || 0, moveBeforeOpen: (groups.moveBeforeOpen || 0) + feedGapLike, misses, movers, alerted: tally.ALERTED || 0 },
   orbFiredShare: r4(orbShare), blockedFade5: { dailySample: fadeShare, n: blockedRuns.length, minimumN: 30, fadeBar: 0.55, ledgerSameSessionNegative, nLedger: blockedLedger.length, note: 'Only dailySample is a 5-session outcome. ledgerSameSessionNegative is same-session and must not be interpreted as a 5-session fade.' } };
 const ig8 = ((J('data/ignition-results.json', {}) || {}).record || {})['IG8/close'] || null;
 const actionsLine = 'Missed runners (' + dayRows.length + ' watched days, ' + movers + ' movers of 15%+): ' + Object.entries(tally).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => k + ' ' + v).join(', ') + '. Decision: ' + branch + '.';
 const asOfDay = dayRows.length ? dayRows.map(x => x.day).sort().slice(-1)[0] : null;   // (outside review, 23 Oct) readers compare this with the newest watcher day; older = stale
 const out = { generatedAt: new Date().toISOString(), asOfDay, staleRule: 'stale if data/ignition-days.jsonl has a later day than asOfDay; re-run before using the decision', agent: 'A', library: 'A-MISS1', preRegistered: '2026-10-21 (decision tree written before the numbers)', window: { watchedDays: dayRows.length, days: dayRows.map(x => x.day), dailyCache: T ? D[W0] + ' to ' + D[T - 1] : 'none' },
-  ledger: { movers, alerted: tally.ALERTED || 0, misses, tally, feedFix, feedGapLike, perStockRows: hist.length, rowsPerDay, note: 'tallies cover every 15%+ intraday mover; per-stock rows the 150 biggest a day' },
+  ledger: { movers, alerted: tally.ALERTED || 0, misses, tally, feedFix, feedGapLike, perStockRows: hist.length, rowsPerDay, duplicateDailySummaries:dayPopulation.duplicates,duplicateLiteralSymbolDays:moverPopulation.duplicates,conflictingLiteralSymbolDays:moverPopulation.conflicts,identity:moverPopulation.identity,tradableUniverseVerified:false,sessionCoverage:'NOT_ESTABLISHED',note: 'Selected one longer daily summary per date; literal symbol/day rows deduplicated without proving security identity. Mixed instruments/delayed quotes and missing session minutes invalidate a whole-market stock denominator. Legacy detailed rows may be capped at 150.' },
   diagnosis: { allMovers: diag, runnerSample: count(runners, 'diagnosis') }, groups, runners: { n: runners.length, codes: count(runners, 'code'), groups: count(runners, 'group'), named, list: runners.slice(0, 400) }, controls: { n: controls.length, list: controls.slice(0, 400) }, knowable,
   latency: { ig8Unbiased: { ...latA, note: 'IG8 signals from the paper ledger, every signal, stop 8% then the close, fills delayed by minutes, after costs' }, moversHindsight: { ...latB, note: 'ONLY stocks that ran 15%+ (hindsight): from the signal minute to the close, no stop, after costs; not a forecast' }, calls, refused, budget: BUDGET, cached: Object.keys(mc).length },
   breakEven, catchable, decision, ig8PaperRecord: ig8, actionsLine, noNewBuyRule: true };
