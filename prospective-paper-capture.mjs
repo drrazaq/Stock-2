@@ -1,5 +1,6 @@
 // Offline preparation only. No network, environment keys, orders or activation path.
 import {createHash} from 'node:crypto';
+import {captureJson} from './capture-json.mjs';
 import {marketSession} from './market-session.mjs';
 import {evaluatePaperEvidence} from './discovery-paper.mjs';
 import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
@@ -26,7 +27,7 @@ export function validatePlan(p){
 export function frameFromSnapshots({sequence,requestedAt,receivedAt,rawResponse,events=[],metadata=[],universe,priorFrames=[],sourceHandoffAt=receivedAt}){
  assert(typeof rawResponse==='string'&&Buffer.byteLength(rawResponse)<=65536,'RAW_RESPONSE_BUDGET');
  assert(iso(receivedAt)&&iso(requestedAt),'SNAPSHOT_CLOCK');
- const body=JSON.parse(rawResponse);assert(body&&typeof body==='object'&&!Array.isArray(body)&&!body.error&&!body.message,'SNAPSHOT_ERROR_ENVELOPE');
+ const body=captureJson(rawResponse);assert(body&&typeof body==='object'&&!Array.isArray(body)&&!body.error&&!body.message,'SNAPSHOT_ERROR_ENVELOPE');
  const ny=ms=>Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ms)).map(x=>[x.type,x.value]));
  const dayAt=ms=>{const x=ny(ms);return x.year+'-'+x.month+'-'+x.day;};
  const minuteAt=ms=>{const x=ny(ms);return Number(x.hour)*60+Number(x.minute);};
@@ -35,7 +36,7 @@ export function frameFromSnapshots({sequence,requestedAt,receivedAt,rawResponse,
   const q=snap.latestQuote||{},now=Date.parse(receivedAt),id=metadata.filter(m=>m.symbol===symbol&&iso(m.asOf)&&Date.parse(m.asOf)<=now).at(-1);
   const bars=new Map();let conflict=false;
   for(const f of [...priorFrames.map(x=>x.frame||x),{rawResponse}]){
-   const bar=JSON.parse(f.rawResponse)[symbol]?.minuteBar;if(!bar||!iso(bar.t))continue;
+   const bar=captureJson(f.rawResponse)[symbol]?.minuteBar;if(!bar||!iso(bar.t))continue;
    const at=Date.parse(bar.t);if(at+60000>now||dayAt(at)!==dayAt(now)||minuteAt(at)<570)continue;
    const signature=JSON.stringify([bar.l,bar.h,bar.v]);if(bars.has(at)&&bars.get(at).signature!==signature)conflict=true;else bars.set(at,{...bar,signature});
   }

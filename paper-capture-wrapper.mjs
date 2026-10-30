@@ -9,7 +9,7 @@ import {runCalibration} from './prospective-capture-transport.mjs';
 import {validateReferenceBundle} from './paper-capture-references.mjs';
 import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
 import {openCaptureZip} from './capture-artifact.mjs';
-export const WRAPPER_FILES=Object.freeze(['capture-json.mjs','capture-artifact.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
+export const WRAPPER_FILES=Object.freeze(['capture-json.mjs','capture-artifact.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
 export const FIXED_UNIVERSE=Object.freeze(['AMD','INTC','NVDA','AMAT','LRCX','KLAC']);
 export const WRAPPER_CAPS=Object.freeze({uploads:41,sealedBytes:160*1024*1024,archiveBytes:164*1024*1024,historyRows:100,referenceBytes:2*1024*1024});
 export const APPROVAL_LIMITS=Object.freeze({providerAttempts:41,perMinute:2,inFlight:1,responseBytes:65536,totalResponseBytes:8388608,frames:41,symbols:6,uploadAttempts:41,sealedBytes:167772160,archiveBytes:171966464,retentionDays:3});
@@ -24,7 +24,7 @@ export function inputFingerprint(referenceSha256,plan){return sha(JSON.stringify
 export function prepareCaptureGuard({root,reviewRoot,approvalFile,referenceFile,context,history,now}){
  const snapshots=new Map(),remember=(f,max)=>{const s=immutableRead(f,max);snapshots.set(path.resolve(f),{...s,max});return s;};
  const approvalRead=remember(approvalFile,65536),a=captureJson(approvalRead.bytes.toString()),p=a.plan;
- ok(a.kind==='PAPER_CAPTURE_GUARDED_APPROVAL_V1'&&a.granted===true&&a.ownerApprovalReference&&a.ownerApprovalReference.length<=200,'DATED_APPROVAL_REQUIRED');
+ ok(a.kind==='PAPER_CAPTURE_GUARDED_APPROVAL_V1'&&a.granted===true&&typeof a.ownerApprovalReference==='string'&&a.ownerApprovalReference.trim().length>0&&a.ownerApprovalReference.length<=200,'DATED_APPROVAL_REQUIRED');
  validatePlan(p);ok(a.limits&&Object.keys(a.limits).sort().join('|')===Object.keys(APPROVAL_LIMITS).sort().join('|')&&Object.entries(APPROVAL_LIMITS).every(([k,v])=>a.limits[k]===v),'EXACT_APPROVED_LIMITS');ok(p.cohort==='CALIBRATION'&&JSON.stringify(p.universe)===JSON.stringify(FIXED_UNIVERSE),'FIXED_CALIBRATION_ONLY');
  ok(a.feed==='sip'&&a.entitlements?.latestSip===true&&a.entitlements?.referenceRetention===true&&a.entitlements?.quoteBarAndConditionsReviewed===true&&hash(a.entitlements?.evidenceSha256)&&a.recoveryProofVerified===true,'OFFICIAL_RIGHTS_OR_RECOVERY_REQUIRED');
  ok(Number.isFinite(stamp(a.approvedAt))&&stamp(a.approvedAt)<=now&&stamp(a.approvedAt)<=Date.parse(p.start)&&Date.parse(p.start)-stamp(a.approvedAt)<=86400000&&a.expires===p.end&&now>=Date.parse(p.start)-10*60000&&now<=Date.parse(p.start),'APPROVAL_OR_START_WINDOW');
@@ -61,19 +61,20 @@ export async function runGuardedCapture({root,reviewRoot,approvalFile,referenceF
  const report=await runCalibration({plan:a.plan,now,wait,metadata:guard.references.metadata,
   readEvents:async at=>{guard.revalidate();const raw=await bounded(ports.events({at,maxBytes:131072,readOnly:true}));ok(typeof raw==='string'&&Buffer.byteLength(raw)<=131072,'EVENT_SOURCE_BUDGET');const doc=captureJson(raw);ok(Array.isArray(doc.events)&&doc.events.length<=20,'EVENT_SOURCE_SCHEMA');eventBatches.push({at,raw,sha256:sha(raw)});return doc.events;},
   transport:async(url,options)=>{guard.revalidate();return ports.provider(url,options);},
-  persist:async state=>{
+  persist:async state=>{try{
    const sequence=state.frames.length-1,name='checkpoint-'+String(sequence).padStart(3,'0')+'.enc';
    const contextTag={kind:'GUARDED_PAPER_CAPTURE_V1',sourceSha:a.plan.sourceSha,approvalHash:guard.approvalHash,referenceHash:guard.references.sha256,runId:context.runId,cohort:'CALIBRATION',sequence,chain:state.chain};
-   const body=Buffer.from(JSON.stringify(sealResearch(Buffer.from(JSON.stringify({approvalRaw:guard.approvalRaw,referenceRaw:guard.references.raw,eventBatches,state})),key,contextTag)));
+   const payload=Buffer.from(JSON.stringify({approvalRaw:guard.approvalRaw,referenceRaw:guard.references.raw,eventBatches,state}));ok(payload.length<=8*1024*1024,'CHECKPOINT_PLAIN_BUDGET');
+   const body=Buffer.from(JSON.stringify(sealResearch(payload,key,contextTag)));
    sealedBytes+=body.length;ok(body.length<=16*1024*1024&&sealedBytes<=WRAPPER_CAPS.sealedBytes&&receipts.length<41,'SEALED_UPLOAD_BUDGET');
    const file=path.join(absolute,name);fs.writeFileSync(file,body,{flag:'wx',mode:0o600});pending.push(name);guard.revalidate();
    const receipt=await bounded(ports.upload({name,file,bytes:body,sha256:sha(body),retentionDays:3,sequence,timeoutMs:10000}),8000);
    ok(receipt&&receipt.success===true&&Number.isSafeInteger(receipt.artifactId)&&receipt.artifactId>0&&!receipts.some(x=>x.artifactId===receipt.artifactId)&&hash(receipt.archiveSha256)&&receipt.fileSha256===sha(body)&&receipt.fileBytes===body.length&&receipt.retentionDays===3&&Number.isSafeInteger(receipt.archiveBytes)&&receipt.archiveBytes>0&&receipt.archiveBytes<=16*1024*1024,'UPLOAD_ACK_INVALID_OR_UNCERTAIN');
    archiveBytes+=receipt.archiveBytes;ok(archiveBytes<=WRAPPER_CAPS.archiveBytes,'ARCHIVE_STORAGE_BUDGET');
    ok(immutableRead(file,16*1024*1024).hash===sha(body),'SEALED_FILE_CHANGED_DURING_UPLOAD');
-   receipts.push({...receipt,name,sequence});pending.pop();
+   receipts.push({success:true,artifactId:receipt.artifactId,archiveSha256:receipt.archiveSha256,archiveBytes:receipt.archiveBytes,fileSha256:receipt.fileSha256,fileBytes:receipt.fileBytes,retentionDays:3,name,sequence});pending.pop();
    fs.writeFileSync(path.join(absolute,'receipt-'+String(sequence).padStart(3,'0')+'.json'),JSON.stringify(receipts.at(-1)),{flag:'wx',mode:0o600});guard.revalidate();return true;
-  }});
+  }catch(e){failure=['CHECKPOINT_PLAIN_BUDGET','SEALED_UPLOAD_BUDGET','UPLOAD_ACK_INVALID_OR_UNCERTAIN','ARCHIVE_STORAGE_BUDGET','SEALED_FILE_CHANGED_DURING_UPLOAD','PORT_TIMEOUT'].includes(e.message)?e.message:'CHECKPOINT_EXTERNAL_OR_IO_ERROR';throw e;}}});
  try{guard.revalidate();status=report.status==='CAPTURE_COMPLETE'?'COMPLETE':'INCOMPLETE';}catch{status='BLOCKED';failure='IMMUTABLE_STATE_CHANGED';}
  const receiptManifest={version:1,sourceSha:a.plan.sourceSha,approvalHash:guard.approvalHash,runId:context.runId,cohort:'CALIBRATION',receipts};
  const receiptBytes=Buffer.from(JSON.stringify(receiptManifest));fs.writeFileSync(path.join(absolute,'receipts.json'),receiptBytes,{flag:'wx',mode:0o600});
