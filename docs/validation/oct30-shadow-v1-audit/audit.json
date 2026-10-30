@@ -1,0 +1,93 @@
+{
+  "kind": "LEGACY_SHADOW_TO_DISCOVERY_PAPER_V1_AUDIT",
+  "provenance": {
+    "protocolSha256": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
+    "admissionRevision": "IDENTITY_EVENT_QUOTES_EXPOSURE_V3",
+    "commit": "f8a3fa97b08d94e1e5608e6c777787ac347da0a3",
+    "parent": "7ddf863343ef816d31c35ed894156218bb2bd9d1",
+    "authorTime": "2026-10-30T19:00:08Z",
+    "commitTime": "2026-10-30T19:00:16Z",
+    "path": "data/shadow/2026-10-30.jsonl.gz",
+    "blob": "7addb934baf4d57cdd5a7f7f7e808b3678abf4a3",
+    "expectedCompressedSha256": "722e4923fc9a5ae9fc6ba8596bf20ebea71de7efd346840d00c6b0911c324228",
+    "sourceAuthenticity": "Immutable repository evidence; not provider authentication or V1 prospective enrollment"
+  },
+  "artifact": {
+    "compressedSha256": "722e4923fc9a5ae9fc6ba8596bf20ebea71de7efd346840d00c6b0911c324228",
+    "decompressedSha256": "17d0ba8373b41d869c85f18221633b492af1de4837fdec27b8fc9534b55c9aaa",
+    "compressedBytes": 64133,
+    "decompressedBytes": 398695,
+    "rows": 978,
+    "dates": [
+      "2026-10-30"
+    ]
+  },
+  "protocol": {
+    "id": "DISCOVERY_PAPER_V1",
+    "notional": 1000,
+    "feePerOrder": 3,
+    "holdMinutes": 30,
+    "maxEntryWaitMinutes": 3,
+    "maxExitWaitMinutes": 3,
+    "maxQuoteAgeSeconds": 120,
+    "maxEntrySpread": 0.02,
+    "minDollarVolume": 1000000,
+    "stressSlippagePerSide": 0.005
+  },
+  "cutoff": "2026-10-30T19:00:16Z",
+  "cutoffMeaning": "Publication-time audit cutoff, not a reconstructed detection/quote clock",
+  "counts": {
+    "auditedRows": 978,
+    "candidateCases": 968,
+    "controlContextRows": 10,
+    "duplicateLegacySecurityDays": 0,
+    "variantAndTriggerSlots": 951,
+    "candidatesWithAnyLegacyEntryBbo": 428,
+    "candidatesWithReportedAgeWithin120s": 413,
+    "candidatesWithLegacyPx30": 422,
+    "candidatesWithFilingAccession": 129,
+    "formalBlocked": 968,
+    "formalUnresolved": 0,
+    "formalResolved": 0,
+    "genuineAdmissions": 0
+  },
+  "requirements": {
+    "immutableByteIntegrity": "PASS_EXPECTED_SHA256_AND_GIT_OBJECT",
+    "legacyDayMinuteAndSymbol": "LEGACY_CONTEXT_ONLY_NOT_UTC_INGESTION_OR_SECURITY_ID",
+    "originalEventAndObservationClockSatisfied": 0,
+    "pointInTimeSecurityAndIndustrySatisfied": 0,
+    "protocolEntryQuoteSatisfied": 0,
+    "sameTimeIndustryControlSatisfied": 0,
+    "executableExitFollowupSatisfied": 0,
+    "displayedSizeSatisfied": 0,
+    "sourceAuditedV1BindingSatisfied": 0,
+    "zad": "NOT_A_NEW_V1_GATE; required separately for any executable approval"
+  },
+  "formalEvaluation": {
+    "counts": {
+      "attempted": 968,
+      "blocked": 968,
+      "unresolved": 0,
+      "resolved": 0,
+      "resolvedWithVerifiedDisplayedSize": 0,
+      "targetNotObserved": 0
+    },
+    "reasonCounts": {
+      "INVALID_DISCOVERY_EVENT": 968
+    },
+    "provenance": "SIMULATION_OR_UNVERIFIED_INPUT",
+    "conclusion": "NO STRATEGY VERDICT — quote assumptions are not fills; fixtures cannot establish profitability, predictive validity or approved BUY eligibility."
+  },
+  "deficitCounts": {
+    "NO_ORIGINAL_DISCOVERY_EVENT_ID": 968,
+    "NO_ABSOLUTE_DETECTION_INGESTION_CLOCK": 968,
+    "NO_POINT_IN_TIME_SECURITY_ID_INDUSTRY": 968,
+    "NO_PROTOCOL_ENTRY_QUOTE_CLOCK": 968,
+    "NO_DOLLAR_VOLUME_ASOF": 968,
+    "NO_ENTRY_EXIT_DISPLAYED_SIZES": 968,
+    "NO_THIRTY_MINUTE_EXIT_BID_PATH": 968,
+    "NO_SAME_TIME_INDUSTRY_PAIRED_CONTROL": 968,
+    "NO_AUDITED_V1_ENROLLMENT_CAPTURE_BINDING": 968
+  },
+  "conclusion": "ZERO GENUINE ADMISSIONS. Legacy price/quote hints and R0 controls are preserved, not converted into executable trades or new frozen cases."
+}

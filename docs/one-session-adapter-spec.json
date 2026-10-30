@@ -1,0 +1,65 @@
+{
+  "id": "ANG_FOMC_ONE_SESSION_ADAPTER_SPEC_V1",
+  "status": "SPECIFICATION_ONLY_NOT_IMPLEMENTED_OR_AUTHORIZED",
+  "mode": "RESEARCH_ONLY_REJECTED_NEGATIVE_CONTROL",
+  "strategy": "ANG-FOMC",
+  "frozenVerdict": "REJECTED",
+  "source": {
+    "core": "angles-core.mjs",
+    "coreBlob": "34dca8c866d1d252a49017ded1c5a19053986af2",
+    "coreSha256": "0ed75b99829049dc416bb1635524224635f3c309d527c7e987c4b7630ecbe570",
+    "firstRun": "data/angles-lab.json#firstRun.ANG-FOMC",
+    "firstRunFileBlob": "fae1317f9155b0aad84b4d12326d9fc8c9ae8ac8",
+    "firstRunFileSha256": "ba6c6c8bfc543af9923388c1b6432b827c0ae4d2abe57b351f2ea71d8a662819"
+  },
+  "horizon": {
+    "closeToCloseReturnIntervals": 1,
+    "datedSessionsIncludingEntryAndExit": 2,
+    "producerHoldIntegerIsNotDurationProof": true
+  },
+  "entry": {
+    "instrument": "SPUS",
+    "basis": "CLOSE_OF_LAST_TRADING_SESSION_BEFORE_OFFICIAL_FOMC_STATEMENT_DAY",
+    "priceRange": null,
+    "expiry": "REGISTERED_ENTRY_SESSION_CLOSE; after that EXPIRED, no next-open substitution or date rollover",
+    "clock": "Exchange calendar close in America/New_York, including DST/half-days; unknown calendar or revised/unverified event makes plan UNRESOLVED"
+  },
+  "exit": {
+    "basis": "CLOSE_OF_OFFICIAL_FOMC_STATEMENT_SESSION",
+    "profitTarget": null,
+    "stop": null,
+    "missingQuoteHaltOrUnavailableClose": "UNRESOLVED/CENSORED; no inferred fill or later-price replacement"
+  },
+  "holding": {
+    "rule": "For frozen model, retain exposure from entry close to next trading-session close only; verify explicit entryDate/exitDate relation",
+    "safety": "Not owner HOLD guidance; current ZAD/identity/quotes/halts/exposure remain separate execution gates"
+  },
+  "costs": {
+    "frozenHistoricalRoundTrip": 0.008,
+    "frozenHistoricalStress": 0.012,
+    "lowerEtfCostInformationDoesNotReplaceGate": true,
+    "prospectiveFeeSchedule": null,
+    "prospectiveSlippageAndQuoteWindow": null,
+    "prospectiveBboOverlay": "NEW_EXECUTION_OVERLAY_REQUIRES_VERSION_AND_APPROVAL; ask/bid quotes are not closing-auction fills; no extra spread charge if already in ask/bid"
+  },
+  "positionRisk": {
+    "notional": null,
+    "allocationPolicy": null,
+    "wholeShareAndDepthEvidenceRequired": true,
+    "leaderDipAllocationMustNotBeInherited": true
+  },
+  "reuse": {
+    "calendar": "marketSession; mentorSessionAfter(entryDate,1) must equal exitDate",
+    "snapshot": "Canonical input-hash/fingerprint pattern; needs strategy-specific schema, not captureLeaderDipContract",
+    "status": "UNRESOLVED/EXPIRED/UNVERIFIED and NOT_ACTIONABLE separation",
+    "routing": "Read-only mentor routing; adapter activation requires review"
+  },
+  "requiredBeforeAnyProspectiveUse": [
+    "Audited point-in-time official event-calendar revision, exact security/class mapping and feed rights",
+    "Frozen exact runtime/dependencies, entry/exit date/close/quote-window policy, quantities/fees/slippage and all-case/control protocol",
+    "Actual source-audited quote paths through both closes and resolution of missing/halts/action adjustments",
+    "Separate dated collection/enrollment scope approval if existing authorized artifacts insufficient"
+  ],
+  "promotion": "No promotion. Existing frozen REJECTED verdict is retained; successful fixtures, a few paper wins or convenient horizon cannot override it.",
+  "protocolSeparation": "DISCOVERY_PAPER_V1 remains30minutes; this one-session adapter is a separate specification, not a parameter change or enrollment."
+}
