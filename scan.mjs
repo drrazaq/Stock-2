@@ -1,3 +1,4 @@
+import {leaderDipMentorPlan,renderLeaderDipMentor} from './mentor-plan.mjs';
 import {readWatcherReport,missedRunnerPopulation} from './watcher-reporting.mjs';
 import {readAlertState,saveAlertState,alertAvailable,deliverAlertOnce,validAlertBook} from './alert-delivery-state.mjs';
 import {paperRequest} from './paper-transport.mjs';
@@ -3189,6 +3190,14 @@ function waysText() { return ['YOUR WAYS TO TRADE (each one separate; you place 
   'a) THE BASKET (core): every month 65% of ~1,000 USD in ZAD Basket 2 = SPUS 54% / gold fund IAUM 46%, and 35% kept as cash; Basket 1 = the halal top 10 (whole-number %) is bought with that cash 3 times a year (first trading day of Jan, May, Sep) to keep ZAD fees low. Send  basket  (buy day:  basket buy AMOUNT )',
   'b) TRY SMALL: ' + usd0(TRY_USD) + ' USD buys from rules that made money in both test halves but did not pass the luck test; max ' + TRY_MAX + ' open, own stop and time exit. They appear in  actions',
   'c) OPTIONS PAPER LANE: long calls tested on paper only; a 1-contract ticket only if a rule earns it. Send  options lab'].join('\n'); }
+function mentorText(sym,pos){
+ const T=readJson0('data/squad11-today.json'),rows=T?.methods?.[LDIP_RULE]?.newSignals;
+ const row=Array.isArray(rows)?rows.find(x=>x?.sym===sym):null;
+ const day=row&&(row.d||T.lastClose),consistent=row&&(!row.d||!T.lastClose||row.d===T.lastClose);
+ const signal=consistent?{rule:LDIP_RULE,day,close:row.close}:null;
+ const policy=ZADPOLICY(),zad=policy.valid?(policy.marks[sym]?.s||'UNKNOWN'):'UNKNOWN';
+ return renderLeaderDipMentor(leaderDipMentorPlan({symbol:sym,position:pos?.[sym]||null,signal,quantity:privRead()?.shares?.[sym],asOfDay:ny(Date.now()).d,zadStatus:zad}));
+}
 async function tgCommands(sig) {
   if (env.GITHUB_WORKFLOW && env.GITHUB_WORKFLOW !== 'Telegram bot replies') return;   // one reader of Telegram messages (audit 22 Oct): the bot workflow
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
@@ -3226,6 +3235,7 @@ async function tgCommands(sig) {
     if (lines.length > 1 && lines.every(x => CMD_LINE.test(x))) lines.forEach(x => queue.push({ update_id: u.update_id, message: { ...m, text: x } }));
     else { if (m && m.text && lines.length === 1) m.text = lines[0]; queue.push(u); }
   }
+  const mentorOnly=queue.length>0&&queue.every(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)&&/^\/?mentor(?:@\w+)?\s+[a-z][a-z.\-]{0,5}\s*$/i.test(u.message?.text||''));
   if (state.menuV !== MENU_V) { if(await sendMenu())state.menuV = MENU_V; }   // the one-tap menu appears by itself once (and after each change)
   for (const u of queue) {
     state.offset = u.update_id + 1;
@@ -3253,6 +3263,7 @@ async function tgCommands(sig) {
     }
     const text = tradeWords(m.text.trim().replace(/\$/g, '').replace(SHARE_TYPOS, 'shares')), num = (re) => { const x = text.match(re); return x ? +x[1] : null; };
     let k;
+    if ((k=text.match(/^mentor\s+([a-z][a-z.\-]{0,5})\s*$/i))) { out.push(mentorText(k[1].toUpperCase(),mentorOnly?readJson0(POS_FILE):pos)); continue; }
     { const tk = (text.match(/\b[A-Z]{2,5}\b/g) || []).filter(x => !NOT_TICKERS.has(x) && !COMMON_WORDS.has(x)), fwd = m.forward_origin || m.forward_from_chat;
       if (!tk.length && !/^\s*(?:tips?|log)\b/i.test(text) && (text.length >= 160 || (fwd && text.length >= 60))) {
         const src = (m.forward_origin && (m.forward_origin.sender_user_name || (m.forward_origin.sender_user && m.forward_origin.sender_user.first_name) || (m.forward_origin.chat && m.forward_origin.chat.title))) || (m.forward_from_chat && m.forward_from_chat.title) || null;
@@ -3543,7 +3554,7 @@ async function tgCommands(sig) {
     } else if (/^(help|commands?|\?)\s*$/i.test(text)) out.push(HELP);
     else out.push(await hotList(sig) + '\n\nYou do not need commands. Write anything, a ticker, or forward a post, and I will study it. Send  help  for the full list.');
   }
-  fs.writeFileSync('data/tg-state.json', JSON.stringify(state)); savePos(pos);
+  fs.writeFileSync('data/tg-state.json', JSON.stringify(state)); if(!mentorOnly)savePos(pos);
   if (out.length) await telegram(out.join('\n\n'));
   if (ups.length) console.log('Telegram: ' + ups.length + ' message(s) read');
 }
