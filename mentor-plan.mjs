@@ -22,7 +22,7 @@ export function savedLeaderDipSignal(contract){
  const {fingerprint:expected,...body}=contract;
  try{if(fingerprint(body)!==expected)return null;const rebuilt=captureLeaderDipContract(body.source);if(!rebuilt||rebuilt.fingerprint!==expected)return null;return {...body.source};}catch{return null;}
 }
-export function leaderDipMentorPlan({symbol,position=null,signal=null,quantity=null,asOfDay,zadStatus='UNKNOWN'}={}){
+export function leaderDipMentorPlan({symbol,position=null,signal=null,quantity=null,asOfDay,asOfMs=null,zadStatus='UNKNOWN'}={}){
  const p=position&&typeof position==='object'&&!Array.isArray(position)?position:null;
  const selected=p?.src==='leader dip';
  const validSignal=signal?.rule==='SQ11-PB12'&&session(signal.day)&&marketSession(asOfDay).known&&signal.day<=asOfDay&&positive(signal.close);
@@ -44,7 +44,9 @@ export function leaderDipMentorPlan({symbol,position=null,signal=null,quantity=n
  if(!entrySession)issues.push('ENTRY_WINDOW_UNRESOLVED');if(selected&&!validSignal)issues.push('ORIGINAL_SIGNAL_IDENTITY_UNKNOWN');
  if(selected&&entrySession&&buySession!==entrySession)issues.push('RECORDED_ENTRY_DIFFERS_FROM_NEXT_OPEN_SESSION');
  if(selected)issues.push('EXACT_OPEN_FILL_NOT_VERIFIED');
- const entryState=!entrySession?'UNKNOWN':!marketSession(asOfDay).known?'UNKNOWN':asOfDay>entrySession?'EXPIRED':asOfDay<entrySession?'NEXT_OPEN_ONLY':'OPEN_ONLY_TIME_AND_QUOTE_UNVERIFIED';
+ let clock=null;
+ if(Number.isFinite(asOfMs)&&Number.isFinite(new Date(asOfMs).getTime())){const parts={};for(const p of new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date(asOfMs)))parts[p.type]=p.value;const day=parts.year+'-'+parts.month+'-'+parts.day;if(day===asOfDay)clock=+parts.hour*3600+ +parts.minute*60+ +parts.second;else issues.push('CLOCK_DAY_MISMATCH');}
+ const entryState=!entrySession||!marketSession(asOfDay).known||issues.includes('CLOCK_DAY_MISMATCH')?'UNKNOWN':asOfDay>entrySession?'EXPIRED':asOfDay<entrySession?'NEXT_OPEN_ONLY':clock===null?'OPEN_ONLY_TIME_AND_QUOTE_UNVERIFIED':clock>marketSession(entrySession).open*60?'EXPIRED':clock<marketSession(entrySession).open*60?'BEFORE_REGISTERED_OPEN':'OPEN_ONLY_TIME_AND_QUOTE_UNVERIFIED';
  const holdingState=!exitSession||!marketSession(asOfDay).known||buySession>asOfDay?'UNKNOWN':asOfDay>exitSession?'REGISTERED_DEADLINE_PASSED':asOfDay===exitSession?'REGISTERED_CLOSE_DUE_TODAY':'MONITOR_CONTRACT_NOT_A_HOLD_APPROVAL';
  return {version:'LEADER_DIP_MENTOR_V1',symbol,scope:selected?'RECORDED_LEADER_DIP':p?'OTHER_LANE_UNSUPPORTED':validSignal?'SOURCE_LEAD':'NO_PLAN',decision:'EXPLANATION_ONLY',evidence:'NOT PROVEN; target exit not adopted under the frozen comparison',rule:'SQ11-PB12 / A-TGT-TGT20-PB12',horizonSessions:126,zadStatus,
   source:validSignal?{day:signal.day,referenceClose:signal.close,sha256:signal.sha256||null,generatedAt:signal.generatedAt||null}:null,

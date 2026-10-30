@@ -3198,8 +3198,8 @@ function mentorSource(sym){
 }
 function mentorText(sym,pos){
  const P=pos?.[sym],signal=P?savedLeaderDipSignal(P.mentorContract):mentorSource(sym);
- const policy=ZADPOLICY(),zad=policy.valid?(policy.marks[sym]?.s||'UNKNOWN'):'UNKNOWN';
- return renderLeaderDipMentor(leaderDipMentorPlan({symbol:sym,position:P||null,signal,quantity:privRead()?.shares?.[sym],asOfDay:ny(Date.now()).d,zadStatus:zad}));
+ const policy=ZADPOLICY(),zad=policy.valid?(policy.marks[sym]?.s||'UNKNOWN'):'UNKNOWN',nowMs=Date.now();
+ return renderLeaderDipMentor(leaderDipMentorPlan({symbol:sym,position:P||null,signal,quantity:privRead()?.shares?.[sym],asOfDay:ny(nowMs).d,asOfMs:nowMs,zadStatus:zad}));
 }
 async function tgCommands(sig) {
   if (env.GITHUB_WORKFLOW && env.GITHUB_WORKFLOW !== 'Telegram bot replies') return;   // one reader of Telegram messages (audit 22 Oct): the bot workflow
