@@ -1,13 +1,5 @@
 {
  "plans": {
-  "IOVA": {
-   "kind": "leader",
-   "stop": 12.19,
-   "kindName": "trend trade",
-   "entry": 14.516667,
-   "qty": 66,
-   "since": "2026-10-16"
-  },
   "WGO": {
    "kind": "entry",
    "exitMA": 20,
@@ -35,16 +27,26 @@
    "since": "2026-10-27"
   }
  },
- "pendingBuy": {},
+ "pendingBuy": {
+  "ABCL": {
+   "id": "9a77ef64-cd2b-4652-b226-47e78b45212f",
+   "d": "2026-10-30",
+   "plan": {
+    "kind": "leader",
+    "stop": 9.69,
+    "kindName": "trend trade"
+   }
+  }
+ },
  "pendingExit": {
-  "IOVA": {
-   "id": "71b8c16c-e25b-4ca5-aad8-c308e9226922",
-   "entry": 14.516667,
-   "qty": 66,
+  "TXG": {
+   "id": "8fb0c676-45ac-43e2-81eb-c5dc21c00cce",
+   "entry": 72.276923,
+   "qty": 13,
    "kind": "leader",
    "kindName": "trend trade",
    "why": "closed under its 50 day average",
-   "since": "2026-10-16"
+   "since": "2026-10-26"
   }
  },
  "closed": [
@@ -141,6 +143,18 @@
    "why": "rule exit (5 day average)",
    "in": "2026-10-22",
    "out": "2026-10-28"
+  },
+  {
+   "sym": "IOVA",
+   "kind": "leader",
+   "engine": "trend trade",
+   "entry": 14.516667,
+   "exit": 8.904545,
+   "pct": -0.3866,
+   "net": -0.39286,
+   "why": "closed under its 50 day average",
+   "in": "2026-10-16",
+   "out": "2026-10-30"
   }
  ],
  "start": {
@@ -148,7 +162,7 @@
   "equity": 100000
  },
  "equity": {
-  "d": "2026-10-29",
-  "equity": 99430.91
+  "d": "2026-10-30",
+  "equity": 99269.09
  }
 }
