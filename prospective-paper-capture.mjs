@@ -78,12 +78,13 @@ export function recoverCapture(envelope,key,expectedPlan){
 export function finishCapture(s){
  const p=s.plan,attempts=[],events=[],quotes=[],metadata=[],seenEvents=new Map(),seenSecurity=new Set();
  const signatures=new Map(),conflicts=new Set();
- for(const {frame:f} of s.frames)for(const e of f.events){if(typeof e.eventId==='string'){const sig=sha(JSON.stringify(e));if(signatures.has(e.eventId)&&signatures.get(e.eventId)!==sig)conflicts.add(e.eventId);else signatures.set(e.eventId,sig);}}
+ for(const {frame:f} of s.frames)for(const e of f.events){if(e&&typeof e==='object'&&typeof e.eventId==='string'){const sig=sha(JSON.stringify(e));if(signatures.has(e.eventId)&&signatures.get(e.eventId)!==sig)conflicts.add(e.eventId);else signatures.set(e.eventId,sig);}}
  for(const {frame:f} of s.frames){
   quotes.push(...f.quotes);metadata.push(...f.metadata);
   for(const e of f.events){
-   const base={eventId:e.eventId??null,symbol:e.symbol??null,paperHandoffAt:f.sourceHandoffAt||f.at,originalObservedAt:e.observedAt??null};let reason=null;
-   if(conflicts.has(e.eventId))reason='CONFLICTING_EVENT_ID';
+   const base={eventId:e?.eventId??null,symbol:e?.symbol??null,paperHandoffAt:f.sourceHandoffAt||f.at,originalObservedAt:e?.observedAt??null};let reason=null;
+   if(!e||typeof e!=='object'||Array.isArray(e))reason='MALFORMED_DISCOVERY_EVENT';
+   else if(conflicts.has(e.eventId))reason='CONFLICTING_EVENT_ID';
    else if(!p.universe.includes(e.symbol))reason='OUTSIDE_FIXED_UNIVERSE';
    else if(e.lane!=='SEC_EVENT'||e.sourceNamespace!=='SEC'||typeof e.sourceId!=='string'||!/^\d{10}-\d{2}-\d{6}$/.test(e.sourceId)||!hash(e.sourceRevisionId))reason='UNVERIFIED_SEC_SOURCE_REVISION';
    else if(!iso(e.sourceAt)||!iso(e.firstIngestedAt)||!iso(e.observedAt)||Date.parse(e.sourceAt)>Date.parse(e.firstIngestedAt)||Date.parse(e.firstIngestedAt)>Date.parse(e.observedAt)||Date.parse(e.observedAt)>Date.parse(f.sourceHandoffAt||f.at)||Date.parse(e.observedAt)<Date.parse(p.start))reason='NONCONTEMPORANEOUS_EVENT_CLOCKS';

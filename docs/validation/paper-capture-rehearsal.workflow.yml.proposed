@@ -1,0 +1,28 @@
+# INACTIVE REVIEW COPY. Do not install or dispatch. This is an offline host
+# rehearsal only. No secrets or real provider/upload ports are bound.
+name: Stock-2 paper capture inactive rehearsal
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: stock2-paper-capture-offline-review
+  cancel-in-progress: false
+jobs:
+  rehearse:
+    if: github.ref_name == 'Stock2-safety-fixes' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PAPER_CAPTURE_EXECUTION: INACTIVE_OFFLINE_REHEARSAL
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: RUNTIME_SOURCE_PIN
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20
+      - name: Guard, reference, upload and downloaded-ZIP recovery simulation
+        run: node test/paper-capture-wrapper.test.mjs

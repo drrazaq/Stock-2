@@ -1,0 +1,28 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {WRAPPER_FILES,FIXED_UNIVERSE,APPROVAL_LIMITS,inputFingerprint} from '../paper-capture-wrapper.mjs';
+import {sha} from '../prospective-paper-capture.mjs';
+const root=path.resolve(new URL('..',import.meta.url).pathname);
+export const t=m=>new Date(Date.parse('2026-11-05T14:30:00Z')+m*60000).toISOString();
+export const fixtureKey='synthetic-paper-capture-key-only';
+export function fixtureGit(dir,args){return execFileSync('git',args,{cwd:dir,encoding:'utf8',stdio:['ignore','pipe','pipe'],env:{PATH:process.env.PATH,GIT_TERMINAL_PROMPT:'0'}}).trim();}
+export function wrapperFixture(){
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'guarded-paper-')),code=path.join(dir,'code'),review=path.join(dir,'review');fs.mkdirSync(code);fs.mkdirSync(path.join(review,'.github/workflows'),{recursive:true});
+ for(const p of WRAPPER_FILES){fs.mkdirSync(path.dirname(path.join(code,p)),{recursive:true});fs.copyFileSync(path.join(root,p),path.join(code,p));}
+ for(const repo of [code,review]){fixtureGit(repo,['init','-q']);fixtureGit(repo,['config','user.email','fixture@example.invalid']);fixtureGit(repo,['config','user.name','Synthetic Fixture']);}
+ fixtureGit(code,['add','.']);fixtureGit(code,['commit','-qm','synthetic runtime']);const sourceSha=fixtureGit(code,['rev-parse','HEAD']);
+ const workflow=fs.readFileSync(path.join(root,'docs/validation/paper-capture-rehearsal.workflow.yml.proposed'),'utf8').replace(/ref: (?:RUNTIME_SOURCE_PIN|[a-f0-9]{40})/,'ref: '+sourceSha);fs.writeFileSync(path.join(review,'.github/workflows/sec-paper-capture.yml'),workflow);
+ fixtureGit(review,['add','.']);fixtureGit(review,['commit','-qm','synthetic inactive host']);const workflowCommitSha=fixtureGit(review,['rev-parse','HEAD']);
+ const records=FIXED_UNIVERSE.map((symbol,i)=>{const cik=String(i+1).padStart(10,'0'),sic=i<3?'3674':'3559',time=t(-60);return {symbol,validFrom:t(-120),validTo:t(1440),zad:{status:'PASS',asOf:t(-60),expires:t(1440),source:'SYNTHETIC_ONLY'},massive:{url:'https://api.massive.com/v3/reference/tickers/'+symbol,capturedAt:time,raw:JSON.stringify({synthetic:true,status:'OK',results:{ticker:symbol,type:'CS',active:true,cik,sic_code:sic,share_class_figi:'BBG00000000'+i,primary_exchange:'XNAS'}})},alpaca:{url:'https://paper-api.alpaca.markets/v2/assets/'+symbol,capturedAt:time,raw:JSON.stringify({synthetic:true,id:'00000000-0000-4000-8000-'+String(i+1).padStart(12,'0'),symbol,exchange:'NASDAQ',class:'us_equity',status:'active',tradable:true})},sec:{url:'https://data.sec.gov/submissions/CIK'+cik+'.json',capturedAt:time,raw:JSON.stringify({synthetic:true,cik,sic})}};});
+ const referenceRaw=JSON.stringify({version:1,records}),referenceSha256=sha(referenceRaw),plan={rule:'EXISTING_STREAM_SEC_30M_V1',cohort:'CALIBRATION',day:'2026-11-05',start:t(0),enrollmentEnd:t(4),end:t(40),universe:[...FIXED_UNIVERSE],sourceSha};plan.enrollmentManifestSha256=inputFingerprint(referenceSha256,plan);
+ const referenceReviews=records.map(r=>({symbol:r.symbol,massiveSha256:sha(r.massive.raw),alpacaSha256:sha(r.alpaca.raw),secSha256:sha(r.sec.raw),zadSha256:sha(JSON.stringify(r.zad)),reviewedAt:t(-45),reviewReference:'SYNTHETIC_REVIEW_NOT_AUTHORITY'}));
+ const approval={kind:'PAPER_CAPTURE_GUARDED_APPROVAL_V1',granted:true,ownerApprovalReference:'SYNTHETIC_ONLY_NO_AUTHORIZATION',approvedAt:t(-30),expires:t(40),feed:'sip',recoveryProofVerified:true,entitlements:{latestSip:true,referenceRetention:true,quoteBarAndConditionsReviewed:true,evidenceSha256:'e'.repeat(64)},plan,limits:{...APPROVAL_LIMITS},runtimeFiles:Object.fromEntries(WRAPPER_FILES.map(p=>[p,sha(fs.readFileSync(path.join(code,p)))])),workflowCommitSha,workflowSha256:sha(workflow),referenceSha256,referenceReviews};
+ const context={repository:'drrazaq/Stock-2',refName:'Stock2-safety-fixes',eventName:'workflow_dispatch',attempt:1,actor:'drrazaq',workflowRef:'drrazaq/Stock-2/.github/workflows/sec-paper-capture.yml@refs/heads/Stock2-safety-fixes',permissions:{contents:'read',actions:'read'},runId:123,workflowCommitSha};
+ const history={total_count:1,workflow_runs:[{id:123,run_attempt:1,event:'workflow_dispatch',head_branch:'Stock2-safety-fixes',created_at:t(-10),head_sha:workflowCommitSha}]};
+ const approvalFile=path.join(dir,'approval.json'),referenceFile=path.join(dir,'reference.json');fs.writeFileSync(approvalFile,JSON.stringify(approval));fs.writeFileSync(referenceFile,referenceRaw);
+ const events=[0,3].map(i=>({eventId:'SYNTHETIC_ORIGINAL_'+i,symbol:FIXED_UNIVERSE[i],lane:'SEC_EVENT',sourceNamespace:'SEC',sourceId:'0000000001-26-000001',sourceRevisionId:'d'.repeat(64),sourceAt:t(-1),firstIngestedAt:t(0),observedAt:t(0)}));
+ return {dir,root:code,reviewRoot:review,approvalFile,referenceFile,context,history,approval,records,referenceRaw,events,start:t(0),universe:[...FIXED_UNIVERSE],nowMs:Date.parse(t(0)),output:path.join(dir,'sealed'),cleanup:()=>fs.rmSync(dir,{recursive:true,force:true})};
+}
+export function updateReference(f,change){const bundle=JSON.parse(fs.readFileSync(f.referenceFile));change(bundle.records);const raw=JSON.stringify(bundle);fs.writeFileSync(f.referenceFile,raw);f.approval.referenceSha256=sha(raw);for(const r of bundle.records){const rev=f.approval.referenceReviews.find(x=>x.symbol===r.symbol);for(const k of ['massive','alpaca','sec'])rev[k+'Sha256']=sha(r[k].raw);rev.zadSha256=sha(JSON.stringify(r.zad));}f.approval.plan.enrollmentManifestSha256=inputFingerprint(sha(raw),f.approval.plan);fs.writeFileSync(f.approvalFile,JSON.stringify(f.approval));return raw;}
