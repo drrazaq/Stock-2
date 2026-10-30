@@ -11,9 +11,13 @@ export function publishWatcherReservation(file,{cwd=process.cwd(),record,phase='
    try{
     run(['fetch','--no-tags','origin','refs/heads/'+branch+':'+ref]);const parent=run(['rev-parse',ref]);let prior=null;
     if(run(['ls-tree',parent,'--',file])){try{prior=JSON.parse(run(['show',parent+':'+file]));}catch{return {ok:false,reason:'REMOTE_STATE_UNREADABLE'};}}
+    if(prior&&(['attempts','publicationAttempts'].some(k=>prior[k]!==undefined&&(!Number.isSafeInteger(prior[k])||prior[k]<0))||prior.nextRetryAt!==undefined&&(!Number.isFinite(prior.nextRetryAt)||prior.nextRetryAt<0)))return {ok:false,reason:'REMOTE_STATE_UNREADABLE',record:{...prior,state:'UNCERTAIN',reason:'INVALID_REMOTE_RETRY_STATE'}};
     if(phase==='reserve'){
      if(prior?.owner===record.owner&&prior?.state==='RESERVED')return {ok:true,record:prior};
      if(prior&&(prior.version!==2||prior.state!=='UNSENT'))return {ok:false,reason:'EXISTING_RESERVATION',record:prior};
+     // A stale local checkout must not bypass another writer's durable cooldown/budget.
+     if(prior&&Number.isFinite(prior.nextRetryAt)&&Date.now()<prior.nextRetryAt)return {ok:false,reason:'RETRY_NOT_DUE',record:prior};
+     if(prior&&Number.isSafeInteger(record.attempts)&&record.attempts!==(prior.attempts||0)+1)return {ok:false,reason:'STALE_RETRY_STATE',record:prior};
     }else if(prior?.owner!==record.owner)return {ok:false,reason:'RESERVATION_OWNER_CHANGED',record:prior};
     // Only this one protected path differs from the latest remote tree. No checkout, pull or rebase.
     run(['read-tree',parent]);const blob=run(['hash-object','-w','--stdin'],JSON.stringify(record));run(['update-index','--add','--cacheinfo','100644',blob,file]);const tree=run(['write-tree']);

@@ -27,7 +27,7 @@ export function createWatcherMessages({day,directory='runtime/watcher-message-st
    const attempts=(prior?.attempts||0)+1,row={version:2,day,keySha256:digest,owner,state:'UNSENT',at:new Date(now()).toISOString(),attempts,nextRetryAt:now()+delay(attempts)};
    if(!save(digest,row))return false;
    const candidate={...row,state:'RESERVED'},result=publish(digest,candidate,'reserve');
-   if(!result.ok){const stored=result.record||{...row,reason:'PUBLICATION_UNCONFIRMED'};save(digest,stored);if(result.reason==='EXISTING_RESERVATION')stats.suppressed++;else stats.publicationFailures++;if(stored.state==='UNSENT')stats.unsent++;return false;}
+   if(!result.ok){const stored=result.record||{...row,reason:'PUBLICATION_UNCONFIRMED'};save(digest,stored);if(['EXISTING_RESERVATION','RETRY_NOT_DUE','STALE_RETRY_STATE'].includes(result.reason))stats.suppressed++;else stats.publicationFailures++;if(stored.state==='UNSENT')stats.unsent++;return false;}
    if(!save(digest,candidate))return false;return true;
   },
   finish(key,result={}){const digest=keyOf(key),prior=read(digest);if(prior?.owner!==owner||prior.state!=='RESERVED')return false;
