@@ -1,97 +1,135 @@
-# Accounting preflight checker v2: approval package (proposed, not installed)
+# Accounting preflight checker v2.1: approval package (proposed, not installed)
 
-30 Oct 2026. Prepared by Claude on the isolated branch `claude/accounting-preflight-v2`. **Nothing in production was changed**:
-- no workflow was paused;
-- the remaining authorized preflight run was not used;
-- no ledger file was created;
-- no secret or permission was touched.
+30 Oct 2026. Prepared by Claude on the isolated branch `claude/accounting-preflight-v2`. It supersedes the reviewed `d3596bf` (v2), for which Codex returned CHANGES REQUIRED.
 
-The accounting patch (`accounting-production-fix-v3/v4.patch`, SHA256 `f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27`) and its approval are unchanged.
+**Nothing in production was changed:**
+- no installation or workflow pause;
+- no protected execution or dispatch;
+- no ledger created, no financial state touched;
+- **the single remaining fresh preflight authorization is unused.**
+
+The accounting patch (SHA256 `f508496f14d729bc2898e430ba24be339f2d98b55a13cb093d158e6b7dd81d27`) and its approval are unchanged.
 
 ## Why v1 blocked
 
 Preflight run `41053549859` (checker v1, blob `92fc955…`) returned `BLOCKED`:
 - v1 treats any missing input as BLOCKED.
-- `data/leaderdip-ledger.jsonl` has never existed on main: no commit has ever touched it.
-- The other three inputs are present. Existence only was checked; no contents were read.
-- Because of the missing file, v1 can never PASS, whatever the `PRIVATE_KEY` state.
+- `data/leaderdip-ledger.jsonl` has never existed on main.
+- The other three inputs are present.
 
-## Owner decision implemented (option 1)
+## Owner decision implemented
 
-A missing LEADER DIP ledger counts as an *unused optional ledger* only when **all** of the following hold. Otherwise it still BLOCKS.
+A missing LEADER DIP ledger counts as an *unused optional ledger* only when **all** conditions hold. Otherwise it BLOCKS with a reason code.
 
-| Condition | How v2 checks it (offline, read-only) |
+| Condition | Check (offline, read-only) | Code if it fails |
+|---|---|---|
+| History complete | Not shallow; no `info/grafts`; replace objects ignored; root commit present; every commit and tree reachable from HEAD present (`rev-list --objects --filter=blob:none --missing=error`); lazy fetch disabled (`GIT_NO_LAZY_FETCH=1`) | `LEDGER_HISTORY_UNCERTAIN` |
+| Never existed | `git log --full-history --no-renames HEAD -- data/leaderdip-ledger.jsonl` empty (also covers deletions and renames) | `LEDGER_EXISTED` |
+| Privacy mode off | The marker is absent from **both** HEAD's tree and the working tree | `PRIVACY_MODE` |
+| Code supports absence | `scan.mjs` (identical to HEAD) has the reviewed SHA256 `dec6e8d4be099949b7515c173e3be90adf150975840c32696db61a6c8c8e392c` (main `4dfecf3`; `ldipRows()` returns `[]` for a missing file, `ldipAppend()` creates it) | `CODE_UNREVIEWED` |
+| No completed LEADER DIP full sale without its result | No journal row that is a LEADER DIP full sale. Part sales (`part`) and half sales (`half`) write no result row, so they are allowed. | `LEADER_DIP_RESULT_WITHOUT_LEDGER` |
+
+### In every case (ledger present or absent)
+
+**Mandatory inputs and key:**
+- `private.enc`, `my-positions.json` and `my-trades.jsonl` are mandatory (`MISSING_REQUIRED_INPUT`). Missing state is never read as an empty account.
+- No key gives `MISSING_KEY`. A wrong key, unauthenticated state or malformed inputs give `ERROR`.
+
+**Pending work:** a `pendingSale` gives `PENDING_SALE`; any other top-level `pending` / `intent` / `recover` key gives `STATE_INTENT`.
+
+**Receipts (finding 3), checked for consistency, never rejected wholesale:**
+
+| Condition | Code |
 |---|---|
-| Repository history verified complete | The checkout is a git work tree at the given root, and the history is complete: it is not shallow; there is no `info/grafts`; replace objects are ignored (`GIT_NO_REPLACE_OBJECTS=1`); a root commit exists; and every commit and tree reachable from HEAD is present (`rev-list --objects --filter=blob:none --missing=error`). Lazy network fetches are disabled (`GIT_NO_LAZY_FETCH=1`), so missing objects fail instead of fetching. |
-| It never existed | `git log --full-history --no-renames HEAD -- data/leaderdip-ledger.jsonl` is empty, and the path is not in HEAD's tree. A deleted, renamed or locally removed ledger therefore BLOCKS. |
-| Not stored elsewhere | `.github/private-data-mode` is absent. With privacy mode on, the ledger lives in the private repository. |
-| Current production code supports absence | The checked-out `scan.mjs` must have the reviewed production SHA256 `dec6e8d4be099949b7515c173e3be90adf150975840c32696db61a6c8c8e392c` (main `4dfecf3`). In that code `ldipRows()` returns `[]` for a missing file and `ldipAppend()` creates it. The approved accounting patch also creates it inside the sale transaction (`existsSync` plus atomic write). Any other `scan.mjs` makes a missing ledger BLOCK. |
-| Authenticated state has nothing to reconcile with that ledger | The state decrypts and authenticates (AES-GCM), with: no `pendingSale` (as in v1, which always blocks); no other top-level `pending` / `intent` / `recover` key; no `saleReceipts`; and no completed LEADER DIP sale in `my-trades.jsonl` (`src` or `kind` matching "leader dip"), whose result row would have to be in the ledger. |
+| Not an array of 64-hex ids, or a malformed `saleId` | `RECEIPT_MALFORMED` |
+| A repeated receipt | `RECEIPT_DUPLICATE` |
+| One sale id on two journal or ledger rows | `RECEIPT_AMBIGUOUS` |
+| A receipt with no journal row; a ledger sale id with no journal row; a receipted LEADER DIP full sale whose existing ledger lacks the `result` row | `RECEIPT_UNMATCHED` |
+| A receipted LEADER DIP full sale with no ledger at all | `LEADER_DIP_RESULT_WITHOUT_LEDGER` |
+| A journal or ledger sale id without a receipt (an unfinished transaction) | `JOURNAL_UNRECEIPTED` |
+| At the accounting patch's 500-receipt cap, a missing receipt (no longer provable) | `RECEIPT_AMBIGUOUS` |
 
-**Unchanged from v1:**
-- `private.enc`, `my-positions.json` and `my-trades.jsonl` remain **mandatory** (missing = BLOCKED, never read as an empty account).
-- No key = BLOCKED; wrong key or unauthenticated state = ERROR; malformed inputs = ERROR.
-- An **existing** ledger is validated as before: unreadable, malformed, a symlink or not a regular file = ERROR.
-- The output is status only: exactly `PASS`, `BLOCKED` or `ERROR`, with exit code 0, 2 or 1, and nothing on stderr.
-- The final re-read detects files that change during the check, including a ledger that appears mid-check.
+Consistent completed receipts PASS. The checker never clears receipts or writes ledger rows.
 
-### One interpretation for the owner to confirm
+**Local copy = authoritative HEAD (finding 2):**
+- Every dependency must be byte-identical to its HEAD tree entry, or absent from both: the four inputs, `scan.mjs` and `.github/private-data-mode`. Otherwise `LOCAL_STATE_DIFFERS`.
+- So a committed privacy marker deleted locally, an edited `scan.mjs`, or an uncommitted input change cannot steer the result.
+- A file that changes during the check, or a HEAD that moves, gives `STATE_CHANGED`.
 
-**An open LEADER DIP position does not block.**
-- Production records such a position without any ledger row: `ldipHit()` falls back to the published SQ11-PB12 list, a case documented in the code on 27 Oct.
-- Only a *sale* writes a ledger row, so a held position is not a transaction awaiting reconciliation.
-- A first draft blocked on open positions. The status-only dry check (below) showed that rule would block production on legitimate held state, so it was narrowed to completed sales.
-- If the owner prefers the stricter reading, reinstate it. The preflight would then stay BLOCKED until that position is sold.
+**Existing ledger:** validated as in v1. Unreadable, malformed, a symlink or not a regular file give `ERROR`.
 
-## Exact artifacts on this branch
+**Freshness (finding 1), new `--fresh` mode:**
+- After the protected check, the workflow fetches current main into `FETCH_HEAD`.
+- `node checker --fresh ROOT` (offline, no key) returns `BLOCKED STATE_CHANGED` if:
+  - the checked-out HEAD is not an ancestor of main (rewritten history); or
+  - any dependency differs; or
+  - any commit in `HEAD..main` touched any dependency, even with no net change (for example a ledger added and then removed).
+
+**Output contract:** exactly one line: `PASS`, `ERROR`, or `BLOCKED <CODE>`. The code comes from a fixed vocabulary that carries no symbol, amount, identifier or exception text. Exit codes are 0, 2 and 1, with nothing on stderr. The workflow rejects any other output as ERROR and publishes `status` and `reason` separately.
+
+### Corrected documentation
+
+**An open LEADER DIP position does not itself require a ledger or a sale.**
+- Ledger rows are written by **offer logging** (`ldipOfferLog`, the nightly scan) and by **sale results**.
+- An absent, never-committed ledger therefore means neither has been recorded: both workflows commit the whole `data/` folder, and the ledger is not gitignored.
+- An open LEADER DIP position recorded through `ldipHit()`'s fallback to the published SQ11-PB12 list is consistent with that. It passes.
+
+## Exact artifacts (branch `claude/accounting-preflight-v2`)
 
 | File | SHA256 | git blob |
 |---|---|---|
-| `ops/accounting-preflight-v2.mjs` (proposed checker) | `1060a9fd626c356cf5d01555a7d7c3cef3fa4734c1c787b0d9bf52699a38c83e` | `d018c8a2fa0a7bd4be1ee4582565f8128a4885fd` |
-| `ops/accounting-preflight-v2.test.mjs` (32 synthetic tests) | `497b6c74f5bc294cd7eeb975645adc3de995353d0cc7a114bc968cc419000413` | |
-| `ops/bot-yml-preflight-v2.patch` (workflow amendment) | `f82692d2b6ea35fd0ac3d54ddaf6fa1075b7e146050902081ab1f22592eae50a` | |
+| `ops/accounting-preflight-v2.mjs` (checker v2.1) | `1ccf8c06d071627b92871331e21016acbd6bd82cae0250c353ce7a07150290df` | `4be2f5ad078aa99cba513290f25d50e6a549663d` |
+| `ops/accounting-preflight-v2.test.mjs` (49 synthetic tests) | `088b44dc9e9ba8eca76e45ed98df40b5209ba2de9651d8343d21b3a85a7cfb33` | |
+| `ops/bot-yml-preflight-v2.patch` (workflow amendment) | `5eb17d2fd23a56edf378ae43e5af057864ad1e7c1f4500a79a2914b90a14b517` | |
 
-The checker sits under `ops/`, not `test/`. The production suites do not run it, so a later `scan.mjs` change cannot break production CI. Run it with `node --test ops/accounting-preflight-v2.test.mjs`.
-
-## Workflow amendment needed (`.github/workflows/bot.yml`, `accounting-preflight` job only)
-
-`ops/bot-yml-preflight-v2.patch` applies cleanly (`git apply --check`) to main's `bot.yml` (SHA256 `1d25e6fec025f7a7e5e7a254cd61a9df4ecd7df97423b74a84fabd68ab6061e8`). It makes three changes:
-1. **Checkout:** `fetch-depth: 0` and `filter: blob:none`. This gives complete commit and tree history without historical file contents. The pinned `actions/checkout@11d5960…` is v4.3.0, which supports both. A blob-free full clone of the repository takes about 1 s and about 2.3 MB, within the job's 2-minute limit.
-2. **Blob pin:** `92fc955…` → `d018c8a2fa0a7bd4be1ee4582565f8128a4885fd`.
-3. **SHA256 pin:** `7d009d80…` → `1060a9fd626c356cf5d01555a7d7c3cef3fa4734c1c787b0d9bf52699a38c83e`.
-
-Nothing else changes: the bot `reply` job, the concurrency groups, the protected step, the status-only emit, and the freshness re-check of the four paths against current main. The blob is downloadable once this branch is on GitHub, because the API serves any blob in the repository.
+The patch applies to main's `bot.yml` (SHA256 `1d25e6fec025f7a7e5e7a254cd61a9df4ecd7df97423b74a84fabd68ab6061e8`). It changes only the `accounting-preflight` job:
+1. **Checkout:** `fetch-depth: 0` and `filter: blob:none`. The pinned `actions/checkout@11d5960…` is v4.3.0, which supports both. The clone takes about 1 s and about 2.3 MB.
+2. **Blob and SHA256 pins:** set to the values above.
+3. **Protected step:** accepts `0:PASS`, `1:ERROR` or `2:BLOCKED <CODE>`; anything else is ERROR.
+4. **Emit step:** on PASS, it fetches current main and runs the pinned checker's `--fresh` mode across every dependency, replacing v1's four-path diff. It emits `status` and `reason` outputs and exits 0, 2 or 1.
 
 ## Evidence
 
-- **Synthetic tests: 32/32 pass.** They cover:
-  - PASS in a complete history;
-  - v1 behaviour with an existing ledger (valid, empty, malformed, a non-object row, a symlink, a directory);
-  - a ledger deleted, renamed or locally removed;
-  - shallow, grafted and missing-object history; no git; not a repository;
-  - the privacy marker;
-  - an unreviewed or missing `scan.mjs`;
-  - a pending sale (ledger absent and ledger present), other intents, receipts;
-  - LEADER DIP journal rows; an open position alone (PASS) and with a sale (BLOCKED);
-  - each mandatory input missing; no key; wrong key; malformed inputs; argument count;
-  - read-only behaviour (file hashes, git status and HEAD unchanged);
-  - a blob-free full clone passing offline while a blob-free shallow clone blocks.
-- **Mutation check: every rule is load-bearing.** I removed each guard in turn, and each removal fails at least one test: shallow 2, history 2, privacy 1, code 1, LEADER DIP journal 2, receipts 1, intent keys 1, v1-like 7, grafts 1, unconditional absence 15. The explicit missing-object scan is defence in depth: missing commits or trees already make the history queries fail.
-- **Status-only dry check against production main `4dfecf3`.** I made a blob-free full clone, read public files only, and printed booleans only:
-  - not shallow, objects complete;
-  - ledger never in history, absent at HEAD;
-  - privacy mode off, `scan.mjs` pinned, three mandatory inputs present;
-  - no LEADER DIP journal row.
+- **Checker tests (run explicitly; ordinary CI runs only `test/` and `tests/`):** `node --test ops/accounting-preflight-v2.test.mjs` gives **49/49 pass**. They include:
+  - regression tests for each finding: a committed marker deleted locally; local pinned bytes over unreviewed HEAD code; a `scan.mjs` or marker change during the preflight; a ledger added then removed; any input change; rewritten history; malformed, duplicate, unmatched, unreceipted and ambiguous receipts; receipts at the cap; ledger-only sale ids;
+  - valid controls: legitimate receipts (manual, part, half, and LEADER DIP with its matching ledger result); a marker removed in history; unrelated changes on main;
+  - integration: a blob-free full clone passes and a shallow one blocks; read-only behaviour in both modes.
+- **Findings reproduced on the reviewed `d3596bf` and fixed in v2.1:**
 
-  All are true. The **predicted result is PASS**, subject to the parts only the protected run can check: `PRIVATE_KEY` availability, authenticated decryption, and the absence of `pendingSale`, intents and receipts.
-- **Not verified here:** `PRIVATE_KEY` availability. The only evidence is indirect: the bot last wrote `data/private.enc` on 27 Oct, and the job maps `secrets.PRIVATE_KEY` correctly. No secret value was accessed.
+  | Finding | Reviewed v2 | v2.1 |
+  |---|---|---|
+  | Committed privacy marker deleted locally | `PASS` | `BLOCKED LOCAL_STATE_DIFFERS` |
+  | Legitimate completed receipt | `BLOCKED` | `PASS` |
+  | Unmatched receipt | `BLOCKED` | `BLOCKED RECEIPT_UNMATCHED` |
+  | `scan.mjs` changed on main during preflight | v2 workflow freshness `PASS` (change not seen) | `BLOCKED STATE_CHANGED` |
+
+- **Mutation check:** I removed each guard in turn. 15 of 16 removals fail at least one test: local-vs-HEAD 5, freshness dependency list 4, freshness log range 1, freshness ancestry 1, receipt unmatched 1, unreceipted 3, duplicate 1, ambiguous 1, LEADER DIP result 1, legacy LEADER DIP 1, the part/half rule 2, blanket receipt rejection 12, ledger existed 2, code pin 1, shallow 2. The explicit HEAD-tree marker check is defence in depth: a committed marker deleted locally already fails local-vs-HEAD, and a present marker fails the local check.
+- **Amended workflow simulation.** I extracted and ran the job's three shell steps on synthetic repositories (URLs swapped to `file://`):
+  - clean main → `PASS`, outputs `status=PASS`;
+  - unrelated change on main → `PASS`;
+  - `scan.mjs` changed during preflight → `BLOCKED STATE_CHANGED`;
+  - privacy marker committed during preflight → `BLOCKED STATE_CHANGED`;
+  - no key → `BLOCKED MISSING_KEY`;
+  - pending sale → `BLOCKED PENDING_SALE`;
+  - wrong key → `ERROR`.
+
+  The checker's own temporary files were removed.
+- **Status-only dry check** against current main `9a94f80` (a blob-free full clone, booleans only, public files only):
+  - not shallow; ledger never in history;
+  - privacy off in both HEAD's tree and locally;
+  - `scan.mjs` pinned; dependencies clean versus HEAD;
+  - no LEADER DIP full sale in the journal; no journal sale-id rows.
+
+  Without a key the checker returns `BLOCKED MISSING_KEY`. The **predicted protected result is PASS**, provided `PRIVATE_KEY` is available, the state authenticates, and it holds no `pendingSale`, other intent or receipts. With no sale ids in the journal, any receipt would be unmatched. These can only be checked by the protected run.
+
+Reproduction harnesses (synthetic, reviewer-run): `ops/evidence/reproduce-findings.mjs`, `ops/evidence/simulate-workflow.py`.
 
 ## Procedure after approval (unchanged order)
 
-1. Install the amendment on main, as an approved ops commit applying `ops/bot-yml-preflight-v2.patch` only, with no other file. Do not merge this branch.
-2. Recheck before the run: the main SHA, the `scan.mjs` SHA256 is still `dec6e8d4…`, both pins, and no pending bot or scanner run.
-3. Pause, drain, and verify the save, as previously approved. Do not cancel active writers: old bot run `41029059529` runs until about 14:39 UTC at the latest.
-4. Use the **one remaining** fresh preflight. Continue only on `PASS`. On `BLOCKED` or `ERROR`, abort safely, restore the ordinary workflows, and report status only.
+1. Install the amendment on main: an approved ops commit applying `ops/bot-yml-preflight-v2.patch` only. Do not merge this branch.
+2. Before the run, recheck the main SHA, `scan.mjs` (still `dec6e8d4…`), both pins, and that no bot or scanner run is pending.
+3. Pause, drain and verify the save as approved. Do not cancel active writers.
+4. Use the **one remaining** fresh preflight. Continue only on `PASS`. On `BLOCKED <CODE>` or `ERROR`, abort safely, restore the ordinary workflows, and report the status and code only.
 5. Deploy only the approved accounting patch, verify CI and the hashes, and re-enable the ordinary workflows.
 
-If main's `scan.mjs` changes before the run, the pin no longer matches and v2 BLOCKS by design. The pin then needs re-review.
+If main's `scan.mjs` changes before the run, v2.1 BLOCKS by design (`CODE_UNREVIEWED`), and the pin needs re-review.

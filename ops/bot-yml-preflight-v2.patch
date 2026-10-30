@@ -1,27 +1,66 @@
 --- a/.github/workflows/bot.yml
 +++ b/.github/workflows/bot.yml
-@@ -97,6 +97,10 @@
+@@ -92,11 +92,16 @@
+     timeout-minutes: 2
+     outputs:
+       status: ${{ steps.result.outputs.status }}
++      reason: ${{ steps.result.outputs.reason }}
+     steps:
+       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
          with:
            ref: main
            persist-credentials: false
-+          # v2 checker: complete commit/tree history (no historical file contents) so it can verify that the
-+          # LEADER DIP ledger never existed; the checker refuses shallow, grafted or incomplete history.
++          # v2.1 checker: complete commit/tree history (no historical file contents), so it can verify that the
++          # LEADER DIP ledger never existed; it refuses shallow, grafted or incomplete history.
 +          fetch-depth: 0
 +          filter: blob:none
        - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
          with:
            node-version: 20
-@@ -106,10 +110,10 @@
+@@ -106,10 +111,10 @@
            set -euo pipefail
            set +x
            rm -f "$RUNNER_TEMP/accounting-preflight.result"
 -          curl --max-time 20 -fsSL https://api.github.com/repos/drrazaq/Stock-2/git/blobs/92fc955497950df6e76823eec6e348f1ebfb78b1 -o "$RUNNER_TEMP/accounting-preflight-source.json" 2>/dev/null
-+          curl --max-time 20 -fsSL https://api.github.com/repos/drrazaq/Stock-2/git/blobs/d018c8a2fa0a7bd4be1ee4582565f8128a4885fd -o "$RUNNER_TEMP/accounting-preflight-source.json" 2>/dev/null
++          curl --max-time 20 -fsSL https://api.github.com/repos/drrazaq/Stock-2/git/blobs/4be2f5ad078aa99cba513290f25d50e6a549663d -o "$RUNNER_TEMP/accounting-preflight-source.json" 2>/dev/null
            node -e 'const fs=require("node:fs"),p=process.env.RUNNER_TEMP,j=JSON.parse(fs.readFileSync(p+"/accounting-preflight-source.json"));if(j.encoding!=="base64")process.exit(1);fs.writeFileSync(p+"/accounting-preflight.mjs",Buffer.from(j.content,"base64"));' >/dev/null 2>&1
 -          printf '7d009d803cd565f5edecc43f52dd9f8fc579837c8a76612ff2c7c580e8473b48  %s/accounting-preflight.mjs\n' "$RUNNER_TEMP" | sha256sum -c --status
 -          test "$(git hash-object --no-filters "$RUNNER_TEMP/accounting-preflight.mjs")" = 92fc955497950df6e76823eec6e348f1ebfb78b1
-+          printf '1060a9fd626c356cf5d01555a7d7c3cef3fa4734c1c787b0d9bf52699a38c83e  %s/accounting-preflight.mjs\n' "$RUNNER_TEMP" | sha256sum -c --status
-+          test "$(git hash-object --no-filters "$RUNNER_TEMP/accounting-preflight.mjs")" = d018c8a2fa0a7bd4be1ee4582565f8128a4885fd
++          printf '1ccf8c06d071627b92871331e21016acbd6bd82cae0250c353ce7a07150290df  %s/accounting-preflight.mjs\n' "$RUNNER_TEMP" | sha256sum -c --status
++          test "$(git hash-object --no-filters "$RUNNER_TEMP/accounting-preflight.mjs")" = 4be2f5ad078aa99cba513290f25d50e6a549663d
        - name: Protected offline pending-sale check
          shell: bash
          env:
+@@ -121,7 +126,8 @@
+           rc=0
+           timeout 10s node --max-old-space-size=256 "$RUNNER_TEMP/accounting-preflight.mjs" "$GITHUB_WORKSPACE" > "$RUNNER_TEMP/accounting-preflight.raw" 2>/dev/null || rc=$?
+           value=$(cat "$RUNNER_TEMP/accounting-preflight.raw" 2>/dev/null)
+-          case "$rc:$value" in 0:PASS|2:BLOCKED|1:ERROR) ;; *) value=ERROR ;; esac
++          # output contract: PASS, ERROR, or BLOCKED plus one fixed reason code (no data); anything else is ERROR
++          if [[ "$rc:$value" =~ ^(0:PASS|1:ERROR|2:BLOCKED\ [A-Z_]{1,40})$ ]]; then :; else value=ERROR; fi
+           printf '%s\n' "$value" > "$RUNNER_TEMP/accounting-preflight.result"
+           rm -f "$RUNNER_TEMP/accounting-preflight.raw"
+       - name: Emit only protected result after state freshness check
+@@ -133,13 +139,18 @@
+         run: |
+           set +x
+           value=$(cat "$RUNNER_TEMP/accounting-preflight.result" 2>/dev/null || true)
+-          case "$value" in PASS|BLOCKED|ERROR) ;; *) value=ERROR ;; esac
++          [[ "$value" =~ ^(PASS|ERROR|BLOCKED\ [A-Z_]{1,40})$ ]] || value=ERROR
+           if [ "$value" = PASS ]; then
++            # authoritative freshness: current main must not have changed ANY dependency of the result (the four inputs,
++            # scan.mjs, the privacy marker; any commit touching them, or rewritten history) since the checked-out HEAD
+             if git fetch --quiet https://github.com/drrazaq/Stock-2.git refs/heads/main >/dev/null 2>&1; then
+-              if ! git diff --quiet HEAD FETCH_HEAD -- data/private.enc data/my-positions.json data/my-trades.jsonl data/leaderdip-ledger.jsonl; then value=BLOCKED; fi
++              fresh=$(timeout 10s node "$RUNNER_TEMP/accounting-preflight.mjs" --fresh "$GITHUB_WORKSPACE" 2>/dev/null || true)
++              case "$fresh" in PASS) ;; "BLOCKED STATE_CHANGED") value="BLOCKED STATE_CHANGED" ;; *) value=ERROR ;; esac
+             else value=ERROR; fi
+           fi
+-          printf 'status=%s\n' "$value" >> "$GITHUB_OUTPUT"
++          status=${value%% *}; reason=${value#"$status"}; reason=${reason# }
++          printf 'status=%s\n' "$status" >> "$GITHUB_OUTPUT"
++          printf 'reason=%s\n' "$reason" >> "$GITHUB_OUTPUT"
+           printf '%s\n' "$value"
+           rm -f "$RUNNER_TEMP/accounting-preflight.result" "$RUNNER_TEMP/accounting-preflight.mjs" "$RUNNER_TEMP/accounting-preflight-source.json"
+-          case "$value" in PASS) exit 0 ;; BLOCKED) exit 2 ;; *) exit 1 ;; esac
++          case "$status" in PASS) exit 0 ;; BLOCKED) exit 2 ;; *) exit 1 ;; esac
