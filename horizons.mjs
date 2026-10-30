@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // HORIZONS: mid- and long-term setups, not only quick trades. Read-only; never places an order.
 // The owner's question: "many stocks pull back, then rocket up; why does the system only look at the next few days?" The quick and
 // swing rules hold days to weeks. This tests fixed, pre-registered setups held for 1, 3 and 6 MONTHS (20 / 60 / 120 sessions)
@@ -89,4 +91,4 @@ for (const s of SETUPS) { msg.push(NAME[s] + ':'); for (const h of H) { const r 
 msg.push('', SETUPS.length * H.length + ' versions tested, so about 1 could pass by luck. A pass goes to paper first. Research only.');
 console.log(msg.join('\n'));
 const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

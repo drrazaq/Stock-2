@@ -8,14 +8,15 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import { loadScan, blocked } from './load-scan.mjs';
 
-let queue = [], sent = [], uid = 500, answers = [], rateOnce = 0;
+let queue = [], sent = [], uid = 500, answers = [], rateOnce = 0, refuseMenu=false;
 const server = http.createServer((req, res) => { let body = ''; req.on('data', c => body += c); req.on('end', () => {
   let out = { ok: true, result: true };
   if (/\/getUpdates/.test(req.url)) { out = { ok: true, result: queue.map(u => (u.cb ? { update_id: ++uid, callback_query: { id: 'q' + uid, data: u.cb, message: { chat: { id: u.chat || 42 } } } } : { update_id: ++uid, message: { message_id: uid, chat: { id: u.chat || 42 }, text: u } })) }; queue = []; }
   else if (/\/sendMessage/.test(req.url)) { let j = {}; try { j = JSON.parse(body); } catch (e) {}
     if (/^FAIL400/.test(j.text || '')) { res.writeHead(400, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ ok: false, description: 'Bad Request: message is too long' })); }
     if (/^RATE429/.test(j.text || '') && !rateOnce++) { res.writeHead(429, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ ok: false, parameters: { retry_after: 1 } })); }
-    sent.push({ text: j.text, rows: j.reply_markup && j.reply_markup.inline_keyboard }); }
+    if(refuseMenu&&j.reply_markup?.keyboard){res.writeHead(200,{'Content-Type':'application/json'});return res.end(JSON.stringify({ok:false,description:'refused'}));}
+    out={ok:true,result:{message_id:++uid}}; sent.push({ text: j.text, rows: j.reply_markup && j.reply_markup.inline_keyboard }); }
   else if (/\/answerCallbackQuery/.test(req.url)) { try { answers.push(JSON.parse(body).text); } catch (e) {} }
   else if (/\/price\?symbol=/.test(req.url)) out = { price: '101.50' };
   res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(out)); }); });
@@ -53,6 +54,7 @@ test('button: a tap from another chat is ignored', async () => {
 });
 test('buttons are offered only for the BUYs under TODAY\'S ACTIONS, never for NOT ACTIONABLE names', async () => {
   const S = await load();
+  S.write('data/halal.json',{WST:{s:'ok',d:new Date().toISOString().slice(0,10)}});
   const text = "ACTIONS\n\nTODAY'S ACTIONS\nLONGER HOLDS | ...\n- BUY WST up to 406.26\n\nNOT ACTIONABLE TODAY (x)\n- MARK HALAL FIRST: HQY\n- BUY ZZZ never\n";
   const rows = S.fn('tradeButtons')(null, { TGT: { entry: 1 } }, 5, text).map(r => r.map(b => b.data));
   assert.deepEqual(rows, [['b|WST', 's|WST'], ['x|TGT']]);
@@ -100,6 +102,9 @@ test('delivery: a 429 rate limit is waited out and delivered; a refused message 
   await S.fn('telegram')('RATE429 hello'); assert.ok(sent.some(x => x.text === 'RATE429 hello'), 'delivered after the retry');
   await S.fn('telegram')('FAIL400 the long one');
   const F = S.read('data/tg-failures.jsonl').trim().split('\n').map(l => JSON.parse(l)); assert.equal(F.length, 1); assert.equal(F[0].status, 400); assert.equal(F[0].head, 'FAIL400 the long one');
-  assert.match(S.fn('healthLine')(), /TELEGRAM: 1 message NOT delivered in the last 24 h \(last: "FAIL400 the long one", 400\)/);
+  assert.match(S.fn('healthLine')(), /TELEGRAM: 1 message delivery unconfirmed in the last 24 h \(last: "FAIL400 the long one", 400\)/);
+});
+test('failed menu delivery never advances the persisted menu version',async()=>{
+ const S=await load();refuseMenu=true;await send(S);assert.notEqual(S.readJson('data/tg-state.json').menuV,S.value('MENU_V'));refuseMenu=false;await send(S);assert.equal(S.readJson('data/tg-state.json').menuV,S.value('MENU_V'));
 });
 test.after(() => server.close());

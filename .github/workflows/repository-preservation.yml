@@ -1,0 +1,29 @@
+name: Exact-source preservation policy
+on:
+  push:
+    branches: [Stock2-safety-fixes]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  source-preservation:
+    if: github.head_ref == 'Stock2-safety-fixes' || github.ref_name == 'Stock2-safety-fixes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          filter: blob:none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify protected Git tree metadata on exact source, not a PR merge tree
+        env:
+          STOCK2_EXACT_SOURCE_TREE: '1'
+        run: node --test tests/repository-preservation.test.mjs
+      - name: Parse every root and tool JavaScript module without executing it
+        shell: bash
+        run: |
+          for f in *.mjs tools/*.mjs; do node --check "$f"; done

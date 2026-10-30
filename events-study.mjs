@@ -1,3 +1,7 @@
+import {createHash} from 'node:crypto';
+import {validSecFilings,validSecArchiveList} from './sec-filing-schema.mjs';
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // EVENT-TO-TRADE EVIDENCE ENGINE. Read-only research; never places an order.
 // Question it answers: when a company announces something (a big contract, an acquisition, an FDA approval, an activist stake,
 // a share sale, a restatement, faster earnings growth...), what did its stock do AFTERWARDS, compared with the market and with
@@ -84,12 +88,12 @@ const save = () => fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(cache)))
 
 if (MODE === 'fetch') {
   const t0 = Date.now(), MAXMS = +(env.EV_MINUTES || 45) * 60000, MAXC = +(env.EV_CALLS || 1500);
-  let calls = 0, note = '';
+  let calls = 0, note = '', sourceFailures=0;
   async function sec(url) {
-    if (note) return null; await sleep(FAST ? 0 : 150); calls++;   // SEC fair-use limit: 10 requests a second
-    const go = () => fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } });
-    let r; try { r = await go(); } catch (e) { return null; }
-    for (let k = 0; k < 3 && (r.status === 403 || r.status === 429); k++) { await sleep(FAST ? 0 : 4000 + Math.random() * 6000); try { r = await go(); } catch (e) { return null; } }
+    if (note) return null; await sleep(FAST ? 0 : 150);   // SEC fair-use limit: 10 requests a second
+    const go = () => {if(calls>=MAXC||Date.now()-t0>=MAXMS){note='SEC request/time budget exhausted; remaining sources UNKNOWN';return null;}calls++;return fetch(url, { redirect:'error',signal:AbortSignal.timeout(Math.max(1,Math.floor(Math.min(15000,MAXMS-(Date.now()-t0))))),headers: { 'User-Agent': UA, 'Accept': 'application/json' } });};
+    let r; try { r = await go(); } catch (e) { return null; } if(!r)return null;
+    for (let k = 0; k < 3 && (r.status === 403 || r.status === 429); k++) { await sleep(FAST ? 0 : 4000 + Math.random() * 6000); try { r = await go(); } catch (e) { return null; } if(!r)return null; }
     if (r.status === 403 || r.status === 429) { note = 'SEC refused this server (HTTP ' + r.status + ') after 3 retries; the rest waits for the next run'; console.log(note); return null; }
     if (!r.ok) return null; return r.json().catch(() => null);
   }
@@ -105,10 +109,19 @@ if (MODE === 'fetch') {
   const cut = iso(Date.now() - 6 * 365 * 864e5);
   const addRows = (S, R) => {   // R = SEC columnar filings object
     const n = (R.form || []).length, have = new Set(S.ev.map(e => e.a));
-    for (let k = 0; k < n; k++) { const acc = R.accessionNumber[k]; if (have.has(acc)) continue;
+    for (let k = 0; k < n; k++) { const acc = R.accessionNumber[k];
       const f = famsOf(R.form[k], (R.items || [])[k], S.sic); if (!f.length) continue;
       const acc0 = String(R.acceptanceDateTime[k] || ''), p = acc0.length >= 16 ? acc0.slice(0, 16) + 'Z' : String(R.filingDate[k] || '').slice(0, 10); if (!p || p.slice(0, 10) < cut) continue;   // stored in UTC with an explicit Z (older cache rows: same UTC cut without the Z; sec-time.mjs reads both as UTC)
-      S.ev.push({ p, f: f.join(','), a: acc }); have.add(acc); }
+      if(have.has(acc)){
+        const old=S.ev.find(e=>e.a===acc);
+        if(old.f!==f.join(',')||((secNY(old.p)||{}).d&&(secNY(p)||{}).d&&secNY(old.p).d!==secNY(p).d)||((secNY(old.p)||{}).ms!=null&&(secNY(p)||{}).ms!=null&&secNY(old.p).ms!==secNY(p).ms)){
+          S.revisionConflicts||={};const record=S.revisionConflicts[acc]||={firstObservedAt:new Date().toISOString(),revisions:{}};
+          const revision=createHash('sha256').update(JSON.stringify([p,f])).digest('hex');
+          if(Object.keys(record.revisions).length<32)record.revisions[revision]||={observedAt:new Date().toISOString()};
+        }
+        continue;
+      }
+      S.ev.push({ p, f: f.join(','), a: acc, firstObservedAt:new Date().toISOString(), ...(typeof R.acceptanceDateTime[k]==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(R.acceptanceDateTime[k])&&Number.isFinite(Date.parse(R.acceptanceDateTime[k]))?{publicationAt:new Date(R.acceptanceDateTime[k]).toISOString()}:{} ) }); have.add(acc); }
     S.ev.sort((x, y) => x.p < y.p ? -1 : 1);
   };
   // 2. every stock in the scan universe: newest filings (refresh oldest first); five years of older pages once
@@ -116,36 +129,42 @@ if (MODE === 'fetch') {
   let done = 0;
   for (const sym of order) { if (calls >= MAXC || Date.now() - t0 > MAXMS || note) break;
     const S = cache.syms[sym] || (cache.syms[sym] = { cik: cache.ciks[sym][0], ev: [] }); if (S.t === iso(Date.now())) continue;
-    const j = await sec(SEC_DATA + '/submissions/CIK' + String(S.cik).padStart(10, '0') + '.json'); if (!j || !j.filings) continue;
+    const j = await sec(SEC_DATA + '/submissions/CIK' + String(S.cik).padStart(10, '0') + '.json'); if (!j || !validSecFilings(j.filings?.recent) || !validSecArchiveList(j.filings?.files)) { sourceFailures++; S.old=false; continue; }
     S.sic = j.sic || S.sic || null; S.name = String(j.name || '').slice(0, 60); addRows(S, j.filings.recent || {});
-    if (!S.old) { let ok = true; for (const fl of j.filings.files || []) { if (String(fl.filingTo || '') < cut) continue; const o = await sec(SEC_DATA + '/submissions/' + fl.name); if (o) addRows(S, o); else ok = false; } S.old = ok; }
-    S.t = iso(Date.now()); done++; }
+    if (!S.old) { let ok = true; for (const fl of j.filings.files || []) { if (String(fl.filingTo || '') < cut) continue; const o = await sec(SEC_DATA + '/submissions/' + fl.name); if (validSecFilings(o)) addRows(S, o); else {ok = false;sourceFailures++;} } S.old = ok; }
+    if (S.old) S.t = iso(Date.now()); done++; }
   // 3. FDA approvals for drug makers (openFDA, no key: 1,000 requests a day), each company weekly
-  let fda = 0; const STOP = new Set(['AMERICAN', 'UNITED', 'FIRST', 'GLOBAL', 'INTERNATIONAL', 'GENERAL', 'NATIONAL', 'PACIFIC', 'NEW', 'BIO', 'PHARMA', 'THE', 'ADVANCED', 'APPLIED']);
+  let fda = 0, fdaFailures=0, fdaRejected=0; const STOP = new Set(['AMERICAN', 'UNITED', 'FIRST', 'GLOBAL', 'INTERNATIONAL', 'GENERAL', 'NATIONAL', 'PACIFIC', 'NEW', 'BIO', 'PHARMA', 'THE', 'ADVANCED', 'APPLIED']);
   for (const [sym, S] of Object.entries(cache.syms)) { if (!/^283[3-6]$/.test(String(S.sic || '')) || fda >= +(env.FDA_CALLS || 150) || Date.now() - t0 > MAXMS) continue;
-    if (S.fdaT && Date.now() - Date.parse(S.fdaT) < 7 * 864e5) continue;
-    const tok = String(S.name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').trim().split(/\s+/)[0] || ''; S.fdaT = new Date().toISOString(); if (tok.length < 4 || STOP.has(tok)) continue;
-    let j = null; try { const r = await fetch(FDA + '/drug/drugsfda.json?search=sponsor_name:' + encodeURIComponent(tok) + '&limit=100'); fda++; j = r.ok ? await r.json() : null; } catch (e) {}
+    if (S.fdaT && Date.now() - Date.parse(S.fdaT) >= 0 && Date.now() - Date.parse(S.fdaT) < 7 * 864e5) continue;
+    const tok = String(S.name || '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').trim().split(/\s+/)[0] || ''; if (tok.length < 4 || STOP.has(tok)) continue;
+    let j = null; fda++;try { const r = await fetch(FDA + '/drug/drugsfda.json?search=sponsor_name:' + encodeURIComponent(tok) + '&limit=100',{redirect:'error',signal:AbortSignal.timeout(15000)}); j = r.ok ? await r.json() : null; } catch (e) {}
     if (!FAST) await sleep(300);
+    if(!j||!Array.isArray(j.results)){fdaFailures++;continue;}
+    let partial=false;
+    const validApps=j.results.filter(app=>{
+      const ok=app&&typeof app==='object'&&!Array.isArray(app)&&typeof app.sponsor_name==='string'&&typeof app.application_number==='string'&&Array.isArray(app.submissions);
+      if(!ok){fdaRejected++;partial=true;}return ok;
+    });
     const have = new Set(S.ev.map(e => e.a));
-    for (const app of (j && j.results) || []) { if (!String(app.sponsor_name || '').toUpperCase().startsWith(tok) || /^ANDA/.test(String(app.application_number || ''))) continue;
-      for (const s of app.submissions || []) { if (s.submission_status !== 'AP' || !/^\d{8}$/.test(String(s.submission_status_date || ''))) continue;
+    for (const app of validApps) { if (!String(app.sponsor_name || '').toUpperCase().startsWith(tok) || /^ANDA/.test(String(app.application_number || ''))) continue;
+      for (const s of app.submissions || []) { if(!s||typeof s!=='object'||Array.isArray(s)){fdaRejected++;partial=true;continue;} if(typeof s.submission_status!=='string'){fdaRejected++;partial=true;continue;}if(s.submission_status!=='AP')continue;if(!/^\d{8}$/.test(String(s.submission_status_date||''))||typeof s.submission_type!=='string'||s.submission_number==null){fdaRejected++;partial=true;continue;}
         const kind = s.submission_type === 'ORIG' ? 'FDA_APPROVAL' : s.submission_type === 'SUPPL' && /EFFICACY/i.test(String(s.submission_class_code || '')) ? 'FDA_NEW_USE' : null; if (!kind) continue;
-        const d = s.submission_status_date, p = d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8), a = 'fda-' + app.application_number + '-' + s.submission_type + '-' + s.submission_number; if (have.has(a) || p < cut) continue;
-        S.ev.push({ p, f: kind, a }); have.add(a); } }
-    S.ev.sort((x, y) => x.p < y.p ? -1 : 1); }
+        const d = s.submission_status_date;const day=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);const parsed=Date.parse(day+'T00:00:00Z');if(!Number.isFinite(parsed)||iso(parsed)!==day||day>iso(Date.now())){fdaRejected++;partial=true;continue;}const p = d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8), a = 'fda-' + app.application_number + '-' + s.submission_type + '-' + s.submission_number; if (have.has(a) || p < cut) continue;
+        S.ev.push({ p, f: kind, a, firstObservedAt:new Date().toISOString() }); have.add(a); } }
+    S.ev.sort((x, y) => x.p < y.p ? -1 : 1); if(!partial)S.fdaT=new Date().toISOString();else fdaFailures++; }
   // 4. small public files: ticker -> [SEC number, industry code], and the last 10 days of events (for check, holdings, the nightly scan)
   const ck = {}; for (const sym of uni) ck[sym] = [cache.ciks[sym][0], (cache.syms[sym] || {}).sic || null];
   fs.writeFileSync(CIKS, JSON.stringify(ck));
   const since = iso(Date.now() - 10 * 864e5), recent = [];
   // events-recent.json `p` FORMAT: New York local time WITH its UTC offset, e.g. '2026-10-21T08:05-04:00' (EDGAR's UTC acceptance time
   // converted), or a date only 'YYYY-MM-DD'. p.slice(0, 10) is the New York calendar date (scan.mjs reads that); Date.parse(p) is exact.
-  for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) { const p = nyStamp(e.p); if (p && p.slice(0, 10) >= since) recent.push({ sym, p, f: e.f, ms: (secNY(e.p) || {}).ms || null }); }
+  for (const [sym, S] of Object.entries(cache.syms)) for (const e of S.ev) { const p = nyStamp(e.p); if (p && p.slice(0, 10) >= since) recent.push({ sym, p, f: e.f, sourceId:typeof e.a==='string'?e.a:null, revisionStatus:S.revisionConflicts?.[e.a]?'CONFLICT':'UNVERIFIED', sourceNamespace:String(e.a||'').startsWith('fda-')?'OPENFDA':/^\d{10}-\d{2}-\d{6}$/.test(e.a||'')?'SEC_EDGAR':'UNKNOWN', firstObservedAt:e.firstObservedAt||null, ...(e.publicationAt?{publicationAt:e.publicationAt}:{}), ms: (secNY(e.p) || {}).ms || null }); }
   recent.sort((x, y) => (x.ms || Date.parse(x.p.slice(0, 10) + 'T12:00:00Z')) < (y.ms || Date.parse(y.p.slice(0, 10) + 'T12:00:00Z')) ? 1 : -1); for (const r of recent) delete r.ms;
-  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), events: recent }, null, 1));
+  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), events: recent,sourceStatus:{SEC:{status:note||sourceFailures?'UNKNOWN':done?'OBSERVED':'NOT_FETCHED',failures:sourceFailures,calls},OPENFDA:{status:fdaFailures?'PARTIAL_OR_UNKNOWN':fda?'OBSERVED':'NOT_FETCHED',attempts:fda,failures:fdaFailures,rejectedRows:fdaRejected}} }, null, 1));
   save();
   const nev = Object.values(cache.syms).reduce((a, S) => a + S.ev.length, 0);
-  secStatus(!note, note || 'ok: ' + calls + ' SEC calls');
+  secStatus(!note&&!sourceFailures, note || (sourceFailures?'UNKNOWN: '+sourceFailures+' failed or malformed SEC sources':'ok: '+calls+' SEC calls'));
   console.log('events: ' + Object.keys(cache.syms).length + ' stocks, ' + nev + ' events stored | today ' + done + ' stocks refreshed, ' + calls + ' SEC calls, ' + fda + ' FDA calls | ' + recent.length + ' events in the last 10 days' + (note ? ' | ' + note : '') + ' | still never fetched: ' + uni.filter(s => !(cache.syms[s] || {}).t).length);
   process.exit(0);
 }
@@ -340,4 +359,4 @@ const msg = ['EVENT STUDY (company news -> what the stock did next), fair test '
   pass.length ? 'PASSED: ' + pass.map(([, x]) => x.name).join('; ') + '. These now go on the nightly list as "event drift" buys (paper account follows them too).' : 'Nothing passed yet, so nothing changes in your ACTIONS. The test repeats every Sunday as the SEC history fills in.',
   'Research, not an order. Not financial advice, not a halal ruling.'];
 console.log(msg.join('\n'));
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length || warns.length)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length || warns.length)) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

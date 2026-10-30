@@ -1,0 +1,2462 @@
+{
+  "kind": "BOUNDED_ALPACA_ACCESS_AUDIT_V1",
+  "sourceSha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+  "startedAt": "2026-10-29T12:13:44.538Z",
+  "finishedAt": "2026-10-29T12:13:46.244Z",
+  "session": {
+    "day": "2026-10-29",
+    "minute": 493,
+    "state": "PREMARKET"
+  },
+  "limits": {
+    "requests": 11,
+    "responseBytes": 33554432,
+    "totalBytes": 67108864,
+    "wallMs": 180000,
+    "requestMs": 15000,
+    "artifactBytes": 1048576
+  },
+  "budget": {
+    "requests": 11,
+    "bytes": 6732892
+  },
+  "stopReason": null,
+  "results": [
+    {
+      "id": "sip_snapshot",
+      "feed": "sip",
+      "scope": "FIXED_24_SYMBOL_SAMPLE",
+      "requestedAt": "2026-10-29T12:13:44.538Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:44.782Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276024
+      },
+      "measurements": {
+        "received": 24,
+        "validSymbols": 24,
+        "invalidSymbols": 0,
+        "unexpectedSymbols": 0,
+        "missingRequested": [],
+        "trade": {
+          "valid": 24,
+          "fresh": 19,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": 15505,
+          "ageP95Ms": 1557425,
+          "freshPctOfRequested": 79.16666666666667,
+          "freshPctOfReturned": 79.16666666666667
+        },
+        "quote": {
+          "valid": 24,
+          "fresh": 21,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": 4023,
+          "ageP95Ms": 807797,
+          "freshPctOfRequested": 87.5,
+          "freshPctOfReturned": 87.5
+        },
+        "freshQuoteSpreadP95Bps": 29.84438286079588,
+        "perSymbol": [
+          {
+            "symbol": "META",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:40.605Z",
+              "ageMs": 4183,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:29.476Z",
+              "ageMs": 15312,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 8.100445524503847
+            }
+          },
+          {
+            "symbol": "SNDL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T11:47:47.363Z",
+              "ageMs": 1557425,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:00:16.991Z",
+              "ageMs": 807797,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 231.6602316602319
+            }
+          },
+          {
+            "symbol": "TSLA",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:39.509Z",
+              "ageMs": 5279,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:39.535Z",
+              "ageMs": 5253,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 5.461089735632878
+            }
+          },
+          {
+            "symbol": "RIVN",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:24.317Z",
+              "ageMs": 80471,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:10:05.258Z",
+              "ageMs": 219530,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 25.850926324859422
+            }
+          },
+          {
+            "symbol": "BF.B",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T23:00:00.003Z",
+              "ageMs": 47624785,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T11:59:31.923Z",
+              "ageMs": 852865,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 241.22029088329182
+            }
+          },
+          {
+            "symbol": "INTC",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.010Z",
+              "ageMs": 778,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.011Z",
+              "ageMs": 777,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 8.663634394628362
+            }
+          },
+          {
+            "symbol": "SOFI",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:42.813Z",
+              "ageMs": 1975,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:43.811Z",
+              "ageMs": 977,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 23.88059701492486
+            }
+          },
+          {
+            "symbol": "AMC",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:11:27.473Z",
+              "ageMs": 137315,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:25.624Z",
+              "ageMs": 19164,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 66.88963210702347
+            }
+          },
+          {
+            "symbol": "HOOD",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.553Z",
+              "ageMs": 3235,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:08.654Z",
+              "ageMs": 36134,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 22.39641657334858
+            }
+          },
+          {
+            "symbol": "AAPL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.555Z",
+              "ageMs": 3233,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.555Z",
+              "ageMs": 3233,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 2.873150409424587
+            }
+          },
+          {
+            "symbol": "F",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:28.129Z",
+              "ageMs": 76659,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:38.622Z",
+              "ageMs": 6166,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 17.03577512776795
+            }
+          },
+          {
+            "symbol": "GME",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:09:48.249Z",
+              "ageMs": 236539,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:06.826Z",
+              "ageMs": 97962,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 29.84438286079588
+            }
+          },
+          {
+            "symbol": "MSFT",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.367Z",
+              "ageMs": 421,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:40.765Z",
+              "ageMs": 4023,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 8.407679013499846
+            }
+          },
+          {
+            "symbol": "BRK.B",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:42.925Z",
+              "ageMs": 61863,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:44.963Z",
+              "ageMs": 59825,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 9.873292743131248
+            }
+          },
+          {
+            "symbol": "NVDA",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.671Z",
+              "ageMs": 117,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:40.629Z",
+              "ageMs": 4159,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 2.3327967900721474
+            }
+          },
+          {
+            "symbol": "QQQ",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:29.283Z",
+              "ageMs": 15505,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.702Z",
+              "ageMs": 86,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 0.8374274229559155
+            }
+          },
+          {
+            "symbol": "IWM",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:27.891Z",
+              "ageMs": 16897,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.141Z",
+              "ageMs": 647,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 1.06483042575373
+            }
+          },
+          {
+            "symbol": "IAUM",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:09:28.226Z",
+              "ageMs": 256562,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.670Z",
+              "ageMs": 118,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 4.985044865404568
+            }
+          },
+          {
+            "symbol": "GOOGL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:40.940Z",
+              "ageMs": 3848,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:42.428Z",
+              "ageMs": 2360,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 1.7326518236164383
+            }
+          },
+          {
+            "symbol": "AMZN",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:21.516Z",
+              "ageMs": 23272,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.161Z",
+              "ageMs": 3627,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 2.002603384399037
+            }
+          },
+          {
+            "symbol": "SPY",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:34.714Z",
+              "ageMs": 10074,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.387Z",
+              "ageMs": 401,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 0.9104921209920463
+            }
+          },
+          {
+            "symbol": "AMD",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:36.321Z",
+              "ageMs": 8467,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.422Z",
+              "ageMs": 366,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 19.816344945947463
+            }
+          },
+          {
+            "symbol": "SPUS",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:06:08.691Z",
+              "ageMs": 456097,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:43.085Z",
+              "ageMs": 1703,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 25.12352399296518
+            }
+          },
+          {
+            "symbol": "PLTR",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.449Z",
+              "ageMs": 3339,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.449Z",
+              "ageMs": 3339,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 10.579611577118213
+            }
+          }
+        ]
+      },
+      "status": "OBSERVED",
+      "latencyMs": 251
+    },
+    {
+      "id": "sip_trade",
+      "feed": "sip",
+      "scope": "FIXED_24_SYMBOL_SAMPLE",
+      "requestedAt": "2026-10-29T12:13:44.789Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:44.849Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276024
+      },
+      "measurements": {
+        "received": 24,
+        "validSymbols": 24,
+        "invalidSymbols": 0,
+        "unexpectedSymbols": 0,
+        "missingRequested": [],
+        "trade": {
+          "valid": 24,
+          "fresh": 19,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": 15567,
+          "ageP95Ms": 1557487,
+          "freshPctOfRequested": 79.16666666666667,
+          "freshPctOfReturned": 79.16666666666667
+        },
+        "quote": {
+          "valid": 0,
+          "fresh": 0,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": null,
+          "ageP95Ms": null,
+          "freshPctOfRequested": 0,
+          "freshPctOfReturned": 0
+        },
+        "freshQuoteSpreadP95Bps": null,
+        "perSymbol": [
+          {
+            "symbol": "TSLA",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:39.509Z",
+              "ageMs": 5341,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "AMD",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:36.321Z",
+              "ageMs": 8529,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "AMZN",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:21.516Z",
+              "ageMs": 23334,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "PLTR",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.449Z",
+              "ageMs": 3401,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "QQQ",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:29.283Z",
+              "ageMs": 15567,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "HOOD",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.553Z",
+              "ageMs": 3297,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "META",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:40.605Z",
+              "ageMs": 4245,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "IAUM",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:09:28.226Z",
+              "ageMs": 256624,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SPY",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:34.714Z",
+              "ageMs": 10136,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "MSFT",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.793Z",
+              "ageMs": 57,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "IWM",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:27.891Z",
+              "ageMs": 16959,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "BF.B",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T23:00:00.003Z",
+              "ageMs": 47624847,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SOFI",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:42.813Z",
+              "ageMs": 2037,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "RIVN",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:24.317Z",
+              "ageMs": 80533,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "GOOGL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.785Z",
+              "ageMs": 65,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "INTC",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.010Z",
+              "ageMs": 840,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "F",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:28.129Z",
+              "ageMs": 76721,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SNDL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T11:47:47.363Z",
+              "ageMs": 1557487,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "NVDA",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.671Z",
+              "ageMs": 179,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "AMC",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:11:27.473Z",
+              "ageMs": 137377,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "GME",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:09:48.249Z",
+              "ageMs": 236601,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SPUS",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:06:08.691Z",
+              "ageMs": 456159,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "BRK.B",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:42.925Z",
+              "ageMs": 61925,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "AAPL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.555Z",
+              "ageMs": 3295,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          }
+        ]
+      },
+      "status": "OBSERVED",
+      "latencyMs": 61
+    },
+    {
+      "id": "sip_quote",
+      "feed": "sip",
+      "scope": "FIXED_24_SYMBOL_SAMPLE",
+      "requestedAt": "2026-10-29T12:13:44.850Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:44.921Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276024
+      },
+      "measurements": {
+        "received": 24,
+        "validSymbols": 24,
+        "invalidSymbols": 0,
+        "unexpectedSymbols": 0,
+        "missingRequested": [],
+        "trade": {
+          "valid": 0,
+          "fresh": 0,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": null,
+          "ageP95Ms": null,
+          "freshPctOfRequested": 0,
+          "freshPctOfReturned": 0
+        },
+        "quote": {
+          "valid": 24,
+          "fresh": 21,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": 3760,
+          "ageP95Ms": 807930,
+          "freshPctOfRequested": 87.5,
+          "freshPctOfReturned": 87.5
+        },
+        "freshQuoteSpreadP95Bps": 29.84438286079588,
+        "perSymbol": [
+          {
+            "symbol": "IAUM",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.670Z",
+              "ageMs": 251,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 4.985044865404568
+            }
+          },
+          {
+            "symbol": "HOOD",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:08.654Z",
+              "ageMs": 36267,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 22.39641657334858
+            }
+          },
+          {
+            "symbol": "F",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:38.622Z",
+              "ageMs": 6299,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 17.03577512776795
+            }
+          },
+          {
+            "symbol": "SOFI",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:43.811Z",
+              "ageMs": 1110,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 23.88059701492486
+            }
+          },
+          {
+            "symbol": "META",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:29.476Z",
+              "ageMs": 15445,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 8.100445524503847
+            }
+          },
+          {
+            "symbol": "INTC",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.011Z",
+              "ageMs": 910,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 8.663634394628362
+            }
+          },
+          {
+            "symbol": "GME",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:06.826Z",
+              "ageMs": 98095,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 29.84438286079588
+            }
+          },
+          {
+            "symbol": "BF.B",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T11:59:31.923Z",
+              "ageMs": 852998,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 241.22029088329182
+            }
+          },
+          {
+            "symbol": "AMZN",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.161Z",
+              "ageMs": 3760,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 2.002603384399037
+            }
+          },
+          {
+            "symbol": "AMD",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.422Z",
+              "ageMs": 499,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 19.816344945947463
+            }
+          },
+          {
+            "symbol": "GOOGL",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.809Z",
+              "ageMs": 112,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 4.503958286416944
+            }
+          },
+          {
+            "symbol": "RIVN",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:10:05.258Z",
+              "ageMs": 219663,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 25.850926324859422
+            }
+          },
+          {
+            "symbol": "SPUS",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:43.085Z",
+              "ageMs": 1836,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 25.12352399296518
+            }
+          },
+          {
+            "symbol": "MSFT",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.802Z",
+              "ageMs": 119,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 12.134223176365843
+            }
+          },
+          {
+            "symbol": "NVDA",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:40.629Z",
+              "ageMs": 4292,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 2.3327967900721474
+            }
+          },
+          {
+            "symbol": "QQQ",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.804Z",
+              "ageMs": 117,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 0.6978513157980212
+            }
+          },
+          {
+            "symbol": "IWM",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.809Z",
+              "ageMs": 112,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 1.06483042575373
+            }
+          },
+          {
+            "symbol": "PLTR",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.449Z",
+              "ageMs": 3472,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 10.579611577118213
+            }
+          },
+          {
+            "symbol": "AMC",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:25.624Z",
+              "ageMs": 19297,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 66.88963210702347
+            }
+          },
+          {
+            "symbol": "SPY",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.805Z",
+              "ageMs": 116,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 0.6503430559629072
+            }
+          },
+          {
+            "symbol": "TSLA",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:39.535Z",
+              "ageMs": 5386,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 5.461089735632878
+            }
+          },
+          {
+            "symbol": "SNDL",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:00:16.991Z",
+              "ageMs": 807930,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 231.6602316602319
+            }
+          },
+          {
+            "symbol": "BRK.B",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:12:44.963Z",
+              "ageMs": 59958,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 9.873292743131248
+            }
+          },
+          {
+            "symbol": "AAPL",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:41.555Z",
+              "ageMs": 3366,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 2.873150409424587
+            }
+          }
+        ]
+      },
+      "status": "OBSERVED",
+      "latencyMs": 72
+    },
+    {
+      "id": "sip_broad_snapshot",
+      "feed": "sip",
+      "scope": "ALL_RETURNED_SNAPSHOT_REQUEST_NOT_ASSUMED_COMPLETE",
+      "requestedAt": "2026-10-29T12:13:44.922Z",
+      "httpStatus": 400,
+      "responseAt": "2026-10-29T12:13:44.977Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276024
+      },
+      "status": "HTTP_REFUSED",
+      "latencyMs": 55
+    },
+    {
+      "id": "iex_snapshot",
+      "feed": "iex",
+      "scope": "FIXED_24_SYMBOL_SAMPLE",
+      "requestedAt": "2026-10-29T12:13:44.977Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:45.158Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276025
+      },
+      "measurements": {
+        "received": 24,
+        "validSymbols": 24,
+        "invalidSymbols": 0,
+        "unexpectedSymbols": 0,
+        "missingRequested": [],
+        "trade": {
+          "valid": 24,
+          "fresh": 5,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": 58425181,
+          "ageP95Ms": 58444600,
+          "freshPctOfRequested": 20.833333333333332,
+          "freshPctOfReturned": 20.833333333333332
+        },
+        "quote": {
+          "valid": 17,
+          "fresh": 2,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": 57884540,
+          "ageP95Ms": 58425157,
+          "freshPctOfRequested": 8.333333333333334,
+          "freshPctOfReturned": 8.333333333333334
+        },
+        "freshQuoteSpreadP95Bps": 25.55993992481282,
+        "perSymbol": [
+          {
+            "symbol": "BF.B",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:54.438Z",
+              "ageMs": 58430721,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:03.495Z",
+              "ageMs": 58421664,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SOFI",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:59.901Z",
+              "ageMs": 58425258,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:21.188Z",
+              "ageMs": 58403971,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "QQQ",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:10:18.706Z",
+              "ageMs": 206453,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:48:43.243Z",
+              "ageMs": 55501916,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 2.087261443410547
+            }
+          },
+          {
+            "symbol": "TSLA",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:41:00.858Z",
+              "ageMs": 55964301,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:00.011Z",
+              "ageMs": 58425148,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 1025.245616216889
+            }
+          },
+          {
+            "symbol": "HOOD",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:59.559Z",
+              "ageMs": 58425600,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:21.353Z",
+              "ageMs": 58403806,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "IWM",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:18:18.749Z",
+              "ageMs": 57326410,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:46.233Z",
+              "ageMs": 58378926,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "INTC",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:01.177Z",
+              "ageMs": 43982,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:02.834Z",
+              "ageMs": 58422325,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 1007.148864592094
+            }
+          },
+          {
+            "symbol": "SPUS",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:58:33.674Z",
+              "ageMs": 58511485,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:02.078Z",
+              "ageMs": 58423081,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "GME",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:59.978Z",
+              "ageMs": 58425181,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:09:00.619Z",
+              "ageMs": 57884540,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 2026.1941448382133
+            }
+          },
+          {
+            "symbol": "BRK.B",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:56.731Z",
+              "ageMs": 58428428,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:00.002Z",
+              "ageMs": 58425157,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 1004.6642481676163
+            }
+          },
+          {
+            "symbol": "NVDA",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:10:56.225Z",
+              "ageMs": 168934,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:54:03.922Z",
+              "ageMs": 55181237,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 2.3435119870630143
+            }
+          },
+          {
+            "symbol": "AMC",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:58.212Z",
+              "ageMs": 58426947,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:07:06.305Z",
+              "ageMs": 398854,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 19419.60085178032
+            }
+          },
+          {
+            "symbol": "GOOGL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:05:18.137Z",
+              "ageMs": 58107022,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:04:27.170Z",
+              "ageMs": 58157989,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 25.554652108258196
+            }
+          },
+          {
+            "symbol": "MSFT",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:11:56.706Z",
+              "ageMs": 108453,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:11:09.960Z",
+              "ageMs": 155199,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 25.55993992481282
+            }
+          },
+          {
+            "symbol": "AMD",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:59.672Z",
+              "ageMs": 58425487,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:03.546Z",
+              "ageMs": 58421613,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 1023.285062972733
+            }
+          },
+          {
+            "symbol": "PLTR",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:33:03.401Z",
+              "ageMs": 56441758,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:02.225Z",
+              "ageMs": 58422934,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "META",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:04:36.464Z",
+              "ageMs": 548695,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:58:06.024Z",
+              "ageMs": 54939135,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 8.610535721538081
+            }
+          },
+          {
+            "symbol": "AAPL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:11:59.032Z",
+              "ageMs": 106127,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:32:33.124Z",
+              "ageMs": 56472035,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 69.41721488839472
+            }
+          },
+          {
+            "symbol": "RIVN",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:56.209Z",
+              "ageMs": 58428950,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:01.420Z",
+              "ageMs": 58423739,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 904.0034438226437
+            }
+          },
+          {
+            "symbol": "IAUM",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:40.559Z",
+              "ageMs": 58444600,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:00.007Z",
+              "ageMs": 58425152,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 609.363388654942
+            }
+          },
+          {
+            "symbol": "SPY",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:27.657Z",
+              "ageMs": 17502,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.805Z",
+              "ageMs": 354,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 1.3006776530575386
+            }
+          },
+          {
+            "symbol": "SNDL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:56.577Z",
+              "ageMs": 58428582,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:01.936Z",
+              "ageMs": 58423223,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 2857.142857142856
+            }
+          },
+          {
+            "symbol": "AMZN",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:57.457Z",
+              "ageMs": 58427702,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:01.881Z",
+              "ageMs": 58423278,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "F",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:06:53.608Z",
+              "ageMs": 58011551,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            },
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:18:37.728Z",
+              "ageMs": 57307431,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 59.70149253731367
+            }
+          }
+        ]
+      },
+      "status": "OBSERVED",
+      "latencyMs": 182
+    },
+    {
+      "id": "iex_trade",
+      "feed": "iex",
+      "scope": "FIXED_24_SYMBOL_SAMPLE",
+      "requestedAt": "2026-10-29T12:13:45.159Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:45.216Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276025
+      },
+      "measurements": {
+        "received": 24,
+        "validSymbols": 24,
+        "invalidSymbols": 0,
+        "unexpectedSymbols": 0,
+        "missingRequested": [],
+        "trade": {
+          "valid": 24,
+          "fresh": 5,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": 58425238,
+          "ageP95Ms": 58444657,
+          "freshPctOfRequested": 20.833333333333332,
+          "freshPctOfReturned": 20.833333333333332
+        },
+        "quote": {
+          "valid": 0,
+          "fresh": 0,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": null,
+          "ageP95Ms": null,
+          "freshPctOfRequested": 0,
+          "freshPctOfReturned": 0
+        },
+        "freshQuoteSpreadP95Bps": null,
+        "perSymbol": [
+          {
+            "symbol": "AMC",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:58.212Z",
+              "ageMs": 58427004,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "AAPL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:11:59.032Z",
+              "ageMs": 106184,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "RIVN",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:56.209Z",
+              "ageMs": 58429007,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "BRK.B",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:56.731Z",
+              "ageMs": 58428485,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SPUS",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:58:33.674Z",
+              "ageMs": 58511542,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "HOOD",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:59.559Z",
+              "ageMs": 58425657,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "IAUM",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:40.559Z",
+              "ageMs": 58444657,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "MSFT",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:11:56.706Z",
+              "ageMs": 108510,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SNDL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:56.577Z",
+              "ageMs": 58428639,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "META",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:04:36.464Z",
+              "ageMs": 548752,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SPY",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:27.657Z",
+              "ageMs": 17559,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "AMD",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:59.672Z",
+              "ageMs": 58425544,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "NVDA",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:10:56.225Z",
+              "ageMs": 168991,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "GOOGL",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:05:18.137Z",
+              "ageMs": 58107079,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "AMZN",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:57.457Z",
+              "ageMs": 58427759,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "INTC",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:01.177Z",
+              "ageMs": 44039,
+              "fresh": true,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "BF.B",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:54.438Z",
+              "ageMs": 58430778,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "F",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:06:53.608Z",
+              "ageMs": 58011608,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "IWM",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:18:18.749Z",
+              "ageMs": 57326467,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "QQQ",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-29T12:10:18.706Z",
+              "ageMs": 206510,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "PLTR",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:33:03.401Z",
+              "ageMs": 56441815,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "TSLA",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T20:41:00.858Z",
+              "ageMs": 55964358,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "GME",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:59.978Z",
+              "ageMs": 58425238,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "SOFI",
+            "trade": {
+              "valid": true,
+              "asOf": "2026-10-28T19:59:59.901Z",
+              "ageMs": 58425315,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          }
+        ]
+      },
+      "status": "OBSERVED",
+      "latencyMs": 57
+    },
+    {
+      "id": "iex_quote",
+      "feed": "iex",
+      "scope": "FIXED_24_SYMBOL_SAMPLE",
+      "requestedAt": "2026-10-29T12:13:45.216Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:45.277Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276025
+      },
+      "measurements": {
+        "received": 24,
+        "validSymbols": 24,
+        "invalidSymbols": 0,
+        "unexpectedSymbols": 0,
+        "missingRequested": [],
+        "trade": {
+          "valid": 0,
+          "fresh": 0,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": null,
+          "ageP95Ms": null,
+          "freshPctOfRequested": 0,
+          "freshPctOfReturned": 0
+        },
+        "quote": {
+          "valid": 17,
+          "fresh": 2,
+          "unknownClock": 0,
+          "futureClock": 0,
+          "ageP50Ms": 57884659,
+          "ageP95Ms": 58425276,
+          "freshPctOfRequested": 8.333333333333334,
+          "freshPctOfReturned": 8.333333333333334
+        },
+        "freshQuoteSpreadP95Bps": 25.55993992481282,
+        "perSymbol": [
+          {
+            "symbol": "AMZN",
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:01.881Z",
+              "ageMs": 58423397,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "TSLA",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:00.011Z",
+              "ageMs": 58425267,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 1025.245616216889
+            }
+          },
+          {
+            "symbol": "SPUS",
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:02.078Z",
+              "ageMs": 58423200,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "RIVN",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:01.420Z",
+              "ageMs": 58423858,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 904.0034438226437
+            }
+          },
+          {
+            "symbol": "AAPL",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:32:33.124Z",
+              "ageMs": 56472154,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 69.41721488839472
+            }
+          },
+          {
+            "symbol": "SNDL",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:01.936Z",
+              "ageMs": 58423342,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 2857.142857142856
+            }
+          },
+          {
+            "symbol": "META",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:58:06.024Z",
+              "ageMs": 54939254,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 8.610535721538081
+            }
+          },
+          {
+            "symbol": "GME",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:09:00.619Z",
+              "ageMs": 57884659,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 2026.1941448382133
+            }
+          },
+          {
+            "symbol": "INTC",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:02.834Z",
+              "ageMs": 58422444,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 1007.148864592094
+            }
+          },
+          {
+            "symbol": "IAUM",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:00.007Z",
+              "ageMs": 58425271,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 609.363388654942
+            }
+          },
+          {
+            "symbol": "SOFI",
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:21.188Z",
+              "ageMs": 58404090,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "GOOGL",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:04:27.170Z",
+              "ageMs": 58158108,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 25.554652108258196
+            }
+          },
+          {
+            "symbol": "F",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:18:37.728Z",
+              "ageMs": 57307550,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 59.70149253731367
+            }
+          },
+          {
+            "symbol": "BF.B",
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:03.495Z",
+              "ageMs": 58421783,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "NVDA",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:54:03.922Z",
+              "ageMs": 55181356,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 2.3435119870630143
+            }
+          },
+          {
+            "symbol": "SPY",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:13:44.805Z",
+              "ageMs": 473,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 1.3006776530575386
+            }
+          },
+          {
+            "symbol": "BRK.B",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:00.002Z",
+              "ageMs": 58425276,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 1004.6642481676163
+            }
+          },
+          {
+            "symbol": "IWM",
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:46.233Z",
+              "ageMs": 58379045,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "AMC",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:07:06.305Z",
+              "ageMs": 398973,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 19419.60085178032
+            }
+          },
+          {
+            "symbol": "PLTR",
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:02.225Z",
+              "ageMs": 58423053,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "HOOD",
+            "quote": {
+              "valid": false,
+              "asOf": "2026-10-28T20:00:21.353Z",
+              "ageMs": 58403925,
+              "fresh": false,
+              "future": false,
+              "spreadBps": null
+            }
+          },
+          {
+            "symbol": "QQQ",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:48:43.243Z",
+              "ageMs": 55502035,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 2.087261443410547
+            }
+          },
+          {
+            "symbol": "AMD",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-28T20:00:03.546Z",
+              "ageMs": 58421732,
+              "fresh": false,
+              "future": false,
+              "spreadBps": 1023.285062972733
+            }
+          },
+          {
+            "symbol": "MSFT",
+            "quote": {
+              "valid": true,
+              "asOf": "2026-10-29T12:11:09.960Z",
+              "ageMs": 155318,
+              "fresh": true,
+              "future": false,
+              "spreadBps": 25.55993992481282
+            }
+          }
+        ]
+      },
+      "status": "OBSERVED",
+      "latencyMs": 62
+    },
+    {
+      "id": "iex_broad_snapshot",
+      "feed": "iex",
+      "scope": "ALL_RETURNED_SNAPSHOT_REQUEST_NOT_ASSUMED_COMPLETE",
+      "requestedAt": "2026-10-29T12:13:45.278Z",
+      "httpStatus": 400,
+      "responseAt": "2026-10-29T12:13:45.341Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276025
+      },
+      "status": "HTTP_REFUSED",
+      "latencyMs": 63
+    },
+    {
+      "id": "active_assets",
+      "feed": "assets",
+      "scope": "ACTIVE_ASSET_REFERENCE_NOT_HISTORICAL_UNIVERSE",
+      "requestedAt": "2026-10-29T12:13:45.341Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:45.634Z",
+      "rateLimit": {
+        "limit": 200,
+        "remaining": 199,
+        "reset": 1793276025
+      },
+      "measurements": {
+        "rows": 14346,
+        "activeValidSymbols": 14346,
+        "tradableValidSymbols": 13488,
+        "invalidOrOutOfScope": 0
+      },
+      "status": "OBSERVED",
+      "latencyMs": 610
+    },
+    {
+      "id": "sip_recent_trades",
+      "feed": "sip",
+      "scope": "FIVE_MINUTE_AAPL_SPY_ONE_PAGE",
+      "requestedAt": "2026-10-29T12:13:45.951Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:46.027Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276025
+      },
+      "measurements": {
+        "records": 1000,
+        "clocksWithinRequestedWindow": 1000,
+        "hasMore": true,
+        "pageLimit": 1000,
+        "pagesFetched": 1,
+        "completeCoverage": false
+      },
+      "status": "OBSERVED",
+      "latencyMs": 133
+    },
+    {
+      "id": "sip_recent_quotes",
+      "feed": "sip",
+      "scope": "FIVE_MINUTE_AAPL_SPY_ONE_PAGE",
+      "requestedAt": "2026-10-29T12:13:46.084Z",
+      "httpStatus": 200,
+      "responseAt": "2026-10-29T12:13:46.190Z",
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793276026
+      },
+      "measurements": {
+        "records": 1000,
+        "clocksWithinRequestedWindow": 1000,
+        "hasMore": true,
+        "pageLimit": 1000,
+        "pagesFetched": 1,
+        "completeCoverage": false
+      },
+      "status": "OBSERVED",
+      "latencyMs": 160
+    }
+  ],
+  "coverage": {},
+  "claims": {
+    "accountPlan": "NOT_INFERRED",
+    "entitlement": "ENDPOINT_AND_TIME_SPECIFIC_HTTP_OBSERVATIONS_ONLY",
+    "wholeMarketRealTimeDiscovery": "NOT_ESTABLISHED",
+    "fullSessionReliability": "NOT_ESTABLISHED",
+    "fills": "NOT_TESTED",
+    "profitability": "NOT_TESTED"
+  },
+  "notes": [
+    "Independent trade/quote clocks; fresh means valid nonfuture clock at most180seconds old at receipt.",
+    "All-symbol request may be refused or incomplete. Active/tradable asset list is a current reference, not proof of historical or real-time universe completeness.",
+    "Single endpoint latency and reported rate-limit headers do not prove sustained throughput. No stress test, retries, pagination, orders or Telegram.",
+    "Fixed sample is not statistically representative. Missing symbols remain in the requested denominator."
+  ],
+  "evidence": {
+    "sourceSha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+    "runId": 40871506655,
+    "jobId": 123439446169,
+    "runAttempt": 1,
+    "ci": [
+      {
+        "name": "fixture-close",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506571/job/123439564723"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516090/job/123439476929"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516090/job/123439476887"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516090/job/123439476573"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516212/job/123439475794"
+      },
+      {
+        "name": "test",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516134/job/123439475589"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516081/job/123439475558"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871516072/job/123439475030"
+      },
+      {
+        "name": "audit",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506655/job/123439446169"
+      },
+      {
+        "name": "safety",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506571/job/123439444783"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506637/job/123439444560"
+      },
+      {
+        "name": "test",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506536/job/123439444224"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40871506571/job/123439444215"
+      }
+    ]
+  }
+}

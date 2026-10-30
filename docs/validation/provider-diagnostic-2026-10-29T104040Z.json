@@ -1,0 +1,105 @@
+{
+  "runId": 40859412224,
+  "runUrl": "https://github.com/drrazaq/Stock-2/actions/runs/40859412224",
+  "sourceCommit": "d99312477048ff7c0820ccb36ea19d9ac380e8da",
+  "trigger": "EXISTING_CODE_CHANGE_TRIGGER; NOW_REMOVED",
+  "phaseA": false,
+  "report": {
+    "kind": "READ_ONLY_PROVIDER_PROBE",
+    "observedAt": "2026-10-29T10:40:40.006Z",
+    "session": {
+      "day": "2026-10-29",
+      "minute": 400,
+      "state": "PREMARKET"
+    },
+    "results": [
+      {
+        "provider": "MASSIVE_SNAPSHOT",
+        "httpStatus": 200,
+        "latencyMs": 182,
+        "rateLimit": {
+          "limit": null,
+          "remaining": null,
+          "reset": null
+        },
+        "status": "RESPONSE_OBSERVED",
+        "received": 13238,
+        "fresh": 0,
+        "unknownTimestamp": 10751,
+        "futureTimestamp": 0,
+        "freshPct": 0,
+        "priceAgeP95Min": 158.66676666666666
+      },
+      {
+        "provider": "ALPACA_SIP",
+        "httpStatus": 200,
+        "latencyMs": 44,
+        "rateLimit": {
+          "limit": 10000,
+          "remaining": 9999,
+          "reset": 1793270440
+        },
+        "status": "RESPONSE_OBSERVED",
+        "received": 3,
+        "fresh": 2,
+        "unknownTimestamp": 0,
+        "futureTimestamp": 0,
+        "freshPct": 66.67,
+        "priceAgeP95Min": 17.158466666666666,
+        "requestedSymbols": 3,
+        "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+      },
+      {
+        "provider": "ALPACA_IEX",
+        "httpStatus": 200,
+        "latencyMs": 9,
+        "rateLimit": {
+          "limit": 10000,
+          "remaining": 9999,
+          "reset": 1793270440
+        },
+        "status": "RESPONSE_OBSERVED",
+        "received": 3,
+        "fresh": 0,
+        "unknownTimestamp": 0,
+        "futureTimestamp": 0,
+        "freshPct": 0,
+        "priceAgeP95Min": 880.72125,
+        "requestedSymbols": 3,
+        "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+      },
+      {
+        "provider": "FINNHUB_GENERAL_NEWS",
+        "httpStatus": 200,
+        "latencyMs": 205,
+        "rateLimit": {
+          "limit": 60,
+          "remaining": 59,
+          "reset": 1793270500
+        },
+        "status": "RESPONSE_OBSERVED",
+        "records": 100,
+        "knownPublicationTimestamp": 100
+      },
+      {
+        "provider": "SEC_TICKER_MAP",
+        "httpStatus": 200,
+        "latencyMs": 57,
+        "rateLimit": {
+          "limit": null,
+          "remaining": null,
+          "reset": null
+        },
+        "status": "RESPONSE_OBSERVED",
+        "records": 10430
+      }
+    ],
+    "claims": {
+      "accountPlan": "NOT_INFERRED",
+      "tradableUniverseCoverage": "NOT_ESTABLISHED",
+      "executionFills": "NOT_TESTED",
+      "profitability": "NOT_TESTED"
+    },
+    "note": "HTTP status/targeted freshness are observations, not evidence of full-session or premarket entitlement. Outside-session old trades do not alone establish an outage. No raw payloads or credentials retained."
+  }
+}

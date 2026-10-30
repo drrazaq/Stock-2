@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // EXIT TEST: WHEN TO SELL. The same buys, sold ten different ways, to see which way of selling keeps more money. Read-only.
 // Entries are fixed in advance (the 4 mid/long setups of horizons.mjs + a breakout to a new 1-year high on heavy volume), so only the
 // SELLING changes. Every exit is compared with the current default (hold 60 sessions, sell if a close is 25% under the entry) on the
@@ -131,4 +133,4 @@ for (const s of SETUPS) { const R = RES[s], d = R.exits.HOLD60.results.newer; ms
 msg.push('Research only. A better exit is used in your sell plans only for a buy kind that has itself passed its test.');
 console.log(msg.join('\n'));
 const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

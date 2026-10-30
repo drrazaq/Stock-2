@@ -1,0 +1,36 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {selectLiveRefreshSymbols, selectStaleRefreshSymbols, MAX_PENNY_RESEARCH_REFRESH} from '../live-refresh-universe.mjs';
+const r=(sym,prevC,price,vol)=>({sym,prevC,price,vol});
+test('preserves all dollar-plus symbols and adds active pennies for research',()=>{
+  assert.deepEqual(selectLiveRefreshSymbols([r('AAA',1,1.2,100),r('PEN',0.5,0.55,1e6),r('LOW',0.02,0.03,1e8),r('NO',0.8,0.9,0)]),['AAA','PEN']);
+});
+test('caps penny refresh by dollar volume and uses stable tie-breaking',()=>{
+  const x=[r('AA',0.8,0.8,100),r('BB',0.8,0.8,300),r('CC',0.8,0.8,200),r('DDD',10,10,1)];
+  assert.deepEqual(selectLiveRefreshSymbols(x,2),['DDD','BB','CC']);
+  assert.deepEqual(selectLiveRefreshSymbols(x,0),['DDD']);
+});
+test('never exceeds bounded penny budget or duplicates symbols',()=>{
+  const x=Array.from({length:500},(_,i)=>r('P'+i,0.6,0.6,1000+i));
+  // Only legitimate uppercase ticker names are eligible; use alphabetic codes.
+  const alpha=Array.from({length:500},(_,i)=>r('P'+String.fromCharCode(65+Math.floor(i/26))+String.fromCharCode(65+i%26),0.6,0.6,1000+i));
+  assert.equal(selectLiveRefreshSymbols(alpha,500).length,MAX_PENNY_RESEARCH_REFRESH);
+  assert.equal(new Set(selectLiveRefreshSymbols(alpha,500)).size,MAX_PENNY_RESEARCH_REFRESH);
+  assert.deepEqual(selectLiveRefreshSymbols([...alpha,r('AAA',1,1,1)],-1),['AAA']);
+});
+test('rejects malformed or non-finite research rows',()=>{
+  assert.deepEqual(selectLiveRefreshSymbols([r('AAA',0.5,NaN,100),r('BBB',0.5,0.6,Infinity),r('ccc',0.5,0.6,100),r('GOOD',0.5,0.6,100)]),['GOOD']);
+});
+test('fresh majority does not hide stale, unknown or future-dated stocks',()=>{
+  const now=1800000000000;
+  const row=(sym,t)=>({...r(sym,10,10,1000),t});
+  const fresh=Array.from({length:10},(_,i)=>row('F'+String.fromCharCode(65+i),now-60000));
+  assert.deepEqual(selectStaleRefreshSymbols([...fresh,row('OLD',now-4*60000),row('MISS',0),row('FUT',now+60000)],now),['OLD','MISS','FUT']);
+  assert.deepEqual(selectStaleRefreshSymbols(fresh,now),[]);
+});
+test('fresh trades do not suppress explicitly required stale BBO refreshes',()=>{
+ const now=1800000000000,base={prevC:10,price:10,vol:100,t:now-1000,bid:9,ask:11,qt:now-1000};
+ const rows=[{...base,sym:'GOOD'},{...base,sym:'OLD',qt:now-121000},{...base,sym:'FUT',qt:now+1},{...base,sym:'MISS',qt:0},{...base,sym:'CROSS',bid:12}];
+ assert.deepEqual(selectStaleRefreshSymbols(rows,now),[]);
+ assert.deepEqual(selectStaleRefreshSymbols(rows,now,{requireQuote:true}),['OLD','FUT','MISS','CROSS']);
+});

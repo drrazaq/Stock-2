@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // LEADERS FAIR TEST. The nightly LEADERS rule is tested on today's well-known companies only, which flatters it: companies that
 // collapsed, were delisted or were bought are missing. This job tests the SAME rule on the WHOLE US market as it was on each day,
 // using Massive's daily prices for every stock that traded that day, including stocks that later disappeared.
@@ -274,5 +276,5 @@ const msg = ['LEADERS FAIR TEST, ' + D[T - 1],
   refusedAt ? 'The data plan allows prices back to about ' + D[0] + ', so this is about ' + Math.round(T / 252 * 10) / 10 + ' years. One period, one market climate.' : '',
   'Limits: stocks that changed ticker are counted as two; a reused ticker can mix two companies; daily prices only.',
   'Research, not an order. Not financial advice, not a halal ruling.'].filter(x => x !== '');
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
 console.log(msg.join('\n'));

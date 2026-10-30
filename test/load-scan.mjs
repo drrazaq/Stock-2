@@ -17,7 +17,7 @@ if (!globalThis.__scanTestFetchGuard) {
 }
 // one-time migrations in scan.mjs are marked done, so they never rewrite a fixture
 const DONE = { stopPlan1018: '2026-10-18T00:00:00.000Z', stopRestore1022: '2026-10-22T00:00:00.000Z', tradesMig1022: '2026-10-22T00:00:00.000Z' };
-const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHUB_KEY', 'ALPACA_KEY', 'ALPACA_SECRET', 'MASSIVE_KEY', 'FMP_KEY', 'ZOYA_KEY', 'PRIVATE_KEY', 'GITHUB_WORKFLOW'];
+const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHUB_KEY', 'ALPACA_KEY', 'ALPACA_SECRET', 'MASSIVE_KEY', 'FMP_KEY', 'ZOYA_KEY', 'PRIVATE_KEY', 'PRIVATE_DATA_TOKEN', 'GITHUB_REPOSITORY', 'GITHUB_REF_NAME', 'GITHUB_WORKFLOW','STOCK2_ENABLE_PAPER_ORDERS','ALPACA_BASE'];
 let seq = 0; const DIRS = [];
 process.on('exit', () => { process.chdir(os.tmpdir()); for (const d of DIRS) try { fs.rmSync(d, { recursive: true, force: true }); } catch (e) {} });
 
@@ -33,17 +33,31 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   const src = fs.readFileSync(process.env.SCAN_SRC || path.join(REPO, 'scan.mjs'), 'utf8').trimEnd().split('\n');
   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
+  // Copy the transitive local static-module closure, not a fragile seed list.
+  const copied=new Set();
+  const copyImports=(text,parent)=>{
+    for(const m of text.matchAll(/^import(?:\s+.+?\s+from)?\s*['"](\.[^'"]+\.mjs)['"]/gm)){
+      const file=path.resolve(parent,m[1]),relative=path.relative(REPO,file);
+      if(relative.startsWith('..'+path.sep)||path.isAbsolute(relative))throw Error('fixture import escapes repository');
+      if(copied.has(file))continue;copied.add(file);
+      const body=fs.readFileSync(file,'utf8'),target=path.join(dir,relative);
+      fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,body);
+      copyImports(body,path.dirname(file));
+    }
+  };
+  copyImports(src.join('\n'),REPO);
   fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
   fs.mkdirSync(path.join(dir, 'data'));
   // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
   const st0 = files['data/settings.json']; writeFixture(dir, 'data/settings.json', typeof st0 === 'string' ? st0 : { ...DONE, ...(st0 || {}) });
+  writeFixture(dir,'data/zad-list.json',{notHalal:[]}); // Explicit valid fixture, not production missing-file behavior.
   for (const [k, v] of Object.entries(files)) if (k !== 'data/settings.json') writeFixture(dir, k, v);
   const file = path.join(dir, 'scan-under-test-' + (++seq) + '.mjs');
   fs.writeFileSync(file, src.join('\n') + '\nexport const __get = (name) => eval(name);\n');
   for (const k of SECRETS) delete process.env[k];
   Object.assign(process.env, { TWELVE_KEY: 'x', BOT_ONLY: '1', MODE: 'chat' }, env);
   process.chdir(dir);
-  const mod = await import(pathToFileURL(file).href);
+  let mod;try{mod=await import(pathToFileURL(file).href);}catch(error){process.chdir(REPO);throw error;}
   const fn = (name) => { const f = mod.__get(name); if (typeof f !== 'function') throw new Error(name + ' is not a function in scan.mjs'); return f; };
   return { dir, fn, value: (name) => mod.__get(name), write: (name, data) => writeFixture(dir, name, data), read: (name) => fs.readFileSync(path.join(dir, name), 'utf8'), readJson: (name) => JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')) };
 }

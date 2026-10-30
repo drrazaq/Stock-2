@@ -1,0 +1,801 @@
+--- a/health.mjs
++++ b/health.mjs
+@@ -1,3 +1,4 @@
++import {readWatcherReport} from './watcher-reporting.mjs';
+ // SYSTEM HEALTH: every evening, checks that every job actually produced fresh results, and tells you on Telegram when one
+ // silently stopped (a step that "continues on error", a crash after a code change, a key that expired, an API that changed).
+ // Today's smart-money crash ran unnoticed for a day; this is what catches that. Read-only; sends a message only when something is wrong.
+@@ -55,8 +56,8 @@
+   else { const c = check ? check(j) : null; if (c) problems.push(name + ': ' + c); else ok.push(name); } }
+ // WATCHER START (28 Oct, owner item 4): the live watcher must be watching by 9:35 New York. GitHub's cron started it 9:38-9:49 every day and
+ // 11:10 on 26 Oct; the watcher guard (watcher-guard.mjs, in the bot job) now starts it when GitHub has not. This reads the last watched day.
+-try { const L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n'), j = JSON.parse(L[L.length - 1]);
+-  if (j.firstMinute && j.firstMinute > '09:35') problems.push('live watcher started late on ' + j.day + ': first watched minute ' + j.firstMinute + ' New York' + (j.procStart ? ' (process started ' + j.procStart + ')' : '') + '; it should watch from 9:30. The open was not watched.'); else ok.push('live watcher start'); } catch (e) {}
++const watcherEvidence=readWatcherReport();
++if(watcherEvidence.actionable)problems.push(watcherEvidence.text);else ok.push(watcherEvidence.text);
+ // MISSING SCRIPTS: every 'node X.mjs' named in a workflow must exist. A file deleted during an upload (shares.mjs, 16 Oct 2026) made
+ // a 'continue on error' step fail silently every day; this catches it the same evening.
+ try { const W = '.github/workflows', seen = new Set();
+@@ -64,7 +65,8 @@
+     if (seen.has(m[1])) continue; seen.add(m[1]); if (!fs.existsSync(m[1])) problems.push('the script ' + m[1] + ' is missing from the main folder, but the workflow ' + f + ' runs it. Upload it again (it was probably deleted during an upload).'); }
+   if (seen.size) ok.push('workflow scripts present'); } catch (e) {}
+ const H = readJson('data/health.json') || {}, key = problems.join('|'), today = new Date().toISOString().slice(0, 10);
+-fs.writeFileSync('data/health.json', JSON.stringify({ at: new Date().toISOString(), ok: ok.length, problems, sentKey: H.sentKey, sentDay: H.sentDay }, null, 1));
++fs.writeFileSync('data/health.json', JSON.stringify({ at: new Date().toISOString(), ok: ok.length, watcher:watcherEvidence, problems, sentKey: H.sentKey, sentDay: H.sentDay }, null, 1));
++console.log(watcherEvidence.text);
+ console.log('health: ' + ok.length + ' fine, ' + problems.length + ' problems' + (problems.length ? '\n- ' + problems.join('\n- ') : ''));
+ // tell the owner once per day per set of problems (and once when everything is fine again)
+ const recovered = !problems.length && H.problems && H.problems.length;
+--- a/early-alerts.mjs
++++ b/early-alerts.mjs
+@@ -31,6 +31,8 @@
+ // hard rules (never bypassed); sec = { known, tags } from the watcher's SEC check
+ export function hardReason({ price, halalFail, lottery, sec }) {
+   if (!(price >= 1)) return 'under 1 USD'; if (halalFail) return 'NOT HALAL (ZAD)'; if (lottery >= 0.15) return 'AVOID list (one-day jump ' + pct(lottery) + ')';
++  if(sec?.status==='NO_ISSUER_RECORD')return 'NO_ISSUER_RECORD (instrument not inferred; blocked, not a transport failure)';
++  if(sec?.policyExcluded)return 'instrument policy exclusion (not a SEC source failure)';
+   if (!sec || !sec.known) return 'SEC check failed (blocked until it works)'; if (sec.tags && sec.tags.length) return 'SEC danger: ' + sec.tags.join(', ');
+   return null;
+ }
+@@ -72,14 +74,14 @@
+   const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0);
+   const worst = (ds) => ['DILUTION', 'NEGATIVE', 'POSITIVE', 'AMBIGUOUS'].find(d => ds.includes(d)) || 'UNKNOWN';
+   const hDir = fN.length ? (() => { const ds = fN.map(x => headlineDirection(x.headline)); return ds.includes('DILUTION') ? 'DILUTION' : ds.includes('NEGATIVE') && ds.includes('POSITIVE') ? 'AMBIGUOUS' : worst(ds); })() : null;
+-  const tag = (o) => ({ ...o, text: o.text + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
++  const tag = (o) => ({ ...o, filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED', text: o.text + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
+   if (fF.length) { const x = fF[0], fd = worst(fF.map(filingDirection)), dir = fd !== 'AMBIGUOUS' ? fd : hDir && hDir !== 'AMBIGUOUS' ? hDir : 'AMBIGUOUS';
+     return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
+   if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
+     return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
+   if (F.length || N.length) { const x = F[0] || null, h = N[0] || null;
+     return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + new Date(x.t).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : '"' + h.headline + '"') }); }
+-  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'the SEC check failed' + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
++  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
+   if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
+   return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing and no headline in 72 h' });
+ }
+@@ -127,6 +129,7 @@
+       for (const kind of ['paper', 'lead']) { const q = S.queue[kind].splice(0), out = [];
+         for (const row of q) { const c = row.c; delete row.c;
+           const hard = hardReason({ price: c.price, halalFail: opts.notHalal(c.sym), lottery: (opts.lottery || {})[c.sym], sec: await secOf(c.sym) });
++          row.instrument=S.sec[c.sym]?.instrument||{status:'UNKNOWN'}; row.collectionVersion='WATCHER_CONTEXT_V2'; row.rankingCohort=opts.collectionCohort||'LEGACY_FROZEN_20261028'; row.approvedBuyEligible=false; row.performanceScope='LEGACY_MIXED_INSTRUMENT_RESEARCH'; c.instrument=row.instrument;
+           if (hard) { row.decision = 'HARD: ' + hard; continue; }
+           if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catText = c.cat.text; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
+           if (!levelAllows(S.level, kind)) { row.decision = 'MUTED: alerts ' + S.level; continue; }
+@@ -135,7 +138,8 @@
+           out.push({ row, c }); }
+         if (!out.length) continue;
+         const text = kind === 'lead' ? leadText(out.map(x => x.c), { halalOk: opts.halalOk }) : paperText(out.map(x => x.c));
+-        const r = await opts.send(text).catch(e => ({ ok: false, why: e.message })), at = opts.now();
++        const labelled=text+'\nRESEARCH ONLY. Instrument identity may be UNKNOWN; unverified instruments are retained as context and are excluded from verified common-stock performance claims. This is never approved BUY eligibility.';
++        const r = await opts.send(labelled).catch(e => ({ ok: false, why: e.message })), at = opts.now();
+         for (const x of out) { x.row.decision = r && r.ok ? 'SENT' : 'SEND FAILED' + (r && r.why ? ': ' + r.why : ''); x.row.sentM = at; x.row.latencyMin = at - x.row.m; }
+         if (r && r.ok) S.sent[kind] += out.length; } },
+     // end of the session: one row per candidate with its 15:00 price and net result after the 6 USD round trip and the spread
+--- a/rank-models.mjs
++++ b/rank-models.mjs
+@@ -1,3 +1,4 @@
++import {RANKING_COHORT_DECISION,primaryRankingDay,primaryRankingRow} from './ranking-cohort.mjs';
+ // SHADOW RANKING EXPERIMENT (owner approved A/B/C on 28 Oct 2026; D added at the owner's request and FROZEN here the same day, before any
+ // D candidate existed; R and R0 are no-skill controls). Shadow only: nothing here changes which alert is sent (live ranking stays A,
+ // first come, until the owner approves a change after a separate confirmation period). Pure functions; shadow-outcomes.mjs runs them.
+@@ -24,7 +25,7 @@
+ import { NEG_ITEMS, DIL_ITEMS, itemsOf } from './early-alerts.mjs';
+
+ export const FROZEN = { date: '2026-10-28', evalFrom: '2026-10-29', cap: 5, minSessions: 20, minPicks: 50, controlsPerDay: 10 };
+-export const spr = (r) => (r.bid > 0 && r.ask >= r.bid ? (r.ask - r.bid) / ((r.ask + r.bid) / 2) : null);
++export const spr = (r) => (Number.isFinite(r.bid) && Number.isFinite(r.ask) && r.bid > 0 && r.ask >= r.bid ? (r.ask - r.bid) / (r.ask / 2 + r.bid / 2) : null);
+ export const hash = (s) => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+ export const MODELS = {
+   A: { stream: 'E', name: 'existing: first come', accept: () => true },
+@@ -47,7 +48,8 @@
+   if (!(q.price >= 1)) why.push('under 1 USD'); if (!(q.prevDollarVol >= 1e6)) why.push('under 1M USD traded the day before');
+   if (q.spreadFresh && q.spread !== null && q.spread > 0.02) why.push('spread over 2%');
+   if (q.halalFail) why.push('NOT HALAL'); if (q.lottery >= 0.15) why.push('AVOID list');
+-  if (!q.sec || !q.sec.known) why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
++  if(q.sec?.status==='NO_ISSUER_RECORD')why.push('NO_ISSUER_RECORD (not inferred instrument type)');else if(q.sec?.policyExcluded)why.push('instrument policy exclusion');
++  if ((!q.sec || !q.sec.known)&&!q.sec?.policyExcluded&&q.sec?.status!=='NO_ISSUER_RECORD') why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
+   return { eligible: why.length === 0, why };
+ }
+
+@@ -67,14 +69,14 @@
+     assumedSpreadShare: sc.length ? +(sc.filter(x => x.s.assumedSpread).length / sc.length).toFixed(3) : null };
+ }
+ // streams: { E: rows, F: rows, N: rows } with r = { d, sym, m, chg, e: {px,bid,ask,qAgeSec,next,px30}, last, ...model inputs }
+-export function evaluate(streams, outcomes = {}, from = FROZEN.evalFrom) {
+-  const out = { frozen: FROZEN, models: {}, streams: {} };
+-  for (const [k, rows] of Object.entries(streams)) { const rs = rows.filter(r => r.d >= from); out.streams[k] = { candidates: rs.length, sessions: new Set(rs.map(r => r.d)).size, all: summarizePicks(rs.filter(r => k !== 'F' || r.dEligible), outcomes) }; }
+-  for (const [id, M] of Object.entries(MODELS)) { const rs = (streams[M.stream] || []).filter(r => r.d >= from), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r);
++export function evaluate(streams, outcomes = {}, from = FROZEN.evalFrom, {secondary=false}={}) {
++  const out = { instrumentScope:'LEGACY_MIXED_INSTRUMENT_RESEARCH',prospectiveAdmission:'NOT_ESTABLISHED',unapprovedCohortRows:Object.values(streams).flat().filter(r=>r.rankingCohort&&r.rankingCohort!=='LEGACY_FROZEN_20261028').length, frozen: FROZEN,cohort:secondary?'SECONDARY_RECONSTRUCTION':'PRIMARY',admissionDecision:RANKING_COHORT_DECISION, models: {}, streams: {} };
++  for (const [k, rows] of Object.entries(streams)) { const rs = rows.filter(r => r.d >= from && (secondary||primaryRankingRow(r))); out.streams[k] = { candidates: rs.length, sessions: new Set(rs.map(r => r.d)).size, all: summarizePicks(rs.filter(r => k !== 'F' || r.dEligible), outcomes) }; }
++  for (const [id, M] of Object.entries(MODELS)) { const rs = (streams[M.stream] || []).filter(r => r.d >= from && (secondary||primaryRankingRow(r))), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r);
+     out.models[id] = { name: M.name, stream: M.stream, ...summarizePicks(Object.values(byDay).flatMap(d => pick(d, M)), outcomes) }; }
+   // alert-cap opportunity cost (stream E): what A's first five did vs the eligible candidates that arrived after the cap, and a hindsight
+   // best five (an upper bound nobody could pick live, shown only to size what first-come gives up)
+-  { const rs = (streams.E || []).filter(r => r.d >= from), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r); const first = [], after = [], best = [];
++  { const rs = (streams.E || []).filter(r => r.d >= from && (secondary||primaryRankingRow(r))), byDay = {}; for (const r of rs) (byDay[r.d] || (byDay[r.d] = [])).push(r); const first = [], after = [], best = [];
+     for (const d of Object.values(byDay)) { const a = pick(d, MODELS.A), set = new Set(a.map(x => x.sym)); first.push(...a); after.push(...d.filter(x => !set.has(x.sym)));
+       best.push(...d.map(r => ({ r, v: scoreRow(r, outcomes).day })).filter(x => x.v !== null).sort((x, y) => y.v - x.v).slice(0, FROZEN.cap).map(x => x.r)); }
+     out.capCost = { firstFive: summarizePicks(first, outcomes), afterCap: summarizePicks(after, outcomes), hindsightBestFive: summarizePicks(best, outcomes) }; }
+@@ -83,5 +85,6 @@
+   for (const id of ['B', 'C', 'D']) { const m = out.models[id], ref = id === 'D' ? [out.models.R0] : [out.models.A, out.models.R];
+     m.verdict = m.sessions < FROZEN.minSessions || m.picks < FROZEN.minPicks ? 'COLLECTING (' + m.sessions + ' of ' + FROZEN.minSessions + ' sessions, ' + m.picks + ' of ' + FROZEN.minPicks + ' picks)'
+       : ref.every(b => v(m, b)) ? 'PROMISING: propose a separate 20-session confirmation period' : 'NOT BETTER than ' + (id === 'D' ? 'the no-information control' : 'first come / random'); }
++  if(secondary)for(const m of Object.values(out.models))m.verdict='SECONDARY ONLY: no primary or confirmation verdict';
+   return out;
+ }
+--- a/shadow-outcomes.mjs
++++ b/shadow-outcomes.mjs
+@@ -55,11 +55,11 @@
+ // RANKING EXPERIMENT (rank-models.mjs, frozen 28 Oct): the three candidate streams, built only from what was recorded at decision time
+ const SH = new Map(shadowRows.map(r => [r.d + '|' + r.sym, r]));
+ const E = oppEl.filter(r => r.kind === 'lead').map(r => { const sh = SH.get(r.d + '|' + r.sym), base = sh && sh.v && sh.v.base;
+-  return { d: r.d, sym: r.sym, m: r.m, chg: r.chg, cat: r.cat, rvT: r.rvT, dollarVol: r.dollarVol, bid: r.bid, ask: r.ask, decision: r.decision, e: base && base.m === r.m ? base : { m: r.m, px: r.px, bid: r.bid, ask: r.ask, qAgeSec: r.qAgeSec, next: null, px30: null }, last: sh ? sh.last : r.px15 }; });
+-const F = shadowRows.filter(r => r.f && r.v && r.v.D).map(r => ({ d: r.d, sym: r.sym, m: r.f.decM, chg: r.f.chg, dEligible: r.f.eligible, why: r.f.why, e: r.v.D, last: r.last }));
+-const N = shadowRows.filter(r => r.v && r.v.R0).map(r => ({ d: r.d, sym: r.sym, m: r.v.R0.m, chg: r.chg0, e: r.v.R0, last: r.last }));
++  return { rankingCohort:r.rankingCohort||sh?.rankingCohort,instrument:r.instrument||sh?.instrument, d: r.d, sym: r.sym, m: r.m, chg: r.chg, cat: r.cat, rvT: r.rvT, dollarVol: r.dollarVol, bid: r.bid, ask: r.ask, decision: r.decision, e: base && base.m === r.m ? base : { m: r.m, px: r.px, bid: r.bid, ask: r.ask, qAgeSec: r.qAgeSec, next: null, px30: null }, last: sh ? sh.last : r.px15 }; });
++const F = shadowRows.filter(r => r.f && r.v && r.v.D).map(r => ({ rankingCohort:r.rankingCohort,instrument:r.instrument, d: r.d, sym: r.sym, m: r.f.decM, chg: r.f.chg, dEligible: r.f.eligible, why: r.f.why, e: r.v.D, last: r.last }));
++const N = shadowRows.filter(r => r.v && r.v.R0).map(r => ({ rankingCohort:r.rankingCohort,instrument:r.instrument, d: r.d, sym: r.sym, m: r.v.R0.m, chg: r.chg0, e: r.v.R0, last: r.last }));
+ report.ranking = evaluate({ E, F, N }, outcomes);
+-report.rankingPilot = evaluate({ E, F, N }, outcomes, '2026-10-28');   // includes the first live day (28 Oct, code deployed that morning): a pilot, never counted in the verdict
++report.rankingPilot = evaluate({ E, F, N }, outcomes, '2026-10-28', {secondary:true});   // includes the first live day (28 Oct, code deployed that morning): a pilot, never counted in the verdict
+ report.dFeed = { filingsDecided: F.length, dEligible: F.filter(r => r.dEligible).length, topReasons: Object.entries(F.flatMap(r => r.why || []).reduce((o, w) => (o[w.replace(/ [\d.,]+$/, '')] = (o[w.replace(/ [\d.,]+$/, '')] || 0) + 1, o), {})).sort((a, b) => b[1] - a[1]).slice(0, 6) };
+ fs.writeFileSync('data/shadow-report.json', JSON.stringify(report, null, 1));
+ console.log('shadow outcomes: ' + fetched + ' day files updated; ' + shadowRows.length + ' shadow candidates over ' + shadowDays.length + ' sessions; ' + Object.keys(outcomes).length + ' outcomes');
+--- /dev/null
++++ b/watcher-reporting.mjs
+@@ -0,0 +1,50 @@
++// Read-only reporting. A process start, a summary count and an observed market minute are distinct evidence.
++import fs from 'node:fs';
++import path from 'node:path';
++import {marketSession} from './market-session.mjs';
++const day=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\d$/.test(x)&&Number.isFinite(Date.parse(x))&&new Date(x).toISOString().slice(0,10)===x;
++const minute=x=>typeof x==='string'&&/^\d\d:\d\d$/.test(x)&&+x.slice(0,2)<24&&+x.slice(3)<60?+x.slice(0,2)*60+ +x.slice(3):null;
++export const watchMinute=m=>m===null?'UNKNOWN':String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
++export function uniqueWatcherDays(rows){
++ const by=new Map();let rejected=0,duplicates=0;
++ for(const x of rows||[]){if(!x||!day(x.day)){rejected++;continue;}const prior=by.get(x.day);if(prior)duplicates++;
++  const count=r=>Number.isSafeInteger(r.minutes)&&r.minutes>=0?r.minutes:0;
++  // A poorer late duplicate cannot replace the longer recorded population. Ties retain the first, never best P&L.
++  if(!prior||count(x)>count(prior))by.set(x.day,x);
++ }
++ return {rows:[...by.values()].sort((a,b)=>a.day.localeCompare(b.day)),duplicates,rejected};
++}
++export function watcherReport(summaries=[],snapshots=[]){
++ const u=uniqueWatcherDays(summaries),days=[...u.rows.map(x=>x.day),...snapshots.filter(x=>day(x?.day)).map(x=>x.day)].sort(),latest=days.at(-1);
++ if(!latest)return {day:null,opening:'UNKNOWN',complete:false,actionable:true,text:'watcher coverage UNKNOWN: no dated observation evidence'};
++ const s=marketSession(latest),open=s.open||570,close=s.close||960,beats=new Map();
++ for(const x of snapshots.filter(x=>x?.day===latest))for(const b of Array.isArray(x.heartbeat)?x.heartbeat:[]){if(Number.isInteger(b?.m)&&b.m>=0&&b.m<1440&&b.received>0&&b.evaluated>0)beats.set(b.m,b);}
++ const minutes=[...beats.keys()].sort((a,b)=>a-b),regular=minutes.filter(m=>m>=open&&m<close),missing=Array.from({length:close-open},(_,i)=>open+i).filter(m=>!beats.has(m));
++ const daily=u.rows.find(x=>x.day===latest),firsts=summaries.filter(x=>x?.day===latest).map(x=>minute(x.firstMinute)).filter(x=>x!==null),firstReported=firsts.length?Math.min(...firsts):null;
++ const opening=beats.has(open)?'OBSERVED':'UNKNOWN',complete=s.known&&!s.closed&&missing.length===0;
++ const legacyOnly=!!daily&&(daily.minutes||0)>regular.length;
++ const declared=snapshots.filter(x=>x?.day===latest&&x.configuredWindow?.open===open&&Number.isInteger(x.configuredWindow?.endExclusive)&&x.configuredWindow.endExclusive>open&&x.configuredWindow.endExclusive<=close).map(x=>x.configuredWindow.endExclusive);
++ const configuredEnd=declared.length?Math.max(...declared):Math.min(close,901), configuredExpected=configuredEnd-open, configuredMissing=missing.filter(m=>m<configuredEnd), configuredMinutes=configuredExpected-configuredMissing.length;
++ let longestGap=0,streak=0;for(let m=open;m<configuredEnd;m++){streak=beats.has(m)?0:streak+1;longestGap=Math.max(longestGap,streak);}
++ const configuredComplete=s.known&&!s.closed&&configuredMissing.length===0;
++ const actionable=!s.known||(!s.closed&&(opening!=='OBSERVED'||configuredMissing.length/configuredExpected>0.05||longestGap>=3));
++ const outside=regular.filter(m=>m>=configuredEnd).length, outsideExpected=close-configuredEnd;
++ const text='watcher evidence on '+latest+': opening minute '+opening+'; configured '+watchMinute(open)+'–'+watchMinute(configuredEnd-1)+' inclusive: '+configuredMinutes+'/'+configuredExpected+' usable minutes ('+configuredMissing.length+' gaps; longest '+longestGap+'); full cash session '+regular.length+'/'+(close-open)+' usable retained regular-session minutes; '+watchMinute(configuredEnd)+'–'+watchMinute(close-1)+' outside configured window: '+outside+'/'+outsideExpected+' observed (known coverage limit, not a daily fault)'+(minutes.length?'; first retained observation '+watchMinute(minutes[0])+' New York':'')+(firstReported!==null?'; daily summaries report first '+watchMinute(firstReported)+' (summary only)':'')+(legacyOnly?'; earlier summary has additional minutes without retained heartbeat proof':'')+'; '+(complete?'full-session minute coverage observed':'full-session coverage NOT ESTABLISHED')+(u.duplicates?'; '+u.duplicates+' duplicate daily summaries excluded':'');
++ return {day:latest,opening,complete,configuredComplete,actionable,configuredExpected,configuredMinutes,configuredMissing,longestGap,outsideExpected,outside,regularMinutes:regular.length,expected:close-open,first:minutes[0]??null,missing,firstReported,legacyOnly,duplicateSummaries:u.duplicates,text};
++}
++export function readWatcherReport(directory='data'){
++ const read=p=>{try{return JSON.parse(fs.readFileSync(p,'utf8'));}catch{return null;}}, rows=[];
++ try{for(const l of fs.readFileSync(path.join(directory,'ignition-days.jsonl'),'utf8').split('\n')){try{rows.push(JSON.parse(l));}catch{}}}catch{}
++ const snapshots=[read(path.join(directory,'ignition-live.json'))].filter(Boolean),date=uniqueWatcherDays(rows).rows.at(-1)?.day||snapshots[0]?.day;
++ if(day(date)){const dir=path.join(directory,'ignition-runs',date);try{for(const f of fs.readdirSync(dir).filter(f=>/^[A-Za-z0-9_-]+\.json$/.test(f))){const x=read(path.join(dir,f));if(x)snapshots.push(x);}}catch{}}
++ return watcherReport(rows,snapshots);
++}
++export function missedRunnerPopulation(rows){
++ const u=uniqueWatcherDays(rows),tally={};for(const r of u.rows)for(const [k,v]of Object.entries(r.tally||{}))if(Number.isSafeInteger(v)&&v>=0)tally[k]=(tally[k]||0)+v;
++ return {...u,tally,count:Object.values(tally).reduce((a,b)=>a+b,0),alerts:u.rows.reduce((n,x)=>n+(Number.isSafeInteger(x.alerts)&&x.alerts>=0?x.alerts:0),0),coverageKnownComplete:u.rows.length>0&&u.rows.every(x=>x.sessionComplete===true),instrumentScope:'UNVERIFIED_MIXED_INSTRUMENTS',uniqueSecurityDays:'NOT_ESTABLISHED_FROM_AGGREGATE_TALLIES'};
++}
++export function uniqueMoverRows(rows){
++ const by=new Map();let duplicates=0,rejected=0,conflicts=0;
++ for(const x of rows||[]){if(!x||!day(x.d)||typeof x.sym!=='string'||!/^[A-Z][A-Z0-9.\-]{0,14}$/.test(x.sym)){rejected++;continue;}const k=x.d+'|'+x.sym;if(by.has(k)){duplicates++;if(JSON.stringify(by.get(k))!==JSON.stringify(x))conflicts++;continue;}by.set(k,x);}
++ return {rows:[...by.values()],duplicates,rejected,conflicts,identity:'LITERAL_SYMBOL_DAY_ONLY_NOT_AUTHENTICATED_SECURITY'};
++}
+--- /dev/null
++++ b/market-session.mjs
+@@ -0,0 +1,9 @@
++// NYSE cash-equity calendar, explicitly bounded to reviewed 2026/2027 dates.
++// Source: https://www.nyse.com/markets/hours-calendars . Unknown years fail closed.
++const holidays=new Set(['2026-01-01','2026-01-19','2026-02-16','2026-04-03','2026-05-25','2026-06-19','2026-07-03','2026-09-07','2026-11-26','2026-12-25','2027-01-01','2027-01-18','2027-02-15','2027-03-26','2027-05-31','2027-06-18','2027-07-05','2027-09-06','2027-11-25','2027-12-24']);
++const early=new Set(['2026-11-27','2026-12-24','2027-11-26']);
++export function marketSession(day) {
++ const valid=typeof day==='string'&&/^202[67]-\d{2}-\d{2}$/.test(day)&&Number.isFinite(Date.parse(day+'T12:00:00Z'))&&new Date(day+'T12:00:00Z').toISOString().slice(0,10)===day;
++ const closed=!valid||[0,6].includes(new Date(day+'T12:00:00Z').getUTCDay())||holidays.has(day);
++ return {day,known:valid,closed,open:closed?null:570,close:closed?null:early.has(day)?780:960};
++}
+--- /dev/null
++++ b/watcher-session.mjs
+@@ -0,0 +1,53 @@
++// Session identity and publication policy. Selection uses observation coverage, never returns.
++import { sessionCoverage } from './session-coverage.mjs';
++import {marketSession} from './market-session.mjs';
++export function sessionEvidence(snapshot) {
++  if (!snapshot || typeof snapshot.day !== 'string') return {minutes:0,usableMinutes:0,first:null,last:null,complete:false};
++  const session=marketSession(snapshot.day), close=session.close||960;
++  if (Array.isArray(snapshot.heartbeat) && snapshot.heartbeat.length) {
++    const ms=[...new Set(snapshot.heartbeat.map(x=>x.m).filter(m=>Number.isInteger(m)&&m>=570&&m<close))].sort((a,b)=>a-b);
++    const c=sessionCoverage(snapshot.heartbeat,snapshot.day);
++    const useful=new Set(snapshot.heartbeat.filter(x=>x.received>0&&x.evaluated>0&&Number.isInteger(x.m)&&x.m>=570&&x.m<close).map(x=>x.m)).size;
++    return {minutes:ms.length,usableMinutes:useful,first:ms[0]??null,last:ms.at(-1)??null,complete:c.complete};
++  }
++  // Legacy daily summaries lack per-minute proof. Use their counts only to avoid replacing
++  // an existing longer record; never upgrade them to a verified complete session.
++  const c=snapshot.coverage||snapshot, minutes=Number.isFinite(c.observedMinutes)?c.observedMinutes:Number.isFinite(c.minutesWatched)?c.minutesWatched:Number.isFinite(c.minutes)?c.minutes:0;
++  return {minutes:Math.max(0,minutes),usableMinutes:0,first:null,last:null,complete:false};
++}
++export function sessionFinished(snapshot, day, {open=570,endExclusive=marketSession(day).close}={}) {
++  const s=marketSession(day);
++  if(snapshot?.day!==day||!s.known||s.closed||!Number.isInteger(open)||!Number.isInteger(endExclusive)||endExclusive<=open||endExclusive>s.close)return false;
++  const usable=new Set((snapshot.heartbeat||[]).filter(x=>Number.isInteger(x?.m)&&x.received>0&&x.evaluated>0).map(x=>x.m));
++  return Array.from({length:endExclusive-open},(_,i)=>open+i).every(m=>usable.has(m));
++}
++export function preferSession(existing, candidate) {
++  if (!candidate || !candidate.day) return false;
++  if (!existing || existing.day!==candidate.day) return true;
++  const a=sessionEvidence(existing),b=sessionEvidence(candidate);
++  // Legacy duration protects the recorded day when heartbeat proof is absent.
++  // A short retry cannot outrank it solely because it has newer telemetry.
++  if ((!Array.isArray(existing.heartbeat) || !existing.heartbeat.length) && b.minutes < a.minutes) return false;
++  if(b.usableMinutes!==a.usableMinutes)return b.usableMinutes>a.usableMinutes;
++  if(b.minutes!==a.minutes)return b.minutes>a.minutes;
++  if(b.first!==null && a.first!==null && b.first!==a.first)return b.first<a.first;
++  // An equal-size rerun must not overwrite earlier evidence or duplicate its messages.
++  return false;
++}
++export function runIdentity(env={}, now=Date.now()) {
++  const id=String(env.GITHUB_RUN_ID||'local-'+now),attempt=String(env.GITHUB_RUN_ATTEMPT||1);
++  if(!/^[A-Za-z0-9_-]+$/.test(id)||!/^\d+$/.test(attempt))throw new Error('invalid watcher run identity');
++  const segment=env.IG_SEGMENT;
++  if(segment && !['open','close'].includes(segment))throw new Error('invalid watcher segment');
++  return id+'-'+attempt+(segment?'-'+segment:'');
++}
++export function chooseDailySummary(rows,day) {
++  const same=rows.filter(x=>x?.day===day);
++  return same.reduce((best,x)=>{
++    if(!best)return x;
++    // Never select by P&L. Legacy summaries use discovery counts only when duration
++    // was not recorded; this fallback is explicitly measurement quality, not coverage proof.
++    const rank=r=>[Number.isFinite(r.sessionMinutes)?r.sessionMinutes:0,Number.isFinite(r.detected)?r.detected:0];
++    const a=rank(best),b=rank(x);return b[0]>a[0]||(b[0]===a[0]&&b[1]>a[1])?x:best;
++  },null);
++}
+--- /dev/null
++++ b/session-coverage.mjs
+@@ -0,0 +1,9 @@
++import {marketSession} from './market-session.mjs';
++// A complete session means every scheduled minute, including the closing minute
++// bar (15:59 normally; 12:59 on reviewed half days). Gaps remain visible.
++export function sessionCoverage(beat, day) {
++  const s=day?marketSession(day):{closed:false,open:570,close:960};
++  const expected=s.closed?0:s.close-s.open;
++  const minutes = new Set((beat||[]).map(b => b?.m).filter(m => Number.isInteger(m) && !s.closed && m >= s.open && m < s.close));
++  return { expectedMinutes: expected, observedMinutes: minutes.size, rate: expected?+(minutes.size / expected).toFixed(3):0, complete: expected>0 && minutes.size===expected };
++}
+--- /dev/null
++++ b/instrument-type.mjs
+@@ -0,0 +1,32 @@
++// Admission uses an explicitly reviewed digest of archived official reference bytes.
++// No ticker-suffix guesses, API calls, or new collection permissions are introduced.
++import fs from 'node:fs';
++import {createHash} from 'node:crypto';
++const sha=x=>createHash('sha256').update(x).digest('hex');
++const unknown=reason=>({status:'UNKNOWN',reason,policyExcluded:false,sourceFailure:false,securityId:null});
++export function instrumentType(symbol,{bytes,pinnedSha256,now=Date.now()}={}){
++ if(!Buffer.isBuffer(bytes)||bytes.length>4*1024*1024||!/^[a-f0-9]{64}$/.test(pinnedSha256||'')||sha(bytes)!==pinnedSha256)return unknown('UNAUTHENTICATED_OR_UNAVAILABLE_REFERENCE');
++ let ref;try{ref=JSON.parse(bytes.toString('utf8'));}catch{return unknown('MALFORMED_REFERENCE');}
++ if(ref?.kind!=='REVIEWED_OFFICIAL_INSTRUMENT_CAPTURE_V1'||!Array.isArray(ref.records)||ref.records.length>20000)return unknown('MALFORMED_REFERENCE');
++ const rows=ref.records.filter(x=>x?.raw?.results?.ticker===symbol);
++ if(rows.length!==1)return unknown(rows.length?'AMBIGUOUS_REFERENCE_IDENTITY':'MISSING_REFERENCE_IDENTITY');
++ const r=rows[0],x=r.raw.results,at=typeof r.observedAt==='string'&&/T.*Z$/.test(r.observedAt)?Date.parse(r.observedAt):NaN;
++ let url;try{url=new URL(r.url);}catch{return unknown('UNSUPPORTED_REFERENCE_ORIGIN');}
++ if(url.protocol!=='https:'||!['api.massive.com','api.polygon.io'].includes(url.hostname)||url.port||url.username||url.password||url.search||url.hash||url.pathname!=='/v3/reference/tickers/'+encodeURIComponent(symbol)||r.transport!=='HTTPS_OFFICIAL_CAPTURE'||r.raw.status!=='OK')return unknown('UNSUPPORTED_REFERENCE_ORIGIN');
++ if(!Number.isFinite(now)||!Number.isFinite(at)||at>now||now-at>7*86400000)return unknown('STALE_FUTURE_OR_MISSING_REFERENCE_CLOCK');
++ const identity=x.share_class_figi||x.composite_figi;
++ if(x.market!=='stocks'||x.locale!=='us'||typeof identity!=='string'||!/^[A-Z0-9]{12}$/.test(identity))return unknown('UNSUPPORTED_OR_AMBIGUOUS_SECURITY_IDENTITY');
++ const common={type:x.type,securityId:identity,sourceUrl:r.url,observedAt:r.observedAt,referenceSha256:pinnedSha256,sourceFailure:false};
++ if(x.type==='CS')return {...common,status:'ELIGIBLE_COMMON_STOCK',policyExcluded:false,reason:'OFFICIAL_COMMON_STOCK_TYPE; NOT_ZAD_OR_EXECUTION_APPROVAL'};
++ if(['WARRANT','RIGHT','RT','UNIT','ETF','ETN','ETV','PFD','ADRW','ADRR','ADRP'].includes(x.type))return {...common,status:'POLICY_EXCLUDED',policyExcluded:true,reason:'COMMON_STOCK_ONLY_POLICY:'+x.type};
++ return {...unknown('UNSUPPORTED_INSTRUMENT_TYPE'),...common};
++}
++export function readInstrumentType(symbol,{file,pinnedSha256,now=Date.now()}={}){
++ try{if(!file)return unknown('REFERENCE_NOT_CONFIGURED');const st=fs.lstatSync(file);if(!st.isFile()||st.isSymbolicLink()||st.size>4*1024*1024)return unknown('REFERENCE_FILE_UNUSABLE');return instrumentType(symbol,{bytes:fs.readFileSync(file),pinnedSha256,now});}catch{return unknown('REFERENCE_FILE_UNAVAILABLE');}
++}
++export async function instrumentAwareSec(symbol,lookup,options={}){
++ const instrument=readInstrumentType(symbol,options);
++ if(instrument.policyExcluded)return {known:false,tags:[],status:'INSTRUMENT_POLICY_EXCLUDED',sourceFailure:false,policyExcluded:true,admissionBlocked:true,instrument};
++ let sec;try{sec=await lookup(symbol);}catch{sec={known:false,tags:[]};}
++ return {...sec,instrument,admissionBlocked:instrument.status!=='ELIGIBLE_COMMON_STOCK'||sec?.status==='NO_ISSUER_RECORD',sourceFailure:sec?.sourceFailure??sec?.known!==true,status:sec?.status==='NO_ISSUER_RECORD'?'NO_ISSUER_RECORD':sec?.known===true?(instrument.status==='ELIGIBLE_COMMON_STOCK'?'SEC_KNOWN':'INSTRUMENT_IDENTITY_UNKNOWN'):'SEC_UNAVAILABLE'};
++}
+--- /dev/null
++++ b/ranking-cohort.mjs
+@@ -0,0 +1,6 @@
++// Dated owner decision changes evidence admission, never the frozen ranking rules.
++export const RANKING_COHORT_DECISION=Object.freeze({recordedAt:'2026-10-30',authority:'OWNER_INSTRUCTION_IN_SESSION',excludedPrimaryDays:['2026-10-28','2026-10-29'],reasons:{'2026-10-28':'ORIGINAL_PILOT; duplicate overwrite, incomplete coverage, retrospective recovery','2026-10-29':'OWNER_EXCLUDED_PRIMARY; duplicate overwrite and incomplete observation coverage'},recoveredEvidence:'SECONDARY_RECONSTRUCTION_ONLY_NOT_UNTOUCHED_CONFIRMATION'});
++export const primaryRankingDay=day=>!RANKING_COHORT_DECISION.excludedPrimaryDays.includes(day);
++
++// An instrument-classified enrollment policy requires a separately frozen, approved cohort.
++export const primaryRankingRow=r=>primaryRankingDay(r?.d)&&(!r?.rankingCohort||r.rankingCohort==='LEGACY_FROZEN_20261028');
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -1,3 +1,8 @@
++import {publishWatcherReservation} from './watcher-message-publish.mjs';
++import {createWatcherMessages} from './watcher-messages.mjs';
++import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
++import {execFileSync} from 'node:child_process';
++import {sessionFinished,preferSession,runIdentity,sessionEvidence} from './watcher-session.mjs';
+ // IGNITION WATCHER: runs during the US session (about 9:20 to 15:00 New York, a long GitHub Actions job). Every minute it checks
+ // the Massive snapshot universe (about 6,000+ US stocks) for stocks that START to run (rules in ignition-core.mjs, plus the
+ // live-only quiet build-up rule IG8). COVERAGE IS MEASURED, NOT ASSUMED: every minute's heartbeat records the coverage mode, how
+@@ -38,6 +43,9 @@
+ const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loops * +env.IG_FAKE_STEP : Math.floor((Date.now() - START) / 60000)) : nyMin();
+ PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
+ const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
++const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
++const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
++if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
+ if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
+ if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
+ if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
+@@ -102,19 +110,25 @@
+   if (o.length < 3) return null; return { orH: Math.max(...o.map(x => x[2])), orL: Math.min(...o.map(x => x[3])), pm: b.filter(x => x[0] < 570).reduce((a, x) => a + x[5], 0) }; }
+ // SEC check before any alert. FAIL-CLOSED: if the check cannot be done, the alert is blocked (the ignition stays on paper).
+ let TICK = null, secLogged = false;
+-async function secRisk(sym) {
++async function secRiskIssuer(sym) {
+   const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
+-  try { if (!TICK) { const r = await fetch(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return { known: false, tags: [] }; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
+-    const cik = TICK[sym]; if (!cik) return { known: false, tags: [] };
+-    const r = await fetch(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return { known: false, tags: [] }; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [];
+-    for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
+-      if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) tags.add('share sale / registration (' + f + ')'); if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
+-    return { known: true, tags: [...tags], filings }; } catch (e) { return { known: false, tags: [] }; } }
++  try { if (!TICK) { const r = await request(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
++    const cik = TICK[sym]; if (!cik) return {known:false,tags:[],status:'NO_ISSUER_RECORD',sourceFailure:false};
++    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
++    for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null, accession: (R.accessionNumber || [])[k] || null, url: (R.accessionNumber || [])[k] && (R.primaryDocument || [])[k] ? 'https://www.sec.gov/Archives/edgar/data/' + Number(cik) + '/' + R.accessionNumber[k].replace(/-/g, '') + '/' + encodeURIComponent(R.primaryDocument[k]) : null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
++      if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) {const acc=String((R.accessionNumber||[])[k]||''),valid=/^\d{10}-\d{2}-\d{6}$/.test(acc);blockingFilings.push({form:f,filingDate:R.filingDate[k],accession:valid?acc:null,acceptedAt:(R.acceptanceDateTime||[])[k]||null,indexUrl:valid?'https://www.sec.gov/Archives/edgar/data/'+Number(cik)+'/'+acc.replace(/-/g,'')+'/'+acc+'-index.html':null,economicClassification:'UNREVIEWED',blockUnchanged:true});tags.add('registration/prospectus ('+f+'); economic classification UNREVIEWED');} if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
++    return {known:true,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
++async function secRisk(sym) { return instrumentAwareSec(sym,secRiskIssuer,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256}); }
+ // headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
+ async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
+   try { const to = new Date().toISOString().slice(0, 10), from = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10), r = await fetch('https://finnhub.io/api/v1/company-news?symbol=' + encodeURIComponent(sym) + '&from=' + from + '&to=' + to + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
+     if (!r.ok) return { ok: false, why: 'HTTP ' + r.status }; const j = await r.json(); return { ok: true, items: (Array.isArray(j) ? j : []).map(x => ({ at: x.datetime ? x.datetime * 1000 : null, source: x.source || '', headline: String(x.headline || '').slice(0, 140) })) }; } catch (e) { return { ok: false, why: e.message }; } }
+-async function tg(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[alert]\n' + text); return; } await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text, disable_web_page_preview: true }) }).catch(() => {}); }
++async function tg(text,key=text) {
++ if(!env.TG_TOKEN||!env.TG_CHAT||!MESSAGE_STATE.reserve(key))return false;
++ let outcome;try{const r=await fetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{signal:AbortSignal.timeout(10000),method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text,disable_web_page_preview:true})});const j=await r.json();outcome={ok:r.ok&&j.ok===true,definitelyUnsent:r.status>=400&&r.status<500&&j.ok===false};}catch{outcome={ok:false};}
++ MESSAGE_STATE.finish(key,outcome);return outcome.ok;
++}
++
+ // ---- the loop
+ const HELD = { at: 0, pos: {} }, STOP_SENT = {};   // live stop watch (23 Oct)
+ const seen = {}, orb = {}, triggers = [], beat = [], vis = {}, ser = {}, pull = {}, earlyWave = {}; let alerts = 0;   // earlyWave: observation only (23 Oct)
+@@ -135,7 +149,7 @@
+     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
+   if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
+   if (!isFreshPriceAge(rd)) { flag(r.sym, 'noLive', 'price age ' + (typeof rd !== 'number' || !Number.isFinite(rd) ? 'unknown' : rd < 0 ? 'invalid (future timestamp)' : Math.round(rd) + ' minutes') + ': not fresh enough to alert'); return; }
+-  const risk = await secRisk(r.sym); if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
++  const risk = await secRisk(r.sym); if(risk.admissionBlocked){t.blocked=[risk.policyExcluded?'INSTRUMENT_POLICY_EXCLUDED':'INSTRUMENT_IDENTITY_UNKNOWN'];flag(r.sym,risk.policyExcluded?'instrumentExcluded':'instrumentUnknown','not admitted: '+risk.status);if(risk.sourceFailure){t.blocked.push('SEC_SOURCE_UNAVAILABLE');flag(r.sym,'secUnavailable','SEC source unavailable as well as instrument identity');}return;} if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
+   if (risk.tags.length) { t.blocked = risk.tags; flag(r.sym, 'secBlocked', 'alert blocked: ' + risk.tags.join(', ')); return; }
+   alerts++; if (early) earlyAlerts++; t.alerted = true; t.early = early; flag(r.sym, 'alerted', 'ALERTED (' + R.id + (early ? ', early paper' : '') + ')');
+   const ex = ok.sort((a, b) => ((PREC[b.rule + '/' + b.exit] || {}).avg || 0) - ((PREC[a.rule + '/' + a.exit] || {}).avg || 0))[0], pr = PREC[ex.rule + '/' + ex.exit], stop = R.orb ? extra.orL : R.pull ? Math.max(extra.stop * 0.995, r.price * 0.88) : r.price * 0.92, hist = !liveOnly && ex.results ? ex.results.newer : null;
+@@ -158,7 +172,7 @@
+     console.log('pre-market record: ' + all.length + ' stocks traded before the open, ' + keep.length + ' saved (heaviest volume + gaps of 5%+), data about ' + ageMed + ' min old'); } }
+ // ---- the audit: every stock that ran 15%+ (moved above the loop on 28 Oct so the 11:15 OPPORTUNITY RADAR snapshot can use it too), one deterministic code (data and safety reasons first, so they are never blamed on a rule)
+ const codeOf = (v) => { const f = v.flags;
+-  if (f.alerted) return 'ALERTED'; if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.lottery) return 'LOTTERY_AVOID'; if (f.alertCap) return 'ALERT_CAP_REACHED';
++  if (f.alerted) return 'ALERTED'; if(f.instrumentExcluded)return 'INSTRUMENT_POLICY_EXCLUDED';if(f.instrumentUnknown)return 'INSTRUMENT_IDENTITY_UNKNOWN';if (f.under1) return 'UNDER_1_USD'; if (f.secUnavailable) return 'SEC_CHECK_UNAVAILABLE'; if (f.secBlocked) return 'SEC_BLOCKED'; if (f.notHalal) return 'NOT_HALAL'; if (f.lottery) return 'LOTTERY_AVOID'; if (f.alertCap) return 'ALERT_CAP_REACHED';
+   if (f.noLive) return 'NO_LIVE_PRICE_AT_SIGNAL'; if (f.volLate && !f.paperGate && !f.ruleNotPassed) return 'VOLUME_FIGURE_LATE'; if (f.paperGate) return 'CAUGHT_PAPER_GATE_NOT_MET'; if (f.ruleNotPassed) return 'CAUGHT_RULE_NOT_PASSED';
+   if ((v.fm <= 575 && v.fc >= 0.10) || v.fo >= 0.10) return 'GAPPED_AT_OPEN'; if (v.lm === undefined) return 'NOT_VISIBLE_LIVE';   // opened 10%+ up = the move happened before the open: no feed can fix that
+   if (v.lc >= 0.25) return 'VISIBLE_TOO_LATE'; if (f.noVolHist) return 'NO_VOLUME_HISTORY';
+@@ -168,14 +182,21 @@
+ // ---- DAILY OPPORTUNITY RADAR (owner, 28 Oct 2026): at 11:15 New York, a snapshot of what the watcher already knows goes to
+ // data/radar-v3-snap.json and opportunity-radar.mjs sends it (four labelled panels; rules in radar-v3-core.mjs). Never an alert or a buy.
+ const RADAR = { done: false, mkt: null };
++const priorRadar=(()=>{try{return fs.readFileSync('data/radar-v3-ledger.jsonl','utf8').split('\n').some(line=>{try{const x=JSON.parse(line);return x.d===day&&x.type!=='close';}catch{return false;}});}catch{return false;}})();
+ // ---- EARLY ALERTS (owner, 28 Oct 2026): prompt RESEARCH LEAD / PAPER SETUP messages, separate from approved alerts, and the per-candidate
+ // log behind the DELIVERY SCORECARD (rules, hard blocks and caps in early-alerts.mjs). Approved alerts still come only from maybeAlert.
+-async function tgSend(text) { if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[early alert, not sent: no Telegram token]\n' + text); return { ok: false, why: 'no Telegram token' }; }
+-  try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(0, 3900), disable_web_page_preview: true }) }); const j = await r.json().catch(() => ({}));
+-    return { ok: !!(r.ok && j.ok), why: r.ok ? (j.description || '') : 'HTTP ' + r.status }; } catch (e) { return { ok: false, why: e.message }; } }
+-const EA = createEarlyAlerts({ day, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
++async function tgSend(text) {
++ if(!env.TG_TOKEN||!env.TG_CHAT)return {ok:false,why:'no Telegram token'};
++ const key='early:'+text;if(!MESSAGE_STATE.reserve(key))return {ok:false,why:'reservation unconfirmed or suppressed'};
++ let result;try{const r=await fetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{signal:AbortSignal.timeout(10000),method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text:text.slice(0,3900),disable_web_page_preview:true})});const j=await r.json();result={ok:r.ok&&j.ok===true,definitelyUnsent:r.status>=400&&r.status<500&&j.ok===false};}catch{result={ok:false,why:'transport uncertain'};}
++ MESSAGE_STATE.finish(key,result);return result;
++}
++const INSTRUMENT_COHORT=env.IG_INSTRUMENT_REFERENCE_FILE?'INSTRUMENT_CLASSIFIED_V2:'+(env.IG_INSTRUMENT_REFERENCE_SHA256||'UNPINNED'):'LEGACY_FROZEN_20261028';
++const EA = createEarlyAlerts({ day, collectionCohort:INSTRUMENT_COHORT, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
+   lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
+ const SR = createShadow({ day });
++const shadowRows=SR.rows.bind(SR); SR.rows=()=>shadowRows().map(row=>({...row,instrument:row.instrument||{status:'UNKNOWN',reason:'LEGACY_OBSERVATION_IDENTITY_UNESTABLISHED'},performanceScope:'LEGACY_MIXED_INSTRUMENT_RESEARCH',approvedBuyEligible:false}));
++for(const method of ['early','trigger','filing','control']){const original=SR[method].bind(SR);SR[method]=(...args)=>{original(...args);const row=SR.book.get(args[0].sym);if(row&&!row.instrument){row.instrument=EA.S.sec[row.sym]?.instrument||readInstrumentType(row.sym,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256});row.instrumentRecordedAt=new Date().toISOString();row.collectionVersion='WATCHER_CONTEXT_V2';row.rankingCohort=INSTRUMENT_COHORT;}};}
+ // ---- SEC LIVE FEED for the D shadow model and the R0 control (owner, 28 Oct 2026; rules frozen in rank-models.mjs). Research only.
+ // EDGAR's latest-filings feed, about every 2 minutes until 11:00 New York (first poll pages back to 4:00); each 8-K / 6-K is decided at the
+ // first live minute after its acceptance (9:30 at the earliest). SEC company checks only for filings that pass the cheap D checks, at
+@@ -183,7 +204,7 @@
+ const EF = { seen: new Set(), pending: [], last: 0, first: true, polls: 0, fails: 0, filings: 0, lat: [], decided: 0, eligible: 0, noPrice: 0, firstOkM: null, ctlDone: false, cik: null }, DAY4 = Date.parse(day + 'T04:00:00Z') - nyOffset(day) * 60000;
+ async function pollEdgar(m) {
+   if (m > 660 || Date.now() - EF.last < 110000) return; EF.last = Date.now();
+-  if (!TICK) await secRisk('SPY').catch(() => {}); if (!TICK) { EF.fails++; return; }
++  if (!TICK) await secRiskIssuer('').catch(() => {}); if (!TICK) { EF.fails++; return; }
+   if (!EF.cik) { EF.cik = new Map(); for (const [t, c] of Object.entries(TICK)) if (/^[A-Z]{1,5}$/.test(t)) { const k = +c; if (!EF.cik.has(k)) EF.cik.set(k, []); EF.cik.get(k).push(t); } }
+   const H = { headers: { 'User-Agent': SEC_UA, Accept: 'application/atom+xml' } };
+   for (const type of ['8-K', '6-K']) for (let start = 0; start < (EF.first ? 800 : 200); start += 100) {
+@@ -219,6 +240,12 @@
+   for (const r of pool) SR.control({ sym: r.sym, m, price: r.price, chg: r.price / r.prevC - 1, bid: r.bid, ask: r.ask, qAgeSec: r.qt > 0 ? (Date.now() - r.qt) / 1000 : null, fc: vis[r.sym] ? vis[r.sym].fc : null, prevDollarVol: r.prevC * (r.prevV || 0), hard: { under1: false, halalFail: false, lottery: LOTT[r.sym] || 0 } });
+ }   // (28 Oct, Phase 1) every candidate with each soft gate removed, for the filter shadow test (shadow-stream.mjs)
+ const medChg = () => { const a = Object.values(vis).filter(v => v.last >= 1 && v.lastC !== undefined).map(v => v.lastC).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
++async function sendRadarOnce(){
++  if(!env.IG_NO_RADAR && (!priorRadar||MESSAGE_STATE.has('midday-radar')) && MESSAGE_STATE.reserve('midday-radar')){
++   let result={ok:false};try{const output=execSync('node opportunity-radar.mjs midday',{encoding:'utf8',timeout:120000,env:{...env,IG_RADAR_RESERVED:'1'}});const marker=output.match(/RADAR_DELIVERY=(.*)/);if(marker)result=JSON.parse(marker[1]);}catch{}
++   MESSAGE_STATE.finish('midday-radar',result);
++  }
++}
+ async function radarSnap(m, scanned, live) {
+   const ms = buildMissed(), tl = {}; for (const x of ms) tl[x.code] = (tl[x.code] || 0) + 1;
+   const hits = triggers.filter(t => !t.logged).map(t => ({ sym: t.sym, rule: t.rule, m: t.m, price: t.price }));
+@@ -226,21 +253,24 @@
+   const now = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.map(e => e.sym)])) if (vis[s] && vis[s].last > 0) now[s] = { px: vis[s].last, chg: +vis[s].lastC.toFixed(4) };
+   RADAR.mkt = medChg();
+   // (28 Oct fix) the live SEC check for every stock the radar may name (cached by the alert system when it already ran); a lead needs it
+-  const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s).catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [] }; }
++  const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s).catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [],instrument:EA.S.sec[s].instrument||{status:'UNKNOWN'},status:EA.S.sec[s].status,sourceFailure:EA.S.sec[s].sourceFailure===true }; }
+   const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catText) cat[r.sym] = r.catText;
+   { let nq = 0; for (const s of [...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)]) { if (cat[s] || !sec[s] || !sec[s].known || sec[s].tags.length) continue;   // the radar's own catalyst check for names it may list
+       const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = classifyCatalyst({ sec: EA.S.sec[s], news, nowMs: Date.now() }).text; } }
+   fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, mkt: RADAR.mkt, tally: tl, sec, cat,
+     movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
+-  if (!env.IG_NO_RADAR) execSync('node opportunity-radar.mjs midday', { stdio: 'inherit', timeout: 120000 });
+-}
++  await sendRadarOnce();
++}
++const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
++process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
++saveObservationProgress();
+ while (Date.now() - START < MAXMS) {
+   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+   const rows = await snap(); loops++; const tStart = triggers.length;
+   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
+   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
+     const pxNow = {}, tNow = Date.now(); for (const r of rows) if (HELD.pos[r.sym] && r.price > 0 && isFreshPriceAge(r.t > 0 ? (tNow - r.t) / 60000 : null)) pxNow[r.sym] = r.price;
+-    for (const h of stopHits(HELD.pos, pxNow, STOP_SENT)) await tg(h.text); } catch (e) { console.log('stop watch: ' + e.message); } const nowMs = Date.now(); let liveN = 0, evald = 0; const ages = [], vages = [], cf = curveAt(m); let sumV = 0, sumA = 0;
++    for(const h of stopHits(HELD.pos,pxNow,STOP_SENT)){const key='stop:'+h.sym+':'+h.kind;await tg(h.text,key);if(MESSAGE_STATE.state(key)==='UNSENT')delete STOP_SENT[h.sym+'|'+h.kind];} } catch (e) { console.log('stop watch: ' + e.message); } const nowMs = Date.now(); let liveN = 0, evald = 0; const ages = [], vages = [], cf = curveAt(m); let sumV = 0, sumA = 0;
+   for (const r of rows) { if (!(r.prevC > 0) || !(r.price > 0)) continue; evald++; const chg = r.price / r.prevC - 1, rd = r.t > 0 ? (nowMs - r.t) / 60000 : null, live = isFreshPriceAge(rd);
+     if (rd !== null) ages.push(rd); if (r.vt > 0) vages.push((nowMs - r.vt) / 60000); if (live) liveN++;
+     // visibility ledger: every stock from its first sighting
+@@ -295,7 +325,9 @@
+   if (sumA > 0) vcToday[Math.floor(m / 5) * 5] = +(sumV / sumA).toFixed(4);   // the market's share of a normal day traded by now
+   const sa = ages.sort((a, b) => a - b), q = (a, f) => a.length ? +a[Math.min(a.length - 1, Math.floor(a.length * f))].toFixed(1) : null;
+   beat.push({ m, mode, received: rows.length, evaluated: evald, live: liveN, ageP50: q(sa, 0.5), ageP95: q(sa, 0.95), volAgeP50: q(vages.sort((a, b) => a - b), 0.5), alerts });   // heartbeat: proves the watcher ran this minute
++  saveObservationProgress();
+   if (m >= 675 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
++  else if(m>=675&&RADAR.done&&MESSAGE_STATE.has('midday-radar')&&MESSAGE_STATE.state('midday-radar')==='UNSENT'){await sendRadarOnce();}
+   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
+   const wait = 60000 - (Date.now() - nowMs); if (wait > 0) await sleep(wait);
+ }
+@@ -308,8 +340,15 @@
+   receivedMedian: med(beat.map(b => b.received)), evaluatedMedian: med(beat.map(b => b.evaluated)), liveMedian: med(beat.map(b => b.live)), liveRate: med(beat.map(b => b.evaluated ? +(b.live / b.evaluated).toFixed(3) : null)),
+   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
+   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
++// Incident backport: archive on original observation basis before any canonical end-of-run publication.
++const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
++const incidentArchive='data/ignition-runs/'+day;
++fs.mkdirSync(incidentArchive,{recursive:true});
++fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.json',JSON.stringify(incidentSnapshot),{flag:'wx'});
++fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.shadow.jsonl.gz',zlib.gzipSync(SR.rows().map(x=>JSON.stringify(x)).join('\n')+'\n'),{flag:'wx'});
++if(!preferSession(readJson('data/ignition-live.json',null),incidentSnapshot)){console.log('watcher: retained richer existing session; attempt archived');process.exit(0);}
+ if (Object.keys(vcToday).length >= 12) { VC.days[day] = vcToday; for (const d of Object.keys(VC.days).sort().slice(0, -25)) delete VC.days[d]; fs.writeFileSync('data/vol-curve.json', JSON.stringify(VC)); }
+-fs.writeFileSync('data/ignition-live.json', JSON.stringify({ version: IG_VERSION, day, mode, src, note, loops, coverage, alerts, triggers, missed: missed.slice(0, 150), tally, heartbeat: beat }, null, 1));
++fs.writeFileSync('data/ignition-live.json', JSON.stringify(incidentSnapshot,null,1));
+ // FEED-FIXABLE: a data-feed miss that real-time prices could actually have helped = not visible/late live AND not already up 10%+
+ // at the open AND not gapped 20%+ before 9:25 (a gap happens before any feed can help). Real-time cannot fix the rest.
+ const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISIBLE_TOO_LATE', 'VOLUME_FIGURE_LATE']), dataMiss = missed.filter(x => DATA_CODES.has(x.code)),
+@@ -322,7 +361,7 @@
+ try { const rs = SR.rows(); if (rs.length) { fs.mkdirSync('data/shadow', { recursive: true }); fs.writeFileSync('data/shadow/' + day + '.jsonl.gz', zlib.gzipSync(rs.map(x => JSON.stringify(x)).join('\n') + '\n')); console.log('shadow stream: ' + rs.length + ' candidates saved'); } } catch (e) { console.log('shadow stream: ' + e.message); }
+ // DELIVERY SCORECARD: every candidate that met an alert trigger (or was a rule hit) with its decision and 15:00 result; soft misses are
+ // counted in the day's summary only (about 1,500 a day would bloat the public repo)
+-try { const lastPx = {}; for (const v of Object.values(vis)) if (v.last > 0) lastPx[v.sym] = v.last; const E = EA.finish(lastPx, null, alerts), keep = E.rows.filter(r => !/^SOFT/.test(r.decision));
++try { const lastPx = {}; for (const v of Object.values(vis)) if (v.last > 0) lastPx[v.sym] = v.last; const E = EA.finish(lastPx, null, alerts); E.summary.sessionMinutes=sessionEvidence(incidentSnapshot).usableMinutes; const keep = E.rows.filter(r => !/^SOFT/.test(r.decision));
+   if (keep.length) fs.appendFileSync('data/opp-ledger.jsonl', keep.map(r => JSON.stringify(r)).join('\n') + '\n'); fs.appendFileSync('data/opp-days.jsonl', JSON.stringify(E.summary) + '\n'); } catch (e) { console.log('delivery scorecard: ' + e.message); }
+ // OPPORTUNITY RADAR same-day score (pre-registered in radar-v3-core.mjs): each line listed at 11:15 gets its last watched price and the
+ // median $1+ stock's move over the same minutes, so the radar is judged against the average stock, not only against zero.
+--- a/.github/workflows/ignition.yml
++++ b/.github/workflows/ignition.yml
+@@ -48,11 +48,13 @@
+         run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
+       - if: always()
+         run: |
++          set -euo pipefail
+           git config user.name "scanner"
+           git config user.email "scanner@users.noreply.github.com"
+-          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; true
++          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; true
+           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
+-          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
++          ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
++          [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
+       - if: failure()
+         env:
+           TG_TOKEN: ${{ secrets.TG_TOKEN }}
+@@ -60,3 +62,15 @@
+         run: |
+           WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
+           curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
++
++      - if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: watcher-evidence-${{ github.run_id }}-${{ github.run_attempt }}
++          path: |
++            data/ignition-runs/
++            data/radar-v3-ledger.jsonl
++            data/radar-v3-ledger.jsonl.pending.json
++            runtime/watcher-message-state/
++          retention-days: 7
++          if-no-files-found: warn
+--- a/opportunity-radar.mjs
++++ b/opportunity-radar.mjs
+@@ -1,3 +1,5 @@
++import {appendRadarRows,readRadarLedger,radarLedgerView} from './radar-ledger.mjs';
++import {chooseDailySummary} from './watcher-session.mjs';
+ // DAILY OPPORTUNITY RADAR runner (rules and wording in radar-v3-core.mjs). Research and routing only; never places an order.
+ //   node opportunity-radar.mjs midday   called by ignition-watch.mjs at about 11:15 New York, after it writes data/radar-v3-snap.json
+ //   node opportunity-radar.mjs close    .github/workflows/opportunity-radar.yml after the watcher has saved the day (scores 5-session rows too)
+@@ -12,9 +14,12 @@
+ const readLines = (f) => { try { return fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)); } catch (e) { return []; } };
+ const nyDay = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+ async function telegram(text) {
+-  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return; }
++  text+='\nInstrument identity may be UNKNOWN. Mixed-instrument RESEARCH ONLY; not verified common-stock performance or admitted prospective evidence.';
++  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return {ok:false,definitelyUnsent:true}; }
+   const parts = []; let cur = ''; for (const l of text.split('\n')) { if ((cur + l).length > 3800) { parts.push(cur); cur = ''; } cur += l + '\n'; } if (cur) parts.push(cur);
+-  for (const p of parts) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: p, disable_web_page_preview: true }) }).catch(e => console.log('telegram: ' + e.message));
++  let ack=0;
++  for(const p of parts){try{const r=await fetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{signal:AbortSignal.timeout(10000),method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text:p,disable_web_page_preview:true})});const j=await r.json();if(!r.ok||j.ok!==true)return {ok:false,definitelyUnsent:ack===0&&r.status>=400&&r.status<500&&j.ok===false};ack++;}catch{return {ok:false};}}
++  return {ok:ack===parts.length};
+ }
+ function context() {
+   const events = {}; for (const e of ((readJson('data/events-recent.json') || {}).events || [])) (events[e.sym] || (events[e.sym] = [])).push(e);
+@@ -43,16 +48,16 @@
+   const snap = readJson('data/radar-v3-snap.json');
+   if (!snap || snap.day !== today) { console.log('radar midday: no snapshot for ' + today); process.exit(0); }
+   const r = buildMidday(snap, ctx);
+-  if (r.rows.length) fs.appendFileSync(LEDGER, r.rows.map(x => JSON.stringify(x)).join('\n') + '\n');
+-  await telegram(r.text); console.log('radar midday: ' + r.rows.length + ' lines listed');
++  try { appendRadarRows(LEDGER,r.rows); } catch(e) { console.error('radar research persistence failed; message unsent: '+e.message); if(env.IG_RADAR_RESERVED==='1')console.log('RADAR_DELIVERY='+JSON.stringify({ok:false,definitelyUnsent:true})); process.exit(0); }
++  const receipt=await telegram(r.text);if(env.IG_RADAR_RESERVED==='1')console.log('RADAR_DELIVERY='+JSON.stringify(receipt)); console.log('radar midday: ' + r.rows.length + ' lines listed');
+ } else {
+-  let ledger = readLines(LEDGER); const s5 = await score5(ledger, today);
+-  if (s5.length) { fs.appendFileSync(LEDGER, s5.map(x => JSON.stringify(x)).join('\n') + '\n'); ledger = ledger.concat(s5); }
+-  const od = readLines('data/opp-days.jsonl').filter(x => x.day === today).pop();   // DELIVERY SCORECARD from the live watcher (early-alerts.mjs)
++  const rawLedger=readRadarLedger(LEDGER),view=radarLedgerView(rawLedger); let ledger=view.rows; const s5 = await score5(ledger, today);
++  if (s5.length) { appendRadarRows(LEDGER,s5); ledger = radarLedgerView(readRadarLedger(LEDGER)).rows; }
++  const od = chooseDailySummary(readLines('data/opp-days.jsonl'),today);   // DELIVERY SCORECARD from the live watcher (early-alerts.mjs)
+   const SRp = readJson('data/shadow-report.json'), pc = (x) => (x === null || x === undefined ? '?' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%');   // Phase 1 shadow test (shadow-outcomes.mjs runs just before)
+   const shadowLine = SRp ? 'FILTER SHADOW TEST: ' + SRp.shadowSessions + ' session' + (SRp.shadowSessions === 1 ? '' : 's') + ' collected (verdicts after 10). ' + (SRp.alerts5d && SRp.alerts5d.delivered.n ? 'Alerts after 5 sessions, net: delivered ' + SRp.alerts5d.delivered.n + ' avg ' + pc(SRp.alerts5d.delivered.avg) + ' (median ' + pc(SRp.alerts5d.delivered.median) + '); eligible not delivered ' + SRp.alerts5d.notDelivered.n + ' avg ' + pc(SRp.alerts5d.notDelivered.avg) + '.' : 'No alert has 5 sessions yet.') : '';
+   const rk = SRp && (SRp.ranking && SRp.ranking.models.A.picks ? SRp.ranking : SRp.rankingPilot), rkLine = rk ? 'RANKING SHADOW TEST (' + (rk === SRp.ranking ? 'counted from ' + rk.frozen.evalFrom : 'PILOT, not counted') + '; same-day net after costs, picks / avg / median): '
+     + ['A', 'B', 'C', 'D', 'R', 'R0'].map(k => { const x = rk.models[k]; return k + ' ' + x.picks + ' / ' + pc(x.day.avg) + ' / ' + pc(x.day.median); }).join('; ') + '. '
+     + (rk.capCost && rk.capCost.firstFive.picks ? 'First five ' + pc(rk.capCost.firstFive.day.avg) + ' vs after the cap ' + pc(rk.capCost.afterCap.day.avg) + '. ' : '') + 'Verdicts: B ' + rk.models.B.verdict + '; C ' + rk.models.C.verdict + '; D ' + rk.models.D.verdict + '. Live ranking is still first come (no change without your approval).' : '';
+-  await telegram(buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '') + (rkLine ? '\n' + rkLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
++  await telegram('Research ledger view '+view.version+': raw listed '+view.rawLists+', logical listed '+view.logicalLists+', exact repeats '+view.exactRepeats+', unknown identity retained '+view.unknownIdentity+'. Original ledger and frozen raw results preserved; corrected secondary view, not admitted prospective evidence.\n'+buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '') + (rkLine ? '\n' + rkLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
+ }
+--- /dev/null
++++ b/watcher-messages.mjs
+@@ -0,0 +1,29 @@
++// Reservation permission is remote-confirmed before transport. Publication failure is UNSENT, not a consumed send.
++import fs from 'node:fs';import path from 'node:path';import {createHash,randomUUID} from 'node:crypto';
++export function createWatcherMessages({day,directory='runtime/watcher-message-state',persist=(_file,{record})=>({ok:true,record}),retryMs=60000,now=Date.now}={}){
++ if(!/^\d{4}-\d\d-\d\d$/.test(day||''))throw Error('invalid message-state day');
++ const dir=path.join(directory,day),owner=randomUUID(),cache=new Map(),retry=new Map(),stats={publicationFailures:0,acknowledged:0,uncertain:0,unsent:0,suppressed:0};
++ const keyOf=key=>createHash('sha256').update(String(key)).digest('hex');
++ const fileOf=digest=>path.join(dir,digest+'.json');
++ const write=(digest,row)=>{try{fs.mkdirSync(dir,{recursive:true});const file=fileOf(digest),tmp=file+'.'+owner+'.tmp',fd=fs.openSync(tmp,'w',0o600);try{fs.writeFileSync(fd,JSON.stringify(row));fs.fsyncSync(fd);}finally{fs.closeSync(fd);}fs.renameSync(tmp,file);return true;}catch{return false;}};
++ const read=digest=>{if(cache.has(digest))return cache.get(digest);try{const row=JSON.parse(fs.readFileSync(fs.existsSync(fileOf(digest))?fileOf(digest):path.join('data/watcher-message-state',day,digest+'.json'),'utf8'));if(row.version!==2||row.day!==day||row.keySha256!==digest||!['UNSENT','RESERVED','ACKNOWLEDGED','UNCERTAIN'].includes(row.state))return {state:'UNCERTAIN',reason:'LEGACY_OR_INVALID_STATE'};return row;}catch(e){return e.code==='ENOENT'?null:{state:'UNCERTAIN',reason:'UNREADABLE_STATE'};}};
++ const publish=(digest,record,phase)=>{try{return persist(path.join('data/watcher-message-state',day,digest+'.json'),{record,phase})||{ok:false};}catch{return {ok:false};}};
++ return {
++  reserve(key){const digest=keyOf(key),prior=read(digest);if(prior&&prior.state!=='UNSENT'){stats.suppressed++;return false;}if(now()<(retry.get(digest)||0))return false;
++   const row={version:2,day,keySha256:digest,owner,state:'UNSENT',at:new Date(now()).toISOString()};
++   if(!write(digest,row)){stats.publicationFailures++;return false;}
++   const candidate={...row,state:'RESERVED'},result=publish(digest,candidate,'reserve');
++   if(!result.ok){const stored=result.record||{...row,reason:'PUBLICATION_UNCONFIRMED'};cache.set(digest,stored);write(digest,stored);retry.set(digest,now()+retryMs);if(result.reason==='EXISTING_RESERVATION')stats.suppressed++;else stats.publicationFailures++;if(stored.state==='UNSENT')stats.unsent++;return false;}
++   cache.set(digest,candidate);if(!write(digest,candidate)){stats.publicationFailures++;return false;}return true;
++  },
++  finish(key,result={}){const digest=keyOf(key),prior=read(digest);if(prior?.owner!==owner||prior.state!=='RESERVED')return false;
++   const state=result.ok?'ACKNOWLEDGED':result.definitelyUnsent?'UNSENT':'UNCERTAIN',row={...prior,state,at:new Date(now()).toISOString()};
++   const stored=publish(digest,row,'finish');cache.set(digest,row);write(digest,row);if(!stored.ok)stats.publicationFailures++;
++   if(state==='ACKNOWLEDGED')stats.acknowledged++;else if(state==='UNSENT'){stats.unsent++;retry.set(digest,now()+retryMs);}else stats.uncertain++;
++   return !!stored.ok;
++  },
++  has(key){return read(keyOf(key))!==null;},
++  state(key){return read(keyOf(key))?.state||'UNSENT';},
++  report(){return {...stats};},
++ };
++}
+--- /dev/null
++++ b/watcher-message-publish.mjs
+@@ -0,0 +1,27 @@
++// Bounded fast-forward compare-and-publish, using an isolated index. Active HEAD, index and source files never move.
++import {execFileSync} from 'node:child_process';
++import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {randomUUID} from 'node:crypto';
++export function publishWatcherReservation(file,{cwd=process.cwd(),record,phase='reserve',git=execFileSync,budgetMs=4000,maxAttempts=3}={}){
++ if(!/^data\/watcher-message-state\/\d{4}-\d\d-\d\d\/[a-f0-9]{64}\.json$/.test(file)||record?.version!==2)return {ok:false,reason:'INVALID_RESERVATION'};
++ const deadline=Date.now()+Math.min(10000,Math.max(100,budgetMs)),dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-publish-')),ref='refs/stock2-message/'+randomUUID();
++ const run=(args,input)=>{if(Date.now()>=deadline)throw Error('budget');return git('git',args,{cwd,input,encoding:'utf8',env:{...process.env,GIT_INDEX_FILE:path.join(dir,'index')},stdio:['pipe','pipe','pipe'],timeout:Math.max(1,Math.min(1500,deadline-Date.now())),maxBuffer:1024*1024}).trim();};
++ try{
++  const upstream=run(['rev-parse','--symbolic-full-name','@{upstream}']);if(!upstream.startsWith('refs/remotes/origin/'))return {ok:false,reason:'UNSUPPORTED_UPSTREAM'};const branch=upstream.slice('refs/remotes/origin/'.length);if(!/^[A-Za-z0-9._/-]+$/.test(branch))return {ok:false,reason:'INVALID_UPSTREAM'};
++  for(let attempt=0;attempt<Math.min(5,maxAttempts);attempt++){
++   try{
++    run(['fetch','--no-tags','origin','refs/heads/'+branch+':'+ref]);const parent=run(['rev-parse',ref]);let prior=null;
++    if(run(['ls-tree',parent,'--',file])){try{prior=JSON.parse(run(['show',parent+':'+file]));}catch{return {ok:false,reason:'REMOTE_STATE_UNREADABLE'};}}
++    if(phase==='reserve'){
++     if(prior?.owner===record.owner&&prior?.state==='RESERVED')return {ok:true,record:prior};
++     if(prior&&(prior.version!==2||prior.state!=='UNSENT'))return {ok:false,reason:'EXISTING_RESERVATION',record:prior};
++    }else if(prior?.owner!==record.owner)return {ok:false,reason:'RESERVATION_OWNER_CHANGED',record:prior};
++    // Only this one protected path differs from the latest remote tree. No checkout, pull or rebase.
++    run(['read-tree',parent]);const blob=run(['hash-object','-w','--stdin'],JSON.stringify(record));run(['update-index','--add','--cacheinfo','100644',blob,file]);const tree=run(['write-tree']);
++    const commit=run(['-c','user.name=scanner','-c','user.email=scanner@users.noreply.github.com','commit-tree',tree,'-p',parent],phase==='reserve'?'watcher message reservation\n':'watcher delivery state\n');
++    run(['push','origin',commit+':refs/heads/'+branch]);return {ok:true,record};
++   }catch{/* A racing fast-forward or uncertain push is resolved by the next bounded fetch, never by forcing. */}
++  }
++  return {ok:false,reason:'PUBLICATION_UNCONFIRMED'};
++ }catch{return {ok:false,reason:'PUBLICATION_UNCONFIRMED'};}
++ finally{try{git('git',['update-ref','-d',ref],{cwd,stdio:'ignore',timeout:1000});}catch{}fs.rmSync(dir,{recursive:true,force:true});}
++}
+--- a/test/rank-models.test.mjs
++++ b/test/rank-models.test.mjs
+@@ -7,7 +7,7 @@
+ import { MODELS, FROZEN, pick, dEligible, evaluate, spr } from '../rank-models.mjs';
+ import { parseAtom, nyMinuteOf } from '../edgar-feed.mjs';
+
+-const e = (o = {}) => ({ d: '2026-10-29', sym: 'S', m: 600, chg: 0.04, cat: 'VERIFIED', rvT: 4, dollarVol: 3e6, bid: 9.99, ask: 10.01, e: { m: 600, px: 10, bid: 9.99, ask: 10.01, qAgeSec: 5 }, last: 10, ...o });
++const e = (o = {}) => ({ d: '2026-10-30', sym: 'S', m: 600, chg: 0.04, cat: 'VERIFIED', rvT: 4, dollarVol: 3e6, bid: 9.99, ask: 10.01, e: { m: 600, px: 10, bid: 9.99, ask: 10.01, qAgeSec: 5 }, last: 10, ...o });
+
+ test('frozen as approved: dates, cap, B and C criteria', () => {
+   assert.deepEqual(FROZEN, { date: '2026-10-28', evalFrom: '2026-10-29', cap: 5, minSessions: 20, minPicks: 50, controlsPerDay: 10 });
+@@ -39,7 +39,7 @@
+   assert.equal(v.models.A.picks, 5); assert.equal(v.streams.E.candidates, 8); assert.ok(v.models.A.day.avg < 0);
+   assert.ok(v.capCost.afterCap.day.avg > 0); assert.equal(v.capCost.afterCap.picks, 3); assert.ok(v.capCost.hindsightBestFive.day.avg > v.capCost.firstFive.day.avg);
+   assert.match(v.models.B.verdict, /^COLLECTING \(1 of 20 sessions/);
+-  assert.equal(evaluate({ E, F: [], N: [] }, out, '2026-10-28').streams.E.candidates, 9);   // the pilot view includes 28 Oct
++  assert.equal(evaluate({ E, F: [], N: [] }, out, '2026-10-28',{secondary:true}).streams.E.candidates, 9);   // the pilot view includes 28 Oct
+ });
+ test('SEC feed parser: form, CIK, items, accession and acceptance time; New York minute', () => {
+   const xml = `<feed><entry><title>8-K - ACME ROBOTICS INC (0001234567) (Filer)</title><link rel="alternate" type="text/html" href="https://www.sec.gov/Archives/edgar/data/1234567/000123456726000123/0001234567-26-000123-index.htm"/>
+@@ -50,3 +50,11 @@
+   assert.deepEqual(a[0], { acc: '0001234567-26-000123', form: '8-K', cik: 1234567, name: 'ACME ROBOTICS INC', role: 'Filer', at: '2026-10-29T07:02:11-04:00', items: '1.01,9.01' });
+   assert.equal(nyMinuteOf(a[0].at), 7 * 60 + 2); assert.equal(nyMinuteOf('2026-11-02T08:00:00-05:00'), 8 * 60);
+ });
++test('malformed or overflowing quotes cannot manufacture a narrow-spread ranking advantage',()=>{
++ assert.equal(spr({bid:Infinity,ask:Infinity}),null);
++ assert.equal(spr({bid:'10',ask:'10.01'}),null);
++ assert.ok(spr({bid:1e308,ask:1.7e308})>0.5);
++ for(const model of [MODELS.B,MODELS.C])assert.equal(model.accept(e({bid:1e308,ask:1.7e308})),false);
++});
++
++test('dated owner exclusion applies even with explicit primary start; reconstruction is secondary only',()=>{const rows=['2026-10-28','2026-10-29','2026-10-30'].map(d=>e({d}));const a=evaluate({E:rows,F:[],N:[]},{},'2026-10-28');assert.equal(a.streams.E.candidates,1);const b=evaluate({E:rows,F:[],N:[]},{},'2026-10-28',{secondary:true});assert.equal(b.streams.E.candidates,3);assert.match(b.models.B.verdict,/SECONDARY ONLY/);assert.equal(b.admissionDecision.recordedAt,'2026-10-30');});
+--- /dev/null
++++ b/test/watcher-incident-revision.test.mjs
+@@ -0,0 +1,20 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawn,spawnSync} from 'node:child_process';import http from 'node:http';import vm from 'node:vm';
++import {sessionFinished} from '../watcher-session.mjs';import {watcherReport} from '../watcher-reporting.mjs';import {createWatcherMessages} from '../watcher-messages.mjs';import {createEarlyAlerts} from '../early-alerts.mjs';import {instrumentAwareSec} from '../instrument-type.mjs';import {dEligible} from '../rank-models.mjs';import {createShadow} from '../shadow-stream.mjs';
++const day='2026-10-30',beat=m=>({m,received:1,evaluated:1}),full=Array.from({length:331},(_,i)=>beat(570+i));
++test('configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable',()=>{assert.equal(sessionFinished({day,heartbeat:full},day,{open:570,endExclusive:901}),true);assert.equal(sessionFinished({day,heartbeat:full},day),false);for(const heartbeat of [full.slice(1),full.slice(0,-1),full.map(x=>x.m===600?{...x,evaluated:0}:x)])assert.equal(sessionFinished({day,heartbeat},day,{open:570,endExclusive:901}),false);});
++test('health reports configured gaps and known outside hour separately; explicit actionable thresholds',()=>{let r=watcherReport([],[{day,heartbeat:full}]);assert.equal(r.complete,false);assert.equal(r.configuredComplete,true);assert.equal(r.actionable,false);assert.equal(r.regularMinutes,331);assert.equal(r.outsideExpected,59);assert.match(r.text,/15:01–15:59 outside configured window: 0\/59/);r=watcherReport([],[{day,heartbeat:full.filter(x=>![600,641,685,729,771,814,855].includes(x.m))}]);assert.equal(r.actionable,false);assert.equal(r.configuredMissing.length,7);for(const heartbeat of [full.slice(1),full.filter(x=>x.m<600||x.m>602),full.filter((x,i)=>i%18!==1)])assert.equal(watcherReport([],[{day,heartbeat}]).actionable,true);});
++test('message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed',t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-message-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const opts={day,directory:dir};assert.equal(createWatcherMessages(opts).reserve('stop:ZZQ:hit'),true);assert.equal(createWatcherMessages(opts).reserve('stop:ZZQ:hit'),false);assert.equal(createWatcherMessages(opts).reserve('midday-radar'),true);assert.equal(createWatcherMessages(opts).reserve('midday-radar'),false);const f=path.join(dir,day,fs.readdirSync(path.join(dir,day))[0]);fs.writeFileSync(f,'broken');for(const key of ['stop:ZZQ:hit','midday-radar'])assert.equal(createWatcherMessages(opts).reserve(key),false);});
++test('unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY',async()=>{const sec=await instrumentAwareSec('ZZQ',async()=>({known:true,tags:[]}));assert.equal(sec.admissionBlocked,true);const sent=[],EA=createEarlyAlerts({day,level:'all',now:()=>600,secRisk:async()=>sec,notHalal:()=>false,halalOk:()=>false,send:async text=>(sent.push(text),{ok:true})});EA.noteLead({sym:'ZZQ',m:600,price:10,chg:.04,score:90,rvT:4,dollarVol:3e6,live:true});EA.notePaper({sym:'ZZP',m:600,price:10,rule:'IG1'},.04);await EA.process();assert.equal(EA.S.seen['lead|ZZQ'].decision,'SENT');assert.equal(EA.S.seen['paper|ZZP'].decision,'SENT');assert.equal(EA.S.seen['lead|ZZQ'].instrument.status,'UNKNOWN');assert.equal(EA.S.seen['lead|ZZQ'].approvedBuyEligible,false);assert.ok(sent.every(x=>/RESEARCH ONLY.*Instrument identity may be UNKNOWN/s.test(x)));assert.equal(dEligible({form:'8-K',items:'8.01',atM:550,decM:580,chg:.01,price:10,prevDollarVol:3e6,spreadFresh:false,halalFail:false,lottery:0,sec}).eligible,true);});
++test('actual watcher shadow producer retains unknown observations and filing records without adding source calls',()=>{const src=fs.readFileSync(process.env.INCIDENT_WATCHER_SRC||new URL('../ignition-watch.mjs',import.meta.url),'utf8'),a=src.indexOf('const shadowRows='),b=src.indexOf('\n',a),SR=createShadow({day}),EA={S:{sec:{}}};SR.early({sym:'ZZQ',m:600,price:10,chg:.04,score:90,dollarVol:3e6,live:true,hard:{}});SR.filing({sym:'ZZF',m:600,price:10,chg:.01,hard:{},f:{acc:'synthetic',eligible:true}});vm.runInNewContext(src.slice(a,b),{SR,EA,env:{},readInstrumentType:()=>({status:'UNKNOWN'})});assert.equal(SR.rows().length,2);assert.ok(SR.rows().every(x=>x.instrument.status==='UNKNOWN'&&x.approvedBuyEligible===false));assert.ok(SR.rows().find(x=>x.sym==='ZZF').f);});
++// The full production caller test is enabled when the exact proposed production file is supplied.
++if(process.env.INCIDENT_WATCHER_SRC)test('actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop',async t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-actual-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const source=path.resolve(process.env.INCIDENT_WATCHER_SRC),root=path.dirname(source);fs.mkdirSync(path.join(dir,'data'));fs.copyFileSync(path.join(root,'opportunity-radar.mjs'),path.join(dir,'opportunity-radar.mjs'));for(const file of ['radar-ledger.mjs','watcher-session.mjs','session-coverage.mjs','market-session.mjs','early-alerts.mjs','rank-models.mjs','ranking-cohort.mjs','shadow-eval.mjs','radar-v3-core.mjs'])fs.copyFileSync(path.join(root,file),path.join(dir,file));spawnSync('git',['init','-q'],{cwd:dir});spawnSync('git',['-c','user.name=fixture','-c','user.email=fixture@example.test','commit','--allow-empty','-qm','fixture'],{cwd:dir});const bin=path.join(dir,'bin');fs.mkdirSync(bin);const real=spawnSync('sh',['-c','command -v git'],{encoding:'utf8'}).stdout.trim();fs.writeFileSync(path.join(bin,'git'),'#!/bin/sh\nif [ "$1" = fetch ]; then exit 1; fi\nexec '+real+' "$@"\n',{mode:0o755});let snapshots=0,messages=[];const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{let out={};if(req.url.includes('/sendMessage')){messages.push(JSON.parse(body).text);out={ok:true,result:{message_id:messages.length}};}else if(req.url.includes('/snapshot/')){snapshots++;out={tickers:[{ticker:'ZZQ',lastTrade:{p:8,t:Date.now()*1e6},prevDay:{c:10,v:1e6},day:{o:8,c:8,v:1e6}}]};}else if(req.url.includes('company_tickers'))out={};res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;
++const run=id=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,[source],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:'1',GITHUB_RUN_ID:id},stdio:['ignore','pipe','pipe']});let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);child.on('error',reject);child.on('close',code=>resolve({code,text}));});const write=(file,x)=>fs.writeFileSync(path.join(dir,'data',file),JSON.stringify(x));write('ignition-live.json',{day,heartbeat:full});let x=await run('complete');assert.equal(x.code,0,x.text);assert.match(x.text,/skipping duplicate/);assert.equal(snapshots,0);write('ignition-live.json',{day,heartbeat:[beat(570)]});write('my-positions.json',{ZZQ:{entry:10,stop:9}});x=await run('recover1');assert.equal(x.code,0,x.text);assert.ok(snapshots>0);assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);assert.ok(messages.some(x=>x.includes('OPPORTUNITY RADAR')), 'actual radar child sent one synthetic message');assert.ok(messages.some(x=>x.includes('Instrument identity may be UNKNOWN')), 'radar preserves explicit unknown context');const n=messages.length,before=snapshots;x=await run('recover2');assert.equal(x.code,0,x.text);assert.ok(snapshots>before);assert.equal(messages.length,n);assert.ok(fs.existsSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json')));});
++
++test('reservation publication failure prevents send and quarantines local retry',t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-reservation-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));let sent=0,published=0;const box=createWatcherMessages({day,directory:dir,persist:()=>{published++;throw Error('synthetic remote refusal');}});if(box.reserve('stop:ZZQ:hit'))sent++;assert.equal(sent,0);assert.equal(box.state('stop:ZZQ:hit'),'UNSENT');assert.equal(box.reserve('stop:ZZQ:hit'),false);assert.equal(published,1);});
++
++test('actual watcher approved-alert caller blocks unknown identity before any send',async()=>{const src=fs.readFileSync(process.env.INCIDENT_WATCHER_SRC||new URL('../ignition-watch.mjs',import.meta.url),'utf8'),a=src.indexOf('async function maybeAlert('),b=src.indexOf('\n// ',a),body=src.slice(a,b);const sec=await instrumentAwareSec('ZZQ',async()=>({known:true,tags:[]})),flags=[],context={passed:[{rule:'IG1',exit:'close'}],paperOk:()=>true,currentOwnerZadApproved:()=>true,approvedQuoteGate:()=>({ok:true}),notHalal:()=>false,LOTT:{},alerts:0,earlyAlerts:0,isFreshPriceAge:()=>true,secRisk:async()=>sec,flag:(...x)=>flags.push(x),tg:()=>assert.fail('must not send'),PREC:{}};const fn=Function(...Object.keys(context),body+';return maybeAlert;')(...Object.values(context)),t={};await fn({sym:'ZZQ',price:10},t,{id:'IG1'},.04,0,4,{}, {},false);assert.ok(flags.some(x=>x[1]==='instrumentUnknown'));assert.ok(t.blocked.includes('INSTRUMENT_IDENTITY_UNKNOWN'));});
++test('actual filing decision caller records eligible unknown-type research, and preserves source failure',async()=>{const src=fs.readFileSync(process.env.INCIDENT_WATCHER_SRC||new URL('../ignition-watch.mjs',import.meta.url),'utf8'),a=src.indexOf('async function decideFilings('),b=src.indexOf('\n// R0',a),body=src.slice(a,b);for(const failure of [false,true]){const sec=await instrumentAwareSec('ZZQ',async()=>({known:!failure,tags:[],sourceFailure:failure})),EF={pending:[{sym:'ZZQ',atM:550,form:'8-K',items:'8.01',acc:'synthetic'}],decided:0,eligible:0,noPrice:0},EA={S:{sec:{}}},SR=createShadow({day});let calls=0;const c={EF,EA,SR,dEligible,secRisk:async()=>{calls++;return sec;},isFreshPriceAge:()=>true,spreadPct:()=>.001,notHalal:()=>false,LOTT:{},vis:{}};const fn=Function(...Object.keys(c),body+';return decideFilings;')(...Object.values(c));await fn(580,new Map([['ZZQ',{price:10,prevC:10,prevV:1e6,t:Date.now(),bid:9.99,ask:10.01,qt:Date.now()}]]));assert.equal(calls,1);assert.equal(SR.rows().length,1);assert.equal(SR.rows()[0].f.eligible,!failure);assert.equal(EF.pending.length,0);if(failure)assert.match(SR.rows()[0].f.why.join(';'),/SEC check failed/);}});
++
++test('actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment',async()=>{const {evaluate}=await import('../rank-models.mjs'),src=fs.readFileSync(new URL('../shadow-outcomes.mjs',import.meta.url),'utf8'),a=src.indexOf('const SH ='),b=src.indexOf('report.ranking =',a),shadowRows=[{d:day,sym:'ZZQ',rankingCohort:'INSTRUMENT_CLASSIFIED_V2:synthetic',instrument:{status:'UNKNOWN'},v:{base:{m:600,px:10},D:{m:600,px:10},R0:{m:600,px:10}},f:{decM:600,eligible:true},last:10}],oppEl=[{d:day,sym:'ZZQ',kind:'lead',decision:'SENT',m:600,px:10}];const c={shadowRows,oppEl};vm.createContext(c);vm.runInContext(src.slice(a,b)+'\nglobalThis.streams={E,F,N};',c);for(const rows of Object.values(c.streams))assert.equal(rows[0].rankingCohort,'INSTRUMENT_CLASSIFIED_V2:synthetic');const primary=evaluate(c.streams,{});assert.equal(primary.streams.E.candidates,0);assert.equal(primary.streams.F.candidates,0);assert.equal(primary.streams.N.candidates,0);assert.equal(primary.unapprovedCohortRows,3);const secondary=evaluate(c.streams,{},'2026-10-28',{secondary:true});assert.equal(secondary.streams.E.candidates,1);assert.match(secondary.models.D.verdict,/SECONDARY ONLY/);});
++
++test('actual shadow caller captures identity once rather than retroactively reclassifying the first observation',()=>{const src=fs.readFileSync(process.env.INCIDENT_WATCHER_SRC||new URL('../ignition-watch.mjs',import.meta.url),'utf8'),a=src.indexOf('const shadowRows='),b=src.indexOf('\n',src.indexOf('\n',a)+1),SR=createShadow({day}),EA={S:{sec:{}}};vm.runInNewContext(src.slice(a,b),{SR,EA,env:{},INSTRUMENT_COHORT:'LEGACY_FROZEN_20261028',readInstrumentType:()=>({status:'UNKNOWN'})});SR.early({sym:'ZZQ',m:600,price:10,chg:.04,score:90,dollarVol:3e6,live:true,hard:{}});EA.S.sec.ZZQ={instrument:{status:'ELIGIBLE_COMMON_STOCK'}};SR.early({sym:'ZZQ',m:601,price:11,chg:.05,score:90,dollarVol:3e6,live:true,hard:{}});assert.equal(SR.rows()[0].instrument.status,'UNKNOWN');assert.equal(SR.rows()[0].rankingCohort,'LEGACY_FROZEN_20261028');});
+--- /dev/null
++++ b/test/watcher-message-publish.test.mjs
+@@ -0,0 +1,7 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawnSync,execFileSync} from 'node:child_process';import {publishWatcherReservation} from '../watcher-message-publish.mjs';
++const FILE='data/watcher-message-state/2026-10-30/'+'a'.repeat(64)+'.json',record={version:2,day:'2026-10-30',keySha256:'a'.repeat(64),owner:'fixture-A',state:'RESERVED'};
++for(const scenario of ['success','push-refused','moved-remote','object-refused'])test('isolated reservation publication: '+scenario,t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-publish-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const git=(cwd,...args)=>{const x=spawnSync('git',args,{cwd,env:{PATH:process.env.PATH,HOME:dir,GIT_AUTHOR_NAME:'fixture',GIT_AUTHOR_EMAIL:'fixture@example.test',GIT_COMMITTER_NAME:'fixture',GIT_COMMITTER_EMAIL:'fixture@example.test',GIT_CONFIG_GLOBAL:'/dev/null'},encoding:'utf8'});assert.equal(x.status,0,x.stderr);return x.stdout.trim();};const bare=path.join(dir,'origin.git'),job=path.join(dir,'job');git(dir,'init','--bare',bare);git(dir,'clone',bare,job);git(job,'checkout','-b','fixture');fs.writeFileSync(path.join(job,'baseline'),'original');git(job,'add','.');git(job,'commit','-m','seed');git(job,'push','-u','origin','fixture');const seed=git(job,'rev-parse','HEAD');fs.writeFileSync(path.join(job,'unrelated'),'staged work');git(job,'add','unrelated');const index=fs.readFileSync(path.join(job,'.git/index'));
++ if(scenario==='push-refused')fs.writeFileSync(path.join(bare,'hooks/pre-receive'),'#!/bin/sh\nexit 1\n',{mode:0o755});
++ if(scenario==='moved-remote'){const other=path.join(dir,'other');git(dir,'clone','-b','fixture',bare,other);fs.writeFileSync(path.join(other,'upstream'),'preserve');git(other,'add','.');git(other,'commit','-m','upstream');git(other,'push');}
++ const before=git(dir,'--git-dir='+bare,'rev-parse','refs/heads/fixture');const calls=[];const result=publishWatcherReservation(FILE,{cwd:job,record,git:(cmd,args,opts)=>{calls.push(args[0]);if(scenario==='object-refused'&&args.includes('commit-tree'))throw Error('synthetic write refusal');return execFileSync(cmd,args,opts);}});const success=['success','moved-remote'].includes(scenario);assert.equal(result.ok,success);assert.equal(git(job,'rev-parse','HEAD'),seed);assert.deepEqual(fs.readFileSync(path.join(job,'.git/index')),index);assert.equal(fs.readFileSync(path.join(job,'baseline'),'utf8'),'original');assert.ok(!calls.some(x=>['checkout','reset','pull','rebase'].includes(x)));
++ const after=git(dir,'--git-dir='+bare,'rev-parse','refs/heads/fixture');if(success){assert.notEqual(after,before);assert.equal(JSON.parse(git(dir,'--git-dir='+bare,'show','refs/heads/fixture:'+FILE)).owner,record.owner);if(scenario==='moved-remote')assert.equal(git(dir,'--git-dir='+bare,'show','refs/heads/fixture:upstream'),'preserve');const loser=publishWatcherReservation(FILE,{cwd:job,record:{...record,owner:'fixture-B'}});assert.equal(loser.ok,false);assert.equal(loser.reason,'EXISTING_RESERVATION');}else assert.equal(after,before);assert.match(git(job,'diff','--cached','--name-only'),/unrelated/);});
+--- /dev/null
++++ b/tests/instrument-type.test.mjs
+@@ -0,0 +1,13 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createHash} from 'node:crypto';
++import {instrumentType,instrumentAwareSec} from '../instrument-type.mjs';import {hardReason} from '../early-alerts.mjs';import {dEligible} from '../rank-models.mjs';
++const now=Date.now(),record=(type='CS',symbol='ZZQ')=>({url:'https://api.massive.com/v3/reference/tickers/'+symbol,transport:'HTTPS_OFFICIAL_CAPTURE',observedAt:new Date(now).toISOString(),raw:{status:'OK',results:{ticker:symbol,market:'stocks',locale:'us',type,composite_figi:'BBG000000001'}}});
++const ref=(records=[record()])=>{const bytes=Buffer.from(JSON.stringify({kind:'REVIEWED_OFFICIAL_INSTRUMENT_CAPTURE_V1',records}));return {bytes,pinnedSha256:createHash('sha256').update(bytes).digest('hex'),now};};
++test('only reviewed exact official reference bytes establish a supported common-stock identity',()=>{const r=ref();assert.equal(instrumentType('ZZQ',r).status,'ELIGIBLE_COMMON_STOCK');assert.equal(instrumentType('ZZQ',{...r,pinnedSha256:'0'.repeat(64)}).status,'UNKNOWN');assert.equal(instrumentType('ZZQ',{}).status,'UNKNOWN');assert.equal(instrumentType('ZZQ',ref([record('us_equity')])).status,'UNKNOWN');});
++test('known warrants/rights/units are policy exclusions; suffixes are never classified',()=>{for(const type of ['WARRANT','RT','UNIT'])assert.equal(instrumentType('ZZQ',ref([record(type)])).policyExcluded,true);assert.equal(instrumentType('ZZQW',ref()).status,'UNKNOWN');assert.equal(instrumentType('ZZQW',ref([record('CS','ZZQW')])).status,'ELIGIBLE_COMMON_STOCK');});
++test('conflicting classes, absent IDs, stale/future clocks and lookalike origins remain unknown',()=>{const a=record();for(const records of [[a,a],[{...a,raw:{status:'OK',results:{...a.raw.results,composite_figi:null}}}],[{...a,observedAt:new Date(now+1000).toISOString()}],[{...a,observedAt:new Date(now-8*86400000).toISOString()}],[{...a,url:'https://api.massive.com.evil.test/v3/reference/tickers/ZZQ'}]])assert.equal(instrumentType('ZZQ',ref(records)).status,'UNKNOWN');});
++for(const type of ['CS','WARRANT',null])test('actual watcher SEC wrapper checks type before transport: '+(type||'unknown'),async t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'instrument-call-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const r=type?ref([record(type)]):{},file=path.join(dir,'reference.json');if(r.bytes)fs.writeFileSync(file,r.bytes);let calls=0;const env={IG_INSTRUMENT_REFERENCE_FILE:file,IG_INSTRUMENT_REFERENCE_SHA256:r.pinnedSha256};const src=fs.readFileSync(new URL('../ignition-watch.mjs',import.meta.url),'utf8');const fn=src.match(/async function secRisk\(sym\) \{[^\n]+\}/)[0];const caller=Function('instrumentAwareSec','secRiskIssuer','env',fn+';return secRisk;')(instrumentAwareSec,async()=>{calls++;return {known:true,tags:[]};},env);const out=await caller('ZZQ');assert.equal(calls,type==='WARRANT'?0:1);assert.equal(out.policyExcluded===true,type==='WARRANT');assert.equal(out.admissionBlocked,type!=='CS');if(type==='WARRANT'){assert.match(hardReason({price:10,sec:out}),/instrument/);assert.ok(dEligible({sec:out}).why.some(x=>/instrument/.test(x)));assert.doesNotMatch(dEligible({sec:out}).why.join(';'),/SEC check failed/);}if(type===null){assert.equal(hardReason({price:10,sec:out}),null);assert.equal(out.admissionBlocked,true);assert.ok(!dEligible({sec:out}).why.some(x=>/instrument/.test(x)));}});
++test('unknown identity plus an actual SEC failure retains both facts',async()=>{const sec=await instrumentAwareSec('ZZQ',async()=>{throw Error('fixture');});assert.equal(sec.status,'SEC_UNAVAILABLE');assert.equal(sec.instrument.status,'UNKNOWN');assert.match(hardReason({price:10,sec}),/SEC check failed/);assert.equal(sec.sourceFailure,true);assert.equal(sec.admissionBlocked,true);});
++
++test('missing issuer mapping is blocked without inferring instrument type or a transport failure',async()=>{const sec=await instrumentAwareSec('ZZQ',async()=>({known:false,tags:[],status:'NO_ISSUER_RECORD',sourceFailure:false}));assert.equal(sec.instrument.status,'UNKNOWN');assert.equal(sec.status,'NO_ISSUER_RECORD');assert.equal(sec.sourceFailure,false);assert.match(hardReason({price:10,sec}),/NO_ISSUER_RECORD/);assert.doesNotMatch(dEligible({sec}).why.join(';'),/SEC check failed/);});
++
++test('actual issuer caller distinguishes missing mapping and preserves unreviewed registration blocks',async()=>{const source=fs.readFileSync(new URL('../ignition-watch.mjs',import.meta.url),'utf8'),body=source.slice(source.indexOf('async function secRiskIssuer('),source.indexOf('async function secRisk(sym)'));const make=request=>Function('request',"let TICK=null,secLogged=false;const SEC_WWW='https://www.sec.gov',SEC_DATA='https://data.sec.gov',SEC_UA='synthetic';"+body+';return secRiskIssuer;')(request);let calls=0;const missing=await make(async()=>{calls++;return {ok:true,json:async()=>({})};})('ZZQ');assert.equal(missing.status,'NO_ISSUER_RECORD');assert.equal(missing.sourceFailure,false);assert.equal(calls,1);const forms=['424B3','S-3','424B4','424B5','S-3ASR','F-1','F-1MEF','424B2','S-1/A','F-3'];const day=new Date().toISOString().slice(0,10);const caller=make(async url=>({ok:true,json:async()=>url.endsWith('company_tickers.json')?{one:{ticker:'ZZQ',cik_str:123}}:{filings:{recent:{form:forms,filingDate:forms.map(()=>day),items:[],accessionNumber:forms.map((_,i)=>'0000000123-26-00000'+i)}}}}));const risk=await caller('ZZQ');assert.equal(risk.known,true);assert.equal(risk.blockingFilings.length,forms.length);assert.ok(risk.blockingFilings.every(x=>x.economicClassification==='UNREVIEWED'&&x.blockUnchanged&&x.indexUrl));assert.match(hardReason({price:10,sec:risk}),/SEC danger/);});
+--- /dev/null
++++ b/test/watcher-resilience.test.mjs
+@@ -0,0 +1,12 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';import {spawn,spawnSync} from 'node:child_process';import {createWatcherMessages} from '../watcher-messages.mjs';
++test('publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct',t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'message-state-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));let allowed=false;const s=createWatcherMessages({day:'2026-10-30',directory:dir,retryMs:0,persist:(_,{record})=>({ok:allowed,record:allowed?record:undefined})});assert.equal(s.reserve('radar'),false);assert.equal(s.state('radar'),'UNSENT');allowed=true;assert.equal(s.reserve('radar'),true);s.finish('radar',{ok:true});assert.equal(s.state('radar'),'ACKNOWLEDGED');assert.equal(s.reserve('radar'),false);assert.equal(s.reserve('stop'),true);s.finish('stop',{ok:false});assert.equal(s.state('stop'),'UNCERTAIN');assert.equal(s.reserve('stop'),false);assert.equal(s.reserve('known-rejection'),true);s.finish('known-rejection',{ok:false,definitelyUnsent:true});assert.equal(s.state('known-rejection'),'UNSENT');assert.equal(s.reserve('known-rejection'),true);});
++if(process.env.INCIDENT_WATCHER_SRC)for(const scenario of ['moved','competing','refusal-retry','interrupted','uncertain','clear-rejection'])test('actual Actions watcher survives '+scenario,async t=>{const root=path.dirname(path.resolve(process.env.INCIDENT_WATCHER_SRC)),tmp=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-resilience-')),bare=path.join(tmp,'origin.git'),job=path.join(tmp,'job'),day='2026-10-30';t.after(()=>fs.rmSync(tmp,{recursive:true,force:true}));const git=(cwd,...args)=>{const x=spawnSync('git',args,{cwd,env:{PATH:process.env.PATH,HOME:tmp,GIT_AUTHOR_NAME:'fixture',GIT_AUTHOR_EMAIL:'fixture@example.test',GIT_COMMITTER_NAME:'fixture',GIT_COMMITTER_EMAIL:'fixture@example.test'},encoding:'utf8'});assert.equal(x.status,0,x.stderr);return x.stdout.trim();};git(tmp,'init','--bare','-b','main',bare);git(tmp,'clone',bare,job);for(const f of fs.readdirSync(root).filter(f=>f.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(job,f));fs.mkdirSync(path.join(job,'data'));fs.writeFileSync(path.join(job,'sentinel.mjs'),'// active source stays pinned\n');fs.writeFileSync(path.join(job,'data/ignition-live.json'),JSON.stringify({day,heartbeat:[{m:570,received:1,evaluated:1}]}));fs.writeFileSync(path.join(job,'data/my-positions.json'),JSON.stringify({ZZQ:{entry:10,stop:9}}));git(job,'add','.');git(job,'commit','-m','synthetic source and data');git(job,'push','-u','origin','main');const seed=git(job,'rev-parse','HEAD'),index=fs.readFileSync(path.join(job,'.git/index'));const other=path.join(tmp,'other');git(tmp,'clone','-b','main',bare,other);fs.writeFileSync(path.join(other,'sentinel.mjs'),'// unrelated remote revision must survive\n');git(other,'add','.');git(other,'commit','-m','unrelated remote advance');git(other,'push');let messages=[],snapshots=0,failTransport=true;const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{let out={};if(req.url.includes('/sendMessage')){messages.push(JSON.parse(body).text);if(scenario==='uncertain'&&failTransport){res.destroy();return;}if(scenario==='clear-rejection'&&failTransport){res.statusCode=429;out={ok:false};}else out={ok:true,result:{message_id:messages.length}};}else if(req.url.includes('/snapshot/')){snapshots++;out={tickers:[{ticker:'ZZQ',lastTrade:{p:8,t:Date.now()*1e6},prevDay:{c:10,v:1e6},day:{o:8,c:8,v:1e6}}]};}res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;const children=[];t.after(()=>children.forEach(x=>{if(x.exitCode===null)x.kill('SIGKILL');}));
++ const launch=(cwd,id,interrupt=false)=>{const child=spawn(process.execPath,['ignition-watch.mjs'],{cwd,env:{PATH:process.env.PATH,HOME:tmp,GITHUB_ACTIONS:'true',GITHUB_REF_NAME:'main',GITHUB_RUN_ID:id,MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:interrupt?'0':'1',IG_RUN_MIN:interrupt?'1':'0.3'},stdio:['ignore','pipe','pipe']});children.push(child);let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);const done=new Promise((resolve,reject)=>{child.on('error',reject);child.on('close',(code,signal)=>resolve({code,signal,text}));});return {child,done};};
++ if(scenario==='refusal-retry'||scenario==='interrupted')fs.writeFileSync(path.join(bare,'hooks/pre-receive'),'#!/bin/sh\nexit 1\n',{mode:0o755});
++ if(scenario==='interrupted'){const {child,done}=launch(job,'interrupt',true);await new Promise((resolve,reject)=>{const start=Date.now(),timer=setInterval(()=>{const f=path.join(job,'data/ignition-runs',day,'interrupt-1-progress.json');if(fs.existsSync(f)&&JSON.parse(fs.readFileSync(f)).heartbeat.length){clearInterval(timer);resolve();}else if(Date.now()-start>12000){clearInterval(timer);reject(Error('no progress archive'));}},20);});child.kill('SIGKILL');const result=await done;assert.equal(result.signal,'SIGKILL');assert.equal(messages.length,0);const progress=JSON.parse(fs.readFileSync(path.join(job,'data/ignition-runs',day,'interrupt-1-progress.json')));assert.ok(progress.heartbeat.length>=1);assert.ok(progress.messageDelivery.publicationFailures>0);}
++ else{const first=launch(job,'first');let second;if(scenario==='competing'){const job2=path.join(tmp,'job2');git(tmp,'clone','-b','main',bare,job2);second=launch(job2,'second');}const result=await first.done;assert.equal(result.code,0,result.text);if(second){const r=await second.done;assert.equal(r.code,0,r.text);}const archived=JSON.parse(fs.readFileSync(path.join(job,'data/ignition-runs',day,'first-1.json')));assert.ok(archived.heartbeat.length>0);assert.ok(snapshots>0);
++  if(scenario==='uncertain'){assert.equal(messages.length,2);const n=messages.length;const retry=await launch(job,'uncertain-retry').done;assert.equal(retry.code,0,retry.text);assert.equal(messages.length,n);}if(scenario==='clear-rejection'){assert.equal(messages.length,2);messages=[];failTransport=false;const retry=await launch(job,'clear-retry').done;assert.equal(retry.code,0,retry.text);}if(scenario==='refusal-retry'){assert.equal(messages.length,0);assert.ok(archived.messageDelivery.publicationFailures>0);fs.unlinkSync(path.join(bare,'hooks/pre-receive'));const retry=await launch(job,'retry').done;assert.equal(retry.code,0,retry.text);}
++  assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);assert.equal(messages.filter(x=>x.includes('OPPORTUNITY RADAR')).length,1);
++  const names=git(tmp,'--git-dir='+bare,'ls-tree','-r','--name-only','main','data/watcher-message-state').split('\n').filter(Boolean);assert.equal(names.length,2);for(const name of names)assert.equal(JSON.parse(git(tmp,'--git-dir='+bare,'show','main:'+name)).state,scenario==='uncertain'?'UNCERTAIN':'ACKNOWLEDGED');
++ }
++ assert.equal(git(job,'rev-parse','HEAD'),seed);assert.deepEqual(fs.readFileSync(path.join(job,'.git/index')),index);assert.equal(fs.readFileSync(path.join(job,'sentinel.mjs'),'utf8'),'// active source stays pinned\n');assert.equal(git(tmp,'--git-dir='+bare,'show','main:sentinel.mjs'),'// unrelated remote revision must survive');});
+--- /dev/null
++++ b/radar-ledger.mjs
+@@ -0,0 +1,23 @@
++// Append-only research identity; deliberately independent of Telegram delivery state.
++import fs from 'node:fs';
++import path from 'node:path';
++import {createHash} from 'node:crypto';
++import {execFileSync} from 'node:child_process';
++import {fileURLToPath} from 'node:url';
++const sha=b=>createHash('sha256').update(b).digest('hex');
++const canonical=x=>x&&typeof x==='object'?Array.isArray(x)?'['+x.map(canonical).join(',')+']':'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}':JSON.stringify(x);
++// No invented day/symbol enrollment rule. Missing source time cannot be merged safely.
++export function observationKey(r){return r?.type==='list'&&/^\d{4}-\d{2}-\d{2}$/.test(r.d)&&(Number.isFinite(r.at)||(typeof r.at==='string'&&/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(r.at)))&&['A','B'].includes(r.panel)&&typeof r.sym==='string'&&r.sym.length&&Number.isFinite(r.px)&&r.px>0?sha(canonical(r)):null;}
++export function radarLedgerView(rows){const seen=new Set(),out=[];let exactRepeats=0,unknownIdentity=0;for(const r of rows){const k=observationKey(r);if(r.type==='list'&&!k)unknownIdentity++;if(k&&seen.has(k)){exactRepeats++;continue;}if(k)seen.add(k);out.push(r);}return {rows:out,rawLists:rows.filter(r=>r.type==='list').length,logicalLists:out.filter(r=>r.type==='list').length,exactRepeats,unknownIdentity,version:'EXACT_REPEAT_CORRECTION_V1'};}
++export function readRadarLedger(file){if(!fs.existsSync(file))return [];const text=fs.readFileSync(file,'utf8');return text.split('\n').filter(x=>x.trim()).map(x=>JSON.parse(x));}
++function syncWrite(file,bytes,flags='w'){const fd=fs.openSync(file,flags);try{fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}
++function syncDir(dir){const fd=fs.openSync(dir,'r');try{fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}
++// flock releases on interruption. A durable intent permits ONLY completion of a known
++// append prefix; neither recovery nor correction truncates/replaces ledger bytes.
++function lockedAppend(file,rows){const pending=file+'.pending.json',dir=path.dirname(file);fs.mkdirSync(dir,{recursive:true});
++ const recover=()=>{if(!fs.existsSync(pending))return;const p=JSON.parse(fs.readFileSync(pending,'utf8')),b=fs.existsSync(file)?fs.readFileSync(file):Buffer.alloc(0),addition=Buffer.from(p.append,'base64');if(p.version!==1||!Number.isSafeInteger(p.size)||p.size<0||b.length<p.size||sha(b.subarray(0,p.size))!==p.prefix||b.length>p.size+addition.length||!b.subarray(p.size).equals(addition.subarray(0,b.length-p.size)))throw Error('radar pending append conflicts with preserved ledger; manual evidence review required');if(b.length<p.size+addition.length)syncWrite(file,addition.subarray(b.length-p.size),'a');else {const fd=fs.openSync(file,'r');try{fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}fs.unlinkSync(pending);syncDir(dir);};
++ recover();const existing=readRadarLedger(file),seen=new Set(existing.map(observationKey).filter(Boolean)),fresh=[];for(const row of rows){const k=observationKey(row);if(row.type==='list'&&!k)throw Error('new radar observation missing complete identity');if(k&&seen.has(k))continue;if(k)seen.add(k);fresh.push(row);}if(!fresh.length)return {appended:0};
++ const before=fs.existsSync(file)?fs.readFileSync(file):Buffer.alloc(0);if(before.length&&before[before.length-1]!==10)throw Error('unterminated ledger without recoverable intent; preserving original bytes');const append=Buffer.from(fresh.map(x=>JSON.stringify(x)).join('\n')+'\n'),intent={version:1,size:before.length,prefix:sha(before),append:append.toString('base64')};
++ const temp=pending+'.tmp';syncWrite(temp,JSON.stringify(intent)+'\n');fs.renameSync(temp,pending);syncDir(dir);recover();return {appended:fresh.length};}
++export function appendRadarRows(file,rows){file=path.resolve(file);fs.mkdirSync(path.dirname(file),{recursive:true});const lock=file+'.lock';return JSON.parse(execFileSync('flock',['--exclusive','--wait','5',lock,process.execPath,fileURLToPath(import.meta.url),'--append',file],{input:JSON.stringify(rows),encoding:'utf8',timeout:15000,stdio:['pipe','pipe','pipe']}));}
++if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)&&process.argv[2]==='--append'){try{const rows=JSON.parse(fs.readFileSync(0,'utf8'));if(!Array.isArray(rows))throw Error('rows must be an array');console.log(JSON.stringify(lockedAppend(process.argv[3],rows)));}catch(e){console.error('radar ledger append refused: '+e.message);process.exitCode=1;}}
+--- /dev/null
++++ b/test/radar-ledger.test.mjs
+@@ -0,0 +1,26 @@
++import {test} from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
++import {execFile,execFileSync} from 'node:child_process';import {promisify} from 'node:util';import {createHash} from 'node:crypto';
++import {appendRadarRows,readRadarLedger,radarLedgerView} from '../radar-ledger.mjs';import {scoreboard} from '../radar-v3-core.mjs';
++const exec=promisify(execFile),root=path.resolve(import.meta.dirname,'..'),row={type:'list',d:'2026-10-30',at:'11:15',panel:'B',sym:'ZZQ',px:10,rule:'IG1'},sha=b=>createHash('sha256').update(b).digest('hex');
++const fixture=()=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'radar-idempotency-'));return {dir,file:path.join(dir,'ledger.jsonl')};};
++test('exact payload only: distinct time/panel/rule/price retained, unknown identity not merged',()=>{const variants=[row,{...row,at:'11:16'},{...row,panel:'A'},{...row,rule:'IG2'},{...row,px:11}],unknown={...row,at:undefined},v=radarLedgerView([...variants,{...row},unknown,unknown]);assert.equal(v.logicalLists,7);assert.equal(v.exactRepeats,1);assert.equal(v.unknownIdentity,2);});
++test('retry after process restart preserves bytes',()=>{const {dir,file}=fixture();try{appendRadarRows(file,[row]);const original=fs.readFileSync(file);execFileSync(process.execPath,[path.join(root,'radar-ledger.mjs'),'--append',file],{input:JSON.stringify([row])});assert.deepEqual(fs.readFileSync(file),original);}finally{fs.rmSync(dir,{recursive:true,force:true});}});
++test('six independent writers append one logical observation',async()=>{const {dir,file}=fixture();try{const script=path.join(dir,'writer.mjs');fs.writeFileSync(script,`import {appendRadarRows} from ${JSON.stringify('file://'+path.join(root,'radar-ledger.mjs'))};appendRadarRows(process.argv[2],JSON.parse(process.argv[3]));`);await Promise.all(Array.from({length:6},()=>exec(process.execPath,[script,file,JSON.stringify([row])])));assert.equal(readRadarLedger(file).length,1);}finally{fs.rmSync(dir,{recursive:true,force:true});}});
++for(const cut of [0,1,20,99,10000])test('pending append recovery at prefix '+cut+' preserves original bytes',()=>{const {dir,file}=fixture();try{const before=Buffer.from('{"type":"preserved","evidence":"original"}\n'),addition=Buffer.from(JSON.stringify(row)+'\n');fs.writeFileSync(file,Buffer.concat([before,addition.subarray(0,cut)]));fs.writeFileSync(file+'.pending.json',JSON.stringify({version:1,size:before.length,prefix:sha(before),append:addition.toString('base64')}));appendRadarRows(file,[row]);assert.deepEqual(fs.readFileSync(file),Buffer.concat([before,addition]));assert.equal(fs.existsSync(file+'.pending.json'),false);}finally{fs.rmSync(dir,{recursive:true,force:true});}});
++test('malformed unjournaled bytes preserved and refused',()=>{const {dir,file}=fixture();try{fs.writeFileSync(file,'{"broken":');const bytes=fs.readFileSync(file);assert.throws(()=>appendRadarRows(file,[row]));assert.deepEqual(fs.readFileSync(file),bytes);}finally{fs.rmSync(dir,{recursive:true,force:true});}});
++test('raw and corrected frozen scorecard remain separate',()=>{const rows=[row,{...row},{type:'close',d:row.d,sym:row.sym,px:11}];const raw=scoreboard(rows),v=radarLedgerView(rows),corrected=scoreboard(v.rows);assert.equal(v.rawLists,2);assert.equal(v.logicalLists,1);assert.equal(v.exactRepeats,1);assert.equal(raw.panels.B.n,2);assert.equal(corrected.panels.B.n,1);});
++import http from 'node:http';
++test('actual radar caller: rejection/retry, concurrent restarts, partial recovery and scored counts',async()=>{const {dir}=fixture();fs.mkdirSync(path.join(dir,'data'));for(const f of fs.readdirSync(root).filter(x=>x.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(dir,f));const day=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'}),snap={day,at:'11:15',mode:'live',firstMinute:'09:30',scanned:100,live:90,alerts:0,mkt:.001,tally:{},sec:{ZZQ:{known:true,tags:[]},ZZR:{known:true,tags:[]}},cat:{},movers:[],hits:[{sym:'ZZQ',rule:'IG1',m:600,price:10}],early:[{sym:'ZZR',change:.06,rvT:3,price:12,score:90,firstMinute:'10:05'}],now:{ZZQ:{px:10.5,chg:.05},ZZR:{px:12.2,chg:.07}}};fs.writeFileSync(path.join(dir,'data/radar-v3-snap.json'),JSON.stringify(snap));let calls=0;const bodies=[],server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{calls++;bodies.push(b);if(calls===1){res.writeHead(400);res.end(JSON.stringify({ok:false,error_code:400}));}else res.end(JSON.stringify({ok:true,result:{message_id:calls}}));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));const env={PATH:process.env.PATH,TG_BASE:'http://127.0.0.1:'+server.address().port,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_RADAR_RESERVED:'1'},run=mode=>exec(process.execPath,['opportunity-radar.mjs',mode],{cwd:dir,env}),file=path.join(dir,'data/radar-v3-ledger.jsonl');try{const first=await run('midday');assert.match(first.stdout,/"definitelyUnsent":true/);const before=fs.readFileSync(file);assert.equal(readRadarLedger(file).length,2);await Promise.all([run('midday'),run('midday'),run('midday')]);assert.deepEqual(fs.readFileSync(file),before);
++// Synthetic interruption with durable intent and a partial append; rerun actual caller.
++const rows=readRadarLedger(file),append=Buffer.from(JSON.stringify(rows[1])+'\n'),prefix=Buffer.from(JSON.stringify(rows[0])+'\n');fs.writeFileSync(file,Buffer.concat([prefix,append.subarray(0,20)]));fs.writeFileSync(file+'.pending.json',JSON.stringify({version:1,size:prefix.length,prefix:sha(prefix),append:append.toString('base64')}));await run('midday');assert.deepEqual(fs.readFileSync(file),before);
++const closeRows=rows.map(r=>({type:'close',d:r.d,sym:r.sym,px:r.px*1.1,mkt:.01}));fs.appendFileSync(file,closeRows.map(r=>JSON.stringify(r)).join('\n')+'\n');assert.equal(scoreboard(readRadarLedger(file)).panels.B.n,1);assert.equal(scoreboard(readRadarLedger(file)).panels.A.n,1);await run('close');assert.match(bodies.join('\n'),/logical listed 2/);assert.match(bodies.join('\n'),/EXACT_REPEAT_CORRECTION_V1/);
++// Corrupt unrelated bytes: do not send or overwrite evidence.
++fs.appendFileSync(file,'{bad');const preserved=fs.readFileSync(file),n=calls,refused=await run('midday');assert.match(refused.stdout,/"definitelyUnsent":true/);assert.equal(calls,n);assert.deepEqual(fs.readFileSync(file),preserved);
++}finally{server.close();fs.rmSync(dir,{recursive:true,force:true});}});
++test('actual caller write-boundary failures and killed worker recover without duplicate research',async()=>{for(const boundary of ['intent','publish-intent','partial-append','after-append','before-unlink','after-unlink']){const {dir}=fixture();try{fs.mkdirSync(path.join(dir,'data'));for(const f of fs.readdirSync(root).filter(x=>x.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(dir,f));const day=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});fs.writeFileSync(path.join(dir,'data/radar-v3-snap.json'),JSON.stringify({day,at:'11:15',mode:'live',scanned:1,live:1,tally:{},sec:{ZZQ:{known:true,tags:[]}},hits:[{sym:'ZZQ',rule:'IG1',m:600,price:10}],early:[],now:{ZZQ:{px:10.5,chg:.05}}}));
++// Inject into the real ledger worker, not the caller's business logic. No production test flag.
++const preload=path.join(dir,'fault.mjs');fs.writeFileSync(preload,`import fs from 'node:fs';if(process.argv[2]==='--append'){const boundary=${JSON.stringify(boundary)},fds=new Map(),open=fs.openSync,write=fs.writeFileSync,rename=fs.renameSync,unlink=fs.unlinkSync;fs.openSync=(p,...a)=>{const fd=open(p,...a);fds.set(fd,String(p));return fd;};fs.writeFileSync=(fd,b,...a)=>{const p=fds.get(fd)||String(fd);if(boundary==='intent'&&p.endsWith('.pending.json.tmp'))throw Error('injected intent');if(p.endsWith('radar-v3-ledger.jsonl')){if(boundary==='partial-append'){write(fd,Buffer.from(b).subarray(0,17),...a);process.kill(process.pid,'SIGKILL');}write(fd,b,...a);if(boundary==='after-append')throw Error('injected after append');return;}return write(fd,b,...a);};fs.renameSync=(a,b)=>{rename(a,b);if(boundary==='publish-intent'&&String(b).endsWith('.pending.json'))throw Error('injected published intent');};fs.unlinkSync=p=>{if(String(p).endsWith('.pending.json')){if(boundary==='before-unlink')throw Error('injected before unlink');unlink(p);if(boundary==='after-unlink')throw Error('injected after unlink');return;}return unlink(p);};}`);
++const env={PATH:process.env.PATH,IG_RADAR_RESERVED:'1'},first=await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env:{...env,NODE_OPTIONS:'--import='+preload}});assert.match(first.stdout,/"definitelyUnsent":true/,boundary);await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env});const file=path.join(dir,'data/radar-v3-ledger.jsonl');assert.equal(readRadarLedger(file).filter(x=>x.type==='list').length,1,boundary);const before=fs.readFileSync(file);await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env});assert.deepEqual(fs.readFileSync(file),before,boundary);
++}finally{fs.rmSync(dir,{recursive:true,force:true});}}});

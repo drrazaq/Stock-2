@@ -1,3 +1,4 @@
+import {resolveZad} from './zad-compliance.mjs';
 // DAILY OPPORTUNITY RADAR (V3.0, owner approved 28 Oct 2026: "do 1, 2, 3"). Pure functions, no network, no files; opportunity-radar.mjs
 // reads and writes. Research and routing only: it adds NO buy rule, lowers NO gate and places NO order.
 // WHY: the audit (docs/v3-opportunity-audit-2026-10-28.md) found the system SAW the day's runners (BRAI, AEYE, OWLS on 27 Oct) but the
@@ -39,11 +40,7 @@ export function blockOf(sym, price, ctx = {}) {
 }
 // ZAD marks, same merge as scan.mjs HALALM: the ZAD list fills in, the owner's own mark wins when newer, a mark older than 90 days expires
 export function halalMap(zad, marks = {}, now = Date.now()) {
-  const m = {}, d = zad && (zad.effective || zad.received);
-  if (zad) { for (const s of zad.notHalal || []) m[s] = { s: 'fail', d }; for (const s of [...(zad.halalAgain || []), ...(zad.newHalal || [])]) m[s] = { s: 'ok', d }; }
-  for (const [k, v] of Object.entries(marks || {})) if (!m[k] || !v.d || v.d >= m[k].d) m[k] = v;
-  const out = {}; for (const [k, v] of Object.entries(m)) if (v && (v.s === 'ok' || v.s === 'fail') && v.d && now - Date.parse(v.d) <= 90 * 86400000) out[k] = v.s;
-  return out;
+  return Object.fromEntries(Object.entries(resolveZad(marks,zad,now).marks).filter(([,v])=>v.s==='ok'||v.s==='fail').map(([s,v])=>[s,v.s]));
 }
 export const halalWord =(sym, ctx = {}) => ((ctx.halal || {})[sym] === 'ok' ? 'halal (your ZAD mark)' : 'HALAL UNKNOWN: check ZAD first');
 export function catalystOf(sym, ctx = {}) {
@@ -58,7 +55,7 @@ export const CODE_WORDS = {
   ALERTED: 'alerted', UNDER_1_USD: 'under 1 USD (hard rule)', SEC_CHECK_UNAVAILABLE: 'SEC check failed (safety block)', SEC_BLOCKED: 'SEC danger filing (safety block)',
   NOT_HALAL: 'NOT HALAL (ZAD)', LOTTERY_AVOID: 'on the one-day-jump AVOID list', ALERT_CAP_REACHED: 'daily alert cap reached', NO_LIVE_PRICE_AT_SIGNAL: 'no fresh price at the signal',
   VOLUME_FIGURE_LATE: 'volume figure late (data)', CAUGHT_PAPER_GATE_NOT_MET: 'a rule caught it; paper record not strong enough (promotion gate)',
-  CAUGHT_RULE_NOT_PASSED: 'a rule caught it; rule failed its 5-year test (promotion gate)', GAPPED_AT_OPEN: 'gapped up before the open (timing)',
+  CAUGHT_RULE_NOT_PASSED: 'a rule caught it; rule failed its minute-bar history verdict (promotion gate)', GAPPED_AT_OPEN: 'gapped up before the open (timing)',
   NOT_VISIBLE_LIVE: 'never had a fresh price (data)', VISIBLE_TOO_LATE: 'first fresh price came after +25% (data)', NO_VOLUME_HISTORY: 'no volume history',
   AFTER_11_00: 'move came after 11:00 New York (rule window)', LOW_VOLUME: 'volume too low for the rules', NO_RULE_FIT: 'no rule fits this shape',
 };
@@ -71,11 +68,11 @@ export function topSilence(tally = {}) {
   return { code: e[0][0], n: e[0][1], kind: SILENCE_KIND[e[0][0]] || 'other', words: (CODE_WORDS[e[0][0]] || e[0][0]).replace(/ \([^)]*\)$/, '') };   // the kind is said separately
 }
 
-// closest rule to approval: the best positive live paper record, with its 5-year history verdict (lab) and what is still missing
+// closest rule to approval: the best positive live paper record, with its minute-bar history verdict (lab) and what is still missing
 export function closestRule(record = {}, lab = {}) {
   const c = Object.entries(record).filter(([k, r]) => /\/close$/.test(k) && r && r.n > 0 && r.avg > 0).sort((a, b) => b[1].n * b[1].avg - a[1].n * a[1].avg)[0];
   if (!c) return null; const [k, r] = c, rule = k.split('/')[0], hv = ((lab[k] || {}).verdict) || 'not tested', miss = [];
-  if (hv !== 'PROMISING') miss.push('its 5-year history test (' + hv + ')'); if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
+  if (hv !== 'PROMISING') miss.push('its minute-bar history test (' + hv + ')'); if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
   if (!(r.stress > 0)) miss.push('a profit at the stress cost');
   return { rule, n: r.n, days: r.days || 0, avg: r.avg, stress: r.stress, history: hv, missing: miss };
 }
@@ -110,7 +107,7 @@ export function buildMidday(snap, ctx0 = {}) {
   text.push('', 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED + ')' + (B.length ? ':' : ': none before 11:00.'));
   for (const x of B.slice(0, 5)) { const { h, r, hv, n } = x;
     text.push('- ' + h.sym + ': ' + h.rule + ' at ' + fm(h.m) + ' ' + usd(h.price) + (n.px > 0 ? ', now ' + usd(n.px) + ' (' + pct(n.px / h.price - 1) + ' since)' : '') + '. ' + halalWord(h.sym, ctx) + '.',
-      '  Rule record: ' + (r ? r.n + ' paper trades on ' + (r.days || 0) + ' days, ' + pct(r.avg, 1) + ' a trade after costs' : 'no paper record yet') + '; 5-year test ' + hv + '.',
+      '  Rule record: ' + (r ? r.n + ' paper trades on ' + (r.days || 0) + ' days, ' + pct(r.avg, 1) + ' a trade after costs' : 'no paper record yet') + '; minute-bar history verdict ' + hv + '.',
       '  For +2% net on 1,000 USD it needs ' + pct(netHurdle(h.price), 1) + ' gross. ' + catalystOf(h.sym, ctx) + '.');
     rows.push({ type: 'list', d: snap.day, at: snap.at, panel: 'B', sym: h.sym, px: n.px > 0 ? n.px : h.price, rule: h.rule }); }
   // A: early-wave observations not already in B, not extended (+2% to +20% now), not blocked
@@ -126,12 +123,12 @@ export function buildMidday(snap, ctx0 = {}) {
   if (blocked.length) text.push('BLOCKED by hard rules (not leads): ' + blocked.slice(0, 6).join('; ') + (blocked.length > 6 ? '; +' + (blocked.length - 6) + ' more' : '') + '.');
   // C
   const cr = closestRule(ctx.record, ctx.lab);
-  text.push('', 'C. APPROVED SIGNALS: ' + (snap.alerts > 0 ? snap.alerts + ' tested alert' + (snap.alerts > 1 ? 's' : '') + ' sent today (see those messages).' : '0 so far today.'));
+  text.push('', 'C. SIGNAL DELIVERY HISTORY: ' + (Number.isInteger(snap.alerts)&&snap.alerts>=0?snap.alerts:'unknown') + ' watcher messages reported today. This may include early paper alerts; cached counts are not current purchase or ZAD approval.');
   if (!(snap.alerts > 0) && cr) text.push('  Closest: ' + cr.rule + ' (' + cr.n + ' paper trades on ' + cr.days + ' days, ' + pct(cr.avg, 1) + ' a trade). Missing: ' + cr.missing.join('; ') + '.');
   // D
   text.push('', 'D. RUNNERS SO FAR (retrospective, not buys)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers));
   const ts = topSilence(snap.tally);
-  text.push('', 'Scanned ' + (snap.scanned ?? '?') + ' stocks (' + (snap.live ?? '?') + ' with a fresh price). 15%+ movers: ' + (snap.movers || []).length + '. Rule hits: ' + (snap.hits || []).length + '. Approved: ' + (snap.alerts || 0) + '.'
+  text.push('', 'Received ' + (snap.scanned ?? '?') + ' stocks (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '. Approved: ' + (snap.alerts || 0) + '.'
     + (ts ? ' Top reason for silence: ' + ts.words + ' (' + ts.n + ', ' + ts.kind + ').' : ''));
   text.push('Chasing: stocks already up 20%+ when first seen fell a median 19% to the close (469 cases, 14-27 Oct). Check ZAD. Research only, not advice.');
   return { text: text.join('\n'), rows };
@@ -166,12 +163,12 @@ export function buildClose(day, live, ledger = [], ctx = {}) {
       text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
     text.push('', 'D. RUNNERS WE MISSED TODAY (retrospective, not buys):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true));
     const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
-    text.push('', 'C. APPROVED SIGNALS today: ' + (live.alerts || 0) + '. Tested buys for the next session come in ACTIONS tonight.');
+    text.push('', 'C. SIGNAL DELIVERY HISTORY today: ' + (Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown') + '. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.');
   }
   const sb = scoreboard(ledger), P = sb.panels;
   text.push('', 'RADAR SCORECARD (' + sb.sessions + ' session' + (sb.sessions === 1 ? '' : 's') + '; verdict after 10):');
   for (const k of ['A', 'B']) { const p = P[k]; text.push('- ' + k + ': ' + (p && p.n ? p.n + ' lines, same day ' + pct(p.avgNet, 1) + ' net on average, ' + Math.round(p.win * 100) + '% positive' + (p.beatMkt !== null ? ', ' + Math.round(p.beatMkt * 100) + '% beat the average stock' : '') : 'no scored lines yet')
     + (p && p.n5 ? '; 5 sessions ' + pct(p.avgNet5, 1) + ', ' + Math.round(p.beatSpy5 * 100) + '% beat SPY' : '')); }
-  text.push('Nothing here is an approved buy unless it says APPROVED. Research only, not advice.');
+  text.push('Nothing in this research summary is a current approved purchase. Cached delivery history is not authorization. Research only, not advice.');
   return text.join('\n');
 }

@@ -1,0 +1,496 @@
+{
+  "status": "NO_GO_OLD_COLLECTOR_DELAYED_NOT_REALTIME_REVISED_PLAN_AND_DATED_APPROVAL_REQUIRED",
+  "reportDate": "2026-10-29",
+  "developmentBase": "2c0a557050c862daca89c58ea672e3cf98d26350",
+  "collectionSource": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
+  "candidateSession": {
+    "date": "2026-10-30",
+    "dispatchNY": "03:55 EDT",
+    "dispatchUTC": "07:55",
+    "dispatchKuwait": "10:55",
+    "collectionNY": "04:00–09:30 EDT",
+    "collectionUTC": "08:00–13:30",
+    "collectionKuwait": "11:00–16:30",
+    "expiryUTC": "2026-10-30T13:35:00Z",
+    "earliestApprovalUTC": "2026-10-29T13:35:00Z",
+    "authorizationIssued": false
+  },
+  "encryption": {
+    "existingBindingUsable": "PASSED_NON_SENSITIVE_GITHUB_CHALLENGE",
+    "ownerRecoveryCopy": "VERIFIED: owner saved copy independently decrypted actual GitHub artifact",
+    "realKeyTestPerformed": true,
+    "workspaceCredentialBindings": 0,
+    "fixtureCryptoAndRecovery": "PASS; does not prove the existing key",
+    "secretValueReadPrintedOrChanged": false,
+    "bindingName": "RESEARCH_ARTIFACT_KEY",
+    "legacyPrivateKey": "NOT_READ_NOT_ROTATED_NOT_EXPORTED",
+    "ownerOfflineDecryption": "VERIFIED_OWNER_CONFIRMED",
+    "keyRecoveryVerified": true,
+    "ownerRecoveryConfirmation": {
+      "status": "VERIFIED",
+      "basis": "OWNER_CONFIRMED_INDEPENDENT_OFFLINE_DECRYPTION_OF_ACTUAL_GITHUB_ARTIFACT",
+      "reportedDate": "2026-10-29",
+      "device": "iPad iSH",
+      "runId": 40834596544,
+      "runAttempt": 1,
+      "artifactId": 12879798326,
+      "authenticated": true,
+      "challengeMatched": true,
+      "files": 1,
+      "recoveryStatus": "AUTHENTICATED_CHALLENGE_ONLY",
+      "sourceSha": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
+      "secretsShared": false,
+      "collectionAuthorized": false
+    }
+  },
+  "workflow": {
+    "installed": false,
+    "reviewedBaselineSha256": "548ee15e3879696c228bd3ea6ca3e43b9e21c3d94714823a19fd5a09aa60f62b",
+    "preflightRevisionSha256": "94824b7bf9cfab2d3862a73be107c405f16ef21059a65edf370eefbe9bcd34fa",
+    "baselineUnchanged": false,
+    "revisionApproved": false,
+    "corePinUnchanged": true,
+    "currentDormantProposalSha256": "b4807b68247ce6e873c1f549f0ecf44410484aa3eaf8cf712f8b6acb09e3547e",
+    "reasonForChange": "Separate research binding retained; malformed acceptance evidence fails closed; main/manual-only guard. Exact revised wrapper requires separate owner approval.",
+    "currentDormantProposalFrom4cPreserved": true
+  },
+  "production": {
+    "mainObserved": "c1991e71a79713cbdbb28f123eb500081c7c96c2",
+    "existingWorkflowsReviewed": 77,
+    "existingProductionFilesChanged": 0,
+    "installationWouldTrigger": [
+      "Existing secret-free Tests push CI only"
+    ],
+    "tradingBindings": [],
+    "phaseABindingsProposed": [
+      "MASSIVE_KEY (collection only)",
+      "FINNHUB_KEY (collection only)",
+      "RESEARCH_ARTIFACT_KEY (preflight and sealer only; PRIVATE_KEY is merely the pinned CLI local alias, never legacy GitHub secret)"
+    ],
+    "workflowRunDownstream": []
+  },
+  "limits": {
+    "providerRequests": 420,
+    "cycles": 330,
+    "compressedCycleBytes": 67108864,
+    "sealedBytes": 100663296,
+    "jobTimeoutMinutes": 360,
+    "revisedSoftTimeoutMinutes": 340,
+    "singleAttempt": "Revised non-active wrapper: first dated run only; attempts2+ and later dispatches rejected; run history must be complete and retained",
+    "recurringSchedule": false,
+    "hardKillArtifactRecovery": "NOT_GUARANTEED; no checkpoint substitution for pinned source"
+  },
+  "recovery": {
+    "runbook": "docs/validation/phase-a-recovery-runbook.md",
+    "offlineTools": [
+      "tools/recover-research-artifact.mjs",
+      "tools/recover-research-artifact.py",
+      "tools/recover-phase-a.py (Python3.9+, no Node; full Phase A artifacts)"
+    ],
+    "wrongKeyAndTamperingFailBeforeOutput": true,
+    "partialEvidenceAlwaysLabelledIncomplete": true,
+    "retentionDays": 3
+  },
+  "actionsPerformed": {
+    "phaseAInstalled": false,
+    "phaseADispatched": false,
+    "keyProofInstalled": true,
+    "keyProofTriggered": true,
+    "providerRequests": 21,
+    "telegram": 0,
+    "orders": 0,
+    "merge": false,
+    "servicesPurchased": false,
+    "phaseAProviderRequests": 0,
+    "standaloneDiagnosticRequests": 21,
+    "authorizedAlpacaAuditGETs": 11,
+    "authorizedDiagnosticRepeatGETs": 5,
+    "requestAccounting": "Engineering diagnostics: prior automatic5GET + authorized repeat5GET + authorized Alpaca audit11GET. Phase A0GET. Excludes unrelated existing production schedules."
+  },
+  "acceptance": {
+    "complete": 22,
+    "total": 40,
+    "percent": 55,
+    "remaining": 18
+  },
+  "nextRequirement": "Original collector cannot validate real-time premarket discovery. Review new hybrid implementation, exact source/workflow/limits and evidence prerequisites before separate dated approval; current revised proposal is design-only, not installable.",
+  "concurrentCommitPreserved": "4c919aaa6fcbd9b3b4810c9a65c70f7953940960",
+  "tests": {
+    "fullPassed": 1300,
+    "failed": 0,
+    "skipped": 0,
+    "targetedPreflightRecoveryPassed": 6,
+    "concurrentBindingTestsPreserved": 2,
+    "pythonRecoveryPassed": 22,
+    "hosted": {
+      "nodeFiles": 151,
+      "nodeTAPTests": 1298,
+      "standaloneAssertionScripts": 2,
+      "pythonUniqueTests": 22,
+      "pythonMatrixJobs": 6
+    }
+  },
+  "verifiedEngineeringCommit": "f65686fb7634d37010fc64e232383570503a5c01",
+  "remoteCI": [
+    {
+      "name": "fixture-close",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846948192/job/123356780583",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "research-fixtures",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846958508/job/123356694232",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "offline-recovery (3.9.16, 3.3.2)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846958411/job/123356694150",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "offline-recovery (3.12, 46.0.3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846958411/job/123356693864",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "test",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846958420/job/123356693701",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "offline-recovery (3.9.16, 46.0.3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846958411/job/123356693626",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "offline-recovery (3.12, 46.0.3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846948312/job/123356658340",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "offline-recovery (3.9.16, 3.3.2)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846948312/job/123356658301",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "offline-recovery (3.9.16, 46.0.3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846948312/job/123356658225",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "safety",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846948192/job/123356657726",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "fixture-open",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846948192/job/123356657466",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    },
+    {
+      "name": "test",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40846948223/job/123356657459",
+      "sha": "f65686fb7634d37010fc64e232383570503a5c01"
+    }
+  ],
+  "runtimeIntegrity": {
+    "pinnedSource": "7dd702d5d2ed3578f7558bc4f7fcc211f3619669",
+    "head": "f65686fb7634d37010fc64e232383570503a5c01",
+    "identicalRuntimeBlobs": 9,
+    "activeWorkflowChanges": 1,
+    "phaseAInstalled": false,
+    "keyProofInstalled": true,
+    "scope": "Secret-free branch Python fixture workflow only; no production workflow changes"
+  },
+  "keyProofRun": {
+    "id": 40834596544,
+    "attempt": 1,
+    "event": "push",
+    "conclusion": "success",
+    "url": "https://github.com/drrazaq/Stock-2/actions/runs/40834596544"
+  },
+  "keyProofArtifact": {
+    "id": 12879798326,
+    "name": "phase-a-key-proof-40834596544-1",
+    "url": "https://github.com/drrazaq/Stock-2/actions/runs/40834596544/artifacts/12879798326",
+    "sizeBytes": 348,
+    "createdAt": "2026-10-29T07:18:44Z",
+    "expiresAt": "2026-11-01T07:18:43Z",
+    "retentionDays": 3,
+    "githubReportedDigest": "sha256:2ee46a7fe6896e34f899be793043a5ef36b0240e2cc8924c6fd78f72a14ebff8",
+    "expectedFile": "key-check.txt.enc"
+  },
+  "remainingConditions": [
+    "Owner review/approval of exact revised workflow hash",
+    "Dated approval issued at/after2026-10-29T13:35:00Z",
+    "Recheck default branch trigger inventory and deployed byte identity immediately before authorized installation/dispatch",
+    "Available artifact quota and provider entitlements established only by authorized collection; no purchase",
+    "Accept documented hard-cancellation/upload-loss limitations; no silent source replacement"
+  ],
+  "residualLimits": [
+    "Pinned source has no encrypted intermediate uploads; hard cancel/runner loss can lose all unuploaded evidence",
+    "64MiB applies to compressed cycles; not a raw HTTP response or total runner RAM limit",
+    "Freshness denominator is received symbols, not a verified tradable universe",
+    "One-shot consumption relies on retained exhaustive GitHub run history; never delete runs to bypass it",
+    "Full iSH Phase A recovery tested on Python3.9.16 fixture sets, not yet on a live collection artifact"
+  ],
+  "providerDiagnostic": {
+    "sourceCommit": "d99312477048ff7c0820ccb36ea19d9ac380e8da",
+    "runId": 40859412224,
+    "url": "https://github.com/drrazaq/Stock-2/actions/runs/40859412224",
+    "report": {
+      "kind": "READ_ONLY_PROVIDER_PROBE",
+      "observedAt": "2026-10-29T10:40:40.006Z",
+      "session": {
+        "day": "2026-10-29",
+        "minute": 400,
+        "state": "PREMARKET"
+      },
+      "results": [
+        {
+          "provider": "MASSIVE_SNAPSHOT",
+          "httpStatus": 200,
+          "latencyMs": 182,
+          "rateLimit": {
+            "limit": null,
+            "remaining": null,
+            "reset": null
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 13238,
+          "fresh": 0,
+          "unknownTimestamp": 10751,
+          "futureTimestamp": 0,
+          "freshPct": 0,
+          "priceAgeP95Min": 158.66676666666666
+        },
+        {
+          "provider": "ALPACA_SIP",
+          "httpStatus": 200,
+          "latencyMs": 44,
+          "rateLimit": {
+            "limit": 10000,
+            "remaining": 9999,
+            "reset": 1793270440
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 3,
+          "fresh": 2,
+          "unknownTimestamp": 0,
+          "futureTimestamp": 0,
+          "freshPct": 66.67,
+          "priceAgeP95Min": 17.158466666666666,
+          "requestedSymbols": 3,
+          "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+        },
+        {
+          "provider": "ALPACA_IEX",
+          "httpStatus": 200,
+          "latencyMs": 9,
+          "rateLimit": {
+            "limit": 10000,
+            "remaining": 9999,
+            "reset": 1793270440
+          },
+          "status": "RESPONSE_OBSERVED",
+          "received": 3,
+          "fresh": 0,
+          "unknownTimestamp": 0,
+          "futureTimestamp": 0,
+          "freshPct": 0,
+          "priceAgeP95Min": 880.72125,
+          "requestedSymbols": 3,
+          "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+        },
+        {
+          "provider": "FINNHUB_GENERAL_NEWS",
+          "httpStatus": 200,
+          "latencyMs": 205,
+          "rateLimit": {
+            "limit": 60,
+            "remaining": 59,
+            "reset": 1793270500
+          },
+          "status": "RESPONSE_OBSERVED",
+          "records": 100,
+          "knownPublicationTimestamp": 100
+        },
+        {
+          "provider": "SEC_TICKER_MAP",
+          "httpStatus": 200,
+          "latencyMs": 57,
+          "rateLimit": {
+            "limit": null,
+            "remaining": null,
+            "reset": null
+          },
+          "status": "RESPONSE_OBSERVED",
+          "records": 10430
+        }
+      ],
+      "claims": {
+        "accountPlan": "NOT_INFERRED",
+        "tradableUniverseCoverage": "NOT_ESTABLISHED",
+        "executionFills": "NOT_TESTED",
+        "profitability": "NOT_TESTED"
+      },
+      "note": "HTTP status/targeted freshness are observations, not evidence of full-session or premarket entitlement. Outside-session old trades do not alone establish an outage. No raw payloads or credentials retained."
+    },
+    "triggerCorrection": "Existing push-on-source-change diagnostic ran automatically; all push triggers removed inc4018c9; no manual dispatch or Phase A run",
+    "conclusion": "MASSIVE_SNAPSHOT 0/13238 fresh vs targeted SIP2/3 at06:40EDT; provider cause/permissions/delay/schema unresolved, no full-session inference"
+  },
+  "providerPlanOwnerConfirmation": {
+    "provider": "Massive",
+    "plan": "Stocks Starter",
+    "delayMinutes": 15,
+    "monthlyUSD": 29,
+    "historyYears": 5,
+    "unlimitedUnderPlanTerms": true,
+    "date": "2026-10-29"
+  },
+  "latestBoundedAlpacaAudit": {
+    "sourceSha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+    "run": 40871506655,
+    "results": "Targeted SIP access observed; supplied24 fresh19trades/21BBO; no-symbol HTTP400. Broad real-time discovery not verified.",
+    "evidence": "docs/validation/alpaca-access-2026-10-29.observed.json"
+  },
+  "latestEngineeringContinuation": {
+    "date": "2026-10-29",
+    "verifiedSource": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+    "verifiedTree": "b52394b5489d8d4146be7d87e1dc19c17d164ccc",
+    "acceptance": {
+      "complete": 22,
+      "total": 40,
+      "percent": 55,
+      "remaining": 18
+    },
+    "node": {
+      "files": 161,
+      "tap": 1393,
+      "standalone": 2,
+      "total": 1395
+    },
+    "static": {
+      "moduleSyntaxChecks": 230,
+      "workflowParses": 85,
+      "bashSaveSyntax": "PASS"
+    },
+    "checks": [
+      {
+        "name": "fixture-close",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123463073431"
+      },
+      {
+        "name": "offline-recovery (3.12, 46.0.3)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952992"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 46.0.3)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952988"
+      },
+      {
+        "name": "test",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363160/job/123462952889"
+      },
+      {
+        "name": "offline-recovery (3.9.16, 3.3.2)",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363152/job/123462952622"
+      },
+      {
+        "name": "research-fixtures",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363165/job/123462952595"
+      },
+      {
+        "name": "delivery-fixtures",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363046/job/123462952534"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878363099/job/123462952217"
+      },
+      {
+        "name": "test",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354272/job/123462922754"
+      },
+      {
+        "name": "fixture-open",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123462922581"
+      },
+      {
+        "name": "safety",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354118/job/123462921988"
+      },
+      {
+        "name": "source-preservation",
+        "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+        "result": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/40878354109/job/123462921829"
+      }
+    ],
+    "dataPreservation": {
+      "baselineDataBlobs": 399,
+      "allUnchanged": true,
+      "frozenRegistryCount": 51,
+      "ownerSecretsReadOrModified": false
+    },
+    "liveDiagnostics": {
+      "phaseARequests": 0,
+      "authorizedExistingDiagnosticGETs": 5,
+      "authorizedAlpacaAuditGETs": 11,
+      "actualPaperTrades": 0,
+      "telegramMessages": 0,
+      "orders": 0
+    },
+    "massive": "Owner-confirmed Stocks Starter15minute delayed; not a real-time premarket source",
+    "hybrid": "Targeted SIP confirmation observed; whole-market real-time discovery remains unverified",
+    "phaseA": "OLD_RUNTIME_UNCHANGED; revised design + offline admission only; no approved/reviewed live replacement",
+    "unpublishedIntendedEngineeringChanges": false,
+    "workspace": "/workspace/stock2-engineering-b64 is isolated test materialization, NOT a Git checkout; canonical branch/commits are authoritative"
+  }
+}

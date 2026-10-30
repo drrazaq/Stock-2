@@ -1,0 +1,851 @@
+{
+  "date": "2026-10-29",
+  "scope": "Literal broker endpoint/mutation inventory, browser request review, all workflow permission/ref/concurrency declarations; dynamic code is not a formal security proof",
+  "brokerMutationPaths": [
+    {
+      "file": "scan.mjs",
+      "adapter": "paper-transport.mjs",
+      "paths": [
+        "POST /v2/orders",
+        "DELETE /v2/orders/:id"
+      ],
+      "default": "DISABLED",
+      "optIn": "STOCK2_ENABLE_PAPER_ORDERS=1; fixed paper host only",
+      "redirects": "error",
+      "retry": "none; unknown outcome never repeated"
+    }
+  ],
+  "otherBrokerClients": {
+    "options-lab.mjs": "GET contracts; arbitrary live-host override removed; redirects refused",
+    "squad15-lab.mjs": "GET contracts/calendar on fixed paper host",
+    "squad15b-lab.mjs": "GET clock/calendar on fixed paper host"
+  },
+  "browser": "Market-data and signal GET requests only; no broker credentials/order client found",
+  "researchCollectorRule": "Never import scan.mjs or paper-transport.mjs; dedicated GET-only allowlist; no broker/TG bindings",
+  "workflows": [
+    {
+      "path": ".github/workflows/squad24-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad24-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/hold-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "hold-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/ml-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "ml-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/provider-readiness-probe.yml",
+      "permissions": {
+        "contents": "read"
+      },
+      "concurrency": null,
+      "checkoutRefs": [
+        "event commit"
+      ]
+    },
+    {
+      "path": ".github/workflows/calendar.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "calendar",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/research-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "research-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad9-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad9-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/leaders-study.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "leaders-study",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/catalyst-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "catalyst-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad25-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad25-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/scorecard-1023.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": null,
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/discover.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "discovery",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad19-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad19-lab",
+      "checkoutRefs": [
+        "event commit",
+        "event commit",
+        "event commit",
+        "event commit",
+        "event commit",
+        "event commit",
+        "event commit",
+        "event commit"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad13-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad13-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad4-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad4-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad26-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad26-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad16-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad16-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad21-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad21-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad6-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad6-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/comeback.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "comeback-board",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/confluence-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "confluence-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/feed-check.yml",
+      "permissions": null,
+      "concurrency": null,
+      "checkoutRefs": [
+        "event commit"
+      ]
+    },
+    {
+      "path": ".github/workflows/main.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "scanner",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/angles-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "angles-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad26-watch.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": {
+        "group": "squad26-watch",
+        "cancel-in-progress": false
+      },
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/stock2-safety-ci.yml",
+      "permissions": {
+        "contents": "read"
+      },
+      "concurrency": null,
+      "checkoutRefs": [
+        "event commit",
+        "event commit",
+        "event commit"
+      ]
+    },
+    {
+      "path": ".github/workflows/Smart-money.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "smart-money",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/private-data-check.yml",
+      "permissions": {
+        "contents": "read"
+      },
+      "concurrency": "private-data-check",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/tests.yml",
+      "permissions": {
+        "contents": "read"
+      },
+      "concurrency": null,
+      "checkoutRefs": [
+        "event commit"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad24-audit.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad24-audit",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/value-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "value-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad10-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad10-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad27-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad27-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad20-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad20-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/premarket.yml",
+      "permissions": {
+        "contents": "read"
+      },
+      "concurrency": "premarket",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad23-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad23-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/bot.yml",
+      "permissions": {
+        "contents": "write",
+        "actions": "write"
+      },
+      "concurrency": "bot",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/account-replay.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "account-replay",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "permissions": {
+        "contents": "read",
+        "pages": "write",
+        "id-token": "write"
+      },
+      "concurrency": {
+        "group": "pages",
+        "cancel-in-progress": true
+      },
+      "checkoutRefs": [
+        "event commit"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad29-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": {
+        "group": "squad29-lab",
+        "cancel-in-progress": false
+      },
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad7-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad7-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/expert-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "expert-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/anomaly-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "anomaly-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/verify-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "verify-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad22-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad22-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad11-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad11-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/agent-a-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "agent-a-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad3-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad3-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/movers.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "movers",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad15b-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad15b-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/news.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "news",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/fastmover-intraday.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "fastmover-intraday",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/deals.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "deals",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/agent-a-tgt-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "agent-a-tgt-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/opportunity-radar.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "opportunity-radar",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad17-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad17-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad15-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad15-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/options-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "options-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/options-survey.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "options-survey",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad5-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad5-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/follow-lane.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "follow-lane",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/intraday-radar.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "radar",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad18-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad18-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/chain-decoder.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "chain-decoder",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad1-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad1-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad8-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad8-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/tipster-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "tipster-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad12-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad12-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/ignition.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "ignition",
+      "checkoutRefs": [
+        "${{ github.ref_name }}",
+        "${{ github.ref_name }}"
+      ]
+    },
+    {
+      "path": ".github/workflows/discovery2.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "discovery2",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/decoded-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "decoded-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad28-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad28-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad14-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad14-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/winners-autopsy.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "winners-autopsy",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/macro-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "macro-lab",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/event-orb-retest-research.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": {
+        "group": "stock2-event-orb-retest-research",
+        "cancel-in-progress": false
+      },
+      "checkoutRefs": [
+        "event commit"
+      ]
+    },
+    {
+      "path": ".github/workflows/Tiprank.yml",
+      "permissions": {
+        "contents": "read"
+      },
+      "concurrency": "tipranks",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad26-labels.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad26-labels",
+      "checkoutRefs": [
+        "main"
+      ]
+    },
+    {
+      "path": ".github/workflows/squad2-lab.yml",
+      "permissions": {
+        "contents": "write"
+      },
+      "concurrency": "squad2-lab",
+      "checkoutRefs": [
+        "main",
+        "main",
+        "main",
+        "main"
+      ]
+    }
+  ],
+  "syntaxModules": 215,
+  "parsedWorkflows": 79,
+  "sensitivePermissionsChanged": false,
+  "remainingRisks": [
+    "Many legacy workflows checkout main; branch dispatch is not development-code evidence",
+    "Legacy rebase -X theirs semantics remain an unresolved data-concurrency review",
+    "A paper-host opt-in is not owner approval to execute any trades in this engineering task"
+  ]
+}

@@ -16,7 +16,7 @@ test('a ticket is shown only for a stock marked halal (ok) in ZAD: not for NOT H
   const S = await loadScan({ files: { 'data/halal.json': halal, 'data/options-shadow.json': { open: [call('TEVA', 1.99), call('HQY', 2.40), call('ZZZ', 1.50)], real: [] } } });
   const t = tickets(S.fn('optionsText')());
   assert.equal(t.length, 1);
-  assert.match(t[0], /BUY TO OPEN 1 x HQY /);
+  assert.match(t[0], /PAPER ONLY, NOT AN APPROVED BUY: 1 x HQY /);
 });
 
 test('no ticket at all while 2 real contracts are open', async () => {

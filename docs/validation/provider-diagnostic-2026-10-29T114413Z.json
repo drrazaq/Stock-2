@@ -1,0 +1,114 @@
+{
+  "kind": "READ_ONLY_PROVIDER_PROBE",
+  "observedAt": "2026-10-29T11:44:13.962Z",
+  "session": {
+    "day": "2026-10-29",
+    "minute": 464,
+    "state": "PREMARKET"
+  },
+  "results": [
+    {
+      "provider": "MASSIVE_SNAPSHOT",
+      "httpStatus": 200,
+      "latencyMs": 196,
+      "rateLimit": {
+        "limit": null,
+        "remaining": null,
+        "reset": null
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 13259,
+      "fresh": 0,
+      "unknownTimestamp": 9898,
+      "futureTimestamp": 0,
+      "freshPct": 0,
+      "priceAgeP95Min": 201.2327
+    },
+    {
+      "provider": "ALPACA_SIP",
+      "httpStatus": 200,
+      "latencyMs": 27,
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793274254
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 3,
+      "fresh": 2,
+      "unknownTimestamp": 0,
+      "futureTimestamp": 0,
+      "freshPct": 66.67,
+      "priceAgeP95Min": 7.319333333333334,
+      "requestedSymbols": 3,
+      "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+    },
+    {
+      "provider": "ALPACA_IEX",
+      "httpStatus": 200,
+      "latencyMs": 7,
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793274254
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 3,
+      "fresh": 0,
+      "unknownTimestamp": 0,
+      "futureTimestamp": 0,
+      "freshPct": 0,
+      "priceAgeP95Min": 944.2871833333334,
+      "requestedSymbols": 3,
+      "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+    },
+    {
+      "provider": "FINNHUB_GENERAL_NEWS",
+      "httpStatus": 200,
+      "latencyMs": 70,
+      "rateLimit": {
+        "limit": 60,
+        "remaining": 59,
+        "reset": 1793274314
+      },
+      "status": "RESPONSE_OBSERVED",
+      "records": 100,
+      "knownPublicationTimestamp": 100
+    },
+    {
+      "provider": "SEC_TICKER_MAP",
+      "httpStatus": 200,
+      "latencyMs": 42,
+      "rateLimit": {
+        "limit": null,
+        "remaining": null,
+        "reset": null
+      },
+      "status": "RESPONSE_OBSERVED",
+      "records": 10430
+    }
+  ],
+  "claims": {
+    "accountPlan": "NOT_INFERRED",
+    "tradableUniverseCoverage": "NOT_ESTABLISHED",
+    "executionFills": "NOT_TESTED",
+    "profitability": "NOT_TESTED"
+  },
+  "note": "HTTP status/targeted freshness are observations, not evidence of full-session or premarket entitlement. Outside-session old trades do not alone establish an outage. No raw payloads or credentials retained.",
+  "evidence": {
+    "runId": 40859412224,
+    "attempt": 2,
+    "jobId": 123426364288,
+    "sourceSha": "d99312477048ff7c0820ccb36ea19d9ac380e8da",
+    "ownerAuthorizedReadOnlyAudit": true
+  },
+  "massivePlan": {
+    "basis": "OWNER_CONFIRMED_2026-10-29",
+    "name": "Stocks Starter",
+    "monthlyUSD": 29,
+    "delayMinutes": 15,
+    "historyYears": 5,
+    "apiCalls": "Unlimited under plan terms",
+    "realTimePremarket": false
+  }
+}

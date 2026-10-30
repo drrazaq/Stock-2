@@ -1,0 +1,95 @@
+{
+  "kind": "READ_ONLY_PROVIDER_PROBE",
+  "observedAt": "2026-10-29T04:53:27.971Z",
+  "session": {
+    "day": "2026-10-29",
+    "minute": 53,
+    "state": "OVERNIGHT"
+  },
+  "results": [
+    {
+      "provider": "MASSIVE_SNAPSHOT",
+      "httpStatus": 200,
+      "latencyMs": 373,
+      "rateLimit": {
+        "limit": null,
+        "remaining": null,
+        "reset": null
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 13262,
+      "fresh": 0,
+      "unknownTimestamp": 1350,
+      "freshPct": 0,
+      "priceAgeP95Min": 724.4661833333333
+    },
+    {
+      "provider": "ALPACA_SIP",
+      "httpStatus": 200,
+      "latencyMs": 186,
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793249608
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 3,
+      "fresh": 0,
+      "unknownTimestamp": 0,
+      "freshPct": 0,
+      "priceAgeP95Min": 295.3571166666667,
+      "requestedSymbols": 3,
+      "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+    },
+    {
+      "provider": "ALPACA_IEX",
+      "httpStatus": 200,
+      "latencyMs": 56,
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793249609
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 3,
+      "fresh": 0,
+      "unknownTimestamp": 0,
+      "freshPct": 0,
+      "priceAgeP95Min": 533.5206666666667,
+      "requestedSymbols": 3,
+      "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+    },
+    {
+      "provider": "FINNHUB_GENERAL_NEWS",
+      "httpStatus": 200,
+      "latencyMs": 147,
+      "rateLimit": {
+        "limit": 60,
+        "remaining": 59,
+        "reset": 1793249669
+      },
+      "status": "RESPONSE_OBSERVED",
+      "records": 100,
+      "knownPublicationTimestamp": 100
+    },
+    {
+      "provider": "SEC_TICKER_MAP",
+      "httpStatus": 200,
+      "latencyMs": 92,
+      "rateLimit": {
+        "limit": null,
+        "remaining": null,
+        "reset": null
+      },
+      "status": "RESPONSE_OBSERVED",
+      "records": 10430
+    }
+  ],
+  "claims": {
+    "accountPlan": "NOT_INFERRED",
+    "tradableUniverseCoverage": "NOT_ESTABLISHED",
+    "executionFills": "NOT_TESTED",
+    "profitability": "NOT_TESTED"
+  },
+  "note": "HTTP status/targeted freshness are observations, not evidence of full-session or premarket entitlement. Outside-session old trades do not alone establish an outage. No raw payloads or credentials retained."
+}

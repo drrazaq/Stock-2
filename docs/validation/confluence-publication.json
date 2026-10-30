@@ -1,0 +1,19 @@
+{
+  "status": "VERIFIED_PUBLISHED",
+  "base": "da99aa5378ff9abd1c7adc1b83fbbb9d6767d461",
+  "workflow": ".github/workflows/confluence-lab.yml",
+  "cases": 48,
+  "newWorkflowCases": 8,
+  "requirementsChanged": [
+    "Commit on original baseline before pull; never reset/clean job output or choose a conflicting frozen/library winner.",
+    "Staging/commit/pull/push failures are reached and cannot report confirmed publication. Disjoint upstream edits survive.",
+    "Public recovery allowlist contains only confluence-lab.json and strategy-library.json; raw signal/operational files excluded. Existing log upload paths retained, retention3days."
+  ],
+  "remaining": [
+    "Other workflow families/cache/cancellation/retention incomplete. No dispatch or study run.",
+    "Operational/paper/cache outputs deliberately excluded from recovery artifact."
+  ],
+  "invariants": "trigger/ref/concurrency/permission/secret-binding metadata unchanged",
+  "sourceSha": "413a91ca966fb1eb8e24a2113f23b4246752ca2e",
+  "ciEvidence": "confluence-publication-ci.json"
+}

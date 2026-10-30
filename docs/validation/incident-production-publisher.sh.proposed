@@ -1,0 +1,7 @@
+set -euo pipefail
+git config user.name "scanner"
+git config user.email "scanner@users.noreply.github.com"
+for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; true
+git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
+ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+[ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }

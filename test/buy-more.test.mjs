@@ -15,10 +15,10 @@ const sig = (extra = {}) => ({ session: '2026-10-21', market: { above50: true, u
 const fullQuick = { n: 40, winRate: 0.6, avgPct: 0.02, avgSpy: 0.005, days: 12, stocks: 25 };
 // a quick-trade live record that is LOSING: 25 trades, -2% a trade vs +0.5% for the S&P
 const losing = { n: 25, winRate: 0.3, avgPct: -0.02, avgSpy: 0.005, days: 12, stocks: 20 };
-const bt = async (settings, s, files = {}) => (await loadScan({ files: { 'data/settings.json': settings, 'data/signals.json': s, ...files } })).fn('buyToday')('AAA', s);
+const bt = async (settings, s, files = {}) => (await loadScan({ files: { 'data/settings.json': settings, 'data/signals.json': s, 'data/halal.json':{AAA:{s:'ok',d:new Date().toISOString().slice(0,10)}}, ...files } })).fn('buyToday')('AAA', s);
 
-test('control: focus off, a proven quick setup on a stock you own is an add, with its range and stop', async () => {
-  assert.deepEqual(await bt({ focus: false }, sig()), { lo: 49, hi: 51, stop: 45, n: 60, thin: false });
+test('control: focus off, a quick setup with its own minimum live record on a stock you own is an add, with its range and stop', async () => {
+  assert.deepEqual(await bt({ focus: false }, sig({quickRecord:fullQuick})), { lo: 49, hi: 51, stop: 45, n: 60, thin: false });
 });
 
 test('FOCUS on and the quick engine not proven live: no add', async () => {

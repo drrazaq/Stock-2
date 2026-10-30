@@ -1,0 +1,43 @@
+# NON-ACTIVE. Separate explicit approval required for this secret-bound key test.
+# No Phase A installation, provider requests, production data or trading.
+name: Phase A encryption-key recovery proof only
+on:
+  push:
+    branches: [Stock2-safety-fixes]
+    paths: ['run-phase-a-keyproof-once.txt']
+permissions:
+  contents: read
+jobs:
+  key-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 7dd702d5d2ed3578f7558bc4f7fcc211f3619669
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: /tools/seal-research-artifact.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Seal a non-sensitive recovery challenge with the existing binding
+        env:
+          RESEARCH_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
+        run: |
+          node --input-type=module - <<'JS'
+          if(process.env.GITHUB_RUN_ATTEMPT!=='1')throw Error('key-proof rerun not authorized');
+          import fs from 'node:fs';
+          import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
+          const bytes=Buffer.from('Stock2 Phase A recovery challenge v1');
+          const envelope=sealResearch(bytes,process.env.RESEARCH_ARTIFACT_KEY,{sourceSha:'7dd702d5d2ed3578f7558bc4f7fcc211f3619669',path:'key-check.txt'});
+          if(!openResearch(envelope,process.env.RESEARCH_ARTIFACT_KEY).equals(bytes))throw Error('key binding roundtrip failed');
+          fs.mkdirSync('sealed-key-proof');fs.writeFileSync('sealed-key-proof/key-check.txt.enc',JSON.stringify(envelope),{flag:'wx'});
+          console.log('Existing binding roundtrip passed; owner offline recovery still required');
+          JS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase-a-key-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          path: sealed-key-proof/
+          retention-days: 3
+          if-no-files-found: error

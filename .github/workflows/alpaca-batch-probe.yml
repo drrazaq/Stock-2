@@ -1,0 +1,13 @@
+name: Completed Alpaca batch access record
+# RETIRED: one bounded authorized probe completed; no keys or automatic trigger remains.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  record:
+    if: github.repository == 'drrazaq/Stock-2' && github.ref_name == 'Stock2-safety-fixes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - run: echo 'Completed read-only probe40886478340. See docs/validation/alpaca-batch-probe-2026-10-29.observed.json. No provider operation is available in this retired job.'

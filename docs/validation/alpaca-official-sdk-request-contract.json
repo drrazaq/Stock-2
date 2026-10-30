@@ -1,0 +1,9 @@
+{
+  "repository": "alpacahq/alpaca-py",
+  "sourceSha": "1b7bf9b922944adc8823ccf88ada5ea4646877ca",
+  "path": "alpaca/data/requests.py",
+  "snapshotLine": 403,
+  "url": "https://github.com/alpacahq/alpaca-py/blob/1b7bf9b922944adc8823ccf88ada5ea4646877ca/alpaca/data/requests.py#L403",
+  "evidence": "class StockSnapshotRequest(NonEmptyRequest):\n    \"\"\"\n    This request class is used to submit a request for snapshot data for stocks.\n\n    Attributes:\n        symbol_or_symbols (Union[str, List[str]]): The ticker identifier or list of ticker identifiers.\n        feed (Optional[DataFeed]): The stock data feed to retrieve from.\n        currency (Optional[SupportedCurrencies]): The currency the data should be returned in. Default to USD.\n    \"\"\"\n\n    symbol_or_symbols: Union[str, List[str]]\n    feed: Optional[DataFeed] = None\n    currency: Optional[SupportedCurrencies] = None  # None = USD\n\n",
+  "interpretation": "Official SDK requires symbol_or_symbols; observed omitted-symbol HTTP400 is consistent with request contract, not proof of a subscription refusal. This SDK model does not establish maximum batch size, account entitlements, rate quota, full-universe rights or coverage."
+}

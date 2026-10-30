@@ -1,0 +1,40 @@
+{
+  "kind": "INSTRUMENT_REFERENCE_PREPARATION_V1",
+  "status": "PROPOSED_NOT_AUTHORIZED_NOT_ACTIVATED",
+  "granted": false,
+  "ownerApprovalDate": null,
+  "sessionDateNewYork": null,
+  "collectorSourceSha": null,
+  "universeSha256": null,
+  "universe": [],
+  "source": "https://api.massive.com/v3/reference/tickers/{exact-symbol}",
+  "issuerMapping": "https://www.sec.gov/files/company_tickers.json",
+  "allowedMethod": "GET",
+  "bounds": {
+    "symbols": 100,
+    "providerRequestsIncludingSingleRetry": 200,
+    "issuerRequestsIncludingSingleRetry": 2,
+    "totalRequests": 202,
+    "concurrency": 1,
+    "elapsedSeconds": 300,
+    "requestTimeoutSeconds": 5,
+    "providerResponseBytes": 32768,
+    "issuerResponseBytes": 4194304,
+    "candidateBytes": 4194304,
+    "totalStoredBytes": 16777216,
+    "retentionDays": 7
+  },
+  "executionDependencies": [
+    "Dated approval and pinned collector source plus deterministic research universe",
+    "Official non-secret plan entitlement and retention/redistribution evidence for reference endpoint",
+    "Approved private encrypted destination and existing encryption mechanism; no secret changes",
+    "Independent capture-provenance review, exact identity join and reviewed candidate hash",
+    "Separate production file/pin binding approval; no auto-activation or deployment"
+  ],
+  "shutdown": [
+    "401/403: stop; no entitlement fallback or purchase",
+    "429: obey Retry-After only within one retry and total time/request budget, otherwise stop",
+    "Bounds, redirect away from official origin, schema/identity conflict or storage failure: stop and preserve explicit partial evidence",
+    "Never advance a failed source clock or silently replace a reviewed reference with an empty result"
+  ]
+}

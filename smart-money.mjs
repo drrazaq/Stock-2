@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch,splitTelegramText} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // SMART MONEY AND ANALYSTS. Once each market morning (Kuwait ~2:20 pm):
 //   1. INSIDER BUYING (Finnhub, free): company executives buying their own stock on the open market in the last 14 days:
 //      two or more buyers of 10,000 USD+ each (50,000 USD+ together), or 250,000 USD+ in total.
@@ -160,5 +162,5 @@ if (study && study.strict) msg.push('', 'STRICT CLUSTER TEST (3+ insiders, 100K 
 if (study) msg.push('', 'HISTORY TEST (' + study.at + '): buying the next open after insider buying, holding 20 sessions', '  older half: ' + line(study.older), '  newer half: ' + line(study.newer), '  ' + study.verdict + ': ' + study.why, ...(study.rising ? ['  rising markets only (S&P 500 above its 50 day average): older ' + line(study.rising.older) + ' | newer ' + line(study.rising.newer), '  falling markets: older ' + line(study.falling.older) + ' | newer ' + line(study.falling.newer)] : []));
 msg.push('', 'Insiders sell for many reasons; buying with their own money is the rarer, stronger signal. Not an order, not a halal ruling: check ZAD.');
 const text = msg.join('\n');
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET) for (let i = 0; i < text.length; i += 3800) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(i, i + 3800), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET) for (const part of splitTelegramText(text,3800)) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }).catch(() => {});
 console.log(text);

@@ -1,0 +1,122 @@
+{
+  "status": "VERIFIED_BRANCH_PREPARED_RE_REVIEW_REQUIRED_NOT_DEPLOYED",
+  "sourceSha": "0b497caff2a98d56e22f244cf9aa5fcfc151b3da",
+  "separateAccountingSource": "ec0960e62675a7706843fe5f0c33d594ae160ff1",
+  "productionBase": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+  "previousVerifiedProductionBase": "b77eac39b7cbdc652458b48256ed6731d728ed24",
+  "laterBaseChange": "data-only; code/tests/dependency bytes unchanged; all three suites repeated on exact latest base",
+  "productionBaseFullSuites": {
+    "watcher": {
+      "scope": "watcher",
+      "baseMain": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+      "patches": [
+        "e571909253efe6b35fc6a7d57811c79f116e11a1a4ee5c20fe3c1f61a024f151"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 115,
+      "reportedCases": 1138,
+      "failures": [],
+      "rootModulesChecked": 203,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false,
+      "verifiedEquivalentFinalWatcherPatch": "4d3dd86acae98736f7be8135a78286a9656fed0ae4395dee2527050069e2f5cd",
+      "allTestedResultAndDependencyBytesUnchanged": true
+    },
+    "accounting": {
+      "scope": "accounting",
+      "baseMain": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+      "patches": [
+        "716e84719808578979c5ef00e8d971f51a4aa0941875d22b9c53f2d3110c74da"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 114,
+      "reportedCases": 1130,
+      "failures": [],
+      "rootModulesChecked": 195,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false
+    },
+    "combined": {
+      "scope": "combined",
+      "baseMain": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+      "patches": [
+        "e571909253efe6b35fc6a7d57811c79f116e11a1a4ee5c20fe3c1f61a024f151",
+        "716e84719808578979c5ef00e8d971f51a4aa0941875d22b9c53f2d3110c74da"
+      ],
+      "originalMainNodeTestFiles": 112,
+      "originalMainTestsRetained": true,
+      "allNodeTestFiles": 117,
+      "reportedCases": 1156,
+      "failures": [],
+      "rootModulesChecked": 203,
+      "staticFailures": [],
+      "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+      "productionWrites": false,
+      "liveRequestsOrMessaging": false,
+      "verifiedEquivalentFinalWatcherPatch": "4d3dd86acae98736f7be8135a78286a9656fed0ae4395dee2527050069e2f5cd",
+      "allTestedResultAndDependencyBytesUnchanged": true
+    }
+  },
+  "branchSuite": {
+    "files": 190,
+    "reportedCases": 1795,
+    "failures": []
+  },
+  "pythonTests": 30,
+  "branchStatic": {
+    "modules": 248,
+    "workflows": 86,
+    "shellBlocks": 328,
+    "pythonSyntax": 13,
+    "failures": []
+  },
+  "watcherCallerCases": 11,
+  "branchWatcherCallerCases": 10,
+  "messagePublisherGitCases": 4,
+  "accountingReviewedCases": 5,
+  "accountingDurabilityCases": 13,
+  "initialIntegrationFailures": [
+    "production ranking fixture still expected excluded pilot date; assertions preserved on non-excluded synthetic day",
+    "sale positive fixture lacked required encryption key; existing behavior assertion retained with synthetic key",
+    "half-sale positive fixture lacked a known quantity; setup corrected without weakening cost/gap assertion"
+  ],
+  "ciEvidence": "docs/validation/incident-revision-v2-ci.json",
+  "watcherCiChecks": 12,
+  "accountingCiChecks": 13,
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "changed": 0
+  },
+  "productionWrites": false,
+  "privateFinancialExcerptsCommitted": false,
+  "frozenResearchOrOriginalEvidenceChanged": false,
+  "prospectiveAdmissions": 0,
+  "p2OrZadPolicyBackported": false,
+  "reviewDependency": "Claude independent re-review of exact19-file watcher and separate4-file accounting patches; no deployment approval requested",
+  "accountingNegativeControlOnUnpatchedProduction": {
+    "tests": 13,
+    "passed": 1,
+    "failed": 12,
+    "passingControl": "original historical journal bytes remain intact",
+    "note": "Failure injection covers original direct encrypted write and new atomic prepare; tests exercise actual commands, not only helpers."
+  },
+  "proposedProductionWorkflow": {
+    "yaml": "PASS",
+    "shellBlocks": 4,
+    "installed": false
+  },
+  "patchTransportNormalization": {
+    "oldWatcherPatchSha256": "e571909253efe6b35fc6a7d57811c79f116e11a1a4ee5c20fe3c1f61a024f151",
+    "finalWatcherPatchSha256": "4d3dd86acae98736f7be8135a78286a9656fed0ae4395dee2527050069e2f5cd",
+    "change": "Only space-only blank unified-diff context lines normalized; no resulting source/test/dependency byte changed",
+    "latestMainPatchReappliedAndAllHashesVerified": true,
+    "fullSuiteEvidence": "Full suites ran on exactly these result/dependency bytes; normalization does not change any tested file."
+  }
+}

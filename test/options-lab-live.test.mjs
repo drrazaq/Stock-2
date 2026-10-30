@@ -71,10 +71,10 @@ test('the ledger never prices an option ticket with the stock\'s price; a stock 
 });
 
 const tk = { sym: 'HQY', occ: 'HQY261218C00095000', exp: '2026-12-18', k: 95, ask: 2.4, bid: 2.2, spot: 96.1, sellBy: '2026-11-27' };
-test('a lane ticket names its rule, tier and record, says 1 contract and BUY CALL, and gives the rule\'s sell date', async () => {
-  const S = await loadScan({ files: { 'data/options-lab.json': lab({ 'OPT-LH1': 'TRADABLE SMALL' }) } });
+test('a lane ticket names its rule, tier and record, says 1-contract paper reference and no purchase approval, and gives the rule\'s sell date', async () => {
+  const S = await loadScan({ files: { 'data/halal.json': {HQY:{s:'ok',d:new Date().toISOString().slice(0,10)}}, 'data/options-lab.json': lab({ 'OPT-LH1': 'TRADABLE SMALL' }) } });
   const t = S.fn('optionsLabTicketText')(tk, 'OPT-LH1', 'small', { n: 310, avg: 0.12, stock: 0.03, tBlock: 2.9 });
-  assert.match(t, /OPT-LH1/); assert.match(t, /TRADABLE SMALL/); assert.match(t, /310 trades/); assert.match(t, /quantity 1/); assert.match(t, /BUY CALL/);
+  assert.match(t, /OPT-LH1/); assert.match(t, /TRADABLE SMALL/); assert.match(t, /310 trades/); assert.match(t, /quantity 1/); assert.match(t, /NOT AN APPROVED BUY/); assert.doesNotMatch(t, /pick BUY CALL|> confirm/);
   assert.match(t, /2026-11-27/); assert.match(t, /245 USD/);
 });
 

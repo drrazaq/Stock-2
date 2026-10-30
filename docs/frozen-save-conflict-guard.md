@@ -1,0 +1,7 @@
+# Frozen-result conflict guard in the shared scanner save
+
+Before resolving any rebasing conflict, the branch helper reads public metadata from docs/repository-ownership.json frozenRegistry and checks every conflicting path. If any registered frozen result conflicts, it returns failure, aborts the rebase through the existing retry path and ultimately fails publication. Both original commits remain: the local job commit contains its version; the upstream ref contains the other version. No firstRun/correctedRun is selected automatically. Obtain explicit reviewed reconciliation rather than changing verdicts to make the push pass.
+
+Missing/malformed/empty or invalid-path registry blocks before data commit/publication. No historical body, secret, key or owner private data is read to make this decision. Existing owner-hunk conflict controls remain unchanged. Nonfrozen conflicts retain their inherited policy; other lab workflows with -X theirs are not repaired or certified by this change. This is partial ACTIONS04 progress, not40/40 completion or a production deployment.
+
+Eight disposable-local-Git tests pass: four original owner/nonconflict controls, commit/pull failure barriers, conflicting frozen-file both-side preservation, and malformed/missing registry. Bash syntax passes. A future reviewed production release of this helper must include the existing registry and Node runtime; no deployment is authorized here.

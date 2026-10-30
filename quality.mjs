@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // QUALITY COMPANIES, HELD FOR MONTHS: the long-investing lane. Instead of chart setups (which failed against the S&P 500), this buys
 // companies by what their own SEC reports say, the way a long-term investor picks Intel or Nvidia, and tests it fairly.
 // Four measures from the yearly 10-K reports (SEC XBRL "frames", free and official), fixed in advance from published research:
@@ -221,4 +223,4 @@ if (dips.length) msg.push('', 'FAIR-PRICE DIPS NOW (down 40%+ from the 1-year hi
 msg.push('', 'V15 deep check (F-score 8-9 in an uptrend): 12 months ' + v15.verdict12m + '; months beating the S&P 500 at 12 months: older ' + v15.monthly['12m'].older.beatSpy + '/' + v15.monthly['12m'].older.months + ', newer ' + v15.monthly['12m'].newer.beatSpy + '/' + v15.monthly['12m'].newer.months + ' | B-FS2 (cheap + flat shares, 12 months): ' + fs2.verdict);
 console.log(msg.join('\n'));
 const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report
-if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && !QUIET_) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});

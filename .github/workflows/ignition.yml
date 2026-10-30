@@ -1,40 +1,61 @@
 name: Ignition watcher
 on:
   schedule:
-    # 8:45 New York in summer. GitHub starts these 35-45 minutes late (first watched minute was 9:38-9:49 every day 16-27 Oct, 11:10 on
-    # 26 Oct), so the old 9:05 start missed the open and the 9:25 pre-market record. If early, the script waits for 9:25 (it accepts
-    # starts from 8:40). The second start covers winter time (from 2 Nov); in summer it queues behind the first (concurrency) and exits.
-    # Trade-off: on a day GitHub starts on time (8:45), the 345-minute run limit ends the watch at about 14:30 instead of 15:00.
-    - cron: '45 12 * * 1-5'
-    - cron: '45 13 * * 1-5'
+    # 09:10 America/New_York in daylight and standard time. GitHub cron is best-effort:
+    # late starts are reported as incomplete, never represented as full coverage.
+    - cron: '10 13 * * 1-5'
+    - cron: '10 14 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
 concurrency: ignition
 jobs:
   watch:
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
-    timeout-minutes: 355
+    timeout-minutes: 320
     env:
       NODE_OPTIONS: --max-old-space-size=8192
+      IG_SEGMENT: open
+      IG_RUN_MIN: 300
     steps:
-      - uses: actions/checkout@v4
+      - name: Ignore opposite DST schedule
+        id: season
+        shell: bash
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          offset=$(TZ=America/New_York date +%z)
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" ]] && { [[ "$SCHEDULE" == '10 13 * * 1-5' && "$offset" != '-0400' ]] || [[ "$SCHEDULE" == '10 14 * * 1-5' && "$offset" != '-0500' ]]; }; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Opposite DST cron: no watcher run"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.season.outputs.run == 'true'
+        uses: actions/checkout@v4
         with:
-          ref: main
-      - uses: actions/setup-node@v4
+          ref: ${{ github.ref_name }}
+      - if: steps.season.outputs.run == 'true'
+        run: git restore --source="${{ github.sha }}" -- '*.mjs'
+      - if: steps.season.outputs.run == 'true'
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: actions/cache/restore@v4
+      - if: steps.season.outputs.run == 'true'
+        uses: actions/cache/restore@v4
         with:
           path: fm-cache
           key: fm-cache-none
           restore-keys: fm-cache-
       # Checks the whole market every minute for stocks starting to run. Alerts only rules that passed the minute test.
-      - shell: bash
+      - if: steps.season.outputs.run == 'true'
+        shell: bash
         run: |
           set -o pipefail
           node ignition-watch.mjs 2>&1 | tee run.log
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
@@ -43,20 +64,135 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # Durable per-stock ledger of today's 15%+ movers (the missed-runner autopsy reads it; no data calls).
-      - if: always()
+      - if: always() && steps.season.outputs.run == 'true'
         continue-on-error: true
         run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
-      - if: always()
+      - if: always() && steps.season.outputs.run == 'true'
         run: |
+          git restore -- '*.mjs'
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; true
+          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/pre-ignition-days.jsonl data/radar-v3-ledger.jsonl data/radar-v3-ledger.jsonl.pending.json data/radar-v3-snap.json data/opp-ledger.jsonl data/opp-days.jsonl data/discovery-live.json; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; [ -d data/discovery-runs ] && git add data/discovery-runs; true
           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
-          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
-      - if: failure()
+          saved=0
+          for i in 1 2 3 4 5; do if git pull --rebase && git push; then saved=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$saved" = 1 ] || { echo 'Error: watcher evidence could not be persisted'; exit 1; }
+      - if: failure() && steps.season.outputs.run == 'true'
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
         run: |
           WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
-          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
+          printf '%s' "RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." | node tools/telegram-notify.mjs || echo 'Telegram failure notification unconfirmed; inspect job logs'
+      - if: always() && steps.season.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: watcher-open-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runtime/watcher-checkpoint.json
+            runtime/watcher-heartbeat.json
+            data/ignition-runs/
+            data/discovery-runs/
+            data/radar-v3-ledger.jsonl
+            data/radar-v3-ledger.jsonl.pending.json
+          retention-days: 1
+          if-no-files-found: warn
+  close:
+    needs: watch
+    if: always() && !cancelled() && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      NODE_OPTIONS: --max-old-space-size=8192
+      IG_SEGMENT: close
+      IG_RESUME: 1
+      IG_RUN_MIN: 150
+    steps:
+      - name: Ignore opposite DST schedule
+        id: season
+        shell: bash
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          offset=$(TZ=America/New_York date +%z)
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" ]] && { [[ "$SCHEDULE" == '10 13 * * 1-5' && "$offset" != '-0400' ]] || [[ "$SCHEDULE" == '10 14 * * 1-5' && "$offset" != '-0500' ]]; }; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Opposite DST cron: no watcher run"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.season.outputs.run == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - if: steps.season.outputs.run == 'true'
+        run: git restore --source="${{ github.sha }}" -- '*.mjs'
+      - if: steps.season.outputs.run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - if: steps.season.outputs.run == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: fm-cache
+          key: fm-cache-none
+          restore-keys: fm-cache-
+      - if: steps.season.outputs.run == 'true'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: watcher-open-${{ github.run_id }}-${{ github.run_attempt }}
+          path: recovered
+      - if: steps.season.outputs.run == 'true'
+        run: |
+          mkdir -p runtime
+          if [ -f recovered/runtime/watcher-checkpoint.json ]; then cp recovered/runtime/watcher-checkpoint.json runtime/; fi
+      # Checks the whole market every minute for stocks starting to run. Alerts only rules that passed the minute test.
+      - if: steps.season.outputs.run == 'true'
+        shell: bash
+        run: |
+          set -o pipefail
+          node ignition-watch.mjs 2>&1 | tee run.log
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}   # (28 Oct) catalyst headlines for early-alert candidates only
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+      # Durable per-stock ledger of today's 15%+ movers (the missed-runner autopsy reads it; no data calls).
+      - if: always() && steps.season.outputs.run == 'true'
+        continue-on-error: true
+        run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
+      - if: always() && steps.season.outputs.run == 'true'
+        run: |
+          git restore -- '*.mjs'
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/pre-ignition-days.jsonl data/radar-v3-ledger.jsonl data/radar-v3-ledger.jsonl.pending.json data/radar-v3-snap.json data/opp-ledger.jsonl data/opp-days.jsonl data/discovery-live.json; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; [ -d data/discovery-runs ] && git add data/discovery-runs; true
+          git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
+          saved=0
+          for i in 1 2 3 4 5; do if git pull --rebase && git push; then saved=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$saved" = 1 ] || { echo 'Error: watcher evidence could not be persisted'; exit 1; }
+      - if: failure() && steps.season.outputs.run == 'true'
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
+          printf '%s' "RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." | node tools/telegram-notify.mjs || echo 'Telegram failure notification unconfirmed; inspect job logs'
+      - if: always() && steps.season.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: watcher-close-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runtime/watcher-checkpoint.json
+            runtime/watcher-heartbeat.json
+            data/ignition-runs/
+            data/discovery-runs/
+            data/radar-v3-ledger.jsonl
+            data/radar-v3-ledger.jsonl.pending.json
+          retention-days: 1
+          if-no-files-found: warn

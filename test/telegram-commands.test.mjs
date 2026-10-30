@@ -78,3 +78,13 @@ test('many halal marks in one message are all saved', async () => {
   assert.match(reply, /Recorded 15 ZAD marks/);
   assert.match(reply, /NOT HALAL: PCTY, MPC/);
 });
+test('owner recheck preserves unrelated raw rejections and never materializes list approvals',async()=>{
+ const marks={OLD:{s:'fail',d:'2000-01-01',by:'ZAD (you)'},KEEP:{s:'unknown',note:'preserve'}};
+ const S=await loadScan({env,files:{'data/halal.json':marks,'data/zad-list.json':{notHalal:['BLOCK'],newHalal:['LIST']}}});
+ await send(S,'halal AAA yes');const saved=S.readJson('data/halal.json');
+ assert.deepEqual(saved.OLD,marks.OLD);assert.deepEqual(saved.KEEP,marks.KEEP);assert.equal(saved.BLOCK,undefined);assert.equal(saved.LIST,undefined);assert.equal(saved.AAA.s,'ok');
+});
+test('malformed existing owner file is not overwritten by a mark command',async()=>{
+ const S=await loadScan({env,files:{'data/halal.json':'{broken'}});
+ assert.match(await send(S,'halal AAA yes'),/no changes saved/);assert.equal(S.read('data/halal.json'),'{broken');
+});

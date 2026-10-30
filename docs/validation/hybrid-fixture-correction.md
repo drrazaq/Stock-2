@@ -1,0 +1,3 @@
+# Hybrid quote-refresh fixture correction
+
+Source eae4c456ccff9308ae684add1f9e602e32f5a014 failed full push40872347539 and PR40872357972: watcher-refresh expected only CCC, but AAA/BBB had current trades and absent quotes, so new quote-aware refresh correctly requested all three. This correction supplies fresh quotes in the original stale-price minority fixture and adds a separate real-watcher case for current-trade/stale-BBO refresh. No production check weakened. Both pass locally; all8 watcher-runtime fixtures pass with explicit sandbox localhost networking. Initial local EPERM was an environment restriction, not a pass. Exact-commit hosted full/safety verification is required before marking the hybrid source verified.

@@ -1,0 +1,1536 @@
+{
+  "sourceCommit": "e717c657ff3a726bbb1f8e6e3d232c2a3b1c9b6b",
+  "auditedAt": "2026-10-29",
+  "files": 51,
+  "sourceBytes": 35367699,
+  "frozenResultsModified": false,
+  "studiesRerun": 0,
+  "scope": "All 51 data/*-lab.json and decoded-history.json at source commit; bounded metadata audit, not return recomputation or source-authenticity certification",
+  "limitations": [
+    "747-entry strategy registry is audited separately",
+    "Arrays and individual historical trade identity/holdout rows are not certified",
+    "Absence of structured fields is UNVERIFIED, not proof registration or identity work never existed elsewhere",
+    "Current ticker/CIK alone cannot establish historical share-class identity or a dead-stock denominator"
+  ],
+  "records": [
+    {
+      "path": "data/agent-a-lab.json",
+      "blobSha": "79f1648351ffd6b3ddd6bc6a8169d75df932261c",
+      "bytes": 67503,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 3
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 12,
+        "NOT PROVEN": 7
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/agent-a-tgt-lab.json",
+      "blobSha": "8ad5a56f3f3af14608c2c5c74322922e508adf6f",
+      "bytes": 843016,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 15
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 30,
+        "REJECTED": 18
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/angles-lab.json",
+      "blobSha": "fae1317f9155b0aad84b4d12326d9fc8c9ae8ac8",
+      "bytes": 33546,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 12
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "INFORMATION": 4,
+        "TOO FEW CASES": 5,
+        "REJECTED": 7
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/anomaly-lab.json",
+      "blobSha": "dc8aa4c41640ec3ffe2bebf2bf5ad75a428f8cc5",
+      "bytes": 117538,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 42
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 3
+        }
+      ],
+      "verdictCounts": {
+        "REJECTED": 37,
+        "NOT PROVEN": 14,
+        "TOO FEW CASES": 1
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/catalyst-lab.json",
+      "blobSha": "f06225bac6d7983d9948d784e43f7b22033d7606",
+      "bytes": 348542,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 3
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 6
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.massiveRefCiks"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/comeback-lab.json",
+      "blobSha": "01193c8cb29cbbb52d4808f0ca85a58d36fdfabc",
+      "bytes": 541,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 0
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {},
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/confluence-lab.json",
+      "blobSha": "0bfd0f1bbe6fc7606e95609df338f27385936f77",
+      "bytes": 3651059,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 2
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 4
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/decoded-history.json",
+      "blobSha": "4cc9991047de4aebab10927b83c61a544bcea70e",
+      "bytes": 9714079,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 98
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 1
+        }
+      ],
+      "verdictCounts": {
+        "REJECTED": 182,
+        "NOT PROVEN": 4,
+        "PROVEN": 2,
+        "TOO FEW CASES": 4
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/expert-lab.json",
+      "blobSha": "3a7fc98ae2623d1866350e6d979e33b1fa48ecd3",
+      "bytes": 358585,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 3
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 1,
+        "NOT PROVEN": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "survivorship"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/fastmover-lab.json",
+      "blobSha": "f9228e6ae467c16e98d89f98f7fbf181a8811a44",
+      "bytes": 49684,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 10,
+        "FAILED on unseen data": 1
+      },
+      "protocolFields": [],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "NO_STRUCTURED_FIRST_RUN_FIELD",
+        "PROTOCOL_REGISTRATION_NOT_STRUCTURED_HERE",
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/hold-lab.json",
+      "blobSha": "14eff9d856857b51242705d743512a6eae013b25",
+      "bytes": 1373429,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 37
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 42,
+        "NOT PROVEN": 22,
+        "INFORMATION": 10,
+        "TOO FEW CASES": 10
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/hunting-lab.json",
+      "blobSha": "df4a3fcf7b743b39723a7ff2ee6a187ae06a8104",
+      "bytes": 52761,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "KEEP THE CURRENT QUICK EXIT": 1,
+        "REJECTED: returns do not rise steadily with the score in both halves, or the top bucket loses after costs": 1,
+        "NOT ENOUGH TRADES": 1
+      },
+      "protocolFields": [],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "NO_STRUCTURED_FIRST_RUN_FIELD",
+        "PROTOCOL_REGISTRATION_NOT_STRUCTURED_HERE",
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/ignition-lab.json",
+      "blobSha": "bd8b13aab2c8cc92b00bd3fb0ef1870d778edfb3",
+      "bytes": 75595,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 33,
+        "NOT PROVEN": 15
+      },
+      "protocolFields": [],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "NO_STRUCTURED_FIRST_RUN_FIELD",
+        "PROTOCOL_REGISTRATION_NOT_STRUCTURED_HERE",
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/macro-lab.json",
+      "blobSha": "3583e49e820396765069b96ab66a135654b67f7c",
+      "bytes": 1702740,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 37
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 2
+        }
+      ],
+      "verdictCounts": {
+        "REJECTED": 39,
+        "NOT PROVEN": 13,
+        "TOO FEW CASES": 28
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/ml-lab.json",
+      "blobSha": "7d1ce1fa167ad536aa844aeec82a4768c7584c16",
+      "bytes": 244836,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 1
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 2,
+        "NOT PROVEN": 1
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [
+        "periods.holdout",
+        "firstRun.ML-RANK1.holdout",
+        "firstRun.ML-RANK1.stopRate.holdout",
+        "firstRun.ML-RANK1.halalMix.holdout",
+        "firstRunComparators.MOM.holdout",
+        "firstRunComparators.MOM.stopRate.holdout",
+        "firstRunComparators.MOM.halalMix.holdout",
+        "firstRunComparators.LIN.holdout",
+        "firstRunComparators.LIN.stopRate.holdout",
+        "firstRunComparators.LIN.halalMix.holdout",
+        "info.ic.ml.holdout",
+        "info.ic.lin.holdout",
+        "info.ic.mom.holdout",
+        "info.holdoutDecisionDates"
+      ],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/options-lab.json",
+      "blobSha": "992ea90dc72824c5fc6a8e96daefddd5edd35914",
+      "bytes": 142629,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 2
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 5,
+        "TOO FEW CASES": 1,
+        "NEEDS DATA": 1
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/pattern-lab.json",
+      "blobSha": "72db9259154ad8a1b008af6b23d73ccf6e6528ed",
+      "bytes": 29802,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 5
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 16
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/research-lab.json",
+      "blobSha": "26bb2c388b3faa05c31c72f8f8665c76d58bb87d",
+      "bytes": 274681,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 12
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 10,
+        "AVOID WEAK (REJECTED AS A BUY)": 1,
+        "TOO FEW CASES": 2,
+        "AVOID NOT SUPPORTED (REJECTED AS A BUY)": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "tenderData.subjNoCik",
+        "firstRun.RQ-TENDER-3-15.data.subjNoCik",
+        "firstRun.RQ-TENDER-ALL.data.subjNoCik"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad1-lab.json",
+      "blobSha": "e1cf8174327308aa9cba3db057d12c91c7a93b97",
+      "bytes": 305494,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 9
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 5
+        }
+      ],
+      "verdictCounts": {
+        "REJECTED": 13,
+        "NOT PROVEN": 3,
+        "AVOID WEAK (REJECTED AS A BUY)": 3,
+        "NOT RUN": 1
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad10-lab.json",
+      "blobSha": "a8a0eb0b873b2f642f05ffec170c482cf3127653",
+      "bytes": 1055523,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 7
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 24,
+        "REJECTED": 4,
+        "TOO FEW CASES": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.cikCover",
+        "data.cikCover.vanishedWithCik",
+        "data.cikCover.aliveWithCik",
+        "diagnostics.data.cikCover",
+        "diagnostics.data.cikCover.vanishedWithCik",
+        "diagnostics.data.cikCover.aliveWithCik"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad11-lab.json",
+      "blobSha": "994da58805db13f14f0ae5b4af118e7520daa288",
+      "bytes": 638980,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 7
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 8,
+        "REJECTED": 4,
+        "TOO FEW CASES": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad12-lab.json",
+      "blobSha": "01682cc2c91008e7c18986ccefc1904f964913c0",
+      "bytes": 913606,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 6
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 16,
+        "REJECTED": 18,
+        "TOO FEW CASES": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad13-lab.json",
+      "blobSha": "1a95e6fc6ad9707ce2a4e37e33b3bcb1c26760b9",
+      "bytes": 39951,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 8
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 6,
+        "NOT PROVEN": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.industry.shareWithCik",
+        "data.results8k.leadersWithoutCik"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad14-lab.json",
+      "blobSha": "9fd9c8f958a3ee154b44a29a950ad847becd9cca",
+      "bytes": 464152,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 6
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 8,
+        "TOO FEW CASES": 2,
+        "REJECTED": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad15-lab.json",
+      "blobSha": "6f0b4c22a0f4885ccfa11d389559b7beaddf83ad",
+      "bytes": 454780,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 6
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 10,
+        "INFORMATION (TOO FEW CASES)": 4
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad16-lab.json",
+      "blobSha": "5c380074f0a6a1b2b64f3b6979d08d14d7658ff9",
+      "bytes": 1571178,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 10
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 18,
+        "NOT PROVEN": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad17-lab.json",
+      "blobSha": "2c08c7b294dfc769aefc7d6cd0f27cf363dec91f",
+      "bytes": 526186,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 3
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 8,
+        "REJECTED": 4,
+        "TOO FEW CASES": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.cikCover",
+        "data.cikCover.vanishedWithCik",
+        "data.cikCover.aliveWithCik",
+        "diagnostics.data.cikCover",
+        "diagnostics.data.cikCover.vanishedWithCik",
+        "diagnostics.data.cikCover.aliveWithCik"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad18-lab.json",
+      "blobSha": "0506058efeb7c7962fa1a3cc05b61fc099bc6f19",
+      "bytes": 573690,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 10
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 13,
+        "REJECTED": 5,
+        "WORSE TIMING": 6
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad19-lab.json",
+      "blobSha": "206fc18673c6b54d1d4457c1efe83d890942db01",
+      "bytes": 777204,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 7
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 18,
+        "TOO FEW CASES": 4
+      },
+      "protocolFields": [],
+      "identityFields": [
+        "dailyLastRun.coverage.withCik",
+        "dailyLastRun.coverage.ciks"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "PROTOCOL_REGISTRATION_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad2-lab.json",
+      "blobSha": "6857e6cf22cbca2aceb24f0e14bdb94417508725",
+      "bytes": 39480,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 9
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 18
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad20-lab.json",
+      "blobSha": "d5dc769a294db0eee3e4ef415a06156e9a36b8d1",
+      "bytes": 572457,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 57
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 115,
+        "REJECTED": 5
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad21-lab.json",
+      "blobSha": "a02ba34aeca291fddd6b55ebf9bb206128cf2136",
+      "bytes": 12039,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 2
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 1,
+        "FORWARD ONLY (not backtested)": 1
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.tickerMap.ciks"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad22-lab.json",
+      "blobSha": "676261c500f8ae7aba042dcb60f9c52b820c57d2",
+      "bytes": 20826,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 3
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 1,
+        "TOO FEW CASES": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.tickerMap.ciks",
+        "data.facts.ciks",
+        "data.spinoff.form10Ciks"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad23-lab.json",
+      "blobSha": "a3cca6396ebba500687bfbb700c82f925bf9d8ea",
+      "bytes": 186485,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 5
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "DOES NOT EARN ITS PLACE": 8,
+        "EARNS ITS PLACE": 2,
+        "TOO FEW": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.cikCover",
+        "data.cikCover.vanishedWithCik",
+        "data.cikCover.aliveWithCik",
+        "diagnostics.data.cikCover",
+        "diagnostics.data.cikCover.vanishedWithCik",
+        "diagnostics.data.cikCover.aliveWithCik"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad24-lab.json",
+      "blobSha": "fcef84ba61d6575091cf57c4c53661a5ac4d23cc",
+      "bytes": 373277,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 1
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 1
+        }
+      ],
+      "verdictCounts": {
+        "REJECTED": 1,
+        "TOO FEW CASES": 1
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.tickerMap.ciks"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad25-lab.json",
+      "blobSha": "ef0ddb6a22108a1bc26a6b36c2a7b26468f891c0",
+      "bytes": 399514,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 2
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 2
+        }
+      ],
+      "verdictCounts": {
+        "REJECTED": 6,
+        "INFORMATION ONLY (fallback not needed: corrected SQ25-GIANTSTAKE-A had enough cases)": 1,
+        "INFORMATION ONLY (fallback not needed: corrected SQ25-GIANTSTAKE-B had enough cases)": 1,
+        "INFORMATION ONLY (fallback not needed: SQ25-GIANTSTAKE-A had enough cases)": 1,
+        "INFORMATION ONLY (fallback not needed: SQ25-GIANTSTAKE-B had enough cases)": 1
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.tickerMap.ciks"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad26-lab.json",
+      "blobSha": "2774969f96a6945699ebfe594c1a4da9afa3e705",
+      "bytes": 431528,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 12
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 24
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.tickerMap.ciks"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad27-lab.json",
+      "blobSha": "352de4cc6e94e53a66aa73a46c867d30af51d10f",
+      "bytes": 44261,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 2
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 2
+        }
+      ],
+      "verdictCounts": {
+        "TOO FEW (information only)": 6
+      },
+      "protocolFields": [],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "PROTOCOL_REGISTRATION_NOT_STRUCTURED_HERE",
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad28-lab.json",
+      "blobSha": "57752674fc72f52cfbef347002142b7a59db67ff",
+      "bytes": 229493,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 2
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 2
+        }
+      ],
+      "verdictCounts": {
+        "TOO FEW CASES": 1,
+        "NOT PROVEN": 1,
+        "REJECTED": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.tickerMap.ciks",
+        "funnel.noCustomerCik",
+        "firstRun.SQ28-SUPDRIFT.funnel.noCustomerCik",
+        "firstRun.SQ28-SUPDRIFT-ANY.funnel.noCustomerCik",
+        "correctedRun.SQ28-SUPDRIFT.funnel.noCustomerCik",
+        "correctedRun.SQ28-SUPDRIFT-ANY.funnel.noCustomerCik"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad29-lab.json",
+      "blobSha": "a9b7aa56d2192c03278b2e763df841df04751e15",
+      "bytes": 110761,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 6
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "INFO": 8,
+        "SELL-WARNING": 4
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.tickerMap.ciks",
+        "firstRun.SQ29-F6-DELISTNOTICE",
+        "latest.data.tickerMap.ciks"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad3-lab.json",
+      "blobSha": "ec9c0946e24485921b354bb492e9003f4b86f5f9",
+      "bytes": 585382,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 11
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 11
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad4-lab.json",
+      "blobSha": "d3d67255ab680f82b2a3982896f872bb93719f4d",
+      "bytes": 925087,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 7
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 8,
+        "REJECTED": 20,
+        "TOO FEW CASES": 2
+      },
+      "protocolFields": [
+        "preRegistered",
+        "firstRun.SQ4-GROWLEAD.plans.REGISTERED",
+        "firstRun.SQ4-RULE40.plans.REGISTERED",
+        "firstRun.SQ4-INSIDER.plans.REGISTERED",
+        "firstRun.SQ4-RDCOMP.plans.REGISTERED",
+        "firstRun.SQ4-QUALDIP.plans.REGISTERED",
+        "firstRun.SQ4-IPOLEAD.plans.REGISTERED",
+        "firstRun.SQ4-PROFILE.plans.REGISTERED",
+        "latest.results.SQ4-GROWLEAD.plans.REGISTERED",
+        "latest.results.SQ4-THEMEGROW.plans.REGISTERED",
+        "latest.results.SQ4-RULE40.plans.REGISTERED",
+        "latest.results.SQ4-INSIDER.plans.REGISTERED",
+        "latest.results.SQ4-RDCOMP.plans.REGISTERED",
+        "latest.results.SQ4-QUALDIP.plans.REGISTERED",
+        "latest.results.SQ4-IPOLEAD.plans.REGISTERED",
+        "latest.results.SQ4-PROFILE.plans.REGISTERED"
+      ],
+      "identityFields": [
+        "data.cikCover",
+        "data.cikCover.vanishedWithCik",
+        "data.cikCover.aliveWithCik",
+        "diagnostics.data.cikCover",
+        "diagnostics.data.cikCover.vanishedWithCik",
+        "diagnostics.data.cikCover.aliveWithCik",
+        "diagnostics.lastMonthStart.noCik"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad5-lab.json",
+      "blobSha": "d929c8fd33fab291a5081108f19f7b12bc94b4e0",
+      "bytes": 1975483,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 8
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 8
+        }
+      ],
+      "verdictCounts": {
+        "NOT PROVEN": 24,
+        "REJECTED": 24
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [
+        "data.cikCover",
+        "data.cikCover.vanishedWithCik",
+        "data.cikCover.aliveWithCik",
+        "diagnostics.data.cikCover",
+        "diagnostics.data.cikCover.vanishedWithCik",
+        "diagnostics.data.cikCover.aliveWithCik"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad6-lab.json",
+      "blobSha": "1529d6198f4518c659eed4f1fa9635159af1ad03",
+      "bytes": 519848,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 8
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 12,
+        "NOT PROVEN": 4
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad7-lab.json",
+      "blobSha": "6d6d3391b06d910b2e308be54e06c770f8723d9d",
+      "bytes": 14352,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 5
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 5
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad8-lab.json",
+      "blobSha": "d23e710f4885fa89b51ef878e08fed8aeeebff38",
+      "bytes": 33553,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 10
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 10
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/squad9-lab.json",
+      "blobSha": "dad8058b98712f801486e166091fff301c80c897",
+      "bytes": 94269,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 10
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 20
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/swing-lab.json",
+      "blobSha": "e881dcd076d92cf6be6fa8d56b2bf0c538d405b2",
+      "bytes": 26526,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 5
+        }
+      ],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "REJECTED": 10
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/tipster-lab.json",
+      "blobSha": "9767420bfaf89c63ed8d17cc8904401650a3ad20",
+      "bytes": 261011,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 6
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 0
+        }
+      ],
+      "verdictCounts": {
+        "TOO FEW CASES": 36
+      },
+      "protocolFields": [
+        "preRegistered",
+        "firstRun.TIP-DIPLEAD.plans.REGISTERED",
+        "firstRun.TIP-THEME.plans.REGISTERED",
+        "firstRun.TIP-TURN.plans.REGISTERED",
+        "firstRun.TIP-DIPLEAD-100.plans.REGISTERED",
+        "firstRun.TIP-THEME-100.plans.REGISTERED",
+        "firstRun.TIP-TURN-100.plans.REGISTERED",
+        "latest.results.TIP-DIPLEAD.plans.REGISTERED",
+        "latest.results.TIP-THEME.plans.REGISTERED",
+        "latest.results.TIP-TURN.plans.REGISTERED",
+        "latest.results.TIP-DIPLEAD-100.plans.REGISTERED",
+        "latest.results.TIP-THEME-100.plans.REGISTERED",
+        "latest.results.TIP-TURN-100.plans.REGISTERED"
+      ],
+      "identityFields": [
+        "data.pre.noHistoryAndDelistedInWindow",
+        "diagnostics.preWindow.noHistoryAndDelistedInWindow"
+      ],
+      "holdoutFields": [],
+      "warnings": [
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/value-lab.json",
+      "blobSha": "97e808ad53a41bc35d131372c9ccddd4a8ed984f",
+      "bytes": 1715422,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [
+        {
+          "path": "firstRun",
+          "entries": 8
+        }
+      ],
+      "correctedRunPaths": [
+        {
+          "path": "correctedRun",
+          "entries": 3
+        }
+      ],
+      "verdictCounts": {
+        "NOT PROVEN": 16,
+        "REJECTED": 7,
+        "NO AVOID": 2
+      },
+      "protocolFields": [
+        "preRegistered"
+      ],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    },
+    {
+      "path": "data/verify-lab.json",
+      "blobSha": "c2f06b5dcfaca3bfea4a77b2c45b80a1d68a3a36",
+      "bytes": 395335,
+      "status": "METADATA_AUDITED",
+      "firstRunPaths": [],
+      "correctedRunPaths": [],
+      "verdictCounts": {
+        "NOT PROVEN": 12
+      },
+      "protocolFields": [],
+      "identityFields": [],
+      "holdoutFields": [],
+      "warnings": [
+        "NO_STRUCTURED_FIRST_RUN_FIELD",
+        "PROTOCOL_REGISTRATION_NOT_STRUCTURED_HERE",
+        "IDENTITY_SURVIVORSHIP_PROVENANCE_NOT_STRUCTURED_HERE",
+        "HOLDOUT_BOUNDARIES_NOT_STRUCTURED_HERE"
+      ],
+      "scope": "Object metadata through depth 8, arrays not inspected; missing metadata is unverified, not proof the study was never registered elsewhere"
+    }
+  ]
+}

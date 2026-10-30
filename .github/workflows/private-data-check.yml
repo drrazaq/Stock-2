@@ -34,4 +34,4 @@ jobs:
         run: |
           L=$(grep -E "of .* private files|expires|Error" check.log 2>/dev/null | head -3 | cut -c1-200 | tr '\n' ' ')
           if [ "$OK" = success ]; then T="PRIVATE DATA CONNECTION: PASSED. $L Nothing switched yet: production still reads the public repository."; else T="PRIVATE DATA CONNECTION: FAILED. $L Nothing changed. Send this message to Claude."; fi
-          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=$T" "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
+          printf '%s' "$T" | node tools/telegram-notify.mjs || echo 'Telegram failure notification unconfirmed; inspect job logs'

@@ -535,6 +535,7 @@ function applyGates(v, g) {
   const block = (why) => ({ word: 'No action', cls: 'wait', signal: true, blocked: true, why });
   if (g.dollarVol !== null && g.dollarVol !== undefined && g.dollarVol < CFG.MIN_DOLLAR_VOL) return block('A signal fired, but this stock trades under 2 million USD a day. Too thin to buy and sell at the listed price. Blocked.');
   if (g.halal === 'no' || g.halal === 'fail') return block('A signal fired, but this stock is marked not halal. Blocked.');
+  if (g.halal !== 'ok') return { ...block('No approved entry: current affirmative owner ZAD confirmation is missing, expired or unverifiable.'), halalPending: true };
   if (g.limit) return block('A signal fired, but your portfolio limit blocks it: ' + g.limit);
   return { ...v, halalPending: g.halal !== 'ok' };
 }
@@ -543,7 +544,16 @@ function applyGates(v, g) {
 const HALAL0 = { JPM: 'fail', BAC: 'fail', C: 'fail', GS: 'fail', MS: 'fail', WFC: 'fail', USB: 'fail', MO: 'fail', PM: 'fail',
   V: 'doubt', MA: 'doubt', AXP: 'doubt', SCHW: 'doubt', BLK: 'doubt', PYPL: 'doubt', DIS: 'doubt', NFLX: 'doubt', CMCSA: 'doubt', LMT: 'doubt', RTX: 'doubt', BA: 'doubt', SPY: 'doubt', QQQ: 'doubt', IWM: 'doubt', DIA: 'doubt' };
 const HALAL_TEXT = { ok: 'Halal: confirmed by you', no: 'Halal: marked not halal by you', fail: 'Halal: fails the business screen (for example interest-based finance or tobacco)', doubt: 'Halal: doubtful, pending ZAD verification', unknown: 'Halal: pending ZAD verification' };
-const halalOf = (sym, marks) => (marks && marks[sym] && marks[sym].s) || HALAL0[sym] || 'unknown';
+function halalOf(sym, marks, list = null, now = Date.now()) {
+  const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x), symbol=x=>typeof x==='string'&&/^[A-Z][A-Z0-9.\-]{0,9}$/.test(x);
+  if(!symbol(sym))return 'unknown';
+  const valid=object(list)&&Array.isArray(list.notHalal)&&list.notHalal.every(symbol)&&['newHalal','halalAgain'].every(k=>list[k]===undefined||Array.isArray(list[k])&&list[k].every(symbol));
+  const m=object(marks)&&Object.hasOwn(marks,sym)&&object(marks[sym])?marks[sym]:null;
+  if(valid&&list.notHalal.includes(sym)||m&&['no','fail'].includes(m.s))return 'fail';
+  const d=m?.d??m?.at,t=typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)?Date.parse(d+'T00:00:00Z'):NaN;
+  const fresh=Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===d&&Number.isFinite(now)&&now>=t&&now-t<=90*86400000;
+  return valid&&m?.s==='ok'&&(m.requiresRecheck===undefined||m.requiresRecheck===false)&&(m.by===undefined||typeof m.by==='string')&&fresh&&!/ZAD list|Zoya|Halal Terminal|HalalScreener/i.test(String(m.by||''))?'ok':HALAL0[sym]||'unknown';
+}
 
 // Price levels that would trip the rule at the next close. Approximate: the averages move a little with each new close.
 function crossPrice(ind, v, i) {
@@ -802,11 +812,11 @@ function study(sym) {
   if (!compute(sym)) return null;
   const data = state.loaded[sym], c = ctx(), pos = c.positions[sym] || null;
   const finished = c.calls.filter(x => x.sym === sym).map(x => resolveCall(x, data.candles, data.ind)).filter(t => t && !t.open).map(t => t.r);
-  const halal = halalOf(sym, c.halal);
+  const halal = halalOf(sym, c.halal, state.zadList);
   const v = applyGates(verdict(data.candles, data.ind, data.learned, pos, data.last, isPaused(finished)), { dollarVol: data.trend.dollarVol, halal, limit: pos ? null : limitFor(sym, c.positions) });
   return { sym, ...data, pos, halal, trigger: buyTrigger(data.candles, data.ind, data.learned), v };
 }
-function setHalal(sym, st) { const m = store.get('halal', {}); if (st) m[sym] = { s: st, at: new Date().toISOString().slice(0, 10) }; else delete m[sym]; store.set('halal', m); render(); }
+function setHalal(sym, st) { const m = store.get('halal', {}); if (st) m[sym] = { s: st, at: new Date().toISOString().slice(0, 10), by: 'ZAD (you)' }; else delete m[sym]; store.set('halal', m); render(); }
 
 // ---- Stages. A possible mover never looks like a buy until its entry is confirmed.
 // How old is the price shown for this stock? Signals come from the last close; only a few stocks are re-priced during the day.
@@ -912,12 +922,12 @@ function renderTop5(studies) {
   main.forEach(d => body.append(dealCard(d)));
   // fill the remaining places with discovery candidates, clearly marked as research only
   const have = new Set(main.map(d => d.s.sym)), marks = ctx().halal;
-  const fill = ((state.disc && state.disc.candidates) || []).filter(c => !have.has(c.sym) && Number(c.price) >= PENNY && !['no', 'fail'].includes(halalOf(c.sym, marks)) && !(c.bio && (c.bio.risk === 'high' || c.bio.risk === 'unknown'))).slice(0, Math.max(0, 5 - main.length));
+  const fill = ((state.disc && state.disc.candidates) || []).filter(c => !have.has(c.sym) && Number(c.price) >= PENNY && !['no', 'fail'].includes(halalOf(c.sym, marks, state.zadList)) && !(c.bio && (c.bio.risk === 'high' || c.bio.risk === 'unknown'))).slice(0, Math.max(0, 5 - main.length));
   for (const c of fill) {
     const p = pickPlan(c.sym); if (p.tier <= 1) continue;
     const t = el('table'); p.rows.forEach(r => t.append(row(r[0], r[1], r[2])));
     const why = el('div', { className: 'notes' }); (c.reasons || []).slice(0, 3).forEach(r => why.append(el('p', {}, String(r))));
-    why.append(el('p', {}, el('b', {}, HALAL_TEXT[halalOf(c.sym, marks)] + '.')), el('p', {}, el('b', {}, 'Action:'), ' research only. No tested rule has confirmed an entry, so the prices are reference levels.'));
+    why.append(el('p', {}, el('b', {}, HALAL_TEXT[halalOf(c.sym, marks, state.zadList)] + '.')), el('p', {}, el('b', {}, 'Action:'), ' research only. No tested rule has confirmed an entry, so the prices are reference levels.'));
     body.append(el('div', { className: 'deal' }, el('header', {}, el('span', { className: 'sym' }, c.sym), el('span', { className: 'price' }, String(c.name || '').slice(0, 28))), el('div', { className: 'stage wait' }, 'Discovery candidate — research required'), t, why));
   }
   $('top5Note').textContent = main.length || fill.length ? 'Ranked by stage, then by gates passed. Entry confirmed means a tested rule fired at the last daily close. Buy watch means it has not fired yet. Readiness gates are a checklist, not a chance of profit.' : (studies.length ? 'No candidate today. No stock has a confirmed entry or a setup close to one. That is a normal result.' : 'Loading prices…');
@@ -960,7 +970,7 @@ function renderQuick(studies, calls) {
   }
   // setups the cloud scanner found on its wider list of large, heavily traded companies
   const cl = state.cloud, have = new Set(firing.map(x => x.s.sym)), marks = ctx().halal, list = watchlist();
-  const extra = ((cl && cl.quick) || []).filter(q => !have.has(q.sym) && cl.session === lastSession(state.now) && !['no', 'fail'].includes(halalOf(q.sym, marks))).slice(0, Math.max(0, 3 - firing.length));
+  const extra = ((cl && cl.quick) || []).filter(q => !have.has(q.sym) && cl.session === lastSession(state.now) && !['no', 'fail'].includes(halalOf(q.sym, marks, state.zadList))).slice(0, Math.max(0, 3 - firing.length));
   for (const q of extra) {
     const t = el('table'), R2 = (x, y, z) => t.append(row(x, y, z));
     const lp = (state.livePx || {})[q.sym];
@@ -976,7 +986,7 @@ function renderQuick(studies, calls) {
     R2('Past result on this stock', Math.round(q.win * 100) + '% wins', q.n + ' unseen trades, average ' + (q.avgPct * 100).toFixed(2) + '% a trade, about ' + q.days + ' days held');
     const add = el('button', { className: 'quiet' }, 'Follow ' + q.sym + ' on this page'); add.onclick = () => { store.set('watch', [...new Set([...watchlist(), q.sym])].slice(0, maxWatch())); $('watch').value = watchlist().join(', '); refresh(); };
     body.append(el('div', { className: 'deal' }, el('header', {}, el('span', { className: 'sym' }, q.sym), el('span', { className: 'price' }, 'close ' + money(q.last))), el('div', { className: 'stage ' + (heat().room(QUICK_RISK) && !(fq && fq.bad) ? 'buy' : 'close') }, !heat().room(QUICK_RISK) ? 'Skip \u2014 total open risk would pass 2%' : fq && fq.bad ? 'Not worth it at your size \u2014 fees exceed the typical gain' : 'Quick trade setup \u2014 from the cloud scanner'), t,
-      el('div', { className: 'notes' }, el('p', {}, el('b', {}, 'Why:'), (q.q === 'gap' ? ' it just had ' : ' in an uptrend, it just had ') + q.what + '.'), el('p', {}, el('b', {}, HALAL_TEXT[halalOf(q.sym, marks)] + '.')), el('p', {}, el('b', {}, 'Action:'), ' research only. Not an order. ' + (q.earn ? q.earn.charAt(0).toUpperCase() + q.earn.slice(1) + '.' : 'Earnings date not checked for this one.'))), list.includes(q.sym) ? '' : el('div', { className: 'actions' }, add)));
+      el('div', { className: 'notes' }, el('p', {}, el('b', {}, 'Why:'), (q.q === 'gap' ? ' it just had ' : ' in an uptrend, it just had ') + q.what + '.'), el('p', {}, el('b', {}, HALAL_TEXT[halalOf(q.sym, marks, state.zadList)] + '.')), el('p', {}, el('b', {}, 'Action:'), ' research only. Not an order. ' + (q.earn ? q.earn.charAt(0).toUpperCase() + q.earn.slice(1) + '.' : 'Earnings date not checked for this one.'))), list.includes(q.sym) ? '' : el('div', { className: 'actions' }, add)));
   }
   const near = ok.filter(s => !firing.some(x => x.s === s) && s.candles[i0(s)].c > s.ind.e[CFG.TREND][i0(s)] && s.quick.some(q => q.v.q === 'rsi') && s.ind.rsi2[i0(s)] < 35).sort((a, b) => a.ind.rsi2[i0(a)] - b.ind.rsi2[i0(b)]).slice(0, 3);
   if (near.length) { const t = el('table'); near.forEach(s => { const q = s.quick.find(x => x.v.q === 'rsi'); t.append(row(s.sym, '2 day RSI ' + s.ind.rsi2[i0(s)].toFixed(0), 'Needs under ' + q.v.thr + '. Past result: ' + pct(q.test.winRate) + ' wins over ' + q.test.n + ' trades.')); }); body.append(el('h3', {}, 'Closest to a quick setup'), t); }
@@ -1042,7 +1052,8 @@ function block(s, big) {
     box.append(t);
     actions.append(el('button', { onclick: () => save({ entry: p.entry, stop: p.stop, target: p.target, shares: p.shares >= 2 ? Math.ceil(p.shares / 2) : (p.shares || null), d: candles[i].d, v: L.v, ts: Date.now() }) }, p.shares >= 2 ? 'I bought stage 1' : 'I bought'));
   }
-  if (!pos && !v.act) {
+  if (!pos && s.halal !== 'ok') box.append(el('p', { className: 'note' }, 'NO APPROVED ENTRY: current owner ZAD confirmation and a valid exclusion list are required. Research levels elsewhere are not purchase approval.'));
+  if (!pos && !v.act && s.halal === 'ok') {
     const tr = s.trigger, t = el('table');
     if (tr.price) {
       t.append(row('Buy when', 'Close above ~' + money(tr.price), tr.text + ' That is ' + ((tr.price / last - 1) * 100).toFixed(1) + '% from the last price. Then buy at the next open.'),
@@ -1265,14 +1276,14 @@ function renderDiscovery() {
   $('discNote').textContent = 'Filtered for you from ' + Number(d.swept).toLocaleString('en-US') + ' US stocks at the ' + d.session + ' close: ' + d.strong + ' strong uptrends, cut to ' + d.candidates.length + ' with fast-growing revenue. They load by themselves and each gets a buy range and sell prices. A tested plan comes from a rule that passed on this stock. A reference plan is volatility arithmetic only and is weaker. Most fast movers fall back.'
     + (d.record ? ' Earlier picks after 4 or more weeks: ' + sp(d.record.avgReturn) + ' on average against ' + sp(d.record.avgSpy) + ' for the S&P 500 (' + d.record.n + ' stocks).' : ' Results are tracked here after four weeks.');
   const halalMarks = ctx().halal;
-  const picks = d.candidates.filter(c => { const h = halalOf(c.sym, halalMarks); return h !== 'no' && h !== 'fail'; }).map(c => ({ c, p: pickPlan(c.sym) })).sort((x, y) => ((x.c.bio && (x.c.bio.risk === 'high' || x.c.bio.risk === 'unknown')) ? 9 : x.p.tier) - ((y.c.bio && (y.c.bio.risk === 'high' || y.c.bio.risk === 'unknown')) ? 9 : y.p.tier) || y.c.score - x.c.score);
+  const picks = d.candidates.filter(c => { const h = halalOf(c.sym, halalMarks, state.zadList); return h !== 'no' && h !== 'fail'; }).map(c => ({ c, p: pickPlan(c.sym) })).sort((x, y) => ((x.c.bio && (x.c.bio.risk === 'high' || x.c.bio.risk === 'unknown')) ? 9 : x.p.tier) - ((y.c.bio && (y.c.bio.risk === 'high' || y.c.bio.risk === 'unknown')) ? 9 : y.p.tier) || y.c.score - x.c.score);
   const build = ({ c, p }) => {
     const blk = c.bio && (c.bio.risk === 'high' || c.bio.risk === 'unknown');
     if (blk) p = { tier: 5, label: 'Blocked · binary event risk', cls: 'sell', rows: [['Prices', 'Withheld', 'No entry plan is shown while a trial result is pending or cannot be checked.']] };
     const t = el('table'); p.rows.forEach(r => t.append(row(r[0], r[1], r[2])));
     const notes = el('div', { className: 'notes' });
     (c.reasons || []).forEach(r => notes.append(el('p', {}, String(r))));
-    notes.append(el('p', {}, el('b', {}, HALAL_TEXT[halalOf(c.sym, halalMarks)] + '.'), ' Check with a Shariah screening service before acting.'));
+    notes.append(el('p', {}, el('b', {}, HALAL_TEXT[halalOf(c.sym, halalMarks, state.zadList)] + '.'), ' Check with a Shariah screening service before acting.'));
     return el('div', { className: 'price-card' }, el('header', {}, el('span', { className: 'sym' }, String(c.sym) + ' '), el('span', { className: 'tag ' + p.cls }, p.label), el('span', { className: 'price' }, 'score ' + c.score)), el('p', { className: 'note' }, String(c.name || '')), t, notes);
   };
   picks.slice(0, 10).forEach(x => body.append(build(x)));
@@ -1522,6 +1533,8 @@ async function loadCloud() {   // status file written by the optional cloud scan
   try {
     const owner = location.hostname.split('.')[0], repo = location.pathname.split('/')[1];
     const url = location.hostname.endsWith('github.io') && repo ? 'https://raw.githubusercontent.com/' + owner + '/' + repo + '/main/data/signals.json' : 'data/signals.json';
+    state.zadList = null; // Missing/failed refresh cannot preserve an old affirmative exclusion context.
+    try { const z=await fetch(url.replace('signals.json','zad-list.json'),{cache:'no-store'});if(z.ok)state.zadList=await z.json(); } catch {}
     try { const r2 = await fetch(url.replace('signals.json', 'discovery.json'), { cache: 'no-store' }); if (r2.ok) state.disc = await r2.json(); } catch (e) {}
     const r = await fetch(url, { cache: 'no-store' });
     if (r.ok) { const j = await r.json(); state.cloud = { quickPaused: Boolean(j.quickPaused), generatedAt: j.generatedAt, session: j.session, buys: (j.stocks || []).filter(x => x.state === 'Buy watch').length, quick: j.quick || [], quickRecord: j.quickRecord || null }; }

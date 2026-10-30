@@ -1,0 +1,34 @@
+{
+  "base": "905d5eb5572d3776439093bfef5a337c58eebb5c",
+  "status": "VERIFIED_EXACT_SOURCE_CI",
+  "acceptanceCredit": 0,
+  "local": {
+    "nodeFiles": 175,
+    "nodeReported": 1543,
+    "standalone": 2,
+    "python": 27,
+    "secFdaCallerCases": 14,
+    "fdaBaselineFailAsExpected": 7,
+    "fdaBaselineControlsPass": 7,
+    "lineageCallerCases": 9,
+    "labPublicationCases": 24,
+    "static": "238 modules/86 YAML/330 shell/Python source2 checks retained; changed JS modules parse and full suite passes"
+  },
+  "repairs": [
+    "FDA weekly markers advance only after structurally valid, nonpartial responses; failed/malformed/future-clock inputs remain retryable.",
+    "Null rows cannot hide valid approvals; date-only FDA events never gain exact publication timestamps.",
+    "Every FDA attempt consumes its request budget; unavailable or not-fetched producer state survives into discovery report.",
+    "Ranked evidence retains origin, upstream status, source/accession/capture metadata; news materiality and lane independence remain explicitly unverified."
+  ],
+  "initialFixtureFailure": "One future-marker case initially lacked the company name required to trigger the FDA request. Fixture corrected, assertion retained; final14/14 pass.",
+  "limits": [
+    "FDA404/no-result provider contract is not independently established; non-2xx stays UNKNOWN.",
+    "Response byte bounds, all producer source/revision identity, body authentication and global cross-job deduplication remain open.",
+    "Other workflow families, mixed encrypted/public outputs, caches and cancellation/upload recovery remain unfinished."
+  ],
+  "resume": "docs/remaining-engineering-resume.md",
+  "realProviderRequests": 0,
+  "prospectiveCases": 0,
+  "verifiedSource": "b716ee93cdc0cb94e67dd7acde7adfd323fb57b5",
+  "ciEvidence": "docs/validation/fda-source-report-ci.json"
+}

@@ -18,11 +18,11 @@ const sig = (extra = {}) => ({ session: '2026-10-21', market: { above50: true, u
 const working = { n: 40, winRate: 0.6, avgPct: 0.02, avgSpy: 0.005, days: 12, stocks: 25 };
 const find = (S, s, sym) => S.fn('planCands')(s, {}).find(x => x.sym === sym);
 
-test('control: with focus off and no other gate, the proven quick trade is a buy', async () => {
-  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/signals.json': sig() } });
-  const x = find(S, sig(), 'AAA');
+test('control: focus off with its own minimum live record, the quick trade is a buy', async () => {
+  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/halal.json':{AAA:{s:'ok',d:today}}, 'data/signals.json': sig({quickRecord:working}) } });
+  const x = find(S, sig({quickRecord:working}), 'AAA');
   assert.equal(x.ok, true);
-  assert.equal(S.fn('gateVerdict')('AAA', sig()), null);
+  assert.equal(S.fn('gateVerdict')('AAA', sig({quickRecord:working})), null);
 });
 
 test('a stock the owner marked NOT halal in ZAD is never a buy and the gate says why', async () => {
@@ -51,7 +51,7 @@ test('FOCUS on and no WORKING engine: the quick trade is paper only, on every pa
   const S = await loadScan({ files: { 'data/settings.json': { focus: true }, 'data/signals.json': sig() } });
   const x = find(S, sig(), 'AAA');
   assert.equal(x.ok, false); assert.equal(x.paperOnly, true);
-  assert.match(S.fn('gateVerdict')('AAA', sig()), /focus mode/);
+  assert.match(S.fn('gateVerdict')('AAA', sig()), /evidence gate/);
 });
 
 test('FOCUS on with a WORKING engine: the quick trade is a buy again', async () => {

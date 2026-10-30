@@ -1,0 +1,44 @@
+{
+  "source": "bb93fb291338b0f12c4bf27e5f6aa5803d14c596",
+  "workflow": ".github/workflows/Smart-money.yml",
+  "scope": "Exact publication run block; disposable local Git only; no dispatch/network/secrets",
+  "status": "REPAIR_VERIFIED_EXACT_SOURCE_CI",
+  "cases": [
+    {
+      "fault": "commit_refused",
+      "shellExit": 0,
+      "upstreamUnchanged": true,
+      "unpublishedLocalBytes": true,
+      "defectReproduced": true
+    },
+    {
+      "fault": "all_pushes_refused",
+      "shellExit": 0,
+      "upstreamUnchanged": true,
+      "unpublishedLocalBytes": true,
+      "defectReproduced": true
+    }
+  ],
+  "repair": {
+    "workflow": ".github/workflows/Smart-money.yml",
+    "test": "tests/workflow-publication-faults.test.mjs",
+    "localCases": 4,
+    "localPass": 4,
+    "baselineNegativeControl": {
+      "pass": 1,
+      "failAsExpected": 3
+    },
+    "behavior": "Explicit stage/commit failure barriers; require confirmed push; abort conflicts instead of job-wins selection.",
+    "exactHostedCI": "All 12 applicable checks passed on 2b96707b242e4ac55cc8ec006211a00ebe2867b9",
+    "acceptanceCredit": 0,
+    "fullLocal": {
+      "files": 172,
+      "reportedNodeTests": 1496,
+      "standalone": 2,
+      "python": 27,
+      "failedFiles": 0
+    },
+    "verifiedSource": "2b96707b242e4ac55cc8ec006211a00ebe2867b9",
+    "ciEvidence": "docs/validation/smart-money-publication-ci.json"
+  }
+}

@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 // Seam: catalystLines(sig, pos) in scan.mjs, the CATALYST RUN-UP section of ACTIONS. It reads data/catalyst-today.json (written weekly by
 // catalyst-lab.mjs). The owner's rule (23 Oct 2026): a buy appears ONLY when the rule's frozen verdict is TRADABLE SMALL (with the tier2
 // switch on and its own ledger not negative) or PROVEN; then buy range = next open up to +3%, stop 15%, SELL date = 2 sessions before
@@ -60,3 +62,13 @@ test('the  catalysts  command shows the calendar as information only when no rul
 });
 
 test('no network was used', () => { assert.deepEqual(blocked, []); });
+
+test('catalyst BUY requires current affirmative owner ZAD, never stale/generated third-party halal',async()=>{
+ for(const marks of [{},{ABCD:{s:'ok',d:'2020-01-01'}},{ABCD:{s:'ok',d:'2099-01-01'}},{ABCD:{s:'fail',d:new Date().toISOString().slice(0,10)}},{ABCD:{s:'ok',d:new Date().toISOString().slice(0,10),by:'Zoya'}}]){
+  const S=await loadScan({files:files('PROVEN',{'data/halal.json':marks})});
+  assert.deepEqual(S.fn('catalystLines')(sig,{}),[]);
+  assert.doesNotMatch(S.fn('catalystCalendarText')(),/halal per ZAD|current owner ZAD mark/);
+ }
+ const S=await loadScan({files:files('PROVEN',{'data/zad-list.json':{notHalal:[]},'data/halal.json':'{broken'})});assert.deepEqual(S.fn('catalystLines')(sig,{}),[]);
+ const missing=await loadScan({files:files('PROVEN')});fs.unlinkSync(path.join(missing.dir,'data/zad-list.json'));assert.deepEqual(missing.fn('catalystLines')(sig,{}),[]);
+});

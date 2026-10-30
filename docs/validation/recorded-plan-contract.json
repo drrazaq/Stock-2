@@ -1,0 +1,37 @@
+{
+  "base": "7bcf591d4414248362d96819a8ffe118a794fa47",
+  "status": "HOSTED_VERIFIED_PARTIAL",
+  "acceptanceAdded": 0,
+  "changedRequirements": [
+    "Actual owner fill command validates numeric tokens before normalization: zero, negative, nonfinite, overflowing, exponent-form and invalid share values cannot become quote fallback or replace an existing position. Invalid confirmation callbacks do not claim a recorded fill.",
+    "Source anchors/stop/target/hold and known entry ceilings are validated; malformed quick siblings do not crash optional statistics. A real reported fill remains recorded but an invalid or above-ceiling source plan stays unresolved without a silently invented stop.",
+    "Horizons explicit75-percent stop specification is checked. Broker-stop tracking is labelled as a safety variant of its tested daily-close/next-open exit, including in original archived plan metadata.",
+    "Half-sale acknowledgement no longer guarantees absence of loss; actual stop/entry, costs, gaps and slippage are explicit."
+  ],
+  "local": {
+    "nodeFiles": 181,
+    "nodeReportedCases": 1645,
+    "standaloneScripts": 2,
+    "pythonTests": 27,
+    "moduleSyntax": 240,
+    "workflowYaml": 86,
+    "shellBlocks": 329,
+    "pythonSyntax": 9,
+    "actualOwnerCallerCases": 26,
+    "priorSourceNegativeControl": {
+      "failed": 24,
+      "passed": 2
+    }
+  },
+  "callerEvidence": "tests/recorded-plan-contract.test.mjs runs actual tgCommands, persistence, planFor, posLine and callback acknowledgements using localhost only and synthetic owner files/key. No actual owner data or existing secret values are read.",
+  "remaining": [
+    "All other delivered recommendation renderers and their registered entry/stop/exit/hold/cost/risk specifications are not yet compared.",
+    "Other owner financial commands and fallback exit quotes, all provider session/corporate-action/units normalization, fee/slippage/liquidity/sizing controls remain unfinished.",
+    "Command offsets/mutations/replies still lack a complete reviewed remote intent/result transaction and all-route partial/unknown reconciliation; finite callback validation is not durable delivery proof."
+  ],
+  "realProviderRequests": 0,
+  "realMessagesOrders": 0,
+  "prospectiveCases": 0,
+  "verifiedSource": "86b25ccb61abe1be1b91b9f41c280f74b73d51d1",
+  "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
+}

@@ -1,0 +1,43 @@
+name: Branch delivery integrity fixtures
+on:
+  push:
+    branches: [Stock2-safety-fixes]
+    paths:
+      - 'telegram-delivery*.mjs'
+      - 'news-watch.mjs'
+      - 'scan.mjs'
+      - 'tests/basket-delivery.test.mjs'
+      - 'tests/watchdog-delivery.test.mjs'
+      - 'tests/add-reply-owner-policy.test.mjs'
+      - 'tests/telegram-delivery-ledger.test.mjs'
+      - 'tests/news-delivery.test.mjs'
+      - '.github/workflows/news.yml'
+      - '.github/workflows/engineering-targeted-tests.yml'
+  pull_request:
+    paths:
+      - 'telegram-delivery*.mjs'
+      - 'news-watch.mjs'
+      - 'scan.mjs'
+      - 'tests/basket-delivery.test.mjs'
+      - 'tests/watchdog-delivery.test.mjs'
+      - 'tests/add-reply-owner-policy.test.mjs'
+      - 'tests/telegram-delivery-ledger.test.mjs'
+      - 'tests/news-delivery.test.mjs'
+      - '.github/workflows/news.yml'
+      - '.github/workflows/engineering-targeted-tests.yml'
+permissions:
+  contents: read
+jobs:
+  delivery-fixtures:
+    if: github.head_ref == 'Stock2-safety-fixes' || github.ref_name == 'Stock2-safety-fixes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Localhost and mocked API contracts only
+        run: timeout 120s node --test tests/telegram-delivery-ledger.test.mjs tests/news-delivery.test.mjs tests/basket-delivery.test.mjs tests/watchdog-delivery.test.mjs tests/add-reply-owner-policy.test.mjs

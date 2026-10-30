@@ -11,7 +11,8 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { optionNet, pickContract, exitValue, verdictOf, isOptionsCall, entrySession, tierOfVerdict, stats, splitHalves, tStat, STOCK_COST, STRESS_X, TIER2_T, PROOF_T, MIN_PER_HALF } from './options-core.mjs';
 const env = process.env, sleep = (ms) => new Promise(r => setTimeout(r, ms)), OUT = 'data/options-lab.json', CD = env.OPT_CACHE || 'opt-cache';
-const AD = (env.ALPACA_DATA || 'https://data.alpaca.markets').replace(/\/$/, ''), AT = (env.ALPACA_TRADE || 'https://paper-api.alpaca.markets').replace(/\/$/, '');
+const local=u=>u&&/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(u)?u:null;
+const AD=local(env.ALPACA_DATA)||'https://data.alpaca.markets',AT=local(env.ALPACA_TRADE)||'https://paper-api.alpaca.markets';
 const AH = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY || '', 'APCA-API-SECRET-KEY': env.ALPACA_SECRET || '' } };
 const WINDOW_FROM = '2024-02-01', r4 = (x) => x === null || x === undefined || !isFinite(x) ? null : +x.toFixed(4);
 const addDays = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10), dayDiff = (a, b) => Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 864e5);
@@ -29,7 +30,7 @@ let lastCall = 0;
 const kindOf = (url) => /\/v2\/stocks\/bars/.test(url) ? (/feed=sip/.test(url) ? 'stockBars-sip' : 'stockBars') : /\/options\/contracts/.test(url) ? 'contracts' : /\/options\/bars/.test(url) ? 'optionBars' : /snapshots/.test(url) ? 'snapshots' : 'other';
 const failed = (url, why) => { const k = kindOf(url) + ' ' + why; cov.alpaca.errors[k] = (cov.alpaca.errors[k] || 0) + 1; if ((cov.alpaca.failedSample = cov.alpaca.failedSample || []).length < 25) cov.alpaca.failedSample.push(k + ' ' + url.replace(/^https?:\/\/[^/]+/, '').slice(0, 160)); };
 async function alp(url) { for (let a = 0; a < 5; a++) { const w = 330 - (Date.now() - lastCall); if (w > 0) await sleep(w); lastCall = Date.now(); cov.alpaca.requests++;
-    let r; try { r = await fetch(url, AH); } catch (e) { failed(url, e.message); await sleep(3000); continue; }
+    let r; try { r = await fetch(url, {...AH,redirect:'error',signal:AbortSignal.timeout(15000)}); } catch (e) { failed(url, e.message); await sleep(3000); continue; }
     if (r.status === 429) { await sleep(15000); continue; } if (!r.ok) { failed(url, 'HTTP ' + r.status); if (r.status >= 500) { await sleep(3000); continue; } return null; }
     return r.json().catch(() => null); } return null; }
 async function pages(url, key) { const out = {}; let tok = null, n = 0;

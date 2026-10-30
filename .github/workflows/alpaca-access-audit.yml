@@ -1,0 +1,14 @@
+name: Completed Alpaca access audit record
+# RETIRED: the authorized dated diagnostic completed. No credentials, network diagnostic or push trigger remains.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  record:
+    if: github.repository == 'drrazaq/Stock-2' && github.ref_name == 'Stock2-safety-fixes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Explain retired diagnostic
+        run: echo 'Completed audit40871506655. See docs/validation/alpaca-access-2026-10-29.observed.json. This job has no provider bindings or diagnostic commands.'

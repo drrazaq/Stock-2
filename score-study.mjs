@@ -1,3 +1,5 @@
+import {telegramFetch as sharedTelegramFetch} from './telegram-delivery.mjs';
+const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // STOCK SCORE. Every liquid US stock gets a score from 0 to 100, built from four measures with long research records:
 //   strength over 6 months (momentum), closeness to its 6 month high, calm price moves (low volatility), and a recent dip
 //   (short-term reversal). The score is only trusted if it WORKS: every month of the last two years, the 20 top-scored stocks
@@ -90,5 +92,5 @@ const msg = ['STOCK SCORE, ' + D[T - 1], 'Every liquid US company scored 0 to 10
   done.length ? '\nPAPER BASKETS FINISHED: ' + done.length + ', average ' + pc(done.reduce((a, b) => a + b.result, 0) / done.length) + ' a month vs S&P 500 ' + pc(done.filter(b => b.spy !== null).reduce((a, b) => a + b.spy, 0) / Math.max(1, done.filter(b => b.spy !== null).length)) : '\nPaper baskets: the first one is recorded today and judged in a month.',
   'About ' + Math.round((res.older.months + res.newer.months) / 12) + ' years of monthly tests (plus 6 months to warm up), one market climate; price measures only (no company figures in this history). Research, not an order. Not financial advice, not a halal ruling.'];
 fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), status: 'OK', verdict, useKey, variant, results: res, top, scores: Object.fromEntries(now.map(r => [r.s, r.score])), text: msg.join('\n') }));
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || verdict === 'PROMISING')) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || verdict === 'PROMISING')) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
 console.log(msg.join('\n'));

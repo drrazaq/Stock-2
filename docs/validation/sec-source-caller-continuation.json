@@ -1,0 +1,41 @@
+{
+  "base": "f54a4542e2c21ff8a12a1b165450031e2ea3268e",
+  "status": "VERIFIED_EXACT_SOURCE_CI",
+  "acceptanceCredit": 0,
+  "local": {
+    "nodeFiles": 175,
+    "nodeReported": 1536,
+    "standalone": 2,
+    "python": 27,
+    "secCallerTests": 7,
+    "secBaselineFailAsExpected": 4,
+    "secBaselineControlsPass": 3,
+    "labCallerTests": 24,
+    "static": {
+      "modules": 238,
+      "workflowYaml": 86,
+      "shellBlocks": 330,
+      "pythonSyntax": "PASS"
+    }
+  },
+  "changes": [
+    "SEC accessions and exact reported publication clocks survive export into discovery; same-minute same-family filings no longer collapse.",
+    "Newly fetched rows retain firstObservedAt across processes; legacy cache ingestion remains unknown.",
+    "SEC retry attempts consume the same request budget as initial requests, with no redirects and a bounded request timeout.",
+    "Comeback publication follows the verified commit-before-pull/conflict-abort/snapshot-artifact contract."
+  ],
+  "limits": [
+    "Reported accession identity is not independent authenticity, revision-history or source archive certification.",
+    "SEC date-only and legacy cache records do not gain invented exact clocks.",
+    "FDA and full all-source ingestion/revision contracts still need review.",
+    "Other workflow families, caches, cancellation recovery and all side-effect contracts remain unfinished."
+  ],
+  "acceptance": {
+    "complete": 24,
+    "remaining": 16,
+    "CATALYST-03": "OPEN",
+    "ACTIONS-04": "OPEN"
+  },
+  "verifiedSource": "905d5eb5572d3776439093bfef5a337c58eebb5c",
+  "ciEvidence": "docs/validation/sec-source-caller-ci.json"
+}

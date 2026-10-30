@@ -1,0 +1,618 @@
+{
+  "version": 1,
+  "date": "2026-10-29",
+  "repository": "drrazaq/Stock-2",
+  "branch": "Stock2-safety-fixes",
+  "base": "38150db02c3a931ae637ecd284af7202d3ddf609",
+  "verifiedSource": "14cc16592a89ad7ec15ca87b90ef61a40306ad18",
+  "tree": "3d3d40290344526833e1d7714375fface5a90e45",
+  "acceptance": {
+    "complete": 23,
+    "total": 40,
+    "remaining": 17,
+    "percent": 57.5
+  },
+  "tests": {
+    "files": 169,
+    "tap": 1446,
+    "standalone": 2,
+    "total": 1448
+  },
+  "checks": [
+    {
+      "name": "fixture-close",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573684912",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "source-preservation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577433/job/123573558342",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "test",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577411/job/123573558054",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "offline-recovery (3.12, 46.0.3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557969",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "research-fixtures",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577421/job/123573557732",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "offline-recovery (3.9.16, 46.0.3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557673",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "delivery-fixtures",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577494/job/123573557365",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "offline-recovery (3.9.16, 3.3.2)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909577413/job/123573557267",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "safety",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573532492",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "fixture-open",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569318/job/123573531936",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "source-preservation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569392/job/123573531633",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    },
+    {
+      "name": "test",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/drrazaq/Stock-2/actions/runs/40909569321/job/123573531395",
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18"
+    }
+  ],
+  "preservation": {
+    "checked": 454,
+    "data": 399,
+    "changed": [],
+    "phaseAInstalled": false
+  },
+  "changedBlobs": [
+    {
+      "path": ".github/workflows/alpaca-batch-probe.yml",
+      "sha": "373f5f58f2b755a42bcb484e7d37386d67795d12",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/engineering-targeted-tests.yml",
+      "sha": "54c6540a8db35c9333ed488660cee41c4f6032e1",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/python-key-recovery-tests.yml",
+      "sha": "bf92af7568ecc698c77f80d7a63cd098cd8ce825",
+      "mode": "100644"
+    },
+    {
+      "path": ".github/workflows/research-collector-fixtures.yml",
+      "sha": "dd543bc05676cbe132497349fc1dd6774bdfcd8e",
+      "mode": "100644"
+    },
+    {
+      "path": "discovery-runtime.mjs",
+      "sha": "e0f0ce849317544b1e1ec54c1ed176fc6f82ee3b",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/alpaca-batch-access-observed-2026-10-29.md",
+      "sha": "3c208f6097864861e4fbfc45b59099b167fe4013",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/catalyst-row-isolation.md",
+      "sha": "682ee3aa606887a17a71a883456d003225100a4c",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-acceptance-checks.json",
+      "sha": "99368dd99badafb7e3d54d17f4e9c3d4669600ea",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-handoff-resume.md",
+      "sha": "24e6f26fc05c155cbf2a9911a62b5f2d3eed329e",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-ledger.json",
+      "sha": "e659e0e07c0e8f1d91eef709157dcd07788b0f80",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/engineering-progress.md",
+      "sha": "64be213e64de6249b009f39c3113d42231744405",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/execution-account-quarantine.md",
+      "sha": "c99d06371c99818fc6e1aac6ba508b712425caef",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/execution-mutation-fault-matrix.md",
+      "sha": "c981e2ed61bf1046d81d774695f6458ad7ff0572",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/hybrid-encrypted-checkpoint-contract.md",
+      "sha": "00e6833177798ef5b729ab37c94c482f5d5f1e1b",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/hybrid-transport-offline-runner.md",
+      "sha": "db934eec874c1f717c1f7541b492693196a97416",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/paper-caller-fault-admission.md",
+      "sha": "ffca3151bd47cd46de5ed56c956a9f614b7d1a91",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/alpaca-batch-probe-2026-10-29.observed.json",
+      "sha": "36d647b288645803257e613553ef4dc807f5c64f",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/validation/alpaca-batch-probe-2026-10-29.request.json",
+      "sha": "90b544b5b3542bb55215fe83795ed2a7c891c7b0",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/watchdog-add-reply-integrity.md",
+      "sha": "fbeb15b464b842da1bca14dcc9ca8be2e9681d92",
+      "mode": "100644"
+    },
+    {
+      "path": "hybrid-research-checkpoint.mjs",
+      "sha": "40f488c2776feb06af36fe221c3d8ca0409cd6e4",
+      "mode": "100644"
+    },
+    {
+      "path": "hybrid-research-fixture.mjs",
+      "sha": "61d6ad29e83222a3d05e2ee93ab2462b61ea6684",
+      "mode": "100644"
+    },
+    {
+      "path": "hybrid-snapshot-transport.mjs",
+      "sha": "f5e6fc3d9aba01382ac0c761938d0afe8262402b",
+      "mode": "100644"
+    },
+    {
+      "path": "paper-mutation-journal.mjs",
+      "sha": "09c8e54a8b830594aee817ab0a6faf4a27d4e43b",
+      "mode": "100644"
+    },
+    {
+      "path": "paper-transport.mjs",
+      "sha": "34d8bdb6bb60a5300b52eef3e4e522b5d17fbe99",
+      "mode": "100644"
+    },
+    {
+      "path": "scan.mjs",
+      "sha": "60ab613621b12230695f255f8b4be2ea09e27f7d",
+      "mode": "100644"
+    },
+    {
+      "path": "test/load-scan.mjs",
+      "sha": "307af979262d010f8221dbed940204fffff78454",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/add-reply-owner-policy.test.mjs",
+      "sha": "a52b446c812d1e2d9788e87a0b469df5232da6d0",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/alpaca-batch-access-probe.test.mjs",
+      "sha": "3c338ab8711ff58fe3b09dd3e05207e2cd1a5fb0",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/discovery-runtime.test.mjs",
+      "sha": "02325260c2bb77e270872649029dedbe708138e2",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/fixtures/hybrid-checkpoint-node-v1.json",
+      "sha": "4c855c5b663fedbdf9384790da239399e87ed0d8",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/hybrid-research-checkpoint.test.mjs",
+      "sha": "e2ba868ea215ff7b1f974818c981bf31faade187",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/hybrid-research-fixture.test.mjs",
+      "sha": "ad59a2d397a443ac4a34aa8a66aae9a8893c6905",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/hybrid-snapshot-transport.test.mjs",
+      "sha": "8d64dc6f7d7f332a90c11212a9acb525e3b205b1",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/paper-caller-faults.test.mjs",
+      "sha": "e48c4f706ea06cf048b060346eb1d9fb6869c493",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/paper-mutation-journal.test.mjs",
+      "sha": "82ef07506c8b79f1d1d77ddc9bd7c238a2ea2842",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/paper-transport.test.mjs",
+      "sha": "04e5ddc2228ed2491817429a12f932bf4ce23353",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/test_hybrid_checkpoint_recovery.py",
+      "sha": "54a98cc4848d6e1d6f556fdc7049de5929347c25",
+      "mode": "100644"
+    },
+    {
+      "path": "tests/watchdog-delivery.test.mjs",
+      "sha": "59d41b6abc4502b5d2ec0bc4a7769b6e0ce189b0",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/alpaca-batch-access-probe.mjs",
+      "sha": "2dabf939cc1b7ee1ae5455ad969c6e3b480037ce",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/hybrid-research-fixture.mjs",
+      "sha": "f798bc76fc6d03007e89e5bee9741d50cb4d3582",
+      "mode": "100644"
+    },
+    {
+      "path": "tools/recover-hybrid-checkpoints.py",
+      "sha": "9a7e7aeabeb8fd6b5cd547577e11ef7fc6e5cd01",
+      "mode": "100644"
+    }
+  ],
+  "publications": [
+    {
+      "sha": "a31340002c54ffcc056854b6464c689757a2f5eb",
+      "parent": "09b5d93a4bf6333c3fabe1e96eebaec6879837d8",
+      "tree": "0d90685e1c9f0190e99d2e603df9c53c7a05fd0a",
+      "paths": [
+        "tools/alpaca-access-audit.mjs",
+        "tests/alpaca-access-audit.test.mjs",
+        ".github/workflows/alpaca-access-audit.yml",
+        "docs/validation/alpaca-access-2026-10-29.request.json",
+        "docs/validation/provider-diagnostic-2026-10-29T114413Z.json",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md"
+      ]
+    },
+    {
+      "sha": "eae4c456ccff9308ae684add1f9e602e32f5a014",
+      "parent": "16529b15ee3b95c4cedd96cf571ace8320889566",
+      "tree": "2a582fc1ec130a234b22425df5a399ed61e9c8ca",
+      "paths": [
+        "snapshot-fields.mjs",
+        "live-refresh-universe.mjs",
+        "ignition-watch.mjs",
+        "research-quote-followups.mjs",
+        "tests/snapshot-fields.test.mjs",
+        "tests/live-refresh-universe.test.mjs",
+        "tests/research-quote-followups.test.mjs",
+        ".github/workflows/alpaca-access-audit.yml",
+        "tests/alpaca-access-audit.test.mjs",
+        "docs/hybrid-provider-readiness-2026-10-29.md",
+        "docs/validation/alpaca-access-2026-10-29.observed.json",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/phase-a-final-preflight-2026-10-29.json",
+        "docs/validation/phase-a-final-preflight.md"
+      ]
+    },
+    {
+      "sha": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+      "parent": "eae4c456ccff9308ae684add1f9e602e32f5a014",
+      "tree": "f5e6f4ec019bc4ffb8f88fe13509d090b33e6ccd",
+      "paths": [
+        "tests/watcher-refresh.test.mjs",
+        "docs/validation/hybrid-fixture-correction.md"
+      ]
+    },
+    {
+      "sha": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+      "parent": "0c58716026e39e2374a8a2a54662f6690404a9fd",
+      "tree": "dc47b537d91502d0daf05bc0c8b9fb29937b613a",
+      "paths": [
+        "scan.mjs",
+        "test/basket-lane.test.mjs",
+        "tests/basket-delivery.test.mjs",
+        ".github/workflows/engineering-targeted-tests.yml",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/basket-delivery-durability.md"
+      ]
+    },
+    {
+      "sha": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+      "parent": "2d22e49c47065dfd7abadbceb22845723bcf57c3",
+      "tree": "f7c833ed2d6fdd5cc47725fcf49f5a2deddbce06",
+      "paths": [
+        "hybrid-research-session.mjs",
+        "tests/hybrid-research-session.test.mjs",
+        "docs/validation/alpaca-official-sdk-request-contract.json",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/hybrid-session-offline-contract.md"
+      ]
+    },
+    {
+      "sha": "194619012541541a011e620e266f8833a697c00c",
+      "parent": "f03e48c514f15d6bc74c5d56ba8355ac25051639",
+      "tree": "4aa1bde0dfcc8f66ec3cf07f22a6917dbfa11055",
+      "paths": [
+        "scan.mjs",
+        "tests/rebalance-owner-gate.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/engineering-acceptance-checks.json",
+        "docs/rebalance-owner-gate.md"
+      ]
+    },
+    {
+      "sha": "5a03637949f14f58487683d26e746a5c76c19ed4",
+      "parent": "194619012541541a011e620e266f8833a697c00c",
+      "tree": "73dc7f973b754ec9c5f0560683a99e561b901821",
+      "paths": [
+        "historical-integrity.mjs",
+        "tests/historical-integrity.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/historical-holdout-admission-v3.md"
+      ]
+    },
+    {
+      "sha": "69db8a5f319e05296887a406f5039739118962da",
+      "parent": "5a03637949f14f58487683d26e746a5c76c19ed4",
+      "tree": "063d72c77e8bb5c7190b7e48be728019f92eb4b2",
+      "paths": [
+        ".github/save-data.sh",
+        "test/save-data.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/shared-save-failure-barrier.md"
+      ]
+    },
+    {
+      "sha": "4c9e4785a7cd4a4d6261dcf57af3099813aebab5",
+      "parent": "69db8a5f319e05296887a406f5039739118962da",
+      "tree": "df4208baf267f3be62ee187137a8c8f8cf074b64",
+      "paths": [
+        ".github/save-data.sh",
+        "test/save-data.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/frozen-save-conflict-guard.md"
+      ]
+    },
+    {
+      "sha": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+      "parent": "4c9e4785a7cd4a4d6261dcf57af3099813aebab5",
+      "tree": "b52394b5489d8d4146be7d87e1dc19c17d164ccc",
+      "paths": [
+        ".github/save-data.sh",
+        "test/save-data.test.mjs",
+        "test/private-data.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/frozen-save-integration-correction.md"
+      ]
+    },
+    {
+      "sha": "38150db02c3a931ae637ecd284af7202d3ddf609",
+      "parent": "234f4195ba2b3e7ab946e33219563a19ef16a912",
+      "tree": "39afd0975d4edc566f1f344dd97cb2bad363c0b8",
+      "paths": [
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/validation/provider-continuation-publication-bundle-2026-10-29.json",
+        "docs/validation/phase-a-final-preflight-2026-10-29.json",
+        "docs/production-validation-approval.md"
+      ]
+    },
+    {
+      "sha": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+      "parent": "38150db02c3a931ae637ecd284af7202d3ddf609",
+      "tree": "dc464d7cfff523f4642c24cc5398e8c7b5f1f9d1",
+      "paths": [
+        "hybrid-snapshot-transport.mjs",
+        "hybrid-research-fixture.mjs",
+        "tools/hybrid-research-fixture.mjs",
+        "tests/hybrid-snapshot-transport.test.mjs",
+        "tests/hybrid-research-fixture.test.mjs",
+        ".github/workflows/research-collector-fixtures.yml",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/hybrid-transport-offline-runner.md"
+      ]
+    },
+    {
+      "sha": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+      "parent": "68b40c1c54da160ae1b94ad5662afc0da50059d6",
+      "tree": "da11dfe146d94023e81c3098e62c1587b6760406",
+      "paths": [
+        "hybrid-snapshot-transport.mjs",
+        "hybrid-research-fixture.mjs",
+        "hybrid-research-checkpoint.mjs",
+        "tools/recover-hybrid-checkpoints.py",
+        "tests/hybrid-research-checkpoint.test.mjs",
+        "tests/test_hybrid_checkpoint_recovery.py",
+        "tests/fixtures/hybrid-checkpoint-node-v1.json",
+        ".github/workflows/python-key-recovery-tests.yml",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/hybrid-encrypted-checkpoint-contract.md"
+      ]
+    },
+    {
+      "sha": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+      "parent": "edb28f7b3e7bc7d14d8e03639569cdb854313bbb",
+      "tree": "95e4f48c1345b30b83cb1968650e29eec455e068",
+      "paths": [
+        "paper-transport.mjs",
+        "tests/paper-transport.test.mjs",
+        "tests/paper-caller-faults.test.mjs",
+        "scan.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/paper-caller-fault-admission.md"
+      ]
+    },
+    {
+      "sha": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+      "parent": "3b4025bcad27b46fdb107738b9d0d885811cb824",
+      "tree": "fde82a4d1e82db91b1c386674cac377ddf2fae5b",
+      "paths": [
+        "tools/alpaca-batch-access-probe.mjs",
+        "tests/alpaca-batch-access-probe.test.mjs",
+        ".github/workflows/alpaca-batch-probe.yml",
+        "docs/validation/alpaca-batch-probe-2026-10-29.request.json",
+        "hybrid-snapshot-transport.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md"
+      ]
+    },
+    {
+      "sha": "468856ff43c5c933a60c11e44e0743626086d901",
+      "parent": "2128b6a1e5b7a4458cb17fa2d682d72dbe72e306",
+      "tree": "eaac1ff1071b470c10ab0b2472ea30896c9a8e09",
+      "paths": [
+        ".github/workflows/alpaca-batch-probe.yml",
+        "tests/alpaca-batch-access-probe.test.mjs",
+        "docs/validation/alpaca-batch-probe-2026-10-29.observed.json",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/alpaca-batch-access-observed-2026-10-29.md"
+      ]
+    },
+    {
+      "sha": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+      "parent": "468856ff43c5c933a60c11e44e0743626086d901",
+      "tree": "3f99ae74e033864c7d4471cb32a486e7cc4d61fb",
+      "paths": [
+        "tests/watchdog-delivery.test.mjs",
+        "tests/add-reply-owner-policy.test.mjs",
+        ".github/workflows/engineering-targeted-tests.yml",
+        "scan.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/watchdog-add-reply-integrity.md"
+      ]
+    },
+    {
+      "sha": "c503b3bf15c7c4f1e1cede346d72e5b2f9eb2b5a",
+      "parent": "a48aadc96ca82dce9e4243d4b1cc4c2dabe29f7c",
+      "tree": "a571757cc2621639d934b7df73bdd9e1417ea476",
+      "paths": [
+        "paper-mutation-journal.mjs",
+        "tests/paper-mutation-journal.test.mjs",
+        "tests/paper-caller-faults.test.mjs",
+        "test/load-scan.mjs",
+        "scan.mjs",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/execution-mutation-fault-matrix.md"
+      ]
+    },
+    {
+      "sha": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+      "parent": "c503b3bf15c7c4f1e1cede346d72e5b2f9eb2b5a",
+      "tree": "53aa660584f74428d8c6ca0e800395cad2330494",
+      "paths": [
+        "paper-mutation-journal.mjs",
+        "tests/paper-mutation-journal.test.mjs",
+        "docs/engineering-ledger.json",
+        "docs/execution-account-quarantine.md",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md"
+      ]
+    },
+    {
+      "sha": "14cc16592a89ad7ec15ca87b90ef61a40306ad18",
+      "parent": "f2d5add88df8057db3006f8ef2ab93073b28b8b2",
+      "tree": "3d3d40290344526833e1d7714375fface5a90e45",
+      "paths": [
+        "discovery-runtime.mjs",
+        "tests/discovery-runtime.test.mjs",
+        "docs/engineering-acceptance-checks.json",
+        "docs/engineering-ledger.json",
+        "docs/engineering-progress.md",
+        "docs/engineering-handoff-resume.md",
+        "docs/catalyst-row-isolation.md"
+      ]
+    }
+  ],
+  "recovery": "Fetch branch; verify actual ref and source tree. Manifest covers source checkpoint, not its own subsequent documentation commit. No untracked materialization should be wholesale published.",
+  "restrictions": "No merge/deploy/Phase A dispatch, orders, live BUYs, secret/permission changes. All mutation infrastructure remains unactivated."
+}

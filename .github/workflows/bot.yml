@@ -26,18 +26,19 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           save() {
-            git add data
+            git add data || return 1
             git diff --cached --quiet && return 0
-            git commit -q -m "bot $(date -u +%FT%RZ)"
-            for i in 1 2 3 4 5; do if git pull -q --rebase -X theirs && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
+            git commit -q -m "bot $(date -u +%FT%RZ)" || return 1
+            for i in 1 2 3 4 5; do if git pull -q --rebase && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
             echo "Error: could not save the data folder to the repository" | tee -a run.log
+            return 1
           }
           # privacy migration stage 1 (28 Oct): keep a copy of the owner's private files in the private repository. Does nothing
           # without the PRIVATE_DATA_TOKEN secret or before the connection check passed; never stops the bot.
           mirror() { bash .github/private-data.sh mirror >> run.log 2>&1 || true; }
           end=$(( $(date +%s) + 330*60 )); last_full=0; : > run.log
           while [ "$(date +%s)" -lt "$end" ]; do
-            git pull -q --rebase -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
+            git pull -q --rebase || { git rebase --abort 2>/dev/null || true; echo 'Error: state sync failed; refusing bot side effects'; exit 1; }
             now=$(date +%s)
             if [ $((now - last_full)) -ge 300 ]; then
               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages
@@ -48,7 +49,8 @@ jobs:
               # in between: wait up to 25 seconds for a message and answer it at once
               BOT_ONLY=1 TG_WAIT=25 node scan.mjs >> run.log 2>&1 || { echo "reply failed" >> run.log; sleep 5; }
             fi
-            save; mirror
+            save || exit 1
+            mirror
             tail -c 200000 run.log > run.tmp && mv run.tmp run.log
           done
         env:
@@ -75,4 +77,4 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
         run: |
           WHY=$(grep -iE "error|missing|rejected|refused|cannot|HTTP [45][0-9][0-9]" run.log 2>/dev/null | grep -vE "DeprecationWarning|rate limit pause" | tail -n 3 | cut -c1-240 || true)
-          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
+          printf '%s' "RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." | node tools/telegram-notify.mjs || echo 'Telegram failure notification unconfirmed; inspect job logs'

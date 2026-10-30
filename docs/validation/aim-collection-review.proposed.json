@@ -1,0 +1,137 @@
+{
+  "kind": "AIM_C0_REVIEW_PROPOSAL_NOT_AUTHORIZATION",
+  "status": "OFFLINE_PREPARED_ENTITLEMENT_DATE_APPROVAL_MISSING",
+  "ownerThresholdAgreement": false,
+  "preparationKernels": [
+    {
+      "path": "alpaca-feed.mjs",
+      "sha256": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568"
+    },
+    {
+      "path": "hybrid-research-session.mjs",
+      "sha256": "d49dfe71eed4f8b101ee1d233d97e1f8cc945b97ff9b9a28a274d5535e7e9a3d"
+    },
+    {
+      "path": "hybrid-research-checkpoint.mjs",
+      "sha256": "18eb8f776c028cb5a633f7690a6461af4638f53367891662c1d60d1dbb599ea0"
+    },
+    {
+      "path": "tools/recover-hybrid-checkpoints.py",
+      "sha256": "21b61fae3f33d04cec5a85c68301ea9634173ca29588ad3f1749fcff3501ac2a"
+    },
+    {
+      "path": "tools/seal-research-artifact.mjs",
+      "sha256": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2"
+    }
+  ],
+  "liveRuntime": {
+    "sourceSha": "c34c8568e910f4e13d2576c5004990716515ceec",
+    "entryPoint": "tools/c0-diagnostic.mjs --collect-cycle",
+    "workflowSha256": "6f393282ee7e024c5b6d855cb4d975a7205a9d716e9455cd9537f349d8dd2878",
+    "requiredBeforeApproval": true,
+    "retired7ddRuntimeAllowed": false,
+    "offlineFixtureAllowedAsLive": false,
+    "codeFiles": {
+      "c0-diagnostic.mjs": "59798102af034d4d1a0dbe9062eac7caf278403b84eaca80e50c1b359541e47b",
+      "tools/c0-diagnostic.mjs": "7f8d9f766c8bca56cda27a30ef84aa80fac89895c2604022590b6bbd01fcaf1e",
+      "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+      "market-symbol.mjs": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+      "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2"
+    },
+    "workflowPath": "docs/validation/c0-diagnostic.workflow.yml.proposed",
+    "recovery": {
+      "path": "tools/recover-c0-diagnostic.py",
+      "sha256": "26b47dad96d0f6b5dcbc0d4d8ed30e9a57417b000850c767ac9ef76270afb828"
+    },
+    "installed": false,
+    "dispatched": false
+  },
+  "entitlement": {
+    "broadSip": "NOT_ESTABLISHED",
+    "extendedHours": "NOT_ESTABLISHED",
+    "officialRateWindow": "REQUESTS_PER_MINUTE_PUBLIC_DOCS; ACCOUNT_ALLOCATION_UNKNOWN",
+    "retentionRights": "NOT_ESTABLISHED",
+    "currentQuoteSizeUnits": "SHARES_PUBLIC_DOCS; NO_EXECUTABLE_CAPACITY_INFERENCE",
+    "evidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md"
+  },
+  "window": {
+    "day": null,
+    "timezone": "America/New_York",
+    "start": "08:45",
+    "expires": "09:00",
+    "utcStart": null,
+    "utcExpiry": null,
+    "cycles": [
+      "08:45",
+      "08:50",
+      "08:55"
+    ],
+    "rollDateOrRerun": false,
+    "historicalUnapprovedIllustration": "2026-11-16; not selected or reserved"
+  },
+  "universe": {
+    "maxAssets": 20000,
+    "policy": "ONE_FROZEN_CURRENT_ACTIVE_TRADABLE_REFERENCE_ORIGINAL_IDS_CLASSES_MISSING_ROWS_RETAINED",
+    "historicalCommonStockAuthenticated": false,
+    "postOutcomeSelectionAllowed": false
+  },
+  "requests": {
+    "assetGets": 1,
+    "sipSnapshotGets": 300,
+    "massiveDelayedBaselineGets": 0,
+    "massiveBaselineOptionalOnlyIfFinalManifestIncludes": true,
+    "fallbackIex": false,
+    "totalAttempts": 400,
+    "perMinute": 60,
+    "batchSize": 200,
+    "method": "GET",
+    "redirect": "error",
+    "timeoutMs": 15000,
+    "stopOnHttp": [
+      401,
+      403,
+      429
+    ],
+    "perBodyBytes": 8388608,
+    "allBodyBytes": 134217728,
+    "publicGitHubHistoryGets": 3,
+    "selectedNoMassiveMaximumAttempts": 304,
+    "controlPlaneTrafficIncluded": false,
+    "controlPlaneBounds": "20min job and encrypted artifact byte cap; no provider requests from setup"
+  },
+  "storage": {
+    "compressedBytes": 67108864,
+    "encryptedBytes": 100663296,
+    "retentionDays": 3,
+    "uploadAfterEachCycle": true,
+    "plaintextUpload": false,
+    "unuploadedCycleLossPossible": true,
+    "plainFrameBytes": 134217728,
+    "uploadSuccessIsRemoteByteProof": false
+  },
+  "capabilities": {
+    "repositoryWrite": false,
+    "dispatch": false,
+    "orders": false,
+    "telegram": false,
+    "ownerPrivateData": false,
+    "secretChanges": false,
+    "permissionChanges": false
+  },
+  "approval": {
+    "granted": false,
+    "requiredFields": [
+      "exactLiveRuntimeSha",
+      "exactWorkflowSha256",
+      "officialFeedScopeAndLimits",
+      "exactDateAndWindow",
+      "approvedExistingBindings",
+      "requestStorageBounds",
+      "recoveryShutdown",
+      "ownerAgreementDate"
+    ],
+    "currentDocumentAuthorizesExecution": false
+  },
+  "historicalPreparationBaseline": "2e785f0314bbefe1a2562c646086bee678525b24",
+  "reviewSourceSha": "c34c8568e910f4e13d2576c5004990716515ceec"
+}

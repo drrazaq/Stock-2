@@ -9,16 +9,16 @@ const fake = (sipOk) => { const calls = []; const f = async (url) => { calls.pus
   if (sip && !sipOk) return { ok: false, status: 403, json: async () => ({ message: 'subscription does not permit querying recent SIP data' }) };
   return { ok: true, status: 200, json: async () => ({ AAA: { latestTrade: { p: 10 }, dailyBar: { v: sip ? 5e6 : 1e5 } } }) }; }; f.calls = calls; return f; };
 
-test('upgraded plan: SIP is used and its full volume comes back', async () => {
-  resetFeed(); const f = fake(true); const j = await snapshots('https://x', ['AAA'], {}, f);
+test('synthetic SIP response preserves reported volume without inferring account plan', async () => {
+  resetFeed(); const f = fake(true); const j = await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f);
   assert.equal(feedUsed(), 'sip'); assert.equal(j.AAA.dailyBar.v, 5e6); assert.equal(f.calls.length, 1);
 });
-test('free plan: SIP refused with 403, IEX used, and later calls go straight to IEX', async () => {
-  resetFeed(); const f = fake(false); const j = await snapshots('https://x', ['AAA'], {}, f);
+test('synthetic SIP403 explicitly downgrades to IEX; later requests prefer IEX', async () => {
+  resetFeed(); const f = fake(false); const j = await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f);
   assert.equal(feedUsed(), 'iex'); assert.equal(j.AAA.latestTrade.p, 10);
-  await snapshots('https://x', ['AAA'], {}, f); assert.equal(f.calls.filter(u => /feed=sip/.test(u)).length, 1);
+  await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f); assert.equal(f.calls.filter(u => /feed=sip/.test(u)).length, 1);
 });
 test('ALPACA_FEED=iex forces IEX', async () => {
-  resetFeed(); process.env.ALPACA_FEED = 'iex'; const f = fake(true); await snapshots('https://x', ['AAA'], {}, f);
+  resetFeed(); process.env.ALPACA_FEED = 'iex'; const f = fake(true); await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f);
   assert.equal(feedUsed(), 'iex'); assert.ok(!f.calls.some(u => /feed=sip/.test(u))); delete process.env.ALPACA_FEED;
 });

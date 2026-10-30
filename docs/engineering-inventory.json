@@ -1,0 +1,5201 @@
+{
+  "scope": "Inventory/static syntax/serialization integrity only; not semantic or trading validation",
+  "modules": [
+    {
+      "path": "account-replay-core.mjs",
+      "bytes": 19308,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "account-replay-lab.mjs",
+      "bytes": 30232,
+      "imports": [
+        "./squad4-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad6-core.mjs",
+        "./squad11-core.mjs",
+        "./squad20-core.mjs",
+        "./account-replay-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "agent-a-core.mjs",
+      "bytes": 13185,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "agent-a-lab.mjs",
+      "bytes": 28173,
+      "imports": [
+        "./first-run.mjs",
+        "./agent-a-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "agent-a-tgt-core.mjs",
+      "bytes": 13248,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "agent-a-tgt-lab.mjs",
+      "bytes": 24357,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./yardstick.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad6-core.mjs",
+        "./anomaly-core.mjs",
+        "./agent-a-tgt-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "alpaca-feed.mjs",
+      "bytes": 958,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "angles-core.mjs",
+      "bytes": 34524,
+      "imports": [
+        "./anomaly-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "angles-lab.mjs",
+      "bytes": 53948,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./anomaly-core.mjs",
+        "./hold-core.mjs",
+        "./angles-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "anomaly-core.mjs",
+      "bytes": 56074,
+      "imports": [
+        "./yardstick.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "anomaly-lab.mjs",
+      "bytes": 70251,
+      "imports": [
+        "./first-run.mjs",
+        "./yardstick.mjs",
+        "./value-core.mjs",
+        "./anomaly-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "approved-quote-gate.mjs",
+      "bytes": 747,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "autolab.mjs",
+      "bytes": 33150,
+      "imports": [
+        "./league-bar.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "blocked-runner-policy.mjs",
+      "bytes": 1435,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "calendar.mjs",
+      "bytes": 33512,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "catalyst-core.mjs",
+      "bytes": 11519,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "catalyst-integrity.mjs",
+      "bytes": 6635,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "catalyst-lab.mjs",
+      "bytes": 32678,
+      "imports": [
+        "./first-run.mjs",
+        "./sec-time.mjs",
+        "./catalyst-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "chain-core.mjs",
+      "bytes": 9466,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "chain-decoder.mjs",
+      "bytes": 52337,
+      "imports": [
+        "./first-run.mjs",
+        "./sec-time.mjs",
+        "./catalyst-core.mjs",
+        "./chain-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "chain-ripple.mjs",
+      "bytes": 15620,
+      "imports": [
+        "./league-bar.mjs",
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "chains.mjs",
+      "bytes": 3522,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "comeback-core.mjs",
+      "bytes": 26177,
+      "imports": [
+        "./value-core.mjs",
+        "./anomaly-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "comeback-lab.mjs",
+      "bytes": 4403,
+      "imports": [
+        "./comeback-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "confluence-core.mjs",
+      "bytes": 16498,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "confluence-lab.mjs",
+      "bytes": 33304,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./anomaly-core.mjs",
+        "./confluence-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "confluence-signals.mjs",
+      "bytes": 4774,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "deals.mjs",
+      "bytes": 9780,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "decoded-core.mjs",
+      "bytes": 21406,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "decoded-lab.mjs",
+      "bytes": 50523,
+      "imports": [
+        "./first-run.mjs",
+        "./yardstick.mjs",
+        "./value-core.mjs",
+        "./sec-time.mjs",
+        "./decoded-core.mjs",
+        "./decoded2-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "decoded2-core.mjs",
+      "bytes": 56696,
+      "imports": [
+        "./decoded-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "discover.mjs",
+      "bytes": 37340,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "discovery2-core.mjs",
+      "bytes": 20973,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "discovery2.mjs",
+      "bytes": 47143,
+      "imports": [
+        "./sec-time.mjs",
+        "./first-run.mjs",
+        "./catalyst-core.mjs",
+        "./discovery2-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "e16-absorption.mjs",
+      "bytes": 13292,
+      "imports": [
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "early-alerts.mjs",
+      "bytes": 22718,
+      "imports": [
+        "./radar-v3-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "early-wave-discovery.mjs",
+      "bytes": 2384,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "earnings-study.mjs",
+      "bytes": 26289,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "edgar-feed.mjs",
+      "bytes": 2135,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "event-orb-retest-bars.mjs",
+      "bytes": 9334,
+      "imports": [
+        "./ignition-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "event-orb-retest-core.mjs",
+      "bytes": 19514,
+      "imports": [
+        "./evidence-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "event-orb-retest-events.mjs",
+      "bytes": 17065,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "event-orb-retest-gates.mjs",
+      "bytes": 12144,
+      "imports": [
+        "./event-orb-retest-bars.mjs",
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "event-orb-retest-library.mjs",
+      "bytes": 2510,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "event-orb-retest-paper-ledger.mjs",
+      "bytes": 3248,
+      "imports": [
+        "./event-orb-retest-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "event-orb-retest-requests.mjs",
+      "bytes": 3513,
+      "imports": [
+        "./event-orb-retest-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "event-orb-retest-study.mjs",
+      "bytes": 2509,
+      "imports": [
+        "./event-orb-retest-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "events-study.mjs",
+      "bytes": 41702,
+      "imports": [
+        "./sec-time.mjs",
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "evidence-core.mjs",
+      "bytes": 5536,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "ew-stack.mjs",
+      "bytes": 15347,
+      "imports": [
+        "./sec-time.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "exits.mjs",
+      "bytes": 17533,
+      "imports": [
+        "./league-bar.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "expert-core.mjs",
+      "bytes": 15218,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "expert-lab.mjs",
+      "bytes": 53020,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./yardstick.mjs",
+        "./expert-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "expert-probe.mjs",
+      "bytes": 8130,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "fastmover-lab.mjs",
+      "bytes": 39238,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "first-run.mjs",
+      "bytes": 2466,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "follow-lane.mjs",
+      "bytes": 73454,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "fulfilling.mjs",
+      "bytes": 16646,
+      "imports": [
+        "./sec-time.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "gov-awards.mjs",
+      "bytes": 20420,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "gov-awards2.mjs",
+      "bytes": 24203,
+      "imports": [
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "health.mjs",
+      "bytes": 10812,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "hold-core.mjs",
+      "bytes": 13021,
+      "imports": [
+        "./value-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "hold-lab.mjs",
+      "bytes": 37883,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "horizons.mjs",
+      "bytes": 14282,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "hunting-lab.mjs",
+      "bytes": 45773,
+      "imports": [
+        "./league-bar.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "ignition-core.mjs",
+      "bytes": 8317,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "ignition-gates.mjs",
+      "bytes": 802,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "ignition-paper.mjs",
+      "bytes": 3530,
+      "imports": [
+        "./ignition-core.mjs",
+        "./ignition-gates.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "ignition-watch.mjs",
+      "bytes": 55813,
+      "imports": [
+        "./alpaca-feed.mjs",
+        "./opp-mode.mjs",
+        "./early-wave-discovery.mjs",
+        "./pre-ignition-discovery.mjs",
+        "./stop-watch.mjs",
+        "./early-alerts.mjs",
+        "./shadow-stream.mjs",
+        "./edgar-feed.mjs",
+        "./rank-models.mjs",
+        "./ignition-core.mjs",
+        "./ignition-gates.mjs",
+        "./live-refresh-universe.mjs",
+        "./approved-quote-gate.mjs",
+        "./zad-compliance.mjs",
+        "./paper-gates.mjs",
+        "./session-coverage.mjs",
+        "./watcher-session.mjs",
+        "./telegram-delivery.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "insider-study.mjs",
+      "bytes": 15610,
+      "imports": [
+        "./league-bar.mjs",
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "intraday-radar.mjs",
+      "bytes": 37265,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "leaders-study.mjs",
+      "bytes": 29446,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "league-bar.mjs",
+      "bytes": 1679,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "league.mjs",
+      "bytes": 15617,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "library-merge.mjs",
+      "bytes": 2395,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "live-refresh-universe.mjs",
+      "bytes": 1263,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "macro-core.mjs",
+      "bytes": 34751,
+      "imports": [
+        "./value-core.mjs",
+        "./anomaly-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "macro-lab.mjs",
+      "bytes": 39580,
+      "imports": [
+        "./first-run.mjs",
+        "./yardstick.mjs",
+        "./value-core.mjs",
+        "./anomaly-core.mjs",
+        "./angles-core.mjs",
+        "./macro-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "missed-runners.mjs",
+      "bytes": 30381,
+      "imports": [
+        "./sec-time.mjs",
+        "./ignition-core.mjs",
+        "./blocked-runner-policy.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "ml-core.mjs",
+      "bytes": 24241,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "ml-lab.mjs",
+      "bytes": 34416,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./anomaly-core.mjs",
+        "./ml-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "move-categories.mjs",
+      "bytes": 1662,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "movers.mjs",
+      "bytes": 42549,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "multi-angle-discovery.mjs",
+      "bytes": 3872,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "news-watch.mjs",
+      "bytes": 16439,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "octopus.mjs",
+      "bytes": 29018,
+      "imports": [
+        "./sec-time.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "opp-mode.mjs",
+      "bytes": 417,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "opportunity-radar.mjs",
+      "bytes": 7026,
+      "imports": [
+        "./radar-v3-core.mjs",
+        "./early-alerts.mjs",
+        "./watcher-session.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "options-core.mjs",
+      "bytes": 9688,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "options-lab.mjs",
+      "bytes": 27740,
+      "imports": [
+        "./options-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "options-survey.mjs",
+      "bytes": 13176,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "orb-study.mjs",
+      "bytes": 22430,
+      "imports": [
+        "./ignition-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "paper-gates.mjs",
+      "bytes": 738,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "pattern-lab.mjs",
+      "bytes": 18085,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "pre-ignition-discovery.mjs",
+      "bytes": 1679,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "premarket-check.mjs",
+      "bytes": 5239,
+      "imports": [
+        "./alpaca-feed.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "quality.mjs",
+      "bytes": 37539,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "radar-v3-core.mjs",
+      "bytes": 18210,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "rank-models.mjs",
+      "bytes": 9336,
+      "imports": [
+        "./shadow-eval.mjs",
+        "./early-alerts.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "rebalance.mjs",
+      "bytes": 12975,
+      "imports": [
+        "./league-bar.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "rebuy.mjs",
+      "bytes": 11887,
+      "imports": [
+        "./league-bar.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "regime-gate.mjs",
+      "bytes": 14139,
+      "imports": [
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "research-core.mjs",
+      "bytes": 40403,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "research-lab.mjs",
+      "bytes": 57323,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./squad1-core.mjs",
+        "./research-core.mjs",
+        "./sec-time.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "runner-hunter-core.mjs",
+      "bytes": 12660,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "runner-hunter-study.mjs",
+      "bytes": 1719,
+      "imports": [
+        "./runner-hunter-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "scan.mjs",
+      "bytes": 662429,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "score-study.mjs",
+      "bytes": 12026,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "scorecard-1023.mjs",
+      "bytes": 17087,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "sec-time.mjs",
+      "bytes": 2673,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "sequence-study.mjs",
+      "bytes": 13702,
+      "imports": [
+        "./league-bar.mjs",
+        "./sec-time.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "session-coverage.mjs",
+      "bytes": 498,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "shadow-eval.mjs",
+      "bytes": 5600,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "shadow-outcomes.mjs",
+      "bytes": 7990,
+      "imports": [
+        "./shadow-eval.mjs",
+        "./rank-models.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "shadow-stream.mjs",
+      "bytes": 6012,
+      "imports": [
+        "./early-alerts.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "share-supply.mjs",
+      "bytes": 18795,
+      "imports": [
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "shares.mjs",
+      "bytes": 5817,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "smart-money.mjs",
+      "bytes": 17755,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad1-core.mjs",
+      "bytes": 35716,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad1-lab.mjs",
+      "bytes": 54334,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./squad1-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad10-core.mjs",
+      "bytes": 21331,
+      "imports": [
+        "./value-core.mjs",
+        "./squad5-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad10-lab.mjs",
+      "bytes": 65151,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad10-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad11-core.mjs",
+      "bytes": 17973,
+      "imports": [
+        "./squad6-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad11-lab.mjs",
+      "bytes": 43229,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./yardstick.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad6-core.mjs",
+        "./squad11-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad12-core.mjs",
+      "bytes": 27250,
+      "imports": [
+        "./sec-time.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad12-lab.mjs",
+      "bytes": 50653,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad1-core.mjs",
+        "./sec-time.mjs",
+        "./squad12-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad13-core.mjs",
+      "bytes": 24031,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad13-lab.mjs",
+      "bytes": 36147,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./squad4-core.mjs",
+        "./squad8-core.mjs",
+        "./squad13-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad14-core.mjs",
+      "bytes": 23376,
+      "imports": [
+        "./squad6-core.mjs",
+        "./squad11-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad14-lab.mjs",
+      "bytes": 55127,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./yardstick.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad6-core.mjs",
+        "./squad14-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad15-core.mjs",
+      "bytes": 23543,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad15-lab.mjs",
+      "bytes": 35852,
+      "imports": [
+        "./first-run.mjs",
+        "./squad15-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad15b-core.mjs",
+      "bytes": 19095,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad15b-lab.mjs",
+      "bytes": 14233,
+      "imports": [
+        "./squad15b-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad16-core.mjs",
+      "bytes": 45300,
+      "imports": [
+        "./squad14-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad16-lab.mjs",
+      "bytes": 68773,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./yardstick.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad6-core.mjs",
+        "./squad10-core.mjs",
+        "./squad14-core.mjs",
+        "./squad16-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad17-core.mjs",
+      "bytes": 13667,
+      "imports": [
+        "./squad10-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad17-lab.mjs",
+      "bytes": 71163,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad10-core.mjs",
+        "./squad17-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad18-core.mjs",
+      "bytes": 29950,
+      "imports": [
+        "./squad6-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad18-lab.mjs",
+      "bytes": 60250,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./yardstick.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad6-core.mjs",
+        "./squad10-core.mjs",
+        "./squad11-core.mjs",
+        "./squad18-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad19-core.mjs",
+      "bytes": 51732,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad19-lab.mjs",
+      "bytes": 53441,
+      "imports": [
+        "./ignition-core.mjs",
+        "./first-run.mjs",
+        "./runner-hunter-core.mjs",
+        "./squad19-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad2-core.mjs",
+      "bytes": 33161,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad2-lab.mjs",
+      "bytes": 33336,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./league-bar.mjs",
+        "./decoded-core.mjs",
+        "./squad2-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad20-core.mjs",
+      "bytes": 29726,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad20-lab.mjs",
+      "bytes": 61761,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./yardstick.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad6-core.mjs",
+        "./squad11-core.mjs",
+        "./squad20-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad21-core.mjs",
+      "bytes": 32676,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad21-lab.mjs",
+      "bytes": 47106,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad21-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad22-core.mjs",
+      "bytes": 34970,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad22-lab.mjs",
+      "bytes": 44623,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad22-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad23-core.mjs",
+      "bytes": 16976,
+      "imports": [
+        "./squad10-core.mjs",
+        "./value-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad23-lab.mjs",
+      "bytes": 59720,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./squad4-core.mjs",
+        "./squad5-core.mjs",
+        "./squad10-core.mjs",
+        "./squad23-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad24-audit-core.mjs",
+      "bytes": 34587,
+      "imports": [
+        "./squad24-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad24-audit-extract.mjs",
+      "bytes": 5614,
+      "imports": [
+        "./squad24-core.mjs",
+        "./squad24-audit-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad24-audit-label.mjs",
+      "bytes": 10347,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad24-core.mjs",
+      "bytes": 29319,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad24-lab.mjs",
+      "bytes": 69163,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad21-core.mjs",
+        "./sec-time.mjs",
+        "./squad24-audit-core.mjs",
+        "./squad24-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad25-audit-core.mjs",
+      "bytes": 6745,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad25-core.mjs",
+      "bytes": 27035,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad25-lab.mjs",
+      "bytes": 61666,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./sec-time.mjs",
+        "./squad25-audit-core.mjs",
+        "./squad25-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad26-core.mjs",
+      "bytes": 24888,
+      "imports": [
+        "./squad24-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad26-lab.mjs",
+      "bytes": 30259,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad21-core.mjs",
+        "./sec-time.mjs",
+        "./squad26-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad26-labels.mjs",
+      "bytes": 5327,
+      "imports": [
+        "./squad21-core.mjs",
+        "./squad24-core.mjs",
+        "./squad26-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad26-watch.mjs",
+      "bytes": 16598,
+      "imports": [
+        "./sec-time.mjs",
+        "./squad21-core.mjs",
+        "./squad26-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad27-core.mjs",
+      "bytes": 29394,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad27-lab.mjs",
+      "bytes": 25165,
+      "imports": [
+        "./first-run.mjs",
+        "./squad27-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad28-core.mjs",
+      "bytes": 34371,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad28-lab.mjs",
+      "bytes": 56293,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad21-core.mjs",
+        "./squad28-core.mjs",
+        "./sec-time.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad29-core.mjs",
+      "bytes": 23931,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad29-lab.mjs",
+      "bytes": 37415,
+      "imports": [
+        "./first-run.mjs",
+        "./sec-time.mjs",
+        "./squad4-core.mjs",
+        "./squad29-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad3-core.mjs",
+      "bytes": 25847,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad3-lab.mjs",
+      "bytes": 23985,
+      "imports": [
+        "./first-run.mjs",
+        "./squad3-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad4-core.mjs",
+      "bytes": 37576,
+      "imports": [
+        "./value-core.mjs",
+        "./hold-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad4-lab.mjs",
+      "bytes": 67462,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad5-core.mjs",
+      "bytes": 33063,
+      "imports": [
+        "./value-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad5-lab.mjs",
+      "bytes": 64880,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./squad4-core.mjs",
+        "./squad10-core.mjs",
+        "./squad5-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad6-core.mjs",
+      "bytes": 36352,
+      "imports": [
+        "./yardstick.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad6-lab.mjs",
+      "bytes": 32488,
+      "imports": [
+        "./first-run.mjs",
+        "./yardstick.mjs",
+        "./value-core.mjs",
+        "./anomaly-core.mjs",
+        "./squad4-core.mjs",
+        "./squad6-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad7-core.mjs",
+      "bytes": 32780,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad7-lab.mjs",
+      "bytes": 33928,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./squad1-core.mjs",
+        "./squad7-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad8-core.mjs",
+      "bytes": 25724,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad8-lab.mjs",
+      "bytes": 32161,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./squad8-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad9-core.mjs",
+      "bytes": 41490,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "squad9-lab.mjs",
+      "bytes": 25099,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./squad9-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "stop-watch.mjs",
+      "bytes": 1481,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "stops.mjs",
+      "bytes": 11504,
+      "imports": [
+        "./league-bar.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "swing-lab.mjs",
+      "bytes": 14891,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "telegram-delivery.mjs",
+      "bytes": 759,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "tip-score.mjs",
+      "bytes": 19414,
+      "imports": [
+        "./first-run.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "tip-sources.mjs",
+      "bytes": 2630,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "tipranks.mjs",
+      "bytes": 11244,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "tipster-core.mjs",
+      "bytes": 19945,
+      "imports": [
+        "./hold-core.mjs",
+        "./value-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "tipster-lab.mjs",
+      "bytes": 64399,
+      "imports": [
+        "./first-run.mjs",
+        "./yardstick.mjs",
+        "./value-core.mjs",
+        "./hold-core.mjs",
+        "./anomaly-core.mjs",
+        "./decoded-core.mjs",
+        "./tipster-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "trade-plan.mjs",
+      "bytes": 2197,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "value-core.mjs",
+      "bytes": 17747,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "value-lab.mjs",
+      "bytes": 54189,
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./yardstick.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "verify-core.mjs",
+      "bytes": 13896,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "verify-lab.mjs",
+      "bytes": 47618,
+      "imports": [
+        "./value-core.mjs",
+        "./verify-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "watcher-guard-core.mjs",
+      "bytes": 5203,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "watcher-guard.mjs",
+      "bytes": 2866,
+      "imports": [
+        "./watcher-guard-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "watcher-session.mjs",
+      "bytes": 2830,
+      "imports": [
+        "./session-coverage.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "winners-autopsy-core.mjs",
+      "bytes": 19758,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "winners-autopsy-lab.mjs",
+      "bytes": 52972,
+      "imports": [
+        "./winners-autopsy-core.mjs",
+        "./first-run.mjs",
+        "./value-core.mjs"
+      ],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "winners-study.mjs",
+      "bytes": 15450,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "yardstick.mjs",
+      "bytes": 4145,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    },
+    {
+      "path": "zad-compliance.mjs",
+      "bytes": 754,
+      "imports": [],
+      "missingImports": [],
+      "auditLevel": "INVENTORIED_ONLY",
+      "syntax": "PASS"
+    }
+  ],
+  "workflows": [
+    {
+      "path": ".github/workflows/Smart-money.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/Tiprank.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": false,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/account-replay.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/agent-a-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/agent-a-tgt-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/angles-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/anomaly-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/bot.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": true,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/calendar.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/catalyst-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/chain-decoder.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/comeback.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/confluence-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/deals.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/decoded-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/discover.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/discovery2.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/event-orb-retest-research.yml",
+      "hardcodedMainCheckout": false,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/expert-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/fastmover-intraday.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/feed-check.yml",
+      "hardcodedMainCheckout": false,
+      "contentsWrite": false,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/follow-lane.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/hold-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/ignition.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/intraday-radar.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/leaders-study.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/macro-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/main.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/ml-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/movers.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/news.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/opportunity-radar.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/options-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/options-survey.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "hardcodedMainCheckout": false,
+      "contentsWrite": false,
+      "actionsWrite": false,
+      "deploys": true,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/premarket.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": false,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/private-data-check.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": false,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/research-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/scorecard-1023.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad1-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad10-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad11-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad12-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad13-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad14-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad15-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad15b-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad16-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad17-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad18-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad19-lab.yml",
+      "hardcodedMainCheckout": false,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad2-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad20-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad21-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad22-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad23-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad24-audit.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad24-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad25-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad26-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad26-labels.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad26-watch.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad27-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad28-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad29-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad3-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad4-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad5-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad6-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad7-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad8-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/squad9-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/stock2-safety-ci.yml",
+      "hardcodedMainCheckout": false,
+      "contentsWrite": false,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/tests.yml",
+      "hardcodedMainCheckout": false,
+      "contentsWrite": false,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/tipster-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/value-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/verify-lab.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    },
+    {
+      "path": ".github/workflows/winners-autopsy.yml",
+      "hardcodedMainCheckout": true,
+      "contentsWrite": true,
+      "actionsWrite": false,
+      "deploys": false,
+      "auditLevel": "INVENTORIED_ONLY"
+    }
+  ],
+  "datasets": [
+    {
+      "path": "data/account-replay-pb12t20-trades.jsonl",
+      "bytes": 98684,
+      "sha256": "b016bf28f7b645335cf99efe1f4ebef6a0698ef48c8887fd54d4339dcbdf7f82",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 427,
+      "status": "PASS"
+    },
+    {
+      "path": "data/account-replay-pb12t20.json",
+      "bytes": 27355,
+      "sha256": "0389cd1cf9c50044434a9506045bc100010ab43401710f7540ec0c7b97fe4b53",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/account-replay-trades.jsonl",
+      "bytes": 109016,
+      "sha256": "83111464e8f5aadcdbcb670a67eb09aeaaa5657f12b5d194b0eabc681a36eaec",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 467,
+      "status": "PASS"
+    },
+    {
+      "path": "data/account-replay.json",
+      "bytes": 186930,
+      "sha256": "804d2cb3319d7e80c124b89c173961bbeb82e12110df31163d1caee74e43e21e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/agent-a-lab.json",
+      "bytes": 67503,
+      "sha256": "777a56b2f2796454bd96b3e9fcf5b7bf4c7a725436d91851d044f9a15d37d922",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/agent-a-tgt-lab.json",
+      "bytes": 843016,
+      "sha256": "3acc7c47e2132fcea92caf3edf016290915d70ef798ebfa3ddd2e646145041ac",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/agent-league.json",
+      "bytes": 3160,
+      "sha256": "582adc819eecaec72d27ec6feeaf7f407fc7254b38879934c046684359674cef",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/agent-shelf.jsonl",
+      "bytes": 1429,
+      "sha256": "183e890a74d4af479014b65cd7986c22fca5ba451ad68f8d4f20895e609d32a4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 6,
+      "status": "PASS"
+    },
+    {
+      "path": "data/agents.json",
+      "bytes": 1798,
+      "sha256": "465931803ad305f33d66f8cd84eda527f2c2b9cf91a1ec0b05e402e2dd0e9627",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/alert-state.json",
+      "bytes": 20,
+      "sha256": "354cd29face45c6f9b17c35ea92901dac8dcad659e4a02f94fef86a3768ef254",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/analyst-archive-2026-10.jsonl.gz",
+      "bytes": 19909,
+      "sha256": "22b25af48667930ab82c7535a00ff7223bbd27f8a83bcde400b73a723dcdf7ff",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 12,
+      "status": "PASS"
+    },
+    {
+      "path": "data/angles-board.json",
+      "bytes": 11081,
+      "sha256": "70483970f6ea120d7467f32df0dd53a437ec84691fd1a1bfcbcb1753b24ffd9a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/angles-lab.json",
+      "bytes": 33546,
+      "sha256": "ba6c6c8bfc543af9923388c1b6432b827c0ae4d2abe57b351f2ea71d8a662819",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/angles-paper.jsonl",
+      "bytes": 917,
+      "sha256": "19138bd0839ae558bc57e1c8da47699475319fb3a917e1b8f391b830ea809066",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 5,
+      "status": "PASS"
+    },
+    {
+      "path": "data/angles-today.json",
+      "bytes": 2869,
+      "sha256": "5dc051881d22d352ccca95239b3f790e4fe50c512cb33dab763b003aeba7ff7e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/anomaly-board.json",
+      "bytes": 42084,
+      "sha256": "9b216d2348d05a1075413bfea59927d74f2112ec287c028d578520817f52076c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/anomaly-lab.json",
+      "bytes": 117538,
+      "sha256": "aaafede53d9d0ef7f96972f08154c3e1ee89a26b4133fbdba4a0520ce81dbad9",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/anomaly-paper.jsonl",
+      "bytes": 216549,
+      "sha256": "077dc6ad561cd9ebc4ef4e96441651342ce747bec7b987694a70ad23e1f6bc6d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 836,
+      "status": "PASS"
+    },
+    {
+      "path": "data/anomaly-today.json",
+      "bytes": 147130,
+      "sha256": "0aae0b0b01a0114d20d57350dc7d34262f8d5a5af113202b3d33de46f287e719",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/autolab.json",
+      "bytes": 709569,
+      "sha256": "067c738be13841abc6d7c6fc88e6a0d12cee11af8c5a1904f70bd6c31dbd685e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/calendar-status.json",
+      "bytes": 460,
+      "sha256": "967186dddd3fc1db27a7e5c68b82561a3c97dc445959eb42e45d64e76981027b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/catalyst-events.jsonl",
+      "bytes": 395640,
+      "sha256": "48827158bc93a481161422e8d9f93a6c02fa4228c633df824b75b9a70b03130e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 740,
+      "status": "PASS"
+    },
+    {
+      "path": "data/catalyst-lab.json",
+      "bytes": 348542,
+      "sha256": "fe39c3b3e9596cf76a0670dd583f84c3f05f682f5974c78739318c07404b821e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/catalyst-today.json",
+      "bytes": 124777,
+      "sha256": "a37124687b6effe69e129f2bdf4d2d5dc4e6e9f434ad5aa86e63012a2a1aecec",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/chain-decoder-error.json",
+      "bytes": 89,
+      "sha256": "1fcca7bc939b5b4bc27847c22211d72157ff86da4775b685a8e83796ec75f65c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/chain-decoder.json",
+      "bytes": 1400979,
+      "sha256": "9da0c409c199d05f9a468565c669b61b75a19e88829f2fad310efffe8642a21e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/chain-defs.json",
+      "bytes": 21595,
+      "sha256": "811f00aa87311834f4b4334cbe7ec39d3da51005ad03fea56aea843b752c1458",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/chain-graph.json",
+      "bytes": 1516609,
+      "sha256": "3044f1934147cccea66ae25d6385dfcc2a0386c6920d9189eb2a7cd8a24ad9f0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/chain-ripple.json",
+      "bytes": 27785,
+      "sha256": "183b26c87706a61e94bc67cf0dd3394aa5f855d467cc7968b4845ece54d949af",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/chain-today.json",
+      "bytes": 59319,
+      "sha256": "a2db19b711c56dcdee57d9734dd7789b4f9eeca5a012fccb07300e403bd5063b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/chains-status.json",
+      "bytes": 46969,
+      "sha256": "4880a24675bc081f014bfca0399d283c8f7c472db1f4f4bc227c38ccf907f6e6",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/chains.json",
+      "bytes": 2735,
+      "sha256": "a400d6cb01e25365d570f98486408e2ba571dc39486601b1678c0932a0b766f0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/channels.json",
+      "bytes": 480,
+      "sha256": "a257e8383fb92c6744e200b1ad30d893744568dfa4fb70e13e2cb770ea177c4b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/comeback-board.json",
+      "bytes": 236151,
+      "sha256": "33620ec3396efe4d0cb46db3e1213445ba169e657aec599fe8fe53597ac21c12",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/comeback-lab.json",
+      "bytes": 541,
+      "sha256": "90bf1b186295048ba19715a4fc26a0bc95027aadd092db867b81e854c426c1c9",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/comeback-spy.json",
+      "bytes": 883,
+      "sha256": "c064a2f9a646b590c4a3d253486cb5ca8a4d728e5ae40d923dd934289f9460f4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/comeback-today.json",
+      "bytes": 359,
+      "sha256": "93824aa23b8089f01956a70393e6396d6bce2a939ac2f4382a4039756131e51d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/companies.json",
+      "bytes": 37762,
+      "sha256": "28b72c6310ea2172f3fdc04e5949d7406e18439c8d25c0542fbc9f72f47d2e5d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/confluence-board.json",
+      "bytes": 1997,
+      "sha256": "ecd1ca3649b3f4e76976dbf144517a515902b3d4c27c1179409e3f054857fa9f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/confluence-lab.json",
+      "bytes": 3651059,
+      "sha256": "83d94079f201be7421a546b9b9c71ca7c1c951d9a4d68e0e7071d6e446b679a9",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/confluence-paper.jsonl",
+      "bytes": 6673,
+      "sha256": "f92528f8f80712db40408ede0ebe19498289b938b1dbc0ff4df0eec8860649b2",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 43,
+      "status": "PASS"
+    },
+    {
+      "path": "data/confluence-portfolio.json",
+      "bytes": 527718,
+      "sha256": "46605d1257a057fa5518d1d269328b3d0fb4908f76ffa03d698881118171080a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/confluence-signals.json.gz",
+      "bytes": 352085,
+      "sha256": "259d08d978d67242d3936f9a7fe469187760c714cb3f25bb7654d8fabbd24f71",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/confluence-today.json",
+      "bytes": 1498,
+      "sha256": "183b51dd92e7258ed9bb93a77ac4f1b3d4cf2bad5b0d0a425b085cb5472a323e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/deals.json",
+      "bytes": 11605,
+      "sha256": "2ece2a24533b61840da964e86e332d8b4cbff202bb1e0579a97326cb637f33d7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/decoded-board.json",
+      "bytes": 170285,
+      "sha256": "1d4fbfa9284be182533833ff5cc61b7503b3a520c8eb0e5a991a8d3208a2ad7e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/decoded-check.json",
+      "bytes": 3458,
+      "sha256": "c63dff8aff6a27560431d6f1317423785b4070987bddf24db0304340908fb8d5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/decoded-history.json",
+      "bytes": 9714079,
+      "sha256": "6d8258631912f7c9de1fdff00bca2c88984e8fb533f4a468b8be6f4a33bb7a5c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/decoded-paper.jsonl",
+      "bytes": 317784,
+      "sha256": "2ad90c26f1e0383a6835808e9d12720259db694cddb5a70938d0697ecf52bffe",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 994,
+      "status": "PASS"
+    },
+    {
+      "path": "data/decoded-today.json",
+      "bytes": 192139,
+      "sha256": "17e93c2961fee1d881b6aa3aaa1ff65f593981eeae3bb76cc30d4e0c1fbe1447",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/discovery-deep-seen.json",
+      "bytes": 175,
+      "sha256": "b00ecb90373941bcc885b03391585a1ae10d09b568c6f2ca6608c6125cbab440",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/discovery-deep-sent.json",
+      "bytes": 49,
+      "sha256": "3548b6442073a32013a80a624ca78d8fde3df94718d3890dd488f00158309bd7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/discovery-journal.jsonl",
+      "bytes": 4145,
+      "sha256": "00529496230a55dbff58f6149fd1a6781635d724d75f06a320901f340e446c98",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 59,
+      "status": "PASS"
+    },
+    {
+      "path": "data/discovery.json",
+      "bytes": 11422,
+      "sha256": "f2fca741ebf845a1b7360b4caf6eaa35d3410911166054f873603fa61943bec2",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/discovery2-today.json",
+      "bytes": 2360,
+      "sha256": "967d8178011f9ddf937d092e3120a09aa8141e5ce217e48cd864accab0aad09b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/discovery2.json",
+      "bytes": 2426296,
+      "sha256": "0ce375b15ebda9e0cc13d9d1f0320c96a52b9e50516361c738110c568f390aa2",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/dow-study.json",
+      "bytes": 1116,
+      "sha256": "c6bedb7cbbd3616573e5e28c635dd1890ee479c084f16ba9e912948c076d03dc",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/e1-tested-270.json",
+      "bytes": 2065,
+      "sha256": "a3acaf6ec358ab463e54cb529acca6b1e3cfa2375f162b50af9e5172433778ff",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/e16-absorption.json",
+      "bytes": 13476,
+      "sha256": "bdc9143f67680cdb6be49783a3b74c6d04363375f0bfee9af517487663c64210",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/early-wave-obs.jsonl",
+      "bytes": 130053,
+      "sha256": "65875cf8b26af58a984dad35cb4f8d1ba91f46d7e4dc7d18f2ebfebebd400c6d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 2,
+      "status": "PASS"
+    },
+    {
+      "path": "data/earnings-cache.json.gz",
+      "bytes": 184151,
+      "sha256": "95604a6996682cf7cf136c3488cab6eca23a28f4e1a08decd4884be00d2a4857",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/earnings-recent.json",
+      "bytes": 37280,
+      "sha256": "bb7871056e33c4a81495b051d5a2ddc9910d33af1a3547ace2de5e725640c833",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/earnings-study.json",
+      "bytes": 25416,
+      "sha256": "a46ec6700fc7dbb8a38c7489a77197b4a2d7aada07e0f30b9cc0625ba3fbbb1c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/engine-history.jsonl",
+      "bytes": 16804,
+      "sha256": "579a608b6349dcaee4d1bd967d744096eaf0bba79b0a5944b1038a1761afa76b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 97,
+      "status": "PASS"
+    },
+    {
+      "path": "data/event-orb-retest-15d-control-requests.json",
+      "bytes": 184918,
+      "sha256": "3c8b86a297b2f7834bdfd5a65df318f8790221933801c816c508902956951c5f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/event-orb-retest-15d-control-study.json",
+      "bytes": 399509,
+      "sha256": "31b5996ec9854b46d7ef6f0f7d79dd6bb736ca44b9df6fcbbb9372c96e463da8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/event-orb-retest-15d-controls.jsonl",
+      "bytes": 358746,
+      "sha256": "9e2f39ef235f1a888f489156960c4f43d038e6cafa2173a329f9ecb4c9b3cb1c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 500,
+      "status": "PASS"
+    },
+    {
+      "path": "data/event-orb-retest-15d-events.json",
+      "bytes": 2005,
+      "sha256": "260d314b34ffd2881ef9a1522854b2d76180f946f2a0ca191deb0ef1d4e334f8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/event-orb-retest-15d-gates.json",
+      "bytes": 15134,
+      "sha256": "c2d4aeb0641dcb30975f31f4c69aec3e9149f0cd781d02877bc279483615fceb",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/event-orb-retest-15d-paper.json",
+      "bytes": 500052,
+      "sha256": "427993330ba1595201fa9cf1650f3fed0685411c0d72e9c9dcf9955ba7261437",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/event-orb-retest-15d-requests.json",
+      "bytes": 191521,
+      "sha256": "67672218828670f2414e141f5f829669b6945adb9199ebacea7008194b60ac4e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/event-orb-retest-15d-study.json",
+      "bytes": 446138,
+      "sha256": "d876c18cd919ec90838387f824c34dd0312fd3ff2188388bc64513bdc0fa2265",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/events-recent.json",
+      "bytes": 47704,
+      "sha256": "390df973b8edcabfd5df221f33c8b61fa5b675cf51d7d09ec690eefcb6ad76c3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/events-study.json",
+      "bytes": 136534,
+      "sha256": "c147422c452bfd055d3ad63ce21a66c73d0ef1371df9b3b3e17d714a038ad5df",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ew-stack.json",
+      "bytes": 14127,
+      "sha256": "3a248e09497897b79531600128a39eb6c8e289875b2a253c24c1dc7b1a745f76",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/exits.json",
+      "bytes": 65727,
+      "sha256": "61fa8c3ae236c03643570635961e69030771883eb615f9065e54f6fc95b80138",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/experiments.jsonl",
+      "bytes": 59136,
+      "sha256": "eea245fb6e2dbbb57c6c4a4036419a192f1acd450ac66c2f36a2872e82faadb0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 191,
+      "status": "PASS"
+    },
+    {
+      "path": "data/expert-board.json",
+      "bytes": 9321,
+      "sha256": "d0b176de0ee1b82faeb289a008fc0b52444fa7ff0721d16e57eddbd2859c01ae",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/expert-lab.json",
+      "bytes": 358585,
+      "sha256": "dbee6dbab6f00077d0c0802d3a813c66c0e7913309ac7c0d3176716bab7acf9a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/expert-paper.jsonl",
+      "bytes": 17660,
+      "sha256": "9ba72c7bbd3858f3686960ab7fcaa13d55dabe58e156fd8921556cfe09a3dca6",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 61,
+      "status": "PASS"
+    },
+    {
+      "path": "data/expert-probe.json",
+      "bytes": 6639,
+      "sha256": "3be9b5558431c4f6ea2fef56a4f3afaaa6feb3b2bcd9bbb6c81aec216d50c0a3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/expert-today.json",
+      "bytes": 10417,
+      "sha256": "588603cbf56c461fabdd80642b5c6188339e8ab3ba7624708d67169828befffc",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/fastmover-lab.json",
+      "bytes": 49684,
+      "sha256": "53e7ad649d5f01f6a68e7b28763bae60b20a46a0e684d19d8787671c3f6b5ed5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/fastmover-live.json",
+      "bytes": 641,
+      "sha256": "727f778566358359c64e85b6cce48889b1ed9b99f607a6a0db69f148f0189cf2",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/fastmover-paper.json",
+      "bytes": 51891,
+      "sha256": "73a658b5c5b2ad1af107b40a6d4ea3368848dfafb2bdb4681ea7008c65fd665a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/flags.json",
+      "bytes": 3117,
+      "sha256": "b7e41eee53145deb8f61da036f77928ebff87523f044a72d966a48784a1a4f29",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/fm-state.json",
+      "bytes": 148,
+      "sha256": "77ac6d15385ed8b02ae04220e00d803bf2cdd967b8de0b9178d65ce3f88f8e1f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/follow-board.json",
+      "bytes": 1081685,
+      "sha256": "17c41c09bbe3378ea56504c599de4a0d55bc563f88c699f8a58a30897fc11b3d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/follow-calls.jsonl",
+      "bytes": 34841575,
+      "sha256": "4593bf2212abe7468eeb5f5a93814916d3bfc160cc634f7f3c81383d44b958b6",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 158157,
+      "status": "PASS"
+    },
+    {
+      "path": "data/follow-channels.json",
+      "bytes": 612161,
+      "sha256": "d6928a50c58e28c78371ebdaa0c00c90ab7bc71f13370571100fcd527ece3910",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/follow-fade.json",
+      "bytes": 20464,
+      "sha256": "ecb91868b5690bc14bc63f190111943fe091b7e9b279c223de8eb2479a8faabd",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/follow-today.json",
+      "bytes": 189,
+      "sha256": "d7a2b812d260c74655940da17363133f4797d4c329ce94e26ed74f77b6f74ee3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/fulfilling.json",
+      "bytes": 9964,
+      "sha256": "59df062641cac9e7892cc19b87d785abef1420b450d51f6e3c5a84262ed97af1",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/gov-awards.json",
+      "bytes": 1630,
+      "sha256": "54cc262d4940f15617d0633ee08e5ce538db2e5b5eee78224b4328d89640933c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/gov-awards2.json",
+      "bytes": 20027,
+      "sha256": "6653804c41a4fbc1f355dd7aa4a531d453f79f1493c9f6f5782f9562469c33c0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/halal-ext.json",
+      "bytes": 4646,
+      "sha256": "ced7dad9a3430253197848977ff11f06f8887ff311a40795e73919e1c27bd69d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/health.json",
+      "bytes": 350,
+      "sha256": "bd48aac1e1ae7a50f0d5b255abf644acf954f8c02a0c12bcd3ed225d79e91c23",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/hold-lab.json",
+      "bytes": 1373429,
+      "sha256": "0c6ce2322717169e36d8a478a3038fa9237e4d9a9bc68de9e2de3c811d7d91b3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/horizons.json",
+      "bytes": 62484,
+      "sha256": "85915bc40881808c629f65ebbe5700230e6b4fae0652d2f53c71a320a945d4ad",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/hunting-lab.json",
+      "bytes": 52761,
+      "sha256": "ad4c426fc102436bc9dea5748085654d1eee2511673d062f5b756a4b4dd1d9f1",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/hunting-paper.json",
+      "bytes": 16,
+      "sha256": "0fdf0b97fc4b8a07e80f29970151d138f7e04fe015e41247b3c855a517c6874d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ignition-days.jsonl",
+      "bytes": 3810,
+      "sha256": "fef22d34f0c9e78674d3d28a07b29fcffd18f67af068cf74879c546b2f86606f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 8,
+      "status": "PASS"
+    },
+    {
+      "path": "data/ignition-lab.json",
+      "bytes": 75595,
+      "sha256": "4fcc04bb8136f760c299dc4de8400f51d11af2f906bda6ae2d873bf148388fe8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ignition-live.json",
+      "bytes": 230244,
+      "sha256": "6aa70781220658649f35476b5a919a2e7793b76c7e133f40eb4793f9ef070509",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ignition-missed-history.jsonl",
+      "bytes": 678662,
+      "sha256": "5bd89619242746eceb54fdb7530160140e72fa692a6b430e687f10addd0639b5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 1437,
+      "status": "PASS"
+    },
+    {
+      "path": "data/ignition-paper.jsonl",
+      "bytes": 278136,
+      "sha256": "a4de490a80493a064cc0f05854e2f8681941a4546e9bb42cd57703624c41b0b4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 1304,
+      "status": "PASS"
+    },
+    {
+      "path": "data/ignition-results.json",
+      "bytes": 221072,
+      "sha256": "e1130f86dfea135e99b11ebcee698a5c7dae7e153253fb18b0bfaf55458a770a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/insider-study.json",
+      "bytes": 25147,
+      "sha256": "c60c6fb95dfd61133aebbba77c74c1cae717d6115506ff29c7f104249c601adf",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/intraday-missed.jsonl",
+      "bytes": 1051,
+      "sha256": "ee9bfddbcee64389f91cabce0932771564b9f3b765ed4e6e325b80655e1ecd6c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 7,
+      "status": "PASS"
+    },
+    {
+      "path": "data/intraday-paper.jsonl",
+      "bytes": 458,
+      "sha256": "b7c89dee3c0b5c69fbd07949c7180ddd7ba2b175947c8568c484418d641abe90",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 3,
+      "status": "PASS"
+    },
+    {
+      "path": "data/intraday-radar.json",
+      "bytes": 34213,
+      "sha256": "5f300726c842118f873ef81ba05d2c9ce033a7a12018e37c48b1034e9432acc8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ipo-paper.json",
+      "bytes": 257,
+      "sha256": "bb88f98c6d7a44ed83d47e462e0104827715b5db301a50dd86d987da93dff608",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/journal.jsonl",
+      "bytes": 35380,
+      "sha256": "0afd33ec9291c0fe877efec49d359f9f3cd2f22748d0bfe2c604b4a19e70ad68",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 137,
+      "status": "PASS"
+    },
+    {
+      "path": "data/leaders-study.json",
+      "bytes": 24251,
+      "sha256": "2e5fea7cba614c6a0bd8c048fbf02edef4e666a1f973b214af3f1b0ecbdda81c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/leaders-universe.json",
+      "bytes": 2768,
+      "sha256": "ec53ff3dd08481772ce388b5044887e89cc04bd7f34f86bd6dd2bd66ec7787c3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/leaders.json",
+      "bytes": 5429,
+      "sha256": "f3e746a322a73d8594df74343062c50634ae7dccad7602ff059591b11826f3be",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/lessons.json",
+      "bytes": 21141,
+      "sha256": "431359f4682116eee8907c8336225bc39bf14a287fbd873cd8d74bf548028ece",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/macro-board.json",
+      "bytes": 32735,
+      "sha256": "577ad44ff0336f660155980b013e334f7c1c0d01b810936dab3949f107d0a15b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/macro-lab.json",
+      "bytes": 1702740,
+      "sha256": "93e3169bd082a7f6882c2b1b6007fb8907c065701443ff09155b71a807d5fbc1",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/macro-log.jsonl",
+      "bytes": 870,
+      "sha256": "3a1a6affb33f62cece2019b600f8bd3ac863229a6d9c84cdbdc1eee5de8b0044",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 5,
+      "status": "PASS"
+    },
+    {
+      "path": "data/macro-paper.jsonl",
+      "bytes": 1152,
+      "sha256": "1b0c04fc889fc7d06eb9c32cd63e159b8fc2975712808963f5b52f401868ad77",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 6,
+      "status": "PASS"
+    },
+    {
+      "path": "data/macro-state.json",
+      "bytes": 89,
+      "sha256": "a1edbbd41cce3f9ef974307cd75230a7099086feed11d647fe4402b5323f5382",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/macro-today.json",
+      "bytes": 7996,
+      "sha256": "896ce0be3c01fb0d0b67b0e9964cef9edc08c0ee012925a8421810c8ed58df28",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/mday-study.json",
+      "bytes": 2501,
+      "sha256": "5a89f9e223a188c7d3540f468576b2f817cce4c728d1d6ef40dfa5d54841b0cd",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/missed-runners.json",
+      "bytes": 379256,
+      "sha256": "0bc78c8d150c2e88568ddb92867b2a3d3bfc1bb17f9d6c586df8f51098324afc",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ml-board.json",
+      "bytes": 1180,
+      "sha256": "5a0dc43ce8f65690fbba3d97de10d28d9c8e0e2a4e7cfe8393a9d0cb9f588c24",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ml-lab.json",
+      "bytes": 244836,
+      "sha256": "15c2f0b4210cdaa1570dc37c04ea8414ebfbffb5c4741e026934cb31cf812584",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ml-model.json",
+      "bytes": 148461,
+      "sha256": "77395e40477f0596387d805e3b67852665d0a7fc61aa7e374c2faec8f0c6b88d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/ml-paper.jsonl",
+      "bytes": 1595,
+      "sha256": "3844118d5ff28d4e27d3c21f75e942ee044c00df63fddfc4c920d62cae24a51c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 2,
+      "status": "PASS"
+    },
+    {
+      "path": "data/ml-today.json",
+      "bytes": 4679,
+      "sha256": "a4f127d5722354d35799add0e80f4fcc1619df4142af39ecac98b22c8555d3b8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/models.json",
+      "bytes": 78985,
+      "sha256": "bac339651209db632879229a5dbe35f5c43029b7b3aba01b94d3f048481dd007",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/movers-journal.jsonl",
+      "bytes": 11566,
+      "sha256": "7cbf4b9a82ddb106219fe56e1c130259c97c557be30891958a586e7b307b0df7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 140,
+      "status": "PASS"
+    },
+    {
+      "path": "data/movers-state.json",
+      "bytes": 3595,
+      "sha256": "45c0482688577c9244d78fec2f68fc676d75bb5194ccc8480054246b8198ff11",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/news-log.jsonl",
+      "bytes": 6512,
+      "sha256": "a78af924c3a8213fadb846c6b79412773e6cec7c0a02770303918df020ea9654",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 31,
+      "status": "PASS"
+    },
+    {
+      "path": "data/news-meta.json",
+      "bytes": 8164,
+      "sha256": "3d64f922ee982a7c3a70c3fea5308f2055cb51d348344a2d414964c3a87f06d5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/news-seen.json",
+      "bytes": 27,
+      "sha256": "5e676d920388a5db18e0847bf418efa1edbb264ea56237006442db32b39c57e5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/octopus-daily.json",
+      "bytes": 2043,
+      "sha256": "fa3692853b6b6d3d26410259382ef936a447a0c1cadfa76b34b6bb4cca58bcc7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/octopus-model.json",
+      "bytes": 4605,
+      "sha256": "c322bcb70eb0e1665ed13b62496e83981320d4200dbcd99c6b5d7ddb2e1a9d88",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/octopus-paper.json",
+      "bytes": 751,
+      "sha256": "aea4a93ce118e1ae73c9d5a6cff996b227227d07798a1ffddbe19cce7ad97359",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/octopus.json",
+      "bytes": 3932,
+      "sha256": "05401de1e7dd3b0f5d49cb3130ace2172d808d344fd1b6e3f766d0d499fa0017",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/options-lab.json",
+      "bytes": 142629,
+      "sha256": "e9a14f6166383f1481632dc1c13518c31577025a9737a24c902a57ec6b9492e3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/options-probe.json",
+      "bytes": 75,
+      "sha256": "291b68f8430e7aed4625e4c5c38792d61fc2b2ed18b26afb821248445d87e1e6",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/options-shadow.json",
+      "bytes": 1721,
+      "sha256": "6d697a64f77731afa21b965b1ff5b4fb7ad5bc3d75e4f6b110647d2bcc9d1a92",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/options-spread-survey.json",
+      "bytes": 32553,
+      "sha256": "9f5953e0fcf79f568833650a675b3fd93dd0afad508eb946bee1b2a66685ea55",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/orb-study.json",
+      "bytes": 9006,
+      "sha256": "1d624c2e55e7d4a6ddb292767155897405aed8852c639e3ecd51fb1f688030c5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/outcomes.json",
+      "bytes": 562,
+      "sha256": "b1864e5da8473b7af883e71521f94b8fc951338545e51126ded3caf85763e965",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/pattern-lab.json",
+      "bytes": 29802,
+      "sha256": "6d85b9996325a01c035970e582890f94649e8d1b10ace6d2ec660c6c3cf5895a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/quality.json",
+      "bytes": 686113,
+      "sha256": "12451de6ac7004ea06efb14df291f1c32520cf9ea22193f2ac69c8ec20fa594e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/radar-day.json",
+      "bytes": 66811,
+      "sha256": "44e99f4e58a1d1670db2db802ff5077241ea34931fca72a5f7c87fc6d539d88e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/radar-paper.json",
+      "bytes": 294674,
+      "sha256": "19bf7ffa7f8f7df8f4cedcf5981f84c17d971d79cdaf543ff0b08215dccf07e6",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/radar-record.json",
+      "bytes": 1763,
+      "sha256": "1212c1cc5e5d01bfd955b7c29df80b4b99fe8e28d3fb85086c3ea6f9b7b951fc",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/radar-sectors.json",
+      "bytes": 9172,
+      "sha256": "3c44b67cd7c07d5263c4fd2f4773ae901e3912054a10fc79f3386b467790bbb3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/radar-universe.json",
+      "bytes": 8206,
+      "sha256": "3bf5b3234c38abe3d60749c92ab7722e8da2828aaa3a33ba2815ed69db6a6df5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/rebalance.json",
+      "bytes": 6748,
+      "sha256": "ea8ef702f134cdae43fec5d8d9207e1f877db39d37cdb79168dc50a8e8e6b502",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/rebuy.json",
+      "bytes": 8610,
+      "sha256": "8548f7605a4a70d77d0961c202a45e97e16f02f9ad0983d978cce8d86b922c72",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/regime-gate.json",
+      "bytes": 12085,
+      "sha256": "f3fb7e14d5d9d6d8066c40de7675a1ac5d199bf6524f3e8f5ddbac9aed4ccea2",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/research-board.json",
+      "bytes": 10163,
+      "sha256": "e689dd07ae12edee3eb8eecda40aac284f9dac9902d9c0b6dcb5b2c9727b80c9",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/research-lab.json",
+      "bytes": 274681,
+      "sha256": "d68f21cf300e00e65000cd45ad58d39d289ae9a14463123f9902a21c69111ba4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/research-paper.jsonl",
+      "bytes": 15536,
+      "sha256": "eb55845fbff96bb8338f9ed50d10b05a1e7f306852b51eaa9477c921de39b1dd",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 39,
+      "status": "PASS"
+    },
+    {
+      "path": "data/research-today.json",
+      "bytes": 11939,
+      "sha256": "bf2d0e819dcae2372292e96b4773d6fcef4f40a5c935164a6dbd535a25c2d81e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/rot-today.json",
+      "bytes": 1205,
+      "sha256": "f06e47d3adff2295d965fe48d3a9f9c16db8358a536405580d35c80e68fa447e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/score-paper.json",
+      "bytes": 296,
+      "sha256": "c7d4d156dec62e72087b35b7c493733ce353c495df20f4185a0f3d96932c49cd",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/score-study.json",
+      "bytes": 32900,
+      "sha256": "dd377ce4b177553aa8763f870d1ac8acba806698dc0df169bcc14e88f3ef94b2",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/scorecard-1023.json",
+      "bytes": 213695,
+      "sha256": "b4609fce00dbb227304c27169556e73c2efcb1dffa855c8c94419a3840e3d6c0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/sec-ciks.json",
+      "bytes": 51602,
+      "sha256": "74963bf823ca6c3af3544644d7df25c381091bfc5f364c95181e73022bda64f6",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/sec-status.json",
+      "bytes": 98,
+      "sha256": "7b4a64e59fad6613fc2144191d93463a798cf80362c2acc6f12bf477d1e775d7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/sectors.json",
+      "bytes": 1404,
+      "sha256": "38393aab46d5856ee2aa134c1587945308a949bcdc8edc655254b4679fd7b86f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/sequence-study.json",
+      "bytes": 7175,
+      "sha256": "4fa9d603a4e0cbc4702befa7b03eef3caf117301501c5547998d9285a98b6740",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/share-supply.json",
+      "bytes": 19068,
+      "sha256": "ed31cfdb2cc8b3220ce980179ea8808d14bfee53f16d24459c73b307d52e25b9",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/shares.json.gz",
+      "bytes": 2004106,
+      "sha256": "4cbbb204b2f6cfc491b62951dc0a4595ab19c0bc3c34d988d915edb34ac8cc3b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/sic-extra.json",
+      "bytes": 4287,
+      "sha256": "a6a205b0a401cc72b6efc9448eb521f2e5b05c5b075be0c989c25bda180b6fe0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/signals.json",
+      "bytes": 898792,
+      "sha256": "2ad04e262b195d3955e1920270d9346fa674344602d5ac7a47512e570fc9f31a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/smart-money-study.json",
+      "bytes": 1145,
+      "sha256": "4c4b55f57a59d28178cac893d7211205c1af9af0f528e98226aab980bff67acd",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/smart-money.json",
+      "bytes": 1479,
+      "sha256": "05d071918e71b1c3b4252fd8bb0f8047f5cc998cfedf75004d1fdf69c5fef0ed",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/splits.json",
+      "bytes": 235600,
+      "sha256": "d29496044951697fbbbafe8b5e89be5c826b2ebfec101b38ea7b4234c90652ed",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/spy-closes.json",
+      "bytes": 2071,
+      "sha256": "6dcfe2d1f7623d6d489cfc058364e76cdb1056b7385d58a4b278e7951111f6e0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad1-board.json",
+      "bytes": 8072,
+      "sha256": "654b29fee8eacb69dddf122728a29fbdfb5ed44658f866217039ebdc7ed4cb82",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad1-diag.json",
+      "bytes": 1766,
+      "sha256": "c22cdc573cb00865e8612e91c307c8a1613f982bb4ff5114ae93354d27cf8353",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad1-lab.json",
+      "bytes": 305494,
+      "sha256": "8bf6d81a6608aa15c9584bfad2f0e4ea39e17914cfff2417226d0909157b7cfd",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad1-paper.jsonl",
+      "bytes": 7225,
+      "sha256": "46eff17ca03c3d42040556899f04e457710efa05ad4fa3033f7634465c7b4dfc",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 27,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad1-today.json",
+      "bytes": 9531,
+      "sha256": "101f260059e593f58f799555b2080656317aca04c22a3640426ccbe0484569ad",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad10-board.json",
+      "bytes": 3213,
+      "sha256": "d7b24240fadf27e30fdf97c60d0543aefb62788c1dc179bc2943fa750f499f7f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad10-diag.json",
+      "bytes": 46823,
+      "sha256": "db8bb6614bc2727c4bb53033829025a3e18191f84f52299256a95c73b1cc322f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad10-lab.json",
+      "bytes": 1055523,
+      "sha256": "e71933a0bc7cd584995848846d383d19a3e8a4db1239039e1e5ae9da20a5989c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad10-today.json",
+      "bytes": 68951,
+      "sha256": "67ba1ea925336c4b49efdcbbb6310b88cca0f0643866f16d955b55bbb5ca249b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad11-board.json",
+      "bytes": 5979,
+      "sha256": "c2f936cbb4e9e180c6482b034f9f85e7a300a81f96ed9ea408dd1adb13ba78d2",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad11-lab.json",
+      "bytes": 638980,
+      "sha256": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad11-paper.jsonl",
+      "bytes": 1401,
+      "sha256": "c8012a5a6e1ed28d6986c50ffac5b5ce1a4c8e0007dcea96835e4fd492c2e0d4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 6,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad11-today.json",
+      "bytes": 6924,
+      "sha256": "a266fa67fa7364df1b25df061d301a99334c1518790fbe334bbc587306ba1546",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad12-board.json",
+      "bytes": 5477,
+      "sha256": "ce067e0fab0e0f828a18b34207d5873ae0a1d0d332ca7b71e684c8ee43fe3ea5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad12-lab.json",
+      "bytes": 913606,
+      "sha256": "34f73717dc7abfe39bb465738cec5282183d5ede4e27518161648c7c2a60f9bf",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad12-paper.jsonl",
+      "bytes": 2532,
+      "sha256": "72af66b3d3db2cf6523e63db19a3c056828a5be9efb3320f31c1ab34f8ed66c6",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 11,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad12-today.json",
+      "bytes": 2017,
+      "sha256": "ad23d216124dffd0368599cc9b70dd3758b7c29b86180801c8905513ad20f4ce",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad13-board.json",
+      "bytes": 10739,
+      "sha256": "5228d977e338a2a542c40ec4293adffb46008551df4eb7d714d817d5d234ae3d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad13-lab.json",
+      "bytes": 39951,
+      "sha256": "8bfcb37eacc7726e7417bc43df5200ae0a418a0832ac57976560c1f13e1b772c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad13-paper.jsonl",
+      "bytes": 9985,
+      "sha256": "cd41071991609ccff7ec96a722721b101c143ce10a08d8fc3baaeba3f72363d9",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 33,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad13-today.json",
+      "bytes": 9340,
+      "sha256": "9df62d5d84d8b0ed7faea4e6d4dd6e4f0ac689f2f1f2dfbb1c7b751e858e5ccf",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad14-board.json",
+      "bytes": 6128,
+      "sha256": "0f54aa01ff1c1dbd6a9331eee96ec6c844ea12bc6b9c09fe8fe999d89aa082fe",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad14-lab.json",
+      "bytes": 464152,
+      "sha256": "28afa0bd12d6a4950c98647025e1e6258b9cfa0563b3d73834b14c54f297b0bb",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad14-paper.jsonl",
+      "bytes": 1899,
+      "sha256": "58d9ae501162213024b858ec198db0e6b9a902af9daf0fe48ef8d31fa762fa9e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 7,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad14-today.json",
+      "bytes": 14515,
+      "sha256": "c774f3f4f1b5a323dc3c93cd2824eef92cdbb422dfaad319a3adfc1816a7fe3d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad15-board.json",
+      "bytes": 2022,
+      "sha256": "c769859cb5a85f421f7f98962f9cfdd6e7ce72ce51045e17442ad9b2f3be4f45",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad15-lab.json",
+      "bytes": 454780,
+      "sha256": "f1111b73980a56b48c7cb76f811c790e9c1f16d91af8b81e0d37fb396843f1a0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad15-paper.jsonl",
+      "bytes": 1976,
+      "sha256": "d4af3da8ddc08e63f5b50b9fe439298188d880a8a4e9cf0deb641bc3c2f28689",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 9,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad15-today.json",
+      "bytes": 2517,
+      "sha256": "afd25c3586bc584a40709e055632bea8bdafeba25d1a899877ed84cb1ea9c488",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad15b-board.json",
+      "bytes": 13115,
+      "sha256": "2b39c83c04409e5645f4312c722b4bf8be49a2381b2c736612831f264228760d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad15b-today.json",
+      "bytes": 303,
+      "sha256": "05f8845f0b6440a4db286f28d3ff86c2d3b978d8868d30bafea4dcab9f1885c0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad16-board.json",
+      "bytes": 13076,
+      "sha256": "61de4c548c6efe4025bbd106a8c5992c7928b31f902bc3438220df8a69960d13",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad16-lab.json",
+      "bytes": 1571178,
+      "sha256": "fe7cd6f819b5be0ff7de1cd1a353b0a67ee04b51d3912baf671774ad850f45ea",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad16-today.json",
+      "bytes": 38056,
+      "sha256": "490fcb481957b52420f497fae48311cf01548561ec614f84257362ca2aca2444",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad17-board.json",
+      "bytes": 1752,
+      "sha256": "b3da6cc62da23306bed02395940ec243b32947918e1fdcd01ccb719b88de7fee",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad17-diag.json",
+      "bytes": 14953,
+      "sha256": "8e466c06d674358f61efb822f223b2379f2f8731834307d4249e1438e7022683",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad17-lab.json",
+      "bytes": 526186,
+      "sha256": "e5b69eed466f6b86006224a81a396622f359a6c03aafc98049b17da12ca33665",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad17-today.json",
+      "bytes": 28290,
+      "sha256": "79f93a350525ee4ea20ba58bd7ef685e91383ff92e38b1dd58af989d4c6ded3f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad18-board.json",
+      "bytes": 6321,
+      "sha256": "6cf1e65983da3710d4359b7c05fec226151d9d9eb397cf604fe8a67f262a504c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad18-lab.json",
+      "bytes": 573690,
+      "sha256": "fd31a7b1be5dcd0799cd34b5dc9cbc30bd40c9cd7e5fc3222d56cd0ca4cbfc70",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad18-paper.jsonl",
+      "bytes": 1034,
+      "sha256": "a1db1c72d1bdd5f9389885e8b59bd17d651f2d432554e6ca1fd2557f5deeb558",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 4,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad18-today.json",
+      "bytes": 3441,
+      "sha256": "2df6154ad2fc8af9afc11843a86f535a94c0539d986bfe06fa09bd39c26d3b14",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad19-board.json",
+      "bytes": 738,
+      "sha256": "7b61977f8f8f656e2b35b36847b0a2417acf138c898c46114ee233e057a57c03",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad19-diag.json",
+      "bytes": 884,
+      "sha256": "9f4887c0b6fed4963c263a83f1cecc21ce54b91016d4773cf1a30818c196d2ed",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad19-lab.json",
+      "bytes": 777204,
+      "sha256": "51890317de4a9168a142b0cb59bad439894cc349083a614f56274d788b18f2bd",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad19-rh1-fm.json",
+      "bytes": 70407,
+      "sha256": "aec0ea583a0b8031187b96ff6ca62a2f164c83959d6e2607558d0592ee0185a8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad19-rh1-raw.json",
+      "bytes": 63970,
+      "sha256": "7d3a3968486d8162c878ddcf5d4cbfa8c30bb3f8e7ceabc53c67131147ae6e30",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad19-today.json",
+      "bytes": 2511,
+      "sha256": "ea46533ed74c0a9680096920968b2a900199c51534359b59b9b96d5512e4e067",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad2-board.json",
+      "bytes": 10992,
+      "sha256": "f5df6f4aa819934e80480b750afea00db559a6041d090a13c9bdb3daa475a935",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad2-lab.json",
+      "bytes": 39480,
+      "sha256": "4eda2e234fb0d151d2bbece6f2101c706b50f6c654c0e3e9010f01ca2f179b37",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad2-paper.jsonl",
+      "bytes": 22290,
+      "sha256": "eb2545363902fa54545d6986e7c05003b1cc19f75dbcef2bcb31f9fdfb859f69",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 95,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad2-today.json",
+      "bytes": 10252,
+      "sha256": "e82702e3aac4d574defca21775cf966ed7de43b33fd4ce77af3075b4ddb5a2df",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad2-trades.json.gz",
+      "bytes": 539827,
+      "sha256": "5fd468e31717f5406651a0c40f3856eef0d8a01e6f863e3e186a4dedeb83043c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad20-board.json",
+      "bytes": 18500,
+      "sha256": "3646a4c533616f95a70279765da6ec17d4bd9ed74dde40b64fd1b27501c29d79",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad20-lab.json",
+      "bytes": 572457,
+      "sha256": "30b2a3ffb714238b36c427a4ea721fc860801466f30e57fefc852530d4b5be2a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad20-paper.jsonl",
+      "bytes": 1004,
+      "sha256": "5d58b02a17647eb291916f3154822240e07d9dbc8b08be5254b5a820fc9a3cd8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 4,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad20-today.json",
+      "bytes": 9229,
+      "sha256": "ad2cc930db09c192a9e3ccd9b6596e6225e70d83349e60b823c3ed04c055479d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad21-board.json",
+      "bytes": 2368,
+      "sha256": "08e3a66b1d538c606ebd6b65243cb07ae3b823bd6b9ffc7c9e17383608666de3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad21-diag.json",
+      "bytes": 17158,
+      "sha256": "1ff31ad9ca80c0e3ef97c56c301b05b1850259ca54e14e630f2f5e9ff88b79c7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad21-lab.json",
+      "bytes": 12039,
+      "sha256": "f9a5ccc78edc25cfff0e0f8ff956430866ab78ad0cf3e3266f4ca0999c997695",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad21-paper.jsonl",
+      "bytes": 12620,
+      "sha256": "632b605bb8d9f9a5cb0b0bbabbde103528337366808109ad7af396a25cd0a3d0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 30,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad21-today.json",
+      "bytes": 4630,
+      "sha256": "e52330f4a81685a0cd07d33f6fae7a6e93f418b29007f43dc82ae8f8df4261e8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad22-board.json",
+      "bytes": 1875,
+      "sha256": "d791f936e2d816ac8692b49917f28ac89d00b7c8f78ddf2f46453226d1a5b2c3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad22-diag.json",
+      "bytes": 7363,
+      "sha256": "e6c2de853de6ae91de1d88bdef2c7caff1a88f308e19354d55c3a205495076bf",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad22-lab.json",
+      "bytes": 20826,
+      "sha256": "08150ec794c22202ed04dfd28fe52bde909b59382b06c228d1493481f7f175d7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad22-today.json",
+      "bytes": 1121,
+      "sha256": "a86e9c086e2912732a671835e0ffa7d723b7ed29baa064c07dc2f7c8b7681b7a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad23-board.json",
+      "bytes": 1097,
+      "sha256": "e3200873497f10d11fe4e8436f2b1c0f55b69a444c52462794fe34230eeec765",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad23-diag.json",
+      "bytes": 22298,
+      "sha256": "ff19f7794f263b2e55f7ccc768c27ff1080962c1f67c6a312087165d39a370ca",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad23-lab.json",
+      "bytes": 186485,
+      "sha256": "c8bf28355631f7b35887b89abe7d0a1ec952b3557444fd5796750271ad374db3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad23-paper.jsonl",
+      "bytes": 1311,
+      "sha256": "dc109a6ff4fcce5ae19b8b67aef030d05d140b619932a2688e85efb9161bd30e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 10,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad23-today.json",
+      "bytes": 21136,
+      "sha256": "724d8316202bcd89f385a654f3e15d4d3e7a7b21f515f4783a7f5e6a02a4b390",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-audit-evidence.json",
+      "bytes": 971467,
+      "sha256": "f7c4d786e4c60b0f6284c17f26a7d68af413ee282cd2665f90e7a96d66cb6820",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-audit-ids.json",
+      "bytes": 238472,
+      "sha256": "213990e0b8fb6b92e89a835b7e8a00eee258b66fc9e7c9fdbf1af93a6b4a3368",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-board.json",
+      "bytes": 596,
+      "sha256": "c666dbc82a41e65b04655969578adcabd84c38c6e52de3213f73ec201f14b7fd",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-cases.json",
+      "bytes": 25028,
+      "sha256": "8e15d30a08893fb49bfdfaaddc4a5ac0a2bfe6f066625adf1764d6e4edd9aa67",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-lab.json",
+      "bytes": 373277,
+      "sha256": "ebcc1c51d4c58772de061dbb25c2c8ac6d8454b266ac5d37466513ab676d9fbe",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-labels.json",
+      "bytes": 76929,
+      "sha256": "233225c59227b350592df2c58fa749ca8dbadc368ee3f613fd50a33f4f71a43d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-megacaps-build.json",
+      "bytes": 493045,
+      "sha256": "f0babc55068ca42f980601d35ee5cf94f0b7356b9f0ee18e3229d2c584499f0a",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-megacaps.json",
+      "bytes": 51642,
+      "sha256": "5530f8200c39cf831750e157cedd32b4f3038b33345a802c152542e5048864da",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-side.json",
+      "bytes": 124794,
+      "sha256": "52852e68fc18353c079605b0074f6baf5e193cb54dc7d7fec0f2871a580b2d9c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad24-today.json",
+      "bytes": 660,
+      "sha256": "1a49e19abf7d32a9984fa970710696a49ca3e39f85dd5a6ed6dbb8e40764233d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad25-board.json",
+      "bytes": 2059,
+      "sha256": "c95e47d0531d9f65a2927c4a7be1cb3c8d731792d2cad6d1af663039026094d1",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad25-giants-build.json",
+      "bytes": 357220,
+      "sha256": "b2af6d696a212d9cb737ffec772fa6d2637872ce2d9a6b0d4947e80616b7a4c5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad25-giants.json",
+      "bytes": 59989,
+      "sha256": "f1d4342104f4a1b0dad7b7195af4b9454354e549f71a50a3df977786963124a3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad25-lab.json",
+      "bytes": 399514,
+      "sha256": "468367da8dd9fa0d33e2086a27554e49c7575fe36f9af4f1c3ed728707b361ef",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad25-today.json",
+      "bytes": 1792,
+      "sha256": "fd296f5a5ef29ae8eb955602b8846e8ef1b8a11643f1a3254f2e7e602cb1c741",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad26-lab.json",
+      "bytes": 431528,
+      "sha256": "2d2dc3ac02adde4e2716c75e5651b65a848cfd094df06e8345c95b1ffe2ae3e8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad26-label-input.json",
+      "bytes": 1935346,
+      "sha256": "556644e54e363be3a28078e97871ab7dc81a80753d7b8bfb5e7e153d16991406",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad26-labeled.json",
+      "bytes": 11659,
+      "sha256": "90eb28832882e2204fcb29904c7e38371f5e3b859f63a7cd77cb91eddc9c656b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad26-labels.json",
+      "bytes": 103950,
+      "sha256": "0acec6a262dafe75bf60b3e9c6d9be393f5215109ce7554b14faa5be19caca93",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad26-paper.jsonl",
+      "bytes": 1433,
+      "sha256": "2afb709849b45c6eb03fdf5400efeebdcb8112b0f3479959eab1ee75adf6b615",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 3,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad26-today.json",
+      "bytes": 4945,
+      "sha256": "1419a9b5d96456b292280580fe46636144333f4c541056fd4c19a7946a4a1149",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad27-board.json",
+      "bytes": 2242,
+      "sha256": "7317a14beebf80c4cb5bda9b66b6dc23678c7e6557ad48561887ee5a6835f049",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad27-lab.json",
+      "bytes": 44261,
+      "sha256": "b3ec9f04ad083a95783b2e39fdf95a6e249e0d98737cb621e57f85b2b635ad44",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad27-offers.json",
+      "bytes": 1258471,
+      "sha256": "e56d7efda239182ae7d1e0da3c0e1d3e1b717950fca27fa0338c98315f1dfd10",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad27-paper.jsonl",
+      "bytes": 332,
+      "sha256": "7c20806598fe3db754aa0b346eae81ad27461252facf3f2b8ebea0d7f61852fc",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 2,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad28-board.json",
+      "bytes": 882,
+      "sha256": "849a075a5a5034565cfada8815601976f1c7eb000950b73f6fb4458a2dd46a62",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad28-lab.json",
+      "bytes": 229493,
+      "sha256": "7b230116f85cf6a20a8a8e3c3169bf9e8ee9b5fcb52e0fd4ab4851aa96afb140",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad28-linkcheck-v1.json",
+      "bytes": 31025,
+      "sha256": "08dad744d5efb229531717cb3be6acbd67fa9d813394e40ac8bdb8083c4f6e2b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad28-linkcheck-v2.json",
+      "bytes": 28032,
+      "sha256": "1af6318d808b77a641317ec0ecbbb2bdb98dd5c0527023b62a1bbf72f37edbe4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad28-linkcheck.json",
+      "bytes": 28208,
+      "sha256": "b38284f7e5c283999d51897a7cc5e30330a4fe87cbee83addea683cc645f7619",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad28-links.json",
+      "bytes": 688871,
+      "sha256": "93ca6a0d65d2bfe0788aef2e2a8ad6897fc11a6f62532db05e4c59f625b5290d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad28-today.json",
+      "bytes": 768,
+      "sha256": "d56efc7b7a850d1af792f3b9c57c78c4641567660c947eee0ad3abe02dc1f3f5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad29-diag.json",
+      "bytes": 16591,
+      "sha256": "52615b294f00aa784b267b38705557071329b8392e424f884f79b4235e230f82",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad29-flags-today.json",
+      "bytes": 15819,
+      "sha256": "78c82ea38e334850d3c1b5467ace04bee652f611fbbdc83901c6f1a5231e0a3c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad29-lab.json",
+      "bytes": 110761,
+      "sha256": "bec398e769170ecdbcbf5b0067ccf31db523a794eac13086c9cacd583924b925",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad3-lab.json",
+      "bytes": 585382,
+      "sha256": "fc93f80a9131f78fd0f7923d8b85dcabd2a5989007ccb7ed099a73a069352922",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad3-today.json",
+      "bytes": 247,
+      "sha256": "b6f9a30dcdcb27abfa4264c2a8fbcf67e89017067cc76a7a4a710126276524f4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad4-board.json",
+      "bytes": 7725,
+      "sha256": "9238b1050855cdda1e2a54035b7a225c8f70054c0972e850f743c267626c2f77",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad4-lab.json",
+      "bytes": 925087,
+      "sha256": "1538f8fe32365d28389b81cf2bdf1b3cd51b3b05f275b55ca0865f92779f09c4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad4-paper.jsonl",
+      "bytes": 64,
+      "sha256": "7e2670317117a659e5787948c55f88c579fd475adc87f503ce73fe72cbd7d952",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 2,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad4-tenx.json",
+      "bytes": 672576,
+      "sha256": "6b6b62c5f914d9165c023f02a2d0159ed6cfdd8764987b8f22e98577b9f23bf0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad4-today.json",
+      "bytes": 57386,
+      "sha256": "678e437a34c90f04d2bbc794bbdc7a186dfaf069caadb502841febec665978d1",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad5-board.json",
+      "bytes": 6774,
+      "sha256": "a0150d0d839c95510f6c61642a1b62d4c86a653ec180cb3005a1f3a2618fd9cc",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad5-lab.json",
+      "bytes": 1975483,
+      "sha256": "419afa436404b600e669aae34fb4628a647ee55aa01bfb14f78bb9c928340240",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad5-today.json",
+      "bytes": 56124,
+      "sha256": "6749d6e3b83cb69627126b91ce77627e547b8dfa6311c4e25462310c5322009f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad6-board.json",
+      "bytes": 9345,
+      "sha256": "061c1ebc8e45b723962a226516056ba77ed730d0f27f8dfec4d9e74b3da7ccb7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad6-lab.json",
+      "bytes": 519848,
+      "sha256": "75e2ab93d2f94164e146cebf0e66b55db27fcc03a97cf922b8a171338ed02e53",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad6-paper.jsonl",
+      "bytes": 37158,
+      "sha256": "4da4421f4f721bdfee1c280ac1edc746ff1c52635c77fe6d7af51c9564666a05",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 142,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad6-today.json",
+      "bytes": 23692,
+      "sha256": "008b21edd42bc5eb0c8ca8692abc6e754e72ce212ad41fb27d0cc37597e3c305",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad7-board.json",
+      "bytes": 4111,
+      "sha256": "f345ae86ad666aa4b1f6c4bffe295a8a64aa83e6ccda8b8e49ac029f663da9a8",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad7-dna.json",
+      "bytes": 200406,
+      "sha256": "72e6877a07b19690fef9fda284d61c587bac7cfc47c56110fdf48d7f669b9755",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad7-lab.json",
+      "bytes": 14352,
+      "sha256": "b20d999d918488923f17e701a9527edf08e105cec66276975a42e8fab69b2d18",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad7-paper.jsonl",
+      "bytes": 17815,
+      "sha256": "06e3d7f3d2a0f78d08bd1a62e2b526a10cd4839ef71a691dec50e0081ebd0d6e",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 68,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad7-screen.json",
+      "bytes": 13661,
+      "sha256": "b9fc05c47d50863cb954c1d9d59f6b1cdf05098cfef6e36d397615d9ab22fd7d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad7-today.json",
+      "bytes": 12676,
+      "sha256": "1e20dd56bbe558ee92629ea8247468332592affa88bbf54ab43402c5008e3111",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad8-board.json",
+      "bytes": 11029,
+      "sha256": "d9e12511af68ae381c7db76d4f13d1056f44155bda1abeb298827c0c13e4e3ae",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad8-diag.json",
+      "bytes": 1528,
+      "sha256": "1a9f4cbc261cda027280f5671c2a9938502103c088045451aed8033a243747d2",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad8-lab.json",
+      "bytes": 33553,
+      "sha256": "ae40e6ca69b7a3e35feb099c0654faa0884ca970ae16213161670a278d9a5358",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad8-paper.jsonl",
+      "bytes": 57196,
+      "sha256": "d841cb29550ab430c5133af412fa96e26df0ca59f7cb0cc417277a02504c11ea",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 219,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad8-today.json",
+      "bytes": 39047,
+      "sha256": "dc4cb9ba79d9f3ef8643c83d84769d84a3ca08be0ed3d698fd2b789fcf12d204",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad9-board.json",
+      "bytes": 9821,
+      "sha256": "b38dc7cf18485d977a13ccb3cd2715b034c42e6a3b6b3d72b477a1a93c280a2f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad9-lab.json",
+      "bytes": 94269,
+      "sha256": "c65511bbff47a8feacf05249dbda3d73e82358239ea3975118c590e016616233",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad9-paper.jsonl",
+      "bytes": 207263,
+      "sha256": "c7d8722a5aacd090352b6db3cd3038a56e8009227efa9b0ab80bf76661084673",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 753,
+      "status": "PASS"
+    },
+    {
+      "path": "data/squad9-today.json",
+      "bytes": 80094,
+      "sha256": "7f62c981c40d58245691c1e0eb8552285f5bbb82068a5cd4fa23d7beab007736",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/stops.json",
+      "bytes": 10728,
+      "sha256": "ef4ba4cd9f5e33beb0f4c896412c918c725546ffbe0a688081366c752f20561c",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/strategy-library.json",
+      "bytes": 1708391,
+      "sha256": "38e6f04e19071536e58caafeaedda97c4060ce363618f8a58493548feb67cbc4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/swing-lab.json",
+      "bytes": 26526,
+      "sha256": "ce5126910f553f00aa8129ea508eb2eae3f5b9b595e338222c67d082d840fbae",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/switch-paper.json",
+      "bytes": 4310,
+      "sha256": "37d201e9b8253576f713b8f318a62bb59c1a9682fbebdc304c95db0077b68b91",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/tg-state.json",
+      "bytes": 113,
+      "sha256": "94dc965a94f1cd2e64de41195dd1227f148606413e4af9dbe4d597f8da818610",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/tier2-ledger.jsonl",
+      "bytes": 362,
+      "sha256": "687e36badeaa9fd70ae29bfb5ac13c6b8974769d13128f552751d5e1f8e501d1",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 5,
+      "status": "PASS"
+    },
+    {
+      "path": "data/timing-study.json",
+      "bytes": 615,
+      "sha256": "31a4cecf385520d6d468c3f48e66f806cc91c58d2384c3efdc5d932f79669e7d",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/tip-score.json",
+      "bytes": 96134,
+      "sha256": "f01eaee4b88c06a3e501a44054b66bf3366d62bb4b9d7935e34045d0111d8cb5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/tips-public.jsonl",
+      "bytes": 5090,
+      "sha256": "ff16dbb908e0548572fb98fb647a0ce84dc329f8a6daaa5e0d079df1117f70c3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 58,
+      "status": "PASS"
+    },
+    {
+      "path": "data/tipster-board.json",
+      "bytes": 4325,
+      "sha256": "1f572879635294fe472304631bbc8a48e8cf387e7bcfbc825c3bb95fbc446856",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/tipster-lab.json",
+      "bytes": 261011,
+      "sha256": "ead6b5e896d4a28cd322c9b52f4e3a5c4ff1e179b0fc3a1baf188ec0174f2cb7",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/tipster-paper.jsonl",
+      "bytes": 656,
+      "sha256": "4f88d22afa5dfa95bc213d29c73bdb7841efdea6722f951d00982f9faebe90a3",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 3,
+      "status": "PASS"
+    },
+    {
+      "path": "data/tipster-today.json",
+      "bytes": 1851,
+      "sha256": "572796e5a2ab009234c4a62a612e057620e4dd5fb86df8f762656a8bb0a77c3f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/value-lab.json",
+      "bytes": 1715422,
+      "sha256": "0d8dc5e9753c43aa17cb3c2369f4da2dd4f17756c5297093eb7ba6204304c1a5",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/value-today.json",
+      "bytes": 47665,
+      "sha256": "955cac5c7ca78d50a6513d9f91585ccd7ab0d6715314b80cab5d1de10f3ce538",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/verify-lab.json",
+      "bytes": 395335,
+      "sha256": "b9d705c0b475d44affe6b7422b2fea28bc9b728154ca2d2ea9100359254c4bfe",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/vol-curve.json",
+      "bytes": 5740,
+      "sha256": "c94890e55a760fb22d947cfb6db4eca45a3bb9aaa76f1e4bea52772f18be8ac4",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/winners-autopsy.json",
+      "bytes": 439529,
+      "sha256": "a0b978ca80dfc3dc466ce39085d3550b40768095e8eb3a861570047eff93109f",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/winners-board.json",
+      "bytes": 4724,
+      "sha256": "94161a2c3ea7b6c25223564eaaef55e7fa458e33b4fd9df1ceecc86d978d68b1",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/winners-paper.json",
+      "bytes": 19,
+      "sha256": "03930132a9bc87c1a22ce519c9559d14ce7eaf8c288c87f44ced0b403e184fc0",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/winners-paper.jsonl",
+      "bytes": 59843,
+      "sha256": "6868f8f767dfb0026c07a37a5c2274900b2cd9d48ca396629713c7814236c136",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "records": 272,
+      "status": "PASS"
+    },
+    {
+      "path": "data/winners-study.json",
+      "bytes": 6188,
+      "sha256": "37e9926b3c0bdf7590d884a0fb82c3629affe4cc3ce832919a4388d69e2f7505",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/zad-list.json",
+      "bytes": 3227,
+      "sha256": "0cf79a403263b9e4b8e74c7823fdde5e86cfd5d2e2dcc563845efed724bcca6b",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    },
+    {
+      "path": "data/zoya.json",
+      "bytes": 8210,
+      "sha256": "904cbd21b627b8160d057ae89f81e04b9cc51abbecd4684a47bdc22218677e15",
+      "check": "ENCODING_AND_JSON_SYNTAX_ONLY",
+      "status": "PASS"
+    }
+  ],
+  "privateFilesExcluded": 15,
+  "testFiles": 128,
+  "totals": {
+    "modules": 206,
+    "workflows": 78,
+    "datasetsChecked": 335,
+    "datasetFailures": 0,
+    "missingImportModules": 0
+  },
+  "readinessStaticCheckpoint": {
+    "date": "2026-10-29",
+    "sourceCommit": "d5c8c3259502054fd3864cb359c52de140d6498c",
+    "rootModules": 218,
+    "workflows": 81,
+    "newModulesSinceBaselineInventory": [
+      "alert-delivery-state.mjs",
+      "discovery-paper.mjs",
+      "discovery-runtime.mjs",
+      "guard-dispatch.mjs",
+      "historical-integrity.mjs",
+      "market-session.mjs",
+      "market-symbol.mjs",
+      "paper-transport.mjs",
+      "research-collector.mjs",
+      "snapshot-fields.mjs",
+      "watcher-checkpoint.mjs",
+      "watcher-heartbeat.mjs"
+    ],
+    "syntax": "PASS",
+    "workflowSerialization": "PASS",
+    "scope": "Additional static checkpoint, not full behavioral audit; baseline inventory and dataset research metadata preserved",
+    "testsPassed": 1299,
+    "nonActiveProposalWorkflowParses": 1,
+    "newWorkflow": ".github/workflows/phase-a-key-proof.yml: explicitly authorized branch-only key proof, exact reviewed bytes",
+    "latestVerified": {
+      "sourceCommit": "14cc16592a89ad7ec15ca87b90ef61a40306ad18",
+      "rootAndToolModules": 236,
+      "workflowYAML": 86,
+      "pythonSyntax": 9,
+      "tests": {
+        "files": 169,
+        "tap": 1446,
+        "standalone": 2,
+        "total": 1448
+      },
+      "scope": "Static counts only; baseline per-module behavioral review classifications preserved"
+    }
+  }
+}

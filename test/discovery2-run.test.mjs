@@ -1,4 +1,4 @@
-// Seam: the discovery2.mjs program on a small synthetic whole-market cache (no network; every side source absent, D2_ALLOW_MISSING=1).
+// Seam: the discovery2.mjs program on a small synthetic whole-market cache (no network; SEC header-only responses supplied by a strict fetch fixture; other side sources absent, D2_ALLOW_MISSING=1).
 //   - it finds the planted pattern (a 5x volume day on a down close before a +28% run) among the top rules
 //   - the frozen pool does NOT depend on the newer half: the same cache with every session from 2024-01-01 scrambled freezes the same pool
 //   - each frozen rule is tested once on the newer half, written to the library with its spec, and the live file is written
@@ -33,7 +33,9 @@ function runIn(dir, cache) {
   fs.mkdirSync(path.join(dir, 'data'), { recursive: true }); fs.mkdirSync(path.join(dir, 'study-cache'), { recursive: true });
   fs.writeFileSync(path.join(dir, 'study-cache/grouped.json.gz'), cache);
   if (!fs.existsSync(path.join(dir, 'data/strategy-library.json'))) fs.writeFileSync(path.join(dir, 'data/strategy-library.json'), JSON.stringify(lib));
-  return execFileSync(process.execPath, [path.join(REPO, 'discovery2.mjs')], { cwd: dir, env: { PATH: process.env.PATH, D2_ALLOW_MISSING: '1' }, encoding: 'utf8', maxBuffer: 1 << 26 });
+  const preload=path.join(dir,'sec-fixture.mjs');
+  fs.writeFileSync(preload,`import zlib from 'node:zlib';globalThis.fetch=async u=>{const x=new URL(u);if(x.origin!=='http://127.0.0.1:9'||!/^\\/Archives\\/edgar\\/full-index\\/\\d{4}\\/QTR[1-4]\\/master\\.gz$/.test(x.pathname))throw Error('NETWORK_FORBIDDEN');return new Response(zlib.gzipSync('CIK|Company Name|Form Type|Date Filed|Filename\\n-----\\n'));};`);
+  return execFileSync(process.execPath, ['--import',preload,path.join(REPO, 'discovery2.mjs')], { cwd: dir, env: { PATH: process.env.PATH, D2_ALLOW_MISSING: '1',SEC_UA:'synthetic fixture',SEC_BASE:'http://127.0.0.1:9' }, encoding: 'utf8', maxBuffer: 1 << 26 });
 }
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'd2-'));
 const A = tmp(), B = tmp();

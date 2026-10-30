@@ -31,6 +31,7 @@ export function checkRunupEligibility({ announcedAt, entryAt, eventDate, datePre
   if (!parsed.eligibleForRunup) return { eligible: false, code: 'DATE_NOT_EXACT', ...parsed };
   const announced = Date.parse(announcedAt || ''), entry = Date.parse(entryAt || ''), exit = Date.parse(plannedExitAt || '');
   if (![announced, entry, exit].every(Number.isFinite)) return { eligible: false, code: 'BAD_TIMESTAMPS', reason: 'announcement, entry, and planned exit timestamps are required' };
+  if (exit <= entry) return { eligible: false, code: 'EXIT_NOT_AFTER_ENTRY', reason: 'planned exit must be after entry' };
   if (announced > entry) return { eligible: false, code: 'DATE_NOT_KNOWN_AT_ENTRY', reason: 'event date was not public by planned entry' };
   if (!(exit < Date.parse(parsed.date + 'T00:00:00Z'))) return { eligible: false, code: 'EXIT_NOT_BEFORE_EVENT', reason: 'planned exit is not before the known event date' };
   const actual = actualOutcomeAt ? Date.parse(actualOutcomeAt) : NaN;
@@ -40,14 +41,14 @@ export function checkRunupEligibility({ announcedAt, entryAt, eventDate, datePre
     reason: exitExposure ? 'event actually occurred before planned exit; must be modelled as event exposure, not a clean pre-event exit' : 'exact date was public before entry and planned exit precedes scheduled event' };
 }
 
-const num = (x) => Number.isFinite(Number(x)) ? Number(x) : null;
+const num = (x) => typeof x === 'number' && Number.isFinite(x) && x >= 0 ? x : null;
 // Structured evidence gate for the NEW value-change hypothesis. Missing data never receives a passing default.
 export function assessCatalystImpact(e = {}) {
   const blockers = [], evidence = [];
   const kind = String(e.eventKind || '').toLowerCase();
   const approvedKinds = ['pivotal_trial_success','first_or_core_product_approval','material_partnership_upfront','material_contract'];
   if (!approvedKinds.includes(kind)) blockers.push('event is not one of the pre-registered material event types');
-  if (!e.publicAt || !e.sourceUrl || e.verifiedPrimarySource !== true) blockers.push('event lacks a verified primary source and public timestamp');
+  if (typeof e.publicAt !== 'string' || !Number.isFinite(Date.parse(e.publicAt)) || typeof e.sourceUrl !== 'string' || !/^https:\/\/[^\s/]+(?:\/[^\s]*)?$/.test(e.sourceUrl) || e.verifiedPrimarySource !== true) blockers.push('event lacks a verified primary source and public timestamp');
   if (e.isGenuinelyNew !== true) blockers.push('novelty versus previously public information is not established');
   const runway = num(e.cashRunwayMonths);
   if (runway === null) blockers.push('cash runway is missing'); else if (runway < 12) blockers.push('cash runway is under 12 months'); else evidence.push('cash runway >= 12 months');

@@ -1,0 +1,101 @@
+{
+  "kind": "READ_ONLY_PROVIDER_PROBE",
+  "observedAt": "2026-10-29T04:41:43.584Z",
+  "session": {
+    "day": "2026-10-29",
+    "minute": 41,
+    "state": "PREMARKET"
+  },
+  "results": [
+    {
+      "provider": "MASSIVE_SNAPSHOT",
+      "httpStatus": 200,
+      "latencyMs": 306,
+      "rateLimit": {
+        "limit": null,
+        "remaining": null,
+        "reset": null
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 13262,
+      "fresh": 0,
+      "unknownTimestamp": 1350,
+      "freshPct": 0,
+      "priceAgeP95Min": 712.7264
+    },
+    {
+      "provider": "ALPACA_SIP",
+      "httpStatus": 200,
+      "latencyMs": 144,
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793248904
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 3,
+      "fresh": 0,
+      "unknownTimestamp": 0,
+      "freshPct": 0,
+      "priceAgeP95Min": 283.6173333333333,
+      "requestedSymbols": 3,
+      "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+    },
+    {
+      "provider": "ALPACA_IEX",
+      "httpStatus": 200,
+      "latencyMs": 45,
+      "rateLimit": {
+        "limit": 10000,
+        "remaining": 9999,
+        "reset": 1793248904
+      },
+      "status": "RESPONSE_OBSERVED",
+      "received": 3,
+      "fresh": 0,
+      "unknownTimestamp": 0,
+      "freshPct": 0,
+      "priceAgeP95Min": 521.7808833333333,
+      "requestedSymbols": 3,
+      "scope": "TARGETED_DIAGNOSTIC_NOT_WHOLE_MARKET"
+    },
+    {
+      "provider": "FINNHUB_GENERAL_NEWS",
+      "httpStatus": 200,
+      "latencyMs": 114,
+      "rateLimit": {
+        "limit": 60,
+        "remaining": 59,
+        "reset": 1793248964
+      },
+      "status": "RESPONSE_OBSERVED",
+      "records": 100,
+      "knownPublicationTimestamp": 100
+    },
+    {
+      "provider": "SEC_TICKER_MAP",
+      "httpStatus": 200,
+      "latencyMs": 319,
+      "rateLimit": {
+        "limit": null,
+        "remaining": null,
+        "reset": null
+      },
+      "status": "RESPONSE_OBSERVED",
+      "records": 10430
+    }
+  ],
+  "claims": {
+    "accountPlan": "NOT_INFERRED",
+    "tradableUniverseCoverage": "NOT_ESTABLISHED",
+    "executionFills": "NOT_TESTED",
+    "profitability": "NOT_TESTED"
+  },
+  "note": "HTTP status/targeted freshness are observations, not evidence of full-session or premarket entitlement. Outside-session old trades do not alone establish an outage. No raw payloads or credentials retained.",
+  "interpretation": {
+    "sessionCorrection": "00:41 New York is OVERNIGHT, before 04:00 premarket; original probe label PREMARKET corrected in code",
+    "limits": "Observed header values only; no plan name or all-endpoint entitlement inferred",
+    "artifact": "https://github.com/drrazaq/Stock-2/actions/runs/40819160719/artifacts/12873304225",
+    "sourceCommit": "62bcd65cdc095ecbd068f478301ec1db4e498a5f"
+  }
+}
