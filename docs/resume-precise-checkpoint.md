@@ -6,6 +6,8 @@ Accounting is **deployed by Claude**, commit `bdc984e9d2d995a8523281e3983060df73
 [Watcher F1/F2 focused review package](watcher-f1-f2-review.md), [exact23-file patch manifest](validation/watcher-core-production-manifest-v5.json) and [validation](validation/watcher-f1-f2.json) supersede v4 only for this proposed watcher release. Current production accounting is retained; watcher is **NOT DEPLOYED**. Next: focused independent review of persistent bounded retry/finalization, frozen-snapshot recovery and health integration, followed by a separate owner deployment decision. Do not merge the development PR. No unrelated repairs in this release.
 
 Acceptance stays **24/40**, CATALYST-03/ACTIONS-04 OPEN; admitted prospective cases0. The owner’s goal is a **trading mentor and decision guide for intraday, days, weeks and months**, with risk, exits and evidence quality explained alongside opportunity discovery. [Aim-to-evidence plan](aim-to-evidence-acceptance-plan.md) retains this scope. This operational release proves neither profitable trading nor broad real-time coverage. Massive remains15-minute delayed; broad SIP rights/coverage remain unverified. P2, privacy and ZAD policy remain excluded. Earlier missing implementation was reconstructed, not recovered.
+
+Verified review packet **8195aab035dc8c3bdb6e90ede11ea70ae73cc97a** passes all **5 applicable exact-commit CI checks**, including safety/source preservation; [CI evidence](validation/watcher-f1-f2-source-ci.json). Production accounting plus exact v5 patch passes121 files/1,199 cases. Any later evidence-only HEAD must be checked at its own SHA.
 <!-- CURRENT-STATUS:END -->
 
 ## Superseded checkpoint evidence (retained; not current instructions)

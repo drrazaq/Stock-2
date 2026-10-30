@@ -1,7 +1,7 @@
 {
-  "verifiedSource": "f007a3bbc11ca6b7a49bad2a2257cfd7fb7cc800",
-  "ciChecksPassed": null,
-  "ciEvidence": "PENDING_EXACT_PUBLICATION",
+  "verifiedSource": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a",
+  "ciChecksPassed": 5,
+  "ciEvidence": "docs/validation/watcher-f1-f2-source-ci.json",
   "acceptance": {
     "complete": 24,
     "total": 40,
@@ -16,7 +16,7 @@
   "entitlementEvidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md",
   "incident": {
     "status": "V5_F1_F2_PREPARED_NOT_DEPLOYED_REVIEW_REQUIRED",
-    "sourceSha": "f007a3bbc11ca6b7a49bad2a2257cfd7fb7cc800",
+    "sourceSha": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a",
     "accountingSource": "09f16792b373268d70e45a535d6a7b02afecf6a5",
     "productionBase": "0b76287bf11d6ed8d25047082178380ca2b7dbf7",
     "newerMainCompatibility": "docs/validation/incident-v4-current-main-compatibility.json",
@@ -150,7 +150,7 @@
     "productionMutationsByThisTask": false,
     "dispatchesByThisTask": 0
   },
-  "ciNote": "Local final v5 suite verified; exact published commit CI pending, not inherited from older SHA.",
+  "ciNote": "All five applicable exact-source checks passed at verifiedSource; later evidence-only checkpoints require their own SHA checks.",
   "priorVerifiedSource": "bd1a4a7e33f059aa4fd48ace321134a3b721d66a",
   "priorCiEvidence": "docs/validation/incident-v4-head-ci.json"
 }

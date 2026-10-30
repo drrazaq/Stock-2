@@ -58,7 +58,7 @@
     "shellBlocks": 328,
     "failures": []
   },
-  "exactHeadCI": "Query exact final published SHA; source CI will be recorded separately after publication",
+  "exactHeadCI": "docs/validation/watcher-f1-f2-source-ci.json",
   "reproduce": [
     "python tools/verify-incident-production-package.py --revision 5 --scope combined --output /tmp/stock2-v5-review",
     "node test/watcher-retry-recovery.test.mjs",
@@ -87,5 +87,6 @@
     "No automatic cross-run artifact restoration or manual recovery authorization",
     "Retries remain subject to actual caller eligibility/window; exhaustion requires review"
   ],
-  "next": "Focused independent v5 review, then separate owner deployment approval; do not deploy earlier packages or repeat accounting maintenance"
+  "next": "Focused independent v5 review, then separate owner deployment approval; do not deploy earlier packages or repeat accounting maintenance",
+  "verifiedPacketSha": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a"
 }

@@ -4994,10 +4994,10 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "sourceSha": "ef10ec13c52f921740d7b230fd97965278a75545",
-    "ciChecksPassed": 12,
-    "status": "VERIFIED_PREPARED_NOT_DEPLOYED_WATCHER_REVIEW_REQUIRED",
-    "evidence": "docs/validation/incident-v4.json",
+    "sourceSha": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a",
+    "ciChecksPassed": 5,
+    "status": "WATCHER_V5_VERIFIED_NOT_DEPLOYED_REVIEW_REQUIRED",
+    "evidence": "docs/validation/watcher-f1-f2.json",
     "acceptanceAdded": 0
   },
   "revisionIdentityMission": {
@@ -5290,7 +5290,8 @@
   "latestSessionCheckpoint": {
     "status": "ACCOUNTING_DEPLOYED_WATCHER_V5_REVIEW_REQUIRED",
     "evidence": "docs/validation/watcher-f1-f2.json",
-    "acceptanceAdded": 0
+    "acceptanceAdded": 0,
+    "verifiedPacketSha": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a"
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5342,9 +5343,9 @@
     "approvalGranted": false
   },
   "currentStatus": {
-    "verifiedSource": "f007a3bbc11ca6b7a49bad2a2257cfd7fb7cc800",
-    "ciChecksPassed": null,
-    "ciEvidence": "PENDING_EXACT_PUBLICATION",
+    "verifiedSource": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a",
+    "ciChecksPassed": 5,
+    "ciEvidence": "docs/validation/watcher-f1-f2-source-ci.json",
     "acceptance": {
       "complete": 24,
       "total": 40,
@@ -5359,7 +5360,7 @@
     "entitlementEvidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md",
     "incident": {
       "status": "V5_F1_F2_PREPARED_NOT_DEPLOYED_REVIEW_REQUIRED",
-      "sourceSha": "f007a3bbc11ca6b7a49bad2a2257cfd7fb7cc800",
+      "sourceSha": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a",
       "accountingSource": "09f16792b373268d70e45a535d6a7b02afecf6a5",
       "productionBase": "0b76287bf11d6ed8d25047082178380ca2b7dbf7",
       "newerMainCompatibility": "docs/validation/incident-v4-current-main-compatibility.json",
@@ -5493,7 +5494,7 @@
       "productionMutationsByThisTask": false,
       "dispatchesByThisTask": 0
     },
-    "ciNote": "Local final v5 suite verified; exact published commit CI pending, not inherited from older SHA.",
+    "ciNote": "All five applicable exact-source checks passed at verifiedSource; later evidence-only checkpoints require their own SHA checks.",
     "priorVerifiedSource": "bd1a4a7e33f059aa4fd48ace321134a3b721d66a",
     "priorCiEvidence": "docs/validation/incident-v4-head-ci.json"
   },
@@ -6218,5 +6219,12 @@
     "actualActionsWatcherTests": 9,
     "publisherTests": 7
   },
-  "historicalFieldsNote": "Earlier accountingApprovedPreflight/accountingPreflightExecution are preserved historical evidence, superseded by accountingDeployment and latestSessionCheckpoint."
+  "historicalFieldsNote": "Earlier accountingApprovedPreflight/accountingPreflightExecution are preserved historical evidence, superseded by accountingDeployment and latestSessionCheckpoint.",
+  "preF1F2_latestVerifiedEngineeringMilestone": {
+    "sourceSha": "ef10ec13c52f921740d7b230fd97965278a75545",
+    "ciChecksPassed": 12,
+    "status": "VERIFIED_PREPARED_NOT_DEPLOYED_WATCHER_REVIEW_REQUIRED",
+    "evidence": "docs/validation/incident-v4.json",
+    "acceptanceAdded": 0
+  }
 }
