@@ -1458,9 +1458,33 @@ function privRead() {
   try { const b = Buffer.from(fs.readFileSync(PRIV_FILE, 'utf8'), 'base64'), d = crypto.createDecipheriv('aes-256-gcm', k, b.subarray(0, 12)); d.setAuthTag(b.subarray(12, 28)); return JSON.parse(Buffer.concat([d.update(b.subarray(28)), d.final()]).toString()); }
   catch (e) { return { buys: [], shares: {} }; }
 }
+function atomicOwnerWrite(file,bytes) {
+ const temp=file+'.pending-'+process.pid;try{const fd=fs.openSync(temp,'w',0o600);try{fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}fs.renameSync(temp,file);}finally{try{fs.unlinkSync(temp);}catch{}}
+}
 function privWrite(o) {
-  const k = privKey(); if (!k) return false; const iv = crypto.randomBytes(12), c = crypto.createCipheriv('aes-256-gcm', k, iv), enc = Buffer.concat([c.update(JSON.stringify(o)), c.final()]);
-  fs.writeFileSync(PRIV_FILE, Buffer.concat([iv, c.getAuthTag(), enc]).toString('base64')); return true;
+ try{const k=privKey();if(!k)return false;const iv=crypto.randomBytes(12),c=crypto.createCipheriv('aes-256-gcm',k,iv),enc=Buffer.concat([c.update(JSON.stringify(o)),c.final()]);
+ atomicOwnerWrite(PRIV_FILE,Buffer.concat([iv,c.getAuthTag(),enc]).toString('base64'));return true;}catch{return false;}
+}
+// Partial-sale intent and recovery stay inside the existing encrypted state. No public private-data migration.
+function saleState() {
+ if(!privKey())throw Error('encrypted state unavailable');
+ if(fs.existsSync(PRIV_FILE)){const b=Buffer.from(fs.readFileSync(PRIV_FILE,'utf8'),'base64'),d=crypto.createDecipheriv('aes-256-gcm',privKey(),b.subarray(0,12));d.setAuthTag(b.subarray(12,28));return JSON.parse(Buffer.concat([d.update(b.subarray(28)),d.final()]).toString());}
+ return {buys:[],shares:{}};
+}
+function finishPendingSale(pv,pos) {
+ const tx=pv.pendingSale;if(!tx)return;
+ if(!tx||typeof tx!=='object'||!/^[a-f0-9]{64}$/.test(tx.id||'')||typeof tx.sym!=='string'||!tx.row||tx.row.saleId!==tx.id||tx.row.sym!==tx.sym||!(tx.position===null||tx.position&&typeof tx.position==='object'))throw Error('invalid pending sale');
+ const rows=fs.existsSync(MY_TRADES)?fs.readFileSync(MY_TRADES,'utf8').split('\n').filter(Boolean):[];
+ if(!rows.some(line=>JSON.parse(line).saleId===tx.id))atomicOwnerWrite(MY_TRADES,rows.concat(JSON.stringify(tx.row)).join('\n')+'\n');
+ if(tx.position===null)delete pos[tx.sym];else pos[tx.sym]=tx.position;
+ atomicOwnerWrite(POS_FILE,JSON.stringify(pos,null,1));
+ const done={...pv,saleReceipts:[...(pv.saleReceipts||[]),tx.id].slice(-500)};delete done.pendingSale;
+ if(!privWrite(done))throw Error('sale completion persistence unconfirmed');
+}
+function recordPartialSale(pv,pos,{id,sym,row,position}) {
+ pv.pendingSale={id,sym,row:{...row,saleId:id},position};
+ if(!privWrite(pv))return false;
+ const before=JSON.parse(JSON.stringify(pos));try{finishPendingSale(pv,pos);return true;}catch{for(const k of Object.keys(pos))delete pos[k];Object.assign(pos,before);return false;}
 }
 // Your usual buy, learned from what you actually buy (the median of your last 10 buys in USD). Sizes are suggested relative to it.
 // what happens at the stop: a loss when the stop is under the buy price, a kept gain when it is above (never "would lose -30 USD"); the
@@ -3180,7 +3204,7 @@ async function tgCommands(sig) {
         else if(kind==='cb'){if(validPlanPrice(+sh)&&validPlanPrice(+cpx)&&Number.isFinite(+sh*+cpx)){txt='bought '+sym+' '+cpx+' '+sh+' shares';note='Recorded: '+sym+' '+sh+' sh at '+cpx;}else note='Not recorded: fill and share count must be finite positive numbers';}
         else if (kind === 'x') { let p = null; try { const j = await liveQ(sym); p = +j.price || null; } catch (e) {} note = 'Not recorded yet: confirm first';
           await ask(p ? 'Record that you sold ALL your ' + sym + '? Confirm records the sale at ' + money(p) + ' (the live price now). If your fill was different, send it instead:  sold ' + sym + ' PRICE' : 'No live price for ' + sym + ' right now. Send your real fill:  sold ' + sym + ' PRICE   (nothing is recorded until you do)', p ? [[{ text: 'Confirm sale at ' + money(p), callback_data: 'cx|' + sym + '|' + money(p) }, { text: 'Cancel', callback_data: 'cn|' + sym }]] : null); }
-        else if(kind==='cx'){if(validPlanPrice(+sh)){txt='sold '+sym+' '+sh;note='Recorded: sold '+sym+' at '+sh;}else note='Not recorded: fill must be a finite positive number';}
+        else if(kind==='cx'){if(validPlanPrice(+sh)){txt='sold '+sym+' '+sh;note='Sale submitted for validation; wait for the recording result';}else note='Not recorded: fill must be a finite positive number';}
         else if (kind === 'cn') note = 'Cancelled: nothing recorded for ' + sym;
         else if (kind === 's') { let px = null; try { const j = await liveQ(sym); px = +j.price || null; } catch (e) { }
           fs.appendFileSync('data/skipped.jsonl', JSON.stringify({ sym, d: ny(Date.now()).d, ts: Date.now(), px }) + '\n'); note = 'Skipped ' + sym + ': noted';
@@ -3214,6 +3238,12 @@ async function tgCommands(sig) {
       const numericText=rawTradeText.replace(/^(?:i\s+)?(?:just\s+)?(?:bought|purchased|sold|exited|اشتريت|شريت|بعت)\s+(?:half\s+)?/i,'').replace(/^[A-Za-z.\-]{1,6}(?=\s|$)\s*/,'');
       if(/\b(?:NaN|Infinity)\b|(?:^|\s)[+-]?\d+(?:\.\d+)?e[+-]?\d+/i.test(numericText)){out.push('Not recorded: use finite positive decimal prices and share counts.');continue;}
       const values=numericText.match(/[+-]?\d[\d,]*(?:\.\d+)?/g)||[];if(values.some(x=>!validPlanPrice(Number(x.replaceAll(',',''))))){out.push('Not recorded: prices and share counts must be finite positive numbers.');continue;}
+    }
+    {const saleRaw=western(m.text.trim().replace(/\$/g,'').replace(SHARE_TYPOS,'shares'));
+      if(/^(?:i\s+)?(?:just\s+)?(?:sold|exited|بعت)\b/i.test(saleRaw)&&!/^(?:i\s+)?sold\s+options?\b/i.test(saleRaw)){
+        const count=saleRaw.match(/([+-]?\d+(?:\.\d+)?)\s*(?:shares?|sh|stocks?|اسهم|سهم)\b/i),vals=(saleRaw.replace(/^(?:i\s+)?(?:just\s+)?(?:sold|exited|بعت)\s+(?:half\s+)?[a-z.\-]{1,6}/i,'').match(/[+-]?\d+(?:\.\d+)?/g)||[]).map(Number);
+        if(/\b(?:NaN|Infinity)\b|(?:^|\s)[+-]?\d+(?:\.\d+)?e[+-]?\d+/i.test(saleRaw)||vals.some(x=>!Number.isFinite(x)||x<=0)||count&&!Number.isSafeInteger(+count[1])){out.push('Not recorded: sale prices must be positive and quantities must be positive whole shares. Position and alerts retained.');continue;}
+      }
     }
     const text = tradeWords(m.text.trim().replace(/\$/g, '').replace(SHARE_TYPOS, 'shares')), num = (re) => { const x = text.match(re); return x ? +x[1] : null; };
     let k;
@@ -3307,14 +3337,24 @@ async function tgCommands(sig) {
       out.push('Added ' + add + ' ' + sym + ' at ' + money(price) + '. You now hold ' + tot + ' shares at an average of ' + money(avg) + ' (was ' + money(P.entry) + ').' + (P.stop ? ' Stop stays ' + money(P.stop) + ' for ALL shares: ' + atStopText(tot, avg, P.stop, 'the whole position') + '. Update the stop at your broker to cover all ' + tot + ' shares.' : ' No stop set: send  stop ' + sym + ' PRICE') + (saved ? '' : ' (share counts not stored: add the PRIVATE_KEY secret)'));
       P.entry = avg; P.addedOn = ny(Date.now()).d; continue;
     }
+    if(/^(?:i\s+)?sold\b/i.test(text)&&!/^(?:i\s+)?sold\s+options?\b/i.test(text)){
+      const values=(text.replace(/^(?:i\s+)?sold\s+(?:half\s+)?[a-z.\-]{1,6}/i,'').match(/[+-]?\d+(?:\.\d+)?/g)||[]).map(Number);
+      if(values.some(x=>!Number.isFinite(x)||x<=0)){out.push('Not recorded: sale prices and share counts must be positive. Your position and alerts stay on.');continue;}
+      try{const pv=saleState();if(pv.pendingSale){finishPendingSale(pv,pos);out.push('Prior pending sale recovered exactly once. This new command was not recorded; verify the position before sending another sale.');continue;}
+        const id=crypto.createHash('sha256').update(String(u.update_id)+'|'+text).digest('hex');if((pv.saleReceipts||[]).includes(id)){out.push('This sale was already recorded; nothing repeated.');continue;}
+      }catch{out.push('Not recorded: encrypted sale state is unavailable or recovery failed. Your position and alerts stay on; retry after storage is repaired.');continue;}
+    }
     // SOLD PART: "sold SYM PRICE 5 shares" when you sell only some of your shares
     { const pm = text.match(/^(?:i\s+)?sold\s+(?!half\b)([a-z.\-]{1,6})\s+(?:at\s+)?(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s*(?:shares?|sh|stocks?|\u0627\u0633\u0647\u0645|\u0633\u0647\u0645)\b/i);
       if (pm && pos[pm[1].toUpperCase()]) { const sym = pm[1].toUpperCase(), exit = +pm[2], n0 = +pm[3], P = pos[sym], pv = privRead(), held = pv.shares && pv.shares[sym];
+        if(!Number.isSafeInteger(n0)||n0<=0||!validPlanPrice(exit)||held!==undefined&&(!Number.isSafeInteger(held)||held<=0)){out.push('Not recorded: valid positive whole-share holding and sale quantity required. Position and alerts retained.');continue;}
+        if(held&&n0>held){out.push('Not recorded: sale quantity exceeds the stored holding. Clarify your actual holding before retrying; position and alerts retained.');continue;}
         // without a stored share count a sale of N shares cannot be told from a full sale: ask; never delete the position or its alerts
         if (!held) { out.push('I do not know how many ' + sym + ' shares you held, so I did not record this sale (your ' + sym + ' stop and sell alerts stay on). If you sold ALL of them, send:  sold ' + sym + ' ' + exit + '\nIf you sold only ' + n0 + ', first send your total before the sale:  bought ' + sym + ' ' + money(P.entry) + ' TOTAL shares  then this sale again.'); continue; }
         if (held && n0 < held) {
-          fs.appendFileSync(MY_TRADES, JSON.stringify({ sym, kind: (P.kind || 'manual'), entry: P.entry, exit, since: P.since || null, out: ny(Date.now()).d, pct: +(exit / P.entry - 1 - MY_COST).toFixed(5), priced: 'you', part: n0 + ' of ' + held, lesson: 'Part sold; the rest is still held.' }) + '\n');
-          const usd = n0 * (exit - P.entry) - 2 * FEE(); pv.shares[sym] = held - n0; addRealized(pv, sym, usd, ny(Date.now()).d); const news = goalNews(pv); privWrite(pv);
+          const usd=n0*(exit-P.entry)-2*FEE();pv.shares[sym]=held-n0;addRealized(pv,sym,usd,ny(Date.now()).d);const news=goalNews(pv);
+          const id=crypto.createHash('sha256').update(String(u.update_id)+'|'+text).digest('hex');
+          if(!recordPartialSale(pv,pos,{id,sym,row:{sym,kind:P.kind||'manual',entry:P.entry,exit,since:P.since||null,out:ny(Date.now()).d,pct:+(exit/P.entry-1-MY_COST).toFixed(5),priced:'you',part:n0+' of '+held,lesson:'Part sold; the rest is still held.'},position:{...P}})){out.push('Sale recording unconfirmed: storage failed. Do not repeat the trade. Position alerts retained; retry recording to recover the pending transaction.');continue;}
           out.push('Sold ' + n0 + ' of your ' + held + ' ' + sym + ' at ' + money(exit) + ' (' + pcs(exit / P.entry - 1) + ', about ' + (usd >= 0 ? '+' : '') + money(usd) + ' USD after fees). You still hold ' + (held - n0) + ' shares at ' + money(P.entry) + ', stop ' + (P.stop ? money(P.stop) : 'not set') + '. Change the stop at your broker to cover ' + (held - n0) + ' shares.' + news);
           continue; } } }
     if ((k = text.match(/^(?:i\s+)?bought\s+(?!options?\b)([a-z.\-]{1,6})(?:\s+(?:at\s+)?(\d+(?:\.\d+)?))?/i))) {   // (22 Oct) not "bought option ...": that is the options trial, handled below
@@ -3361,12 +3401,16 @@ async function tgCommands(sig) {
       try { out.push(await stockMap(sym, sig, pos, true)); } catch (e) { }
     } else if ((k = text.match(/^(?:i\s+)?sold\s+half\s+([a-z.\-]{1,6})(?:\s+(?:at\s+)?(\d+(?:\.\d+)?))?/i))) {
       const sym = k[1].toUpperCase(), P = pos[sym]; if (!P) { out.push('I was not tracking ' + sym + '.'); continue; }
-      { const sh0 = (privRead().shares || {})[sym]; if (sh0 > 0 && sh0 < 2) { out.push('You hold ' + sh0 + ' ' + sym + ' share: it cannot be sold in half, so nothing was recorded. If you sold it, send:  sold ' + sym + ' PRICE'); continue; } }   // half of 1 share is 0 shares
-      let exit = k[2] ? +k[2] : null; if (!exit) { const j = await liveQ(sym); exit = +j.price || null; }
-      if (exit && P.entry) fs.appendFileSync(MY_TRADES, JSON.stringify({ sym, kind: (P.kind || 'manual'), entry: P.entry, exit, since: P.since || null, out: ny(Date.now()).d, pct: +(exit / P.entry - 1 - MY_COST).toFixed(5), priced: k[2] ? 'you' : 'quote', half: true, lesson: 'Half sold at target 1; the rest runs with a trailing stop.' }) + '\n');
-      let news = ''; { const pv = privRead(); if (pv.shares && pv.shares[sym]) { const h = Math.floor(pv.shares[sym] / 2); if (exit && P.entry) { addRealized(pv, sym, h * (exit - P.entry) - 2 * FEE(), ny(Date.now()).d, 'half'); news = goalNews(pv); } pv.shares[sym] -= h; privWrite(pv); } }
-      P.trail = true; P.halfSince = ny(Date.now()).d; P.stop = Math.max(P.stop || 0, P.entry); P.own = false; delete P.stopWhy; P.maxHold = 30;
-      out.push('Half of ' + sym + ' sold' + (exit ? ' at ' + money(exit) + ' (' + pcs(exit / P.entry - 1) + ')' : '') + '. The rest now has a stop at ' + money(P.stop) + ' (entry ' + money(P.entry) + '). This does not guarantee breakeven; fees, slippage or gaps can still cause a loss. I raise the stop every night (3 daily moves under the close) and tell you when to sell the rest. Move the stop at your broker to ' + money(P.stop) + ' now.' + news);
+      const pv=saleState(),held=pv.shares?.[sym];
+      if(!Number.isSafeInteger(held)||held<2){out.push(held===1?'You hold 1 '+sym+' share: it cannot be sold in half, so nothing was recorded.':'Not recorded: a known positive whole-share holding of at least two is required. Position and alerts retained.');continue;}
+      let exit=k[2]?+k[2]:null;if(!exit){const j=await liveQ(sym);exit=+j.price||null;}
+      if(!validPlanPrice(exit)||!validPlanPrice(P.entry)){out.push('Not recorded: no valid fill price. Position and alerts retained.');continue;}
+      const n=Math.floor(held/2),next={...P,trail:true,halfSince:ny(Date.now()).d,stop:Math.max(P.stop||0,P.entry),own:false,maxHold:30};delete next.stopWhy;
+      pv.shares[sym]=held-n;addRealized(pv,sym,n*(exit-P.entry)-2*FEE(),ny(Date.now()).d,'half');const news=goalNews(pv);
+      const id=crypto.createHash('sha256').update(String(u.update_id)+'|'+text).digest('hex');
+      const row={sym,kind:P.kind||'manual',entry:P.entry,exit,since:P.since||null,out:ny(Date.now()).d,pct:+(exit/P.entry-1-MY_COST).toFixed(5),priced:k[2]?'you':'quote',half:true,lesson:'Half sold at target 1; the rest runs with a trailing stop.'};
+      if(!recordPartialSale(pv,pos,{id,sym,row,position:next})){out.push('Sale recording unconfirmed: storage failed. Do not repeat the trade. Position alerts retained; retry recording to recover the pending transaction.');continue;}
+      out.push('Half of '+sym+' sold at '+money(exit)+'. The rest now has a stop at '+money(next.stop)+' (entry '+money(P.entry)+'). This does not guarantee breakeven; fees, slippage or gaps can still cause a loss. Move the stop at your broker to '+money(next.stop)+' now.'+news);
     } else if ((k = text.match(/^(?:i\s+)?sold\s+(?!options?\b)([a-z.\-]{1,6})(?:\s+(?:at\s+)?(\d+(?:\.\d+)?))?/i))) {
       const sym = k[1].toUpperCase(), shTxt = (text.match(/(\d+)\s*shares?\b/i) || [])[1], shSaid = shTxt ? +shTxt : null;
       if (!pos[sym]) {   // already sold today (for example with the Sold button): correct that record with your real price and shares
@@ -3383,7 +3427,9 @@ async function tgCommands(sig) {
           msg += ' In money: about ' + (usd >= 0 ? '+' : '') + money(usd) + ' USD on ' + n + ' shares (private, encrypted). Since your goals started: ' + (pv.realized - pv.goals.base >= 0 ? '+' : '') + money(pv.realized - pv.goals.base) + ' USD.' + news; }
         out.push(msg); continue; }
       let exit = k[2] ? +k[2] : null; if (!exit) { const j = await liveQ((sym)); exit = +j.price || null; }
-      const P = pos[sym]; delete pos[sym];
+      const P = pos[sym];
+      {const held=saleState().shares?.[sym];if(held!==undefined&&(!Number.isSafeInteger(held)||held<=0)){out.push('Not recorded: stored holding is not a positive whole-share quantity. Clarify it first; position and alerts retained.');continue;}}
+      if(!validPlanPrice(exit)){out.push('Not recorded: no valid fill price. Position and alerts retained.');continue;}
       if (exit && P.entry) {     // your real trades are the evidence that matters most: every sale is recorded
         const t = { sym, kind: P.kind || 'manual', entry: P.entry, exit, since: P.since || null, out: ny(Date.now()).d, pct: +(exit / P.entry - 1 - MY_COST).toFixed(5), priced: k[2] ? 'you' : 'quote at the time of your message', t1: P.t1 || null, stop: P.stop || null, test: P.test || null, orig: P.orig || null, mkt: { atBuy: P.mktAtBuy || null, atSale: (sig && sig.market) ? (sig.market.above50 === false || sig.market.up === false ? 'weak' : 'rising') : null }, lesson: soldLesson(P, exit) };
         { const md = moodOf(text); if (md || P.mood) t.mood = { buy: P.mood || null, sell: md }; }
@@ -3391,11 +3437,14 @@ async function tgCommands(sig) {
         // LOSS LEDGER: why each losing trade lost (gaps through the stop are the hidden cost to watch)
         if (t.pct <= 0) t.lossType = P.stop && exit < P.stop * 0.995 ? 'sold below the stop (' + pcs(exit / P.stop - 1) + ' past it)' : P.stop && exit <= P.stop * 1.01 ? 'stop hit (normal)' : t.mkt.atSale === 'weak' ? 'sold in a weak market' : P.kind === 'manual' ? 'own pick, sold early' : 'sold on the rule exit or early';
         if (P.src) t.src = P.src;
-        fs.appendFileSync(MY_TRADES, JSON.stringify(t) + '\n');
+        const pv=saleState(),sh=pv.shares?.[sym]||shSaid;let cash='';
+        if(sh){const usd=sh*(exit-P.entry)-2*FEE()-sh*P.entry*0.002;addRealized(pv,sym,usd,t.out);if(pv.shares)delete pv.shares[sym];pv.soldUsd={...(pv.soldUsd||{}),[sym+'|'+t.out]:{usd:+usd.toFixed(2),sh}};cash='In money: about '+(usd>=0?'+':'')+money(usd)+' USD on '+sh+' shares (private, encrypted).'+goalNews(pv);}
+        else cash='Share count unknown: sale is excluded from dollar goals until you clarify the actual quantity.';
+        const id=crypto.createHash('sha256').update(String(u.update_id)+'|'+text).digest('hex');
+        if(!recordPartialSale(pv,pos,{id,sym,row:t,position:null})){out.push('Sale recording unconfirmed: storage failed. Do not repeat the trade. Position alerts retained; retry recording to recover the pending transaction.');continue;}
+        out.push(cash);
         if (P.src === 'leader dip') { ldipAppend({ d: t.out, sym, kind: 'result', rule: LDIP_RULE, entry: P.entry, exit, since: P.boughtSession || P.since || null, out: t.out, pct: t.pct, priced: t.priced, why: P.exitFlag ? P.exitFlag.why : 'owner sale' });   // (27 Oct) the LEADER DIP live record
           try { out.push(ldipRecordLine()); } catch (e) {} }
-        { const pv = privRead(), sh = (pv.shares && pv.shares[sym]) || shSaid; if (sh) { const usd = sh * (exit - P.entry) - 2 * FEE() - sh * P.entry * 0.002; addRealized(pv, sym, usd, t.out); if (pv.shares) delete pv.shares[sym]; pv.soldUsd = { ...(pv.soldUsd || {}), [sym + '|' + t.out]: { usd: +usd.toFixed(2), sh } }; const news = goalNews(pv); privWrite(pv); out.push('In money: about ' + (usd >= 0 ? '+' : '') + money(usd) + ' USD on ' + sh + ' shares (private, encrypted). Since your goals started: ' + (pv.realized - pv.goals.base >= 0 ? '+' : '') + money(pv.realized - pv.goals.base) + ' USD. Send  goals  for the ladder.' + news); }
-          else out.push('I do not know how many ' + sym + ' shares you had, so this sale is not in your dollar goals. Send the result in dollars, for example:  pnl -2000 ' + sym); }
         out.push('Sold ' + sym + ' at ' + money(exit) + ' (' + (k[2] ? 'your price' : 'price now; send  sold ' + sym + ' PRICE  next time for your exact fill') + '). Result ' + pcs(t.pct) + ' after about 0.8% costs. Recorded.\nWHY: ' + t.lesson + '\n' + myRecord());
       } else out.push('Stopped tracking ' + sym + '. I could not get a price, so this sale is not in your record. Next time send: sold ' + sym + ' PRICE');
     } else if ((k = text.match(/^focus\s+(on|off)\s*$/i))) { const st = updateSettings(s => { s.focus = k[1].toLowerCase() === 'on'; }); if (!st) out.push(SETTINGS_BAD); else out.push(st.focus ? 'FOCUS ON: engine buys (swing / quick rules) are paused until one has a positive live record; they are listed under NOT ACTIONABLE TODAY. Your own lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT), sells and stops continue.' : 'FOCUS OFF: presentation expanded; unproven engine candidates remain paper only. Evidence, safety and current ZAD approval are still required.');

@@ -128,7 +128,7 @@ test('holdings review: HOLD shows the target and time exit (no stop nag); a HIGH
 test('sold SYM PRICE on a leader dip position: the result goes to the leader dip ledger', async () => {
   const M = mkServer('sold AAA 60'); const B = await M.start();
   const S = await loadScan({ files: { 'data/my-positions.json': { AAA: { entry: 50, since: sessAgo(4), boughtSession: sessAgo(4), kind: 'leader dip', src: 'leader dip', target: 60, ldHold: 126, own: true } } },
-    env: { TG_TOKEN: 'T', TG_CHAT: '42', TG_BASE: B, TD_BASE: B, FH_BASE: B, SEC_BASE: B } });
+    env: { PRIVATE_KEY:'synthetic-test-key', TG_TOKEN: 'T', TG_CHAT: '42', TG_BASE: B, TD_BASE: B, FH_BASE: B, SEC_BASE: B } });
   await S.fn('tgCommands')(null); M.server.close();
   const rows = S.read('data/leaderdip-ledger.jsonl').trim().split('\n').map(x => JSON.parse(x));
   assert.equal(rows.length, 1); assert.equal(rows[0].kind, 'result'); assert.equal(rows[0].sym, 'AAA'); assert.equal(rows[0].pct, +(0.2 - 0.008).toFixed(5));
