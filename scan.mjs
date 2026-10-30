@@ -1,4 +1,4 @@
-import {leaderDipMentorPlan,renderLeaderDipMentor} from './mentor-plan.mjs';
+import {leaderDipMentorPlan,renderLeaderDipMentor,captureLeaderDipContract,savedLeaderDipSignal} from './mentor-plan.mjs';
 import {readWatcherReport,missedRunnerPopulation} from './watcher-reporting.mjs';
 import {readAlertState,saveAlertState,alertAvailable,deliverAlertOnce,validAlertBook} from './alert-delivery-state.mjs';
 import {paperRequest} from './paper-transport.mjs';
@@ -3190,13 +3190,16 @@ function waysText() { return ['YOUR WAYS TO TRADE (each one separate; you place 
   'a) THE BASKET (core): every month 65% of ~1,000 USD in ZAD Basket 2 = SPUS 54% / gold fund IAUM 46%, and 35% kept as cash; Basket 1 = the halal top 10 (whole-number %) is bought with that cash 3 times a year (first trading day of Jan, May, Sep) to keep ZAD fees low. Send  basket  (buy day:  basket buy AMOUNT )',
   'b) TRY SMALL: ' + usd0(TRY_USD) + ' USD buys from rules that made money in both test halves but did not pass the luck test; max ' + TRY_MAX + ' open, own stop and time exit. They appear in  actions',
   'c) OPTIONS PAPER LANE: long calls tested on paper only; a 1-contract ticket only if a rule earns it. Send  options lab'].join('\n'); }
-function mentorText(sym,pos){
- const T=readJson0('data/squad11-today.json'),rows=T?.methods?.[LDIP_RULE]?.newSignals;
+function mentorSource(sym){
+ try{const bytes=fs.readFileSync('data/squad11-today.json'),T=JSON.parse(bytes),rows=T?.methods?.[LDIP_RULE]?.newSignals;
  const row=Array.isArray(rows)?rows.find(x=>x?.sym===sym):null;
- const day=row&&(row.d||T.lastClose),consistent=row&&(!row.d||!T.lastClose||row.d===T.lastClose);
- const signal=consistent?{rule:LDIP_RULE,day,close:row.close}:null;
+ if(!row||row.d&&T.lastClose&&row.d!==T.lastClose)return null;
+ return {rule:LDIP_RULE,day:row.d||T.lastClose,close:row.close,generatedAt:typeof T.generatedAt==='string'?T.generatedAt:null,sha256:crypto.createHash('sha256').update(bytes).digest('hex')};}catch{return null;}
+}
+function mentorText(sym,pos){
+ const P=pos?.[sym],signal=P?savedLeaderDipSignal(P.mentorContract):mentorSource(sym);
  const policy=ZADPOLICY(),zad=policy.valid?(policy.marks[sym]?.s||'UNKNOWN'):'UNKNOWN';
- return renderLeaderDipMentor(leaderDipMentorPlan({symbol:sym,position:pos?.[sym]||null,signal,quantity:privRead()?.shares?.[sym],asOfDay:ny(Date.now()).d,zadStatus:zad}));
+ return renderLeaderDipMentor(leaderDipMentorPlan({symbol:sym,position:P||null,signal,quantity:privRead()?.shares?.[sym],asOfDay:ny(Date.now()).d,zadStatus:zad}));
 }
 async function tgCommands(sig) {
   if (env.GITHUB_WORKFLOW && env.GITHUB_WORKFLOW !== 'Telegram bot replies') return;   // one reader of Telegram messages (audit 22 Oct): the bot workflow
@@ -3385,7 +3388,8 @@ async function tgCommands(sig) {
       // LEADER DIP (27 Oct): a pick of the owner's real lane shown in the last 10 sessions. First, so it wins over TRY SMALL (PB12 is also a
       // TRY SMALL rule) and over any plan from tonight's lists: its own exits only, a +20% sell limit and a 126-session time exit, NO stop.
       { const lh = ldipHit(sym); if (lh) { for (const f of ['stop', 't1', 't2', 'tmode', 'tnote', 'maxHold', 'exitBelow', 'exitMA', 'key', 'q']) delete P[f];
-        Object.assign(P, { kind: 'leader dip', src: 'leader dip', target: +(entry * (1 + LDIP_TGT)).toFixed(2), ldHold: LDIP_HOLD, boughtSession: ny(Date.now()).d, own: true, stopWhy: 'no stop by design (tested without one)' }); } }
+        Object.assign(P, { kind: 'leader dip', src: 'leader dip', target: +(entry * (1 + LDIP_TGT)).toFixed(2), ldHold: LDIP_HOLD, boughtSession: ny(Date.now()).d, own: true, stopWhy: 'no stop by design (tested without one)' });
+        const source=mentorSource(sym);P.mentorContract=source&&source.day===(lh.session||lh.d)&&source.day<=P.boughtSession?captureLeaderDipContract(source):null; } }
       if (!P.src) { const Qh = readJson0('data/quality.json'); if (((Qh && Qh.fscoreUpToday) || []).some(x => x.sym === sym)) P.src = 'longer hold'; }   // counts toward the 3 open LONGER HOLDS
       if (!P.src) { const tl = tryLedgerHit(sym); if (tl && tl.hold > 0) { const sp = tl.stopPct > 0 ? tl.stopPct : (tl.hold > 100 ? 0.35 : 0.15); P.src = 'try small'; P.stop = +(entry * (1 - sp)).toFixed(2); P.own = true; P.stopWhy = 'the TRY SMALL lane stop, ' + Math.round(sp * 100) + '% under your buy (fixed, never moved by the bot)'; P.tryHold = tl.hold || 63; } }   // (audit 24 Oct) the buy as it was SHOWN, even if the lab's file changed since
       if (!P.src) { const VT = readJson0('data/value-today.json'), VL = readJson0('data/value-lab.json'), q = VL ? tryQualifies(labRuns(VL)) : [];   // TRY SMALL buy: its own 15% stop and ~3-month exit
