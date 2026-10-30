@@ -13,7 +13,7 @@ export function createWatcherMessages({day,directory='runtime/watcher-message-st
    const row={version:2,day,keySha256:digest,owner,state:'UNSENT',at:new Date(now()).toISOString()};
    if(!write(digest,row)){stats.publicationFailures++;return false;}
    const candidate={...row,state:'RESERVED'},result=publish(digest,candidate,'reserve');
-   if(!result.ok){const stored=result.record||{...row,reason:'PUBLICATION_UNCONFIRMED'};cache.set(digest,stored);write(digest,stored);retry.set(digest,now()+retryMs);stats.publicationFailures++;stats.unsent++;return false;}
+   if(!result.ok){const stored=result.record||{...row,reason:'PUBLICATION_UNCONFIRMED'};cache.set(digest,stored);write(digest,stored);retry.set(digest,now()+retryMs);if(result.reason==='EXISTING_RESERVATION')stats.suppressed++;else stats.publicationFailures++;if(stored.state==='UNSENT')stats.unsent++;return false;}
    cache.set(digest,candidate);if(!write(digest,candidate)){stats.publicationFailures++;return false;}return true;
   },
   finish(key,result={}){const digest=keyOf(key),prior=read(digest);if(prior?.owner!==owner||prior.state!=='RESERVED')return false;
