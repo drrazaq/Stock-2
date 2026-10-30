@@ -1,6 +1,6 @@
-# Accounting preflight checker v2.1: approval package (proposed, not installed)
+# Accounting preflight checker v2.2: approval package (proposed, not installed)
 
-30 Oct 2026. Prepared by Claude on the isolated branch `claude/accounting-preflight-v2`. It supersedes the reviewed `d3596bf` (v2), for which Codex returned CHANGES REQUIRED.
+30 Oct 2026. Prepared by Claude on the isolated branch `claude/accounting-preflight-v2`. It supersedes the reviewed `d3596bf` (v2) and `f6076bb` (v2.1), for both of which Codex returned CHANGES REQUIRED. **The expanded output contract (`BLOCKED <CODE>`) awaits owner approval.**
 
 **Nothing in production was changed:**
 - no installation or workflow pause;
@@ -65,7 +65,16 @@ Consistent completed receipts PASS. The checker never clears receipts or writes 
   - any dependency differs; or
   - any commit in `HEAD..main` touched any dependency, even with no net change (for example a ledger added and then removed).
 
-**Output contract:** exactly one line: `PASS`, `ERROR`, or `BLOCKED <CODE>`. The code comes from a fixed vocabulary that carries no symbol, amount, identifier or exception text. Exit codes are 0, 2 and 1, with nothing on stderr. The workflow rejects any other output as ERROR and publishes `status` and `reason` separately.
+**Final consistency check (v2.2, Codex review of `f6076bb`):**
+- When every dependency is proven identical to HEAD, the checker records its local state (absent, a regular file with its SHA256, or other) and its HEAD tree entry. Dependencies: the four inputs, `scan.mjs` and `.github/private-data-mode`.
+- The bytes it evaluated must be those bytes.
+- **Immediately before PASS**, it re-reads HEAD and every dependency's local state and tree entry. Any difference gives `BLOCKED STATE_CHANGED`.
+- So an edit, creation, deletion or symlink swap of any dependency, or a commit moving HEAD, during the history walk blocks. Rewriting identical bytes does not.
+
+**Output contract (awaiting owner approval):** exactly one line: `PASS`, `ERROR`, or `BLOCKED <CODE>`.
+- The code comes from a fixed vocabulary of **16 reviewed codes**, carrying no symbol, amount, identifier or exception text: `MISSING_KEY`, `MISSING_REQUIRED_INPUT`, `PENDING_SALE`, `STATE_INTENT`, `RECEIPT_MALFORMED`, `RECEIPT_DUPLICATE`, `RECEIPT_UNMATCHED`, `RECEIPT_AMBIGUOUS`, `JOURNAL_UNRECEIPTED`, `LEADER_DIP_RESULT_WITHOUT_LEDGER`, `LEDGER_EXISTED`, `LEDGER_HISTORY_UNCERTAIN`, `PRIVACY_MODE`, `CODE_UNREVIEWED`, `LOCAL_STATE_DIFFERS`, `STATE_CHANGED`.
+- Exit codes are 0, 2 and 1, with nothing on stderr.
+- **The workflow allowlists exactly these codes** in both the protected and emit steps. An unknown code (for example `BLOCKED NOT_A_REVIEWED_CODE`), a malformed line, extra lines or a mismatched exit code is ERROR. The workflow publishes `status` and `reason` separately.
 
 ### Corrected documentation
 
@@ -78,19 +87,46 @@ Consistent completed receipts PASS. The checker never clears receipts or writes 
 
 | File | SHA256 | git blob |
 |---|---|---|
-| `ops/accounting-preflight-v2.mjs` (checker v2.1) | `1ccf8c06d071627b92871331e21016acbd6bd82cae0250c353ce7a07150290df` | `4be2f5ad078aa99cba513290f25d50e6a549663d` |
-| `ops/accounting-preflight-v2.test.mjs` (49 synthetic tests) | `088b44dc9e9ba8eca76e45ed98df40b5209ba2de9651d8343d21b3a85a7cfb33` | |
-| `ops/bot-yml-preflight-v2.patch` (workflow amendment) | `5eb17d2fd23a56edf378ae43e5af057864ad1e7c1f4500a79a2914b90a14b517` | |
+| `ops/accounting-preflight-v2.mjs` (checker v2.2) | `957560f0f3ebb8885492c21da623cd499241657411ac4df7e4efc133c8a22d35` | `aa45a67686ad8528a50404e6aa88b8c19d26e0ba` |
+| `ops/accounting-preflight-v2.test.mjs` (57 synthetic checker tests) | `f4fa6448618d921403be2b65043c1f434731ca591e8b0ed1837fe68a59b533ad` | |
+| `ops/accounting-preflight-wrapper.test.mjs` (8 wrapper tests on the amended `bot.yml`) | `f3fc62aee58c3085e4534ba33767b3d2bb9fdf2c916cb55fdee6cc75aee5d631` | |
+| `ops/bot-yml-preflight-v2.patch` (workflow amendment) | `c315d9cdc4e43d3a774a33d868247c9c221fda3edf46702bca326bd1d816f293` | |
 
 The patch applies to main's `bot.yml` (SHA256 `1d25e6fec025f7a7e5e7a254cd61a9df4ecd7df97423b74a84fabd68ab6061e8`). It changes only the `accounting-preflight` job:
 1. **Checkout:** `fetch-depth: 0` and `filter: blob:none`. The pinned `actions/checkout@11d5960…` is v4.3.0, which supports both. The clone takes about 1 s and about 2.3 MB.
 2. **Blob and SHA256 pins:** set to the values above.
-3. **Protected step:** accepts `0:PASS`, `1:ERROR` or `2:BLOCKED <CODE>`; anything else is ERROR.
-4. **Emit step:** on PASS, it fetches current main and runs the pinned checker's `--fresh` mode across every dependency, replacing v1's four-path diff. It emits `status` and `reason` outputs and exits 0, 2 or 1.
+3. **Protected step:** accepts only `0:PASS`, `1:ERROR` or `2:BLOCKED <one of the 16 reviewed codes>`; anything else is ERROR. The timeout (`timeout 10s`), memory limit and raw-file cleanup are unchanged.
+4. **Emit step:** re-validates the result against the same allowlist. On PASS, it fetches current main and runs the pinned checker's `--fresh` mode across every dependency, replacing v1's four-path diff; only `PASS` or `BLOCKED STATE_CHANGED` is accepted from it. It emits `status` and `reason` outputs, exits 0, 2 or 1, and removes the checker files as before.
 
 ## Evidence
 
-- **Checker tests (run explicitly; ordinary CI runs only `test/` and `tests/`):** `node --test ops/accounting-preflight-v2.test.mjs` gives **49/49 pass**. They include:
+### v2.2 focused evidence (Codex review of `f6076bb`)
+
+**Gap 1, final consistency.** 8 new tests use a wrapper `git` that performs one local mutation when the checker reaches a history walk (the ledger log walk or the object walk), then runs the real git.
+
+| Mutation during the walk | Reviewed `f6076bb` | v2.2 |
+|---|---|---|
+| `scan.mjs` edited (either walk) | PASS | `BLOCKED STATE_CHANGED` |
+| Privacy marker created (either walk) | PASS | `BLOCKED STATE_CHANGED` |
+| Dependency replaced by a symlink | PASS | `BLOCKED STATE_CHANGED` |
+| Each input changed; ledger created; HEAD moved | `BLOCKED` | `BLOCKED STATE_CHANGED` |
+| Controls: no mutation (either walk); unrelated file; identical bytes rewritten | PASS | PASS |
+
+The 3 tests that fail on `f6076bb` reproduce the gap; all pass on v2.2. Mutation check: removing the final dependency loop fails 5 tests; removing the HEAD check fails 1; restricting the loop to the inputs fails 3.
+
+**Gap 2, wrapper vocabulary.** `ops/accounting-preflight-wrapper.test.mjs` applies the patch to this checkout's `bot.yml` (pinned main version) and runs the protected and emit steps as written, against a fake checker. There is no key and no network: the emit step's GitHub URL is replaced by a local `file://` repository.
+- **No drift:** both allowlists equal the checker's 16 reviewed codes.
+- **Plumbing kept:** the timeout, memory-limit and cleanup lines are present.
+- **Protected step:** keeps `PASS`, `ERROR` and **every one of the 16** `BLOCKED` codes. It turns 23 unknown or malformed outputs into ERROR, including `BLOCKED NOT_A_REVIEWED_CODE`, a bare `BLOCKED`, extra spaces or tokens, lower case, regex-like `MISSING_KEY|PASS` / `.*`, multi-line output, an empty line and a tab separator. It also turns 8 mismatched exit codes into ERROR.
+- **Emit step:** publishes `status=BLOCKED reason=<code>` with exit 2 for every reviewed code, and turns every malformed value into `status=ERROR` with exit 1. PASS needs a fresh-mode PASS: `STATE_CHANGED` blocks, while any other fresh output, or a fetch failure, is ERROR. The checker files are always removed.
+
+On the reviewed `f6076bb` patch, 3 of the 8 wrapper tests fail (no allowlist; unknown codes accepted by both steps). For example, a checker printing `BLOCKED NOT_A_REVIEWED_CODE` produced the result `BLOCKED NOT_A_REVIEWED_CODE`. All 8 pass on v2.2.
+
+**Previously passed behaviour is unchanged.** All 49 earlier checker tests still pass (57/57 in total). The end-to-end workflow simulation with the v2.2 pins gives the same results as before: clean main PASS, unrelated change PASS, `scan.mjs` or marker change `BLOCKED STATE_CHANGED`, no key `BLOCKED MISSING_KEY`, pending sale `BLOCKED PENDING_SALE`, wrong key ERROR.
+
+### Evidence carried from v2.1
+
+- **Checker tests (run explicitly; ordinary CI runs only `test/` and `tests/`):** `node --test ops/accounting-preflight-v2.test.mjs` gave **49/49 pass** at v2.1 (57/57 at v2.2). They include:
   - regression tests for each finding: a committed marker deleted locally; local pinned bytes over unreviewed HEAD code; a `scan.mjs` or marker change during the preflight; a ledger added then removed; any input change; rewritten history; malformed, duplicate, unmatched, unreceipted and ambiguous receipts; receipts at the cap; ledger-only sale ids;
   - valid controls: legitimate receipts (manual, part, half, and LEADER DIP with its matching ledger result); a marker removed in history; unrelated changes on main;
   - integration: a blob-free full clone passes and a shallow one blocks; read-only behaviour in both modes.
@@ -132,4 +168,4 @@ Reproduction harnesses (synthetic, reviewer-run): `ops/evidence/reproduce-findin
 4. Use the **one remaining** fresh preflight. Continue only on `PASS`. On `BLOCKED <CODE>` or `ERROR`, abort safely, restore the ordinary workflows, and report the status and code only.
 5. Deploy only the approved accounting patch, verify CI and the hashes, and re-enable the ordinary workflows.
 
-If main's `scan.mjs` changes before the run, v2.1 BLOCKS by design (`CODE_UNREVIEWED`), and the pin needs re-review.
+If main's `scan.mjs` changes before the run, v2.2 BLOCKS by design (`CODE_UNREVIEWED`), and the pin needs re-review.

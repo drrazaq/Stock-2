@@ -10,7 +10,7 @@
          with:
            ref: main
            persist-credentials: false
-+          # v2.1 checker: complete commit/tree history (no historical file contents), so it can verify that the
++          # checker v2.2: complete commit/tree history (no historical file contents), so it can verify that the
 +          # LEADER DIP ledger never existed; it refuses shallow, grafted or incomplete history.
 +          fetch-depth: 0
 +          filter: blob:none
@@ -22,31 +22,35 @@
            set +x
            rm -f "$RUNNER_TEMP/accounting-preflight.result"
 -          curl --max-time 20 -fsSL https://api.github.com/repos/drrazaq/Stock-2/git/blobs/92fc955497950df6e76823eec6e348f1ebfb78b1 -o "$RUNNER_TEMP/accounting-preflight-source.json" 2>/dev/null
-+          curl --max-time 20 -fsSL https://api.github.com/repos/drrazaq/Stock-2/git/blobs/4be2f5ad078aa99cba513290f25d50e6a549663d -o "$RUNNER_TEMP/accounting-preflight-source.json" 2>/dev/null
++          curl --max-time 20 -fsSL https://api.github.com/repos/drrazaq/Stock-2/git/blobs/aa45a67686ad8528a50404e6aa88b8c19d26e0ba -o "$RUNNER_TEMP/accounting-preflight-source.json" 2>/dev/null
            node -e 'const fs=require("node:fs"),p=process.env.RUNNER_TEMP,j=JSON.parse(fs.readFileSync(p+"/accounting-preflight-source.json"));if(j.encoding!=="base64")process.exit(1);fs.writeFileSync(p+"/accounting-preflight.mjs",Buffer.from(j.content,"base64"));' >/dev/null 2>&1
 -          printf '7d009d803cd565f5edecc43f52dd9f8fc579837c8a76612ff2c7c580e8473b48  %s/accounting-preflight.mjs\n' "$RUNNER_TEMP" | sha256sum -c --status
 -          test "$(git hash-object --no-filters "$RUNNER_TEMP/accounting-preflight.mjs")" = 92fc955497950df6e76823eec6e348f1ebfb78b1
-+          printf '1ccf8c06d071627b92871331e21016acbd6bd82cae0250c353ce7a07150290df  %s/accounting-preflight.mjs\n' "$RUNNER_TEMP" | sha256sum -c --status
-+          test "$(git hash-object --no-filters "$RUNNER_TEMP/accounting-preflight.mjs")" = 4be2f5ad078aa99cba513290f25d50e6a549663d
++          printf '957560f0f3ebb8885492c21da623cd499241657411ac4df7e4efc133c8a22d35  %s/accounting-preflight.mjs\n' "$RUNNER_TEMP" | sha256sum -c --status
++          test "$(git hash-object --no-filters "$RUNNER_TEMP/accounting-preflight.mjs")" = aa45a67686ad8528a50404e6aa88b8c19d26e0ba
        - name: Protected offline pending-sale check
          shell: bash
          env:
-@@ -121,7 +126,8 @@
+@@ -121,7 +126,10 @@
            rc=0
            timeout 10s node --max-old-space-size=256 "$RUNNER_TEMP/accounting-preflight.mjs" "$GITHUB_WORKSPACE" > "$RUNNER_TEMP/accounting-preflight.raw" 2>/dev/null || rc=$?
            value=$(cat "$RUNNER_TEMP/accounting-preflight.raw" 2>/dev/null)
 -          case "$rc:$value" in 0:PASS|2:BLOCKED|1:ERROR) ;; *) value=ERROR ;; esac
-+          # output contract: PASS, ERROR, or BLOCKED plus one fixed reason code (no data); anything else is ERROR
-+          if [[ "$rc:$value" =~ ^(0:PASS|1:ERROR|2:BLOCKED\ [A-Z_]{1,40})$ ]]; then :; else value=ERROR; fi
++          # output contract: PASS, ERROR, or BLOCKED plus one REVIEWED reason code (fixed vocabulary, no data);
++          # any other output, an unknown code or a mismatched exit code is ERROR
++          codes='MISSING_KEY|MISSING_REQUIRED_INPUT|PENDING_SALE|STATE_INTENT|RECEIPT_MALFORMED|RECEIPT_DUPLICATE|RECEIPT_UNMATCHED|RECEIPT_AMBIGUOUS|JOURNAL_UNRECEIPTED|LEADER_DIP_RESULT_WITHOUT_LEDGER|LEDGER_EXISTED|LEDGER_HISTORY_UNCERTAIN|PRIVACY_MODE|CODE_UNREVIEWED|LOCAL_STATE_DIFFERS|STATE_CHANGED'
++          if [[ "$rc:$value" =~ ^(0:PASS|1:ERROR|2:BLOCKED\ ($codes))$ ]]; then :; else value=ERROR; fi
            printf '%s\n' "$value" > "$RUNNER_TEMP/accounting-preflight.result"
            rm -f "$RUNNER_TEMP/accounting-preflight.raw"
        - name: Emit only protected result after state freshness check
-@@ -133,13 +139,18 @@
+@@ -132,14 +140,20 @@
+           GIT_TERMINAL_PROMPT: '0'
          run: |
            set +x
++          codes='MISSING_KEY|MISSING_REQUIRED_INPUT|PENDING_SALE|STATE_INTENT|RECEIPT_MALFORMED|RECEIPT_DUPLICATE|RECEIPT_UNMATCHED|RECEIPT_AMBIGUOUS|JOURNAL_UNRECEIPTED|LEADER_DIP_RESULT_WITHOUT_LEDGER|LEDGER_EXISTED|LEDGER_HISTORY_UNCERTAIN|PRIVACY_MODE|CODE_UNREVIEWED|LOCAL_STATE_DIFFERS|STATE_CHANGED'
            value=$(cat "$RUNNER_TEMP/accounting-preflight.result" 2>/dev/null || true)
 -          case "$value" in PASS|BLOCKED|ERROR) ;; *) value=ERROR ;; esac
-+          [[ "$value" =~ ^(PASS|ERROR|BLOCKED\ [A-Z_]{1,40})$ ]] || value=ERROR
++          [[ "$value" =~ ^(PASS|ERROR|BLOCKED\ ($codes))$ ]] || value=ERROR
            if [ "$value" = PASS ]; then
 +            # authoritative freshness: current main must not have changed ANY dependency of the result (the four inputs,
 +            # scan.mjs, the privacy marker; any commit touching them, or rewritten history) since the checked-out HEAD

@@ -99,3 +99,21 @@ test('blob-free full clone (the amended checkout) passes offline; a blob-free sh
 const snapshot=d=>spawnSync('sh',['-c','find . -type f -not -path "./.git/index" -print0 | sort -z | xargs -0 sha256sum'],{cwd:d}).stdout.toString();
 test('read-only: no file or git state changes in either mode; output is one status line',needsScan,()=>{const d=fetched(),before=git(d,'status','--porcelain','--ignored'),head=git(d,'rev-parse','HEAD'),snap=snapshot(d);
  is(run(d),'PASS');is(run(null,{},['--fresh',d]),'PASS');assert.equal(snapshot(d),snap);assert.equal(git(d,'status','--porcelain','--ignored'),before);assert.equal(git(d,'rev-parse','HEAD'),head);});
+
+// ---- final consistency (Codex review of f6076bb): a dependency or HEAD that changes DURING the history walk must block.
+// A wrapper `git` performs one local mutation when the checker reaches the chosen history walk, then runs the real git.
+const REAL_GIT=spawnSync('sh',['-c','command -v git'],{encoding:'utf8'}).stdout.trim();
+const WALKS={ledgerLog:'log --full-history --no-renames --format=%H HEAD -- data/leaderdip-ledger.jsonl',objects:'rev-list --objects --filter=blob:none --missing=error HEAD'};
+function duringWalk(d,walk,mutation){const bin=tmp('preflight-bin-'),flag=path.join(bin,'done'),q=s=>"'"+s.replace(/'/g,"'\\''")+"'";
+ fs.writeFileSync(path.join(bin,'git'),'#!/bin/sh\ncase " $* " in *'+q(' '+WALKS[walk]+' ')+'*) if [ ! -e '+q(flag)+' ]; then : > '+q(flag)+'; '+mutation(q)+'; fi;; esac\nexec '+q(REAL_GIT)+' "$@"\n',{mode:0o755});
+ const r=run(d,{PRIVATE_KEY:KEY,PATH:bin+path.delimiter+process.env.PATH});assert.ok(fs.existsSync(flag),'the history walk was reached');return r;}
+const appendTo=(d,rel)=>q=>'printf "\\n" >> '+q(path.join(d,rel));
+test('FINAL CHECK: scan.mjs edited during the history walk BLOCKS',needsScan,()=>{for(const walk of Object.keys(WALKS)){const d=repo();is(duringWalk(d,walk,appendTo(d,'scan.mjs')),'BLOCKED STATE_CHANGED');}});
+test('FINAL CHECK: privacy marker created during the history walk BLOCKS',needsScan,()=>{for(const walk of Object.keys(WALKS)){const d=repo();is(duringWalk(d,walk,q=>'mkdir -p '+q(path.join(d,'.github'))+' && : > '+q(path.join(d,M))),'BLOCKED STATE_CHANGED');}});
+test('FINAL CHECK: any input changed during the history walk BLOCKS',needsScan,()=>{for(const rel of ['data/private.enc','data/my-positions.json','data/my-trades.jsonl']){const d=repo();is(duringWalk(d,'ledgerLog',appendTo(d,rel)),'BLOCKED STATE_CHANGED');}});
+test('FINAL CHECK: ledger created during the history walk BLOCKS',needsScan,()=>{const d=repo();is(duringWalk(d,'ledgerLog',q=>': > '+q(path.join(d,L))),'BLOCKED STATE_CHANGED');});
+test('FINAL CHECK: a dependency replaced by a symlink during the walk BLOCKS',needsScan,()=>{const d=repo(),f=path.join(d,'scan.mjs'),copy=path.join(tmp('preflight-copy-'),'scan.mjs');fs.copyFileSync(f,copy);is(duringWalk(d,'ledgerLog',q=>'rm '+q(f)+' && ln -s '+q(copy)+' '+q(f)),'BLOCKED STATE_CHANGED');});
+test('FINAL CHECK: HEAD moved during the history walk BLOCKS',needsScan,()=>{const d=repo();is(duringWalk(d,'ledgerLog',q=>q(REAL_GIT)+' -C '+q(d)+' -c user.name=f -c user.email=f@x commit -q --allow-empty -m moved'),'BLOCKED STATE_CHANGED');});
+test('FINAL CHECK control: the walk runs with no mutation and PASSes',needsScan,()=>{for(const walk of Object.keys(WALKS))is(duringWalk(repo(),walk,()=>'true'),'PASS');});
+test('FINAL CHECK control: an unrelated file changed, or a dependency rewritten with identical bytes, PASSes',needsScan,()=>{let d=repo();is(duringWalk(d,'ledgerLog',q=>': > '+q(path.join(d,'data/unrelated.json'))),'PASS');
+ d=repo();const f=path.join(d,'scan.mjs'),copy=path.join(tmp('preflight-copy-'),'scan.mjs');fs.copyFileSync(f,copy);is(duringWalk(d,'ledgerLog',q=>'cp '+q(copy)+' '+q(f)+' && touch '+q(f)),'PASS');});

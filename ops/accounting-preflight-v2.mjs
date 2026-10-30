@@ -46,6 +46,9 @@ function matchesHead(root,rel){
  const m=/^100644 blob ([a-f0-9]{40,64})\t/.exec(entry);if(!m||!st||!st.isFile()||st.isSymbolicLink())return false;
  return git(root,['hash-object','--no-filters','--',rel])===m[1];
 }
+// a dependency's observable local state; compared byte-for-byte at the end
+function localState(root,rel){let st;try{st=fs.lstatSync(path.join(root,rel));}catch(e){if(e.code==='ENOENT')return 'ABSENT';throw e;}
+ return st.isFile()&&!st.isSymbolicLink()?'FILE:'+sha(fs.readFileSync(path.join(root,rel))):'OTHER';}
 function historyComplete(root){
  if(git(root,['rev-parse','--is-shallow-repository'])!=='false')return false;
  if(fs.existsSync(path.resolve(root,git(root,['rev-parse','--git-path','info/grafts']))))return false;
@@ -89,7 +92,10 @@ function check(root){
  receiptsConsistent(state,journal,ledger);
  // the local copy must be the authoritative HEAD state for every dependency (a locally deleted marker, an edited
  // scan.mjs or an uncommitted input cannot steer the result)
- for(const rel of DEPENDENCIES)if(!matchesHead(root,rel))block('LOCAL_STATE_DIFFERS');
+ const checked=new Map();
+ for(const rel of DEPENDENCIES){if(!matchesHead(root,rel))block('LOCAL_STATE_DIFFERS');checked.set(rel,{local:localState(root,rel),tree:git(root,['ls-tree','HEAD','--',rel])});}
+ // the bytes evaluated above (read before this check) must be the bytes proven identical to HEAD
+ for(const [rel] of INPUTS)if(checked.get(rel).local!==(inputs[rel]===null?'ABSENT':'FILE:'+sha(inputs[rel])))block('STATE_CHANGED');
  if(ledger===null){
   if(git(root,['ls-tree','HEAD','--',MARKER])!==''||fs.existsSync(path.join(root,MARKER)))block('PRIVACY_MODE');
   let code=null;try{const f=path.join(root,SCAN),st=fs.lstatSync(f);if(st.isFile()&&!st.isSymbolicLink())code=sha(fs.readFileSync(f));}catch{}   // identical to HEAD:scan.mjs (checked above)
@@ -98,10 +104,11 @@ function check(root){
   if(!historyComplete(root))block('LEDGER_HISTORY_UNCERTAIN');
   if(git(root,['log','--full-history','--no-renames','--format=%H','HEAD','--',LEDGER])!=='')block('LEDGER_EXISTED');
  }
- // a moving local copy: inputs must be byte-identical at the end, and HEAD must not have moved
- for(const [rel] of INPUTS){const file=path.join(root,rel);if(inputs[rel]===null){let gone=false;try{fs.lstatSync(file);}catch(e){gone=e.code==='ENOENT';}if(!gone)block('STATE_CHANGED');continue;}
-  const st=fs.lstatSync(file);if(!st.isFile()||st.isSymbolicLink()||!fs.readFileSync(file).equals(inputs[rel]))block('STATE_CHANGED');}
+ // final consistency, immediately before PASS: HEAD has not moved, and every dependency (the four inputs, scan.mjs and
+ // the privacy marker) still has its originally checked local state and HEAD tree entry; a change during the history
+ // walk blocks
  if(git(root,['rev-parse','--verify','HEAD^{commit}'])!==head)block('STATE_CHANGED');
+ for(const rel of DEPENDENCIES){const was=checked.get(rel);if(localState(root,rel)!==was.local||git(root,['ls-tree','HEAD','--',rel])!==was.tree)block('STATE_CHANGED');}
  return 'PASS';
 }
 // After the protected check: the workflow fetches current main into FETCH_HEAD; any dependency change since the
