@@ -1,5 +1,7 @@
 # Incident v3: verified repairs for B1 and A1 — not deployed
 
+Current status: [v4 B2 repair and re-review](incident-v4-b2-review.md) supersedes the watcher package below. Claude v3 reports B1/A1 CLOSED and accounting PASS; the accounting patch remains identical. Historical v3 evidence is preserved.
+
 30 October 2026. The implementation/integration owner independently inspected Claude's v2 review and both attached probes before changing code. Review evidence is not policy or deployment authority. V1/v2 packages remain superseded and unapproved. No production change, dispatch, live collection/delivery, trade, purchase, secret/permission change or historical financial rewrite occurred.
 
 ## Reproduced defects and corrected requirements

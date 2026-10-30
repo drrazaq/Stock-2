@@ -2,11 +2,9 @@
 
 Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
 
-Current priority: [incident v3 B1/A1 review](incident-v3-review.md). Separate watcher20-file/accounting5-file scopes preserve observations during publication failures and restore losing-sale strategy evidence on recovery. All112 production tests retained; full scopes116/115/119 files pass on main840fb269fe3f829237ed2a96d25a6136d1db059e. Source1b5769432bf6f991c0b75e5bffa3f5be65e60a30 passes12 exact CI checks; accounting09f16792b373268d70e45a535d6a7b02afecf6a5 passes13. [Verification](validation/incident-v3.json), [handoff](resume-precise-checkpoint.md).
+Current priority: [watcher v4 B2 result](incident-v4-b2-review.md) and [separate accounting-only owner proposal](accounting-standalone-deployment-proposal.md). B2 rejected retry2→4 is repaired to2→2 without changing observation enrollment or B1/A1. Original ledger30/30 logical observations has no exact repeats and is untouched; any correction is a labelled secondary view. [Verification](validation/incident-v4.json), [hashes](validation/watcher-core-production-manifest-v4.json), [precise handoff](resume-precise-checkpoint.md).
 
-[Bounded authoritative instrument-reference preparation](instrument-reference-readiness.md) remains unactivated: rights, trusted capture/provenance, private encrypted storage and dated scope/binding approval are missing. Identity UNKNOWN retains research and blocks approved BUY. Permanent zero approved alerts is not completion. P2, ZAD policy and privacy remain excluded;170 list-sourced positives are not automatically approved/revoked.
-
-Acceptance24/40;16OPEN; CATALYST-03/ACTIONS-04 open. Prospective admissions0; profitability NOT ESTABLISHED; Massive15-minute delayed; broad SIP rights/coverage unverified. October29 excluded primary and October28 excluded pilot; recovery secondary only. Next decision: independent v3 re-review, not deployment. Earlier entries are historical.
+Source **ef10ec13c52f921740d7b230fd97965278a75545** passes all12 exact CI checks. Production-base watcher117/1157, accounting115/1140, combined120/1185 pass; all112 main tests retained and every manifest/dependency hash verified. Watcher re-review required; accounting independently reported PASS with identical patch. Neither package is deployed; do not merge full PR1. Acceptance24/40,16OPEN; prospective admissions0. Official identity/feed rights, trusted bounded captures and dated approval remain missing; delayed Massive, uncertain broad SIP,170 unresolved marks and P2/privacy scope unchanged.
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|
