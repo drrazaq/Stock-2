@@ -1,0 +1,266 @@
+{
+  "status": "DEVELOPMENT_COMPARISON_NOT_STRATEGY_ENDORSEMENT",
+  "basisCommit": "706ac3e8117e3a6eeeadbdbe726184726378a890",
+  "comparisons": [
+    {
+      "file": "data/anomaly-lab.json",
+      "blob": "dc8aa4c41640ec3ffe2bebf2bf5ad75a428f8cc5",
+      "sha256": "aaafede53d9d0ef7f96972f08154c3e1ee89a26b4133fbdba4a0520ce81dbad9",
+      "path": "firstRun.ANOM-PREHOL",
+      "label": "Pre-holiday SPY",
+      "horizon": "1 close-to-close",
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -3.74 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -7.37 under 2.5 in the newer half",
+      "halves": {
+        "older": {
+          "n": 22,
+          "days": 22,
+          "avg": -0.0062,
+          "avgStress": -0.0102,
+          "edge": -0.0064,
+          "tBlock": -3.74,
+          "vsOwn": 0.0016,
+          "noTop2": -0.0079
+        },
+        "newer": {
+          "n": 28,
+          "days": 28,
+          "avg": -0.0065,
+          "avgStress": -0.0105,
+          "edge": -0.0072,
+          "tBlock": -7.37,
+          "vsOwn": 0.0008,
+          "noTop2": -0.0072
+        }
+      }
+    },
+    {
+      "file": "data/angles-lab.json",
+      "blob": "fae1317f9155b0aad84b4d12326d9fc8c9ae8ac8",
+      "sha256": "ba6c6c8bfc543af9923388c1b6432b827c0ae4d2abe57b351f2ea71d8a662819",
+      "path": "firstRun.ANG-FOMC",
+      "label": "Pre-FOMC SPUS",
+      "horizon": "1 close-to-close; producer hold2 is a calendar label",
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.5 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.79 under 2.5 in the newer half",
+      "halves": {
+        "older": {
+          "n": 24,
+          "days": 24,
+          "avg": -0.0044,
+          "avgStress": -0.0084,
+          "edge": -0.005,
+          "tBlock": -1.5,
+          "vsOwn": 0.003,
+          "noTop2": -0.0071
+        },
+        "newer": {
+          "n": 22,
+          "days": 22,
+          "avg": -0.0091,
+          "avgStress": -0.0131,
+          "edge": -0.01,
+          "tBlock": -3.79,
+          "vsOwn": -0.002,
+          "noTop2": -0.0112
+        }
+      }
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "blob": "6857e6cf22cbca2aceb24f0e14bdb94417508725",
+      "sha256": "4eda2e234fb0d151d2bbece6f2101c706b50f6c654c0e3e9010f01ca2f179b37",
+      "path": "firstRun.SQ2-ORB5",
+      "label": "5-minute opening-range breakout",
+      "horizon": "1 intraday session",
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.08 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.99 under 2.5 in the newer half",
+      "halves": {
+        "older": {
+          "n": 2372,
+          "days": 494,
+          "avg": -0.0081,
+          "avgStress": -0.0121,
+          "edge": -0.0045,
+          "tBlock": -3.08,
+          "vsOwn": -0.0009,
+          "noTop2": -0.0083
+        },
+        "newer": {
+          "n": 4066,
+          "days": 669,
+          "avg": -0.0073,
+          "avgStress": -0.0113,
+          "edge": -0.0032,
+          "tBlock": -0.99,
+          "vsOwn": 0.0003,
+          "noTop2": -0.008
+        }
+      }
+    },
+    {
+      "file": "data/swing-lab.json",
+      "blob": "e881dcd076d92cf6be6fa8d56b2bf0c538d405b2",
+      "sha256": "ce5126910f553f00aa8129ea508eb2eae3f5b9b595e338222c67d082d840fbae",
+      "path": "firstRun.results.SW1",
+      "label": "RSI(2) mean reversion",
+      "horizon": "variable, max5; RSI2 is lookback",
+      "verdict": "REJECTED",
+      "why": "not better than an average stock in the older half (-0.64%); could be luck in the older half (t -11.83, 3.88 needed); lost money after costs in the older half; did not beat the S&P 500 in the older half (-0.78%); not clearly better than the same stock on its other days in the older half (+0.03%, t 0.35); loses without its 2 best trades in the older half; not better than an average stock in the newer half (-0.78%); could be luck in the newer half (t -14.17, 3.88 needed); lost money after costs in the newer half; did not beat the S&P 500 in the newer half (-0.87%); not clearly better than the same stock on its other days in the newer half (-0.14%, t -1.82); loses without its 2 best trades in the newer half; loses at 1.2% costs",
+      "halves": {
+        "older": {
+          "n": 41190,
+          "days": 524,
+          "held": 3.3,
+          "avg": -0.0043,
+          "edge": -0.0064,
+          "t": -11.83,
+          "vsOwn": 0.0003,
+          "noTop2": -0.0043
+        },
+        "newer": {
+          "n": 50840,
+          "days": 516,
+          "held": 3.3,
+          "avg": -0.0049,
+          "edge": -0.0078,
+          "t": -14.17,
+          "vsOwn": -0.0014,
+          "noTop2": -0.005
+        }
+      }
+    },
+    {
+      "file": "data/swing-lab.json",
+      "blob": "e881dcd076d92cf6be6fa8d56b2bf0c538d405b2",
+      "sha256": "ce5126910f553f00aa8129ea508eb2eae3f5b9b595e338222c67d082d840fbae",
+      "path": "firstRun.results.SW2",
+      "label": "Daily short-term reversal",
+      "horizon": "5 fixed",
+      "verdict": "REJECTED",
+      "why": "not better than an average stock in the older half (-0.68%); could be luck in the older half (t -4.53, 3.88 needed); lost money after costs in the older half; did not beat the S&P 500 in the older half (-0.85%); not clearly better than the same stock on its other days in the older half (-0.27%, t -1.4); loses without its 2 best trades in the older half; not better than an average stock in the newer half (-0.66%); could be luck in the newer half (t -3.69, 3.88 needed); lost money after costs in the newer half; did not beat the S&P 500 in the newer half (-0.79%); not clearly better than the same stock on its other days in the newer half (-0.71%, t -3.15); loses without its 2 best trades in the newer half; loses at 1.2% costs",
+      "halves": {
+        "older": {
+          "n": 6815,
+          "days": 522,
+          "held": 5,
+          "avg": -0.0058,
+          "edge": -0.0068,
+          "t": -4.53,
+          "vsOwn": -0.0027,
+          "noTop2": -0.0061
+        },
+        "newer": {
+          "n": 8792,
+          "days": 517,
+          "held": 5,
+          "avg": -0.0058,
+          "edge": -0.0066,
+          "t": -3.69,
+          "vsOwn": -0.0071,
+          "noTop2": -0.0061
+        }
+      }
+    },
+    {
+      "file": "data/swing-lab.json",
+      "blob": "e881dcd076d92cf6be6fa8d56b2bf0c538d405b2",
+      "sha256": "ce5126910f553f00aa8129ea508eb2eae3f5b9b595e338222c67d082d840fbae",
+      "path": "firstRun.results.SW5",
+      "label": "ETF IBS",
+      "horizon": "variable, max3; not a fixed2-session rule",
+      "verdict": "REJECTED",
+      "why": "not better than an average stock in the older half (-0.71%); could be luck in the older half (t -9.62, 3.88 needed); lost money after costs in the older half; did not beat the S&P 500 in the older half (-0.80%); not clearly better than the same stock on its other days in the older half (+0.10%, t 0.84); loses without its 2 best trades in the older half; not better than an average stock in the newer half (-1.02%); could be luck in the newer half (t -9.6, 3.88 needed); lost money after costs in the newer half; did not beat the S&P 500 in the newer half (-0.80%); not clearly better than the same stock on its other days in the newer half (-0.07%, t -0.51); loses without its 2 best trades in the newer half; loses at 1.2% costs",
+      "halves": {
+        "older": {
+          "n": 80,
+          "days": 80,
+          "held": 2,
+          "avg": -0.0063,
+          "edge": -0.0071,
+          "t": -9.62,
+          "vsOwn": 0.001,
+          "noTop2": -0.0067
+        },
+        "newer": {
+          "n": 66,
+          "days": 66,
+          "held": 2.5,
+          "avg": -0.0072,
+          "edge": -0.0102,
+          "t": -9.6,
+          "vsOwn": -0.0007,
+          "noTop2": -0.0078
+        }
+      }
+    },
+    {
+      "file": "data/angles-lab.json",
+      "blob": "fae1317f9155b0aad84b4d12326d9fc8c9ae8ac8",
+      "sha256": "ba6c6c8bfc543af9923388c1b6432b827c0ae4d2abe57b351f2ea71d8a662819",
+      "path": "firstRun.ANG-LCREV-W",
+      "label": "Weekly large-cap reversal",
+      "horizon": "weekly enrollment,5-session hold",
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.8 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -5.1 under 2.5 in the newer half",
+      "halves": {
+        "older": {
+          "n": 4351,
+          "days": 112,
+          "avg": -0.0091,
+          "avgStress": -0.0131,
+          "edge": -0.0084,
+          "tBlock": -4.8,
+          "vsOwn": -0.0015,
+          "noTop2": -0.0094
+        },
+        "newer": {
+          "n": 5672,
+          "days": 146,
+          "avg": -0.0081,
+          "avgStress": -0.0121,
+          "edge": -0.0088,
+          "tBlock": -5.1,
+          "vsOwn": -0.0073,
+          "noTop2": -0.0083
+        }
+      }
+    },
+    {
+      "file": "data/sequence-study.json",
+      "blob": "406e2a77ce2094c0818e04f5431105c339bfa300",
+      "sha256": "4fa9d603a4e0cbc4702befa7b03eef3caf117301501c5547998d9285a98b6740",
+      "path": "results.h5",
+      "label": "Filing/quiet/ignition sequence",
+      "horizon": "5 fixed; saved current results, not frozen firstRun",
+      "verdict": "NOT PROVEN",
+      "why": "not profitable in the newer half (-0.1%, 232 trades); gap over the control could be luck (t 0.76, 2.4 needed); loses without its 2 best trades; loses at 1.5x costs",
+      "halves": {
+        "older": {
+          "n": 212,
+          "days": 180,
+          "avg": 0.0001,
+          "noTop2": -0.011
+        },
+        "newer": {
+          "n": 232,
+          "days": 145,
+          "avg": -0.0006,
+          "noTop2": -0.0099
+        }
+      }
+    }
+  ],
+  "twoSessionFinding": "No separately verified fixed2-session winner established in reviewed sources. FOMC hold2 is not two close-to-close return intervals; RSI2 is a lookback, and SW5 variable duration is not fixed2.",
+  "nextHorizonRecommendation": "One-session contract/evidence infrastructure audit, not trading approval or promotion of a rejected rule. Existing30-minute DISCOVERY_PAPER_V1 is the smaller first complete quote-path diagnostic and remains unchanged.",
+  "prospectiveDependencies": [
+    "Official account-specific feed/latest-quote/extended-hours/retention rights and quotas",
+    "Authenticated point-in-time security identity, industry and same-time deterministic control",
+    "Frozen event/revision/source/entry/exit clocks and all-case census",
+    "Actual fresh executable BBO with sizes/liquidity and paired followups through V1 horizon",
+    "Encrypted durable source-pinned artifact with independently recoverable audit trail",
+    "Separately dated approval of exact collector/workflow/universe/session/request/time/storage/binding/shutdown scope; C0 alone insufficient"
+  ],
+  "admittedProspectiveCases": 0,
+  "frozenRulesOrGatesChanged": false
+}

@@ -1,3 +1,5 @@
+> [Follow-up review and synthetic outputs](mentor-review-and-next-horizon.md) explicitly distinguish base exit, unadopted target overlay, unresolved plans and the next evidence horizon. This remains development, not strategy endorsement.
+
 # Trading mentor: capability, evidence and gap map
 
 30October2026. Development work only. [Machine-readable evidence and hashes](trading-mentor-capability-gap-map.json), [existing aims/evaluation plan](aim-to-evidence-acceptance-plan.md). Accounting `bdc984e` and watcher `be31590` deployment evidence remains preserved. This work deploys nothing, expands no collection, sends no real messages, and changes no strategy/ZAD/execution gate. Acceptance stays24/40 and admitted prospective cases0.
