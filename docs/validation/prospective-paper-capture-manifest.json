@@ -1,17 +1,23 @@
 {
-  "kind": "OFFLINE_PAPER_CAPTURE_PREPARATION_MANIFEST_V1",
-  "sourceSha": "822a6ca0aa6b99465841896f9764d5b1b264a0f4",
+  "kind": "GUARDED_CAPTURE_OFFLINE_PACKAGE_V2",
+  "sourceSha": "112480526183371781e3b1122778e37f0684fd3d",
   "basis": "6b1f3cde948ccf8ace15bdd1882a76c852b4dced",
   "runtimeFiles": {
-    "prospective-paper-capture.mjs": "7379ccb07f264ea5ead3827f19daf397328340583986b30785dfe15268234cba",
+    "capture-json.mjs": "07c28d7aba206183953e1ac034746555ced6cf02492fd67af544d943d6040476",
+    "capture-artifact.mjs": "4019010f6ad40ca8df27aa5db0c378107e9829073361e788a4e267c0d1e6f981",
+    "paper-capture-ports.mjs": "6fd7b817f2fdd9f5d5ef1f224cf9404d8ba1fdcac4187202cd097e532070ce6a",
+    "paper-capture-references.mjs": "81677789a9c3fb4dd246892961930c97534de1a75f16bd0cdba6346cf0ab0e56",
+    "paper-capture-wrapper.mjs": "d5a06dcd7c95a37579666b92906fa29f1c2e38886c385628f06837c5a1a75a09",
+    "prospective-paper-capture.mjs": "0fdeaaf63d8c7f537499f1d3fcc8caaa2a43ac670e726da05352e8c629b022df",
     "prospective-capture-transport.mjs": "5ede54bc5bb34889444feb97d5222bb977688f432256cfda168e241a70ad8e41",
-    "tools/replay-prospective-capture.mjs": "8323f76b1cfb8cef3584b49d2130f15ce80af74952e50554e8da072b774bc017",
     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
-    "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2"
+    "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2",
+    "tools/run-paper-capture-workflow.mjs": "f1dc0d20398ada2bce2c388631d50ee79f29329f42bae9ed5017ee65c969f473",
+    "tools/recover-paper-capture.mjs": "38fecfa78760dbcd087c706a8066e4f958860a02a859e5872f7e9d59b42fdcae"
   },
-  "workflowSpecSha256": "777503bc991cc91ea8fb93e38c3119189f0857309b974fd86d3336ba9b13da4e",
-  "candidateSha256": "93814400d1f7a6344176e9a532f64028ca24d12bf2bcc91c1e7b5e638829c8bf",
+  "workflowSpecSha256": "1236a48ef7f9a2dec30e78308e333eef718e2fd901cd971e37b8d29be9d49ba1",
+  "candidateSha256": "e304a20b948a81ef188c62e908bc21079e6aae7ccef15e075ad3fdb2699d8b96",
   "liveWorkflowInstalled": false,
   "liveEntryPointImplemented": false,
   "newCaptureAuthorized": false,
@@ -19,8 +25,20 @@
   "originalAuditGenuineAdmissions": 0,
   "syntheticExamplesDoNotCount": true,
   "reviewFiles": {
+    "test/paper-capture-wrapper.test.mjs": "af288d2b5a571747525fbef829f3e2fc1d51954640f9981dac0935185db73576",
+    "test/paper-capture-ports.test.mjs": "75b6edeb5cdec76acae797a4631444e7dc8c0073ce8f569f403f5cc5eeea019c",
+    "test/capture-wrapper-fixture.mjs": "d2aa0c3c2c0c9a8e9443aef4c1b789214a5bb4aa57147e6a78c1534aa4a78570",
     "test/prospective-paper-capture.test.mjs": "49b6f81ee44076f40c9a4604d002c7b2cc9527458b938677869f5cfc85ed9df8",
-    "test/prospective-capture-package.test.mjs": "e21444905e0810a901631f20e0ca7df0ecf7d7583140ac8e2c9a441dbae76ec1",
-    "docs/prospective-paper-capture-proposal.md": "4133979716d08c2587429c444b838a62c6d0742e472c0dd08cb91cf1d5cfb7bc"
-  }
+    "docs/guarded-paper-capture-review.md": "1ada1b69a7dfa50241178b58c2d9ba114f143bfb19f18c57d86786b887bd0c7c",
+    "docs/prospective-paper-capture-proposal.md": "81f6758b38a5ca9ef2a1ac17d812a17b8a685617fb9f8afc66be68557f800b00",
+    "test/prospective-capture-package.test.mjs": "80c208ec61bcac574ab5110759d65a7f523b3d9d8599807de601c4de6f61caae",
+    "tools/replay-prospective-capture.mjs": "8323f76b1cfb8cef3584b49d2130f15ce80af74952e50554e8da072b774bc017"
+  },
+  "rehearsalWorkflowSha256": "199a2af8214c76da1b950e914f523b91aa1caf312f5da786df66c23f4826df56",
+  "guardedWrapperImplemented": true,
+  "referenceProvenanceValidatorImplemented": true,
+  "acknowledgedUploadAndArchiveRecoveryImplemented": true,
+  "offlineServiceAdaptersImplemented": true,
+  "liveEntryPointIntentionallyAbsent": true,
+  "credentialBindingsActivated": false
 }

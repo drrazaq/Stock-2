@@ -1,22 +1,28 @@
 {
-  "kind": "INACTIVE_CAPTURE_WORKFLOW_SPEC_V1",
+  "kind": "INACTIVE_GUARDED_CAPTURE_WORKFLOW_V2",
   "installable": false,
-  "reason": "Live approval/source-reference validation and acknowledged artifact adapter not implemented; specification only",
-  "runtimeSourceSha": "822a6ca0aa6b99465841896f9764d5b1b264a0f4",
+  "reason": "Finished offline rehearsal; no installation, credentials or real client bindings authorized",
+  "runtimeSourceSha": "112480526183371781e3b1122778e37f0684fd3d",
   "runtimeFiles": {
-    "prospective-paper-capture.mjs": "7379ccb07f264ea5ead3827f19daf397328340583986b30785dfe15268234cba",
+    "capture-json.mjs": "07c28d7aba206183953e1ac034746555ced6cf02492fd67af544d943d6040476",
+    "capture-artifact.mjs": "4019010f6ad40ca8df27aa5db0c378107e9829073361e788a4e267c0d1e6f981",
+    "paper-capture-ports.mjs": "6fd7b817f2fdd9f5d5ef1f224cf9404d8ba1fdcac4187202cd097e532070ce6a",
+    "paper-capture-references.mjs": "81677789a9c3fb4dd246892961930c97534de1a75f16bd0cdba6346cf0ab0e56",
+    "paper-capture-wrapper.mjs": "d5a06dcd7c95a37579666b92906fa29f1c2e38886c385628f06837c5a1a75a09",
+    "prospective-paper-capture.mjs": "0fdeaaf63d8c7f537499f1d3fcc8caaa2a43ac670e726da05352e8c629b022df",
     "prospective-capture-transport.mjs": "5ede54bc5bb34889444feb97d5222bb977688f432256cfda168e241a70ad8e41",
-    "tools/replay-prospective-capture.mjs": "8323f76b1cfb8cef3584b49d2130f15ce80af74952e50554e8da072b774bc017",
     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
-    "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2"
+    "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2",
+    "tools/run-paper-capture-workflow.mjs": "f1dc0d20398ada2bce2c388631d50ee79f29329f42bae9ed5017ee65c969f473",
+    "tools/recover-paper-capture.mjs": "38fecfa78760dbcd087c706a8066e4f958860a02a859e5872f7e9d59b42fdcae"
   },
   "event": "workflow_dispatch_only",
   "branch": "Stock2-safety-fixes",
   "attempt": 1,
   "permissions": {
     "contents": "read",
-    "actions": "read_proposed_for_run_history_requires_approval"
+    "actions": "read"
   },
   "concurrency": {
     "group": "stock2-sec-30m-calibration-2026-11-05",
@@ -36,38 +42,33 @@
   "steps": [
     {
       "order": 1,
-      "name": "Guard",
-      "contract": "Require dated non-secret exact owner-approved manifest, source/workflow/input hashes, CALIBRATION, fixed date/universe/bounds, attempt1/manual/branch; refuse missing rights or expiry; enumerate complete run history, refuse other starts; do not log approval inputs"
+      "name": "Local approval/context/immutable source/input guard",
+      "implementedIn": "paper-capture-wrapper.mjs"
     },
     {
       "order": 2,
-      "name": "Immutable sparse checkout",
-      "contract": "Pinned source commit and six file hashes; persist-credentials false; no normal bot/data checkout; verify bytes before credential-bearing execution"
+      "name": "Complete single-attempt mocked run history",
+      "implementedIn": "paper-capture-wrapper.mjs / paper-capture-ports.mjs"
     },
     {
       "order": 3,
-      "name": "Authenticate reference inputs",
-      "contract": "Only pinned reviewed six-record package; raw official mapping/hash/knownAt/validity/class/CIK/industry/exchange and current unchanged ZAD; refuse conflicts/unknowns for enrollment; preserve research; no financial records"
+      "name": "Pinned official-response/reference and unchanged ZAD validation",
+      "implementedIn": "paper-capture-references.mjs"
     },
     {
       "order": 4,
-      "name": "Capture",
-      "contract": "Run reviewed injected transport via future endpoint-specific credential adapter; 41 GET-only SIP attempts; no provider/broker/TG fallback; stop on limits/errors; source existing SEC events only; no source-history backfill"
+      "name": "Actual source handoff, bounded snapshot capture and hash chain",
+      "implementedIn": "prospective-paper-capture.mjs / prospective-capture-transport.mjs"
     },
     {
       "order": 5,
-      "name": "Checkpoint",
-      "contract": "Every frame encrypted before disk publication, exclusive immutable file; upload acknowledgement and total sealed bytes enforced before next cycle; retention3days; no plaintext/raw logs"
+      "name": "Exclusive AES-GCM checkpoint and bounded acknowledgement before next provider",
+      "implementedIn": "paper-capture-wrapper.mjs"
     },
     {
       "order": 6,
-      "name": "Finalization",
-      "contract": "Always attempt retained encrypted-file upload without additional provider calls; log aggregates only; do not promise survival after SIGKILL/runner loss; no automatic retries"
-    },
-    {
-      "order": 7,
-      "name": "Recovery review",
-      "contract": "Authenticate contiguous source/cohort/plan chain; retain corrupt originals; never query missing history; independent source audit before admissions"
+      "name": "Downloaded ZIP/receipt/tag/input/contiguous-chain recovery",
+      "implementedIn": "capture-artifact.mjs / tools/recover-paper-capture.mjs"
     }
   ],
   "budgets": {
@@ -98,5 +99,11 @@
       "maxResponseBytes": 32768
     },
     "referencePlainTotalBytes": 2097152
-  }
+  },
+  "offlineImplementationComplete": true,
+  "rehearsalWorkflow": "docs/validation/paper-capture-rehearsal.workflow.yml.proposed",
+  "rehearsalWorkflowSha256": "199a2af8214c76da1b950e914f523b91aa1caf312f5da786df66c23f4826df56",
+  "credentialBindingsActivated": false,
+  "providerCallsDuringTests": 0,
+  "permissionsProposedNotChanged": true
 }
