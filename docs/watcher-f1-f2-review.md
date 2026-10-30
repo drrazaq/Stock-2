@@ -1,3 +1,5 @@
+> **Current: watcher v5 is DEPLOYED** at `be3159015708be8f4f8df1384453b97fad1198db`; exact-commit push-triggered CI passed. Only approved23-file patch applied; data/accounting unchanged. Natural completion/final saves verified before deployment. [Deployment evidence and pending passive checks](watcher-v5-deployment-result.md). No post-deployment watcher run observed yet; next usable natural weekday run is expected2November, with timing uncertain. Earlier blocked/review-only text below is historical.
+
 # Watcher F1/F2: focused independent review, not deployed
 
 30 October2026. Accounting is already deployed separately as `bdc984e9d2d995a8523281e3983060df73fcb2be`; see [passive status](accounting-deployment-passive-status.md). This proposal is only the watcher operational release. No production write, dispatch, message, trade, protected execution or policy change was performed by this task.

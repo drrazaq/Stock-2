@@ -1,0 +1,100 @@
+{
+  "deployment": {
+    "status": "DEPLOYED_VERIFIED_EXACT_COMMIT_CI_PASS_NATURAL_PASSIVE_PENDING",
+    "sha": "be3159015708be8f4f8df1384453b97fad1198db",
+    "parent": "b59dae0aa48cee17763a9cc60d13f527b5f81bda",
+    "approvedSource": "16be57ee9903971d686ac4cf19224564db718d53",
+    "patchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+    "boundaryCheckedAt": "2026-10-30T20:01:46.531985+00:00",
+    "watcherRunsTerminalAndNoNonterminalRuns": true,
+    "finalPersistenceEvidence": "natural-completion.json",
+    "tests": "test-result.json",
+    "onlyApproved23Files": true,
+    "dataAndAccountingUnchanged": true,
+    "manualDispatches": 0,
+    "workflowsDisabled": 0,
+    "cancelledRuns": 0,
+    "pushExit": 0,
+    "remoteVerifiedAt": "2026-10-30T20:02:11.137943+00:00",
+    "remoteMain": "be3159015708be8f4f8df1384453b97fad1198db",
+    "deployedFileDependencyAccountingHashes": "MATCH",
+    "dataUnchangedAtDeployment": true,
+    "exactDiffSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+    "exactCommitCI": [
+      {
+        "name": "test",
+        "sha": "be3159015708be8f4f8df1384453b97fad1198db",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/drrazaq/Stock-2/actions/runs/41120023266/job/124284079942"
+      }
+    ],
+    "ciRunId": 41120023266,
+    "ciTrigger": "push",
+    "watcherWorkflow": "active",
+    "botWorkflow": "active",
+    "scannerWorkflow": "active",
+    "postDeploymentWatcherRunsObserved": 0,
+    "postDeploymentArchives": "NOT_YET_OBSERVED",
+    "postDeploymentSnapshotPersistence": "NOT_YET_OBSERVED",
+    "postDeploymentDuplicateProtection": "NOT_YET_OBSERVED",
+    "postDeploymentDeliveryHealth": "NOT_YET_OBSERVED",
+    "postDeploymentDataPublication": "NOT_YET_OBSERVED",
+    "nextNaturalWeekday": "2026-11-02",
+    "inspectionAt": "2026-10-30T20:03:34.653375+00:00"
+  },
+  "productionTests": {
+    "baseMain": "b59dae0aa48cee17763a9cc60d13f527b5f81bda",
+    "approvedSource": "16be57ee9903971d686ac4cf19224564db718d53",
+    "patchSha256": "a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6",
+    "files": 23,
+    "allManifestDependencyAndAccountingHashesMatchBeforeAndAfter": true,
+    "productionTestFilesRetained": 115,
+    "allProductionTestsRetained": true,
+    "testFiles": 121,
+    "cases": 1199,
+    "failures": [],
+    "staticFailures": [],
+    "productionWrites": false,
+    "deployment": "LOCAL_CANDIDATE_NOT_YET_PUSHED"
+  },
+  "naturalCompletion": {
+    "base": "b59dae0aa48cee17763a9cc60d13f527b5f81bda",
+    "bothRunsTerminalSuccess": true,
+    "firstRun": 41061535419,
+    "firstJob": 124082233084,
+    "firstFinalPush": "f8a3fa97b08d94e1e5608e6c777787ac347da0a3",
+    "secondRun": 41072889693,
+    "secondJob": 124254775124,
+    "secondFinalPush": "bf9bc940b04a1b3e5b0f855ad14077af91591202",
+    "persistedGitObjects": [
+      {
+        "commit": "f8a3fa97b08d94e1e5608e6c777787ac347da0a3",
+        "liveSummarySha256": "910676d846be0befeef514fe144b9195595cc38cf36c0659e8f52769396cfff3",
+        "day": "2026-10-30",
+        "heartbeatRows": 327,
+        "dailyLedgerPresent": true,
+        "shadowPresent": true
+      },
+      {
+        "commit": "bf9bc940b04a1b3e5b0f855ad14077af91591202",
+        "liveSummarySha256": "9cbd56b3345f7dce58a56bc8b2b43ed2334fe80879ca59fb06b9a5ef758f53fd",
+        "day": "2026-10-30",
+        "heartbeatRows": 1,
+        "dailyLedgerPresent": true,
+        "shadowPresent": true
+      }
+    ],
+    "scopeNote": "Run final persistence, not proof of complete observation coverage. Later canonical overwrite retained in immutable history."
+  },
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "added": 0,
+    "CATALYST-03": "OPEN",
+    "ACTIONS-04": "OPEN",
+    "admittedProspectiveCases": 0
+  },
+  "historicalIntegrity": "Pre-deployment30October old-code overwrite preserved in Git. No historical rewrite or new cohort-policy decision; do not treat reconstruction as untouched prospective evidence.",
+  "restrictions": "Only approved23-file watcher patch deployed; accounting/data unchanged. No full-PR merge, manual dispatch, cancellation, pause, suppression, provider expansion, instrument activation, financial command or secret/permission change."
+}

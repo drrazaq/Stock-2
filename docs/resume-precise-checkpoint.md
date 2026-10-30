@@ -1,3 +1,5 @@
+> **Current: watcher v5 is DEPLOYED** at `be3159015708be8f4f8df1384453b97fad1198db`; exact-commit push-triggered CI passed. Only approved23-file patch applied; data/accounting unchanged. Natural completion/final saves verified before deployment. [Deployment evidence and pending passive checks](watcher-v5-deployment-result.md). No post-deployment watcher run observed yet; next usable natural weekday run is expected2November, with timing uncertain. Earlier blocked/review-only text below is historical.
+
 > **Latest deployment status:** Owner approved exact watcher v5; compatibility/hash checks and fresh production tests pass, but deployment is **blocked** by active41061535419 and pending41072889693. No production change. Reassess after20:00Z30October with fresh terminal-run/final-publication evidence. [Precise status and resume conditions](watcher-v5-deployment-status.md). Older review/approval-needed language below is historical.
 
 <!-- CURRENT-STATUS:BEGIN -->

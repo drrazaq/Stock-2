@@ -1,3 +1,5 @@
+> **Current: watcher v5 is DEPLOYED** at `be3159015708be8f4f8df1384453b97fad1198db`; exact-commit push-triggered CI passed. Only approved23-file patch applied; data/accounting unchanged. Natural completion/final saves verified before deployment. [Deployment evidence and pending passive checks](watcher-v5-deployment-result.md). No post-deployment watcher run observed yet; next usable natural weekday run is expected2November, with timing uncertain. Earlier blocked/review-only text below is historical.
+
 # Watcher v5 deployment: approved, blocked by natural boundary
 
 30 October2026. Owner approved the exact watcher v5 package from `16be57ee9903971d686ac4cf19224564db718d53`, SHA256 `a9a9d2ef49da38b100015da9e86be8ab2c05a47849292e062c64de4b27290bd6`. Approval remains conditional; **no watcher deployment has occurred**. [Read-only checks and fresh test results](validation/watcher-v5-deployment-attempt.json).
