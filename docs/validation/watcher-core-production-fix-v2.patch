@@ -81,7 +81,7 @@
  // first come, until the owner approves a change after a separate confirmation period). Pure functions; shadow-outcomes.mjs runs them.
 @@ -24,7 +25,7 @@
  import { NEG_ITEMS, DIL_ITEMS, itemsOf } from './early-alerts.mjs';
- 
+
  export const FROZEN = { date: '2026-10-28', evalFrom: '2026-10-29', cap: 5, minSessions: 20, minPicks: 50, controlsPerDay: 10 };
 -export const spr = (r) => (r.bid > 0 && r.ask >= r.bid ? (r.ask - r.bid) / ((r.ask + r.bid) / 2) : null);
 +export const spr = (r) => (Number.isFinite(r.bid) && Number.isFinite(r.ask) && r.bid > 0 && r.ask >= r.bid ? (r.ask - r.bid) / (r.ask / 2 + r.bid / 2) : null);
@@ -97,7 +97,7 @@
 +  if ((!q.sec || !q.sec.known)&&!q.sec?.policyExcluded&&q.sec?.status!=='NO_ISSUER_RECORD') why.push('SEC check failed'); else if (q.sec.tags && q.sec.tags.length) why.push('SEC danger: ' + q.sec.tags.join(', '));
    return { eligible: why.length === 0, why };
  }
- 
+
 @@ -67,14 +69,14 @@
      assumedSpreadShare: sc.length ? +(sc.filter(x => x.s.assumedSpread).length / sc.length).toFixed(3) : null };
  }
@@ -558,10 +558,10 @@
 @@ -7,7 +7,7 @@
  import { MODELS, FROZEN, pick, dEligible, evaluate, spr } from '../rank-models.mjs';
  import { parseAtom, nyMinuteOf } from '../edgar-feed.mjs';
- 
+
 -const e = (o = {}) => ({ d: '2026-10-29', sym: 'S', m: 600, chg: 0.04, cat: 'VERIFIED', rvT: 4, dollarVol: 3e6, bid: 9.99, ask: 10.01, e: { m: 600, px: 10, bid: 9.99, ask: 10.01, qAgeSec: 5 }, last: 10, ...o });
 +const e = (o = {}) => ({ d: '2026-10-30', sym: 'S', m: 600, chg: 0.04, cat: 'VERIFIED', rvT: 4, dollarVol: 3e6, bid: 9.99, ask: 10.01, e: { m: 600, px: 10, bid: 9.99, ask: 10.01, qAgeSec: 5 }, last: 10, ...o });
- 
+
  test('frozen as approved: dates, cap, B and C criteria', () => {
    assert.deepEqual(FROZEN, { date: '2026-10-28', evalFrom: '2026-10-29', cap: 5, minSessions: 20, minPicks: 50, controlsPerDay: 10 });
 @@ -39,7 +39,7 @@
