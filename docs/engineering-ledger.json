@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "branch": "Stock2-safety-fixes",
   "pr": 1,
   "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
@@ -306,13 +306,7 @@
     "Live end-to-end telemetry needs authorized deployment and subsequent real sessions",
     "No five-year point-in-time executable data established for early engines"
   ],
-  "next": [
-    "Owner separate review/approval of exact revised Phase A wrapper and Oct30 session after13:35UTC Oct29; do not install/dispatch before explicit approval",
-    "Complete cross-job/reply/report Telegram durability and all recommendation-path behavioral review; preserve ambiguous outcome quarantine",
-    "Point-in-time security/industry and liquidity capture plus regular-session quote followups for matched paper protocol",
-    "Independent historical identity/delisting/survivorship, after-cost replay and performance-claim validation",
-    "Complete remaining19 acceptance checks; do not claim profitability from fixtures or registry metadata"
-  ],
+  "next": "Claude independent re-review of exact watcher v2 and separate accounting v2. No deployment/P2/ZAD-policy approval. No unrelated lab continuation before bounded report.",
   "checkpointFollowup": {
     "base": "a06032cca7c309f486a5215b15bd8a81fc6b1b08",
     "verifiedBaseCI": [
@@ -5000,15 +4994,11 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "source": "626aa20377e9ba261876d5543d91c73fd5d785cd",
-    "ciEvidence": "docs/validation/incident-consolidated-ci.json",
-    "acceptance": {
-      "complete": 24,
-      "total": 40,
-      "remaining": 16,
-      "added": 0
-    },
-    "resume": "docs/resume-precise-checkpoint.md"
+    "sourceSha": "0b497caff2a98d56e22f244cf9aa5fcfc151b3da",
+    "ciChecksPassed": 12,
+    "status": "RE_REVIEW_REQUIRED_NOT_DEPLOYED",
+    "evidence": "docs/validation/incident-revision-v2.json",
+    "acceptanceAdded": 0
   },
   "revisionIdentityMission": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5298,10 +5288,11 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "source": "626aa20377e9ba261876d5543d91c73fd5d785cd",
-    "verified": true,
-    "handoff": "docs/resume-precise-checkpoint.md",
-    "nextExecutable": "Owner review of exact production patch scope; no main/deploy action authorized. If engineering continues independently, bounded SEC failure/cache contract under existing request budget, without collection expansion."
+    "sourceSha": "0b497caff2a98d56e22f244cf9aa5fcfc151b3da",
+    "ciChecksPassed": 12,
+    "status": "RE_REVIEW_REQUIRED_NOT_DEPLOYED",
+    "evidence": "docs/validation/incident-revision-v2.json",
+    "acceptanceAdded": 0
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5352,7 +5343,36 @@
     "liveRuntimePin": null,
     "approvalGranted": false
   },
-  "currentStatus": "docs/current-engineering-status.json",
+  "currentStatus": {
+    "verifiedSource": "0b497caff2a98d56e22f244cf9aa5fcfc151b3da",
+    "ciChecksPassed": 12,
+    "ciEvidence": "docs/validation/incident-revision-v2-ci.json",
+    "acceptance": {
+      "complete": 24,
+      "total": 40,
+      "remaining": 16,
+      "added": 0
+    },
+    "aimPlan": "docs/aim-to-evidence-acceptance-plan.md",
+    "confluence": "VERIFIED_PUBLISHED; 48 actual Git fault/race cases across six workflows",
+    "c0": "OFFLINE_VERIFIED_PUBLISHED_INACTIVE; runtime and workflow/dependency bytes pinned. Date UNSET; entitlement/date/approval and actual upload evidence absent.",
+    "next": "Claude independent re-review of exact watcher v2 and separate accounting v2. No deployment/P2/ZAD-policy approval. No unrelated lab continuation before bounded report.",
+    "c0Review": "docs/c0-diagnostic-review.md",
+    "entitlementEvidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md",
+    "incident": {
+      "status": "V2_PREPARED_RE_REVIEW_REQUIRED;V1_CHANGES_REQUIRED_DO_NOT_DEPLOY",
+      "sourceSha": "0b497caff2a98d56e22f244cf9aa5fcfc151b3da",
+      "separateAccountingSource": "ec0960e62675a7706843fe5f0c33d594ae160ff1",
+      "proposal": "docs/incident-revision-review.md",
+      "evidence": "docs/validation/incident-revision-v2.json",
+      "productionBase": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+      "productionUnchangedByThisTask": true,
+      "watcherFiles": 19,
+      "accountingFiles": 4,
+      "cohortDecision": "30October owner excludes29October;28October pilot excluded; reconstruction secondary only",
+      "nextDecision": "Claude independent re-review; no deployment request"
+    }
+  },
   "confluencePublication": {
     "source": "413a91ca966fb1eb8e24a2113f23b4246752ca2e",
     "ciEvidence": "docs/validation/confluence-publication-ci.json",
@@ -5407,5 +5427,121 @@
     "originalCommitRecovered": false,
     "privacyMigration": false,
     "acceptanceAdded": 0
+  },
+  "incidentRevisionV2": {
+    "status": "VERIFIED_BRANCH_PREPARED_RE_REVIEW_REQUIRED_NOT_DEPLOYED",
+    "sourceSha": "0b497caff2a98d56e22f244cf9aa5fcfc151b3da",
+    "separateAccountingSource": "ec0960e62675a7706843fe5f0c33d594ae160ff1",
+    "productionBase": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+    "previousVerifiedProductionBase": "b77eac39b7cbdc652458b48256ed6731d728ed24",
+    "laterBaseChange": "data-only; code/tests/dependency bytes unchanged; all three suites repeated on exact latest base",
+    "productionBaseFullSuites": {
+      "watcher": {
+        "scope": "watcher",
+        "baseMain": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+        "patches": [
+          "e571909253efe6b35fc6a7d57811c79f116e11a1a4ee5c20fe3c1f61a024f151"
+        ],
+        "originalMainNodeTestFiles": 112,
+        "originalMainTestsRetained": true,
+        "allNodeTestFiles": 115,
+        "reportedCases": 1138,
+        "failures": [],
+        "rootModulesChecked": 203,
+        "staticFailures": [],
+        "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+        "productionWrites": false,
+        "liveRequestsOrMessaging": false
+      },
+      "accounting": {
+        "scope": "accounting",
+        "baseMain": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+        "patches": [
+          "716e84719808578979c5ef00e8d971f51a4aa0941875d22b9c53f2d3110c74da"
+        ],
+        "originalMainNodeTestFiles": 112,
+        "originalMainTestsRetained": true,
+        "allNodeTestFiles": 114,
+        "reportedCases": 1130,
+        "failures": [],
+        "rootModulesChecked": 195,
+        "staticFailures": [],
+        "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+        "productionWrites": false,
+        "liveRequestsOrMessaging": false
+      },
+      "combined": {
+        "scope": "combined",
+        "baseMain": "66dd28ecd66d28f8db3449d157b650762c9ebeeb",
+        "patches": [
+          "e571909253efe6b35fc6a7d57811c79f116e11a1a4ee5c20fe3c1f61a024f151",
+          "716e84719808578979c5ef00e8d971f51a4aa0941875d22b9c53f2d3110c74da"
+        ],
+        "originalMainNodeTestFiles": 112,
+        "originalMainTestsRetained": true,
+        "allNodeTestFiles": 117,
+        "reportedCases": 1156,
+        "failures": [],
+        "rootModulesChecked": 203,
+        "staticFailures": [],
+        "allManifestAndDependencyHashesVerifiedBeforeAndAfter": true,
+        "productionWrites": false,
+        "liveRequestsOrMessaging": false
+      }
+    },
+    "branchSuite": {
+      "files": 190,
+      "reportedCases": 1795,
+      "failures": []
+    },
+    "pythonTests": 30,
+    "branchStatic": {
+      "modules": 248,
+      "workflows": 86,
+      "shellBlocks": 328,
+      "pythonSyntax": 13,
+      "failures": []
+    },
+    "watcherCallerCases": 11,
+    "branchWatcherCallerCases": 10,
+    "messagePublisherGitCases": 4,
+    "accountingReviewedCases": 5,
+    "accountingDurabilityCases": 13,
+    "initialIntegrationFailures": [
+      "production ranking fixture still expected excluded pilot date; assertions preserved on non-excluded synthetic day",
+      "sale positive fixture lacked required encryption key; existing behavior assertion retained with synthetic key",
+      "half-sale positive fixture lacked a known quantity; setup corrected without weakening cost/gap assertion"
+    ],
+    "ciEvidence": "docs/validation/incident-revision-v2-ci.json",
+    "watcherCiChecks": 12,
+    "accountingCiChecks": 13,
+    "acceptance": {
+      "complete": 24,
+      "total": 40,
+      "changed": 0
+    },
+    "productionWrites": false,
+    "privateFinancialExcerptsCommitted": false,
+    "frozenResearchOrOriginalEvidenceChanged": false,
+    "prospectiveAdmissions": 0,
+    "p2OrZadPolicyBackported": false,
+    "reviewDependency": "Claude independent re-review of exact19-file watcher and separate4-file accounting patches; no deployment approval requested"
+  },
+  "preIncidentRevisionV2_latestSessionCheckpoint": {
+    "source": "626aa20377e9ba261876d5543d91c73fd5d785cd",
+    "verified": true,
+    "handoff": "docs/resume-precise-checkpoint.md",
+    "nextExecutable": "Owner review of exact production patch scope; no main/deploy action authorized. If engineering continues independently, bounded SEC failure/cache contract under existing request budget, without collection expansion."
+  },
+  "preIncidentRevisionV2_latestVerifiedEngineeringMilestone": {
+    "source": "626aa20377e9ba261876d5543d91c73fd5d785cd",
+    "ciEvidence": "docs/validation/incident-consolidated-ci.json",
+    "acceptance": {
+      "complete": 24,
+      "total": 40,
+      "remaining": 16,
+      "added": 0
+    },
+    "resume": "docs/resume-precise-checkpoint.md"
   }
 }

@@ -1,3 +1,5 @@
+> **Current review status: CHANGES REQUIRED on v1; do not deploy the old packages.** See [revised exact-scope v2 packet](incident-revision-review.md) and [production-base verification](validation/incident-revision-v2.json). The material below preserves historical incident findings and earlier implementation evidence; its old approval choices are superseded. No production/P2/ZAD-policy deployment is authorized.
+
 # Independent accounting handoff review —30October2026
 
 The actual attachments are now available and authenticated by SHA256:

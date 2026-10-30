@@ -1,3 +1,5 @@
+> **Current review status: CHANGES REQUIRED on v1; do not deploy the old packages.** See [revised exact-scope v2 packet](incident-revision-review.md) and [production-base verification](validation/incident-revision-v2.json). The material below preserves historical incident findings and earlier implementation evidence; its old approval choices are superseded. No production/P2/ZAD-policy deployment is authorized.
+
 # Narrow production incident fix — owner review, inactive
 
 **Not deployed or authorized to deploy.** Do not merge PR1 or copy the development scan wholesale. No collection expansion, new provider requests, real messages/orders, purchases or secret/permission changes are part of this package. Accounting implementation and privacy migration are separate.

@@ -2,9 +2,11 @@
 
 Owner aim/readiness plan: [aim-to-evidence-acceptance-plan.md](aim-to-evidence-acceptance-plan.md) — proposed thresholds await owner agreement; no collection/trading authorization.
 
-Current priority: [October29 incident and verified recovery](incident-2026-10-29.md), [isolated production proposal](production-incident-fix-proposal.md) and [minimal prospective protocol](minimal-existing-stream-prospective-protocol.md). Owner decision30October excludes29October from primary ranking;28October remains pilot. Recovery is secondary only. Consolidated incident source626aa20 passes all13 exact-commit checks; separate accounting0052f6d also passes13. Production is unchanged. Production unchanged; acceptance24/40, prospective cases0.
+Current priority: [V2 incident repair — independent re-review required](incident-revision-review.md). Claude rejected the earlier packages; do not deploy v1 or merge PR1. Watcher source0b497caff2a98d56e22f244cf9aa5fcfc151b3da passes12 exact CI checks; separate accountingec0960e62675a7706843fe5f0c33d594ae160ff1 passes13. Production base66dd28ecd66d28f8db3449d157b650762c9ebeeb is read-only; all112 original tests retained in each exact-scope run (watcher115, accounting114, combined117 files, all pass). [Results](validation/incident-revision-v2.json), [handoff](resume-precise-checkpoint.md).
 
-Updated30October2026; verified engineering code source626aa20 (13 exact-commit checks passed); canonical status: current-engineering-status.json; precise engineering resume in resume-precise-checkpoint.md; source-lineage/lab publication continuation is engineering-only, acceptance24/40(60%). Engineering acceptance is tracked separately in engineering-progress.md. **Prospective cases0; validated trading advantage NOT ESTABLISHED.**
+UNKNOWN instruments remain research context; approved BUY stays blocked. Explicit classified enrollment gets a distinct cohort, excluded from the old primary. The configured331-minute window is separate from390-minute cash-session coverage. October29 primary exclusion and October28 excluded pilot remain; reconstruction is secondary only. No ZAD policy/mark changes;170 list-sourced positives need separate provenance/owner-confirmation review.
+
+Acceptance24/40;16OPEN; CATALYST-03/ACTIONS-04 open. Prospective cases0; validated trading advantage NOT ESTABLISHED. Next decision is Claude re-review, **not deployment**. Earlier milestone sections below are historical; canonical status is current-engineering-status.json.
 
 | Evidence | Actual observation | What it does not establish |
 |---|---|---|
