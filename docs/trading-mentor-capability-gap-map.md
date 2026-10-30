@@ -37,7 +37,7 @@ The separate fixed three-slot account replay is more relevant to usable capital:
 
 The new development-only **`mentor SYMBOL`** command reaches `tgCommands → mentorText → leaderDipMentorPlan/renderLeaderDipMentor`. It combines an existing LEADER DIP holding or source lead with:
 
-- the source day/reference close, next-open session and expired/unverified entry window; no fabricated executable range;
+- the source day/reference close, next-open session and expired/unverified entry window; the actual New York clock marks a lead expired after that opening, not only on the next date; no fabricated executable range;
 - actual recorded fill/session separately from unverified exact-open execution, with late-entry/source conflicts qualified;
 - known whole shares and recorded notional, missing quantity as UNKNOWN, allocation breaches and the absence of a stop-defined loss cap;
 - stored target versus the registered20% target, changed-stop variants, and the session126 close deadline counting the buy day once;
@@ -61,6 +61,6 @@ Readiness: **explanation/fixture path implemented**, full executable mentor work
 
 ## Operational evidence stays separate
 
-Accounting `bdc984e` and watcher `be31590` remain deployed; see [deployment evidence](watcher-v5-deployment-result.md). No naturally scheduled post-deployment watcher run has yet supplied evidence at the latest read-only check. November DST operational behavior remains **PENDING**, despite the offline calendar test mapping Friday30October to Monday2November. Observe actual source/session/progress/archive/snapshot/duplicate/health/publication evidence through natural runs only. Do not dispatch, backfill observations or treat a test as live proof.
+Accounting `bdc984e` and watcher `be31590` remain deployed; see [deployment evidence](watcher-v5-deployment-result.md). No naturally scheduled post-deployment watcher run has yet supplied evidence at the latest read-only check. November DST operational behavior remains **PENDING**, despite offline calendar/UTC-opening tests for Friday30October and Monday2November (13:30Z versus14:30Z opening). Observe actual source/session/progress/archive/snapshot/duplicate/health/publication evidence through natural runs only. Do not dispatch, backfill observations or treat a test as live proof.
 
-[Verification](validation/trading-mentor-workflow.json):11 focused mentor/source-contract cases, existing14 LEADER DIP and26 recorded-plan controls, full197-file/1,854-case Node suite,30 Python tests,252 module syntax checks,86 workflow YAML and328 shell blocks all pass. Exact published commit CI must be checked at its own SHA. No new acceptance credit is claimed.
+[Verification](validation/trading-mentor-workflow.json):13 focused mentor/source-contract/expiry cases, existing14 LEADER DIP and26 recorded-plan controls, full197-file/1,856-case Node suite,30 Python tests,252 module syntax checks,86 workflow YAML and328 shell blocks all pass. Exact published commit CI must be checked at its own SHA. No new acceptance credit is claimed.

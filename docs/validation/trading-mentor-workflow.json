@@ -1,6 +1,6 @@
 {
   "status": "DEVELOPMENT_VERIFIED_NOT_DEPLOYED",
-  "implementationCommit": "9a04971b17466a73585ba098cc961828ca95d216",
+  "implementationCommit": "f66b825dc4ed05abebf67f4b1977399dc5e5aef5",
   "capabilityMap": "docs/trading-mentor-capability-gap-map.md",
   "selectedLane": "SQ11-PB12 / A-TGT-TGT20-PB12;126sessions;NOT_PROVEN_AND_TARGET_NOT_ADOPTED",
   "requirementsChanged": [
@@ -8,9 +8,10 @@
     "New LEADER DIP owner-fill records retain a versioned source/contract snapshot; later source replacement cannot rewrite that reference",
     "Legacy holdings do not borrow current signals as original evidence",
     "Mentor-only commands preserve positions/encrypted accounting/strategy-ledger bytes; normal command offset still advances",
-    "Registered126th-session close versus legacy next-open mismatch explicitly exposed; no exit-policy change"
+    "Registered126th-session close versus legacy next-open mismatch explicitly exposed; no exit-policy change",
+    "Entry window expires after the actual New York opening on the same day, with offline before/after November DST UTC controls and inconsistent-clock fallback"
   ],
-  "focusedTests": 11,
+  "focusedTests": 13,
   "actualCallerControls": [
     "mentor command with synthetic Telegram localhost transport",
     "bought command snapshot capture with synthetic fill only",
@@ -22,7 +23,7 @@
   "existingRecordedPlanControls": 26,
   "node": {
     "files": 197,
-    "cases": 1854,
+    "cases": 1856,
     "failures": []
   },
   "python": {
@@ -65,10 +66,15 @@
       41061535419
     ],
     "archivesSnapshotDuplicateHealthPublication": "PENDING_NATURAL_RUN",
-    "novemberDST": "PENDING_ACTUAL_NATURAL_RUN;offline calendar test is not live evidence",
+    "novemberDST": "PENDING_ACTUAL_NATURAL_RUN; offline UTC-opening fixtures are not live evidence",
     "nextOrdinaryWeekday": "2026-11-02",
     "manualDispatches": 0
   },
   "remaining": "Original provider revision/identity, executable quotes/size/costs, next-open constraint and close-timed exit reconciliation, portfolio limits and admitted prospective evaluation remain unmet. No source activation or new evaluation thresholds authorized.",
-  "exactPublishedCI": "Use exact published SHA in PR1/GitHub checks; no historical CI borrowed."
+  "exactPublishedCI": "Use exact published SHA in PR1/GitHub checks; no historical CI borrowed.",
+  "priorCheckpointCI": {
+    "sha": "3d473307dcee022a1dee84b88abb4db263bb92ec",
+    "applicableChecksPassed": 6,
+    "note": "Prior checkpoint only; final publication requires its own exact-SHA checks."
+  }
 }
