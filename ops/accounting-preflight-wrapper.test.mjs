@@ -16,13 +16,16 @@ let wf='';if(ready){const d=tmp('wf-');fs.mkdirSync(path.join(d,'.github/workflo
 function stepRun(name){const L=wf.split('\n'),i=L.findIndex(l=>l==='      - name: '+name);assert.ok(i>=0,name);let j=L.findIndex((l,k)=>k>i&&l==='        run: |');const out=[];
  for(j++;j<L.length&&(L[j]===''||L[j].startsWith('          '));j++)out.push(L[j].slice(10));return out.join('\n');}
 const G={GIT_AUTHOR_NAME:'f',GIT_AUTHOR_EMAIL:'f@x',GIT_COMMITTER_NAME:'f',GIT_COMMITTER_EMAIL:'f@x',GIT_CONFIG_GLOBAL:'/dev/null',GIT_CONFIG_NOSYSTEM:'1'};
-function fakeChecker(rt,{out,code,fresh='PASS\n',freshCode=0}){fs.writeFileSync(path.join(rt,'accounting-preflight.mjs'),
- 'const fresh=process.argv[2]==="--fresh";process.stdout.write(fresh?'+JSON.stringify(fresh)+':'+JSON.stringify(out)+');process.exitCode=fresh?'+freshCode+':'+code+';\n');}
+// fake checker: prints the chosen output, then exits with the chosen code, or after a real sleep (to hit `timeout`),
+// or by killing itself with a signal (an interrupted run)
+function fakeChecker(rt,{out,code,sleepMs=0,signal=null,fresh='PASS\n',freshCode=0,freshSleepMs=0,freshSignal=null}){fs.writeFileSync(path.join(rt,'accounting-preflight.mjs'),
+ 'const f=process.argv[2]==="--fresh",o=f?'+JSON.stringify(fresh)+':'+JSON.stringify(out)+',c=f?'+freshCode+':'+code+',ms=f?'+freshSleepMs+':'+sleepMs+',sig=f?'+JSON.stringify(freshSignal)+':'+JSON.stringify(signal)+';\n'+
+ 'process.stdout.write(o,()=>{if(sig)process.kill(process.pid,sig);else if(ms)setTimeout(()=>{process.exitCode=c;},ms);else process.exitCode=c;});\n');}
 const bash=(script,env,cwd)=>spawnSync('bash',['--noprofile','--norc','-e','-o','pipefail','-c',script],{cwd,encoding:'utf8',env:{PATH:process.env.PATH,HOME:os.tmpdir(),...G,...env}});
-function protectedStep(out,code){const rt=tmp('rt-'),ws=tmp('ws-');fakeChecker(rt,{out,code});const r=bash(stepRun('Protected offline pending-sale check'),{RUNNER_TEMP:rt,GITHUB_WORKSPACE:ws,PRIVATE_KEY:'synthetic'},ws);
+function protectedStep(out,code,opts={}){const rt=tmp('rt-'),ws=tmp('ws-');fakeChecker(rt,{out,code,...opts});const r=bash(stepRun('Protected offline pending-sale check'),{RUNNER_TEMP:rt,GITHUB_WORKSPACE:ws,PRIVATE_KEY:'synthetic'},ws);
  assert.equal(r.status,0,r.stderr);return {value:fs.readFileSync(path.join(rt,'accounting-preflight.result'),'utf8'),raw:fs.existsSync(path.join(rt,'accounting-preflight.raw'))};}
-function emitStep(value,{fresh,freshCode,fetchOk=true}={}){const rt=tmp('rt-'),out=path.join(tmp('out-'),'o');fs.writeFileSync(out,'');fakeChecker(rt,{out:'',code:0,fresh,freshCode});
- fs.writeFileSync(path.join(rt,'accounting-preflight.result'),value);fs.writeFileSync(path.join(rt,'accounting-preflight-source.json'),'{}');
+function emitStep(value,{fresh,freshCode,freshSleepMs,freshSignal,fetchOk=true}={}){const rt=tmp('rt-'),out=path.join(tmp('out-'),'o');fs.writeFileSync(out,'');fakeChecker(rt,{out:'',code:0,fresh,freshCode,freshSleepMs,freshSignal});
+ if(value!==null)fs.writeFileSync(path.join(rt,'accounting-preflight.result'),value);fs.writeFileSync(path.join(rt,'accounting-preflight-source.json'),'{}');
  const src=tmp('src-'),ws=path.join(tmp('ws-'),'c');for(const a of [['init','-q','-b','main'],['commit','-q','--allow-empty','-m','s']])spawnSync('git',a,{cwd:src,env:{...process.env,...G}});spawnSync('git',['clone','-q','file://'+src,ws],{env:{...process.env,...G}});
  const script=stepRun('Emit only protected result after state freshness check').replace('https://github.com/drrazaq/Stock-2.git',fetchOk?'file://'+src:'file:///nonexistent/repo');
  const r=bash(script,{RUNNER_TEMP:rt,GITHUB_OUTPUT:out,GIT_TERMINAL_PROMPT:'0'},ws);
@@ -49,3 +52,16 @@ test('emit step PASS requires a fresh-mode PASS; only STATE_CHANGED may block; a
  r=emitStep('PASS\n',{fresh:'BLOCKED STATE_CHANGED\n',freshCode:2});assert.equal(r.code,2);assert.deepEqual(r.outputs,{status:'BLOCKED',reason:'STATE_CHANGED'});
  for(const fresh of ['BLOCKED NOT_A_REVIEWED_CODE\n','BLOCKED MISSING_KEY\n','ERROR\n','','PASS\nPASS\n','pass\n']){r=emitStep('PASS\n',{fresh,freshCode:fresh.startsWith('BLOCKED')?2:1});assert.equal(r.code,1,JSON.stringify(fresh));assert.deepEqual(r.outputs,{status:'ERROR',reason:''});}
  r=emitStep('PASS\n',{fresh:'PASS\n',freshCode:0,fetchOk:false});assert.equal(r.code,1);assert.deepEqual(r.outputs,{status:'ERROR',reason:''});assert.deepEqual(r.leftover,[]);});
+
+// ---- exit/result consistency (Codex review of 77e4ead): the freshness run's exit status is captured, never discarded
+const emitted=(r,status,reason='')=>{assert.deepEqual(r.outputs,{status,reason});assert.equal(r.code,status==='PASS'?0:status==='BLOCKED'?2:1);assert.deepEqual(r.leftover,[]);};
+test('FRESHNESS controls: PASS/0 passes, BLOCKED STATE_CHANGED/2 blocks, ERROR/1 is ERROR',needs,()=>{emitted(emitStep('PASS\n',{fresh:'PASS\n',freshCode:0}),'PASS');
+ emitted(emitStep('PASS\n',{fresh:'BLOCKED STATE_CHANGED\n',freshCode:2}),'BLOCKED','STATE_CHANGED');emitted(emitStep('PASS\n',{fresh:'ERROR\n',freshCode:1}),'ERROR');});
+test('FRESHNESS: output PASS with exit 1, 2, 124 or 137 is ERROR',needs,()=>{for(const freshCode of [1,2,124,137])emitted(emitStep('PASS\n',{fresh:'PASS\n',freshCode}),'ERROR');});
+test('FRESHNESS: other output/exit mismatches are ERROR',needs,()=>{for(const [fresh,freshCode] of [['BLOCKED STATE_CHANGED\n',0],['BLOCKED STATE_CHANGED\n',1],['BLOCKED STATE_CHANGED\n',124],['ERROR\n',0],['ERROR\n',2],['\n',0],['PASS\nPASS\n',0]])emitted(emitStep('PASS\n',{fresh,freshCode}),'ERROR');});
+test('FRESHNESS: a real timeout (the 10 s limit) after printing PASS is ERROR',needs,()=>emitted(emitStep('PASS\n',{fresh:'PASS\n',freshCode:0,freshSleepMs:13000}),'ERROR'));
+test('FRESHNESS: an interrupted or killed run after printing PASS is ERROR',needs,()=>{for(const freshSignal of ['SIGINT','SIGTERM','SIGKILL'])emitted(emitStep('PASS\n',{fresh:'PASS\n',freshSignal}),'ERROR');});
+test('EMIT: a missing protected result is ERROR',needs,()=>emitted(emitStep(null),'ERROR'));
+test('PROTECTED (audit): a real timeout or an interrupted run after printing PASS is ERROR',needs,()=>{assert.equal(protectedStep('PASS\n',0,{sleepMs:13000}).value,'ERROR\n');for(const signal of ['SIGINT','SIGTERM','SIGKILL'])assert.equal(protectedStep('PASS\n',0,{signal}).value,'ERROR\n',signal);});
+test('AUDIT: no command in the amended preflight job discards an exit status with || true',needs,()=>{const job=wf.slice(wf.indexOf('  accounting-preflight:'));assert.ok(job.length>100);assert.doesNotMatch(job,/\|\|\s*true/);
+ assert.match(job,/frc=0; fresh=\$\(timeout 10s node "\$RUNNER_TEMP\/accounting-preflight\.mjs" --fresh "\$GITHUB_WORKSPACE" 2>\/dev\/null\) \|\| frc=\$\?/);assert.match(job,/case "\$frc:\$fresh" in "0:PASS"\)/);});

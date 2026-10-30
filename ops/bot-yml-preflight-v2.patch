@@ -43,21 +43,25 @@
            printf '%s\n' "$value" > "$RUNNER_TEMP/accounting-preflight.result"
            rm -f "$RUNNER_TEMP/accounting-preflight.raw"
        - name: Emit only protected result after state freshness check
-@@ -132,14 +140,20 @@
+@@ -132,14 +140,23 @@
            GIT_TERMINAL_PROMPT: '0'
          run: |
            set +x
-+          codes='MISSING_KEY|MISSING_REQUIRED_INPUT|PENDING_SALE|STATE_INTENT|RECEIPT_MALFORMED|RECEIPT_DUPLICATE|RECEIPT_UNMATCHED|RECEIPT_AMBIGUOUS|JOURNAL_UNRECEIPTED|LEADER_DIP_RESULT_WITHOUT_LEDGER|LEDGER_EXISTED|LEDGER_HISTORY_UNCERTAIN|PRIVACY_MODE|CODE_UNREVIEWED|LOCAL_STATE_DIFFERS|STATE_CHANGED'
-           value=$(cat "$RUNNER_TEMP/accounting-preflight.result" 2>/dev/null || true)
+-          value=$(cat "$RUNNER_TEMP/accounting-preflight.result" 2>/dev/null || true)
 -          case "$value" in PASS|BLOCKED|ERROR) ;; *) value=ERROR ;; esac
++          codes='MISSING_KEY|MISSING_REQUIRED_INPUT|PENDING_SALE|STATE_INTENT|RECEIPT_MALFORMED|RECEIPT_DUPLICATE|RECEIPT_UNMATCHED|RECEIPT_AMBIGUOUS|JOURNAL_UNRECEIPTED|LEADER_DIP_RESULT_WITHOUT_LEDGER|LEDGER_EXISTED|LEDGER_HISTORY_UNCERTAIN|PRIVACY_MODE|CODE_UNREVIEWED|LOCAL_STATE_DIFFERS|STATE_CHANGED'
++          # a missing or unreadable result is ERROR (explicit, not discarded)
++          if ! value=$(cat "$RUNNER_TEMP/accounting-preflight.result" 2>/dev/null); then value=ERROR; fi
 +          [[ "$value" =~ ^(PASS|ERROR|BLOCKED\ ($codes))$ ]] || value=ERROR
            if [ "$value" = PASS ]; then
 +            # authoritative freshness: current main must not have changed ANY dependency of the result (the four inputs,
 +            # scan.mjs, the privacy marker; any commit touching them, or rewritten history) since the checked-out HEAD
              if git fetch --quiet https://github.com/drrazaq/Stock-2.git refs/heads/main >/dev/null 2>&1; then
 -              if ! git diff --quiet HEAD FETCH_HEAD -- data/private.enc data/my-positions.json data/my-trades.jsonl data/leaderdip-ledger.jsonl; then value=BLOCKED; fi
-+              fresh=$(timeout 10s node "$RUNNER_TEMP/accounting-preflight.mjs" --fresh "$GITHUB_WORKSPACE" 2>/dev/null || true)
-+              case "$fresh" in PASS) ;; "BLOCKED STATE_CHANGED") value="BLOCKED STATE_CHANGED" ;; *) value=ERROR ;; esac
++              # output and exit status are validated together, as in the protected step: PASS only with exit 0,
++              # STATE_CHANGED only with exit 2; failed, timed-out (124), killed or interrupted runs are ERROR
++              frc=0; fresh=$(timeout 10s node "$RUNNER_TEMP/accounting-preflight.mjs" --fresh "$GITHUB_WORKSPACE" 2>/dev/null) || frc=$?
++              case "$frc:$fresh" in "0:PASS") ;; "2:BLOCKED STATE_CHANGED") value="BLOCKED STATE_CHANGED" ;; *) value=ERROR ;; esac
              else value=ERROR; fi
            fi
 -          printf 'status=%s\n' "$value" >> "$GITHUB_OUTPUT"

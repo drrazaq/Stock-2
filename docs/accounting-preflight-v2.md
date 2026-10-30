@@ -89,16 +89,44 @@ Consistent completed receipts PASS. The checker never clears receipts or writes 
 |---|---|---|
 | `ops/accounting-preflight-v2.mjs` (checker v2.2) | `957560f0f3ebb8885492c21da623cd499241657411ac4df7e4efc133c8a22d35` | `aa45a67686ad8528a50404e6aa88b8c19d26e0ba` |
 | `ops/accounting-preflight-v2.test.mjs` (57 synthetic checker tests) | `f4fa6448618d921403be2b65043c1f434731ca591e8b0ed1837fe68a59b533ad` | |
-| `ops/accounting-preflight-wrapper.test.mjs` (8 wrapper tests on the amended `bot.yml`) | `f3fc62aee58c3085e4534ba33767b3d2bb9fdf2c916cb55fdee6cc75aee5d631` | |
-| `ops/bot-yml-preflight-v2.patch` (workflow amendment) | `c315d9cdc4e43d3a774a33d868247c9c221fda3edf46702bca326bd1d816f293` | |
+| `ops/accounting-preflight-wrapper.test.mjs` (16 wrapper tests on the amended `bot.yml`) | `84a50b5a21bb53354e0da1eb19dc997b72b736134b14fb3481700c613daa20b9` | |
+| `ops/bot-yml-preflight-v2.patch` (workflow amendment) | `6f411d6a4d6b26d6e0249a5d49e9f75e58ec9fafe71508d679b8b4fea8a3f078` | |
 
 The patch applies to main's `bot.yml` (SHA256 `1d25e6fec025f7a7e5e7a254cd61a9df4ecd7df97423b74a84fabd68ab6061e8`). It changes only the `accounting-preflight` job:
 1. **Checkout:** `fetch-depth: 0` and `filter: blob:none`. The pinned `actions/checkout@11d5960…` is v4.3.0, which supports both. The clone takes about 1 s and about 2.3 MB.
 2. **Blob and SHA256 pins:** set to the values above.
 3. **Protected step:** accepts only `0:PASS`, `1:ERROR` or `2:BLOCKED <one of the 16 reviewed codes>`; anything else is ERROR. The timeout (`timeout 10s`), memory limit and raw-file cleanup are unchanged.
-4. **Emit step:** re-validates the result against the same allowlist. On PASS, it fetches current main and runs the pinned checker's `--fresh` mode across every dependency, replacing v1's four-path diff; only `PASS` or `BLOCKED STATE_CHANGED` is accepted from it. It emits `status` and `reason` outputs, exits 0, 2 or 1, and removes the checker files as before.
+4. **Emit step:** re-validates the result against the same allowlist. On PASS, it fetches current main and runs the pinned checker's `--fresh` mode across every dependency, replacing v1's four-path diff; its output and **exit status are validated together**: only `0:PASS`, or `2:BLOCKED STATE_CHANGED`, is accepted, and a failed, timed-out (124), killed (137) or interrupted run, or any mismatch, is ERROR. A missing or unreadable protected result is ERROR. It emits `status` and `reason` outputs, exits 0, 2 or 1, and removes the checker files as before.
 
 ## Evidence
+
+### Amendment exit/result consistency (Codex review of `77e4ead`; checker unchanged)
+
+**The fix.** The freshness call no longer discards its exit status with `|| true`:
+`frc=0; fresh=$(timeout 10s node … --fresh …) || frc=$?`, then `case "$frc:$fresh" in "0:PASS") …; "2:BLOCKED STATE_CHANGED") …; *) value=ERROR`. These are the same fail-closed rules as the protected step.
+
+**Audit of every other command in the job:**
+- The verify step runs under `set -euo pipefail`, so any failure fails the step, and the emit step then finds no result: ERROR.
+- The protected step already captured `rc` and validates it with the output.
+- The emit step's read of the result file used `|| true`. That was fail-closed (an empty value is ERROR), but it is now explicit: `if ! value=$(cat …); then value=ERROR; fi`.
+- No `|| true` remains in the job, and a test asserts this.
+
+**Wrapper regressions** (8 new; 16/16 pass):
+
+| Case | Result |
+|---|---|
+| Freshness output `PASS` with exit 1, 2, 124 or 137 | ERROR |
+| `BLOCKED STATE_CHANGED` with exit 0, 1 or 124 | ERROR |
+| `ERROR` with exit 0 or 2; an empty line; `PASS` twice | ERROR |
+| A **real** 10-second timeout after printing `PASS` | ERROR |
+| Self-interrupted or killed (`SIGINT`, `SIGTERM`, `SIGKILL`) after printing `PASS` | ERROR |
+| A missing protected result | ERROR |
+| Protected step, real timeout or interruption after printing `PASS` (audit) | ERROR |
+| Controls: `0:PASS`, `2:BLOCKED STATE_CHANGED`, `1:ERROR` | PASS, `BLOCKED STATE_CHANGED`, ERROR |
+
+On the reviewed `77e4ead` amendment, 5 of these tests fail (it accepted `PASS` regardless of exit status). All pass now.
+
+**Unchanged:** the checker (SHA256 `957560f0…`, blob `aa45a676…`, 57/57 tests). The end-to-end workflow simulation gives the same seven results as before.
 
 ### v2.2 focused evidence (Codex review of `f6076bb`)
 
