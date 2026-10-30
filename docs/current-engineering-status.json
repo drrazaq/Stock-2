@@ -1,7 +1,7 @@
 {
-  "verifiedSource": "0052f6d2f0231bde22b6b8d278a038c1466b9132",
+  "verifiedSource": "626aa20377e9ba261876d5543d91c73fd5d785cd",
   "ciChecksPassed": 13,
-  "ciEvidence": "docs/validation/accounting-handoff-ci.json",
+  "ciEvidence": "docs/validation/incident-consolidated-ci.json",
   "acceptance": {
     "complete": 24,
     "total": 40,
@@ -11,15 +11,16 @@
   "aimPlan": "docs/aim-to-evidence-acceptance-plan.md",
   "confluence": "VERIFIED_PUBLISHED; 48 actual Git fault/race cases across six workflows",
   "c0": "OFFLINE_VERIFIED_PUBLISHED_INACTIVE; runtime and workflow/dependency bytes pinned. Date UNSET; entitlement/date/approval and actual upload evidence absent.",
-  "next": "Verify consolidated exact CI and final chat report. Owner reviews isolated production backport and separate accounting package; no deployment authorization or unrelated lab continuation.",
+  "next": "Owner reviews exact P1-only13-file or full P1/P2 16-file production backport and separate accounting patch. No production action authorized. Remaining related engineering: bounded SEC retry/cache contracts and source/identity evidence; no new collection or privacy migration.",
   "c0Review": "docs/c0-diagnostic-review.md",
   "entitlementEvidenceNeeded": "docs/c0-alpaca-entitlement-evidence.md",
   "incident": {
-    "status": "CONSOLIDATED_LOCAL_VERIFIED_CI_PENDING",
+    "status": "VERIFIED_PUBLISHED_PRODUCTION_UNCHANGED",
     "report": "docs/incident-2026-10-29.md",
     "proposal": "docs/production-incident-fix-proposal.md",
-    "evidence": "docs/validation/incident-2026-10-29.json",
+    "evidence": "docs/validation/incident-consolidated-ci.json",
     "accounting": "SEPARATE0052f6d; ACTUAL ATTACHMENTS HASH/5CASE/FULLSUITE/EXACT13CI VERIFIED",
-    "cohortDecision": "30October owner excludes29Oct;28Oct pilot excluded; all reconstruction secondary only"
+    "cohortDecision": "30October owner excludes29Oct;28Oct pilot excluded; all reconstruction secondary only",
+    "sourceSha": "626aa20377e9ba261876d5543d91c73fd5d785cd"
   }
 }
