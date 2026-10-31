@@ -1,3 +1,5 @@
+> **Current stop-contract continuation:** [Actual earnings/event gap-fill mismatch, risk guard and variant persistence](drift-plan-stop-contract-continuation.md) supersede only those two attachment-path gaps below. Full cross-lane EXEC-03 remains OPEN; no tested-strategy or historical result is promoted.
+
 # Recorded plan contract review
 
 This is partial EXEC-03 and REPO-03 evidence. Acceptance remains 24/40; no row is closed. Tests run the actual owner command, source-plan attachment, saved position/original plan and rendered acknowledgement with synthetic data and localhost transport. This records an owner-reported fill; it does not approve or execute a trade.

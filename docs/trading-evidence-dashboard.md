@@ -1,3 +1,5 @@
+> **Execution-contract follow-up:** [Actual earnings/event fill plans now retain source stop and label owner/unresolved variants](drift-plan-stop-contract-continuation.md). Branch-only; no strategy endorsement, historical rewrite or production deployment. EXEC-03 remains OPEN.
+
 > **Market ingress follow-up:** [Impossible calendar clocks rejected through the actual watcher caller](market-ingress-calendar-continuation.md), with synthetic DST/half-day controls. Separate branch-only repair; real DST evidence still pending.
 
 > **Source-bound follow-up:** [Actual news ingress now bounded without treating failure as empty](source-ingestion-bounds-continuation.md). Separate development commit; not in the inactive SEC patch. No acceptance increase or production change.
