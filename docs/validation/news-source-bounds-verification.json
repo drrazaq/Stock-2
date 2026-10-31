@@ -1,0 +1,41 @@
+{
+  "kind": "NEWS_SOURCE_BOUNDED_INGRESS_VERIFICATION_V1",
+  "implementationSource": "0f29b059a7d67537a773b440805b67fc6d346877",
+  "sourceHashes": {
+    "news-source.mjs": "55015ab59063d784f9b7cd8e1e81fce5a8bebc80b5f13cfcf8b9aea57b4a24e8",
+    "tests/news-source-bounds.test.mjs": "18380705b93bbcc953729d2ec1f753b0897c93a5df36c54b2786210c55590b5a",
+    "tests/catalyst-source-errors.test.mjs": "b65e9f51be3447eafb27915149bb347a28bb70ccaf6b5033cea9d83b64fee595"
+  },
+  "focused": {
+    "newSourceAndActualCaller": 6,
+    "reconstructedSourceControls": 28,
+    "failures": 0
+  },
+  "syntheticBeforeAfter": [
+    {
+      "source": "before",
+      "oversizeValidJson": "OBSERVED",
+      "invalidClock": "OBSERVED",
+      "uncooperativeFetch": "STILL_PENDING_AFTER_30MS"
+    },
+    {
+      "source": "after",
+      "oversizeValidJson": "BODY_LIMIT",
+      "invalidClock": "INVALID_OBSERVATION_CLOCK",
+      "uncooperativeFetch": "TIMEOUT"
+    }
+  ],
+  "protocolChanges": false,
+  "productionChanged": false,
+  "providerCalls": 0,
+  "realMessages": 0,
+  "acceptanceAdded": 0,
+  "fullSuite": {
+    "files": 207,
+    "cases": 1931,
+    "failures": []
+  },
+  "syntax": "node --check news-source.mjs PASS; prior269root/tool checks PASS, other runtime modules unchanged",
+  "python": "30PASS; no Python source change",
+  "exactCommitCI": "Final publication requires its own exact-SHA CI; linked in PR1 and final report."
+}

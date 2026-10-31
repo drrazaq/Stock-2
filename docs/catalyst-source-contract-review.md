@@ -1,3 +1,5 @@
+> **Current bounded source continuation:** [News streamed-body/row/deadline and actual caller failure controls](source-ingestion-bounds-continuation.md) supersede the missing-body-cap/cooperative-timeout limitations below. [Native SEC acceptance and lineage](native-sec-acceptance-lineage.md) advance original producer evidence. All-source acceptance remains OPEN; earlier findings/results are retained.
+
 ## Continuation review and next source findings
 
 News, SEC/earnings metadata, Insider and Chain caller requirements progressed through verified86b25cc; exact changed/unmet requirements are in catalyst03-closure-matrix.json and resume-precise-checkpoint.md. This supersedes older table gaps only where the new caller evidence actually applies. No full REPO-03/MARKET-03/CATALYST-03/ACTIONS-04 closure is inferred.

@@ -30,6 +30,8 @@ Parent continuity is explicitly **available pinned producer-run lineage, not aut
 
 The proposed5November2026 six-name09:30–10:10NY calibration remains unapproved and lapses if the4November18:00Z preparation deadline is missed. Calibration is not untouched confirmation; zero eligible events is a valid result. No universe/window/exit/control/cost or evaluator change is authorized.
 
+**Feasibility limit:** the normal main-loop order is feed observation followed by filing decisions/safety requests. If the acceptance response first arrives after that event was observed, it is retained as a late supplement and is not admitted retrospectively. The actual-caller test covers this usual ordering as well as an already-available matching response. This package cannot promise an eligible event. The8MiB parent capsule can also refuse a large prior run; that is an explicit blocked continuation, not evidence of complete global history. Any larger continuity storage/transport scope needs a separately bounded review before activation.
+
 ## Next executable work
 
 Finish the separately pinned inactive live host/producer-artifact client, retaining the rehearsal guard; then complete remaining source-body bounds, normalization ingress and delivered-plan/spec contracts in dependency order. [All16open rows and owners](acceptance-closure-board.md). CATALYST-03, MARKET-03 and EXEC-03 remain OPEN; no whole row is engineering complete on these tests alone.

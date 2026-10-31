@@ -43,7 +43,7 @@
       "id": "MARKET-03",
       "status": "OPEN",
       "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
-      "criteriaAlreadySatisfied": "SEC class/CIK isolation; provider clock controls; offline market session tests.",
+      "criteriaAlreadySatisfied": "SEC class/CIK isolation; provider clock controls; offline market session tests. Stream/row/deadline news source bounds and actual caller failure isolation: docs/source-ingestion-bounds-continuation.md.",
       "remainingEngineering": "Complete provider ingress symbol/units/corporate-action/ticker-change matrix.",
       "externalOrLiveEvidence": "Authoritative identity/mapping and price-basis evidence for real instruments.",
       "nextActionAndOwner": "Implementation owner: inventory actual ingress and test ambiguous aliases/DST/half-day controls."
@@ -79,7 +79,7 @@
       "id": "CATALYST-03",
       "status": "OPEN",
       "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
-      "criteriaAlreadySatisfied": "Reconstructed55source regressions; news/insider/chain/share-supply caller repairs; immutable native Atom archive. Offline actual submissions-response tee, acceptance join and pinned cross-run first-ingestion/revision lineage: docs/native-sec-acceptance-lineage.md.",
+      "criteriaAlreadySatisfied": "Reconstructed55source regressions; news/insider/chain/share-supply caller repairs; immutable native Atom archive. Offline actual submissions-response tee, acceptance join and pinned cross-run first-ingestion/revision lineage: docs/native-sec-acceptance-lineage.md. Stream/row/deadline news source bounds and actual caller failure isolation: docs/source-ingestion-bounds-continuation.md.",
       "remainingEngineering": "Trusted live producer-artifact transport/host and remaining source bounds/materiality/revision matrix.",
       "externalOrLiveEvidence": "Source authenticity/point-in-time evidence cannot be inferred from caches or fixtures.",
       "nextActionAndOwner": "Implementation owner: finish separately reviewed inactive live host/transport; no activation, extra provider requests or retrospective admission."
