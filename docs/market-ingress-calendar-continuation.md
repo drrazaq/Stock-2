@@ -1,0 +1,9 @@
+# Market clock normalization continuation — development only
+
+The shared Alpaca snapshot ingress previously let `Date.parse` normalize impossible provider dates. Synthetic `2026-02-30T14:30:00Z` became `2026-03-02T14:30:00Z` for price, BBO and aggregate volume. On that later date it could falsely satisfy freshness checks. `snapshot-fields.mjs` now validates the literal calendar day and RFC3339 hour/minute/second shape before parsing; malformed clocks stay unknown0. It does not remove the research row or invent another timestamp.
+
+Twelve field tests plus one actual `ignition-watch.mjs::alpacaAll` caller test pass, including the new impossible-calendar controls, pre/post-November DST openings, both explicit offsets in the repeated01:30hour and a half-day timestamp. Dot and dash classes remain separate through the caller. Valid timestamps alone do not imply an open session, provider entitlement, identity approval or executable evidence. No actual November DST observation has happened; natural-run verification remains pending.
+
+This is a separate branch-only repair, **outside** the exact seven-file inactive native SEC shadow patch. That patch’s pinned production-base test result remains valid for its unchanged bytes. No production main helper, deployed accounting, watcher release, reference, research protocol, frozen result or ZAD gate was changed remotely. This does not close MARKET-03: other provider ingress, symbol changes, adjustments, previous-session clocks and corporate actions still require their own actual-path evidence.
+
+[Before/after and test record](validation/market-ingress-calendar-verification.json), [all16row board](acceptance-closure-board.md). Next market work is the provider ingress/field/session/corporate-action matrix; execution work then compares actual delivered lane plans with registered rules. No new strategy or rejected-strategy adapter is added.

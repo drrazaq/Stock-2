@@ -1,0 +1,43 @@
+{
+  "kind": "MARKET_INGRESS_CALENDAR_CONTINUATION_V1",
+  "source": "80d13569557e2761169ccc52f76f804bd405fc30",
+  "hashes": {
+    "snapshot-fields.mjs": "3fd0b87d9237bc4a8242115a5728ce82cf73e0748797a2848d61a52560fd73e6",
+    "tests/snapshot-fields.test.mjs": "7708de711c8925d82a144b3db568c07d232ecb5344c0fccfca1a987c903aad2e",
+    "tests/snapshot-ingress-calendar.test.mjs": "64947b3aba37b3f55aae6baa576d95297de06a2fea0a405c078140f6a3749ce9"
+  },
+  "syntheticBeforeAfter": [
+    {
+      "source": "before",
+      "priceClock": 1772461800000,
+      "quoteClock": 1772461800000,
+      "volumeClock": 1772461800000,
+      "normalizedAt": "2026-03-02T14:30:00.000Z"
+    },
+    {
+      "source": "after",
+      "priceClock": 0,
+      "quoteClock": 0,
+      "volumeClock": 0,
+      "normalizedAt": null
+    }
+  ],
+  "focused": {
+    "fieldCases": 12,
+    "actualWatcherIngress": 1,
+    "failures": 0
+  },
+  "calendarMeaning": "Source clock shape/instant only; not proof of open-session coverage or real November DST behavior",
+  "newCollection": false,
+  "productionChanged": false,
+  "approvedGatesChanged": false,
+  "frozenResearchChanged": false,
+  "acceptanceAdded": 0,
+  "fullSuite": {
+    "files": 208,
+    "cases": 1934,
+    "failures": []
+  },
+  "syntax": "PASS for current snapshot-fields.mjs and news-source.mjs;269root/tool files passed, remaining files unchanged",
+  "python": "30PASS; no Python source changes"
+}

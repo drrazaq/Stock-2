@@ -23,7 +23,7 @@ Parent continuity is explicitly **available pinned producer-run lineage, not aut
 
 ## Still missing before activation
 
-- Trusted live host/client implementation and live artifact discovery/download with independent producer run/source/digest derivation and complete-run selection. The tested offline staging tool is not that transport.
+- Trusted live host/client implementation and live artifact discovery/download with independent producer run/source/digest derivation and complete-run selection. The tested offline staging tool is not that transport. The proposed existing artifact-upload step follows the watcher’s15:00 finish, so it cannot satisfy09:30–09:34 enrollment. Timely colocated read-only handoff or explicitly bounded incremental transport is an engineering requirement; end-of-run archive recovery does not satisfy it.
 - Official Alpaca latest SIP account/session/universe and retention rights; authenticated current six-name class/FIGI/CIK/SIC/exchange references and current ZAD. Missing identity remains UNKNOWN and blocks approved BUY while retaining labelled research.
 - Exact artifact SDK/wire retry/digest/size semantics, real uploaded recovery applicability and bounded service-failure handling. Existing mock ZIP tests do not prove the real backend.
 - Independent review and separately approved installation/reference/capture scopes. Reference preparation18 + capture41 = **59 maximum additional source requests**, separately authorized; this shadow adds0. Existing background watcher traffic is outside59.

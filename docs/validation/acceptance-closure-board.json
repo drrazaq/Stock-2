@@ -43,8 +43,8 @@
       "id": "MARKET-03",
       "status": "OPEN",
       "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
-      "criteriaAlreadySatisfied": "SEC class/CIK isolation; provider clock controls; offline market session tests. Stream/row/deadline news source bounds and actual caller failure isolation: docs/source-ingestion-bounds-continuation.md.",
-      "remainingEngineering": "Complete provider ingress symbol/units/corporate-action/ticker-change matrix.",
+      "criteriaAlreadySatisfied": "SEC class/CIK isolation; provider clock controls; offline market session tests. Stream/row/deadline news source bounds and actual caller failure isolation: docs/source-ingestion-bounds-continuation.md. Literal calendar/RFC3339 rejection through actual watcher snapshot ingress; DST/half-day/literal-class fixture controls: docs/market-ingress-calendar-continuation.md.",
+      "remainingEngineering": "Remaining provider ingress/field-unit/previous-session/adjustment/corporate-action/ticker-change matrix; current source timestamps do not authenticate historical mappings.",
       "externalOrLiveEvidence": "Authoritative identity/mapping and price-basis evidence for real instruments.",
       "nextActionAndOwner": "Implementation owner: inventory actual ingress and test ambiguous aliases/DST/half-day controls."
     },

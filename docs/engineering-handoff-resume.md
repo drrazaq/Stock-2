@@ -1,3 +1,5 @@
+> **Market ingress follow-up:** [Impossible calendar clocks rejected through the actual watcher caller](market-ingress-calendar-continuation.md), with synthetic DST/half-day controls. Separate branch-only repair; real DST evidence still pending.
+
 > **Source-bound follow-up:** [Actual news ingress now bounded without treating failure as empty](source-ingestion-bounds-continuation.md). Separate development commit; not in the inactive SEC patch. No acceptance increase or production change.
 
 > **Current source integration:** [Native SEC acceptance-response join and pinned cross-run lineage](native-sec-acceptance-lineage.md); [all16open-row closure board](acceptance-closure-board.md). Exact inactive v2 patch and synthetic caller evidence are linked there. Acceptance24/40; no row closed. Production accounting/watcher deployment evidence retained; natural watcher/DST evidence pending. No new production changes, source calls or capture.
