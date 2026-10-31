@@ -1,0 +1,28 @@
+{
+  "kind": "WATCHER_DATE_FIXTURE_REPAIR_V1",
+  "productionSourceTested": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+  "before": {
+    "cases": 20,
+    "passed": 12,
+    "failed": 8,
+    "status": "HISTORICAL_KNOWN_DATE_DEPENDENT_FAILURES_NOT_ERASED"
+  },
+  "after": {
+    "incidentCases": 11,
+    "resilienceCases": 9,
+    "passed": 20,
+    "failed": 0
+  },
+  "files": {
+    "test/watcher-incident-revision.test.mjs": "77c2052f08cb9705486bac317441dae57b798d1097f143622fa296e5ee2b1e76",
+    "test/watcher-resilience.test.mjs": "eacaf971d069c2ee6d3ae66a2ff40465e8f65c069a1009cfbd85b0fc60b05b1b"
+  },
+  "assertionsWeakened": false,
+  "runtimeChanged": false,
+  "strategyChanged": false,
+  "productionChanged": false,
+  "providerCalls": 0,
+  "realMessages": 0,
+  "fixtureBehavior": "Pin Date constructor and Date.now, inherited radar child and synthetic price clock to same2026-10-30session; retain real elapsed time and existing retry shift.",
+  "logs": "/workspace/milestones/native-incremental/fixture-{incident,resilience}.log"
+}

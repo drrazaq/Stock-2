@@ -1,3 +1,5 @@
+> **SEC hotfix DEPLOYED:** `bd70f5a76172f369e9dff1096eba0e526c0e3fdc`, normal push CI PASS ([deployment record](https://github.com/drrazaq/Stock-2/blob/ac352357791e4b98685a11e4c4458a44da687f8b/docs/sec-request-hotfix-deployment-result.md)). Ordinary122files/1,196cases and9additional cases passed; historical deployment gated12/20result retained. Separate development fixture clock repair now passes20/20against the deployed source. Natural-run/DST/SEC/submissions/delivery checks still pending; shadow/live capture inactive.
+
 > **Execution-contract follow-up:** [Actual earnings/event fill plans now retain source stop and label owner/unresolved variants](drift-plan-stop-contract-continuation.md). Branch-only; no strategy endorsement, historical rewrite or production deployment. EXEC-03 remains OPEN.
 
 > **Market ingress follow-up:** [Impossible calendar clocks rejected through the actual watcher caller](market-ingress-calendar-continuation.md), with synthetic DST/half-day controls. Separate branch-only repair; real DST evidence still pending.
