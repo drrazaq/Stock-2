@@ -1,0 +1,90 @@
+{
+  "kind": "INACTIVE_NATIVE_SEC_INCREMENTAL_HANDOFF_VERIFICATION_V1",
+  "runtimeSourceSha": "cbad6a9c0140b0da2f91c78cc45779769be5e237",
+  "productionBase": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+  "patchSha256": "0afd4a1cf621725af086d0a10d242f633c93b74c3d14882de626454a43c1dabd",
+  "manifestSha256": "d6c9f5c3278e1d41c3f706a1fc973f1a08df7f96e2f1333e5e303847f5df0130",
+  "items": {
+    "boundedIncrementalAppend": "COMPLETE_OFFLINE",
+    "actualWatcherOffOn": "COMPLETE_OFFLINE",
+    "timelyPinnedPrefixGuardedCapture": "COMPLETE_OFFLINE",
+    "originalClockAcceptanceRevisionRestartPartialControls": "COMPLETE_OFFLINE"
+  },
+  "development": {
+    "files": 211,
+    "cases": 1961,
+    "skipped": 0,
+    "failures": []
+  },
+  "productionMainPlusExactPatch": {
+    "files": 123,
+    "cases": 1205,
+    "skipped": 0,
+    "failures": []
+  },
+  "focused": {
+    "incremental": 8,
+    "actualWatcher": 7,
+    "timelyHandoff": 3,
+    "nativeEvents": 9,
+    "nativeLineage": 9,
+    "guardedWrapper": 14,
+    "productionGatedIncident": 11,
+    "productionGatedResilience": 9
+  },
+  "actualWatcherLongSyntheticSession": {
+    "synthetic": true,
+    "requestsOff": 517,
+    "requestsOn": 517,
+    "legacyRowsOff": 1,
+    "legacyRowsOn": 1,
+    "heartbeats": 331,
+    "writer": {
+      "fullValidations": 1,
+      "fullRecordReads": 0,
+      "deltaRecordReads": 0,
+      "tailRecordReads": 184,
+      "appends": 185
+    },
+    "nativeResponses": 185,
+    "legacyDecisionsEqual": true,
+    "genuineAdmissions": 0
+  },
+  "python": {
+    "tests": 30,
+    "failures": 0
+  },
+  "syntax": {
+    "files": 270,
+    "failures": []
+  },
+  "logSha256": {
+    "development/node.log": "b47ca8df482645c387fe8c89f5ab8e5f9c829ec36a87006be9d8f518dc6e8d88",
+    "production-plus-v3/node.log": "04fc46b69708183f4d113b5dbc63c58751fcc44af56a1557314372453e323824",
+    "native-sec-incremental-verified.log": "52f67843c395af696e0dfd9f42bd81be1832eadf699e50f4af8c203f0872214b",
+    "native-sec-actual-watcher-verified.log": "160668050bd9040c54d5a0bc28d44ac5a4d59b0c5a3e833b90531c389b32302a",
+    "native-sec-handoff-verified.log": "c8d2e9bbe390ef1dd65f6813dd8933103524916f05423a711dd34eab207b4389",
+    "production-gated-incident.log": "6398e08187c461d247938a5956b5f88a72363972b4dba1d52712bc409a1b163f",
+    "production-gated-resilience.log": "2d05cdf31570eb68b0b445572f5d503fdfb4d67c8b86b0aec16c74153a8e4878",
+    "python.log": "1067fffb3c13eeab8492070812c32766100e464d6dedff95c2dfe720ac80fa0f"
+  },
+  "acceptanceAdded": 0,
+  "accepted": 24,
+  "total": 40,
+  "genuineAdmissions": 0,
+  "productionChanged": false,
+  "shadowInstalled": false,
+  "liveCaptureActivated": false,
+  "providerCalls": 0,
+  "syntheticLocalRequestsOnly": true,
+  "passiveNaturalRun": "PENDING_NO_NEW_RUN_OBSERVED",
+  "remainingEngineering": [
+    "Trusted inactive live-host/client binding and durable cross-job independently pinned parent transport",
+    "All-source materiality/revision bounds, remaining MARKET-03 normalization and EXEC-03 lane/spec/cost/size/liquidity matrix"
+  ],
+  "externalDependencies": [
+    "Official SIP entitlement and reference/quote retention scope",
+    "Authoritative current identity/industry and ZAD source evidence",
+    "Separate dated reference-preparation and calibration approval; no execution authorized"
+  ]
+}

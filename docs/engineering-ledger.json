@@ -5288,44 +5288,27 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "OFFLINE_NATIVE_SEC_ACCEPTANCE_LINEAGE_IMPLEMENTED_INACTIVE",
-    "runtimeSourceSha": "e66565cfff57e139243d186364d51a38ed479749",
+    "status": "OFFLINE_NATIVE_INCREMENTAL_TIMELY_HANDOFF_VERIFIED_INACTIVE",
+    "runtimeSourceSha": "cbad6a9c0140b0da2f91c78cc45779769be5e237",
     "closureBoard": "docs/acceptance-closure-board.md",
-    "review": "docs/native-sec-acceptance-lineage.md",
-    "patchManifest": "docs/validation/native-sec-shadow-production-manifest-v2.json",
+    "review": "docs/native-sec-incremental-handoff-checkpoint.md",
+    "patchManifest": "docs/validation/native-sec-shadow-production-manifest-v3.json",
+    "verification": "docs/validation/native-sec-incremental-handoff-verification.json",
     "acceptanceAdded": 0,
     "genuineAdmissions": 0,
     "productionChanged": false,
     "providerRequestsAdded": 0,
-    "offlineEngineeringRemaining": [
-      "Trusted inactive live host/client and producer artifact selection/download, independent immutable run/source/digest derivation",
-      "Real artifact-client contract/failure handling and authenticated current reference provenance",
-      "Remaining all-source bounds/materiality/revision matrix, all-provider normalization and actual cross-lane plan/spec/cost/size/liquidity comparisons"
-    ],
-    "externalDependencies": [
-      "Official latest SIP account/session/universe and retention evidence",
-      "Authoritative current identity/industry/ZAD and permitted reference use",
-      "Separately reviewed dated reference preparation and calibration authorization"
-    ],
-    "nextExecutableTask": "Prepare separate inactive colocated read-only native handoff: actual tee\u2192committed prefix\u2192trusted pinned reader\u2192guarded capture, early enrollment clocks, restarts/partial/revision/late failures, no new provider or message operations. Existing end-of-run upload is too late. Then remaining MARKET-03 ingress and EXEC-03 actual lane/spec contracts.",
-    "verification": "docs/validation/native-sec-acceptance-lineage-verification.json",
-    "passiveWatcher": {
-      "observedProductionMain": "a4e88a3eb7ddaf3e7506bc82bd0fb1e4883c1958",
-      "lastScheduledIgnitionRun": 41072889693,
-      "lastScheduledRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
-      "postDeploymentScheduledRunObserved": false,
-      "novemberDST": "PENDING_NATURAL_RUN",
-      "manualDispatches": 0
-    },
     "localVerification": {
       "development": {
-        "files": 208,
-        "cases": 1934,
+        "files": 211,
+        "cases": 1961,
+        "skipped": 0,
         "failures": []
       },
       "productionMainPlusExactPatch": {
-        "files": 122,
-        "cases": 1191,
+        "files": 123,
+        "cases": 1205,
+        "skipped": 0,
         "failures": []
       },
       "python": {
@@ -5333,35 +5316,27 @@
         "failures": 0
       },
       "syntax": {
-        "files": 269,
+        "files": 270,
         "failures": []
       }
     },
-    "newsSourceBoundsContinuation": {
-      "implementationSource": "0f29b059a7d67537a773b440805b67fc6d346877",
-      "evidence": "docs/validation/news-source-bounds-verification.json",
-      "sourceReview": "docs/source-ingestion-bounds-continuation.md",
-      "acceptanceAdded": 0,
-      "status": "PUBLISHED_36811e55_ALL_5_EXACT_CI_PASS"
-    },
-    "marketCalendarContinuation": {
-      "source": "80d13569557e2761169ccc52f76f804bd405fc30",
-      "evidence": "docs/validation/market-ingress-calendar-verification.json",
-      "acceptanceAdded": 0,
-      "status": "OFFLINE_VERIFIED_PENDING_FINAL_EXACT_COMMIT_CI"
-    },
-    "priorPublishedExactCI": {
-      "source": "36811e55f74b2d04fd7a9386fa6878f1d0b771c1",
-      "applicableChecksPassed": 5,
-      "testsRun": 41184487256,
-      "note": "Final calendar/docs publication requires its own SHA checks; do not borrow this PASS."
-    },
-    "driftPlanContinuation": {
-      "source": "fb5850f519fcb6f81ae04a637431ae91d014d01f",
-      "evidence": "docs/validation/drift-plan-stop-contract-verification.json",
-      "acceptanceAdded": 0,
-      "status": "FOCUSED_VERIFIED_CURRENT_FULL_CHECKS_PENDING",
-      "productionChanged": false
+    "offlineEngineeringRemaining": [
+      "Trusted inactive live-host/client binding and durable cross-job independently pinned parent transport",
+      "All-source materiality/revision bounds, remaining MARKET-03 normalization and EXEC-03 lane/spec/cost/size/liquidity matrix"
+    ],
+    "externalDependencies": [
+      "Official SIP entitlement and reference/quote retention scope",
+      "Authoritative current identity/industry and ZAD source evidence",
+      "Separate dated reference-preparation and calibration approval; no execution authorized"
+    ],
+    "nextExecutableTask": "Prepare separately reviewed inactive co-located live host/client and durable parent transport using the completed pre-quote port; do not bypass rehearsal guard or activate. Then continue source materiality/normalization and actual plan/spec contracts. No repeated artifact audit or rejected-strategy adapters.",
+    "passiveWatcher": {
+      "observedProductionMain": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+      "lastScheduledIgnitionRun": 41072889693,
+      "lastScheduledRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "postDeploymentScheduledRunObserved": false,
+      "novemberDST": "PENDING_NATURAL_RUN",
+      "manualDispatches": 0
     }
   },
   "shareSupplyCaller": {
@@ -7319,5 +7294,82 @@
     "shadowActivated": false,
     "accountingChanged": false,
     "acceptanceAdded": 0
+  },
+  "preIncrementalHandoff_latestSessionCheckpoint": {
+    "status": "OFFLINE_NATIVE_SEC_ACCEPTANCE_LINEAGE_IMPLEMENTED_INACTIVE",
+    "runtimeSourceSha": "e66565cfff57e139243d186364d51a38ed479749",
+    "closureBoard": "docs/acceptance-closure-board.md",
+    "review": "docs/native-sec-acceptance-lineage.md",
+    "patchManifest": "docs/validation/native-sec-shadow-production-manifest-v2.json",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
+    "productionChanged": false,
+    "providerRequestsAdded": 0,
+    "offlineEngineeringRemaining": [
+      "Trusted inactive live host/client and producer artifact selection/download, independent immutable run/source/digest derivation",
+      "Real artifact-client contract/failure handling and authenticated current reference provenance",
+      "Remaining all-source bounds/materiality/revision matrix, all-provider normalization and actual cross-lane plan/spec/cost/size/liquidity comparisons"
+    ],
+    "externalDependencies": [
+      "Official latest SIP account/session/universe and retention evidence",
+      "Authoritative current identity/industry/ZAD and permitted reference use",
+      "Separately reviewed dated reference preparation and calibration authorization"
+    ],
+    "nextExecutableTask": "Prepare separate inactive colocated read-only native handoff: actual tee\u2192committed prefix\u2192trusted pinned reader\u2192guarded capture, early enrollment clocks, restarts/partial/revision/late failures, no new provider or message operations. Existing end-of-run upload is too late. Then remaining MARKET-03 ingress and EXEC-03 actual lane/spec contracts.",
+    "verification": "docs/validation/native-sec-acceptance-lineage-verification.json",
+    "passiveWatcher": {
+      "observedProductionMain": "a4e88a3eb7ddaf3e7506bc82bd0fb1e4883c1958",
+      "lastScheduledIgnitionRun": 41072889693,
+      "lastScheduledRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "postDeploymentScheduledRunObserved": false,
+      "novemberDST": "PENDING_NATURAL_RUN",
+      "manualDispatches": 0
+    },
+    "localVerification": {
+      "development": {
+        "files": 208,
+        "cases": 1934,
+        "failures": []
+      },
+      "productionMainPlusExactPatch": {
+        "files": 122,
+        "cases": 1191,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 269,
+        "failures": []
+      }
+    },
+    "newsSourceBoundsContinuation": {
+      "implementationSource": "0f29b059a7d67537a773b440805b67fc6d346877",
+      "evidence": "docs/validation/news-source-bounds-verification.json",
+      "sourceReview": "docs/source-ingestion-bounds-continuation.md",
+      "acceptanceAdded": 0,
+      "status": "PUBLISHED_36811e55_ALL_5_EXACT_CI_PASS"
+    },
+    "marketCalendarContinuation": {
+      "source": "80d13569557e2761169ccc52f76f804bd405fc30",
+      "evidence": "docs/validation/market-ingress-calendar-verification.json",
+      "acceptanceAdded": 0,
+      "status": "OFFLINE_VERIFIED_PENDING_FINAL_EXACT_COMMIT_CI"
+    },
+    "priorPublishedExactCI": {
+      "source": "36811e55f74b2d04fd7a9386fa6878f1d0b771c1",
+      "applicableChecksPassed": 5,
+      "testsRun": 41184487256,
+      "note": "Final calendar/docs publication requires its own SHA checks; do not borrow this PASS."
+    },
+    "driftPlanContinuation": {
+      "source": "fb5850f519fcb6f81ae04a637431ae91d014d01f",
+      "evidence": "docs/validation/drift-plan-stop-contract-verification.json",
+      "acceptanceAdded": 0,
+      "status": "FOCUSED_VERIFIED_CURRENT_FULL_CHECKS_PENDING",
+      "productionChanged": false
+    }
   }
 }
