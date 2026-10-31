@@ -16,9 +16,19 @@ export async function orchestratePinnedCapture({schedule,clock=SYSTEM_CAPTURE_CL
  if(time()<schedule.warmupAt)await clock.sleep(schedule.warmupAt-time());
  let ready=false;for(let polls=0;polls<=21&&time()<=schedule.latestLaunchAt;polls++){checkPin();if(!healthy())break;try{ready=await prefixReady(new Date(time()).toISOString());}catch{ready=false;}if(ready&&time()<=schedule.latestLaunchAt)break;ready=false;if(time()<schedule.latestLaunchAt)await clock.sleep(Math.min(1000,schedule.latestLaunchAt-time()));else break;}
  if(!ready)return {status:'NATIVE_PREFIX_NOT_READY_BY_START',captureStarted:false,deadline:schedule.deadline};checkPin();need(time()<=schedule.latestLaunchAt,'HOST_LATEST_START');
- const capture=startCapture(),deadline=new Promise(resolve=>{
+ const capture=startCapture();let closed=false,monitorTimer,controlActive=true;
+ const exited=Promise.resolve(capture.completion).then(code=>{closed=true;return code;});
+ const awaitClose=()=>Promise.race([exited.catch(()=>new Promise(()=>{})),new Promise(resolve=>timers.push(clock.setTimeout(resolve,2000)))]);
+ const control=new Promise((_,reject)=>{const inspect=()=>{if(!controlActive)return;try{time();checkPin();need(healthy(),'HOST_SOURCE_OR_RESOURCE_UNHEALTHY');}catch(error){reject(error);return;}monitorTimer=clock.setTimeout(inspect,1000);};monitorTimer=clock.setTimeout(inspect,1000);});
+ const deadline=new Promise(resolve=>{
   timers.push(clock.setTimeout(()=>capture.terminate('SIGTERM'),Math.max(0,schedule.terminateAt-time())));
   timers.push(clock.setTimeout(()=>{capture.terminate('SIGKILL');resolve({status:'CAPTURE_DEADLINE',captureStarted:true,deadline:schedule.deadline});},Math.max(0,schedule.deadline-time())));
  });
- try{const outcome=await Promise.race([capture.completion.then(code=>({status:time()>=schedule.terminateAt?'CAPTURE_DEADLINE':code===0?'CAPTURE_FINISHED':'CAPTURE_FAILED',captureStarted:true,deadline:schedule.deadline})),deadline]);checkPin();return outcome;}finally{for(const timer of timers)clock.clearTimeout(timer);}
+ try{const outcome=await Promise.race([exited.then(code=>({status:time()>=schedule.terminateAt?'CAPTURE_DEADLINE':code===0?'CAPTURE_FINISHED':'CAPTURE_FAILED',captureStarted:true,deadline:schedule.deadline})),deadline,control]);if(outcome.status==='CAPTURE_DEADLINE'&&!closed)await awaitClose();checkPin();return {...outcome,shutdownConfirmed:closed};}
+ catch(error){
+  // A failed completion port, changed plan or unhealthy source must not clear
+  // the deadline while leaving an orphan capture process. Never signal source.
+  if(!closed){capture.terminate('SIGTERM');await Promise.race([exited.catch(()=>new Promise(()=>{})),new Promise(resolve=>timers.push(clock.setTimeout(resolve,2000)))]);if(!closed){capture.terminate('SIGKILL');await awaitClose();}}
+  return {status:'CAPTURE_CONTROL_FAILED',reason:['HOST_CLOCK_REGRESSION','HOST_PLAN_CHANGED','HOST_SOURCE_OR_RESOURCE_UNHEALTHY'].includes(error.message)?error.message:'HOST_CAPTURE_COMPLETION_FAILED',captureStarted:true,shutdownConfirmed:closed,deadline:schedule.deadline};
+ }finally{controlActive=false;clock.clearTimeout(monitorTimer);for(const timer of timers)clock.clearTimeout(timer);}
 }
