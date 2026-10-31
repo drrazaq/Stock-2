@@ -1190,6 +1190,12 @@ function sourcePlanAnchor(row,key='buyLo',targets=[],entry=null){
  if(row.buyHi!==undefined&&(!validPlanPrice(row.buyHi)||row.buyHi<row[key]||entry!==null&&entry>row.buyHi))throw Error('fill outside source entry range');
  if(!validPlanPrice(row[key])||!validPlanPrice(row.stop)||row.stop>=row[key]||targets.some(k=>row[k]!=null&&(!validPlanPrice(row[k])||row[k]<=row[key]))||row.half!==undefined&&typeof row.half!=='boolean'||['maxHold','hold'].some(k=>row[k]!=null&&(!Number.isInteger(row[k])||row[k]<=0)))throw Error('invalid source plan');
 }
+function driftSourcePlan(row,entry,source){
+ sourcePlanAnchor(row,'buyLo',[],entry);
+ // Both registered studies use the original reaction-day stop, not a fill-shifted distance.
+ if(entry<=row.stop||(entry-row.stop)/entry>0.15)return {kind:'manual',stop:null,t1:null,t2:null,planStatus:'UNRESOLVED_SOURCE_PLAN',planWhy:'FILL_OUTSIDE_REGISTERED_DRIFT_STOP_RISK',planSource:source,planVariant:'UNRESOLVED_DRIFT_ENTRY'};
+ return {kind:'entry',exitMA:20,maxHold:row.hold||40,stop:row.stop,t1:null,t2:null,exitBelow:row.sma20,planSource:source,planVariant:'UNSHIFTED_SOURCE_STOP',planNote:'Original source stop retained, not shifted with your reported fill. Source identity, executable quotes, costs and strategy evidence remain unverified.'};
+}
 function planFor0(sym, entry, sig) {   // levels for a new position, scaled from last night's plan to the price you actually paid
   const rows=k=>Array.isArray(sig?.[k])?sig[k].filter(x=>x&&typeof x==='object'):[];
   const q=rows('quick').find(x=>x.sym===sym),b=rows('stocks').find(x=>x.sym===sym);
@@ -1198,8 +1204,8 @@ function planFor0(sym, entry, sig) {   // levels for a new position, scaled from
   const ld=rows('leaders').find(x=>x.sym===sym);if(!q&&!b&&ld)sourcePlanAnchor(ld,'buyLo',[],entry);
   if (!q && !b && ld) return { kind: 'leader', stop: +(entry - (ld.buyLo - ld.stop)).toFixed(2), t1: null, t2: null };
   if (b) return { kind: 'entry', key: b.key || null, maxHold: b.maxHold || null, stop: +(entry - (b.buyLo - b.stop)).toFixed(2), t1: b.target ? +(entry * b.target / b.buyLo).toFixed(2) : null, t2: null, ...(b.target ? { tmode: b.half ? 'half' : 'all' } : {}), ...(b.exitBelow ? { exitBelow: +b.exitBelow.toFixed(2) } : {}) };
-  const ev=rows('evt').find(x=>x.sym===sym&&x.live);if(ev&&!rows('pead').some(x=>x.sym===sym&&x.live)){sourcePlanAnchor(ev,'buyLo',[],entry);return { kind: 'entry', exitMA: 20, maxHold: ev.hold || 40, stop: +(entry - (ev.buyLo - ev.stop)).toFixed(2), t1: null, t2: null, exitBelow: ev.sma20 };}
-  const pe=rows('pead').find(x=>x.sym===sym&&x.live);if(pe){sourcePlanAnchor(pe,'buyLo',[],entry);return { kind: 'entry', exitMA: 20, maxHold: pe.hold || 40, stop: +(entry - (pe.buyLo - pe.stop)).toFixed(2), t1: null, t2: null, exitBelow: pe.sma20 };}
+  const ev=rows('evt').find(x=>x.sym===sym&&x.live);if(ev&&!rows('pead').some(x=>x.sym===sym&&x.live)){return driftSourcePlan(ev,entry,'events-study');}
+  const pe=rows('pead').find(x=>x.sym===sym&&x.live);if(pe){return driftSourcePlan(pe,entry,'earnings-study');}
   { const HZ = readJson('data/horizons.json', null), r = HZ && HZ.status === 'OK' ? Object.values(HZ.results).filter(x => x.verdict === 'PROMISING' && (HZ.today[x.setup] || []).includes(sym))[0] : null; if(r){if(HZ.rules?.stopAt!==0.75||!Number.isInteger(r.hold)||r.hold<=0)throw Error('unverified horizon specification');return {kind:'entry',maxHold:r.hold,stop:+(entry*0.75).toFixed(2),t1:null,t2:null,planSource:'horizons',planVariant:'BROKER_STOP_VS_TESTED_DAILY_CLOSE_NEXT_OPEN',planNote:'Broker stop is a safety variant. The study exits after a daily close below this level, at the next open; its returns do not validate an intraday stop.'};} }
   { const OD = readJson('data/octopus-daily.json', null), z = OD && OD.live && OD.today ? OD.today.picks.find(x => x.sym === sym) : null; if(z){sourcePlanAnchor(z,'c');return { kind: 'entry', maxHold: 10, stop: +(entry - (z.c - z.stop)).toFixed(2), t1: null, t2: null };}}
   const rd = readJson('data/intraday-radar.json', null), rc = rd && (rd.candidates || []).find(x => x.sym === sym && x.levels && x.group);
@@ -3409,7 +3415,7 @@ async function tgCommands(sig) {
           P.stopWhy += '. I will raise it if the stock rises, never lower it.';
         }
       }
-      const st = num(/stop\s+(\d+(?:\.\d+)?)/i), tg = num(/target\s+(\d+(?:\.\d+)?)/i); if(st!==null&&!validPlanPrice(st)||tg!==null&&!validPlanPrice(tg)){out.push(sym+': not recorded. Stop and target must be finite positive prices.');continue;} if (st) { P.stop = st; delete P.stopWhy; P.own = true; } if (tg) { P.t1 = tg; P.ownT = true; }
+      const st = num(/stop\s+(\d+(?:\.\d+)?)/i), tg = num(/target\s+(\d+(?:\.\d+)?)/i); if(st!==null&&!validPlanPrice(st)||tg!==null&&!validPlanPrice(tg)){out.push(sym+': not recorded. Stop and target must be finite positive prices.');continue;} if (st) { P.stop = st; delete P.stopWhy; P.own = true; if(P.planVariant==='UNSHIFTED_SOURCE_STOP'){P.planVariant='OWNER_STOP_OVERRIDE';P.planNote='Your explicit stop overrides the source stop. This owner variant is not validated by the registered drift result.';} } if (tg) { P.t1 = tg; P.ownT = true; }
       if(['leader dip','try small'].includes(P.src)){for(const key of ['planNote','planVariant','planSource','planStatus','planWhy'])delete P[key];}
       guideTargets(P);if(['stop','t1','t2','target','exitBelow'].some(key=>P[key]!=null&&!validPlanPrice(P[key]))){out.push(sym+': not recorded. The attached plan contains an invalid price; send your fill with explicit valid stop and target prices.');continue;} P.mktAtBuy = sig && sig.market ? (sig.market.above50 === false || sig.market.up === false ? 'weak' : 'rising') : null; P.orig = { d: P.since, stop: P.stop || null, t1: P.t1 || null, tmode: P.tmode || null, exitBelow: P.exitBelow || null, kind: P.kind, key: P.key || null, planSource:P.planSource||null,planVariant:P.planVariant||null,planStatus:P.planStatus||null,logic: L.LOGIC_VERSION };   // the plan at the buy, archived for honest scoring
       { const old = pos[sym]; if (old && old.entry > 0) out.push('CORRECTED ' + sym + ': your earlier record (bought ' + money(old.entry) + ' on ' + (old.since || '?') + ') is REPLACED by this one (' + money(entry) + '). If you bought MORE shares instead, send:  added ' + sym + ' PRICE SHARES'); }   // (28 Oct) a repeated buy line corrects, and says so
