@@ -4994,7 +4994,7 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "sourceSha": "2ea76ce05f01b2c8867b4683773946ace5d91f34",
+    "sourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
     "status": "INTEGRATED_D3_EXECUTION_HISTORY_AND_STARTUP_CORRECTION_OFFLINE_VERIFIED",
     "evidence": "docs/validation/d3-session-history-verification.json",
     "acceptanceAdded": 0,
@@ -5314,7 +5314,7 @@
   },
   "latestSessionCheckpoint": {
     "status": "INTEGRATED_D3_EXECUTION_HISTORY_AND_STARTUP_CORRECTION_OFFLINE_VERIFIED",
-    "runtimeSourceSha": "2ea76ce05f01b2c8867b4683773946ace5d91f34",
+    "runtimeSourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
     "review": "docs/d3-session-history-review.md",
     "patchManifest": "docs/validation/d3-session-history-manifest.json",
     "verification": "docs/validation/d3-session-history-verification.json",
@@ -5375,6 +5375,27 @@
         "bindingMatrix": 55,
         "preservedD1D2FullSchedule": 13,
         "legacyParentCompatibility": 20
+      }
+    },
+    "firstPublishedCI": {
+      "sha": "f34c4641e422fdd09a66c783d3209bcff1dc326b",
+      "runId": 41242565418,
+      "result": "FAIL",
+      "failedCase": "actual colocated host success-contended",
+      "otherChecksPassed": 4,
+      "logSha256": "0517cd9d210e89303f97b2980bb74119bcdca65f79168161376636fdf8404869"
+    },
+    "bootstrapFixtureCorrection": {
+      "cause": "Producer could finish before slow worker requested artificial overlap; missed test rendezvous, distinct from real reader retry defect",
+      "reproduction": "6000ms delayed worker on first published fixture: SYNTHETIC_WRITER_NOT_READY,331 producer heartbeats,writerCommittedfalse",
+      "repair": "Bounded rendezvous before second archive commit acquires lock, then same500ms lock hold; no production/runtime change or relaxed assertion",
+      "normalStress": "PASS",
+      "delayedWorkerStress": "PASS",
+      "logs": {
+        "ci-synchronization-repro.log": "5850c31846bfdb0097da73e22d6679e09404cf620be6d6aeb1b702ba293e6309",
+        "ci-synchronization-repro/capture/synthetic-read-failure.json": "82c900c603e6e64f8a06b308bf8ce972c7621fb7f8d69a9e9f84a02dd07f5c7d",
+        "ci-synchronization-fixed.log": "a29966bcd60b255183b3f1173678c02991948cceeac1ae782fa1dd9038551904",
+        "ci-delayed-bootstrap-fixed.log": "a9f55c7a01911784a84676e353bebe5b6992e7662ac45d12efdfc378c5fc6ea7"
       }
     }
   },

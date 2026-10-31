@@ -1,6 +1,6 @@
 # Integrated inactive D3 history and startup-race correction
 
-Runtime source `2ea76ce05f01b2c8867b4683773946ace5d91f34`, based on independently reviewed guard/client checkpoint `f49c4ef34eeaa045a9e6e5e8709c6c2ce99a7740`. No deployment, real credentials, authenticated production history/log request, provider collection, dispatch, delivery or policy adoption occurred. Public official documentation acquisition was routine preparation.
+Runtime source `04e70e257a9eacd656430261ebc3610a43670f5e`, based on independently reviewed guard/client checkpoint `f49c4ef34eeaa045a9e6e5e8709c6c2ce99a7740`. No deployment, real credentials, authenticated production history/log request, provider collection, dispatch, delivery or policy adoption occurred. Public official documentation acquisition was routine preparation.
 
 [Exact integrated manifest](validation/d3-session-history-manifest.json) · [verification](validation/d3-session-history-verification.json) · [startup regression evidence](validation/d3-startup-race-evidence.json).
 
@@ -56,3 +56,9 @@ The expanded initial host matrix passed standalone, but exceeded the local runne
 ## Final verification
 
 Cold full Node suite:221files/2,141cases,0failures/skips. Python30 and syntax280 pass. Focused contract27, existing lineage17, prefix3, host12, binding55, preserved full-schedule13 and legacy-parent20 cases pass. Exact patched checkout:27 contract,17 lineage,3 prefix,3 actual-host history and3 actual-binding history cases, plus the original package-pin check, pass. All25 runtime/dependency Git blobs and all20 patched file bytes match. D1/D2, rehearsal worker, frozen evaluator/capture rule, production/accounting/messaging source and installed workflows are byte-preserved. Final publication additionally requires ordinary exact-commit CI; no live behavior is inferred from these offline results.
+
+## First CI result and controlled-fixture synchronization correction
+
+The first published checkpoint f34c4641 passed four checks but failed the new contention test in CI. The first fault injector waited for a reader only if the producer happened to remain active. A fast producer could complete all331 heartbeats before a slow worker requested the artificial overlap. A6000ms bootstrap-delay reproduction produced `SYNTHETIC_WRITER_NOT_READY`, writerCommittedfalse and the same zero-quote failure. This was not accepted as a safe startup or a passed checkpoint. The failing CI log and reproduction are preserved.
+
+The test now rendezvous with the reader before the next native commit acquires its lock, with a bounded10second synthetic wait, then holds that legitimate commit for the same500ms. Normal and deliberately delayed-worker tests both complete41 cycles and331 heartbeats with unchanged assertions. Bounded diagnostics are included in future assertion failures. All25 runtime/dependency files are byte-identical to f34; only two test files and inactive pins/evidence changed. The initial20ms runtime-reader defect and its bounded-retry repair remain separately documented. No D1/D2 timeout, runtime source, admission policy or production behavior changed in this correction.

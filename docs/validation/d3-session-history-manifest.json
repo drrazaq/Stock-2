@@ -1,10 +1,10 @@
 {
   "kind": "INTEGRATED_INACTIVE_SESSION_HISTORY_AND_STARTUP_CORRECTION",
   "base": "f49c4ef34eeaa045a9e6e5e8709c6c2ce99a7740",
-  "runtimeSourceSha": "2ea76ce05f01b2c8867b4683773946ace5d91f34",
+  "runtimeSourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
   "priorComponentCheckpoint": "60731fcbaeb6af60c43f61b643538d3e02fccab1",
-  "patchPath": "docs/validation/d3-session-history.patch",
-  "patchSha256": "9ebc46681df646d977669138d55032759432238a889cadcee43408231dae3fcf",
+  "patchPath": "docs/validation/d3-session-history-v2.patch",
+  "patchSha256": "c09b3113c98bf277e21b5a0ef01644d0ec3dc5a2850d7aeef4284d943dc39d8c",
   "patchTarget": "DEVELOPMENT_ONLY_NOT_PRODUCTION_DEPLOYMENT",
   "sourcePatchFiles": [
     "capture-approved-binding.mjs",
@@ -91,18 +91,18 @@
     "test/approved-capture-fixture.mjs": "32103c352079c0854786a2491918c996e49baa386dbbb1bdb27e39fc40fa9c52",
     "test/github-history-contract.test.mjs": "55b6ae8fe7317e2a7fe7acf9e0b8b7c7a45a501a13a8575ca9da60acd58b909f",
     "test/github-history-fixture.mjs": "ecd13efea1c9f43aa7b1f945e6315f8c556848a52615ac30d42847a5149e676b",
-    "test/native-sec-colocated-host.test.mjs": "7ede22d20fa58bafca3c47be28fedd5e78a2f55e8717ed37793b05b0b06afb45",
+    "test/native-sec-colocated-host.test.mjs": "2e74ade04cd012b935c4918bd160c0e10bd0ebf1c09ab0bbcb07878081f1db49",
     "test/native-sec-colocated-prefix.test.mjs": "ecc3243ec601134c2d38f48319403e1228de59daae7b8ad6c4c4f77b4d44f153",
     "test/native-sec-lineage-history.test.mjs": "9e8f4ac88e4ced470f6ca7a55557a592eac195b6947409e053a899176359411b",
-    "test/native-sec-producer-fixture.mjs": "8fdfdfe0acfede2babb703bfffb3226a30d455b15371e5ca8d254aca6c1bc7c3",
-    "docs/validation/paper-capture-calibration.candidate.json": "2776efe9feaa51671415c8de12acd48b211a1abd960d9d5aa1209bba6a5abe1c",
-    "docs/validation/paper-capture-rehearsal.workflow.yml.proposed": "8fd7da3dbc9524e198e154da27c753bdf038670c8451cab8b13e18ef69065c9d",
-    "docs/validation/prospective-paper-capture-workflow.json": "220775059a72931b4a5bdf3cfa4967a974020d4e9b7dc96a3756d34bd9d4caeb",
-    "docs/validation/prospective-paper-capture-manifest.json": "63c9c0f7edaa5ae8874734b1da307cddce8f3cae97486cd3022ff9c2883d152c",
-    "docs/validation/approved-native-binding.candidate.json": "7974ba60266c4e152f59d5b2e4951bc593edca2afa410a68483b3021866fa6ce",
-    "docs/d3-session-history-review.md": "cbf7ac5759e344f70ce9f787cf4a96ed623525c9f150ef0c8cb992b7927af961",
+    "test/native-sec-producer-fixture.mjs": "2d10aa35267b497d9d44dbcf530cd99ad236a5f1b08b3cb00aa3527ddee04dcb",
+    "docs/validation/paper-capture-calibration.candidate.json": "d89bdb019e6f51e29614d501c2c8fdb57150fa3e45c3f25f0bc984068c5fb1ee",
+    "docs/validation/paper-capture-rehearsal.workflow.yml.proposed": "f10ad24bf24ea3714c5dfd086d33d3fb2b62e2057afd04af26b13c385a64cbc5",
+    "docs/validation/prospective-paper-capture-workflow.json": "83c9d9b1ad7934c2172d7df670607a8056b8da75cac57645fce8afe17544248d",
+    "docs/validation/prospective-paper-capture-manifest.json": "afc47df9de49b39694611e0d9af1a5adb763b4a2b290e0a722814b75bad69164",
+    "docs/validation/approved-native-binding.candidate.json": "3c59804fd2b3cf8c5cf42827305d9a8ea9a588d01a64e492bff7660784c8242c",
+    "docs/d3-session-history-review.md": "5492b611b9b388ccc54053006665569d5ee1ba7c091394c280e2bf5a6615221e",
     "docs/validation/github-actions-history-contract.json": "296e6973ea840ae6bb44b47d489eba85543efc4abb4d5e945522c0b159d4c8fb",
-    "docs/validation/d3-startup-race-evidence.json": "942f77f68409f92f6b1c31679901b885ba70746bd55831e94e5edc07057504cf",
+    "docs/validation/d3-startup-race-evidence.json": "0049318ed6adf14a1fccf996412a01f0f2c94522ae981ed359bd1e37323deb5b",
     "test/native-sec-schedule.test.mjs": "fae241f2a85d0ec5f7fb1e521e31f66bfc1e09734dee4b42eb853652dfdbf7a9",
     "test/native-sec-actual-watcher.test.mjs": "5d203d108b45b287b65c7682de092208817020d4d858a86623ad2f0d5e3be98e",
     "test/paper-capture-wrapper.test.mjs": "2ac2e0ec2ceb19c82bd3a673f54078f1f679cc26fcb46d211cc7243acbc5c2d3"
@@ -155,5 +155,12 @@
     "prospective-paper-capture.mjs": "c7f5f09e9e1416e620b650fce76ebacac8fa572618d468eb59d0be92998a439f",
     "ignition-watch.mjs": "a468a1381e89c5cf156dce9a8024e126e4d45b717959bf5c9f95819df0a17872",
     "scan.mjs": "70cd4899289368244ce463e55a557e0bdf2b302fee6a16b54ba3159fb77b75c2"
-  }
+  },
+  "priorPublishedAttempt": {
+    "sha": "f34c4641e422fdd09a66c783d3209bcff1dc326b",
+    "ci": "FOUR_PASS_TEST_FAILED_CONTROLLED_FIXTURE_SYNC",
+    "patchSha256": "9ebc46681df646d977669138d55032759432238a889cadcee43408231dae3fcf",
+    "patchPath": "docs/validation/d3-session-history.patch"
+  },
+  "runtimeUnchangedFromPriorPublished": true
 }

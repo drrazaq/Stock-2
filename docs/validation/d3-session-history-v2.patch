@@ -1,0 +1,896 @@
+diff --git a/capture-approved-binding.mjs b/capture-approved-binding.mjs
+index f851b146..a8689039 100644
+--- a/capture-approved-binding.mjs
++++ b/capture-approved-binding.mjs
+@@ -10,7 +10,8 @@ import {boundedSnapshotClient,reviewedArtifactClient} from './native-sec-bounded
+ import {createArtifactWireClient} from './artifact-wire-client.mjs';
+ import {createSameDayLineageClient,sameDayLineageEventPort,LINEAGE_STATES} from './native-sec-lineage-history.mjs';
+ import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
+-export const APPROVED_BINDING_CAPS=Object.freeze({parentRequests:32,captureHistoryRequests:1,providerRequests:41,artifactWireRequests:205,retries:0,shutdownMarginMs:30000,storageBytes:400*1024*1024,lineagePlainBytes:12*1024*1024,lineageSealedBytes:16*1024*1024,sourceContextBytes:1024*1024});
++export const APPROVED_BINDING_CAPS=Object.freeze({parentRequests:256,captureHistoryRequests:1,providerRequests:41,artifactWireRequests:205,retries:0,shutdownMarginMs:30000,storageBytes:400*1024*1024,lineagePlainBytes:12*1024*1024,lineageSealedBytes:16*1024*1024,sourceContextBytes:1024*1024});
++export const APPROVED_CONTROL_LIMITS=Object.freeze({historyContract:'SESSION_EXECUTION_HISTORY_V2',parentRequests:256,parentReceivedBytes:67108864,parentTotalMs:120000,parentMaxInFlight:4});
+ const need=(v,c)=>{if(!v)throw Error(c);};
+ const defaultClock={now:()=>Date.now(),sleep:ms=>new Promise(r=>setTimeout(r,ms)),setTimeout:(f,ms)=>setTimeout(f,ms),clearTimeout:t=>clearTimeout(t)};
+ const validSecret=s=>typeof s==='string'&&s.length>=1&&s.length<=32768;
+@@ -31,6 +32,7 @@ export function prepareApprovedBinding(options){
+  need(a.bindingReview?.version===1&&a.bindingReview.approved===true&&a.bindingReview.continuityPolicyApproved===false&&a.bindingReview.protocol==='EXISTING_STREAM_SEC_30M_V1'&&a.bindingReview.primaryAdmission==='DISABLED_PENDING_CONTINUITY_REVIEW','BINDING_SEPARATE_REVIEW');
+  need(immutableRead(entitlementFile,1024*1024).hash===entitlementSha256&&a.entitlements?.evidenceSha256===entitlementSha256,'BINDING_ENTITLEMENT_PIN');
+  need(a.native?.sourceSha===native.expectedSourceSha&&/^[a-f0-9]{40}$/.test(native.expectedSourceSha)&&native.expectedRunId===context.runId+'-1'&&a.native.runId===native.expectedRunId&&a.native.directorySuffix==='runtime/native-sec-events/'+native.expectedRunId&&path.isAbsolute(native.directory)&&native.directory.endsWith(path.sep+a.native.directorySuffix)&&Object.keys(native).sort().join('|')==='directory|expectedRunId|expectedSourceSha'&&Number.isSafeInteger(a.native.workflowId)&&a.native.workflowId>0,'BINDING_NATIVE_SCOPE');
++ need(a.controlLimits&&JSON.stringify(Object.entries(a.controlLimits).sort())===JSON.stringify(Object.entries(APPROVED_CONTROL_LIMITS).sort()),'BINDING_CONTROL_LIMITS');
+  const s=a.artifactScope;need(s&&httpsOrigin(s.resultsOrigin,'actions.githubusercontent.com')&&Array.isArray(s.storageOrigins)&&s.storageOrigins.length>=1&&s.storageOrigins.length<=4&&new Set(s.storageOrigins).size===s.storageOrigins.length&&s.storageOrigins.every(x=>httpsOrigin(x,'blob.core.windows.net')),'BINDING_ARTIFACT_ORIGINS');
+  const guard=prepareApprovedCaptureGuard({root,reviewRoot:options.reviewRoot,approvalFile,referenceFile:options.referenceFile,context,now:clock.now()}),workflow=immutableRead(path.join(options.reviewRoot,'.github/workflows/sec-paper-capture.yml'),65536),timeouts=[...workflow.bytes.toString().matchAll(/^ +timeout-minutes: ([0-9]+) *$/gm)];need(timeouts.length===1&&Number(timeouts[0][1])>=45&&Number(timeouts[0][1])<=360,'BINDING_WORKFLOW_TIME_BUDGET');const extra=immutableRead(entitlementFile,1024*1024);need(guard.approvalHash===approvalSha256&&extra.hash===entitlementSha256,'BINDING_INPUT_CHANGED');const revalidate=guard.revalidate;
+  guard.revalidate=(requireHistory=true)=>{revalidate(requireHistory);const b=immutableRead(entitlementFile,1024*1024);need(b.hash===extra.hash&&b.signature===extra.signature,'BINDING_ENTITLEMENT_CHANGED');};
+diff --git a/docs/validation/production-ignition-noop-workflow.yml b/docs/validation/production-ignition-noop-workflow.yml
+new file mode 100644
+index 00000000..a4e87a2b
+--- /dev/null
++++ b/docs/validation/production-ignition-noop-workflow.yml
+@@ -0,0 +1,77 @@
++name: Ignition watcher
++on:
++  schedule:
++    # 8:45 New York in summer. GitHub starts these 35-45 minutes late (first watched minute was 9:38-9:49 every day 16-27 Oct, 11:10 on
++    # 26 Oct), so the old 9:05 start missed the open and the 9:25 pre-market record. If early, the script waits for 9:25 (it accepts
++    # starts from 8:40). The second start covers winter time (from 2 Nov); in summer it queues behind the first (concurrency) and exits.
++    # Trade-off: on a day GitHub starts on time (8:45), the 345-minute run limit ends the watch at about 14:30 instead of 15:00.
++    - cron: '45 12 * * 1-5'
++    - cron: '45 13 * * 1-5'
++  workflow_dispatch:
++permissions:
++  contents: write
++concurrency: ignition
++jobs:
++  watch:
++    runs-on: ubuntu-latest
++    timeout-minutes: 355
++    env:
++      NODE_OPTIONS: --max-old-space-size=8192
++    steps:
++      - uses: actions/checkout@v4
++        with:
++          ref: main
++      - uses: actions/setup-node@v4
++        with:
++          node-version: 20
++      - uses: actions/cache/restore@v4
++        with:
++          path: fm-cache
++          key: fm-cache-none
++          restore-keys: fm-cache-
++      # Checks the whole market every minute for stocks starting to run. Alerts only rules that passed the minute test.
++      - shell: bash
++        run: |
++          set -o pipefail
++          node ignition-watch.mjs 2>&1 | tee run.log
++        env:
++          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
++          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
++          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
++          FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}   # (28 Oct) catalyst headlines for early-alert candidates only
++          TG_TOKEN: ${{ secrets.TG_TOKEN }}
++          TG_CHAT: ${{ secrets.TG_CHAT }}
++          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
++      # Durable per-stock ledger of today's 15%+ movers (the missed-runner autopsy reads it; no data calls).
++      - if: always()
++        continue-on-error: true
++        run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
++      - if: always()
++        run: |
++          set -euo pipefail
++          git config user.name "scanner"
++          git config user.email "scanner@users.noreply.github.com"
++          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/radar-v3-snap.json data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; true
++          git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
++          ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
++          [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
++      - if: failure()
++        env:
++          TG_TOKEN: ${{ secrets.TG_TOKEN }}
++          TG_CHAT: ${{ secrets.TG_CHAT }}
++        run: |
++          WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
++          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
++
++      - if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: watcher-evidence-${{ github.run_id }}-${{ github.run_attempt }}
++          path: |
++            data/ignition-runs/
++            data/radar-v3-snap.json
++            data/radar-v3-ledger.jsonl
++            data/radar-v3-ledger.jsonl.pending.json
++            runtime/watcher-message-state/
++          retention-days: 7
++          if-no-files-found: warn
+diff --git a/ignition-execution-contract.mjs b/ignition-execution-contract.mjs
+new file mode 100644
+index 00000000..9bacb2c2
+--- /dev/null
++++ b/ignition-execution-contract.mjs
+@@ -0,0 +1,217 @@
++// Reviewed deployed production source closure, not observation evidence.
++// Used only with authenticated workflow/job/log/tree proof; unknown revisions fail closed.
++export const PRODUCTION_NO_OBSERVATION={
++  "productionBase": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
++  "workflowSha256": "b5ebab71b7f6d33ceb4d41e965fe8247db81e610e6016b35272095fa87b43909",
++  "jobName": "watch",
++  "watcherStep": 5,
++  "lastDeclaredStep": 9,
++  "codeBlobSha1": {
++    "ignition-watch.mjs": "7e8b7b4f7854e6aba0a805cc40cb7ae4741961fc",
++    ".github/workflows/ignition.yml": "a4e87a2b4c551adff0420447e9419af5d23abe45",
++    "tests/instrument-type.test.mjs": "dc199221ace3731510a21fa0c5f548ed3e812ba7",
++    "account-replay-core.mjs": "5ab5d56cb9c4c15525ab079a55a7a8854efa2f0b",
++    "account-replay-lab.mjs": "04f668f3fbdfcaeb3b63825d8215cbce0d50a4a5",
++    "agent-a-core.mjs": "2413055bf17a88318d96d449fe5076f90950c5f6",
++    "agent-a-lab.mjs": "a8c0fc75fa562b88925e8e6caac7f6ab6fe04fea",
++    "agent-a-tgt-core.mjs": "e71f593c726dcbf1fd9272cf41ce5e9475ae9f80",
++    "agent-a-tgt-lab.mjs": "0fb0783c596b9f28ac1d39e1c03c93c8c8df1f31",
++    "alpaca-feed.mjs": "2e6682f745a1be9cf0403e7943535147dd62e01c",
++    "angles-core.mjs": "34dca8c866d1d252a49017ded1c5a19053986af2",
++    "angles-lab.mjs": "6b0826ed014b775f471b4e1838ce2d749f8c5599",
++    "anomaly-core.mjs": "48c690b7ea62ffc5f2b675e298d28a2aea79bfa2",
++    "anomaly-lab.mjs": "6d0d83b79b843fdc50e7920487a0789273d833f2",
++    "autolab.mjs": "23b72ce0524f1acc077ff4baf7c72db478a2eec2",
++    "blocked-runner-policy.mjs": "560f579baf57961385209ca178a5dde72a2a442f",
++    "calendar.mjs": "f5a9767df57a5eeabc1b5344500b576620fa6e9f",
++    "catalyst-core.mjs": "e19bc07142f41e9408670d7d49f80235b21c6f80",
++    "catalyst-integrity.mjs": "6073badd5fb368bb3107e956c24709d3135c9c4d",
++    "catalyst-lab.mjs": "d389ef380b1752b4ebcd6c359a171224ea7564d4",
++    "chain-core.mjs": "317319b9208cace17b5ccb2af57c5c438a8ccf43",
++    "chain-decoder.mjs": "795b9e004c234dc5b109d9346d265d734f1ad355",
++    "chain-ripple.mjs": "e832e53beefe64b335e2fa1533f38842e8e79d4d",
++    "chains.mjs": "64fc0732b43151b946449e750377a1ac89266379",
++    "comeback-core.mjs": "19f1c789f953d83a03dc80255b4460dce1ceabd4",
++    "comeback-lab.mjs": "2bd4fc5df19f34558ae455ee9e52e2f58791bc80",
++    "confluence-core.mjs": "b9dfd1a020cf77cb23b6b9bbde3060c8c7b4e86f",
++    "confluence-lab.mjs": "a2ca47f58c214296cfbc4df727751fada3562bb0",
++    "confluence-signals.mjs": "9ca58378323d92fb2a99d116644fafca16b25ae3",
++    "deals.mjs": "d4642f79ed479006c4fe649f07f8f643fb0f4843",
++    "decoded-core.mjs": "fe16d01f7f1d7828c15cdc850ddfdce5d2fc335d",
++    "decoded-lab.mjs": "6da74c0b18d77f4bc9435f82784257114916a356",
++    "decoded2-core.mjs": "c79be4bf7f4f58a583cb810f59a939a087a413c0",
++    "discover.mjs": "d2b04bed874820b4adcad78970b5bae7c0b738ca",
++    "discovery2-core.mjs": "a340b609857a3764e08c0574266a154bde3f3dac",
++    "discovery2.mjs": "4c6d6d0f3bc6d4d1dd9a50cb4fad7cd692aa3a7e",
++    "e16-absorption.mjs": "ebe72872ff71e05ec415588f50556b1a49080a38",
++    "early-alerts.mjs": "0263544009bdb8b692da9d7e70825b75e8651e67",
++    "early-wave-discovery.mjs": "67ea8b6e21fa92c6027f2ae1f692434972d62c81",
++    "earnings-study.mjs": "64696e20637fb5cba9e7dd7f2e7a2a3d06f1ccc0",
++    "edgar-feed.mjs": "8d0161761276492cb170fb9ea0e21ddb614d3fa6",
++    "event-orb-retest-bars.mjs": "49e1e05fd5302a882c53048951aa8505488f7915",
++    "event-orb-retest-core.mjs": "df8382a2436da93fc0c26fcafd178c12d319bbac",
++    "event-orb-retest-events.mjs": "7246f67ccefd2507cbb4825969298c05988a8cab",
++    "event-orb-retest-gates.mjs": "2c5ef9f03615b04cc82136ace0a12351ba2bda4f",
++    "event-orb-retest-library.mjs": "d209e3f4af5f6121bf4990a040f57319b89bf29e",
++    "event-orb-retest-paper-ledger.mjs": "a87415df694c23940acfefe0bad3f12c10c528a7",
++    "event-orb-retest-requests.mjs": "dec766f8e9844843d45a46f9331952e3ca01d587",
++    "event-orb-retest-study.mjs": "18603afb878417622a9346a877dcc9fe156883fc",
++    "events-study.mjs": "8707ca2a1b6b519e47434a7dae70eff3832c449b",
++    "evidence-core.mjs": "7f17274943828ce86262b07b4f9e1121121b36b8",
++    "ew-stack.mjs": "2852d9fd523c913a07d5aa8bdc80b6b0b8e7a5d7",
++    "exits.mjs": "7139663c57e8bcf57b414ea49757c424af239b95",
++    "expert-core.mjs": "8b81c88935321eab837da30dff6ed59495322820",
++    "expert-lab.mjs": "68a011e87c61ad34b9e4bb778f5d4af2cde05643",
++    "expert-probe.mjs": "d377cab0c3312161b66c0273a264ddaa3f41f10e",
++    "fastmover-lab.mjs": "2429b25106c54ac9b73cf82ff16a7524a0982e58",
++    "first-run.mjs": "4aacc97041e9072c19b6915cc6997fb479d5bee0",
++    "follow-lane.mjs": "64ac6b677bac4ac5c29147e6abf6e77b41d8cbc0",
++    "fulfilling.mjs": "fb9d6e1528388081ea665a9ae2499edd5c803471",
++    "gov-awards.mjs": "815c8598ef9ed2f0312155f0072f1dcdb482cb6a",
++    "gov-awards2.mjs": "a5e6717d35810343754bff82101dcc2653278667",
++    "health.mjs": "a9cf3afcffc92f9319825777301b02fc55e55936",
++    "hold-core.mjs": "664bfaa80997b470dbb8ac7235f8b60ec3688d70",
++    "hold-lab.mjs": "fe5175705d691aada1b847c0084cf99d04733cab",
++    "horizons.mjs": "d9015f47669f20cd0223208a8c12466ce6944787",
++    "hunting-lab.mjs": "b8c8f03e6632f02d3a3371ee4f5cc45919d7c0d2",
++    "ignition-core.mjs": "ee8279c93173d38eb5f5dc1544f5d64d5498dc0b",
++    "ignition-gates.mjs": "0861eced9d2a91086d3087cda3ea56e821feaf0c",
++    "ignition-paper.mjs": "296d72e326fb2deac2ccc5e9cc31da6a0d190719",
++    "insider-study.mjs": "7ceea4683ae7a0b452c4453ed54fbc803b3803fe",
++    "instrument-type.mjs": "83c48d75e1e00b4b0df4b2b44644f2be2bff5066",
++    "intraday-radar.mjs": "cb98ea798eb26802ce1474ce4cd5a1229daa4981",
++    "leaders-study.mjs": "1080e45e897f7ddca050a4e39e0816575f1ac0b2",
++    "league-bar.mjs": "6de525340b021b6cc339a15cf19912dad75679d5",
++    "league.mjs": "4ef40bd6ad46e6081029e63a686daf9e43e379d2",
++    "library-merge.mjs": "d8cfcfdddc2ca0c452c54c8eaddbc6ee82cf6b9d",
++    "macro-core.mjs": "f3937d71fdba1a65f4d7059eed628b4a8e1eff74",
++    "macro-lab.mjs": "ff30b5e853c0749de33e2aa45577a050651bd1fa",
++    "market-session.mjs": "233eed2717b88fc1340616bd769de486c4cc082d",
++    "missed-runners.mjs": "7777daa7213a408b0064ebd84eeface3b911a220",
++    "ml-core.mjs": "2a7e1c28ffd5fb17299e2809fcb54a57b6fa22cd",
++    "ml-lab.mjs": "30f537a90fc3b1aa7d4dba5712d63ff27b7a6007",
++    "movers.mjs": "73827b24f5e421d46f879118e9c52bb2f26eff31",
++    "news-watch.mjs": "eaf5c9064286f8a277f1d9e447b5f20ff5fb3fec",
++    "octopus.mjs": "6918a29e6cdc5db51a7f4ed4e806103c77f5af89",
++    "opp-mode.mjs": "08e999ab42593e902f2a9804e18291389b883cf7",
++    "opportunity-radar.mjs": "330761e891cb719ee0f775d1e2e8cb4865a2b553",
++    "options-core.mjs": "e4e7a2148f354b430cd18976e2c9a8ca04f3ce24",
++    "options-lab.mjs": "38d60f0c222c8e818fd087fa8c13e438677e5187",
++    "options-survey.mjs": "a6b355b1318b451571c8ff651ed7239f59253b49",
++    "orb-study.mjs": "5eed190ba7c76a64fa45d292887f1a5ffd33acfc",
++    "pattern-lab.mjs": "9652000f8f2ac0ae0a049540982c33b91c278057",
++    "premarket-check.mjs": "7fb3ff42cfca84e313e92449a7b839e4b2493d37",
++    "quality.mjs": "c751a9090111b91c07c4b5a11850f9c9678ecac1",
++    "radar-ledger.mjs": "bdc4829f1a1340c282595722e2dca570d810965f",
++    "radar-v3-core.mjs": "0d0ead259c882626eb3c3094b6c37993dbae9ec9",
++    "rank-models.mjs": "7ff9ea65e4487f212f4d39b8b7b886963ffec8de",
++    "ranking-cohort.mjs": "ee0fc124ba1b2aefe77d765f87fca201e4d3f3ca",
++    "rebalance.mjs": "c5afb7e8e6aaf7823c373ba27587ce40a8f41d2e",
++    "rebuy.mjs": "4713310076ce09e9a453f594ecd8487b313e5f5b",
++    "regime-gate.mjs": "793df1c62853988fa12b83ad6b84bdae00c9a867",
++    "research-core.mjs": "de45b5463e142182d7d0fb0b1b650ab337ff770f",
++    "research-lab.mjs": "b3acd00b59a239872b230c803229018c0213f40a",
++    "runner-hunter-core.mjs": "f53405d00f4b4910695e1e683c1e1b0c84716b34",
++    "runner-hunter-study.mjs": "e0d148474fe6b540fdeb1d9d28c057839de09326",
++    "scan.mjs": "92a1b6cfc23049c2b9423f36defb2044100629b7",
++    "score-study.mjs": "04b40dedb70fbc522b29c15268e8713080dd346e",
++    "scorecard-1023.mjs": "5d9ab46beca82d9a8c5dca336fe1f4cdb390aaa5",
++    "sec-time.mjs": "75351edba97278220bb65052792e12104e07a67b",
++    "sequence-study.mjs": "b2a80fecf86536505e8b65c377eccf985fc898d5",
++    "session-coverage.mjs": "216f78391d383eccdd2d404d9249bd324f2188d7",
++    "shadow-eval.mjs": "deb983e60eb5ec11aa2307ca7aa1d80455e93567",
++    "shadow-outcomes.mjs": "d6279fc526f55029dbc128693e7f2de2b747c53a",
++    "shadow-stream.mjs": "50cb1c2bead82756cd2b5d34c4f5ea3dbd03d184",
++    "share-supply.mjs": "611815df863b58db1df8db63542222dcc9b50027",
++    "shares.mjs": "b4e4e8a9ea54e59b6acc193e1d3336b889896f06",
++    "smart-money.mjs": "cfc01ad672c5b86ca95e89e7ebd0030c93fddc40",
++    "squad1-core.mjs": "b3116c3dbb9358ad28b2718476b9f756122159c4",
++    "squad1-lab.mjs": "5aa204c6bc284ee6d0577878f3065fc560b492ec",
++    "squad10-core.mjs": "c54abf1ca4177164f984e512274391f59c6d5dbc",
++    "squad10-lab.mjs": "3da7813142b0f2633eda82c89ebdc0508477c4d0",
++    "squad11-core.mjs": "6a646195beb88452cecedfc0b9fda4774b9d8498",
++    "squad11-lab.mjs": "6cba35435b4b33946cf6075352e693c84e578d86",
++    "squad12-core.mjs": "d7c245a4054c5ed95a9d09112f5fc7d4d1a49731",
++    "squad12-lab.mjs": "ac7effb85f5114487b61c2b6853309b984603616",
++    "squad13-core.mjs": "66f019059325526b75ac668b47a02b11ad1400c5",
++    "squad13-lab.mjs": "f1719b6a06824f5cf31f7afce3036463326fe0e4",
++    "squad14-core.mjs": "86b151ad44a4290f145fcce1134ea22e1b000e73",
++    "squad14-lab.mjs": "7a6c1c2df929b6200325ae82a5b26a7ece8223ec",
++    "squad15-core.mjs": "66447390afcadb4a13b9daf363e59753032960bc",
++    "squad15-lab.mjs": "83663a5063cd4e9c619cd75a04cfcdc86c2a33e0",
++    "squad15b-core.mjs": "a5985d1be677ad7f1108e45bf2cc2b25bcd08f7e",
++    "squad15b-lab.mjs": "1e718a1fe623b19dd07f77d5486e515671631448",
++    "squad16-core.mjs": "9ffff7e5ea17e1fd82d2cbea4a2c0dd771dd93ce",
++    "squad16-lab.mjs": "543988f64a6d05a8f60f4611f425b0afd26d74fa",
++    "squad17-core.mjs": "15888cc790548a8ae7b046ce888a90df87139954",
++    "squad17-lab.mjs": "a367a5aeee00ac322f394a7c1a731a95190db675",
++    "squad18-core.mjs": "c19ca2e479ee52fdef196842a0336b428f02cdfd",
++    "squad18-lab.mjs": "ba4f315a4dc49f9d50fb9a2cfb45af2f84e56617",
++    "squad19-core.mjs": "5395ff8a2268a50640e30300fca32291fa1d48dd",
++    "squad19-lab.mjs": "7cdd84fbaeb265e9d823b6a01604bf4c28fbf05e",
++    "squad2-core.mjs": "92e30132954a0d99b03345f805f748fde94e78c4",
++    "squad2-lab.mjs": "6ac5c827857234bb3d48824a2266c2981a78aaed",
++    "squad20-core.mjs": "b5f4cd082abbc8119db1e6af81aecab58e9c1538",
++    "squad20-lab.mjs": "5cd0c2f8e3dfd9a6193757f02f56382b855f2dec",
++    "squad21-core.mjs": "fcc416d00dabd837d4cc4f4987d42c415da199af",
++    "squad21-lab.mjs": "c1bda5a1ae17351e8d7058acf53bbcf2ba84a96a",
++    "squad22-core.mjs": "138668112ba242577a3279906c30f4a09fe6703e",
++    "squad22-lab.mjs": "a97be7e78a76b2dd0846b8838bf4994d1f98e21b",
++    "squad23-core.mjs": "bc7db368e5805f5d0f2fe967dbcd97c949c3c82d",
++    "squad23-lab.mjs": "888b949ae4582984c1a7f5b55f04e29be911af77",
++    "squad24-audit-core.mjs": "c275d567484e6b85b9e3fbbe7782c36379accef0",
++    "squad24-audit-extract.mjs": "1f802dfb2658b3ca7674db3fe64efa884e4401f3",
++    "squad24-audit-label.mjs": "60fe3d0fced27e9ba0c4ce98863145d5eb4a19ba",
++    "squad24-core.mjs": "da84e9ddef8e30bf61b187c25269b71b2b319594",
++    "squad24-lab.mjs": "577f91f75cc62c24d2f39322315dcd93b7389564",
++    "squad25-audit-core.mjs": "e7e941a017d1f0c6da0a1e25f1896d817c9c6541",
++    "squad25-core.mjs": "bbcebd385fc7461a25354e011f9cb5e93116c6de",
++    "squad25-lab.mjs": "8adb18bba746b3834b9173b14462a565fc940bae",
++    "squad26-core.mjs": "7007fb822aa54e50b8ef91103ec16bb17f3c9e82",
++    "squad26-lab.mjs": "e194f3fb6e47ebef18b8a10017da71481073dd26",
++    "squad26-labels.mjs": "882fe1ba2b0ac52cff802c9d483b2de90c58b909",
++    "squad26-watch.mjs": "775f0dea5de65eb4962c2183d72c8f5836993569",
++    "squad27-core.mjs": "19963d5144f9995f23977a31853891d38c338689",
++    "squad27-lab.mjs": "8bf11ae9979ef65e9edbdd5ab8bc654715fe04ba",
++    "squad28-core.mjs": "5931bfcc9422187f1e07f6d267ade44db62fa0d8",
++    "squad28-lab.mjs": "383a2166b497148264bf53ec578a0b44d65fbc20",
++    "squad29-core.mjs": "7916c264882e2ec628f89587e50c48caba61ea1c",
++    "squad29-lab.mjs": "8874cd61f44a04a4a631c0b7cfecd4bb742736e4",
++    "squad3-core.mjs": "03511d9fc782bcd78990e334c417f088e784d151",
++    "squad3-lab.mjs": "a490bdefd6091b37c01833c33528792ed5a14401",
++    "squad4-core.mjs": "5cd5311b422270ff3b4ac29245dee2157628baac",
++    "squad4-lab.mjs": "eee1bf0266c73fe175262d35cd3cef3f51a8a8d4",
++    "squad5-core.mjs": "ee22cfabe83e5be159b0c864eb2da428ad3a7209",
++    "squad5-lab.mjs": "8e0b42e4797315580a678c6c60c640ded08531e1",
++    "squad6-core.mjs": "1efa1e8c1d47417a9e81d13360bda354cd0bedc5",
++    "squad6-lab.mjs": "a98ecbb595e5b8091e25fac5b37a2c99b66a8331",
++    "squad7-core.mjs": "634861aaf136a4ca19caef0a803c09bd77f3bbc4",
++    "squad7-lab.mjs": "550c5c2ef5d3b707cf88fc8d0aad1031a5e78fe2",
++    "squad8-core.mjs": "2cf44a2a31983175ae8ae5153df380b9144da333",
++    "squad8-lab.mjs": "e2ca699f56438b5d3af15ca34e08b48aff61e4b5",
++    "squad9-core.mjs": "9311a8e06bbbf15d682f57e015f15d2c4a949803",
++    "squad9-lab.mjs": "30b6c5f134d3481b4026bf814044a49dee2ab8a9",
++    "stop-watch.mjs": "42019ee5184c5acc8388231890f2f4d13dceec9b",
++    "stops.mjs": "54948dad12c600a1b4b3d2286fbc1f47bfdc48b1",
++    "swing-lab.mjs": "0fe9a25b5bdf6e792d4e18767e26b80892faa8d4",
++    "tip-score.mjs": "98350858136dc9d56bee4807300f38ddcba40196",
++    "tip-sources.mjs": "615d1e099cd21ac203feda337b10d2ee21d121a7",
++    "tipranks.mjs": "43003b4a858a41cd60bb72d03065d830950e1a9f",
++    "tipster-core.mjs": "78df62fdeca22eaa6bd9eb13f28d10ace178ff49",
++    "tipster-lab.mjs": "e02ed83dca07d0c600fb5fe7c5824bb014715ca7",
++    "value-core.mjs": "d3d9ba2d356c195f21895e6672394bfb0ea3c968",
++    "value-lab.mjs": "485a7ad1e48ad16429f63b8ce78c2f474e9551e4",
++    "verify-core.mjs": "c5419503471b65ba7fa25feac9aa9195e5c27e73",
++    "verify-lab.mjs": "1f5456aa91742390a5ae415a43ced6d25e65f672",
++    "watcher-guard-core.mjs": "3e44c5f2a8d3aa88806cbf33de6fc1c2ff7d5111",
++    "watcher-guard.mjs": "44cf647169518152bf515a8c4b5ffc2c0e711d23",
++    "watcher-message-publish.mjs": "8b68f491ced2ac1d6fde73a3620be57bfda9d06f",
++    "watcher-messages.mjs": "47a56653fb4752ce39e96a75837ec2d3b18e4bd4",
++    "watcher-reporting.mjs": "bd1d106f3655283a9c6cb3bd7894a7dda35a7856",
++    "watcher-session.mjs": "71a03c07ad2bcb200a4802da22074ad8fa983cea",
++    "winners-autopsy-core.mjs": "0ce55c12f1b91967b7ae107edccbb3543679da39",
++    "winners-autopsy-lab.mjs": "f9d0d97967612462acffd8e3ec7f6e5e5fcd41be",
++    "winners-study.mjs": "1c99fae9055731b8f3a2f27e502bd7f3cd811425",
++    "yardstick.mjs": "2afc5f8d283e4a6d8c14a6ad8a2f11a68221557d"
++  }
++};
+diff --git a/native-sec-colocated-prefix.mjs b/native-sec-colocated-prefix.mjs
+index 18ea7b09..d9a36c85 100644
+--- a/native-sec-colocated-prefix.mjs
++++ b/native-sec-colocated-prefix.mjs
+@@ -4,12 +4,13 @@ import fs from 'node:fs';import path from 'node:path';import {createHash} from '
+ import {nativeRunDigest,nativeEventsForCapture} from './native-sec-events.mjs';import {validateNativeEvidenceAsset} from './native-sec-handoff.mjs';import {immutableRead} from './paper-capture-wrapper.mjs';
+ const sha=b=>createHash('sha256').update(b).digest('hex');
+ export function colocatedPrefixPort({directory,expectedRunId,expectedSourceSha,wait=ms=>new Promise(r=>setTimeout(r,ms))}){
+- return async({at,identities})=>{for(let attempt=0;attempt<3;attempt++)try{
++ const delays=[10,25,50,100,200,400,400];
++ return async({at,identities})=>{for(let attempt=0;attempt<=delays.length;attempt++)try{
+   const prefix=nativeRunDigest(directory),asset={kind:'NATIVE_SEC_COMMITTED_PREFIX_V1',runId:expectedRunId,sourceSha:expectedSourceSha,...prefix},archive=validateNativeEvidenceAsset(asset);
+   // A newly appended immutable successor does not alter this already captured
+   // chain prefix. Recheck every selected original byte, not a mutable cursor.
+   for(const f of prefix.files)if(sha(immutableRead(path.join(directory,f.name),8*1024*1024).bytes)!==sha(Buffer.from(f.bodyBase64,'base64')))throw Error('COLOCATED_PREFIX_CHANGED');
+   const names=fs.readdirSync(directory);if(names.some(n=>!['run.json','lineage.json','.cursor.json'].includes(n)&&!/^response-\d{6}\.json$/.test(n)))throw Error('COLOCATED_PREFIX_INCOMPLETE');
+   return {raw:JSON.stringify(nativeEventsForCapture(archive,{at,identities})),evidenceAssets:[asset]};
+- }catch(e){if(attempt===2)throw e;await wait(10);}};
++ }catch(e){if(attempt===delays.length)throw e;await wait(delays[attempt]);}};
+ }
+diff --git a/native-sec-lineage-history.mjs b/native-sec-lineage-history.mjs
+index 20500d62..d4d74a3e 100644
+--- a/native-sec-lineage-history.mjs
++++ b/native-sec-lineage-history.mjs
+@@ -1,10 +1,17 @@
+ // Proposed same-day continuity transport. Inactive; no default network client,
+ // global-first claim, heartbeat admission criterion or V1 enrollment change.
+ import fs from 'node:fs';import path from 'node:path';import {createHash} from 'node:crypto';
+-import {createNativeParentClient} from './native-sec-parent-client.mjs';import {readNativeRun,nativeEventsForCapture} from './native-sec-events.mjs';import {immutableRead} from './paper-capture-wrapper.mjs';import {captureJson} from './capture-json.mjs';import {openCaptureZip} from './capture-artifact.mjs';import {nyMinuteOf} from './edgar-feed.mjs';import {colocatedPrefixPort} from './native-sec-colocated-prefix.mjs';
++import {createNativeParentClient} from './native-sec-parent-client.mjs';import {readNativeRun,nativeEventsForCapture} from './native-sec-events.mjs';import {immutableRead} from './paper-capture-wrapper.mjs';import {captureJson} from './capture-json.mjs';import {openCaptureZip} from './capture-artifact.mjs';import {colocatedPrefixPort} from './native-sec-colocated-prefix.mjs';
++import {PRODUCTION_NO_OBSERVATION} from './ignition-execution-contract.mjs';
+ const need=(v,c)=>{if(!v)throw Error(c);},sha=x=>createHash('sha256').update(x).digest('hex'),json=x=>JSON.stringify(x),stamp=x=>typeof x==='string'&&Number.isFinite(Date.parse(x))?Date.parse(x):NaN;
+ export const LINEAGE_STATES=Object.freeze({NONE:'VERIFIED_NO_EARLIER_SAME_DAY_RUN',EARLIER:'AUTHENTICATED_EARLIER_SAME_DAY_EVIDENCE',UNKNOWN:'UNKNOWN_MISSING_OR_AMBIGUOUS_HISTORY'});
+-export function sameDayStart(day){const noon=day+'T12:00:00Z',offset=720-nyMinuteOf(noon);need(/^\d{4}-\d{2}-\d{2}$/.test(day)&&Number.isFinite(Date.parse(noon))&&new Date(noon).toISOString().slice(0,10)===day&&Number.isInteger(offset),'LINEAGE_DAY');return new Date(Date.parse(day+'T00:00:00Z')+offset*60000).toISOString();}
++export const SESSION_HISTORY_CAPS=Object.freeze({contract:'SESSION_EXECUTION_HISTORY_V2',requests:256,bytes:64*1024*1024,totalMs:120000,creationLookbackDays:35,runsPerQuery:1000,pageSize:100,maxInFlight:4,jsonBytes:1048576,jobPages:2,retainedRuns:4});
++const nyClock=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
++export function sameDayStart(day){
++ const target=Date.parse(day+'T00:00:00Z');need(/^\d{4}-\d{2}-\d{2}$/.test(day)&&Number.isFinite(target)&&new Date(target).toISOString().slice(0,10)===day,'LINEAGE_DAY');let guess=target;
++ for(let i=0;i<3;i++){const p=Object.fromEntries(nyClock.formatToParts(guess).map(x=>[x.type,x.value])),local=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second);guess+=target-local;}
++ const p=Object.fromEntries(nyClock.formatToParts(guess).map(x=>[x.type,x.value]));need(p.year+'-'+p.month+'-'+p.day===day&&p.hour==='00'&&p.minute==='00','LINEAGE_DAY');return new Date(guess).toISOString();
++}
+ export function validateLineageBundle(bundle,{runId,sourceSha}){
+  need(['NATIVE_SEC_AVAILABLE_RUN_BUNDLE_V2','NATIVE_SEC_COMPLETE_RUN_BUNDLE_V1'].includes(bundle?.kind)&&bundle.asset?.runId===runId&&bundle.asset?.sourceSha===sourceSha,'LINEAGE_BUNDLE_PIN');const a=bundle.asset;need(Array.isArray(a.files)&&a.files.length<=258&&new Set(a.files.map(f=>f.name)).size===a.files.length&&a.files.every(f=>f.name==='run.json'||f.name==='lineage.json'||/^response-\d{6}\.json$/.test(f.name))&&sha(json(a.files))===a.sha256&&Buffer.byteLength(json(a))<=4*1024*1024,'LINEAGE_PREFIX_HASH');
+  const archive=readNativeRun({expectedRunId:runId,expectedSourceSha:sourceSha,_files:a.files});need(archive.status==='INTEGRITY_CHECKED_UNAUDITED','LINEAGE_CHAIN');const legacy=Buffer.from(bundle.legacyArchiveBase64||'','base64'),c=bundle.completion;need(legacy.length<=4*1024*1024&&sha(legacy)===c?.legacyArchiveSha256&&Number.isInteger(c.producerExitCode)&&Number.isFinite(stamp(c.endedAt))&&c.lastHash===archive.lastHash&&c.responses===archive.responses.length&&(!archive.lastObservedAt||stamp(c.endedAt)>=stamp(archive.lastObservedAt)),'LINEAGE_FINAL_RECORD');const saved=captureJson(legacy.toString());need(saved.runId===runId&&saved.sourceSha===sourceSha&&Array.isArray(saved.heartbeat)&&saved.heartbeat.length<=1000,'LINEAGE_SOURCE');
+@@ -12,30 +19,94 @@ export function validateLineageBundle(bundle,{runId,sourceSha}){
+  const seen=new Set(saved.heartbeat.map(x=>x.m).filter(Number.isInteger)),missingMinutes=Array.from({length:331},(_,i)=>i+570).filter(m=>!seen.has(m));return {archive,sourceIntegrity:'VERIFIED_AVAILABLE_PREFIX',coverage:{scope:'CONFIGURED_0930_1500_NOT_FULL_SESSION',state:missingMinutes.length?'PARTIAL':'COMPLETE_CONFIGURED_WINDOW',missingMinutes},sourceCaptureCompleteness:c.producerExitCode===0&&!partial.length&&archive.sourceStatus==='OBSERVED'?'AVAILABLE_RUN_RECORDS':'UNESTABLISHED',globalHistoryEstablished:false};
+ }
+ export function prepareAvailableLineageBundle({directory,runId,sourceSha,legacyArchive,producerExitCode,endedAt,out}){
+- const names=fs.readdirSync(directory).sort(),files=[],partialFiles=[];let partialBytes=0;for(const name of names){if(name==='.cursor.json')continue;const file=path.join(directory,name),s=fs.lstatSync(file);need(!s.isSymbolicLink(),'LINEAGE_SYMLINK');if(s.isDirectory()){need(name==='.writer-lock'&&fs.readdirSync(file).length===0,'LINEAGE_UNSUPPORTED_DIRECTORY');partialFiles.push({name,bodyBase64:'',sha256:sha(Buffer.alloc(0))});continue;}const bytes=immutableRead(file,8*1024*1024).bytes;if(name==='run.json'||name==='lineage.json'||/^response-\d{6}\.json$/.test(name))files.push({name,bodyBase64:bytes.toString('base64')});else{partialBytes+=bytes.length;need(partialBytes<=4*1024*1024,'LINEAGE_PARTIAL_BUDGET');partialFiles.push({name,bodyBase64:bytes.toString('base64'),sha256:sha(bytes)});}}
++ const names=fs.readdirSync(directory).sort(),files=[],partialFiles=[];let partialBytes=0;for(const name of names){if(name==='.cursor.json')continue;const file=path.join(directory,name),s=fs.lstatSync(file);need(!s.isSymbolicLink(),'LINEAGE_SYMLINK');if(s.isDirectory()){need(name==='.writer-lock'&&fs.readdirSync(file).length===0,'LINEAGE_UNSUPPORTED_DIRECTORY');partialFiles.push({name,bodyBase64:'',sha256:sha(Buffer.alloc(0))});return;}const bytes=immutableRead(file,8*1024*1024).bytes;if(name==='run.json'||name==='lineage.json'||/^response-\d{6}\.json$/.test(name))files.push({name,bodyBase64:bytes.toString('base64')});else{partialBytes+=bytes.length;need(partialBytes<=4*1024*1024,'LINEAGE_PARTIAL_BUDGET');partialFiles.push({name,bodyBase64:bytes.toString('base64'),sha256:sha(bytes)});}}
+  const archive=readNativeRun({expectedRunId:runId,expectedSourceSha:sourceSha,_files:files}),legacy=immutableRead(legacyArchive,4*1024*1024).bytes,bundle={kind:'NATIVE_SEC_AVAILABLE_RUN_BUNDLE_V2',asset:{kind:'NATIVE_SEC_COMMITTED_PREFIX_V1',runId,sourceSha,files,sha256:sha(json(files))},partialFiles,completion:{producerExitCode,endedAt,legacyArchiveSha256:sha(legacy),lastHash:archive.lastHash,responses:archive.responses.length,globalHistoryEstablished:false},legacyArchiveBase64:legacy.toString('base64')};validateLineageBundle(bundle,{runId,sourceSha});const body=Buffer.from(json(bundle));need(body.length<=12*1024*1024,'LINEAGE_BUNDLE_BUDGET');const fd=fs.openSync(out,'wx',0o600);try{fs.writeFileSync(fd,body);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}return bundle;
+ }
+-export function createSameDayLineageClient(options){const http=createNativeParentClient({...options,limits:{requests:32,bytes:64*1024*1024,totalMs:120000}}),api='https://api.github.com/repos/drrazaq/Stock-2';return {stats:http.stats,async discover({day,before,currentRunId,currentAttempt=1,workflowId,workflowPath='.github/workflows/ignition.yml',allowedSourceShas,expectedProducerSources={}}){
+- const retained=[],evidence=[],ignored=[],uncertainties=[];let history=[];try{
+-  const start=stamp(sameDayStart(day)),dayEnd=stamp(sameDayStart(new Date(Date.parse(day+'T00:00:00Z')+86400000).toISOString().slice(0,10))),cutoff=stamp(before),lookback=start-86400000;need(cutoff>=start&&cutoff<dayEnd&&Number.isSafeInteger(currentRunId)&&currentAttempt===1&&Number.isSafeInteger(workflowId)&&workflowPath==='.github/workflows/ignition.yml'&&Array.isArray(allowedSourceShas),'LINEAGE_SCOPE');
+-  const route=page=>api+'/actions/workflows/'+workflowId+'/runs?per_page=20&page='+page;let total,rows=[];for(let page=1;page<=2;page++){const d=await http.read(route(page));need(Number.isInteger(d.total_count)&&Array.isArray(d.workflow_runs)&&d.workflow_runs.length<=20&&(total===undefined||total===d.total_count),'LINEAGE_HISTORY_SCHEMA');total=d.total_count;history.push({url:route(page),body:d});rows.push(...d.workflow_runs);if(rows.length>=total)break;need(page<2,'LINEAGE_HISTORY_TRUNCATED');}
+-  need(new Set(rows.map(r=>r.id)).size===rows.length&&rows.every((r,i)=>Number.isFinite(stamp(r.created_at))&&(!i||stamp(rows[i-1].created_at)>=stamp(r.created_at))),'LINEAGE_HISTORY_ORDER');need(rows.length===total,'LINEAGE_HISTORY_TRUNCATED');const relevant=r=>r.id!==currentRunId&&stamp(r.created_at)<cutoff&&(stamp(r.created_at)>=lookback||r.status!=='completed'||!Number.isFinite(stamp(r.updated_at))||stamp(r.updated_at)>=start);const candidates=rows.filter(relevant);need(candidates.length<=4,'LINEAGE_RUN_HORIZON');
+-  const reread=[...history];for(const run of candidates){try{need(run.workflow_id===workflowId&&run.path===workflowPath&&run.head_branch==='main'&&run.repository?.full_name==='drrazaq/Stock-2'&&Number.isSafeInteger(run.id),'LINEAGE_RUN_IDENTITY');const jobsUrl=api+'/actions/runs/'+run.id+'/jobs?filter=all&per_page=100';let jobs=null;try{jobs=await http.read(jobsUrl);reread.push({url:jobsUrl,body:jobs});}catch{uncertainties.push({runId:run.id,reason:'LINEAGE_JOB_HISTORY_UNAVAILABLE'});}
+-   const jobsComplete=jobs&&Number.isInteger(jobs.total_count)&&Array.isArray(jobs.jobs)&&jobs.total_count===jobs.jobs.length&&jobs.total_count<=100&&new Set(jobs.jobs.map(j=>j?.id)).size===jobs.jobs.length&&jobs.jobs.every(j=>j&&typeof j==='object'&&Number.isSafeInteger(j.id)&&j.id>0&&j.run_id===run.id&&Object.hasOwn(j,'started_at')&&Object.hasOwn(j,'completed_at')&&(j.completed_at===null||Number.isFinite(stamp(j.completed_at))&&(j.started_at===null||Number.isFinite(stamp(j.started_at))&&stamp(j.completed_at)>=stamp(j.started_at))));
+-   if(!jobsComplete)uncertainties.push({runId:run.id,reason:'LINEAGE_JOB_HISTORY'});
+-   const neverStarted=jobsComplete&&run.status==='completed'&&run.conclusion==='cancelled'&&Object.hasOwn(run,'run_started_at')&&run.run_started_at===null&&jobs.jobs.every(j=>j.started_at===null&&j.status==='completed'&&j.conclusion==='cancelled');if(neverStarted){ignored.push({id:run.id,reason:'CONFIRMED_NEVER_STARTED'});continue;}
+-   const startsKnown=jobsComplete&&jobs.jobs.length>0&&jobs.jobs.every(j=>Number.isFinite(stamp(j.started_at)));if(!startsKnown)uncertainties.push({runId:run.id,reason:'LINEAGE_JOB_START_UNKNOWN'});
+-   if(startsKnown&&jobs.jobs.every(j=>Number.isFinite(stamp(j.completed_at))&&stamp(j.completed_at)<start))continue;
+-   if(startsKnown&&jobs.jobs.some(j=>j.status==='completed'&&!Number.isFinite(stamp(j.completed_at))))uncertainties.push({runId:run.id,reason:'LINEAGE_JOB_COMPLETION_UNKNOWN'});
+-   if(run.run_attempt!==1||!jobsComplete||jobs.jobs.some(j=>j.run_attempt!==1))uncertainties.push({runId:run.id,reason:'LINEAGE_ATTEMPT_HISTORY_AMBIGUOUS'});evidence.push({runId:run.id,jobs:jobs?.jobs||[],terminal:run.status==='completed'});
+-   const artifactsUrl=api+'/actions/runs/'+run.id+'/artifacts?per_page=20',listing=await http.read(artifactsUrl);need(Number.isInteger(listing.total_count)&&listing.total_count<=20&&Array.isArray(listing.artifacts)&&listing.total_count===listing.artifacts.length,'LINEAGE_ARTIFACT_HISTORY');reread.push({url:artifactsUrl,body:listing});const matches=listing.artifacts.filter(a=>['native-sec-complete-run-v1','native-sec-available-run-v2'].includes(a.name));need(matches.length===1,'LINEAGE_EVIDENCE_MISSING_OR_AMBIGUOUS');const artifact=matches[0];need(Number.isSafeInteger(artifact.id)&&!artifact.expired&&artifact.workflow_run?.id===run.id&&artifact.workflow_run?.head_sha===run.head_sha&&/^sha256:[a-f0-9]{64}$/.test(artifact.digest||'')&&artifact.size_in_bytes>0&&artifact.size_in_bytes<=16*1024*1024,'LINEAGE_ARTIFACT_PIN');
+-   const location=await http.read(api+'/actions/artifacts/'+artifact.id+'/zip',{status:302}),zip=await http.read(location,{storage:true,binary:true,max:16*1024*1024});need(zip.length===artifact.size_in_bytes&&'sha256:'+sha(zip)===artifact.digest,'LINEAGE_ZIP_HASH');const bundle=captureJson(openCaptureZip(zip,'native-sec-run.json',12*1024*1024).toString(),12*1024*1024);need(allowedSourceShas.includes(bundle.asset?.sourceSha)&&bundle.asset.sourceSha===(expectedProducerSources[String(run.id)]||run.head_sha),'LINEAGE_SOURCE_PIN');const checked=validateLineageBundle(bundle,{runId:run.id+'-1',sourceSha:bundle.asset.sourceSha});retained.push({runId:run.id,bundle,coverage:checked.coverage,sourceIntegrity:checked.sourceIntegrity,sourceCaptureCompleteness:checked.sourceCaptureCompleteness,artifactDigest:artifact.digest});reread.push({url:api+'/actions/runs/'+run.id,body:run,kind:'run'});
+-   }catch(error){uncertainties.push({runId:run.id,reason:/^(LINEAGE|PARENT)_[A-Z_]+$/.test(error.message)?error.message:'LINEAGE_RUN_ERROR'});}
+-  }
+-  const runPin=r=>['id','run_attempt','workflow_id','path','head_branch','head_sha','status','conclusion','created_at','run_started_at'].map(k=>r[k]).concat([r.repository?.full_name]);for(const p of reread){const again=await http.read(p.url);const project=d=>p.kind==='run'?runPin(d):Array.isArray(d.workflow_runs)?d.workflow_runs.filter(relevant).map(runPin):d;need(json(project(again))===json(project(p.body)),'LINEAGE_HISTORY_CHANGED');}
+-  need(!uncertainties.length,'LINEAGE_MISSING_OR_AMBIGUOUS_EVIDENCE');const state=evidence.length?LINEAGE_STATES.EARLIER:LINEAGE_STATES.NONE;need(evidence.every(e=>e.terminal),'LINEAGE_EARLIER_RUN_STILL_ACTIVE');return {status:state,state,day,sameDayStart:new Date(start).toISOString(),historyVerified:true,jobHistoryVerified:true,historyEvidence:{scope:{day,before,currentRunId,workflowId},snapshots:reread},retainedBundles:retained,ignoredNeverStarted:ignored,globalHistoryEstablished:false,admissionPolicyApproved:false,...http.stats()};
+- }catch(e){return {status:LINEAGE_STATES.UNKNOWN,state:LINEAGE_STATES.UNKNOWN,reason:/^(LINEAGE|PARENT)_[A-Z_]+$/.test(e.message)?e.message:'LINEAGE_CLIENT_ERROR',day,uncertainties,historyEvidence:{scope:{day,before,currentRunId,workflowId},snapshots:history},retainedBundles:retained,ignoredNeverStarted:ignored,globalHistoryEstablished:false,admissionPolicyApproved:false,...http.stats()};}
+- }};}
++// Exact source contract: job identity is only an index into these reviewed
++// bytes. Names/timestamps alone never prove a no-op.
++export const NO_OBSERVATION_WORKFLOW=Object.freeze({sha256:'0ceb8aa86d77b85773e4cfb02142f756b0928555a8c116e263f2d153aef9c96a',jobs:{watch:11,close:13}});
++function queuedCancellation(job){return job.status==='completed'&&job.conclusion==='cancelled'&&Array.isArray(job.steps)&&job.steps.length===0&&Object.hasOwn(job,'runner_id')&&[null,0].includes(job.runner_id)&&Object.hasOwn(job,'runner_name')&&[null,''].includes(job.runner_name);}
++function skippedJob(job){return job.status==='completed'&&job.conclusion==='skipped'&&Array.isArray(job.steps)&&job.steps.length===0;}
++function verifiedSkippedWorkflow(jobs){
++ if(jobs.length!==2||new Set(jobs.map(j=>j.name)).size!==2)return false;
++ return jobs.every(job=>{const last=Object.hasOwn(NO_OBSERVATION_WORKFLOW.jobs,job.name)?NO_OBSERVATION_WORKFLOW.jobs[job.name]:null;if(!last)return false;if(skippedJob(job))return true;if(job.status!=='completed'||!Array.isArray(job.steps))return false;const steps=job.steps;
++ if(steps.some(s=>!s||!Number.isSafeInteger(s.number)||s.number<1)||new Set(steps.map(s=>s.number)).size!==steps.length)return false;const setup=steps.find(s=>s.number===1);if(!setup||setup.status!=='completed'||setup.conclusion!=='success')return false;
++ const guard=steps.find(s=>s.number===2);if(!guard||guard.status!=='completed'||guard.conclusion!=='success'||!Number.isFinite(stamp(guard.started_at))||!Number.isFinite(stamp(guard.completed_at))||stamp(guard.completed_at)<stamp(guard.started_at))return false;
++ if(!Array.from({length:last-2},(_,i)=>i+3).every(n=>{const s=steps.find(x=>x.number===n);return s?.status==='completed'&&s.conclusion==='skipped';}))return false;
++ return steps.every(s=>s.number>=1&&s.number<=last||s.name==='Complete job'&&s.number>last&&s.status==='completed'&&s.conclusion==='success');
++ });
++}
++function productionNoopLog(raw){
++ const text=new TextDecoder('utf-8',{fatal:true}).decode(raw),lines=text.split(/\r?\n/).map(s=>s.replace(/\x1b\[[0-9;]*m/g,'').replace(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z +/,''));
++ const checkout=lines.map((line,i)=>({line,i})).filter(x=>/^\[command\].*\bgit log -1 --format=%H$/.test(x.line));need(checkout.length===1,'LINEAGE_CHECKOUT_EXECUTION_PROOF');const checkoutSha=lines[checkout[0].i+1];need(/^[a-f0-9]{40}$/.test(checkoutSha||''),'LINEAGE_CHECKOUT_EXECUTION_PROOF');
++ const groups=lines.map((line,i)=>({line,i})).filter(x=>x.line==='##[group]Run set -o pipefail');need(groups.length===1,'LINEAGE_WATCHER_EXECUTION_PROOF');const first=groups[0].i,end=lines.indexOf('##[endgroup]',first);need(end>first&&end-first<50&&lines[first+1]==='set -o pipefail'&&lines[first+2]==='node ignition-watch.mjs 2>&1 | tee run.log','LINEAGE_WATCHER_EXECUTION_PROOF');const next=lines.findIndex((s,i)=>i>end&&s.startsWith('##[group]')),output=lines.slice(end+1,next===-1?lines.length:next).filter(Boolean);
++ need(output.length===1&&/^ignition watcher: outside 9:00-15:00 New York \(\d\d:\d\d\), nothing to do$/.test(output[0]),'LINEAGE_PREOBSERVATION_EXIT_NOT_PROVEN');return {checkoutSha,marker:'VERIFIED_OUTSIDE_WINDOW_PREOBSERVATION_EXIT',logSha256:sha(raw)};
++}
++async function verifyProductionNoop({run,jobs,workflowBytes,api,http,remember}){
++ const contract=PRODUCTION_NO_OBSERVATION;need(sha(workflowBytes)===contract.workflowSha256&&jobs.length===1&&jobs[0].name===contract.jobName,'LINEAGE_PRODUCTION_WORKFLOW_PROOF');const job=jobs[0],steps=job.steps;
++ need(job.status==='completed'&&job.conclusion==='success'&&Array.isArray(steps)&&new Set(steps.map(s=>s?.number)).size===steps.length&&Array.from({length:contract.lastDeclaredStep},(_,i)=>i+1).every(n=>steps.some(s=>s.number===n&&s.status==='completed'))&&[2,3,4,5,6,7,9].every(n=>steps.some(s=>s.number===n&&s.conclusion==='success')),'LINEAGE_PRODUCTION_JOB_PROOF');
++ const location=await http.read(api+'/actions/jobs/'+job.id+'/logs',{status:302}),raw=await http.read(location,{storage:true,binary:true,max:1048576}),proof=productionNoopLog(raw);
++ const commit=await remember(api+'/git/commits/'+proof.checkoutSha);need(commit.sha===proof.checkoutSha&&/^[a-f0-9]{40}$/.test(commit.tree?.sha||''),'LINEAGE_EXECUTED_COMMIT_PROOF');const tree=await remember(api+'/git/trees/'+commit.tree.sha+'?recursive=1');need(tree.sha===commit.tree.sha&&tree.truncated===false&&Array.isArray(tree.tree),'LINEAGE_EXECUTED_TREE_PROOF');const entries=new Map(tree.tree.map(e=>[e.path,e]));need(entries.size===tree.tree.length&&Object.entries(contract.codeBlobSha1).every(([p,hash])=>entries.get(p)?.type==='blob'&&entries.get(p).sha===hash),'LINEAGE_EXECUTED_SOURCE_CHANGED');
++ // Re-fetch the authenticated log as well; mutable/absent log evidence cannot
++ // silently become a no-op. Signed storage URL is never written to the result.
++ const againLocation=await http.read(api+'/actions/jobs/'+job.id+'/logs',{status:302}),again=await http.read(againLocation,{storage:true,binary:true,max:1048576});need(sha(again)===proof.logSha256,'LINEAGE_EXECUTION_LOG_CHANGED');return {...proof,workflowSha256:sha(workflowBytes),codeBlobsVerified:Object.keys(contract.codeBlobSha1).length};
++}
++export function createSameDayLineageClient(options){
++ const limits={requests:256,bytes:64*1024*1024,totalMs:120000},http=createNativeParentClient({...options,historyContract:SESSION_HISTORY_CAPS.contract,limits}),api='https://api.github.com/repos/drrazaq/Stock-2';
++ return {stats:http.stats,async discover({day,before,currentRunId,currentAttempt=1,workflowId,workflowPath='.github/workflows/ignition.yml',allowedSourceShas,expectedProducerSources={}}){
++ const retained=[],evidence=[],ignored=[],uncertainties=[],snapshots=[];let start,cutoff;
++ const runPin=r=>['id','run_attempt','workflow_id','path','head_branch','head_sha','status','conclusion','created_at','run_started_at','updated_at','event'].map(k=>r[k]).concat([r.repository?.full_name]);
++ const remember=async(url,project=x=>x)=>{const body=await http.read(url,{max:1048576});snapshots.push({url,body,project});return body;};
++ try{
++  start=stamp(sameDayStart(day));const nextDay=new Date(Date.parse(day+'T00:00:00Z')+86400000).toISOString().slice(0,10),dayEnd=stamp(sameDayStart(nextDay));cutoff=stamp(before);
++  need(cutoff>=start&&cutoff<dayEnd&&Number.isSafeInteger(currentRunId)&&currentAttempt===1&&Number.isSafeInteger(workflowId)&&workflowId>0&&workflowPath==='.github/workflows/ignition.yml'&&Array.isArray(allowedSourceShas),'LINEAGE_SCOPE');
++  const second=n=>new Date(Math.floor(n/1000)*1000).toISOString().replace('.000Z','Z');
++  async function list(from,to){let total,rows=[];for(let page=1;page<=10;page++){
++   const range=second(from)+'..'+second(to),url=api+'/actions/workflows/'+workflowId+'/runs?branch=main&created='+encodeURIComponent(range)+'&per_page=100&page='+page;
++   const body=await remember(url,d=>({total_count:d.total_count,workflow_runs:d.workflow_runs?.map(runPin)}));
++   need(Number.isInteger(body.total_count)&&body.total_count>=0&&body.total_count<=1000&&(total===undefined||total===body.total_count)&&Array.isArray(body.workflow_runs)&&body.workflow_runs.length<=100,'LINEAGE_SCOPED_HISTORY_SCHEMA');total=body.total_count;
++   need(body.workflow_runs.every(r=>Number.isFinite(stamp(r.created_at))&&stamp(r.created_at)>=Math.floor(from/1000)*1000&&stamp(r.created_at)<=Math.floor(to/1000)*1000),'LINEAGE_CREATED_FILTER_NOT_HONORED');rows.push(...body.workflow_runs);
++   if(rows.length>=total){need(rows.length===total,'LINEAGE_HISTORY_TRUNCATED');break;}need(body.workflow_runs.length===100&&page<10,'LINEAGE_HISTORY_TRUNCATED');
++  }need(rows.length===total&&new Set(rows.map(r=>r.id)).size===rows.length,'LINEAGE_HISTORY_TRUNCATED');return rows;}
++  // A workflow cannot execute beyond GitHub's documented35-day total lifetime,
++  // including waiting/approval. Carry-in jobs are examined, not guessed from run
++  // start/update metadata. The rolling bound never means global history.
++  const rows=[...await list(start,cutoff),...await list(start-35*86400000,start-1000)];need(new Set(rows.map(r=>r.id)).size===rows.length,'LINEAGE_HISTORY_DUPLICATE');
++  const candidates=rows.filter(r=>r.id!==currentRunId&&stamp(r.created_at)<cutoff);
++  const parallel=async(items,fn)=>{let index=0;const settled=await Promise.allSettled(Array.from({length:Math.min(4,items.length)},async()=>{for(;;){const i=index++;if(i>=items.length)return;await fn(items[i]);}}));const failed=settled.find(x=>x.status==='rejected');if(failed)throw failed.reason;};let reservedBundles=0;
++  await parallel(candidates,async run=>{try{
++   need(run.workflow_id===workflowId&&run.path===workflowPath&&run.head_branch==='main'&&run.repository?.full_name==='drrazaq/Stock-2'&&Number.isSafeInteger(run.id)&&/^[a-f0-9]{40}$/.test(run.head_sha),'LINEAGE_RUN_IDENTITY');
++   let jobs=[],jobsComplete=true,total;
++   try{for(let page=1;page<=2;page++){
++    const data=await remember(api+'/actions/runs/'+run.id+'/jobs?filter=all&per_page=100&page='+page);
++    need(Number.isInteger(data.total_count)&&data.total_count>=0&&data.total_count<=200&&(total===undefined||total===data.total_count)&&Array.isArray(data.jobs)&&data.jobs.length<=100,'LINEAGE_JOB_HISTORY');total=data.total_count;jobs.push(...data.jobs);
++    if(jobs.length>=total){need(jobs.length===total,'LINEAGE_JOB_HISTORY');break;}need(data.jobs.length===100&&page<2,'LINEAGE_JOB_HISTORY');
++   }
++   need(jobs.length===total&&new Set(jobs.map(j=>j?.id)).size===jobs.length&&jobs.every(j=>j&&Number.isSafeInteger(j.id)&&j.id>0&&j.run_id===run.id&&Object.hasOwn(j,'started_at')&&Object.hasOwn(j,'completed_at')&&(j.started_at===null||Number.isFinite(stamp(j.started_at)))&&(j.completed_at===null||Number.isFinite(stamp(j.completed_at)))&&(!(j.started_at&&j.completed_at)||stamp(j.completed_at)>=stamp(j.started_at))),'LINEAGE_JOB_HISTORY');
++   }catch(e){jobsComplete=false;uncertainties.push({runId:run.id,reason:/^(LINEAGE|PARENT)_[A-Z_]+$/.test(e.message)?e.message:'LINEAGE_JOB_HISTORY_UNAVAILABLE'});}
++   const attemptOK=run.run_attempt===1&&jobs.every(j=>j?.run_attempt===1);if(!attemptOK)uncertainties.push({runId:run.id,reason:'LINEAGE_ATTEMPT_HISTORY_AMBIGUOUS'});
++   const terminal=run.status==='completed';
++   if(terminal&&jobsComplete&&attemptOK&&run.conclusion==='cancelled'&&jobs.every(queuedCancellation)){ignored.push({id:run.id,reason:'CONFIRMED_NEVER_STARTED',proof:'COMPLETE_CANCELLED_UNASSIGNED_JOB_HISTORY',runStartedAtIsExecutionEvidence:false});return;}
++   if(terminal&&jobsComplete&&attemptOK&&jobs.length&&jobs.every(j=>j.status==='completed'&&Number.isFinite(stamp(j.completed_at))&&stamp(j.completed_at)<start)){ignored.push({id:run.id,reason:'VERIFIED_JOB_EXECUTION_BEFORE_DAY'});return;}
++   if(terminal&&jobsComplete&&attemptOK&&jobs.length&&verifiedSkippedWorkflow(jobs)){
++    const url=api+'/contents/.github/workflows/ignition.yml?ref='+run.head_sha,doc=await remember(url);need(doc.type==='file'&&doc.path===workflowPath&&doc.encoding==='base64'&&typeof doc.content==='string','LINEAGE_WORKFLOW_PROOF');const bytes=Buffer.from(doc.content,'base64');need(bytes.length<=65536&&createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex')===doc.sha&&sha(bytes)===NO_OBSERVATION_WORKFLOW.sha256,'LINEAGE_WORKFLOW_PROOF');
++    ignored.push({id:run.id,reason:'VERIFIED_OBSERVATION_STEPS_SKIPPED',proof:'PINNED_WORKFLOW_AND_COMPLETE_JOB_STEPS',workflowSha256:sha(bytes),dstReasonNotGuessed:true});return;
++   }
++   if(!jobs.length)uncertainties.push({runId:run.id,reason:'LINEAGE_JOB_EXECUTION_UNKNOWN'});
++   if(!terminal)uncertainties.push({runId:run.id,reason:'LINEAGE_EARLIER_RUN_STILL_ACTIVE'});
++   evidence.push({runId:run.id,jobs,terminal});
++   const listing=await remember(api+'/actions/runs/'+run.id+'/artifacts?per_page=20');need(Number.isInteger(listing.total_count)&&listing.total_count<=20&&Array.isArray(listing.artifacts)&&listing.total_count===listing.artifacts.length,'LINEAGE_ARTIFACT_HISTORY');const matches=listing.artifacts.filter(a=>['native-sec-complete-run-v1','native-sec-available-run-v2'].includes(a.name));if(matches.length===0&&terminal&&jobsComplete&&attemptOK&&jobs.length===1&&jobs[0].status==='completed'&&jobs[0].conclusion==='success'){
++    const doc=await remember(api+'/contents/.github/workflows/ignition.yml?ref='+run.head_sha);need(doc.type==='file'&&doc.path===workflowPath&&doc.encoding==='base64','LINEAGE_WORKFLOW_PROOF');const bytes=Buffer.from(doc.content||'','base64');need(bytes.length<=65536&&createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex')===doc.sha,'LINEAGE_WORKFLOW_PROOF');const proof=await verifyProductionNoop({run,jobs,workflowBytes:bytes,api,http,remember});ignored.push({id:run.id,reason:'VERIFIED_WATCHER_PREOBSERVATION_EXIT',proof});const at=evidence.findIndex(e=>e.runId===run.id);if(at>=0)evidence.splice(at,1);return;
++   }need(matches.length===1,'LINEAGE_EVIDENCE_MISSING_OR_AMBIGUOUS');need(reservedBundles++<4,'LINEAGE_RETAINED_RUN_BUDGET');const artifact=matches[0];need(Number.isSafeInteger(artifact.id)&&!artifact.expired&&artifact.workflow_run?.id===run.id&&artifact.workflow_run?.head_sha===run.head_sha&&/^sha256:[a-f0-9]{64}$/.test(artifact.digest||'')&&artifact.size_in_bytes>0&&artifact.size_in_bytes<=16*1024*1024,'LINEAGE_ARTIFACT_PIN');
++   const location=await http.read(api+'/actions/artifacts/'+artifact.id+'/zip',{status:302}),zip=await http.read(location,{storage:true,binary:true,max:16*1024*1024});need(zip.length===artifact.size_in_bytes&&'sha256:'+sha(zip)===artifact.digest,'LINEAGE_ZIP_HASH');const bundle=captureJson(openCaptureZip(zip,'native-sec-run.json',12*1024*1024).toString(),12*1024*1024);need(allowedSourceShas.includes(bundle.asset?.sourceSha)&&bundle.asset.sourceSha===(expectedProducerSources[String(run.id)]||run.head_sha),'LINEAGE_SOURCE_PIN');const checked=validateLineageBundle(bundle,{runId:run.id+'-1',sourceSha:bundle.asset.sourceSha});retained.push({runId:run.id,bundle,coverage:checked.coverage,sourceIntegrity:checked.sourceIntegrity,sourceCaptureCompleteness:checked.sourceCaptureCompleteness,artifactDigest:artifact.digest});
++   }catch(e){uncertainties.push({runId:run.id,reason:/^(LINEAGE|PARENT)_[A-Z_]+$/.test(e.message)?e.message:'LINEAGE_RUN_ERROR'});}
++  });
++  await parallel(snapshots,async entry=>{const again=await http.read(entry.url);need(json((entry.project||((x)=>x))(again))===json((entry.project||((x)=>x))(entry.body)),'LINEAGE_HISTORY_CHANGED');});
++  need(!uncertainties.length,'LINEAGE_MISSING_OR_AMBIGUOUS_EVIDENCE');const state=evidence.length?LINEAGE_STATES.EARLIER:LINEAGE_STATES.NONE;
++  return {status:state,state,day,sameDayStart:new Date(start).toISOString(),historyVerified:true,jobHistoryVerified:true,lookupStatus:'COMPLETE',earlierObservationEvidence:retained.length?'AUTHENTICATED_AVAILABLE_SOURCE':'NOT_ESTABLISHED',historyEvidence:{scope:{day,before,currentRunId,workflowId,branch:'main',creationLookbackDays:35,contract:SESSION_HISTORY_CAPS.contract},snapshots:snapshots.map(({project,...x})=>x)},retainedBundles:retained,ignoredNeverStarted:ignored.filter(x=>x.reason==='CONFIRMED_NEVER_STARTED'),excludedExecutions:ignored,globalHistoryEstablished:false,admissionPolicyApproved:false,...http.stats()};
++ }catch(e){const reason=/^(LINEAGE|PARENT)_[A-Z_]+$/.test(e.message)?e.message:'LINEAGE_CLIENT_ERROR',budget=reason==='PARENT_REQUEST_BUDGET'?'REQUESTS':reason==='PARENT_TIME_BUDGET'?'TIME':reason==='PARENT_RESPONSE_BUDGET'?'BYTES':null;return {status:LINEAGE_STATES.UNKNOWN,state:LINEAGE_STATES.UNKNOWN,reason,historyVerified:false,jobHistoryVerified:false,lookupStatus:budget?'CONTROL_PLANE_BUDGET_EXHAUSTED':'INCOMPLETE',budgetExhausted:budget,earlierObservationEvidence:retained.length?'AUTHENTICATED_AVAILABLE_SOURCE':'NOT_ESTABLISHED',day,uncertainties,historyEvidence:{scope:{day,before,currentRunId,workflowId,branch:'main',creationLookbackDays:35,contract:SESSION_HISTORY_CAPS.contract},snapshots:snapshots.map(({project,...x})=>x)},retainedBundles:retained,ignoredNeverStarted:ignored.filter(x=>x.reason==='CONFIRMED_NEVER_STARTED'),excludedExecutions:ignored,globalHistoryEstablished:false,admissionPolicyApproved:false,...http.stats()};}
++ }};
++}
+ export function sameDayLineageEventPort({current,history}){const port=colocatedPrefixPort(current);return async input=>{
+  const captured=await port(input),assets=[...(history.retainedBundles||[]).map(r=>r.bundle.asset),...captured.evidenceAssets],archives=assets.map(a=>readNativeRun({expectedRunId:a.runId,expectedSourceSha:a.sourceSha,_files:a.files})),views=archives.flatMap(a=>nativeEventsForCapture(a,input).events),groups=new Map();for(const event of views){const list=groups.get(event.eventId)||[];list.push(event);groups.set(event.eventId,list);}
+  const historyUnknown=history.state===LINEAGE_STATES.UNKNOWN,sourceUncertain=(history.retainedBundles||[]).some(r=>r.sourceCaptureCompleteness==='UNESTABLISHED'),unknown=historyUnknown||sourceUncertain,researchEvents=[...groups.values()].map(list=>{list.sort((a,b)=>stamp(a.firstIngestedAt)-stamp(b.firstIngestedAt));const event=list[0],earlier=archives.flatMap(a=>a.observations).filter(row=>row.accession===event.sourceId&&row.issuerCik===event.issuerCik&&stamp(row.firstIngestedAt)<stamp(event.firstIngestedAt)),uncertain=unknown||earlier.length>0;return {originalInAvailableArchive:event,allAvailableVersions:list,earlierIssuerEvidence:earlier,firstIngestedAt:uncertain?null:event.firstIngestedAt,originalIngestionStatus:historyUnknown?'UNKNOWN_EARLIER_OBSERVATION_POSSIBLE':sourceUncertain?'SOURCE_CAPTURE_INCOMPLETE_FIRST_UNKNOWN':earlier.length?'EARLIER_ISSUER_IDENTITY_UNRESOLVED':'AVAILABLE_SAME_DAY_STREAM_ONLY',exclusionReason:'CONTINUITY_ADMISSION_POLICY_NOT_APPROVED'};});
+diff --git a/native-sec-parent-client.mjs b/native-sec-parent-client.mjs
+index 8660fc27..b4ff159f 100644
+--- a/native-sec-parent-client.mjs
++++ b/native-sec-parent-client.mjs
+@@ -19,11 +19,11 @@ export function prepareCompleteNativeBundle({directory,runId,sourceSha,legacyArc
+  const bundle={kind:'NATIVE_SEC_COMPLETE_RUN_BUNDLE_V1',asset,completion:{producerExitCode,endedAt,legacyArchiveSha256:sha(legacy),lastHash:archive.lastHash,responses:archive.responses.length,coverageScope:'CONFIGURED_0930_1500_NOT_FULL_SESSION',globalHistoryEstablished:false},legacyArchiveBase64:legacy.toString('base64')};validateCompleteNativeBundle(bundle,{expectedRunId:runId,expectedSourceSha:sourceSha});need(nativeRunDigest(directory).sha256===prefix.sha256,'PARENT_CHANGED');const bytes=Buffer.from(JSON.stringify(bundle));need(bytes.length<=12*1024*1024,'PARENT_BUNDLE_BUDGET');
+  const fd=fs.openSync(out,'wx',0o600);try{fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}return {sha256:sha(bytes),bytes:bytes.length};
+ }
+-export function createNativeParentClient({fetcher,token,storageOrigins,now=()=>Date.now(),timeoutMs=PARENT_CAPS.timeoutMs,limits={requests:10,bytes:20*1024*1024,totalMs:90000}}){
++export function createNativeParentClient({fetcher,token,storageOrigins,now=()=>Date.now(),timeoutMs=PARENT_CAPS.timeoutMs,limits={requests:10,bytes:20*1024*1024,totalMs:90000},historyContract=null}){
+  need(typeof fetcher==='function'&&typeof token==='string'&&Array.isArray(storageOrigins)&&storageOrigins.every(x=>new URL(x).origin===x&&x.startsWith('https://'))&&Number.isInteger(timeoutMs)&&timeoutMs>0&&timeoutMs<=10000,'PARENT_EXPLICIT_CLIENT_REQUIRED');
+- need(Number.isInteger(limits.requests)&&limits.requests>=1&&limits.requests<=32&&Number.isInteger(limits.bytes)&&limits.bytes>0&&limits.bytes<=64*1024*1024&&Number.isInteger(limits.totalMs)&&limits.totalMs>0&&limits.totalMs<=120000,'PARENT_LIMITS');let requests=0,receivedBytes=0,start=null;const stats=()=>({requests,receivedBytes,retries:0});
++ need(Number.isInteger(limits.requests)&&limits.requests>=1&&limits.requests<=(historyContract==='SESSION_EXECUTION_HISTORY_V2'?256:32)&&Number.isInteger(limits.bytes)&&limits.bytes>0&&limits.bytes<=64*1024*1024&&Number.isInteger(limits.totalMs)&&limits.totalMs>0&&limits.totalMs<=120000,'PARENT_LIMITS');let requests=0,receivedBytes=0,start=null;const stats=()=>({requests,receivedBytes,retries:0});
+  async function request(url,{max=PARENT_CAPS.jsonBytes,status=200,binary=false,storage=false}={}){
+-  start??=now();need(requests<limits.requests&&now()-start<=limits.totalMs,'PARENT_REQUEST_BUDGET');requests++;const u=new URL(url);need(!u.username&&!u.password&&!u.hash&&(storage?storageOrigins.includes(u.origin):u.origin==='https://api.github.com'&&u.pathname.startsWith('/repos/drrazaq/Stock-2/')),'PARENT_ENDPOINT_SCOPE');
++  start??=now();need(requests<limits.requests,'PARENT_REQUEST_BUDGET');need(now()-start<=limits.totalMs,historyContract==='SESSION_EXECUTION_HISTORY_V2'?'PARENT_TIME_BUDGET':'PARENT_REQUEST_BUDGET');requests++;const u=new URL(url);need(!u.username&&!u.password&&!u.hash&&(storage?storageOrigins.includes(u.origin):u.origin==='https://api.github.com'&&u.pathname.startsWith('/repos/drrazaq/Stock-2/')),'PARENT_ENDPOINT_SCOPE');
+   const controller=new AbortController();let timer;const operation=(async()=>{const r=await fetcher(url,{method:'GET',redirect:'manual',signal:controller.signal,headers:storage?{}:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});need(r.status===status,'PARENT_SERVICE_ERROR');if(status===302){const location=r.headers.get('location');need(location,'PARENT_REDIRECT_MISSING');return location;}
+    const reader=r.body.getReader(),parts=[];let n=0;try{for(;;){const {done,value}=await reader.read();if(done)break;n+=value.length;receivedBytes+=value.length;need(n<=max&&receivedBytes<=limits.bytes,'PARENT_RESPONSE_BUDGET');parts.push(Buffer.from(value));}}finally{await reader.cancel().catch(()=>{});}const bytes=Buffer.concat(parts);return binary?bytes:captureJson(bytes.toString());})();
+   try{return await Promise.race([operation,new Promise((_,reject)=>timer=setTimeout(()=>{controller.abort();reject(Error('PARENT_TIMEOUT'));},Math.min(timeoutMs,Math.max(1,limits.totalMs-(now()-start)))))]);}finally{clearTimeout(timer);controller.abort();}
+diff --git a/paper-capture-wrapper.mjs b/paper-capture-wrapper.mjs
+index 27b92e28..537ec6fd 100644
+--- a/paper-capture-wrapper.mjs
++++ b/paper-capture-wrapper.mjs
+@@ -11,7 +11,7 @@ import {validateReferenceBundle} from './paper-capture-references.mjs';
+ import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
+ import {openCaptureZip} from './capture-artifact.mjs';
+ export const WRAPPER_FILES=Object.freeze(['native-sec-handoff.mjs','native-sec-events.mjs','edgar-feed.mjs','capture-json.mjs','capture-artifact.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
+-export const APPROVED_BINDING_FILES=Object.freeze([...WRAPPER_FILES,'capture-approved-binding.mjs','native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs']);
++export const APPROVED_BINDING_FILES=Object.freeze([...WRAPPER_FILES,'capture-approved-binding.mjs','native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs','ignition-execution-contract.mjs']);
+ export const FIXED_UNIVERSE=Object.freeze(['AMD','INTC','NVDA','AMAT','LRCX','KLAC']);
+ export const WRAPPER_CAPS=Object.freeze({uploads:41,sealedBytes:160*1024*1024,archiveBytes:164*1024*1024,historyRows:100,referenceBytes:2*1024*1024});
+ export const APPROVAL_LIMITS=Object.freeze({providerAttempts:41,perMinute:2,inFlight:1,responseBytes:65536,totalResponseBytes:8388608,frames:41,symbols:6,uploadAttempts:41,sealedBytes:167772160,archiveBytes:171966464,retentionDays:3});
+diff --git a/test/approved-capture-binding.test.mjs b/test/approved-capture-binding.test.mjs
+index e2c2d85f..96cfbfcf 100644
+--- a/test/approved-capture-binding.test.mjs
++++ b/test/approved-capture-binding.test.mjs
+@@ -1,3 +1,4 @@
++import {scopedRunHistory,operationalHistory} from './github-history-fixture.mjs';
+ import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
+ import {runApprovedNativeCapture,prepareApprovedBinding,recoverApprovedLineage,approvedEnvironmentClients} from '../capture-approved-binding.mjs';
+ import {recoverUploadedCapture,prepareCaptureGuard} from '../paper-capture-wrapper.mjs';import {sha} from '../prospective-paper-capture.mjs';
+@@ -31,13 +32,13 @@ for(const fault of ['history-private','duplicate-run','unknown-producer-history'
+  }finally{f.cleanup();}
+ });
+ test('separate approved API cannot pass the unchanged rehearsal approval guard',()=>{const f=approvedFixture(noNative);try{assert.throws(()=>prepareCaptureGuard({...f,now:f.nowMs}),/DATED_APPROVAL_REQUIRED/);assert.ok(prepareApprovedBinding({...f,clock:{now:()=>f.nowMs}}).guard);}finally{f.cleanup();}});
+-for(const fault of ['success','provider-429','provider-error','upload-rejection','invalid-finalize','changed-input','deadline-upload'])test('actual native producer → approved guard/real client adapters → encrypted recovery: '+fault,async()=>{
++for(const fault of ['success','success-lifetime','success-cancelled-zero','success-winter-noop','unknown-budget','provider-429','provider-error','upload-rejection','invalid-finalize','changed-input','deadline-upload'])test('actual native producer → approved guard/real client adapters → encrypted recovery: '+fault,async()=>{
+  const p=await producerFixture(),native={directory:path.join(p.dir,'runtime/native-sec-events/123-1'),expectedRunId:'123-1',expectedSourceSha:p.sourceSha},f=approvedFixture(native);let m;
+- try{const production=await p.run({shadow:true,runId:'123'}),before=JSON.stringify(production.providerTrace);m=approvedServices(f,{providerFault:fault==='provider-429'?()=>new Response('{}',{status:429}):fault==='provider-error'?()=>new Response('{}',{status:500}):undefined,onProvider:async()=>{if(fault==='changed-input')fs.appendFileSync(f.entitlementFile,' ');},onArtifact:async call=>{if(fault==='upload-rejection')return new Response('{}',{status:403});if(fault==='invalid-finalize'&&call.phase==='finalize')return Response.json({ok:true,artifact_id:'INVALID'});if(fault==='deadline-upload'){m.setTime(Date.parse(t(40))+30001);return Response.json({ok:true});}}});
+- const reads=[],env=new Proxy({GITHUB_TOKEN:'SYNTHETIC_GITHUB_TOKEN',ALPACA_KEY:'SYNTHETIC_ALPACA_KEY',ALPACA_SECRET:'SYNTHETIC_ALPACA_SECRET',PRIVATE_KEY:fixtureKey,ACTIONS_RUNTIME_TOKEN:(await import('./artifact-wire-fixture.mjs')).syntheticArtifactToken},{get:(o,k)=>{reads.push(k);return o[k];}}),bound=approvedEnvironmentClients({environment:env,fetcher:(url,o)=>url.startsWith('https://api.github.com/')?m.transports.history(url,o):url.startsWith('https://data.alpaca.markets/')?m.transports.provider(url,o):m.transports.artifact(url,o)});
++ try{const production=await p.run({shadow:true,runId:'123'}),before=JSON.stringify(production.providerTrace),history=operationalHistory(fault,p.sourceSha,fs.readFileSync(new URL('../docs/validation/production-ignition-noop-workflow.yml',import.meta.url)));m=approvedServices(f,{historyFault:['success-lifetime','success-cancelled-zero','success-winter-noop','unknown-budget'].includes(fault)?(url)=>url.includes('sec-paper-capture')?Response.json(f.history):history.response(url):undefined,providerFault:['success-lifetime','success-cancelled-zero','success-winter-noop'].includes(fault)?()=>m.requests.provider.length>1?new Response('{}',{status:429}):null:fault==='provider-429'?()=>new Response('{}',{status:429}):fault==='provider-error'?()=>new Response('{}',{status:500}):undefined,onProvider:async()=>{if(fault==='changed-input')fs.appendFileSync(f.entitlementFile,' ');},onArtifact:async call=>{if(fault==='upload-rejection')return new Response('{}',{status:403});if(fault==='invalid-finalize'&&call.phase==='finalize')return Response.json({ok:true,artifact_id:'INVALID'});if(fault==='deadline-upload'){m.setTime(Date.parse(t(40))+30001);return Response.json({ok:true});}}});
++ const reads=[],env=new Proxy({GITHUB_TOKEN:'SYNTHETIC_GITHUB_TOKEN',ALPACA_KEY:'SYNTHETIC_ALPACA_KEY',ALPACA_SECRET:'SYNTHETIC_ALPACA_SECRET',PRIVATE_KEY:fixtureKey,ACTIONS_RUNTIME_TOKEN:(await import('./artifact-wire-fixture.mjs')).syntheticArtifactToken},{get:(o,k)=>{reads.push(k);return o[k];}}),bound=approvedEnvironmentClients({environment:env,fetcher:(url,o)=>(url.startsWith('https://api.github.com/')||o.method==='GET'&&new URL(url).hostname.endsWith('.blob.core.windows.net'))?m.transports.history(url,o):url.startsWith('https://data.alpaca.markets/')?m.transports.provider(url,o):m.transports.artifact(url,o)});
+  const r=await runApprovedNativeCapture({...opts(f,m),...bound});assert.deepEqual(reads,['GITHUB_TOKEN','ALPACA_KEY','ALPACA_SECRET','PRIVATE_KEY','ACTIONS_RUNTIME_TOKEN']);assert.equal(JSON.stringify(production.providerTrace),before);assert.equal(r.genuineAdmissions,0);assert.equal(fs.existsSync(path.join(p.dir,'blocked-fetch')),false);
+- if(fault==='success'){
+-  assert.equal(r.status,'COMPLETE',JSON.stringify(r));assert.equal(r.providerAttempts,41);assert.equal(r.confirmedUploads,41);assert.equal(r.wireRequests,164);assert.equal(r.parentRequests,2);assert.equal(m.requests.history.length,3);
++ if(['success-lifetime','success-cancelled-zero','success-winter-noop'].includes(fault)){assert.equal(r.status,'INCOMPLETE');assert.equal(r.reason,'RATE_LIMIT_STOP');assert.equal(r.providerAttempts,2);assert.equal(r.confirmedUploads,1);assert.equal(r.parentRequests,history.expectedRequests);assert.equal(r.wireRequests,4);const raw=fs.readFileSync(path.join(f.output,'receipts.json'),'utf8'),recovered=recoverUploadedCapture({archives:m.wire.archives,receiptRaw:raw,expectedReceiptSha256:sha(raw),expectedApprovalHash:f.approvalSha256,expectedSourceSha:f.approval.plan.sourceSha,key:fixtureKey});assert.equal(recovered.frames,1);assert.equal(recovered.status,'AUTHENTICATED_INCOMPLETE');assert.equal(recovered.originalInputs.sourceContext.historyVerified,true);assert.equal(recovered.originalInputs.sourceContext.state,'VERIFIED_NO_EARLIER_SAME_DAY_RUN');assert.equal(recovered.report.evaluation.counts.resolved,0);}else if(fault.startsWith('success')){
++  assert.equal(r.status,'COMPLETE',JSON.stringify(r));assert.equal(r.providerAttempts,41);assert.equal(r.confirmedUploads,41);assert.equal(r.wireRequests,164);assert.equal(r.parentRequests,history.expectedRequests);assert.equal(m.requests.history.length,history.expectedRequests+1);
+   for(const q of m.requests.provider){assert.equal(q.method,'GET');assert.equal(q.redirect,'error');assert.equal(q.headers['APCA-API-KEY-ID'],'SYNTHETIC_ALPACA_KEY');assert.equal(new URL(q.url).pathname,'/v2/stocks/snapshots');}
+   for(const q of m.requests.artifact)if(q.url.includes('blob.core.windows.net'))assert.equal(q.headers.Authorization,undefined);
+   const raw=fs.readFileSync(path.join(f.output,'receipts.json'),'utf8'),recovered=recoverUploadedCapture({archives:m.wire.archives,receiptRaw:raw,expectedReceiptSha256:sha(raw),expectedApprovalHash:f.approvalSha256,expectedSourceSha:f.approval.plan.sourceSha,key:fixtureKey});assert.equal(recovered.frames,41);assert.equal(recovered.report.evaluation.counts.resolved,0);assert.equal(recovered.originalInputs.sourceContext.historyVerified,true);assert.ok(recovered.originalInputs.evidenceAssets.length>0);assert.ok(recovered.originalInputs.eventBatches.every(b=>JSON.parse(b.raw).events.length===0));assert.equal(recovered.originalInputs.sourceContext.admissionPolicyApproved,false);
+@@ -46,7 +47,7 @@ for(const fault of ['success','provider-429','provider-error','upload-rejection'
+   // disappear partway through recovery. Legacy absent-context controls persist.
+   const manifest=JSON.parse(raw),receipt=manifest.receipts[1],envelope=JSON.parse(openCaptureZip(m.wire.archives.get(receipt.artifactId),receipt.name)),payload=JSON.parse(openResearch(envelope,fixtureKey));delete payload.sourceContext;delete envelope.context.sourceContextSha256;const altered=Buffer.from(JSON.stringify(sealResearch(Buffer.from(JSON.stringify(payload)),fixtureKey,envelope.context))),zip=fixtureZip(receipt.name,altered),changed=new Map(m.wire.archives);changed.set(receipt.artifactId,zip);Object.assign(receipt,{archiveSha256:sha(zip),archiveBytes:zip.length,fileSha256:sha(altered),fileBytes:altered.length});const changedRaw=JSON.stringify(manifest);assert.throws(()=>recoverUploadedCapture({archives:changed,receiptRaw:changedRaw,expectedReceiptSha256:sha(changedRaw),expectedApprovalHash:f.approvalSha256,expectedSourceSha:f.approval.plan.sourceSha,key:fixtureKey}),/RECOVERY_SOURCE_CONTEXT_CHANGED/);
+   const again=await runApprovedNativeCapture(opts(f,m));assert.equal(again.status,'BLOCKED');assert.equal(m.requests.provider.length,41);
+- }else{assert.notEqual(r.status,'COMPLETE',JSON.stringify(r));assert.equal(m.requests.provider.length,1);assert.ok(m.requests.artifact.length<=4);assert.equal(r.confirmedUploads,0);}
++ }else if(fault==='unknown-budget'){assert.equal(r.status,'BLOCKED');assert.equal(r.reason,'LINEAGE_UNKNOWN');assert.equal(m.requests.provider.length,0);assert.equal(m.requests.artifact.length,0);}else{assert.notEqual(r.status,'COMPLETE',JSON.stringify(r));assert.equal(m.requests.provider.length,1);assert.ok(m.requests.artifact.length<=4);assert.equal(r.confirmedUploads,0);}
+  }finally{p.close();f.cleanup();}
+ });
+ for(const fault of ['deadline-history','deadline-provider','deadline-upload-wait'])test('full pinned deadline aborts '+fault+' even when a transport ignores cancellation; late response cannot resume capture',async()=>{
+@@ -90,7 +91,7 @@ test('unknown earlier-job history retains authenticated partial original source
+  const {prepareAvailableLineageBundle}=await import('../native-sec-lineage-history.mjs');const first=await producerFixture(),next=await producerFixture(),native={directory:path.join(next.dir,'runtime/native-sec-events/123-1'),expectedRunId:'123-1',expectedSourceSha:next.sourceSha},f=approvedFixture(native);
+  try{const prior=await first.run({shadow:true,runId:'100',epoch:Date.parse(t(-2))}),pending=Buffer.from('SYNTHETIC_INTERRUPTED_ORIGINAL_BYTES');fs.writeFileSync(path.join(prior.archiveDirectory,'response-000002.json.pending-SYNTHETIC'),pending);const file=path.join(first.dir,'native-sec-run.json'),bundle=prepareAvailableLineageBundle({directory:prior.archiveDirectory,runId:'100-1',sourceSha:first.sourceSha,legacyArchive:path.join(first.dir,'data/ignition-runs/2026-11-05/100-1.json'),producerExitCode:9,endedAt:t(-1),out:file}),zip=fixtureZip('native-sec-run.json',fs.readFileSync(file));
+  const run={id:100,run_attempt:1,workflow_id:7,path:'.github/workflows/ignition.yml',head_branch:'main',head_sha:first.sourceSha,status:'completed',conclusion:'failure',created_at:t(-5),run_started_at:t(-5),repository:{full_name:'drrazaq/Stock-2'}},job={id:101,run_id:100,run_attempt:1,status:'completed',started_at:t(-5),completed_at:t(-1)},artifact={id:200,name:'native-sec-available-run-v2',size_in_bytes:zip.length,digest:'sha256:'+sha(zip),expired:false,workflow_run:{id:100,head_sha:first.sourceSha}};
+- assert.equal(first.sourceSha,next.sourceSha);const m=approvedServices(f,{historyFault:async(url,o)=>{if(url.includes('sec-paper-capture'))return Response.json(f.history);if(url.includes('/workflows/7/'))return Response.json({total_count:1,workflow_runs:[run]});if(url.includes('/jobs?'))return Response.json({total_count:2,jobs:[job,job]});if(url.includes('/runs/100/artifacts?'))return Response.json({total_count:1,artifacts:[artifact]});if(url.endsWith('/artifacts/200/zip'))return new Response(null,{status:302,headers:{location:f.approval.artifactScope.storageOrigins[0]+'/prior.zip'}});if(url.endsWith('/prior.zip')){assert.equal(o.headers.Authorization,undefined);return new Response(zip);}if(url.endsWith('/runs/100'))return Response.json(run);throw Error('SYNTHETIC_UNEXPECTED_ROUTE');}});
++ assert.equal(first.sourceSha,next.sourceSha);const m=approvedServices(f,{historyFault:async(url,o)=>{if(url.includes('sec-paper-capture'))return Response.json(f.history);if(url.includes('/workflows/7/'))return Response.json(scopedRunHistory(url,[run]));if(url.includes('/jobs?'))return Response.json({total_count:2,jobs:[job,job]});if(url.includes('/runs/100/artifacts?'))return Response.json({total_count:1,artifacts:[artifact]});if(url.endsWith('/artifacts/200/zip'))return new Response(null,{status:302,headers:{location:f.approval.artifactScope.storageOrigins[0]+'/prior.zip'}});if(url.endsWith('/prior.zip')){assert.equal(o.headers.Authorization,undefined);return new Response(zip);}if(url.endsWith('/runs/100'))return Response.json(run);throw Error('SYNTHETIC_UNEXPECTED_ROUTE');}});
+  const result=await runApprovedNativeCapture(opts(f,m));assert.equal(result.reason,'LINEAGE_UNKNOWN',JSON.stringify(result));assert.equal(m.requests.provider.length,0);assert.equal(m.requests.artifact.length,0);const journal=f.output+'.lineage.enc',recovered=recoverApprovedLineage({file:journal,sha256:sha(fs.readFileSync(journal)),key:fixtureKey,sourceSha:f.approval.plan.sourceSha,approvalSha256:f.approvalSha256,runId:123});assert.equal(recovered.lineage.retainedBundles.length,1);assert.deepEqual(recovered.lineage.retainedBundles[0].bundle,bundle);assert.equal(Buffer.from(recovered.lineage.retainedBundles[0].bundle.partialFiles[0].bodyBase64,'base64').toString(),pending.toString());assert.equal(recovered.primaryAdmission,false);
+  }finally{first.close();next.close();f.cleanup();}
+ });
+diff --git a/test/approved-capture-fixture.mjs b/test/approved-capture-fixture.mjs
+index 8e16fd9a..fbbc5633 100644
+--- a/test/approved-capture-fixture.mjs
++++ b/test/approved-capture-fixture.mjs
+@@ -3,6 +3,7 @@ import fs from 'node:fs';import path from 'node:path';
+ import {wrapperFixture,fixtureGit,t,fixtureKey} from './capture-wrapper-fixture.mjs';
+ import {APPROVED_BINDING_FILES,inputFingerprint} from '../paper-capture-wrapper.mjs';
+ import {sha} from '../prospective-paper-capture.mjs';
++import {APPROVED_CONTROL_LIMITS} from '../capture-approved-binding.mjs';
+ import {artifactWireFixture,syntheticArtifactToken,syntheticResultsOrigin,syntheticStorageOrigin} from './artifact-wire-fixture.mjs';
+ const root=new URL('../',import.meta.url);
+ export function approvedFixture(native){const f=wrapperFixture();
+@@ -12,7 +13,7 @@ export function approvedFixture(native){const f=wrapperFixture();
+  fixtureGit(f.reviewRoot,['add','.']);fixtureGit(f.reviewRoot,['commit','-qm','SYNTHETIC future workflow contract not installed']);const workflowCommitSha=fixtureGit(f.reviewRoot,['rev-parse','HEAD']);
+  f.approval.kind='PAPER_CAPTURE_LIVE_BINDING_APPROVAL_V1';f.approval.plan.sourceSha=sourceSha;f.approval.plan.enrollmentManifestSha256=inputFingerprint(f.approval.referenceSha256,f.approval.plan);f.approval.runtimeFiles=Object.fromEntries(APPROVED_BINDING_FILES.map(n=>[n,sha(fs.readFileSync(path.join(f.root,n)))]));f.approval.workflowCommitSha=workflowCommitSha;f.approval.workflowSha256=sha(fs.readFileSync(wf));f.context.workflowCommitSha=workflowCommitSha;f.history.workflow_runs[0].head_sha=workflowCommitSha;
+  f.entitlementFile=path.join(f.dir,'SYNTHETIC-entitlement.json');fs.writeFileSync(f.entitlementFile,JSON.stringify({label:'SYNTHETIC_NOT_OFFICIAL_EVIDENCE',plan:'MOCK_SIP_AND_RETENTION'}));f.entitlementSha256=sha(fs.readFileSync(f.entitlementFile));f.approval.entitlements.evidenceSha256=f.entitlementSha256;
+- f.approval.bindingReview={version:1,approved:true,continuityPolicyApproved:false,protocol:'EXISTING_STREAM_SEC_30M_V1',primaryAdmission:'DISABLED_PENDING_CONTINUITY_REVIEW'};f.approval.native={sourceSha:native.expectedSourceSha,runId:'123-1',workflowId:7,directorySuffix:'runtime/native-sec-events/123-1'};f.approval.artifactScope={resultsOrigin:'https://results-receiver.actions.githubusercontent.com',storageOrigins:[syntheticStorageOrigin]};
++ f.approval.controlLimits={...APPROVED_CONTROL_LIMITS};f.approval.bindingReview={version:1,approved:true,continuityPolicyApproved:false,protocol:'EXISTING_STREAM_SEC_30M_V1',primaryAdmission:'DISABLED_PENDING_CONTINUITY_REVIEW'};f.approval.native={sourceSha:native.expectedSourceSha,runId:'123-1',workflowId:7,directorySuffix:'runtime/native-sec-events/123-1'};f.approval.artifactScope={resultsOrigin:'https://results-receiver.actions.githubusercontent.com',storageOrigins:[syntheticStorageOrigin]};
+  f.native=native;f.output=path.join(f.root,'runtime/paper-capture/123-1');f.save=()=>{fs.writeFileSync(f.approvalFile,JSON.stringify(f.approval));f.approvalSha256=sha(fs.readFileSync(f.approvalFile));};f.save();return f;
+ }
+ export function approvedServices(f,{historyFault,providerFault,artifactFault,onHistory=()=>{},onProvider=()=>{},onArtifact=()=>{}}={}){
+@@ -20,6 +21,6 @@ export function approvedServices(f,{historyFault,providerFault,artifactFault,onH
+  return {requests,wire,clock:{now:()=>clock,sleep:async ms=>{clock+=ms;},setTimeout,clearTimeout},setTime:x=>{clock=x;},opens:()=>({controlOpens,captureOpens}),
+  openControlBindings:async()=>{controlOpens++;return {githubToken:'SYNTHETIC_GITHUB_TOKEN'};},openCaptureBindings:async()=>{captureOpens++;return {keyId:'SYNTHETIC_ALPACA_KEY',secret:'SYNTHETIC_ALPACA_SECRET',encryptionKey:fixtureKey,runtimeToken:syntheticArtifactToken};},
+  transports:{history:async(url,o)=>{requests.history.push({url,...o});await onHistory(url,o);if(historyFault)return historyFault(url,o);if(url.includes('/sec-paper-capture.yml/runs?'))return Response.json(f.history);if(url.includes('/workflows/7/runs?'))return Response.json({total_count:0,workflow_runs:[]});throw Error('SYNTHETIC_UNEXPECTED_HISTORY');},
+- provider:async(url,o)=>{requests.provider.push({url,...o});await onProvider(url,o);if(providerFault)return providerFault(url,o);const minute=Math.floor((clock-f.nowMs)/60000),data=Object.fromEntries(f.universe.map(symbol=>[symbol,{latestQuote:{t:new Date(clock).toISOString(),bp:9.99,ap:10.01,bs:1000,as:1000},minuteBar:{t:t(minute-1),l:9,h:11,v:250000}}]));return Response.json(data);},
++ provider:async(url,o)=>{requests.provider.push({url,...o});await onProvider(url,o);if(providerFault){const response=await providerFault(url,o);if(response)return response;}const minute=Math.floor((clock-f.nowMs)/60000),data=Object.fromEntries(f.universe.map(symbol=>[symbol,{latestQuote:{t:new Date(clock).toISOString(),bp:9.99,ap:10.01,bs:1000,as:1000},minuteBar:{t:t(minute-1),l:9,h:11,v:250000}}]));return Response.json(data);},
+  artifact:async(url,o)=>{requests.artifact.push({url,...o});if(artifactFault)return artifactFault(url,o);return wire.fetcher(url.replace(f.approval.artifactScope.resultsOrigin,syntheticResultsOrigin),o);}}};
+ }
+diff --git a/test/github-history-contract.test.mjs b/test/github-history-contract.test.mjs
+new file mode 100644
+index 00000000..36f90b89
+--- /dev/null
++++ b/test/github-history-contract.test.mjs
+@@ -0,0 +1,28 @@
++// Production-shaped GitHub metadata, synthetic only. No actual GitHub calls.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {createHash} from 'node:crypto';
++import {createSameDayLineageClient,sameDayStart,LINEAGE_STATES,SESSION_HISTORY_CAPS} from '../native-sec-lineage-history.mjs';
++import {scopedRunHistory,queuedRun,skippedObservationJobs} from './github-history-fixture.mjs';
++const source='a'.repeat(40),defaultScope={day:'2026-11-05',before:'2026-11-05T14:30:00Z',currentRunId:99999,workflowId:7,allowedSourceShas:[source]};
++const workflow=fs.readFileSync(new URL('../.github/workflows/ignition.yml',import.meta.url));
++function mock(rows,{jobFor=()=>[],workflowBytes=workflow,jobError=false,artifacts=[],failPage=false}={}){const calls=[];let active=0,maxActive=0;const fetcher=async(url,o)=>{calls.push(url);active++;maxActive=Math.max(maxActive,active);try{assert.equal(o.method,'GET');assert.equal(o.redirect,'manual');await new Promise(r=>setTimeout(r,1));const u=new URL(url);if(u.pathname.includes('/workflows/7/runs')){assert.ok(u.searchParams.has('created'),'no lifetime-wide query');assert.equal(u.searchParams.get('branch'),'main');const d=scopedRunHistory(url,rows);if(failPage&&u.searchParams.get('page')==='2')d.workflow_runs=[];return Response.json(d);}if(u.pathname.endsWith('/jobs')){if(jobError)return new Response('{}',{status:403});const id=Number(u.pathname.split('/').at(-2)),jobs=jobFor(rows.find(r=>r.id===id));return Response.json({total_count:jobs.length,jobs});}if(u.pathname.endsWith('/artifacts'))return Response.json({total_count:artifacts.length,artifacts});if(u.pathname.includes('/contents/'))return Response.json({type:'file',path:'.github/workflows/ignition.yml',encoding:'base64',content:workflowBytes.toString('base64'),sha:createHash('sha1').update('blob '+workflowBytes.length+'\0').update(workflowBytes).digest('hex')});throw Error('UNEXPECTED_SYNTHETIC_HISTORY_ROUTE');}finally{active--;}};return {calls,fetcher,maxActive:()=>maxActive};}
++const client=m=>createSameDayLineageClient({fetcher:m.fetcher,token:'SYNTHETIC',storageOrigins:['https://synthetic.blob.core.windows.net']});
++test('NY midnight uses the offset at midnight, including23/25-hour DST transition days',()=>{assert.equal(sameDayStart('2026-03-08'),'2026-03-08T05:00:00.000Z');assert.equal(sameDayStart('2026-03-09'),'2026-03-09T04:00:00.000Z');assert.equal(sameDayStart('2026-11-01'),'2026-11-01T04:00:00.000Z');assert.equal(sameDayStart('2026-11-02'),'2026-11-02T05:00:00.000Z');assert.throws(()=>sameDayStart('2026-02-30'));});
++test('thousands of lifetime runs do not contaminate day/carry-in query counts',async()=>{const rows=[queuedRun(100,'2026-11-05T14:10:00Z',source),...Array.from({length:1500},(_,i)=>queuedRun(1000+i,'2026-01-01T12:00:00Z',source))],m=mock(rows),r=await client(m).discover(defaultScope);assert.equal(r.state,LINEAGE_STATES.NONE);assert.equal(r.ignoredNeverStarted.length,1);assert.equal(r.ignoredNeverStarted[0].runStartedAtIsExecutionEvidence,false);assert.ok(m.calls.every(u=>!u.includes('/runs/1000/jobs')));assert.ok(r.requests<10);});
++test('101 scoped cancelled zero-job runs traverse complete pagination and revalidation',async()=>{const rows=Array.from({length:101},(_,i)=>queuedRun(1000+i,new Date(Date.parse('2026-11-05T14:20:00Z')-i*1000).toISOString(),source)),m=mock(rows),r=await client(m).discover(defaultScope);assert.equal(r.state,LINEAGE_STATES.NONE);assert.equal(r.ignoredNeverStarted.length,101);assert.equal(r.requests,208);assert.ok(m.maxActive()<=4);assert.ok(m.calls.some(u=>new URL(u).searchParams.get('page')==='2'));});
++test('partial pagination is UNKNOWN and cannot establish no earlier producer',async()=>{const m=mock(Array.from({length:101},(_,i)=>queuedRun(1000+i,'2026-11-05T14:00:00Z',source)),{failPage:true}),r=await client(m).discover(defaultScope);assert.equal(r.state,LINEAGE_STATES.UNKNOWN);assert.equal(r.reason,'LINEAGE_HISTORY_TRUNCATED');assert.equal(r.earlierObservationEvidence,'NOT_ESTABLISHED');});
++test('control request exhaustion is distinct from any evidence of earlier observation',async()=>{const m=mock(Array.from({length:140},(_,i)=>queuedRun(1000+i,'2026-11-05T14:00:00Z',source))),r=await client(m).discover(defaultScope);assert.equal(r.state,LINEAGE_STATES.UNKNOWN);assert.equal(r.lookupStatus,'CONTROL_PLANE_BUDGET_EXHAUSTED');assert.equal(r.budgetExhausted,'REQUESTS');assert.equal(r.earlierObservationEvidence,'NOT_ESTABLISHED');assert.equal(r.requests,SESSION_HISTORY_CAPS.requests);assert.equal(r.admissionPolicyApproved,false);});
++for(const type of ['zero-jobs','queued-assigned-start','runner-allocated-unknown','private-jobs'])test('cancelled production shape '+type+' requires reliable job evidence, not run_started_at',async()=>{const run=queuedRun(100,'2026-11-05T14:10:00Z',source),job={id:101,run_id:100,run_attempt:1,status:'completed',conclusion:'cancelled',started_at:run.created_at,completed_at:run.created_at,runner_id:type==='runner-allocated-unknown'?42:0,runner_name:type==='runner-allocated-unknown'?'SYNTHETIC_RUNNER':'',steps:[]},m=mock([run],{jobFor:()=>type==='zero-jobs'?[]:[job],jobError:type==='private-jobs'}),r=await client(m).discover(defaultScope);assert.equal(r.state,['zero-jobs','queued-assigned-start'].includes(type)?LINEAGE_STATES.NONE:LINEAGE_STATES.UNKNOWN);assert.equal(r.globalHistoryEstablished,false);if(r.state===LINEAGE_STATES.NONE)assert.equal(r.ignoredNeverStarted[0].proof,'COMPLETE_CANCELLED_UNASSIGNED_JOB_HISTORY');});
++for(const fault of ['none','name-only','watcher-executed','missing-close','missing-step','wrong-workflow','duplicate-step'])test('winter opposite-DST no-op: '+fault,async()=>{const run={...queuedRun(100,'2026-11-02T13:10:04Z',source),conclusion:'success'},jobs=skippedObservationJobs(run);if(fault==='name-only')for(const j of jobs)delete j.steps;if(fault==='watcher-executed')jobs[0].steps.find(s=>s.number===7).conclusion='success';if(fault==='missing-close')jobs.pop();if(fault==='missing-step')jobs[0].steps.splice(3,1);if(fault==='duplicate-step')jobs[0].steps.push({...jobs[0].steps[3]});const m=mock([run],{jobFor:()=>jobs,workflowBytes:fault==='wrong-workflow'?Buffer.concat([workflow,Buffer.from('\n# unreviewed change')]):workflow}),r=await client(m).discover({...defaultScope,day:'2026-11-02',before:'2026-11-02T14:30:00Z'});assert.equal(r.state,fault==='none'?LINEAGE_STATES.NONE:LINEAGE_STATES.UNKNOWN);if(fault==='none'){assert.equal(r.excludedExecutions[0].reason,'VERIFIED_OBSERVATION_STEPS_SKIPPED');assert.ok(m.calls.some(u=>u.includes('/contents/')));}else assert.equal(r.ignoredNeverStarted.length,0);});
++test('prior-day creation with same-day executing job is not silently dropped',async()=>{const run=queuedRun(100,'2026-11-04T23:59:00Z',source),m=mock([run],{jobFor:()=>[{id:101,run_id:100,run_attempt:1,status:'completed',conclusion:'success',started_at:'2026-11-05T13:00:00Z',completed_at:'2026-11-05T14:00:00Z',steps:[]}]}),r=await client(m).discover(defaultScope);assert.equal(r.state,LINEAGE_STATES.UNKNOWN);assert.ok(m.calls.some(u=>u.includes('/artifacts')));assert.equal(r.ignoredNeverStarted.length,0);});
++import {PRODUCTION_NO_OBSERVATION} from '../ignition-execution-contract.mjs';
++import {productionNoopExecution} from './github-history-fixture.mjs';
++for(const fault of ['none','marker-in-command-only','other-output','missing-checkout','wrong-source','truncated-tree','private-log','changed-log','wrong-workflow','extra-job'])test('actual deployed single-job winter no-op needs authenticated executed-source/log evidence: '+fault,async()=>{
++ const run={...queuedRun(100,'2026-11-05T12:45:04Z',source),conclusion:'success'},execution=productionNoopExecution(run,PRODUCTION_NO_OBSERVATION.codeBlobSha1),productionWorkflow=fs.readFileSync(new URL('../docs/validation/production-ignition-noop-workflow.yml',import.meta.url)),calls=[];let logs=0;
++ if(fault==='marker-in-command-only')execution.log=Buffer.from(execution.log.toString().replace('##[endgroup]\n','').replace('##[endgroup]',''));
++ if(fault==='other-output')execution.log=Buffer.from(execution.log.toString().replace('ignition watcher: outside','09:30 New York: SYNTHETIC_OBSERVATION\n2026-11-05T13:12:00Z ignition watcher: outside'));
++ if(fault==='missing-checkout')execution.log=Buffer.from(execution.log.toString().replace(execution.checkoutSha,'NOT_AN_AUTHENTICATED_COMMIT'));
++ if(fault==='wrong-source')execution.tree.tree.find(e=>e.path==='ignition-watch.mjs').sha='b'.repeat(40);
++ if(fault==='truncated-tree')execution.tree.truncated=true;
++ const fetcher=async(url,o)=>{calls.push(url);const u=new URL(url);assert.equal(o.method,'GET');if(u.pathname.includes('/actions/workflows/'))return Response.json(scopedRunHistory(url,[run]));if(u.pathname.endsWith('/runs/100/jobs'))return Response.json({total_count:fault==='extra-job'?2:1,jobs:fault==='extra-job'?[execution.job,{...execution.job,id:1001,name:'UNREVIEWED_JOB'}]:[execution.job]});if(u.pathname.endsWith('/artifacts'))return Response.json({total_count:0,artifacts:[]});if(u.pathname.includes('/contents/')){const b=fault==='wrong-workflow'?Buffer.from('name: Ignition watcher\n'):productionWorkflow;return Response.json({type:'file',path:'.github/workflows/ignition.yml',encoding:'base64',content:b.toString('base64'),sha:createHash('sha1').update('blob '+b.length+'\0').update(b).digest('hex')});}if(u.pathname.endsWith('/logs'))return fault==='private-log'?new Response('{}',{status:403}):new Response(null,{status:302,headers:{location:'https://synthetic.blob.core.windows.net/noop.log'}});if(u.pathname==='/noop.log'){assert.equal(o.headers.Authorization,undefined);logs++;return new Response(fault==='changed-log'&&logs>1?Buffer.from('SYNTHETIC_CHANGED_LOG'):execution.log);}if(u.pathname.includes('/git/commits/')){assert.ok(url.endsWith(execution.checkoutSha),'must verify actual checkout, not run.head_sha');return Response.json({sha:execution.checkoutSha,tree:{sha:execution.treeSha}});}if(u.pathname.includes('/git/trees/'))return Response.json(execution.tree);throw Error('UNEXPECTED_MOCK_PRODUCTION_ROUTE');};
++ const r=await client({fetcher}).discover(defaultScope);assert.equal(r.state,fault==='none'?LINEAGE_STATES.NONE:LINEAGE_STATES.UNKNOWN,JSON.stringify(r));if(fault==='none'){assert.equal(r.excludedExecutions[0].reason,'VERIFIED_WATCHER_PREOBSERVATION_EXIT');assert.equal(r.excludedExecutions[0].proof.codeBlobsVerified,Object.keys(PRODUCTION_NO_OBSERVATION.codeBlobSha1).length);assert.equal(logs,2);}else assert.equal(r.ignoredNeverStarted.length,0);
++});
+diff --git a/test/github-history-fixture.mjs b/test/github-history-fixture.mjs
+new file mode 100644
+index 00000000..e91ee840
+--- /dev/null
++++ b/test/github-history-fixture.mjs
+@@ -0,0 +1,8 @@
++import {PRODUCTION_NO_OBSERVATION} from '../ignition-execution-contract.mjs';
++// Synthetic REST-shaped filtering. The upstream lifetime count is deliberately
++// not used as a filtered query total. No transport or credentials here.
++export function scopedRunHistory(url,rows){const u=new URL(url),created=u.searchParams.get('created');let selected=rows.filter(r=>!u.searchParams.has('branch')||r.head_branch===u.searchParams.get('branch'));if(created){const [from,to]=created.split('..').map(Date.parse);selected=selected.filter(r=>Date.parse(r.created_at)>=from&&Date.parse(r.created_at)<=to);}selected=[...selected].sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at));const size=Number(u.searchParams.get('per_page')||20),page=Number(u.searchParams.get('page')||1);return {total_count:selected.length,workflow_runs:selected.slice((page-1)*size,page*size)};}
++export function queuedRun(id,created_at,sha){return {id,run_attempt:1,workflow_id:7,path:'.github/workflows/ignition.yml',head_branch:'main',head_sha:sha,status:'completed',conclusion:'cancelled',event:'schedule',created_at,run_started_at:created_at,updated_at:created_at,repository:{full_name:'drrazaq/Stock-2'}};}
++export function skippedObservationJobs(run){return ['watch','close'].map((name,i)=>({id:run.id*10+i,run_id:run.id,run_attempt:1,name,status:'completed',conclusion:'success',started_at:run.created_at,completed_at:run.created_at,runner_id:42,runner_name:'SYNTHETIC_RUNNER',steps:[{number:1,name:'Set up job',status:'completed',conclusion:'success',started_at:run.created_at,completed_at:run.created_at},{number:2,name:'Ignore opposite DST schedule',status:'completed',conclusion:'success',started_at:run.created_at,completed_at:run.created_at},...Array.from({length:(name==='watch'?11:13)-2},(_,j)=>({number:j+3,name:j===4?'Run set -o pipefail':'SYNTHETIC_SKIPPED_STEP',status:'completed',conclusion:'skipped',started_at:run.created_at,completed_at:run.created_at}))]}));}
++export function operationalHistory(caseName,source,workflowBytes){const day='2026-11-05',rows=Array.from({length:1500},(_,i)=>queuedRun(10000+i,'2026-01-01T12:00:00Z',source));let run=null;if(caseName==='success-cancelled-zero')run=queuedRun(100,day+'T14:10:00Z',source);if(caseName==='success-winter-noop')run={...queuedRun(100,day+'T12:45:04Z',source),conclusion:'success'};if(run)rows.unshift(run);if(caseName==='unknown-budget')rows.unshift(...Array.from({length:140},(_,i)=>queuedRun(1000+i,day+'T14:00:00Z',source)));const execution=run&&caseName==='success-winter-noop'?productionNoopExecution(run,PRODUCTION_NO_OBSERVATION.codeBlobSha1):null;return {async response(url){const u=new URL(url);if(u.pathname.includes('/workflows/7/runs'))return Response.json(scopedRunHistory(url,rows));if(u.pathname.endsWith('/jobs')&&(caseName==='unknown-budget'||u.pathname.endsWith('/runs/100/jobs'))){const jobs=execution?[execution.job]:[];return Response.json({total_count:jobs.length,jobs});}if(u.pathname.endsWith('/runs/100/artifacts'))return Response.json({total_count:0,artifacts:[]});if(u.pathname.endsWith('/jobs/'+(run?.id*10)+'/logs'))return new Response(null,{status:302,headers:{location:'https://synthetic.blob.core.windows.net/noop.log'}});if(u.pathname==='/noop.log')return new Response(execution.log);if(u.pathname.includes('/git/commits/'))return Response.json({sha:execution.checkoutSha,tree:{sha:execution.treeSha}});if(u.pathname.includes('/git/trees/'))return Response.json(execution.tree);if(u.pathname.includes('/contents/')){const {createHash}=await import('node:crypto');return Response.json({type:'file',path:'.github/workflows/ignition.yml',encoding:'base64',content:workflowBytes.toString('base64'),sha:createHash('sha1').update('blob '+workflowBytes.length+'\0').update(workflowBytes).digest('hex')});}throw Error('UNEXPECTED_SYNTHETIC_OPERATIONAL_HISTORY');},expectedRequests:caseName==='unknown-budget'?256:run?(caseName==='success-winter-noop'?18:6):4};}
++export function productionNoopExecution(run,codePins){const checkoutSha='d'.repeat(40),treeSha='c'.repeat(40),job={id:run.id*10,run_id:run.id,run_attempt:1,name:'watch',status:'completed',conclusion:'success',started_at:run.created_at,completed_at:run.created_at,runner_id:42,runner_name:'SYNTHETIC_RUNNER',steps:Array.from({length:9},(_,i)=>({number:i+1,name:i===4?'Run set -o pipefail':i===1?'Run actions/checkout@v4':'SYNTHETIC_STEP',status:'completed',conclusion:i===7?'skipped':'success',started_at:run.created_at,completed_at:run.created_at}))},lines=['[command]/usr/bin/git log -1 --format=%H',checkoutSha,'##[group]Run set -o pipefail','\x1b[36;1mset -o pipefail\x1b[0m','\x1b[36;1mnode ignition-watch.mjs 2>&1 | tee run.log\x1b[0m','shell: /usr/bin/bash -e {0}','##[endgroup]','ignition watcher: outside 9:00-15:00 New York (08:12), nothing to do','##[group]Run MR_LEDGER_ONLY=1 node missed-runners.mjs'];job.started_at=run.created_at.slice(0,10)+'T13:11:00Z';job.completed_at=run.created_at.slice(0,10)+'T13:13:00Z';run.updated_at=job.completed_at;for(const step of job.steps){step.started_at=run.created_at.slice(0,10)+'T13:12:00Z';step.completed_at=step.started_at;}return {checkoutSha,treeSha,job,log:Buffer.from(lines.map(l=>run.created_at.slice(0,10)+'T13:12:00Z '+l).join('\n')),tree:{sha:treeSha,truncated:false,tree:Object.entries(codePins).map(([path,sha])=>({path,type:'blob',mode:'100644',sha}))}};}
+diff --git a/test/native-sec-colocated-host.test.mjs b/test/native-sec-colocated-host.test.mjs
+index 8c847124..c1b49465 100644
+--- a/test/native-sec-colocated-host.test.mjs
++++ b/test/native-sec-colocated-host.test.mjs
+@@ -1,3 +1,4 @@
++import {scopedRunHistory,operationalHistory} from './github-history-fixture.mjs';
+ // Actual reviewed production watcher in a child, separate guarded capture worker.
+ // Every service operation is synthetic; local HTTP is the existing watcher stub only.
+ import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
+@@ -5,17 +6,17 @@ import {startColocatedNativeHost,prepareNativeParentForHost} from '../native-sec
+ import {sha} from '../prospective-paper-capture.mjs';import {recoverUploadedCapture} from '../paper-capture-wrapper.mjs';
+ import {prepareCompleteNativeBundle,createNativeParentClient} from '../native-sec-parent-client.mjs';import {readNativeRun} from '../native-sec-events.mjs';import {fixtureZip} from '../capture-artifact.mjs';
+ const root=path.resolve(new URL('..',import.meta.url).pathname);
+-function setupWorker(f,native,scenario){for(const name of ['native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs','tools/native-sec-capture-worker.mjs']){fs.mkdirSync(path.dirname(path.join(f.root,name)),{recursive:true});fs.copyFileSync(path.join(root,name),path.join(f.root,name));}
++function setupWorker(f,native,scenario){for(const name of ['ignition-execution-contract.mjs','native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs','tools/native-sec-capture-worker.mjs']){fs.mkdirSync(path.dirname(path.join(f.root,name)),{recursive:true});fs.copyFileSync(path.join(root,name),path.join(f.root,name));}
+  fs.copyFileSync(path.join(root,'test/artifact-wire-fixture.mjs'),path.join(f.root,'synthetic-wire-transport.mjs'));
+  const binding=path.join(f.root,'synthetic-native-bindings.mjs'),resultFile=path.join(f.dir,'result.json');fs.writeFileSync(binding,`import fs from 'node:fs';import path from 'node:path';import {artifactPort} from './paper-capture-ports.mjs';import {sameDayLineageEventPort} from './native-sec-lineage-history.mjs';import {colocatedPrefixPort} from './native-sec-colocated-prefix.mjs';import {boundedSnapshotClient,reviewedArtifactClient} from './native-sec-bounded-clients.mjs';import {createArtifactWireClient} from './artifact-wire-client.mjs';import {artifactWireFixture,syntheticArtifactToken,syntheticResultsOrigin,syntheticStorageOrigin} from './synthetic-wire-transport.mjs';import {sha} from './prospective-paper-capture.mjs';
+- export async function createCaptureBindings(c){if(c.scenario==='plan-change-stuck-worker'){process.on('SIGTERM',()=>{});setInterval(()=>{},1000);setTimeout(()=>fs.appendFileSync(c.capture.approvalFile,' '),250);}let clock=c.capture.nowMs,id=0,quoteCalls=0;const progress=()=>{try{return JSON.parse(fs.readFileSync(c.progressFile)).heartbeat.length;}catch{return 0;}};const observations=[];
+- const provider=boundedSnapshotClient({keyId:'SYNTHETIC',secret:'SYNTHETIC',fetcher:async()=>{if(c.scenario==='quote-timeout'){fs.writeFileSync(c.quoteStarted,'SYNTHETIC_QUOTE_STARTED');return new Promise(()=>{});}if(quoteCalls++===0&&c.scenario==='success'){const before=progress();await new Promise(r=>setTimeout(r,500));fs.writeFileSync(c.quoteProgressProof,JSON.stringify({before,after:progress()}));}await new Promise(r=>setTimeout(r,5));return new Response(JSON.stringify(Object.fromEntries(c.capture.universe.map(s=>[s,{latestQuote:{t:new Date(clock).toISOString(),bp:9.99,ap:10.01,bs:1000,as:1000},minuteBar:{t:new Date(clock-60000).toISOString(),l:9,h:11,v:250000}}]))));}});
+- let uploadWaited=false;const mock=artifactWireFixture({onRequest:async request=>{if(request.phase==='block'&&!uploadWaited){uploadWaited=true;const before=progress();await new Promise(r=>setTimeout(r,500));observations.push({before,after:progress()});fs.writeFileSync(c.progressProof,JSON.stringify(observations));if(c.scenario==='upload-refusal')return new Response('{}',{status:503});}return null;},onFinalized:async({id,zip})=>{fs.mkdirSync(c.downloads,{recursive:true});fs.writeFileSync(path.join(c.downloads,id+'.zip'),zip,{flag:'wx'});}});const sdk=createArtifactWireClient({fetcher:mock.fetcher,runtimeToken:syntheticArtifactToken,resultsOrigin:syntheticResultsOrigin,allowedResultsOrigins:[syntheticResultsOrigin],storageOrigins:[syntheticStorageOrigin],now:()=>new Date(clock).toISOString()}),moduleFile=path.join(c.capture.root,'artifact-wire-client.mjs'),uploader=reviewedArtifactClient({sdk,reviewed:{moduleFile,packageSha256:c.extraRuntimeFiles['artifact-wire-client.mjs'],contract:'PRE_REQUEST_WIRE_GATE_V1',maxWireRequestsPerUpload:5}});return {key:'synthetic-paper-capture-key-only',now:()=>clock,wait:async ms=>{clock+=ms;},ports:{history:async()=>c.capture.history,events:async x=>{if(c.scenario==='quote-timeout')for(let i=0;i<40&&progress()<331;i++)await new Promise(r=>setTimeout(r,50));return c.lineage?sameDayLineageEventPort({current:c.native,history:c.lineage})(x):colocatedPrefixPort(c.native)(x);},provider:provider.request,upload:async x=>{try{return await uploader.upload(x);}finally{fs.writeFileSync(c.wireProof,JSON.stringify(sdk.stats()));}}}};}
++ export async function createCaptureBindings(c){if(c.scenario==='success-contended'&&c.bootstrapDelayMs)await new Promise(r=>setTimeout(r,c.bootstrapDelayMs));if(c.scenario==='plan-change-stuck-worker'){process.on('SIGTERM',()=>{});setInterval(()=>{},1000);setTimeout(()=>fs.appendFileSync(c.capture.approvalFile,' '),250);}let clock=c.capture.nowMs,id=0,quoteCalls=0;const progress=()=>{try{return JSON.parse(fs.readFileSync(c.progressFile)).heartbeat.length;}catch{return 0;}};const observations=[];
++ const provider=boundedSnapshotClient({keyId:'SYNTHETIC',secret:'SYNTHETIC',fetcher:async()=>{if(['success-lifetime','success-cancelled-zero','success-winter-noop'].includes(c.scenario)&&quoteCalls>0)return new Response('{}',{status:429});if(c.scenario==='quote-timeout'){fs.writeFileSync(c.quoteStarted,'SYNTHETIC_QUOTE_STARTED');return new Promise(()=>{});}if(quoteCalls++===0&&c.scenario.startsWith('success')){const before=progress();await new Promise(r=>setTimeout(r,500));fs.writeFileSync(c.quoteProgressProof,JSON.stringify({before,after:progress()}));}await new Promise(r=>setTimeout(r,5));return new Response(JSON.stringify(Object.fromEntries(c.capture.universe.map(s=>[s,{latestQuote:{t:new Date(clock).toISOString(),bp:9.99,ap:10.01,bs:1000,as:1000},minuteBar:{t:new Date(clock-60000).toISOString(),l:9,h:11,v:250000}}]))));}});
++ let uploadWaited=false;const mock=artifactWireFixture({onRequest:async request=>{if(request.phase==='block'&&!uploadWaited){uploadWaited=true;const before=progress();await new Promise(r=>setTimeout(r,500));observations.push({before,after:progress()});fs.writeFileSync(c.progressProof,JSON.stringify(observations));if(c.scenario==='upload-refusal')return new Response('{}',{status:503});}return null;},onFinalized:async({id,zip})=>{fs.mkdirSync(c.downloads,{recursive:true});fs.writeFileSync(path.join(c.downloads,id+'.zip'),zip,{flag:'wx'});}});const sdk=createArtifactWireClient({fetcher:mock.fetcher,runtimeToken:syntheticArtifactToken,resultsOrigin:syntheticResultsOrigin,allowedResultsOrigins:[syntheticResultsOrigin],storageOrigins:[syntheticStorageOrigin],now:()=>new Date(clock).toISOString()}),moduleFile=path.join(c.capture.root,'artifact-wire-client.mjs'),uploader=reviewedArtifactClient({sdk,reviewed:{moduleFile,packageSha256:c.extraRuntimeFiles['artifact-wire-client.mjs'],contract:'PRE_REQUEST_WIRE_GATE_V1',maxWireRequestsPerUpload:5}});return {key:'synthetic-paper-capture-key-only',now:()=>clock,wait:async ms=>{clock+=ms;},ports:{history:async()=>c.capture.history,events:async x=>{if(c.scenario==='success-contended'){fs.writeFileSync(c.readerReady,'SYNTHETIC_READER_STARTING');for(let i=0;i<1000&&!fs.existsSync(c.writerHeld);i++)await new Promise(r=>setTimeout(r,2));if(!fs.existsSync(c.writerHeld)){fs.writeFileSync(c.readFailure,JSON.stringify({code:'SYNTHETIC_WRITER_NOT_READY',progress:progress(),readerRequested:true,writerCommitted:false}));throw Error('SYNTHETIC_WRITER_NOT_READY');}}if(c.scenario==='quote-timeout')for(let i=0;i<40&&progress()<331;i++)await new Promise(r=>setTimeout(r,50));try{return await (c.lineage?sameDayLineageEventPort({current:c.native,history:c.lineage})(x):colocatedPrefixPort(c.native)(x));}catch(e){fs.writeFileSync(c.readFailure,JSON.stringify({label:'SYNTHETIC_ONLY',code:e.message,files:fs.readdirSync(c.native.directory)}));throw e;}},provider:provider.request,upload:async x=>{try{return await uploader.upload(x);}finally{fs.writeFileSync(c.wireProof,JSON.stringify(sdk.stats()));}}}};}
+  `);
+- const config={mode:'INACTIVE_SYNTHETIC_REHEARSAL',scenario,capture:{...f,cleanup:undefined},native,resultFile,bindingModule:{file:binding,sha256:sha(fs.readFileSync(binding))},extraRuntimeFiles:Object.fromEntries(['native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs','synthetic-wire-transport.mjs'].map(n=>[n,sha(fs.readFileSync(path.join(f.root,n)))])),progressFile:path.join(native.directory,'../../../data/ignition-runs/2026-11-05',native.expectedRunId+'-progress.json'),wireProof:path.join(f.dir,'wire-proof.json'),quoteStarted:path.join(f.dir,'quote-started'),quoteProgressProof:path.join(f.dir,'quote-progress.json'),progressProof:path.join(f.dir,'progress-proof.json'),downloads:path.join(f.dir,'downloads')};const configFile=path.join(f.dir,'worker-input.json');fs.writeFileSync(configFile,JSON.stringify(config));return {configFile,config,resultFile,planPin:{file:f.approvalFile,sha256:sha(fs.readFileSync(f.approvalFile))},capture:{cwd:f.root,entry:'tools/native-sec-capture-worker.mjs',entrySha256:sha(fs.readFileSync(path.join(f.root,'tools/native-sec-capture-worker.mjs'))),args:[configFile,sha(fs.readFileSync(configFile))],env:{},runtimeFiles:{...f.approval.runtimeFiles,...config.extraRuntimeFiles,'native-sec-bounded-clients.mjs':sha(fs.readFileSync(path.join(f.root,'native-sec-bounded-clients.mjs'))),'native-sec-colocated-prefix.mjs':sha(fs.readFileSync(path.join(f.root,'native-sec-colocated-prefix.mjs'))),'synthetic-native-bindings.mjs':sha(fs.readFileSync(binding))}}};}
+-for(const scenario of ['success','upload-refusal','quote-timeout','missing-parent','plan-change-stuck-worker'])test('actual colocated host '+scenario+': capture waits/failure never suspends or cancels producer',async()=>{const p=await producerFixture({long:true,snapshotDelayMs:['success','plan-change-stuck-worker'].includes(scenario)?5:0}),f=wrapperFixture();try{const runId='SYNTHETIC-HOST-'+scenario,native={directory:path.join(p.dir,'runtime/native-sec-events',runId+'-1'),expectedRunId:runId+'-1',expectedSourceSha:p.sourceSha},w=setupWorker(f,native,scenario);let host;
+- const result=await p.run({shadow:true,runId,launch:spec=>{const runtimeFiles=Object.fromEntries(fs.readdirSync(p.dir).filter(n=>/\.(mjs|js)$/.test(n)).map(n=>[n,sha(fs.readFileSync(path.join(p.dir,n)))]));host=startColocatedNativeHost({mode:'INACTIVE_SYNTHETIC_REHEARSAL',producer:{...spec,entrySha256:runtimeFiles['ignition-watch.mjs'],runtimeFiles},capture:w.capture,native,planPin:w.planPin,clock:(()=>{let time=Date.parse(f.approval.plan.start)-30000;const origin=time;return {now:()=>time,sleep:ms=>new Promise(r=>setTimeout(r,Math.min(ms,1000))),setTimeout:(fn,ms)=>{const due=time+ms;return setTimeout(()=>{if(scenario==='quote-timeout')time=Math.max(time,due);fn();},scenario==='quote-timeout'?Math.min(ms,4000):ms);},clearTimeout:id=>clearTimeout(id)};})(),completeRun:{legacyArchive:path.join(p.dir,'data/ignition-runs/2026-11-05',runId+'-1.json'),out:path.join(p.dir,'native-sec-run.json'),endedAt:t(400)},parentState:{status:scenario==='missing-parent'?'INCOMPLETE':'SYNTHETIC_BOOTSTRAP_NO_GLOBAL_HISTORY'},storageRoot:f.dir,healthFile:path.join(f.dir,'host-health.json')});return host.producer;}});const health=await host.completion;assert.equal(health.producerExitCode,0);assert.equal(health.producerCancelled,false);assert.equal(health.completeRunBundle.status,'PREPARED_NOT_UPLOADED');assert.equal(result.snapshot.heartbeat.length,331);assert.equal(result.nativeReport.failures,0);if(scenario==='missing-parent'){assert.equal(health.status,'PARENT_INCOMPLETE');assert.equal(health.captureStarted,false);assert.equal(fs.existsSync(w.resultFile),false);return;}assert.ok(health.captureStarted);if(scenario==='plan-change-stuck-worker'){assert.equal(health.status,'CAPTURE_CONTROL_FAILED');assert.equal(health.captureFailureReason,'HOST_PLAN_CHANGED');assert.equal(health.captureExitSignal,'SIGKILL');assert.equal(health.captureShutdownConfirmed,true);return;}if(scenario==='success'){assert.equal(health.status,'CAPTURE_FINISHED',fs.existsSync(w.resultFile)?JSON.stringify((({status,failure,captureStatus,providerAttempts})=>({status,failure,captureStatus,providerAttempts}))(JSON.parse(fs.readFileSync(w.resultFile)))):JSON.stringify(health));const captured=JSON.parse(fs.readFileSync(w.resultFile));assert.equal(captured.status,'COMPLETE');assert.equal(captured.confirmedUploads,41);const wireProof=JSON.parse(fs.readFileSync(w.config.wireProof));assert.equal(wireProof.completed,41);assert.equal(wireProof.retries,0);assert.ok(wireProof.requests<=205);assert.equal(captured.genuineAdmissions,0);const receiptRaw=JSON.stringify(captured.receiptManifest),archives=new Map(captured.receiptManifest.receipts.map(r=>[r.artifactId,fs.readFileSync(path.join(w.config.downloads,r.artifactId+'.zip'))]));const recovered=recoverUploadedCapture({archives,receiptRaw,expectedReceiptSha256:sha(receiptRaw),expectedApprovalHash:sha(fs.readFileSync(f.approvalFile)),expectedSourceSha:f.approval.plan.sourceSha,key:'synthetic-paper-capture-key-only'});assert.equal(recovered.status,'AUTHENTICATED_COMPLETE');assert.equal(recovered.frames,41);assert.equal(recovered.genuineAdmissions,0);assert.ok(recovered.originalInputs.evidenceAssets.length>0);const quoteProof=JSON.parse(fs.readFileSync(w.config.quoteProgressProof));assert.ok(quoteProof.after>quoteProof.before,'watcher must continue saving heartbeat progress during quote wait');const proof=JSON.parse(fs.readFileSync(w.config.progressProof));assert.ok(proof.some(x=>x.after>x.before),'watcher must continue saving heartbeat progress during capture upload wait');}else if(scenario==='upload-refusal'){assert.equal(health.status,'CAPTURE_FAILED');const captured=JSON.parse(fs.readFileSync(w.resultFile));assert.equal(captured.pendingFiles,1);assert.equal(captured.providerAttempts,1);}else {assert.equal(health.status,'CAPTURE_DEADLINE',fs.existsSync(w.resultFile)?fs.readFileSync(w.resultFile,'utf8'):JSON.stringify(health));assert.ok(fs.existsSync(w.config.quoteStarted));}
+- }finally{p.close();f.cleanup();}});
++ const bootstrapDelayMs=Number(process.env.SYNTHETIC_CAPTURE_BOOTSTRAP_MS||0);assert.ok(Number.isInteger(bootstrapDelayMs)&&bootstrapDelayMs>=0&&bootstrapDelayMs<=6000);const config={mode:'INACTIVE_SYNTHETIC_REHEARSAL',scenario,bootstrapDelayMs,capture:{...f,cleanup:undefined},native,resultFile,bindingModule:{file:binding,sha256:sha(fs.readFileSync(binding))},extraRuntimeFiles:Object.fromEntries(['ignition-execution-contract.mjs','native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs','synthetic-wire-transport.mjs'].map(n=>[n,sha(fs.readFileSync(path.join(f.root,n)))])),readerReady:path.resolve(native.directory,'../../..','synthetic-reader-ready'),writerHeld:path.resolve(native.directory,'../../..','synthetic-writer-held'),readFailure:path.join(f.dir,'synthetic-read-failure.json'),progressFile:path.join(native.directory,'../../../data/ignition-runs/2026-11-05',native.expectedRunId+'-progress.json'),wireProof:path.join(f.dir,'wire-proof.json'),quoteStarted:path.join(f.dir,'quote-started'),quoteProgressProof:path.join(f.dir,'quote-progress.json'),progressProof:path.join(f.dir,'progress-proof.json'),downloads:path.join(f.dir,'downloads')};const configFile=path.join(f.dir,'worker-input.json');fs.writeFileSync(configFile,JSON.stringify(config));return {configFile,config,resultFile,planPin:{file:f.approvalFile,sha256:sha(fs.readFileSync(f.approvalFile))},capture:{cwd:f.root,entry:'tools/native-sec-capture-worker.mjs',entrySha256:sha(fs.readFileSync(path.join(f.root,'tools/native-sec-capture-worker.mjs'))),args:[configFile,sha(fs.readFileSync(configFile))],env:{},runtimeFiles:{...f.approval.runtimeFiles,...config.extraRuntimeFiles,'native-sec-bounded-clients.mjs':sha(fs.readFileSync(path.join(f.root,'native-sec-bounded-clients.mjs'))),'native-sec-colocated-prefix.mjs':sha(fs.readFileSync(path.join(f.root,'native-sec-colocated-prefix.mjs'))),'synthetic-native-bindings.mjs':sha(fs.readFileSync(binding))}}};}
++for(const scenario of ['success','success-contended','success-lifetime','success-cancelled-zero','success-winter-noop','unknown-budget','upload-refusal','quote-timeout','missing-parent','plan-change-stuck-worker'])test('actual colocated host '+scenario+': capture waits/failure never suspends or cancels producer',async()=>{const p=await producerFixture({long:true,snapshotDelayMs:(scenario.startsWith('success')||scenario==='plan-change-stuck-worker')?5:0,nativeCommitDelayMs:scenario==='success-contended'?500:0}),f=wrapperFixture();try{const runId='SYNTHETIC-HOST-'+scenario,native={directory:path.join(p.dir,'runtime/native-sec-events',runId+'-1'),expectedRunId:runId+'-1',expectedSourceSha:p.sourceSha},w=setupWorker(f,native,scenario);let host,parentState={status:scenario==='missing-parent'?'INCOMPLETE':'SYNTHETIC_BOOTSTRAP_NO_GLOBAL_HISTORY'};if(['success-lifetime','success-cancelled-zero','success-winter-noop','unknown-budget'].includes(scenario)){const {createSameDayLineageClient}=await import('../native-sec-lineage-history.mjs'),history=operationalHistory(scenario,p.sourceSha,fs.readFileSync(path.join(root,'docs/validation/production-ignition-noop-workflow.yml'))),client=createSameDayLineageClient({token:'SYNTHETIC',storageOrigins:['https://synthetic.blob.core.windows.net'],fetcher:(url)=>history.response(url)});parentState=await prepareNativeParentForHost({client,scope:{day:'2026-11-05',before:t(0),currentRunId:900,workflowId:7,allowedSourceShas:[p.sourceSha]},rootDirectory:p.dir,destination:'runtime/native-sec-parents/operational'});assert.equal(parentState.status,scenario==='unknown-budget'?'UNKNOWN_MISSING_OR_AMBIGUOUS_HISTORY':'VERIFIED_NO_EARLIER_SAME_DAY_RUN');assert.equal(client.stats().requests,history.expectedRequests);}
++ const result=await p.run({shadow:true,runId,launch:spec=>{const runtimeFiles=Object.fromEntries(fs.readdirSync(p.dir).filter(n=>/\.(mjs|js)$/.test(n)).map(n=>[n,sha(fs.readFileSync(path.join(p.dir,n)))]));host=startColocatedNativeHost({mode:'INACTIVE_SYNTHETIC_REHEARSAL',producer:{...spec,entrySha256:runtimeFiles['ignition-watch.mjs'],runtimeFiles},capture:w.capture,native,planPin:w.planPin,clock:(()=>{let time=Date.parse(f.approval.plan.start)-30000;const origin=time;return {now:()=>time,sleep:ms=>new Promise(r=>setTimeout(r,Math.min(ms,1000))),setTimeout:(fn,ms)=>{const due=time+ms;return setTimeout(()=>{if(scenario==='quote-timeout')time=Math.max(time,due);fn();},scenario==='quote-timeout'?Math.min(ms,4000):ms);},clearTimeout:id=>clearTimeout(id)};})(),completeRun:{legacyArchive:path.join(p.dir,'data/ignition-runs/2026-11-05',runId+'-1.json'),out:path.join(p.dir,'native-sec-run.json'),endedAt:t(400)},parentState,storageRoot:f.dir,healthFile:path.join(f.dir,'host-health.json')});return host.producer;}});const health=await host.completion;assert.equal(health.producerExitCode,0);assert.equal(health.producerCancelled,false);assert.equal(health.completeRunBundle.status,'PREPARED_NOT_UPLOADED');assert.equal(result.snapshot.heartbeat.length,331);assert.equal(result.nativeReport.failures,0);if(scenario==='missing-parent'||scenario==='unknown-budget'){assert.equal(health.status,'PARENT_INCOMPLETE');assert.equal(health.captureStarted,false);assert.equal(fs.existsSync(w.resultFile),false);return;}assert.ok(health.captureStarted);if(scenario==='plan-change-stuck-worker'){assert.equal(health.status,'CAPTURE_CONTROL_FAILED');assert.equal(health.captureFailureReason,'HOST_PLAN_CHANGED');assert.equal(health.captureExitSignal,'SIGKILL');assert.equal(health.captureShutdownConfirmed,true);return;}if(['success-lifetime','success-cancelled-zero','success-winter-noop'].includes(scenario)){assert.equal(health.status,'CAPTURE_FAILED');const captured=JSON.parse(fs.readFileSync(w.resultFile));assert.equal(captured.captureStatus,'RATE_LIMIT_STOP');assert.equal(captured.confirmedUploads,1);assert.equal(captured.providerAttempts,2);assert.equal(captured.simulationReport.checkpointState.frames.length,1);assert.equal(captured.simulationReport.evaluation.counts.resolved,0);return;}if(scenario.startsWith('success')){assert.equal(health.status,'CAPTURE_FINISHED',fs.existsSync(w.resultFile)?JSON.stringify({capture:(({status,failure,captureStatus,providerAttempts})=>({status,failure,captureStatus,providerAttempts}))(JSON.parse(fs.readFileSync(w.resultFile))),syntheticReadDiagnostic:fs.existsSync(w.config.readFailure)?JSON.parse(fs.readFileSync(w.config.readFailure)):null,writerHandshakeCompleted:fs.existsSync(w.config.writerHeld)}):JSON.stringify(health));const captured=JSON.parse(fs.readFileSync(w.resultFile));assert.equal(captured.status,'COMPLETE');assert.equal(captured.confirmedUploads,41);const wireProof=JSON.parse(fs.readFileSync(w.config.wireProof));assert.equal(wireProof.completed,41);assert.equal(wireProof.retries,0);assert.ok(wireProof.requests<=205);assert.equal(captured.genuineAdmissions,0);const receiptRaw=JSON.stringify(captured.receiptManifest),archives=new Map(captured.receiptManifest.receipts.map(r=>[r.artifactId,fs.readFileSync(path.join(w.config.downloads,r.artifactId+'.zip'))]));const recovered=recoverUploadedCapture({archives,receiptRaw,expectedReceiptSha256:sha(receiptRaw),expectedApprovalHash:sha(fs.readFileSync(f.approvalFile)),expectedSourceSha:f.approval.plan.sourceSha,key:'synthetic-paper-capture-key-only'});assert.equal(recovered.status,'AUTHENTICATED_COMPLETE');assert.equal(recovered.frames,41);assert.equal(recovered.genuineAdmissions,0);assert.ok(recovered.originalInputs.evidenceAssets.length>0);const quoteProof=JSON.parse(fs.readFileSync(w.config.quoteProgressProof));assert.ok(quoteProof.after>quoteProof.before,'watcher must continue saving heartbeat progress during quote wait');const proof=JSON.parse(fs.readFileSync(w.config.progressProof));assert.ok(proof.some(x=>x.after>x.before),'watcher must continue saving heartbeat progress during capture upload wait');}else if(scenario==='upload-refusal'){assert.equal(health.status,'CAPTURE_FAILED');const captured=JSON.parse(fs.readFileSync(w.resultFile));assert.equal(captured.pendingFiles,1);assert.equal(captured.providerAttempts,1);}else {assert.equal(health.status,'CAPTURE_DEADLINE',fs.existsSync(w.resultFile)?fs.readFileSync(w.resultFile,'utf8'):JSON.stringify(health));assert.ok(fs.existsSync(w.config.quoteStarted));}
++ }catch(error){const base=process.env.SYNTHETIC_FAILURE_EVIDENCE_DIR;if(base){fs.mkdirSync(base,{recursive:true});fs.cpSync(f.dir,path.join(base,'capture'),{recursive:true});fs.cpSync(p.dir,path.join(base,'producer'),{recursive:true});}throw error;}finally{p.close();f.cleanup();}});
+ 
+ test('mocked GitHub discovery → complete parent staging → actual host restart preserves original lineage',async()=>{
+  const first=await producerFixture({long:true}),next=await producerFixture(),f=wrapperFixture();try{
+@@ -28,7 +29,7 @@ test('mocked GitHub discovery → complete parent staging → actual host restar
+ test('D3 partial earlier same-day source → pinned history → actual host/worker keeps earlier clocks as research and never promotes later ingestion',async()=>{
+  const {createSameDayLineageClient,prepareAvailableLineageBundle,LINEAGE_STATES}=await import('../native-sec-lineage-history.mjs'),first=await producerFixture(),next=await producerFixture(),f=wrapperFixture();try{
+  const earlier=await first.run({shadow:true,runId:'100',epoch:Date.parse(t(-1))}),file=path.join(first.dir,'native-sec-run.json');prepareAvailableLineageBundle({directory:earlier.archiveDirectory,runId:earlier.runId,sourceSha:earlier.sourceSha,legacyArchive:path.join(first.dir,'data/ignition-runs/2026-11-05/100-1.json'),producerExitCode:0,endedAt:t(-.5),out:file});const zip=fixtureZip('native-sec-run.json',fs.readFileSync(file)),run={id:100,run_attempt:1,workflow_id:7,path:'.github/workflows/ignition.yml',head_branch:'main',head_sha:first.sourceSha,status:'completed',conclusion:'success',created_at:t(-16),run_started_at:t(-16),repository:{full_name:'drrazaq/Stock-2'}},job={id:101,run_id:100,run_attempt:1,status:'completed',conclusion:'success',started_at:t(-16),completed_at:t(-.5)},artifact={id:200,name:'native-sec-available-run-v2',size_in_bytes:zip.length,digest:'sha256:'+sha(zip),expired:false,workflow_run:{id:100,head_sha:first.sourceSha}};
+- const client=createSameDayLineageClient({token:'SYNTHETIC',storageOrigins:['https://storage.example.invalid'],fetcher:async(url,o)=>{assert.equal(o.method,'GET');if(url.includes('/workflows/'))return Response.json({total_count:1,workflow_runs:[run]});if(url.includes('/jobs?'))return Response.json({total_count:1,jobs:[job]});if(url.includes('/runs/100/artifacts?'))return Response.json({total_count:1,artifacts:[artifact]});if(url.endsWith('/artifacts/200/zip'))return new Response(null,{status:302,headers:{location:'https://storage.example.invalid/source?sig=SYNTHETIC'}});if(url.startsWith('https://storage.example.invalid/'))return new Response(zip);if(url.endsWith('/runs/100'))return Response.json(run);throw Error('UNEXPECTED_MOCK_HISTORY');}}),parentState=await prepareNativeParentForHost({client,scope:{day:'2026-11-05',before:t(0),currentRunId:900,workflowId:7,allowedSourceShas:[first.sourceSha]},rootDirectory:next.dir,destination:'runtime/native-sec-parents/day'});assert.equal(parentState.status,LINEAGE_STATES.EARLIER);
++ const client=createSameDayLineageClient({token:'SYNTHETIC',storageOrigins:['https://storage.example.invalid'],fetcher:async(url,o)=>{assert.equal(o.method,'GET');if(url.includes('/workflows/'))return Response.json(scopedRunHistory(url,[run]));if(url.includes('/jobs?'))return Response.json({total_count:1,jobs:[job]});if(url.includes('/runs/100/artifacts?'))return Response.json({total_count:1,artifacts:[artifact]});if(url.endsWith('/artifacts/200/zip'))return new Response(null,{status:302,headers:{location:'https://storage.example.invalid/source?sig=SYNTHETIC'}});if(url.startsWith('https://storage.example.invalid/'))return new Response(zip);if(url.endsWith('/runs/100'))return Response.json(run);throw Error('UNEXPECTED_MOCK_HISTORY');}}),parentState=await prepareNativeParentForHost({client,scope:{day:'2026-11-05',before:t(0),currentRunId:900,workflowId:7,allowedSourceShas:[first.sourceSha]},rootDirectory:next.dir,destination:'runtime/native-sec-parents/day'});assert.equal(parentState.status,LINEAGE_STATES.EARLIER);
+  const runId='900',native={directory:path.join(next.dir,'runtime/native-sec-events/900-1'),expectedRunId:'900-1',expectedSourceSha:next.sourceSha},w=setupWorker(f,native,'success');let host;const result=await next.run({shadow:true,runId,launch:spec=>{const runtimeFiles=Object.fromEntries(fs.readdirSync(next.dir).filter(n=>/\.(mjs|js)$/.test(n)).map(n=>[n,sha(fs.readFileSync(path.join(next.dir,n)))]));host=startColocatedNativeHost({mode:'INACTIVE_SYNTHETIC_REHEARSAL',producer:{...spec,entrySha256:runtimeFiles['ignition-watch.mjs'],runtimeFiles},capture:w.capture,native,planPin:w.planPin,clock:{now:()=>Date.parse(f.approval.plan.start)-30000,sleep:ms=>new Promise(r=>setTimeout(r,Math.min(ms,1000))),setTimeout,clearTimeout},parentState,storageRoot:f.dir,healthFile:path.join(f.dir,'host-health.json')});return host.producer;}});assert.equal((await host.completion).status,'CAPTURE_FINISHED');assert.equal(result.nativeReport.failures,0);const captured=JSON.parse(fs.readFileSync(w.resultFile)),receiptRaw=JSON.stringify(captured.receiptManifest),archives=new Map(captured.receiptManifest.receipts.map(r=>[r.artifactId,fs.readFileSync(path.join(w.config.downloads,r.artifactId+'.zip'))])),recovered=recoverUploadedCapture({archives,receiptRaw,expectedReceiptSha256:sha(receiptRaw),expectedApprovalHash:sha(fs.readFileSync(f.approvalFile)),expectedSourceSha:f.approval.plan.sourceSha,key:'synthetic-paper-capture-key-only'});const batches=recovered.originalInputs.eventBatches.map(b=>JSON.parse(b.raw));assert.ok(batches.some(b=>b.researchEvents?.some(e=>e.earlierIssuerEvidence?.length)));assert.ok(batches.every(b=>b.events.length===0));assert.ok(batches.every(b=>b.admissionPolicyApproved===false));assert.equal(recovered.genuineAdmissions,0);assert.equal(captured.simulationReport.evaluation.counts.resolved,0);
+  }finally{first.close();next.close();f.cleanup();}
+ });
+diff --git a/test/native-sec-colocated-prefix.test.mjs b/test/native-sec-colocated-prefix.test.mjs
+index a31a7295..9d123c23 100644
+--- a/test/native-sec-colocated-prefix.test.mjs
++++ b/test/native-sec-colocated-prefix.test.mjs
+@@ -5,3 +5,4 @@ const source='a'.repeat(40),t=n=>new Date(Date.parse('2026-11-05T14:30:00Z')+n*6
+ function fixture(){const dir=fs.mkdtempSync('/tmp/colocated-prefix-'),store=openNativeRun({directory:dir,runId:'SYNTHETIC',sourceSha:source,provenance:'SYNTHETIC_FIXTURE'}),url='https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom';const append=(n,items='1.01')=>appendNativeResponse(store,{body:Buffer.from('<feed><entry><title>8-K - SYNTHETIC (0000000001) (Filer)</title><summary>Item '+items+'</summary><updated>'+t(-1)+'</updated><id>urn:tag:sec.gov,2008:accession-number=0000000001-26-000001</id></entry></feed>'),url,responseUrl:url,redirected:false,httpStatus:200,requestStartedAt:t(n),headersReceivedAt:t(n),bodyReceivedAt:t(n),observedAt:t(n),legacySeen:new Set()});return {dir,append,read:colocatedPrefixPort({directory:dir,expectedRunId:'SYNTHETIC',expectedSourceSha:source,wait:async()=>{}}),input:{at:t(5),identities:[{issuerCik:'0000000001',symbol:'AMD',securityId:'SYNTHETIC',asOf:t(-2),identityAudit:'DOCUMENTED_SOURCE_REVIEW'}]},cleanup:()=>fs.rmSync(dir,{recursive:true,force:true})};}
+ test('new immutable successor during a read does not invalidate the captured original prefix; next read retains revision and first clocks',async()=>{const f=fixture(),original=fs.readdirSync;try{f.append(0);let appended=false;fs.readdirSync=(p,...args)=>{const names=original(p,...args);if(p===f.dir&&!appended){appended=true;f.append(1,'2.02');}return names;};const first=await f.read(f.input);assert.equal(first.evidenceAssets[0].files.filter(x=>x.name.startsWith('response-')).length,1);assert.equal(JSON.parse(first.raw).events[0].firstIngestedAt,t(0));fs.readdirSync=original;const next=await f.read(f.input);assert.equal(next.evidenceAssets[0].files.filter(x=>x.name.startsWith('response-')).length,2);assert.equal(JSON.parse(next.raw).events[0].nativeEvidenceStatus,'REVISION_REQUIRES_REVIEW');assert.equal(JSON.parse(next.raw).events[0].firstIngestedAt,t(0));}finally{fs.readdirSync=original;f.cleanup();}});
+ test('partial files, stale locks and changed original bytes cannot become a complete prefix',async()=>{const f=fixture();try{f.append(0);const file=path.join(f.dir,'response-000000.json'),bytes=fs.readFileSync(file);fs.writeFileSync(path.join(f.dir,'.pending-SYNTHETIC'),'partial');await assert.rejects(f.read(f.input));fs.unlinkSync(path.join(f.dir,'.pending-SYNTHETIC'));fs.mkdirSync(path.join(f.dir,'.writer-lock'));await assert.rejects(f.read(f.input));fs.rmdirSync(path.join(f.dir,'.writer-lock'));fs.writeFileSync(file,Buffer.concat([bytes,Buffer.from('corruption')]));await assert.rejects(f.read(f.input));assert.ok(fs.readFileSync(file).length>bytes.length);}finally{f.cleanup();}});
++test('legitimate in-progress commit gets bounded backoff; original clock and bytes remain unchanged',async()=>{const f=fixture(),waits=[];try{f.append(0);fs.mkdirSync(path.join(f.dir,'.writer-lock'));const read=colocatedPrefixPort({directory:f.dir,expectedRunId:'SYNTHETIC',expectedSourceSha:source,wait:async ms=>{waits.push(ms);if(waits.reduce((a,b)=>a+b,0)>=500)fs.rmdirSync(path.join(f.dir,'.writer-lock'));}}),bytes=fs.readFileSync(path.join(f.dir,'response-000000.json')),result=await read(f.input);assert.deepEqual(waits,[10,25,50,100,200,400]);assert.equal(JSON.parse(result.raw).events[0].firstIngestedAt,t(0));assert.deepEqual(fs.readFileSync(path.join(f.dir,'response-000000.json')),bytes);}finally{f.cleanup();}});
+diff --git a/test/native-sec-lineage-history.test.mjs b/test/native-sec-lineage-history.test.mjs
+index c4eeb5a5..2444938d 100644
+--- a/test/native-sec-lineage-history.test.mjs
++++ b/test/native-sec-lineage-history.test.mjs
+@@ -1,15 +1,16 @@
++import {scopedRunHistory} from './github-history-fixture.mjs';
+ // Synthetic GitHub HTTP history and immutable native evidence only.
+ import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
+ import {openNativeRun,appendNativeResponse} from '../native-sec-events.mjs';import {sha} from '../prospective-paper-capture.mjs';import {fixtureZip} from '../capture-artifact.mjs';import {createSameDayLineageClient,prepareAvailableLineageBundle,validateLineageBundle,sameDayLineageEventPort,LINEAGE_STATES} from '../native-sec-lineage-history.mjs';import {prepareNativeParentForHost} from '../native-sec-colocated-host.mjs';
+ const source='a'.repeat(40),t=m=>new Date(Date.parse('2026-11-05T14:30:00Z')+m*60000).toISOString(),scope={day:'2026-11-05',before:t(0),currentRunId:900,currentAttempt:1,workflowId:7,allowedSourceShas:[source]};
+ function fixture(){const dir=fs.mkdtempSync('/tmp/same-day-lineage-'),archive=path.join(dir,'archive'),store=openNativeRun({directory:archive,runId:'100-1',sourceSha:source,provenance:'SYNTHETIC_FIXTURE'}),url='https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&output=atom';const append=(s,n)=>appendNativeResponse(s,{body:Buffer.from('<feed><entry><title>8-K - SYNTHETIC (0000000001) (Filer)</title><summary>Item 1.01</summary><updated>'+t(-30)+'</updated><id>urn:tag:sec.gov,2008:accession-number=0000000001-26-000001</id></entry></feed>'),url,responseUrl:url,redirected:false,httpStatus:200,requestStartedAt:t(n),headersReceivedAt:t(n),bodyReceivedAt:t(n),observedAt:t(n),legacySeen:new Set()});append(store,-10);const saved=path.join(dir,'progress.json');fs.writeFileSync(saved,JSON.stringify({runId:'100-1',sourceSha:source,partial:true,heartbeat:[{m:568},{m:569}]}));const bundle=()=>prepareAvailableLineageBundle({directory:archive,runId:'100-1',sourceSha:source,legacyArchive:saved,producerExitCode:143,endedAt:t(-5),out:path.join(dir,'bundle-'+fs.readdirSync(dir).length+'.json')});const run={id:100,run_attempt:1,workflow_id:7,path:'.github/workflows/ignition.yml',head_branch:'main',head_sha:source,status:'completed',conclusion:'cancelled',created_at:t(-20),run_started_at:t(-20),repository:{full_name:'drrazaq/Stock-2'}},job={id:101,run_id:100,run_attempt:1,status:'completed',conclusion:'cancelled',started_at:t(-20),completed_at:t(-5)},history={total_count:1,workflow_runs:[run]};return {dir,archive,store,append,bundle,run,job,history,cleanup:()=>fs.rmSync(dir,{recursive:true,force:true})};}
+-function mock(f,{missing=false,ambiguous=false,status=200,mutateFinal=false}={}){const original=f.bundle(),zip=fixtureZip('native-sec-run.json',Buffer.from(JSON.stringify(original))),artifact={id:200,name:'native-sec-available-run-v2',size_in_bytes:zip.length,digest:'sha256:'+sha(zip),expired:false,workflow_run:{id:100,head_sha:source}},calls=[];let histories=0;return {original,calls,fetcher:async(url,o)=>{calls.push(url);assert.equal(o.method,'GET');assert.equal(o.redirect,'manual');if(status!==200)return new Response('{}',{status});if(url.includes('/workflows/')){histories++;return Response.json(mutateFinal&&histories>1?{...f.history,workflow_runs:[...f.history.workflow_runs,{...f.run,id:102,created_at:t(-1)}],total_count:2}:f.history);}if(url.includes('/jobs?'))return Response.json({total_count:f.job?1:0,jobs:f.job?[f.job]:[]});if(url.includes('/runs/100/artifacts?'))return Response.json({total_count:missing?0:ambiguous?2:1,artifacts:missing?[]:ambiguous?[artifact,{...artifact,id:201}]:[artifact]});if(url.endsWith('/artifacts/200/zip'))return new Response(null,{status:302,headers:{location:'https://storage.example.invalid/evidence?sig=SYNTHETIC'}});if(url.startsWith('https://storage.example.invalid/')){assert.deepEqual(o.headers,{});return new Response(zip);}if(url.endsWith('/runs/100'))return Response.json({...f.run,extraEndpointField:true});throw Error('UNEXPECTED_MOCK_URL');}};}
++function mock(f,{missing=false,ambiguous=false,status=200,mutateFinal=false}={}){const original=f.bundle(),zip=fixtureZip('native-sec-run.json',Buffer.from(JSON.stringify(original))),artifact={id:200,name:'native-sec-available-run-v2',size_in_bytes:zip.length,digest:'sha256:'+sha(zip),expired:false,workflow_run:{id:100,head_sha:source}},calls=[];let histories=0;return {original,calls,fetcher:async(url,o)=>{calls.push(url);assert.equal(o.method,'GET');assert.equal(o.redirect,'manual');if(status!==200)return new Response('{}',{status});if(url.includes('/actions/workflows/')){histories++;return Response.json(mutateFinal&&histories>2?{...f.history,workflow_runs:[...f.history.workflow_runs,{...f.run,id:102,created_at:t(-1)}],total_count:2}:scopedRunHistory(url,f.history.workflow_runs));}if(url.includes('/jobs?'))return Response.json({total_count:f.job?1:0,jobs:f.job?[f.job]:[]});if(url.includes('/runs/100/artifacts?'))return Response.json({total_count:missing?0:ambiguous?2:1,artifacts:missing?[]:ambiguous?[artifact,{...artifact,id:201}]:[artifact]});if(url.endsWith('/artifacts/200/zip'))return new Response(null,{status:302,headers:{location:'https://storage.example.invalid/evidence?sig=SYNTHETIC'}});if(url.startsWith('https://storage.example.invalid/')){assert.deepEqual(o.headers,{});return new Response(zip);}if(url.endsWith('/runs/100'))return Response.json({...f.run,extraEndpointField:true});throw Error('UNEXPECTED_MOCK_URL');}};}
+ const client=m=>createSameDayLineageClient({fetcher:m.fetcher,token:'SYNTHETIC',storageOrigins:['https://storage.example.invalid']});
+ test('complete absence proof and cancelled-never-started proof are distinct from missing/active history',async()=>{for(const type of ['none','never-started','started-cancelled','unknown-jobs']){const f=fixture();try{if(type==='none')f.history={total_count:0,workflow_runs:[]};if(type==='never-started'){f.run.run_started_at=null;f.job=null;}if(type==='unknown-jobs')delete f.job.started_at;const m=mock(f,{missing:type==='started-cancelled'}),r=await client(m).discover(scope);assert.equal(r.state,type==='none'||type==='never-started'?LINEAGE_STATES.NONE:LINEAGE_STATES.UNKNOWN);assert.equal(r.globalHistoryEstablished,false);if(type==='never-started')assert.equal(r.ignoredNeverStarted[0].reason,'CONFIRMED_NEVER_STARTED');if(type==='started-cancelled')assert.ok(m.calls.some(u=>u.includes('/artifacts?')));}finally{f.cleanup();}}});
+ test('authenticated partial native evidence retains original bytes/first clocks despite incomplete heartbeat coverage',async()=>{const f=fixture();try{fs.writeFileSync(path.join(f.archive,'response-000001.json.pending-SYNTHETIC'),'original interrupted bytes');const bytes=fs.readFileSync(path.join(f.archive,'response-000000.json')),m=mock(f),r=await client(m).discover(scope);assert.equal(r.state,LINEAGE_STATES.EARLIER);assert.equal(r.retainedBundles[0].coverage.state,'PARTIAL');assert.equal(r.retainedBundles[0].coverage.missingMinutes.length,331);assert.equal(r.retainedBundles[0].sourceIntegrity,'VERIFIED_AVAILABLE_PREFIX');assert.equal(r.retainedBundles[0].bundle.partialFiles[0].bodyBase64,Buffer.from('original interrupted bytes').toString('base64'));const checked=validateLineageBundle(r.retainedBundles[0].bundle,{runId:'100-1',sourceSha:source});assert.equal(checked.archive.observations[0].firstIngestedAt,t(-10));assert.deepEqual(fs.readFileSync(path.join(f.archive,'response-000000.json')),bytes);
+  const prepared=await prepareNativeParentForHost({client:{discover:async()=>r},scope,rootDirectory:f.dir,destination:'runtime/native-sec-parents/prior'});assert.equal(prepared.status,LINEAGE_STATES.EARLIER);assert.ok(fs.existsSync(prepared.historyFile));const descriptor=JSON.parse(fs.readFileSync(prepared.historyFile));assert.deepEqual(JSON.parse(fs.readFileSync(descriptor.retainedBundles[0].bundleFile)),r.retainedBundles[0].bundle);
+  }finally{f.cleanup();}});
+-for(const type of ['missing','ambiguous','private','truncated','jobs-truncated','history-moved','active'])test('same-day '+type+' is UNKNOWN, never empty history',async()=>{const f=fixture();try{if(type==='truncated')f.history={total_count:100,workflow_runs:Array.from({length:20},(_,i)=>({...f.run,id:100+i,created_at:t(-i)}))};if(type==='active'){f.run.status='in_progress';f.job.status='in_progress';f.job.completed_at=null;}const m=mock(f,{missing:type==='missing',ambiguous:type==='ambiguous',status:type==='private'?403:200,mutateFinal:type==='history-moved'});if(type==='jobs-truncated'){const original=m.fetcher;m.fetcher=(u,o)=>u.includes('/jobs?')?Promise.resolve(Response.json({total_count:101,jobs:[f.job]})):original(u,o);}const r=await client(m).discover(scope);assert.equal(r.state,LINEAGE_STATES.UNKNOWN);assert.equal(r.admissionPolicyApproved,false);assert.ok(r.requests<=32);if(type==='active'||type==='history-moved')assert.equal(r.retainedBundles.length,1);}finally{f.cleanup();}});
++for(const type of ['missing','ambiguous','private','truncated','jobs-truncated','history-moved','active'])test('same-day '+type+' is UNKNOWN, never empty history',async()=>{const f=fixture();try{if(type==='truncated')f.history={total_count:100,workflow_runs:Array.from({length:20},(_,i)=>({...f.run,id:100+i,created_at:t(-i)}))};if(type==='active'){f.run.status='in_progress';f.job.status='in_progress';f.job.completed_at=null;}const m=mock(f,{missing:type==='missing',ambiguous:type==='ambiguous',status:type==='private'?403:200,mutateFinal:type==='history-moved'});if(type==='truncated'){const original=m.fetcher;m.fetcher=(u,o)=>u.includes('/actions/workflows/')?Promise.resolve(Response.json(new URL(u).searchParams.get('page')==='1'?{total_count:101,workflow_runs:Array.from({length:100},(_,i)=>({...f.run,id:100+i,created_at:t(-i)}))}:{total_count:101,workflow_runs:[]})):original(u,o);}if(type==='jobs-truncated'){const original=m.fetcher;m.fetcher=(u,o)=>u.includes('/jobs?')?Promise.resolve(Response.json({total_count:101,jobs:[f.job]})):original(u,o);}const r=await client(m).discover(scope);assert.equal(r.state,LINEAGE_STATES.UNKNOWN);assert.equal(r.admissionPolicyApproved,false);assert.ok(r.requests<=256);if(type==='active'||type==='history-moved')assert.equal(r.retainedBundles.length,1);}finally{f.cleanup();}});
+ test('read-side lineage view never promotes a later sighting; unmapped earlier issuer clocks remain unresolved',async()=>{const f=fixture();try{const m=mock(f),r=await client(m).discover(scope),currentDir=path.join(f.dir,'current'),s=openNativeRun({directory:currentDir,runId:'900-1',sourceSha:source,provenance:'SYNTHETIC_FIXTURE'});f.append(s,0);const current={directory:currentDir,expectedRunId:s.runId,expectedSourceSha:source},input={at:t(1),identities:[{issuerCik:'0000000001',securityId:'SYNTHETIC',symbol:'AMD',identityAudit:'DOCUMENTED_SOURCE_REVIEW',asOf:t(-30)}]},view=JSON.parse((await sameDayLineageEventPort({current,history:r})(input)).raw);assert.equal(view.events.length,0);assert.equal(view.researchEvents[0].firstIngestedAt,null);assert.equal(view.researchEvents[0].originalInAvailableArchive.firstIngestedAt,t(-10));assert.equal(view.researchEvents[0].originalIngestionStatus,'SOURCE_CAPTURE_INCOMPLETE_FIRST_UNKNOWN');assert.equal(view.researchEvents[0].originalInAvailableArchive.producerRunId,'100-1');assert.equal(view.admissionPolicyApproved,false);
+  const unknown=JSON.parse((await sameDayLineageEventPort({current,history:{...r,state:LINEAGE_STATES.UNKNOWN}})(input)).raw);assert.equal(unknown.researchEvents[0].firstIngestedAt,null);assert.equal(unknown.researchEvents[0].originalIngestionStatus,'UNKNOWN_EARLIER_OBSERVATION_POSSIBLE');const unmapped=JSON.parse((await sameDayLineageEventPort({current,history:r})({...input,identities:input.identities.map(x=>({...x,asOf:t(-1)}))})).raw);assert.equal(unmapped.researchEvents[0].firstIngestedAt,null);assert.equal(unmapped.researchEvents[0].earlierIssuerEvidence[0].firstIngestedAt,t(-10));
+  }finally{f.cleanup();}});
+@@ -17,4 +18,4 @@ test('read-side lineage view never promotes a later sighting; unmapped earlier i
+ test('missing newest evidence does not discard authenticated older partial evidence',async()=>{const f=fixture();try{f.history={total_count:2,workflow_runs:[{...f.run,id:102,created_at:t(-1)},f.run]};const m=mock(f),r=await client(m).discover(scope);assert.equal(r.state,LINEAGE_STATES.UNKNOWN);assert.equal(r.retainedBundles.length,1);assert.equal(r.retainedBundles[0].runId,100);assert.ok(r.uncertainties.some(x=>x.runId===102));assert.equal(validateLineageBundle(r.retainedBundles[0].bundle,{runId:'100-1',sourceSha:source}).archive.observations[0].firstIngestedAt,t(-10));}finally{f.cleanup();}});
+ test('partial-lineage publication uses the implemented bounded wire adapter without a heartbeat-completeness gate',async()=>{const f=fixture();try{fs.writeFileSync(path.join(f.archive,'response-000001.json.pending-SYNTHETIC'),'retained pending bytes');const bundle=f.bundle(),file=path.join(f.dir,'native-sec-run.json');fs.writeFileSync(file,JSON.stringify(bundle));const {createArtifactWireClient}=await import('../artifact-wire-client.mjs'),{reviewedNativeRunPublisher}=await import('../native-sec-bounded-clients.mjs'),{artifactWireFixture,syntheticArtifactToken,syntheticResultsOrigin,syntheticStorageOrigin}=await import('./artifact-wire-fixture.mjs'),mock=artifactWireFixture(),sdk=createArtifactWireClient({fetcher:mock.fetcher,runtimeToken:syntheticArtifactToken,resultsOrigin:syntheticResultsOrigin,allowedResultsOrigins:[syntheticResultsOrigin],storageOrigins:[syntheticStorageOrigin],profile:'NATIVE_PARENT',nativeBundleVersion:2,now:()=>t(0)}),moduleFile=new URL('../artifact-wire-client.mjs',import.meta.url).pathname,publisher=reviewedNativeRunPublisher({sdk,bundleVersion:2,reviewed:{moduleFile,packageSha256:sha(fs.readFileSync(moduleFile)),contract:'PRE_REQUEST_WIRE_GATE_V1',maxWireRequestsPerUpload:5}}),receipt=await publisher.upload({file,expectedRunId:'100-1',expectedSourceSha:source});assert.equal(mock.calls.length,4);assert.equal(JSON.parse(mock.calls[0].body).name,'native-sec-available-run-v2');assert.equal(receipt.retentionDays,7);assert.equal(sdk.stats().completed,1);assert.equal(fs.readFileSync(path.join(f.archive,'response-000001.json.pending-SYNTHETIC'),'utf8'),'retained pending bytes');}finally{f.cleanup();}});
+ for(const fault of ['duplicate-jobs','inverted-job-clocks','job-permission-error','null-job-row'])test('uncertain '+fault+' retains independently authenticated source evidence',async()=>{const f=fixture();try{const m=mock(f),original=m.fetcher;m.fetcher=(url,o)=>{if(url.includes('/jobs?')){if(fault==='job-permission-error')return Promise.resolve(new Response('{}',{status:403}));return Promise.resolve(Response.json({total_count:fault==='duplicate-jobs'?2:1,jobs:fault==='duplicate-jobs'?[f.job,{...f.job}]:fault==='null-job-row'?[null]:[{...f.job,completed_at:t(-30)}]}));}return original(url,o);};const result=await client(m).discover(scope);assert.equal(result.state,LINEAGE_STATES.UNKNOWN);assert.equal(result.retainedBundles.length,1);assert.equal(result.retainedBundles[0].runId,100);assert.equal(validateLineageBundle(result.retainedBundles[0].bundle,{runId:'100-1',sourceSha:source}).archive.observations[0].firstIngestedAt,t(-10));assert.equal(result.admissionPolicyApproved,false);}finally{f.cleanup();}});
+-test('terminal cancelled job with explicit null start and a cancellation timestamp is genuinely unused',async()=>{const f=fixture();try{f.run.run_started_at=null;f.job.started_at=null;const result=await client(mock(f)).discover(scope);assert.equal(result.state,LINEAGE_STATES.NONE);assert.equal(result.ignoredNeverStarted.length,1);}finally{f.cleanup();}});
++test('terminal cancelled job with explicit null start and a cancellation timestamp is genuinely unused',async()=>{const f=fixture();try{f.run.run_started_at=null;f.job.started_at=null;f.job.steps=[];f.job.runner_id=null;f.job.runner_name=null;const result=await client(mock(f)).discover(scope);assert.equal(result.state,LINEAGE_STATES.NONE);assert.equal(result.ignoredNeverStarted.length,1);}finally{f.cleanup();}});
+diff --git a/test/native-sec-producer-fixture.mjs b/test/native-sec-producer-fixture.mjs
+index 22ddf443..476a88b9 100644
+--- a/test/native-sec-producer-fixture.mjs
++++ b/test/native-sec-producer-fixture.mjs
+@@ -1,7 +1,7 @@
+ // Offline full-production runtime capsule. Everything collected here is SYNTHETIC.
+ import fs from 'node:fs';import path from 'node:path';import {gunzipSync} from 'node:zlib';import {createHash} from 'node:crypto';import {execFileSync,spawn} from 'node:child_process';import http from 'node:http';
+ const root=new URL('../',import.meta.url),hash=b=>createHash('sha256').update(b).digest('hex');
+-export async function producerFixture({scenario='success',pageEntries=1,long=false,snapshotDelayMs=0}={}){
++export async function producerFixture({scenario='success',pageEntries=1,long=false,snapshotDelayMs=0,nativeCommitDelayMs=0}={}){
+  const dir=fs.mkdtempSync('/tmp/native-producer-'),bundleBytes=fs.readFileSync(new URL('docs/validation/native-sec-shadow-runtime-base-v3.json.gz',root)),m=JSON.parse(fs.readFileSync(new URL('docs/validation/native-sec-shadow-production-manifest-v3.json',root))),patch=fs.readFileSync(new URL('docs/validation/native-sec-shadow-production-v3.patch',root));
+  if(hash(bundleBytes)!==m.testOnlyRuntimeBaseBundleSha256||hash(patch)!==m.patchSha256)throw Error('PRODUCTION_CAPSULE_PIN');const bundle=JSON.parse(gunzipSync(bundleBytes,{maxOutputLength:16*1024*1024}));if(bundle.commit!==m.productionBase||bundle.publicSourceCodeOnly!==true)throw Error('PRODUCTION_CAPSULE_ID');
+  for(const [f,b]of Object.entries(bundle.files)){if(path.isAbsolute(f)||f.split('/').includes('..')||hash(b)!==bundle.sha256[f])throw Error('PRODUCTION_CAPSULE_FILE');fs.mkdirSync(path.dirname(path.join(dir,f)),{recursive:true});fs.writeFileSync(path.join(dir,f),b);}
+@@ -18,7 +18,7 @@ export async function producerFixture({scenario='success',pageEntries=1,long=fal
+   else{res.statusCode=404;body={error:'UNEXPECTED_SYNTHETIC_PATH'};}
+   if(snapshotDelayMs&&u.pathname.includes('/snapshot/'))await new Promise(r=>setTimeout(r,snapshotDelayMs));const raw=typeof body==='string'?body:JSON.stringify(body);sourceBodies.push({path:u.pathname,status:res.statusCode,sha256:hash(raw),raw});res.end(raw);
+  });server.on('connection',s=>{sockets.add(s);s.on('close',()=>sockets.delete(s));});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port,trace=path.join(dir,'request-trace.jsonl'),blocked=path.join(dir,'blocked-fetch'),preload=path.join(dir,'preload.mjs');
+- fs.writeFileSync(preload,`import fs from 'node:fs';const D=Date;let now=Number(process.env.SYNTHETIC_EPOCH);globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[now]));}static now(){return now;}};const f=fetch;globalThis.fetch=async(input,o={})=>{const original=String(input),u=new URL(original);let mapped;if(original.startsWith(${JSON.stringify(base+'/')})){mapped=new URL(original);if(u.pathname.includes('/snapshot/'))now+=Number(process.env.SYNTHETIC_MARKET_ADVANCE);}
++ fs.writeFileSync(preload,`import fs from 'node:fs';const mkdir=fs.mkdirSync;let delayed=false;fs.mkdirSync=function(p,...args){const overlap=${nativeCommitDelayMs}>0&&!delayed&&String(p).endsWith('/.writer-lock')&&fs.existsSync(String(p).replace(/\\.writer-lock$/,'response-000000.json'));if(overlap){for(let i=0;i<1000&&!fs.existsSync(${JSON.stringify(path.join(dir,'synthetic-reader-ready'))});i++)Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,10);if(!fs.existsSync(${JSON.stringify(path.join(dir,'synthetic-reader-ready'))}))throw Error('SYNTHETIC_READER_HANDSHAKE_TIMEOUT');}const result=mkdir(p,...args);if(overlap){delayed=true;fs.writeFileSync(${JSON.stringify(path.join(dir,'synthetic-writer-held'))},'SYNTHETIC_WRITER_COMMIT_IN_PROGRESS');Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,${nativeCommitDelayMs});}return result;};const D=Date;let now=Number(process.env.SYNTHETIC_EPOCH);globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[now]));}static now(){return now;}};const f=fetch;globalThis.fetch=async(input,o={})=>{const original=String(input),u=new URL(original);let mapped;if(original.startsWith(${JSON.stringify(base+'/')})){mapped=new URL(original);if(u.pathname.includes('/snapshot/'))now+=Number(process.env.SYNTHETIC_MARKET_ADVANCE);}
+  else if(u.origin==='https://www.sec.gov'&&(u.pathname==='/files/company_tickers.json'||u.pathname==='/cgi-bin/browse-edgar'))mapped=new URL(${JSON.stringify(base)}+'/sec-www'+u.pathname+u.search);
+  else if(u.origin==='https://data.sec.gov'&&u.pathname==='/submissions/CIK0000000001.json')mapped=new URL(${JSON.stringify(base)}+'/sec-data'+u.pathname+u.search);
+  else{fs.writeFileSync(${JSON.stringify(blocked)},'UNEXPECTED_NETWORK_ATTEMPT');throw Error('NO_EXTERNAL_PROVIDER_AUTHORIZATION');}now+=10;mapped.searchParams.set('__clock',String(now));fs.appendFileSync(${JSON.stringify(trace)},JSON.stringify({url:original.replace(${JSON.stringify(base)},'http://fixture.local'),method:o.method||'GET'})+'\\n');return f(mapped,o);};`);
+diff --git a/docs/validation/approved-native-binding.candidate.json b/docs/validation/approved-native-binding.candidate.json
+index ad9adf94..328f34d8 100644
+--- a/docs/validation/approved-native-binding.candidate.json
++++ b/docs/validation/approved-native-binding.candidate.json
+@@ -4,7 +4,7 @@
+   "ownerApprovalReference": null,
+   "approvedAt": null,
+   "expires": null,
+-  "runtimeSourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
++  "runtimeSourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
+   "runtimeFiles": {
+     "native-sec-handoff.mjs": "90a3b5ff12ad31b132e68e9d660d805aeaefbc581dd57b779b2c217aace9bfe3",
+     "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+@@ -13,7 +13,7 @@
+     "capture-artifact.mjs": "4019010f6ad40ca8df27aa5db0c378107e9829073361e788a4e267c0d1e6f981",
+     "paper-capture-ports.mjs": "4474fc07a640f77d80fbb6092adb7bebf9c946e9c7a018a5cfc79d5f57045e49",
+     "paper-capture-references.mjs": "81677789a9c3fb4dd246892961930c97534de1a75f16bd0cdba6346cf0ab0e56",
+-    "paper-capture-wrapper.mjs": "f8137fac8d87b58ea51a098ccf1c39d7bf10b1f472ed65b99b180eeeacac66b0",
++    "paper-capture-wrapper.mjs": "3764613a7e3845f1b977fe6ece4c0b6949762f2c1943c9efbcd358cba3d72987",
+     "prospective-paper-capture.mjs": "c7f5f09e9e1416e620b650fce76ebacac8fa572618d468eb59d0be92998a439f",
+     "prospective-capture-transport.mjs": "a1eed686ac2415f47a09551381473d99d1d22d7a02b844cbbb1841bc9798caf1",
+     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
+@@ -21,12 +21,13 @@
+     "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2",
+     "tools/run-paper-capture-workflow.mjs": "f1dc0d20398ada2bce2c388631d50ee79f29329f42bae9ed5017ee65c969f473",
+     "tools/recover-paper-capture.mjs": "38fecfa78760dbcd087c706a8066e4f958860a02a859e5872f7e9d59b42fdcae",
+-    "capture-approved-binding.mjs": "bb9831d1cbca1971e3319c1404c145a718cc75f8210cad46b6a57c15c47feee3",
++    "capture-approved-binding.mjs": "57e7c9ac716a79a493a834b7056c09d58ea04642ed3113cfa02dd1a199b0c8e8",
+     "native-sec-bounded-clients.mjs": "d11a0f944d1f36aa812f35834abe48cb739216a7217c22b3466fc082ce1d5a26",
+-    "native-sec-colocated-prefix.mjs": "b4df1b5479a2ca7f63ced71ebc7f0e9c7dd99b66e2ee0ae42c3689bc8819239e",
+-    "native-sec-parent-client.mjs": "2441c24cc8e79215e63beb10c15324eb4356f7b237551e47c9efdb983a908234",
+-    "native-sec-lineage-history.mjs": "b17cc8014abe24740107e9ca91b7b3e25442118ba47d69476769a199047299d7",
+-    "artifact-wire-client.mjs": "d075eab560fb641fc53ddea48fa8b6d313b7e1ffdb78d0e27bbbd4c0d4eac3cd"
++    "native-sec-colocated-prefix.mjs": "7f02632e7b7b103aa46d1b6786df8cd5990fd3ae08ad5d3920af284f0e2e22ab",
++    "native-sec-parent-client.mjs": "8ba33b87f749c099f0f024643b6ebd99da51500e5daa5c865ff6745eaacb509f",
++    "native-sec-lineage-history.mjs": "c044cd0995ff7dc19b13b942f20ac1bd3146a552d648d7d655cc183a12dcd8bb",
++    "artifact-wire-client.mjs": "d075eab560fb641fc53ddea48fa8b6d313b7e1ffdb78d0e27bbbd4c0d4eac3cd",
++    "ignition-execution-contract.mjs": "148c07379ab7a4c188ebd90e02dda2ad819dddf4f2fbcfc8063bc93d78789663"
+   },
+   "workflowCommitSha": null,
+   "workflowSha256": null,
+@@ -44,5 +45,12 @@
+   "captureRequests": 41,
+   "combinedSourceMaximum": 59,
+   "noActivationAuthority": true,
+-  "note": "Review candidate only, deliberately insufficient to pass runtime guards. Not a dated approval or usable credential binding."
++  "note": "Review candidate only, deliberately insufficient to pass runtime guards. Not a dated approval or usable credential binding.",
++  "controlLimits": {
++    "historyContract": "SESSION_EXECUTION_HISTORY_V2",
++    "parentRequests": 256,
++    "parentReceivedBytes": 67108864,
++    "parentTotalMs": 120000,
++    "parentMaxInFlight": 4
++  }
+ }
+diff --git a/docs/validation/paper-capture-calibration.candidate.json b/docs/validation/paper-capture-calibration.candidate.json
+index 5387efe9..56229380 100644
+--- a/docs/validation/paper-capture-calibration.candidate.json
++++ b/docs/validation/paper-capture-calibration.candidate.json
+@@ -21,7 +21,7 @@
+     "LRCX",
+     "KLAC"
+   ],
+-  "sourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
++  "sourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
+   "enrollmentManifestSha256": null,
+   "feed": "sip",
+   "evaluation": {
+diff --git a/docs/validation/paper-capture-rehearsal.workflow.yml.proposed b/docs/validation/paper-capture-rehearsal.workflow.yml.proposed
+index 93273f68..eac4bc86 100644
+--- a/docs/validation/paper-capture-rehearsal.workflow.yml.proposed
++++ b/docs/validation/paper-capture-rehearsal.workflow.yml.proposed
+@@ -19,7 +19,7 @@ jobs:
+     steps:
+       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+         with:
+-          ref: 9e8ebe61c6ee2fc270cdbff34048e271de1079ec
++          ref: 04e70e257a9eacd656430261ebc3610a43670f5e
+           persist-credentials: false
+       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+         with:
+diff --git a/docs/validation/prospective-paper-capture-manifest.json b/docs/validation/prospective-paper-capture-manifest.json
+index 6d2324a0..a4882840 100644
+--- a/docs/validation/prospective-paper-capture-manifest.json
++++ b/docs/validation/prospective-paper-capture-manifest.json
+@@ -1,6 +1,6 @@
+ {
+   "kind": "NATIVE_SEC_INCREMENTAL_HANDOFF_INACTIVE_PACKAGE_V5",
+-  "sourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
++  "sourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
+   "basis": "6b1f3cde948ccf8ace15bdd1882a76c852b4dced",
+   "runtimeFiles": {
+     "native-sec-handoff.mjs": "90a3b5ff12ad31b132e68e9d660d805aeaefbc581dd57b779b2c217aace9bfe3",
+@@ -10,7 +10,7 @@
+     "capture-artifact.mjs": "4019010f6ad40ca8df27aa5db0c378107e9829073361e788a4e267c0d1e6f981",
+     "paper-capture-ports.mjs": "4474fc07a640f77d80fbb6092adb7bebf9c946e9c7a018a5cfc79d5f57045e49",
+     "paper-capture-references.mjs": "81677789a9c3fb4dd246892961930c97534de1a75f16bd0cdba6346cf0ab0e56",
+-    "paper-capture-wrapper.mjs": "f8137fac8d87b58ea51a098ccf1c39d7bf10b1f472ed65b99b180eeeacac66b0",
++    "paper-capture-wrapper.mjs": "3764613a7e3845f1b977fe6ece4c0b6949762f2c1943c9efbcd358cba3d72987",
+     "prospective-paper-capture.mjs": "c7f5f09e9e1416e620b650fce76ebacac8fa572618d468eb59d0be92998a439f",
+     "prospective-capture-transport.mjs": "a1eed686ac2415f47a09551381473d99d1d22d7a02b844cbbb1841bc9798caf1",
+     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
+@@ -19,8 +19,8 @@
+     "tools/run-paper-capture-workflow.mjs": "f1dc0d20398ada2bce2c388631d50ee79f29329f42bae9ed5017ee65c969f473",
+     "tools/recover-paper-capture.mjs": "38fecfa78760dbcd087c706a8066e4f958860a02a859e5872f7e9d59b42fdcae"
+   },
+-  "workflowSpecSha256": "76cc856323d6f5d963966b9f822b95582ebd4affa2fbd1e88aa08ba9449c2df3",
+-  "candidateSha256": "db7cd4e31ad9bdc02d61b590148e7eaafac646220d9fefc26ee72364ccd22297",
++  "workflowSpecSha256": "83c9d9b1ad7934c2172d7df670607a8056b8da75cac57645fce8afe17544248d",
++  "candidateSha256": "d89bdb019e6f51e29614d501c2c8fdb57150fa3e45c3f25f0bc984068c5fb1ee",
+   "liveWorkflowInstalled": false,
+   "liveEntryPointImplemented": false,
+   "newCaptureAuthorized": false,
+@@ -47,10 +47,10 @@
+     "test/native-sec-handoff.test.mjs": "13b4a46fa3a68dcd46e91c112baf2c27d90504807ddd28b9afd09d9621b4bba4",
+     "test/native-sec-incremental.test.mjs": "39d4af4e994de6cb6b486da35fda7407815126f1a3114be7953c938bbecef8c3",
+     "test/native-sec-actual-watcher.test.mjs": "5d203d108b45b287b65c7682de092208817020d4d858a86623ad2f0d5e3be98e",
+-    "test/native-sec-producer-fixture.mjs": "81b749f1cc632ec5739074721387fdf91a54a08c3b0cdadbd2f60c50dc7c33dc",
++    "test/native-sec-producer-fixture.mjs": "2d10aa35267b497d9d44dbcf530cd99ad236a5f1b08b3cb00aa3527ddee04dcb",
+     "docs/native-sec-incremental-handoff-checkpoint.md": "1c43dbd1ca435bb2600c543356d833a70b9f1c45f6154c9cd7428e83db402bdf"
+   },
+-  "rehearsalWorkflowSha256": "bdd55b216f40998ab71ab1939d5e2227668415885fce5e3c79bc3a126aaca227",
++  "rehearsalWorkflowSha256": "f10ad24bf24ea3714c5dfd086d33d3fb2b62e2057afd04af26b13c385a64cbc5",
+   "guardedWrapperImplemented": true,
+   "referenceProvenanceValidatorImplemented": true,
+   "acknowledgedUploadAndArchiveRecoveryImplemented": true,
+diff --git a/docs/validation/prospective-paper-capture-workflow.json b/docs/validation/prospective-paper-capture-workflow.json
+index f8abe38a..d053fc5d 100644
+--- a/docs/validation/prospective-paper-capture-workflow.json
++++ b/docs/validation/prospective-paper-capture-workflow.json
+@@ -2,7 +2,7 @@
+   "kind": "INACTIVE_GUARDED_CAPTURE_WORKFLOW_V2",
+   "installable": false,
+   "reason": "Inactive candidate: pinned full-session lifecycle and explicit same-day lineage states, implemented source-pinned artifact wire transport. V1 ordinary acceptance ordering remains infeasible; V2/continuity policy unapproved and route/control telemetry missing. No live bindings or collection.",
+-  "runtimeSourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
++  "runtimeSourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
+   "runtimeFiles": {
+     "native-sec-handoff.mjs": "90a3b5ff12ad31b132e68e9d660d805aeaefbc581dd57b779b2c217aace9bfe3",
+     "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+@@ -11,7 +11,7 @@
+     "capture-artifact.mjs": "4019010f6ad40ca8df27aa5db0c378107e9829073361e788a4e267c0d1e6f981",
+     "paper-capture-ports.mjs": "4474fc07a640f77d80fbb6092adb7bebf9c946e9c7a018a5cfc79d5f57045e49",
+     "paper-capture-references.mjs": "81677789a9c3fb4dd246892961930c97534de1a75f16bd0cdba6346cf0ab0e56",
+-    "paper-capture-wrapper.mjs": "f8137fac8d87b58ea51a098ccf1c39d7bf10b1f472ed65b99b180eeeacac66b0",
++    "paper-capture-wrapper.mjs": "3764613a7e3845f1b977fe6ece4c0b6949762f2c1943c9efbcd358cba3d72987",
+     "prospective-paper-capture.mjs": "c7f5f09e9e1416e620b650fce76ebacac8fa572618d468eb59d0be92998a439f",
+     "prospective-capture-transport.mjs": "a1eed686ac2415f47a09551381473d99d1d22d7a02b844cbbb1841bc9798caf1",
+     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",

@@ -54,5 +54,16 @@
   },
   "syntheticOnly": true,
   "genuineAdmissions": 0,
-  "productionChanged": false
+  "productionChanged": false,
+  "subsequentCIFixtureFailure": {
+    "publishedSha": "f34c4641e422fdd09a66c783d3209bcff1dc326b",
+    "runId": 41242565418,
+    "cause": "Artificial writer overlap was never entered when capture worker booted after producer completion; distinct from runtime read retry defect",
+    "reproducedWithWorkerDelayMs": 6000,
+    "diagnostic": "SYNTHETIC_WRITER_NOT_READY progress331 writerCommittedfalse",
+    "testOnlyCorrectionSource": "04e70e257a9eacd656430261ebc3610a43670f5e",
+    "normalAndDelayedExactPackage": "PASS",
+    "fullHostMatrix": "12 PASS",
+    "runtimeChangedByFixtureCorrection": false
+  }
 }

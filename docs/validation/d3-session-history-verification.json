@@ -1,6 +1,6 @@
 {
   "kind": "INTEGRATED_INACTIVE_D3_HISTORY_STARTUP_VERIFICATION",
-  "runtimeSourceSha": "2ea76ce05f01b2c8867b4683773946ace5d91f34",
+  "runtimeSourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
   "baseline": "f49c4ef34eeaa045a9e6e5e8709c6c2ce99a7740",
   "development": {
     "files": 221,
@@ -27,12 +27,14 @@
   },
   "exactPackage": {
     "base": "f49c4ef34eeaa045a9e6e5e8709c6c2ce99a7740",
-    "source": "2ea76ce05f01b2c8867b4683773946ace5d91f34",
-    "patchSha256": "9ebc46681df646d977669138d55032759432238a889cadcee43408231dae3fcf",
+    "source": "04e70e257a9eacd656430261ebc3610a43670f5e",
+    "patchSha256": "c09b3113c98bf277e21b5a0ef01644d0ec3dc5a2850d7aeef4284d943dc39d8c",
     "patchFiles": 20,
     "runtimeHashes": 25,
     "applyCheck": "PASS",
-    "resultingFileAndGitBlobComparison": "PASS"
+    "resultingFileAndGitBlobComparison": "PASS",
+    "normalContendedHost": "PASS:41 cycles,331 heartbeats",
+    "delayed6000msContendedHost": "PASS:41 cycles,331 heartbeats"
   },
   "packageIntegration": {
     "historyContractCases": 27,
@@ -98,7 +100,10 @@
     "schedule-preserved.log": "7f7ae882b45d8eda04e2dedcbe8627bb5d7008d58b08c8184b149a5c91274def",
     "legacy-parent.log": "60d75bf8687322ea225cbd28ff084e6cde97b4ebde1d50514d6e5942169609c3",
     "python.log": "e8a036531fb415c57ad198b5b3a95cfe7bf039e2e33b475be771f335971cdb81",
-    "static.json": "bb3e3b80d6671c95dca8a77fb9a20b4ab8931b08583887a5270391a74c852d7c"
+    "static.json": "bb3e3b80d6671c95dca8a77fb9a20b4ab8931b08583887a5270391a74c852d7c",
+    "host-synchronization-verified.log": "c1d6baf655bfb0125cf9b46c0e483eb60d2f9dae37d97af5f441504c7eec080c",
+    "bootstrap-package-normal.log": "0601a29fbbf918d814ca47bad8b81f76015a40ebe58b52f2782af61f9eedd9a9",
+    "bootstrap-package-delayed.log": "863dd8d1b107834e01a687a3f73e94cc726e5199d974d2ea97e01dd3c384e839"
   },
   "controlHistoryContract": "SESSION_EXECUTION_HISTORY_V2_NOT_PAPER_V2",
   "controlPlaneProposedMaximum": 467,
@@ -114,5 +119,31 @@
   "acceptanceAdded": 0,
   "accepted": 24,
   "total": 40,
-  "exactCommitCI": "Verify ordinary push checks on final published HEAD before final report"
+  "exactCommitCI": "Verify ordinary push checks on final published HEAD before final report",
+  "firstPublishedCI": {
+    "sha": "f34c4641e422fdd09a66c783d3209bcff1dc326b",
+    "runId": 41242565418,
+    "result": "FAIL",
+    "failedCase": "actual colocated host success-contended",
+    "otherChecksPassed": 4,
+    "logSha256": "0517cd9d210e89303f97b2980bb74119bcdca65f79168161376636fdf8404869"
+  },
+  "bootstrapFixtureCorrection": {
+    "cause": "Producer could finish before slow worker requested artificial overlap; missed test rendezvous, distinct from real reader retry defect",
+    "reproduction": "6000ms delayed worker on first published fixture: SYNTHETIC_WRITER_NOT_READY,331 producer heartbeats,writerCommittedfalse",
+    "repair": "Bounded rendezvous before second archive commit acquires lock, then same500ms lock hold; no production/runtime change or relaxed assertion",
+    "normalStress": "PASS",
+    "delayedWorkerStress": "PASS",
+    "logs": {
+      "ci-synchronization-repro.log": "5850c31846bfdb0097da73e22d6679e09404cf620be6d6aeb1b702ba293e6309",
+      "ci-synchronization-repro/capture/synthetic-read-failure.json": "82c900c603e6e64f8a06b308bf8ce972c7621fb7f8d69a9e9f84a02dd07f5c7d",
+      "ci-synchronization-fixed.log": "a29966bcd60b255183b3f1173678c02991948cceeac1ae782fa1dd9038551904",
+      "ci-delayed-bootstrap-fixed.log": "a9f55c7a01911784a84676e353bebe5b6992e7662ac45d12efdfc378c5fc6ea7"
+    },
+    "fullHostMatrix": {
+      "cases": 12,
+      "pass": 12,
+      "fail": 0
+    }
+  }
 }
