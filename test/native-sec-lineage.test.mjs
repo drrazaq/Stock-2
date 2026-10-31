@@ -75,3 +75,11 @@ test('same-clock conflicting revisions across runs and duplicate ancestor run ID
  const a=create(root,'original');appendNativeResponse(a,atom());const b=create(root,'later',pin(a));appendNativeResponse(b,atom(0,'2.02'));assert.equal(read(b).observations[0].nativeEvidenceStatus,'CONFLICTING_SAME_OBSERVATION');
  assert.throws(()=>openNativeRun({directory:path.join(root,'reused'),runId:'original',sourceSha:sha,provenance:'SYNTHETIC_FIXTURE',parent:pin(b)}),/INCOMPLETE/);
 }));
+
+test('offline pinned parent staging CLI → actual shadow parent-manifest binding → repeat preserves original clocks',fixture(async root=>{
+ const s=create(root,'stage-source');appendNativeSubmissions(s,submission());appendNativeResponse(s,atom());const parent=pin(s),original=nativeRunDigest(s.directory),destination=path.join(root,'runtime/native-sec-parents/staged');
+ execFileSync(process.execPath,[new URL('../tools/prepare-native-sec-parent.mjs',import.meta.url).pathname,'--offline',s.directory,s.runId,sha,parent.sha256,destination],{cwd:root,stdio:'ignore'});
+ const manifestFile=destination+'.parent.json',manifestSha256=hash(fs.readFileSync(manifestFile)),oldCwd=process.cwd();try{process.chdir(root);const shadow=createNativeSecShadow({enabled:true,directory:path.join(root,'next'),runId:'stage-next',sourceSha:sha,provenance:'SYNTHETIC_FIXTURE',parentManifestFile:manifestFile,parentManifestSha256:manifestSha256});assert.equal(shadow.observe(atom(1)).status,'ARCHIVED_UNAUDITED');const a=readNativeRun({directory:path.join(root,'next'),expectedRunId:'stage-next',expectedSourceSha:sha});assert.equal(a.observations[0].firstIngestedAt,t(0));assert.equal(a.observations[0].duplicateCount,1);
+ const bad=createNativeSecShadow({enabled:true,directory:path.join(root,'bad'),runId:'bad-pin',sourceSha:sha,provenance:'SYNTHETIC_FIXTURE',parentManifestFile:manifestFile,parentManifestSha256:'0'.repeat(64)});assert.equal(bad.observe(atom(1)).status,'UNKNOWN');assert.equal(fs.existsSync(path.join(root,'bad','response-000000.json')),false);
+ }finally{process.chdir(oldCwd);}assert.deepEqual(nativeRunDigest(s.directory),original);
+}));
