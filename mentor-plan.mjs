@@ -50,11 +50,28 @@ export function leaderDipMentorPlan({symbol,position=null,signal=null,quantity=n
  const holdingState=!exitSession||!marketSession(asOfDay).known||buySession>asOfDay?'UNKNOWN':asOfDay>exitSession?'REGISTERED_DEADLINE_PASSED':asOfDay===exitSession?'REGISTERED_CLOSE_DUE_TODAY':'MONITOR_CONTRACT_NOT_A_HOLD_APPROVAL';
  const structuralIssues=issues.filter(x=>x!=='EXACT_OPEN_FILL_NOT_VERIFIED');
  const planStatus=structuralIssues.length?'UNRESOLVED':selected?'LOCAL_CONTRACT_ONLY_UNVERIFIED':entryState==='EXPIRED'?'EXPIRED_ENTRY':'RESEARCH_CONTEXT_UNVERIFIED';
- return {version:'LEADER_DIP_MENTOR_V1',symbol,scope:selected?'RECORDED_LEADER_DIP':p?'OTHER_LANE_UNSUPPORTED':validSignal?'SOURCE_LEAD':'NO_PLAN',decision:'EXPLANATION_ONLY',actionability:'NOT_ACTIONABLE',planStatus,evidence:'NOT PROVEN; target exit not adopted under the frozen comparison',rule:'SQ11-PB12 / A-TGT-TGT20-PB12',horizonSessions:126,zadStatus,
+ const plan={version:'LEADER_DIP_MENTOR_V1',symbol,scope:selected?'RECORDED_LEADER_DIP':p?'OTHER_LANE_UNSUPPORTED':validSignal?'SOURCE_LEAD':'NO_PLAN',decision:'EXPLANATION_ONLY',actionability:'NOT_ACTIONABLE',planStatus,evidence:'NOT PROVEN; target exit not adopted under the frozen comparison',rule:'SQ11-PB12 / A-TGT-TGT20-PB12',horizonSessions:126,zadStatus,
+  asOf:{day:asOfDay,clockSeconds:clock},
+  selection:{rule:'SQ11-PB12',condition:'Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high',verified:false},
   source:validSignal?{day:signal.day,referenceClose:signal.close,sha256:signal.sha256||null,generatedAt:signal.generatedAt||null}:null,
   entry:{session:entrySession,state:entryState,range:null,recordedFill:fill,recordedSession:buySession,fillAtOpenVerified:false},
   risk:{quantity:units,notional,maximumAllocationPerSlot:1000,maximumSlots:3,stopDefinedLossCap:null,feesSlippage:'UNKNOWN'},
   exit:{referenceState:holdingState,baseRule:'SQ11-PB12',baseExit:'SESSION_126_CLOSE_NO_FIXED_TARGET',targetStudy:'A-TGT-TGT20-PB12',targetStudyVerdict:'NOT PROVEN',targetStudyAdopted:false,recordedStop:positive(p?.stop)?p.stop:null,storedTarget:target,session:exitSession,time:'REGISTERED_SESSION_CLOSE',storedTargetMatchesOverlay:fill!==null&&target!==null&&!issues.includes('TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT')},holdingState:planStatus==='UNRESOLVED'?'UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE':holdingState,issues};
+ plan.guide=leaderDipDecisionGuide(plan);return plan;
+}
+export function leaderDipDecisionGuide(p){
+ const close=p.exit.session?marketSession(p.exit.session).close:null,clock=p.asOf.clockSeconds;
+ const deadlineState=!p.exit.session?'UNKNOWN':p.asOf.day>p.exit.session?'PASSED':p.asOf.day<p.exit.session?'FUTURE':clock===null?'CLOSE_TODAY_CLOCK_UNKNOWN':clock<close*60?'CLOSE_TODAY_PENDING':'PASSED';
+ const stage=p.planStatus==='UNRESOLVED'?'RECONCILE_PLAN':p.scope==='RECORDED_LEADER_DIP'?deadlineState==='PASSED'?'CLOSE_REACHED_EXECUTION_UNVERIFIED':deadlineState==='CLOSE_TODAY_PENDING'?'REGISTERED_CLOSE_TODAY':deadlineState==='CLOSE_TODAY_CLOCK_UNKNOWN'?'VERIFY_EXIT_CLOCK':'MONITOR_RESEARCH_CONTRACT':p.entry.state==='EXPIRED'?'ENTRY_EXPIRED':'VERIFY_BEFORE_NEXT_OPEN';
+ const next={RECONCILE_PLAN:'Resolve the listed source/fill/variant contradictions before treating the stored plan as guidance; keep original records.',CLOSE_REACHED_EXECUTION_UNVERIFIED:'Verify whether the registered close exit occurred and reconcile actual holding status. If missed, next-open recovery is an unvalidated timing variant, not the frozen exit.',REGISTERED_CLOSE_TODAY:'The frozen reference ends at today’s close. Confirm actual holdings, eligibility and executable exit evidence; this view does not issue an order.',VERIFY_EXIT_CLOCK:'Verify the New York clock before classifying the registered close as pending or missed.',MONITOR_RESEARCH_CONTRACT:'Review the unchanged contract and current eligibility/execution evidence; this is not approval to hold.',ENTRY_EXPIRED:'Do not present this lead as a current next-open entry. A later entry is a different, unvalidated variant.',VERIFY_BEFORE_NEXT_OPEN:'Verify source selection, identity, current ZAD, executable opening evidence, costs and portfolio capacity. No executable entry range is established.'}[stage];
+ return {version:'LEADER_DIP_DECISION_GUIDE_V1',stage,next,referenceCloseMinute:close,deadlineState,executable:false,changes:[
+  {event:'OPEN_PASSES_WITHOUT_VERIFIED_FILL',effect:'Entry expires; no chase or invented replacement price.'},
+  {event:'SOURCE_FILL_OR_RULE_DIFFERS',effect:'Reconcile as unresolved; do not borrow a later signal or tested returns.'},
+  {event:'ELIGIBILITY_OR_EXECUTION_EVIDENCE_MISSING',effect:'Keep identity/ZAD/BBO/size/liquidity/cost and portfolio checks unresolved; no approved BUY.'},
+  {event:'REGISTERED_SESSION_126_CLOSE',effect:'Frozen base time exit; missed-close recovery differs from the tested rule.'},
+  {event:'STORED_TARGET_TOUCHED',effect:'Unadopted overlay only; daily high is not a confirmed fill or sale.'},
+  {event:'REPORTED_SALE',effect:'Only an actual owner-reported execution enters existing transaction recording; this read-only view never records a sale.'}
+ ]};
 }
 const money=n=>positive(n)?n.toFixed(2):'UNKNOWN';
 export function renderLeaderDipMentor(p){return [
@@ -62,6 +79,8 @@ export function renderLeaderDipMentor(p){return [
  'EXPLANATION ONLY: no new BUY or HOLD approval. '+p.evidence+'.',
  'Plan status: '+p.planStatus+' | '+p.actionability+'. Unsupported/contradictory plans are unresolved, never an action.',
  'Scope: '+p.scope+'.',
+ 'Workflow: '+p.guide.stage+'; '+p.guide.next,
+ 'Entry condition (not independently verified): '+p.selection.condition+'.',
  'Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.',
  'Source: '+(p.source?p.source.day+' close '+money(p.source.referenceClose)+' (reference, not executable price)':'UNKNOWN; no source signal matched')+'.',
  'Original-input fingerprint: '+(p.source?.sha256||'UNKNOWN')+'; checksum is not provider authentication.',
@@ -74,6 +93,7 @@ export function renderLeaderDipMentor(p){return [
  'Time exit reference (not an actionable instruction): '+(p.exit.session||'UNKNOWN')+' at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: '+p.exit.referenceState+'; guidance state: '+p.holdingState+'.',
  'Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.',
  'Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: '+p.zadStatus+'. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.',
+ 'What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.',
  'Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.',
  'Unresolved: '+(p.issues.join(', ')||'no structural contract issue found; execution/prospective evidence still missing')+'.',
 ].join('\n');}
