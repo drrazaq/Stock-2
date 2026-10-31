@@ -1,11 +1,11 @@
 {
-  "status": "OFFLINE_IMPLEMENTATION_COMPLETE_INACTIVE_NO_REAL_EXTERNAL_OPERATIONS",
+  "status": "NATIVE_ADAPTER_TESTED_SHADOW_NOT_INSTALLED_LIVE_HOST_IMPLEMENTATION_GAPS",
   "basisCommit": "6e22b65ab2aca04ccbe96b28fd28e32560b1acb3",
   "basisExactCI": {
     "checksPassed": 5,
     "testsRun": 41135063341
   },
-  "runtimeSourceSha": "112480526183371781e3b1122778e37f0684fd3d",
+  "runtimeSourceSha": "23a3f4b777e6b78704f8e3479a49e8fe179da62d",
   "focusedLocal": {
     "wrapperAndDownloadedArchiveRecovery": 13,
     "serviceAdapters": 4,
@@ -58,5 +58,26 @@
     "failures": []
   },
   "actualOriginalInputRecoveryVerified": true,
-  "noMetadataIngestionBackfillVerified": true
+  "noMetadataIngestionBackfillVerified": true,
+  "readinessCorrection": "Native producer integration and live client/host bindings are implementation work, not only missing external evidence.",
+  "nativeProducerAudit": {
+    "atomUpdatedIsVerifiedAcceptance": false,
+    "oldProducerRetainsRawEntryBytes": false,
+    "oldProducerRetainsReceiptClocks": false,
+    "shadowPatchPreparedNotApplied": true,
+    "actualAtomOnlyAdmissions": 0,
+    "syntheticResolvedContractCases": 1,
+    "genuineAdmissions": 0
+  },
+  "remainingImplementation": [
+    "A distinct live CLI/host deriving actor/ref/run/attempt from trusted GitHub execution, not fixture JSON",
+    "A separately pinned live workflow and validator; retain existing rehearsal rejection of secrets and live CLI arguments",
+    "Bind only separately approved data/encryption clients after local approval/source/input/reference/history preflight; no fallback to rehearsal",
+    "Connect actual immutable producer-run artifacts with independent producer SHA/run/digest pins and full original receipt/revision evidence",
+    "Capture and preserve explicit SEC acceptance bytes from already-existing responses if truly available; no Atom updated substitution and no extra request hidden in shadow scope",
+    "Map an exact approved Actions artifact client version and verify size/digest/timeout/internal-retry semantics plus actual uploaded recovery",
+    "Complete one-run authorization, final revalidation and shutdown/retention on real service failures before installation review"
+  ],
+  "currentNativeVerificationStatus": "UNVERIFIED_LAST_NATIVE_RUN_8_PASS_1_FIXTURE_FAILURE",
+  "handoff": "docs/validation/native-sec-unverified-handoff.json"
 }

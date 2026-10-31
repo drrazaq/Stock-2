@@ -1,0 +1,73 @@
+{
+  "status": "UNVERIFIED_PRESERVATION_CHECKPOINT",
+  "remoteLastVerified": "5159ce229edd4eff6443d6a5a293d4578bfedd6d",
+  "localImplementationCommit": "23a3f4b777e6b78704f8e3479a49e8fe179da62d",
+  "changedSinceRemote": [
+    "docs/engineering-handoff-resume.md",
+    "docs/engineering-ledger.json",
+    "docs/engineering-progress.md",
+    "docs/guarded-paper-capture-review.md",
+    "docs/prospective-paper-capture-proposal.md",
+    "docs/resume-precise-checkpoint.md",
+    "docs/trading-evidence-dashboard.md",
+    "docs/validation/native-sec-shadow-base.json.gz",
+    "docs/validation/native-sec-shadow-production-manifest.json",
+    "docs/validation/native-sec-shadow-production.patch",
+    "docs/validation/paper-capture-calibration.candidate.json",
+    "docs/validation/paper-capture-live-scope.json",
+    "docs/validation/paper-capture-rehearsal.workflow.yml.proposed",
+    "docs/validation/paper-capture-request-budget.json",
+    "docs/validation/prospective-paper-capture-manifest.json",
+    "docs/validation/prospective-paper-capture-verification.json",
+    "docs/validation/prospective-paper-capture-workflow.json",
+    "native-sec-events.mjs",
+    "native-sec-shadow.mjs",
+    "paper-capture-ports.mjs",
+    "paper-capture-wrapper.mjs",
+    "prospective-paper-capture.mjs",
+    "test/native-sec-events.test.mjs",
+    "test/native-sec-shadow-package.test.mjs",
+    "test/paper-capture-wrapper.test.mjs",
+    "test/prospective-capture-package.test.mjs",
+    "tools/prepare-native-sec-shadow-patch.mjs"
+  ],
+  "untrackedPreserved": [
+    "docs/native-sec-event-integration.md"
+  ],
+  "implemented": [
+    "Native parseAtom-based raw-byte/clock/accession/revision adapter",
+    "Immutable per-run store and actual native reader port",
+    "Capture identity binding and unresolved-native admission guard",
+    "Inactive5-file production shadow patch and exact base/hash manifest",
+    "Corrected18+41=59 budget and separate inactive live implementation scope"
+  ],
+  "testResults": {
+    "nativeTestsLastRun": {
+      "pass": 8,
+      "fail": 1,
+      "total": 9,
+      "failure": "One direct nativeEventPort test invocation omitted required identities; actual guarded caller test passed"
+    },
+    "earlierNativeTests": {
+      "pass": 8,
+      "fail": 0
+    },
+    "shadowPatchTests": {
+      "pass": 2,
+      "fail": 0
+    },
+    "packagePinTest": {
+      "pass": 1,
+      "fail": 0
+    },
+    "fullSuite": "NOT YET RUN FOR THIS PACKAGE",
+    "lastRetry": "Tool cancelled before log/process creation; no result claimed"
+  },
+  "activeNativeTestProcess": false,
+  "executionAvailable": true,
+  "toolBlocker": null,
+  "productionMutations": false,
+  "collection": false,
+  "preservedEvidenceDirectory": "/workspace/milestones/native-sec",
+  "nextExecutableTask": "Fix direct native reader test call to pass identities; rerun all9native tests; then complete full package/CI validation. Do not skip assertions or claim verified until passing."
+}
