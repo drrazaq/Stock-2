@@ -101,8 +101,14 @@ test('bought SYM PRICE: tagged LEADER DIP (target +20%, 126 sessions, no stop), 
   const msg = M.sent.join('\n');
   assert.match(msg, /Tracking AAA as LEADER DIP: bought 50\.00\. Put a SELL LIMIT at 60\.00/); assert.doesNotMatch(msg, /Suggested stop|NO STOP|SET A STOP/);
   // an offer older than 10 sessions does not tag
-  const S2 = await loadScan({ files: { 'data/leaderdip-ledger.jsonl': [{ d: sessAgo(11), sym: 'AAA', kind: 'offer', px: 49 }] } });
+  // Closed-day sessAgo counts the last session; sessionsAfter excludes the offer's own day.
+  const closedDayOffset = isS(nyd) ? 0 : 1, expiredOffer = sessAgo(11 + closedDayOffset), boundaryOffer = sessAgo(10 + closedDayOffset);
+  const S2 = await loadScan({ files: { 'data/leaderdip-ledger.jsonl': [{ d: expiredOffer, sym: 'AAA', kind: 'offer', px: 49 }] } });
+  assert.equal(S2.fn('sessionsAfter')(expiredOffer, nyd), 11);
   assert.equal(S2.fn('ldipHit')('AAA'), null);
+  S2.write('data/leaderdip-ledger.jsonl', [{ d: boundaryOffer, sym: 'AAA', kind: 'offer', px: 49 }]);
+  assert.equal(S2.fn('sessionsAfter')(boundaryOffer, nyd), 10);
+  assert.equal(S2.fn('ldipHit')('AAA').d, boundaryOffer);
 });
 
 test('holdings review: HOLD shows the target and time exit (no stop nag); a HIGH at the target gives a SELL', async () => {
