@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-30T00:37:39.445Z",
+ "generatedAt": "2026-10-31T00:43:17.776Z",
  "preRegistered": "squad11-core.mjs header + RULES (24 Oct 2026, before any run) + data/strategy-library.json SQ11-*",
  "window": [
   "2021-10-12",
-  "2026-10-29"
+  "2026-10-30"
  ],
  "bar": 4.07,
  "split": "2024-01-01",
@@ -11,10 +11,10 @@
  "data": {
   "price": {
    "ok": true,
-   "sessions": 1268,
+   "sessions": 1269,
    "from": "2021-10-12",
-   "to": "2026-10-29",
-   "stocks": 8601,
+   "to": "2026-10-30",
+   "stocks": 8602,
    "rowsWithHighLow": 1
   },
   "tickerMap": {
@@ -29,7 +29,7 @@
    "ok": true,
    "companies": 4062,
    "answered": 4062,
-   "withRevenue": 3379,
+   "withRevenue": 3380,
    "fromSquad4Cache": 6154,
    "fetchedNow": 0,
    "failed": 0,
@@ -37,15 +37,15 @@
   },
   "splits": {
    "ok": true,
-   "rows": 7380,
-   "tickers": 4780,
+   "rows": 7383,
+   "tickers": 4781,
    "pagesNow": 8
   },
   "altShares": {
    "ok": true,
-   "wanted": 0,
-   "fetchedNow": 0,
-   "known": 1695
+   "wanted": 1,
+   "fetchedNow": 1,
+   "known": 1696
   },
   "domicile": {
    "ok": true,
@@ -61,7 +61,7 @@
    "months": 48,
    "first": "2022-10-31",
    "minTop": 300,
-   "minLeaders": 60,
+   "minLeaders": 59,
    "vanishedLeaders": 96
   }
  },
@@ -449,6 +449,14 @@
    "leaders": 60,
    "vanishedLeaders": 1,
    "cap300B": 31.8942
+  },
+  {
+   "d": "2026-10-30",
+   "top300": 300,
+   "withMom": 295,
+   "leaders": 59,
+   "vanishedLeaders": 0,
+   "cap300B": 33.5574
   }
  ],
  "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock bought and sold at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5, return per year of capital tied up above SPY on the same days -> TRADABLE SMALL; block t >= 4.07 -> PROVEN",
@@ -1722,11 +1730,11 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-30T00:37:39.445Z",
+  "at": "2026-10-31T00:43:17.776Z",
   "results": {
    "SQ11-PB8": {
     "verdict": "NOT PROVEN",
-    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.39 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 2.13 under 2.5 in the newer half; return per year of capital tied up 8.1% not above the S&P 500 on the same days in the older half (19.5%)",
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 0.39 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 2.22 under 2.5 in the newer half; return per year of capital tied up 8.1% not above the S&P 500 on the same days in the older half (19.5%)",
     "name": "Leader pullback: first close 8% under its 50-day high, still above its 200-day (hold 63)",
     "hold": 63,
     "block": 63,
@@ -1755,42 +1763,42 @@
       "win": 0.5435
      },
      "newer": {
-      "n": 489,
-      "days": 262,
+      "n": 490,
+      "days": 263,
       "stocks": 233,
-      "avg": 0.0609,
-      "median": 0.0261,
-      "avgStress": 0.0569,
-      "ctrl": 0.0319,
-      "edge": 0.0232,
-      "tDay": 1.64,
+      "avg": 0.0613,
+      "median": 0.0266,
+      "avgStress": 0.0573,
+      "ctrl": 0.0318,
+      "edge": 0.0243,
+      "tDay": 1.72,
       "blocks": 12,
-      "tBlock": 2.13,
-      "vsOwn": -0.0581,
-      "ownCovered": 262,
-      "noTop2": 0.0536,
+      "tBlock": 2.22,
+      "vsOwn": -0.0573,
+      "ownCovered": 263,
+      "noTop2": 0.054,
+      "best": 1.975,
+      "worst": -0.5521,
+      "win": 0.5469
+     },
+     "all": {
+      "n": 674,
+      "days": 373,
+      "stocks": 283,
+      "avg": 0.05,
+      "median": 0.0207,
+      "avgStress": 0.046,
+      "ctrl": 0.0265,
+      "edge": 0.0182,
+      "tDay": 1.71,
+      "blocks": 16,
+      "tBlock": 1.81,
+      "vsOwn": -0.0669,
+      "ownCovered": 372,
+      "noTop2": 0.0447,
       "best": 1.975,
       "worst": -0.5521,
       "win": 0.546
-     },
-     "all": {
-      "n": 673,
-      "days": 372,
-      "stocks": 283,
-      "avg": 0.0497,
-      "median": 0.0195,
-      "avgStress": 0.0457,
-      "ctrl": 0.0267,
-      "edge": 0.0174,
-      "tDay": 1.64,
-      "blocks": 16,
-      "tBlock": 1.63,
-      "vsOwn": -0.0675,
-      "ownCovered": 371,
-      "noTop2": 0.0444,
-      "best": 1.975,
-      "worst": -0.5521,
-      "win": 0.5453
      }
     },
     "perYear": {
@@ -1800,9 +1808,9 @@
       "avgStock": 0.0834
      },
      "newer": {
-      "rule": 0.2436,
-      "spy": 0.188,
-      "avgStock": 0.1598
+      "rule": 0.2452,
+      "spy": 0.1876,
+      "avgStock": 0.1591
      }
     },
     "timing": {
@@ -1814,18 +1822,18 @@
       "dipBetterShare": 0.7826
      },
      "newer": {
-      "n": 489,
-      "dipAvg": 0.0609,
-      "fixedDateAvg": 0.0197,
+      "n": 490,
+      "dipAvg": 0.0613,
+      "fixedDateAvg": 0.02,
       "dipMinusFixed": 0.0412,
-      "dipBetterShare": 0.7198
+      "dipBetterShare": 0.7204
      },
      "all": {
-      "n": 673,
-      "dipAvg": 0.0497,
-      "fixedDateAvg": 0.0049,
-      "dipMinusFixed": 0.0448,
-      "dipBetterShare": 0.737
+      "n": 674,
+      "dipAvg": 0.05,
+      "fixedDateAvg": 0.0052,
+      "dipMinusFixed": 0.0449,
+      "dipBetterShare": 0.7374
      },
      "note": "twin = the same leader bought at the open after its leader month end (the fixed date) and held the same number of sessions; dipMinusFixed > 0 = waiting for the dip paid"
     },
@@ -1859,10 +1867,10 @@
       "beatsSpy": false
      },
      "2026": {
-      "n": 121,
-      "avg": 0.1157,
-      "spy": 0.0595,
-      "avgStock": 0.0495,
+      "n": 122,
+      "avg": 0.1169,
+      "spy": 0.059,
+      "avgStock": 0.0487,
       "beatsSpy": true
      }
     },
@@ -1876,23 +1884,23 @@
       "worst": -0.3727
      },
      "newer": {
-      "n": 489,
-      "win": 0.546,
-      "avg": 0.0609,
-      "avgWin": 0.226,
+      "n": 490,
+      "win": 0.5469,
+      "avg": 0.0613,
+      "avgWin": 0.2261,
       "avgLoss": -0.1377,
       "worst": -0.5521
      }
     },
     "exits": {
-     "max": 670,
+     "max": 671,
      "gone": 3
     },
     "notes": {
      "artifacts": 0,
-     "open": 59,
+     "open": 58,
      "notBought": 0,
-     "skippedBusy": 1303
+     "skippedBusy": 1306
     }
    },
    "SQ11-PB12": {
@@ -1937,7 +1945,7 @@
       "tDay": 1.59,
       "blocks": 11,
       "tBlock": 0.42,
-      "vsOwn": -0.1112,
+      "vsOwn": -0.1097,
       "ownCovered": 154,
       "noTop2": 0.141,
       "best": 2.992,
@@ -1956,7 +1964,7 @@
       "tDay": 2.67,
       "blocks": 15,
       "tBlock": 0.8,
-      "vsOwn": -0.1091,
+      "vsOwn": -0.108,
       "ownCovered": 216,
       "noTop2": 0.1414,
       "best": 2.992,
@@ -2063,12 +2071,12 @@
      "artifacts": 0,
      "open": 65,
      "notBought": 0,
-     "skippedBusy": 867
+     "skippedBusy": 871
     }
    },
    "SQ11-MA50": {
     "verdict": "REJECTED",
-    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.14 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.71 under 2.5 in the newer half; return per year of capital tied up 1.0% not above the S&P 500 on the same days in the older half (15.8%)",
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.14 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.76 under 2.5 in the newer half; return per year of capital tied up 1.0% not above the S&P 500 on the same days in the older half (15.8%)",
     "name": "Leader touches its 50-day average from above (hold 63)",
     "hold": 63,
     "block": 63,
@@ -2097,42 +2105,42 @@
       "win": 0.4518
      },
      "newer": {
-      "n": 487,
-      "days": 246,
+      "n": 489,
+      "days": 247,
       "stocks": 233,
-      "avg": 0.0563,
+      "avg": 0.0566,
       "median": 0.0219,
-      "avgStress": 0.0523,
-      "ctrl": 0.0311,
-      "edge": 0.0256,
-      "tDay": 1.61,
+      "avgStress": 0.0526,
+      "ctrl": 0.0308,
+      "edge": 0.0262,
+      "tDay": 1.66,
       "blocks": 12,
-      "tBlock": 1.71,
-      "vsOwn": -0.0659,
-      "ownCovered": 243,
-      "noTop2": 0.0485,
+      "tBlock": 1.76,
+      "vsOwn": -0.0653,
+      "ownCovered": 244,
+      "noTop2": 0.0489,
       "best": 2.1852,
       "worst": -0.5369,
-      "win": 0.5462
+      "win": 0.5481
      },
      "all": {
-      "n": 684,
-      "days": 352,
+      "n": 686,
+      "days": 353,
       "stocks": 291,
-      "avg": 0.0408,
+      "avg": 0.0411,
       "median": 0.0081,
-      "avgStress": 0.0368,
-      "ctrl": 0.0222,
-      "edge": 0.0147,
-      "tDay": 1.24,
+      "avgStress": 0.0371,
+      "ctrl": 0.022,
+      "edge": 0.0151,
+      "tDay": 1.28,
       "blocks": 16,
-      "tBlock": 1.16,
-      "vsOwn": -0.0767,
-      "ownCovered": 348,
-      "noTop2": 0.0352,
+      "tBlock": 1.21,
+      "vsOwn": -0.0763,
+      "ownCovered": 349,
+      "noTop2": 0.0355,
       "best": 2.1852,
       "worst": -0.5369,
-      "win": 0.519
+      "win": 0.5204
      }
     },
     "perYear": {
@@ -2142,9 +2150,9 @@
       "avgStock": 0.0332
      },
      "newer": {
-      "rule": 0.2251,
-      "spy": 0.2045,
-      "avgStock": 0.1566
+      "rule": 0.2264,
+      "spy": 0.2036,
+      "avgStock": 0.1552
      }
     },
     "timing": {
@@ -2156,18 +2164,18 @@
       "dipBetterShare": 0.7817
      },
      "newer": {
-      "n": 487,
-      "dipAvg": 0.0563,
-      "fixedDateAvg": -0.0065,
+      "n": 489,
+      "dipAvg": 0.0566,
+      "fixedDateAvg": -0.0062,
       "dipMinusFixed": 0.0628,
-      "dipBetterShare": 0.7577
+      "dipBetterShare": 0.7587
      },
      "all": {
-      "n": 684,
-      "dipAvg": 0.0408,
-      "fixedDateAvg": -0.0199,
-      "dipMinusFixed": 0.0606,
-      "dipBetterShare": 0.7646
+      "n": 686,
+      "dipAvg": 0.0411,
+      "fixedDateAvg": -0.0196,
+      "dipMinusFixed": 0.0607,
+      "dipBetterShare": 0.7653
      },
      "note": "twin = the same leader bought at the open after its leader month end (the fixed date) and held the same number of sessions; dipMinusFixed > 0 = waiting for the dip paid"
     },
@@ -2201,10 +2209,10 @@
       "beatsSpy": false
      },
      "2026": {
-      "n": 112,
-      "avg": 0.1043,
-      "spy": 0.0588,
-      "avgStock": 0.0322,
+      "n": 114,
+      "avg": 0.1048,
+      "spy": 0.0576,
+      "avgStock": 0.0307,
       "beatsSpy": true
      }
     },
@@ -2218,28 +2226,28 @@
       "worst": -0.3694
      },
      "newer": {
-      "n": 487,
-      "win": 0.5462,
-      "avg": 0.0563,
-      "avgWin": 0.2034,
+      "n": 489,
+      "win": 0.5481,
+      "avg": 0.0566,
+      "avgWin": 0.2029,
       "avgLoss": -0.1208,
       "worst": -0.5369
      }
     },
     "exits": {
-     "max": 681,
+     "max": 683,
      "gone": 3
     },
     "notes": {
      "artifacts": 0,
-     "open": 35,
+     "open": 33,
      "notBought": 0,
-     "skippedBusy": 1017
+     "skippedBusy": 1018
     }
    },
    "SQ11-3DN": {
     "verdict": "REJECTED",
-    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.74 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.91 under 2.5 in the newer half; return per year of capital tied up 3.5% not above the S&P 500 on the same days in the older half (21.6%)",
+    "why": "lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.74 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.94 under 2.5 in the newer half; return per year of capital tied up 3.5% not above the S&P 500 on the same days in the older half (21.6%)",
     "name": "Leader after 3 down days in a row (hold 21)",
     "hold": 21,
     "block": 21,
@@ -2268,42 +2276,42 @@
       "win": 0.4544
      },
      "newer": {
-      "n": 1268,
-      "days": 418,
-      "stocks": 272,
-      "avg": 0.02,
-      "median": 0.0052,
-      "avgStress": 0.016,
-      "ctrl": 0.002,
-      "edge": 0.0033,
-      "tDay": 0.68,
+      "n": 1271,
+      "days": 419,
+      "stocks": 274,
+      "avg": 0.0203,
+      "median": 0.0054,
+      "avgStress": 0.0163,
+      "ctrl": 0.0019,
+      "edge": 0.0036,
+      "tDay": 0.74,
       "blocks": 34,
-      "tBlock": 0.91,
-      "vsOwn": -0.0208,
-      "ownCovered": 418,
-      "noTop2": 0.0181,
+      "tBlock": 0.94,
+      "vsOwn": -0.0204,
+      "ownCovered": 419,
+      "noTop2": 0.0183,
       "best": 1.2577,
       "worst": -0.4275,
-      "win": 0.5244
+      "win": 0.5256
      },
      "all": {
-      "n": 1838,
-      "days": 598,
+      "n": 1841,
+      "days": 599,
       "stocks": 332,
-      "avg": 0.0147,
-      "median": 0.0005,
-      "avgStress": 0.0107,
+      "avg": 0.0149,
+      "median": 0.0008,
+      "avgStress": 0.0109,
       "ctrl": 0.0011,
-      "edge": -0.0008,
-      "tDay": -0.21,
+      "edge": -0.0006,
+      "tDay": -0.15,
       "blocks": 48,
-      "tBlock": 0.14,
-      "vsOwn": -0.027,
-      "ownCovered": 598,
-      "noTop2": 0.0134,
+      "tBlock": 0.17,
+      "vsOwn": -0.0268,
+      "ownCovered": 599,
+      "noTop2": 0.0135,
       "best": 1.2577,
       "worst": -0.4275,
-      "win": 0.5027
+      "win": 0.5035
      }
     },
     "perYear": {
@@ -2313,9 +2321,9 @@
       "avgStock": 0.0869
      },
      "newer": {
-      "rule": 0.2402,
-      "spy": 0.1818,
-      "avgStock": 0.1197
+      "rule": 0.2432,
+      "spy": 0.1809,
+      "avgStock": 0.1192
      }
     },
     "timing": {
@@ -2327,18 +2335,18 @@
       "dipBetterShare": 0.6667
      },
      "newer": {
-      "n": 1268,
-      "dipAvg": 0.02,
-      "fixedDateAvg": -0.0144,
+      "n": 1271,
+      "dipAvg": 0.0203,
+      "fixedDateAvg": -0.0141,
       "dipMinusFixed": 0.0344,
-      "dipBetterShare": 0.6301
+      "dipBetterShare": 0.631
      },
      "all": {
-      "n": 1838,
-      "dipAvg": 0.0147,
-      "fixedDateAvg": -0.0169,
+      "n": 1841,
+      "dipAvg": 0.0149,
+      "fixedDateAvg": -0.0168,
       "dipMinusFixed": 0.0317,
-      "dipBetterShare": 0.6415
+      "dipBetterShare": 0.642
      },
      "note": "twin = the same leader bought at the open after its leader month end (the fixed date) and held the same number of sessions; dipMinusFixed > 0 = waiting for the dip paid"
     },
@@ -2372,10 +2380,10 @@
       "beatsSpy": false
      },
      "2026": {
-      "n": 335,
-      "avg": 0.0415,
-      "spy": 0.0134,
-      "avgStock": -0.0007,
+      "n": 338,
+      "avg": 0.0422,
+      "spy": 0.0131,
+      "avgStock": -0.0008,
       "beatsSpy": true
      }
     },
@@ -2389,23 +2397,23 @@
       "worst": -0.2361
      },
      "newer": {
-      "n": 1268,
-      "win": 0.5244,
-      "avg": 0.02,
+      "n": 1271,
+      "win": 0.5256,
+      "avg": 0.0203,
       "avgWin": 0.1104,
       "avgLoss": -0.0796,
       "worst": -0.4275
      }
     },
     "exits": {
-     "max": 1834,
+     "max": 1837,
      "gone": 4
     },
     "notes": {
      "artifacts": 0,
-     "open": 48,
+     "open": 45,
      "notBought": 0,
-     "skippedBusy": 1466
+     "skippedBusy": 1478
     }
    },
    "SQ11-FLUSH": {
@@ -2894,7 +2902,7 @@
      "artifacts": 0,
      "open": 41,
      "notBought": 0,
-     "skippedBusy": 1731
+     "skippedBusy": 1763
     }
    }
   }
@@ -7724,7 +7732,7 @@
     "net": 0.2781,
     "avgStock": 0.0926,
     "spy": 0.144,
-    "sameStock": 0.0157,
+    "sameStock": 0.0154,
     "fixedDate": 0.1565
    },
    {
@@ -7748,7 +7756,7 @@
     "net": 0.0921,
     "avgStock": 0.1081,
     "spy": 0.1416,
-    "sameStock": 0.0945,
+    "sameStock": 0.0983,
     "fixedDate": -0.0503
    },
    {
@@ -7772,7 +7780,7 @@
     "net": 0.1035,
     "avgStock": 0.1128,
     "spy": 0.1045,
-    "sameStock": 0.1792,
+    "sameStock": 0.1802,
     "fixedDate": 0.0486
    },
    {
@@ -7964,7 +7972,7 @@
     "net": -0.0126,
     "avgStock": 0.04,
     "spy": 0.1053,
-    "sameStock": 0.1563,
+    "sameStock": 0.1661,
     "fixedDate": -0.149
    },
    {
@@ -8024,7 +8032,7 @@
     "net": 0.0434,
     "avgStock": 0.0232,
     "spy": 0.0805,
-    "sameStock": 0.0473,
+    "sameStock": 0.0504,
     "fixedDate": 0.0463
    },
    {
@@ -8048,7 +8056,7 @@
     "net": -0.0076,
     "avgStock": 0.3864,
     "spy": 0.3729,
-    "sameStock": 0.0995,
+    "sameStock": 0.0957,
     "fixedDate": -0.2047
    },
    {
@@ -8084,7 +8092,7 @@
     "net": -0.0096,
     "avgStock": -0.0217,
     "spy": 0.0261,
-    "sameStock": 0.1608,
+    "sameStock": 0.1567,
     "fixedDate": -0.1888
    },
    {
@@ -8108,7 +8116,7 @@
     "net": 0.0713,
     "avgStock": -0.0025,
     "spy": 0.0475,
-    "sameStock": 0.0142,
+    "sameStock": 0.0078,
     "fixedDate": 0.0615
    },
    {
@@ -8156,7 +8164,7 @@
     "net": -0.1516,
     "avgStock": 0.1394,
     "spy": 0.1637,
-    "sameStock": 0.1427,
+    "sameStock": 0.1387,
     "fixedDate": -0.1917
    },
    {
@@ -8252,7 +8260,7 @@
     "net": -0.2106,
     "avgStock": 0.0907,
     "spy": 0.099,
-    "sameStock": 0.2602,
+    "sameStock": 0.2701,
     "fixedDate": -0.0663
    },
    {
@@ -8288,7 +8296,7 @@
     "net": 0.3376,
     "avgStock": 0.1375,
     "spy": 0.1466,
-    "sameStock": 0.0761,
+    "sameStock": 0.0791,
     "fixedDate": 0.2983
    },
    {
@@ -8384,7 +8392,7 @@
     "net": 0.2889,
     "avgStock": 0.1025,
     "spy": 0.1247,
-    "sameStock": 0.0232,
+    "sameStock": 0.0305,
     "fixedDate": 0.262
    },
    {
@@ -8396,7 +8404,7 @@
     "net": 0.2119,
     "avgStock": 0.1451,
     "spy": 0.1049,
-    "sameStock": 0.0232,
+    "sameStock": 0.0305,
     "fixedDate": 0.03
    },
    {
@@ -8444,7 +8452,7 @@
     "net": 0.0486,
     "avgStock": 0.1057,
     "spy": 0.1163,
-    "sameStock": 0.1723,
+    "sameStock": 0.1611,
     "fixedDate": -0.0007
    },
    {
@@ -8456,7 +8464,7 @@
     "net": -0.0027,
     "avgStock": 0.1028,
     "spy": 0.1603,
-    "sameStock": 0.0482,
+    "sameStock": 0.0437,
     "fixedDate": -0.2171
    },
    {
@@ -8468,7 +8476,7 @@
     "net": 0.004,
     "avgStock": -0.013,
     "spy": 0.0577,
-    "sameStock": 0.1888,
+    "sameStock": 0.1844,
     "fixedDate": 0.0177
    },
    {
@@ -8492,7 +8500,7 @@
     "net": 0.199,
     "avgStock": 0.3958,
     "spy": 0.3641,
-    "sameStock": 0.1513,
+    "sameStock": 0.1557,
     "fixedDate": -0.0169
    },
    {
@@ -8636,7 +8644,7 @@
     "net": 0.2024,
     "avgStock": 0.1306,
     "spy": 0.1378,
-    "sameStock": -0.1226,
+    "sameStock": -0.1297,
     "fixedDate": 0.1825
    },
    {
@@ -8648,7 +8656,7 @@
     "net": 0.2547,
     "avgStock": -0.0783,
     "spy": -0.0027,
-    "sameStock": -0.1226,
+    "sameStock": -0.1297,
     "fixedDate": 0.1575
    },
    {
@@ -8660,7 +8668,7 @@
     "net": -0.0008,
     "avgStock": 0.0923,
     "spy": 0.0672,
-    "sameStock": -0.1226,
+    "sameStock": -0.1297,
     "fixedDate": -0.1737
    },
    {
@@ -8696,7 +8704,7 @@
     "net": 0.3183,
     "avgStock": 0.1383,
     "spy": 0.166,
-    "sameStock": 0.1276,
+    "sameStock": 0.1318,
     "fixedDate": 0.121
    },
    {
@@ -8708,7 +8716,7 @@
     "net": -0.0788,
     "avgStock": -0.0721,
     "spy": -0.0164,
-    "sameStock": 0.1276,
+    "sameStock": 0.1318,
     "fixedDate": -0.2017
    },
    {
@@ -8744,7 +8752,7 @@
     "net": 0.0228,
     "avgStock": 0.0808,
     "spy": 0.1192,
-    "sameStock": 0.0735,
+    "sameStock": 0.0702,
     "fixedDate": 0.025
    },
    {
@@ -8780,7 +8788,7 @@
     "net": 0.2768,
     "avgStock": -0.0217,
     "spy": 0.0261,
-    "sameStock": 0.2273,
+    "sameStock": 0.1862,
     "fixedDate": -0.1008
    },
    {
@@ -8792,7 +8800,7 @@
     "net": -0.3335,
     "avgStock": 0.0939,
     "spy": 0.0661,
-    "sameStock": 0.2273,
+    "sameStock": 0.1862,
     "fixedDate": -0.3368
    },
    {
@@ -8816,7 +8824,7 @@
     "net": 0.2146,
     "avgStock": 0.0117,
     "spy": 0.1722,
-    "sameStock": -0.0347,
+    "sameStock": -0.0353,
     "fixedDate": 0.1922
    },
    {
@@ -8864,7 +8872,7 @@
     "net": 0.2802,
     "avgStock": 0.0743,
     "spy": 0.0819,
-    "sameStock": 0.3781,
+    "sameStock": 0.3502,
     "fixedDate": 0.2545
    },
    {
@@ -8876,7 +8884,7 @@
     "net": 0.3117,
     "avgStock": -0.013,
     "spy": 0.0577,
-    "sameStock": 0.3781,
+    "sameStock": 0.3502,
     "fixedDate": 0.2032
    },
    {
@@ -8924,7 +8932,7 @@
     "net": 0.3483,
     "avgStock": 0.1321,
     "spy": 0.1743,
-    "sameStock": 0.016,
+    "sameStock": 0.0145,
     "fixedDate": 0.1504
    },
    {
@@ -8936,7 +8944,7 @@
     "net": -0.2425,
     "avgStock": -0.0797,
     "spy": -0.025,
-    "sameStock": 0.016,
+    "sameStock": 0.0145,
     "fixedDate": -0.3415
    },
    {
@@ -8972,7 +8980,7 @@
     "net": 0.3614,
     "avgStock": 0.0423,
     "spy": 0.0718,
-    "sameStock": -0.0456,
+    "sameStock": -0.0481,
     "fixedDate": 0.4168
    },
    {
@@ -8996,7 +9004,7 @@
     "net": 0.0855,
     "avgStock": 0.1593,
     "spy": 0.1762,
-    "sameStock": -0.0276,
+    "sameStock": -0.026,
     "fixedDate": 0.0116
    },
    {
@@ -9020,7 +9028,7 @@
     "net": 0.2411,
     "avgStock": 0.1321,
     "spy": 0.1743,
-    "sameStock": -0.1528,
+    "sameStock": -0.1472,
     "fixedDate": 0.0806
    },
    {
@@ -9032,7 +9040,7 @@
     "net": -0.2961,
     "avgStock": -0.088,
     "spy": -0.017,
-    "sameStock": -0.1528,
+    "sameStock": -0.1472,
     "fixedDate": -0.3513
    },
    {
@@ -9080,7 +9088,7 @@
     "net": -0.1975,
     "avgStock": 0.1438,
     "spy": 0.1367,
-    "sameStock": -0.0886,
+    "sameStock": -0.0827,
     "fixedDate": -0.0263
    },
    {
@@ -9116,7 +9124,7 @@
     "net": 0.2455,
     "avgStock": 0.314,
     "spy": 0.2779,
-    "sameStock": 0.0713,
+    "sameStock": 0.0633,
     "fixedDate": 0.1729
    },
    {
@@ -9140,7 +9148,7 @@
     "net": 0.3792,
     "avgStock": 0.1321,
     "spy": 0.1743,
-    "sameStock": -0.1948,
+    "sameStock": -0.203,
     "fixedDate": 0.1554
    },
    {
@@ -9152,7 +9160,7 @@
     "net": 0.3777,
     "avgStock": 0.1269,
     "spy": 0.1337,
-    "sameStock": -0.1948,
+    "sameStock": -0.203,
     "fixedDate": 0.2211
    },
    {
@@ -9344,7 +9352,7 @@
     "net": 0.1438,
     "avgStock": 0.1253,
     "spy": 0.109,
-    "sameStock": -0.2431,
+    "sameStock": -0.2544,
     "fixedDate": 0.1062
    },
    {
@@ -9356,7 +9364,7 @@
     "net": 0.2173,
     "avgStock": -0.0721,
     "spy": -0.0164,
-    "sameStock": -0.2431,
+    "sameStock": -0.2544,
     "fixedDate": 0.1112
    },
    {
@@ -9368,7 +9376,7 @@
     "net": -0.3534,
     "avgStock": 0.155,
     "spy": 0.0843,
-    "sameStock": -0.2431,
+    "sameStock": -0.2544,
     "fixedDate": -0.3046
    },
    {
@@ -9392,7 +9400,7 @@
     "net": 0.103,
     "avgStock": 0.3864,
     "spy": 0.3729,
-    "sameStock": -0.0481,
+    "sameStock": -0.0545,
     "fixedDate": -0.0356
    },
    {
@@ -9440,7 +9448,7 @@
     "net": -0.0219,
     "avgStock": 0.0865,
     "spy": 0.0703,
-    "sameStock": -0.171,
+    "sameStock": -0.1672,
     "fixedDate": -0.0385
    },
    {
@@ -9464,7 +9472,7 @@
     "net": 0.1528,
     "avgStock": -0.0876,
     "spy": -0.0219,
-    "sameStock": -0.1154,
+    "sameStock": -0.1163,
     "fixedDate": -0.0248
    },
    {
@@ -9512,7 +9520,7 @@
     "net": -0.0753,
     "avgStock": 0.1323,
     "spy": 0.1431,
-    "sameStock": 0.0294,
+    "sameStock": 0.0265,
     "fixedDate": -0.1831
    },
    {
@@ -9572,7 +9580,7 @@
     "net": -0.4401,
     "avgStock": -0.0165,
     "spy": 0.0316,
-    "sameStock": -0.2561,
+    "sameStock": -0.2643,
     "fixedDate": -0.4166
    },
    {
@@ -9596,7 +9604,7 @@
     "net": 0.0534,
     "avgStock": 0.1174,
     "spy": 0.1572,
-    "sameStock": -0.1327,
+    "sameStock": -0.1233,
     "fixedDate": -0.091
    },
    {
@@ -9620,7 +9628,7 @@
     "net": -0.0918,
     "avgStock": 0.0552,
     "spy": 0.1125,
-    "sameStock": -0.3107,
+    "sameStock": -0.3028,
     "fixedDate": -0.0805
    },
    {
@@ -9644,7 +9652,7 @@
     "net": 0.8098,
     "avgStock": 0.0841,
     "spy": 0.1158,
-    "sameStock": -0.0349,
+    "sameStock": 0.016,
     "fixedDate": 0.6814
    },
    {
@@ -9656,7 +9664,7 @@
     "net": 0.4409,
     "avgStock": 0.0513,
     "spy": 0.0719,
-    "sameStock": -0.0349,
+    "sameStock": 0.016,
     "fixedDate": 0.2173
    },
    {
@@ -9668,7 +9676,7 @@
     "net": -0.1745,
     "avgStock": 0.0138,
     "spy": 0.0022,
-    "sameStock": -0.0349,
+    "sameStock": 0.016,
     "fixedDate": -0.1604
    },
    {
@@ -9740,7 +9748,7 @@
     "net": 0.5951,
     "avgStock": 0.0266,
     "spy": 0.0909,
-    "sameStock": 0.2375,
+    "sameStock": 0.2376,
     "fixedDate": 0.2173
    },
    {
@@ -9752,7 +9760,7 @@
     "net": 1.078,
     "avgStock": 0.0051,
     "spy": 0.0593,
-    "sameStock": 0.2375,
+    "sameStock": 0.2376,
     "fixedDate": 0.8177
    },
    {
@@ -9764,7 +9772,7 @@
     "net": -0.1223,
     "avgStock": 0.1275,
     "spy": 0.0705,
-    "sameStock": 0.2375,
+    "sameStock": 0.2376,
     "fixedDate": -0.0626
    },
    {
@@ -9860,7 +9868,7 @@
     "net": -0.1377,
     "avgStock": 0.0304,
     "spy": 0.0866,
-    "sameStock": -0.1228,
+    "sameStock": -0.1061,
     "fixedDate": -0.1149
    },
    {
@@ -9920,7 +9928,7 @@
     "net": 0.0035,
     "avgStock": 0.1031,
     "spy": 0.1129,
-    "sameStock": 0.022,
+    "sameStock": 0.0181,
     "fixedDate": 0.0422
    },
    {
@@ -9944,7 +9952,7 @@
     "net": 0.3124,
     "avgStock": 0.1179,
     "spy": 0.139,
-    "sameStock": 1.106,
+    "sameStock": 1.0596,
     "fixedDate": 0.308
    },
    {
@@ -9956,7 +9964,7 @@
     "net": -0.269,
     "avgStock": -0.013,
     "spy": 0.0577,
-    "sameStock": 1.106,
+    "sameStock": 1.0596,
     "fixedDate": -0.3613
    },
    {
@@ -9980,7 +9988,7 @@
     "net": 0.3043,
     "avgStock": 0.0488,
     "spy": 0.1123,
-    "sameStock": 0.2283,
+    "sameStock": 0.2464,
     "fixedDate": -0.077
    },
    {
@@ -10004,7 +10012,7 @@
     "net": -0.1005,
     "avgStock": 0.0865,
     "spy": 0.0686,
-    "sameStock": 0.2079,
+    "sameStock": 0.19,
     "fixedDate": 0.0139
    },
    {
@@ -10028,7 +10036,7 @@
     "net": -0.0021,
     "avgStock": 0.0513,
     "spy": 0.0719,
-    "sameStock": 0.2026,
+    "sameStock": 0.2012,
     "fixedDate": -0.2017
    },
    {
@@ -10124,7 +10132,7 @@
     "net": 0.0515,
     "avgStock": 0.0509,
     "spy": 0.1243,
-    "sameStock": -0.1946,
+    "sameStock": -0.1902,
     "fixedDate": -0.1253
    },
    {
@@ -10184,7 +10192,7 @@
     "net": 0.232,
     "avgStock": 0.1323,
     "spy": 0.1431,
-    "sameStock": 0.1213,
+    "sameStock": 0.12,
     "fixedDate": 0.1337
    },
    {
@@ -10196,7 +10204,7 @@
     "net": 0.0598,
     "avgStock": 0.0477,
     "spy": 0.1015,
-    "sameStock": 1.2132,
+    "sameStock": 1.2041,
     "fixedDate": -0.1197
    },
    {
@@ -10208,7 +10216,7 @@
     "net": -0.1149,
     "avgStock": -0.1035,
     "spy": -0.006,
-    "sameStock": 1.2132,
+    "sameStock": 1.2041,
     "fixedDate": -0.2541
    },
    {
@@ -10256,7 +10264,7 @@
     "net": 0.3659,
     "avgStock": 0.1028,
     "spy": 0.1603,
-    "sameStock": -0.1403,
+    "sameStock": -0.1329,
     "fixedDate": 0.1462
    },
    {
@@ -10292,7 +10300,7 @@
     "net": 0.0516,
     "avgStock": 0.1593,
     "spy": 0.1762,
-    "sameStock": 0.0351,
+    "sameStock": 0.0417,
     "fixedDate": -0.0216
    },
    {
@@ -10352,7 +10360,7 @@
     "net": 0.1906,
     "avgStock": 0.0017,
     "spy": 0.0457,
-    "sameStock": 0.1015,
+    "sameStock": 0.0951,
     "fixedDate": 0.2477
    },
    {
@@ -10364,7 +10372,7 @@
     "net": 0.5327,
     "avgStock": 0.0117,
     "spy": 0.1722,
-    "sameStock": 0.0567,
+    "sameStock": 0.0184,
     "fixedDate": 0.3069
    },
    {
@@ -10376,7 +10384,7 @@
     "net": 0.1968,
     "avgStock": 0.0724,
     "spy": 0.0596,
-    "sameStock": 0.0567,
+    "sameStock": 0.0184,
     "fixedDate": 0.1677
    },
    {
@@ -10388,7 +10396,7 @@
     "net": -0.4201,
     "avgStock": 0.1509,
     "spy": 0.1115,
-    "sameStock": 0.0567,
+    "sameStock": 0.0184,
     "fixedDate": -0.4269
    },
    {
@@ -10400,7 +10408,7 @@
     "net": -0.3482,
     "avgStock": 0.0148,
     "spy": 0.048,
-    "sameStock": 0,
+    "sameStock": 0.0265,
     "fixedDate": -0.3246
    },
    {
@@ -10412,7 +10420,7 @@
     "net": 0.7891,
     "avgStock": 0.1174,
     "spy": 0.1572,
-    "sameStock": -0.2257,
+    "sameStock": -0.2305,
     "fixedDate": 0.5282
    },
    {
@@ -10424,7 +10432,7 @@
     "net": -0.0706,
     "avgStock": -0.0217,
     "spy": 0.0261,
-    "sameStock": -0.2257,
+    "sameStock": -0.2305,
     "fixedDate": -0.2696
    },
    {
@@ -10436,7 +10444,7 @@
     "net": 0.0748,
     "avgStock": 0.0488,
     "spy": 0.1113,
-    "sameStock": 0.0878,
+    "sameStock": 0.0824,
     "fixedDate": -0.1211
    },
    {
@@ -10544,7 +10552,7 @@
     "net": -0.1151,
     "avgStock": 0.0488,
     "spy": 0.1123,
-    "sameStock": 0.294,
+    "sameStock": 0.3158,
     "fixedDate": -0.2708
    },
    {
@@ -10556,7 +10564,7 @@
     "net": -0.3965,
     "avgStock": 0.1445,
     "spy": 0.0892,
-    "sameStock": 0.294,
+    "sameStock": 0.3158,
     "fixedDate": -0.2974
    },
    {
@@ -10568,7 +10576,7 @@
     "net": 0.088,
     "avgStock": 0.0808,
     "spy": 0.1192,
-    "sameStock": 0.2934,
+    "sameStock": 0.3029,
     "fixedDate": 0.0057
    },
    {
@@ -10580,7 +10588,7 @@
     "net": 0.4585,
     "avgStock": 0.1593,
     "spy": 0.1762,
-    "sameStock": -0.1243,
+    "sameStock": -0.1232,
     "fixedDate": 0.3418
    },
    {
@@ -10592,7 +10600,7 @@
     "net": 0.0406,
     "avgStock": 0.0306,
     "spy": 0.0763,
-    "sameStock": -0.1243,
+    "sameStock": -0.1232,
     "fixedDate": -0.1122
    },
    {
@@ -10604,7 +10612,7 @@
     "net": 0.1499,
     "avgStock": 0.088,
     "spy": 0.1659,
-    "sameStock": -0.1507,
+    "sameStock": -0.1465,
     "fixedDate": -0.0544
    },
    {
@@ -10616,7 +10624,7 @@
     "net": -0.1813,
     "avgStock": -0.0217,
     "spy": 0.0261,
-    "sameStock": -0.1507,
+    "sameStock": -0.1465,
     "fixedDate": -0.2842
    },
    {
@@ -10628,7 +10636,7 @@
     "net": 0.0135,
     "avgStock": 0.1095,
     "spy": 0.1885,
-    "sameStock": -0.2771,
+    "sameStock": -0.2394,
     "fixedDate": -0.1762
    },
    {
@@ -10640,7 +10648,7 @@
     "net": 0.5142,
     "avgStock": -0.1125,
     "spy": -0.0382,
-    "sameStock": -0.2771,
+    "sameStock": -0.2394,
     "fixedDate": 0.3802
    },
    {
@@ -10652,7 +10660,7 @@
     "net": -0.4624,
     "avgStock": 0.1158,
     "spy": 0.0622,
-    "sameStock": -0.2771,
+    "sameStock": -0.2394,
     "fixedDate": -0.5114
    },
    {
@@ -10664,7 +10672,7 @@
     "net": -0.2186,
     "avgStock": 0.0509,
     "spy": 0.1243,
-    "sameStock": 0.0295,
+    "sameStock": 0.0332,
     "fixedDate": 0.2369
    },
    {
@@ -10676,7 +10684,7 @@
     "net": -0.1573,
     "avgStock": 0.0343,
     "spy": 0.0961,
-    "sameStock": -0.0738,
+    "sameStock": -0.0731,
     "fixedDate": -0.1765
    },
    {
@@ -10760,7 +10768,7 @@
     "net": 0.122,
     "avgStock": 0.0494,
     "spy": 0.1071,
-    "sameStock": -0.1762,
+    "sameStock": -0.1862,
     "fixedDate": 0.0632
    },
    {
@@ -10772,7 +10780,7 @@
     "net": 0.7679,
     "avgStock": -0.0706,
     "spy": -0.01,
-    "sameStock": -0.1762,
+    "sameStock": -0.1862,
     "fixedDate": 0.5638
    },
    {
@@ -10784,7 +10792,7 @@
     "net": -0.5606,
     "avgStock": 0.1029,
     "spy": 0.1245,
-    "sameStock": -0.1762,
+    "sameStock": -0.1862,
     "fixedDate": -0.3061
    },
    {
@@ -10796,7 +10804,7 @@
     "net": -0.0924,
     "avgStock": 0.1552,
     "spy": 0.0886,
-    "sameStock": 0.2188,
+    "sameStock": 0.2462,
     "fixedDate": -0.1192
    },
    {
@@ -10832,7 +10840,7 @@
     "net": 0.1894,
     "avgStock": 0.0948,
     "spy": 0.1515,
-    "sameStock": -0.0302,
+    "sameStock": -0.0282,
     "fixedDate": 0.0968
    },
    {
@@ -10844,7 +10852,7 @@
     "net": 0.2579,
     "avgStock": 0.1269,
     "spy": 0.1337,
-    "sameStock": 0.0585,
+    "sameStock": 0.0587,
     "fixedDate": 0.1264
    },
    {
@@ -10856,7 +10864,7 @@
     "net": 0.6536,
     "avgStock": 0.1375,
     "spy": 0.1466,
-    "sameStock": -0.1127,
+    "sameStock": -0.1162,
     "fixedDate": 0.5925
    },
    {
@@ -10868,7 +10876,7 @@
     "net": 0.1826,
     "avgStock": -0.0923,
     "spy": -0.0145,
-    "sameStock": -0.1127,
+    "sameStock": -0.1162,
     "fixedDate": 0.0606
    },
    {
@@ -10880,7 +10888,7 @@
     "net": -0.1297,
     "avgStock": 0.0939,
     "spy": 0.0661,
-    "sameStock": -0.1127,
+    "sameStock": -0.1162,
     "fixedDate": -0.1318
    },
    {
@@ -10892,7 +10900,7 @@
     "net": 0.0453,
     "avgStock": 0.0513,
     "spy": 0.0719,
-    "sameStock": 0.2203,
+    "sameStock": 0.2153,
     "fixedDate": -0.0901
    },
    {
@@ -10904,7 +10912,7 @@
     "net": 2.992,
     "avgStock": 0.1284,
     "spy": 0.1173,
-    "sameStock": -0.3091,
+    "sameStock": -0.339,
     "fixedDate": 2.992
    },
    {
@@ -10916,7 +10924,7 @@
     "net": -0.0005,
     "avgStock": 0.0051,
     "spy": 0.0593,
-    "sameStock": -0.3091,
+    "sameStock": -0.339,
     "fixedDate": 0.0341
    },
    {
@@ -10928,7 +10936,7 @@
     "net": 0.488,
     "avgStock": 0.1289,
     "spy": 0.0936,
-    "sameStock": -0.3091,
+    "sameStock": -0.339,
     "fixedDate": 1.0059
    },
    {
@@ -10940,7 +10948,7 @@
     "net": -0.4055,
     "avgStock": -0.0041,
     "spy": 0.065,
-    "sameStock": 0.0559,
+    "sameStock": 0.0489,
     "fixedDate": -0.4925
    },
    {
@@ -10952,7 +10960,7 @@
     "net": 0.5411,
     "avgStock": 0.1593,
     "spy": 0.1762,
-    "sameStock": 0.0005,
+    "sameStock": 0.0021,
     "fixedDate": 0.3217
    },
    {
@@ -10964,7 +10972,7 @@
     "net": 0.1381,
     "avgStock": 0.2058,
     "spy": 0.2043,
-    "sameStock": 0.0005,
+    "sameStock": 0.0021,
     "fixedDate": 0.1752
    },
    {
@@ -10976,7 +10984,7 @@
     "net": 0.1359,
     "avgStock": 0.1057,
     "spy": 0.1163,
-    "sameStock": 0.0816,
+    "sameStock": 0.0788,
     "fixedDate": 0.091
    },
    {
@@ -10988,7 +10996,7 @@
     "net": -0.1985,
     "avgStock": 0.0945,
     "spy": 0.1026,
-    "sameStock": 0.0885,
+    "sameStock": 0.0836,
     "fixedDate": -0.2515
    },
    {
@@ -11000,7 +11008,7 @@
     "net": 0.1143,
     "avgStock": -0.0025,
     "spy": 0.0475,
-    "sameStock": 0.0712,
+    "sameStock": 0.0685,
     "fixedDate": 0.1148
    },
    {
@@ -11012,7 +11020,7 @@
     "net": -0.0966,
     "avgStock": -0.0651,
     "spy": -0.0063,
-    "sameStock": 0.4096,
+    "sameStock": 0.4043,
     "fixedDate": -0.2221
    },
    {
@@ -11024,7 +11032,7 @@
     "net": -0.1089,
     "avgStock": -0.0923,
     "spy": -0.0145,
-    "sameStock": 0.2591,
+    "sameStock": 0.2488,
     "fixedDate": -0.1933
    },
    {
@@ -11072,7 +11080,7 @@
     "net": 0.4122,
     "avgStock": 0.2717,
     "spy": 0.2486,
-    "sameStock": 0.219,
+    "sameStock": 0.213,
     "fixedDate": 0.2933
    },
    {
@@ -11120,7 +11128,7 @@
     "net": -0.0673,
     "avgStock": -0.0217,
     "spy": 0.0261,
-    "sameStock": 0.136,
+    "sameStock": 0.134,
     "fixedDate": -0.2068
    },
    {
@@ -11132,7 +11140,7 @@
     "net": -0.0555,
     "avgStock": -0.0202,
     "spy": 0.005,
-    "sameStock": 0.0732,
+    "sameStock": 0.0765,
     "fixedDate": -0.0757
    },
    {
@@ -11156,7 +11164,7 @@
     "net": 0.0307,
     "avgStock": 0.0513,
     "spy": 0.0719,
-    "sameStock": 0.022,
+    "sameStock": 0.023,
     "fixedDate": -0.031
    },
    {
@@ -11168,7 +11176,7 @@
     "net": 0.1093,
     "avgStock": 0.2717,
     "spy": 0.2486,
-    "sameStock": 0.2013,
+    "sameStock": 0.2019,
     "fixedDate": 0.0571
    },
    {
@@ -11204,7 +11212,7 @@
     "net": 0.3021,
     "avgStock": 0.0131,
     "spy": 0.0601,
-    "sameStock": 0.3703,
+    "sameStock": 0.3552,
     "fixedDate": 0.1935
    },
    {
@@ -11216,7 +11224,7 @@
     "net": -0.1672,
     "avgStock": 0.1221,
     "spy": 0.0853,
-    "sameStock": 0.3703,
+    "sameStock": 0.3552,
     "fixedDate": -0.3051
    },
    {
@@ -11228,7 +11236,7 @@
     "net": -0.1982,
     "avgStock": -0.0797,
     "spy": -0.025,
-    "sameStock": 0.0721,
+    "sameStock": 0.0714,
     "fixedDate": -0.2852
    },
    {
@@ -11252,7 +11260,7 @@
     "net": -0.0542,
     "avgStock": -0.1023,
     "spy": -0.0481,
-    "sameStock": -0.121,
+    "sameStock": -0.1155,
     "fixedDate": -0.1686
    },
    {
@@ -11264,7 +11272,7 @@
     "net": 0.2753,
     "avgStock": 0.1429,
     "spy": 0.1625,
-    "sameStock": 0.1193,
+    "sameStock": 0.113,
     "fixedDate": 0.1377
    },
    {
@@ -11288,7 +11296,7 @@
     "net": -0.0997,
     "avgStock": -0.0837,
     "spy": -0.0176,
-    "sameStock": 0.0333,
+    "sameStock": 0.0342,
     "fixedDate": -0.1065
    },
    {
@@ -11324,7 +11332,7 @@
     "net": 1.1232,
     "avgStock": -0.0217,
     "spy": 0.0261,
-    "sameStock": 0.5229,
+    "sameStock": 0.4997,
     "fixedDate": 0.8976
    },
    {
@@ -11336,7 +11344,7 @@
     "net": -0.1988,
     "avgStock": 0.0939,
     "spy": 0.0661,
-    "sameStock": 0.5229,
+    "sameStock": 0.4997,
     "fixedDate": -0.2499
    },
    {
@@ -11348,7 +11356,7 @@
     "net": -0.286,
     "avgStock": -0.1037,
     "spy": -0.0171,
-    "sameStock": 0.3586,
+    "sameStock": 0.3409,
     "fixedDate": -0.3205
    },
    {
@@ -11360,7 +11368,7 @@
     "net": 0.0392,
     "avgStock": 0.0513,
     "spy": 0.0719,
-    "sameStock": 0.4983,
+    "sameStock": 0.4787,
     "fixedDate": -0.1546
    },
    {
@@ -11372,7 +11380,7 @@
     "net": -0.0233,
     "avgStock": 0.0147,
     "spy": -0.0218,
-    "sameStock": 0.4983,
+    "sameStock": 0.4787,
     "fixedDate": -0.0175
    },
    {
@@ -11384,7 +11392,7 @@
     "net": -0.1732,
     "avgStock": 0.0057,
     "spy": 0.067,
-    "sameStock": -0.0609,
+    "sameStock": -0.0587,
     "fixedDate": -0.2392
    },
    {
@@ -11420,7 +11428,7 @@
     "net": 0.1315,
     "avgStock": 0.1323,
     "spy": 0.1431,
-    "sameStock": 0.1794,
+    "sameStock": 0.1724,
     "fixedDate": -0.0182
    },
    {
@@ -11432,7 +11440,7 @@
     "net": -0.1815,
     "avgStock": -0.013,
     "spy": 0.0577,
-    "sameStock": 0.1823,
+    "sameStock": 0.1792,
     "fixedDate": -0.218
    },
    {
@@ -11444,7 +11452,7 @@
     "net": -0.2451,
     "avgStock": 0.2419,
     "spy": 0.2547,
-    "sameStock": 0.0689,
+    "sameStock": 0.073,
     "fixedDate": -0.2515
    },
    {
@@ -11456,7 +11464,7 @@
     "net": 0.0624,
     "avgStock": -0.013,
     "spy": 0.0577,
-    "sameStock": 0.077,
+    "sameStock": 0.0726,
     "fixedDate": -0.0416
    },
    {
@@ -11468,7 +11476,7 @@
     "net": 0.177,
     "avgStock": -0.0087,
     "spy": 0.0416,
-    "sameStock": 0.2861,
+    "sameStock": 0.2761,
     "fixedDate": 0.1127
    },
    {
@@ -11480,7 +11488,7 @@
     "net": -0.1084,
     "avgStock": 0.0147,
     "spy": -0.0218,
-    "sameStock": 0.2861,
+    "sameStock": 0.2761,
     "fixedDate": -0.0876
    },
    {
@@ -11492,7 +11500,7 @@
     "net": 0.0732,
     "avgStock": 0.0147,
     "spy": -0.0218,
-    "sameStock": 0.2022,
+    "sameStock": 0.1994,
     "fixedDate": 0.0182
    },
    {
@@ -11504,7 +11512,7 @@
     "net": 0.2539,
     "avgStock": 0.1269,
     "spy": 0.1337,
-    "sameStock": 0.245,
+    "sameStock": 0.2381,
     "fixedDate": 0.146
    },
    {
@@ -11516,7 +11524,7 @@
     "net": 0.0662,
     "avgStock": 0.0341,
     "spy": 0.0088,
-    "sameStock": 0.245,
+    "sameStock": 0.2381,
     "fixedDate": -0.06
    },
    {
@@ -11528,7 +11536,7 @@
     "net": 0.2095,
     "avgStock": 0.1057,
     "spy": 0.1163,
-    "sameStock": 0.1963,
+    "sameStock": 0.1895,
     "fixedDate": 0.1206
    },
    {
@@ -11540,7 +11548,7 @@
     "net": 0.2942,
     "avgStock": 0.1429,
     "spy": 0.1625,
-    "sameStock": 0.1079,
+    "sameStock": 0.1094,
     "fixedDate": 0.1334
    },
    {
@@ -11552,7 +11560,7 @@
     "net": 0.0643,
     "avgStock": 0.1168,
     "spy": 0.0852,
-    "sameStock": 0.2494,
+    "sameStock": 0.2493,
     "fixedDate": -0.1218
    },
    {
@@ -11564,7 +11572,7 @@
     "net": 0.4269,
     "avgStock": 0.0939,
     "spy": 0.0661,
-    "sameStock": 0.5651,
+    "sameStock": 0.5354,
     "fixedDate": 0.4178
    },
    {
@@ -11576,7 +11584,7 @@
     "net": -0.4495,
     "avgStock": 0.1474,
     "spy": 0.1342,
-    "sameStock": -0.0293,
+    "sameStock": -0.039,
     "fixedDate": -0.4962
    },
    {
@@ -11588,7 +11596,7 @@
     "net": 0.0369,
     "avgStock": 0.1234,
     "spy": 0.0857,
-    "sameStock": 0.1365,
+    "sameStock": 0.1304,
     "fixedDate": -0.0681
    },
    {
@@ -11600,7 +11608,7 @@
     "net": -0.052,
     "avgStock": 0.1046,
     "spy": 0.065,
-    "sameStock": 0.2226,
+    "sameStock": 0.2043,
     "fixedDate": -0.0668
    },
    {
@@ -11612,7 +11620,7 @@
     "net": -0.3228,
     "avgStock": 0.0854,
     "spy": 0.0599,
-    "sameStock": 0.7126,
+    "sameStock": 0.6689,
     "fixedDate": -0.0175
    },
    {
@@ -11624,7 +11632,7 @@
     "net": 0.3116,
     "avgStock": 0.1046,
     "spy": 0.065,
-    "sameStock": 0.2261,
+    "sameStock": 0.2182,
     "fixedDate": 0.1939
    },
    {
@@ -11636,7 +11644,7 @@
     "net": -0.0876,
     "avgStock": 0.1158,
     "spy": 0.0622,
-    "sameStock": 0.1553,
+    "sameStock": 0.1475,
     "fixedDate": -0.0377
    },
    {
@@ -11660,7 +11668,7 @@
     "net": 0.0975,
     "avgStock": 0.0939,
     "spy": 0.0661,
-    "sameStock": 0.0594,
+    "sameStock": 0.0634,
     "fixedDate": 0.1171
    },
    {
@@ -11672,7 +11680,7 @@
     "net": 0.0512,
     "avgStock": 0.0907,
     "spy": 0.0651,
-    "sameStock": 0.1009,
+    "sameStock": 0.1025,
     "fixedDate": -0.0497
    },
    {
@@ -11684,7 +11692,7 @@
     "net": -0.2125,
     "avgStock": 0.0823,
     "spy": 0.0512,
-    "sameStock": 0.6404,
+    "sameStock": 0.6263,
     "fixedDate": -0.4536
    },
    {
@@ -11696,7 +11704,7 @@
     "net": -0.406,
     "avgStock": 0.0147,
     "spy": -0.0218,
-    "sameStock": 0.4607,
+    "sameStock": 0.4475,
     "fixedDate": -0.4233
    },
    {
@@ -11708,7 +11716,7 @@
     "net": 0.513,
     "avgStock": 0.0823,
     "spy": 0.0512,
-    "sameStock": 0.1521,
+    "sameStock": 0.1517,
     "fixedDate": 0.3996
    },
    {
@@ -11720,7 +11728,7 @@
     "net": 0.0046,
     "avgStock": 0.0935,
     "spy": 0.0537,
-    "sameStock": 0.1313,
+    "sameStock": 0.1248,
     "fixedDate": -0.1524
    },
    {
@@ -11989,18 +11997,6 @@
    }
   ],
   "SQ11-MA50": [
-   {
-    "s": "SCCO",
-    "sig": "2026-03-06",
-    "buy": "2026-03-09",
-    "sell": "2026-06-05",
-    "kind": "max",
-    "net": -0.032,
-    "avgStock": 0.0804,
-    "spy": 0.1068,
-    "sameStock": 0.2829,
-    "fixedDate": -0.1245
-   },
    {
     "s": "SCCO",
     "sig": "2026-06-05",
@@ -12394,8 +12390,20 @@
     "net": 0.1056,
     "avgStock": 0.0705,
     "spy": 0.1143,
-    "sameStock": 0.0328,
+    "sameStock": 0.0438,
     "fixedDate": 0.0327
+   },
+   {
+    "s": "MNST",
+    "sig": "2026-08-03",
+    "buy": "2026-08-04",
+    "sell": "2026-10-30",
+    "kind": "max",
+    "net": 0.0044,
+    "avgStock": -0.0537,
+    "spy": -0.0065,
+    "sameStock": 0.0438,
+    "fixedDate": -0.0557
    },
    {
     "s": "VRSN",
