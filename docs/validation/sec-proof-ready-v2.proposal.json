@@ -1,18 +1,33 @@
 {
-  "kind": "UNAPPROVED_SEC_PROOF_READY_ENROLLMENT_PROPOSAL_V2",
+  "kind": "UNAPPROVED_CONDITIONAL_SEC_PROOF_READY_PROTOCOL_V2_REVISED",
   "approved": false,
   "implementedInFrozenEvaluator": false,
   "cohort": "SEPARATE_NEW_CALIBRATION_REQUIRED",
-  "hypothesis": "Executable 30-minute opportunity after both native event and matching existing submissions proof first become available",
+  "hypothesis": "Conditional net30-minute paper opportunity after existing price-conditioned SEC verification among six names and symmetrically eligible event controls; not causal or whole-market",
   "originalClocks": "PRESERVE_UNCHANGED_NO_BACKDATING",
   "eligibilityEstablishedAt": "MAX_ORIGINAL_EVENT_OBSERVATION_AND_MATCHING_PROOF_PERSISTENCE",
   "entry": "FIRST_FRESH_EXECUTABLE_QUOTE_AFTER_ELIGIBILITY_AND_TIMELY_HANDOFF",
-  "enrollmentWindow": "09:30–09:34 New York; separately agreed dated session",
+  "enrollmentWindow": "09:30\u201309:34 New York; separately agreed dated session",
   "primaryExit": "30 minutes after actual entry",
   "costsControlsCapacityFollowups": "UNCHANGED_V1_RULES",
   "newProviderRequests": 0,
   "producerOrderChanges": 0,
   "v1PoolingAllowed": false,
   "zeroEligibleEventsValid": true,
-  "decisionRequired": "Owner and independent protocol review before implementation or evaluation; no execution authorized"
+  "decisionRequired": "Owner and independent protocol review before implementation or evaluation; no execution authorized",
+  "primaryCohort": "Original first native observation in09:30\u201309:34; documented price-conditioned D proof route or documented D-origin cache; symmetric controls required",
+  "secondaryCohort": "Premarket first observation reconsidered at open; preserve original clocks, never relabel primary",
+  "otherRequestRoutes": "Retain separate labelled strata; no pooling",
+  "controlPolicy": "Proposed symmetric pre-entry SEC-event risk-set controls; missing control means no primary pair; V1 controls unchanged",
+  "requiredNewTelemetry": [
+    "original request route",
+    "cache origin/vintage and matching accession",
+    "pre-entry price/quote/liquidity/identity predicates",
+    "all queued/no-request/exclusion reasons"
+  ],
+  "telemetryImplemented": false,
+  "retainAllNoProofEvents": true,
+  "unknownReasons": "REASON_NOT_RECORDED",
+  "globalFirstIngestionEstablished": false,
+  "continuityPolicyApproved": false
 }

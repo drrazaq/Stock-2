@@ -1,9 +1,9 @@
 // Dependency-injected, offline-tested transport preparation. No default fetcher or key lookup.
 import {newCapture,appendCapture,frameFromSnapshots,finishCapture} from './prospective-paper-capture.mjs';
-export async function runCalibration({plan,transport,now,wait,readEvents,metadata,persist}){
+export async function runCalibration({plan,transport,now,wait,readEvents,metadata,persist,timers={setTimeout,clearTimeout}}){
  let state=newCapture(plan),attempts=0,bytes=0,status='INCOMPLETE';const starts=[];
  const start=Date.parse(plan.start),end=Date.parse(plan.end);
- const bounded=async fn=>{let timer;try{return await Promise.race([fn(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('LOCAL_CALLBACK_TIMEOUT_STOP')),10000);})]);}finally{clearTimeout(timer);}};
+ const bounded=async fn=>{let timer;try{return await Promise.race([fn(),new Promise((_,reject)=>{timer=timers.setTimeout(()=>reject(Error('LOCAL_CALLBACK_TIMEOUT_STOP')),10000);})]);}finally{timers.clearTimeout(timer);}};
  try{
   for(let i=0;i<41;i++){
    // Last cycle starts ten seconds before the hard end, to leave response headroom.
@@ -23,7 +23,7 @@ export async function runCalibration({plan,transport,now,wait,readEvents,metadat
     return Buffer.concat(parts).toString('utf8');
    })();
    let rawResponse;
-   try{rawResponse=await Promise.race([operation,new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('REQUEST_TIMEOUT_STOP'));},10000);})]);}finally{clearTimeout(timer);controller.abort();}
+   try{rawResponse=await Promise.race([operation,new Promise((_,reject)=>{timer=timers.setTimeout(()=>{controller.abort();reject(Error('REQUEST_TIMEOUT_STOP'));},10000);})]);}finally{timers.clearTimeout(timer);controller.abort();}
    if(now()>end){status='TIME_LIMIT';break;}
    const receivedAt=new Date(now()).toISOString();
    state=appendCapture(state,frameFromSnapshots({sequence:state.frames.length,requestedAt,receivedAt,rawResponse,events,sourceHandoffAt,metadata,universe:plan.universe,priorFrames:state.frames}));

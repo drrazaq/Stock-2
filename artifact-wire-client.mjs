@@ -7,6 +7,7 @@ import {performance} from 'node:perf_hooks';
 import {immutableRead} from './paper-capture-wrapper.mjs';
 import {captureJson} from './capture-json.mjs';
 import {crc32} from './capture-artifact.mjs';
+import {validateLineageBundle} from './native-sec-lineage-history.mjs';
 import {validateCompleteNativeBundle} from './native-sec-parent-client.mjs';
 const need=(value,code)=>{if(!value)throw Error(code);};
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -27,19 +28,19 @@ function tokenBackendIds(token){
  // this explicit runtime token. Never log the token, backend IDs or signed URL.
  return {workflow_run_backend_id:parts[1],workflow_job_run_backend_id:parts[2]};
 }
-export function createArtifactWireClient({fetcher,runtimeToken,resultsOrigin,allowedResultsOrigins,storageOrigins,profile='CAPTURE',uploadTimeoutMs=6500,now=()=>new Date().toISOString()}){
+export function createArtifactWireClient({fetcher,runtimeToken,resultsOrigin,allowedResultsOrigins,storageOrigins,profile='CAPTURE',nativeBundleVersion=1,uploadTimeoutMs=6500,now=()=>new Date().toISOString()}){
  need(typeof fetcher==='function'&&['CAPTURE','NATIVE_PARENT'].includes(profile)&&Array.isArray(allowedResultsOrigins)&&allowedResultsOrigins.includes(resultsOrigin)&&Array.isArray(storageOrigins)&&storageOrigins.length>0,'ARTIFACT_WIRE_EXPLICIT_BINDING');
  for(const origin of [resultsOrigin,...allowedResultsOrigins,...storageOrigins]){const u=new URL(origin);need(u.origin===origin&&u.protocol==='https:'&&!u.username&&!u.password,'ARTIFACT_WIRE_ORIGIN_SCOPE');}
- need(Number.isInteger(uploadTimeoutMs)&&uploadTimeoutMs>0&&uploadTimeoutMs<=6500,'ARTIFACT_WIRE_TIMEOUT_SCOPE');const backend=tokenBackendIds(runtimeToken),maxUploads=profile==='CAPTURE'?41:1,storageLimit=profile==='CAPTURE'?164*1024*1024:16*1024*1024;
+ need(Number.isInteger(uploadTimeoutMs)&&uploadTimeoutMs>0&&uploadTimeoutMs<=6500,'ARTIFACT_WIRE_TIMEOUT_SCOPE');need([1,2].includes(nativeBundleVersion),'ARTIFACT_WIRE_BUNDLE_VERSION');const backend=tokenBackendIds(runtimeToken),maxUploads=profile==='CAPTURE'?41:1,storageLimit=profile==='CAPTURE'?164*1024*1024:16*1024*1024;
  let gate=null,session=null,attempted=0,completed=0,requests=0,archiveBytes=0,requestBodyBytes=0,failed=false,lastState='UNSENT';const ids=new Set();
  const stats=()=>({uploads:attempted,completed,requests,retries:0,archiveBytes,requestBodyBytes,failed,state:lastState});
  const cancelActiveUpload=()=>{if(session){session.active=false;session.controller.abort();session.rejectAbort?.(Error('ARTIFACT_WIRE_ABORTED'));}};
  async function uploadArtifact(name,files,root,options){
   need(!session&&!failed&&attempted<maxUploads,'ARTIFACT_WIRE_ATTEMPT_BUDGET');need(typeof gate==='function','ARTIFACT_WIRE_PRE_REQUEST_GATE_REQUIRED');
-  const sequence=attempted,expectedName=profile==='CAPTURE'?'paper-capture-'+String(sequence).padStart(3,'0'):'native-sec-complete-run-v1',fileName=profile==='CAPTURE'?'checkpoint-'+String(sequence).padStart(3,'0')+'.enc':'native-sec-run.json',retention=profile==='CAPTURE'?3:7;
+  const sequence=attempted,expectedName=profile==='CAPTURE'?'paper-capture-'+String(sequence).padStart(3,'0'):nativeBundleVersion===2?'native-sec-available-run-v2':'native-sec-complete-run-v1',fileName=profile==='CAPTURE'?'checkpoint-'+String(sequence).padStart(3,'0')+'.enc':'native-sec-run.json',retention=profile==='CAPTURE'?3:7;
   need(name===expectedName&&Array.isArray(files)&&files.length===1&&path.basename(files[0])===fileName&&path.dirname(path.resolve(files[0]))===path.resolve(root)&&options?.retentionDays===retention&&Object.keys(options).join('|')==='retentionDays','ARTIFACT_WIRE_FILE_SCOPE');
   const original=immutableRead(files[0],16*1024*1024);if(profile==='CAPTURE'){const e=captureJson(original.bytes.toString(),16*1024*1024);need(e.version===1&&e.context?.kind==='GUARDED_PAPER_CAPTURE_V1'&&e.context.cohort==='CALIBRATION'&&e.context.sequence===sequence&&typeof e.iv==='string'&&Buffer.from(e.iv,'base64').length===12&&typeof e.tag==='string'&&Buffer.from(e.tag,'base64').length===16&&typeof e.ciphertext==='string'&&Buffer.from(e.ciphertext,'base64').length>0&&Buffer.from(e.ciphertext,'base64').length<=8*1024*1024,'ARTIFACT_WIRE_ENCRYPTED_INPUT_REQUIRED');}
-  else {const b=captureJson(original.bytes.toString(),16*1024*1024);validateCompleteNativeBundle(b,{expectedRunId:b.asset?.runId,expectedSourceSha:b.asset?.sourceSha});}
+  else {const b=captureJson(original.bytes.toString(),16*1024*1024);if(nativeBundleVersion===2)validateLineageBundle(b,{runId:b.asset?.runId,sourceSha:b.asset?.sourceSha});else validateCompleteNativeBundle(b,{expectedRunId:b.asset?.runId,expectedSourceSha:b.asset?.sourceSha});}
   const zip=singleFileArtifactZip(fileName,original.bytes),digest=hash(zip);need(archiveBytes+zip.length<=storageLimit,'ARTIFACT_WIRE_TOTAL_STORAGE_BUDGET');const clock=now();need(instant(clock),'ARTIFACT_WIRE_CLOCK');const expires=new Date(Date.parse(clock)+retention*86400000).toISOString();
   attempted++;archiveBytes+=zip.length;lastState='UNSENT';const current={controller:new AbortController(),active:true,requests:0,start:performance.now()};session=current;let timer;const aborted=new Promise((_,reject)=>{current.rejectAbort=reject;});
   const unchanged=()=>{const latest=immutableRead(files[0],16*1024*1024);need(latest.hash===original.hash&&latest.signature===original.signature,'ARTIFACT_WIRE_FILE_CHANGED');};
