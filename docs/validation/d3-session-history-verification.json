@@ -1,0 +1,118 @@
+{
+  "kind": "INTEGRATED_INACTIVE_D3_HISTORY_STARTUP_VERIFICATION",
+  "runtimeSourceSha": "2ea76ce05f01b2c8867b4683773946ace5d91f34",
+  "baseline": "f49c4ef34eeaa045a9e6e5e8709c6c2ce99a7740",
+  "development": {
+    "files": 221,
+    "cases": 2141,
+    "skipped": 0,
+    "failures": []
+  },
+  "python": {
+    "tests": 30,
+    "failures": 0
+  },
+  "syntax": {
+    "files": 280,
+    "failures": []
+  },
+  "focused": {
+    "historyContract": 27,
+    "existingLineage": 17,
+    "prefix": 3,
+    "hostMatrix": 12,
+    "bindingMatrix": 55,
+    "preservedD1D2FullSchedule": 13,
+    "legacyParentCompatibility": 20
+  },
+  "exactPackage": {
+    "base": "f49c4ef34eeaa045a9e6e5e8709c6c2ce99a7740",
+    "source": "2ea76ce05f01b2c8867b4683773946ace5d91f34",
+    "patchSha256": "9ebc46681df646d977669138d55032759432238a889cadcee43408231dae3fcf",
+    "patchFiles": 20,
+    "runtimeHashes": 25,
+    "applyCheck": "PASS",
+    "resultingFileAndGitBlobComparison": "PASS"
+  },
+  "packageIntegration": {
+    "historyContractCases": 27,
+    "lineageCases": 17,
+    "prefixCases": 3,
+    "actualHostHistoryCases": 3,
+    "actualBindingHistoryCases": 3,
+    "existingPinRegression": 1,
+    "allPass": true
+  },
+  "resolvedFindings": [
+    "rolling NY-day/carry-in branch-scoped pagination, no lifetime40-run gate",
+    "cancelled zero-job/unassigned-job evidence independent of run_started_at",
+    "actual deployed pre-observation no-op verified by executed checkout/source/log, not guessed names/clocks",
+    "explicit control-plane exhaustion UNKNOWN, no false earlier-observation claim",
+    "actual commit/read startup race; bounded retry without accepting partial/stale bytes"
+  ],
+  "currentCaptureOnUnknown": "BLOCKED_UNCHANGED",
+  "firstIngestionClaims": "AVAILABLE_SCOPE_ONLY_GLOBAL_NOT_ESTABLISHED",
+  "preservedSourceHashes": {
+    "native-sec-host-schedule.mjs": "b994a349e143237dc72accbe08d6c76c8fcff6afdbecc2d6b2ba9ec18634a868",
+    "native-sec-colocated-host.mjs": "1e96b29b21908e3623b6086497c598735308e468e032e993620b376636e88b48",
+    "tools/native-sec-capture-worker.mjs": "cb840c6fb1c893c5c85a4ef9dd784b01d1a4d5ba150a538d97099e5b7f4f1098",
+    "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
+    "prospective-paper-capture.mjs": "c7f5f09e9e1416e620b650fce76ebacac8fa572618d468eb59d0be92998a439f",
+    "ignition-watch.mjs": "a468a1381e89c5cf156dce9a8024e126e4d45b717959bf5c9f95819df0a17872",
+    "scan.mjs": "70cd4899289368244ce463e55a557e0bdf2b302fee6a16b54ba3159fb77b75c2"
+  },
+  "initialExpandedFullRun": {
+    "status": "PER_FILE_TEST_TIMEOUT_NOT_A_PASS",
+    "result": {
+      "files": 221,
+      "cases": 2129,
+      "skipped": 0,
+      "failures": [
+        "test/native-sec-colocated-host.test.mjs"
+      ]
+    },
+    "cause": "New history cases redundantly replayed41 cycles each, exceeding existing180second per-file bound",
+    "repair": "History-specific cases prove first durable ACK then deliberate429; original full lifecycle assertions/schedule retained; final cold full suite passed",
+    "logSha256": "ed73a645b6e6ccda504088ebf734338382ad1106e9a6e84e9ffdd0793c096c91"
+  },
+  "sourceCompatibility": {
+    "main": "6e806c4f2ea5d0f299b86c435fdc449c2f87e291",
+    "auditedSourceFiles": 206,
+    "mismatches": []
+  },
+  "logSha256": {
+    "development-verified/node.log": "a0becde0d2491ac7126d3ca5049cd04b2bbc0b906e7ec8354d2b3a8d23c11981",
+    "contract-verified.log": "20e3dc0f0887af2c70398a925a47444043147841fd6d1bc59597ed2fdee3283e",
+    "history-verified.log": "2e60564786fd644be8719434b0f894afaa42712a47c1aaf397c2b9f1ae78cddf",
+    "prefix-verified.log": "499f0081042b171798579cc1f8c43a3481c96dc1c4e753a55dcc14d772801d82",
+    "host-final.log": "28ad9f8a5623ccee615103e7af7cd0ddf8686c688e56b47fb219d93cf6bcab63",
+    "binding-verified.log": "9c912fdc574937cdc91f79776d4797960e1f094b711f0605a9d6e91ef5794543",
+    "host-history-bounded.log": "21035b93f2c4aed300efbf145e29fbfa66cbf66ab3a50f407923b69221e71a1a",
+    "binding-history-bounded.log": "e691c34de2dcdf2a4b2b3e40120c7004f1f6170cafaf79c1c7d267af3a2f76b8",
+    "package-contract.log": "80c1ab5c16afbf7bb0fa06b74dbba5f31395c67648392fb6bff14ecf72480890",
+    "package-history.log": "aed42a918811ca6917d76272e70d61daa126cb9b22b45caf7df1ce44a3ed6469",
+    "package-prefix.log": "7a80f11d583c127334e18973aeca9859f20f76e83b2c7c417ef92bb9b24eb307",
+    "package-host.log": "2c7fc3d661ee16e48b9495d4332c61311e867daf8235c0033e3321f356be5ca4",
+    "package-binding.log": "3dc4b1bf70b2168dc04abcecb22236e2f858fb6ce9d4c82a734e2ffc1c603aec",
+    "package-pins.log": "be3a74be5d6574fbbb4a72dfd3a36163f6ed22915e826f254fb8a3f2b294e425",
+    "schedule-preserved.log": "7f7ae882b45d8eda04e2dedcbe8627bb5d7008d58b08c8184b149a5c91274def",
+    "legacy-parent.log": "60d75bf8687322ea225cbd28ff084e6cde97b4ebde1d50514d6e5942169609c3",
+    "python.log": "e8a036531fb415c57ad198b5b3a95cfe7bf039e2e33b475be771f335971cdb81",
+    "static.json": "bb3e3b80d6671c95dca8a77fb9a20b4ab8931b08583887a5270391a74c852d7c"
+  },
+  "controlHistoryContract": "SESSION_EXECUTION_HISTORY_V2_NOT_PAPER_V2",
+  "controlPlaneProposedMaximum": 467,
+  "sourceRequestsMaximum": 59,
+  "newControlLimitsApprovedForExecution": false,
+  "installed": false,
+  "liveCredentialsUsed": false,
+  "liveProviderCalls": 0,
+  "productionChanged": false,
+  "protocolV2Adopted": false,
+  "continuityPolicyAdopted": false,
+  "genuineAdmissions": 0,
+  "acceptanceAdded": 0,
+  "accepted": 24,
+  "total": 40,
+  "exactCommitCI": "Verify ordinary push checks on final published HEAD before final report"
+}

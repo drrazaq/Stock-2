@@ -1,0 +1,58 @@
+{
+  "kind": "SYNTHETIC_ACTUAL_HOST_STARTUP_RACE_REGRESSION",
+  "baseline": "f49c4ef34eeaa045a9e6e5e8709c6c2ce99a7740",
+  "repairedSource": "60731fcbaeb6af60c43f61b643538d3e02fccab1",
+  "originalReadAttempts": 3,
+  "originalScheduledWaitMs": 20,
+  "injectedLegitimateCommitMs": 500,
+  "originalActualReadError": "NATIVE_PARENT_INCOMPLETE",
+  "writerLockPresent": true,
+  "originalQuotesBeforeFailure": 0,
+  "originalCaptureStatus": "CAPTURE_FAILED",
+  "fixedReadAttempts": 8,
+  "fixedMaxScheduledWaitMs": 1185,
+  "fixedHostSuite": {
+    "cases": 12,
+    "pass": 12,
+    "configuredHeartbeatsPerRun": 331,
+    "completeCyclesInSuccessCases": 41
+  },
+  "assertionsRelaxed": false,
+  "uncontendedBaselineRepeats": [
+    {
+      "iteration": 0,
+      "exitCode": 0
+    },
+    {
+      "iteration": 1,
+      "exitCode": 0
+    },
+    {
+      "iteration": 2,
+      "exitCode": 0
+    },
+    {
+      "iteration": 3,
+      "exitCode": 0
+    },
+    {
+      "iteration": 4,
+      "exitCode": 0
+    },
+    {
+      "iteration": 5,
+      "exitCode": 0
+    }
+  ],
+  "historicalFailureLimitation": "Coarse historical logs alone cannot attribute every old failure; deterministic actual-producer commit/read overlap reproduces and diagnoses the repaired mechanism.",
+  "logSha256": {
+    "contended-original.log": "43b372aef4aaeff6dc9eb94c7cd5359967b7f92d42d8b63609b3329b210d473c",
+    "contended-original/capture/synthetic-read-failure.json": "2579dc6273c7aec38f92673461e159ac15abcbeb11952be14490a48ac97ec4a6",
+    "prior-unexplained-failure.log": "dc85a8bc4c03d6a1671a0996464afa9b8711e70f0dc170b0ab97e88073668634",
+    "baseline-diagnostic-only.diff": "096f13d087fae55fd2d8867f7f233adfb423243eb085fd366a8d1da6316e1724",
+    "host-final.log": "28ad9f8a5623ccee615103e7af7cd0ddf8686c688e56b47fb219d93cf6bcab63"
+  },
+  "syntheticOnly": true,
+  "genuineAdmissions": 0,
+  "productionChanged": false
+}
