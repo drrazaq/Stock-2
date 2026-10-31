@@ -12,8 +12,8 @@ export function createNativeSecShadow({enabled=false,directory,runId,sourceSha,p
  // Tee the actual existing submissions response once; the caller still parses its original JSON.
  async readSubmissions(response,{url,requestStartedAt}){
   if(!enabled)return response.ok?response.json():null;
-  const headersReceivedAt=now();if(!response.ok){api.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body:Buffer.alloc(0),url,httpStatus:response.status,requestStartedAt,headersReceivedAt,bodyReceivedAt:null,observedAt:now()});return null;}
-  let body;try{body=Buffer.from(await response.arrayBuffer());}catch(e){api.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body:Buffer.alloc(0),url,httpStatus:0,requestStartedAt,headersReceivedAt,bodyReceivedAt:null,observedAt:now()});throw e;}
-  const bodyReceivedAt=now();api.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body,url,httpStatus:response.status,requestStartedAt,headersReceivedAt,bodyReceivedAt,observedAt:now()});return JSON.parse(new TextDecoder().decode(body));
+  const headersReceivedAt=now();if(!response.ok){api.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body:Buffer.alloc(0),url,responseUrl:response.url||null,redirected:response.redirected??null,httpStatus:response.status,requestStartedAt,headersReceivedAt,bodyReceivedAt:null,observedAt:now()});return null;}
+  let body;try{body=Buffer.from(await response.arrayBuffer());}catch(e){api.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body:Buffer.alloc(0),url,responseUrl:response.url||null,redirected:response.redirected??null,httpStatus:0,requestStartedAt,headersReceivedAt,bodyReceivedAt:null,observedAt:now()});throw e;}
+  const bodyReceivedAt=now();api.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body,url,responseUrl:response.url||null,redirected:response.redirected??null,httpStatus:response.status,requestStartedAt,headersReceivedAt,bodyReceivedAt,observedAt:now()});return JSON.parse(new TextDecoder().decode(body));
  }};return api;
 }

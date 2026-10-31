@@ -17,15 +17,16 @@ const entry=(items='1.01')=>`<entry><title>8-K - SYNTHETIC (0000000001) (Filer)<
 const feed=(items)=>Buffer.from('<feed>'+entry(items)+'</feed>');
 const sub=(accept=t(-1))=>Buffer.from(JSON.stringify({cik:'0000000001',filings:{recent:{form:['8-K'],filingDate:['2026-11-05'],items:['1.01'],accessionNumber:['0000000001-26-000001'],acceptanceDateTime:[accept]}}}));
 const fields=(m=0)=>({requestStartedAt:t(m-.02),headersReceivedAt:t(m-.01),bodyReceivedAt:t(m),observedAt:t(m)});
-const atom=(m=0,items)=>({body:feed(items),url:atomUrl,httpStatus:200,legacySeen:new Set(),...fields(m)});
-const submission=(m=-.5,accept)=>({body:sub(accept),url:subUrl,httpStatus:200,...fields(m)});
+const atom=(m=0,items)=>({body:feed(items),url:atomUrl,responseUrl:atomUrl,redirected:false,httpStatus:200,legacySeen:new Set(),...fields(m)});
+const submission=(m=-.5,accept)=>({body:sub(accept),url:subUrl,responseUrl:subUrl,redirected:false,httpStatus:200,...fields(m)});
+const directResponse=(bytes,url)=>{const r=new Response(bytes);Object.defineProperty(r,'url',{value:url});return r;};
 const create=(root,id,parent=null)=>openNativeRun({directory:path.join(root,id),runId:id,sourceSha:sha,provenance:'SYNTHETIC_FIXTURE',parent});
 const read=s=>readNativeRun({directory:s.directory,expectedRunId:s.runId,expectedSourceSha:sha});
 const pin=s=>({directory:s.directory,runId:s.runId,sourceSha:sha,sha256:nativeRunDigest(s.directory).sha256});
 function fixture(fn){return async()=>{const root=fs.mkdtempSync('/tmp/sec-lineage-');try{await fn(root);}finally{fs.rmSync(root,{recursive:true,force:true});}};}
 test('actual existing submissions response tee → persisted proof → Atom → pinned reader/capture event, no extra fetch',fixture(async root=>{
  const shadow=createNativeSecShadow({enabled:true,directory:path.join(root,'first'),runId:'first',sourceSha:sha,provenance:'SYNTHETIC_FIXTURE',now:()=>t(-.5)});
- const raw=sub(),response=new Response(raw);let consumes=0;const arrayBuffer=response.arrayBuffer.bind(response);response.arrayBuffer=()=>{consumes++;return arrayBuffer();};
+ const raw=sub(),response=directResponse(raw,subUrl);let consumes=0;const arrayBuffer=response.arrayBuffer.bind(response);response.arrayBuffer=()=>{consumes++;return arrayBuffer();};
  assert.equal((await shadow.readSubmissions(response,{url:subUrl,requestStartedAt:t(-.52)})).cik,'0000000001');assert.equal(consumes,1);
  shadow.observe(atom());const a=readNativeRun({directory:path.join(root,'first'),expectedRunId:'first',expectedSourceSha:sha});assert.equal(a.responses.length,2);assert.deepEqual(Buffer.from(a.responses[0].payload.bodyBase64,'base64'),raw);assert.equal(a.observations[0].acceptance.at,t(-1));assert.equal(a.observations[0].firstIngestedAt,t(0));assert.equal(a.observations[0].nativeEvidenceStatus,'COMPLETE_ORIGINAL_EVIDENCE');
  const events=JSON.parse(await nativeEventPort({directory:path.join(root,'first'),expectedRunId:'first',expectedSourceSha:sha})({at:t(1),identities:[{issuerCik:'0000000001',symbol:'SYNTH',securityId:'synthetic',asOf:t(-3),identityAudit:'DOCUMENTED_SOURCE_REVIEW'}]}));assert.equal(events.events[0].sourceAt,t(-1));assert.equal(events.events[0].observedAt,t(0));assert.equal(events.genuineAdmissions,0);
@@ -52,14 +53,14 @@ test('malformed, mismatched issuer, failed and future proofs remain unavailable;
  const a=create(root,'clock');appendNativeResponse(a,atom());const b=create(root,'clock-next',pin(a));assert.throws(()=>appendNativeResponse(b,atom(-1)),/NONMONOTONIC/);assert.equal(read(b).responses.length,0);
 }));
 test('actual proposed production secRiskIssuer and pollEdgar callers tee only existing responses and retain legacy outputs',fixture(async root=>{
- const manifest=JSON.parse(fs.readFileSync(new URL('../docs/validation/native-sec-shadow-production-manifest-v2.json',import.meta.url))),base=JSON.parse(gunzipSync(fs.readFileSync(new URL('../docs/validation/native-sec-shadow-base-v2.json.gz',import.meta.url))));
+ const manifest=JSON.parse(fs.readFileSync(new URL('../docs/validation/native-sec-shadow-production-manifest-v3.json',import.meta.url))),base=JSON.parse(gunzipSync(fs.readFileSync(new URL('../docs/validation/native-sec-shadow-base-v3.json.gz',import.meta.url))));
  for(const [file,text]of Object.entries(base.files)){fs.mkdirSync(path.dirname(path.join(root,file)),{recursive:true});fs.writeFileSync(path.join(root,file),text);assert.equal(hash(text),manifest.before[file]);}
- execFileSync('git',['init','-q'],{cwd:root,stdio:'ignore'});const patch=new URL('../docs/validation/native-sec-shadow-production-v2.patch',import.meta.url).pathname;execFileSync('git',['apply',patch],{cwd:root,stdio:'ignore'});for(const [file,h]of Object.entries(manifest.after))assert.equal(hash(fs.readFileSync(path.join(root,file))),h);
+ execFileSync('git',['init','-q'],{cwd:root,stdio:'ignore'});const patch=new URL('../docs/validation/native-sec-shadow-production-v3.patch',import.meta.url).pathname;execFileSync('git',['apply',patch],{cwd:root,stdio:'ignore'});for(const [file,h]of Object.entries(manifest.after))assert.equal(hash(fs.readFileSync(path.join(root,file))),h);
  const code=fs.readFileSync(path.join(root,'ignition-watch.mjs'),'utf8'),risk=code.slice(code.indexOf('async function secRiskIssuer('),code.indexOf('async function secRisk(sym)')),poll=code.slice(code.indexOf('async function pollEdgar('),code.indexOf('async function decideFilings('));
  let now=Date.parse(t(-.5)),calls=[];class Clock extends Date{constructor(...args){super(...(args.length?args:[now]));}static now(){return now;}}
  const shadow=createNativeSecShadow({enabled:true,directory:path.join(root,'evidence'),runId:'producer',sourceSha:sha,provenance:'SYNTHETIC_FIXTURE',now:()=>new Date(now).toISOString()});
  const EF={seen:new Set(),pending:[],last:0,first:true,polls:0,fails:0,filings:0,lat:[],firstOkM:null};
- const context=vm.createContext({Buffer,TextDecoder,Date:Clock,console,SEC_UA:'synthetic',SEC_DATA:'https://data.sec.gov',SEC_WWW:'https://www.sec.gov',NATIVE_SEC_SHADOW:shadow,EF,DAY4:Date.parse(t(-3)),parseAtom,nyMinuteOf,marketSymbol:x=>x,request:async url=>{calls.push(url);return new Response(url.includes('/submissions/')?sub():feed());},fetch:async url=>{calls.push(url);return new Response(feed());}});
+ const context=vm.createContext({Buffer,TextDecoder,Date:Clock,console,SEC_UA:'synthetic',SEC_DATA:'https://data.sec.gov',SEC_WWW:'https://www.sec.gov',NATIVE_SEC_SHADOW:shadow,EF,DAY4:Date.parse(t(-3)),parseAtom,nyMinuteOf,marketSymbol:x=>x,request:async url=>{calls.push(url);return directResponse(url.includes('/submissions/')?sub():feed(),url);},fetch:async url=>{calls.push(url);return directResponse(feed(),url);}});
  vm.runInContext('let TICK={SYNTH:1},secLogged=false;'+risk+poll+';globalThis.api={secRiskIssuer,pollEdgar};',context);
  const result=await context.api.secRiskIssuer('SYNTH');assert.equal(result.known,true);assert.equal(result.filings[0].accession,'0000000001-26-000001');now=Date.parse(t(0));await context.api.pollEdgar(570);assert.equal(calls.length,3);assert.equal(EF.pending.length,1);const a=readNativeRun({directory:path.join(root,'evidence'),expectedRunId:'producer',expectedSourceSha:sha});assert.equal(a.responses.length,3);assert.equal(a.observations[0].nativeEvidenceStatus,'COMPLETE_ORIGINAL_EVIDENCE');assert.equal(a.observations[0].acceptance.at,t(-1));assert.equal(a.genuineAdmissions,0);
  // Normal production order is feed then filing decisions; a later safety response is a late supplement.
@@ -70,7 +71,7 @@ test('actual proposed production secRiskIssuer and pollEdgar callers tee only ex
 test('interrupted proof append suppresses capture while legacy response parsing survives; original bytes unchanged',fixture(async root=>{
  const s=create(root,'interrupted');appendNativeResponse(s,atom());const before=fs.readFileSync(path.join(s.directory,'response-000000.json'));fs.mkdirSync(path.join(s.directory,'.writer-lock'));
  const shadow=createNativeSecShadow({enabled:true,directory:s.directory,runId:s.runId,sourceSha:sha,provenance:'SYNTHETIC_FIXTURE',now:()=>t(1)});
- const result=await shadow.readSubmissions(new Response(sub()),{url:subUrl,requestStartedAt:t(.9)});assert.equal(result.cik,'0000000001');assert.equal(shadow.report().status,'UNKNOWN');assert.deepEqual(fs.readFileSync(path.join(s.directory,'response-000000.json')),before);assert.equal(read(s).status,'INCOMPLETE');
+ const result=await shadow.readSubmissions(directResponse(sub(),subUrl),{url:subUrl,requestStartedAt:t(.9)});assert.equal(result.cik,'0000000001');assert.equal(shadow.report().status,'UNKNOWN');assert.deepEqual(fs.readFileSync(path.join(s.directory,'response-000000.json')),before);assert.equal(read(s).status,'INCOMPLETE');
  await assert.rejects(nativeEventPort({directory:s.directory,expectedRunId:s.runId,expectedSourceSha:sha})({at:t(2),identities:[]}),/INCOMPLETE/);
 }));
 test('same-clock conflicting revisions across runs and duplicate ancestor run IDs remain unresolved',fixture(root=>{

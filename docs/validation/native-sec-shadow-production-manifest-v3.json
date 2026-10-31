@@ -1,0 +1,49 @@
+{
+  "kind": "INACTIVE_NATIVE_SEC_SHADOW_PATCH_V3",
+  "productionBase": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+  "testOnlyRuntimeBaseBundleSha256": "6a24d371b4069f5f4c0064c215ab2775b373f72d5a513b3ba7ef8d36c971d129",
+  "testOnlyRuntimeBaseFiles": 206,
+  "patchSha256": "af830368dc06fe747b69ba4d5d4f8a21ba28ea616dbf3bff271a669f1374b1cc",
+  "files": [
+    ".github/workflows/ignition.yml",
+    "capture-json.mjs",
+    "ignition-watch.mjs",
+    "native-sec-events.mjs",
+    "native-sec-shadow.mjs",
+    "tests/instrument-type.test.mjs"
+  ],
+  "before": {
+    "ignition-watch.mjs": "1ea7741c2a78c2b5344067aad970a5777fa72936b37df943b231d81712f75091",
+    ".github/workflows/ignition.yml": "b5ebab71b7f6d33ceb4d41e965fe8247db81e610e6016b35272095fa87b43909",
+    "tests/instrument-type.test.mjs": "b2c7438d26ae7a741b63d7079c5a79879de365f4210c465f1e8f1862278244da"
+  },
+  "after": {
+    "ignition-watch.mjs": "d44ffd3f31517202a04f688386f648ad468bfed5164a5ae4caefea4b968b406d",
+    ".github/workflows/ignition.yml": "334ac5f97e897ec3d1d8f6c313d316edd955fb9f6ab582df9d43171782e44cc4",
+    "tests/instrument-type.test.mjs": "3db9a14b681a141f446e62cb5430100f4f3dad65bdd3dd052c4ff0480150433f",
+    "native-sec-events.mjs": "7ad1ff7d2a6cd0ce3a3af853c8a2b4d4ade4df9ed69f8c4d59c72fb6f2572f49",
+    "native-sec-shadow.mjs": "a4c820e663d1584b8bf338816f529ae6006ea258af4a30a90c613dec7b6ec4f6",
+    "capture-json.mjs": "07c28d7aba206183953e1ac034746555ced6cf02492fd67af544d943d6040476"
+  },
+  "unchangedDependencies": {
+    "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17"
+  },
+  "providerRequestsAdded": 0,
+  "acceptanceProofFetchesAdded": 0,
+  "messagesAdded": 0,
+  "scoringFormulaChanges": 0,
+  "enabledOnlyAfterPatchApproval": true,
+  "artifactPath": "runtime/native-sec-events/",
+  "artifactRetentionDays": 7,
+  "productionChanged": false,
+  "testOnlyFiles": [
+    "tests/instrument-type.test.mjs"
+  ],
+  "shadowDefaultEnabled": false,
+  "deployedSecHotfixRetained": true,
+  "incrementalWriter": true,
+  "parentInputRequiredForCrossRunContinuity": true,
+  "parentInputInstalled": false,
+  "lineageTransportImplemented": false,
+  "acceptanceResponseTeeImplemented": true
+}
