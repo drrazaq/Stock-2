@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-31",
-  "sourceCheckpoint": "ef10ec13c52f921740d7b230fd97965278a75545",
+  "sourceCheckpoint": "b4d355d9d08cfea193ae547503955b04faa1e2c7",
   "score": {
     "complete": 24,
     "total": 40,
@@ -192,7 +192,9 @@
       "title": "Behavioral review of every script",
       "status": "OPEN",
       "actionability": "SAFE_BRANCH",
-      "requiredVerification": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this."
+      "requiredVerification": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this.",
+      "latestExactUnmetRequirement": "No complete per-script input/output/side-effect/failure/timing/research-boundary review with links; new targeted reviews are not every-script evidence.",
+      "latestEvidence": []
     },
     {
       "id": "ACTIONS-04",
@@ -201,7 +203,11 @@
       "actionability": "SAFE_BRANCH",
       "requiredVerification": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch.",
       "partialEvidence": "Smart-money exact-block disposable-Git false-success/conflict regression and repair in 2b96707; broad all-workflow review remains OPEN. docs/validation/smart-money-publication-rehearsal.json.",
-      "continuationEvidence": "Five lab writers including Leaders plus earlier Smart-money/news controls have actual Git fault evidence; forty five-workflow cases include stage/commit/pull/push refusal, frozen/library conflict and disjoint publication. Opaque outputs, other writers/cache/cancellation/retention still OPEN."
+      "continuationEvidence": "Five lab writers including Leaders plus earlier Smart-money/news controls have actual Git fault evidence; forty five-workflow cases include stage/commit/pull/push refusal, frozen/library conflict and disjoint publication. Opaque outputs, other writers/cache/cancellation/retention still OPEN.",
+      "latestExactUnmetRequirement": "All-workflow checkout/ref/writer/cache/cancellation/retention coverage remains incomplete; watcher publication/conflict tests cover only repaired paths.",
+      "latestEvidence": [
+        "docs/validation/d3-session-history-verification.json"
+      ]
     },
     {
       "id": "MARKET-02",
@@ -209,7 +215,9 @@
       "status": "OPEN",
       "actionability": "LIVE_AND_PROVIDER_EVIDENCE",
       "requiredVerification": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.",
-      "partialEvidence": "Owner-confirmed Massive Starter15minute delay; authorized actual SIP/IEX endpoint samples and official SDK symbol-request contract. Alpaca account contract/full universe still unverified."
+      "partialEvidence": "Owner-confirmed Massive Starter15minute delay; authorized actual SIP/IEX endpoint samples and official SDK symbol-request contract. Alpaca account contract/full universe still unverified.",
+      "latestExactUnmetRequirement": "No current official account-specific latest SIP/session/universe/retention entitlement plus authorized representative permission/refusal evidence.",
+      "latestEvidence": []
     },
     {
       "id": "MARKET-03",
@@ -218,28 +226,40 @@
       "actionability": "SAFE_BRANCH",
       "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
       "partialEvidence": "Independent clock/provider/feed repairs and explicit-universe offline session contracts; all-provider audit remains open.",
-      "continuationEvidence": "Actual SEC Insider dash/dot classes remain distinct through producer/cache/cluster/discovery, and CIK padding cannot count one owner twice. Other provider ingress, ticker changes, units, corporate-action and session basis remain OPEN."
+      "continuationEvidence": "Actual SEC Insider dash/dot classes remain distinct through producer/cache/cluster/discovery, and CIK padding cannot count one owner twice. Other provider ingress, ticker changes, units, corporate-action and session basis remain OPEN.",
+      "latestExactUnmetRequirement": "No complete actual-ingress symbol/units/session/corporate-action/ticker-change matrix across every provider; history/DST repairs cover only scoped paths.",
+      "latestEvidence": [
+        "docs/d3-session-history-review.md"
+      ]
     },
     {
       "id": "MARKET-04",
       "title": "Measured full-session freshness and latency",
       "status": "OPEN",
       "actionability": "APPROVED_LIVE_EVIDENCE",
-      "requiredVerification": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this."
+      "requiredVerification": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this.",
+      "latestExactUnmetRequirement": "No observed complete regular, premarket and half-day intended-minute/freshness/denominator/p95/outage dataset; configured09:30\u201315:00 excludes the final hour and post-DST evidence is pending.",
+      "latestEvidence": []
     },
     {
       "id": "DISCOVERY-03",
       "title": "Whole-market premarket discovery verified",
       "status": "OPEN",
       "actionability": "PHASE_A_APPROVAL_AND_LIVE_EVIDENCE",
-      "requiredVerification": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence."
+      "requiredVerification": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence.",
+      "latestExactUnmetRequirement": "Six-name offline integration cannot establish whole-market premarket SIP coverage; representative explicit universe, rights, exact approval and measured broad coverage remain missing.",
+      "latestEvidence": []
     },
     {
       "id": "DISCOVERY-04",
       "title": "Prospective matched lead/false-positive evaluation",
       "status": "OPEN",
       "actionability": "PROSPECTIVE_AND_SEPARATE_APPROVAL",
-      "requiredVerification": "Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping."
+      "requiredVerification": "Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping.",
+      "latestExactUnmetRequirement": "Zero admitted cases; V1 ordinary proof ordering and disabled primary continuity admission block enrollment. Frozen prospective period/case/day/controls/quotes/costs/uncertainty/confirmation criteria are unmet.",
+      "latestEvidence": [
+        "docs/d3-session-history-review.md"
+      ]
     },
     {
       "id": "CATALYST-03",
@@ -248,14 +268,20 @@
       "actionability": "SAFE_BRANCH",
       "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
       "partialEvidence": "Verified bb93fb2: 55 reconstructed source regressions, malformed/failed/empty source distinctions and SEC structural coverage. Full identity/revision/persistence evidence remains OPEN; docs/validation/catalyst-source-ci.json.",
-      "continuationEvidence": "News remote intent/revisions and SEC/earnings metadata controls:5cc2dbb; Insider persistence/Leaders publication:691bbf9; SEC bounds/class identity:60be0ee; Chain revisions/clocks:7bcf591. Exact CI evidence in validation/*caller-ci.json and source matrix. Full source/revision/persistence/materiality scope remains OPEN. Share-supply/current SEC identity and shared Discovery2 caller candidate: docs/validation/share-supply-source-caller.json; full eight-lane criterion remains OPEN."
+      "continuationEvidence": "News remote intent/revisions and SEC/earnings metadata controls:5cc2dbb; Insider persistence/Leaders publication:691bbf9; SEC bounds/class identity:60be0ee; Chain revisions/clocks:7bcf591. Exact CI evidence in validation/*caller-ci.json and source matrix. Full source/revision/persistence/materiality scope remains OPEN. Share-supply/current SEC identity and shared Discovery2 caller candidate: docs/validation/share-supply-source-caller.json; full eight-lane criterion remains OPEN.",
+      "latestExactUnmetRequirement": "Native SEC clocks/joins/revisions/restart have actual-path proof, but events-study/news full-body revision contracts, earnings AV/FMP provenance/shape handling and Discovery2/Comeback derived-event contracts still lack a complete eight-lane materiality/conflict/persistence matrix. Independent historical authenticity belongs separately to CATALYST-04.",
+      "latestEvidence": [
+        "docs/d3-session-history-review.md"
+      ]
     },
     {
       "id": "CATALYST-04",
       "title": "Independent point-in-time catalyst/missing-source audit",
       "status": "OPEN",
       "actionability": "INDEPENDENT_DATA",
-      "requiredVerification": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability."
+      "requiredVerification": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability.",
+      "latestExactUnmetRequirement": "No independent contemporaneous publication/access records and missing-source/late-ingestion denominators; current caches and reconstructed archives cannot authenticate past availability.",
+      "latestEvidence": []
     },
     {
       "id": "EXEC-03",
@@ -264,7 +290,12 @@
       "actionability": "SAFE_BRANCH",
       "requiredVerification": "Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity.",
       "continuationEvidence": "Actual owner command/plan attachment/persistence/rendering has26 local caller cases, numeric and gap rejection and archived Horizons timing-variant labels. docs/execution-plan-contract-review.md. Other rendered lane/spec/cost/size/liquidity contracts remain OPEN.",
-      "mentorContinuationEvidence": "docs/validation/trading-mentor-workflow.json: selected126-session lane has actual read-only mentor and immutable local source/contract recording tests. Cross-lane execution consistency, genuine source/execution identity, executable sizing/cost/liquidity and close-vs-next-open reminder mismatch remain OPEN. No acceptance credit."
+      "mentorContinuationEvidence": "docs/validation/trading-mentor-workflow.json: selected126-session lane has actual read-only mentor and immutable local source/contract recording tests. Cross-lane execution consistency, genuine source/execution identity, executable sizing/cost/liquidity and close-vs-next-open reminder mismatch remain OPEN. No acceptance credit.",
+      "latestExactUnmetRequirement": "One mentor lane is explained and conflicting exit variants are unresolved, but every delivered lane is not reconciled to tested entry/stop/exit/hold/cost/risk; executable size/liquidity/cost basis remains unestablished.",
+      "latestEvidence": [
+        "docs/mentor-entry-to-exit-workflow.md",
+        "test/mentor-lifecycle.test.mjs"
+      ]
     },
     {
       "id": "TELEGRAM-03",
@@ -273,42 +304,58 @@
       "actionability": "SAFE_BRANCH",
       "requiredVerification": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.",
       "partialEvidence": "Basket intent/ACK/quarantine repaired on branch; remote journal still opt-in, all-route delivery/persistence not complete.",
-      "continuationEvidence": "News remote intent/ACK has actual process-loss/restored-job/refusal/race fixtures; owner numeric callbacks now locally validated. Non-news mutation/offset/result/publication and all-route durable reconciliation remain OPEN."
+      "continuationEvidence": "News remote intent/ACK has actual process-loss/restored-job/refusal/race fixtures; owner numeric callbacks now locally validated. Non-news mutation/offset/result/publication and all-route durable reconciliation remain OPEN.",
+      "latestExactUnmetRequirement": "Watcher and accounting repairs do not establish stable IDs/partial ACK/quarantine/publication/reconciliation for every independent message/callback route; journal remains opt-in.",
+      "latestEvidence": []
     },
     {
       "id": "TELEGRAM-04",
       "title": "Authorized actual non-BUY delivery validation",
       "status": "OPEN",
       "actionability": "SEPARATE_OWNER_APPROVAL",
-      "requiredVerification": "After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this."
+      "requiredVerification": "After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this.",
+      "latestExactUnmetRequirement": "No separately approved actual non-BUY delivery and independent recovery/deduplication observation with real acknowledgments.",
+      "latestEvidence": []
     },
     {
       "id": "STRATEGY-04",
       "title": "Independent realistic after-cost replay",
       "status": "OPEN",
       "actionability": "INDEPENDENT_DATA",
-      "requiredVerification": "Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained."
+      "requiredVerification": "Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained.",
+      "latestExactUnmetRequirement": "No independently source-audited PIT/delisted representative universe and untouched execution-realistic after-cost replay; frozen study metadata and mentor examples are insufficient.",
+      "latestEvidence": []
     },
     {
       "id": "HISTORY-02",
       "title": "Actual identity/ticker/delisting/survivorship audit",
       "status": "OPEN",
       "actionability": "INDEPENDENT_DATA",
-      "requiredVerification": "Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness."
+      "requiredVerification": "Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness.",
+      "latestExactUnmetRequirement": "No independently authenticated as-known security/ticker/class/listing/delisting/terminal-value audit across decision, entry and exit.",
+      "latestEvidence": []
     },
     {
       "id": "HISTORY-03",
       "title": "All performance claims and windows validated",
       "status": "OPEN",
       "actionability": "SAFE_REVIEW_PLUS_INDEPENDENT_DATA",
-      "requiredVerification": "Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results."
+      "requiredVerification": "Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results.",
+      "latestExactUnmetRequirement": "Every numerical/tested/proven/unseen claim is not yet catalogued and authenticated/qualified; the mentor and legacy/admitted split correct only scoped claims.",
+      "latestEvidence": [
+        "docs/mentor-entry-to-exit-workflow.md"
+      ]
     },
     {
       "id": "HISTORY-04",
       "title": "Benchmark/capacity/drawdown/uncertainty report",
       "status": "OPEN",
       "actionability": "OBSERVED_OR_INDEPENDENT_DATA",
-      "requiredVerification": "Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability."
+      "requiredVerification": "Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability.",
+      "latestExactUnmetRequirement": "No observed candidate/control/SPY capacity/cost/drawdown paths and predeclared clustered/multiplicity/untouched-confirmation result; admitted cases remain0.",
+      "latestEvidence": [
+        "docs/validation/d3-session-history-verification.json"
+      ]
     }
   ],
   "separatePrerequisites": {
@@ -393,5 +440,12 @@
     ]
   },
   "preNativeJoinVerifiedEngineeringSource": "ef10ec13c52f921740d7b230fd97965278a75545",
-  "latestVerifiedEngineeringCI": "docs/validation/source-ingestion-bounds-ci.json"
+  "latestVerifiedEngineeringCI": "docs/validation/mentor-acceptance-closure-verification.json",
+  "latestClosureAssessment": {
+    "source": "b4d355d9d08cfea193ae547503955b04faa1e2c7",
+    "rowsReviewed": 16,
+    "closuresEarned": [],
+    "scoreUnchanged": "24/40",
+    "evidence": "docs/acceptance-closure-board.md"
+  }
 }

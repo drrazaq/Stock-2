@@ -1,3 +1,5 @@
+> Current continuation: [complete lifecycle and standalone tool](mentor-entry-to-exit-workflow.md), including8synthetic examples and half-day close/unknown-execution states. The historical five-example review below remains evidence for its earlier checkpoint; no additional strategy adapter or endorsement was added.
+
 # Mentor development review: exits, examples and next evidence
 
 Development milestone only; **LEADER DIP remains NOT PROVEN**. This review does not endorse a strategy, activate a target, change a gate, deploy code, collect data or send messages. The [capability map](trading-mentor-capability-gap-map.md) remains the broader context. [Synthetic outputs](mentor-synthetic-examples.md) and [pinned horizon evidence](mentor-horizon-comparison.json) make this checkpoint reviewable.

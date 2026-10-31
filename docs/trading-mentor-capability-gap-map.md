@@ -1,3 +1,5 @@
+> **Current mentor/closure milestone:** [one complete read-only entry-to-exit explanation](mentor-entry-to-exit-workflow.md), [all16exact closure assessments](acceptance-closure-board.md), [bounded work and evidence decision](mentor-evidence-next-decision.md). Implementation `b4d355d9d08cfea193ae547503955b04faa1e2c7`;28focused tests PASS; full222files/2,148cases, Python30 and syntax281 PASS. No new row closes:24/40,16OPEN,0admissions. LEADER DIP NOT PROVEN; no deploy or collection. Earlier notes below are historical. Prior D3 checkpoint3fa31b2c has all5CI checks PASS. Final milestone CI must be verified on its published SHA.
+
 > [Follow-up review and synthetic outputs](mentor-review-and-next-horizon.md) explicitly distinguish base exit, unadopted target overlay, unresolved plans and the next evidence horizon. This remains development, not strategy endorsement.
 
 # Trading mentor: capability, evidence and gap map

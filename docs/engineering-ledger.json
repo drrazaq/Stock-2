@@ -4994,16 +4994,13 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "sourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
-    "status": "INTEGRATED_D3_EXECUTION_HISTORY_AND_STARTUP_CORRECTION_OFFLINE_VERIFIED",
-    "evidence": "docs/validation/d3-session-history-verification.json",
-    "acceptanceAdded": 0,
-    "genuineAdmissions": 0,
-    "localVerification": {
-      "development": {
-        "files": 221,
-        "cases": 2141,
-        "skipped": 0,
+    "sourceSha": "b4d355d9d08cfea193ae547503955b04faa1e2c7",
+    "status": "MENTOR_EXPLANATION_COMPLETE_OFFLINE_ACCEPTANCE_RECONCILED",
+    "evidence": {
+      "node": {
+        "source": "b4d355d9",
+        "files": 222,
+        "cases": 2148,
         "failures": []
       },
       "python": {
@@ -5011,19 +5008,13 @@
         "failures": 0
       },
       "syntax": {
-        "files": 280,
+        "files": 281,
         "failures": []
-      },
-      "focused": {
-        "historyContract": 27,
-        "existingLineage": 17,
-        "prefix": 3,
-        "hostMatrix": 12,
-        "bindingMatrix": 55,
-        "preservedD1D2FullSchedule": 13,
-        "legacyParentCompatibility": 20
       }
-    }
+    },
+    "verification": "docs/validation/mentor-acceptance-closure-verification.json",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0
   },
   "revisionIdentityMission": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5313,50 +5304,23 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "INTEGRATED_D3_EXECUTION_HISTORY_AND_STARTUP_CORRECTION_OFFLINE_VERIFIED",
-    "runtimeSourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
-    "review": "docs/d3-session-history-review.md",
-    "patchManifest": "docs/validation/d3-session-history-manifest.json",
-    "verification": "docs/validation/d3-session-history-verification.json",
+    "status": "MENTOR_EXPLANATION_COMPLETE_OFFLINE_ACCEPTANCE_RECONCILED",
+    "runtimeSourceSha": "b4d355d9d08cfea193ae547503955b04faa1e2c7",
+    "review": "docs/mentor-entry-to-exit-workflow.md",
+    "verification": "docs/validation/mentor-acceptance-closure-verification.json",
     "closureBoard": "docs/acceptance-closure-board.md",
+    "remainingWorkAndApprovalCandidate": "docs/mentor-evidence-next-decision.md",
     "acceptanceAdded": 0,
-    "genuineAdmissions": 0,
     "accepted": 24,
     "total": 40,
-    "UNKNOWNBehavior": "BLOCK_QUOTE_AND_UPLOAD_UNCHANGED",
-    "historyContract": "SESSION_EXECUTION_HISTORY_V2_CONTROL_PLANE_ONLY_NOT_PAPER_V2",
-    "historyBudget": {
-      "requests": 256,
-      "bytes": 67108864,
-      "totalMs": 120000,
-      "maxInFlight": 4,
-      "approvedForExecution": false
-    },
-    "startupCause": "Normal commit held writer lock beyond former20ms reader allowance; actual original caller fails before quote; bounded backoff succeeds without accepting stale/partial state",
-    "sourceProof": "Run-start metadata is not job execution; actual production no-op requires verified checkout/source closure and authenticated watcher-exit log",
-    "productionChanged": false,
-    "installed": false,
-    "liveBindings": false,
-    "protocolV2Adopted": false,
-    "continuityPolicyAdopted": false,
-    "remainingV2Engineering": [
-      "Original SEC request-route and cache-origin/vintage telemetry",
-      "Queued/no-request/exclusion reasons and contemporaneous pre-entry predicates",
-      "Symmetric SEC-event control selection under the separate unapproved proposal"
-    ],
-    "nextDecision": "Targeted D3/history correction review; no general package/activation approval requested. Official rights/reference/recovery evidence and a separately dated exact host/binding/capture scope remain required.",
-    "passiveWatcher": {
-      "lastScheduledRun": 41072889693,
-      "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
-      "observedProduction": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
-      "postDeploymentEvidence": "PENDING_NATURAL_RUN",
-      "novemberDST": "PENDING_NATURAL_RUN"
-    },
+    "open": 16,
+    "genuineAdmissions": 0,
+    "exactCriteriaUnchanged": true,
     "localVerification": {
-      "development": {
-        "files": 221,
-        "cases": 2141,
-        "skipped": 0,
+      "node": {
+        "source": "b4d355d9",
+        "files": 222,
+        "cases": 2148,
         "failures": []
       },
       "python": {
@@ -5364,40 +5328,18 @@
         "failures": 0
       },
       "syntax": {
-        "files": 280,
+        "files": 281,
         "failures": []
-      },
-      "focused": {
-        "historyContract": 27,
-        "existingLineage": 17,
-        "prefix": 3,
-        "hostMatrix": 12,
-        "bindingMatrix": 55,
-        "preservedD1D2FullSchedule": 13,
-        "legacyParentCompatibility": 20
       }
     },
-    "firstPublishedCI": {
-      "sha": "f34c4641e422fdd09a66c783d3209bcff1dc326b",
-      "runId": 41242565418,
-      "result": "FAIL",
-      "failedCase": "actual colocated host success-contended",
-      "otherChecksPassed": 4,
-      "logSha256": "0517cd9d210e89303f97b2980bb74119bcdca65f79168161376636fdf8404869"
-    },
-    "bootstrapFixtureCorrection": {
-      "cause": "Producer could finish before slow worker requested artificial overlap; missed test rendezvous, distinct from real reader retry defect",
-      "reproduction": "6000ms delayed worker on first published fixture: SYNTHETIC_WRITER_NOT_READY,331 producer heartbeats,writerCommittedfalse",
-      "repair": "Bounded rendezvous before second archive commit acquires lock, then same500ms lock hold; no production/runtime change or relaxed assertion",
-      "normalStress": "PASS",
-      "delayedWorkerStress": "PASS",
-      "logs": {
-        "ci-synchronization-repro.log": "5850c31846bfdb0097da73e22d6679e09404cf620be6d6aeb1b702ba293e6309",
-        "ci-synchronization-repro/capture/synthetic-read-failure.json": "82c900c603e6e64f8a06b308bf8ce972c7621fb7f8d69a9e9f84a02dd07f5c7d",
-        "ci-synchronization-fixed.log": "a29966bcd60b255183b3f1173678c02991948cceeac1ae782fa1dd9038551904",
-        "ci-delayed-bootstrap-fixed.log": "a9f55c7a01911784a84676e353bebe5b6992e7662ac45d12efdfc378c5fc6ea7"
-      }
-    }
+    "focusedTests": 28,
+    "productionChanged": false,
+    "liveCapture": false,
+    "frozenRuleChanged": false,
+    "strategyVerdict": "LEADER_DIP_NOT_PROVEN",
+    "targetAdoption": false,
+    "passiveWatcher": "docs/validation/mentor-passive-watcher-status.json",
+    "nextAction": "Finish existing CATALYST-03 producer matrix (events/news body revisions; earnings; Discovery2/Comeback), then MARKET-03/EXEC-03 actual paths. Independent review of separate proof-ready proposal and official rights before any dated collection approval."
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -7736,6 +7678,100 @@
         "failures": []
       },
       "exactPackageFocusedTests": 51
+    }
+  },
+  "latestD3IntegratedMilestone": {
+    "status": "INTEGRATED_D3_EXECUTION_HISTORY_AND_STARTUP_CORRECTION_OFFLINE_VERIFIED",
+    "runtimeSourceSha": "04e70e257a9eacd656430261ebc3610a43670f5e",
+    "review": "docs/d3-session-history-review.md",
+    "patchManifest": "docs/validation/d3-session-history-manifest.json",
+    "verification": "docs/validation/d3-session-history-verification.json",
+    "closureBoard": "docs/acceptance-closure-board.md",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
+    "accepted": 24,
+    "total": 40,
+    "UNKNOWNBehavior": "BLOCK_QUOTE_AND_UPLOAD_UNCHANGED",
+    "historyContract": "SESSION_EXECUTION_HISTORY_V2_CONTROL_PLANE_ONLY_NOT_PAPER_V2",
+    "historyBudget": {
+      "requests": 256,
+      "bytes": 67108864,
+      "totalMs": 120000,
+      "maxInFlight": 4,
+      "approvedForExecution": false
+    },
+    "startupCause": "Normal commit held writer lock beyond former20ms reader allowance; actual original caller fails before quote; bounded backoff succeeds without accepting stale/partial state",
+    "sourceProof": "Run-start metadata is not job execution; actual production no-op requires verified checkout/source closure and authenticated watcher-exit log",
+    "productionChanged": false,
+    "installed": false,
+    "liveBindings": false,
+    "protocolV2Adopted": false,
+    "continuityPolicyAdopted": false,
+    "remainingV2Engineering": [
+      "Original SEC request-route and cache-origin/vintage telemetry",
+      "Queued/no-request/exclusion reasons and contemporaneous pre-entry predicates",
+      "Symmetric SEC-event control selection under the separate unapproved proposal"
+    ],
+    "nextDecision": "Targeted D3/history correction review; no general package/activation approval requested. Official rights/reference/recovery evidence and a separately dated exact host/binding/capture scope remain required.",
+    "passiveWatcher": {
+      "lastScheduledRun": 41072889693,
+      "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "observedProduction": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+      "postDeploymentEvidence": "PENDING_NATURAL_RUN",
+      "novemberDST": "PENDING_NATURAL_RUN"
+    },
+    "localVerification": {
+      "development": {
+        "files": 221,
+        "cases": 2141,
+        "skipped": 0,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 280,
+        "failures": []
+      },
+      "focused": {
+        "historyContract": 27,
+        "existingLineage": 17,
+        "prefix": 3,
+        "hostMatrix": 12,
+        "bindingMatrix": 55,
+        "preservedD1D2FullSchedule": 13,
+        "legacyParentCompatibility": 20
+      }
+    },
+    "firstPublishedCI": {
+      "sha": "f34c4641e422fdd09a66c783d3209bcff1dc326b",
+      "runId": 41242565418,
+      "result": "FAIL",
+      "failedCase": "actual colocated host success-contended",
+      "otherChecksPassed": 4,
+      "logSha256": "0517cd9d210e89303f97b2980bb74119bcdca65f79168161376636fdf8404869"
+    },
+    "bootstrapFixtureCorrection": {
+      "cause": "Producer could finish before slow worker requested artificial overlap; missed test rendezvous, distinct from real reader retry defect",
+      "reproduction": "6000ms delayed worker on first published fixture: SYNTHETIC_WRITER_NOT_READY,331 producer heartbeats,writerCommittedfalse",
+      "repair": "Bounded rendezvous before second archive commit acquires lock, then same500ms lock hold; no production/runtime change or relaxed assertion",
+      "normalStress": "PASS",
+      "delayedWorkerStress": "PASS",
+      "logs": {
+        "ci-synchronization-repro.log": "5850c31846bfdb0097da73e22d6679e09404cf620be6d6aeb1b702ba293e6309",
+        "ci-synchronization-repro/capture/synthetic-read-failure.json": "82c900c603e6e64f8a06b308bf8ce972c7621fb7f8d69a9e9f84a02dd07f5c7d",
+        "ci-synchronization-fixed.log": "a29966bcd60b255183b3f1173678c02991948cceeac1ae782fa1dd9038551904",
+        "ci-delayed-bootstrap-fixed.log": "a9f55c7a01911784a84676e353bebe5b6992e7662ac45d12efdfc378c5fc6ea7"
+      }
+    },
+    "finalPublishedCI": {
+      "sha": "3fa31b2cd2ec56f6a72cf077a0c845cc4c58777b",
+      "checksPassed": 5,
+      "testRun": 41243983492,
+      "files": 221,
+      "cases": 2141
     }
   }
 }
