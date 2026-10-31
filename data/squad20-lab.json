@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-10-30T01:41:20.524Z",
+ "generatedAt": "2026-10-31T01:40:57.150Z",
  "squad": 20,
  "philosophy": "use the jump differently: as an AVOID filter and an EXIT on the rules that work, as a second setup after the spike is digested, and one-month momentum among high-turnover large caps (Medhat & Schmeling 2022)",
  "preRegistered": "squad20-core.mjs header + RULES (25 Oct 2026, before any run) + data/strategy-library.json SQ20-*",
  "window": [
   "2021-10-12",
-  "2026-10-29"
+  "2026-10-30"
  ],
  "bar": 4.07,
  "split": "2024-01-01",
@@ -13,10 +13,10 @@
  "data": {
   "price": {
    "ok": true,
-   "sessions": 1268,
+   "sessions": 1269,
    "from": "2021-10-12",
-   "to": "2026-10-29",
-   "stocks": 8601,
+   "to": "2026-10-30",
+   "stocks": 8602,
    "rowsWithHighLow": 1
   },
   "tickerMap": {
@@ -31,7 +31,7 @@
    "ok": true,
    "companies": 4445,
    "answered": 4445,
-   "withRevenue": 3720,
+   "withRevenue": 3721,
    "fromSquad4Cache": 6154,
    "fetchedNow": 0,
    "failed": 0,
@@ -39,23 +39,23 @@
   },
   "splits": {
    "ok": true,
-   "rows": 7380,
-   "tickers": 4780,
+   "rows": 7383,
+   "tickers": 4781,
    "pagesNow": 8
   },
   "altShares": {
    "ok": true,
-   "wanted": 0,
-   "fetchedNow": 0,
-   "known": 2087
+   "wanted": 1,
+   "fetchedNow": 1,
+   "known": 2088
   },
   "domicile": {
    "ok": true,
-   "wantedNow": 0,
-   "fetchedNow": 0,
+   "wantedNow": 1,
+   "fetchedNow": 1,
    "failed": 0,
    "missing": 0,
-   "known": 1755,
+   "known": 1756,
    "foreign": 176
   },
   "bases": {
@@ -161,20 +161,20 @@
   },
   "spike": {
    "ok": true,
-   "stocksWithSpikes": 2390,
-   "spikes": 6727,
+   "stocksWithSpikes": 2392,
+   "spikes": 6730,
    "signals": 90,
-   "controls": 2632,
+   "controls": 2633,
    "controlsHeld": 829
   },
   "stmom": {
    "ok": true,
-   "formations": 58,
+   "formations": 59,
    "first": "2021-12-31",
    "minUniverse": 1000,
    "minUsable1000": 999,
-   "avgPicks1000": 26.069,
-   "avgPicks500": 13.6379
+   "avgPicks1000": 25.9153,
+   "avgPicks500": 13.5085
   }
  },
  "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock at the same moments (capped +300%, AUD-1), better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5, return per year of capital above SPY -> TRADABLE SMALL; block t >= 4.07 -> PROVEN. A filters / B exits additionally carry the pre-registered ADOPT test (squad20-core.mjs adoptFilter / adoptExit).",
@@ -24238,7 +24238,7 @@
      "tDay": 1.59,
      "blocks": 11,
      "tBlock": 0.42,
-     "vsOwn": -0.1112,
+     "vsOwn": -0.1097,
      "ownCovered": 154,
      "noTop2": 0.141,
      "best": 2.992,
@@ -24257,7 +24257,7 @@
      "tDay": 2.67,
      "blocks": 15,
      "tBlock": 0.8,
-     "vsOwn": -0.1091,
+     "vsOwn": -0.108,
      "ownCovered": 216,
      "noTop2": 0.1414,
      "best": 2.992,
@@ -24367,7 +24367,7 @@
      "tDay": 1.42,
      "blocks": 4,
      "tBlock": 1.42,
-     "vsOwn": 0.0102,
+     "vsOwn": 0.0104,
      "ownCovered": 4,
      "noTop2": 0.1812,
      "best": 2.992,
@@ -24386,7 +24386,7 @@
      "tDay": 1.56,
      "blocks": 7,
      "tBlock": 1.56,
-     "vsOwn": -0.0627,
+     "vsOwn": -0.0625,
      "ownCovered": 7,
      "noTop2": 0.1346,
      "best": 2.992,
@@ -24745,7 +24745,7 @@
      "tDay": 1.12,
      "blocks": 6,
      "tBlock": 1.39,
-     "vsOwn": -0.0519,
+     "vsOwn": -0.0491,
      "ownCovered": 29,
      "noTop2": 0.0964,
      "best": 2.1845,
@@ -24764,7 +24764,7 @@
      "tDay": 1.92,
      "blocks": 8,
      "tBlock": 1.94,
-     "vsOwn": -0.0893,
+     "vsOwn": -0.0874,
      "ownCovered": 43,
      "noTop2": 0.0842,
      "best": 2.1845,
@@ -25526,22 +25526,6 @@
  },
  "stmomFormations": [
   {
-   "d": "2024-10-31",
-   "companies": 1907,
-   "SQ20-STMOM-1000": {
-    "universe": 1000,
-    "usable": 999,
-    "picks": 25,
-    "sizeAtCut": 4.2212
-   },
-   "SQ20-STMOM-500": {
-    "universe": 500,
-    "usable": 500,
-    "picks": 13,
-    "sizeAtCut": 13.8987
-   }
-  },
-  {
    "d": "2024-11-29",
    "companies": 2018,
    "SQ20-STMOM-1000": {
@@ -25908,11 +25892,27 @@
     "picks": 18,
     "sizeAtCut": 15.0052
    }
+  },
+  {
+   "d": "2026-10-30",
+   "companies": 2086,
+   "SQ20-STMOM-1000": {
+    "universe": 1000,
+    "usable": 1000,
+    "picks": 17,
+    "sizeAtCut": 4.7826
+   },
+   "SQ20-STMOM-500": {
+    "universe": 500,
+    "usable": 500,
+    "picks": 6,
+    "sizeAtCut": 15.251
+   }
   }
  ],
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-30T01:41:20.524Z",
+  "at": "2026-10-31T01:40:57.150Z",
   "results": {}
  },
  "trades": {}
