@@ -25,7 +25,7 @@
   "focused": {
     "incremental": 8,
     "actualWatcher": 7,
-    "timelyHandoff": 3,
+    "timelyHandoff": 4,
     "nativeEvents": 9,
     "nativeLineage": 9,
     "guardedWrapper": 14,
@@ -66,7 +66,8 @@
     "native-sec-handoff-verified.log": "c8d2e9bbe390ef1dd65f6813dd8933103524916f05423a711dd34eab207b4389",
     "production-gated-incident.log": "6398e08187c461d247938a5956b5f88a72363972b4dba1d52712bc409a1b163f",
     "production-gated-resilience.log": "2d05cdf31570eb68b0b445572f5d503fdfb4d67c8b86b0aec16c74153a8e4878",
-    "python.log": "1067fffb3c13eeab8492070812c32766100e464d6dedff95c2dfe720ac80fa0f"
+    "python.log": "1067fffb3c13eeab8492070812c32766100e464d6dedff95c2dfe720ac80fa0f",
+    "native-sec-handoff-partial-verified.log": "8ce07a0a04cb6d8767bc9296f978c2a2c3c0113f09f0559805befefd047f7ed7"
   },
   "acceptanceAdded": 0,
   "accepted": 24,
@@ -86,5 +87,11 @@
     "Official SIP entitlement and reference/quote retention scope",
     "Authoritative current identity/industry and ZAD source evidence",
     "Separate dated reference-preparation and calibration approval; no execution authorized"
-  ]
+  ],
+  "additionalRegressionAfterCombinedRun": {
+    "actualProductionCallerPartialWrite": 1,
+    "passed": true,
+    "runtimeChanged": false,
+    "fullCurrentInventoryCases": 1962
+  }
 }
