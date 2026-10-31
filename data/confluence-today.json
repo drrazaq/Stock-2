@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-30T03:15:42.385Z",
- "lastClose": "2026-10-29",
+ "generatedAt": "2026-10-31T00:19:04.272Z",
+ "lastClose": "2026-10-30",
  "paperStart": "2026-10-23",
- "inputsSeen": 82,
+ "inputsSeen": 102,
  "note": "PAPER ONLY. A stock picked by 2+ (CONF-3: 3+) different rule families within 5 sessions. Nothing here is a buy by itself: a version needs a TRADABLE SMALL / PROVEN frozen 5-year verdict (data/confluence-lab.json firstRun), or the TRY SMALL gates, or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
   "CONF-2": {
@@ -12,10 +12,10 @@
    "holdNote": "each signal carries its own hold (sessions) and stopPct",
    "newSignals": [
     {
-     "sym": "MA",
-     "close": 635.7,
-     "halal": "ok",
-     "d": "2026-10-29",
+     "sym": "ADP",
+     "close": 293.84,
+     "halal": "unknown",
+     "d": "2026-10-30",
      "hold": 10,
      "stopPct": 0.15,
      "families": [
@@ -26,13 +26,13 @@
       "DEC2-MINTT",
       "DEC2-TPS"
      ],
-     "plan": "buy at the open of 2026-10-30 (the next session after 2026-10-29), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+     "plan": "buy at the open of 2026-11-02 (the next session after 2026-10-30), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
     },
     {
-     "sym": "MO",
-     "close": 76.75,
+     "sym": "MRK",
+     "close": 149.52,
      "halal": "unknown",
-     "d": "2026-10-29",
+     "d": "2026-10-30",
      "hold": 10,
      "stopPct": 0.15,
      "families": [
@@ -43,7 +43,58 @@
       "DEC2-MINTT",
       "DEC2-TPS"
      ],
-     "plan": "buy at the open of 2026-10-30 (the next session after 2026-10-29), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+     "plan": "buy at the open of 2026-11-02 (the next session after 2026-10-30), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+    },
+    {
+     "sym": "MRVL",
+     "close": 196.4,
+     "halal": "unknown",
+     "d": "2026-10-30",
+     "hold": 10,
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ],
+     "rules": [
+      "DEC2-MINTT",
+      "DEC2-TPS"
+     ],
+     "plan": "buy at the open of 2026-11-02 (the next session after 2026-10-30), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+    },
+    {
+     "sym": "PBR",
+     "close": 22.05,
+     "halal": "unknown",
+     "d": "2026-10-30",
+     "hold": 10,
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ],
+     "rules": [
+      "DEC2-MINTT",
+      "DEC2-TPS"
+     ],
+     "plan": "buy at the open of 2026-11-02 (the next session after 2026-10-30), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+    },
+    {
+     "sym": "VLO",
+     "close": 399.66,
+     "halal": "unknown",
+     "d": "2026-10-30",
+     "hold": 10,
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ],
+     "rules": [
+      "DEC2-MINTT",
+      "DEC2-TPS"
+     ],
+     "plan": "buy at the open of 2026-11-02 (the next session after 2026-10-30), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
     }
    ],
    "open": [
@@ -52,7 +103,33 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0089,
+     "sinceBuy": -0.0479,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "MA",
+     "halal": "ok",
+     "signal": "2026-10-29",
+     "buy": "2026-10-30",
+     "sinceBuy": -0.0069,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "MO",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-10-30",
+     "sinceBuy": -0.0014,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
