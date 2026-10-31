@@ -1,3 +1,5 @@
+> **DEPLOYED31October2026:** owner approved the unchanged patch from review head627e81e3; isolated production commit `bd70f5a76172f369e9dff1096eba0e526c0e3fdc`, ordinary push CI PASS. [Deployment record, basket-wrapper clarification, separate gated failures, rollback and pending natural evidence](sec-request-hotfix-deployment-result.md). Original proposal below is retained as pre-deployment evidence; its approval-needed/not-deployed wording is historical.
+
 # Isolated watcher SEC-request hotfix — owner review, not deployed
 
 The deployed watcher calls `request()` for the SEC ticker map and submissions without defining it. The ReferenceError is caught and reported as SEC unavailable; ticker-map initialization fails, so EDGAR polling also never begins. A running watcher and market heartbeats do not prove SEC observation coverage.
