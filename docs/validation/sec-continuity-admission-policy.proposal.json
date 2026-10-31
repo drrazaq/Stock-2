@@ -1,0 +1,14 @@
+{
+  "kind": "UNAPPROVED_SAME_DAY_CONTINUITY_ADMISSION_POLICY_V2",
+  "approved": false,
+  "activated": false,
+  "changesV1": false,
+  "globalHistoryEstablished": false,
+  "states": ["VERIFIED_NO_EARLIER_SAME_DAY_RUN", "AUTHENTICATED_EARLIER_SAME_DAY_EVIDENCE", "UNKNOWN_MISSING_OR_AMBIGUOUS_HISTORY"],
+  "heartbeatCompletenessIsLineageIntegrity": false,
+  "unknownEarlierObservation": "Later original ingestion remains null; original available-record clocks retained separately",
+  "partialEvidence": "Retain exact original prefixes, progress/final snapshots and interrupted bytes with explicit uncertainty",
+  "unmappedEarlierIssuerEvidence": "Do not promote a later mapped sighting as original ingestion",
+  "preparedView": "Research context and exclusions only; emits no primary events until policy review",
+  "requiredReview": "Define whether/when verified same-day stream history can support the chosen protocol; never infer global first ingestion or rewrite V1"
+}

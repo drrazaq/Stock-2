@@ -5288,20 +5288,16 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "OFFLINE_HOST_PARENT_TRANSPORT_VERIFIED_REAL_SDK_AND_PROTOCOL_BLOCKED",
-    "runtimeSourceSha": "4053619fb17bd8bfe8fecae49324bc08e7c60548",
-    "closureBoard": "docs/acceptance-closure-board.md",
-    "review": "docs/native-sec-live-integration-checklist.md",
+    "status": "D1_D2_D3_AND_ARTIFACT_WIRE_IMPLEMENTED_OFFLINE_REVIEW_PENDING",
+    "runtimeSourceSha": "dfeed025ca4650944c92ef13e631d1ba6e6c79a6",
+    "review": "docs/native-sec-feasibility-corrections.md",
     "patchManifest": "docs/validation/native-sec-live-host-manifest.json",
-    "verification": "docs/validation/native-sec-live-host-verification.json",
-    "acceptanceAdded": 0,
-    "genuineAdmissions": 0,
-    "productionChanged": false,
-    "providerRequestsAdded": 0,
+    "verification": "docs/validation/native-sec-feasibility-verification.json",
+    "closureBoard": "docs/acceptance-closure-board.md",
     "localVerification": {
       "development": {
-        "files": 216,
-        "cases": 1999,
+        "files": 219,
+        "cases": 2044,
         "skipped": 0,
         "failures": []
       },
@@ -5310,26 +5306,25 @@
         "failures": 0
       },
       "syntax": {
-        "files": 275,
+        "files": 278,
         "failures": []
       }
     },
-    "completedOffline": [
-      "Independent actual producer/capture process orchestration and heartbeat progress while quotes/uploads wait",
-      "Bounded GitHub complete-parent discovery/download/immutable recovery/staging and original cross-run lineage",
-      "Stable append-compatible reader; real client interfaces with mocked transports and strict pre-request-gate contract"
+    "D1": "COMPLETE_OFFLINE",
+    "D2": "COMPLETE_OFFLINE",
+    "D3": "COMPLETE_OFFLINE_RESEARCH_POLICY_UNAPPROVED",
+    "sdkSourceAndAdapter": "COMPLETE_OFFLINE_PUBLIC_ACCESS_SUCCEEDED",
+    "calibrationReadiness": "NOT_READY",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
+    "productionChanged": false,
+    "implementationRemaining": [
+      "Distinct production-capable live guard/binding",
+      "After protocol review only: V2 route/cache/no-request telemetry and symmetric-control implementation",
+      "Other open source materiality/normalization and execution-plan contracts remain outside this bounded package"
     ],
-    "implementationBlocked": [
-      "Pinned actual Actions artifact SDK/transitive source and compatible pre-request/cancellation shim unavailable",
-      "Separate production-capable live guard/client binding pending protocol choice and SDK implementation"
-    ],
-    "protocolDecision": "V1 normal Atom-first ordering cannot enroll; conditional earlier proof frequency unknown. Separate unapproved V2 proof-ready proposal; frozen evaluator unchanged.",
-    "nextExecutableTask": "With a supplied reviewed immutable SDK/transitive source bundle (or separately authorized bounded source acquisition), implement/audit the actual pre-request/cancellation shim; then complete the distinct live guard against the chosen protocol. Do not bind an opaque SDK or bypass rehearsal. Continue no new strategy adapters.",
-    "externalDependencies": [
-      "Official SIP/session/universe and reference-retention evidence",
-      "Authoritative current identity/industry/ZAD evidence",
-      "Separate owner/protocol review of V1 feasibility versus V2; dated reference/calibration and exact activation scope approval"
-    ],
+    "nextDecision": "Independent review of the bounded correction and revised continuity/V2 proposals; no V2 implementation/enrollment or activation approval exists.",
+    "publicSourceAcquisitionCorrection": "Earlier requirement for separate owner approval was too broad and incorrect. Official source was acquired with credential-free bounded curl, pinned and inspected, not installed/executed. No technical access blocker.",
     "passiveWatcher": {
       "lastScheduledRun": 41072889693,
       "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
@@ -7421,6 +7416,57 @@
       "postDeploymentScheduledRunObserved": false,
       "novemberDST": "PENDING_NATURAL_RUN",
       "manualDispatches": 0
+    }
+  },
+  "preD1D2D3_latestSessionCheckpoint": {
+    "status": "OFFLINE_HOST_PARENT_TRANSPORT_VERIFIED_REAL_SDK_AND_PROTOCOL_BLOCKED",
+    "runtimeSourceSha": "4053619fb17bd8bfe8fecae49324bc08e7c60548",
+    "closureBoard": "docs/acceptance-closure-board.md",
+    "review": "docs/native-sec-live-integration-checklist.md",
+    "patchManifest": "docs/validation/native-sec-live-host-manifest.json",
+    "verification": "docs/validation/native-sec-live-host-verification.json",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
+    "productionChanged": false,
+    "providerRequestsAdded": 0,
+    "localVerification": {
+      "development": {
+        "files": 216,
+        "cases": 1999,
+        "skipped": 0,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 275,
+        "failures": []
+      }
+    },
+    "completedOffline": [
+      "Independent actual producer/capture process orchestration and heartbeat progress while quotes/uploads wait",
+      "Bounded GitHub complete-parent discovery/download/immutable recovery/staging and original cross-run lineage",
+      "Stable append-compatible reader; real client interfaces with mocked transports and strict pre-request-gate contract"
+    ],
+    "implementationBlocked": [
+      "Pinned actual Actions artifact SDK/transitive source and compatible pre-request/cancellation shim unavailable",
+      "Separate production-capable live guard/client binding pending protocol choice and SDK implementation"
+    ],
+    "protocolDecision": "V1 normal Atom-first ordering cannot enroll; conditional earlier proof frequency unknown. Separate unapproved V2 proof-ready proposal; frozen evaluator unchanged.",
+    "nextExecutableTask": "With a supplied reviewed immutable SDK/transitive source bundle (or separately authorized bounded source acquisition), implement/audit the actual pre-request/cancellation shim; then complete the distinct live guard against the chosen protocol. Do not bind an opaque SDK or bypass rehearsal. Continue no new strategy adapters.",
+    "externalDependencies": [
+      "Official SIP/session/universe and reference-retention evidence",
+      "Authoritative current identity/industry/ZAD evidence",
+      "Separate owner/protocol review of V1 feasibility versus V2; dated reference/calibration and exact activation scope approval"
+    ],
+    "passiveWatcher": {
+      "lastScheduledRun": 41072889693,
+      "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "observedProduction": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+      "postDeploymentEvidence": "PENDING_NATURAL_RUN",
+      "novemberDST": "PENDING_NATURAL_RUN"
     }
   }
 }
