@@ -151,6 +151,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
   for (const id of IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     if (R.family === 'isc') { ch += preRegisterIsc(LB); continue; }
     if (R.family === 'rpo') { ch += preRegisterRpo(LB); continue; }
+    if (R.family === 'eat') { ch += preRegisterEat(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -311,4 +312,68 @@ export function preRegisterRpo(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of RPO_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-28 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Measure, event timing, ranking and data rule fixed in research-core.mjs (IDEA 4) before any run.', sources: RPO_SOURCES, hold: R.hold, note: RPO_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 5 (pre-registered 31 Oct 2026, before any run): EARNINGS ANNOUNCEMENT TIMING (advancers vs delayers) ----------------
+// Source: Johnson and So, "Time Will Tell: Information in the Timing of Scheduled Earnings News", Journal of Financial and Quantitative
+// Analysis 53(6), 2018, 2431-2464 (MIT DSpace 1721.1/122364): firms that report EARLIER than their usual (year-ago) date tend to have good
+// news and earn higher returns than firms that report LATER than usual (delayers: bad news); investors under-react to the timing signal.
+// Also Bagnoli, Kross and Watts (2002, Journal of Accounting and Economics 33(3)): late announcements carry bad news. NEW information
+// (the calendar of a company's own earnings releases, official SEC 8-K item 2.02 filings); nothing in the library uses it (E17, C-PEER1,
+// RQ-ISC-E use earnings DAYS, not their timing). Long only: buy the advancers; the delayers are an AVOID check (never a buy).
+// MEASURE (fixed now, no tuning): an EARNINGS FILING = an original form '8-K' whose items list 2.02 (Results of Operations), dated by its
+// SEC acceptance time on the New York clock (calendar date). Earnings filings of a company are grouped: a filing starts a NEW announcement
+// when it is more than 30 days after the start of the previous announcement (later 2.02s within 30 days are the same announcement:
+// corrections, slides). An announcement's DATE = its first filing. YEAR-AGO = the company's announcement whose date is closest to
+// date - 364 days (52 weeks, the same weekday) within +-30 days (none -> no event). SHIFT = date - (year-ago date + 364), calendar days
+// (negative = earlier than usual).
+//   RQ-EAT-ADV-21   BUY an ADVANCER (shift <= -7: a week or more earlier than a year before); hold 21 sessions.
+//   RQ-EAT-ADV-63   the same, hold 63 sessions.
+//   RQ-EAT-DEL-21   AVOID check: a DELAYER (shift >= +7), 21 sessions, judged with the avoid verdict (never a buy).
+// TIMING: the REACTION session of the first filing (research-core IDEA 3 reactionDate: New York acceptance before 16:00 -> that date's
+// session, or the next session if that date is not one; 16:00 or later -> the next session) = t; the stock must be liquid (system rule) on
+// t; ENTRY the open of t+1 (a pre-market release is bought one session late: conservative, and the nightly scan can act on it); EXIT the
+// close `hold` sessions later. One open trade per stock per rule. Events from 2021-10-01 (the cached 8-K lists start 2021-09-01, so the
+// first events with a year-ago match fall in late 2022; the older half is shorter, stated in the report).
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies have their 8-K list (the IDEA 3 cache), (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 5,000+ announcements with a year-ago match (fewer = the reader is broken: fix it, no verdict).
+// AVOID JUDGING (fixed now, stricter than ideas 1 and 4): value-core halfStat's edge charges the 0.8% cost to the trade but not to the
+// average stock, so ANY random set of stocks shows edge ~ -0.8% and could pass an avoid test (found 31 Oct 2026 on synthetic random
+// prices before this run). RQ-EAT-DEL-21 is therefore judged with avoidVerdict on GROSS returns against the GROSS average stock (the trade's
+// return before cost), so only a real lag counts.
+// Diagnostic only (not a filter; it uses later filings): the share of signals whose announcement had 2+ item-2.02 filings within 30 days.
+export const EAT = { gap: 30, year: 364, window: 30, adv: -7, del: 7, from: '2021-10-01' };
+export const EAT_DATA = { subs: 0.95, map: 0.85, events: 5000 };
+RULES['RQ-EAT-ADV-21'] = { kind: 'buy', hold: 21, side: 'adv', family: 'eat', name: 'Earnings reported a week or more EARLIER than a year before (advancer), hold 1 month',
+  rule: 'Buy the open of the session after the reaction session of an earnings 8-K (item 2.02) whose date is 7+ calendar days earlier than the company\'s year-ago announcement date + 364 days (year-ago = closest announcement within +-30 days of date - 364; filings within 30 days = one announcement); stock liquid on the reaction session; sell the close 21 sessions later.' };
+RULES['RQ-EAT-ADV-63'] = { kind: 'buy', hold: 63, side: 'adv', family: 'eat', name: 'Earnings reported a week or more EARLIER than a year before (advancer), hold 3 months', rule: 'As RQ-EAT-ADV-21, hold 63 sessions.' };
+RULES['RQ-EAT-DEL-21'] = { kind: 'avoid', hold: 21, side: 'del', family: 'eat', name: 'AVOID check: earnings reported a week or more LATER than a year before (delayer), 21 sessions',
+  rule: 'Information only: earnings 8-Ks dated 7+ calendar days later than the year-ago date + 364, bought the session after the reaction session, 21 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+export const EAT_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'eat');
+for (const id of EAT_IDS) { if (!IDS.includes(id)) IDS.push(id); if (RULES[id].kind === 'buy' && !BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// 8-K list [[acceptance, items]] -> announcements [{ d (New York date of the first filing), accept, n (item-2.02 filings in the group) }]
+export function eatAnnouncements(list, ny) { const f = [];
+  for (const [acc, items] of list || []) { if (!isEarnings(items)) continue; const x = ny(acc); if (!x || !x.d) continue; f.push({ d: x.d, accept: acc }); }
+  f.sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : String(a.accept) < String(b.accept) ? -1 : 1); const out = [];
+  for (const z of f) { const last = out[out.length - 1]; if (last && daysBetween(last.d, z.d) <= EAT.gap) { last.n++; continue; } out.push({ d: z.d, accept: z.accept, n: 1 }); }
+  return out; }
+// announcements -> timing events [{ d, accept, prev, shift, n, side }] (each announcement with a year-ago match)
+export function eatEvents(anns) { const out = [];
+  for (const a of anns || []) { const target = addDays(a.d, -EAT.year); let best = null;
+    for (const b of anns) { if (b === a || b.d >= a.d) continue; const gap = Math.abs(daysBetween(b.d, target)); if (gap > EAT.window) continue;
+      if (!best || gap < Math.abs(daysBetween(best.d, target))) best = b; }
+    if (!best) continue; const shift = daysBetween(addDays(best.d, EAT.year), a.d);
+    out.push({ d: a.d, accept: a.accept, prev: best.d, shift, n: a.n, side: shift <= EAT.adv ? 'adv' : shift >= EAT.del ? 'del' : null }); }
+  return out; }
+export function eatDataRule({ ciks, subsOk, liqMonths, liqMapped, events }) { const r = { subs: ciks ? subsOk / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.subs >= EAT_DATA.subs)) why.push('8-K lists read ' + (r.subs * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= EAT_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= EAT_DATA.events)) why.push('announcements with a year-ago match ' + events + ' (5,000 needed: reader check)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const EAT_SOURCES = ['https://doi.org/10.1017/S0022109018000492', 'https://dspace.mit.edu/handle/1721.1/122364', 'https://doi.org/10.1016/S0165-4101(02)00048-6'];
+const EAT_NOTE = 'Daily researcher 2026-10-31: Johnson and So (2018, JFQA) "Time Will Tell": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company\'s own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026.';
+export function preRegisterEat(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of EAT_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-31 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.', sources: EAT_SOURCES, hold: R.hold, note: EAT_NOTE }); ch++; }
   return ch; }

@@ -34,7 +34,7 @@ FILED BY:
 
 test('registry: two tender rules beside the three lazy rules; spreads 3-15% and >0-15%; max hold 120', () => {
   assert.deepEqual(LAZY_IDS, ['RQ-LAZY-63', 'RQ-LAZY-126', 'RQ-LAZY-CHG63']); assert.deepEqual(TENDER_IDS, ['RQ-TENDER-3-15', 'RQ-TENDER-ALL']);
-  assert.equal(IDS.length, 12);   // + 4 info-shock rules (idea 3, 27 Oct) + 3 backlog rules (idea 4, 28 Oct) for (const id of TENDER_IDS) { assert.equal(RULES[id].kind, 'buy'); assert.equal(RULES[id].hold, 120); }
+  assert.equal(IDS.length, 15);   // + 4 info-shock rules (idea 3, 27 Oct) + 3 backlog rules (idea 4, 28 Oct) + 3 earnings timing (idea 5, 31 Oct) for (const id of TENDER_IDS) { assert.equal(RULES[id].kind, 'buy'); assert.equal(RULES[id].hold, 120); }
 });
 
 test('submission: subject company CIK (not the filer), NY acceptance date, only SC TO / EX-99 documents kept', () => {
@@ -90,6 +90,6 @@ test('data rule: 95% index days, 95% filings read, 50% offer price found among p
 
 test('library: the tender entries are added once with their own note and sources; existing lazy entries untouched', () => {
   const LB = { strategies: [{ id: 'RQ-LAZY-63', status: 'tested: rejected' }, { id: 'C-SPEC1', status: 'queued (Agent C)' }] };
-  assert.equal(preRegister(LB), 11); assert.equal(preRegister(LB), 0); assert.equal(LB.strategies[0].status, 'tested: rejected');   // 2 lazy + 2 tender + 4 info-shock + 3 backlog
+  assert.equal(preRegister(LB), 14); assert.equal(preRegister(LB), 0); assert.equal(LB.strategies[0].status, 'tested: rejected');   // 2 lazy + 2 tender + 4 info-shock + 3 backlog + 3 earnings timing
   const e = LB.strategies.find(x => x.id === 'RQ-TENDER-3-15'); assert.match(e.status, /pre-registered 2026-10-26/); assert.match(e.note, /C-SPEC1/); assert.ok(e.sources.length >= 2); assert.equal(e.hold, 120);
 });

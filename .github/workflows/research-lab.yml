@@ -7,7 +7,8 @@ name: Research lab
 # pre-registered data rule passes. Idea 2 (26 Oct 2026): CASH TENDER OFFERS (RQ-TENDER-*; SEC daily index + Schedule TO-T filings, cached in
 # research-cache/to). Idea 3 (27 Oct 2026): INFORMATION-SHOCK CONTINUATION (RQ-ISC-*; C-ISC1, Jiang and Zhu 2017): 8-K lists from
 # data.sec.gov submissions, cached in research-cache/isc. Idea 4 (28 Oct 2026): ORDER BACKLOG GROWTH (RQ-RPO-*; RevenueRemainingPerformanceObligation from
-# the SEC bulk company facts file, read once into research-cache/rpo.json.gz; paper via companyconcept). The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
+# the SEC bulk company facts file, read once into research-cache/rpo.json.gz; paper via companyconcept). Idea 5 (31 Oct 2026): EARNINGS ANNOUNCEMENT
+# TIMING (RQ-EAT-*; Johnson and So 2018): item-2.02 8-K dates vs the year-ago date, from the idea-3 8-K lists in research-cache/isc; paper via fresh submissions. The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
 # research-cache is saved. Commits only its own output files and its own library entries. Never places an order.
 # Start by hand: change run-research-now.txt (or run the workflow).
 on:

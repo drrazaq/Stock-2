@@ -31996,6 +31996,54 @@
     ],
     "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
    }
+  },
+  {
+   "id": "RQ-EAT-ADV-21",
+   "family": "Daily researcher (RQ)",
+   "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 1 month",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-31 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the open of the session after the reaction session of an earnings 8-K (item 2.02) whose date is 7+ calendar days earlier than the company's year-ago announcement date + 364 days (year-ago = closest announcement within +-30 days of date - 364; filings within 30 days = one announcement); stock liquid on the reaction session; sell the close 21 sessions later. Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.",
+   "sources": [
+    "https://doi.org/10.1017/S0022109018000492",
+    "https://dspace.mit.edu/handle/1721.1/122364",
+    "https://doi.org/10.1016/S0165-4101(02)00048-6"
+   ],
+   "hold": 21,
+   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026."
+  },
+  {
+   "id": "RQ-EAT-ADV-63",
+   "family": "Daily researcher (RQ)",
+   "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 3 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-10-31 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-EAT-ADV-21, hold 63 sessions. Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.",
+   "sources": [
+    "https://doi.org/10.1017/S0022109018000492",
+    "https://dspace.mit.edu/handle/1721.1/122364",
+    "https://doi.org/10.1016/S0165-4101(02)00048-6"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026."
+  },
+  {
+   "id": "RQ-EAT-DEL-21",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: earnings reported a week or more LATER than a year before (delayer), 21 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-10-31 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: earnings 8-Ks dated 7+ calendar days later than the year-ago date + 364, bought the session after the reaction session, 21 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.",
+   "sources": [
+    "https://doi.org/10.1017/S0022109018000492",
+    "https://dspace.mit.edu/handle/1721.1/122364",
+    "https://doi.org/10.1016/S0165-4101(02)00048-6"
+   ],
+   "hold": 21,
+   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026."
   }
  ]
 }
