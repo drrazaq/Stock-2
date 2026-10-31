@@ -1,0 +1,76 @@
+{
+  "status": "LOCAL_CHECKS_RECONCILED_EXACT_COMMIT_CI_REQUIRED",
+  "runtimeSourceSha": "2d5119b2edf1b2023cf2bb86f5bff45fab9378b4",
+  "basisPublishedHead": "5159ce229edd4eff6443d6a5a293d4578bfedd6d",
+  "basisCI": {
+    "checksPassed": 5
+  },
+  "nativeFocused": {
+    "cases": 9,
+    "failures": 0
+  },
+  "shadowPatchChecks": {
+    "cases": 2,
+    "failures": 0,
+    "applied": false,
+    "executed": false
+  },
+  "fullNodeInitial": {
+    "files": 205,
+    "cases": 1916,
+    "failures": [
+      "test/leader-dip.test.mjs"
+    ]
+  },
+  "resolvedFailureRerun": {
+    "file": "test/leader-dip.test.mjs",
+    "cases": 14,
+    "failures": 0,
+    "scope": "Fixture-only correction for closed market days;10-session boundary/11-session expiry now asserted; production strategy code and gates unchanged"
+  },
+  "outstandingLocalFailures": [],
+  "python": {
+    "cases": 30,
+    "failures": 0
+  },
+  "static": {
+    "modules": 268,
+    "failures": [],
+    "proposedYamlParse": "PASS"
+  },
+  "producerAudit": {
+    "atomUpdatedIsVerifiedAcceptance": false,
+    "originalBytesPreviouslyRetained": false,
+    "originalReceiptClocksPreviouslyRetained": false,
+    "newAdapterImplemented": true,
+    "readerConnectedToGuardedCaller": true,
+    "shadowIntegrationPreparedNotInstalled": true,
+    "acceptanceResponseHookImplemented": false,
+    "liveHostBindingsImplemented": false,
+    "actualAtomOnlyAdmissions": 0,
+    "syntheticResolvedContractCases": 1,
+    "genuineAdmissions": 0
+  },
+  "shadowPatchSha256": "14ce5f796c22bd854eed7dbe230ce6ec9eada3e4e7d399db6afcd412e3e7b713",
+  "productionBase": "d710db7e5a2f8bfcff84aa4aa124f3cc4e1d2a6f",
+  "budget": {
+    "reference": 18,
+    "capture": 41,
+    "combinedNewSourceHTTP": 59,
+    "shadowAdditional": 0,
+    "separateAuthorizationsRequired": true
+  },
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "added": 0
+  },
+  "preservedUnverifiedCheckpoint": "fe901d7e8d9069987d7a494da84d63845adb817f",
+  "historicalHandoff": "docs/validation/native-sec-unverified-handoff.json",
+  "productionChanged": false,
+  "credentialsUsed": false,
+  "newCollection": false,
+  "messagesSent": false,
+  "remainingImplementation": "docs/validation/paper-capture-live-scope.json",
+  "exactHeadCI": "Verify published SHA; no historical check result is borrowed"
+}

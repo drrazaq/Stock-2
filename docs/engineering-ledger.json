@@ -5312,7 +5312,36 @@
     "actualAtomOnlyAdmissions": 0,
     "acceptanceAdded": 0,
     "productionChanged": false,
-    "nextExecutableTask": "Independent review of exact5-file shadow patch and separate inactive live implementation scope; no installation/dispatch/source collection. Preserve zero admissions and propose any later activation only after review."
+    "nextExecutableTask": "Independent review of exact5-file shadow patch and separate inactive live implementation scope; no installation/dispatch/source collection. Preserve zero admissions and propose any later activation only after review.",
+    "runtimeSourceSha": "2d5119b2edf1b2023cf2bb86f5bff45fab9378b4",
+    "verification": "docs/validation/native-sec-integration-verification.json",
+    "nativeFocused": {
+      "cases": 9,
+      "failures": 0
+    },
+    "localFullNodeInitial": {
+      "files": 205,
+      "cases": 1916,
+      "failures": [
+        "test/leader-dip.test.mjs"
+      ]
+    },
+    "resolvedFixtureRerun": {
+      "file": "test/leader-dip.test.mjs",
+      "cases": 14,
+      "failures": 0,
+      "scope": "Fixture-only correction for closed market days;10-session boundary/11-session expiry now asserted; production strategy code and gates unchanged"
+    },
+    "outstandingLocalFailures": [],
+    "python": {
+      "cases": 30,
+      "failures": 0
+    },
+    "static": {
+      "modules": 268,
+      "failures": [],
+      "proposedYamlParse": "PASS"
+    }
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
