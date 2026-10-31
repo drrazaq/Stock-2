@@ -9,7 +9,7 @@ import {runCalibration} from './prospective-capture-transport.mjs';
 import {validateReferenceBundle} from './paper-capture-references.mjs';
 import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
 import {openCaptureZip} from './capture-artifact.mjs';
-export const WRAPPER_FILES=Object.freeze(['capture-json.mjs','capture-artifact.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
+export const WRAPPER_FILES=Object.freeze(['native-sec-events.mjs','edgar-feed.mjs','capture-json.mjs','capture-artifact.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
 export const FIXED_UNIVERSE=Object.freeze(['AMD','INTC','NVDA','AMAT','LRCX','KLAC']);
 export const WRAPPER_CAPS=Object.freeze({uploads:41,sealedBytes:160*1024*1024,archiveBytes:164*1024*1024,historyRows:100,referenceBytes:2*1024*1024});
 export const APPROVAL_LIMITS=Object.freeze({providerAttempts:41,perMinute:2,inFlight:1,responseBytes:65536,totalResponseBytes:8388608,frames:41,symbols:6,uploadAttempts:41,sealedBytes:167772160,archiveBytes:171966464,retentionDays:3});
@@ -59,7 +59,7 @@ export async function runGuardedCapture({root,reviewRoot,approvalFile,referenceF
  const receipts=[],pending=[],eventBatches=[];let sealedBytes=0,archiveBytes=0,status='ERROR',failure='NONE';
  const a=guard.approval;
  const report=await runCalibration({plan:a.plan,now,wait,metadata:guard.references.metadata,
-  readEvents:async at=>{guard.revalidate();const raw=await bounded(ports.events({at,maxBytes:131072,readOnly:true}));ok(typeof raw==='string'&&Buffer.byteLength(raw)<=131072,'EVENT_SOURCE_BUDGET');const doc=captureJson(raw);ok(Array.isArray(doc.events)&&doc.events.length<=20,'EVENT_SOURCE_SCHEMA');eventBatches.push({at,raw,sha256:sha(raw)});return doc.events;},
+  readEvents:async at=>{guard.revalidate();const raw=await bounded(ports.events({at,maxBytes:131072,readOnly:true,identities:guard.references.metadata}));ok(typeof raw==='string'&&Buffer.byteLength(raw)<=131072,'EVENT_SOURCE_BUDGET');const doc=captureJson(raw);ok(Array.isArray(doc.events)&&doc.events.length<=20,'EVENT_SOURCE_SCHEMA');eventBatches.push({at,raw,sha256:sha(raw)});return doc.events;},
   transport:async(url,options)=>{guard.revalidate();return ports.provider(url,options);},
   persist:async state=>{try{
    const sequence=state.frames.length-1,name='checkpoint-'+String(sequence).padStart(3,'0')+'.enc';

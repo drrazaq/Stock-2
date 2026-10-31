@@ -1,0 +1,34 @@
+{
+  "kind": "INACTIVE_NATIVE_SEC_SHADOW_PATCH_V1",
+  "productionBase": "d710db7e5a2f8bfcff84aa4aa124f3cc4e1d2a6f",
+  "patchSha256": "14ce5f796c22bd854eed7dbe230ce6ec9eada3e4e7d399db6afcd412e3e7b713",
+  "files": [
+    ".github/workflows/ignition.yml",
+    "capture-json.mjs",
+    "ignition-watch.mjs",
+    "native-sec-events.mjs",
+    "native-sec-shadow.mjs"
+  ],
+  "before": {
+    "ignition-watch.mjs": "315a0ec797a17cf27e14e135bc9c0eb2e7b76973bb2480a03b6393a29ffe52d4",
+    ".github/workflows/ignition.yml": "b5ebab71b7f6d33ceb4d41e965fe8247db81e610e6016b35272095fa87b43909"
+  },
+  "after": {
+    "ignition-watch.mjs": "08aea59fbf8f2d97acc99114c4dbd0c5297afc760fb09be6e51eb58a59c0411f",
+    ".github/workflows/ignition.yml": "ad8c7c26afd143ddbd03b0107932c1fdc138287cdff53a95037b2ede63a57c4c",
+    "native-sec-events.mjs": "59a3b64c454bc9715850ede44d775916701c1d02fcd4cf58cf080f2c7c2436fa",
+    "native-sec-shadow.mjs": "06b42e80a48a076e92656ec1522aa6cb5849892b556dd067b00bf55e05007d8d",
+    "capture-json.mjs": "07c28d7aba206183953e1ac034746555ced6cf02492fd67af544d943d6040476"
+  },
+  "unchangedDependencies": {
+    "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17"
+  },
+  "providerRequestsAdded": 0,
+  "acceptanceProofFetchesAdded": 0,
+  "messagesAdded": 0,
+  "scoringFormulaChanges": 0,
+  "enabledOnlyAfterPatchApproval": true,
+  "artifactPath": "runtime/native-sec-events/",
+  "artifactRetentionDays": 7,
+  "productionChanged": false
+}

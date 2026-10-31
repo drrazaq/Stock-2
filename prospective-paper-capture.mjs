@@ -87,6 +87,7 @@ export function finishCapture(s){
    if(!e||typeof e!=='object'||Array.isArray(e))reason='MALFORMED_DISCOVERY_EVENT';
    else if(conflicts.has(e.eventId))reason='CONFLICTING_EVENT_ID';
    else if(!p.universe.includes(e.symbol))reason='OUTSIDE_FIXED_UNIVERSE';
+   else if(e.nativeEvidenceStatus!==undefined&&e.nativeEvidenceStatus!=='COMPLETE_ORIGINAL_EVIDENCE')reason='NATIVE_EVENT_EVIDENCE_UNRESOLVED';
    else if(e.lane!=='SEC_EVENT'||e.sourceNamespace!=='SEC'||typeof e.sourceId!=='string'||!/^\d{10}-\d{2}-\d{6}$/.test(e.sourceId)||!hash(e.sourceRevisionId))reason='UNVERIFIED_SEC_SOURCE_REVISION';
    else if(!iso(e.sourceAt)||!iso(e.firstIngestedAt)||!iso(e.observedAt)||Date.parse(e.sourceAt)>Date.parse(e.firstIngestedAt)||Date.parse(e.firstIngestedAt)>Date.parse(e.observedAt)||Date.parse(e.observedAt)>Date.parse(f.sourceHandoffAt||f.at)||Date.parse(e.observedAt)<Date.parse(p.start))reason='NONCONTEMPORANEOUS_EVENT_CLOCKS';
    else if(Date.parse(e.observedAt)>Date.parse(p.enrollmentEnd))reason='ENROLLMENT_CLOSED_RETAINED_CONTEXT';
@@ -97,6 +98,7 @@ export function finishCapture(s){
     seenEvents.set(e.eventId,sha(JSON.stringify(e)));
     const m=metadata.filter(m=>m.symbol===e.symbol&&Date.parse(m.asOf)<=Date.parse(e.observedAt)).at(-1);
     if(!m||m.instrumentType!=='CS'||m.identityAudit!=='DOCUMENTED_SOURCE_REVIEW'||m.zad!=='PASS'||!m.securityId||!m.industry||!hash(m.referenceSha256))reason='IDENTITY_INDUSTRY_OR_ZAD_UNKNOWN';
+    else if(e.nativeEvidenceStatus&&(e.issuerCik!==m.issuerCik||e.securityId!==m.securityId))reason='NATIVE_IDENTITY_BINDING_MISMATCH';
     else if(seenSecurity.has(m.securityId))reason='ALREADY_ENROLLED_SECURITY_DAY';
     else {seenSecurity.add(m.securityId);events.push(e);}
    }
