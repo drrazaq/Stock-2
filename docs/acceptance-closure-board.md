@@ -1,3 +1,5 @@
+> **Current bounded follow-up:** [failure-path evidence](native-sec-feasibility-corrections.md#verified-failure-path-follow-up) advances capture cleanup and source-history integrity. All16rows remain OPEN; no substep is counted as a closure.
+
 # Open acceptance closure board —31 October2026
 
 Latest bounded D1/D2/D3 and SDK correction: [feasibility report](native-sec-feasibility-corrections.md). Mechanisms verified offline; no acceptance closure or activation. Public source acquisition succeeded; prior permission/SDK blockers are superseded. V1 ordering and proposed V2/continuity policy still block readiness.

@@ -1,11 +1,11 @@
 {
   "kind": "NATIVE_SEC_D1_D2_D3_SDK_OFFLINE_VERIFICATION",
-  "runtimeSourceSha": "dfeed025ca4650944c92ef13e631d1ba6e6c79a6",
-  "baselinePreserved": "d99f46c8a8c5826e5c243814d410400f6b78cd77",
+  "runtimeSourceSha": "686b685faa721198141894ab92665a0e28234eb9",
+  "baselinePreserved": "f3b96564fd2c7bab895cd301d2b410bc31770888",
   "baselineCI": "ALL_5_PASS",
   "development": {
     "files": 219,
-    "cases": 2044,
+    "cases": 2053,
     "skipped": 0,
     "failures": []
   },
@@ -18,10 +18,10 @@
     "failures": []
   },
   "focused": {
-    "fullScheduleClock": 10,
-    "sameDayHistoryAndPartialPublication": 12,
+    "fullScheduleClock": 13,
+    "sameDayHistoryAndPartialPublication": 17,
     "artifactWire": 20,
-    "actualHost": 6,
+    "actualHost": 7,
     "parentCompatibilityAndWire": 20,
     "guardedRecoveryIncludingLargeEnvelope": 15
   },
@@ -35,20 +35,21 @@
   "continuityPolicy": "UNAPPROVED_RESEARCH_VIEW_ONLY",
   "calibration": "NOT_READY",
   "logSha256": {
-    "development/node.log": "f940adf57fcedf1a580b444dcd2326fe012eb8fbf4b482cd870eadb19db68f69",
-    "schedule.log": "7ff6dcfdf334adf65894dc414d9f0ff43cb45e32d7e7ea4b3cb96a7bb61cdd32",
-    "lineage-history.log": "d30ba205a2ad5faa13416fc0f517551fdde72406c2085162e3050cbc37cee106",
-    "wire-test-final.log": "3fa5388d06d849104e6bd1ac745d538b6dc24d449134f68ce6ea79c15fad7cd3",
-    "host-d1-d3.log": "e7957ca90d0204be163536ac3aee756b97b9dba8be8c4e0f17ea3df3257f7843",
-    "parent-wire-test.log": "bcb3a35fdcb49a9229cd9a4ddd23eeb7d778f4fead3e4a163cd89b055f6810a3",
-    "wrapper-large-recovery.log": "97bedbd9fd3c6e1843a366a2823e7a9d9a58291931bfc9e9c6c684d203272025",
-    "python.log": "4003cdda957147405c1ca4ae9603a79699cdea3ca61d7f0053039eee8bfb99f7"
+    "development/node.log": "4ef061a23cc3fc787391a343b9f8c6f3e32fa40fdfd226dcc024edac43f58b85",
+    "schedule.log": "f3112cdf9587c506eca53ddc17d94465782a621357bac33212f29f3d37163259",
+    "history-recheck.log": "fa3a1f955b973902326495e11af373e13b7ea563fd724275a428492c2b3a9ca2",
+    "host-recheck.log": "701d4a761b9024d3b9ad2eaf180399d5e7171bedd41fac1fe2bc563b4a3b2787",
+    "python.log": "c4b5c707a9574ef18811a1637659f20cbd01957eae198cb0dc92cb4019fb0b84",
+    "static.json": "ba91b63a556f65fe421c8e55f9bc06bdcdf2161511ab50ab8510150f737a6e7c",
+    "package-pin-recheck.log": "711e049ebff8b639592b01563c743785b8d53be79374a10225b44ed6f07088bc",
+    "package-schedule.log": "e6cc2587dd6813559234548b936b6c7fb136f4caf98cf35c41f2d54e6a72509f",
+    "package-history.log": "d8171712a592fc1e70674fb25a2695c8283f9e8e7041e4d4a9e670f2f072b738"
   },
   "sourceArchivePins": {
     "actionsArtifact631": "3917e287b36403f9fe7cda27a56e84f83be2ad5a8602d8d9e0bdc713645d1a91",
     "azureStorageBlob12310": "182fc54931d78b2b14580060cb716670de45f7a2716c6c9c3c1ab206ec00e597"
   },
-  "patchSha256": "253323a1dd37a7fc063ec93b0590e7b8629ecd8460a5518a0c78a942526d321b",
+  "patchSha256": "fd3cec141a081829a976eb6dbd7cce70cf4d0d7a66f1aba73f9d759cf4789c41",
   "installed": false,
   "liveBindings": false,
   "providerCalls": 0,
@@ -57,5 +58,30 @@
   "genuineAdmissions": 0,
   "acceptanceAdded": 0,
   "accepted": 24,
-  "total": 40
+  "total": 40,
+  "priorVerificationPreservedInCommit": "f3b96564fd2c7bab895cd301d2b410bc31770888",
+  "developmentInitialRun": {
+    "files": 219,
+    "cases": 2053,
+    "skipped": 0,
+    "failures": [
+      "test/prospective-capture-package.test.mjs"
+    ]
+  },
+  "initialFailureResolution": {
+    "file": "test/prospective-capture-package.test.mjs",
+    "cause": "Inactive proposed-workflow source pin changed without refreshing rehearsalWorkflowSha256",
+    "repair": "Refresh exact proposed YAML SHA256; no assertions or runtime changed",
+    "recheck": "1/1_PASS",
+    "finalFullSuite": "EXACT_COMMIT_CI_REQUIRED"
+  },
+  "negativeControls": "docs/validation/native-sec-failure-followup-negative-controls.json",
+  "patchVerification": {
+    "base": "d99f46c8a8c5826e5c243814d410400f6b78cd77",
+    "source": "686b685faa721198141894ab92665a0e28234eb9",
+    "patchSha256": "fd3cec141a081829a976eb6dbd7cce70cf4d0d7a66f1aba73f9d759cf4789c41",
+    "exactPatchFilesVerified": 26,
+    "runtimeHashesVerified": 23,
+    "productionFilesChanged": false
+  }
 }

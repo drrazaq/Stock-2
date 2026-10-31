@@ -1,14 +1,14 @@
 {
   "kind": "INACTIVE_NATIVE_SEC_FEASIBILITY_CORRECTION_D1_D3",
   "developmentBase": "d99f46c8a8c5826e5c243814d410400f6b78cd77",
-  "runtimeSourceSha": "dfeed025ca4650944c92ef13e631d1ba6e6c79a6",
-  "patchPath": "docs/validation/native-sec-feasibility-correction.patch",
-  "patchSha256": "253323a1dd37a7fc063ec93b0590e7b8629ecd8460a5518a0c78a942526d321b",
+  "runtimeSourceSha": "686b685faa721198141894ab92665a0e28234eb9",
+  "patchPath": "docs/validation/native-sec-feasibility-correction-v2.patch",
+  "patchSha256": "fd3cec141a081829a976eb6dbd7cce70cf4d0d7a66f1aba73f9d759cf4789c41",
   "patchTarget": "DEVELOPMENT_ONLY_NOT_A_PRODUCTION_DEPLOYMENT_PATCH",
   "productionBaseForActualWatcherTests": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
   "inactiveProducerTeePatchSha256": "0afd4a1cf621725af086d0a10d242f633c93b74c3d14882de626454a43c1dabd",
   "codeFiles": {
-    "native-sec-colocated-host.mjs": "76b783d1f5bae6cb1952d4274135b3b781ca86ab99f25ee39362a566808da6d2",
+    "native-sec-colocated-host.mjs": "1e96b29b21908e3623b6086497c598735308e468e032e993620b376636e88b48",
     "native-sec-colocated-prefix.mjs": "b4df1b5479a2ca7f63ced71ebc7f0e9c7dd99b66e2ee0ae42c3689bc8819239e",
     "native-sec-parent-client.mjs": "2441c24cc8e79215e63beb10c15324eb4356f7b237551e47c9efdb983a908234",
     "native-sec-bounded-clients.mjs": "d11a0f944d1f36aa812f35834abe48cb739216a7217c22b3466fc082ce1d5a26",
@@ -29,27 +29,28 @@
     "tools/run-paper-capture-workflow.mjs": "f1dc0d20398ada2bce2c388631d50ee79f29329f42bae9ed5017ee65c969f473",
     "tools/recover-paper-capture.mjs": "38fecfa78760dbcd087c706a8066e4f958860a02a859e5872f7e9d59b42fdcae",
     "artifact-wire-client.mjs": "d075eab560fb641fc53ddea48fa8b6d313b7e1ffdb78d0e27bbbd4c0d4eac3cd",
-    "native-sec-host-schedule.mjs": "b6c15c68b8766aa46288750e7022758d31e349bf14a1981321a7b5fd62fd01e9",
-    "native-sec-lineage-history.mjs": "8a00696e9c0a2290b37c27715a5e8faedef3b10505a7bc99c64c38b907f6db87"
+    "native-sec-host-schedule.mjs": "b994a349e143237dc72accbe08d6c76c8fcff6afdbecc2d6b2ba9ec18634a868",
+    "native-sec-lineage-history.mjs": "b17cc8014abe24740107e9ca91b7b3e25442118ba47d69476769a199047299d7"
   },
   "reviewFiles": {
-    "test/native-sec-colocated-host.test.mjs": "0deb678819a8cb4bd8a8c448c19d1da4a9c359c6c247bdb00bd64c02bd5d106d",
+    "test/native-sec-colocated-host.test.mjs": "efc5a29704b501be8d624659d64737d4062b87323f4865e823d62dd178a659f4",
     "test/native-sec-colocated-prefix.test.mjs": "be9de06ed8eb91509e8c742d6d55dc48b40bb13ed9249904faa3877e1cd91ee1",
     "test/native-sec-parent-client.test.mjs": "5b78b26f0a95e6f47a7f02de78c90f2a4020e204a1d3e783906c3a5c283fb415",
     "test/native-sec-bounded-clients.test.mjs": "8290adbbda2eee6b3fc928f0e46e651cc4264aa0adb6e6d32cf6a4ef94f9a42a",
     "test/native-sec-host-guards.test.mjs": "82f59cdbf59a6fcf0298e9b4581288763669112ecb62ca5ee6e400f2d5b0b215",
     "test/native-sec-producer-fixture.mjs": "81b749f1cc632ec5739074721387fdf91a54a08c3b0cdadbd2f60c50dc7c33dc",
-    "docs/native-sec-live-integration-checklist.md": "84fcc8a1dc86f48e5cd4f4d12f0ea506af5e05fe0ac625218fdafec23ecd62a2",
+    "docs/native-sec-live-integration-checklist.md": "df6ffc4e181f3a35038de52f018d0b3e287597ca5c75a8cd53db721994f3fab7",
     "docs/native-sec-acceptance-ordering.md": "8a83c25e11d259480505a8a22d6f50e4b33709a469f5b1ee3d0d59539604096a",
     "docs/validation/sec-proof-ready-v2.proposal.json": "15af75c13f04299c0e2a883e21496e886836a8ae5b43e79c366a7ff002b9b418",
     "test/artifact-wire-client.test.mjs": "996c168f3503dfcb2e59989b273fa1059c9a96b721cbd284cac19dbf5b6081db",
     "test/artifact-wire-fixture.mjs": "cd06ed1598f1c70583a60637ea31d359e2ea76f7a49470b40c604351a11a4e6b",
-    "test/native-sec-schedule.test.mjs": "c781683383dcd6afeba2c2874c4bb5a88434b361bb1cbc755d51b53f02153a0b",
-    "test/native-sec-lineage-history.test.mjs": "eec2d1f59fc23162615f5c4d3ad5c529be55d382340b796bb47afd849ffe6db8",
+    "test/native-sec-schedule.test.mjs": "fae241f2a85d0ec5f7fb1e521e31f66bfc1e09734dee4b42eb853652dfdbf7a9",
+    "test/native-sec-lineage-history.test.mjs": "d49abafb8d267b8fb85d4d4cb1719ed01f13b915d400c63ea8fc9917bff3be87",
     "test/paper-capture-wrapper.test.mjs": "2ac2e0ec2ceb19c82bd3a673f54078f1f679cc26fcb46d211cc7243acbc5c2d3",
-    "docs/native-sec-feasibility-corrections.md": "1496f49143f3a273fb5e06a077386b1acea33372736a12a0f36d3c7e4e855aab",
+    "docs/native-sec-feasibility-corrections.md": "5692e59efc01f164184e5f76b62dec59ec1031216d3c8aea9c67b479c2424681",
     "docs/validation/sec-continuity-admission-policy.proposal.json": "4918ad714da49174e5bc8f7ae3f3b3ed020d6111a0df7890ba2d9926d577f93b",
-    "docs/validation/artifact-wire-source-basis.json": "95ffc4d36457bb6074fe032f484755914df8febacbb7f9b008e8cc2f25c357f2"
+    "docs/validation/artifact-wire-source-basis.json": "95ffc4d36457bb6074fe032f484755914df8febacbb7f9b008e8cc2f25c357f2",
+    "docs/validation/native-sec-failure-followup-negative-controls.json": "0476b666bb6af60a0754cea542bc6f3532888f584109492a3be10c386ffbcbf9"
   },
   "installed": false,
   "liveCaptureActivated": false,
@@ -74,7 +75,7 @@
     "retries": 0,
     "liveServiceValidation": "NOT_AUTHORIZED_NOT_PERFORMED"
   },
-  "remainingLiveGuardImplementation": "Separate production-capable live guard/binding remains unimplemented; protocol/continuity policy must be reviewed before corresponding telemetry/control implementation or activation.",
+  "remainingLiveGuardImplementation": "Distinct production-capable live guard/binding and V2 route/control telemetry remain engineering work; offline preparation authorized, protocol adoption/activation separately gated.",
   "budgets": {
     "additionalReferenceRequests": 18,
     "additionalCaptureRequests": 41,
@@ -100,11 +101,18 @@
     "maxProducerStartupLeadMs": 14400000,
     "historyMaxWorkflowRuns": 40,
     "historyMaxEarlierRuns": 4,
-    "historyMaxJobsPerRun": 100
+    "historyMaxJobsPerRun": 100,
+    "captureCloseAcknowledgmentMaxMs": 2000
   },
   "parentPolicy": "Explicit same-day NONE/EARLIER/UNKNOWN with complete bounded run/job history; heartbeat coverage separate; partial evidence retained",
   "parentProvenance": "Available same-day prefixes only; unknown/partial capture never promotes later ingestion; no global history",
   "continuityAdmissionPolicyApproved": false,
   "primaryEventsFromNewLineageView": 0,
-  "calibrationReadiness": "NOT_READY_NORMAL_ATOM_FIRST_V1_PATH_INELIGIBLE"
+  "calibrationReadiness": "NOT_READY_NORMAL_ATOM_FIRST_V1_PATH_INELIGIBLE",
+  "priorVerifiedPackage": {
+    "commit": "f3b96564fd2c7bab895cd301d2b410bc31770888",
+    "patchPath": "docs/validation/native-sec-feasibility-correction.patch",
+    "patchSha256": "253323a1dd37a7fc063ec93b0590e7b8629ecd8460a5518a0c78a942526d321b",
+    "ci": "ALL_5_PASS"
+  }
 }

@@ -4994,11 +4994,15 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "sourceSha": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a",
-    "ciChecksPassed": 5,
-    "status": "WATCHER_V5_VERIFIED_NOT_DEPLOYED_REVIEW_REQUIRED",
-    "evidence": "docs/validation/watcher-f1-f2.json",
-    "acceptanceAdded": 0
+    "sourceSha": "686b685faa721198141894ab92665a0e28234eb9",
+    "status": "NATIVE_SEC_D1_D2_D3_FAILURE_PATHS_VERIFIED_OFFLINE_NOT_ACTIVATED",
+    "evidence": "docs/validation/native-sec-feasibility-verification.json",
+    "priorExactCommitCI": {
+      "sha": "f3b96564fd2c7bab895cd301d2b410bc31770888",
+      "checksPassed": 5
+    },
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0
   },
   "revisionIdentityMission": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5288,8 +5292,8 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "D1_D2_D3_AND_ARTIFACT_WIRE_IMPLEMENTED_OFFLINE_REVIEW_PENDING",
-    "runtimeSourceSha": "dfeed025ca4650944c92ef13e631d1ba6e6c79a6",
+    "status": "D1_D2_D3_FAILURE_PATHS_OFFLINE_VERIFIED_INACTIVE_REVIEW_PENDING",
+    "runtimeSourceSha": "686b685faa721198141894ab92665a0e28234eb9",
     "review": "docs/native-sec-feasibility-corrections.md",
     "patchManifest": "docs/validation/native-sec-live-host-manifest.json",
     "verification": "docs/validation/native-sec-feasibility-verification.json",
@@ -5297,10 +5301,11 @@
     "localVerification": {
       "development": {
         "files": 219,
-        "cases": 2044,
+        "cases": 2053,
         "skipped": 0,
         "failures": []
       },
+      "initialRunAndResolution": "docs/validation/native-sec-feasibility-verification.json",
       "python": {
         "tests": 30,
         "failures": 0
@@ -5320,10 +5325,10 @@
     "productionChanged": false,
     "implementationRemaining": [
       "Distinct production-capable live guard/binding",
-      "After protocol review only: V2 route/cache/no-request telemetry and symmetric-control implementation",
-      "Other open source materiality/normalization and execution-plan contracts remain outside this bounded package"
+      "V2 route/cache/no-request telemetry and symmetric-control implementation, inactive and subject to protocol review before adoption",
+      "Other source materiality/normalization and execution-plan contracts outside this bounded correction"
     ],
-    "nextDecision": "Independent review of the bounded correction and revised continuity/V2 proposals; no V2 implementation/enrollment or activation approval exists.",
+    "nextDecision": "Review revised V2/continuity policies; no protocol adoption or live activation authorized. Routine offline preparation remains authorized.",
     "publicSourceAcquisitionCorrection": "Earlier requirement for separate owner approval was too broad and incorrect. Official source was acquired with credential-free bounded curl, pinned and inspected, not installed/executed. No technical access blocker.",
     "passiveWatcher": {
       "lastScheduledRun": 41072889693,
@@ -5331,6 +5336,14 @@
       "observedProduction": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
       "postDeploymentEvidence": "PENDING_NATURAL_RUN",
       "novemberDST": "PENDING_NATURAL_RUN"
+    },
+    "failurePathEvidence": {
+      "schedule": 13,
+      "sameDayHistory": 17,
+      "actualHost": 7,
+      "baselineNegativeControlFailures": 7,
+      "producerHeartbeatsPreservedInStuckWorkerTest": 331,
+      "partialEvidenceRetainedWithUnknownHistory": true
     }
   },
   "shareSupplyCaller": {
@@ -7468,5 +7481,58 @@
       "postDeploymentEvidence": "PENDING_NATURAL_RUN",
       "novemberDST": "PENDING_NATURAL_RUN"
     }
+  },
+  "preFailurePathFollowup_latestSessionCheckpoint": {
+    "status": "D1_D2_D3_AND_ARTIFACT_WIRE_IMPLEMENTED_OFFLINE_REVIEW_PENDING",
+    "runtimeSourceSha": "dfeed025ca4650944c92ef13e631d1ba6e6c79a6",
+    "review": "docs/native-sec-feasibility-corrections.md",
+    "patchManifest": "docs/validation/native-sec-live-host-manifest.json",
+    "verification": "docs/validation/native-sec-feasibility-verification.json",
+    "closureBoard": "docs/acceptance-closure-board.md",
+    "localVerification": {
+      "development": {
+        "files": 219,
+        "cases": 2044,
+        "skipped": 0,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 278,
+        "failures": []
+      }
+    },
+    "D1": "COMPLETE_OFFLINE",
+    "D2": "COMPLETE_OFFLINE",
+    "D3": "COMPLETE_OFFLINE_RESEARCH_POLICY_UNAPPROVED",
+    "sdkSourceAndAdapter": "COMPLETE_OFFLINE_PUBLIC_ACCESS_SUCCEEDED",
+    "calibrationReadiness": "NOT_READY",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
+    "productionChanged": false,
+    "implementationRemaining": [
+      "Distinct production-capable live guard/binding",
+      "After protocol review only: V2 route/cache/no-request telemetry and symmetric-control implementation",
+      "Other open source materiality/normalization and execution-plan contracts remain outside this bounded package"
+    ],
+    "nextDecision": "Independent review of the bounded correction and revised continuity/V2 proposals; no V2 implementation/enrollment or activation approval exists.",
+    "publicSourceAcquisitionCorrection": "Earlier requirement for separate owner approval was too broad and incorrect. Official source was acquired with credential-free bounded curl, pinned and inspected, not installed/executed. No technical access blocker.",
+    "passiveWatcher": {
+      "lastScheduledRun": 41072889693,
+      "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "observedProduction": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+      "postDeploymentEvidence": "PENDING_NATURAL_RUN",
+      "novemberDST": "PENDING_NATURAL_RUN"
+    }
+  },
+  "preFailurePathFollowup_latestVerifiedEngineeringMilestone": {
+    "sourceSha": "8195aab035dc8c3bdb6e90ede11ea70ae73cc97a",
+    "ciChecksPassed": 5,
+    "status": "WATCHER_V5_VERIFIED_NOT_DEPLOYED_REVIEW_REQUIRED",
+    "evidence": "docs/validation/watcher-f1-f2.json",
+    "acceptanceAdded": 0
   }
 }

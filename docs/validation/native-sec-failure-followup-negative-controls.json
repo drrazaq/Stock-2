@@ -1,0 +1,26 @@
+{
+  "kind": "SYNTHETIC_FAILURE_PATH_NEGATIVE_CONTROLS",
+  "baseline": "f3b96564fd2c7bab895cd301d2b410bc31770888",
+  "repairedSource": "686b685faa721198141894ab92665a0e28234eb9",
+  "results": {
+    "native-sec-schedule": {
+      "exitCode": 1,
+      "expectedFailingRegressions": 3,
+      "actualFailures": 3
+    },
+    "native-sec-lineage-history": {
+      "exitCode": 1,
+      "expectedFailingRegressions": 4,
+      "actualFailures": 4
+    }
+  },
+  "commands": [
+    "node test/native-sec-schedule.test.mjs",
+    "node test/native-sec-lineage-history.test.mjs"
+  ],
+  "note": "New regression tests copied unchanged into detached baseline. Three scheduler and four history failures reproduced; existing controls pass. No protected state, service request or production mutation.",
+  "logSha256": {
+    "native-sec-schedule-baseline.log": "982eaf3a71b55253c505a6385928e7652cb3350e463f4b0fb03df6b0010b5b62",
+    "native-sec-lineage-history-baseline.log": "4d3a5305012b8e0cca541829867ce59d91ab1983cd0fa6efc2c09fb902437103"
+  }
+}
