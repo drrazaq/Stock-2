@@ -1,0 +1,160 @@
+{
+  "kind": "OPEN_ACCEPTANCE_CLOSURE_BOARD_V1",
+  "updated": "2026-10-31",
+  "reconciledDevelopmentSource": "b9f6d20cbe606239a64fc28b60fecd2fdec7696f",
+  "observedProductionMain": "a4e88a3eb7ddaf3e7506bc82bd0fb1e4883c1958",
+  "score": {
+    "complete": 24,
+    "total": 40,
+    "remaining": 16,
+    "percent": 60
+  },
+  "closuresEarned": [],
+  "principle": "Satisfied subcriteria do not close rows. No row is labelled engineering complete without full scoped proof. Claude separately audits workflow/delivery/repository/claims.",
+  "rows": [
+    {
+      "id": "REPO-03",
+      "status": "OPEN",
+      "requiredVerification": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this.",
+      "criteriaAlreadySatisfied": "Inventory/syntax and targeted reviews only.",
+      "remainingEngineering": "Per-script behavioral matrix and defect controls.",
+      "externalOrLiveEvidence": "None for offline review.",
+      "nextActionAndOwner": "Claude: finish assigned read-only closure audit; implementation owner repairs confirmed defects."
+    },
+    {
+      "id": "ACTIONS-04",
+      "status": "OPEN",
+      "requiredVerification": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch.",
+      "criteriaAlreadySatisfied": "Accounting and watcher v5 deployed; bounded reservation/publication/retry fixtures and exact patch tests preserved.",
+      "remainingEngineering": "All remaining workflow writers/cache/cancellation/retention contracts.",
+      "externalOrLiveEvidence": "Natural-run persistence/recovery where applicable.",
+      "nextActionAndOwner": "Claude: assigned workflow audit; implementation owner fixes independently confirmed gaps."
+    },
+    {
+      "id": "MARKET-02",
+      "status": "OPEN",
+      "requiredVerification": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.",
+      "criteriaAlreadySatisfied": "Massive Starter delay established; limited SIP/IEX endpoint samples.",
+      "remainingEngineering": "Inactive entitlement/coverage admission guards prepared.",
+      "externalOrLiveEvidence": "Official account/plan/feed/session/universe rights plus authorized observations.",
+      "nextActionAndOwner": "Owner: supply redacted official current entitlement evidence; no new calls authorized."
+    },
+    {
+      "id": "MARKET-03",
+      "status": "OPEN",
+      "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
+      "criteriaAlreadySatisfied": "SEC class/CIK isolation; provider clock controls; offline market session tests.",
+      "remainingEngineering": "Complete provider ingress symbol/units/corporate-action/ticker-change matrix.",
+      "externalOrLiveEvidence": "Authoritative identity/mapping and price-basis evidence for real instruments.",
+      "nextActionAndOwner": "Implementation owner: inventory actual ingress and test ambiguous aliases/DST/half-day controls."
+    },
+    {
+      "id": "MARKET-04",
+      "status": "OPEN",
+      "requiredVerification": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this.",
+      "criteriaAlreadySatisfied": "Configured watcher coverage and known final-hour limit documented; no full-session proof.",
+      "remainingEngineering": "Keep bounded telemetry/capture guards; verify live-host implementation.",
+      "externalOrLiveEvidence": "Authorized intended-session coverage, denominators and latency/outage records; November DST pending.",
+      "nextActionAndOwner": "Implementation owner: passively inspect next naturally scheduled post-DST watcher; owner separately approves broader measurement."
+    },
+    {
+      "id": "DISCOVERY-03",
+      "status": "OPEN",
+      "requiredVerification": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence.",
+      "criteriaAlreadySatisfied": "Delayed Phase A disqualified as real-time proof; inactive explicit-universe design.",
+      "remainingEngineering": "Trusted live host/client/artifact transport and revised pinned collector.",
+      "externalOrLiveEvidence": "Official SIP rights, dated scope approval and measured broad coverage.",
+      "nextActionAndOwner": "Implementation owner: finish inactive live integration; owner reviews exact future collection scope."
+    },
+    {
+      "id": "DISCOVERY-04",
+      "status": "OPEN",
+      "requiredVerification": "Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping.",
+      "criteriaAlreadySatisfied": "Unchanged30-minute evaluator, offline wrapper/recovery; existing artifact audit0admissions.",
+      "remainingEngineering": "Native proof/lineage join and trusted live bindings/transport.",
+      "externalOrLiveEvidence": "Frozen hypotheses/cohort rules agreed, official rights, dated capture approval and eligible prospective cases.",
+      "nextActionAndOwner": "Implementation owner: native integration then reviewable inactive scope; owner approves calibration separately from evaluation."
+    },
+    {
+      "id": "CATALYST-03",
+      "status": "OPEN",
+      "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
+      "criteriaAlreadySatisfied": "Reconstructed55source regressions; news/insider/chain/share-supply caller repairs; immutable native Atom archive.",
+      "remainingEngineering": "Native acceptance-response and cross-run lineage; finish remaining source/materiality matrix.",
+      "externalOrLiveEvidence": "Source authenticity/point-in-time evidence cannot be inferred from caches or fixtures.",
+      "nextActionAndOwner": "Implementation owner: implement actual existing SEC response tee, pinned parent lineage and capture caller regressions."
+    },
+    {
+      "id": "CATALYST-04",
+      "status": "OPEN",
+      "requiredVerification": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability.",
+      "criteriaAlreadySatisfied": "Timestamp and missing-source distinctions established; no independent historical authenticity proof.",
+      "remainingEngineering": "Prepare exact source-audit inputs/rejection report.",
+      "externalOrLiveEvidence": "Independent contemporaneous source records/access clocks and missing-source denominators.",
+      "nextActionAndOwner": "Owner/data reviewer: choose licensed independent evidence; implementation owner prepares offline audit."
+    },
+    {
+      "id": "EXEC-03",
+      "status": "OPEN",
+      "requiredVerification": "Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity.",
+      "criteriaAlreadySatisfied": "Numeric/gap owner-plan controls; mentor marks unadopted target and close/next-open mismatch unresolved.",
+      "remainingEngineering": "Every delivered lane versus frozen tested entry/exit/cost/size/liquidity contract.",
+      "externalOrLiveEvidence": "Current executable BBO/size and genuinely admitted cases; strategy proof separate.",
+      "nextActionAndOwner": "Implementation owner: complete actual renderer/spec matrix; no rejected adapters or new rule."
+    },
+    {
+      "id": "TELEGRAM-03",
+      "status": "OPEN",
+      "requiredVerification": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.",
+      "criteriaAlreadySatisfied": "Watcher B1/B2/F1/F2 deployed; accounting receipts/recovery reviewed; research dedup separate.",
+      "remainingEngineering": "All-route stable IDs/ACK/unknown quarantine and independent-job reconciliation.",
+      "externalOrLiveEvidence": "Natural affected-path evidence; no real test message authorized.",
+      "nextActionAndOwner": "Claude: assigned delivery audit; implementation owner repairs confirmed caller gaps."
+    },
+    {
+      "id": "TELEGRAM-04",
+      "status": "OPEN",
+      "requiredVerification": "After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this.",
+      "criteriaAlreadySatisfied": "Mock ACK/retry/refusal controls; no authorized live validation claimed.",
+      "remainingEngineering": "Prepare exact bounded non-BUY validation scope after delivery audit.",
+      "externalOrLiveEvidence": "Separate owner approval and actual independent ACK/recovery observation.",
+      "nextActionAndOwner": "Owner: review bounded validation only after readiness; no dispatch now."
+    },
+    {
+      "id": "STRATEGY-04",
+      "status": "OPEN",
+      "requiredVerification": "Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained.",
+      "criteriaAlreadySatisfied": "Frozen metadata and rejected/unproven findings retained; legacy evidence not promoted.",
+      "remainingEngineering": "Prepare reproducible audited replay input contract.",
+      "externalOrLiveEvidence": "Independent PIT/delisted universe, execution/cost/liquidity data and untouched holdout.",
+      "nextActionAndOwner": "Owner/data reviewer: resolve licensed data; implementation owner retains offline admission checks."
+    },
+    {
+      "id": "HISTORY-02",
+      "status": "OPEN",
+      "requiredVerification": "Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness.",
+      "criteriaAlreadySatisfied": "Security/class admission shapes and unknown rejection implemented.",
+      "remainingEngineering": "Complete PIT identity/terminal-value audit tooling for selected evidence.",
+      "externalOrLiveEvidence": "Independent as-known listings, class/ticker changes, delistings and terminal values.",
+      "nextActionAndOwner": "Owner/data reviewer: choose authoritative reference scope; no calls yet."
+    },
+    {
+      "id": "HISTORY-03",
+      "status": "OPEN",
+      "requiredVerification": "Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results.",
+      "criteriaAlreadySatisfied": "Legacy/admitted evidence split;0admissions, mentor NOT PROVEN and unresolved exits explicit.",
+      "remainingEngineering": "Finish numerical claim/source/window/cost catalogue and qualifications.",
+      "externalOrLiveEvidence": "Independent authenticated reproduction where claims rely on unavailable history.",
+      "nextActionAndOwner": "Claude: assigned claims audit; implementation owner qualifies confirmed unsupported output."
+    },
+    {
+      "id": "HISTORY-04",
+      "status": "OPEN",
+      "requiredVerification": "Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability.",
+      "criteriaAlreadySatisfied": "Frozen matched/control/cost/missingness evaluator and synthetic recovery tests; no profit conclusion.",
+      "remainingEngineering": "Trusted live capture integration and independent audit-ready reports.",
+      "externalOrLiveEvidence": "Observed quote sizes/candidate-control-SPY paths and fixed clustered uncertainty/holdout.",
+      "nextActionAndOwner": "Implementation owner: finish inactive capture; owner agrees evaluation rules and collection scope."
+    }
+  ]
+}
