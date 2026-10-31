@@ -7,6 +7,7 @@ import {prepareCaptureGuard,runGuardedCapture,recoverUploadedCapture} from '../p
 import {validateReferenceBundle} from '../paper-capture-references.mjs';
 import {fixtureZip,openCaptureZip} from '../capture-artifact.mjs';
 import {captureJson} from '../capture-json.mjs';
+import {sealResearch,openResearch} from '../tools/seal-research-artifact.mjs';
 import {sha} from '../prospective-paper-capture.mjs';
 import {wrapperFixture,updateReference,fixtureGit,t,fixtureKey} from './capture-wrapper-fixture.mjs';
 const guard=f=>prepareCaptureGuard({...f,now:f.nowMs});
@@ -59,6 +60,9 @@ test('authenticated downloaded-artifact recovery rejects wrong key/truncation/re
  assert.ok(complete,'complete synthetic capture required');const {f,r,m}=complete,z=m.archives.get(1);assert.throws(()=>recover(f,r,m,{key:'incorrect-synthetic-key'}));m.archives.set(1,z.subarray(0,z.length-1));assert.throws(()=>recover(f,r,m),/DIGEST/);m.archives.set(1,z);
  const changed=structuredClone(r.receiptManifest);changed.receipts.reverse();let raw=JSON.stringify(changed);assert.throws(()=>recover(f,r,m,{receiptRaw:raw,expectedReceiptSha256:sha(raw)}),/ORDER/);
  const prefix=structuredClone(r.receiptManifest);prefix.receipts=prefix.receipts.slice(0,40);raw=JSON.stringify(prefix);const x=recover(f,r,m,{receiptRaw:raw,expectedReceiptSha256:sha(raw)});assert.equal(x.status,'AUTHENTICATED_INCOMPLETE');assert.equal(x.automaticResumeAuthorized,false);assert.equal(fs.readFileSync(path.join(f.output,'receipts.json'),'utf8'),JSON.stringify(r.receiptManifest));
+});
+test('large authenticated encrypted envelope fits declared 16MiB sealed cap while plaintext/default JSON stay at 8MiB',()=>{
+ assert.ok(complete);const {f,r,m}=complete,manifest=structuredClone(r.receiptManifest);manifest.receipts=manifest.receipts.slice(0,1);const receipt=manifest.receipts[0],old=JSON.parse(openCaptureZip(m.archives.get(receipt.artifactId),receipt.name)),payload=JSON.parse(openResearch(old,fixtureKey));payload.syntheticOfflinePadding='S'.repeat(Math.ceil(6.2*1024*1024));const plain=Buffer.from(JSON.stringify(payload));assert.ok(plain.length<8*1024*1024);const bytes=Buffer.from(JSON.stringify(sealResearch(plain,fixtureKey,old.context)));assert.ok(bytes.length>8*1024*1024&&bytes.length<16*1024*1024);assert.throws(()=>captureJson(bytes.toString()),/JSON_BUDGET/);assert.throws(()=>captureJson('{}',16*1024*1024+1),/JSON_BUDGET/);const zip=fixtureZip(receipt.name,bytes);receipt.archiveBytes=zip.length;receipt.archiveSha256=sha(zip);receipt.fileBytes=bytes.length;receipt.fileSha256=sha(bytes);const raw=JSON.stringify(manifest),x=recover(f,r,{...m,archives:new Map([[receipt.artifactId,zip]])},{receiptRaw:raw,expectedReceiptSha256:sha(raw)});assert.equal(x.status,'AUTHENTICATED_INCOMPLETE');assert.equal(x.frames,1);assert.equal(x.genuineAdmissions,0);assert.deepEqual(x.state.frames,complete.r.simulationReport.checkpointState.frames.slice(0,1));
 });
 test('malformed native rows remain explicit research rejections alongside valid rows',async()=>{const f=wrapperFixture();try{const m=mocks(f,{events:async()=>JSON.stringify({events:[null,...f.events]}),upload:async()=>({success:false})});const r=await run(f,m);assert.equal(r.simulationReport.attempts[0].reason,'MALFORMED_DISCOVERY_EVENT');assert.equal(r.simulationReport.attempts.length,3);assert.equal(r.genuineAdmissions,0);assert.equal(m.counts().calls,1);}finally{f.cleanup();}});
 test('actual offline wrapper/recovery CLIs preserve original inputs and refuse output reuse',async()=>{

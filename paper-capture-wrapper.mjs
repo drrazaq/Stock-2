@@ -88,7 +88,7 @@ export function recoverUploadedCapture({archives,receiptRaw,expectedReceiptSha25
  for(let i=0;i<m.receipts.length;i++){
   const r=m.receipts[i],name='checkpoint-'+String(i).padStart(3,'0')+'.enc',zip=archives.get(r.artifactId);ok(r.sequence===i&&r.name===name&&!seen.has(r.artifactId)&&r.retentionDays===3&&r.success===true,'RECOVERY_ORDER_OR_RECEIPT');seen.add(r.artifactId);
   ok(Buffer.isBuffer(zip)&&zip.length===r.archiveBytes&&sha(zip)===r.archiveSha256,'DOWNLOADED_ARTIFACT_DIGEST');total+=zip.length;ok(total<=WRAPPER_CAPS.archiveBytes,'RECOVERY_ARCHIVE_BUDGET');
-  const bytes=openCaptureZip(zip,name);ok(bytes.length===r.fileBytes&&sha(bytes)===r.fileSha256,'RECOVERY_FILE_PIN');const envelope=captureJson(bytes.toString()),c=envelope.context;
+  const bytes=openCaptureZip(zip,name);ok(bytes.length===r.fileBytes&&sha(bytes)===r.fileSha256,'RECOVERY_FILE_PIN');const envelope=captureJson(bytes.toString(),16*1024*1024),c=envelope.context;
   ok(c?.kind==='GUARDED_PAPER_CAPTURE_V1'&&c.sourceSha===m.sourceSha&&c.approvalHash===m.approvalHash&&c.runId===m.runId&&c.cohort===m.cohort&&c.sequence===i,'RECOVERY_CONTEXT');
   const p=captureJson(openResearch(envelope,key).toString());ok(sha(p.approvalRaw)===m.approvalHash&&sha(p.referenceRaw)===c.referenceHash,'RECOVERY_INPUT_PIN');
   const a=captureJson(p.approvalRaw);validateReferenceBundle(p.referenceRaw,a);ok(a.plan.sourceSha===m.sourceSha&&a.plan.cohort==='CALIBRATION'&&a.plan.enrollmentManifestSha256===inputFingerprint(c.referenceHash,a.plan),'RECOVERY_PLAN');
