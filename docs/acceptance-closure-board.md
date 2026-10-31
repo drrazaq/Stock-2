@@ -1,5 +1,7 @@
 # Open acceptance closure board —31 October2026
 
+Latest inactive host/client/parent implementation: [finite COMPLETE/BLOCKED checklist](native-sec-live-integration-checklist.md). Offline host and parent transport verified; real SDK/shim and live guard remain implementation blockers. V1 acceptance ordering feasibility is NOT ESTABLISHED; V2 is unapproved. No row closed.
+
 24/40 accepted; all16rows below remain OPEN. Exact unchanged full criteria are retained in [machine-readable board](validation/acceptance-closure-board.json) and [checklist](engineering-acceptance-checks.json). No substep is counted as a row. Accounting `bdc984e9`, watcher `be315901` and SEC hotfix `bd70f5a` deployments/reviews are preserved; November DST/natural-run evidence remains pending. Prior missing code was reconstructed, not recovered.
 
 | Row | Satisfied subcriteria (linked basis in checklist/ledger) | Remaining engineering | External/live evidence | Next executable action and owner |

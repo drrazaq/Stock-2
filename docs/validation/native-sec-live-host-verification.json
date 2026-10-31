@@ -1,0 +1,64 @@
+{
+  "kind": "OFFLINE_NATIVE_SEC_HOST_CLIENT_VERIFICATION_V1",
+  "runtimeSourceSha": "4053619fb17bd8bfe8fecae49324bc08e7c60548",
+  "baselineOfflinePass": "5dc6cc769e7cff0d5cf1bf2501e1d32f2e55298f",
+  "development": {
+    "files": 216,
+    "cases": 1999,
+    "skipped": 0,
+    "failures": []
+  },
+  "python": {
+    "tests": 30,
+    "failures": 0
+  },
+  "syntax": {
+    "files": 275,
+    "failures": []
+  },
+  "focused": {
+    "actualHost": 5,
+    "parentClientAndPublisher": 19,
+    "boundedClients": 8,
+    "inactiveWorkerGuards": 3,
+    "concurrentPrefix": 2,
+    "priorIncremental": 8,
+    "priorActualWatcher": 7,
+    "priorHandoff": 4
+  },
+  "additionalCurrentSourceProof": "Actual host quote/upload heartbeat progress and downloaded ZIP recovery verified again after strengthening assertions",
+  "logSha256": {
+    "development/node.log": "d694bb9b0c902e84ecf1d2e36698d5a228e09c552cbac2b69c05e724a70861ab",
+    "host-verified.log": "02630ce0dc3fdbbc254d741be2a239cb2f6faaabbe2e082a97a178c04c9df83a",
+    "host-quote-upload-progress.log": "df36425ff927156d49445e6b86bfee786a8e7e7d24766d332f4dcbc8c6369c6d",
+    "parent-final.log": "309ff25b026bda41608f296c5c42e2d4a462b4eab3413baa368ee9c3db8e62a6",
+    "clients-final.log": "24f875e43d418943b48ecdd0c984134691a2805fcaf0fa004752643ee9a44933",
+    "guards-final.log": "c3cae79849838887bc298b5542abcd015163ef04fc6a13de370ef7462f5c658a",
+    "prefix.log": "34f5c6dcb34f75d2a9f8aeeb38eada6e01dd2b8905422e735952c12668b7d05a",
+    "prior-incremental.log": "2d41cbc6b660fb73e387b90ef85ad18e301f5796388e8258175e951b395f9893",
+    "prior-actual.log": "5babbf0092ccbb3e48b265f2728451189e89be15a2aef553a43d515629e6f7af",
+    "prior-handoff.log": "6163cce190384ce74bf1471c7afdbcf8c1b548ada71583f4d0de1b88a75ca22a",
+    "python.log": "523a5e1b1145a4dd1d2520b3b5e5d84b83ef99163eb465754a5250dadabc0f00"
+  },
+  "blockers": [
+    "Real Actions SDK/pre-request/cancellation shim implementation against an unavailable immutable source bundle",
+    "V1 enrollment frequency unknown; normal Atom-first path cannot enroll; V2 requires separate owner/protocol decision and implementation",
+    "Separately reviewed production-capable live guard/client bindings, official feed/reference/identity evidence and dated approvals"
+  ],
+  "accepted": 24,
+  "total": 40,
+  "acceptanceAdded": 0,
+  "genuineAdmissions": 0,
+  "productionChanged": false,
+  "installed": false,
+  "providerCalls": 0,
+  "realMessages": 0,
+  "mockedExternalClientsOnly": true,
+  "passiveWatcher": {
+    "lastScheduledRun": 41072889693,
+    "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+    "observedProduction": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+    "postDeploymentEvidence": "PENDING_NATURAL_RUN",
+    "novemberDST": "PENDING_NATURAL_RUN"
+  }
+}

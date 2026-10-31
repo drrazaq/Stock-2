@@ -5288,26 +5288,20 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "OFFLINE_NATIVE_INCREMENTAL_TIMELY_HANDOFF_VERIFIED_INACTIVE",
-    "runtimeSourceSha": "cbad6a9c0140b0da2f91c78cc45779769be5e237",
+    "status": "OFFLINE_HOST_PARENT_TRANSPORT_VERIFIED_REAL_SDK_AND_PROTOCOL_BLOCKED",
+    "runtimeSourceSha": "4053619fb17bd8bfe8fecae49324bc08e7c60548",
     "closureBoard": "docs/acceptance-closure-board.md",
-    "review": "docs/native-sec-incremental-handoff-checkpoint.md",
-    "patchManifest": "docs/validation/native-sec-shadow-production-manifest-v3.json",
-    "verification": "docs/validation/native-sec-incremental-handoff-verification.json",
+    "review": "docs/native-sec-live-integration-checklist.md",
+    "patchManifest": "docs/validation/native-sec-live-host-manifest.json",
+    "verification": "docs/validation/native-sec-live-host-verification.json",
     "acceptanceAdded": 0,
     "genuineAdmissions": 0,
     "productionChanged": false,
     "providerRequestsAdded": 0,
     "localVerification": {
       "development": {
-        "files": 211,
-        "cases": 1961,
-        "skipped": 0,
-        "failures": []
-      },
-      "productionMainPlusExactPatch": {
-        "files": 123,
-        "cases": 1205,
+        "files": 216,
+        "cases": 1999,
         "skipped": 0,
         "failures": []
       },
@@ -5316,27 +5310,32 @@
         "failures": 0
       },
       "syntax": {
-        "files": 270,
+        "files": 275,
         "failures": []
       }
     },
-    "offlineEngineeringRemaining": [
-      "Trusted inactive live-host/client binding and durable cross-job independently pinned parent transport",
-      "All-source materiality/revision bounds, remaining MARKET-03 normalization and EXEC-03 lane/spec/cost/size/liquidity matrix"
+    "completedOffline": [
+      "Independent actual producer/capture process orchestration and heartbeat progress while quotes/uploads wait",
+      "Bounded GitHub complete-parent discovery/download/immutable recovery/staging and original cross-run lineage",
+      "Stable append-compatible reader; real client interfaces with mocked transports and strict pre-request-gate contract"
     ],
+    "implementationBlocked": [
+      "Pinned actual Actions artifact SDK/transitive source and compatible pre-request/cancellation shim unavailable",
+      "Separate production-capable live guard/client binding pending protocol choice and SDK implementation"
+    ],
+    "protocolDecision": "V1 normal Atom-first ordering cannot enroll; conditional earlier proof frequency unknown. Separate unapproved V2 proof-ready proposal; frozen evaluator unchanged.",
+    "nextExecutableTask": "With a supplied reviewed immutable SDK/transitive source bundle (or separately authorized bounded source acquisition), implement/audit the actual pre-request/cancellation shim; then complete the distinct live guard against the chosen protocol. Do not bind an opaque SDK or bypass rehearsal. Continue no new strategy adapters.",
     "externalDependencies": [
-      "Official SIP entitlement and reference/quote retention scope",
-      "Authoritative current identity/industry and ZAD source evidence",
-      "Separate dated reference-preparation and calibration approval; no execution authorized"
+      "Official SIP/session/universe and reference-retention evidence",
+      "Authoritative current identity/industry/ZAD evidence",
+      "Separate owner/protocol review of V1 feasibility versus V2; dated reference/calibration and exact activation scope approval"
     ],
-    "nextExecutableTask": "Prepare separately reviewed inactive co-located live host/client and durable parent transport using the completed pre-quote port; do not bypass rehearsal guard or activate. Then continue source materiality/normalization and actual plan/spec contracts. No repeated artifact audit or rejected-strategy adapters.",
     "passiveWatcher": {
-      "observedProductionMain": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
-      "lastScheduledIgnitionRun": 41072889693,
-      "lastScheduledRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
-      "postDeploymentScheduledRunObserved": false,
-      "novemberDST": "PENDING_NATURAL_RUN",
-      "manualDispatches": 0
+      "lastScheduledRun": 41072889693,
+      "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "observedProduction": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+      "postDeploymentEvidence": "PENDING_NATURAL_RUN",
+      "novemberDST": "PENDING_NATURAL_RUN"
     }
   },
   "shareSupplyCaller": {
@@ -7370,6 +7369,58 @@
       "acceptanceAdded": 0,
       "status": "FOCUSED_VERIFIED_CURRENT_FULL_CHECKS_PENDING",
       "productionChanged": false
+    }
+  },
+  "preLiveHost_latestSessionCheckpoint": {
+    "status": "OFFLINE_NATIVE_INCREMENTAL_TIMELY_HANDOFF_VERIFIED_INACTIVE",
+    "runtimeSourceSha": "cbad6a9c0140b0da2f91c78cc45779769be5e237",
+    "closureBoard": "docs/acceptance-closure-board.md",
+    "review": "docs/native-sec-incremental-handoff-checkpoint.md",
+    "patchManifest": "docs/validation/native-sec-shadow-production-manifest-v3.json",
+    "verification": "docs/validation/native-sec-incremental-handoff-verification.json",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
+    "productionChanged": false,
+    "providerRequestsAdded": 0,
+    "localVerification": {
+      "development": {
+        "files": 211,
+        "cases": 1961,
+        "skipped": 0,
+        "failures": []
+      },
+      "productionMainPlusExactPatch": {
+        "files": 123,
+        "cases": 1205,
+        "skipped": 0,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 270,
+        "failures": []
+      }
+    },
+    "offlineEngineeringRemaining": [
+      "Trusted inactive live-host/client binding and durable cross-job independently pinned parent transport",
+      "All-source materiality/revision bounds, remaining MARKET-03 normalization and EXEC-03 lane/spec/cost/size/liquidity matrix"
+    ],
+    "externalDependencies": [
+      "Official SIP entitlement and reference/quote retention scope",
+      "Authoritative current identity/industry and ZAD source evidence",
+      "Separate dated reference-preparation and calibration approval; no execution authorized"
+    ],
+    "nextExecutableTask": "Prepare separately reviewed inactive co-located live host/client and durable parent transport using the completed pre-quote port; do not bypass rehearsal guard or activate. Then continue source materiality/normalization and actual plan/spec contracts. No repeated artifact audit or rejected-strategy adapters.",
+    "passiveWatcher": {
+      "observedProductionMain": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+      "lastScheduledIgnitionRun": 41072889693,
+      "lastScheduledRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "postDeploymentScheduledRunObserved": false,
+      "novemberDST": "PENDING_NATURAL_RUN",
+      "manualDispatches": 0
     }
   }
 }
