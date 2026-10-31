@@ -1,10 +1,12 @@
+> **Current inactive binding checkpoint:** [separate approved guard, concrete client/environment mapping and end-to-end recovery](approved-native-binding-review.md), [exact package](validation/approved-native-binding-manifest.json), [validation](validation/approved-native-binding-verification.json). Runtime source `9e8ebe61c6ee2fc270cdbff34048e271de1079ec`;51 focused caller/service/failure tests and220files/2,104cases pass; Python30 and syntax279 pass. V1 and rehearsal worker unchanged; no production deployment, binding installation, collection or policy adoption. Acceptance24/40; genuine admissions0. Earlier implementation-blocker claims below are historical.
+
 > **Current bounded follow-up:** [failure-path evidence](native-sec-feasibility-corrections.md#verified-failure-path-follow-up) advances capture cleanup and source-history integrity. All16rows remain OPEN; no substep is counted as a closure.
 
 # Open acceptance closure board —31 October2026
 
 Latest bounded D1/D2/D3 and SDK correction: [feasibility report](native-sec-feasibility-corrections.md). Mechanisms verified offline; no acceptance closure or activation. Public source acquisition succeeded; prior permission/SDK blockers are superseded. V1 ordering and proposed V2/continuity policy still block readiness.
 
-Latest inactive host/client/parent implementation: [finite COMPLETE/BLOCKED checklist](native-sec-live-integration-checklist.md). Offline host and parent transport verified; real SDK/shim and live guard remain implementation blockers. V1 acceptance ordering feasibility is NOT ESTABLISHED; V2 is unapproved. No row closed.
+Latest inactive host/client/parent implementation: [finite COMPLETE/BLOCKED checklist](native-sec-live-integration-checklist.md). Offline host and parent transport verified; the artifact adapter and separate guard/client binding are now implemented offline. Installation, official evidence and policy adoption remain unestablished. V1 acceptance ordering feasibility is NOT ESTABLISHED; V2 is unapproved. No row closed.
 
 24/40 accepted; all16rows below remain OPEN. Exact unchanged full criteria are retained in [machine-readable board](validation/acceptance-closure-board.json) and [checklist](engineering-acceptance-checks.json). No substep is counted as a row. Accounting `bdc984e9`, watcher `be315901` and SEC hotfix `bd70f5a` deployments/reviews are preserved; November DST/natural-run evidence remains pending. Prior missing code was reconstructed, not recovered.
 

@@ -1,0 +1,392 @@
+diff --git a/capture-approved-binding.mjs b/capture-approved-binding.mjs
+new file mode 100644
+index 00000000..f851b146
+--- /dev/null
++++ b/capture-approved-binding.mjs
+@@ -0,0 +1,81 @@
++// Separate, UNINSTALLED V1 calibration binding. No CLI, env lookup, default
++// fetch, logging or activation switch. Every external operation is explicit.
++import fs from 'node:fs';
++import path from 'node:path';
++import {prepareApprovedCaptureGuard,runPreparedCapture,immutableRead} from './paper-capture-wrapper.mjs';
++import {captureJson} from './capture-json.mjs';
++import {sha} from './prospective-paper-capture.mjs';
++import {historyPort} from './paper-capture-ports.mjs';
++import {boundedSnapshotClient,reviewedArtifactClient} from './native-sec-bounded-clients.mjs';
++import {createArtifactWireClient} from './artifact-wire-client.mjs';
++import {createSameDayLineageClient,sameDayLineageEventPort,LINEAGE_STATES} from './native-sec-lineage-history.mjs';
++import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
++export const APPROVED_BINDING_CAPS=Object.freeze({parentRequests:32,captureHistoryRequests:1,providerRequests:41,artifactWireRequests:205,retries:0,shutdownMarginMs:30000,storageBytes:400*1024*1024,lineagePlainBytes:12*1024*1024,lineageSealedBytes:16*1024*1024,sourceContextBytes:1024*1024});
++const need=(v,c)=>{if(!v)throw Error(c);};
++const defaultClock={now:()=>Date.now(),sleep:ms=>new Promise(r=>setTimeout(r,ms)),setTimeout:(f,ms)=>setTimeout(f,ms),clearTimeout:t=>clearTimeout(t)};
++const validSecret=s=>typeof s==='string'&&s.length>=1&&s.length<=32768;
++function storageBytes(root){let bytes=0,files=0;const walk=p=>{const s=fs.lstatSync(p);need(!s.isSymbolicLink(),'BINDING_STORAGE');if(s.isDirectory()){for(const n of fs.readdirSync(p)){need(++files<=4096,'BINDING_STORAGE');walk(path.join(p,n));}}else{need(s.isFile(),'BINDING_STORAGE');bytes+=s.size;need(bytes<=APPROVED_BINDING_CAPS.storageBytes,'BINDING_STORAGE');}};if(fs.existsSync(root))walk(root);return bytes;}
++function safeDirectory(dir){for(let p=path.resolve(dir);;p=path.dirname(p)){if(fs.existsSync(p))need(!fs.lstatSync(p).isSymbolicLink(),'BINDING_STORAGE');if(path.dirname(p)===p)break;}fs.mkdirSync(dir,{recursive:true,mode:0o700});storageBytes(dir);}
++function writeExclusive(file,bytes){const fd=fs.openSync(file,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);try{fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}const dir=fs.openSync(path.dirname(file),fs.constants.O_RDONLY);try{fs.fsyncSync(dir);}finally{fs.closeSync(dir);}}
++function httpsOrigin(origin,suffix){const u=new URL(origin);return u.origin===origin&&u.protocol==='https:'&&!u.username&&!u.password&&(u.hostname===suffix||u.hostname.endsWith('.'+suffix));}
++// Concrete future host mapping for existing binding identifiers. Merely creating
++// this adapter reads no environment values; keys are opened only by the guard.
++// Callers supply the environment and native HTTP transport explicitly.
++export function approvedEnvironmentClients({environment,fetcher}){
++ need(environment&&typeof environment==='object'&&typeof fetcher==='function','BINDING_EXPLICIT_CLIENTS');
++ return {transports:{history:fetcher,provider:fetcher,artifact:fetcher},openControlBindings:async()=>({githubToken:environment.GITHUB_TOKEN}),openCaptureBindings:async()=>({keyId:environment.ALPACA_KEY,secret:environment.ALPACA_SECRET,encryptionKey:environment.PRIVATE_KEY,runtimeToken:environment.ACTIONS_RUNTIME_TOKEN})};
++}
++export function prepareApprovedBinding(options){
++ const {root,approvalFile,approvalSha256,entitlementFile,entitlementSha256,context,native,clock=defaultClock}=options;
++ const approval=immutableRead(approvalFile,65536);need(approval.hash===approvalSha256,'BINDING_APPROVAL_PIN');const a=captureJson(approval.bytes.toString());
++ need(a.bindingReview?.version===1&&a.bindingReview.approved===true&&a.bindingReview.continuityPolicyApproved===false&&a.bindingReview.protocol==='EXISTING_STREAM_SEC_30M_V1'&&a.bindingReview.primaryAdmission==='DISABLED_PENDING_CONTINUITY_REVIEW','BINDING_SEPARATE_REVIEW');
++ need(immutableRead(entitlementFile,1024*1024).hash===entitlementSha256&&a.entitlements?.evidenceSha256===entitlementSha256,'BINDING_ENTITLEMENT_PIN');
++ need(a.native?.sourceSha===native.expectedSourceSha&&/^[a-f0-9]{40}$/.test(native.expectedSourceSha)&&native.expectedRunId===context.runId+'-1'&&a.native.runId===native.expectedRunId&&a.native.directorySuffix==='runtime/native-sec-events/'+native.expectedRunId&&path.isAbsolute(native.directory)&&native.directory.endsWith(path.sep+a.native.directorySuffix)&&Object.keys(native).sort().join('|')==='directory|expectedRunId|expectedSourceSha'&&Number.isSafeInteger(a.native.workflowId)&&a.native.workflowId>0,'BINDING_NATIVE_SCOPE');
++ const s=a.artifactScope;need(s&&httpsOrigin(s.resultsOrigin,'actions.githubusercontent.com')&&Array.isArray(s.storageOrigins)&&s.storageOrigins.length>=1&&s.storageOrigins.length<=4&&new Set(s.storageOrigins).size===s.storageOrigins.length&&s.storageOrigins.every(x=>httpsOrigin(x,'blob.core.windows.net')),'BINDING_ARTIFACT_ORIGINS');
++ const guard=prepareApprovedCaptureGuard({root,reviewRoot:options.reviewRoot,approvalFile,referenceFile:options.referenceFile,context,now:clock.now()}),workflow=immutableRead(path.join(options.reviewRoot,'.github/workflows/sec-paper-capture.yml'),65536),timeouts=[...workflow.bytes.toString().matchAll(/^ +timeout-minutes: ([0-9]+) *$/gm)];need(timeouts.length===1&&Number(timeouts[0][1])>=45&&Number(timeouts[0][1])<=360,'BINDING_WORKFLOW_TIME_BUDGET');const extra=immutableRead(entitlementFile,1024*1024);need(guard.approvalHash===approvalSha256&&extra.hash===entitlementSha256,'BINDING_INPUT_CHANGED');const revalidate=guard.revalidate;
++ guard.revalidate=(requireHistory=true)=>{revalidate(requireHistory);const b=immutableRead(entitlementFile,1024*1024);need(b.hash===extra.hash&&b.signature===extra.signature,'BINDING_ENTITLEMENT_CHANGED');};
++ guard.revalidate(false);
++ const output=path.resolve(root,'runtime/paper-capture',context.runId+'-1');for(let p=path.dirname(output);;p=path.dirname(p)){if(fs.existsSync(p))need(!fs.lstatSync(p).isSymbolicLink(),'BINDING_STORAGE');if(path.dirname(p)===p)break;}storageBytes(path.dirname(output));need(!fs.existsSync(output)&&!fs.existsSync(output+'.lineage.enc'),'BINDING_ALREADY_STARTED');
++ return {guard,output,approval:a};
++}
++// A caller cannot inject a prepared guard or substitute individual admission /
++// provider/upload ports. Only transports, clock and separately opened bindings.
++export async function runApprovedNativeCapture(options){
++ try{options={...options,context:structuredClone(options?.context),native:structuredClone(options?.native)};if(options.clock!==undefined)need(options.clock&&['now','sleep','setTimeout','clearTimeout'].every(k=>typeof options.clock[k]==='function'),'BINDING_CLOCK_INTERFACE');}catch{return {status:'BLOCKED',reason:'PREFLIGHT_REJECTED',providerAttempts:0,confirmedUploads:0,genuineAdmissions:0};}
++ const {clock=defaultClock,openControlBindings,openCaptureBindings,native}=options;const transports={...options.transports};
++ let wire,deadlineTimer,phase='PREFLIGHT',guard,historyVerified=false,closed=false,lastTime,controller=new AbortController(),attempts=0,uploads=0;
++ let rejectStop;const stopped=new Promise((_,reject)=>{rejectStop=reject;});stopped.catch(()=>{});
++ const stop=()=>{closed=true;controller.abort();wire?.cancelActiveUpload();rejectStop(Error('BINDING_STOPPED'));};
++ const race=promise=>Promise.race([Promise.resolve(promise),stopped]);
++ const time=()=>{const n=clock.now();need(Number.isFinite(n)&&(lastTime===undefined||n>=lastTime),'BINDING_CLOCK');lastTime=n;return n;};
++ try{
++  const prepared=prepareApprovedBinding({...options,clock});({guard}=prepared);const a=prepared.approval;
++  need(transports&&['history','provider','artifact'].every(k=>typeof transports[k]==='function')&&typeof openControlBindings==='function'&&typeof openCaptureBindings==='function','BINDING_EXPLICIT_CLIENTS');
++  const start=Date.parse(a.plan.start),deadline=Date.parse(a.plan.end)+APPROVED_BINDING_CAPS.shutdownMarginMs;time();deadlineTimer=clock.setTimeout(stop,Math.max(0,deadline-time()));
++  const checked=fetcher=>async(url,o)=>{guard.revalidate(historyVerified);storageBytes(path.dirname(prepared.output));need(!closed&&time()<=deadline,'BINDING_STOPPED');const signal=o.signal?AbortSignal.any([controller.signal,o.signal]):controller.signal;const r=await race(fetcher(url,{...o,signal}));guard.revalidate(historyVerified);need(!closed&&time()<=deadline,'BINDING_STOPPED');return r;};
++  phase='CONTROL';const control=await race(openControlBindings());guard.revalidate(false);need(validSecret(control?.githubToken),'BINDING_CONTROL_BINDING');
++  let historyTimer;try{const h=await race(Promise.race([historyPort({fetcher:checked(transports.history),token:control.githubToken})(),new Promise((_,reject)=>historyTimer=clock.setTimeout(()=>{stop();reject(Error('BINDING_HISTORY_TIMEOUT'));},10000))]));guard.verifyHistory(h);historyVerified=true;}finally{clock.clearTimeout(historyTimer);}
++  const parents=createSameDayLineageClient({fetcher:checked(transports.history),token:control.githubToken,storageOrigins:a.artifactScope.storageOrigins,now:time});
++  const lineage=await race(parents.discover({day:a.plan.day,before:new Date(time()).toISOString(),currentRunId:options.context.runId,workflowId:a.native.workflowId,allowedSourceShas:[a.native.sourceSha]}));
++  guard.revalidate();need(!closed&&time()<=start,'BINDING_LATEST_START');
++  phase='BINDINGS';const bindings=await race(openCaptureBindings());guard.revalidate();need(validSecret(bindings?.keyId)&&validSecret(bindings?.secret)&&validSecret(bindings?.runtimeToken)&&typeof bindings.encryptionKey==='string'&&bindings.encryptionKey.length>=16,'BINDING_CAPTURE_BINDINGS');
++  safeDirectory(path.dirname(prepared.output));const lineageRaw=Buffer.from(JSON.stringify(lineage));need(lineageRaw.length<=APPROVED_BINDING_CAPS.lineagePlainBytes,'BINDING_LINEAGE_BUDGET');
++  const lineageContext={kind:'APPROVED_CAPTURE_LINEAGE_RESEARCH_V1',sourceSha:a.plan.sourceSha,approvalSha256:options.approvalSha256,runId:options.context.runId,lineageSha256:sha(lineageRaw),primaryAdmission:false};
++  const sealed=Buffer.from(JSON.stringify(sealResearch(lineageRaw,bindings.encryptionKey,lineageContext)));need(sealed.length<=APPROVED_BINDING_CAPS.lineageSealedBytes&&storageBytes(path.dirname(prepared.output))+sealed.length<=APPROVED_BINDING_CAPS.storageBytes,'BINDING_STORAGE');
++  writeExclusive(prepared.output+'.lineage.enc',sealed);guard.revalidate();
++  if(![LINEAGE_STATES.NONE,LINEAGE_STATES.EARLIER].includes(lineage.state))return {status:'BLOCKED',reason:'LINEAGE_UNKNOWN',providerAttempts:0,confirmedUploads:0,genuineAdmissions:0,lineagePreserved:true};
++  const sourceContext={...lineage,retainedBundles:lineage.retainedBundles.map(r=>({runId:r.runId,artifactDigest:r.artifactDigest,coverage:r.coverage,sourceIntegrity:r.sourceIntegrity,sourceCaptureCompleteness:r.sourceCaptureCompleteness})),lineageJournalSha256:sha(sealed)};
++  need(Buffer.byteLength(JSON.stringify(sourceContext))<=APPROVED_BINDING_CAPS.sourceContextBytes,'BINDING_LINEAGE_BUDGET');
++  need(time()<=start,'BINDING_LATEST_START');const provider=boundedSnapshotClient({fetcher:checked(transports.provider),keyId:bindings.keyId,secret:bindings.secret});
++  wire=createArtifactWireClient({fetcher:checked(transports.artifact),runtimeToken:bindings.runtimeToken,resultsOrigin:a.artifactScope.resultsOrigin,allowedResultsOrigins:[a.artifactScope.resultsOrigin],storageOrigins:a.artifactScope.storageOrigins,now:()=>new Date(time()).toISOString()});
++  const uploader=reviewedArtifactClient({sdk:wire,reviewed:{contract:'PRE_REQUEST_WIRE_GATE_V1',maxWireRequestsPerUpload:5,moduleFile:path.join(options.root,'artifact-wire-client.mjs'),packageSha256:a.runtimeFiles['artifact-wire-client.mjs']}});
++  const events=sameDayLineageEventPort({current:native,history:lineage});phase='CAPTURE';
++  const result=await race(runPreparedCapture({approvalFile:options.approvalFile,context:options.context,output:prepared.output,key:bindings.encryptionKey,now:time,wait:ms=>race(clock.sleep(ms)),sourceContext,ports:{events:async x=>{guard.revalidate();need(!closed,'BINDING_STOPPED');return events(x);},provider:async(u,o)=>{need(!closed&&time()<=Date.parse(a.plan.end)-10000,'BINDING_STOPPED');attempts++;return provider.request(u,o);},upload:async x=>{storageBytes(path.dirname(prepared.output));need(!closed,'BINDING_STOPPED');const ack=await uploader.upload(x);uploads++;return ack;}}},guard));
++  guard.revalidate();return {status:result.status,reason:result.captureStatus,providerAttempts:result.providerAttempts,confirmedUploads:result.confirmedUploads,pendingFiles:result.pendingFiles,genuineAdmissions:0,primaryAdmission:false,lineagePreserved:true,wireRequests:wire.stats().requests,parentRequests:parents.stats().requests};
++ }catch{return {status:phase==='CAPTURE'?'INCOMPLETE':'BLOCKED',reason:closed?'DEADLINE_OR_CANCELLED':phase==='PREFLIGHT'?'PREFLIGHT_REJECTED':phase==='CONTROL'?'CONTROL_REJECTED':phase==='BINDINGS'?'BINDINGS_OR_PERSISTENCE_REJECTED':'CAPTURE_REJECTED',providerAttempts:attempts,confirmedUploads:uploads,genuineAdmissions:0};}
++ finally{closed=true;controller.abort();wire?.cancelActiveUpload();clock.clearTimeout(deadlineTimer);}
++}
++export function recoverApprovedLineage({file,sha256,key,sourceSha,approvalSha256,runId}){
++ const b=immutableRead(file,APPROVED_BINDING_CAPS.lineageSealedBytes);need(b.hash===sha256,'BINDING_RECOVERY_PIN');const e=captureJson(b.bytes.toString(),APPROVED_BINDING_CAPS.lineageSealedBytes),c=e.context;
++ need(c?.kind==='APPROVED_CAPTURE_LINEAGE_RESEARCH_V1'&&c.sourceSha===sourceSha&&c.approvalSha256===approvalSha256&&c.runId===runId&&c.primaryAdmission===false,'BINDING_RECOVERY_SCOPE');const raw=openResearch(e,key);need(raw.length<=APPROVED_BINDING_CAPS.lineagePlainBytes&&sha(raw)===c.lineageSha256,'BINDING_RECOVERY_HASH');return {lineage:captureJson(raw.toString(),APPROVED_BINDING_CAPS.lineagePlainBytes),automaticResumeAuthorized:false,primaryAdmission:false};
++}
+diff --git a/paper-capture-wrapper.mjs b/paper-capture-wrapper.mjs
+index f932cb56..27b92e28 100644
+--- a/paper-capture-wrapper.mjs
++++ b/paper-capture-wrapper.mjs
+@@ -11,6 +11,7 @@ import {validateReferenceBundle} from './paper-capture-references.mjs';
+ import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
+ import {openCaptureZip} from './capture-artifact.mjs';
+ export const WRAPPER_FILES=Object.freeze(['native-sec-handoff.mjs','native-sec-events.mjs','edgar-feed.mjs','capture-json.mjs','capture-artifact.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
++export const APPROVED_BINDING_FILES=Object.freeze([...WRAPPER_FILES,'capture-approved-binding.mjs','native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs']);
+ export const FIXED_UNIVERSE=Object.freeze(['AMD','INTC','NVDA','AMAT','LRCX','KLAC']);
+ export const WRAPPER_CAPS=Object.freeze({uploads:41,sealedBytes:160*1024*1024,archiveBytes:164*1024*1024,historyRows:100,referenceBytes:2*1024*1024});
+ export const APPROVAL_LIMITS=Object.freeze({providerAttempts:41,perMinute:2,inFlight:1,responseBytes:65536,totalResponseBytes:8388608,frames:41,symbols:6,uploadAttempts:41,sealedBytes:167772160,archiveBytes:171966464,retentionDays:3});
+@@ -22,19 +23,23 @@ export function immutableRead(file,max){
+ }
+ const git=(root,args)=>execFileSync('git',['--no-replace-objects','-c','protocol.allow=never',...args],{cwd:root,timeout:5000,maxBuffer:1024*1024,stdio:['ignore','pipe','ignore'],env:{PATH:process.env.PATH,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}}).toString().trim();
+ export function inputFingerprint(referenceSha256,plan){return sha(JSON.stringify({referenceSha256,rule:plan.rule,cohort:plan.cohort,day:plan.day,start:plan.start,end:plan.end,enrollmentEnd:plan.enrollmentEnd,universe:plan.universe}));}
+-export function prepareCaptureGuard({root,reviewRoot,approvalFile,referenceFile,context,history,now}){
++export function prepareCaptureGuard(options){return prepareGuard(options,false);}
++// Separate reviewed API: this does not change the rehearsal workflow or worker.
++export function prepareApprovedCaptureGuard(options){return prepareGuard(options,true);}
++function prepareGuard({root,reviewRoot,approvalFile,referenceFile,context,history,now},approvedBinding){
++ const files=approvedBinding?APPROVED_BINDING_FILES:WRAPPER_FILES;
+  const snapshots=new Map(),remember=(f,max)=>{const s=immutableRead(f,max);snapshots.set(path.resolve(f),{...s,max});return s;};
+  const approvalRead=remember(approvalFile,65536),a=captureJson(approvalRead.bytes.toString()),p=a.plan;
+- ok(a.kind==='PAPER_CAPTURE_GUARDED_APPROVAL_V1'&&a.granted===true&&typeof a.ownerApprovalReference==='string'&&a.ownerApprovalReference.trim().length>0&&a.ownerApprovalReference.length<=200,'DATED_APPROVAL_REQUIRED');
++ ok(a.kind===(approvedBinding?'PAPER_CAPTURE_LIVE_BINDING_APPROVAL_V1':'PAPER_CAPTURE_GUARDED_APPROVAL_V1')&&a.granted===true&&typeof a.ownerApprovalReference==='string'&&a.ownerApprovalReference.trim().length>0&&a.ownerApprovalReference.length<=200,'DATED_APPROVAL_REQUIRED');
+  validatePlan(p);ok(a.limits&&Object.keys(a.limits).sort().join('|')===Object.keys(APPROVAL_LIMITS).sort().join('|')&&Object.entries(APPROVAL_LIMITS).every(([k,v])=>a.limits[k]===v),'EXACT_APPROVED_LIMITS');ok(p.cohort==='CALIBRATION'&&JSON.stringify(p.universe)===JSON.stringify(FIXED_UNIVERSE),'FIXED_CALIBRATION_ONLY');
+  ok(a.feed==='sip'&&a.entitlements?.latestSip===true&&a.entitlements?.referenceRetention===true&&a.entitlements?.quoteBarAndConditionsReviewed===true&&hash(a.entitlements?.evidenceSha256)&&a.recoveryProofVerified===true,'OFFICIAL_RIGHTS_OR_RECOVERY_REQUIRED');
+  ok(Number.isFinite(stamp(a.approvedAt))&&stamp(a.approvedAt)<=now&&stamp(a.approvedAt)<=Date.parse(p.start)&&Date.parse(p.start)-stamp(a.approvedAt)<=86400000&&a.expires===p.end&&now>=Date.parse(p.start)-10*60000&&now<=Date.parse(p.start),'APPROVAL_OR_START_WINDOW');
+  ok(context.repository==='drrazaq/Stock-2'&&context.refName==='Stock2-safety-fixes'&&context.eventName==='workflow_dispatch'&&context.attempt===1&&context.actor==='drrazaq'&&context.workflowRef==='drrazaq/Stock-2/.github/workflows/sec-paper-capture.yml@refs/heads/Stock2-safety-fixes'&&context.permissions?.contents==='read'&&context.permissions?.actions==='read'&&Object.keys(context.permissions).length===2&&Number.isSafeInteger(context.runId)&&context.runId>0,'WORKFLOW_CONTEXT_OR_PERMISSIONS');
+  ok(a.workflowCommitSha===context.workflowCommitSha&&git(reviewRoot,['rev-parse','HEAD'])===a.workflowCommitSha,'INSTALLED_WORKFLOW_HEAD');
+- const wf=remember(path.join(reviewRoot,'.github/workflows/sec-paper-capture.yml'),65536);ok((wf.bytes.toString().match(/^[ \t]*permissions:/gm)||[]).length===1&&wf.bytes.toString().includes('permissions:\n  contents: read\n  actions: read\n')&&wf.bytes.toString().includes("PAPER_CAPTURE_EXECUTION: INACTIVE_OFFLINE_REHEARSAL")&&!wf.bytes.toString().includes('secrets.')&&wf.bytes.toString().includes('ref: '+p.sourceSha),'WORKFLOW_READ_ONLY_INACTIVE_GUARDS');ok(wf.hash===a.workflowSha256&&sha(execFileSync('git',['--no-replace-objects','-c','protocol.allow=never','show',a.workflowCommitSha+':.github/workflows/sec-paper-capture.yml'],{cwd:reviewRoot,timeout:5000,maxBuffer:65536,stdio:['ignore','pipe','ignore'],env:{PATH:process.env.PATH,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}}))===wf.hash,'INSTALLED_WORKFLOW_PIN');
++ const wf=remember(path.join(reviewRoot,'.github/workflows/sec-paper-capture.yml'),65536);ok((wf.bytes.toString().match(/^[ \t]*permissions:/gm)||[]).length===1&&wf.bytes.toString().includes('permissions:\n  contents: read\n  actions: read\n')&&(approvedBinding?wf.bytes.toString().includes('PAPER_CAPTURE_EXECUTION: APPROVED_CALIBRATION_V1')&&!wf.bytes.toString().includes('INACTIVE_OFFLINE_REHEARSAL'):wf.bytes.toString().includes("PAPER_CAPTURE_EXECUTION: INACTIVE_OFFLINE_REHEARSAL")&&!wf.bytes.toString().includes('secrets.'))&&wf.bytes.toString().includes('ref: '+p.sourceSha),'WORKFLOW_READ_ONLY_INACTIVE_GUARDS');ok(wf.hash===a.workflowSha256&&sha(execFileSync('git',['--no-replace-objects','-c','protocol.allow=never','show',a.workflowCommitSha+':.github/workflows/sec-paper-capture.yml'],{cwd:reviewRoot,timeout:5000,maxBuffer:65536,stdio:['ignore','pipe','ignore'],env:{PATH:process.env.PATH,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}}))===wf.hash,'INSTALLED_WORKFLOW_PIN');
+  ok(git(root,['rev-parse','HEAD'])===p.sourceSha,'SOURCE_HEAD');
+- ok(a.runtimeFiles&&Object.keys(a.runtimeFiles).sort().join('|')===[...WRAPPER_FILES].sort().join('|'),'COMPLETE_DEPENDENCY_SET');
+- for(const file of WRAPPER_FILES){const s=remember(path.join(root,file),1024*1024);ok(s.hash===a.runtimeFiles[file],'RUNTIME_FILE_PIN');const blob=execFileSync('git',['--no-replace-objects','-c','protocol.allow=never','show',p.sourceSha+':'+file],{cwd:root,timeout:5000,maxBuffer:1024*1024,stdio:['ignore','pipe','ignore'],env:{PATH:process.env.PATH,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}});ok(sha(blob)===s.hash,'RUNTIME_GIT_BLOB_PIN');}
++ ok(a.runtimeFiles&&Object.keys(a.runtimeFiles).sort().join('|')===[...files].sort().join('|'),'COMPLETE_DEPENDENCY_SET');
++ for(const file of files){const s=remember(path.join(root,file),1024*1024);ok(s.hash===a.runtimeFiles[file],'RUNTIME_FILE_PIN');const blob=execFileSync('git',['--no-replace-objects','-c','protocol.allow=never','show',p.sourceSha+':'+file],{cwd:root,timeout:5000,maxBuffer:1024*1024,stdio:['ignore','pipe','ignore'],env:{PATH:process.env.PATH,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}});ok(sha(blob)===s.hash,'RUNTIME_GIT_BLOB_PIN');}
+  const ref=remember(referenceFile,WRAPPER_CAPS.referenceBytes);ok(ref.hash===a.referenceSha256&&p.enrollmentManifestSha256===inputFingerprint(ref.hash,p),'INPUT_MANIFEST_PIN');
+  const references=validateReferenceBundle(ref.bytes.toString(),a);references.inputIngestedAt=new Date(now).toISOString();for(const m of references.metadata){m.sourceCapturedAt=m.asOf;m.asOf=references.inputIngestedAt;}const initialHead=p.sourceSha,workflowHead=a.workflowCommitSha;let historyVerified=false;
+  function verifyHistory(h){
+@@ -55,17 +60,24 @@ export async function runGuardedCapture({root,reviewRoot,approvalFile,referenceF
+  // No key operation or provider/upload call until unsecreted guard/provenance checks pass.
+  const guard=prepareCaptureGuard({root,reviewRoot,approvalFile,referenceFile,context,now:now()});
+  const history=await bounded(ports.history({maxRows:100,timeoutMs:10000}));guard.verifyHistory(history);
++ return runPreparedCapture({root,reviewRoot,approvalFile,referenceFile,context,output,key,now,wait,ports},guard);
++}
++// Shared storage/evaluator engine. Entry points must construct their own guard;
++// neither the rehearsal CLI nor approved binding accepts a caller-supplied guard.
++export async function runPreparedCapture({approvalFile,context,output,key,now,wait,ports,sourceContext=null},guard){
++ guard.revalidate();
+  ok(typeof key==='string'&&key.length>=16,'RESEARCH_ENCRYPTION_BINDING_REQUIRED');
+  const absolute=path.resolve(output);for(let parent=path.dirname(absolute);;parent=path.dirname(parent)){ok(!fs.lstatSync(parent).isSymbolicLink(),'OUTPUT_PARENT_SYMLINK');if(path.dirname(parent)===parent)break;}ok(!fs.existsSync(absolute),'EXCLUSIVE_OUTPUT_REQUIRED');immutableRead(approvalFile,65536);fs.mkdirSync(absolute,{mode:0o700});
+  const receipts=[],pending=[],eventBatches=[],evidenceAssets=[];let sealedBytes=0,archiveBytes=0,status='ERROR',failure='NONE';
+  const a=guard.approval;
++ const sourceContextRaw=sourceContext===null?null:JSON.stringify(sourceContext);ok(sourceContextRaw===null||Buffer.byteLength(sourceContextRaw)<=1024*1024,'SOURCE_CONTEXT_BUDGET');
+  const report=await runCalibration({plan:a.plan,now,wait,metadata:guard.references.metadata,
+   readEvents:async at=>{guard.revalidate();const supplied=await bounded(ports.events({at,maxBytes:131072,readOnly:true,identities:guard.references.metadata}));const raw=typeof supplied==='string'?supplied:supplied?.raw;const assets=typeof supplied==='string'?[]:supplied?.evidenceAssets;ok(Array.isArray(assets)&&assets.length<=41,'EVENT_EVIDENCE_SCHEMA');for(const asset of assets){validateNativeEvidenceAsset(asset);if(!evidenceAssets.some(x=>x.sha256===asset.sha256))evidenceAssets.push(asset);}ok(Buffer.byteLength(JSON.stringify(evidenceAssets))<=NATIVE_HANDOFF_BYTES,'EVENT_EVIDENCE_BUDGET');validateNativeEventAssets(raw,evidenceAssets);ok(typeof raw==='string'&&Buffer.byteLength(raw)<=131072,'EVENT_SOURCE_BUDGET');const doc=captureJson(raw);ok(Array.isArray(doc.events)&&doc.events.length<=20,'EVENT_SOURCE_SCHEMA');eventBatches.push({at,raw,sha256:sha(raw)});return doc.events;},
+   transport:async(url,options)=>{guard.revalidate();return ports.provider(url,options);},
+   persist:async state=>{try{
+    const sequence=state.frames.length-1,name='checkpoint-'+String(sequence).padStart(3,'0')+'.enc';
+-   const contextTag={kind:'GUARDED_PAPER_CAPTURE_V1',sourceSha:a.plan.sourceSha,approvalHash:guard.approvalHash,referenceHash:guard.references.sha256,runId:context.runId,cohort:'CALIBRATION',sequence,chain:state.chain};
+-   const payload=Buffer.from(JSON.stringify({approvalRaw:guard.approvalRaw,referenceRaw:guard.references.raw,inputIngestedAt:guard.references.inputIngestedAt,eventBatches,evidenceAssets,state}));ok(payload.length<=8*1024*1024,'CHECKPOINT_PLAIN_BUDGET');
++   const contextTag={kind:'GUARDED_PAPER_CAPTURE_V1',sourceSha:a.plan.sourceSha,approvalHash:guard.approvalHash,referenceHash:guard.references.sha256,runId:context.runId,cohort:'CALIBRATION',sequence,chain:state.chain,...(sourceContextRaw===null?{}:{sourceContextSha256:sha(sourceContextRaw)})};
++   const payload=Buffer.from(JSON.stringify({approvalRaw:guard.approvalRaw,referenceRaw:guard.references.raw,inputIngestedAt:guard.references.inputIngestedAt,eventBatches,evidenceAssets,state,...(sourceContextRaw===null?{}:{sourceContext:JSON.parse(sourceContextRaw)})}));ok(payload.length<=8*1024*1024,'CHECKPOINT_PLAIN_BUDGET');
+    const body=Buffer.from(JSON.stringify(sealResearch(payload,key,contextTag)));
+    sealedBytes+=body.length;ok(body.length<=16*1024*1024&&sealedBytes<=WRAPPER_CAPS.sealedBytes&&receipts.length<41,'SEALED_UPLOAD_BUDGET');
+    const file=path.join(absolute,name);fs.writeFileSync(file,body,{flag:'wx',mode:0o600});pending.push(name);guard.revalidate();
+@@ -90,10 +102,10 @@ export function recoverUploadedCapture({archives,receiptRaw,expectedReceiptSha25
+   ok(Buffer.isBuffer(zip)&&zip.length===r.archiveBytes&&sha(zip)===r.archiveSha256,'DOWNLOADED_ARTIFACT_DIGEST');total+=zip.length;ok(total<=WRAPPER_CAPS.archiveBytes,'RECOVERY_ARCHIVE_BUDGET');
+   const bytes=openCaptureZip(zip,name);ok(bytes.length===r.fileBytes&&sha(bytes)===r.fileSha256,'RECOVERY_FILE_PIN');const envelope=captureJson(bytes.toString(),16*1024*1024),c=envelope.context;
+   ok(c?.kind==='GUARDED_PAPER_CAPTURE_V1'&&c.sourceSha===m.sourceSha&&c.approvalHash===m.approvalHash&&c.runId===m.runId&&c.cohort===m.cohort&&c.sequence===i,'RECOVERY_CONTEXT');
+-  const p=captureJson(openResearch(envelope,key).toString());ok(sha(p.approvalRaw)===m.approvalHash&&sha(p.referenceRaw)===c.referenceHash,'RECOVERY_INPUT_PIN');
++  const p=captureJson(openResearch(envelope,key).toString());if(c.sourceContextSha256!==undefined){ok(sha(JSON.stringify(p.sourceContext))===c.sourceContextSha256,'RECOVERY_SOURCE_CONTEXT_PIN');}else ok(p.sourceContext===undefined,'RECOVERY_SOURCE_CONTEXT_UNPINNED');if(lastPayload)ok(JSON.stringify(lastPayload.sourceContext)===JSON.stringify(p.sourceContext),'RECOVERY_SOURCE_CONTEXT_CHANGED');ok(sha(p.approvalRaw)===m.approvalHash&&sha(p.referenceRaw)===c.referenceHash,'RECOVERY_INPUT_PIN');
+   const a=captureJson(p.approvalRaw);validateReferenceBundle(p.referenceRaw,a);ok(a.plan.sourceSha===m.sourceSha&&a.plan.cohort==='CALIBRATION'&&a.plan.enrollmentManifestSha256===inputFingerprint(c.referenceHash,a.plan),'RECOVERY_PLAN');
+   const state=recoverCapture(checkpointCapture(p.state,key),key,a.plan);ok(Number.isFinite(stamp(p.inputIngestedAt))&&stamp(p.inputIngestedAt)<=Date.parse(a.plan.start)&&state.frames.every(x=>x.frame.metadata.every(m=>m.asOf===p.inputIngestedAt&&stamp(m.sourceCapturedAt)<=stamp(m.asOf))),'RECOVERY_METADATA_INGESTION_CLOCK');ok(Array.isArray(p.eventBatches)&&p.eventBatches.length===state.frames.length&&p.eventBatches.every((b,j)=>sha(b.raw)===b.sha256&&JSON.stringify(captureJson(b.raw).events)===JSON.stringify(state.frames[j].frame.events)),'RECOVERY_EVENT_SOURCE_BYTES');ok(state.frames.length===i+1&&state.frames[i].previous===previousChain&&state.chain===c.chain,'RECOVERY_CONTIGUOUS_CHAIN');
+   const assets=p.evidenceAssets||[];ok(Array.isArray(assets)&&Buffer.byteLength(JSON.stringify(assets))<=NATIVE_HANDOFF_BYTES,'RECOVERY_NATIVE_EVIDENCE_BUDGET');for(const asset of assets)validateNativeEvidenceAsset(asset);for(const batch of p.eventBatches)validateNativeEventAssets(batch.raw,assets);if(lastPayload)ok((lastPayload.evidenceAssets||[]).every(a=>assets.some(b=>JSON.stringify(a)===JSON.stringify(b))),'RECOVERY_NATIVE_PREFIX_CHANGED');if(last)ok(JSON.stringify(state.frames.slice(0,-1))===JSON.stringify(last.frames),'RECOVERY_PREFIX_CHANGED');last=state;lastPayload=p;previousChain=state.chain;
+  }
+- return {status:last.frames.length===41?'AUTHENTICATED_COMPLETE':'AUTHENTICATED_INCOMPLETE',frames:last.frames.length,state:last,originalInputs:{approvalRaw:lastPayload.approvalRaw,referenceRaw:lastPayload.referenceRaw,eventBatches:lastPayload.eventBatches,evidenceAssets:lastPayload.evidenceAssets||[]},report:finishCapture(last),genuineAdmissions:0,automaticResumeAuthorized:false};
++ return {status:last.frames.length===41?'AUTHENTICATED_COMPLETE':'AUTHENTICATED_INCOMPLETE',frames:last.frames.length,state:last,originalInputs:{approvalRaw:lastPayload.approvalRaw,referenceRaw:lastPayload.referenceRaw,eventBatches:lastPayload.eventBatches,evidenceAssets:lastPayload.evidenceAssets||[],...(lastPayload.sourceContext?{sourceContext:lastPayload.sourceContext}:{})},report:finishCapture(last),genuineAdmissions:0,automaticResumeAuthorized:false};
+ }
+diff --git a/test/approved-capture-binding.test.mjs b/test/approved-capture-binding.test.mjs
+new file mode 100644
+index 00000000..e2c2d85f
+--- /dev/null
++++ b/test/approved-capture-binding.test.mjs
+@@ -0,0 +1,98 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
++import {runApprovedNativeCapture,prepareApprovedBinding,recoverApprovedLineage,approvedEnvironmentClients} from '../capture-approved-binding.mjs';
++import {recoverUploadedCapture,prepareCaptureGuard} from '../paper-capture-wrapper.mjs';import {sha} from '../prospective-paper-capture.mjs';
++import {approvedFixture,approvedServices} from './approved-capture-fixture.mjs';import {producerFixture} from './native-sec-producer-fixture.mjs';import {t,fixtureKey} from './capture-wrapper-fixture.mjs';
++import {openCaptureZip,fixtureZip} from '../capture-artifact.mjs';import {openResearch,sealResearch} from '../tools/seal-research-artifact.mjs';
++const noNative={directory:'/tmp/NEVER_READ_SYNTHETIC_ONLY/runtime/native-sec-events/123-1',expectedRunId:'123-1',expectedSourceSha:'b'.repeat(40)};
++function opts(f,m){return {...f,...m,approvalSha256:f.approvalSha256};}
++for(const fault of ['approval-pin','approval-reread-race','entitlement-reread-race','not-approved','binding-review','wrong-protocol','reference-pin','entitlement-pin','workflow-mode','runtime-pin','extra-dependency','wrong-native-run','unsafe-origin','permission','retry','late'])test('approved binding refuses '+fault+' before any credential opening or service operation',async()=>{
++ const f=approvedFixture(noNative),m=approvedServices(f);try{
++ if(fault==='approval-pin')fs.appendFileSync(f.approvalFile,' ');
++ if(fault.endsWith('reread-race')){let changed=false;const now=m.clock.now;m.clock.now=()=>{if(!changed){changed=true;fs.appendFileSync(fault==='approval-reread-race'?f.approvalFile:f.entitlementFile,' ');}return now();};}
++ if(fault==='not-approved'){f.approval.granted=false;f.save();}
++ if(fault==='binding-review'){f.approval.bindingReview.approved=false;f.save();}
++ if(fault==='wrong-protocol'){f.approval.bindingReview.protocol='V2';f.save();}
++ if(fault==='reference-pin')fs.appendFileSync(f.referenceFile,' ');
++ if(fault==='entitlement-pin')fs.appendFileSync(f.entitlementFile,' ');
++ if(fault==='workflow-mode'){const p=path.join(f.reviewRoot,'.github/workflows/sec-paper-capture.yml');fs.writeFileSync(p,fs.readFileSync(p,'utf8').replace('APPROVED_CALIBRATION_V1','INACTIVE_OFFLINE_REHEARSAL'));}
++ if(fault==='runtime-pin')fs.appendFileSync(path.join(f.root,'capture-approved-binding.mjs'),' ');
++ if(fault==='extra-dependency'){f.approval.runtimeFiles['unreviewed.mjs']='e'.repeat(64);f.save();}
++ if(fault==='wrong-native-run')f.native={...f.native,expectedRunId:'124-1'};
++ if(fault==='unsafe-origin'){f.approval.artifactScope.storageOrigins=['https://example.com'];f.save();}
++ if(fault==='permission')f.context.permissions.contents='write';
++ if(fault==='retry')f.context.attempt=2;
++ if(fault==='late')m.setTime(Date.parse(t(1)));
++ const r=await runApprovedNativeCapture(opts(f,m));assert.equal(r.status,'BLOCKED');assert.equal(r.reason,'PREFLIGHT_REJECTED');assert.deepEqual(m.opens(),{controlOpens:0,captureOpens:0});assert.ok(Object.values(m.requests).every(x=>x.length===0));assert.equal(fs.existsSync(f.output),false);
++ }finally{f.cleanup();}
++});
++for(const fault of ['history-private','duplicate-run','unknown-producer-history','late-history','clock-regression','entitlement-mutation','runtime-symlink'])test('actual control binding '+fault+' never reaches provider/upload',async()=>{
++ const f=approvedFixture(noNative);let m;m=approvedServices(f,{historyFault:fault==='history-private'?()=>new Response('{}',{status:403}):fault==='unknown-producer-history'?(url)=>url.includes('sec-paper-capture')?Response.json(f.history):new Response('{}',{status:403}):undefined,onHistory:async url=>{if(fault==='late-history')m.setTime(Date.parse(t(1)));if(fault==='clock-regression')m.setTime(Date.parse(t(-2)));if(fault==='entitlement-mutation')fs.appendFileSync(f.entitlementFile,' ');if(fault==='runtime-symlink'){const p=path.join(f.root,'capture-approved-binding.mjs');fs.renameSync(p,p+'.original');fs.symlinkSync(p+'.original',p);}if(fault==='duplicate-run'&&url.includes('sec-paper-capture')){f.history.workflow_runs.push({...f.history.workflow_runs[0],id:124});f.history.total_count=2;}}});try{
++ const r=await runApprovedNativeCapture(opts(f,m));assert.equal(r.status,'BLOCKED');assert.equal(m.requests.provider.length,0);assert.equal(m.requests.artifact.length,0);assert.equal(r.genuineAdmissions,0);if(fault==='unknown-producer-history'){assert.equal(r.reason,'LINEAGE_UNKNOWN');const file=f.output+'.lineage.enc',recovered=recoverApprovedLineage({file,sha256:sha(fs.readFileSync(file)),key:fixtureKey,sourceSha:f.approval.plan.sourceSha,approvalSha256:f.approvalSha256,runId:123});assert.equal(recovered.lineage.state,'UNKNOWN_MISSING_OR_AMBIGUOUS_HISTORY');assert.equal(recovered.automaticResumeAuthorized,false);}else assert.equal(m.opens().captureOpens,0);
++ }finally{f.cleanup();}
++});
++test('separate approved API cannot pass the unchanged rehearsal approval guard',()=>{const f=approvedFixture(noNative);try{assert.throws(()=>prepareCaptureGuard({...f,now:f.nowMs}),/DATED_APPROVAL_REQUIRED/);assert.ok(prepareApprovedBinding({...f,clock:{now:()=>f.nowMs}}).guard);}finally{f.cleanup();}});
++for(const fault of ['success','provider-429','provider-error','upload-rejection','invalid-finalize','changed-input','deadline-upload'])test('actual native producer → approved guard/real client adapters → encrypted recovery: '+fault,async()=>{
++ const p=await producerFixture(),native={directory:path.join(p.dir,'runtime/native-sec-events/123-1'),expectedRunId:'123-1',expectedSourceSha:p.sourceSha},f=approvedFixture(native);let m;
++ try{const production=await p.run({shadow:true,runId:'123'}),before=JSON.stringify(production.providerTrace);m=approvedServices(f,{providerFault:fault==='provider-429'?()=>new Response('{}',{status:429}):fault==='provider-error'?()=>new Response('{}',{status:500}):undefined,onProvider:async()=>{if(fault==='changed-input')fs.appendFileSync(f.entitlementFile,' ');},onArtifact:async call=>{if(fault==='upload-rejection')return new Response('{}',{status:403});if(fault==='invalid-finalize'&&call.phase==='finalize')return Response.json({ok:true,artifact_id:'INVALID'});if(fault==='deadline-upload'){m.setTime(Date.parse(t(40))+30001);return Response.json({ok:true});}}});
++ const reads=[],env=new Proxy({GITHUB_TOKEN:'SYNTHETIC_GITHUB_TOKEN',ALPACA_KEY:'SYNTHETIC_ALPACA_KEY',ALPACA_SECRET:'SYNTHETIC_ALPACA_SECRET',PRIVATE_KEY:fixtureKey,ACTIONS_RUNTIME_TOKEN:(await import('./artifact-wire-fixture.mjs')).syntheticArtifactToken},{get:(o,k)=>{reads.push(k);return o[k];}}),bound=approvedEnvironmentClients({environment:env,fetcher:(url,o)=>url.startsWith('https://api.github.com/')?m.transports.history(url,o):url.startsWith('https://data.alpaca.markets/')?m.transports.provider(url,o):m.transports.artifact(url,o)});
++ const r=await runApprovedNativeCapture({...opts(f,m),...bound});assert.deepEqual(reads,['GITHUB_TOKEN','ALPACA_KEY','ALPACA_SECRET','PRIVATE_KEY','ACTIONS_RUNTIME_TOKEN']);assert.equal(JSON.stringify(production.providerTrace),before);assert.equal(r.genuineAdmissions,0);assert.equal(fs.existsSync(path.join(p.dir,'blocked-fetch')),false);
++ if(fault==='success'){
++  assert.equal(r.status,'COMPLETE',JSON.stringify(r));assert.equal(r.providerAttempts,41);assert.equal(r.confirmedUploads,41);assert.equal(r.wireRequests,164);assert.equal(r.parentRequests,2);assert.equal(m.requests.history.length,3);
++  for(const q of m.requests.provider){assert.equal(q.method,'GET');assert.equal(q.redirect,'error');assert.equal(q.headers['APCA-API-KEY-ID'],'SYNTHETIC_ALPACA_KEY');assert.equal(new URL(q.url).pathname,'/v2/stocks/snapshots');}
++  for(const q of m.requests.artifact)if(q.url.includes('blob.core.windows.net'))assert.equal(q.headers.Authorization,undefined);
++  const raw=fs.readFileSync(path.join(f.output,'receipts.json'),'utf8'),recovered=recoverUploadedCapture({archives:m.wire.archives,receiptRaw:raw,expectedReceiptSha256:sha(raw),expectedApprovalHash:f.approvalSha256,expectedSourceSha:f.approval.plan.sourceSha,key:fixtureKey});assert.equal(recovered.frames,41);assert.equal(recovered.report.evaluation.counts.resolved,0);assert.equal(recovered.originalInputs.sourceContext.historyVerified,true);assert.ok(recovered.originalInputs.evidenceAssets.length>0);assert.ok(recovered.originalInputs.eventBatches.every(b=>JSON.parse(b.raw).events.length===0));assert.equal(recovered.originalInputs.sourceContext.admissionPolicyApproved,false);
++  const journal=f.output+'.lineage.enc',hash=sha(fs.readFileSync(journal));assert.equal(recoverApprovedLineage({file:journal,sha256:hash,key:fixtureKey,sourceSha:f.approval.plan.sourceSha,approvalSha256:f.approvalSha256,runId:123}).lineage.state,'VERIFIED_NO_EARLIER_SAME_DAY_RUN');assert.throws(()=>recoverApprovedLineage({file:journal,sha256:hash,key:'SYNTHETIC_WRONG_KEY_ONLY',sourceSha:f.approval.plan.sourceSha,approvalSha256:f.approvalSha256,runId:123}));
++  // Authenticated but semantically inconsistent optional provenance must not
++  // disappear partway through recovery. Legacy absent-context controls persist.
++  const manifest=JSON.parse(raw),receipt=manifest.receipts[1],envelope=JSON.parse(openCaptureZip(m.wire.archives.get(receipt.artifactId),receipt.name)),payload=JSON.parse(openResearch(envelope,fixtureKey));delete payload.sourceContext;delete envelope.context.sourceContextSha256;const altered=Buffer.from(JSON.stringify(sealResearch(Buffer.from(JSON.stringify(payload)),fixtureKey,envelope.context))),zip=fixtureZip(receipt.name,altered),changed=new Map(m.wire.archives);changed.set(receipt.artifactId,zip);Object.assign(receipt,{archiveSha256:sha(zip),archiveBytes:zip.length,fileSha256:sha(altered),fileBytes:altered.length});const changedRaw=JSON.stringify(manifest);assert.throws(()=>recoverUploadedCapture({archives:changed,receiptRaw:changedRaw,expectedReceiptSha256:sha(changedRaw),expectedApprovalHash:f.approvalSha256,expectedSourceSha:f.approval.plan.sourceSha,key:fixtureKey}),/RECOVERY_SOURCE_CONTEXT_CHANGED/);
++  const again=await runApprovedNativeCapture(opts(f,m));assert.equal(again.status,'BLOCKED');assert.equal(m.requests.provider.length,41);
++ }else{assert.notEqual(r.status,'COMPLETE',JSON.stringify(r));assert.equal(m.requests.provider.length,1);assert.ok(m.requests.artifact.length<=4);assert.equal(r.confirmedUploads,0);}
++ }finally{p.close();f.cleanup();}
++});
++for(const fault of ['deadline-history','deadline-provider','deadline-upload-wait'])test('full pinned deadline aborts '+fault+' even when a transport ignores cancellation; late response cannot resume capture',async()=>{
++ const p=await producerFixture(),native={directory:path.join(p.dir,'runtime/native-sec-events/123-1'),expectedRunId:'123-1',expectedSourceSha:p.sourceSha},f=approvedFixture(native);try{
++ await p.run({shadow:true,runId:'123'});let resolveLate,activeSignal;const pending=new Promise(resolve=>resolveLate=resolve),timers=new Map();let next=0;
++ const m=approvedServices(f,{historyFault:fault==='deadline-history'?(_,o)=>{activeSignal=o.signal;return pending;}:undefined,providerFault:fault==='deadline-provider'?(_,o)=>{activeSignal=o.signal;return pending;}:undefined,artifactFault:fault==='deadline-upload-wait'?(_,o)=>{activeSignal=o.signal;return pending;}:undefined});m.clock.setTimeout=(fn,delay)=>{timers.set(++next,{fn,delay});return next;};m.clock.clearTimeout=id=>timers.delete(id);
++ const run=runApprovedNativeCapture(opts(f,m));for(let i=0;i<1000&&!activeSignal;i++)await new Promise(r=>setTimeout(r,1));assert.ok(activeSignal,'the requested actual client must be waiting');const deadline=[...timers.values()].find(x=>x.delay>40*60000);assert.ok(deadline);m.setTime(Date.parse(t(40))+30000);deadline.fn();const r=await run;assert.equal(r.reason,'DEADLINE_OR_CANCELLED');assert.equal(activeSignal.aborted,true);const before=Object.values(m.requests).map(a=>a.length);resolveLate(Response.json({ok:true}));await new Promise(r=>setTimeout(r,25));assert.deepEqual(Object.values(m.requests).map(a=>a.length),before);assert.ok(m.requests.provider.length<=1);assert.equal(r.confirmedUploads,0);
++ }finally{p.close();f.cleanup();}
++});
++for(const fault of ['partial-lineage','existing-output','output-symlink','input-head-change','history-budget'])test('recording boundary '+fault+' is fail-closed and never overwrites existing evidence',async()=>{
++ const f=approvedFixture(noNative);let m;m=approvedServices(f,{historyFault:fault==='history-budget'?url=>url.includes('sec-paper-capture')?Response.json(f.history):Response.json({total_count:41,workflow_runs:Array.from({length:20},(_,i)=>({id:i+1,created_at:t(-i-1),status:'completed',updated_at:t(-i),repository:{full_name:'drrazaq/Stock-2'}}))}):undefined,onHistory:async()=>{if(fault==='input-head-change'){const {fixtureGit}=await import('./capture-wrapper-fixture.mjs');fixtureGit(f.root,['-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','--allow-empty','-qm','SYNTHETIC changed HEAD']);}}});try{
++ if(fault==='partial-lineage'){fs.mkdirSync(path.dirname(f.output),{recursive:true});fs.writeFileSync(f.output+'.lineage.enc','SYNTHETIC_INTERRUPTED_BYTES');}
++ if(fault==='existing-output')fs.mkdirSync(f.output,{recursive:true});
++ if(fault==='output-symlink'){fs.mkdirSync(path.dirname(path.dirname(f.output)),{recursive:true});fs.symlinkSync(f.dir,path.dirname(f.output));}
++ const r=await runApprovedNativeCapture(opts(f,m));assert.equal(r.status,'BLOCKED');assert.equal(m.requests.provider.length,0);assert.equal(m.requests.artifact.length,0);if(fault==='partial-lineage')assert.equal(fs.readFileSync(f.output+'.lineage.enc','utf8'),'SYNTHETIC_INTERRUPTED_BYTES');
++ }finally{f.cleanup();}
++});
++test('competing actual binding invocations share an exclusive run journal; only one provider can start',async()=>{
++ const p=await producerFixture(),native={directory:path.join(p.dir,'runtime/native-sec-events/123-1'),expectedRunId:'123-1',expectedSourceSha:p.sourceSha},f=approvedFixture(native);try{await p.run({shadow:true,runId:'123'});const m=approvedServices(f,{providerFault:()=>new Response('{}',{status:429})}),results=await Promise.all([runApprovedNativeCapture(opts(f,m)),runApprovedNativeCapture(opts(f,m))]);assert.equal(m.requests.provider.length,1);assert.equal(m.requests.artifact.length,0);assert.equal(results.filter(r=>r.status==='BLOCKED').length,1);assert.equal(fs.statSync(f.output+'.lineage.enc').mode&0o777,0o600);}finally{p.close();f.cleanup();}
++});
++test('binding errors cannot expose credential text and never call a default/global fetch',async()=>{const f=approvedFixture(noNative),m=approvedServices(f),saved=globalThis.fetch;let calls=0;globalThis.fetch=()=>{calls++;throw Error('MUST_NOT_USE_GLOBAL_FETCH');};try{const r=await runApprovedNativeCapture({...opts(f,m),openCaptureBindings:async()=>{throw Error('SYNTHETIC_SECRET_MUST_NOT_APPEAR');}});assert.equal(r.status,'BLOCKED');assert.equal(JSON.stringify(r).includes('SYNTHETIC_SECRET'),false);assert.equal(calls,0);assert.equal(m.requests.provider.length,0);}finally{globalThis.fetch=saved;f.cleanup();}});
++for(const boundary of ['lineage-partial-write','lineage-fsync','checkpoint-partial-write'])test('actual write failure '+boundary+' leaves encrypted evidence, suppresses further requests and blocks automatic retry',async()=>{
++ const p=await producerFixture(),native={directory:path.join(p.dir,'runtime/native-sec-events/123-1'),expectedRunId:'123-1',expectedSourceSha:p.sourceSha},f=approvedFixture(native);const write=fs.writeFileSync,sync=fs.fsyncSync;let injected=false;
++ try{await p.run({shadow:true,runId:'123'});const m=approvedServices(f);const target=f.output+(boundary==='checkpoint-partial-write'?'/checkpoint-000.enc':'.lineage.enc');
++ const pathname=file=>typeof file==='number'?fs.readlinkSync('/proc/self/fd/'+file):String(file);
++ if(boundary==='lineage-fsync')fs.fsyncSync=function(fd){if(!injected&&pathname(fd)===target){injected=true;throw Error('SYNTHETIC_IO_ERROR');}return sync(fd);};
++ else fs.writeFileSync=function(file,body,...args){if(!injected&&pathname(file)===target){injected=true;write(file,Buffer.from(body).subarray(0,20),...args);throw Error('SYNTHETIC_IO_ERROR');}return write(file,body,...args);};
++ const r=await runApprovedNativeCapture(opts(f,m));assert.ok(injected);assert.notEqual(r.status,'COMPLETE');assert.equal(r.confirmedUploads,0);assert.equal(m.requests.artifact.length,0);assert.equal(m.requests.provider.length,boundary==='checkpoint-partial-write'?1:0);const bytes=fs.readFileSync(target);fs.writeFileSync=write;fs.fsyncSync=sync;const again=await runApprovedNativeCapture(opts(f,m));assert.equal(again.status,'BLOCKED');assert.deepEqual(fs.readFileSync(target),bytes);
++ }finally{fs.writeFileSync=write;fs.fsyncSync=sync;p.close();f.cleanup();}
++});
++test('actual colocated watcher continues observations during approved-binding quote/upload waits and capture failure',async()=>{
++ const p=await producerFixture({long:true,snapshotDelayMs:5}),native={directory:path.join(p.dir,'runtime/native-sec-events/123-1'),expectedRunId:'123-1',expectedSourceSha:p.sourceSha},f=approvedFixture(native);try{
++ const observing=p.run({shadow:true,runId:'123'});observing.catch(()=>{});const progress=()=>{try{return JSON.parse(fs.readFileSync(path.join(p.dir,'data/ignition-runs/2026-11-05/123-1-progress.json'))).heartbeat.length;}catch{return 0;}};
++ for(let i=0;i<2000&&!fs.existsSync(path.join(native.directory,'response-000001.json'));i++)await new Promise(r=>setTimeout(r,2));assert.ok(fs.existsSync(path.join(native.directory,'response-000001.json')));
++ let quoteProgress=false,uploadProgress=false;const m=approvedServices(f,{onProvider:async()=>{const before=progress();await new Promise(r=>setTimeout(r,200));quoteProgress=progress()>before;},onArtifact:async()=>{const before=progress();await new Promise(r=>setTimeout(r,200));uploadProgress=progress()>before;return new Response('{}',{status:403});}});
++ const r=await runApprovedNativeCapture(opts(f,m)),produced=await observing;assert.notEqual(r.status,'COMPLETE',JSON.stringify(r));assert.equal(r.providerAttempts,1);assert.ok(quoteProgress,'watcher must continue during actual client quote wait');assert.ok(uploadProgress,'watcher must continue during actual client upload wait');assert.equal(produced.snapshot.heartbeat.length,331);assert.equal(produced.nativeReport.failures,0);assert.equal(fs.existsSync(path.join(p.dir,'blocked-fetch')),false);
++ }finally{p.close();f.cleanup();}
++});
++test('malformed binding and clock inputs return fixed status without escaping errors',async()=>{for(const input of [undefined,{clock:{}},{clock:null},{context:{bad:()=>{}},native:noNative}]){const r=await runApprovedNativeCapture(input);assert.equal(r.status,'BLOCKED');assert.equal(r.reason,'PREFLIGHT_REJECTED');}});
++test('unknown earlier-job history retains authenticated partial original source in the actual encrypted binding journal',async()=>{
++ const {prepareAvailableLineageBundle}=await import('../native-sec-lineage-history.mjs');const first=await producerFixture(),next=await producerFixture(),native={directory:path.join(next.dir,'runtime/native-sec-events/123-1'),expectedRunId:'123-1',expectedSourceSha:next.sourceSha},f=approvedFixture(native);
++ try{const prior=await first.run({shadow:true,runId:'100',epoch:Date.parse(t(-2))}),pending=Buffer.from('SYNTHETIC_INTERRUPTED_ORIGINAL_BYTES');fs.writeFileSync(path.join(prior.archiveDirectory,'response-000002.json.pending-SYNTHETIC'),pending);const file=path.join(first.dir,'native-sec-run.json'),bundle=prepareAvailableLineageBundle({directory:prior.archiveDirectory,runId:'100-1',sourceSha:first.sourceSha,legacyArchive:path.join(first.dir,'data/ignition-runs/2026-11-05/100-1.json'),producerExitCode:9,endedAt:t(-1),out:file}),zip=fixtureZip('native-sec-run.json',fs.readFileSync(file));
++ const run={id:100,run_attempt:1,workflow_id:7,path:'.github/workflows/ignition.yml',head_branch:'main',head_sha:first.sourceSha,status:'completed',conclusion:'failure',created_at:t(-5),run_started_at:t(-5),repository:{full_name:'drrazaq/Stock-2'}},job={id:101,run_id:100,run_attempt:1,status:'completed',started_at:t(-5),completed_at:t(-1)},artifact={id:200,name:'native-sec-available-run-v2',size_in_bytes:zip.length,digest:'sha256:'+sha(zip),expired:false,workflow_run:{id:100,head_sha:first.sourceSha}};
++ assert.equal(first.sourceSha,next.sourceSha);const m=approvedServices(f,{historyFault:async(url,o)=>{if(url.includes('sec-paper-capture'))return Response.json(f.history);if(url.includes('/workflows/7/'))return Response.json({total_count:1,workflow_runs:[run]});if(url.includes('/jobs?'))return Response.json({total_count:2,jobs:[job,job]});if(url.includes('/runs/100/artifacts?'))return Response.json({total_count:1,artifacts:[artifact]});if(url.endsWith('/artifacts/200/zip'))return new Response(null,{status:302,headers:{location:f.approval.artifactScope.storageOrigins[0]+'/prior.zip'}});if(url.endsWith('/prior.zip')){assert.equal(o.headers.Authorization,undefined);return new Response(zip);}if(url.endsWith('/runs/100'))return Response.json(run);throw Error('SYNTHETIC_UNEXPECTED_ROUTE');}});
++ const result=await runApprovedNativeCapture(opts(f,m));assert.equal(result.reason,'LINEAGE_UNKNOWN',JSON.stringify(result));assert.equal(m.requests.provider.length,0);assert.equal(m.requests.artifact.length,0);const journal=f.output+'.lineage.enc',recovered=recoverApprovedLineage({file:journal,sha256:sha(fs.readFileSync(journal)),key:fixtureKey,sourceSha:f.approval.plan.sourceSha,approvalSha256:f.approvalSha256,runId:123});assert.equal(recovered.lineage.retainedBundles.length,1);assert.deepEqual(recovered.lineage.retainedBundles[0].bundle,bundle);assert.equal(Buffer.from(recovered.lineage.retainedBundles[0].bundle.partialFiles[0].bodyBase64,'base64').toString(),pending.toString());assert.equal(recovered.primaryAdmission,false);
++ }finally{first.close();next.close();f.cleanup();}
++});
++for(const scope of ['unapproved','private-history'])test('concrete environment mapping opens only the bindings permitted after each guard phase: '+scope,async()=>{const f=approvedFixture(noNative),m=approvedServices(f,{historyFault:()=>new Response('{}',{status:403})}),reads=[],clients=approvedEnvironmentClients({environment:new Proxy({GITHUB_TOKEN:'SYNTHETIC_ONLY'},{get:(o,k)=>{reads.push(k);return o[k];}}),fetcher:m.transports.history});try{if(scope==='unapproved'){f.approval.granted=false;f.save();}const r=await runApprovedNativeCapture({...opts(f,m),...clients});assert.equal(r.status,'BLOCKED');assert.deepEqual(reads,scope==='unapproved'?[]:['GITHUB_TOKEN']);}finally{f.cleanup();}});
++for(const minutes of [10,400])test('reviewed workflow still refuses an insufficient/excessive job budget '+minutes,async()=>{const {fixtureGit}=await import('./capture-wrapper-fixture.mjs');const f=approvedFixture(noNative),m=approvedServices(f);try{const file=path.join(f.reviewRoot,'.github/workflows/sec-paper-capture.yml');fs.writeFileSync(file,fs.readFileSync(file,'utf8').replace('timeout-minutes: 45','timeout-minutes: '+minutes));fixtureGit(f.reviewRoot,['add','.']);fixtureGit(f.reviewRoot,['commit','-qm','SYNTHETIC invalid job duration']);f.context.workflowCommitSha=fixtureGit(f.reviewRoot,['rev-parse','HEAD']);f.approval.workflowCommitSha=f.context.workflowCommitSha;f.approval.workflowSha256=sha(fs.readFileSync(file));f.history.workflow_runs[0].head_sha=f.context.workflowCommitSha;f.save();const r=await runApprovedNativeCapture(opts(f,m));assert.equal(r.reason,'PREFLIGHT_REJECTED');assert.deepEqual(m.opens(),{controlOpens:0,captureOpens:0});assert.equal(m.requests.history.length,0);}finally{f.cleanup();}});
+diff --git a/test/approved-capture-fixture.mjs b/test/approved-capture-fixture.mjs
+new file mode 100644
+index 00000000..8e16fd9a
+--- /dev/null
++++ b/test/approved-capture-fixture.mjs
+@@ -0,0 +1,25 @@
++// SYNTHETIC ONLY: disposable commits and owner grants are NOT authorization.
++import fs from 'node:fs';import path from 'node:path';
++import {wrapperFixture,fixtureGit,t,fixtureKey} from './capture-wrapper-fixture.mjs';
++import {APPROVED_BINDING_FILES,inputFingerprint} from '../paper-capture-wrapper.mjs';
++import {sha} from '../prospective-paper-capture.mjs';
++import {artifactWireFixture,syntheticArtifactToken,syntheticResultsOrigin,syntheticStorageOrigin} from './artifact-wire-fixture.mjs';
++const root=new URL('../',import.meta.url);
++export function approvedFixture(native){const f=wrapperFixture();
++ for(const file of APPROVED_BINDING_FILES){fs.mkdirSync(path.dirname(path.join(f.root,file)),{recursive:true});fs.copyFileSync(new URL(file,root),path.join(f.root,file));}
++ fixtureGit(f.root,['add','.']);fixtureGit(f.root,['commit','-qm','SYNTHETIC approved binding source']);const sourceSha=fixtureGit(f.root,['rev-parse','HEAD']);
++ const wf=path.join(f.reviewRoot,'.github/workflows/sec-paper-capture.yml');fs.writeFileSync(wf,fs.readFileSync(wf,'utf8').replace(f.approval.plan.sourceSha,sourceSha).replace('PAPER_CAPTURE_EXECUTION: INACTIVE_OFFLINE_REHEARSAL','PAPER_CAPTURE_EXECUTION: APPROVED_CALIBRATION_V1').replace('timeout-minutes: 10','timeout-minutes: 45'));
++ fixtureGit(f.reviewRoot,['add','.']);fixtureGit(f.reviewRoot,['commit','-qm','SYNTHETIC future workflow contract not installed']);const workflowCommitSha=fixtureGit(f.reviewRoot,['rev-parse','HEAD']);
++ f.approval.kind='PAPER_CAPTURE_LIVE_BINDING_APPROVAL_V1';f.approval.plan.sourceSha=sourceSha;f.approval.plan.enrollmentManifestSha256=inputFingerprint(f.approval.referenceSha256,f.approval.plan);f.approval.runtimeFiles=Object.fromEntries(APPROVED_BINDING_FILES.map(n=>[n,sha(fs.readFileSync(path.join(f.root,n)))]));f.approval.workflowCommitSha=workflowCommitSha;f.approval.workflowSha256=sha(fs.readFileSync(wf));f.context.workflowCommitSha=workflowCommitSha;f.history.workflow_runs[0].head_sha=workflowCommitSha;
++ f.entitlementFile=path.join(f.dir,'SYNTHETIC-entitlement.json');fs.writeFileSync(f.entitlementFile,JSON.stringify({label:'SYNTHETIC_NOT_OFFICIAL_EVIDENCE',plan:'MOCK_SIP_AND_RETENTION'}));f.entitlementSha256=sha(fs.readFileSync(f.entitlementFile));f.approval.entitlements.evidenceSha256=f.entitlementSha256;
++ f.approval.bindingReview={version:1,approved:true,continuityPolicyApproved:false,protocol:'EXISTING_STREAM_SEC_30M_V1',primaryAdmission:'DISABLED_PENDING_CONTINUITY_REVIEW'};f.approval.native={sourceSha:native.expectedSourceSha,runId:'123-1',workflowId:7,directorySuffix:'runtime/native-sec-events/123-1'};f.approval.artifactScope={resultsOrigin:'https://results-receiver.actions.githubusercontent.com',storageOrigins:[syntheticStorageOrigin]};
++ f.native=native;f.output=path.join(f.root,'runtime/paper-capture/123-1');f.save=()=>{fs.writeFileSync(f.approvalFile,JSON.stringify(f.approval));f.approvalSha256=sha(fs.readFileSync(f.approvalFile));};f.save();return f;
++}
++export function approvedServices(f,{historyFault,providerFault,artifactFault,onHistory=()=>{},onProvider=()=>{},onArtifact=()=>{}}={}){
++ let clock=f.nowMs-30000,controlOpens=0,captureOpens=0;const requests={history:[],provider:[],artifact:[]},wire=artifactWireFixture({onRequest:onArtifact});
++ return {requests,wire,clock:{now:()=>clock,sleep:async ms=>{clock+=ms;},setTimeout,clearTimeout},setTime:x=>{clock=x;},opens:()=>({controlOpens,captureOpens}),
++ openControlBindings:async()=>{controlOpens++;return {githubToken:'SYNTHETIC_GITHUB_TOKEN'};},openCaptureBindings:async()=>{captureOpens++;return {keyId:'SYNTHETIC_ALPACA_KEY',secret:'SYNTHETIC_ALPACA_SECRET',encryptionKey:fixtureKey,runtimeToken:syntheticArtifactToken};},
++ transports:{history:async(url,o)=>{requests.history.push({url,...o});await onHistory(url,o);if(historyFault)return historyFault(url,o);if(url.includes('/sec-paper-capture.yml/runs?'))return Response.json(f.history);if(url.includes('/workflows/7/runs?'))return Response.json({total_count:0,workflow_runs:[]});throw Error('SYNTHETIC_UNEXPECTED_HISTORY');},
++ provider:async(url,o)=>{requests.provider.push({url,...o});await onProvider(url,o);if(providerFault)return providerFault(url,o);const minute=Math.floor((clock-f.nowMs)/60000),data=Object.fromEntries(f.universe.map(symbol=>[symbol,{latestQuote:{t:new Date(clock).toISOString(),bp:9.99,ap:10.01,bs:1000,as:1000},minuteBar:{t:t(minute-1),l:9,h:11,v:250000}}]));return Response.json(data);},
++ artifact:async(url,o)=>{requests.artifact.push({url,...o});if(artifactFault)return artifactFault(url,o);return wire.fetcher(url.replace(f.approval.artifactScope.resultsOrigin,syntheticResultsOrigin),o);}}};
++}
+diff --git a/docs/validation/paper-capture-calibration.candidate.json b/docs/validation/paper-capture-calibration.candidate.json
+index 0b24a084..5387efe9 100644
+--- a/docs/validation/paper-capture-calibration.candidate.json
++++ b/docs/validation/paper-capture-calibration.candidate.json
+@@ -21,7 +21,7 @@
+     "LRCX",
+     "KLAC"
+   ],
+-  "sourceSha": "686b685faa721198141894ab92665a0e28234eb9",
++  "sourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
+   "enrollmentManifestSha256": null,
+   "feed": "sip",
+   "evaluation": {
+diff --git a/docs/validation/paper-capture-rehearsal.workflow.yml.proposed b/docs/validation/paper-capture-rehearsal.workflow.yml.proposed
+index 0de84af5..93273f68 100644
+--- a/docs/validation/paper-capture-rehearsal.workflow.yml.proposed
++++ b/docs/validation/paper-capture-rehearsal.workflow.yml.proposed
+@@ -19,7 +19,7 @@ jobs:
+     steps:
+       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+         with:
+-          ref: 686b685faa721198141894ab92665a0e28234eb9
++          ref: 9e8ebe61c6ee2fc270cdbff34048e271de1079ec
+           persist-credentials: false
+       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+         with:
+diff --git a/docs/validation/prospective-paper-capture-manifest.json b/docs/validation/prospective-paper-capture-manifest.json
+index 4c24b593..6d2324a0 100644
+--- a/docs/validation/prospective-paper-capture-manifest.json
++++ b/docs/validation/prospective-paper-capture-manifest.json
+@@ -1,6 +1,6 @@
+ {
+   "kind": "NATIVE_SEC_INCREMENTAL_HANDOFF_INACTIVE_PACKAGE_V5",
+-  "sourceSha": "686b685faa721198141894ab92665a0e28234eb9",
++  "sourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
+   "basis": "6b1f3cde948ccf8ace15bdd1882a76c852b4dced",
+   "runtimeFiles": {
+     "native-sec-handoff.mjs": "90a3b5ff12ad31b132e68e9d660d805aeaefbc581dd57b779b2c217aace9bfe3",
+@@ -10,7 +10,7 @@
+     "capture-artifact.mjs": "4019010f6ad40ca8df27aa5db0c378107e9829073361e788a4e267c0d1e6f981",
+     "paper-capture-ports.mjs": "4474fc07a640f77d80fbb6092adb7bebf9c946e9c7a018a5cfc79d5f57045e49",
+     "paper-capture-references.mjs": "81677789a9c3fb4dd246892961930c97534de1a75f16bd0cdba6346cf0ab0e56",
+-    "paper-capture-wrapper.mjs": "c3831ce766d5c2e5b84c77a70e28ebf269cd06208190dc881ab8e4321a6925b4",
++    "paper-capture-wrapper.mjs": "f8137fac8d87b58ea51a098ccf1c39d7bf10b1f472ed65b99b180eeeacac66b0",
+     "prospective-paper-capture.mjs": "c7f5f09e9e1416e620b650fce76ebacac8fa572618d468eb59d0be92998a439f",
+     "prospective-capture-transport.mjs": "a1eed686ac2415f47a09551381473d99d1d22d7a02b844cbbb1841bc9798caf1",
+     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
+@@ -19,8 +19,8 @@
+     "tools/run-paper-capture-workflow.mjs": "f1dc0d20398ada2bce2c388631d50ee79f29329f42bae9ed5017ee65c969f473",
+     "tools/recover-paper-capture.mjs": "38fecfa78760dbcd087c706a8066e4f958860a02a859e5872f7e9d59b42fdcae"
+   },
+-  "workflowSpecSha256": "7960d033aeffcdf96f2daef7e9f58816aa0be695ace65a1ebaf9521262cd6f80",
+-  "candidateSha256": "c019026e4aa831b18f1721978eac6c334ed3fe79d1a90d85adf6d8e898f5f4bb",
++  "workflowSpecSha256": "76cc856323d6f5d963966b9f822b95582ebd4affa2fbd1e88aa08ba9449c2df3",
++  "candidateSha256": "db7cd4e31ad9bdc02d61b590148e7eaafac646220d9fefc26ee72364ccd22297",
+   "liveWorkflowInstalled": false,
+   "liveEntryPointImplemented": false,
+   "newCaptureAuthorized": false,
+@@ -50,7 +50,7 @@
+     "test/native-sec-producer-fixture.mjs": "81b749f1cc632ec5739074721387fdf91a54a08c3b0cdadbd2f60c50dc7c33dc",
+     "docs/native-sec-incremental-handoff-checkpoint.md": "1c43dbd1ca435bb2600c543356d833a70b9f1c45f6154c9cd7428e83db402bdf"
+   },
+-  "rehearsalWorkflowSha256": "4ef151acc8c942ca9ea1514a308f05744b49d5604b0e876383bc7dcc31dbb432",
++  "rehearsalWorkflowSha256": "bdd55b216f40998ab71ab1939d5e2227668415885fce5e3c79bc3a126aaca227",
+   "guardedWrapperImplemented": true,
+   "referenceProvenanceValidatorImplemented": true,
+   "acknowledgedUploadAndArchiveRecoveryImplemented": true,
+diff --git a/docs/validation/prospective-paper-capture-workflow.json b/docs/validation/prospective-paper-capture-workflow.json
+index 0a71da18..f8abe38a 100644
+--- a/docs/validation/prospective-paper-capture-workflow.json
++++ b/docs/validation/prospective-paper-capture-workflow.json
+@@ -2,7 +2,7 @@
+   "kind": "INACTIVE_GUARDED_CAPTURE_WORKFLOW_V2",
+   "installable": false,
+   "reason": "Inactive candidate: pinned full-session lifecycle and explicit same-day lineage states, implemented source-pinned artifact wire transport. V1 ordinary acceptance ordering remains infeasible; V2/continuity policy unapproved and route/control telemetry missing. No live bindings or collection.",
+-  "runtimeSourceSha": "686b685faa721198141894ab92665a0e28234eb9",
++  "runtimeSourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
+   "runtimeFiles": {
+     "native-sec-handoff.mjs": "90a3b5ff12ad31b132e68e9d660d805aeaefbc581dd57b779b2c217aace9bfe3",
+     "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+@@ -11,7 +11,7 @@
+     "capture-artifact.mjs": "4019010f6ad40ca8df27aa5db0c378107e9829073361e788a4e267c0d1e6f981",
+     "paper-capture-ports.mjs": "4474fc07a640f77d80fbb6092adb7bebf9c946e9c7a018a5cfc79d5f57045e49",
+     "paper-capture-references.mjs": "81677789a9c3fb4dd246892961930c97534de1a75f16bd0cdba6346cf0ab0e56",
+-    "paper-capture-wrapper.mjs": "c3831ce766d5c2e5b84c77a70e28ebf269cd06208190dc881ab8e4321a6925b4",
++    "paper-capture-wrapper.mjs": "f8137fac8d87b58ea51a098ccf1c39d7bf10b1f472ed65b99b180eeeacac66b0",
+     "prospective-paper-capture.mjs": "c7f5f09e9e1416e620b650fce76ebacac8fa572618d468eb59d0be92998a439f",
+     "prospective-capture-transport.mjs": "a1eed686ac2415f47a09551381473d99d1d22d7a02b844cbbb1841bc9798caf1",
+     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",

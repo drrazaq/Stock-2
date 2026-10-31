@@ -4994,15 +4994,28 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "sourceSha": "686b685faa721198141894ab92665a0e28234eb9",
-    "status": "NATIVE_SEC_D1_D2_D3_FAILURE_PATHS_VERIFIED_OFFLINE_NOT_ACTIVATED",
-    "evidence": "docs/validation/native-sec-feasibility-verification.json",
-    "priorExactCommitCI": {
-      "sha": "f3b96564fd2c7bab895cd301d2b410bc31770888",
-      "checksPassed": 5
-    },
+    "sourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
+    "status": "INACTIVE_GUARD_CLIENT_BINDING_VERIFIED_NOT_INSTALLED",
+    "evidence": "docs/validation/approved-native-binding-verification.json",
     "acceptanceAdded": 0,
-    "genuineAdmissions": 0
+    "genuineAdmissions": 0,
+    "localVerification": {
+      "development": {
+        "files": 220,
+        "cases": 2104,
+        "skipped": 0,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 279,
+        "failures": []
+      },
+      "exactPackageFocusedTests": 51
+    }
   },
   "revisionIdentityMission": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5292,44 +5305,40 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "D1_D2_D3_FAILURE_PATHS_OFFLINE_VERIFIED_INACTIVE_REVIEW_PENDING",
-    "runtimeSourceSha": "686b685faa721198141894ab92665a0e28234eb9",
-    "review": "docs/native-sec-feasibility-corrections.md",
-    "patchManifest": "docs/validation/native-sec-live-host-manifest.json",
-    "verification": "docs/validation/native-sec-feasibility-verification.json",
+    "status": "INACTIVE_APPROVED_BINDING_IMPLEMENTED_VERIFIED_REVIEW_PENDING",
+    "runtimeSourceSha": "9e8ebe61c6ee2fc270cdbff34048e271de1079ec",
+    "review": "docs/approved-native-binding-review.md",
+    "patchManifest": "docs/validation/approved-native-binding-manifest.json",
+    "verification": "docs/validation/approved-native-binding-verification.json",
     "closureBoard": "docs/acceptance-closure-board.md",
-    "localVerification": {
-      "development": {
-        "files": 219,
-        "cases": 2053,
-        "skipped": 0,
-        "failures": []
-      },
-      "initialRunAndResolution": "docs/validation/native-sec-feasibility-verification.json",
-      "python": {
-        "tests": 30,
-        "failures": 0
-      },
-      "syntax": {
-        "files": 278,
-        "failures": []
-      }
-    },
-    "D1": "COMPLETE_OFFLINE",
-    "D2": "COMPLETE_OFFLINE",
-    "D3": "COMPLETE_OFFLINE_RESEARCH_POLICY_UNAPPROVED",
-    "sdkSourceAndAdapter": "COMPLETE_OFFLINE_PUBLIC_ACCESS_SUCCEEDED",
-    "calibrationReadiness": "NOT_READY",
+    "focusedTests": 51,
+    "accepted": 24,
+    "total": 40,
     "acceptanceAdded": 0,
     "genuineAdmissions": 0,
     "productionChanged": false,
-    "implementationRemaining": [
-      "Distinct production-capable live guard/binding",
-      "V2 route/cache/no-request telemetry and symmetric-control implementation, inactive and subject to protocol review before adoption",
-      "Other source materiality/normalization and execution-plan contracts outside this bounded correction"
+    "installed": false,
+    "liveBindings": false,
+    "protocolV2Adopted": false,
+    "continuityPolicyAdopted": false,
+    "engineeringComplete": [
+      "Separate V1 approval/workflow/source/input guard",
+      "Concrete deferred binding identifier mapping",
+      "Actual snapshot/GitHub/artifact/native client composition",
+      "Bounded deadline/cancellation and no retry",
+      "Exclusive encrypted lineage/source-context persistence and recovery",
+      "Actual-producer end-to-end service/failure/concurrent-write tests"
     ],
-    "nextDecision": "Review revised V2/continuity policies; no protocol adoption or live activation authorized. Routine offline preparation remains authorized.",
-    "publicSourceAcquisitionCorrection": "Earlier requirement for separate owner approval was too broad and incorrect. Official source was acquired with credential-free bounded curl, pinned and inspected, not installed/executed. No technical access blocker.",
+    "implementationRemaining": [
+      "V2 route/cache/no-request telemetry and symmetric controls remain separate; no protocol adopted",
+      "Any future host/workflow integration must be reviewed for its trusted context, independent producer lifetime and retained failure artifacts"
+    ],
+    "externalEvidence": [
+      "Official SIP/session/universe and retention entitlement evidence",
+      "Official reference/identity/industry/current ZAD review",
+      "Owner-device encryption/recovery proof"
+    ],
+    "nextDecision": "Independent binding/package review and decision on revised V2/continuity policies, without activation. Dated exact host/binding/reference/capture scope still requires separate approval.",
     "passiveWatcher": {
       "lastScheduledRun": 41072889693,
       "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
@@ -5337,13 +5346,22 @@
       "postDeploymentEvidence": "PENDING_NATURAL_RUN",
       "novemberDST": "PENDING_NATURAL_RUN"
     },
-    "failurePathEvidence": {
-      "schedule": 13,
-      "sameDayHistory": 17,
-      "actualHost": 7,
-      "baselineNegativeControlFailures": 7,
-      "producerHeartbeatsPreservedInStuckWorkerTest": 331,
-      "partialEvidenceRetainedWithUnknownHistory": true
+    "localVerification": {
+      "development": {
+        "files": 220,
+        "cases": 2104,
+        "skipped": 0,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 279,
+        "failures": []
+      },
+      "exactPackageFocusedTests": 51
     }
   },
   "shareSupplyCaller": {
@@ -7534,5 +7552,71 @@
     "status": "WATCHER_V5_VERIFIED_NOT_DEPLOYED_REVIEW_REQUIRED",
     "evidence": "docs/validation/watcher-f1-f2.json",
     "acceptanceAdded": 0
+  },
+  "preApprovedBinding_latestSessionCheckpoint": {
+    "status": "D1_D2_D3_FAILURE_PATHS_OFFLINE_VERIFIED_INACTIVE_REVIEW_PENDING",
+    "runtimeSourceSha": "686b685faa721198141894ab92665a0e28234eb9",
+    "review": "docs/native-sec-feasibility-corrections.md",
+    "patchManifest": "docs/validation/native-sec-live-host-manifest.json",
+    "verification": "docs/validation/native-sec-feasibility-verification.json",
+    "closureBoard": "docs/acceptance-closure-board.md",
+    "localVerification": {
+      "development": {
+        "files": 219,
+        "cases": 2053,
+        "skipped": 0,
+        "failures": []
+      },
+      "initialRunAndResolution": "docs/validation/native-sec-feasibility-verification.json",
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 278,
+        "failures": []
+      }
+    },
+    "D1": "COMPLETE_OFFLINE",
+    "D2": "COMPLETE_OFFLINE",
+    "D3": "COMPLETE_OFFLINE_RESEARCH_POLICY_UNAPPROVED",
+    "sdkSourceAndAdapter": "COMPLETE_OFFLINE_PUBLIC_ACCESS_SUCCEEDED",
+    "calibrationReadiness": "NOT_READY",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
+    "productionChanged": false,
+    "implementationRemaining": [
+      "Distinct production-capable live guard/binding",
+      "V2 route/cache/no-request telemetry and symmetric-control implementation, inactive and subject to protocol review before adoption",
+      "Other source materiality/normalization and execution-plan contracts outside this bounded correction"
+    ],
+    "nextDecision": "Review revised V2/continuity policies; no protocol adoption or live activation authorized. Routine offline preparation remains authorized.",
+    "publicSourceAcquisitionCorrection": "Earlier requirement for separate owner approval was too broad and incorrect. Official source was acquired with credential-free bounded curl, pinned and inspected, not installed/executed. No technical access blocker.",
+    "passiveWatcher": {
+      "lastScheduledRun": 41072889693,
+      "lastRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "observedProduction": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+      "postDeploymentEvidence": "PENDING_NATURAL_RUN",
+      "novemberDST": "PENDING_NATURAL_RUN"
+    },
+    "failurePathEvidence": {
+      "schedule": 13,
+      "sameDayHistory": 17,
+      "actualHost": 7,
+      "baselineNegativeControlFailures": 7,
+      "producerHeartbeatsPreservedInStuckWorkerTest": 331,
+      "partialEvidenceRetainedWithUnknownHistory": true
+    }
+  },
+  "preApprovedBinding_latestVerifiedEngineeringMilestone": {
+    "sourceSha": "686b685faa721198141894ab92665a0e28234eb9",
+    "status": "NATIVE_SEC_D1_D2_D3_FAILURE_PATHS_VERIFIED_OFFLINE_NOT_ACTIVATED",
+    "evidence": "docs/validation/native-sec-feasibility-verification.json",
+    "priorExactCommitCI": {
+      "sha": "f3b96564fd2c7bab895cd301d2b410bc31770888",
+      "checksPassed": 5
+    },
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0
   }
 }
