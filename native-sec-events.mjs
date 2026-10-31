@@ -38,8 +38,8 @@ export function decodeNativeResponse(input){
 }
 // A parent is copied with its exact bytes, not reconstructed observations. No lookup/network.
 export function nativeRunDigest(directory){
- const names=fs.readdirSync(directory).sort();need(names.every(n=>n==='run.json'||n==='lineage.json'||/^response-\d{6}\.json$/.test(n)),'NATIVE_PARENT_INCOMPLETE');
- const files=[];let encodedBytes=0;for(const name of names){const bodyBase64=regular(path.join(directory,name),NATIVE_SEC_CAPS.lineageBytes).toString('base64');encodedBytes+=Buffer.byteLength(bodyBase64)+Buffer.byteLength(name)+64;need(encodedBytes<=NATIVE_SEC_CAPS.lineageBytes,'NATIVE_LINEAGE_BUDGET');files.push({name,bodyBase64});}
+ const names=fs.readdirSync(directory).sort();need(names.every(n=>n==='run.json'||n==='lineage.json'||n==='.cursor.json'||/^response-\d{6}\.json$/.test(n)),'NATIVE_PARENT_INCOMPLETE');
+ const files=[];let encodedBytes=0;for(const name of names.filter(n=>n!=='.cursor.json')){const bodyBase64=regular(path.join(directory,name),NATIVE_SEC_CAPS.lineageBytes).toString('base64');encodedBytes+=Buffer.byteLength(bodyBase64)+Buffer.byteLength(name)+64;need(encodedBytes<=NATIVE_SEC_CAPS.lineageBytes,'NATIVE_LINEAGE_BUDGET');files.push({name,bodyBase64});}
  return {sha256:sha(json(files)),files};
 }
 export function openNativeRun({directory,runId,sourceSha,provenance,parent=null}){
@@ -49,23 +49,23 @@ export function openNativeRun({directory,runId,sourceSha,provenance,parent=null}
  if(parent){need(/^[a-f0-9]{64}$/.test(parent.sha256||''),'NATIVE_PARENT_PIN_REQUIRED');const snapshot=nativeRunDigest(parent.directory);need(snapshot.sha256===parent.sha256,'NATIVE_PARENT_DIGEST');const archive=readNativeRun({directory:parent.directory,expectedRunId:parent.runId,expectedSourceSha:parent.sourceSha});need(archive.status==='INTEGRITY_CHECKED_UNAUDITED'&&!archive.lineageRunIds.includes(runId)&&archive.lineageRunIds.length<=NATIVE_SEC_CAPS.lineageDepth&&archive.meta.provenance===provenance,'NATIVE_PARENT_INCOMPLETE');need(nativeRunDigest(parent.directory).sha256===snapshot.sha256,'NATIVE_PARENT_CHANGED');lineage={kind:'NATIVE_SEC_LINEAGE_V1',runId:parent.runId,sourceSha:parent.sourceSha,...snapshot};need(Buffer.byteLength(json(lineage))<=NATIVE_SEC_CAPS.lineageBytes,'NATIVE_LINEAGE_BUDGET');}
  const meta={kind:'NATIVE_SEC_RUN_V1',runId,sourceSha,provenance,...(lineage?{lineageSha256:sha(json(lineage))}:{})};const file=path.join(directory,'run.json');if(!fs.existsSync(file))exclusive(file,Buffer.from(json(meta)));else need(regular(file,4096).toString()===json(meta),'NATIVE_RUN_REUSE_MISMATCH');
  if(lineage){const f=path.join(directory,'lineage.json'),b=Buffer.from(json(lineage));if(fs.existsSync(f))need(regular(f,NATIVE_SEC_CAPS.lineageBytes).equals(b),'NATIVE_LINEAGE_REUSE');else exclusive(f,b);}
- return {directory,runId,sourceSha,provenance};
+ const store={directory,runId,sourceSha,provenance,metrics:{fullValidations:0,fullRecordReads:0,deltaRecordReads:0,tailRecordReads:0,appends:0}};initializeWriter(store);return store;
 }
 export function readNativeRun({directory,expectedRunId,expectedSourceSha,_files=null,_depth=0}){
  need(_depth<=NATIVE_SEC_CAPS.lineageDepth,'NATIVE_LINEAGE_DEPTH');
  const read=(name,max)=>{if(!_files)return regular(path.join(directory,name),max);const f=_files.find(f=>f.name===name);need(f,'NATIVE_PARENT_FILE');const b=Buffer.from(f.bodyBase64,'base64');need(b.length<=max,'NATIVE_FILE_BUDGET');return b;};
  const meta=captureJson(read('run.json',4096).toString());need(meta.kind==='NATIVE_SEC_RUN_V1'&&meta.runId===expectedRunId&&meta.sourceSha===expectedSourceSha,'NATIVE_RUN_PIN');
- const names=_files?_files.map(f=>f.name):fs.readdirSync(directory),files=names.filter(x=>/^response-\d{6}\.json$/.test(x)).sort(),issues=names.filter(x=>x!=='run.json'&&!(x==='lineage.json'&&meta.lineageSha256)&&!/^response-\d{6}\.json$/.test(x)).map(x=>({reason:'UNCOMMITTED_OR_UNEXPECTED_FILE',name:x}));need(files.length<=256,'NATIVE_RESPONSE_BUDGET');let prev='0'.repeat(64),bytes=Buffer.byteLength(json(meta));const responses=[],groups=new Map(),proofs=[];let parentArchive=null;
+ const names=_files?_files.map(f=>f.name):fs.readdirSync(directory),files=names.filter(x=>/^response-\d{6}\.json$/.test(x)).sort(),issues=names.filter(x=>x!=='run.json'&&x!=='.cursor.json'&&!(x==='lineage.json'&&meta.lineageSha256)&&!/^response-\d{6}\.json$/.test(x)).map(x=>({reason:'UNCOMMITTED_OR_UNEXPECTED_FILE',name:x}));need(files.length<=256,'NATIVE_RESPONSE_BUDGET');let prev='0'.repeat(64),bytes=Buffer.byteLength(json(meta));const responses=[],groups=new Map(),proofs=[];let parentArchive=null;
  if(meta.lineageSha256){const b=read('lineage.json',NATIVE_SEC_CAPS.lineageBytes);need(sha(b)===meta.lineageSha256,'NATIVE_LINEAGE_HASH');const l=captureJson(b.toString());need(l.kind==='NATIVE_SEC_LINEAGE_V1'&&Array.isArray(l.files)&&l.files.length<=258&&sha(json(l.files))===l.sha256&&new Set(l.files.map(f=>f.name)).size===l.files.length&&l.files.every(f=>f.name==='run.json'||f.name==='lineage.json'||/^response-\d{6}\.json$/.test(f.name)),'NATIVE_LINEAGE_FORMAT');parentArchive=readNativeRun({expectedRunId:l.runId,expectedSourceSha:l.sourceSha,_files:l.files,_depth:_depth+1});need(parentArchive.status==='INTEGRITY_CHECKED_UNAUDITED'&&!parentArchive.lineageRunIds.includes(meta.runId)&&parentArchive.meta.provenance===meta.provenance,'NATIVE_PARENT_INCOMPLETE');for(const row of parentArchive.observations)groups.set(row.key,row.observations);proofs.push(...parentArchive.acceptanceResponses);issues.push(...parentArchive.issues.map(x=>({...x,scope:'PARENT'})));bytes+=b.length;}
  let latest=parentArchive?.lastObservedAt??null;
  for(let i=0;i<files.length;i++){need(files[i]==='response-'+String(i).padStart(6,'0')+'.json','NATIVE_SEQUENCE_GAP');const b=read(files[i],4*1024*1024);bytes+=b.length;need(bytes<=NATIVE_SEC_CAPS.totalStoredBytes,'NATIVE_TOTAL_BUDGET');const r=captureJson(b.toString());need(r.sequence===i&&r.previousHash===prev&&r.recordHash===sha(json(r.payload))&&r.chainHash===sha(prev+r.recordHash),'NATIVE_RECORD_CHAIN');need(!latest||instant(r.payload.observedAt)>=instant(latest),'NATIVE_NONMONOTONIC_OBSERVATION');latest=r.payload.observedAt;
   let decoded;
   if(r.payload.kind==='SEC_SUBMISSIONS_RESPONSE_V1'){const result=decodeSubmissions(r.payload);decoded={status:result.status,entries:[],rejections:result.rejections};if(result.proof)proofs.push(result.proof);}
-  else decoded=decodeNativeResponse({...r.payload,acceptanceProofs:[...(r.payload.acceptanceProofs||[]),...proofs.filter(p=>instant(p.receivedAt)<=instant(r.payload.observedAt)).slice(-100)]});prev=r.chainHash;responses.push({file:files[i],sha256:sha(b),...r,decoded});
+  else decoded=decodeNativeResponse({...r.payload,acceptanceProofs:[...(r.payload.acceptanceProofs||[]),...proofs.filter(p=>instant(p.receivedAt)<=instant(r.payload.observedAt)).slice(-100)]});prev=r.chainHash;responses.push({file:files[i],storedBytes:b.length,sha256:sha(b),...r,decoded});
   if(decoded.status!=='PARSED')issues.push({reason:decoded.status,sequence:i});for(const entry of decoded.entries){const a=groups.get(entry.key)||[];a.push({...entry,producerRunId:meta.runId,producerSourceSha:meta.sourceSha,producerProvenance:meta.provenance,responseSequence:i,responseSha256:sha(b)});groups.set(entry.key,a);}
  }
  const observations=[...groups.values()].map(list=>{const first=list[0],versions=new Set(list.map(x=>x.rawEntrySha256));let state='COMPLETE_ORIGINAL_EVIDENCE';if(first.originalSeenBeforeArchive)state='ORIGINAL_FIRST_INGESTION_UNAVAILABLE';else if(versions.size>1)state=list.some((x,i)=>list.some((y,j)=>j<i&&x.observedAt===y.observedAt&&x.rawEntrySha256!==y.rawEntrySha256))?'CONFLICTING_SAME_OBSERVATION':'REVISION_REQUIRES_REVIEW';else if(acceptance({cik:Number(first.issuerCik),acc:first.accession},proofs,latest).status==='CONFLICTING_ACCEPTANCE_PROOFS'||list.some(x=>x.acceptance.status==='CONFLICTING_ACCEPTANCE_PROOFS')||new Set(list.filter(x=>x.acceptance.at!==null).map(x=>instant(x.acceptance.at))).size>1)state='CONFLICTING_ACCEPTANCE_PROOFS';else if(first.acceptance.at===null)state=(list.some(x=>x.acceptance.at!==null)||acceptance({cik:Number(first.issuerCik),acc:first.accession},proofs,latest).at!==null)?'LATE_ACCEPTANCE_SUPPLEMENT_RESEARCH_ONLY':'ACCEPTANCE_UNAVAILABLE';return {...first,firstSystemReceiptAt:first.originalSeenBeforeArchive?null:first.systemReceiptAt,firstIngestedAt:first.originalSeenBeforeArchive?null:first.bodyIngestedAt,firstObservedAt:first.originalSeenBeforeArchive?null:first.observedAt,firstObservationScope:'AVAILABLE_PRODUCER_RUN_LINEAGE_NOT_GLOBAL_HISTORY',nativeEvidenceStatus:state,acceptanceSupplements:proofs.filter(p=>instant(p.receivedAt)>instant(first.observedAt)&&acceptance({cik:Number(first.issuerCik),acc:first.accession},[p],latest).at!==null),observations:list,duplicateCount:list.length-versions.size,revisionCount:versions.size,sourceAuditRequired:true,genuineProspectiveEvidence:false};});
- return {meta,acceptanceResponses:proofs,lastObservedAt:latest,lineageRunIds:[...(parentArchive?.lineageRunIds||[]),meta.runId],status:issues.some(x=>x.reason==='UNCOMMITTED_OR_UNEXPECTED_FILE')?'INCOMPLETE':'INTEGRITY_CHECKED_UNAUDITED',sourceStatus:issues.length?'PARTIAL_OR_UNKNOWN':'OBSERVED',issues,responses,observations,bytes,lastHash:prev,genuineAdmissions:0};
+ return {meta,acceptanceResponses:proofs,parentLastObservedAt:parentArchive?.lastObservedAt??null,lastObservedAt:latest,lineageRunIds:[...(parentArchive?.lineageRunIds||[]),meta.runId],status:issues.some(x=>x.reason==='UNCOMMITTED_OR_UNEXPECTED_FILE')?'INCOMPLETE':'INTEGRITY_CHECKED_UNAUDITED',sourceStatus:issues.length?'PARTIAL_OR_UNKNOWN':'OBSERVED',issues,responses,observations,bytes,lastHash:prev,genuineAdmissions:0};
 }
 function decodeSubmissions(p){
  const b=Buffer.from(p.bodyBase64,'base64');need(b.length<=NATIVE_SEC_CAPS.responseBytes&&sha(b)===p.bodySha256&&/^https:\/\/data\.sec\.gov\/submissions\/CIK\d{10}\.json$/.test(p.url),'NATIVE_SUBMISSIONS_ORIGIN_OR_HASH');
@@ -75,16 +75,60 @@ function decodeSubmissions(p){
  try{new TextDecoder('utf-8',{fatal:true}).decode(b);const d=captureJson(b.toString()),r=d.filings?.recent;need(Number(d.cik)===Number(p.url.match(/CIK(\d+)/)[1])&&Array.isArray(r?.accessionNumber)&&Array.isArray(r?.acceptanceDateTime)&&r.accessionNumber.length===r.acceptanceDateTime.length,'SCHEMA');return {status:'PARSED',rejections:[],proof:{url:p.url,httpStatus:p.httpStatus,receivedAt:p.bodyReceivedAt,requestStartedAt:p.requestStartedAt,headersReceivedAt:p.headersReceivedAt,observedAt:p.observedAt,bodyBase64:p.bodyBase64,sha256:p.bodySha256}};}catch{return {status:'MALFORMED_SUBMISSIONS',rejections:[{reason:'SUBMISSIONS_SCHEMA_OR_UTF8'}]};}
 }
 export function appendNativeSubmissions(store,input){return appendNativeResponse(store,{...input,legacySeen:new Set(),kind:'SEC_SUBMISSIONS_RESPONSE_V1'});}
+// Derived cursor is a bounded acceleration hint. Original records remain authoritative.
+const recordName=i=>'response-'+String(i).padStart(6,'0')+'.json';
+function directoryStamp(directory){const x=fs.statSync(directory,{bigint:true});return [x.dev,x.ino,x.mtimeNs,x.ctimeNs].join(':');}
+function stateAt(store,archive,count=archive.responses.length){
+ need(Number.isInteger(count)&&count>=0&&count<=archive.responses.length,'NATIVE_CURSOR_SEQUENCE');
+ const tail=archive.responses[count-1],baseBytes=archive.bytes-archive.responses.reduce((n,r)=>n+r.storedBytes,0);
+ return {kind:'NATIVE_SEC_CURSOR_V1',runId:store.runId,sourceSha:store.sourceSha,metaSha256:sha(regular(path.join(store.directory,'run.json'),4096)),sequence:count,lastHash:tail?.chainHash||'0'.repeat(64),bytes:baseBytes+archive.responses.slice(0,count).reduce((n,r)=>n+r.storedBytes,0),lastObservedAt:tail?.payload.observedAt??archive.parentLastObservedAt,tailSha256:tail?.sha256??null};
+}
+function cursorRead(store){const c=captureJson(regular(path.join(store.directory,'.cursor.json'),4096).toString());need(c.kind==='NATIVE_SEC_CURSOR_V1'&&c.runId===store.runId&&c.sourceSha===store.sourceSha&&Number.isInteger(c.sequence)&&c.sequence>=0&&c.sequence<=256&&Number.isInteger(c.bytes)&&c.bytes>=0&&c.bytes<=NATIVE_SEC_CAPS.totalStoredBytes,'NATIVE_CURSOR_SCHEMA');return c;}
+function cursorWrite(store,c){
+ const file=path.join(store.directory,'.cursor.json'),temp=file+'.pending-'+randomBytes(8).toString('hex'),b=Buffer.from(json(c));need(b.length<=4096,'NATIVE_CURSOR_BUDGET');
+ if(fs.existsSync(file))regular(file,4096);
+ const fd=fs.openSync(temp,'wx',0o600);try{fs.writeFileSync(fd,b);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}fs.renameSync(temp,file);const d=fs.openSync(store.directory,'r');try{fs.fsyncSync(d);}finally{fs.closeSync(d);}
+}
+function recoverWriterLocked(store){
+ const archive=readNativeRun({directory:store.directory,expectedRunId:store.runId,expectedSourceSha:store.sourceSha});
+ need(!archive.issues.some(x=>x.reason==='UNCOMMITTED_OR_UNEXPECTED_FILE'&&x.name.includes('.pending-')),'NATIVE_INTERRUPTED_WRITE');
+ need(archive.issues.filter(x=>x.reason==='UNCOMMITTED_OR_UNEXPECTED_FILE').every(x=>['.writer-lock','health-incomplete.json'].includes(x.name)),'NATIVE_PRIOR_ARCHIVE_INCOMPLETE');
+ const target=stateAt(store,archive),file=path.join(store.directory,'.cursor.json');
+ if(fs.existsSync(file)){const prior=cursorRead(store);need(json(prior)===json(stateAt(store,archive,prior.sequence)),'NATIVE_CURSOR_PREFIX_MISMATCH');if(json(prior)!==json(target))cursorWrite(store,target);}else cursorWrite(store,target);
+ store.cursor=target;store.metrics.fullValidations++;store.metrics.fullRecordReads+=archive.responses.length;return target;
+}
+function initializeWriter(store){const lock=path.join(store.directory,'.writer-lock');fs.mkdirSync(lock);try{recoverWriterLocked(store);}finally{fs.rmdirSync(lock);}store.dirStamp=directoryStamp(store.directory);}
+function syncWriterLocked(store,beforeLock){
+ if(!store.cursor)return recoverWriterLocked(store);
+ let c={...store.cursor},hint=cursorRead(store);need(sha(regular(path.join(store.directory,'run.json'),4096))===c.metaSha256,'NATIVE_RUN_METADATA_CHANGED');need(hint.sequence>=c.sequence,'NATIVE_CURSOR_REWIND');
+ const changed=hint.sequence>c.sequence;
+ for(let i=c.sequence;i<hint.sequence;i++){
+  const b=regular(path.join(store.directory,recordName(i)),4*1024*1024),r=captureJson(b.toString());store.metrics.deltaRecordReads++;
+  need(r.sequence===i&&r.previousHash===c.lastHash&&r.recordHash===sha(json(r.payload))&&r.chainHash===sha(c.lastHash+r.recordHash),'NATIVE_RECORD_CHAIN');need(!c.lastObservedAt||instant(r.payload.observedAt)>=instant(c.lastObservedAt),'NATIVE_NONMONOTONIC_OBSERVATION');
+  if(r.payload.kind==='SEC_SUBMISSIONS_RESPONSE_V1')decodeSubmissions(r.payload);else decodeNativeResponse(r.payload);
+  c={...c,sequence:i+1,lastHash:r.chainHash,bytes:c.bytes+b.length,lastObservedAt:r.payload.observedAt,tailSha256:sha(b)};
+ }
+ need(json(c)===json(hint),'NATIVE_CURSOR_PREFIX_MISMATCH');store.cursor=c;
+ // Full validation only on open/recovery or an unexpected namespace change, never each normal append.
+ if(!changed&&beforeLock!==store.dirStamp)return recoverWriterLocked(store);
+ if(c.sequence){store.metrics.tailRecordReads++;need(sha(regular(path.join(store.directory,recordName(c.sequence-1)),4*1024*1024))===c.tailSha256,'NATIVE_TAIL_CHANGED');}
+ if(fs.existsSync(path.join(store.directory,recordName(c.sequence))))return recoverWriterLocked(store);
+ return c;
+}
+export function markNativeRunIncomplete({directory,runId,sourceSha},at){
+ const meta=captureJson(regular(path.join(directory,'run.json'),4096).toString());need(meta.runId===runId&&meta.sourceSha===sourceSha,'NATIVE_RUN_PIN');
+ const file=path.join(directory,'health-incomplete.json');if(!fs.existsSync(file))exclusive(file,Buffer.from(json({kind:'NATIVE_ARCHIVE_FAILURE_NOT_AN_EVENT',at,reason:'ARCHIVE_WRITE_FAILED',primaryAdmissionAllowed:false})));
+}
+export function nativeWriterStats(store){return {...store.metrics};}
 export function appendNativeResponse(store,{body,url,httpStatus=200,requestStartedAt,headersReceivedAt,bodyReceivedAt,observedAt,legacySeen,acceptanceProofs=[],kind}){
  need(Buffer.isBuffer(body)&&body.length<=NATIVE_SEC_CAPS.responseBytes&&legacySeen instanceof Set&&acceptanceProofs.length<=100&&Buffer.byteLength(json(acceptanceProofs))<=1048576,'NATIVE_INPUT_SCOPE');
- const lock=path.join(store.directory,'.writer-lock');fs.mkdirSync(lock);try{
-  // Ignore this live lock only while this writer owns it. Incomplete prior writes block continuation.
-  const names=fs.readdirSync(store.directory);need(!names.some(x=>x.includes('.pending-')),'NATIVE_INTERRUPTED_WRITE');
-  const archive=readNativeRun({directory:store.directory,expectedRunId:store.runId,expectedSourceSha:store.sourceSha});need(archive.issues.filter(x=>x.reason==='UNCOMMITTED_OR_UNEXPECTED_FILE').every(x=>x.name==='.writer-lock'),'NATIVE_PRIOR_ARCHIVE_INCOMPLETE');
-  need(!archive.lastObservedAt||instant(observedAt)>=instant(archive.lastObservedAt),'NATIVE_NONMONOTONIC_OBSERVATION');
+ const beforeLock=directoryStamp(store.directory),lock=path.join(store.directory,'.writer-lock');fs.mkdirSync(lock);let completed=false,touched=false;
+ try{
+  const current=syncWriterLocked(store,beforeLock);need(!current.lastObservedAt||instant(observedAt)>=instant(current.lastObservedAt),'NATIVE_NONMONOTONIC_OBSERVATION');
   const nativeKeys=parseAtom(body.toString('utf8')).map(e=>e.acc+'|'+e.cik),payload={...(kind?{kind}:{}),url,httpStatus,bodyCaptureStatus:httpStatus===200?'RESPONSE_BODY_AS_DELIVERED_BY_FETCH':'ERROR_BODY_COMPLETENESS_UNAVAILABLE',requestStartedAt,headersReceivedAt:headersReceivedAt??null,bodyReceivedAt:bodyReceivedAt??null,observedAt,bodyBase64:body.toString('base64'),bodySha256:sha(body),priorSeenKeys:[...new Set(nativeKeys.filter(k=>legacySeen.has(k)))],acceptanceProofs};if(kind==='SEC_SUBMISSIONS_RESPONSE_V1')decodeSubmissions(payload);else decodeNativeResponse(payload);
-  const sequence=archive.responses.length;need(sequence<256,'NATIVE_RESPONSE_BUDGET');const recordHash=sha(json(payload)),record={sequence,previousHash:archive.lastHash,recordHash,chainHash:sha(archive.lastHash+recordHash),payload},bytes=Buffer.from(json(record));need(bytes.length<=4*1024*1024&&archive.bytes+bytes.length<=67100672,'NATIVE_STORAGE_BUDGET');exclusive(path.join(store.directory,'response-'+String(sequence).padStart(6,'0')+'.json'),bytes);return {sequence,recordHash,bytes:bytes.length};
- }finally{fs.rmdirSync(lock);}
+  const sequence=current.sequence;need(sequence<256,'NATIVE_RESPONSE_BUDGET');const recordHash=sha(json(payload)),record={sequence,previousHash:current.lastHash,recordHash,chainHash:sha(current.lastHash+recordHash),payload},bytes=Buffer.from(json(record));need(bytes.length<=4*1024*1024&&current.bytes+bytes.length<=67100672,'NATIVE_STORAGE_BUDGET');touched=true;exclusive(path.join(store.directory,recordName(sequence)),bytes);
+  const next={...current,sequence:sequence+1,lastHash:record.chainHash,bytes:current.bytes+bytes.length,lastObservedAt:observedAt,tailSha256:sha(bytes)};cursorWrite(store,next);store.cursor=next;store.metrics.appends++;completed=true;return {sequence,recordHash,bytes:bytes.length};
+ }finally{if(!completed&&touched)store.cursor=null;fs.rmdirSync(lock);store.dirStamp=directoryStamp(store.directory);}
 }
 export function nativeEventsForCapture(archive,{identities,at}){
  need(archive.status==='INTEGRITY_CHECKED_UNAUDITED','NATIVE_ARTIFACT_INCOMPLETE');need(Array.isArray(identities),'NATIVE_IDENTITIES_REQUIRED');const events=[],unmapped=[];
