@@ -3,6 +3,7 @@ import fs from 'node:fs';import path from 'node:path';
 import {wrapperFixture,fixtureGit,t,fixtureKey} from './capture-wrapper-fixture.mjs';
 import {APPROVED_BINDING_FILES,inputFingerprint} from '../paper-capture-wrapper.mjs';
 import {sha} from '../prospective-paper-capture.mjs';
+import {APPROVED_CONTROL_LIMITS} from '../capture-approved-binding.mjs';
 import {artifactWireFixture,syntheticArtifactToken,syntheticResultsOrigin,syntheticStorageOrigin} from './artifact-wire-fixture.mjs';
 const root=new URL('../',import.meta.url);
 export function approvedFixture(native){const f=wrapperFixture();
@@ -12,7 +13,7 @@ export function approvedFixture(native){const f=wrapperFixture();
  fixtureGit(f.reviewRoot,['add','.']);fixtureGit(f.reviewRoot,['commit','-qm','SYNTHETIC future workflow contract not installed']);const workflowCommitSha=fixtureGit(f.reviewRoot,['rev-parse','HEAD']);
  f.approval.kind='PAPER_CAPTURE_LIVE_BINDING_APPROVAL_V1';f.approval.plan.sourceSha=sourceSha;f.approval.plan.enrollmentManifestSha256=inputFingerprint(f.approval.referenceSha256,f.approval.plan);f.approval.runtimeFiles=Object.fromEntries(APPROVED_BINDING_FILES.map(n=>[n,sha(fs.readFileSync(path.join(f.root,n)))]));f.approval.workflowCommitSha=workflowCommitSha;f.approval.workflowSha256=sha(fs.readFileSync(wf));f.context.workflowCommitSha=workflowCommitSha;f.history.workflow_runs[0].head_sha=workflowCommitSha;
  f.entitlementFile=path.join(f.dir,'SYNTHETIC-entitlement.json');fs.writeFileSync(f.entitlementFile,JSON.stringify({label:'SYNTHETIC_NOT_OFFICIAL_EVIDENCE',plan:'MOCK_SIP_AND_RETENTION'}));f.entitlementSha256=sha(fs.readFileSync(f.entitlementFile));f.approval.entitlements.evidenceSha256=f.entitlementSha256;
- f.approval.bindingReview={version:1,approved:true,continuityPolicyApproved:false,protocol:'EXISTING_STREAM_SEC_30M_V1',primaryAdmission:'DISABLED_PENDING_CONTINUITY_REVIEW'};f.approval.native={sourceSha:native.expectedSourceSha,runId:'123-1',workflowId:7,directorySuffix:'runtime/native-sec-events/123-1'};f.approval.artifactScope={resultsOrigin:'https://results-receiver.actions.githubusercontent.com',storageOrigins:[syntheticStorageOrigin]};
+ f.approval.controlLimits={...APPROVED_CONTROL_LIMITS};f.approval.bindingReview={version:1,approved:true,continuityPolicyApproved:false,protocol:'EXISTING_STREAM_SEC_30M_V1',primaryAdmission:'DISABLED_PENDING_CONTINUITY_REVIEW'};f.approval.native={sourceSha:native.expectedSourceSha,runId:'123-1',workflowId:7,directorySuffix:'runtime/native-sec-events/123-1'};f.approval.artifactScope={resultsOrigin:'https://results-receiver.actions.githubusercontent.com',storageOrigins:[syntheticStorageOrigin]};
  f.native=native;f.output=path.join(f.root,'runtime/paper-capture/123-1');f.save=()=>{fs.writeFileSync(f.approvalFile,JSON.stringify(f.approval));f.approvalSha256=sha(fs.readFileSync(f.approvalFile));};f.save();return f;
 }
 export function approvedServices(f,{historyFault,providerFault,artifactFault,onHistory=()=>{},onProvider=()=>{},onArtifact=()=>{}}={}){

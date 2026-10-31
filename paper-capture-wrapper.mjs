@@ -11,7 +11,7 @@ import {validateReferenceBundle} from './paper-capture-references.mjs';
 import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
 import {openCaptureZip} from './capture-artifact.mjs';
 export const WRAPPER_FILES=Object.freeze(['native-sec-handoff.mjs','native-sec-events.mjs','edgar-feed.mjs','capture-json.mjs','capture-artifact.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
-export const APPROVED_BINDING_FILES=Object.freeze([...WRAPPER_FILES,'capture-approved-binding.mjs','native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs']);
+export const APPROVED_BINDING_FILES=Object.freeze([...WRAPPER_FILES,'capture-approved-binding.mjs','native-sec-bounded-clients.mjs','native-sec-colocated-prefix.mjs','native-sec-parent-client.mjs','native-sec-lineage-history.mjs','artifact-wire-client.mjs','ignition-execution-contract.mjs']);
 export const FIXED_UNIVERSE=Object.freeze(['AMD','INTC','NVDA','AMAT','LRCX','KLAC']);
 export const WRAPPER_CAPS=Object.freeze({uploads:41,sealedBytes:160*1024*1024,archiveBytes:164*1024*1024,historyRows:100,referenceBytes:2*1024*1024});
 export const APPROVAL_LIMITS=Object.freeze({providerAttempts:41,perMinute:2,inFlight:1,responseBytes:65536,totalResponseBytes:8388608,frames:41,symbols:6,uploadAttempts:41,sealedBytes:167772160,archiveBytes:171966464,retentionDays:3});
