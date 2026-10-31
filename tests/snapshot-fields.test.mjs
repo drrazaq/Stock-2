@@ -53,3 +53,12 @@ test('Alpaca clocks require explicit timezone rather than machine-local interpre
  for(const t of ['2026-10-29','2026-10-29T14:00:00','October 29 2026'])assert.equal(alpacaSnapshot('ABC',{latestTrade:{p:10,t}}).t,0);
  assert.equal(alpacaSnapshot('ABC',{latestTrade:{p:10,t:'2026-10-29T10:00:00-04:00'}}).t,Date.parse('2026-10-29T14:00:00Z'));
 });
+
+test('impossible calendar dates and non-RFC3339 hours cannot normalize into fresh Alpaca clocks',()=>{
+ for(const t of ['2026-02-30T14:30:00Z','2026-04-31T14:30:00Z','2026-11-02T24:00:00Z','2026-11-02T09:60:00-05:00']){const r=alpacaSnapshot('SYNTH',{latestTrade:{p:10,t},latestQuote:{bp:9.9,ap:10.1,t},dailyBar:{v:10,t}},true);assert.equal(r.t,0,t);assert.equal(r.qt,0,t);assert.equal(r.vt,0,t);}
+});
+test('explicit DST offsets retain distinct fold instants; pre/post transition openings and half-day quote clocks stay exact',()=>{
+ for(const [clock,expected]of [['2026-10-30T09:30:00-04:00','2026-10-30T13:30:00Z'],['2026-11-02T09:30:00-05:00','2026-11-02T14:30:00Z'],['2026-11-27T13:00:00-05:00','2026-11-27T18:00:00Z'],['2026-11-01T01:30:00-04:00','2026-11-01T05:30:00Z'],['2026-11-01T01:30:00-05:00','2026-11-01T06:30:00Z']]){const r=alpacaSnapshot('SYNTH',{latestQuote:{bp:9.9,ap:10.1,t:clock}});assert.equal(r.qt,Date.parse(expected));assert.equal(r.t,0);}
+ // Exact source timestamps alone do not establish an open trading session.
+ assert.equal(alpacaSnapshot('SYNTH',{latestTrade:{p:10,t:'2026-11-01T01:30:00'}}).t,0);
+});

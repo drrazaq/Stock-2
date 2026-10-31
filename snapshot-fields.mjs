@@ -1,7 +1,12 @@
 // Each field keeps its own provider clock. Missing clocks remain unknown (0).
 const positive = x => typeof x === 'number' && Number.isFinite(x) && x > 0;
 const number = x => positive(x) ? x : 0;
-const isoTime = x => typeof x === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,9})?(?:Z|[+-]\d\d:\d\d)$/.test(x) && Number.isFinite(Date.parse(x)) ? Date.parse(x) : 0;
+const isoTime = x => {
+ // Date.parse normalizes impossible days (for example February30) into another session.
+ if(typeof x!=='string'||!/^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,9})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/.test(x))return 0;
+ const day=new Date(x.slice(0,10)+'T00:00:00Z'),ms=Date.parse(x);
+ return Number.isFinite(+day)&&day.toISOString().slice(0,10)===x.slice(0,10)&&Number.isFinite(ms)?ms:0;
+};
 const nsTime = x => positive(x) ? x / 1e6 : 0;
 export function massiveSnapshot(x) {
   const lt=x.lastTrade||{}, mn=x.min||{}, dy=x.day||{}, pd=x.prevDay||{}, q=x.lastQuote||{};
