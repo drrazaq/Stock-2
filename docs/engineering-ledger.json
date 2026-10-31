@@ -5288,59 +5288,54 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "NATIVE_ADAPTER_AND_SHADOW_PATCH_PREPARED_NOT_INSTALLED_LIVE_HOST_INCOMPLETE",
-    "basisCommit": "5159ce229edd4eff6443d6a5a293d4578bfedd6d",
-    "implementationCommit": "23a3f4b777e6b78704f8e3479a49e8fe179da62d",
-    "review": "docs/native-sec-event-integration.md",
-    "budgetAuthority": "docs/validation/paper-capture-request-budget.json",
-    "referenceRequestsMaximum": 18,
-    "captureRequestsMaximum": 41,
-    "combinedAdditionalSourceRequestsMaximum": 59,
-    "shadowAdditionalRequests": 0,
-    "offlineEngineeringRemaining": [
-      "Distinct trusted live host/CLI/workflow and real client bindings",
-      "Original SEC acceptance-response capture/join when already-existing responses contain it; Atom updated is insufficient",
-      "Cross-run producer lineage/artifact transport/pins and exact backend uploader/recovery contract"
-    ],
-    "externalEvidenceSeparate": [
-      "Official plan/entitlement/retention evidence",
-      "Actual identity/industry/ZAD/source and original clock evidence",
-      "Owner recovery/service quota and backend behavior"
-    ],
-    "readinessCorrection": "Native producer and live bindings are implementation gaps, not merely missing external evidence. Native adapter/artifacts/reader are now prepared; proposed production integration is not installed.",
-    "genuineAdmissions": 0,
-    "actualAtomOnlyAdmissions": 0,
+    "status": "OFFLINE_NATIVE_SEC_ACCEPTANCE_LINEAGE_IMPLEMENTED_INACTIVE",
+    "runtimeSourceSha": "e66565cfff57e139243d186364d51a38ed479749",
+    "closureBoard": "docs/acceptance-closure-board.md",
+    "review": "docs/native-sec-acceptance-lineage.md",
+    "patchManifest": "docs/validation/native-sec-shadow-production-manifest-v2.json",
     "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
     "productionChanged": false,
-    "nextExecutableTask": "Independent review of exact5-file shadow patch and separate inactive live implementation scope; no installation/dispatch/source collection. Preserve zero admissions and propose any later activation only after review.",
-    "runtimeSourceSha": "2d5119b2edf1b2023cf2bb86f5bff45fab9378b4",
-    "verification": "docs/validation/native-sec-integration-verification.json",
-    "nativeFocused": {
-      "cases": 9,
-      "failures": 0
+    "providerRequestsAdded": 0,
+    "offlineEngineeringRemaining": [
+      "Trusted inactive live host/client and producer artifact selection/download, independent immutable run/source/digest derivation",
+      "Real artifact-client contract/failure handling and authenticated current reference provenance",
+      "Remaining all-source bounds/materiality/revision matrix, all-provider normalization and actual cross-lane plan/spec/cost/size/liquidity comparisons"
+    ],
+    "externalDependencies": [
+      "Official latest SIP account/session/universe and retention evidence",
+      "Authoritative current identity/industry/ZAD and permitted reference use",
+      "Separately reviewed dated reference preparation and calibration authorization"
+    ],
+    "nextExecutableTask": "Finish distinct inactive live producer-artifact/client host without bypassing rehearsal guard; then dependent source/market/execution contracts. No activation or live calls.",
+    "verification": "docs/validation/native-sec-acceptance-lineage-verification.json",
+    "passiveWatcher": {
+      "observedProductionMain": "a4e88a3eb7ddaf3e7506bc82bd0fb1e4883c1958",
+      "lastScheduledIgnitionRun": 41072889693,
+      "lastScheduledRunSource": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "postDeploymentScheduledRunObserved": false,
+      "novemberDST": "PENDING_NATURAL_RUN",
+      "manualDispatches": 0
     },
-    "localFullNodeInitial": {
-      "files": 205,
-      "cases": 1916,
-      "failures": [
-        "test/leader-dip.test.mjs"
-      ]
-    },
-    "resolvedFixtureRerun": {
-      "file": "test/leader-dip.test.mjs",
-      "cases": 14,
-      "failures": 0,
-      "scope": "Fixture-only correction for closed market days;10-session boundary/11-session expiry now asserted; production strategy code and gates unchanged"
-    },
-    "outstandingLocalFailures": [],
-    "python": {
-      "cases": 30,
-      "failures": 0
-    },
-    "static": {
-      "modules": 268,
-      "failures": [],
-      "proposedYamlParse": "PASS"
+    "localVerification": {
+      "development": {
+        "files": 206,
+        "cases": 1925,
+        "failures": []
+      },
+      "productionMainPlusExactPatch": {
+        "files": 122,
+        "cases": 1191,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 269,
+        "failures": []
+      }
     }
   },
   "shareSupplyCaller": {
@@ -7221,5 +7216,62 @@
       "cases": 30,
       "failures": 0
     }
-  }
+  },
+  "preNativeJoin_latestSessionCheckpoint": {
+    "status": "NATIVE_ADAPTER_AND_SHADOW_PATCH_PREPARED_NOT_INSTALLED_LIVE_HOST_INCOMPLETE",
+    "basisCommit": "5159ce229edd4eff6443d6a5a293d4578bfedd6d",
+    "implementationCommit": "23a3f4b777e6b78704f8e3479a49e8fe179da62d",
+    "review": "docs/native-sec-event-integration.md",
+    "budgetAuthority": "docs/validation/paper-capture-request-budget.json",
+    "referenceRequestsMaximum": 18,
+    "captureRequestsMaximum": 41,
+    "combinedAdditionalSourceRequestsMaximum": 59,
+    "shadowAdditionalRequests": 0,
+    "offlineEngineeringRemaining": [
+      "Distinct trusted live host/CLI/workflow and real client bindings",
+      "Original SEC acceptance-response capture/join when already-existing responses contain it; Atom updated is insufficient",
+      "Cross-run producer lineage/artifact transport/pins and exact backend uploader/recovery contract"
+    ],
+    "externalEvidenceSeparate": [
+      "Official plan/entitlement/retention evidence",
+      "Actual identity/industry/ZAD/source and original clock evidence",
+      "Owner recovery/service quota and backend behavior"
+    ],
+    "readinessCorrection": "Native producer and live bindings are implementation gaps, not merely missing external evidence. Native adapter/artifacts/reader are now prepared; proposed production integration is not installed.",
+    "genuineAdmissions": 0,
+    "actualAtomOnlyAdmissions": 0,
+    "acceptanceAdded": 0,
+    "productionChanged": false,
+    "nextExecutableTask": "Independent review of exact5-file shadow patch and separate inactive live implementation scope; no installation/dispatch/source collection. Preserve zero admissions and propose any later activation only after review.",
+    "runtimeSourceSha": "2d5119b2edf1b2023cf2bb86f5bff45fab9378b4",
+    "verification": "docs/validation/native-sec-integration-verification.json",
+    "nativeFocused": {
+      "cases": 9,
+      "failures": 0
+    },
+    "localFullNodeInitial": {
+      "files": 205,
+      "cases": 1916,
+      "failures": [
+        "test/leader-dip.test.mjs"
+      ]
+    },
+    "resolvedFixtureRerun": {
+      "file": "test/leader-dip.test.mjs",
+      "cases": 14,
+      "failures": 0,
+      "scope": "Fixture-only correction for closed market days;10-session boundary/11-session expiry now asserted; production strategy code and gates unchanged"
+    },
+    "outstandingLocalFailures": [],
+    "python": {
+      "cases": 30,
+      "failures": 0
+    },
+    "static": {
+      "modules": 268,
+      "failures": [],
+      "proposedYamlParse": "PASS"
+    }
+  },
+  "acceptanceClosureBoard": "docs/acceptance-closure-board.md"
 }

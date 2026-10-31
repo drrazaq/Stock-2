@@ -1,3 +1,5 @@
+> **Current continuation:** [Acceptance-response tee and cross-run lineage, exact inactive v2 scope](native-sec-acceptance-lineage.md) supersede the missing-offline-join/lineage statements below. Live host, transport, reference authentication and activation remain unresolved. Historical evidence retained.
+
 # Native SEC evidence continuation — inactive
 
 Prepared31October2026. The earlier description of native-event production and live bindings as only external/activation dependencies was wrong. They are **implementation gaps**. This checkpoint implements the native adapter, artifacts and reader, and prepares an isolated shadow patch. It does **not** implement or activate the separate live capture host. [Live implementation scope](validation/paper-capture-live-scope.json), [canonical request budget](validation/paper-capture-request-budget.json).

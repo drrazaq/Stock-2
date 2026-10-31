@@ -1,0 +1,80 @@
+{
+  "kind": "NATIVE_SEC_ACCEPTANCE_LINEAGE_OFFLINE_VERIFICATION_V1",
+  "runtimeSourceSha": "e66565cfff57e139243d186364d51a38ed479749",
+  "productionMain": "a4e88a3eb7ddaf3e7506bc82bd0fb1e4883c1958",
+  "patchSha256": "2ac7cc44971b3afabd552c5887ba17ec276a2364829ab7caeb5020d54a96ef83",
+  "productionChanged": false,
+  "sourceRequests": 0,
+  "captureRequests": 0,
+  "genuineAdmissions": 0,
+  "acceptanceAdded": 0,
+  "focused": {
+    "nativeOriginalAndGuardedCapture": 9,
+    "acceptanceLineageAndActualProductionCallers": 9,
+    "historicalPatchAndBudget": 2,
+    "instrumentCompatibility": 9,
+    "runtimeManifestPins": 1
+  },
+  "developmentFull": {
+    "files": 206,
+    "cases": 1925,
+    "failures": []
+  },
+  "productionMainPlusExactPatch": {
+    "files": 122,
+    "cases": 1191,
+    "failures": []
+  },
+  "productionTestOnlySupport": {
+    "callerHarnessSha256": "d6a4d9b105b8f08be5149c487ac96ebe7df3293beda7e688ab2922ac735faff9",
+    "note": "One synthetic actual-caller harness plus three exact proposal fixture files staged only in disposable checkout, outside proposed patch. All original121 production test files retained. No production service executed."
+  },
+  "productionCompatibilityFailuresRetained": {
+    "initialFailures": [
+      "test/leader-dip.test.mjs",
+      "tests/instrument-type.test.mjs"
+    ],
+    "unpatchedMainLeaderDipFails": true,
+    "unpatchedMainInstrumentPasses": true,
+    "resolution": "Existing test-only weekend expiry boundary fixture plus disabled real shadow binding in isolated issuer harness. Original assertions retained. No strategy/identity gate change.",
+    "logs": "/workspace/milestones/native-sec-closure/production"
+  },
+  "unchangedProductionRuntimeAndAccounting": {
+    "scan.mjs": "c4f2d96793b3104659d6a4b2e0ce4910cf19b756c6637fce4743df8dd70eb1c3",
+    "test/accounting-fixes.test.mjs": "f7860b69887b77543c23d897aea8e13d2cb3a383e00d982d5b1b753e24175048",
+    "test/accounting-durability.test.mjs": "ca7676283a89203a3c909d285fe8dcc7f822fcfff36db9913ec73fd78ccc531a",
+    "test/leader-dip-sale-recovery.test.mjs": "36ddbb70e66899dde07bcea0bbec2fcc5c45b18eedd93eea07d8cc375e5433e3",
+    "test/load-scan.mjs": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2",
+    "index.html": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
+    "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17"
+  },
+  "productionDataUnchanged": true,
+  "python": {
+    "tests": 30,
+    "failures": 0
+  },
+  "syntax": {
+    "files": 269,
+    "failures": []
+  },
+  "proposedYaml": "PASS",
+  "passiveOperations": {
+    "latestScheduledWatcherRun": 41072889693,
+    "sourceSha": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+    "postDeploymentScheduledWatcherObserved": false,
+    "novemberDST": "PENDING_NATURAL_RUN",
+    "manualDispatches": 0
+  },
+  "remainingEngineering": [
+    "Trusted distinct live host/client; no rehearsal guard bypass",
+    "Live artifact selection/download, trusted independent pins and complete-run lineage selection",
+    "Real artifact SDK/wire contract and failure handling",
+    "Remaining all-source bounds/materiality/revisions; provider normalization; lane/spec execution contracts"
+  ],
+  "externalEvidence": [
+    "Official latest SIP plan/session/universe and retention",
+    "Authoritative current six-name class/industry/CIK/exchange reference and ZAD",
+    "Separately dated owner scopes for reference preparation and calibration"
+  ],
+  "exactCommitCI": "Pending publication; final exact SHA must be independently checked and reported. Historical b9f6d20c all5PASS is not borrowed."
+}

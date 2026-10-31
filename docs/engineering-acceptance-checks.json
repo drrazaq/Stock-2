@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30",
+  "updated": "2026-10-31",
   "sourceCheckpoint": "ef10ec13c52f921740d7b230fd97965278a75545",
   "score": {
     "complete": 24,
@@ -376,5 +376,20 @@
       "ACTIONS-04"
     ]
   },
-  "deploymentStatusEvidence": "docs/validation/watcher-v5-deployment-result.json; accounting/watcher deployed, natural watcher/DST evidence pending. No operational row closed solely for deployment or tests."
+  "deploymentStatusEvidence": "docs/validation/watcher-v5-deployment-result.json; accounting/watcher deployed, natural watcher/DST evidence pending. No operational row closed solely for deployment or tests.",
+  "closureBoard": "docs/acceptance-closure-board.md",
+  "nativeJoinContinuation": {
+    "evidence": "docs/native-sec-acceptance-lineage.md",
+    "acceptanceAdded": 0,
+    "criteriaAdvanced": [
+      "Actual existing submissions-response tee and immutable accession/CIK acceptance join",
+      "Pinned parent artifacts preserve original clocks/revisions across runs",
+      "Late/conflicting/missing evidence remains unresolved; original artifacts unchanged"
+    ],
+    "stillOpen": [
+      "CATALYST-03",
+      "MARKET-03",
+      "EXEC-03"
+    ]
+  }
 }
