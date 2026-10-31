@@ -32003,7 +32003,7 @@
    "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 1 month",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-31 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "Buy the open of the session after the reaction session of an earnings 8-K (item 2.02) whose date is 7+ calendar days earlier than the company's year-ago announcement date + 364 days (year-ago = closest announcement within +-30 days of date - 364; filings within 30 days = one announcement); stock liquid on the reaction session; sell the close 21 sessions later. Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.",
    "sources": [
     "https://doi.org/10.1017/S0022109018000492",
@@ -32011,7 +32011,45 @@
     "https://doi.org/10.1016/S0165-4101(02)00048-6"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026."
+   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026.",
+   "tested": "2026-10-30",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     613,
+     1299
+    ],
+    "avg": [
+     -0.0087,
+     -0.0059
+    ],
+    "stress": [
+     -0.0127,
+     -0.0099
+    ],
+    "edge": [
+     -0.0014,
+     -0.0089
+    ],
+    "vsOwn": [
+     0.0085,
+     0.0011
+    ],
+    "noTop2": [
+     -0.0133,
+     -0.008
+    ],
+    "tBlock": [
+     -0.25,
+     -0.4
+    ],
+    "win": [
+     0.4078,
+     0.4488
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.25 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.4 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-EAT-ADV-63",
@@ -32019,7 +32057,7 @@
    "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 3 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-10-31 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-EAT-ADV-21, hold 63 sessions. Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.",
    "sources": [
     "https://doi.org/10.1017/S0022109018000492",
@@ -32027,7 +32065,45 @@
     "https://doi.org/10.1016/S0165-4101(02)00048-6"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026."
+   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026.",
+   "tested": "2026-10-30",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     576,
+     1204
+    ],
+    "avg": [
+     0.0121,
+     0.0309
+    ],
+    "stress": [
+     0.0081,
+     0.0269
+    ],
+    "edge": [
+     -0.022,
+     -0.0008
+    ],
+    "vsOwn": [
+     -0.0117,
+     0.0035
+    ],
+    "noTop2": [
+     0.0048,
+     0.0261
+    ],
+    "tBlock": [
+     -3.88,
+     0.23
+    ],
+    "win": [
+     0.4809,
+     0.4925
+    ],
+    "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -3.88 under 2.5 in the older half; not better than the average stock in the newer half; block t 0.23 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-EAT-DEL-21",
@@ -32035,7 +32111,7 @@
    "name": "AVOID check: earnings reported a week or more LATER than a year before (delayer), 21 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-10-31 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: earnings 8-Ks dated 7+ calendar days later than the year-ago date + 364, bought the session after the reaction session, 21 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.",
    "sources": [
     "https://doi.org/10.1017/S0022109018000492",
@@ -32043,7 +32119,45 @@
     "https://doi.org/10.1016/S0165-4101(02)00048-6"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026."
+   "note": "Daily researcher 2026-10-31: Johnson and So (2018, JFQA) \"Time Will Tell\": advancers (earnings earlier than usual) beat delayers. New information family (the timing of a company's own earnings releases, from official SEC 8-K item 2.02 acceptance times), not in the library. Buy advancers; delayers as an avoid check. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 30 Oct 2026.",
+   "tested": "2026-10-30",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "n": [
+     1106,
+     3682
+    ],
+    "avg": [
+     0.0052,
+     -0.0029
+    ],
+    "stress": [
+     0.0012,
+     -0.0069
+    ],
+    "edge": [
+     -0.0005,
+     -0.0077
+    ],
+    "vsOwn": [
+     0.0089,
+     -0.0001
+    ],
+    "noTop2": [
+     0.0037,
+     -0.0041
+    ],
+    "tBlock": [
+     -0.1,
+     -0.63
+    ],
+    "win": [
+     0.5045,
+     0.4726
+    ],
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-30T23:19:22.337Z",
+ "generatedAt": "2026-10-31T09:19:05.333Z",
  "lastClose": "2026-10-30",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Daily-researcher rules (RQ-*) recording forward from 26 Oct 2026. Nothing here is a buy by itself: a rule needs a frozen 5-year verdict that meets the TRY SMALL standard (data/research-lab.json firstRun) or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
@@ -50,7 +50,15 @@
    "name": "Cash tender offer target, any positive spread up to 15%, held to the deal close (max 120 sessions)",
    "hold": 120,
    "tier": "TOO FEW CASES",
-   "newSignals": [],
+   "newSignals": [
+    {
+     "sym": "PCRX",
+     "close": 36.39,
+     "halal": "ok",
+     "d": "2026-10-30",
+     "plan": "buy at the open of 2026-11-02; cash offer 36.5 USD a share (spread 0.3% at the filing-day close, plus a CVR); sell when the deal pays out, at a close under 32.751 (deal break), or after 120 sessions"
+    }
+   ],
    "late": [],
    "open": []
   },
@@ -1934,7 +1942,16 @@
    "name": "Order backlog (RPO) growth in the top 20%, hold 3 months",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": [],
+   "newSignals": [
+    {
+     "sym": "RBC",
+     "close": 462.21,
+     "halal": "unknown",
+     "d": "2026-10-30",
+     "pct": 0.8206,
+     "plan": "buy at the open of 2026-11-02, hold 63 sessions (backlog +38% on a year before)"
+    }
+   ],
    "late": [
     {
      "sym": "PWR",
@@ -2061,7 +2078,16 @@
    "name": "Order backlog (RPO) growth in the top 20%, hold 6 months",
    "hold": 126,
    "tier": "REJECTED",
-   "newSignals": [],
+   "newSignals": [
+    {
+     "sym": "RBC",
+     "close": 462.21,
+     "halal": "unknown",
+     "d": "2026-10-30",
+     "pct": 0.8206,
+     "plan": "buy at the open of 2026-11-02, hold 126 sessions (backlog +38% on a year before)"
+    }
+   ],
    "late": [
     {
      "sym": "PWR",
@@ -2183,6 +2209,38 @@
      "exitAfter": "126 sessions"
     }
    ]
+  },
+  "RQ-EAT-ADV-21": {
+   "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 1 month",
+   "hold": 21,
+   "tier": "REJECTED",
+   "newSignals": [
+    {
+     "sym": "DV",
+     "close": 13.56,
+     "halal": "unknown",
+     "d": "2026-10-30",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (earnings 7 days earlier than usual)"
+    }
+   ],
+   "late": [],
+   "open": []
+  },
+  "RQ-EAT-ADV-63": {
+   "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 3 months",
+   "hold": 63,
+   "tier": "REJECTED",
+   "newSignals": [
+    {
+     "sym": "DV",
+     "close": 13.56,
+     "halal": "unknown",
+     "d": "2026-10-30",
+     "plan": "buy at the open of 2026-11-03, hold 63 sessions (earnings 7 days earlier than usual)"
+    }
+   ],
+   "late": [],
+   "open": []
   }
  }
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-30T23:19:22.338Z",
+ "generatedAt": "2026-10-31T09:19:05.334Z",
  "lastClose": "2026-10-30",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -135,8 +135,8 @@
    "hold": 120,
    "family": "tender",
    "dataOk": true,
-   "signals": 0,
-   "waiting": 0,
+   "signals": 1,
+   "waiting": 1,
    "open": 0,
    "closed": {
     "n": 0,
@@ -290,8 +290,8 @@
    "hold": 63,
    "family": "rpo",
    "dataOk": true,
-   "signals": 16,
-   "waiting": 11,
+   "signals": 17,
+   "waiting": 12,
    "open": 5,
    "closed": {
     "n": 0,
@@ -321,8 +321,8 @@
    "hold": 126,
    "family": "rpo",
    "dataOk": true,
-   "signals": 16,
-   "waiting": 11,
+   "signals": 17,
+   "waiting": 12,
    "open": 5,
    "closed": {
     "n": 0,
@@ -351,6 +351,99 @@
    "kind": "avoid",
    "hold": 63,
    "family": "rpo",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
+  },
+  "RQ-EAT-ADV-21": {
+   "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 1 month",
+   "kind": "buy",
+   "hold": 21,
+   "family": "eat",
+   "dataOk": true,
+   "signals": 1,
+   "waiting": 1,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.25 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.4 under 2.5 in the newer half"
+   }
+  },
+  "RQ-EAT-ADV-63": {
+   "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 3 months",
+   "kind": "buy",
+   "hold": 63,
+   "family": "eat",
+   "dataOk": true,
+   "signals": 1,
+   "waiting": 1,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -3.88 under 2.5 in the older half; not better than the average stock in the newer half; block t 0.23 under 2.5 in the newer half"
+   }
+  },
+  "RQ-EAT-DEL-21": {
+   "name": "AVOID check: earnings reported a week or more LATER than a year before (delayer), 21 sessions",
+   "kind": "avoid",
+   "hold": 21,
+   "family": "eat",
    "dataOk": true,
    "signals": 0,
    "waiting": 0,
