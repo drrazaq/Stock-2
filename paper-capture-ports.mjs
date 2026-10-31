@@ -1,7 +1,7 @@
 // Prepared service adapters. Every external client is injected; no global fetch,
 // credentials from environment, SDK installation or implicit activation.
 import path from 'node:path';
-import {readNativeRun,nativeEventsForCapture} from './native-sec-events.mjs';
+import {nativeHandoffPort} from './native-sec-handoff.mjs';
 import {captureJson} from './capture-json.mjs';
 import {immutableRead,FIXED_UNIVERSE} from './paper-capture-wrapper.mjs';
 const need=(x,c)=>{if(!x)throw Error(c);};
@@ -25,4 +25,4 @@ export function artifactPort({uploadArtifact}){
  };
 }
 
-export function nativeEventPort({directory,expectedRunId,expectedSourceSha}){return async({at,identities})=>{const archive=readNativeRun({directory,expectedRunId,expectedSourceSha});return JSON.stringify(nativeEventsForCapture(archive,{identities,at}));};}
+export function nativeEventPort(options){return nativeHandoffPort(options);}

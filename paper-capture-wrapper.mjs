@@ -3,13 +3,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
+import {validateNativeEvidenceAsset,validateNativeEventAssets,NATIVE_HANDOFF_BYTES} from './native-sec-handoff.mjs';
 import {captureJson} from './capture-json.mjs';
 import {sha,validatePlan,checkpointCapture,recoverCapture,finishCapture} from './prospective-paper-capture.mjs';
 import {runCalibration} from './prospective-capture-transport.mjs';
 import {validateReferenceBundle} from './paper-capture-references.mjs';
 import {sealResearch,openResearch} from './tools/seal-research-artifact.mjs';
 import {openCaptureZip} from './capture-artifact.mjs';
-export const WRAPPER_FILES=Object.freeze(['native-sec-events.mjs','edgar-feed.mjs','capture-json.mjs','capture-artifact.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
+export const WRAPPER_FILES=Object.freeze(['native-sec-handoff.mjs','native-sec-events.mjs','edgar-feed.mjs','capture-json.mjs','capture-artifact.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','paper-capture-wrapper.mjs','prospective-paper-capture.mjs','prospective-capture-transport.mjs','discovery-paper.mjs','market-session.mjs','tools/seal-research-artifact.mjs','tools/run-paper-capture-workflow.mjs','tools/recover-paper-capture.mjs']);
 export const FIXED_UNIVERSE=Object.freeze(['AMD','INTC','NVDA','AMAT','LRCX','KLAC']);
 export const WRAPPER_CAPS=Object.freeze({uploads:41,sealedBytes:160*1024*1024,archiveBytes:164*1024*1024,historyRows:100,referenceBytes:2*1024*1024});
 export const APPROVAL_LIMITS=Object.freeze({providerAttempts:41,perMinute:2,inFlight:1,responseBytes:65536,totalResponseBytes:8388608,frames:41,symbols:6,uploadAttempts:41,sealedBytes:167772160,archiveBytes:171966464,retentionDays:3});
@@ -56,15 +57,15 @@ export async function runGuardedCapture({root,reviewRoot,approvalFile,referenceF
  const history=await bounded(ports.history({maxRows:100,timeoutMs:10000}));guard.verifyHistory(history);
  ok(typeof key==='string'&&key.length>=16,'RESEARCH_ENCRYPTION_BINDING_REQUIRED');
  const absolute=path.resolve(output);for(let parent=path.dirname(absolute);;parent=path.dirname(parent)){ok(!fs.lstatSync(parent).isSymbolicLink(),'OUTPUT_PARENT_SYMLINK');if(path.dirname(parent)===parent)break;}ok(!fs.existsSync(absolute),'EXCLUSIVE_OUTPUT_REQUIRED');immutableRead(approvalFile,65536);fs.mkdirSync(absolute,{mode:0o700});
- const receipts=[],pending=[],eventBatches=[];let sealedBytes=0,archiveBytes=0,status='ERROR',failure='NONE';
+ const receipts=[],pending=[],eventBatches=[],evidenceAssets=[];let sealedBytes=0,archiveBytes=0,status='ERROR',failure='NONE';
  const a=guard.approval;
  const report=await runCalibration({plan:a.plan,now,wait,metadata:guard.references.metadata,
-  readEvents:async at=>{guard.revalidate();const raw=await bounded(ports.events({at,maxBytes:131072,readOnly:true,identities:guard.references.metadata}));ok(typeof raw==='string'&&Buffer.byteLength(raw)<=131072,'EVENT_SOURCE_BUDGET');const doc=captureJson(raw);ok(Array.isArray(doc.events)&&doc.events.length<=20,'EVENT_SOURCE_SCHEMA');eventBatches.push({at,raw,sha256:sha(raw)});return doc.events;},
+  readEvents:async at=>{guard.revalidate();const supplied=await bounded(ports.events({at,maxBytes:131072,readOnly:true,identities:guard.references.metadata}));const raw=typeof supplied==='string'?supplied:supplied?.raw;const assets=typeof supplied==='string'?[]:supplied?.evidenceAssets;ok(Array.isArray(assets)&&assets.length<=41,'EVENT_EVIDENCE_SCHEMA');for(const asset of assets){validateNativeEvidenceAsset(asset);if(!evidenceAssets.some(x=>x.sha256===asset.sha256))evidenceAssets.push(asset);}ok(Buffer.byteLength(JSON.stringify(evidenceAssets))<=NATIVE_HANDOFF_BYTES,'EVENT_EVIDENCE_BUDGET');validateNativeEventAssets(raw,evidenceAssets);ok(typeof raw==='string'&&Buffer.byteLength(raw)<=131072,'EVENT_SOURCE_BUDGET');const doc=captureJson(raw);ok(Array.isArray(doc.events)&&doc.events.length<=20,'EVENT_SOURCE_SCHEMA');eventBatches.push({at,raw,sha256:sha(raw)});return doc.events;},
   transport:async(url,options)=>{guard.revalidate();return ports.provider(url,options);},
   persist:async state=>{try{
    const sequence=state.frames.length-1,name='checkpoint-'+String(sequence).padStart(3,'0')+'.enc';
    const contextTag={kind:'GUARDED_PAPER_CAPTURE_V1',sourceSha:a.plan.sourceSha,approvalHash:guard.approvalHash,referenceHash:guard.references.sha256,runId:context.runId,cohort:'CALIBRATION',sequence,chain:state.chain};
-   const payload=Buffer.from(JSON.stringify({approvalRaw:guard.approvalRaw,referenceRaw:guard.references.raw,inputIngestedAt:guard.references.inputIngestedAt,eventBatches,state}));ok(payload.length<=8*1024*1024,'CHECKPOINT_PLAIN_BUDGET');
+   const payload=Buffer.from(JSON.stringify({approvalRaw:guard.approvalRaw,referenceRaw:guard.references.raw,inputIngestedAt:guard.references.inputIngestedAt,eventBatches,evidenceAssets,state}));ok(payload.length<=8*1024*1024,'CHECKPOINT_PLAIN_BUDGET');
    const body=Buffer.from(JSON.stringify(sealResearch(payload,key,contextTag)));
    sealedBytes+=body.length;ok(body.length<=16*1024*1024&&sealedBytes<=WRAPPER_CAPS.sealedBytes&&receipts.length<41,'SEALED_UPLOAD_BUDGET');
    const file=path.join(absolute,name);fs.writeFileSync(file,body,{flag:'wx',mode:0o600});pending.push(name);guard.revalidate();
@@ -92,7 +93,7 @@ export function recoverUploadedCapture({archives,receiptRaw,expectedReceiptSha25
   const p=captureJson(openResearch(envelope,key).toString());ok(sha(p.approvalRaw)===m.approvalHash&&sha(p.referenceRaw)===c.referenceHash,'RECOVERY_INPUT_PIN');
   const a=captureJson(p.approvalRaw);validateReferenceBundle(p.referenceRaw,a);ok(a.plan.sourceSha===m.sourceSha&&a.plan.cohort==='CALIBRATION'&&a.plan.enrollmentManifestSha256===inputFingerprint(c.referenceHash,a.plan),'RECOVERY_PLAN');
   const state=recoverCapture(checkpointCapture(p.state,key),key,a.plan);ok(Number.isFinite(stamp(p.inputIngestedAt))&&stamp(p.inputIngestedAt)<=Date.parse(a.plan.start)&&state.frames.every(x=>x.frame.metadata.every(m=>m.asOf===p.inputIngestedAt&&stamp(m.sourceCapturedAt)<=stamp(m.asOf))),'RECOVERY_METADATA_INGESTION_CLOCK');ok(Array.isArray(p.eventBatches)&&p.eventBatches.length===state.frames.length&&p.eventBatches.every((b,j)=>sha(b.raw)===b.sha256&&JSON.stringify(captureJson(b.raw).events)===JSON.stringify(state.frames[j].frame.events)),'RECOVERY_EVENT_SOURCE_BYTES');ok(state.frames.length===i+1&&state.frames[i].previous===previousChain&&state.chain===c.chain,'RECOVERY_CONTIGUOUS_CHAIN');
-  if(last)ok(JSON.stringify(state.frames.slice(0,-1))===JSON.stringify(last.frames),'RECOVERY_PREFIX_CHANGED');last=state;lastPayload=p;previousChain=state.chain;
+  const assets=p.evidenceAssets||[];ok(Array.isArray(assets)&&Buffer.byteLength(JSON.stringify(assets))<=NATIVE_HANDOFF_BYTES,'RECOVERY_NATIVE_EVIDENCE_BUDGET');for(const asset of assets)validateNativeEvidenceAsset(asset);for(const batch of p.eventBatches)validateNativeEventAssets(batch.raw,assets);if(lastPayload)ok((lastPayload.evidenceAssets||[]).every(a=>assets.some(b=>JSON.stringify(a)===JSON.stringify(b))),'RECOVERY_NATIVE_PREFIX_CHANGED');if(last)ok(JSON.stringify(state.frames.slice(0,-1))===JSON.stringify(last.frames),'RECOVERY_PREFIX_CHANGED');last=state;lastPayload=p;previousChain=state.chain;
  }
- return {status:last.frames.length===41?'AUTHENTICATED_COMPLETE':'AUTHENTICATED_INCOMPLETE',frames:last.frames.length,state:last,originalInputs:{approvalRaw:lastPayload.approvalRaw,referenceRaw:lastPayload.referenceRaw,eventBatches:lastPayload.eventBatches},report:finishCapture(last),genuineAdmissions:0,automaticResumeAuthorized:false};
+ return {status:last.frames.length===41?'AUTHENTICATED_COMPLETE':'AUTHENTICATED_INCOMPLETE',frames:last.frames.length,state:last,originalInputs:{approvalRaw:lastPayload.approvalRaw,referenceRaw:lastPayload.referenceRaw,eventBatches:lastPayload.eventBatches,evidenceAssets:lastPayload.evidenceAssets||[]},report:finishCapture(last),genuineAdmissions:0,automaticResumeAuthorized:false};
 }
