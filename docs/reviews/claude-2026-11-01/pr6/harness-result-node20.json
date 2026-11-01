@@ -1,0 +1,137 @@
+{
+ "tree": "v2a",
+ "node": "v20.20.0",
+ "capture": {
+  "attempts": [
+   "CAPTURE_FINISHED/COMPLETE"
+  ],
+  "producer": {
+   "exit": 0,
+   "cancelled": false,
+   "fullHeartbeat": true,
+   "heartbeatMinutes": 332
+  },
+  "confirmedUploads": 41,
+  "providerAttempts": 41,
+  "wireRequests": 164,
+  "unreconciled": 0,
+  "automaticResumeAuthorized": false,
+  "manifestOnDiskMatchesResult": true
+ },
+ "recovery": {
+  "R00_baseline": "RETURNED:AUTHENTICATED_COMPLETE_CAPTURE/frames=41",
+  "R01_receipt_pin_wrong": "THROW:V2_RECOVERY_RECEIPT_PIN",
+  "R02_scope_runId_changed": "THROW:V2_RECOVERY_SCOPE",
+  "R03_wrong_key": "THROW:Unsupported state or unable to authenticate data",
+  "R04_archive_missing": "THROW:V2_RECOVERY_ARCHIVE",
+  "R05_archives_swapped": "THROW:V2_RECOVERY_ARCHIVE",
+  "R06_byte_flip_receipt_repinned": "THROW:ARTIFACT_ZIP_SCOPE_OR_INTEGRITY",
+  "R07_duplicate_artifactId": "THROW:V2_RECOVERY_RECEIPT",
+  "R08_middle_receipt_dropped": "THROW:V2_RECOVERY_RECEIPT",
+  "R09_receipts_reordered": "THROW:V2_RECOVERY_RECEIPT",
+  "R10_truncated_to_20": "RETURNED:AUTHENTICATED_PARTIAL_CONTEXT/frames=20",
+  "R11_extra_receipt_42": "THROW:V2_RECOVERY_SCOPE",
+  "R12_primaryAdmission_true": "THROW:V2_RECOVERY_SCOPE",
+  "R13_forge_reseal_unchanged": "RETURNED:AUTHENTICATED_COMPLETE_CAPTURE/frames=41",
+  "R14_forge_outcome_edited": "THROW:V2_RECOVERY_OUTCOME",
+  "R15_forge_policyApproved": "THROW:V2_RECOVERY_CHAIN",
+  "R16_forge_earlier_frame_rewritten": "THROW:V2_RECOVERY_FRAME_REWRITE",
+  "R17_forge_last_frame_and_outcome": "RETURNED:AUTHENTICATED_COMPLETE_CAPTURE/frames=41",
+  "R18_forge_native_bytes": "THROW:V2_RECOVERY_NATIVE_PREFIX",
+  "R19b_forge_telemetry_field_stale_hash": "THROW:V2_RECOVERY_TELEMETRY_HASH",
+  "R19a_forge_telemetry_whitespace_only": "RETURNED:AUTHENTICATED_COMPLETE_CAPTURE/frames=41",
+  "R20_forge_context_reference_removed": "RETURNED:AUTHENTICATED_PARTIAL_CONTEXT/frames=41",
+  "notes": {
+   "firstNativeCheckpoint": 0,
+   "firstTelemetryCheckpoint": 0,
+   "contextAssets": [
+    "context:reference",
+    "context:reference-review",
+    "context:history",
+    "context:runtime-pins",
+    "context:input-clocks"
+   ]
+  }
+ },
+ "guards": {
+  "G00_exact_inactive_inputs": "RETURNED",
+  "G01_reference_nonsynthetic_repinned": "THROW:V2_BINDING_SYNTHETIC_REFERENCE_REQUIRED",
+  "G02_reference_flag_missing_repinned": "THROW:V2_BINDING_SYNTHETIC_REFERENCE_REQUIRED",
+  "G03_policyApproved_true": "THROW:V2_BINDING_SCOPE",
+  "G04_mode_LIVE": "THROW:V2_BINDING_SCOPE",
+  "G05_protocol_changed": "THROW:V2_BINDING_SCOPE",
+  "G06_output_outside_storage": "THROW:V2_BINDING_STORAGE_SCOPE",
+  "G07_host_mode_LIVE": "THROW:V2_HOST_INACTIVE_SCOPE",
+  "G08_host_other_worker": "THROW:V2_HOST_INACTIVE_SCOPE",
+  "G09_history_UNKNOWN_MISSING_OR_AMBIGUOUS_HISTORY": {
+   "status": "BLOCKED",
+   "reason": "HISTORY_NOT_ELIGIBLE",
+   "credentialReads": 0,
+   "transportCalls": 0,
+   "outputCreated": false
+  },
+  "G09_history_AUTHENTICATED_EARLIER_SAME_DAY_EVIDENCE": {
+   "status": "BLOCKED",
+   "reason": "HISTORY_NOT_ELIGIBLE",
+   "credentialReads": 0,
+   "transportCalls": 0,
+   "outputCreated": false
+  },
+  "G10_window_early_31s": {
+   "status": "THROW:V2_BINDING_START_WINDOW",
+   "credentialReads": 0,
+   "transportCalls": 0,
+   "outputCreated": false
+  },
+  "G10_window_late_9s": {
+   "status": "THROW:V2_BINDING_START_WINDOW",
+   "credentialReads": 0,
+   "transportCalls": 0,
+   "outputCreated": false
+  }
+ },
+ "isolation": {
+  "I1_bindings_throw": {
+   "host": "CAPTURE_FAILED",
+   "captureExitSignal": null,
+   "producer": {
+    "exit": 0,
+    "cancelled": false,
+    "fullHeartbeat": true,
+    "heartbeatMinutes": 332
+   },
+   "result": null,
+   "probe": null,
+   "localServerHits": 0
+  },
+  "I2_worker_exit_mid_capture": {
+   "host": "CAPTURE_FAILED",
+   "captureExitSignal": null,
+   "producer": {
+    "exit": 0,
+    "cancelled": false,
+    "fullHeartbeat": true,
+    "heartbeatMinutes": 332
+   },
+   "result": null,
+   "probe": null,
+   "localServerHits": 0
+  },
+  "I3_ambient_vs_core_network": {
+   "host": "CAPTURE_FAILED",
+   "captureExitSignal": null,
+   "producer": {
+    "exit": 0,
+    "cancelled": false,
+    "fullHeartbeat": true,
+    "heartbeatMinutes": 332
+   },
+   "result": null,
+   "probe": {
+    "fetchResult": "INACTIVE_NETWORK_FORBIDDEN",
+    "core": "ALLOWED_STATUS_200"
+   },
+   "localServerHits": 1
+  }
+ }
+}
