@@ -1,0 +1,64 @@
+diff --git a/tests/research-recovery-publication.test.mjs b/tests/research-recovery-publication.test.mjs
+new file mode 100644
+index 00000000..4a96eac3
+--- /dev/null
++++ b/tests/research-recovery-publication.test.mjs
+@@ -0,0 +1,13 @@
++// REPO-03: actual offline recovery caller, synthetic ciphertext only. No real keys/state.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {pathToFileURL} from 'node:url';
++import {sealResearch} from '../tools/seal-research-artifact.mjs';
++const {recoverDirectory}=await import(process.env.STOCK2_RECOVERY_TOOL?pathToFileURL(process.env.STOCK2_RECOVERY_TOOL).href:new URL('../tools/recover-research-artifact.mjs',import.meta.url).href);
++const key='synthetic-offline-recovery-key-only',sha='a'.repeat(40);
++function fixture(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'repo03-recovery-')),input=path.join(dir,'sealed'),storage=path.join(dir,'storage'),outside=path.join(dir,'outside');for(const p of [input,storage,outside])fs.mkdirSync(p);const body=Buffer.from('SYNTHETIC research bytes only');fs.mkdirSync(path.join(input,'attempt'));fs.writeFileSync(path.join(input,'attempt/case.json.enc'),JSON.stringify(sealResearch(body,key,{sourceSha:sha,path:'attempt/case.json'})));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));return {dir,input,storage,outside,body,output:path.join(storage,'recovered')};}
++test('authenticated recovery publishes identical bytes with private directory and file permissions',t=>{const f=fixture(t),oldMask=process.umask(0o022);let r;try{r=recoverDirectory(f.input,f.output,key,sha);}finally{process.umask(oldMask);}assert.equal(r.status,'AUTHENTICATED_INCOMPLETE');assert.deepEqual(fs.readFileSync(path.join(f.output,'attempt/case.json')),f.body);for(const p of [f.output,path.join(f.output,'attempt')])assert.equal(fs.statSync(p).mode&0o777,0o700);for(const p of ['attempt/case.json','recovery-report.json'])assert.equal(fs.statSync(path.join(f.output,p)).mode&0o777,0o600);});
++test('output ancestor symlink cannot redirect plaintext publication',t=>{const f=fixture(t),link=path.join(f.dir,'linked');fs.symlinkSync(f.outside,link);assert.throws(()=>recoverDirectory(f.input,path.join(link,'recovered'),key,sha));assert.deepEqual(fs.readdirSync(f.outside),[]);});
++test('existing and dangling output links are preserved without writing their targets',t=>{const f=fixture(t);for(const target of [f.outside,path.join(f.dir,'missing')]){fs.symlinkSync(target,f.output);assert.throws(()=>recoverDirectory(f.input,f.output,key,sha));assert.equal(fs.readlinkSync(f.output),target);fs.unlinkSync(f.output);}assert.deepEqual(fs.readdirSync(f.outside),[]);assert.equal(fs.existsSync(path.join(f.dir,'missing')),false);});
++test('ancestor replacement between directory creation and writes cannot redirect publication',t=>{const f=fixture(t),retained=f.storage+'-retained',mkdir=fs.mkdirSync;let replaced=false;fs.mkdirSync=function(file,...args){const r=mkdir.call(this,file,...args);if(String(file).endsWith('/recovered')&&!replaced){replaced=true;fs.renameSync(f.storage,retained);fs.symlinkSync(f.outside,f.storage);}return r;};let error;try{recoverDirectory(f.input,f.output,key,sha);}catch(e){error=e;}finally{fs.mkdirSync=mkdir;}assert.equal(replaced,true);assert.deepEqual(fs.readdirSync(f.outside),[]);assert.equal(error,undefined);assert.deepEqual(fs.readFileSync(path.join(retained,'recovered/attempt/case.json')),f.body);});
++test('bad authentication creates no output and cannot change sealed bytes',t=>{const f=fixture(t),file=path.join(f.input,'attempt/case.json.enc'),before=fs.readFileSync(file);assert.throws(()=>recoverDirectory(f.input,f.output,'wrong-synthetic-key-only',sha));assert.equal(fs.existsSync(f.output),false);assert.deepEqual(fs.readFileSync(file),before);});
++test('existing output evidence is not replaced or truncated',t=>{const f=fixture(t);fs.mkdirSync(f.output);fs.writeFileSync(path.join(f.output,'retained'),'original fixture bytes');assert.throws(()=>recoverDirectory(f.input,f.output,key,sha),/ALREADY_EXISTS/);assert.equal(fs.readFileSync(path.join(f.output,'retained'),'utf8'),'original fixture bytes');});
++test('publication refusal leaves ciphertext and existing parent contents unchanged',t=>{const f=fixture(t),uid=process.geteuid?.();assert.ok(Number.isInteger(uid)&&uid!==0,'run this permissions regression as a non-root user');fs.writeFileSync(path.join(f.storage,'retained'),'original');fs.chmodSync(f.storage,0o500);try{assert.throws(()=>recoverDirectory(f.input,f.output,key,sha));assert.deepEqual(fs.readdirSync(f.storage),['retained']);assert.equal(fs.existsSync(f.output),false);}finally{fs.chmodSync(f.storage,0o700);}});
+diff --git a/tools/recover-research-artifact.mjs b/tools/recover-research-artifact.mjs
+index 63cefd46..5776aa76 100644
+--- a/tools/recover-research-artifact.mjs
++++ b/tools/recover-research-artifact.mjs
+@@ -4,6 +4,27 @@ import path from 'node:path';
+ import zlib from 'node:zlib';
+ import {pathToFileURL} from 'node:url';
+ import {openResearch} from './seal-research-artifact.mjs';
++// Keep every publication operation anchored to verified Linux directory handles.
++// A check followed by a pathname write can follow a replaced ancestor; descriptors
++// retain the chosen directory even if its name is replaced while writing.
++function openRecoveryDirectory(directory){
++ let fd=fs.openSync('/',fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);
++ try{for(const part of path.resolve(directory).split('/').filter(Boolean)){const next=fs.openSync('/proc/self/fd/'+fd+'/'+part,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);fs.closeSync(fd);fd=next;}return fd;}catch(e){fs.closeSync(fd);throw Error('RECOVERY_UNSAFE_DIRECTORY',{cause:e});}
++}
++function publishRecoveredFiles(output,payloads,report){
++ const resolved=path.resolve(output),parent=openRecoveryDirectory(path.dirname(resolved));let root;
++ try{
++  const leaf='/proc/self/fd/'+parent+'/'+path.basename(resolved);
++  fs.mkdirSync(leaf,{mode:0o700});root=fs.openSync(leaf,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);
++  const write=(relative,body)=>{let fd=fs.openSync('/proc/self/fd/'+root,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY);try{
++   const parts=relative.split('/'),name=parts.pop();
++   for(const part of parts){const dir='/proc/self/fd/'+fd+'/'+part;try{fs.mkdirSync(dir,{mode:0o700});}catch(e){if(e.code!=='EEXIST')throw e;}const next=fs.openSync(dir,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);fs.closeSync(fd);fd=next;}
++   const file=fs.openSync('/proc/self/fd/'+fd+'/'+name,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);try{fs.writeFileSync(file,body);fs.fsyncSync(file);}finally{fs.closeSync(file);}fs.fsyncSync(fd);
++  }finally{fs.closeSync(fd);}};
++  for(const p of payloads)write(p.relative,p.body);
++  write('recovery-report.json',JSON.stringify(report,null,2));fs.fsyncSync(root);fs.fsyncSync(parent);
++ }finally{if(root!==undefined)fs.closeSync(root);fs.closeSync(parent);}
++}
+ export function recoverDirectory(input,output,secret,sourceSha,maxBytes=128*1024*1024){
+  if(!/^[a-f0-9]{40}$/.test(sourceSha)||!Number.isInteger(maxBytes)||maxBytes<1||maxBytes>128*1024*1024)throw Error('INVALID_RECOVERY_SCOPE');
+  if(fs.existsSync(output))throw Error('RECOVERY_OUTPUT_ALREADY_EXISTS');
+@@ -31,11 +52,10 @@ export function recoverDirectory(input,output,secret,sourceSha,maxBytes=128*1024
+   for(const cycle of cycles){const row=JSON.parse(zlib.gunzipSync(cycle.body,{maxOutputLength:32*1024*1024}).toString());if(row.kind!=='RESEARCH_ONLY'||row.claims?.orders!==false||row.claims?.approvedBuy!==false)problems.push('UNEXPECTED_CYCLE_SCOPE');}
+   summaries.push({attempt:dir,cycles:cycles.length,clockWindowComplete:summary.executionWindowComplete===true,problems});
+  }
+- fs.mkdirSync(output);for(const p of payloads){const dest=path.join(output,p.relative);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,p.body,{flag:'wx',mode:0o600});}
+  const complete=summaries.length>0&&summaries.every(x=>!x.problems.length&&x.clockWindowComplete);
+  const report={sourceSha,files:payloads.length,bytes,authenticated:true,status:complete?'AUTHENTICATED_CLOCK_WINDOW_ONLY':'AUTHENTICATED_INCOMPLETE',summaries,
+   note:'Authentication does not prove all files were uploaded, source completeness, freshness or profitability. Missing summaries/clock coverage remain incomplete. Plaintext stays in the chosen local output directory.'};
+- fs.writeFileSync(path.join(output,'recovery-report.json'),JSON.stringify(report,null,2),{flag:'wx',mode:0o600});return report;
++ publishRecoveredFiles(output,payloads,report);return report;
+ }
+ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
+  if(process.argv.length!==5)throw Error('usage: node tools/recover-research-artifact.mjs ENCRYPTED_DIR NEW_OUTPUT_DIR EXPECTED_SOURCE_SHA');

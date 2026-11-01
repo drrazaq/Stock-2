@@ -63,7 +63,12 @@ if (SESSION.closed) { console.log('ignition watcher: closed or unsupported calen
 if (env.GITHUB_ACTIONS && env.GITHUB_REF_NAME!=='main' && !FAST) {console.log('branch watcher: live I/O disabled; use fixture integration tests');process.exit(0);}
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
 if (clock() < 540 || clock() > SESSION.close) { console.log('ignition watcher: outside scheduled session New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
-if (sessionFinished(readJson('data/ignition-live.json', null), day)) { console.log('watcher: session already recorded for ' + day + '; skipping duplicate run'); process.exit(0); }
+const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
+if (sessionFinished(readJson('data/ignition-live.json', null), day)) {
+ const pending=MESSAGE_STATE.report().pendingFinalizations;MESSAGE_STATE.maintain();
+ if(pending){const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+runIdentity(env)+'-delivery-recovery.json';if(!fs.existsSync(file))fs.writeFileSync(file,JSON.stringify({day,runId:runIdentity(env),messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});}
+ console.log('watcher: session already recorded for ' + day + '; skipping duplicate run');process.exit(0);
+}
 const RUN_ID = runIdentity(env), CODE_SHA = env.GITHUB_SHA || (() => { try { return execSync('git rev-parse HEAD', {stdio:['ignore','pipe','ignore']}).toString().trim(); } catch { return null; } })();
 const RUN_START = Date.now();   // Runtime begins after the early 09:25 wait, not at cron startup.
 const CP_FILE='runtime/watcher-checkpoint.json',RESUME=env.IG_RESUME?readCheckpoint(CP_FILE,{day,sourceSha:CODE_SHA,beforeMinute:clock(),requireResearch:true}):null;
@@ -148,13 +153,12 @@ async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no
 async function tg(message,key=message) {
  if(!ALLOW_SEND||!env.TG_TOKEN||!env.TG_CHAT||!MESSAGE_STATE.reserve(key))return false;
  const outcome=await sendTelegramMessage({base:TG,token:env.TG_TOKEN,chat:env.TG_CHAT,text:message});
- MESSAGE_STATE.finish(key,outcome);return outcome.ok;
+ MESSAGE_STATE.finish(key,{...outcome,definitelyUnsent:!outcome.ok&&/^HTTP_(?:400|401|403|404|429)$/.test(outcome.reason||'')});return outcome.ok;
 }
 
 // ---- the loop
 const DISCOVERY=discoveryState(),discoveryLive=[];let discoverySources=[];
 const ANCHOR={minute:null,prices:{},market:null}; // Preserve the pre-registered 15:00 research endpoint.
-const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
 const HELD = { at: 0, pos: {} }, STOP_SENT = {};   // live stop watch (23 Oct)
 const seen = {}, orb = {}, triggers = [], beat = [], vis = {}, ser = {}, pull = {}, earlyWave = {}, preIgnition = {}; let alerts = 0;   // earlyWave: observation only (23 Oct)
 const flag = (sym, f, text) => { const v = vis[sym]; if (!v) return; v.flags[f] = true; if (text && !v.notes.includes(text)) v.notes.push(text); };
@@ -215,6 +219,7 @@ const buildMissed = () => { const movers = Object.values(vis).filter(v => v.maxC
 // ---- DAILY OPPORTUNITY RADAR (owner, 28 Oct 2026): at 11:15 New York, a snapshot of what the watcher already knows goes to
 // data/radar-v3-snap.json and opportunity-radar.mjs sends it (four labelled panels; rules in radar-v3-core.mjs). Never an alert or a buy.
 const RADAR = { done: false, mkt: null };
+const priorRadar=(()=>{try{return fs.readFileSync('data/radar-v3-ledger.jsonl','utf8').split('\n').some(line=>{try{const x=JSON.parse(line);return x.d===day&&x.type!=='close';}catch{return false;}});}catch{return false;}})();
 // ---- EARLY ALERTS (owner, 28 Oct 2026): prompt RESEARCH LEAD / PAPER SETUP messages, separate from approved alerts, and the per-candidate
 // log behind the DELIVERY SCORECARD (rules, hard blocks and caps in early-alerts.mjs). Approved alerts still come only from maybeAlert.
 async function tgSend(text) {
@@ -273,12 +278,18 @@ function controlSample(m, rows) {
 }   // (28 Oct, Phase 1) every candidate with each soft gate removed, for the filter shadow test (shadow-stream.mjs)
 const medChg = () => { const a = Object.values(vis).filter(v => v.last >= 1 && v.lastC !== undefined).map(v => v.lastC).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
 async function sendRadarOnce(){
-  if(!env.IG_NO_RADAR && MESSAGE_STATE.reserve('midday-radar')){
+  if(!env.IG_NO_RADAR && (!priorRadar||MESSAGE_STATE.has('midday-radar')) && MESSAGE_STATE.reserve('midday-radar')){
    let result={ok:false};try{const output=execSync('node opportunity-radar.mjs midday',{encoding:'utf8',timeout:120000,env:{...env,IG_RADAR_RESERVED:'1'}});const marker=output.match(/RADAR_DELIVERY=(.*)/);if(marker)result=JSON.parse(marker[1]);}catch{}
    MESSAGE_STATE.finish('midday-radar',result);
   }
 }
 async function radarSnap(m, scanned, live) {
+  if (MESSAGE_STATE.has('midday-radar') || priorRadar) {
+    const frozen=readJson('data/radar-v3-snap.json',null);
+    if(frozen?.day!==day){console.error('radar recovery blocked: frozen snapshot unavailable');return;}
+    RADAR.mkt=frozen.mkt;await sendRadarOnce();return;
+  }
+
   const ms = buildMissed(), tl = {}; for (const x of ms) tl[x.code] = (tl[x.code] || 0) + 1;
   const hits = triggers.filter(t => !t.logged).map(t => ({ sym: t.sym, rule: t.rule, m: t.m, price: t.price }));
   const early = Object.values(earlyWave).sort((x, y) => y.score - x.score).slice(0, 40).map(e => ({ sym: e.sym, change: e.change, rvT: e.rvT, price: e.price, score: e.score, firstMinute: e.firstMinute }));
@@ -380,8 +391,8 @@ while (Date.now() - RUN_START < MAXMS) {
   const sa = ages.sort((a, b) => a - b), q = (a, f) => a.length ? +a[Math.min(a.length - 1, Math.floor(a.length * f))].toFixed(1) : null;
   beat.push({ m, mode, received: rows.length, evaluated: evald, live: liveN, ageP50: q(sa, 0.5), ageP95: q(sa, 0.95), volAgeP50: q(vages.sort((a, b) => a - b), 0.5), alerts });   // heartbeat: proves the watcher ran this minute
   saveObservationProgress();
-  if (m >= 675 && m <= 690 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
-  else if(m>=675&&RADAR.done&&MESSAGE_STATE.has('midday-radar')&&MESSAGE_STATE.state('midday-radar')==='UNSENT'){await sendRadarOnce();}
+  if (m >= 675 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
+  else if(m>=675&&RADAR.done&&MESSAGE_STATE.has('midday-radar')&&MESSAGE_STATE.state('midday-radar')==='UNSENT'){const frozen=readJson('data/radar-v3-snap.json',null);if(frozen?.day===day)await sendRadarOnce();else console.error('radar recovery blocked: frozen snapshot unavailable');}
   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
   const discoveryCutoff=new Date().toISOString();
   const ingress=collectDiscovery({readText:f=>fs.readFileSync(f,'utf8'),cutoff:discoveryCutoff,live:discoveryLive});discoverySources=ingress.sources;

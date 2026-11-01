@@ -8049,6 +8049,62 @@
     "baseSourceCommit": "6868d9a39518fdf4168f67167f681bbba7c68ab0",
     "matrix": "docs/validation/repo03-behavioral-matrix.json",
     "scripts": 305,
+    "sourceReviewed": 65,
+    "pendingSourceReview": 240,
+    "reviewedWithOpenGaps": 31,
+    "accepted": false,
+    "newAcceptanceClosures": [],
+    "report": "docs/repo03-critical-contract-batch.md",
+    "next": "Scanner planCands/liveQ/planText/entry confirmation actual caller; health state publication with Claude audit",
+    "hostMonitorCompanion": "docs/validation/repo03-host-monitor-manifest.json",
+    "firstPublishedCi": "53ee12e:4PASS,1FAIL; unchanged manifest-partial case missing output, evidence retained",
+    "independentReviewReconciliation": "docs/validation/repo03-independent-review-reconciliation.json",
+    "prefixCompanion": "docs/validation/repo03-prefix-handoff-manifest.json",
+    "intermediate6d": {
+      "hostStress": "PASS30_CONSECUTIVE",
+      "ordinaryNode": "237PASS1FAIL_LEGACY_PREFIX_CONTENTION",
+      "failurePreserved": true
+    },
+    "latestBatchBase": "237d191eb43d7f9f9994b8f7db81c62fcba6a314",
+    "original26Disposition": "docs/validation/repo03-gap-disposition.json",
+    "original26": {
+      "confirmedSourceDefects": 4,
+      "missingVerification": 20,
+      "declaredLimitations": 2,
+      "reclassifiedBoundaries": 2,
+      "unresolvedOrPartly": 24
+    },
+    "currentTests": {
+      "gatedDevelopment": {
+        "pass": 20,
+        "fail": 0
+      },
+      "readOnlyProductionWatcher": {
+        "base": "004ac1ca235c7db904a72f85a409b96ff9392153",
+        "pass": 20,
+        "fail": 0,
+        "notFullProductionSuite": true
+      },
+      "healthActualCaller": {
+        "pass": 5,
+        "fail": 0,
+        "oldSourceFails": 5
+      },
+      "finalExactCI": "External checks on containing published commit; report source-specific results separately.",
+      "localAllCurrentFiles": {
+        "loop": 239,
+        "addedHealthFile": 1,
+        "distinctFiles": 240,
+        "pass": true
+      }
+    },
+    "fourCompanions": "docs/repo03-critical-contract-batch.md#four-independent-repair-companions",
+    "pr6Unchanged": "64611cdf47dd230026911dde53b98cf7413c17f1"
+  },
+  "repo03Historical237Review": {
+    "baseSourceCommit": "6868d9a39518fdf4168f67167f681bbba7c68ab0",
+    "matrix": "docs/validation/repo03-behavioral-matrix.json",
+    "scripts": 305,
     "sourceReviewed": 49,
     "pendingSourceReview": 256,
     "reviewedWithOpenGaps": 26,

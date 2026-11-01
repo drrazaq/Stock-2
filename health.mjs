@@ -1,3 +1,5 @@
+import {createHash} from 'node:crypto';
+import {readAlertState,saveAlertState,deliverAlertOnce} from './alert-delivery-state.mjs';
 import {readWatcherReport} from './watcher-reporting.mjs';
 import {telegramFetch} from './telegram-delivery.mjs';
 // SYSTEM HEALTH: every evening, checks that every job actually produced fresh results, and tells you on Telegram when one
@@ -66,12 +68,25 @@ try { const W = '.github/workflows', seen = new Set();
     if (seen.has(m[1])) continue; seen.add(m[1]); if (!fs.existsSync(m[1])) problems.push('the script ' + m[1] + ' is missing from the main folder, but the workflow ' + f + ' runs it. Upload it again (it was probably deleted during an upload).'); }
   if (seen.size) ok.push('workflow scripts present'); } catch (e) {}
 const H = readJson('data/health.json') || {}, key = problems.join('|'), today = new Date().toISOString().slice(0, 10);
-fs.writeFileSync('data/health.json', JSON.stringify({ at: new Date().toISOString(), ok: ok.length, watcher:watcherEvidence, problems, sentKey: H.sentKey, sentDay: H.sentDay }, null, 1));
+const recovered = !problems.length && (H.recoveryPending || H.problems && H.problems.length);
+fs.writeFileSync('data/health.json', JSON.stringify({ at: new Date().toISOString(), ok: ok.length, watcher:watcherEvidence, problems, sentKey: H.sentKey, sentDay: H.sentDay, recoveryPending: !!recovered, noticeDelivery: H.noticeDelivery }, null, 1));
 console.log(watcherEvidence.text);
 console.log('health: ' + ok.length + ' fine, ' + problems.length + ' problems' + (problems.length ? '\n- ' + problems.join('\n- ') : ''));
 // tell the owner once per day per set of problems (and once when everything is fine again)
-const recovered = !problems.length && H.problems && H.problems.length;
 if ((problems.length && (H.sentKey !== key || H.sentDay !== today)) || recovered) {
   const msg = problems.length ? ['SYSTEM HEALTH: ' + problems.length + ' problem' + (problems.length > 1 ? 's' : '') + ' (' + ok.length + ' parts fine)', '', ...problems.map(p => '- ' + p), '', 'Your ACTIONS may be missing information until this is fixed. Send this message to Claude.'] : ['SYSTEM HEALTH: all ' + ok.length + ' parts are running again.'];
-  if (env.TG_TOKEN && env.TG_CHAT) await telegramFetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
-  const J = readJson('data/health.json'); J.sentKey = key; J.sentDay = today; J.problems = problems; fs.writeFileSync('data/health.json', JSON.stringify(J, null, 1)); }
+  let outcome={ok:false,reason:'MISSING_BINDINGS'};
+  if (env.TG_TOKEN && env.TG_CHAT) {
+    try {
+      const file='data/health-delivery-state.json',book=readAlertState(file,today);
+      const event=createHash('sha256').update(JSON.stringify([today,key,!!recovered])).digest('hex');
+      outcome=await deliverAlertOnce({book,keys:[event],save:()=>saveAlertState(file,book),send:async()=>{
+        const r=await telegramFetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text:msg.join('\n'),disable_web_page_preview:true})});
+        const body=await r.json();return {ok:r.ok,reason:body.description,deliveredParts:r.deliveredParts};
+      }});
+    }catch{outcome={ok:false,reason:'HEALTH_DELIVERY_STATE_UNREADABLE'};}
+  }
+  const J=readJson('data/health.json');J.noticeDelivery=outcome.ok?'ACK':outcome.reason||'NO_ACK';
+  if(outcome.ok){J.sentKey=key;J.sentDay=today;J.recoveryPending=false;}
+  fs.writeFileSync('data/health.json',JSON.stringify(J,null,1));
+}

@@ -1,0 +1,115 @@
+✖ absent bindings do not mark notice sent; later ACK is durable and restart does not resend (88.932906ms)
+✖ definite rejection permits a later retry but does not claim delivery (113.068072ms)
+✖ ambiguous transport is durable UNKNOWN across restart, never silently retried (107.659665ms)
+✖ failed intent save prevents send; failed ACK save retains pending state and blocks restart (112.026939ms)
+✖ recovery notice intent survives a rejected attempt without reintroducing stale problems (79.966363ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 507.513915
+
+✖ failing tests:
+
+test at test/health-delivery-contract.test.mjs:13:1
+✖ absent bindings do not mark notice sent; later ACK is durable and restart does not resend (88.932906ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'nightly scan (ACTIONS, buy list): its file is missing (data/signals.json). It should update every weekday night.'
+  - undefined
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/health-delivery-contract.test.mjs:13:161)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'nightly scan (ACTIONS, buy list): its file is missing (data/signals.json). It should update every weekday night.',
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/health-delivery-contract.test.mjs:14:1
+✖ definite rejection permits a later retry but does not claim delivery (113.068072ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '2026-11-01'
+  - undefined
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/health-delivery-contract.test.mjs:14:158)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2026-11-01',
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/health-delivery-contract.test.mjs:15:1
+✖ ambiguous transport is durable UNKNOWN across restart, never silently retried (107.659665ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '2026-11-01'
+  - undefined
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/health-delivery-contract.test.mjs:15:168)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2026-11-01',
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/health-delivery-contract.test.mjs:16:1
+✖ failed intent save prevents send; failed ACK save retains pending state and blocks restart (112.026939ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'INTENT_NOT_DURABLE'
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/health-delivery-contract.test.mjs:16:167)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'INTENT_NOT_DURABLE',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/health-delivery-contract.test.mjs:17:1
+✖ recovery notice intent survives a rejected attempt without reintroducing stale problems (79.966363ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - true
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/health-delivery-contract.test.mjs:17:351)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

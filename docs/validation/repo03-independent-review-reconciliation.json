@@ -46,5 +46,15 @@
   "N4": "Partial frame count versus context completeness must be read separately; no naming change in this scope.",
   "N5": "Eight author-reported gated base failures remain explicit follow-up; ordinary hosted PASS does not run those gated cases.",
   "newAcceptanceClosures": [],
-  "productionChanged": false
+  "productionChanged": false,
+  "N5LatestIndependentExecution": {
+    "baseDevelopment": "237d191eb43d7f9f9994b8f7db81c62fcba6a314",
+    "originalFailures": 8,
+    "productionMain": "004ac1ca235c7db904a72f85a409b96ff9392153",
+    "productionWatcherPass": 20,
+    "developmentRepairedPass": 20,
+    "cause": "Development recovery drift plus explicit production/development fixture profile and transitive dependency/clock assumptions",
+    "evidence": "docs/validation/repo03-critical-batch-evidence.json",
+    "priorEnvironmentLimitation": "Historical only; Node child/loopback now available. No repeated EPERM claim."
+  }
 }

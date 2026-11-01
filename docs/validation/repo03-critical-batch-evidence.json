@@ -1,0 +1,156 @@
+{
+  "kind": "REPO03_CRITICAL_CONTRACT_BATCH_V1",
+  "base": "237d191eb43d7f9f9994b8f7db81c62fcba6a314",
+  "preservedPR6": "64611cdf47dd230026911dde53b98cf7413c17f1",
+  "productionReadOnlyBase": "004ac1ca235c7db904a72f85a409b96ff9392153",
+  "productionSourceScope": "Actual watcher static root-module closure verified from Git blobs; NOT a complete current-main checkout/full suite. Eleven unrelated absent root files were not fetched. No production deployment or modification.",
+  "originalProductionWatcherBlob": "7cda23781e70c1114463567c187978d8a931cf14",
+  "tests": {
+    "gated-incident-baseline": {
+      "tests": 11,
+      "pass": 10,
+      "fail": 1,
+      "skipped": 0
+    },
+    "gated-resilience-baseline": {
+      "tests": 9,
+      "pass": 2,
+      "fail": 7,
+      "skipped": 0
+    },
+    "gated-main-incident-final": {
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skipped": 0
+    },
+    "gated-main-resilience-final": {
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    "gated-dev-incident-final": {
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skipped": 0
+    },
+    "gated-resilience-final": {
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    "health-original-negative": {
+      "tests": 5,
+      "pass": 0,
+      "fail": 5,
+      "skipped": 0
+    },
+    "health-final": {
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    "recovery-standalone": {
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    "verifier-standalone": {
+      "tests": null,
+      "pass": null,
+      "fail": null,
+      "skipped": null
+    }
+  },
+  "logHashes": {
+    "gated-incident-baseline.log": "dc0110f4dbb5dd3f19920b6fde8d3979068e3db0743dfe21b43a6840b5ea1749",
+    "gated-resilience-baseline.log": "00e38817b8fb8d58b3b1324dd749b3d4c15e62f113f60395499e724148c7bedb",
+    "gated-main-incident-final.log": "77460d6f10b260e57b612f2567460f86fd58a912941d009324d01d8493196431",
+    "gated-main-resilience-final.log": "42998b6cbfa1407d33111038649ee77b9d66ff9507a44eb473f4a720400b0687",
+    "gated-dev-incident-final.log": "676a889e7caf7008c655614e581d9cbb0f1b3d250f60b109c1c87daaded0d2a6",
+    "gated-resilience-final.log": "bdd854b90cc58b73c6b104c652b3bf9873e067bee3c16c0b1f6e4134d9b154c0",
+    "health-original-negative.log": "7100a7968eab34e58329b91833a93a51868cf12dfba59ed2a62263f2ad37c0c0",
+    "health-final.log": "bef4ab00e6e45ad9b3f3c78951503a78d943d37c595c1543f35d5b4182133444",
+    "recovery-standalone.log": "f1d1334ef6277f789067d58c26ea4f7ba41b7bcf89ae5a4a6d35c8d804d9a08f",
+    "verifier-standalone.log": "2a9bb4c7c7e5ccbe6f42780eea3399b86ef99869a6c3f43505fbcec987dede98"
+  },
+  "runtimeHashes": {
+    "ignition-watch.mjs": "11dac84aeb1fb26027d191ba01a7410a91bf79262a921ddbc14834a6b9ee63ea",
+    "health.mjs": "c95b06871a80120db31c203b22a8ef3d884594b3594454f75bb45cbae9959337",
+    "watcher-messages.mjs": "5803a587420fca807a0c60ad2812165d7e1ae26b0ac6ae08ddcd1a49d9a68c25",
+    "watcher-message-publish.mjs": "ef665d103ba30cfede445a57b4fd62fe673aa5e0c901174dbf62b6357a80105f",
+    "radar-ledger.mjs": "cade553f598c149e8bd7259f9d8d78970bab743df9e61f038ec45c26ddc905a3",
+    "alert-delivery-state.mjs": "eb9a496ddade476b8db8148077467b13ca93d24b6165aeea27fbec46616c81f7",
+    "telegram-delivery.mjs": "90c148a417ab47227f18ebeb46a69229ed0d71b80d5874da73bfdfb11a5d81f8"
+  },
+  "coverage": {
+    "scripts": 305,
+    "sourceReviewed": 65,
+    "pending": 240,
+    "reviewedWithOpenFindings": 31
+  },
+  "healthNegativeControl": {
+    "actualCaller": "health.mjs",
+    "providerAndTelegramBindings": "ABSENT",
+    "ambientFetch": "REFUSED",
+    "exit": 0,
+    "problemsPresent": true,
+    "sentKeyAdvanced": true,
+    "sentDayAdvanced": true,
+    "defectReproduced": true
+  },
+  "newAcceptanceClosures": [],
+  "acceptance": {
+    "accepted": 24,
+    "total": 40,
+    "genuineAdmissions": 0
+  },
+  "fullNode": {
+    "completeLoop": {
+      "files": 239,
+      "pass": 239,
+      "fail": 0
+    },
+    "addedHealthCallerFile": {
+      "pass": 5,
+      "fail": 0
+    },
+    "currentDistinctTestFiles": 240,
+    "qualification": "Health test added after full-loop enumeration; its5 cases executed separately. Final hosted CI must execute all240 files on exact source."
+  },
+  "python": {
+    "cases": 39,
+    "pass": 39
+  },
+  "limits": [
+    "Local durability is not cross-workflow publication; health book must be preserved by reviewed persistence caller before any production proposal.",
+    "PR6 historical source/manifest remain unchanged; apply companions to their stated bases.",
+    "Old runner/profitability/frozen results unchanged; naturally scheduled DST/source/delivery verification remains pending."
+  ],
+  "nextExecutableTask": "Complete scanner per-command plan/message/mutation review, starting with planCands/liveQ/planText/entry confirmation; reconcile health book persistence with Claude audit.",
+  "syntax": {
+    "modules": 293,
+    "pass": true,
+    "healthFinalCheck": "PASS"
+  },
+  "finalExactCommitCI": "External GitHub checks of the containing published commit; no hosted result inferred from local tests.",
+  "currentRepairManifest": "docs/validation/repo03-critical-callers-manifest.json",
+  "standaloneExactPatch": {
+    "base": "237d191eb43d7f9f9994b8f7db81c62fcba6a314",
+    "fileAndDependencyHashes": 44,
+    "hashesMatch": true,
+    "tests": {
+      "profile": 2,
+      "gatedIncident": 11,
+      "gatedResilience": 9,
+      "healthActual": 5,
+      "pass": 27,
+      "fail": 0
+    }
+  }
+}

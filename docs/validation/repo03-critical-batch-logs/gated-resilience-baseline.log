@@ -1,0 +1,137 @@
+✔ publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct (4.013049ms)
+✖ actual Actions watcher survives moved (1220.657702ms)
+✖ actual Actions watcher survives competing (1199.300378ms)
+✖ actual Actions watcher survives refusal-retry (1795.839056ms)
+✔ actual Actions watcher survives interrupted (912.773493ms)
+✖ actual Actions watcher survives uncertain (1114.612093ms)
+✖ actual Actions watcher survives clear-rejection (1131.722826ms)
+✖ actual Actions watcher survives finish-refusal (1705.422028ms)
+✖ actual Actions watcher survives missing-snapshot (1132.569618ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 2
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10223.955143
+
+✖ failing tests:
+
+test at test/watcher-resilience.test.mjs:3:177
+✖ actual Actions watcher survives moved (1220.657702ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/watcher-resilience.test.mjs:11:80)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/watcher-resilience.test.mjs:3:177
+✖ actual Actions watcher survives competing (1199.300378ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/watcher-resilience.test.mjs:11:80)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/watcher-resilience.test.mjs:3:177
+✖ actual Actions watcher survives refusal-retry (1795.839056ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/watcher-resilience.test.mjs:11:80)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/watcher-resilience.test.mjs:3:177
+✖ actual Actions watcher survives uncertain (1114.612093ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/watcher-resilience.test.mjs:9:37)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/watcher-resilience.test.mjs:3:177
+✖ actual Actions watcher survives clear-rejection (1131.722826ms)
+  Error: ENOENT: no such file or directory, open '/tmp/watcher-resilience-QbG452/job/data/radar-v3-snap.json'
+      at Object.openSync (node:fs:622:18)
+      at Object.readFileSync (node:fs:488:35)
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/watcher-resilience.test.mjs:10:81)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/tmp/watcher-resilience-QbG452/job/data/radar-v3-snap.json'
+  }
+
+test at test/watcher-resilience.test.mjs:3:177
+✖ actual Actions watcher survives finish-refusal (1705.422028ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/watcher-resilience.test.mjs:11:80)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/watcher-resilience.test.mjs:3:177
+✖ actual Actions watcher survives missing-snapshot (1132.569618ms)
+  Error: ENOENT: no such file or directory, open '/tmp/watcher-resilience-0uYexJ/job/data/radar-v3-snap.json'
+      at Object.openSync (node:fs:622:18)
+      at Object.readFileSync (node:fs:488:35)
+      at TestContext.<anonymous> (file:///workspace/stock2-acceptance-integration/test/watcher-resilience.test.mjs:10:81)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/tmp/watcher-resilience-0uYexJ/job/data/radar-v3-snap.json'
+  }

@@ -862,7 +862,7 @@
       "path": "alert-delivery-state.mjs",
       "sha256": "eb9a496ddade476b8db8148077467b13ca93d24b6165aeea27fbec46616c81f7",
       "bytes": 2201,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -907,7 +907,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "eb9a496ddade476b8db8148077467b13ca93d24b6165aeea27fbec46616c81f7",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Validated book/day/key list, explicit send and synchronous durable-save port.",
+        "outputs": "ACK/UNKNOWN/PENDING and result; sent map only after acknowledgement.",
+        "sideEffects": "Local caller save before send and after outcome; no implicit providers.",
+        "failure": "Failed intent save prevents send; failed ACK save refuses success; known zero-part HTTP rejection permits retry, ambiguous delivery blocks.",
+        "timing": "Per-day key scope; no automatic uncertain retry.",
+        "researchBoundary": "Local durability only; no cross-process remote reservation is supplied by this helper.",
+        "remainingVerification": "Cross-process scanner writers and daily reset behavior require Claude persistence/concurrency audit; helper alone cannot certify global exactly-once.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "tests/alert-delivery-state.test.mjs"
       ],
@@ -7489,70 +7504,86 @@
     },
     {
       "path": "health.mjs",
-      "sha256": "5684482b30ab7a1d4318f2ec2a17cb942c405d33745442810637c9ae3086b85c",
-      "bytes": 10667,
-      "status": "PENDING_SOURCE_REVIEW",
+      "sha256": "c95b06871a80120db31c203b22a8ef3d884594b3594454f75bb45cbae9959337",
+      "bytes": 11485,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
-            8,
-            9,
-            24,
-            65
+            10,
+            11,
+            26,
+            67
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "outputs": {
           "matchingLines": [
-            69,
-            70,
-            71,
-            77
+            72,
+            73,
+            74,
+            91
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "sideEffects": {
           "matchingLines": [
-            8,
-            69,
-            77
+            10,
+            72,
+            91
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "failure": {
           "matchingLines": [
-            9,
-            24,
-            46,
-            67,
-            76
+            11,
+            26,
+            48,
+            69,
+            87
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "timing": {
           "matchingLines": [
-            10,
             12,
-            13,
-            24,
-            25,
+            14,
+            15,
+            26,
             27,
-            56,
-            68,
-            69
+            29,
+            58,
+            70,
+            72
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "researchBoundary": {
           "matchingLines": [
-            38,
-            42
+            40,
+            44
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "c95b06871a80120db31c203b22a8ef3d884594b3594454f75bb45cbae9959337",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Existing public status files/workflow script references,watcher report and optional TG bindings.; scoped durable health notice book.",
+        "outputs": "health.json counts/problem text and potential health message.",
+        "sideEffects": "Writes health.json and existing Telegram compatibility calls; no broker actions. Existing shared alert helper reserves health notice durably before transport.",
+        "failure": "Missing bindings/rejected send never marks sent. UNKNOWN/PENDING blocks replay across restart. Failed intent/ACK save cannot claim success; recovery intent retained after rejection.",
+        "timing": "Daily problem-set dedup; configured vs full-session separated by watcher-reporting.",
+        "researchBoundary": "Operational health does not establish profitability, complete coverage or receipt.",
+        "remainingVerification": "Missing-binding false-sent defect reproduced, repaired and five actual-caller tests PASS; all five fail against original. Cross-workflow persistence/concurrency and carrying the new health state file across scheduled checkouts require Claude caller audit before a production proposal.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
+        "test/health-delivery-contract.test.mjs",
         "tests/incident-reporting.test.mjs"
       ],
       "workflowReferences": [
@@ -8573,20 +8604,21 @@
     },
     {
       "path": "ignition-watch.mjs",
-      "sha256": "98b62a8b545f2a3861e40ef9b5f8bde215d80c108ce08d58bf94eed095339d40",
-      "bytes": 67124,
-      "status": "PENDING_SOURCE_REVIEW",
+      "sha256": "11dac84aeb1fb26027d191ba01a7410a91bf79262a921ddbc14834a6b9ee63ea",
+      "bytes": 68288,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
             46,
             52,
-            75,
-            163,
-            187,
-            387,
-            391,
-            454
+            80,
+            167,
+            191,
+            222,
+            398,
+            402,
+            465
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -8596,37 +8628,40 @@
             63,
             64,
             65,
-            66,
-            71,
-            79,
-            137,
-            205,
-            292,
-            305,
-            310,
+            69,
+            70,
+            76,
+            84,
+            142,
+            209,
+            289,
+            303,
+            316,
             321,
-            375,
-            378,
-            383,
-            385,
-            399,
-            402,
-            415,
-            421,
-            422,
-            424,
+            332,
+            386,
+            389,
+            394,
+            395,
+            396,
+            410,
+            413,
             426,
-            428,
-            429,
             432,
-            434,
+            433,
             435,
-            436,
-            444,
+            437,
+            439,
+            440,
+            443,
+            445,
+            446,
             447,
-            451,
-            457,
-            458
+            455,
+            458,
+            462,
+            468,
+            469
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -8635,40 +8670,41 @@
             47,
             48,
             51,
-            67,
-            97,
+            69,
+            72,
             102,
-            129,
-            137,
-            139,
-            140,
-            141,
+            107,
+            134,
+            142,
+            144,
+            145,
             146,
-            204,
-            223,
-            243,
-            292,
-            310,
-            319,
-            389,
-            420,
-            421,
-            422,
-            424,
-            426,
-            427,
-            428,
+            151,
+            208,
+            228,
+            248,
+            303,
+            321,
+            330,
+            400,
+            431,
             432,
-            434,
+            433,
             435,
-            436,
-            442,
+            437,
+            438,
+            439,
             443,
-            444,
             445,
+            446,
             447,
-            451,
-            457
+            453,
+            454,
+            455,
+            456,
+            458,
+            462,
+            468
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -8681,40 +8717,41 @@
             63,
             64,
             65,
-            66,
-            67,
-            79,
-            90,
-            98,
-            104,
-            110,
-            129,
-            142,
+            70,
+            72,
+            84,
+            95,
+            103,
+            109,
+            115,
+            134,
             147,
-            168,
-            173,
-            174,
-            186,
-            187,
-            223,
-            239,
-            243,
-            260,
-            277,
-            288,
-            310,
-            311,
-            319,
+            152,
+            172,
+            177,
+            178,
+            190,
+            191,
+            222,
+            228,
+            244,
+            248,
+            265,
+            282,
+            299,
             321,
-            339,
-            375,
-            377,
-            378,
-            383,
-            429,
-            447,
-            451,
-            457
+            322,
+            330,
+            332,
+            350,
+            386,
+            388,
+            389,
+            394,
+            440,
+            458,
+            462,
+            468
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -8740,83 +8777,84 @@
             61,
             64,
             65,
-            66,
-            68,
-            69,
+            67,
+            70,
+            73,
             74,
-            75,
+            79,
             80,
             85,
-            114,
-            129,
-            130,
-            131,
-            139,
-            140,
-            141,
+            90,
+            119,
+            134,
+            135,
+            136,
+            144,
+            145,
             146,
-            147,
-            156,
-            162,
-            177,
+            151,
+            152,
+            161,
+            166,
             181,
-            189,
-            199,
-            223,
+            185,
+            193,
+            203,
             228,
-            231,
             233,
-            234,
-            235,
             236,
             238,
-            246,
-            247,
-            255,
-            257,
-            270,
-            272,
+            239,
+            240,
+            241,
+            243,
+            251,
+            252,
+            260,
+            262,
+            275,
             277,
-            284,
-            291,
-            292,
-            313,
-            315,
-            316,
-            318,
-            319,
-            320,
-            321,
+            282,
+            295,
+            302,
+            303,
+            324,
+            326,
+            327,
+            329,
+            330,
+            331,
             332,
-            333,
-            336,
-            342,
-            345,
-            355,
-            362,
-            372,
+            343,
+            344,
+            347,
+            353,
+            356,
+            366,
             373,
-            376,
-            377,
-            381,
-            386,
-            396,
-            400,
-            401,
-            404,
-            410,
+            383,
+            384,
+            387,
+            388,
+            392,
+            397,
+            407,
             411,
+            412,
             415,
-            416,
-            418,
-            425,
+            421,
+            422,
+            426,
+            427,
             429,
-            442,
-            444,
-            451,
+            436,
+            440,
             453,
-            454,
-            458
+            455,
+            462,
+            464,
+            465,
+            469
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -8827,61 +8865,80 @@
             10,
             40,
             42,
-            71,
-            89,
-            90,
-            91,
-            92,
-            93,
-            118,
-            133,
-            156,
+            76,
+            94,
+            95,
+            96,
+            97,
+            98,
+            123,
+            138,
             161,
-            162,
+            165,
             166,
-            169,
             170,
-            172,
             173,
-            175,
-            178,
+            174,
+            176,
+            177,
             179,
-            180,
-            181,
             182,
-            187,
-            188,
-            189,
-            190,
+            183,
+            184,
+            185,
+            186,
             191,
             192,
             193,
-            209,
-            218,
-            227,
-            230,
+            194,
+            195,
+            196,
+            197,
+            213,
+            223,
             232,
-            247,
-            257,
-            258,
-            272,
-            301,
-            330,
-            339,
-            377,
-            390,
-            392,
-            394,
-            430,
-            431,
-            432,
-            444,
-            445
+            235,
+            237,
+            252,
+            262,
+            263,
+            277,
+            288,
+            289,
+            290,
+            312,
+            341,
+            350,
+            388,
+            395,
+            401,
+            403,
+            405,
+            441,
+            442,
+            443,
+            455,
+            456
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "11dac84aeb1fb26027d191ba01a7410a91bf79262a921ddbc14834a6b9ee63ea",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Existing env/local endpoints, price/BBO/volume source clocks, held positions, source safety, persisted reservations/checkpoints.",
+        "outputs": "Progress/final archives, canonical summary, research/filing ledgers, gated message attempts.",
+        "sideEffects": "Existing GETs and source checks, fixed radar subprocess, isolated reservation Git publication; no broker order.",
+        "failure": "Publication refusal does not stop observation; ACK/UNSENT/UNCERTAIN separated; missing frozen radar blocks retry; incomplete source/identity cannot approve BUY.",
+        "timing": "Development full-session390 distinct from deployed331-minute configured window; frozen15:00 research anchor preserved; bounded request/publication/retry budgets.",
+        "researchBoundary": "B1/B2 and historical cohorts preserved. Shadow remains default-off; retrospective/unknown instruments not approved evidence.",
+        "remainingVerification": "Development integration drift repaired by this batch; natural coverage/provider authentication is pending separately, not proven by synthetic requests.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "test/sec-v2-host.test.mjs",
         "test/native-sec-lineage.test.mjs",
@@ -8905,6 +8962,7 @@
         "tests/watcher-session.test.mjs"
       ],
       "workflowReferences": [
+        ".github/workflows/tests.yml",
         ".github/workflows/ignition.yml",
         ".github/workflows/stock2-safety-ci.yml"
       ],
@@ -10435,7 +10493,6 @@
         ]
       },
       "testReferences": [
-        "test/watcher-incident-revision.test.mjs",
         "tests/market-heartbeat.test.mjs",
         "tests/c0-diagnostic.test.mjs"
       ],
@@ -10504,7 +10561,7 @@
       "path": "mentor-plan.mjs",
       "sha256": "c9450320caa3f54abd11d957676ff600a509ebe8014a38b77c7a7596a3ba99c9",
       "bytes": 13160,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [],
@@ -10600,7 +10657,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "c9450320caa3f54abd11d957676ff600a509ebe8014a38b77c7a7596a3ba99c9",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Archived lane source fingerprint,recorded fill/quantity/session,ZAD summary and explicit asOf.",
+        "outputs": "Explanation-only entry expiry,risk,126-session close reference,unadopted20% overlay and contradictions.",
+        "sideEffects": "Pure formatting/calendar/fingerprint; never records trade or sends.",
+        "failure": "Missing/changed contract/legacy unknown/fill/time yields unresolved; no executable price inferred.",
+        "timing": "Next-session open only; frozen close vs next-open legacy reminder mismatch explicit.",
+        "researchBoundary": "LEADER DIP NOT PROVEN; reference close not BBO/fill; fingerprint not authentication; allocation not loss cap.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "test/mentor-plan.test.mjs",
         "test/mentor-production-package.test.mjs",
@@ -11400,7 +11472,7 @@
         "failure": "Source/plan/history pins; byte/file/log limits; capture-only shutdown on failures. Transient observing/writer-lock directory disappearance no longer falsely terminates capture; other errors remain fatal.",
         "timing": "D1/D2 absolute plan-end deadline and bounded shutdown; waits for natural producer completion.",
         "researchBoundary": "Inactive synthetic scope; incomplete history/capture never implies first ingestion/admission. PR6 branch remains historical exact source; this changed helper is a separate companion correction.",
-        "remainingVerification": "Whole filesystem allocation quota and all adversarial rename/resource races remain unestablished;6 targeted storage cases pass locally, actual host companion requires exact hosted CI.",
+        "remainingVerification": "7 storage/health cases,2 actual monitor callers,30 consecutive Node20 controls and full238 PASS at237d191 supersede the old actual-host pending claim. Logical file/byte quotas are not physical allocation guarantees. Adversarial rename/resource-boundary tests beyond current scope remain missing.",
         "evidence": [
           "docs/repo03-behavioral-review.md#source-interface-pass"
         ]
@@ -11419,7 +11491,7 @@
       "path": "native-sec-colocated-prefix.mjs",
       "sha256": "9b4ba6967edfee6459ff59c494bc08f69ad77146e6ff087e3ce122aa47b7049e",
       "bytes": 2690,
-      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [],
@@ -11462,14 +11534,14 @@
       "contract": {
         "sha256": "9b4ba6967edfee6459ff59c494bc08f69ad77146e6ff087e3ce122aa47b7049e",
         "reviewer": "Codex source-interface review, 2026-11-01",
-        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "status": "SOURCE_REVIEWED",
         "inputs": "Explicit native run directory, pinned run/source, at/identity inputs and bounded wait port.",
         "outputs": "Validated immutable prefix asset plus native event representation.",
         "sideEffects": "Local original-byte reads and bounded backoff only; no lock stealing, writer suspension, provider calls or state writes.",
         "failure": "Initial digest strictly rejects existing lock/partial; selected bytes revalidated. Only later successor staging/lock/cursor files may coexist with the already validated prefix; old-record rewrite/unknown/health/link failures still reject.",
         "timing": "Original feed/receipt/first-ingestion clocks retained; at most7 original backoff waits totaling1185ms. No first-ever/global history inference.",
         "researchBoundary": "Asset is an immutable committed PREFIX, never proof that current archive/session is complete. Protocol/enrollment/scoring/V1 unchanged; new source revision requires independent review before activation.",
-        "remainingVerification": "10 local prefix cases pass with3 old-source failures/7 controls; unchanged actual contended-host caller requires exact new hosted CI. General source authenticity and missing global history remain unproven.",
+        "remainingVerification": "Declared historical/incomplete-evidence boundary, not a newly repaired behavior. See repo03-gap-disposition.json; no current deployment or capture readiness implied.",
         "evidence": [
           "docs/repo03-behavioral-review.md#source-interface-pass"
         ]
@@ -12409,7 +12481,7 @@
       "path": "opportunity-radar.mjs",
       "sha256": "e1a24f415c56f332c32d0fcce0f726d551fafca993991224730e04e5f44843fe",
       "bytes": 8156,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -12475,7 +12547,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "e1a24f415c56f332c32d0fcce0f726d551fafca993991224730e04e5f44843fe",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Saved same-day radar snapshot and frozen rule/core inputs; selected midday/close/score5 command.",
+        "outputs": "Research panels, exact append rows, delivery marker, score output.",
+        "sideEffects": "Append before delivery; existing Telegram compatibility transport and score5 provider requests.",
+        "failure": "Rejected send leaves research rows exactly once; missing/stale snapshot blocks; strict ledger read/pending conflicts fail.",
+        "timing": "Snapshot original observation time kept across retries; score5 historical5-session daily bars.",
+        "researchBoundary": "Research panels and unknown identity never approved common-stock results; legacy estimates not admitted prospective cases.",
+        "remainingVerification": "score5 bar pagination/fallback lacks a total request cap and per-response feed provenance; not repaired or used for new capture in this batch.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "test/radar-ledger.test.mjs",
         "test/watcher-incident-revision.test.mjs",
@@ -13148,7 +13235,7 @@
       "path": "paper-gates.mjs",
       "sha256": "4abf388aafc7182b6bf386e2bae184f5a8af0b16044a87e8552b586aa75d1110",
       "bytes": 738,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [],
@@ -13182,7 +13269,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "4abf388aafc7182b6bf386e2bae184f5a8af0b16044a87e8552b586aa75d1110",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Legacy statistics/frozen per-kind thresholds and config.",
+        "outputs": "Pure pass/reason verdicts.",
+        "sideEffects": "None.",
+        "failure": "Insufficient/stressed/noTop2/nonpositive/too-concentrated evidence cannot pass relevant gate.",
+        "timing": "Existing count/day/symbol requirements unchanged.",
+        "researchBoundary": "Legacy paper tests are not executable30minute admitted cases or new strategy endorsement.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "tests/paper-gates-safety.test.mjs",
         "tests/ignition-replay.test.mjs"
@@ -13196,7 +13298,7 @@
       "path": "paper-mutation-journal.mjs",
       "sha256": "9b7e5fe4454a1ad48576b1aac53a2c3ce5e7f63fa29ec0a743e93874acb25e8c",
       "bytes": 7309,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -13281,7 +13383,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "9b7e5fe4454a1ad48576b1aac53a2c3ce5e7f63fa29ec0a743e93874acb25e8c",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Explicit enabled flag,account key/order identity,private CAS store and send port.",
+        "outputs": "Durable operation/account-lock state and validated broker result.",
+        "sideEffects": "Remote private journal writes only when explicit future enablement; default no mutation.",
+        "failure": "Intent and account lock confirmed before send; any nonACK quarantines; ACK/readback/release failures never claim durable success.",
+        "timing": "Bounded10sec/128KiB store requests; no uncertain retry.",
+        "researchBoundary": "Inactive preparation; synthetic tests only; no private migration, broker order or policy authority.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "tests/paper-mutation-journal.test.mjs"
       ],
@@ -13292,7 +13409,7 @@
       "path": "paper-transport.mjs",
       "sha256": "f3ec6b8c22290905a0f0f1e9c4d2a5d18d02414bb165447f795bd536aa855ee9",
       "bytes": 4372,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -13352,7 +13469,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "f3ec6b8c22290905a0f0f1e9c4d2a5d18d02414bb165447f795bd536aa855ee9",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Explicit paper/local host,method,path,body,credentials; enableOrders false default.",
+        "outputs": "Bounded parsed paper API result or fixed refusal.",
+        "sideEffects": "Scoped paper-only requests through explicit fetcher; no automatic retry.",
+        "failure": "Disallowed host/path/body/order response refuses; unknown errors do not imply cancelled or filled.",
+        "timing": "10sec request/body deadline and128KiB response bound.",
+        "researchBoundary": "POST/DELETE remain disabled unless separately enabled/approved; review never contacted a broker.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "tests/paper-transport.test.mjs",
         "tests/paper-mutation-journal.test.mjs"
@@ -13873,7 +14005,7 @@
       "path": "radar-ledger.mjs",
       "sha256": "cade553f598c149e8bd7259f9d8d78970bab743df9e61f038ec45c26ddc905a3",
       "bytes": 4473,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -13930,10 +14062,24 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "cade553f598c149e8bd7259f9d8d78970bab743df9e61f038ec45c26ddc905a3",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Complete original list row and append-only ledger/pending intent.",
+        "outputs": "Exact-observation identity/corrected read view and append count.",
+        "sideEffects": "flock child, durable append intent, fsynced suffix append and intent cleanup; original ledger never truncated.",
+        "failure": "Missing new identity refuses; partial append completes only matching original prefix; conflict blocks.",
+        "timing": "Logical identity includes the full canonical row; legitimate distinct times/fields remain distinct.",
+        "researchBoundary": "Frozen scoring uses explicit exact-repeat view; no invented daily/symbol enrollment.",
+        "remainingVerification": "Offline caller supports concurrent local writers; remote merge/publication is a separate caller contract, not guaranteed by local flock.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
-        "test/radar-ledger.test.mjs",
-        "test/watcher-incident-revision.test.mjs"
+        "test/radar-ledger.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -14041,7 +14187,6 @@
       "contract": null,
       "testReferences": [
         "test/radar-ledger.test.mjs",
-        "test/watcher-incident-revision.test.mjs",
         "test/radar-v3-core.test.mjs"
       ],
       "workflowReferences": [],
@@ -14160,9 +14305,7 @@
         }
       },
       "contract": null,
-      "testReferences": [
-        "test/watcher-incident-revision.test.mjs"
-      ],
+      "testReferences": [],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
     },
@@ -17663,7 +17806,6 @@
         ]
       },
       "testReferences": [
-        "test/watcher-incident-revision.test.mjs",
         "tests/ignition-replay.test.mjs",
         "tests/session-coverage.test.mjs"
       ],
@@ -17731,7 +17873,6 @@
       },
       "contract": null,
       "testReferences": [
-        "test/watcher-incident-revision.test.mjs",
         "test/shadow.test.mjs"
       ],
       "workflowReferences": [],
@@ -27889,7 +28030,7 @@
       "path": "stop-watch.mjs",
       "sha256": "5ba911f55a10bce06e6e4f3b5357386cffb9a1cff5b4761f67fe47a739907b33",
       "bytes": 1481,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [],
@@ -27920,7 +28061,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "5ba911f55a10bce06e6e4f3b5357386cffb9a1cff5b4761f67fe47a739907b33",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Explicit positions,fresh-price map and caller-owned seen map.",
+        "outputs": "Pure hit/near warnings and dedup marks.",
+        "sideEffects": "Mutates only supplied seen map; no files/providers/messages/orders.",
+        "failure": "Missing/nonpositive prices/stops do not infer hit; freshness supplied by actual watcher caller.",
+        "timing": "Caller must clear a mark only for definite UNSENT; uncertain/acknowledged stays suppressed.",
+        "researchBoundary": "Reported stop is guidance, not guaranteed fill or owner trade.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "test/stop-watch.test.mjs"
       ],
@@ -28153,7 +28309,7 @@
       "path": "telegram-delivery.mjs",
       "sha256": "90c148a417ab47227f18ebeb46a69229ed0d71b80d5874da73bfdfb11a5d81f8",
       "bytes": 5071,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [],
@@ -28216,7 +28372,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "90c148a417ab47227f18ebeb46a69229ed0d71b80d5874da73bfdfb11a5d81f8",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Explicit scoped Telegram URL/body, fetch/sleep, optional store durability.",
+        "outputs": "Acknowledged message ID or fixed refusal; split-part outcome counters.",
+        "sideEffects": "Telegram HTTP, optional failure log and explicit CAS store.",
+        "failure": "HTTP200 with no positive message ID is failure; network ambiguity never automatically retried; optional durable port reserves first.",
+        "timing": "10sec per request,3 explicit429 attempts(max5sec wait),3900char splits.",
+        "researchBoundary": "Transport success is not approved BUY, persisted accounting or guaranteed recipient reading.",
+        "remainingVerification": "Compatibility non-durable callers must provide their own persistent logical idempotency; health caller currently does not.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "tests/telegram-policy.test.mjs",
         "tests/telegram-delivery.test.mjs",
@@ -28753,7 +28924,7 @@
       "path": "tools/accounting-pending-preflight.mjs",
       "sha256": "7d009d803cd565f5edecc43f52dd9f8fc579837c8a76612ff2c7c580e8473b48",
       "bytes": 2813,
-      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -28804,14 +28975,14 @@
       "contract": {
         "sha256": "7d009d803cd565f5edecc43f52dd9f8fc579837c8a76612ff2c7c580e8473b48",
         "reviewer": "Codex source-interface review, 2026-11-01",
-        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "status": "SOURCE_REVIEWED",
         "inputs": "Explicit repository argv; PRIVATE_KEY environment binding; four bounded accounting files.",
         "outputs": "Exactly PASS/BLOCKED/ERROR and exits0/2/1.",
         "sideEffects": "Decrypts in memory and re-reads state bytes; no state writes, scanner import, messages or providers.",
         "failure": "Missing key/input or any pendingSale property blocks; malformed/authentication/moving state errors; no recovery.",
         "timing": "Synchronous bounded reads; no source-history or network deadline guard in this historical checker.",
         "researchBoundary": "Read-only legacy conservative checker; not the later deployed v2.2 checker or current deployment authority.",
-        "remainingVerification": "Historical checker is deliberately stricter than v2.2; do not reuse it for protected deployment without reconciliation.",
+        "remainingVerification": "Declared historical/incomplete-evidence boundary, not a newly repaired behavior. See repo03-gap-disposition.json; no current deployment or capture readiness implied.",
         "evidence": [
           "docs/repo03-behavioral-review.md#source-interface-pass"
         ]
@@ -31533,7 +31704,7 @@
       "path": "trade-plan.mjs",
       "sha256": "97e73a0ec8369d44ab3ac64eaa2b0ef1504c1bd9fc2bbdcca79a61774ffc6376",
       "bytes": 2197,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [],
@@ -31573,7 +31744,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "97e73a0ec8369d44ab3ac64eaa2b0ef1504c1bd9fc2bbdcca79a61774ffc6376",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Explicit strategy/evidence/quote/position inputs and clock.",
+        "outputs": "Research plan with execution/eligibility/risk blockers.",
+        "sideEffects": "Pure; no provider/network/messaging/state.",
+        "failure": "Invalid price/costs/stale quote/eligibility/capacity fail; integer whole shares, stressed/OOS evidence checks.",
+        "timing": "Fixed existing1/3/5/10/21/42-session research horizons; no inferred feed latency.",
+        "researchBoundary": "Helper output not deployed mentor/BUY approval or executable fill; never alters frozen strategy inputs.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "tests/trade-plan.test.mjs"
       ],
@@ -32311,7 +32497,7 @@
       "path": "watcher-message-publish.mjs",
       "sha256": "ef665d103ba30cfede445a57b4fd62fe673aa5e0c901174dbf62b6357a80105f",
       "bytes": 3737,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -32358,7 +32544,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "ef665d103ba30cfede445a57b4fd62fe673aa5e0c901174dbf62b6357a80105f",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Validated state path/version, local Git upstream and explicit record/phase.",
+        "outputs": "Compare/publish status and authoritative competing record.",
+        "sideEffects": "Fetches target to temporary ref, isolated index/commit-tree, fast-forward push only protected state leaf; active source/index untouched.",
+        "failure": "Remote conflict/refusal/uncertain push bounded and suppress transport; cleanup always attempted.",
+        "timing": "4sec default budget,1.5sec child cap,max3 attempts(default),1sec cleanup.",
+        "researchBoundary": "No hot rebase, force push or publication of unrelated local/private data; synthetic disposable remotes only in review.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "test/watcher-message-publish.test.mjs"
       ],
@@ -32369,7 +32570,7 @@
       "path": "watcher-messages.mjs",
       "sha256": "5803a587420fca807a0c60ad2812165d7e1ae26b0ac6ae08ddcd1a49d9a68c25",
       "bytes": 5631,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -32422,7 +32623,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "5803a587420fca807a0c60ad2812165d7e1ae26b0ac6ae08ddcd1a49d9a68c25",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Day/key, local/public state, bounded persist/clock/retry policy.",
+        "outputs": "Durable RESERVED/UNSENT/ACKNOWLEDGED/UNCERTAIN and retry-health counters.",
+        "sideEffects": "Local fsynced state; explicit publication port only; maintain never sends.",
+        "failure": "Unconfirmed reservation suppresses send; failed finalization stays pending; uncertain/reserved blocks repeats; retry attempts/cooldown persisted.",
+        "timing": "Default8 attempts with exponential cooldown max15minutes; one finalization publication per observation cycle.",
+        "researchBoundary": "No permission to send merely from local reservation or successful process exit.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "test/watcher-retry-recovery.test.mjs",
         "test/watcher-resilience.test.mjs",
@@ -32435,7 +32651,7 @@
       "path": "watcher-reporting.mjs",
       "sha256": "68e1e136cbfdccd774bc8c0c3670b7141cacd0a06dce86155138a3272967c544",
       "bytes": 6784,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -32492,7 +32708,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "68e1e136cbfdccd774bc8c0c3670b7141cacd0a06dce86155138a3272967c544",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Public canonical snapshots and run archives; configured-window heartbeat rows and delivery health.",
+        "outputs": "Explicit configured/full-session/opening/gap/UNKNOWN text; legacy missed-runner population counts.",
+        "sideEffects": "Reads public evidence only; no messages/writes.",
+        "failure": "Malformed/unusable evidence cannot certify opening coverage; per-minute union deduplicates usable rows; delivery failure visible.",
+        "timing": "Configured window distinct from16:00 full session; >=5% missing or3-minute consecutive gap actionable.",
+        "researchBoundary": "Source counts/job duration are not actual observation or unique common-stock performance.",
+        "remainingVerification": "Aggregate legacy runner counts cannot deduplicate security-days without original identities/rows; that is explicitly labelled, not silently corrected.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "test/watcher-retry-recovery.test.mjs",
         "test/watcher-incident-revision.test.mjs",
@@ -33053,7 +33284,7 @@
       "path": "zad-compliance.mjs",
       "sha256": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
       "bytes": 2828,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED",
       "facts": {
         "inputs": {
           "matchingLines": [],
@@ -33101,7 +33332,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+        "reviewer": "Codex production-critical interface review,2026-11-01",
+        "status": "SOURCE_REVIEWED",
+        "inputs": "Owner marks,quarterly exclusions and explicit clock.",
+        "outputs": "Resolved approval/expired/fail/recheck and exclusion set.",
+        "sideEffects": "Pure; no source refresh or mark writes.",
+        "failure": "Malformed lists/marks fail closed; third-party provenance cannot grant owner approval; stale fail remains blocked.",
+        "timing": "Strict calendar date,<=90day affirmative freshness,no future acceptance.",
+        "researchBoundary": "No policy changes; affirmative current owner evidence required independently of research performance.",
+        "remainingVerification": "Scoped interface review complete; not all-path verification or production activation.",
+        "evidence": [
+          "docs/repo03-critical-contract-batch.md",
+          "docs/validation/repo03-critical-batch-evidence.json"
+        ]
+      },
       "testReferences": [
         "test/zad-policy-integration.test.mjs",
         "tests/zad-compliance.test.mjs",
@@ -33113,13 +33359,10 @@
   ],
   "totals": {
     "scripts": 305,
-    "sourceReviewed": 49,
-    "pending": 256,
-    "reviewedWithOpenFindings": 26
+    "sourceReviewed": 65,
+    "pending": 240,
+    "reviewedWithOpenFindings": 31
   },
   "accepted": false,
-  "note": "An explicit hash-matched review is required. Empty axes, source changes and inventories cannot silently count as reviewed; review is distinct from all-path runtime verification.",
-  "baseSourceCommit": "6868d9a39518fdf4168f67167f681bbba7c68ab0",
-  "preservedReviewPR6Head": "64611cdf47dd230026911dde53b98cf7413c17f1",
-  "report": "docs/repo03-behavioral-review.md"
+  "note": "An explicit hash-matched review is required. Empty axes, source changes and inventories cannot silently count as reviewed; review is distinct from all-path runtime verification."
 }

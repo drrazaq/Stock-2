@@ -31,6 +31,13 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_repository_behavior.py'
           python -m unittest discover -s tests -p 'test_incident_verifier_evidence.py'
+      - name: Verify gated actual-watcher callers against the explicit development contract
+        env:
+          INCIDENT_WATCHER_SRC: ${{ github.workspace }}/ignition-watch.mjs
+          INCIDENT_WATCHER_PROFILE: development-full
+        run: |
+          node test/watcher-incident-revision.test.mjs
+          node test/watcher-resilience.test.mjs
       - name: Run every test file
         shell: bash
         run: |
