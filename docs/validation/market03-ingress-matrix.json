@@ -4,7 +4,7 @@
   "pairs": 442,
   "providerPairs": 305,
   "decisionPathPairs": 97,
-  "reviewedDecisionPairs": 29,
+  "reviewedDecisionPairs": 33,
   "fullyCoveredDecisionPairs": 3,
   "unreviewedDecisionPairs": [
    "calendar.mjs|MASSIVE",
@@ -57,10 +57,6 @@
    "scorecard-1023.mjs|ALPACA_DATA",
    "shadow-outcomes.mjs|ALPACA_DATA",
    "shares.mjs|SEC",
-   "smart-money.mjs|MASSIVE",
-   "smart-money.mjs|POLYGON",
-   "smart-money.mjs|FMP",
-   "smart-money.mjs|FINNHUB",
    "squad26-watch.mjs|ALPACA_DATA",
    "squad26-watch.mjs|FINNHUB",
    "squad26-watch.mjs|SEC",
@@ -71,7 +67,7 @@
   "unclassified": [],
   "frozenResearchPairs": 187,
   "decisionIngress": 87,
-  "reviewedIngress": 27,
+  "reviewedIngress": 31,
   "fullyCoveredIngress": [
    "comeback-lab.mjs|MASSIVE",
    "discovery2.mjs|SEC",
@@ -1942,7 +1938,17 @@
    "kind": "PROVIDER",
    "provider": "MASSIVE",
    "role": "LIVE_DELIVERY_PATH",
-   "contract": "NOT_REVIEWED"
+   "contract": {
+    "identity": "P",
+    "units": "Y",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "Y",
+    "revision": "N",
+    "status": "Y",
+    "by": "claude/market03-batch2",
+    "note": "grouped prices: exchange-calendar day, envelope checked, day/lag/basis recorded, no tips on a stale day; plain tickers only (classes excluded)"
+   }
   },
   {
    "file": "smart-money.mjs",
@@ -1950,7 +1956,17 @@
    "kind": "PROVIDER",
    "provider": "POLYGON",
    "role": "LIVE_DELIVERY_PATH",
-   "contract": "NOT_REVIEWED"
+   "contract": {
+    "identity": "P",
+    "units": "Y",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "Y",
+    "revision": "N",
+    "status": "Y",
+    "by": "claude/market03-batch2",
+    "note": "fallback host of the same grouped request"
+   }
   },
   {
    "file": "smart-money.mjs",
@@ -1963,7 +1979,17 @@
    "kind": "PROVIDER",
    "provider": "FMP",
    "role": "LIVE_DELIVERY_PATH",
-   "contract": "NOT_REVIEWED"
+   "contract": {
+    "identity": "Y",
+    "units": "NA",
+    "clock": "Y",
+    "session": "NA",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "Y",
+    "by": "claude/market03-batch2",
+    "note": "grades-latest-news: bounded read, REFUSED/RATE_LIMITED/MALFORMED distinct, future rows excluded, classes counted"
+   }
   },
   {
    "file": "smart-money.mjs",
@@ -1971,7 +1997,17 @@
    "kind": "PROVIDER",
    "provider": "FINNHUB",
    "role": "LIVE_DELIVERY_PATH",
-   "contract": "NOT_REVIEWED"
+   "contract": {
+    "identity": "Y",
+    "units": "Y",
+    "clock": "Y",
+    "session": "NA",
+    "adjustment": "NA",
+    "revision": "P",
+    "status": "Y",
+    "by": "claude/market03-batch2",
+    "note": "insider + recommendation: outcome per call, requested-symbol identity, strict numbers, no future dates, duplicate rows once, one person once, consecutive sorted months; study block unchanged"
+   }
   },
   {
    "file": "squad1-core.mjs",
