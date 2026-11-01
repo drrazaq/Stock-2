@@ -1,0 +1,216 @@
+{
+ "kind": "MARKET_DATA_CONTRACTS_PROPOSAL_V1",
+ "revision": 3,
+ "date": "2026-11-01",
+ "approved": false,
+ "active": false,
+ "providerCallsMade": 0,
+ "sources": {
+  "D1": "https://docs.alpaca.markets/us/docs/market-data-faq#how-are-bars-aggregated",
+  "D2": "https://docs.alpaca.markets/us/reference/stockbars",
+  "D3": "https://docs.alpaca.markets/us/docs/about-market-data-api#subscription-plans",
+  "D4": "https://docs.alpaca.markets/us/docs/real-time-stock-pricing-data",
+  "D5": "https://docs.alpaca.markets/us/reference/stocklatestquotes-1",
+  "D6": "https://docs.alpaca.markets/us/reference/stocksnapshotsingle",
+  "D7": "https://docs.alpaca.markets/us/reference/stocktrades-1",
+  "D8": "https://docs.alpaca.markets/us/docs/historical-stock-data-1"
+ },
+ "capabilities": [
+  {
+   "need": "timed cumulative volume",
+   "endpoint": "GET /v2/stocks/bars timeframe=1Min feed=sip",
+   "supplied": "DOCUMENTED",
+   "caveats": [
+    "gaps unexplained (D1)",
+    "REST settlement undocumented"
+   ]
+  },
+  {
+   "need": "exact per-minute volume incl. volume-only trades",
+   "endpoint": "GET /v2/stocks/trades feed=sip + D1 condition table",
+   "supplied": "DOCUMENTED",
+   "caveats": [
+    "high data volume"
+   ]
+  },
+  {
+   "need": "streaming cumulative daily volume with emission time",
+   "endpoint": "wss v2/sip dailyBars + updatedBars",
+   "supplied": "DOCUMENTED",
+   "caveats": [
+    "persistent connection architecture",
+    "per-account connection limit undocumented"
+   ]
+  },
+  {
+   "need": "untimed daily volume",
+   "endpoint": "snapshot dailyBar.v",
+   "supplied": "DOCUMENTED",
+   "caveats": [
+    "no as-of time (D6)"
+   ]
+  },
+  {
+   "need": "consolidated best bid/offer for entry-quote evidence",
+   "endpoint": "GET /v2/stocks/quotes/latest feed=sip",
+   "supplied": "DOCUMENTED",
+   "caveats": [
+    "age must be checked",
+    "sizes round lots before 2025-11-03"
+   ]
+  },
+  {
+   "need": "pre-market trade",
+   "endpoint": "snapshot latestTrade / trades latest feed=sip",
+   "supplied": "DOCUMENTED",
+   "caveats": [
+    "informational only"
+   ]
+  },
+  {
+   "need": "prior close",
+   "endpoint": "snapshot prevDailyBar",
+   "supplied": "DOCUMENTED",
+   "caveats": [
+    "D1 last-sale rules; may differ from listing-exchange official close"
+   ]
+  },
+  {
+   "need": "halt / LULD status",
+   "endpoint": "wss statuses / lulds",
+   "supplied": "NOT_ESTABLISHED",
+   "caveats": [
+    "docs: production status data via sales team"
+   ]
+  }
+ ],
+ "timestampValidation": "calendar-exact RFC 3339 profile: YYYY-MM-DDTHH:MM:SS[.1-9 digits](Z|+HH:MM|-HH:MM); impossible dates rejected, never normalised",
+ "missingCapabilities": [
+  "as-of time for snapshot daily volume",
+  "documented REST minute-bar settlement/revision window",
+  "bars cannot distinguish no-trade vs volume-only minutes",
+  "documented max symbols per request",
+  "trading-status feed in Algo Trader Plus"
+ ],
+ "volumeClasses": {
+  "UNTIMED_DAILY": "never offered to time-sensitive gates",
+  "RETURNED_BAR_SUM": "sum of the qualifying SIP 1Min bars the API returned, over a stated New York scope, through a stated closed minute; coverage limits always attached; not a complete count of every reported share"
+ },
+ "aggregation": {
+  "scopesNewYork": {
+   "PRE": "04:00-09:30",
+   "REGULAR": "09:30-16:00",
+   "POST": "16:00-20:00",
+   "PRE_AND_REGULAR": "04:00-16:00",
+   "ALL_EXTENDED": "04:00-20:00"
+  },
+  "revisionGraceSec": 60,
+  "revisionGraceMeaning": "volume of minutes ending less than graceMs before retrieval is reported separately; not a finality guarantee",
+  "revisionGraceStatus": "TO_CONFIRM",
+  "minutesWithoutBar": "listed; label SOME_MINUTES_RETURNED_NO_BAR; cause (no trades vs volume-only trades) not given by the API",
+  "reconciliation": "minute sum <= later daily total, else INVALID",
+  "validation": [
+   "minute-aligned",
+   "same NY session",
+   "no duplicates/out-of-order",
+   "v,n positive integers",
+   "o/h/l/c/vw positive and consistent",
+   "bar closed at retrieval"
+  ]
+ },
+ "protectedVerification": {
+  "status": "PROPOSED_NOT_RUN",
+  "requests": 7,
+  "retries": 0,
+  "timeoutSec": 10,
+  "symbols": [
+   "SPY",
+   "AAPL",
+   "one pre-chosen thin listed stock (never an owner holding)"
+  ],
+  "outputs": "aggregate PASS/FAIL statistics only",
+  "checks": [
+   "real-time SIP access with end=now",
+   "current minute absent, previous present",
+   "revisions between T0 and T0+90s",
+   "day minute sum <= 1Day volume and unaccounted share",
+   "thin-stock gaps explained by /trades",
+   "quote sizes in shares",
+   "prevDailyBar.c vs prior 1Day close",
+   "rate-limit headers"
+  ],
+  "excluded": [
+   "halt status (sales)",
+   "websocket connection limits (separate approved test)"
+  ]
+ },
+ "existingThresholds": [
+  {
+   "name": "MAX_SIGNAL_PRICE_AGE_MIN",
+   "value": 3,
+   "unit": "min",
+   "where": "ignition-gates.mjs",
+   "status": "PRODUCTION"
+  },
+  {
+   "name": "MAX_Q_AGE / spreadFresh / early-alert fresh",
+   "value": 120,
+   "unit": "s",
+   "spreadMax": 0.1,
+   "where": "shadow-eval.mjs, ignition-watch.mjs, early-alerts.mjs",
+   "status": "PRODUCTION"
+  },
+  {
+   "name": "SQ15 MAX_AGE_MIN",
+   "value": 15,
+   "unit": "min",
+   "spreadMax": 0.05,
+   "where": "squad15b-core.mjs",
+   "status": "PRODUCTION_PAPER"
+  },
+  {
+   "name": "premarket CURRENT label",
+   "value": 30,
+   "unit": "min",
+   "status": "REMOVED_NEVER_IN_PRODUCTION",
+   "history": "introduced by Claude in feed-integrity revision 2 as a display label (not data-derived); removed in revision 3; the deployed premarket-check (main b680988b) applies no freshness cut-off and shows basis, source, New York timestamp and exact age"
+  }
+ ],
+ "proposedContracts": [
+  {
+   "strategy": "premarket stop SELL",
+   "contract": "unchanged rule; show basis and age; no freshness cut-off"
+  },
+  {
+   "strategy": "premarket HOLD/WATCH",
+   "contract": "deployed: production decisions, exact age shown, no cut-off; any future freshness label or cut-off is a new proposal requiring approval, derived from measured 08:40 last-trade ages over 20 sessions"
+  },
+  {
+   "strategy": "watcher signals",
+   "contract": "keep 3 min (approved)"
+  },
+  {
+   "strategy": "early alerts / shadow spread",
+   "contract": "keep 120 s / 10% (approved); future approved-buy lines add entry-quote evidence checks, age <= 60 s TO_CONFIRM"
+  },
+  {
+   "strategy": "LEADER DIP entry",
+   "contract": "daily signal; entry price only via entry-quote evidence checks in REGULAR phase, else prior close labelled reference"
+  },
+  {
+   "strategy": "time-sensitive volume gates",
+   "contract": "RETURNED_BAR_SUM, grace boundary <= 2 min TO_CONFIRM, coverage limits shown, stated scope; behavioural change requires shadow validation"
+  }
+ ],
+ "behaviouralChange": {
+  "proposed": "rv, rvT and elapsed-fraction ratio from RETURNED_BAR_SUM",
+  "made": false,
+  "validation": [
+   "20+ sessions side-by-side shadow",
+   "per-minute differences and changed decisions",
+   "same-scope curve re-learn",
+   "pre-registered acceptance",
+   "separate reviewed change with owner approval"
+  ]
+ }
+}
