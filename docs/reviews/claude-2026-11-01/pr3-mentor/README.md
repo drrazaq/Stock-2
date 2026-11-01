@@ -11,6 +11,9 @@ Read-only review outputs; nothing here is imported or run by the system. The har
 | `REVIEW-mentor-pr3-v2.md` | Re-review of revision 2 (`8e9cb9b`, patch `6c6d14dc`), changes only: **CHANGES REQUIRED** (M3 closed; M1, M2 open) |
 | `mentor-harness-v2.mjs` | v1 harness plus multi-line mentor+owner-command messages and bare/malformed spellings. `node mentor-harness-v2.mjs <patched tree>` |
 | `harness-result-v2-main-f6a9b166.json` | Output on main `f6a9b166` + revised patch (Node 20.20.0) |
+| `REVIEW-mentor-pr3-v3.md` | Re-review of revision 3 (`25a8500`, patch `1841837e`), changes only: **APPROVE** (M1, M2 closed; notes n1, n2) |
+| `mentor-harness-v3.mjs` | v2 harness with extraction for the numbered layout, plus internal-code and number-join scans. `node mentor-harness-v3.mjs <patched tree>` |
+| `harness-result-v3-main-f6a9b166.json` | Output on main `f6a9b166` + revision-3 patch (Node 20.20.0) |
 
 ## SHA256
 
@@ -21,3 +24,6 @@ Read-only review outputs; nothing here is imported or run by the system. The har
 - `REVIEW-mentor-pr3-v2.md`: `c5f514d06f14b81bf09266d993372684e49eb38581be78165f3638d4f6d6205c`
 - `mentor-harness-v2.mjs`: `aa168bfac3235d29041a661eb8bd6dedeed03a936c5a15628afcaa9c3b039ef1`
 - `harness-result-v2-main-f6a9b166.json`: `2bc4772a526746f000d4870c35c5dd07a859e27ea34672e04f85fc753871b0ce`
+- `REVIEW-mentor-pr3-v3.md`: `8cff5315cb10b7a7632082ebf4d4d38604f35e468a7aae19b5933b0ead9ea26d`
+- `mentor-harness-v3.mjs`: `0438dddd1185faf887e2407ca21cef24387fbbc1b0d0f6b3e7115418a5e75fe1`
+- `harness-result-v3-main-f6a9b166.json`: `343e90fea2eccc459b065a7672dee77f2352182dee499e88d7a1351a429a543b`

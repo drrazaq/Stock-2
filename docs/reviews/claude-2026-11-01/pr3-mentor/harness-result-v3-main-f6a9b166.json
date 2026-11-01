@@ -1,0 +1,346 @@
+{
+ "tree": "m3tree",
+ "node": "v20.20.0",
+ "cases": {
+  "held_consistent": {
+   "replies": 1,
+   "chars": 1386,
+   "lines": 14,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "planStatus": "RECORDED_PLAN_PROVENANCE_MISSING",
+   "contradictions": [],
+   "firstLine": "MENTOR GOOD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)",
+   "exitLine": "3 May 2027 at 16:00 New York CLOSE.",
+   "entryLine": null,
+   "expected": {
+    "exitClose126": "2027-05-03",
+    "botTimeExitOpen": "2027-05-04",
+    "entrySession": null,
+    "target20": 120
+   },
+   "exitDateMatches": true,
+   "entryDateMatches": null,
+   "saysNoApproval": true,
+   "saysNotProven": true,
+   "showsStoredTarget": true,
+   "internalCodes": [],
+   "gluedNumberWords": [],
+   "hasSelfContradictionWording": false
+  },
+  "held_thanksgiving_buy": {
+   "replies": 1,
+   "chars": 1445,
+   "lines": 16,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "planStatus": "UNRESOLVED",
+   "contradictions": [
+    "RECORDED_NOTIONAL_EXCEEDS_SLOT_ALLOCATION",
+    "BUY_SESSION_FUTURE"
+   ],
+   "firstLine": "MENTOR HOLI — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)",
+   "exitLine": "27 May 2027 at 16:00 New York CLOSE.",
+   "entryLine": null,
+   "expected": {
+    "exitClose126": "2027-05-27",
+    "botTimeExitOpen": "2027-05-28",
+    "entrySession": null,
+    "target20": 300.6
+   },
+   "exitDateMatches": true,
+   "entryDateMatches": null,
+   "saysNoApproval": true,
+   "saysNotProven": true,
+   "showsStoredTarget": true,
+   "internalCodes": [],
+   "gluedNumberWords": [],
+   "hasSelfContradictionWording": false
+  },
+  "held_target_mismatch": {
+   "replies": 1,
+   "chars": 1414,
+   "lines": 15,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "planStatus": "UNRESOLVED",
+   "contradictions": [
+    "TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT"
+   ],
+   "firstLine": "MENTOR BADTGT — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)",
+   "exitLine": "3 May 2027 at 16:00 New York CLOSE.",
+   "entryLine": null,
+   "expected": {
+    "exitClose126": "2027-05-03",
+    "botTimeExitOpen": "2027-05-04",
+    "entrySession": null,
+    "target20": 120
+   },
+   "exitDateMatches": true,
+   "entryDateMatches": null,
+   "saysNoApproval": true,
+   "saysNotProven": true,
+   "showsStoredTarget": true,
+   "internalCodes": [],
+   "gluedNumberWords": [],
+   "hasSelfContradictionWording": false
+  },
+  "held_over_slot": {
+   "replies": 1,
+   "chars": 1401,
+   "lines": 15,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "planStatus": "UNRESOLVED",
+   "contradictions": [
+    "RECORDED_NOTIONAL_EXCEEDS_SLOT_ALLOCATION"
+   ],
+   "firstLine": "MENTOR BIG — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)",
+   "exitLine": "3 May 2027 at 16:00 New York CLOSE.",
+   "entryLine": null,
+   "expected": {
+    "exitClose126": "2027-05-03",
+    "botTimeExitOpen": "2027-05-04",
+    "entrySession": null,
+    "target20": 120
+   },
+   "exitDateMatches": true,
+   "entryDateMatches": null,
+   "saysNoApproval": true,
+   "saysNotProven": true,
+   "showsStoredTarget": true,
+   "internalCodes": [],
+   "gluedNumberWords": [],
+   "hasSelfContradictionWording": false
+  },
+  "other_lane": {
+   "replies": 1,
+   "chars": 152,
+   "lines": 2,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "planStatus": "UNSUPPORTED",
+   "contradictions": [],
+   "firstLine": "MENTOR OTHER — LEADER DIP only.",
+   "exitLine": null,
+   "entryLine": null,
+   "expected": {
+    "exitClose126": null,
+    "botTimeExitOpen": null,
+    "entrySession": null,
+    "target20": 60
+   },
+   "exitDateMatches": null,
+   "entryDateMatches": null,
+   "saysNoApproval": true,
+   "saysNotProven": true,
+   "showsStoredTarget": null,
+   "internalCodes": [],
+   "gluedNumberWords": [],
+   "hasSelfContradictionWording": false
+  },
+  "source_lead": {
+   "replies": 1,
+   "chars": 1243,
+   "lines": 13,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "planStatus": "EXPIRED_ENTRY",
+   "contradictions": [],
+   "firstLine": "MENTOR LEAD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)",
+   "exitLine": "126 sessions, counting the buy day; no filled-position exit date established.",
+   "entryLine": "2 Nov 2026 New York OPEN only; next open only.",
+   "expected": {
+    "exitClose126": null,
+    "botTimeExitOpen": null,
+    "entrySession": "2026-11-02",
+    "target20": null
+   },
+   "exitDateMatches": null,
+   "entryDateMatches": true,
+   "saysNoApproval": true,
+   "saysNotProven": true,
+   "showsStoredTarget": null,
+   "internalCodes": [],
+   "gluedNumberWords": [],
+   "hasSelfContradictionWording": false
+  },
+  "lead_before_holiday": {
+   "replies": 1,
+   "chars": 113,
+   "lines": 2,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "planStatus": "NO_PLAN",
+   "contradictions": [],
+   "firstLine": "MENTOR HOLS — no LEADER DIP signal or holding on file.",
+   "exitLine": null,
+   "entryLine": null,
+   "expected": {
+    "exitClose126": null,
+    "botTimeExitOpen": null,
+    "entrySession": "2026-11-27",
+    "target20": null
+   },
+   "exitDateMatches": null,
+   "saysNoApproval": true,
+   "saysNotProven": true,
+   "showsStoredTarget": null,
+   "internalCodes": [],
+   "gluedNumberWords": [],
+   "hasSelfContradictionWording": false
+  },
+  "unknown": {
+   "replies": 1,
+   "chars": 113,
+   "lines": 2,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "planStatus": "NO_PLAN",
+   "contradictions": [],
+   "firstLine": "MENTOR ZZZZ — no LEADER DIP signal or holding on file.",
+   "exitLine": null,
+   "entryLine": null,
+   "expected": {
+    "exitClose126": null,
+    "botTimeExitOpen": null,
+    "entrySession": null,
+    "target20": null
+   },
+   "exitDateMatches": null,
+   "entryDateMatches": null,
+   "saysNoApproval": true,
+   "saysNotProven": true,
+   "showsStoredTarget": null,
+   "internalCodes": [],
+   "gluedNumberWords": [],
+   "hasSelfContradictionWording": false
+  },
+  "mixed_owner_stop": {
+   "changedFiles": [
+    "data/my-positions.json",
+    "data/tg-state.json"
+   ],
+   "otherStop": 46,
+   "goodUnchanged": true,
+   "offset": 102
+  },
+  "multiline_mentor_then_stop": {
+   "changedFiles": [
+    "data/my-positions.json",
+    "data/tg-state.json"
+   ],
+   "otherStop": 46,
+   "stopSaved": true,
+   "reply": "MENTOR GOOD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY) | 1. Position: 10 whole shares; recorded entry $100.00; bought 30 Oct 2026. | 2. Owner overlay: $120.00 (20%",
+   "offset": 101
+  },
+  "multiline_stop_then_mentor": {
+   "changedFiles": [
+    "data/my-positions.json",
+    "data/tg-state.json"
+   ],
+   "otherStop": 46,
+   "stopSaved": true,
+   "reply": "Updated OTHER: bought 50.00 |   stop 46.00, target 1 not set |   This is now your own stop. I will not raise or change it; I only alert you if the price reaches it.",
+   "offset": 101
+  },
+  "multiline_slash_mentor_then_stop": {
+   "changedFiles": [
+    "data/my-positions.json",
+    "data/tg-state.json"
+   ],
+   "otherStop": 46,
+   "stopSaved": true,
+   "reply": "MENTOR GOOD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY) | 1. Position: 10 whole shares; recorded entry $100.00; bought 30 Oct 2026. | 2. Owner overlay: $120.00 (20%",
+   "offset": 101
+  },
+  "spell_slash": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR GOOD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)"
+  },
+  "spell_botname": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR GOOD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)"
+  },
+  "spell_dotted": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR BRK.B — no LEADER DIP signal or holding on file."
+  },
+  "spell_two_lines": {
+   "mentorReplies": 2,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR GOOD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)"
+  },
+  "spell_trailing_text": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR — EXPLANATION ONLY. NOT PROVEN. Use mentor SYMBOL (one symbol per line). "
+  },
+  "spell_bare_slash": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR — EXPLANATION ONLY. NOT PROVEN. Use mentor SYMBOL (one symbol per line). "
+  },
+  "spell_bare": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR — EXPLANATION ONLY. NOT PROVEN. Use mentor SYMBOL (one symbol per line). "
+  },
+  "spell_two_slash_lines": {
+   "mentorReplies": 2,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR GOOD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)"
+  }
+ },
+ "sampleText": "MENTOR GOOD — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)\n1. Position: 10 whole shares; recorded entry $100.00; bought 30 Oct 2026.\n2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.\n3. Tested exit reference: 3 May 2027 at 16:00 New York CLOSE.\n4. Size/risk: $1,000.00 recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.\n5. Limits: Original signal not on file; this is missing history, not a contradiction. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.\n6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.\nNo new BUY or HOLD approval.\nDetails:\nOriginal signal not on file. Recorded buy date: 30 Oct 2026. It does not establish an original signal date or an exact opening fill.\nEntry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.\nNo executable price/range is established.\nA touched daily high does not prove a limit fill.\nHistorical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.",
+ "dateCheck": {
+  "buyDaysChecked": 186,
+  "mismatches": [],
+  "mismatchCount": 0,
+  "bothUnknownBeyondCalendar": 0
+ }
+}
