@@ -7,6 +7,7 @@ test('exact runtime patch applies to pinned production source and yields all rev
  const runtime=path.join(root,'docs/validation/passive-contract-observer-runtime.patch');assert.equal(hash(fs.readFileSync(runtime)),m.runtimePatchSha256);
  git('apply','--check',runtime);git('apply',runtime);for(const [name,digest]of Object.entries(m.runtimeFiles))assert.equal(hash(fs.readFileSync(path.join(dir,name))),digest,name);
  assert.equal(hash(fs.readFileSync(path.join(dir,'market-data-contracts.mjs'))),'269626fa8da5c2a12234a0baf028b560bb7838f468a9e52a428208574a091cbe');
+ const testsPatch=path.join(root,'docs/validation/passive-contract-observer-tests.patch');assert.equal(hash(fs.readFileSync(testsPatch)),m.testsPatchSha256);git('apply','--check',testsPatch);git('apply',testsPatch);for(const file of ['test/watcher-contract-observer.test.mjs','test/watcher-contract-parity.test.mjs','test/passive-observer-package.test.mjs','test/market-data-contracts.test.mjs'])assert.ok(fs.readFileSync(path.join(dir,file)).equals(read(file)),file);
  fs.mkdirSync(path.join(dir,'.github/workflows'),{recursive:true});fs.writeFileSync(path.join(dir,'.github/workflows/ignition.yml'),read('.github/workflows/ignition.yml'));
  const activation=path.join(root,'docs/validation/passive-contract-observer-activation.patch.proposed');assert.equal(hash(fs.readFileSync(activation)),m.activationPatchSha256);git('apply','--check',activation);
  assert.doesNotMatch(read('.github/workflows/ignition.yml').toString(),/CONTRACT_OBSERVER:/);assert.equal(m.activationApproved,false);

@@ -19,3 +19,15 @@ Tests: actual full watcher baseline/off/on across SIP, IEX downgrade and top50; 
 The original accepted package's no-production-import assertion remains valid at its immutable INACTIVE commit; this future integration intentionally changes that invariant. Its pure regression evidence is preserved. New production integration tests assert the exact passive caller and immutable accepted source hash instead of treating an active observer as an inactive package. No prior result is relabelled.
 
 Proposed rollback: revert only this narrow runtime patch/activation at a safe natural boundary; retain all sidecar and original evidence. No financial/data reset. Post-deployment observation would be via natural runs only: original request/decision/archive parity, sidecar persistence and quarantine health. No test message or provider dispatch is included.
+
+## O1 narrow revision — independent review6465c071
+
+Claude passed the default-off package at7b3e5a6c and reproduced O1: quarantine wrote a marker through a symlink after normal recording rejected it. This revision changes only the observer's filesystem handling; the other three runtime files, accepted contracts bytes, provider requests, strategy decisions and activation proposal remain unchanged.
+
+Recording and quarantine now walk each path component using O_DIRECTORY/O_NOFOLLOW and write relative to a verified Linux directory descriptor. Leaf files also use O_NOFOLLOW/exclusive creation. An ancestor replacement cannot redirect a record or failure marker into the replacement target. If no safe directory can be opened (including dangling links or permission denial), quarantine is in memory only. Existing partial evidence remains intact. Linux /proc/self/fd is an explicit dependency of this Actions-targeted implementation; unsupported systems fail closed.
+
+Regressions cover root/ancestor/dangling/leaf links, links introduced after open, replacements exactly at record open and at error handling, and actual read-only-directory behavior with verified effective uid1000 and denied W_OK. All10 local unit tests pass. The root case must use a non-root child; a root-only permission test cannot count as verification.
+
+The exact package now includes all26 contracts tests. Numerical/calendar/revision/coverage assertions are unchanged. The original inactive-only import assertion is updated explicitly for this integration: the exact allowed importer set is watcher-contract-observer.mjs, not an unrestricted exemption. The package test applies both runtime and tests patches and verifies all four shipped test files byte-for-byte. Local contracts26/26 and package1/1 pass. Actual watcher parity and complete production-base checks require exact-revision hosted CI because this workspace refuses loopback listeners (EPERM).
+
+No activation or production deployment is requested. Independently re-review this narrow revision before considering the separate activation proposal.

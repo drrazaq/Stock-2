@@ -43,3 +43,26 @@ test('independent competing processes preserve one immutable heartbeat and fail 
  assert.deepEqual(await Promise.all([run(),run()]),[0,0]);const root=path.join(x.directory,day,runId+'.contracts'),names=fs.readdirSync(root).filter(x=>x.endsWith('.json'));assert.equal(names.length,1);
  const raw=fs.readFileSync(path.join(root,names[0]));assert.doesNotThrow(()=>JSON.parse(raw));const before=Buffer.from(raw);createContractObserver(x).record({minute:580,rows:[],nowMs:now});assert.ok(fs.readFileSync(path.join(root,names[0])).equals(before));
 });
+
+test('O1 root, ancestor, dangling and leaf symlinks never receive records or quarantine writes',t=>{
+ for(const variant of ['root','ancestor','dangling','after-open','marker','record']){
+  const x=fixture(t),target=fs.mkdtempSync(path.join(os.tmpdir(),'observer-outside-'));t.after(()=>fs.rmSync(target,{recursive:true,force:true}));const sentinel=path.join(target,'sentinel');fs.writeFileSync(sentinel,'UNCHANGED');const dir=path.join(x.directory,day),root=path.join(dir,runId+'.contracts');fs.mkdirSync(dir,{recursive:true});let a;
+  if(variant==='ancestor'){fs.rmdirSync(dir);fs.symlinkSync(target,dir);}
+  else if(variant==='root'||variant==='dangling')fs.symlinkSync(variant==='root'?target:path.join(target,'missing'),root);
+  else{fs.mkdirSync(root);if(variant==='marker')fs.symlinkSync(sentinel,path.join(root,'QUARANTINED'));if(variant==='record')fs.symlinkSync(sentinel,path.join(root,'beat-0580.json'));if(variant==='after-open'){a=createContractObserver(x);fs.rmdirSync(root);fs.symlinkSync(target,root);}}
+  a??=createContractObserver(x);assert.equal(a.record({minute:580,rows:[],nowMs:now}),false);assert.equal(a.health().state,'QUARANTINED');assert.deepEqual(fs.readdirSync(target),['sentinel'],variant);assert.equal(fs.readFileSync(sentinel,'utf8'),'UNCHANGED');
+ }
+});
+test('O1 ancestor replacement at record open and at error handling cannot redirect any write',t=>{
+ for(const fail of [false,true]){const x=fixture(t),root=path.join(x.directory,day,runId+'.contracts'),saved=root+'.original',target=fs.mkdtempSync(path.join(os.tmpdir(),'observer-race-'));t.after(()=>fs.rmSync(target,{recursive:true,force:true}));let swapped=false;
+  const swap=()=>{fs.renameSync(root,saved);fs.symlinkSync(target,root);swapped=true;};
+  const io={...fs,openSync:(file,...args)=>{if(!fail&&!swapped&&String(file).endsWith('/beat-0580.json'))swap();return fs.openSync(file,...args);},writeSync:(...args)=>{if(fail&&!swapped){swap();throw Error('SYNTHETIC_WRITE_FAILURE');}return fs.writeSync(...args);}};
+  const a=createContractObserver({...x,io});assert.equal(a.record({minute:580,rows:[],nowMs:now}),false);assert.ok(swapped);assert.equal(a.health().state,'QUARANTINED');assert.deepEqual(fs.readdirSync(target),[]);assert.ok(fs.existsSync(path.join(saved,'beat-0580.json')));
+ }
+});
+test('O1 real read-only directory under a verified non-root uid fails without writes',async t=>{
+ const x=fixture(t),root=path.join(x.directory,day,runId+'.contracts');fs.mkdirSync(root,{recursive:true});for(const p of [x.directory,path.dirname(root)])fs.chmodSync(p,0o755);fs.chmodSync(root,0o555);
+ if(process.getuid()!==0){try{assert.throws(()=>fs.accessSync(root,fs.constants.W_OK));const a=createContractObserver(x);assert.equal(a.record({minute:580,rows:[],nowMs:now}),false);assert.equal(a.health().state,'QUARANTINED');assert.deepEqual(fs.readdirSync(root),[]);}finally{fs.chmodSync(root,0o755);}return;}
+ const script="import fs from 'node:fs';import {createContractObserver} from "+JSON.stringify(new URL('../watcher-contract-observer.mjs',import.meta.url).href)+";if(process.getuid()===0)throw Error('INVALID_ROOT_TEST');let denied=false;try{fs.accessSync("+JSON.stringify(root)+",fs.constants.W_OK);}catch{denied=true;}if(!denied)throw Error('PERMISSION_NOT_ENFORCED');const a=createContractObserver("+JSON.stringify(x)+");const written=a.record({minute:580,rows:[],nowMs:"+now+"});console.log(JSON.stringify({uid:process.getuid(),denied,written,health:a.health().state}));";
+ const opts={env:{PATH:process.env.PATH},stdio:['ignore','pipe','pipe'],...(process.getuid()===0?{uid:65534,gid:65534}:{})};let out='',err='';const p=spawn(process.execPath,['--input-type=module','-e',script],opts);p.stdout.on('data',b=>out+=b);p.stderr.on('data',b=>err+=b);const code=await new Promise((resolve,reject)=>{p.once('error',reject);p.once('close',resolve);});fs.chmodSync(root,0o755);assert.equal(code,0,err);const r=JSON.parse(out);assert.notEqual(r.uid,0);assert.equal(r.denied,true);assert.equal(r.written,false);assert.equal(r.health,'QUARANTINED');assert.deepEqual(fs.readdirSync(root),[]);
+});
