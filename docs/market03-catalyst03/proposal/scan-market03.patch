@@ -1,0 +1,45 @@
+--- a/scan.mjs
++++ b/scan.mjs
+@@ -1813,11 +1813,21 @@
+     for (const x of (j && Array.isArray(j.results) ? j.results : [])) { const f = +x.split_from, t = +x.split_to, d = String(x.execution_date || ''); if (!d || !(f > 0) || !(t > 0) || f === t || /dividend/i.test(String(x.adjustment_type || ''))) continue; SPLIT_ASKED[sym].push({ s: sym, d, r: t / f }); } } catch (e) {} }
+   return [...own, ...SPLIT_ASKED[sym].filter(x => !own.some(o => o.d === x.d))];
+ }
++// MARKET-03 proposal: Twelve Data daily bars must name the requested symbol, have valid dates and finite positive prices;
++// a malformed row is dropped (never a NaN candle) and an empty or foreign series is an error, not a stock with no history.
++function tdBars(j, sym) {
++  if (j.meta && typeof j.meta.symbol === 'string' && j.meta.symbol.toUpperCase() !== String(sym).toUpperCase()) return null;
++  const ok = (x) => Number.isFinite(x) && x > 0, rows = [];
++  for (const v of Array.isArray(j.values) ? j.values : []) { const d = typeof (v && v.datetime) === 'string' ? v.datetime.slice(0, 10) : '';
++    const o = +v.open, h = +v.high, l = +v.low, c = +v.close; if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || ![o, h, l, c].every(ok) || h < l) continue;
++    rows.push({ d, o: +o.toFixed(4), h: +h.toFixed(4), l: +l.toFixed(4), c: +c.toFixed(4), v: Math.round(+v.volume || 0) }); }
++  return rows.length ? rows.sort((a, b) => a.d < b.d ? -1 : 1) : null;
++}
+ let spyDaily = null;
+ async function loadDaily(sym) {
+   if (sym === 'SPY' && spyDaily) return spyDaily;
+   const j = await td('/time_series?symbol=' + encodeURIComponent(sym) + '&interval=1day&outputsize=4000&order=ASC'); if (!j || !j.values) return null;
+-  const now = Date.now(), all = j.values.map(v => ({ d: v.datetime.slice(0, 10), o: +(+v.open).toFixed(4), h: +(+v.high).toFixed(4), l: +(+v.low).toFixed(4), c: +(+v.close).toFixed(4), v: Math.round(+v.volume || 0) })).sort((a, b) => a.d < b.d ? -1 : 1);
++  const now = Date.now(), all = tdBars(j, sym); if (!all) return null;
+   adjustSplits(sym, all, await splitsFor(sym, all));
+   const res = { candles: all.filter(c => barClosed(c.d, now)), last: all[all.length - 1].c }; if (sym === 'SPY') spyDaily = res; return res;
+ }
+@@ -3775,7 +3785,7 @@
+   for (const sym of LIST) {
+     const j = await td('/time_series?symbol=' + encodeURIComponent(sym) + '&interval=1day&outputsize=4000&order=ASC');
+     if (j.status === 'error' || !j.values) { errors.push(sym); continue; }
+-    const all = j.values.map(v => ({ d: v.datetime.slice(0, 10), o: +(+v.open).toFixed(4), h: +(+v.high).toFixed(4), l: +(+v.low).toFixed(4), c: +(+v.close).toFixed(4), v: Math.round(+v.volume || 0) })).sort((a, b) => a.d < b.d ? -1 : 1);
++    const all = tdBars(j, sym); if (!all) { errors.push(sym); continue; }
+     if (adjustSplits(sym, all, await splitsFor(sym, all))) console.log('split adjusted: ' + sym);
+     loaded[sym] = { candles: all.filter(c => barClosed(c.d, now)), last: all[all.length - 1].c };
+   }
+@@ -3921,7 +3931,9 @@
+   // Offered only while the Sunday fair test (earnings-study.mjs) says PROMISING; otherwise logged for the record only.
+   const pead = [], peadFunnel = { reports: 0, noPrice: 0, held: 0, notHalal: 0, smallEst: 0, beat: 0, passed: 0 }; { const ES = readJson0('data/earnings-study.json'), ER = readJson0('data/earnings-recent.json'), R = (ES && ES.rule) || { minSurprise: 0.10, minUp: 0.03, minLoc: 0.5, maxGap: 0.03, maxStop: 0.15, hold: 40 };
+     const nextDay = (d) => { let ms = Date.parse(d + 'T12:00:00Z'); do { ms += 864e5; } while ([0, 6].includes(new Date(ms).getUTCDay())); return new Date(ms).toISOString().slice(0, 10); };
+-    for (const r of (ER && ER.reports) || []) { const react = r.t === 'bmo' ? r.d : r.t === 'amc' ? nextDay(r.d) : null; if (react ? react !== session : !(r.d === session || nextDay(r.d) === session)) continue; peadFunnel.reports++;
++    // MARKET-03 proposal: use the producer's exchange-calendar reaction session (holidays and half days included) when present;
++    // the weekday-only nextDay stays for legacy rows. Unknown timing keeps both candidate sessions, never a guess.
++    for (const r of (ER && ER.reports) || []) { const cands = Array.isArray(r.reactionCandidates) ? r.reactionCandidates : null, react = typeof r.reactionSession === 'string' ? r.reactionSession : cands ? null : r.t === 'bmo' ? r.d : r.t === 'amc' ? nextDay(r.d) : null; if (react ? react !== session : cands ? !cands.includes(session) : !(r.d === session || nextDay(r.d) === session)) continue; peadFunnel.reports++;
+       const d = loaded[r.sym]; if (!d || d.candles.length < 30) { peadFunnel.noPrice++; continue; } if (myPos[r.sym]) { peadFunnel.held++; continue; } if (myHalal(r.sym) === 'fail') { peadFunnel.notHalal++; continue; }
+       const c = d.candles, i = c.length - 1, b = c[i], p = c[i - 1]; if (b.d !== session) { peadFunnel.noPrice++; continue; }
+       if (!(Math.abs(r.e) >= 0.05)) { peadFunnel.smallEst++; continue; } const sur = (r.a - r.e) / Math.abs(r.e), up = b.c / p.c - 1, loc = b.h > b.l ? (b.c - b.l) / (b.h - b.l) : 0.5, stop = +(b.l * 0.995).toFixed(2);

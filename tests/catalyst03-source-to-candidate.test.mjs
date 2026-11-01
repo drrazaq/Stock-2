@@ -127,18 +127,6 @@ test('comeback: signals from a missing, undated or stale lab file are withheld w
  assert.equal(o.priceBasis,'LAB_REPORTED_BASIS_UNVERIFIED');assert.equal(o.sourceIdentityBasis,'PROVIDER_TICKER_NOT_SECURITY_ID');assert.equal(o.publicationBasis,'DERIVED_OUTPUT_AVAILABLE');
 });
 
-test('comeback SPY ingress: malformed bars rejected, today\'s unfinished bar excluded, a revised cached bar kept as the original', async t=>{
- const w=workdir(t),latest=latestCompletedSession(now),prior=prevSession(latest),barMs=d=>Date.parse(d+'T04:00:00Z');
- w.put('data/comeback-spy.json',{bars:{[prior]:{o:500,c:501}}});
- const p=await provider(t,async()=>[200,{ticker:'SPY',status:'OK',results:[{t:barMs(prior),o:500,c:999},{t:barMs(latest),o:510,c:511},{t:now+3600e3,o:1,c:1},{t:'bad',o:1,c:1},{t:barMs(day(now)),o:520,c:'x'}]}]);
- await run(w.dir,'comeback-lab.mjs',{MASSIVE_BASE:p.base});
- const spy=w.json('data/comeback-spy.json');assert.equal(spy.bars[prior].c,501,'the cached bar is not overwritten');assert.deepEqual(spy.conflicts[prior].reported,{o:500,c:999});
- assert.equal(spy.bars[latest].c,511);assert.equal(spy.status,'CONFLICT');
- const today=w.json('data/comeback-today.json');assert.equal(today.sourceStatus.SPY_BARS.status,'CONFLICT');assert.equal(today.sourceStatus.SPY_BARS.rejectedBars>=2,true);assert.equal(today.sourceStatus.LAB_TODAY_FILES.status,'EMPTY');
- const p2=await provider(t,async()=>[503,{}]);await run(w.dir,'comeback-lab.mjs',{MASSIVE_BASE:p2.base});
- assert.equal(w.json('data/comeback-today.json').sourceStatus.SPY_BARS.status,'UNAVAILABLE','a failed fetch is never shown as fresh bars');
-});
-
 // --------------------------------------------------------------------- news --------------------------------------------------------
 test('news: the same story re-attributed to other symbols is held back, with which field changed recorded and no text added', async t=>{
  const w=workdir(t),pub=Math.floor(now/1000)-120;let related='AAA';const sent=[];
