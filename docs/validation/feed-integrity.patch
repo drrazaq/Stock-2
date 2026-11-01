@@ -64,7 +64,7 @@ index 2e6682f7..8b921f11 100644
 + return null;
  }
 diff --git a/ignition-watch.mjs b/ignition-watch.mjs
-index 7e8b7b4f..216cec50 100644
+index 7e8b7b4f..7cda2378 100644
 --- a/ignition-watch.mjs
 +++ b/ignition-watch.mjs
 @@ -17,7 +17,8 @@ import {sessionFinished,preferSession,runIdentity,sessionEvidence} from './watch
@@ -73,7 +73,7 @@ index 7e8b7b4f..216cec50 100644
  // Read-only; never places an order.
 -import { snapshots, feedUsed } from './alpaca-feed.mjs';
 +import { snapshots, feedUsed, snapshotFeed } from './alpaca-feed.mjs';
-+import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot } from './snapshot-fields.mjs';   // (1 Nov) every field keeps its own provider clock and feed
++import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot, validateClocks } from './snapshot-fields.mjs';   // (1 Nov) every field keeps its own provider clock and feed
  import { sendAlert } from './opp-mode.mjs';
  import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
  import { stopHits } from './stop-watch.mjs';
@@ -91,7 +91,7 @@ index 7e8b7b4f..216cec50 100644
 -    const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = feedUsed() === 'sip';
 -    return syms.map(s => { const x = sj[s] || {}, lt = x.latestTrade || {}, db = x.dailyBar || {}, pb = x.prevDailyBar || {}, t = lt.t ? Date.parse(lt.t) : 0; return { sym: s, price: +(lt.p || db.c || 0), prevC: +(pb.c || 0), open: +(db.o || 0), vol: sip && db.v ? +db.v : null, t, vt: sip && db.v ? t : 0 }; }); } catch (e) { return null; } }
 +    const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
-+    return syms.map(s => alpacaSnapshot(s, sj[s] || {}, sip)); } catch (e) { return null; } }
++    const at = Date.now(); return syms.map(s => alpacaSnapshot(s, sj[s] || {}, sip, at)); } catch (e) { return null; } }
  async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
    if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
    for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
@@ -99,27 +99,33 @@ index 7e8b7b4f..216cec50 100644
 -    try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = feedUsed() === 'sip';   // SIP = every exchange, so its day volume is the real one
 -      for (const [s, x] of Object.entries(sj || {})) { const lt = (x && x.latestTrade) || {}, db = (x && x.dailyBar) || {}, lq = (x && x.latestQuote) || {}; if (lt.p > 0) out.set(s, { price: +lt.p, t: lt.t ? Date.parse(lt.t) : 0, open: +(db.o || 0), vol: sip && db.v ? +db.v : null, bid: +(lq.bp || 0), ask: +(lq.ap || 0), qt: lq.t ? Date.parse(lq.t) : 0 }); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
 +    try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
-+      for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x || {}, sip); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
++      const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x || {}, sip, at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
    if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
    return out; }
  async function snap() {
-@@ -97,13 +97,17 @@ async function snap() {
+@@ -97,13 +97,23 @@ async function snap() {
    const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
    if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
    if (m && m.length) { const live = await alpacaAll(m.filter(r => r.prevC >= 1).map(r => r.sym));
 -    if (live) { let n = 0; for (const r of m) { const x = live.get(r.sym); if (x && x.t > r.t) { r.price = x.price; r.t = x.t; if (x.open > 0) r.open = x.open; if (x.vol > 0) { r.vol = x.vol; r.vt = x.t; } n++; } if (x && x.ask > 0 && x.qt >= (r.qt || 0)) { r.bid = x.bid; r.ask = x.ask; r.qt = x.qt; } }
 -      src = 'alpaca live prices (' + feedUsed().toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (feedUsed() === 'sip' ? 'live SIP volume' : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
-+    if (live) { let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, now)) n++; if (x && x.volumeFeed === 'sip' && r.volumeFeed === 'sip') sv++; }
++    if (live) { let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, now)) n++; if (x && r.volumeBasis === 'SIP_DAILY_BAR_ASOF_UNSTATED') sv++; }
 +      const feeds = [...new Set([...live.values()].map(x => x.priceFeed))], feedLabel = feeds.length === 1 ? feeds[0] : feeds.length ? 'mixed' : feedUsed();   // this minute's responses, not the whole day's
-+      src = 'alpaca live prices (' + feedLabel.toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (sv ? 'live SIP volume for ' + sv : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
++      src = 'alpaca live prices (' + feedLabel.toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (sv ? 'SIP daily volume (provider states no as-of time) for ' + sv : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
    const a = await snapTop50();
    if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
    src = 'alpaca top-50 gainers only'; mode = 'PARTIAL_TOP50_FALLBACK';
    const byM = new Map((m || []).map(r => [r.sym, r]));
 -  for (const r of a) { const x = byM.get(r.sym); r.vol = x ? x.vol : null; r.vt = x ? x.vt : 0; if (!(r.prevC > 0) && x) r.prevC = x.prevC; if (!(r.open > 0) && x) r.open = x.open; byM.set(r.sym, r); }
-+  // Field set unchanged (price/prevC/open/volume). Volume: the newer of this response's own SIP figure and Massive's, each on its own clock.
-+  for (const r of a) { const x = byM.get(r.sym); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed;
-+    if (x && !(r.vol > 0 && r.vt > 0 && r.vt >= (x.vt || 0))) { r.vol = x.vol; r.vt = x.vt; r.volumeProvider = x.volumeProvider || null; r.volumeFeed = x.volumeFeed || null; }
++  // Field set unchanged (price/prevC/open/volume, no quote fields). Every field passes the normal per-field clock validation: a future
++  // clock never vouches for its value, and between this response and Massive the newer valid clock wins (as in the main merge).
++  const at = Date.now();
++  for (const r of a) { const x = byM.get(r.sym); validateClocks(r, at); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed;
++    if (x) { const m0 = validateClocks({ sym: r.sym, price: x.price, t: x.t, open: 0, vol: x.vol, vt: x.vt, priceProvider: x.priceProvider, priceKind: x.priceKind, volumeProvider: x.volumeProvider, volumeFeed: x.volumeFeed || null }, at), own = { ...r };
++      mergeLiveSnapshot(m0, own, at);
++      if (!(m0.t > 0) && own.price > 0) { m0.price = own.price; m0.t = own.t; m0.priceProvider = own.priceProvider; m0.priceFeed = own.priceFeed; m0.priceKind = own.priceKind; }   // neither clock valid: this response's own price, still unclocked
++      for (const k of ['price', 't', 'priceProvider', 'priceFeed', 'priceKind', 'vol', 'vt', 'volumeProvider', 'volumeFeed', 'volumeBasis', 'volumeAsOf', 'volumeSessionStart', 'volumeMinuteBarStart', 'volumeRejected']) if (k in m0) r[k] = m0[k];
++      if (!(r.vol > 0)) { r.vol = null; r.vt = 0; } }
 +    if (!(r.prevC > 0) && x) r.prevC = x.prevC; if (!(r.open > 0) && x) r.open = x.open; byM.set(r.sym, r); }
    return [...byM.values()];
  }
@@ -138,7 +144,7 @@ index 00000000..c626ead0
 + return /^[A-Z][A-Z0-9]{0,5}(?:[.\-][A-Z0-9]{1,3})?$/.test(symbol)?symbol:null;
 +}
 diff --git a/premarket-check.mjs b/premarket-check.mjs
-index 7fb3ff42..99df4171 100644
+index 7fb3ff42..53e89744 100644
 --- a/premarket-check.mjs
 +++ b/premarket-check.mjs
 @@ -3,9 +3,10 @@
@@ -154,7 +160,7 @@ index 7fb3ff42..99df4171 100644
  import fs from 'node:fs';
  const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
  const AD = local(env.ALPACA_DATA_BASE) || 'https://data.alpaca.markets', TG = local(env.TG_BASE) || 'https://api.telegram.org';
-@@ -15,15 +16,18 @@ const pcs = (x) => x === null || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x
+@@ -15,24 +16,42 @@ const pcs = (x) => x === null || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x
  const AS = J('data/actions-sells.json', { sells: [] }), asell = Object.fromEntries((Date.now() - Date.parse(AS.at || 0) < 4 * 864e5 ? AS.sells : []).map(x => [x.sym, x.why]));
  const P = J('data/my-positions.json', {}), SG = J('data/signals.json', {}), pv = SG.posVerdict || {}, syms = Object.keys(P).filter(s => P[s] && P[s].entry);
  if (!syms.length) { console.log('premarket: no positions'); process.exit(0); }
@@ -169,31 +175,51 @@ index 7fb3ff42..99df4171 100644
 -    if (j) snaps = j; else note = 'price feed refused'; } catch (e) { note = 'price feed unreachable'; } } else note = 'no Alpaca key in this workflow';
 +    if (j) { snaps = j; feed = snapshotFeed(j); } else note = 'price feed refused'; } catch (e) { note = 'price feed unreachable'; } } else note = 'no Alpaca key in this workflow';
  const last = {}; for (const x of SG.stocks || []) if (x.last) last[x.sym] = x.last;
- const rows = { sell: [], watch: [], hold: [] };
+-const rows = { sell: [], watch: [], hold: [] };
 -for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade, prevC = (sn.prevDailyBar && sn.prevDailyBar.c) || (sn.dailyBar && String(sn.dailyBar.t || '').slice(0, 10) < ny ? sn.dailyBar.c : null) || last[s] || null;
 -  const pre = lt && String(lt.t || '').slice(0, 10) === ny ? lt.p : null, px = pre || prevC, stop = p.stop || null, chg = pre && prevC ? pre / prevC - 1 : null, toStop = px && stop ? px / stop - 1 : null;
 -  const tag = s + ' ' + (pre ? 'pre-market ' + money(pre) + ' (' + pcs(chg) + ' vs close)' : 'no pre-market trade yet, close ' + money(prevC)) + ', stop ' + (stop ? money(stop) + (toStop !== null ? ' (' + pcs(toStop) + ' away)' : '') : 'NOT SET') + ', you ' + pcs(px && p.entry ? px / p.entry - 1 : null);
-+for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade, dbAt = sn.dailyBar && at(sn.dailyBar.t), prevC = (sn.prevDailyBar && sn.prevDailyBar.c) || (dbAt && nyDate(dbAt) < ny ? sn.dailyBar.c : null) || last[s] || null;
-+  const ltAt = lt && lt.p > 0 ? at(lt.t) : null, pre = ltAt && nyDate(ltAt) === ny ? lt.p : null, px = pre || prevC, stop = p.stop || null, chg = pre && prevC ? pre / prevC - 1 : null, toStop = px && stop ? px / stop - 1 : null;
-+  const tag = s + ' ' + (pre ? 'pre-market ' + money(pre) + ' at ' + nyTime(ltAt) + ' NY (' + pcs(chg) + ' vs close)' : 'no pre-market trade yet, close ' + money(prevC)) + ', stop ' + (stop ? money(stop) + (toStop !== null ? ' (' + pcs(toStop) + ' away)' : '') : 'NOT SET') + ', you ' + pcs(px && p.entry ? px / p.entry - 1 : null);
-   if (stop && px && px <= stop) rows.sell.push('- ' + tag + ': SELL at the open (after the first 15 minutes). The price is at or under your stop.');
+-  if (stop && px && px <= stop) rows.sell.push('- ' + tag + ': SELL at the open (after the first 15 minutes). The price is at or under your stop.');
++// (1 Nov) Price basis, shown on every line. Strategy rules are unchanged: a price at or under the stop means SELL at the open; the
++// ACTIONS and last-night-scan SELLs stand on their own; WATCH is within 3% of the stop. What changed: WATCH/HOLD are only given on a
++// CURRENT price. A stale, previous-close-only or missing price is labelled as such and listed under NO CURRENT PRICE, never as a HOLD.
++//   CURRENT    today's (New York date) pre-market trade, at most STALE_MIN minutes old
++//   STALE      today's pre-market trade, older than that
++//   PREV_CLOSE no trade today; the last close (snapshot previous-day bar, or last night's scan)
++//   MISSING    no usable price at all
++const STALE_MIN = 30;
++const rows = { sell: [], watch: [], hold: [], nocurrent: [] };
++for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade, dbAt = sn.dailyBar && at(sn.dailyBar.t);
++  const snapClose = (sn.prevDailyBar && sn.prevDailyBar.c) || (dbAt && nyDate(dbAt) < ny ? sn.dailyBar.c : null), prevC = snapClose || last[s] || null, closeSrc = snapClose ? 'last close' : last[s] ? 'last close (last night\u2019s scan)' : null;
++  const ltAt = lt && lt.p > 0 ? at(lt.t) : null, today = ltAt && nyDate(ltAt) === ny, ageMin = today ? Math.round((Date.now() - ltAt) / 60000) : null;
++  const basis = today ? (ageMin <= STALE_MIN ? 'CURRENT' : 'STALE') : prevC ? 'PREV_CLOSE' : 'MISSING', pre = today ? lt.p : null;
++  const px = pre || prevC, stop = p.stop || null, chg = pre && prevC ? pre / prevC - 1 : null, toStop = px && stop ? px / stop - 1 : null;
++  const priceText = basis === 'CURRENT' ? 'pre-market ' + money(pre) + ' at ' + nyTime(ltAt) + ' NY (' + pcs(chg) + ' vs close)'
++    : basis === 'STALE' ? 'STALE pre-market trade ' + money(pre) + ' at ' + nyTime(ltAt) + ' NY (' + ageMin + ' min old, ' + pcs(chg) + ' vs close)'
++    : basis === 'PREV_CLOSE' ? 'no pre-market trade today; ' + closeSrc + ' ' + money(prevC) : 'NO PRICE' + (note ? ' (' + note + ')' : '');
++  const tag = s + ' ' + priceText + ', stop ' + (stop ? money(stop) + (toStop !== null ? ' (' + pcs(toStop) + ' away)' : '') : 'NOT SET') + ', you ' + pcs(px && p.entry ? px / p.entry - 1 : null);
++  if (stop && px && px <= stop) rows.sell.push('- ' + tag + ': SELL at the open (after the first 15 minutes). ' + (basis === 'CURRENT' ? 'The price is at or under your stop.' : basis === 'STALE' ? 'The last pre-market trade (stale) is at or under your stop; check the price at the open.' : 'The ' + closeSrc + ' is at or under your stop (no current price).'));
    else if (asell[s]) rows.sell.push('- ' + tag + ': SELL today, as the last ACTIONS message said: ' + asell[s].replace(/^[A-Z.]+[^:]*: /, '').slice(0, 160));
-   else if (pv[s] && !(/stop/i.test(pv[s]) && stop && px && px > stop)) rows.sell.push('- ' + tag + ': SELL today, as last night’s scan said: ' + pv[s].replace(/\.$/, '') + '.');
-@@ -31,7 +35,7 @@ for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade
+-  else if (pv[s] && !(/stop/i.test(pv[s]) && stop && px && px > stop)) rows.sell.push('- ' + tag + ': SELL today, as last night’s scan said: ' + pv[s].replace(/\.$/, '') + '.');
++  else if (pv[s] && !(/stop/i.test(pv[s]) && stop && px && px > stop)) rows.sell.push('- ' + tag + ': SELL today, as last night\u2019s scan said: ' + pv[s].replace(/\.$/, '') + '.');
++  else if (basis !== 'CURRENT') rows.nocurrent.push('- ' + tag + ': no current price, so no HOLD/WATCH call. Check the price at the open; your broker stop does the work.');
+   else if (stop && px && toStop < 0.03) rows.watch.push('- ' + tag + ': WATCH. Within 3% of your stop; your broker stop does the work.');
    else rows.hold.push('- ' + tag + ': HOLD.'); }
  // (28 Oct) Kuwait time of 9:30 New York on that New York day: Kuwait is UTC+3 all year, New York moves on 1 Nov (never a fixed string)
  const openKuwait = (d) => { const noon = new Date(d + 'T12:00:00Z'), h = +new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', hourCycle: 'h23' }).format(noon), k = 570 - (h - 12) * 60 + 180; return (Math.floor(k / 60) % 12 || 12) + ':' + String(k % 60).padStart(2, '0') + ' pm'; };
 -const msg = ['PRE-MARKET CHECK ' + ny + ' (your stocks, before the open: ' + openKuwait(ny) + ' Kuwait)' + (note ? ' [' + note + ']' : ''), '',
+-  ...(rows.sell.length ? ['SELL', ...rows.sell, ''] : ['SELL: nothing.', '']), ...(rows.watch.length ? ['WATCH', ...rows.watch, ''] : []), ...(rows.hold.length ? ['HOLD', ...rows.hold, ''] : []),
 +const msg = ['PRE-MARKET CHECK ' + ny + ' (your stocks, before the open: ' + openKuwait(ny) + ' Kuwait)' + (note ? ' [' + note + ']' : feed ? ' [prices: ' + feed.toUpperCase() + ' feed]' : ''), '',
-   ...(rows.sell.length ? ['SELL', ...rows.sell, ''] : ['SELL: nothing.', '']), ...(rows.watch.length ? ['WATCH', ...rows.watch, ''] : []), ...(rows.hold.length ? ['HOLD', ...rows.hold, ''] : []),
++  ...(rows.sell.length ? ['SELL', ...rows.sell, ''] : ['SELL: nothing.', '']), ...(rows.watch.length ? ['WATCH', ...rows.watch, ''] : []), ...(rows.hold.length ? ['HOLD', ...rows.hold, ''] : []), ...(rows.nocurrent.length ? ['NO CURRENT PRICE (stale, previous close only or missing: not a HOLD)', ...rows.nocurrent, ''] : []),
    'Do not trade in the pre-market itself (thin, wide spreads, often reversed at the open). Act in the regular session; keep every stop at your broker. After you sell, send  sold SYM PRICE .'];
  console.log(msg.join('\n'));
+ if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
 diff --git a/snapshot-fields.mjs b/snapshot-fields.mjs
 new file mode 100644
-index 00000000..fb9c4200
+index 00000000..cbfbb098
 --- /dev/null
 +++ b/snapshot-fields.mjs
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,94 @@
 +// Each field keeps its own provider clock. Missing clocks remain unknown (0).
 +const positive = x => typeof x === 'number' && Number.isFinite(x) && x > 0;
 +const number = x => positive(x) ? x : 0;
@@ -215,18 +241,50 @@ index 00000000..fb9c4200
 +    priceProvider:'MASSIVE',priceKind:trade?'TRADE':minute?'MINUTE_BAR':'DAILY_BAR',
 +    quoteProvider:'MASSIVE',quoteFeed:'PLAN_DEPENDENT',volumeProvider:'MASSIVE'};
 +}
-+export function alpacaSnapshot(symbol,x={},sip=false) {
-+  const lt=x.latestTrade||{}, db=x.dailyBar||{}, pb=x.prevDailyBar||{}, q=x.latestQuote||{}, mb=x.minuteBar||{};
-+  const trade=positive(lt.p), volume=sip&&positive(db.v);
-+  // dailyBar.t is the bar's session start, not an as-of time. The same response's
-+  // latest minute-bar start (same daily bar) is a conservative as-of lower bound
-+  // for the cumulative volume; the trade clock is never borrowed.
-+  const dayStart=isoTime(db.t),minuteStart=isoTime(mb.t),volumeClock=dayStart&&minuteStart>=dayStart&&minuteStart<dayStart+86400000?minuteStart:dayStart;
-+  return {sym:symbol,price:trade?lt.p:number(db.c),t:trade?isoTime(lt.t):dayStart,
-+    prevC:number(pb.c),open:number(db.o),vol:volume?db.v:null,vt:volume?volumeClock:0,
++// Alpaca snapshot volume contract (official docs, read 1 Nov 2026):
++//  - Snapshot reference (docs.alpaca.markets/us/reference/stocksnapshotsingle): "A snapshot provides the latest trade, latest quote,
++//    latest minute bar, current daily bar and previous daily bar"; each t is "Timestamp in RFC-3339 format" (example dailyBar t 04:00Z).
++//  - Market Data FAQ "How are bars aggregated?": a daily bar holds the day's trades, truncated "to the day (in New York)"; a bar's
++//    timestamp is "the left side of the interval".
++// So dailyBar.t is the SESSION START, not an as-of time, and the REST snapshot states no as-of time for the cumulative daily volume.
++// The minute-bar start is a separate observation, not proof of when the daily total was computed. (The websocket page's "daily bars
++// contain all trades until the time they were emitted" describes the stream, not this REST snapshot.)
++// Observed: volumeSessionStart (dailyBar.t), volumeMinuteBarStart (minuteBar.t). Derived: none. vt stays 0 (as-of unknown) and the
++// volume is labelled SIP_DAILY_BAR_ASOF_UNSTATED, never "live". It is rejected when it contradicts itself or is not today's session.
++const NY_DAY = new Intl.DateTimeFormat('en-CA', {timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'});
++const nyDay = ms => NY_DAY.format(new Date(ms));
++export function sipDailyVolume(x = {}, nowMs = Date.now()) {
++  const db = x.dailyBar || {}, mb = x.minuteBar || {};
++  if (!positive(db.v)) return {ok:false, reason:'NO_DAILY_VOLUME'};
++  const session = isoTime(db.t), minute = isoTime(mb.t);
++  if (!session) return {ok:false, reason:'NO_SESSION_TIMESTAMP'};
++  if (session > nowMs) return {ok:false, reason:'FUTURE_SESSION'};
++  if (nyDay(session) !== nyDay(nowMs)) return {ok:false, reason:'NOT_TODAYS_SESSION'};
++  if (minute) {
++    if (minute > nowMs) return {ok:false, reason:'FUTURE_MINUTE_BAR'};
++    if (nyDay(minute) !== nyDay(session)) return {ok:false, reason:'MINUTE_BAR_OTHER_SESSION'};
++    if (positive(mb.v) && db.v < mb.v) return {ok:false, reason:'DAILY_BELOW_MINUTE_BAR'};
++  }
++  return {ok:true, vol:db.v, session, minute};
++}
++export function alpacaSnapshot(symbol,x={},sip=false,nowMs=Date.now()) {
++  const lt=x.latestTrade||{}, db=x.dailyBar||{}, pb=x.prevDailyBar||{}, q=x.latestQuote||{};
++  const trade=positive(lt.p), dv=sip?sipDailyVolume(x,nowMs):{ok:false,reason:'NOT_SIP'};
++  return {sym:symbol,price:trade?lt.p:number(db.c),t:trade?isoTime(lt.t):isoTime(db.t),
++    prevC:number(pb.c),open:number(db.o),vol:dv.ok?dv.vol:null,vt:0,
++    volumeAsOf:null,volumeBasis:dv.ok?'SIP_DAILY_BAR_ASOF_UNSTATED':null,volumeSessionStart:dv.ok?dv.session:0,volumeMinuteBarStart:dv.ok?dv.minute||0:0,
++    volumeRejected:dv.ok?null:dv.reason,
 +    bid:number(q.bp),ask:number(q.ap),qt:isoTime(q.t),
 +    priceProvider:'ALPACA',priceFeed:sip?'sip':'iex',priceKind:trade?'TRADE':'DAILY_BAR',
-+    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',volumeProvider:volume?'ALPACA':null,volumeFeed:volume?'sip':null};
++    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',volumeProvider:dv.ok?'ALPACA':null,volumeFeed:dv.ok?'sip':null};
++}
++// Per-field clock validation for rows that are used without a merge (top-50 fallback): a future or missing clock never vouches for its value.
++export function validateClocks(row, nowMs = Date.now()) {
++  if (!row) return row;
++  if (positive(row.t) && row.t > nowMs) { row.t = 0; row.priceClockRejected = 'FUTURE'; }
++  if (positive(row.vt) && row.vt > nowMs) { row.vol = null; row.vt = 0; row.volumeRejected = 'FUTURE_VOLUME_CLOCK'; row.volumeProvider = null; row.volumeFeed = null; }
++  if (positive(row.qt) && row.qt > nowMs) { row.bid = 0; row.ask = 0; row.qt = 0; }
++  return row;
 +}
 +export function mergeLiveSnapshot(row, live, nowMs = Date.now()) {
 +  if (!live) return false;
@@ -241,6 +299,12 @@ index 00000000..fb9c4200
 +  if (positive(live.vol) && positive(live.vt) && live.vt<=nowMs &&
 +      (live.vt>row.vt || row.vt>nowMs || !positive(row.vt))) {
 +    row.vol=live.vol;row.vt=live.vt;row.volumeProvider=live.volumeProvider||'UNKNOWN';row.volumeFeed=live.volumeFeed||null;
++  } else if (positive(live.vol) && live.volumeBasis==='SIP_DAILY_BAR_ASOF_UNSTATED') {
++    // No as-of time: used only when consistent with any earlier clocked cumulative count for the session (a cumulative total
++    // cannot be below an earlier observation). vt becomes 0: the age of this figure is unknown, so it is never "live".
++    const earlier = positive(row.vol) && positive(row.vt) && row.vt<=nowMs ? row.vol : 0;
++    if (live.vol >= earlier) { row.vol=live.vol;row.vt=0;row.volumeAsOf=null;row.volumeBasis=live.volumeBasis;row.volumeSessionStart=live.volumeSessionStart;row.volumeMinuteBarStart=live.volumeMinuteBarStart;row.volumeProvider=live.volumeProvider;row.volumeFeed=live.volumeFeed; }
++    else row.volumeRejected='SIP_DAILY_BELOW_EARLIER_CLOCKED_COUNT';
 +  }
 +  // A future clock must not pin either BBO or volume against later real data.
 +  // Equal-clock conflicts are not resolved by choosing the last arriving quote.
@@ -277,12 +341,28 @@ index 5aa3e95d..bfde1360 100644
 +  resetFeed(); process.env.ALPACA_FEED = 'iex'; const f = fake(true); await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f);
    assert.equal(feedUsed(), 'iex'); assert.ok(!f.calls.some(u => /feed=sip/.test(u))); delete process.env.ALPACA_FEED;
  });
+diff --git a/test/bot-actions.test.mjs b/test/bot-actions.test.mjs
+index cea9a594..a3f80c38 100644
+--- a/test/bot-actions.test.mjs
++++ b/test/bot-actions.test.mjs
+@@ -17,7 +17,10 @@ const sig = (extra = {}) => ({ session: '2026-10-27', market: { above50: true, u
+ const ok = { s: 'ok', d: new Date().toISOString().slice(0, 10) };
+ const PICKS = [{ sym: 'WST', fs: 9 }, { sym: 'HQY', fs: 9 }, { sym: 'MMSI', fs: 8 }];
+ async function render(files, s = sig()) { const S = await loadScan({ files: { 'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': s, ...files }, env: { TD_BASE: 'http://127.0.0.1:9', FH_BASE: 'http://127.0.0.1:9', SEC_BASE: 'http://127.0.0.1:9' } }); return { S, t: await S.fn('actionsText')(s, S.fn('loadPos')(), null, 'ACTIONS TEST') }; }
+-const section = (t, name) => { const i = t.indexOf('\n' + name); if (i < 0) return ''; const rest = t.slice(i + 1), j = rest.slice(1).search(/\n\n[A-Z][A-Z' -]{3,}(\(|\n|:)/); return j < 0 ? rest : rest.slice(0, j + 1); };
++// A section ends only at the next documented top-level heading (scan.mjs, 28 Oct layout). Sub-headings inside a section, such as the
++// Sunday weekly scoreboard's "THIS WEEK" inside RECORDS, are part of it (1 Nov: the old generic heading pattern cut RECORDS on Sundays).
++const TOP = ['POLICY TODAY', 'CRITICAL', "TODAY'S ACTIONS", 'NOT ACTIONABLE TODAY', 'APPROVED LANES', 'SHORT-TERM OPPORTUNITIES', 'CURRENT HOLDINGS', 'RECORDS', 'SYSTEM HEALTH', 'LONGER-TERM'];
++const section = (t, name) => { const i = t.indexOf('\n' + name); if (i < 0) return ''; const rest = t.slice(i + 1), ends = TOP.filter(h => h !== name).map(h => rest.indexOf('\n\n' + h, 1)).filter(j => j > 0); return ends.length ? rest.slice(0, Math.min(...ends) + 1) : rest; };
+ 
+ test('28 Oct contradiction fixed: focus on + LONGER HOLDS buys (marked halal) -> buys under TODAY\'S ACTIONS with their status; the policy says engine buys only are paused', async () => {
+   const { t } = await render({ 'data/quality.json': quality(PICKS), 'data/halal.json': { WST: ok, HQY: ok, MMSI: ok }, 'data/names.json': { WST: 'WEST PHARMACEUTICAL SERVICES INC' } });
 diff --git a/test/feed-integrity-watcher.test.mjs b/test/feed-integrity-watcher.test.mjs
 new file mode 100644
-index 00000000..5166eeec
+index 00000000..f057a79a
 --- /dev/null
 +++ b/test/feed-integrity-watcher.test.mjs
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,104 @@
 +// Full production watcher (ignition-watch.mjs) against synthetic local Massive + Alpaca services: SIP/IEX attribution,
 +// 403/422/429 handling, quote clocks and archive output. No credentials, provider, message or order; external fetch is refused.
 +// FEED_INTEGRITY_ROOT can point at another tree's modules (used to show the defects on unpatched production).
@@ -304,18 +384,23 @@ index 00000000..5166eeec
 +  fs.mkdirSync(path.join(dir, 'data'));
 +  execFileSync('git', ['init', '-q'], { cwd: dir, stdio: 'ignore' }); execFileSync('git', ['-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', 'commit', '--allow-empty', '-qm', 'fixture'], { cwd: dir, stdio: 'ignore' });
 +  const SYMS = scenario === 'race' ? Array.from({ length: 250 }, (_, i) => 'Z' + L[Math.floor(i / 26) % 26] + L[i % 26]) : ['ZZQ'];
-+  const mrow = (s) => ({ ticker: s, lastTrade: { p: 10, t: late * 1e6 }, lastQuote: { p: 9.98, P: 10.02, t: late * 1e6 }, prevDay: { c: 9.5, v: 2e6 }, min: { c: 10, t: late, av: 1e5 }, day: { c: 10, o: 9.6, v: 1e5 } });
++  const minT = scenario.startsWith('top50-future') ? epoch + 10 * 60000 : late;   // a future-dated Massive volume clock
++  const mrow = (s) => ({ ticker: s, lastTrade: { p: 10, t: late * 1e6 }, lastQuote: { p: 9.98, P: 10.02, t: late * 1e6 }, prevDay: { c: 9.5, v: 2e6 }, min: { c: 10, t: minT, av: 1e5 }, day: { c: 10, o: 9.6, v: 1e5 } });
++  let snapshotRequests = 0;
 +  const calls = [], sockets = new Set();
 +  const server = http.createServer(async (req, res) => { const u = new URL(req.url, 'http://localhost'), feed = u.searchParams.get('feed'); calls.push(u.pathname + (feed ? '?feed=' + feed : '')); res.setHeader('Content-Type', 'application/json');
 +    if (u.pathname.includes('/v2/snapshot/locale')) return res.end(JSON.stringify({ tickers: SYMS.map(mrow) }));
 +    if (u.pathname.includes('/screener/')) return res.end(JSON.stringify({ gainers: [{ symbol: 'ZZQ' }] }));
-+    if (u.pathname === '/v2/stocks/snapshots') { const syms = (u.searchParams.get('symbols') || '').split(',');
++    if (u.pathname === '/v2/stocks/snapshots') { const syms = (u.searchParams.get('symbols') || '').split(','); snapshotRequests++;
++      // top50-future*: the targeted refresh fails (non-403), so the watcher takes the top-50 fallback, whose snapshot succeeds
++      if (scenario.startsWith('top50-future') && snapshotRequests === 1) { res.statusCode = 500; return res.end('{}'); }
++      const minuteT = scenario === 'top50-future-sip-minute' ? epoch + 5 * 60000 : epoch - 60000;
 +      if (scenario === 'race') { if (feed === 'sip' && syms[0] === SYMS[0]) { await sleep(50); res.statusCode = 403; return res.end('{}'); } await sleep(feed === 'iex' ? 300 : 150); }
 +      if (feed === 'sip' && scenario === 'sip-403') { res.statusCode = 403; return res.end('{"message":"subscription does not permit"}'); }
 +      if (feed === 'sip' && scenario === 'sip-422') { res.statusCode = 422; return res.end('{"message":"invalid"}'); }
 +      if (scenario === 'sip-429') { res.statusCode = 429; res.setHeader('retry-after', '86400'); return res.end('{}'); }
 +      const tt = new Date(epoch - 30000).toISOString();
-+      return res.end(JSON.stringify(Object.fromEntries(syms.map(s => [s, { latestTrade: { p: 11, t: tt }, latestQuote: { bp: 10.99, ap: 11.01, t: tt }, minuteBar: { t: new Date(epoch - 60000).toISOString(), c: 11, v: 1000 }, dailyBar: { t: day + 'T04:00:00Z', o: 9.6, c: 11, v: feed === 'sip' ? 3e6 : 5e4 }, prevDailyBar: { c: 9.5, v: 2e6 } }])))); }
++      return res.end(JSON.stringify(Object.fromEntries(syms.map(s => [s, { latestTrade: { p: 11, t: tt }, latestQuote: { bp: 10.99, ap: 11.01, t: tt }, minuteBar: { t: new Date(minuteT).toISOString(), c: 11, v: 1000 }, dailyBar: { t: day + 'T04:00:00Z', o: 9.6, c: 11, v: feed === 'sip' ? 3e6 : 5e4 }, prevDailyBar: { c: 9.5, v: 2e6 } }])))); }
 +    res.statusCode = 404; res.end('{}'); });
 +  server.on('connection', s => { sockets.add(s); s.on('close', () => sockets.delete(s)); }); await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => { for (const s of sockets) s.destroy(); server.close(); });
 +  const base = 'http://127.0.0.1:' + server.address().port, preload = path.join(dir, 'local-only.mjs');
@@ -332,10 +417,10 @@ index 00000000..5166eeec
 +  return { calls, live, shadow, SYMS, snaps: calls.filter(c => c.startsWith('/v2/stocks/snapshots')) };
 +}
 +
-+test('SIP answer: live SIP price, volume and quote with their own clocks; archive says SIP', async t => {
++test('SIP answer: SIP price and quote with their own clocks; SIP daily volume used but labelled as having no stated as-of time', async t => {
 +  const r = await run(t, 'sip-ok'), x = r.shadow.find(s => s.sym === 'ZZQ'), ig = x.ig[0];
 +  assert.deepEqual(r.snaps, ['/v2/stocks/snapshots?feed=sip']);
-+  assert.match(r.live.src, /SIP feed/); assert.match(r.live.src, /live SIP volume for 1/);
++  assert.match(r.live.src, /SIP feed/); assert.match(r.live.src, /SIP daily volume \(provider states no as-of time\) for 1/); assert.doesNotMatch(r.live.src, /live SIP volume/);
 +  assert.equal(x.px0, 11); assert.equal(x.rv0, 1.5, 'full-market SIP volume 3e6 / previous 2e6');
 +  assert.equal(ig.bid, 10.99); assert.equal(ig.qAgeSec, 30, 'quote age from the quote clock');
 +});
@@ -370,18 +455,30 @@ index 00000000..5166eeec
 +  const r = await run(t, 'top50'), x = r.shadow.find(s => s.sym === 'ZZQ');
 +  assert.equal(r.live.mode, 'PARTIAL_TOP50_FALLBACK'); assert.equal(x.px0, 11); assert.equal(x.ig[0].bid, null); assert.equal(x.ig[0].qAgeSec, null);
 +});
++
++test('top-50 fallback: a future-dated Massive volume clock is rejected; this response\'s consistent SIP daily volume is used instead', async t => {
++  const r = await run(t, 'top50-future'), x = r.shadow.find(s => s.sym === 'ZZQ');
++  assert.equal(r.live.mode, 'PARTIAL_TOP50_FALLBACK'); assert.equal(x.px0, 11);
++  assert.equal(x.dv0, 3e6 * 11, 'dollar volume from SIP 3e6; the future-clocked Massive 1e5 is not used (top-50 rows carry no previous-day volume, so rv is not computed)');
++});
++
++test('top-50 fallback: future-dated volume on both sources leaves volume unknown (never a future-clocked figure)', async t => {
++  const r = await run(t, 'top50-future-sip-minute'), x = r.shadow.find(s => s.sym === 'ZZQ');
++  assert.equal(r.live.mode, 'PARTIAL_TOP50_FALLBACK'); assert.equal(x.px0, 11);
++  assert.ok(!(x.dv0 > 0), 'no volume survives clock validation: dv0=' + x.dv0);
++});
 diff --git a/test/feed-integrity.test.mjs b/test/feed-integrity.test.mjs
 new file mode 100644
-index 00000000..8781153a
+index 00000000..2e37f6f8
 --- /dev/null
 +++ b/test/feed-integrity.test.mjs
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,128 @@
 +// Feed integrity (1 Nov 2026): per-response SIP/IEX attribution, error handling and per-field provider clocks.
 +// Synthetic local fetchers only; no provider, credential or message. Run: node --test test/feed-integrity.test.mjs
 +import test from 'node:test';
 +import assert from 'node:assert/strict';
 +import { snapshots, feedUsed, snapshotFeed, feedEvidence, resetFeed, COOLDOWN_CAP_MS } from '../alpaca-feed.mjs';
-+import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot } from '../snapshot-fields.mjs';
++import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot, sipDailyVolume, validateClocks } from '../snapshot-fields.mjs';
 +
 +const BASE = 'http://127.0.0.1:9';
 +const row = (v) => ({ latestTrade: { p: 10, t: '2026-10-30T14:00:00Z' }, dailyBar: { t: '2026-10-30T04:00:00Z', v } });
@@ -450,16 +547,37 @@ index 00000000..8781153a
 +    assert.equal(await snapshots(base, ['AAA'], {}, async () => { n++; return reply(200, { AAA: row(1) }); }), null, base); assert.equal(n, 0); }
 +});
 +
-+test('Alpaca volume: SIP only, clocked by the same response\'s latest minute bar, never by the trade', () => {
-+  const x = { latestTrade: { p: 11, t: '2026-10-30T14:29:30Z' }, minuteBar: { t: '2026-10-30T14:28:00Z' }, dailyBar: { t: '2026-10-30T04:00:00Z', c: 11, v: 3e6 }, latestQuote: { bp: 10.99, ap: 11.01, t: '2026-10-30T14:29:31Z' } };
-+  const sip = alpacaSnapshot('AAA', x, true), iex = alpacaSnapshot('AAA', x, false);
-+  assert.equal(sip.vol, 3e6); assert.equal(sip.vt, Date.parse('2026-10-30T14:28:00Z')); assert.equal(sip.volumeFeed, 'sip');
-+  assert.equal(iex.vol, null); assert.equal(iex.vt, 0); assert.equal(iex.quoteFeed, 'iex'); assert.equal(iex.priceFeed, 'iex');
++test('Alpaca SIP daily volume: documented contract gives no as-of time; session and minute bar are observations, never a freshness clock', () => {
++  const now = Date.parse('2026-10-30T14:30:00Z');
++  const x = { latestTrade: { p: 11, t: '2026-10-30T14:29:30Z' }, minuteBar: { t: '2026-10-30T14:28:00Z', v: 1000 }, dailyBar: { t: '2026-10-30T04:00:00Z', c: 11, v: 3e6 }, latestQuote: { bp: 10.99, ap: 11.01, t: '2026-10-30T14:29:31Z' } };
++  const sip = alpacaSnapshot('AAA', x, true, now), iex = alpacaSnapshot('AAA', x, false, now);
++  assert.equal(sip.vol, 3e6); assert.equal(sip.vt, 0, 'no observed as-of time: age unknown'); assert.equal(sip.volumeAsOf, null);
++  assert.equal(sip.volumeBasis, 'SIP_DAILY_BAR_ASOF_UNSTATED'); assert.equal(sip.volumeSessionStart, Date.parse('2026-10-30T04:00:00Z')); assert.equal(sip.volumeMinuteBarStart, Date.parse('2026-10-30T14:28:00Z'));
++  assert.equal(iex.vol, null); assert.equal(iex.volumeRejected, 'NOT_SIP'); assert.equal(iex.quoteFeed, 'iex'); assert.equal(iex.priceFeed, 'iex');
 +  assert.equal(sip.t, Date.parse('2026-10-30T14:29:30Z')); assert.equal(sip.qt, Date.parse('2026-10-30T14:29:31Z'));
-+  const noMinute = alpacaSnapshot('AAA', { ...x, minuteBar: undefined }, true); assert.equal(noMinute.vt, Date.parse('2026-10-30T04:00:00Z'), 'without a minute bar only the session start is known');
-+  const staleMinute = alpacaSnapshot('AAA', { ...x, minuteBar: { t: '2026-10-29T19:59:00Z' } }, true); assert.equal(staleMinute.vt, Date.parse('2026-10-30T04:00:00Z'), 'a minute bar from another session is not this volume\'s clock');
-+  const closeOnly = alpacaSnapshot('AAA', { dailyBar: { t: '2026-10-30T04:00:00Z', c: 12 }, latestTrade: { t: '2026-10-30T14:29:30Z' } }, true);
++  const closeOnly = alpacaSnapshot('AAA', { dailyBar: { t: '2026-10-30T04:00:00Z', c: 12 }, latestTrade: { t: '2026-10-30T14:29:30Z' } }, true, now);
 +  assert.equal(closeOnly.price, 12); assert.equal(closeOnly.priceKind, 'DAILY_BAR'); assert.equal(closeOnly.t, Date.parse('2026-10-30T04:00:00Z'), 'a bar price never borrows the trade clock');
++});
++
++test('SIP daily volume is rejected when it contradicts itself, is another session, or carries a future clock', () => {
++  const now = Date.parse('2026-10-30T14:30:00Z'), ok = { dailyBar: { t: '2026-10-30T04:00:00Z', v: 3e6 }, minuteBar: { t: '2026-10-30T14:28:00Z', v: 1000 } };
++  assert.equal(sipDailyVolume(ok, now).ok, true);
++  for (const [why, x] of [
++    ['NOT_TODAYS_SESSION', { ...ok, dailyBar: { t: '2026-10-29T04:00:00Z', v: 3e6 }, minuteBar: undefined }],
++    ['FUTURE_SESSION', { ...ok, dailyBar: { t: '2026-10-31T04:00:00Z', v: 3e6 } }],
++    ['FUTURE_MINUTE_BAR', { ...ok, minuteBar: { t: '2026-10-30T14:45:00Z', v: 1 } }],
++    ['MINUTE_BAR_OTHER_SESSION', { ...ok, minuteBar: { t: '2026-10-29T19:59:00Z', v: 1 } }],
++    ['DAILY_BELOW_MINUTE_BAR', { ...ok, minuteBar: { t: '2026-10-30T14:28:00Z', v: 4e6 } }],
++    ['NO_SESSION_TIMESTAMP', { dailyBar: { v: 3e6 } }],
++  ]) assert.equal(sipDailyVolume(x, now).reason, why);
++  // winter time: the 05:00Z session start is still the New York day
++  assert.equal(sipDailyVolume({ dailyBar: { t: '2026-11-02T05:00:00Z', v: 1 } }, Date.parse('2026-11-02T15:00:00Z')).ok, true);
++});
++
++test('per-field clock validation: future price, volume and quote clocks never vouch for their values', () => {
++  const now = 1793370000000, r = validateClocks({ price: 5, t: now + 1, vol: 9, vt: now + 1, bid: 1, ask: 2, qt: now + 1 }, now);
++  assert.equal(r.t, 0); assert.equal(r.vol, null); assert.equal(r.vt, 0); assert.equal(r.volumeRejected, 'FUTURE_VOLUME_CLOCK'); assert.equal(r.qt, 0); assert.equal(r.bid, 0);
++  const fine = validateClocks({ price: 5, t: now, vol: 9, vt: now - 1 }, now); assert.equal(fine.vol, 9); assert.equal(fine.t, now);
 +});
 +
 +test('Massive price clock follows the price actually used; the snapshot "updated" time is never a price clock', () => {
@@ -470,26 +588,30 @@ index 00000000..8781153a
 +  assert.equal(dayOnly.price, 8); assert.equal(dayOnly.t, 0, 'a close with no clock must not look fresh');
 +});
 +
-+test('merge: newer SIP volume replaces late Massive volume; IEX never does; future and crossed values never win', () => {
++test('merge: SIP daily volume (no as-of) is used only when consistent with the earlier clocked count; IEX never; future and crossed values never win', () => {
 +  const now = Date.parse('2026-10-30T14:30:00Z');
 +  const m = massiveSnapshot({ ticker: 'AAA', lastTrade: { p: 10, t: (now - 20 * 60000) * 1e6 }, min: { c: 10, t: now - 21 * 60000, av: 1e5 }, lastQuote: { p: 9.9, P: 10.1, t: (now - 20 * 60000) * 1e6 } });
-+  const x = { latestTrade: { p: 11, t: new Date(now - 30000).toISOString() }, minuteBar: { t: new Date(now - 60000).toISOString() }, dailyBar: { t: '2026-10-30T04:00:00Z', v: 3e6 }, latestQuote: { bp: 10.99, ap: 11.01, t: new Date(now - 30000).toISOString() } };
-+  const a = { ...m }; assert.equal(mergeLiveSnapshot(a, alpacaSnapshot('AAA', x, true), now), true);
-+  assert.equal(a.price, 11); assert.equal(a.vol, 3e6); assert.equal(a.volumeFeed, 'sip'); assert.equal(a.bid, 10.99); assert.equal(a.quoteFeed, 'sip');
-+  const b = { ...m }; mergeLiveSnapshot(b, alpacaSnapshot('AAA', x, false), now);
++  const x = { latestTrade: { p: 11, t: new Date(now - 30000).toISOString() }, minuteBar: { t: new Date(now - 60000).toISOString(), v: 100 }, dailyBar: { t: '2026-10-30T04:00:00Z', v: 3e6 }, latestQuote: { bp: 10.99, ap: 11.01, t: new Date(now - 30000).toISOString() } };
++  const a = { ...m }; assert.equal(mergeLiveSnapshot(a, alpacaSnapshot('AAA', x, true, now), now), true);
++  assert.equal(a.price, 11); assert.equal(a.vol, 3e6); assert.equal(a.vt, 0, 'age unknown after replacement'); assert.equal(a.volumeBasis, 'SIP_DAILY_BAR_ASOF_UNSTATED'); assert.equal(a.bid, 10.99); assert.equal(a.quoteFeed, 'sip');
++  const low = { ...m }; mergeLiveSnapshot(low, alpacaSnapshot('AAA', { ...x, dailyBar: { t: '2026-10-30T04:00:00Z', v: 5e4 } }, true, now), now);
++  assert.equal(low.vol, 1e5, 'a cumulative total below an earlier clocked count is a contradiction'); assert.equal(low.volumeRejected, 'SIP_DAILY_BELOW_EARLIER_CLOCKED_COUNT');
++  const b = { ...m }; mergeLiveSnapshot(b, alpacaSnapshot('AAA', x, false, now), now);
 +  assert.equal(b.price, 11); assert.equal(b.vol, 1e5, 'IEX volume is one venue only'); assert.equal(b.quoteFeed, 'iex', 'an IEX quote is labelled as IEX, not NBBO');
-+  const c = { ...m }; mergeLiveSnapshot(c, alpacaSnapshot('AAA', { ...x, latestTrade: { p: 50, t: new Date(now + 60000).toISOString() }, latestQuote: { bp: 11, ap: 10, t: new Date(now - 1000).toISOString() } }, true), now);
++  const c = { ...m }; mergeLiveSnapshot(c, alpacaSnapshot('AAA', { ...x, latestTrade: { p: 50, t: new Date(now + 60000).toISOString() }, latestQuote: { bp: 11, ap: 10, t: new Date(now - 1000).toISOString() } }, true, now), now);
 +  assert.equal(c.price, 10, 'future trade clock refused'); assert.equal(c.bid, 9.9, 'crossed quote refused');
 +});
 diff --git a/test/premarket-feed.test.mjs b/test/premarket-feed.test.mjs
 new file mode 100644
-index 00000000..4424af84
+index 00000000..fb9c7f0a
 --- /dev/null
 +++ b/test/premarket-feed.test.mjs
-@@ -0,0 +1,49 @@
-+// Actual premarket-check.mjs against a synthetic local Alpaca service: the "pre-market trade" test uses New York dates
-+// (a late after-hours trade is the next UTC day), and the message names the response feed and the trade's own time.
-+// No Telegram variables are set, so nothing is sent; any non-local fetch throws. PREMARKET_ROOT can point at another tree.
+@@ -0,0 +1,79 @@
++// Actual premarket-check.mjs against a synthetic local Alpaca service. The price basis of every line is explicit: CURRENT (today's
++// New York-date pre-market trade, at most 30 min old), STALE, PREV_CLOSE or MISSING. WATCH/HOLD only on a CURRENT price; stop, ACTIONS
++// and last-night-scan SELLs are preserved on any basis and say which basis they rest on. A late after-hours trade (next UTC date,
++// previous New York date) is never today's pre-market price. No Telegram variables are set, so nothing is sent; non-local fetch throws.
++// PREMARKET_ROOT can point at another tree (used to show the defects on unpatched production).
 +import test from 'node:test';
 +import assert from 'node:assert/strict';
 +import fs from 'node:fs';
@@ -501,38 +623,100 @@ index 00000000..4424af84
 +const nyDate = (d) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
 +// Start of today's New York date, found by stepping back from now (works in both EDT and EST).
 +const nyMidnight = () => { const today = nyDate(new Date()); let t = Date.now() - (Date.now() % 60000); while (nyDate(new Date(t - 60000)) === today) t -= 60000; return t; };
++const iso = (ms) => new Date(ms).toISOString();
 +
-+async function run(t, feedStatus) {
++async function run(t, { feedStatus = 200, rows, positions, signals, actionsSells }) {
 +  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'premarket-feed-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
 +  for (const f of ['premarket-check.mjs', 'alpaca-feed.mjs', 'market-symbol.mjs']) if (fs.existsSync(path.join(root, f))) fs.copyFileSync(path.join(root, f), path.join(dir, f));
-+  fs.mkdirSync(path.join(dir, 'data'));
-+  fs.writeFileSync(path.join(dir, 'data/my-positions.json'), JSON.stringify({ AAA: { entry: 10, stop: 8 }, BBB: { entry: 10, stop: 8 } }));
-+  const mid = nyMidnight(), lateAfterHours = new Date(mid - 30 * 60000).toISOString(), fresh = new Date(Date.now() - 60000).toISOString(), calls = [];
++  fs.mkdirSync(path.join(dir, 'data')); fs.writeFileSync(path.join(dir, 'data/my-positions.json'), JSON.stringify(positions));
++  if (signals) fs.writeFileSync(path.join(dir, 'data/signals.json'), JSON.stringify(signals));
++  if (actionsSells) fs.writeFileSync(path.join(dir, 'data/actions-sells.json'), JSON.stringify(actionsSells));
++  const calls = [];
 +  const server = http.createServer((req, res) => { const u = new URL(req.url, 'http://l'), feed = u.searchParams.get('feed'); calls.push(feed);
-+    if (feed === 'sip' && feedStatus !== 200) { res.statusCode = feedStatus; return res.end('{}'); }
-+    res.setHeader('Content-Type', 'application/json');
-+    res.end(JSON.stringify({ AAA: { latestTrade: { p: 9, t: lateAfterHours }, prevDailyBar: { c: 9.5 } }, BBB: { latestTrade: { p: 9.9, t: fresh }, prevDailyBar: { c: 9.5 } } })); });
++    if ((feed === 'sip' && feedStatus !== 200) || feedStatus === 500) { res.statusCode = feedStatus; return res.end('{}'); }
++    res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(rows)); });
 +  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => server.close());
 +  const base = 'http://127.0.0.1:' + server.address().port, preload = path.join(dir, 'local-only.mjs');
 +  fs.writeFileSync(preload, `const f=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(base + '/')}))throw Error('NO_EXTERNAL_ACCESS');return f(u,o);};`);
 +  const child = spawn(process.execPath, ['--import', preload, 'premarket-check.mjs'], { cwd: dir, env: { PATH: process.env.PATH, ALPACA_DATA_BASE: base, ALPACA_KEY: 'synthetic', ALPACA_SECRET: 'synthetic' }, stdio: ['ignore', 'pipe', 'pipe'] });
 +  let out = ''; child.stdout.on('data', x => out += x); child.stderr.on('data', x => out += x);
 +  const code = await new Promise(r => child.on('close', r)); assert.equal(code, 0, out);
-+  return { out, calls, lateAfterHours };
++  const lines = out.split('\n'), sectionOf = (sym) => { let sec = null; for (const l of lines) { if (/^[A-Z][A-Z ]+(\(|$)/.test(l) && !l.startsWith('- ')) sec = l.split(' (')[0]; if (l.startsWith('- ' + sym + ' ')) return { sec, line: l }; } return { sec: null, line: null }; };
++  return { out, calls, sectionOf };
 +}
++const pos = (stop) => ({ entry: 10, stop });
 +
-+test('a late after-hours trade (next UTC date, previous New York date) is not today\'s pre-market price', async t => {
-+  const r = await run(t, 200), aaa = r.out.split('\n').find(l => l.includes('AAA'));
-+  assert.equal(new Date(r.lateAfterHours).toISOString().slice(0, 10), nyDate(new Date()), 'fixture: the trade has today\'s UTC date');
-+  assert.match(aaa, /AAA no pre-market trade yet, close 9\.50/);
++test('price basis: CURRENT gives HOLD; late after-hours, stale and missing prices are NOT HOLD and say why; feed is named', async t => {
++  const now = Date.now(), mid = nyMidnight(), staleAt = now - 45 * 60000, staleToday = nyDate(new Date(staleAt)) === nyDate(new Date(now));
++  const r = await run(t, { positions: { AAA: pos(8), BBB: pos(8), CCC: pos(8), FFF: pos(8) }, rows: {
++    AAA: { latestTrade: { p: 9, t: iso(mid - 30 * 60000) }, prevDailyBar: { c: 9.5 } },          // after-hours trade, today's UTC date, yesterday in New York
++    BBB: { latestTrade: { p: 9.9, t: iso(now - 60000) }, prevDailyBar: { c: 9.5 } },             // current pre-market trade
++    CCC: { latestTrade: { p: 9.8, t: iso(staleToday ? staleAt : mid + 60000) }, prevDailyBar: { c: 9.5 } },
++  } });
++  assert.match(r.out, /\[prices: SIP feed\]/); assert.deepEqual(r.calls, ['sip']);
++  const a = r.sectionOf('AAA'), b = r.sectionOf('BBB'), f = r.sectionOf('FFF');
++  assert.equal(a.sec, 'NO CURRENT PRICE'); assert.match(a.line, /no pre-market trade today; last close 9\.50/); assert.match(a.line, /no HOLD\/WATCH call/);
++  assert.equal(b.sec, 'HOLD'); assert.match(b.line, /pre-market 9\.90 at \d\d:\d\d NY \(\+4\.2% vs close\)/);
++  assert.equal(f.sec, 'NO CURRENT PRICE'); assert.match(f.line, /FFF NO PRICE/);
++  if (staleToday) { const c = r.sectionOf('CCC'); assert.equal(c.sec, 'NO CURRENT PRICE'); assert.match(c.line, /STALE pre-market trade 9\.80 at \d\d:\d\d NY \(4[5-7] min old/); }
 +});
 +
-+test('a real pre-market trade is shown with its own New York time, and the header names the response feed', async t => {
-+  const r = await run(t, 200), bbb = r.out.split('\n').find(l => l.includes('BBB'));
-+  assert.match(bbb, /BBB pre-market 9\.90 at \d\d:\d\d NY \(\+4\.2% vs close\)/);
-+  assert.match(r.out, /\[prices: SIP feed\]/); assert.deepEqual(r.calls, ['sip']);
++test('exit instructions are preserved on every basis and name it: stale and previous-close stop hits, ACTIONS and scan SELLs', async t => {
++  const now = Date.now(), staleAt = now - 45 * 60000, staleToday = nyDate(new Date(staleAt)) === nyDate(new Date(now));
++  const r = await run(t, {
++    positions: { DDD: pos(9), EEE: pos(9), GGG: pos(8), HHH: pos(8), III: pos(8) },
++    rows: { DDD: { latestTrade: { p: 8.9, t: iso(staleAt) }, prevDailyBar: { c: 9.5 } }, EEE: { prevDailyBar: { c: 8.8 } }, GGG: { prevDailyBar: { c: 9.5 } } },
++    signals: { posVerdict: { HHH: 'SELL: halal fail (ZAD).' }, stocks: [{ sym: 'HHH', last: 9.4 }, { sym: 'III', last: 7.5 }] },
++    actionsSells: { at: new Date(now).toISOString(), sells: [{ sym: 'GGG', why: 'GGG: TIME EXIT after 126 sessions' }] } });
++  const e = r.sectionOf('EEE'), g = r.sectionOf('GGG'), h = r.sectionOf('HHH'), i = r.sectionOf('III');
++  assert.equal(e.sec, 'SELL'); assert.match(e.line, /last close 8\.80.*The last close is at or under your stop \(no current price\)/);
++  assert.equal(g.sec, 'SELL'); assert.match(g.line, /no pre-market trade today; last close 9\.50.*SELL today, as the last ACTIONS message said: TIME EXIT/);
++  assert.equal(h.sec, 'SELL'); assert.match(h.line, /last close \(last night’s scan\) 9\.40.*SELL today, as last night’s scan said: SELL: halal fail/);
++  assert.equal(i.sec, 'SELL'); assert.match(i.line, /last close \(last night’s scan\) 7\.50.*at or under your stop \(no current price\)/);
++  if (staleToday) { const d = r.sectionOf('DDD'); assert.equal(d.sec, 'SELL'); assert.match(d.line, /STALE pre-market trade 8\.90.*The last pre-market trade \(stale\) is at or under your stop; check the price at the open/); }
++});
++
++test('a refused feed is named; prices fall back only to labelled previous closes, never a HOLD', async t => {
++  const r = await run(t, { feedStatus: 500, positions: { JJJ: pos(8) }, rows: {}, signals: { stocks: [{ sym: 'JJJ', last: 9.6 }] } });
++  assert.match(r.out, /\[price feed refused\]/);
++  const j = r.sectionOf('JJJ'); assert.equal(j.sec, 'NO CURRENT PRICE'); assert.match(j.line, /last close \(last night’s scan\) 9\.60/);
 +});
 +
 +test('after a SIP 403 the header says IEX', async t => {
-+  const r = await run(t, 403); assert.match(r.out, /\[prices: IEX feed\]/); assert.deepEqual(r.calls, ['sip', 'iex']);
++  const r = await run(t, { feedStatus: 403, positions: { BBB: pos(8) }, rows: { BBB: { latestTrade: { p: 9.9, t: iso(Date.now() - 60000) }, prevDailyBar: { c: 9.5 } } } });
++  assert.match(r.out, /\[prices: IEX feed\]/); assert.deepEqual(r.calls, ['sip', 'iex']); assert.equal(r.sectionOf('BBB').sec, 'HOLD');
 +});
+diff --git a/test/watcher-incident-revision.test.mjs b/test/watcher-incident-revision.test.mjs
+index ebcc9118..46b41ed6 100644
+--- a/test/watcher-incident-revision.test.mjs
++++ b/test/watcher-incident-revision.test.mjs
+@@ -7,8 +7,10 @@ test('message reservations persist across instances; uncertain send is not repla
+ test('unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY',async()=>{const sec=await instrumentAwareSec('ZZQ',async()=>({known:true,tags:[]}));assert.equal(sec.admissionBlocked,true);const sent=[],EA=createEarlyAlerts({day,level:'all',now:()=>600,secRisk:async()=>sec,notHalal:()=>false,halalOk:()=>false,send:async text=>(sent.push(text),{ok:true})});EA.noteLead({sym:'ZZQ',m:600,price:10,chg:.04,score:90,rvT:4,dollarVol:3e6,live:true});EA.notePaper({sym:'ZZP',m:600,price:10,rule:'IG1'},.04);await EA.process();assert.equal(EA.S.seen['lead|ZZQ'].decision,'SENT');assert.equal(EA.S.seen['paper|ZZP'].decision,'SENT');assert.equal(EA.S.seen['lead|ZZQ'].instrument.status,'UNKNOWN');assert.equal(EA.S.seen['lead|ZZQ'].approvedBuyEligible,false);assert.ok(sent.every(x=>/RESEARCH ONLY.*Instrument identity may be UNKNOWN/s.test(x)));assert.equal(dEligible({form:'8-K',items:'8.01',atM:550,decM:580,chg:.01,price:10,prevDollarVol:3e6,spreadFresh:false,halalFail:false,lottery:0,sec}).eligible,true);});
+ test('actual watcher shadow producer retains unknown observations and filing records without adding source calls',()=>{const src=fs.readFileSync(process.env.INCIDENT_WATCHER_SRC||new URL('../ignition-watch.mjs',import.meta.url),'utf8'),a=src.indexOf('const shadowRows='),b=src.indexOf('\n',a),SR=createShadow({day}),EA={S:{sec:{}}};SR.early({sym:'ZZQ',m:600,price:10,chg:.04,score:90,dollarVol:3e6,live:true,hard:{}});SR.filing({sym:'ZZF',m:600,price:10,chg:.01,hard:{},f:{acc:'synthetic',eligible:true}});vm.runInNewContext(src.slice(a,b),{SR,EA,env:{},readInstrumentType:()=>({status:'UNKNOWN'})});assert.equal(SR.rows().length,2);assert.ok(SR.rows().every(x=>x.instrument.status==='UNKNOWN'&&x.approvedBuyEligible===false));assert.ok(SR.rows().find(x=>x.sym==='ZZF').f);});
+ // The full production caller test is enabled when the exact proposed production file is supplied.
+-if(process.env.INCIDENT_WATCHER_SRC)test('actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop',async t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-actual-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const source=path.resolve(process.env.INCIDENT_WATCHER_SRC),root=path.dirname(source);fs.mkdirSync(path.join(dir,'data'));fs.copyFileSync(path.join(root,'opportunity-radar.mjs'),path.join(dir,'opportunity-radar.mjs'));for(const file of ['radar-ledger.mjs','watcher-session.mjs','session-coverage.mjs','market-session.mjs','early-alerts.mjs','rank-models.mjs','ranking-cohort.mjs','shadow-eval.mjs','radar-v3-core.mjs'])fs.copyFileSync(path.join(root,file),path.join(dir,file));spawnSync('git',['init','-q'],{cwd:dir});spawnSync('git',['-c','user.name=fixture','-c','user.email=fixture@example.test','commit','--allow-empty','-qm','fixture'],{cwd:dir});const bin=path.join(dir,'bin');fs.mkdirSync(bin);const real=spawnSync('sh',['-c','command -v git'],{encoding:'utf8'}).stdout.trim();fs.writeFileSync(path.join(bin,'git'),'#!/bin/sh\nif [ "$1" = fetch ]; then exit 1; fi\nexec '+real+' "$@"\n',{mode:0o755});let snapshots=0,messages=[];const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{let out={};if(req.url.includes('/sendMessage')){messages.push(JSON.parse(body).text);out={ok:true,result:{message_id:messages.length}};}else if(req.url.includes('/snapshot/')){snapshots++;out={tickers:[{ticker:'ZZQ',lastTrade:{p:8,t:Date.now()*1e6},prevDay:{c:10,v:1e6},day:{o:8,c:8,v:1e6}}]};}else if(req.url.includes('company_tickers'))out={};res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;
+-const run=id=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,[source],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:'1',GITHUB_RUN_ID:id},stdio:['ignore','pipe','pipe']});let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);child.on('error',reject);child.on('close',code=>resolve({code,text}));});const write=(file,x)=>fs.writeFileSync(path.join(dir,'data',file),JSON.stringify(x));write('ignition-live.json',{day,heartbeat:full});let x=await run('complete');assert.equal(x.code,0,x.text);assert.match(x.text,/skipping duplicate/);assert.equal(snapshots,0);write('ignition-live.json',{day,heartbeat:[beat(570)]});write('my-positions.json',{ZZQ:{entry:10,stop:9}});x=await run('recover1');assert.equal(x.code,0,x.text);assert.ok(snapshots>0);assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);assert.ok(messages.some(x=>x.includes('OPPORTUNITY RADAR')), 'actual radar child sent one synthetic message');assert.ok(messages.some(x=>x.includes('Instrument identity may be UNKNOWN')), 'radar preserves explicit unknown context');const n=messages.length,before=snapshots;x=await run('recover2');assert.equal(x.code,0,x.text);assert.ok(snapshots>before);assert.equal(messages.length,n);assert.ok(fs.existsSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json')));});
++if(process.env.INCIDENT_WATCHER_SRC)test('actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop',async t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-actual-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const source=path.resolve(process.env.INCIDENT_WATCHER_SRC),root=path.dirname(source);fs.mkdirSync(path.join(dir,'data'));fs.copyFileSync(path.join(root,'opportunity-radar.mjs'),path.join(dir,'opportunity-radar.mjs'));for(const file of ['radar-ledger.mjs','watcher-session.mjs','session-coverage.mjs','market-session.mjs','early-alerts.mjs','rank-models.mjs','ranking-cohort.mjs','shadow-eval.mjs','radar-v3-core.mjs'])fs.copyFileSync(path.join(root,file),path.join(dir,file));spawnSync('git',['init','-q'],{cwd:dir});spawnSync('git',['-c','user.name=fixture','-c','user.email=fixture@example.test','commit','--allow-empty','-qm','fixture'],{cwd:dir});const bin=path.join(dir,'bin');fs.mkdirSync(bin);const real=spawnSync('sh',['-c','command -v git'],{encoding:'utf8'}).stdout.trim();fs.writeFileSync(path.join(bin,'git'),'#!/bin/sh\nif [ "$1" = fetch ]; then exit 1; fi\nexec '+real+' "$@"\n',{mode:0o755});// (1 Nov) Frozen fixture clock for the watcher process and the synthetic trade times: IG_DAY at minute 900 (15:00 New York), advancing in real time.
++const AT=Date.parse(day+'T19:00:00Z'),T0=Date.now(),fixtureNow=()=>AT+Date.now()-T0,clock=path.join(dir,'clock.mjs');fs.writeFileSync(clock,'const D=Date,at='+AT+',t0='+T0+',now=()=>at+D.now()-t0;globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[now()]));}static now(){return now();}};');
++let snapshots=0,messages=[];const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{let out={};if(req.url.includes('/sendMessage')){messages.push(JSON.parse(body).text);out={ok:true,result:{message_id:messages.length}};}else if(req.url.includes('/snapshot/')){snapshots++;out={tickers:[{ticker:'ZZQ',lastTrade:{p:8,t:fixtureNow()*1e6},prevDay:{c:10,v:1e6},day:{o:8,c:8,v:1e6}}]};}else if(req.url.includes('company_tickers'))out={};res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;
++const run=id=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,[source],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:'1',GITHUB_RUN_ID:id,NODE_OPTIONS:'--import='+clock},stdio:['ignore','pipe','pipe']});let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);child.on('error',reject);child.on('close',code=>resolve({code,text}));});const write=(file,x)=>fs.writeFileSync(path.join(dir,'data',file),JSON.stringify(x));write('ignition-live.json',{day,heartbeat:full});let x=await run('complete');assert.equal(x.code,0,x.text);assert.match(x.text,/skipping duplicate/);assert.equal(snapshots,0);write('ignition-live.json',{day,heartbeat:[beat(570)]});write('my-positions.json',{ZZQ:{entry:10,stop:9}});x=await run('recover1');assert.equal(x.code,0,x.text);assert.ok(snapshots>0);assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);assert.ok(messages.some(x=>x.includes('OPPORTUNITY RADAR')), 'actual radar child sent one synthetic message');assert.ok(messages.some(x=>x.includes('Instrument identity may be UNKNOWN')), 'radar preserves explicit unknown context');const n=messages.length,before=snapshots;x=await run('recover2');assert.equal(x.code,0,x.text);assert.ok(snapshots>before);assert.equal(messages.length,n);assert.ok(fs.existsSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json')));});
+ 
+ test('reservation publication failure prevents send and quarantines local retry',t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-reservation-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));let sent=0,published=0;const box=createWatcherMessages({day,directory:dir,persist:()=>{published++;throw Error('synthetic remote refusal');}});if(box.reserve('stop:ZZQ:hit'))sent++;assert.equal(sent,0);assert.equal(box.state('stop:ZZQ:hit'),'UNSENT');assert.equal(box.reserve('stop:ZZQ:hit'),false);assert.equal(published,1);});
+ 
+diff --git a/test/watcher-resilience.test.mjs b/test/watcher-resilience.test.mjs
+index b32cf9ba..f3f55246 100644
+--- a/test/watcher-resilience.test.mjs
++++ b/test/watcher-resilience.test.mjs
+@@ -1,7 +1,10 @@
+ import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';import {spawn,spawnSync} from 'node:child_process';import {createWatcherMessages} from '../watcher-messages.mjs';
+ test('publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct',t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'message-state-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));let allowed=false;const s=createWatcherMessages({day:'2026-10-30',directory:dir,retryMs:0,persist:(_,{record})=>({ok:allowed,record:allowed?record:undefined})});assert.equal(s.reserve('radar'),false);assert.equal(s.state('radar'),'UNSENT');allowed=true;assert.equal(s.reserve('radar'),true);s.finish('radar',{ok:true});assert.equal(s.state('radar'),'ACKNOWLEDGED');assert.equal(s.reserve('radar'),false);assert.equal(s.reserve('stop'),true);s.finish('stop',{ok:false});assert.equal(s.state('stop'),'UNCERTAIN');assert.equal(s.reserve('stop'),false);assert.equal(s.reserve('known-rejection'),true);s.finish('known-rejection',{ok:false,definitelyUnsent:true});assert.equal(s.state('known-rejection'),'UNSENT');assert.equal(s.reserve('known-rejection'),true);});
+-if(process.env.INCIDENT_WATCHER_SRC)for(const scenario of ['moved','competing','refusal-retry','interrupted','uncertain','clear-rejection','finish-refusal','missing-snapshot'])test('actual Actions watcher survives '+scenario,async t=>{const root=path.dirname(path.resolve(process.env.INCIDENT_WATCHER_SRC)),tmp=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-resilience-')),bare=path.join(tmp,'origin.git'),job=path.join(tmp,'job'),day='2026-10-30';t.after(()=>fs.rmSync(tmp,{recursive:true,force:true}));const git=(cwd,...args)=>{const x=spawnSync('git',args,{cwd,env:{PATH:process.env.PATH,HOME:tmp,GIT_AUTHOR_NAME:'fixture',GIT_AUTHOR_EMAIL:'fixture@example.test',GIT_COMMITTER_NAME:'fixture',GIT_COMMITTER_EMAIL:'fixture@example.test'},encoding:'utf8'});assert.equal(x.status,0,x.stderr);return x.stdout.trim();};git(tmp,'init','--bare','-b','main',bare);git(tmp,'clone',bare,job);for(const f of fs.readdirSync(root).filter(f=>f.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(job,f));fs.mkdirSync(path.join(job,'data'));fs.writeFileSync(path.join(job,'sentinel.mjs'),'// active source stays pinned\n');fs.writeFileSync(path.join(job,'data/ignition-live.json'),JSON.stringify({day,heartbeat:[{m:570,received:1,evaluated:1}]}));fs.writeFileSync(path.join(job,'data/my-positions.json'),JSON.stringify({ZZQ:{entry:10,stop:9}}));git(job,'add','.');git(job,'commit','-m','synthetic source and data');git(job,'push','-u','origin','main');const seed=git(job,'rev-parse','HEAD'),index=fs.readFileSync(path.join(job,'.git/index'));const other=path.join(tmp,'other');git(tmp,'clone','-b','main',bare,other);fs.writeFileSync(path.join(other,'sentinel.mjs'),'// unrelated remote revision must survive\n');git(other,'add','.');git(other,'commit','-m','unrelated remote advance');git(other,'push');let messages=[],snapshots=0,failTransport=true;const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{let out={};if(req.url.includes('/sendMessage')){messages.push(JSON.parse(body).text);if(scenario==='finish-refusal'&&failTransport){fs.writeFileSync(path.join(bare,'hooks/pre-receive'),'#!/bin/sh\nexit 1\n',{mode:0o755});failTransport=false;}if(scenario==='uncertain'&&failTransport){res.destroy();return;}if(['clear-rejection','missing-snapshot'].includes(scenario)&&failTransport){res.statusCode=429;out={ok:false};}else out={ok:true,result:{message_id:messages.length}};}else if(req.url.includes('/snapshot/')){snapshots++;out={tickers:[{ticker:'ZZQ',lastTrade:{p:8,t:Date.now()*1e6},prevDay:{c:10,v:1e6},day:{o:8,c:8,v:1e6}}]};}res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;const children=[];t.after(()=>children.forEach(x=>{if(x.exitCode===null)x.kill('SIGKILL');}));
+- fs.writeFileSync(path.join(tmp,'clock.mjs'),'const original=Date.now;Date.now=()=>original()+Number(process.env.FIXTURE_CLOCK_SHIFT||0);');
++if(process.env.INCIDENT_WATCHER_SRC)for(const scenario of ['moved','competing','refusal-retry','interrupted','uncertain','clear-rejection','finish-refusal','missing-snapshot'])test('actual Actions watcher survives '+scenario,async t=>{const root=path.dirname(path.resolve(process.env.INCIDENT_WATCHER_SRC)),tmp=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-resilience-')),bare=path.join(tmp,'origin.git'),job=path.join(tmp,'job'),day='2026-10-30';t.after(()=>fs.rmSync(tmp,{recursive:true,force:true}));const git=(cwd,...args)=>{const x=spawnSync('git',args,{cwd,env:{PATH:process.env.PATH,HOME:tmp,GIT_AUTHOR_NAME:'fixture',GIT_AUTHOR_EMAIL:'fixture@example.test',GIT_COMMITTER_NAME:'fixture',GIT_COMMITTER_EMAIL:'fixture@example.test'},encoding:'utf8'});assert.equal(x.status,0,x.stderr);return x.stdout.trim();};git(tmp,'init','--bare','-b','main',bare);git(tmp,'clone',bare,job);for(const f of fs.readdirSync(root).filter(f=>f.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(job,f));fs.mkdirSync(path.join(job,'data'));fs.writeFileSync(path.join(job,'sentinel.mjs'),'// active source stays pinned\n');fs.writeFileSync(path.join(job,'data/ignition-live.json'),JSON.stringify({day,heartbeat:[{m:570,received:1,evaluated:1}]}));fs.writeFileSync(path.join(job,'data/my-positions.json'),JSON.stringify({ZZQ:{entry:10,stop:9}}));git(job,'add','.');git(job,'commit','-m','synthetic source and data');git(job,'push','-u','origin','main');const seed=git(job,'rev-parse','HEAD'),index=fs.readFileSync(path.join(job,'.git/index'));const other=path.join(tmp,'other');git(tmp,'clone','-b','main',bare,other);fs.writeFileSync(path.join(other,'sentinel.mjs'),'// unrelated remote revision must survive\n');git(other,'add','.');git(other,'commit','-m','unrelated remote advance');git(other,'push');let messages=[],snapshots=0,failTransport=true;const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{let out={};if(req.url.includes('/sendMessage')){messages.push(JSON.parse(body).text);if(scenario==='finish-refusal'&&failTransport){fs.writeFileSync(path.join(bare,'hooks/pre-receive'),'#!/bin/sh\nexit 1\n',{mode:0o755});failTransport=false;}if(scenario==='uncertain'&&failTransport){res.destroy();return;}if(['clear-rejection','missing-snapshot'].includes(scenario)&&failTransport){res.statusCode=429;out={ok:false};}else out={ok:true,result:{message_id:messages.length}};}else if(req.url.includes('/snapshot/')){snapshots++;out={tickers:[{ticker:'ZZQ',lastTrade:{p:8,t:fixtureNow()*1e6},prevDay:{c:10,v:1e6},day:{o:8,c:8,v:1e6}}]};}res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;const children=[];t.after(()=>children.forEach(x=>{if(x.exitCode===null)x.kill('SIGKILL');}));
++ // (1 Nov) Frozen fixture clock: the watcher, its Date objects and the synthetic trade times all read the fixture session (IG_DAY at
++ // minute 900 = 15:00 New York), advancing in real time, plus the existing retry shift. The real calendar day never leaks in.
++ const AT=Date.parse(day+'T19:00:00Z'),T0=Date.now(),fixtureNow=()=>AT+Date.now()-T0;
++ fs.writeFileSync(path.join(tmp,'clock.mjs'),'const D=Date,at='+AT+',t0='+T0+',shift=Number(process.env.FIXTURE_CLOCK_SHIFT||0),now=()=>at+D.now()-t0+shift;globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[now()]));}static now(){return now();}};');
+  const launch=(cwd,id,interrupt=false)=>{const child=spawn(process.execPath,['ignition-watch.mjs'],{cwd,env:{PATH:process.env.PATH,HOME:tmp,GITHUB_ACTIONS:'true',GITHUB_REF_NAME:'main',GITHUB_RUN_ID:id,NODE_OPTIONS:'--import='+path.join(tmp,'clock.mjs'),FIXTURE_CLOCK_SHIFT:/retry/.test(id)?'120000':'0',MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:interrupt?'0':'1',IG_RUN_MIN:interrupt?'1':'0.3'},stdio:['ignore','pipe','pipe']});children.push(child);let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);const done=new Promise((resolve,reject)=>{child.on('error',reject);child.on('close',(code,signal)=>resolve({code,signal,text}));});return {child,done};};
+  if(scenario==='refusal-retry'||scenario==='interrupted')fs.writeFileSync(path.join(bare,'hooks/pre-receive'),'#!/bin/sh\nexit 1\n',{mode:0o755});
+  if(scenario==='interrupted'){const {child,done}=launch(job,'interrupt',true);await new Promise((resolve,reject)=>{const start=Date.now(),timer=setInterval(()=>{const f=path.join(job,'data/ignition-runs',day,'interrupt-1-progress.json');if(fs.existsSync(f)&&JSON.parse(fs.readFileSync(f)).heartbeat.length){clearInterval(timer);resolve();}else if(Date.now()-start>12000){clearInterval(timer);reject(Error('no progress archive'));}},20);});child.kill('SIGKILL');const result=await done;assert.equal(result.signal,'SIGKILL');assert.equal(messages.length,0);const progress=JSON.parse(fs.readFileSync(path.join(job,'data/ignition-runs',day,'interrupt-1-progress.json')));assert.ok(progress.heartbeat.length>=1);assert.ok(progress.messageDelivery.publicationFailures>0);}

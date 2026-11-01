@@ -1,68 +1,93 @@
-# Feed integrity: SIP/IEX attribution, errors and provider clocks (1 Nov 2026)
+# Feed integrity: SIP/IEX attribution, errors and provider clocks (1 Nov 2026, revision 2)
 
 **Status:** verified offline, then published on the separate branch `claude/feed-integrity`. Not deployed, not merged and not activated. No provider was contacted, and no feed default changed.
 
-**Owner:** Claude, taking over from Codex, whose environment ran out of processes and threads. This is **not** Codex's unpublished candidate (`provider-integrity.patch`, SHA256 `a78e11d1…`). That candidate exists only on Codex's blocked workspace, is on no GitHub ref, and could not be downloaded or hash-checked. This work was rebuilt from published sources only:
-- production `main` at `8291efd5`;
+**Owner:** Claude, taking over from Codex, whose environment ran out of processes and threads. This is **not** Codex's unpublished candidate (`provider-integrity.patch`, SHA256 `a78e11d1…`). That candidate is on no GitHub ref and could not be verified. This work was rebuilt from published sources only:
+- production `main`;
 - the published development checkpoint `cfc8550d` (its `alpaca-feed.mjs`, `market-symbol.mjs` and `snapshot-fields.mjs`).
+
+Revision 2 answers Codex's review of `3b91b7a`.
+
+## Alpaca volume timestamp contract (official documentation, read 1 Nov 2026)
+
+| Source | What it says |
+|---|---|
+| Snapshot reference (`docs.alpaca.markets/us/reference/stocksnapshotsingle`) | "A snapshot provides the latest trade, latest quote, latest minute bar, current daily bar and previous daily bar." Each bar `t` is "Timestamp in RFC-3339 format"; the example `dailyBar.t` is `…T04:00:00Z`. |
+| Market Data FAQ, "How are bars aggregated?" | Bars are aggregated from trades. The trade time is truncated "to the day (in New York) for daily bars". "The timestamp of the bar is the left side of the interval." |
+| Real-time stock data (websocket) | "Daily bars … contain all trades until the time they were emitted." This describes the **stream**, not the REST snapshot, so it is not used. |
+
+**Contract applied:**
+- `dailyBar.t` is the New York **session start**, not an as-of time.
+- The REST snapshot states **no as-of time** for the cumulative daily volume.
+- The latest minute bar's start is a separate observation and does not show when the daily total was computed.
+
+**Implementation** (`snapshot-fields.mjs`):
+- **Observed:** `volumeSessionStart` (dailyBar.t) and `volumeMinuteBarStart` (minuteBar.t).
+- **Derived:** none. `vt` stays 0 and `volumeAsOf` is null, so the volume's age is unknown and it is never labelled "live".
+- **Label:** `volumeBasis: SIP_DAILY_BAR_ASOF_UNSTATED`.
+- **Rejected** (`volumeRejected` gives the reason) when it:
+  - is not SIP;
+  - has no session timestamp;
+  - is a future session or not today's New York session;
+  - has a future minute bar, or a minute bar from another session;
+  - has a daily total below the minute bar's own volume.
+- **Merge:** SIP daily volume replaces a clocked count (for example Massive's 15-minute-delayed total) only if it is not below that earlier count, because a cumulative total cannot shrink. Otherwise the earlier count stays, with `SIP_DAILY_BELOW_EARLIER_CLOCKED_COUNT`.
+- **Heartbeat:** the watcher's median volume age (`volAgeP50`) now counts only volumes with an observed as-of time. Revision 1 had stamped SIP volume with the minute-bar start, which made it look about one minute old.
+- **Source label:** reads "SIP daily volume (provider states no as-of time) for N".
 
 ## Scope (five runtime files)
 
 | File | Change |
 |---|---|
 | `alpaca-feed.mjs` | Per-response feed label (`snapshotFeed`). SIP 403 is the only IEX downgrade; 422 is a failed request. 429 is not retried, and its pause is capped at 5 min. Network, JSON, unrequested-symbol and error-object answers return nothing. A `null` row drops only that symbol. The base must be the Alpaca data origin or a local test service. 10 s timeout, no redirects. |
-| `market-symbol.mjs` | New. Syntax-only symbol check, taken from the development checkpoint. |
-| `snapshot-fields.mjs` | New. Each field keeps its own provider clock. Massive: the price clock follows the price actually used, and the snapshot's `updated` time is never a price clock. Alpaca: volume comes from SIP only, clocked by the same response's latest minute bar (never the trade). A daily-bar price keeps the session-start clock. Merges refuse future clocks and crossed quotes. |
-| `ignition-watch.mjs` | Uses the modules above. SIP is judged per response. Live SIP volume replaces late Massive volume only when its own clock is newer. The top-50 fallback keeps its original field set but no longer throws away same-response SIP volume. The source label names this minute's feeds. The refresh symbol scope and decision tree are unchanged. |
-| `premarket-check.mjs` | "Today's pre-market trade" uses the New York date, not the UTC date. The header names the response feed, and each pre-market price shows its own New York time. |
+| `market-symbol.mjs` | New. Syntax-only symbol check, from the development checkpoint. |
+| `snapshot-fields.mjs` | New. Per-field provider clocks. Massive: the price clock follows the price actually used, never the snapshot's `updated` time. Alpaca: the volume contract above. `validateClocks`: a future price, volume or quote clock never vouches for its value. Merges refuse future clocks and crossed quotes. |
+| `ignition-watch.mjs` | SIP is judged per response. The top-50 fallback applies the same per-field clock validation (future volume, price and quote clocks are rejected; the newer valid clock wins) and keeps its original field set. The source label names this minute's feeds. The refresh symbol scope and decision tree are unchanged. |
+| `premarket-check.mjs` | New York date for "today's" trade. Every line names its price basis (below). The header names the response feed. |
 
-**Unchanged:**
-- SIP first, and IEX only after a SIP 403;
-- request cadence (apart from no retry during a 429 pause);
-- symbol and refresh scope;
-- strategy rules, gates, halal/ZAD, accounting and messages, apart from the pre-market feed/time text;
-- archive file set and field schema;
-- workflows, `data/**`, and the V1 and frozen evaluators.
+## Pre-market price basis (strategy rules unchanged)
 
-## Defects fixed (each reproduced on production `main` by the tests below)
+| Basis | Meaning | Possible outcome |
+|---|---|---|
+| CURRENT | Today's (New York date) pre-market trade, at most 30 min old | SELL / WATCH / HOLD, as before |
+| STALE | Today's pre-market trade, older than 30 min | SELL if at or under the stop, worded "stale … check the price at the open"; otherwise NO CURRENT PRICE |
+| PREV_CLOSE | No trade today; the last close (snapshot previous-day bar, or last night's scan, which is named) | SELL if the close is at or under the stop ("no current price"); otherwise NO CURRENT PRICE |
+| MISSING | No usable price | NO CURRENT PRICE ("NO PRICE") |
 
-1. **IEX volume read as SIP (concurrency race).**
-   - **How:** `alpacaAll` sends up to 6 requests at once and read a shared, mutable feed label after each response. If one part's SIP answer landed between another part's SIP 403 and its IEX answer, the IEX payload was read as SIP.
-   - **Effect:** IEX's one-venue volume was used as full-market volume.
-   - **Shown on the actual production watcher:** 200 IEX-answered symbols got relative volume 0.025 (IEX 5e4) instead of 0.05 (Massive 1e5).
-2. **422 treated as an entitlement downgrade.** Production switched to IEX for the rest of the run on a 422, which signals an invalid request.
-3. **429 retried immediately.** The same minute requested again with no pause.
-4. **Massive price clock.** A daily close with no trade or minute bar took the snapshot's `updated` time, so a stale price could look fresh.
-5. **Volume clock borrowed from the trade clock.** Alpaca and Massive volume were stamped with the trade time.
-6. **Top-50 fallback discarded same-response SIP volume.** It used late Massive volume instead, or null when there was no Massive row.
-7. **Pre-market date in UTC.** In New York winter time, a 7–8 pm after-hours trade has the next UTC date. Production would have shown it as today's pre-market price from 2 Nov.
-8. **Source label.** The label was a process-wide guess; it now names the feeds actually observed.
+- **Preserved:** ACTIONS SELLs and last-night-scan SELLs apply on any basis, and their lines show the basis.
+- **New section:** NO CURRENT PRICE ("stale, previous close only or missing: not a HOLD"). It replaces a HOLD or WATCH that would have rested on a non-current price.
+- **The 30-minute threshold** only labels freshness; it is not a trading rule.
+- **Rule preservation check:** a 64-case grid (4 price bases × 4 price levels × 4 instruction types) gives an identical SELL set on production and on this branch (48 symbols each).
 
-## Tests
+## Defects fixed (each reproduced on production by the tests)
 
-| Test file | Cases | On this branch | On production `main` (negative control) |
-|---|---:|---|---|
-| `test/feed-integrity.test.mjs` (feed and field modules) | 11 | all pass | the modules do not exist there |
-| `test/feed-integrity-watcher.test.mjs` (actual watcher, synthetic local Massive/Alpaca, external fetch refused, fixed clock) | 6 | all pass | 4 fail (SIP label, 422, 429, race); 2 controls pass (403, top-50) |
-| `test/premarket-feed.test.mjs` (actual pre-market check) | 3 | all pass | 3 fail (UTC date, plus 2 label checks) |
-| `test/alpaca-feed.test.mjs` (existing) | 3 | pass | base URL updated to a local service, as in the development checkpoint |
+1. **IEX volume read as SIP** under concurrent requests (shared mutable feed label).
+2. **422 treated as an entitlement downgrade.**
+3. **429 retried immediately.**
+4. **Massive daily close** clocked by the snapshot's `updated` time.
+5. **Volume clocked by the trade time.**
+6. **Top-50 fallback volume:** it discarded same-response SIP volume, and kept future-clocked Massive volume.
+7. **Pre-market check:** used the UTC date (from 2 Nov a 7–8 pm New York after-hours trade would have looked like today's pre-market), and gave HOLD/WATCH on non-current prices.
+8. **Source label:** a process-wide guess, now replaced by the feeds actually observed.
 
-**Archive preservation** (actual watcher, production vs branch, keys compared, values excluded):
-- the SIP, SIP-403 and top-50 scenarios write the same files with identical field schemas (8, 7 and 7 files);
-- the 9:25 pre-market record (`data/premarket.jsonl`) is byte-identical.
+## Test repairs (test files only; assertions preserved)
 
-Full production suite results are in `docs/validation/feed-integrity-verification.json`.
+- **`test/bot-actions.test.mjs`:** the `section()` helper ended a section at any capitalised heading. On Sundays the weekly scoreboard adds "THIS WEEK" inside RECORDS, which cut RECORDS before the PRACTICE ACCOUNT line. The helper now ends a section only at the documented top-level headings. The production message was correct throughout.
+- **`test/watcher-incident-revision.test.mjs` and `test/watcher-resilience.test.mjs`:** these ran the watcher for `IG_DAY=2026-10-30` with the real `Date.now()`, and the synthetic trade times also used the real clock. On another calendar day (here Sunday 1 Nov) the stop alert did not fire. The watcher process (`--import` clock) and the stub's trade times now share one frozen fixture clock: 30 Oct 15:00 New York (minute 900), advancing in real time, plus the existing retry shift.
+- **Correction:** the earlier explanation for these 8 failures ("gated tests run against the wrong watcher") was wrong.
+- **Result:** all 9 previously failing cases pass, against both the production watcher and this branch's watcher.
 
-## Not claimed; remaining blockers
+## Remaining limitations
 
-- **Codex's candidate:** `a78e11d1…` is unverified and unavailable, and this branch makes no statement about it.
-- **V2 outcomes file:** `sec-proof-ready-outcomes.mjs` (an interrupted write) is on no published ref. Its existence and completeness are UNKNOWN. Nothing was reconstructed and nothing is included here.
+- **Codex's candidate:** `a78e11d1…` is unavailable and unverified.
+- **V2 outcomes file:** `sec-proof-ready-outcomes.mjs` (an interrupted write) is UNKNOWN and was not reconstructed.
 - **Live behaviour is unverified:**
-  - the account's actual SIP entitlement and endpoint/key mapping;
-  - real BBO ages, sizes and coverage;
-  - whether real SIP `minuteBar` timing behaves as the fixtures assume.
+  - SIP entitlement and endpoint/key mapping;
+  - real snapshot field behaviour, BBO ages, sizes and coverage.
 
-  These need the owner's protected checks, not provider probes from here.
-- **Massive delay:** Massive stays 15 minutes delayed for discovery, the opening range and pre-market minute bars. This change does not make those fields real-time.
-- **One-sided quotes:** a one-sided Alpaca quote (bid 0) no longer replaces Massive's quote. This is stricter than production.
-- **Deployment:** needs the owner's approval and independent review.
+  These need the owner's protected checks.
+- **SIP daily volume** is used with an unknown age, because the provider states none. Volume rules therefore rest on a figure whose freshness is not established; only consistency checks back it.
+- **Massive stays 15 minutes delayed.**
+- **One-sided Alpaca quotes** (no bid) no longer replace Massive's quote.
+- **A future-clocked price** in the top-50 fallback with no other source is dropped (price 0, so not evaluated).
+- **Deployment** needs independent review and owner approval.

@@ -1,42 +1,68 @@
 {
- "kind": "FEED_INTEGRITY_PRODUCTION_CANDIDATE_V1",
+ "kind": "FEED_INTEGRITY_PRODUCTION_CANDIDATE_V2",
+ "revision": 2,
+ "previousRevision": "3b91b7a7a61b38eff07bb6e95adc211a5242393e",
  "owner": "Claude (takeover; not Codex candidate a78e11d1, which is unpublished and unverified)",
- "productionBase": "8291efd5e58d33f6059504af23aa5b250b358b12",
+ "productionBase": "e1f6effa25a7327f2e36f7928014eecad7363fe8",
  "sourcesPorted": {
   "developmentCheckpoint": "cfc8550d47aa26699c9266258b77d71a1be2f770",
   "files": [
    "alpaca-feed.mjs",
    "market-symbol.mjs",
    "snapshot-fields.mjs"
-  ],
-  "changedAfterPort": [
-   "alpaca-feed.mjs: 429 pause capped at 5 min; null row dropped per symbol",
-   "snapshot-fields.mjs: SIP volume clock = same-response minute-bar start (dev used the daily-bar session start, which made live SIP volume lose to late Massive volume)"
   ]
  },
- "patch": {
-  "path": "docs/validation/feed-integrity.patch",
-  "sha256": "825537a87217e01a5f5e167c657e540c37cfbce53b3aa4b31540fca7502a7177",
-  "appliesTo": "8291efd5e58d33f6059504af23aa5b250b358b12"
+ "volumeContract": {
+  "sources": [
+   "https://docs.alpaca.markets/us/reference/stocksnapshotsingle",
+   "https://docs.alpaca.markets/us/docs/market-data-faq#how-are-bars-aggregated"
+  ],
+  "dailyBarT": "New York session start (left edge of the day interval), not an as-of time",
+  "asOf": "NOT STATED by the REST snapshot",
+  "observed": [
+   "volumeSessionStart",
+   "volumeMinuteBarStart"
+  ],
+  "derived": [],
+  "label": "SIP_DAILY_BAR_ASOF_UNSTATED",
+  "neverLabelledLive": true
+ },
+ "patches": {
+  "combined": {
+   "path": "docs/validation/feed-integrity.patch",
+   "sha256": "fe5cbd19d7121c055971c0cbca1dd22d119e9a5afbe1c20c913dcc18ecf05c90"
+  },
+  "runtime": {
+   "path": "docs/validation/feed-integrity-runtime.patch",
+   "sha256": "93fb1f5b1c4baa623532c395dc1189dea61bb085ce56d3429aae03619fc8ae8a"
+  },
+  "tests": {
+   "path": "docs/validation/feed-integrity-tests.patch",
+   "sha256": "3ec97a277148d169c61cf4b56bf92f5405c3c81c3d654344a057c43b0ffa9ef6"
+  },
+  "appliesTo": "e1f6effa25a7327f2e36f7928014eecad7363fe8"
  },
  "runtimeFiles": {
   "alpaca-feed.mjs": "3318c8a27a1f6e576bba1890f05fd6b8b91b06aab9b2384627ce5c42b99da120",
   "market-symbol.mjs": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
-  "snapshot-fields.mjs": "9e73cde0128acac55d8cf5d9e48b875ecd0a675f29c8c7d094fdd5b71485b09e",
-  "ignition-watch.mjs": "a9ffb47f4845cf33a6f35152113a5f1b0ff432f0c789e7e2a3b2c215efbd5c41",
-  "premarket-check.mjs": "6deb9a2f0944bab668424bbd6a09e8ae769d21cf6d1cfd284d9a164285a205aa"
+  "snapshot-fields.mjs": "1f06f2270ee796aab30d624065b04a31f70fae18bedf39bd98ff7f3bae50950e",
+  "ignition-watch.mjs": "15dd3c13ca75dae65e128ce69b1cd7e248de9b7acae45aa2cf6b554c1247f604",
+  "premarket-check.mjs": "829927decc5f2e42a6843788cb9311c2c442862fb37ccc86086e54b08e97ad50"
  },
  "testFiles": {
   "test/alpaca-feed.test.mjs": "cb6c14a2fdb5a3532acc94d06cbf93b276c26c30a8a24fc58e47354007e675e6",
-  "test/feed-integrity.test.mjs": "005ed28175430a16c4695e772c5fa731470d50b301d27f4a6a35dc148b9f8a2b",
-  "test/feed-integrity-watcher.test.mjs": "798549bad872baf6cbf1f6f7d5fa0a8f808cb1c79fec21b0291d3ffabdfab1ba",
-  "test/premarket-feed.test.mjs": "78e8bab5145523b0a5f5ea2c6994748549e85eda9db7ea3d9771a7dbbaaab2eb"
+  "test/feed-integrity.test.mjs": "8e1fc0a0d1d3193be658fc2d7ba2bbf561edfa07087000b5b81075856e5a46b7",
+  "test/feed-integrity-watcher.test.mjs": "a50b577c792593cfea6d4577e78b9c6e8a0e54cc8a27e1353ca11244ddce04f0",
+  "test/premarket-feed.test.mjs": "bad49ec1630f037212d3e42e21bbcaf2b2431aed5727c04f9517f049be405a44",
+  "test/bot-actions.test.mjs": "2e234bda6758f5225377589641dff117dcc8150815da50f4d9b522dbe2a87690",
+  "test/watcher-incident-revision.test.mjs": "04283a5a686205c090e1fece5b5a7bbcaa8e49bfed4a057b74057ab58d2299c8",
+  "test/watcher-resilience.test.mjs": "af4bcb4a4915cbd5a03c1d67988bcb56c8819f8f0cffa6e2b4a153ef54a0d62c"
  },
  "unchanged": [
   "workflows",
   "data/**",
   "scan.mjs",
-  "strategy/gate/ZAD/accounting logic",
+  "strategy/gate/ZAD/accounting rules",
   "V1 and frozen evaluators",
   "archive file set and field schema"
  ],

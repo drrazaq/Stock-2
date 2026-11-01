@@ -1,55 +1,47 @@
 {
  "kind": "FEED_INTEGRITY_OFFLINE_VERIFICATION",
+ "revision": 2,
  "date": "2026-11-01",
- "node": "v22.22.0",
+ "localNode": "v22.22.0",
  "focused": {
   "test/feed-integrity.test.mjs": {
-   "pass": 11,
+   "pass": 13,
    "fail": 0
   },
   "test/feed-integrity-watcher.test.mjs": {
-   "pass": 6,
+   "pass": 8,
    "fail": 0,
-   "productionMainNegativeControl": {
-    "fail": [
-     "SIP label (wording only)",
-     "422 downgrade",
-     "429 retry",
-     "concurrent IEX-as-SIP race"
-    ],
-    "pass": [
-     "403 to IEX",
-     "top-50 field set"
-    ]
-   }
+   "productionNegativeControl": "fails SIP-label, 422, 429, race, top-50 future-Massive-volume, top-50 both-future; passes 403 and top-50 field-set controls"
   },
   "test/premarket-feed.test.mjs": {
-   "pass": 3,
+   "pass": 4,
    "fail": 0,
-   "productionMainNegativeControl": {
-    "fail": [
-     "UTC-date pre-market trade (defect)",
-     "feed/time label",
-     "IEX label"
-    ]
-   }
+   "productionNegativeControl": "all 4 fail"
   },
   "test/alpaca-feed.test.mjs": {
    "pass": 3,
    "fail": 0
   }
  },
+ "rulePreservation": {
+  "premarketSellSetGrid": "64 cases (4 price bases x 4 price levels x 4 instruction types): SELL set identical on production and branch (48 each)"
+ },
  "archivePreservation": {
-  "scenarios": {
-   "sip-ok": "8 files, identical key schema",
-   "sip-403": "7 files, identical key schema",
-   "top50": "7 files, identical key schema"
-  },
+  "sip-ok": "8 files, identical key schema",
+  "sip-403": "7 files, identical key schema",
+  "top50": "7 files, identical key schema",
   "premarketRecord": "data/premarket.jsonl byte-identical (sha256 prefix f98aa81497fd7987)"
  },
+ "previouslyFailingNine": {
+  "fix": "test-only: bot-actions section helper (Sunday scoreboard sub-heading); frozen watcher+fixture clock in incident/resilience tests",
+  "resultAgainstProductionWatcher": "bot-actions 8/8, watcher-incident-revision 11/11, watcher-resilience 9/9",
+  "resultAgainstBranchWatcher": "bot-actions 8/8, watcher-incident-revision 11/11, watcher-resilience 9/9",
+  "earlierExplanationRetracted": "the 8 watcher failures were a real-clock date dependency, not an environment-variable mismatch"
+ },
  "fullSuite": {
-  "command": "each test/*.test.mjs and tests/*.test.mjs with node --test, INCIDENT_WATCHER_SRC=<tree>/ignition-watch.mjs",
+  "command": "each test/*.test.mjs and tests/*.test.mjs with node --test; INCIDENT_WATCHER_SRC=<tree>/ignition-watch.mjs",
   "productionMain": {
+   "commit": "e1f6effa25a7327f2e36f7928014eecad7363fe8",
    "files": 123,
    "failedFiles": 3,
    "pass": 1207,
@@ -57,19 +49,22 @@
   },
   "branch": {
    "files": 126,
-   "failedFiles": 3,
-   "pass": 1227,
-   "fail": 9
+   "failedFiles": 0,
+   "pass": 1241,
+   "fail": 0
+  }
+ },
+ "hostedCI": {
+  "previousRevision": {
+   "commit": "3b91b7a7a61b38eff07bb6e95adc211a5242393e",
+   "run": 41286756963,
+   "conclusion": "failure (not reported at the time; failing file not visible in the retrieved log tail)"
   },
-  "sameNineFailuresOnBoth": [
-   "bot-actions #6 PRACTICE ACCOUNT line (pre-existing on main; scan.mjs not touched)",
-   "watcher-incident-revision #6 and watcher-resilience #2,3,4,6,7,8,9: gated incident-watcher tests run against the production watcher, which is not the package they target; without INCIDENT_WATCHER_SRC they are not registered and both files pass"
-  ]
+  "thisRevision": "see the run for the pushed head commit"
  },
  "notVerified": [
   "live SIP entitlement and endpoint/key mapping",
-  "real BBO ages/sizes/coverage",
-  "real SIP minuteBar timing",
+  "real snapshot field behaviour, BBO ages/sizes/coverage",
   "Codex candidate a78e11d1 (unavailable)",
   "V2 sec-proof-ready-outcomes.mjs (unavailable; UNKNOWN)"
  ]
