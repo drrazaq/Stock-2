@@ -1,0 +1,7 @@
+# Preserved V2 continuation — UNVERIFIED, INACTIVE
+Base 107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30. Rows DISCOVERY-04/HISTORY-04/CATALYST-03. This is an interruption-safe working checkpoint, not completed engineering or source-authentic evidence.
+Prepared files: sec-v2-outcomes.mjs (paired30-minute quoted paths, fees/stress once, full-path missingness); sec-v2-evidence.mjs (encrypted immutable source deltas/state/ACKs, quarantine, branded offline pin guard); sec-proof-ready-proposal.mjs (retain securityId/issuerCik and entrySequence in proposed pair metadata only).
+V1, approved binding, rehearsal guard, frozen selection thresholds and historical results are untouched. New processing is SYNTHETIC_FIXTURE-only; no live host/client activation path is implemented.
+Checks so far: V8 syntax only. Required before calling verified: actual producer -> source prefix -> proposal -> encrypted checkpoint/client ACK -> restart -> both quoted exits; failure at every write/ACK/guard boundary; counters and lost/missing paths; actual-format recovery and resource caps.
+The bounded new V2 upload/storage limits are proposed, not inherited permission from old V1/control-plane quotas. Policy adoption/continuity, live bindings, all-denominator source authentication and observations remain separate dependencies.
+Paused to incorporate diagnostic C1/C2; resume this exact branch without resetting or claiming old unavailable Codex code was recovered.
