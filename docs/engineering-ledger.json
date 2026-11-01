@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-01",
+  "updated": "2026-11-01T21:41:21.099359+00:00",
   "branch": "Stock2-safety-fixes",
   "pr": 1,
   "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
@@ -4994,47 +4994,16 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "sourceSha": "119de64b323f86f2f45e6d3a40e13383294ee648",
-    "status": "OFFLINE_COMPONENTS_VERIFIED_INDEPENDENT_REVIEW_PENDING",
-    "verification": "docs/validation/sec-v2-mentor-verification.json",
-    "acceptanceAdded": 0,
-    "genuineAdmissions": 0,
-    "productionTests": {
-      "mentor": [
-        124,
-        1208
-      ],
-      "telemetryWithExplicitPrerequisites": [
-        123,
-        1206
-      ],
-      "combined": [
-        124,
-        1208
-      ],
-      "allPass": true,
-      "gatedPreservedDateFixtureCases": 20
+    "sourceSha": "d3c1ee58a2785ece01838fa06b81900d01970499",
+    "status": "DEVELOPMENT_RADAR_FOOTER_CORRECTION_VERIFIED_NO_PRODUCTION_CHANGE",
+    "tests": {
+      "node20Files": 249,
+      "python": 9,
+      "consecutiveActualHost": 30,
+      "checksPassed": 6
     },
-    "focused": {
-      "telemetry": 10,
-      "policyPrototype": 19,
-      "mentorPackage": 6,
-      "mentorReadOnly": 2
-    },
-    "development": {
-      "files": 226,
-      "cases": 2186,
-      "failures": [],
-      "runtimeCodeSource": "119de64b323f86f2f45e6d3a40e13383294ee648"
-    },
-    "python": {
-      "tests": 30,
-      "failures": 0
-    },
-    "syntax": {
-      "files": 283,
-      "failures": []
-    }
+    "ci": "docs/validation/history03-reconciliation-ci.json",
+    "scope": "One residual radar approval label removed; no counter, scoring, gate or policy change."
   },
   "revisionIdentityMission": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5324,99 +5293,31 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "ACCEPTANCE_QUEUE_INACTIVE_C1_C2_OBSERVER_V2_IMPLEMENTATION",
-    "report": "docs/acceptance-diagnostic-v2-checkpoint.md",
-    "board": "docs/acceptance-closure-board.md",
+    "status": "HISTORY03_SOURCE_ANCHORS_VERIFIED_SCAN_PROPOSAL_UNAPPLIED_MENTOR_BLOCKED",
+    "verifiedSource": "d3c1ee58a2785ece01838fa06b81900d01970499",
+    "preservedCheckpoint": "2e466c58a6ef719d54fd306338721e0546c5aac3",
+    "report": "docs/history-03/SOURCE-ANCHOR-RECONCILIATION.md",
+    "ci": "docs/validation/history03-reconciliation-ci.json",
+    "sourceAnchorRecords": 100,
+    "sourceLocations": 151,
     "accepted": 24,
     "total": 40,
     "closuresEarned": [],
     "genuineAdmissions": 0,
-    "diagnosticSource": "b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c",
-    "diagnosticWrapperSource": "ccf091c1044b7563259c1c173d0d910633f75816",
-    "diagnosticSourceAndWrapperCI": "PASS_HOSTED_ONLY",
-    "observerPackage": "fbbd0e43b15009f85f371efbe8647a5fed983ac1",
-    "observerCI": "PASS_HOSTED_MAIN_BASE",
-    "V2SourceCandidate": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
-    "V2Verification": {
-      "sha": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
-      "result": "PASS",
-      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304257278/job/124841310307",
-      "focusedTests": 7,
-      "actualProducerPath": true,
-      "scope": "Synthetic producer prefixes->source guard->41 frames->encrypted checkpoint/client ACK->restart->paired exits; missingness, losses, partial writes, concurrent attempts and unconfirmed/timeout ACKs. No live binding or admissions."
+    "unappliedScanProposal": "docs/history-03/proposal/manifest.json",
+    "scanOwnership": "Claude isolated earnings-holiday patch/hunk handoff pending; active scan.mjs unchanged",
+    "integrationReview": {
+      "head": "e6a1382c69201bd13add0b2249fa75e1fc3d51bd",
+      "verdict": "CHANGES_REQUIRED",
+      "report": "docs/reviews/market03-catalyst03/REVIEW.md",
+      "packageIntegrated": false
     },
-    "V1Changed": false,
-    "contractsChanged": false,
+    "privacy": "docs/news-log-containment-proposal.md; confirmed public exposure; proposal only, no migration/deletion/history rewrite",
     "productionChanged": false,
     "workflowInstalled": false,
     "credentialsUsed": false,
     "providerCalls": 0,
-    "mondayNaturalEvidence": "PENDING_2026_11_02",
-    "next": "DISCOVERY-04 remaining V2 host/report/guard engineering; CATALYST-03 source contracts next",
-    "observerCurrentMainCompatibility": {
-      "packageSource": "fbbd0e43b15009f85f371efbe8647a5fed983ac1",
-      "testedCurrentMain": "97001c3fd1b5ea04603f98d1900324a882c951cc",
-      "compatibilityCommit": "7b3e5a6cae542f2290efa2c283d4b118b23bc31a",
-      "result": "PASS",
-      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304745853/job/124842748853",
-      "scope": "All existing current-main tests plus unchanged runtime/package/parity tests. Agent-C changes preserved, not merged into development. No main changes."
-    },
-    "diagnosticStorageFollowup": {
-      "sha": "510ef31cb90c9623ee8a0170cfed1010ebfd28bf",
-      "result": "PASS",
-      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304943132/job/124843321673",
-      "fullTestFiles": 130,
-      "focusedTests": 24
-    },
-    "verifiedDevelopment": {
-      "sha": "5ad4aa09c1cb9e919a5898260a2fa166cef936d4",
-      "checks": [
-        {
-          "name": "fixture-close",
-          "status": "completed",
-          "conclusion": "success",
-          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843670562"
-        },
-        {
-          "name": "safety",
-          "status": "completed",
-          "conclusion": "success",
-          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843607078"
-        },
-        {
-          "name": "fixture-open",
-          "status": "completed",
-          "conclusion": "success",
-          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843606946"
-        },
-        {
-          "name": "source-preservation",
-          "status": "completed",
-          "conclusion": "success",
-          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041617/job/124843606584"
-        },
-        {
-          "name": "test",
-          "status": "completed",
-          "conclusion": "success",
-          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041579/job/124843606367"
-        }
-      ],
-      "fullNodeTestFiles": 232,
-      "result": "PASS_ALL_5",
-      "scope": "Before bid-mark/missingness followup; final HEAD needs its own checks."
-    },
-    "V2ReportingFollowup": {
-      "sha": "feba5acf39a2df1277e50b6f1ab42fd378cd33bc",
-      "tests": 8,
-      "status": "Exact-SHA checks required; prior243bf2f2 seven-test PASS retained",
-      "behavior": "Bid marks versus liquidation capacity, global quote missingness, future-frame cutoff"
-    },
-    "reviewPRs": {
-      "diagnostic": 5,
-      "observer": 4,
-      "mentorExisting": 3
-    }
+    "next": "Mentor safe natural recording boundary first. Independently obtain Claude scan ownership handoff and MARKET/CATALYST R1-R3 corrections; combine/test exact bounded hunks. Original policies and criteria unchanged."
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5483,11 +5384,12 @@
       "feedIntegrity": "b680988b0ffb66fcb3955fc8b4ff1c246959b880",
       "scope": "Existing deployment records retained; no new production modifications."
     },
-    "mentor": "Goal: entry/price/expiry/risk/holding/exit explanations across requested horizons; LEADER DIP NOT PROVEN, read-only mentor undeployed.",
-    "nextImplementation": "DISCOVERY-04: finish offline V2 state/exit/missingness/guard tests, then CATALYST-03 remaining source contracts.",
+    "mentor": "Exact PR3 head25a85000 owner-approved and Claude v3 PASS; undeployed, active writer41327224130 blocks boundary. LEADER DIP NOT PROVEN; tested-close/next-open mismatch remains.",
+    "nextImplementation": "HISTORY-03 scan ownership handoff/combined regression; MARKET-03/CATALYST-03 R1-R3 independent review corrections. Do not merge broad branch.",
     "passiveEvidence": "Monday2November natural-run/DST/source/save/archive/delivery pending; no manual dispatch",
     "diagnostic": "C1/C2 inactive source/wrappers hosted PASS; unapproved dated seven-request proposal",
-    "currentFinalCI": "Use exact published HEAD check-runs; source-package passes are linked separately"
+    "currentFinalCI": "Use exact published HEAD check-runs; source-package passes are linked separately",
+    "privacy": "Public news log exposure verified read-only; sanitized proposal only. No migration/deletion/history rewrite."
   },
   "confluencePublication": {
     "source": "413a91ca966fb1eb8e24a2113f23b4246752ca2e",
@@ -8125,6 +8027,207 @@
   },
   "latestMentorUserFacingRelease": {
     "base": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+    "reviewHead": "25a85000b076c4da649634606467e71b577bc75c",
+    "reviewPR": 3,
+    "patchSha256": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
+    "patchFiles": 8,
+    "manifestSha256": "13b120e52a2e6dcfe505136c430ebd7875fea6e18a581e39f610e62fa4f3e250",
+    "independentReview": {
+      "source": "cf33e4bc029cfec4916e8995e10ba745cbac369f",
+      "verdict": "PASS",
+      "reviewSha256": "8cff5315cb10b7a7632082ebf4d4d38604f35e468a7aae19b5933b0ead9ea26d"
+    },
+    "deploymentApproved": true,
+    "deployed": false,
+    "releaseStatus": "BLOCKED_ACTIVE_WRITER",
+    "blockingRun": 41327224130,
+    "blockingJob": 124919084401,
+    "writerObserved": "2026-11-01T21:39:24Z",
+    "productionPlusApprovedPatchFilesPass": 133,
+    "reviewHeadCI": "Both hosted test checks PASS; source-specific evidence retained",
+    "productionDataFilesUnchanged": 425,
+    "productionChanged": false,
+    "optionalWordingIncluded": false,
+    "packageSeparateFromDevelopment": true,
+    "limitations": [
+      "LEADER DIP NOT PROVEN",
+      "tested close versus next-open reminder mismatch remains explicit"
+    ],
+    "next": "Re-enumerate terminal writers and successors, verify final saves/persisted offset without consuming commands; deploy only approved exact patch if every original condition holds. No pause/cancellation/dispatch."
+  },
+  "latestSipDecisionPackage": {
+    "reviewedCodeUnchanged": true,
+    "decision": "docs/validation/sip-diagnostic-decision-package.json",
+    "workflowSha256": "5c707d1df5494398e13068eab82f7f02464b0a00ae805a90d87c3bb656c6d1c3",
+    "installationPatchSha256": "2318247b367df574aab11af15635f8b45ede141755dd3b2da5ed2edc9d64ac53",
+    "sampleUtc": "2026-11-03T16:00:00Z",
+    "earliestActualRunApprovalUtc": "2026-11-02T16:00:00Z",
+    "approved": false,
+    "requestsMax": 7
+  },
+  "preHistory03Reconciliation_latestSessionCheckpoint": {
+    "status": "ACCEPTANCE_QUEUE_INACTIVE_C1_C2_OBSERVER_V2_IMPLEMENTATION",
+    "report": "docs/acceptance-diagnostic-v2-checkpoint.md",
+    "board": "docs/acceptance-closure-board.md",
+    "accepted": 24,
+    "total": 40,
+    "closuresEarned": [],
+    "genuineAdmissions": 0,
+    "diagnosticSource": "b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c",
+    "diagnosticWrapperSource": "ccf091c1044b7563259c1c173d0d910633f75816",
+    "diagnosticSourceAndWrapperCI": "PASS_HOSTED_ONLY",
+    "observerPackage": "fbbd0e43b15009f85f371efbe8647a5fed983ac1",
+    "observerCI": "PASS_HOSTED_MAIN_BASE",
+    "V2SourceCandidate": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
+    "V2Verification": {
+      "sha": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304257278/job/124841310307",
+      "focusedTests": 7,
+      "actualProducerPath": true,
+      "scope": "Synthetic producer prefixes->source guard->41 frames->encrypted checkpoint/client ACK->restart->paired exits; missingness, losses, partial writes, concurrent attempts and unconfirmed/timeout ACKs. No live binding or admissions."
+    },
+    "V1Changed": false,
+    "contractsChanged": false,
+    "productionChanged": false,
+    "workflowInstalled": false,
+    "credentialsUsed": false,
+    "providerCalls": 0,
+    "mondayNaturalEvidence": "PENDING_2026_11_02",
+    "next": "DISCOVERY-04 remaining V2 host/report/guard engineering; CATALYST-03 source contracts next",
+    "observerCurrentMainCompatibility": {
+      "packageSource": "fbbd0e43b15009f85f371efbe8647a5fed983ac1",
+      "testedCurrentMain": "97001c3fd1b5ea04603f98d1900324a882c951cc",
+      "compatibilityCommit": "7b3e5a6cae542f2290efa2c283d4b118b23bc31a",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304745853/job/124842748853",
+      "scope": "All existing current-main tests plus unchanged runtime/package/parity tests. Agent-C changes preserved, not merged into development. No main changes."
+    },
+    "diagnosticStorageFollowup": {
+      "sha": "510ef31cb90c9623ee8a0170cfed1010ebfd28bf",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304943132/job/124843321673",
+      "fullTestFiles": 130,
+      "focusedTests": 24
+    },
+    "verifiedDevelopment": {
+      "sha": "5ad4aa09c1cb9e919a5898260a2fa166cef936d4",
+      "checks": [
+        {
+          "name": "fixture-close",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843670562"
+        },
+        {
+          "name": "safety",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843607078"
+        },
+        {
+          "name": "fixture-open",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843606946"
+        },
+        {
+          "name": "source-preservation",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041617/job/124843606584"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041579/job/124843606367"
+        }
+      ],
+      "fullNodeTestFiles": 232,
+      "result": "PASS_ALL_5",
+      "scope": "Before bid-mark/missingness followup; final HEAD needs its own checks."
+    },
+    "V2ReportingFollowup": {
+      "sha": "feba5acf39a2df1277e50b6f1ab42fd378cd33bc",
+      "tests": 8,
+      "status": "Exact-SHA checks required; prior243bf2f2 seven-test PASS retained",
+      "behavior": "Bid marks versus liquidation capacity, global quote missingness, future-frame cutoff"
+    },
+    "reviewPRs": {
+      "diagnostic": 5,
+      "observer": 4,
+      "mentorExisting": 3
+    }
+  },
+  "preHistory03Reconciliation_latestVerifiedEngineeringMilestone": {
+    "sourceSha": "119de64b323f86f2f45e6d3a40e13383294ee648",
+    "status": "OFFLINE_COMPONENTS_VERIFIED_INDEPENDENT_REVIEW_PENDING",
+    "verification": "docs/validation/sec-v2-mentor-verification.json",
+    "acceptanceAdded": 0,
+    "genuineAdmissions": 0,
+    "productionTests": {
+      "mentor": [
+        124,
+        1208
+      ],
+      "telemetryWithExplicitPrerequisites": [
+        123,
+        1206
+      ],
+      "combined": [
+        124,
+        1208
+      ],
+      "allPass": true,
+      "gatedPreservedDateFixtureCases": 20
+    },
+    "focused": {
+      "telemetry": 10,
+      "policyPrototype": 19,
+      "mentorPackage": 6,
+      "mentorReadOnly": 2
+    },
+    "development": {
+      "files": 226,
+      "cases": 2186,
+      "failures": [],
+      "runtimeCodeSource": "119de64b323f86f2f45e6d3a40e13383294ee648"
+    },
+    "python": {
+      "tests": 30,
+      "failures": 0
+    },
+    "syntax": {
+      "files": 283,
+      "failures": []
+    }
+  },
+  "preHistory03Reconciliation_currentStatus": {
+    "authoritativeLatest": "latestSessionCheckpoint",
+    "acceptance": {
+      "complete": 24,
+      "total": 40,
+      "remaining": 16,
+      "added": 0
+    },
+    "historicalEvidence": "preAcceptanceQueue_currentStatus and dated deployment records remain history; prior in-progress run/boundary status is not current status",
+    "deployedRepairs": {
+      "accounting": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+      "watcher": "be3159015708be8f4f8df1384453b97fad1198db",
+      "sec": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+      "feedIntegrity": "b680988b0ffb66fcb3955fc8b4ff1c246959b880",
+      "scope": "Existing deployment records retained; no new production modifications."
+    },
+    "mentor": "Exact PR3 head25a85000 owner-approved and Claude v3 PASS; undeployed, active writer41327224130 blocks boundary. LEADER DIP NOT PROVEN; tested-close/next-open mismatch remains.",
+    "nextImplementation": "HISTORY-03 scan ownership handoff/combined regression; MARKET-03/CATALYST-03 R1-R3 independent review corrections. Do not merge broad branch.",
+    "passiveEvidence": "Monday2November natural-run/DST/source/save/archive/delivery pending; no manual dispatch",
+    "diagnostic": "C1/C2 inactive source/wrappers hosted PASS; unapproved dated seven-request proposal",
+    "currentFinalCI": "Use exact published HEAD check-runs; source-package passes are linked separately",
+    "privacy": "Public news log exposure verified read-only; sanitized proposal only. No migration/deletion/history rewrite."
+  },
+  "preHistory03Reconciliation_latestMentorUserFacingRelease": {
+    "base": "f6a9b1668d0591cf24a734034949b96b241fe35b",
     "reviewHead": "8e9cb9bea2809a19048cdb36987e8d050872020a",
     "reviewPR": 3,
     "patchSha256": "6c6d14dcc9db494583aa9ba997de52ed753720ee72b42f20f9beaa3d5cb2f5fb",
@@ -8156,15 +8259,5 @@
       "hostConsecutivePass": 30,
       "evidence": "docs/validation/mentor-release-development-ci.json"
     }
-  },
-  "latestSipDecisionPackage": {
-    "reviewedCodeUnchanged": true,
-    "decision": "docs/validation/sip-diagnostic-decision-package.json",
-    "workflowSha256": "5c707d1df5494398e13068eab82f7f02464b0a00ae805a90d87c3bb656c6d1c3",
-    "installationPatchSha256": "2318247b367df574aab11af15635f8b45ede141755dd3b2da5ed2edc9d64ac53",
-    "sampleUtc": "2026-11-03T16:00:00Z",
-    "earliestActualRunApprovalUtc": "2026-11-02T16:00:00Z",
-    "approved": false,
-    "requestsMax": 7
   }
 }

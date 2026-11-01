@@ -1,0 +1,1829 @@
+{
+  "kind": "HISTORY03_SOURCE_ANCHOR_RECONCILIATION_V1",
+  "auditCommit": "5bcf4d2933c1d77b10b7c12489e2cfbb624387d9",
+  "productionSource": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+  "developmentSource": "d3c1ee58a2785ece01838fa06b81900d01970499",
+  "developmentTree": "6c182cf22376ab47925a0f86e92243ac49506530",
+  "note": "100 audit records relocated, not 100 accepted claims. Line mapping locates source; it is not semantic proof or raw-data authentication. No private data files are read or copied. Original catalogue and erratum remain immutable. Existing source corrections are preserved; this report changes no runtime or policy.",
+  "extractors": {
+    "extract-claims.py": "c40b219d491f68beea9c379c1d6569cf762174c5a2a5264d84658bb4aaad6ce9",
+    "extract-claims-broad.py": "d92f278def75eb2277f927fb8b0afb2fe5343f82541a150673f8e9e923e02946"
+  },
+  "productionFileListSha256": "8105b28e91bf6a64a9493d5332e2ccb1b47e2552de31ec1078cf7760f9b75f40",
+  "extractCounts": {
+    "production": {
+      "extract-claims.py": {
+        "candidates": 914,
+        "sha256": "5aface9561d59506f0e25559d64c858c62212fedcc0c3c60a5e5c235acd21a8c"
+      },
+      "extract-claims-broad.py": {
+        "candidates": 1212,
+        "sha256": "a440bd778ab1ff1fc1545143a3ae1a53c32b5a7e04710fae0ba8c3651d566430"
+      }
+    },
+    "development": {
+      "extract-claims.py": {
+        "candidates": 902,
+        "sha256": "bfa4d868612e5a75312f40aef8b5f57dfed51b62acfb41022b6831188acfef39"
+      },
+      "extract-claims-broad.py": {
+        "candidates": 1232,
+        "sha256": "09add8dea5eeb25f3c50e07b95821834b0190a5975293e00157014c77260e00d"
+      }
+    }
+  },
+  "literalDelta": {
+    "extract-claims.py": {
+      "unchangedOccurrences": 835,
+      "oldOccurrencesAbsent": 79,
+      "newOccurrences": 67
+    },
+    "extract-claims-broad.py": {
+      "unchangedOccurrences": 1110,
+      "oldOccurrencesAbsent": 102,
+      "newOccurrences": 122
+    }
+  },
+  "stateCounts": {
+    "CORRECTION_REGRESSION_COVERED": 52,
+    "OWNER_POLICY_TODO": 11,
+    "UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF": 3,
+    "ACCEPTED_BLOCK_REASON_WITH_UNQUANTIFIED_RECORD": 1,
+    "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED": 33
+  },
+  "records": [
+    {
+      "id": "W01",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 3203,
+          "originalLine": 3102,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs",
+      "pendingPolicy": "CURRENT_PLAN_CONFIRMATION"
+    },
+    {
+      "id": "A01",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2695,
+          "originalLine": 2632,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-claims.test.mjs"
+    },
+    {
+      "id": "W03",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2589,
+          "originalLine": 2527,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-claims.test.mjs"
+    },
+    {
+      "id": "W04",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1112,
+          "originalLine": 1074,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-claims.test.mjs"
+    },
+    {
+      "id": "X01",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "intraday-radar.mjs",
+          "line": 135,
+          "originalLine": 133,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "d77156212597095359458524f7b177a5e399d5f728b81214414b70004ca9c192"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P1"
+    },
+    {
+      "id": "W07",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 525,
+          "originalLine": 515,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        },
+        {
+          "path": "autolab.mjs",
+          "line": 191,
+          "originalLine": 189,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "1112b96d9211564720274481c27772576530072309d60fb8b1132a0f5a556b4b"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-vocabulary.test.mjs"
+    },
+    {
+      "id": "W08",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1638,
+          "originalLine": 1576,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-vocabulary.test.mjs"
+    },
+    {
+      "id": "A04",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2669,
+          "originalLine": 2606,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P2"
+    },
+    {
+      "id": "A05",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 4004,
+          "originalLine": 3868,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-vocabulary.test.mjs"
+    },
+    {
+      "id": "S07",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-vocabulary.test.mjs"
+    },
+    {
+      "id": "W02",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 3035,
+          "originalLine": 2961,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "A02",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2697,
+          "originalLine": 2634,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        },
+        {
+          "path": "leaders-study.mjs",
+          "line": 221,
+          "originalLine": 237,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "W06",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 3651,
+          "originalLine": 3524,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "S02",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 564,
+          "originalLine": 554,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-delivery-counts.test.mjs"
+    },
+    {
+      "id": "W09",
+      "state": "UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 77,
+          "originalLine": 71,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "preparedProposal": "docs/history-03/proposal/residual-scan.patch"
+    },
+    {
+      "id": "A03",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2651,
+          "originalLine": 2588,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "W05",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1112,
+          "originalLine": 1074,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "docs/history-03/proposal/residual-scan-regressions.mjs"
+    },
+    {
+      "id": "X02",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "news-watch.mjs",
+          "line": 104,
+          "originalLine": 75,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "70c59c185e34c2c7f34499a8df26252e5d07d45984f930f83203b25df457a32d"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "tests/news-delivery.test.mjs"
+    },
+    {
+      "id": "X03",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "radar-v3-core.mjs",
+          "line": 166,
+          "originalLine": 169,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "7e6be73103f792328f143ad38f8ac4c0c197fc8157c2d5387e606697775806d8"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-delivery-counts.test.mjs"
+    },
+    {
+      "id": "X07",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "ignition-watch.mjs",
+          "line": 192,
+          "originalLine": 169,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-delivery-counts.test.mjs"
+    },
+    {
+      "id": "W16",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2633,
+          "originalLine": 2570,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "S03",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 560,
+          "originalLine": 550,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-delivery-counts.test.mjs"
+    },
+    {
+      "id": "W11",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 169,
+          "originalLine": 163,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "W12",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1961,
+          "originalLine": 1899,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "A09",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1558,
+          "originalLine": 1497,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "X04",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "octopus.mjs",
+          "line": 165,
+          "originalLine": 163,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "9a36fb8dd500cb0d07676be7d3afb86cf437445bbfcbc7482c46de56c4420c50"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P1"
+    },
+    {
+      "id": "W13",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1307,
+          "originalLine": 1247,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "A08",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "W15",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "quality.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "2c309f9289885570f6893277c6411d130b1e8c96edbbcf4088f9e0b5d8651247"
+        },
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "A12",
+      "state": "UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 639,
+          "originalLine": 622,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "preparedProposal": "docs/history-03/proposal/residual-scan.patch"
+    },
+    {
+      "id": "A06",
+      "state": "ACCEPTED_BLOCK_REASON_WITH_UNQUANTIFIED_RECORD",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2685,
+          "originalLine": 2622,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "A10",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2699,
+          "originalLine": 2636,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "tests/incident-reporting.test.mjs"
+    },
+    {
+      "id": "A07",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2675,
+          "originalLine": 2612,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "A11",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2579,
+          "originalLine": 2517,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "A13",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 650,
+          "originalLine": 633,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "S01",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 559,
+          "originalLine": 549,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "S04",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 559,
+          "originalLine": 549,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "S05",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 559,
+          "originalLine": 549,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "S06",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "W10",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "W14",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "league.mjs",
+          "line": 110,
+          "originalLine": 110,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "8d5f5b4315e045c55b98abf822a904c977cf943b47a4a746572d9947760a18b8"
+        },
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "X05",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "movers.mjs",
+          "line": 240,
+          "originalLine": 238,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "6b189998fd90a54ad025f019046d84ddf005f7cf4bf0e521bbbdaaf45ebc5468"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "X06",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "ignition-watch.mjs",
+          "line": 174,
+          "originalLine": 155,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B01",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "radar-v3-core.mjs",
+          "line": 126,
+          "originalLine": 129,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "7e6be73103f792328f143ad38f8ac4c0c197fc8157c2d5387e606697775806d8"
+        },
+        {
+          "path": "ignition-watch.mjs",
+          "line": 190,
+          "originalLine": 166,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-delivery-counts.test.mjs"
+    },
+    {
+      "id": "B02",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "ignition-watch.mjs",
+          "line": 176,
+          "originalLine": 157,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P1"
+    },
+    {
+      "id": "B03",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "hunting-lab.mjs",
+          "line": 360,
+          "originalLine": 358,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "16a2ff8ea0e15b0a18ec545e33bcdddf9d9405d5709f2254e1f70b6aae227de8"
+        },
+        {
+          "path": "scan.mjs",
+          "line": 1343,
+          "originalLine": 1283,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P2"
+    },
+    {
+      "id": "B04",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 3879,
+          "originalLine": 3743,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-claims.test.mjs"
+    },
+    {
+      "id": "B05",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1756,
+          "originalLine": 1694,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-vocabulary.test.mjs"
+    },
+    {
+      "id": "B06",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "stops.mjs",
+          "line": 73,
+          "originalLine": 71,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "d84dd115a3e60377362a46d9c5428647842b99e0f3cbaeb7218543df27cb6295"
+        },
+        {
+          "path": "exits.mjs",
+          "line": 127,
+          "originalLine": 125,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "9b9a6050e6e541c960f4b8c5dca647e1d398be74bfa90b74aa448c5f9f2cb984"
+        },
+        {
+          "path": "horizons.mjs",
+          "line": 88,
+          "originalLine": 86,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "a91dedb4a8378bdce92612fad7fcd61c21109cb25a6840dbd3a629d312adbc68"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "B07",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "rebuy.mjs",
+          "line": 86,
+          "originalLine": 84,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "5ad6d720c9e48131fbd6eb9067caeb1d2c743f182ca0ab08e860a5740167bdea"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "B08",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "B09",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "radar-v3-core.mjs",
+          "line": 126,
+          "originalLine": 130,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "7e6be73103f792328f143ad38f8ac4c0c197fc8157c2d5387e606697775806d8"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-delivery-counts.test.mjs"
+    },
+    {
+      "id": "B10",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "radar-v3-core.mjs",
+          "line": 133,
+          "originalLine": 136,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "7e6be73103f792328f143ad38f8ac4c0c197fc8157c2d5387e606697775806d8"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "B11",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "early-alerts.mjs",
+          "line": 108,
+          "originalLine": 103,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "52f85f4886ced98ce371277bd10a5c950d07e7bbc4089d58335c3542c2243735"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "B12",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "radar-v3-core.mjs",
+          "line": 166,
+          "originalLine": 169,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "7e6be73103f792328f143ad38f8ac4c0c197fc8157c2d5387e606697775806d8"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-delivery-counts.test.mjs"
+    },
+    {
+      "id": "B13",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "stops.mjs",
+          "line": 73,
+          "originalLine": 71,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "d84dd115a3e60377362a46d9c5428647842b99e0f3cbaeb7218543df27cb6295"
+        },
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "STOP_DEFAULT"
+    },
+    {
+      "id": "B14",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "ignition-watch.mjs",
+          "line": 181,
+          "originalLine": 162,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "B20",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "hunting-lab.mjs",
+          "line": 348,
+          "originalLine": 346,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "16a2ff8ea0e15b0a18ec545e33bcdddf9d9405d5709f2254e1f70b6aae227de8"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B21",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "winners-study.mjs",
+          "line": 137,
+          "originalLine": 135,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "670be668ca9c455e858e476c310ab69f2a1f723b04de5bbbb3f107bdee4cafa2"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B22",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "leaders-study.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B23",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "earnings-study.mjs",
+          "line": 179,
+          "originalLine": 176,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "763bd4733a3c11ef6aa626ad7e61e426605c6ef54dcea582ba04282a1487e09d"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B24",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "events-study.mjs",
+          "line": 354,
+          "originalLine": 335,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "2a003c7f39ba8e13b8e5546bc4bf6d58cfc98da0e49c923040c5425f8cbc9d49"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B25",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "horizons.mjs",
+          "line": 88,
+          "originalLine": 86,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "a91dedb4a8378bdce92612fad7fcd61c21109cb25a6840dbd3a629d312adbc68"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B26",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "exits.mjs",
+          "line": 117,
+          "originalLine": 115,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "9b9a6050e6e541c960f4b8c5dca647e1d398be74bfa90b74aa448c5f9f2cb984"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B27",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "octopus.mjs",
+          "line": 199,
+          "originalLine": 197,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "9a36fb8dd500cb0d07676be7d3afb86cf437445bbfcbc7482c46de56c4420c50"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B28",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "score-study.mjs",
+          "line": 84,
+          "originalLine": 82,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "eb39d5c690ee145595564f4dd5049ea441eb287b08b584cedcf698c7bfac75f0"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B29",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "radar-v3-core.mjs",
+          "line": 93,
+          "originalLine": 96,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "7e6be73103f792328f143ad38f8ac4c0c197fc8157c2d5387e606697775806d8"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B30",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "radar-v3-core.mjs",
+          "line": 141,
+          "originalLine": 144,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "7e6be73103f792328f143ad38f8ac4c0c197fc8157c2d5387e606697775806d8"
+        },
+        {
+          "path": "opportunity-radar.mjs",
+          "line": 60,
+          "originalLine": 59,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "e1a24f415c56f332c32d0fcce0f726d551fafca993991224730e04e5f44843fe"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B31",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "early-alerts.mjs",
+          "line": 110,
+          "originalLine": 105,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "52f85f4886ced98ce371277bd10a5c950d07e7bbc4089d58335c3542c2243735"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B32",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "early-alerts.mjs",
+          "line": 175,
+          "originalLine": 170,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "52f85f4886ced98ce371277bd10a5c950d07e7bbc4089d58335c3542c2243735"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B33",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "B34",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "C01",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "ignition-watch.mjs",
+          "line": 192,
+          "originalLine": 169,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P1"
+    },
+    {
+      "id": "C02",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "intraday-radar.mjs",
+          "line": 163,
+          "originalLine": 161,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "d77156212597095359458524f7b177a5e399d5f728b81214414b70004ca9c192"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-vocabulary.test.mjs"
+    },
+    {
+      "id": "C03",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "intraday-radar.mjs",
+          "line": 174,
+          "originalLine": 172,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "d77156212597095359458524f7b177a5e399d5f728b81214414b70004ca9c192"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-vocabulary.test.mjs"
+    },
+    {
+      "id": "C04",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "intraday-radar.mjs",
+          "line": 154,
+          "originalLine": 152,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "d77156212597095359458524f7b177a5e399d5f728b81214414b70004ca9c192"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P1"
+    },
+    {
+      "id": "C10",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "stop-watch.mjs",
+          "line": 12,
+          "originalLine": 12,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "5ba911f55a10bce06e6e4f3b5357386cffb9a1cff5b4761f67fe47a739907b33"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "C11",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "intraday-radar.mjs",
+          "line": 218,
+          "originalLine": 216,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "d77156212597095359458524f7b177a5e399d5f728b81214414b70004ca9c192"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "C12",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "autolab.mjs",
+          "line": 184,
+          "originalLine": 182,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "1112b96d9211564720274481c27772576530072309d60fb8b1132a0f5a556b4b"
+        },
+        {
+          "path": "quality.mjs",
+          "line": 220,
+          "originalLine": 218,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "2c309f9289885570f6893277c6411d130b1e8c96edbbcf4088f9e0b5d8651247"
+        },
+        {
+          "path": "rebalance.mjs",
+          "line": 81,
+          "originalLine": 79,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "a2880a6a2c1eb056a4351a139f2167c95152d5dc19d02042e4e71c9f29898c63"
+        },
+        {
+          "path": "fastmover-lab.mjs",
+          "line": 176,
+          "originalLine": 174,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "0bb13045b95d0a1efea67d8790fe839a519d78f142825d807f509deb311d283f"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "D01",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2296,
+          "originalLine": 2234,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-claims.test.mjs",
+      "erratum": "ERRATA-01: wording-only; original gate allegation superseded; P3 remains open"
+    },
+    {
+      "id": "D02",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2268,
+          "originalLine": 2206,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-claims.test.mjs"
+    },
+    {
+      "id": "D03",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2659,
+          "originalLine": 2596,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-claims.test.mjs"
+    },
+    {
+      "id": "D04",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1425,
+          "originalLine": 1364,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "D05",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1418,
+          "originalLine": 1357,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "D06",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2658,
+          "originalLine": 2595,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P4"
+    },
+    {
+      "id": "D07",
+      "state": "UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1359,
+          "originalLine": 1299,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "preparedProposal": "docs/history-03/proposal/residual-scan.patch"
+    },
+    {
+      "id": "D08",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1968,
+          "originalLine": 1906,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-vocabulary.test.mjs"
+    },
+    {
+      "id": "D09",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1357,
+          "originalLine": 1297,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P2"
+    },
+    {
+      "id": "D10",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 43,
+          "originalLine": 37,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "D11",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 49,
+          "originalLine": 43,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "D12",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1101,
+          "originalLine": 1063,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "D13",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 2879,
+          "originalLine": 2816,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "D14",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "D15",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "opp-mode.mjs",
+          "line": 3,
+          "originalLine": 3,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "021138df2fc90a5d8b400ec5df0ac4a82092dd1b5236878392a9f2eeb9949974"
+        },
+        {
+          "path": "ignition-watch.mjs",
+          "line": 190,
+          "originalLine": 166,
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-delivery-counts.test.mjs"
+    },
+    {
+      "id": "D20",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "scan.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+        }
+      ],
+      "acceptanceClosed": false
+    },
+    {
+      "id": "E01",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "news-watch.mjs",
+          "line": 101,
+          "originalLine": 72,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "70c59c185e34c2c7f34499a8df26252e5d07d45984f930f83203b25df457a32d"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-claims.test.mjs"
+    },
+    {
+      "id": "E02",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "discover.mjs",
+          "line": 342,
+          "originalLine": 340,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "abc1ddf693845d665b224fdf0033f6711ade086c976d0143540af11f367f1df9"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "E03",
+      "state": "OWNER_POLICY_TODO",
+      "anchors": [
+        {
+          "path": "deals.mjs",
+          "line": 100,
+          "originalLine": 98,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "cf30c07645fd198b6b3c2542c2b259497cc59222c49211099299ac5244c09525"
+        }
+      ],
+      "acceptanceClosed": false,
+      "pendingPolicy": "P1"
+    },
+    {
+      "id": "E04",
+      "state": "CORRECTION_REGRESSION_COVERED",
+      "anchors": [
+        {
+          "path": "tipranks.mjs",
+          "line": 126,
+          "originalLine": 124,
+          "basis": "UNCHANGED_LINE_RELOCATED",
+          "sha256": "ecf74ec265c82078ee4ef7f44cc48e841cff252b28b1cee7f435b0e306e07c7d"
+        }
+      ],
+      "acceptanceClosed": false,
+      "regressionFile": "test/history03-attribution.test.mjs"
+    },
+    {
+      "id": "E10",
+      "state": "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED",
+      "anchors": [
+        {
+          "path": "agent-a-core.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "1ba3eb26eae9f7fee58b27b46d873bcdda1a522db375f8f86cb301fa3f3b6f14"
+        },
+        {
+          "path": "agent-a-lab.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "ecf41017f8ba6e2ceabd607502b19c2179efeaad0361a128a9172ac3c3a7c75d"
+        },
+        {
+          "path": "calendar.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "6bc0b508f72b3a64e660ea1df0efa6cf7490c690d09cdf1652b545c7b248bbeb"
+        },
+        {
+          "path": "catalyst-core.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "f97ad5d90f413b9f49a00f1abff67c6a88eddca9ec67e78bc8a0dbe46638e43d"
+        },
+        {
+          "path": "catalyst-lab.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "bff90fab371c07ce4d430cfdca91b380820061ab2e3a85c07388d259c4b6e4aa"
+        },
+        {
+          "path": "chain-core.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "ff37c8b850b84c28ea365865e0d384c8fa4216fd00f37bb9d16a5424447221a5"
+        },
+        {
+          "path": "chain-decoder.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "ad92235a3a2bdaf1f7fae74d6ab43b3d6e2e0400ee4cea7a0b94f2d1815b9a74"
+        },
+        {
+          "path": "chain-ripple.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "7dac1d0525cd1ae681333bfa05d547e8ab00ab288892d09498bb0752d7db6452"
+        },
+        {
+          "path": "deals.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "cf30c07645fd198b6b3c2542c2b259497cc59222c49211099299ac5244c09525"
+        },
+        {
+          "path": "discover.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "abc1ddf693845d665b224fdf0033f6711ade086c976d0143540af11f367f1df9"
+        },
+        {
+          "path": "discovery2-core.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "a453f3f624094aeb6d9caa8492ef93fe45498261dc413c2b30b3dbf88279316b"
+        },
+        {
+          "path": "discovery2.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "709033f065571b41bedaff062fe9fe952f162d5a05dbcffcd0af44431da93fee"
+        },
+        {
+          "path": "e16-absorption.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "d489d53dc1861c0a4b2245d9a780ca2a7f9a8627b153dc27fd9aee59505d4308"
+        },
+        {
+          "path": "ew-stack.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "7e6d9b390783abbf1cbff75e53d52383ca8c9043385fc8092ed2828f18c5a6bb"
+        },
+        {
+          "path": "follow-lane.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "39b612829136df537629bea59228e88c1835038468195f1697158507921dbe96"
+        },
+        {
+          "path": "fulfilling.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "4f8cca3445daa35f99021740b69d042f46900fe27e0f75845fdd99d9c338f9d6"
+        },
+        {
+          "path": "gov-awards.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "b153cf26cdc3b63158b53b7fcd01b47357efa8d18e5cf2a27866d2504155da12"
+        },
+        {
+          "path": "gov-awards2.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "bb3b53eaa954eaf60051e08fd70793b3494b8920c53fdc1d30066da62021b34b"
+        },
+        {
+          "path": "health.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "c95b06871a80120db31c203b22a8ef3d884594b3594454f75bb45cbae9959337"
+        },
+        {
+          "path": "ignition-core.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "3e0ca9cdc9ed78e0a466c2bea409e955f947b0ce704487881037f0058c863f08"
+        },
+        {
+          "path": "ignition-paper.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "ea246d9190a7e43d12fe2218102c202a23a3524c09a0d579af081051adc3289d"
+        },
+        {
+          "path": "insider-study.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "a24f7c32c7bbf398aed7bbb57bd2b36161624f64deb11cfcaf813dc7095e1e54"
+        },
+        {
+          "path": "league.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "8d5f5b4315e045c55b98abf822a904c977cf943b47a4a746572d9947760a18b8"
+        },
+        {
+          "path": "missed-runners.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "4f724ee05257e0718257896f8725e627355bd2bb6db90a8c7a3f18cfd9f145a0"
+        },
+        {
+          "path": "movers.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "6b189998fd90a54ad025f019046d84ddf005f7cf4bf0e521bbbdaaf45ebc5468"
+        },
+        {
+          "path": "news-watch.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "70c59c185e34c2c7f34499a8df26252e5d07d45984f930f83203b25df457a32d"
+        },
+        {
+          "path": "orb-study.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "a9ed7dca072df5776df188db0a1ecfbc94be77a9b62c67c15facc81e75b08c51"
+        },
+        {
+          "path": "pattern-lab.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "ec8ec728a71ff66d5a8811a7d872400a61a21c65c8a97f37d5778c7c58b5b337"
+        },
+        {
+          "path": "rank-models.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "354c8d52add8959cd3e664a6963498a5d9d32a59caf932d225dd703b94dbe3e3"
+        },
+        {
+          "path": "regime-gate.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "8323b2aca77e929fe65aa9a785e170aafa2ba9861d21a9bc73d478ae9e0c94ce"
+        },
+        {
+          "path": "sequence-study.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "1efe4c6ebba9d337d1172caa715b47738bc35488407a0094131fcd304ab1a242"
+        },
+        {
+          "path": "share-supply.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "4299f9839f7c1905df1eaf94e8b75c3f6d87c1ad4ba8cc6124800b77d0a316e2"
+        },
+        {
+          "path": "smart-money.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "109adc3b5f0cf25b1a4e3b1bd490486cfc19ab37a0249725cbbd434ad78f6238"
+        },
+        {
+          "path": "swing-lab.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "1bf5f58aa60152da9bbfc7afcbaeae7bbde7da5c4890a7d09a113029d49ef1cf"
+        },
+        {
+          "path": "tip-score.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "44430a313b8e7b4e284c8b39f14609fa336fcc03ece73b5a9c9765a438ceb42f"
+        },
+        {
+          "path": "tipranks.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "ecf74ec265c82078ee4ef7f44cc48e841cff252b28b1cee7f435b0e306e07c7d"
+        },
+        {
+          "path": "watcher-guard-core.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "5572cecbba5d959e50890716cdf0d7a3cd9fa38a262b1087090a856e1dbb9afe"
+        },
+        {
+          "path": "watcher-reporting.mjs",
+          "line": 1,
+          "basis": "FILE_SCOPE_ONLY",
+          "sha256": "68e1e136cbfdccd774bc8c0c3670b7141cacd0a06dce86155138a3272967c544"
+        }
+      ],
+      "acceptanceClosed": false
+    }
+  ]
+}

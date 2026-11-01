@@ -1,0 +1,44 @@
+{
+  "kind": "MARKET03_CATALYST03_INDEPENDENT_REVIEW_V1",
+  "verdict": "CHANGES_REQUIRED",
+  "reviewedHead": "e6a1382c69201bd13add0b2249fa75e1fc3d51bd",
+  "codePatchSha256": "21841f123ccd9e108a5ae83400d3cce5d816148a11d1ea014d4d30b21d82dff1",
+  "manifestSha256": "19d7df266bb0d7c745ba710e986c189b260a6c7b080f81ad21a787d2bfad4c27",
+  "matrixSha256": "a2e21c9a2a6ea2b0f444c48cd3287ab8c576bc43d7b70c487b9f9c2b1491255b",
+  "reviewHarnessSha256": "9c3d7475b662d9214df488faf4b4f66a1cb538779e00872eda8a6e6fe74c6029",
+  "independentRuntime": "Node24.19.0",
+  "suppliedTests": {
+    "exactPackagePass": 22,
+    "onDevelopment2e466c58Pass": 22,
+    "onDevelopmentD3c1WithClosedWorkerPass": 23
+  },
+  "affectedCallerTests": {
+    "pass": 127,
+    "todo": 6,
+    "fail": 0
+  },
+  "actualHostTests": {
+    "pass": 13,
+    "fail": 0
+  },
+  "newDesiredBehaviorTests": {
+    "pass": 0,
+    "fail": 4,
+    "processExit": 1
+  },
+  "newFindings": [
+    "R1-invalid-date-isolation",
+    "R2-missing-SPY-envelope",
+    "R3-unresolved-conflict-status"
+  ],
+  "hostedCI": {
+    "test": "SUCCESS",
+    "host-monitor-stress": "SKIPPED"
+  },
+  "currentDependencyDifferences": [
+    "scan.mjs",
+    "ignition-watch.mjs"
+  ],
+  "packageIntegrated": false,
+  "productionMutation": false
+}

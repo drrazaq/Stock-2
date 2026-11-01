@@ -1,5 +1,7 @@
 # HISTORY-03 integration — bounded runtime batches
 
+Latest continuation: [source-anchor reconciliation](SOURCE-ANCHOR-RECONCILIATION.md) at code checkpoint `d3c1ee58`, preserving `2e466c58`. The additional actual radar footer correction is integrated. All 100 original catalogue records are relocated; W09/A12/D07 and registry-count corrections are tested but remain an **unapplied scan proposal** pending Claude's earnings-holiday ownership handoff. Historical paragraphs below retain checkpoint evidence; their old “next batch” lists are superseded by this continuation. Acceptance remains 24/40. The MARKET/CATALYST package is [CHANGES REQUIRED](../reviews/market03-catalyst03/REVIEW.md); [privacy containment](../news-log-containment-proposal.md) is a proposal only. Mentor approval remains exact-package-only and blocked by the active-writer boundary.
+
 Source audit/harness: Claude `5bcf4d2933c1d77b10b7c12489e2cfbb624387d9`, [immutable original package](https://github.com/drrazaq/Stock-2/tree/5bcf4d2933c1d77b10b7c12489e2cfbb624387d9/docs/history-03). Integrator: Codex. The original catalogue is review evidence, not automatic authority to change policies. No production deployment is part of this integration.
 
 ## Batch 1: qualification and corrected-behavior harness
