@@ -1,0 +1,89 @@
+# INACTIVE REVIEW COPY: outside .github/workflows. Installation, binding and one run require separate approval.
+name: Bounded SIP-access sample
+on:
+  workflow_dispatch:
+    inputs:
+      approval_json:
+        description: Dated non-secret approval, reviewed source/plan/workflow hashes; never credentials
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: stock2-sip-access-sample
+  cancel-in-progress: false
+jobs:
+  diagnostic:
+    if: github.ref_name == 'main' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read installed workflow
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          path: review
+          sparse-checkout: .github/workflows/sip-access-diagnostic.yml
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Read reviewed immutable diagnostic
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 8af4e1acf74530b620ddc4cc232c2030fffabb6f
+          path: code
+          sparse-checkout: |
+            sip-access-diagnostic.mjs
+            tools/run-sip-access-diagnostic.mjs
+            docs/validation/sip-access-plan.proposed.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.22.0
+      - name: Prepare bounded non-secret approval
+        env:
+          APPROVAL_JSON: ${{ inputs.approval_json }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          value = os.environ['APPROVAL_JSON']
+          if len(value.encode()) > 16384:
+              raise SystemExit('BLOCKED')
+          json.loads(value)
+          with open(os.path.join(os.environ['RUNNER_TEMP'], 'sip-access-approval.json'), 'x') as f:
+              f.write(value)
+          PY
+      - name: Verify immutable files before binding provider credentials
+        env:
+          EXPECTED_SOURCE: 8af4e1acf74530b620ddc4cc232c2030fffabb6f
+        run: |
+          python3 - <<'PY'
+          import hashlib, pathlib, subprocess, os
+          root = pathlib.Path('code')
+          if subprocess.check_output(['git', '-C', 'code', 'rev-parse', 'HEAD'], text=True).strip() != os.environ['EXPECTED_SOURCE']:
+              raise SystemExit('BLOCKED')
+          expected = {"sip-access-diagnostic.mjs":"008f8b23db51b226ebc61890d816ff55031e37ac2a5d7b913568174e0aacb151","tools/run-sip-access-diagnostic.mjs":"9f32782726db84b94dc9ce0ce04a5ffd4c21544f8562d63c64d53a0605f0cb63","docs/validation/sip-access-plan.proposed.json":"c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05"}
+          for name, digest in expected.items():
+              p = root / name
+              if p.is_symlink() or not p.is_file() or p.stat().st_size > 16384 or hashlib.sha256(p.read_bytes()).hexdigest() != digest:
+                  raise SystemExit('BLOCKED')
+          PY
+      - name: Protected diagnostic only
+        id: diagnostic
+        working-directory: code
+        env:
+          SIP_APPROVED_SOURCE: 8af4e1acf74530b620ddc4cc232c2030fffabb6f
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+        run: timeout --kill-after=5s 190s node tools/run-sip-access-diagnostic.mjs --approval "$RUNNER_TEMP/sip-access-approval.json" "$GITHUB_WORKSPACE/review/.github/workflows/sip-access-diagnostic.yml"
+      - name: Retain aggregate-only report
+        if: always() && steps.diagnostic.outcome != 'skipped'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sip-access-sample-${{ github.run_id }}
+          path: ${{ runner.temp }}/sip-access-report.json
+          if-no-files-found: warn
+          retention-days: 3
+      - name: Remove temporary approval and aggregate
+        if: always()
+        run: rm -f -- "$RUNNER_TEMP/sip-access-approval.json" "$RUNNER_TEMP/sip-access-report.json"

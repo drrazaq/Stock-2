@@ -17,16 +17,16 @@ The immutable [plan](validation/sip-access-plan.proposed.json) has approved=fals
 6. raw 1Day bars for SPY,AAPL across the declared previous session;
 7. AAPL trades over the ten seconds before T0.
 
-The inclusive bar end is T0 minus 1ms, so the open minute is not requested. A page token means INCOMPLETE_PAGE and immediate stop; absence of a returned bar is not proof of no traded volume. One repeat measures sampled revisions, never a universal REST settling period. Rate-limit header numbers describe these responses, not sustained limits. This does not reconcile all minute volume, determine halt rights, prove quote units through an account test, guarantee fills or validate profitability.
+This replaces the earlier all-day seven-request sketch with one feasible <=180second packet. It does not claim thin-stock gap explanation, full-day minute/daily reconciliation or after-hours coverage. The inclusive bar end is T0 minus 1ms, so the open minute is not requested. A page token means INCOMPLETE_PAGE and immediate stop; absence of a returned bar is not proof of no traded volume. One repeat measures sampled revisions, never a universal REST settling period. Rate-limit header numbers describe these responses, not sustained limits. This does not reconcile all minute volume, determine halt rights, prove quote units through an account test, guarantee fills or validate profitability.
 
-Hard limits: 10 seconds per HTTP request AND body, 128KiB/body, 896KiB cumulative response bytes, 16KiB report, 180 seconds total runtime, seven attempts. No automatic run retries; refusal, timeout, malformed/oversize response, unknown pagination, clock reversal or deadline stops the sequence. A failed/uncertain attempt is never resumed automatically.
+Hard limits: 10 seconds per HTTP request AND body, 128KiB/body, 896KiB cumulative body bytes read (not a TLS/wire-byte guarantee), 16KiB report, 180 seconds total runtime, seven attempts. No automatic run retries; attempt>1 is blocked. Concurrency serializes jobs but is not a cross-dispatch single-use authorization store: the operator must inspect prior run history before the ONE approved dispatch and must not dispatch a replacement after failure without new approval. Refusal, timeout, malformed/oversize response, unknown pagination, clock reversal or deadline stops the sequence. A failed/uncertain attempt is never resumed automatically.
 
 ## Implemented offline
 
 - sip-access-diagnostic.mjs: fixed routes, request/time/body/report caps, stop behavior, per-response ages, all-seven-field sample revision comparison, no ambient fetch.
 - tools/run-sip-access-diagnostic.mjs: inactive guarded entrypoint. Requires manual main workflow identity, attempt1, pinned source/plan/workflow hashes and a dated scoped approval before reading existing bindings into its client. Ordinary execution fails closed.
 - test/sip-access-diagnostic.test.mjs: mocked full orchestration, failures, actual bounded HTTP adapter with mocked streams, CLI refusal. No provider calls or credentials.
-- Proposed workflow will remain outside .github/workflows. Its final source pin/manifest follow the first code checkpoint. No accepted contracts source is changed.
+- The [pinned proposed workflow](validation/sip-access-diagnostic.workflow.yml.proposed) remains outside .github/workflows; [manifest](validation/sip-access-diagnostic-manifest.json) pins source 8af4e1acf74530b620ddc4cc232c2030fffabb6f and each exact file hash. No accepted contracts source is changed.
 
 The runtime stores no raw provider responses, identifiers from private state, holdings or account details. Raw bodies are bounded in memory only. The report contains endpoint IDs, HTTP status, counts, clock ages, sample revision counts and fixed claim exclusions. Numeric rate headers are allowlisted; error strings/provider bodies/credentials are omitted. There is no price, BBO, symbol-level dataset or decrypted state artifact. Aggregate-only reporting intentionally cannot support later trading-case admission.
 
@@ -34,7 +34,9 @@ The runtime stores no raw provider responses, identifiers from private state, ho
 
 After independent review, approval would cover only installation of the final proposed workflow, one manual run on this date with immutable source/plan/workflow hashes, and binding the already-existing ALPACA_KEY/ALPACA_SECRET to its protected step. No new secret, PRIVATE_KEY, research encryption key, broker endpoint, Telegram binding, permission escalation or normal-bot substitute. Repository permission contents:read, checkout persist-credentials:false, job5min, no pushes.
 
-The report upload is bounded to one <=16KiB JSON file, retention3days; upload failure is UNKNOWN durability, not successful collection. Hard interruption may lose the report. Recovery is download of that existing aggregate report only; no repeated provider calls, financial recovery or automatic second run. Artifact acknowledgment is not independent remote-byte verification.
+The proposed wrapper verifies the fixed source and plan hashes BEFORE the protected credential-bearing step; the runner rechecks source/plan/workflow/approval. No arbitrary repository script is run instead.
+
+The report upload is bounded to one <=16KiB JSON file, retention3days; upload failure is UNKNOWN durability, not successful collection. Hard interruption may lose the report. An existing or partial report path fails before transport and is never overwritten. Recovery is download of that existing aggregate report only; no repeated provider calls, financial recovery or automatic second run. Artifact acknowledgment is not independent remote-byte verification.
 
 Before execution the operator must verify protected workflow permissions/guards, existing binding availability without displaying values, calendar/date, source and report-storage quotas. A single authorization must specify workflow bytes, source SHA, plan hash, date, exactly seven attempts and current binding. No unused earlier preflight/capture authorization is repurposed.
 

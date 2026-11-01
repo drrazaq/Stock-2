@@ -1,0 +1,57 @@
+{
+  "kind": "INACTIVE_SIP_ACCESS_DIAGNOSTIC_V1",
+  "sourceCommit": "8af4e1acf74530b620ddc4cc232c2030fffabb6f",
+  "reviewDate": "2026-11-01",
+  "contractsReviewed": {
+    "sha": "f61bcf748c569bd86ec6997267bc23fa5984e113",
+    "verdict": "PASS_INACTIVE_ONLY",
+    "diffSha256": "d49ff0fa3c5045ea0a0b72f61945a4f8e891b567a36c4c0c45445eebc8013f4d"
+  },
+  "contractsEdited": false,
+  "productionDeployment": false,
+  "providerCallsMade": 0,
+  "installed": false,
+  "approved": false,
+  "requestBudgets": {
+    "referencePreparation": 0,
+    "sipSampling": 7,
+    "combinedApplicationMaximum": 7,
+    "controlPlane": "checkout/setup/artifact traffic excluded from application count; 5min job/16KiB artifact/3day retention"
+  },
+  "sourceHashes": {
+    "sip-access-diagnostic.mjs": "008f8b23db51b226ebc61890d816ff55031e37ac2a5d7b913568174e0aacb151",
+    "tools/run-sip-access-diagnostic.mjs": "9f32782726db84b94dc9ce0ce04a5ffd4c21544f8562d63c64d53a0605f0cb63"
+  },
+  "planSha256": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
+  "workflowSha256": "4cd8081c6d0800f929d425e9ff777d0a4605ae8161c733728230afa013b95a26",
+  "fileHashes": {
+    "sip-access-diagnostic.mjs": "008f8b23db51b226ebc61890d816ff55031e37ac2a5d7b913568174e0aacb151",
+    "tools/run-sip-access-diagnostic.mjs": "9f32782726db84b94dc9ce0ce04a5ffd4c21544f8562d63c64d53a0605f0cb63",
+    "test/sip-access-diagnostic.test.mjs": "82bb1338b4646c8ed39b8b25624ad28434ce125dbd87d7f4b03523bac95f2a4b",
+    "docs/validation/sip-access-plan.proposed.json": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
+    "docs/market-data-contracts-review-pass.md": "114d060f091c9db417eccc4b3a8697603c105ae968e894024afd68a0278dcc81",
+    "docs/sip-access-diagnostic-proposal.md": "04a812c4531daab14e582cd324db899067a10a0a00af4245c95fd49c91319503",
+    "docs/contracts-integration-proposal.md": "e2b52311b914ef1e0267b841bcf9b084229cd769570616cb6a2a5fce1744f047",
+    "docs/validation/sip-access-diagnostic.workflow.yml.proposed": "4cd8081c6d0800f929d425e9ff777d0a4605ae8161c733728230afa013b95a26",
+    "test/sip-access-package.test.mjs": "c69e16a8f167021626e730b954b20792399aea01dce093d378c6b4ca833b6905",
+    "docs/validation/sip-access-approval.example.json": "2bb89ed07d7fc04177b3f2a8265861edfdd9b1d58e4b351f2f59298ba3008a34"
+  },
+  "verification": {
+    "independentLocalNode": "UNAVAILABLE: managed executor initialization failed",
+    "independentPureMock": "7 pure orchestration/failure checks PASS in isolated JavaScript; V8 syntax checks PASS; not independent Node/process execution",
+    "hostedSourceCi": {
+      "sha": "8af4e1acf74530b620ddc4cc232c2030fffabb6f",
+      "checksUrl": "https://github.com/drrazaq/Stock-2/commit/8af4e1acf74530b620ddc4cc232c2030fffabb6f",
+      "fullNode": "https://github.com/drrazaq/Stock-2/actions/runs/41297935006/job/124822632870",
+      "result": "PASS_ALL_5_APPLICABLE_CHECKS",
+      "focusedCases": 12
+    },
+    "approvalRequired": "Exact workflow installation, existing provider bindings and ONE dated run; no automatic replacement/retry; operator checks run history"
+  },
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "newClosures": 0,
+    "genuineAdmissions": 0
+  }
+}
