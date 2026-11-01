@@ -1,6 +1,10 @@
 [0s] library: 0 A-LDX entries written now
 [6s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30
-[7s] splits since 2026-10-19: 103 listed, 1 repaired
+[6s] splits since 2026-10-19: 103 listed, 1 repaired
 [7s] window 2021-10-12..2026-10-30 (1269 sessions, 8602 stocks), rows with high/low +100.0%
-[7s] trades: {"signals":357,"noPrice":0,"notBought":0,"open":0,"artifacts":0,"open189":33,"rebuilt":357,"liveCheck":{"older":{"n":99,"win":0.7273},"newer":{"n":258,"win":0.7481}},"replayCheck":{"older":{"n":99,"win":0.7273},"newer":{"n":256,"win":0.7461}},"reproduces":false} | CUT 2026-04-24
-[7s] NOT RUN: the rebuilt live trades do not reproduce REPLAY-PB12T20 (n / win per half); nothing frozen
+[7s] trades: {"signals":357,"noPrice":0,"notBought":0,"open":0,"artifacts":0,"open189":33,"rebuilt":357,"liveCheck":{"older":{"n":99,"win":0.7273},"newer":{"n":256,"win":0.7461}},"replayCheck":{"through":"2026-10-23","older":{"n":99,"win":0.7273},"newer":{"n":256,"win":0.7461}},"reproduces":true} | CUT 2026-04-24
+[7s] LIVE account: {"older":3361.2,"newer":4532.91,"spyOlder":3227.38,"spyNewer":4439.35}
+[7s] LDX-HALF63: DO NOT ADOPT | older diff -3.1% fired 35 | newer diff -2.1% fired 93 | acct older 3169.42 vs 3361.2, newer 4300.48 vs 4532.91 | older: same-money average change -3.1% (not > 0); older: per year of capital +25.5% below the live +28.4%; older: 3-slot account at 0.8% ends 3169 USD, not above the live 3361; older: 3-slot account at 1.2% ends 3125 USD, not above the live 3326; newer: same-money average change -2.1% (not > 0); new
+[7s] LDX-T200: DO NOT ADOPT | older diff -8.4% fired 69 | newer diff -4.9% fired 147 | acct older 3851.59 vs 3361.2, newer 4734.84 vs 4532.91 | older: same-money average change -8.4% (not > 0); older: per year of capital +10.2% below the live +28.4%; newer: same-money average change -4.9% (not > 0)
+[7s] LDX-TIME189: DO NOT ADOPT | older diff +1.7% fired 41 | newer diff +0.8% fired 92 | acct older 3028.42 vs 3361.2, newer 4223.63 vs 4532.91 | older: per year of capital +26.4% below the live +28.4%; older: 3-slot account at 0.8% ends 3028 USD, not above the live 3361; older: 3-slot account at 1.2% ends 3002 USD, not above the live 3326; newer: per year of capital +21.7% below the live +25.0%; newer: 3-slot account at 0.8% ends 4224 USD, n
+AGENT A LEADER DIP EXITS 2021-10-12 to 2026-10-30 | cut 2026-04-24 | LDX-HALF63 DO NOT ADOPT | LDX-T200 DO NOT ADOPT | LDX-TIME189 DO NOT ADOPT

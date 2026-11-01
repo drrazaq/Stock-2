@@ -1,5 +1,17 @@
 {
- "generatedAt": "2026-11-01T12:34:36.817Z",
+ "generatedAt": "2026-11-01T12:35:56.936Z",
+ "study": "A-LDX1 exit questions on the live LEADER DIP lane (Agent A)",
+ "preRegistered": "agent-a-ldx-core.mjs header (1 Nov 2026, before any run) + data/strategy-library.json LDX-*",
+ "registered": "2026-11-01",
+ "live": "SQ11-PB12 entries, +20% sell limit, else the close of session 126, no stop; 3 slots x 1,000 USD (NOT re-tested; the reference)",
+ "window": [
+  "2021-10-12",
+  "2026-10-30"
+ ],
+ "cut": "2026-04-24",
+ "split": "2024-01-01",
+ "cost": 0.008,
+ "stress": 0.012,
  "data": {
   "price": {
    "ok": true,
@@ -23,11 +35,12 @@
      "win": 0.7273
     },
     "newer": {
-     "n": 258,
-     "win": 0.7481
+     "n": 256,
+     "win": 0.7461
     }
    },
    "replayCheck": {
+    "through": "2026-10-23",
     "older": {
      "n": 99,
      "win": 0.7273
@@ -37,12 +50,1062 @@
      "win": 0.7461
     }
    },
-   "reproduces": false
+   "reproduces": true
   }
+ },
+ "halal": "full universe (past ZAD marks unknown), as REPLAY-PB12T20",
+ "firstRun": {
+  "LDX-HALF63": {
+   "at": "2026-11-01T12:35:56.936Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-30"
+   ],
+   "cut": "2026-04-24",
+   "name": "LEADER DIP (+20% limit, 126 sessions) + halfway check: still under the buy price after 63 sessions -> sell at the next open",
+   "verdict": "DO NOT ADOPT",
+   "why": "older: same-money average change -3.1% (not > 0); older: per year of capital +25.5% below the live +28.4%; older: 3-slot account at 0.8% ends 3169 USD, not above the live 3361; older: 3-slot account at 1.2% ends 3125 USD, not above the live 3326; newer: same-money average change -2.1% (not > 0); newer: 3-slot account at 0.8% ends 4300 USD, not above the live 4533; newer: 3-slot account at 1.2% ends 4202 USD, not above the live 4456",
+   "compare": {
+    "older": {
+     "n": 99,
+     "fired": 35,
+     "diff": -0.0309,
+     "firedDiff": -0.0873,
+     "firedBetter": 0.3143
+    },
+    "newer": {
+     "n": 258,
+     "fired": 93,
+     "diff": -0.0209,
+     "firedDiff": -0.0581,
+     "firedBetter": 0.3978
+    }
+   },
+   "live": {
+    "older": {
+     "n": 99,
+     "stocks": 93,
+     "days": 69,
+     "avg": 0.096,
+     "median": 0.192,
+     "worst": -0.2628,
+     "best": 0.2323,
+     "win": 0.7273,
+     "avgStress": 0.092,
+     "perYear": 0.2836,
+     "heldAvg": 85.3131
+    },
+    "newer": {
+     "n": 258,
+     "stocks": 180,
+     "days": 160,
+     "avg": 0.0855,
+     "median": 0.192,
+     "worst": -0.5606,
+     "best": 0.4933,
+     "win": 0.7481,
+     "avgStress": 0.0815,
+     "perYear": 0.2836,
+     "heldAvg": 76.0194
+    }
+   },
+   "variant": {
+    "older": {
+     "n": 99,
+     "stocks": 93,
+     "days": 69,
+     "avg": 0.0652,
+     "median": 0.192,
+     "worst": -0.3636,
+     "best": 0.2323,
+     "win": 0.5859,
+     "avgStress": 0.0612,
+     "perYear": 0.2553,
+     "heldAvg": 64.3131
+    },
+    "newer": {
+     "n": 258,
+     "stocks": 180,
+     "days": 160,
+     "avg": 0.0646,
+     "median": 0.192,
+     "worst": -0.5411,
+     "best": 0.4933,
+     "win": 0.6124,
+     "avgStress": 0.0606,
+     "perYear": 0.2933,
+     "heldAvg": 55.5039
+    }
+   },
+   "atStress": {
+    "live": {
+     "older": {
+      "n": 99,
+      "stocks": 93,
+      "days": 69,
+      "avg": 0.092,
+      "median": 0.188,
+      "worst": -0.2668,
+      "best": 0.2283,
+      "win": 0.7273,
+      "avgStress": 0.092,
+      "perYear": 0.2718,
+      "heldAvg": 85.3131
+     },
+     "newer": {
+      "n": 258,
+      "stocks": 180,
+      "days": 160,
+      "avg": 0.0815,
+      "median": 0.188,
+      "worst": -0.5646,
+      "best": 0.4893,
+      "win": 0.7403,
+      "avgStress": 0.0815,
+      "perYear": 0.2703,
+      "heldAvg": 76.0194
+     }
+    },
+    "variant": {
+     "older": {
+      "n": 99,
+      "stocks": 93,
+      "days": 69,
+      "avg": 0.0612,
+      "median": 0.188,
+      "worst": -0.3676,
+      "best": 0.2283,
+      "win": 0.5859,
+      "avgStress": 0.0612,
+      "perYear": 0.2396,
+      "heldAvg": 64.3131
+     },
+     "newer": {
+      "n": 258,
+      "stocks": 180,
+      "days": 160,
+      "avg": 0.0606,
+      "median": 0.188,
+      "worst": -0.5451,
+      "best": 0.4893,
+      "win": 0.6085,
+      "avgStress": 0.0606,
+      "perYear": 0.2752,
+      "heldAvg": 55.5039
+     }
+    }
+   },
+   "account": {
+    "variant": {
+     "cost": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3169.42,
+       "perYear": 0.0251,
+       "maxDD": -0.2624,
+       "trades": 13,
+       "closed": 11,
+       "fullSlotSkips": 85,
+       "ruleOffSkips": 1,
+       "timeInMarket": 0.5197,
+       "spyEnd": 3227.38,
+       "beatsSpy": false
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4300.48,
+       "perYear": 0.1694,
+       "maxDD": -0.223,
+       "trades": 29,
+       "closed": 26,
+       "fullSlotSkips": 226,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4439.35,
+       "beatsSpy": false
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 3925.43,
+       "perYear": 0.0613,
+       "maxDD": -0.3089,
+       "trades": 41,
+       "closed": 38,
+       "fullSlotSkips": 312,
+       "ruleOffSkips": 1,
+       "timeInMarket": 0.7583,
+       "spyEnd": 4659.16,
+       "beatsSpy": false
+      }
+     },
+     "stress": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3125.36,
+       "perYear": 0.0187,
+       "maxDD": -0.2713,
+       "trades": 13,
+       "closed": 11,
+       "fullSlotSkips": 85,
+       "ruleOffSkips": 1,
+       "timeInMarket": 0.5197,
+       "spyEnd": 3222.16,
+       "beatsSpy": false
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4202.26,
+       "perYear": 0.1577,
+       "maxDD": -0.2279,
+       "trades": 29,
+       "closed": 26,
+       "fullSlotSkips": 226,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4433.68,
+       "beatsSpy": false
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 3022.08,
+       "perYear": 0.0016,
+       "maxDD": -0.3187,
+       "trades": 27,
+       "closed": 27,
+       "fullSlotSkips": 225,
+       "ruleOffSkips": 102,
+       "timeInMarket": 0.5562,
+       "spyEnd": 4653.94,
+       "beatsSpy": false
+      }
+     }
+    },
+    "live": {
+     "cost": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3361.2,
+       "perYear": 0.0527,
+       "maxDD": -0.2248,
+       "trades": 10,
+       "closed": 9,
+       "fullSlotSkips": 89,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5179,
+       "spyEnd": 3227.38,
+       "beatsSpy": true
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4532.91,
+       "perYear": 0.1964,
+       "maxDD": -0.1188,
+       "trades": 22,
+       "closed": 19,
+       "fullSlotSkips": 233,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4439.35,
+       "beatsSpy": true
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 4913.68,
+       "perYear": 0.1155,
+       "maxDD": -0.2248,
+       "trades": 32,
+       "closed": 29,
+       "fullSlotSkips": 322,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7557,
+       "spyEnd": 4659.16,
+       "beatsSpy": true
+      }
+     },
+     "stress": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3325.93,
+       "perYear": 0.0477,
+       "maxDD": -0.2303,
+       "trades": 10,
+       "closed": 9,
+       "fullSlotSkips": 89,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5179,
+       "spyEnd": 3222.16,
+       "beatsSpy": true
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4456.3,
+       "perYear": 0.1876,
+       "maxDD": -0.1218,
+       "trades": 22,
+       "closed": 19,
+       "fullSlotSkips": 233,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4433.68,
+       "beatsSpy": true
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 4800.55,
+       "perYear": 0.1097,
+       "maxDD": -0.2303,
+       "trades": 32,
+       "closed": 29,
+       "fullSlotSkips": 322,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7557,
+       "spyEnd": 4653.94,
+       "beatsSpy": true
+      }
+     }
+    }
+   },
+   "changedBy": {
+    "halfway": 128
+   },
+   "frozenAt": "2026-11-01T12:35:56.936Z"
+  },
+  "LDX-T200": {
+   "at": "2026-11-01T12:35:56.936Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-30"
+   ],
+   "cut": "2026-04-24",
+   "name": "LEADER DIP (+20% limit, 126 sessions) + trend break: first close under the stock's 200-day average -> sell at the next open",
+   "verdict": "DO NOT ADOPT",
+   "why": "older: same-money average change -8.4% (not > 0); older: per year of capital +10.2% below the live +28.4%; newer: same-money average change -4.9% (not > 0)",
+   "compare": {
+    "older": {
+     "n": 99,
+     "fired": 69,
+     "diff": -0.0844,
+     "firedDiff": -0.1211,
+     "firedBetter": 0.2464
+    },
+    "newer": {
+     "n": 258,
+     "fired": 147,
+     "diff": -0.049,
+     "firedDiff": -0.086,
+     "firedBetter": 0.2857
+    }
+   },
+   "live": {
+    "older": {
+     "n": 99,
+     "stocks": 93,
+     "days": 69,
+     "avg": 0.096,
+     "median": 0.192,
+     "worst": -0.2628,
+     "best": 0.2323,
+     "win": 0.7273,
+     "avgStress": 0.092,
+     "perYear": 0.2836,
+     "heldAvg": 85.3131
+    },
+    "newer": {
+     "n": 258,
+     "stocks": 180,
+     "days": 160,
+     "avg": 0.0855,
+     "median": 0.192,
+     "worst": -0.5606,
+     "best": 0.4933,
+     "win": 0.7481,
+     "avgStress": 0.0815,
+     "perYear": 0.2836,
+     "heldAvg": 76.0194
+    }
+   },
+   "variant": {
+    "older": {
+     "n": 99,
+     "stocks": 93,
+     "days": 69,
+     "avg": 0.0116,
+     "median": -0.03,
+     "worst": -0.4124,
+     "best": 0.2323,
+     "win": 0.3333,
+     "avgStress": 0.0076,
+     "perYear": 0.1017,
+     "heldAvg": 28.7475
+    },
+    "newer": {
+     "n": 258,
+     "stocks": 180,
+     "days": 160,
+     "avg": 0.0366,
+     "median": -0.0146,
+     "worst": -0.3552,
+     "best": 0.4933,
+     "win": 0.4729,
+     "avgStress": 0.0326,
+     "perYear": 0.3045,
+     "heldAvg": 30.2558
+    }
+   },
+   "atStress": {
+    "live": {
+     "older": {
+      "n": 99,
+      "stocks": 93,
+      "days": 69,
+      "avg": 0.092,
+      "median": 0.188,
+      "worst": -0.2668,
+      "best": 0.2283,
+      "win": 0.7273,
+      "avgStress": 0.092,
+      "perYear": 0.2718,
+      "heldAvg": 85.3131
+     },
+     "newer": {
+      "n": 258,
+      "stocks": 180,
+      "days": 160,
+      "avg": 0.0815,
+      "median": 0.188,
+      "worst": -0.5646,
+      "best": 0.4893,
+      "win": 0.7403,
+      "avgStress": 0.0815,
+      "perYear": 0.2703,
+      "heldAvg": 76.0194
+     }
+    },
+    "variant": {
+     "older": {
+      "n": 99,
+      "stocks": 93,
+      "days": 69,
+      "avg": 0.0076,
+      "median": -0.034,
+      "worst": -0.4164,
+      "best": 0.2283,
+      "win": 0.3131,
+      "avgStress": 0.0076,
+      "perYear": 0.0666,
+      "heldAvg": 28.7475
+     },
+     "newer": {
+      "n": 258,
+      "stocks": 180,
+      "days": 160,
+      "avg": 0.0326,
+      "median": -0.0186,
+      "worst": -0.3592,
+      "best": 0.4893,
+      "win": 0.469,
+      "avgStress": 0.0326,
+      "perYear": 0.2711,
+      "heldAvg": 30.2558
+     }
+    }
+   },
+   "account": {
+    "variant": {
+     "cost": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3851.59,
+       "perYear": 0.1195,
+       "maxDD": -0.1386,
+       "trades": 25,
+       "closed": 23,
+       "fullSlotSkips": 74,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5197,
+       "spyEnd": 3227.38,
+       "beatsSpy": true
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4734.84,
+       "perYear": 0.2193,
+       "maxDD": -0.2492,
+       "trades": 50,
+       "closed": 47,
+       "fullSlotSkips": 204,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4439.35,
+       "beatsSpy": true
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 5996.06,
+       "perYear": 0.1657,
+       "maxDD": -0.1878,
+       "trades": 75,
+       "closed": 72,
+       "fullSlotSkips": 278,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7645,
+       "spyEnd": 4659.16,
+       "beatsSpy": true
+      }
+     },
+     "stress": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3760.99,
+       "perYear": 0.1075,
+       "maxDD": -0.145,
+       "trades": 25,
+       "closed": 23,
+       "fullSlotSkips": 74,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5197,
+       "spyEnd": 3222.16,
+       "beatsSpy": true
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4710.92,
+       "perYear": 0.2166,
+       "maxDD": -0.2581,
+       "trades": 47,
+       "closed": 44,
+       "fullSlotSkips": 201,
+       "ruleOffSkips": 5,
+       "timeInMarket": 0.9828,
+       "spyEnd": 4433.68,
+       "beatsSpy": true
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 5726.22,
+       "perYear": 0.1539,
+       "maxDD": -0.1972,
+       "trades": 75,
+       "closed": 72,
+       "fullSlotSkips": 278,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7645,
+       "spyEnd": 4653.94,
+       "beatsSpy": true
+      }
+     }
+    },
+    "live": {
+     "cost": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3361.2,
+       "perYear": 0.0527,
+       "maxDD": -0.2248,
+       "trades": 10,
+       "closed": 9,
+       "fullSlotSkips": 89,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5179,
+       "spyEnd": 3227.38,
+       "beatsSpy": true
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4532.91,
+       "perYear": 0.1964,
+       "maxDD": -0.1188,
+       "trades": 22,
+       "closed": 19,
+       "fullSlotSkips": 233,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4439.35,
+       "beatsSpy": true
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 4913.68,
+       "perYear": 0.1155,
+       "maxDD": -0.2248,
+       "trades": 32,
+       "closed": 29,
+       "fullSlotSkips": 322,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7557,
+       "spyEnd": 4659.16,
+       "beatsSpy": true
+      }
+     },
+     "stress": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3325.93,
+       "perYear": 0.0477,
+       "maxDD": -0.2303,
+       "trades": 10,
+       "closed": 9,
+       "fullSlotSkips": 89,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5179,
+       "spyEnd": 3222.16,
+       "beatsSpy": true
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4456.3,
+       "perYear": 0.1876,
+       "maxDD": -0.1218,
+       "trades": 22,
+       "closed": 19,
+       "fullSlotSkips": 233,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4433.68,
+       "beatsSpy": true
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 4800.55,
+       "perYear": 0.1097,
+       "maxDD": -0.2303,
+       "trades": 32,
+       "closed": 29,
+       "fullSlotSkips": 322,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7557,
+       "spyEnd": 4653.94,
+       "beatsSpy": true
+      }
+     }
+    }
+   },
+   "changedBy": {
+    "trend": 216
+   },
+   "frozenAt": "2026-11-01T12:35:56.936Z"
+  },
+  "LDX-TIME189": {
+   "at": "2026-11-01T12:35:56.936Z",
+   "window": [
+    "2021-10-12",
+    "2026-10-30"
+   ],
+   "cut": "2026-04-24",
+   "name": "LEADER DIP with a 189-session time exit instead of 126 (the +20% limit kept until then)",
+   "verdict": "DO NOT ADOPT",
+   "why": "older: per year of capital +26.4% below the live +28.4%; older: 3-slot account at 0.8% ends 3028 USD, not above the live 3361; older: 3-slot account at 1.2% ends 3002 USD, not above the live 3326; newer: per year of capital +21.7% below the live +25.0%; newer: 3-slot account at 0.8% ends 4224 USD, not above the live 4533; newer: 3-slot account at 1.2% ends 4171 USD, not above the live 4456",
+   "compare": {
+    "older": {
+     "n": 99,
+     "fired": 41,
+     "diff": 0.017,
+     "firedDiff": 0.0411,
+     "firedBetter": 0.6829
+    },
+    "newer": {
+     "n": 225,
+     "fired": 92,
+     "diff": 0.0082,
+     "firedDiff": 0.02,
+     "firedBetter": 0.5435
+    }
+   },
+   "live": {
+    "older": {
+     "n": 99,
+     "stocks": 93,
+     "days": 69,
+     "avg": 0.096,
+     "median": 0.192,
+     "worst": -0.2628,
+     "best": 0.2323,
+     "win": 0.7273,
+     "avgStress": 0.092,
+     "perYear": 0.2836,
+     "heldAvg": 85.3131
+    },
+    "newer": {
+     "n": 225,
+     "stocks": 163,
+     "days": 142,
+     "avg": 0.0784,
+     "median": 0.192,
+     "worst": -0.5606,
+     "best": 0.4933,
+     "win": 0.7333,
+     "avgStress": 0.0744,
+     "perYear": 0.2496,
+     "heldAvg": 79.1822
+    }
+   },
+   "variant": {
+    "older": {
+     "n": 99,
+     "stocks": 93,
+     "days": 69,
+     "avg": 0.113,
+     "median": 0.192,
+     "worst": -0.2636,
+     "best": 0.2323,
+     "win": 0.7879,
+     "avgStress": 0.109,
+     "perYear": 0.2635,
+     "heldAvg": 108.1313
+    },
+    "newer": {
+     "n": 225,
+     "stocks": 163,
+     "days": 142,
+     "avg": 0.0866,
+     "median": 0.192,
+     "worst": -0.6761,
+     "best": 0.4933,
+     "win": 0.76,
+     "avgStress": 0.0826,
+     "perYear": 0.2172,
+     "heldAvg": 100.4444
+    }
+   },
+   "atStress": {
+    "live": {
+     "older": {
+      "n": 99,
+      "stocks": 93,
+      "days": 69,
+      "avg": 0.092,
+      "median": 0.188,
+      "worst": -0.2668,
+      "best": 0.2283,
+      "win": 0.7273,
+      "avgStress": 0.092,
+      "perYear": 0.2718,
+      "heldAvg": 85.3131
+     },
+     "newer": {
+      "n": 225,
+      "stocks": 163,
+      "days": 142,
+      "avg": 0.0744,
+      "median": 0.188,
+      "worst": -0.5646,
+      "best": 0.4893,
+      "win": 0.7244,
+      "avgStress": 0.0744,
+      "perYear": 0.2368,
+      "heldAvg": 79.1822
+     }
+    },
+    "variant": {
+     "older": {
+      "n": 99,
+      "stocks": 93,
+      "days": 69,
+      "avg": 0.109,
+      "median": 0.188,
+      "worst": -0.2676,
+      "best": 0.2283,
+      "win": 0.7879,
+      "avgStress": 0.109,
+      "perYear": 0.2541,
+      "heldAvg": 108.1313
+     },
+     "newer": {
+      "n": 225,
+      "stocks": 163,
+      "days": 142,
+      "avg": 0.0826,
+      "median": 0.188,
+      "worst": -0.6801,
+      "best": 0.4893,
+      "win": 0.7511,
+      "avgStress": 0.0826,
+      "perYear": 0.2072,
+      "heldAvg": 100.4444
+     }
+    }
+   },
+   "account": {
+    "variant": {
+     "cost": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3028.42,
+       "perYear": 0.0043,
+       "maxDD": -0.3066,
+       "trades": 9,
+       "closed": 6,
+       "fullSlotSkips": 90,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5197,
+       "spyEnd": 3227.38,
+       "beatsSpy": false
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4223.63,
+       "perYear": 0.1602,
+       "maxDD": -0.1296,
+       "trades": 16,
+       "closed": 13,
+       "fullSlotSkips": 238,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4439.35,
+       "beatsSpy": false
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 3568.01,
+       "perYear": 0.0391,
+       "maxDD": -0.3066,
+       "trades": 22,
+       "closed": 20,
+       "fullSlotSkips": 332,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7645,
+       "spyEnd": 4659.16,
+       "beatsSpy": false
+      }
+     },
+     "stress": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3001.87,
+       "perYear": 0.0003,
+       "maxDD": -0.311,
+       "trades": 9,
+       "closed": 6,
+       "fullSlotSkips": 90,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5197,
+       "spyEnd": 3222.16,
+       "beatsSpy": false
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4171.27,
+       "perYear": 0.154,
+       "maxDD": -0.131,
+       "trades": 16,
+       "closed": 13,
+       "fullSlotSkips": 238,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4433.68,
+       "beatsSpy": false
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 3492.14,
+       "perYear": 0.0342,
+       "maxDD": -0.311,
+       "trades": 22,
+       "closed": 20,
+       "fullSlotSkips": 332,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7645,
+       "spyEnd": 4653.94,
+       "beatsSpy": false
+      }
+     }
+    },
+    "live": {
+     "cost": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3361.2,
+       "perYear": 0.0527,
+       "maxDD": -0.2248,
+       "trades": 10,
+       "closed": 9,
+       "fullSlotSkips": 89,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5179,
+       "spyEnd": 3227.38,
+       "beatsSpy": true
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4532.91,
+       "perYear": 0.1964,
+       "maxDD": -0.1188,
+       "trades": 22,
+       "closed": 19,
+       "fullSlotSkips": 233,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4439.35,
+       "beatsSpy": true
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 4913.68,
+       "perYear": 0.1155,
+       "maxDD": -0.2248,
+       "trades": 32,
+       "closed": 29,
+       "fullSlotSkips": 322,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7557,
+       "spyEnd": 4659.16,
+       "beatsSpy": true
+      }
+     },
+     "stress": {
+      "older": {
+       "start": "2021-10-12",
+       "end": "2023-12-29",
+       "v1": 3325.93,
+       "perYear": 0.0477,
+       "maxDD": -0.2303,
+       "trades": 10,
+       "closed": 9,
+       "fullSlotSkips": 89,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.5179,
+       "spyEnd": 3222.16,
+       "beatsSpy": true
+      },
+      "newer": {
+       "start": "2024-01-02",
+       "end": "2026-04-24",
+       "v1": 4456.3,
+       "perYear": 0.1876,
+       "maxDD": -0.1218,
+       "trades": 22,
+       "closed": 19,
+       "fullSlotSkips": 233,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.9983,
+       "spyEnd": 4433.68,
+       "beatsSpy": true
+      },
+      "full": {
+       "start": "2021-10-12",
+       "end": "2026-04-24",
+       "v1": 4800.55,
+       "perYear": 0.1097,
+       "maxDD": -0.2303,
+       "trades": 32,
+       "closed": 29,
+       "fullSlotSkips": 322,
+       "ruleOffSkips": 0,
+       "timeInMarket": 0.7557,
+       "spyEnd": 4653.94,
+       "beatsSpy": true
+      }
+     }
+    }
+   },
+   "changedBy": {
+    "max": 99,
+    "target": 27,
+    "gap": 6,
+    "gone": 1
+   },
+   "frozenAt": "2026-11-01T12:35:56.936Z"
+  }
+ },
+ "advice": {
+  "LDX-HALF63": "DO NOT ADOPT",
+  "LDX-T200": "DO NOT ADOPT",
+  "LDX-TIME189": "DO NOT ADOPT"
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-01T12:34:36.817Z",
-  "note": "not run: data check failed"
+  "at": "2026-11-01T12:35:56.936Z",
+  "results": {
+   "LDX-HALF63": {
+    "verdict": "DO NOT ADOPT",
+    "compare": {
+     "older": {
+      "n": 99,
+      "fired": 35,
+      "diff": -0.0309,
+      "firedDiff": -0.0873,
+      "firedBetter": 0.3143
+     },
+     "newer": {
+      "n": 258,
+      "fired": 93,
+      "diff": -0.0209,
+      "firedDiff": -0.0581,
+      "firedBetter": 0.3978
+     }
+    }
+   },
+   "LDX-T200": {
+    "verdict": "DO NOT ADOPT",
+    "compare": {
+     "older": {
+      "n": 99,
+      "fired": 69,
+      "diff": -0.0844,
+      "firedDiff": -0.1211,
+      "firedBetter": 0.2464
+     },
+     "newer": {
+      "n": 258,
+      "fired": 147,
+      "diff": -0.049,
+      "firedDiff": -0.086,
+      "firedBetter": 0.2857
+     }
+    }
+   },
+   "LDX-TIME189": {
+    "verdict": "DO NOT ADOPT",
+    "compare": {
+     "older": {
+      "n": 99,
+      "fired": 41,
+      "diff": 0.017,
+      "firedDiff": 0.0411,
+      "firedBetter": 0.6829
+     },
+     "newer": {
+      "n": 225,
+      "fired": 92,
+      "diff": 0.0082,
+      "firedDiff": 0.02,
+      "firedBetter": 0.5435
+     }
+    }
+   }
+  }
  }
 }

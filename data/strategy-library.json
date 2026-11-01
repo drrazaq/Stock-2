@@ -32684,39 +32684,102 @@
    "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
    "name": "LEADER DIP (+20% limit, 126 sessions) + halfway check: still under the buy price after 63 sessions -> sell at the next open",
    "explain": "RULE: LEADER DIP (+20% limit, 126 sessions) + halfway check: still under the buy price after 63 sessions -> sell at the next open. Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
-   "status": "pre-registered 2026-11-01 (Agent A); 5-year one-shot pending",
+   "status": "tested: do not adopt (exit)",
    "agent": "A",
    "registered": "2026-11-01",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
-   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal."
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal.",
+   "result": {
+    "at": "2026-11-01T12:35:56.936Z",
+    "verdict": "DO NOT ADOPT",
+    "why": "older: same-money average change -3.1% (not > 0); older: per year of capital +25.5% below the live +28.4%; older: 3-slot account at 0.8% ends 3169 USD, not above the live 3361; older: 3-slot account at 1.2% ends 3125 USD, not above the live 3326; newer: same-money average change -2.1% (not > 0); newer: 3-slot account at 0.8% ends 4300 USD, not above the live 4533; newer: 3-slot account at 1.2% ends 4202 USD, not above the live 4456",
+    "older": {
+     "fired": 35,
+     "diff": -0.0309,
+     "liveAvg": 0.096,
+     "variantAvg": 0.0652,
+     "acct": 3169.42,
+     "liveAcct": 3361.2
+    },
+    "newer": {
+     "fired": 93,
+     "diff": -0.0209,
+     "liveAvg": 0.0855,
+     "variantAvg": 0.0646,
+     "acct": 4300.48,
+     "liveAcct": 4532.91
+    }
+   }
   },
   {
    "id": "LDX-T200",
    "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
    "name": "LEADER DIP (+20% limit, 126 sessions) + trend break: first close under the stock's 200-day average -> sell at the next open",
    "explain": "RULE: LEADER DIP (+20% limit, 126 sessions) + trend break: first close under the stock's 200-day average -> sell at the next open. Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
-   "status": "pre-registered 2026-11-01 (Agent A); 5-year one-shot pending",
+   "status": "tested: do not adopt (exit)",
    "agent": "A",
    "registered": "2026-11-01",
    "hold": 126,
    "kind": "exit",
    "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
-   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal."
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal.",
+   "result": {
+    "at": "2026-11-01T12:35:56.936Z",
+    "verdict": "DO NOT ADOPT",
+    "why": "older: same-money average change -8.4% (not > 0); older: per year of capital +10.2% below the live +28.4%; newer: same-money average change -4.9% (not > 0)",
+    "older": {
+     "fired": 69,
+     "diff": -0.0844,
+     "liveAvg": 0.096,
+     "variantAvg": 0.0116,
+     "acct": 3851.59,
+     "liveAcct": 3361.2
+    },
+    "newer": {
+     "fired": 147,
+     "diff": -0.049,
+     "liveAvg": 0.0855,
+     "variantAvg": 0.0366,
+     "acct": 4734.84,
+     "liveAcct": 4532.91
+    }
+   }
   },
   {
    "id": "LDX-TIME189",
    "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
    "name": "LEADER DIP with a 189-session time exit instead of 126 (the +20% limit kept until then)",
    "explain": "RULE: LEADER DIP with a 189-session time exit instead of 126 (the +20% limit kept until then). Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
-   "status": "pre-registered 2026-11-01 (Agent A); 5-year one-shot pending",
+   "status": "tested: do not adopt (exit)",
    "agent": "A",
    "registered": "2026-11-01",
    "hold": 189,
    "kind": "exit",
    "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
-   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal."
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal.",
+   "result": {
+    "at": "2026-11-01T12:35:56.936Z",
+    "verdict": "DO NOT ADOPT",
+    "why": "older: per year of capital +26.4% below the live +28.4%; older: 3-slot account at 0.8% ends 3028 USD, not above the live 3361; older: 3-slot account at 1.2% ends 3002 USD, not above the live 3326; newer: per year of capital +21.7% below the live +25.0%; newer: 3-slot account at 0.8% ends 4224 USD, not above the live 4533; newer: 3-slot account at 1.2% ends 4171 USD, not above the live 4456",
+    "older": {
+     "fired": 41,
+     "diff": 0.017,
+     "liveAvg": 0.096,
+     "variantAvg": 0.113,
+     "acct": 3028.42,
+     "liveAcct": 3361.2
+    },
+    "newer": {
+     "fired": 92,
+     "diff": 0.0082,
+     "liveAvg": 0.0784,
+     "variantAvg": 0.0866,
+     "acct": 4223.63,
+     "liveAcct": 4532.91
+    }
+   }
   },
   {
    "id": "A-TP1",
