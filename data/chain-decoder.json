@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T06:47:20.368Z",
+ "generatedAt": "2026-11-01T08:03:32.059Z",
  "preRegistered": "2026-10-23",
  "window": [
   "2022-01-21",
@@ -10,12 +10,15 @@
   "half": "2024-06-05",
   "lag1SecondHalfSplit": "2025-08-13"
  },
- "bar": 4.02,
- "complete": true,
+ "bar": 4.07,
+ "complete": false,
  "data": {
-  "requests": 141,
+  "requests": 7758,
   "failedRequests": 0,
-  "missing": [],
+  "missing": [
+   "chain-cache/agr/amazon/2023.json",
+   "chain-cache/agr/amazon-com/2020.json"
+  ],
   "members": {
    "pointInTime": 399,
    "todayOnly": 16,
@@ -24,14 +27,14 @@
    "pending": 0
   },
   "customerLinks": 628,
-  "agreements": 1534,
-  "demandNode8K": 968,
-  "demandSignals": 461,
-  "readCandidates": 346,
-  "readSignals": 213,
+  "agreements": 1531,
+  "demandNode8K": 982,
+  "demandSignals": 466,
+  "readCandidates": 359,
+  "readSignals": 224,
   "dilutionIndexQuarters": "24 of 24",
-  "secTickers": 10425,
-  "massiveRefCiks": 10219
+  "secTickers": 10423,
+  "massiveRefCiks": 10230
  },
  "caveat": "Prices: 5-year whole-market cache incl. dead stocks (3 USD+, 1M USD+ rows). Chains and layers were chosen in Oct 2026 (hindsight); membership is dated by the companies' own filings and today-only members are excluded. EDGAR full-text search gives filing dates only (READ1 signals count from the first session on/after that date); DEMAND1 uses the exact acceptance time. Keyword rules read words, not meaning: some hits are mentions. results = frozen first verdict (firstRun); latest = monitoring only.",
  "results": {
@@ -728,7 +731,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-25T06:47:20.372Z",
+  "at": "2026-11-01T08:03:32.062Z",
   "to": "2026-10-19",
   "results": {
    "CHAIN-MOM1": {
@@ -747,7 +750,7 @@
       "best": 1.1854,
       "avgStress": 0.0347,
       "ctrl": 0.0064,
-      "edge": 0.0279,
+      "edge": 0.0278,
       "t": 1.96,
       "vsOwn": 0.0053,
       "tOwn": 0.32,
@@ -765,7 +768,7 @@
       "worst": -0.4627,
       "best": 0.9909,
       "avgStress": 0.0158,
-      "ctrl": -0.0013,
+      "ctrl": -0.0012,
       "edge": 0.0164,
       "t": 0.96,
       "vsOwn": -0.0077,
@@ -784,8 +787,8 @@
       "worst": -0.5224,
       "best": 1.1854,
       "avgStress": 0.0596,
-      "ctrl": 0.0165,
-      "edge": 0.0403,
+      "ctrl": 0.0166,
+      "edge": 0.0402,
       "t": 1.73,
       "vsOwn": 0.0192,
       "tOwn": 0.76,
@@ -806,26 +809,26 @@
    "CHAIN-DEMAND1": {
     "name": "Demand signal at the source: suppliers of a demand node that raised guidance or capital spending, under +5% since; 40 sessions, stop 20%",
     "verdict": "REJECTED",
-    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -0.07 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 1.7 under 2.5 in the newer half; not better than the same stock on its other days in the newer half",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -0.07 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 1.66 under 2.5 in the newer half; not better than the same stock on its other days in the newer half",
     "results": {
      "all": {
-      "n": 2379,
+      "n": 2376,
       "days": 248,
-      "stocks": 329,
-      "win": 0.443,
-      "avg": 0.0023,
+      "stocks": 328,
+      "win": 0.4432,
+      "avg": 0.0022,
       "median": -0.0196,
       "worst": -0.5062,
       "best": 1.7453,
-      "avgStress": -0.0017,
-      "ctrl": 0.002,
-      "edge": 0.0096,
-      "t": 1.32,
+      "avgStress": -0.0018,
+      "ctrl": 0.0021,
+      "edge": 0.0093,
+      "t": 1.29,
       "vsOwn": -0.013,
       "tOwn": -1.44,
-      "ownCases": 2369,
-      "vsSpy": -0.0048,
-      "noTop2": 0.0009
+      "ownCases": 2366,
+      "vsSpy": -0.005,
+      "noTop2": 0.0008
      },
      "older": {
       "n": 1164,
@@ -847,23 +850,23 @@
       "noTop2": -0.0039
      },
      "newer": {
-      "n": 1215,
+      "n": 1212,
       "days": 127,
-      "stocks": 272,
-      "win": 0.4494,
-      "avg": 0.006,
-      "median": -0.0176,
+      "stocks": 271,
+      "win": 0.4497,
+      "avg": 0.0058,
+      "median": -0.0175,
       "worst": -0.5062,
       "best": 1.707,
-      "avgStress": 0.002,
-      "ctrl": 0.0085,
-      "edge": 0.0192,
-      "t": 1.7,
+      "avgStress": 0.0018,
+      "ctrl": 0.0087,
+      "edge": 0.0188,
+      "t": 1.66,
       "vsOwn": -0.0115,
       "tOwn": -0.85,
-      "ownCases": 1209,
-      "vsSpy": 0.0109,
-      "noTop2": 0.0034
+      "ownCases": 1206,
+      "vsSpy": 0.0107,
+      "noTop2": 0.0033
      }
     },
     "funnel": {
@@ -874,7 +877,7 @@
      "lottery": 245,
      "dilution": 107,
      "overlap": 489,
-     "noPrice": 824
+     "noPrice": 827
     },
     "information": {
      "byEdge": {
@@ -889,8 +892,8 @@
        "best": 0.9889,
        "avgStress": -0.0236,
        "ctrl": 0.0001,
-       "edge": -0.0022,
-       "t": -0.27,
+       "edge": -0.0023,
+       "t": -0.28,
        "vsOwn": -0.0142,
        "tOwn": -1.36,
        "ownCases": 1068,
@@ -898,23 +901,23 @@
        "noTop2": -0.0212
       },
       "material agreement": {
-       "n": 303,
+       "n": 300,
        "days": 122,
-       "stocks": 124,
-       "win": 0.4125,
-       "avg": -0.0081,
-       "median": -0.0299,
+       "stocks": 123,
+       "win": 0.4133,
+       "avg": -0.0087,
+       "median": -0.0298,
        "worst": -0.2742,
        "best": 1.3501,
-       "avgStress": -0.0121,
-       "ctrl": 0.0005,
-       "edge": -0.0162,
-       "t": -1.21,
-       "vsOwn": -0.0151,
+       "avgStress": -0.0127,
+       "ctrl": 0.0007,
+       "edge": -0.0168,
+       "t": -1.26,
+       "vsOwn": -0.0149,
        "tOwn": -1.07,
-       "ownCases": 298,
-       "vsSpy": -0.0276,
-       "noTop2": -0.0165
+       "ownCases": 295,
+       "vsSpy": -0.0281,
+       "noTop2": -0.0172
       },
       "upstream layer": {
        "n": 1003,
@@ -926,9 +929,9 @@
        "worst": -0.3371,
        "best": 1.7453,
        "avgStress": 0.0248,
-       "ctrl": 0.0045,
-       "edge": 0.023,
-       "t": 1.93,
+       "ctrl": 0.0046,
+       "edge": 0.0229,
+       "t": 1.92,
        "vsOwn": -0.0106,
        "tOwn": -0.7,
        "ownCases": 1003,
@@ -948,7 +951,7 @@
        "best": 1.707,
        "avgStress": -0.0192,
        "ctrl": 0.0036,
-       "edge": -0.0026,
+       "edge": -0.0027,
        "t": -0.2,
        "vsOwn": -0.0299,
        "tOwn": -2.13,
@@ -957,23 +960,23 @@
        "noTop2": -0.0185
       },
       "capex": {
-       "n": 1482,
+       "n": 1479,
        "days": 159,
-       "stocks": 272,
-       "win": 0.4696,
-       "avg": 0.0129,
+       "stocks": 271,
+       "win": 0.4699,
+       "avg": 0.0128,
        "median": -0.0097,
        "worst": -0.5062,
        "best": 1.7453,
-       "avgStress": 0.0089,
-       "ctrl": 0.001,
-       "edge": 0.018,
-       "t": 2.13,
+       "avgStress": 0.0088,
+       "ctrl": 0.0011,
+       "edge": 0.0176,
+       "t": 2.09,
        "vsOwn": 0.0042,
        "tOwn": 0.38,
-       "ownCases": 1477,
-       "vsSpy": 0.0046,
-       "noTop2": 0.0108
+       "ownCases": 1474,
+       "vsSpy": 0.0044,
+       "noTop2": 0.0107
       }
      }
     }
@@ -993,8 +996,8 @@
       "worst": -0.4687,
       "best": 0.8636,
       "avgStress": 0.0046,
-      "ctrl": 0.0167,
-      "edge": -0.0066,
+      "ctrl": 0.0168,
+      "edge": -0.0067,
       "t": -0.23,
       "vsOwn": 0.0057,
       "tOwn": 0.17,
@@ -1012,7 +1015,7 @@
       "worst": -0.2853,
       "best": 0.3298,
       "avgStress": 0.0218,
-      "ctrl": 0.019,
+      "ctrl": 0.0191,
       "edge": 0.008,
       "t": 0.29,
       "vsOwn": 0.0371,
@@ -1031,8 +1034,8 @@
       "worst": -0.4687,
       "best": 0.8636,
       "avgStress": -0.0171,
-      "ctrl": 0.0138,
-      "edge": -0.0286,
+      "ctrl": 0.0139,
+      "edge": -0.0287,
       "t": -0.46,
       "vsOwn": -0.0413,
       "tOwn": -0.62,
@@ -1056,7 +1059,7 @@
    "CHAIN-READ1": {
     "name": "Earnings read-through: same-layer peers of a chain company with revenue up 10%+ and raised guidance, under +5% since; 20 sessions, stop 20%",
     "verdict": "REJECTED",
-    "why": "t 0.74 under 2.5 in the older half; not better than the average stock in the newer half; t -0.13 under 2.5 in the newer half",
+    "why": "t 0.74 under 2.5 in the older half; not better than the average stock in the newer half; t -0.15 under 2.5 in the newer half",
     "results": {
      "all": {
       "n": 960,
@@ -1068,9 +1071,9 @@
       "worst": -0.3401,
       "best": 1.0247,
       "avgStress": 0.0237,
-      "ctrl": 0.0146,
-      "edge": 0.0024,
-      "t": 0.33,
+      "ctrl": 0.0147,
+      "edge": 0.0023,
+      "t": 0.32,
       "vsOwn": 0.0098,
       "tOwn": 1.15,
       "ownCases": 959,
@@ -1106,9 +1109,9 @@
       "worst": -0.2681,
       "best": 0.9789,
       "avgStress": 0.0278,
-      "ctrl": 0.0155,
-      "edge": -0.0015,
-      "t": -0.13,
+      "ctrl": 0.0157,
+      "edge": -0.0016,
+      "t": -0.15,
       "vsOwn": 0.0065,
       "tOwn": 0.52,
       "ownCases": 572,
@@ -3923,7 +3926,7 @@
      "Crypto|Bitcoin miners"
     ],
     "net": -0.3985,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.1258
    },
    {
@@ -3934,7 +3937,7 @@
      "Crypto|Bitcoin miners"
     ],
     "net": -0.4627,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0409
    },
    {
@@ -3945,7 +3948,7 @@
      "Crypto|Bitcoin miners"
     ],
     "net": -0.2872,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.1475
    },
    {
@@ -3956,7 +3959,7 @@
      "Crypto|Bitcoin miners"
     ],
     "net": -0.3773,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": -0.0664
    },
    {
@@ -3967,7 +3970,7 @@
      "Crypto|Bitcoin miners"
     ],
     "net": -0.408,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": -0.1807
    },
    {
@@ -3978,7 +3981,7 @@
      "EVs and batteries|EV makers"
     ],
     "net": -0.1506,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0063
    },
    {
@@ -3989,7 +3992,7 @@
      "EVs and batteries|EV makers"
     ],
     "net": -0.1997,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": -0.0716
    },
    {
@@ -4000,7 +4003,7 @@
      "EVs and batteries|EV makers"
     ],
     "net": -0.2403,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": -0.0301
    },
    {
@@ -4011,7 +4014,7 @@
      "EVs and batteries|EV makers"
     ],
     "net": -0.0294,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0115
    },
    {
@@ -4022,7 +4025,7 @@
      "EVs and batteries|EV makers"
     ],
     "net": -0.1945,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": -0.0774
    },
    {
@@ -4033,7 +4036,7 @@
      "AI build-out|Servers and assembly"
     ],
     "net": -0.2003,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.1511
    },
    {
@@ -4044,7 +4047,7 @@
      "AI build-out|Servers and assembly"
     ],
     "net": 0.0339,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0312
    },
    {
@@ -4055,7 +4058,7 @@
      "AI build-out|Servers and assembly"
     ],
     "net": -0.0624,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0153
    },
    {
@@ -4066,7 +4069,7 @@
      "AI build-out|Servers and assembly"
     ],
     "net": 0.0705,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0582
    },
    {
@@ -4077,7 +4080,7 @@
      "AI build-out|Servers and assembly"
     ],
     "net": -0.0933,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0347
    },
    {
@@ -4088,7 +4091,7 @@
      "AI build-out|Servers and assembly"
     ],
     "net": -0.0813,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0274
    },
    {
@@ -4099,7 +4102,7 @@
      "AI build-out|Servers and assembly"
     ],
     "net": -0.1038,
-    "avgStock": -0.0773,
+    "avgStock": -0.0771,
     "sameStock": 0.0309
    },
    {
@@ -5804,7 +5807,7 @@
      "Power, utilities and nuclear|Nuclear fuel and reactors"
     ],
     "net": -0.1625,
-    "avgStock": -0.0502,
+    "avgStock": -0.0501,
     "sameStock": 0.0141
    },
    {
@@ -5815,7 +5818,7 @@
      "Defense and space|Drones and new defense"
     ],
     "net": -0.0224,
-    "avgStock": -0.0502,
+    "avgStock": -0.0501,
     "sameStock": 0.0299
    },
    {
@@ -5903,7 +5906,7 @@
      "Defense and space|Drones and new defense"
     ],
     "net": -0.1409,
-    "avgStock": -0.0558,
+    "avgStock": -0.0544,
     "sameStock": 0.0034
    },
    {
@@ -5914,7 +5917,7 @@
      "Defense and space|Drones and new defense"
     ],
     "net": -0.2224,
-    "avgStock": -0.0558,
+    "avgStock": -0.0544,
     "sameStock": 0.0299
    },
    {
@@ -5925,7 +5928,7 @@
      "Crypto|Exchanges and bitcoin holders"
     ],
     "net": -0.0088,
-    "avgStock": -0.0558,
+    "avgStock": -0.0544,
     "sameStock": 0.077
    },
    {
@@ -5936,7 +5939,7 @@
      "Crypto|Exchanges and bitcoin holders"
     ],
     "net": -0.5224,
-    "avgStock": -0.0558,
+    "avgStock": -0.0544,
     "sameStock": 0.063
    },
    {
@@ -5947,7 +5950,7 @@
      "Defense and space|Space launch and satellites"
     ],
     "net": 0.0651,
-    "avgStock": -0.0558,
+    "avgStock": -0.0544,
     "sameStock": 0.0351
    },
    {
@@ -7018,7 +7021,7 @@
      "Semiconductor cycle|Memory"
     ],
     "net": 0.2414,
-    "avgStock": 0.0129,
+    "avgStock": 0.0133,
     "sameStock": 0.0548
    },
    {
@@ -7030,7 +7033,7 @@
      "Semiconductor cycle|Memory"
     ],
     "net": 0.115,
-    "avgStock": 0.0129,
+    "avgStock": 0.0133,
     "sameStock": 0.0202
    },
    {
@@ -7134,7 +7137,7 @@
      "Semiconductor cycle|Memory"
     ],
     "net": -0.0837,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.0548
    },
    {
@@ -7145,7 +7148,7 @@
      "EVs and batteries|Lithium and battery materials"
     ],
     "net": 0.0563,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.0085
    },
    {
@@ -7156,7 +7159,7 @@
      "EVs and batteries|Lithium and battery materials"
     ],
     "net": -0.0291,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.0259
    },
    {
@@ -7167,7 +7170,7 @@
      "EVs and batteries|Lithium and battery materials"
     ],
     "net": -0.0272,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": -0.0878
    },
    {
@@ -7178,7 +7181,7 @@
      "EVs and batteries|Lithium and battery materials"
     ],
     "net": 0.1326,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": -0.0013
    },
    {
@@ -17028,7 +17031,7 @@
     "filed": "2023-07-26",
     "exit": "time",
     "net": -0.0779,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": -0.0205,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000132680123000089/meta06302023-exhibit991.htm"
    },
@@ -17041,7 +17044,7 @@
     "filed": "2023-07-26",
     "exit": "time",
     "net": -0.1131,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": 0.012,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000132680123000089/meta06302023-exhibit991.htm"
    },
@@ -17054,7 +17057,7 @@
     "filed": "2023-07-26",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": -0.0213,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000132680123000089/meta06302023-exhibit991.htm"
    },
@@ -17067,7 +17070,7 @@
     "filed": "2023-07-26",
     "exit": "time",
     "net": -0.1028,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": 0.0129,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000132680123000089/meta06302023-exhibit991.htm"
    },
@@ -17080,7 +17083,7 @@
     "filed": "2023-07-26",
     "exit": "time",
     "net": -0.0078,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": 0.0047,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000132680123000089/meta06302023-exhibit991.htm"
    },
@@ -17093,7 +17096,7 @@
     "filed": "2023-07-26",
     "exit": "time",
     "net": -0.0026,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": 0.056,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000132680123000089/meta06302023-exhibit991.htm"
    },
@@ -17106,7 +17109,7 @@
     "filed": "2023-07-26",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": -0.0444,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000132680123000089/meta06302023-exhibit991.htm"
    },
@@ -17405,7 +17408,7 @@
     "filed": "2023-07-27",
     "exit": "stop",
     "net": -0.2448,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": 0.0664,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000116669123000029/ex991-6302023.htm"
    },
@@ -17418,7 +17421,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0153,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": -0.0221,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000116669123000029/ex991-6302023.htm"
    },
@@ -17431,7 +17434,7 @@
     "filed": "2023-07-27",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": -0.041,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000116669123000029/ex991-6302023.htm"
    },
@@ -17444,7 +17447,7 @@
     "filed": "2023-07-27",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": 0.0369,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000116669123000029/ex991-6302023.htm"
    },
@@ -17457,7 +17460,7 @@
     "filed": "2023-07-27",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.1022,
+    "avgStock": -0.1023,
     "sameStock": 0.0449,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000116669123000029/ex991-6302023.htm"
    },
@@ -17509,7 +17512,7 @@
     "filed": "2023-08-15",
     "exit": "time",
     "net": -0.0956,
-    "avgStock": -0.0672,
+    "avgStock": -0.0673,
     "sameStock": 0.1237,
     "source": "https://www.sec.gov/Archives/edgar/data/721371/000072137123000058/a23q4_x063023xex991xnewsre.htm"
    },
@@ -18341,7 +18344,7 @@
     "filed": "2023-08-31",
     "exit": "time",
     "net": -0.0866,
-    "avgStock": -0.1365,
+    "avgStock": -0.1364,
     "sameStock": 0.0381,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016823000074/avgo-07302023x8kxex99.htm"
    },
@@ -18354,7 +18357,7 @@
     "filed": "2023-08-31",
     "exit": "time",
     "net": -0.105,
-    "avgStock": -0.1365,
+    "avgStock": -0.1364,
     "sameStock": -0.0018,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016823000074/avgo-07302023x8kxex99.htm"
    },
@@ -18367,7 +18370,7 @@
     "filed": "2023-08-31",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.1365,
+    "avgStock": -0.1364,
     "sameStock": 0.0211,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016823000074/avgo-07302023x8kxex99.htm"
    },
@@ -18380,7 +18383,7 @@
     "filed": "2023-08-31",
     "exit": "time",
     "net": -0.0355,
-    "avgStock": -0.1365,
+    "avgStock": -0.1364,
     "sameStock": -0.011,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016823000074/avgo-07302023x8kxex99.htm"
    },
@@ -23125,7 +23128,7 @@
     "filed": "2024-06-12",
     "exit": "stop",
     "net": -0.2297,
-    "avgStock": -0.0017,
+    "avgStock": -0.0013,
     "sameStock": 0.0718,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000077/avgo-05052024x8kxex99.htm"
    },
@@ -23138,7 +23141,7 @@
     "filed": "2024-06-12",
     "exit": "time",
     "net": -0.1128,
-    "avgStock": -0.0017,
+    "avgStock": -0.0013,
     "sameStock": 0.0368,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000077/avgo-05052024x8kxex99.htm"
    },
@@ -23151,7 +23154,7 @@
     "filed": "2024-06-12",
     "exit": "stop",
     "net": -0.2835,
-    "avgStock": -0.0017,
+    "avgStock": -0.0013,
     "sameStock": 0.1762,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000077/avgo-05052024x8kxex99.htm"
    },
@@ -23164,7 +23167,7 @@
     "filed": "2024-06-12",
     "exit": "time",
     "net": -0.0174,
-    "avgStock": -0.0017,
+    "avgStock": -0.0013,
     "sameStock": 0.1465,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000077/avgo-05052024x8kxex99.htm"
    },
@@ -23177,7 +23180,7 @@
     "filed": "2024-06-12",
     "exit": "time",
     "net": -0.0354,
-    "avgStock": -0.0017,
+    "avgStock": -0.0013,
     "sameStock": 0.1074,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000077/avgo-05052024x8kxex99.htm"
    },
@@ -24607,7 +24610,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.066,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0586,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24620,7 +24623,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.0853,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": 0.0182,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24633,7 +24636,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.1794,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.025,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24646,7 +24649,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.1345,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0372,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24659,7 +24662,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.0614,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0487,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24672,7 +24675,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.1474,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0013,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24685,7 +24688,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.1117,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0274,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24698,7 +24701,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.1427,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0043,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24711,7 +24714,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.0272,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0339,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24724,7 +24727,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.069,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0263,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24737,7 +24740,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.157,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": 0.0007,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24750,7 +24753,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.0894,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": -0.0241,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24763,7 +24766,7 @@
     "filed": "2024-08-20",
     "exit": "time",
     "net": 0.1305,
-    "avgStock": 0.0483,
+    "avgStock": 0.0485,
     "sameStock": 0.0039,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066724000137/exhibit991-08022024.htm"
    },
@@ -24880,7 +24883,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": 0.1045,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.0864,
     "source": "https://www.sec.gov/Archives/edgar/data/936468/000093646824000107/ex991q32024.htm"
    },
@@ -24893,7 +24896,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": 1.0458,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.1548,
     "source": "https://www.sec.gov/Archives/edgar/data/936468/000093646824000107/ex991q32024.htm"
    },
@@ -24906,7 +24909,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": 0.3776,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.0366,
     "source": "https://www.sec.gov/Archives/edgar/data/936468/000093646824000107/ex991q32024.htm"
    },
@@ -24919,7 +24922,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": 0.001,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.0794,
     "source": "https://www.sec.gov/Archives/edgar/data/936468/000093646824000107/ex991q32024.htm"
    },
@@ -24932,7 +24935,7 @@
     "filed": "2024-10-22",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.1987,
     "source": "https://www.sec.gov/Archives/edgar/data/936468/000093646824000107/ex991q32024.htm"
    },
@@ -24945,7 +24948,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": -0.1589,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": -0.1301,
     "source": "https://www.sec.gov/Archives/edgar/data/936468/000093646824000107/ex991q32024.htm"
    },
@@ -24958,7 +24961,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": 0.0144,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.0441,
     "source": "https://www.sec.gov/Archives/edgar/data/101829/000010182924000036/a2024-10x228xkerexhibit99.htm"
    },
@@ -24971,7 +24974,7 @@
     "filed": "2024-10-22",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": null,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271224000062/a2024q3exhibit991.htm"
    },
@@ -24984,7 +24987,7 @@
     "filed": "2024-10-22",
     "exit": "stop",
     "net": -0.3123,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": -0.0025,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271224000062/a2024q3exhibit991.htm"
    },
@@ -24997,7 +25000,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": -0.0005,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.0597,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271224000062/a2024q3exhibit991.htm"
    },
@@ -25010,7 +25013,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": 0.2645,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.1758,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271224000062/a2024q3exhibit991.htm"
    },
@@ -25023,7 +25026,7 @@
     "filed": "2024-10-22",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.0417,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271224000062/a2024q3exhibit991.htm"
    },
@@ -25036,7 +25039,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": -0.0366,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.0474,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271224000062/a2024q3exhibit991.htm"
    },
@@ -25049,7 +25052,7 @@
     "filed": "2024-10-22",
     "exit": "time",
     "net": 0.0231,
-    "avgStock": -0.0142,
+    "avgStock": -0.0129,
     "sameStock": 0.0464,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271224000062/a2024q3exhibit991.htm"
    },
@@ -25062,7 +25065,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0802,
-    "avgStock": -0.0054,
+    "avgStock": -0.0031,
     "sameStock": 0.0504,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828024043432/exhibit.htm"
    },
@@ -25075,7 +25078,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.1343,
-    "avgStock": -0.0054,
+    "avgStock": -0.0031,
     "sameStock": 0.0009,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828024043432/exhibit.htm"
    },
@@ -25088,7 +25091,7 @@
     "filed": "2024-10-23",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0054,
+    "avgStock": -0.0031,
     "sameStock": 0.0063,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828024043432/exhibit.htm"
    },
@@ -25101,7 +25104,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.1368,
-    "avgStock": -0.0054,
+    "avgStock": -0.0031,
     "sameStock": 0.0713,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828024043432/exhibit.htm"
    },
@@ -25114,7 +25117,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.047,
-    "avgStock": -0.0145,
+    "avgStock": -0.0132,
     "sameStock": -0.0187,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271724000056/t3q2024exhibit991.htm"
    },
@@ -25127,7 +25130,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.1417,
-    "avgStock": -0.0145,
+    "avgStock": -0.0132,
     "sameStock": 0.0667,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271724000056/t3q2024exhibit991.htm"
    },
@@ -25140,7 +25143,7 @@
     "filed": "2024-10-24",
     "exit": "time",
     "net": 0.6946,
-    "avgStock": -0.0054,
+    "avgStock": -0.0031,
     "sameStock": 0.1131,
     "source": "https://www.sec.gov/Archives/edgar/data/1133421/000113342124000063/noc-09302024xearningsrelea.htm"
    },
@@ -25231,7 +25234,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.0172,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0552,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25244,7 +25247,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": -0.1203,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0849,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25257,7 +25260,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": -0.0376,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.1002,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25270,7 +25273,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": -0.0636,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0679,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25283,7 +25286,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.192,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.1013,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25296,7 +25299,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": -0.0532,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0355,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25309,7 +25312,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.0186,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.002,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25322,7 +25325,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.0383,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0751,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25335,7 +25338,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.0636,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0197,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25348,7 +25351,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.1505,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0824,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25361,7 +25364,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.049,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.1011,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25374,7 +25377,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.1632,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.1057,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25387,7 +25390,7 @@
     "filed": "2024-10-31",
     "exit": "stop",
     "net": -0.2083,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0426,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25400,7 +25403,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.0649,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0315,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086324000147/q324_earningsrelease.htm"
    },
@@ -25465,7 +25468,7 @@
     "filed": "2024-11-01",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": -0.1303,
     "source": "https://www.sec.gov/Archives/edgar/data/721371/000072137124000119/a25q1_x093024xex991xnewsre.htm"
    },
@@ -25478,7 +25481,7 @@
     "filed": "2024-11-01",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0051,
+    "avgStock": 0.0054,
     "sameStock": 0.0499,
     "source": "https://www.sec.gov/Archives/edgar/data/721371/000072137124000119/a25q1_x093024xex991xnewsre.htm"
    },
@@ -25491,7 +25494,7 @@
     "filed": "2024-11-06",
     "exit": "time",
     "net": 0.2678,
-    "avgStock": -0.0351,
+    "avgStock": -0.0349,
     "sameStock": -0.006,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765324000121/mck_exhibit991x9302024.htm"
    },
@@ -25504,7 +25507,7 @@
     "filed": "2024-11-06",
     "exit": "time",
     "net": -0.0296,
-    "avgStock": -0.0314,
+    "avgStock": -0.0312,
     "sameStock": 0.0404,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085924000148/exhibit991-q42024.htm"
    },
@@ -25517,7 +25520,7 @@
     "filed": "2024-11-06",
     "exit": "time",
     "net": -0.047,
-    "avgStock": -0.0314,
+    "avgStock": -0.0312,
     "sameStock": 0.038,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085924000148/exhibit991-q42024.htm"
    },
@@ -26232,7 +26235,7 @@
     "filed": "2024-12-12",
     "exit": "time",
     "net": -0.0147,
-    "avgStock": -0.0034,
+    "avgStock": -0.0026,
     "sameStock": 0.0739,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000125/avgo-11032024x8kxex99.htm"
    },
@@ -26245,7 +26248,7 @@
     "filed": "2024-12-12",
     "exit": "time",
     "net": -0.0254,
-    "avgStock": -0.0034,
+    "avgStock": -0.0026,
     "sameStock": 0.0325,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000125/avgo-11032024x8kxex99.htm"
    },
@@ -26258,7 +26261,7 @@
     "filed": "2024-12-12",
     "exit": "time",
     "net": 0.1883,
-    "avgStock": -0.0034,
+    "avgStock": -0.0026,
     "sameStock": 0.1663,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000125/avgo-11032024x8kxex99.htm"
    },
@@ -26271,7 +26274,7 @@
     "filed": "2024-12-12",
     "exit": "time",
     "net": -0.0545,
-    "avgStock": -0.0034,
+    "avgStock": -0.0026,
     "sameStock": 0.1689,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000125/avgo-11032024x8kxex99.htm"
    },
@@ -26284,7 +26287,7 @@
     "filed": "2024-12-12",
     "exit": "time",
     "net": -0.0159,
-    "avgStock": -0.0034,
+    "avgStock": -0.0026,
     "sameStock": 0.1209,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016824000125/avgo-11032024x8kxex99.htm"
    },
@@ -26557,7 +26560,7 @@
     "filed": "2025-01-28",
     "exit": "time",
     "net": -0.0214,
-    "avgStock": -0.0853,
+    "avgStock": -0.0849,
     "sameStock": 0.0958,
     "source": "https://www.sec.gov/Archives/edgar/data/101829/000010182925000002/a2025-01x288xkerexhibit99.htm"
    },
@@ -26570,7 +26573,7 @@
     "filed": "2025-01-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0853,
+    "avgStock": -0.0849,
     "sameStock": -0.088,
     "source": "https://www.sec.gov/Archives/edgar/data/101829/000010182925000002/a2025-01x288xkerexhibit99.htm"
    },
@@ -28468,7 +28471,7 @@
     "filed": "2025-05-06",
     "exit": "time",
     "net": 0.299,
-    "avgStock": 0.1016,
+    "avgStock": 0.1017,
     "sameStock": 0.0417,
     "source": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000045/q12025991.htm"
    },
@@ -28481,7 +28484,7 @@
     "filed": "2025-05-06",
     "exit": "time",
     "net": 0.2238,
-    "avgStock": 0.1016,
+    "avgStock": 0.1017,
     "sameStock": 0.1396,
     "source": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000045/q12025991.htm"
    },
@@ -28494,7 +28497,7 @@
     "filed": "2025-05-06",
     "exit": "time",
     "net": -0.0013,
-    "avgStock": 0.1016,
+    "avgStock": 0.1017,
     "sameStock": 0.1118,
     "source": "https://www.sec.gov/Archives/edgar/data/2488/000000248825000045/q12025991.htm"
    },
@@ -28507,7 +28510,7 @@
     "filed": "2025-05-07",
     "exit": "time",
     "net": -0.0388,
-    "avgStock": 0.1016,
+    "avgStock": 0.1017,
     "sameStock": 0.0645,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085925000081/exhibit991-q22025.htm"
    },
@@ -28520,7 +28523,7 @@
     "filed": "2025-05-07",
     "exit": "time",
     "net": 0.0082,
-    "avgStock": 0.1016,
+    "avgStock": 0.1017,
     "sameStock": 0.0347,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085925000081/exhibit991-q22025.htm"
    },
@@ -30418,7 +30421,7 @@
     "filed": "2025-08-06",
     "exit": "time",
     "net": 0.0073,
-    "avgStock": 0.0864,
+    "avgStock": 0.0872,
     "sameStock": 0.0383,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765325000105/mck_exhibit991x6302025.htm"
    },
@@ -30431,7 +30434,7 @@
     "filed": "2025-08-06",
     "exit": "time",
     "net": 0.1021,
-    "avgStock": 0.0864,
+    "avgStock": 0.0872,
     "sameStock": -0.0179,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765325000105/mck_exhibit991x6302025.htm"
    },
@@ -30444,7 +30447,7 @@
     "filed": "2025-08-06",
     "exit": "time",
     "net": 0.0939,
-    "avgStock": 0.0864,
+    "avgStock": 0.0872,
     "sameStock": 0.0457,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765325000105/mck_exhibit991x6302025.htm"
    },
@@ -30457,7 +30460,7 @@
     "filed": "2025-08-06",
     "exit": "time",
     "net": 0.1694,
-    "avgStock": 0.0719,
+    "avgStock": 0.0728,
     "sameStock": 0.0476,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085925000119/exhibit991-q32025.htm"
    },
@@ -30470,7 +30473,7 @@
     "filed": "2025-08-13",
     "exit": "time",
     "net": 0.4664,
-    "avgStock": 0.0224,
+    "avgStock": 0.0232,
     "sameStock": 0.1304,
     "source": "https://www.sec.gov/Archives/edgar/data/858877/000119312525179820/d901470dex991.htm"
    },
@@ -30483,7 +30486,7 @@
     "filed": "2025-08-13",
     "exit": "time",
     "net": 0.5008,
-    "avgStock": 0.0224,
+    "avgStock": 0.0232,
     "sameStock": 0.1245,
     "source": "https://www.sec.gov/Archives/edgar/data/858877/000119312525179820/d901470dex991.htm"
    },
@@ -30496,7 +30499,7 @@
     "filed": "2025-08-13",
     "exit": "time",
     "net": 0.3684,
-    "avgStock": 0.0224,
+    "avgStock": 0.0232,
     "sameStock": 0.149,
     "source": "https://www.sec.gov/Archives/edgar/data/858877/000119312525179820/d901470dex991.htm"
    },
@@ -30509,7 +30512,7 @@
     "filed": "2025-08-13",
     "exit": "time",
     "net": 1.707,
-    "avgStock": 0.0224,
+    "avgStock": 0.0232,
     "sameStock": 0.4071,
     "source": "https://www.sec.gov/Archives/edgar/data/858877/000119312525179820/d901470dex991.htm"
    },
@@ -30522,7 +30525,7 @@
     "filed": "2025-08-14",
     "exit": "time",
     "net": -0.1558,
-    "avgStock": 0.0224,
+    "avgStock": 0.0232,
     "sameStock": 0.0186,
     "source": "https://www.sec.gov/Archives/edgar/data/315189/000155837025011453/de-20250814xex99d1.htm"
    },
@@ -30535,7 +30538,7 @@
     "filed": "2025-08-14",
     "exit": "time",
     "net": -0.1136,
-    "avgStock": 0.0224,
+    "avgStock": 0.0232,
     "sameStock": 0.0419,
     "source": "https://www.sec.gov/Archives/edgar/data/315189/000155837025011453/de-20250814xex99d1.htm"
    },
@@ -31601,7 +31604,7 @@
     "filed": "2025-10-22",
     "exit": "time",
     "net": 0.0436,
-    "avgStock": -0.0058,
+    "avgStock": -0.0051,
     "sameStock": 0.014,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045861/exhibit991.htm"
    },
@@ -31614,7 +31617,7 @@
     "filed": "2025-10-22",
     "exit": "time",
     "net": 0.0023,
-    "avgStock": -0.0058,
+    "avgStock": -0.0051,
     "sameStock": -0.0098,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045861/exhibit991.htm"
    },
@@ -31627,7 +31630,7 @@
     "filed": "2025-10-22",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0058,
+    "avgStock": -0.0051,
     "sameStock": -0.0201,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045861/exhibit991.htm"
    },
@@ -31640,7 +31643,7 @@
     "filed": "2025-10-22",
     "exit": "time",
     "net": 0.0085,
-    "avgStock": -0.0058,
+    "avgStock": -0.0051,
     "sameStock": 0.0554,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025045861/exhibit991.htm"
    },
@@ -31723,19 +31726,6 @@
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271725000163/t-3q2025exhibit991.htm"
    },
    {
-    "s": "SATS",
-    "buy": "2025-10-23",
-    "node": "T",
-    "via": "material agreement",
-    "kind": "capex",
-    "filed": "2025-10-22",
-    "exit": "time",
-    "net": 0.4184,
-    "avgStock": 0.0017,
-    "sameStock": 0.1334,
-    "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271725000163/t-3q2025exhibit991.htm"
-   },
-   {
     "s": "AMT",
     "buy": "2025-10-23",
     "node": "T",
@@ -31757,7 +31747,7 @@
     "filed": "2025-10-23",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": -0.0329,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31770,7 +31760,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": -0.0014,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0149,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31783,7 +31773,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": 0.1036,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0312,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31796,7 +31786,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": 0.1145,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0487,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31809,7 +31799,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": 0.0467,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0366,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31822,7 +31812,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": 0.3237,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0312,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31835,7 +31825,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": 0.1576,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": -0.0174,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31848,7 +31838,7 @@
     "filed": "2025-10-23",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": -0.0171,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31861,7 +31851,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": 0.1003,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.023,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31874,7 +31864,7 @@
     "filed": "2025-10-23",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0027,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31887,7 +31877,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": 0.3104,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": -0.0086,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31900,7 +31890,7 @@
     "filed": "2025-10-23",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0538,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31913,7 +31903,7 @@
     "filed": "2025-10-23",
     "exit": "stop",
     "net": -0.2802,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.047,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31926,7 +31916,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": -0.0258,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0135,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31939,7 +31929,7 @@
     "filed": "2025-10-23",
     "exit": "time",
     "net": 0.0106,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0385,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31952,7 +31942,7 @@
     "filed": "2025-10-23",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0025,
+    "avgStock": -0.0019,
     "sameStock": 0.0208,
     "source": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000169/q325earningsrelease.htm"
    },
@@ -31965,7 +31955,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": 0.2444,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": -0.0152,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -31978,7 +31968,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.2807,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0748,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -31991,7 +31981,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": -0.0196,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0434,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32004,7 +31994,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": 0.018,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": -0.0395,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32017,7 +32007,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": 0.0511,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0232,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32030,7 +32020,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": -0.0108,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": -0.0113,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32043,7 +32033,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0838,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32056,7 +32046,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0534,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32069,7 +32059,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": -0.1306,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.1155,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32082,7 +32072,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": -0.0985,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": -0.1207,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32095,7 +32085,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": 0.0171,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0889,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32108,7 +32098,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": -0.0848,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0197,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32121,7 +32111,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": -0.0925,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.022,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32134,7 +32124,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0291,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32147,7 +32137,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.1981,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32160,7 +32150,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0674,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32173,7 +32163,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0998,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/googexhibit991q32025.htm"
    },
@@ -32186,7 +32176,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.21,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.069,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047114/meta-09302025xexhibit991.htm"
    },
@@ -32199,7 +32189,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": -0.0845,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0398,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047114/meta-09302025xexhibit991.htm"
    },
@@ -32212,7 +32202,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": 0.0331,
-    "avgStock": 0.0219,
+    "avgStock": 0.0223,
     "sameStock": 0.0609,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271225000114/a2025q3exhibit99.htm"
    },
@@ -32225,7 +32215,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": 0.2384,
-    "avgStock": 0.0219,
+    "avgStock": 0.0223,
     "sameStock": 0.0081,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271225000114/a2025q3exhibit99.htm"
    },
@@ -32238,7 +32228,7 @@
     "filed": "2025-10-29",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0219,
+    "avgStock": 0.0223,
     "sameStock": -0.0094,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271225000114/a2025q3exhibit99.htm"
    },
@@ -32251,7 +32241,7 @@
     "filed": "2025-10-29",
     "exit": "time",
     "net": 0.0026,
-    "avgStock": 0.0219,
+    "avgStock": 0.0223,
     "sameStock": 0.048,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271225000114/a2025q3exhibit99.htm"
    },
@@ -32264,7 +32254,7 @@
     "filed": "2025-10-30",
     "exit": "time",
     "net": -0.0629,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": -0.0181,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000116669125000052/ex991-9302025.htm"
    },
@@ -32277,7 +32267,7 @@
     "filed": "2025-10-30",
     "exit": "time",
     "net": -0.0251,
-    "avgStock": 0.0188,
+    "avgStock": 0.0192,
     "sameStock": 0.0486,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000116669125000052/ex991-9302025.htm"
    },
@@ -32290,7 +32280,7 @@
     "filed": "2025-10-31",
     "exit": "time",
     "net": 0.0599,
-    "avgStock": 0.0104,
+    "avgStock": 0.0109,
     "sameStock": -0.019,
     "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341025000103/a09302025ex9918-k.htm"
    },
@@ -32303,7 +32293,7 @@
     "filed": "2025-10-31",
     "exit": "time",
     "net": 0.0563,
-    "avgStock": 0.0104,
+    "avgStock": 0.0109,
     "sameStock": -0.0235,
     "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341025000103/a09302025ex9918-k.htm"
    },
@@ -32316,7 +32306,7 @@
     "filed": "2025-10-31",
     "exit": "time",
     "net": -0.0604,
-    "avgStock": 0.0104,
+    "avgStock": 0.0109,
     "sameStock": 0.0317,
     "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341025000103/a09302025ex9918-k.htm"
    },
@@ -32329,7 +32319,7 @@
     "filed": "2025-10-31",
     "exit": "time",
     "net": 0.0771,
-    "avgStock": 0.0104,
+    "avgStock": 0.0109,
     "sameStock": -0.0199,
     "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341025000103/a09302025ex9918-k.htm"
    },
@@ -32342,7 +32332,7 @@
     "filed": "2025-10-31",
     "exit": "time",
     "net": -0.0414,
-    "avgStock": 0.0104,
+    "avgStock": 0.0109,
     "sameStock": 0.0087,
     "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341025000103/a09302025ex9918-k.htm"
    },
@@ -32355,7 +32345,7 @@
     "filed": "2025-10-31",
     "exit": "time",
     "net": 0.1009,
-    "avgStock": 0.0104,
+    "avgStock": 0.0109,
     "sameStock": -0.0016,
     "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341025000103/a09302025ex9918-k.htm"
    },
@@ -32368,7 +32358,7 @@
     "filed": "2025-10-31",
     "exit": "time",
     "net": 0.0358,
-    "avgStock": 0.0104,
+    "avgStock": 0.0109,
     "sameStock": -0.0036,
     "source": "https://www.sec.gov/Archives/edgar/data/93410/000009341025000103/a09302025ex9918-k.htm"
    },
@@ -32381,7 +32371,7 @@
     "filed": "2025-11-05",
     "exit": "time",
     "net": 0.153,
-    "avgStock": 0.0721,
+    "avgStock": 0.0725,
     "sameStock": 0.0161,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765325000138/mck_exhibit991x9302025.htm"
    },
@@ -32394,7 +32384,7 @@
     "filed": "2025-11-05",
     "exit": "time",
     "net": -0.0916,
-    "avgStock": 0.0721,
+    "avgStock": 0.0725,
     "sameStock": 0.0367,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765325000138/mck_exhibit991x9302025.htm"
    },
@@ -32407,7 +32397,7 @@
     "filed": "2025-11-05",
     "exit": "time",
     "net": 0.0459,
-    "avgStock": 0.0721,
+    "avgStock": 0.0725,
     "sameStock": 0.0161,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765325000138/mck_exhibit991x9302025.htm"
    },
@@ -32420,7 +32410,7 @@
     "filed": "2025-11-05",
     "exit": "time",
     "net": -0.1056,
-    "avgStock": 0.0361,
+    "avgStock": 0.0366,
     "sameStock": 0.045,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085925000128/exhibit991-q42025.htm"
    },
@@ -32433,7 +32423,7 @@
     "filed": "2025-11-12",
     "exit": "time",
     "net": 0.4529,
-    "avgStock": 0.0951,
+    "avgStock": 0.0956,
     "sameStock": 0.1302,
     "source": "https://www.sec.gov/Archives/edgar/data/858877/000119312525277624/d484663dex991.htm"
    },
@@ -32446,7 +32436,7 @@
     "filed": "2025-11-12",
     "exit": "time",
     "net": 0.4132,
-    "avgStock": 0.0951,
+    "avgStock": 0.0956,
     "sameStock": 0.1333,
     "source": "https://www.sec.gov/Archives/edgar/data/858877/000119312525277624/d484663dex991.htm"
    },
@@ -32459,7 +32449,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.205,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": -0.0552,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32472,7 +32462,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.2695,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": 0.0057,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32485,7 +32475,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.1727,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": -0.0098,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32498,7 +32488,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.1752,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": -0.0401,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32511,7 +32501,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.1034,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": 0.0004,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32524,7 +32514,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": -0.0077,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": -0.0349,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32537,7 +32527,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.0982,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": 0.0023,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32550,7 +32540,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.0402,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": -0.0155,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32563,7 +32553,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.1249,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": 0.0027,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32576,7 +32566,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.0267,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": -0.0287,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32589,7 +32579,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.1265,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": -0.0294,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32602,7 +32592,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.0733,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": 0.0101,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32615,7 +32605,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.171,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": -0.0318,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32628,7 +32618,7 @@
     "filed": "2025-11-19",
     "exit": "time",
     "net": 0.1312,
-    "avgStock": 0.0884,
+    "avgStock": 0.0888,
     "sameStock": 0.0059,
     "source": "https://www.sec.gov/Archives/edgar/data/60667/000006066725000203/exhibit991-10312025.htm"
    },
@@ -32641,7 +32631,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0646,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0854,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32654,7 +32644,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.1194,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0322,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32667,7 +32657,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0505,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0218,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32680,7 +32670,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0063,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0042,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32693,7 +32683,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.2062,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0056,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32706,7 +32696,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0792,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0332,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32719,7 +32709,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0359,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0063,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32732,7 +32722,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0317,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0893,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32745,7 +32735,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.026,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0081,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32758,7 +32748,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0917,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0376,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32771,7 +32761,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0481,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0168,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32784,7 +32774,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.3582,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0371,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32797,7 +32787,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.1224,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0194,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32810,7 +32800,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0049,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0246,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32823,7 +32813,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.1145,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0197,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32836,7 +32826,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0875,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0153,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32849,7 +32839,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0745,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0232,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32862,7 +32852,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0122,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0087,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32875,7 +32865,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.1048,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0474,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32888,7 +32878,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.1387,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0186,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32901,7 +32891,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0232,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0579,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32914,7 +32904,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0915,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0044,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32927,7 +32917,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0593,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0196,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32940,7 +32930,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.1424,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0557,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32953,7 +32943,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.3024,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0495,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32966,7 +32956,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.3796,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0069,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32979,7 +32969,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.0755,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": -0.0052,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -32992,7 +32982,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0558,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.028,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -33005,7 +32995,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0075,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0496,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -33018,7 +33008,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.1049,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0424,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -33031,7 +33021,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0335,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.04,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -33044,7 +33034,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.2037,
-    "avgStock": 0.1434,
+    "avgStock": 0.1438,
     "sameStock": 0.0506,
     "source": "https://www.sec.gov/Archives/edgar/data/104169/000010416925000177/earningsreleasefy26q3.htm"
    },
@@ -33057,7 +33047,7 @@
     "filed": "2025-11-25",
     "exit": "time",
     "net": -0.0415,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": 0.0396,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/exhibit991earnings8kq3fy26.htm"
    },
@@ -33070,7 +33060,7 @@
     "filed": "2025-11-25",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": 0.2274,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/exhibit991earnings8kq3fy26.htm"
    },
@@ -33083,7 +33073,7 @@
     "filed": "2025-11-25",
     "exit": "time",
     "net": 0.0254,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": 0.0723,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/exhibit991earnings8kq3fy26.htm"
    },
@@ -33096,7 +33086,7 @@
     "filed": "2025-11-25",
     "exit": "time",
     "net": 0.0977,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": 0.0146,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/exhibit991earnings8kq3fy26.htm"
    },
@@ -33109,7 +33099,7 @@
     "filed": "2025-11-25",
     "exit": "time",
     "net": 0.1838,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": 0.0698,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/exhibit991earnings8kq3fy26.htm"
    },
@@ -33122,7 +33112,7 @@
     "filed": "2025-11-25",
     "exit": "time",
     "net": 0.2991,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": 0.0827,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/exhibit991earnings8kq3fy26.htm"
    },
@@ -33135,7 +33125,7 @@
     "filed": "2025-11-25",
     "exit": "time",
     "net": 0.1353,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": 0.0974,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/exhibit991earnings8kq3fy26.htm"
    },
@@ -33148,7 +33138,7 @@
     "filed": "2025-11-26",
     "exit": "time",
     "net": 0.063,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": -0.0163,
     "source": "https://www.sec.gov/Archives/edgar/data/315189/000110465925116130/de-20251126xex99d1.htm"
    },
@@ -33161,7 +33151,7 @@
     "filed": "2025-11-26",
     "exit": "time",
     "net": 0.0905,
-    "avgStock": 0.061,
+    "avgStock": 0.0614,
     "sameStock": 0.0118,
     "source": "https://www.sec.gov/Archives/edgar/data/315189/000110465925116130/de-20251126xex99d1.htm"
    },
@@ -33252,7 +33242,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.1218,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0706,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33265,7 +33255,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.066,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0464,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33278,7 +33268,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.056,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0371,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33291,7 +33281,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": -0.0299,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.1384,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33304,7 +33294,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": -0.0075,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0744,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33317,7 +33307,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": -0.067,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.1504,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33330,7 +33320,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.106,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0933,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33343,7 +33333,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": -0.1202,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.2757,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33356,7 +33346,7 @@
     "filed": "2025-12-17",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.1914,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33369,7 +33359,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.2536,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0287,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33382,7 +33372,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.2629,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0139,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33395,7 +33385,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.2511,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0156,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33408,7 +33398,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.2218,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": -0.0239,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33421,7 +33411,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": -0.0466,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": -0.0136,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33434,7 +33424,7 @@
     "filed": "2025-12-17",
     "exit": "time",
     "net": 0.5095,
-    "avgStock": 0.0411,
+    "avgStock": 0.0428,
     "sameStock": 0.0186,
     "source": "https://www.sec.gov/Archives/edgar/data/723125/000072312525000044/a2026q1ex991-pressrelease.htm"
    },
@@ -33655,7 +33645,7 @@
     "filed": "2026-01-27",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0627,
+    "avgStock": -0.0606,
     "sameStock": 0.0973,
     "source": "https://www.sec.gov/Archives/edgar/data/1133421/000113342126000002/noc-12312025xearningsrelea.htm"
    },
@@ -33668,7 +33658,7 @@
     "filed": "2026-01-27",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0627,
+    "avgStock": -0.0606,
     "sameStock": -0.0053,
     "source": "https://www.sec.gov/Archives/edgar/data/1133421/000113342126000002/noc-12312025xearningsrelea.htm"
    },
@@ -33681,7 +33671,7 @@
     "filed": "2026-01-27",
     "exit": "time",
     "net": 0.368,
-    "avgStock": -0.0627,
+    "avgStock": -0.0606,
     "sameStock": 0.0045,
     "source": "https://www.sec.gov/Archives/edgar/data/1133421/000113342126000002/noc-12312025xearningsrelea.htm"
    },
@@ -33694,7 +33684,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": -0.18,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": 0.066,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-12312025xexhibit991.htm"
    },
@@ -33707,7 +33697,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.0545,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": 0.0434,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-12312025xexhibit991.htm"
    },
@@ -33720,7 +33710,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.1635,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": -0.0046,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-12312025xexhibit991.htm"
    },
@@ -33733,7 +33723,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.0441,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": 0.0012,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-12312025xexhibit991.htm"
    },
@@ -33746,7 +33736,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.0521,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": -0.0026,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-12312025xexhibit991.htm"
    },
@@ -33759,7 +33749,7 @@
     "filed": "2026-01-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": 0.2226,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-12312025xexhibit991.htm"
    },
@@ -33772,7 +33762,7 @@
     "filed": "2026-01-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": 0.0607,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-12312025xexhibit991.htm"
    },
@@ -33785,7 +33775,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": -0.1024,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": 0.1014,
     "source": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-12312025xexhibit991.htm"
    },
@@ -33798,7 +33788,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": -0.0609,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": -0.006,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003837/exhibit991.htm"
    },
@@ -33811,7 +33801,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": -0.1711,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": -0.0148,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003837/exhibit991.htm"
    },
@@ -33824,7 +33814,7 @@
     "filed": "2026-01-28",
     "exit": "stop",
     "net": -0.2108,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": -0.1017,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003837/exhibit991.htm"
    },
@@ -33837,7 +33827,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.1234,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": -0.0022,
     "source": "https://www.sec.gov/Archives/edgar/data/1318605/000162828026003837/exhibit991.htm"
    },
@@ -33850,7 +33840,7 @@
     "filed": "2026-01-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": 0.2921,
     "source": "https://www.sec.gov/Archives/edgar/data/40533/000004053326000003/gd-20251231exhibit991.htm"
    },
@@ -33863,7 +33853,7 @@
     "filed": "2026-01-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": 0.2864,
     "source": "https://www.sec.gov/Archives/edgar/data/40533/000004053326000003/gd-20251231exhibit991.htm"
    },
@@ -33876,7 +33866,7 @@
     "filed": "2026-01-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": 0.2035,
     "source": "https://www.sec.gov/Archives/edgar/data/40533/000004053326000003/gd-20251231exhibit991.htm"
    },
@@ -33889,7 +33879,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.5017,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": 0.1248,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -33902,7 +33892,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.2327,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": 0.0384,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -33915,7 +33905,7 @@
     "filed": "2026-01-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": -0.0033,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -33928,7 +33918,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": -0.102,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": 0.0574,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -33941,7 +33931,7 @@
     "filed": "2026-01-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": -0.1105,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -33954,7 +33944,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.1194,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": -0.0035,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -33967,21 +33957,8 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": -0.0477,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": 0.1338,
-    "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
-   },
-   {
-    "s": "SATS",
-    "buy": "2026-01-29",
-    "node": "T",
-    "via": "material agreement",
-    "kind": "capex",
-    "filed": "2026-01-28",
-    "exit": "time",
-    "net": -0.1378,
-    "avgStock": -0.0646,
-    "sameStock": 0.1685,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
    {
@@ -33993,7 +33970,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": -0.0564,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": -0.0086,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -34006,7 +33983,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": 0.2559,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": 0.0641,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -34019,7 +33996,7 @@
     "filed": "2026-01-28",
     "exit": "time",
     "net": -0.0104,
-    "avgStock": -0.0646,
+    "avgStock": -0.0641,
     "sameStock": -0.032,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000047/t-4q2025exhibit991.htm"
    },
@@ -34032,7 +34009,7 @@
     "filed": "2026-01-29",
     "exit": "time",
     "net": -0.0528,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": -0.0267,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000162828026003964/ex991-12312025.htm"
    },
@@ -34045,7 +34022,7 @@
     "filed": "2026-01-29",
     "exit": "time",
     "net": 0.0003,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": 0.0658,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000162828026003964/ex991-12312025.htm"
    },
@@ -34058,7 +34035,7 @@
     "filed": "2026-01-29",
     "exit": "time",
     "net": -0.0356,
-    "avgStock": -0.068,
+    "avgStock": -0.0676,
     "sameStock": -0.2535,
     "source": "https://www.sec.gov/Archives/edgar/data/1166691/000162828026003964/ex991-12312025.htm"
    },
@@ -34071,7 +34048,7 @@
     "filed": "2026-01-30",
     "exit": "time",
     "net": 0.1203,
-    "avgStock": -0.0674,
+    "avgStock": -0.0671,
     "sameStock": 0.0442,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271226000003/a2025q4exhibit99.htm"
    },
@@ -34084,7 +34061,7 @@
     "filed": "2026-01-30",
     "exit": "time",
     "net": -0.1465,
-    "avgStock": -0.0674,
+    "avgStock": -0.0671,
     "sameStock": 0.0274,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271226000003/a2025q4exhibit99.htm"
    },
@@ -34097,7 +34074,7 @@
     "filed": "2026-01-30",
     "exit": "time",
     "net": -0.081,
-    "avgStock": -0.0674,
+    "avgStock": -0.0671,
     "sameStock": 0.0491,
     "source": "https://www.sec.gov/Archives/edgar/data/732712/000073271226000003/a2025q4exhibit99.htm"
    },
@@ -34110,7 +34087,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": -0.0308,
-    "avgStock": -0.028,
+    "avgStock": -0.0256,
     "sameStock": 0.0589,
     "source": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000006/exhibit991_20251231.htm"
    },
@@ -34123,7 +34100,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": 0.4333,
-    "avgStock": -0.028,
+    "avgStock": -0.0256,
     "sameStock": 0.061,
     "source": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000006/exhibit991_20251231.htm"
    },
@@ -34136,7 +34113,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": 0.3275,
-    "avgStock": -0.028,
+    "avgStock": -0.0256,
     "sameStock": 0.0018,
     "source": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000006/exhibit991_20251231.htm"
    },
@@ -34149,7 +34126,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": -0.0196,
-    "avgStock": -0.028,
+    "avgStock": -0.0256,
     "sameStock": 0.0772,
     "source": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000006/exhibit991_20251231.htm"
    },
@@ -34162,7 +34139,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": 0.2987,
-    "avgStock": -0.028,
+    "avgStock": -0.0256,
     "sameStock": 0.0525,
     "source": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000006/exhibit991_20251231.htm"
    },
@@ -34175,7 +34152,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": 0.1176,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": -0.0159,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34188,7 +34165,7 @@
     "filed": "2026-02-04",
     "exit": "stop",
     "net": -0.2138,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.0513,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34201,7 +34178,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": 0.2211,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.003,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34214,7 +34191,7 @@
     "filed": "2026-02-04",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.085,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34227,7 +34204,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": -0.0035,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.0092,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34240,7 +34217,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": -0.1346,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.0607,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34253,7 +34230,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": 0.0275,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.0979,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34266,7 +34243,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": 0.214,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.1142,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34279,7 +34256,7 @@
     "filed": "2026-02-04",
     "exit": "stop",
     "net": -0.2135,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.094,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34292,7 +34269,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": -0.0307,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.1241,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34305,7 +34282,7 @@
     "filed": "2026-02-04",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.0064,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34318,7 +34295,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": 0.079,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": -0.0584,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34331,7 +34308,7 @@
     "filed": "2026-02-04",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.2116,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34344,7 +34321,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": 0.0362,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.0501,
     "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm"
    },
@@ -34357,7 +34334,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": 0.0162,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": 0.0274,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765326000015/mck_exhibit991x12312025.htm"
    },
@@ -34370,7 +34347,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": -0.008,
-    "avgStock": -0.0212,
+    "avgStock": -0.0209,
     "sameStock": -0.0454,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765326000015/mck_exhibit991x12312025.htm"
    },
@@ -34383,7 +34360,7 @@
     "filed": "2026-02-04",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.028,
+    "avgStock": -0.0256,
     "sameStock": 0.0405,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085926000004/exhibit991-q12026.htm"
    },
@@ -34396,7 +34373,7 @@
     "filed": "2026-02-04",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.028,
+    "avgStock": -0.0256,
     "sameStock": 0.0483,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085926000004/exhibit991-q12026.htm"
    },
@@ -34409,7 +34386,7 @@
     "filed": "2026-02-05",
     "exit": "time",
     "net": 0.0392,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": 0.0226,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34422,7 +34399,7 @@
     "filed": "2026-02-05",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": -0.0099,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34435,7 +34412,7 @@
     "filed": "2026-02-05",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": -0.0588,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34448,7 +34425,7 @@
     "filed": "2026-02-05",
     "exit": "time",
     "net": -0.1753,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": -0.0227,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34461,7 +34438,7 @@
     "filed": "2026-02-05",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": 0.0048,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34474,7 +34451,7 @@
     "filed": "2026-02-05",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": -0.0526,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34487,7 +34464,7 @@
     "filed": "2026-02-05",
     "exit": "stop",
     "net": -0.2084,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": 0.0671,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34500,7 +34477,7 @@
     "filed": "2026-02-05",
     "exit": "time",
     "net": 0.1632,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": 0.0023,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34513,7 +34490,7 @@
     "filed": "2026-02-05",
     "exit": "time",
     "net": 0.0769,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": -0.0068,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34526,7 +34503,7 @@
     "filed": "2026-02-05",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": 0.0259,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34539,7 +34516,7 @@
     "filed": "2026-02-05",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": -0.0286,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34552,7 +34529,7 @@
     "filed": "2026-02-05",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0432,
+    "avgStock": -0.0429,
     "sameStock": 0.0504,
     "source": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000002/amzn-20251231xex991.htm"
    },
@@ -34565,7 +34542,7 @@
     "filed": "2026-02-10",
     "exit": "time",
     "net": 0.0962,
-    "avgStock": -0.0304,
+    "avgStock": -0.0301,
     "sameStock": 0.0432,
     "source": "https://www.sec.gov/Archives/edgar/data/37996/000003799626000014/exhibit99tofebruary10202.htm"
    },
@@ -34578,7 +34555,7 @@
     "filed": "2026-02-10",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0304,
+    "avgStock": -0.0301,
     "sameStock": -0.0567,
     "source": "https://www.sec.gov/Archives/edgar/data/37996/000003799626000014/exhibit99tofebruary10202.htm"
    },
@@ -34591,7 +34568,7 @@
     "filed": "2026-02-10",
     "exit": "time",
     "net": 0.0611,
-    "avgStock": -0.0304,
+    "avgStock": -0.0301,
     "sameStock": 0.0047,
     "source": "https://www.sec.gov/Archives/edgar/data/37996/000003799626000014/exhibit99tofebruary10202.htm"
    },
@@ -35737,19 +35714,6 @@
     "net": -0.0525,
     "avgStock": 0.0205,
     "sameStock": 0.1349,
-    "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000203/t-1q2026exhibit991.htm"
-   },
-   {
-    "s": "SATS",
-    "buy": "2026-04-23",
-    "node": "T",
-    "via": "material agreement",
-    "kind": "capex",
-    "filed": "2026-04-22",
-    "exit": "time",
-    "net": -0.11,
-    "avgStock": 0.0205,
-    "sameStock": 0.1976,
     "source": "https://www.sec.gov/Archives/edgar/data/732717/000073271726000203/t-1q2026exhibit991.htm"
    },
    {
@@ -36983,7 +36947,7 @@
     "filed": "2026-05-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0168,
+    "avgStock": 0.0171,
     "sameStock": 0.2093,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/exhibit991earnings8kq1fy27.htm"
    },
@@ -36996,7 +36960,7 @@
     "filed": "2026-05-28",
     "exit": "time",
     "net": 0.0387,
-    "avgStock": 0.0168,
+    "avgStock": 0.0171,
     "sameStock": 0.0594,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/exhibit991earnings8kq1fy27.htm"
    },
@@ -37009,7 +36973,7 @@
     "filed": "2026-05-28",
     "exit": "time",
     "net": -0.0432,
-    "avgStock": 0.0168,
+    "avgStock": 0.0171,
     "sameStock": 0.0621,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/exhibit991earnings8kq1fy27.htm"
    },
@@ -37022,7 +36986,7 @@
     "filed": "2026-05-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0168,
+    "avgStock": 0.0171,
     "sameStock": 0.1181,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/exhibit991earnings8kq1fy27.htm"
    },
@@ -37035,7 +36999,7 @@
     "filed": "2026-05-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0168,
+    "avgStock": 0.0171,
     "sameStock": 0.059,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/exhibit991earnings8kq1fy27.htm"
    },
@@ -37048,7 +37012,7 @@
     "filed": "2026-05-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0168,
+    "avgStock": 0.0171,
     "sameStock": 0.135,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/exhibit991earnings8kq1fy27.htm"
    },
@@ -37061,7 +37025,7 @@
     "filed": "2026-05-28",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0168,
+    "avgStock": 0.0171,
     "sameStock": 0.1143,
     "source": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/exhibit991earnings8kq1fy27.htm"
    },
@@ -37074,7 +37038,7 @@
     "filed": "2026-06-03",
     "exit": "time",
     "net": -0.0631,
-    "avgStock": 0.0234,
+    "avgStock": 0.0254,
     "sameStock": 0.0619,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
    },
@@ -37087,7 +37051,7 @@
     "filed": "2026-06-03",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0234,
+    "avgStock": 0.0254,
     "sameStock": 0.1495,
     "source": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
    },
@@ -37100,7 +37064,7 @@
     "filed": "2026-06-10",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": 0.0388,
+    "avgStock": 0.0391,
     "sameStock": -0.1013,
     "source": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
    },
@@ -37113,7 +37077,7 @@
     "filed": "2026-06-10",
     "exit": "time",
     "net": -0.0131,
-    "avgStock": 0.0388,
+    "avgStock": 0.0391,
     "sameStock": 0.0274,
     "source": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
    },
@@ -37126,7 +37090,7 @@
     "filed": "2026-06-10",
     "exit": "time",
     "net": -0.0412,
-    "avgStock": 0.0388,
+    "avgStock": 0.0391,
     "sameStock": 0.0311,
     "source": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
    },
@@ -37139,7 +37103,7 @@
     "filed": "2026-06-10",
     "exit": "time",
     "net": -0.0773,
-    "avgStock": 0.0388,
+    "avgStock": 0.0391,
     "sameStock": 0.1216,
     "source": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
    },
@@ -38153,7 +38117,7 @@
     "filed": "2026-08-05",
     "exit": "time",
     "net": 0.0137,
-    "avgStock": -0.059,
+    "avgStock": -0.0588,
     "sameStock": 0.0225,
     "source": "https://www.sec.gov/Archives/edgar/data/927653/000092765326000232/mck_exhibit991x6302026.htm"
    },
@@ -38166,7 +38130,7 @@
     "filed": "2026-08-05",
     "exit": "time",
     "net": -0.1908,
-    "avgStock": -0.0582,
+    "avgStock": -0.058,
     "sameStock": 0.0598,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085926000032/exhibit991-q32026.htm"
    },
@@ -38179,7 +38143,7 @@
     "filed": "2026-08-05",
     "exit": "time",
     "net": 0.6369,
-    "avgStock": -0.0582,
+    "avgStock": -0.058,
     "sameStock": -0.0396,
     "source": "https://www.sec.gov/Archives/edgar/data/1140859/000114085926000032/exhibit991-q32026.htm"
    },
@@ -38192,7 +38156,7 @@
     "filed": "2026-08-12",
     "exit": "time",
     "net": -0.1761,
-    "avgStock": -0.0753,
+    "avgStock": -0.0734,
     "sameStock": 0.1975,
     "source": "https://www.sec.gov/Archives/edgar/data/858877/000085887726000106/exhibit991pressrelease-q4f.htm"
    },
@@ -38205,7 +38169,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1535,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0194,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38218,7 +38182,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1127,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0243,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38231,7 +38195,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1333,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0024,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38244,7 +38208,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.0772,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0124,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38257,7 +38221,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.0777,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0113,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38270,7 +38234,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1015,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0358,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38283,7 +38247,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.097,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0211,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38296,7 +38260,7 @@
     "filed": "2026-08-18",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0371,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38309,7 +38273,7 @@
     "filed": "2026-08-18",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0137,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38322,7 +38286,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1315,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0188,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38335,7 +38299,7 @@
     "filed": "2026-08-18",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0003,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38348,7 +38312,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1171,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0062,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38361,7 +38325,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1723,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.035,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38374,7 +38338,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.161,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0142,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38387,7 +38351,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.104,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.012,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38400,7 +38364,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1114,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0206,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38413,7 +38377,7 @@
     "filed": "2026-08-18",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0154,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38426,7 +38390,7 @@
     "filed": "2026-08-18",
     "exit": "stop",
     "net": -0.2094,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0109,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38439,7 +38403,7 @@
     "filed": "2026-08-18",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0188,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38452,7 +38416,7 @@
     "filed": "2026-08-18",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": -0.0138,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -38465,7 +38429,7 @@
     "filed": "2026-08-18",
     "exit": "time",
     "net": -0.1572,
-    "avgStock": -0.0955,
+    "avgStock": -0.0946,
     "sameStock": 0.0189,
     "source": "https://www.sec.gov/Archives/edgar/data/354950/000035495026000145/hd_exhibit991x08022026.htm"
    },
@@ -39122,7 +39086,7 @@
     "sell": "2024-12-24",
     "layer": "AI build-out|Cloud platforms",
     "net": 0.0421,
-    "avgStock": -0.0502,
+    "avgStock": -0.0501,
     "sameStock": -0.0338
    },
    {
@@ -39131,7 +39095,7 @@
     "sell": "2024-12-24",
     "layer": "AI build-out|Cloud platforms",
     "net": 0.1414,
-    "avgStock": -0.0502,
+    "avgStock": -0.0501,
     "sameStock": -0.0303
    },
    {
@@ -39140,7 +39104,7 @@
     "sell": "2024-12-24",
     "layer": "AI build-out|Cloud platforms",
     "net": 0.1727,
-    "avgStock": -0.0502,
+    "avgStock": -0.0501,
     "sameStock": 0.0103
    },
    {
@@ -39149,7 +39113,7 @@
     "sell": "2024-12-24",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.1267,
-    "avgStock": -0.0502,
+    "avgStock": -0.0501,
     "sameStock": -0.0162
    },
    {
@@ -39158,7 +39122,7 @@
     "sell": "2024-12-24",
     "layer": "AI build-out|Cloud platforms",
     "net": 0.0732,
-    "avgStock": -0.0502,
+    "avgStock": -0.0501,
     "sameStock": 0.0302
    },
    {
@@ -39167,7 +39131,7 @@
     "sell": "2024-12-24",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.0033,
-    "avgStock": -0.0502,
+    "avgStock": -0.0501,
     "sameStock": 0.0105
    },
    {
@@ -39563,7 +39527,7 @@
     "sell": "2026-03-02",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.1005,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.0328
    },
    {
@@ -39572,7 +39536,7 @@
     "sell": "2026-03-02",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.1393,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.0528
    },
    {
@@ -39581,7 +39545,7 @@
     "sell": "2026-03-02",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.1065,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.0334
    },
    {
@@ -39590,7 +39554,7 @@
     "sell": "2026-03-02",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.1205,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": -0.0122
    },
    {
@@ -39599,7 +39563,7 @@
     "sell": "2026-03-02",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.1096,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.0466
    },
    {
@@ -39608,7 +39572,7 @@
     "sell": "2026-03-02",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.2196,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.1048
    },
    {
@@ -39617,7 +39581,7 @@
     "sell": "2026-03-02",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.0139,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": 0.1074
    },
    {
@@ -39626,7 +39590,7 @@
     "sell": "2026-03-02",
     "layer": "AI build-out|Cloud platforms",
     "net": -0.2298,
-    "avgStock": 0.0084,
+    "avgStock": 0.009,
     "sameStock": -0.0341
    },
    {
@@ -42275,7 +42239,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": 0.2465,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0875,
     "source": "https://www.sec.gov/Archives/edgar/data/1783180/000178318023000053/a99-q22023earningsexhibit.htm"
    },
@@ -42288,7 +42252,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.1724,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0097,
     "source": "https://www.sec.gov/Archives/edgar/data/1783180/000178318023000053/a99-q22023earningsexhibit.htm"
    },
@@ -42301,7 +42265,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0093,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0259,
     "source": "https://www.sec.gov/Archives/edgar/data/1783180/000178318023000053/a99-q22023earningsexhibit.htm"
    },
@@ -42314,7 +42278,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0858,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0393,
     "source": "https://www.sec.gov/Archives/edgar/data/1783180/000178318023000053/a99-q22023earningsexhibit.htm"
    },
@@ -42327,7 +42291,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.1166,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.03,
     "source": "https://www.sec.gov/Archives/edgar/data/1783180/000178318023000053/a99-q22023earningsexhibit.htm"
    },
@@ -42340,7 +42304,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0514,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0015,
     "source": "https://www.sec.gov/Archives/edgar/data/105770/000010577023000043/exh991q22023earningsrelease.htm"
    },
@@ -42353,7 +42317,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0219,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": -0.0019,
     "source": "https://www.sec.gov/Archives/edgar/data/105770/000010577023000043/exh991q22023earningsrelease.htm"
    },
@@ -42366,7 +42330,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0364,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": -0.0036,
     "source": "https://www.sec.gov/Archives/edgar/data/105770/000010577023000043/exh991q22023earningsrelease.htm"
    },
@@ -42379,7 +42343,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": 0.0434,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.011,
     "source": "https://www.sec.gov/Archives/edgar/data/105770/000010577023000043/exh991q22023earningsrelease.htm"
    },
@@ -42392,7 +42356,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0681,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": -0.0158,
     "source": "https://www.sec.gov/Archives/edgar/data/105770/000010577023000043/exh991q22023earningsrelease.htm"
    },
@@ -42405,7 +42369,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": 0.0306,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": -0.0152,
     "source": "https://www.sec.gov/Archives/edgar/data/105770/000010577023000043/exh991q22023earningsrelease.htm"
    },
@@ -42418,7 +42382,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0335,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0149,
     "source": "https://www.sec.gov/Archives/edgar/data/916076/000095017023034945/mlm-ex99_1.htm"
    },
@@ -42431,7 +42395,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.046,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0216,
     "source": "https://www.sec.gov/Archives/edgar/data/916076/000095017023034945/mlm-ex99_1.htm"
    },
@@ -42444,7 +42408,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": 0.0787,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0331,
     "source": "https://www.sec.gov/Archives/edgar/data/916076/000095017023034945/mlm-ex99_1.htm"
    },
@@ -42457,7 +42421,7 @@
     "filed": "2023-07-27",
     "exit": "time",
     "net": -0.0564,
-    "avgStock": -0.0688,
+    "avgStock": -0.0687,
     "sameStock": 0.0199,
     "source": "https://www.sec.gov/Archives/edgar/data/916076/000095017023034945/mlm-ex99_1.htm"
    },
@@ -46019,7 +45983,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0368,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0083,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46032,7 +45996,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.1913,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0602,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46045,7 +46009,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0681,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0337,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46058,7 +46022,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0063,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0091,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46071,7 +46035,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0059,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0226,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46084,7 +46048,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0165,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0598,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46097,7 +46061,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.139,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0281,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46110,7 +46074,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.1487,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0256,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46123,7 +46087,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.2553,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0403,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46136,7 +46100,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.2988,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0111,
     "source": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/q32024exhibit991vrt102324.htm"
    },
@@ -46149,7 +46113,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.033,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.0251,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46162,7 +46126,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0689,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.007,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46175,7 +46139,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0627,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.0139,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46188,7 +46152,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0829,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.0192,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46201,7 +46165,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.1466,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.009,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46214,7 +46178,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.1149,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0148,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46227,7 +46191,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0649,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.0027,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46240,7 +46204,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0185,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.0104,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46253,7 +46217,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0998,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0137,
     "source": "https://www.sec.gov/Archives/edgar/data/1069202/000162828024043349/lii-2024930xexx991pressrel.htm"
    },
@@ -46266,7 +46230,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0764,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.0058,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46279,7 +46243,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0227,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0239,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46292,7 +46256,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.1197,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0045,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46305,7 +46269,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0215,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0012,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46318,7 +46282,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.06,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.0095,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46331,7 +46295,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0611,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0149,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46344,7 +46308,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": 0.0483,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": -0.0176,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46357,7 +46321,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0691,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0088,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46370,7 +46334,7 @@
     "filed": "2024-10-23",
     "exit": "time",
     "net": -0.0396,
-    "avgStock": 0.0192,
+    "avgStock": 0.0212,
     "sameStock": 0.0039,
     "source": "https://www.sec.gov/Archives/edgar/data/1967680/000196768024000135/vlto-20241023xex991.htm"
    },
@@ -46383,7 +46347,7 @@
     "filed": "2024-10-29",
     "exit": "time",
     "net": -0.0195,
-    "avgStock": 0.0557,
+    "avgStock": 0.0575,
     "sameStock": 0.0176,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800324000188/pfe-9292024xex99.htm"
    },
@@ -46396,7 +46360,7 @@
     "filed": "2024-10-29",
     "exit": "time",
     "net": -0.0333,
-    "avgStock": 0.0557,
+    "avgStock": 0.0575,
     "sameStock": -0.0315,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800324000188/pfe-9292024xex99.htm"
    },
@@ -46409,7 +46373,7 @@
     "filed": "2024-10-29",
     "exit": "time",
     "net": -0.1104,
-    "avgStock": 0.0557,
+    "avgStock": 0.0575,
     "sameStock": 0.0198,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800324000188/pfe-9292024xex99.htm"
    },
@@ -46422,7 +46386,7 @@
     "filed": "2024-10-29",
     "exit": "time",
     "net": 0.15,
-    "avgStock": 0.0557,
+    "avgStock": 0.0575,
     "sameStock": -0.0546,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800324000188/pfe-9292024xex99.htm"
    },
@@ -46435,7 +46399,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": -0.0258,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0184,
     "source": "https://www.sec.gov/Archives/edgar/data/3453/000155837024013944/matx-20241030xex99d1.htm"
    },
@@ -46448,7 +46412,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": -0.0244,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0251,
     "source": "https://www.sec.gov/Archives/edgar/data/3453/000155837024013944/matx-20241030xex99d1.htm"
    },
@@ -46461,7 +46425,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": -0.084,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0209,
     "source": "https://www.sec.gov/Archives/edgar/data/3453/000155837024013944/matx-20241030xex99d1.htm"
    },
@@ -46474,7 +46438,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": -0.002,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": -0.0022,
     "source": "https://www.sec.gov/Archives/edgar/data/3453/000155837024013944/matx-20241030xex99d1.htm"
    },
@@ -46487,7 +46451,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.1146,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0238,
     "source": "https://www.sec.gov/Archives/edgar/data/1466258/000146625824000242/exhibit991-q32024earningsr.htm"
    },
@@ -46500,7 +46464,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.0949,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0291,
     "source": "https://www.sec.gov/Archives/edgar/data/1466258/000146625824000242/exhibit991-q32024earningsr.htm"
    },
@@ -46513,7 +46477,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.0383,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0023,
     "source": "https://www.sec.gov/Archives/edgar/data/1466258/000146625824000242/exhibit991-q32024earningsr.htm"
    },
@@ -46526,7 +46490,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.121,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0118,
     "source": "https://www.sec.gov/Archives/edgar/data/1466258/000146625824000242/exhibit991-q32024earningsr.htm"
    },
@@ -46539,7 +46503,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.1821,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.007,
     "source": "https://www.sec.gov/Archives/edgar/data/1466258/000146625824000242/exhibit991-q32024earningsr.htm"
    },
@@ -46552,7 +46516,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.1199,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": -0.0015,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46565,7 +46529,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.0989,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": -0.0024,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46578,7 +46542,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.0565,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": -0.0032,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46591,7 +46555,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.049,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": -0.0215,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46604,7 +46568,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.0178,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": -0.0203,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46617,7 +46581,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.3708,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0178,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46630,7 +46594,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.2896,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": -0.043,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46643,7 +46607,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.1352,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0152,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46656,7 +46620,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.1613,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.0081,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46669,7 +46633,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": 0.4032,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": 0.018,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46682,7 +46646,7 @@
     "filed": "2024-10-30",
     "exit": "time",
     "net": -0.0511,
-    "avgStock": 0.0587,
+    "avgStock": 0.059,
     "sameStock": -0.0193,
     "source": "https://www.sec.gov/Archives/edgar/data/1447669/000144766924000175/twloq324ex991.htm"
    },
@@ -46695,7 +46659,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.0969,
-    "avgStock": 0.071,
+    "avgStock": 0.0714,
     "sameStock": 0.0136,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000002632424000046/ex991_cwxq324xearnings.htm"
    },
@@ -46708,7 +46672,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": -0.0499,
-    "avgStock": 0.071,
+    "avgStock": 0.0714,
     "sameStock": -0.0021,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000002632424000046/ex991_cwxq324xearnings.htm"
    },
@@ -46721,7 +46685,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.2498,
-    "avgStock": 0.071,
+    "avgStock": 0.0714,
     "sameStock": 0.0389,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000002632424000046/ex991_cwxq324xearnings.htm"
    },
@@ -46734,7 +46698,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.1791,
-    "avgStock": 0.071,
+    "avgStock": 0.0714,
     "sameStock": 0.0363,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000002632424000046/ex991_cwxq324xearnings.htm"
    },
@@ -46747,7 +46711,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.1324,
-    "avgStock": 0.071,
+    "avgStock": 0.0714,
     "sameStock": 0.011,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000002632424000046/ex991_cwxq324xearnings.htm"
    },
@@ -46760,7 +46724,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.1687,
-    "avgStock": 0.071,
+    "avgStock": 0.0714,
     "sameStock": 0.0364,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000002632424000046/ex991_cwxq324xearnings.htm"
    },
@@ -46773,7 +46737,7 @@
     "filed": "2024-10-31",
     "exit": "time",
     "net": 0.153,
-    "avgStock": 0.071,
+    "avgStock": 0.0714,
     "sameStock": 0.0321,
     "source": "https://www.sec.gov/Archives/edgar/data/1551182/000155118224000038/etn09302024exhibit99.htm"
    },
@@ -46786,7 +46750,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.5318,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0235,
     "source": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/a2024q3ex991earningsrelease.htm"
    },
@@ -46799,7 +46763,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.2151,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0316,
     "source": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/a2024q3ex991earningsrelease.htm"
    },
@@ -46812,7 +46776,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.1992,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0294,
     "source": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/a2024q3ex991earningsrelease.htm"
    },
@@ -46825,7 +46789,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.4417,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": -0.0465,
     "source": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/a2024q3ex991earningsrelease.htm"
    },
@@ -46838,7 +46802,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.1592,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0112,
     "source": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/a2024q3ex991earningsrelease.htm"
    },
@@ -46851,7 +46815,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.4037,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": -0.0107,
     "source": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/a2024q3ex991earningsrelease.htm"
    },
@@ -46864,7 +46828,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.2251,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": -0.001,
     "source": "https://www.sec.gov/Archives/edgar/data/1773751/000177375124000337/hims-20240930x8xkearningsr.htm"
    },
@@ -46877,7 +46841,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.3952,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": -0.0248,
     "source": "https://www.sec.gov/Archives/edgar/data/1773751/000177375124000337/hims-20240930x8xkearningsr.htm"
    },
@@ -46890,7 +46854,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.1155,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": -0.0056,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689324000133/q32024ex991.htm"
    },
@@ -46903,7 +46867,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.0872,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": -0.0013,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689324000133/q32024ex991.htm"
    },
@@ -46916,7 +46880,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.2931,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0111,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689324000133/q32024ex991.htm"
    },
@@ -46929,7 +46893,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.4041,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0018,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689324000133/q32024ex991.htm"
    },
@@ -46942,7 +46906,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.6142,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0261,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689324000133/q32024ex991.htm"
    },
@@ -46955,7 +46919,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.2603,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": -0.0267,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689324000133/q32024ex991.htm"
    },
@@ -46968,7 +46932,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.1364,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0084,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689324000133/q32024ex991.htm"
    },
@@ -46981,7 +46945,7 @@
     "filed": "2024-11-04",
     "exit": "time",
     "net": 0.3717,
-    "avgStock": 0.0648,
+    "avgStock": 0.0651,
     "sameStock": 0.0203,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689324000133/q32024ex991.htm"
    },
@@ -46994,7 +46958,7 @@
     "filed": "2024-11-06",
     "exit": "time",
     "net": 0.0008,
-    "avgStock": 0.0042,
+    "avgStock": 0.0044,
     "sameStock": 0.0268,
     "source": "https://www.sec.gov/Archives/edgar/data/4281/000110465924114539/tm2427588d1_ex99-1.htm"
    },
@@ -47553,7 +47517,7 @@
     "filed": "2025-05-05",
     "exit": "time",
     "net": 0.2555,
-    "avgStock": 0.0612,
+    "avgStock": 0.0615,
     "sameStock": -0.0044,
     "source": "https://www.sec.gov/Archives/edgar/data/868857/000110465925044515/tm2513816d1_ex99-1.htm"
    },
@@ -47566,7 +47530,7 @@
     "filed": "2025-05-05",
     "exit": "time",
     "net": 0.0591,
-    "avgStock": 0.0612,
+    "avgStock": 0.0615,
     "sameStock": -0.0027,
     "source": "https://www.sec.gov/Archives/edgar/data/868857/000110465925044515/tm2513816d1_ex99-1.htm"
    },
@@ -47579,7 +47543,7 @@
     "filed": "2025-05-05",
     "exit": "time",
     "net": 0.1831,
-    "avgStock": 0.0612,
+    "avgStock": 0.0615,
     "sameStock": 0.0091,
     "source": "https://www.sec.gov/Archives/edgar/data/868857/000110465925044515/tm2513816d1_ex99-1.htm"
    },
@@ -47592,7 +47556,7 @@
     "filed": "2025-05-05",
     "exit": "time",
     "net": 0.146,
-    "avgStock": 0.0612,
+    "avgStock": 0.0615,
     "sameStock": 0.0545,
     "source": "https://www.sec.gov/Archives/edgar/data/868857/000110465925044515/tm2513816d1_ex99-1.htm"
    },
@@ -47605,7 +47569,7 @@
     "filed": "2025-05-06",
     "exit": "time",
     "net": 0.036,
-    "avgStock": 0.058,
+    "avgStock": 0.0583,
     "sameStock": 0.0002,
     "source": "https://www.sec.gov/Archives/edgar/data/948320/000164117225008841/ex99-1.htm"
    },
@@ -48112,7 +48076,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": -0.0328,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.0138,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800325000136/pfe-06292025xex99.htm"
    },
@@ -48125,7 +48089,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": 0.2263,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": -0.0338,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800325000136/pfe-06292025xex99.htm"
    },
@@ -48138,7 +48102,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": -0.0475,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.0167,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800325000136/pfe-06292025xex99.htm"
    },
@@ -48151,7 +48115,7 @@
     "filed": "2025-08-05",
     "exit": "stop",
     "net": -0.245,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": -0.0106,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800325000136/pfe-06292025xex99.htm"
    },
@@ -48164,7 +48128,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": 0.0002,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": -0.039,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800325000136/pfe-06292025xex99.htm"
    },
@@ -48177,7 +48141,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": -0.0187,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": -0.0028,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48190,7 +48154,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": 0.0116,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.0054,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48203,7 +48167,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": -0.0019,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.0053,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48216,7 +48180,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": -0.0449,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.019,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48229,7 +48193,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": 0.1295,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.0362,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48242,7 +48206,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": -0.042,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.0232,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48255,7 +48219,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": 0.0031,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": -0.0146,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48268,7 +48232,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": -0.0794,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.0191,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48281,7 +48245,7 @@
     "filed": "2025-08-05",
     "exit": "time",
     "net": 0.3353,
-    "avgStock": 0.0384,
+    "avgStock": 0.0394,
     "sameStock": 0.0194,
     "source": "https://www.sec.gov/Archives/edgar/data/1136893/000113689325000115/q22025ex991.htm"
    },
@@ -48294,7 +48258,7 @@
     "filed": "2025-08-07",
     "exit": "time",
     "net": 0.0163,
-    "avgStock": 0.052,
+    "avgStock": 0.0528,
     "sameStock": 0.0013,
     "source": "https://www.sec.gov/Archives/edgar/data/59478/000005947825000202/q225lillysalesandearningsp.htm"
    },
@@ -49113,7 +49077,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.2315,
-    "avgStock": 0.085,
+    "avgStock": 0.0855,
     "sameStock": 0.0743,
     "source": "https://www.sec.gov/Archives/edgar/data/1707753/000170775325000053/a26q2erex991.htm"
    },
@@ -49126,7 +49090,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.1024,
-    "avgStock": 0.085,
+    "avgStock": 0.0855,
     "sameStock": 0.0459,
     "source": "https://www.sec.gov/Archives/edgar/data/1707753/000170775325000053/a26q2erex991.htm"
    },
@@ -49139,7 +49103,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.3071,
-    "avgStock": 0.085,
+    "avgStock": 0.0855,
     "sameStock": 0.0237,
     "source": "https://www.sec.gov/Archives/edgar/data/1707753/000170775325000053/a26q2erex991.htm"
    },
@@ -49152,7 +49116,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": -0.0401,
-    "avgStock": 0.085,
+    "avgStock": 0.0855,
     "sameStock": 0.0108,
     "source": "https://www.sec.gov/Archives/edgar/data/1707753/000170775325000053/a26q2erex991.htm"
    },
@@ -49165,7 +49129,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.1479,
-    "avgStock": 0.085,
+    "avgStock": 0.0855,
     "sameStock": 0.0043,
     "source": "https://www.sec.gov/Archives/edgar/data/1707753/000170775325000053/a26q2erex991.htm"
    },
@@ -49178,7 +49142,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.1175,
-    "avgStock": 0.085,
+    "avgStock": 0.0855,
     "sameStock": -0.023,
     "source": "https://www.sec.gov/Archives/edgar/data/1707753/000170775325000053/a26q2erex991.htm"
    },
@@ -49191,7 +49155,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.2494,
-    "avgStock": 0.085,
+    "avgStock": 0.0855,
     "sameStock": 0.0104,
     "source": "https://www.sec.gov/Archives/edgar/data/1707753/000170775325000053/a26q2erex991.htm"
    },
@@ -49204,7 +49168,7 @@
     "filed": "2025-11-20",
     "exit": "time",
     "net": 0.01,
-    "avgStock": 0.085,
+    "avgStock": 0.0855,
     "sameStock": 0.0188,
     "source": "https://www.sec.gov/Archives/edgar/data/1707753/000170775325000053/a26q2erex991.htm"
    },
@@ -49217,7 +49181,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": -0.0405,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": 0.0045,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49230,7 +49194,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": -0.0515,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": 0.0057,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49243,7 +49207,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": 0.0064,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": -0.0209,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49256,7 +49220,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": -0.0375,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": -0.014,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49269,7 +49233,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": -0.0238,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": 0.037,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49282,7 +49246,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": -0.0043,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": -0.0274,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49295,7 +49259,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": -0.0379,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": 0.0208,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49308,7 +49272,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": -0.0972,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": 0.0239,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49321,7 +49285,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": 0.0662,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": 0.0687,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49334,7 +49298,7 @@
     "filed": "2025-12-03",
     "exit": "time",
     "net": -0.088,
-    "avgStock": 0.0013,
+    "avgStock": 0.0017,
     "sameStock": -0.0179,
     "source": "https://www.sec.gov/Archives/edgar/data/1108524/000110852425000234/crm-q3fy26xexhibit991.htm"
    },
@@ -49347,7 +49311,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": 0.0286,
-    "avgStock": -0.0039,
+    "avgStock": -0.0033,
     "sameStock": 0.0106,
     "source": "https://www.sec.gov/Archives/edgar/data/52988/000162828026005001/jfy2026q1earningsrelease.htm"
    },
@@ -49360,7 +49324,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": -0.0101,
-    "avgStock": -0.0039,
+    "avgStock": -0.0033,
     "sameStock": -0.0079,
     "source": "https://www.sec.gov/Archives/edgar/data/52988/000162828026005001/jfy2026q1earningsrelease.htm"
    },
@@ -49373,7 +49337,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": 0.1387,
-    "avgStock": -0.0039,
+    "avgStock": -0.0033,
     "sameStock": 0.0212,
     "source": "https://www.sec.gov/Archives/edgar/data/52988/000162828026005001/jfy2026q1earningsrelease.htm"
    },
@@ -49386,7 +49350,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": 0.184,
-    "avgStock": -0.0039,
+    "avgStock": -0.0033,
     "sameStock": 0.0601,
     "source": "https://www.sec.gov/Archives/edgar/data/52988/000162828026005001/jfy2026q1earningsrelease.htm"
    },
@@ -49399,7 +49363,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": -0.0039,
-    "avgStock": -0.0039,
+    "avgStock": -0.0033,
     "sameStock": 0.0278,
     "source": "https://www.sec.gov/Archives/edgar/data/52988/000162828026005001/jfy2026q1earningsrelease.htm"
    },
@@ -49412,7 +49376,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": -0.0854,
-    "avgStock": -0.0039,
+    "avgStock": -0.0033,
     "sameStock": 0.0248,
     "source": "https://www.sec.gov/Archives/edgar/data/52988/000162828026005001/jfy2026q1earningsrelease.htm"
    },
@@ -49425,7 +49389,7 @@
     "filed": "2026-02-03",
     "exit": "time",
     "net": 0.2047,
-    "avgStock": -0.0039,
+    "avgStock": -0.0033,
     "sameStock": 0.0221,
     "source": "https://www.sec.gov/Archives/edgar/data/52988/000162828026005001/jfy2026q1earningsrelease.htm"
    },
@@ -49438,7 +49402,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": 0.0434,
-    "avgStock": -0.002,
+    "avgStock": -0.0015,
     "sameStock": 0.026,
     "source": "https://www.sec.gov/Archives/edgar/data/67347/000110465926010338/mod-20260204xex99d1.htm"
    },
@@ -49451,7 +49415,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": -0.019,
-    "avgStock": -0.002,
+    "avgStock": -0.0015,
     "sameStock": 0.0122,
     "source": "https://www.sec.gov/Archives/edgar/data/67347/000110465926010338/mod-20260204xex99d1.htm"
    },
@@ -49464,7 +49428,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": -0.0732,
-    "avgStock": -0.002,
+    "avgStock": -0.0015,
     "sameStock": -0.0023,
     "source": "https://www.sec.gov/Archives/edgar/data/67347/000110465926010338/mod-20260204xex99d1.htm"
    },
@@ -49477,7 +49441,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": -0.009,
-    "avgStock": -0.002,
+    "avgStock": -0.0015,
     "sameStock": 0.0124,
     "source": "https://www.sec.gov/Archives/edgar/data/67347/000110465926010338/mod-20260204xex99d1.htm"
    },
@@ -49490,7 +49454,7 @@
     "filed": "2026-02-04",
     "exit": "time",
     "net": -0.0183,
-    "avgStock": -0.002,
+    "avgStock": -0.0015,
     "sameStock": 0.0148,
     "source": "https://www.sec.gov/Archives/edgar/data/67347/000110465926010338/mod-20260204xex99d1.htm"
    },
@@ -51726,7 +51690,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.0199,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0131,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800326000094/pfe-6282026xex99.htm"
    },
@@ -51739,7 +51703,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.0011,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": -0.0302,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800326000094/pfe-6282026xex99.htm"
    },
@@ -51752,7 +51716,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": 0.1058,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0104,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800326000094/pfe-6282026xex99.htm"
    },
@@ -51765,7 +51729,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": 0.0065,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": -0.0131,
     "source": "https://www.sec.gov/Archives/edgar/data/78003/000007800326000094/pfe-6282026xex99.htm"
    },
@@ -51778,7 +51742,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.0802,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0246,
     "source": "https://www.sec.gov/Archives/edgar/data/1037868/000103786826000173/ametek8kexhibit99108042026.htm"
    },
@@ -51791,7 +51755,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.0693,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0146,
     "source": "https://www.sec.gov/Archives/edgar/data/1037868/000103786826000173/ametek8kexhibit99108042026.htm"
    },
@@ -51804,7 +51768,7 @@
     "filed": "2026-08-04",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0196,
     "source": "https://www.sec.gov/Archives/edgar/data/1037868/000103786826000173/ametek8kexhibit99108042026.htm"
    },
@@ -51817,7 +51781,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.0473,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0233,
     "source": "https://www.sec.gov/Archives/edgar/data/1037868/000103786826000173/ametek8kexhibit99108042026.htm"
    },
@@ -51830,7 +51794,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.0988,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.015,
     "source": "https://www.sec.gov/Archives/edgar/data/877212/000162828026052158/zbraex99120260704.htm"
    },
@@ -51843,7 +51807,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.0977,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0065,
     "source": "https://www.sec.gov/Archives/edgar/data/1955520/000162828026052184/a2026q2ex99.htm"
    },
@@ -51856,7 +51820,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.1009,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0018,
     "source": "https://www.sec.gov/Archives/edgar/data/1955520/000162828026052184/a2026q2ex99.htm"
    },
@@ -51869,7 +51833,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.1195,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": -0.0007,
     "source": "https://www.sec.gov/Archives/edgar/data/1955520/000162828026052184/a2026q2ex99.htm"
    },
@@ -51882,7 +51846,7 @@
     "filed": "2026-08-04",
     "exit": "time",
     "net": -0.0889,
-    "avgStock": -0.0239,
+    "avgStock": -0.0236,
     "sameStock": 0.0121,
     "source": "https://www.sec.gov/Archives/edgar/data/1955520/000162828026052184/a2026q2ex99.htm"
    },
@@ -51895,7 +51859,7 @@
     "filed": "2026-08-06",
     "exit": "time",
     "net": -0.0984,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": -0.0005,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000162828026053847/ex991_cwxq226xearnings.htm"
    },
@@ -51908,7 +51872,7 @@
     "filed": "2026-08-06",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": 0.0488,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000162828026053847/ex991_cwxq226xearnings.htm"
    },
@@ -51921,7 +51885,7 @@
     "filed": "2026-08-06",
     "exit": "time",
     "net": -0.1783,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": 0.0391,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000162828026053847/ex991_cwxq226xearnings.htm"
    },
@@ -51934,7 +51898,7 @@
     "filed": "2026-08-06",
     "exit": "time",
     "net": -0.197,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": 0.0243,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000162828026053847/ex991_cwxq226xearnings.htm"
    },
@@ -51947,7 +51911,7 @@
     "filed": "2026-08-06",
     "exit": "time",
     "net": -0.1142,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": 0.0469,
     "source": "https://www.sec.gov/Archives/edgar/data/26324/000162828026053847/ex991_cwxq226xearnings.htm"
    },
@@ -51960,7 +51924,7 @@
     "filed": "2026-08-06",
     "exit": "time",
     "net": 0.0324,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": 0.0257,
     "source": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000097/ceg-20260806992.htm"
    },
@@ -51973,7 +51937,7 @@
     "filed": "2026-08-06",
     "exit": "time",
     "net": -0.1061,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": 0.0411,
     "source": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000097/ceg-20260806992.htm"
    },
@@ -51986,7 +51950,7 @@
     "filed": "2026-08-06",
     "exit": "time",
     "net": -0.0682,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": 0.0199,
     "source": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000097/ceg-20260806992.htm"
    },
@@ -52025,7 +51989,7 @@
     "filed": "2026-08-13",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0442,
+    "avgStock": -0.0439,
     "sameStock": 0.0017,
     "source": "https://www.sec.gov/Archives/edgar/data/1646188/000119312526347973/onds-ex99_1.htm"
    },
@@ -52038,7 +52002,7 @@
     "filed": "2026-08-13",
     "exit": "stop",
     "net": -0.208,
-    "avgStock": -0.0442,
+    "avgStock": -0.0439,
     "sameStock": 0.0781,
     "source": "https://www.sec.gov/Archives/edgar/data/1646188/000119312526347973/onds-ex99_1.htm"
    },
