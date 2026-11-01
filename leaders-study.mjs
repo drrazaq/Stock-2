@@ -80,6 +80,24 @@ for (let k = 1, have = Object.keys(store.days).length; have < WANT && k < WANT *
   store.days[d] = { ...pack(rows), x: pack(all.filter(x => !qualifies(x) && x.c > 0)), xAt: iso(Date.now()) };
   have++; added++; if (added % 25 === 0) { save(); console.log('sessions held:', have); }
 }
+// FORWARD FILL (repair, 1 Nov 2026, Agent A). The walk above stops as soon as WANT sessions are held, so once the window was full
+// (23 Oct) no NEW session was ever added: the cache stayed at 2026-10-19 and every study and the league referee read stale prices.
+// New sessions after the newest held day are now always fetched; the trim below then drops the oldest days so the window stays
+// WANT sessions long (rolling five years). Frozen verdicts are unaffected (firstRun is never recomputed). Same filter and packing as above; a weekday with no rows inside the last 4 days is retried next run, older ones are holidays.
+{ const newest = Object.keys(store.days).sort().pop();
+  for (let k = 1; k <= 60 && calls < MAX_CALLS; k++) {
+    const ms = Date.now() - k * 86400000, d = iso(ms), wd = new Date(ms).getUTCDay();
+    if (newest && d <= newest) break;
+    if (wd === 0 || wd === 6 || d in store.days || store.gone.includes(d)) continue;
+    const j = await api(`/v2/aggs/grouped/locale/us/market/stocks/${d}?adjusted=true`);
+    if (!j || j.refused) continue;
+    const all = (j.results || []).filter(x => x && /^[A-Z]{1,5}$/.test(x.T || '') && (CS.has(x.T) || x.T === 'SPY' || !CS.size)), rows = all.filter(qualifies);
+    if (!rows.length) { if (k > 4) store.gone.push(d); continue; }
+    store.days[d] = { ...pack(rows), x: pack(all.filter(x => !qualifies(x) && x.c > 0)), xAt: iso(Date.now()) };
+    added++;
+  }
+  if (added) save();
+}
 // x rows for days fetched before 22 Oct 2026 (main rows are left exactly as they are)
 { let tailCalls = 0; const TAIL_CALLS = +(env.TAIL_CALLS || 1300), need = Object.keys(store.days).filter(d => !store.days[d].x).sort().reverse();
   for (const d of need) { if (tailCalls >= TAIL_CALLS) break; const j = await api(`/v2/aggs/grouped/locale/us/market/stocks/${d}?adjusted=true`); tailCalls++;

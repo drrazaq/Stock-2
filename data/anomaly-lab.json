@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-10-31T00:00:40.511Z",
+ "generatedAt": "2026-11-01T14:24:57.369Z",
  "preRegistered": "anomaly-core.mjs header + ANOMALIES (23 Oct 2026, before any run) + data/strategy-library.json ANOM-*",
  "window": [
   "2021-10-12",
   "2026-10-30"
  ],
- "bar": 4.07,
+ "bar": 4.09,
  "split": "2024-01-01",
  "cost": 0.008,
  "data": {
@@ -13,15 +13,15 @@
    "ok": true,
    "companies": 3640,
    "withFacts": 3265,
-   "at": "2026-10-30T23:57:57.286Z"
+   "at": "2026-11-01T14:21:43.450Z"
   },
   "earn": {
    "ok": true,
    "days": 1319,
    "missing": 0,
-   "fetchedNow": 16,
+   "fetchedNow": 15,
    "fromAgentA": 1308,
-   "reports": 68783,
+   "reports": 68791,
    "surge": {
     "reports": 40119,
     "withSurge": 27296
@@ -38,7 +38,7 @@
    "ok": true,
    "quarters": 28,
    "missing": [],
-   "rows": 16610
+   "rows": 16616
   },
   "divs": {
    "ok": true,
@@ -47,10 +47,10 @@
   },
   "si": {
    "ok": true,
-   "months": 61,
+   "months": 62,
    "withData": 61,
-   "tried": 2,
-   "note": ""
+   "tried": 3,
+   "note": "FINRA API: not a list for 2026-11"
   },
   "13f": {
    "ok": true,
@@ -71,7 +71,7 @@
    "sessions": 1269
   }
  },
- "standard": "both halves (formation before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (calendar rules: SPY over all same-length windows), better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.07 -> PROVEN",
+ "standard": "both halves (formation before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (calendar rules: SPY over all same-length windows), better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.09 -> PROVEN",
  "needsData": {
   "ANOM-IDXADD": {
    "name": "Index additions",
@@ -5126,12 +5126,13 @@
    }
   },
   "ANOM-SUESURGE": {
-   "at": "2026-10-24T05:58:12.164Z",
+   "at": "2026-11-01T12:56:07.692Z",
    "bugs": [
     "AUD-1",
-    "AUD-2"
+    "AUD-2",
+    "SQ28-TIMING"
    ],
-   "explanation": "AUD-1: The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule's own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule's and the yardstick's, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run. AUD-2: ANOM-SUESURGE only: the top-30% revenue-surprise cut-off also counted surprises from SEC filings made after the trade was bought (look-ahead in the threshold). Corrected: only filings public by the entry session count.",
+   "explanation": "AUD-1: The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule's own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule's and the yardstick's, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run. AUD-2: ANOM-SUESURGE only: the top-30% revenue-surprise cut-off also counted surprises from SEC filings made after the trade was bought (look-ahead in the threshold). Corrected: only filings public by the entry session count. SQ28-TIMING: Earnings reports with no time in the Nasdaq calendar were taken as after-the-close, so before-the-open reports were judged one session late (found by Squad 28, 27 Oct 2026). Corrected: those reports are timed from their own SEC 8-K Item 2.02 acceptance time (before 16:00 New York -> that session; 16:00 or later -> the next session); no 8-K within 3 days -> the calendar rule.",
    "window": [
     "2021-10-12",
     "2026-10-23"
@@ -5139,79 +5140,126 @@
    "frozenAt": "2026-10-23T20:20:21.074Z",
    "bar": 4.02,
    "verdict": "NOT PROVEN",
-   "why": "not better than the same stocks on their other days in the older half; block t 1.21 under 2.5 in the older half; block t 0.2 under 2.5 in the newer half",
+   "why": "not better than the same stocks on their other days in the older half; block t 1.18 under 2.5 in the older half; block t 0.29 under 2.5 in the newer half",
    "results": {
+    "older": {
+     "n": 881,
+     "days": 215,
+     "stocks": 577,
+     "avg": 0.0158,
+     "median": 0.0045,
+     "avgStress": 0.0118,
+     "ctrl": -0.0122,
+     "edge": 0.024,
+     "tDay": 2.31,
+     "blocks": 10,
+     "tBlock": 1.18,
+     "vsOwn": -0.0431,
+     "ownCovered": 205,
+     "noTop2": 0.0134,
+     "best": 1.1555,
+     "worst": -0.6912,
+     "win": 0.5096
+    },
+    "newer": {
+     "n": 1410,
+     "days": 323,
+     "stocks": 820,
+     "avg": 0.0479,
+     "median": 0.0253,
+     "avgStress": 0.0439,
+     "ctrl": 0.0315,
+     "edge": 0.0059,
+     "tDay": 0.5,
+     "blocks": 12,
+     "tBlock": 0.29,
+     "vsOwn": 0.0024,
+     "ownCovered": 319,
+     "noTop2": 0.0455,
+     "best": 2.0424,
+     "worst": -0.746,
+     "win": 0.5596
+    },
+    "all": {
+     "n": 2291,
+     "days": 538,
+     "stocks": 1104,
+     "avg": 0.0355,
+     "median": 0.0152,
+     "avgStress": 0.0315,
+     "ctrl": 0.0147,
+     "edge": 0.0131,
+     "tDay": 1.6,
+     "blocks": 21,
+     "tBlock": 0.79,
+     "vsOwn": -0.0154,
+     "ownCovered": 524,
+     "noTop2": 0.0341,
+     "best": 2.0424,
+     "worst": -0.746,
+     "win": 0.5404
+    }
+   },
+   "hold": 60,
+   "reason": "Reaction-day timing bug (Squad 28 finding, checked by Agent A 1 Nov 2026): reports with no time in the Nasdaq calendar were taken as after-the-close, so before-the-open reports were judged one session late (surprise scaled by a close that already held the reaction; buy one session late). Corrected: those reports timed from their own SEC 8-K Item 2.02 acceptance time; everything else unchanged. 54078 of 65847 untimed reports re-timed by an 8-K (22068 moved earlier, 453 later); 735 frozen-window signals dropped and 721 added.",
+   "timing": {
+    "signals": {
+     "before": 2462,
+     "after": 2448,
+     "unchanged": 1727,
+     "dropped": 735,
+     "added": 721
+    },
+    "withoutTimingFix": {
+     "verdict": "NOT PROVEN",
+     "older": {
+      "n": 892,
+      "days": 217,
+      "avgStress": 0.011,
+      "edge": 0.0215,
+      "vsOwn": -0.0394,
+      "noTop2": 0.0127,
+      "tBlock": 1.21,
+      "win": 0.5112
+     },
+     "newer": {
+      "n": 1411,
+      "days": 319,
+      "avgStress": 0.0429,
+      "edge": 0.0023,
+      "vsOwn": 0.0018,
+      "noTop2": 0.0445,
+      "tBlock": 0.19,
+      "win": 0.5507
+     }
+    }
+   },
+   "previousCorrection": {
+    "bugs": [
+     "AUD-1",
+     "AUD-2"
+    ],
+    "verdict": "NOT PROVEN",
+    "at": "2026-10-24T05:58:12.164Z",
     "older": {
      "n": 892,
      "days": 217,
-     "stocks": 581,
-     "avg": 0.015,
-     "median": 0.0065,
      "avgStress": 0.011,
-     "ctrl": -0.0123,
      "edge": 0.0215,
-     "tDay": 2.22,
-     "blocks": 10,
-     "tBlock": 1.21,
      "vsOwn": -0.0394,
-     "ownCovered": 211,
      "noTop2": 0.0127,
-     "best": 1.1555,
-     "worst": -0.6912,
+     "tBlock": 1.21,
      "win": 0.5112
     },
     "newer": {
      "n": 1411,
      "days": 319,
-     "stocks": 820,
-     "avg": 0.0469,
-     "median": 0.0218,
      "avgStress": 0.0429,
-     "ctrl": 0.0315,
      "edge": 0.0024,
-     "tDay": 0.21,
-     "blocks": 12,
-     "tBlock": 0.2,
      "vsOwn": 0.0018,
-     "ownCovered": 315,
      "noTop2": 0.0445,
-     "best": 2.0424,
-     "worst": -0.746,
+     "tBlock": 0.2,
      "win": 0.5507
-    },
-    "all": {
-     "n": 2303,
-     "days": 536,
-     "stocks": 1106,
-     "avg": 0.0346,
-     "median": 0.0139,
-     "avgStress": 0.0306,
-     "ctrl": 0.0145,
-     "edge": 0.0101,
-     "tDay": 1.28,
-     "blocks": 21,
-     "tBlock": 0.81,
-     "vsOwn": -0.0147,
-     "ownCovered": 526,
-     "noTop2": 0.0331,
-     "best": 2.0424,
-     "worst": -0.746,
-     "win": 0.5354
-    }
-   },
-   "hold": 60,
-   "aud1Only": {
-    "note": "AUD-1 alone (old cut-off, capped yardstick): information",
-    "verdict": "NOT PROVEN",
-    "older": {
-     "n": 898,
-     "edge": 0.0224,
-     "avgStress": 0.0113
-    },
-    "newer": {
-     "n": 1406,
-     "edge": 0.0017,
-     "avgStress": 0.0433
     }
    },
    "reproduced": {
@@ -5237,7 +5285,7 @@
      "blocks": 12,
      "avg": 0.0473,
      "avgStress": 0.0433,
-     "ctrl": 0.0306,
+     "ctrl": 0.0307,
      "edge": 0.0026,
      "vsOwn": 0.002,
      "noTop2": 0.0449,
@@ -5249,37 +5297,456 @@
     "note": "sensitivity only: no cap on the rule or the yardstick",
     "verdict": "NOT PROVEN",
     "older": {
-     "n": 892,
-     "days": 217,
+     "n": 881,
+     "days": 215,
      "blocks": 10,
-     "avg": 0.015,
-     "avgStress": 0.011,
-     "ctrl": -0.0122,
-     "edge": 0.0214,
-     "vsOwn": -0.0394,
-     "noTop2": 0.0127,
-     "tBlock": 1.21,
+     "avg": 0.0158,
+     "avgStress": 0.0118,
+     "ctrl": -0.0121,
+     "edge": 0.024,
+     "vsOwn": -0.0431,
+     "noTop2": 0.0134,
+     "tBlock": 1.18,
      "best": 1.1555
     },
     "newer": {
-     "n": 1411,
-     "days": 319,
+     "n": 1410,
+     "days": 323,
      "blocks": 12,
-     "avg": 0.0469,
-     "avgStress": 0.0429,
-     "ctrl": 0.0318,
-     "edge": 0.0021,
-     "vsOwn": 0.0017,
-     "noTop2": 0.0445,
-     "tBlock": 0.18,
+     "avg": 0.0479,
+     "avgStress": 0.0439,
+     "ctrl": 0.0327,
+     "edge": 0.0052,
+     "vsOwn": 0.0024,
+     "noTop2": 0.0455,
+     "tBlock": 0.25,
      "best": 2.0424
+    }
+   }
+  },
+  "ANOM-SUE": {
+   "at": "2026-11-01T12:56:07.598Z",
+   "bugs": [
+    "AUD-1",
+    "SQ28-TIMING"
+   ],
+   "explanation": "AUD-1: The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule's own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule's and the yardstick's, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run. SQ28-TIMING: Earnings reports with no time in the Nasdaq calendar were taken as after-the-close, so before-the-open reports were judged one session late (found by Squad 28, 27 Oct 2026). Corrected: those reports are timed from their own SEC 8-K Item 2.02 acceptance time (before 16:00 New York -> that session; 16:00 or later -> the next session); no 8-K within 3 days -> the calendar rule.",
+   "window": [
+    "2021-10-12",
+    "2026-10-23"
+   ],
+   "frozenAt": "2026-10-23T20:20:21.074Z",
+   "bar": 4.02,
+   "verdict": "NOT PROVEN",
+   "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.59 under 2.5 in the older half; block t 0.67 under 2.5 in the newer half",
+   "results": {
+    "older": {
+     "n": 1454,
+     "days": 296,
+     "stocks": 748,
+     "avg": -0.0004,
+     "median": -0.0189,
+     "avgStress": -0.0044,
+     "ctrl": -0.0159,
+     "edge": 0.0109,
+     "tDay": 1.26,
+     "blocks": 10,
+     "tBlock": 0.59,
+     "vsOwn": -0.0383,
+     "ownCovered": 283,
+     "noTop2": -0.0025,
+     "best": 1.596,
+     "worst": -0.8218,
+     "win": 0.4635
+    },
+    "newer": {
+     "n": 2011,
+     "days": 363,
+     "stocks": 997,
+     "avg": 0.0474,
+     "median": 0.0174,
+     "avgStress": 0.0434,
+     "ctrl": 0.0289,
+     "edge": 0.0117,
+     "tDay": 0.96,
+     "blocks": 12,
+     "tBlock": 0.67,
+     "vsOwn": 0.05,
+     "ownCovered": 357,
+     "noTop2": 0.0446,
+     "best": 2.992,
+     "worst": -0.8527,
+     "win": 0.538
+    },
+    "all": {
+     "n": 3465,
+     "days": 659,
+     "stocks": 1291,
+     "avg": 0.0273,
+     "median": 0.0036,
+     "avgStress": 0.0233,
+     "ctrl": 0.0101,
+     "edge": 0.0113,
+     "tDay": 1.47,
+     "blocks": 21,
+     "tBlock": 0.86,
+     "vsOwn": 0.0109,
+     "ownCovered": 640,
+     "noTop2": 0.0257,
+     "best": 2.992,
+     "worst": -0.8527,
+     "win": 0.5068
+    }
+   },
+   "hold": 60,
+   "reason": "Reaction-day timing bug (Squad 28 finding, checked by Agent A 1 Nov 2026): reports with no time in the Nasdaq calendar were taken as after-the-close, so before-the-open reports were judged one session late (surprise scaled by a close that already held the reaction; buy one session late). Corrected: those reports timed from their own SEC 8-K Item 2.02 acceptance time; everything else unchanged. 54078 of 65847 untimed reports re-timed by an 8-K (22068 moved earlier, 453 later); 1354 frozen-window signals dropped and 1341 added.",
+   "timing": {
+    "signals": {
+     "before": 3792,
+     "after": 3779,
+     "unchanged": 2438,
+     "dropped": 1354,
+     "added": 1341
+    },
+    "withoutTimingFix": {
+     "verdict": "NOT PROVEN",
+     "older": {
+      "n": 1472,
+      "days": 294,
+      "avgStress": -0.0055,
+      "edge": 0.0075,
+      "vsOwn": -0.0442,
+      "noTop2": -0.0038,
+      "tBlock": 1,
+      "win": 0.4688
+     },
+     "newer": {
+      "n": 2005,
+      "days": 358,
+      "avgStress": 0.0446,
+      "edge": 0.0113,
+      "vsOwn": 0.0467,
+      "noTop2": 0.0458,
+      "tBlock": 0.35,
+      "win": 0.5372
+     }
+    }
+   },
+   "previousCorrection": null,
+   "reproduced": {
+    "matchesFrozen": true,
+    "note": "the old engine on this run's data gives the frozen numbers: the change is the fix alone",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 1472,
+     "days": 294,
+     "blocks": 10,
+     "avg": -0.0015,
+     "avgStress": -0.0055,
+     "ctrl": -0.017,
+     "edge": 0.0077,
+     "vsOwn": -0.044,
+     "noTop2": -0.0038,
+     "tBlock": 1.01,
+     "best": 1.9041
+    },
+    "newer": {
+     "n": 2005,
+     "days": 358,
+     "blocks": 12,
+     "avg": 0.0496,
+     "avgStress": 0.0456,
+     "ctrl": 0.0289,
+     "edge": 0.0151,
+     "vsOwn": 0.0514,
+     "noTop2": 0.0458,
+     "tBlock": 0.62,
+     "best": 5.0474
+    }
+   },
+   "noCapEitherSide": {
+    "note": "sensitivity only: no cap on the rule or the yardstick",
+    "verdict": "NOT PROVEN",
+    "older": {
+     "n": 1454,
+     "days": 296,
+     "blocks": 10,
+     "avg": -0.0004,
+     "avgStress": -0.0044,
+     "ctrl": -0.0158,
+     "edge": 0.0108,
+     "vsOwn": -0.0384,
+     "noTop2": -0.0025,
+     "tBlock": 0.58,
+     "best": 1.596
+    },
+    "newer": {
+     "n": 2011,
+     "days": 363,
+     "blocks": 12,
+     "avg": 0.0484,
+     "avgStress": 0.0444,
+     "ctrl": 0.0303,
+     "edge": 0.014,
+     "vsOwn": 0.0525,
+     "noTop2": 0.0446,
+     "tBlock": 0.79,
+     "best": 5.0474
+    }
+   }
+  }
+ },
+ "timingCheck": {
+  "at": "2026-11-01T12:56:07.289Z",
+  "complete": true,
+  "method": "anomaly-lab.mjs TIMING AUDIT header (1 Nov 2026)",
+  "secRequests": 4305,
+  "companies": 4071,
+  "reports": {
+   "reports": 67302,
+   "noTime": 65847,
+   "by8K": 54078,
+   "noFiling": 11769,
+   "sameSession": 31557,
+   "movedEarlier": 22068,
+   "movedLater": 453,
+   "labelled": {
+    "bmo": {
+     "n": 20,
+     "agree": 19
+    },
+    "amc": {
+     "n": 0,
+     "agree": 0
+    }
+   },
+   "examples": [
+    {
+     "sym": "FAST",
+     "date": "2021-10-12",
+     "acceptedNY": "2021-10-12 07:36",
+     "calendarSession": "2021-10-13",
+     "corrected": "2021-10-12"
+    },
+    {
+     "sym": "JPM",
+     "date": "2021-10-13",
+     "acceptedNY": "2021-10-13 06:45",
+     "calendarSession": "2021-10-14",
+     "corrected": "2021-10-13"
+    },
+    {
+     "sym": "DAL",
+     "date": "2021-10-13",
+     "acceptedNY": "2021-10-13 07:25",
+     "calendarSession": "2021-10-14",
+     "corrected": "2021-10-13"
+    },
+    {
+     "sym": "SOTK",
+     "date": "2021-10-13",
+     "acceptedNY": "2021-10-13 08:00",
+     "calendarSession": "2021-10-14",
+     "corrected": "2021-10-13"
+    },
+    {
+     "sym": "UNH",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 06:05",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "BAC",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 06:46",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "MS",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 07:30",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "WFC",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 06:46",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "C",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 09:34",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "PGR",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 10:57",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "USB",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 06:39",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "DPZ",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 07:31",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "CMC",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-14 09:03",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-14"
+    },
+    {
+     "sym": "HTLD",
+     "date": "2021-10-14",
+     "acceptedNY": "2021-10-15 18:44",
+     "calendarSession": "2021-10-15",
+     "corrected": "2021-10-18"
+    },
+    {
+     "sym": "GS",
+     "date": "2021-10-15",
+     "acceptedNY": "2021-10-15 08:34",
+     "calendarSession": "2021-10-18",
+     "corrected": "2021-10-15"
+    }
+   ]
+  },
+  "selfCheck": "the rebuild without re-timing reproduces this run's signals exactly",
+  "ids": {
+   "ANOM-SUE": {
+    "signals": {
+     "before": 3792,
+     "after": 3779,
+     "unchanged": 2438,
+     "dropped": 1354,
+     "added": 1341
+    },
+    "affected": true,
+    "withoutTimingFix": {
+     "verdict": "NOT PROVEN",
+     "older": {
+      "n": 1472,
+      "days": 294,
+      "avgStress": -0.0055,
+      "edge": 0.0075,
+      "vsOwn": -0.0442,
+      "noTop2": -0.0038,
+      "tBlock": 1,
+      "win": 0.4688
+     },
+     "newer": {
+      "n": 2005,
+      "days": 358,
+      "avgStress": 0.0446,
+      "edge": 0.0113,
+      "vsOwn": 0.0467,
+      "noTop2": 0.0458,
+      "tBlock": 0.35,
+      "win": 0.5372
+     }
+    },
+    "withTimingFix": {
+     "verdict": "NOT PROVEN",
+     "older": {
+      "n": 1454,
+      "days": 296,
+      "avgStress": -0.0044,
+      "edge": 0.0109,
+      "vsOwn": -0.0383,
+      "noTop2": -0.0025,
+      "tBlock": 0.59,
+      "win": 0.4635
+     },
+     "newer": {
+      "n": 2011,
+      "days": 363,
+      "avgStress": 0.0434,
+      "edge": 0.0117,
+      "vsOwn": 0.05,
+      "noTop2": 0.0446,
+      "tBlock": 0.67,
+      "win": 0.538
+     }
+    }
+   },
+   "ANOM-SUESURGE": {
+    "signals": {
+     "before": 2462,
+     "after": 2448,
+     "unchanged": 1727,
+     "dropped": 735,
+     "added": 721
+    },
+    "affected": true,
+    "withoutTimingFix": {
+     "verdict": "NOT PROVEN",
+     "older": {
+      "n": 892,
+      "days": 217,
+      "avgStress": 0.011,
+      "edge": 0.0215,
+      "vsOwn": -0.0394,
+      "noTop2": 0.0127,
+      "tBlock": 1.21,
+      "win": 0.5112
+     },
+     "newer": {
+      "n": 1411,
+      "days": 319,
+      "avgStress": 0.0429,
+      "edge": 0.0023,
+      "vsOwn": 0.0018,
+      "noTop2": 0.0445,
+      "tBlock": 0.19,
+      "win": 0.5507
+     }
+    },
+    "withTimingFix": {
+     "verdict": "NOT PROVEN",
+     "older": {
+      "n": 881,
+      "days": 215,
+      "avgStress": 0.0118,
+      "edge": 0.024,
+      "vsOwn": -0.0431,
+      "noTop2": 0.0134,
+      "tBlock": 1.18,
+      "win": 0.5096
+     },
+     "newer": {
+      "n": 1410,
+      "days": 323,
+      "avgStress": 0.0439,
+      "edge": 0.0059,
+      "vsOwn": 0.0024,
+      "noTop2": 0.0455,
+      "tBlock": 0.29,
+      "win": 0.5596
+     }
     }
    }
   }
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-31T00:00:40.511Z",
+  "at": "2026-11-01T14:24:57.369Z",
   "results": {}
  },
  "trades": {}

@@ -1,0 +1,98 @@
+{
+  "kind": "MENTOR_CURRENT_PRODUCTION_VERIFICATION_V2",
+  "productionBase": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+  "patchSha256": "6c6d14dcc9db494583aa9ba997de52ed753720ee72b42f20f9beaa3d5cb2f5fb",
+  "localRuntime": "v24.19.0",
+  "unpatchedProduction": {
+    "files": 129,
+    "pass": 129,
+    "fail": 0,
+    "ordinaryWorkflowFiles": 128,
+    "additionalInstrumentTestFiles": 1
+  },
+  "patchedProduction": {
+    "completeLoopFiles": 131,
+    "completeLoopPass": 131,
+    "completeLoopFail": 0,
+    "addedPlanFileCases": {
+      "tests": 8,
+      "pass": 8,
+      "fail": 0
+    },
+    "currentDistinctFiles": 132,
+    "qualification": "Plan file added after first loop enumeration; final10-case caller and8-case plan separately rerun. Hosted ordinary CI must run131 test/*.test.mjs files; tests/instrument-type.test.mjs is an additional unchanged local file."
+  },
+  "focused": {
+    "oldPr3CurrentBase": {
+      "tests": 10,
+      "pass": 3,
+      "fail": 7
+    },
+    "repairedCaller": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0
+    },
+    "unchangedOldCaller": {
+      "tests": 2,
+      "pass": 2,
+      "fail": 0
+    },
+    "plan": {
+      "tests": 8,
+      "pass": 8,
+      "fail": 0
+    },
+    "gatedWatcherIncident": {
+      "tests": 11,
+      "pass": 11,
+      "fail": 0
+    },
+    "gatedWatcherResilience": {
+      "tests": 9,
+      "pass": 9,
+      "fail": 0
+    },
+    "developmentCaller": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0
+    },
+    "developmentPlan": {
+      "tests": 8,
+      "pass": 8,
+      "fail": 0
+    }
+  },
+  "productionDataPreservation": {
+    "baseBlobs": 425,
+    "beforeAfterEqual": true,
+    "protectedCredentialsUsed": false,
+    "protectedPrivateStateDecrypted": false,
+    "publicRepositoryDataHashedOnly": true
+  },
+  "baselineClassifications": {
+    "ordinaryFailuresReproduced": 0,
+    "priorDateFixturesOrNineReportedFailures": "Historical results retained; none reproduced on this exact ordinary base. Existing production bot-actions helper fix preserved byte-identically; no baseline assertions changed.",
+    "basketWrapper": "Existing sixth-argumenttrue wrapper remains untouched; this release does not certify new basket behavior.",
+    "legacyReply": "Existing inline helper can retry ambiguous transport and advance command offset before confirmed receipt; may duplicate or lose a read-only reply. No new durable-delivery claim."
+  },
+  "unchangedFrozenModuleSha256": "c9450320caa3f54abd11d957676ff600a509ebe8014a38b77c7a7596a3ba99c9",
+  "productionDeployment": false,
+  "providerCalls": 0,
+  "realMessages": 0,
+  "genuineAdmissions": 0,
+  "newAcceptanceClosures": [],
+  "hostedCI": "External exact-source ordinary push/PR checks; no hosted result inferred from local tests.",
+  "independentReview": "New exact package pending Claude; preserve previous module checks where unchanged.",
+  "exactPatchReapplication": {
+    "cleanBase": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+    "applies": true,
+    "fileDependencyAndCallerHashes": 16,
+    "hashesMatch": true,
+    "focusedCases": 20,
+    "pass": 20,
+    "fail": 0,
+    "reversePatchCheckRequiredAtDeployment": true
+  }
+}

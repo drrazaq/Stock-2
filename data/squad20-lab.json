@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-31T01:40:57.150Z",
+ "generatedAt": "2026-11-01T17:12:05.835Z",
  "squad": 20,
  "philosophy": "use the jump differently: as an AVOID filter and an EXIT on the rules that work, as a second setup after the spike is digested, and one-month momentum among high-turnover large caps (Medhat & Schmeling 2022)",
  "preRegistered": "squad20-core.mjs header + RULES (25 Oct 2026, before any run) + data/strategy-library.json SQ20-*",
@@ -7,7 +7,7 @@
   "2021-10-12",
   "2026-10-30"
  ],
- "bar": 4.07,
+ "bar": 4.09,
  "split": "2024-01-01",
  "cost": 0.008,
  "data": {
@@ -32,7 +32,7 @@
    "companies": 4445,
    "answered": 4445,
    "withRevenue": 3721,
-   "fromSquad4Cache": 6154,
+   "fromSquad4Cache": 6155,
    "fetchedNow": 0,
    "failed": 0,
    "mode": "cache"
@@ -47,12 +47,12 @@
    "ok": true,
    "wanted": 1,
    "fetchedNow": 1,
-   "known": 2088
+   "known": 2089
   },
   "domicile": {
    "ok": true,
-   "wantedNow": 1,
-   "fetchedNow": 1,
+   "wantedNow": 0,
+   "fetchedNow": 0,
    "failed": 0,
    "missing": 0,
    "known": 1756,
@@ -161,11 +161,11 @@
   },
   "spike": {
    "ok": true,
-   "stocksWithSpikes": 2392,
-   "spikes": 6730,
+   "stocksWithSpikes": 2400,
+   "spikes": 7054,
    "signals": 90,
-   "controls": 2633,
-   "controlsHeld": 829
+   "controls": 2645,
+   "controlsHeld": 831
   },
   "stmom": {
    "ok": true,
@@ -177,7 +177,7 @@
    "avgPicks500": 13.5085
   }
  },
- "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock at the same moments (capped +300%, AUD-1), better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5, return per year of capital above SPY -> TRADABLE SMALL; block t >= 4.07 -> PROVEN. A filters / B exits additionally carry the pre-registered ADOPT test (squad20-core.mjs adoptFilter / adoptExit).",
+ "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock at the same moments (capped +300%, AUD-1), better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5, return per year of capital above SPY -> TRADABLE SMALL; block t >= 4.09 -> PROVEN. A filters / B exits additionally carry the pre-registered ADOPT test (squad20-core.mjs adoptFilter / adoptExit).",
  "rules": {
   "SQ20-AV40-PB12": {
    "name": "Leader 12% pullback (SQ11-PB12), skipping stocks with a +40% day in the 10 sessions before entry",
@@ -24233,7 +24233,7 @@
      "avg": 0.1631,
      "median": 0.074,
      "avgStress": 0.1591,
-     "ctrl": 0.0776,
+     "ctrl": 0.0777,
      "edge": 0.0466,
      "tDay": 1.59,
      "blocks": 11,
@@ -24363,7 +24363,7 @@
      "median": 0.0945,
      "avgStress": 0.1889,
      "ctrl": 0.073,
-     "edge": 0.1124,
+     "edge": 0.1123,
      "tDay": 1.42,
      "blocks": 4,
      "tBlock": 1.42,
@@ -24381,7 +24381,7 @@
      "avg": 0.1414,
      "median": 0.0641,
      "avgStress": 0.1374,
-     "ctrl": 0.0577,
+     "ctrl": 0.0578,
      "edge": 0.0759,
      "tDay": 1.56,
      "blocks": 7,
@@ -24403,7 +24403,7 @@
     "newer": {
      "rule": 0.388,
      "spy": 0.2038,
-     "avgStock": 0.1628
+     "avgStock": 0.163
     }
    },
    "byYear": {
@@ -24437,7 +24437,7 @@
     "2025": {
      "n": 239,
      "avg": 0.2741,
-     "avgStock": 0.1393,
+     "avgStock": 0.1394,
      "spy": 0.1392,
      "perYear": 0.5542,
      "spyPerYear": 0.2814,
@@ -24483,7 +24483,7 @@
      "median": 0.0082,
      "avgStress": 0.0486,
      "ctrl": 0.0271,
-     "edge": 0.0176,
+     "edge": 0.0175,
      "tDay": 0.53,
      "blocks": 10,
      "tBlock": 0.53,
@@ -24523,7 +24523,7 @@
     "newer": {
      "rule": 0.2115,
      "spy": 0.1706,
-     "avgStock": 0.1409
+     "avgStock": 0.141
     }
    },
    "byYear": {
@@ -24557,7 +24557,7 @@
     "2025": {
      "n": 200,
      "avg": 0.104,
-     "avgStock": 0.0378,
+     "avgStock": 0.0379,
      "spy": 0.04,
      "perYear": 0.4171,
      "spyPerYear": 0.1604,
@@ -24910,7 +24910,7 @@
     "newer": {
      "rule": 0.1804,
      "spy": 0.1752,
-     "avgStock": 0.1403
+     "avgStock": 0.1404
     }
    },
    "byYear": {
@@ -24998,9 +24998,9 @@
      "avg": 0.0473,
      "median": 0.0235,
      "avgStress": 0.0433,
-     "ctrl": 0.0318,
-     "edge": 0.0014,
-     "tDay": 0.12,
+     "ctrl": 0.0319,
+     "edge": 0.0013,
+     "tDay": 0.11,
      "blocks": 12,
      "tBlock": 0.14,
      "vsOwn": 0.0016,
@@ -25018,7 +25018,7 @@
      "median": 0.0142,
      "avgStress": 0.0308,
      "ctrl": 0.0149,
-     "edge": 0.0099,
+     "edge": 0.0098,
      "tDay": 1.25,
      "blocks": 21,
      "tBlock": 0.8,
@@ -25039,7 +25039,7 @@
     "newer": {
      "rule": 0.1986,
      "spy": 0.2052,
-     "avgStock": 0.1673
+     "avgStock": 0.1677
     }
    },
    "byYear": {
@@ -25073,7 +25073,7 @@
     "2024": {
      "n": 570,
      "avg": 0.033,
-     "avgStock": 0.0239,
+     "avgStock": 0.0241,
      "spy": 0.052,
      "perYear": 0.1384,
      "spyPerYear": 0.2184,
@@ -25895,7 +25895,7 @@
   },
   {
    "d": "2026-10-30",
-   "companies": 2086,
+   "companies": 2087,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25912,7 +25912,7 @@
  ],
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-31T01:40:57.150Z",
+  "at": "2026-11-01T17:12:05.835Z",
   "results": {}
  },
  "trades": {}

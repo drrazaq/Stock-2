@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-10-27",
+ "updated": "2026-11-01",
  "strategies": [
   {
    "id": "T1",
@@ -2322,7 +2322,7 @@
    "explain": "Award dollar value over 20% of market cap, share count flat, quiet 5 days before; buy next open, hold 20 sessions. Official free APIs only, point-in-time award date. Cash from the government, not a press release.",
    "status": "tested: needs data",
    "agent": "C",
-   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: built against the official USAspending API (contracts C/D, grants 04/05, 20M+; strict SEC-name match; stop rule: under 30% of 50M+ awards matched = needs data). Caveat: Award Amount is the total to date, so a pass goes to live paper first.",
+   "note": "From the outside reviews and photos of 20 Oct (afternoon). Pre-register, run once, same gates. Agent C 20 Oct: built against the official USAspending API (contracts C/D, grants 04/05, 20M+; strict SEC-name match; stop rule: under 30% of 50M+ awards matched = needs data). Caveat: Award Amount is the total to date, so a pass goes to live paper first. | 1 Nov 2026 (Agent C): closed. The parent-mapped version C-GOV1b ran on 25 Oct (33% match): too few big awards (9 in 5 years) for the 20%-of-market-cap rule; any 50M+ award rejected as information.",
    "tested": "2026-10-19",
    "study": "gov-awards.mjs -> data/gov-awards.json (run once; stopped by its own match-rate rule)",
    "result": {
@@ -3027,10 +3027,18 @@
    "family": "Forward cash",
    "name": "Government award, parent-mapped (USAspending recipient parent)",
    "explain": "Same events and gates as C-GOV1 (award 20%+ of market cap on its start day; G2 adds flat share count and no 10% day in the 5 sessions before; hold 20 / 60), but recipients are matched to listed parents through the official USAspending recipient profile (parent_name), and awards are fetched per quarter so small and mid awards are in. Data rules: 30% match stop rule unchanged; no verdict until 95% of 50M+ awards have a parent lookup and every quarter list is complete.",
-   "status": "pre-registered 22 Oct 2026, built (gov-awards2.mjs); first run Sunday 25 Oct (may need 2 runs to finish the parent lookups)",
+   "status": "tested: TOO FEW CASES for the rule (G1/G2: 9 awards worth 20%+ of market cap in 5 years, 6 older / 3 newer); information version (any 50M+ award) REJECTED (frozen 25 Oct 2026)",
    "agent": "C",
    "source": "https://github.com/fedspendingtransparency/usaspending-api/blob/master/usaspending_api/api_contracts/contracts/v2/recipient/recipient_id.md",
-   "note": "Agent C 22 Oct 2026, queue item 1 (C-GOV1 parent map). C-GOV1 stopped at 16% match (subsidiary names). Judged for PROVEN and TRADABLE SMALL (tier 2). Caveat kept: Award Amount is the total to date; a pass goes to live paper first."
+   "note": "Agent C 22 Oct 2026, queue item 1 (C-GOV1 parent map). C-GOV1 stopped at 16% match (subsidiary names). Judged for PROVEN and TRADABLE SMALL (tier 2). Caveat kept: Award Amount is the total to date; a pass goes to live paper first.",
+   "tested": "2026-10-25",
+   "result": {
+    "G1_G2": "TOO FEW CASES (9 signals: older 6, newer 3)",
+    "ALL_20": "REJECTED (information only): older n 147 avg +0.1% edge +0.9% t 1.43; newer n 166 avg +0.8% edge -0.7% t -0.63",
+    "ALL_60": "REJECTED (information only)",
+    "matchRate": 0.331,
+    "closedBy": "Agent C 1 Nov 2026: C-GOV1 queue item closed; no re-run (rule stays as written)"
+   }
   },
   {
    "id": "C-ARK1",
@@ -3049,12 +3057,14 @@
    "family": "Crowd",
    "name": "US Congress members' stock purchases (STOCK Act reports)",
    "explain": "Each purchase in a House or Senate periodic transaction report is a call dated on its DISCLOSURE (filing) date, not the trade date; bought the next open, 20 and 60 sessions, vs the average stock and the S&P 500. Tested as a tip source (FOLLOW / FADE, tier 2 rules) and as a historical test 2021-2026 with the same gates.",
-   "status": "queued (Agent C): data route found 27 Oct 2026",
+   "status": "tested (agent-c-lab): 20 sessions REJECTED, 60 sessions REJECTED",
    "agent": "C",
    "source": "https://www.nber.org/papers/w35041 (Capital in the Capitol, 2012-2023: after the STOCK Act legislators' portfolios trail or at best match the market); https://www.nber.org/papers/w26975",
    "data": "needs data: House Clerk financial-disclosure ZIP/XML (disclosures-clerk.house.gov, public, no login) gives filing dates and PDF links; trades are in PDFs (parsing needed). Alternative: Alpha Vantage CONGRESS_TRADES (key exists, 25 calls/day) if it returns the disclosure date.",
    "queue": "after C-ARK1 historical test",
-   "note": "WEB SCOUT 22 Oct. Published post-2012 result is no edge, so the expected outcome is NO EDGE or FADE; worth scoring because the crowd follows these trades. | 27 Oct 2026 (owner shared trader-skill, MIT, github.com/Jakeschincariol/trader-skill): official House Clerk source = https://disclosures-clerk.house.gov/public_disc/financial-pdfs/<YEAR>FD.zip (index: member, FilingType P = PTR, FilingDate, DocID) + PTR PDFs at /public_disc/ptr-pdfs/<YEAR>/<DocID>.pdf, read with pdftotext -layout; its parser trader-pelosi/ptr.py (MIT, may be adapted with credit). Use the FILING date (not the trade date) as the signal date: PTRs are 30-45 days late. Senate: efdsearch.senate.gov is manual only (no bulk route): House only. Pre-register before any result."
+   "note": "WEB SCOUT 22 Oct. Published post-2012 result is no edge, so the expected outcome is NO EDGE or FADE; worth scoring because the crowd follows these trades. | 27 Oct 2026 (owner shared trader-skill, MIT, github.com/Jakeschincariol/trader-skill): official House Clerk source = https://disclosures-clerk.house.gov/public_disc/financial-pdfs/<YEAR>FD.zip (index: member, FilingType P = PTR, FilingDate, DocID) + PTR PDFs at /public_disc/ptr-pdfs/<YEAR>/<DocID>.pdf, read with pdftotext -layout; its parser trader-pelosi/ptr.py (MIT, may be adapted with credit). Use the FILING date (not the trade date) as the signal date: PTRs are 30-45 days late. Senate: efdsearch.senate.gov is manual only (no bulk route): House only. Pre-register before any result.",
+   "preRegistered": "2026-11-01",
+   "tested": "2026-11-01"
   },
   {
    "id": "C-CUST1",
@@ -8697,9 +8707,19 @@
    "family": "Ranked experts",
    "name": "Purchase by a top-10% Congress member, ranked by earlier disclosed purchases (hold 126)",
    "explain": "Each purchase on its DISCLOSURE date; member = top 10% by earlier purchases (126-session excess; min 5 resolved). Hold 126.",
-   "status": "queued (Agent C): data route found 27 Oct 2026",
+   "status": "tested: too few cases (agent-c-lab, frozen 2026-11-01)",
    "agent": "expert",
-   "note": "Overlaps C-CONG1 (needs data) and the follow lane (Congress members scored as tip sources). Evidence: Belmont et al. (J Public Econ 2022, 2012-2020) no edge. Unlock: FMP Starter senate/house trades or an Alpha Vantage premium key (the free 25 calls a day are used by follow-lane and earnings-study). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json). | 27 Oct 2026 (owner shared trader-skill, MIT, github.com/Jakeschincariol/trader-skill): official House Clerk source = https://disclosures-clerk.house.gov/public_disc/financial-pdfs/<YEAR>FD.zip (index: member, FilingType P = PTR, FilingDate, DocID) + PTR PDFs at /public_disc/ptr-pdfs/<YEAR>/<DocID>.pdf, read with pdftotext -layout; its parser trader-pelosi/ptr.py (MIT, may be adapted with credit). Use the FILING date (not the trade date) as the signal date: PTRs are 30-45 days late. Senate: efdsearch.senate.gov is manual only (no bulk route): House only. Pre-register before any result."
+   "note": "Overlaps C-CONG1 (needs data) and the follow lane (Congress members scored as tip sources). Evidence: Belmont et al. (J Public Econ 2022, 2012-2020) no edge. Unlock: FMP Starter senate/house trades or an Alpha Vantage premium key (the free 25 calls a day are used by follow-lane and earnings-study). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json). | 27 Oct 2026 (owner shared trader-skill, MIT, github.com/Jakeschincariol/trader-skill): official House Clerk source = https://disclosures-clerk.house.gov/public_disc/financial-pdfs/<YEAR>FD.zip (index: member, FilingType P = PTR, FilingDate, DocID) + PTR PDFs at /public_disc/ptr-pdfs/<YEAR>/<DocID>.pdf, read with pdftotext -layout; its parser trader-pelosi/ptr.py (MIT, may be adapted with credit). Use the FILING date (not the trade date) as the signal date: PTRs are 30-45 days late. Senate: efdsearch.senate.gov is manual only (no bulk route): House only. Pre-register before any result.",
+   "builtBy": "C",
+   "data": "House Clerk yearly index + PTR PDFs (official, public); House only",
+   "tested": "2026-11-01",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "level": "NONE",
+    "why": "fewer than 20 cases or 3 blocks in a half (12 cases, 2 blocks / 34 cases, 4 blocks)",
+    "older": "12 trades, 7 days, avg -6.0% (stress -6.4%), edge -11.0%, t null",
+    "newer": "34 trades, 8 days, avg -3.5% (stress -3.9%), edge -5.3%, t -3.49"
+   }
   },
   {
    "id": "EXP-ETORO1",
@@ -29347,8 +29367,23 @@
    "family": "Crowd",
    "name": "Insider cluster + cash-rich quality (owner outside reviewer, 25 Oct 2026)",
    "explain": "2+ distinct insiders buy within 5 sessions, total >= 200k USD (Form 4, filing date), AND the B-FCF1 company check point-in-time (FCF yield >5% trailing 4Q (OCF-capex)/mcap, revenue growth >=10% YoY, debt/equity <0.5, close above 200-day), close 5$+ and 20d traded value 5M$+. Buy next open, hold 63, stop 15%. Yardsticks: average stock same days; V15 same dates; same stock other days. Differs from SQ1-INSCLU (no quality) and DEC2-INSQ (too few cases): check case count first; if under 20 per half say TOO FEW before any return is computed.",
-   "status": "queued (Agent C)",
-   "agent": "C"
+   "status": "tested: too few cases (agent-c-lab, frozen 2026-11-01)",
+   "agent": "C",
+   "study": "agent-c-lab.mjs -> data/agent-c-lab.json firstRun",
+   "sources": [
+    "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+    "value-core.mjs fcfCheck (B-FCF1)"
+   ],
+   "rule": "2+ different insiders (officer/director/other; 10%-only owners out) with Form 4 open-market purchases filed in 5 sessions, together 200k USD+, fires on the filing date; issuer passes B-FCF1 (fcfCheck by issuer CIK), close above 200-day, liquid (5 USD+, 5M USD/day) on the session before entry; buy next open, hold 63, stop 15% (intraday low); one open trade per stock; count first (20 per half or TOO FEW, no returns). V15 same-date yardstick not computed (no point-in-time V15 list).",
+   "preRegistered": "2026-11-01",
+   "tested": "2026-11-01",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "level": "NONE",
+    "why": "count first (pre-registered): 0 / 5 signals with a complete hold (20 per half needed); no return computed",
+    "older": "n/a",
+    "newer": "n/a"
+   }
   },
   {
    "id": "SQ22-CASHCONV",
@@ -32158,6 +32193,624 @@
     ],
     "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
    }
+  },
+  {
+   "id": "D2-011",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "close vs its 20-day average at or below -14.3% AND close vs its 200-day average at or below -44.4% AND 5-day return at or below -7.9%; hold 60, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when close vs its 20-day average at or below -14.3% AND close vs its 200-day average at or below -44.4% AND 5-day return at or below -7.9%. Buy the next open, hold 60 sessions, stop 15% under the buy. Learned from runners that rose 50%+ over the next 60 sessions (2021-2023 only): 11% of runners vs 2% of look-alikes (lift 6.7496, lower 95% bound 4.8594). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 1187,
+    "avg": 0.0065,
+    "avgStress": 0.0025,
+    "edge": -0.0492,
+    "t": -4.38,
+    "tBlock": -3.21,
+    "vsOwn": 0.0414,
+    "noTop2": 0.0026,
+    "win": 0.3033,
+    "bar": 2.81,
+    "why": "not better than the average stock bought the same day; day t -4.38 under the luck bar 2.81; block t -3.21 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-012",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "1-day return at or below -5.9% AND close vs its 50-day average at or below -23.1% AND 5-day return at or below -7.9%; hold 60, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when 1-day return at or below -5.9% AND close vs its 50-day average at or below -23.1% AND 5-day return at or below -7.9%. Buy the next open, hold 60 sessions, stop 15% under the buy. Learned from runners that rose 50%+ over the next 60 sessions (2021-2023 only): 10% of runners vs 1% of look-alikes (lift 6.7678, lower 95% bound 4.8573). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 3051,
+    "avg": 0.0302,
+    "avgStress": 0.0262,
+    "edge": -0.0517,
+    "t": -6.41,
+    "tBlock": -2.25,
+    "vsOwn": -0.0114,
+    "noTop2": 0.0282,
+    "win": 0.3533,
+    "bar": 2.81,
+    "why": "not better than the average stock bought the same day; not better than the same stock on its other days; day t -6.41 under the luck bar 2.81; block t -2.25 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-013",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "1-day return at or below -5.9% AND close vs its 50-day average at or below -23.1% AND 60-day return percentile among all tradable stocks (0-1) at or below 0.03718; hold 10, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when 1-day return at or below -5.9% AND close vs its 50-day average at or below -23.1% AND 60-day return percentile among all tradable stocks (0-1) at or below 0.03718. Buy the next open, hold 10 sessions, stop 15% under the buy. Learned from runners that rose 25%+ over the next 10 sessions (2021-2023 only): 5% of runners vs 1% of look-alikes (lift 6.4539, lower 95% bound 4.8553). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 2520,
+    "avg": -0.0094,
+    "avgStress": -0.0134,
+    "edge": -0.0245,
+    "t": -4.7,
+    "tBlock": -3,
+    "vsOwn": 0.0053,
+    "noTop2": -0.0113,
+    "win": 0.4139,
+    "bar": 2.81,
+    "why": "lost money after 0.8% costs; lost money after 1.2% costs; not better than the average stock bought the same day; loses without its 2 best trades; day t -4.7 under the luck bar 2.81; block t -3 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-014",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "1-day return at or below -5.9% AND 20-day return at or below -22.7% AND 60-day return percentile among all tradable stocks (0-1) at or below 0.03718; hold 60, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when 1-day return at or below -5.9% AND 20-day return at or below -22.7% AND 60-day return percentile among all tradable stocks (0-1) at or below 0.03718. Buy the next open, hold 60 sessions, stop 15% under the buy. Learned from runners that rose 50%+ over the next 60 sessions (2021-2023 only): 6% of runners vs 1% of look-alikes (lift 7.7065, lower 95% bound 4.8546). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 1500,
+    "avg": -0.013,
+    "avgStress": -0.017,
+    "edge": -0.0501,
+    "t": -4.58,
+    "tBlock": -3.24,
+    "vsOwn": 0.0076,
+    "noTop2": -0.0164,
+    "win": 0.28,
+    "bar": 2.81,
+    "why": "lost money after 0.8% costs; lost money after 1.2% costs; not better than the average stock bought the same day; loses without its 2 best trades; day t -4.58 under the luck bar 2.81; block t -3.24 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-015",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "5-day return at or below -12.4% AND 20-day close range (high minus low, over the close) at or above 41.4% AND 60-day return at or below -38.6%; hold 60, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when 5-day return at or below -12.4% AND 20-day close range (high minus low, over the close) at or above 41.4% AND 60-day return at or below -38.6%. Buy the next open, hold 60 sessions, stop 15% under the buy. Learned from runners that rose 50%+ over the next 60 sessions (2021-2023 only): 7% of runners vs 1% of look-alikes (lift 7.2458, lower 95% bound 4.8539). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 1379,
+    "avg": 0.017,
+    "avgStress": 0.013,
+    "edge": -0.053,
+    "t": -5.29,
+    "tBlock": -2.71,
+    "vsOwn": 0.0111,
+    "noTop2": 0.0128,
+    "win": 0.3089,
+    "bar": 2.81,
+    "why": "not better than the average stock bought the same day; day t -5.29 under the luck bar 2.81; block t -2.71 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-016",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "distance above the 52-week low close at or below 0.6% AND close vs its 200-day average at or below -44.4% AND 60-day return at or below -38.6%; hold 60, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when distance above the 52-week low close at or below 0.6% AND close vs its 200-day average at or below -44.4% AND 60-day return at or below -38.6%. Buy the next open, hold 60 sessions, stop 15% under the buy. Learned from runners that rose 50%+ over the next 60 sessions (2021-2023 only): 12% of runners vs 2% of look-alikes (lift 6.5691, lower 95% bound 4.8063). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 920,
+    "avg": 0.0151,
+    "avgStress": 0.0111,
+    "edge": -0.0485,
+    "t": -3.96,
+    "tBlock": -2.71,
+    "vsOwn": 0.0413,
+    "noTop2": 0.01,
+    "win": 0.3054,
+    "bar": 2.81,
+    "why": "not better than the average stock bought the same day; day t -3.96 under the luck bar 2.81; block t -2.71 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-017",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "distance from the 20-day high close at or below -26.0% AND 20-day return at or below -22.7% AND distance above the 52-week low close at or below 0.6%; hold 60, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when distance from the 20-day high close at or below -26.0% AND 20-day return at or below -22.7% AND distance above the 52-week low close at or below 0.6%. Buy the next open, hold 60 sessions, stop 15% under the buy. Learned from runners that rose 50%+ over the next 60 sessions (2021-2023 only): 13% of runners vs 2% of look-alikes (lift 6.4084, lower 95% bound 4.8018). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 2003,
+    "avg": 0.0206,
+    "avgStress": 0.0166,
+    "edge": -0.0392,
+    "t": -4.29,
+    "tBlock": -2.73,
+    "vsOwn": 0.0209,
+    "noTop2": 0.0184,
+    "win": 0.3719,
+    "bar": 2.81,
+    "why": "not better than the average stock bought the same day; day t -4.29 under the luck bar 2.81; block t -2.73 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-018",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "20-day return minus the S&P 500's at or below -21.6% AND close vs its 200-day average at or below -44.4% AND 60-day return at or below -38.6%; hold 60, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when 20-day return minus the S&P 500's at or below -21.6% AND close vs its 200-day average at or below -44.4% AND 60-day return at or below -38.6%. Buy the next open, hold 60 sessions, stop 15% under the buy. Learned from runners that rose 50%+ over the next 60 sessions (2021-2023 only): 11% of runners vs 2% of look-alikes (lift 6.6344, lower 95% bound 4.7921). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 967,
+    "avg": -0.0197,
+    "avgStress": -0.0237,
+    "edge": -0.0486,
+    "t": -3.77,
+    "tBlock": -3.28,
+    "vsOwn": 0.0421,
+    "noTop2": -0.0251,
+    "win": 0.2565,
+    "bar": 2.81,
+    "why": "lost money after 0.8% costs; lost money after 1.2% costs; not better than the average stock bought the same day; loses without its 2 best trades; day t -3.77 under the luck bar 2.81; block t -3.28 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-019",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "distance from the 20-day high close at or below -26.0% AND distance above the 52-week low close at or below 0.6% AND close vs its 50-day average at or below -15.3%; hold 60, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when distance from the 20-day high close at or below -26.0% AND distance above the 52-week low close at or below 0.6% AND close vs its 50-day average at or below -15.3%. Buy the next open, hold 60 sessions, stop 15% under the buy. Learned from runners that rose 50%+ over the next 60 sessions (2021-2023 only): 15% of runners vs 2% of look-alikes (lift 6.2874, lower 95% bound 4.7826). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 2141,
+    "avg": 0.0283,
+    "avgStress": 0.0243,
+    "edge": -0.0419,
+    "t": -5.62,
+    "tBlock": -2.05,
+    "vsOwn": 0.0187,
+    "noTop2": 0.0263,
+    "win": 0.3872,
+    "bar": 2.81,
+    "why": "not better than the average stock bought the same day; day t -5.62 under the luck bar 2.81; block t -2.05 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "D2-020",
+   "family": "Discovered (Discovery Engine v2)",
+   "agent": "D2",
+   "name": "close vs its 20-day average at or below -14.3% AND 20-day volatility (daily-move size) at or above 5.8% AND 50-day average vs 200-day average at or below -33.1%; hold 10, stop 15%",
+   "explain": "DISCOVERED BY THE SYSTEM (discovery2.mjs), frozen 2026-10-23 BEFORE any newer-half session was read. Signal at the close when close vs its 20-day average at or below -14.3% AND 20-day volatility (daily-move size) at or above 5.8% AND 50-day average vs 200-day average at or below -33.1%. Buy the next open, hold 10 sessions, stop 15% under the buy. Learned from runners that rose 25%+ over the next 10 sessions (2021-2023 only): 2% of runners vs 0% of look-alikes (lift 7.2419, lower 95% bound 4.7197). Tested ONCE on signals from 2024-01-01 (newer half) at the tier-2 standard with luck bar t 2.81 (batch 2, 20 rules tested in all).",
+   "status": "tested: rejected",
+   "note": "Discovery Engine v2 batch 2",
+   "tested": "2026-11-01",
+   "study": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
+   "result": {
+    "n": 521,
+    "avg": -0.0391,
+    "avgStress": -0.0431,
+    "edge": -0.0497,
+    "t": -5.14,
+    "tBlock": -4.45,
+    "vsOwn": 0.0179,
+    "noTop2": -0.0466,
+    "win": 0.2821,
+    "bar": 2.81,
+    "why": "lost money after 0.8% costs; lost money after 1.2% costs; not better than the average stock bought the same day; loses without its 2 best trades; day t -5.14 under the luck bar 2.81; block t -4.45 under the luck bar 2.81"
+   }
+  },
+  {
+   "id": "RQ-TAX-63",
+   "family": "Daily researcher (RQ)",
+   "name": "Tax expense surprise (tax up vs a year before, per assets) in the top 20%, hold 3 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+   "explain": "Buy the next open after a 10-Q/10-K whose quarterly income tax expense minus the same quarter a year before, divided by total assets a year before (SEC XBRL), is in the top 20% (percentile >= 0.80 vs all such filings of the prior 365 days; filed within 120 days of the quarter end; assets 10M USD+); stock liquid; sell the close 63 sessions later. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1475-679X.2011.00409.x",
+    "https://ideas.repec.org/a/bla/joares/v49y2011i3p791-821.html",
+    "https://repec.som.yale.edu/icfpub/publications/2531.pdf"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-01: Thomas and Zhang (2011, JAR) \"Tax Expense Momentum\": the year-on-year change in quarterly tax expense, per assets, predicts returns for two quarters (top minus bottom decile 3.89% over 3 months, 1977-2005). New information family (the tax line, official SEC XBRL company facts), not in the library. Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 2 Nov 2026.",
+   "tested": "2026-10-30",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     1867,
+     2920
+    ],
+    "avg": [
+     0.0139,
+     0.0353
+    ],
+    "stress": [
+     0.0099,
+     0.0313
+    ],
+    "edge": [
+     -0.0115,
+     -0.0171
+    ],
+    "vsOwn": [
+     -0.0485,
+     -0.0154
+    ],
+    "noTop2": [
+     0.0125,
+     0.0339
+    ],
+    "tBlock": [
+     -1.59,
+     -2.34
+    ],
+    "win": [
+     0.5051,
+     0.5329
+    ],
+    "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -1.59 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -2.34 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "RQ-TAX-126",
+   "family": "Daily researcher (RQ)",
+   "name": "Tax expense surprise in the top 20%, hold 6 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+   "explain": "As RQ-TAX-63, hold 126 sessions. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1475-679X.2011.00409.x",
+    "https://ideas.repec.org/a/bla/joares/v49y2011i3p791-821.html",
+    "https://repec.som.yale.edu/icfpub/publications/2531.pdf"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-01: Thomas and Zhang (2011, JAR) \"Tax Expense Momentum\": the year-on-year change in quarterly tax expense, per assets, predicts returns for two quarters (top minus bottom decile 3.89% over 3 months, 1977-2005). New information family (the tax line, official SEC XBRL company facts), not in the library. Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 2 Nov 2026.",
+   "tested": "2026-10-30",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     1568,
+     2029
+    ],
+    "avg": [
+     0.0155,
+     0.082
+    ],
+    "stress": [
+     0.0115,
+     0.078
+    ],
+    "edge": [
+     0.0013,
+     0.0068
+    ],
+    "vsOwn": [
+     -0.0769,
+     0.0029
+    ],
+    "noTop2": [
+     0.0125,
+     0.0792
+    ],
+    "tBlock": [
+     0.22,
+     0.39
+    ],
+    "win": [
+     0.5045,
+     0.55
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 0.22 under 2.5 in the older half; block t 0.39 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "RQ-TAX-LOW63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: tax expense surprise in the bottom 20%, 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026",
+   "explain": "Information only: stocks whose tax expense change per assets is among the 20% lowest (percentile <= 0.20), bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1475-679X.2011.00409.x",
+    "https://ideas.repec.org/a/bla/joares/v49y2011i3p791-821.html",
+    "https://repec.som.yale.edu/icfpub/publications/2531.pdf"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-01: Thomas and Zhang (2011, JAR) \"Tax Expense Momentum\": the year-on-year change in quarterly tax expense, per assets, predicts returns for two quarters (top minus bottom decile 3.89% over 3 months, 1977-2005). New information family (the tax line, official SEC XBRL company facts), not in the library. Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 2 Nov 2026.",
+   "tested": "2026-10-30",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "n": [
+     2478,
+     2511
+    ],
+    "avg": [
+     0.0099,
+     0.0306
+    ],
+    "stress": [
+     0.0059,
+     0.0266
+    ],
+    "edge": [
+     0.0002,
+     -0.0145
+    ],
+    "vsOwn": [
+     -0.0307,
+     -0.0082
+    ],
+    "noTop2": [
+     0.0081,
+     0.029
+    ],
+    "tBlock": [
+     -0.15,
+     -1.27
+    ],
+    "win": [
+     0.5016,
+     0.5297
+    ],
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
+  },
+  {
+   "id": "C-CONG1-20",
+   "family": "Crowd",
+   "agent": "C",
+   "name": "US House members' stock purchases, filing date, hold 20",
+   "explain": "C-CONG1 version with a 20-session hold (agent-c-core.mjs).",
+   "status": "tested: rejected (agent-c-lab, frozen 2026-11-01)",
+   "study": "agent-c-lab.mjs -> data/agent-c-lab.json firstRun",
+   "sources": [
+    "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/",
+    "https://github.com/Jakeschincariol/trader-skill (MIT; trader-pelosi/ptr.py, idea of the parser)",
+    "https://www.nber.org/papers/w35041"
+   ],
+   "rule": "Every House PTR row: type P, asset [ST], ticker given; signal = the PTR FILING date (House Clerk yearly index); buy the open of the first session after it; liquid the session before; hold 20 sessions; no stop; one open trade per stock. House only (no bulk Senate route). Scanned PTRs left out (no OCR). Data stop: index complete, 98% of PDFs read, scanned <= 25%, 90% of stock rows with a ticker.",
+   "preRegistered": "2026-11-01",
+   "tested": "2026-11-01",
+   "result": {
+    "verdict": "REJECTED",
+    "level": "NONE",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 1.41 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.41 under 2.5 in the newer half",
+    "older": "1700 trades, 251 days, avg -0.8% (stress -1.2%), edge +0.8%, t 1.41",
+    "newer": "3307 trades, 324 days, avg +0.6% (stress +0.2%), edge -0.2%, t -0.41"
+   }
+  },
+  {
+   "id": "C-CONG1-60",
+   "family": "Crowd",
+   "agent": "C",
+   "name": "US House members' stock purchases, filing date, hold 60",
+   "explain": "C-CONG1 version with a 60-session hold (agent-c-core.mjs).",
+   "status": "tested: rejected (agent-c-lab, frozen 2026-11-01)",
+   "study": "agent-c-lab.mjs -> data/agent-c-lab.json firstRun",
+   "sources": [
+    "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/",
+    "https://github.com/Jakeschincariol/trader-skill (MIT; trader-pelosi/ptr.py, idea of the parser)",
+    "https://www.nber.org/papers/w35041"
+   ],
+   "rule": "Every House PTR row: type P, asset [ST], ticker given; signal = the PTR FILING date (House Clerk yearly index); buy the open of the first session after it; liquid the session before; hold 60 sessions; no stop; one open trade per stock. House only (no bulk Senate route). Scanned PTRs left out (no OCR). Data stop: index complete, 98% of PDFs read, scanned <= 25%, 90% of stock rows with a ticker.",
+   "preRegistered": "2026-11-01",
+   "tested": "2026-11-01",
+   "result": {
+    "verdict": "REJECTED",
+    "level": "NONE",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.96 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.28 under 2.5 in the newer half",
+    "older": "1299 trades, 239 days, avg -0.6% (stress -1.0%), edge +0.9%, t 0.96",
+    "newer": "2332 trades, 280 days, avg +3.0% (stress +2.6%), edge -0.1%, t -0.28"
+   }
+  },
+  {
+   "agent": "C",
+   "family": "Crowd",
+   "registered": "2026-11-01",
+   "id": "C-CONG2",
+   "name": "House PTRs filed on paper / scanned (unreadable) as the signal",
+   "status": "needs data (Agent C queue after C-CONG1)",
+   "source": "https://abfer.org/media/abfer-events-2026/annual-conference/slides-corporate/20260520-CorpFin-Unreadable-Political-Trades.pdf (Dong, Xu & Yu, May 2026: 5,113 House PTRs 2014-2022; trades in unreadable filings earn about 37 bps more 22-day CAR, filed about 23 days later)",
+   "explain": "Rule (written before any test): the C-CONG1 rule (purchase, [ST], ticker, signal = FILING date, next open, liquid, hold 20 and 60, one open trade per stock) restricted to PTRs whose PDF has no text layer (scanned/handwritten).",
+   "data": "needs OCR of scanned PTR PDFs (tesseract in the Actions runner would unlock it; the PDFs are public); C-CONG1 already counts and lists them",
+   "queue": "C-CONG1 then C-CONG2"
+  },
+  {
+   "agent": "C",
+   "family": "Crowd",
+   "registered": "2026-11-01",
+   "id": "C-F144X",
+   "name": "Form 144 sale notice that expires without a sale (large caps)",
+   "status": "queued (Agent C), low",
+   "source": "https://arxiv.org/abs/2602.17890 (Neupane 2026: 2003-2025; only large-cap calendar alpha significant, 14.5 bps/month, t 2.30; equal-weight alpha t 1.03)",
+   "explain": "Rule (written before any test): a Form 144 (proposed insider sale) of a top-500 company with no matching Form 4 sale within 91 days of the notice; buy the next open after day 91, hold 63, vs the average large stock and the same stock on other days.",
+   "data": "Form 144 filed electronically on EDGAR since April 2023 (about 3 years: halves would be short); needs EDGAR Form 144 XML parsing",
+   "queue": "after C-CT1"
+  },
+  {
+   "agent": "C",
+   "family": "Crowd",
+   "registered": "2026-11-01",
+   "id": "C-INS52W",
+   "name": "Insider purchase far below the 52-week high (microcaps)",
+   "status": "not built: short-horizon reaction (2-3 sessions) in 30-500M USD microcaps; the paper finds the longer drift imprecise (t 1.70) and no calendar alpha after day 1; large-cap extension fails",
+   "source": "https://arxiv.org/abs/2602.06198 (Zhao 2026, 13,534 purchases 2018-2024)",
+   "explain": "Recorded so it is not re-proposed: the edge is a 1-3 day disclosure reaction, the short-hold lane that is closed on daily data (CLAUDE.md 5).",
+   "data": "has data (SEC Form 4)"
+  },
+  {
+   "id": "LDX-HALF63",
+   "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
+   "name": "LEADER DIP (+20% limit, 126 sessions) + halfway check: still under the buy price after 63 sessions -> sell at the next open",
+   "explain": "RULE: LEADER DIP (+20% limit, 126 sessions) + halfway check: still under the buy price after 63 sessions -> sell at the next open. Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
+   "status": "tested: do not adopt (exit)",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "hold": 126,
+   "kind": "exit",
+   "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal.",
+   "result": {
+    "at": "2026-11-01T12:35:56.936Z",
+    "verdict": "DO NOT ADOPT",
+    "why": "older: same-money average change -3.1% (not > 0); older: per year of capital +25.5% below the live +28.4%; older: 3-slot account at 0.8% ends 3169 USD, not above the live 3361; older: 3-slot account at 1.2% ends 3125 USD, not above the live 3326; newer: same-money average change -2.1% (not > 0); newer: 3-slot account at 0.8% ends 4300 USD, not above the live 4533; newer: 3-slot account at 1.2% ends 4202 USD, not above the live 4456",
+    "older": {
+     "fired": 35,
+     "diff": -0.0309,
+     "liveAvg": 0.096,
+     "variantAvg": 0.0652,
+     "acct": 3169.42,
+     "liveAcct": 3361.2
+    },
+    "newer": {
+     "fired": 93,
+     "diff": -0.0209,
+     "liveAvg": 0.0855,
+     "variantAvg": 0.0646,
+     "acct": 4300.48,
+     "liveAcct": 4532.91
+    }
+   }
+  },
+  {
+   "id": "LDX-T200",
+   "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
+   "name": "LEADER DIP (+20% limit, 126 sessions) + trend break: first close under the stock's 200-day average -> sell at the next open",
+   "explain": "RULE: LEADER DIP (+20% limit, 126 sessions) + trend break: first close under the stock's 200-day average -> sell at the next open. Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
+   "status": "tested: do not adopt (exit)",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "hold": 126,
+   "kind": "exit",
+   "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal.",
+   "result": {
+    "at": "2026-11-01T12:35:56.936Z",
+    "verdict": "DO NOT ADOPT",
+    "why": "older: same-money average change -8.4% (not > 0); older: per year of capital +10.2% below the live +28.4%; newer: same-money average change -4.9% (not > 0)",
+    "older": {
+     "fired": 69,
+     "diff": -0.0844,
+     "liveAvg": 0.096,
+     "variantAvg": 0.0116,
+     "acct": 3851.59,
+     "liveAcct": 3361.2
+    },
+    "newer": {
+     "fired": 147,
+     "diff": -0.049,
+     "liveAvg": 0.0855,
+     "variantAvg": 0.0366,
+     "acct": 4734.84,
+     "liveAcct": 4532.91
+    }
+   }
+  },
+  {
+   "id": "LDX-TIME189",
+   "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
+   "name": "LEADER DIP with a 189-session time exit instead of 126 (the +20% limit kept until then)",
+   "explain": "RULE: LEADER DIP with a 189-session time exit instead of 126 (the +20% limit kept until then). Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
+   "status": "tested: do not adopt (exit)",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "hold": 189,
+   "kind": "exit",
+   "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal.",
+   "result": {
+    "at": "2026-11-01T12:35:56.936Z",
+    "verdict": "DO NOT ADOPT",
+    "why": "older: per year of capital +26.4% below the live +28.4%; older: 3-slot account at 0.8% ends 3028 USD, not above the live 3361; older: 3-slot account at 1.2% ends 3002 USD, not above the live 3326; newer: per year of capital +21.7% below the live +25.0%; newer: 3-slot account at 0.8% ends 4224 USD, not above the live 4533; newer: 3-slot account at 1.2% ends 4171 USD, not above the live 4456",
+    "older": {
+     "fired": 41,
+     "diff": 0.017,
+     "liveAvg": 0.096,
+     "variantAvg": 0.113,
+     "acct": 3028.42,
+     "liveAcct": 3361.2
+    },
+    "newer": {
+     "fired": 92,
+     "diff": 0.0082,
+     "liveAvg": 0.0784,
+     "variantAvg": 0.0866,
+     "acct": 4223.63,
+     "liveAcct": 4532.91
+    }
+   }
+  },
+  {
+   "id": "A-TP1",
+   "family": "Market timing (Agent A web scout 1 Nov 2026)",
+   "name": "Momentum turning points: hold SPY/SPUS on the 50/50 blend of the 12-month and 1-month excess-return signals, else cash",
+   "explain": "RULE (written before any test): at each month end, slow = sign of SPY 12-month excess return, fast = sign of the 1-month excess return; blended signal = 0.5 slow + 0.5 fast (Bull +1, Correction/Rebound 0, Bear -1). Long-only version: hold SPY (SPUS for the owner) for the next month when the blend >= 0, else cash (T-bill). Cost 0.1% a switch (ETF). Judged vs buy-and-hold SPY per half (before / from 2024): return, max drawdown, Sharpe; must not lower return per year in both halves to be useful as a core-timing overlay.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "kind": "timing",
+   "sources": [
+    "https://www.cxoadvisory.com/?p=33354",
+    "https://doi.org/10.1016/j.jfineco.2021.04.020"
+   ],
+   "data": "SPY daily closes and T-bill rate (system has SPY in the study cache; T-bill from FRED, free)",
+   "note": "Garg, Goulding, Harvey and Mazzoleni (2021, JFE), out-of-sample 1969-2018 on the US market: gross Sharpe 0.51 for the equal blend vs 0.38 buy-and-hold, gain mostly from smaller drawdowns; gross of costs. Library check: ANOM-TSMOM (12-month time-series momentum on stocks: rejected) and A-RG1 (regime gate on rules: not proven) are different (single-speed, or a gate on stock rules). Owner's monthly core (SPUS + IAUM) is his decision: this would be information only unless it passes."
+  },
+  {
+   "id": "A-ANCH1",
+   "family": "Earnings timing (Agent A web scout 1 Nov 2026)",
+   "name": "Good earnings surprise while the stock is near its 52-week high (anchoring): buy the session after the reaction, hold 60",
+   "explain": "RULE (written before any test): a report whose SUE (actual minus consensus over the close before the report) is in the top 30% of the previous 63 sessions' liquid reports AND whose close before the report is within 5% of its 52-week high; reaction session timed from the SEC 8-K Item 2.02 acceptance time when the calendar has no time (SQ28-TIMING rule); buy the open after the reaction session, hold 60 sessions. Full gates (CLAUDE.md section 4).",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "kind": "entry",
+   "sources": [
+    "https://www.jbs.cam.ac.uk/2017/does-anchoring-impede-investors-interpretation-of-earnings-news/"
+   ],
+   "data": "Nasdaq earnings calendar (a-cache), SEC 8-K Item 2.02 times (anomaly-cache/subs202.json after the 1 Nov timing audit), prices (study cache): all in the system",
+   "note": "George, Hwang and Li (anchoring on the 52-week high slows the reaction to good news near the high). Caution found the same day: Subrahmanyam (2025, UCLA) finds earnings drift NOT significant once microcaps are removed (t 1.43, 2001-2024), and Martineau (2022) finds it gone in large stocks after 2006; ANOM-SUE was NOT PROVEN. Queue after the ANOM-SUE timing audit result."
   }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-31T09:19:05.334Z",
+ "generatedAt": "2026-11-01T09:23:59.728Z",
  "lastClose": "2026-10-30",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -444,6 +444,99 @@
    "kind": "avoid",
    "hold": 21,
    "family": "eat",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
+  },
+  "RQ-TAX-63": {
+   "name": "Tax expense surprise (tax up vs a year before, per assets) in the top 20%, hold 3 months",
+   "kind": "buy",
+   "hold": 63,
+   "family": "tax",
+   "dataOk": true,
+   "signals": 22,
+   "waiting": 22,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -1.59 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -2.34 under 2.5 in the newer half"
+   }
+  },
+  "RQ-TAX-126": {
+   "name": "Tax expense surprise in the top 20%, hold 6 months",
+   "kind": "buy",
+   "hold": 126,
+   "family": "tax",
+   "dataOk": true,
+   "signals": 22,
+   "waiting": 22,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "not better than the same stocks on their other days in the older half; block t 0.22 under 2.5 in the older half; block t 0.39 under 2.5 in the newer half"
+   }
+  },
+  "RQ-TAX-LOW63": {
+   "name": "AVOID check: tax expense surprise in the bottom 20%, 63 sessions",
+   "kind": "avoid",
+   "hold": 63,
+   "family": "tax",
    "dataOk": true,
    "signals": 0,
    "waiting": 0,

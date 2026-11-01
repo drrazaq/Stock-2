@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-10-31T00:20:24.882Z",
+ "generatedAt": "2026-11-01T16:10:10.163Z",
  "preRegistered": "squad4-core.mjs RULES + data/strategy-library.json SQ4-* (24 Oct 2026, before any run)",
  "window": [
   "2021-10-12",
   "2026-10-30"
  ],
- "bar": 4.07,
+ "bar": 4.09,
  "split": "2024-01-01",
  "cost": 0.008,
  "stress": 0.012,
@@ -14,8 +14,8 @@
  "data": {
   "funds": {
    "ok": true,
-   "SPUS": 1255,
-   "HLAL": 1255
+   "SPUS": 1254,
+   "HLAL": 1254
   },
   "f345": {
    "ok": true,
@@ -28,13 +28,13 @@
   },
   "facts": {
    "ok": true,
-   "companies": 6153,
-   "answered": 6153,
-   "withRevenue": 4857,
-   "fetchedNow": 6133,
+   "companies": 6154,
+   "answered": 6154,
+   "withRevenue": 4858,
+   "fetchedNow": 1,
    "failed": 0,
-   "mode": "bulk",
-   "at": "2026-10-31T00:20:18.337Z"
+   "mode": "api",
+   "at": "2026-11-01T16:08:14.089Z"
   },
   "sic": {
    "askedNow": 1,
@@ -48,6 +48,9 @@
    "aliveWithCik": 133526,
    "vanishedShare": 0.9085,
    "aliveShare": 0.9993
+  },
+  "scan": {
+   "ok": true
   }
  },
  "diagnostics": {
@@ -60,8 +63,8 @@
   "data": {
    "funds": {
     "ok": true,
-    "SPUS": 1255,
-    "HLAL": 1255
+    "SPUS": 1254,
+    "HLAL": 1254
    },
    "f345": {
     "ok": true,
@@ -74,13 +77,13 @@
    },
    "facts": {
     "ok": true,
-    "companies": 6153,
-    "answered": 6153,
-    "withRevenue": 4857,
-    "fetchedNow": 6133,
+    "companies": 6154,
+    "answered": 6154,
+    "withRevenue": 4858,
+    "fetchedNow": 1,
     "failed": 0,
-    "mode": "bulk",
-    "at": "2026-10-31T00:20:18.337Z"
+    "mode": "api",
+    "at": "2026-11-01T16:08:14.089Z"
    },
    "sic": {
     "askedNow": 1,
@@ -94,6 +97,9 @@
     "aliveWithCik": 133526,
     "vanishedShare": 0.9085,
     "aliveShare": 0.9993
+   },
+   "scan": {
+    "ok": true
    }
   },
   "lastMonthStart": {
@@ -104,7 +110,7 @@
    "withRevenueGrowthOfFirst400": 315
   }
  },
- "standard": "both halves (signal before / from 2024-01-01; first signal ~Oct 2022, 12 months of prices needed, no pre-window history used): > 0 after 0.8% and 1.2% cost per unit of money, better than the average liquid stock over the same unit-weighted days, better than the same stocks with the same plan on their other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks; 12-month holds overlap so t is optimistic) -> TRADABLE SMALL; block t >= 4.07 -> PROVEN; plus return per year of capital tied up above SPY on the same days in both halves. Returns uncapped on both sides (split-artifact paths left out on both sides); +300% cap on both sides = sensitivity only",
+ "standard": "both halves (signal before / from 2024-01-01; first signal ~Oct 2022, 12 months of prices needed, no pre-window history used): > 0 after 0.8% and 1.2% cost per unit of money, better than the average liquid stock over the same unit-weighted days, better than the same stocks with the same plan on their other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 (63-session blocks; 12-month holds overlap so t is optimistic) -> TRADABLE SMALL; block t >= 4.09 -> PROVEN; plus return per year of capital tied up above SPY on the same days in both halves. Returns uncapped on both sides (split-artifact paths left out on both sides); +300% cap on both sides = sensitivity only",
  "firstRun": {
   "SQ4-GROWLEAD": {
    "at": "2026-10-24T06:16:18.699Z",
@@ -3504,11 +3510,11 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-25T16:00:50.232Z",
+  "at": "2026-11-01T16:10:10.163Z",
   "results": {
    "SQ4-GROWLEAD": {
     "verdict": "NOT PROVEN",
-    "why": "not better than the same stocks with the same plan on their other days in the older half; block t 0.03 under 2.5 in the older half; not better than the same stocks with the same plan on their other days in the newer half; block t 0.6 under 2.5 in the newer half; return per year of capital tied up 15.3% not above the S&P 500 on the same days in the older half (18.9%); return per year of capital tied up 12.1% not above the S&P 500 on the same days in the newer half (15.8%)",
+    "why": "not better than the same stocks with the same plan on their other days in the older half; block t 0.03 under 2.5 in the older half; not better than the same stocks with the same plan on their other days in the newer half; block t 0.59 under 2.5 in the newer half; return per year of capital tied up 15.3% not above the S&P 500 on the same days in the older half (18.9%); return per year of capital tied up 12.1% not above the S&P 500 on the same days in the newer half (15.8%)",
     "name": "Growth leader at a new high",
     "plan": "G",
     "hold": 252,
@@ -3541,11 +3547,11 @@
       "avg": 0.0838,
       "median": 0.0221,
       "avgStress": 0.0798,
-      "ctrl": 0.0718,
-      "edge": 0.0118,
+      "ctrl": 0.072,
+      "edge": 0.0116,
       "tDay": 0.13,
       "blocks": 7,
-      "tBlock": 0.6,
+      "tBlock": 0.59,
       "vsOwn": -0.2261,
       "ownCovered": 17,
       "noTop2": 0.0402,
@@ -3560,11 +3566,11 @@
       "avg": 0.1028,
       "median": -0.0002,
       "avgStress": 0.0988,
-      "ctrl": 0.0492,
-      "edge": 0.0227,
-      "tDay": 0.37,
+      "ctrl": 0.0493,
+      "edge": 0.0226,
+      "tDay": 0.36,
       "blocks": 11,
-      "tBlock": 0.71,
+      "tBlock": 0.7,
       "vsOwn": -0.1755,
       "ownCovered": 27,
       "noTop2": 0.0602,
@@ -3586,14 +3592,14 @@
       "spy": 0.1584,
       "spus": 0.1832,
       "hlal": 0.1696,
-      "avgStock": 0.1155
+      "avgStock": 0.1158
      },
      "all": {
       "rule": 0.1379,
       "spy": 0.1741,
       "spus": 0.2167,
       "hlal": 0.1839,
-      "avgStock": 0.0767
+      "avgStock": 0.0768
      }
     },
     "sensitivityCap300": {
@@ -3606,7 +3612,7 @@
      },
      "newer": {
       "avg": 0.0838,
-      "edge": 0.0225,
+      "edge": 0.0223,
       "tBlock": 0.7
      }
     },
@@ -3979,7 +3985,7 @@
      "2025": {
       "n": 19,
       "avg": 0.1251,
-      "avgStock": 0.149
+      "avgStock": 0.1496
      }
     }
    },
@@ -4018,8 +4024,8 @@
       "avg": 0.461,
       "median": 0.1186,
       "avgStress": 0.457,
-      "ctrl": 0.1162,
-      "edge": 0.2686,
+      "ctrl": 0.1164,
+      "edge": 0.2685,
       "tDay": 1.52,
       "blocks": 8,
       "tBlock": 1.88,
@@ -4037,11 +4043,11 @@
       "avg": 0.3914,
       "median": 0.1159,
       "avgStress": 0.3874,
-      "ctrl": 0.1056,
-      "edge": 0.2436,
+      "ctrl": 0.1058,
+      "edge": 0.2435,
       "tDay": 1.9,
       "blocks": 12,
-      "tBlock": 2.24,
+      "tBlock": 2.25,
       "vsOwn": -0.0112,
       "ownCovered": 27,
       "noTop2": 0.2831,
@@ -4063,14 +4069,14 @@
       "spy": 0.1654,
       "spus": 0.1841,
       "hlal": 0.1572,
-      "avgStock": 0.1378
+      "avgStock": 0.138
      },
      "all": {
       "rule": 0.3662,
       "spy": 0.1857,
       "spus": 0.2124,
       "hlal": 0.1751,
-      "avgStock": 0.1262
+      "avgStock": 0.1264
      }
     },
     "sensitivityCap300": {
@@ -4083,7 +4089,7 @@
      },
      "newer": {
       "avg": 0.4473,
-      "edge": 0.272,
+      "edge": 0.2719,
       "tBlock": 1.87
      }
     },
@@ -4456,7 +4462,7 @@
      "2025": {
       "n": 17,
       "avg": 0.7985,
-      "avgStock": 0.1855
+      "avgStock": 0.186
      }
     }
    },
@@ -4495,8 +4501,8 @@
       "avg": 0.1519,
       "median": -0.1095,
       "avgStress": 0.1479,
-      "ctrl": 0.1049,
-      "edge": 0.038,
+      "ctrl": 0.105,
+      "edge": 0.0379,
       "tDay": 0.73,
       "blocks": 8,
       "tBlock": 0.97,
@@ -4515,10 +4521,10 @@
       "median": -0.0311,
       "avgStress": 0.0997,
       "ctrl": 0.0724,
-      "edge": 0.0125,
+      "edge": 0.0124,
       "tDay": 0.35,
       "blocks": 12,
-      "tBlock": 0.32,
+      "tBlock": 0.31,
       "vsOwn": -0.0315,
       "ownCovered": 36,
       "noTop2": 0.0795,
@@ -4540,7 +4546,7 @@
       "spy": 0.1692,
       "spus": 0.2062,
       "hlal": 0.1863,
-      "avgStock": 0.1511
+      "avgStock": 0.1513
      },
      "all": {
       "rule": 0.133,
@@ -4560,7 +4566,7 @@
      },
      "newer": {
       "avg": 0.1245,
-      "edge": 0.0292,
+      "edge": 0.0291,
       "tBlock": 0.87
      }
     },
@@ -4911,7 +4917,7 @@
      }
     ],
     "signals": 404,
-    "tooRecent": 149,
+    "tooRecent": 150,
     "splitArtifactsLeftOut": 0,
     "stocks": 218,
     "byYear": {
@@ -4933,7 +4939,7 @@
      "2025": {
       "n": 112,
       "avg": 0.1344,
-      "avgStock": 0.1631
+      "avgStock": 0.1632
      }
     }
    },
@@ -4972,8 +4978,8 @@
       "avg": 0.1652,
       "median": -0.0234,
       "avgStress": 0.1612,
-      "ctrl": 0.0697,
-      "edge": 0.0735,
+      "ctrl": 0.0698,
+      "edge": 0.0734,
       "tDay": 1.42,
       "blocks": 8,
       "tBlock": 1.89,
@@ -4991,8 +4997,8 @@
       "avg": 0.0868,
       "median": -0.0615,
       "avgStress": 0.0828,
-      "ctrl": 0.0417,
-      "edge": 0.0419,
+      "ctrl": 0.0418,
+      "edge": 0.0418,
       "tDay": 1.16,
       "blocks": 12,
       "tBlock": 1.26,
@@ -5017,14 +5023,14 @@
       "spy": 0.1685,
       "spus": 0.1977,
       "hlal": 0.169,
-      "avgStock": 0.1222
+      "avgStock": 0.1225
      },
      "all": {
       "rule": 0.1292,
       "spy": 0.1762,
       "spus": 0.2211,
       "hlal": 0.1789,
-      "avgStock": 0.074
+      "avgStock": 0.0741
      }
     },
     "sensitivityCap300": {
@@ -5037,7 +5043,7 @@
      },
      "newer": {
       "avg": 0.1652,
-      "edge": 0.0801,
+      "edge": 0.08,
       "tBlock": 2
      }
     },
@@ -5410,7 +5416,7 @@
      "2025": {
       "n": 82,
       "avg": 0.1674,
-      "avgStock": 0.1173
+      "avgStock": 0.1177
      }
     }
    },
@@ -5449,9 +5455,9 @@
       "avg": 0.2488,
       "median": -0.001,
       "avgStress": 0.2448,
-      "ctrl": 0.0874,
-      "edge": 0.0945,
-      "tDay": 1.76,
+      "ctrl": 0.0875,
+      "edge": 0.0943,
+      "tDay": 1.75,
       "blocks": 8,
       "tBlock": 0.84,
       "vsOwn": 0.0224,
@@ -5469,7 +5475,7 @@
       "median": -0.052,
       "avgStress": 0.1436,
       "ctrl": 0.0689,
-      "edge": 0.0463,
+      "edge": 0.0462,
       "tDay": 1.22,
       "blocks": 12,
       "tBlock": 0.87,
@@ -5494,14 +5500,14 @@
       "spy": 0.1762,
       "spus": 0.2087,
       "hlal": 0.1783,
-      "avgStock": 0.1449
+      "avgStock": 0.145
      },
      "all": {
       "rule": 0.2155,
       "spy": 0.1919,
       "spus": 0.2335,
       "hlal": 0.1899,
-      "avgStock": 0.1122
+      "avgStock": 0.1123
      }
     },
     "sensitivityCap300": {
@@ -5514,7 +5520,7 @@
      },
      "newer": {
       "avg": 0.2081,
-      "edge": 0.0763,
+      "edge": 0.0762,
       "tBlock": 0.65
      }
     },
@@ -5887,7 +5893,7 @@
      "2025": {
       "n": 137,
       "avg": 0.3864,
-      "avgStock": 0.1405
+      "avgStock": 0.1407
      }
     }
    },
@@ -5926,9 +5932,9 @@
       "avg": 0.1254,
       "median": 0.0308,
       "avgStress": 0.1214,
-      "ctrl": 0.1509,
-      "edge": -0.0617,
-      "tDay": -1.62,
+      "ctrl": 0.1512,
+      "edge": -0.0621,
+      "tDay": -1.63,
       "blocks": 8,
       "tBlock": -0.71,
       "vsOwn": -0.275,
@@ -5945,11 +5951,11 @@
       "avg": 0.1932,
       "median": 0.0931,
       "avgStress": 0.1892,
-      "ctrl": 0.1329,
-      "edge": 0.0404,
-      "tDay": 0.97,
+      "ctrl": 0.133,
+      "edge": 0.0401,
+      "tDay": 0.96,
       "blocks": 12,
-      "tBlock": 0.47,
+      "tBlock": 0.46,
       "vsOwn": -0.1155,
       "ownCovered": 180,
       "noTop2": 0.1612,
@@ -5971,19 +5977,19 @@
       "spy": 0.1912,
       "spus": 0.2339,
       "hlal": 0.2124,
-      "avgStock": 0.1862
+      "avgStock": 0.1866
      },
      "all": {
       "rule": 0.1843,
       "spy": 0.2201,
       "spus": 0.2626,
       "hlal": 0.2223,
-      "avgStock": 0.1609
+      "avgStock": 0.1611
      }
     },
     "sensitivityCap300": {
      "verdict": "REJECTED",
-     "why": "not better than the average stock in the newer half; not better than the yardstick on the same buys in the newer half; block t -0.57 under 2.5 in the newer half; return per year of capital tied up 24.8% not above the S&P 500 on the same days in the older half (25.6%); return per year of capital tied up 11.7% not above the S&P 500 on the same days in the newer half (19.1%)",
+     "why": "not better than the average stock in the newer half; not better than the yardstick on the same buys in the newer half; block t -0.58 under 2.5 in the newer half; return per year of capital tied up 24.8% not above the S&P 500 on the same days in the older half (25.6%); return per year of capital tied up 11.7% not above the S&P 500 on the same days in the newer half (19.1%)",
      "older": {
       "avg": 0.2559,
       "edge": 0.1492,
@@ -5991,8 +5997,8 @@
      },
      "newer": {
       "avg": 0.1254,
-      "edge": -0.0515,
-      "tBlock": -0.57
+      "edge": -0.0517,
+      "tBlock": -0.58
      }
     },
     "plans": {
@@ -6064,16 +6070,16 @@
        "perYear": 0.1195
       },
       "newer": {
-       "n": 44,
-       "avg": 0.3058,
-       "median": 0.0084,
-       "perYear": 0.1574
+       "n": 46,
+       "avg": 0.2977,
+       "median": 0.0387,
+       "perYear": 0.155
       },
       "all": {
-       "n": 158,
-       "avg": 0.2534,
+       "n": 160,
+       "avg": 0.2517,
        "median": 0.1099,
-       "perYear": 0.1301
+       "perYear": 0.1296
       }
      }
     },
@@ -6342,7 +6348,7 @@
      }
     ],
     "signals": 257,
-    "tooRecent": 113,
+    "tooRecent": 114,
     "splitArtifactsLeftOut": 0,
     "stocks": 221,
     "byYear": {
@@ -6359,12 +6365,12 @@
      "2024": {
       "n": 60,
       "avg": 0.0943,
-      "avgStock": 0.0635
+      "avgStock": 0.0638
      },
      "2025": {
       "n": 83,
       "avg": 0.1478,
-      "avgStock": 0.214
+      "avgStock": 0.2143
      }
     }
    },
@@ -6403,8 +6409,8 @@
       "avg": 0.1114,
       "median": 0.0192,
       "avgStress": 0.1074,
-      "ctrl": 0.0519,
-      "edge": 0.0132,
+      "ctrl": 0.0521,
+      "edge": 0.013,
       "tDay": 0.2,
       "blocks": 8,
       "tBlock": -0.03,
@@ -6422,8 +6428,8 @@
       "avg": 0.0913,
       "median": -0.0028,
       "avgStress": 0.0873,
-      "ctrl": 0.0429,
-      "edge": 0.053,
+      "ctrl": 0.043,
+      "edge": 0.0529,
       "tDay": 0.87,
       "blocks": 12,
       "tBlock": 0.43,
@@ -6448,19 +6454,19 @@
       "spy": 0.1675,
       "spus": 0.1885,
       "hlal": 0.1568,
-      "avgStock": 0.0952
+      "avgStock": 0.0954
      },
      "all": {
       "rule": 0.1415,
       "spy": 0.1815,
       "spus": 0.2091,
       "hlal": 0.1686,
-      "avgStock": 0.0789
+      "avgStock": 0.079
      }
     },
     "sensitivityCap300": {
      "verdict": "NOT PROVEN",
-     "why": "loses without its 2 best in the older half; block t 1.36 under 2.5 in the older half; not better than the yardstick on the same buys in the newer half; block t 0.05 under 2.5 in the newer half; return per year of capital tied up 9.3% not above the S&P 500 on the same days in the older half (20.1%)",
+     "why": "loses without its 2 best in the older half; block t 1.36 under 2.5 in the older half; not better than the yardstick on the same buys in the newer half; block t 0.04 under 2.5 in the newer half; return per year of capital tied up 9.3% not above the S&P 500 on the same days in the older half (20.1%)",
      "older": {
       "avg": 0.0624,
       "edge": 0.1045,
@@ -6468,8 +6474,8 @@
      },
      "newer": {
       "avg": 0.1114,
-      "edge": 0.0198,
-      "tBlock": 0.05
+      "edge": 0.0196,
+      "tBlock": 0.04
      }
     },
     "plans": {
@@ -6841,7 +6847,7 @@
      "2025": {
       "n": 11,
       "avg": 0.0192,
-      "avgStock": 0.107
+      "avgStock": 0.1075
      }
     }
    },
@@ -6880,9 +6886,9 @@
       "avg": 0.1033,
       "median": 0.0263,
       "avgStress": 0.0993,
-      "ctrl": 0.081,
-      "edge": -0.0253,
-      "tDay": -0.35,
+      "ctrl": 0.0811,
+      "edge": -0.0255,
+      "tDay": -0.36,
       "blocks": 8,
       "tBlock": -0.62,
       "vsOwn": -0.2066,
@@ -6899,9 +6905,9 @@
       "avg": 0.0697,
       "median": -0.0068,
       "avgStress": 0.0657,
-      "ctrl": 0.0493,
-      "edge": -0.0308,
-      "tDay": -0.63,
+      "ctrl": 0.0494,
+      "edge": -0.0309,
+      "tDay": -0.64,
       "blocks": 12,
       "tBlock": -0.89,
       "vsOwn": -0.1734,
@@ -6925,7 +6931,7 @@
       "spy": 0.1776,
       "spus": 0.2158,
       "hlal": 0.1938,
-      "avgStock": 0.1347
+      "avgStock": 0.1348
      },
      "all": {
       "rule": 0.0971,
@@ -6945,7 +6951,7 @@
      },
      "newer": {
       "avg": 0.1033,
-      "edge": -0.0168,
+      "edge": -0.0169,
       "tBlock": -0.5
      }
     },
@@ -7318,7 +7324,7 @@
      "2025": {
       "n": 26,
       "avg": 0.1107,
-      "avgStock": 0.1619
+      "avgStock": 0.1621
      }
     }
    }
@@ -7802,52 +7808,52 @@
    ]
   },
   {
-   "d": "2026-10-23",
+   "d": "2026-10-30",
    "ind": "3572",
-   "ret12": 1.8527,
+   "ret12": 1.4267,
    "picks": [
     "SNDK",
-    "WDC",
-    "STX"
+    "STX",
+    "WDC"
    ]
   }
  ],
  "tenX": {
   "counts": {
-   "x5": 590,
-   "x10": 169,
+   "x5": 598,
+   "x10": 173,
    "x5Dead": 4,
-   "x5LiquidAtStart": 215,
-   "x5StillAbove5xNow": 288,
-   "medianSessionsTo5x": 471,
-   "medianFromPeakToLast": -0.4199
+   "x5LiquidAtStart": 217,
+   "x5StillAbove5xNow": 281,
+   "medianSessionsTo5x": 470,
+   "medianFromPeakToLast": -0.4302
   },
   "lookAlikes": {
    "m6": {
-    "winners": 281,
-    "lookAlikes": 24515,
-    "lookAlikesPerWinner": 87.242,
-    "reached5x": 952,
-    "reached10x": 232,
-    "died": 1646,
-    "share5x": 0.0388,
-    "shareDied": 0.0671
+    "winners": 282,
+    "lookAlikes": 24549,
+    "lookAlikesPerWinner": 87.0532,
+    "reached5x": 959,
+    "reached10x": 233,
+    "died": 1649,
+    "share5x": 0.0391,
+    "shareDied": 0.0672
    },
    "start": {
-    "winners": 452,
-    "lookAlikes": 30637,
-    "lookAlikesPerWinner": 67.781,
-    "reached5x": 1616,
-    "reached10x": 413,
-    "died": 2165,
-    "share5x": 0.0527,
-    "shareDied": 0.0707
+    "winners": 460,
+    "lookAlikes": 30978,
+    "lookAlikesPerWinner": 67.3435,
+    "reached5x": 1625,
+    "reached10x": 414,
+    "died": 2167,
+    "share5x": 0.0525,
+    "shareDied": 0.07
    }
   },
   "precision": {
    "all": {
-    "n": 63342,
-    "stocks": 4462,
+    "n": 63337,
+    "stocks": 4459,
     "x2": 0.1546,
     "x5n": 1002,
     "x5stocks": 197,
@@ -7859,10 +7865,10 @@
     "deadN": 1102,
     "dead": 0.0174,
     "crash80": 0.0391,
-    "avgRet": 0.2815,
-    "medianRet": 0.08,
-    "top5Share": 0.6739,
-    "failedPerWinner": 62.2156
+    "avgRet": 0.2816,
+    "medianRet": 0.0802,
+    "top5Share": 0.6737,
+    "failedPerWinner": 62.2106
    },
    "REV30": {
     "name": "revenue +30%+",
@@ -7966,28 +7972,28 @@
    },
    "RS20": {
     "name": "12-month return in the top 20%",
-    "n": 12209,
-    "stocks": 2166,
-    "x2": 0.218,
+    "n": 12208,
+    "stocks": 2165,
+    "x2": 0.2181,
     "x5n": 272,
     "x5stocks": 64,
     "x5": 0.0223,
     "x10n": 35,
     "x10stocks": 12,
     "x10": 0.0029,
-    "lift5": 1.41,
-    "deadN": 75,
+    "lift5": 1.4102,
+    "deadN": 74,
     "dead": 0.0061,
     "crash80": 0.0251,
-    "avgRet": 0.4144,
-    "medianRet": 0.1444,
-    "top5Share": 0.5119,
-    "failedPerWinner": 43.886
+    "avgRet": 0.4145,
+    "medianRet": 0.1445,
+    "top5Share": 0.5118,
+    "failedPerWinner": 43.8824
    },
    "NEAR-HIGH": {
     "name": "within 5% of the 52-week high",
-    "n": 11429,
-    "stocks": 2502,
+    "n": 11428,
+    "stocks": 2501,
     "x2": 0.1282,
     "x5n": 87,
     "x5stocks": 34,
@@ -7999,10 +8005,10 @@
     "deadN": 18,
     "dead": 0.0016,
     "crash80": 0.009,
-    "avgRet": 0.2877,
+    "avgRet": 0.2878,
     "medianRet": 0.1255,
-    "top5Share": 0.4687,
-    "failedPerWinner": 130.3678
+    "top5Share": 0.4686,
+    "failedPerWinner": 130.3563
    },
    "SMALL-GROW-GM": {
     "name": "market cap under 2B, revenue +25%+, gross margin 40%+",
@@ -8146,43 +8152,43 @@
    },
    "MICRO": {
     "name": "market cap under 300M",
-    "n": 4171,
-    "stocks": 968,
-    "x2": 0.2407,
+    "n": 4166,
+    "stocks": 965,
+    "x2": 0.241,
     "x5n": 187,
     "x5stocks": 65,
-    "x5": 0.0448,
+    "x5": 0.0449,
     "x10n": 43,
     "x10stocks": 16,
     "x10": 0.0103,
-    "lift5": 2.8376,
+    "lift5": 2.841,
     "deadN": 554,
-    "dead": 0.1328,
-    "crash80": 0.2081,
-    "avgRet": 0.2237,
-    "medianRet": -0.25,
-    "top5Share": 1.406,
-    "failedPerWinner": 21.3048
+    "dead": 0.133,
+    "crash80": 0.2074,
+    "avgRet": 0.2249,
+    "medianRet": -0.2471,
+    "top5Share": 1.3998,
+    "failedPerWinner": 21.2781
    },
    "DEEP-DOWN": {
     "name": "40%+ under the 52-week high",
-    "n": 13101,
-    "stocks": 2257,
-    "x2": 0.2178,
+    "n": 13099,
+    "stocks": 2256,
+    "x2": 0.2179,
     "x5n": 462,
     "x5stocks": 136,
     "x5": 0.0353,
     "x10n": 102,
     "x10stocks": 34,
     "x10": 0.0078,
-    "lift5": 2.2319,
+    "lift5": 2.2323,
     "deadN": 810,
     "dead": 0.0618,
-    "crash80": 0.1167,
-    "avgRet": 0.3027,
+    "crash80": 0.1166,
+    "avgRet": 0.3029,
     "medianRet": -0.0867,
-    "top5Share": 0.993,
-    "failedPerWinner": 27.3571
+    "top5Share": 0.9918,
+    "failedPerWinner": 27.3528
    },
    "DEEP-DOWN-GROW": {
     "name": "40%+ under the 52-week high and revenue +30%+",
@@ -8226,23 +8232,23 @@
    },
    "NO-REVENUE-DATA": {
     "name": "no SEC revenue growth known",
-    "n": 16825,
-    "stocks": 1993,
-    "x2": 0.1763,
+    "n": 16823,
+    "stocks": 1991,
+    "x2": 0.1764,
     "x5n": 317,
     "x5stocks": 85,
     "x5": 0.0188,
     "x10n": 50,
     "x10stocks": 18,
     "x10": 0.003,
-    "lift5": 1.1925,
+    "lift5": 1.1926,
     "deadN": 484,
     "dead": 0.0288,
-    "crash80": 0.0593,
-    "avgRet": 0.3071,
+    "crash80": 0.0591,
+    "avgRet": 0.3072,
     "medianRet": 0.0969,
-    "top5Share": 0.6452,
-    "failedPerWinner": 52.0757
+    "top5Share": 0.645,
+    "failedPerWinner": 52.0694
    }
   },
   "file": "data/squad4-tenx.json"
@@ -10220,7 +10226,7 @@
     "info": {
      "revG": 0.307,
      "off52": 1,
-     "capB": 47.6137,
+     "capB": 95.3545,
      "g0": 0.4774,
      "g1": 0.2976,
      "gm": 0.3394,
@@ -10258,7 +10264,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.032,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.2861,
     "spy": 0.2066,
     "worst": -0.1833,
@@ -10281,7 +10287,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.0217,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.4172,
     "spy": 0.2066,
     "worst": -0.28,
@@ -10304,7 +10310,7 @@
     "kind": "max",
     "units": 1,
     "net": -0.1742,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": -0.2003,
     "spy": 0.2066,
     "worst": -0.1662,
@@ -10327,7 +10333,7 @@
     "kind": "trail",
     "units": 1,
     "net": 0.3977,
-    "avgStock": 0.057,
+    "avgStock": 0.0604,
     "sameStock": 0.3831,
     "spy": 0.078,
     "worst": 0,
@@ -11548,7 +11554,7 @@
     "kind": "max",
     "units": 1,
     "net": 1.7869,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 2.4201,
     "spy": 0.2066,
     "worst": -0.0177,
@@ -11568,7 +11574,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.2854,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.5486,
     "spy": 0.2066,
     "worst": -0.0427,
@@ -11588,7 +11594,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.4307,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.0712,
     "spy": 0.2066,
     "worst": -0.1462,
@@ -19027,7 +19033,7 @@
     "info": {
      "revG": 0.307,
      "off52": 1,
-     "capB": 47.6137,
+     "capB": 95.3545,
      "sic": "3678",
      "fcfM": 0.1323
     }
@@ -19481,7 +19487,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.3702,
-    "avgStock": 0.168,
+    "avgStock": 0.1719,
     "sameStock": 0.0838,
     "spy": 0.0933,
     "worst": -0.3622,
@@ -19502,7 +19508,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.2116,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": -0.1168,
     "spy": 0.2066,
     "worst": -0.2428,
@@ -19523,7 +19529,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.37,
-    "avgStock": 0.165,
+    "avgStock": 0.1692,
     "sameStock": 0.3088,
     "spy": 0.1208,
     "worst": -0.362,
@@ -19544,7 +19550,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.3635,
-    "avgStock": 0.1303,
+    "avgStock": 0.1342,
     "sameStock": 0.132,
     "spy": 0.0564,
     "worst": -0.3555,
@@ -19565,7 +19571,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.3609,
-    "avgStock": 0.1579,
+    "avgStock": 0.1623,
     "sameStock": 0.0031,
     "spy": 0.1044,
     "worst": -0.359,
@@ -26716,7 +26722,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.3741,
-    "avgStock": 0.1365,
+    "avgStock": 0.1404,
     "sameStock": -0.1157,
     "spy": 0.104,
     "worst": -0.392,
@@ -26736,7 +26742,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.2062,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.3923,
     "spy": 0.2066,
     "worst": -0.0614,
@@ -26756,7 +26762,7 @@
     "kind": "trail",
     "units": 1,
     "net": 0.6996,
-    "avgStock": 0.1496,
+    "avgStock": 0.153,
     "sameStock": -0.0995,
     "spy": 0.119,
     "worst": -0.1092,
@@ -26776,7 +26782,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.3372,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": -0.189,
     "spy": 0.2066,
     "worst": -0.2121,
@@ -26796,7 +26802,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.2186,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.1088,
     "spy": 0.2066,
     "worst": -0.0882,
@@ -26816,7 +26822,7 @@
     "kind": "max",
     "units": 1,
     "net": 1.6687,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.8148,
     "spy": 0.2066,
     "worst": -0.0086,
@@ -26836,7 +26842,7 @@
     "kind": "trail",
     "units": 1,
     "net": 1.4657,
-    "avgStock": 0.1196,
+    "avgStock": 0.1234,
     "sameStock": 0.1337,
     "spy": 0.0594,
     "worst": -0.142,
@@ -26856,7 +26862,7 @@
     "kind": "trail",
     "units": 1,
     "net": 1.2875,
-    "avgStock": 0.1789,
+    "avgStock": 0.1835,
     "sameStock": 0.643,
     "spy": 0.1247,
     "worst": -0.0746,
@@ -26876,7 +26882,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.2755,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.1964,
     "spy": 0.2066,
     "worst": -0.1474,
@@ -37370,7 +37376,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.3574,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.5509,
     "spy": 0.2066,
     "worst": 0,
@@ -37392,7 +37398,7 @@
     "kind": "max",
     "units": 1,
     "net": 1.0746,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.2723,
     "spy": 0.2066,
     "worst": -0.3265,
@@ -37414,7 +37420,7 @@
     "kind": "trail",
     "units": 1,
     "net": 0.5613,
-    "avgStock": 0.0558,
+    "avgStock": 0.0599,
     "sameStock": 0.2458,
     "spy": 0.0935,
     "worst": -0.1119,
@@ -37436,7 +37442,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.3635,
-    "avgStock": 0.0897,
+    "avgStock": 0.0935,
     "sameStock": 0.3361,
     "spy": 0.1031,
     "worst": -0.3567,
@@ -37458,7 +37464,7 @@
     "kind": "trail",
     "units": 1,
     "net": 0.6996,
-    "avgStock": 0.1496,
+    "avgStock": 0.153,
     "sameStock": -0.0995,
     "spy": 0.119,
     "worst": -0.1092,
@@ -37480,7 +37486,7 @@
     "kind": "trail",
     "units": 1,
     "net": 0.4383,
-    "avgStock": 0.0558,
+    "avgStock": 0.0599,
     "sameStock": -0.2925,
     "spy": 0.0935,
     "worst": -0.2491,
@@ -37524,7 +37530,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.3668,
-    "avgStock": 0.1569,
+    "avgStock": 0.1618,
     "sameStock": 0.4961,
     "spy": 0.1279,
     "worst": -0.3588,
@@ -41177,7 +41183,7 @@
     "kind": "stop",
     "units": 2,
     "net": -0.4201,
-    "avgStock": -0.031,
+    "avgStock": -0.0308,
     "sameStock": 0.6021,
     "spy": -0.035,
     "worst": -0.4121,
@@ -41723,7 +41729,7 @@
     "kind": "gone",
     "units": 2,
     "net": 0.1445,
-    "avgStock": 0.1459,
+    "avgStock": 0.1466,
     "sameStock": 0.1764,
     "spy": 0.1712,
     "worst": -0.1883,
@@ -41807,7 +41813,7 @@
     "kind": "max",
     "units": 2,
     "net": 0.406,
-    "avgStock": 0.0518,
+    "avgStock": 0.0599,
     "sameStock": 0.2108,
     "spy": 0.1407,
     "worst": -0.1704,
@@ -41828,7 +41834,7 @@
     "kind": "max",
     "units": 2,
     "net": 0.4591,
-    "avgStock": 0.027,
+    "avgStock": 0.0351,
     "sameStock": 0.3825,
     "spy": 0.1259,
     "worst": -0.2775,
@@ -42752,7 +42758,7 @@
     "kind": "max",
     "units": 2,
     "net": -0.1021,
-    "avgStock": 0.1434,
+    "avgStock": 0.1436,
     "sameStock": 0.0475,
     "spy": 0.1287,
     "worst": -0.1709,
@@ -42899,7 +42905,7 @@
     "kind": "stop",
     "units": 2,
     "net": -0.3857,
-    "avgStock": 0.1463,
+    "avgStock": 0.1462,
     "sameStock": -0.0903,
     "spy": 0.1466,
     "worst": -0.3777,
@@ -43298,7 +43304,7 @@
     "kind": "stop",
     "units": 2,
     "net": -0.3541,
-    "avgStock": 0.2088,
+    "avgStock": 0.2091,
     "sameStock": -0.0303,
     "spy": 0.1549,
     "worst": -0.3545,
@@ -43319,7 +43325,7 @@
     "kind": "stop",
     "units": 2,
     "net": -0.3603,
-    "avgStock": 0.2029,
+    "avgStock": 0.2046,
     "sameStock": 0.0321,
     "spy": 0.1538,
     "worst": -0.354,
@@ -43382,7 +43388,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.281,
-    "avgStock": 0.301,
+    "avgStock": 0.3026,
     "sameStock": 0.0517,
     "spy": 0.2497,
     "worst": -0.0937,
@@ -43403,7 +43409,7 @@
     "kind": "max",
     "units": 1,
     "net": -0.1472,
-    "avgStock": 0.301,
+    "avgStock": 0.3026,
     "sameStock": 0.1874,
     "spy": 0.2497,
     "worst": -0.144,
@@ -43424,7 +43430,7 @@
     "kind": "stop",
     "units": 2,
     "net": -0.372,
-    "avgStock": 0.0945,
+    "avgStock": 0.0946,
     "sameStock": -0.0682,
     "spy": 0.1081,
     "worst": -0.3671,
@@ -43445,7 +43451,7 @@
     "kind": "stop",
     "units": 2,
     "net": -0.3525,
-    "avgStock": 0.0808,
+    "avgStock": 0.0851,
     "sameStock": 0.5078,
     "spy": 0.117,
     "worst": -0.3549,
@@ -43487,7 +43493,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.4814,
-    "avgStock": 0.2105,
+    "avgStock": 0.2133,
     "sameStock": 0.467,
     "spy": 0.1996,
     "worst": -0.0947,
@@ -43508,7 +43514,7 @@
     "kind": "stop",
     "units": 2,
     "net": -0.3764,
-    "avgStock": 0.0616,
+    "avgStock": 0.0649,
     "sameStock": 3.682,
     "spy": 0.0504,
     "worst": -0.3684,
@@ -43529,7 +43535,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.4685,
-    "avgStock": 0.046,
+    "avgStock": 0.05,
     "sameStock": 0.4698,
     "spy": 0.0714,
     "worst": -0.4605,
@@ -43550,7 +43556,7 @@
     "kind": "max",
     "units": 1,
     "net": 0.5239,
-    "avgStock": 0.2716,
+    "avgStock": 0.2747,
     "sameStock": 0.0356,
     "spy": 0.2192,
     "worst": -0.0749,
@@ -43571,7 +43577,7 @@
     "kind": "max",
     "units": 2,
     "net": 0.0172,
-    "avgStock": 0.265,
+    "avgStock": 0.2671,
     "sameStock": 0.6303,
     "spy": 0.2062,
     "worst": -0.1648,
@@ -43592,7 +43598,7 @@
     "kind": "max",
     "units": 2,
     "net": -0.1858,
-    "avgStock": 0.1981,
+    "avgStock": 0.1987,
     "sameStock": 0.0152,
     "spy": 0.1779,
     "worst": -0.3112,
@@ -43655,7 +43661,7 @@
     "kind": "max",
     "units": 1,
     "net": -0.0383,
-    "avgStock": 0.2138,
+    "avgStock": 0.2147,
     "sameStock": 0.1495,
     "spy": 0.1929,
     "worst": -0.1291,
@@ -45323,7 +45329,7 @@
     "kind": "trail",
     "units": 1,
     "net": 0.3977,
-    "avgStock": 0.057,
+    "avgStock": 0.0604,
     "sameStock": 0.3831,
     "spy": 0.078,
     "worst": 0,
@@ -45345,7 +45351,7 @@
     "kind": "max",
     "units": 1,
     "net": -0.0227,
-    "avgStock": 0.2921,
+    "avgStock": 0.2946,
     "sameStock": 0.3004,
     "spy": 0.2066,
     "worst": -0.0361,
@@ -48252,7 +48258,7 @@
     "kind": "stop",
     "units": 1,
     "net": -0.3622,
-    "avgStock": 0.1142,
+    "avgStock": 0.1185,
     "sameStock": 1.0604,
     "spy": 0.0843,
     "worst": -0.3572,
@@ -48539,6 +48545,5 @@
     }
    }
   ]
- },
- "light": true
+ }
 }

@@ -1162,7 +1162,7 @@ function planFor(sym, entry, sig) {   // levels for a new position, scaled from 
   return { kind: 'manual', stop: null, t1: null, t2: null };
 }
 const stopTag = (sym, P, short) => !P.stop ? (short ? ' NO STOP' : ' (NO STOP: send  stop ' + sym + ' PRICE)') : P.stopOk && P.stopOk.price === P.stop ? '' : short ? ' UNCONFIRMED' : ' (RISK UNPROTECTED until the stop is at your broker: then send  stop placed ' + sym + ')';
-const posLine = (sym, P, price) => sym + ': bought ' + money(P.entry) + (price ? ', now ' + money(price) + ' (' + (price >= P.entry ? '+' : '') + ((price / P.entry - 1) * 100).toFixed(1) + '%)' : '') + (P.src === 'leader dip' && !P.stop ? '\n  leader dip: no stop by design, sell limit ' + money(P.target || P.entry * 1.2) : '\n  stop ' + (P.stop ? money(P.stop) : 'NOT SET') + ', target 1 ' + (P.t1 ? money(P.t1) : 'not set')) + (P.t2 ? ', target 2 ' + money(P.t2) : '') + (P.ownT ? '\n  target 1 is your own' : P.t1 && P.tmode ? '\n  target tested: ' + (P.tmode === 'half' ? 'sell HALF there, the rest on the exit rule' : 'sell ALL there') + (P.tnote ? ' (' + P.tnote + ')' : '') : P.tnote ? '\n  no target: ' + P.tnote + '. Sell on the exit rule' : '') + (P.kind === 'entry' ? '\n  swing trade: ' + (P.exitBelow ? 'also sell on a daily close under ~' + money(P.exitBelow) + '; ' : '') + (P.maxHold ? 'sell after ' + P.maxHold + ' sessions at the latest' : 'no time limit') : '') + (P.kind === 'manual' ? '\n  your own pick: no tested target or time limit; the stop protects it and I check it every night' : '') + (P.kind === 'leader' ? '\n  leader trade: no fixed target. I raise the stop as it climbs; also sell on a close under its 50 day average' : '') + (P.kind === 'radar' ? '\n  early-wave trade: sell at target 1 or after 5 sessions, whichever comes first' : '') + (P.kind === 'quick' ? '\n  quick trade: also sell on the first close ' + (P.q === 'gap' ? 'below' : 'above') + ' its 5 day average, or after ' + (P.maxHold || 5) + ' sessions' : '');
+const posLine = (sym, P, price) => sym + ': bought ' + money(P.entry) + (price ? ', now ' + money(price) + ' (' + (price >= P.entry ? '+' : '') + ((price / P.entry - 1) * 100).toFixed(1) + '%)' : '') + (P.src === 'leader dip' && !P.stop ? '\n  leader dip: no stop by design, sell limit ' + money(P.target || P.entry * 1.2) : '\n  stop ' + (P.stop ? money(P.stop) : 'NOT SET') + ', target 1 ' + (P.t1 ? money(P.t1) : 'not set')) + (P.t2 ? ', target 2 ' + money(P.t2) : '') + (P.ownT ? '\n  target 1 is your own' : P.t1 && P.tmode ? '\n  target tested: ' + (P.tmode === 'half' ? 'sell HALF there, the rest on the exit rule' : 'sell ALL there') + (P.tnote ? ' (' + P.tnote + ')' : '') : P.tnote ? '\n  no target: ' + P.tnote + '. Sell on the exit rule' : '') + (P.kind === 'entry' ? '\n  swing trade: ' + (P.exitBelow ? 'also sell on a daily close under ~' + money(P.exitBelow) + '; ' : '') + (P.maxHold ? 'sell after ' + P.maxHold + ' sessions at the latest' : 'no time limit') : '') + (P.kind === 'manual' && P.src !== 'leader dip' ? '\n  your own pick: no tested target or time limit; the stop protects it and I check it every night' : '') + (P.kind === 'leader' ? '\n  leader trade: no fixed target. I raise the stop as it climbs; also sell on a close under its 50 day average' : '') + (P.kind === 'radar' ? '\n  early-wave trade: sell at target 1 or after 5 sessions, whichever comes first' : '') + (P.kind === 'quick' ? '\n  quick trade: also sell on the first close ' + (P.q === 'gap' ? 'below' : 'above') + ' its 5 day average, or after ' + (P.maxHold || 5) + ' sessions' : '');
 // "today": the short-trade list. Only setups that passed the tests at the last close, re-priced now.
 // ---- YOUR REAL RECORD: every sale you report, split by the kind of trade, so paper and real results can be compared.
 const MY_TRADES = 'data/my-trades.jsonl';
@@ -1649,7 +1649,7 @@ function conclusion(sig, pos) {
   if (sig.quickPaused) out.push('Quick trades are paused by the circuit breaker.');
   if (out.length === 1) out.push('No new trade today. Nothing passed its tests.');
   const pv = sig.posVerdict || {};
-  for (const sym of Object.keys(pos || {})) { const P = pos[sym]; out.push(sym + ' (yours): ' + (pv[sym] ? 'SELL at the next open, ' + pv[sym] : 'HOLD | STOP ' + (P.stop ? money(P.stop) : 'none set') + ' | SELL ' + (P.t1 ? money(P.t1) + (P.t2 ? ' then ' + money(P.t2) : '') : 'no target set'))); }
+  for (const sym of Object.keys(pos || {})) { const P = pos[sym]; out.push(sym + ' (yours): ' + (pv[sym] ? 'SELL at the next open, ' + pv[sym] : P.src === 'leader dip' && !P.stop ? 'HOLD | no stop by design (LEADER DIP) | SELL LIMIT ' + money(P.target) + ', time exit about ' + ldipExitDay(P.boughtSession || P.since, P.ldHold || LDIP_HOLD) : 'HOLD | STOP ' + (P.stop ? money(P.stop) : 'none set') + ' | SELL ' + (P.t1 ? money(P.t1) + (P.t2 ? ' then ' + money(P.t2) : '') : 'no target set'))); }
   return out;
 }
 // The same conclusion, recalculated from the price RIGHT NOW (market hours only): buy near the live price, with the stop and
@@ -3118,7 +3118,7 @@ async function tgCommands(sig) {
   try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/getUpdates?timeout=' + Math.min(50, Math.max(0, parseInt(env.TG_WAIT || '0', 10) || 0)) + '&offset=' + state.offset); ups = ((await r.json()).result) || []; } catch (e) { console.log('could not read Telegram messages'); return; }
   // One message may carry several commands, one per line (for example four "follow" lines pasted together). Split those up.
   // A leading dash, bullet or backtick copied from a list is ignored. A multi-line tip message is left whole.
-  const CMD_LINE = /^(mentor|follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
+  const CMD_LINE = /^(\/?mentor(?:@\w+)?|follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
   for (const u of ups) {
     if (u.callback_query) {   // a tapped button: Bought / Sold / Skipped
       const cq = u.callback_query, chatId = cq.message && cq.message.chat ? cq.message.chat.id : (cq.from && cq.from.id); let txt = null, note = 'Recorded';
@@ -3147,7 +3147,7 @@ async function tgCommands(sig) {
     if (lines.length > 1 && lines.every(x => CMD_LINE.test(x))) lines.forEach(x => queue.push({ update_id: u.update_id, message: { ...m, text: x } }));
     else { if (m && m.text && lines.length === 1) m.text = lines[0]; queue.push(u); }
   }
-  const isMentor=u=>/^\/?mentor(?:@\w+)?\s+[a-z][a-z.\-]{0,5}\s*$/i.test(u.message?.text||''),owned=queue.filter(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)),mentorOnly=queue.some(isMentor)&&owned.every(isMentor);
+  const isMentor=u=>/^\/?mentor(?:@\w+)?(?:\s|$)/i.test(u.message?.text||''),owned=queue.filter(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)),mentorOnly=queue.some(isMentor)&&owned.every(isMentor);
   if (state.menuV !== MENU_V) { await sendMenu(); state.menuV = MENU_V; }   // the one-tap menu appears by itself once (and after each change)
   for (const u of queue) {
     state.offset = u.update_id + 1;
@@ -3169,7 +3169,7 @@ async function tgCommands(sig) {
     }
     const text = tradeWords(m.text.trim().replace(/\$/g, '').replace(SHARE_TYPOS, 'shares')), num = (re) => { const x = text.match(re); return x ? +x[1] : null; };
     let k;
-    if ((k=text.match(/^mentor\s+([a-z][a-z.\-]{0,5})\s*$/i))) { out.push(mentorText(k[1].toUpperCase(),mentorOnly?readJson0(POS_FILE):pos)); continue; }
+    if (/^mentor(?:@\w+)?(?:\s|$)/i.test(text)) { k=text.match(/^mentor(?:@\w+)?\s+([a-z][a-z.\-]{0,5})\s*$/i); out.push(k?mentorText(k[1].toUpperCase(),mentorOnly?readJson0(POS_FILE):pos):'MENTOR — EXPLANATION ONLY. NOT PROVEN. Use mentor SYMBOL (one symbol per line). This request records no trade; no BUY or HOLD recommendation.'); continue; }
     { const tk = (text.match(/\b[A-Z]{2,5}\b/g) || []).filter(x => !NOT_TICKERS.has(x) && !COMMON_WORDS.has(x)), fwd = m.forward_origin || m.forward_from_chat;
       if (!tk.length && !/^\s*(?:tips?|log)\b/i.test(text) && (text.length >= 160 || (fwd && text.length >= 60))) {
         const src = (m.forward_origin && (m.forward_origin.sender_user_name || (m.forward_origin.sender_user && m.forward_origin.sender_user.first_name) || (m.forward_origin.chat && m.forward_origin.chat.title))) || (m.forward_from_chat && m.forward_from_chat.title) || null;

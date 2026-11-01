@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T06:45:04.968Z",
+ "generatedAt": "2026-11-01T06:50:12.851Z",
  "agent": "C",
  "ids": [
   "C-S8",
@@ -14,7 +14,7 @@
  "universe": "companies in today's SEC ticker list that are in the price cache (delisted companies are missing: their S-8 and lock-up events are not counted)",
  "status": "OK",
  "versions": 4,
- "bar": 4.02,
+ "bar": 4.07,
  "firstRun": {
   "at": "2026-10-23T08:37:59.461Z",
   "bar": 4,
@@ -150,49 +150,49 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-25T06:45:05.577Z",
+  "at": "2026-11-01T06:50:13.317Z",
   "from": "2022-01-06",
   "to": "2026-10-19",
-  "bar": 4.02,
+  "bar": 4.07,
   "results": {
    "S8A": {
     "name": "Any Form S-8 filed (avoid 20 sessions)",
-    "signals": 5552,
+    "signals": 5543,
     "info": false,
     "verdict": "NOT PROVEN",
     "level": "NONE",
-    "why": "could be luck in the older half (t -1.8, -4.02 needed); not clearly worse than the same stock on its other days in the older half (-0.6%, t -1.13); could be luck in the newer half (t -0.75, -4.02 needed); not clearly worse than the same stock on its other days in the newer half (+0.2%, t 0.3)",
-    "whyTier2": "older: t -1.8 not at or below -2.5; newer: t -0.75 not at or below -2.5",
+    "why": "could be luck in the older half (t -1.81, -4.07 needed); not clearly worse than the same stock on its other days in the older half (-0.6%, t -1.14); could be luck in the newer half (t -0.68, -4.07 needed); not clearly worse than the same stock on its other days in the newer half (+0.4%, t 0.54)",
+    "whyTier2": "older: t -1.81 not at or below -2.5; newer: t -0.68 not at or below -2.5",
     "results": {
      "older": {
-      "n": 2555,
+      "n": 2552,
       "days": 524,
-      "stocks": 1613,
-      "avg": -0.0131,
+      "stocks": 1612,
+      "avg": -0.0133,
       "ctrl": -0.0073,
-      "edge": -0.0079,
-      "t": -1.8,
+      "edge": -0.008,
+      "t": -1.81,
       "vsSpy": -0.0183,
-      "tSpy": -3.98,
+      "tSpy": -3.99,
       "vsOwn": -0.0061,
-      "tOwn": -1.13,
-      "lagged": 0.537,
-      "noWorst2": -0.0051
+      "tOwn": -1.14,
+      "lagged": 0.538,
+      "noWorst2": -0.0052
      },
      "newer": {
-      "n": 2892,
+      "n": 2886,
       "days": 520,
-      "stocks": 1963,
-      "avg": 0.0021,
-      "ctrl": 0.0053,
-      "edge": -0.0053,
-      "t": -0.75,
-      "vsSpy": -0.0094,
-      "tSpy": -1.32,
-      "vsOwn": 0.0022,
-      "tOwn": 0.3,
+      "stocks": 1959,
+      "avg": 0.0027,
+      "ctrl": 0.0055,
+      "edge": -0.0047,
+      "t": -0.68,
+      "vsSpy": -0.0088,
+      "tSpy": -1.24,
+      "vsOwn": 0.0039,
+      "tOwn": 0.54,
       "lagged": 0.537,
-      "noWorst2": -0.0026
+      "noWorst2": -0.0021
      }
     }
    },
@@ -202,8 +202,8 @@
     "info": false,
     "verdict": "REJECTED",
     "level": "NONE",
-    "why": "not worse than an average stock in the older half (+0.5%); could be luck in the older half (t 0.31, -4.02 needed); not clearly worse than the same stock on its other days in the older half (+2.3%, t 1.27); not worse without its 2 worst cases in the older half; could be luck in the newer half (t -0.46, -4.02 needed); not clearly worse than the same stock on its other days in the newer half (+1.1%, t 0.49)",
-    "whyTier2": "older: not worse than the average stock; older: t 0.31 not at or below -2.5; older: not worse without its 2 worst cases; newer: t -0.46 not at or below -2.5",
+    "why": "not worse than an average stock in the older half (+0.5%); could be luck in the older half (t 0.31, -4.07 needed); not clearly worse than the same stock on its other days in the older half (+2.3%, t 1.27); not worse without its 2 worst cases in the older half; could be luck in the newer half (t -0.47, -4.07 needed); not clearly worse than the same stock on its other days in the newer half (+1.1%, t 0.49)",
+    "whyTier2": "older: not worse than the average stock; older: t 0.31 not at or below -2.5; older: not worse without its 2 worst cases; newer: t -0.47 not at or below -2.5",
     "results": {
      "older": {
       "n": 164,
@@ -225,83 +225,83 @@
       "days": 219,
       "stocks": 279,
       "avg": 0.0046,
-      "ctrl": 0.0102,
-      "edge": -0.0094,
-      "t": -0.46,
+      "ctrl": 0.0103,
+      "edge": -0.0095,
+      "t": -0.47,
       "vsSpy": -0.0101,
       "tSpy": -0.49,
       "vsOwn": 0.0108,
       "tOwn": 0.49,
       "lagged": 0.536,
-      "noWorst2": -0.0006
+      "noWorst2": -0.0007
      }
     }
    },
    "L180": {
     "name": "IPO lock-up expiry (first 424B4 + 180 days), the 10 sessions after = C-LOCK",
-    "signals": 97,
+    "signals": 98,
     "info": false,
     "verdict": "TOO FEW CASES",
     "level": "NONE",
-    "why": "too few cases in the older half (17); could be luck in the newer half (t -1.3, -4.02 needed); not clearly worse than the same stock on its other days in the newer half (+0.7%, t 0.35)",
+    "why": "too few cases in the older half (17); could be luck in the newer half (t -1.3, -4.07 needed); not clearly worse than the same stock on its other days in the newer half (+0.6%, t 0.32)",
     "whyTier2": "too few cases; newer: t -1.3 not at or below -2.5",
     "results": {
      "older": {
       "n": 17
      },
      "newer": {
-      "n": 75,
-      "days": 62,
-      "stocks": 75,
-      "avg": -0.0342,
-      "ctrl": 0.0035,
-      "edge": -0.0355,
+      "n": 76,
+      "days": 63,
+      "stocks": 76,
+      "avg": -0.0339,
+      "ctrl": 0.0032,
+      "edge": -0.0349,
       "t": -1.3,
-      "vsSpy": -0.0378,
+      "vsSpy": -0.0373,
       "tSpy": -1.38,
-      "vsOwn": 0.0067,
-      "tOwn": 0.35,
-      "lagged": 0.547,
-      "noWorst2": -0.0139
+      "vsOwn": 0.006,
+      "tOwn": 0.32,
+      "lagged": 0.539,
+      "noWorst2": -0.0136
      }
     }
    },
    "L180W": {
     "name": "IPO lock-up expiry window, 5 sessions before to 1 after (Field and Hanka 2001)",
-    "signals": 92,
+    "signals": 93,
     "info": false,
     "verdict": "TOO FEW CASES",
     "level": "NONE",
-    "why": "too few cases in the older half (16); could be luck in the newer half (t -0.17, -4.02 needed); not clearly worse than the same stock on its other days in the newer half (+0.3%, t 0.16); not worse without its 2 worst cases in the newer half",
-    "whyTier2": "too few cases; newer: t -0.17 not at or below -2.5; newer: not worse without its 2 worst cases",
+    "why": "too few cases in the older half (16); not worse than an average stock in the newer half (+0.1%); could be luck in the newer half (t 0.07, -4.07 needed); not worse than the S&P 500 in the newer half; not clearly worse than the same stock on its other days in the newer half (+0.7%, t 0.41); not worse without its 2 worst cases in the newer half",
+    "whyTier2": "too few cases; newer: not worse than the average stock; newer: t 0.07 not at or below -2.5; newer: not worse without its 2 worst cases",
     "results": {
      "older": {
       "n": 16
      },
      "newer": {
-      "n": 73,
-      "days": 61,
-      "stocks": 73,
-      "avg": -0.0054,
-      "ctrl": 0.0013,
-      "edge": -0.0031,
-      "t": -0.17,
-      "vsSpy": -0.0027,
-      "tSpy": -0.14,
-      "vsOwn": 0.0029,
-      "tOwn": 0.16,
-      "lagged": 0.466,
-      "noWorst2": 0.0064
+      "n": 74,
+      "days": 62,
+      "stocks": 74,
+      "avg": -0.0018,
+      "ctrl": 0.0011,
+      "edge": 0.0014,
+      "t": 0.07,
+      "vsSpy": 0.0015,
+      "tSpy": 0.08,
+      "vsOwn": 0.0072,
+      "tOwn": 0.41,
+      "lagged": 0.459,
+      "noWorst2": 0.01
      }
     }
    },
    "L90": {
     "name": "IPO + 90 days, 10 sessions after (information only)",
-    "signals": 133,
+    "signals": 134,
     "info": true,
     "verdict": "INFORMATION: NOT PROVEN",
     "level": "information only",
-    "why": "could be luck in the older half (t -1.23, -4.02 needed); not clearly worse than the same stock on its other days in the older half (+1.0%, t 0.38); not worse without its 2 worst cases in the older half; could be luck in the newer half (t -0.1, -4.02 needed); not clearly worse than the same stock on its other days in the newer half (-2.2%, t -1.11); not worse without its 2 worst cases in the newer half",
+    "why": "could be luck in the older half (t -1.23, -4.07 needed); not clearly worse than the same stock on its other days in the older half (+1.0%, t 0.38); not worse without its 2 worst cases in the older half; could be luck in the newer half (t -0.1, -4.07 needed); not clearly worse than the same stock on its other days in the newer half (-2.2%, t -1.13); not worse without its 2 worst cases in the newer half",
     "whyTier2": "older: t -1.23 not at or below -2.5; older: not worse without its 2 worst cases; newer: t -0.1 not at or below -2.5; newer: not worse without its 2 worst cases",
     "results": {
      "older": {
@@ -320,19 +320,19 @@
       "noWorst2": 0.0015
      },
      "newer": {
-      "n": 99,
-      "days": 80,
-      "stocks": 99,
+      "n": 100,
+      "days": 81,
+      "stocks": 100,
       "avg": -0.0076,
-      "ctrl": 0.0019,
-      "edge": -0.0042,
+      "ctrl": 0.002,
+      "edge": -0.0044,
       "t": -0.1,
-      "vsSpy": -0.0045,
-      "tSpy": -0.11,
+      "vsSpy": -0.0043,
+      "tSpy": -0.1,
       "vsOwn": -0.0219,
-      "tOwn": -1.11,
-      "lagged": 0.636,
-      "noWorst2": 0.0053
+      "tOwn": -1.13,
+      "lagged": 0.64,
+      "noWorst2": 0.0051
      }
     }
    }
@@ -676,7 +676,7 @@
     "s": "CPT",
     "d": "2026-08-07",
     "ret": -0.052,
-    "avgStock": -0.006
+    "avgStock": -0.005
    }
   ],
   "S8B": [
@@ -690,7 +690,7 @@
     "s": "USAU",
     "d": "2025-11-13",
     "ret": 0.193,
-    "avgStock": 0.067
+    "avgStock": 0.068
    },
    {
     "s": "USAS",
@@ -708,7 +708,7 @@
     "s": "IIPR",
     "d": "2026-06-09",
     "ret": 0.088,
-    "avgStock": 0.039
+    "avgStock": 0.04
    },
    {
     "s": "FISN",
