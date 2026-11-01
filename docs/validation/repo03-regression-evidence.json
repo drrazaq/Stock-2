@@ -5,9 +5,9 @@
   "reviewPR6Unchanged": "64611cdf47dd230026911dde53b98cf7413c17f1",
   "coverage": {
     "scripts": 305,
-    "sourceReviewed": 48,
-    "pending": 257,
-    "reviewedWithOpenFindings": 25
+    "sourceReviewed": 49,
+    "pending": 256,
+    "reviewedWithOpenFindings": 26
   },
   "recoveryOld": {
     "cases": 7,
@@ -55,12 +55,21 @@
       "fail": 0,
       "includesFixedReasonValidation": true
     },
-    "actualWatcherCompanion": "41211cb transient-race caller PASS; new health caller pending exact final CI",
+    "actualWatcherCompanion": "6d900024 monitor and health caller cases PASS",
     "historicalManifestFailureExactCause": "NOT_ESTABLISHED",
     "PR6BranchPreserved": true,
-    "oneStockDependencyDiffers": "native-sec-colocated-host.mjs"
+    "oneStockDependencyDiffers": "native-sec-colocated-host.mjs",
+    "stress": "6d900024 PASS30_CONSECUTIVE_NODE20"
   },
   "independentReviewSource": "9af3b071630cce73136ff91016e368ea3cc77b13",
   "ordinaryIntermediateSource": "41211cb25614417e2372636444d20cac7a6c64da",
-  "ordinaryIntermediateResult": "ALL5_CHECKS_PASS"
+  "ordinaryIntermediateResult": "ALL5_CHECKS_PASS",
+  "prefixHandoff": {
+    "oldSourceFailed": 3,
+    "oldSourcePassed": 7,
+    "repairedPass": 10,
+    "existingHostSuccessAssertionChanged": false,
+    "providerRequestsAdded": 0,
+    "initialPartialRejectionPreserved": true
+  }
 }

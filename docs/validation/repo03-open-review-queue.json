@@ -1310,19 +1310,6 @@
       "nextAction": "Review actual source/caller contract using matrix locators; reuse prior targeted evidence without treating it as whole-script coverage."
     },
     {
-      "path": "native-sec-colocated-prefix.mjs",
-      "sha256": "7f02632e7b7b103aa46d1b6786df8cd5990fd3ae08ad5d3920af284f0e2e22ab",
-      "requiredAxes": [
-        "inputs",
-        "outputs",
-        "sideEffects",
-        "failure",
-        "timing",
-        "researchBoundary"
-      ],
-      "nextAction": "Review actual source/caller contract using matrix locators; reuse prior targeted evidence without treating it as whole-script coverage."
-    },
-    {
       "path": "native-sec-events.mjs",
       "sha256": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
       "requiredAxes": [
@@ -3365,6 +3352,11 @@
     {
       "path": "native-sec-colocated-host.mjs",
       "gap": "Whole filesystem allocation quota and all adversarial rename/resource races remain unestablished;6 targeted storage cases pass locally, actual host companion requires exact hosted CI.",
+      "owner": "Implementation owner"
+    },
+    {
+      "path": "native-sec-colocated-prefix.mjs",
+      "gap": "10 local prefix cases pass with3 old-source failures/7 controls; unchanged actual contended-host caller requires exact new hosted CI. General source authenticity and missing global history remain unproven.",
       "owner": "Implementation owner"
     },
     {

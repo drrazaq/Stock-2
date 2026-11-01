@@ -718,5 +718,20 @@
     "evidence": [
       "docs/repo03-behavioral-review.md#source-interface-pass"
     ]
+  },
+  "native-sec-colocated-prefix.mjs": {
+    "sha256": "9b4ba6967edfee6459ff59c494bc08f69ad77146e6ff087e3ce122aa47b7049e",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit native run directory, pinned run/source, at/identity inputs and bounded wait port.",
+    "outputs": "Validated immutable prefix asset plus native event representation.",
+    "sideEffects": "Local original-byte reads and bounded backoff only; no lock stealing, writer suspension, provider calls or state writes.",
+    "failure": "Initial digest strictly rejects existing lock/partial; selected bytes revalidated. Only later successor staging/lock/cursor files may coexist with the already validated prefix; old-record rewrite/unknown/health/link failures still reject.",
+    "timing": "Original feed/receipt/first-ingestion clocks retained; at most7 original backoff waits totaling1185ms. No first-ever/global history inference.",
+    "researchBoundary": "Asset is an immutable committed PREFIX, never proof that current archive/session is complete. Protocol/enrollment/scoring/V1 unchanged; new source revision requires independent review before activation.",
+    "remainingVerification": "10 local prefix cases pass with3 old-source failures/7 controls; unchanged actual contended-host caller requires exact new hosted CI. General source authenticity and missing global history remain unproven.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
   }
 }

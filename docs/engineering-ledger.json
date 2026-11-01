@@ -8049,15 +8049,21 @@
     "baseSourceCommit": "6868d9a39518fdf4168f67167f681bbba7c68ab0",
     "matrix": "docs/validation/repo03-behavioral-matrix.json",
     "scripts": 305,
-    "sourceReviewed": 48,
-    "pendingSourceReview": 257,
-    "reviewedWithOpenGaps": 25,
+    "sourceReviewed": 49,
+    "pendingSourceReview": 256,
+    "reviewedWithOpenGaps": 26,
     "accepted": false,
     "newAcceptanceClosures": [],
     "report": "docs/repo03-behavioral-review.md",
     "next": "scan.mjs source/caller contract; coordinate complementary Claude workflow/claim audit; PR6 stable",
     "hostMonitorCompanion": "docs/validation/repo03-host-monitor-manifest.json",
     "firstPublishedCi": "53ee12e:4PASS,1FAIL; unchanged manifest-partial case missing output, evidence retained",
-    "independentReviewReconciliation": "docs/validation/repo03-independent-review-reconciliation.json"
+    "independentReviewReconciliation": "docs/validation/repo03-independent-review-reconciliation.json",
+    "prefixCompanion": "docs/validation/repo03-prefix-handoff-manifest.json",
+    "intermediate6d": {
+      "hostStress": "PASS30_CONSECUTIVE",
+      "ordinaryNode": "237PASS1FAIL_LEGACY_PREFIX_CONTENTION",
+      "failurePreserved": true
+    }
   }
 }
