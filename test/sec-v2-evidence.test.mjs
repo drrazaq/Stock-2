@@ -87,3 +87,10 @@ test('upload timeout and unconfirmed acknowledgments preserve pending bytes and 
   const timers={setTimeout:(fn)=>setTimeout(fn,10),clearTimeout};await assert.rejects(store.append(record,{guard:g.guard,upload,timers}));assert.equal(calls,1);const b=fs.readFileSync(path.join(directory,'checkpoint-000000.enc'));await assert.rejects(store.append(record,{guard:g.guard,upload,timers}));assert.equal(calls,1);assert.ok(fs.readFileSync(path.join(directory,'checkpoint-000000.enc')).equals(b));assert.equal(openProposedV2EvidenceStore(options).snapshot().pending.length,1);
  }
 });
+
+test('bid marks never imply full-size liquidation; global stale quotes and future frames stay visible',()=>{
+ const f=frames((b,i)=>{if(i===20)b.INTC.latestQuote.bs=1;if(i===25)b.NVDA.latestQuote.t='2026-11-05T14:00:00Z';});
+ const r=evaluateProposedV2Outcomes({frames:f,pairs:[pair(f)],cutoffAt:f.at(-1).at});assert.equal(r.cases[0].candidate.drawdownCapacityVerified,false);assert.deepEqual(r.cases[0].candidate.insufficientMarkDepthSequences,[20]);assert.equal(r.cases[0].candidate.drawdownBasis,'BID_MARK_NOT_A_GUARANTEED_FULL_SIZE_LIQUIDATION');assert.equal(Object.hasOwn(r.cases[0].candidate,'observedLiquidationDrawdown'),false);
+ assert.equal(r.quoteEvidenceComplete,false);assert.ok(r.invalidQuoteSymbols.some(x=>x.symbol==='NVDA'&&x.sequence===25));assert.equal(r.genuineAdmissions,0);
+ assert.throws(()=>evaluateProposedV2Outcomes({frames:f,pairs:[pair(f)],cutoffAt:f[30].at}),/FRAME_INTEGRITY/);
+});
