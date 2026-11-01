@@ -2,7 +2,7 @@
 import {createHash} from 'node:crypto';
 import {readNativeRun,nativeRunDigest} from './native-sec-events.mjs';import {readSelectionTelemetry,SEC_SELECTION_SCOPE} from './sec-selection-telemetry.mjs';
 import {dEligible} from './rank-models.mjs';import {PAPER_PROTOCOL} from './discovery-paper.mjs';import {captureJson} from './capture-json.mjs';import {alpacaSnapshot} from './snapshot-fields.mjs';import {marketSession} from './market-session.mjs';
-export const PROOF_READY_PROPOSAL='SEC_PROOF_READY_V2_REVIEW_ONLY';
+export const PROOF_READY_PROPOSAL='SEC_PROOF_READY_V2_DRAFT2_REVIEW_ONLY';
 const sha=x=>createHash('sha256').update(typeof x==='string'?x:JSON.stringify(x)).digest('hex'),need=(x,c)=>{if(!x)throw Error(c);};
 const time=x=>{if(typeof x!=='string'||!/^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,9})?(?:Z|[+-]\d\d:\d\d)$/.test(x))return NaN;const d=new Date(x.slice(0,10)+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===x.slice(0,10)?Date.parse(x):NaN;};
 const ny=x=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(x)).map(p=>[p.type,p.value]));return {day:p.year+'-'+p.month+'-'+p.day,minute:+p.hour*60+ +p.minute};};
@@ -19,13 +19,13 @@ export function prepareProposedV2Source({archiveDirectory,telemetryDirectory,run
  const handle=Object.freeze({kind:'PROPOSED_V2_READ_ONLY_SOURCE_HANDLE',runId,sourceSha,observedAt,nativePrefixSha256:before.sha256,telemetryLastHash:telemetry.lastHash});preparedSources.set(handle,{source,telemetry,history:structuredClone(history)});return handle;
 }
 export function proposeProofReadyFrame({sourceHandle,frame,state=null}){
- const prepared=preparedSources.get(sourceHandle);need(prepared,'PROPOSAL_SOURCE_HANDLE_REQUIRED');const {source,telemetry,history}=prepared,{runId,sourceSha}=sourceHandle;
+ const prepared=preparedSources.get(sourceHandle);need(prepared,'PROPOSAL_SOURCE_HANDLE_REQUIRED');preparedSources.delete(sourceHandle);const {source,telemetry,history}=prepared,{runId,sourceSha}=sourceHandle;
  need(frame?.sourceHandoffAt===sourceHandle.observedAt,'PROPOSAL_HANDOFF_HANDLE_MISMATCH');
  const handoff=time(frame?.sourceHandoffAt),at=time(frame?.at);need(Number.isFinite(handoff)&&Number.isFinite(at)&&handoff<at&&at-handoff<=180000,'PROPOSAL_HANDOFF_CLOCK');
  const day=ny(handoff).day;need(marketSession(day).known&&!marketSession(day).closed&&ny(at).day===day,'PROPOSAL_SESSION');
- const prior=state?structuredClone(state):{protocol:PROOF_READY_PROPOSAL,runId,sourceSha,day,frames:0,used:[],pairs:[],lastAt:null};
+ const prior=state?structuredClone(state):{protocol:PROOF_READY_PROPOSAL,runId,sourceSha,day,frames:0,ready:{},used:[],pairs:[],lastAt:null};
  if(state){const {checksum,...body}=state;need(checksum===sha(body),'PROPOSAL_STATE_HASH');}
- delete prior.checksum;need(prior.protocol===PROOF_READY_PROPOSAL&&prior.runId===runId&&prior.sourceSha===sourceSha&&prior.day===day&&prior.frames===frame.sequence&&prior.frames<41&&(!prior.lastAt||time(prior.lastAt)<at),'PROPOSAL_STATE_OR_RESTART');
+ delete prior.checksum;need(prior.protocol===PROOF_READY_PROPOSAL&&prior.runId===runId&&prior.sourceSha===sourceSha&&prior.day===day&&prior.ready&&typeof prior.ready==='object'&&prior.frames===frame.sequence&&prior.frames<41&&(!prior.lastAt||time(prior.lastAt)<at),'PROPOSAL_STATE_OR_RESTART');
  need(frame.provider==='ALPACA'&&frame.feed==='sip'&&typeof frame.rawResponse==='string'&&sha(frame.rawResponse)===frame.rawResponseSha256&&Buffer.byteLength(frame.rawResponse)<=65536,'PROPOSAL_FRAME_SOURCE');
 
  const ledger=[],members=[],raw=captureJson(frame.rawResponse),used=new Set(prior.used);const historyKnown=history?.state==='VERIFIED_NO_EARLIER_SAME_DAY_RUN'&&history.scope==='MAIN_PRODUCER_SAME_DAY';
@@ -48,6 +48,9 @@ export function proposeProofReadyFrame({sourceHandle,frame,state=null}){
   const proofs=source.acceptanceResponses.filter(p=>p.sha256===c.bodySha256&&p.transportEvidence.status==='DIRECT_RESPONSE_URL_MATCH'&&time(p.receivedAt)<=handoff);let acceptance=null;
   for(const p of proofs){const doc=captureJson(Buffer.from(p.bodyBase64,'base64').toString()),idx=doc.filings?.recent?.accessionNumber?.indexOf(event.accession);if(String(doc.cik).padStart(10,'0')!==event.issuerCik||!(idx>=0))continue;const value=doc.filings.recent.acceptanceDateTime[idx];if(value===c.reportedAcceptanceAt&&Number.isFinite(time(value)))acceptance=value;}
   if(!acceptance||time(acceptance)>time(event.firstObservedAt)||ny(time(acceptance)).day!==day||ny(time(acceptance)).minute<240||ny(time(acceptance)).minute>660)reject('ACCEPTANCE_PROOF_JOIN_UNRESOLVED');
+  const saved=prior.ready[event.eventId];if(saved&&(saved.proofBodySha256!==c.bodySha256||saved.revision!==event.sourceRevisionId))reject('SOURCE_READY_REVISION_REQUIRES_REVIEW');
+  const ready=saved||{at:frame.sourceHandoffAt,proofBodySha256:c.bodySha256,revision:event.sourceRevisionId};prior.ready[event.eventId]=ready;row.sourceReadyAt=ready.at;row.sourceReadAt=frame.sourceHandoffAt;
+  if(!Number.isFinite(time(ready.at))||time(ready.at)>handoff||at-time(ready.at)>180000||nySeconds(at)>577*60)reject('ENTRY_EXPIRED');
   const q=frame.quotes?.find(q=>q.symbol===identity.symbol&&q.securityId===identity.securityId),snapshot=raw[identity.symbol],live=alpacaSnapshot(identity.symbol,snapshot,true),qt=time(q?.quoteAsOf),vt=time(q?.dollarVolumeAsOf);
   if(!q||q.provider!=='ALPACA'||q.feed!=='sip'||q.at!==frame.at||!positive(q.ask)||!positive(q.bid)||q.ask<q.bid||!Number.isFinite(qt)||qt<=handoff||qt>at||at-qt>120000||(q.ask-q.bid)/(q.ask/2+q.bid/2)>.02)reject('ENTRY_BBO_NOT_FRESH_AFTER_READY');
   if(q.bid!==live.bid||q.ask!==live.ask||qt!==time(snapshot?.latestQuote?.t)||q.askSizeShares!==(Number.isInteger(snapshot?.latestQuote?.as)&&snapshot.latestQuote.as>=0?snapshot.latestQuote.as:null)||q.bidSizeShares!==(Number.isInteger(snapshot?.latestQuote?.bs)&&snapshot.latestQuote.bs>=0?snapshot.latestQuote.bs:null))reject('QUOTE_RAW_JOIN_MISMATCH');
