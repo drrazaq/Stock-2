@@ -688,5 +688,35 @@
     "evidence": [
       "docs/repo03-behavioral-review.md#source-interface-pass"
     ]
+  },
+  "native-sec-colocated-host.mjs": {
+    "sha256": "fc2c2e68b5a7fd4e74af73170b6a80ce41eeb34ac418f938c372a0f12c6d4278",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Pinned inactive producer/capture processes, plan, complete same-day parent evidence and storage/health paths.",
+    "outputs": "Independent producer child plus bounded capture lifecycle/health; optional native bundle publication ACK.",
+    "sideEffects": "Spawns explicit local processes; resource monitoring; no ambient provider/secret discovery or producer cancellation.",
+    "failure": "Source/plan/history pins; byte/file/log limits; capture-only shutdown on failures. Transient observing/writer-lock directory disappearance no longer falsely terminates capture; other errors remain fatal.",
+    "timing": "D1/D2 absolute plan-end deadline and bounded shutdown; waits for natural producer completion.",
+    "researchBoundary": "Inactive synthetic scope; incomplete history/capture never implies first ingestion/admission. PR6 branch remains historical exact source; this changed helper is a separate companion correction.",
+    "remainingVerification": "Whole filesystem allocation quota and all adversarial rename/resource races remain unestablished;6 targeted storage cases pass locally, actual host companion requires exact hosted CI.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "native-sec-host-schedule.mjs": {
+    "sha256": "b994a349e143237dc72accbe08d6c76c8fcff6afdbecc2d6b2ba9ec18634a868",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Pinned reviewed plan, explicit monotonic clock/parent/health/readiness/completion ports.",
+    "outputs": "Schedule and finite readiness/completion/deadline/failure state.",
+    "sideEffects": "Only injected sleep/timers and capture termination; never signals producer.",
+    "failure": "Unknown history/latest-start/readiness/pin/clock failure blocks or terminates only capture; bounded SIGTERM then SIGKILL confirmation.",
+    "timing": "At most4h early startup; warmup start-30s/latest start-10s; end plus5..60s shutdown margin, not540sec cap.",
+    "researchBoundary": "Unchanged transport lifecycle only, not protocol adoption or evidence completeness. No collection activated.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
   }
 }

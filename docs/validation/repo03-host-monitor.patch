@@ -1,0 +1,60 @@
+diff --git a/native-sec-colocated-host.mjs b/native-sec-colocated-host.mjs
+index 0ca496aa..919855de 100644
+--- a/native-sec-colocated-host.mjs
++++ b/native-sec-colocated-host.mjs
+@@ -7,7 +7,19 @@ import {pinnedCaptureSchedule,orchestratePinnedCapture,SYSTEM_CAPTURE_CLOCK} fro
+ import {immutableRead} from './paper-capture-wrapper.mjs';import {nativeHandoffPort} from './native-sec-handoff.mjs';
+ const need=(x,c)=>{if(!x)throw Error(c);};
+ export const HOST_CAPS=Object.freeze({logBytes:2097152,storageBytes:400*1024*1024,files:4096,internalRetries:0});
+-function treeBytes(root){let total=0,count=0;const visit=p=>{const s=fs.lstatSync(p);need(!s.isSymbolicLink(),'HOST_STORAGE_SYMLINK');if(s.isDirectory())for(const name of fs.readdirSync(p)){need(++count<=4096,'HOST_FILE_BUDGET');visit(path.join(p,name));}else{need(s.isFile(),'HOST_STORAGE_TYPE');total+=s.size;need(total<=HOST_CAPS.storageBytes,'HOST_STORAGE_BUDGET');}};if(fs.existsSync(root))visit(root);return total;}
++export function treeBytes(root){
++ let total=0,count=0;
++ const visit=(p,transient=false)=>{
++  let stat,names;
++  try{stat=fs.lstatSync(p);}catch(e){if(transient&&e.code==='ENOENT')return;throw e;}
++  need(!stat.isSymbolicLink(),'HOST_STORAGE_SYMLINK');
++  if(stat.isDirectory()){
++   try{names=fs.readdirSync(p);}catch(e){if(transient&&e.code==='ENOENT')return;throw e;}
++   for(const name of names){need(++count<=HOST_CAPS.files,'HOST_FILE_BUDGET');visit(path.join(p,name),name==='.observing'||name==='.writer-lock');}
++  }else{need(stat.isFile(),'HOST_STORAGE_TYPE');total+=stat.size;need(total<=HOST_CAPS.storageBytes,'HOST_STORAGE_BUDGET');}
++ };
++ if(fs.existsSync(root))visit(root);return total;
++}
+ function verify(spec){need(spec&&path.isAbsolute(spec.cwd)&&typeof spec.entry==='string'&&!path.isAbsolute(spec.entry)&&!spec.entry.split('/').includes('..')&&Array.isArray(spec.args||[])&&Object.keys(spec.env||{}).every(k=>/^[A-Z_][A-Z0-9_]*$/.test(k)),'HOST_PROCESS_SPEC');need(immutableRead(path.join(spec.cwd,spec.entry),4*1024*1024).hash===spec.entrySha256,'HOST_SOURCE_PIN');for(const [file,pin]of Object.entries(spec.runtimeFiles||{})){need(!path.isAbsolute(file)&&!file.split('/').includes('..'),'HOST_DEPENDENCY_PATH');need(immutableRead(path.join(spec.cwd,file),4*1024*1024).hash===pin,'HOST_DEPENDENCY_PIN');}}
+ export function startColocatedNativeHost({mode,producer,capture,native,healthFile,parentState,completeRun=null,planPin,clock=SYSTEM_CAPTURE_CLOCK,shutdownMarginMs=30000,storageRoot=capture.cwd}){
+  need(mode==='INACTIVE_SYNTHETIC_REHEARSAL','HOST_INACTIVE_NO_LIVE_AUTHORIZATION');const schedule=pinnedCaptureSchedule(planPin,clock.now(),{shutdownMarginMs});verify(producer);verify(capture);need(path.isAbsolute(storageRoot)&&capture.cwd.startsWith(path.resolve(storageRoot)+path.sep),'HOST_STORAGE_ROOT');need(Object.keys(producer.runtimeFiles||{}).length>0&&Object.keys(capture.runtimeFiles||{}).length>0,'HOST_COMPLETE_DEPENDENCY_PINS');need(path.resolve(healthFile).startsWith(path.resolve(storageRoot)+path.sep)&&!fs.existsSync(healthFile),'HOST_EXCLUSIVE_HEALTH');for(let p=path.dirname(path.resolve(healthFile));;p=path.dirname(p)){if(fs.existsSync(p))need(!fs.lstatSync(p).isSymbolicLink(),'HOST_HEALTH_SYMLINK');if(path.dirname(p)===p)break;}
+diff --git a/test/repo03-host-monitor.test.mjs b/test/repo03-host-monitor.test.mjs
+new file mode 100644
+index 00000000..a30944c6
+--- /dev/null
++++ b/test/repo03-host-monitor.test.mjs
+@@ -0,0 +1,15 @@
++// Companion REPO-03 regression. PR6's source/fixtures/tests stay unchanged.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
++import {producerFixture} from './native-sec-producer-fixture.mjs';import {v2HostFixture} from './sec-v2-host-fixture.mjs';import {startInactiveV2Host} from '../sec-v2-host-binding.mjs';
++import {prepareNativeParentForHost} from '../native-sec-colocated-host.mjs';import {createSameDayLineageClient} from '../native-sec-lineage-history.mjs';
++import {createHash} from 'node:crypto';const sha=b=>createHash('sha256').update(b).digest('hex');
++test('actual host survives transient marker disappearance and retains the intended partial manifest',async t=>{
++ const p=await producerFixture({long:true,snapshotDelayMs:1,selectionTelemetry:true,symbol:'AMD',peerSymbol:'INTC',syntheticSECOrigin:true,emptyFeedBefore:Date.parse('2026-11-05T14:30:30Z')}),w=v2HostFixture(p,'manifest-partial');t.after(()=>{p.close();w.cleanup();});
++ const client=createSameDayLineageClient({token:'SYNTHETIC',storageOrigins:['https://synthetic.blob.core.windows.net'],fetcher:async()=>Response.json({total_count:0,workflow_runs:[]})});
++ const parentState=await prepareNativeParentForHost({client,scope:{day:'2026-11-05',before:'2026-11-05T14:29:30Z',currentRunId:900,workflowId:7,allowedSourceShas:[p.sourceSha]},rootDirectory:p.dir,destination:'runtime/native-sec-parents/repo03'});
++ const original=fs.lstatSync;let injected=0,host;fs.lstatSync=function(file,...args){if(injected===0&&String(file).startsWith(w.c.output+path.sep)&&['.observing','.writer-lock'].includes(path.basename(String(file)))&&fs.existsSync(file)){injected++;throw Object.assign(Error('SYNTHETIC_REMOVED_BETWEEN_LIST_AND_STAT'),{code:'ENOENT'});}return original.call(this,file,...args);};
++ try{
++  const result=await p.run({shadow:true,runId:'900',epoch:Date.parse('2026-11-05T14:28:00Z'),fakeMin:569,launch:spec=>{const runtimeFiles=Object.fromEntries(fs.readdirSync(p.dir).filter(n=>n.endsWith('.mjs')||n.endsWith('.js')).map(n=>[n,sha(fs.readFileSync(path.join(p.dir,n)))]));host=startInactiveV2Host({mode:'INACTIVE_SYNTHETIC_REHEARSAL',producer:{...spec,entrySha256:runtimeFiles['ignition-watch.mjs'],runtimeFiles},capture:w.capture,native:w.native,parentState,planPin:w.planPin,clock:{now:()=>Date.parse(w.c.plan.start)-30000,sleep:ms=>new Promise(r=>setTimeout(r,Math.min(ms,1000))),setTimeout,clearTimeout},storageRoot:w.f.dir,healthFile:path.join(w.f.dir,'health.json')});return host.producer;}});
++  const health=await host.completion;assert.equal(injected,1);assert.equal(health.producerExitCode,0);assert.equal(health.producerCancelled,false);assert.equal(health.status,'CAPTURE_FAILED');assert.equal(health.captureExitSignal,null,'intended manifest failure, not a resource-monitor termination');assert.deepEqual(result.snapshot.heartbeat.map(x=>x.m),Array.from({length:332},(_,i)=>569+i));assert.equal(fs.readFileSync(path.join(w.c.receiptDirectory,'manifest.json')).length,12);assert.equal(fs.readdirSync(w.c.downloads).length,41);
++ }finally{fs.lstatSync=original;}
++});
+diff --git a/test/repo03-host-storage.test.mjs b/test/repo03-host-storage.test.mjs
+new file mode 100644
+index 00000000..b3047354
+--- /dev/null
++++ b/test/repo03-host-storage.test.mjs
+@@ -0,0 +1,8 @@
++// Actual host storage walker: real disposable paths and narrowly injected filesystem races.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
++import {pathToFileURL} from 'node:url';
++const {treeBytes,HOST_CAPS}=await import(process.env.STOCK2_HOST_BUDGET_MODULE?pathToFileURL(process.env.STOCK2_HOST_BUDGET_MODULE).href:new URL('../native-sec-colocated-host.mjs',import.meta.url).href);
++function fixture(t){const root=fs.mkdtempSync(path.join(os.tmpdir(),'repo03-host-budget-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.writeFileSync(path.join(root,'evidence'),'retained');return root;}
++for(const marker of ['.observing','.writer-lock'])for(const boundary of ['stat','read'])test('normal '+marker+' removal at '+boundary+' cannot kill capture storage inspection',t=>{const root=fixture(t),file=path.join(root,marker);fs.mkdirSync(file);const original=boundary==='stat'?fs.lstatSync:fs.readdirSync,key=boundary==='stat'?'lstatSync':'readdirSync';let removed=false;fs[key]=function(p,...args){if(p===file&&!removed){removed=true;fs.rmdirSync(file);}return original.call(this,p,...args);};try{assert.equal(treeBytes(root),8);assert.equal(removed,true);}finally{fs[key]=original;}});
++test('a disappearing committed file is still an integrity failure',t=>{const root=fixture(t),file=path.join(root,'evidence'),original=fs.lstatSync;fs.lstatSync=function(p,...args){if(p===file)fs.unlinkSync(file);return original.call(this,p,...args);};try{assert.throws(()=>treeBytes(root),{code:'ENOENT'});}finally{fs.lstatSync=original;}});
++test('marker names do not bypass symlink/type/budget or permission failures',t=>{const root=fixture(t),marker=path.join(root,'.observing');fs.symlinkSync(path.join(root,'evidence'),marker);assert.throws(()=>treeBytes(root),/HOST_STORAGE_SYMLINK/);fs.unlinkSync(marker);fs.mkdirSync(marker);const original=fs.lstatSync;fs.lstatSync=function(p,...args){if(p===marker)throw Object.assign(Error('synthetic permission refusal'),{code:'EACCES'});return original.call(this,p,...args);};try{assert.throws(()=>treeBytes(root),{code:'EACCES'});}finally{fs.lstatSync=original;}fs.rmdirSync(marker);const fd=fs.openSync(marker,'wx');try{fs.ftruncateSync(fd,HOST_CAPS.storageBytes+1);}finally{fs.closeSync(fd);}assert.throws(()=>treeBytes(root),/HOST_STORAGE_BUDGET/);});

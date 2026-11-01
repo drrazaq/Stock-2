@@ -7,7 +7,19 @@ import {pinnedCaptureSchedule,orchestratePinnedCapture,SYSTEM_CAPTURE_CLOCK} fro
 import {immutableRead} from './paper-capture-wrapper.mjs';import {nativeHandoffPort} from './native-sec-handoff.mjs';
 const need=(x,c)=>{if(!x)throw Error(c);};
 export const HOST_CAPS=Object.freeze({logBytes:2097152,storageBytes:400*1024*1024,files:4096,internalRetries:0});
-function treeBytes(root){let total=0,count=0;const visit=p=>{const s=fs.lstatSync(p);need(!s.isSymbolicLink(),'HOST_STORAGE_SYMLINK');if(s.isDirectory())for(const name of fs.readdirSync(p)){need(++count<=4096,'HOST_FILE_BUDGET');visit(path.join(p,name));}else{need(s.isFile(),'HOST_STORAGE_TYPE');total+=s.size;need(total<=HOST_CAPS.storageBytes,'HOST_STORAGE_BUDGET');}};if(fs.existsSync(root))visit(root);return total;}
+export function treeBytes(root){
+ let total=0,count=0;
+ const visit=(p,transient=false)=>{
+  let stat,names;
+  try{stat=fs.lstatSync(p);}catch(e){if(transient&&e.code==='ENOENT')return;throw e;}
+  need(!stat.isSymbolicLink(),'HOST_STORAGE_SYMLINK');
+  if(stat.isDirectory()){
+   try{names=fs.readdirSync(p);}catch(e){if(transient&&e.code==='ENOENT')return;throw e;}
+   for(const name of names){need(++count<=HOST_CAPS.files,'HOST_FILE_BUDGET');visit(path.join(p,name),name==='.observing'||name==='.writer-lock');}
+  }else{need(stat.isFile(),'HOST_STORAGE_TYPE');total+=stat.size;need(total<=HOST_CAPS.storageBytes,'HOST_STORAGE_BUDGET');}
+ };
+ if(fs.existsSync(root))visit(root);return total;
+}
 function verify(spec){need(spec&&path.isAbsolute(spec.cwd)&&typeof spec.entry==='string'&&!path.isAbsolute(spec.entry)&&!spec.entry.split('/').includes('..')&&Array.isArray(spec.args||[])&&Object.keys(spec.env||{}).every(k=>/^[A-Z_][A-Z0-9_]*$/.test(k)),'HOST_PROCESS_SPEC');need(immutableRead(path.join(spec.cwd,spec.entry),4*1024*1024).hash===spec.entrySha256,'HOST_SOURCE_PIN');for(const [file,pin]of Object.entries(spec.runtimeFiles||{})){need(!path.isAbsolute(file)&&!file.split('/').includes('..'),'HOST_DEPENDENCY_PATH');need(immutableRead(path.join(spec.cwd,file),4*1024*1024).hash===pin,'HOST_DEPENDENCY_PIN');}}
 export function startColocatedNativeHost({mode,producer,capture,native,healthFile,parentState,completeRun=null,planPin,clock=SYSTEM_CAPTURE_CLOCK,shutdownMarginMs=30000,storageRoot=capture.cwd}){
  need(mode==='INACTIVE_SYNTHETIC_REHEARSAL','HOST_INACTIVE_NO_LIVE_AUTHORIZATION');const schedule=pinnedCaptureSchedule(planPin,clock.now(),{shutdownMarginMs});verify(producer);verify(capture);need(path.isAbsolute(storageRoot)&&capture.cwd.startsWith(path.resolve(storageRoot)+path.sep),'HOST_STORAGE_ROOT');need(Object.keys(producer.runtimeFiles||{}).length>0&&Object.keys(capture.runtimeFiles||{}).length>0,'HOST_COMPLETE_DEPENDENCY_PINS');need(path.resolve(healthFile).startsWith(path.resolve(storageRoot)+path.sep)&&!fs.existsSync(healthFile),'HOST_EXCLUSIVE_HEALTH');for(let p=path.dirname(path.resolve(healthFile));;p=path.dirname(p)){if(fs.existsSync(p))need(!fs.lstatSync(p).isSymbolicLink(),'HOST_HEALTH_SYMLINK');if(path.dirname(p)===p)break;}

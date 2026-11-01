@@ -1310,19 +1310,6 @@
       "nextAction": "Review actual source/caller contract using matrix locators; reuse prior targeted evidence without treating it as whole-script coverage."
     },
     {
-      "path": "native-sec-colocated-host.mjs",
-      "sha256": "1e96b29b21908e3623b6086497c598735308e468e032e993620b376636e88b48",
-      "requiredAxes": [
-        "inputs",
-        "outputs",
-        "sideEffects",
-        "failure",
-        "timing",
-        "researchBoundary"
-      ],
-      "nextAction": "Review actual source/caller contract using matrix locators; reuse prior targeted evidence without treating it as whole-script coverage."
-    },
-    {
       "path": "native-sec-colocated-prefix.mjs",
       "sha256": "7f02632e7b7b103aa46d1b6786df8cd5990fd3ae08ad5d3920af284f0e2e22ab",
       "requiredAxes": [
@@ -1351,19 +1338,6 @@
     {
       "path": "native-sec-handoff.mjs",
       "sha256": "90a3b5ff12ad31b132e68e9d660d805aeaefbc581dd57b779b2c217aace9bfe3",
-      "requiredAxes": [
-        "inputs",
-        "outputs",
-        "sideEffects",
-        "failure",
-        "timing",
-        "researchBoundary"
-      ],
-      "nextAction": "Review actual source/caller contract using matrix locators; reuse prior targeted evidence without treating it as whole-script coverage."
-    },
-    {
-      "path": "native-sec-host-schedule.mjs",
-      "sha256": "b994a349e143237dc72accbe08d6c76c8fcff6afdbecc2d6b2ba9ec18634a868",
       "requiredAxes": [
         "inputs",
         "outputs",
@@ -3387,6 +3361,11 @@
       "path": ".github/save-data.sh",
       "gap": "Do not run inside active watcher; complete caller/dirty-tree/conflict audit assigned separately, not claimed satisfied here.",
       "owner": "Claude workflow/privacy/claims audit"
+    },
+    {
+      "path": "native-sec-colocated-host.mjs",
+      "gap": "Whole filesystem allocation quota and all adversarial rename/resource races remain unestablished;6 targeted storage cases pass locally, actual host companion requires exact hosted CI.",
+      "owner": "Implementation owner"
     },
     {
       "path": "sec-time.mjs",
