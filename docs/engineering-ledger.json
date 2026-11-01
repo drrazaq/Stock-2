@@ -8030,14 +8030,20 @@
   "latestInactiveV2HostCheckpoint": {
     "date": "2026-11-01",
     "source": "b4cebc98a3b36b1818bdc4f041e9a439ba07af7f",
-    "scopedEngineering": "COMPLETE_REVIEW_PENDING",
+    "scopedEngineering": "REOPENED_F1_COMPANION_RE_REVIEW_PENDING",
     "hostedNodeTestFiles": 235,
     "localGuardWireLegacyCases": 37,
     "package": "docs/validation/v2-host-guard-recovery-manifest.json",
     "acceptanceClosures": [],
     "genuineAdmissions": 0,
     "liveModeImplemented": false,
-    "next": "Focused independent review, then REPO-03 behavioral matrix and HISTORY-03 numerical claim catalogue with Claude audit"
+    "next": "Focused independent review, then REPO-03 behavioral matrix and HISTORY-03 numerical claim catalogue with Claude audit",
+    "historicalScopedEngineering": "COMPLETE_REVIEW_PENDING",
+    "independentReview": {
+      "source": "9af3b071630cce73136ff91016e368ea3cc77b13",
+      "verdict": "CHANGES_REQUIRED",
+      "reconciliation": "docs/validation/repo03-independent-review-reconciliation.json"
+    }
   },
   "latestRepo03BehavioralReview": {
     "baseSourceCommit": "6868d9a39518fdf4168f67167f681bbba7c68ab0",
@@ -8051,6 +8057,7 @@
     "report": "docs/repo03-behavioral-review.md",
     "next": "scan.mjs source/caller contract; coordinate complementary Claude workflow/claim audit; PR6 stable",
     "hostMonitorCompanion": "docs/validation/repo03-host-monitor-manifest.json",
-    "firstPublishedCi": "53ee12e:4PASS,1FAIL; unchanged manifest-partial case missing output, evidence retained"
+    "firstPublishedCi": "53ee12e:4PASS,1FAIL; unchanged manifest-partial case missing output, evidence retained",
+    "independentReviewReconciliation": "docs/validation/repo03-independent-review-reconciliation.json"
   }
 }

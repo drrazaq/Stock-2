@@ -20,6 +20,14 @@ export function treeBytes(root){
  };
  if(fs.existsSync(root))visit(root);return total;
 }
+// Fixed health categories only: no filesystem path, provider text or input value.
+export function storageMonitorReason(error){
+ const codes=['ENOENT','EACCES','EPERM','EIO','ENOTDIR','ELOOP'];
+ if(codes.includes(error?.code))return 'HOST_STORAGE_MONITOR_'+error.code;
+ const bounds=['HOST_STORAGE_SYMLINK','HOST_STORAGE_TYPE','HOST_STORAGE_BUDGET','HOST_FILE_BUDGET'];
+ return bounds.includes(error?.message)?error.message:'HOST_STORAGE_MONITOR_ERROR';
+}
+
 function verify(spec){need(spec&&path.isAbsolute(spec.cwd)&&typeof spec.entry==='string'&&!path.isAbsolute(spec.entry)&&!spec.entry.split('/').includes('..')&&Array.isArray(spec.args||[])&&Object.keys(spec.env||{}).every(k=>/^[A-Z_][A-Z0-9_]*$/.test(k)),'HOST_PROCESS_SPEC');need(immutableRead(path.join(spec.cwd,spec.entry),4*1024*1024).hash===spec.entrySha256,'HOST_SOURCE_PIN');for(const [file,pin]of Object.entries(spec.runtimeFiles||{})){need(!path.isAbsolute(file)&&!file.split('/').includes('..'),'HOST_DEPENDENCY_PATH');need(immutableRead(path.join(spec.cwd,file),4*1024*1024).hash===pin,'HOST_DEPENDENCY_PIN');}}
 export function startColocatedNativeHost({mode,producer,capture,native,healthFile,parentState,completeRun=null,planPin,clock=SYSTEM_CAPTURE_CLOCK,shutdownMarginMs=30000,storageRoot=capture.cwd}){
  need(mode==='INACTIVE_SYNTHETIC_REHEARSAL','HOST_INACTIVE_NO_LIVE_AUTHORIZATION');const schedule=pinnedCaptureSchedule(planPin,clock.now(),{shutdownMarginMs});verify(producer);verify(capture);need(path.isAbsolute(storageRoot)&&capture.cwd.startsWith(path.resolve(storageRoot)+path.sep),'HOST_STORAGE_ROOT');need(Object.keys(producer.runtimeFiles||{}).length>0&&Object.keys(capture.runtimeFiles||{}).length>0,'HOST_COMPLETE_DEPENDENCY_PINS');need(path.resolve(healthFile).startsWith(path.resolve(storageRoot)+path.sep)&&!fs.existsSync(healthFile),'HOST_EXCLUSIVE_HEALTH');for(let p=path.dirname(path.resolve(healthFile));;p=path.dirname(p)){if(fs.existsSync(p))need(!fs.lstatSync(p).isSymbolicLink(),'HOST_HEALTH_SYMLINK');if(path.dirname(p)===p)break;}
@@ -32,9 +40,9 @@ export function startColocatedNativeHost({mode,producer,capture,native,healthFil
   try{
    const parentAllowed=['VERIFIED_AVAILABLE_PARENT_NOT_GLOBAL_HISTORY','VERIFIED_NO_EARLIER_SAME_DAY_RUN','AUTHENTICATED_EARLIER_SAME_DAY_EVIDENCE','SYNTHETIC_BOOTSTRAP_NO_GLOBAL_HISTORY'].includes(parentState?.status),port=nativeHandoffPort(native);
    const lifecycle=await orchestratePinnedCapture({schedule,clock,parentAllowed,healthy:()=>!limitHit&&!(producerDone&&producerCode!==0),prefixReady:async at=>{const prefix=await port({at,identities:[]});return prefix.evidenceAssets.some(a=>a.files.some(f=>/^response-\d{6}\.json$/.test(f.name)));},startCapture:()=>{
-    verify(capture);treeBytes(storageRoot);captureChild=launch(capture);const monitor=setInterval(()=>{try{treeBytes(storageRoot);if(producerDone&&producerCode!==0||limitHit||captureBytes>HOST_CAPS.logBytes){limitHit=true;captureChild.kill('SIGTERM');}}catch{limitHit=true;captureChild.kill('SIGTERM');}},100);
+    verify(capture);treeBytes(storageRoot);captureChild=launch(capture);const monitor=setInterval(()=>{try{treeBytes(storageRoot);if(producerDone&&producerCode!==0||limitHit||captureBytes>HOST_CAPS.logBytes){limitHit=true;captureChild.kill('SIGTERM');}}catch(error){captureFailureReason=storageMonitorReason(error);limitHit=true;captureChild.kill('SIGTERM');}},100);
     for(const stream of [captureChild.stdout,captureChild.stderr])stream.on('data',b=>{captureBytes+=b.length;});const completion=new Promise(resolve=>{captureChild.once('error',()=>resolve(-1));captureChild.once('close',(code,signal)=>{captureExitSignal=signal;resolve(code);});}).finally(()=>clearInterval(monitor));return {completion,terminate:signal=>{if(captureChild.exitCode===null)captureChild.kill(signal);}};
-   }});health=lifecycle.status;captureFailureReason=lifecycle.reason||null;captureShutdownConfirmed=lifecycle.shutdownConfirmed??null;
+   }});health=lifecycle.status;captureFailureReason=captureFailureReason||lifecycle.reason||null;captureShutdownConfirmed=lifecycle.shutdownConfirmed??null;
   }catch{health='HOST_ERROR';}
   // Capture failure never cancels, rebases or suspends the producer. Its existing
   // session runner owns its natural deadline; completion waits for that boundary.

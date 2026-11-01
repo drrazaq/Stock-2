@@ -1,0 +1,49 @@
+{
+  "kind": "REPO03_CLAUDE_PR6_RECONCILIATION_V1",
+  "reviewSource": "9af3b071630cce73136ff91016e368ea3cc77b13",
+  "reviewVerdict": "CHANGES_REQUIRED",
+  "reviewedPR6Head": "64611cdf47dd230026911dde53b98cf7413c17f1",
+  "reviewUrl": "https://github.com/drrazaq/Stock-2/blob/9af3b071630cce73136ff91016e368ea3cc77b13/docs/reviews/claude-2026-11-01/pr6/REVIEW-v2-host-pr6.md",
+  "verifiedPublicFileHashes": {
+    "REVIEW-v2-host-pr6.md": "9d66747d256c3be19c717d03ede241999d55728e8218928e57cc4eb05b442d63",
+    "v2-host-harness.mjs": "fb83f88ae72c7a40f1a4515426aedfc1e030600e067e8b6f5b7d43ac794b751d",
+    "README.md": "6dc382ae3c6c6d11a08c840d15d36ac85a178d12289bdcac479a44c1c37ce605",
+    "diag-monitor.sh": "e5b539a40d329c130526564925512c3f285c97caf6f8334a2150f0b3c1337a34",
+    "harness-result-node22.json": "19268dbebe32fe3a10e3fc0db8bb97ec474920063f618439e90ae1d78bd2a1e3",
+    "harness-result-node20.json": "0beca55e16651d2d027576368e12ea29bd9784d9a1e5bffa10fb94e9261a4c09"
+  },
+  "executionsAttributedToClaude": {
+    "NodeVersions": [
+      "20.20.0",
+      "22.22.0"
+    ],
+    "actualHostSuccessFailures": "3/18; diagnostic traced ENOENT sealed/.observing",
+    "recoveryGuardIsolationResults": "See pinned review; prior passes preserved",
+    "gatedBaselineFailures": {
+      "watcher-resilience": 7,
+      "watcher-incident-revision": 1,
+      "sameAt": [
+        "71cccb62",
+        "6868d9a3"
+      ],
+      "independentlyReproducedHere": false
+    }
+  },
+  "ourExecutions": {
+    "exactOldWalker": {
+      "failedRaceCases": 4,
+      "passedSafetyControls": 2
+    },
+    "repairedStorageAndHealthCases": 7,
+    "hosted41211cb": "All5 checks PASS,238 Node files expected; actual caller transient-race and full332 heartbeat passed",
+    "newHealthAndStress": "PENDING_FINAL_EXACT_CI"
+  },
+  "F1Disposition": "Narrow companion tolerates only transient-marker ENOENT, preserves fixed monitor reasons; independent re-review pending. PR6 unchanged. Thirty consecutive Node20 controls required by proposed verification job, no retry after failure.",
+  "N1": "Inactive labels/fetch replacement are not an OS/core-network sandbox; future live guard needs enforced destinations, not trust in a binding promise. No live mode exists.",
+  "N2": "Encryption/key-holder resealing is not independent source authenticity. Existing limitation retained.",
+  "N3": "No interrupted recovery without pinned receipt manifest; per-receipt reconstruction/download operation remains implementation gap.",
+  "N4": "Partial frame count versus context completeness must be read separately; no naming change in this scope.",
+  "N5": "Eight author-reported gated base failures remain explicit follow-up; ordinary hosted PASS does not run those gated cases.",
+  "newAcceptanceClosures": [],
+  "productionChanged": false
+}

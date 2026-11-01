@@ -2,11 +2,11 @@
   "kind": "REPO03_INACTIVE_HOST_MONITOR_COMPANION_V1",
   "base": "53ee12ea3722bbbc358cf332b3da2591d54419f9",
   "preservedPR6Head": "64611cdf47dd230026911dde53b98cf7413c17f1",
-  "patchSha256": "36f5be17f764072459768d188a24fb662bcf64d9e1e38d51606c965173b69dba",
+  "patchSha256": "5c2ee9c713632839bdcadc38f80819c56389e0b7b145f386fcb1274b8730e007",
   "files": {
-    "native-sec-colocated-host.mjs": "fc2c2e68b5a7fd4e74af73170b6a80ce41eeb34ac418f938c372a0f12c6d4278",
-    "test/repo03-host-storage.test.mjs": "e72719af0e1466d595d6a66fc8bb8efdbe0e0103bba7bd87b844cd4ec1637bda",
-    "test/repo03-host-monitor.test.mjs": "9c082aa07e0f3d284d68fbcb9b5f58302daa371496fc1b52cbbeadb1587ff76c"
+    "native-sec-colocated-host.mjs": "d4e13f117921a7cc1cfa19a5d5c9a8953886c0208578061710774ea2ce7f8b32",
+    "test/repo03-host-storage.test.mjs": "f884b20a4d8f1f5680f10c8ac58eaed26c28dc19e8a5980a22d695e6c7ac916c",
+    "test/repo03-host-monitor.test.mjs": "054d83eded3687573a6e19ea333a90d5424c77e55f98fcaaf275495602b2a036"
   },
   "unchangedPR6Dependencies": {
     "artifact-wire-client.mjs": "48242dc35478fc2e6464b3f5b6bab32b902e6ffb246a1107b277f3233931e0d4",
@@ -60,12 +60,18 @@
     "pass": 6,
     "fail": 0
   },
-  "actualHostRegression": "PENDING_EXACT_HOSTED_CI",
+  "actualHostRegression": "41211cb transient race PASS; final transient/health and30consecutive controls PENDING_EXACT_HOSTED",
   "firstCiFailure": {
     "commit": "53ee12ea3722bbbc358cf332b3da2591d54419f9",
     "job": 124907084402,
     "case": "manifest-partial",
     "error": "ENOENT expected partial manifest absent",
     "exactRetrospectiveCause": "NOT_ESTABLISHED"
-  }
+  },
+  "repairedStorageAndHealthCases": {
+    "pass": 7,
+    "fail": 0
+  },
+  "independentReviewSource": "9af3b071630cce73136ff91016e368ea3cc77b13",
+  "independentReReview": "PENDING"
 }

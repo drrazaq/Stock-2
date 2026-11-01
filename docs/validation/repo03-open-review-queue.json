@@ -3477,5 +3477,14 @@
       "gap": "Existing/symlink output overwrite repaired with2 actual-caller tests; local git/archive child still lacks explicit no-lazy-fetch/timeout. Further bounded verifier review remains.",
       "owner": "Implementation owner"
     }
-  ]
+  ],
+  "independentAuditNotes": {
+    "source": "9af3b071630cce73136ff91016e368ea3cc77b13",
+    "generalRepo03AuditNotPublished": true,
+    "gatedBaseFailures": {
+      "watcher-resilience": 7,
+      "watcher-incident-revision": 1
+    },
+    "next": "Preserve F1 companion for independent re-review; diagnose gated failures under scanner/watcher source-contract review without rewriting strategies or frozen results."
+  }
 }
