@@ -1,0 +1,25 @@
+--- a/scan.mjs
++++ b/scan.mjs
+@@ -996,6 +996,12 @@
+ const nextDay = (x) => new Date(Date.parse(x + 'T00:00:00Z') + 864e5).toISOString().slice(0, 10);
+ function sessionsAfter(a, b) { if (!a || !b || b <= a) return 0; let n = 0, x = a; for (let k = 0; k < 800 && x < b; k++) { x = nextDay(x); if (isSession(x)) n++; } return n; }
+ function sessionPlus(a, n) { let x = a; for (let k = 0; k < 800 && n > 0; k++) { x = nextDay(x); if (isSession(x)) n--; } return x; }
++// EARNINGS DRIFT reaction session on the exchange calendar (MARKET-03 earnings-holiday fix, 2 Nov 2026). Before the open: that day
++// if it is a session, else the next session; after the close: the next session; unknown time: either of those two sessions.
++// Same result as before on ordinary trading days; a report next to a market holiday is no longer silently skipped.
++function peadReactsOn(r, session) { if (!r || typeof r.d !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.d)) return false;
++  const same = isSession(r.d) ? r.d : sessionPlus(r.d, 1), next = sessionPlus(r.d, 1);
++  return r.t === 'bmo' ? same === session : r.t === 'amc' ? next === session : same === session || next === session; }
+ const marketOpen = (now) => { const n = ny(now); return !n.weekend && !isHoliday(n.d) && n.mins >= 570 && n.mins < 960; };
+ 
+ let used = 0;
+@@ -3930,8 +3936,7 @@
+   // EARNINGS DRIFT: a stock that beat its EPS estimate by 10%+ and whose reaction day (this session) closed up 3%+ in the top half.
+   // Offered only while the Sunday fair test (earnings-study.mjs) says PROMISING; otherwise logged for the record only.
+   const pead = [], peadFunnel = { reports: 0, noPrice: 0, held: 0, notHalal: 0, smallEst: 0, beat: 0, passed: 0 }; { const ES = readJson0('data/earnings-study.json'), ER = readJson0('data/earnings-recent.json'), R = (ES && ES.rule) || { minSurprise: 0.10, minUp: 0.03, minLoc: 0.5, maxGap: 0.03, maxStop: 0.15, hold: 40 };
+-    const nextDay = (d) => { let ms = Date.parse(d + 'T12:00:00Z'); do { ms += 864e5; } while ([0, 6].includes(new Date(ms).getUTCDay())); return new Date(ms).toISOString().slice(0, 10); };
+-    for (const r of (ER && ER.reports) || []) { const react = r.t === 'bmo' ? r.d : r.t === 'amc' ? nextDay(r.d) : null; if (react ? react !== session : !(r.d === session || nextDay(r.d) === session)) continue; peadFunnel.reports++;
++    for (const r of (ER && ER.reports) || []) { if (!peadReactsOn(r, session)) continue; peadFunnel.reports++;
+       const d = loaded[r.sym]; if (!d || d.candles.length < 30) { peadFunnel.noPrice++; continue; } if (myPos[r.sym]) { peadFunnel.held++; continue; } if (myHalal(r.sym) === 'fail') { peadFunnel.notHalal++; continue; }
+       const c = d.candles, i = c.length - 1, b = c[i], p = c[i - 1]; if (b.d !== session) { peadFunnel.noPrice++; continue; }
+       if (!(Math.abs(r.e) >= 0.05)) { peadFunnel.smallEst++; continue; } const sur = (r.a - r.e) / Math.abs(r.e), up = b.c / p.c - 1, loc = b.h > b.l ? (b.c - b.l) / (b.h - b.l) : 0.5, stop = +(b.l * 0.995).toFixed(2);

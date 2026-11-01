@@ -1,0 +1,5 @@
+{"author":"Claude","date":"2026-11-02","patch":{"file":"docs/earnings-holiday/scan-earnings-holiday.patch","sha256":"608e01e97ab2efcd1cb82ecf240e0e19ccb489bbb573f68c1851e468f452fb07","lines":25},
+ "regressions":{"file":"docs/earnings-holiday/earnings-holiday.test.mjs","sha256":"678d10d1cce52574ab75e37fa63cff86e110f51f8f071bb8efbbb54e54689016","tests":6,"installAs":"test/earnings-holiday.test.mjs"},
+ "trees":{"codex_2e466c58":{"scanBefore":"73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7","scanAfter":"7d01d4fb728325e33f3ecefa51b373bdb981bf1287004a1eda64f5b610d771e0","withoutPatch":"FAIL (peadReactsOn is not defined)","withPatch":{"node20":"6/6","node22":"6/6","scanDependentFiles":"63/63"}},
+          "main_f6a9b166":{"scanBefore":"76ffcd5675a00a881432d5cb0dad69d6d5235cd66932ef07eb4530ddca9c1a99","scanAfter":"f08a338725387d5b7d4ecca6cffb46ec6baea84bc147feec39cb0061c0aaa91a","withPatch":{"node20":"6/6","buy-gates":"9/9","bot-actions":"8/8"}}},
+ "equivalence":{"range":"2026-01-01..2027-12-31","comparisons":9039,"changed":302,"rule":"every change is where the old rule pointed at a non-session day"}}
