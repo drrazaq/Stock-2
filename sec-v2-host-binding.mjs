@@ -63,5 +63,5 @@ export async function runInactiveV2Capture(c,prepared,bindings){
  }catch(e){reason=/^(V2_|PROPOSAL_|TELEMETRY_|ARTIFACT_|SNAPSHOT_|NATIVE_)[A-Z_]+$/.test(e.message)?e.message:'V2_BINDING_FAILED';}
  finally{wire.cancelActiveUpload();}
  const manifest={kind:'INACTIVE_V2_RECEIPTS_V1',scope:store.scope,receipts,primaryAdmission:false},raw=JSON.stringify(manifest);privateWrite(path.join(c.receiptDirectory,'manifest.json'),raw);
- return {status,reason,providerAttempts,responseBytes,confirmedUploads:receipts.length,wireRequests:wire.stats().requests,receiptManifestSha256:sha(raw),receiptManifest:manifest,outcome:result?.outcome||null,genuineAdmissions:0,primaryAdmission:false,automaticResumeAuthorized:false};
+ return {status,reason,providerAttempts,responseBytes,confirmedUploads:receipts.length,unreconciledRemoteUploads:wire.stats().completed-receipts.length,wireRequests:wire.stats().requests,receiptManifestSha256:sha(raw),receiptManifest:manifest,outcome:result?.outcome||null,genuineAdmissions:0,primaryAdmission:false,automaticResumeAuthorized:false};
 }
