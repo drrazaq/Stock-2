@@ -128,7 +128,7 @@ export function buildMidday(snap, ctx0 = {}) {
   // D
   text.push('', 'D. RUNNERS SO FAR (retrospective, not buys)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers));
   const ts = topSilence(snap.tally);
-  text.push('', 'Received ' + (snap.scanned ?? '?') + ' stocks (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '. Approved: ' + (snap.alerts || 0) + '.'
+  text.push('', 'Received ' + (snap.scanned ?? '?') + ' stocks (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '.'
     + (ts ? ' Top reason for silence: ' + ts.words + ' (' + ts.n + ', ' + ts.kind + ').' : ''));
   text.push('Chasing risk: no authenticated numerical estimate is linked here. Late discovery does not establish remaining opportunity. Check ZAD. Research only, not advice.');
   return { text: text.join('\n'), rows };

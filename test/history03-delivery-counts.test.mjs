@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
-import {alertDeliveryCounts,alertDeliveryLines} from '../radar-v3-core.mjs';import {saveCheckpoint,readCheckpoint} from '../watcher-checkpoint.mjs';
+import {alertDeliveryCounts,alertDeliveryLines,buildMidday,buildClose} from '../radar-v3-core.mjs';import {saveCheckpoint,readCheckpoint} from '../watcher-checkpoint.mjs';
 const source=fs.readFileSync(new URL('../ignition-watch.mjs',import.meta.url),'utf8'),a=source.indexOf('async function maybeAlert('),b=source.indexOf('\n// ',a),body=source.slice(a,b);
 async function actual({early=false,send=true,ack=true,state='UNSENT',blocked=false}={}){
  const messages=[],record={rule:'IG1',exit:'close',exitName:'close'},t={d:'2026-10-30',sym:'ZZQ',rule:early?'IG8':'IG1',m:600},pr={n:80,days:30,avg:0.02,stress:0.01};
@@ -17,3 +17,15 @@ test('observational interruption is uncertain and a restored checkpoint preserve
 });
 test('duplicate observation is counted once; conflicting count metadata is uncertain, never a manufactured send',()=>{const r={d:'2026-10-30',sym:'ZZQ',rule:'IG1',m:600,deliveryKind:'RULE_QUALIFIED',deliveryState:'ACKNOWLEDGED'};assert.equal(alertDeliveryCounts([r,{...r}],1).ruleQualified.sent,1);const c=alertDeliveryCounts([r,{...r,deliveryState:'UNSENT'}],1);assert.equal(c.ruleQualified.sent,0);assert.equal(c.ruleQualified.uncertain,1);assert.equal(c.legacyUnclassified,1);});
 test('legacy and malformed breakdowns remain unknown and cannot become current approval',()=>{for(const alertCounts of [undefined,{}, {version:1,ruleQualified:{recorded:2,sent:4}}]){const s=alertDeliveryLines({alerts:2,alertCounts}).join('\n');assert.match(s,/Legacy unsplit total: 2/);assert.match(s,/breakdown UNKNOWN/);assert.doesNotMatch(s,/APPROVED SIGNALS/);}});
+test('B01/D15 the actual midday footer never reclassifies a legacy count as approved',()=>{
+ const snap={day:'2026-10-30',at:'2026-10-30T16:00:00Z',m:720,alerts:9,hits:[],early:[],movers:[],tally:{},scanned:10,live:8};
+ const out=buildMidday(snap,{record:{},lab:{}}).text;
+ assert.match(out,/Legacy unsplit total: 9/);assert.match(out,/breakdown UNKNOWN/);
+ assert.doesNotMatch(out,/Approved:\s*9|APPROVED SIGNALS|9 approved|9 tested alerts sent/i);
+ assert.match(out,/10 stocks \(8 with a fresh price\)/);
+});
+test('X03/B12 actual close guidance does not promote cached history or paper outcomes to tested buys',()=>{
+ const out=buildClose('2026-10-30',{day:'2026-10-30',alerts:9},[],{});
+ assert.match(out,/Legacy unsplit total: 9/);assert.match(out,/Nothing in this research summary is a current approved purchase/);
+ assert.doesNotMatch(out,/system.s tested buys|Tomorrow.*tested|9 approved/i);
+});
