@@ -130,3 +130,106 @@ python3 -I tools/build-catalogue.py <dir with catalogue_data.py and hits.json> <
 ```
 
 Rebuilding from these tools on main `f6a9b166` reproduces `claims-catalogue.json`, `source-candidates.json`, `CLAIMS-CATALOGUE.md` and `RANKED-FINDINGS.md` byte for byte (checked before publication).
+
+---
+
+# Batch 2: Sunday lab summaries, opportunity radar, early alerts
+
+This batch covers the surfaces missing from the first catalogue. Every caller was rendered offline:
+- **Sunday lab senders:** on a synthetic 5-year price cache.
+- **Bot research replies and the after-close radar runner:** on the committed data.
+- **Radar and early-alert builders:** on the repository's own test fixtures.
+
+Every fetch went to a local fake server or was refused, and no real message was sent. Raw renders stay local.
+
+## Results
+
+- **29 records:** 14 findings (B01-B14) and 15 reviewed-acceptable surfaces (B20-B34). NOT PROVEN and REJECTED results are preserved as recorded.
+- **Gate or decision defects** (kept separate from wording):
+  - **B01:** the radar counts "APPROVED SIGNALS: N tested alerts sent". That count includes EARLY PAPER (NOT PROVEN) alerts, and alerts that were recorded but not sent.
+  - **B03:** the per-stock "15+ past trades, +1.5%" bar still admits engine BUY candidates. Its only test (hunting-lab persistence) was inconclusive, and its picks did worse than the other stocks.
+  - **B13:** the stop study's risk-preference choice is applied automatically to new owner buys, under the name "tested stop".
+  - **B02, and the batch-1 latent items X01 / X04:** paper results that produce trade wording.
+- **Wording-only defects:**
+  - **B04:** selection-biased "+1.6% to +2.2% a trade" averages in the `days` and `market today` replies;
+  - **B05:** "proven buy" used for the per-stock past-trade check;
+  - **B06:** a hard-coded "5 years" on studies that cover 3.5 to 4.3 years;
+  - **B07:** a mislabelled rebuy metric;
+  - **B08:** "buy day / sell day" printed for REJECTED catalyst rules;
+  - **B09:** "Missing: ... REJECTED; 2 more trading days";
+  - **B12:** "Tested buys ..." (the same as batch-1 X03).
+- **Provenance-only gaps:** B10 (static chasing statistic), B11 (static EW-ALERT-1 note), B14 ("tested AVOID").
+- **Owner policy questions, not decided here:**
+  - **P1:** may a paper record alone trigger a trade suggestion or BUY wording?
+  - **P2:** may the unvalidated per-stock check admit engine BUYs when focus is off?
+- **Production note:** the Sunday labs treat a missing `settings.quiet` as quiet. With the committed settings, most Sunday lab messages are sent only when something passes. The owner sees the results through the bot's research replies.
+
+## Coverage counts (`COVERAGE.md`)
+
+Batch 1's "914 - 837 = 77" did not mean 77 reviewed claims. It meant **77 source strings within one line of a catalogued claim's source reference**:
+- those strings covered 31 of the 43 claims;
+- 15 of them counted against more than one claim.
+
+Inventory v2 replaces that rule with:
+- exact anchor phrases, with long-string truncation handled;
+- every string in the batch-2 files read one by one;
+- a broader extraction that found 298 strings the batch-1 word list missed.
+
+| Category | Strings |
+|---|---:|
+| CATALOGUED_CLAIM | 57 |
+| REVIEWED_ACCEPTABLE | 202 |
+| NOT_A_CLAIM | 50 |
+| NOT_REVIEWED | 903 |
+| **Total** | **1212** (914 batch-1 + 298 broad-only) |
+
+**Records:** 43 (batch 1) + 29 (batch 2) = 72.
+- 42 are anchored to an extracted string.
+- 14 have their phrase in a source literal that carries no listed claim word.
+- 1 is assembled at runtime.
+- 15 are whole rendered surfaces (B20-B34).
+
+The 15 records not anchored to a string were reviewed from rendered text.
+
+## Still open for HISTORY-03 closure (updated)
+
+1. **903 strings still unreviewed:** mostly `scan.mjs`, plus discover, deals, movers, news-watch, premarket-check, smart-money, tipranks and intraday-radar.
+2. **Texts not yet rendered:**
+   - the live-only alert bodies (`ignition-watch.mjs`, read from source only) and the intraday-radar cards;
+   - the owner-input replies (`check SYM`, the sell/hold review, the opinion replies, the LEADER DIP buy confirmation).
+3. **Codex: wording repairs** per `RANKED-FINDINGS-v2.md` and `EVIDENCE-VOCABULARY.md`, plus the counter split for B01. Codex is changing these runtime files, so nothing is edited here.
+4. **Owner:** answer P1 and P2, and confirm the automatic stop default (B13).
+5. **MISSING provenance fields:** those from batch 1, plus B10, B11 and B14.
+6. **Independent recomputation** from raw prices of the claims the owner acts on (needs an authorized run on the 5-year cache).
+7. **Re-render and re-extract** after the repairs.
+
+## Batch 2 files and SHA256
+
+| File | Purpose | SHA256 |
+|---|---|---|
+| `BATCH2-FINDINGS.md` | batch-2 findings (B01-B14) and reviewed surfaces (B20-B34): supports / unsupported / defect type / correction; owner policy questions P1, P2 | `77a34cac1f19228335815f2ef09240140a8e7a924e862ff4e7ed9eb48371dd65` |
+| `RANKED-FINDINGS-v2.md` | combined ranked corrections, batches 1 and 2, with defect type | `f23dd3b531679ba52e6f007b8a52bb88ef77ed874ffe66b7cc84bc14670ce8d5` |
+| `EVIDENCE-VOCABULARY.md` | one proposed evidence vocabulary and the wording it replaces | `47f5a1ff092b1cdf1df6c2a7992153fa256f181c861dc092699aeea279a8a7c9` |
+| `COVERAGE.md` | coverage counts, claim presence table and the reconciliation of the batch-1 "77 mapped" | `8f6e1050f234da02e39ccdff1c997deb73a3749866435d8e7cbe4309498f78bb` |
+| `batch2-claims.json` | machine-readable batch-2 records and policy questions | `8207456496b3d28ec6ac182aa2c3decb41937ec44020b976f5dc9a9b7a2f3148` |
+| `source-inventory-v2.json` | all 1,212 strings (914 batch-1 + 298 broad-only) with category, claim ids and per-claim presence | `1f63d36e574cbe454cce53d57035b055ae6074189f01686cc0b81f8c1d079200` |
+| `tools/extract-claims-broad.py` | broader extractor (recall check) | `d92f278def75eb2277f927fb8b0afb2fe5343f82541a150673f8e9e923e02946` |
+| `tools/render-sunday-labs.mjs` | runs the 15 Sunday lab senders offline on a synthetic 5-year cache (output local only) | `173495e3ca7f0f0bc2779692eddedcb8e84f6e04afb81938bbe85a619dd3e03d` |
+| `tools/render-research.mjs` | renders scan.mjs research replies on committed data, offline (output local only) | `dcb4b4a783d20d10c48616a5f26b837348803f2c2bc998f770f7f09292676f0c` |
+| `tools/render-radar-alerts.mjs` | radar and early-alert builders on the repository test fixtures; opportunity-radar close on committed data, offline (output local only) | `bd7d6de157effcd91c0cd7be6b928480625a5c647429214f2096c94935ca8b1b` |
+| `tools/focus-check.mjs` | checks that the market-today buy list respects focus mode (committed data, local) | `b2147f7d8a66435c7c5b2f7da448b7ade9266595d8d03001e7f1761236817f23` |
+| `tools/catalogue_data_b2.py` | hand-mapped batch-2 records, vocabulary and policy questions | `ab8b38b1cb92d755e00612c8d4410b91ee851e41de48bb670795f257b136a059` |
+| `tools/build-batch2.py` | builds every batch-2 output above | `0563683b0b20201ffae4c7b1417f5d0d81b90f8423626411122537a6d8f8330b` |
+| `tools/readme_b2.py` | writes this README section | `878fab65232f37346baed2b7189b1dddaf303d7597e8733d72f360e1e9c21a39` |
+
+Reproduce (the outputs are byte-identical on main `f6a9b166`):
+
+```
+python3 -I tools/extract-claims-broad.py <repo> $(cat tools/production-files.txt) > hits-broad.json
+python3 -I tools/build-batch2.py docs/history-03 hits-broad.json <repo>
+node tools/render-sunday-labs.mjs <repo> <work dir>       # local only
+node tools/render-research.mjs <repo>                     # local only; contains owner holdings
+node tools/render-radar-alerts.mjs <repo> <work dir>      # local only
+```
+
+Batch 1's `source-candidates.json` is unchanged. Its `reviewStatus` field is superseded by `source-inventory-v2.json`.
