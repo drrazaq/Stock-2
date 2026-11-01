@@ -1,0 +1,278 @@
+diff --git a/artifact-wire-client.mjs b/artifact-wire-client.mjs
+index d8c0c308..dbdd5733 100644
+--- a/artifact-wire-client.mjs
++++ b/artifact-wire-client.mjs
+@@ -28,18 +28,20 @@ function tokenBackendIds(token){
+  // this explicit runtime token. Never log the token, backend IDs or signed URL.
+  return {workflow_run_backend_id:parts[1],workflow_job_run_backend_id:parts[2]};
+ }
+-export function createArtifactWireClient({fetcher,runtimeToken,resultsOrigin,allowedResultsOrigins,storageOrigins,profile='CAPTURE',nativeBundleVersion=1,uploadTimeoutMs=6500,now=()=>new Date().toISOString()}){
+- need(typeof fetcher==='function'&&['CAPTURE','NATIVE_PARENT'].includes(profile)&&Array.isArray(allowedResultsOrigins)&&allowedResultsOrigins.includes(resultsOrigin)&&Array.isArray(storageOrigins)&&storageOrigins.length>0,'ARTIFACT_WIRE_EXPLICIT_BINDING');
++export function createArtifactWireClient({fetcher,runtimeToken,resultsOrigin,allowedResultsOrigins,storageOrigins,profile='CAPTURE',nativeBundleVersion=1,v2Scope=null,uploadTimeoutMs=6500,now=()=>new Date().toISOString()}){
++ need(typeof fetcher==='function'&&['CAPTURE','V2_CAPTURE','NATIVE_PARENT'].includes(profile)&&Array.isArray(allowedResultsOrigins)&&allowedResultsOrigins.includes(resultsOrigin)&&Array.isArray(storageOrigins)&&storageOrigins.length>0,'ARTIFACT_WIRE_EXPLICIT_BINDING');
+  for(const origin of [resultsOrigin,...allowedResultsOrigins,...storageOrigins]){const u=new URL(origin);need(u.origin===origin&&u.protocol==='https:'&&!u.username&&!u.password,'ARTIFACT_WIRE_ORIGIN_SCOPE');}
+- need(Number.isInteger(uploadTimeoutMs)&&uploadTimeoutMs>0&&uploadTimeoutMs<=6500,'ARTIFACT_WIRE_TIMEOUT_SCOPE');need([1,2].includes(nativeBundleVersion),'ARTIFACT_WIRE_BUNDLE_VERSION');const backend=tokenBackendIds(runtimeToken),maxUploads=profile==='CAPTURE'?41:1,storageLimit=profile==='CAPTURE'?164*1024*1024:16*1024*1024;
++ const v2=profile==='V2_CAPTURE'?structuredClone(v2Scope):null,isCapture=profile!=='NATIVE_PARENT';if(v2)need(Object.keys(v2).sort().join('|')==='proposalSha256|runId|sourceSha|window'&&/^[A-Za-z0-9_-]{1,80}$/.test(v2.runId)&&/^[a-f0-9]{40}$/.test(v2.sourceSha)&&/^[a-f0-9]{64}$/.test(v2.proposalSha256)&&v2.window&&Object.keys(v2.window).sort().join('|')==='day|end|start'&&/^\d{4}-\d\d-\d\d$/.test(v2.window.day)&&Date.parse(v2.window.end)-Date.parse(v2.window.start)===2400000,'ARTIFACT_WIRE_V2_SCOPE');need(profile!=='V2_CAPTURE'||v2,'ARTIFACT_WIRE_V2_SCOPE');
++ need(Number.isInteger(uploadTimeoutMs)&&uploadTimeoutMs>0&&uploadTimeoutMs<=6500,'ARTIFACT_WIRE_TIMEOUT_SCOPE');need([1,2].includes(nativeBundleVersion),'ARTIFACT_WIRE_BUNDLE_VERSION');const backend=tokenBackendIds(runtimeToken),maxUploads=isCapture?41:1,storageLimit=profile==='V2_CAPTURE'?64*1024*1024:profile==='CAPTURE'?164*1024*1024:16*1024*1024;
+  let gate=null,session=null,attempted=0,completed=0,requests=0,archiveBytes=0,requestBodyBytes=0,failed=false,lastState='UNSENT';const ids=new Set();
+  const stats=()=>({uploads:attempted,completed,requests,retries:0,archiveBytes,requestBodyBytes,failed,state:lastState});
+  const cancelActiveUpload=()=>{if(session){session.active=false;session.controller.abort();session.rejectAbort?.(Error('ARTIFACT_WIRE_ABORTED'));}};
+  async function uploadArtifact(name,files,root,options){
+   need(!session&&!failed&&attempted<maxUploads,'ARTIFACT_WIRE_ATTEMPT_BUDGET');need(typeof gate==='function','ARTIFACT_WIRE_PRE_REQUEST_GATE_REQUIRED');
+-  const sequence=attempted,expectedName=profile==='CAPTURE'?'paper-capture-'+String(sequence).padStart(3,'0'):nativeBundleVersion===2?'native-sec-available-run-v2':'native-sec-complete-run-v1',fileName=profile==='CAPTURE'?'checkpoint-'+String(sequence).padStart(3,'0')+'.enc':'native-sec-run.json',retention=profile==='CAPTURE'?3:7;
++  const sequence=attempted,expectedName=isCapture?(profile==='V2_CAPTURE'?'paper-capture-v2-':'paper-capture-')+String(sequence).padStart(3,'0'):nativeBundleVersion===2?'native-sec-available-run-v2':'native-sec-complete-run-v1',fileName=isCapture?'checkpoint-'+String(sequence).padStart(3,'0')+'.enc':'native-sec-run.json',retention=isCapture?3:7;
+   need(name===expectedName&&Array.isArray(files)&&files.length===1&&path.basename(files[0])===fileName&&path.dirname(path.resolve(files[0]))===path.resolve(root)&&options?.retentionDays===retention&&Object.keys(options).join('|')==='retentionDays','ARTIFACT_WIRE_FILE_SCOPE');
+   const original=immutableRead(files[0],16*1024*1024);if(profile==='CAPTURE'){const e=captureJson(original.bytes.toString(),16*1024*1024);need(e.version===1&&e.context?.kind==='GUARDED_PAPER_CAPTURE_V1'&&e.context.cohort==='CALIBRATION'&&e.context.sequence===sequence&&typeof e.iv==='string'&&Buffer.from(e.iv,'base64').length===12&&typeof e.tag==='string'&&Buffer.from(e.tag,'base64').length===16&&typeof e.ciphertext==='string'&&Buffer.from(e.ciphertext,'base64').length>0&&Buffer.from(e.ciphertext,'base64').length<=8*1024*1024,'ARTIFACT_WIRE_ENCRYPTED_INPUT_REQUIRED');}
++  else if(profile==='V2_CAPTURE'){const e=captureJson(original.bytes.toString(),16*1024*1024);need(Object.keys(e).sort().join('|')==='ciphertext|context|iv|tag|version'&&e.version===1&&JSON.stringify(e.context)===JSON.stringify({kind:'PROPOSED_V2_ENCRYPTED_EVIDENCE_V1',...v2,sequence,policyApproved:false,primaryAdmission:false})&&typeof e.iv==='string'&&Buffer.from(e.iv,'base64').length===12&&typeof e.tag==='string'&&Buffer.from(e.tag,'base64').length===16&&typeof e.ciphertext==='string'&&Buffer.from(e.ciphertext,'base64').length>0&&Buffer.from(e.ciphertext,'base64').length<=12*1024*1024,'ARTIFACT_WIRE_V2_ENCRYPTED_INPUT_REQUIRED');}
+   else {const b=captureJson(original.bytes.toString(),16*1024*1024);if(nativeBundleVersion===2)validateLineageBundle(b,{runId:b.asset?.runId,sourceSha:b.asset?.sourceSha});else validateCompleteNativeBundle(b,{expectedRunId:b.asset?.runId,expectedSourceSha:b.asset?.sourceSha});}
+   const zip=singleFileArtifactZip(fileName,original.bytes),digest=hash(zip);need(archiveBytes+zip.length<=storageLimit,'ARTIFACT_WIRE_TOTAL_STORAGE_BUDGET');const clock=now();need(instant(clock),'ARTIFACT_WIRE_CLOCK');const expires=new Date(Date.parse(clock)+retention*86400000).toISOString();
+   attempted++;archiveBytes+=zip.length;lastState='UNSENT';const current={controller:new AbortController(),active:true,requests:0,start:performance.now()};session=current;let timer;const aborted=new Promise((_,reject)=>{current.rejectAbort=reject;});
+diff --git a/native-sec-bounded-clients.mjs b/native-sec-bounded-clients.mjs
+index af00e401..0080cdee 100644
+--- a/native-sec-bounded-clients.mjs
++++ b/native-sec-bounded-clients.mjs
+@@ -23,3 +23,10 @@ export function reviewedNativeRunPublisher(options){const gate=gatedSdk(options,
+  need(path.basename(file)==='native-sec-run.json','NATIVE_PUBLISH_NAME');const original=immutableRead(file,12*1024*1024),bundle=captureJson(original.bytes.toString());if(options.bundleVersion===2){const {validateLineageBundle}=await import('./native-sec-lineage-history.mjs');validateLineageBundle(bundle,{runId:expectedRunId,sourceSha:expectedSourceSha});}else{const {validateCompleteNativeBundle}=await import('./native-sec-parent-client.mjs');validateCompleteNativeBundle(bundle,{expectedRunId,expectedSourceSha});}
+  const r=await gate.perform(options.bundleVersion===2?'native-sec-available-run-v2':'native-sec-complete-run-v1',[file],path.dirname(file),{retentionDays:7});need(immutableRead(file,12*1024*1024).hash===original.hash,'NATIVE_PUBLISH_MUTATED');need(Number.isSafeInteger(r.id)&&r.id>0&&Number.isInteger(r.size)&&r.size>0&&r.size<=16*1024*1024&&/^[a-f0-9]{64}$/.test(r.digest||''),'NATIVE_PUBLISH_ACK_UNKNOWN');return {artifactId:r.id,archiveSha256:r.digest,archiveBytes:r.size,fileSha256:original.hash,retentionDays:7,globalHistoryEstablished:false};
+  }};}
++
++// Separate proposed V2 namespace/envelope. The reviewed V1 adapter is unchanged.
++export function reviewedV2ArtifactClient(options){const gate=gatedSdk(options,41);return {stats:gate.stats,async upload(x){
++ const original=immutableRead(x.file,16*1024*1024);need(original.hash===x.sha256&&original.bytes.equals(x.bytes)&&path.basename(x.file)==='checkpoint-'+String(x.sequence).padStart(3,'0')+'.enc'&&x.retentionDays===3,'V2_ARTIFACT_FILE_SCOPE');
++ const r=await gate.perform('paper-capture-v2-'+String(x.sequence).padStart(3,'0'),[x.file],path.dirname(x.file),{retentionDays:3});const after=immutableRead(x.file,16*1024*1024);need(after.hash===original.hash&&after.signature===original.signature,'V2_ARTIFACT_FILE_MUTATION');
++ return {success:true,artifactId:r.id,archiveSha256:r.digest,archiveBytes:r.size,fileSha256:original.hash,fileBytes:original.bytes.length,retentionDays:3};
++ }};}
+diff --git a/sec-v2-evidence.mjs b/sec-v2-evidence.mjs
+index 25648b99..013eff11 100644
+--- a/sec-v2-evidence.mjs
++++ b/sec-v2-evidence.mjs
+@@ -33,6 +33,7 @@ function sourceAssets(options,handle){
+  need(native.sha256===handle.nativePrefixSha256&&telemetry.lastHash===handle.telemetryLastHash,'V2_SOURCE_CHANGED');
+  const assets=native.files.map(f=>({name:'native:'+f.name,bodyBase64:f.bodyBase64}));
+  for(const name of fs.readdirSync(options.telemetryDirectory).sort()){need(name==='run.json'||/^record-\d{6}\.json$/.test(name),'V2_TELEMETRY_PARTIAL');const bytes=immutableRead(path.join(options.telemetryDirectory,name),16384).bytes;assets.push({name:'telemetry:'+name,bodyBase64:bytes.toString('base64')});}
++ for(const a of options.contextAssets||[]){need(/^context:(reference|reference-review|input-clocks|runtime-pins|history|parent-[0-3])$/.test(a.name)&&Buffer.isBuffer(a.bytes),'V2_CONTEXT_ASSET');assets.push({name:a.name,bodyBase64:a.bytes.toString('base64')});}
+  need(Buffer.byteLength(JSON.stringify(assets))<=V2_EVIDENCE_CAPS.sourceBytes,'V2_SOURCE_BUDGET');
+  return assets.map(a=>({...a,sha256:sha(Buffer.from(a.bodyBase64,'base64'))}));
+ }
+diff --git a/sec-v2-host-binding.mjs b/sec-v2-host-binding.mjs
+new file mode 100644
+index 00000000..5c24b4ac
+--- /dev/null
++++ b/sec-v2-host-binding.mjs
+@@ -0,0 +1,67 @@
++// INACTIVE integration: no environment discovery, default transport, workflow or live mode.
++import fs from 'node:fs';import path from 'node:path';import {createHash} from 'node:crypto';
++import {immutableRead,FIXED_UNIVERSE} from './paper-capture-wrapper.mjs';
++import {captureJson} from './capture-json.mjs';import {validateReferenceBundle} from './paper-capture-references.mjs';
++import {boundedSnapshotClient,reviewedV2ArtifactClient} from './native-sec-bounded-clients.mjs';
++import {createArtifactWireClient} from './artifact-wire-client.mjs';import {frameFromSnapshots} from './prospective-paper-capture.mjs';
++import {createOfflineV2EvidenceGuard,openProposedV2EvidenceStore,processProposedV2Frame,V2_GUARD_FILES} from './sec-v2-evidence.mjs';
++import {startColocatedNativeHost} from './native-sec-colocated-host.mjs';
++export const V2_HOST_FILES=Object.freeze([...new Set([...V2_GUARD_FILES,'sec-v2-host-binding.mjs','sec-v2-recovery.mjs','tools/native-sec-v2-capture-worker.mjs','native-sec-colocated-host.mjs','native-sec-host-schedule.mjs','paper-capture-references.mjs'])]);
++const need=(x,c)=>{if(!x)throw Error(c);},sha=b=>createHash('sha256').update(b).digest('hex');
++// Anchor receipt/result writes to verified Linux directory descriptors; refuse
++// links in every ancestor and the leaf, including on error-reporting paths.
++function privateDirectory(directory){let fd=fs.openSync('/',fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);try{for(const name of path.resolve(directory).split('/').filter(Boolean)){const target='/proc/self/fd/'+fd+'/'+name;try{fs.mkdirSync(target,{mode:0o700});}catch(e){if(e.code!=='EEXIST')throw e;}const next=fs.openSync(target,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);fs.closeSync(fd);fd=next;}return fd;}catch(e){fs.closeSync(fd);throw e;}}
++function privateWrite(file,bytes){const directory=privateDirectory(path.dirname(file));let fd;try{fd=fs.openSync('/proc/self/fd/'+directory+'/'+path.basename(file),fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);fs.fsyncSync(directory);}finally{if(fd!==undefined)fs.closeSync(fd);fs.closeSync(directory);}}
++export function writeInactiveV2Result(c,result){need(path.isAbsolute(c.resultFile)&&path.resolve(c.resultFile).startsWith(path.resolve(c.storageRoot)+path.sep),'V2_BINDING_STORAGE_SCOPE');privateWrite(c.resultFile,JSON.stringify(result));}
++export function startInactiveV2Host(options){
++ need(options.mode==='INACTIVE_SYNTHETIC_REHEARSAL'&&options.capture?.entry==='tools/native-sec-v2-capture-worker.mjs','V2_HOST_INACTIVE_SCOPE');
++ // Reuse only the unchanged calibration transport window/lifecycle, not V1 enrollment or evaluator.
++ return startColocatedNativeHost(options);
++}
++export function prepareInactiveV2Binding(c,{inputFile,inputSha256,historyFile,historySha256}){
++ need(c.mode==='INACTIVE_SYNTHETIC_REHEARSAL'&&c.policyApproved===false&&c.protocol==='SEC_PROOF_READY_V2_DRAFT3_REVIEW_ONLY','V2_BINDING_SCOPE');
++ for(const target of [c.output,c.receiptDirectory,c.resultFile]){need(path.isAbsolute(target)&&path.resolve(target).startsWith(path.resolve(c.storageRoot)+path.sep),'V2_BINDING_STORAGE_SCOPE');for(let p=path.dirname(target);;p=path.dirname(p)){if(fs.existsSync(p))need(!fs.lstatSync(p).isSymbolicLink(),'V2_BINDING_STORAGE_SYMLINK');if(path.dirname(p)===p)break;}}
++ const inputs=new Map(),pin=(file,digest,max=1048576)=>{const p=immutableRead(file,max);need(p.hash===digest,'V2_BINDING_INPUT_PIN');inputs.set(file,{...p,max});return p.bytes;};
++ need(JSON.stringify(captureJson(pin(inputFile,inputSha256).toString()))===JSON.stringify(c),'V2_BINDING_CONFIG_MISMATCH');const referenceRaw=pin(c.reference.file,c.reference.sha256,2*1024*1024).toString(),references=captureJson(referenceRaw);
++ need(references.records.every(r=>['massive','alpaca','sec'].every(k=>captureJson(r[k].raw).synthetic===true)),'V2_BINDING_SYNTHETIC_REFERENCE_REQUIRED');
++ const checked=validateReferenceBundle(referenceRaw,c.reference.review),contextAssets=[{name:'context:reference',bytes:Buffer.from(referenceRaw)},{name:'context:reference-review',bytes:Buffer.from(JSON.stringify(c.reference.review))}];
++ const history=captureJson(pin(historyFile,historySha256).toString()),hs=history.historyEvidence?.scope;need(history.day===c.plan.day&&hs?.day===c.plan.day&&String(hs.currentRunId)+'-1'===c.native.runId&&Number.isSafeInteger(c.historyWorkflowId)&&hs.workflowId===c.historyWorkflowId&&hs.branch==='main'&&hs.contract==='SESSION_EXECUTION_HISTORY_V2'&&Number.isFinite(Date.parse(hs.before))&&Date.parse(hs.before)<=Date.parse(c.plan.start),'V2_BINDING_HISTORY_SCOPE');contextAssets.push({name:'context:history',bytes:inputs.get(historyFile).bytes});
++ for(const [i,row]of (history.retainedBundles||[]).entries()){const bytes=pin(row.bundleFile,row.bundleSha256,12*1024*1024);contextAssets.push({name:'context:parent-'+i,bytes});}
++ const sources=Object.fromEntries(V2_HOST_FILES.map(name=>{need(c.sourcePins?.[name],'V2_BINDING_CLOSURE_PIN');return[name,c.sourcePins[name]];}));const inner=createOfflineV2EvidenceGuard({root:c.root,sourcePins:sources});
++ pin(c.bindingModule.file,c.bindingModule.sha256);for(const [name,digest]of Object.entries(c.bindingModule.runtimeFiles||{})){need(!path.isAbsolute(name)&&!name.split('/').includes('..'),'V2_BINDING_MODULE_DEPENDENCY');pin(path.join(c.root,name),digest,4*1024*1024);}const referenceIngestedAt=null;
++
++ need(c.proposalSha256===c.sourcePins['sec-proof-ready-proposal.mjs'],'V2_BINDING_PROPOSAL_PIN');contextAssets.push({name:'context:runtime-pins',bytes:Buffer.from(JSON.stringify({sourcePins:sources,bindingModule:c.bindingModule,protocol:c.protocol,producerSourceCommit:c.native.sourceSha}))});
++ need(c.plan.universe?.join(',')===FIXED_UNIVERSE.join(',')&&c.native.runId&&c.native.sourceSha,'V2_BINDING_PLAN');
++ const pinnedConfig=JSON.stringify(c);const revalidate=()=>{need(JSON.stringify(c)===pinnedConfig,'V2_BINDING_CONFIG_CHANGED');inner.revalidate({mode:'PROPOSAL_ONLY',protocol:c.protocol});for(const [file,p]of inputs){const b=immutableRead(file,p.max);need(b.hash===p.hash&&b.signature===p.signature,'V2_BINDING_INPUT_CHANGED');}};
++ const metadata=checked.metadata.map(r=>{return {...r,sic:r.industry,commonStock:r.instrumentType==='CS'&&r.eligibility==='ELIGIBLE_REQUIRES_SOURCE_AUDIT',asOf:referenceIngestedAt,sourceCapturedAt:r.asOf};});
++ revalidate();return {guard:inner,revalidate,history,metadata,contextAssets,referenceIngestedAt};
++}
++export async function runInactiveV2Capture(c,prepared,bindings){
++ need(bindings&&['provider','artifact'].every(k=>typeof bindings.transports?.[k]==='function')&&typeof bindings.now==='function'&&typeof bindings.wait==='function','V2_BINDING_EXPLICIT_CLIENTS');
++ const b=prepared,clock=bindings.now,start=Date.parse(c.plan.start),end=Date.parse(c.plan.end);let last=clock(),providerAttempts=0,responseBytes=0,wire,store,reason='NONE',status='INCOMPLETE';const receipts=[];let wireBytes=0;
++ const time=()=>{const n=clock();need(Number.isFinite(n)&&n>=last&&n<=end+30000,'V2_BINDING_CLOCK');last=n;return n;};
++ const outside=()=>{b.revalidate();need(time()<=end,'V2_BINDING_DEADLINE');};
++ // UNKNOWN and earlier-run policy are blocked, without quote requests or key usage.
++ if(b.history.state!=='VERIFIED_NO_EARLIER_SAME_DAY_RUN'||b.history.historyVerified!==true||b.history.jobHistoryVerified!==true||b.history.lookupStatus!=='COMPLETE')return {status:'BLOCKED',reason:'HISTORY_NOT_ELIGIBLE',providerAttempts:0,confirmedUploads:0,genuineAdmissions:0};
++ need(time()>=start-30000&&time()<=start-10000,'V2_BINDING_START_WINDOW');outside();
++ const ingestedAt=new Date(time()).toISOString(),metadata=b.metadata.map(r=>{need(Date.parse(r.sourceCapturedAt)<=time(),'V2_BINDING_REFERENCE_FUTURE');return {...r,asOf:ingestedAt};});b.contextAssets.push({name:'context:input-clocks',bytes:Buffer.from(JSON.stringify({referenceIngestedAt:ingestedAt,referenceSha256:c.reference.sha256}))});
++ const checked=fetcher=>async(...args)=>{outside();const value=await fetcher(...args);outside();return value;};
++ const provider=boundedSnapshotClient({fetcher:checked(bindings.transports.provider),keyId:bindings.keyId,secret:bindings.secret});
++ wire=createArtifactWireClient({profile:'V2_CAPTURE',v2Scope:{runId:c.native.runId,sourceSha:c.native.sourceSha,proposalSha256:c.proposalSha256,window:{day:c.plan.day,start:c.plan.start,end:c.plan.end}},fetcher:checked(bindings.transports.artifact),runtimeToken:bindings.runtimeToken,resultsOrigin:c.artifact.resultsOrigin,allowedResultsOrigins:[c.artifact.resultsOrigin],storageOrigins:c.artifact.storageOrigins,now:()=>new Date(time()).toISOString()});
++ const uploader=reviewedV2ArtifactClient({sdk:wire,reviewed:{moduleFile:path.join(c.root,'artifact-wire-client.mjs'),packageSha256:c.sourcePins['artifact-wire-client.mjs'],contract:'PRE_REQUEST_WIRE_GATE_V1',maxWireRequestsPerUpload:5}});
++ store=openProposedV2EvidenceStore({directory:c.output,key:bindings.encryptionKey,runId:c.native.runId,sourceSha:c.native.sourceSha,proposalSha256:c.proposalSha256,plan:c.plan});
++ const initial=store.snapshot();need(initial.records.length===0&&!initial.observing&&!initial.locked&&!initial.observationUnknown,'V2_BINDING_NO_AUTOMATIC_RESUME');
++ const upload=async x=>{outside();const original=immutableRead(path.join(c.output,x.name),16*1024*1024);need(original.hash===x.sha256&&original.bytes.equals(x.bytes),'V2_BINDING_UPLOAD_SOURCE');const archiveEntryName='checkpoint-'+String(x.sequence).padStart(3,'0')+'.enc',file=path.join(c.receiptDirectory,'wire',archiveEntryName);need(wireBytes+x.bytes.length<=64*1024*1024,'V2_BINDING_WIRE_STORAGE_BUDGET');privateWrite(file,x.bytes);wireBytes+=x.bytes.length;const ack=await uploader.upload({...x,name:archiveEntryName,file,retentionDays:3});need(immutableRead(path.join(c.output,x.name),16*1024*1024).hash===x.sha256,'V2_BINDING_UPLOAD_SOURCE_CHANGED');outside();need(ack.success===true&&ack.fileSha256===x.sha256&&Number.isSafeInteger(ack.artifactId)&&ack.artifactId>0&&!receipts.some(r=>r.artifactId===ack.artifactId)&&ack.archiveBytes>0&&ack.archiveBytes<=16*1024*1024&&/^[a-f0-9]{64}$/.test(ack.archiveSha256),'V2_BINDING_ACK');
++  const receipt={sequence:x.sequence,name:x.name,archiveEntryName,...ack};need(receipts.reduce((n,r)=>n+r.archiveBytes,0)+ack.archiveBytes<=64*1024*1024,'V2_BINDING_ARCHIVE_BUDGET');const raw=JSON.stringify(receipt),target=path.join(c.receiptDirectory,'receipt-'+String(x.sequence).padStart(6,'0')+'.json');privateWrite(target,raw);receipts.push(receipt);return {confirmed:true,contentSha256:x.sha256,artifactId:ack.artifactId};};
++ fs.closeSync(privateDirectory(c.receiptDirectory));let result;
++ try{for(let sequence=0;sequence<41;sequence++){
++  const due=sequence===40?end-10000:start+sequence*60000;if(time()<due)await bindings.wait(due-time());outside();need(time()<=due+10000,'V2_BINDING_SLOT_EXPIRED');
++  result=await processProposedV2Frame({store,sourceOptions:{...c.native,history:{state:b.history.state,scope:'MAIN_PRODUCER_SAME_DAY'},contextAssets:b.contextAssets},now:()=>new Date(time()).toISOString(),guard:b.guard,upload,observeFrame:async info=>{
++   outside();const requestedAt=new Date(time()).toISOString();providerAttempts++;const controller=new AbortController();let timer;
++   try{const raw=await Promise.race([(async()=>{const r=await provider.request('https://data.alpaca.markets/v2/stocks/snapshots?symbols='+c.plan.universe.join(',')+'&feed=sip',{method:'GET',redirect:'error',signal:controller.signal});need(r.status===200,r.status===429?'V2_BINDING_RATE_LIMIT':'V2_BINDING_PROVIDER');const parts=[];let size=0;const reader=r.body.getReader();try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;responseBytes+=value.byteLength;need(size<=65536&&responseBytes<=8388608,'V2_BINDING_RESPONSE_BUDGET');parts.push(Buffer.from(value));}}finally{await reader.cancel().catch(()=>{});}return Buffer.concat(parts).toString();})(),new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('V2_BINDING_REQUEST_TIMEOUT'));},10000);})]);outside();return frameFromSnapshots({sequence,requestedAt,receivedAt:new Date(time()).toISOString(),sourceHandoffAt:info.sourceHandoffAt,rawResponse:raw,metadata,universe:c.plan.universe,priorFrames:store.snapshot().state?.frames||[]});}finally{clearTimeout(timer);controller.abort();}
++  }});outside();}status='COMPLETE';
++ }catch(e){reason=/^(V2_|PROPOSAL_|TELEMETRY_|ARTIFACT_|SNAPSHOT_|NATIVE_)[A-Z_]+$/.test(e.message)?e.message:'V2_BINDING_FAILED';}
++ finally{wire.cancelActiveUpload();}
++ const manifest={kind:'INACTIVE_V2_RECEIPTS_V1',scope:store.scope,receipts,primaryAdmission:false},raw=JSON.stringify(manifest);privateWrite(path.join(c.receiptDirectory,'manifest.json'),raw);
++ return {status,reason,providerAttempts,responseBytes,confirmedUploads:receipts.length,unreconciledRemoteUploads:wire.stats().completed-receipts.length,wireRequests:wire.stats().requests,receiptManifestSha256:sha(raw),receiptManifest:manifest,outcome:result?.outcome||null,genuineAdmissions:0,primaryAdmission:false,automaticResumeAuthorized:false};
++}
+diff --git a/sec-v2-recovery.mjs b/sec-v2-recovery.mjs
+new file mode 100644
+index 00000000..29f5f1c8
+--- /dev/null
++++ b/sec-v2-recovery.mjs
+@@ -0,0 +1,31 @@
++// Read-only recovery of actual-format downloaded ZIPs; no network or financial/state writes.
++import {createHash} from 'node:crypto';import {openCaptureZip} from './capture-artifact.mjs';import {openResearch} from './tools/seal-research-artifact.mjs';
++import {captureJson} from './capture-json.mjs';import {evaluateProposedV2Outcomes} from './sec-v2-outcomes.mjs';
++import {validateNativeEvidenceAsset} from './native-sec-handoff.mjs';import {validateLineageBundle} from './native-sec-lineage-history.mjs';
++const need=(x,c)=>{if(!x)throw Error(c);},sha=b=>createHash('sha256').update(b).digest('hex');
++export function recoverInactiveV2Capture({receiptRaw,receiptSha256,expectedScope,archives,key}){
++ need(typeof receiptRaw==='string'&&Buffer.byteLength(receiptRaw)<=65536&&sha(receiptRaw)===receiptSha256,'V2_RECOVERY_RECEIPT_PIN');const m=captureJson(receiptRaw);
++ need(m.kind==='INACTIVE_V2_RECEIPTS_V1'&&JSON.stringify(m.scope)===JSON.stringify(expectedScope)&&m.primaryAdmission===false&&Array.isArray(m.receipts)&&m.receipts.length>0&&m.receipts.length<=41,'V2_RECOVERY_SCOPE');
++ let chain='0'.repeat(64),total=0,state;const assets=new Map(),ids=new Set(),records=[];
++ for(const [sequence,r]of m.receipts.entries()){
++  need(r.sequence===sequence&&r.name==='checkpoint-'+String(sequence).padStart(6,'0')+'.enc'&&r.archiveEntryName==='checkpoint-'+String(sequence).padStart(3,'0')+'.enc'&&r.success===true&&r.retentionDays===3&&Number.isSafeInteger(r.artifactId)&&r.artifactId>0&&!ids.has(r.artifactId),'V2_RECOVERY_RECEIPT');ids.add(r.artifactId);
++  const zip=archives.get(r.artifactId);need(Buffer.isBuffer(zip)&&zip.length===r.archiveBytes&&sha(zip)===r.archiveSha256,'V2_RECOVERY_ARCHIVE');total+=zip.length;need(total<=64*1024*1024,'V2_RECOVERY_BUDGET');
++  const bytes=openCaptureZip(zip,r.archiveEntryName),env=captureJson(bytes.toString(),16*1024*1024);need(bytes.length===r.fileBytes&&sha(bytes)===r.fileSha256&&JSON.stringify(env.context)===JSON.stringify({kind:'PROPOSED_V2_ENCRYPTED_EVIDENCE_V1',...expectedScope,sequence,policyApproved:false,primaryAdmission:false}),'V2_RECOVERY_CONTEXT');
++  const plain=openResearch(env,key);need(plain.length<=12*1024*1024,'V2_RECOVERY_PLAIN_BUDGET');const p=captureJson(plain.toString(),12*1024*1024),record=p.record;
++  need(p.sequence===sequence&&p.previous===chain&&p.chain===sha(chain+JSON.stringify(record))&&record.sequence===sequence&&record.policyApproved===false&&record.primaryAdmission===false,'V2_RECOVERY_CHAIN');chain=p.chain;
++  for(const a of record.sourceAssets){need(/^(native:|telemetry:|context:)/.test(a.name)&&!assets.has(a.name)&&sha(Buffer.from(a.bodyBase64,'base64'))===a.sha256,'V2_RECOVERY_SOURCE_BYTES');assets.set(a.name,a);}
++  state=record.state;need(state.frames.length===sequence+1&&state.sourceSha===expectedScope.sourceSha&&state.runId===expectedScope.runId,'V2_RECOVERY_STATE');const {checksum,...body}=state.selection;need(checksum===sha(JSON.stringify(body))&&JSON.stringify(state.pairs)===JSON.stringify(state.selection.pairs),'V2_RECOVERY_SELECTION');
++  need(records.every((old,i)=>JSON.stringify(old.state.frames)===JSON.stringify(state.frames.slice(0,i+1))),'V2_RECOVERY_FRAME_REWRITE');
++  const outcome=evaluateProposedV2Outcomes({frames:state.frames,pairs:state.pairs,ledger:state.ledger,cutoffAt:state.frames.at(-1).at});need(JSON.stringify(outcome)===JSON.stringify(record.outcome),'V2_RECOVERY_OUTCOME');records.push(record);
++ }
++ const original=[...assets.values()],native=original.filter(a=>a.name.startsWith('native:')).map(a=>({name:a.name.slice(7),bodyBase64:a.bodyBase64})).sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
++ need(native.length>0,'V2_RECOVERY_NATIVE_MISSING');const digest=sha(JSON.stringify(native)),handle=records.at(-1).sourceHandle;
++ validateNativeEvidenceAsset({kind:'NATIVE_SEC_COMMITTED_PREFIX_V1',runId:expectedScope.runId,sourceSha:expectedScope.sourceSha,files:native,sha256:digest});need(digest===handle.nativePrefixSha256,'V2_RECOVERY_NATIVE_PREFIX');
++ const telemetry=original.filter(a=>a.name.startsWith('telemetry:')).sort((a,b)=>a.name.localeCompare(b.name));let previous='0'.repeat(64),index=0;
++ const meta=telemetry.find(a=>a.name==='telemetry:run.json');need(meta,'V2_RECOVERY_TELEMETRY_META');const info=captureJson(Buffer.from(meta.bodyBase64,'base64').toString());need(info.runId===expectedScope.runId&&info.sourceSha===expectedScope.sourceSha,'V2_RECOVERY_TELEMETRY_SCOPE');
++ for(const a of telemetry.filter(a=>a.name!=='telemetry:run.json')){need(a.name==='telemetry:record-'+String(index).padStart(6,'0')+'.json','V2_RECOVERY_TELEMETRY_SEQUENCE');const {hash,...body}=captureJson(Buffer.from(a.bodyBase64,'base64').toString());need(body.sequence===index++&&body.previousHash===previous&&hash===sha(JSON.stringify(body)),'V2_RECOVERY_TELEMETRY_HASH');previous=hash;}
++ need(previous===handle.telemetryLastHash,'V2_RECOVERY_TELEMETRY_PREFIX');
++ for(const a of original.filter(a=>a.name.startsWith('context:parent-'))){const bundle=captureJson(Buffer.from(a.bodyBase64,'base64').toString(),12*1024*1024);validateLineageBundle(bundle,{runId:bundle.asset.runId,sourceSha:bundle.asset.sourceSha});}
++ const contextComplete=['context:reference','context:reference-review','context:history','context:input-clocks','context:runtime-pins'].every(n=>assets.has(n));
++ return {status:records.length===41&&contextComplete?'AUTHENTICATED_COMPLETE_CAPTURE':'AUTHENTICATED_PARTIAL_CONTEXT',frames:records.length,state,records,sourceAssets:original,contextComplete,originalClocksPreserved:true,remoteBytesIndependentlyVerified:true,sourceAuthenticity:'NOT_ESTABLISHED_BY_ENCRYPTION',automaticResumeAuthorized:false,policyApproved:false,primaryAdmission:false,genuineAdmissions:0};
++}
+diff --git a/test/sec-v2-host-fixture.mjs b/test/sec-v2-host-fixture.mjs
+new file mode 100644
+index 00000000..215acdf6
+--- /dev/null
++++ b/test/sec-v2-host-fixture.mjs
+@@ -0,0 +1,27 @@
++import fs from 'node:fs';import path from 'node:path';import {createHash} from 'node:crypto';
++import {wrapperFixture} from './capture-wrapper-fixture.mjs';import {V2_HOST_FILES} from '../sec-v2-host-binding.mjs';
++export const sha=b=>createHash('sha256').update(b).digest('hex');
++const root=new URL('../',import.meta.url);
++export function v2HostFixture(producer,scenario='success'){
++ const f=wrapperFixture(),runId='900-1',native={directory:path.join(producer.dir,'runtime/native-sec-events',runId),expectedRunId:runId,expectedSourceSha:producer.sourceSha};
++ for(const name of V2_HOST_FILES){fs.mkdirSync(path.dirname(path.join(f.root,name)),{recursive:true});fs.copyFileSync(new URL(name,root),path.join(f.root,name));}
++ fs.copyFileSync(new URL('test/artifact-wire-fixture.mjs',root),path.join(f.root,'synthetic-wire-transport.mjs'));
++ const binding=path.join(f.root,'synthetic-v2-bindings.mjs');fs.writeFileSync(binding,`
++ import {spawn} from 'node:child_process';import fs from 'node:fs';import path from 'node:path';import {artifactWireFixture,syntheticArtifactToken,syntheticResultsOrigin,syntheticStorageOrigin} from './synthetic-wire-transport.mjs';
++ export function createV2Bindings(c){
++  let clock=Date.parse(c.plan.start)-30000,firstQuote=true,firstBlock=true;const progress=()=>{for(let n=0;n<25;n++){try{return JSON.parse(fs.readFileSync(c.progressFile)).heartbeat.length;}catch{}Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,2);}throw Error('SYNTHETIC_PROGRESS_UNAVAILABLE');};
++  const copy=(source,dest,name)=>{fs.mkdirSync(dest,{recursive:true});const b=fs.readFileSync(path.join(source,name)),out=path.join(dest,name);if(fs.existsSync(out)){if(!fs.readFileSync(out).equals(b))throw Error('SYNTHETIC_SOURCE_REWRITE');}else fs.writeFileSync(out,b,{flag:'wx'});};
++  function stage(){for(const [source,dest,pattern]of [[c.producerNative,c.native.archiveDirectory,/^response-[0-9]{6}[.]json$/],[c.producerTelemetry,c.native.telemetryDirectory,/^record-[0-9]{6}[.]json$/]]){copy(source,dest,'run.json');for(const name of fs.readdirSync(source).filter(n=>pattern.test(n)).sort()){const doc=JSON.parse(fs.readFileSync(path.join(source,name)));if(Date.parse(doc.payload?.observedAt||doc.at)<=clock)copy(source,dest,name);}}}
++  stage();if(['checkpoint-partial','ack-partial','receipt-partial','manifest-partial'].includes(c.scenario)){const write=fs.writeFileSync;let failed=false;fs.writeFileSync=function(fd,body,...args){let file='';try{if(typeof fd==='number')file=fs.readlinkSync('/proc/self/fd/'+fd);}catch{}const hit=c.scenario==='checkpoint-partial'&&file===path.join(c.output,'checkpoint-000000.enc')||c.scenario==='ack-partial'&&file===path.join(c.output,'ack-000000.enc')||c.scenario==='receipt-partial'&&file===path.join(c.receiptDirectory,'receipt-000000.json')||c.scenario==='manifest-partial'&&file===path.join(c.receiptDirectory,'manifest.json');if(hit&&!failed){failed=true;write(fd,Buffer.from(body).subarray(0,12));throw Error('SYNTHETIC_PARTIAL_WRITE');}return write(fd,body,...args);};}const mock=artifactWireFixture({onRequest:async call=>{if(call.phase==='block'&&firstBlock){firstBlock=false;const before=progress();await new Promise(r=>setTimeout(r,500));fs.writeFileSync(c.uploadProof,JSON.stringify({before,after:progress()}));if(c.scenario==='upload-refusal')return new Response('{}',{status:503});}return null;},onFinalized:async({id,zip})=>{fs.mkdirSync(c.downloads,{recursive:true});fs.writeFileSync(path.join(c.downloads,id+'.zip'),zip,{flag:'wx'});}});
++  return {encryptionKey:'synthetic-v2-artifact-key-only',keyId:'SYNTHETIC',secret:'SYNTHETIC',runtimeToken:syntheticArtifactToken,now:()=>clock,wait:async ms=>{clock+=ms;stage();},transports:{
++   artifact:mock.fetcher,provider:async(url,o)=>{if(!String(url).startsWith('https://data.alpaca.markets/v2/stocks/snapshots?')||o.method!=='GET'||o.redirect!=='error'||o.headers['APCA-API-KEY-ID']!=='SYNTHETIC')throw Error('SYNTHETIC_SCOPE');if(firstQuote){firstQuote=false;if(c.scenario==='success-contended'){const child=spawn(process.execPath,process.argv.slice(1),{cwd:process.cwd(),env:{PATH:process.env.PATH},stdio:['ignore','pipe','pipe']});let out='';child.stdout.on('data',b=>out+=b);const status=await new Promise((resolve,reject)=>{child.once('error',reject);child.once('close',resolve);});fs.writeFileSync(c.concurrencyProof,JSON.stringify({status,out}));}const before=progress();await new Promise(r=>setTimeout(r,500));fs.writeFileSync(c.quoteProof,JSON.stringify({before,after:progress()}));if(c.scenario==='input-change')fs.appendFileSync(c.reference.file,' ');if(c.scenario==='quote-refusal')return new Response('{}',{status:429});}clock+=1000;const minute=Math.floor(clock/60000)*60000-60000;return Response.json(Object.fromEntries(c.plan.universe.map(symbol=>[symbol,{latestQuote:{bp:symbol==='INTC'&&clock>=Date.parse(c.plan.start)+180000?9.5:9.99,ap:10.01,bs:1000,as:1000,t:new Date(clock-500).toISOString()},latestTrade:{p:10,t:new Date(clock-500).toISOString()},prevDailyBar:{c:10,v:1000000,t:'2026-11-04T05:00:00Z'},minuteBar:{t:new Date(minute).toISOString(),l:10,h:10,v:200000}}])));}
++  }};
++ }
++ `);
++ const pins=Object.fromEntries(V2_HOST_FILES.map(p=>[p,sha(fs.readFileSync(path.join(f.root,p)))]));
++ const reference={file:f.referenceFile,sha256:sha(fs.readFileSync(f.referenceFile)),review:f.approval};
++ const c={mode:'INACTIVE_SYNTHETIC_REHEARSAL',protocol:'SEC_PROOF_READY_V2_DRAFT3_REVIEW_ONLY',policyApproved:false,historyWorkflowId:7,root:f.root,storageRoot:f.dir,plan:f.approval.plan,proposalSha256:pins['sec-proof-ready-proposal.mjs'],reference,sourcePins:pins,bindingModule:{file:binding,sha256:sha(fs.readFileSync(binding)),runtimeFiles:{'synthetic-wire-transport.mjs':sha(fs.readFileSync(path.join(f.root,'synthetic-wire-transport.mjs')))}},native:{archiveDirectory:path.join(f.dir,'staged-native'),telemetryDirectory:path.join(f.dir,'staged-telemetry'),runId,sourceSha:producer.sourceSha},producerNative:native.directory,producerTelemetry:path.join(producer.dir,'runtime/sec-selection',runId),progressFile:path.join(producer.dir,'data/ignition-runs/2026-11-05/900-1-progress.json'),concurrencyProof:path.join(f.dir,'concurrency-proof.json'),quoteProof:path.join(f.dir,'quote-progress.json'),uploadProof:path.join(f.dir,'upload-progress.json'),downloads:path.join(f.dir,'downloads'),output:path.join(f.dir,'sealed'),receiptDirectory:path.join(f.dir,'receipts'),resultFile:path.join(f.dir,'result.json'),artifact:{resultsOrigin:'https://results.example.invalid',storageOrigins:['https://synthetic.blob.core.windows.net']},scenario};
++ const file=path.join(f.dir,'v2-input.json');fs.writeFileSync(file,JSON.stringify(c));
++ const capture={cwd:f.root,entry:'tools/native-sec-v2-capture-worker.mjs',entrySha256:pins['tools/native-sec-v2-capture-worker.mjs'],runtimeFiles:pins,args:[file,sha(fs.readFileSync(file))],env:{}};
++ return {f,c,native,capture,planPin:{file:f.approvalFile,sha256:sha(fs.readFileSync(f.approvalFile))},cleanup:f.cleanup};
++}
+diff --git a/test/sec-v2-host-guard.test.mjs b/test/sec-v2-host-guard.test.mjs
+new file mode 100644
+index 00000000..6d924178
+--- /dev/null
++++ b/test/sec-v2-host-guard.test.mjs
+@@ -0,0 +1,10 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
++import {v2HostFixture,sha} from './sec-v2-host-fixture.mjs';import {prepareInactiveV2Binding,runInactiveV2Capture,startInactiveV2Host} from '../sec-v2-host-binding.mjs';
++function setup(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'v2-guard-')),w=v2HostFixture({dir,sourceSha:'a'.repeat(40)});t.after(()=>{w.cleanup();fs.rmSync(dir,{recursive:true,force:true});});const historyFile=path.join(dir,'history.json');fs.writeFileSync(historyFile,JSON.stringify({day:'2026-11-05',historyEvidence:{scope:{day:'2026-11-05',before:'2026-11-05T14:29:30Z',currentRunId:900,workflowId:7,branch:'main',contract:'SESSION_EXECUTION_HISTORY_V2'}},state:'VERIFIED_NO_EARLIER_SAME_DAY_RUN',lookupStatus:'COMPLETE',historyVerified:true,jobHistoryVerified:true,retainedBundles:[]}));return {...w,input:{inputFile:path.join(w.f.dir,'v2-input.json'),inputSha256:sha(fs.readFileSync(path.join(w.f.dir,'v2-input.json'))),historyFile,historySha256:sha(fs.readFileSync(historyFile))}};}
++test('V2 guard accepts its exact inactive inputs and refuses changed mode, context or pins',t=>{const w=setup(t);assert.ok(prepareInactiveV2Binding(w.c,w.input));assert.throws(()=>startInactiveV2Host({mode:'LIVE'}),/INACTIVE_SCOPE/);assert.throws(()=>prepareInactiveV2Binding({...w.c,mode:'LIVE'},w.input),/SCOPE/);assert.throws(()=>prepareInactiveV2Binding({...w.c,resultFile:path.join(w.f.dir,'other-result')},w.input),/CONFIG_MISMATCH/);assert.throws(()=>prepareInactiveV2Binding(w.c,{...w.input,historySha256:'0'.repeat(64)}),/INPUT_PIN/);});
++test('V2 guard revalidates reference bytes and source dependencies after preparation',t=>{for(const variant of ['reference','source','module-dependency']){const w=setup(t),g=prepareInactiveV2Binding(w.c,w.input),file=variant==='reference'?w.c.reference.file:path.join(w.f.root,variant==='source'?'sec-v2-outcomes.mjs':'synthetic-wire-transport.mjs');fs.appendFileSync(file,'\n');assert.throws(()=>g.revalidate(),/CHANGED|PIN/);}});
++test('V2 guard refuses symlink replacement rather than accepting identical bytes',t=>{const w=setup(t),g=prepareInactiveV2Binding(w.c,w.input),file=w.c.reference.file,other=file+'.original';fs.renameSync(file,other);fs.symlinkSync(other,file);assert.throws(()=>g.revalidate(),/SYMLINK|FILE/);});
++test('earlier and UNKNOWN histories never open capture bindings or create output',async t=>{for(const state of ['AUTHENTICATED_EARLIER_SAME_DAY_EVIDENCE','UNKNOWN_MISSING_OR_AMBIGUOUS_HISTORY']){const w=setup(t);fs.writeFileSync(w.input.historyFile,JSON.stringify({...JSON.parse(fs.readFileSync(w.input.historyFile)),state,retainedBundles:[]}));w.input.historySha256=sha(fs.readFileSync(w.input.historyFile));const g=prepareInactiveV2Binding(w.c,w.input);let calls=0;const bindings={transports:{provider:()=>{calls++;},artifact:()=>{calls++;}},now:()=>Date.parse(w.c.plan.start)-30000,wait:async()=>{}};for(const key of ['keyId','secret','encryptionKey','runtimeToken'])Object.defineProperty(bindings,key,{get(){throw Error('MUST_NOT_READ_BINDINGS');}});const result=await runInactiveV2Capture(w.c,g,bindings);assert.equal(result.status,'BLOCKED');assert.equal(result.providerAttempts,0);assert.equal(calls,0);assert.equal(fs.existsSync(w.c.output),false);}});
++test('result and failure reporting refuse ancestor symlinks without external writes',async t=>{const {writeInactiveV2Result}=await import('../sec-v2-host-binding.mjs'),w=setup(t),target=fs.mkdtempSync(path.join(os.tmpdir(),'v2-outside-'));t.after(()=>fs.rmSync(target,{recursive:true,force:true}));const parent=path.join(w.f.dir,'results');fs.symlinkSync(target,parent);assert.throws(()=>writeInactiveV2Result({...w.c,resultFile:path.join(parent,'failed.json')},{status:'INCOMPLETE'}));assert.deepEqual(fs.readdirSync(target),[]);});
++
++test('history evidence from another day, run or workflow is rejected despite a matching file hash',t=>{for(const change of [h=>h.day='2026-11-04',h=>h.historyEvidence.scope.currentRunId=901,h=>h.historyEvidence.scope.workflowId=8]){const w=setup(t),h=JSON.parse(fs.readFileSync(w.input.historyFile));change(h);fs.writeFileSync(w.input.historyFile,JSON.stringify(h));w.input.historySha256=sha(fs.readFileSync(w.input.historyFile));assert.throws(()=>prepareInactiveV2Binding(w.c,w.input),/HISTORY_SCOPE/);}});
+diff --git a/test/sec-v2-host.test.mjs b/test/sec-v2-host.test.mjs
+new file mode 100644
+index 00000000..c5cd231f
+--- /dev/null
++++ b/test/sec-v2-host.test.mjs
+@@ -0,0 +1,19 @@
++import {spawnSync} from 'node:child_process';import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
++import {producerFixture} from './native-sec-producer-fixture.mjs';import {v2HostFixture,sha} from './sec-v2-host-fixture.mjs';
++import {startInactiveV2Host} from '../sec-v2-host-binding.mjs';import {recoverInactiveV2Capture} from '../sec-v2-recovery.mjs';
++import {prepareNativeParentForHost} from '../native-sec-colocated-host.mjs';import {createSameDayLineageClient} from '../native-sec-lineage-history.mjs';
++for(const scenario of ['success','success-contended','upload-refusal','quote-refusal','input-change','unknown-history','checkpoint-partial','ack-partial','receipt-partial','manifest-partial'])test('actual V2 host/guard/real client binding '+scenario,async t=>{
++ const p=await producerFixture({long:true,snapshotDelayMs:scenario.startsWith('success')?15:1,selectionTelemetry:true,symbol:'AMD',peerSymbol:'INTC',syntheticSECOrigin:true,emptyFeedBefore:Date.parse('2026-11-05T14:30:30Z')}),w=v2HostFixture(p,scenario);t.after(()=>{p.close();w.cleanup();});let historyRequests=0;
++ const client=createSameDayLineageClient({token:'SYNTHETIC',storageOrigins:['https://synthetic.blob.core.windows.net'],fetcher:async url=>{historyRequests++;if(scenario==='unknown-history')return new Response('{}',{status:503});const u=new URL(url);assert.ok(u.pathname.includes('/actions/workflows/'));assert.ok(u.searchParams.get('created'));return Response.json({total_count:0,workflow_runs:[]});}});
++ const parentState=await prepareNativeParentForHost({client,scope:{day:'2026-11-05',before:'2026-11-05T14:29:30Z',currentRunId:900,workflowId:7,allowedSourceShas:[p.sourceSha]},rootDirectory:p.dir,destination:'runtime/native-sec-parents/v2'});let host;
++ const result=await p.run({shadow:true,runId:'900',epoch:Date.parse('2026-11-05T14:28:00Z'),fakeMin:569,launch:spec=>{const runtimeFiles=Object.fromEntries(fs.readdirSync(p.dir).filter(n=>n.endsWith('.mjs')||n.endsWith('.js')).map(n=>[n,sha(fs.readFileSync(path.join(p.dir,n)))]));host=startInactiveV2Host({mode:'INACTIVE_SYNTHETIC_REHEARSAL',producer:{...spec,entrySha256:runtimeFiles['ignition-watch.mjs'],runtimeFiles},capture:w.capture,native:w.native,parentState,planPin:w.planPin,clock:{now:()=>Date.parse(w.c.plan.start)-30000,sleep:ms=>new Promise(r=>setTimeout(r,Math.min(ms,1000))),setTimeout,clearTimeout},storageRoot:w.f.dir,healthFile:path.join(w.f.dir,'health.json')});return host.producer;}});
++ const health=await host.completion;assert.equal(health.producerExitCode,0);assert.equal(health.producerCancelled,false);assert.deepEqual(result.snapshot.heartbeat.map(x=>x.m),Array.from({length:332},(_,i)=>569+i));assert.ok(historyRequests<=4);
++ if(scenario==='unknown-history'){assert.equal(health.status,'PARENT_INCOMPLETE');assert.equal(health.captureStarted,false);return;}
++ const r=fs.existsSync(w.c.resultFile)?JSON.parse(fs.readFileSync(w.c.resultFile)):null;if(scenario==='manifest-partial'){assert.equal(health.status,'CAPTURE_FAILED');const file=path.join(w.c.receiptDirectory,'manifest.json'),bytes=fs.readFileSync(file);assert.equal(bytes.length,12);assert.equal(fs.readdirSync(w.c.downloads).length,41);return;}assert.ok(r,JSON.stringify(health)); const retained=fs.readFileSync(w.c.resultFile),again=spawnSync(process.execPath,[w.capture.entry,...w.capture.args,parentState.historyFile,parentState.historySha256],{cwd:w.capture.cwd,env:{PATH:process.env.PATH},encoding:'utf8',timeout:10000});assert.equal(again.status,1,again.stderr);assert.equal(again.stdout.trim(),'V2_CAPTURE_BLOCKED');assert.ok(fs.readFileSync(w.c.resultFile).equals(retained),'restart cannot rewrite prior outcome or re-enroll');
++ if(!scenario.startsWith('success')){assert.equal(health.status,'CAPTURE_FAILED');assert.notEqual(r.status,'COMPLETE');assert.ok(r.providerAttempts<=1);assert.equal(r.confirmedUploads,scenario==='ack-partial'?1:0);assert.ok(fs.existsSync(w.c.output));if(scenario==='checkpoint-partial'||scenario==='ack-partial'){const file=path.join(w.c.output,scenario==='checkpoint-partial'?'checkpoint-000000.enc':'ack-000000.enc');assert.equal(fs.statSync(file).size,12);}if(scenario==='receipt-partial')assert.equal(fs.statSync(path.join(w.c.receiptDirectory,'receipt-000000.json')).size,12);if(scenario==='upload-refusal'){assert.equal(r.reason,'ARTIFACT_WIRE_SERVICE_ERROR');assert.equal(r.wireRequests,2);assert.ok(fs.existsSync(w.c.uploadProof));}if(scenario==='quote-refusal'){assert.equal(r.reason,'V2_BINDING_RATE_LIMIT');assert.equal(r.wireRequests,0);}if(scenario==='input-change'){assert.equal(r.reason,'V2_WORKER_INPUT_CHANGED');assert.equal(r.wireRequests,0);}return;}
++ assert.equal(health.status,'CAPTURE_FINISHED',JSON.stringify(r));assert.equal(r.confirmedUploads,41);if(scenario==='success-contended'){const proof=JSON.parse(fs.readFileSync(w.c.concurrencyProof));assert.equal(proof.status,1);assert.equal(proof.out.trim(),'V2_CAPTURE_BLOCKED');}assert.equal(r.providerAttempts,41);assert.ok(r.wireRequests<=205);assert.equal(r.genuineAdmissions,0);
++ for(const file of [w.c.quoteProof,w.c.uploadProof]){const proof=JSON.parse(fs.readFileSync(file));assert.ok(proof.after>proof.before,'producer keeps observing during quote/upload waits');}
++ const raw=JSON.stringify(r.receiptManifest),archives=new Map(r.receiptManifest.receipts.map(x=>[x.artifactId,fs.readFileSync(path.join(w.c.downloads,x.artifactId+'.zip'))]));
++ const options={receiptRaw:raw,receiptSha256:sha(raw),expectedScope:r.receiptManifest.scope,archives,key:'synthetic-v2-artifact-key-only'};const recovered=recoverInactiveV2Capture(options);assert.equal(recovered.status,'AUTHENTICATED_COMPLETE_CAPTURE');assert.equal(recovered.frames,41);assert.equal(recovered.genuineAdmissions,0);assert.ok(recovered.sourceAssets.some(a=>a.name==='context:input-clocks'));assert.equal(recovered.records.at(-1).outcome.cases.length,1);
++ assert.throws(()=>recoverInactiveV2Capture({...options,key:'wrong-synthetic-key'}));const missing=new Map(archives);missing.delete(1);assert.throws(()=>recoverInactiveV2Capture({...options,archives:missing}),/ARCHIVE/);const changed=new Map(archives);changed.set(1,Buffer.from('truncated'));assert.throws(()=>recoverInactiveV2Capture({...options,archives:changed}),/ARCHIVE/);
++});
+diff --git a/test/sec-v2-wire.test.mjs b/test/sec-v2-wire.test.mjs
+new file mode 100644
+index 00000000..dcfd8168
+--- /dev/null
++++ b/test/sec-v2-wire.test.mjs
+@@ -0,0 +1,12 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createHash} from 'node:crypto';
++import {createArtifactWireClient} from '../artifact-wire-client.mjs';import {reviewedV2ArtifactClient} from '../native-sec-bounded-clients.mjs';import {sealResearch} from '../tools/seal-research-artifact.mjs';import {openCaptureZip} from '../capture-artifact.mjs';
++import {artifactWireFixture,syntheticArtifactToken,syntheticResultsOrigin,syntheticStorageOrigin} from './artifact-wire-fixture.mjs';
++const sha=b=>createHash('sha256').update(b).digest('hex'),scope={runId:'900-1',sourceSha:'a'.repeat(40),proposalSha256:'b'.repeat(64),window:{day:'2026-11-05',start:'2026-11-05T14:30:00.000Z',end:'2026-11-05T15:10:00.000Z'}};
++function fixture(t,profile='V2_CAPTURE'){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'v2-wire-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const mock=artifactWireFixture(),wire=createArtifactWireClient({fetcher:mock.fetcher,runtimeToken:syntheticArtifactToken,resultsOrigin:syntheticResultsOrigin,allowedResultsOrigins:[syntheticResultsOrigin],storageOrigins:[syntheticStorageOrigin],profile,v2Scope:scope});const moduleFile=new URL('../artifact-wire-client.mjs',import.meta.url).pathname,client=reviewedV2ArtifactClient({sdk:wire,reviewed:{moduleFile,packageSha256:sha(fs.readFileSync(moduleFile)),contract:'PRE_REQUEST_WIRE_GATE_V1',maxWireRequestsPerUpload:5}});
++ const envelope=()=>sealResearch(Buffer.from('SYNTHETIC_V2_ONLY'),'synthetic-key-at-least16',{kind:'PROPOSED_V2_ENCRYPTED_EVIDENCE_V1',...scope,sequence:0,policyApproved:false,primaryAdmission:false});
++ const upload=e=>{const bytes=Buffer.from(JSON.stringify(e)),file=path.join(dir,'checkpoint-000.enc');fs.writeFileSync(file,bytes);return client.upload({file,name:'checkpoint-000.enc',bytes,sha256:sha(bytes),retentionDays:3,sequence:0});};return {dir,mock,wire,client,envelope,upload};
++}
++test('V2 adapter traverses actual reviewed wire protocol with a distinct namespace and unchanged encrypted bytes',async t=>{const f=fixture(t),e=f.envelope(),r=await f.upload(e);assert.equal(r.success,true);assert.equal(f.mock.calls.length,4);assert.equal(f.client.stats().wireRequests,4);assert.equal(f.wire.stats().retries,0);assert.equal(JSON.parse(f.mock.calls[0].body).name,'paper-capture-v2-000');assert.deepEqual(openCaptureZip(f.mock.archives.get(r.artifactId),'checkpoint-000.enc'),Buffer.from(JSON.stringify(e)));});
++test('V2 wire rejects plaintext, mismatched scope and extra top-level content before every external operation',async t=>{for(const change of [e=>({...e,extra:'PLAINTEXT_NOT_ALLOWED'}),e=>({...e,context:{...e.context,sourceSha:'c'.repeat(40)}}),e=>({...e,context:{...e.context,primaryAdmission:true}}),e=>({...e,ciphertext:''})]){const f=fixture(t);await assert.rejects(f.upload(change(f.envelope())),/V2_ENCRYPTED_INPUT_REQUIRED/);assert.equal(f.mock.calls.length,0);}});
++test('V1 defaults do not accept the V2 namespace or envelope',async t=>{const f=fixture(t,'CAPTURE');await assert.rejects(f.upload(f.envelope()),/FILE_SCOPE/);assert.equal(f.mock.calls.length,0);await assert.rejects(f.wire.uploadArtifact('paper-capture-000',[path.join(f.dir,'checkpoint-000.enc')],f.dir,{retentionDays:3}),/ENCRYPTED_INPUT_REQUIRED/);assert.equal(f.mock.calls.length,0);});
+diff --git a/tools/native-sec-v2-capture-worker.mjs b/tools/native-sec-v2-capture-worker.mjs
+new file mode 100644
+index 00000000..02ec59fd
+--- /dev/null
++++ b/tools/native-sec-v2-capture-worker.mjs
+@@ -0,0 +1,14 @@
++// Inactive V2 worker; adding credentials cannot activate a mode or change frozen policy.
++import fs from 'node:fs';import path from 'node:path';import {pathToFileURL} from 'node:url';
++import {captureJson} from '../capture-json.mjs';import {immutableRead} from '../paper-capture-wrapper.mjs';
++import {prepareInactiveV2Binding,runInactiveV2Capture,writeInactiveV2Result} from '../sec-v2-host-binding.mjs';
++export async function runInactiveV2Worker({file,sha256,historyFile,historySha256}){
++ const raw=immutableRead(file,1048576);if(raw.hash!==sha256)throw Error('V2_WORKER_INPUT_PIN');const freeze=x=>{if(x&&typeof x==='object'){for(const v of Object.values(x))freeze(v);Object.freeze(x);}return x;};const c=freeze(captureJson(raw.bytes.toString()));
++ const prepared=prepareInactiveV2Binding(c,{inputFile:file,inputSha256:sha256,historyFile,historySha256});
++ // No ambient network even when a binding module is loaded. Services must be explicit.
++ globalThis.fetch=async()=>{throw Error('INACTIVE_NETWORK_FORBIDDEN');};prepared.revalidate();
++ if(prepared.history.state!=='VERIFIED_NO_EARLIER_SAME_DAY_RUN'||prepared.history.lookupStatus!=='COMPLETE')throw Error('V2_WORKER_HISTORY_BLOCKED');
++ const module=await import(pathToFileURL(c.bindingModule.file));prepared.revalidate();if(typeof module.createV2Bindings!=='function')throw Error('V2_WORKER_EXPLICIT_CLIENTS');
++ let result=await runInactiveV2Capture(c,prepared,await module.createV2Bindings(c));try{prepared.revalidate();}catch{result={...result,status:'INCOMPLETE',reason:'V2_WORKER_INPUT_CHANGED'};}writeInactiveV2Result(c,result);return result;
++}
++if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href){try{if(process.argv.length!==6)throw Error('V2_WORKER_ARGS');const r=await runInactiveV2Worker({file:process.argv[2],sha256:process.argv[3],historyFile:process.argv[4],historySha256:process.argv[5]});console.log(r.status);if(r.status!=='COMPLETE')process.exitCode=1;}catch{console.log('V2_CAPTURE_BLOCKED');process.exitCode=1;}}
