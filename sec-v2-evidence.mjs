@@ -51,7 +51,7 @@ export function openProposedV2EvidenceStore({directory,key,runId,sourceSha,propo
  const scoped=(e,seq)=>need(JSON.stringify(e.context)===JSON.stringify(context(scope,seq)),'V2_CONTEXT');
  const snapshot=()=>{
   safe(directory);const names=io.readdirSync(directory);need(names.every(n=>n==='.writer-lock'||n==='.observing'||n==='.observation-unknown'||/^(checkpoint|ack)-\d{6}\.enc$/.test(n)),'V2_UNEXPECTED_FILE');
-  if(cache){const expected=Object.keys(signatures).sort(),actual=names.filter(n=>n!=='.writer-lock').sort();if(JSON.stringify(expected)===JSON.stringify(actual)&&actual.every(n=>signature(path.join(directory,n))===signatures[n]))return structuredClone({...cache,locked:names.includes('.writer-lock'),observing:names.includes('.observing'),observationUnknown:names.includes('.observation-unknown')});}
+  if(cache){const expected=Object.keys(signatures).sort(),actual=names.filter(n=>n!=='.writer-lock'&&n!=='.observing').sort();if(JSON.stringify(expected)===JSON.stringify(actual)&&actual.every(n=>signature(path.join(directory,n))===signatures[n]))return structuredClone({...cache,locked:names.includes('.writer-lock'),observing:names.includes('.observing'),observationUnknown:names.includes('.observation-unknown')});}
   let state=null,chain='0'.repeat(64),total=0;const pending=[],records=[];
   const checkpoints=names.filter(n=>n.startsWith('checkpoint-')).sort();need(checkpoints.length<=41,'V2_FRAME_CAP');
   for(let seq=0;seq<checkpoints.length;seq++){
@@ -63,17 +63,17 @@ export function openProposedV2EvidenceStore({directory,key,runId,sourceSha,propo
    need(ack.kind==='CLIENT_ACK_NOT_INDEPENDENT_REMOTE_VERIFICATION'&&ack.checkpointSha256===sha(bytes)&&ack.sequence===seq&&Number.isSafeInteger(ack.artifactId)&&ack.artifactId>0,'V2_ACK_BINDING');state=p.record.state;
   }
   need(names.filter(n=>n.startsWith('ack-')).length===checkpoints.length-pending.length,'V2_ORPHAN_ACK');
-  const result={scope,records,state,chain,total,pending,locked:names.includes('.writer-lock'),automaticResumeAuthorized:false,primaryAdmission:false};remember(result);return structuredClone(result);
+  const result={scope,records,state,chain,total,pending,locked:names.includes('.writer-lock'),observing:names.includes('.observing'),observationUnknown:names.includes('.observation-unknown'),automaticResumeAuthorized:false,primaryAdmission:false};remember(result);return structuredClone(result);
  };
  let activeLease=null;
- const beginObservation=()=>{const prior=snapshot();need(!prior.locked&&!prior.observing&&!prior.observationUnknown&&!prior.pending.length,'V2_OBSERVATION_UNCONFIRMED');io.mkdirSync(path.join(directory,'.observing'));const lease={prior,release(){if(activeLease===lease){activeLease=null;io.rmdirSync(path.join(directory,'.observing'));}}};activeLease=lease;return lease;};
+ const beginObservation=()=>{const prior=snapshot();need(!prior.locked&&!prior.observing&&!prior.observationUnknown&&!prior.pending.length,'V2_OBSERVATION_UNCONFIRMED');io.mkdirSync(path.join(directory,'.observing'));try{const after=snapshot();need(!after.locked&&!after.observationUnknown&&!after.pending.length&&after.chain===prior.chain,'V2_CONCURRENT_OBSERVATION');}catch(e){io.rmdirSync(path.join(directory,'.observing'));throw e;}const lease={prior,release(){if(activeLease===lease){activeLease=null;io.rmdirSync(path.join(directory,'.observing'));}}};activeLease=lease;return lease;};
  const markUnknown=()=>{try{io.writeFileSync(path.join(directory,'.observation-unknown'),'UNCONFIRMED_OBSERVATION',{flag:'wx',mode:0o600});}catch{}};
  const append=async(record,{guard,upload,lease,timers={setTimeout,clearTimeout}}={})=>{
   need(guards.has(guard)&&typeof upload==='function','V2_PORTS');guard.revalidate({mode:'PROPOSAL_ONLY',protocol:PROOF_READY_PROPOSAL});
   const before=snapshot();need(!before.locked&&!before.observationUnknown&&!before.pending.length&&(!before.observing||lease===activeLease),'V2_UNCONFIRMED_OR_INTERRUPTED');need(before.records.length<41,'V2_FRAME_CAP');
   let lock=false;
   try{
-   io.mkdirSync(path.join(directory,'.writer-lock'));lock=true;const current=snapshot();need(current.chain===before.chain&&!current.pending.length,'V2_CONCURRENT_ADVANCE');
+   io.mkdirSync(path.join(directory,'.writer-lock'));lock=true;const current=snapshot();need(current.chain===before.chain&&!current.pending.length&&!current.observationUnknown&&(!current.observing||lease===activeLease),'V2_CONCURRENT_ADVANCE');
    const sequence=current.records.length;need(record.sequence===sequence&&record.state?.frames?.length===sequence+1&&record.policyApproved===false&&record.primaryAdmission===false,'V2_RECORD_SCOPE');
    need(record.state.kind==='PROPOSED_V2_EVIDENCE_STATE_V1'&&record.state.sourceSha===scope.sourceSha&&record.state.runId===scope.runId&&record.state.selection?.frames===sequence+1&&JSON.stringify(record.state.selection.pairs)===JSON.stringify(record.state.pairs),'V2_STATE_BINDING');const {checksum,...selectionBody}=record.state.selection;need(checksum===sha(selectionBody),'V2_SELECTION_HASH');
    const payload={sequence,previous:current.chain,record,chain:sha(current.chain+JSON.stringify(record))},plain=Buffer.from(JSON.stringify(payload));need(plain.length<=V2_EVIDENCE_CAPS.plainBytes,'V2_PLAIN_BUDGET');
@@ -99,7 +99,7 @@ export async function processProposedV2Frame({store,sourceOptions,observeFrame,n
  const sequence=old.frames.length,w=store.scope.window,start=Date.parse(w.start),end=Date.parse(w.end),due=sequence===40?end-10000:start+sequence*60000;
  need(sequence<41&&sourceOptions.runId===old.runId&&sourceOptions.sourceSha===old.sourceSha,'V2_FRAME_SCOPE');
  need(readNativeRun({directory:sourceOptions.archiveDirectory,expectedRunId:sourceOptions.runId,expectedSourceSha:sourceOptions.sourceSha}).meta.provenance==='SYNTHETIC_FIXTURE','V2_LIVE_BINDING_NOT_IMPLEMENTED_OR_AUTHORIZED');
- // Actual original prefixes are read and sealed into the pending record context BEFORE quote observation.
+ // Read original prefixes BEFORE quote observation; immutable encrypted persistence follows the frame. An interruption leaves uncertainty, not an invented durable pre-quote proof.
  const handle=prepareProposedV2Source({...sourceOptions,now}),assets=sourceAssets(sourceOptions,handle),deltas=[];
  for(const asset of assets){const priorHash=old.assetIndex[asset.name];need(!priorHash||priorHash===asset.sha256,'V2_IMMUTABLE_ASSET_CHANGED');if(!priorHash)deltas.push(asset);}
  guard.revalidate({mode:'PROPOSAL_ONLY',protocol:PROOF_READY_PROPOSAL});observed=true;

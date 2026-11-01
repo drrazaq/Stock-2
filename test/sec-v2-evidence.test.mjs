@@ -68,3 +68,22 @@ test('checkpoint/upload/ACK failures keep original evidence and block blind retr
   if(boundary==='guard')break;
  }
 });
+
+test('concurrent checkpoint writers cannot duplicate upload or consume an unconfirmed sequence',async t=>{
+ const g=guardFixture(t),directory=fs.mkdtempSync(path.join(os.tmpdir(),'v2-concurrent-'));t.after(()=>fs.rmSync(directory,{recursive:true,force:true}));
+ const options={directory,key,runId:'synthetic',sourceSha:'a'.repeat(40),proposalSha256:sha('proposal'),plan},store=openProposedV2EvidenceStore(options),other=openProposedV2EvidenceStore(options),body={protocol:PROOF_READY_PROPOSAL,frames:1,pairs:[],ready:{},used:[]},selection={...body,checksum:sha(body)},record={sequence:0,policyApproved:false,primaryAdmission:false,state:{kind:'PROPOSED_V2_EVIDENCE_STATE_V1',sourceSha:options.sourceSha,runId:options.runId,frames:[frameAt(0)],pairs:[],selection}};
+ let release,entered;const waiting=new Promise(r=>{release=r;}),started=new Promise(r=>{entered=r;});let uploads=0;
+ const first=store.append(record,{guard:g.guard,upload:async x=>{uploads++;entered();await waiting;return {confirmed:true,contentSha256:sha(x.bytes),artifactId:1};}});
+ await started;await assert.rejects(other.append(record,{guard:g.guard,upload:async()=>{uploads++;throw Error('must not upload');}}));assert.equal(uploads,1);release();await first;
+ assert.equal(other.snapshot().state.frames.length,1);assert.equal(other.snapshot().pending.length,0);assert.equal(other.snapshot().automaticResumeAuthorized,false);
+ const lease=store.beginObservation();assert.throws(()=>other.beginObservation());await assert.rejects(other.append(record,{guard:g.guard,upload:async()=>{throw Error('must not upload during observation');}}));lease.release();assert.equal(other.snapshot().observing,false);
+});
+test('upload timeout and unconfirmed acknowledgments preserve pending bytes and prevent blind retries',async t=>{
+ const g=guardFixture(t);
+ for(const response of ['timeout','refused','wrong-hash','invalid-id']){
+  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'v2-ack-'));t.after(()=>fs.rmSync(directory,{recursive:true,force:true}));const options={directory,key,runId:'synthetic',sourceSha:'a'.repeat(40),proposalSha256:sha('proposal'),plan},store=openProposedV2EvidenceStore(options);
+  const body={protocol:PROOF_READY_PROPOSAL,frames:1,pairs:[],ready:{},used:[]},selection={...body,checksum:sha(body)},record={sequence:0,policyApproved:false,primaryAdmission:false,state:{kind:'PROPOSED_V2_EVIDENCE_STATE_V1',sourceSha:options.sourceSha,runId:options.runId,frames:[frameAt(0)],pairs:[],selection}};let calls=0;
+  const upload=async x=>{calls++;if(response==='timeout')return new Promise(()=>{});return {confirmed:response!=='refused',contentSha256:response==='wrong-hash'?'0'.repeat(64):sha(x.bytes),artifactId:response==='invalid-id'?0:1};};
+  const timers={setTimeout:(fn)=>setTimeout(fn,10),clearTimeout};await assert.rejects(store.append(record,{guard:g.guard,upload,timers}));assert.equal(calls,1);const b=fs.readFileSync(path.join(directory,'checkpoint-000000.enc'));await assert.rejects(store.append(record,{guard:g.guard,upload,timers}));assert.equal(calls,1);assert.ok(fs.readFileSync(path.join(directory,'checkpoint-000000.enc')).equals(b));assert.equal(openProposedV2EvidenceStore(options).snapshot().pending.length,1);
+ }
+});
