@@ -1,8 +1,8 @@
 {
   "kind": "OPEN_ACCEPTANCE_CLOSURE_BOARD_V1",
   "updated": "2026-11-01",
-  "reconciledDevelopmentSource": "119de64b323f86f2f45e6d3a40e13383294ee648",
-  "observedProductionMain": "6e806c4f2ea5d0f299b86c435fdc449c2f87e291",
+  "reconciledDevelopmentSource": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30",
+  "observedProductionMain": "31399de73752c7915857dab7865ddbdd1bcae070",
   "score": {
     "complete": 24,
     "total": 40,
@@ -22,9 +22,15 @@
       "nextActionAndOwner": "Claude: finish assigned read-only closure audit; implementation owner repairs confirmed defects.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No complete per-script input/output/side-effect/failure/timing/research-boundary review with links; new targeted reviews are not every-script evidence.",
+        "exactUnmetRequirement": "Complete behavioral matrix for every script; inventory and scoped tests do not cover every script.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Existing inventory and targeted script reviews.",
+      "smallestRemainingGap": "Complete behavioral matrix for every script; inventory and scoped tests do not cover every script.",
+      "gapType": [
+        "IMPLEMENTATION"
+      ],
+      "nextConcreteAction": "Claude completes assigned read-only audit; Codex repairs confirmed defects. No duplicate broad audit."
     },
     {
       "id": "ACTIONS-04",
@@ -36,25 +42,39 @@
       "nextActionAndOwner": "Claude: assigned workflow audit; implementation owner fixes independently confirmed gaps.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "All-workflow checkout/ref/writer/cache/cancellation/retention coverage remains incomplete; watcher publication/conflict tests cover only repaired paths.",
+        "exactUnmetRequirement": "Every remaining workflow/helper needs checkout/ref, writer/conflict/retry, failure-save and retention proof.",
         "newEvidence": [
           "docs/validation/d3-session-history-verification.json"
         ]
-      }
+      },
+      "latestEvidence": "Accounting/watcher deployments and disposable-Git publication/conflict regressions retained.",
+      "smallestRemainingGap": "Every remaining workflow/helper needs checkout/ref, writer/conflict/retry, failure-save and retention proof.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "NATURAL_EVIDENCE"
+      ],
+      "nextConcreteAction": "Claude workflow audit → targeted Codex repairs; natural save evidence stays separate."
     },
     {
       "id": "MARKET-02",
       "status": "OPEN",
       "requiredVerification": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.",
-      "criteriaAlreadySatisfied": "Massive Starter delay established; limited SIP/IEX endpoint samples.",
+      "criteriaAlreadySatisfied": "Sanitized official account UI: Alpaca Algo Trader Plus and Massive Stocks Starter; prior limited SIP/IEX observed responses. C1/C2 bounded diagnostic source b8e0fe8c hosted PASS.",
       "remainingEngineering": "Inactive entitlement/coverage admission guards prepared.",
-      "externalOrLiveEvidence": "Official account/plan/feed/session/universe rights plus authorized observations.",
-      "nextActionAndOwner": "Owner: supply redacted official current entitlement evidence; no new calls authorized.",
+      "externalOrLiveEvidence": "Current binding/endpoint/feed/session permissions and relevant reference/retention rights; ownership of the two subscriptions is CONFIRMED.",
+      "nextActionAndOwner": "Review corrected exact seven-request inactive diagnostic; only then owner may authorize installation/bindings/ONE dated run. Other product rights need official non-secret evidence.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No current official account-specific latest SIP/session/universe/retention entitlement plus authorized representative permission/refusal evidence.",
+        "exactUnmetRequirement": "Current binding/endpoint/feed/session permissions and relevant reference/retention rights; ownership of the two subscriptions is CONFIRMED.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Sanitized official account UI: Alpaca Algo Trader Plus and Massive Stocks Starter; prior limited SIP/IEX observed responses. C1/C2 bounded diagnostic source b8e0fe8c hosted PASS.",
+      "smallestRemainingGap": "Current binding/endpoint/feed/session permissions and relevant reference/retention rights; ownership of the two subscriptions is CONFIRMED.",
+      "gapType": [
+        "EXTERNAL_EVIDENCE",
+        "OWNER_DECISION"
+      ],
+      "nextConcreteAction": "Review corrected exact seven-request inactive diagnostic; only then owner may authorize installation/bindings/ONE dated run. Other product rights need official non-secret evidence."
     },
     {
       "id": "MARKET-03",
@@ -66,11 +86,18 @@
       "nextActionAndOwner": "Implementation owner: inventory actual ingress and test ambiguous aliases/DST/half-day controls.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No complete actual-ingress symbol/units/session/corporate-action/ticker-change matrix across every provider; history/DST repairs cover only scoped paths.",
+        "exactUnmetRequirement": "Finish every-ingress symbol/unit/session/adjustment and corporate-action matrix; authoritative real-security mapping remains separate.",
         "newEvidence": [
           "docs/d3-session-history-review.md"
         ]
-      }
+      },
+      "latestEvidence": "Feed b680 deployed; strict calendar/source-clock controls; accepted inactive contracts f61 unchanged. Separate default-off observer patch/parity/package tests hosted PASS at fbbd0e43, not deployed.",
+      "smallestRemainingGap": "Finish every-ingress symbol/unit/session/adjustment and corporate-action matrix; authoritative real-security mapping remains separate.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE"
+      ],
+      "nextConcreteAction": "Review passive observer exact branch fbbd0e43; then finish remaining ingress contracts without adopting thresholds or changing inputs."
     },
     {
       "id": "MARKET-04",
@@ -82,9 +109,16 @@
       "nextActionAndOwner": "Implementation owner: passively inspect next naturally scheduled post-DST watcher; owner separately approves broader measurement.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No observed complete regular, premarket and half-day intended-minute/freshness/denominator/p95/outage dataset; configured09:30\u201315:00 excludes the final hour and post-DST evidence is pending.",
+        "exactUnmetRequirement": "Actual full regular/premarket/half-day coverage, verified universe, clocks and p95/outages are absent. Configured09:30–15:00 omits final hour.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Watcher v5 deployed and configured-window health semantics retained; fixtures are not session observations.",
+      "smallestRemainingGap": "Actual full regular/premarket/half-day coverage, verified universe, clocks and p95/outages are absent. Configured09:30–15:00 omits final hour.",
+      "gapType": [
+        "NATURAL_EVIDENCE",
+        "OWNER_DECISION"
+      ],
+      "nextConcreteAction": "Passively inspect Monday2November natural startup/DST, source access, archives/save/delivery. Broader measurement scope needs distinct approval."
     },
     {
       "id": "DISCOVERY-03",
@@ -96,9 +130,17 @@
       "nextActionAndOwner": "Implementation owner: finish inactive live integration; owner reviews exact future collection scope.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Six-name offline integration cannot establish whole-market premarket SIP coverage; representative explicit universe, rights, exact approval and measured broad coverage remain missing.",
+        "exactUnmetRequirement": "Representative broad-universe SIP hybrid collector and measured scope remain distinct from the six-name calibration.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Delayed Massive Phase A rejected as real-time proof; six-name offline host/clients and explicit source budgets retained.",
+      "smallestRemainingGap": "Representative broad-universe SIP hybrid collector and measured scope remain distinct from the six-name calibration.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE",
+        "OWNER_DECISION"
+      ],
+      "nextConcreteAction": "Finish exact broad-universe rights/request/storage/coverage scope only after current bounded V2 work; no activation."
     },
     {
       "id": "DISCOVERY-04",
@@ -110,11 +152,19 @@
       "nextActionAndOwner": "Implementation owner: V2 route/cache/no-proof telemetry and symmetric-control specification/implementation after required protocol review; owner/reviewer: evaluate exact separate enrollment/continuity proposal. No live activation.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Zero admitted cases; V1 ordinary proof ordering and disabled primary continuity admission block enrollment. Frozen prospective period/case/day/controls/quotes/costs/uncertainty/confirmation criteria are unmet.",
+        "exactUnmetRequirement": "V1 normal proof order cannot enroll. V2 policy unadopted; offline encrypted transport/outcomes are under actual-caller tests. Trusted live V2 host/guard integration remains engineering.",
         "newEvidence": [
           "docs/d3-session-history-review.md"
         ]
-      }
+      },
+      "latestEvidence": "V1 unchanged; existing artifact zero admissions retained; D1–D3 and inactive host/client/parent proofs preserved.",
+      "smallestRemainingGap": "V1 normal proof order cannot enroll. V2 policy unadopted; offline encrypted transport/outcomes are under actual-caller tests. Trusted live V2 host/guard integration remains engineering.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE",
+        "OWNER_DECISION"
+      ],
+      "nextConcreteAction": "Verify proposed V2 encrypted frame/state/ACK recovery and paired exits/missingness; independent chronology/control review precedes owner adoption and dated capture approval."
     },
     {
       "id": "CATALYST-03",
@@ -126,11 +176,17 @@
       "nextActionAndOwner": "Implementation owner: finish remaining all-source materiality/identity/revision/conflict/persistence matrix; native host/client/parent mechanism is already implemented offline.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Native SEC clocks/joins/revisions/restart have actual-path proof, but events-study/news full-body revision contracts, earnings AV/FMP provenance/shape handling and Discovery2/Comeback derived-event contracts still lack a complete eight-lane materiality/conflict/persistence matrix. Independent historical authenticity belongs separately to CATALYST-04.",
+        "exactUnmetRequirement": "Events-study/news full-body revisions, AV/FMP earnings and derived Discovery2/Comeback need complete identity/materiality/conflict/persistence evidence.",
         "newEvidence": [
           "docs/d3-session-history-review.md"
         ]
-      }
+      },
+      "latestEvidence": "Deployed SEC helper repair plus reconstructed—not recovered—source protections and actual native acceptance join/cross-run lineage tests preserved.",
+      "smallestRemainingGap": "Events-study/news full-body revisions, AV/FMP earnings and derived Discovery2/Comeback need complete identity/materiality/conflict/persistence evidence.",
+      "gapType": [
+        "IMPLEMENTATION"
+      ],
+      "nextConcreteAction": "Codex completes remaining eight-lane source-contract matrix and actual-caller regressions. Native SEC lineage is already implemented offline; do not restart it."
     },
     {
       "id": "CATALYST-04",
@@ -142,9 +198,17 @@
       "nextActionAndOwner": "Owner/data reviewer: choose licensed independent evidence; implementation owner prepares offline audit.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No independent contemporaneous publication/access records and missing-source/late-ingestion denominators; current caches and reconstructed archives cannot authenticate past availability.",
+        "exactUnmetRequirement": "Independently authenticated contemporaneous sources/access clocks and missing-source denominators cannot be inferred from current caches.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Economic/source/access-clock and missing-source distinctions retained; no authenticated historical availability claim.",
+      "smallestRemainingGap": "Independently authenticated contemporaneous sources/access clocks and missing-source denominators cannot be inferred from current caches.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE",
+        "OWNER_DECISION"
+      ],
+      "nextConcreteAction": "Codex prepares source-audit input/rejection contract; owner/data reviewer selects exact licensed independent evidence."
     },
     {
       "id": "EXEC-03",
@@ -156,12 +220,19 @@
       "nextActionAndOwner": "Implementation owner: extend actual lane/spec/holding/exit contract comparisons; keep unsupported timing, source, cost and execution plans unresolved.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "One mentor lane is explained and conflicting exit variants are unresolved, but every delivered lane is not reconciled to tested entry/stop/exit/hold/cost/risk; executable size/liquidity/cost basis remains unestablished.",
+        "exactUnmetRequirement": "Every delivered lane still needs its registered entry/stop/exit/hold/cost/size/liquidity comparison; unsupported execution assumptions remain unresolved.",
         "newEvidence": [
           "docs/mentor-entry-to-exit-workflow.md",
           "test/mentor-lifecycle.test.mjs"
         ]
-      }
+      },
+      "latestEvidence": "Recorded numeric/gap/risk controls; one LEADER DIP guide distinguishes target not adopted and frozen close versus next-open mismatch; production proposal separate.",
+      "smallestRemainingGap": "Every delivered lane still needs its registered entry/stop/exit/hold/cost/size/liquidity comparison; unsupported execution assumptions remain unresolved.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE"
+      ],
+      "nextConcreteAction": "Finish actual lane/spec comparisons; separate read-only mentor proposal stays NOT PROVEN and undeployed."
     },
     {
       "id": "TELEGRAM-03",
@@ -173,9 +244,16 @@
       "nextActionAndOwner": "Claude: assigned delivery audit; implementation owner repairs confirmed caller gaps.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Watcher and accounting repairs do not establish stable IDs/partial ACK/quarantine/publication/reconciliation for every independent message/callback route; journal remains opt-in.",
+        "exactUnmetRequirement": "Stable IDs/partial ACK/unknown quarantine/confirmed persistence across every route and independent job; journal remains opt-in.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Watcher B1/B2/F1/F2 and accounting transaction durability deployed; research idempotency separate from delivery retry.",
+      "smallestRemainingGap": "Stable IDs/partial ACK/unknown quarantine/confirmed persistence across every route and independent job; journal remains opt-in.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "NATURAL_EVIDENCE"
+      ],
+      "nextConcreteAction": "Claude delivery audit → Codex targeted caller integration. No live test message."
     },
     {
       "id": "TELEGRAM-04",
@@ -187,9 +265,16 @@
       "nextActionAndOwner": "Owner: review bounded validation only after readiness; no dispatch now.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No separately approved actual non-BUY delivery and independent recovery/deduplication observation with real acknowledgments.",
+        "exactUnmetRequirement": "Explicitly authorized bounded non-BUY real ACK/recovery across independent runs has not occurred.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Synthetic ACK/refusal/retry controls only; no new real messages.",
+      "smallestRemainingGap": "Explicitly authorized bounded non-BUY real ACK/recovery across independent runs has not occurred.",
+      "gapType": [
+        "OWNER_DECISION",
+        "NATURAL_EVIDENCE"
+      ],
+      "nextConcreteAction": "After delivery readiness, prepare exact non-sensitive validation scope for owner decision; mocks cannot close it."
     },
     {
       "id": "STRATEGY-04",
@@ -201,9 +286,17 @@
       "nextActionAndOwner": "Owner/data reviewer: resolve licensed data; implementation owner retains offline admission checks.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No independently source-audited PIT/delisted representative universe and untouched execution-realistic after-cost replay; frozen study metadata and mentor examples are insufficient.",
+        "exactUnmetRequirement": "Audited PIT/delisted universe, execution/cost/liquidity data and untouched holdout are unavailable.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Frozen rejected/unproven findings preserved; no new endorsement or strategy activation.",
+      "smallestRemainingGap": "Audited PIT/delisted universe, execution/cost/liquidity data and untouched holdout are unavailable.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE",
+        "OWNER_DECISION"
+      ],
+      "nextConcreteAction": "Finish replay admission/input contract; owner/data reviewer selects defensible source and holdout scope."
     },
     {
       "id": "HISTORY-02",
@@ -215,9 +308,17 @@
       "nextActionAndOwner": "Owner/data reviewer: choose authoritative reference scope; no calls yet.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No independently authenticated as-known security/ticker/class/listing/delisting/terminal-value audit across decision, entry and exit.",
+        "exactUnmetRequirement": "Independent as-known security/class mappings, universe membership, ticker changes, delistings and terminal values.",
         "newEvidence": []
-      }
+      },
+      "latestEvidence": "Identity/class shape and ambiguous-identity rejection controls; fixtures do not authenticate mappings.",
+      "smallestRemainingGap": "Independent as-known security/class mappings, universe membership, ticker changes, delistings and terminal values.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE",
+        "OWNER_DECISION"
+      ],
+      "nextConcreteAction": "Finish selected-source PIT audit tooling; resolve exact authoritative reference scope without new calls."
     },
     {
       "id": "HISTORY-03",
@@ -229,11 +330,18 @@
       "nextActionAndOwner": "Claude: assigned claims audit; implementation owner qualifies confirmed unsupported output.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Every numerical/tested/proven/unseen claim is not yet catalogued and authenticated/qualified; the mentor and legacy/admitted split correct only scoped claims.",
+        "exactUnmetRequirement": "Complete numerical claim/source/window/selection/cost/hold catalogue and authenticate or qualify each claim.",
         "newEvidence": [
           "docs/mentor-entry-to-exit-workflow.md"
         ]
-      }
+      },
+      "latestEvidence": "Legacy paper versus zero admitted prospective cases explicit; mentor NOT PROVEN and unresolved exit assumptions visible.",
+      "smallestRemainingGap": "Complete numerical claim/source/window/selection/cost/hold catalogue and authenticate or qualify each claim.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE"
+      ],
+      "nextConcreteAction": "Claude claims audit → Codex targeted wording/claim repairs; preserve original frozen results."
     },
     {
       "id": "HISTORY-04",
@@ -245,11 +353,19 @@
       "nextActionAndOwner": "Implementation owner: V2 route/cache/no-proof telemetry and symmetric-control specification/implementation after required protocol review; owner/reviewer: evaluate exact separate enrollment/continuity proposal. No live activation.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "No observed candidate/control/SPY capacity/cost/drawdown paths and predeclared clustered/multiplicity/untouched-confirmation result; admitted cases remain0.",
+        "exactUnmetRequirement": "Observed candidate/control/SPY quote/size paths, censored gaps, realistic costs/capacity/drawdowns and untouched clustered confirmation absent.",
         "newEvidence": [
           "docs/validation/d3-session-history-verification.json"
         ]
-      }
+      },
+      "latestEvidence": "Unchanged V1 evaluator/frozen results; offline control/cost/missingness and source recovery proofs only; genuine admissions0.",
+      "smallestRemainingGap": "Observed candidate/control/SPY quote/size paths, censored gaps, realistic costs/capacity/drawdowns and untouched clustered confirmation absent.",
+      "gapType": [
+        "IMPLEMENTATION",
+        "EXTERNAL_EVIDENCE",
+        "OWNER_DECISION"
+      ],
+      "nextConcreteAction": "Verify separate V2 paired30-minute exits, losing paths and missingness reports; finish trusted live binding then independently review protocol before adoption."
     }
   ],
   "currentSourceIntegrationCheckpoint": "04e70e257a9eacd656430261ebc3610a43670f5e",
@@ -287,5 +403,20 @@
   },
   "exactCriteriaUnchanged": true,
   "latestReviewEvidence": "docs/validation/sec-v2-mentor-verification.json",
-  "latestReviewSource": "119de64b323f86f2f45e6d3a40e13383294ee648"
+  "latestReviewSource": "119de64b323f86f2f45e6d3a40e13383294ee648",
+  "scope": "16 full criteria reassessed; inactive components are implementation evidence only, no production capabilities or profitability proof.",
+  "deployedRepairs": {
+    "accounting": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+    "watcher": "be3159015708be8f4f8df1384453b97fad1198db",
+    "sec": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+    "feedIntegrity": "b680988b0ffb66fcb3955fc8b4ff1c246959b880",
+    "scope": "Existing deployment records retained; no new production modifications."
+  },
+  "preservedEvidence": "Prior detailed row evidence retained in criteriaAlreadySatisfied and immutable Git history. No partial repair is a full acceptance closure.",
+  "nextImplementationRow": "DISCOVERY-04: finish offline V2 state/exit/missingness/guard tests, then CATALYST-03 remaining source contracts.",
+  "naturalMonday": {
+    "date": "2026-11-02",
+    "status": "PENDING_NO_NATURAL_SESSION_YET",
+    "notInferredFromFixtures": true
+  }
 }

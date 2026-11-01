@@ -12,7 +12,7 @@ test('inactive package hashes and immutable source pin match the reviewed guard/
 });
 test('proposed wrapper has read-only permissions, no automatic trigger and exactly the existing provider bindings',()=>{
  const y=read('docs/validation/sip-access-diagnostic.workflow.yml.proposed');
- assert.match(y,/permissions:\n  contents: read\n/);assert.match(y,/timeout-minutes: 5/);assert.match(y,/github.run_attempt == 1/);
+ assert.match(y,/permissions:\n  contents: read\n/);assert.match(y,/timeout-minutes: 20/);assert.match(y,/github.run_attempt == 1/);
  assert.doesNotMatch(y,/schedule:|pull_request:|push:|contents: write|actions: write|TG_TOKEN|PRIVATE_KEY|RESEARCH_ARTIFACT_KEY|cancel-in-progress: true/);
  assert.deepEqual([...y.matchAll(/secrets\.([A-Z_]+)/g)].map(m=>m[1]).sort(),['ALPACA_KEY','ALPACA_SECRET']);
  assert.ok(y.indexOf('Verify immutable files before binding')<y.indexOf('      - name: Protected diagnostic only'));assert.match(y,/persist-credentials: false/);assert.match(y,/retention-days: 3/);

@@ -1,32 +1,199 @@
-> **1 November inactive SIP/accepted-contracts checkpoint:** [f61bcf748 reviewed PASS, unchanged](market-data-contracts-review-pass.md); [bounded protected SIP diagnostic](sip-access-diagnostic-proposal.md), [immutable inactive package](validation/sip-access-diagnostic-manifest.json), [separate passive contracts-integration proposal](contracts-integration-proposal.md). Diagnostic source `8af4e1acf74530b620ddc4cc232c2030fffabb6f`; mocked transport/CLI checks run through ordinary hosted CI, with local Node unavailable. Reference0 + sampled SIP7 = combined maximum7 application attempts; no workflow installation, binding or execution. Production feed repair is deployed separately at `b680988b`; prior provider audit below is historical. Monday2November natural-run/DST/archive/delivery verification remains PENDING. Contracts/proposed thresholds not activated; acceptance24/40,0new closures or admissions. The earlier unavailable Codex candidate was not recovered. Exact observer patch is remaining engineering, not an external-only blocker.
+# Sixteen-row acceptance closure board — 1 November 2026
 
-> **Current1November subscription/feed checkpoint:** owner account UI confirms Alpaca Algo Trader Plus and Massive Stocks Starter; only [sanitized product evidence](validation/subscription-evidence-2026-11-01.json) is published. [Actual provider/feed route audit](provider-feed-path-audit-2026-11-01.md) distinguishes production’s SIP-first/global-label/422downgrade and volume-clock defects from existing development repairs; new source-clock/browser/top50/premarket safeguards are development-only. Implementation source `2323cbe6dc66dced8b20f7d6b1ae74768d4c5939`. [Verification](validation/provider-feed-decision-verification.json) preserves the local resource-failed full run; exact published CI/PR1 is authoritative. No new probe, production feed switch, collection or deployment. Acceptance24/40,0closures/admissions. Earlier plan-unknown notes below are historical.
+24/40 accepted;16 OPEN;0 new full-row closures;0 admitted prospective cases. This board is an implementation queue, not a profitability claim. The goal remains a trading mentor explaining entry conditions/prices, risk, holding periods and exits across intraday, days, weeks and months. LEADER DIP remains NOT PROVEN.
 
-> **Current1November review checkpoint:** [V2 chronology, actual telemetry and symmetric-control proposal](sec-proof-ready-v2-review.md); [separate mentor production package / draftPR3](mentor-readonly-production-proposal.md); [exact non-secret entitlement checklist](alpaca-entitlement-owner-checklist.md). Draft3source `119de64b323f86f2f45e6d3a40e13383294ee648`: offline226files/2,186cases, Python30 and syntax283 PASS; V1/frozen results unchanged. Empty-start and buffered-entry schedule defects corrected;19policy tests PASS. Independent policy review PENDING; no adoption, deployment or collection. V2 encrypted transport/outcome/guard integration remains engineering work. Acceptance24/40,0closures/admissions. Earlier checkpoint notes below are historical.
+Deployed accounting `bdc984e9`, watcher `be315901`, SEC `bd70f5a7` and feed-integrity `b680988b` are preserved. Their bounded repairs do not satisfy all-route/all-source or empirical criteria. Monday2November natural-run/DST verification remains pending; configured watcher09:30–15:00 does not cover15:00–16:00.
 
-# Acceptance closure board —31 October2026
+## REPO-03 — OPEN
 
-Reconciled against published D3 checkpoint `3fa31b2cd2ec56f6a72cf077a0c845cc4c58777b` (all5CI checks PASS), current mentor implementation `b4d355d9d08cfea193ae547503955b04faa1e2c7`, and production main `6e806c4f2ea5d0f299b86c435fdc449c2f87e291`. **24/40 accepted;0new closures;16OPEN;0genuine admissions.** Every original requiredVerification is unchanged in the [checklist](engineering-acceptance-checks.json) and [machine-readable board](validation/acceptance-closure-board.json). No full row earns closure from a satisfied substep. Earlier evidence stays in the ledger and Git history. Unpublished source fixes were reconstructed, not recovered.
+**Exact requirement:** Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this.
 
-Latest repairs: scoped/paginated GitHub execution history, reliable cancellation/no-op proof, explicit UNKNOWN budgets and diagnosed startup-race correction advance ACTIONS-04, MARKET-03, CATALYST-03 and the prospective-evidence preparation portions of DISCOVERY-04/HISTORY-04. They do not establish all-source/all-provider/all-workflow coverage or original global ingestion. The [mentor workflow](mentor-entry-to-exit-workflow.md) advances EXEC-03 and claim qualification under HISTORY-03; NOT PROVEN and timing/target conflicts remain visible.
+**Completed evidence:** Existing inventory and targeted script reviews.
 
-| Row | Satisfied scope | Exact unmet requirement; why OPEN | Next action / owner |
-|---|---|---|---|
-| REPO-03 | Inventory/syntax; targeted behavioral reviews | No complete per-script input/output/side-effect/failure/timing/research-boundary review with links; new targeted reviews are not every-script evidence. | Claude: finish assigned read-only closure audit; implementation owner repairs confirmed defects. |
-| ACTIONS-04 | Deployed accounting/watcher/SEC fixes; actual Git fault tests; bounded history | All-workflow checkout/ref/writer/cache/cancellation/retention coverage remains incomplete; watcher publication/conflict tests cover only repaired paths. | Claude: assigned workflow audit; implementation owner fixes independently confirmed gaps. |
-| MARKET-02 | Massive15minute delay; limited SIP/IEX samples | No current official account-specific latest SIP/session/universe/retention entitlement plus authorized representative permission/refusal evidence. | Owner: supply redacted official current entitlement evidence; no new calls authorized. |
-| MARKET-03 | SEC class/CIK, source clock, DST/literal calendar controls | No complete actual-ingress symbol/units/session/corporate-action/ticker-change matrix across every provider; history/DST repairs cover only scoped paths. | Implementation owner: inventory actual ingress and test ambiguous aliases/DST/half-day controls. |
-| MARKET-04 | Coverage telemetry and09:30–15:00 limit documented | No observed complete regular, premarket and half-day intended-minute/freshness/denominator/p95/outage dataset; configured09:30–15:00 excludes the final hour and post-DST evidence is pending. | Implementation owner: passively inspect next naturally scheduled post-DST watcher; owner separately approves broader measurement. |
-| DISCOVERY-03 | Delayed Phase A disqualified; explicit-universe design | Six-name offline integration cannot establish whole-market premarket SIP coverage; representative explicit universe, rights, exact approval and measured broad coverage remain missing. | Implementation owner: finish inactive live integration; owner reviews exact future collection scope. |
-| DISCOVERY-04 | Offline lifecycle/quote/control/cost/recovery mechanisms; artifact audit0 | Zero admitted cases; V1 ordinary proof ordering and disabled primary continuity admission block enrollment. Frozen prospective period/case/day/controls/quotes/costs/uncertainty/confirmation criteria are unmet. | Implementation owner: V2 route/cache/no-proof telemetry and symmetric-control specification/implementation after required protocol review; owner/reviewer: evaluate exact separate enrollment/continuity proposal. No live activation. |
-| CATALYST-03 | 55 reconstructed source controls; caller repairs; native SEC lineage/D3 | Native SEC clocks/joins/revisions/restart have actual-path proof, but events-study/news full-body revision contracts, earnings AV/FMP provenance/shape handling and Discovery2/Comeback derived-event contracts still lack a complete eight-lane materiality/conflict/persistence matrix. Independent historical authenticity belongs separately to CATALYST-04. | Implementation owner: finish remaining all-source materiality/identity/revision/conflict/persistence matrix; native host/client/parent mechanism is already implemented offline. |
-| CATALYST-04 | Source/access clocks and missing-source distinctions | No independent contemporaneous publication/access records and missing-source/late-ingestion denominators; current caches and reconstructed archives cannot authenticate past availability. | Owner/data reviewer: choose licensed independent evidence; implementation owner prepares offline audit. |
-| EXEC-03 | Numeric/gap controls; drift stop repair; one read-only mentor lifecycle | One mentor lane is explained and conflicting exit variants are unresolved, but every delivered lane is not reconciled to tested entry/stop/exit/hold/cost/risk; executable size/liquidity/cost basis remains unestablished. | Implementation owner: extend actual lane/spec/holding/exit contract comparisons; keep unsupported timing, source, cost and execution plans unresolved. |
-| TELEGRAM-03 | Deployed watcher/accounting durability and scoped journal tests | Watcher and accounting repairs do not establish stable IDs/partial ACK/quarantine/publication/reconciliation for every independent message/callback route; journal remains opt-in. | Claude: assigned delivery audit; implementation owner repairs confirmed caller gaps. |
-| TELEGRAM-04 | Mock ACK/refusal/retry controls only | No separately approved actual non-BUY delivery and independent recovery/deduplication observation with real acknowledgments. | Owner: review bounded validation only after readiness; no dispatch now. |
-| STRATEGY-04 | Frozen study registry and rejected/unproven findings preserved | No independently source-audited PIT/delisted representative universe and untouched execution-realistic after-cost replay; frozen study metadata and mentor examples are insufficient. | Owner/data reviewer: resolve licensed data; implementation owner retains offline admission checks. |
-| HISTORY-02 | Identity schemas and ambiguous aliases fail closed | No independently authenticated as-known security/ticker/class/listing/delisting/terminal-value audit across decision, entry and exit. | Owner/data reviewer: choose authoritative reference scope; no calls yet. |
-| HISTORY-03 | Legacy/admitted separation; scoped claim/mentor qualifications | Every numerical/tested/proven/unseen claim is not yet catalogued and authenticated/qualified; the mentor and legacy/admitted split correct only scoped claims. | Claude: assigned claims audit; implementation owner qualifies confirmed unsupported output. |
-| HISTORY-04 | Frozen matched/cost/missingness engine and mocked recovery | No observed candidate/control/SPY capacity/cost/drawdown paths and predeclared clustered/multiplicity/untouched-confirmation result; admitted cases remain0. | Implementation owner: V2 route/cache/no-proof telemetry and symmetric-control specification/implementation after required protocol review; owner/reviewer: evaluate exact separate enrollment/continuity proposal. No live activation. |
+**Smallest gap:** Complete behavioral matrix for every script; inventory and scoped tests do not cover every script.
 
-[Bounded remaining work and smallest evidence decision](mentor-evidence-next-decision.md). Accounting `bdc984e9`, watcher `be315901` and SEC hotfix `bd70f5a` deployment evidence is preserved. Natural-run/archive/delivery and November DST observations remain pending; no new production observation was inferred from tests. Claude’s separate audit is not duplicated.
+**Dependency type:** IMPLEMENTATION.
+
+**Next action and owner:** Claude completes assigned read-only audit; Codex repairs confirmed defects. No duplicate broad audit.
+
+## ACTIONS-04 — OPEN
+
+**Exact requirement:** Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch.
+
+**Completed evidence:** Accounting/watcher deployments and disposable-Git publication/conflict regressions retained.
+
+**Smallest gap:** Every remaining workflow/helper needs checkout/ref, writer/conflict/retry, failure-save and retention proof.
+
+**Dependency type:** IMPLEMENTATION, NATURAL_EVIDENCE.
+
+**Next action and owner:** Claude workflow audit → targeted Codex repairs; natural save evidence stays separate.
+
+## MARKET-02 — OPEN
+
+**Exact requirement:** Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.
+
+**Completed evidence:** Sanitized official account UI: Alpaca Algo Trader Plus and Massive Stocks Starter; prior limited SIP/IEX observed responses. C1/C2 bounded diagnostic source b8e0fe8c hosted PASS.
+
+**Smallest gap:** Current binding/endpoint/feed/session permissions and relevant reference/retention rights; ownership of the two subscriptions is CONFIRMED.
+
+**Dependency type:** EXTERNAL_EVIDENCE, OWNER_DECISION.
+
+**Next action and owner:** Review corrected exact seven-request inactive diagnostic; only then owner may authorize installation/bindings/ONE dated run. Other product rights need official non-secret evidence.
+
+## MARKET-03 — OPEN
+
+**Exact requirement:** Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.
+
+**Completed evidence:** Feed b680 deployed; strict calendar/source-clock controls; accepted inactive contracts f61 unchanged. Separate default-off observer patch/parity/package tests hosted PASS at fbbd0e43, not deployed.
+
+**Smallest gap:** Finish every-ingress symbol/unit/session/adjustment and corporate-action matrix; authoritative real-security mapping remains separate.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE.
+
+**Next action and owner:** Review passive observer exact branch fbbd0e43; then finish remaining ingress contracts without adopting thresholds or changing inputs.
+
+## MARKET-04 — OPEN
+
+**Exact requirement:** Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this.
+
+**Completed evidence:** Watcher v5 deployed and configured-window health semantics retained; fixtures are not session observations.
+
+**Smallest gap:** Actual full regular/premarket/half-day coverage, verified universe, clocks and p95/outages are absent. Configured09:30–15:00 omits final hour.
+
+**Dependency type:** NATURAL_EVIDENCE, OWNER_DECISION.
+
+**Next action and owner:** Passively inspect Monday2November natural startup/DST, source access, archives/save/delivery. Broader measurement scope needs distinct approval.
+
+## DISCOVERY-03 — OPEN
+
+**Exact requirement:** Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence.
+
+**Completed evidence:** Delayed Massive Phase A rejected as real-time proof; six-name offline host/clients and explicit source budgets retained.
+
+**Smallest gap:** Representative broad-universe SIP hybrid collector and measured scope remain distinct from the six-name calibration.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE, OWNER_DECISION.
+
+**Next action and owner:** Finish exact broad-universe rights/request/storage/coverage scope only after current bounded V2 work; no activation.
+
+## DISCOVERY-04 — OPEN
+
+**Exact requirement:** Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping.
+
+**Completed evidence:** V1 unchanged; existing artifact zero admissions retained; D1–D3 and inactive host/client/parent proofs preserved.
+
+**Smallest gap:** V1 normal proof order cannot enroll. V2 policy unadopted; offline encrypted transport/outcomes are under actual-caller tests. Trusted live V2 host/guard integration remains engineering.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE, OWNER_DECISION.
+
+**Next action and owner:** Verify proposed V2 encrypted frame/state/ACK recovery and paired exits/missingness; independent chronology/control review precedes owner adoption and dated capture approval.
+
+## CATALYST-03 — OPEN
+
+**Exact requirement:** Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.
+
+**Completed evidence:** Deployed SEC helper repair plus reconstructed—not recovered—source protections and actual native acceptance join/cross-run lineage tests preserved.
+
+**Smallest gap:** Events-study/news full-body revisions, AV/FMP earnings and derived Discovery2/Comeback need complete identity/materiality/conflict/persistence evidence.
+
+**Dependency type:** IMPLEMENTATION.
+
+**Next action and owner:** Codex completes remaining eight-lane source-contract matrix and actual-caller regressions. Native SEC lineage is already implemented offline; do not restart it.
+
+## CATALYST-04 — OPEN
+
+**Exact requirement:** Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability.
+
+**Completed evidence:** Economic/source/access-clock and missing-source distinctions retained; no authenticated historical availability claim.
+
+**Smallest gap:** Independently authenticated contemporaneous sources/access clocks and missing-source denominators cannot be inferred from current caches.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE, OWNER_DECISION.
+
+**Next action and owner:** Codex prepares source-audit input/rejection contract; owner/data reviewer selects exact licensed independent evidence.
+
+## EXEC-03 — OPEN
+
+**Exact requirement:** Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity.
+
+**Completed evidence:** Recorded numeric/gap/risk controls; one LEADER DIP guide distinguishes target not adopted and frozen close versus next-open mismatch; production proposal separate.
+
+**Smallest gap:** Every delivered lane still needs its registered entry/stop/exit/hold/cost/size/liquidity comparison; unsupported execution assumptions remain unresolved.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE.
+
+**Next action and owner:** Finish actual lane/spec comparisons; separate read-only mentor proposal stays NOT PROVEN and undeployed.
+
+## TELEGRAM-03 — OPEN
+
+**Exact requirement:** Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.
+
+**Completed evidence:** Watcher B1/B2/F1/F2 and accounting transaction durability deployed; research idempotency separate from delivery retry.
+
+**Smallest gap:** Stable IDs/partial ACK/unknown quarantine/confirmed persistence across every route and independent job; journal remains opt-in.
+
+**Dependency type:** IMPLEMENTATION, NATURAL_EVIDENCE.
+
+**Next action and owner:** Claude delivery audit → Codex targeted caller integration. No live test message.
+
+## TELEGRAM-04 — OPEN
+
+**Exact requirement:** After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this.
+
+**Completed evidence:** Synthetic ACK/refusal/retry controls only; no new real messages.
+
+**Smallest gap:** Explicitly authorized bounded non-BUY real ACK/recovery across independent runs has not occurred.
+
+**Dependency type:** OWNER_DECISION, NATURAL_EVIDENCE.
+
+**Next action and owner:** After delivery readiness, prepare exact non-sensitive validation scope for owner decision; mocks cannot close it.
+
+## STRATEGY-04 — OPEN
+
+**Exact requirement:** Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained.
+
+**Completed evidence:** Frozen rejected/unproven findings preserved; no new endorsement or strategy activation.
+
+**Smallest gap:** Audited PIT/delisted universe, execution/cost/liquidity data and untouched holdout are unavailable.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE, OWNER_DECISION.
+
+**Next action and owner:** Finish replay admission/input contract; owner/data reviewer selects defensible source and holdout scope.
+
+## HISTORY-02 — OPEN
+
+**Exact requirement:** Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness.
+
+**Completed evidence:** Identity/class shape and ambiguous-identity rejection controls; fixtures do not authenticate mappings.
+
+**Smallest gap:** Independent as-known security/class mappings, universe membership, ticker changes, delistings and terminal values.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE, OWNER_DECISION.
+
+**Next action and owner:** Finish selected-source PIT audit tooling; resolve exact authoritative reference scope without new calls.
+
+## HISTORY-03 — OPEN
+
+**Exact requirement:** Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results.
+
+**Completed evidence:** Legacy paper versus zero admitted prospective cases explicit; mentor NOT PROVEN and unresolved exit assumptions visible.
+
+**Smallest gap:** Complete numerical claim/source/window/selection/cost/hold catalogue and authenticate or qualify each claim.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE.
+
+**Next action and owner:** Claude claims audit → Codex targeted wording/claim repairs; preserve original frozen results.
+
+## HISTORY-04 — OPEN
+
+**Exact requirement:** Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability.
+
+**Completed evidence:** Unchanged V1 evaluator/frozen results; offline control/cost/missingness and source recovery proofs only; genuine admissions0.
+
+**Smallest gap:** Observed candidate/control/SPY quote/size paths, censored gaps, realistic costs/capacity/drawdowns and untouched clustered confirmation absent.
+
+**Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE, OWNER_DECISION.
+
+**Next action and owner:** Verify separate V2 paired30-minute exits, losing paths and missingness reports; finish trusted live binding then independently review protocol before adoption.
+
+No row is labelled engineering complete merely because an inactive component passes tests. [Machine-readable board](validation/acceptance-closure-board.json) retains detailed prior evidence. [Current checkpoint](acceptance-diagnostic-v2-checkpoint.md) links exact packages and CI.

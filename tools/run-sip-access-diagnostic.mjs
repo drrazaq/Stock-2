@@ -1,6 +1,7 @@
 // Inactive protected diagnostic runner: fixed output codes only; no live workflow installed.
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';import {createHash} from 'node:crypto';import {execFileSync} from 'node:child_process';
 import {runSipDiagnostic,createBoundedSipRequest,validatePlan,waitDiagnosticStart,LIMITS,DIAGNOSTIC_TIMING} from '../sip-access-diagnostic.mjs';
+import {createSingleAttemptHttpsRequest} from '../sip-access-https.mjs';
 import {RESULT_EXITS,normalizeSipResult} from '../sip-access-result.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),hash=b=>createHash('sha256').update(b).digest('hex');
 const controller=new AbortController(),interrupted=()=>controller.abort('INTERRUPTED');
@@ -18,7 +19,7 @@ try{
  const workflow=read(args[2],'BLOCKED_SOURCE');
  let codeSha;try{codeSha=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8',timeout:3000}).trim();}catch{stop('BLOCKED_SOURCE');}
  if(approval.sourceSha!==env.SIP_APPROVED_SOURCE||codeSha!==approval.sourceSha||hash(workflow)!==approval.workflowSha256)stop('BLOCKED_SOURCE');
- const files=['sip-access-diagnostic.mjs','sip-access-result.mjs','tools/run-sip-access-diagnostic.mjs','tools/validate-sip-access-result.mjs'];
+ const files=['sip-access-diagnostic.mjs','sip-access-result.mjs','sip-access-https.mjs','tools/run-sip-access-diagnostic.mjs','tools/validate-sip-access-result.mjs'];
  if(Object.keys(approval.sourceHashes||{}).sort().join(',')!==files.sort().join(','))stop('BLOCKED_SOURCE');
  for(const f of files)if(hash(read(path.join(root,f),'BLOCKED_SOURCE'))!==approval.sourceHashes[f])stop('BLOCKED_SOURCE');
  const planBytes=read(path.join(root,'docs/validation/sip-access-plan.proposed.json'),'BLOCKED_INPUT');
@@ -34,7 +35,7 @@ try{
  if(!env.ALPACA_KEY||!env.ALPACA_SECRET)stop('BLOCKED_BINDING');
  const out=path.join(env.RUNNER_TEMP||root,'sip-access-report.json');
  try{fd=fs.openSync(out,'wx',0o600);}catch(e){stop(e.code==='EEXIST'?'BLOCKED_EXISTING_REPORT':'ERROR_STORAGE');}
- const report=await runSipDiagnostic(plan,{approval,signal:controller.signal,now:()=>Date.now(),wait:sleep,request:createBoundedSipRequest({fetcher:fetch,signal:controller.signal,headers:{'APCA-API-KEY-ID':env.ALPACA_KEY,'APCA-API-SECRET-KEY':env.ALPACA_SECRET}})});
+ const report=await runSipDiagnostic(plan,{approval,signal:controller.signal,now:()=>Date.now(),wait:sleep,request:createBoundedSipRequest({fetcher:createSingleAttemptHttpsRequest(),signal:controller.signal,headers:{'APCA-API-KEY-ID':env.ALPACA_KEY,'APCA-API-SECRET-KEY':env.ALPACA_SECRET}})});
  const payload=JSON.stringify(report)+'\n';if(Buffer.byteLength(payload)>LIMITS.reportBytes)stop('ERROR_STORAGE');
  try{fs.writeFileSync(fd,payload);fs.fsyncSync(fd);fs.closeSync(fd);fd=undefined;}catch{stop('ERROR_STORAGE');}
  const reason=report.reason;

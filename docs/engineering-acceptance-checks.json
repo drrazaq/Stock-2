@@ -238,7 +238,7 @@
       "status": "OPEN",
       "actionability": "APPROVED_LIVE_EVIDENCE",
       "requiredVerification": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this.",
-      "latestExactUnmetRequirement": "No observed complete regular, premarket and half-day intended-minute/freshness/denominator/p95/outage dataset; configured09:30\u201315:00 excludes the final hour and post-DST evidence is pending.",
+      "latestExactUnmetRequirement": "No observed complete regular, premarket and half-day intended-minute/freshness/denominator/p95/outage dataset; configured09:30–15:00 excludes the final hour and post-DST evidence is pending.",
       "latestEvidence": []
     },
     {
@@ -442,11 +442,12 @@
   "preNativeJoinVerifiedEngineeringSource": "ef10ec13c52f921740d7b230fd97965278a75545",
   "latestVerifiedEngineeringCI": "docs/validation/mentor-acceptance-closure-verification.json",
   "latestClosureAssessment": {
-    "source": "b4d355d9d08cfea193ae547503955b04faa1e2c7",
+    "sourceBaseline": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30",
     "rowsReviewed": 16,
     "closuresEarned": [],
     "scoreUnchanged": "24/40",
-    "evidence": "docs/acceptance-closure-board.md"
+    "evidence": "docs/acceptance-closure-board.md",
+    "exactRequirementsUnchanged": true
   },
   "latestReviewContinuation": {
     "source": "04e24416013dacb7cddcb86528510e2db4b5f28d",
@@ -459,5 +460,12 @@
   },
   "providerSubscriptionEvidence": "docs/validation/subscription-evidence-2026-11-01.json",
   "providerRouteAudit": "docs/provider-feed-path-audit-2026-11-01.md",
-  "providerEvidenceStatus": "Subscription confirmed; endpoint/key/fresh BBO/coverage/retention separate. No row closure."
+  "providerEvidenceStatus": "Subscription confirmed; endpoint/key/fresh BBO/coverage/retention separate. No row closure.",
+  "latestEngineeringQueue": {
+    "report": "docs/acceptance-diagnostic-v2-checkpoint.md",
+    "next": "DISCOVERY-04 V2 host/report/guard integration; then CATALYST-03 remaining source contracts",
+    "productionChanged": false,
+    "V1Changed": false,
+    "thresholdsAdopted": false
+  }
 }

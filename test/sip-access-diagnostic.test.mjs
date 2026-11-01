@@ -95,22 +95,9 @@ test('actual CLI refuses ordinary execution even with synthetic keys; no provide
  assert.equal(child.status,2);assert.equal(child.stdout.trim(),'BLOCKED_CONTEXT');assert.doesNotMatch(child.stdout+child.stderr,/synthetic-key|synthetic-secret/);
 });
 
-test('actual protected runner succeeds only with complete synthetic pins; bad pins and existing partial output fail before transport',t=>{
- const top=fs.mkdtempSync(path.join(os.tmpdir(),'sip-guard-'));t.after(()=>fs.rmSync(top,{recursive:true,force:true}));
- const hash=s=>createHash('sha256').update(s).digest('hex'),root=path.join(top,'code');fs.mkdirSync(path.join(root,'tools'),{recursive:true});fs.mkdirSync(path.join(root,'docs/validation'),{recursive:true});
- const files=['sip-access-diagnostic.mjs','sip-access-result.mjs','tools/run-sip-access-diagnostic.mjs','tools/validate-sip-access-result.mjs','docs/validation/sip-access-plan.proposed.json'];
- for(const f of files)fs.copyFileSync(new URL('../'+f,import.meta.url),path.join(root,f));
- const git=(...args)=>{const r=spawnSync('git',args,{cwd:root,encoding:'utf8',env:{PATH:process.env.PATH}});assert.equal(r.status,0,r.stderr);return r.stdout.trim();};
- git('init','-q');git('add','.');git('-c','user.name=synthetic','-c','user.email=synthetic@example.invalid','commit','-qm','synthetic source');const source=git('rev-parse','HEAD');
- const workflow=path.join(top,'workflow.yml');fs.writeFileSync(workflow,'# synthetic installed workflow\n');
- const preload=path.join(top,'mock.mjs'),calls=path.join(top,'calls.txt');
- fs.writeFileSync(preload,`import fs from 'node:fs';const D=Date;let now=${T};globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[now]));}static now(){return now;}};const timer=setTimeout;globalThis.setTimeout=(f,ms,...a)=>{if(ms===90000){now+=ms;return timer(f,0,...a);}return timer(f,ms,...a);};globalThis.fetch=async url=>{fs.appendFileSync(${JSON.stringify(calls)},'attempt\\n');if(!String(url).startsWith('https://data.alpaca.markets/'))throw Error('NO_NETWORK');const t=new D(${T}-60000).toISOString();let body;if(url.includes('/snapshots'))body={SPY:{latestQuote:{t}},AAPL:{latestQuote:{t}}};else if(url.includes('/quotes/latest'))body={quotes:{SPY:{t},AAPL:{t}}};else if(url.includes('/trades/latest'))body={trades:{SPY:{t},AAPL:{t}}};else if(url.includes('/trades?'))body={trades:{AAPL:[{t}]}};else body={bars:{SPY:[{t,v:1}],AAPL:[{t,v:1}]}};return new Response(JSON.stringify(body));};`);
- const base={granted:true,scope:'SIP_ACCESS_SAMPLE_V1',sourceSha:source,workflowSha256:hash(fs.readFileSync(workflow)),sourceHashes:Object.fromEntries(files.slice(0,-1).map(f=>[f,hash(fs.readFileSync(path.join(root,f)))])),planSha256:hash(fs.readFileSync(path.join(root,files.at(-1)))),approvedAt:new Date(T-3600000).toISOString(),existingBindingsOnly:true,sampledResponsesOnly:true};
- const run=(over={},partial=false)=>{const dir=fs.mkdtempSync(path.join(top,'run-')),approvalFile=path.join(dir,'approval.json');fs.writeFileSync(approvalFile,JSON.stringify({...base,...over}));if(partial)fs.writeFileSync(path.join(dir,'sip-access-report.json'),'original partial');
- const before=fs.existsSync(calls)?fs.readFileSync(calls,'utf8').length:0;
- const r=spawnSync(process.execPath,['--import',preload,'tools/run-sip-access-diagnostic.mjs','--approval',approvalFile,workflow],{cwd:root,encoding:'utf8',timeout:10000,env:{PATH:process.env.PATH,GITHUB_ACTIONS:'true',GITHUB_EVENT_NAME:'workflow_dispatch',GITHUB_RUN_ATTEMPT:'1',GITHUB_REF_NAME:'main',GITHUB_WORKFLOW_REF:'drrazaq/Stock-2/.github/workflows/sip-access-diagnostic.yml@refs/heads/main',SIP_APPROVED_SOURCE:source,RUNNER_TEMP:dir,ALPACA_KEY:'synthetic-key',ALPACA_SECRET:'synthetic-secret'}});
- const after=fs.existsSync(calls)?fs.readFileSync(calls,'utf8').length:0;return {r,dir,attempts:(after-before)/8};};
- const good=run();assert.equal(good.r.status,0,good.r.stderr);assert.equal(good.r.stdout.trim(),'PASS');assert.equal(good.attempts,7);assert.equal(JSON.parse(fs.readFileSync(path.join(good.dir,'sip-access-report.json'))).applicationAttempts,7);
- for(const over of [{planSha256:'0'.repeat(64)},{workflowSha256:'0'.repeat(64)},{sourceSha:'0'.repeat(40)},{sourceHashes:{}},{approvedAt:'2026-02-30T15:00:00Z'}]){const bad=run(over);assert.equal(bad.r.status,2,bad.r.stderr);assert.equal(bad.attempts,0);}
- const partial=run({},true);assert.equal(partial.r.status,2);assert.equal(partial.attempts,0);assert.equal(fs.readFileSync(path.join(partial.dir,'sip-access-report.json'),'utf8'),'original partial');
+test('actual protected runner succeeds only with complete synthetic pins; bad pins and existing partial output fail before transport',async t=>{
+ const {realFixture}=await import('./sip-access-real-fixture.mjs'),f=await realFixture(t);
+ const good=await f.run();assert.equal(good.code,0,good.stderr+good.stdout);assert.equal(good.stdout,'PASS\n');assert.equal(good.calls.length,7);assert.equal(JSON.parse(good.report).applicationAttempts,7);
+ for(const approval of [{planSha256:'0'.repeat(64)},{workflowSha256:'0'.repeat(64)},{sourceSha:'0'.repeat(40)},{sourceHashes:{}},{approvedAt:'2026-02-30T15:00:00Z'}]){const bad=await f.run({approval});assert.equal(bad.code,2,bad.stderr+bad.stdout);assert.equal(bad.calls.length,0);}
+ const partial=await f.run({existing:true});assert.equal(partial.code,2);assert.equal(partial.calls.length,0);assert.equal(partial.report,'original partial');
 });
