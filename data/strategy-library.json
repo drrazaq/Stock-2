@@ -3057,13 +3057,14 @@
    "family": "Crowd",
    "name": "US Congress members' stock purchases (STOCK Act reports)",
    "explain": "Each purchase in a House or Senate periodic transaction report is a call dated on its DISCLOSURE (filing) date, not the trade date; bought the next open, 20 and 60 sessions, vs the average stock and the S&P 500. Tested as a tip source (FOLLOW / FADE, tier 2 rules) and as a historical test 2021-2026 with the same gates.",
-   "status": "pre-registered 2026-11-01 as C-CONG1-20 / C-CONG1-60 (agent-c-core.mjs); built agent-c-lab.mjs; one-shot pending",
+   "status": "tested (agent-c-lab): 20 sessions REJECTED, 60 sessions REJECTED",
    "agent": "C",
    "source": "https://www.nber.org/papers/w35041 (Capital in the Capitol, 2012-2023: after the STOCK Act legislators' portfolios trail or at best match the market); https://www.nber.org/papers/w26975",
    "data": "needs data: House Clerk financial-disclosure ZIP/XML (disclosures-clerk.house.gov, public, no login) gives filing dates and PDF links; trades are in PDFs (parsing needed). Alternative: Alpha Vantage CONGRESS_TRADES (key exists, 25 calls/day) if it returns the disclosure date.",
    "queue": "after C-ARK1 historical test",
    "note": "WEB SCOUT 22 Oct. Published post-2012 result is no edge, so the expected outcome is NO EDGE or FADE; worth scoring because the crowd follows these trades. | 27 Oct 2026 (owner shared trader-skill, MIT, github.com/Jakeschincariol/trader-skill): official House Clerk source = https://disclosures-clerk.house.gov/public_disc/financial-pdfs/<YEAR>FD.zip (index: member, FilingType P = PTR, FilingDate, DocID) + PTR PDFs at /public_disc/ptr-pdfs/<YEAR>/<DocID>.pdf, read with pdftotext -layout; its parser trader-pelosi/ptr.py (MIT, may be adapted with credit). Use the FILING date (not the trade date) as the signal date: PTRs are 30-45 days late. Senate: efdsearch.senate.gov is manual only (no bulk route): House only. Pre-register before any result.",
-   "preRegistered": "2026-11-01"
+   "preRegistered": "2026-11-01",
+   "tested": "2026-11-01"
   },
   {
    "id": "C-CUST1",
@@ -8706,11 +8707,19 @@
    "family": "Ranked experts",
    "name": "Purchase by a top-10% Congress member, ranked by earlier disclosed purchases (hold 126)",
    "explain": "Each purchase on its DISCLOSURE date; member = top 10% by earlier purchases (126-session excess; min 5 resolved). Hold 126.",
-   "status": "built 2026-11-01 by Agent C in agent-c-lab.mjs with the expert-core.mjs rule (pre-registered 23 Oct 2026, unchanged) on House Clerk PTR data; one-shot pending",
+   "status": "tested: too few cases (agent-c-lab, frozen 2026-11-01)",
    "agent": "expert",
    "note": "Overlaps C-CONG1 (needs data) and the follow lane (Congress members scored as tip sources). Evidence: Belmont et al. (J Public Econ 2022, 2012-2020) no edge. Unlock: FMP Starter senate/house trades or an Alpha Vantage premium key (the free 25 calls a day are used by follow-lane and earnings-study). Pre-registered 23 Oct 2026 BEFORE any run (expert-core.mjs header = the exact rule; one version). Experts ranked by the lab itself POINT IN TIME (only calls whose window ended before the signal day; platform rankings are lists of past winners and are not used). Buy the next open after the PUBLIC date, liquid the session before, 35% disaster stop, one open trade per stock. Judged once (expert-lab.mjs, first complete run frozen in data/expert-lab.json) at the tier-2 standard + SKILL gate (must beat the same rule using every expert, no ranking, in both halves). Forward paper record from 23 Oct (data/expert-paper.jsonl, data/expert-board.json). | 27 Oct 2026 (owner shared trader-skill, MIT, github.com/Jakeschincariol/trader-skill): official House Clerk source = https://disclosures-clerk.house.gov/public_disc/financial-pdfs/<YEAR>FD.zip (index: member, FilingType P = PTR, FilingDate, DocID) + PTR PDFs at /public_disc/ptr-pdfs/<YEAR>/<DocID>.pdf, read with pdftotext -layout; its parser trader-pelosi/ptr.py (MIT, may be adapted with credit). Use the FILING date (not the trade date) as the signal date: PTRs are 30-45 days late. Senate: efdsearch.senate.gov is manual only (no bulk route): House only. Pre-register before any result.",
    "builtBy": "C",
-   "data": "House Clerk yearly index + PTR PDFs (official, public); House only"
+   "data": "House Clerk yearly index + PTR PDFs (official, public); House only",
+   "tested": "2026-11-01",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "level": "NONE",
+    "why": "fewer than 20 cases or 3 blocks in a half (12 cases, 2 blocks / 34 cases, 4 blocks)",
+    "older": "12 trades, 7 days, avg -6.0% (stress -6.4%), edge -11.0%, t null",
+    "newer": "34 trades, 8 days, avg -3.5% (stress -3.9%), edge -5.3%, t -3.49"
+   }
   },
   {
    "id": "EXP-ETORO1",
@@ -29358,7 +29367,7 @@
    "family": "Crowd",
    "name": "Insider cluster + cash-rich quality (owner outside reviewer, 25 Oct 2026)",
    "explain": "2+ distinct insiders buy within 5 sessions, total >= 200k USD (Form 4, filing date), AND the B-FCF1 company check point-in-time (FCF yield >5% trailing 4Q (OCF-capex)/mcap, revenue growth >=10% YoY, debt/equity <0.5, close above 200-day), close 5$+ and 20d traded value 5M$+. Buy next open, hold 63, stop 15%. Yardsticks: average stock same days; V15 same dates; same stock other days. Differs from SQ1-INSCLU (no quality) and DEC2-INSQ (too few cases): check case count first; if under 20 per half say TOO FEW before any return is computed.",
-   "status": "pre-registered 2026-11-01 (agent-c-core.mjs header, exact rule); built agent-c-lab.mjs; one-shot pending",
+   "status": "tested: too few cases (agent-c-lab, frozen 2026-11-01)",
    "agent": "C",
    "study": "agent-c-lab.mjs -> data/agent-c-lab.json firstRun",
    "sources": [
@@ -29366,7 +29375,15 @@
     "value-core.mjs fcfCheck (B-FCF1)"
    ],
    "rule": "2+ different insiders (officer/director/other; 10%-only owners out) with Form 4 open-market purchases filed in 5 sessions, together 200k USD+, fires on the filing date; issuer passes B-FCF1 (fcfCheck by issuer CIK), close above 200-day, liquid (5 USD+, 5M USD/day) on the session before entry; buy next open, hold 63, stop 15% (intraday low); one open trade per stock; count first (20 per half or TOO FEW, no returns). V15 same-date yardstick not computed (no point-in-time V15 list).",
-   "preRegistered": "2026-11-01"
+   "preRegistered": "2026-11-01",
+   "tested": "2026-11-01",
+   "result": {
+    "verdict": "TOO FEW CASES",
+    "level": "NONE",
+    "why": "count first (pre-registered): 0 / 5 signals with a complete hold (20 per half needed); no return computed",
+    "older": "n/a",
+    "newer": "n/a"
+   }
   },
   {
    "id": "SQ22-CASHCONV",
@@ -32585,7 +32602,7 @@
    "agent": "C",
    "name": "US House members' stock purchases, filing date, hold 20",
    "explain": "C-CONG1 version with a 20-session hold (agent-c-core.mjs).",
-   "status": "pre-registered 2026-11-01 (agent-c-core.mjs header); built agent-c-lab.mjs; one-shot pending",
+   "status": "tested: rejected (agent-c-lab, frozen 2026-11-01)",
    "study": "agent-c-lab.mjs -> data/agent-c-lab.json firstRun",
    "sources": [
     "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/",
@@ -32593,7 +32610,15 @@
     "https://www.nber.org/papers/w35041"
    ],
    "rule": "Every House PTR row: type P, asset [ST], ticker given; signal = the PTR FILING date (House Clerk yearly index); buy the open of the first session after it; liquid the session before; hold 20 sessions; no stop; one open trade per stock. House only (no bulk Senate route). Scanned PTRs left out (no OCR). Data stop: index complete, 98% of PDFs read, scanned <= 25%, 90% of stock rows with a ticker.",
-   "preRegistered": "2026-11-01"
+   "preRegistered": "2026-11-01",
+   "tested": "2026-11-01",
+   "result": {
+    "verdict": "REJECTED",
+    "level": "NONE",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 1.41 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.41 under 2.5 in the newer half",
+    "older": "1700 trades, 251 days, avg -0.8% (stress -1.2%), edge +0.8%, t 1.41",
+    "newer": "3307 trades, 324 days, avg +0.6% (stress +0.2%), edge -0.2%, t -0.41"
+   }
   },
   {
    "id": "C-CONG1-60",
@@ -32601,7 +32626,7 @@
    "agent": "C",
    "name": "US House members' stock purchases, filing date, hold 60",
    "explain": "C-CONG1 version with a 60-session hold (agent-c-core.mjs).",
-   "status": "pre-registered 2026-11-01 (agent-c-core.mjs header); built agent-c-lab.mjs; one-shot pending",
+   "status": "tested: rejected (agent-c-lab, frozen 2026-11-01)",
    "study": "agent-c-lab.mjs -> data/agent-c-lab.json firstRun",
    "sources": [
     "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/",
@@ -32609,7 +32634,15 @@
     "https://www.nber.org/papers/w35041"
    ],
    "rule": "Every House PTR row: type P, asset [ST], ticker given; signal = the PTR FILING date (House Clerk yearly index); buy the open of the first session after it; liquid the session before; hold 60 sessions; no stop; one open trade per stock. House only (no bulk Senate route). Scanned PTRs left out (no OCR). Data stop: index complete, 98% of PDFs read, scanned <= 25%, 90% of stock rows with a ticker.",
-   "preRegistered": "2026-11-01"
+   "preRegistered": "2026-11-01",
+   "tested": "2026-11-01",
+   "result": {
+    "verdict": "REJECTED",
+    "level": "NONE",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.96 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.28 under 2.5 in the newer half",
+    "older": "1299 trades, 239 days, avg -0.6% (stress -1.0%), edge +0.9%, t 0.96",
+    "newer": "2332 trades, 280 days, avg +3.0% (stress +2.6%), edge -0.1%, t -0.28"
+   }
   },
   {
    "agent": "C",

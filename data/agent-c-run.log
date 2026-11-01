@@ -1,12 +1,23 @@
-[0s] agent C lab, mode diag; frozen already: none; proof bar 4.09
-[6s] cache to 2026-10-19; fresh sessions: 9
-[7s] splits since 2026-10-19: 103 listed, 1 repaired
-[7s] sessions 1269 (2021-10-12 to 2026-10-30), stocks 8602
-[8s] insider: {"ok":true,"quarters":23,"fromSquad1Cache":23,"downloadedNow":0,"missing":[],"purchases":139160}
-[8s] facts: {"ok":true,"companies":3694,"shareSeries":9410}
-[10s] C-INSQ1 signals with a complete hold, older / newer: 0 / 5 | dropped {"noPrice":1969,"early":2190,"notLiquid":1944,"under200":1682,"noCompany":20,"noShares":52,"fcfFail":272}
-[10s] House index: {"years":6,"ok":6,"failed":[]}; PTRs listed 3177
-[10s] PTRs cached 3177, to read 0
-[10s] congress: {"indexYears":{"years":6,"ok":6,"failed":[]},"ptrs":3177,"downloaded":3177,"fetchedNow":0,"failed":0,"scanned":485,"stRows":23379,"stWithTicker":20827,"check":{"ok":false,"why":["stock rows with a ticker 20827/23379 (90% needed)"]},"ok":false}
-[10s] C-CONG1 purchase events 7456 (liquid 6456, no price 532); complete holds {"20":{"older":1967,"newer":4435},"60":{"older":1967,"newer":4294}}
-AGENT C DIAG | insider ok, facts ok, congress NOT OK: stock rows with a ticker 20827/23379 (90% needed) | INSQ 0/5 | CONG60 1967/4294
+[0s] agent C lab, mode lab; frozen already: none; proof bar 4.09
+[0s] library: 0 Agent C entries written now
+[7s] cache to 2026-10-19; fresh sessions: 9
+[9s] splits since 2026-10-19: 103 listed, 1 repaired
+[9s] sessions 1269 (2021-10-12 to 2026-10-30), stocks 8602
+[9s] insider: {"ok":true,"quarters":23,"fromSquad1Cache":23,"downloadedNow":0,"missing":[],"purchases":139160}
+[10s] facts: {"ok":true,"companies":3694,"shareSeries":9410}
+[11s] C-INSQ1 signals with a complete hold, older / newer: 0 / 5 | dropped {"noPrice":1969,"early":2190,"notLiquid":1944,"under200":1682,"noCompany":20,"noShares":52,"fcfFail":272}
+[12s] House index: {"years":6,"ok":6,"failed":[]}; PTRs listed 3177
+[12s] PTRs cached 0, to read 3177
+[54s] PTR PDFs read now: 500
+[96s] PTR PDFs read now: 1000
+[137s] PTR PDFs read now: 1500
+[179s] PTR PDFs read now: 2000
+[221s] PTR PDFs read now: 2500
+[263s] PTR PDFs read now: 3000
+[277s] congress: {"indexYears":{"years":6,"ok":6,"failed":[]},"ptrs":3177,"downloaded":3177,"fetchedNow":3177,"failed":0,"scanned":485,"stRows":23379,"stWithTicker":22145,"check":{"ok":true,"why":[]},"ok":true}
+[278s] C-CONG1 purchase events 7853 (liquid 6545, no price 625); complete holds {"20":{"older":2056,"newer":4435},"60":{"older":2056,"newer":4294}}
+[278s] - C-INSQ1: TOO FEW CASES | count first (pre-registered): 0 / 5 signals with a complete hold (20 per half needed); no return computed
+[278s] - C-CONG1-20: REJECTED | older 1700 (251d, 27bl) avg -0.8% stress -1.2% edge +0.8% own -0.4% no2 -0.9% tBlock 1.41 win +46.0% med -0.9% worst -39.4% | newer 3307 (324d, 35bl) avg +0.6% stress +0.2% edge -0.2% own +0.0% no2 +0.6% tBlock -0.41 win +51.0% med +0.1% worst -58.8% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 1.41 under 2.5 in the older half; not better than the average stock in the newer half; block t -0.41 under 2.5 in the newer half
+[278s] - C-CONG1-60: REJECTED | older 1299 (239d, 10bl) avg -0.6% stress -1.0% edge +0.9% own -3.5% no2 -0.8% tBlock 0.96 win +46.9% med -1.0% worst -89.8% | newer 2332 (280d, 12bl) avg +3.0% stress +2.6% edge -0.1% own -0.2% no2 +2.8% tBlock -0.28 win +53.0% med +1.1% worst -62.2% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t 0.96 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.28 under 2.5 in the newer half
+[278s] - EXP-CONG1: TOO FEW CASES | older 12 (7d, 2bl) avg -6.0% stress -6.4% edge -11.0% own -21.9% no2 -11.2% tBlock null win +41.7% med -7.9% worst -54.9% | newer 34 (8d, 4bl) avg -3.5% stress -3.9% edge -5.3% own -19.1% no2 -5.4% tBlock -3.49 win +41.2% med -3.7% worst -37.6% | all members older +0.9% newer +7.0% | eligible max 79 | fewer than 20 cases or 3 blocks in a half (12 cases, 2 blocks / 34 cases, 4 blocks)
+AGENT C LAB done: C-INSQ1 TOO FEW CASES, C-CONG1-20 REJECTED, C-CONG1-60 REJECTED, EXP-CONG1 TOO FEW CASES
