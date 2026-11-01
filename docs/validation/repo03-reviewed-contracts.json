@@ -1,0 +1,692 @@
+{
+  "tools/accounting-pending-preflight.mjs": {
+    "sha256": "7d009d803cd565f5edecc43f52dd9f8fc579837c8a76612ff2c7c580e8473b48",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit repository argv; PRIVATE_KEY environment binding; four bounded accounting files.",
+    "outputs": "Exactly PASS/BLOCKED/ERROR and exits0/2/1.",
+    "sideEffects": "Decrypts in memory and re-reads state bytes; no state writes, scanner import, messages or providers.",
+    "failure": "Missing key/input or any pendingSale property blocks; malformed/authentication/moving state errors; no recovery.",
+    "timing": "Synchronous bounded reads; no source-history or network deadline guard in this historical checker.",
+    "researchBoundary": "Read-only legacy conservative checker; not the later deployed v2.2 checker or current deployment authority.",
+    "remainingVerification": "Historical checker is deliberately stricter than v2.2; do not reuse it for protected deployment without reconciliation.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/alpaca-access-audit.mjs": {
+    "sha256": "1979cd781a612888b0a19ab24ac2a58fbf46fc7747a5ddd5c1d0340a1a61600e",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Explicit env/fetcher/clock;24 fixed symbols, broad snapshots and current asset reference.",
+    "outputs": "Aggregate endpoint/clock/missingness report, fixed per-symbol measurements, up to1MiB report file.",
+    "sideEffects": "At most11 GETs; historical CLI writes probe-output; no orders/messages.",
+    "failure": "Request/response/aggregate quotas;401/429 global stop,403 per-feed stop; no retries or pagination.",
+    "timing": "CLI dated29October expired;180sec total between requests,15sec request signal;180sec freshness is this old diagnostic measure.",
+    "researchBoundary": "Sampled endpoint evidence only; neither historical universe nor general real-time/fill/profitability proof.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/alpaca-batch-access-probe.mjs": {
+    "sha256": "f456fb199405351d104e43e62de06407eaba9b6d37ea2e7f94b371ed2193b5be",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Explicit env/fetcher/clock, active assets and deterministic hash sample of200.",
+    "outputs": "Reference/conflict/sample counts and per-feed transport reports; up to1MiB report.",
+    "sideEffects": "One assets GET plus at most2 bounded SIP/IEX snapshot requests; historical branch report write.",
+    "failure": "Missing binding/refusal/malformed or insufficient sample returns status;4/8MiB snapshot/total bounds.",
+    "timing": "Historical push-only29October window;10sec request and30sec snapshot client duration.",
+    "researchBoundary": "Not common-stock certification, random sample or whole-market/premarket coverage; no activation authority.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/audit-legacy-shadow.mjs": {
+    "sha256": "8747fdb9a483dd7dfbc13321b5c241daea25c6a94e436c69ea1c2edb35873c0b",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Exact local Git commit/path/hash, frozen protocol bytes, optional new output.",
+    "outputs": "Aggregate admission audit and optional audit.json/cases.csv.",
+    "sideEffects": "Only local Git object reads; optional local output; never fetches or rewrites source artifacts.",
+    "failure": "Exact pins, disabled lazy fetch/protocols,5sec/max8MiB Git reads, existing-output refusal.",
+    "timing": "Historical artifact cutoff comes from pinned commit; no new collection or later evidence injected.",
+    "researchBoundary": "Secondary legacy audit, not genuine contemporaneous admission; no approved BUY/fill implication.",
+    "remainingVerification": "Output ancestors are pathname-based; adversarial replacement is not covered by the current audit fixture.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/c0-diagnostic.mjs": {
+    "sha256": "7f8d9f766c8bca56cda27a30ef84aa80fac89895c2604022590b6bbd01fcaf1e",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Fixture JSON/output OR explicit collect-cycle approval/output/workflow/source; existing scoped env.",
+    "outputs": "Aggregate cycle result; encrypted research evidence through runC0Cycle.",
+    "sideEffects": "Fixture mode uses mock providers; live-capable mode calls existing C0 client only after context/source/workflow gates.",
+    "failure": "Input bounds, exact file closure/hash/cycle/context checks; fixed refusal on any failure.",
+    "timing": "Approval/window validation delegated to C0; fixture virtual clock; live attempt1/manual context.",
+    "researchBoundary": "Live mode exists but workflow installation/collection remain separately unapproved; not trading evidence.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/check-research-evidence.mjs": {
+    "sha256": "51aa24278921612c09c4db03fbcd4d11c4f2ccbed250f1f92234636cafe27cc9",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "One explicit JSON evidence path.",
+    "outputs": "Admission structure audit JSON; exit1 unless STRUCTURE_VALID_ONLY.",
+    "sideEffects": "Reads one file, stdout; no collection, mutation or strategy execution.",
+    "failure": "Argument/JSON/read errors terminate; audit rejects deficient evidence structure.",
+    "timing": "No wall timeout; source clock semantics delegated to historical-integrity.",
+    "researchBoundary": "Structure-valid is not source authentication/profitability/admission approval.",
+    "remainingVerification": "File read is unbounded and follows path links; input-size/hostile-path test remains needed.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/explain-leader-dip.mjs": {
+    "sha256": "199e07917c73fe47bc9208f9dba5bdedbfebc5e5600bb00f68892950f01bfd43",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Explicit stdin up to32KiB/10sec; symbol/asOf/position/signal/quantity only.",
+    "outputs": "Development explanation JSON or fixed stderr error.",
+    "sideEffects": "No discovery/network/state writes; bounded stdin processing only.",
+    "failure": "Rejects invalid schema/symbol/clock; legacy holding uses only its archived mentorContract.",
+    "timing": "New York asOf session derived from supplied clock, not current signals.",
+    "researchBoundary": "LEADER DIP NOT PROVEN; unresolved source/target/close-versus-open execution assumptions remain visible.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/hybrid-research-fixture.mjs": {
+    "sha256": "160691ba6ecb74b904e9887d45f5cd338872cb7ad21e5f25bf2d2cef10a79ae1",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "--fixture bounded8MiB input and new output directory.",
+    "outputs": "fixture-result.json plus aggregate research-only status.",
+    "sideEffects": "Local synthetic run and new local files; no live mode/environment bindings.",
+    "failure": "Strict argument/regular-file/synthetic-engine constraints; existing output refused by mkdir.",
+    "timing": "Fixture clock controlled by input and hybrid fixture engine, not market observation.",
+    "researchBoundary": "Never counts generated cycles as actual collection or approved BUY.",
+    "remainingVerification": "Output ancestor replacement and result publication interruption are not covered by a dedicated caller test.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/native-sec-capture-worker.mjs": {
+    "sha256": "cb840c6fb1c893c5c85a4ef9dd784b01d1a4d5ba150a538d97099e5b7f4f1098",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Pinned inactive config/binding/reference/history/bundles/runtime files.",
+    "outputs": "Exclusive result file; COMPLETE/INCOMPLETE or fixed refusal.",
+    "sideEffects": "Explicit binding-module import and ports; ambient fetch disabled; no default live mode.",
+    "failure": "Pins and mutable dependency revalidation before/after every port; unknown lineage delegated to guarded wrapper.",
+    "timing": "Uses actual host/wrapper clock/deadline; no autonomous collection scheduling.",
+    "researchBoundary": "Synthetic references and inactive mode mandatory; no V1 enrollment change.",
+    "remainingVerification": "Result write is pathname-based; symlink/ancestor replacement needs an actual legacy-worker caller regression. PR6 V2 worker is separate.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/native-sec-v2-capture-worker.mjs": {
+    "sha256": "b40e68ce1f5b8bdb149cc8749d6d17f780d44bb90aa763b90483b960171a5c73",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Pinned immutable V2 input/history and guarded explicit binding module.",
+    "outputs": "Status plus link-safe exclusive result via V2 host binding.",
+    "sideEffects": "Explicit mocked clients only; ambient fetch disabled before loading bindings.",
+    "failure": "Deep freeze, full dependency revalidation, UNKNOWN/earlier history blocked before client binding; no auto-resume.",
+    "timing": "Reuses D1/D2 host schedule and absolute V2 capture deadline.",
+    "researchBoundary": "Synthetic-only; policy false and genuine admissions0. PR6 source remains unchanged.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/phase_a_preflight.py": {
+    "sha256": "2f5061a509d67566b47414e2147b5d69b8b3829dd6c03093f2d8505965ff6a5e",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Manifest, full run history, aware clock, run ID/attempt; or summary and cycles.",
+    "outputs": "Pure session guard or collection-validation dictionary.",
+    "sideEffects": "No file/network/credential writes, imports only standard time/math.",
+    "failure": "Exact source/day/budgets/attempt/history; malformed/missing coverage fails validation.",
+    "timing": "Pinned30October pre-open235\u2013240NY, exact expiry;330unique minutes and latency quantile checks.",
+    "researchBoundary": "Old frozen Phase A validation only; PASS is collection checks, not coverage/fills/profitability or fresh approval.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/prepare-native-sec-parent.mjs": {
+    "sha256": "e12c1bab7b2b1535b453dd7cb702672dde3d538a730d88e73b767d05a3137f15",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "--offline source directory/run/source/digest plus new runtime parent destination.",
+    "outputs": "Copied public native bytes and fsynced parent manifest with SHA256.",
+    "sideEffects": "Local validated public source copies only; no download/activation/provider calls.",
+    "failure": "Exact pins, archive integrity, destination/link refusal; rehash source and copy after staging.",
+    "timing": "No backdated ingestion; clocks retained from original validated native archive.",
+    "researchBoundary": "PREPARED_UNAUDITED_NOT_ACTIVATED; one supplied parent never proves complete global history.",
+    "remainingVerification": "Path checks precede writes; concurrent ancestor substitution still needs a targeted test.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/prepare-native-sec-shadow-patch.mjs": {
+    "sha256": "eb81df00d243bc130d3e812cf1ddc1343a28b155493cf5015d4d9a182c018416",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Pinned production-base Git objects and new local output.",
+    "outputs": "Inactive patch, hashes, runtime-base bundle and proposed watcher source.",
+    "sideEffects": "Local Git reads/diff and output files; never installs or executes watcher/patch.",
+    "failure": "Exact anchors/deployed SEC helper required, Git protocol/lazy-fetch disabled,5sec operation/2MiB output bounds.",
+    "timing": "No session execution; retained producer clocks are part of generated code, not observations.",
+    "researchBoundary": "Shadow default0; separate installation/activation permission; no strategy/source-request expansion.",
+    "remainingVerification": "Timeout cleanup after asynchronous git shutdown and output ancestor replacement need dedicated stress evidence.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/provider-readiness-probe.mjs": {
+    "sha256": "60da3ab347ea7e8ff016f98bd0fa5e673cbb29eef964b7bb2eaa40e588e742b1",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit env/fetcher/clock for Massive, Alpaca SIP/IEX, Finnhub, SEC.",
+    "outputs": "Aggregate response/status/independent price/BBO/volume clock metrics and probe-output JSON.",
+    "sideEffects": "At most5 existing GET endpoints and local report write; no orders/messages.",
+    "failure": "Missing keys statuses, HTTP refusals/schema errors, IEX skipped after429; no retry.",
+    "timing": "15sec fetch signal; supplied observation time and New York market session.",
+    "researchBoundary": "Historical diagnostic measures do not infer account plan, fills, profitability or complete coverage.",
+    "remainingVerification": "Response json() has no byte cap; no total deadline or explicit dated authorization gate outside GHA branch check. Do not treat it as the reviewed seven-request SIP package.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/recover-c0-diagnostic.py": {
+    "sha256": "26b47dad96d0f6b5dcbc0d4d8ed30e9a57417b000850c767ac9ef76270afb828",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit encrypted cycle root/new output/source/approval hashes; hidden local key.",
+    "outputs": "Authenticated decompressed C0 frame files and recovery report.",
+    "sideEffects": "Offline crypto/decompression/local new output only; no network or financial records.",
+    "failure": "Strict JSON/envelope/sequence/request-response/cycle checks;96MiB sealed/64MiB zipped/128MiB plain; no retry.",
+    "timing": "Recorded request clocks retained; no live scheduling or auto-resume.",
+    "researchBoundary": "LOCAL_FRAMES_ONLY; remote upload, permissions, coverage/fills/profitability unverified.",
+    "remainingVerification": "Pathname output checks do not establish immunity to concurrent ancestor replacement; actual attack test not yet run.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/recover-hybrid-checkpoints.py": {
+    "sha256": "21b61fae3f33d04cec5a85c68301ea9634173ca29588ad3f1749fcff3501ac2a",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit downloaded checkpoint dir/new output/reviewed SHA and hidden local key.",
+    "outputs": "Authenticated compressed files, ignored staging count and local report.",
+    "sideEffects": "Offline crypto/read/write only; no decompression/network/legacy state.",
+    "failure": "Strict duplicates/envelope/paths/byte limits; pending staging ignored, empty authenticated set rejected.",
+    "timing": "Sequence/state completeness intentionally not claimed; no reconstruction of missing clocks.",
+    "researchBoundary": "CHECKPOINT_FILES_ONLY; no market/fill/profitability or activation claim.",
+    "remainingVerification": "Pathname output checks do not establish immunity to concurrent ancestor replacement; actual attack test not yet run.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/recover-key-proof.py": {
+    "sha256": "0d0fb60d5435955a096058037593e53e9c87161212aaf1e31f057e95542cc556",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Only key-check.txt.enc, exact historical source and hidden TTY key.",
+    "outputs": "Exact authenticated challenge and local report.",
+    "sideEffects": "Offline AESGCM/Scrypt and new local output; no providers/state access.",
+    "failure": "Strict schema/base64/64KiB/marker checks before output; hidden prompt refuses fallback.",
+    "timing": "No session clocks; historical challenge source pin unchanged.",
+    "researchBoundary": "Challenge match proves key/file authentication only, not collection authorization.",
+    "remainingVerification": "Pathname output checks do not establish immunity to concurrent ancestor replacement; actual attack test not yet run.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/recover-paper-capture.mjs": {
+    "sha256": "38fecfa78760dbcd087c706a8066e4f958860a02a859e5872f7e9d59b42fdcae",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit downloaded ZIPs/receipt/hash/approval/source/output/key; fixture or hidden TTY.",
+    "outputs": "Authenticated capture JSON plus aggregate local recovery status.",
+    "sideEffects": "Offline ZIP verification/decryption and new output; no automatic resume or network.",
+    "failure": "41receipt/16MiBfile/164MiBaggregate and immutable input gates; wrong scope/authentication rejects before output.",
+    "timing": "Original source/frame clocks delegated to immutable recovery; no new ingestion claims.",
+    "researchBoundary": "genuineAdmissions0; no financial record or V1 protocol change.",
+    "remainingVerification": "Output ancestry checks precede pathname publication; concurrent replacement needs caller-level regression.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/recover-phase-a.py": {
+    "sha256": "2dff726f47410aa4856368833da87f1cb3d929b5180aa6fa9ffb3d75054b9a95",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit encrypted root/new output, exact historical source, hidden TTY key.",
+    "outputs": "Byte-identical authenticated files and count-only recovery report.",
+    "sideEffects": "Offline AESGCM; no decompression/network/subprocess or owner state.",
+    "failure": "Strict duplicate/schema/base64/path/depth8/files512/96MiBinput/128MiBplain; all tags checked before output.",
+    "timing": "Original source timestamps retained; clock evidence only inferred from authenticated counts and explicitly limited.",
+    "researchBoundary": "FILE_COUNTS_ONLY is not observation completeness, trading admission or activation.",
+    "remainingVerification": "Pathname output checks do not establish immunity to concurrent ancestor replacement; actual attack test not yet run.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/recover-research-artifact.mjs": {
+    "sha256": "7af2fb3ab7f586718d3551b3d5e799a717337fae0add1171d0542d685b84611e",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Encrypted directory, new output, explicit key/source, at most128MiB plaintext.",
+    "outputs": "Authenticated original bytes and bounded-analysis recovery-report.json.",
+    "sideEffects": "Offline GCM/decompression/new private output; no original writes, network or records.",
+    "failure": "All tags/scope checks before output; exclusive files; descriptor-anchored publication refuses links/races; failed output retains originals.",
+    "timing": "No live scheduling; summary clock-window flag is not source or market coverage.",
+    "researchBoundary": "Historical research recovery only; no automatic resumption, completeness/admission/profitability claim.",
+    "remainingVerification": "Output findings repaired and7new tests pass; input-ancestor mutation/file-count/depth stress still requires separate review.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/recover-research-artifact.py": {
+    "sha256": "a027f399941517d1b7a01c2345e85fb59ece4e68528bef4bae05ef181e616b2a",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Three explicit paths/source arguments and hidden interactive key.",
+    "outputs": "Child Node recovery aggregate output/exit.",
+    "sideEffects": "Invokes local sibling mjs with narrow environment and only RESEARCH_ARTIFACT_KEY.",
+    "failure": "No piped key, PRIVATE_KEY forwarding or NODE_OPTIONS/preload inheritance; child failure propagated.",
+    "timing": "No child wall timeout beyond bounded underlying work.",
+    "researchBoundary": "Offline wrapper only; no migration/reconciliation or production execution authorized.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/recover-watcher-incident.py": {
+    "sha256": "31b697f61e4d404cfdc8579b2c31377dfd5e6b505d2e5760a8974354b504b92e",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Exact day/SHA pairs from local Git and a new output directory.",
+    "outputs": "Whole-file byte copies and labelled SECONDARY_RECONSTRUCTION_ONLY manifest.",
+    "sideEffects": "Local Git reads and isolated copies; never fetches or rewrites original data.",
+    "failure": "Source/date format,128MiBtotal/32MiBfile and duplicate-source/output/link checks.",
+    "timing": "Historical original bytes unchanged, including other JSONL dates; unavailable files labelled missing.",
+    "researchBoundary": "No frozen primary cohort admission, owner accounting data or invented observations.",
+    "remainingVerification": "Git invocations lack explicit timeout/no-lazy-fetch environment, and output path race has no actual regression yet.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/render-mentor-examples.mjs": {
+    "sha256": "43ac67234082bf582a655f10da8ab3b80eba15190488a1dafbe8a606ae2dfe5a",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Explicit synthetic source/contracts/clocks created in code.",
+    "outputs": "Markdown examples via stdout or exported example objects.",
+    "sideEffects": "No private files, feeds, credentials or account changes.",
+    "failure": "Pure mentor functions preserve unresolved legacy/contradictory/expired plans.",
+    "timing": "Fixed synthetic next-open and126th-session/half-day clocks; not market samples.",
+    "researchBoundary": "NOT PROVEN and target-overlay/close-versus-open mismatch visible; no strategy adoption.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/replay-prospective-capture.mjs": {
+    "sha256": "8323f76b1cfb8cef3584b49d2130f15ce80af74952e50554e8da072b774bc017",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "--synthetic fixture up to8MiB/41frames and new output.",
+    "outputs": "Encrypted frame files and simulated lifecycle summary.",
+    "sideEffects": "Offline append/seal/recover on every frame; no key lookup/live mode.",
+    "failure": "Synthetic flag, existing-output refusal,160MiB encrypted aggregate and per-frame authenticated recovery.",
+    "timing": "Fixture clocks only; no restart gap fabrication or actual first-ingestion claim.",
+    "researchBoundary": "Simulated resolved cases remain genuineAdmissions0; unchanged V1 evaluator.",
+    "remainingVerification": "Input/output ancestor substitution is not covered by current path-level checks.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/repository-audit.py": {
+    "sha256": "5c60372c06dd27ceb5a93b999048212400368899c5d614f8ce80152be78edcca",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Explicit source root; optional syntax mode, hash-matched reviews and new report path.",
+    "outputs": "Static inventory or305-script behavioral matrix; aggregate totals stdout.",
+    "sideEffects": "Reads public source only in scripts-only mode; optional syntax subprocesses in legacy mode; exclusive output.",
+    "failure": "Unknown/stale/incomplete review never counts; links not source-reviewed; prior report refuses overwrite.",
+    "timing": "No market clock; syntax subprocess timeout not implemented in legacy mode.",
+    "researchBoundary": "Facts/test-name matches are navigation only; source review distinct from acceptance. Private datasets not read by scripts-only mode.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/research-collector.mjs": {
+    "sha256": "1859299c52b125220412d17d1227ca927f3f2c0ee23a0c0ec3ad409fdfd3f6ca",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "--fixture cycles OR explicit historical research manifest/env.",
+    "outputs": "Gzipped cycles, heartbeat, discovery and summary with independent coverage claims.",
+    "sideEffects": "Fixture mock responses; collect mode existing provider calls and isolated research-output.",
+    "failure": "Source/day/approval and byte/request/cycle gates; errors or request budget stop without approved BUY.",
+    "timing": "Premarket04:00\u201309:30 waiting,60sec cycles and approval expiry; late start flagged.",
+    "researchBoundary": "Manifest possession is not owner approval; legacy isolated collection not current V2. No activation authorized.",
+    "remainingVerification": "Legacy manifest reads/output path protections and lifetime replay policy require further validation; unchanged frozen Phase A wrapper remains separate.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/run-paper-capture-workflow.mjs": {
+    "sha256": "f1dc0d20398ada2bce2c388631d50ee79f29329f42bae9ed5017ee65c969f473",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "--simulate pinned synthetic wrapper/reference files and output.",
+    "outputs": "Mock ZIP downloads and aggregate wrapper result.",
+    "sideEffects": "Explicit mock provider/events/upload ports;0realproviderrequests and fixed synthetic key.",
+    "failure": "Input/synthetic-reference checks then unchanged guarded wrapper and exclusive downloads.",
+    "timing": "Virtual plan schedule advanced by injected wait; no live mode.",
+    "researchBoundary": "Offline rehearsal guard/V1 unchanged; simulated artifacts are never admitted prospective evidence.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/run-sip-access-diagnostic.mjs": {
+    "sha256": "2728669651e1fcdb9f1ff01af457bf7dd13cbf89da92fcb3b551cbf4e2499866",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Pinned approval/workflow/plan/source closure, exact GHA context and existing two bindings after time gate.",
+    "outputs": "Fixed allowlisted code/exit and exclusive at-most16KiB aggregate report.",
+    "sideEffects": "Future live-capable seven-GET client only after approval gates; inactive workflow not installed.",
+    "failure": "Exact immutable pins, no fallback/retry, per-request/body/total limits and interruption/deadline error codes.",
+    "timing": "Bounded early waitT0-600s,latestT0+30s,absoluteT0+180s; total790s; SIGINT/SIGTERM cleanup.",
+    "researchBoundary": "Sampled access only; owner subscription confirmed separately, no fills/whole-market proof.",
+    "remainingVerification": "Independent reviewF1 records1/12 intermittent Node20 corrections-test failure without case/log; not claimed fixed or a runtime defect.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/seal-research-artifact.mjs": {
+    "sha256": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit bytes/key/context or directory/source/budget; CLI legacy PRIVATE_KEY env only.",
+    "outputs": "Version1 AES-GCM envelope or encrypted directory count/bytes/source report.",
+    "sideEffects": "Local crypto and encrypted output; no upload performed.",
+    "failure": "Key length/source/name/type/budget gates; symlink input leafs refused; existing leaves exclusive.",
+    "timing": "Synchronous scrypt/encryption, no scheduling;96MiBdefault/128MiBceiling.",
+    "researchBoundary": "Cryptographic integrity is not source authenticity, completeness or trading evidence.",
+    "remainingVerification": "Output root/ancestors are not descriptor-anchored; adversarial destination behavior requires reproduction. Shared PR6 dependency intentionally unchanged pending separate repair/review.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/telegram-notify.mjs": {
+    "sha256": "089b47fc2b5ad3997f2f6352c214f40b2508af67500bdba93ab966048ba78d3c",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "stdin message, TG_TOKEN/TG_CHAT and optional loopback TG_BASE.",
+    "outputs": "Acknowledgement text only when telegramFetch reports ok; nonzero refusal.",
+    "sideEffects": "One real-delivery-capable Telegram adapter, no provider/order/accounting calls.",
+    "failure": "Missing bindings fail; response success/error semantics delegated to telegram-delivery.",
+    "timing": "stdin read has no byte/time bound; delegated Telegram timeout/retry applies.",
+    "researchBoundary": "This source was inspected only, never run; no test message authorization.",
+    "remainingVerification": "All workflow usage and repeat-message durability remain Claude ACTIONS/TELEGRAM audit ownership; no new delivery review claimed.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/validate-sip-access-result.mjs": {
+    "sha256": "7a6b93e17edb4a1dd3250d0028cc1d3f06aa355a158b7eefeed9839e6b260744",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Explicit bounded regular code file and raw exit argument.",
+    "outputs": "Exactly normalized allowlisted code plus matching exit.",
+    "sideEffects": "One local read and stdout; no keys/providers/records.",
+    "failure": "128byte/lstat/arg checks; unknown/malformed/mismatch becomes ERROR.",
+    "timing": "No clock/scheduling; pure status validation at completion.",
+    "researchBoundary": "Output contract reveals no provider text, identifiers or financial observations.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/verify-incident-production-package.py": {
+    "sha256": "ec78e1ff590659c3271c38648023066658a76a88c5f22e6ccfb57b23f7df3360",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Exact pinned watcher/accounting/combined manifests, local Git base, new evidence output.",
+    "outputs": "Disposable base-plus-patch tests/logs/result.json; dependency hashes before and after.",
+    "sideEffects": "Local git archive/apply/test processes and exclusive new evidence output; never pushes/deploys or dispatches.",
+    "failure": "Exact patch/file/dependency assertions, retained base tests,180sec/file; failures nonzero.",
+    "timing": "Historical base/revision only; not current compatibility or safe production boundary.",
+    "researchBoundary": "Synthetic/local fixtures; standalone approval still separate, no financial state changes.",
+    "remainingVerification": "Existing/symlink output overwrite repaired with2 actual-caller tests; local git/archive child still lacks explicit no-lazy-fetch/timeout. Further bounded verifier review remains.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "tools/watcher-artifact-fixture.mjs": {
+    "sha256": "252244c299fe909749e9bb137112b25d7bb765d45e84cf78c6d3dbbefa181ee8",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "open or close phase; generated fixture-state and prior synthetic artifact checkpoint.",
+    "outputs": "Synthetic snapshot/checkpoint/archive and exact coverage assertions.",
+    "sideEffects": "Local loopback service plus actual watcher subprocess; ambient external endpoints blocked.",
+    "failure": "Existing-state rules, child timeout30sec, nonzero/assert failure; finally closes server.",
+    "timing": "Synthetic fake minute open570/close840; explicit recovered heartbeat clock ensures monotonic continuation.",
+    "researchBoundary": "Secret-free branch artifact roundtrip only; synthetic390minute coverage is not deployed09:30\u201315:00 observation evidence.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  ".github/save-data.sh": {
+    "sha256": "3885f367c2d08b4c626dbeb245bc45e82dd953ff6aa3fcd5a4125410f58dd948",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Data worktree, frozen ownership registry, optional commit message and SAVE_SLEEP.",
+    "outputs": "Local data commit and remote save status; preserves owner upstream conflict hunks.",
+    "sideEffects": "Git add/commit/pull/rebase/push; may alter active checkout; temporary files cleaned by trap.",
+    "failure": "5tries, rebase20step cap; frozen conflict refuses; network refusal not treated as successful rebase.",
+    "timing": "Default10sec retry sleeps; no overall network deadline.",
+    "researchBoundary": "Only source inspected here; actual disposable-Git tests and workflow/ref semantics belong to Claude ACTIONS-04 audit.",
+    "remainingVerification": "Do not run inside active watcher; complete caller/dirty-tree/conflict audit assigned separately, not claimed satisfied here.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  ".github/private-data.sh": {
+    "sha256": "dd82ffa949f0f84e81cd1d8ceb7f4babde88817df6e435eca4dcb235824b793d",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit mode, private-file list, scoped private repo token or local test URL, local checkout.",
+    "outputs": "Private check/mirror/pull/push counts/checksums and status.",
+    "sideEffects": "Clone/read/write private repo; pull can replace local private files. This task performs none.",
+    "failure": "No binding handling varies by mode; check verifies readback; mirror failures logged;5publication tries.",
+    "timing": "10minute failed-mirror cooloff;5sec retries by default, no overall network deadline.",
+    "researchBoundary": "Privacy migration/policy remains separate and unapproved here; no state read/migration/reconciliation done.",
+    "remainingVerification": "Claude ACTIONS/privacy audit owns activation/conflict and stale state; do not mistake source review for policy/deployment approval.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "market-symbol.mjs": {
+    "sha256": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Explicit string only.",
+    "outputs": "Normalized syntax or null; dot/hyphen identities stay distinct.",
+    "sideEffects": "Pure string normalization; no reference lookup.",
+    "failure": "Nonstrings/invalid syntax fail as null.",
+    "timing": "No clocks or scheduling.",
+    "researchBoundary": "Syntax is not issuer identity, common-stock eligibility, tradability or ZAD approval.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "capture-json.mjs": {
+    "sha256": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Explicit JSON text and1..16MiB byte limit.",
+    "outputs": "Parsed object/value after structural scan.",
+    "sideEffects": "Pure bounded parser; no file/network activity.",
+    "failure": "Rejects duplicate/prototype keys, depth>64, nodes>500000, trailing syntax, nonfinite numbers.",
+    "timing": "Synchronous byte/depth/node-bounded work; no session clock.",
+    "researchBoundary": "Parsing is not provenance, signature, completeness or admission proof.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "approved-quote-gate.mjs": {
+    "sha256": "c8ad6611d5545bd691467e906dfa8c45c4360b398dffa0090aac3304a6a5373f",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Independent numeric price/bid/ask/quoteAgeSec.",
+    "outputs": "ok plus reason/spread/limit.",
+    "sideEffects": "Pure eligibility predicate, never a fill/order.",
+    "failure": "Unknown/nonfinite/invalid/crossed/stale/future quote refused; wide spread blocked.",
+    "timing": "Quote age0..120sec is existing provisional safety input, not newly adopted evidence threshold.",
+    "researchBoundary": "Quote quality does not prove executable size, costs, compliance or profitability.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "live-refresh-universe.mjs": {
+    "sha256": "2fdf2ffad24af1b143193e961b063f5641a2ac13986c6c1d1e3dfa6c28dd8e50",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Snapshot rows, current clock and optional quote requirement/penny cap.",
+    "outputs": "Unique refresh symbols preserving existing >=$1 lane plus at most250 research pennies.",
+    "sideEffects": "Pure selection/sort, no provider calls.",
+    "failure": "Invalid rows/identities/prevClose excluded; stale/missing/future prices and independently stale BBO select refresh.",
+    "timing": "Current clock used per symbol; a fresh median never proves every row fresh.",
+    "researchBoundary": "Sub-$1 research visibility does not change alert/BUY eligibility; no identity/ZAD inference.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "session-coverage.mjs": {
+    "sha256": "47bd1179e0adea0c0c5188ea3d9c5963be8010689ef6fe0d7dc1af960f5e1d7d",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Heartbeat rows and optionally reviewed market date.",
+    "outputs": "Expected/unique observed minutes, rounded rate and complete flag.",
+    "sideEffects": "Pure set construction, no persistence or messages.",
+    "failure": "Invalid/outside minutes excluded; closed/unknown date never complete.",
+    "timing": "Calendar open-inclusive/close-exclusive full session, normally390minutes; half days210.",
+    "researchBoundary": "Does not prove received prices, configured watcher-window completion, quotes or full-market observation.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "catalyst-integrity.mjs": {
+    "sha256": "b1e02464a7f0e066b60c44405ca25a8c789c390d5a18b045dbe45edea9df7ada",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Declared event date precision, announcement/entry/exit clocks and structured impact evidence.",
+    "outputs": "Precision/eligibility/reasons and quantified materiality ratios.",
+    "sideEffects": "Pure research classification; no provider/order/write.",
+    "failure": "Approximate dates never substituted; missing source/economics/context blocks; early actual event flagged as exposure.",
+    "timing": "Entry must follow public announcement, exit after entry and before scheduled exact day; legacy clocks use Date.parse.",
+    "researchBoundary": "Eligible only for frozen historical backtest; materiality/runway hypotheses are not approved BUY/profitability proof.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "market-session.mjs": {
+    "sha256": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Exact calendar date in reviewed2026/2027 years.",
+    "outputs": "known/closed/open/close with holidays and early closes.",
+    "sideEffects": "Pure calendar function.",
+    "failure": "Impossible dates/unknown years/weekends/holidays close; no guessed session.",
+    "timing": "New York cash minutes570..960 or780 on explicit half days; clock conversion stays with caller.",
+    "researchBoundary": "Calendar knowledge is not actual watcher coverage, entitlement or trading readiness.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "sec-time.mjs": {
+    "sha256": "3ca0be0997aa76abc9b9635024cb74e4eaccdd0b3ee569c03604b1fb1c271ab2",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Legacy SEC date or timestamp string; unzoned minute cut interpreted as UTC for compatibility.",
+    "outputs": "New York parts/phase/stamp, or date-only/null.",
+    "sideEffects": "Pure Intl/date conversion; no fetching/source writes.",
+    "failure": "Unparseable timestamp can fall back to date-only; not the strict native acceptance proof parser.",
+    "timing": "Before09:30/during09:30\u201315:59/after16:00 semantics; DST through Intl.",
+    "researchBoundary": "Does not establish acceptance authenticity or first ingestion; historical compatibility retained.",
+    "remainingVerification": "Legacy date-only/Date.parse normalization is permissive; stricter caller validation and frozen historical impact need explicit audit before any change.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "ignition-execution-contract.mjs": {
+    "sha256": "148c07379ab7a4c188ebd90e02dda2ad819dddf4f2fbcfc8063bc93d78789663",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "No runtime input; fixed reviewed production code/workflow blob map.",
+    "outputs": "Exported historical production no-observation source closure.",
+    "sideEffects": "Pure metadata; no execution or network.",
+    "failure": "Unknown/new production revisions are not certified by this map; caller must authenticate complete history/job/log/tree.",
+    "timing": "No event/heartbeat clocks are generated.",
+    "researchBoundary": "Source compatibility metadata is not proof that an earlier watcher did or did not observe; no global first-ingestion claim.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "sip-access-result.mjs": {
+    "sha256": "01a3c1859003e49a5caf5001bfd6219faf3fcf88b68549b81127528ea09a337b",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Candidate status string and integer process exit.",
+    "outputs": "Exact20-code allowlist result or ERROR/1.",
+    "sideEffects": "Pure normalization; no env/keys/providers/writes.",
+    "failure": "Unknown/malformed/oversized/output-extra-lines or code/exit mismatch becomes ERROR.",
+    "timing": "Timeout/interruption exit cannot turn PASS into success.",
+    "researchBoundary": "Non-sensitive output contract, independently reviewed; no credential permission or sampled-data proof by itself.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  },
+  "watcher-session.mjs": {
+    "sha256": "0b535eacf94b35c5ef97dc6768849a8d8c51324b1229468f77fe1a48e0c403df",
+    "reviewer": "Codex source-interface review, 2026-11-01",
+    "status": "SOURCE_REVIEWED",
+    "inputs": "Snapshots/heartbeats, calendar day, configured window and GHA identity fields.",
+    "outputs": "Coverage/usable-minute evidence, canonical selection, sessionFinished, run identity and daily-summary choice.",
+    "sideEffects": "Pure selection and identity only; no state/network/message writes.",
+    "failure": "Unknown/closed calendar or invalid identity refused; ties preserve earlier evidence; legacy counts never verified complete.",
+    "timing": "Full-session and explicitly configured-window semantics separate; ordered unique heartbeat minutes determine quality.",
+    "researchBoundary": "Never selects by P&L; legacy detected-count fallback is measurement quality, not coverage/trading proof.",
+    "remainingVerification": "No additional finding in this scoped source-interface review; this is not all-path runtime proof.",
+    "evidence": [
+      "docs/repo03-behavioral-review.md#source-interface-pass"
+    ]
+  }
+}

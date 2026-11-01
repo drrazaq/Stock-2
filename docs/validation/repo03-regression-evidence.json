@@ -1,0 +1,48 @@
+{
+  "kind": "REPO03_TARGETED_REGRESSION_EVIDENCE_V1",
+  "baseSourceCommit": "6868d9a39518fdf4168f67167f681bbba7c68ab0",
+  "productionChanged": false,
+  "reviewPR6Unchanged": "64611cdf47dd230026911dde53b98cf7413c17f1",
+  "coverage": {
+    "scripts": 305,
+    "sourceReviewed": 46,
+    "pending": 259,
+    "reviewedWithOpenFindings": 24
+  },
+  "recoveryOld": {
+    "cases": 7,
+    "failedDefectCases": 3,
+    "passedControls": 4
+  },
+  "recoveryRepaired": {
+    "cases": 7,
+    "pass": 7,
+    "effectiveUid": 1000,
+    "realNonRootPermissionRefusal": true
+  },
+  "verifierOld": {
+    "cases": 2,
+    "fail": 2
+  },
+  "verifierRepaired": {
+    "cases": 2,
+    "pass": 2
+  },
+  "matrixTests": {
+    "cases": 7,
+    "pass": 7
+  },
+  "fullPython": {
+    "cases": 39,
+    "pass": 39
+  },
+  "syntaxModules": 293,
+  "pureHelperRegressionFiles": 5,
+  "localActualWatcher": "BLOCKED_BY_NODE_SPAWN_EPERM_STATUS0_EMPTY_STDOUT",
+  "newAcceptanceClosures": [],
+  "repairedFiles": {
+    "tools/recover-research-artifact.mjs": "7af2fb3ab7f586718d3551b3d5e799a717337fae0add1171d0542d685b84611e",
+    "tools/verify-incident-production-package.py": "ec78e1ff590659c3271c38648023066658a76a88c5f22e6ccfb57b23f7df3360",
+    "tools/repository-audit.py": "5c60372c06dd27ceb5a93b999048212400368899c5d614f8ce80152be78edcca"
+  }
+}

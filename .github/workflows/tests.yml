@@ -27,6 +27,10 @@ jobs:
             echo "PASS $f"
             echo "::endgroup::"
           done
+      - name: Verify REPO-03 source inventory and non-destructive verifier behavior
+        run: |
+          python -m unittest discover -s tests -p 'test_repository_behavior.py'
+          python -m unittest discover -s tests -p 'test_incident_verifier_evidence.py'
       - name: Run every test file
         shell: bash
         run: |

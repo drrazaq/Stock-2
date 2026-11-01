@@ -5,7 +5,7 @@ No fetch/push, providers, deployment or message dispatch. Tests use existing syn
 import argparse,hashlib,io,json,os,re,subprocess,tarfile,tempfile
 from pathlib import Path
 parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--scope',choices=['watcher','accounting','combined'],required=True);parser.add_argument('--revision',choices=['2','3','4','5'],default='3');args=parser.parse_args()
-repo=Path(__file__).resolve().parents[1];out=Path(args.output).resolve();out.mkdir(parents=True,exist_ok=True)
+repo=Path(__file__).resolve().parents[1];out=Path(args.output).resolve();out.mkdir(parents=True,exist_ok=False,mode=0o700)
 sha=lambda b:hashlib.sha256(b).hexdigest()
 scopes=['watcher','accounting'] if args.scope=='combined' else [args.scope];manifests=[]
 if args.revision=='5':
