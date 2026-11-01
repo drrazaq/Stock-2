@@ -195,7 +195,7 @@ test('basket text: 65/35 month, next Basket 1 buy day with 4 months saved, top-1
   assert.match(t3, /REPLACED: PLTR is NOT halal in ZAD, so KO/);
   assert.match(t3, /CHECK IN ZAD FIRST: MSFT \(on the buy day its share goes to SPUS until you mark it\)/);
   const w = B.fn('waysText')();
-  assert.match(w, /a\) THE BASKET \(core\): every month 65%.*halal top 10.*3 times a year/); assert.match(w, /b\) TRY SMALL: 1,000 USD/); assert.match(w, /c\) OPTIONS PAPER LANE/);
+  assert.match(w, /a\) THE BASKET \(core\): every month 65%.*halal top 10.*3 times a year/); assert.match(w, /b\) TRY SMALL: paper only/); assert.match(w,/LEADER DIP: existing owner lane/); assert.match(w, /c\) OPTIONS PAPER LANE/);
   assert.match(B.value('HELP'), /\nbasket   \(THE BASKET/); assert.match(B.value('HELP'), /\nbasket buy 1400   \(Basket 1 buy day/); assert.match(B.value('HELP'), /\nways   \(your ways to trade/);
   const none = await loadScan({ env });
   assert.match(none.fn('basketText')(1000), /Set aside 35% = 350\.00 USD.*top-10 list is not ready yet/s);

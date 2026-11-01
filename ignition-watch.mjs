@@ -178,7 +178,7 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
   let ok = ok0.filter(p => paperOk(p.rule, p.exit, liveOnly)), early = false;
   if (!ok.length) { const e = liveOnly ? ok0.filter(p => { const q = PREC[p.rule + '/' + p.exit]; return earlyPaperEligible(q); }) : [];
     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
-  if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
+  if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (hard AVOID list; numerical performance not independently reproduced here)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
   if (!isFreshPriceAge(rd)) { flag(r.sym, 'noLive', 'price age ' + (typeof rd !== 'number' || !Number.isFinite(rd) ? 'unknown' : rd < 0 ? 'invalid (future timestamp)' : Math.round(rd) + ' minutes') + ': not fresh enough to alert'); return; }
   if (!early && !currentOwnerZadApproved(r.sym)) { t.blocked = ['ZAD_NOT_CONFIRMED']; flag(r.sym, 'halalUnknown', 'approved alert withheld: confirm halal in ZAD first'); return; }
   // Only an approved BUY needs an executable quote; unproven paper setups remain research.

@@ -85,7 +85,7 @@ for (const s of SETUPS) for (const h of H) { const a = trades[s + '_' + h], o = 
 const spy = (h) => { const a = []; for (let t = 252; t + h < T; t += h) { const b = spyI * T, e = O[b + t + 1], z = C[b + t + h]; if (e > 0 && z > 0) a.push(z / e - 1); } return mean(a); };
 const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[252], to: D[T - 1], versions: SETUPS.length * H.length, spy: Object.fromEntries(H.map(h => [h, spy(h)])), results: RES, today, rules: { stopAt: STOP, cost: COST } };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
-const msg = ['HORIZONS (mid and long term: 1, 3 and 6 months; 5 years, whole market, vs an average stock bought the same day)', ''];
+const msg = ['HORIZONS (mid and long term: 1, 3 and 6 months; stored sample ' + out.from + ' to ' + out.to + ', vs an average stock bought the same day)', ''];
 for (const s of SETUPS) { msg.push(NAME[s] + ':'); for (const h of H) { const r = RES[s + '_' + h], n = r.results.newer; msg.push('  ' + r.months + ' month' + (r.months > 1 ? 's' : '') + ': ' + r.verdict + (n.n ? ' | newer half ' + n.n + ' trades, ' + pc(n.avg) + ' vs average stock ' + pc(n.ctrl) + ', ' + Math.round(n.win * 100) + '% won, S&P 500 ' + pc(n.spy) + ', worst trade ' + pc(n.worst) + ', average low point ' + pc(n.avgMAE) : '') + (r.verdict !== 'PROMISING' ? ' (' + r.why.split(';')[0] + ')' : '')); }
   if (today[s].length && Object.values(RES).some(r => r.setup === s && r.verdict === 'PROMISING')) msg.push('  In this setup today: ' + today[s].slice(0, 10).join(', ')); }
 msg.push('', SETUPS.length * H.length + ' versions tested, so about 1 could pass by luck. A pass goes to paper first. Research only.');

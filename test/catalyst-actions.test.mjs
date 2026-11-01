@@ -58,7 +58,7 @@ test('the  catalysts  command shows the calendar as information only when no rul
   const S = await loadScan({ files: files(null) });
   const t = S.fn('catalystCalendarText')();
   assert.match(t, /INFORMATION ONLY/);
-  assert.match(t, /- ABCD: PDUFA 2026-12-10; buy day 2026-10-26, sell day 2026-12-08/);
+  assert.match(t, /- ABCD: PDUFA 2026-12-10; reference entry 2026-10-26, reference exit 2026-12-08/);
 });
 
 test('no network was used', () => { assert.deepEqual(blocked, []); });

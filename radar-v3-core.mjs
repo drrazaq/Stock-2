@@ -130,7 +130,7 @@ export function buildMidday(snap, ctx0 = {}) {
   const ts = topSilence(snap.tally);
   text.push('', 'Received ' + (snap.scanned ?? '?') + ' stocks (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '. Approved: ' + (snap.alerts || 0) + '.'
     + (ts ? ' Top reason for silence: ' + ts.words + ' (' + ts.n + ', ' + ts.kind + ').' : ''));
-  text.push('Chasing: stocks already up 20%+ when first seen fell a median 19% to the close (469 cases, 14-27 Oct). Check ZAD. Research only, not advice.');
+  text.push('Chasing risk: no authenticated numerical estimate is linked here. Late discovery does not establish remaining opportunity. Check ZAD. Research only, not advice.');
   return { text: text.join('\n'), rows };
 }
 

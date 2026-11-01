@@ -105,7 +105,7 @@ export function leadText(items, ctx = {}) {
     '- ' + c.sym + ' ' + pct(c.chg, 1) + ' at ' + usd(c.price) + ', volume pace ' + (c.rvT ? c.rvT.toFixed(1) + 'x' : '?') + ', ' + (c.dollarVol / 1e6).toFixed(1) + 'M USD traded so far. '
       + (ctx.halalOk && ctx.halalOk(c.sym) ? 'Halal (your ZAD mark).' : 'HALAL UNKNOWN: check ZAD first.') + ' SEC: no danger filing in 30 days.\n  Catalyst: ' + (c.cat ? c.cat.text : 'not checked') + '.\n  ' + spreadHurdle(c)
       + (c.price < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : '')),
-    'Trigger EW-ALERT-1 is UNPROVEN: on its first 2 days only about 1 in 10 such stocks reached that gross move. At most 5 a day; the after-close radar scores every one. Fewer messages: alerts paper  or  alerts off.'].join('\n');
+    'Trigger EW-ALERT-1 is UNPROVEN. See the delivery scorecard for recorded outcomes; messages are not executable-fill evidence. At most 5 a day; the after-close radar scores every one. Fewer messages: alerts paper  or  alerts off.'].join('\n');
 }
 export function paperText(items) {
   return ['EARLY WATCH: PAPER SETUP' + (items.length > 1 ? 'S' : '') + ' (NOT AN APPROVED BUY) ' + fm(items[0].m) + ' New York', ...items.map(c => { const r = c.record;

@@ -83,7 +83,7 @@ for (const key of Object.keys(cases)) { const a = cases[key], R = { older: stat(
 const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[60], to: D[T - H - 3], versions: NT, tCrit: +TCRIT.toFixed(2), costPerSide: SIDE, results: RES };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 const msg = ['SELL NOW, BUY BACK LOWER? (' + out.from + ' to ' + out.to + ', whole market, compared on day 60 with simply holding, costs included)', ''];
-for (const r of Object.values(RES)) { const n = r.results.newer; msg.push(r.name + ': ' + r.verdict + (n.n ? ' | newer half ' + n.n + ' cases: switch ' + pc(n.adv) + ' vs holding, better ' + Math.round(n.better * 100) + '% of the time, came back to the buy-back price ' + Math.round(n.cameBack * 100) + '% of the time' : '')); }
+for (const r of Object.values(RES)) { const n = r.results.newer; msg.push(r.name + ': ' + r.verdict + (n.n ? ' | newer half ' + n.n + ' cases: switch ' + pc(n.adv) + ' vs holding, better ' + Math.round(n.better * 100) + '% of the time, ' + (r.rebuy==='UPTURN'?'re-entry signal occurred within 60 sessions ':'came back to the buy-back price ') + Math.round(n.cameBack * 100) + '% of the time' : '')); }
 msg.push('', NT + ' versions, bar t ' + TCRIT.toFixed(1) + '. Research only.');
 console.log(msg.join('\n'));
 const QUIET_ = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet (default): study results stay in the files and reach you through ACTIONS and the weekly report

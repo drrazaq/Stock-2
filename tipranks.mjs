@@ -130,8 +130,8 @@ for (const s of short) {
     let done = false;
     if (d.candles.length >= 600 && mkt) {
       const i = d.candles.length - 1, ind = L.indicators(d.candles, mkt), Lr = L.learn(d.candles, ind, null, false), v = L.verdict(d.candles, ind, Lr, null, d.last, false), dist = Lr.v.mult * ind.atr[i], trig = L.buyTrigger(d.candles, ind, Lr);
-      if (v.act) { plan = '  BUY WATCH (tested rule): buy ' + money(d.last) + ' to ' + money(d.last + 0.5 * ind.atr[i]) + ', stop ' + money(d.last - dist) + (Lr.v.tp ? ', target ' + money(d.last + Lr.v.tp * dist) : ', no fixed target'); done = true; }
-      else if (Lr.proven && trig.price && trig.price / d.last < 1.15) { plan = '  Not yet (tested rule): buy only after a close above ~' + money(trig.price) + ', stop ~' + money(trig.price - dist) + (Lr.v.tp ? ', target ~' + money(trig.price + Lr.v.tp * dist) : ''); done = true; }
+      if (v.act) { plan = '  BUY WATCH (past-trade check only, NOT PROVEN): buy ' + money(d.last) + ' to ' + money(d.last + 0.5 * ind.atr[i]) + ', stop ' + money(d.last - dist) + (Lr.v.tp ? ', target ' + money(d.last + Lr.v.tp * dist) : ', no fixed target'); done = true; }
+      else if (Lr.proven && trig.price && trig.price / d.last < 1.15) { plan = '  Not yet (past-trade check only, NOT PROVEN): buy only after a close above ~' + money(trig.price) + ', stop ~' + money(trig.price - dist) + (Lr.v.tp ? ', target ~' + money(trig.price + Lr.v.tp * dist) : ''); done = true; }
     }
     if (!done) { const r = L.refPlan(d.candles, d.last); if (r) plan = '  Reference plan (not tested): ' + (r.extended ? 'wait for a pullback, then buy ' : 'buy ') + money(r.lo) + ' to ' + money(r.hi) + ', stop ' + money(r.stop) + ', target ' + money(r.target); }
     plan = '  now ' + money(d.last) + '\n' + plan;

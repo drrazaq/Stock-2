@@ -124,7 +124,7 @@ for (const s of SETUPS) { const a = trades[s], o = a.filter(x => x.t < mid), w =
 const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[252], to: D[T - MAXH - 1], versions: NT, tCrit: +TCRIT.toFixed(2), cost: COST, results: RES };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 // ---- message
-const msg = ['EXIT TEST (when to sell): the same buys sold 10 ways, 5 years, whole market, ' + out.from + ' to ' + out.to, 'Yardstick: hold 3 months with a 25% stop. A new exit must beat it on the SAME trades, measured above the S&P 500 over the days each was held, in both halves, beyond luck (' + NT + ' versions, bar t ' + TCRIT.toFixed(1) + ').', ''];
+const msg = ['EXIT TEST (when to sell): the same buys sold 10 ways, stored whole-market sample, ' + out.from + ' to ' + out.to, 'Yardstick: hold 3 months with a 25% stop. A new exit must beat it on the SAME trades, measured above the S&P 500 over the days each was held, in both halves, beyond luck (' + NT + ' versions, bar t ' + TCRIT.toFixed(1) + ').', ''];
 for (const s of SETUPS) { const R = RES[s], d = R.exits.HOLD60.results.newer; msg.push(R.name + ' (' + R.trades + ' trades): default ' + pc(d.avg) + ' a trade, ' + Math.round((d.win || 0) * 100) + '% won, ' + d.days + ' sessions held');
   if (R.best !== 'HOLD60') { const b = R.exits[R.best].results; msg.push('  BEST: ' + EXNAME[R.best] + ': ' + pc(b.newer.avg) + ' a trade (' + pc(b.vsDefault.newer.diff) + ' vs default, newer half; ' + pc(b.vsDefault.older.diff) + ' older), ' + b.newer.days + ' sessions held, ' + pc(b.newer.perMonth) + ' a month'); }
   else msg.push('  No exit beat the default beyond luck. Keep: ' + EXNAME.HOLD60 + '.');

@@ -70,7 +70,7 @@ for (const pool of POOLS) { const A = rows[pool], ts = [...new Set(A.map(x => x.
   RES[pool] = { rules: R, recommended: safe[0] || 'NONE', buys: A.length }; }
 const out = { generatedAt: new Date().toISOString(), status: 'OK', from: D[130], to: D[T - H - 3], hold: H, versions: NT, tCrit: +TCRIT.toFixed(2), results: RES };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
-const msg = ['STOP STUDY (where to put the stop on your own buys; 5 years, whole market, held up to 60 sessions, ' + out.from + ' to ' + out.to + ')', ''];
+const msg = ['STOP STUDY (where to put the stop on your own buys; stored whole-market sample, held up to 60 sessions, ' + out.from + ' to ' + out.to + ')', ''];
 for (const pool of POOLS) { const P = RES[pool], R = P.rules, rec = P.recommended, line = (r) => R[r].name + ': ' + pc(R[r].newer.avg) + ' a buy, worst 5% average ' + pc(R[r].newer.worst5) + ', stopped ' + Math.round(R[r].newer.hit * 100) + '% of the time' + (R[r].harmful ? ' (cost more than 0.5% a buy vs no stop)' : R[r].better ? ' (beat no stop)' : '');
   msg.push(pool === 'ANY' ? 'ANY LIQUID STOCK (' + P.buys + ' buys):' : 'STRONG STOCKS, top 30% of 6-month gains (' + P.buys + ' buys):', '- ' + line('NONE'), '- ' + line('OLD'), '- ' + line('PCT25'), '- ' + line('ATR3'), 'RECOMMENDED: ' + NAME[rec] + ' (the smallest losses in the worst 5% of buys among the stops costing at most 0.5% a buy)', ''); }
 msg.push(NT + ' versions. Research only. New buys you record get the recommended stop; existing stops are shown side by side in  stops .');
