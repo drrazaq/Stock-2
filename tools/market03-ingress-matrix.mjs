@@ -54,6 +54,7 @@ export const CONTRACTS={
  'smart-money.mjs|FMP':C('Y','NA','Y','NA','NA','N','Y','claude/market03-batch2','grades-latest-news: bounded read, REFUSED/RATE_LIMITED/MALFORMED distinct, future rows excluded, classes counted'),
  'smart-money.mjs|MASSIVE':C('P','Y','Y','Y','Y','N','Y','claude/market03-batch2','grouped prices: exchange-calendar day, envelope checked, day/lag/basis recorded, no tips on a stale day; plain tickers only (classes excluded)'),
  'smart-money.mjs|POLYGON':C('P','Y','Y','Y','Y','N','Y','claude/market03-batch2','fallback host of the same grouped request'),
+ 'calendar.mjs|MASSIVE':C('Y','P','Y','Y','NA','P','Y','claude/market03-batch2 (batch 3)','holidays: validated, past dropped, NYSE/Nasdaq and exchange-calendar disagreements kept as CONFLICT, failure never ok; dividends: held-ticker identity, valid ex-date, finite amount, currency labelled; public status counts only'),
  'scan.mjs|TWELVE_DATA':C('N','N','N','N','N','N','N','open (scan.mjs owned by main session)','proposal in docs/market03-catalyst03/SCAN-PROPOSAL.md'),
  'scan.mjs|ALPACA_DATA':C('N','N','P','P','N','N','N','open (scan.mjs owned by main session)','proposal'),
  'scan.mjs|FINNHUB':C('N','N','N','N','NA','N','N','open (scan.mjs owned by main session)','proposal'),

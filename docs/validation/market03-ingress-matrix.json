@@ -4,10 +4,9 @@
   "pairs": 442,
   "providerPairs": 305,
   "decisionPathPairs": 97,
-  "reviewedDecisionPairs": 33,
+  "reviewedDecisionPairs": 34,
   "fullyCoveredDecisionPairs": 3,
   "unreviewedDecisionPairs": [
-   "calendar.mjs|MASSIVE",
    "calendar.mjs|TIPRANKS",
    "calendar.mjs|ALPHA_VANTAGE",
    "calendar.mjs|BLS",
@@ -67,7 +66,7 @@
   "unclassified": [],
   "frozenResearchPairs": 187,
   "decisionIngress": 87,
-  "reviewedIngress": 31,
+  "reviewedIngress": 32,
   "fullyCoveredIngress": [
    "comeback-lab.mjs|MASSIVE",
    "discovery2.mjs|SEC",
@@ -334,7 +333,17 @@
    "kind": "PROVIDER",
    "provider": "MASSIVE",
    "role": "LIVE_DELIVERY_PATH",
-   "contract": "NOT_REVIEWED"
+   "contract": {
+    "identity": "Y",
+    "units": "P",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "NA",
+    "revision": "P",
+    "status": "Y",
+    "by": "claude/market03-batch2 (batch 3)",
+    "note": "holidays: validated, past dropped, NYSE/Nasdaq and exchange-calendar disagreements kept as CONFLICT, failure never ok; dividends: held-ticker identity, valid ex-date, finite amount, currency labelled; public status counts only"
+   }
   },
   {
    "file": "calendar.mjs",
