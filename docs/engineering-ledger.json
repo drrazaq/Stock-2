@@ -5361,7 +5361,62 @@
       "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304745853/job/124842748853",
       "scope": "All existing current-main tests plus unchanged runtime/package/parity tests. Agent-C changes preserved, not merged into development. No main changes."
     },
-    "diagnosticStorageFollowup": "510ef31cb90c9623ee8a0170cfed1010ebfd28bf; exact-SHA CI required"
+    "diagnosticStorageFollowup": {
+      "sha": "510ef31cb90c9623ee8a0170cfed1010ebfd28bf",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304943132/job/124843321673",
+      "fullTestFiles": 130,
+      "focusedTests": 24
+    },
+    "verifiedDevelopment": {
+      "sha": "5ad4aa09c1cb9e919a5898260a2fa166cef936d4",
+      "checks": [
+        {
+          "name": "fixture-close",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843670562"
+        },
+        {
+          "name": "safety",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843607078"
+        },
+        {
+          "name": "fixture-open",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041693/job/124843606946"
+        },
+        {
+          "name": "source-preservation",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041617/job/124843606584"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/41305041579/job/124843606367"
+        }
+      ],
+      "fullNodeTestFiles": 232,
+      "result": "PASS_ALL_5",
+      "scope": "Before bid-mark/missingness followup; final HEAD needs its own checks."
+    },
+    "V2ReportingFollowup": {
+      "sha": "feba5acf39a2df1277e50b6f1ab42fd378cd33bc",
+      "tests": 8,
+      "status": "Exact-SHA checks required; prior243bf2f2 seven-test PASS retained",
+      "behavior": "Bid marks versus liquidation capacity, global quote missingness, future-frame cutoff"
+    },
+    "reviewPRs": {
+      "diagnostic": 5,
+      "observer": 4,
+      "mentorExisting": 3
+    }
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",

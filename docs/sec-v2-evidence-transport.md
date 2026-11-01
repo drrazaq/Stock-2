@@ -38,3 +38,9 @@ No strategy is endorsed; no profitable or admissible case is claimed.
 ## Verified execution
 
 [Exact-source hosted PASS](https://github.com/drrazaq/Stock-2/actions/runs/41304257278/job/124841310307) on243bf2f24fa5986a86fdaf0afdabe0e476bd29ad:7/7 focused tests, full existing suite. Source/state/guard/failure and real synthetic producer integration passed. This is hosted execution of our tests; local Node and Claude attachment/harness access remain unavailable. Latest consolidated HEAD still needs its own tests; these passes do not fill the remaining live-binding or independent-evidence gaps.
+
+## Reporting integrity followup (HISTORY-04)
+
+The drawdown field is now observedBidMarkDrawdown, explicitly BID_MARK_NOT_A_GUARANTEED_FULL_SIZE_LIQUIDATION. Each leg exposes insufficientMarkDepthSequences and drawdownCapacityVerified; small intermediate bid sizes do not become guaranteed full-size liquidation evidence. The pair remains a quoted paper path, never a fill claim. Global invalidQuoteSymbols/quoteEvidenceComplete distinguishes observed frame cadence from usable BBO/size evidence for every symbol, including names outside enrolled pairs. Frames later than the declared cutoff are rejected.
+
+This is reporting/validation only; no enrollment, entry, exit, fee or strategy rule changes. The8th test covers an intermediate low-depth mark, an unenrolled stale quote and future-frame refusal. Expanded source candidatefeba5acf39a2df1277e50b6f1ab42fd378cd33bc must pass exact-SHA CI; prior7-test243bf2f2 remains verified historical evidence.

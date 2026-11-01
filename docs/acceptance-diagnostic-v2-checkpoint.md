@@ -34,3 +34,11 @@ V2 source243bf2f2: [7/7 actual-caller/failure controls and full hosted suite PAS
 Production main subsequently advanced with independent Agent-C source/workflow/test changes. Observer watcher/snapshot dependencies remain identical. The unchanged observer package was applied on current main97001c3f in separate test commit7b3e5a6c and [all current-main tests passed](https://github.com/drrazaq/Stock-2/actions/runs/41304745853/job/124842748853). No Agent-C history was merged into this development checkpoint, no Agent-C lab was dispatched and no production code was modified.
 
 A final defensive C2 followup makes result/refusal-file storage errors emit only ERROR and cross-checks the finalizer against the protected step's native outcome, so a failed step cannot leave an apparently valid PASS receipt. Literal-Python storage/symlink and native-outcome regressions are added. This followup must pass its exact-SHA checks before review.
+
+## Published review checkpoints and final reporting guard
+
+Verified development source5ad4aa09: all5 checks PASS (test232files, safety, fixture-open, fixture-close, source-preservation). Diagnostic followup510ef31c: full130files/24focused tests PASS; [draftPR5](https://github.com/drrazaq/Stock-2/pull/5). Passive observer current-main full130files PASS; [draftPR4](https://github.com/drrazaq/Stock-2/pull/4). These bounded review packages do not authorize deployment.
+
+A directly affected HISTORY-04 report defect was then corrected separately: a bid-mark drawdown cannot claim full-size liquidation where intermediate depth is insufficient. Proposed V2 now exposes mark/depth uncertainty, missing quote quality for every symbol and refuses frames later than cutoff. Expanded8-test sourcefeba5acf and consolidated final HEAD require their own terminal checks; do not borrow5ad4aa09's CI. No frozen cost/exit/enrollment changes.
+
+Read-only named workflow-history queries were refused by the GitHub connector (HTTP400 allowed-endpoint policy). This is a platform access limitation, not missing owner authorization. Monday natural verification remains pending; no newer watcher/premarket run is inferred. Managed runtime and attachment-download limitations remain as recorded above.

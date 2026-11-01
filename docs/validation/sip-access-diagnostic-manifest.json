@@ -43,7 +43,7 @@
     "test/sip-access-package.test.mjs": "70b49c194d6333483de4443b24dd285159dd8efc0bdfc67ce3ff7ae6abad6a41",
     "docs/validation/sip-access-diagnostic.workflow.yml.proposed": "5c707d1df5494398e13068eab82f7f02464b0a00ae805a90d87c3bb656c6d1c3",
     "docs/validation/sip-access-approval.example.json": "0dc7c13127a8a9fb81f221bb5d8bcae1ac4f34052881928d2f203312fbefdfc7",
-    "docs/sip-access-c1-c2-review.md": "28e23e01a98a77a66ff4ff52f6a150bae03ad2327aff7a0e2022a8b39b878df4",
+    "docs/sip-access-c1-c2-review.md": "55247d1a90f94cf0ec0651bb5bbe8f7f791e890b4dd48a46d02cfb6de633dfb9",
     "test/sip-access-workflow.test.mjs": "e14143f857fcf7cedd2323c348c7054f6ddac4b590039a4b94d59d1fc0ea627f",
     "docs/validation/sip-access-action-provenance.json": "1ea86cf1aa19f32246c938d07484c218abf26d0c4b701224fda459862e5a69f7"
   },
@@ -58,10 +58,11 @@
     },
     "approvalRequired": "Exact workflow installation, existing provider bindings and ONE dated run; no automatic replacement/retry; operator checks run history",
     "currentRevision": {
-      "sha": "ccf091c1044b7563259c1c173d0d910633f75816",
+      "sha": "510ef31cb90c9623ee8a0170cfed1010ebfd28bf",
       "result": "PASS",
-      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41303964171/job/124840463268",
-      "scope": "Production-base full suite; literal proposed protected-wrapper and finalizer Python executed with every code, timeout/interruption exits, malformed/missing output. No credentials/provider traffic."
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304943132/job/124843321673",
+      "fullTestFiles": 130,
+      "focusedTests": 24
     },
     "firstCorrectionFailure": {
       "sha": "5a885fdb74b448c528e17b4578ae59e0f087ebde",
@@ -72,7 +73,7 @@
       ],
       "result": "PRESERVED; fixed and source tests PASS on b8e0fe8c, including exactly one local wire request on connection failure"
     },
-    "wrapperStorageCorrection": "Added fixed ERROR handling for refusal/result-file storage errors, with literal-Python directory/symlink failure regressions; final exact-SHA tests required."
+    "wrapperStorageCorrection": "PASS at510ef31c: fixed ERROR on storage failure; finalizer checks protected-step native outcome. No code/exit mismatch accepted."
   },
   "acceptance": {
     "complete": 24,
@@ -93,5 +94,6 @@
     "killGraceSeconds": 5,
     "jobMinutes": 20,
     "approved": false
-  }
+  },
+  "reviewPR": "https://github.com/drrazaq/Stock-2/pull/5"
 }

@@ -1,23 +1,29 @@
 {
   "kind": "PROPOSED_V2_OFFLINE_EVIDENCE_INCREMENT",
   "date": "2026-11-01",
-  "sourceCandidate": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
+  "sourceCandidate": "feba5acf39a2df1277e50b6f1ab42fd378cd33bc",
   "baseline": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30",
-  "sourceChecks": "https://github.com/drrazaq/Stock-2/commit/243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
+  "sourceChecks": "https://github.com/drrazaq/Stock-2/commit/feba5acf39a2df1277e50b6f1ab42fd378cd33bc",
   "verification": {
     "sha": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
     "result": "PASS",
     "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304257278/job/124841310307",
     "focusedTests": 7,
     "actualProducerPath": true,
-    "scope": "Synthetic producer prefixes->source guard->41 frames->encrypted checkpoint/client ACK->restart->paired exits; missingness, losses, partial writes, concurrent attempts and unconfirmed/timeout ACKs. No live binding or admissions."
+    "scope": "Synthetic producer prefixes->source guard->41 frames->encrypted checkpoint/client ACK->restart->paired exits; missingness, losses, partial writes, concurrent attempts and unconfirmed/timeout ACKs. No live binding or admissions.",
+    "reportingFollowup": {
+      "sha": "feba5acf39a2df1277e50b6f1ab42fd378cd33bc",
+      "tests": 8,
+      "status": "Exact-SHA checks required; prior243bf2f2 seven-test PASS retained",
+      "behavior": "Bid marks versus liquidation capacity, global quote missingness, future-frame cutoff"
+    }
   },
   "fileHashes": {
     "sec-proof-ready-proposal.mjs": "c314a55ca5bb09219bb8aa96404ca6f4fd7943a23c22488e8521b03f6462de8b",
-    "sec-v2-outcomes.mjs": "813ed8a3c67c99a346f9dbe0a644fe2729b4ae5c8137902beaca0996f89aa5ce",
+    "sec-v2-outcomes.mjs": "f6faa45e744af423840b532104439e85d7374163d31c147edccd770b72ee604d",
     "sec-v2-evidence.mjs": "2aba830c6a6f2f51ba2e99c625ebac906f7b314c6f7348bb8a78dae35b4309c5",
-    "test/sec-v2-evidence.test.mjs": "26ed04cb4c1cb359eb34bd51e155ccb2d4511d6ab47902953b0b9bef79aaaa59",
-    "docs/sec-v2-evidence-transport.md": "e2e857ac6014c90f722a79d2e52428bc2f0dfcf641699241626c6a7f0b60623f"
+    "test/sec-v2-evidence.test.mjs": "c9db6c28f4475dfcc1ab05c115bd9016f9c62dc71bbdc98d7ae27de2c1f57390",
+    "docs/sec-v2-evidence-transport.md": "78561900d71ffc4cf403dfeb586e5c2f2110b5bc1b84fdb31bec24c4911e975a"
   },
   "guardDependencyGitBlobs": {
     "artifact-wire-client.mjs": "d8c0c30831c4903a18ad487255e33d5a8cd9630d",
@@ -46,7 +52,7 @@
     "sec-proof-ready-proposal.mjs": "e229a9a5819081e7845808e7560e69f4a6451b29",
     "sec-selection-telemetry.mjs": "c7c25102f5820d0ae98199e141d25f268e9a67e7",
     "sec-v2-evidence.mjs": "25648b995b61f6355d345c4130634aea2ae85ac6",
-    "sec-v2-outcomes.mjs": "6b9fd4cc9a812658995b6920276e3ea05d58c254",
+    "sec-v2-outcomes.mjs": "b7a05b3ef6c7d29aadd8294876ab295efef32120",
     "shadow-eval.mjs": "3caf7733e51d91eabf6e535335f5a6aad9e42767",
     "snapshot-fields.mjs": "d0e9d3ae12ffdc39296f9fb7722a3ec3f704afae",
     "tools/seal-research-artifact.mjs": "74e42726ad5a5b81e111ddfd1605d6961be1ab21",
