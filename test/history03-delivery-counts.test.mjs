@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
-import {alertDeliveryCounts,alertDeliveryLines} from '../watcher-delivery-counts.mjs';import {saveCheckpoint,readCheckpoint} from '../watcher-checkpoint.mjs';
+import {alertDeliveryCounts,alertDeliveryLines} from '../radar-v3-core.mjs';import {saveCheckpoint,readCheckpoint} from '../watcher-checkpoint.mjs';
 const source=fs.readFileSync(new URL('../ignition-watch.mjs',import.meta.url),'utf8'),a=source.indexOf('async function maybeAlert('),b=source.indexOf('\n// ',a),body=source.slice(a,b);
 async function actual({early=false,send=true,ack=true,state='UNSENT',blocked=false}={}){
  const messages=[],record={rule:'IG1',exit:'close',exitName:'close'},t={d:'2026-10-30',sym:'ZZQ',rule:early?'IG8':'IG1',m:600},pr={n:80,days:30,avg:0.02,stress:0.01};

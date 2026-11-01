@@ -14,7 +14,7 @@ const section = (t, name, next) => { const i = t.indexOf('\n' + name); if (i < 0
 
 // ---- B01 / D15: delivery counts, paper versus approved -------------------------------------------------------------------------------
 test('[CORRECTED B01] radar separates acknowledged gate-qualified and early-paper messages from recorded/uncertain events',async()=>{
- const RC=await mod('radar-v3-core.mjs'),{alertDeliveryCounts}=await mod('watcher-delivery-counts.mjs'),{ctx,snap}=await lift('test/radar-v3-core.test.mjs',['ctx','snap']);
+ const RC=await mod('radar-v3-core.mjs'),{alertDeliveryCounts}=await mod('radar-v3-core.mjs'),{ctx,snap}=await lift('test/radar-v3-core.test.mjs',['ctx','snap']);
  const events=[{d:'2026-10-30',sym:'ZZQ',rule:'IG8',m:600,deliveryKind:'EARLY_PAPER',deliveryState:'UNSENT'},{d:'2026-10-30',sym:'ZZP',rule:'IG8',m:600,deliveryKind:'EARLY_PAPER',deliveryState:'UNCERTAIN'}];
  const alertCounts=alertDeliveryCounts(events,0),text=RC.buildMidday(snap({alerts:0,alertCounts}),ctx).text;assert.match(text,/HISTORY\/PAPER-GATE QUALIFIED: 0 recorded, 0 sent/);assert.match(text,/EARLY PAPER ALERTS \(NOT PROVEN\): 2 recorded, 0 sent \(acknowledged\), 1 unsent, 1 uncertain/);assert.doesNotMatch(text,/tested alerts sent|APPROVED SIGNALS/);assert.match(text,/not current purchase or ZAD approval/);
  const close=RC.buildClose('2026-10-30',{day:'2026-10-30',alerts:0,alertCounts},[],{});assert.match(close,/EARLY PAPER ALERTS \(NOT PROVEN\): 2 recorded/);

@@ -1,3 +1,4 @@
+import {after} from 'node:test';
 // HISTORY-03 regression harness: shared environment (reviewer: Claude). Synthetic and offline only.
 // - REPO: the repository root (one level up from test), or HISTORY03_TREE to point at another checkout.
 // - loadScan / blocked: the repository's own test loader (test/load-scan.mjs): scan.mjs loaded without running, network refused.
@@ -11,12 +12,14 @@ export const REPO = path.resolve(process.env.HISTORY03_TREE || path.join(path.di
 export const mod = (rel) => import(pathToFileURL(path.join(REPO, rel)).href);
 export const { loadScan, blocked } = await mod('test/load-scan.mjs');
 export const src = (rel) => fs.readFileSync(path.join(REPO, rel), 'utf8');
+const liftedFixtures=new Set();after(()=>{for(const dir of liftedFixtures)fs.rmSync(dir,{recursive:true,force:true});});
 export async function lift(testFile, names) {
   const s = src(testFile), head = s.slice(0, s.indexOf('\ntest('));
   const body = head.split('\n').filter(l => !/^import (test|assert)\b/.test(l)).join('\n')
     .replace(/from '\.\.\/([^']+)'/g, (_, f) => 'from ' + JSON.stringify(pathToFileURL(path.join(REPO, f)).href))
     .replace(/from '\.\/([^']+)'/g, (_, f) => 'from ' + JSON.stringify(pathToFileURL(path.join(REPO, 'test', f)).href));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'h03-fx-')), f = path.join(dir, path.basename(testFile));
+  liftedFixtures.add(dir);
   fs.writeFileSync(f, body + '\nexport { ' + names.join(', ') + ' };\n');
   return import(pathToFileURL(f).href);
 }

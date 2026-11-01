@@ -522,7 +522,7 @@ function autolabText() { const AL = readJson0('data/autolab.json'); if (!AL || A
   return ['AUTOLAB: rules the system invents itself (' + AL.weeks + ' week' + (AL.weeks === 1 ? '' : 's') + ', ' + t.length + ' rules tried, luck bar now t ' + AL.last.bar + ')', '',
     'Failed: discovery ' + cnt('FAILED DISCOVERY') + ', validation ' + cnt('FAILED VALIDATION') + ', untouched vault ' + cnt('FAILED VAULT') + ', live paper ' + cnt('FAILED LIVE') + '.', '',
     ...(c.length ? ['LIVE CANDIDATES:', ...c.map(x => '- ' + x.name + ': ' + x.status + (x.stability ? ' [' + x.stability + (x.loses && x.loses.length ? ', loses in ' + x.loses.join(', ') : '') + ']' : '') + (x.paper && x.paper.n ? ' (' + x.paper.n + ' paper trades, ' + pcs(x.paper.avg) + ' a trade, ' + pcs(x.paper.vsAvg || 0) + ' vs an average stock)' : '') + (x.today && x.today.length ? '. This week: ' + x.today.slice(0, 8).join(', ') : ''))] : ['No rule has survived all three gates yet. That is normal: most invented rules are luck, and the gates are built to catch that.']),
-    '', 'Only PROVEN LIVE rules (30+ paper trades, profitable, better than an average stock) appear in your ACTIONS. Check ZAD. Research only.'].join('\n'); }
+    '', 'Autolab uses a legacy paper-record gate (30+ profitable paper trades beating the average stock), not the full proof bar. Your own lanes are separate and remain NOT PROVEN. Check ZAD; this is research context.'].join('\n'); }
 // OPPORTUNITY BOARD: everything worth knowing today, wider than the tested buys, each with an honest evidence label.
 //   [TESTED] passed its 5-year test   [EARLY] promising, too few trades yet   [PAPER] on live paper   [INFO] no test supports buying it
 function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 = (x) => money(x).replace(/\.00$/, ''), Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, mine = loadPos(), skip = (s0) => bad.has(s0) || mine[s0];
@@ -866,7 +866,7 @@ function timingNote() { const T = readJson0('data/timing-study.json'); if (!T ||
   return 'WHEN: buy ' + (T.buy === 'CLOSE' ? 'at the open after the first 15 minutes (tested: buying in the last minutes of the signal day did better, but that needs a pre-close alert, planned with the always-on server)' : w(T.buy)) + '; sell on a rule exit ' + (T.sell === 'CLOSE' ? 'at the open (near the close did better, same pre-close alert needed)' : w(T.sell)) + '. Stops: any time. Never in pre-market or after-hours.'; }
 function timingText() { const T = readJson0('data/timing-study.json'); if (!T || !T.older) return 'The timing study runs with the nightly scan. Ask again tomorrow.';
   const l = (h, k) => T[h][k].n ? pcs(T[h][k].avg) + ' (' + T[h][k].n + ')' : 'n/a';
-  return ['WHEN TO BUY AND SELL (tested on the unseen trades of the rules the system offers, after costs; older | newer half)',
+  return ['WHEN TO BUY AND SELL (tested on the historical out-of-sample test trades of the rules the system offers, after costs; older | newer half)',
     'BUY at the next open: ' + l('older', 'openIn') + ' | ' + l('newer', 'openIn'), 'BUY in the last minutes of the signal day: ' + l('older', 'closeIn') + ' | ' + l('newer', 'closeIn'),
     'SELL (rule exit) at the next open: ' + l('older', 'openOut') + ' | ' + l('newer', 'openOut'), 'SELL (rule exit) in the last minutes of the day it fires: ' + l('older', 'closeOut') + ' | ' + l('newer', 'closeOut'),
     '', timingNote(), '',
@@ -882,10 +882,10 @@ function shadowText() {
   const ld = (LD.done || []).filter(x => typeof x.pct === 'number'), la = ld.length ? ld.reduce((a, x) => a + x.pct, 0) / ld.length : null;
   const rg = Object.values(RR.groups || {}).filter(g => g.n), rn = rg.reduce((a, g) => a + g.n, 0), ra = rn ? rg.reduce((a, g) => a + g.avg * g.n, 0) / rn : null;
   return ['SHADOW RECORD: every system signal followed forward on paper, whether you bought or not (after costs)',
-    'Tested-rule buys (swing and quick): ' + (n ? n + ' finished, ' + Math.round(win * 100) + '% won, average ' + pcs(avg) : 'none finished yet') + (sg.quickRecord && sg.quickRecord.n ? ' | quick trades vs S&P 500 same days: ' + pcs(sg.quickRecord.avgPct) + ' vs ' + pcs(sg.quickRecord.avgSpy || 0) : ''),
+    'Engine picks (swing and quick; legacy forward paper, assumed fills): ' + (n ? n + ' finished, ' + Math.round(win * 100) + '% won, average ' + pcs(avg) : 'none finished yet') + (sg.quickRecord && sg.quickRecord.n ? ' | quick trades vs S&P 500 same days: ' + pcs(sg.quickRecord.avgPct) + ' vs ' + pcs(sg.quickRecord.avgSpy || 0) : ''),
     'LEADERS trend trades: ' + (ld.length ? ld.length + ' finished, average ' + pcs(la) : 'none finished yet (they last weeks)'),
     'Early-wave radar: ' + (rn ? rn + ' finished, average ' + pcs(ra) : 'none finished yet'),
-    '', 'This is the honest forward test: about 60 finished trades per kind are needed before it means much. Rules that lose here are demoted automatically.'].join('\n'); }
+    '', 'Legacy forward logs use assumed execution and costs, not admitted prospective cases. The legacy 60-case display guideline is not proof. Losing rules remain visible and existing demotion gates are unchanged.'].join('\n'); }
 function themesText() { const F = readJson0('data/leaders-study.json'), th = F && F.theme;
   if (!th || !th.now) return 'THEMES: the industry study runs every Sunday with the LEADERS fair test (it first loads the industry of every stock). Ask again after Sunday.';
   return ['WHERE THE MONEY IS GOING (strongest industries over 6 months, from the Sunday study ' + String(F.to || '') + ')', ...th.now.map((x, k) => (k + 1) + ') ' + x.name + ': ' + pcs(x.avg) + ' average (' + x.n + ' stocks). Leaders: ' + x.leaders.join(', ')),
@@ -894,7 +894,7 @@ function themesText() { const F = readJson0('data/leaders-study.json'), th = F &
     'Information to explore with  check SYM . A stock becomes a buy only through a tested rule (ACTIONS).'].join('\n'); }
 function dowText() {
   const D = readJson0('data/dow-study.json'); if (!D || !D.rows) return 'The day-of-week study runs with the nightly scan. Ask again tomorrow.';
-  return ['DAY OF THE WEEK: does the buy day matter? (unseen trades of the rules the system offers, after costs, by the day the BUY happened)', 'Average: older half ' + pcs(D.all.older) + ', newer half ' + pcs(D.all.newer), ...D.rows.map(r => r.day + ': older ' + (r.older.n ? pcs(r.older.avg) + ' (' + r.older.n + ')' : 'n/a') + ', newer ' + (r.newer.n ? pcs(r.newer.avg) + ' (' + r.newer.n + ')' : 'n/a') + ' -> ' + r.verdict), '', 'A day counts as worse or better only if it differs by 0.5% a trade or more in BOTH halves, with 150+ trades each.'].join('\n'); }
+  return ['DAY OF THE WEEK: historical test trades of stocks pre-selected for good past results, after modelled costs; not expected returns or prospective confirmation', 'Average: older half ' + pcs(D.all.older) + ', newer half ' + pcs(D.all.newer), ...D.rows.map(r => r.day + ': older ' + (r.older.n ? pcs(r.older.avg) + ' (' + r.older.n + ')' : 'n/a') + ', newer ' + (r.newer.n ? pcs(r.newer.avg) + ' (' + r.newer.n + ')' : 'n/a') + ' -> ' + r.verdict), '', 'A day counts as worse or better only if it differs by 0.5% a trade or more in BOTH halves, with 150+ trades each.'].join('\n'); }
 // ---- ALPACA PAPER TRADING (fake money only). Every fully proven BUY becomes a PAPER limit order at the top of its buy range with
 // its stop attached; each night the trade's own tested exit closes it. Real fills, real timing, real gaps: the honest track record.
 // The address is fixed to Alpaca's PAPER server, so no real money can ever move. Secrets: ALPACA_KEY, ALPACA_SECRET.
@@ -1331,11 +1331,11 @@ const netOf = (avg, px) => typeof avg === 'number' ? avg + TEST_COST - costPct(p
 // always shown per $1,000, so every card compares the same way
 const usdLine = (net, gross, px) => { if (net === null) return ''; const sz = STD_BUY, fees = 2 * FEE(), n2 = gross + TEST_COST - costPct(px, sz);
   return ' (on a ' + '$' + Math.round(sz) + ' buy: about ' + (n2 >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(n2 * sz)) + ' after your $' + fees + ' broker fees' + (fees / sz > 0.01 ? '. WARNING: the fees alone are ' + (fees / sz * 100).toFixed(1) + '% of this buy; buy about $' + Math.ceil(fees / 0.005 / 100) * 100 + '+ or the fee eats the gain' : '') + ')'; };
-// Ranking by evidence, not by luck: average after costs, weighted by how many unseen trades back it (more trades, more trust).
+// Ranking by evidence, not by luck: average after costs, weighted by how many historical out-of-sample test trades back it (more trades, more trust).
 const evid = (net, n) => (net || 0) * Math.sqrt(Math.min(n || 0, 200));
 const secGroup = (x) => !x ? null : /biotech|pharma|life sciences|health/i.test(x) ? 'Health care and biotech' : /semiconductor/i.test(x) ? 'Semiconductors' : x;
 const pcs = (x) => (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
-// BUY evidence: 30+ unseen trades with a positive average after costs, OR an EARLY-EVIDENCE buy: 15 to 29 unseen trades
+// BUY evidence: 30+ historical out-of-sample test trades with a positive average after costs, OR an EARLY-EVIDENCE buy: 15 to 29 historical out-of-sample test trades
 // with a strong average (+1.5% or more after costs) and at least half won. Early-evidence buys get a smaller size and are
 // demoted automatically if their live record turns negative.
 // MIN_NET: a proven buy must also clear +0.4% a trade after your $6 fees and the spread (about $4 per $1,000): a tiny edge is not worth the risk.
@@ -1347,7 +1347,7 @@ const okEv = (n, net, win) => (n >= 30 && net >= MIN_NET) || (n >= 15 && net >= 
 const distOf = (pcts, px) => { if (!Array.isArray(pcts) || pcts.length < 5) return null; const c = costPct(px, STD_BUY) - TEST_COST, r = pcts.map(p => p - c), n = r.length, m = r.reduce((a, x) => a + x, 0) / n;
   const w = r.filter(x => x > 0), l = r.filter(x => x <= 0), sd = Math.sqrt(r.reduce((a, x) => a + (x - m) ** 2, 0) / (n - 1)), gw = w.reduce((a, x) => a + x, 0), gl = -l.reduce((a, x) => a + x, 0);
   return { n, avg: m, aw: w.length ? gw / w.length : 0, al: l.length ? -gl / l.length : 0, pf: gl > 0 ? gw / gl : 99, lb: m - 1.28 * sd / Math.sqrt(n), worst: Math.min(...r) }; };
-// HIGH CONVICTION label (a label only, nothing is hidden): 60+ unseen trades, +0.8% or more after costs, a cautious (95%) lower
+// HIGH CONVICTION label (a label only, nothing is hidden): 60+ historical out-of-sample test trades, +0.8% or more after costs, a cautious (95%) lower
 // bound on the win rate of at least 50%, stop no wider than 12%, and not losing on live paper.
 const wilsonLo = (p, n) => { if (!(n > 0) || typeof p !== 'number') return 0; const z = 1.96, d = 1 + z * z / n; return (p + z * z / (2 * n) - z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))) / d; };
 const highConv = (x) => !x.thin && x.n >= 60 && x.net >= 0.008 && wilsonLo(x.win, x.n) >= 0.5 && x.lo > 0 && x.stop > 0 && (x.lo - x.stop) / x.lo <= 0.12 && !(x.live && x.live.n >= 10 && x.live.avg <= 0);
@@ -1383,7 +1383,7 @@ function gateVerdict(sym, sig) { try { sig = sig || readJson0('data/signals.json
   if (BIOBLOCK.has(sym)) return 'dilution / trial-risk block (' + String(BIOBLOCK.get(sym)).slice(0, 100) + ')';   // review S-5
   // (review S-5, 22 Oct) every plan block gives a reason; before, the blocks without an avoid text fell through and passed with focus off
   const pc = sig ? planCands(sig, {}).find(x => x.sym === sym) : null; if (pc && pc.ok) return myHalal(sym)==='ok'?null:'ZAD approval missing, malformed or expired: check ZAD first';
-  if (pc && !pc.ok) return pc.avoid ? pc.avoid.replace(/^(AVOID|PAPER ONLY):\s*/, '') : pc.threatBlock ? 'threat headline in the last 24 hours' : pc.macroBlock ? 'macro: ' + pc.macroBlock : pc.watch ? 'early evidence (under 30 unseen trades): watch only' : pc.newsBlock ? 'bad-news filing' : pc.regBlock ? 'falling market (no record of its own in falling markets)' : 'not cleared by the plan gates';
+  if (pc && !pc.ok) return pc.avoid ? pc.avoid.replace(/^(AVOID|PAPER ONLY):\s*/, '') : pc.threatBlock ? 'threat headline in the last 24 hours' : pc.macroBlock ? 'macro: ' + pc.macroBlock : pc.watch ? 'early evidence (under 30 historical out-of-sample test trades): watch only' : pc.newsBlock ? 'bad-news filing' : pc.regBlock ? 'falling market (no record of its own in falling markets)' : 'not cleared by the plan gates';
   const FOCUS = (readJson0('data/settings.json') || {}).focus !== false; if (FOCUS && !(pc && workingKinds().has(pc.kind))) return 'focus mode: ' + (pc ? 'the ' + pc.kind + ' engine has not' : 'no tested engine for this stock has') + ' proven itself live yet';   // per kind (review S-14)
   if(myHalal(sym)!=='ok')return 'ZAD approval missing, malformed or expired: check ZAD first';
   return 'no cleared strategy plan for this stock; research only'; } catch (e) { return 'gate check failed (' + String(e && e.message).slice(0, 60) + ')'; } }   // an error means blocked (review S-5)
@@ -1434,14 +1434,14 @@ function planCands0(sig, held0) {
   { const OD = readJson0('data/octopus-daily.json'); if (OD && OD.live && OD.today && sig.session && OD.today.d >= sig.session) for (const z of OD.today.picks) { if (held[z.sym] || c.some(x => x.sym === z.sym)) continue; const t = OD.test && OD.test.newer, r = OD.record || {};
       c.push({ sym: z.sym, kind: 'octopus', n: t ? t.n : null, net: t ? t.avg : null, lo: z.lo, hi: z.hi, stop: z.stop, days: 10, earnDays: null, sector: null,
         sell: 'at the close on the 10th trading day after you buy (the tested exit), or earlier only at the safety stop', wait: '10 trading days',
-        expect: (t ? Math.round((t.win || 0) * 100) + '% of ' + t.n + ' unseen 5-year picks won, average ' + pcs(t.avg) + ' a trade after costs' : 'tested') + '; live paper ' + r.n + ' picks, ' + pcs(r.avg) + ' a trade',
+        expect: (t ? Math.round((t.win || 0) * 100) + '% of ' + t.n + ' historical out-of-sample picks (stored window) won, average ' + pcs(t.avg) + ' a trade after costs' : 'tested') + '; live paper ' + r.n + ' picks, ' + pcs(r.avg) + ' a trade',
         why: 'top 5 of the whole market on 26 linked angles (momentum, volume, industry, SEC news, market mood) in the model retrained every Sunday', ok: true, thin: false, score: 0.002 }); } }
   // HORIZONS: stocks in a mid / long-term setup whose 1-6 month test PASSED (bought at the open, sold after the tested hold, safety stop 25% under the entry)
   { const HZ = readJson0('data/horizons.json'); if (HZ && HZ.status === 'OK') for (const r of Object.values(HZ.results).filter(r => r.verdict === 'PROMISING').sort((a, b) => b.results.newer.avg - b.results.newer.ctrl - (a.results.newer.avg - a.results.newer.ctrl))) for (const sym of (HZ.today[r.setup] || []).slice(0, 5)) {
       if (held[sym] || c.some(x => x.sym === sym)) continue; const q = (sig.stocks || []).find(b => b.sym === sym), last = q && q.last; if (!(last > 0)) continue; const n = r.results.newer;
       c.push({ sym, kind: 'mid-term', n: n.n, net: n.avg, lo: +(last * 0.99).toFixed(2), hi: +(last * 1.02).toFixed(2), stop: +(last * 0.75).toFixed(2), days: r.hold, earnDays: null, sector: q.sector || null,
         sell: 'after ' + r.months + ' month' + (r.months > 1 ? 's' : '') + ' (' + r.hold + ' sessions, the tested hold), or at the safety stop', wait: r.months + ' month' + (r.months > 1 ? 's' : ''),
-        expect: Math.round(n.win * 100) + '% of ' + n.n + ' unseen trades won; average ' + pcs(n.avg) + ' vs ' + pcs(n.ctrl) + ' for an average stock held as long',
+        expect: Math.round(n.win * 100) + '% of ' + n.n + ' historical out-of-sample test trades won; average ' + pcs(n.avg) + ' vs ' + pcs(n.ctrl) + ' for an average stock held as long',
         why: r.name + ' (mid / long-term setup, tested on 5 years)', ok: true, thin: false, score: 0.002 }); } }
   // NEWS GATE (precaution, not tested): no buy today for a stock the news watch flagged with a threat headline in the last 24 hours.
   { let L = []; try { L = fs.readFileSync('data/news-log.jsonl', 'utf8').trim().split('\n').slice(-400).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { }
@@ -1451,13 +1451,13 @@ function planCands0(sig, held0) {
   for (const m of macroNow()) for (const x of c) { const g = m.indOf(x.sym); if (!g) continue;
     if (x.ok && m.downSet.has(g)) { x.ok = false; x.macroBlock = m.label; } else if (m.upSet.has(g)) { x.macroUp = m.label; x.why = (x.why ? x.why + '; ' : '') + 'tailwind: its industry beat the market after ' + m.label.toLowerCase() + ' in past tests'; x.score = (x.score || 0) + 0.001; } }
   c.sort((a, b) => (b.macroUp ? 1 : 0) - (a.macroUp ? 1 : 0));
-  // EARLY EVIDENCE IS WATCH-ONLY (owner's decision, 12 Oct): 15-29 unseen trades can be luck. Such setups are logged on paper and
-  // listed in one WATCH line; they become BUYs by themselves once they reach 30+ unseen trades with a positive result.
+  // EARLY EVIDENCE IS WATCH-ONLY (owner's decision, 12 Oct): 15-29 historical out-of-sample test trades can be luck. Such setups are logged on paper and
+  // listed in one WATCH line; they become BUYs by themselves once they reach 30+ historical out-of-sample test trades with a positive result.
   for (const x of c) if (x.thin && x.ok) { x.ok = false; x.watch = true; }
   // BAD-NEWS GATE: no buy within 10 days of a filing kind the event study proved is followed by losses (e.g. a share offering).
   for (const x of c) if (x.ok && eventWarn(x.sym)) { x.ok = false; x.newsBlock = true; }
   // FALLING-MARKET GATE: when the S&P 500 is under its 50 day average or in a downtrend, a quick or swing rule is offered only if
-  // its OWN unseen trades made money in falling markets (10+ such trades). Its record there is in the per-stock test.
+  // its OWN historical out-of-sample test trades made money in falling markets (10+ such trades). Its record there is in the per-stock test.
   { const mk = sig.market || {}, weak = mk.above50 === false || mk.up === false;
     if (weak) for (const x of c) if (x.ok && /quick|swing/.test(x.kind || '')) { const src = x.kind === 'quick trade' ? (sig.quick || []).find(q => q.sym === x.sym) : (sig.stocks || []).find(b => b.sym === x.sym), dn = src && src.reg && src.reg.down;
       if (!dn || dn.n < 10 || !(dn.avgR > 0)) { x.ok = false; x.regBlock = true; } } }
@@ -1627,15 +1627,15 @@ function planText(sig, pos, px, title, only, full, opts) {
     if (top) { TOPSYM = top.sym; const mid = (top.lo + top.hi) / 2, loss = Math.round(1000 * ((mid - top.stop) / mid + costPct(mid, STD_BUY)));
       out.push('', 'TOP PICK: ' + top.sym + (highConv(top) ? ' (HIGH CONVICTION)' : top.thin ? ' (early evidence)' : '') + '. Best profit for its risk: average ' + pcs(top.d.avg) + ' (safety margin ' + pcs(top.d.lb) + '), winners ' + pcs(top.d.aw) + ', losers ' + pcs(top.d.al) + '; the stop costs about $' + loss + ' per $1,000.'); }
     else if (pick.some(x => x.d)) out.push('', 'TOP PICK: none today. No buy has a safety margin above zero with a clean halal screen, so each could still be luck. The list is your choice; smaller size.'); }
-  if (!only) out.push('', short ? 'BUY (' + nFull + ' proven' + (pick.length > nFull ? ', ' + (pick.length - nFull) + ' early' : '') + ')' : 'BUY' + (pick.length ? ' (' + nFull + ' fully proven' + (pick.length > nFull ? ', ' + (pick.length - nFull) + ' early evidence' : '') + ', strongest evidence first)' : ''));
-  if (!only && !short && pick.length && !nFull) out.push('None fully proven (30+ tested trades) today.');
+  if (!only) out.push('', short ? 'BUY (' + nFull + ' past-trade check passed' + (pick.length > nFull ? ', ' + (pick.length - nFull) + ' early' : '') + ')' : 'BUY' + (pick.length ? ' (' + nFull + ' past-trade check passed (NOT PROVEN)' + (pick.length > nFull ? ', ' + (pick.length - nFull) + ' early evidence' : '') + ', strongest evidence first)' : ''));
+  if (!only && !short && pick.length && !nFull) out.push('No candidate cleared the 30-trade past-history check today; it is not proof.');
   { const b = budgetOnce(); if (b && pick.length && !only) { const per = {}; for (const x of pick) { const g = secGroup(x.sector) || 'Other'; per[g] = (per[g] || 0) + amountFor(x, sig.market, false).usd; }
       const over = Object.entries(per).filter(([g, v]) => g !== 'Other' && v > b * 0.4); if (over.length) out.push('SECTOR LIMIT: ' + over.map(([g, v]) => g + ' buys add up to ' + money(v).replace(/\.00$/, '') + ' USD').join('; ') + ', over 40% of your budget. They tend to fall together: buy only the strongest ones until under ' + money(b * 0.4).replace(/\.00$/, '') + ' USD.'); } }
   { const br = budgetRoom(), m0 = (x) => money(x).replace(/\.00$/, ''); if (br && pick.length && !only) {
       if (br.room >= 1000) out.push('BUDGET: ' + m0(br.open) + ' USD open of ' + m0(br.budget) + '; room for ' + m0(br.room) + ' USD more. Fill it in the order below, strongest first.');
       else if (br.after >= 1000) out.push('BUDGET FULL: ' + m0(br.open) + ' USD open of ' + m0(br.budget) + '. Today\u2019s sells (' + br.selling.join(', ') + ') free about ' + m0(br.freed) + ' USD at your buy prices, so about ' + m0(br.after) + ' USD of room AFTER they are sold. Sell first, then buy from the top only until that room is used; skip the rest.');
       else out.push('NOTE, BUDGET: ' + m0(br.open) + ' USD open of ' + m0(br.budget) + (br.freed ? '; after today\u2019s sells (' + br.selling.join(', ') + ') only about ' + m0(Math.max(0, br.after)) + ' USD of room, under the 1000 USD minimum a trade' : (br.room > 0 ? '; only ' + m0(br.room) + ' USD of room, under the 1000 USD minimum a trade' : '')) + '. The full list is still shown: you decide. Send  budget open  to stop this note.'); } }
-  if (!pick.length && !only) out.push(short ? 'Nothing proven today. Waiting is a result.' : 'Nothing today. No setup has proof: 30+ unseen trades averaging +0.4% or more after costs, or 15+ with +1.5% or more a trade. Waiting is a result.');
+  if (!pick.length && !only) out.push(short ? 'No candidate passed its past-trade check today. Waiting is a result.' : 'No candidate passed its existing past-trade check today. That check uses historical out-of-sample cases; it is not the full proof bar or prospective evidence. Early evidence stays watch/paper under the existing gates. Waiting is a result.');
   pick.forEach((x, n) => {
     if (short) {   // compact card
       if (x.thin && (n === 0 || !pick[n - 1].thin)) out.push('', 'EARLY EVIDENCE (fewer tested trades: smaller size, your choice)');
@@ -1650,16 +1650,16 @@ function planText(sig, pos, px, title, only, full, opts) {
         + (x.earnDays !== null && x.earnDays !== undefined && x.earnDays <= x.days * 1.5 ? ' | EARNINGS in ' + x.earnDays + 'd' : '') + (x.sameAs ? ' | same industry as ' + x.sameAs : ''));
       return;
     }
-    if (!only && x.thin && (n === 0 || !pick[n - 1].thin)) out.push('', 'EARLY EVIDENCE (15 to 29 tested trades with a strong average: promising, NOT fully proven. Smaller size, your choice)');
+    if (!only && x.thin && (n === 0 || !pick[n - 1].thin)) out.push('', 'EARLY EVIDENCE (15 to 29 past test trades: NOT PROVEN; the existing eligibility and size gates still apply)');
     const p = px && px[x.sym], risk = x.lo - x.stop;
     { const SS = readJson('data/score-study.json', null), sc = SS && SS.scores && SS.verdict !== 'REJECTED' ? SS.scores[x.sym] : undefined;   // a score the Sunday test rejected is not shown
-      out.push((n ? '\n' : '') + (n + 1) + ') ' + x.sym + (highConv(x) ? ' (HIGH CONVICTION: 60+ unseen trades, +0.8% or more after costs, cautious win rate 50%+)' : '') + ', ' + x.kind + (x.thin ? ' (EARLY EVIDENCE: ' + x.n + ' tested trades, smaller size)' : '') + (x.cheap ? ' (CHEAP STOCK under 5 USD: higher risk, smaller size)' : '') + (x.sector ? ', ' + x.sector : '') + (sc !== undefined ? ', score ' + sc + '/100' : '')); }
+      out.push((n ? '\n' : '') + (n + 1) + ') ' + x.sym + (highConv(x) ? ' (HIGH CONVICTION: 60+ historical out-of-sample test trades, +0.8% or more after costs, cautious win rate 50%+)' : '') + ', ' + x.kind + (x.thin ? ' (EARLY EVIDENCE: ' + x.n + ' tested trades, smaller size)' : '') + (x.cheap ? ' (CHEAP STOCK under 5 USD: higher risk, smaller size)' : '') + (x.sector ? ', ' + x.sector : '') + (sc !== undefined ? ', score ' + sc + '/100' : '')); }
     if (p) out.push('   Now: ' + money(p) + (p > x.hi ? ', ABOVE the range: SKIP, do not chase' : p <= x.stop ? ', AT THE STOP: CANCELLED' : p < x.lo ? ', under the range: wait for it to turn up' : ', inside the range: OK to buy'));
     out.push('   Buy: ' + money(x.lo) + ' to ' + money(x.hi) + ' (skip if above ' + money(x.hi) + ')',
       '   Stop: ' + money(x.stop) + ' (' + pcs(x.stop / x.lo - 1) + '). If it is hit: about -$' + Math.round(1000 * (1 - x.stop / ((x.lo + x.hi) / 2)) + 2 * FEE() + 2) + ' on a $1,000 buy, fees included' + ((x.lo - x.stop) / x.lo > 0.12 ? '. WIDE STOP: buy less' : ''),
       '   Sell: ' + x.sell + (x.tgtNote ? '. Target study: ' + x.tgtNote : ''),
       '   Wait: ' + x.wait,
-      '   Expected: ' + x.expect + (x.d ? '. ' + distText(x.d) : '') + (typeof x.r10 === 'number' ? '. Bigger runs: ' + Math.round(x.r10 * 100) + '% of past trades were up +10% at some point' + (typeof x.r20 === 'number' ? ', ' + Math.round(x.r20 * 100) + '% up +20%' : '') + ' (before the planned exit)' : ''),
+      '   Stored past record (not a forecast): ' + x.expect + (x.d ? '. ' + distText(x.d) : '') + (typeof x.r10 === 'number' ? '. Bigger runs: ' + Math.round(x.r10 * 100) + '% of past trades were up +10% at some point' + (typeof x.r20 === 'number' ? ', ' + Math.round(x.r20 * 100) + '% up +20%' : '') + ' (before the planned exit)' : ''),
       '   Why: ' + x.why,
       ...(() => { const hm = HALALM()[x.sym], zt = zoyaLive() ? zoyaText(x.sym) : null; const hc0 = halalChecks(x.sym).text, bi = L.halalOf(x.sym, null), hc = bi === 'fail' ? 'Built-in screen: FAILS (business type, e.g. interest-based finance or tobacco)' + (hc0 ? '. ' + hc0.replace(/\. Confirm in ZAD\.$/, '') : '') + '. Your decision: check ZAD.' : hc0 ? hc0.replace('Confirm in ZAD.', 'Shown for information, not filtered. Your decision: check ZAD.') : null; return hm && hm.s !== 'expired' ? ['   Halal: ' + (hm.s === 'ok' ? 'HALAL in ZAD (your mark, ' + hm.d + ')' : 'NOT halal in ZAD (your mark)')] : hm ? ['   Halal: you marked it ' + (hm.was === 'ok' ? 'HALAL' : 'NOT halal') + ' on ' + hm.d + ', over 90 days ago. Its finances may have changed: CHECK ZAD AGAIN' + (hc ? '. ' + hc : '')] : hc ? ['   ' + hc] : zt ? ['   ' + zt] : []; })(),
       '   Amount: BUY ' + money(amountFor(x, sig.market, TOPSYM === x.sym).usd).replace(/\.00$/, '') + ' USD (' + amountFor(x, sig.market, TOPSYM === x.sym).why + '), about ' + Math.max(1, Math.floor(amountFor(x, sig.market, TOPSYM === x.sym).usd / x.hi)) + ' shares at the top of the range',
@@ -1692,7 +1692,7 @@ function planText(sig, pos, px, title, only, full, opts) {
     out.push('', 'EARLY-WAVE RADAR (alerts during the session): ' + (pv.length ? 'PROVEN on paper: ' + pv.map(g => g.name.toLowerCase() + ' (' + g.n + ' trades, ' + Math.round(g.win * 100) + '% won, average ' + pcs(g.avg) + ' after costs)').join('; ') + '. Its alerts marked BUY can be acted on.'
       : 'not proven yet' + (best && best.n ? ' (furthest: ' + best.name.toLowerCase() + ', ' + best.n + ' of ' + (RR.need || 30) + ' paper trades, average ' + pcs(best.avg) + ')' : '') + '. Its alerts are paper only.')); }
   { const ru = readJson('data/radar-universe.json', null), rn = ru && ru.syms ? ru.syms.length : 0;
-    out.push('', 'COVERAGE: ' + (sig.tested || sig.scanned || 0) + ' stocks tested last night; ' + c.length + ' had a setup, ' + c.filter(x => x.ok && !x.thin).length + ' fully proven (30+ unseen trades, profit after costs)' + (c.some(x => x.ok && x.thin) ? ' and ' + c.filter(x => x.ok && x.thin).length + ' early evidence (15 to 29)' : '') + '.' + (rn ? ' The radar watches about ' + rn + ' strong stocks live in the session.' : '')); }
+    out.push('', 'COVERAGE: ' + (sig.tested || sig.scanned || 0) + ' stocks tested last night; ' + c.length + ' had a setup, ' + c.filter(x => x.ok && !x.thin).length + ' past-trade check passed (30+ historical out-of-sample trades, profit after modelled costs; NOT PROVEN)' + (c.some(x => x.ok && x.thin) ? ' and ' + c.filter(x => x.ok && x.thin).length + ' early evidence (15 to 29)' : '') + '.' + (rn ? ' The radar watches about ' + rn + ' strong stocks live in the session.' : '')); }
   out.push('', 'Before buying: check halal in ZAD. Buy only inside the range and place the stop at once. Then send: bought SYMBOL PRICE SHARES', 'Full details: send  details');
   return out.join('\n');
 }
@@ -1730,7 +1730,7 @@ function conclusionLive(sig, pos, px) {
     out.push(sym + ' (yours): ' + (p && P.stop && p <= P.stop ? 'SELL NOW, your stop ' + money(P.stop) + ' is reached.' + chg : eventSell(sym) ? eventSell(sym) + chg : p && P.t2 && p >= P.t2 ? 'TARGET 2 REACHED (' + money(P.t2) + '). Sell.' + chg : p && P.t1 && p >= P.t1 ? 'TARGET 1 REACHED (' + money(P.t1) + '). Take profit, or sell part and raise the stop to your entry.' + chg : pv[sym] ? 'SELL at the next open, ' + pv[sym] + chg : 'HOLD | STOP ' + (P.stop ? money(P.stop) : 'none set') + ' | SELL ' + (P.t1 ? money(P.t1) + (P.t2 ? ' then ' + money(P.t2) : '') : 'no target set') + '.' + chg)); }
   return out;
 }
-// WHAT KIND OF DAY IS TODAY? The market's state, each part checked against the market-day study (the system's own unseen trades
+// WHAT KIND OF DAY IS TODAY? The market's state, each part checked against the market-day study (the system's own historical out-of-sample test trades
 // grouped by what the S&P 500 did), plus YOUR tested sells and the proven buys. Verdicts come only from tests, never from opinion.
 async function dayText(sig, pos) {
   const MD = readJson0('data/mday-study.json'), row = (k) => MD && MD.rows ? MD.rows.find(r => r.k === k) : null, NAME = { bigDown: 'a big drop (1.5%+)', down: 'a drop', flat: 'a flat day', up: 'a rise', bigUp: 'a big rise (1.5%+)', gapDown: 'opened down 0.75%+', gapFlat: 'opened flat', gapUp: 'opened up 0.75%+', strong: 'above its long trend line', weak: 'under its long trend line', calm: 'calm last 20 days', wild: 'wild last 20 days (big daily swings)' };
@@ -1753,15 +1753,15 @@ async function dayText(sig, pos) {
   const losing = bad.some(x => /LOSING/.test(x.r.verdict)), head = [];
   if (sells.length) head.push('SELL DAY: ' + sells.length + ' of your stocks hit their tested exit or stop (' + sells.slice(0, 6).join(', ') + '). Sell those first.');
   const PGd = protectWhy(pos || {}, null, sig);
-  if (!buys.length) head.push('NO NEW BUYS: no proven buy rule fired.');
+  if (!buys.length) head.push('NO NEW BUYS: no candidate passed the existing plan gates (past-trade checks are not proof).');
   else if (PGd.length) head.push('CAREFUL (protect advice): ' + PGd.join('; ') + '. Buys are listed; your decision, smaller size suggested.');
   else if (losing) head.push('NOT A BUYING DAY: buys made after days like this LOST money in both halves of the tests. Skip the ' + buys.length + ' buy' + (buys.length > 1 ? 's' : '') + ' today (or wait for tomorrow’s list).');
   else if (bad.length) head.push('CAREFUL BUYING DAY: buys after ' + bad.map(x => NAME[x.k]).join(' / ') + ' did WORSE than usual (still positive). Take only the TOP PICK, or wait a day.');
-  else head.push('BUYING DAY: ' + buys.length + ' proven buy' + (buys.length > 1 ? 's' : '') + ' (' + buys.slice(0, 5).map(x => x.sym).join(', ') + ')' + (good.length ? '; days like this were BETTER than usual in the tests' : '') + '. Use ACTIONS for ranges and stops.');
-  if (!sells.length && !buys.length) head.splice(0, head.length, 'NOTHING TO DO TODAY: no tested sell and no proven buy. Keep your stops at the broker.');
+  else head.push('BUYING DAY: ' + buys.length + ' gated candidate' + (buys.length > 1 ? 's' : '') + ' (' + buys.slice(0, 5).map(x => x.sym).join(', ') + ')' + (good.length ? '; days like this were BETTER than usual in the tests' : '') + '. Use ACTIONS for ranges and stops.');
+  if (!sells.length && !buys.length) head.splice(0, head.length, 'NOTHING TO DO TODAY: no rule exit or gated entry candidate. Keep your stops at the broker.');
   const dn = buyDayNote();
   return ['TODAY’S MARKET: ' + head.map(x => x.split(':')[0]).join(' + '), ...head, '', ...out, '',
-    MD && MD.rows ? 'TESTED (the system’s own unseen trades bought after days like this, older / newer half; average of all ' + pcs(MD.all.older) + ' / ' + pcs(MD.all.newer) + '):' : 'The market-day study is built with the nightly scan; it shows here from tomorrow.', ...lines,
+    MD && MD.rows ? 'HISTORICAL RESEARCH (pre-selected stocks with good past test results, not expected returns; older / newer half averages ' + pcs(MD.all.older) + ' / ' + pcs(MD.all.newer) + '):' : 'The market-day study is built with the nightly scan; it shows here from tomorrow.', ...lines,
     ...(dn ? ['', dn] : []), '', 'A day counts as worse or better only with 150+ trades in each half and the same direction in both. Your stops always apply.'].join('\n');
 }
 async function hotList(sig) {
@@ -1883,7 +1883,7 @@ async function checkLive(sym) {
     const T = L.trendStats(c, ind, mom), Lr = L.learn(c, ind, null, false), halal = myHalal(sym), v = L.applyGates(L.verdict(c, ind, Lr, null, d.last, false), { dollarVol: T.dollarVol, halal, limit: null });
     const trig = L.buyTrigger(c, ind, Lr), dist = Lr.v.mult * ind.atr[i], half = 0.5 * ind.atr[i], Q = d.last >= 5 ? L.quickFire(c, ind, L.quickStudy(c, ind, false)) : null;
     out.push((T.up ? 'In an uptrend' : c[i].c < ind.e[L.CFG.TREND][i] ? 'In a downtrend' : 'Mixed trend') + ', ' + (T.mom6 >= 0 ? '+' : '') + Math.round(T.mom6 * 100) + '% over 6 months' + (T.rs === null ? '' : ' (' + (T.rs >= 0 ? '+' : '') + Math.round(T.rs * 100) + '% vs the market)') + '.',
-      'Rule tested for it: ' + L.ruleText(Lr.v) + '. ' + Lr.test.n + ' unseen trades, ' + Math.round(Lr.test.winRate * 100) + '% wins. ' + L.statusText(Lr));
+      'Rule tested for it: ' + L.ruleText(Lr.v) + '. ' + Lr.test.n + ' historical out-of-sample test trades, ' + Math.round(Lr.test.winRate * 100) + '% wins. ' + L.statusText(Lr));
     if (v.act) word = Lr.test.n < 30 ? 'WATCH ONLY (EARLY EVIDENCE, ' + Lr.test.n + ' tested trades): an entry fired, but it is not a buy until 30. Prices below for the record.' : 'BUY: a tested rule confirmed an entry. Prices below.';
     else if (v.blocked) word = 'NO BUY: ' + v.why;
     else if (Lr.proven && trig.price) word = 'WATCH: not yet. It becomes a buy only after a daily close above ~' + money(trig.price) + '.';
@@ -2937,8 +2937,8 @@ async function addReply(sym, pos, at = Date.now()) {
   const now = p ? ' You bought at ' + money(P.entry) + ', now ' + money(p) + ' (' + (p >= P.entry ? '+' : '') + ((p / P.entry - 1) * 100).toFixed(1) + '%).' : ' You bought at ' + money(P.entry) + '.';
   const plan = 'Your plan is unchanged: HOLD | STOP ' + (P.stop ? money(P.stop) : 'none set') + ' | SELL ' + (P.t1 ? money(P.t1) + (P.t2 ? ' then ' + money(P.t2) : '') : 'no target set') + (P.kind === 'quick' ? ' | or on the rule exit, or after ' + (P.maxHold || 5) + ' sessions.' : '.');
   const SG = readJson('data/signals.json', null), out = ['SHOULD YOU BUY MORE ' + sym + '?'], b = buyToday(sym, SG), b0s = SG && SG.session;   // adds: a NEW, fully PROVEN signal on a stock already in profit. Never early evidence, never to lower an average.
-  if (b && !b.thin && p && p > P.entry * 1.01 && !(P.since && b0s && b0s <= P.since) && !(P.stop && p <= P.stop) && !(p > b.hi)) out.push('Yes: add 1,000 USD (each buy and each sell costs you 3 USD, so smaller adds are not worth it), inside ' + money(b.lo) + ' to ' + money(b.hi) + '.' + now, 'A TESTED buy rule fired on ' + sym + ' at the last close (' + b.n + ' unseen trades' + (b.thin ? ', early evidence' : '') + '). That is the only reason to add' + (p && p < P.entry ? ', and it also lowers your average price' : '') + '. Use ONE stop for all your shares: ' + money(b.stop) + '. After buying send:  added ' + sym + ' PRICE SHARES');
-  else if (b && b.thin) out.push('No.' + now, 'A buy rule fired, but it is only EARLY EVIDENCE (' + b.n + ' tested trades). Adding needs a fully proven rule.', plan);
+  if (b && !b.thin && p && p > P.entry * 1.01 && !(P.since && b0s && b0s <= P.since) && !(P.stop && p <= P.stop) && !(p > b.hi)) out.push('Yes: add 1,000 USD (each buy and each sell costs you 3 USD, so smaller adds are not worth it), inside ' + money(b.lo) + ' to ' + money(b.hi) + '.' + now, 'A TESTED buy rule fired on ' + sym + ' at the last close (' + b.n + ' historical out-of-sample test trades' + (b.thin ? ', early evidence' : '') + '). That is the only reason to add' + (p && p < P.entry ? ', and it also lowers your average price' : '') + '. Use ONE stop for all your shares: ' + money(b.stop) + '. After buying send:  added ' + sym + ' PRICE SHARES');
+  else if (b && b.thin) out.push('No.' + now, 'A buy rule fired, but it is only EARLY EVIDENCE (' + b.n + ' tested trades). Adding still requires the existing past-trade and execution gates; none of this is full proof.', plan);
   else if (p && P.stop && p <= P.stop) out.push('No. It has reached your stop at ' + money(P.stop) + '.' + now, 'The plan says sell or reassess here, not add.');
   else if (p && p < P.entry) out.push('No.' + now, 'It is below your entry. Buying more now is adding to a losing trade: it doubles the bet at the moment the trade is going against you, and it is how a small planned loss becomes a large one.', plan);
   else if (P.kind === 'quick') out.push('No.' + now, 'A quick trade is a single entry. Its edge is small, so the plan is to take the bounce and leave, not to build a bigger position.', plan);
@@ -3906,7 +3906,7 @@ async function daily() {
         const qd = Q.v.mult * ind.atr[i], per10k = Math.floor(VOLM * Math.min(10000 * 0.005 / qd, 10000 * 0.20 / d.last)), P = L.quickPlan ? L.quickPlan(d.last, ind.atr[i], ind.sma5[i], Q) : {};
         const t1 = P.t1 ? +P.t1.toFixed(4) : null, t2 = null, qhalf = !!P.half, tgtNote = Q.tgt ? Q.tgt.verdict + (t1 && Q.tgt.oosAvg !== null ? ' (' + pcs(Q.tgt.oosAvg) + ' a trade with it vs ' + pcs(Q.tgt.baseAvg) + ' without)' : '') : null;
         quick.push({ t: Q.test.t, row: { sym, last: d.last, buyLo: d.last, buyHi: +(d.last + 0.5 * ind.atr[i]).toFixed(4), sellAbove: +ind.sma5[i].toFixed(4), stop: +(d.last - qd).toFixed(4), t1, t2, half: qhalf, tgtNote, rsi2: ind.rsi2[i] !== null ? +ind.rsi2[i].toFixed(1) : null, mom6: +T.mom6.toFixed(4), reg: Q.regime || null, q: Q.v.q, maxHold: Q.v.maxHold, exitText: L.quickExitText ? L.quickExitText(Q.v, ind.sma5[i]) : '', what: L.quickWhat(Q.v), key: Q.key, win: Q.test.winRate, n: Q.test.n, avgPct: Q.avgPct, pcts: Q.oosPct || null, r10: Q.reach10 ?? null, r20: Q.reach20 ?? null, days: Q.medDays },
-          text: sym + ' closed ' + money(d.last) + '\n  why: ' + (Q.v.q === 'gap' ? 'momentum, ' : 'in an uptrend, ') + L.quickWhat(Q.v) + '\n  buy ' + money(d.last) + ' to ' + money(d.last + 0.5 * ind.atr[i]) + ' at the next open' + (t1 ? '\n  target: ' + money(t1) + (qhalf ? ' (sell HALF there)' : ' (sell ALL there)') + ', ' + tgtNote : '\n  no target: ' + (tgtNote || 'not studied')) + '\n  rule exit: ' + (L.quickExitText ? L.quickExitText(Q.v, ind.sma5[i]) : 'first close above its 5 day average') + '\n  time exit: after ' + Q.v.maxHold + ' sessions\n  invalidation: ' + money(d.last - qd) + ' (stop loss)\n  size: about ' + per10k + ' shares per 10,000 USD of account (risking about ' + Math.round(per10k * qd) + ' USD)\n  past result here: ' + Math.round(Q.test.winRate * 100) + '% wins over ' + Q.test.n + ' unseen trades, average ' + (Q.avgPct * 100).toFixed(2) + '% a trade, about ' + Q.medDays + ' days held\n  ' + L.HALAL_TEXT[halal] });
+          text: sym + ' closed ' + money(d.last) + '\n  why: ' + (Q.v.q === 'gap' ? 'momentum, ' : 'in an uptrend, ') + L.quickWhat(Q.v) + '\n  buy ' + money(d.last) + ' to ' + money(d.last + 0.5 * ind.atr[i]) + ' at the next open' + (t1 ? '\n  target: ' + money(t1) + (qhalf ? ' (sell HALF there)' : ' (sell ALL there)') + ', ' + tgtNote : '\n  no target: ' + (tgtNote || 'not studied')) + '\n  rule exit: ' + (L.quickExitText ? L.quickExitText(Q.v, ind.sma5[i]) : 'first close above its 5 day average') + '\n  time exit: after ' + Q.v.maxHold + ' sessions\n  invalidation: ' + money(d.last - qd) + ' (stop loss)\n  size: about ' + per10k + ' shares per 10,000 USD of account (risking about ' + Math.round(per10k * qd) + ' USD)\n  past result here: ' + Math.round(Q.test.winRate * 100) + '% wins over ' + Q.test.n + ' historical out-of-sample test trades, average ' + (Q.avgPct * 100).toFixed(2) + '% a trade, about ' + Q.medDays + ' days held\n  ' + L.HALAL_TEXT[halal] });
         quick[quick.length - 1].entry = mine.some(x => x.d === c[i].d && x.kind === 'quick') ? null : { sym, d: c[i].d, key: Q.key, v: Q.v, dist: +qd.toFixed(6), ref: d.last, t1, state: 'Quick trade', kind: 'quick', loggedAt: new Date(now).toISOString() };
       }
     }
@@ -3988,7 +3988,7 @@ async function daily() {
   // QUICK-TRADE GATE (stronger quick trades). The dip family loses on the whole market, so a stock's own good record is not enough.
   // 1) If Sunday's lab found a condition under which dips work on the whole market (both halves), only dips meeting it are offered.
   // 2) If no condition passed and the persistence test says a stock's own record does not carry forward, quick trades are paper only.
-  // 3) Otherwise (or before the lab has run): a strict gate, 25+ unseen trades and a positive safety margin (luck taken off).
+  // 3) Otherwise (or before the lab has run): a strict gate, 25+ historical out-of-sample test trades and a positive safety margin (luck taken off).
   // Every dip is still logged on paper, so the evidence keeps growing.
   const quickHeld = []; {
     const HL = readJson0('data/hunting-lab.json'), best = HL && HL.quickFilters ? HL.quickFilters.best : null, perBad = Boolean(HL && HL.persistence && /DID NOT HELP/.test(HL.persistence.verdict || ''));
@@ -3998,7 +3998,7 @@ async function daily() {
     const strictOk = (r) => { const d = distOf(r.pcts, r.last); return (r.n || 0) >= 30 && d && d.lb > 0; };
     const pass = [];
     for (const q of quick) { const r = q.row;
-      const why = best ? (meets(r) ? null : 'does not meet the condition that works on the whole market (' + best + ')') : perBad ? 'paper only: dips do not work on the whole market and a stock\u2019s own record did not carry forward' : strictOk(r) ? null : 'strict gate: needs 30+ unseen trades and a positive safety margin (has ' + (r.n || 0) + ')';
+      const why = best ? (meets(r) ? null : 'does not meet the condition that works on the whole market (' + best + ')') : perBad ? 'paper only: dips do not work on the whole market and a stock\u2019s own record did not carry forward' : strictOk(r) ? null : 'strict gate: needs 30+ historical out-of-sample test trades and a positive safety margin (has ' + (r.n || 0) + ')';
       if (why) quickHeld.push({ sym: r.sym, why }); else pass.push(q); }
     quick.length = 0; quick.push(...pass); }
   for (const st of stocks.filter(x => x.state === 'Buy watch')) {
@@ -4286,7 +4286,7 @@ async function intraday(onlyMine) {
     const posL = Object.entries(myPos).filter(([k]) => seen[k]).map(([k, P]) => { const p = seen[k], g = p / P.entry - 1;
       return k + ' ' + money(p) + ' (' + (g >= 0 ? '+' : '') + (g * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' + (P.stop ? ' | stop ' + money(P.stop) + ' (' + ((P.stop / p - 1) * 100).toFixed(1) + '%)' : P.src === 'leader dip' ? ' | leader dip: sell limit ' + money(P.target) + ', no stop by design' : ' | NO STOP SET') + (P.t1 ? ' | target ' + money(P.t1) + ' (+' + ((P.t1 / p - 1) * 100).toFixed(1) + '%)' : '') + ': ' + (P.stop && p <= P.stop ? 'SELL NOW: the stop is reached' : P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '') ? P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ')' : 'HOLD'); });
     const buyL = planBuys.filter(x => seen[x.sym] && !myPos[x.sym]).map(x => { const p = seen[x.sym]; return x.sym + ' ' + money(p) + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (p > x.hi ? 'ABOVE the range, do not chase' : p < x.lo ? 'below the range, wait' : 'INSIDE the range'); });
-    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PLAN CANDIDATES (current gates; not a new proof verdict)', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.'].join('\n');
+    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PLAN CANDIDATES (current gates; not a new proof verdict)', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a candidate allowed by the existing gates inside its range (not proof of profitability).'].join('\n');
   }
   save();
   if (openMsg) await deliver(['__open'],openMsg+'\n'+FOOT);

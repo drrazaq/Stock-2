@@ -1,4 +1,4 @@
-import {alertDeliveryCounts} from './watcher-delivery-counts.mjs';
+import {alertDeliveryCounts} from './radar-v3-core.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
 import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
