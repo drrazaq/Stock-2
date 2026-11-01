@@ -99,4 +99,6 @@ All from the actual-bot harness `mentor-harness-v3.mjs`, Node 20.20.0.
 
 ## Hosted CI
 
-Not executed by me. Check the PR checks on head `25a8500` before release.
+Checked by me through the GitHub API (I did not run them): workflow `Tests` on head `25a85000`, push run [41342940853](https://github.com/drrazaq/Stock-2/actions/runs/41342940853) and PR run [41342945481](https://github.com/drrazaq/Stock-2/actions/runs/41342945481), both **success**.
+
+The HISTORY-03 regression harness (`claude/history-03-claims` @ `5bcf4d29`) gives the same result on main and on main + this patch, on Node 20 and 22: 30 tests, 19 pass, 0 fail, 11 todo. The mentor patch does not interact with it.
