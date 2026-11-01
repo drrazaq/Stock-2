@@ -1,0 +1,223 @@
+# HISTORY-03 priority claim records (reviewer: Claude). Data for build-catalogue.py. Source lines refer to main f6a9b166.
+# Wording is quoted from offline renders of the production code on committed repository data (1 Nov 2026), or from the source
+# template where values vary; owner-specific values (holdings, personal trade record) are replaced by <placeholders>.
+MAIN = 'f6a9b1668d0591cf24a734034949b96b241fe35b'
+NR = 'NOT RECOMPUTED (traced to the artifact; values not re-derived from raw prices)'
+C = []
+def add(**k): C.append(k)
+
+# ---------------- ACTIONS (nightly; also "today", "records", "what to buy today") ----------------
+add(id='A01', surface='ACTIONS > RECORDS (Sunday research line)', status='MISLEADING',
+    wording="RESEARCH (Sunday): none of 17 new ideas passed; LEADERS provisionally promising; insider buying works in rising markets (+0.1% / +6.1% a trade). Send  lab  for details.",
+    source='scan.mjs:2632-2634 (actionsText, S.routine)', evidence='data/smart-money-study.json (rising.older / rising.newer; verdict NOT PROVEN, why "lost money in the older half"); data/leaders-study.json (liveVerdict)',
+    population='Insider clusters (2+ buyers 10k USD+, 50k+ total, or 250k+) found by smart-money.mjs; "rising" = S&P 500 rising regime; older n=166, newer n=265',
+    period='Study halves of smart-money.mjs (dates not stored in the summary file: MISSING)', rule='smart-money.mjs Sunday study (version not recorded: MISSING)',
+    costs='"after costs" per smart-money.mjs header; exact cost value not stored in the artifact: MISSING', hold='20 sessions, buy next open',
+    coverage='Finnhub insider data; universe coverage and dead-stock inclusion not stated: MISSING', reproduced=NR,
+    finding='The printed condition only checks n>=30 and average>0 in both halves. In the older half the rising-market average was +0.12% a trade against +0.31% for the S&P 500 on the same days (it trailed), and the study verdict is NOT PROVEN. "works" is not supported.',
+    correction="Insider buying (rising markets): NOT PROVEN. Older years +0.1% a trade (S&P 500 +0.3% same days), newer years +6.1%. Not a buy signal.")
+add(id='A02', surface='ACTIONS > RECORDS (Sunday research line) and leaders command', status='MISLEADING',
+    wording="LEADERS provisionally promising  |  FAIR TEST (whole market, collapsed stocks included, 2021-10-12 to 2026-10-19): this version PROVISIONALLY PROMISING. It passed in the newer half at the 0.8% cost. Live paper trades must still confirm it.",
+    source='scan.mjs:2634; scan.mjs:244/689/1357-1359; leaders-study.mjs:237 (verdictOf)', evidence="data/leaders-study.json: chosen '126-2' verdict NOT PROVEN (profit factor 1.11 < 1.2); live '126-3' liveVerdict PROVISIONALLY PROMISING",
+    population='4,277 stocks, whole market incl. dead stocks (fundsFiltered true)', period='2021-10-12 to 2026-10-19, split 2024-10-15 (handbook split is 2024-01-01)',
+    rule="leaders-study.mjs; live version 126-3 differs from the chosen version 126-2", costs='0.8% a trade', hold='126 sessions (version 126-3)',
+    coverage='1,260 sessions; universe point-in-time per study header', reproduced=NR,
+    finding='"Provisionally promising" is not a tier in the handbook (section 4.5). It is awarded for passing the newer half only, the study verdict is NOT PROVEN, the live version is not the chosen one, and the split date differs from the handbook. The live paper record shown in the same reply is 5 finished trades averaging -15.9%.',
+    correction="LEADERS: NOT PROVEN (fails the older half; passed only the newer half). Live paper so far: 5 trades, average -15.9%.")
+add(id='A03', surface='ACTIONS > TODAY\'S ACTIONS (LEADER DIP lane line)', status='SUPPORTED_QUALIFIED (incomplete)',
+    wording="LEADER DIP | horizon: up to 126 sessions (about 6 months) | APPROVED BY YOU as your real lane (27 Oct); tested 73% / 75% of trades won, about equal to SPY as a 3-slot account: NOT PROVEN by the full bar | permitted today: yes",
+    source='scan.mjs:2588 (and header 2450-2457)', evidence="data/agent-a-tgt-lab.json firstRun['A-TGT-TGT20-PB12'] (win 72.7% n 99 older / 74.6% n 256 newer, NOT PROVEN, adoption adopt:false); data/account-replay-pb12t20.json REPLAY-PB12T20",
+    population='SQ11-PB12 signals: top-20% 12-1 momentum leaders among the 300 largest, point in time', period='2021-10-12 to 2026-10-23 (trade test); replay 2021-10-12 to 2026-04-24, split 2024-01-01',
+    rule='SQ11-PB12 entry + A-TGT-TGT20 exit (+20% limit, else close of session 126), no stop', costs='0.8% (stress 1.2% in replay)', hold='until +20% limit fill or close of session 126',
+    coverage='whole market incl. dead stocks per squad11/agent-a headers; halal marks: replay uses all stocks (hindsight variant separate)', reproduced=NR,
+    finding='Numbers trace. Missing context: the +20% target was NOT adopted by its own pre-registered test (it lowered returns vs. selling at session 126); from its first signal in the older half the 3-slot account made 10.3% a year vs SPY 16.6%; it trailed SPUS in both halves (newer 19.6% vs SPUS 22.0%); worst trade -55.6%. The handbook says a high win rate is not the goal.',
+    correction="LEADER DIP (your lane, NOT PROVEN): about 3 in 4 trades hit +20%, but the test without the +20% limit made more; as a 3 x 1,000 USD account it roughly matched SPY and trailed SPUS. Worst single trade -56%.")
+add(id='A04', surface='ACTIONS > NOT ACTIONABLE TODAY', status='MISLEADING (definition)',
+    wording="ENGINE BUYS PAUSED by focus mode (no engine kind proven on live paper yet; logged on paper): <SYMBOLS>.  focus off  shows them as buys.",
+    source='scan.mjs:2606', evidence='Engine candidate gate okEv (scan.mjs:1283): per stock, 30+ out-of-sample trades with >= +0.4% after costs, or 15+ with >= +1.5% and half won',
+    population='Each candidate stock\'s own history for its rule', period='the stock\'s own history (walk-forward on that stock); window not printed: MISSING',
+    rule='engine swing/quick rules (signals.json)', costs='0.8%-equivalent: 6 USD fees + spread per 1,000 USD (scan.mjs:1281)', hold='rule-specific (quick max 3-7 sessions, swing per plan)',
+    coverage='nightly 2,512-stock scan (details reply)', reproduced=NR,
+    finding='"focus off shows them as buys": with focus off, a stock that clears the per-stock okEv bar is shown as a BUY. That bar is far below the handbook PROVEN tier (all gates in both halves, block t >= 2.5, luck bar about 4.1). The message does not say so.',
+    correction="ENGINE (swing/quick): paused. These picks pass only a per-stock history check, not the system's full test. focus off would show them as buys anyway.")
+add(id='A05', surface='ACTIONS > NOT ACTIONABLE TODAY', status='MISLEADING (definition)',
+    wording="QUICK TRADES held back (not strong enough; logged on paper): <SYMBOLS>. Why: strict gate: needs 30+ unseen trades and a positive safety margin (has 20).",
+    source='scan.mjs:3868', evidence='per-stock okEv / safety-margin computation (scan.mjs:1270-1300)', population='the stock\'s own history', period='not printed: MISSING', rule='quick-trade rules', costs='as A04', hold='quick trade plan',
+    coverage='per stock', reproduced=NR,
+    finding='"unseen trades" means out-of-sample trades on the same stock\'s own past, not unseen future days. Readers can take it as forward evidence.',
+    correction="needs 30+ test trades on this stock's own past that were not used to pick the rule (has 20).")
+add(id='A06', surface='ACTIONS > NOT ACTIONABLE TODAY', status='SUPPORTED_QUALIFIED (window missing)',
+    wording="NOT IN THIS MARKET (no winning record in falling markets): <SYMBOLS>.",
+    source='scan.mjs:2622 (gate at 1398-1402)', evidence='signals.json per-stock reg.down (n >= 10 and avgR > 0 required)', population='the stock\'s own unseen trades in falling markets',
+    period='not printed: MISSING', rule='falling-market gate', costs='R units (after stop distance)', hold='rule plan', coverage='per stock', reproduced=NR,
+    finding='Accurate as a block reason; the record size and period are not shown.', correction="NOT IN THIS MARKET: fewer than 10 past trades of this rule on this stock in falling markets, or they lost.")
+add(id='A07', surface='ACTIONS > SHORT-TERM OPPORTUNITIES', status='SUPPORTED_QUALIFIED',
+    wording="EARLY WAVE (intraday, paper): 973 paper trades, 40% won, -0.7% a trade after costs (-1.5% at 1.5x costs) on 7 days; negative: its alerts stay paused.",
+    source='scan.mjs:2612', evidence='data/ignition-results.json / ignition-days.jsonl (IG8 forward paper)', population='IG8 alerts in the live watcher', period='forward paper since IG8 start (7 days)',
+    rule='IG8 quiet build-up', costs='model costs, plus 1.5x stress', hold='entry at alert price, exit at close', coverage='live watcher coverage (see day trades COVERAGE line)', reproduced=NR,
+    finding='Clear and correctly negative.', correction=None)
+add(id='A08', surface='ACTIONS > TRY SMALL line', status='SUPPORTED',
+    wording="TRY SMALL: PAPER ONLY (not a buy; your decision 27 Oct after the account replay: 2 slots of 1,000 USD did not reliably beat holding SPY. Put that money in Basket 2. ...)",
+    source='scan.mjs (TRY SMALL paper section)', evidence='account-replay (TRY SMALL) results; owner decision 27 Oct (CLAUDE.md section 2)', population='9 TRY SMALL rules', period='replay windows per account-replay-core.mjs',
+    rule='TRY SMALL bar', costs='0.8%', hold='per rule', coverage='whole market', reproduced=NR, finding='Matches the owner decision. "Put that money in Basket 2" uses the old name: the owner now buys SPUS/IAUM monthly (see W01).',
+    correction="...Put that money in your monthly SPUS + IAUM buy.")
+add(id='A09', surface='ACTIONS > RECORDS (your real trades)', status='SUPPORTED_QUALIFIED (cost basis)',
+    wording="YOUR REAL TRADES (what you reported): size level <N>: up to <USD> a trade. Your record: <n> sales on <d> days, <+x.x>% in total per 1,000 USD traded after costs (<+y.y>% before the 0.8% a trade cost). ...",
+    source='scan.mjs:1497', evidence='owner-reported sales (private trade log)', population="owner's reported sales", period='all reported sales', rule='size ladder', costs='a MODELLED 0.8% per trade, not the actual ZAD fees/fills', hold='actual',
+    coverage='only trades the owner reported', reproduced='NOT REPRODUCED (private data, not read)',
+    finding='"after costs" means after a modelled 0.8%, not the actual broker fees and fills.', correction="... after an assumed 0.8% cost per trade (not your actual ZAD fees).")
+add(id='A10', surface='ACTIONS > RECORDS / SCOREBOARD (forward paper)', status='SUPPORTED_QUALIFIED',
+    wording="POSITIVE SO FAR: Swing buys; Fast alerts rule IG1; Fast alerts rule IG2 (one market period only).; below the full live bar, so engine buys stay paused",
+    source='scan.mjs:2636 (from scorecardText verdicts)', evidence='see S02-S04', population='forward paper signals', period='since each record started', rule='per engine', costs='after costs', hold='per row',
+    coverage='per row', reproduced=NR, finding='Qualified, but inherits the Swing population mix (S02) and labels IG2 (+0.0%, -0.9% at 1.5x costs) as positive.',
+    correction="Not losing so far (one market period, not proof): IG1. Swing buys and IG2 are flat or mixed.")
+add(id='A11', surface='ACTIONS > RECORDS (practice account)', status='SUPPORTED_QUALIFIED',
+    wording="PRACTICE ACCOUNT (Alpaca, fake money, unproven engines: NOT buys for you): <value> (<pct> since 2026-10-12). Closed 9: 1 won, 8 lost, average -10.1%. ...",
+    source='scan.mjs:2517', evidence='data/alpaca-paper.json', population='Alpaca paper fills', period='since 2026-10-12', rule='engines on paper', costs='actual paper fills', hold='actual',
+    coverage='paper account', reproduced=NR, finding='Clear.', correction=None)
+add(id='A12', surface='ACTIONS > RECORDS (weekly research count)', status='SUPPORTED_QUALIFIED',
+    wording="Tested this week: 51 rules: 38 rejected, 7 not proven / needs data, 6 other.", source='scan.mjs:622', evidence='data/strategy-library.json (per-rule verdicts)',
+    population='rules entered this week', period='this week', rule='library', costs='per lab', hold='per lab', coverage='library entries only', reproduced=NR, finding='"6 other" is unexplained.', correction="... 6 with another status (see lab).")
+add(id='A13', surface='ACTIONS > RECORDS (comeback board)', status='SUPPORTED_QUALIFIED',
+    wording="COMEBACK (forward paper records, top 5 by average after 0.8%): DEC2-NISON (decoded): 5 trades on 3 days, average +7.3%, TOO EARLY ...", source='scan.mjs:633',
+    evidence='data/comeback-board.json (cost 0.008)', population='rejected rules followed forward', period='forward since rejection', rule='per rule', costs='0.8%', hold='per rule', coverage='rules on the board',
+    reproduced=NR, finding='Top-5-by-average is a selection; "TOO EARLY" qualifies it.', correction=None)
+
+# ---------------- SCORECARD / SCOREBOARD / SHADOW ----------------
+add(id='S01', surface='SCORECARD (scorecard command and Sunday)', status='SUPPORTED_QUALIFIED',
+    wording="SCORECARD (future days only, after costs; back-tests are NOT counted here) ... Rules: a \"POSITIVE\" record from one market period is not proof. ...",
+    source='scan.mjs:549-602', evidence='data/engine-history.jsonl, outcomes.json, ignition-results.json, radar-record.json, tier2-ledger.jsonl, alpaca-paper.json, switch-paper.json',
+    population='forward paper per engine', period='since each record started', rule='per engine', costs='after costs (engine-specific; 1.5x stress shown for IG rules)', hold='per engine',
+    coverage='per row', reproduced=NR, finding='Framing is honest; specific rows below.', correction=None)
+add(id='S02', surface='SCORECARD row', status='MISLEADING',
+    wording="Swing buys (ACTIONS), 3 days after the signal: 42 finished, 16% won, average +0.3% vs S&P -0.3% (finished trades: 25, average -0.47R) => POSITIVE so far (one market period only; not proof yet)",
+    source='scan.mjs:554 (row from outcomes.json)', evidence='data/outcomes.json: horizons["3"] (n 42, avgReturn, avgBenchmark), finished 25, winRate 0.16, avgR -0.47',
+    population='mixed: count and average are 3-day marks of 42 signals; win rate is from 25 finished trades', period='since outcomes tracking began', rule='engine swing buys',
+    costs='3-day mark: cost treatment not stated: MISSING; R units for finished trades', hold='3-day mark vs actual exits', coverage='swing signals listed in ACTIONS', reproduced=NR,
+    finding='"42 finished" is wrong: 42 is the number of 3-day marks; only 25 trades finished and they average -0.47R with 16% won. The POSITIVE label comes from the 3-day mark-to-market, not finished trades.',
+    correction="Swing buys: 25 finished trades, 16% won, average -0.47R (losing). 3 days after the signal, 42 signals averaged +0.3% vs S&P -0.3%.")
+add(id='S03', surface='SCORECARD row', status='MISLEADING (threshold)',
+    wording="Fast alerts rule IG2 (paper, at the alert price, sold at the close): 39 finished, 33% won, average +0.0% (-0.9% at 1.5x costs, 10 day(s), 37 stocks) => POSITIVE so far (one market period only; not proof yet)",
+    source='scan.mjs:550-551 (verdict)', evidence='data/ignition-results.json', population='IG2 live paper alerts', period='10 days', rule='IG2/close', costs='model costs, 1.5x stress',
+    hold='alert price to close', coverage='live watcher coverage', reproduced=NR, finding='An average that rounds to +0.0% and is negative at 1.5x costs is labelled POSITIVE.', correction="IG2: flat (+0.0%; -0.9% at 1.5x costs): no edge shown.")
+add(id='S04', surface='SCORECARD rows (LOSING / too early)', status='SUPPORTED_QUALIFIED',
+    wording="Quick trades (ACTIONS): 89 finished, 51% won, average -1.6% vs S&P -0.3% => LOSING: do not act on these  (and the IG3/5/6/8/9, early-wave and Alpaca rows)",
+    source='scan.mjs:549-602', evidence='engine-history.jsonl, ignition-results.json, radar-record.json, alpaca-paper.json', population='per row', period='per row', rule='per row', costs='per row', hold='per row',
+    coverage='per row', reproduced=NR, finding='Negative results stated plainly.', correction=None)
+add(id='S05', surface='SCORECARD rows (your real trades)', status='SUPPORTED_QUALIFIED',
+    wording="YOUR REAL trades on system picks: <n> finished, <w>% won, average <x>% => too early (<n>) | on your own picks: ...", source='scan.mjs:549-602', evidence='private trade log',
+    population="owner's reported trades", period='all', rule='-', costs='modelled 0.8%', hold='actual', coverage='reported trades', reproduced='NOT REPRODUCED (private data)', finding='Cost basis as A09.', correction=None)
+add(id='S06', surface='SCOREBOARD weekly / ACTIONS', status='SUPPORTED_QUALIFIED',
+    wording="Last 90 days: you: <n> sales, <w> won, average <x>% after costs; S&P 500 <y>% over the same period.", source='scan.mjs (scoreboardText 603+)', evidence='private trade log; data/spy-closes.json',
+    population="owner's sales", period='last 90 days', rule='-', costs='modelled 0.8%', hold='actual', coverage='reported trades', reproduced='NOT REPRODUCED (private data)', finding='Cost basis as A09.', correction=None)
+add(id='S07', surface='shadow command', status='SUPPORTED_QUALIFIED',
+    wording="Tested-rule buys (swing and quick): 114 finished, 43% won, average -1.9% | quick trades vs S&P 500 same days: -1.6% vs -0.3%  ...  This is the honest forward test: about 60 finished trades per kind are needed before it means much.",
+    source='scan.mjs (shadowText)', evidence='data/engine-history.jsonl', population='engine signals', period='forward', rule='engine', costs='after costs', hold='per rule', coverage='engine signals', reproduced=NR,
+    finding='"Tested-rule buys" means the per-stock okEv check (A04), not the full test. The "60 per kind" bar differs from the handbook forward bar (30+ on 10+ days).', correction="Engine picks (swing and quick): 114 finished, ...")
+
+# ---------------- Owner-facing lane descriptions ----------------
+add(id='W01', surface='ways command', status='STALE (contradicts owner decisions of 27 Oct)',
+    wording="a) THE BASKET (core): every month 65% of ~1,000 USD in ZAD Basket 2 = SPUS 54% / gold fund IAUM 46%, and 35% kept as cash; Basket 1 = the halal top 10 (whole-number %) is bought with that cash 3 times a year ...  b) TRY SMALL: 1,000 USD buys from rules that made money in both test halves but did not pass the luck test; max 2 open, own stop and time exit. They appear in  actions",
+    source='scan.mjs:3102-3105 (waysText)', evidence='CLAUDE.md section 2 (owner decisions 27 Oct): whole monthly amount in SPUS 54% + IAUM 46%; Basket 1 OFF; TRY SMALL PAPER only; the basket command already says so',
+    population='-', period='-', rule='-', costs='-', hold='-', coverage='-', reproduced='checked against the rendered basket and ACTIONS replies',
+    finding='Tells the owner to keep 35% as cash for Basket 1 and that TRY SMALL makes 1,000 USD buys. Both were switched off on 27 Oct. The LEADER DIP lane (his only trading lane) is missing.',
+    correction="a) MONTHLY CORE: your whole monthly amount in SPUS 54% + IAUM 46% (2 orders).  b) LEADER DIP: your trading lane, up to 3 x 1,000 USD, NOT PROVEN.  c) TRY SMALL: paper only (since 27 Oct).  d) OPTIONS: paper only.")
+add(id='W02', surface='basket command', status='MISLEADING (evidence does not match the plan followed)',
+    wording="Tested 2022-01 to 23 Oct 2026 (Squad 10, the top 10 alone): about 16.7% a year vs SPUS 12.2%; it beat SPUS in both halves (2022-23: 0.8% vs 0.5% a year; 2024-26: 29.5% vs 21.2%); worst fall -42% vs -28%. NOT PROVEN ...  With 30% gold (Squad 23 test, run on the top-20 basket: 70% basket + 30% gold): ~17.5% a year vs 16.2% ...  The buying schedule (Basket 2 monthly, Basket 1 three times a year) was not tested itself",
+    source='scan.mjs:2961-2964 (BASKET_RECORD)', evidence='data/squad10-lab.json (SQ10-SH10 NOT PROVEN); squad23 lab (not opened in this pass: MISSING)',
+    population='halal top 10 cap-weighted (squad10)', period='2022-01-03 to 2026-10-23, split 2024-01-01', rule='SQ10-SH10 quarterly', costs='0.8% (squad10 cost)', hold='63 sessions (quarterly)',
+    coverage='squad10 universe per its header', reproduced=NR,
+    finding='The reply now (correctly) says the plan is SPUS 54% + IAUM 46% and Basket 1 is OFF, but every number shown is for Basket 1 or a 70/30 top-20+gold mix. The 54/46 SPUS/IAUM plan itself has no test shown. The schedule line still describes the old plan.',
+    correction="Your plan (SPUS 54% + IAUM 46%) was not tested as such. For reference only: Basket 1 (now OFF) ... ; a 70/30 top-20 + gold mix ... . Both NOT PROVEN.")
+add(id='W03', surface='longterm command (and ACTIONS longer-term pointer)', status='UNSUPPORTED',
+    wording="YARDSTICK: on 5 years, the S&P 500 beat every long-term stock-picking method tested. Long-term money: a halal index fund (check ZAD).",
+    source='scan.mjs:2527-2528 (longTermLines)', evidence='Computed only from data/horizons.json (12 results) and data/quality.json (21 results): printed whenever none has verdict PROMISING',
+    population='horizons + quality labs only', period='horizons 2022-10-12 to 2026-10-19 (4 years, not 5); quality 2021-11-10 to 2026-10-19', rule='-', costs='per lab', hold='per lab', coverage='2 of the system\'s labs',
+    reproduced='logic read; verdict sets confirmed (NOT PROVEN / REJECTED only)',
+    finding='"Not PROMISING" is turned into "the S&P 500 beat every method". Several methods did beat the S&P 500 on raw return without passing the luck test (e.g. Basket 1 16.7% a year vs SPUS 12.2%; LEADER DIP replay 11.6% vs SPY 10.2% a year). Only two labs are consulted and one covers 4 years.',
+    correction="YARDSTICK: no long-term stock-picking method has passed the full test yet (5 years, both halves, luck bar). Some beat the S&P 500 on past returns, but that could be luck. Long-term money: a halal index fund (check ZAD).")
+add(id='W04', surface='HELP (help command)', status='UNSUPPORTED (no rule is proven)',
+    wording="paper   (the Alpaca PAPER account: real fills on every proven buy, fake money)  |  budget open   (no budget limit: every proven buy is listed, you decide; size still follows the evidence)",
+    source='scan.mjs:1074 (HELP)', evidence='CLAUDE.md section 4.5: no rule is proven; ACTIONS practice line says the account tests "unproven engines"', population='-', period='-', rule='-', costs='-', hold='-', coverage='-', reproduced='checked against rendered ACTIONS',
+    finding='Describes buys as "proven" while nothing is proven; contradicts the practice-account line.', correction="paper   (the Alpaca practice account: fake money, tests engines that are NOT proven)  |  budget open   (no budget limit on the buys ACTIONS lists; you decide)")
+add(id='W05', surface='HELP (help command)', status='MISLEADING',
+    wording="day trades   (fast movers: which day-trade and overnight rules passed five years of tests, and today’s list)  |  check LPG   (analyses ANY ticker now: tested rules, ...)  |  lab   (this week’s hunting lab: new ways to catch moves, tested on two years of the whole market)  |  events (... which kinds of news were followed by gains or by losses, tested)  |  market today (... from the tests and your stocks)",
+    source='scan.mjs:1074 (HELP)', evidence='day trades reply: "48 versions tested ..., 0 passed the history test"; hunting-lab window not mapped: MISSING',
+    population='-', period='-', rule='-', costs='-', hold='-', coverage='-', reproduced='checked against rendered day trades reply',
+    finding='"which rules passed five years of tests": none passed. "tested" is used as if it meant validated.', correction="day trades   (fast movers: how each day-trade rule did over five years; none has passed yet)")
+add(id='W06', surface='leaders command', status='MISLEADING',
+    wording="Rule in use: strength over 6 months, stop 3 normal daily moves under the close. I re-test 9 versions every night; 7 pass tonight.  Past test, 80 large stocks together since 2016, five held at a time: 467 trades, 37% won. ... all trades +1.54% each after costs (S&P 500 over the same days +1.05%). ... Whole account about 13% a year against 13% ...  Caution: the test list is today’s well-known companies, which flatters the past.",
+    source='scan.mjs:3524, 3600-3601 (leadEvidence), 3927', evidence='data/leaders.json (nightly re-test on a fixed list of today\'s 80 large stocks)',
+    population='80 of today\'s large companies (survivorship-biased; caveat printed)', period='since 2016', rule='LEADERS trend version in use', costs='0.8% (0.4% before 18 Oct 2026)', hold='typical 16 sessions',
+    coverage='fixed 80-stock list', reproduced=NR,
+    finding='"7 pass tonight" is on the survivorship-biased list; the fair whole-market test of the same family is NOT PROVEN (A02) and live paper is 5 trades at -15.9%. The caution line is present but comes after the pass count.',
+    correction="Rule in use: ... On today's 80 large stocks (a list that flatters the past) 7 of 9 versions look profitable; on the fair whole-market test the rule is NOT PROVEN.")
+add(id='W07', surface='autolab command (and autolab Sunday summary)', status='UNSUPPORTED',
+    wording="Only PROVEN LIVE rules (30+ paper trades, profitable, better than an average stock) appear in your ACTIONS. Check ZAD. Research only.",
+    source='scan.mjs:515; autolab.mjs:189', evidence='ACTIONS shows the owner\'s lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT) as actions while NOT PROVEN; POLICY TODAY line',
+    population='-', period='-', rule='-', costs='-', hold='-', coverage='-', reproduced='checked against rendered ACTIONS', finding='False as a general statement; also a third definition of "proven".',
+    correction="An autolab rule reaches ACTIONS only after 30+ profitable paper trades that beat an average stock. Your own lanes (LEADER DIP and others) are shown separately and are NOT PROVEN.")
+add(id='W08', surface='details command', status='MISLEADING (definition)',
+    wording="Nothing today. No setup has proof: 30+ unseen trades averaging +0.4% or more after costs, or 15+ with +1.5% or more a trade. Waiting is a result.  |  COVERAGE: 2512 stocks tested last night; 3 had a setup, 0 fully proven (30+ unseen trades, profit after costs).",
+    source='scan.mjs:1576; details COVERAGE line', evidence='okEv (scan.mjs:1283)', population='per-stock history', period='not printed: MISSING', rule='engine rules', costs='6 USD fees + spread', hold='per rule', coverage='2,512 stocks',
+    reproduced=NR, finding='Calls the per-stock okEv bar "proof" / "fully proven". Under the handbook nothing is proven; this bar is much lower (no both-halves gates, no block t, no luck bar).',
+    correction="No setup cleared even the basic per-stock check tonight (30+ past test trades averaging +0.4% after costs). Note: passing it is not proof.")
+add(id='W09', surface='day trades command', status='MISLEADING (contradiction)',
+    wording="Only rules that PASSED send a morning list or a live alert. Use 1,000 USD at most per day trade. Research, not advice.",
+    source='scan.mjs:71', evidence='same reply: "0 passed the history test"; EARLY WATCH PAPER SETUP / RESEARCH LEAD alerts (early-alerts.mjs) and EARLY WAVE ALERT [PAPER, NOT PROVEN] (ignition-watch.mjs:169) are sent without a passed rule',
+    population='-', period='-', rule='-', costs='-', hold='-', coverage='-', reproduced='source read', finding='Live alerts are sent (labelled paper / not approved) although no rule passed.',
+    correction="No rule has passed, so there is no morning buy list. Live alerts you get are PAPER or RESEARCH only. If you trade one anyway: 1,000 USD at most.")
+add(id='W10', surface='day trades command (rule rows)', status='SUPPORTED_QUALIFIED',
+    wording="FAST MOVERS AND DAY TRADES (five years, whole market incl. 1-3 USD stocks, 2021-10-18 to 2026-10-23; ...) - Gap-up 10%+ at the open: REJECTED. 10255 trades, 27% won, average -2.3% ...",
+    source='scan.mjs (day trades text from fastmover-lab.json)', evidence='data/fastmover-lab.json (from 2021-10-18 to 2026-10-23)', population='whole market incl. 1-3 USD', period='2021-10-18 to 2026-10-23 (newer half shown)',
+    rule='per row', costs='"costs by price"', hold='intraday / next open', coverage='whole market daily data; ignition rows: 35,913 of 73,864 run days with minute data (2024-10-25 to 2026-10-23)', reproduced=NR,
+    finding='REJECTED results stated plainly. "best moment" (average daily high) is labelled as what a chart shows.', correction=None)
+add(id='W11', surface='stops command', status='MISLEADING (period)',
+    wording="YOUR STOPS vs THE TESTED STOP (from the 5-year stop study; the tested stop is measured from YOUR buy price)", source='scan.mjs:163',
+    evidence='data/stops.json: from 2022-04-19 to 2026-07-22, 18 versions, tCrit 2.99, hold 60', population='stop study universe (not mapped: MISSING)', period='2022-04-19 to 2026-07-22 (about 4.3 years)',
+    rule='stop study', costs='not mapped: MISSING', hold='60 sessions', coverage='not mapped: MISSING', reproduced=NR, finding='Not 5 years. Whether the "tested stop" passed its study is not stated.',
+    correction="YOUR STOPS vs THE STUDIED STOP (stop study, Apr 2022 to Jul 2026, about 4 years; <its verdict>)")
+add(id='W12', surface='sources command', status='MISLEADING (label)',
+    wording="Analysts turning positive: 167 tips, average -3.9% against -1.6% for the S&P 500 (with the tested stop added: -3.9%). 68 of 167 beat the market. Record: INSUFFICIENT EVIDENCE (under 10 tips or under a month).",
+    source='scan.mjs:1899', evidence='tip ledger (data/tips*.jsonl; not mapped in this pass: MISSING)', population='logged tips per source', period='since logging began (under 20 days)', rule='tip scoring', costs='not stated: MISSING', hold='to now',
+    coverage='tips logged by the bot', reproduced=NR, finding='The reason shown for 167 tips is "under 10 tips or under a month"; only the month condition applies. "the tested stop" is not identified.',
+    correction="Record: TOO SHORT (logged for under a month).  (with the stop from the stop study added: ...)")
+add(id='W13', surface='lessons command', status='EVIDENCE_NOT_MAPPED',
+    wording="reached target 1: 20% (the test expected about half)", source='scan.mjs:1247', evidence='"the test" not identified in the message or the code comment: MISSING', population='live paper trades per rule',
+    period='forward', rule='per rule', costs='after costs', hold='per rule', coverage='per rule', reproduced='-', finding='No artifact backs "about half".', correction="reached target 1: 20% of trades")
+add(id='W14', surface='league command', status='SUPPORTED_QUALIFIED',
+    wording="AGENT LEAGUE (since 2026-10-20; luck bar for everyone t 4.1 after 2326 rules tried in total) ... Proven 0, working live 0. ... Only results count: a strategy that passes every test, picks that beat the S&P 500 on days nobody had seen, and live paper records.",
+    source='league.mjs:110-111; scan.mjs league reply', evidence='data/agent-league.json', population='agents A/B/C', period='since 2026-10-20', rule='league', costs='-', hold='1 and 3 months', coverage='-', reproduced=NR,
+    finding='Clear. Note the autolab reply uses a different luck bar (t 3.96 for its own 1,320 rules) without saying why.', correction=None)
+add(id='W15', surface='quality command', status='SUPPORTED_QUALIFIED',
+    wording="QUALITY COMPANIES: long investing by the SEC reports (2021-11-10 to 2026-10-19, 59 monthly ...) - Piotroski F-score 8-9 (improving finances), 6 months: NOT PROVEN (+7.6% vs average stock +5.7%, S&P 500 +8.6%) ...",
+    source='quality.mjs / scan.mjs qualityText', evidence='data/quality.json (from 2021-11-10 to 2026-10-19, 59 months)', population='SEC-report universe', period='2021-11-10 to 2026-10-19', rule='per row', costs='per quality.mjs', hold='6 / 12 months',
+    coverage='per quality.mjs header', reproduced=NR, finding='Verdicts stated. The "TOP QUALITY NOW" list shows names with "gross profit 0% of assets" (data gap) under a quality heading.', correction="Mark rows with missing gross-profit data as DATA MISSING instead of 0%.")
+add(id='W16', surface='LONGER HOLDS line in ACTIONS', status='SUPPORTED_QUALIFIED',
+    wording="LONGER HOLDS: no buy today; <n> picks need your ZAD mark first (YOUR LABELLED CHOICE (20 Oct), tier 2 TRADABLE SMALL).", source='scan.mjs:2570-2581',
+    evidence='discovery2 / value lab V15 tier record', population='F-score 8-9 in an uptrend', period='newer half only (tier 2)', rule='V15', costs='0.8% / 1.2%', hold='per V15', coverage='per lab', reproduced=NR,
+    finding='"TRADABLE SMALL" is a newer-half-only tier; the line does not say NOT PROVEN as the LEADER DIP line does.', correction="LONGER HOLDS (your labelled choice, NOT PROVEN; passed only the newer years) ...")
+
+# ---------------- Other production senders (latent or session-time) ----------------
+add(id='X01', surface='intraday radar alerts (intraday-radar.mjs, every 15 min in session)', status='MISLEADING (latent definition)',
+    wording="BUY: this kind of setup is PROVEN on paper  |  <group>: ... PROVEN: its alerts say BUY  |  A card says BUY only when its kind of setup has earned it on paper (30+ trades, profit after costs, still positive lately).",
+    source='intraday-radar.mjs:133-152 (graduation), 219, 247, 263, 302', evidence='data/radar-record.json (need 30; no group currently proven)', population='radar groups', period='forward paper', rule='graduation rule', costs='after costs',
+    hold='per card', coverage='about 280 strong stocks live', reproduced=NR,
+    finding='Not triggered today (no group qualifies), but a forward-paper graduation would print "PROVEN" and "BUY". Under the handbook that is the forward-paper bar, not PROVEN, and CLAUDE.md section 9 allows plain BUYs only for the owner\'s lanes. Flag for the owner / Codex: wording AND gate.',
+    correction="PAPER RECORD PASSED (30+ trades, profit after costs): still NOT PROVEN by the full test. (No BUY wording without the owner's decision.)")
+add(id='X02', surface='news watch (news-watch.mjs)', status='MISLEADING',
+    wording="Tested buys in ACTIONS stay valid at their prices.  |  DECISION: HOLD. Do not chase stocks that already jumped; buy only tested buys inside their price range.  |  that day: the system’s tested buys made ...",
+    source='news-watch.mjs:75-78', evidence='-', population='-', period='-', rule='-', costs='-', hold='-', coverage='-', reproduced='source read', finding='"tested buys" reads as validated buys; ACTIONS buys are the owner\'s NOT PROVEN lanes.',
+    correction="Buys listed in ACTIONS stay valid at their prices (they are your lanes, NOT PROVEN).")
+add(id='X03', surface='opportunity radar close message (radar-v3-core.mjs)', status='MISLEADING',
+    wording=". Tested buys for the next session come in ACTIONS tonight.", source='radar-v3-core.mjs:169', evidence='-', population='-', period='-', rule='-', costs='-', hold='-', coverage='-', reproduced='source read',
+    finding='Same as X02.', correction=". Tonight's ACTIONS lists any buys from your lanes (NOT PROVEN).")
+add(id='X04', surface='octopus board (octopus.mjs)', status='MISLEADING (latent)', wording="Both gates passed: these may be considered as buys (your stop, your halal check, your decision).",
+    source='octopus.mjs:163', evidence='octopus gates: 5-year test + 30+ positive live paper picks over 10+ days', population='octopus picks', period='-', rule='octopus', costs='stress', hold='weekly', coverage='-', reproduced='source read',
+    finding='Latent: if both octopus gates pass, picks are called buys without the full PROVEN tier (luck bar) being stated.', correction="Both octopus checks passed (still NOT PROVEN by the full test): research candidates.")
+add(id='X05', surface='movers (movers.mjs)', status='SUPPORTED_QUALIFIED', wording="This subset was profitable in this period. That is one sample of ...", source='movers.mjs:238', evidence='movers journal', population='movers subset', period='this period',
+    rule='movers study', costs='per movers.mjs', hold='per study', coverage='-', reproduced='source read', finding='Qualified as one sample.', correction=None)
+add(id='X06', surface='EARLY WAVE ALERT (ignition-watch.mjs)', status='SUPPORTED_QUALIFIED', wording="EARLY WAVE ALERT [PAPER, NOT PROVEN] | only ...  |  (paper only: the rule has not passed its history test)",
+    source='ignition-watch.mjs:155, 169', evidence='fastmover-lab.json IG verdicts', population='-', period='-', rule='IG rules', costs='-', hold='-', coverage='-', reproduced='source read', finding='Clear.', correction=None)
+add(id='X07', surface='IGNITION ALERT (ignition-watch.mjs)', status='MISLEADING', wording="IGNITION ALERT | FAST DAY TRADE, separate from the tested swing buys in ACTIONS",
+    source='ignition-watch.mjs:169', evidence='-', population='-', period='-', rule='-', costs='-', hold='-', coverage='-', reproduced='source read', finding='"tested swing buys" implies validated swing buys; swing buys are paused and NOT PROVEN.', correction="IGNITION ALERT | FAST DAY TRADE (paper), separate from ACTIONS")
