@@ -26,6 +26,6 @@ export function recoverInactiveV2Capture({receiptRaw,receiptSha256,expectedScope
  for(const a of telemetry.filter(a=>a.name!=='telemetry:run.json')){need(a.name==='telemetry:record-'+String(index).padStart(6,'0')+'.json','V2_RECOVERY_TELEMETRY_SEQUENCE');const {hash,...body}=captureJson(Buffer.from(a.bodyBase64,'base64').toString());need(body.sequence===index++&&body.previousHash===previous&&hash===sha(JSON.stringify(body)),'V2_RECOVERY_TELEMETRY_HASH');previous=hash;}
  need(previous===handle.telemetryLastHash,'V2_RECOVERY_TELEMETRY_PREFIX');
  for(const a of original.filter(a=>a.name.startsWith('context:parent-'))){const bundle=captureJson(Buffer.from(a.bodyBase64,'base64').toString(),12*1024*1024);validateLineageBundle(bundle,{runId:bundle.asset.runId,sourceSha:bundle.asset.sourceSha});}
- const contextComplete=['context:reference','context:reference-review','context:history','context:input-clocks'].every(n=>assets.has(n));
+ const contextComplete=['context:reference','context:reference-review','context:history','context:input-clocks','context:runtime-pins'].every(n=>assets.has(n));
  return {status:records.length===41&&contextComplete?'AUTHENTICATED_COMPLETE_CAPTURE':'AUTHENTICATED_PARTIAL_CONTEXT',frames:records.length,state,records,sourceAssets:original,contextComplete,originalClocksPreserved:true,remoteBytesIndependentlyVerified:true,sourceAuthenticity:'NOT_ESTABLISHED_BY_ENCRYPTION',automaticResumeAuthorized:false,policyApproved:false,primaryAdmission:false,genuineAdmissions:0};
 }

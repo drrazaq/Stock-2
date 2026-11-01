@@ -33,7 +33,7 @@ function sourceAssets(options,handle){
  need(native.sha256===handle.nativePrefixSha256&&telemetry.lastHash===handle.telemetryLastHash,'V2_SOURCE_CHANGED');
  const assets=native.files.map(f=>({name:'native:'+f.name,bodyBase64:f.bodyBase64}));
  for(const name of fs.readdirSync(options.telemetryDirectory).sort()){need(name==='run.json'||/^record-\d{6}\.json$/.test(name),'V2_TELEMETRY_PARTIAL');const bytes=immutableRead(path.join(options.telemetryDirectory,name),16384).bytes;assets.push({name:'telemetry:'+name,bodyBase64:bytes.toString('base64')});}
- for(const a of options.contextAssets||[]){need(/^context:(reference|reference-review|input-clocks|history|parent-[0-3])$/.test(a.name)&&Buffer.isBuffer(a.bytes),'V2_CONTEXT_ASSET');assets.push({name:a.name,bodyBase64:a.bytes.toString('base64')});}
+ for(const a of options.contextAssets||[]){need(/^context:(reference|reference-review|input-clocks|runtime-pins|history|parent-[0-3])$/.test(a.name)&&Buffer.isBuffer(a.bytes),'V2_CONTEXT_ASSET');assets.push({name:a.name,bodyBase64:a.bytes.toString('base64')});}
  need(Buffer.byteLength(JSON.stringify(assets))<=V2_EVIDENCE_CAPS.sourceBytes,'V2_SOURCE_BUDGET');
  return assets.map(a=>({...a,sha256:sha(Buffer.from(a.bodyBase64,'base64'))}));
 }
