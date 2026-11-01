@@ -8,7 +8,7 @@ import {runSipDiagnostic,createBoundedSipRequest,LIMITS} from '../sip-access-dia
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const bad=()=>{throw Error('BLOCKED');};
-let kill;
+let kill,reportFd;
 try{
  const env=process.env;
  if(env.GITHUB_ACTIONS!=='true'||env.GITHUB_EVENT_NAME!=='workflow_dispatch'||env.GITHUB_RUN_ATTEMPT!=='1'||env.GITHUB_REF_NAME!=='main')bad();
@@ -25,14 +25,15 @@ try{
  const planBytes=readSmall(path.join(root,'docs/validation/sip-access-plan.proposed.json'));
  if(hash(planBytes)!==approval.planSha256)bad();
  const plan=JSON.parse(planBytes),at=Date.parse(approval.approvedAt),t0=Date.parse(plan.t0);
- if(!Number.isFinite(at)||at>t0||t0-at>86400000||Date.now()<t0||Date.now()>t0+30000)bad();
+ if(typeof approval.approvedAt!=='string'||!/^\d{4}-\d\d-\d\dT[0-2]\d:[0-5]\d:[0-5]\d(?:\.\d{1,3})?Z$/.test(approval.approvedAt)||!Number.isFinite(at)||new Date(at).toISOString().slice(0,10)!==approval.approvedAt.slice(0,10)||at>t0||t0-at>86400000||Date.now()<t0||Date.now()>t0+30000)bad();
  if(!env.ALPACA_KEY||!env.ALPACA_SECRET||approval.existingBindingsOnly!==true||approval.sampledResponsesOnly!==true)bad();
+ const out=path.join(process.env.RUNNER_TEMP||root,'sip-access-report.json');
+ reportFd=fs.openSync(out,'wx',0o600); // reserve output BEFORE transport; an existing/partial report is never silently overwritten
  // HTTP and this outer process bound are independent; no retries or collection resumption.
  kill=setTimeout(()=>process.exit(2),LIMITS.wallMs);
  const report=await runSipDiagnostic(plan,{approval,now:()=>Date.now(),wait:ms=>new Promise(resolve=>setTimeout(resolve,ms)),request:createBoundedSipRequest({fetcher:fetch,headers:{'APCA-API-KEY-ID':env.ALPACA_KEY,'APCA-API-SECRET-KEY':env.ALPACA_SECRET}})});
  const payload=JSON.stringify(report)+'\n';if(Buffer.byteLength(payload)>LIMITS.reportBytes)bad();
- const out=path.join(process.env.RUNNER_TEMP||root,'sip-access-report.json');
- fs.writeFileSync(out,payload,{flag:'wx',mode:0o600});
+ fs.writeFileSync(reportFd,payload);fs.fsyncSync(reportFd);fs.closeSync(reportFd);reportFd=undefined;
  console.log(report.status==='COMPLETE_SAMPLED'?'COMPLETE_SAMPLED':'STOPPED');
  if(report.status!=='COMPLETE_SAMPLED')process.exitCode=2;
-}catch{console.log('BLOCKED_OR_ERROR');process.exitCode=2;}finally{clearTimeout(kill);}
+}catch{console.log('BLOCKED_OR_ERROR');process.exitCode=2;}finally{clearTimeout(kill);if(reportFd!==undefined)try{fs.closeSync(reportFd);}catch{}}
