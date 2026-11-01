@@ -114,7 +114,7 @@ async function snap() {
   const m = env.MASSIVE_KEY ? await snapMassive() : null, now = Date.now();
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
   const refresh = selectStaleRefreshSymbols(m, now, {requireQuote:true});
-  if (m && m.length && !refresh.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
+  if (m && m.length && !refresh.length && late <= 3) { src = 'Massive snapshot (Starter delayed; per-field ages measured)'; mode = 'FULL_SNAPSHOT'; return m; }
   if (m && m.length) { const live = refresh.length ? await alpacaAll(refresh) : null; // refresh per-symbol staleness; penny research cap and BUY hard block unchanged
     if (live) { let n = 0; for (const r of m) if (mergeLiveSnapshot(r, live.get(r.sym))) n++;
       src = 'alpaca price updates (' + feedUsed().toUpperCase() + ' feed): ' + n + ' updated of ' + refresh.length + ' stale refresh targets (' + m.length + ' received); freshness measured per symbol + ' + 'per-response SIP volume only; each aggregate retains its own bar timestamp'; mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; }
@@ -123,7 +123,7 @@ async function snap() {
   if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
   src = 'alpaca top-50 gainers only'; mode = 'PARTIAL_TOP50_FALLBACK';
   const byM = new Map((m || []).map(r => [r.sym, r]));
-  for (const r of a) { const x = byM.get(r.sym); r.vol = x ? x.vol : null; r.vt = x ? x.vt : 0; if (!(r.prevC > 0) && x) r.prevC = x.prevC; if (!(r.open > 0) && x) r.open = x.open; byM.set(r.sym, r); }
+  for (const r of a) { const x = byM.get(r.sym); if (x) { mergeLiveSnapshot(x,r,now); if (r.prevC>0) x.prevC=r.prevC; if (!(x.open>0)&&r.open>0) x.open=r.open; } else byM.set(r.sym,r); }
   return [...byM.values()];
 }
 async function minuteBars(sym) { try { const r = await request(MV + `/v2/aggs/ticker/${sym}/range/1/minute/${day}/${day}?adjusted=true&sort=asc&limit=50000&apiKey=` + encodeURIComponent(env.MASSIVE_KEY || '')); if (!r.ok) return null; return toBars((await r.json()).results, day); } catch (e) { return null; } }

@@ -666,7 +666,17 @@ function isPaused(finishedR) {
   const lastFew = finishedR.slice(-CFG.PAUSE_AFTER);
   return lastFew.length >= CFG.PAUSE_AFTER && lastFew.reduce((a, b) => a + b, 0) < 0;
 }
-if (typeof module !== 'undefined') module.exports = { LOGIC_VERSION, BASE, CFG, VARIANTS, vkey, ema, atr, marketMap, indicators, signalAt, exitAt, followTrade, allTrades, stats, learn, famText, ruleText, statusText, plan, exitCheck, verdict, applyGates, HALAL0, HALAL_TEXT, halalOf, crossPrice, buyTrigger, sellLevel, trendStats, resolveCall, barOutcomes, isPaused, refPlan, refOdds, volRegime, corr60, QUICK, QUICK_POOLS, quickWhat, quickExitText, bullishCandle, bearishCandle, CANDLE_NAMES, BEAR_NAMES, quickStudy, quickFire, quickSize, quickPlan, rsi };
+// Observation time is not provider event time; a price is never executable BBO evidence.
+function providerPriceObservation(provider, reported, sourceTime, observedAt = Date.now()) {
+  const p = (typeof reported === 'number' || typeof reported === 'string' && /^\d+(?:\.\d+)?$/.test(reported)) ? Number(reported) : NaN;
+  const validPrice = Number.isFinite(p) && p > 0;
+  const t = typeof sourceTime === 'number' && Number.isFinite(sourceTime) && sourceTime > 0 ? sourceTime : null;
+  const clock = typeof observedAt === 'number' && Number.isFinite(observedAt) && observedAt > 0;
+  const age = clock && t !== null ? observedAt - t : null;
+  const status = !validPrice ? 'INVALID_PRICE' : !clock || t === null ? 'UNKNOWN_SOURCE_TIME' : age < 0 ? 'FUTURE_SOURCE_TIME' : age > 180000 ? 'STALE_PRICE' : 'FRESH_OBSERVED_PRICE';
+  return {provider, src:provider === 'FINNHUB' ? 'finnhub' : 'twelve-data', feed:'UNKNOWN', kind:'REFERENCE_PRICE_NOT_BBO', reportedPrice:validPrice ? p : null, t, observedAt:clock ? observedAt : null, priceAgeMs:age, status, price:status === 'FRESH_OBSERVED_PRICE' ? p : null};
+}
+if (typeof module !== 'undefined') module.exports = { providerPriceObservation, LOGIC_VERSION, BASE, CFG, VARIANTS, vkey, ema, atr, marketMap, indicators, signalAt, exitAt, followTrade, allTrades, stats, learn, famText, ruleText, statusText, plan, exitCheck, verdict, applyGates, HALAL0, HALAL_TEXT, halalOf, crossPrice, buyTrigger, sellLevel, trendStats, resolveCall, barOutcomes, isPaused, refPlan, refOdds, volRegime, corr60, QUICK, QUICK_POOLS, quickWhat, quickExitText, bullishCandle, bearishCandle, CANDLE_NAMES, BEAR_NAMES, quickStudy, quickFire, quickSize, quickPlan, rsi };
 </script>
 <script>
 // ---- Time helpers (US market hours, New York time; holidays are not known to this page) ----
@@ -822,8 +832,8 @@ function setHalal(sym, st) { const m = store.get('halal', {}); if (st) m[sym] = 
 // How old is the price shown for this stock? Signals come from the last close; only a few stocks are re-priced during the day.
 function pl(sym) {
   const d = state.loaded[sym];
-  if (!marketOpen(state.now)) return 'close ';
-  return d && state.now - d.at < 20 * 60000 ? 'now ' : 'last close ';
+  const q = d && d.priceEvidence;
+  return q && providerPriceObservation(q.provider,q.reportedPrice,q.t,state.now).price !== null ? 'fresh observed trade ' : 'daily-bar reference ';
 }
 function stageOf(s) {
   if (s.pos) return s.v.cls === 'sell' ? { key: 'sell', label: 'Sell / reassess watch', cls: 'sell' } : { key: 'hold', label: 'Hold', cls: 'hold' };
@@ -974,8 +984,8 @@ function renderQuick(studies, calls) {
   for (const q of extra) {
     const t = el('table'), R2 = (x, y, z) => t.append(row(x, y, z));
     const lp = (state.livePx || {})[q.sym];
-    if (lp) R2('Price now', money(lp.p), 'At ' + new Date(lp.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '. ' + (lp.p > q.buyHi ? 'Above the entry range: the dip is gone, skip it.' : lp.p <= q.stop ? 'At or below the invalidation level: the setup has failed.' : lp.p < q.buyLo ? 'Below the planned range and above the invalidation level. The dip is still running: a lower entry, but not yet a bounce.' : 'Inside the entry range.'));
-    else if (marketOpen(state.now)) R2('Price now', 'Loading', 'The prices below were set at the last close.');
+    if (lp && providerPriceObservation(lp.provider,lp.reportedPrice,lp.t,state.now).price !== null) R2('Price now', money(lp.price), 'At ' + new Date(lp.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '. ' + (lp.price > q.buyHi ? 'Above the entry range: the dip is gone, skip it.' : lp.price <= q.stop ? 'At or below the invalidation level: the setup has failed.' : lp.price < q.buyLo ? 'Below the planned range and above the invalidation level. The dip is still running: a lower entry, but not yet a bounce.' : 'Inside the entry range.'));
+    else if (marketOpen(state.now)) R2('Current price', 'UNVERIFIED', 'Twelve Data /price has no verified source timestamp. The plan below is daily-bar reference only; check a fresh broker BBO.');
     R2('Entry range', money(q.buyLo) + ' to ' + money(q.buyHi), 'Set at the ' + ((state.cloud || {}).session || 'last') + ' close, for the next open. If it opens above the range, skip it.');
     if (q.t1) R2('Target', money(q.t1), (q.half ? 'Sell HALF here, the rest on the rule exit' : 'Sell ALL here') + ' (tested on unseen trades: it beat the plain exit).');
     R2('Rule exit', q.q === 'gap' ? 'Close below ~' + money(q.sellAbove) : 'Close above ~' + money(q.sellAbove), 'The ' + (q.exitText || 'first daily close above its 5 day average') + ', or after ' + (q.maxHold || 5) + ' sessions.');
@@ -1107,7 +1117,7 @@ function render() {
   lastRender = Date.now(); state.ctx = null;
   const now = state.now, calls = store.get('calls', []), list = watchAll();
   const open = marketOpen(now);
-  $('meta').textContent = (open ? 'US market is open. ' : 'US market is closed. Next open ' + when(nextOpen(now)) + ' your time. ') + 'Signals are set once a day, from the last close. Each Refresh during market hours re-prices your positions and today\u2019s setups, and recalculates their entry, stop and targets from the live price' + (state.livePlan ? ' (last at ' + new Date(state.livePlan).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ')' : '') + '. The rest of the list stays at the last close. The page updates itself every 5 minutes while it is open. Last checked ' + new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '.';
+  $('meta').textContent = (open ? 'US market is open. ' : 'US market is closed. Next open ' + when(nextOpen(now)) + ' your time. ') + 'Signals are set once a day, from the last close. Refresh retains daily-bar reference plans. Timestamp-unverified prices do not reprice entry, stop or target; fresh executable BBO evidence remains required' + (state.livePlan ? ' (last at ' + new Date(state.livePlan).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ')' : '') + '. The rest of the list stays at the last close. The page updates itself every 5 minutes while it is open. Last checked ' + new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '.';
   const M = market();
   $('marketLine').hidden = !M.known;
   if (M.known) $('marketLine').textContent = 'Market backdrop: ' + (M.up ? 'uptrend. The S&P 500 is above its 200 day average.' : 'downtrend. The S&P 500 is below its 200 day average, so rules with the market filter will not buy.');
@@ -1573,7 +1583,7 @@ async function refresh() {
     btn.textContent = sym + '…';
     try {
       const c = await fetchSymbol(sym, key, now), d = toCandles(c.rows, now); fetched++; delete state.errors[sym];
-      state.loaded[sym] = cur && cur.candles.length === d.candles.length ? { ...cur, last: d.last, at: now } : { ...d, at: now };
+      state.loaded[sym] = cur && cur.candles.length === d.candles.length ? { ...cur, last: d.last, at: now, priceEvidence:null } : { ...d, at: now, priceEvidence:null };
       compute(sym); await sleep(0);
     } catch (e) {
       if (e.code === 429) { limited = true; pending++; }
@@ -1598,8 +1608,8 @@ async function refresh() {
     if (pri.length) {
       try {
         const j = await (await fetch('https://api.twelvedata.com/price?symbol=' + encodeURIComponent(pri.join(',')) + '&apikey=' + encodeURIComponent(key), { cache: 'no-store' })).json();
-        for (const sym of pri) { const v = pri.length === 1 ? j : j[sym]; if (v && +v.price > 0) { state.loaded[sym].last = +v.price; state.loaded[sym].at = Date.now(); } }
-        state.liveAt = Date.now(); state.livePlan = Date.now();
+        for (const sym of pri) { const v = pri.length === 1 ? j : j[sym]; const evidence=providerPriceObservation('TWELVE_DATA',v?.price,null,Date.now()); state.loaded[sym].priceEvidence=evidence; /* /price supplies no authenticated event clock: retain the daily reference. */ }
+        state.liveAt = Date.now();
       } catch (e) {}
     }
     state.now = Date.now(); render();
@@ -1608,8 +1618,8 @@ async function refresh() {
   if (marketOpen(Date.now()) && state.cloud && state.cloud.quick) {
     state.livePx = state.livePx || {};
     for (const q of state.cloud.quick.filter(x => !state.loaded[x.sym]).slice(0, 4)) {
-      const old = state.livePx[q.sym]; if (old && Date.now() - old.at < 600000) continue;
-      try { const j = await (await fetch('https://api.twelvedata.com/price?symbol=' + encodeURIComponent(q.sym) + '&apikey=' + encodeURIComponent(key), { cache: 'no-store' })).json(); if (+j.price > 0) state.livePx[q.sym] = { p: +j.price, at: Date.now() }; } catch (e) {}
+      const old = state.livePx[q.sym]; if (old && Date.now() - (old.observedAt ?? old.at) < 600000) continue;
+      try { const j = await (await fetch('https://api.twelvedata.com/price?symbol=' + encodeURIComponent(q.sym) + '&apikey=' + encodeURIComponent(key), { cache: 'no-store' })).json(); state.livePx[q.sym] = providerPriceObservation('TWELVE_DATA',j.price,null,Date.now()); } catch (e) {}
     }
     render();
   }

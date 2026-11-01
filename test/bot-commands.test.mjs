@@ -18,10 +18,11 @@ const server = http.createServer((req, res) => { let body = ''; req.on('data', c
     if(refuseMenu&&j.reply_markup?.keyboard){res.writeHead(200,{'Content-Type':'application/json'});return res.end(JSON.stringify({ok:false,description:'refused'}));}
     out={ok:true,result:{message_id:++uid}}; sent.push({ text: j.text, rows: j.reply_markup && j.reply_markup.inline_keyboard }); }
   else if (/\/answerCallbackQuery/.test(req.url)) { try { answers.push(JSON.parse(body).text); } catch (e) {} }
+  else if (/\/quote\?symbol=/.test(req.url)) out = { c: 101.50, t: Math.floor(Date.now()/1000) };
   else if (/\/price\?symbol=/.test(req.url)) out = { price: '101.50' };
   res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(out)); }); });
 await new Promise(r => server.listen(0, '127.0.0.1', r));
-const BASE = 'http://127.0.0.1:' + server.address().port, env = { TG_TOKEN: 'T', TG_CHAT: '42', TG_BASE: BASE, TD_BASE: BASE, FH_BASE: BASE, SEC_BASE: BASE, PRIVATE_KEY: 'test-key' };   // share counts live encrypted in data/private.enc
+const BASE = 'http://127.0.0.1:' + server.address().port, env = { TG_TOKEN: 'T', TG_CHAT: '42', TG_BASE: BASE, TD_BASE: BASE, FH_BASE: BASE, FINNHUB_KEY: 'synthetic-quote-key', SEC_BASE: BASE, PRIVATE_KEY: 'test-key' };   // share counts live encrypted in data/private.enc
 const send = async (S, ...items) => { queue = items; sent = []; answers = []; await S.fn('tgCommands')(null); return sent.map(x => x.text).join('\n'); };
 const today = new Date().toISOString().slice(0, 10), ok = { s: 'ok', d: today, by: 'ZAD (you)' };
 const load = (files = {}) => loadScan({ env, files: { 'data/my-positions.json': {}, ...files } });

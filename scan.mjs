@@ -1010,9 +1010,10 @@ async function liveQ(sym) {
     if (Date.now() - fhStart > 60000) { fhStart = Date.now(); fhUsed = 0; }
     if (fhUsed >= 50) { await sleep(FAST ? 5 : Math.max(0, 61000 - (Date.now() - fhStart))); fhStart = Date.now(); fhUsed = 0; }
     fhUsed++;
-    try { const r = await fetch(FH + '/quote?symbol=' + encodeURIComponent(sym) + '&token=' + encodeURIComponent(env.FINNHUB_KEY)); if (r.ok) { const j = await r.json(); if (j && Number.isFinite(j.c)&&j.c>0) return { price:j.c,src:'finnhub',t:Number.isFinite(j.t)&&j.t>0?j.t*1000:null }; } } catch (e) {}
+    try { const r = await fetch(FH + '/quote?symbol=' + encodeURIComponent(sym) + '&token=' + encodeURIComponent(env.FINNHUB_KEY)); if (r.ok) { const j = await r.json(); if (j && Number.isFinite(j.c)&&j.c>0) return L.providerPriceObservation('FINNHUB',j.c,Number.isFinite(j.t)&&j.t>0?j.t*1000:null,Date.now()); } } catch (e) {}
   }
-  return td('/price?symbol=' + encodeURIComponent(sym));
+  const j=await td('/price?symbol=' + encodeURIComponent(sym));
+  return L.providerPriceObservation('TWELVE_DATA',j?.price,null,Date.now());
 }
 // ---- WHOLE MARKET (paid Massive plan: unlimited calls, 5+ years of daily prices). Every liquid US company is tested every
 // night with the same rules and the same proof gates as the core list. On the free plan (5 calls a minute) the first refusal
@@ -1760,15 +1761,15 @@ async function hotList(sig) {
   if (!sig) return 'No scan has run yet.';
   const open = marketOpen(Date.now()), pos = loadPos(), px = {};
   if (open) { const c = planCands(sig, pos); for (const sym of [...new Set([...c.filter(x => x.ok).map(x => x.sym), ...Object.keys(pos)])].slice(0, 30)) { const j = await liveQ((sym)); if (j && +j.price > 0) px[sym] = +j.price; } }
-  if (QUIET()) return actionsText(sig, pos, open ? px : null, open ? 'ACTIONS NOW (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait, live prices)' : 'ACTIONS, from the ' + sig.session + ' close');
-  return planText(sig, pos, open ? px : null, open ? 'WHAT TO DO NOW (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait, live prices)' : 'PLAN, from the ' + sig.session + ' close');
+  if (QUIET()) return actionsText(sig, pos, open ? px : null, open ? 'ACTIONS NOW (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait, fresh observed prices where available; otherwise reference only)' : 'ACTIONS, from the ' + sig.session + ' close');
+  return planText(sig, pos, open ? px : null, open ? 'WHAT TO DO NOW (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait, fresh observed prices where available; otherwise reference only)' : 'PLAN, from the ' + sig.session + ' close');
 }
 async function detailList(sig) {
   if (!sig) return 'No scan has run yet.';
   const open = marketOpen(Date.now()), pos = loadPos(), px = {};
   const OK = new Set(planCands(sig, pos).filter(x => x.ok && myHalal(x.sym)==='ok').map(x => x.sym)), qk = (sig.quick || []).filter(x => !pos[x.sym] && OK.has(x.sym)).slice(0, 5), buys = (sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo && !pos[x.sym] && OK.has(x.sym)).slice(0, 4);
   if (open) for (const sym of [...new Set([...qk.map(q => q.sym), ...buys.map(b => b.sym), ...Object.keys(pos)])].slice(0, 30)) { const j = await liveQ((sym)); if (j && +j.price > 0) px[sym] = +j.price; }
-  const out = [...(open ? conclusionLive(sig, pos, px) : conclusion(sig, pos)), '', 'DETAILS, from the ' + sig.session + ' close' + (open ? ', priced now' : ' (market closed: these are the prices to use at the next open)')], live = async (sym, fallback) => px[sym] || fallback;
+  const out = [...(open ? conclusionLive(sig, pos, px) : conclusion(sig, pos)), '', 'DETAILS, from the ' + sig.session + ' close' + (open ? ', fresh observed prices where available; otherwise reference only' : ' (market closed: these are the prices to use at the next open)')], live = async (sym, fallback) => px[sym] || fallback;
   if (qk.length) out.push('', 'QUICK TRADES, 2 TO 5 DAYS (' + qk.length + ')');
   for (const q of qk) {
     const p = await live(q.sym, q.last), where = p > q.buyHi ? 'ABOVE its entry range: the dip is gone, skip it' : p <= q.stop ? 'FAILED: at or below its invalidation level' : p < q.buyLo ? 'below its planned range, dip still running' : 'inside its entry range';
@@ -4236,7 +4237,7 @@ async function intraday(onlyMine) {
   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
   const seen = {};
   for (const sym of watch) {
-    const j = await liveQ((sym)), p = +j.price; const fresh = Number.isFinite(p)&&p>0&&Number.isFinite(j.t) && j.t>0 && Date.now()-j.t>=0 && Date.now()-j.t<=180000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
+    const j = await liveQ((sym)), p = +j.price; const fresh = Number.isFinite(p)&&p>0&&Number.isFinite(j.t) && j.t>0 && Date.now()-j.t>=0 && Date.now()-j.t<=180000;   // SOURCE-CLOCK GATE: no BUY NOW on a price older than three minutes; trade is not executable BBO
     const say = (k, text) => {const key=sym+k;if(alertAvailable(st,key)&&!alertKeys.has(key)){alertKeys.add(key);alerts.push(sym+' at '+money(p)+': '+text);}};
     if(!fresh){if(myPos[sym])say('priceUnknown','YOUR POSITION: PRICE UNVERIFIED. Check your broker and keep its stop; no current-price SELL/HOLD inference.');continue;}seen[sym]=p;
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
