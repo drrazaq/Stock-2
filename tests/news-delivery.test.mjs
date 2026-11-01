@@ -84,3 +84,9 @@ for(const journalFailure of ['commit','push'])test('news publication '+journalFa
 test('competing remote unknown journal cannot be overwritten to authorize another send',async t=>{const f=await fixture(t,{remoteJournal:true,journalRace:true});f.ack();await f.run({allowDeliveryFailure:true});assert.equal(f.messages.length,0);assert.equal(f.remoteBook().delivery['AAA|1'].status,'UNKNOWN');assert.equal(f.remoteBook().unknown['AAA|1'].reason,'competing writer');});
 
 test('malformed provider identifiers cannot become source identity or trigger delivery',async t=>{const f=await fixture(t,{companyId:{bad:'id'}});f.ack();await f.run();assert.equal(f.messages.length,0);const audit=f.raw('news-log.jsonl').trim().split('\n').map(JSON.parse).find(x=>x.recordType==='SOURCE_REVISION_QUARANTINE');assert.equal(audit.reason,'INVALID_REVISION_RECORD');assert.equal(audit.reportedId,null);});
+
+// HISTORY-03 B04/E01: actual news-watch process, synthetic provider/Telegram only.
+test('market-shock research names the selected historical population and is never a return forecast',async t=>{
+ const f=await fixture(t,{macro:true});f.write('mday-study.json',{all:{newer:0.01},rows:[{k:'bigDown',verdict:'NOT PROVEN',newer:{avg:0.016,n:50}}]});f.ack();await f.run();
+ const text=f.messages.find(x=>x.includes('MARKET SHOCK'));assert.ok(text);assert.match(text,/past test trades of pre-selected stocks/);assert.match(text,/50 historical test trades, not prospective cases/);assert.match(text,/NOT PROVEN/);assert.match(text,/not an expected return/);assert.doesNotMatch(text,/system’s tested buys|Decided by the system from/);
+});
