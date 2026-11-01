@@ -1,0 +1,132 @@
+{
+ "kind": "MARKET03_CATALYST03_SOURCE_CONTRACT_PACKAGE_V1",
+ "author": "Claude",
+ "branch": "claude/market03-catalyst03",
+ "developmentBase": "a51fa948537c3fb2df7fa8bb7fc8dbf73c7a159f",
+ "developmentBaseBranch": "Stock2-safety-fixes",
+ "head": "5c5b2eeb763ae2c7e62b631a78f0fda4b08bda6d",
+ "productionMain": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+ "patch": "market03-catalyst03-code.patch",
+ "patchSha256": "21841f123ccd9e108a5ae83400d3cce5d816148a11d1ea014d4d30b21d82dff1",
+ "files": [
+  "comeback-lab.mjs",
+  "comeback-provenance.mjs",
+  "discovery-runtime.mjs",
+  "discovery2.mjs",
+  "earnings-study.mjs",
+  "news-revision-archive.mjs",
+  "news-watch.mjs",
+  "source-contract.mjs",
+  "tests/catalyst03-source-to-candidate.test.mjs",
+  "tests/market03-comeback-spy.test.mjs",
+  "tests/market03-ingress-matrix.test.mjs",
+  "tests/market03-source-contract.test.mjs",
+  "tools/market03-ingress-matrix.mjs"
+ ],
+ "before": {
+  "comeback-lab.mjs": "68559eea87bc814984bec1fbb75d233781065db16094b62f54be5283ba858b7b",
+  "comeback-provenance.mjs": null,
+  "discovery-runtime.mjs": "a4a4ac558c34c387e40c5f225a044aef7d2826112bb278e94e4e494073a9280e",
+  "discovery2.mjs": "709033f065571b41bedaff062fe9fe952f162d5a05dbcffcd0af44431da93fee",
+  "earnings-study.mjs": "763bd4733a3c11ef6aa626ad7e61e426605c6ef54dcea582ba04282a1487e09d",
+  "news-revision-archive.mjs": null,
+  "news-watch.mjs": "41a103e105f4c4252e3665b3bbed4a4697b218e8adfcf0388d9f528012ab873e",
+  "source-contract.mjs": null,
+  "tests/catalyst03-source-to-candidate.test.mjs": null,
+  "tests/market03-comeback-spy.test.mjs": null,
+  "tests/market03-ingress-matrix.test.mjs": null,
+  "tests/market03-source-contract.test.mjs": null,
+  "tools/market03-ingress-matrix.mjs": null
+ },
+ "after": {
+  "comeback-lab.mjs": "ca5830a2369fc71ed194fd5643ad9195aea42b96fa1f16f01e104cea076c5c96",
+  "comeback-provenance.mjs": "b956b73773247245580a2df28d7a99a113d4d81965cade3a0802ebcf60fc81d3",
+  "discovery-runtime.mjs": "22f63325c82e5a6e90eb3260ebde18d8edf3b5fb0f82033684ad73cf64be40e5",
+  "discovery2.mjs": "122660f00e580e300591d15fdcc2edf4df916d15ac29cd86229eb599cf44a6b7",
+  "earnings-study.mjs": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+  "news-revision-archive.mjs": "2eec1e227f88df432ab1caa5c10649bb4afa461a06d11ca1e1560ed305b83e3d",
+  "news-watch.mjs": "2f00103bd31eb245fca5922f6f28706fbb192803b3f136d90da9bee91a262755",
+  "source-contract.mjs": "392f65eb99381a870d6fc06182f55b290e0a374fcf103b322f9493292f6cfc81",
+  "tests/catalyst03-source-to-candidate.test.mjs": "1f3d404dc7d268227b956645fc117af4013a4ea06aca2f5f206a9e004e1cf25c",
+  "tests/market03-comeback-spy.test.mjs": "a56746beddb29afb9db7e7ffbaca641d41d5902568c82c3cc7e56be14e61b1e4",
+  "tests/market03-ingress-matrix.test.mjs": "299120bded7d98d4fbc95b81f4a3d83e5a91beae41f445afaa39c95710052f0f",
+  "tests/market03-source-contract.test.mjs": "8bc469b8708b9e1fdc9d16a27377bf7710059a75f09d964fe5de568153b4a364",
+  "tools/market03-ingress-matrix.mjs": "ec8187d5072008faf5e5b34a563936a120755296916529a1542eba8146545568"
+ },
+ "unchangedDependencies": {
+  "market-symbol.mjs": {
+   "base": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+   "head": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+   "unchanged": true
+  },
+  "market-session.mjs": {
+   "base": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+   "head": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+   "unchanged": true
+  },
+  "comeback-core.mjs": {
+   "base": "7c25bce42a0a1fa70a0c28fa9aa178c4af9606bda60281abb15c75ebdf9e7ad6",
+   "head": "7c25bce42a0a1fa70a0c28fa9aa178c4af9606bda60281abb15c75ebdf9e7ad6",
+   "unchanged": true
+  },
+  "discovery2-core.mjs": {
+   "base": "a453f3f624094aeb6d9caa8492ef93fe45498261dc413c2b30b3dbf88279316b",
+   "head": "a453f3f624094aeb6d9caa8492ef93fe45498261dc413c2b30b3dbf88279316b",
+   "unchanged": true
+  },
+  "news-revision-state.mjs": {
+   "base": "4437791c9e05502e6953f06ad7e5ea454ca153a0c6947c15ae5be19fe8ad96c4",
+   "head": "4437791c9e05502e6953f06ad7e5ea454ca153a0c6947c15ae5be19fe8ad96c4",
+   "unchanged": true
+  },
+  "news-source.mjs": {
+   "base": "55015ab59063d784f9b7cd8e1e81fce5a8bebc80b5f13cfcf8b9aea57b4a24e8",
+   "head": "55015ab59063d784f9b7cd8e1e81fce5a8bebc80b5f13cfcf8b9aea57b4a24e8",
+   "unchanged": true
+  },
+  "share-supply-source.mjs": {
+   "base": "d1718c31458db28a63296719b9c4dabfc53452c840cebe10def4854056db3fe8",
+   "head": "d1718c31458db28a63296719b9c4dabfc53452c840cebe10def4854056db3fe8",
+   "unchanged": true
+  },
+  "scan.mjs": {
+   "base": "638525b1e4218bb812c8faeac7813edf163e75e5c52810a0e3ee1c3b80ce5e14",
+   "head": "638525b1e4218bb812c8faeac7813edf163e75e5c52810a0e3ee1c3b80ce5e14",
+   "unchanged": true
+  },
+  "mentor-plan.mjs": {
+   "base": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+   "head": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+   "unchanged": true
+  },
+  "ignition-watch.mjs": {
+   "base": "11dac84aeb1fb26027d191ba01a7410a91bf79262a921ddbc14834a6b9ee63ea",
+   "head": "11dac84aeb1fb26027d191ba01a7410a91bf79262a921ddbc14834a6b9ee63ea",
+   "unchanged": true
+  },
+  "alpaca-feed.mjs": {
+   "base": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568",
+   "head": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568",
+   "unchanged": true
+  },
+  "leaders-study.mjs": {
+   "base": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3",
+   "head": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3",
+   "unchanged": true
+  }
+ },
+ "notChanged": [
+  "data/** (no data or frozen result file in the diff)",
+  "existing test files",
+  "workflows",
+  "scan.mjs (proposal only)",
+  "mentor, SIP, V2 host/capture, watcher files"
+ ],
+ "activity": {
+  "providerCalls": 0,
+  "credentials": 0,
+  "deployment": false,
+  "liveCollection": false,
+  "messages": 0
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "node": "v20.20.0 (local, root user)",
+ "runner": "mirror of .github/workflows/tests.yml \"Run every test file\" (same four host files skipped)",
+ "base": {
+  "commit": "a51fa948537c3fb2df7fa8bb7fc8dbf73c7a159f",
+  "files": 239,
+  "total": "TOTAL pass=238 fail=1",
+  "failed": [
+   "tests/research-recovery-publication.test.mjs"
+  ]
+ },
+ "package": {
+  "commit": "5c5b2eeb763ae2c7e62b631a78f0fda4b08bda6d",
+  "note": "exact detached checkout; later commits are documentation only",
+  "files": 243,
+  "total": "TOTAL pass=242 fail=1",
+  "failed": [
+   "tests/research-recovery-publication.test.mjs"
+  ]
+ },
+ "addedFiles": [
+  "tests/catalyst03-source-to-candidate.test.mjs",
+  "tests/market03-comeback-spy.test.mjs",
+  "tests/market03-ingress-matrix.test.mjs",
+  "tests/market03-source-contract.test.mjs"
+ ],
+ "environmentalFailure": {
+  "file": "tests/research-recovery-publication.test.mjs",
+  "reason": "the test asserts it is not run as root ('run this permissions regression as a non-root user'); this container runs as root. Identical on base and package; not touched by this package."
+ },
+ "node22": {
+  "tests/market03-source-contract.test.mjs": "12/12",
+  "tests/market03-ingress-matrix.test.mjs": "3/3",
+  "tests/market03-comeback-spy.test.mjs": "1/1",
+  "tests/catalyst03-source-to-candidate.test.mjs": "6/6",
+  "tests/earnings-source-caller.test.mjs": "3/3",
+  "tests/discovery-runtime.test.mjs": "14/14",
+  "tests/news-delivery.test.mjs": "22/22"
+ },
+ "productionMainCompatibility": {
+  "main": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+  "appliesToMain": [
+   "source-contract.mjs",
+   "news-revision-archive.mjs",
+   "comeback-provenance.mjs",
+   "comeback-lab.mjs",
+   "tools/market03-ingress-matrix.mjs"
+  ],
+  "blockedOnMain": {
+   "discovery2.mjs": "Codex da99aa5 (shared SEC index contract)",
+   "earnings-study.mjs": "Codex 5cc2dbb (revision quarantine)",
+   "news-watch.mjs": "Codex 5cc2dbb/0f29b05 (revision state, bounded source)",
+   "discovery-runtime.mjs": "absent on main (Codex branch)"
+  },
+  "pureModulesOnMain": "tests/market03-source-contract.test.mjs 12/12 on Node 20 and 22; market-symbol.mjs and market-session.mjs byte-identical to main",
+  "spyIngressOnMain": "tests/market03-comeback-spy.test.mjs 1/1 on main + comeback hunks"
+ },
+ "scanProposal": {
+  "patch": "docs/market03-catalyst03/proposal/scan-market03.patch",
+  "sha256": "4f555b0012f79ff2507b8694fb6254bd4c58e47db85cea48adb669014ee21188",
+  "appliesTo": [
+   "package branch",
+   "production main f6a9b166"
+  ],
+  "scanDependentTestFilesOnPatchedTree": "58/58 pass",
+  "checkBefore": {
+   "tree": "mc",
+   "tdBarsPresent": false,
+   "thanksgivingAmc": {
+    "report": "2026-11-25",
+    "weekdayNextDay": "2026-11-26",
+    "calendarSession": "2026-11-27"
+   },
+   "goodFridayAmc": {
+    "report": "2027-03-25",
+    "weekdayNextDay": "2027-03-26",
+    "calendarSession": "2027-03-29"
+   },
+   "peadUsesProducerSession": false
+  },
+  "checkAfter": {
+   "tree": "scanprop-tree",
+   "tdBarsPresent": true,
+   "malformedRowsDropped": true,
+   "foreignSeriesRefused": true,
+   "emptySeriesRefused": true,
+   "thanksgivingAmc": {
+    "report": "2026-11-25",
+    "weekdayNextDay": "2026-11-26",
+    "calendarSession": "2026-11-27"
+   },
+   "goodFridayAmc": {
+    "report": "2027-03-25",
+    "weekdayNextDay": "2027-03-26",
+    "calendarSession": "2027-03-29"
+   },
+   "peadUsesProducerSession": true
+  }
+ }
+}
