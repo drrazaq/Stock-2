@@ -16,7 +16,7 @@ import { freezeEach, latestBlock } from './first-run.mjs';
 import { halfStat, judge, fcfCheck, TIER2_T } from './value-core.mjs';
 import { ownAverage, relFlags, isInsider } from './squad1-core.mjs';
 import { RULES as XRULES, walkHold, PITRanker, midSplit } from './expert-core.mjs';
-import { COST, INSQ, CONG, RULE_IDS, mean, r4, halfOf, capG, insiderClusters, stopWalk, sma200, parseFdIndex, parsePtrText, isScanned, purchases, congDataOk, trySmallBar, preRegister } from './agent-c-core.mjs';
+import { PARSER_V, COST, INSQ, CONG, RULE_IDS, mean, r4, halfOf, capG, insiderClusters, stopWalk, sma200, parseFdIndex, parsePtrText, isScanned, purchases, congDataOk, trySmallBar, preRegister } from './agent-c-core.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', HOUSE = local(env.HOUSE_BASE) || 'https://disclosures-clerk.house.gov';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.AGC_CACHE || 'agentc-cache', SC1 = env.SQ1_CACHE || 'squad1-cache', VC = env.VALUE_CACHE || 'value-cache';
@@ -151,12 +151,12 @@ for (const y of YEARS) { const cf = SC + '/house/idx-' + y + '.json'; let rows =
   if (rows) { idxStat.ok++; for (const r of rows) IDX.push({ ...r, y }); } else idxStat.failed.push(y); }
 log('House index: ' + JSON.stringify(idxStat) + '; PTRs listed ' + IDX.length);
 const PTR = new Map(); let downloaded = 0, fetchedNow = 0, dlFail = 0; const SAMPLE_TXT = [];
-{ const todo = []; for (const r of IDX) { const f = SC + '/ptr/' + r.y + '/' + r.docId + '.json', x = J(f, null); if (x) { PTR.set(r.docId, x); downloaded++; } else todo.push(r); }
+{ const todo = []; for (const r of IDX) { const f = SC + '/ptr/' + r.y + '/' + r.docId + '.json', x = J(f, null); if (x && x.v === PARSER_V) { PTR.set(r.docId, x); downloaded++; } else todo.push(r); }
   log('PTRs cached ' + downloaded + ', to read ' + todo.length);
   let ix = 0; const work = async () => { while (ix < todo.length) { const r = todo[ix++]; if (left() < 90 * 60e3) { dlFail++; continue; }
       const buf = await house(HOUSE + '/public_disc/ptr-pdfs/' + r.y + '/' + r.docId + '.pdf', 'buf'); if (!buf) { dlFail++; continue; }
       const pf = SC + '/tmp-' + r.docId + '.pdf'; fs.writeFileSync(pf, buf); let txt = ''; try { txt = execFileSync('pdftotext', ['-layout', pf, '-'], { maxBuffer: 1e8, timeout: 60000 }).toString(); } catch (e) { txt = ''; } try { fs.unlinkSync(pf); } catch (e) {}
-      const p = parsePtrText(txt), x = { docId: r.docId, chars: p.chars, anchors: p.anchors, st: p.st, stTicker: p.stTicker, rows: p.rows };
+      const p = parsePtrText(txt), x = { v: PARSER_V, docId: r.docId, chars: p.chars, anchors: p.anchors, st: p.st, stTicker: p.stTicker, rows: p.rows };
       if (SAMPLE_TXT.length < 4 && p.anchors > 0) SAMPLE_TXT.push({ docId: r.docId, head: txt.split('\n').slice(0, 60).join('\n').slice(0, 4000) });
       W(SC + '/ptr/' + r.y + '/' + r.docId + '.json', x); PTR.set(r.docId, x); downloaded++; fetchedNow++; if (fetchedNow % 500 === 0) log('PTR PDFs read now: ' + fetchedNow); } };
   await Promise.all([work(), work(), work()]); }

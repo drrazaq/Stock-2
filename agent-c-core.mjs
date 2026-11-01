@@ -91,7 +91,10 @@ export function parseFdIndex(xml) { const out = []; for (const m of String(xml |
   return out; }
 // a transaction row anchor in pdftotext -layout output: type, transaction date, notification date, amount (lower bound)
 const ANCHOR = /(?:^|\s)(P|S|S \(partial\)|E)\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}\/\d{2}\/\d{4})\s+(?:\$([\d,]+)|(Spouse\/DC Over \$1,000,000|Over \$[\d,]+))/;
-const TICK = /\(([A-Z][A-Z0-9.\-]{0,7})\)\s*(?:-\s*)?(?:\$[\d,]+\s*)?\[([A-Z]{2,3})\]/;
+// tickers are matched case-blind: the 2021-era House PDFs map some capitals to lower case in the text layer ("(AlB)", "(gOOg)", "(PYPl)");
+// found by the 1 Nov DIAG (coverage check, no returns) and fixed before any return was computed. PARSER_V invalidates cached parses.
+export const PARSER_V = 2;
+const TICK = /\(([A-Za-z][A-Za-z0-9.\-]{0,7})\)\s*(?:-\s*)?(?:\$[\d,]+\s*)?\[([A-Z]{2,3})\]/;
 const TAGONLY = /\[([A-Z]{2,3})\]/;
 // -> { rows: [{ type, trade, notified, lo, hi, ticker, asset }], anchors, st, stTicker, text: chars }
 export function parsePtrText(txt) { const lines = String(txt || '').replace(/\f/g, '\n').split(/\r?\n/), A = [];
@@ -103,7 +106,7 @@ export function parsePtrText(txt) { const lines = String(txt || '').replace(/\f/
     const asset = tk ? tk[2] : tg ? tg[1] : null; const tail = lines[j].slice(m.index + m[0].length - 1), hiM = /-\s*\$([\d,]+)/.exec(tail) || (/-\s*$/.test(tail) ? /\$([\d,]+)/.exec(lines.slice(j + 1, end).join(' ')) : null);
     const lo = m[4] ? +m[4].replace(/,/g, '') : 1000001, hi = hiM ? +hiM[1].replace(/,/g, '') : null;
     if (asset === 'ST') { st++; if (tk) stTicker++; }
-    rows.push({ type: m[1] === 'S (partial)' ? 'S' : m[1], trade: usDate(m[2]), notified: usDate(m[3]), lo, hi: hi && hi > lo ? hi : null, ticker: tk ? tk[1].replace(/-/g, '.') : null, asset }); });
+    rows.push({ type: m[1] === 'S (partial)' ? 'S' : m[1], trade: usDate(m[2]), notified: usDate(m[3]), lo, hi: hi && hi > lo ? hi : null, ticker: tk ? tk[1].toUpperCase().replace(/-/g, '.') : null, asset }); });
   return { rows, anchors: A.length, st, stTicker, chars: String(txt || '').replace(/\s/g, '').length }; }
 // a PTR whose text layer is (nearly) empty is a scanned / handwritten filing
 export const isScanned = (p) => p.chars < 400 && p.anchors === 0;

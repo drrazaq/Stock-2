@@ -53,6 +53,9 @@ test('PTR text: rows, tickers on the wrapped line, options and sales kept apart,
   assert.equal(p.rows[3].ticker, null); assert.equal(p.rows[4].ticker, 'BRK.B');
   assert.deepEqual(purchases(p).map(r => r.ticker), ['GOOGL', 'BRK.B']); assert.equal(isScanned(p), false);
   assert.equal(isScanned(parsePtrText('  \n\f  Clerk of the House  \n')), true);
+  const q = parsePtrText('          SP        Albemarle Corporation (AlB) [ST]    P               02/10/2021 02/15/2021        $1,001 - $15,000        g\n' +
+    '                    Alphabet Inc. - Class C Capital    P               02/11/2021 02/16/2021        $1,001 - $15,000        f\n                    Stock (gOOg) [ST]');
+  assert.deepEqual(q.rows.map(r => r.ticker), ['ALB', 'GOOG'], 'lower-case capitals in 2021 PDFs');
 });
 test('data stop: each failure is named; a complete set passes', () => {
   assert.equal(congDataOk({ years: 6, yearsOk: 6, ptrs: 1000, downloaded: 995, scanned: 100, st: 5000, stTicker: 4800 }).ok, true);
