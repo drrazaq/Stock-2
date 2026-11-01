@@ -19,18 +19,23 @@ async function run(t, scenario) {
   fs.mkdirSync(path.join(dir, 'data'));
   execFileSync('git', ['init', '-q'], { cwd: dir, stdio: 'ignore' }); execFileSync('git', ['-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', 'commit', '--allow-empty', '-qm', 'fixture'], { cwd: dir, stdio: 'ignore' });
   const SYMS = scenario === 'race' ? Array.from({ length: 250 }, (_, i) => 'Z' + L[Math.floor(i / 26) % 26] + L[i % 26]) : ['ZZQ'];
-  const mrow = (s) => ({ ticker: s, lastTrade: { p: 10, t: late * 1e6 }, lastQuote: { p: 9.98, P: 10.02, t: late * 1e6 }, prevDay: { c: 9.5, v: 2e6 }, min: { c: 10, t: late, av: 1e5 }, day: { c: 10, o: 9.6, v: 1e5 } });
+  const minT = scenario.startsWith('top50-future') ? epoch + 10 * 60000 : late;   // a future-dated Massive volume clock
+  const mrow = (s) => ({ ticker: s, lastTrade: { p: 10, t: late * 1e6 }, lastQuote: { p: 9.98, P: 10.02, t: late * 1e6 }, prevDay: { c: 9.5, v: 2e6 }, min: { c: 10, t: minT, av: 1e5 }, day: { c: 10, o: 9.6, v: 1e5 } });
+  let snapshotRequests = 0;
   const calls = [], sockets = new Set();
   const server = http.createServer(async (req, res) => { const u = new URL(req.url, 'http://localhost'), feed = u.searchParams.get('feed'); calls.push(u.pathname + (feed ? '?feed=' + feed : '')); res.setHeader('Content-Type', 'application/json');
     if (u.pathname.includes('/v2/snapshot/locale')) return res.end(JSON.stringify({ tickers: SYMS.map(mrow) }));
     if (u.pathname.includes('/screener/')) return res.end(JSON.stringify({ gainers: [{ symbol: 'ZZQ' }] }));
-    if (u.pathname === '/v2/stocks/snapshots') { const syms = (u.searchParams.get('symbols') || '').split(',');
+    if (u.pathname === '/v2/stocks/snapshots') { const syms = (u.searchParams.get('symbols') || '').split(','); snapshotRequests++;
+      // top50-future*: the targeted refresh fails (non-403), so the watcher takes the top-50 fallback, whose snapshot succeeds
+      if (scenario.startsWith('top50-future') && snapshotRequests === 1) { res.statusCode = 500; return res.end('{}'); }
+      const minuteT = scenario === 'top50-future-sip-minute' ? epoch + 5 * 60000 : epoch - 60000;
       if (scenario === 'race') { if (feed === 'sip' && syms[0] === SYMS[0]) { await sleep(50); res.statusCode = 403; return res.end('{}'); } await sleep(feed === 'iex' ? 300 : 150); }
       if (feed === 'sip' && scenario === 'sip-403') { res.statusCode = 403; return res.end('{"message":"subscription does not permit"}'); }
       if (feed === 'sip' && scenario === 'sip-422') { res.statusCode = 422; return res.end('{"message":"invalid"}'); }
       if (scenario === 'sip-429') { res.statusCode = 429; res.setHeader('retry-after', '86400'); return res.end('{}'); }
       const tt = new Date(epoch - 30000).toISOString();
-      return res.end(JSON.stringify(Object.fromEntries(syms.map(s => [s, { latestTrade: { p: 11, t: tt }, latestQuote: { bp: 10.99, ap: 11.01, t: tt }, minuteBar: { t: new Date(epoch - 60000).toISOString(), c: 11, v: 1000 }, dailyBar: { t: day + 'T04:00:00Z', o: 9.6, c: 11, v: feed === 'sip' ? 3e6 : 5e4 }, prevDailyBar: { c: 9.5, v: 2e6 } }])))); }
+      return res.end(JSON.stringify(Object.fromEntries(syms.map(s => [s, { latestTrade: { p: 11, t: tt }, latestQuote: { bp: 10.99, ap: 11.01, t: tt }, minuteBar: { t: new Date(minuteT).toISOString(), c: 11, v: 1000 }, dailyBar: { t: day + 'T04:00:00Z', o: 9.6, c: 11, v: feed === 'sip' ? 3e6 : 5e4 }, prevDailyBar: { c: 9.5, v: 2e6 } }])))); }
     res.statusCode = 404; res.end('{}'); });
   server.on('connection', s => { sockets.add(s); s.on('close', () => sockets.delete(s)); }); await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => { for (const s of sockets) s.destroy(); server.close(); });
   const base = 'http://127.0.0.1:' + server.address().port, preload = path.join(dir, 'local-only.mjs');
@@ -47,10 +52,10 @@ async function run(t, scenario) {
   return { calls, live, shadow, SYMS, snaps: calls.filter(c => c.startsWith('/v2/stocks/snapshots')) };
 }
 
-test('SIP answer: live SIP price, volume and quote with their own clocks; archive says SIP', async t => {
+test('SIP answer: SIP price and quote with their own clocks; SIP daily volume used but labelled as having no stated as-of time', async t => {
   const r = await run(t, 'sip-ok'), x = r.shadow.find(s => s.sym === 'ZZQ'), ig = x.ig[0];
   assert.deepEqual(r.snaps, ['/v2/stocks/snapshots?feed=sip']);
-  assert.match(r.live.src, /SIP feed/); assert.match(r.live.src, /live SIP volume for 1/);
+  assert.match(r.live.src, /SIP feed/); assert.match(r.live.src, /SIP daily volume \(provider states no as-of time\) for 1/); assert.doesNotMatch(r.live.src, /live SIP volume/);
   assert.equal(x.px0, 11); assert.equal(x.rv0, 1.5, 'full-market SIP volume 3e6 / previous 2e6');
   assert.equal(ig.bid, 10.99); assert.equal(ig.qAgeSec, 30, 'quote age from the quote clock');
 });
@@ -84,4 +89,16 @@ test('concurrent parts: an IEX response is never read as SIP when another part\'
 test('top-50 fallback keeps its original field set (no quote fields added)', async t => {
   const r = await run(t, 'top50'), x = r.shadow.find(s => s.sym === 'ZZQ');
   assert.equal(r.live.mode, 'PARTIAL_TOP50_FALLBACK'); assert.equal(x.px0, 11); assert.equal(x.ig[0].bid, null); assert.equal(x.ig[0].qAgeSec, null);
+});
+
+test('top-50 fallback: a future-dated Massive volume clock is rejected; this response\'s consistent SIP daily volume is used instead', async t => {
+  const r = await run(t, 'top50-future'), x = r.shadow.find(s => s.sym === 'ZZQ');
+  assert.equal(r.live.mode, 'PARTIAL_TOP50_FALLBACK'); assert.equal(x.px0, 11);
+  assert.equal(x.dv0, 3e6 * 11, 'dollar volume from SIP 3e6; the future-clocked Massive 1e5 is not used (top-50 rows carry no previous-day volume, so rv is not computed)');
+});
+
+test('top-50 fallback: future-dated volume on both sources leaves volume unknown (never a future-clocked figure)', async t => {
+  const r = await run(t, 'top50-future-sip-minute'), x = r.shadow.find(s => s.sym === 'ZZQ');
+  assert.equal(r.live.mode, 'PARTIAL_TOP50_FALLBACK'); assert.equal(x.px0, 11);
+  assert.ok(!(x.dv0 > 0), 'no volume survives clock validation: dv0=' + x.dv0);
 });

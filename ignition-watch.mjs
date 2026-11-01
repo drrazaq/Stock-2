@@ -18,7 +18,7 @@ import {sessionFinished,preferSession,runIdentity,sessionEvidence} from './watch
 // says so). Volume stays the late Massive figure (can only undercount). Last fallback: Alpaca's top-50 gainers (PARTIAL coverage).
 // Read-only; never places an order.
 import { snapshots, feedUsed, snapshotFeed } from './alpaca-feed.mjs';
-import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot } from './snapshot-fields.mjs';   // (1 Nov) every field keeps its own provider clock and feed
+import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot, validateClocks } from './snapshot-fields.mjs';   // (1 Nov) every field keeps its own provider clock and feed
 import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
 import { stopHits } from './stop-watch.mjs';
@@ -83,13 +83,13 @@ async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
   try { const r = await fetch(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
     const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
-    return syms.map(s => alpacaSnapshot(s, sj[s] || {}, sip)); } catch (e) { return null; } }
+    const at = Date.now(); return syms.map(s => alpacaSnapshot(s, sj[s] || {}, sip, at)); } catch (e) { return null; } }
 async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
     try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
-      for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x || {}, sip); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
+      const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x || {}, sip, at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
 async function snap() {
@@ -97,16 +97,22 @@ async function snap() {
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
   if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
   if (m && m.length) { const live = await alpacaAll(m.filter(r => r.prevC >= 1).map(r => r.sym));
-    if (live) { let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, now)) n++; if (x && x.volumeFeed === 'sip' && r.volumeFeed === 'sip') sv++; }
+    if (live) { let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, now)) n++; if (x && r.volumeBasis === 'SIP_DAILY_BAR_ASOF_UNSTATED') sv++; }
       const feeds = [...new Set([...live.values()].map(x => x.priceFeed))], feedLabel = feeds.length === 1 ? feeds[0] : feeds.length ? 'mixed' : feedUsed();   // this minute's responses, not the whole day's
-      src = 'alpaca live prices (' + feedLabel.toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (sv ? 'live SIP volume for ' + sv : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
+      src = 'alpaca live prices (' + feedLabel.toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (sv ? 'SIP daily volume (provider states no as-of time) for ' + sv : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
   const a = await snapTop50();
   if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
   src = 'alpaca top-50 gainers only'; mode = 'PARTIAL_TOP50_FALLBACK';
   const byM = new Map((m || []).map(r => [r.sym, r]));
-  // Field set unchanged (price/prevC/open/volume). Volume: the newer of this response's own SIP figure and Massive's, each on its own clock.
-  for (const r of a) { const x = byM.get(r.sym); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed;
-    if (x && !(r.vol > 0 && r.vt > 0 && r.vt >= (x.vt || 0))) { r.vol = x.vol; r.vt = x.vt; r.volumeProvider = x.volumeProvider || null; r.volumeFeed = x.volumeFeed || null; }
+  // Field set unchanged (price/prevC/open/volume, no quote fields). Every field passes the normal per-field clock validation: a future
+  // clock never vouches for its value, and between this response and Massive the newer valid clock wins (as in the main merge).
+  const at = Date.now();
+  for (const r of a) { const x = byM.get(r.sym); validateClocks(r, at); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed;
+    if (x) { const m0 = validateClocks({ sym: r.sym, price: x.price, t: x.t, open: 0, vol: x.vol, vt: x.vt, priceProvider: x.priceProvider, priceKind: x.priceKind, volumeProvider: x.volumeProvider, volumeFeed: x.volumeFeed || null }, at), own = { ...r };
+      mergeLiveSnapshot(m0, own, at);
+      if (!(m0.t > 0) && own.price > 0) { m0.price = own.price; m0.t = own.t; m0.priceProvider = own.priceProvider; m0.priceFeed = own.priceFeed; m0.priceKind = own.priceKind; }   // neither clock valid: this response's own price, still unclocked
+      for (const k of ['price', 't', 'priceProvider', 'priceFeed', 'priceKind', 'vol', 'vt', 'volumeProvider', 'volumeFeed', 'volumeBasis', 'volumeAsOf', 'volumeSessionStart', 'volumeMinuteBarStart', 'volumeRejected']) if (k in m0) r[k] = m0[k];
+      if (!(r.vol > 0)) { r.vol = null; r.vt = 0; } }
     if (!(r.prevC > 0) && x) r.prevC = x.prevC; if (!(r.open > 0) && x) r.open = x.open; byM.set(r.sym, r); }
   return [...byM.values()];
 }

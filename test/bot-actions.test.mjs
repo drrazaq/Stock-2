@@ -17,7 +17,10 @@ const sig = (extra = {}) => ({ session: '2026-10-27', market: { above50: true, u
 const ok = { s: 'ok', d: new Date().toISOString().slice(0, 10) };
 const PICKS = [{ sym: 'WST', fs: 9 }, { sym: 'HQY', fs: 9 }, { sym: 'MMSI', fs: 8 }];
 async function render(files, s = sig()) { const S = await loadScan({ files: { 'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': s, ...files }, env: { TD_BASE: 'http://127.0.0.1:9', FH_BASE: 'http://127.0.0.1:9', SEC_BASE: 'http://127.0.0.1:9' } }); return { S, t: await S.fn('actionsText')(s, S.fn('loadPos')(), null, 'ACTIONS TEST') }; }
-const section = (t, name) => { const i = t.indexOf('\n' + name); if (i < 0) return ''; const rest = t.slice(i + 1), j = rest.slice(1).search(/\n\n[A-Z][A-Z' -]{3,}(\(|\n|:)/); return j < 0 ? rest : rest.slice(0, j + 1); };
+// A section ends only at the next documented top-level heading (scan.mjs, 28 Oct layout). Sub-headings inside a section, such as the
+// Sunday weekly scoreboard's "THIS WEEK" inside RECORDS, are part of it (1 Nov: the old generic heading pattern cut RECORDS on Sundays).
+const TOP = ['POLICY TODAY', 'CRITICAL', "TODAY'S ACTIONS", 'NOT ACTIONABLE TODAY', 'APPROVED LANES', 'SHORT-TERM OPPORTUNITIES', 'CURRENT HOLDINGS', 'RECORDS', 'SYSTEM HEALTH', 'LONGER-TERM'];
+const section = (t, name) => { const i = t.indexOf('\n' + name); if (i < 0) return ''; const rest = t.slice(i + 1), ends = TOP.filter(h => h !== name).map(h => rest.indexOf('\n\n' + h, 1)).filter(j => j > 0); return ends.length ? rest.slice(0, Math.min(...ends) + 1) : rest; };
 
 test('28 Oct contradiction fixed: focus on + LONGER HOLDS buys (marked halal) -> buys under TODAY\'S ACTIONS with their status; the policy says engine buys only are paused', async () => {
   const { t } = await render({ 'data/quality.json': quality(PICKS), 'data/halal.json': { WST: ok, HQY: ok, MMSI: ok }, 'data/names.json': { WST: 'WEST PHARMACEUTICAL SERVICES INC' } });

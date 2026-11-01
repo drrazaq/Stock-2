@@ -19,18 +19,50 @@ export function massiveSnapshot(x) {
     priceProvider:'MASSIVE',priceKind:trade?'TRADE':minute?'MINUTE_BAR':'DAILY_BAR',
     quoteProvider:'MASSIVE',quoteFeed:'PLAN_DEPENDENT',volumeProvider:'MASSIVE'};
 }
-export function alpacaSnapshot(symbol,x={},sip=false) {
-  const lt=x.latestTrade||{}, db=x.dailyBar||{}, pb=x.prevDailyBar||{}, q=x.latestQuote||{}, mb=x.minuteBar||{};
-  const trade=positive(lt.p), volume=sip&&positive(db.v);
-  // dailyBar.t is the bar's session start, not an as-of time. The same response's
-  // latest minute-bar start (same daily bar) is a conservative as-of lower bound
-  // for the cumulative volume; the trade clock is never borrowed.
-  const dayStart=isoTime(db.t),minuteStart=isoTime(mb.t),volumeClock=dayStart&&minuteStart>=dayStart&&minuteStart<dayStart+86400000?minuteStart:dayStart;
-  return {sym:symbol,price:trade?lt.p:number(db.c),t:trade?isoTime(lt.t):dayStart,
-    prevC:number(pb.c),open:number(db.o),vol:volume?db.v:null,vt:volume?volumeClock:0,
+// Alpaca snapshot volume contract (official docs, read 1 Nov 2026):
+//  - Snapshot reference (docs.alpaca.markets/us/reference/stocksnapshotsingle): "A snapshot provides the latest trade, latest quote,
+//    latest minute bar, current daily bar and previous daily bar"; each t is "Timestamp in RFC-3339 format" (example dailyBar t 04:00Z).
+//  - Market Data FAQ "How are bars aggregated?": a daily bar holds the day's trades, truncated "to the day (in New York)"; a bar's
+//    timestamp is "the left side of the interval".
+// So dailyBar.t is the SESSION START, not an as-of time, and the REST snapshot states no as-of time for the cumulative daily volume.
+// The minute-bar start is a separate observation, not proof of when the daily total was computed. (The websocket page's "daily bars
+// contain all trades until the time they were emitted" describes the stream, not this REST snapshot.)
+// Observed: volumeSessionStart (dailyBar.t), volumeMinuteBarStart (minuteBar.t). Derived: none. vt stays 0 (as-of unknown) and the
+// volume is labelled SIP_DAILY_BAR_ASOF_UNSTATED, never "live". It is rejected when it contradicts itself or is not today's session.
+const NY_DAY = new Intl.DateTimeFormat('en-CA', {timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'});
+const nyDay = ms => NY_DAY.format(new Date(ms));
+export function sipDailyVolume(x = {}, nowMs = Date.now()) {
+  const db = x.dailyBar || {}, mb = x.minuteBar || {};
+  if (!positive(db.v)) return {ok:false, reason:'NO_DAILY_VOLUME'};
+  const session = isoTime(db.t), minute = isoTime(mb.t);
+  if (!session) return {ok:false, reason:'NO_SESSION_TIMESTAMP'};
+  if (session > nowMs) return {ok:false, reason:'FUTURE_SESSION'};
+  if (nyDay(session) !== nyDay(nowMs)) return {ok:false, reason:'NOT_TODAYS_SESSION'};
+  if (minute) {
+    if (minute > nowMs) return {ok:false, reason:'FUTURE_MINUTE_BAR'};
+    if (nyDay(minute) !== nyDay(session)) return {ok:false, reason:'MINUTE_BAR_OTHER_SESSION'};
+    if (positive(mb.v) && db.v < mb.v) return {ok:false, reason:'DAILY_BELOW_MINUTE_BAR'};
+  }
+  return {ok:true, vol:db.v, session, minute};
+}
+export function alpacaSnapshot(symbol,x={},sip=false,nowMs=Date.now()) {
+  const lt=x.latestTrade||{}, db=x.dailyBar||{}, pb=x.prevDailyBar||{}, q=x.latestQuote||{};
+  const trade=positive(lt.p), dv=sip?sipDailyVolume(x,nowMs):{ok:false,reason:'NOT_SIP'};
+  return {sym:symbol,price:trade?lt.p:number(db.c),t:trade?isoTime(lt.t):isoTime(db.t),
+    prevC:number(pb.c),open:number(db.o),vol:dv.ok?dv.vol:null,vt:0,
+    volumeAsOf:null,volumeBasis:dv.ok?'SIP_DAILY_BAR_ASOF_UNSTATED':null,volumeSessionStart:dv.ok?dv.session:0,volumeMinuteBarStart:dv.ok?dv.minute||0:0,
+    volumeRejected:dv.ok?null:dv.reason,
     bid:number(q.bp),ask:number(q.ap),qt:isoTime(q.t),
     priceProvider:'ALPACA',priceFeed:sip?'sip':'iex',priceKind:trade?'TRADE':'DAILY_BAR',
-    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',volumeProvider:volume?'ALPACA':null,volumeFeed:volume?'sip':null};
+    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',volumeProvider:dv.ok?'ALPACA':null,volumeFeed:dv.ok?'sip':null};
+}
+// Per-field clock validation for rows that are used without a merge (top-50 fallback): a future or missing clock never vouches for its value.
+export function validateClocks(row, nowMs = Date.now()) {
+  if (!row) return row;
+  if (positive(row.t) && row.t > nowMs) { row.t = 0; row.priceClockRejected = 'FUTURE'; }
+  if (positive(row.vt) && row.vt > nowMs) { row.vol = null; row.vt = 0; row.volumeRejected = 'FUTURE_VOLUME_CLOCK'; row.volumeProvider = null; row.volumeFeed = null; }
+  if (positive(row.qt) && row.qt > nowMs) { row.bid = 0; row.ask = 0; row.qt = 0; }
+  return row;
 }
 export function mergeLiveSnapshot(row, live, nowMs = Date.now()) {
   if (!live) return false;
@@ -45,6 +77,12 @@ export function mergeLiveSnapshot(row, live, nowMs = Date.now()) {
   if (positive(live.vol) && positive(live.vt) && live.vt<=nowMs &&
       (live.vt>row.vt || row.vt>nowMs || !positive(row.vt))) {
     row.vol=live.vol;row.vt=live.vt;row.volumeProvider=live.volumeProvider||'UNKNOWN';row.volumeFeed=live.volumeFeed||null;
+  } else if (positive(live.vol) && live.volumeBasis==='SIP_DAILY_BAR_ASOF_UNSTATED') {
+    // No as-of time: used only when consistent with any earlier clocked cumulative count for the session (a cumulative total
+    // cannot be below an earlier observation). vt becomes 0: the age of this figure is unknown, so it is never "live".
+    const earlier = positive(row.vol) && positive(row.vt) && row.vt<=nowMs ? row.vol : 0;
+    if (live.vol >= earlier) { row.vol=live.vol;row.vt=0;row.volumeAsOf=null;row.volumeBasis=live.volumeBasis;row.volumeSessionStart=live.volumeSessionStart;row.volumeMinuteBarStart=live.volumeMinuteBarStart;row.volumeProvider=live.volumeProvider;row.volumeFeed=live.volumeFeed; }
+    else row.volumeRejected='SIP_DAILY_BELOW_EARLIER_CLOCKED_COUNT';
   }
   // A future clock must not pin either BBO or volume against later real data.
   // Equal-clock conflicts are not resolved by choosing the last arriving quote.
