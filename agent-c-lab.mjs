@@ -184,6 +184,9 @@ if (MODE === 'diag') { const lagDays = CONG_EV.filter(e => e.trade).map(e => (Da
     sampleRows: CONG_EV.filter((e, j) => j % Math.max(1, Math.floor(CONG_EV.length / 25)) === 0).slice(0, 25).map(e => ({ d: e.d, sym: e.sym, who: e.who, trade: e.trade, lo: e.lo, hi: e.hi, docId: e.docId })),
     sampleText: SAMPLE_TXT, scannedSample: [...PTR.values()].filter(isScanned).slice(0, 10).map(p => p.docId),
     noTickerSample: [...PTR.values()].filter(p => p.st > p.stTicker).slice(0, 10).map(p => ({ docId: p.docId, st: p.st, stTicker: p.stTicker, rows: p.rows.filter(r => r.asset === 'ST' && !r.ticker).slice(0, 3) })),
+    noTickerText: await (async () => { const out = []; for (const p of [...PTR.values()].filter(p => p.st > p.stTicker).slice(0, 8)) { const r = IDX.find(x => x.docId === p.docId); if (!r) continue;
+        const buf = await house(HOUSE + '/public_disc/ptr-pdfs/' + r.y + '/' + r.docId + '.pdf', 'buf'); if (!buf) continue; const pf = SC + '/dbg.pdf'; fs.writeFileSync(pf, buf); let txt = ''; try { txt = execFileSync('pdftotext', ['-layout', pf, '-'], { maxBuffer: 1e8 }).toString(); } catch (e) {}
+        const Ls = txt.split('\n'), hit = Ls.map((l, j) => /\[ST\]/.test(l) ? j : -1).filter(j => j >= 0).slice(0, 6); out.push({ docId: p.docId, lines: hit.map(j => Ls.slice(Math.max(0, j - 3), j + 4).join('\n')) }); } return out; })(),
     insqSample: INSQ_SIG.slice(0, 20).map(z => ({ sym: z.sym, d: z.d, people: z.people, usd: z.usd, fcfy: z.fcfy, growth: z.growth, de: z.de })) });
   console.log('AGENT C DIAG | insider ' + (STATUS.insider.ok ? 'ok' : 'MISSING') + ', facts ' + (STATUS.facts.ok ? 'ok' : 'MISSING') + ', congress ' + (STATUS.congress.ok ? 'ok' : 'NOT OK: ' + STATUS.congress.check.why.join('; ')) + ' | INSQ ' + insqCount.older + '/' + insqCount.newer + ' | CONG60 ' + congCount[60].older + '/' + congCount[60].newer);
   process.exit(0); }
