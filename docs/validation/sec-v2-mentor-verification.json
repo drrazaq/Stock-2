@@ -1,0 +1,120 @@
+{
+  "kind": "INACTIVE_V2_POLICY_TELEMETRY_AND_SEPARATE_MENTOR_REVIEW",
+  "developmentImplementationSource": "04e24416013dacb7cddcb86528510e2db4b5f28d",
+  "productionBase": "6e806c4f2ea5d0f299b86c435fdc449c2f87e291",
+  "mentorStandaloneReviewHead": "d63d3d10849e4addaa1c5e05d22ec5eeaecc82ea",
+  "mentorReviewURL": "https://github.com/drrazaq/Stock-2/pull/3",
+  "v2IndependentReview": "REQUESTED_IN_DRAFT_PR1_NOT_COMPLETED",
+  "files": {
+    "sec-selection-telemetry.mjs": "2cacc14f265b6d18c3edaec9b90ec60462af3b413476bfed50894f6d78561de2",
+    "sec-proof-ready-proposal.mjs": "b482bf94152453980740324f705f7f7f392c1ea21741cf5650bcb440aae2627e",
+    "test/sec-selection-telemetry.test.mjs": "01e2db931af7fa8bdb9a304af1db422dad20107bbfa63603e77c75d5e86fbb6c",
+    "test/sec-proof-ready-proposal.test.mjs": "f46bad3cb9bfaabd9e598bead056be6762b75db8f41218242a376832a4604805",
+    "test/native-sec-producer-fixture.mjs": "933f4e462048d818ffef3bbab5652444f759fc1268db4d6275d39ae90d1b17c0",
+    "docs/validation/sec-selection-telemetry.patch": "6cd63f6aedfab9f80939859cf41660117c6d5feb038fb9732a711e0a80115002",
+    "docs/validation/sec-selection-telemetry-manifest.json": "baf824c481e8d0d256b19fd473a874e563cc7902f5a0ab0913b7afcd36989eef",
+    "docs/validation/mentor-readonly-production.patch": "ebc62f42571b0dddc9d7e44e8d81f49b0f7ff22ea097ce121ba18140a5846222",
+    "docs/validation/mentor-readonly-production-manifest.json": "6ec5cef7119c872d30be79086ade432275325d909f88f84a0570698468fc5e14",
+    "docs/validation/sunday-record-section-fixture.patch": "9ee64f9ba1bfc2a2b52c88200b92e1b53c385ef780dff9eac94b4d05dc2509b9",
+    "docs/sec-proof-ready-v2-review.md": "1df32faf6bdfae79c7c28f062c8c56e1d75e50506538e4e3a56a1dddb546c111",
+    "docs/mentor-readonly-production-proposal.md": "ac3233dd8e9d7935eb4f1eabc6d083930a55c62cff23949b15ac4bccd36b596f",
+    "docs/alpaca-entitlement-owner-checklist.md": "deb1f4eb546af6ffd4f7003e13b410064bf2c48d86e035c9a35c1b320713fb0a",
+    "docs/validation/sec-proof-ready-v2.proposal.json": "10f2fffb4254eafc9d07152cc853675fdc87274320f150336402c930a52636a1",
+    "docs/validation/sec-proof-ready-v2-example.json": "d243d0e5d9bddf85137adf8a1883af7ebfc63dfa5563653d564453985fa63fb4"
+  },
+  "focused": {
+    "actualTelemetry": 10,
+    "policyPrototype": 17,
+    "productionMentorCapsule": 6,
+    "mentorReadOnly": 2,
+    "preservedActualWatcher": 7
+  },
+  "productionMentor": {
+    "files": 124,
+    "cases": 1208,
+    "failures": []
+  },
+  "productionTelemetryWithExplicitPrerequisites": {
+    "files": 123,
+    "cases": 1206,
+    "failures": []
+  },
+  "productionCombined": {
+    "files": 124,
+    "cases": 1208,
+    "failures": []
+  },
+  "gatedCombinedWithPreservedVerificationOnlyDateFixtures": {
+    "incident": 11,
+    "resilience": 9,
+    "failures": [],
+    "fixtureSource": "1d8e27bb",
+    "includedInProductionPatches": false
+  },
+  "baselineFailurePreserved": "Unmodified main reproduces Sunday RECORDS parser truncation; actual production record text remains present; test helper fixed without loosening assertions",
+  "negativeMentorControl": "Prior bd49source fails financial-byte preservation with foreign-message batch; explicit owner mutation control passes",
+  "sourceAndRehearsalGuardsPreserved": true,
+  "v1FrozenResultsChanged": false,
+  "protocolAdopted": false,
+  "primaryAdmissions": 0,
+  "productionChanged": false,
+  "liveProviderCalls": 0,
+  "realMessages": 0,
+  "accountCredentialsUsed": false,
+  "accepted": 24,
+  "total": 40,
+  "closuresEarned": [],
+  "remainingV2Engineering": [
+    "Separate encrypted source/telemetry/state transport and ACK/recovery bindings with aggregate storage/wire caps",
+    "V2 paired outcomes/capacity/missingness and all-denominator admission reports",
+    "Separately reviewed V2 guard/workflow/client scope; no V1/rehearsal bypass"
+  ],
+  "finalDevelopmentAndExactCI": "Final ordinary exact-head checks are authoritative; linked in PR1 and user report. Verification never inherits another SHA CI.",
+  "python": {
+    "tests": 30,
+    "failures": 0
+  },
+  "syntax": {
+    "files": 283,
+    "failures": []
+  },
+  "mentorExactCommitCI": {
+    "sha": "d63d3d10849e4addaa1c5e05d22ec5eeaecc82ea",
+    "push": {
+      "runId": 41271470148,
+      "conclusion": "success"
+    },
+    "pullRequest": {
+      "runId": 41271484735,
+      "conclusion": "success"
+    }
+  },
+  "publicDocumentationDocuments": 4,
+  "v2Draft2Corrections": [
+    "First source-readiness/proof/revision preserved across unpaired retries and restart; no refreshed expiry",
+    "Single-use reader handles; reject pre-readiness requests and source-clock regression"
+  ],
+  "logSha256": {
+    "selection-verified.log": "2403c9beadf86af1cab4e9872ca10588042887e3c6062c2099f27f6099f47a32",
+    "proposal-draft2-verified.log": "5aa952e28cc8e8a60803d45c718701bdcd4d18fa6dab356b5a747a2f1968faa9",
+    "mentor-package-verified.log": "bb169b506f06e5c7ffc80567bf7a8748f4dde1bffcdde94e64d5d790e8baec35",
+    "mentor-production-focused.log": "91fbf69a271c39dca577a0808b6bcc065dda8c6f9863fc804eb435901a6129a7",
+    "mentor-negative-control.log": "1b923b92d324769e1476811629e70dfcb1c4b4c4fb1d3fef1eb168c19e5af09a",
+    "main-baseline-bot-actions.log": "5d4c2b8d2fec5b7d6504db440050ff5dd8ce71f4e9b475754e7bde94b251b865",
+    "production-mentor-final/node.log": "98122d46f2e97f0440aed929f9f1c34cce3e269346fd9d54522baf633262003b",
+    "production-telemetry-final/node.log": "a6a1718a231e78922410f258dc639591e52e1f98325d31306e7550609a00b367",
+    "production-combined-final/node.log": "d3c0c642d706842d7541c3273f34a1f7a04c1dafdf41f7f518921dc921e3a4f4",
+    "gated.json": "0e23ac00ff663286bb9ddac2b1b8030b1344d3cc8bf317a037a7645f4f295588",
+    "python.log": "d383d5e797701867573f3dbe2d50ede120bb8086a81f58d13c118a0535660f4c",
+    "static.json": "a72ffbfa999ec8d525bfa7e8d31cd4bef27557b357ca50ce3fd17f85ad184db8",
+    "development-draft2/node.log": "005d623a0350339aba1b954659a44cb87d1a4cfc7f30e7642bff54eff40efc68"
+  },
+  "reviewSource": "04e24416013dacb7cddcb86528510e2db4b5f28d",
+  "prototypeRevision": "SEC_PROOF_READY_V2_DRAFT2_REVIEW_ONLY",
+  "development": {
+    "files": 226,
+    "cases": 2184,
+    "failures": [],
+    "runtimeCodeSource": "04e24416013dacb7cddcb86528510e2db4b5f28d"
+  }
+}

@@ -1,3 +1,5 @@
+> Current implementation/review: [proof-ready V2 review submission](sec-proof-ready-v2-review.md). Route/cache/trigger/no-request telemetry now has an actual default-off producer patch and the symmetric policy has an executable offline prototype. Neither is adopted/activated or wired into V1. Earlier design statements below describe their original checkpoint; the new report lists remaining real engineering.
+
 # SEC acceptance ordering and conditional V2 proposal — NOT APPROVED
 
 V1 and its frozen evaluator remain untouched. This replaces the earlier nominal “proof-ready” proposal with explicit selection and cohort requirements. No V2 enrollment, source request, producer-order change or activation is approved or implemented.

@@ -4994,27 +4994,47 @@
     "ciEvidence": "docs/validation/continuation-04f6b6d-ci.json"
   },
   "latestVerifiedEngineeringMilestone": {
-    "sourceSha": "b4d355d9d08cfea193ae547503955b04faa1e2c7",
-    "status": "MENTOR_EXPLANATION_COMPLETE_OFFLINE_ACCEPTANCE_RECONCILED",
-    "evidence": {
-      "node": {
-        "source": "b4d355d9",
-        "files": 222,
-        "cases": 2148,
-        "failures": []
-      },
-      "python": {
-        "tests": 30,
-        "failures": 0
-      },
-      "syntax": {
-        "files": 281,
-        "failures": []
-      }
-    },
-    "verification": "docs/validation/mentor-acceptance-closure-verification.json",
+    "sourceSha": "04e24416013dacb7cddcb86528510e2db4b5f28d",
+    "status": "OFFLINE_COMPONENTS_VERIFIED_INDEPENDENT_REVIEW_PENDING",
+    "verification": "docs/validation/sec-v2-mentor-verification.json",
     "acceptanceAdded": 0,
-    "genuineAdmissions": 0
+    "genuineAdmissions": 0,
+    "productionTests": {
+      "mentor": [
+        124,
+        1208
+      ],
+      "telemetryWithExplicitPrerequisites": [
+        123,
+        1206
+      ],
+      "combined": [
+        124,
+        1208
+      ],
+      "allPass": true,
+      "gatedPreservedDateFixtureCases": 20
+    },
+    "focused": {
+      "telemetry": 10,
+      "policyPrototype": 17,
+      "mentorPackage": 6,
+      "mentorReadOnly": 2
+    },
+    "development": {
+      "files": 226,
+      "cases": 2184,
+      "failures": [],
+      "runtimeCodeSource": "04e24416013dacb7cddcb86528510e2db4b5f28d"
+    },
+    "python": {
+      "tests": 30,
+      "failures": 0
+    },
+    "syntax": {
+      "files": 283,
+      "failures": []
+    }
   },
   "revisionIdentityMission": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5304,42 +5324,66 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "MENTOR_EXPLANATION_COMPLETE_OFFLINE_ACCEPTANCE_RECONCILED",
-    "runtimeSourceSha": "b4d355d9d08cfea193ae547503955b04faa1e2c7",
-    "review": "docs/mentor-entry-to-exit-workflow.md",
-    "verification": "docs/validation/mentor-acceptance-closure-verification.json",
-    "closureBoard": "docs/acceptance-closure-board.md",
-    "remainingWorkAndApprovalCandidate": "docs/mentor-evidence-next-decision.md",
-    "acceptanceAdded": 0,
+    "status": "INACTIVE_V2_REVIEW_PACKAGE_AND_SEPARATE_MENTOR_PRODUCTION_PROPOSAL",
+    "runtimeSourceSha": "04e24416013dacb7cddcb86528510e2db4b5f28d",
+    "review": "docs/sec-proof-ready-v2-review.md",
+    "verification": "docs/validation/sec-v2-mentor-verification.json",
+    "mentorProposal": "docs/mentor-readonly-production-proposal.md",
+    "mentorDraftPR": 3,
+    "mentorStandaloneHead": "d63d3d10849e4addaa1c5e05d22ec5eeaecc82ea",
+    "mentorStandaloneCI": {
+      "pushRun": 41271470148,
+      "prRun": 41271484735,
+      "result": "PASS"
+    },
+    "entitlementChecklist": "docs/alpaca-entitlement-owner-checklist.md",
     "accepted": 24,
     "total": 40,
-    "open": 16,
+    "acceptanceAdded": 0,
     "genuineAdmissions": 0,
-    "exactCriteriaUnchanged": true,
-    "localVerification": {
-      "node": {
-        "source": "b4d355d9",
-        "files": 222,
-        "cases": 2148,
-        "failures": []
-      },
-      "python": {
-        "tests": 30,
-        "failures": 0
-      },
-      "syntax": {
-        "files": 281,
-        "failures": []
-      }
-    },
-    "focusedTests": 28,
+    "V1AndFrozenResultsChanged": false,
+    "policyAdopted": false,
     "productionChanged": false,
-    "liveCapture": false,
-    "frozenRuleChanged": false,
-    "strategyVerdict": "LEADER_DIP_NOT_PROVEN",
-    "targetAdoption": false,
-    "passiveWatcher": "docs/validation/mentor-passive-watcher-status.json",
-    "nextAction": "Finish existing CATALYST-03 producer matrix (events/news body revisions; earnings; Discovery2/Comeback), then MARKET-03/EXEC-03 actual paths. Independent review of separate proof-ready proposal and official rights before any dated collection approval."
+    "newProviderRequests": 0,
+    "accountCredentialsUsed": false,
+    "localFocused": {
+      "telemetry": 10,
+      "policyPrototype": 17,
+      "mentorPackage": 6,
+      "mentorReadOnly": 2
+    },
+    "productionSuites": {
+      "mentor": [
+        124,
+        1208
+      ],
+      "telemetryWithExplicitPrerequisites": [
+        123,
+        1206
+      ],
+      "combined": [
+        124,
+        1208
+      ],
+      "allPass": true,
+      "gatedPreservedDateFixtureCases": 20
+    },
+    "fullDevelopmentVerification": "Final exact-source ordinary checks on published HEAD; see PR1/check-runs and linked verification; no prior-SHA CI borrowed",
+    "remainingEngineering": [
+      "V2 encrypted telemetry/native/state transport and ACK/recovery with aggregate storage/wire limits",
+      "Separate V2 outcomes/capacity/missingness admission report and reviewed guard/workflow/client scope",
+      "Remaining source contracts: events/news body revisions; earnings AV/FMP; Discovery2/Comeback; full eight-lane materiality/persistence matrix",
+      "MARKET-03 all-ingress units/session/corporate-action/ticker-change and EXEC-03 all-lane plan contracts"
+    ],
+    "externalEvidence": "Official latest-SIP/reference/retention rights and current identity/ZAD; checklist provides exact non-secret fields",
+    "nextDecision": "Independent V2 chronology/control-estimand review and mentorPR3 review, then owner adoption/deployment decisions only if review supports them; no adoption/activation requested now",
+    "passiveOperations": "Natural post-deployment SEC/archive/delivery and November DST evidence remain pending; no new run coverage inferred",
+    "localDevelopment": {
+      "files": 226,
+      "cases": 2184,
+      "failures": [],
+      "runtimeCodeSource": "04e24416013dacb7cddcb86528510e2db4b5f28d"
+    }
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -7773,5 +7817,43 @@
       "files": 221,
       "cases": 2141
     }
+  },
+  "mentorAcceptanceClosureMilestone": {
+    "status": "MENTOR_EXPLANATION_COMPLETE_OFFLINE_ACCEPTANCE_RECONCILED",
+    "runtimeSourceSha": "b4d355d9d08cfea193ae547503955b04faa1e2c7",
+    "review": "docs/mentor-entry-to-exit-workflow.md",
+    "verification": "docs/validation/mentor-acceptance-closure-verification.json",
+    "closureBoard": "docs/acceptance-closure-board.md",
+    "remainingWorkAndApprovalCandidate": "docs/mentor-evidence-next-decision.md",
+    "acceptanceAdded": 0,
+    "accepted": 24,
+    "total": 40,
+    "open": 16,
+    "genuineAdmissions": 0,
+    "exactCriteriaUnchanged": true,
+    "localVerification": {
+      "node": {
+        "source": "b4d355d9",
+        "files": 222,
+        "cases": 2148,
+        "failures": []
+      },
+      "python": {
+        "tests": 30,
+        "failures": 0
+      },
+      "syntax": {
+        "files": 281,
+        "failures": []
+      }
+    },
+    "focusedTests": 28,
+    "productionChanged": false,
+    "liveCapture": false,
+    "frozenRuleChanged": false,
+    "strategyVerdict": "LEADER_DIP_NOT_PROVEN",
+    "targetAdoption": false,
+    "passiveWatcher": "docs/validation/mentor-passive-watcher-status.json",
+    "nextAction": "Finish existing CATALYST-03 producer matrix (events/news body revisions; earnings; Discovery2/Comeback), then MARKET-03/EXEC-03 actual paths. Independent review of separate proof-ready proposal and official rights before any dated collection approval."
   }
 }

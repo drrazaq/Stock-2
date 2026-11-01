@@ -1,3 +1,5 @@
+> A separately reviewable [production mentor package](mentor-readonly-production-proposal.md) is prepared in draftPR3, not deployed. It includes a financial-byte preservation fix for foreign-message batches; it excludes new fill snapshot writes and keeps current ZAD UNKNOWN in this view.
+
 # One usable mentor workflow — development, not a strategy endorsement
 
 31 October 2026. **LEADER DIP / SQ11-PB12 remains NOT PROVEN.** This completes a read-only explanation workflow, not an executable trading recommendation or proof of profitable returns. No strategy, target adoption, risk gate, financial record or production reminder changes.
