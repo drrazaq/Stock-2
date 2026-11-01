@@ -1,0 +1,99 @@
+name: Agent C lab
+# AGENT C (Crowd) one-shot lab (agent-c-lab.mjs; 1 Nov 2026). Rules pre-registered in the agent-c-core.mjs header before any run:
+# C-INSQ1 (insider cluster + B-FCF1 quality), C-CONG1-20 / C-CONG1-60 (House members' stock purchases on their PTR FILING date),
+# EXP-CONG1 (expert-core.mjs rule, top-10% members). A push of run-agent-c-now.txt runs it (last line DIAG = coverage only, no returns).
+# Each rule is judged ONCE (first complete verdict frozen in data/agent-c-lab.json firstRun). No schedule, no Telegram, never an order.
+# The price cache, squad 1's insider cache and value-lab's facts cache are RESTORED READ ONLY; only agentc-cache is saved.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'lab | diag (empty = the last line of run-agent-c-now.txt decides)'
+        required: false
+        default: ''
+  push:
+    branches: [main]
+    paths: ['run-agent-c-now.txt']
+permissions:
+  contents: write
+concurrency:
+  group: agent-c-lab
+  cancel-in-progress: false
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils unzip
+      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - uses: actions/cache/restore@v4
+        with:
+          path: study-cache
+          key: leaders-study-none
+          restore-keys: leaders-study-
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad1-cache
+          key: squad1-cache-none
+          restore-keys: squad1-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: value-cache
+          key: value-cache-none
+          restore-keys: value-cache-
+      - uses: actions/cache/restore@v4
+        with:
+          path: agentc-cache
+          key: agentc-cache-${{ github.run_id }}
+          restore-keys: agentc-cache-
+      - shell: bash
+        run: du -sh study-cache squad1-cache value-cache agentc-cache 2>/dev/null || true
+      - shell: bash
+        timeout-minutes: 310
+        run: |
+          set -o pipefail
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            if tail -n 1 run-agent-c-now.txt | grep -q DIAG; then MODE=diag; else MODE=lab; fi
+          fi
+          echo "mode: $MODE"; export MODE
+          node agent-c-lab.mjs 2>&1 | tee run.log
+        env:
+          SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          AGC_MINUTES: '290'
+      - if: success() || failure()
+        uses: actions/cache/save@v4
+        with:
+          path: agentc-cache
+          key: agentc-cache-${{ github.run_id }}
+      - if: success() || failure()
+        shell: bash
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          tail -n 300 run.log | cut -c1-2000 > data/agent-c-run.log 2>/dev/null || true
+          FILES="data/agent-c-lab.json data/agent-c-diag.json data/agent-c-run.log data/house-ptr.json.gz"
+          OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+          for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+          git reset -q --hard && git clean -fdq data && git pull -q --rebase
+          (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
+          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
+          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "agent C lab $(date -u +%F)"
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: could not save the agent C lab result"; exit 1; }
+      - if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-c-lab-log
+          path: run.log
