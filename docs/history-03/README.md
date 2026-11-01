@@ -233,3 +233,43 @@ node tools/render-radar-alerts.mjs <repo> <work dir>      # local only
 ```
 
 Batch 1's `source-candidates.json` is unchanged. Its `reviewStatus` field is superseded by `source-inventory-v2.json`.
+
+---
+
+# Batch 3: live alert bodies, intraday radar, unrendered Sunday labs
+
+Same method and fields as batch 2. Nothing was sent and no provider was called; raw renders stay local.
+
+## Results
+
+- **C01 (P1, extends B02):** an EARLY WAVE ALERT [PAPER, NOT PROVEN] uses the approved alert's body, including an explicit "BUY only up to <price>", a stop and an exit. A NOT PROVEN paper result therefore produces a full buy instruction. This stays an owner policy question (P1).
+- **C02 (wording):** the intraday-radar card says "holding time that tested best". It is a split-half choice on 30+ paper trades without a luck bar, and it is not shown today because no group has a selected hold.
+- **C03 (wording):** the intraday-radar card labels the setup's paper record (currently negative for all four groups) as "Expected:".
+- **C04 (latent, = X01, P1):** the "BUY, PROVEN ON PAPER" board section and position sizing.
+- **Acceptable:** stop alerts (C10), PRE-WAVE / PAPER PLAN cards (C11).
+- **C12:** the Sunday autolab and quality messages crashed on the synthetic input, and rebalance and fastmover-lab sent nothing. They are covered by reading their source strings and by their replies on committed data.
+
+## Coverage after this batch (`COVERAGE.md`, `source-inventory-v3.json`)
+
+| Category | Strings |
+|---|---:|
+| CATALOGUED_CLAIM | 58 |
+| REVIEWED_ACCEPTABLE | 212 |
+| NOT_A_CLAIM | 56 |
+| NOT_REVIEWED | 886 |
+| **Total** | **1212** |
+
+Records to date: 79 (43 in batch 1, the rest in `all-claims.json`). The combined ranking is in `RANKED-FINDINGS-v3.md`.
+
+## Files and SHA256
+
+| File | SHA256 |
+|---|---|
+| `BATCH3-FINDINGS.md` | `45f9e78bc3f4c0d218c06e1b8034c5499f74927f78a744c9601fa6ed170096ea` |
+| `RANKED-FINDINGS-v3.md` | `b213551746274783daf72e9a19bdc2c9fc3f3979fe3a00070236cc3a4a9dd7c2` |
+| `COVERAGE.md` | `84df7d5e84e0a2f6cd2fa3d8e44406fc6ee5f0ae36ec6f98eb1679123f01e676` |
+| `all-claims.json` | `b28678bfeb41058fab536a3cc83c743ca078dc03422f992d0ccad37eb50ec683` |
+| `source-inventory-v3.json` | `457e49f835f5c941a6098d75fd55a0623235980f0b99a80f9252a9fb8b98c910` |
+| `tools/catalogue_data_b3.py` | `8a54572e7751b4e20979e8a216561a77a117f47bb29cba249c2b15926fdc84ff` |
+| `tools/build-audit.py` | `0784a9e631652517c953811753bb04603f378d8d9da7d2a3fe19071b1456f064` |
+| `tools/readme_batch.py` | `db4b15b3cb0f0e703ee185420c17f25dfb00b012c2e17aea7e74ce5a96b7ee22` |

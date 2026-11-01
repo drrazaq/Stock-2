@@ -21,13 +21,13 @@ The batch-1 word list missed claim strings such as the `ways` text ("made money 
 
 | Category | Batch-1 strings | Broad-only strings | Total | Meaning |
 |---|---:|---:|---:|---|
-| CATALOGUED_CLAIM | 46 | 11 | 57 | contains (or is a 15+ character fragment of) the anchor phrase of a catalogued claim in the same file |
-| REVIEWED_ACCEPTABLE | 149 | 53 | 202 | in a batch-2 file, read individually; claim-bearing text or a template fragment whose rendered message was reviewed and is acceptable (verdict words preserved) |
-| NOT_A_CLAIM | 44 | 6 | 50 | in a batch-2 file, read individually; a rule definition, condition label or error text, not a performance or evidence claim |
-| NOT_REVIEWED | 675 | 228 | 903 | outside both batches' file-level review (most are in scan.mjs); some of these were seen as rendered lines in batch 1 but were not classified one by one |
+| CATALOGUED_CLAIM | 47 | 11 | 58 | contains (or is a 15+ character fragment of) the anchor phrase of a catalogued claim in the same file |
+| REVIEWED_ACCEPTABLE | 156 | 56 | 212 | in a batch-2 file, read individually; claim-bearing text or a template fragment whose rendered message was reviewed and is acceptable (verdict words preserved) |
+| NOT_A_CLAIM | 48 | 8 | 56 | in a batch-2 file, read individually; a rule definition, condition label or error text, not a performance or evidence claim |
+| NOT_REVIEWED | 663 | 223 | 886 | outside both batches' file-level review (most are in scan.mjs); some of these were seen as rendered lines in batch 1 but were not classified one by one |
 | **Total** | **914** | **298** | **1212** | |
 
-Reconciliation of the batch-1 numbers: of the 914 batch-1 strings, 46 now anchor a catalogued claim (exact phrase, not proximity), 193 were read one by one in batch 2 and found acceptable or not a claim, and 675 remain unreviewed (batch 1 said 837 under the proximity rule).
+Reconciliation of the batch-1 numbers: of the 914 batch-1 strings, 47 now anchor a catalogued claim (exact phrase, not proximity), 204 were read one by one in batch 2 and found acceptable or not a claim, and 663 remain unreviewed (batch 1 said 837 under the proximity rule).
 
 ## How each catalogued claim relates to the source strings
 
@@ -90,29 +90,36 @@ Reconciliation of the batch-1 numbers: of the 914 batch-1 strings, 46 now anchor
 | B12 | ANCHORED (narrow extractor) |
 | B13 | ANCHORED (broad extractor only: missed by the batch-1 word list) |
 | B14 | ANCHORED (narrow extractor) |
-| B20 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B21 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B22 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B23 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B24 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B25 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B26 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B27 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B28 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B29 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B30 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B31 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B32 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B33 | REVIEWED SURFACE (B20-B34: whole rendered message) |
-| B34 | REVIEWED SURFACE (B20-B34: whole rendered message) |
+| B20 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B21 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B22 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B23 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B24 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B25 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B26 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B27 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B28 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B29 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B30 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B31 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B32 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B33 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| B34 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| C01 | IN SOURCE, NOT EXTRACTED (string has no listed claim word) |
+| C02 | ANCHORED (narrow extractor) |
+| C03 | IN SOURCE, NOT EXTRACTED (string has no listed claim word) |
+| C04 | IN SOURCE, NOT EXTRACTED (string has no listed claim word) |
+| C10 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| C11 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| C12 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
 
 ## Claims
 
 - **Batch 1:** 43 claims (`claims-catalogue.json`).
-- **Batch 2:** 29 records (`batch2-claims.json`): 14 findings (B01-B14) and 15 reviewed-acceptable surfaces (B20-B34).
-- **Total:** 72 records.
-- **Claims not anchored to an extracted string:** 15 (see the presence table). They were reviewed from rendered output.
-- **Gate or decision defects among the ranked corrections:** B01, B03, X01, B02, B13, X04.
+- **Batches 2+:** 36 records (`batch2-claims.json`): 18 findings and 18 reviewed-acceptable surfaces.
+- **Total:** 79 records.
+- **Claims not anchored to an extracted string:** 18 (see the presence table). They were reviewed from rendered output.
+- **Gate or decision defects among the ranked corrections:** B01, B03, X01, B02, C01, B13, X04, C04.
 
 ## Rendered surfaces in batch 2
 
@@ -123,9 +130,15 @@ Reconciliation of the batch-1 numbers: of the 914 batch-1 strings, 46 now anchor
 - **Opportunity radar:** midday panels (3 fixtures) and close (1 fixture), all through the actual builders; the actual `opportunity-radar.mjs close` runner on committed data (its 2 Alpaca requests were refused, so it failed closed).
 - **Early watch:** RESEARCH LEADS, PAPER SETUP and the DELIVERY SCORECARD (fixtures through the actual builders).
 
+## Batch 3: live alert bodies, intraday radar, unrendered Sunday labs: coverage
+
+- **Read from source** (live-session only, not renderable offline without a market session): the ignition-watch alert bodies (approved and early-paper kinds), the stop alerts (stop-watch.mjs), and the intraday-radar cards and board (intraday-radar.mjs).
+- Every extracted string of intraday-radar.mjs and stop-watch.mjs was read one by one.
+- **Not rendered on the synthetic cache:** Sunday autolab and quality (crash on synthetic input), rebalance and fastmover-lab (no message). Covered through source triage and their replies on committed data.
+
 ## Still not covered
 
-- **903 source strings** outside both file-level reviews (mostly `scan.mjs`, plus discover, deals, movers, news-watch, premarket-check, smart-money, tipranks, intraday-radar and others).
+- **886 source strings** outside both file-level reviews (mostly `scan.mjs`, plus discover, deals, movers, news-watch, premarket-check, smart-money, tipranks, intraday-radar and others).
 - **Live-only texts:** the `ignition-watch.mjs` alert bodies, which were read from source, not rendered, and the intraday-radar cards.
 - **Owner-input replies:** `check SYM`, the sell/hold review, the opinion replies, and the LEADER DIP buy confirmation.
 - **No independent recomputation** of any number from raw prices (see the README).
