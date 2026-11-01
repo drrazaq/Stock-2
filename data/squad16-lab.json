@@ -1,12 +1,12 @@
 {
- "generatedAt": "2026-10-31T01:23:52.293Z",
+ "generatedAt": "2026-11-01T16:57:40.255Z",
  "squad": 16,
  "preRegistered": "squad16-core.mjs header + RULES (24 Oct 2026, before any run) + data/strategy-library.json SQ16-*",
  "window": [
   "2021-10-12",
   "2026-10-30"
  ],
- "bar": 4.07,
+ "bar": 4.09,
  "split": "2024-01-01",
  "cost": 0.008,
  "data": {
@@ -29,9 +29,9 @@
   "renames": {
    "ok": true,
    "spliced": [
-    "FB->META to 2022-06-08 (152 bars)",
-    "IIVI->COHR to 2022-09-07 (214 bars)",
-    "ANTM->ELV to 2022-06-27 (164 bars)"
+    "FB->META to 2022-06-08 (151 bars)",
+    "IIVI->COHR to 2022-09-07 (213 bars)",
+    "ANTM->ELV to 2022-06-27 (163 bars)"
    ],
    "skipped": []
   },
@@ -40,7 +40,7 @@
    "companies": 4445,
    "answered": 4445,
    "withRevenue": 3721,
-   "fromSquad4Cache": 6154,
+   "fromSquad4Cache": 6155,
    "fetchedNow": 0,
    "failed": 0,
    "mode": "cache"
@@ -53,14 +53,14 @@
   },
   "altShares": {
    "ok": true,
-   "wanted": 2,
-   "fetchedNow": 2,
-   "known": 2206
+   "wanted": 1,
+   "fetchedNow": 1,
+   "known": 2207
   },
   "domicile": {
    "ok": true,
-   "wantedNow": 2,
-   "fetchedNow": 2,
+   "wantedNow": 0,
+   "fetchedNow": 0,
    "failed": 0,
    "missing": 0,
    "known": 1905,
@@ -105,7 +105,7 @@
   "spus": {
    "ok": true,
    "src": "massive",
-   "sessions": 1255,
+   "sessions": 1254,
    "note": "information (portfolio comparison); SPY is the gate"
   }
  },
@@ -236,7 +236,7 @@
   ]
  },
  "luck": "10 rules tried here (one version each) from a sweep of ~30 sources; the library holds ~590 ideas. Read block t against the proof bar, not 2.5. Value, quality and payout baskets overlap (cheap, profitable large caps): their results are not independent.",
- "standard": "both halves (entry review before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock bought and sold at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5, return per year of capital tied up above SPY on the same days -> TRADABLE SMALL; block t >= 4.07 -> PROVEN. Baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
+ "standard": "both halves (entry review before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock bought and sold at the same moments (rule and yardstick capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5, return per year of capital tied up above SPY on the same days -> TRADABLE SMALL; block t >= 4.09 -> PROVEN. Baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
  "rules": {
   "SQ16-MAGIC": {
    "name": "Greenblatt magic formula (EBIT/EV + return on capital, 1000 largest, 10 a quarter, each held a year)",
@@ -7805,7 +7805,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-31T01:23:52.294Z",
+  "at": "2026-11-01T16:57:40.255Z",
   "results": {
    "SQ16-MAGIC": {
     "verdict": "REJECTED",
@@ -9470,7 +9470,7 @@
    },
    "SQ16-MSCIQ": {
     "verdict": "REJECTED",
-    "why": "not better than the same stocks held as long on their other days in the older half; block t 2.21 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -1.27 under 2.5 in the newer half; return per year of capital tied up 1.5% not above the S&P 500 on the same days in the older half (6.3%); return per year of capital tied up 9.7% not above the S&P 500 on the same days in the newer half (19.1%)",
+    "why": "not better than the same stocks held as long on their other days in the older half; block t 2.21 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -1.28 under 2.5 in the newer half; return per year of capital tied up 1.5% not above the S&P 500 on the same days in the older half (6.3%); return per year of capital tied up 9.7% not above the S&P 500 on the same days in the newer half (19.1%)",
     "name": "MSCI USA Quality method (iShares QUAL): ROE, low debt, stable earnings; 125 of the 600 largest, May/November, index-weighted",
     "hold": 126,
     "holdRule": "buy the next open; hold while the semiannual review keeps it selected",
@@ -9513,11 +9513,11 @@
       "avg": 0.0486,
       "median": 0.0194,
       "avgStress": 0.0446,
-      "ctrl": 0.0652,
+      "ctrl": 0.0653,
       "edge": -0.0241,
-      "tDay": -1.27,
+      "tDay": -1.28,
       "blocks": 5,
-      "tBlock": -1.27,
+      "tBlock": -1.28,
       "vsOwn": -0.1209,
       "ownCovered": 5,
       "noTop2": 0.043,
@@ -9554,7 +9554,7 @@
      "newer": {
       "rule": 0.0974,
       "spy": 0.1914,
-      "avgStock": 0.1469
+      "avgStock": 0.147
      }
     },
     "byYear": {
@@ -9590,7 +9590,7 @@
       "n": 250,
       "avg": 0.0775,
       "spy": 0.1338,
-      "avgStock": 0.1297,
+      "avgStock": 0.1298,
       "beatsSpy": false
      },
      "2026": {
@@ -11101,7 +11101,7 @@
    },
    "SQ16-IND12": {
     "verdict": "REJECTED",
-    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.51 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.1 under 2.5 in the newer half; return per year of capital tied up 8.1% not above the S&P 500 on the same days in the older half (18.2%); return per year of capital tied up 13.5% not above the S&P 500 on the same days in the newer half (19.5%)",
+    "why": "not better than the average stock in the older half; not better than the same stocks held as long on their other days in the older half; block t -0.51 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -0.11 under 2.5 in the newer half; return per year of capital tied up 8.1% not above the S&P 500 on the same days in the older half (18.2%); return per year of capital tied up 13.5% not above the S&P 500 on the same days in the newer half (19.5%)",
     "name": "Industry momentum 12-0 among the 500 largest (top 5 SIC-2 industries by 12-month return, monthly)",
     "hold": 22,
     "holdRule": "buy the next open; hold while the monthly review keeps it selected",
@@ -11146,9 +11146,9 @@
       "avgStress": 0.0077,
       "ctrl": 0.0042,
       "edge": -0.0016,
-      "tDay": -0.26,
+      "tDay": -0.27,
       "blocks": 11,
-      "tBlock": -0.1,
+      "tBlock": -0.11,
       "vsOwn": -0.0378,
       "ownCovered": 32,
       "noTop2": 0.011,
@@ -11163,8 +11163,8 @@
       "avg": 0.0102,
       "median": 0.0003,
       "avgStress": 0.0062,
-      "ctrl": 0.0034,
-      "edge": -0.0026,
+      "ctrl": 0.0035,
+      "edge": -0.0027,
       "tDay": -0.54,
       "blocks": 16,
       "tBlock": -0.39,
@@ -11185,7 +11185,7 @@
      "newer": {
       "rule": 0.1348,
       "spy": 0.1954,
-      "avgStock": 0.1394
+      "avgStock": 0.1398
      }
     },
     "byYear": {
@@ -11214,7 +11214,7 @@
       "n": 915,
       "avg": 0.002,
       "spy": 0.0145,
-      "avgStock": 0.0025,
+      "avgStock": 0.0026,
       "beatsSpy": false
      },
      "2026": {
@@ -11529,23 +11529,23 @@
     },
     "results": {
      "older": {
-      "n": 261,
+      "n": 262,
       "days": 130,
-      "stocks": 224,
-      "avg": 0.019,
+      "stocks": 225,
+      "avg": 0.0188,
       "median": 0.0152,
-      "avgStress": 0.015,
-      "ctrl": 0.0377,
-      "edge": -0.0192,
-      "tDay": -2.11,
+      "avgStress": 0.0148,
+      "ctrl": 0.0379,
+      "edge": -0.0197,
+      "tDay": -2.17,
       "blocks": 5,
       "tBlock": -1.02,
-      "vsOwn": -0.0497,
+      "vsOwn": -0.0502,
       "ownCovered": 120,
-      "noTop2": 0.0148,
+      "noTop2": 0.0146,
       "best": 0.6336,
       "worst": -0.3522,
-      "win": 0.5479
+      "win": 0.5458
      },
      "newer": {
       "n": 256,
@@ -11567,30 +11567,30 @@
       "win": 0.5859
      },
      "all": {
-      "n": 517,
+      "n": 518,
       "days": 274,
-      "stocks": 346,
-      "avg": 0.0373,
-      "median": 0.0185,
-      "avgStress": 0.0333,
-      "ctrl": 0.041,
-      "edge": -0.0051,
-      "tDay": -0.47,
+      "stocks": 347,
+      "avg": 0.0372,
+      "median": 0.0183,
+      "avgStress": 0.0332,
+      "ctrl": 0.0411,
+      "edge": -0.0053,
+      "tDay": -0.49,
       "blocks": 16,
       "tBlock": -0.84,
-      "vsOwn": -0.0273,
+      "vsOwn": -0.0275,
       "ownCovered": 258,
-      "noTop2": 0.0307,
+      "noTop2": 0.0306,
       "best": 1.8632,
       "worst": -0.6156,
-      "win": 0.5667
+      "win": 0.5656
      }
     },
     "perYear": {
      "older": {
-      "rule": 0.0765,
-      "spy": 0.2652,
-      "avgStock": 0.1836
+      "rule": 0.0757,
+      "spy": 0.2653,
+      "avgStock": 0.1846
      },
      "newer": {
       "rule": 0.2259,
@@ -11600,10 +11600,10 @@
     },
     "byYear": {
      "2022": {
-      "n": 109,
-      "avg": -0.0189,
-      "spy": 0.0521,
-      "avgStock": 0.0572,
+      "n": 110,
+      "avg": -0.019,
+      "spy": 0.0523,
+      "avgStock": 0.0577,
       "beatsSpy": false
      },
      "2023": {
@@ -11637,11 +11637,11 @@
     },
     "shape": {
      "older": {
-      "n": 261,
-      "win": 0.5479,
-      "avg": 0.019,
+      "n": 262,
+      "win": 0.5458,
+      "avg": 0.0188,
       "avgWin": 0.1103,
-      "avgLoss": -0.0916,
+      "avgLoss": -0.0911,
       "worst": -0.3522,
       "medianDays": 63
      },
@@ -11656,7 +11656,7 @@
      }
     },
     "exits": {
-     "max": 512,
+     "max": 513,
      "gone": 5
     },
     "notes": {
@@ -11664,7 +11664,7 @@
      "open": 10,
      "notBought": 0,
      "skippedBusy": 41,
-     "signals": 570
+     "signals": 571
     },
     "reviews": null,
     "tryWouldQualify": {
@@ -45045,7 +45045,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2498,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.4616
    },
@@ -45057,7 +45057,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.3326,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45069,7 +45069,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0024,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.8339
    },
@@ -45081,7 +45081,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.2264,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45093,7 +45093,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2583,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45105,7 +45105,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0036,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.2521
    },
@@ -45117,7 +45117,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0259,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45129,7 +45129,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1262,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45141,7 +45141,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1263,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45153,7 +45153,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.6217,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45165,7 +45165,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0726,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45177,7 +45177,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.6824,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45189,7 +45189,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1546,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45201,7 +45201,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.7458,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.1544
    },
@@ -45213,7 +45213,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.9892,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45225,7 +45225,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1057,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45237,7 +45237,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1416,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45249,7 +45249,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.2762,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45261,7 +45261,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1845,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45273,7 +45273,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.8294,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45285,7 +45285,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0698,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45297,7 +45297,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0112,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.0299
    },
@@ -45309,7 +45309,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.3554,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45321,7 +45321,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.3144,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45333,7 +45333,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.6912,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.2054
    },
@@ -45345,7 +45345,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0707,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45357,7 +45357,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0827,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45369,7 +45369,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0661,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45381,7 +45381,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1771,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45393,7 +45393,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0857,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45405,7 +45405,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.4327,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45417,7 +45417,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.3387,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45429,7 +45429,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.2491,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45441,7 +45441,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1522,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.313
    },
@@ -45453,7 +45453,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.232,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45465,7 +45465,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0563,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45477,7 +45477,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.7685,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45489,7 +45489,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2031,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45501,7 +45501,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0223,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45513,7 +45513,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.6,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45525,7 +45525,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0378,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45537,7 +45537,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2218,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45549,7 +45549,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1055,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45561,7 +45561,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1638,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45573,7 +45573,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2365,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45585,7 +45585,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.249,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45597,7 +45597,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.4069,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45609,7 +45609,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.4028,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45621,7 +45621,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1303,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45633,7 +45633,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.6093,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45645,7 +45645,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1489,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.161
    },
@@ -45657,7 +45657,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0944,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45669,7 +45669,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.3412,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.0741
    },
@@ -45681,7 +45681,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0615,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.3557
    },
@@ -45693,7 +45693,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0158,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45705,7 +45705,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.5521,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.2494
    },
@@ -45717,7 +45717,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0265,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45729,7 +45729,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0449,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45741,7 +45741,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1936,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45753,7 +45753,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1338,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.0787
    },
@@ -45765,7 +45765,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0647,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45777,7 +45777,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.3424,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.4221
    },
@@ -45789,7 +45789,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1987,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.2446
    },
@@ -45801,7 +45801,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.6191,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.6864
    },
@@ -45813,7 +45813,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1619,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45825,7 +45825,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0105,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": -0.0778
    },
@@ -45837,7 +45837,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0951,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45849,7 +45849,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0524,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": -0.0152
    },
@@ -45861,7 +45861,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0443,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45873,7 +45873,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.118,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.0549
    },
@@ -45885,7 +45885,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0729,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45897,7 +45897,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0779,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.1032
    },
@@ -45909,7 +45909,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0642,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45921,7 +45921,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1263,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45933,7 +45933,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1178,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.1943
    },
@@ -45945,7 +45945,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0033,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45957,7 +45957,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.3488,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.5894
    },
@@ -45969,7 +45969,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0907,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.1786
    },
@@ -45981,7 +45981,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.269,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -45993,7 +45993,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1624,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46005,7 +46005,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.4696,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": -0.0108
    },
@@ -46017,7 +46017,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0655,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46029,7 +46029,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1331,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46041,7 +46041,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0422,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46053,7 +46053,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.115,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46065,7 +46065,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.4434,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46077,7 +46077,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1774,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.1627
    },
@@ -46089,7 +46089,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0256,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.0376
    },
@@ -46101,7 +46101,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0866,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46113,7 +46113,7 @@
     "kind": "period",
     "days": 125,
     "net": 1.0377,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46125,7 +46125,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0804,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46137,7 +46137,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0083,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46149,7 +46149,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.014,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46161,7 +46161,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.1597,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46173,7 +46173,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2823,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46185,7 +46185,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2378,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46197,7 +46197,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0301,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.2703
    },
@@ -46209,7 +46209,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0391,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46221,7 +46221,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1215,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.2281
    },
@@ -46233,7 +46233,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.2413,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.4097
    },
@@ -46245,7 +46245,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.256,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46257,7 +46257,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0757,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.1435
    },
@@ -46269,7 +46269,7 @@
     "kind": "period",
     "days": 125,
     "net": 1.1005,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.6975
    },
@@ -46281,7 +46281,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0255,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.0937
    },
@@ -46293,7 +46293,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0384,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 1.0706
    },
@@ -46305,7 +46305,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.2619,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.0992
    },
@@ -46317,7 +46317,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1891,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46329,7 +46329,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.6663,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46341,7 +46341,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0183,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.0759
    },
@@ -46353,7 +46353,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0792,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46365,7 +46365,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.3021,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46377,7 +46377,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.7744,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46389,7 +46389,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2247,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46401,7 +46401,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0564,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46413,7 +46413,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.125,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46425,7 +46425,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.3645,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46437,7 +46437,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0622,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": 0.1412
    },
@@ -46449,7 +46449,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.3984,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46461,7 +46461,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0597,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46473,7 +46473,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.0059,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46485,7 +46485,7 @@
     "kind": "period",
     "days": 125,
     "net": 0.5,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46497,7 +46497,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1328,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": -0.0258
    },
@@ -46509,7 +46509,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.1245,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46521,7 +46521,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.0086,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -46533,7 +46533,7 @@
     "kind": "period",
     "days": 125,
     "net": -0.2943,
-    "avgStock": 0.1116,
+    "avgStock": 0.1118,
     "spy": 0.1128,
     "sameStock": null
    },
@@ -75504,6 +75504,18 @@
     "sameStock": 0.0116
    },
    {
+    "s": "ELV",
+    "sig": "2022-10-19",
+    "buy": "2022-10-20",
+    "sell": "2023-01-20",
+    "kind": "max",
+    "days": 63,
+    "net": -0.0314,
+    "avgStock": 0.105,
+    "spy": 0.0757,
+    "sameStock": 0.0013
+   },
+   {
     "s": "SLB",
     "sig": "2022-10-19",
     "buy": "2022-10-20",
@@ -80803,7 +80815,7 @@
     "kind": "max",
     "days": 63,
     "net": -0.002,
-    "avgStock": 0.1264,
+    "avgStock": 0.1269,
     "spy": 0.0493,
     "sameStock": 0.0403
    },
@@ -80815,7 +80827,7 @@
     "kind": "max",
     "days": 63,
     "net": -0.0095,
-    "avgStock": 0.1264,
+    "avgStock": 0.1269,
     "spy": 0.0493,
     "sameStock": null
    },
@@ -80827,7 +80839,7 @@
     "kind": "max",
     "days": 63,
     "net": -0.1792,
-    "avgStock": 0.0611,
+    "avgStock": 0.0615,
     "spy": 0.0123,
     "sameStock": 0.055
    },
@@ -80839,7 +80851,7 @@
     "kind": "max",
     "days": 63,
     "net": 0.3459,
-    "avgStock": 0.0013,
+    "avgStock": 0.0016,
     "spy": -0.0105,
     "sameStock": 0.0739
    },
