@@ -18,11 +18,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Verify inactive V2 integration before the complete regression suite
+        shell: bash
+        run: |
+          for f in test/sec-v2-host-guard.test.mjs test/sec-v2-host.test.mjs; do
+            echo "::group::$f"
+            node "$f"
+            echo "PASS $f"
+            echo "::endgroup::"
+          done
       - name: Run every test file
         shell: bash
         run: |
           failed=0
           for f in test/*.test.mjs; do
+            case "$f" in test/sec-v2-host-guard.test.mjs|test/sec-v2-host.test.mjs) continue ;; esac
             echo "::group::$f"
             if node "$f"; then echo "PASS $f"; else echo "::error file=$f::test file failed"; failed=1; fi
             echo "::endgroup::"
