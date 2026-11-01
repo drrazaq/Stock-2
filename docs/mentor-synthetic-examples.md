@@ -9,27 +9,19 @@ Regenerate offline: `node tools/render-mentor-examples.mjs`.
 Reported fill100 for10 whole shares; this is synthetic. The new-entry window is now closed; that does not establish when the reported fill actually occurred.
 
 ```text
-MENTOR EXMPL | LEADER DIP | up to126 sessions (about6months)
-EXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.
-Plan status: LOCAL_CONTRACT_ONLY_UNVERIFIED | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.
-Scope: RECORDED_LEADER_DIP.
-Workflow: MONITOR_RESEARCH_CONTRACT; Review the unchanged contract and current eligibility/execution evidence; this is not approval to hold.
-Entry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.
-Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.
-Source: 2026-10-30 close 100.00 (reference, not executable price).
-Original-input fingerprint: d1dd296c61495143b8e4efd05d387ed36c9b3c712f9ec464a7a87a7d1014c0b9; checksum is not provider authentication.
-Entry: next session OPEN only; 2026-11-02; EXPIRED. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.
-Recorded fill: 100.00 on 2026-11-02; exact opening fill NOT VERIFIED.
-Position: 10 whole shares; recorded notional 1000.00. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.
-Risk: the frozen baseline and target study model no stop; recorded stop UNKNOWN is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.
-Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.
-Unadopted owner-lane overlay: stored target 120.00 arithmetically matches recorded fill +20%; this does not validate or adopt the overlay; a touched daily high does not prove a limit fill.
-Time exit reference (not an actionable instruction): 2027-05-04 at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: MONITOR_CONTRACT_NOT_A_HOLD_APPROVAL; guidance state: MONITOR_CONTRACT_NOT_A_HOLD_APPROVAL.
-Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.
-Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.
-What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.
-Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.
-Unresolved: EXACT_OPEN_FILL_NOT_VERIFIED.
+MENTOR EXMPL — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)
+1. Position: 10 whole shares; recorded entry $100.00; bought 2 Nov 2026.
+2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.
+3. Tested exit reference: 4 May 2027 at 16:00 New York CLOSE.
+4. Size/risk: $1,000.00 recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.
+5. Limits: Original input checksum is not provider authentication. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.
+6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.
+No new BUY or HOLD approval.
+Details:
+Entry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.
+Source: 2026-10-30 close $100.00 (reference, not executable price). No executable price/range is established.
+A touched daily high does not prove a limit fill.
+Historical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.
 ```
 
 ## Legacy holding — original source/session unknown
@@ -37,27 +29,21 @@ Unresolved: EXACT_OPEN_FILL_NOT_VERIFIED.
 No archived source is supplied or borrowed from current signals. The holding remains recorded but its contract is unresolved.
 
 ```text
-MENTOR EXMPL | LEADER DIP | up to126 sessions (about6months)
-EXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.
-Plan status: UNRESOLVED | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.
-Scope: RECORDED_LEADER_DIP.
-Workflow: RECONCILE_PLAN; Resolve the listed source/fill/variant contradictions before treating the stored plan as guidance; keep original records.
-Entry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.
-Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.
-Source: UNKNOWN; no source signal matched.
-Original-input fingerprint: UNKNOWN; checksum is not provider authentication.
-Entry: next session OPEN only; UNKNOWN; UNKNOWN. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.
-Recorded fill: 100.00 on UNKNOWN; exact opening fill NOT VERIFIED.
-Position: UNKNOWN whole shares; recorded notional UNKNOWN. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.
-Risk: the frozen baseline and target study model no stop; recorded stop UNKNOWN is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.
-Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.
-Unadopted owner-lane overlay: stored target 120.00 arithmetically matches recorded fill +20%; this does not validate or adopt the overlay; a touched daily high does not prove a limit fill.
-Time exit reference (not an actionable instruction): UNKNOWN at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: UNKNOWN; guidance state: UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE.
-Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.
-Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.
-What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.
-Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.
-Unresolved: BUY_SESSION_UNKNOWN, TIME_EXIT_UNRESOLVED, WHOLE_SHARE_QUANTITY_UNKNOWN, ENTRY_WINDOW_UNRESOLVED, ORIGINAL_SIGNAL_IDENTITY_UNKNOWN, EXACT_OPEN_FILL_NOT_VERIFIED.
+MENTOR EXMPL — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)
+1. Position: unknown quantity; recorded entry $100.00; bought unknown.
+2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.
+3. Tested exit reference: 126 sessions, counting the buy day; no filled-position exit date established.
+4. Size/risk: unknown recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.
+5. Limits: Original signal not on file; this is missing history, not a contradiction. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.
+6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.
+No new BUY or HOLD approval.
+Details:
+Original signal not on file. Recorded buy date: unknown. It does not establish an original signal date or an exact opening fill.
+Recorded buy session is missing; the exit date cannot be calculated.
+Entry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.
+No executable price/range is established.
+A touched daily high does not prove a limit fill.
+Historical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.
 ```
 
 ## Expired next-open entry — no holding
@@ -65,27 +51,19 @@ Unresolved: BUY_SESSION_UNKNOWN, TIME_EXIT_UNRESOLVED, WHOLE_SHARE_QUANTITY_UNKN
 The next registered opening was14:30Z after DST. At14:31Z the opportunity cannot be represented as an available next-open entry.
 
 ```text
-MENTOR EXMPL | LEADER DIP | up to126 sessions (about6months)
-EXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.
-Plan status: EXPIRED_ENTRY | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.
-Scope: SOURCE_LEAD.
-Workflow: ENTRY_EXPIRED; Do not present this lead as a current next-open entry. A later entry is a different, unvalidated variant.
-Entry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.
-Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.
-Source: 2026-10-30 close 100.00 (reference, not executable price).
-Original-input fingerprint: d1dd296c61495143b8e4efd05d387ed36c9b3c712f9ec464a7a87a7d1014c0b9; checksum is not provider authentication.
-Entry: next session OPEN only; 2026-11-02; EXPIRED. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.
-Recorded fill: UNKNOWN on UNKNOWN; exact opening fill NOT VERIFIED.
-Position: UNKNOWN whole shares; recorded notional UNKNOWN. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.
-Risk: the frozen baseline and target study model no stop; recorded stop UNKNOWN is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.
-Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.
-Unadopted owner-lane overlay: stored target UNKNOWN is UNKNOWN or inconsistent with the unadopted overlay; a touched daily high does not prove a limit fill.
-Time exit reference (not an actionable instruction): UNKNOWN at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: UNKNOWN; guidance state: UNKNOWN.
-Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.
-Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.
-What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.
-Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.
-Unresolved: no structural contract issue found; execution/prospective evidence still missing.
+MENTOR EXMPL — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)
+1. Lead: $100.00 reference close on 30 Oct 2026; not an executable price.
+2. Entry: 2 Nov 2026 New York OPEN only; expired; do not treat this as a current entry.
+3. Tested exit reference: 126 sessions, counting the buy day; no filled-position exit date established.
+4. Size/risk: $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.
+5. Limits: Selection and execution are not verified. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.
+6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.
+No new BUY or HOLD approval.
+Details:
+Entry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.
+Source: 2026-10-30 close $100.00 (reference, not executable price). No executable price/range is established.
+A touched daily high does not prove a limit fill.
+Historical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.
 ```
 
 ## Missing evidence — no source, fill, quantity or executable quote
@@ -93,27 +71,8 @@ Unresolved: no structural contract issue found; execution/prospective evidence s
 Unknown evidence does not become an actionable plan.
 
 ```text
-MENTOR EXMPL | LEADER DIP | up to126 sessions (about6months)
-EXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.
-Plan status: UNRESOLVED | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.
-Scope: NO_PLAN.
-Workflow: RECONCILE_PLAN; Resolve the listed source/fill/variant contradictions before treating the stored plan as guidance; keep original records.
-Entry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.
-Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.
-Source: UNKNOWN; no source signal matched.
-Original-input fingerprint: UNKNOWN; checksum is not provider authentication.
-Entry: next session OPEN only; UNKNOWN; UNKNOWN. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.
-Recorded fill: UNKNOWN on UNKNOWN; exact opening fill NOT VERIFIED.
-Position: UNKNOWN whole shares; recorded notional UNKNOWN. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.
-Risk: the frozen baseline and target study model no stop; recorded stop UNKNOWN is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.
-Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.
-Unadopted owner-lane overlay: stored target UNKNOWN is UNKNOWN or inconsistent with the unadopted overlay; a touched daily high does not prove a limit fill.
-Time exit reference (not an actionable instruction): UNKNOWN at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: UNKNOWN; guidance state: UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE.
-Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.
-Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.
-What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.
-Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.
-Unresolved: NO_VALID_SOURCE_SIGNAL, ENTRY_WINDOW_UNRESOLVED.
+MENTOR EXMPL — no LEADER DIP signal or holding on file.
+Explanation only; NOT PROVEN. No new BUY or HOLD approval.
 ```
 
 ## Contradictory stored target, stop and holding period
@@ -121,27 +80,22 @@ Unresolved: NO_VALID_SOURCE_SIGNAL, ENTRY_WINDOW_UNRESOLVED.
 The150 target,90 stop and63-session hold conflict with this126-session no-stop contract and its unadopted20% overlay. No alternative rule is invented.
 
 ```text
-MENTOR EXMPL | LEADER DIP | up to126 sessions (about6months)
-EXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.
-Plan status: UNRESOLVED | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.
-Scope: RECORDED_LEADER_DIP.
-Workflow: RECONCILE_PLAN; Resolve the listed source/fill/variant contradictions before treating the stored plan as guidance; keep original records.
-Entry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.
-Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.
-Source: 2026-10-30 close 100.00 (reference, not executable price).
-Original-input fingerprint: d1dd296c61495143b8e4efd05d387ed36c9b3c712f9ec464a7a87a7d1014c0b9; checksum is not provider authentication.
-Entry: next session OPEN only; 2026-11-02; EXPIRED. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.
-Recorded fill: 100.00 on 2026-11-02; exact opening fill NOT VERIFIED.
-Position: 10 whole shares; recorded notional 1000.00. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.
-Risk: the frozen baseline and target study model no stop; recorded stop 90.00 is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.
-Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.
-Unadopted owner-lane overlay: stored target 150.00 is UNKNOWN or inconsistent with the unadopted overlay; a touched daily high does not prove a limit fill.
-Time exit reference (not an actionable instruction): UNKNOWN at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: UNKNOWN; guidance state: UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE.
-Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.
-Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.
-What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.
-Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.
-Unresolved: TIME_EXIT_UNRESOLVED, TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT, STOP_VARIANT_NOT_TESTED_BY_THIS_RULE, EXACT_OPEN_FILL_NOT_VERIFIED.
+MENTOR EXMPL — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)
+1. Position: 10 whole shares; recorded entry $100.00; bought 2 Nov 2026.
+2. Owner overlay: $150.00 (50% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.
+3. Tested exit reference: 126 sessions, counting the buy day; no filled-position exit date established.
+4. Size/risk: $1,000.00 recorded; $1,000 per slot, 3 slots. Base has no stop; recorded stop $90.00 is an untested variant: full notional can be lost, plus costs.
+5. Limits: Check recorded plan differences below. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.
+6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.
+No new BUY or HOLD approval.
+Details:
+Check: Recorded holding period differs from 126 sessions.
+Check: Stored target differs from the unadopted +20% overlay.
+Check: The recorded stop is a variant outside the tested no-stop rule.
+Entry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.
+Source: 2026-10-30 close $100.00 (reference, not executable price). No executable price/range is established.
+A touched daily high does not prove a limit fill.
+Historical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.
 ```
 
 ## Registered close due today — research reference, not an exit order
@@ -149,27 +103,19 @@ Unresolved: TIME_EXIT_UNRESOLVED, TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT, STO
 Synthetic126th session is the27November half day; registered close13:00NY. This does not establish a sale or adopt next-open recovery.
 
 ```text
-MENTOR EXMPL | LEADER DIP | up to126 sessions (about6months)
-EXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.
-Plan status: LOCAL_CONTRACT_ONLY_UNVERIFIED | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.
-Scope: RECORDED_LEADER_DIP.
-Workflow: REGISTERED_CLOSE_TODAY; The frozen reference ends at today’s close. Confirm actual holdings, eligibility and executable exit evidence; this view does not issue an order.
-Entry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.
-Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.
-Source: 2026-05-29 close 100.00 (reference, not executable price).
-Original-input fingerprint: d1dd296c61495143b8e4efd05d387ed36c9b3c712f9ec464a7a87a7d1014c0b9; checksum is not provider authentication.
-Entry: next session OPEN only; 2026-06-01; EXPIRED. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.
-Recorded fill: 100.00 on 2026-06-01; exact opening fill NOT VERIFIED.
-Position: 10 whole shares; recorded notional 1000.00. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.
-Risk: the frozen baseline and target study model no stop; recorded stop UNKNOWN is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.
-Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.
-Unadopted owner-lane overlay: stored target 120.00 arithmetically matches recorded fill +20%; this does not validate or adopt the overlay; a touched daily high does not prove a limit fill.
-Time exit reference (not an actionable instruction): 2026-11-27 at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: REGISTERED_CLOSE_DUE_TODAY; guidance state: REGISTERED_CLOSE_DUE_TODAY.
-Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.
-Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.
-What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.
-Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.
-Unresolved: EXACT_OPEN_FILL_NOT_VERIFIED.
+MENTOR EXMPL — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)
+1. Position: 10 whole shares; recorded entry $100.00; bought 1 Jun 2026.
+2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.
+3. Tested exit reference: 27 Nov 2026 at 13:00 New York CLOSE.
+4. Size/risk: $1,000.00 recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.
+5. Limits: Original input checksum is not provider authentication. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.
+6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.
+No new BUY or HOLD approval.
+Details:
+Entry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.
+Source: 2026-05-29 close $100.00 (reference, not executable price). No executable price/range is established.
+A touched daily high does not prove a limit fill.
+Historical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.
 ```
 
 ## Registered half-day close reached — actual execution unknown
@@ -177,27 +123,20 @@ Unresolved: EXACT_OPEN_FILL_NOT_VERIFIED.
 Synthetic126th session is the27November half day; registered close13:00NY. This does not establish a sale or adopt next-open recovery.
 
 ```text
-MENTOR EXMPL | LEADER DIP | up to126 sessions (about6months)
-EXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.
-Plan status: LOCAL_CONTRACT_ONLY_UNVERIFIED | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.
-Scope: RECORDED_LEADER_DIP.
-Workflow: CLOSE_REACHED_EXECUTION_UNVERIFIED; Verify whether the registered close exit occurred and reconcile actual holding status. If missed, next-open recovery is an unvalidated timing variant, not the frozen exit.
-Entry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.
-Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.
-Source: 2026-05-29 close 100.00 (reference, not executable price).
-Original-input fingerprint: d1dd296c61495143b8e4efd05d387ed36c9b3c712f9ec464a7a87a7d1014c0b9; checksum is not provider authentication.
-Entry: next session OPEN only; 2026-06-01; EXPIRED. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.
-Recorded fill: 100.00 on 2026-06-01; exact opening fill NOT VERIFIED.
-Position: 10 whole shares; recorded notional 1000.00. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.
-Risk: the frozen baseline and target study model no stop; recorded stop UNKNOWN is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.
-Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.
-Unadopted owner-lane overlay: stored target 120.00 arithmetically matches recorded fill +20%; this does not validate or adopt the overlay; a touched daily high does not prove a limit fill.
-Time exit reference (not an actionable instruction): 2026-11-27 at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: REGISTERED_CLOSE_DUE_TODAY; guidance state: REGISTERED_CLOSE_DUE_TODAY.
-Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.
-Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.
-What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.
-Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.
-Unresolved: EXACT_OPEN_FILL_NOT_VERIFIED.
+MENTOR EXMPL — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)
+1. Position: 10 whole shares; recorded entry $100.00; bought 1 Jun 2026.
+2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.
+3. Tested exit reference: 27 Nov 2026 at 13:00 New York CLOSE.
+4. Size/risk: $1,000.00 recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.
+5. Limits: Original input checksum is not provider authentication. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.
+6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.
+No new BUY or HOLD approval.
+Details:
+Entry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.
+Source: 2026-05-29 close $100.00 (reference, not executable price). No executable price/range is established.
+The registered close has passed. Verify actual holding/sale status; a reached date or target does not prove a sale.
+A touched daily high does not prove a limit fill.
+Historical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.
 ```
 
 ## Registered close date with missing clock — pending versus passed unresolved
@@ -205,25 +144,17 @@ Unresolved: EXACT_OPEN_FILL_NOT_VERIFIED.
 Synthetic126th session is the27November half day; registered close13:00NY. This does not establish a sale or adopt next-open recovery.
 
 ```text
-MENTOR EXMPL | LEADER DIP | up to126 sessions (about6months)
-EXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.
-Plan status: LOCAL_CONTRACT_ONLY_UNVERIFIED | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.
-Scope: RECORDED_LEADER_DIP.
-Workflow: VERIFY_EXIT_CLOCK; Verify the New York clock before classifying the registered close as pending or missed.
-Entry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.
-Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.
-Source: 2026-05-29 close 100.00 (reference, not executable price).
-Original-input fingerprint: d1dd296c61495143b8e4efd05d387ed36c9b3c712f9ec464a7a87a7d1014c0b9; checksum is not provider authentication.
-Entry: next session OPEN only; 2026-06-01; EXPIRED. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.
-Recorded fill: 100.00 on 2026-06-01; exact opening fill NOT VERIFIED.
-Position: 10 whole shares; recorded notional 1000.00. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.
-Risk: the frozen baseline and target study model no stop; recorded stop UNKNOWN is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.
-Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.
-Unadopted owner-lane overlay: stored target 120.00 arithmetically matches recorded fill +20%; this does not validate or adopt the overlay; a touched daily high does not prove a limit fill.
-Time exit reference (not an actionable instruction): 2026-11-27 at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: REGISTERED_CLOSE_DUE_TODAY; guidance state: REGISTERED_CLOSE_DUE_TODAY.
-Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.
-Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.
-What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.
-Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.
-Unresolved: EXACT_OPEN_FILL_NOT_VERIFIED.
+MENTOR EXMPL — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)
+1. Position: 10 whole shares; recorded entry $100.00; bought 1 Jun 2026.
+2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.
+3. Tested exit reference: 27 Nov 2026 at 13:00 New York CLOSE.
+4. Size/risk: $1,000.00 recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.
+5. Limits: Original input checksum is not provider authentication. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.
+6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.
+No new BUY or HOLD approval.
+Details:
+Entry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.
+Source: 2026-05-29 close $100.00 (reference, not executable price). No executable price/range is established.
+A touched daily high does not prove a limit fill.
+Historical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.
 ```

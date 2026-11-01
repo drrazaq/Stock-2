@@ -1,10 +1,10 @@
 {
-  "kind": "READ_ONLY_MENTOR_PRODUCTION_PACKAGE_V2",
+  "kind": "READ_ONLY_MENTOR_PRODUCTION_PACKAGE_V3_M1_M3",
   "productionBase": "f6a9b1668d0591cf24a734034949b96b241fe35b",
-  "previousReviewHead": "d63d3d10849e4addaa1c5e05d22ec5eeaecc82ea",
+  "previousReviewHead": "8e9cb9bea2809a19048cdb36987e8d050872020a",
   "reviewBranch": "review/mentor-readonly-20261101",
   "reviewURL": "https://github.com/drrazaq/Stock-2/pull/3",
-  "patchSha256": "6c6d14dcc9db494583aa9ba997de52ed753720ee72b42f20f9beaa3d5cb2f5fb",
+  "patchSha256": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
   "files": [
     "scan.mjs",
     "mentor-plan.mjs",
@@ -12,7 +12,8 @@
     "test/mentor-readonly.test.mjs",
     "test/mentor-release.test.mjs",
     "test/mentor-release-plan.test.mjs",
-    "test/mentor-release-examples.mjs"
+    "test/mentor-release-examples.mjs",
+    "test/mentor-m1-m3.test.mjs"
   ],
   "before": {
     "scan.mjs": "76ffcd5675a00a881432d5cb0dad69d6d5235cd66932ef07eb4530ddca9c1a99",
@@ -21,16 +22,18 @@
     "test/mentor-readonly.test.mjs": null,
     "test/mentor-release.test.mjs": null,
     "test/mentor-release-plan.test.mjs": null,
-    "test/mentor-release-examples.mjs": null
+    "test/mentor-release-examples.mjs": null,
+    "test/mentor-m1-m3.test.mjs": null
   },
   "after": {
     "scan.mjs": "a864175379c0ecd3b8102d363925c6191b450d286b06cd473283d1fc3f746cc0",
-    "mentor-plan.mjs": "c9450320caa3f54abd11d957676ff600a509ebe8014a38b77c7a7596a3ba99c9",
+    "mentor-plan.mjs": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
     "test/load-scan.mjs": "ca8a48be321215b5d02f9bc09edecf5f562f18dbbe1b3812424f5f97d4b91605",
-    "test/mentor-readonly.test.mjs": "99e7e9f11c38d77b3813de0bb56399481e0b27648f8050d098ea5ae2c692e147",
-    "test/mentor-release.test.mjs": "c40b7a6a63fb3f7c853b33ad5595c91080fcdb5c03d54931c02f0803f74b18c2",
-    "test/mentor-release-plan.test.mjs": "a06ac1073d5ad2d3fe699c97e8ffbac3e8b3bad1b8f380f47848d9ae585f3850",
-    "test/mentor-release-examples.mjs": "7d4edd70cc2813a194f73d032050ecf888f24a44706c478f8f1a44fa0d20ee89"
+    "test/mentor-readonly.test.mjs": "339ae1baeeb2d079ef88ba0fa5c47de3fcd90d08c6a60fea0203fbff018dc1dc",
+    "test/mentor-release.test.mjs": "1a5bce0a13144db3362435e960b06286faf6845567c41088bd39b515ddb329f5",
+    "test/mentor-release-plan.test.mjs": "e78e44d94da96e54bc8d4fe531101d7b2c3b2738382fbfbe65fbe1a6efafcdf0",
+    "test/mentor-release-examples.mjs": "7d4edd70cc2813a194f73d032050ecf888f24a44706c478f8f1a44fa0d20ee89",
+    "test/mentor-m1-m3.test.mjs": "4eaa43223c2c5dbbf942c032f050bef88354da213bbd69a7c52c5e789f8bb137"
   },
   "dependencies": {
     "index.html": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
@@ -109,12 +112,12 @@
     "stress": 0.012,
     "status": "NOT_PROVEN_NOT_ACTIONABLE"
   },
-  "modulePreservedFromOriginalReview": true,
+  "modulePreservedFromOriginalReview": false,
   "sourceContractsAuthenticated": false,
   "currentZadSummary": "UNKNOWN_NOT_AUTHENTICATED_BY_THIS_VIEW",
   "installed": false,
   "deploymentApproved": false,
-  "independentReviewStatus": "PENDING_FOCUSED_V2_REVIEW",
+  "independentReviewStatus": "PENDING_FOCUSED_M1_M3_RE_REVIEW",
   "productionDataPatchPaths": [],
   "workflowPatchPaths": [],
   "historicalV1Manifest": "docs/validation/mentor-readonly-production-v1-manifest.json",
@@ -122,5 +125,9 @@
   "verification": "docs/validation/mentor-release-verification.json",
   "examples": "docs/mentor-readonly-examples.md",
   "fullRepositoryAuditRequiredForThisRelease": false,
-  "coverageBoundary": "Exact runtime/imports/caller/plan and no-financial-write evidence, not all scanner/Telegram/broker behavior."
+  "coverageBoundary": "Exact runtime/imports/caller/plan and no-financial-write evidence, not all scanner/Telegram/broker behavior.",
+  "modelVersion": "LEADER_DIP_MENTOR_V2",
+  "historicalV2Manifest": "docs/validation/mentor-readonly-production-v2-manifest.json",
+  "historicalV2Patch": "docs/validation/mentor-readonly-production-v2.patch",
+  "reviewEvidenceCommit": "06c137f1a6c43704c9d5788fee374b22246a9c5c"
 }
