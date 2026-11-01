@@ -21,11 +21,11 @@ export function prepareProposedV2Source({archiveDirectory,telemetryDirectory,run
 export function proposeProofReadyFrame({sourceHandle,frame,state=null}){
  const prepared=preparedSources.get(sourceHandle);need(prepared,'PROPOSAL_SOURCE_HANDLE_REQUIRED');preparedSources.delete(sourceHandle);const {source,telemetry,history}=prepared,{runId,sourceSha}=sourceHandle;
  need(frame?.sourceHandoffAt===sourceHandle.observedAt,'PROPOSAL_HANDOFF_HANDLE_MISMATCH');
- const handoff=time(frame?.sourceHandoffAt),at=time(frame?.at);need(Number.isFinite(handoff)&&Number.isFinite(at)&&handoff<at&&at-handoff<=180000,'PROPOSAL_HANDOFF_CLOCK');
+ const handoff=time(frame?.sourceHandoffAt),at=time(frame?.at),requested=time(frame?.requestedAt);need(Number.isFinite(handoff)&&Number.isFinite(at)&&Number.isFinite(requested)&&requested>=handoff&&requested<=at&&frame.receivedAt===frame.at&&at-requested<=10000&&handoff<at&&at-handoff<=180000,'PROPOSAL_HANDOFF_CLOCK');
  const day=ny(handoff).day;need(marketSession(day).known&&!marketSession(day).closed&&ny(at).day===day,'PROPOSAL_SESSION');
  const prior=state?structuredClone(state):{protocol:PROOF_READY_PROPOSAL,runId,sourceSha,day,frames:0,ready:{},used:[],pairs:[],lastAt:null};
  if(state){const {checksum,...body}=state;need(checksum===sha(body),'PROPOSAL_STATE_HASH');}
- delete prior.checksum;need(prior.protocol===PROOF_READY_PROPOSAL&&prior.runId===runId&&prior.sourceSha===sourceSha&&prior.day===day&&prior.ready&&typeof prior.ready==='object'&&prior.frames===frame.sequence&&prior.frames<41&&(!prior.lastAt||time(prior.lastAt)<at),'PROPOSAL_STATE_OR_RESTART');
+ delete prior.checksum;need(prior.protocol===PROOF_READY_PROPOSAL&&prior.runId===runId&&prior.sourceSha===sourceSha&&prior.day===day&&prior.ready&&typeof prior.ready==='object'&&prior.frames===frame.sequence&&prior.frames<41&&(!prior.lastAt||time(prior.lastAt)<at&&time(prior.lastAt)<=handoff),'PROPOSAL_STATE_OR_RESTART');
  need(frame.provider==='ALPACA'&&frame.feed==='sip'&&typeof frame.rawResponse==='string'&&sha(frame.rawResponse)===frame.rawResponseSha256&&Buffer.byteLength(frame.rawResponse)<=65536,'PROPOSAL_FRAME_SOURCE');
 
  const ledger=[],members=[],raw=captureJson(frame.rawResponse),used=new Set(prior.used);const historyKnown=history?.state==='VERIFIED_NO_EARLIER_SAME_DAY_RUN'&&history.scope==='MAIN_PRODUCER_SAME_DAY';
