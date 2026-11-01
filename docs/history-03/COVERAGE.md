@@ -21,13 +21,13 @@ The batch-1 word list missed claim strings such as the `ways` text ("made money 
 
 | Category | Batch-1 strings | Broad-only strings | Total | Meaning |
 |---|---:|---:|---:|---|
-| CATALOGUED_CLAIM | 97 | 11 | 108 | contains (or is a 15+ character fragment of) the anchor phrase of a catalogued claim in the same file |
-| REVIEWED_ACCEPTABLE | 602 | 204 | 806 | in a batch-2 file, read individually; claim-bearing text or a template fragment whose rendered message was reviewed and is acceptable (verdict words preserved) |
-| NOT_A_CLAIM | 51 | 16 | 67 | in a batch-2 file, read individually; a rule definition, condition label or error text, not a performance or evidence claim |
-| NOT_REVIEWED | 164 | 67 | 231 | outside both batches' file-level review (most are in scan.mjs); some of these were seen as rendered lines in batch 1 but were not classified one by one |
+| CATALOGUED_CLAIM | 101 | 14 | 115 | contains (or is a 15+ character fragment of) the anchor phrase of a catalogued claim in the same file |
+| REVIEWED_ACCEPTABLE | 734 | 255 | 989 | in a batch-2 file, read individually; claim-bearing text or a template fragment whose rendered message was reviewed and is acceptable (verdict words preserved) |
+| NOT_A_CLAIM | 79 | 29 | 108 | in a batch-2 file, read individually; a rule definition, condition label or error text, not a performance or evidence claim |
+| NOT_REVIEWED | 0 | 0 | 0 | outside both batches' file-level review (most are in scan.mjs); some of these were seen as rendered lines in batch 1 but were not classified one by one |
 | **Total** | **914** | **298** | **1212** | |
 
-Reconciliation of the batch-1 numbers: of the 914 batch-1 strings, 97 now anchor a catalogued claim (exact phrase, not proximity), 653 were read one by one in batch 2 and found acceptable or not a claim, and 164 remain unreviewed (batch 1 said 837 under the proximity rule).
+Reconciliation of the batch-1 numbers: of the 914 batch-1 strings, 101 now anchor a catalogued claim (exact phrase, not proximity), 813 were read one by one in batch 2 and found acceptable or not a claim, and 0 remain unreviewed (batch 1 said 837 under the proximity rule).
 
 ## How each catalogued claim relates to the source strings
 
@@ -128,14 +128,19 @@ Reconciliation of the batch-1 numbers: of the 914 batch-1 strings, 97 now anchor
 | D14 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
 | D15 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
 | D20 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
+| E01 | ANCHORED (narrow extractor) |
+| E02 | ANCHORED (broad extractor only: missed by the batch-1 word list) |
+| E03 | ANCHORED (narrow extractor) |
+| E04 | ANCHORED (narrow extractor) |
+| E10 | REVIEWED SURFACE (whole rendered or read message, no single anchor) |
 
 ## Claims
 
 - **Batch 1:** 43 claims (`claims-catalogue.json`).
-- **Batches 2+:** 52 records (`batch2-claims.json`): 30 findings and 22 reviewed-acceptable surfaces.
-- **Total:** 95 records.
+- **Batches 2+:** 57 records (`batch2-claims.json`): 34 findings and 23 reviewed-acceptable surfaces.
+- **Total:** 100 records.
 - **Claims not anchored to an extracted string:** 18 (see the presence table). They were reviewed from rendered output.
-- **Gate or decision defects among the ranked corrections:** B01, D01, D15, B03, X01, B02, C01, D06, B13, X04, C04.
+- **Gate or decision defects among the ranked corrections:** B01, D01, D15, B03, X01, B02, C01, D06, B13, X04, C04, E03.
 
 ## Rendered surfaces in batch 2
 
@@ -158,9 +163,14 @@ Reconciliation of the batch-1 numbers: of the 914 batch-1 strings, 97 now anchor
 - **28 owner-input replies rendered** on committed data with synthetic owner messages, offline (`tools/render-decisions.mjs`): check, review, should I buy more, when to sell, when to buy, what to buy today, penny, sector, today, details, bought (LEADER DIP / quick / own pick), sold, added, halal, stop, target, options, two forwarded opinions, tips, market today, alerts, focus.
 - **Degraded renders:** replies that need live prices (review, when to sell, tips price check, parts of check) printed "could not load prices", because every external fetch is refused offline. Their source strings were read instead.
 
+## Batch 5: remaining senders and modules: coverage
+
+- **All 231 remaining extracted strings** in these files were read one by one. After this batch no extracted string is NOT_REVIEWED.
+- **No render:** these senders query providers in production, so their claim-bearing templates were read in full from source (news-watch market shock, deals, discover, tipranks, smart-money, movers).
+
 ## Still not covered
 
-- **231 source strings** outside both file-level reviews (mostly `scan.mjs`, plus discover, deals, movers, news-watch, premarket-check, smart-money, tipranks, intraday-radar and others).
-- **Live-only texts:** the `ignition-watch.mjs` alert bodies, which were read from source, not rendered, and the intraday-radar cards.
-- **Owner-input replies:** `check SYM`, the sell/hold review, the opinion replies, and the LEADER DIP buy confirmation.
+- **Source strings not reviewed:** 0.
+- **Extractor recall:** strings with none of the listed claim words, and text assembled at runtime, are covered only through rendered messages and the per-claim presence table. A claim that never renders under the available data or fixtures could still be missed.
+- **Read from source, not rendered:** live-only texts (`ignition-watch.mjs` alert bodies, intraday-radar cards and board, news-watch MARKET SHOCK) and the provider-dependent senders of batch 5. Owner-input replies that need live prices rendered degraded (batch 4).
 - **No independent recomputation** of any number from raw prices (see the README).

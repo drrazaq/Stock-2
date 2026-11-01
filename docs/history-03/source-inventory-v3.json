@@ -9,14 +9,12 @@
 "NOT_REVIEWED": "outside both batches' file-level review (most are in scan.mjs); some of these were seen as rendered lines in batch 1 but were not classified one by one"
 },
 "counts": {
-"broad-only / CATALOGUED_CLAIM": 11,
-"broad-only / NOT_A_CLAIM": 16,
-"broad-only / NOT_REVIEWED": 67,
-"broad-only / REVIEWED_ACCEPTABLE": 204,
-"narrow / CATALOGUED_CLAIM": 97,
-"narrow / NOT_A_CLAIM": 51,
-"narrow / NOT_REVIEWED": 164,
-"narrow / REVIEWED_ACCEPTABLE": 602
+"broad-only / CATALOGUED_CLAIM": 14,
+"broad-only / NOT_A_CLAIM": 29,
+"broad-only / REVIEWED_ACCEPTABLE": 255,
+"narrow / CATALOGUED_CLAIM": 101,
+"narrow / NOT_A_CLAIM": 79,
+"narrow / REVIEWED_ACCEPTABLE": 734
 },
 "total": 1212,
 "narrowTotal": 914,
@@ -115,7 +113,12 @@
 "D13": "ANCHORED (narrow extractor)",
 "D14": "REVIEWED SURFACE (whole rendered or read message, no single anchor)",
 "D15": "REVIEWED SURFACE (whole rendered or read message, no single anchor)",
-"D20": "REVIEWED SURFACE (whole rendered or read message, no single anchor)"
+"D20": "REVIEWED SURFACE (whole rendered or read message, no single anchor)",
+"E01": "ANCHORED (narrow extractor)",
+"E02": "ANCHORED (broad extractor only: missed by the batch-1 word list)",
+"E03": "ANCHORED (narrow extractor)",
+"E04": "ANCHORED (narrow extractor)",
+"E10": "REVIEWED SURFACE (whole rendered or read message, no single anchor)"
 },
 "claimsWithAnchoredStrings": {
 "W01": 2,
@@ -173,7 +176,11 @@
 "D10": 2,
 "D11": 1,
 "D12": 1,
-"D13": 1
+"D13": 1,
+"E01": 3,
+"E02": 1,
+"E03": 1,
+"E04": 2
 },
 "claimsWithoutAnchoredString": [
 "A04",
@@ -203,7 +210,7 @@
 "line": 67,
 "function": "judgeMonthly",
 "text": "every gate passed in both halves and t clears the proof bar ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -213,7 +220,7 @@
 "line": 67,
 "function": "judgeMonthly",
 "text": "every gate passed in both halves with t >= ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -223,7 +230,7 @@
 "line": 105,
 "function": "switchVerdict",
 "text": "every gate passed in both halves and the month-by-month t clears the proof bar ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -233,7 +240,7 @@
 "line": 105,
 "function": "switchVerdict",
 "text": "every gate passed in both halves, month-by-month t >= ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -243,7 +250,7 @@
 "line": 85,
 "function": "build",
 "text": " above its 10-month average, else gold (BAR) above its own, else cash",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -253,7 +260,7 @@
 "line": 124,
 "function": "switchStudy",
 "text": "stock 30%+ above its 50-day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -263,7 +270,7 @@
 "line": 152,
 "function": "runE1",
 "text": "not better than the average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -273,7 +280,7 @@
 "line": 156,
 "function": "runE1",
 "text": "every tier-2 gate passed in both halves",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -283,7 +290,7 @@
 "line": 175,
 "function": "runE1",
 "text": "the 270 tested companies (Nasdaq estimates)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -293,7 +300,7 @@
 "line": 191,
 "function": "runE1",
 "text": "This month\\'s holdings of each halal fund rotation (decided on the last month-end close, bought at the next open, reviewed at every month end). The scan shows a version in ACTIONS only if its frozen verdict is TRADABLE SMALL or PROVEN. Halal: ZAD check needed unless ZAD lists the fund.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -483,7 +490,7 @@
 "line": 120,
 "function": "fillAct",
 "text": "?\\s*[:=]\\s*(\\d+)/i); if (m) left = +m[1]; } catch (e) { } }\n    status.tipranksCallsLeft = left; out.trAt = nowIso; const perRun = left === null ? 1 : left > 400 ? 8 : left > 150 ? 4 : left > 100 ? 2 : 0;   // never use the calls the daily radar needs\n    const back = old.backTo || iso(now - 10 * 864e5); let bt = back;\n    for (let k = 0; k < perRun && bt > iso(now - 1830 * 864e5); k++) { const to = bt, from = iso(Date.parse(bt) - 31 * 864e5); try { add(await call(from, to)); bt = from; await sleep(800); } catch (e) { break; } }\n    out.backTo = bt; out.hist.sort((a, b) => a.t < b.t ? -1 : 1);",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -493,7 +500,7 @@
 "line": 33,
 "function": "sentences",
 "text": "])/);\n}\n// text of one 8-K document + its EDGAR filing date -> [{ kind, date, precision, text }] in text order; one per kind per sentence\nexport function extractCatalysts(text, filingDate) {\n  const out = [];\n  for (const s of sentences(text)) {\n    for (const K of KINDS) {\n      const km = s.match(K.rx); if (!km) continue;\n      if (K.needsExpect && !EXPECT.test(s)) continue;\n      const at = km.index, found = [];\n      for (const P of DATE_RX) { P.rx.lastIndex = 0; let m; while ((m = P.rx.exec(s))) { const v = P.f(m); if (!found.some(x => m.index < x.end && x.start < m.index + m[0].length)) ",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -503,7 +510,7 @@
 "line": 182,
 "function": "addE",
 "text": "News build-up: 3+ positive 8-Ks in 60 sessions, none negative, above the 50-day; hold ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -513,7 +520,7 @@
 "line": 210,
 "function": "tierOf",
 "text": "Upcoming dated catalysts from 8-Ks (PDUFA, advisory committee, expected topline). Gates (price, dollar volume, lottery, dilution) on the last cached close; halal from data/halal.json + ZAD list. The scan shows a buy only for a rule whose frozen verdict is TRADABLE SMALL or PROVEN; otherwise this is a calendar for information.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -523,7 +530,7 @@
 "line": 215,
 "function": "tierOf",
 "text": "Prices: 5-year whole-market cache incl. dead stocks; its rows hold 3 USD+ stocks with 1M USD+ traded, so the 2 USD floor is in practice 3 USD (penny-stock run-ups like OCGN under 3 USD are outside the test). EDGAR full-text search gives filing dates only (no time), used from the first session on/after that date. CAT-NEWS1 positive/negative is by fixed phrases, not by reading: some hits are mentions, not events. results = frozen first verdict (firstRun); latest = monitoring only.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -533,7 +540,7 @@
 "line": 220,
 "function": "tierOf",
 "text": " stocks, win ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -543,7 +550,7 @@
 "line": 220,
 "function": "annualRevenue",
 "text": "').join(' OR '), '8-K', ym + '-01', end, null, ym === thisMonth);\n    for (const h of hits || []) { if (!memberCiks.has(h[2]) || !(h[6] || []).some(it => String(it) === '2.02')) continue; const id = h[0];\n      if (!(id in RD)) { if (outOfTime()) { miss('read doc ' + id); continue; } const tx = await docText(h[2], h[1], String(id).split(':')[1]); if (tx === null) { miss('read doc ' + id); continue; } const r = readThrough(tx); RD[id] = { hit: r.hit, growth: r.growth, text: r.text }; if (Object.keys(RD).length % 100 === 0) W(RDF, RD); }\n      readEvents.push({ cik: h[2], filed: h[3], id, url: P",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -553,7 +560,7 @@
 "line": 49,
 "function": "stat",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -563,7 +570,7 @@
 "line": 52,
 "function": "stat",
 "text": "beat the average stock in both halves, beyond luck, at stress cost",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -573,7 +580,7 @@
 "line": 66,
 "function": "stat",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -583,7 +590,7 @@
 "line": 68,
 "function": "stat",
 "text": "beat the average stock and the bottom group in both halves, beyond luck",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -593,7 +600,7 @@
 "line": 71,
 "function": "stat",
 "text": "beat the average stock in both halves; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -603,7 +610,7 @@
 "line": 81,
 "function": "PREV",
 "text": " vs an average stock, t ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -613,7 +620,7 @@
 "line": 76,
 "function": "isShell",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -623,8 +630,10 @@
 "line": 98,
 "function": "isShell",
 "text": ". It becomes a BUY only after 30+ paper trades with a profit.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"E03"
+]
 },
 {
 "n": 43,
@@ -633,7 +642,7 @@
 "line": 164,
 "function": "merge",
 "text": "turned profitable",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -643,7 +652,7 @@
 "line": 164,
 "function": "merge",
 "text": "profitable and growing",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -653,7 +662,7 @@
 "line": 165,
 "function": "merge",
 "text": "turned profitable",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -663,7 +672,7 @@
 "line": 165,
 "function": "merge",
 "text": "profitable and growing",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -673,7 +682,7 @@
 "line": 233,
 "function": "num",
 "text": ", average target ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -683,7 +692,7 @@
 "line": 309,
 "function": "cleanName",
 "text": "). Blocked until it has passed.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -693,7 +702,7 @@
 "line": 337,
 "function": "cleanName",
 "text": "Free cash flow is positive: the business funds itself",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -703,7 +712,7 @@
 "line": 338,
 "function": "cleanName",
 "text": "Earnings quality WARNING: it reported a profit but its operations burned cash. The profit is not backed by cash",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -713,7 +722,7 @@
 "line": 339,
 "function": "cleanName",
 "text": "Earnings quality good: cash from operations is at least as large as the reported profit",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -723,7 +732,7 @@
 "line": 379,
 "function": "cleanName",
 "text": " on average, S&P 500 ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -733,7 +742,7 @@
 "line": 12,
 "function": null,
 "text": "close vs its 20-day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -743,7 +752,7 @@
 "line": 13,
 "function": null,
 "text": "close vs its 50-day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -753,7 +762,7 @@
 "line": 13,
 "function": null,
 "text": "close vs its 200-day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -763,7 +772,7 @@
 "line": 14,
 "function": null,
 "text": "50-day average vs 200-day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -773,7 +782,7 @@
 "line": 17,
 "function": null,
 "text": "range contraction (10-day vs 60-day average high-low range)",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -783,7 +792,7 @@
 "line": 18,
 "function": null,
 "text": "volume dry-up (last 10 sessions vs 50-day average volume)",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -793,7 +802,7 @@
 "line": 18,
 "function": null,
 "text": "signal-day volume vs its 50-day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -803,7 +812,7 @@
 "line": 19,
 "function": null,
 "text": "last 3 sessions\\' volume vs its 50-day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -813,7 +822,7 @@
 "line": 19,
 "function": null,
 "text": "20-day vs 60-day average volume",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -823,7 +832,7 @@
 "line": 20,
 "function": null,
 "text": "daily dollar volume (log10 USD, 20-day average)",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -833,7 +842,7 @@
 "line": 28,
 "function": null,
 "text": "S&P 500 above its 200-day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -843,7 +852,7 @@
 "line": 38,
 "function": null,
 "text": "earnings beats in the last 4 reports",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -853,7 +862,7 @@
 "line": 98,
 "function": "judgeNewer",
 "text": "not better than the average stock bought the same day",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -863,7 +872,7 @@
 "line": 103,
 "function": "judgeNewer",
 "text": "every tier-2 gate passed on the newer half with day and block t >= ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -873,7 +882,7 @@
 "line": 103,
 "function": "judgeNewer",
 "text": " (luck bar for the rules tested so far)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -883,7 +892,7 @@
 "line": 175,
 "function": "costReality",
 "text": "stored average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -893,7 +902,7 @@
 "line": 178,
 "function": "costReality",
 "text": "loses at 0.8%, wins at 0.4%",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -903,7 +912,7 @@
 "line": 178,
 "function": "costReality",
 "text": "loses at 0.8% and 0.4%, wins at 0.2%",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -913,7 +922,7 @@
 "line": 65,
 "function": "costBlock",
 "text": "Report only: no verdict is changed. 0.8% = a 1,000 USD position with 3 USD fees each way (0.6%) plus about 0.2% spread; 0.4% = a 5,000 USD position (0.12% fees + spread); 0.2% = a zero-commission broker (spread only). The average after costs is exact for any cost (the mean shifts by the cost difference), so stored averages are used where a study keeps no per-trade list (method). \"Edge\" = vs the average stock bought the same day, which pays no cost in the house yardstick.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -923,7 +932,7 @@
 "line": 80,
 "function": "diagnosis",
 "text": " sessions): nothing discovered or tested this run; earlier frozen results kept",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -933,7 +942,7 @@
 "line": 250,
 "function": "hsh",
 "text": "FROZEN, newer half not yet tested",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -943,7 +952,7 @@
 "line": 255,
 "function": "hsh",
 "text": " rules tested in all)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -953,7 +962,7 @@
 "line": 289,
 "function": "tierOf",
 "text": "TRADABLE SMALL (tier 2) on the newer half only: net > 0 after 0.8% and 1.2%, edge vs the average stock (same day, same exit) > 0, vs the same stock on its other newer-half days > 0, positive without the 2 best, 20+ trades, day t and block t >= max(2.5, zInv(1 - 0.05/m)), m = rules tested in all when its batch was added. Never PROVEN from this engine: the older half was used to find the rule.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -963,7 +972,7 @@
 "line": 297,
 "function": "tierOf",
 "text": " rules tested in all)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -973,7 +982,7 @@
 "line": 298,
 "function": "tierOf",
 "text": " trades, avg ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -983,7 +992,7 @@
 "line": 306,
 "function": "libraryWrite",
 "text": " Tested ONCE on signals from ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -993,7 +1002,7 @@
 "line": 306,
 "function": "libraryWrite",
 "text": " rules tested in all).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1003,7 +1012,7 @@
 "line": 307,
 "function": "libraryWrite",
 "text": "discovery2.mjs -> data/discovery2.json (newer half only, tested once, first judged run frozen)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1013,7 +1022,7 @@
 "line": 62,
 "function": "stat",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1023,7 +1032,7 @@
 "line": 65,
 "function": "stat",
 "text": "did not beat the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1033,7 +1042,7 @@
 "line": 70,
 "function": "stat",
 "text": "beat the average stock, the S&P 500 and the same stock on its other days in both halves, beyond the luck bar, at stress cost, without its 2 best trades",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1043,7 +1052,7 @@
 "line": 82,
 "function": "stat",
 "text": " trades, edge ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1053,7 +1062,7 @@
 "line": 82,
 "function": "stat",
 "text": " trades, edge ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1305,7 +1314,7 @@
 "line": 74,
 "function": "stat",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1315,7 +1324,7 @@
 "line": 77,
 "function": "stat",
 "text": "did not beat the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1325,7 +1334,7 @@
 "line": 82,
 "function": "stat",
 "text": "beat the average stock, the S&P 500 and the same stock on its other days in both halves, beyond the luck bar, at stress cost, without its 2 best trades",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1335,7 +1344,7 @@
 "line": 89,
 "function": "stat",
 "text": "If NOT PROVEN: early-wave buying on daily data is not proven and the ignition buy alerts stay paper-only. A PASS goes to live paper first, never straight into buys.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1345,7 +1354,7 @@
 "line": 92,
 "function": "stat",
 "text": " trades, edge ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1355,7 +1364,7 @@
 "line": 92,
 "function": "stat",
 "text": " trades, edge ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1685,7 +1694,7 @@
 "line": 135,
 "function": "both",
 "text": "passed every check",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1695,7 +1704,7 @@
 "line": 135,
 "function": "both",
 "text": "worse than the average stock in both halves, t ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1705,7 +1714,7 @@
 "line": 135,
 "function": "both",
 "text": "does not beat the average stock in both halves",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1715,7 +1724,7 @@
 "line": 161,
 "function": "applyLuckBar",
 "text": "passed every check but the luck bar for ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1725,7 +1734,7 @@
 "line": 388,
 "function": "bsPost",
 "text": "searchPosts worked without login",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -1735,7 +1744,7 @@
 "line": 460,
 "function": "recordLine",
 "text": "% won, vs the average stock ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1745,7 +1754,7 @@
 "line": 470,
 "function": "recordLine",
 "text": "Each trader is ONE hypothesis at ONE horizon H fixed in advance (1 day trader, 60 long-term, else 20 sessions). Entry: the first regular-session open after the call was public (New York). FOLLOW: 30+ finished calls on 10+ days; both halves positive after 0.8% and 1.2% and beating the average stock; positive without his 2 best; date-clustered t vs the average stock >= 2.5. FADE: same counts, worse in both halves, t <= -2.5, still worse without his 2 worst. WATCH: too few.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1755,7 +1764,7 @@
 "line": 79,
 "function": "stat",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1765,7 +1774,7 @@
 "line": 82,
 "function": "stat",
 "text": "did not beat the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1775,7 +1784,7 @@
 "line": 87,
 "function": "stat",
 "text": "beat the average stock, the S&P 500 and the same stock on its other days in both halves, beyond the luck bar, at stress cost, without its 2 best trades",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1785,7 +1794,7 @@
 "line": 99,
 "function": "add",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1795,7 +1804,7 @@
 "line": 102,
 "function": "add",
 "text": "did not beat the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1805,7 +1814,7 @@
 "line": 107,
 "function": "add",
 "text": "beat the average stock, the S&P 500 and the same stock on its other days in both halves, beyond the luck bar, at stress cost, without its 2 best trades",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1815,7 +1824,7 @@
 "line": 118,
 "function": "add",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1825,7 +1834,7 @@
 "line": 121,
 "function": "add",
 "text": "did not beat the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1835,7 +1844,7 @@
 "line": 126,
 "function": "add",
 "text": ": not better than the average stock",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1845,7 +1854,7 @@
 "line": 126,
 "function": "add",
 "text": ": did not beat the S&P 500",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1855,7 +1864,7 @@
 "line": 130,
 "function": "add",
 "text": "every gate passed",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -1865,7 +1874,7 @@
 "line": 130,
 "function": "add",
 "text": "tier-2 test passed",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2367,7 +2376,7 @@
 "line": 70,
 "function": "stat",
 "text": "not clearly better than the average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2377,7 +2386,7 @@
 "line": 71,
 "function": "stat",
 "text": "one stock made over 25% of the profit",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2387,7 +2396,7 @@
 "line": 73,
 "function": "stat",
 "text": "beat the average stock and the same stock’s other days in both halves, beyond luck, at stress cost",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2397,7 +2406,7 @@
 "line": 74,
 "function": "stat",
 "text": "beat the average stock and the same stock in both halves; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2407,7 +2416,7 @@
 "line": 84,
 "function": "PREV",
 "text": " vs average stock (t ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2645,7 +2654,7 @@
 "line": 110,
 "function": "pc",
 "text": " months beat the S&P 500 (average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2655,7 +2664,7 @@
 "line": 110,
 "function": "pc",
 "text": ". Ideas tested ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2665,7 +2674,7 @@
 "line": 111,
 "function": "pc",
 "text": "Only results count: a strategy that passes every test, picks that beat the S&P 500 on days nobody had seen, and live paper records. Nothing reaches your money without the live paper record.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2675,7 +2684,7 @@
 "line": 180,
 "function": "share",
 "text": "SCORE_THEM: 20%+ caught in time; size the engine only if its paper record is positive after costs",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2685,7 +2694,7 @@
 "line": 189,
 "function": "share",
 "text": "IG8 signals from the paper ledger, every signal, stop 8% then the close, fills delayed by minutes, after costs",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2695,7 +2704,7 @@
 "line": 230,
 "function": "expect",
 "text": "No group of movers was reliably profitable to chase in this period.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2705,7 +2714,7 @@
 "line": 237,
 "function": "expect",
 "text": "Exit by first close under the 5 day average: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2727,7 +2736,7 @@
 "line": 238,
 "function": "expect",
 "text": ", not proof. It is a candidate for a tested rule.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2737,7 +2746,7 @@
 "line": 252,
 "function": "expect",
 "text": "Too few past build-ups to say how well this watch works.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2747,7 +2756,7 @@
 "line": 270,
 "function": "expect",
 "text": "the expansion day made a little on average but lost more often than it won. Not usable as it stands.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2757,7 +2766,7 @@
 "line": 321,
 "function": "study",
 "text": "same, only stocks above their 20 day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -2767,7 +2776,7 @@
 "line": 324,
 "function": "study",
 "text": "same, only stocks above their 20 day average",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -2777,7 +2786,7 @@
 "line": 326,
 "function": "study",
 "text": "After a beat and a strong reaction, 5 days",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -2787,7 +2796,7 @@
 "line": 326,
 "function": "study",
 "text": "same, and earnings beat the estimate",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -2797,7 +2806,7 @@
 "line": 327,
 "function": "study",
 "text": "After a beat and a strong reaction, 10 days",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -2807,7 +2816,7 @@
 "line": 342,
 "function": "whyLine",
 "text": "; under 5 USD, outside the tested rules",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2817,7 +2826,7 @@
 "line": 354,
 "function": "st",
 "text": "A CANDIDATE beat an ordinary stock clearly in this sample. It goes on paper; one period is a lead, not proof.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2827,7 +2836,7 @@
 "line": 354,
 "function": "st",
 "text": "No new way beat buying an ordinary stock clearly in this period. The tests repeat every night as the sessions roll forward.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2849,8 +2858,10 @@
 "line": 75,
 "function": "add",
 "text": "Only the strongest tested buy today.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"E01"
+]
 },
 {
 "n": 263,
@@ -2883,7 +2894,7 @@
 "line": 78,
 "function": "add",
 "text": " a trade on average (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2893,7 +2904,7 @@
 "line": 78,
 "function": "add",
 "text": " unseen trades) vs ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -2903,7 +2914,7 @@
 "line": 108,
 "function": "add",
 "text": "Decided by the system. News is a precaution, not a tested signal; your stop is the tested protection.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3105,7 +3116,7 @@
 "line": 117,
 "function": "stat",
 "text": "not better than the average universe stock open-to-close in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3115,7 +3126,7 @@
 "line": 120,
 "function": "stat",
 "text": "did not beat the S&P 500 open-to-close in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3125,7 +3136,7 @@
 "line": 128,
 "function": "stat",
 "text": "beat the average universe stock, the S&P 500 and the same stock on its other days in both halves, beyond the luck bar, at stress cost and extra slippage, without its 2 best trades",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3135,7 +3146,7 @@
 "line": 134,
 "function": "stat",
 "text": " by previous-day dollar volume, then open > 5 USD, 14-day average volume 1M+ shares, ATR14 > 0.50 USD, relative volume (first 5 minutes vs the previous 14 sessions) >= 1, top ",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -3145,7 +3156,7 @@
 "line": 104,
 "function": "stat",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3155,7 +3166,7 @@
 "line": 107,
 "function": "stat",
 "text": "did not beat the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3165,7 +3176,7 @@
 "line": 112,
 "function": "stat",
 "text": "beat the average stock, the S&P 500 and the same stock on its other days in both halves, beyond the luck bar, at stress cost, without its 2 best trades",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3490,7 +3501,7 @@
 "line": 69,
 "function": "cmp",
 "text": " against the average stock)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3500,7 +3511,7 @@
 "line": 82,
 "function": "cmp",
 "text": " (vs avg stock ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9019,7 +9030,7 @@
 "line": 106,
 "function": "stat",
 "text": "not profitable in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9029,7 +9040,7 @@
 "line": 107,
 "function": "stat",
 "text": "one stock made over 25% of the profit",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9039,7 +9050,7 @@
 "line": 108,
 "function": "stat",
 "text": "beat the no-filing control; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9049,7 +9060,7 @@
 "line": 114,
 "function": "stat",
 "text": "A version passed: it goes on paper first, never straight to a buy.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9059,7 +9070,7 @@
 "line": 89,
 "function": "add",
 "text": "Form S-8 filed and share count up over 2% vs 90 days earlier (avoid 20 sessions) = C-S8",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -9069,7 +9080,7 @@
 "line": 92,
 "function": "add",
 "text": "not worse than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9079,7 +9090,7 @@
 "line": 97,
 "function": "add",
 "text": ": not worse than the average stock",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9089,7 +9100,7 @@
 "line": 100,
 "function": "add",
 "text": "every gate passed",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9099,7 +9110,7 @@
 "line": 100,
 "function": "add",
 "text": "tier-2 test passed",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9109,7 +9120,7 @@
 "line": 102,
 "function": "add",
 "text": "Analysts turning positive",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9119,7 +9130,7 @@
 "line": 143,
 "function": "profitableAt",
 "text": "beat costs, the S&P 500 and the ordinary rule in both halves. Paper only until its live record passes.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9129,7 +9140,7 @@
 "line": 144,
 "function": "profitableAt",
 "text": "beat costs and the S&P 500 in both halves. Paper only until its live record also passes.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9139,7 +9150,7 @@
 "line": 149,
 "function": "line",
 "text": "% up, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9149,7 +9160,7 @@
 "line": 154,
 "function": "line",
 "text": "ANALYSTS TURNING POSITIVE (more Buy ratings than last month)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9159,7 +9170,7 @@
 "line": 158,
 "function": "line",
 "text": "WHAT HAPPENS NEXT: all of these are added to tonight’s scan. If one also has a tested entry, it appears in the PLAN as a BUY with range and stop. Each source is scored against the S&P 500 (send: sources).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9169,7 +9180,7 @@
 "line": 159,
 "function": "line",
 "text": "STRICT CLUSTER TEST (3+ insiders, 100K USD+, profitable company): older ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9179,7 +9190,7 @@
 "line": 160,
 "function": "line",
 "text": "  rising markets only (S&P 500 above its 50 day average): older ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9219,7 +9230,7 @@
 "line": 76,
 "function": "stat",
 "text": "2-day RSI under 10 in an uptrend, sell at the first close above the 5-day average (max 5 sessions)",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -9229,7 +9240,7 @@
 "line": 76,
 "function": "stat",
 "text": "Three lower highs and lows in an uptrend, sell at the first close above the 5-day average (max 5)",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -9239,7 +9250,7 @@
 "line": 80,
 "function": "stat",
 "text": "not better than an average stock in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9249,7 +9260,7 @@
 "line": 83,
 "function": "stat",
 "text": "did not beat the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9259,7 +9270,7 @@
 "line": 89,
 "function": "stat",
 "text": "beat the average stock, the S&P 500 and the same stock on its other days in both halves, beyond the luck bar, at stress cost, without its 2 best trades",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9269,7 +9280,7 @@
 "line": 89,
 "function": "stat",
 "text": "positive at 0.25% costs in both halves (information only: the cost is what decides it)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9279,7 +9290,7 @@
 "line": 89,
 "function": "stat",
 "text": "not positive even at 0.25% costs",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9289,7 +9300,7 @@
 "line": 94,
 "function": "stat",
 "text": " | older avg ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9299,7 +9310,7 @@
 "line": 94,
 "function": "stat",
 "text": " | newer avg ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9309,7 +9320,7 @@
 "line": 105,
 "function": "tier2Of",
 "text": " (buy next open, 0.8% cost; edge = tip minus the average stock bought the same day; t by day)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9319,7 +9330,7 @@
 "line": 105,
 "function": "tier2Of",
 "text": "source | tips | 5 sessions: n, avg, vs avg stock (t), vs S&P | 20 sessions: n, avg, vs avg stock (t), vs S&P | so far (open to last close) | verdict",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9329,7 +9340,7 @@
 "line": 112,
 "function": "tier2Of",
 "text": "FOLLOW (tier 2): 30+ finished tips on 10+ days at a horizon; in both date halves beats the average stock after 1.2% stress cost, beats the S&P 500, positive without its 2 best tips, t >= 2.5. FADE (tier 2): both halves worse than the average stock, t <= -2.5, still worse without its 2 worst. First judgement frozen.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9339,7 +9350,7 @@
 "line": 112,
 "function": "tier2Of",
 "text": "FADE: 10+ finished tips on 5+ days and t <= -2 vs the average stock at 5 or 20 sessions; its tips become AVOID for 20 sessions. LISTEN (information only): t >= +2 with the same counts. Never a buy rule.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9349,7 +9360,7 @@
 "line": 124,
 "function": "candles",
 "text": "average target ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9359,8 +9370,10 @@
 "line": 131,
 "function": "candles",
 "text": "  BUY WATCH (tested rule): buy ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"E04"
+]
 },
 {
 "n": 897,
@@ -9369,8 +9382,10 @@
 "line": 132,
 "function": "candles",
 "text": "  Not yet (tested rule): buy only after a close above ~",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"E04"
+]
 },
 {
 "n": 898,
@@ -9379,7 +9394,7 @@
 "line": 134,
 "function": "candles",
 "text": "  Reference plan (not tested): ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9389,7 +9404,7 @@
 "line": 139,
 "function": "candles",
 "text": "\\n\\nData by TipRanks. Ratings are opinions, not tested signals. Not financial advice, not a halal ruling.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9539,7 +9554,7 @@
 "line": 65,
 "function": "judgeMonthly",
 "text": "not better than the same funds held equally in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9549,7 +9564,7 @@
 "line": 67,
 "function": "judgeMonthly",
 "text": "), below the proof bar ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9559,7 +9574,7 @@
 "line": 99,
 "function": "switchVerdict",
 "text": "holding did better in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9569,7 +9584,7 @@
 "line": 100,
 "function": "switchVerdict",
 "text": "holding did better at 1.2% cost in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9579,7 +9594,7 @@
 "line": 103,
 "function": "switchVerdict",
 "text": "not better than switching the same stocks on their other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9589,7 +9604,7 @@
 "line": 105,
 "function": "switchVerdict",
 "text": "), below the proof bar ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9599,7 +9614,7 @@
 "line": 152,
 "function": "runE1",
 "text": "not better than the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9609,7 +9624,7 @@
 "line": 153,
 "function": "runE1",
 "text": "not better than the same stocks on their non-earnings days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9619,7 +9634,7 @@
 "line": 176,
 "function": "runE1",
 "text": "E1 study on its own data (Alpha Vantage history), as written by the leaders fair test",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9659,7 +9674,7 @@
 "line": 8,
 "function": "sentences",
 "text": "$0-9])/).map(s => s.replace(/․/g, '.'));\n}\n\n// ---- CHAIN-DEMAND1 keyword rule (and part A for CHAIN-READ1) ---------------------------------------------------------------------\nconst RAISE_A = /\\b(rais(e|es|ed|ing)|increas(e|es|ed|ing)|lift(s|ed|ing)?|boost(s|ed|ing)?)\\b[^.;]{0,80}?\\b(guidance|outlook|forecast)\\b/i;\nconst RAISE_B = /\\b(guidance|outlook|forecast)\\b[^.;]{0,40}?\\b(raised|increased|lifted)\\b/i;\nconst CAPEX = /\\bcapital (expenditures?|spending|investments?)\\b|\\bcapex\\b/i, CAPEX_UP = /\\b(increas\\w*|higher|rais\\w*|grow\\w*|accelerat\\w*|expand\\w*)\\b/i;\nconst VETO = /\\b(lower(s|ed|ing)",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -9669,7 +9684,7 @@
 "line": 49,
 "function": "stat",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9679,7 +9694,7 @@
 "line": 66,
 "function": "stat",
 "text": "top group not better than the bottom group in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9689,7 +9704,7 @@
 "line": 66,
 "function": "stat",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9699,7 +9714,7 @@
 "line": 98,
 "function": "isShell",
 "text": "Paper record of this pattern (buy next open, 10% stop, out after 20 sessions): ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9709,7 +9724,7 @@
 "line": 183,
 "function": "merge",
 "text": "losing money",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9719,7 +9734,7 @@
 "line": 322,
 "function": "cleanName",
 "text": "Revenue started from almost nothing a year ago, so its growth figure (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9729,7 +9744,7 @@
 "line": 322,
 "function": "cleanName",
 "text": " against a year ago",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9739,8 +9754,10 @@
 "line": 340,
 "function": "cleanName",
 "text": "% in a year. Companies that keep selling new shares lag the market",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"E02"
+]
 },
 {
 "n": 935,
@@ -9749,7 +9766,7 @@
 "line": 341,
 "function": "cleanName",
 "text": "% in a year: existing holders are being diluted",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9759,7 +9776,7 @@
 "line": 99,
 "function": "judgeNewer",
 "text": "not better than the same stock on its other days",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9769,7 +9786,7 @@
 "line": 57,
 "function": "halves",
 "text": " (newer-half test)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9779,7 +9796,7 @@
 "line": 274,
 "function": "hsh",
 "text": "discovery2: newer-half test done (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9789,7 +9806,7 @@
 "line": 286,
 "function": "tierOf",
 "text": "Signals of the discovered rules at the last cached close. buys holds lines only for a rule whose frozen newer-half verdict is TRADABLE SMALL; gates in the test and here: 3 USD+, 2M USD+ a day, no 15%+ one-day jump in 21 sessions, no 424B4/424B5 in 20 sessions; halal from data/halal.json + ZAD (unknown = check ZAD first).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9799,7 +9816,7 @@
 "line": 66,
 "function": "stat",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -9979,7 +9996,7 @@
 "line": 78,
 "function": "stat",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10041,7 +10058,7 @@
 "line": 353,
 "function": "sec",
 "text": "); names = new Map(); for (const v of Object.values(ct || {})) if (!names.has(norm(v.title))) names.set(norm(v.title), v.ticker); } t = names.get(norm(nm)) || null; }\n      S[cusip] = t && /^[A-Z]{1,5}$/.test(t) ? t : null; return S[cusip]; };\n    for (const cik of [...new Set(SEED13F)]) { const sub = await sec(SECD + ",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10051,7 +10068,7 @@
 "line": 359,
 "function": "sec",
 "text": "); if (!idx) continue;\n        const x = ((idx.directory && idx.directory.item) || []).map(i => i.name).find(n => /\\.xml$/i.test(n) && !/primary_doc/i.test(n)); if (!x) continue; const xml = await sec(dir + ",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10061,7 +10078,7 @@
 "line": 472,
 "function": "recordLine",
 "text": "needs data: TikTok’s Research API is for approved academic researchers only; no other official read access to videos.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10071,7 +10088,7 @@
 "line": 83,
 "function": "stat",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10081,7 +10098,7 @@
 "line": 47,
 "function": "fetchFamily",
 "text": " record fields: ",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10091,7 +10108,7 @@
 "line": 96,
 "function": "add",
 "text": "Any matched federal award of 50M+ (information only, no size test)",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10101,7 +10118,7 @@
 "line": 103,
 "function": "add",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10111,7 +10128,7 @@
 "line": 122,
 "function": "add",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10121,7 +10138,7 @@
 "line": 30,
 "function": "ran",
 "text": "Sunday company-news test",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10131,7 +10148,7 @@
 "line": 31,
 "function": "ran",
 "text": "Sunday octopus test",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10141,7 +10158,7 @@
 "line": 35,
 "function": "ran",
 "text": "Sunday horizons test",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10151,7 +10168,7 @@
 "line": 39,
 "function": "ran",
 "text": "Sunday earnings-drift test (feeds the nightly earnings-drift buys)",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10221,7 +10238,7 @@
 "line": 9,
 "function": null,
 "text": "Crosses +10% before 11:00, normal day’s volume, listed under a year",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10231,7 +10248,7 @@
 "line": 18,
 "function": "scoreIgnitionPaper",
 "text": ": removed from the record because price age was not verified",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -10271,7 +10288,7 @@
 "line": 70,
 "function": "stat",
 "text": "not clearly better than the same stock on other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10381,7 +10398,7 @@
 "line": 177,
 "function": "share",
 "text": "rule did not fire (or fired without a validated record) is the biggest cause: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10391,7 +10408,7 @@
 "line": 225,
 "function": "expect",
 "text": "On this evidence, buying the morning after a 20% jump made money more often than not in this period. One good month is not proof.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10401,7 +10418,7 @@
 "line": 243,
 "function": "expect",
 "text": "Stocks under 1 USD can be halted, delisted, or diluted by an offering within days. The radar does not test or price them.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10411,7 +10428,7 @@
 "line": 258,
 "function": "expect",
 "text": " trades is a lead, not proof.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10421,7 +10438,7 @@
 "line": 270,
 "function": "expect",
 "text": " trades). A lead, not proof.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10431,8 +10448,10 @@
 "line": 78,
 "function": "add",
 "text": "What the 5-year test found when the S&P 500 had ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"E01"
+]
 },
 {
 "n": 1004,
@@ -10441,8 +10460,10 @@
 "line": 79,
 "function": "add",
 "text": "Decided by the system from the 5-year market-day test. Not financial advice.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"E01"
+]
 },
 {
 "n": 1005,
@@ -10481,7 +10502,7 @@
 "line": 121,
 "function": "stat",
 "text": "not clearly better than the same stock open-to-close on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10491,7 +10512,7 @@
 "line": 108,
 "function": "stat",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10627,7 +10648,7 @@
 "line": 87,
 "function": "v",
 "text": "PROMISING: propose a separate 20-session confirmation period",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10637,7 +10658,7 @@
 "line": 87,
 "function": "v",
 "text": "NOT BETTER than ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10677,7 +10698,7 @@
 "line": 69,
 "function": "cmp",
 "text": "BELOW was not worse than ABOVE in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10687,7 +10708,7 @@
 "line": 71,
 "function": "cmp",
 "text": "BELOW trades did worse in both halves and lost money, beyond the luck bar",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12349,7 +12370,7 @@
 "line": 106,
 "function": "stat",
 "text": "not better than the no-filing control in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12359,7 +12380,7 @@
 "line": 108,
 "function": "stat",
 "text": "PROMISING (paper first)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12369,7 +12390,7 @@
 "line": 114,
 "function": "stat",
 "text": "the filing does not make the breakout better than the same breakout without news. Nothing to act on.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12379,7 +12400,7 @@
 "line": 94,
 "function": "add",
 "text": "not worse than the S&P 500 in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12389,7 +12410,7 @@
 "line": 95,
 "function": "add",
 "text": "not clearly worse than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12399,7 +12420,7 @@
 "line": 96,
 "function": "add",
 "text": "not worse without its 2 worst cases in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12409,7 +12430,7 @@
 "line": 97,
 "function": "add",
 "text": ": not worse without its 2 worst cases",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12419,7 +12440,7 @@
 "line": 138,
 "function": "profitableAt",
 "text": "no better than the S&P 500 over the same days",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12429,7 +12450,7 @@
 "line": 142,
 "function": "profitableAt",
 "text": "no better than the S&P 500",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12439,7 +12460,7 @@
 "line": 142,
 "function": "profitableAt",
 "text": "no better than the ordinary insider rule",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12471,7 +12492,7 @@
 "line": 84,
 "function": "stat",
 "text": "not clearly better than the same stock on its other days in the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12481,7 +12502,7 @@
 "line": 111,
 "function": "tier2Of",
 "text": "FADE / AVOID now: none (no source has a 10-tip, 5-day record at t <= -2 yet)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12491,7 +12512,7 @@
 "line": 34,
 "function": "guardDecide",
 "text": "WATCHER STOPPED EARLY: today\\'s live watcher ended before 14:55 New York (crash or time limit). Not restarted automatically (a second run would overwrite the day\\'s record). Send this to Claude.",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -12501,7 +12522,7 @@
 "line": 33,
 "function": "watcherReport",
 "text": "; earlier summary has additional minutes without retained heartbeat proof",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {

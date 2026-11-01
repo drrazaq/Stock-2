@@ -189,9 +189,9 @@ Cv = ['# HISTORY-03 coverage and count reconciliation', '', f'Production source:
       '',
       *[l for m in MODS[1:] for l in (['## ' + m.TITLE + ': coverage', ''] + getattr(m, 'COVERAGE_NOTES', []) + [''] if getattr(m, 'COVERAGE_NOTES', None) else [])],
       '## Still not covered', '',
-      f'- **{counts.get(("narrow", "NOT_REVIEWED"), 0) + counts.get(("broad-only", "NOT_REVIEWED"), 0)} source strings** outside both file-level reviews (mostly `scan.mjs`, plus discover, deals, movers, news-watch, premarket-check, smart-money, tipranks, intraday-radar and others).',
-      '- **Live-only texts:** the `ignition-watch.mjs` alert bodies, which were read from source, not rendered, and the intraday-radar cards.',
-      '- **Owner-input replies:** `check SYM`, the sell/hold review, the opinion replies, and the LEADER DIP buy confirmation.',
+      f'- **Source strings not reviewed:** {counts.get(("narrow", "NOT_REVIEWED"), 0) + counts.get(("broad-only", "NOT_REVIEWED"), 0)}.',
+      '- **Extractor recall:** strings with none of the listed claim words, and text assembled at runtime, are covered only through rendered messages and the per-claim presence table. A claim that never renders under the available data or fixtures could still be missed.',
+      '- **Read from source, not rendered:** live-only texts (`ignition-watch.mjs` alert bodies, intraday-radar cards and board, news-watch MARKET SHOCK) and the provider-dependent senders of batch 5. Owner-input replies that need live prices rendered degraded (batch 4).',
       '- **No independent recomputation** of any number from raw prices (see the README).']
 (D / 'COVERAGE.md').write_text('\n'.join(Cv) + '\n')
 print(json.dumps({'counts': {e + '/' + c: n for (e, c), n in counts.items()}, 'total': len(rows), 'records': 43 + len(ALLB), 'noAnchor': no_anchor, 'gateDefects': gate}))

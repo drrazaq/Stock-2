@@ -318,3 +318,43 @@ Records to date: 95 (43 in batch 1, the rest in `all-claims.json`). The combined
 | `tools/render-decisions.mjs` | `efafa50f948e10c1b0c2559bf63c11d1b05107a0fcada7c18167dbc9630b367c` |
 | `tools/build-audit.py` | `0784a9e631652517c953811753bb04603f378d8d9da7d2a3fe19071b1456f064` |
 | `tools/readme_batch.py` | `db4b15b3cb0f0e703ee185420c17f25dfb00b012c2e17aea7e74ce5a96b7ee22` |
+
+---
+
+# Batch 5: remaining senders and modules
+
+Same method and fields as batch 2. Nothing was sent and no provider was called; raw renders stay local.
+
+## Results
+
+- **E01 (medium-high):** the live MARKET SHOCK message (sent when the S&P 500 moves 1.5%+) quotes the selection-biased market-day averages ("the system’s tested buys made X a trade … unseen trades") and says "Decided by the system from the 5-year market-day test". Its hold-and-keep-your-stops advice is fine.
+- **E02:** the `discover` reply's "Companies that keep selling new shares lag the market" is stated as fact, but its evidence is below the luck bar (S2: −3.8%, t −2.3) and the S-8 share-creep test (C-S8) was rejected.
+- **E03 (latent, P1):** `deals` says a pattern "becomes a BUY only after 30+ paper trades with a profit".
+- **E04 (vocabulary):** `tipranks` uses "BUY WATCH (tested rule)" for the per-stock check.
+- **E10:** the lab and study verdict templates across the remaining modules are acceptable.
+- **Coverage:** every extracted string is now classified; none remains NOT_REVIEWED.
+
+## Coverage after this batch (`COVERAGE.md`, `source-inventory-v3.json`)
+
+| Category | Strings |
+|---|---:|
+| CATALOGUED_CLAIM | 115 |
+| REVIEWED_ACCEPTABLE | 989 |
+| NOT_A_CLAIM | 108 |
+| NOT_REVIEWED | 0 |
+| **Total** | **1212** |
+
+Records to date: 100 (43 in batch 1, the rest in `all-claims.json`). The combined ranking is in `RANKED-FINDINGS-v3.md`.
+
+## Files and SHA256
+
+| File | SHA256 |
+|---|---|
+| `BATCH5-FINDINGS.md` | `adb763e69476928fc57553ab8c1a81c7d96a26fb5a1e19937b49dc1119791729` |
+| `RANKED-FINDINGS-v3.md` | `89a5aa41cccd5a7ee997a4d421f00bdb744360e1e4fe067604c07f3b4208b056` |
+| `COVERAGE.md` | `bdda1917aba7154dd0216868481335e6d67f4ea04f7d850524e76163c4722a99` |
+| `all-claims.json` | `1014cd29f592ea3cd1f710f3005acd289401273f728fd0ec63e974b661aaacf1` |
+| `source-inventory-v3.json` | `214cc9df1565ba498a613f985964975e3d9513f8e71c1da80dee4be906dc3a0e` |
+| `tools/catalogue_data_b5.py` | `10019907109c6d62960058b4cfd11fb66651cfce87e5b3d823972aa2f1711a7c` |
+| `tools/build-audit.py` | `14ff06c6b21e124ab21362439dc700f78aca361d333820bf137491f43c1ecf02` |
+| `tools/readme_batch.py` | `db4b15b3cb0f0e703ee185420c17f25dfb00b012c2e17aea7e74ce5a96b7ee22` |
