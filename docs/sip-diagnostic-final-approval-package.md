@@ -1,3 +1,17 @@
+# Final decision summary — reviewed SIP sample remains inactive
+
+No installation or execution is authorized. Reviewed PR5/runtime/plan/workflow bytes are unchanged. [Machine-readable exact decision](validation/sip-diagnostic-decision-package.json); [single-workflow installation patch](validation/sip-access-diagnostic-installation.patch), SHA256 **`2318247b367df574aab11af15635f8b45ede141755dd3b2da5ed2edc9d64ac53`**. This patch only adds `.github/workflows/sip-access-diagnostic.yml` with exact reviewed workflow SHA256 **`5c707d1df5494398e13068eab82f7f02464b0a00ae805a90d87c3bb656c6d1c3`**. No runtime files are installed: they are checked out by immutable source pin at execution.
+
+Two related decisions: installation of that exact workflow; and ONE manual seven-request run using only existing ALPACA_KEY/ALPACA_SECRET. They can be approved together after **2November16:00UTC /19:00Kuwait**, when the unchanged actual-approval24hour guard opens. Proposed dispatch **3November10:50NewYork /18:50Kuwait**, sample **11:00NewYork /19:00Kuwait**. An approval issued now1November cannot be relabelled as a later approval. Installation-only authority would not authorize the run; missing/late approval or a missed window means no execution, not an automatic reschedule.
+
+The existing keys are present in the protected step environment during the bounded early wait, though read/use waits for the time gate. Approval includes the fixed20-code output contract, contents:read and one16KiB aggregate artifact with3-day retention, not raw quotes/account records. Reference0 + sample7 = combined maximum7 provider requests, no retry/fallback. App/body limits exclude TLS/control-plane traffic. Seven sampled responses can check binding access, clocks and revisions for SPY/AAPL; they cannot establish broad coverage, stable settling/rate limits, executable fills or profitability. Subscriptions are confirmed; sampled access and freshness remain untested. Proposed thresholds stay unapproved.
+
+Current offline checks:24 tests across the four unchanged diagnostic/correction/workflow/package files PASS with synthetic bindings/local services on author Node24.19.0. Prior independent Claude Node22.22.0/TLS/wrapper PASS remains distinct. Official action tags were re-resolved publicly and match all three pins; this is provenance, not a full action security audit. F1's old1/12 failure without a retained case/log remains UNKNOWN and independently classified non-blocking. No new failure or runtime revision is claimed. The dedicated runner and literal finalizer guards remain intact; no credential, provider, broker or Telegram use occurred.
+
+The complete previously prepared reviewed scope follows. Monday natural-run verification and the mentor deployment decision remain separate.
+
+---
+
 # Exact SIP diagnostic approval package — prepared, NOT authorized
 
 Scope: installation of only the byte-identical proposed workflow and, separately, ONE dated manual seven-request diagnostic using existing bindings. No installation, dispatch, credential use or provider call has occurred. This is not V2 capture, strategy evaluation, a feed switch or trading authorization.

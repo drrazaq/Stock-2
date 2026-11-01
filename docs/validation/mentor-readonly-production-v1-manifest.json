@@ -1,0 +1,65 @@
+{
+  "kind": "READ_ONLY_MENTOR_SEPARATE_PRODUCTION_REVIEW",
+  "productionBase": "6e806c4f2ea5d0f299b86c435fdc449c2f87e291",
+  "patchSha256": "ebc62f42571b0dddc9d7e44e8d81f49b0f7ff22ea097ce121ba18140a5846222",
+  "files": [
+    "scan.mjs",
+    "mentor-plan.mjs",
+    "test/load-scan.mjs",
+    "test/mentor-readonly.test.mjs",
+    "test/bot-actions.test.mjs"
+  ],
+  "before": {
+    "scan.mjs": "c4f2d96793b3104659d6a4b2e0ce4910cf19b756c6637fce4743df8dd70eb1c3",
+    "test/load-scan.mjs": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2",
+    "test/bot-actions.test.mjs": "ad4e9a8cbe694b9b4dba8aeac53cd948ab1ee8bea29b16899ea444c157c0ff48"
+  },
+  "after": {
+    "scan.mjs": "a86f88b7a2508866ed01def9182e6ed97e00a0a6947f9f879335d2f1cc0b67fe",
+    "mentor-plan.mjs": "c9450320caa3f54abd11d957676ff600a509ebe8014a38b77c7a7596a3ba99c9",
+    "test/load-scan.mjs": "ca8a48be321215b5d02f9bc09edecf5f562f18dbbe1b3812424f5f97d4b91605",
+    "test/mentor-readonly.test.mjs": "99e7e9f11c38d77b3813de0bb56399481e0b27648f8050d098ea5ae2c692e147",
+    "test/bot-actions.test.mjs": "e845f9c183bd52357d01f74b2211f04470b98bee5d419ffb2a7ea467e08ac3c8"
+  },
+  "dependencies": {
+    "index.html": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
+    "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21"
+  },
+  "readOnlyFinancialRecords": true,
+  "normalCommandOffsetStillPersists": true,
+  "mixedOwnerCommandsKeepExistingBehavior": true,
+  "currentZadSummary": "UNKNOWN_IN_THIS_VIEW",
+  "newFillContractRecordingIncluded": false,
+  "strategyRulesChanged": false,
+  "targetOverlayAdopted": false,
+  "recommendationsActionable": false,
+  "installed": false,
+  "deploymentApproved": false,
+  "fullDevelopmentPRRequired": false,
+  "testOnlyFiles": [
+    "test/load-scan.mjs",
+    "test/mentor-readonly.test.mjs",
+    "test/bot-actions.test.mjs"
+  ],
+  "testOnlyBaseCapsule": {
+    "path": "docs/validation/mentor-production-test-base.json.gz",
+    "sha256": "4f2733133451c7920e0fd07c5a674b1b8b1fc1e57fbfdcd7cd52d3e412efc9ad",
+    "source": "6e806c4f2ea5d0f299b86c435fdc449c2f87e291",
+    "files": {
+      "index.html": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
+      "test/load-scan.mjs": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2",
+      "test/bot-actions.test.mjs": "ad4e9a8cbe694b9b4dba8aeac53cd948ab1ee8bea29b16899ea444c157c0ff48"
+    }
+  },
+  "baselineTestFailure": "Unpatched6e806c4f reproduces Sunday RECORDS helper truncation at PRACTICE ACCOUNT; fixture-only boundary correction retains label assertions and adds a negative boundary control.",
+  "standaloneReviewBranch": "review/mentor-readonly-20261101",
+  "standaloneReviewHead": "d63d3d10849e4addaa1c5e05d22ec5eeaecc82ea",
+  "fullProductionSuite": {
+    "files": 124,
+    "cases": 1208,
+    "failures": []
+  },
+  "developmentImplementationSource": "c3a9ffd431659916685ab38132afa3e8c28a8d7b",
+  "independentReviewStatus": "PENDING",
+  "reviewURL": "https://github.com/drrazaq/Stock-2/pull/3"
+}

@@ -1,0 +1,124 @@
+{
+  "kind": "SIP_DIAGNOSTIC_EXACT_DECISION_PACKAGE_V1",
+  "prepared": "2026-11-01",
+  "approved": false,
+  "independentReview": {
+    "head": "510ef31cb90c9623ee8a0170cfed1010ebfd28bf",
+    "reviewCommit": "6465c071d7206e3f089063fa448eb2d1076610dc",
+    "verdict": "PASS_INACTIVE_ONLY",
+    "runtimeSourceUnchanged": true
+  },
+  "installation": {
+    "target": ".github/workflows/sip-access-diagnostic.yml",
+    "workflowSha256": "5c707d1df5494398e13068eab82f7f02464b0a00ae805a90d87c3bb656c6d1c3",
+    "workflowGitBlob": "cbee2138f0635472ffc1c1237339ef0e963b0325",
+    "proposedFile": "docs/validation/sip-access-diagnostic.workflow.yml.proposed",
+    "patch": "docs/validation/sip-access-diagnostic-installation.patch",
+    "patchSha256": "2318247b367df574aab11af15635f8b45ede141755dd3b2da5ed2edc9d64ac53",
+    "otherInstalledFiles": [],
+    "currentlyInstalled": false
+  },
+  "execution": {
+    "authorization": "ONE_DATED_MANUAL_RUN_ONLY_AFTER_OWNER_APPROVAL",
+    "runtimeSource": "b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c",
+    "runtimeHashes": {
+      "sip-access-diagnostic.mjs": "8810a1220102786119b3fdf0caf296b8a38412c87bd9f3c1bc5ee9cb58d35d8a",
+      "sip-access-result.mjs": "01a3c1859003e49a5caf5001bfd6219faf3fcf88b68549b81127528ea09a337b",
+      "sip-access-https.mjs": "cd82157e48daf7c53822c2a0fb2e1ea6f01433058ee0ac61bb20c8bc47dccfd9",
+      "tools/run-sip-access-diagnostic.mjs": "2728669651e1fcdb9f1ff01af457bf7dd13cbf89da92fcb3b551cbf4e2499866",
+      "tools/validate-sip-access-result.mjs": "7a6b93e17edb4a1dd3250d0028cc1d3f06aa355a158b7eefeed9839e6b260744"
+    },
+    "planSha256": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
+    "sampleDay": "2026-11-03",
+    "dispatchProposedUtc": "2026-11-03T15:50:00Z",
+    "dispatchNewYork": "2026-11-03 10:50",
+    "dispatchKuwait": "2026-11-03 18:50",
+    "sampleUtc": "2026-11-03T16:00:00Z",
+    "sampleNewYork": "2026-11-03 11:00",
+    "sampleKuwait": "2026-11-03 19:00",
+    "latestRunnerStartUtc": "2026-11-03T16:00:30Z",
+    "absoluteDataDeadlineUtc": "2026-11-03T16:03:00Z",
+    "earliestValidActualApprovalUtc": "2026-11-02T16:00:00Z",
+    "actualApprovalTimestamp": null,
+    "approvalMustBeActualNotScheduledOrBackdated": true,
+    "earlyWaitSeconds": 600,
+    "runnerCeilingSeconds": 790,
+    "processSeconds": 800,
+    "killGraceSeconds": 5,
+    "jobMinutes": 20,
+    "automaticRetriesOrReplacement": false,
+    "checkExistingRunHistoryBeforeDispatch": true
+  },
+  "bindings": {
+    "existingNames": [
+      "ALPACA_KEY",
+      "ALPACA_SECRET"
+    ],
+    "newNames": [],
+    "keyPresentInEnvironmentDuringEarlyWait": true,
+    "keyPropertiesReadOnlyAfterGate": true,
+    "repositoryPermissions": {
+      "contents": "read"
+    },
+    "privateKeyBrokerTelegramAccess": false
+  },
+  "budgets": {
+    "referenceRequests": 0,
+    "sampleRequestsMax": 7,
+    "combinedApplicationMax": 7,
+    "perBodyBytes": 131072,
+    "allBodyBytes": 917504,
+    "perRequestAndBodyMs": 10000,
+    "reportBytes": 16384,
+    "symbols": [
+      "SPY",
+      "AAPL"
+    ],
+    "host": "data.alpaca.markets",
+    "feed": "sip",
+    "retries": 0,
+    "redirects": 0,
+    "fallbacks": 0,
+    "paginationFollowups": 0,
+    "artifactRetentionDays": 3,
+    "limitsDoNotIncludeTlsWireOrControlPlaneTraffic": true
+  },
+  "stdoutContract": {
+    "source": "sip-access-result.mjs",
+    "fixedCodeCount": 20,
+    "exitValidation": "joint code/exit/native-step outcome in protected wrapper and finalizer",
+    "malformedUnknownOrMismatch": "ERROR/1"
+  },
+  "failureAndCleanup": "First refusal,timeout,malformed/oversize/incomplete response,clock change or deadline stops; no provider retry. One aggregate upload; lost/unacknowledged artifact remains UNKNOWN durability. Exact temporary approval/report/raw/code/exit paths removed in always cleanup.",
+  "officialActionTagsRechecked": {
+    "actions/checkout@v4.2.2": "11bd71901bbe5b1630ceea73d27597364c9af683",
+    "actions/setup-node@v4.4.0": "49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/upload-artifact@v4.6.2": "ea165f8d65b6e75b540449e92b4886f43607fa02"
+  },
+  "subscriptionEvidence": {
+    "AlpacaAlgoTraderPlus": "CONFIRMED_OWNER_EVIDENCE",
+    "MassiveStocksStarter": "CONFIRMED_15_MINUTE_DELAY",
+    "protectedSampledEndpointAccess": "NOT_YET_RUN",
+    "broadLiveCoverageSettlingRateGuarantees": "NOT_ESTABLISHED"
+  },
+  "notAuthorized": [
+    "installation",
+    "dispatch",
+    "realCredentials",
+    "providerCalls",
+    "feedSwitch",
+    "captureExpansion",
+    "strategyOrThresholdAdoption"
+  ],
+  "separateFrom": [
+    "mentorProductionDecision",
+    "MondayNaturalWatcherDSTObservations",
+    "V2EnrollmentOrCapture"
+  ],
+  "remainingEngineeringBlockers": [],
+  "remainingDecisions": [
+    "Owner byte-identical workflow installation approval",
+    "Owner one dated dispatch approval issued within actual24h guard window; may be bundled with installation after window opens"
+  ],
+  "knownIndependentNonBlockingFollowUp": "F1 one failed Node20 corrections run among12, no retained case/log; exact cause UNKNOWN. Current local passes do not erase it."
+}

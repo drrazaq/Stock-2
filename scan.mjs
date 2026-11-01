@@ -3216,7 +3216,7 @@ async function tgCommands(sig) {
   try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/getUpdates?timeout=' + Math.min(50, Math.max(0, parseInt(env.TG_WAIT || '0', 10) || 0)) + '&offset=' + state.offset); ups = ((await r.json()).result) || []; } catch (e) { console.log('could not read Telegram messages'); return; }
   // One message may carry several commands, one per line (for example four "follow" lines pasted together). Split those up.
   // A leading dash, bullet or backtick copied from a list is ignored. A multi-line tip message is left whole.
-  const CMD_LINE = /^(follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
+  const CMD_LINE = /^(\/?mentor(?:@\w+)?|follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
   for (const u of ups) {
     if (u.callback_query) {   // a tapped button: Bought / Sold / Skipped
       const cq = u.callback_query, chatId = cq.message && cq.message.chat ? cq.message.chat.id : (cq.from && cq.from.id); let txt = null, note = 'Recorded';
@@ -3245,7 +3245,7 @@ async function tgCommands(sig) {
     if (lines.length > 1 && lines.every(x => CMD_LINE.test(x))) lines.forEach(x => queue.push({ update_id: u.update_id, message: { ...m, text: x } }));
     else { if (m && m.text && lines.length === 1) m.text = lines[0]; queue.push(u); }
   }
-  const isMentor=u=>/^\/?mentor(?:@\w+)?\s+[a-z][a-z.\-]{0,5}\s*$/i.test(u.message?.text||''),owned=queue.filter(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)),mentorOnly=queue.some(isMentor)&&owned.every(isMentor);
+  const isMentor=u=>/^\/?mentor(?:@\w+)?(?:\s|$)/i.test(u.message?.text||''),owned=queue.filter(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)),mentorOnly=queue.some(isMentor)&&owned.every(isMentor);
   if (state.menuV !== MENU_V) { if(await sendMenu())state.menuV = MENU_V; }   // the one-tap menu appears by itself once (and after each change)
   for (const u of queue) {
     state.offset = u.update_id + 1;
@@ -3273,7 +3273,7 @@ async function tgCommands(sig) {
     }
     const text = tradeWords(m.text.trim().replace(/\$/g, '').replace(SHARE_TYPOS, 'shares')), num = (re) => { const x = text.match(re); return x ? +x[1] : null; };
     let k;
-    if ((k=text.match(/^mentor\s+([a-z][a-z.\-]{0,5})\s*$/i))) { out.push(mentorText(k[1].toUpperCase(),mentorOnly?readJson0(POS_FILE):pos)); continue; }
+    if (/^mentor(?:@\w+)?(?:\s|$)/i.test(text)) { k=text.match(/^mentor(?:@\w+)?\s+([a-z][a-z.\-]{0,5})\s*$/i); out.push(k?mentorText(k[1].toUpperCase(),mentorOnly?readJson0(POS_FILE):pos):'MENTOR — EXPLANATION ONLY. NOT PROVEN. Use mentor SYMBOL (one symbol per line). This request records no trade; no BUY or HOLD recommendation.'); continue; }
     { const tk = (text.match(/\b[A-Z]{2,5}\b/g) || []).filter(x => !NOT_TICKERS.has(x) && !COMMON_WORDS.has(x)), fwd = m.forward_origin || m.forward_from_chat;
       if (!tk.length && !/^\s*(?:tips?|log)\b/i.test(text) && (text.length >= 160 || (fwd && text.length >= 60))) {
         const src = (m.forward_origin && (m.forward_origin.sender_user_name || (m.forward_origin.sender_user && m.forward_origin.sender_user.first_name) || (m.forward_origin.chat && m.forward_origin.chat.title))) || (m.forward_from_chat && m.forward_from_chat.title) || null;

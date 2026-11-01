@@ -1,65 +1,126 @@
 {
-  "kind": "READ_ONLY_MENTOR_SEPARATE_PRODUCTION_REVIEW",
-  "productionBase": "6e806c4f2ea5d0f299b86c435fdc449c2f87e291",
-  "patchSha256": "ebc62f42571b0dddc9d7e44e8d81f49b0f7ff22ea097ce121ba18140a5846222",
+  "kind": "READ_ONLY_MENTOR_PRODUCTION_PACKAGE_V2",
+  "productionBase": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+  "previousReviewHead": "d63d3d10849e4addaa1c5e05d22ec5eeaecc82ea",
+  "reviewBranch": "review/mentor-readonly-20261101",
+  "reviewURL": "https://github.com/drrazaq/Stock-2/pull/3",
+  "patchSha256": "6c6d14dcc9db494583aa9ba997de52ed753720ee72b42f20f9beaa3d5cb2f5fb",
   "files": [
     "scan.mjs",
     "mentor-plan.mjs",
     "test/load-scan.mjs",
     "test/mentor-readonly.test.mjs",
-    "test/bot-actions.test.mjs"
+    "test/mentor-release.test.mjs",
+    "test/mentor-release-plan.test.mjs",
+    "test/mentor-release-examples.mjs"
   ],
   "before": {
-    "scan.mjs": "c4f2d96793b3104659d6a4b2e0ce4910cf19b756c6637fce4743df8dd70eb1c3",
+    "scan.mjs": "76ffcd5675a00a881432d5cb0dad69d6d5235cd66932ef07eb4530ddca9c1a99",
+    "mentor-plan.mjs": null,
     "test/load-scan.mjs": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2",
-    "test/bot-actions.test.mjs": "ad4e9a8cbe694b9b4dba8aeac53cd948ab1ee8bea29b16899ea444c157c0ff48"
+    "test/mentor-readonly.test.mjs": null,
+    "test/mentor-release.test.mjs": null,
+    "test/mentor-release-plan.test.mjs": null,
+    "test/mentor-release-examples.mjs": null
   },
   "after": {
-    "scan.mjs": "a86f88b7a2508866ed01def9182e6ed97e00a0a6947f9f879335d2f1cc0b67fe",
+    "scan.mjs": "a864175379c0ecd3b8102d363925c6191b450d286b06cd473283d1fc3f746cc0",
     "mentor-plan.mjs": "c9450320caa3f54abd11d957676ff600a509ebe8014a38b77c7a7596a3ba99c9",
     "test/load-scan.mjs": "ca8a48be321215b5d02f9bc09edecf5f562f18dbbe1b3812424f5f97d4b91605",
     "test/mentor-readonly.test.mjs": "99e7e9f11c38d77b3813de0bb56399481e0b27648f8050d098ea5ae2c692e147",
-    "test/bot-actions.test.mjs": "e845f9c183bd52357d01f74b2211f04470b98bee5d419ffb2a7ea467e08ac3c8"
+    "test/mentor-release.test.mjs": "c40b7a6a63fb3f7c853b33ad5595c91080fcdb5c03d54931c02f0803f74b18c2",
+    "test/mentor-release-plan.test.mjs": "a06ac1073d5ad2d3fe699c97e8ffbac3e8b3bad1b8f380f47848d9ae585f3850",
+    "test/mentor-release-examples.mjs": "7d4edd70cc2813a194f73d032050ecf888f24a44706c478f8f1a44fa0d20ee89"
   },
   "dependencies": {
     "index.html": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21"
   },
-  "readOnlyFinancialRecords": true,
-  "normalCommandOffsetStillPersists": true,
-  "mixedOwnerCommandsKeepExistingBehavior": true,
-  "currentZadSummary": "UNKNOWN_IN_THIS_VIEW",
-  "newFillContractRecordingIncluded": false,
-  "strategyRulesChanged": false,
-  "targetOverlayAdopted": false,
-  "recommendationsActionable": false,
-  "installed": false,
-  "deploymentApproved": false,
-  "fullDevelopmentPRRequired": false,
-  "testOnlyFiles": [
-    "test/load-scan.mjs",
-    "test/mentor-readonly.test.mjs",
-    "test/bot-actions.test.mjs"
-  ],
-  "testOnlyBaseCapsule": {
-    "path": "docs/validation/mentor-production-test-base.json.gz",
-    "sha256": "4f2733133451c7920e0fd07c5a674b1b8b1fc1e57fbfdcd7cd52d3e412efc9ad",
-    "source": "6e806c4f2ea5d0f299b86c435fdc449c2f87e291",
-    "files": {
-      "index.html": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
-      "test/load-scan.mjs": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2",
-      "test/bot-actions.test.mjs": "ad4e9a8cbe694b9b4dba8aeac53cd948ab1ee8bea29b16899ea444c157c0ff48"
+  "callerAndBaselinePins": {
+    ".github/workflows/bot.yml": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40",
+    ".github/workflows/main.yml": "8856c2b72c11b450da752b111260615d39e342e8e03bf87b2f0724a3a2581c5e",
+    ".github/save-data.sh": "8a399645f8e6a777f5a76a81f2bcf8a5b4e8c5f6934601d2eefcd9103dfcd8e2",
+    ".github/private-data.sh": "dd82ffa949f0f84e81cd1d8ceb7f4babde88817df6e435eca4dcb235824b793d",
+    ".github/private-files.txt": "f78988302329fe6e69c77783fc5b905b0a4629ea6be1b99069d6ed0ff9b897a5",
+    "test/bot-actions.test.mjs": "2e234bda6758f5225377589641dff117dcc8150815da50f4d9b522dbe2a87690",
+    "test/basket-lane.test.mjs": "a236407358a3f8133b1b72bf649c4bbdcc733e3a8f9c65e0bff636cd5acc5628"
+  },
+  "unchangedCriticalCodeRegions": {
+    "encrypted_accounting_and_sale_recovery": {
+      "startMarker": "const PRIV_FILE =",
+      "endMarker": "function amountFor(",
+      "sha256": "70f775ffc4be474d5b186084f3cdb57ae832e84d1aaa7ca40021134d384f1b4d",
+      "unchanged": true
+    },
+    "existing_reply_transport": {
+      "startMarker": "async function telegram(",
+      "endMarker": "const FOOT =",
+      "sha256": "e83f794e48620e031309923d529c8768948e926e4d1afe5f8ef2c6f21a0d41e6",
+      "unchanged": true
+    },
+    "position_normalization": {
+      "startMarker": "function guideTargets(",
+      "endMarker": "const loadPos =",
+      "sha256": "f90f7c27082cbe86bdbe4d878288e76a189a2bec567167d8400bdef4414ee858",
+      "unchanged": true
+    },
+    "existing_lane_rule_and_brake": {
+      "startMarker": "const LDIP_USD =",
+      "endMarker": "function practiceLine(",
+      "sha256": "d4e4957f085d3e9112a9548ba9983b897b249a96ee27007dfb97d6eb2e92621a",
+      "unchanged": true
     }
   },
-  "baselineTestFailure": "Unpatched6e806c4f reproduces Sunday RECORDS helper truncation at PRACTICE ACCOUNT; fixture-only boundary correction retains label assertions and adds a negative boundary control.",
-  "standaloneReviewBranch": "review/mentor-readonly-20261101",
-  "standaloneReviewHead": "d63d3d10849e4addaa1c5e05d22ec5eeaecc82ea",
-  "fullProductionSuite": {
-    "files": 124,
-    "cases": 1208,
-    "failures": []
+  "bindings": {
+    "existingOnly": [
+      "TG_TOKEN",
+      "TG_CHAT",
+      "TWELVE_KEY",
+      "PRIVATE_KEY"
+    ],
+    "newBindings": [],
+    "PRIVATE_KEY": "Optional existing read path; no real key used in preparation. Unknown quantity on absent/authentication-failed state."
   },
-  "developmentImplementationSource": "c3a9ffd431659916685ab38132afa3e8c28a8d7b",
-  "independentReviewStatus": "PENDING",
-  "reviewURL": "https://github.com/drrazaq/Stock-2/pull/3"
+  "readOnlyScope": {
+    "financialRecords": true,
+    "researchScoringAndEnrollmentUntouched": true,
+    "normalCommandOffsetPersists": true,
+    "operationalFailureLogMayAppend": true,
+    "mixedOwnerCommandsKeepExistingMutations": true,
+    "startupMigrationFlagsObservedTrue": [
+      "stopPlan1018",
+      "stopRestore1022",
+      "tradesMig1022"
+    ],
+    "futureFillSourceArchivalIncluded": false,
+    "privateMigrationIncluded": false
+  },
+  "frozenReference": {
+    "rule": "SQ11-PB12",
+    "entry": "NEXT_SESSION_OPEN_ONLY",
+    "holdSessions": 126,
+    "baseExit": "SESSION_126_CLOSE_NO_FIXED_TARGET",
+    "unadoptedOverlayPct": 0.2,
+    "overlayAdopted": false,
+    "stop": "NONE_REGISTERED",
+    "allocationPerSlot": 1000,
+    "slots": 3,
+    "historicalRoundTrip": 0.008,
+    "stress": 0.012,
+    "status": "NOT_PROVEN_NOT_ACTIONABLE"
+  },
+  "modulePreservedFromOriginalReview": true,
+  "sourceContractsAuthenticated": false,
+  "currentZadSummary": "UNKNOWN_NOT_AUTHENTICATED_BY_THIS_VIEW",
+  "installed": false,
+  "deploymentApproved": false,
+  "independentReviewStatus": "PENDING_FOCUSED_V2_REVIEW",
+  "productionDataPatchPaths": [],
+  "workflowPatchPaths": [],
+  "historicalV1Manifest": "docs/validation/mentor-readonly-production-v1-manifest.json",
+  "historicalV1Patch": "docs/validation/mentor-readonly-production-v1.patch",
+  "verification": "docs/validation/mentor-release-verification.json",
+  "examples": "docs/mentor-readonly-examples.md",
+  "fullRepositoryAuditRequiredForThisRelease": false,
+  "coverageBoundary": "Exact runtime/imports/caller/plan and no-financial-write evidence, not all scanner/Telegram/broker behavior."
 }

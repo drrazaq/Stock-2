@@ -1,6 +1,6 @@
 diff --git a/mentor-plan.mjs b/mentor-plan.mjs
 new file mode 100644
-index 00000000..aa19fa59
+index 0000000..aa19fa5
 --- /dev/null
 +++ b/mentor-plan.mjs
 @@ -0,0 +1,99 @@
@@ -104,7 +104,7 @@ index 00000000..aa19fa59
 + 'Unresolved: '+(p.issues.join(', ')||'no structural contract issue found; execution/prospective evidence still missing')+'.',
 +].join('\n');}
 diff --git a/scan.mjs b/scan.mjs
-index 92a1b6cf..08552df9 100644
+index 85d40c5..152d23d 100644
 --- a/scan.mjs
 +++ b/scan.mjs
 @@ -1,3 +1,4 @@
@@ -130,7 +130,7 @@ index 92a1b6cf..08552df9 100644
    // One message may carry several commands, one per line (for example four "follow" lines pasted together). Split those up.
    // A leading dash, bullet or backtick copied from a list is ignored. A multi-line tip message is left whole.
 -  const CMD_LINE = /^(follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
-+  const CMD_LINE = /^(mentor|follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
++  const CMD_LINE = /^(\/?mentor(?:@\w+)?|follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
    for (const u of ups) {
      if (u.callback_query) {   // a tapped button: Bought / Sold / Skipped
        const cq = u.callback_query, chatId = cq.message && cq.message.chat ? cq.message.chat.id : (cq.from && cq.from.id); let txt = null, note = 'Recorded';
@@ -138,7 +138,7 @@ index 92a1b6cf..08552df9 100644
      if (lines.length > 1 && lines.every(x => CMD_LINE.test(x))) lines.forEach(x => queue.push({ update_id: u.update_id, message: { ...m, text: x } }));
      else { if (m && m.text && lines.length === 1) m.text = lines[0]; queue.push(u); }
    }
-+  const isMentor=u=>/^\/?mentor(?:@\w+)?\s+[a-z][a-z.\-]{0,5}\s*$/i.test(u.message?.text||''),owned=queue.filter(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)),mentorOnly=queue.some(isMentor)&&owned.every(isMentor);
++  const isMentor=u=>/^\/?mentor(?:@\w+)?(?:\s|$)/i.test(u.message?.text||''),owned=queue.filter(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)),mentorOnly=queue.some(isMentor)&&owned.every(isMentor);
    if (state.menuV !== MENU_V) { await sendMenu(); state.menuV = MENU_V; }   // the one-tap menu appears by itself once (and after each change)
    for (const u of queue) {
      state.offset = u.update_id + 1;
@@ -146,7 +146,7 @@ index 92a1b6cf..08552df9 100644
      }
      const text = tradeWords(m.text.trim().replace(/\$/g, '').replace(SHARE_TYPOS, 'shares')), num = (re) => { const x = text.match(re); return x ? +x[1] : null; };
      let k;
-+    if ((k=text.match(/^mentor\s+([a-z][a-z.\-]{0,5})\s*$/i))) { out.push(mentorText(k[1].toUpperCase(),mentorOnly?readJson0(POS_FILE):pos)); continue; }
++    if (/^mentor(?:@\w+)?(?:\s|$)/i.test(text)) { k=text.match(/^mentor(?:@\w+)?\s+([a-z][a-z.\-]{0,5})\s*$/i); out.push(k?mentorText(k[1].toUpperCase(),mentorOnly?readJson0(POS_FILE):pos):'MENTOR — EXPLANATION ONLY. NOT PROVEN. Use mentor SYMBOL (one symbol per line). This request records no trade; no BUY or HOLD recommendation.'); continue; }
      { const tk = (text.match(/\b[A-Z]{2,5}\b/g) || []).filter(x => !NOT_TICKERS.has(x) && !COMMON_WORDS.has(x)), fwd = m.forward_origin || m.forward_from_chat;
        if (!tk.length && !/^\s*(?:tips?|log)\b/i.test(text) && (text.length >= 160 || (fwd && text.length >= 60))) {
          const src = (m.forward_origin && (m.forward_origin.sender_user_name || (m.forward_origin.sender_user && m.forward_origin.sender_user.first_name) || (m.forward_origin.chat && m.forward_origin.chat.title))) || (m.forward_from_chat && m.forward_from_chat.title) || null;
@@ -159,27 +159,8 @@ index 92a1b6cf..08552df9 100644
    if (out.length) await telegram(out.join('\n\n'));
    if (ups.length) console.log('Telegram: ' + ups.length + ' message(s) read');
  }
-diff --git a/test/bot-actions.test.mjs b/test/bot-actions.test.mjs
-index cea9a594..762880fe 100644
---- a/test/bot-actions.test.mjs
-+++ b/test/bot-actions.test.mjs
-@@ -17,7 +17,7 @@ const sig = (extra = {}) => ({ session: '2026-10-27', market: { above50: true, u
- const ok = { s: 'ok', d: new Date().toISOString().slice(0, 10) };
- const PICKS = [{ sym: 'WST', fs: 9 }, { sym: 'HQY', fs: 9 }, { sym: 'MMSI', fs: 8 }];
- async function render(files, s = sig()) { const S = await loadScan({ files: { 'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': s, ...files }, env: { TD_BASE: 'http://127.0.0.1:9', FH_BASE: 'http://127.0.0.1:9', SEC_BASE: 'http://127.0.0.1:9' } }); return { S, t: await S.fn('actionsText')(s, S.fn('loadPos')(), null, 'ACTIONS TEST') }; }
--const section = (t, name) => { const i = t.indexOf('\n' + name); if (i < 0) return ''; const rest = t.slice(i + 1), j = rest.slice(1).search(/\n\n[A-Z][A-Z' -]{3,}(\(|\n|:)/); return j < 0 ? rest : rest.slice(0, j + 1); };
-+const section = (t,name) => {const i=t.indexOf('\n'+name);if(i<0)return '';const rest=t.slice(i+1),next=['CRITICAL',"TODAY'S ACTIONS",'NOT ACTIONABLE TODAY','APPROVED LANES','SHORT-TERM OPPORTUNITIES','CURRENT HOLDINGS','RECORDS','SYSTEM HEALTH','LONGER-TERM:'].map(h=>rest.indexOf('\n\n'+h)).filter(n=>n>=0);return next.length?rest.slice(0,Math.min(...next)):rest;};
- 
- test('28 Oct contradiction fixed: focus on + LONGER HOLDS buys (marked halal) -> buys under TODAY\'S ACTIONS with their status; the policy says engine buys only are paused', async () => {
-   const { t } = await render({ 'data/quality.json': quality(PICKS), 'data/halal.json': { WST: ok, HQY: ok, MMSI: ok }, 'data/names.json': { WST: 'WEST PHARMACEUTICAL SERVICES INC' } });
-@@ -75,3 +75,5 @@ test('a stock picked by two lanes (LONGER HOLDS and LEADER DIP) is ONE buy, unde
-   assert.equal((t.match(/- BUY WST/g) || []).length, 1, t);
-   assert.match(section(t, "TODAY'S ACTIONS"), /LONGER HOLDS[\s\S]*- BUY WST/);
- });
-+
-+test('record subheadings including Sunday SCOREBOARD and PRACTICE ACCOUNT cannot terminate the RECORDS section',()=>{const t='ACTIONS\nRECORDS\nJournal\n\nSCOREBOARD (week)\nSynthetic summary\n\nPRACTICE ACCOUNT (fixture)\n\nSYSTEM HEALTH\nOther';const r=section(t,'RECORDS');assert.match(r,/SCOREBOARD/);assert.match(r,/PRACTICE ACCOUNT/);assert.doesNotMatch(r,/SYSTEM HEALTH/);});
 diff --git a/test/load-scan.mjs b/test/load-scan.mjs
-index 8c081272..a94607fc 100644
+index 8c08127..a94607f 100644
 --- a/test/load-scan.mjs
 +++ b/test/load-scan.mjs
 @@ -33,6 +33,7 @@ export async function loadScan({ files = {}, env = {} } = {}) {
@@ -192,10 +173,73 @@ index 8c081272..a94607fc 100644
    // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
 diff --git a/test/mentor-readonly.test.mjs b/test/mentor-readonly.test.mjs
 new file mode 100644
-index 00000000..45b16ca1
+index 0000000..45b16ca
 --- /dev/null
 +++ b/test/mentor-readonly.test.mjs
 @@ -0,0 +1,3 @@
 +// Synthetic owner commands only; no real messages, broker/provider calls or financial records.
 +import test from 'node:test';import assert from 'node:assert/strict';import http from 'node:http';import fs from 'node:fs';import {loadScan,blocked} from './load-scan.mjs';
 +for(const mixed of [false,true])test('mentor-only preserves financial bytes; explicit mixed owner stop keeps existing recording: '+mixed,async t=>{let updates=[],sent=[];const server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{let out={ok:true,result:[]};if(req.url.includes('/getUpdates')){out.result=updates;updates=[];}else if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);out.result={message_id:1};}res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.closeAllConnections();server.close();});const s=await loadScan({files:{'data/my-positions.json':{AMD:{src:'leader dip',entry:100,target:150,stop:90,ldHold:126,boughtSession:'2026-11-02'}},'data/leaderdip-ledger.jsonl':[]},env:{TG_TOKEN:'fixture',TG_CHAT:'42',TG_BASE:'http://127.0.0.1:'+server.address().port,PRIVATE_KEY:'synthetic-only'}});s.fn('privWrite')({shares:{AMD:10},buys:[]});s.write('data/tg-state.json',{offset:0,menuV:s.value('MENU_V')});const files=['data/my-positions.json','data/private.enc','data/leaderdip-ledger.jsonl'],before=files.map(f=>s.read(f));updates=[{update_id:5,message:{chat:{id:42},text:'mentor AMD'}},{update_id:6,message:{chat:{id:99},text:'foreign input'}}];if(mixed)updates.push({update_id:7,message:{chat:{id:42},text:'stop AMD 95'}});await s.fn('tgCommands')(null);assert.match(sent.join('\n'),/MENTOR AMD/);assert.match(sent.join('\n'),/NOT PROVEN/);assert.match(sent.join('\n'),/NOT_ACTIONABLE/);assert.match(sent.join('\n'),/current legacy reminder says next open/);assert.equal(s.read('data/private.enc'),before[1]);assert.equal(s.read('data/leaderdip-ledger.jsonl'),before[2]);if(!mixed)assert.equal(s.read('data/my-positions.json'),before[0]);else assert.equal(s.readJson('data/my-positions.json').AMD.stop,95);assert.ok(s.readJson('data/tg-state.json').offset>=7);assert.equal(fs.existsSync(s.dir+'/data/my-trades.jsonl'),false);assert.equal(blocked.length,0);});
+diff --git a/test/mentor-release-examples.mjs b/test/mentor-release-examples.mjs
+new file mode 100644
+index 0000000..d3c8a40
+--- /dev/null
++++ b/test/mentor-release-examples.mjs
+@@ -0,0 +1,19 @@
++// Synthetic documentation only. Calls the actual read-only mentorText function;
++// never issues a command, records a fill or contacts a provider/Telegram.
++import {loadScan,blocked} from './load-scan.mjs';
++import {captureLeaderDipContract} from '../mentor-plan.mjs';
++export async function mentorReleaseExamples(){
++ const source={rule:'SQ11-PB12',day:'2026-10-30',close:100,generatedAt:'2026-10-30T22:00:00Z',sha256:'a'.repeat(64)};
++ const position={src:'leader dip',entry:100,target:120,ldHold:126,boughtSession:'2026-11-02',mentorContract:captureLeaderDipContract(source)};
++ const samples=[
++  {id:'synthetic-known-source-fill',name:'Hypothetical fill with an already archived source contract',position,quantity:5,clock:'2026-11-02T14:30:00Z'},
++  {id:'legacy',name:'Legacy holding: original source identity missing',position:{...position,mentorContract:null},quantity:5,clock:'2026-11-03T16:00:00Z'},
++  {id:'expired',name:'Source lead after its registered next-open entry has expired',position:null,quantity:null,clock:'2026-11-03T16:00:00Z',producer:true},
++  {id:'missing',name:'No matching source or holding evidence',position:null,quantity:null,clock:'2026-11-03T16:00:00Z'},
++  {id:'contradictory',name:'Stored stop/target differs from the frozen reference',position:{...position,target:150,stop:90},quantity:5,clock:'2026-11-03T16:00:00Z'},
++ ];const results=[];
++ for(const x of samples){const files={'data/my-positions.json':x.position?{ZZQ:x.position}:{},'data/leaderdip-ledger.jsonl':[]};if(x.producer)files['data/squad11-today.json']={generatedAt:source.generatedAt,lastClose:source.day,methods:{'SQ11-PB12':{newSignals:[{sym:'ZZQ',d:source.day,close:source.close}]}}};
++  const s=await loadScan({files,env:{PRIVATE_KEY:'SYNTHETIC_EXAMPLE_ONLY'}});s.fn('privWrite')({shares:x.quantity?{ZZQ:x.quantity}:{},buys:[]});const before=s.read('data/my-positions.json'),encrypted=s.read('data/private.enc'),original=Date.now;let text;try{Date.now=()=>Date.parse(x.clock);text=s.fn('mentorText')('ZZQ',s.readJson('data/my-positions.json'));}finally{Date.now=original;}
++  if(s.read('data/my-positions.json')!==before||s.read('data/private.enc')!==encrypted||blocked.length)throw Error('SYNTHETIC_EXAMPLE_SIDE_EFFECT');results.push({...x,source,text});
++ }return results;
++}
+diff --git a/test/mentor-release-plan.test.mjs b/test/mentor-release-plan.test.mjs
+new file mode 100644
+index 0000000..b60119e
+--- /dev/null
++++ b/test/mentor-release-plan.test.mjs
+@@ -0,0 +1,11 @@
++import test from 'node:test';import assert from 'node:assert/strict';
++import {leaderDipMentorPlan,renderLeaderDipMentor,captureLeaderDipContract,savedLeaderDipSignal,mentorSessionAfter} from '../mentor-plan.mjs';import {marketSession} from '../market-session.mjs';import {mentorReleaseExamples} from './mentor-release-examples.mjs';
++const source={rule:'SQ11-PB12',day:'2026-10-30',close:100,sha256:'a'.repeat(64)},position={src:'leader dip',entry:100,target:120,ldHold:126,boughtSession:'2026-11-02'};
++const plan=(x={})=>leaderDipMentorPlan({symbol:'ZZQ',position,signal:source,quantity:5,asOfDay:'2026-11-02',...x});
++test('frozen base no-target close exit remains distinct from unadopted20% overlay and full-loss allocation',()=>{const p=plan(),s=renderLeaderDipMentor(p);assert.equal(p.actionability,'NOT_ACTIONABLE');assert.equal(p.exit.baseExit,'SESSION_126_CLOSE_NO_FIXED_TARGET');assert.equal(p.exit.targetStudyAdopted,false);assert.equal(p.risk.notional,500);assert.equal(p.risk.maximumAllocationPerSlot,1000);assert.equal(p.risk.maximumSlots,3);assert.equal(p.risk.stopDefinedLossCap,null);assert.match(s,/NOT PROVEN/);assert.match(s,/can lose its full notional/);assert.match(s,/next open.*differs from the registered close/);});
++for(const [signalDay,day,open] of [['2026-10-29','2026-10-30','2026-10-30T13:30:00Z'],['2026-10-30','2026-11-02','2026-11-02T14:30:00Z']])test('registered entry expires at the actual New York open, DST preserved: '+day,()=>{const input={position:null,signal:{...source,day:signalDay},asOfDay:day},t=Date.parse(open);assert.equal(plan({...input,asOfMs:t-1000}).entry.state,'BEFORE_REGISTERED_OPEN');assert.equal(plan({...input,asOfMs:t}).entry.state,'OPEN_ONLY_TIME_AND_QUOTE_UNVERIFIED');assert.equal(plan({...input,asOfMs:t+1000}).entry.state,'EXPIRED');});
++test('legacy/missing/contradictory sources and unsupported lanes remain unresolved',()=>{for(const x of [{signal:null},{position:{...position,target:150}},{position:{...position,stop:90}},{position:{...position,ldHold:5}},{position:{...position,src:'other lane'}}]){const p=plan(x);assert.equal(p.planStatus,'UNRESOLVED');assert.equal(p.holdingState,'UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE');assert.equal(p.actionability,'NOT_ACTIONABLE');}});
++test('archived contract checksum rejects mutation and is explicitly not authentication',()=>{const c=captureLeaderDipContract(source);assert.equal(c.status,'CAPTURED_SOURCE_NOT_AUTHENTICATED');assert.deepEqual(savedLeaderDipSignal(c),{...source,generatedAt:null});assert.equal(savedLeaderDipSignal({...c,hold:63}),null);assert.equal(savedLeaderDipSignal({...c,source:{...source,close:999}}),null);assert.equal(captureLeaderDipContract({...source,sha256:null}),null);});
++test('unknown calendars and mismatched clocks cannot create executable guidance',()=>{const p=plan({asOfDay:'2030-01-01'});assert.equal(p.planStatus,'UNRESOLVED');assert.equal(p.entry.state,'UNKNOWN');assert.equal(mentorSessionAfter('2030-01-01',1),null);assert.equal(plan({asOfMs:Date.parse('2026-10-30T13:30:00Z')}).entry.state,'UNKNOWN');});
++test('session126 half-day close is13:00, never silently next-open recovery or confirmed sale',()=>{const end='2026-11-27';let ms=Date.parse(end+'T12:00:00Z'),n=0;while(n<125){ms-=86400000;const s=marketSession(new Date(ms).toISOString().slice(0,10));assert.equal(s.known,true);if(!s.closed)n++;}const buy=new Date(ms).toISOString().slice(0,10);do{ms-=86400000;}while(marketSession(new Date(ms).toISOString().slice(0,10)).closed);const signalDay=new Date(ms).toISOString().slice(0,10);assert.equal(mentorSessionAfter(buy,125),end);const input={position:{...position,boughtSession:buy},signal:{...source,day:signalDay},asOfDay:end};const before=plan({...input,asOfMs:Date.parse(end+'T17:59:59Z')}),after=plan({...input,asOfMs:Date.parse(end+'T18:00:00Z')});assert.equal(before.guide.referenceCloseMinute,780);assert.equal(before.guide.stage,'REGISTERED_CLOSE_TODAY');assert.equal(after.guide.stage,'CLOSE_REACHED_EXECUTION_UNVERIFIED');assert.equal(after.guide.executable,false);});
++test('five actual mentorText examples preserve synthetic financial bytes and unresolved context',async()=>{const examples=await mentorReleaseExamples();assert.equal(examples.length,5);for(const x of examples){assert.match(x.text,/NOT PROVEN/);assert.match(x.text,/NOT_ACTIONABLE/);assert.match(x.text,/No executable price\/range is established/);}assert.match(examples.find(x=>x.id==='legacy').text,/ORIGINAL_SIGNAL_IDENTITY_UNKNOWN/);assert.match(examples.find(x=>x.id==='expired').text,/EXPIRED/);assert.match(examples.find(x=>x.id==='missing').text,/NO_VALID_SOURCE_SIGNAL/);assert.match(examples.find(x=>x.id==='contradictory').text,/TARGET_DIFFERS/);});
+diff --git a/test/mentor-release.test.mjs b/test/mentor-release.test.mjs
+new file mode 100644
+index 0000000..89e3749
+--- /dev/null
++++ b/test/mentor-release.test.mjs
+@@ -0,0 +1,15 @@
++// Actual current-production mentor caller: synthetic loopback, records and key only.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import http from 'node:http';import {spawn} from 'node:child_process';import {fileURLToPath} from 'node:url';
++import {loadScan,blocked} from './load-scan.mjs';
++const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
++async function fixture(t){let updates=[],sent=[],routes=[],reject=false;const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{routes.push(req.url);let out={ok:true,result:[]};if(req.url.includes('/getUpdates')){out.result=updates;updates=[];}else if(req.url.includes('/sendMessage')){sent.push(JSON.parse(body).text);if(reject){res.statusCode=403;out={ok:false};}else out.result={message_id:sent.length};}else assert.fail('unexpected provider/broker route: '+req.url);res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.closeAllConnections();server.close();});const base='http://127.0.0.1:'+server.address().port;
++ const s=await loadScan({files:{'data/my-positions.json':{ZZQ:{src:'leader dip',entry:100,target:120,ldHold:126,boughtSession:'2026-10-30',guide:true,t1:999}},'data/leaderdip-ledger.jsonl':[],'data/my-trades.jsonl':[]},env:{PRIVATE_KEY:'SYNTHETIC_MENTOR_ONLY',TG_TOKEN:'synthetic',TG_CHAT:'42',TG_BASE:base}});s.fn('privWrite')({shares:{ZZQ:5},buys:[]});s.write('data/tg-state.json',{offset:0,menuV:s.value('MENU_V')});const protectedNames=['data/my-positions.json','data/private.enc','data/leaderdip-ledger.jsonl','data/my-trades.jsonl','data/settings.json'],before=protectedNames.map(p=>s.read(p));
++ return {s,base,sent,routes,set(text,foreign=false){updates=[{update_id:101,message:{chat:{id:42},text}},...(foreign?[{update_id:102,message:{chat:{id:99},text:'unrelated foreign input'}}]:[])];},reject(){reject=true;},unchanged(){assert.deepEqual(protectedNames.map(p=>s.read(p)),before);assert.equal(blocked.length,0);assert.ok(routes.every(x=>/\/(?:getUpdates|sendMessage)/.test(x)));}};
++}
++for(const text of ['mentor','mentor 123','mentor ZZQ extra','/mentor@fixture ZZQ extra'])test('malformed mentor command refuses without fallback or financial writes: '+text,async t=>{const f=await fixture(t);f.set(text,true);await f.s.fn('tgCommands')(null);f.unchanged();assert.match(f.sent.join('\n'),/MENTOR.*EXPLANATION ONLY/);assert.match(f.sent.join('\n'),/Use mentor SYMBOL/);assert.doesNotMatch(f.sent.join('\n'),/TODAY.S ACTIONS|TOP PICK|OK to buy/);assert.equal(f.s.readJson('data/tg-state.json').offset,103);});
++for(const text of ['mentor ZZQ\nmentor QQZ','/mentor@fixture ZZQ\n/mentor@fixture QQZ'])test('multiple owner mentor commands each stay read-only: '+text.replaceAll('\n',' / '),async t=>{const f=await fixture(t);f.set(text);await f.s.fn('tgCommands')(null);f.unchanged();assert.match(f.sent.join('\n'),/MENTOR ZZQ/);assert.match(f.sent.join('\n'),/MENTOR QQZ/);assert.match(f.sent.join('\n'),/ORIGINAL_SIGNAL_IDENTITY_UNKNOWN/);assert.match(f.sent.join('\n'),/NOT PROVEN/);assert.match(f.sent.join('\n'),/NOT_ACTIONABLE/);});
++test('rejected mentor reply preserves financial evidence and ordinary offset semantics; owner may repeat read-only request',async t=>{const f=await fixture(t);f.reject();f.set('mentor ZZQ');await f.s.fn('tgCommands')(null);f.unchanged();assert.equal(f.s.readJson('data/tg-state.json').offset,102);assert.ok(f.sent.length>0);});
++for(const text of ['mentor ZZQ','mentor'])test('actual scan main fast-reply entry has no provider or financial mutation: '+text,async t=>{const f=await fixture(t);f.set(text);fs.copyFileSync(process.env.SCAN_SRC||path.join(root,'scan.mjs'),path.join(f.s.dir,'scan.mjs'));const preload=path.join(f.s.dir,'guard.mjs');fs.writeFileSync(preload,`const raw=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(f.base+'/')}))throw Error('SYNTHETIC_EXTERNAL_REQUEST_BLOCKED');return raw(u,o);};`);
++ const child=spawn(process.execPath,['scan.mjs'],{cwd:f.s.dir,env:{PATH:process.env.PATH,HOME:f.s.dir,TWELVE_KEY:'synthetic',TG_TOKEN:'synthetic',TG_CHAT:'42',TG_BASE:f.base,PRIVATE_KEY:'SYNTHETIC_MENTOR_ONLY',GITHUB_WORKFLOW:'Telegram bot replies',MODE:'chat',BOT_ONLY:'1',NODE_OPTIONS:'--import='+preload},stdio:['ignore','pipe','pipe']});let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>output+=x);const timer=setTimeout(()=>child.kill('SIGKILL'),10000);t.after(()=>clearTimeout(timer));const exit=await new Promise((resolve,reject)=>{child.on('error',reject);child.on('close',resolve);});assert.equal(exit,0,output);f.unchanged();assert.match(f.sent.join('\n'),/MENTOR/);assert.equal(f.s.readJson('data/tg-state.json').offset,102);});
++
++test('invalid mentor plus explicit owner stop preserves existing mutation without a false batch-wide read-only claim',async t=>{const f=await fixture(t),encrypted=f.s.read('data/private.enc');f.set('mentor\nstop ZZQ 95');await f.s.fn('tgCommands')(null);assert.equal(f.s.readJson('data/my-positions.json').ZZQ.stop,95);assert.equal(f.s.read('data/private.enc'),encrypted);assert.match(f.sent.join('\n'),/Use mentor SYMBOL/);assert.doesNotMatch(f.sent.join('\n'),/No financial records changed/);assert.equal(blocked.length,0);});
