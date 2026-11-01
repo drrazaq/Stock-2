@@ -1,0 +1,27 @@
+import fs from 'node:fs';import path from 'node:path';import {createHash} from 'node:crypto';
+import {wrapperFixture} from './capture-wrapper-fixture.mjs';import {V2_HOST_FILES} from '../sec-v2-host-binding.mjs';
+export const sha=b=>createHash('sha256').update(b).digest('hex');
+const root=new URL('../',import.meta.url);
+export function v2HostFixture(producer,scenario='success'){
+ const f=wrapperFixture(),runId='900-1',native={directory:path.join(producer.dir,'runtime/native-sec-events',runId),expectedRunId:runId,expectedSourceSha:producer.sourceSha};
+ for(const name of V2_HOST_FILES){fs.mkdirSync(path.dirname(path.join(f.root,name)),{recursive:true});fs.copyFileSync(new URL(name,root),path.join(f.root,name));}
+ fs.copyFileSync(new URL('test/artifact-wire-fixture.mjs',root),path.join(f.root,'synthetic-wire-transport.mjs'));
+ const binding=path.join(f.root,'synthetic-v2-bindings.mjs');fs.writeFileSync(binding,`
+ import fs from 'node:fs';import path from 'node:path';import {artifactWireFixture,syntheticArtifactToken,syntheticResultsOrigin,syntheticStorageOrigin} from './synthetic-wire-transport.mjs';
+ export function createV2Bindings(c){
+  let clock=Date.parse(c.plan.start)-30000,firstQuote=true,firstBlock=true;const progress=()=>{try{return JSON.parse(fs.readFileSync(c.progressFile)).heartbeat.length;}catch{return 0;}};
+  const copy=(source,dest,name)=>{fs.mkdirSync(dest,{recursive:true});const b=fs.readFileSync(path.join(source,name)),out=path.join(dest,name);if(fs.existsSync(out)){if(!fs.readFileSync(out).equals(b))throw Error('SYNTHETIC_SOURCE_REWRITE');}else fs.writeFileSync(out,b,{flag:'wx'});};
+  function stage(){for(const [source,dest,pattern]of [[c.producerNative,c.native.archiveDirectory,/^response-/],[c.producerTelemetry,c.native.telemetryDirectory,/^record-/]]){copy(source,dest,'run.json');for(const name of fs.readdirSync(source).filter(n=>pattern.test(n)).sort()){const doc=JSON.parse(fs.readFileSync(path.join(source,name)));if(Date.parse(doc.payload?.observedAt||doc.at)<=clock)copy(source,dest,name);}}}
+  stage();const mock=artifactWireFixture({onRequest:async call=>{if(call.phase==='block'&&firstBlock){firstBlock=false;const before=progress();await new Promise(r=>setTimeout(r,500));fs.writeFileSync(c.uploadProof,JSON.stringify({before,after:progress()}));if(c.scenario==='upload-refusal')return new Response('{}',{status:503});}return null;},onFinalized:async({id,zip})=>{fs.mkdirSync(c.downloads,{recursive:true});fs.writeFileSync(path.join(c.downloads,id+'.zip'),zip,{flag:'wx'});}});
+  return {encryptionKey:'synthetic-v2-artifact-key-only',keyId:'SYNTHETIC',secret:'SYNTHETIC',runtimeToken:syntheticArtifactToken,now:()=>clock,wait:async ms=>{clock+=ms;stage();},transports:{
+   artifact:mock.fetcher,provider:async(url,o)=>{if(!String(url).startsWith('https://data.alpaca.markets/v2/stocks/snapshots?')||o.method!=='GET'||o.redirect!=='error'||o.headers['APCA-API-KEY-ID']!=='SYNTHETIC')throw Error('SYNTHETIC_SCOPE');if(firstQuote){firstQuote=false;const before=progress();await new Promise(r=>setTimeout(r,500));fs.writeFileSync(c.quoteProof,JSON.stringify({before,after:progress()}));if(c.scenario==='input-change')fs.appendFileSync(c.reference.file,' ');if(c.scenario==='quote-refusal')return new Response('{}',{status:429});}clock+=1000;const minute=Math.floor(clock/60000)*60000-60000;return Response.json(Object.fromEntries(c.plan.universe.map(symbol=>[symbol,{latestQuote:{bp:symbol==='INTC'&&clock>Date.parse(c.plan.start)+120000?9.5:9.99,ap:10.01,bs:1000,as:1000,t:new Date(clock-500).toISOString()},latestTrade:{p:10,t:new Date(clock-500).toISOString()},prevDailyBar:{c:10,v:1000000,t:'2026-11-04T05:00:00Z'},minuteBar:{t:new Date(minute).toISOString(),l:10,h:10,v:200000}}])));}
+  }};
+ }
+ `);
+ const pins=Object.fromEntries(V2_HOST_FILES.map(p=>[p,sha(fs.readFileSync(path.join(f.root,p)))]));
+ const reference={file:f.referenceFile,sha256:sha(fs.readFileSync(f.referenceFile)),review:f.approval};
+ const c={mode:'INACTIVE_SYNTHETIC_REHEARSAL',protocol:'SEC_PROOF_READY_V2_DRAFT3_REVIEW_ONLY',policyApproved:false,root:f.root,storageRoot:f.dir,plan:f.approval.plan,proposalSha256:sha('UNADOPTED_V2_SYNTHETIC_ONLY'),reference,sourcePins:pins,bindingModule:{file:binding,sha256:sha(fs.readFileSync(binding)),runtimeFiles:{'synthetic-wire-transport.mjs':sha(fs.readFileSync(path.join(f.root,'synthetic-wire-transport.mjs')))}},native:{archiveDirectory:path.join(f.dir,'staged-native'),telemetryDirectory:path.join(f.dir,'staged-telemetry'),runId,sourceSha:producer.sourceSha},producerNative:native.directory,producerTelemetry:path.join(producer.dir,'runtime/sec-selection',runId),progressFile:path.join(producer.dir,'data/ignition-runs/2026-11-05/900-1-progress.json'),quoteProof:path.join(f.dir,'quote-progress.json'),uploadProof:path.join(f.dir,'upload-progress.json'),downloads:path.join(f.dir,'downloads'),output:path.join(f.dir,'sealed'),receiptDirectory:path.join(f.dir,'receipts'),resultFile:path.join(f.dir,'result.json'),artifact:{resultsOrigin:'https://results.example.invalid',storageOrigins:['https://synthetic.blob.core.windows.net']},scenario};
+ const file=path.join(f.dir,'v2-input.json');fs.writeFileSync(file,JSON.stringify(c));
+ const capture={cwd:f.root,entry:'tools/native-sec-v2-capture-worker.mjs',entrySha256:pins['tools/native-sec-v2-capture-worker.mjs'],runtimeFiles:pins,args:[file,sha(fs.readFileSync(file))],env:{}};
+ return {f,c,native,capture,planPin:{file:f.approvalFile,sha256:sha(fs.readFileSync(f.approvalFile))},cleanup:f.cleanup};
+}
