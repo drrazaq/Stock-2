@@ -1,0 +1,3501 @@
+{
+ "summary": {
+  "files": 296,
+  "pairs": 442,
+  "providerPairs": 305,
+  "decisionPathPairs": 97,
+  "reviewedDecisionPairs": 29,
+  "fullyCoveredDecisionPairs": 3,
+  "unreviewedDecisionPairs": [
+   "calendar.mjs|MASSIVE",
+   "calendar.mjs|TIPRANKS",
+   "calendar.mjs|ALPHA_VANTAGE",
+   "calendar.mjs|BLS",
+   "calendar.mjs|FEDERAL_RESERVE",
+   "deals.mjs|MASSIVE",
+   "deals.mjs|POLYGON",
+   "deals.mjs|FINNHUB",
+   "discover.mjs|MASSIVE",
+   "discover.mjs|POLYGON",
+   "discover.mjs|CLINICALTRIALS",
+   "discover.mjs|SEC",
+   "discover.mjs|FMP",
+   "discover.mjs|FINNHUB",
+   "discover.mjs|ALPHA_VANTAGE",
+   "fastmover-lab.mjs|MASSIVE",
+   "follow-lane.mjs|MASSIVE",
+   "follow-lane.mjs|STOCKTWITS",
+   "follow-lane.mjs|SEC",
+   "follow-lane.mjs|ALPHA_VANTAGE",
+   "follow-lane.mjs|YOUTUBE",
+   "gov-awards.mjs|USASPENDING",
+   "gov-awards.mjs|SEC",
+   "gov-awards2.mjs|USASPENDING",
+   "gov-awards2.mjs|SEC",
+   "hybrid-research-fixture.mjs|ALPACA_DATA",
+   "hybrid-snapshot-transport.mjs|ALPACA_DATA",
+   "ignition-watch.mjs|SEC",
+   "ignition-watch.mjs|FINNHUB",
+   "missed-runners.mjs|MASSIVE",
+   "movers.mjs|MASSIVE",
+   "native-sec-events.mjs|SEC",
+   "opportunity-radar.mjs|ALPACA_DATA",
+   "paper-capture-ports.mjs|ALPACA_DATA",
+   "paper-capture-references.mjs|MASSIVE",
+   "paper-capture-references.mjs|SEC",
+   "paper-capture-references.mjs|ALPACA_PAPER",
+   "paper-transport.mjs|ALPACA_PAPER",
+   "regime-gate.mjs|TWELVE_DATA",
+   "research-collector.mjs|MASSIVE",
+   "scan.mjs|APEWISDOM",
+   "scan.mjs|HALALTERMINAL",
+   "scan.mjs|MASSIVE",
+   "scan.mjs|CLINICALTRIALS",
+   "scan.mjs|ALPACA_PAPER",
+   "scan.mjs|YOUTUBE",
+   "scorecard-1023.mjs|MASSIVE",
+   "scorecard-1023.mjs|ALPACA_DATA",
+   "shadow-outcomes.mjs|ALPACA_DATA",
+   "shares.mjs|SEC",
+   "smart-money.mjs|MASSIVE",
+   "smart-money.mjs|POLYGON",
+   "smart-money.mjs|FMP",
+   "smart-money.mjs|FINNHUB",
+   "squad26-watch.mjs|ALPACA_DATA",
+   "squad26-watch.mjs|FINNHUB",
+   "squad26-watch.mjs|SEC",
+   "tip-sources.mjs|ARKFUNDS",
+   "tipranks.mjs|TWELVE_DATA",
+   "tipranks.mjs|TIPRANKS"
+  ],
+  "unclassified": [],
+  "frozenResearchPairs": 187,
+  "decisionIngress": 87,
+  "reviewedIngress": 27,
+  "fullyCoveredIngress": [
+   "comeback-lab.mjs|MASSIVE",
+   "discovery2.mjs|SEC",
+   "share-supply-source.mjs|SEC"
+  ]
+ },
+ "pairs": [
+  {
+   "file": "account-replay-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "agent-a-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "agent-a-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "agent-a-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "agent-a-tgt-core.mjs",
+   "host": "alphaarchitect.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "agent-a-tgt-core.mjs",
+   "host": "www.cxoadvisory.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "agent-a-tgt-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "alpaca-feed.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "Y",
+    "units": "P",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "P",
+    "by": "Codex market-ingress-calendar",
+    "note": "DST/half-day/impossible calendar controls; dot/dash classes distinct; intraday basis raw"
+   }
+  },
+  {
+   "file": "angles-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "angles-core.mjs",
+   "host": "ideas.repec.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "angles-core.mjs",
+   "host": "www.dimensional.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "angles-core.mjs",
+   "host": "www.luxalgo.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "angles-core.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "angles-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "angles-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "angles-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "angles-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "angles-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "anomaly-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "anomaly-core.mjs",
+   "host": "ideas.repec.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "anomaly-core.mjs",
+   "host": "ssrn.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "anomaly-core.mjs",
+   "host": "www.joim.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "anomaly-core.mjs",
+   "host": "www.jstor.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "anomaly-core.mjs",
+   "host": "www.nber.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "anomaly-core.mjs",
+   "host": "www.openassetpricing.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "anomaly-lab.mjs",
+   "host": "api.finra.org",
+   "kind": "PROVIDER",
+   "provider": "FINRA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "anomaly-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "anomaly-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "anomaly-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "anomaly-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "anomaly-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "autolab.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "c0-diagnostic.mjs",
+   "host": "api.github.com",
+   "kind": "OPS"
+  },
+  {
+   "file": "c0-diagnostic.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "c0-diagnostic.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "c0-diagnostic.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "calendar.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "calendar.mjs",
+   "host": "mcp.tipranks.com",
+   "kind": "PROVIDER",
+   "provider": "TIPRANKS",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "calendar.mjs",
+   "host": "www.alphavantage.co",
+   "kind": "PROVIDER",
+   "provider": "ALPHA_VANTAGE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "calendar.mjs",
+   "host": "www.bls.gov",
+   "kind": "PROVIDER",
+   "provider": "BLS",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "calendar.mjs",
+   "host": "www.federalreserve.gov",
+   "kind": "PROVIDER",
+   "provider": "FEDERAL_RESERVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "catalyst-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "catalyst-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "catalyst-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "chain-decoder.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "chain-decoder.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "chain-decoder.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "chain-decoder.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "chain-ripple.mjs",
+   "host": null,
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "P",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex chain continuation",
+    "note": "price-day ids and raw hashes; corporate-action basis not authenticated"
+   },
+   "via": "shared cache or injected transport"
+  },
+  {
+   "file": "comeback-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "Y",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "Y",
+    "revision": "Y",
+    "status": "Y",
+    "by": "claude/market03-catalyst03",
+    "note": "SPY only; NY bar day; unfinished bar excluded; revised bars kept as original"
+   }
+  },
+  {
+   "file": "confluence-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "deals.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "deals.mjs",
+   "host": "api.polygon.io",
+   "kind": "PROVIDER",
+   "provider": "POLYGON",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "deals.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "deals.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "decoded-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "api.polygon.io",
+   "kind": "PROVIDER",
+   "provider": "POLYGON",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "clinicaltrials.gov",
+   "kind": "PROVIDER",
+   "provider": "CLINICALTRIALS",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "financialmodelingprep.com",
+   "kind": "PROVIDER",
+   "provider": "FMP",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "www.alphavantage.co",
+   "kind": "PROVIDER",
+   "provider": "ALPHA_VANTAGE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "discover.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "discovery2.mjs",
+   "host": null,
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "NA",
+    "clock": "Y",
+    "session": "NA",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex share-supply (shared index contract)",
+    "note": ""
+   },
+   "via": "shared cache or injected transport"
+  },
+  {
+   "file": "discovery2.mjs",
+   "host": null,
+   "kind": "PROVIDER",
+   "provider": "PRICE_CACHE",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "P",
+    "units": "NA",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "P",
+    "revision": "Y",
+    "status": "Y",
+    "by": "claude/market03-catalyst03",
+    "note": "reads the shared cache (no fetch): close day, session-based lag, basis label, revision id; stale lines withheld"
+   },
+   "via": "shared cache or injected transport"
+  },
+  {
+   "file": "earnings-study.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "earnings-study.mjs",
+   "host": "financialmodelingprep.com",
+   "kind": "PROVIDER",
+   "provider": "FMP",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "P",
+    "clock": "P",
+    "session": "N",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "claude/market03-catalyst03",
+    "note": "whole response rejected on any foreign symbol; FMP gives no timing (UNKNOWN, both reaction candidates)"
+   }
+  },
+  {
+   "file": "earnings-study.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "P",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex 86b25cc + claude/market03-catalyst03",
+    "note": "pending vs malformed vs class rows; DMH kept; cross-provider corroboration vs same-provider revision"
+   }
+  },
+  {
+   "file": "earnings-study.mjs",
+   "host": "www.alphavantage.co",
+   "kind": "PROVIDER",
+   "provider": "ALPHA_VANTAGE",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "P",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "claude/market03-catalyst03",
+    "note": "requested-symbol identity; EPS strict, currency not stated by provider (labelled); report day + provider timing; reaction session"
+   }
+  },
+  {
+   "file": "event-orb-retest-bars.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "event-orb-retest-events.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "event-orb-retest-events.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "events-study.mjs",
+   "host": "api.fda.gov",
+   "kind": "PROVIDER",
+   "provider": "OPENFDA",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "P",
+    "units": "NA",
+    "clock": "P",
+    "session": "N",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "Y",
+    "by": "Codex FDA continuation",
+    "note": "weekly marker only on success; schema/refresh failures distinct"
+   }
+  },
+  {
+   "file": "events-study.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "events-study.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "NA",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "NA",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex SEC caller/native lineage",
+    "note": "accession + reported publication metadata; body revisions/authenticity open"
+   }
+  },
+  {
+   "file": "events-study.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "NA",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "NA",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex SEC caller/native lineage",
+    "note": "accession + reported publication metadata; body revisions/authenticity open"
+   }
+  },
+  {
+   "file": "exits.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "expert-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "expert-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "expert-lab.mjs",
+   "host": "financialmodelingprep.com",
+   "kind": "PROVIDER",
+   "provider": "FMP",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "expert-lab.mjs",
+   "host": "public-api.etoro.com",
+   "kind": "PROVIDER",
+   "provider": "ETORO",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "expert-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "expert-probe.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "expert-probe.mjs",
+   "host": "api.openfigi.com",
+   "kind": "PROVIDER",
+   "provider": "OPENFIGI",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "expert-probe.mjs",
+   "host": "financialmodelingprep.com",
+   "kind": "PROVIDER",
+   "provider": "FMP",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "expert-probe.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "expert-probe.mjs",
+   "host": "mcp.tipranks.com",
+   "kind": "PROVIDER",
+   "provider": "TIPRANKS",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "expert-probe.mjs",
+   "host": "www.alphavantage.co",
+   "kind": "PROVIDER",
+   "provider": "ALPHA_VANTAGE",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "expert-probe.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "fastmover-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "fastmover-lab.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "actionalerts.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "api.stocktwits.com",
+   "kind": "PROVIDER",
+   "provider": "STOCKTWITS",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "astuteinvestor.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "blusuitdillon.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "cockneyrebel.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "moneymachinenewsletter.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "smartstocksnewsletter.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "stockpicking.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "stocktwits.com",
+   "kind": "PROVIDER",
+   "provider": "STOCKTWITS",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "topstockstrader.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "www.alphavantage.co",
+   "kind": "PROVIDER",
+   "provider": "ALPHA_VANTAGE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "www.googleapis.com",
+   "kind": "PROVIDER",
+   "provider": "YOUTUBE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "follow-lane.mjs",
+   "host": "www.youtube.com",
+   "kind": "PROVIDER",
+   "provider": "YOUTUBE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "gov-awards.mjs",
+   "host": "api.usaspending.gov",
+   "kind": "PROVIDER",
+   "provider": "USASPENDING",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "gov-awards.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "gov-awards2.mjs",
+   "host": "api.usaspending.gov",
+   "kind": "PROVIDER",
+   "provider": "USASPENDING",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "gov-awards2.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "health.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "hold-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "hold-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "hold-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "horizons.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "hunting-lab.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "hybrid-research-fixture.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "hybrid-snapshot-transport.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "ignition-watch.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "P",
+    "session": "P",
+    "adjustment": "N",
+    "revision": "N",
+    "status": "P",
+    "by": "open",
+    "note": "15-minute delayed plan; contract not reviewed in this package (Codex watcher scope)"
+   }
+  },
+  {
+   "file": "ignition-watch.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "ignition-watch.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "Y",
+    "units": "P",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "P",
+    "by": "Codex market-ingress-calendar",
+    "note": "actual alpacaAll caller test"
+   }
+  },
+  {
+   "file": "ignition-watch.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "ignition-watch.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "ignition-watch.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "insider-study.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "Y",
+    "clock": "P",
+    "session": "NA",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex insider ZIP/TSV",
+    "note": "dash/dot classes distinct; CIK padding; legacy rows lack accession/ingestion clocks"
+   }
+  },
+  {
+   "file": "instrument-reference-preparation.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "intraday-radar.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "intraday-radar.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "N",
+    "session": "N",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "N",
+    "by": "open",
+    "note": ""
+   }
+  },
+  {
+   "file": "leaders-study.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "SHARED_PRICE_INPUT",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "P",
+    "session": "N",
+    "adjustment": "P",
+    "revision": "N",
+    "status": "P",
+    "by": "open (Codex-owned shared cache)",
+    "note": "grouped bars split-adjusted as of each fetch + heuristic split repair; share classes excluded (/^[A-Z]{1,5}$/); ticker reuse not detected"
+   }
+  },
+  {
+   "file": "leaders-study.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "en.wikipedia.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "gvwire.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "ideas.repec.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "in.benzinga.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "www.allsides.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "www.emeraldinsight.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "www.etftrends.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "www.evidenceinvestor.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "www.federalreserve.gov",
+   "kind": "PROVIDER",
+   "provider": "FEDERAL_RESERVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "www.fool.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "www.opb.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-core.mjs",
+   "host": "www.schaeffersresearch.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "macro-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "macro-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "macro-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "market-session.mjs",
+   "host": "www.nyse.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "missed-runners.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "ml-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "movers.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "movers.mjs",
+   "host": "api.polygon.io",
+   "kind": "PROVIDER",
+   "provider": "POLYGON",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "N",
+    "session": "N",
+    "adjustment": "N",
+    "revision": "N",
+    "status": "N",
+    "by": "open",
+    "note": ""
+   }
+  },
+  {
+   "file": "movers.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "movers.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "N",
+    "session": "N",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "N",
+    "by": "open",
+    "note": ""
+   }
+  },
+  {
+   "file": "native-sec-events.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "native-sec-events.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "native-sec-lineage-history.mjs",
+   "host": "api.github.com",
+   "kind": "OPS"
+  },
+  {
+   "file": "native-sec-parent-client.mjs",
+   "host": "api.github.com",
+   "kind": "OPS"
+  },
+  {
+   "file": "news-watch.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "news-watch.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "P",
+    "units": "NA",
+    "clock": "Y",
+    "session": "N",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex 0f29b05/5cc2dbb + claude/market03-catalyst03",
+    "note": "company-news bounds/status/revisions (Codex); per-field and attribution digests (this package); quote/profile/metadata paths still legacy nullable"
+   }
+  },
+  {
+   "file": "octopus.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "opportunity-radar.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "opportunity-radar.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "options-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "options-lab.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "options-survey.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "orb-study.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "paper-capture-ports.mjs",
+   "host": "api.github.com",
+   "kind": "OPS"
+  },
+  {
+   "file": "paper-capture-ports.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "paper-capture-references.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "paper-capture-references.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "paper-capture-references.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "paper-mutation-journal.mjs",
+   "host": "api.github.com",
+   "kind": "OPS"
+  },
+  {
+   "file": "paper-transport.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "premarket-check.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "premarket-check.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "P",
+    "session": "P",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "N",
+    "by": "open",
+    "note": "prior-close / old-trade guard covered by Codex news tests only"
+   }
+  },
+  {
+   "file": "prospective-capture-transport.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "quality.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "quality.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "rebalance.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "rebuy.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "regime-gate.mjs",
+   "host": "api.twelvedata.com",
+   "kind": "PROVIDER",
+   "provider": "TWELVE_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "research-collector.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "research-collector.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "P",
+    "units": "NA",
+    "clock": "Y",
+    "session": "N",
+    "adjustment": "NA",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex cf7f964",
+    "note": "live vs cached origin carried to reliability; no cross-job revision guarantee"
+   }
+  },
+  {
+   "file": "research-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "research-core.mjs",
+   "host": "ideas.repec.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "research-core.mjs",
+   "host": "onlinelibrary.wiley.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "research-core.mjs",
+   "host": "papers.ssrn.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "research-core.mjs",
+   "host": "www.johnhcochrane.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "research-core.mjs",
+   "host": "www.nber.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "research-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "research-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "research-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "scan.mjs",
+   "host": "apewisdom.io",
+   "kind": "PROVIDER",
+   "provider": "APEWISDOM",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "scan.mjs",
+   "host": "api.halalterminal.com",
+   "kind": "PROVIDER",
+   "provider": "HALALTERMINAL",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "scan.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "scan.mjs",
+   "host": "api.polygon.io",
+   "kind": "PROVIDER",
+   "provider": "POLYGON",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "N",
+    "session": "N",
+    "adjustment": "N",
+    "revision": "N",
+    "status": "N",
+    "by": "open (scan.mjs owned by main session)",
+    "note": "proposal"
+   }
+  },
+  {
+   "file": "scan.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "scan.mjs",
+   "host": "api.twelvedata.com",
+   "kind": "PROVIDER",
+   "provider": "TWELVE_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "N",
+    "session": "N",
+    "adjustment": "N",
+    "revision": "N",
+    "status": "N",
+    "by": "open (scan.mjs owned by main session)",
+    "note": "proposal in docs/market03-catalyst03/SCAN-PROPOSAL.md"
+   }
+  },
+  {
+   "file": "scan.mjs",
+   "host": "clinicaltrials.gov",
+   "kind": "PROVIDER",
+   "provider": "CLINICALTRIALS",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "scan.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "P",
+    "session": "P",
+    "adjustment": "N",
+    "revision": "N",
+    "status": "N",
+    "by": "open (scan.mjs owned by main session)",
+    "note": "proposal"
+   }
+  },
+  {
+   "file": "scan.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "P",
+    "units": "NA",
+    "clock": "P",
+    "session": "NA",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "P",
+    "by": "open (scan.mjs owned by main session)",
+    "note": "danger-filing reads; proposal"
+   }
+  },
+  {
+   "file": "scan.mjs",
+   "host": "financialmodelingprep.com",
+   "kind": "PROVIDER",
+   "provider": "FMP",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "N",
+    "session": "NA",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "N",
+    "by": "open (scan.mjs owned by main session)",
+    "note": "proposal"
+   }
+  },
+  {
+   "file": "scan.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "N",
+    "units": "N",
+    "clock": "N",
+    "session": "N",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "N",
+    "by": "open (scan.mjs owned by main session)",
+    "note": "proposal"
+   }
+  },
+  {
+   "file": "scan.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "scan.mjs",
+   "host": "www.googleapis.com",
+   "kind": "PROVIDER",
+   "provider": "YOUTUBE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "scan.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": {
+    "identity": "P",
+    "units": "NA",
+    "clock": "P",
+    "session": "NA",
+    "adjustment": "NA",
+    "revision": "N",
+    "status": "P",
+    "by": "open (scan.mjs owned by main session)",
+    "note": "danger-filing reads; proposal"
+   }
+  },
+  {
+   "file": "scan.mjs",
+   "host": "www.youtube.com",
+   "kind": "PROVIDER",
+   "provider": "YOUTUBE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "score-study.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "scorecard-1023.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "scorecard-1023.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "sec-v2-host-binding.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "sequence-study.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "shadow-outcomes.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "share-supply-source.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "CATALYST_LANE_PRODUCER",
+   "contract": {
+    "identity": "Y",
+    "units": "NA",
+    "clock": "Y",
+    "session": "NA",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex share-supply",
+    "note": "literal class punctuation; unique CIK mapping; bounded index"
+   }
+  },
+  {
+   "file": "shares.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "shares.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "sip-access-diagnostic.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "sip-access-https.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "smart-money.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "smart-money.mjs",
+   "host": "api.polygon.io",
+   "kind": "PROVIDER",
+   "provider": "POLYGON",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "smart-money.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "smart-money.mjs",
+   "host": "financialmodelingprep.com",
+   "kind": "PROVIDER",
+   "provider": "FMP",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "smart-money.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "squad1-core.mjs",
+   "host": "alphaarchitect.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad1-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad1-core.mjs",
+   "host": "ideas.repec.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad1-core.mjs",
+   "host": "www.nber.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad1-lab.mjs",
+   "host": "api.finra.org",
+   "kind": "PROVIDER",
+   "provider": "FINRA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad1-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad1-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad1-lab.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad1-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad10-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad10-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad10-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad10-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad10-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad11-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad11-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad11-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad12-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad12-core.mjs",
+   "host": "ideas.repec.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad12-core.mjs",
+   "host": "ssrn.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad12-core.mjs",
+   "host": "www.jstor.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad12-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad12-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad12-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad12-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad13-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad13-core.mjs",
+   "host": "www.investopedia.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad13-core.mjs",
+   "host": "www.investors.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad13-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad13-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad14-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad14-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad14-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad15-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad15-lab.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad15b-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad15b-lab.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "alphaarchitect.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "quantifiedstrategies.substack.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "quantpedia.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.etfstrategy.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.innovatoretfs.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.johnhcochrane.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.kjtradingsystems.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.magicformulainvesting.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.msci.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.optimalmomentum.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.quant-investing.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.quantrocket.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.smbtraining.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.tradertom.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.tradingview.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.validea.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-core.mjs",
+   "host": "www.zacks.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad16-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad16-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad16-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad17-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad17-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad17-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad17-lab.mjs",
+   "host": "www.alphavantage.co",
+   "kind": "PROVIDER",
+   "provider": "ALPHA_VANTAGE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad17-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad17-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad18-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad18-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad18-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad19-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad19-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad19-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad19-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad2-core.mjs",
+   "host": "completetradersedge.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad2-core.mjs",
+   "host": "papers.ssrn.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad2-core.mjs",
+   "host": "thepatternsite.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad2-core.mjs",
+   "host": "tradingsetupsreview.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad2-core.mjs",
+   "host": "www.alphatrends.net",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad2-core.mjs",
+   "host": "www.financialwisdomtv.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad2-core.mjs",
+   "host": "www.investopedia.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad2-core.mjs",
+   "host": "www.warriortrading.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad2-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad2-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad20-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad20-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad20-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad20-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad21-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad21-core.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad21-core.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad21-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad21-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad21-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad21-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad22-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad22-core.mjs",
+   "host": "www.jstor.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad22-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad22-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad22-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad23-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad23-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad23-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad23-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad23-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad24-audit-extract.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad24-core.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad24-core.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad24-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad24-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad24-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad24-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad25-core.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad25-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad25-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad25-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad25-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad26-core.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad26-core.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad26-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad26-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad26-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad26-labels.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad26-watch.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "squad26-watch.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "squad26-watch.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "squad27-core.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad27-core.mjs",
+   "host": "www.ecfr.gov",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad27-core.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad27-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad27-lab.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad27-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad28-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad28-core.mjs",
+   "host": "ideas.repec.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad28-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad28-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad28-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad28-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad28-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad28-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad29-core.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad29-core.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad29-core.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad29-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad29-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad29-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad29-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad3-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad4-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad4-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad4-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad4-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad4-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad5-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad5-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad5-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad5-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad5-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "alphaarchitect.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "funds.alphaarchitect.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "it.tradingview.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "usethinkscript.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "wl6.wealth-lab.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "www.amazon.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "www.followingthetrend.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "www.msci.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "www.quantconnect.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "www.tradingmarkets.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-core.mjs",
+   "host": "www.wiley.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad6-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad7-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad7-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad7-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad8-core.mjs",
+   "host": "doi.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad8-core.mjs",
+   "host": "ideas.repec.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad8-core.mjs",
+   "host": "papers.ssrn.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad8-core.mjs",
+   "host": "repec.cepr.org",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad8-core.mjs",
+   "host": "www.investopedia.com",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "squad8-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad8-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad9-core.mjs",
+   "host": "www.youtube.com",
+   "kind": "PROVIDER",
+   "provider": "YOUTUBE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad9-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "squad9-lab.mjs",
+   "host": "youtube.com",
+   "kind": "PROVIDER",
+   "provider": "YOUTUBE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "stops.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "telegram-delivery-ledger.mjs",
+   "host": "api.github.com",
+   "kind": "OPS"
+  },
+  {
+   "file": "telegram-delivery.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "tip-sources.mjs",
+   "host": "arkfunds.io",
+   "kind": "PROVIDER",
+   "provider": "ARKFUNDS",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "tipranks.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "tipranks.mjs",
+   "host": "api.twelvedata.com",
+   "kind": "PROVIDER",
+   "provider": "TWELVE_DATA",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "tipranks.mjs",
+   "host": "mcp.tipranks.com",
+   "kind": "PROVIDER",
+   "provider": "TIPRANKS",
+   "role": "LIVE_DELIVERY_PATH",
+   "contract": "NOT_REVIEWED"
+  },
+  {
+   "file": "tipster-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "tipster-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "tipster-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "tipster-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "tipster-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "tools/alpaca-access-audit.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "tools/alpaca-access-audit.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "tools/alpaca-batch-access-probe.mjs",
+   "host": "paper-api.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "tools/provider-readiness-probe.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "tools/provider-readiness-probe.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "tools/provider-readiness-probe.mjs",
+   "host": "finnhub.io",
+   "kind": "PROVIDER",
+   "provider": "FINNHUB",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "tools/provider-readiness-probe.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "tools/run-paper-capture-workflow.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "DIAGNOSTIC_TOOL",
+   "contract": "DIAGNOSTIC_NOT_A_DECISION_PATH"
+  },
+  {
+   "file": "tools/telegram-notify.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "value-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "value-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "value-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "verify-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "verify-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "verify-lab.mjs",
+   "host": "efts.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "verify-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "watcher-guard.mjs",
+   "host": "api.github.com",
+   "kind": "OPS"
+  },
+  {
+   "file": "watcher-guard.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  },
+  {
+   "file": "watcher-heartbeat.mjs",
+   "host": "api.github.com",
+   "kind": "OPS"
+  },
+  {
+   "file": "winners-autopsy-lab.mjs",
+   "host": "api.massive.com",
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "winners-autopsy-lab.mjs",
+   "host": "api.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "winners-autopsy-lab.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "winners-autopsy-lab.mjs",
+   "host": "www.nasdaq.com",
+   "kind": "PROVIDER",
+   "provider": "NASDAQ",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "winners-autopsy-lab.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "FROZEN_RESEARCH_PRODUCER",
+   "contract": "OUT_OF_SCOPE_FROZEN_INPUTS"
+  },
+  {
+   "file": "winners-study.mjs",
+   "host": "api.telegram.org",
+   "kind": "OPS"
+  }
+ ]
+}
