@@ -151,3 +151,41 @@ export function combineStatus(statuses){
  if(s.some(x=>x==='OBSERVED'||x==='EMPTY'||x==='PARTIAL'))return 'PARTIAL';
  return 'UNKNOWN';
 }
+
+// ---- bounded JSON transport ------------------------------------------------------------------------------------------
+// One request, no redirect, a hard deadline even if the fetcher ignores AbortSignal, a counted byte cap and distinct
+// failure statuses. A refused/limited/oversized/unparseable answer is never returned as an observed empty body.
+export const JSON_SOURCE_LIMITS=Object.freeze({bytes:4194304,timeoutMs:15000});
+export async function readJsonSource(fetcher,url,{maxBytes=JSON_SOURCE_LIMITS.bytes,timeoutMs=JSON_SOURCE_LIMITS.timeoutMs}={}){
+ const controller=new AbortController(),requestedAt=new Date().toISOString();let timer,reader;
+ const out=(status,extra={})=>({status,requestedAt,receivedAt:new Date().toISOString(),body:null,...extra});
+ const deadline=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('SOURCE_TIMEOUT'));},timeoutMs);});
+ const task=async()=>{
+  const r=await fetcher(url,{redirect:'error',signal:controller.signal});
+  if(!r.ok){try{r.body?.cancel?.()?.catch?.(()=>{});}catch{}return out(r.status===429?'RATE_LIMITED':[401,402,403].includes(r.status)?'REFUSED':'HTTP_ERROR',{httpStatus:r.status});}
+  let text;
+  if(r.body?.getReader){reader=r.body.getReader();const parts=[];let bytes=0;
+   for(;;){const p=await reader.read();if(p.done)break;bytes+=p.value.byteLength;if(bytes>maxBytes)return out('BODY_LIMIT',{httpStatus:r.status});parts.push(Buffer.from(p.value));}
+   try{text=new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(parts));}catch{return out('INVALID_JSON',{httpStatus:r.status});}}
+  else return out('INVALID_JSON',{httpStatus:r.status});
+  let body;try{body=JSON.parse(text);}catch{return out('INVALID_JSON',{httpStatus:r.status});}
+  return out('OK',{httpStatus:r.status,body});
+ };
+ try{return await Promise.race([task(),deadline]);}catch(e){return out(e.message==='SOURCE_TIMEOUT'?'TIMEOUT':'NETWORK_ERROR');}
+ finally{clearTimeout(timer);controller.abort();try{reader?.cancel()?.catch(()=>{});}catch{}}
+}
+
+// ---- daily-close freshness ---------------------------------------------------------------------------------------------
+// The newest regular session whose close has happened at `ms` (New York calendar). Weekends and holidays do not age a close:
+// Friday's close is current until Monday's close. Outside the known calendar the answer is null (unknown), never a guess.
+export function latestCompletedSession(ms){
+ if(!Number.isFinite(ms))return null;const {day,minute}=nyParts(ms);let d=day;
+ for(let i=0;i<15;i++){const s=marketSession(d);if(!s.known)return null;if(!s.closed&&(d<day||minute>=s.close))return d;d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
+ return null;
+}
+// Sessions between a data day and the latest completed session (0 = current close). null when the calendar cannot say.
+export function closeLagSessions(day,ms){
+ const latest=latestCompletedSession(ms);if(!latest||!validDay(day))return null;if(day>latest)return -1;
+ let n=0,d=latest;while(d>day&&n<60){d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);const s=marketSession(d);if(!s.known)return null;if(!s.closed)n++;}
+ return d===day||d<day?n:null;
+}

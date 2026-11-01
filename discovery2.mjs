@@ -24,6 +24,7 @@
 //    DISCOVERED in ACTIONS and logs them to data/tier2-ledger.jsonl as discovery:<id>).
 // WEEKLY: a run at least 6 days after the last batch adds the next 10 UNTESTED rules of the frozen pool; the luck bar uses every rule
 //    tested so far (counter testedTotal), so each new batch faces a higher bar. The pool itself is never re-learned.
+import {closeLagSessions,digest} from './source-contract.mjs';
 import fs from 'node:fs';
 import {createSupplySource} from './share-supply-source.mjs';
 import zlib from 'node:zlib';
@@ -283,8 +284,17 @@ const hsh = (q) => { let h = 2166136261; for (let k = 0; k < q.length; k++) { h 
   // ---- 5. LIVE list: signals at the last close of every rule that reached tier 2 ----
   const future = tradingSessions(new Date(Date.parse(last) + 864e5).toISOString().slice(0, 10), new Date(Date.parse(last) + 140 * 864e5).toISOString().slice(0, 10));
   const HAL = J('data/halal.json', {}) || {}, ZAD = J('data/zad-list.json', {}) || {}, zbad = new Set(ZAD.notHalal || []), halOf = (s) => zbad.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
-  const buys = []; for (const r of rules) if (tierOf(r.id)) for (const x of live[r.id]) buys.push({ rule: r.id, sym: x.sym, buy: future[0], sell: future[r.hold - 1], hold: r.hold, stopPct: K.STOP, lastClose: x.lastClose, combo: r.conds.map(K.condText).join(' AND '), features: x.features, halal: halOf(x.sym) });
-  W(TODAY_OUT, { generatedAt: new Date().toISOString(), lastClose: last, sessions: future.slice(0, 90), rules: Object.fromEntries(rules.map(r => [r.id, tierOf(r.id)])), verdicts: Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.verdict])), buys, buyUpToPct: 0.03,
+  // Source contract (MARKET-03 / CATALYST-03, 2 Nov 2026): every live line carries the close day, identity basis, price basis and
+  // a revision id; the file states its own price-cache freshness. A cache whose last close is older than the previous completed
+  // session is STALE: its lines move to retainedBuys (kept, not actionable) instead of being shown as today's buys. Rules,
+  // gates, verdicts and the frozen firstRun are unchanged.
+  const lag = closeLagSessions(last, Date.now()), priceStatus = lag === null ? 'UNKNOWN' : lag < 0 ? 'FUTURE' : lag <= 1 ? 'OBSERVED' : 'STALE';
+  const PRICE_BASIS = 'SPLIT_ADJUSTED_AS_OF_FETCH_WITH_SPLIT_REPAIR (study-cache grouped bars; share classes excluded by the cache)';
+  const allBuys = []; for (const r of rules) if (tierOf(r.id)) for (const x of live[r.id]) allBuys.push({ rule: r.id, sym: x.sym, buy: future[0], sell: future[r.hold - 1], hold: r.hold, stopPct: K.STOP, lastClose: x.lastClose, combo: r.conds.map(K.condText).join(' AND '), features: x.features, halal: halOf(x.sym),
+    lastCloseDay: last, sourceId: digest(['DISCOVERY2', r.id, x.sym, last]), sourceRevisionId: digest([x.lastClose, x.features]), sourceClockBasis: 'DAILY_CLOSE_CACHE', priceBasis: PRICE_BASIS, sourceIdentityBasis: 'PRICE_CACHE_TICKER_NOT_SECURITY_ID' });
+  const buys = priceStatus === 'OBSERVED' ? allBuys : [], retainedBuys = priceStatus === 'OBSERVED' ? [] : allBuys;
+  W(TODAY_OUT, { generatedAt: new Date().toISOString(), lastClose: last, sessions: future.slice(0, 90), rules: Object.fromEntries(rules.map(r => [r.id, tierOf(r.id)])), verdicts: Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.verdict])), buys, retainedBuys, buyUpToPct: 0.03,
+    sourceStatus: { SEC_INDEX: { status: 'OBSERVED' }, PRICE_CACHE: { status: priceStatus, lastClose: last, lagSessions: lag, basis: PRICE_BASIS } },
     note: 'Signals of the discovered rules at the last cached close. buys holds lines only for a rule whose frozen newer-half verdict is TRADABLE SMALL; gates in the test and here: 3 USD+, 2M USD+ a day, no 15%+ one-day jump in 21 sessions, no 424B4/424B5 in 20 sessions; halal from data/halal.json + ZAD (unknown = check ZAD first).' });
 
   const out = { generatedAt: new Date().toISOString(), status: 'OK', preRegistered: state.frozenAt, window: [D[0], last], split: K.SPLIT, newerHalfFrom: D[tNew], complete, sources: SRC, missing,
@@ -299,7 +309,7 @@ const hsh = (q) => { let h = 2166136261; for (let k = 0; k < q.length; k++) { h 
   console.log('DISCOVERY ENGINE v2 (newer half ' + D[tNew] + ' to ' + last + ', ' + out.testedTotal + ' rules tested in all)');
   for (const r of rules) { const x = results[r.id], s = RES[r.id].newer || {}; console.log('- ' + r.id + ' [' + r.def + ', bar ' + RES[r.id].bar + '] ' + x.verdict + ' | ' + (s.n || 0) + ' trades, avg ' + pc(s.avg) + ' (1.2%: ' + pc(s.avgStress) + '), edge ' + pc(s.edge) + ' t ' + s.t + ' block t ' + s.tBlock + ', vs own ' + pc(s.vsOwn) + ', no top 2 ' + pc(s.noTop2) + ' | ' + r.conds.map(K.condText).join(' AND ')); }
   const cr = out.costReality; console.log('cost reality: ' + Object.entries(cr.bySource).map(([k, v]) => k + ' ' + v.rules + ' rules, +at 0.8% ' + v.positiveAt08 + ', +at 0.4% ' + v.positiveAt04 + ', +at 0.2% ' + v.positiveAt02).join(' | '));
-  console.log('live: ' + buys.length + ' discovered buys (' + rules.filter(r => tierOf(r.id)).length + ' rules at tier 2)');
+  console.log('live: ' + buys.length + ' discovered buys' + (retainedBuys.length ? ' (' + retainedBuys.length + ' withheld: price cache ' + priceStatus + ')' : '') + ' (' + rules.filter(r => tierOf(r.id)).length + ' rules at tier 2)');
 })().catch(e => { console.log('Error: discovery2 crashed: ' + (e && e.stack || e)); process.exitCode = 1; });
 
 // library: every rule in a batch gets its written spec (pre-registered, frozen before the newer half); status from firstRun only
