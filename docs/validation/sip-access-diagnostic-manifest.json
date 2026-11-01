@@ -1,6 +1,6 @@
 {
   "kind": "INACTIVE_SIP_ACCESS_DIAGNOSTIC_V1",
-  "sourceCommit": "8af4e1acf74530b620ddc4cc232c2030fffabb6f",
+  "sourceCommit": "b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c",
   "reviewDate": "2026-11-01",
   "contractsReviewed": {
     "sha": "f61bcf748c569bd86ec6997267bc23fa5984e113",
@@ -16,43 +16,48 @@
     "referencePreparation": 0,
     "sipSampling": 7,
     "combinedApplicationMaximum": 7,
-    "controlPlane": "checkout/setup/artifact traffic excluded from application count; 5min job/16KiB artifact/3day retention"
+    "controlPlane": "checkout/setup/artifact separate from seven application attempts;20min job,16KiB artifact,3day retention"
   },
   "sourceHashes": {
-    "sip-access-diagnostic.mjs": "008f8b23db51b226ebc61890d816ff55031e37ac2a5d7b913568174e0aacb151",
-    "tools/run-sip-access-diagnostic.mjs": "9f32782726db84b94dc9ce0ce04a5ffd4c21544f8562d63c64d53a0605f0cb63"
+    "sip-access-diagnostic.mjs": "8810a1220102786119b3fdf0caf296b8a38412c87bd9f3c1bc5ee9cb58d35d8a",
+    "sip-access-result.mjs": "01a3c1859003e49a5caf5001bfd6219faf3fcf88b68549b81127528ea09a337b",
+    "sip-access-https.mjs": "cd82157e48daf7c53822c2a0fb2e1ea6f01433058ee0ac61bb20c8bc47dccfd9",
+    "tools/run-sip-access-diagnostic.mjs": "2728669651e1fcdb9f1ff01af457bf7dd13cbf89da92fcb3b551cbf4e2499866",
+    "tools/validate-sip-access-result.mjs": "7a6b93e17edb4a1dd3250d0028cc1d3f06aa355a158b7eefeed9839e6b260744"
   },
   "planSha256": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
-  "workflowSha256": "4cd8081c6d0800f929d425e9ff777d0a4605ae8161c733728230afa013b95a26",
+  "workflowSha256": "affa4c65bec9a17748b66ef4e78631d054725b841ab1c7a5733240712a3c6a31",
   "fileHashes": {
     "sip-access-diagnostic.mjs": "8810a1220102786119b3fdf0caf296b8a38412c87bd9f3c1bc5ee9cb58d35d8a",
     "tools/run-sip-access-diagnostic.mjs": "2728669651e1fcdb9f1ff01af457bf7dd13cbf89da92fcb3b551cbf4e2499866",
     "test/sip-access-diagnostic.test.mjs": "83f2f113a6c0e768293ab7f2e33b7d943ba15ccb9a828eae6bf220dae7a3085d",
     "docs/validation/sip-access-plan.proposed.json": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
     "docs/market-data-contracts-review-pass.md": "114d060f091c9db417eccc4b3a8697603c105ae968e894024afd68a0278dcc81",
-    "docs/sip-access-diagnostic-proposal.md": "04a812c4531daab14e582cd324db899067a10a0a00af4245c95fd49c91319503",
+    "docs/sip-access-diagnostic-proposal.md": "e4dd85ff58a33e527c7b7ef35972a98f1f3e4a8b81c4b0a7d9e8f56379f38d5e",
     "docs/contracts-integration-proposal.md": "e2b52311b914ef1e0267b841bcf9b084229cd769570616cb6a2a5fce1744f047",
-    "docs/validation/sip-access-diagnostic.workflow.yml.proposed": "4cd8081c6d0800f929d425e9ff777d0a4605ae8161c733728230afa013b95a26",
-    "test/sip-access-package.test.mjs": "c69e16a8f167021626e730b954b20792399aea01dce093d378c6b4ca833b6905",
-    "docs/validation/sip-access-approval.example.json": "2bb89ed07d7fc04177b3f2a8265861edfdd9b1d58e4b351f2f59298ba3008a34",
+    "sip-access-https.mjs": "cd82157e48daf7c53822c2a0fb2e1ea6f01433058ee0ac61bb20c8bc47dccfd9",
+    "test/sip-access-real-fixture.mjs": "cf4fc5115e19a9037971830bd336b996e497569f099cfd63e1135a378e1e4a12",
     "sip-access-result.mjs": "01a3c1859003e49a5caf5001bfd6219faf3fcf88b68549b81127528ea09a337b",
     "tools/validate-sip-access-result.mjs": "7a6b93e17edb4a1dd3250d0028cc1d3f06aa355a158b7eefeed9839e6b260744",
-    "test/sip-access-real-fixture.mjs": "cf4fc5115e19a9037971830bd336b996e497569f099cfd63e1135a378e1e4a12",
     "test/sip-access-corrections.test.mjs": "9030380d11cb4c74b548dd4cde914ba3e270643057b8a929ad44fa02327df8c3",
-    "sip-access-https.mjs": "cd82157e48daf7c53822c2a0fb2e1ea6f01433058ee0ac61bb20c8bc47dccfd9"
+    "test/sip-access-package.test.mjs": "70b49c194d6333483de4443b24dd285159dd8efc0bdfc67ce3ff7ae6abad6a41",
+    "docs/validation/sip-access-diagnostic.workflow.yml.proposed": "affa4c65bec9a17748b66ef4e78631d054725b841ab1c7a5733240712a3c6a31",
+    "docs/validation/sip-access-approval.example.json": "5a9de22bab648fee85a3f6d68813eaa83b2c69dc67b347016732d50d1e051520",
+    "docs/sip-access-c1-c2-review.md": "9a3a9ad39568be86ab38b28b982a77bcc15b88e4402ea509875d1478db969e69",
+    "test/sip-access-workflow.test.mjs": "6b503f4c7545f42deb48246f7d1094b3d6b086e27eda1adb0f66ae158c3bf69b",
+    "docs/validation/sip-access-action-provenance.json": "1ea86cf1aa19f32246c938d07484c218abf26d0c4b701224fda459862e5a69f7"
   },
   "verification": {
     "independentLocalNode": "UNAVAILABLE: managed executor initialization failed",
-    "independentPureMock": "7 pure orchestration/failure checks PASS in isolated JavaScript; V8 syntax checks PASS; not independent Node/process execution",
+    "independentPureMock": "Historical pure mock checks only; hosted process tests are separately linked. Claude's attached harness unread due failed execution workspace.",
     "hostedSourceCi": {
-      "sha": "8af4e1acf74530b620ddc4cc232c2030fffabb6f",
-      "checksUrl": "https://github.com/drrazaq/Stock-2/commit/8af4e1acf74530b620ddc4cc232c2030fffabb6f",
-      "fullNode": "https://github.com/drrazaq/Stock-2/actions/runs/41297935006/job/124822632870",
-      "result": "PASS_ALL_5_APPLICABLE_CHECKS",
-      "focusedCases": 12
+      "sha": "b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41302824284/job/124837129889",
+      "tests": "12 diagnostic +6 correction tests, all original main tests; final literal-wrapper tests checked separately"
     },
     "approvalRequired": "Exact workflow installation, existing provider bindings and ONE dated run; no automatic replacement/retry; operator checks run history",
-    "currentRevision": "Hosted execution pending; previous source/CI claims remain historical only.",
+    "currentRevision": "Source tests PASS; final literal workflow wrapper/finalizer packaging CI pending.",
     "firstCorrectionFailure": {
       "sha": "5a885fdb74b448c528e17b4578ae59e0f087ebde",
       "job": 124834335972,
@@ -60,7 +65,7 @@
         "real-path timer failed to accelerate a shifted repeat wait",
         "native fetch produced two local HTTP requests for one application attempt on connection failure"
       ],
-      "result": "PRESERVED; no live provider calls; new single-attempt HTTPS and fixture-owner timer correction pending"
+      "result": "PRESERVED; fixed and source tests PASS on b8e0fe8c, including exactly one local wire request on connection failure"
     }
   },
   "acceptance": {
@@ -69,6 +74,18 @@
     "newClosures": 0,
     "genuineAdmissions": 0
   },
-  "revisionStatus": "C1_C2_SOURCE_CHECKPOINT_UNVERIFIED_DO_NOT_INSTALL",
-  "previousReviewedCheckpoint": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30"
+  "revisionStatus": "C1_C2_OFFLINE_SOURCE_PASS_FINAL_WRAPPER_CHECK_PENDING_NOT_AUTHORIZED",
+  "previousReviewedCheckpoint": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30",
+  "timing": {
+    "t0": "2026-11-03T16:00:00Z",
+    "dispatchProposed": "2026-11-03T15:50:00Z",
+    "startEarliest": "T0-600seconds",
+    "latest": "T0+30seconds",
+    "dataDeadline": "T0+180seconds",
+    "runnerCeilingSeconds": 790,
+    "processCeilingSeconds": 800,
+    "killGraceSeconds": 5,
+    "jobMinutes": 20,
+    "approved": false
+  }
 }

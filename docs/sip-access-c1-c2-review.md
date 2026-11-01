@@ -1,5 +1,5 @@
-# Diagnostic C1/C2 correction — SOURCE CHECKPOINT, UNVERIFIED
-The accepted contracts package and original107935f6 remain immutable. This checkpoint changes only the inactive diagnostic; final source/workflow pins follow passing source tests.
+# Diagnostic C1/C2 correction — inactive re-review package
+The accepted contracts package and original107935f6 remain immutable. This checkpoint changes only the inactive diagnostic; source b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c passed hosted actual-runner/client tests; final packaging is checked separately.
 C1: bounded early wait inside the runner,10minutes maximum, latest startT0+30seconds, same absolute data deadlineT0+180seconds. Dispatch proposed10:50NY /18:50Kuwait forT0=11:00NY /19:00Kuwait on3November; scheduling delay beyond the latest start refuses before credentials are read. Total runner ceiling790seconds; final workflow will use20minutes including setup/upload and an800second process ceiling. No request/body/storage/output cap expansion; max7, no retries/fallback.
 C2:20 fixed codes, jointly checked with exit0/1/2. Any unknown/malformed code, mismatch or exit124/137/143 becomes ERROR. Both proposed wrapper/finalizer must use this exact contract.
 Own actual-runner tests use a real loopback HTTP service and synthetic bindings; fixtures preserve full declared early/late/repeat/deadline clocks while accelerating timers. Interrupted waiting must produce ERROR_INTERRUPTED and no requests.
@@ -10,3 +10,7 @@ Previous107935f6:5 check-runs across3 workflow runs, all PASS: test124824874025;
 No installation, binding, provider call, dispatch or protocol adoption.
 
 First correction CI5a885fdb failed two real-path cases (job124834335972); preserved. Timer fixture now distinguishes runner-owned waits from HTTP timers. Native fetch was observed retrying a local connection failure; protected runtime now uses core HTTPS agent:false, one request.end call, no retry or redirect. Synthetic fixtures replace only HTTPS transport with an owned loopback HTTP service; ambient fetch is refused. This is independent code, not Claude's unread attached harness.
+
+Source execution: [ordinary push CI 41302824284/job124837129889](https://github.com/drrazaq/Stock-2/actions/runs/41302824284/job/124837129889) PASS on b8e0fe8c. This is our authored test suite executed by hosted CI, not an independent local Node run or Claude's harness. The failed managed executor prevents local process execution and attachment download. The final proposed-wrapper Python tests execute the literal code extracted from both workflow steps; source tests cover eight guard refusals, full logical early/start/late/repeat/deadline schedules, slow/timeout/HTTP/parser failures and SIGINT/SIGTERM. All use synthetic bindings and owned loopback HTTP only.
+
+Bounds remain max7 single attempts, no fallback/pagination followups/redirect,128KiB/body,896KiB cumulative,16KiB report. Waiting has a separate10-minute cap; data deadline stays T0+180s. Details and fixed20-code list are linked in the proposal. No installation or run is approved.
