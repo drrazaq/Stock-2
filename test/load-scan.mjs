@@ -29,15 +29,16 @@ export function writeFixture(dir, name, data) {
 }
 
 // files: { 'data/signals.json': {...}, 'data/my-trades.jsonl': [rows], ... }; settings are merged over the migration flags.
-export async function loadScan({ files = {}, env = {} } = {}) {
-  const src = fs.readFileSync(process.env.SCAN_SRC || path.join(REPO, 'scan.mjs'), 'utf8').trimEnd().split('\n');
+export async function loadScan({ files = {}, env = {}, root = REPO } = {}) {
+  const sourceRepo=path.resolve(root);
+  const src = fs.readFileSync(process.env.SCAN_SRC || path.join(sourceRepo, 'scan.mjs'), 'utf8').trimEnd().split('\n');
   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
   // Copy the transitive local static-module closure, not a fragile seed list.
   const copied=new Set();
   const copyImports=(text,parent)=>{
     for(const m of text.matchAll(/^import(?:\s+.+?\s+from)?\s*['"](\.[^'"]+\.mjs)['"]/gm)){
-      const file=path.resolve(parent,m[1]),relative=path.relative(REPO,file);
+      const file=path.resolve(parent,m[1]),relative=path.relative(sourceRepo,file);
       if(relative.startsWith('..'+path.sep)||path.isAbsolute(relative))throw Error('fixture import escapes repository');
       if(copied.has(file))continue;copied.add(file);
       const body=fs.readFileSync(file,'utf8'),target=path.join(dir,relative);
@@ -45,8 +46,8 @@ export async function loadScan({ files = {}, env = {} } = {}) {
       copyImports(body,path.dirname(file));
     }
   };
-  copyImports(src.join('\n'),REPO);
-  fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
+  copyImports(src.join('\n'),sourceRepo);
+  fs.copyFileSync(path.join(sourceRepo, 'index.html'), path.join(dir, 'index.html'));
   fs.mkdirSync(path.join(dir, 'data'));
   // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
   const st0 = files['data/settings.json']; writeFixture(dir, 'data/settings.json', typeof st0 === 'string' ? st0 : { ...DONE, ...(st0 || {}) });

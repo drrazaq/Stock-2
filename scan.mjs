@@ -3244,7 +3244,7 @@ async function tgCommands(sig) {
     if (lines.length > 1 && lines.every(x => CMD_LINE.test(x))) lines.forEach(x => queue.push({ update_id: u.update_id, message: { ...m, text: x } }));
     else { if (m && m.text && lines.length === 1) m.text = lines[0]; queue.push(u); }
   }
-  const mentorOnly=queue.length>0&&queue.every(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)&&/^\/?mentor(?:@\w+)?\s+[a-z][a-z.\-]{0,5}\s*$/i.test(u.message?.text||''));
+  const isMentor=u=>/^\/?mentor(?:@\w+)?\s+[a-z][a-z.\-]{0,5}\s*$/i.test(u.message?.text||''),owned=queue.filter(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)),mentorOnly=queue.some(isMentor)&&owned.every(isMentor);
   if (state.menuV !== MENU_V) { if(await sendMenu())state.menuV = MENU_V; }   // the one-tap menu appears by itself once (and after each change)
   for (const u of queue) {
     state.offset = u.update_id + 1;

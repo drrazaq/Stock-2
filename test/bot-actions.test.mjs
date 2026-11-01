@@ -17,7 +17,7 @@ const sig = (extra = {}) => ({ session: '2026-10-27', market: { above50: true, u
 const ok = { s: 'ok', d: new Date().toISOString().slice(0, 10) };
 const PICKS = [{ sym: 'WST', fs: 9 }, { sym: 'HQY', fs: 9 }, { sym: 'MMSI', fs: 8 }];
 async function render(files, s = sig()) { const S = await loadScan({ files: { 'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': s, ...files }, env: { TD_BASE: 'http://127.0.0.1:9', FH_BASE: 'http://127.0.0.1:9', SEC_BASE: 'http://127.0.0.1:9' } }); return { S, t: await S.fn('actionsText')(s, S.fn('loadPos')(), null, 'ACTIONS TEST') }; }
-const section = (t, name) => { const i = t.indexOf('\n' + name); if (i < 0) return ''; const rest = t.slice(i + 1), j = rest.slice(1).search(/\n\n[A-Z][A-Z' -]{3,}(\(|\n|:)/); return j < 0 ? rest : rest.slice(0, j + 1); };
+const section = (t,name) => {const i=t.indexOf('\n'+name);if(i<0)return '';const rest=t.slice(i+1),next=['CRITICAL',"TODAY'S ACTIONS",'NOT ACTIONABLE TODAY','APPROVED LANES','SHORT-TERM OPPORTUNITIES','CURRENT HOLDINGS','RECORDS','SYSTEM HEALTH','LONGER-TERM:'].map(h=>rest.indexOf('\n\n'+h)).filter(n=>n>=0);return next.length?rest.slice(0,Math.min(...next)):rest;};
 
 test('28 Oct contradiction fixed: focus on + LONGER HOLDS buys (marked halal) -> buys under TODAY\'S ACTIONS with their status; the policy says engine buys only are paused', async () => {
   const { t } = await render({ 'data/quality.json': quality(PICKS), 'data/halal.json': { WST: ok, HQY: ok, MMSI: ok }, 'data/names.json': { WST: 'WEST PHARMACEUTICAL SERVICES INC' } });
@@ -75,3 +75,5 @@ test('a stock picked by two lanes (LONGER HOLDS and LEADER DIP) is ONE buy, unde
   assert.equal((t.match(/- BUY WST/g) || []).length, 1, t);
   assert.match(section(t, "TODAY'S ACTIONS"), /LONGER HOLDS[\s\S]*- BUY WST/);
 });
+
+test('record subheadings including Sunday SCOREBOARD and PRACTICE ACCOUNT cannot terminate the RECORDS section',()=>{const t='ACTIONS\nRECORDS\nJournal\n\nSCOREBOARD (week)\nSynthetic summary\n\nPRACTICE ACCOUNT (fixture)\n\nSYSTEM HEALTH\nOther';const r=section(t,'RECORDS');assert.match(r,/SCOREBOARD/);assert.match(r,/PRACTICE ACCOUNT/);assert.doesNotMatch(r,/SYSTEM HEALTH/);});
