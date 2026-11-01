@@ -4,8 +4,7 @@
   "ownerInputNeededForOfflineReview": false,
   "priority": [
     "scan.mjs",
-    "early-alerts.mjs",
-    "live-contract-gate.mjs"
+    "radar-v3-core.mjs"
   ],
   "pendingSourceReviews": [
     {
@@ -505,19 +504,6 @@
     {
       "path": "e16-absorption.mjs",
       "sha256": "d489d53dc1861c0a4b2245d9a780ca2a7f9a8627b153dc27fd9aee59505d4308",
-      "requiredAxes": [
-        "inputs",
-        "outputs",
-        "sideEffects",
-        "failure",
-        "timing",
-        "researchBoundary"
-      ],
-      "nextAction": "Review actual source/caller contract; reuse exact-hash evidence, not filename matches."
-    },
-    {
-      "path": "early-alerts.mjs",
-      "sha256": "bdfb980faae9a2a2dda697dfeb722b3c3f3c47d186863e15b49d6cb7dfdee398",
       "requiredAxes": [
         "inputs",
         "outputs",
@@ -3394,13 +3380,17 @@
     {
       "path": "health.mjs",
       "remainingVerification": "Missing-binding false-sent defect reproduced, repaired and five actual-caller tests PASS; all five fail against original. Cross-workflow persistence/concurrency and carrying the new health state file across scheduled checkouts require Claude caller audit before a production proposal."
+    },
+    {
+      "path": "early-alerts.mjs",
+      "remainingVerification": "CATALYST-03 source fetch/revision/freshness identity still needs actual producer/caller evidence; per-run SEC cache and classification checkedAt alone do not provide it. Do not add refresh provider calls silently. Cross-process durability/publication and malformed producer schema paths remain caller contracts;12 helper tests are not whole-system proof."
     }
   ],
   "totals": {
     "scripts": 305,
-    "sourceReviewed": 65,
-    "pending": 240,
-    "reviewedWithOpenFindings": 31
+    "sourceReviewed": 66,
+    "pending": 239,
+    "reviewedWithOpenFindings": 32
   },
   "scannerPartialReview": {
     "status": "PARTIAL_NOT_COUNTED_AS_COMPLETE",
@@ -3409,5 +3399,6 @@
     "evidence": "docs/repo03-critical-contract-batch.md",
     "mentorBoundary": "Current-production bounded mentor package PR3 verified separately; full scanner plan/price/mutation review still pending. No whole-script closure."
   },
-  "healthPublicationOwner": "Claude complementary persistence audit; no deployment proposal until durable state survives checkout/save caller."
+  "healthPublicationOwner": "Claude complementary persistence audit; no deployment proposal until durable state survives checkout/save caller.",
+  "queueCorrection": "Removed nonexistent live-contract-gate.mjs priority entry; no such script or invented integration work is required. Actual next source paths are scan.mjs and radar-v3-core.mjs."
 }

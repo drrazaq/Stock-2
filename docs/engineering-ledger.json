@@ -8049,9 +8049,9 @@
     "baseSourceCommit": "6868d9a39518fdf4168f67167f681bbba7c68ab0",
     "matrix": "docs/validation/repo03-behavioral-matrix.json",
     "scripts": 305,
-    "sourceReviewed": 65,
-    "pendingSourceReview": 240,
-    "reviewedWithOpenGaps": 31,
+    "sourceReviewed": 66,
+    "pendingSourceReview": 239,
+    "reviewedWithOpenGaps": 32,
     "accepted": false,
     "newAcceptanceClosures": [],
     "report": "docs/repo03-critical-contract-batch.md",
@@ -8099,7 +8099,8 @@
       }
     },
     "fourCompanions": "docs/repo03-critical-contract-batch.md#four-independent-repair-companions",
-    "pr6Unchanged": "64611cdf47dd230026911dde53b98cf7413c17f1"
+    "pr6Unchanged": "64611cdf47dd230026911dde53b98cf7413c17f1",
+    "postMentorReadOnlyFollowup": "docs/validation/repo03-early-alerts-review.json"
   },
   "repo03Historical237Review": {
     "baseSourceCommit": "6868d9a39518fdf4168f67167f681bbba7c68ab0",
@@ -8147,7 +8148,14 @@
     "noNewCaptureInfrastructure": true,
     "next": "Claude focused review; owner exact-patch decision only after PASS and current compatibility/natural boundary",
     "report": "docs/mentor-sip-release-checkpoint.md",
-    "acceptanceClosures": []
+    "acceptanceClosures": [],
+    "consolidatedDevelopmentCI": {
+      "source": "3ce932e2a016e44c7cf2ad9ac49c7e8aa43ce36c",
+      "checksPass": 7,
+      "node20FilesPass": 242,
+      "hostConsecutivePass": 30,
+      "evidence": "docs/validation/mentor-release-development-ci.json"
+    }
   },
   "latestSipDecisionPackage": {
     "reviewedCodeUnchanged": true,

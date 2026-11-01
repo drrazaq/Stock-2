@@ -4935,7 +4935,7 @@
       "path": "early-alerts.mjs",
       "sha256": "bdfb980faae9a2a2dda697dfeb722b3c3f3c47d186863e15b49d6cb7dfdee398",
       "bytes": 23775,
-      "status": "PENDING_SOURCE_REVIEW",
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [],
@@ -5043,7 +5043,24 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "sha256": "bdfb980faae9a2a2dda697dfeb722b3c3f3c47d186863e15b49d6cb7dfdee398",
+        "reviewer": "Codex source/caller review,2026-11-01; bounded follow-up after mentor release",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Explicit candidate/quote fields,day/clock/level,typed SEC/news ports,current ZAD exclusions/marks,lottery map,legacy rule statistics and send port; watcher builds inputs from normalized observations.",
+        "outputs": "Labelled RESEARCH LEAD/PAPER SETUP messages; per-kind/symbol decisions,source interpretation and legacy15:00 result/scorecard summary. approvedBuyEligible is always false.",
+        "sideEffects": "Per-run in-memory seen/queues/cache/counters; calls explicit SEC/news/send ports only. Actual watcher wraps delivery with durable reservation; helper does not publish or place orders.",
+        "failure": "Source failure hard-blocks; NO_ISSUER_RECORD/policy exclusion distinguished; failed source never NONE. Invalid/future evidence timestamps excluded in classifier, sending failure recorded. Typed arrays/finite producer inputs remain caller preconditions; module is not a hostile-input schema validator.",
+        "timing": "Unchanged575..690 lead window,<=690paper,5/4daily caps and24/72h source-age interpretation. secOf caches per symbol within run; checkedAt is classification time, not authenticated SEC fetch time. Quote age<=120seconds is a legacy explanatory hurdle, not executable BBO/fill proof.",
+        "researchBoundary": "No approved BUY, orders, model adoption or new enrollment. Unknown instruments remain labelled context; mixed legacy estimates cannot establish verified common-stock/admitted prospective performance. One per kind/symbol frozen decision semantics unchanged.",
+        "remainingVerification": "CATALYST-03 source fetch/revision/freshness identity still needs actual producer/caller evidence; per-run SEC cache and classification checkedAt alone do not provide it. Do not add refresh provider calls silently. Cross-process durability/publication and malformed producer schema paths remain caller contracts;12 helper tests are not whole-system proof.",
+        "evidence": [
+          "docs/validation/repo03-early-alerts-review.json",
+          "test/early-alerts.test.mjs",
+          "test/watcher-incident-revision.test.mjs",
+          "docs/repo03-critical-contract-batch.md"
+        ]
+      },
       "testReferences": [
         "test/watcher-incident-revision.test.mjs",
         "test/early-alerts.test.mjs",
@@ -33365,9 +33382,9 @@
   ],
   "totals": {
     "scripts": 305,
-    "sourceReviewed": 65,
-    "pending": 240,
-    "reviewedWithOpenFindings": 31
+    "sourceReviewed": 66,
+    "pending": 239,
+    "reviewedWithOpenFindings": 32
   },
   "accepted": false,
   "note": "An explicit hash-matched review is required. Empty axes, source changes and inventories cannot silently count as reviewed; review is distinct from all-path runtime verification."
