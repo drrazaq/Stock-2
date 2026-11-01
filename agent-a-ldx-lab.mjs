@@ -84,7 +84,7 @@ const smaMemo = new Map(), smaFor = (i) => { if (!smaMemo.has(i)) smaMemo.set(i,
 for (const [sym, d] of SIG) { const t = sessionOf(d); if (t < 0) { note.noPrice++; continue; } const i = SY.get(sym); if (i === undefined) { note.noPrice++; continue; } const S = seriesOf(i);
   const base = holdFrom(S, t + 1, S.last, T, HOLD); if (!base) { note.notBought++; continue; } if (base.pending || base.open) { note.open++; continue; } if (hasArt(i, base.k, base.x)) { note.artifacts++; continue; }
   const ord = dayIdx.get(D[t]) || 0; dayIdx.set(D[t], ord + 1);
-  const live = liveExit(S, base), common = { sym, sig: D[t], half: halfOf(D[t]), k: base.k, px0: base.px0 };
+  const live = liveExit(S, base), common = { sym, sig: D[t], half: halfOf(D[t]), k: base.k, px0: base.px0, xT: base.x };
   const alts = { 'LDX-HALF63': halfwayExit(S, base, live, VARIANTS['LDX-HALF63'].check), 'LDX-T200': trendExit(S, base, live, smaFor(i)) };
   const b189 = holdFrom(S, t + 1, S.last, T, VARIANTS['LDX-TIME189'].hold);
   if (b189 && !b189.pending && !b189.open && !hasArt(i, b189.k, b189.x)) alts['LDX-TIME189'] = liveExit(S, b189); else note.open189++;
@@ -97,8 +97,13 @@ for (const [sym, d] of SIG) { const t = sessionOf(d); if (t < 0) { note.noPrice+
   if (b189a && !b189a.open) CANDS['LDX-TIME189'].push(cand(liveExit(S, b189a)));
   else { const tg = (() => { const L = base.px0 * 1.2; for (let q = base.k; q <= Math.min(T - 1, S.last); q++) { const o = S.o[q], h = S.h[q], c = S.c[q]; if (q > base.k && o > 0 && o >= L) return { q, px: o }; const top = h > 0 ? h : c; if (top > 0 && top >= L - 1e-12) return { q, px: L }; } return null; })();
     CANDS['LDX-TIME189'].push(tg ? { id: 'SQ11-PB12', sym, t, sig: D[t], ord, k: base.k, x: tg.q, px0: base.px0, px1: tg.px, kind: 'target', exitAt: 'c' } : { id: 'SQ11-PB12', sym, t, sig: D[t], ord, k: base.k, x: null, px0: base.px0, px1: null, kind: 'open', exitAt: 'c' }); } }
-const liveCheck = Object.fromEntries(['older', 'newer'].map(h => { const r = ROWS.live.filter(z => z.half === h); return [h, { n: r.length, win: r4(r.filter(z => z.base.px / z.px0 - 1 - COST > 0).length / Math.max(1, r.length)) }]; }));
-const REP = J('data/account-replay-pb12t20.json', {}), repCheck = REP.check && REP.check.TGT20 ? { older: { n: REP.check.TGT20.older.n, win: REP.check.TGT20.older.win }, newer: { n: REP.check.TGT20.newer.n, win: REP.check.TGT20.newer.win } } : null;
+// DATA CHECK (fixed 1 Nov 2026 after the first attempt stopped here, BEFORE anything was judged: the first version compared ALL rebuilt trades
+// with REPLAY-PB12T20's counts, but 2 more trades have finished since that run, so it could never match). The check now compares the trades
+// whose 126-session sale is inside A-TGT-TGT20-PB12's frozen window with that frozen first run (n and win per half), which is exactly the
+// population REPLAY-PB12T20 also reproduced. Rule, data and adoption test unchanged; the study itself still uses every finished trade.
+const AT = J('data/agent-a-tgt-lab.json', {}), atFr = (AT.firstRun || {})['A-TGT-TGT20-PB12'] || {}, atEnd = (atFr.window || [])[1] || null;
+const liveCheck = Object.fromEntries(['older', 'newer'].map(h => { const r = ROWS.live.filter(z => z.half === h && atEnd && D[z.xT] <= atEnd); return [h, { n: r.length, win: r4(r.filter(z => z.base.px / z.px0 - 1 - COST > 0).length / Math.max(1, r.length)) }]; }));
+const repCheck = atFr.results ? { through: atEnd, older: { n: atFr.results.older.n, win: atFr.results.older.win }, newer: { n: atFr.results.newer.n, win: atFr.results.newer.win } } : null;
 STATUS.trades = { ...note, rebuilt: ROWS.live.length, liveCheck, replayCheck: repCheck, reproduces: !!repCheck && ['older', 'newer'].every(h => repCheck[h].n === liveCheck[h].n && Math.abs(repCheck[h].win - liveCheck[h].win) < 0.002) };
 log('trades: ' + JSON.stringify(STATUS.trades) + ' | CUT ' + CUT);
 if (DIAG) { log('DIAG: nothing judged or written'); process.exit(0); }
