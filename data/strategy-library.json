@@ -32398,6 +32398,54 @@
     "bar": 2.81,
     "why": "lost money after 0.8% costs; lost money after 1.2% costs; not better than the average stock bought the same day; loses without its 2 best trades; day t -5.14 under the luck bar 2.81; block t -4.45 under the luck bar 2.81"
    }
+  },
+  {
+   "id": "RQ-TAX-63",
+   "family": "Daily researcher (RQ)",
+   "name": "Tax expense surprise (tax up vs a year before, per assets) in the top 20%, hold 3 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-01 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the next open after a 10-Q/10-K whose quarterly income tax expense minus the same quarter a year before, divided by total assets a year before (SEC XBRL), is in the top 20% (percentile >= 0.80 vs all such filings of the prior 365 days; filed within 120 days of the quarter end; assets 10M USD+); stock liquid; sell the close 63 sessions later. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1475-679X.2011.00409.x",
+    "https://ideas.repec.org/a/bla/joares/v49y2011i3p791-821.html",
+    "https://repec.som.yale.edu/icfpub/publications/2531.pdf"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-01: Thomas and Zhang (2011, JAR) \"Tax Expense Momentum\": the year-on-year change in quarterly tax expense, per assets, predicts returns for two quarters (top minus bottom decile 3.89% over 3 months, 1977-2005). New information family (the tax line, official SEC XBRL company facts), not in the library. Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 2 Nov 2026."
+  },
+  {
+   "id": "RQ-TAX-126",
+   "family": "Daily researcher (RQ)",
+   "name": "Tax expense surprise in the top 20%, hold 6 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-01 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-TAX-63, hold 126 sessions. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1475-679X.2011.00409.x",
+    "https://ideas.repec.org/a/bla/joares/v49y2011i3p791-821.html",
+    "https://repec.som.yale.edu/icfpub/publications/2531.pdf"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-01: Thomas and Zhang (2011, JAR) \"Tax Expense Momentum\": the year-on-year change in quarterly tax expense, per assets, predicts returns for two quarters (top minus bottom decile 3.89% over 3 months, 1977-2005). New information family (the tax line, official SEC XBRL company facts), not in the library. Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 2 Nov 2026."
+  },
+  {
+   "id": "RQ-TAX-LOW63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: tax expense surprise in the bottom 20%, 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-01 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: stocks whose tax expense change per assets is among the 20% lowest (percentile <= 0.20), bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1475-679X.2011.00409.x",
+    "https://ideas.repec.org/a/bla/joares/v49y2011i3p791-821.html",
+    "https://repec.som.yale.edu/icfpub/publications/2531.pdf"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-01: Thomas and Zhang (2011, JAR) \"Tax Expense Momentum\": the year-on-year change in quarterly tax expense, per assets, predicts returns for two quarters (top minus bottom decile 3.89% over 3 months, 1977-2005). New information family (the tax line, official SEC XBRL company facts), not in the library. Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 2 Nov 2026."
   }
  ]
 }
