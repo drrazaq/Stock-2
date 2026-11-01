@@ -273,3 +273,48 @@ Records to date: 79 (43 in batch 1, the rest in `all-claims.json`). The combined
 | `tools/catalogue_data_b3.py` | `8a54572e7751b4e20979e8a216561a77a117f47bb29cba249c2b15926fdc84ff` |
 | `tools/build-audit.py` | `0784a9e631652517c953811753bb04603f378d8d9da7d2a3fe19071b1456f064` |
 | `tools/readme_batch.py` | `db4b15b3cb0f0e703ee185420c17f25dfb00b012c2e17aea7e74ce5a96b7ee22` |
+
+---
+
+# Batch 4: trading-decision replies (scan.mjs)
+
+Same method and fields as batch 2. Nothing was sent and no provider was called; raw renders stay local.
+
+## Results
+
+- **D01 (decision, P3):** the holdings review raises a "TAKE PROFIT OPTION (tested on 5 years …)" (sell, buy back 10% lower) for every stretched or spiking holding, without checking the study verdict. The study is BELOW THE LEAGUE BAR (+1.9% / +1.8% vs holding, 2022-2026), and the rebuy reply on the same data says "Do not sell to buy back lower". The owner gets opposite guidance from two replies.
+- **D06 (latent gate, P4):** tier-2 CHAIN, DISCOVERED, FOLLOWING and CATALYST RUN-UP lanes and AUTO-DISCOVERED ("PROVEN ON LIVE PAPER") print a plain "- BUY" in ACTIONS when they fire. `settings.tier2` is unset (on) and focus mode does not pause them, while CLAUDE.md §9 names only LEADER DIP and LONGER HOLDS. None fires today.
+- **D03 (high, wording):** the EARNINGS DRIFT owner-lane BUY card says "passed its own 5-year test", but the frozen earnings study (23 Oct) is NOT PROVEN. Its "+1.8% a trade over 176 past beats" has no recorded source.
+- **D02:** the `check` reply hard-codes "proven: stops, trim, switch, avoid rules". The library has none of these as PROVEN, and the switch is "not proven".
+- **D04 / D05 (wording):** card fallbacks say "whole-market fair test passed" with no recorded pass, and "PROVISIONALLY PROMISING" leaders become "passed the whole-market fair test".
+- **D08 (wording):** the per-stock check is called "passed its tests", "PROVEN signal", "proven setup" or "tested exit" across the decision replies. The gating itself is consistent: focus mode is respected.
+- **D07, D12, D13, D14:** inconsistent FADE labels; a "5 years" stop study that covers 4.3; a static "-4.9%, 719 cases" figure; a 3-trade record used as an argument.
+- **D15:** early paper alerts are recorded but not sent under the default `opportunitiesOnly`, so B02 and C01 are latent. The B01 counter still counts them as sent and approved.
+- **Supported:** the danger-filing SELL reasons (D10: squad29 F4 −12.5% / −16.3% at 60 sessions, block t ≈ −6, both halves) and the lottery AVOID (D09: autolab M15 discovery, −3.2%, t −5.1; resolves B14's provenance). Exits, the target-study note, the LONGER HOLDS evidence line and the "no tested support" replies are acceptable (D11, D20).
+- **New owner policy questions:** P3 and P4 (not decided).
+
+## Coverage after this batch (`COVERAGE.md`, `source-inventory-v3.json`)
+
+| Category | Strings |
+|---|---:|
+| CATALOGUED_CLAIM | 108 |
+| REVIEWED_ACCEPTABLE | 806 |
+| NOT_A_CLAIM | 67 |
+| NOT_REVIEWED | 231 |
+| **Total** | **1212** |
+
+Records to date: 95 (43 in batch 1, the rest in `all-claims.json`). The combined ranking is in `RANKED-FINDINGS-v3.md`.
+
+## Files and SHA256
+
+| File | SHA256 |
+|---|---|
+| `BATCH4-FINDINGS.md` | `d5bdeb97d12d247d1159a25243a9d49762d05c55c6b988b0c3b808629756a6e3` |
+| `RANKED-FINDINGS-v3.md` | `22f90db45192e22efa4f87d13edd8609a9d9f6795e6ff17729f12a52e154d7f9` |
+| `COVERAGE.md` | `941b886734a07ed456f076211bb52f8fa34b35e912d11c1725f7141ba4b0bdaa` |
+| `all-claims.json` | `d73b9592839c0acd36c027de0b292ca61c073be5ff54709026d2b2d2b823d3e8` |
+| `source-inventory-v3.json` | `f5814d34bc83a1f668f12bbf9ad1d3fbf8d1879ee3030e1d831ca7e431f916d7` |
+| `tools/catalogue_data_b4.py` | `22853fa6dab216236e0b271452365eeb601015eb53c6e52eb4bdad75ad17586a` |
+| `tools/render-decisions.mjs` | `efafa50f948e10c1b0c2559bf63c11d1b05107a0fcada7c18167dbc9630b367c` |
+| `tools/build-audit.py` | `0784a9e631652517c953811753bb04603f378d8d9da7d2a3fe19071b1456f064` |
+| `tools/readme_batch.py` | `db4b15b3cb0f0e703ee185420c17f25dfb00b012c2e17aea7e74ce5a96b7ee22` |

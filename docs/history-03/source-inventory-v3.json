@@ -10,13 +10,13 @@
 },
 "counts": {
 "broad-only / CATALOGUED_CLAIM": 11,
-"broad-only / NOT_A_CLAIM": 8,
-"broad-only / NOT_REVIEWED": 223,
-"broad-only / REVIEWED_ACCEPTABLE": 56,
-"narrow / CATALOGUED_CLAIM": 47,
-"narrow / NOT_A_CLAIM": 48,
-"narrow / NOT_REVIEWED": 663,
-"narrow / REVIEWED_ACCEPTABLE": 156
+"broad-only / NOT_A_CLAIM": 16,
+"broad-only / NOT_REVIEWED": 67,
+"broad-only / REVIEWED_ACCEPTABLE": 204,
+"narrow / CATALOGUED_CLAIM": 97,
+"narrow / NOT_A_CLAIM": 51,
+"narrow / NOT_REVIEWED": 164,
+"narrow / REVIEWED_ACCEPTABLE": 602
 },
 "total": 1212,
 "narrowTotal": 914,
@@ -99,7 +99,23 @@
 "C04": "IN SOURCE, NOT EXTRACTED (string has no listed claim word)",
 "C10": "REVIEWED SURFACE (whole rendered or read message, no single anchor)",
 "C11": "REVIEWED SURFACE (whole rendered or read message, no single anchor)",
-"C12": "REVIEWED SURFACE (whole rendered or read message, no single anchor)"
+"C12": "REVIEWED SURFACE (whole rendered or read message, no single anchor)",
+"D01": "ANCHORED (narrow extractor)",
+"D02": "ANCHORED (narrow extractor)",
+"D03": "ANCHORED (narrow extractor)",
+"D04": "ANCHORED (narrow extractor)",
+"D05": "ANCHORED (narrow extractor)",
+"D06": "ANCHORED (narrow extractor)",
+"D07": "ANCHORED (narrow extractor)",
+"D08": "ANCHORED (narrow extractor)",
+"D09": "ANCHORED (narrow extractor)",
+"D10": "ANCHORED (narrow extractor)",
+"D11": "ANCHORED (narrow extractor)",
+"D12": "ANCHORED (narrow extractor)",
+"D13": "ANCHORED (narrow extractor)",
+"D14": "REVIEWED SURFACE (whole rendered or read message, no single anchor)",
+"D15": "REVIEWED SURFACE (whole rendered or read message, no single anchor)",
+"D20": "REVIEWED SURFACE (whole rendered or read message, no single anchor)"
 },
 "claimsWithAnchoredStrings": {
 "W01": 2,
@@ -144,7 +160,20 @@
 "B12": 1,
 "B13": 1,
 "B14": 1,
-"C02": 1
+"C02": 1,
+"D01": 4,
+"D02": 1,
+"D03": 1,
+"D04": 2,
+"D05": 1,
+"D06": 6,
+"D07": 2,
+"D08": 24,
+"D09": 4,
+"D10": 2,
+"D11": 1,
+"D12": 1,
+"D13": 1
 },
 "claimsWithoutAnchoredString": [
 "A04",
@@ -3481,8 +3510,10 @@
 "line": 37,
 "function": "dangerFlag",
 "text": "): such stocks lagged the average stock by about 12-16% over the next 60 sessions in 5 years of tests (SEC: ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D10"
+]
 },
 {
 "n": 328,
@@ -3491,8 +3522,10 @@
 "line": 38,
 "function": "dangerFlag",
 "text": "): such stocks lagged the average stock heavily in 5 years of tests (SEC: ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D10"
+]
 },
 {
 "n": 329,
@@ -3501,7 +3534,7 @@
 "line": 43,
 "function": "eventWarn",
 "text": " tested cases). Keep your stop firm",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3511,8 +3544,10 @@
 "line": 49,
 "function": "eventSell",
 "text": ". Tested: after such filings stocks fell ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D11"
+]
 },
 {
 "n": 331,
@@ -3521,7 +3556,7 @@
 "line": 49,
 "function": "eventSell",
 "text": " on average over 20 sessions (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3531,7 +3566,7 @@
 "line": 55,
 "function": "ln",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3541,7 +3576,7 @@
 "line": 58,
 "function": "ln",
 "text": "RULES (newer half; \"best moment\" = the average high of the day, what a chart shows):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3551,7 +3586,7 @@
 "line": 59,
 "function": "ln",
 "text": "WHAT CAME BEFORE THE JUMPS (found on old data, checked on unseen data):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3561,7 +3596,7 @@
 "line": 59,
 "function": "ln",
 "text": "- no pattern kept its edge on unseen data",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3571,7 +3606,7 @@
 "line": 60,
 "function": "ln",
 "text": "Best pattern by profit: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3581,7 +3616,7 @@
 "line": 60,
 "function": "ln",
 "text": " a trade on unseen data).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3591,7 +3626,7 @@
 "line": 61,
 "function": "ln",
 "text": "TODAY: no candidates from a passed rule",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3601,7 +3636,7 @@
 "line": 64,
 "function": "ln",
 "text": " run days tested, ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3611,7 +3646,7 @@
 "line": 64,
 "function": "ln",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3621,7 +3656,7 @@
 "line": 66,
 "function": "ln",
 "text": " versions tested (versions with no trades yet are not listed), ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3631,7 +3666,7 @@
 "line": 66,
 "function": "ln",
 "text": " passed the history test; any alert also needs 30+ positive live paper trades at 1.5x costs.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3653,7 +3688,7 @@
 "line": 84,
 "function": "tested",
 "text": "tested: the S&P 500 went ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3663,7 +3698,7 @@
 "line": 96,
 "function": "line",
 "text": "DECISION: only tested reactions change ACTIONS (hunt / avoid industries after a surprise, below); everything else follows the normal rules.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3673,7 +3708,7 @@
 "line": 96,
 "function": "line",
 "text": "DECISION: no release has a tested effect yet (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3683,7 +3718,7 @@
 "line": 98,
 "function": "line",
 "text": "  [tested reaction on file]",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3693,7 +3728,7 @@
 "line": 123,
 "function": "macroLines",
 "text": "), tested on ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3703,7 +3738,7 @@
 "line": 124,
 "function": "macroLines",
 "text": "  HUNT, industries that beat the market next: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3713,7 +3748,7 @@
 "line": 124,
 "function": "macroLines",
 "text": "  no industry beat the market steadily after this.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3723,7 +3758,7 @@
 "line": 127,
 "function": "macroLines",
 "text": ": HOLD with your stop (no tested reason to sell early).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3733,7 +3768,7 @@
 "line": 141,
 "function": "skipsText",
 "text": "Average since skipping: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3743,7 +3778,7 @@
 "line": 141,
 "function": "skipsText",
 "text": " (the skipped buys went UP on average: skipping cost you)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3753,7 +3788,7 @@
 "line": 141,
 "function": "skipsText",
 "text": " (the skipped buys went DOWN on average: your skips helped)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3763,7 +3798,7 @@
 "line": 142,
 "function": "skipsText",
 "text": " average since",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3773,7 +3808,7 @@
 "line": 153,
 "function": "qualityLine",
 "text": "average quality",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3783,7 +3818,7 @@
 "line": 154,
 "function": "qualityLine",
 "text": "On 5 years of history, top-10% quality companies beat the average stock and the S&P 500 over ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3793,7 +3828,7 @@
 "line": 154,
 "function": "qualityLine",
 "text": "The quality test has not passed yet, so this is information, not a buy.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3803,7 +3838,7 @@
 "line": 160,
 "function": "testedStop",
 "text": "tested on 5 years (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3825,7 +3860,7 @@
 "line": 165,
 "function": "stopsText",
 "text": ": no tested stop (not enough price history).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3835,7 +3870,7 @@
 "line": 167,
 "function": "stopsText",
 "text": " | tested stop ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3845,7 +3880,7 @@
 "line": 168,
 "function": "stopsText",
 "text": ". The tested stop is ALREADY above today\\u2019s price: by the tested rule this one is past its stop.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3855,7 +3890,7 @@
 "line": 168,
 "function": "stopsText",
 "text": ". Yours is TIGHTER than the tested stop: it is hit more often. Your choice: keep yours, or widen to ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3865,7 +3900,7 @@
 "line": 169,
 "function": "stopsText",
 "text": "New buys you record (bought SYM PRICE SHARES) get the tested stop automatically. Stops are always yours to place at the broker. Research only.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3875,7 +3910,7 @@
 "line": 185,
 "function": "sellCheckText",
 "text": "stretched far above its average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3885,8 +3920,10 @@
 "line": 185,
 "function": "sellCheckText",
 "text": ": selling and buying back 10% lower beat holding on 5 years of history (not yet confirmed live)",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D01"
+]
 },
 {
 "n": 368,
@@ -3895,7 +3932,7 @@
 "line": 194,
 "function": "sellCheckText",
 "text": ": TAKE PROFIT OPTION (your choice)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3905,7 +3942,7 @@
 "line": 198,
 "function": "sellCheckText",
 "text": "MUST = your rules. TESTED = passed a 5-year test. OPTION = passed on history, live check running. INFO = a real risk, not a tested sell signal: weigh it, the stop still decides.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3915,7 +3952,7 @@
 "line": 201,
 "function": "horizonLine",
 "text": "Mid / long term: not in any of the 4 tested pullback / leader / turn-around setups today.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3925,7 +3962,7 @@
 "line": 203,
 "function": "horizonLine",
 "text": "TESTED BUY for ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3935,7 +3972,7 @@
 "line": 203,
 "function": "horizonLine",
 "text": " vs an average stock ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3945,7 +3982,7 @@
 "line": 203,
 "function": "horizonLine",
 "text": " (tested better exit)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3955,7 +3992,7 @@
 "line": 203,
 "function": "horizonLine",
 "text": "tested, no edge (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3965,7 +4002,7 @@
 "line": 206,
 "function": "horizonLine",
 "text": "free public files with an archive, so nothing is lost by waiting. Build the collector if any company-news or fast-mover test passes on Sunday, then test squeeze setups against the same baseline",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3975,7 +4012,7 @@
 "line": 207,
 "function": "horizonLine",
 "text": "free SEC data sets going back years, so it can be tested later without collecting now. Same trigger as short interest; one new feed at a time",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3985,7 +4022,7 @@
 "line": 212,
 "function": "horizonLine",
 "text": "Exit test (trailing stop, profit lock, average lines) per kind of buy",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -3995,7 +4032,7 @@
 "line": 216,
 "function": "horizonLine",
 "text": "later; need minute data and a passed fast-mover rule first",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4005,7 +4042,7 @@
 "line": 217,
 "function": "horizonLine",
 "text": "COLLECTING since 15 Oct 2026 on every ignition trigger (adr5); tested with the fast-mover paper record",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4015,7 +4052,7 @@
 "line": 218,
 "function": "horizonLine",
 "text": "not built: official disclosures are PDFs up to 45 days late, the free feeds are unofficial, and published studies find no edge after the delay. Revisit only if the FMP plan includes it, as a months-long scoreboard",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4025,7 +4062,7 @@
 "line": 219,
 "function": "horizonLine",
 "text": "not built: low expected value, and the SEC history already saved lacks them (a fair test needs a full re-download). Activist 13D and insider clusters are already tested",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4035,8 +4072,10 @@
 "line": 223,
 "function": "horizonLine",
 "text": "passed on 5 years of history; LIVE PAPER CHECK running on every stock in the nightly scan; shown to you as an option, not an order, until it confirms",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D01"
+]
 },
 {
 "n": 383,
@@ -4045,7 +4084,7 @@
 "line": 231,
 "function": "J",
 "text": "no pattern passed as a buy rule",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4055,7 +4094,7 @@
 "line": 234,
 "function": "J",
 "text": "strict insider cluster (3+ insiders, $100K+, profitable)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4065,7 +4104,7 @@
 "line": 239,
 "function": "J",
 "text": "no exit beat holding 3 months",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4075,7 +4114,7 @@
 "line": 239,
 "function": "J",
 "text": "no exit beat the default beyond luck",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4085,7 +4124,7 @@
 "line": 245,
 "function": "J",
 "text": " invented rules tested; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4095,7 +4134,7 @@
 "line": 245,
 "function": "J",
 "text": "none survived all gates",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4105,7 +4144,7 @@
 "line": 246,
 "function": "J",
 "text": "26 angles + 325 combinations, retrained weekly, judged on unseen weeks",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4115,7 +4154,7 @@
 "line": 261,
 "function": "exitsText",
 "text": "  Keep the default: no other way of selling beat it beyond luck.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4125,7 +4164,7 @@
 "line": 262,
 "function": "exitsText",
 "text": "A better exit goes into your sell plans only for a kind of buy that has itself passed its test. Research only.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4135,7 +4174,7 @@
 "line": 263,
 "function": "rebuyText",
 "text": "SELL NOW, BUY BACK LOWER: the test runs on Sunday with the other studies. Until it says otherwise: do not sell a stock just to buy it back cheaper. Sell only on your stop, a tested exit, or a tested warning.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4145,7 +4184,7 @@
 "line": 268,
 "function": "rebuyText",
 "text": "DECISION: the 10%-lower buy-back passed on history. When one of your stocks meets it, ACTIONS shows it as a TAKE PROFIT OPTION with the buy-back price, until the live paper check confirms it.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4155,7 +4194,7 @@
 "line": 268,
 "function": "rebuyText",
 "text": "DECISION: no switch beat holding. Do not sell to buy back lower; sell only on your stop, a tested exit, or a tested warning.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4165,7 +4204,7 @@
 "line": 283,
 "function": "rebalanceText",
 "text": "tested warning filing",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4175,7 +4214,7 @@
 "line": 286,
 "function": "rebalanceText",
 "text": "a RISK REVIEW, not an order. Tested on 10-stock portfolios: trimming cut the worst fall (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4185,7 +4224,7 @@
 "line": 286,
 "function": "rebalanceText",
 "text": ") and the profit was ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4195,7 +4234,7 @@
 "line": 293,
 "function": "healthy",
 "text": " (tested: new cash into the smallest holding lowered the worst fall",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4205,7 +4244,7 @@
 "line": 293,
 "function": "healthy",
 "text": ", at some cost in profit)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4215,7 +4254,7 @@
 "line": 293,
 "function": "healthy",
 "text": " (tested: adding to the winners made more; this is a risk choice)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4225,7 +4264,7 @@
 "line": 294,
 "function": "healthy",
 "text": "- no healthy holding is underweight; put new cash into the tested buys in ACTIONS.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4235,7 +4274,7 @@
 "line": 295,
 "function": "healthy",
 "text": "NOT ADDING TO (underweight because they fell; adding would only lower your average): ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4245,7 +4284,7 @@
 "line": 296,
 "function": "healthy",
 "text": "Tested buys in ACTIONS come before rebalancing buys. Fees: 3 USD a trade; no trade under 1,000 USD. Research only, not financial advice.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4255,8 +4294,10 @@
 "line": 383,
 "function": "followSection",
 "text": "FOLLOWING (traders whose own call history wins; tier 2, 1,000 USD, stop 15% unless the trader gave one)",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D06"
+]
 },
 {
 "n": 405,
@@ -4265,7 +4306,7 @@
 "line": 383,
 "function": "followSection",
 "text": "Why these: each trader passed the tier-2 test on his own full call history (30+ calls on 10+ days, both halves, after the 1.2% cost, t 2.5+), below the 4.0 proof bar. Send  traders  for the leaderboard.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4275,8 +4316,10 @@
 "line": 390,
 "function": "by",
 "text": "FOLLOW traders’ new buy calls appear in ACTIONS under FOLLOWING (tier 2, 1,000 USD, with a stop). FADE: their calls lag the average stock. Research, not advice.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D06"
+]
 },
 {
 "n": 407,
@@ -4285,7 +4328,7 @@
 "line": 405,
 "function": "swLabel",
 "text": " TRADABLE SMALL (tier 2: passed its own test in both halves, t ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4295,7 +4338,7 @@
 "line": 430,
 "function": "lab",
 "text": "tier 2, TRADABLE SMALL: passed its own pre-registered 5-year test in both halves after the higher cost, below the 4.0 proof bar; 1,000 USD, switched off if its live record turns negative",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4305,7 +4348,7 @@
 "line": 435,
 "function": "buyLine",
 "text": " positive 8-Ks in 60 sessions, none negative. Check ZAD; send  bought ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4315,7 +4358,7 @@
 "line": 443,
 "function": "kind",
 "text": "INFORMATION ONLY: no catalyst rule passed its test, so nothing here is a buy.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4325,7 +4368,7 @@
 "line": 444,
 "function": "kind",
 "text": "No upcoming dated catalyst passes the gates (price, volume, no recent share sale, no 15% one-day jump).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4335,7 +4378,7 @@
 "line": 446,
 "function": "kind",
 "text": "Already inside the window (buy day passed): ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4345,8 +4388,10 @@
 "line": 471,
 "function": "chainLines",
 "text": "CHAIN (tier 2, TRADABLE SMALL: passed its own pre-registered 5-year test in both halves after the higher cost, below the 4.0 proof bar; 1,000 USD each, switched off if its live record turns negative",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D06"
+]
 },
 {
 "n": 414,
@@ -4355,7 +4400,7 @@
 "line": 471,
 "function": "chainLines",
 "text": "; PROVEN rules marked",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4365,7 +4410,7 @@
 "line": 479,
 "function": "row",
 "text": "INFORMATION ONLY: no chain rule passed its test, so a hot layer here is context, not a buy.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4375,8 +4420,10 @@
 "line": 497,
 "function": "on",
 "text": "DISCOVERED (tier 2, TRADABLE SMALL: a rule the system found on 2021-2023 and passed its one test on 2024-2026 after the higher cost, below the 4.0 proof bar; 1,000 USD each, switched off if its live record turns negative):",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D06"
+]
 },
 {
 "n": 417,
@@ -4385,7 +4432,7 @@
 "line": 503,
 "function": "switchPaperLine",
 "text": " vs holding on average, better ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4395,7 +4442,7 @@
 "line": 507,
 "function": "qualityText",
 "text": " vs average stock ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4405,7 +4452,7 @@
 "line": 508,
 "function": "qualityText",
 "text": "TOP QUALITY NOW (profit on assets, no new shares, lean growth, cash-backed profit):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4415,7 +4462,7 @@
 "line": 508,
 "function": "qualityText",
 "text": ": gross profit ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4425,7 +4472,7 @@
 "line": 509,
 "function": "qualityText",
 "text": "A version passed: it goes to paper first, then into ACTIONS.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4435,7 +4482,7 @@
 "line": 509,
 "function": "qualityText",
 "text": "No version passed yet: this list is research, not a buy list.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4445,7 +4492,7 @@
 "line": 514,
 "function": "autolabText",
 "text": " vs an average stock)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4455,7 +4502,7 @@
 "line": 514,
 "function": "autolabText",
 "text": "No rule has survived all three gates yet. That is normal: most invented rules are luck, and the gates are built to catch that.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4477,7 +4524,7 @@
 "line": 522,
 "function": "opportunitiesText",
 "text": "Buying after a big jump has not passed a test yet.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4487,7 +4534,7 @@
 "line": 532,
 "function": "opportunitiesText",
 "text": "QUICK SETUPS [EARLY] (passed, but under 30 tested trades):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4497,7 +4544,7 @@
 "line": 538,
 "function": "opportunitiesText",
 "text": "TESTED on history, paper next",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4507,7 +4554,7 @@
 "line": 540,
 "function": "opportunitiesText",
 "text": "AUTOLAB [PAPER] (rules the system invented, passed 3 gates):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4517,7 +4564,7 @@
 "line": 542,
 "function": "opportunitiesText",
 "text": "OPPORTUNITIES BEYOND THE TESTED BUYS (you decide; the label says how much evidence is behind each)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4527,7 +4574,7 @@
 "line": 542,
 "function": "opportunitiesText",
 "text": "[TESTED] passed its test | [EARLY] promising, too few trades | [PAPER] being proven live | [INFO] interesting, no test supports buying it. Check ZAD; use a stop on anything you buy.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4537,7 +4584,7 @@
 "line": 551,
 "function": "verdict",
 "text": "positive, but all from ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4547,7 +4594,7 @@
 "line": 551,
 "function": "verdict",
 "text": "positive, but on only ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4569,7 +4616,7 @@
 "line": 551,
 "function": "verdict",
 "text": "positive so far, too few",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4579,7 +4626,7 @@
 "line": 551,
 "function": "verdict",
 "text": "mixed: no edge shown",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4589,7 +4636,7 @@
 "line": 562,
 "function": "row",
 "text": " vs an average stock)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4599,7 +4646,7 @@
 "line": 570,
 "function": "disc",
 "text": " open paper positions marked to market: average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4609,7 +4656,7 @@
 "line": 571,
 "function": "disc",
 "text": " on average; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4619,7 +4666,7 @@
 "line": 580,
 "function": "disc",
 "text": "Rules: a \"POSITIVE\" record from one market period is not proof. A rule that is changed starts a new record; it never keeps the old one. LOSING engines stay visible, they are not hidden. Research only.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4629,7 +4676,7 @@
 "line": 592,
 "function": "avoidLedger",
 "text": " resolved, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4639,7 +4686,7 @@
 "line": 609,
 "function": "lastRow",
 "text": " trades this week, running average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4649,7 +4696,7 @@
 "line": 611,
 "function": "lastRow",
 "text": " won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4659,7 +4706,7 @@
 "line": 622,
 "function": "lastRow",
 "text": "not proven / needs data",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4693,7 +4740,7 @@
 "line": 633,
 "function": "comebackLines",
 "text": " days, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4703,7 +4750,7 @@
 "line": 664,
 "function": "liveConclusions",
 "text": ": losing so far. If you buy one, use half your usual amount until the record turns positive.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4713,7 +4760,7 @@
 "line": 667,
 "function": "liveConclusions",
 "text": "- Unchanged: your stops, and selling on the tested exits.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4723,7 +4770,7 @@
 "line": 675,
 "function": "missedText",
 "text": "seen in time, but no tested rule fired or passed",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4733,7 +4780,7 @@
 "line": 677,
 "function": "missedText",
 "text": "The data saw them; the rules did not fire or have not passed. That is the fast-mover lab and autolab job, not a data problem: a faster feed would not help.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4743,7 +4790,7 @@
 "line": 688,
 "function": "icon",
 "text": "RESEARCH REGISTRY: every idea tested, result, versions tried",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4753,7 +4800,7 @@
 "line": 689,
 "function": "icon",
 "text": " versions tried in total. Passed: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4763,7 +4810,7 @@
 "line": 691,
 "function": "icon",
 "text": "The more versions tried, the more one passes by luck. With ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4773,7 +4820,7 @@
 "line": 694,
 "function": "icon",
 "text": "Research only. Nothing here is a buy until it passes the paper record.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4783,7 +4830,7 @@
 "line": 696,
 "function": "ln",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4793,7 +4840,7 @@
 "line": 700,
 "function": "ln",
 "text": "AS A BUY (news + a strong day, bought the next open; must beat stocks that jumped the same way WITHOUT the news):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4803,7 +4850,7 @@
 "line": 701,
 "function": "ln",
 "text": "- none proven",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4813,7 +4860,7 @@
 "line": 702,
 "function": "ln",
 "text": "LAST 10 DAYS (only kinds that passed or warn):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4823,7 +4870,7 @@
 "line": 705,
 "function": "ln",
 "text": "Only kinds that PASSED become buys (as \"event drift\" in ACTIONS). Research, not advice.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4833,7 +4880,7 @@
 "line": 841,
 "function": "buyDayNote",
 "text": " on average). Consider waiting a day.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4843,7 +4890,7 @@
 "line": 842,
 "function": "buyDayNote",
 "text": " did better than average in both halves of the tests.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4853,7 +4900,7 @@
 "line": 846,
 "function": "w",
 "text": " Kuwait; tested: no difference from the close)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4863,7 +4910,7 @@
 "line": 848,
 "function": "w",
 "text": "at the open after the first 15 minutes (tested: buying in the last minutes of the signal day did better, but that needs a pre-close alert, planned with the always-on server)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4873,7 +4920,7 @@
 "line": 851,
 "function": "l",
 "text": "WHEN TO BUY AND SELL (tested on the unseen trades of the rules the system offers, after costs; older | newer half)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4883,7 +4930,7 @@
 "line": 855,
 "function": "l",
 "text": "Fixed rules (not testable with daily prices, from how the market works):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4905,7 +4952,7 @@
 "line": 867,
 "function": "shadowText",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4915,7 +4962,7 @@
 "line": 868,
 "function": "shadowText",
 "text": " finished, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4925,7 +4972,7 @@
 "line": 869,
 "function": "shadowText",
 "text": " finished, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4935,7 +4982,7 @@
 "line": 876,
 "function": "themesText",
 "text": "Information to explore with  check SYM . A stock becomes a buy only through a tested rule (ACTIONS).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4957,7 +5004,7 @@
 "line": 879,
 "function": "dowText",
 "text": "Average: older half ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4967,7 +5014,7 @@
 "line": 916,
 "function": "alpacaPaper",
 "text": "rule exit (5 day average)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4977,7 +5024,7 @@
 "line": 917,
 "function": "alpacaPaper",
 "text": "closed under its 50 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4987,7 +5034,7 @@
 "line": 919,
 "function": "alpacaPaper",
 "text": " day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -4997,7 +5044,7 @@
 "line": 930,
 "function": "alpacaPaper",
 "text": " (outside the tested set)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5007,7 +5054,7 @@
 "line": 940,
 "function": "paperText",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5017,7 +5064,7 @@
 "line": 942,
 "function": "paperText",
 "text": "PRACTICE ONLY: this account tests the system\\'s UNPROVEN engines with fake money. Its buys are NOT recommendations; judge it by the account total, not by one winner. Compare with  shadow  and  record.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5027,8 +5074,10 @@
 "line": 1063,
 "function": "savePos",
 "text": "the tested 35% disaster stop for your own picks (stop study, 18 Oct): tighter stops cost money on 5 years of buys",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D12"
+]
 },
 {
 "n": 481,
@@ -5050,8 +5099,10 @@
 "line": 1080,
 "function": "savePos",
 "text": "Is today a buying, selling or nothing-to-do day? (tested)",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 483,
@@ -5060,7 +5111,7 @@
 "line": 1088,
 "function": "savePos",
 "text": "Fast movers: tested day-trade rules and today\\u2019s list",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5070,7 +5121,7 @@
 "line": 1093,
 "function": "savePos",
 "text": "Company news (SEC, FDA): what it did next, tested",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5080,7 +5131,7 @@
 "line": 1094,
 "function": "savePos",
 "text": "Upcoming FDA dates and trial readouts (calendar; a buy only if a rule passed)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5090,7 +5141,7 @@
 "line": 1099,
 "function": "savePos",
 "text": "The strategy library: what was tested, what failed, what is waiting",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5100,7 +5151,7 @@
 "line": 1101,
 "function": "savePos",
 "text": "Proof of work: what was tested, rejected, built and scored lately",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5110,8 +5161,10 @@
 "line": 1102,
 "function": "savePos",
 "text": "Turn the TRADABLE SMALL addition on or off (tier2 off = proven-only, as before)",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 489,
@@ -5120,7 +5173,7 @@
 "line": 1107,
 "function": "savePos",
 "text": "Fallen stocks now under their own fair value (watch list, tested every Sunday)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5130,7 +5183,7 @@
 "line": 1108,
 "function": "savePos",
 "text": "Every idea tested, result, and what is waiting",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5140,7 +5193,7 @@
 "line": 1110,
 "function": "savePos",
 "text": "What to sell and why: every reason, tested or not",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5150,7 +5203,7 @@
 "line": 1111,
 "function": "savePos",
 "text": "Everything worth knowing today, beyond the tested buys, with evidence labels",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5160,7 +5213,7 @@
 "line": 1135,
 "function": "savePos",
 "text": "ANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5170,7 +5223,7 @@
 "line": 1135,
 "function": "savePos",
 "text": "MARKET NOW: market | movers | day trades (fast movers, tested) | radar",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5180,7 +5233,7 @@
 "line": 1146,
 "function": "post",
 "text": "Send:  check NVDA   (any ticker). I check the tested rules, news, SEC filings, analysts, insiders, earnings date and halal.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5190,7 +5243,7 @@
 "line": 1164,
 "function": "posLine",
 "text": "\\n  target tested: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5200,7 +5253,7 @@
 "line": 1164,
 "function": "posLine",
 "text": "\\n  your own pick: no tested target or time limit; the stop protects it and I check it every night",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5210,7 +5263,7 @@
 "line": 1164,
 "function": "posLine",
 "text": "\\n  leader trade: no fixed target. I raise the stop as it climbs; also sell on a close under its 50 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5220,7 +5273,7 @@
 "line": 1164,
 "function": "posLine",
 "text": " its 5 day average, or after ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5230,7 +5283,7 @@
 "line": 1180,
 "function": "line",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5240,7 +5293,7 @@
 "line": 1180,
 "function": "line",
 "text": ", profit factor ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5250,7 +5303,7 @@
 "line": 1194,
 "function": "line",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5260,7 +5313,7 @@
 "line": 1194,
 "function": "line",
 "text": " (WORSE than tested: be careful)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5270,7 +5323,7 @@
 "line": 1196,
 "function": "line",
 "text": "% wins, reality is ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5280,7 +5333,7 @@
 "line": 1213,
 "function": "goalNews",
 "text": " Well done. Same rules, same sizes: the next goal comes from repeating what worked, not from bigger bets.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5290,7 +5343,7 @@
 "line": 1220,
 "function": "goalsText",
 "text": "MONEY GOALS (realized profit after fees since ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5300,7 +5353,7 @@
 "line": 1220,
 "function": "goalsText",
 "text": "; average win +",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5310,7 +5363,7 @@
 "line": 1220,
 "function": "goalsText",
 "text": ", average loss ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5344,7 +5397,7 @@
 "line": 1234,
 "function": "goalsText",
 "text": " (average amount the system recommends today)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5354,7 +5407,7 @@
 "line": 1237,
 "function": "goalsText",
 "text": "Bigger buys reach goals faster but lose faster too: your size grows by the ladder (send  ladder ): 2,500 USD a trade after 30+ sales on 10+ days with a positive record. Change the plan:  size 1000  |  trades 15",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5364,7 +5417,7 @@
 "line": 1245,
 "function": "lessonsText",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5374,7 +5427,7 @@
 "line": 1249,
 "function": "lessonsText",
 "text": "\\n  lesson: it loses live, so it is paper only until its record turns positive",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5384,7 +5437,7 @@
 "line": 1250,
 "function": "lessonsText",
 "text": "A rule is demoted automatically after 10+ live trades with a negative average, and restored when the average turns positive.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5394,7 +5447,7 @@
 "line": 1253,
 "function": "soldLesson",
 "text": "It reached target 2: the plan worked in full.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5404,7 +5457,7 @@
 "line": 1254,
 "function": "soldLesson",
 "text": "It reached target 1: the plan worked.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5414,7 +5467,7 @@
 "line": 1256,
 "function": "soldLesson",
 "text": "It was sold on the quick-trade rule (the bounce back to the 5 day average, or the time limit) before target 1. That is by design: target 1 is a level only about half of past trades reached, and a dip trade is built to take the bounce back to the average and get out. Every tested result of this rule already includes that exit.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5424,7 +5477,7 @@
 "line": 1295,
 "function": "distText",
 "text": ", profit factor ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5434,7 +5487,7 @@
 "line": 1295,
 "function": "distText",
 "text": ". Safety margin (lower bound of the average): ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5444,7 +5497,7 @@
 "line": 1295,
 "function": "distText",
 "text": ", so the edge could still be luck",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5454,8 +5507,10 @@
 "line": 1298,
 "function": "planCands",
 "text": "% one-day jump in the last month); tested 19 Oct: such stocks lagged the average stock by about 3% over the next month (t -5)",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D09"
+]
 },
 {
 "n": 523,
@@ -5464,8 +5519,10 @@
 "line": 1302,
 "function": "planCands",
 "text": ", a source whose tips lagged the average stock (tested: FADE); avoid for 20 sessions after the tip",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D07"
+]
 },
 {
 "n": 524,
@@ -5474,8 +5531,10 @@
 "line": 1305,
 "function": "planCands",
 "text": ", a source whose tips lagged the average stock (tested: FADE); avoid for 20 sessions after the tip",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D07"
+]
 },
 {
 "n": 525,
@@ -5484,7 +5543,7 @@
 "line": 1311,
 "function": "planCands",
 "text": " trades, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5494,7 +5553,7 @@
 "line": 1316,
 "function": "planCands",
 "text": " proven itself live yet (its ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5504,8 +5563,10 @@
 "line": 1320,
 "function": "gateVerdict",
 "text": "% one-day jump in the last month; tested to lag)",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D09"
+]
 },
 {
 "n": 528,
@@ -5514,7 +5575,7 @@
 "line": 1326,
 "function": "gateVerdict",
 "text": "early evidence (under 30 unseen trades): watch only",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5524,7 +5585,7 @@
 "line": 1327,
 "function": "gateVerdict",
 "text": "no tested engine for this stock has",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5534,7 +5595,7 @@
 "line": 1327,
 "function": "gateVerdict",
 "text": " proven itself live yet",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5544,7 +5605,7 @@
 "line": 1334,
 "function": "planCands0",
 "text": " (half, tested; the rest on ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5554,7 +5615,7 @@
 "line": 1334,
 "function": "planCands0",
 "text": " (all, tested), or the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5564,7 +5625,7 @@
 "line": 1334,
 "function": "planCands0",
 "text": "first daily close above its 5 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5574,7 +5635,7 @@
 "line": 1335,
 "function": "planCands0",
 "text": " trading days, then sell anyway (holding time tested on this stock: the best of ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5584,7 +5645,7 @@
 "line": 1336,
 "function": "planCands0",
 "text": " past trades it never saw won; average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5594,7 +5655,7 @@
 "line": 1336,
 "function": "planCands0",
 "text": "no tested record",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5604,7 +5665,7 @@
 "line": 1336,
 "function": "planCands0",
 "text": " trades, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5614,7 +5675,7 @@
 "line": 1341,
 "function": "planCands0",
 "text": " (half, tested; the rest on a daily close under ~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5624,7 +5685,7 @@
 "line": 1341,
 "function": "planCands0",
 "text": " (all, tested), or a daily close under ~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5634,7 +5695,7 @@
 "line": 1343,
 "function": "planCands0",
 "text": " past trades it never saw won; average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5644,7 +5705,7 @@
 "line": 1343,
 "function": "planCands0",
 "text": "tested rule, record not stored",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5654,7 +5715,7 @@
 "line": 1343,
 "function": "planCands0",
 "text": " trades, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5664,7 +5725,7 @@
 "line": 1344,
 "function": "planCands0",
 "text": "a tested entry signal fired",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5674,7 +5735,7 @@
 "line": 1349,
 "function": "planCands0",
 "text": "proven on paper",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5684,7 +5745,7 @@
 "line": 1355,
 "function": "planCands0",
 "text": "no fixed target. Sell when it closes under the stop (I raise it as it climbs) or under its 50 day average (~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5694,8 +5755,10 @@
 "line": 1357,
 "function": "planCands0",
 "text": "passed the whole-market fair test; live record still building",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D05"
+]
 },
 {
 "n": 547,
@@ -5704,7 +5767,7 @@
 "line": 1357,
 "function": "planCands0",
 "text": "NOT proven on the whole-market fair test (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5714,7 +5777,7 @@
 "line": 1363,
 "function": "planCands0",
 "text": "when it closes under its 20 day average (~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5724,7 +5787,7 @@
 "line": 1364,
 "function": "planCands0",
 "text": " past earnings beats it never saw won; average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5734,8 +5797,10 @@
 "line": 1364,
 "function": "planCands0",
 "text": "whole-market fair test passed",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D04"
+]
 },
 {
 "n": 551,
@@ -5744,7 +5809,7 @@
 "line": 1365,
 "function": "planCands0",
 "text": "earnings beat the estimate by ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5754,7 +5819,7 @@
 "line": 1368,
 "function": "planCands0",
 "text": "when it closes under its 20 day average (~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5764,7 +5829,7 @@
 "line": 1369,
 "function": "planCands0",
 "text": " past cases it never saw won; average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5774,8 +5839,10 @@
 "line": 1369,
 "function": "planCands0",
 "text": "whole-market fair test passed",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D04"
+]
 },
 {
 "n": 555,
@@ -5784,7 +5851,7 @@
 "line": 1375,
 "function": "planCands0",
 "text": "at the close on the 10th trading day after you buy (the tested exit), or earlier only at the safety stop",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5794,7 +5861,7 @@
 "line": 1376,
 "function": "planCands0",
 "text": " unseen 5-year picks won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5804,7 +5871,7 @@
 "line": 1382,
 "function": "planCands0",
 "text": " sessions, the tested hold), or at the safety stop",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5814,7 +5881,7 @@
 "line": 1383,
 "function": "planCands0",
 "text": " unseen trades won; average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5824,7 +5891,7 @@
 "line": 1383,
 "function": "planCands0",
 "text": " for an average stock held as long",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5834,7 +5901,7 @@
 "line": 1384,
 "function": "planCands0",
 "text": " (mid / long-term setup, tested on 5 years)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5844,7 +5911,7 @@
 "line": 1391,
 "function": "planCands0",
 "text": "tailwind: its industry beat the market after ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5854,7 +5921,7 @@
 "line": 1464,
 "function": "sizeFor",
 "text": " tested trades: half the normal size",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5864,7 +5931,7 @@
 "line": 1477,
 "function": "t1Text",
 "text": ") reached: SELL ALL now (the tested plan for this stock sells everything at the target), then send  sold ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5874,7 +5941,7 @@
 "line": 1477,
 "function": "t1Text",
 "text": "TAKE PROFIT. Target 1 (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5884,7 +5951,7 @@
 "line": 1495,
 "function": "t1Text",
 "text": "), total positive, profit factor 1.2+ (now ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5894,7 +5961,7 @@
 "line": 1495,
 "function": "t1Text",
 "text": " months), profit factor 1.3+, 2 of the last 3 months positive",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5904,7 +5971,7 @@
 "line": 1495,
 "function": "t1Text",
 "text": "200+ sales over 6+ months, profit factor 1.3+, 4 of the last 6 months positive",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5914,8 +5981,10 @@
 "line": 1506,
 "function": "amountFor",
 "text": "proven with a safety margin",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 569,
@@ -5924,8 +5993,10 @@
 "line": 1507,
 "function": "amountFor",
 "text": "proven, but the edge could still be luck or the stop is wide",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 570,
@@ -5934,7 +6005,7 @@
 "line": 1530,
 "function": "protectWhy",
 "text": "% on average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5944,7 +6015,7 @@
 "line": 1555,
 "function": "planText",
 "text": "the S&P 500 is under its 50 day average (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5954,7 +6025,7 @@
 "line": 1566,
 "function": "RK",
 "text": ". Best profit for its risk: average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -5964,8 +6035,10 @@
 "line": 1568,
 "function": "RK",
 "text": " fully proven",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 574,
@@ -5974,8 +6047,10 @@
 "line": 1569,
 "function": "RK",
 "text": "None fully proven (30+ tested trades) today.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 575,
@@ -5984,7 +6059,7 @@
 "line": 1576,
 "function": "RK",
 "text": "Nothing proven today. Waiting is a result.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6006,7 +6081,7 @@
 "line": 1579,
 "function": "RK",
 "text": "EARLY EVIDENCE (fewer tested trades: smaller size, your choice)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6016,7 +6091,7 @@
 "line": 1586,
 "function": "RK",
 "text": "(no target: tested) ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6026,8 +6101,10 @@
 "line": 1591,
 "function": "RK",
 "text": "EARLY EVIDENCE (15 to 29 tested trades with a strong average: promising, NOT fully proven. Smaller size, your choice)",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 580,
@@ -6036,7 +6113,7 @@
 "line": 1594,
 "function": "RK",
 "text": " (HIGH CONVICTION: 60+ unseen trades, +0.8% or more after costs, cautious win rate 50%+)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6046,7 +6123,7 @@
 "line": 1594,
 "function": "RK",
 "text": " tested trades, smaller size)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6056,7 +6133,7 @@
 "line": 1610,
 "function": "RK",
 "text": ". Under 2,000 USD the 3 USD minimum fee eats more of the edge",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6066,7 +6143,7 @@
 "line": 1610,
 "function": "RK",
 "text": "; under 2,000 USD the 3 USD minimum fee eats more of the edge",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6076,8 +6153,10 @@
 "line": 1619,
 "function": "RK",
 "text": "has PROVEN setups",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 585,
@@ -6086,7 +6165,7 @@
 "line": 1623,
 "function": "RK",
 "text": "Also passed, left out: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6096,7 +6175,7 @@
 "line": 1624,
 "function": "RK",
 "text": "Not proven, paper only: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6106,7 +6185,7 @@
 "line": 1628,
 "function": "RK",
 "text": " live paper trades reviewed, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6116,8 +6195,10 @@
 "line": 1630,
 "function": "RK",
 "text": "PROVEN on paper: ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 589,
@@ -6126,7 +6207,7 @@
 "line": 1630,
 "function": "RK",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6136,7 +6217,7 @@
 "line": 1631,
 "function": "RK",
 "text": "not proven yet",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6146,7 +6227,7 @@
 "line": 1631,
 "function": "RK",
 "text": " paper trades, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6156,7 +6237,7 @@
 "line": 1633,
 "function": "RK",
 "text": " stocks tested last night; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6166,8 +6247,10 @@
 "line": 1633,
 "function": "RK",
 "text": " fully proven (30+ unseen trades, profit after costs)",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 594,
@@ -6176,7 +6259,7 @@
 "line": 1649,
 "function": "conclusion",
 "text": "No new trade today. Nothing passed its tests.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6186,7 +6269,7 @@
 "line": 1665,
 "function": "conclusionLive",
 "text": "No new trade right now. Nothing passed its tests at the last close.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6196,7 +6279,7 @@
 "line": 1668,
 "function": "conclusionLive",
 "text": "). Take profit, or sell part and raise the stop to your entry.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6206,7 +6289,7 @@
 "line": 1679,
 "function": "dayText",
 "text": " its 50 day average; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6216,7 +6299,7 @@
 "line": 1692,
 "function": "dayText",
 "text": " of your stocks hit their tested exit or stop (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6238,7 +6321,7 @@
 "line": 1697,
 "function": "dayText",
 "text": " did WORSE than usual (still positive). Take only the TOP PICK, or wait a day.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6272,7 +6355,7 @@
 "line": 1721,
 "function": "detailList",
 "text": "first close above its 5 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6282,7 +6365,7 @@
 "line": 1721,
 "function": "detailList",
 "text": "% wins over ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6292,7 +6375,7 @@
 "line": 1721,
 "function": "detailList",
 "text": " trades, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6302,7 +6385,7 @@
 "line": 1733,
 "function": "detailList",
 "text": "Nothing passed the tests at that close. On most days the honest answer is: no trade today.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6312,8 +6395,10 @@
 "line": 1734,
 "function": "detailList",
 "text": "These are tested setups, not hot tips. Small wins, strict stops, manual review only. Check halal status first. After buying, tell me: bought SYMBOL PRICE SHARES",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 608,
@@ -6322,7 +6407,7 @@
 "line": 1782,
 "function": "deepInfo",
 "text": " (turning more positive)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6332,7 +6417,7 @@
 "line": 1797,
 "function": "deepInfo",
 "text": " [a tested BUY kind of news]",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6342,7 +6427,7 @@
 "line": 1813,
 "function": "refLine2",
 "text": "the short-term rules only buy stocks above their 50-day average, and this one is under it (that is the short-term angle only; see mid / long term below).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6352,7 +6437,7 @@
 "line": 1814,
 "function": "refLine2",
 "text": "% of cases, which loses on average.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6362,7 +6447,7 @@
 "line": 1815,
 "function": "refLine2",
 "text": "REFERENCE LEVELS (not tested, not a buy): ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6372,7 +6457,7 @@
 "line": 1816,
 "function": "refLine2",
 "text": "NO BUY: no tested rule supports a trade on it.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6382,7 +6467,7 @@
 "line": 1817,
 "function": "refLine2",
 "text": "It has under three years of price history, so no rule can be tested on it.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6392,7 +6477,7 @@
 "line": 1824,
 "function": "refLine2",
 "text": "Rule tested for it: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6402,7 +6487,7 @@
 "line": 1824,
 "function": "refLine2",
 "text": " unseen trades, ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6412,7 +6497,7 @@
 "line": 1825,
 "function": "refLine2",
 "text": " tested trades): an entry fired, but it is not a buy until 30. Prices below for the record.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6422,8 +6507,10 @@
 "line": 1825,
 "function": "refLine2",
 "text": "BUY: a tested rule confirmed an entry. Prices below.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 619,
@@ -6432,7 +6519,7 @@
 "line": 1828,
 "function": "refLine2",
 "text": "WATCH ONLY (EARLY EVIDENCE, not a buy until 30 tested trades)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6442,7 +6529,7 @@
 "line": 1828,
 "function": "refLine2",
 "text": " tested past trades. Prices below.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6452,7 +6539,7 @@
 "line": 1828,
 "function": "refLine2",
 "text": " and no profit after your costs",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6462,7 +6549,7 @@
 "line": 1829,
 "function": "refLine2",
 "text": "WATCH: tested rule, but no entry now.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6472,7 +6559,7 @@
 "line": 1833,
 "function": "refLine2",
 "text": "% wins over ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6482,7 +6569,7 @@
 "line": 1835,
 "function": "refLine2",
 "text": "No tested rule supports a trade on this stock.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6492,7 +6579,7 @@
 "line": 1876,
 "function": "nextWd",
 "text": ". The source\\u2019s sell is its own call, not a tested exit. Your stop and the system\\u2019s exit rules still apply; selling is your decision. If you sell, send:  sold SYM PRICE",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6502,7 +6589,7 @@
 "line": 1886,
 "function": "logTips",
 "text": "No tested rule supports a trade on this stock.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6512,7 +6599,7 @@
 "line": 1899,
 "function": "pcx",
 "text": " tips, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6534,7 +6621,7 @@
 "line": 1899,
 "function": "pcx",
 "text": " beat the market. ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6544,7 +6631,7 @@
 "line": 1899,
 "function": "pcx",
 "text": "MORE RELIABLE RECORD (50+ tips)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6554,8 +6641,10 @@
 "line": 1906,
 "function": "checkOne",
 "text": "BUY: a tested setup is open. Send  today  for the prices.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 632,
@@ -6564,7 +6653,7 @@
 "line": 1906,
 "function": "checkOne",
 "text": "WATCH ONLY: entry signal, but under 30 tested trades (early evidence). Paper only.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6574,7 +6663,7 @@
 "line": 1906,
 "function": "checkOne",
 "text": "NO BUY: no tested setup.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6584,7 +6673,7 @@
 "line": 1908,
 "function": "checkOne",
 "text": "% wins over ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6594,8 +6683,10 @@
 "line": 1909,
 "function": "checkOne",
 "text": "It passed its tests.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 636,
@@ -6604,7 +6695,7 @@
 "line": 1947,
 "function": "pcx",
 "text": "Headlines are off: the Finnhub key is not passed to this bot yet.",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -6614,7 +6705,7 @@
 "line": 1981,
 "function": "gainersNow",
 "text": "no FMP key is passed to the bot",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -6624,7 +6715,7 @@
 "line": 2037,
 "function": "fastMovers",
 "text": "RUNNERS NOW (heads-up only: already up 20%+, no tested way to buy these yet)\\n\\n",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6634,7 +6725,7 @@
 "line": 2038,
 "function": "fastMovers",
 "text": "\\n\\nNo entry or exit prices are given for fast movers: nothing here has been tested on them. Not financial advice, not a halal ruling.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6644,7 +6735,7 @@
 "line": 2082,
 "function": "sectorReply",
 "text": "?t worry|no risk|بدون مخاطر|مضمون|guarantee/i, ",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -6654,7 +6745,7 @@
 "line": 2102,
 "function": "opinionChecks",
 "text": "No steady pattern, so \"bad news is good news\" is not proven by the data.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6664,7 +6755,7 @@
 "line": 2103,
 "function": "opinionChecks",
 "text": "- Inflation claim: the calendar study has no tested result for this yet (it needs more past releases).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6674,7 +6765,7 @@
 "line": 2109,
 "function": "opinionChecks",
 "text": "Not a reliable pattern.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6684,7 +6775,7 @@
 "line": 2113,
 "function": "opinionChecks",
 "text": ". Published history (Yardeni, via CNBC): higher 12 months after every midterm since 1954, about +15% on average. That is only ~18 cases and says nothing about single stocks or the months before. This year\\u2019s election is 3 November 2026; the system will score the claim on 3 November 2027.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6694,8 +6785,10 @@
 "line": 2134,
 "function": "opinionReply",
 "text": ", proven setup",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 646,
@@ -6704,7 +6797,7 @@
 "line": 2144,
 "function": "opinionReply",
 "text": " its 50 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6714,7 +6807,7 @@
 "line": 2145,
 "function": "opinionReply",
 "text": ". A strong theme did not make its strongest stocks a winning buy.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6724,7 +6817,7 @@
 "line": 2146,
 "function": "opinionReply",
 "text": "- A random stock held 10 days in the newer year: average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6734,7 +6827,7 @@
 "line": 2150,
 "function": "opinionReply",
 "text": "With tested support today:",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6744,7 +6837,7 @@
 "line": 2150,
 "function": "opinionReply",
 "text": "No stock in this theme has tested support today.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6754,7 +6847,7 @@
 "line": 2160,
 "function": "pennyReply",
 "text": "None. No stock under 5 USD on my scan has a tested rule firing or close to firing.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6764,7 +6857,7 @@
 "line": 2165,
 "function": "pennyReply",
 "text": "So I will not name a penny stock to buy unless a tested rule supports it. To have one checked: check TICKER",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6774,8 +6867,10 @@
 "line": 2179,
 "function": "sellReply",
 "text": "SELL (TESTED EXIT): on the first day it CLOSES ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 654,
@@ -6784,7 +6879,7 @@
 "line": 2179,
 "function": "sellReply",
 "text": " its 5 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6794,8 +6889,10 @@
 "line": 2180,
 "function": "sellReply",
 "text": "SELL (TESTED EXIT): on a daily close under ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 656,
@@ -6804,7 +6901,7 @@
 "line": 2180,
 "function": "sellReply",
 "text": " day average, rising)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6814,8 +6911,10 @@
 "line": 2181,
 "function": "sellReply",
 "text": "SELL (TESTED EXIT): on a daily close under its rising stop or its 50 day average",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 658,
@@ -6824,7 +6923,7 @@
 "line": 2182,
 "function": "sellReply",
 "text": "Your own pick: no tested exit. I check it every night with the hold-or-sell study (send  review ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6834,7 +6933,7 @@
 "line": 2184,
 "function": "sellReply",
 "text": " (tested: sell ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6844,7 +6943,7 @@
 "line": 2184,
 "function": "sellReply",
 "text": "none on purpose: the target study found no fixed price that beat the tested exit above. The exit catches the bounce for you.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6854,7 +6953,7 @@
 "line": 2192,
 "function": "sellReply",
 "text": "Trend exit: a daily close below its 50 day average, now ~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6864,7 +6963,7 @@
 "line": 2202,
 "function": "sixAngles",
 "text": " setup, tested; buy ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6874,7 +6973,7 @@
 "line": 2202,
 "function": "sixAngles",
 "text": "engine not proven live",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6884,7 +6983,7 @@
 "line": 2202,
 "function": "sixAngles",
 "text": "no tested setup today",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6894,7 +6993,7 @@
 "line": 2204,
 "function": "sixAngles",
 "text": " insiders bought in the last 30 days (not proven as a buy rule)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6904,8 +7003,10 @@
 "line": 2206,
 "function": "sixAngles",
 "text": "buy rules proven live: none yet; proven: stops, trim, switch, avoid rules",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D02"
+]
 },
 {
 "n": 667,
@@ -6914,7 +7015,7 @@
 "line": 2232,
 "function": "fallNote",
 "text": " recent cases), selling a stock in this state did NOT beat holding it (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6924,7 +7025,7 @@
 "line": 2235,
 "function": "fallNote",
 "text": "% above its 50 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6934,8 +7035,10 @@
 "line": 2235,
 "function": "fallNote",
 "text": ". Tested on 5 years of the whole market: selling here and buying back 10% lower beat holding (",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D01"
+]
 },
 {
 "n": 670,
@@ -6944,7 +7047,7 @@
 "line": 2235,
 "function": "fallNote",
 "text": ", buy it back at the market that day (that is part of the tested rule)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6954,7 +7057,7 @@
 "line": 2237,
 "function": "fallNote",
 "text": "it closed under its 50 day average (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6964,7 +7067,7 @@
 "line": 2239,
 "function": "fallNote",
 "text": "it closed under its 50 day average (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6974,7 +7077,7 @@
 "line": 2240,
 "function": "fallNote",
 "text": " daily moves above its 50 day average) and from this stretch its own past lagged. Sell part, raise the stop on the rest.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6984,7 +7087,7 @@
 "line": 2241,
 "function": "fallNote",
 "text": " daily moves above its 50 day average). Nobody knows the top; a raised stop keeps most of the gain if it turns.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -6994,7 +7097,7 @@
 "line": 2242,
 "function": "fallNote",
 "text": " average (under its 200 day, so weaker).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7004,7 +7107,7 @@
 "line": 2245,
 "function": "fallNote",
 "text": "SELL (its tested exit fired)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7014,7 +7117,7 @@
 "line": 2245,
 "function": "fallNote",
 "text": " This trade follows its own tested rule.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7024,7 +7127,7 @@
 "line": 2246,
 "function": "fallNote",
 "text": "HOLD (follow its tested rule)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7034,7 +7137,7 @@
 "line": 2251,
 "function": "fallNote",
 "text": " (the trade\\u2019s own tested stop; the bot raises it when its rule says so).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7044,7 +7147,7 @@
 "line": 2251,
 "function": "fallNote",
 "text": " (2 daily moves under the price, or the 50 day average if closer)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7054,7 +7157,7 @@
 "line": 2255,
 "function": "fallNote",
 "text": "Tested on its own history, not a promise. Not financial advice, not a halal ruling.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7064,7 +7167,7 @@
 "line": 2278,
 "function": "cc",
 "text": " (average correlation ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7074,7 +7177,7 @@
 "line": 2315,
 "function": "holdingsText",
 "text": ". No stop by design (tested without one).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7084,7 +7187,7 @@
 "line": 2319,
 "function": "holdingsText",
 "text": "its tested exit",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7094,7 +7197,7 @@
 "line": 2319,
 "function": "holdingsText",
 "text": " (its own tested exit).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7104,7 +7207,7 @@
 "line": 2320,
 "function": "holdingsText",
 "text": " its 5 day average or ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7114,7 +7217,7 @@
 "line": 2320,
 "function": "holdingsText",
 "text": "exit: a close under its rising stop or 50 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7124,8 +7227,10 @@
 "line": 2325,
 "function": "holdingsText",
 "text": ": TAKE PROFIT OPTION (tested on 5 years of history, not yet confirmed live: your choice, not an order). ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D01"
+]
 },
 {
 "n": 689,
@@ -7134,7 +7239,7 @@
 "line": 2327,
 "function": "holdingsText",
 "text": ") to lock profit, raise the stop on the rest to ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7144,8 +7249,10 @@
 "line": 2329,
 "function": "holdingsText",
 "text": ": HOLD and ADD 1,000 USD (a winner with a new PROVEN signal; fees 3 USD per buy and per sell) inside ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 691,
@@ -7154,7 +7261,7 @@
 "line": 2329,
 "function": "holdingsText",
 "text": ". A tested buy rule fired on it today",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7164,7 +7271,7 @@
 "line": 2330,
 "function": "holdingsText",
 "text": " no target (tested)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7174,7 +7281,7 @@
 "line": 2349,
 "function": "unresolvedSells",
 "text": ". Still held. If you are keeping it on purpose, that is your call; the tested rule says sell.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7184,7 +7291,7 @@
 "line": 2434,
 "function": "pxOf",
 "text": "TRY SMALL: no buy today (a pick is bought only within 5 sessions of its formation, as tested). Next ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7194,7 +7301,7 @@
 "line": 2442,
 "function": "pxOf",
 "text": "TRY SMALL: no buy today (a pick is bought only within 5 sessions of its formation, as tested). Next ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7204,7 +7311,7 @@
 "line": 2443,
 "function": "pxOf",
 "text": "TRY SMALL (weaker proof: made money after costs in BOTH 5-year test halves and beat the average stock, but did NOT pass the luck test. Small on purpose: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7214,7 +7321,7 @@
 "line": 2443,
 "function": "pxOf",
 "text": " open. Switches itself off if its first 10 results lose on average.)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7236,7 +7343,7 @@
 "line": 2447,
 "function": "pxOf",
 "text": "% under your buy price at your broker; the bot works it out when you send  bought ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7246,7 +7353,7 @@
 "line": 2460,
 "function": "LDIP_REAL",
 "text": "Rule: leader dip (a top-300 company 12% off its high, still in its uptrend). Tested: 3 of 4 trades won; as an account about equal to SPY; some losers fell 20–55%.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7256,7 +7363,7 @@
 "line": 2476,
 "function": "ldipRecordLine",
 "text": " won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7266,7 +7373,7 @@
 "line": 2486,
 "function": "ldipLines",
 "text": " finished trades average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7276,7 +7383,7 @@
 "line": 2501,
 "function": "ldipLines",
 "text": "). Right after you buy, put a SELL LIMIT at your buy price +20% (good-till-cancelled) in ZAD. No stop: this rule was tested without one. If it has not sold by about ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7322,7 +7429,7 @@
 "line": 2537,
 "function": "hurdleText",
 "text": "+2% net needs about +2.9% gross (price unknown here)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7332,7 +7439,7 @@
 "line": 2537,
 "function": "hurdleText",
 "text": "spread not recorded overnight; +2% net on 1,000 USD needs about +",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7342,8 +7449,10 @@
 "line": 2562,
 "function": "gateLines",
 "text": "DO NOT BUY (one-day jump of 15%+ this month, tested to lag about 3% a month): ",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D09"
+]
 },
 {
 "n": 710,
@@ -7364,7 +7473,7 @@
 "line": 2574,
 "function": "buySyms",
 "text": "), below the 4.0 proof bar: NOT PROVEN",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7374,7 +7483,7 @@
 "line": 2577,
 "function": "buySyms",
 "text": "Why: F-score 8-9 (improving reported finances) and the stock above its 200-day average. Catalyst: none (a rule on reported finances, not news). Signal from the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7384,7 +7493,7 @@
 "line": 2579,
 "function": "buySyms",
 "text": "Exit for all: SELL when 30%+ above its 50-day average (the bot tells you; buy back 10% lower), TRIM above 15% of your money, review at 6 months.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7394,7 +7503,7 @@
 "line": 2580,
 "function": "buySyms",
 "text": "Evidence: 5-year test +9.7% in 6 months vs the S&P 500 +7.6% (2024-26) but +5.8% vs +9.1% (2021-23); beat the average stock in both. Risk: it LOST to the S&P 500 in 2021-23. Live: the league scores these picks monthly.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7416,7 +7525,7 @@
 "line": 2589,
 "function": "buySyms",
 "text": "Why: a top-300 company closed 12% under its 50-day high while still above its 200-day average. Catalyst: none (a price rule).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7426,7 +7535,7 @@
 "line": 2593,
 "function": "buySyms",
 "text": "TRY SMALL | horizon: the rule hold | your real lane only when settings.trySmallReal is on: NOT PROVEN",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7436,7 +7545,7 @@
 "line": 2598,
 "function": "buySyms",
 "text": " beat by 10%+; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7446,7 +7555,7 @@
 "line": 2598,
 "function": "buySyms",
 "text": " passed the reaction-day test",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7456,8 +7565,10 @@
 "line": 2599,
 "function": "buySyms",
 "text": "EARNINGS DRIFT | horizon: the tested hold | YOUR CHOICE (21 Oct): passed its own 5-year test; live paper still building: NOT PROVEN live | permitted today: yes | 1,000 USD each",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D03"
+]
 },
 {
 "n": 721,
@@ -7466,7 +7577,7 @@
 "line": 2600,
 "function": "buySyms",
 "text": "Why: beat estimates by 10%+ and a strong reaction day. Catalyst: the earnings report (verified by the reported numbers). Shape: about 1 win in 3, winners much bigger than losers (+1.8% a trade over 176 past beats). If two losses in a row would make you move the stop, skip these.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7476,7 +7587,7 @@
 "line": 2601,
 "function": "buySyms",
 "text": ". NOTE: this company was not in the tested set (smaller or newer): treat it as the weaker of the two",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7486,7 +7597,7 @@
 "line": 2606,
 "function": "buySyms",
 "text": "ENGINE BUYS PAUSED by focus mode (no engine kind proven on live paper yet; logged on paper): ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7496,7 +7607,7 @@
 "line": 2607,
 "function": "buySyms",
 "text": "ENGINE (swing / quick rules): paused by focus mode until a kind shows a positive live record.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7506,7 +7617,7 @@
 "line": 2609,
 "function": "buySyms",
 "text": "focus on: only kinds proven on live paper",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7516,7 +7627,7 @@
 "line": 2609,
 "function": "buySyms",
 "text": "focus OFF: every engine buy, including unproven kinds (labelled on each card)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7526,7 +7637,7 @@
 "line": 2621,
 "function": "buySyms",
 "text": "WATCH ONLY (15-29 tested trades; paper until proven, NOT a buy): ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7548,8 +7659,10 @@
 "line": 2629,
 "function": "buySyms",
 "text": "AUTO-DISCOVERED | rules the system invented, PROVEN ON LIVE PAPER",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D06"
+]
 },
 {
 "n": 730,
@@ -7558,7 +7671,7 @@
 "line": 2629,
 "function": "buySyms",
 "text": ". Picks from the last Sunday close; check ZAD; 1,000 USD each; stop: the tested stop.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7568,7 +7681,7 @@
 "line": 2634,
 "function": "buySyms",
 "text": "NEW idea passed: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7578,7 +7691,7 @@
 "line": 2634,
 "function": "buySyms",
 "text": " new ideas passed",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7588,7 +7701,7 @@
 "line": 2634,
 "function": "buySyms",
 "text": "; works in RISING markets only: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7610,7 +7723,7 @@
 "line": 2642,
 "function": "buySyms",
 "text": "focus ON, a proven engine kind is working: its buys are actions.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7620,7 +7733,7 @@
 "line": 2642,
 "function": "buySyms",
 "text": "focus OFF: every engine buy is shown, unproven ones labelled.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7630,7 +7743,7 @@
 "line": 2741,
 "function": "optionsText",
 "text": "Test: a call 30-60 days out on each tested stock BUY signal, bought at the ask, sold at the bid 14 days later, ZAD fee 5 USD a contract each way, next to the same stock over the same days.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7640,7 +7753,7 @@
 "line": 2742,
 "function": "optionsText",
 "text": ", average income ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7650,7 +7763,7 @@
 "line": 2743,
 "function": "optionsText",
 "text": " USD + 5 USD ZAD fee; the most you can lose). Plan: sell it when the stock passes ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7660,7 +7773,7 @@
 "line": 2747,
 "function": "optionsText",
 "text": "% won, worst ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7670,7 +7783,7 @@
 "line": 2748,
 "function": "optionsText",
 "text": "calls did NOT beat simply owning the stock.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7680,7 +7793,7 @@
 "line": 2749,
 "function": "optionsText",
 "text": "SMALL TRIAL: not yet. When the paper calls beat owning the stock (20+ calls over 10+ days), this line will say so, with the trial rules (1 contract, max 300 USD a trade, max 2 open).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7690,7 +7803,7 @@
 "line": 2755,
 "function": "optionsLabTicketText",
 "text": "TRADABLE SMALL, tier 2: passed its pre-registered test on real option prices in both halves, below the 4.0 proof bar",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7700,7 +7813,7 @@
 "line": 2775,
 "function": "line",
 "text": "LIVE: no options rule has reached tier 2 or proven, so no new options ticket is shown. Sharia: options are ZAD\\u2019s view to confirm.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7710,7 +7823,7 @@
 "line": 2790,
 "function": "ex",
 "text": "): a possible catch-up, untested",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7720,7 +7833,7 @@
 "line": 2796,
 "function": "ex",
 "text": "Business (last 10-K): profit on assets ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7730,7 +7843,7 @@
 "line": 2808,
 "function": "ex",
 "text": "How much to trust the chain view: \"a hot industry pulls its suppliers up\" tested ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7740,7 +7853,7 @@
 "line": 2808,
 "function": "ex",
 "text": " on 5 years; quality and cheapness have their own tests (Sunday). This map explains a stock; only tested rules make a BUY. Check ZAD.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7750,7 +7863,7 @@
 "line": 2814,
 "function": "secondOpinion",
 "text": "It is not in an uptrend (the rules that tested well buy uptrends).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7760,7 +7873,7 @@
 "line": 2815,
 "function": "secondOpinion",
 "text": "The S&P 500 is under its 50-day average: buys fail more often in a weak market.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7770,8 +7883,10 @@
 "line": 2816,
 "function": "secondOpinion",
 "text": " in 5 sessions: buying after a big jump tested badly (typically -4.9% three days later, 719 cases).",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D13"
+]
 },
 {
 "n": 752,
@@ -7780,7 +7895,7 @@
 "line": 2818,
 "function": "secondOpinion",
 "text": " sold, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7790,7 +7905,7 @@
 "line": 2823,
 "function": "secondOpinion",
 "text": "Buying cheap passed the 5-year test.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7800,7 +7915,7 @@
 "line": 2875,
 "function": "addReply",
 "text": "A TESTED buy rule fired on ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7810,7 +7925,7 @@
 "line": 2875,
 "function": "addReply",
 "text": " unseen trades",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7820,7 +7935,7 @@
 "line": 2875,
 "function": "addReply",
 "text": ", and it also lowers your average price",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7830,8 +7945,10 @@
 "line": 2876,
 "function": "addReply",
 "text": " tested trades). Adding needs a fully proven rule.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 758,
@@ -7840,7 +7957,7 @@
 "line": 2879,
 "function": "addReply",
 "text": "A quick trade is a single entry. Its edge is small, so the plan is to take the bounce and leave, not to build a bigger position.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7850,7 +7967,7 @@
 "line": 2893,
 "function": "sourceReply",
 "text": "no tested support today",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7860,7 +7977,7 @@
 "line": 2896,
 "function": "sourceReply",
 "text": "None. Nothing this source named has a tested entry or setup today.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7870,7 +7987,7 @@
 "line": 2898,
 "function": "sourceReply",
 "text": "A source naming a stock is a lead. Only a line starting ENTRY CONFIRMED, QUICK TRADE or BUY WATCH carries prices from your tested rules.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7892,7 +8009,7 @@
 "line": 2962,
 "function": "late",
 "text": "More fragile than the top 20: without NVDA, AAPL or MSFT it lost to SPUS in 2022-23 (the top 20 did not), and its worst fall was deeper (-42% vs -33%).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7914,7 +8031,7 @@
 "line": 2964,
 "function": "late",
 "text": "The buying schedule (Basket 2 monthly, Basket 1 three times a year) was not tested itself; it is there to keep ZAD fees low.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7924,7 +8041,7 @@
 "line": 3033,
 "function": "basketZadLines",
 "text": "Reserves passed over: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7934,7 +8051,7 @@
 "line": 3105,
 "function": "waysText",
 "text": "c) OPTIONS PAPER LANE: long calls tested on paper only; a 1-contract ticket only if a rule earns it. Send  options lab",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7944,7 +8061,7 @@
 "line": 3216,
 "function": "tgCommands",
 "text": "APPROVED only: alerts from rules that passed every test.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7954,7 +8071,7 @@
 "line": 3248,
 "function": "tgCommands",
 "text": " shares you had before, so I cannot work out the new average. Send your TOTAL now with the average price from your broker:  bought ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7964,7 +8081,7 @@
 "line": 3248,
 "function": "tgCommands",
 "text": " AVERAGE-PRICE TOTAL shares",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7974,7 +8091,7 @@
 "line": 3251,
 "function": "tgCommands",
 "text": " shares at an average of ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7984,7 +8101,7 @@
 "line": 3256,
 "function": "tgCommands",
 "text": "Not recorded: sale prices and share counts must be positive. Your position and alerts stay on.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -7994,7 +8111,7 @@
 "line": 3264,
 "function": "tgCommands",
 "text": "Not recorded: valid positive whole-share holding and sale quantity required. Position and alerts retained.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8004,7 +8121,7 @@
 "line": 3283,
 "function": "tgCommands",
 "text": "no stop by design (tested without one)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8014,7 +8131,7 @@
 "line": 3297,
 "function": "tgCommands",
 "text": "its 50 day average, the trend line a holder of this stock should not see broken",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8024,7 +8141,7 @@
 "line": 3298,
 "function": "tgCommands",
 "text": "the tested stop for a buy like this (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8034,7 +8151,7 @@
 "line": 3309,
 "function": "tgCommands",
 "text": " (your buy +20%, good-till-cancelled) in ZAD now. No stop by design (tested without one). Time exit about ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8044,7 +8161,7 @@
 "line": 3316,
 "function": "tgCommands",
 "text": "Not recorded: a known positive whole-share holding of at least two is required. Position and alerts retained.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8054,7 +8171,7 @@
 "line": 3324,
 "function": "tgCommands",
 "text": "). This does not guarantee breakeven; fees, slippage or gaps can still cause a loss. Move the stop at your broker to ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8064,7 +8181,7 @@
 "line": 3342,
 "function": "tgCommands",
 "text": "Not recorded: stored holding is not a positive whole-share quantity. Clarify it first; position and alerts retained.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8074,7 +8191,7 @@
 "line": 3361,
 "function": "tgCommands",
 "text": "FOCUS ON: engine buys (swing / quick rules) are paused until one has a positive live record; they are listed under NOT ACTIONABLE TODAY. Your own lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT), sells and stops continue.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8084,7 +8201,7 @@
 "line": 3361,
 "function": "tgCommands",
 "text": "FOCUS OFF: ACTIONS shows every engine buy again, unproven ones labelled. A stock without your ZAD halal mark is still never a buy.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8094,8 +8211,10 @@
 "line": 3363,
 "function": "tgCommands",
 "text": "TRADABLE SMALL is ON: rules that passed their own test (t 2.5+, both halves, higher cost) are shown in their own section at 1,000 USD with a stop, with their own record.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D06"
+]
 },
 {
 "n": 784,
@@ -8104,8 +8223,10 @@
 "line": 3363,
 "function": "tgCommands",
 "text": "TRADABLE SMALL is OFF: the system is back to proven-only, exactly as before. Its ledger is kept.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 785,
@@ -8114,7 +8235,7 @@
 "line": 3367,
 "function": "tgCommands",
 "text": "\\n\\nThe ladder: 1,000 USD a trade, then 2,500 (30+ sales on 10+ days, positive, profit factor 1.2+), then 5,000 (80+ sales over 3+ months, profit factor 1.3+), then 10,000 (200+ sales over 6+ months). It steps down one level at once if your last 20 sales lost money. Report every sale ( sold SYM PRICE ) so the ladder can see it.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8124,7 +8245,7 @@
 "line": 3386,
 "function": "tgCommands",
 "text": " strategies tested (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8134,7 +8255,7 @@
 "line": 3386,
 "function": "tgCommands",
 "text": " not proven, ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8144,7 +8265,7 @@
 "line": 3386,
 "function": "tgCommands",
 "text": " tested. Library: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8154,7 +8275,7 @@
 "line": 3387,
 "function": "tgCommands",
 "text": " passed last week.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8164,8 +8285,10 @@
 "line": 3394,
 "function": "tgCommands",
 "text": "1. Stocks that jumped 15%+ in one day lagged the average stock by 3.2% over the next month: 3,054 cases, 5 years, dead stocks included, real costs (t -5.1). It is one of the most solid results in the whole system.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D09"
+]
 },
 {
 "n": 791,
@@ -8174,7 +8297,7 @@
 "line": 3397,
 "function": "tgCommands",
 "text": "4. What to do: put the phone down for 60 minutes. If you still want it, send  check SYM  first. If it still passes nothing, the most the ladder allows for an untested pick is 1,000 USD with a stop at once; better, add the money to SPUS/HLAL (check ZAD).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8184,7 +8307,7 @@
 "line": 3401,
 "function": "tgCommands",
 "text": "passed, now on live paper",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8194,7 +8317,7 @@
 "line": 3401,
 "function": "tgCommands",
 "text": "tested and failed",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8204,7 +8327,7 @@
 "line": 3401,
 "function": "tgCommands",
 "text": "waiting to be tested",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8214,7 +8337,7 @@
 "line": 3401,
 "function": "tgCommands",
 "text": "tested, not proven / in use",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8224,7 +8347,7 @@
 "line": 3403,
 "function": "tgCommands",
 "text": " vs an average stock",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8234,7 +8357,7 @@
 "line": 3405,
 "function": "tgCommands",
 "text": "): down 40%+ from the 1-year high, cash flow positive, little dilution, and under the LOW end of their own fair value.\\n",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8244,7 +8367,7 @@
 "line": 3405,
 "function": "tgCommands",
 "text": "The 5-year test PASSED: research list, paper first, check ZAD.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8254,7 +8377,7 @@
 "line": 3405,
 "function": "tgCommands",
 "text": "The 5-year test has NOT passed (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8276,7 +8399,7 @@
 "line": 3600,
 "function": "leadEvidence",
 "text": "% won. Winners averaged +",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8286,7 +8409,7 @@
 "line": 3607,
 "function": "leadLedger",
 "text": ". Profit factor ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8296,7 +8419,7 @@
 "line": 3609,
 "function": "leadLine",
 "text": " | SELL when it closes under its trailing stop or its 50 day average (now ~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8306,7 +8429,7 @@
 "line": 3679,
 "function": "refLine",
 "text": " (reference, not tested)\\n  ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8316,7 +8439,7 @@
 "line": 3680,
 "function": "refLine",
 "text": "\\n  too little history to count how often this worked",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8326,7 +8449,7 @@
 "line": 3699,
 "function": "refLine",
 "text": "LEADER EXIT: it closed under its 50 day average, the trend is broken. Sell at the next open.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8336,7 +8459,7 @@
 "line": 3703,
 "function": "refLine",
 "text": ", the tested exit line. Sell at the next open.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8346,7 +8469,7 @@
 "line": 3709,
 "function": "refLine",
 "text": "RUNNING HALF TIME EXIT: 30 sessions have passed. Sell the rest at the next open.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8356,7 +8479,7 @@
 "line": 3710,
 "function": "refLine",
 "text": " its 5 day average. Sell at the next open.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8366,7 +8489,7 @@
 "line": 3711,
 "function": "refLine",
 "text": " sessions have passed. Sell at the next open.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8376,7 +8499,7 @@
 "line": 3725,
 "function": "refLine",
 "text": " its 5 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8386,7 +8509,7 @@
 "line": 3727,
 "function": "refLine",
 "text": "Average cross",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8396,7 +8519,7 @@
 "line": 3753,
 "function": "refLine",
 "text": "no tested target",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8406,7 +8529,7 @@
 "line": 3761,
 "function": "refLine",
 "text": ": a tested rule fired, but ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8416,7 +8539,7 @@
 "line": 3763,
 "function": "refLine",
 "text": " (ENTRY CONFIRMED, tested rule)\\n  buy range ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8426,7 +8549,7 @@
 "line": 3764,
 "function": "refLine",
 "text": " (BUY WATCH, tested rule)\\n  buy only after a close above ~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8436,7 +8559,7 @@
 "line": 3776,
 "function": "refLine",
 "text": "first close above its 5 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8446,7 +8569,7 @@
 "line": 3776,
 "function": "refLine",
 "text": "% wins over ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8456,7 +8579,7 @@
 "line": 3776,
 "function": "refLine",
 "text": " unseen trades, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8466,7 +8589,7 @@
 "line": 3868,
 "function": "earnText",
 "text": "does not meet the condition that works on the whole market (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8488,7 +8611,7 @@
 "line": 3873,
 "function": "earnText",
 "text": ": a tested rule fired, but earnings are on ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8498,7 +8621,7 @@
 "line": 3875,
 "function": "earnText",
 "text": ": a tested rule fired, but there is ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8508,7 +8631,7 @@
 "line": 3889,
 "function": "earnText",
 "text": "closed under its 50 day average",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8518,7 +8641,7 @@
 "line": 3920,
 "function": "earnText",
 "text": "NO NEW BUYS: the S&P 500 is under its 200 day average. Leaders fail most often in a falling market. Existing ones keep their stops.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8528,7 +8651,7 @@
 "line": 3921,
 "function": "earnText",
 "text": "% below). I raise it as the stock climbs\\n  SELL when it closes under the stop or under its 50 day average (now ~",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8538,7 +8661,7 @@
 "line": 3927,
 "function": "earnText",
 "text": "): the new one tested clearly better on the older years and still made money in the last two.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8548,7 +8671,7 @@
 "line": 3928,
 "function": "earnText",
 "text": "FAIR TEST: not run yet. Until it is, the past test above is flattered and the edge is NOT proven. Use small size or paper only.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8558,7 +8681,7 @@
 "line": 3930,
 "function": "earnText",
 "text": "% won, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8568,7 +8691,7 @@
 "line": 3930,
 "function": "earnText",
 "text": " If every entry had been filled at the dearest price inside its buy range: average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8578,7 +8701,7 @@
 "line": 3990,
 "function": "earnText",
 "text": "The pause lifts by itself once the last five are positive again.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8588,8 +8711,10 @@
 "line": 4001,
 "function": "earnText",
 "text": ": ENTRY CONFIRMED by a tested rule. Its prices are in the CONCLUSION.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 833,
@@ -8598,7 +8723,7 @@
 "line": 4002,
 "function": "earnText",
 "text": ": a tested quick trade setup fired. See QUICK TRADES.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8608,7 +8733,7 @@
 "line": 4007,
 "function": "earnText",
 "text": "CROWD RADAR (Reddit\\u2019s most-mentioned stocks, filtered by the tested rules)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8618,7 +8743,7 @@
 "line": 4007,
 "function": "earnText",
 "text": "None of the crowd\\u2019s favourites has tested support today.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8628,7 +8753,7 @@
 "line": 4007,
 "function": "earnText",
 "text": " with no tested support",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8638,8 +8763,10 @@
 "line": 4017,
 "function": "earnText",
 "text": ": ENTRY CONFIRMED by a tested rule. Its prices are in the CONCLUSION.",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 838,
@@ -8648,7 +8775,7 @@
 "line": 4018,
 "function": "earnText",
 "text": ": a tested quick trade setup fired. See QUICK TRADES.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8658,7 +8785,7 @@
 "line": 4022,
 "function": "earnText",
 "text": "FOLLOWED CHANNELS (stocks named in the last 3 days, filtered by the tested rules)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8668,7 +8795,7 @@
 "line": 4022,
 "function": "earnText",
 "text": "No stock named by your channels has tested support today.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8678,7 +8805,7 @@
 "line": 4022,
 "function": "earnText",
 "text": "Named but no tested support: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8688,7 +8815,7 @@
 "line": 4029,
 "function": "earnText",
 "text": "% wins, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8698,7 +8825,7 @@
 "line": 4030,
 "function": "earnText",
 "text": "% wins, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8708,7 +8835,7 @@
 "line": 4031,
 "function": "earnText",
 "text": "a tested rule fired. See QUICK TRADES for its prices.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8718,7 +8845,7 @@
 "line": 4031,
 "function": "earnText",
 "text": "no tested rule fired on it. No trade.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8728,7 +8855,7 @@
 "line": 4063,
 "function": "earnText",
 "text": "% wins, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8738,7 +8865,7 @@
 "line": 4065,
 "function": "earnText",
 "text": " on average, S&P 500 ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8748,7 +8875,7 @@
 "line": 4066,
 "function": "earnText",
 "text": " tips, average ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8758,7 +8885,7 @@
 "line": 4135,
 "function": "intraday",
 "text": ". Sell when it closes under its trailing stop or its 50 day average. If you buy, tell me: bought ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8768,7 +8895,7 @@
 "line": 4139,
 "function": "intraday",
 "text": ". If it CLOSES above that tonight, the night scan checks it and puts it in ACTIONS with a buy range, stop and sell prices if it passes. Do not buy from this message.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8778,7 +8905,7 @@
 "line": 4143,
 "function": "intraday",
 "text": ". Review, or take part of the profit.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8788,7 +8915,7 @@
 "line": 4155,
 "function": "intraday",
 "text": "none. Nothing passed the test last night. I will message you the moment one does.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -8810,8 +8937,10 @@
 "line": 4161,
 "function": "intraday",
 "text": "BUY NOW: a proven setup is inside its buy range (",
-"category": "NOT_REVIEWED",
-"claims": []
+"category": "CATALOGUED_CLAIM",
+"claims": [
+"D08"
+]
 },
 {
 "n": 855,
@@ -10568,7 +10697,7 @@
 "line": 62,
 "function": "ln",
 "text": "IGNITION (catching a run while it starts, minute by minute): the test runs on Saturday.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10578,7 +10707,7 @@
 "line": 64,
 "function": "ln",
 "text": "IGNITION (buying WHILE a stock starts to run; minute-by-minute test, ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10588,7 +10717,7 @@
 "line": 143,
 "function": "skipsText",
 "text": "Too few skips to judge until about 20. The system’s own record: send  record .",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10598,7 +10727,7 @@
 "line": 149,
 "function": "dilutionLine",
 "text": "% in a year (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10608,7 +10737,7 @@
 "line": 149,
 "function": "dilutionLine",
 "text": "% in a year (buybacks or a reverse split).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10618,7 +10747,7 @@
 "line": 154,
 "function": "qualityLine",
 "text": " (better than ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10628,7 +10757,7 @@
 "line": 154,
 "function": "qualityLine",
 "text": "); its live paper record comes next.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10638,7 +10767,7 @@
 "line": 188,
 "function": "sellCheckText",
 "text": "LOW company quality from its SEC reports (worse than ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10648,7 +10777,7 @@
 "line": 191,
 "function": "sellCheckText",
 "text": "% of your money in one stock (trimming over 15% lowered the worst fall in the test)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10658,7 +10787,7 @@
 "line": 214,
 "function": "horizonLine",
 "text": "BUILT: test runs Sunday; send  rebalance  for your portfolio",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10668,7 +10797,7 @@
 "line": 215,
 "function": "horizonLine",
 "text": "uses the pre-market record; after ~60 sessions",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10678,7 +10807,7 @@
 "line": 224,
 "function": "horizonLine",
 "text": "machine learning on 26 angles (overfits), social-media mood (the crowd test failed), paid alt-data, rules for one stock only",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10688,7 +10817,7 @@
 "line": 239,
 "function": "J",
 "text": "exit test (when to sell)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10698,7 +10827,7 @@
 "line": 239,
 "function": "J",
 "text": "exit test (when to sell)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10708,7 +10837,7 @@
 "line": 257,
 "function": "exitsText",
 "text": "EXIT TEST: runs on Sunday with the other studies (the same buys sold 10 ways). Ask again after Sunday.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10718,7 +10847,7 @@
 "line": 286,
 "function": "rebalanceText",
 "text": "the rebalancing test runs Sunday",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10728,7 +10857,7 @@
 "line": 286,
 "function": "rebalanceText",
 "text": " a year without trimming (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10738,7 +10867,7 @@
 "line": 286,
 "function": "rebalanceText",
 "text": ". You hold under 8 stocks, so the test does not fit your portfolio well",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10748,7 +10877,7 @@
 "line": 381,
 "function": "followSection",
 "text": ". His record: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10758,7 +10887,7 @@
 "line": 405,
 "function": "swLabel",
 "text": " at worst, below the 4.0 proof bar; switched off if its live record turns negative).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10768,7 +10897,7 @@
 "line": 467,
 "function": "chainLines",
 "text": "STOP 15% under your buy (safety stop; the test held without one)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10778,7 +10907,7 @@
 "line": 499,
 "function": "linkVerdict",
 "text": "INFORMATION ONLY (no luck test, no costs; not a buy rule)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10788,7 +10917,7 @@
 "line": 526,
 "function": "opportunitiesText",
 "text": ": LIVE RECORD LOSING, do not buy these, watch only",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10822,7 +10951,7 @@
 "line": 551,
 "function": "verdict",
 "text": "losing so far",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10844,7 +10973,7 @@
 "line": 614,
 "function": "lastRow",
 "text": "DECISION: your trading is behind the index over 90 days. The index fund (check ZAD) is the better use of new money until the record turns.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10854,7 +10983,7 @@
 "line": 631,
 "function": "lastRow",
 "text": "Rejected rules keep running on paper; a rule comes back only on its own forward record.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10864,7 +10993,7 @@
 "line": 662,
 "function": "liveConclusions",
 "text": "LIVE RECORD (what really happened on future days, after costs):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10874,7 +11003,7 @@
 "line": 677,
 "function": "missedText",
 "text": "These moved overnight: the pre-market record (saved daily since 15 Oct) is what can catch them; its test comes after ~90 sessions.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10884,7 +11013,7 @@
 "line": 682,
 "function": "missedText",
 "text": "Seeing more runners earlier is not the same as making money: the 2-week side-by-side test must count the net result of every extra trade, losers included, after costs.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10894,7 +11023,7 @@
 "line": 683,
 "function": "missedText",
 "text": "But most of these had gapped before the open, which real-time cannot fix: do NOT pay for the feed on this evidence. The pre-market record is the better lead.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10904,7 +11033,7 @@
 "line": 691,
 "function": "icon",
 "text": " would \"pass\" by pure chance at the usual 5% bar, which is why every pass still needs the paper record before any alert.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10914,7 +11043,7 @@
 "line": 797,
 "function": "zoyaText",
 "text": " (SANDBOX test data, not real)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10924,7 +11053,7 @@
 "line": 841,
 "function": "buyDayNote",
 "text": " did WORSE in both halves of the tests (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10934,7 +11063,7 @@
 "line": 848,
 "function": "w",
 "text": "at the open (near the close did better, same pre-close alert needed)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10944,7 +11073,7 @@
 "line": 859,
 "function": "l",
 "text": "- STOPS: sell as soon as one is hit, any time in the session. Do not wait for a better price.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10954,7 +11083,7 @@
 "line": 860,
 "function": "l",
 "text": "A choice changes only when one way is better by 0.2% a trade or more in BOTH halves.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10964,7 +11093,7 @@
 "line": 866,
 "function": "shadowText",
 "text": "SHADOW RECORD: every system signal followed forward on paper, whether you bought or not (after costs)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10974,7 +11103,7 @@
 "line": 870,
 "function": "shadowText",
 "text": "This is the honest forward test: about 60 finished trades per kind are needed before it means much. Rules that lose here are demoted automatically.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10984,7 +11113,7 @@
 "line": 872,
 "function": "themesText",
 "text": "THEMES: the industry study runs every Sunday with the LEADERS fair test (it first loads the industry of every stock). Ask again after Sunday.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -10994,7 +11123,7 @@
 "line": 875,
 "function": "themesText",
 "text": "SUPPLY CHAIN NOW (hot industry -> suppliers that have not moved yet). History test: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11004,7 +11133,7 @@
 "line": 879,
 "function": "dowText",
 "text": "A day counts as worse or better only if it differs by 0.5% a trade or more in BOTH halves, with 150+ trades each.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11014,7 +11143,7 @@
 "line": 1083,
 "function": "savePos",
 "text": "Record a buy: /bought NVDA 180.5 10 shares",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -11024,7 +11153,7 @@
 "line": 1084,
 "function": "savePos",
 "text": "Record a sale: /sold NVDA 190.2",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -11034,7 +11163,7 @@
 "line": 1104,
 "function": "savePos",
 "text": "Rejected rules on forward paper: which could come back, on their own record only",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11044,7 +11173,7 @@
 "line": 1116,
 "function": "savePos",
 "text": "Forward paper record of every system signal",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11054,7 +11183,7 @@
 "line": 1136,
 "function": "savePos",
 "text": "YOUR RESULTS: record | goals | paper | shadow | review",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11064,7 +11193,7 @@
 "line": 1178,
 "function": "myRecord",
 "text": "YOUR REAL RECORD: no sale recorded yet. When you sell, send: sold SYMBOL PRICE",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11074,7 +11203,7 @@
 "line": 1189,
 "function": "line",
 "text": " (WORSE than your usual)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11084,7 +11213,7 @@
 "line": 1189,
 "function": "line",
 "text": " (better than your usual)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11094,7 +11223,7 @@
 "line": 1194,
 "function": "line",
 "text": " system buys): tests said ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11104,7 +11233,7 @@
 "line": 1196,
 "function": "line",
 "text": "CALIBRATION ALERT: the tests promised ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11114,7 +11243,7 @@
 "line": 1196,
 "function": "line",
 "text": "worse: buy the minimum amount until it recovers",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11124,7 +11253,7 @@
 "line": 1196,
 "function": "line",
 "text": "better than promised, but it can still be luck",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11134,7 +11263,7 @@
 "line": 1198,
 "function": "line",
 "text": "YOUR REAL RECORD (after about 0.8% costs; in dollars, your $",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11156,7 +11285,7 @@
 "line": 1257,
 "function": "soldLesson",
 "text": "It ended on the 5 day time limit before marker 1. The radar record counts this.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11166,7 +11295,7 @@
 "line": 1312,
 "function": "planCands",
 "text": "PAPER ONLY: this engine is LOSING on its live record (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11176,7 +11305,7 @@
 "line": 1326,
 "function": "gateVerdict",
 "text": "falling market (no record of its own in falling markets)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11186,7 +11315,7 @@
 "line": 1329,
 "function": "gateLines",
 "text": "). Levels for the record: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11196,7 +11325,7 @@
 "line": 1342,
 "function": "planCands0",
 "text": " days at the latest (the test chose this over no limit, on this stock\\u2019s own past)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11206,7 +11335,7 @@
 "line": 1342,
 "function": "planCands0",
 "text": "; no time limit (the test chose this over a 20 day limit, on this stock\\u2019s own past)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11216,7 +11345,7 @@
 "line": 1364,
 "function": "planCands0",
 "text": " a trade after costs (whole-market fair test)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11226,7 +11355,7 @@
 "line": 1369,
 "function": "planCands0",
 "text": " a trade after costs, better than stocks that jumped the same way without the news",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11236,7 +11365,7 @@
 "line": 1391,
 "function": "planCands0",
 "text": " in past tests",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11246,7 +11375,7 @@
 "line": 1452,
 "function": "atStopText",
 "text": " (after fees; a gap can make it worse)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11256,7 +11385,7 @@
 "line": 1465,
 "function": "sizeFor",
 "text": "long, strong record (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11266,7 +11395,7 @@
 "line": 1466,
 "function": "sizeFor",
 "text": "strong record (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11276,7 +11405,7 @@
 "line": 1470,
 "function": "sizeFor",
 "text": "losing live: halved",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11286,7 +11415,7 @@
 "line": 1497,
 "function": "t1Text",
 "text": ". Your record: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11296,7 +11425,7 @@
 "line": 1511,
 "function": "amountFor",
 "text": " (your real record sets the most per trade)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11306,7 +11435,7 @@
 "line": 1628,
 "function": "RK",
 "text": " Demoted for losing live: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11316,7 +11445,7 @@
 "line": 1696,
 "function": "dayText",
 "text": "NOT A BUYING DAY: buys made after days like this LOST money in both halves of the tests. Skip the ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11326,7 +11455,7 @@
 "line": 1698,
 "function": "dayText",
 "text": "; days like this were BETTER than usual in the tests",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11336,7 +11465,7 @@
 "line": 1703,
 "function": "dayText",
 "text": "A day counts as worse or better only with 150+ trades in each half and the same direction in both. Your stops always apply.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11346,7 +11475,7 @@
 "line": 1732,
 "function": "detailList",
 "text": "Full list and its record: send   leaders",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11356,7 +11485,7 @@
 "line": 1776,
 "function": "deepInfo",
 "text": "WHAT THE MARKET SAYS (information only; in the tests, news and analyst ratings did not predict returns)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11366,7 +11495,7 @@
 "line": 1899,
 "function": "pcx",
 "text": "EARLY RECORD (10 to 29 tips)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11376,7 +11505,7 @@
 "line": 1899,
 "function": "pcx",
 "text": "TRACKABLE RECORD (30+ tips)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11386,7 +11515,7 @@
 "line": 1906,
 "function": "checkOne",
 "text": "WATCH: quick setup with too little proof. Paper only.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11396,7 +11525,7 @@
 "line": 1909,
 "function": "checkOne",
 "text": "It did not pass its tests, so no signals are given.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11406,7 +11535,7 @@
 "line": 1992,
 "function": "whyMoved",
 "text": "\\n  cause: UNRESOLVED (no company news in the last 2 days; SEC filings checked below). Not proof of a pump, but no reason to expect it to continue.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11416,7 +11545,7 @@
 "line": 2145,
 "function": "opinionReply",
 "text": " in the fair test up to ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11426,7 +11555,7 @@
 "line": 2232,
 "function": "fallNote",
 "text": " In the 5-year test (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11436,7 +11565,7 @@
 "line": 2235,
 "function": "fallNote",
 "text": " a case, better ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11446,7 +11575,7 @@
 "line": 2475,
 "function": "ldipRecordLine",
 "text": "LEADER DIP record: no finished trade yet.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11456,7 +11585,7 @@
 "line": 2476,
 "function": "ldipRecordLine",
 "text": "LEADER DIP record: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11466,7 +11595,7 @@
 "line": 2498,
 "function": "ldipLines",
 "text": "LEADER DIP: PAPER ONLY (switched off with settings.leaderDip = false; not a buy. These picks are recorded to build the live paper record):",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11476,7 +11605,7 @@
 "line": 2601,
 "function": "buySyms",
 "text": ". Past test: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11486,7 +11615,7 @@
 "line": 2613,
 "function": "buySyms",
 "text": " Kuwait): EARLY WATCH messages (research leads and paper setups, NOT approved buys; send  alerts paper  or  alerts off  for fewer) and the OPPORTUNITY RADAR at ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11496,7 +11625,7 @@
 "line": 2627,
 "function": "buySyms",
 "text": " filed news that was followed by losses in the tests (send  check ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11506,7 +11635,7 @@
 "line": 2636,
 "function": "buySyms",
 "text": "FORWARD PAPER RECORD (signals the system logged, not your trades; ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11516,7 +11645,7 @@
 "line": 2637,
 "function": "buySyms",
 "text": "- LOSING on 20+ live paper trades: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11526,7 +11655,7 @@
 "line": 2648,
 "function": "sec",
 "text": "APPROVED LANES (status)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11536,7 +11665,7 @@
 "line": 2649,
 "function": "sec",
 "text": "SHORT-TERM OPPORTUNITIES (research and paper: NOT approved buys)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11546,7 +11675,7 @@
 "line": 2668,
 "function": "optionsShadow",
 "text": "Options paper test: off (no Alpaca key).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11556,7 +11685,7 @@
 "line": 2707,
 "function": "get",
 "text": "OPTIONS TRIAL TICKET (separate from your stocks; 1 contract; no evidence yet, the paper test runs beside it)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11566,7 +11695,7 @@
 "line": 2735,
 "function": "get",
 "text": "no BUY signal to test today",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11576,7 +11705,7 @@
 "line": 2748,
 "function": "optionsText",
 "text": "calls did better than the stocks so far (one period only).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11586,7 +11715,7 @@
 "line": 2756,
 "function": "optionsLabTicketText",
 "text": "Record of the rule: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11596,7 +11725,7 @@
 "line": 2795,
 "function": "ex",
 "text": "better than ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11606,7 +11735,7 @@
 "line": 2796,
 "function": "ex",
 "text": " in a year; assets ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11616,7 +11745,7 @@
 "line": 2797,
 "function": "ex",
 "text": " in a year (dilution)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11626,7 +11755,7 @@
 "line": 2823,
 "function": "secondOpinion",
 "text": "Note: \"cheap\" has NOT beaten the market on 5 years of tests yet, so treat this as information.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11636,7 +11765,7 @@
 "line": 2878,
 "function": "addReply",
 "text": "It is below your entry. Buying more now is adding to a losing trade: it doubles the bet at the moment the trade is going against you, and it is how a small planned loss becomes a large one.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11646,7 +11775,7 @@
 "line": 2897,
 "function": "sourceReply",
 "text": "This source\\u2019s record so far: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11656,7 +11785,7 @@
 "line": 2897,
 "function": "sourceReply",
 "text": "No record yet: results start after the next nightly scan.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11666,7 +11795,7 @@
 "line": 3051,
 "function": "basketText",
 "text": "Why 3 times a year: ZAD charges about ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11700,7 +11829,7 @@
 "line": 3123,
 "function": "tgCommands",
 "text": "Record your buy of ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11710,7 +11839,7 @@
 "line": 3126,
 "function": "tgCommands",
 "text": "Record that you sold ALL your ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11720,7 +11849,7 @@
 "line": 3155,
 "function": "tgCommands",
 "text": "?s market|day|day type|what (kind of )?day( is (it|today))?|how is the market( today)?|is today a (buy|buying|sell|selling) day|buy day|sell day)\\s*\\??$/.test(t0)) { out.push(await dayText(sig, pos)); continue; } if (/^(menu|start|buttons?|bar)$/.test(t0)) { await sendMenu(); state.menuV = MENU_V; continue; } }\n    {const saleRaw=western(m.text.trim().replace(/\\$/g,",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -11730,7 +11859,7 @@
 "line": 3156,
 "function": "tgCommands",
 "text": "));\n      if(/^(?:i\\s+)?(?:just\\s+)?(?:sold|exited|بعت)\\b/i.test(saleRaw)&&!/^(?:i\\s+)?sold\\s+options?\\b/i.test(saleRaw)){\n        const count=saleRaw.match(/([+-]?\\d+(?:\\.\\d+)?)\\s*(?:shares?|sh|stocks?|اسهم|سهم)\\b/i),vals=(saleRaw.replace(/^(?:i\\s+)?(?:just\\s+)?(?:sold|exited|بعت)\\s+(?:half\\s+)?[a-z.\\-]{1,6}/i,",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -11740,7 +11869,7 @@
 "line": 3158,
 "function": "tgCommands",
 "text": ").match(/[+-]?\\d+(?:\\.\\d+)?/g)||[]).map(Number);\n        if(/\\b(?:NaN|Infinity)\\b|(?:^|\\s)[+-]?\\d+(?:\\.\\d+)?e[+-]?\\d+/i.test(saleRaw)||vals.some(x=>!Number.isFinite(x)||x<=0)||count&&!Number.isSafeInteger(+count[1])){out.push(",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -11750,7 +11879,7 @@
 "line": 3162,
 "function": "tgCommands",
 "text": ")), num = (re) => { const x = text.match(re); return x ? +x[1] : null; };\n    let k;\n    { const tk = (text.match(/\\b[A-Z]{2,5}\\b/g) || []).filter(x => !NOT_TICKERS.has(x) && !COMMON_WORDS.has(x)), fwd = m.forward_origin || m.forward_from_chat;\n      if (!tk.length && !/^\\s*(?:tips?|log)\\b/i.test(text) && (text.length >= 160 || (fwd && text.length >= 60))) {\n        const src = (m.forward_origin && (m.forward_origin.sender_user_name || (m.forward_origin.sender_user && m.forward_origin.sender_user.first_name) || (m.forward_origin.chat && m.forward_origin.chat.title))) || (m.forward_from_chat &&",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -11760,7 +11889,7 @@
 "line": 3171,
 "function": "tgCommands",
 "text": ")); continue; } }\n      const hm = h1 ? [h1[1], !/^(yes|ok|halal|pass)$/i.test(h1[2])] : h2 ? [h2[1], !/^halal$/i.test(h2[2])] : h3 ? [h3[1], true] : null;\n      if (hm) { const sym = hm[0].toUpperCase(), mk = HALALM(); mk[sym] = { s: hm[1] ? ",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -11770,7 +11899,7 @@
 "line": 3174,
 "function": "tgCommands",
 "text": ")); continue; } }\n    if (/^traders?\\s*$/i.test(text)) { out.push(tradersText()); continue; }\n    if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl) { out.push(nl); continue; } }   // a forwarded message is someone else",
-"category": "NOT_REVIEWED",
+"category": "NOT_A_CLAIM",
 "claims": []
 },
 {
@@ -11780,7 +11909,7 @@
 "line": 3197,
 "function": "tgCommands",
 "text": ". Its past record stays in the scoreboard.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11790,7 +11919,7 @@
 "line": 3216,
 "function": "tgCommands",
 "text": "ALL: research leads (max 5 a day), paper setups (max 4) and approved alerts, each labelled.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11800,7 +11929,7 @@
 "line": 3216,
 "function": "tgCommands",
 "text": "PAPER: paper setups (max 4 a day) and approved alerts; no research leads.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11810,7 +11939,7 @@
 "line": 3216,
 "function": "tgCommands",
 "text": "OFF: no research leads or paper setups (approved alerts keep their own switches).",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11820,7 +11949,7 @@
 "line": 3217,
 "function": "tgCommands",
 "text": "ON: one research message at 11:15 New York and one after the close (live leads, paper setups, approved signals, runners missed). Nothing in it is a buy unless it says APPROVED.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11830,7 +11959,7 @@
 "line": 3220,
 "function": "tgCommands",
 "text": "Saved: you accept losing about ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11840,7 +11969,7 @@
 "line": 3222,
 "function": "tgCommands",
 "text": "The stock score runs every Sunday with the fair test. No result yet.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11850,7 +11979,7 @@
 "line": 3227,
 "function": "tgCommands",
 "text": "The hunting lab runs every Sunday with the fair test. No result yet.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11860,7 +11989,7 @@
 "line": 3228,
 "function": "tgCommands",
 "text": "The winners study runs every Sunday with the fair test. No result yet.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11870,7 +11999,7 @@
 "line": 3267,
 "function": "tgCommands",
 "text": " shares you held, so I did not record this sale (your ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11880,7 +12009,7 @@
 "line": 3305,
 "function": "tgCommands",
 "text": ": your earlier record (bought ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11890,7 +12019,7 @@
 "line": 3360,
 "function": "tgCommands",
 "text": ". I could not get a price, so this sale is not in your record. Next time send: sold ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11900,7 +12029,7 @@
 "line": 3364,
 "function": "tgCommands",
 "text": "QUIET ON: you get ONE action message each night and morning, plus BUY NOW, stop and target alerts; the older research messages (movers, discovery, early-wave cards) are kept in the system. The OPPORTUNITY RADAR and EARLY WATCH messages have their own switches ( radar on/off ,  alerts all/paper/approved/off ). Send  quiet off  to get everything again.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11910,7 +12039,7 @@
 "line": 3375,
 "function": "tgCommands",
 "text": " USD after fees. Trial record: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11920,7 +12049,7 @@
 "line": 3375,
 "function": "tgCommands",
 "text": " USD in total. Kept separate from your stock record.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11930,7 +12059,7 @@
 "line": 3385,
 "function": "tgCommands",
 "text": "PROGRESS (proof of work, updated ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11940,7 +12069,7 @@
 "line": 3403,
 "function": "tgCommands",
 "text": "\\n\\nEvery strategy must pass the same tests before it can reach ACTIONS. Most will fail; that is the filter working.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11950,7 +12079,7 @@
 "line": 3600,
 "function": "leadEvidence",
 "text": "Past test: too few trades to judge.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11960,7 +12089,7 @@
 "line": 3601,
 "function": "leadEvidence",
 "text": "% a year against ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11970,7 +12099,7 @@
 "line": 3602,
 "function": "leadEvidence",
 "text": "\\nCaution: the test list is today’s well-known companies, which flatters the past. The paper record below, counted from now on, is the honest test.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11980,7 +12109,7 @@
 "line": 3751,
 "function": "refLine",
 "text": "x the stop distance, chosen by the test",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -11990,7 +12119,7 @@
 "line": 3754,
 "function": "refLine",
 "text": "NEW TEST RESULT after your buy (target at the buy: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12000,7 +12129,7 @@
 "line": 3759,
 "function": "refLine",
 "text": "x the stop distance, chosen by the walk-forward test",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12010,7 +12139,7 @@
 "line": 3784,
 "function": "refLine",
 "text": "WORSE in both halves",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12020,7 +12149,7 @@
 "line": 3784,
 "function": "refLine",
 "text": "BETTER in both halves",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12030,7 +12159,7 @@
 "line": 3788,
 "function": "refLine",
 "text": "LOSING in both halves",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12040,7 +12169,7 @@
 "line": 3788,
 "function": "refLine",
 "text": "WORSE in both halves",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12050,7 +12179,7 @@
 "line": 3788,
 "function": "refLine",
 "text": "BETTER in both halves",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12060,7 +12189,7 @@
 "line": 3868,
 "function": "earnText",
 "text": "paper only: dips do not work on the whole market and a stock\\u2019s own record did not carry forward",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12070,7 +12199,7 @@
 "line": 3918,
 "function": "earnText",
 "text": "NO PRICES: the weekly fair test on the whole market (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12080,7 +12209,7 @@
 "line": 3918,
 "function": "earnText",
 "text": ") REJECTED this version: it lost money on the newer data even at the lowest cost. Do not buy these. I keep following the picks on paper, so the live record keeps growing; the test re-runs every Sunday.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12090,7 +12219,7 @@
 "line": 3919,
 "function": "earnText",
 "text": "NO PRICES: on the past test this rule did not make money",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12100,7 +12229,7 @@
 "line": 3928,
 "function": "earnText",
 "text": "FAIR TEST (whole market, collapsed stocks included, ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12110,7 +12239,7 @@
 "line": 3930,
 "function": "earnText",
 "text": "Paper record since this list started: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12120,7 +12249,7 @@
 "line": 3930,
 "function": "earnText",
 "text": "Costs in these figures: 0.8% a trade (3 USD + 3 USD fees on a 1,000 USD buy plus the spread), the same cost the fair test uses. Trades finished before 18 Oct 2026 were counted at 0.4%.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12130,7 +12259,7 @@
 "line": 4006,
 "function": "earnText",
 "text": "Muted: over its record so far, Reddit\\u2019s most-mentioned stocks have trailed the S&P 500. Still being scored; it returns if that changes.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12140,7 +12269,7 @@
 "line": 4015,
 "function": "earnText",
 "text": " is muted: its record trails the market)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12150,7 +12279,7 @@
 "line": 4015,
 "function": "earnText",
 "text": " is muted: its record trails the market)",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12160,7 +12289,7 @@
 "line": 4030,
 "function": "earnText",
 "text": "Paper record: ",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12170,7 +12299,7 @@
 "line": 4031,
 "function": "earnText",
 "text": "too new to test (under three years of prices). No trade.",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12180,7 +12309,7 @@
 "line": 4044,
 "function": "earnText",
 "text": "Options paper test: error (",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
@@ -12190,7 +12319,7 @@
 "line": 4081,
 "function": "earnText",
 "text": "\\nNightly report: send  report   Your record: send  record",
-"category": "NOT_REVIEWED",
+"category": "REVIEWED_ACCEPTABLE",
 "claims": []
 },
 {
