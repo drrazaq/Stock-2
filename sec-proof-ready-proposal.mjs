@@ -2,7 +2,7 @@
 import {createHash} from 'node:crypto';
 import {readNativeRun,nativeRunDigest} from './native-sec-events.mjs';import {readSelectionTelemetry,SEC_SELECTION_SCOPE} from './sec-selection-telemetry.mjs';
 import {dEligible} from './rank-models.mjs';import {PAPER_PROTOCOL} from './discovery-paper.mjs';import {captureJson} from './capture-json.mjs';import {alpacaSnapshot} from './snapshot-fields.mjs';import {marketSession} from './market-session.mjs';
-export const PROOF_READY_PROPOSAL='SEC_PROOF_READY_V2_DRAFT2_REVIEW_ONLY';
+export const PROOF_READY_PROPOSAL='SEC_PROOF_READY_V2_DRAFT3_REVIEW_ONLY';
 const sha=x=>createHash('sha256').update(typeof x==='string'?x:JSON.stringify(x)).digest('hex'),need=(x,c)=>{if(!x)throw Error(c);};
 const time=x=>{if(typeof x!=='string'||!/^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,9})?(?:Z|[+-]\d\d:\d\d)$/.test(x))return NaN;const d=new Date(x.slice(0,10)+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===x.slice(0,10)?Date.parse(x):NaN;};
 const ny=x=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(x)).map(p=>[p.type,p.value]));return {day:p.year+'-'+p.month+'-'+p.day,minute:+p.hour*60+ +p.minute};};
@@ -37,7 +37,7 @@ export function proposeProofReadyFrame({sourceHandle,frame,state=null}){
   if(event.originalSeenBeforeArchive||!Number.isFinite(time(event.firstIngestedAt))||!Number.isFinite(time(event.firstObservedAt)))reject('ORIGINAL_INGESTION_UNAVAILABLE');
   if(event.revisionCount!==1||event.nativeEvidenceStatus.includes('CONFLICT'))reject('REVISION_OR_CONFLICT');
   if(event.transportEvidence.status!=='DIRECT_RESPONSE_URL_MATCH')reject('SOURCE_ORIGIN_UNVERIFIED');
-  const first=ny(time(event.firstObservedAt));if(first.day!==day||first.minute<570)reject('PREMARKET_SECONDARY_NOT_ENABLED');if(nySeconds(time(event.firstObservedAt))>574*60||nySeconds(handoff)>574*60||nySeconds(handoff)<570*60)reject('OUTSIDE_PRIMARY_READY_WINDOW');
+  const first=ny(time(event.firstObservedAt));if(first.day!==day||first.minute<570)reject('PREMARKET_SECONDARY_NOT_ENABLED');if(nySeconds(time(event.firstObservedAt))>574*60||(!prior.ready[event.eventId]&&(nySeconds(handoff)>574*60||nySeconds(handoff)<570*60)))reject('OUTSIDE_PRIMARY_READY_WINDOW');
   if(!identity.securityId||identity.commonStock!==true||identity.zad!=='PASS'||!/^\d{4}$/.test(identity.sic)||!Number.isFinite(time(identity.asOf))||time(identity.asOf)>time(event.firstObservedAt))reject('IDENTITY_INDUSTRY_OR_ZAD_UNESTABLISHED');
   if(frame.metadata.filter(m=>m.symbol===identity.symbol).length!==1||frame.metadata.filter(m=>m.securityId===identity.securityId).length!==1||frame.metadata.filter(m=>String(m.issuerCik).padStart(10,'0')===event.issuerCik).length!==1)reject('AMBIGUOUS_SECURITY_MAPPING');
   const decisions=telemetry.records.filter(r=>r.payload.type==='D_EVENT_DECISION'&&r.payload.event.symbol===identity.symbol&&r.payload.event.accession===event.accession&&time(r.at)<=handoff),record=decisions.at(-1),d=record?.payload,c=d?.cache;
