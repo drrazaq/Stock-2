@@ -1,28 +1,52 @@
 {
- "generatedAt": "2026-10-25T06:45:26.725Z",
+ "generatedAt": "2026-11-01T07:33:15.312Z",
  "preRegistered": "2026-10-23",
  "window": [
   "2022-01-06",
   "2026-10-19"
  ],
  "sessions": 1200,
- "bar": 4.02,
- "complete": true,
+ "bar": 4.07,
+ "complete": false,
  "data": {
   "fullTextPhrases": 44,
-  "fullTextComplete": true,
-  "missing": [],
-  "catalystHits": 23305,
-  "bioDocuments": 12638,
+  "fullTextComplete": false,
+  "missing": [
+   "topline 2024-03",
+   "topline 2025-03",
+   "topline 2025-04",
+   "topline 2026-04",
+   "top-line 2023-02",
+   "top-line 2023-05",
+   "top-line 2025-01",
+   "Rare Pediatric Disease designation 2023-05",
+   "supply agreement 2024-10",
+   "did not achieve 2021-10",
+   "did not achieve 2026-03",
+   "substantial doubt 2021-04"
+  ],
+  "catalystHits": 22220,
+  "bioDocuments": 12080,
   "documentsNotRead": 0,
   "dilutionIndexQuarters": "24 of 24",
-  "companiesWithTickers": 11106,
-  "massiveRefCiks": 10219,
-  "positive8K": 38072,
-  "negative8K": 59941,
-  "requests": 53,
-  "failedRequests": 0,
-  "failures": []
+  "companiesWithTickers": 11117,
+  "massiveRefCiks": 10230,
+  "positive8K": 38140,
+  "negative8K": 60105,
+  "requests": 15772,
+  "failedRequests": 162,
+  "failures": [
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
+   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3"
+  ]
  },
  "caveat": "Prices: 5-year whole-market cache incl. dead stocks; its rows hold 3 USD+ stocks with 1M USD+ traded, so the 2 USD floor is in practice 3 USD (penny-stock run-ups like OCGN under 3 USD are outside the test). EDGAR full-text search gives filing dates only (no time), used from the first session on/after that date. CAT-NEWS1 positive/negative is by fixed phrases, not by reading: some hits are mentions, not events. results = frozen first verdict (firstRun); latest = monitoring only.",
  "results": {
@@ -583,98 +607,98 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-25T06:45:26.727Z",
+  "at": "2026-11-01T07:33:15.313Z",
   "to": "2026-10-19",
   "results": {
    "CAT-RUN1": {
     "name": "Run-up into a scheduled biotech/medtech catalyst: buy 30 sessions before, sell 2 sessions before",
     "verdict": "REJECTED",
-    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; t 0.41 under 2.5 in the older half; loses without its 2 best trades in the older half; not better than the average stock in the newer half; t -0.19 under 2.5 in the newer half; not better than the same stock on its other days in the newer half",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; t 0.42 under 2.5 in the older half; loses without its 2 best trades in the older half; not better than the average stock in the newer half; t -0.23 under 2.5 in the newer half; not better than the same stock on its other days in the newer half",
     "results": {
      "all": {
-      "n": 834,
+      "n": 824,
       "days": 222,
-      "stocks": 265,
-      "win": 0.482,
-      "avg": 0.0083,
+      "stocks": 263,
+      "win": 0.483,
+      "avg": 0.0087,
       "median": -0.0057,
       "worst": -0.9141,
       "best": 1.6949,
-      "avgStress": 0.0043,
-      "ctrl": 0.0036,
-      "edge": 0.0025,
-      "t": 0.2,
-      "vsOwn": -0.0065,
-      "tOwn": -0.5,
-      "vsSpy": -0.007,
-      "noTop2": 0.0043
+      "avgStress": 0.0047,
+      "ctrl": 0.0038,
+      "edge": 0.0022,
+      "t": 0.18,
+      "vsOwn": -0.0067,
+      "tOwn": -0.52,
+      "vsSpy": -0.0072,
+      "noTop2": 0.0046
      },
      "older": {
-      "n": 401,
+      "n": 398,
       "days": 113,
-      "stocks": 178,
-      "win": 0.4115,
-      "avg": -0.0076,
-      "median": -0.0252,
+      "stocks": 177,
+      "win": 0.4146,
+      "avg": -0.0055,
+      "median": -0.0251,
       "worst": -0.8617,
       "best": 1.6949,
-      "avgStress": -0.0116,
-      "ctrl": -0.0022,
-      "edge": 0.0077,
-      "t": 0.41,
-      "vsOwn": 0.0027,
-      "tOwn": 0.13,
-      "vsSpy": -0.0059,
-      "noTop2": -0.0145
+      "avgStress": -0.0095,
+      "ctrl": -0.0024,
+      "edge": 0.0079,
+      "t": 0.42,
+      "vsOwn": 0.0028,
+      "tOwn": 0.14,
+      "vsSpy": -0.0057,
+      "noTop2": -0.0124
      },
      "newer": {
-      "n": 433,
+      "n": 426,
       "days": 109,
-      "stocks": 189,
-      "win": 0.5473,
-      "avg": 0.0231,
-      "median": 0.0178,
+      "stocks": 188,
+      "win": 0.5469,
+      "avg": 0.0219,
+      "median": 0.0174,
       "worst": -0.9141,
       "best": 1.6833,
-      "avgStress": 0.0191,
-      "ctrl": 0.009,
-      "edge": -0.003,
-      "t": -0.19,
-      "vsOwn": -0.0159,
-      "tOwn": -1.01,
-      "vsSpy": -0.0081,
-      "noTop2": 0.0165
+      "avgStress": 0.0179,
+      "ctrl": 0.0096,
+      "edge": -0.0036,
+      "t": -0.23,
+      "vsOwn": -0.0164,
+      "tOwn": -1.04,
+      "vsSpy": -0.0086,
+      "noTop2": 0.0152
      }
     },
     "funnel": {
-     "groups": 3008,
-     "inWindow": 2490,
-     "tooLate": 398,
-     "noPrice": 833,
-     "gate": 75,
-     "dilution": 98,
-     "lottery": 144,
+     "groups": 2962,
+     "inWindow": 2422,
+     "tooLate": 367,
+     "noPrice": 813,
+     "gate": 74,
+     "dilution": 95,
+     "lottery": 141,
      "overlap": 107
     },
     "information": {
      "byKind": {
       "PDUFA": {
-       "n": 312,
+       "n": 311,
        "days": 200,
        "stocks": 117,
-       "win": 0.5064,
-       "avg": 0.014,
-       "median": 0.0022,
+       "win": 0.5048,
+       "avg": 0.0137,
+       "median": 0.0018,
        "worst": -0.7258,
        "best": 0.8077,
-       "avgStress": 0.01,
+       "avgStress": 0.0097,
        "ctrl": 0.0071,
-       "edge": 0.0104,
+       "edge": 0.0103,
        "t": 0.84,
        "vsOwn": 0.0024,
        "tOwn": 0.18,
        "vsSpy": 0.0016,
-       "noTop2": 0.0089
+       "noTop2": 0.0086
       },
       "ADCOM": {
        "n": 38,
@@ -686,8 +710,8 @@
        "worst": -0.9141,
        "best": 0.8077,
        "avgStress": -0.0458,
-       "ctrl": 0.0017,
-       "edge": -0.0512,
+       "ctrl": 0.0018,
+       "edge": -0.0513,
        "t": -1.02,
        "vsOwn": -0.0428,
        "tOwn": -0.85,
@@ -695,42 +719,42 @@
        "noTop2": -0.0848
       },
       "TOPLINE": {
-       "n": 557,
+       "n": 548,
        "days": 65,
-       "stocks": 220,
-       "win": 0.4686,
-       "avg": 0.0071,
-       "median": -0.0113,
+       "stocks": 218,
+       "win": 0.4708,
+       "avg": 0.0078,
+       "median": -0.0112,
        "worst": -0.9136,
        "best": 1.6949,
-       "avgStress": 0.0031,
-       "ctrl": 0.0034,
-       "edge": -0.0361,
-       "t": -1.33,
-       "vsOwn": -0.0493,
-       "tOwn": -1.76,
-       "vsSpy": -0.046,
-       "noTop2": 0.001
+       "avgStress": 0.0038,
+       "ctrl": 0.0037,
+       "edge": -0.0367,
+       "t": -1.35,
+       "vsOwn": -0.05,
+       "tOwn": -1.78,
+       "vsSpy": -0.0465,
+       "noTop2": 0.0016
       }
      },
      "byPrecision": {
       "day": {
-       "n": 253,
+       "n": 252,
        "days": 187,
        "stocks": 106,
-       "win": 0.498,
-       "avg": 0.008,
-       "median": -0.0023,
+       "win": 0.496,
+       "avg": 0.0076,
+       "median": -0.0024,
        "worst": -0.7258,
        "best": 0.8077,
-       "avgStress": 0.004,
+       "avgStress": 0.0036,
        "ctrl": 0.0066,
-       "edge": 0.0015,
-       "t": 0.12,
+       "edge": 0.0014,
+       "t": 0.11,
        "vsOwn": -0.0076,
        "tOwn": -0.55,
-       "vsSpy": -0.0083,
-       "noTop2": 0.0017
+       "vsSpy": -0.0084,
+       "noTop2": 0.0012
       },
       "month": {
        "n": 83,
@@ -742,49 +766,49 @@
        "worst": -0.8737,
        "best": 0.779,
        "avgStress": 0.0168,
-       "ctrl": -0.003,
-       "edge": 0.0294,
+       "ctrl": -0.0029,
+       "edge": 0.0293,
        "t": 0.83,
-       "vsOwn": 0.031,
-       "tOwn": 0.78,
+       "vsOwn": 0.0306,
+       "tOwn": 0.77,
        "vsSpy": 0.0172,
        "noTop2": 0.0035
       },
       "quarter": {
-       "n": 297,
+       "n": 292,
        "days": 19,
-       "stocks": 170,
-       "win": 0.4377,
-       "avg": -0.0189,
+       "stocks": 167,
+       "win": 0.4418,
+       "avg": -0.0187,
        "median": -0.0252,
        "worst": -0.9141,
        "best": 1.2066,
-       "avgStress": -0.0229,
-       "ctrl": -0.007,
-       "edge": -0.0087,
-       "t": -0.41,
-       "vsOwn": -0.0361,
-       "tOwn": -1.22,
-       "vsSpy": -0.0178,
+       "avgStress": -0.0227,
+       "ctrl": -0.0064,
+       "edge": -0.0109,
+       "t": -0.51,
+       "vsOwn": -0.0388,
+       "tOwn": -1.3,
+       "vsSpy": -0.0199,
        "noTop2": -0.027
       },
       "half": {
-       "n": 201,
+       "n": 197,
        "days": 9,
-       "stocks": 133,
-       "win": 0.5075,
-       "avg": 0.0437,
+       "stocks": 131,
+       "win": 0.5076,
+       "avg": 0.0456,
        "median": 0.0051,
        "worst": -0.9136,
        "best": 1.6949,
-       "avgStress": 0.0397,
+       "avgStress": 0.0416,
        "ctrl": 0.0184,
-       "edge": 0.0394,
-       "t": 1.46,
-       "vsOwn": 0.062,
-       "tOwn": 1.71,
-       "vsSpy": 0.045,
-       "noTop2": 0.0272
+       "edge": 0.0408,
+       "t": 1.6,
+       "vsOwn": 0.0636,
+       "tOwn": 1.79,
+       "vsSpy": 0.0464,
+       "noTop2": 0.0287
       }
      }
     }
@@ -792,25 +816,25 @@
    "CAT-NEWS1": {
     "name": "News build-up: 3+ positive 8-Ks in 60 sessions, none negative, above the 50-day; hold 15 sessions",
     "verdict": "REJECTED",
-    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -0.91 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 0.16 under 2.5 in the newer half",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; t -0.91 under 2.5 in the older half; not better than the same stock on its other days in the older half; loses without its 2 best trades in the older half; t 0.22 under 2.5 in the newer half",
     "results": {
      "all": {
-      "n": 608,
-      "days": 457,
-      "stocks": 223,
-      "win": 0.449,
-      "avg": 0.0001,
+      "n": 605,
+      "days": 454,
+      "stocks": 222,
+      "win": 0.4512,
+      "avg": 0.0004,
       "median": -0.0171,
       "worst": -0.7462,
       "best": 1.2194,
-      "avgStress": -0.0039,
-      "ctrl": 0.0006,
-      "edge": -0.003,
-      "t": -0.37,
-      "vsOwn": 0.0009,
-      "tOwn": 0.1,
-      "vsSpy": -0.0086,
-      "noTop2": -0.0039
+      "avgStress": -0.0036,
+      "ctrl": 0.0007,
+      "edge": -0.0026,
+      "t": -0.33,
+      "vsOwn": 0.0013,
+      "tOwn": 0.16,
+      "vsSpy": -0.0082,
+      "noTop2": -0.0036
      },
      "older": {
       "n": 279,
@@ -831,31 +855,31 @@
       "noTop2": -0.0134
      },
      "newer": {
-      "n": 329,
-      "days": 239,
-      "stocks": 140,
-      "win": 0.4742,
-      "avg": 0.0081,
-      "median": -0.0119,
+      "n": 326,
+      "days": 236,
+      "stocks": 138,
+      "win": 0.4785,
+      "avg": 0.0088,
+      "median": -0.0106,
       "worst": -0.7462,
       "best": 1.2194,
-      "avgStress": 0.0041,
-      "ctrl": 0.0043,
-      "edge": 0.0021,
-      "t": 0.16,
-      "vsOwn": 0.0047,
-      "tOwn": 0.35,
-      "vsSpy": -0.0023,
-      "noTop2": 0.0008
+      "avgStress": 0.0048,
+      "ctrl": 0.0044,
+      "edge": 0.0028,
+      "t": 0.22,
+      "vsOwn": 0.0056,
+      "tOwn": 0.42,
+      "vsSpy": -0.0013,
+      "noTop2": 0.0014
      }
     },
     "funnel": {
-     "companies": 7812,
-     "signals": 3763,
-     "noPrice": 15471,
+     "companies": 7827,
+     "signals": 3741,
+     "noPrice": 15408,
      "gate": 648,
      "dilution": 1007,
-     "lottery": 1496
+     "lottery": 1477
     }
    }
   }
@@ -1865,34 +1889,6 @@
     "sameStock": 0.0238
    },
    {
-    "s": "KURA",
-    "buy": "2022-05-18",
-    "sell": "2022-06-29",
-    "event": "2022-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2022-02-24",
-    "net": 0.5065,
-    "avgStock": -0.0648,
-    "sameStock": 0.0338
-   },
-   {
-    "s": "OCUL",
-    "buy": "2022-05-18",
-    "sell": "2022-06-29",
-    "event": "2022-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2022-05-09",
-    "net": 0.0491,
-    "avgStock": -0.0648,
-    "sameStock": -0.0145
-   },
-   {
     "s": "ANAB",
     "buy": "2022-05-18",
     "sell": "2022-06-29",
@@ -1919,6 +1915,20 @@
     "net": 0.0081,
     "avgStock": -0.0648,
     "sameStock": 0.0178
+   },
+   {
+    "s": "KURA",
+    "buy": "2022-05-18",
+    "sell": "2022-06-29",
+    "event": "2022-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2022-02-24",
+    "net": 0.5065,
+    "avgStock": -0.0648,
+    "sameStock": 0.0338
    },
    {
     "s": "AMGN",
@@ -2003,6 +2013,20 @@
     "net": -0.1835,
     "avgStock": -0.0648,
     "sameStock": -0.0957
+   },
+   {
+    "s": "OCUL",
+    "buy": "2022-05-18",
+    "sell": "2022-06-29",
+    "event": "2022-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2022-05-09",
+    "net": 0.0491,
+    "avgStock": -0.0648,
+    "sameStock": -0.0145
    },
    {
     "s": "HZNP",
@@ -2713,34 +2737,6 @@
     "sameStock": 0.0424
    },
    {
-    "s": "GOSS",
-    "buy": "2022-11-17",
-    "sell": "2022-12-29",
-    "event": "2023-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2022-05-10",
-    "net": -0.7653,
-    "avgStock": -0.0289,
-    "sameStock": -0.1079
-   },
-   {
-    "s": "KRTX",
-    "buy": "2022-11-17",
-    "sell": "2022-12-29",
-    "event": "2023-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2022-05-05",
-    "net": -0.1516,
-    "avgStock": -0.0289,
-    "sameStock": 0.084
-   },
-   {
     "s": "FGEN",
     "buy": "2022-11-17",
     "sell": "2022-12-29",
@@ -2755,32 +2751,18 @@
     "sameStock": -0.1359
    },
    {
-    "s": "ARWR",
+    "s": "KRTX",
     "buy": "2022-11-17",
     "sell": "2022-12-29",
     "event": "2023-01-01",
     "kinds": [
      "TOPLINE"
     ],
-    "precision": "half",
-    "filed": "2022-05-10",
-    "net": 0.2841,
+    "precision": "quarter",
+    "filed": "2022-05-05",
+    "net": -0.1516,
     "avgStock": -0.0289,
-    "sameStock": -0.0243
-   },
-   {
-    "s": "PLRX",
-    "buy": "2022-11-17",
-    "sell": "2022-12-29",
-    "event": "2023-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2022-05-09",
-    "net": -0.0831,
-    "avgStock": -0.0289,
-    "sameStock": 0.0414
+    "sameStock": 0.084
    },
    {
     "s": "VRDN",
@@ -2851,6 +2833,20 @@
     "net": -0.0131,
     "avgStock": -0.0289,
     "sameStock": 0.0169
+   },
+   {
+    "s": "PLRX",
+    "buy": "2022-11-17",
+    "sell": "2022-12-29",
+    "event": "2023-01-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2022-05-09",
+    "net": -0.0831,
+    "avgStock": -0.0289,
+    "sameStock": 0.0414
    },
    {
     "s": "REPL",
@@ -2993,6 +2989,20 @@
     "sameStock": -0.0428
    },
    {
+    "s": "VTRS",
+    "buy": "2022-11-17",
+    "sell": "2022-12-29",
+    "event": "2023-01-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2022-11-07",
+    "net": 0.0131,
+    "avgStock": -0.0289,
+    "sameStock": -0.0201
+   },
+   {
     "s": "VRNA",
     "buy": "2022-11-17",
     "sell": "2022-12-29",
@@ -3007,6 +3017,34 @@
     "sameStock": -0.0196
    },
    {
+    "s": "GOSS",
+    "buy": "2022-11-17",
+    "sell": "2022-12-29",
+    "event": "2023-01-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2022-05-10",
+    "net": -0.7653,
+    "avgStock": -0.0289,
+    "sameStock": -0.1079
+   },
+   {
+    "s": "ARWR",
+    "buy": "2022-11-17",
+    "sell": "2022-12-29",
+    "event": "2023-01-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2022-05-10",
+    "net": 0.2841,
+    "avgStock": -0.0289,
+    "sameStock": -0.0243
+   },
+   {
     "s": "TIL",
     "buy": "2022-11-17",
     "sell": "2022-12-29",
@@ -3019,20 +3057,6 @@
     "net": -0.6545,
     "avgStock": -0.0289,
     "sameStock": -0.1381
-   },
-   {
-    "s": "VTRS",
-    "buy": "2022-11-17",
-    "sell": "2022-12-29",
-    "event": "2023-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2022-11-07",
-    "net": 0.0131,
-    "avgStock": -0.0289,
-    "sameStock": -0.0201
    },
    {
     "s": "SGEN",
@@ -3544,20 +3568,6 @@
     "sameStock": 0.0458
    },
    {
-    "s": "ROIV",
-    "buy": "2023-03-17",
-    "sell": "2023-04-27",
-    "event": "2023-05-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "month",
-    "filed": "2023-03-15",
-    "net": -0.0151,
-    "avgStock": 0.0005,
-    "sameStock": 0.0389
-   },
-   {
     "s": "TERN",
     "buy": "2023-03-17",
     "sell": "2023-04-27",
@@ -3570,6 +3580,20 @@
     "net": 0.2851,
     "avgStock": 0.0005,
     "sameStock": -0.0291
+   },
+   {
+    "s": "ROIV",
+    "buy": "2023-03-17",
+    "sell": "2023-04-27",
+    "event": "2023-05-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "month",
+    "filed": "2023-03-15",
+    "net": -0.0151,
+    "avgStock": 0.0005,
+    "sameStock": 0.0389
    },
    {
     "s": "KRYS",
@@ -3596,7 +3620,7 @@
     "precision": "day",
     "filed": "2023-01-09",
     "net": 0.0422,
-    "avgStock": -0.0353,
+    "avgStock": -0.035,
     "sameStock": 0.0531
    },
    {
@@ -3843,62 +3867,6 @@
     "sameStock": 0.0935
    },
    {
-    "s": "GRTX",
-    "buy": "2023-05-18",
-    "sell": "2023-06-29",
-    "event": "2023-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2022-03-10",
-    "net": -0.1077,
-    "avgStock": 0.0547,
-    "sameStock": -0.3879
-   },
-   {
-    "s": "PFE",
-    "buy": "2023-05-18",
-    "sell": "2023-06-29",
-    "event": "2023-07-01",
-    "kinds": [
-     "ADCOM"
-    ],
-    "precision": "half",
-    "filed": "2023-05-02",
-    "net": -0.0241,
-    "avgStock": 0.0547,
-    "sameStock": -0.0329
-   },
-   {
-    "s": "MIRM",
-    "buy": "2023-05-18",
-    "sell": "2023-06-29",
-    "event": "2023-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2023-04-12",
-    "net": -0.0659,
-    "avgStock": 0.0547,
-    "sameStock": 0.0185
-   },
-   {
-    "s": "EBS",
-    "buy": "2023-05-18",
-    "sell": "2023-06-29",
-    "event": "2023-07-01",
-    "kinds": [
-     "PDUFA"
-    ],
-    "precision": "month",
-    "filed": "2023-05-09",
-    "net": -0.1499,
-    "avgStock": 0.0547,
-    "sameStock": -0.1453
-   },
-   {
     "s": "ARQT",
     "buy": "2023-05-18",
     "sell": "2023-06-29",
@@ -3925,6 +3893,34 @@
     "net": 0.2316,
     "avgStock": 0.0547,
     "sameStock": 0.1704
+   },
+   {
+    "s": "GRTX",
+    "buy": "2023-05-18",
+    "sell": "2023-06-29",
+    "event": "2023-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2022-03-10",
+    "net": -0.1077,
+    "avgStock": 0.0547,
+    "sameStock": -0.3879
+   },
+   {
+    "s": "PFE",
+    "buy": "2023-05-18",
+    "sell": "2023-06-29",
+    "event": "2023-07-01",
+    "kinds": [
+     "ADCOM"
+    ],
+    "precision": "half",
+    "filed": "2023-05-02",
+    "net": -0.0241,
+    "avgStock": 0.0547,
+    "sameStock": -0.0329
    },
    {
     "s": "LGND",
@@ -3955,20 +3951,6 @@
     "sameStock": 0.0414
    },
    {
-    "s": "ALLK",
-    "buy": "2023-05-18",
-    "sell": "2023-06-29",
-    "event": "2023-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2022-06-21",
-    "net": -0.1614,
-    "avgStock": 0.0547,
-    "sameStock": -0.0621
-   },
-   {
     "s": "VRDN",
     "buy": "2023-05-18",
     "sell": "2023-06-29",
@@ -3995,6 +3977,20 @@
     "net": -0.0982,
     "avgStock": 0.0547,
     "sameStock": -0.1079
+   },
+   {
+    "s": "ALLK",
+    "buy": "2023-05-18",
+    "sell": "2023-06-29",
+    "event": "2023-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2022-06-21",
+    "net": -0.1614,
+    "avgStock": 0.0547,
+    "sameStock": -0.0621
    },
    {
     "s": "CRNX",
@@ -4249,21 +4245,7 @@
     "sameStock": 0.0215
    },
    {
-    "s": "HZNP",
-    "buy": "2023-05-18",
-    "sell": "2023-06-29",
-    "event": "2023-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2023-03-01",
-    "net": 0.0109,
-    "avgStock": 0.0547,
-    "sameStock": 0.0519
-   },
-   {
-    "s": "BHVN",
+    "s": "MIRM",
     "buy": "2023-05-18",
     "sell": "2023-06-29",
     "event": "2023-07-01",
@@ -4271,10 +4253,10 @@
      "TOPLINE"
     ],
     "precision": "half",
-    "filed": "2023-03-24",
-    "net": 0.6928,
+    "filed": "2023-04-12",
+    "net": -0.0659,
     "avgStock": 0.0547,
-    "sameStock": 0.0105
+    "sameStock": 0.0185
    },
    {
     "s": "ALKS",
@@ -4389,21 +4371,21 @@
     "sameStock": 0.0178
    },
    {
-    "s": "NVCR",
+    "s": "EBS",
     "buy": "2023-05-18",
     "sell": "2023-06-29",
     "event": "2023-07-01",
     "kinds": [
-     "TOPLINE"
+     "PDUFA"
     ],
-    "precision": "half",
-    "filed": "2023-02-23",
-    "net": -0.4927,
+    "precision": "month",
+    "filed": "2023-05-09",
+    "net": -0.1499,
     "avgStock": 0.0547,
-    "sameStock": -0.0428
+    "sameStock": -0.1453
    },
    {
-    "s": "ALEC",
+    "s": "HZNP",
     "buy": "2023-05-18",
     "sell": "2023-06-29",
     "event": "2023-07-01",
@@ -4411,10 +4393,24 @@
      "TOPLINE"
     ],
     "precision": "quarter",
-    "filed": "2023-02-28",
-    "net": -0.2359,
+    "filed": "2023-03-01",
+    "net": 0.0109,
     "avgStock": 0.0547,
-    "sameStock": -0.046
+    "sameStock": 0.0519
+   },
+   {
+    "s": "BHVN",
+    "buy": "2023-05-18",
+    "sell": "2023-06-29",
+    "event": "2023-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2023-03-24",
+    "net": 0.6928,
+    "avgStock": 0.0547,
+    "sameStock": 0.0105
    },
    {
     "s": "BIIB",
@@ -4643,21 +4639,6 @@
     "sameStock": -0.0329
    },
    {
-    "s": "NBIX",
-    "buy": "2023-08-18",
-    "sell": "2023-09-28",
-    "event": "2023-10-01",
-    "kinds": [
-     "PDUFA",
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2023-05-03",
-    "net": 0.0973,
-    "avgStock": -0.0317,
-    "sameStock": 0.0313
-   },
-   {
     "s": "SPRY",
     "buy": "2023-08-18",
     "sell": "2023-09-28",
@@ -4670,6 +4651,21 @@
     "net": -0.4583,
     "avgStock": -0.0317,
     "sameStock": 0.0756
+   },
+   {
+    "s": "NBIX",
+    "buy": "2023-08-18",
+    "sell": "2023-09-28",
+    "event": "2023-10-01",
+    "kinds": [
+     "TOPLINE",
+     "PDUFA"
+    ],
+    "precision": "quarter",
+    "filed": "2023-05-03",
+    "net": 0.0973,
+    "avgStock": -0.0317,
+    "sameStock": 0.0313
    },
    {
     "s": "MIRM",
@@ -4812,7 +4808,7 @@
     "sameStock": -0.0035
    },
    {
-    "s": "ABOS",
+    "s": "KRTX",
     "buy": "2023-08-18",
     "sell": "2023-09-28",
     "event": "2023-10-01",
@@ -4820,10 +4816,10 @@
      "TOPLINE"
     ],
     "precision": "quarter",
-    "filed": "2023-03-27",
-    "net": -0.345,
+    "filed": "2023-05-04",
+    "net": -0.0252,
     "avgStock": -0.0317,
-    "sameStock": -0.1621
+    "sameStock": 0.084
    },
    {
     "s": "VRDN",
@@ -4838,34 +4834,6 @@
     "net": -0.2012,
     "avgStock": -0.0317,
     "sameStock": -0.0237
-   },
-   {
-    "s": "AKRO",
-    "buy": "2023-08-18",
-    "sell": "2023-09-28",
-    "event": "2023-10-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2023-03-17",
-    "net": 0.071,
-    "avgStock": -0.0317,
-    "sameStock": 0.1183
-   },
-   {
-    "s": "KRTX",
-    "buy": "2023-08-18",
-    "sell": "2023-09-28",
-    "event": "2023-10-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2023-05-04",
-    "net": -0.0252,
-    "avgStock": -0.0317,
-    "sameStock": 0.084
    },
    {
     "s": "ACRS",
@@ -4938,6 +4906,20 @@
     "sameStock": -0.0416
    },
    {
+    "s": "ABOS",
+    "buy": "2023-08-18",
+    "sell": "2023-09-28",
+    "event": "2023-10-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2023-03-27",
+    "net": -0.345,
+    "avgStock": -0.0317,
+    "sameStock": -0.1621
+   },
+   {
     "s": "MLTX",
     "buy": "2023-08-18",
     "sell": "2023-09-28",
@@ -4966,6 +4948,20 @@
     "sameStock": 0.0012
    },
    {
+    "s": "AKRO",
+    "buy": "2023-08-18",
+    "sell": "2023-09-28",
+    "event": "2023-10-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2023-03-17",
+    "net": 0.071,
+    "avgStock": -0.0317,
+    "sameStock": 0.1183
+   },
+   {
     "s": "BMY",
     "buy": "2023-08-31",
     "sell": "2023-10-11",
@@ -4990,7 +4986,7 @@
     "precision": "day",
     "filed": "2023-05-04",
     "net": -0.0272,
-    "avgStock": -0.0871,
+    "avgStock": -0.0869,
     "sameStock": 0.0262
    },
    {
@@ -5979,7 +5975,7 @@
     "precision": "month",
     "filed": "2024-01-08",
     "net": -0.0396,
-    "avgStock": -0.0029,
+    "avgStock": -0.0032,
     "sameStock": 0.011
    },
    {
@@ -6556,52 +6552,10 @@
      "TOPLINE"
     ],
     "precision": "half",
-    "filed": "2024-03-05",
+    "filed": "2024-05-13",
     "net": -0.1111,
     "avgStock": -0.0454,
     "sameStock": -0.1153
-   },
-   {
-    "s": "SLRN",
-    "buy": "2024-05-16",
-    "sell": "2024-06-27",
-    "event": "2024-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2023-08-14",
-    "net": -0.1743,
-    "avgStock": -0.0454,
-    "sameStock": -0.1057
-   },
-   {
-    "s": "CELC",
-    "buy": "2024-05-16",
-    "sell": "2024-06-27",
-    "event": "2024-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2024-03-27",
-    "net": -0.1724,
-    "avgStock": -0.0454,
-    "sameStock": 0.066
-   },
-   {
-    "s": "OABI",
-    "buy": "2024-05-16",
-    "sell": "2024-06-27",
-    "event": "2024-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2024-03-20",
-    "net": -0.1794,
-    "avgStock": -0.0454,
-    "sameStock": 0.03
    },
    {
     "s": "PRTA",
@@ -6646,7 +6600,7 @@
     "sameStock": -0.0191
    },
    {
-    "s": "NTLA",
+    "s": "CELC",
     "buy": "2024-05-16",
     "sell": "2024-06-27",
     "event": "2024-07-01",
@@ -6654,10 +6608,10 @@
      "TOPLINE"
     ],
     "precision": "half",
-    "filed": "2024-05-09",
-    "net": -0.1256,
+    "filed": "2024-05-15",
+    "net": -0.1724,
     "avgStock": -0.0454,
-    "sameStock": -0.0518
+    "sameStock": 0.066
    },
    {
     "s": "SUPN",
@@ -6674,6 +6628,20 @@
     "sameStock": 0.0049
    },
    {
+    "s": "NTLA",
+    "buy": "2024-05-16",
+    "sell": "2024-06-27",
+    "event": "2024-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2024-05-09",
+    "net": -0.1256,
+    "avgStock": -0.0454,
+    "sameStock": -0.0518
+   },
+   {
     "s": "ALKS",
     "buy": "2024-05-16",
     "sell": "2024-06-27",
@@ -6688,7 +6656,7 @@
     "sameStock": 0.0039
    },
    {
-    "s": "TBPH",
+    "s": "OABI",
     "buy": "2024-05-16",
     "sell": "2024-06-27",
     "event": "2024-07-01",
@@ -6696,10 +6664,24 @@
      "TOPLINE"
     ],
     "precision": "half",
-    "filed": "2023-05-08",
-    "net": -0.1501,
+    "filed": "2024-05-09",
+    "net": -0.1794,
     "avgStock": -0.0454,
-    "sameStock": 0.0012
+    "sameStock": 0.03
+   },
+   {
+    "s": "SLRN",
+    "buy": "2024-05-16",
+    "sell": "2024-06-27",
+    "event": "2024-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2023-08-14",
+    "net": -0.1743,
+    "avgStock": -0.0454,
+    "sameStock": -0.1057
    },
    {
     "s": "PDSB",
@@ -7373,7 +7355,7 @@
     "precision": "day",
     "filed": "2024-02-22",
     "net": 0.0085,
-    "avgStock": 0.0382,
+    "avgStock": 0.0395,
     "sameStock": 0.0586
    },
    {
@@ -7387,7 +7369,7 @@
     "precision": "day",
     "filed": "2024-07-31",
     "net": 0.0537,
-    "avgStock": 0.0382,
+    "avgStock": 0.0395,
     "sameStock": 0.0405
    },
    {
@@ -7401,7 +7383,7 @@
     "precision": "day",
     "filed": "2024-06-10",
     "net": 0.0513,
-    "avgStock": 0.0382,
+    "avgStock": 0.0395,
     "sameStock": 0.0641
    },
    {
@@ -7457,7 +7439,7 @@
     "precision": "day",
     "filed": "2024-08-01",
     "net": -0.0648,
-    "avgStock": -0.0051,
+    "avgStock": -0.0049,
     "sameStock": 0.0262
    },
    {
@@ -7471,7 +7453,7 @@
     "precision": "day",
     "filed": "2024-08-01",
     "net": -0.1899,
-    "avgStock": -0.0517,
+    "avgStock": -0.0514,
     "sameStock": 0.0141
    },
    {
@@ -7485,7 +7467,7 @@
     "precision": "day",
     "filed": "2024-11-05",
     "net": -0.1409,
-    "avgStock": -0.0517,
+    "avgStock": -0.0514,
     "sameStock": 0.0505
    },
    {
@@ -7500,7 +7482,7 @@
     "precision": "day",
     "filed": "2024-11-06",
     "net": -0.2271,
-    "avgStock": -0.0372,
+    "avgStock": -0.037,
     "sameStock": 0.0444
    },
    {
@@ -7806,24 +7788,10 @@
      "TOPLINE"
     ],
     "precision": "half",
-    "filed": "2024-03-21",
+    "filed": "2024-05-14",
     "net": -0.0849,
     "avgStock": -0.0167,
     "sameStock": 0.0715
-   },
-   {
-    "s": "IMNM",
-    "buy": "2024-11-18",
-    "sell": "2024-12-30",
-    "event": "2025-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2024-03-28",
-    "net": -0.0002,
-    "avgStock": -0.0167,
-    "sameStock": 0.053
    },
    {
     "s": "NKTR",
@@ -8092,6 +8060,48 @@
     "sameStock": 0.0238
    },
    {
+    "s": "IGMS",
+    "buy": "2024-11-18",
+    "sell": "2024-12-30",
+    "event": "2025-01-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2024-05-08",
+    "net": -0.3705,
+    "avgStock": -0.0167,
+    "sameStock": 0.2265
+   },
+   {
+    "s": "COGT",
+    "buy": "2024-11-18",
+    "sell": "2024-12-30",
+    "event": "2025-01-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2024-09-03",
+    "net": -0.1417,
+    "avgStock": -0.0167,
+    "sameStock": 0.1418
+   },
+   {
+    "s": "VYGR",
+    "buy": "2024-11-18",
+    "sell": "2024-12-30",
+    "event": "2025-01-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2024-08-06",
+    "net": -0.0186,
+    "avgStock": -0.0167,
+    "sameStock": -0.0361
+   },
+   {
     "s": "ATXS",
     "buy": "2024-11-18",
     "sell": "2024-12-30",
@@ -8118,48 +8128,6 @@
     "net": -0.0696,
     "avgStock": -0.0167,
     "sameStock": 0.1223
-   },
-   {
-    "s": "IGMS",
-    "buy": "2024-11-18",
-    "sell": "2024-12-30",
-    "event": "2025-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2024-05-08",
-    "net": -0.3705,
-    "avgStock": -0.0167,
-    "sameStock": 0.2265
-   },
-   {
-    "s": "VYGR",
-    "buy": "2024-11-18",
-    "sell": "2024-12-30",
-    "event": "2025-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2024-08-06",
-    "net": -0.0186,
-    "avgStock": -0.0167,
-    "sameStock": -0.0361
-   },
-   {
-    "s": "COGT",
-    "buy": "2024-11-18",
-    "sell": "2024-12-30",
-    "event": "2025-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2024-09-03",
-    "net": -0.1417,
-    "avgStock": -0.0167,
-    "sameStock": 0.1418
    },
    {
     "s": "VRTX",
@@ -8517,20 +8485,6 @@
     "sameStock": 0.0623
    },
    {
-    "s": "KROS",
-    "buy": "2025-02-18",
-    "sell": "2025-03-28",
-    "event": "2025-04-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2024-09-03",
-    "net": 0.0365,
-    "avgStock": -0.1099,
-    "sameStock": -0.0296
-   },
-   {
     "s": "SGMT",
     "buy": "2025-02-18",
     "sell": "2025-03-28",
@@ -8557,6 +8511,20 @@
     "net": 0.1847,
     "avgStock": -0.1099,
     "sameStock": 0.1877
+   },
+   {
+    "s": "KROS",
+    "buy": "2025-02-18",
+    "sell": "2025-03-28",
+    "event": "2025-04-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2024-09-03",
+    "net": 0.0365,
+    "avgStock": -0.1099,
+    "sameStock": -0.0296
    },
    {
     "s": "ANIP",
@@ -8807,7 +8775,7 @@
     "precision": "day",
     "filed": "2025-04-24",
     "net": 0.0955,
-    "avgStock": 0.0592,
+    "avgStock": 0.0593,
     "sameStock": 0.0386
    },
    {
@@ -8821,7 +8789,7 @@
     "precision": "day",
     "filed": "2025-04-29",
     "net": -0.1022,
-    "avgStock": 0.0592,
+    "avgStock": 0.0593,
     "sameStock": -0.0138
    },
    {
@@ -8911,34 +8879,6 @@
     "sameStock": 0.069
    },
    {
-    "s": "CYTK",
-    "buy": "2025-05-16",
-    "sell": "2025-06-27",
-    "event": "2025-07-01",
-    "kinds": [
-     "PDUFA"
-    ],
-    "precision": "half",
-    "filed": "2025-02-27",
-    "net": 0.0999,
-    "avgStock": 0.0316,
-    "sameStock": 0.0226
-   },
-   {
-    "s": "VERA",
-    "buy": "2025-05-16",
-    "sell": "2025-06-27",
-    "event": "2025-07-01",
-    "kinds": [
-     "PDUFA"
-    ],
-    "precision": "half",
-    "filed": "2025-02-26",
-    "net": 0.0604,
-    "avgStock": 0.0316,
-    "sameStock": 0.0035
-   },
-   {
     "s": "BHVN",
     "buy": "2025-05-16",
     "sell": "2025-06-27",
@@ -8953,6 +8893,20 @@
     "net": -0.1246,
     "avgStock": 0.0316,
     "sameStock": -0.0097
+   },
+   {
+    "s": "CYTK",
+    "buy": "2025-05-16",
+    "sell": "2025-06-27",
+    "event": "2025-07-01",
+    "kinds": [
+     "PDUFA"
+    ],
+    "precision": "half",
+    "filed": "2025-02-27",
+    "net": 0.0999,
+    "avgStock": 0.0316,
+    "sameStock": 0.0226
    },
    {
     "s": "JAZZ",
@@ -9040,34 +8994,6 @@
     "sameStock": 0.1046
    },
    {
-    "s": "APGE",
-    "buy": "2025-05-16",
-    "sell": "2025-06-27",
-    "event": "2025-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2024-03-05",
-    "net": 0.0613,
-    "avgStock": 0.0316,
-    "sameStock": 0.0826
-   },
-   {
-    "s": "HROW",
-    "buy": "2025-05-16",
-    "sell": "2025-06-27",
-    "event": "2025-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2024-03-19",
-    "net": 0.1997,
-    "avgStock": 0.0316,
-    "sameStock": 0.035
-   },
-   {
     "s": "VRDN",
     "buy": "2025-05-16",
     "sell": "2025-06-27",
@@ -9093,7 +9019,7 @@
     "filed": "2024-05-14",
     "net": 0.0896,
     "avgStock": 0.0316,
-    "sameStock": 0.053
+    "sameStock": 0.0302
    },
    {
     "s": "ATYR",
@@ -9107,7 +9033,7 @@
     "filed": "2024-07-22",
     "net": 0.6304,
     "avgStock": 0.0316,
-    "sameStock": -0.1672
+    "sameStock": 0.0069
    },
    {
     "s": "PCVX",
@@ -9164,6 +9090,20 @@
     "net": 0.084,
     "avgStock": 0.0316,
     "sameStock": 0.0198
+   },
+   {
+    "s": "APGE",
+    "buy": "2025-05-16",
+    "sell": "2025-06-27",
+    "event": "2025-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2024-08-12",
+    "net": 0.0613,
+    "avgStock": 0.0316,
+    "sameStock": 0.0826
    },
    {
     "s": "ALKS",
@@ -9320,18 +9260,18 @@
     "sameStock": 0.0082
    },
    {
-    "s": "PTGX",
+    "s": "VERA",
     "buy": "2025-05-16",
     "sell": "2025-06-27",
     "event": "2025-07-01",
     "kinds": [
-     "TOPLINE"
+     "PDUFA"
     ],
     "precision": "half",
-    "filed": "2025-03-03",
-    "net": 0.2477,
+    "filed": "2025-02-26",
+    "net": 0.0604,
     "avgStock": 0.0316,
-    "sameStock": 0.1052
+    "sameStock": 0.0035
    },
    {
     "s": "RYTM",
@@ -9342,7 +9282,7 @@
      "TOPLINE"
     ],
     "precision": "quarter",
-    "filed": "2025-04-07",
+    "filed": "2025-05-07",
     "net": 0.0389,
     "avgStock": 0.0316,
     "sameStock": 0.0505
@@ -9713,7 +9653,7 @@
     "precision": "day",
     "filed": "2025-07-29",
     "net": 0.0786,
-    "avgStock": 0.0521,
+    "avgStock": 0.0531,
     "sameStock": 0.031
    },
    {
@@ -9727,7 +9667,7 @@
     "precision": "day",
     "filed": "2025-05-14",
     "net": 0.015,
-    "avgStock": 0.0762,
+    "avgStock": 0.0771,
     "sameStock": 0.0623
    },
    {
@@ -9742,7 +9682,7 @@
     "precision": "day",
     "filed": "2025-01-10",
     "net": -0.0218,
-    "avgStock": 0.046,
+    "avgStock": 0.0469,
     "sameStock": 0.046
    },
    {
@@ -9756,7 +9696,7 @@
     "precision": "day",
     "filed": "2025-02-27",
     "net": 0.315,
-    "avgStock": 0.046,
+    "avgStock": 0.0469,
     "sameStock": 0.0226
    },
    {
@@ -9765,28 +9705,14 @@
     "sell": "2025-09-29",
     "event": "2025-10-01",
     "kinds": [
-     "TOPLINE",
-     "PDUFA"
+     "PDUFA",
+     "TOPLINE"
     ],
     "precision": "quarter",
     "filed": "2025-02-25",
     "net": -0.2493,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0214
-   },
-   {
-    "s": "ARQT",
-    "buy": "2025-08-19",
-    "sell": "2025-09-29",
-    "event": "2025-10-01",
-    "kinds": [
-     "PDUFA"
-    ],
-    "precision": "quarter",
-    "filed": "2025-02-25",
-    "net": 0.107,
-    "avgStock": 0.0472,
-    "sameStock": 0.0848
    },
    {
     "s": "MRK",
@@ -9799,7 +9725,7 @@
     "precision": "quarter",
     "filed": "2025-07-29",
     "net": -0.0767,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0131
    },
    {
@@ -9814,7 +9740,7 @@
     "precision": "quarter",
     "filed": "2025-08-05",
     "net": 0.0849,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0405
    },
    {
@@ -9828,7 +9754,7 @@
     "precision": "month",
     "filed": "2025-08-06",
     "net": 0.1784,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": -0.0411
    },
    {
@@ -9842,8 +9768,22 @@
     "precision": "month",
     "filed": "2025-08-01",
     "net": -0.0333,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": -0.0138
+   },
+   {
+    "s": "ARQT",
+    "buy": "2025-08-19",
+    "sell": "2025-09-29",
+    "event": "2025-10-01",
+    "kinds": [
+     "PDUFA"
+    ],
+    "precision": "quarter",
+    "filed": "2025-02-25",
+    "net": 0.107,
+    "avgStock": 0.0484,
+    "sameStock": 0.0848
    },
    {
     "s": "GOSS",
@@ -9854,9 +9794,9 @@
      "TOPLINE"
     ],
     "precision": "quarter",
-    "filed": "2024-03-05",
+    "filed": "2024-05-07",
     "net": 0.4235,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": -0.1247
    },
    {
@@ -9870,7 +9810,7 @@
     "precision": "quarter",
     "filed": "2024-11-14",
     "net": 0.019,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0388
    },
    {
@@ -9884,7 +9824,7 @@
     "precision": "quarter",
     "filed": "2024-11-13",
     "net": 0.1804,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0262
    },
    {
@@ -9898,7 +9838,7 @@
     "precision": "quarter",
     "filed": "2025-01-10",
     "net": 0.0248,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0505
    },
    {
@@ -9912,7 +9852,7 @@
     "precision": "quarter",
     "filed": "2025-05-15",
     "net": 0.1893,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0305
    },
    {
@@ -9926,7 +9866,7 @@
     "precision": "quarter",
     "filed": "2025-05-07",
     "net": -0.1572,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0356
    },
    {
@@ -9940,7 +9880,7 @@
     "precision": "quarter",
     "filed": "2025-06-24",
     "net": 1.1614,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.1585
    },
    {
@@ -9954,7 +9894,7 @@
     "precision": "quarter",
     "filed": "2025-08-06",
     "net": 0.0738,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0299
    },
    {
@@ -9968,7 +9908,7 @@
     "precision": "quarter",
     "filed": "2025-08-04",
     "net": 0.0516,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0592
    },
    {
@@ -9982,7 +9922,7 @@
     "precision": "quarter",
     "filed": "2025-08-07",
     "net": 0.2227,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.0641
    },
    {
@@ -9996,7 +9936,7 @@
     "precision": "quarter",
     "filed": "2025-02-12",
     "net": 0.1549,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.1076
    },
    {
@@ -10010,7 +9950,7 @@
     "precision": "quarter",
     "filed": "2025-05-08",
     "net": 0.1512,
-    "avgStock": 0.0472,
+    "avgStock": 0.0484,
     "sameStock": 0.165
    },
    {
@@ -10066,7 +10006,7 @@
     "precision": "month",
     "filed": "2025-08-25",
     "net": 0.3121,
-    "avgStock": -0.0029,
+    "avgStock": -0.0016,
     "sameStock": 0.0982
    },
    {
@@ -10080,7 +10020,7 @@
     "precision": "month",
     "filed": "2025-05-20",
     "net": -0.0627,
-    "avgStock": -0.0029,
+    "avgStock": -0.0016,
     "sameStock": 0.004
    },
    {
@@ -10109,7 +10049,7 @@
     "precision": "day",
     "filed": "2025-02-10",
     "net": 0.0899,
-    "avgStock": -0.0453,
+    "avgStock": -0.0443,
     "sameStock": 0.0358
    },
    {
@@ -10165,7 +10105,7 @@
     "precision": "day",
     "filed": "2025-06-25",
     "net": 0.0399,
-    "avgStock": 0.0281,
+    "avgStock": 0.0291,
     "sameStock": 0.0376
    },
    {
@@ -10179,7 +10119,7 @@
     "precision": "day",
     "filed": "2025-05-01",
     "net": 0.0923,
-    "avgStock": 0.0394,
+    "avgStock": 0.0401,
     "sameStock": 0.0226
    },
    {
@@ -10194,7 +10134,7 @@
     "precision": "day",
     "filed": "2025-08-06",
     "net": 0.1472,
-    "avgStock": 0.0394,
+    "avgStock": 0.0401,
     "sameStock": 0.0108
    },
    {
@@ -10208,7 +10148,7 @@
     "precision": "day",
     "filed": "2025-07-17",
     "net": -0.1125,
-    "avgStock": 0.0231,
+    "avgStock": 0.0237,
     "sameStock": -0.0906
    },
    {
@@ -10222,7 +10162,7 @@
     "precision": "day",
     "filed": "2025-11-04",
     "net": 0.1492,
-    "avgStock": 0.0401,
+    "avgStock": 0.0406,
     "sameStock": 0.0505
    },
    {
@@ -10237,7 +10177,7 @@
     "precision": "day",
     "filed": "2025-05-01",
     "net": -0.0564,
-    "avgStock": 0.021,
+    "avgStock": 0.0215,
     "sameStock": 0.0226
    },
    {
@@ -10251,7 +10191,7 @@
     "precision": "day",
     "filed": "2025-05-08",
     "net": 0.0012,
-    "avgStock": 0.021,
+    "avgStock": 0.0215,
     "sameStock": 0.046
    },
    {
@@ -10265,7 +10205,7 @@
     "precision": "day",
     "filed": "2025-03-03",
     "net": 0.1071,
-    "avgStock": 0.0649,
+    "avgStock": 0.0654,
     "sameStock": 0.1343
    },
    {
@@ -10279,7 +10219,7 @@
     "precision": "day",
     "filed": "2025-05-07",
     "net": 0.6216,
-    "avgStock": 0.0649,
+    "avgStock": 0.0654,
     "sameStock": 0.0102
    },
    {
@@ -10295,7 +10235,7 @@
     "precision": "quarter",
     "filed": "2025-03-05",
     "net": 0.0977,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0476
    },
    {
@@ -10309,7 +10249,7 @@
     "precision": "quarter",
     "filed": "2025-08-07",
     "net": -0.0653,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0713
    },
    {
@@ -10323,7 +10263,7 @@
     "precision": "half",
     "filed": "2025-05-12",
     "net": 0.2717,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.012
    },
    {
@@ -10337,7 +10277,7 @@
     "precision": "quarter",
     "filed": "2025-11-05",
     "net": -0.3729,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.0741
    },
    {
@@ -10351,7 +10291,7 @@
     "precision": "quarter",
     "filed": "2023-03-24",
     "net": 0.0178,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.14
    },
    {
@@ -10365,7 +10305,7 @@
     "precision": "quarter",
     "filed": "2024-11-13",
     "net": 0.6525,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.0473
    },
    {
@@ -10379,7 +10319,7 @@
     "precision": "half",
     "filed": "2025-01-29",
     "net": 0.5166,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.1393
    },
    {
@@ -10393,7 +10333,7 @@
     "precision": "half",
     "filed": "2025-02-28",
     "net": -0.0017,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0867
    },
    {
@@ -10407,7 +10347,7 @@
     "precision": "half",
     "filed": "2025-02-26",
     "net": 0.1191,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0356
    },
    {
@@ -10419,9 +10359,9 @@
      "TOPLINE"
     ],
     "precision": "half",
-    "filed": "2025-03-17",
+    "filed": "2025-05-13",
     "net": 0.2678,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.0177
    },
    {
@@ -10433,24 +10373,10 @@
      "TOPLINE"
     ],
     "precision": "quarter",
-    "filed": "2025-03-04",
+    "filed": "2025-05-08",
     "net": -0.1416,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.1755
-   },
-   {
-    "s": "MAZE",
-    "buy": "2025-11-18",
-    "sell": "2025-12-30",
-    "event": "2026-01-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2025-03-31",
-    "net": 0.2034,
-    "avgStock": 0.0661,
-    "sameStock": 0.0618
    },
    {
     "s": "OCUL",
@@ -10461,9 +10387,9 @@
      "TOPLINE"
     ],
     "precision": "quarter",
-    "filed": "2025-03-03",
+    "filed": "2025-05-05",
     "net": 0.0224,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0388
    },
    {
@@ -10477,7 +10403,7 @@
     "precision": "quarter",
     "filed": "2025-06-02",
     "net": 0.1692,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0202
    },
    {
@@ -10491,7 +10417,7 @@
     "precision": "half",
     "filed": "2025-07-28",
     "net": 0.0466,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.056
    },
    {
@@ -10505,7 +10431,7 @@
     "precision": "quarter",
     "filed": "2025-08-12",
     "net": 0.0179,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.1392
    },
    {
@@ -10519,7 +10445,7 @@
     "precision": "quarter",
     "filed": "2025-08-07",
     "net": -0.148,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0082
    },
    {
@@ -10533,7 +10459,7 @@
     "precision": "half",
     "filed": "2025-08-13",
     "net": 0.602,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.0175
    },
    {
@@ -10547,7 +10473,7 @@
     "precision": "half",
     "filed": "2025-08-04",
     "net": 0.078,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.0187
    },
    {
@@ -10561,7 +10487,7 @@
     "precision": "quarter",
     "filed": "2025-09-22",
     "net": 0.0766,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0262
    },
    {
@@ -10575,7 +10501,7 @@
     "precision": "half",
     "filed": "2025-09-17",
     "net": 0.0502,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.078
    },
    {
@@ -10589,7 +10515,7 @@
     "precision": "quarter",
     "filed": "2025-09-08",
     "net": -0.0421,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.004
    },
    {
@@ -10603,8 +10529,22 @@
     "precision": "quarter",
     "filed": "2025-10-10",
     "net": 0.177,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0826
+   },
+   {
+    "s": "MAZE",
+    "buy": "2025-11-18",
+    "sell": "2025-12-30",
+    "event": "2026-01-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2025-11-06",
+    "net": 0.2034,
+    "avgStock": 0.0665,
+    "sameStock": 0.0618
    },
    {
     "s": "CMPX",
@@ -10617,7 +10557,7 @@
     "precision": "quarter",
     "filed": "2025-11-05",
     "net": 0.099,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.1646
    },
    {
@@ -10631,7 +10571,7 @@
     "precision": "quarter",
     "filed": "2025-11-12",
     "net": 0.0287,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.0848
    },
    {
@@ -10645,7 +10585,7 @@
     "precision": "month",
     "filed": "2025-11-12",
     "net": 0.592,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.2286
    },
    {
@@ -10659,7 +10599,7 @@
     "precision": "quarter",
     "filed": "2023-11-02",
     "net": 0.3779,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": 0.1076
    },
    {
@@ -10673,7 +10613,7 @@
     "precision": "quarter",
     "filed": "2025-05-06",
     "net": 0.0347,
-    "avgStock": 0.0661,
+    "avgStock": 0.0665,
     "sameStock": -0.0698
    },
    {
@@ -10687,7 +10627,7 @@
     "precision": "day",
     "filed": "2025-07-07",
     "net": -0.057,
-    "avgStock": 0.0479,
+    "avgStock": 0.0483,
     "sameStock": -0.0029
    },
    {
@@ -10729,7 +10669,7 @@
     "precision": "day",
     "filed": "2025-07-08",
     "net": 0.1868,
-    "avgStock": -0.008,
+    "avgStock": -0.0077,
     "sameStock": 0.1333
    },
    {
@@ -10743,7 +10683,7 @@
     "precision": "month",
     "filed": "2025-08-11",
     "net": 0.1911,
-    "avgStock": -0.002,
+    "avgStock": -0.0018,
     "sameStock": 0.078
    },
    {
@@ -10757,7 +10697,7 @@
     "precision": "month",
     "filed": "2026-01-12",
     "net": 0.1193,
-    "avgStock": -0.002,
+    "avgStock": -0.0018,
     "sameStock": 0.0884
    },
    {
@@ -10771,7 +10711,7 @@
     "precision": "month",
     "filed": "2025-08-11",
     "net": 0.296,
-    "avgStock": -0.002,
+    "avgStock": -0.0018,
     "sameStock": -0.1293
    },
    {
@@ -10785,7 +10725,7 @@
     "precision": "day",
     "filed": "2025-08-06",
     "net": 0.1609,
-    "avgStock": -0.0254,
+    "avgStock": -0.0252,
     "sameStock": 0.0163
    },
    {
@@ -10799,7 +10739,7 @@
     "precision": "day",
     "filed": "2025-12-16",
     "net": -0.1511,
-    "avgStock": -0.0455,
+    "avgStock": -0.0449,
     "sameStock": -0.0906
    },
    {
@@ -10814,7 +10754,7 @@
     "precision": "day",
     "filed": "2025-11-07",
     "net": -0.2126,
-    "avgStock": -0.0424,
+    "avgStock": -0.0418,
     "sameStock": 0.0505
    },
    {
@@ -10845,20 +10785,6 @@
     "net": -0.0584,
     "avgStock": -0.0758,
     "sameStock": 0.0226
-   },
-   {
-    "s": "KOD",
-    "buy": "2026-02-18",
-    "sell": "2026-03-30",
-    "event": "2026-04-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2025-03-27",
-    "net": 0.4834,
-    "avgStock": -0.0758,
-    "sameStock": 0.1862
    },
    {
     "s": "RNA",
@@ -10942,7 +10868,7 @@
     "filed": "2025-12-15",
     "net": -0.1498,
     "avgStock": -0.0758,
-    "sameStock": 0.053
+    "sameStock": 0.0302
    },
    {
     "s": "AVTX",
@@ -11211,20 +11137,6 @@
     "sameStock": 0.0131
    },
    {
-    "s": "ARQT",
-    "buy": "2026-05-14",
-    "sell": "2026-06-25",
-    "event": "2026-06-29",
-    "kinds": [
-     "PDUFA"
-    ],
-    "precision": "day",
-    "filed": "2026-02-25",
-    "net": 0.2191,
-    "avgStock": 0.0249,
-    "sameStock": 0.0848
-   },
-   {
     "s": "UNCY",
     "buy": "2026-05-14",
     "sell": "2026-06-25",
@@ -11251,6 +11163,20 @@
     "net": 0.1172,
     "avgStock": 0.0249,
     "sameStock": 0.0163
+   },
+   {
+    "s": "ARQT",
+    "buy": "2026-05-14",
+    "sell": "2026-06-25",
+    "event": "2026-06-29",
+    "kinds": [
+     "PDUFA"
+    ],
+    "precision": "day",
+    "filed": "2026-02-25",
+    "net": 0.2191,
+    "avgStock": 0.0249,
+    "sameStock": 0.0848
    },
    {
     "s": "IONS",
@@ -11324,77 +11250,6 @@
     "sameStock": 0.0688
    },
    {
-    "s": "RARE",
-    "buy": "2026-05-18",
-    "sell": "2026-06-29",
-    "event": "2026-07-01",
-    "kinds": [
-     "PDUFA",
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2025-07-31",
-    "net": 0.2133,
-    "avgStock": 0.0665,
-    "sameStock": -0.026
-   },
-   {
-    "s": "HRMY",
-    "buy": "2026-05-18",
-    "sell": "2026-06-29",
-    "event": "2026-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2026-01-12",
-    "net": 0.1649,
-    "avgStock": 0.0665,
-    "sameStock": 0.0214
-   },
-   {
-    "s": "AGIO",
-    "buy": "2026-05-18",
-    "sell": "2026-06-29",
-    "event": "2026-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2026-01-12",
-    "net": 0.3429,
-    "avgStock": 0.0665,
-    "sameStock": 0.0023
-   },
-   {
-    "s": "AXSM",
-    "buy": "2026-05-18",
-    "sell": "2026-06-29",
-    "event": "2026-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2026-02-23",
-    "net": 0.0441,
-    "avgStock": 0.0665,
-    "sameStock": 0.0592
-   },
-   {
-    "s": "LGND",
-    "buy": "2026-05-18",
-    "sell": "2026-06-29",
-    "event": "2026-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2026-02-26",
-    "net": 0.4582,
-    "avgStock": 0.0665,
-    "sameStock": 0.0713
-   },
-   {
     "s": "SRRK",
     "buy": "2026-05-18",
     "sell": "2026-06-29",
@@ -11422,6 +11277,20 @@
     "net": 0.0102,
     "avgStock": 0.0665,
     "sameStock": 0.1393
+   },
+   {
+    "s": "HRMY",
+    "buy": "2026-05-18",
+    "sell": "2026-06-29",
+    "event": "2026-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2026-01-12",
+    "net": 0.1649,
+    "avgStock": 0.0665,
+    "sameStock": 0.0214
    },
    {
     "s": "MIRM",
@@ -11480,6 +11349,34 @@
     "net": 0.0707,
     "avgStock": 0.0665,
     "sameStock": 0.056
+   },
+   {
+    "s": "AXSM",
+    "buy": "2026-05-18",
+    "sell": "2026-06-29",
+    "event": "2026-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2026-02-23",
+    "net": 0.0441,
+    "avgStock": 0.0665,
+    "sameStock": 0.0592
+   },
+   {
+    "s": "LGND",
+    "buy": "2026-05-18",
+    "sell": "2026-06-29",
+    "event": "2026-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2026-02-26",
+    "net": 0.4582,
+    "avgStock": 0.0665,
+    "sameStock": 0.0713
    },
    {
     "s": "ANNX",
@@ -11560,24 +11457,10 @@
      "TOPLINE"
     ],
     "precision": "half",
-    "filed": "2025-03-20",
+    "filed": "2025-05-14",
     "net": 0.2286,
     "avgStock": 0.0665,
     "sameStock": 0.0715
-   },
-   {
-    "s": "ALMS",
-    "buy": "2026-05-18",
-    "sell": "2026-06-29",
-    "event": "2026-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2025-03-18",
-    "net": 0.1689,
-    "avgStock": 0.0665,
-    "sameStock": -0.0473
    },
    {
     "s": "ZURA",
@@ -11608,6 +11491,35 @@
     "sameStock": 0.0958
    },
    {
+    "s": "RARE",
+    "buy": "2026-05-18",
+    "sell": "2026-06-29",
+    "event": "2026-07-01",
+    "kinds": [
+     "TOPLINE",
+     "PDUFA"
+    ],
+    "precision": "quarter",
+    "filed": "2025-07-31",
+    "net": 0.2133,
+    "avgStock": 0.0665,
+    "sameStock": -0.026
+   },
+   {
+    "s": "ALMS",
+    "buy": "2026-05-18",
+    "sell": "2026-06-29",
+    "event": "2026-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2025-08-13",
+    "net": 0.1689,
+    "avgStock": 0.0665,
+    "sameStock": -0.0473
+   },
+   {
     "s": "KOD",
     "buy": "2026-05-18",
     "sell": "2026-06-29",
@@ -11619,7 +11531,7 @@
     "filed": "2025-08-13",
     "net": 0.0123,
     "avgStock": 0.0665,
-    "sameStock": 0.1862
+    "sameStock": 0.2508
    },
    {
     "s": "RAPP",
@@ -11718,6 +11630,20 @@
     "net": 0.0605,
     "avgStock": 0.0665,
     "sameStock": 0.0324
+   },
+   {
+    "s": "AGIO",
+    "buy": "2026-05-18",
+    "sell": "2026-06-29",
+    "event": "2026-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2026-01-12",
+    "net": 0.3429,
+    "avgStock": 0.0665,
+    "sameStock": 0.0023
    },
    {
     "s": "IMCR",
@@ -11888,20 +11814,6 @@
     "sameStock": 0.0884
    },
    {
-    "s": "ZNTL",
-    "buy": "2026-05-18",
-    "sell": "2026-06-29",
-    "event": "2026-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2026-04-09",
-    "net": 0.1445,
-    "avgStock": 0.0665,
-    "sameStock": -0.2038
-   },
-   {
     "s": "TECX",
     "buy": "2026-05-18",
     "sell": "2026-06-29",
@@ -11928,6 +11840,20 @@
     "net": 0.9253,
     "avgStock": 0.0665,
     "sameStock": 0.0789
+   },
+   {
+    "s": "ZNTL",
+    "buy": "2026-05-18",
+    "sell": "2026-06-29",
+    "event": "2026-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2026-05-12",
+    "net": 0.1445,
+    "avgStock": 0.0665,
+    "sameStock": -0.2038
    },
    {
     "s": "PTCT",
@@ -11986,20 +11912,6 @@
     "sameStock": 0.0505
    },
    {
-    "s": "DNTH",
-    "buy": "2026-05-18",
-    "sell": "2026-06-29",
-    "event": "2026-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2024-08-08",
-    "net": 0.0993,
-    "avgStock": 0.0665,
-    "sameStock": 0.0956
-   },
-   {
     "s": "UPB",
     "buy": "2026-05-18",
     "sell": "2026-06-29",
@@ -12040,6 +11952,20 @@
     "net": 0.037,
     "avgStock": 0.0665,
     "sameStock": 0.1076
+   },
+   {
+    "s": "DNTH",
+    "buy": "2026-05-18",
+    "sell": "2026-06-29",
+    "event": "2026-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2024-08-08",
+    "net": 0.0993,
+    "avgStock": 0.0665,
+    "sameStock": 0.0956
    },
    {
     "s": "BIOA",
@@ -12108,7 +12034,7 @@
     "precision": "month",
     "filed": "2026-04-29",
     "net": 0.1983,
-    "avgStock": 0.0112,
+    "avgStock": 0.0114,
     "sameStock": -0.0138
    },
    {
@@ -12122,7 +12048,7 @@
     "precision": "month",
     "filed": "2026-05-14",
     "net": -0.5405,
-    "avgStock": 0.0112,
+    "avgStock": 0.0114,
     "sameStock": 0.0982
    },
    {
@@ -12136,7 +12062,7 @@
     "precision": "day",
     "filed": "2026-05-01",
     "net": -0.0742,
-    "avgStock": 0.0337,
+    "avgStock": 0.034,
     "sameStock": 0.0882
    },
    {
@@ -12150,7 +12076,7 @@
     "precision": "day",
     "filed": "2025-11-06",
     "net": -0.1066,
-    "avgStock": 0.0241,
+    "avgStock": 0.0242,
     "sameStock": 0.0163
    },
    {
@@ -12166,20 +12092,6 @@
     "net": 0.1015,
     "avgStock": 0.0307,
     "sameStock": 0.0024
-   },
-   {
-    "s": "BMY",
-    "buy": "2026-07-06",
-    "sell": "2026-08-13",
-    "event": "2026-08-17",
-    "kinds": [
-     "PDUFA"
-    ],
-    "precision": "day",
-    "filed": "2026-04-30",
-    "net": 0.1117,
-    "avgStock": 0.0307,
-    "sameStock": 0.015
    },
    {
     "s": "CAPR",
@@ -12307,7 +12219,7 @@
     "filed": "2026-03-31",
     "net": -0.0934,
     "avgStock": 0.0301,
-    "sameStock": 0.1862
+    "sameStock": 0.2508
    },
    {
     "s": "IRD",
@@ -12334,7 +12246,7 @@
     "precision": "day",
     "filed": "2026-02-03",
     "net": 0.143,
-    "avgStock": -0.0378,
+    "avgStock": -0.0376,
     "sameStock": 0.0131
    },
    {
@@ -12348,7 +12260,7 @@
     "precision": "day",
     "filed": "2026-04-21",
     "net": -0.2158,
-    "avgStock": -0.0444,
+    "avgStock": -0.0442,
     "sameStock": 0.0262
    },
    {
@@ -12362,7 +12274,7 @@
     "precision": "day",
     "filed": "2026-05-06",
     "net": -0.0964,
-    "avgStock": -0.0655,
+    "avgStock": -0.0652,
     "sameStock": 0.069
    },
    {
@@ -12376,7 +12288,7 @@
     "precision": "quarter",
     "filed": "2025-11-06",
     "net": -0.3602,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": -0.012
    },
    {
@@ -12390,7 +12302,7 @@
     "precision": "quarter",
     "filed": "2026-08-10",
     "net": -0.1578,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0592
    },
    {
@@ -12404,7 +12316,7 @@
     "precision": "quarter",
     "filed": "2026-01-05",
     "net": -0.1921,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0305
    },
    {
@@ -12418,7 +12330,7 @@
     "precision": "quarter",
     "filed": "2026-08-05",
     "net": -0.0173,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0848
    },
    {
@@ -12432,7 +12344,7 @@
     "precision": "quarter",
     "filed": "2025-11-04",
     "net": -0.1728,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.1076
    },
    {
@@ -12446,22 +12358,8 @@
     "precision": "month",
     "filed": "2026-02-24",
     "net": -0.0871,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0299
-   },
-   {
-    "s": "CADL",
-    "buy": "2026-08-19",
-    "sell": "2026-09-29",
-    "event": "2026-10-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2025-03-13",
-    "net": -0.132,
-    "avgStock": -0.0686,
-    "sameStock": 0.0567
    },
    {
     "s": "ANNX",
@@ -12474,7 +12372,7 @@
     "precision": "quarter",
     "filed": "2025-08-14",
     "net": -0.2502,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0141
    },
    {
@@ -12488,7 +12386,7 @@
     "precision": "quarter",
     "filed": "2025-08-14",
     "net": -0.3323,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": -0.0088
    },
    {
@@ -12502,7 +12400,7 @@
     "precision": "quarter",
     "filed": "2025-11-05",
     "net": 0.0721,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0117
    },
    {
@@ -12516,7 +12414,7 @@
     "precision": "quarter",
     "filed": "2026-01-12",
     "net": -0.2121,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0428
    },
    {
@@ -12530,7 +12428,7 @@
     "precision": "quarter",
     "filed": "2026-02-13",
     "net": -0.2038,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0324
    },
    {
@@ -12544,7 +12442,7 @@
     "precision": "month",
     "filed": "2026-02-25",
     "net": -0.2565,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0147
    },
    {
@@ -12558,7 +12456,7 @@
     "precision": "quarter",
     "filed": "2026-02-26",
     "net": -0.1258,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0141
    },
    {
@@ -12572,7 +12470,7 @@
     "precision": "quarter",
     "filed": "2026-02-10",
     "net": -0.0224,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.031
    },
    {
@@ -12586,7 +12484,7 @@
     "precision": "quarter",
     "filed": "2026-02-09",
     "net": -0.0724,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.016
    },
    {
@@ -12600,36 +12498,8 @@
     "precision": "quarter",
     "filed": "2026-03-06",
     "net": 0.0016,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.14
-   },
-   {
-    "s": "TRVI",
-    "buy": "2026-08-19",
-    "sell": "2026-09-29",
-    "event": "2026-10-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2026-04-17",
-    "net": -0.2605,
-    "avgStock": -0.0686,
-    "sameStock": 0.0958
-   },
-   {
-    "s": "PHAT",
-    "buy": "2026-08-19",
-    "sell": "2026-09-29",
-    "event": "2026-10-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "quarter",
-    "filed": "2026-04-30",
-    "net": -0.2267,
-    "avgStock": -0.0686,
-    "sameStock": 0.01
    },
    {
     "s": "SYRE",
@@ -12642,7 +12512,7 @@
     "precision": "quarter",
     "filed": "2026-05-05",
     "net": -0.2378,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0677
    },
    {
@@ -12656,7 +12526,7 @@
     "precision": "quarter",
     "filed": "2026-05-14",
     "net": -0.7219,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": -0.0473
    },
    {
@@ -12670,7 +12540,7 @@
     "precision": "quarter",
     "filed": "2026-05-07",
     "net": -0.406,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0262
    },
    {
@@ -12684,7 +12554,7 @@
     "precision": "month",
     "filed": "2026-02-25",
     "net": -0.3485,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0356
    },
    {
@@ -12698,7 +12568,7 @@
     "precision": "month",
     "filed": "2026-05-07",
     "net": -0.342,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0485
    },
    {
@@ -12712,7 +12582,7 @@
     "precision": "quarter",
     "filed": "2026-05-12",
     "net": -0.1529,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.3305
    },
    {
@@ -12726,7 +12596,7 @@
     "precision": "quarter",
     "filed": "2026-05-15",
     "net": -0.3226,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": -0.0175
    },
    {
@@ -12740,8 +12610,22 @@
     "precision": "quarter",
     "filed": "2026-06-22",
     "net": -0.2283,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0342
+   },
+   {
+    "s": "PHAT",
+    "buy": "2026-08-19",
+    "sell": "2026-09-29",
+    "event": "2026-10-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "quarter",
+    "filed": "2026-06-23",
+    "net": -0.2267,
+    "avgStock": -0.0684,
+    "sameStock": 0.01
    },
    {
     "s": "BHVN",
@@ -12754,7 +12638,7 @@
     "precision": "month",
     "filed": "2026-08-10",
     "net": -0.0546,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": -0.0097
    },
    {
@@ -12768,8 +12652,8 @@
     "precision": "quarter",
     "filed": "2026-08-10",
     "net": -0.222,
-    "avgStock": -0.0686,
-    "sameStock": 0.035
+    "avgStock": -0.0684,
+    "sameStock": 0.0655
    },
    {
     "s": "IMRX",
@@ -12782,7 +12666,7 @@
     "precision": "quarter",
     "filed": "2026-08-05",
     "net": -0.2107,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": -0.0122
    },
    {
@@ -12796,7 +12680,7 @@
     "precision": "quarter",
     "filed": "2026-08-06",
     "net": -0.1581,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0226
    },
    {
@@ -12810,7 +12694,7 @@
     "precision": "month",
     "filed": "2026-08-07",
     "net": 0.0273,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.0688
    },
    {
@@ -12824,7 +12708,7 @@
     "precision": "quarter",
     "filed": "2026-08-07",
     "net": -0.0745,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.004
    },
    {
@@ -12838,7 +12722,7 @@
     "precision": "quarter",
     "filed": "2026-05-04",
     "net": -0.0214,
-    "avgStock": -0.0686,
+    "avgStock": -0.0684,
     "sameStock": 0.049
    },
    {
@@ -12886,7 +12770,7 @@
     "sell": "2024-11-14",
     "positives": 3,
     "net": -0.1861,
-    "avgStock": 0.0223,
+    "avgStock": 0.0267,
     "sameStock": 0.0061
    },
    {
@@ -12922,7 +12806,7 @@
     "sell": "2025-10-01",
     "positives": 3,
     "net": -0.2408,
-    "avgStock": 0.0262,
+    "avgStock": 0.0265,
     "sameStock": 0.0747
    },
    {
@@ -12940,7 +12824,7 @@
     "sell": "2025-12-10",
     "positives": 4,
     "net": 0.0963,
-    "avgStock": 0.0753,
+    "avgStock": 0.0764,
     "sameStock": 0.0747
    },
    {
@@ -12969,15 +12853,6 @@
     "net": -0.0353,
     "avgStock": 0.0049,
     "sameStock": 0.0747
-   },
-   {
-    "s": "NRXP",
-    "buy": "2026-07-23",
-    "sell": "2026-08-12",
-    "positives": 3,
-    "net": -0.2356,
-    "avgStock": 0.0492,
-    "sameStock": -0.0502
    },
    {
     "s": "OMER",
@@ -13057,7 +12932,7 @@
     "sell": "2025-05-27",
     "positives": 4,
     "net": -0.1098,
-    "avgStock": 0.0565,
+    "avgStock": 0.0567,
     "sameStock": 0.0266
    },
    {
@@ -13093,7 +12968,7 @@
     "sell": "2024-11-19",
     "positives": 3,
     "net": 0.0899,
-    "avgStock": 0.0158,
+    "avgStock": 0.0162,
     "sameStock": 0.0189
    },
    {
@@ -13102,7 +12977,7 @@
     "sell": "2024-12-16",
     "positives": 3,
     "net": -0.1334,
-    "avgStock": -0.0207,
+    "avgStock": -0.0205,
     "sameStock": 0.0189
    },
    {
@@ -13502,24 +13377,6 @@
     "sameStock": 0.0239
    },
    {
-    "s": "VTVT",
-    "buy": "2026-03-23",
-    "sell": "2026-04-13",
-    "positives": 3,
-    "net": 0.0087,
-    "avgStock": 0.0619,
-    "sameStock": -0.032
-   },
-   {
-    "s": "VTVT",
-    "buy": "2026-04-16",
-    "sell": "2026-05-06",
-    "positives": 3,
-    "net": -0.1657,
-    "avgStock": 0.0337,
-    "sameStock": -0.032
-   },
-   {
     "s": "REPL",
     "buy": "2022-04-04",
     "sell": "2022-04-25",
@@ -13599,6 +13456,15 @@
     "net": 0.3041,
     "avgStock": 0.0533,
     "sameStock": 0.0132
+   },
+   {
+    "s": "BTAI",
+    "buy": "2023-05-04",
+    "sell": "2023-05-24",
+    "positives": 3,
+    "net": 0.1532,
+    "avgStock": 0.0153,
+    "sameStock": -0.0203
    },
    {
     "s": "NGNE",
@@ -13723,7 +13589,7 @@
     "sell": "2026-07-17",
     "positives": 3,
     "net": -0.0438,
-    "avgStock": 0.0127,
+    "avgStock": 0.0128,
     "sameStock": 0.0895
    },
    {
@@ -13750,7 +13616,7 @@
     "sell": "2024-11-26",
     "positives": 3,
     "net": -0.0243,
-    "avgStock": 0.0189,
+    "avgStock": 0.019,
     "sameStock": 0.1154
    },
    {
@@ -13759,7 +13625,7 @@
     "sell": "2026-02-13",
     "positives": 5,
     "net": -0.1713,
-    "avgStock": -0.0217,
+    "avgStock": -0.0215,
     "sameStock": 0.1154
    },
    {
@@ -13786,7 +13652,7 @@
     "sell": "2026-01-13",
     "positives": 3,
     "net": 0.0302,
-    "avgStock": 0.0276,
+    "avgStock": 0.0278,
     "sameStock": 0.0674
    },
    {
@@ -13813,7 +13679,7 @@
     "sell": "2026-07-16",
     "positives": 5,
     "net": 0.1217,
-    "avgStock": 0.0123,
+    "avgStock": 0.0126,
     "sameStock": 0.0674
    },
    {
@@ -13849,17 +13715,8 @@
     "sell": "2026-08-25",
     "positives": 3,
     "net": 0.0042,
-    "avgStock": 0.0047,
+    "avgStock": 0.0049,
     "sameStock": -0.0313
-   },
-   {
-    "s": "BTAI",
-    "buy": "2023-05-04",
-    "sell": "2023-05-24",
-    "positives": 3,
-    "net": 0.1532,
-    "avgStock": 0.0153,
-    "sameStock": -0.0203
    },
    {
     "s": "PDSB",
@@ -13939,7 +13796,7 @@
     "sell": "2026-02-26",
     "positives": 3,
     "net": -0.0912,
-    "avgStock": 0.026,
+    "avgStock": 0.0265,
     "sameStock": 0.0241
    },
    {
@@ -13997,78 +13854,6 @@
     "sameStock": 0.0452
    },
    {
-    "s": "CRNX",
-    "buy": "2022-06-27",
-    "sell": "2022-07-18",
-    "positives": 3,
-    "net": -0.0252,
-    "avgStock": -0.0279,
-    "sameStock": 0.0295
-   },
-   {
-    "s": "CRNX",
-    "buy": "2024-01-09",
-    "sell": "2024-01-30",
-    "positives": 3,
-    "net": 0.022,
-    "avgStock": 0.007,
-    "sameStock": 0.0295
-   },
-   {
-    "s": "CRNX",
-    "buy": "2024-02-01",
-    "sell": "2024-02-22",
-    "positives": 3,
-    "net": -0.0077,
-    "avgStock": 0.0187,
-    "sameStock": 0.0295
-   },
-   {
-    "s": "CRNX",
-    "buy": "2024-02-29",
-    "sell": "2024-03-20",
-    "positives": 3,
-    "net": 0.0009,
-    "avgStock": 0.0066,
-    "sameStock": 0.0295
-   },
-   {
-    "s": "CRNX",
-    "buy": "2024-04-19",
-    "sell": "2024-05-09",
-    "positives": 3,
-    "net": 0.1587,
-    "avgStock": 0.0679,
-    "sameStock": 0.0295
-   },
-   {
-    "s": "CRNX",
-    "buy": "2024-05-13",
-    "sell": "2024-06-03",
-    "positives": 4,
-    "net": -0.047,
-    "avgStock": -0.0056,
-    "sameStock": 0.0295
-   },
-   {
-    "s": "CRNX",
-    "buy": "2024-06-05",
-    "sell": "2024-06-26",
-    "positives": 4,
-    "net": -0.1189,
-    "avgStock": -0.0229,
-    "sameStock": 0.0297
-   },
-   {
-    "s": "SLNO",
-    "buy": "2024-07-12",
-    "sell": "2024-08-01",
-    "positives": 3,
-    "net": 0.0885,
-    "avgStock": 0.0025,
-    "sameStock": 0.0104
-   },
-   {
     "s": "MNPR",
     "buy": "2026-07-24",
     "sell": "2026-08-13",
@@ -14083,7 +13868,7 @@
     "sell": "2026-09-04",
     "positives": 4,
     "net": 0.0291,
-    "avgStock": -0.0156,
+    "avgStock": -0.0154,
     "sameStock": 0.0369
    },
    {
@@ -14094,6 +13879,15 @@
     "net": -0.2957,
     "avgStock": -0.047,
     "sameStock": 0.0369
+   },
+   {
+    "s": "NRXP",
+    "buy": "2026-07-23",
+    "sell": "2026-08-12",
+    "positives": 3,
+    "net": -0.2356,
+    "avgStock": 0.0492,
+    "sameStock": -0.0502
    },
    {
     "s": "STOK",
@@ -14128,7 +13922,7 @@
     "sell": "2025-08-27",
     "positives": 3,
     "net": 0.453,
-    "avgStock": 0.0425,
+    "avgStock": 0.0437,
     "sameStock": 0.0218
    },
    {
@@ -14157,33 +13951,6 @@
     "net": -0.1205,
     "avgStock": -0.0128,
     "sameStock": 0.0218
-   },
-   {
-    "s": "ALLO",
-    "buy": "2024-01-10",
-    "sell": "2024-01-31",
-    "positives": 3,
-    "net": 0.1423,
-    "avgStock": -0.0129,
-    "sameStock": -0.0379
-   },
-   {
-    "s": "ALLO",
-    "buy": "2024-02-02",
-    "sell": "2024-02-23",
-    "positives": 3,
-    "net": 0.2291,
-    "avgStock": 0.024,
-    "sameStock": -0.0379
-   },
-   {
-    "s": "BCYC",
-    "buy": "2023-05-08",
-    "sell": "2023-05-26",
-    "positives": 3,
-    "net": 0.0884,
-    "avgStock": -0.0045,
-    "sameStock": -0.0156
    },
    {
     "s": "KURA",
@@ -14227,7 +13994,7 @@
     "sell": "2025-12-23",
     "positives": 3,
     "net": -0.0557,
-    "avgStock": 0.0242,
+    "avgStock": 0.0246,
     "sameStock": -0.011
    },
    {
@@ -14245,62 +14012,26 @@
     "sell": "2025-02-10",
     "positives": 3,
     "net": -0.0563,
-    "avgStock": 0.0009,
+    "avgStock": 0.0022,
     "sameStock": -0.0778
    },
    {
-    "s": "BPMC",
-    "buy": "2022-04-11",
-    "sell": "2022-05-02",
+    "s": "ALLO",
+    "buy": "2024-01-10",
+    "sell": "2024-01-31",
     "positives": 3,
-    "net": -0.1326,
-    "avgStock": -0.0633,
-    "sameStock": 0.0225
+    "net": 0.1423,
+    "avgStock": -0.0129,
+    "sameStock": -0.0379
    },
    {
-    "s": "BPMC",
-    "buy": "2022-05-05",
-    "sell": "2022-05-25",
-    "positives": 4,
-    "net": -0.1237,
-    "avgStock": -0.0774,
-    "sameStock": 0.0225
-   },
-   {
-    "s": "BPMC",
-    "buy": "2022-06-27",
-    "sell": "2022-07-18",
+    "s": "ALLO",
+    "buy": "2024-02-02",
+    "sell": "2024-02-23",
     "positives": 3,
-    "net": -0.0953,
-    "avgStock": -0.0279,
-    "sameStock": 0.0225
-   },
-   {
-    "s": "BPMC",
-    "buy": "2022-07-20",
-    "sell": "2022-08-09",
-    "positives": 3,
-    "net": 0.2163,
-    "avgStock": 0.062,
-    "sameStock": 0.0225
-   },
-   {
-    "s": "BPMC",
-    "buy": "2022-08-18",
-    "sell": "2022-09-08",
-    "positives": 3,
-    "net": 0.2575,
-    "avgStock": -0.0714,
-    "sameStock": 0.0225
-   },
-   {
-    "s": "BPMC",
-    "buy": "2022-09-12",
-    "sell": "2022-09-30",
-    "positives": 3,
-    "net": -0.1417,
-    "avgStock": -0.1372,
-    "sameStock": 0.0225
+    "net": 0.2291,
+    "avgStock": 0.024,
+    "sameStock": -0.0379
    },
    {
     "s": "MNMD",
@@ -14366,24 +14097,6 @@
     "sameStock": 0.0117
    },
    {
-    "s": "TVTX",
-    "buy": "2022-01-07",
-    "sell": "2022-01-28",
-    "positives": 4,
-    "net": -0.1204,
-    "avgStock": -0.1051,
-    "sameStock": -0.0219
-   },
-   {
-    "s": "TVTX",
-    "buy": "2022-02-10",
-    "sell": "2022-03-03",
-    "positives": 4,
-    "net": -0.0537,
-    "avgStock": -0.0314,
-    "sameStock": -0.0219
-   },
-   {
     "s": "VRDN",
     "buy": "2025-05-30",
     "sell": "2025-06-20",
@@ -14443,7 +14156,7 @@
     "sell": "2026-07-08",
     "positives": 3,
     "net": 0.134,
-    "avgStock": 0.002,
+    "avgStock": 0.0021,
     "sameStock": 0.0293
    },
    {
@@ -14454,6 +14167,24 @@
     "net": -0.032,
     "avgStock": 0.0601,
     "sameStock": -0.1335
+   },
+   {
+    "s": "VTVT",
+    "buy": "2026-03-23",
+    "sell": "2026-04-13",
+    "positives": 3,
+    "net": 0.0087,
+    "avgStock": 0.0619,
+    "sameStock": -0.032
+   },
+   {
+    "s": "VTVT",
+    "buy": "2026-04-16",
+    "sell": "2026-05-06",
+    "positives": 3,
+    "net": -0.1657,
+    "avgStock": 0.0337,
+    "sameStock": -0.032
    },
    {
     "s": "TNXP",
@@ -14515,7 +14246,7 @@
     "sell": "2025-12-16",
     "positives": 4,
     "net": 0.3028,
-    "avgStock": 0.0391,
+    "avgStock": 0.0398,
     "sameStock": -0.0087
    },
    {
@@ -14526,6 +14257,69 @@
     "net": -0.1091,
     "avgStock": 0.0337,
     "sameStock": -0.0087
+   },
+   {
+    "s": "CRNX",
+    "buy": "2022-06-27",
+    "sell": "2022-07-18",
+    "positives": 3,
+    "net": -0.0252,
+    "avgStock": -0.0279,
+    "sameStock": 0.0295
+   },
+   {
+    "s": "CRNX",
+    "buy": "2024-01-09",
+    "sell": "2024-01-30",
+    "positives": 3,
+    "net": 0.022,
+    "avgStock": 0.007,
+    "sameStock": 0.0295
+   },
+   {
+    "s": "CRNX",
+    "buy": "2024-02-01",
+    "sell": "2024-02-22",
+    "positives": 3,
+    "net": -0.0077,
+    "avgStock": 0.0187,
+    "sameStock": 0.0295
+   },
+   {
+    "s": "CRNX",
+    "buy": "2024-02-29",
+    "sell": "2024-03-20",
+    "positives": 3,
+    "net": 0.0009,
+    "avgStock": 0.0066,
+    "sameStock": 0.0295
+   },
+   {
+    "s": "CRNX",
+    "buy": "2024-04-19",
+    "sell": "2024-05-09",
+    "positives": 3,
+    "net": 0.1587,
+    "avgStock": 0.0679,
+    "sameStock": 0.0295
+   },
+   {
+    "s": "CRNX",
+    "buy": "2024-05-13",
+    "sell": "2024-06-03",
+    "positives": 4,
+    "net": -0.047,
+    "avgStock": -0.0056,
+    "sameStock": 0.0295
+   },
+   {
+    "s": "CRNX",
+    "buy": "2024-06-05",
+    "sell": "2024-06-26",
+    "positives": 4,
+    "net": -0.1189,
+    "avgStock": -0.0229,
+    "sameStock": 0.0297
    },
    {
     "s": "VERV",
@@ -14555,6 +14349,15 @@
     "sameStock": -0.0159
    },
    {
+    "s": "SLNO",
+    "buy": "2024-07-12",
+    "sell": "2024-08-01",
+    "positives": 3,
+    "net": 0.0885,
+    "avgStock": 0.0025,
+    "sameStock": 0.0104
+   },
+   {
     "s": "KPTI",
     "buy": "2022-02-09",
     "sell": "2022-03-02",
@@ -14562,6 +14365,60 @@
     "net": -0.2818,
     "avgStock": -0.0194,
     "sameStock": -0.0402
+   },
+   {
+    "s": "BPMC",
+    "buy": "2022-04-11",
+    "sell": "2022-05-02",
+    "positives": 3,
+    "net": -0.1326,
+    "avgStock": -0.0633,
+    "sameStock": 0.0225
+   },
+   {
+    "s": "BPMC",
+    "buy": "2022-05-05",
+    "sell": "2022-05-25",
+    "positives": 4,
+    "net": -0.1237,
+    "avgStock": -0.0774,
+    "sameStock": 0.0225
+   },
+   {
+    "s": "BPMC",
+    "buy": "2022-06-27",
+    "sell": "2022-07-18",
+    "positives": 3,
+    "net": -0.0953,
+    "avgStock": -0.0279,
+    "sameStock": 0.0225
+   },
+   {
+    "s": "BPMC",
+    "buy": "2022-07-20",
+    "sell": "2022-08-09",
+    "positives": 3,
+    "net": 0.2163,
+    "avgStock": 0.062,
+    "sameStock": 0.0225
+   },
+   {
+    "s": "BPMC",
+    "buy": "2022-08-18",
+    "sell": "2022-09-08",
+    "positives": 3,
+    "net": 0.2575,
+    "avgStock": -0.0714,
+    "sameStock": 0.0225
+   },
+   {
+    "s": "BPMC",
+    "buy": "2022-09-12",
+    "sell": "2022-09-30",
+    "positives": 3,
+    "net": -0.1417,
+    "avgStock": -0.1372,
+    "sameStock": 0.0225
    },
    {
     "s": "MRSN",
@@ -14614,8 +14471,26 @@
     "sell": "2026-07-14",
     "positives": 3,
     "net": 0.1491,
-    "avgStock": 0.0258,
+    "avgStock": 0.026,
     "sameStock": 0.0862
+   },
+   {
+    "s": "TVTX",
+    "buy": "2022-01-07",
+    "sell": "2022-01-28",
+    "positives": 4,
+    "net": -0.1204,
+    "avgStock": -0.1051,
+    "sameStock": -0.0219
+   },
+   {
+    "s": "TVTX",
+    "buy": "2022-02-10",
+    "sell": "2022-03-03",
+    "positives": 4,
+    "net": -0.0537,
+    "avgStock": -0.0314,
+    "sameStock": -0.0219
    },
    {
     "s": "SGEN",
@@ -14632,7 +14507,7 @@
     "sell": "2023-09-26",
     "positives": 3,
     "net": 0.0357,
-    "avgStock": -0.0654,
+    "avgStock": -0.0655,
     "sameStock": 0.0242
    },
    {
@@ -14695,7 +14570,7 @@
     "sell": "2024-04-08",
     "positives": 3,
     "net": -0.2262,
-    "avgStock": 0.0182,
+    "avgStock": 0.0181,
     "sameStock": null
    },
    {
@@ -14706,33 +14581,6 @@
     "net": -0.0237,
     "avgStock": 0.0287,
     "sameStock": 0.058
-   },
-   {
-    "s": "ACLX",
-    "buy": "2022-07-18",
-    "sell": "2022-08-05",
-    "positives": 4,
-    "net": 0.1868,
-    "avgStock": 0.0932,
-    "sameStock": 0.0372
-   },
-   {
-    "s": "ACLX",
-    "buy": "2022-08-09",
-    "sell": "2022-08-29",
-    "positives": 4,
-    "net": -0.1427,
-    "avgStock": -0.0349,
-    "sameStock": 0.0372
-   },
-   {
-    "s": "ACLX",
-    "buy": "2023-02-08",
-    "sell": "2023-03-01",
-    "positives": 4,
-    "net": -0.1292,
-    "avgStock": -0.0447,
-    "sameStock": 0.0372
    },
    {
     "s": "CRBU",
@@ -14780,6 +14628,42 @@
     "sameStock": -0.0131
    },
    {
+    "s": "BCYC",
+    "buy": "2023-05-08",
+    "sell": "2023-05-26",
+    "positives": 3,
+    "net": 0.0884,
+    "avgStock": -0.0045,
+    "sameStock": -0.0156
+   },
+   {
+    "s": "ACLX",
+    "buy": "2022-07-18",
+    "sell": "2022-08-05",
+    "positives": 4,
+    "net": 0.1868,
+    "avgStock": 0.0932,
+    "sameStock": 0.0372
+   },
+   {
+    "s": "ACLX",
+    "buy": "2022-08-09",
+    "sell": "2022-08-29",
+    "positives": 4,
+    "net": -0.1427,
+    "avgStock": -0.0349,
+    "sameStock": 0.0372
+   },
+   {
+    "s": "ACLX",
+    "buy": "2023-02-08",
+    "sell": "2023-03-01",
+    "positives": 4,
+    "net": -0.1292,
+    "avgStock": -0.0447,
+    "sameStock": 0.0372
+   },
+   {
     "s": "HRMY",
     "buy": "2023-05-16",
     "sell": "2023-06-06",
@@ -14803,7 +14687,7 @@
     "sell": "2025-05-28",
     "positives": 3,
     "net": 0.0392,
-    "avgStock": 0.0435,
+    "avgStock": 0.0437,
     "sameStock": 0.0048
    },
    {
@@ -14902,7 +14786,7 @@
     "sell": "2024-07-05",
     "positives": 3,
     "net": 0.0152,
-    "avgStock": -0.0175,
+    "avgStock": -0.0173,
     "sameStock": -0.0329
    },
    {
@@ -14911,7 +14795,7 @@
     "sell": "2024-11-27",
     "positives": 3,
     "net": 0.1576,
-    "avgStock": 0.0122,
+    "avgStock": 0.0124,
     "sameStock": -0.0329
    },
    {
@@ -14958,51 +14842,6 @@
     "net": 0.0381,
     "avgStock": 0.067,
     "sameStock": 0.0122
-   },
-   {
-    "s": "RLAY",
-    "buy": "2026-03-17",
-    "sell": "2026-04-07",
-    "positives": 3,
-    "net": 0.332,
-    "avgStock": 0.0014,
-    "sameStock": 0.0167
-   },
-   {
-    "s": "RLAY",
-    "buy": "2026-05-05",
-    "sell": "2026-05-26",
-    "positives": 3,
-    "net": 0.0696,
-    "avgStock": 0.0168,
-    "sameStock": 0.0167
-   },
-   {
-    "s": "RLAY",
-    "buy": "2026-06-23",
-    "sell": "2026-07-14",
-    "positives": 3,
-    "net": 0.1383,
-    "avgStock": 0.0258,
-    "sameStock": 0.0167
-   },
-   {
-    "s": "RLAY",
-    "buy": "2026-07-16",
-    "sell": "2026-08-05",
-    "positives": 3,
-    "net": 0.0023,
-    "avgStock": 0.0229,
-    "sameStock": 0.0167
-   },
-   {
-    "s": "CPRX",
-    "buy": "2024-04-04",
-    "sell": "2024-04-24",
-    "positives": 3,
-    "net": -0.035,
-    "avgStock": -0.0492,
-    "sameStock": 0.0363
    },
    {
     "s": "ENGN",
@@ -15154,7 +14993,7 @@
     "sell": "2023-08-29",
     "positives": 3,
     "net": 0.031,
-    "avgStock": -0.0282,
+    "avgStock": -0.0281,
     "sameStock": 0.0109
    },
    {
@@ -15226,7 +15065,7 @@
     "sell": "2025-12-30",
     "positives": 3,
     "net": 0.072,
-    "avgStock": 0.0013,
+    "avgStock": 0.0016,
     "sameStock": 0.0292
    },
    {
@@ -15289,7 +15128,7 @@
     "sell": "2025-12-17",
     "positives": 3,
     "net": 0.0348,
-    "avgStock": 0.0119,
+    "avgStock": 0.0125,
     "sameStock": 0.0233
    },
    {
@@ -15298,7 +15137,7 @@
     "sell": "2026-01-12",
     "positives": 3,
     "net": 0.0242,
-    "avgStock": 0.0416,
+    "avgStock": 0.0419,
     "sameStock": 0.0233
    },
    {
@@ -15464,15 +15303,6 @@
     "sameStock": 0.0002
    },
    {
-    "s": "ZBH",
-    "buy": "2024-10-31",
-    "sell": "2024-11-20",
-    "positives": 3,
-    "net": -0.0119,
-    "avgStock": 0.0179,
-    "sameStock": -0.0046
-   },
-   {
     "s": "MRNA",
     "buy": "2022-03-28",
     "sell": "2022-04-18",
@@ -15496,7 +15326,7 @@
     "sell": "2024-06-25",
     "positives": 4,
     "net": -0.0121,
-    "avgStock": -0.0253,
+    "avgStock": -0.0251,
     "sameStock": -0.0302
    },
    {
@@ -15541,7 +15371,7 @@
     "sell": "2025-10-14",
     "positives": 3,
     "net": 0.0159,
-    "avgStock": 0.003,
+    "avgStock": 0.0048,
     "sameStock": 0.0374
    },
    {
@@ -15577,7 +15407,7 @@
     "sell": "2024-12-02",
     "positives": 3,
     "net": -0.2408,
-    "avgStock": 0.0089,
+    "avgStock": 0.0091,
     "sameStock": -0.0595
    },
    {
@@ -15586,7 +15416,7 @@
     "sell": "2025-02-20",
     "positives": 3,
     "net": -0.1928,
-    "avgStock": -0.0103,
+    "avgStock": -0.0088,
     "sameStock": -0.0595
    },
    {
@@ -15685,7 +15515,7 @@
     "sell": "2026-09-04",
     "positives": 3,
     "net": 0.0371,
-    "avgStock": -0.0156,
+    "avgStock": -0.0154,
     "sameStock": -0.0068
    },
    {
@@ -15696,87 +15526,6 @@
     "net": -0.1292,
     "avgStock": -0.047,
     "sameStock": -0.0068
-   },
-   {
-    "s": "ABOS",
-    "buy": "2024-01-04",
-    "sell": "2024-01-25",
-    "positives": 4,
-    "net": -0.1831,
-    "avgStock": 0.0024,
-    "sameStock": -0.1488
-   },
-   {
-    "s": "ANAB",
-    "buy": "2023-12-12",
-    "sell": "2024-01-03",
-    "positives": 3,
-    "net": 0.2654,
-    "avgStock": 0.0405,
-    "sameStock": -0.0151
-   },
-   {
-    "s": "ANAB",
-    "buy": "2024-01-05",
-    "sell": "2024-01-26",
-    "positives": 3,
-    "net": 0.0963,
-    "avgStock": 0.0117,
-    "sameStock": -0.0151
-   },
-   {
-    "s": "ANAB",
-    "buy": "2025-03-18",
-    "sell": "2025-04-07",
-    "positives": 4,
-    "net": 0.0855,
-    "avgStock": -0.138,
-    "sameStock": 0.0338
-   },
-   {
-    "s": "ANAB",
-    "buy": "2025-04-15",
-    "sell": "2025-05-06",
-    "positives": 4,
-    "net": 0.1211,
-    "avgStock": 0.0539,
-    "sameStock": 0.0338
-   },
-   {
-    "s": "ANAB",
-    "buy": "2025-05-08",
-    "sell": "2025-05-29",
-    "positives": 4,
-    "net": 0.1513,
-    "avgStock": 0.0394,
-    "sameStock": 0.0338
-   },
-   {
-    "s": "CNTA",
-    "buy": "2024-01-29",
-    "sell": "2024-02-16",
-    "positives": 3,
-    "net": 0.4267,
-    "avgStock": 0.0207,
-    "sameStock": -0.0194
-   },
-   {
-    "s": "CNTA",
-    "buy": "2024-04-01",
-    "sell": "2024-04-19",
-    "positives": 3,
-    "net": -0.0865,
-    "avgStock": -0.0791,
-    "sameStock": -0.0194
-   },
-   {
-    "s": "CNTA",
-    "buy": "2024-06-13",
-    "sell": "2024-07-05",
-    "positives": 3,
-    "net": -0.1125,
-    "avgStock": -0.0175,
-    "sameStock": 0.0519
    },
    {
     "s": "AARD",
@@ -15793,8 +15542,17 @@
     "sell": "2026-02-19",
     "positives": 3,
     "net": -0.0721,
-    "avgStock": -0.0076,
+    "avgStock": -0.0069,
     "sameStock": -0.0219
+   },
+   {
+    "s": "CPRX",
+    "buy": "2024-04-04",
+    "sell": "2024-04-24",
+    "positives": 3,
+    "net": -0.035,
+    "avgStock": -0.0492,
+    "sameStock": 0.0363
    },
    {
     "s": "NBIX",
@@ -15946,7 +15704,7 @@
     "sell": "2024-07-05",
     "positives": 3,
     "net": 0.1088,
-    "avgStock": -0.0175,
+    "avgStock": -0.0173,
     "sameStock": 0.0034
    },
    {
@@ -16018,7 +15776,7 @@
     "sell": "2026-02-23",
     "positives": 3,
     "net": 0.017,
-    "avgStock": 0.0019,
+    "avgStock": 0.0026,
     "sameStock": 0.0034
    },
    {
@@ -16054,7 +15812,7 @@
     "sell": "2026-07-14",
     "positives": 3,
     "net": -0.2842,
-    "avgStock": 0.0258,
+    "avgStock": 0.026,
     "sameStock": 0.0034
    },
    {
@@ -16081,7 +15839,7 @@
     "sell": "2025-12-12",
     "positives": 3,
     "net": 0.2114,
-    "avgStock": 0.0965,
+    "avgStock": 0.0971,
     "sameStock": -0.0008
    },
    {
@@ -16092,24 +15850,6 @@
     "net": -0.0644,
     "avgStock": 0.02,
     "sameStock": -0.0008
-   },
-   {
-    "s": "AVTX",
-    "buy": "2025-11-07",
-    "sell": "2025-11-28",
-    "positives": 3,
-    "net": 0.2314,
-    "avgStock": 0.0371,
-    "sameStock": 0.0197
-   },
-   {
-    "s": "AVTX",
-    "buy": "2025-12-02",
-    "sell": "2025-12-22",
-    "positives": 3,
-    "net": 0.1216,
-    "avgStock": 0.0264,
-    "sameStock": 0.0197
    },
    {
     "s": "NVCR",
@@ -16148,13 +15888,49 @@
     "sameStock": 0.009
    },
    {
-    "s": "VTGN",
-    "buy": "2023-09-07",
-    "sell": "2023-09-27",
-    "positives": 5,
-    "net": -0.1648,
-    "avgStock": -0.0493,
-    "sameStock": -0.0417
+    "s": "ANAB",
+    "buy": "2023-12-12",
+    "sell": "2024-01-03",
+    "positives": 3,
+    "net": 0.2654,
+    "avgStock": 0.0405,
+    "sameStock": -0.0151
+   },
+   {
+    "s": "ANAB",
+    "buy": "2024-01-05",
+    "sell": "2024-01-26",
+    "positives": 3,
+    "net": 0.0963,
+    "avgStock": 0.0117,
+    "sameStock": -0.0151
+   },
+   {
+    "s": "ANAB",
+    "buy": "2025-03-18",
+    "sell": "2025-04-07",
+    "positives": 4,
+    "net": 0.0855,
+    "avgStock": -0.138,
+    "sameStock": 0.0338
+   },
+   {
+    "s": "ANAB",
+    "buy": "2025-04-15",
+    "sell": "2025-05-06",
+    "positives": 4,
+    "net": 0.1211,
+    "avgStock": 0.0539,
+    "sameStock": 0.0338
+   },
+   {
+    "s": "ANAB",
+    "buy": "2025-05-08",
+    "sell": "2025-05-29",
+    "positives": 4,
+    "net": 0.1513,
+    "avgStock": 0.0395,
+    "sameStock": 0.0338
    },
    {
     "s": "EYPT",
@@ -16198,7 +15974,7 @@
     "sell": "2025-06-09",
     "positives": 3,
     "net": 0.4559,
-    "avgStock": 0.0295,
+    "avgStock": 0.0293,
     "sameStock": -0.0067
    },
    {
@@ -16225,8 +16001,17 @@
     "sell": "2025-10-27",
     "positives": 3,
     "net": -0.1215,
-    "avgStock": 0.0005,
+    "avgStock": 0.0023,
     "sameStock": -0.0067
+   },
+   {
+    "s": "ABOS",
+    "buy": "2024-01-04",
+    "sell": "2024-01-25",
+    "positives": 4,
+    "net": -0.1831,
+    "avgStock": 0.0024,
+    "sameStock": -0.1488
    },
    {
     "s": "MCRB",
@@ -16254,6 +16039,33 @@
     "net": -0.135,
     "avgStock": 0.0119,
     "sameStock": 0.163
+   },
+   {
+    "s": "VTGN",
+    "buy": "2023-09-07",
+    "sell": "2023-09-27",
+    "positives": 5,
+    "net": -0.1648,
+    "avgStock": -0.0493,
+    "sameStock": -0.0417
+   },
+   {
+    "s": "AVTX",
+    "buy": "2025-11-07",
+    "sell": "2025-11-28",
+    "positives": 3,
+    "net": 0.2314,
+    "avgStock": 0.0371,
+    "sameStock": 0.0197
+   },
+   {
+    "s": "AVTX",
+    "buy": "2025-12-02",
+    "sell": "2025-12-22",
+    "positives": 3,
+    "net": 0.1216,
+    "avgStock": 0.0269,
+    "sameStock": 0.0197
    },
    {
     "s": "AVBP",
@@ -16310,15 +16122,6 @@
     "sameStock": 0.0193
    },
    {
-    "s": "ASPI",
-    "buy": "2025-01-22",
-    "sell": "2025-02-11",
-    "positives": 3,
-    "net": -0.1125,
-    "avgStock": -0.0127,
-    "sameStock": -0.0159
-   },
-   {
     "s": "TARA",
     "buy": "2026-01-08",
     "sell": "2026-01-29",
@@ -16333,7 +16136,7 @@
     "sell": "2026-02-23",
     "positives": 3,
     "net": 0.0444,
-    "avgStock": 0.0019,
+    "avgStock": 0.0026,
     "sameStock": -0.0606
    },
    {
@@ -16477,7 +16280,7 @@
     "sell": "2024-07-08",
     "positives": 3,
     "net": -0.0905,
-    "avgStock": 0.0013,
+    "avgStock": 0.0016,
     "sameStock": -0.0252
    },
    {
@@ -16558,7 +16361,7 @@
     "sell": "2023-08-29",
     "positives": 3,
     "net": -0.1011,
-    "avgStock": -0.0282,
+    "avgStock": -0.0281,
     "sameStock": -0.0481
    },
    {
@@ -16630,7 +16433,7 @@
     "sell": "2026-06-29",
     "positives": 4,
     "net": 0.0525,
-    "avgStock": 0.039,
+    "avgStock": 0.0393,
     "sameStock": 0.0053
    },
    {
@@ -16643,48 +16446,12 @@
     "sameStock": null
    },
    {
-    "s": "VTNR",
-    "buy": "2022-05-03",
-    "sell": "2022-05-23",
-    "positives": 4,
-    "net": 0.4905,
-    "avgStock": -0.056,
-    "sameStock": -0.0159
-   },
-   {
-    "s": "VTNR",
-    "buy": "2022-06-15",
-    "sell": "2022-07-07",
-    "positives": 3,
-    "net": -0.1768,
-    "avgStock": 0.0359,
-    "sameStock": -0.0159
-   },
-   {
-    "s": "ZURA",
-    "buy": "2026-08-18",
-    "sell": "2026-09-08",
-    "positives": 3,
-    "net": 0.0827,
-    "avgStock": -0.0167,
-    "sameStock": 0.0072
-   },
-   {
-    "s": "ZURA",
-    "buy": "2026-09-10",
-    "sell": "2026-09-30",
-    "positives": 3,
-    "net": -0.2651,
-    "avgStock": -0.0333,
-    "sameStock": 0.0072
-   },
-   {
     "s": "RUM",
     "buy": "2025-12-03",
     "sell": "2025-12-23",
     "positives": 3,
     "net": -0.0367,
-    "avgStock": 0.0242,
+    "avgStock": 0.0246,
     "sameStock": 0.0185
    },
    {
@@ -16722,6 +16489,24 @@
     "net": 0.0068,
     "avgStock": 0.0791,
     "sameStock": null
+   },
+   {
+    "s": "ZURA",
+    "buy": "2026-08-18",
+    "sell": "2026-09-08",
+    "positives": 3,
+    "net": 0.0827,
+    "avgStock": -0.0164,
+    "sameStock": 0.0072
+   },
+   {
+    "s": "ZURA",
+    "buy": "2026-09-10",
+    "sell": "2026-09-30",
+    "positives": 3,
+    "net": -0.2651,
+    "avgStock": -0.0333,
+    "sameStock": 0.0072
    },
    {
     "s": "WOLF",
@@ -16765,7 +16550,7 @@
     "sell": "2025-10-02",
     "positives": 3,
     "net": -0.1763,
-    "avgStock": 0.0149,
+    "avgStock": 0.0153,
     "sameStock": -0.0252
    },
    {
@@ -16776,6 +16561,24 @@
     "net": 0.0642,
     "avgStock": 0.0362,
     "sameStock": 0.0314
+   },
+   {
+    "s": "VTNR",
+    "buy": "2022-05-03",
+    "sell": "2022-05-23",
+    "positives": 4,
+    "net": 0.4905,
+    "avgStock": -0.056,
+    "sameStock": -0.0159
+   },
+   {
+    "s": "VTNR",
+    "buy": "2022-06-15",
+    "sell": "2022-07-07",
+    "positives": 3,
+    "net": -0.1768,
+    "avgStock": 0.0359,
+    "sameStock": -0.0159
    },
    {
     "s": "DTM",
@@ -16801,7 +16604,7 @@
     "sell": "2023-08-28",
     "positives": 3,
     "net": -0.0698,
-    "avgStock": -0.0367,
+    "avgStock": -0.0366,
     "sameStock": -0.0031
    },
    {
@@ -16812,24 +16615,6 @@
     "net": -0.0421,
     "avgStock": -0.0684,
     "sameStock": 0.0027
-   },
-   {
-    "s": "UFPT",
-    "buy": "2025-06-11",
-    "sell": "2025-07-02",
-    "positives": 3,
-    "net": 0.0156,
-    "avgStock": 0.0205,
-    "sameStock": 0.0076
-   },
-   {
-    "s": "UFPT",
-    "buy": "2026-05-06",
-    "sell": "2026-05-27",
-    "positives": 4,
-    "net": 0.0377,
-    "avgStock": 0.0047,
-    "sameStock": 0.0076
    },
    {
     "s": "CF",
@@ -17003,6 +16788,33 @@
     "sameStock": -0.0069
    },
    {
+    "s": "CNTA",
+    "buy": "2024-01-29",
+    "sell": "2024-02-16",
+    "positives": 3,
+    "net": 0.4267,
+    "avgStock": 0.0207,
+    "sameStock": -0.0194
+   },
+   {
+    "s": "CNTA",
+    "buy": "2024-04-01",
+    "sell": "2024-04-19",
+    "positives": 3,
+    "net": -0.0865,
+    "avgStock": -0.0791,
+    "sameStock": -0.0194
+   },
+   {
+    "s": "CNTA",
+    "buy": "2024-06-13",
+    "sell": "2024-07-05",
+    "positives": 3,
+    "net": -0.1125,
+    "avgStock": -0.0173,
+    "sameStock": 0.0519
+   },
+   {
     "s": "FNF",
     "buy": "2022-11-21",
     "sell": "2022-12-12",
@@ -17044,7 +16856,7 @@
     "sell": "2026-08-26",
     "positives": 3,
     "net": 0.0553,
-    "avgStock": 0.0102,
+    "avgStock": 0.0103,
     "sameStock": -0.0537
    },
    {
@@ -17062,7 +16874,7 @@
     "sell": "2026-02-13",
     "positives": 3,
     "net": -0.2856,
-    "avgStock": -0.0217,
+    "avgStock": -0.0215,
     "sameStock": 0.0657
    },
    {
@@ -17084,24 +16896,6 @@
     "sameStock": -0.0184
    },
    {
-    "s": "KOPN",
-    "buy": "2026-05-13",
-    "sell": "2026-06-03",
-    "positives": 3,
-    "net": 0.1175,
-    "avgStock": 0.0129,
-    "sameStock": -0.0458
-   },
-   {
-    "s": "KOPN",
-    "buy": "2026-06-05",
-    "sell": "2026-06-26",
-    "positives": 3,
-    "net": -0.3797,
-    "avgStock": 0.0197,
-    "sameStock": -0.0458
-   },
-   {
     "s": "CRON",
     "buy": "2022-05-17",
     "sell": "2022-06-07",
@@ -17109,6 +16903,24 @@
     "net": -0.1448,
     "avgStock": 0.0458,
     "sameStock": -0.0382
+   },
+   {
+    "s": "UFPT",
+    "buy": "2025-06-11",
+    "sell": "2025-07-02",
+    "positives": 3,
+    "net": 0.0156,
+    "avgStock": 0.0205,
+    "sameStock": 0.0076
+   },
+   {
+    "s": "UFPT",
+    "buy": "2026-05-06",
+    "sell": "2026-05-27",
+    "positives": 4,
+    "net": 0.0377,
+    "avgStock": 0.0047,
+    "sameStock": 0.0076
    },
    {
     "s": "CABA",
@@ -17467,7 +17279,7 @@
     "sell": "2025-08-27",
     "positives": 4,
     "net": 0.13,
-    "avgStock": 0.0425,
+    "avgStock": 0.0437,
     "sameStock": 0.0534
    },
    {
@@ -17485,7 +17297,7 @@
     "sell": "2025-10-13",
     "positives": 3,
     "net": 0.2943,
-    "avgStock": -0.011,
+    "avgStock": -0.0092,
     "sameStock": 0.0534
    },
    {
@@ -17750,6 +17562,42 @@
     "sameStock": 0.0051
    },
    {
+    "s": "RLAY",
+    "buy": "2026-03-17",
+    "sell": "2026-04-07",
+    "positives": 3,
+    "net": 0.332,
+    "avgStock": 0.0014,
+    "sameStock": 0.0167
+   },
+   {
+    "s": "RLAY",
+    "buy": "2026-05-05",
+    "sell": "2026-05-26",
+    "positives": 3,
+    "net": 0.0696,
+    "avgStock": 0.0168,
+    "sameStock": 0.0167
+   },
+   {
+    "s": "RLAY",
+    "buy": "2026-06-23",
+    "sell": "2026-07-14",
+    "positives": 3,
+    "net": 0.1383,
+    "avgStock": 0.026,
+    "sameStock": 0.0167
+   },
+   {
+    "s": "RLAY",
+    "buy": "2026-07-16",
+    "sell": "2026-08-05",
+    "positives": 3,
+    "net": 0.0023,
+    "avgStock": 0.0229,
+    "sameStock": 0.0167
+   },
+   {
     "s": "SGMT",
     "buy": "2024-05-24",
     "sell": "2024-06-14",
@@ -17773,7 +17621,7 @@
     "sell": "2026-02-25",
     "positives": 3,
     "net": -0.0806,
-    "avgStock": 0.0037,
+    "avgStock": 0.004,
     "sameStock": -0.013
    },
    {
@@ -17894,13 +17742,22 @@
     "sameStock": 0.0046
    },
    {
-    "s": "LEU",
-    "buy": "2025-01-06",
-    "sell": "2025-01-28",
+    "s": "KOPN",
+    "buy": "2026-05-13",
+    "sell": "2026-06-03",
     "positives": 3,
-    "net": -0.0662,
-    "avgStock": -0.0006,
-    "sameStock": 0.0417
+    "net": 0.1175,
+    "avgStock": 0.0129,
+    "sameStock": -0.0458
+   },
+   {
+    "s": "KOPN",
+    "buy": "2026-06-05",
+    "sell": "2026-06-26",
+    "positives": 3,
+    "net": -0.3797,
+    "avgStock": 0.0197,
+    "sameStock": -0.0458
    },
    {
     "s": "LEU",
@@ -17909,7 +17766,7 @@
     "positives": 3,
     "net": 0.1115,
     "avgStock": 0.0154,
-    "sameStock": 0.0417
+    "sameStock": 0.0352
    },
    {
     "s": "LEU",
@@ -17917,8 +17774,8 @@
     "sell": "2025-10-09",
     "positives": 3,
     "net": 0.4193,
-    "avgStock": 0.0049,
-    "sameStock": 0.0417
+    "avgStock": 0.0066,
+    "sameStock": 0.0352
    },
    {
     "s": "LEU",
@@ -17927,7 +17784,7 @@
     "positives": 3,
     "net": -0.122,
     "avgStock": 0.0112,
-    "sameStock": 0.0417
+    "sameStock": 0.0352
    },
    {
     "s": "LEU",
@@ -17936,7 +17793,7 @@
     "positives": 3,
     "net": -0.1233,
     "avgStock": 0.0069,
-    "sameStock": 0.0417
+    "sameStock": 0.0352
    },
    {
     "s": "NAMS",
@@ -17953,7 +17810,7 @@
     "sell": "2025-02-07",
     "positives": 5,
     "net": -0.1485,
-    "avgStock": 0.0012,
+    "avgStock": 0.0026,
     "sameStock": 0.02
    },
    {
@@ -17989,7 +17846,7 @@
     "sell": "2025-09-09",
     "positives": 5,
     "net": 0.048,
-    "avgStock": 0.0234,
+    "avgStock": 0.0247,
     "sameStock": 0.02
    },
    {
@@ -17998,7 +17855,7 @@
     "sell": "2025-10-01",
     "positives": 4,
     "net": 0.0742,
-    "avgStock": 0.0262,
+    "avgStock": 0.0265,
     "sameStock": 0.02
    },
    {
@@ -18088,7 +17945,7 @@
     "sell": "2025-12-16",
     "positives": 3,
     "net": 1.1917,
-    "avgStock": 0.0391,
+    "avgStock": 0.0398,
     "sameStock": 0.0179
    },
    {
@@ -18106,7 +17963,7 @@
     "sell": "2026-02-26",
     "positives": 3,
     "net": -0.2389,
-    "avgStock": 0.026,
+    "avgStock": 0.0265,
     "sameStock": 0.0138
    },
    {
@@ -18124,7 +17981,7 @@
     "sell": "2026-02-10",
     "positives": 4,
     "net": -0.1396,
-    "avgStock": 0.0049,
+    "avgStock": 0.005,
     "sameStock": -0.0197
    },
    {
@@ -18340,7 +18197,7 @@
     "sell": "2026-09-03",
     "positives": 3,
     "net": -0.2333,
-    "avgStock": -0.0202,
+    "avgStock": -0.0199,
     "sameStock": -0.1263
    }
   ]
