@@ -3,7 +3,7 @@ import fs from 'node:fs';import path from 'node:path';import {pathToFileURL} fro
 import {captureJson} from '../capture-json.mjs';import {immutableRead} from '../paper-capture-wrapper.mjs';
 import {prepareInactiveV2Binding,runInactiveV2Capture,writeInactiveV2Result} from '../sec-v2-host-binding.mjs';
 export async function runInactiveV2Worker({file,sha256,historyFile,historySha256}){
- const raw=immutableRead(file,1048576);if(raw.hash!==sha256)throw Error('V2_WORKER_INPUT_PIN');const c=captureJson(raw.bytes.toString());
+ const raw=immutableRead(file,1048576);if(raw.hash!==sha256)throw Error('V2_WORKER_INPUT_PIN');const freeze=x=>{if(x&&typeof x==='object'){for(const v of Object.values(x))freeze(v);Object.freeze(x);}return x;};const c=freeze(captureJson(raw.bytes.toString()));
  const prepared=prepareInactiveV2Binding(c,{inputFile:file,inputSha256:sha256,historyFile,historySha256});
  // No ambient network even when a binding module is loaded. Services must be explicit.
  globalThis.fetch=async()=>{throw Error('INACTIVE_NETWORK_FORBIDDEN');};prepared.revalidate();

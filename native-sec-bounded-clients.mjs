@@ -23,3 +23,10 @@ export function reviewedNativeRunPublisher(options){const gate=gatedSdk(options,
  need(path.basename(file)==='native-sec-run.json','NATIVE_PUBLISH_NAME');const original=immutableRead(file,12*1024*1024),bundle=captureJson(original.bytes.toString());if(options.bundleVersion===2){const {validateLineageBundle}=await import('./native-sec-lineage-history.mjs');validateLineageBundle(bundle,{runId:expectedRunId,sourceSha:expectedSourceSha});}else{const {validateCompleteNativeBundle}=await import('./native-sec-parent-client.mjs');validateCompleteNativeBundle(bundle,{expectedRunId,expectedSourceSha});}
  const r=await gate.perform(options.bundleVersion===2?'native-sec-available-run-v2':'native-sec-complete-run-v1',[file],path.dirname(file),{retentionDays:7});need(immutableRead(file,12*1024*1024).hash===original.hash,'NATIVE_PUBLISH_MUTATED');need(Number.isSafeInteger(r.id)&&r.id>0&&Number.isInteger(r.size)&&r.size>0&&r.size<=16*1024*1024&&/^[a-f0-9]{64}$/.test(r.digest||''),'NATIVE_PUBLISH_ACK_UNKNOWN');return {artifactId:r.id,archiveSha256:r.digest,archiveBytes:r.size,fileSha256:original.hash,retentionDays:7,globalHistoryEstablished:false};
  }};}
+
+// Separate proposed V2 namespace/envelope. The reviewed V1 adapter is unchanged.
+export function reviewedV2ArtifactClient(options){const gate=gatedSdk(options,41);return {stats:gate.stats,async upload(x){
+ const original=immutableRead(x.file,16*1024*1024);need(original.hash===x.sha256&&original.bytes.equals(x.bytes)&&path.basename(x.file)==='checkpoint-'+String(x.sequence).padStart(3,'0')+'.enc'&&x.retentionDays===3,'V2_ARTIFACT_FILE_SCOPE');
+ const r=await gate.perform('paper-capture-v2-'+String(x.sequence).padStart(3,'0'),[x.file],path.dirname(x.file),{retentionDays:3});const after=immutableRead(x.file,16*1024*1024);need(after.hash===original.hash&&after.signature===original.signature,'V2_ARTIFACT_FILE_MUTATION');
+ return {success:true,artifactId:r.id,archiveSha256:r.digest,archiveBytes:r.size,fileSha256:original.hash,fileBytes:original.bytes.length,retentionDays:3};
+ }};}
