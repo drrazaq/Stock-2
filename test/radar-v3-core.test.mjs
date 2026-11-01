@@ -32,7 +32,7 @@ test('halal map: exclusion dominates, list never grants owner approval, rejectio
 });
 test('closest rule names its history verdict and what is missing; a rejected rule is never called approvable', () => {
   const c = closestRule(ctx.record, ctx.lab); assert.equal(c.rule, 'IG1'); assert.equal(c.history, 'REJECTED');
-  assert.ok(c.missing.some(x => /REJECTED/.test(x))); assert.ok(c.missing.some(x => /2 more trading days/.test(x)));
+  assert.ok(c.missing.some(x => /REJECTED/.test(x))); assert.ok(c.missing.every(x => !/more trading days/.test(x)), 'waiting cannot repair a rejected history test');
   assert.equal(closestRule({ 'IG5/close': { n: 60, days: 9, avg: -0.05 } }, {}), null);
 });
 test('silence reason picks the biggest code and its kind', () => { const t = topSilence({ UNDER_1_USD: 3, GAPPED_AT_OPEN: 5, ALERTED: 9 }); assert.equal(t.code, 'GAPPED_AT_OPEN'); assert.equal(t.kind, 'timing problem'); assert.equal(topSilence({}), null); });
@@ -45,7 +45,7 @@ test('midday: labelled panels, hard blocks shown as BLOCKED never as leads, one 
   assert.match(t, /- NEWSY \+4%.*HALAL UNKNOWN/); assert.match(t, /SEC 8-K contract/);
   assert.match(t, /BLOCKED by hard rules \(not leads\):.*BAD \(NOT HALAL/); assert.match(t, /DIL \(SEC danger filing: offering\)/); assert.match(t, /JUMP \(AVOID list/); assert.match(t, /PENNY \(under 1 USD\)/);
   assert.doesNotMatch(t, /- HOT /); assert.doesNotMatch(t, /- PENNY /); assert.doesNotMatch(t, /- BAD:/);
-  assert.match(t, /Closest: IG1.*Missing: its minute-bar history test \(REJECTED\)/); assert.match(t, /RUNR up to \+60%.*gapped up before the open/);
+  assert.match(t, /Closest: IG1.*Cannot be approved: its minute-bar history test is REJECTED/); assert.match(t,/More paper days cannot repair that verdict/); assert.match(t, /RUNR up to \+60%.*gapped up before the open/);
   assert.match(t, /Top reason for silence: gapped up before the open \(5, timing problem\)/);
   assert.doesNotMatch(t.split(NOT_APPROVED).join(''), /\bBUY\b/);   // the only BUY word is inside the label assert.doesNotMatch(t, /index fund/i);
   assert.deepEqual(r.rows.map(x => x.panel + x.sym), ['BGOOD', 'ANEWSY']); assert.equal(r.rows[0].px, 3.4);

@@ -1,3 +1,4 @@
+import {alertDeliveryCounts} from './watcher-delivery-counts.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
 import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
@@ -186,14 +187,15 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
     if (!approvedQuote.ok) { t.blocked = ['QUOTE_' + approvedQuote.reason]; flag(r.sym, 'quoteBlocked', 'approved alert withheld: ' + approvedQuote.reason + (approvedQuote.spreadPct !== undefined ? ' (' + (approvedQuote.spreadPct * 100).toFixed(1) + '% spread)' : '')); return; } }
   const risk = await secRisk(r.sym); if(risk.admissionBlocked){t.blocked=[risk.policyExcluded?'INSTRUMENT_POLICY_EXCLUDED':'INSTRUMENT_IDENTITY_UNKNOWN'];flag(r.sym,risk.policyExcluded?'instrumentExcluded':'instrumentUnknown','not admitted: '+risk.status);if(risk.sourceFailure){t.blocked.push('SEC_SOURCE_UNAVAILABLE');flag(r.sym,'secUnavailable','SEC source unavailable as well as instrument identity');}return;} if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
   if (risk.tags.length) { t.blocked = risk.tags; flag(r.sym, 'secBlocked', 'alert blocked: ' + risk.tags.join(', ')); return; }
-  t.early = early;
+  t.early = early; t.deliveryKind=early?'EARLY_PAPER':'RULE_QUALIFIED';t.deliveryState='UNCERTAIN';
   const ex = ok.sort((a, b) => ((PREC[b.rule + '/' + b.exit] || {}).avg || 0) - ((PREC[a.rule + '/' + a.exit] || {}).avg || 0))[0], pr = PREC[ex.rule + '/' + ex.exit], stop = R.orb ? extra.orL : R.pull ? Math.max(extra.stop * 0.995, r.price * 0.88) : r.price * 0.92, hist = !liveOnly && ex.results ? ex.results.newer : null;
-  if (!sendAlert({ early }, (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')); } catch (e) { return {}; } })())) return;   // recorded as an early paper alert (t.alerted), not sent: opportunities only
-  const delivered = await tg([(early ? 'EARLY WAVE ALERT [PAPER, NOT PROVEN] | only ' + pr.n + ' paper trades on ' + (pr.days || '?') + ' day(s). RESEARCH ONLY: NO BUY. This rule has not passed the promotion gate; track its entry, spread, stop and outcome in paper trading.' : 'IGNITION ALERT | FAST DAY TRADE, separate from the tested swing buys in ACTIONS'), r.sym + ' ' + pc(chg) + ' at ' + fmtM(clock()) + ' New York (' + kuwait(clock()) + ' Kuwait, ' + (rd < 1 ? 'live' : Math.round(rd) + ' min old') + ' price). Coverage: ' + mode,
+  if (!sendAlert({ early }, (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')); } catch (e) { return {}; } })())) {t.deliveryState='UNSENT';return;} // recorded research, no transport attempted
+  const message = [(early ? 'EARLY WAVE ALERT [PAPER, NOT PROVEN] | only ' + pr.n + ' paper trades on ' + (pr.days || '?') + ' day(s). RESEARCH ONLY: NO BUY. This rule has not passed the promotion gate; track its entry, spread, stop and outcome in paper trading.' : 'IGNITION ALERT | FAST DAY TRADE, separate from ACTIONS'), r.sym + ' ' + pc(chg) + ' at ' + fmtM(clock()) + ' New York (' + kuwait(clock()) + ' Kuwait, ' + (rd < 1 ? 'live' : Math.round(rd) + ' min old') + ' price). Coverage: ' + mode,
     'Price ' + r.price.toFixed(2) + (approvedQuote ? ' | live spread ' + (approvedQuote.spreadPct * 100).toFixed(2) + '%' : '') + ' | volume ' + (rv === null ? 'n/a' : rv.toFixed(1) + 'x a normal day (late figure)') + (M.float ? ' | float ' + (M.float / 1e6).toFixed(1) + 'M shares' : '') + (M.age !== null && M.age < 250 ? ' | traded only ' + M.age + ' sessions' : '') + ' | SEC: no share sale or delisting notice in 30 days',
     (early ? 'PAPER ENTRY REFERENCE ' + r.price.toFixed(2) + ' (not an order). PAPER STOP ' + stop.toFixed(2) + '. PAPER EXIT: ' + ex.exitName : 'BUY only up to ' + (r.price * 1.03).toFixed(2) + ' (3% above now; higher = skip). STOP ' + stop.toFixed(2) + '. EXIT: ' + ex.exitName) + ' (sell before 11 pm Kuwait at the latest).',
     'Rule: ' + R.name + '. ' + (hist ? 'History test: ' + Math.round(hist.win * 100) + '% won, average ' + pc(hist.avg) + ' (' + hist.n + ' trades). ' : 'Forward-tested only. ') + 'Live paper: ' + pr.n + ' trades, ' + pc(pr.avg) + ' (' + pc(pr.stress) + ' at 1.5x costs).',
-    'Check ZAD first. 1,000 USD at most. Not financial advice, not a halal ruling.'].join('\n'));
+    'Check ZAD first. 1,000 USD at most. Not financial advice, not a halal ruling.'].join('\n');
+  const delivered = await tg(message);t.deliveryState=delivered?'ACKNOWLEDGED':MESSAGE_STATE.state(message);
   if (delivered) { alerts++; if (early) earlyAlerts++; t.alerted = true; flag(r.sym, 'alerted', 'DELIVERED (' + R.id + (early ? ', early paper' : '') + ')'); }
   else { t.deliveryFailed = true; flag(r.sym, 'deliveryFailed', 'Telegram did not acknowledge message'); }
 }
@@ -300,7 +302,7 @@ async function radarSnap(m, scanned, live) {
   const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catText) cat[r.sym] = r.catText;
   { let nq = 0; for (const s of [...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)]) { if (cat[s] || !sec[s] || !sec[s].known || sec[s].tags.length) continue;   // the radar's own catalyst check for names it may list
       const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = classifyCatalyst({ sec: EA.S.sec[s], news, nowMs: Date.now() }).text; } }
-  fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, mkt: RADAR.mkt, tally: tl, sec, cat,
+  fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, alertCounts:alertDeliveryCounts(triggers,alerts), mkt: RADAR.mkt, tally: tl, sec, cat,
     moverCount: ms.length, movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
   await sendRadarOnce();
 }
@@ -424,7 +426,7 @@ const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(
   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
 if (!session.complete) console.error('INCOMPLETE WATCHER SESSION: observed ' + session.observedMinutes + '/' + session.expectedMinutes + ' market minutes (rate ' + session.rate + '); do not interpret missed-runner counts or daily coverage as complete.');
-const runSnapshot = {configuredWindow:{open:570,endExclusive:SESSION.close},collectionVersion:"WATCHER_CONTEXT_V2", inheritedFrom:RESUME?.runId||null,inheritedMinutes:RESUME?.beat.length||0,segment:env.IG_SEGMENT||null, version: IG_VERSION, day, runId: RUN_ID, sourceSha: CODE_SHA, processStart: PROC_START, mode, src, note, loops, coverage, alerts, triggers, missed, tally, heartbeat: beat,messageDelivery:MESSAGE_STATE.report() };
+const runSnapshot = {configuredWindow:{open:570,endExclusive:SESSION.close},collectionVersion:"WATCHER_CONTEXT_V2", inheritedFrom:RESUME?.runId||null,inheritedMinutes:RESUME?.beat.length||0,segment:env.IG_SEGMENT||null, version: IG_VERSION, day, runId: RUN_ID, sourceSha: CODE_SHA, processStart: PROC_START, mode, src, note, loops, coverage, alerts, alertCounts:alertDeliveryCounts(triggers,alerts), triggers, missed, tally, heartbeat: beat,messageDelivery:MESSAGE_STATE.report() };
 // Archive every attempt before choosing the canonical day. A queued late duplicate must
 // never destroy the opening session, its shadow stream, or its delivery scorecard.
 const archiveDir = 'data/ignition-runs/' + day;

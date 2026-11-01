@@ -61,3 +61,8 @@ test('[CURRENT POLICY] the two danger-filing SELL reasons quote the frozen Squad
   assert.match(s, /such stocks lagged the average stock by about 12-16% over the next 60 sessions in 5 years of tests/);
   assert.match(s, /delisting \/ listing-standard notice \(8-K 3\.01/);
 });
+
+test('[CURRENT POLICY] stronger stored switch verdict remains visible without changing its gate or calling it newly proven',async()=>{
+ const rb=structuredClone(SYN.rebuyBelowBar);rb.results['STRETCH/LOWER10'].verdict='SWITCH WINS';const S=await loadScan({files:{'data/settings.json':{},'data/rebuy.json':rb,'data/agent-a-lab.json':{verdicts:{'A-SWR1/STRETCH/LOWER10':'PROVEN','A-SWR1/SPIKE/LOWER10':'NOT PROVEN'}}}});
+ assert.equal(S.fn('swTier')(rb.results['STRETCH/LOWER10']),'proven');assert.match(S.fn('rebuyText')(),/stored switch-study verdict SWITCH WINS \(not independently reproduced here\)/);
+});

@@ -1,3 +1,4 @@
+import {alertDeliveryLines} from './watcher-delivery-counts.mjs';
 import {resolveZad} from './zad-compliance.mjs';
 // DAILY OPPORTUNITY RADAR (V3.0, owner approved 28 Oct 2026: "do 1, 2, 3"). Pure functions, no network, no files; opportunity-radar.mjs
 // reads and writes. Research and routing only: it adds NO buy rule, lowers NO gate and places NO order.
@@ -72,7 +73,7 @@ export function topSilence(tally = {}) {
 export function closestRule(record = {}, lab = {}) {
   const c = Object.entries(record).filter(([k, r]) => /\/close$/.test(k) && r && r.n > 0 && r.avg > 0).sort((a, b) => b[1].n * b[1].avg - a[1].n * a[1].avg)[0];
   if (!c) return null; const [k, r] = c, rule = k.split('/')[0], hv = ((lab[k] || {}).verdict) || 'not tested', miss = [];
-  if (hv !== 'PROMISING') miss.push('its minute-bar history test (' + hv + ')'); if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
+  if (hv !== 'PROMISING') miss.push('its minute-bar history test (' + hv + ')'); if (hv === 'REJECTED') return {rule,n:r.n,days:r.days||0,avg:r.avg,stress:r.stress,history:hv,missing:miss}; if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
   if (!(r.stress > 0)) miss.push('a profit at the stress cost');
   return { rule, n: r.n, days: r.days || 0, avg: r.avg, stress: r.stress, history: hv, missing: miss };
 }
@@ -123,8 +124,8 @@ export function buildMidday(snap, ctx0 = {}) {
   if (blocked.length) text.push('BLOCKED by hard rules (not leads): ' + blocked.slice(0, 6).join('; ') + (blocked.length > 6 ? '; +' + (blocked.length - 6) + ' more' : '') + '.');
   // C
   const cr = closestRule(ctx.record, ctx.lab);
-  text.push('', 'C. SIGNAL DELIVERY HISTORY: ' + (Number.isInteger(snap.alerts)&&snap.alerts>=0?snap.alerts:'unknown') + ' watcher messages reported today. This may include early paper alerts; cached counts are not current purchase or ZAD approval.');
-  if (!(snap.alerts > 0) && cr) text.push('  Closest: ' + cr.rule + ' (' + cr.n + ' paper trades on ' + cr.days + ' days, ' + pct(cr.avg, 1) + ' a trade). Missing: ' + cr.missing.join('; ') + '.');
+  text.push('', 'C. SIGNAL DELIVERY HISTORY: ' + (Number.isInteger(snap.alerts)&&snap.alerts>=0?snap.alerts:'unknown') + ' watcher messages reported today. Cached counts are not current purchase or ZAD approval.', ...alertDeliveryLines(snap));
+  if (!(snap.alerts > 0) && cr) text.push('  Closest: ' + cr.rule + ' (' + cr.n + ' paper trades on ' + cr.days + ' days, ' + pct(cr.avg, 1) + ' a trade). ' + (cr.history==='REJECTED'?'Cannot be approved: its minute-bar history test is REJECTED. More paper days cannot repair that verdict; a new version needs a separately registered test.':'Missing: '+cr.missing.join('; ')+'.'));
   // D
   text.push('', 'D. RUNNERS SO FAR (retrospective, not buys)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers));
   const ts = topSilence(snap.tally);
@@ -163,7 +164,7 @@ export function buildClose(day, live, ledger = [], ctx = {}) {
       text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
     text.push('', 'D. RUNNERS WE MISSED TODAY (retrospective, not buys):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true));
     const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
-    text.push('', 'C. SIGNAL DELIVERY HISTORY today: ' + (Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown') + '. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.');
+    text.push('', 'C. SIGNAL DELIVERY HISTORY today: ' + (Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown') + '. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.', ...alertDeliveryLines(live));
   }
   const sb = scoreboard(ledger), P = sb.panels;
   text.push('', 'RADAR SCORECARD (' + sb.sessions + ' session' + (sb.sessions === 1 ? '' : 's') + '; verdict after 10):');
