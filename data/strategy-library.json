@@ -32678,6 +32678,76 @@
    "source": "https://arxiv.org/abs/2602.06198 (Zhao 2026, 13,534 purchases 2018-2024)",
    "explain": "Recorded so it is not re-proposed: the edge is a 1-3 day disclosure reaction, the short-hold lane that is closed on daily data (CLAUDE.md 5).",
    "data": "has data (SEC Form 4)"
+  },
+  {
+   "id": "LDX-HALF63",
+   "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
+   "name": "LEADER DIP (+20% limit, 126 sessions) + halfway check: still under the buy price after 63 sessions -> sell at the next open",
+   "explain": "RULE: LEADER DIP (+20% limit, 126 sessions) + halfway check: still under the buy price after 63 sessions -> sell at the next open. Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
+   "status": "pre-registered 2026-11-01 (Agent A); 5-year one-shot pending",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "hold": 126,
+   "kind": "exit",
+   "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal."
+  },
+  {
+   "id": "LDX-T200",
+   "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
+   "name": "LEADER DIP (+20% limit, 126 sessions) + trend break: first close under the stock's 200-day average -> sell at the next open",
+   "explain": "RULE: LEADER DIP (+20% limit, 126 sessions) + trend break: first close under the stock's 200-day average -> sell at the next open. Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
+   "status": "pre-registered 2026-11-01 (Agent A); 5-year one-shot pending",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "hold": 126,
+   "kind": "exit",
+   "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal."
+  },
+  {
+   "id": "LDX-TIME189",
+   "family": "LEADER DIP exits on the live lane (Agent A, A-LDX1)",
+   "name": "LEADER DIP with a 189-session time exit instead of 126 (the +20% limit kept until then)",
+   "explain": "RULE: LEADER DIP with a 189-session time exit instead of 126 (the +20% limit kept until then). Common (agent-a-ldx-core.mjs header, pre-registered 1 Nov 2026 before any run): the SQ11-PB12 trade list (data/squad11-lab.json), buy the next open; LIVE = the owner's lane exit (+20% sell limit, else the close of session 126, no stop), NOT re-tested; the variant applied to the SAME trades. Cost 0.8% (1.2% stress); halves by signal date (before / from 2024-01-01); run once, first complete result frozen in data/agent-a-ldx-lab.json firstRun. ADOPT only if in BOTH halves: it changed 10+ trades, the same-money average change over all trades > 0, the per-year return of capital not below LIVE, and the 3-slot 3,000 USD account ends above the LIVE account at 0.8% and at 1.2%.",
+   "status": "pre-registered 2026-11-01 (Agent A); 5-year one-shot pending",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "hold": 189,
+   "kind": "exit",
+   "libraryCheck": "Library check 1 Nov 2026: A-TGT-* (targets / 10% trail / 10% stop on PB12: not adopted), SQ20-XH/XA-*-PB12 (sell on a big up day: not adopted), SQ3-CUTRUN (rejected), SQ14-PB12P5, SQ18-PB12-*: none is a halfway check, a 200-day trend-break exit or a 189-session time exit on the live PB12 +20% lane.",
+   "note": "Pre-registered 2026-11-01 BEFORE any run (agent-a-ldx-core.mjs = the exact rule; one version). Run once by agent-a-ldx-lab.mjs; an exit question on the owner's live lane, never a buy signal."
+  },
+  {
+   "id": "A-TP1",
+   "family": "Market timing (Agent A web scout 1 Nov 2026)",
+   "name": "Momentum turning points: hold SPY/SPUS on the 50/50 blend of the 12-month and 1-month excess-return signals, else cash",
+   "explain": "RULE (written before any test): at each month end, slow = sign of SPY 12-month excess return, fast = sign of the 1-month excess return; blended signal = 0.5 slow + 0.5 fast (Bull +1, Correction/Rebound 0, Bear -1). Long-only version: hold SPY (SPUS for the owner) for the next month when the blend >= 0, else cash (T-bill). Cost 0.1% a switch (ETF). Judged vs buy-and-hold SPY per half (before / from 2024): return, max drawdown, Sharpe; must not lower return per year in both halves to be useful as a core-timing overlay.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "kind": "timing",
+   "sources": [
+    "https://www.cxoadvisory.com/?p=33354",
+    "https://doi.org/10.1016/j.jfineco.2021.04.020"
+   ],
+   "data": "SPY daily closes and T-bill rate (system has SPY in the study cache; T-bill from FRED, free)",
+   "note": "Garg, Goulding, Harvey and Mazzoleni (2021, JFE), out-of-sample 1969-2018 on the US market: gross Sharpe 0.51 for the equal blend vs 0.38 buy-and-hold, gain mostly from smaller drawdowns; gross of costs. Library check: ANOM-TSMOM (12-month time-series momentum on stocks: rejected) and A-RG1 (regime gate on rules: not proven) are different (single-speed, or a gate on stock rules). Owner's monthly core (SPUS + IAUM) is his decision: this would be information only unless it passes."
+  },
+  {
+   "id": "A-ANCH1",
+   "family": "Earnings timing (Agent A web scout 1 Nov 2026)",
+   "name": "Good earnings surprise while the stock is near its 52-week high (anchoring): buy the session after the reaction, hold 60",
+   "explain": "RULE (written before any test): a report whose SUE (actual minus consensus over the close before the report) is in the top 30% of the previous 63 sessions' liquid reports AND whose close before the report is within 5% of its 52-week high; reaction session timed from the SEC 8-K Item 2.02 acceptance time when the calendar has no time (SQ28-TIMING rule); buy the open after the reaction session, hold 60 sessions. Full gates (CLAUDE.md section 4).",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "registered": "2026-11-01",
+   "kind": "entry",
+   "sources": [
+    "https://www.jbs.cam.ac.uk/2017/does-anchoring-impede-investors-interpretation-of-earnings-news/"
+   ],
+   "data": "Nasdaq earnings calendar (a-cache), SEC 8-K Item 2.02 times (anomaly-cache/subs202.json after the 1 Nov timing audit), prices (study cache): all in the system",
+   "note": "George, Hwang and Li (anchoring on the 52-week high slows the reaction to good news near the high). Caution found the same day: Subrahmanyam (2025, UCLA) finds earnings drift NOT significant once microcaps are removed (t 1.43, 2001-2024), and Martineau (2022) finds it gone in large stocks after 2006; ANOM-SUE was NOT PROVEN. Queue after the ANOM-SUE timing audit result."
   }
  ]
 }

@@ -19,6 +19,7 @@ export const yardMean = (v, minN = 50) => v.length >= minN ? v.reduce((a, b) => 
 // ---- the corrected-run entry (written next to the frozen firstRun; first-run.mjs effectiveRuns reads it) ----
 export const AUDIT = {
   'AUD-1': 'The average-stock yardstick (and the same-stock-other-days yardstick) dropped every stock that gained +300% or more over the window, while the rule\'s own trades were not capped: the yardstick was lower than the real average stock. Corrected: every gross return, the rule\'s and the yardstick\'s, capped at +300% the same way (winsorised, nothing dropped). Same window, entries, exits and costs as the frozen run.',
+  'SQ28-TIMING': 'Earnings reports with no time in the Nasdaq calendar were taken as after-the-close, so before-the-open reports were judged one session late (found by Squad 28, 27 Oct 2026). Corrected: those reports are timed from their own SEC 8-K Item 2.02 acceptance time (before 16:00 New York -> that session; 16:00 or later -> the next session); no 8-K within 3 days -> the calendar rule.',
   'AUD-2': 'ANOM-SUESURGE only: the top-30% revenue-surprise cut-off also counted surprises from SEC filings made after the trade was bought (look-ahead in the threshold). Corrected: only filings public by the entry session count.',
 };
 const brief = (h) => h && h.n ? { n: h.n, days: h.days, blocks: h.blocks, avg: h.avg, avgStress: h.avgStress, ctrl: h.ctrl, edge: h.edge, vsOwn: h.vsOwn, noTop2: h.noTop2, tBlock: h.tBlock, best: h.best } : { n: 0 };
