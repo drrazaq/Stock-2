@@ -6,8 +6,8 @@ import ast, collections, difflib, hashlib, json, re, subprocess, sys, tempfile, 
 ROOT=Path(sys.argv[1] if len(sys.argv)>1 else '.').resolve()
 AUDIT='5bcf4d2933c1d77b10b7c12489e2cfbb624387d9'
 BASE='f6a9b1668d0591cf24a734034949b96b241fe35b'
-LOCAL='d3c1ee58a2785ece01838fa06b81900d01970499'
-PUBLIC='d3c1ee58a2785ece01838fa06b81900d01970499'
+LOCAL='e17d4181e00482eb88b412cc83499d2874ad1dde'
+PUBLIC='e17d4181e00482eb88b412cc83499d2874ad1dde'
 OUT=ROOT/'docs/validation/history03-source-anchor-reconciliation.json'
 def show(commit,path):
  return subprocess.check_output(['git','show',commit+':'+path],cwd=ROOT,env={**os.environ,'GIT_NO_LAZY_FETCH':'1','GIT_TERMINAL_PROMPT':'0'})
@@ -21,7 +21,8 @@ groups=[('W04 W03 A01 D02 D03 D01 B04 E01','test/history03-claims.test.mjs'),
  ('W01 W02 W15 A02 D05 W06 A03 W16 D04 A09 B06 W11 D12 B07 B08 W12 E02 D14 E04 A08 B10 B11 B14 D13 W13','test/history03-attribution.test.mjs')]
 tested={k:f for ids,f in groups for k in ids.split()}
 tested['X02']='tests/news-delivery.test.mjs'
-tested['W05']='docs/history-03/proposal/residual-scan-regressions.mjs'
+tested['W05']='test/history03-source-anchors.test.mjs'
+tested.update({k:'test/history03-source-anchors.test.mjs' for k in ['W09','A12','D07']})
 tested['A10']='tests/incident-reporting.test.mjs'
 prior=set('A07 A11 A13 S01 S04 S05 S06 W10 W14 X05 X06 B20 B21 B22 B23 B24 B25 B26 B27 B28 B29 B30 B31 B32 B33 B34 C10 C11 C12 D10 D11 D20 E10'.split())
 policy={'A04':'P2','X01':'P1','X04':'P1','C04':'P1','E03':'P1','B02':'P1','C01':'P1','B03':'P2','D09':'P2','D06':'P4','B13':'STOP_DEFAULT'}
@@ -56,10 +57,8 @@ for x in claims:
  assert anchors,(key,raw)
  state='CORRECTION_REGRESSION_COVERED' if key in tested else 'OWNER_POLICY_TODO' if key in policy else 'PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED' if key in prior else 'RESIDUAL_SOURCE_REVIEW_REQUIRED'
  if key=='A06':state='ACCEPTED_BLOCK_REASON_WITH_UNQUANTIFIED_RECORD'
- if key in ['W09','A12','D07']:state='UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF'
  record={'id':key,'state':state,'anchors':anchors,'acceptanceClosed':False}
  if key in tested:record['regressionFile']=tested[key]
- if key in ['W09','A12','D07']:record['preparedProposal']='docs/history-03/proposal/residual-scan.patch'
  if key in policy:record['pendingPolicy']=policy[key]
  if key=='D01':record['erratum']='ERRATA-01: wording-only; original gate allegation superseded; P3 remains open'
  if key=='W01':record['pendingPolicy']='CURRENT_PLAN_CONFIRMATION'

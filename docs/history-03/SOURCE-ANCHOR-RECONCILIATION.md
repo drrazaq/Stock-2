@@ -1,6 +1,6 @@
 # HISTORY-03 source-anchor reconciliation
 
-Source checkpoint: `d3c1ee58a2785ece01838fa06b81900d01970499`, preserving `2e466c58` and its four completed correction batches. Original audit/harness: `5bcf4d2933c1d77b10b7c12489e2cfbb624387d9`. No original catalogue, frozen result or ERRATA-01 byte was rewritten.
+Source checkpoint: `e17d4181e00482eb88b412cc83499d2874ad1dde`, preserving `2e466c58` and its four completed correction batches. Original audit/harness: `5bcf4d2933c1d77b10b7c12489e2cfbb624387d9`. No original catalogue, frozen result or ERRATA-01 byte was rewritten.
 
 ## Completed source pass
 
@@ -11,15 +11,14 @@ Both exact pinned extractors were independently rerun on the audit's original so
 | Source | Narrow candidates | Broad candidates |
 |---|---:|---:|
 | Production audit base `f6a9b166` | 914 | 1,212 |
-| Corrected development `d3c1ee58` | 902 | 1,232 |
+| Corrected development `e17d4181` | 897 | 1,232 |
 
-The broad baseline reproduces the original 1,212 count. File+literal occurrence matching finds 1,110 unchanged broad candidates, 102 old occurrences absent and 122 new. Qualifications can increase this lexical count: these are **not defect, strategy, trade or acceptance counts**. The original extractors truncate captured literals; a prefix match does not establish complete message correctness. Current semantic catalogue classification and authenticated market-data reproduction remain distinct from this source-location pass.
+The broad baseline reproduces the original 1,212 count. File+literal occurrence matching finds 1,103 unchanged broad candidates, 109 old occurrences absent and 129 new. Qualifications can increase this lexical count: these are **not defect, strategy, trade or acceptance counts**. The original extractors truncate captured literals; a prefix match does not establish complete message correctness. Current semantic catalogue classification and authenticated market-data reproduction remain distinct from this source-location pass.
 
 | Disposition | Records | Meaning |
 |---|---:|---|
-| Correction/current qualifier covered by linked regressions | 52 | Includes inherited A10 fixes and pre-existing W05 qualification; not 52 new changes or fully authenticated studies. |
+| Correction/current qualifier covered by linked regressions | 55 | Includes inherited A10 fixes and pre-existing W05 qualification; not 52 new changes or fully authenticated studies. |
 | Owner-policy TODO | 11 | Claim IDs affected by the existing six decision topics; no policy adopted. |
-| Unapplied correction pending scan handoff | 3 | W09, A12, D07; exact tested proposal below, not an integrated capability. |
 | Accurate block reason with unquantified record | 1 | A06: limited sample/window detail does not justify bypassing the block. |
 | Prior audit acceptable disposition preserved | 33 | No new adverse finding or claim of a newly executed empirical study. |
 
@@ -27,22 +26,25 @@ The broad baseline reproduces the original 1,212 count. File+literal occurrence 
 
 The actual midday radar footer still printed `Approved: <legacy alerts>` after the corrected delivery panel. A synthetic actual-caller regression failed before repair. `d3c1ee58` removes that misleading footer label without changing counters, historical ledgers, scorecard formulas or gates. The actual close caller also has an explicit non-promotion regression (X03/B12). The focused set passes **39 cases, six policy TODO**, zero failures. ERRATA-01 still controls D01; the original gate remains.
 
-## Remaining scan corrections, prepared without competing ownership
+## Integrated scan corrections after explicit ownership handoff
 
-The [unapplied one-file patch](proposal/residual-scan.patch), [manifest](proposal/manifest.json) and [seven desired-behavior tests](proposal/residual-scan-regressions.mjs) are a finite handoff for Claude's isolated earnings-holiday work. Active `scan.mjs` remains SHA256 `73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7`.
+Claude's `claude/earnings-holiday` handoff at `979bcdf42205d1910a25477fa464f7ea7007b3d0` explicitly delegates application to Codex and leaves `scan.mjs` unchanged on her docs-only branch. After verifying patch SHA256 `608e01e97ab2efcd1cb82ecf240e0e19ccb489bbb573f68c1851e468f452fb07`, Codex combined it with the previously tested HISTORY patch in a disposable checkout, then integrated only the verified hunks and two test files.
 
-| Anchor / functions | Confirmed issue | Prepared correction |
-|---|---|---|
-| W09 — `fastText` | Says only history-passed rules send live alerts despite labelled early paper alerts. | Distinguish classes; preserve alert rules and promotion-policy TODO. |
-| A12 — `scoreboardText` | Unexplained `other` status bucket. | `other recorded status (not a pass)`; counts unchanged. |
-| D07 — `planCands`, `gateVerdict`, library command | Short-record FADE exclusion reads as validated future underperformance; historical library text says not wired. | Qualify evidence and display current wiring separately, preserving exclusions, thresholds and original library status. Different source-record displays have different populations/bars. |
-| Supplemental registry provenance — `experimentRows`, `experimentsText` | Zero attempts become one; invalid counts are not distinguished; incomplete estimates become a total-experiment/false-pass denominator. | Preserve zero, mark invalid counts UNKNOWN, qualify estimates and remove the unsupported expected false-pass count. Strategy luck bars unchanged. |
+[Current source/test hashes and evidence](../validation/history03-scan-integration.json) identify the combined code. The [residual patch](proposal/residual-scan.patch) and [manifest](proposal/manifest.json) preserve the earlier isolated before/after evidence; it is now integrated in development, not approved for production. No financial/data/workflow file changed.
 
-W05's HELP qualification was independently confirmed with synthetic output. A10's `liveConclusions` inherits corrected display verdicts: signal marks/rounded-zero negative-stress rows do not become WORKING; its existing actual-caller regression passes. A04 remains tied to P2: focus is not evidence/compliance approval, and a minimum legacy live record is not the full proof standard. No policy is adopted.
+| Anchor / functions | Correction now integrated |
+|---|---|
+| W09 — `fastText` | Distinguishes history-passed morning lists from labelled early paper alerts. Alert rules and promotion-policy TODO stay unchanged. |
+| A12 — `scoreboardText` | Explains `other recorded status (not a pass)`; category counts unchanged. |
+| D07 — `planCands`, `gateVerdict`, library command | Qualifies the short-record FADE exclusion and explains current wiring without changing exclusions, thresholds or the original historical library status. Different source-record displays retain their distinct populations/bars. |
+| Supplemental registry provenance — `experimentRows`, `experimentsText` | Preserves zero; treats invalid/fractional counts as UNKNOWN; qualifies incomplete estimates and removes the unsupported expected false-pass count. No strategy luck bar changed. |
+| MARKET-03 calendar — `peadReactsOn` and actual EARNINGS DRIFT loop | Uses the existing exchange calendar rather than weekday-only arithmetic. BMO/AMC/unknown timing semantics are retained; holiday/closed-day reaction dates are corrected. No rule threshold, stop, hold or verdict changed. |
 
-Final proposal tests: **one control PASS / six FAIL before; seven PASS after**. Eight affected caller test files: **80 PASS** on the proposed tree. All records/services are synthetic. No historical data/library file is edited. Desired-behavior proposal tests stay outside the active passing suite until integration; none requires a bug to persist.
+The proposed holiday helper initially threw `RangeError` for full-shape invalid months, a gap its supplied format tests missed. The integrated helper rejects impossible dates before calendar arithmetic, with additional invalid-month/day regressions. Its ordinary-day equivalence regression over 2026–2027 passes. The broader MARKET/CATALYST package's similar **separate** date helper is not integrated or fixed here; its independent findings still apply.
 
-Ownership coordination is published on PR #1. Next action: obtain Claude's exact earnings-holiday head/patch and scan hunk handoff, combine bounded hunks in a disposable current checkout, re-pin and rerun actual callers, then integrate compatible changes. Do not overwrite newer work or alter the exact approved mentor patch. This is an implementation/ownership dependency, not a request for repeated owner permission.
+Final evidence: earlier isolated HISTORY proposal **one control PASS/six FAIL before; seven PASS after**; combined focused **13 PASS**; **64 scan-dependent test files, 574 PASS/six policy TODO, zero failures** locally. Both new test files are registered in the normal suite. All records/services are synthetic. No test requires a known bug. Original code/CLAUDE reports and independent execution are separately attributed in the evidence.
+
+W05's existing HELP qualification was reproduced. A10's `liveConclusions` inherits corrected display verdicts, so signal marks/rounded-zero negative-stress rows do not become WORKING. A04 remains tied to P2: focus is not evidence/compliance approval, and minimum legacy live records are not the full proof standard. No owner policy was adopted. Next independent review should target these exact integrated hunks; the separate approved mentor patch must remain unchanged.
 
 ## Reproduction and acceptance
 

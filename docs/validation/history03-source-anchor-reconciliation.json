@@ -2,8 +2,8 @@
   "kind": "HISTORY03_SOURCE_ANCHOR_RECONCILIATION_V1",
   "auditCommit": "5bcf4d2933c1d77b10b7c12489e2cfbb624387d9",
   "productionSource": "f6a9b1668d0591cf24a734034949b96b241fe35b",
-  "developmentSource": "d3c1ee58a2785ece01838fa06b81900d01970499",
-  "developmentTree": "6c182cf22376ab47925a0f86e92243ac49506530",
+  "developmentSource": "e17d4181e00482eb88b412cc83499d2874ad1dde",
+  "developmentTree": "a7987590df915b4ba32505720c35d632c4c4eeb0",
   "note": "100 audit records relocated, not 100 accepted claims. Line mapping locates source; it is not semantic proof or raw-data authentication. No private data files are read or copied. Original catalogue and erratum remain immutable. Existing source corrections are preserved; this report changes no runtime or policy.",
   "extractors": {
     "extract-claims.py": "c40b219d491f68beea9c379c1d6569cf762174c5a2a5264d84658bb4aaad6ce9",
@@ -23,31 +23,30 @@
     },
     "development": {
       "extract-claims.py": {
-        "candidates": 902,
-        "sha256": "bfa4d868612e5a75312f40aef8b5f57dfed51b62acfb41022b6831188acfef39"
+        "candidates": 897,
+        "sha256": "d384d41d891c1977bb2a0e6c43f0cae93cff768319f6c643f16aa834390c4495"
       },
       "extract-claims-broad.py": {
         "candidates": 1232,
-        "sha256": "09add8dea5eeb25f3c50e07b95821834b0190a5975293e00157014c77260e00d"
+        "sha256": "df1c60e603f81cd70da2c42ec4b6bd39293eae746064d58f42e005c580830c30"
       }
     }
   },
   "literalDelta": {
     "extract-claims.py": {
-      "unchangedOccurrences": 835,
-      "oldOccurrencesAbsent": 79,
-      "newOccurrences": 67
+      "unchangedOccurrences": 829,
+      "oldOccurrencesAbsent": 85,
+      "newOccurrences": 68
     },
     "extract-claims-broad.py": {
-      "unchangedOccurrences": 1110,
-      "oldOccurrencesAbsent": 102,
-      "newOccurrences": 122
+      "unchangedOccurrences": 1103,
+      "oldOccurrencesAbsent": 109,
+      "newOccurrences": 129
     }
   },
   "stateCounts": {
-    "CORRECTION_REGRESSION_COVERED": 52,
+    "CORRECTION_REGRESSION_COVERED": 55,
     "OWNER_POLICY_TODO": 11,
-    "UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF": 3,
     "ACCEPTED_BLOCK_REASON_WITH_UNQUANTIFIED_RECORD": 1,
     "PRIOR_AUDIT_ACCEPTABLE_NOT_REVALIDATED": 33
   },
@@ -58,10 +57,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 3203,
+          "line": 3210,
           "originalLine": 3102,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -74,10 +73,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2695,
+          "line": 2702,
           "originalLine": 2632,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -89,10 +88,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2589,
+          "line": 2596,
           "originalLine": 2527,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -104,10 +103,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1112,
+          "line": 1119,
           "originalLine": 1074,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -137,7 +136,7 @@
           "line": 525,
           "originalLine": 515,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         },
         {
           "path": "autolab.mjs",
@@ -156,10 +155,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1638,
+          "line": 1645,
           "originalLine": 1576,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -171,10 +170,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2669,
+          "line": 2676,
           "originalLine": 2606,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -186,10 +185,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 4004,
+          "line": 4010,
           "originalLine": 3868,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -203,7 +202,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -215,10 +214,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 3035,
+          "line": 3042,
           "originalLine": 2961,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -230,10 +229,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2697,
+          "line": 2704,
           "originalLine": 2634,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         },
         {
           "path": "leaders-study.mjs",
@@ -252,10 +251,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 3651,
+          "line": 3658,
           "originalLine": 3524,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -270,7 +269,7 @@
           "line": 564,
           "originalLine": 554,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -278,18 +277,18 @@
     },
     {
       "id": "W09",
-      "state": "UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF",
+      "state": "CORRECTION_REGRESSION_COVERED",
       "anchors": [
         {
           "path": "scan.mjs",
           "line": 77,
           "originalLine": 71,
-          "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
-      "preparedProposal": "docs/history-03/proposal/residual-scan.patch"
+      "regressionFile": "test/history03-source-anchors.test.mjs"
     },
     {
       "id": "A03",
@@ -297,10 +296,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2651,
+          "line": 2658,
           "originalLine": 2588,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -312,14 +311,14 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1112,
+          "line": 1119,
           "originalLine": 1074,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
-      "regressionFile": "docs/history-03/proposal/residual-scan-regressions.mjs"
+      "regressionFile": "test/history03-source-anchors.test.mjs"
     },
     {
       "id": "X02",
@@ -372,10 +371,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2633,
+          "line": 2640,
           "originalLine": 2570,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -390,7 +389,7 @@
           "line": 560,
           "originalLine": 550,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -405,7 +404,7 @@
           "line": 169,
           "originalLine": 163,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -417,10 +416,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1961,
+          "line": 1968,
           "originalLine": 1899,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -432,10 +431,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1558,
+          "line": 1565,
           "originalLine": 1497,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -462,10 +461,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1307,
+          "line": 1314,
           "originalLine": 1247,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -479,7 +478,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -499,7 +498,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -507,18 +506,18 @@
     },
     {
       "id": "A12",
-      "state": "UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF",
+      "state": "CORRECTION_REGRESSION_COVERED",
       "anchors": [
         {
           "path": "scan.mjs",
           "line": 639,
           "originalLine": 622,
-          "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "basis": "CHANGED_HUNK_LOCATION_ONLY",
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
-      "preparedProposal": "docs/history-03/proposal/residual-scan.patch"
+      "regressionFile": "test/history03-source-anchors.test.mjs"
     },
     {
       "id": "A06",
@@ -526,10 +525,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2685,
+          "line": 2692,
           "originalLine": 2622,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -540,10 +539,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2699,
+          "line": 2706,
           "originalLine": 2636,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -555,10 +554,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2675,
+          "line": 2682,
           "originalLine": 2612,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -569,10 +568,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2579,
+          "line": 2586,
           "originalLine": 2517,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -586,7 +585,7 @@
           "line": 650,
           "originalLine": 633,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -600,7 +599,7 @@
           "line": 559,
           "originalLine": 549,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -614,7 +613,7 @@
           "line": 559,
           "originalLine": 549,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -628,7 +627,7 @@
           "line": 559,
           "originalLine": 549,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -641,7 +640,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -654,7 +653,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -674,7 +673,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -757,10 +756,10 @@
         },
         {
           "path": "scan.mjs",
-          "line": 1343,
+          "line": 1350,
           "originalLine": 1283,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -772,10 +771,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 3879,
+          "line": 3886,
           "originalLine": 3743,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -787,10 +786,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1756,
+          "line": 1763,
           "originalLine": 1694,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -848,7 +847,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -929,7 +928,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1146,7 +1145,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -1159,7 +1158,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -1293,10 +1292,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2296,
+          "line": 2303,
           "originalLine": 2234,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1309,10 +1308,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2268,
+          "line": 2275,
           "originalLine": 2206,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1324,10 +1323,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2659,
+          "line": 2666,
           "originalLine": 2596,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1339,10 +1338,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1425,
+          "line": 1432,
           "originalLine": 1364,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1354,10 +1353,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1418,
+          "line": 1425,
           "originalLine": 1357,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1369,10 +1368,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2658,
+          "line": 2665,
           "originalLine": 2595,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1380,18 +1379,18 @@
     },
     {
       "id": "D07",
-      "state": "UNAPPLIED_CORRECTION_PENDING_SCAN_HANDOFF",
+      "state": "CORRECTION_REGRESSION_COVERED",
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1359,
+          "line": 1366,
           "originalLine": 1299,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
-      "preparedProposal": "docs/history-03/proposal/residual-scan.patch"
+      "regressionFile": "test/history03-source-anchors.test.mjs"
     },
     {
       "id": "D08",
@@ -1399,10 +1398,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1968,
+          "line": 1975,
           "originalLine": 1906,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1414,10 +1413,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1357,
+          "line": 1364,
           "originalLine": 1297,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1432,7 +1431,7 @@
           "line": 43,
           "originalLine": 37,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -1446,7 +1445,7 @@
           "line": 49,
           "originalLine": 43,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
@@ -1457,10 +1456,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 1101,
+          "line": 1108,
           "originalLine": 1063,
           "basis": "UNCHANGED_LINE_RELOCATED",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1472,10 +1471,10 @@
       "anchors": [
         {
           "path": "scan.mjs",
-          "line": 2879,
+          "line": 2886,
           "originalLine": 2816,
           "basis": "CHANGED_HUNK_LOCATION_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1489,7 +1488,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false,
@@ -1525,7 +1524,7 @@
           "path": "scan.mjs",
           "line": 1,
           "basis": "FILE_SCOPE_ONLY",
-          "sha256": "73a241d969df9c20892b3036ebdd7daba335bb8dbcc6a82c5dc3cefc797765c7"
+          "sha256": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88"
         }
       ],
       "acceptanceClosed": false
