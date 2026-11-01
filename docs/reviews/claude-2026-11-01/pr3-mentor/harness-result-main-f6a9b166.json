@@ -1,0 +1,303 @@
+{
+ "tree": "mmain",
+ "node": "v20.20.0",
+ "cases": {
+  "held_consistent": {
+   "replies": 1,
+   "chars": 3243,
+   "lines": 21,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "status": "UNRESOLVED",
+   "stage": "RECONCILE_PLAN",
+   "entry": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ],
+   "exit": "2027-05-03",
+   "unresolved": "ENTRY_WINDOW_UNRESOLVED, ORIGINAL_SIGNAL_IDENTITY_UNKNOWN, EXACT_OPEN_FILL_NOT_VERIFIED",
+   "expected": {
+    "exitClose126": "2027-05-03",
+    "botTimeExitOpen": "2027-05-04",
+    "entrySession": null,
+    "target20": 120
+   },
+   "saysNotActionable": true,
+   "saysNotProven": true,
+   "showsStoredTarget": true,
+   "quantityShown": [
+    "10",
+    "1000.00"
+   ]
+  },
+  "held_thanksgiving_buy": {
+   "replies": 1,
+   "chars": 3276,
+   "lines": 21,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "status": "UNRESOLVED",
+   "stage": "RECONCILE_PLAN",
+   "entry": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ],
+   "exit": "2027-05-27",
+   "unresolved": "RECORDED_NOTIONAL_EXCEEDS_SLOT_ALLOCATION, BUY_SESSION_FUTURE, ENTRY_WINDOW_UNRESOLVED, ORIGINAL_SIGNAL_IDENTITY_UNKNOWN, EXACT_OPEN_FILL_NOT_VERIFIED",
+   "expected": {
+    "exitClose126": "2027-05-27",
+    "botTimeExitOpen": "2027-05-28",
+    "entrySession": null,
+    "target20": 300.6
+   },
+   "saysNotActionable": true,
+   "saysNotProven": true,
+   "showsStoredTarget": true,
+   "quantityShown": [
+    "4",
+    "1002.00"
+   ]
+  },
+  "held_target_mismatch": {
+   "replies": 1,
+   "chars": 3255,
+   "lines": 21,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "status": "UNRESOLVED",
+   "stage": "RECONCILE_PLAN",
+   "entry": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ],
+   "exit": "2027-05-03",
+   "unresolved": "TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT, ENTRY_WINDOW_UNRESOLVED, ORIGINAL_SIGNAL_IDENTITY_UNKNOWN, EXACT_OPEN_FILL_NOT_VERIFIED",
+   "expected": {
+    "exitClose126": "2027-05-03",
+    "botTimeExitOpen": "2027-05-04",
+    "entrySession": null,
+    "target20": 120
+   },
+   "saysNotActionable": true,
+   "saysNotProven": true,
+   "showsStoredTarget": true,
+   "quantityShown": [
+    "10",
+    "1000.00"
+   ]
+  },
+  "held_over_slot": {
+   "replies": 1,
+   "chars": 3285,
+   "lines": 21,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "status": "UNRESOLVED",
+   "stage": "RECONCILE_PLAN",
+   "entry": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ],
+   "exit": "2027-05-03",
+   "unresolved": "RECORDED_NOTIONAL_EXCEEDS_SLOT_ALLOCATION, ENTRY_WINDOW_UNRESOLVED, ORIGINAL_SIGNAL_IDENTITY_UNKNOWN, EXACT_OPEN_FILL_NOT_VERIFIED",
+   "expected": {
+    "exitClose126": "2027-05-03",
+    "botTimeExitOpen": "2027-05-04",
+    "entrySession": null,
+    "target20": 120
+   },
+   "saysNotActionable": true,
+   "saysNotProven": true,
+   "showsStoredTarget": true,
+   "quantityShown": [
+    "25",
+    "2500.00"
+   ]
+  },
+  "other_lane": {
+   "replies": 1,
+   "chars": 3165,
+   "lines": 21,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "status": "UNRESOLVED",
+   "stage": "RECONCILE_PLAN",
+   "entry": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ],
+   "exit": "UNKNOWN",
+   "unresolved": "OTHER_LANE_NOT_SUPPORTED, NO_VALID_SOURCE_SIGNAL, ENTRY_WINDOW_UNRESOLVED",
+   "expected": {
+    "exitClose126": null,
+    "botTimeExitOpen": null,
+    "entrySession": null,
+    "target20": 60
+   },
+   "saysNotActionable": true,
+   "saysNotProven": true,
+   "showsStoredTarget": null,
+   "quantityShown": [
+    "20",
+    "UNKNOWN"
+   ]
+  },
+  "source_lead": {
+   "replies": 1,
+   "chars": 3284,
+   "lines": 21,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "status": "RESEARCH_CONTEXT_UNVERIFIED",
+   "stage": "VERIFY_BEFORE_NEXT_OPEN",
+   "entry": [
+    "2026-11-02",
+    "NEXT_OPEN_ONLY"
+   ],
+   "exit": "UNKNOWN",
+   "unresolved": "no structural contract issue found; execution/prospective evidence still missing",
+   "expected": {
+    "exitClose126": null,
+    "botTimeExitOpen": null,
+    "entrySession": "2026-11-02",
+    "target20": null
+   },
+   "saysNotActionable": true,
+   "saysNotProven": true,
+   "showsStoredTarget": null,
+   "quantityShown": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ]
+  },
+  "lead_before_holiday": {
+   "replies": 1,
+   "chars": 3130,
+   "lines": 21,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "status": "UNRESOLVED",
+   "stage": "RECONCILE_PLAN",
+   "entry": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ],
+   "exit": "UNKNOWN",
+   "unresolved": "NO_VALID_SOURCE_SIGNAL, ENTRY_WINDOW_UNRESOLVED",
+   "expected": {
+    "exitClose126": null,
+    "botTimeExitOpen": null,
+    "entrySession": "2026-11-27",
+    "target20": null
+   },
+   "saysNotActionable": true,
+   "saysNotProven": true,
+   "showsStoredTarget": null,
+   "quantityShown": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ]
+  },
+  "unknown": {
+   "replies": 1,
+   "chars": 3130,
+   "lines": 21,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 103,
+   "status": "UNRESOLVED",
+   "stage": "RECONCILE_PLAN",
+   "entry": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ],
+   "exit": "UNKNOWN",
+   "unresolved": "NO_VALID_SOURCE_SIGNAL, ENTRY_WINDOW_UNRESOLVED",
+   "expected": {
+    "exitClose126": null,
+    "botTimeExitOpen": null,
+    "entrySession": null,
+    "target20": null
+   },
+   "saysNotActionable": true,
+   "saysNotProven": true,
+   "showsStoredTarget": null,
+   "quantityShown": [
+    "UNKNOWN",
+    "UNKNOWN"
+   ]
+  },
+  "mixed_owner_stop": {
+   "changedFiles": [
+    "data/my-positions.json",
+    "data/tg-state.json"
+   ],
+   "otherStop": 46,
+   "goodUnchanged": true,
+   "offset": 102
+  },
+  "spell_slash": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR GOOD | LEADER DIP | up to126 sessions (about6months)"
+  },
+  "spell_botname": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR GOOD | LEADER DIP | up to126 sessions (about6months)"
+  },
+  "spell_dotted": {
+   "mentorReplies": 1,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR BRK.B | LEADER DIP | up to126 sessions (about6months)"
+  },
+  "spell_two_lines": {
+   "mentorReplies": 2,
+   "changedFiles": [
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "MENTOR GOOD | LEADER DIP | up to126 sessions (about6months)"
+  },
+  "spell_trailing_text": {
+   "mentorReplies": 0,
+   "changedFiles": [
+    "data/my-positions.json",
+    "data/tg-state.json"
+   ],
+   "offset": 101,
+   "firstLine": "No scan has run yet."
+  }
+ },
+ "sampleText": "MENTOR GOOD | LEADER DIP | up to126 sessions (about6months)\nEXPLANATION ONLY: no new BUY or HOLD approval. NOT PROVEN; target exit not adopted under the frozen comparison.\nPlan status: UNRESOLVED | NOT_ACTIONABLE. Unsupported/contradictory plans are unresolved, never an action.\nScope: RECORDED_LEADER_DIP.\nWorkflow: RECONCILE_PLAN; Resolve the listed source/fill/variant contradictions before treating the stored plan as guidance; keep original records.\nEntry condition (not independently verified): Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high.\nSelection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.\nSource: UNKNOWN; no source signal matched.\nOriginal-input fingerprint: UNKNOWN; checksum is not provider authentication.\nEntry: next session OPEN only; UNKNOWN; UNKNOWN. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.\nRecorded fill: 100.00 on 2026-10-30; exact opening fill NOT VERIFIED.\nPosition: 10 whole shares; recorded notional 1000.00. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.\nRisk: the frozen baseline and target study model no stop; recorded stop UNKNOWN is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.\nFrozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.\nUnadopted owner-lane overlay: stored target 120.00 arithmetically matches recorded fill +20%; this does not validate or adopt the overlay; a touched daily high does not prove a limit fill.\nTime exit reference (not an actionable instruction): 2027-05-03 at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: MONITOR_CONTRACT_NOT_A_HOLD_APPROVAL; guidance state: UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE.\nTiming mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.\nHolding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: UNKNOWN (not independently verified by this view). Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.\nWhat changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.\nCosts/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.\nUnresolved: ENTRY_WINDOW_UNRESOLVED, ORIGINAL_SIGNAL_IDENTITY_UNKNOWN, EXACT_OPEN_FILL_NOT_VERIFIED.",
+ "dateCheck": {
+  "buyDaysChecked": 186,
+  "mismatches": [],
+  "mismatchCount": 0,
+  "bothUnknownBeyondCalendar": 0
+ }
+}
