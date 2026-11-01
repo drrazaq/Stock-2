@@ -358,3 +358,47 @@ Records to date: 100 (43 in batch 1, the rest in `all-claims.json`). The combine
 | `tools/catalogue_data_b5.py` | `10019907109c6d62960058b4cfd11fb66651cfce87e5b3d823972aa2f1711a7c` |
 | `tools/build-audit.py` | `14ff06c6b21e124ab21362439dc700f78aca361d333820bf137491f43c1ecf02` |
 | `tools/readme_batch.py` | `db4b15b3cb0f0e703ee185420c17f25dfb00b012c2e17aea7e74ce5a96b7ee22` |
+
+---
+
+# Final: reconciliation, provenance register, closure checklist
+
+## Where to start
+
+- `CLOSURE-CHECKLIST.md`: status per part of the criterion, and the remaining owner, Codex and external-evidence items.
+- `RANKED-FINDINGS-v3.md`: all ranked corrections.
+- `PROVENANCE-REGISTER.md`: every missing field and every stored-row gap.
+- `EVIDENCE-VOCABULARY-v2.md`: the consolidated vocabulary.
+
+## Final counts
+
+- **Strings:** 1212 extracted (914 narrow + 298 broad-only).
+  - 115 catalogued claims;
+  - 989 reviewed and acceptable;
+  - 108 not claims;
+  - 0 not reviewed.
+- **Records:** 100.
+- **Batch order:** batch 1 is the first section of this README; batches 2 to 5 follow, each section with its own file hashes.
+
+## Correction to batch 4
+
+The first publication of batch 4 (`b2b762dd`) quoted the owner's own-pick record in D14. It now uses placeholders. The figure comes from data already committed to the repository; the branch history was not rewritten.
+
+## Final files and SHA256
+
+| File | SHA256 |
+|---|---|
+| `CLOSURE-CHECKLIST.md` | `bb478ce62e93ddf8796fa2e5438e12a86d60bd92a7c2b26442de965dae011202` |
+| `PROVENANCE-REGISTER.md` | `616ea4ed80fc26cf8b07798baeaf855469ab5006a2a44cde6c6d08f7d4534a74` |
+| `EVIDENCE-VOCABULARY-v2.md` | `f65d07beebac7177145ff6da2abf0c7fd133ffd4c6fae5791ef9239b78cd5996` |
+| `RANKED-FINDINGS-v3.md` | `9b0d279c753aebb93f375d52ccfd465e9112cb60d3e607f2281c2a936b10091b` |
+| `COVERAGE.md` | `bdda1917aba7154dd0216868481335e6d67f4ea04f7d850524e76163c4722a99` |
+| `all-claims.json` | `e2ae665798edb2f3be45b746f597064c3963134bd3137f8ea55a0400bf971045` |
+| `source-inventory-v3.json` | `214cc9df1565ba498a613f985964975e3d9513f8e71c1da80dee4be906dc3a0e` |
+| `consistency-checks.json` | `f9d42d535ad9b425f23c43fa163d38ed727252fe5a98c705334ba837a7ad344d` |
+| `BATCH4-FINDINGS.md` | `5034d15be7710707f85110d3c4a13408b07759aee06b2751304b9bb12fe12b8a` |
+| `tools/catalogue_data_b4.py` | `86bddb916f66e49a42ab73182fa63423019f5e19096fcb1ffa6058c4339652a0` |
+| `tools/consistency-checks.py` | `76cc5e63f288194ab39929635e251520f750bed95d4776f4a1b6d2b2ab26c433` |
+| `tools/final_package.py` | `637d978b39cecbc8770feea90540d94cd114b509f26630dfcb3555afcb555c64` |
+| `tools/readme_final.py` | `77953f018c3872a7407b0f4b72c654f8e45d54a2d0ed9069bbbb5a8265747747` |
+| `tools/build-audit.py` | `14ff06c6b21e124ab21362439dc700f78aca361d333820bf137491f43c1ecf02` |

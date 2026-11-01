@@ -1,0 +1,120 @@
+{
+ "LEADER DIP 73% / 75% (A-TGT-TGT20-PB12)": {
+  "quoted": "tested 73% / 75% of trades won (ACTIONS LEADER DIP line, scan.mjs:2588)",
+  "frozenSummary": {
+   "older": {
+    "n": 99,
+    "win": 0.7273,
+    "avg": 0.096
+   },
+   "newer": {
+    "n": 256,
+    "win": 0.7461,
+    "avg": 0.0847
+   }
+  },
+  "storedRows": {
+   "total": 212,
+   "older": {
+    "n": 57,
+    "win": 1.0,
+    "avg": 0.1943
+   },
+   "newer": {
+    "n": 155,
+    "win": 1.0,
+    "avg": 0.1994
+   }
+  },
+  "agrees": "NOT REPRODUCIBLE FROM STORED ROWS: 212 stored rows vs 355 trades in the frozen summary. agent-a-tgt-lab.mjs:160 keeps only trades whose exit kind is not \"max\" (126-session time exit) or \"gone\" (delisted), last 300; every stored row is a target exit (kinds {'target': 177, 'gap over the target': 35}), so all time-exit and delisted trades, i.e. the losers, are absent. The win rate, losses and worst trade can only be reproduced by re-running the test on the price cache.",
+  "storedKinds": {
+   "target": 177,
+   "gap over the target": 35
+  }
+ },
+ "LEADER DIP 3-slot replay (REPLAY-PB12T20)": {
+  "quoted": "about equal to SPY as a 3-slot account (2024-26 +19.6% a year vs SPY +18.6%)",
+  "storedSummary": {
+   "older": {
+    "accountPerYear": 0.0527,
+    "spyPerYear": 0.0335,
+    "spusPerYear": null
+   },
+   "newer": {
+    "accountPerYear": 0.1964,
+    "spyPerYear": 0.1856,
+    "spusPerYear": 0.2198
+   },
+   "full": {
+    "accountPerYear": 0.1155,
+    "spyPerYear": 0.1024,
+    "spusPerYear": null
+   },
+   "olderFromFirstSignal": {
+    "accountPerYear": 0.1031,
+    "spyPerYear": 0.1663,
+    "spusPerYear": 0.2478
+   }
+  },
+  "storedRows": {
+   "full": {
+    "trades": 32,
+    "rowsWithoutPnl": 3,
+    "win": 0.6562,
+    "pnlSum": 1883.84
+   },
+   "newer": {
+    "trades": 22,
+    "rowsWithoutPnl": 3,
+    "win": 0.6818,
+    "pnlSum": 1477.86
+   },
+   "older": {
+    "trades": 10,
+    "rowsWithoutPnl": 1,
+    "win": 0.6,
+    "pnlSum": 345.74
+   },
+   "olderFromFirstSignal": {
+    "trades": 10,
+    "rowsWithoutPnl": 1,
+    "win": 0.6,
+    "pnlSum": 345.74
+   }
+  },
+  "agrees": "QUOTE MATCHES the stored newer-window summary (0.1964 vs SPY 0.1856). Not mentioned in the message: older window from first signal 0.1031 vs SPY 0.1663, and SPUS 0.2198 (newer). Stored rows: some rows carry no pnl field (counted as 0), so per-year returns cannot be rebuilt from rows alone."
+ },
+ "Insider buying \"works in rising markets (+0.1% / +6.1%)\"": {
+  "quoted": "ACTIONS research line (scan.mjs:2634)",
+  "storedSummary": {
+   "older": {
+    "n": 166,
+    "win": 0.45180722891566266,
+    "avg": 0.0011559643546654836,
+    "spy": 0.0030611047634882226
+   },
+   "newer": {
+    "n": 265,
+    "win": 0.5320754716981132,
+    "avg": 0.06063551508918941,
+    "spy": 0.01137701349280841
+   }
+  },
+  "verdict": "NOT PROVEN",
+  "agrees": "NUMBERS MATCH the stored summary (+0.12% / +6.06%); the older-half S&P 500 same-days figure (+0.31%) is higher than the rule's; no trade rows stored"
+ },
+ "Late-filing SELL reason \"about 12-16% over 60 sessions\"": {
+  "quoted": "scan.mjs:37",
+  "storedSummary": {
+   "older": -0.1252,
+   "newer": -0.1632
+  },
+  "verdict": "SELL-WARNING",
+  "agrees": "NUMBERS MATCH the stored summary (-12.5% / -16.3%); no event rows stored"
+ },
+ "Basket 1 \"about 16.7% a year vs SPUS 12.2%\"": {
+  "quoted": "basket reply (scan.mjs:2961)",
+  "verdict": "NOT PROVEN",
+  "agrees": "VALUE 0.167 PRESENT in data/squad10-lab.json (string search); the summary field path was not traced; NOT PROVEN verdict matches the message"
+ }
+}

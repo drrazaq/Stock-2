@@ -312,7 +312,7 @@ Production source: main `f6a9b1668d0591cf24a734034949b96b241fe35b`. Same method,
 
 ## D14: bought confirmation: FOR / AGAINST notes | WORDING_ONLY | **MISLEADING (tiny sample as an argument)**
 
-> - FOR: Your own picks so far: 3 sold, average +24.6%.
+> - FOR: Your own picks so far: <n> sold, average <x>%.
 
 | Field | Value |
 |---|---|
@@ -328,7 +328,7 @@ Production source: main `f6a9b1668d0591cf24a734034949b96b241fe35b`. Same method,
 
 **What the recorded evidence supports:** The number is the owner's record.
 
-**Unsupported wording or missing provenance:** 3 trades shown as an argument FOR a buy without "too few to judge".
+**Unsupported wording or missing provenance:** A handful of trades (<n> = 3 in the render) shown as an argument FOR a buy without "too few to judge".
 
 **Proposed wording:** - Your own picks so far: 3 sold (too few to judge).
 
