@@ -1,0 +1,149 @@
+diff --git a/ignition-watch.mjs b/ignition-watch.mjs
+index ff2d5999..b772f17c 100644
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -25,6 +25,7 @@ import { createEarlyAlerts, alertLevel, classifyCatalyst } from './early-alerts.
+ import { createShadow, spreadPct } from './shadow-stream.mjs';
+ import { parseAtom, nyMinuteOf } from './edgar-feed.mjs';
+ import {createNativeSecShadow} from './native-sec-shadow.mjs';
++import {createSelectionTelemetry} from './sec-selection-telemetry.mjs';
+ import { dEligible, hash, FROZEN as RANK } from './rank-models.mjs';
+ import { execSync } from 'node:child_process';
+ import fs from 'node:fs';
+@@ -113,16 +114,16 @@ async function openingRange(sym) {   // first 5 minutes (9:30-9:34) and the pre-
+   if (o.length < 3) return null; return { orH: Math.max(...o.map(x => x[2])), orL: Math.min(...o.map(x => x[3])), pm: b.filter(x => x[0] < 570).reduce((a, x) => a + x[5], 0) }; }
+ // SEC check before any alert. FAIL-CLOSED: if the check cannot be done, the alert is blocked (the ignition stays on paper).
+ let TICK = null, secLogged = false;
+-async function secRiskIssuer(sym) {
++async function secRiskIssuer(sym, selectionContext=null) {
+   const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
+   try { if (!TICK) { const r = await request(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
+     const cik = TICK[sym]; if (!cik) return {known:false,tags:[],status:'NO_ISSUER_RECORD',sourceFailure:false};
+     const nativeSubmissionUrl=SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json',nativeSubmissionRequestAt=new Date().toISOString();
+-    const r = await request(nativeSubmissionUrl, H).catch(error=>{NATIVE_SEC_SHADOW.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body:Buffer.alloc(0),url:nativeSubmissionUrl,httpStatus:0,requestStartedAt:nativeSubmissionRequestAt,headersReceivedAt:null,bodyReceivedAt:null,observedAt:new Date().toISOString()});throw error;}); const nativeSubmission=await NATIVE_SEC_SHADOW.readSubmissions(r,{url:nativeSubmissionUrl,requestStartedAt:nativeSubmissionRequestAt}); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const R = nativeSubmission.filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
++    const r = await request(nativeSubmissionUrl, H).catch(error=>{NATIVE_SEC_SHADOW.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body:Buffer.alloc(0),url:nativeSubmissionUrl,httpStatus:0,requestStartedAt:nativeSubmissionRequestAt,headersReceivedAt:null,bodyReceivedAt:null,observedAt:new Date().toISOString()});throw error;}); const nativeSubmission=await SELECTION.submissions(r,{url:nativeSubmissionUrl,requestStartedAt:nativeSubmissionRequestAt},selectionContext,NATIVE_SEC_SHADOW); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const R = nativeSubmission.filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
+     for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null, accession: (R.accessionNumber || [])[k] || null, url: (R.accessionNumber || [])[k] && (R.primaryDocument || [])[k] ? 'https://www.sec.gov/Archives/edgar/data/' + Number(cik) + '/' + R.accessionNumber[k].replace(/-/g, '') + '/' + encodeURIComponent(R.primaryDocument[k]) : null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
+       if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) {const acc=String((R.accessionNumber||[])[k]||''),valid=/^\d{10}-\d{2}-\d{6}$/.test(acc);blockingFilings.push({form:f,filingDate:R.filingDate[k],accession:valid?acc:null,acceptedAt:(R.acceptanceDateTime||[])[k]||null,indexUrl:valid?'https://www.sec.gov/Archives/edgar/data/'+Number(cik)+'/'+acc.replace(/-/g,'')+'/'+acc+'-index.html':null,economicClassification:'UNREVIEWED',blockUnchanged:true});tags.add('registration/prospectus ('+f+'); economic classification UNREVIEWED');} if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
+     return {known:true,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
+-async function secRisk(sym) { return instrumentAwareSec(sym,secRiskIssuer,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256}); }
++async function secRisk(sym,route='OTHER_EXISTING_CALL',predicates=null) { const context=SELECTION.start(sym,route,predicates);const result=await instrumentAwareSec(sym,s=>secRiskIssuer(s,context),{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256});SELECTION.finish(context,result);return result; }
+ // headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
+ async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
+   try { const to = new Date().toISOString().slice(0, 10), from = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10), r = await fetch('https://finnhub.io/api/v1/company-news?symbol=' + encodeURIComponent(sym) + '&from=' + from + '&to=' + to + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
+@@ -153,7 +154,7 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
+     if (!e.length || earlyAlerts >= 3) { flag(r.sym, 'paperGate', 'caught by ' + R.id + ' (paper only: live paper record not yet strong enough)'); return; } ok = e; early = true; }
+   if (notHalal(r.sym)) { flag(r.sym, 'notHalal', 'marked NOT HALAL'); return; } if (LOTT[r.sym] >= 0.15) { flag(r.sym, 'lottery', 'lottery-like: a ' + Math.round(LOTT[r.sym] * 100) + '% one-day jump in the last month (tested AVOID)'); return; } if (alerts >= 6) { flag(r.sym, 'alertCap', 'daily alert limit reached'); return; }
+   if (!isFreshPriceAge(rd)) { flag(r.sym, 'noLive', 'price age ' + (typeof rd !== 'number' || !Number.isFinite(rd) ? 'unknown' : rd < 0 ? 'invalid (future timestamp)' : Math.round(rd) + ' minutes') + ': not fresh enough to alert'); return; }
+-  const risk = await secRisk(r.sym); if(risk.admissionBlocked){t.blocked=[risk.policyExcluded?'INSTRUMENT_POLICY_EXCLUDED':'INSTRUMENT_IDENTITY_UNKNOWN'];flag(r.sym,risk.policyExcluded?'instrumentExcluded':'instrumentUnknown','not admitted: '+risk.status);if(risk.sourceFailure){t.blocked.push('SEC_SOURCE_UNAVAILABLE');flag(r.sym,'secUnavailable','SEC source unavailable as well as instrument identity');}return;} if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
++  const risk = await secRisk(r.sym,'ALERT'); if(risk.admissionBlocked){t.blocked=[risk.policyExcluded?'INSTRUMENT_POLICY_EXCLUDED':'INSTRUMENT_IDENTITY_UNKNOWN'];flag(r.sym,risk.policyExcluded?'instrumentExcluded':'instrumentUnknown','not admitted: '+risk.status);if(risk.sourceFailure){t.blocked.push('SEC_SOURCE_UNAVAILABLE');flag(r.sym,'secUnavailable','SEC source unavailable as well as instrument identity');}return;} if (!risk.known) { t.blocked = ['SEC_CHECK_UNAVAILABLE']; flag(r.sym, 'secUnavailable', 'alert blocked: SEC check unavailable'); return; }
+   if (risk.tags.length) { t.blocked = risk.tags; flag(r.sym, 'secBlocked', 'alert blocked: ' + risk.tags.join(', ')); return; }
+   alerts++; if (early) earlyAlerts++; t.alerted = true; t.early = early; flag(r.sym, 'alerted', 'ALERTED (' + R.id + (early ? ', early paper' : '') + ')');
+   const ex = ok.sort((a, b) => ((PREC[b.rule + '/' + b.exit] || {}).avg || 0) - ((PREC[a.rule + '/' + a.exit] || {}).avg || 0))[0], pr = PREC[ex.rule + '/' + ex.exit], stop = R.orb ? extra.orL : R.pull ? Math.max(extra.stop * 0.995, r.price * 0.88) : r.price * 0.92, hist = !liveOnly && ex.results ? ex.results.newer : null;
+@@ -196,8 +197,8 @@ async function tgSend(text) {
+  MESSAGE_STATE.finish(key,result);return result;
+ }
+ const INSTRUMENT_COHORT=env.IG_INSTRUMENT_REFERENCE_FILE?'INSTRUMENT_CLASSIFIED_V2:'+(env.IG_INSTRUMENT_REFERENCE_SHA256||'UNPINNED'):'LEGACY_FROZEN_20261028';
+-const EA = createEarlyAlerts({ day, collectionCohort:INSTRUMENT_COHORT, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
+-  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
++const EA = createEarlyAlerts({ day, collectionCohort:INSTRUMENT_COHORT, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk:s=>secRisk(s,'EARLY_WAVE'), notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
++  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym,'CATALYST'), news: await newsFor(sym), nowMs: Date.now() }) });
+ const SR = createShadow({ day });
+ const shadowRows=SR.rows.bind(SR); SR.rows=()=>shadowRows().map(row=>({...row,instrument:row.instrument||{status:'UNKNOWN',reason:'LEGACY_OBSERVATION_IDENTITY_UNESTABLISHED'},performanceScope:'LEGACY_MIXED_INSTRUMENT_RESEARCH',approvedBuyEligible:false}));
+ for(const method of ['early','trigger','filing','control']){const original=SR[method].bind(SR);SR[method]=(...args)=>{original(...args);const row=SR.book.get(args[0].sym);if(row&&!row.instrument){row.instrument=EA.S.sec[row.sym]?.instrument||readInstrumentType(row.sym,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256});row.instrumentRecordedAt=new Date().toISOString();row.collectionVersion='WATCHER_CONTEXT_V2';row.rankingCohort=INSTRUMENT_COHORT;}};}
+@@ -206,6 +207,7 @@ for(const method of ['early','trigger','filing','control']){const original=SR[me
+ // first live minute after its acceptance (9:30 at the earliest). SEC company checks only for filings that pass the cheap D checks, at
+ // most 15 a minute (the rest wait a minute and say so in decM), so the minute loop stays fast.
+ const EF = { seen: new Set(), pending: [], last: 0, first: true, polls: 0, fails: 0, filings: 0, lat: [], decided: 0, eligible: 0, noPrice: 0, firstOkM: null, ctlDone: false, cik: null }, DAY4 = Date.parse(day + 'T04:00:00Z') - nyOffset(day) * 60000;
++const SELECTION=createSelectionTelemetry({enabled:env.IG_SEC_SELECTION_TELEMETRY==='1'&&env.IG_NATIVE_SEC_SHADOW==='1',directory:'runtime/sec-selection/'+INCIDENT_RUN_ID,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA});
+ const NATIVE_SEC_SHADOW=createNativeSecShadow({enabled:env.IG_NATIVE_SEC_SHADOW==='1',directory:'runtime/native-sec-events/'+INCIDENT_RUN_ID,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,provenance:env.IG_NATIVE_SEC_SYNTHETIC_FIXTURE==='1'?'SYNTHETIC_FIXTURE':'DECLARED_UNAUDITED_NATIVE',parentManifestFile:env.IG_NATIVE_SEC_PARENT_FILE||null,parentManifestSha256:env.IG_NATIVE_SEC_PARENT_SHA256||null});
+ async function pollEdgar(m) {
+   if (m > 660 || Date.now() - EF.last < 110000) return; EF.last = Date.now();
+@@ -224,7 +226,7 @@ async function pollEdgar(m) {
+       NATIVE_SEC_SHADOW.observe({body:nativeBody,url:nativeUrl,responseUrl:r.url||null,redirected:r.redirected??null,httpStatus:r.status,requestStartedAt:nativeRequestAt,headersReceivedAt:nativeHeadersAt,bodyReceivedAt:nativeBodyAt,observedAt:new Date().toISOString(),legacySeen:EF.seen});
+     }else nativeText=await r.text();
+     const ents = parseAtom(nativeText); let older = false;
+-    for (const e of ents) { const t = Date.parse(e.at); if (!(t >= DAY4)) { older = true; continue; } const k = e.acc + '|' + e.cik; if (EF.seen.has(k)) continue; EF.seen.add(k); EF.filings++; if (!EF.first) EF.lat.push(Math.round((Date.now() - t) / 1000));
++    for (const e of ents) { SELECTION.feed(e,EF.cik.get(e.cik)||[],EF.seen.has(e.acc+'|'+e.cik));const t = Date.parse(e.at); if (!(t >= DAY4)) { older = true; continue; } const k = e.acc + '|' + e.cik; if (EF.seen.has(k)) continue; EF.seen.add(k); EF.filings++; if (!EF.first) EF.lat.push(Math.round((Date.now() - t) / 1000));
+       for (const sym of EF.cik.get(e.cik) || []) EF.pending.push({ sym, acc: e.acc, form: e.form, items: e.items, at: e.at, atM: nyMinuteOf(e.at) }); }
+     if (older || ents.length < 100) break; }
+   EF.first = false;
+@@ -232,15 +234,15 @@ async function pollEdgar(m) {
+ async function decideFilings(m, bySym) {
+   if (!EF.pending.length || m < 570) return; const keep = []; let secCalls = 0;
+   for (const p of EF.pending) { const r = bySym.get(p.sym);
+-    if (m <= p.atM) { keep.push(p); continue; }
++    if (m <= p.atM) { SELECTION.decision(p,'NO_REQUEST_AWAIT_MINUTE',{decisionMinute:m});keep.push(p); continue; }
+     const live = r && r.prevC > 0 && r.price > 0 && isFreshPriceAge(r.t > 0 ? (Date.now() - r.t) / 60000 : null);
+-    if (!live) { if (m <= 660) keep.push(p); else EF.noPrice++; continue; }
++    if (!live) { SELECTION.decision(p,m<=660?'NO_REQUEST_NO_FRESH_PRICE_DEFERRED':'NO_REQUEST_NO_FRESH_PRICE_EXPIRED',{decisionMinute:m});if (m <= 660) keep.push(p); else EF.noPrice++; continue; }
+     const chg = r.price / r.prevC - 1, sp = spreadPct(r.bid, r.ask), qAge = r.qt > 0 ? (Date.now() - r.qt) / 1000 : null, hard = { under1: r.price < 1, halalFail: notHalal(p.sym), lottery: LOTT[p.sym] || 0 };
+     const q = { form: p.form, items: p.items, atM: p.atM, decM: m, chg, price: r.price, prevDollarVol: (r.prevC || 0) * (r.prevV || 0), spread: sp, spreadFresh: sp !== null && qAge !== null && qAge <= 120, halalFail: hard.halalFail, lottery: hard.lottery };
+-    let sec = EA.S.sec[p.sym] || null;
+-    if (!sec && dEligible({ ...q, sec: { known: true, tags: [] } }).eligible) { if (secCalls >= 15) { keep.push(p); continue; } secCalls++; sec = EA.S.sec[p.sym] = await secRisk(p.sym).catch(() => ({ known: false, tags: [] })); }
++    const predicateObservedAt=new Date().toISOString(),hadCachedSec=!!EA.S.sec[p.sym];let sec = EA.S.sec[p.sym] || null;
++    if (!sec && dEligible({ ...q, sec: { known: true, tags: [] } }).eligible) { if (secCalls >= 15) { SELECTION.decision(p,'NO_REQUEST_D_MINUTE_CAP',{decisionMinute:m,predicates:q,predicateObservedAt});keep.push(p); continue; } secCalls++; sec = EA.S.sec[p.sym] = await secRisk(p.sym,'D',q).catch(() => ({ known: false, tags: [] })); }
+     const D = dEligible({ ...q, sec: sec || { known: true, tags: [] } }); if (!sec) D.why.push('SEC not checked (failed another D rule first)');
+-    EF.decided++; if (D.eligible) EF.eligible++;
++    SELECTION.decision(p,hadCachedSec?'NO_REQUEST_CACHED_RESULT':sec?'REQUEST_RESULT':'NO_REQUEST_CHEAP_GATE',{decisionMinute:m,predicates:q,predicateObservedAt,legacyDecision:D,cache:SELECTION.info(sec,p.acc)});EF.decided++; if (D.eligible) EF.eligible++;
+     SR.filing({ sym: p.sym, m, price: r.price, chg, bid: r.bid, ask: r.ask, qAgeSec: qAge, fc: vis[p.sym] ? vis[p.sym].fc : null, prevDollarVol: q.prevDollarVol, hard,
+       f: { acc: p.acc, form: p.form, items: p.items, atM: p.atM, decM: m, chg: +chg.toFixed(4), prevDollarVol: Math.round(q.prevDollarVol), spread: sp, eligible: D.eligible, why: D.why } }); }
+   EF.pending = keep;
+@@ -271,7 +273,7 @@ async function radarSnap(m, scanned, live) {
+   const now = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.map(e => e.sym)])) if (vis[s] && vis[s].last > 0) now[s] = { px: vis[s].last, chg: +vis[s].lastC.toFixed(4) };
+   RADAR.mkt = medChg();
+   // (28 Oct fix) the live SEC check for every stock the radar may name (cached by the alert system when it already ran); a lead needs it
+-  const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s).catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [],instrument:EA.S.sec[s].instrument||{status:'UNKNOWN'},status:EA.S.sec[s].status,sourceFailure:EA.S.sec[s].sourceFailure===true }; }
++  const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s,'RADAR').catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [],instrument:EA.S.sec[s].instrument||{status:'UNKNOWN'},status:EA.S.sec[s].status,sourceFailure:EA.S.sec[s].sourceFailure===true }; }
+   const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catText) cat[r.sym] = r.catText;
+   { let nq = 0; for (const s of [...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)]) { if (cat[s] || !sec[s] || !sec[s].known || sec[s].tags.length) continue;   // the radar's own catalyst check for names it may list
+       const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = classifyCatalyst({ sec: EA.S.sec[s], news, nowMs: Date.now() }).text; } }
+@@ -360,7 +362,8 @@ const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(
+   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
+   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
+ // Incident backport: archive on original observation basis before any canonical end-of-run publication.
+-if(NATIVE_SEC_SHADOW.report().enabled)console.log('NATIVE_SEC_SHADOW_STATUS='+JSON.stringify(NATIVE_SEC_SHADOW.report()));
++if(NATIVE_SEC_SHADOW.report().enabled)console.log('SEC_SELECTION_TELEMETRY_STATUS='+JSON.stringify(SELECTION.report()));
++console.log('NATIVE_SEC_SHADOW_STATUS='+JSON.stringify(NATIVE_SEC_SHADOW.report()));
+ const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
+ const incidentArchive='data/ignition-runs/'+day;
+ fs.mkdirSync(incidentArchive,{recursive:true});
+diff --git a/sec-selection-telemetry.mjs b/sec-selection-telemetry.mjs
+new file mode 100644
+index 00000000..882573c0
+--- /dev/null
++++ b/sec-selection-telemetry.mjs
+@@ -0,0 +1,34 @@
++// Proposed observational V2 telemetry. No network, messages, scoring or activation.
++import fs from 'node:fs';import path from 'node:path';import {createHash} from 'node:crypto';
++export const SEC_SELECTION_SCOPE=Object.freeze(['AMD','INTC','NVDA','AMAT','LRCX','KLAC']);
++export const SELECTION_CAPS=Object.freeze({records:4096,bytes:16*1024*1024,recordBytes:16384});
++const sha=x=>createHash('sha256').update(x).digest('hex'),need=(x,c)=>{if(!x)throw Error(c);};
++const read=f=>{const s=fs.lstatSync(f);need(s.isFile()&&!s.isSymbolicLink()&&s.size<=SELECTION_CAPS.recordBytes,'TELEMETRY_FILE');return fs.readFileSync(f);};
++export function readSelectionTelemetry(directory,{runId,sourceSha}){
++ const names=fs.readdirSync(directory).sort();need(names.every(n=>n==='run.json'||/^record-\d{6}\.json$/.test(n)),'TELEMETRY_PARTIAL_OR_UNKNOWN');
++ const meta=JSON.parse(read(path.join(directory,'run.json')));need(meta.runId===runId&&meta.sourceSha===sourceSha&&meta.kind==='SEC_SELECTION_TELEMETRY_PROPOSED_V2','TELEMETRY_ID');
++ const records=[];let previous='0'.repeat(64),bytes=0,lastAt=null;
++ for(const n of names.filter(n=>n!=='run.json')){need(records.length<SELECTION_CAPS.records&&n==='record-'+String(records.length).padStart(6,'0')+'.json','TELEMETRY_SEQUENCE');const b=read(path.join(directory,n));bytes+=b.length;need(bytes<=SELECTION_CAPS.bytes,'TELEMETRY_BYTES');const {hash,...body}=JSON.parse(b);need(body.sequence===records.length&&body.previousHash===previous&&hash===sha(JSON.stringify(body)),'TELEMETRY_HASH');need(Number.isFinite(Date.parse(body.at))&&(!lastAt||Date.parse(body.at)>=Date.parse(lastAt)),'TELEMETRY_CLOCK');lastAt=body.at;records.push({...body,hash});previous=hash;}
++ return {meta,records,bytes,lastHash:previous,lastAt,status:'INTEGRITY_CHECKED_UNAUDITED',genuineAdmissions:0};
++}
++export function createSelectionTelemetry({enabled=false,directory,runId,sourceSha,now=()=>new Date().toISOString()}={}){
++ let count=0,bytes=0,previous='0'.repeat(64),lastAt=null,opened=false,status=enabled?'NOT_OBSERVED':'DISABLED',failed=false;const cache=new WeakMap();let parsed=0,outside=0,unmapped=0;
++ const scoped=s=>SEC_SELECTION_SCOPE.includes(s);
++ function fail(){failed=true;status='INCOMPLETE';try{fs.writeFileSync(path.join(directory,'.incomplete'),'TELEMETRY_INCOMPLETE',{flag:'wx',mode:0o600});}catch{}}
++ function emit(payload){if(!enabled||failed)return null;let lock=false;try{
++  need(/^[A-Za-z0-9_-]{1,80}$/.test(runId||'')&&/^[a-f0-9]{40}$/.test(sourceSha||''),'TELEMETRY_ID');
++  if(!opened){for(let p=path.resolve(directory);;p=path.dirname(p)){if(fs.existsSync(p))need(!fs.lstatSync(p).isSymbolicLink(),'TELEMETRY_SYMLINK');if(path.dirname(p)===p)break;}fs.mkdirSync(directory,{recursive:true,mode:0o700});const meta={kind:'SEC_SELECTION_TELEMETRY_PROPOSED_V2',runId,sourceSha,scope:SEC_SELECTION_SCOPE};const f=path.join(directory,'run.json');if(!fs.existsSync(f))fs.writeFileSync(f,JSON.stringify(meta),{flag:'wx',mode:0o600});const prior=readSelectionTelemetry(directory,{runId,sourceSha});count=prior.records.length;bytes=prior.bytes;previous=prior.lastHash;lastAt=prior.lastAt;opened=true;}
++  fs.mkdirSync(path.join(directory,'.writer-lock'));lock=true;need(count<SELECTION_CAPS.records,'TELEMETRY_CAP');const body={sequence:count,previousHash:previous,at:now(),payload};need(Number.isFinite(Date.parse(body.at))&&(!lastAt||Date.parse(body.at)>=Date.parse(lastAt)),'TELEMETRY_CLOCK');const hash=sha(JSON.stringify(body)),b=Buffer.from(JSON.stringify({...body,hash}));need(b.length<=SELECTION_CAPS.recordBytes&&bytes+b.length<=SELECTION_CAPS.bytes,'TELEMETRY_BUDGET');const pending=path.join(directory,'.pending'),fd=fs.openSync(pending,'wx',0o600);try{fs.writeFileSync(fd,b);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}const target=path.join(directory,'record-'+String(count).padStart(6,'0')+'.json');fs.linkSync(pending,target);fs.unlinkSync(pending);const dfd=fs.openSync(directory,'r');try{fs.fsyncSync(dfd);}finally{fs.closeSync(dfd);}previous=hash;lastAt=body.at;count++;bytes+=b.length;status='RECORDED_UNAUDITED';return {hash,acknowledgedAt:now()};
++ }catch{fail();return null;}finally{if(lock)try{fs.rmdirSync(path.join(directory,'.writer-lock'));}catch{fail();}}}
++ return {emit,feed(entry,symbols,seen){if(!enabled)return;parsed++;if(!symbols.length)unmapped++;if(!symbols.some(scoped)){outside++;return;}emit({type:'FEED_ENTRY',entry,scopeSymbols:symbols.filter(scoped),seenByLegacy:seen,clockBasis:'ATOM_UPDATED_NOT_ACCEPTANCE',globalFirstIngestionEstablished:false});},
++  start(symbol,route,predicates=null){if(!enabled||!scoped(symbol))return null;const x={symbol,route,lookupInvokedAt:now(),predicates};const ack=emit({type:'LOOKUP_INVOKED',...x});return ack?{...x,lookupId:ack.hash,response:null}:null;},
++  finish(ctx,result){if(!ctx)return;emit({type:'LOOKUP_FINISHED',lookupId:ctx.lookupId,symbol:ctx.symbol,route:ctx.route,known:result?.known===true,status:result?.status||'UNKNOWN',response:ctx.response?{...ctx.response,recent:undefined}:null});if(result&&typeof result==='object')cache.set(result,ctx);},
++  info(result,acc){if(!result)return {state:'MISS'};const c=cache.get(result);if(!c)return {state:'UNKNOWN_OR_PREEXISTING_CACHE'};const r=c.response,idx=r?.recent?.accessionNumber?.indexOf(acc)??-1;return {state:r?'DOCUMENTED_RESPONSE':'NO_RESPONSE',lookupId:c.lookupId,route:c.route,requestPredicates:c.predicates,lookupInvokedAt:c.lookupInvokedAt,requestedAt:r?.requestStartedAt||null,responseRecordedAt:r?.recordedAt||null,bodySha256:r?.bodySha256||null,directOrigin:r?.directOrigin===true,httpStatus:r?.httpStatus??null,accessionMatched:idx>=0,reportedAcceptanceAt:idx>=0?r.recent.acceptanceDateTime?.[idx]||null:null};},
++  decision(p,reason,details={}){if(scoped(p.sym))emit({type:'D_EVENT_DECISION',event:{symbol:p.sym,accession:p.acc,reportedAtomUpdatedAt:p.at},reason,...details});},
++  async submissions(response,options,ctx,archive){
++   if(!enabled||!ctx)return archive.readSubmissions(response,options);
++   const headersReceivedAt=now();if(!response.ok){archive.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body:Buffer.alloc(0),url:options.url,responseUrl:response.url||null,redirected:response.redirected??null,httpStatus:response.status,requestStartedAt:options.requestStartedAt,headersReceivedAt,bodyReceivedAt:null,observedAt:now()});ctx.response={httpStatus:response.status,requestStartedAt:options.requestStartedAt,headersReceivedAt,bodyReceivedAt:null,recordedAt:now(),bodySha256:null,directOrigin:false};return null;}
++   let body;try{body=Buffer.from(await response.arrayBuffer());}catch(e){archive.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body:Buffer.alloc(0),url:options.url,responseUrl:response.url||null,redirected:response.redirected??null,httpStatus:0,requestStartedAt:options.requestStartedAt,headersReceivedAt,bodyReceivedAt:null,observedAt:now()});emit({type:'BODY_READ_FAILED',lookupId:ctx.lookupId,symbol:ctx.symbol});throw e;}const bodyReceivedAt=now();archive.observe({kind:'SEC_SUBMISSIONS_RESPONSE_V1',body,url:options.url,responseUrl:response.url||null,redirected:response.redirected??null,httpStatus:response.status,requestStartedAt:options.requestStartedAt,headersReceivedAt,bodyReceivedAt,observedAt:now()});
++   const base={httpStatus:response.status,requestStartedAt:options.requestStartedAt,headersReceivedAt,bodyReceivedAt,recordedAt:now(),bodySha256:sha(body),directOrigin:response.url===options.url&&response.redirected===false};ctx.response=base;emit({type:'SUBMISSIONS_BYTES',lookupId:ctx.lookupId,symbol:ctx.symbol,...base});const doc=JSON.parse(new TextDecoder().decode(body));ctx.response={...base,recent:doc.filings?.recent};return doc;
++  },report(){return {enabled,status,failed,records:count,bytes,parsedEntryOccurrences:parsed,outsideScopeOccurrences:outside,unmappedOccurrences:unmapped,primaryAdmission:false};}};
++}
