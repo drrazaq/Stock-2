@@ -1,30 +1,30 @@
 {
   "kind": "INACTIVE_V2_POLICY_TELEMETRY_AND_SEPARATE_MENTOR_REVIEW",
-  "developmentImplementationSource": "04e24416013dacb7cddcb86528510e2db4b5f28d",
+  "developmentImplementationSource": "119de64b323f86f2f45e6d3a40e13383294ee648",
   "productionBase": "6e806c4f2ea5d0f299b86c435fdc449c2f87e291",
   "mentorStandaloneReviewHead": "d63d3d10849e4addaa1c5e05d22ec5eeaecc82ea",
   "mentorReviewURL": "https://github.com/drrazaq/Stock-2/pull/3",
   "v2IndependentReview": "REQUESTED_IN_DRAFT_PR1_NOT_COMPLETED",
   "files": {
-    "sec-selection-telemetry.mjs": "2cacc14f265b6d18c3edaec9b90ec60462af3b413476bfed50894f6d78561de2",
-    "sec-proof-ready-proposal.mjs": "b482bf94152453980740324f705f7f7f392c1ea21741cf5650bcb440aae2627e",
+    "sec-selection-telemetry.mjs": "20687fa91d3f5418dcc44ee6749bcfc8fb00e352e1c8f36ca2feb439a14942dd",
+    "sec-proof-ready-proposal.mjs": "d1af1f777df37257073c6212e2e887a8e926c0862db8cd37781553162b7f9d68",
     "test/sec-selection-telemetry.test.mjs": "01e2db931af7fa8bdb9a304af1db422dad20107bbfa63603e77c75d5e86fbb6c",
-    "test/sec-proof-ready-proposal.test.mjs": "f46bad3cb9bfaabd9e598bead056be6762b75db8f41218242a376832a4604805",
-    "test/native-sec-producer-fixture.mjs": "933f4e462048d818ffef3bbab5652444f759fc1268db4d6275d39ae90d1b17c0",
-    "docs/validation/sec-selection-telemetry.patch": "6cd63f6aedfab9f80939859cf41660117c6d5feb038fb9732a711e0a80115002",
-    "docs/validation/sec-selection-telemetry-manifest.json": "baf824c481e8d0d256b19fd473a874e563cc7902f5a0ab0913b7afcd36989eef",
+    "test/sec-proof-ready-proposal.test.mjs": "fc58da6451e1939d3f13d862b08af7c6dee7776e24a54522d757811f4062739a",
+    "test/native-sec-producer-fixture.mjs": "26609fea41da19ead53fe9bfb65efdc7e6e1c16da029030712e492b2720cb651",
+    "docs/validation/sec-selection-telemetry.patch": "c2317ee38b1765c04c77cd92273829768973ad53ea28f19c70674bc6e17f0fc4",
+    "docs/validation/sec-selection-telemetry-manifest.json": "79e129341a2c896635e2e5e574dacb4dc219d6072d2dfd091bbdefec7704871b",
     "docs/validation/mentor-readonly-production.patch": "ebc62f42571b0dddc9d7e44e8d81f49b0f7ff22ea097ce121ba18140a5846222",
     "docs/validation/mentor-readonly-production-manifest.json": "6ec5cef7119c872d30be79086ade432275325d909f88f84a0570698468fc5e14",
     "docs/validation/sunday-record-section-fixture.patch": "9ee64f9ba1bfc2a2b52c88200b92e1b53c385ef780dff9eac94b4d05dc2509b9",
-    "docs/sec-proof-ready-v2-review.md": "1df32faf6bdfae79c7c28f062c8c56e1d75e50506538e4e3a56a1dddb546c111",
+    "docs/sec-proof-ready-v2-review.md": "f519a946ac58efaa74337670dfd6ad74336607ce87ffd88ef3b7723cc26d6c9f",
     "docs/mentor-readonly-production-proposal.md": "ac3233dd8e9d7935eb4f1eabc6d083930a55c62cff23949b15ac4bccd36b596f",
     "docs/alpaca-entitlement-owner-checklist.md": "deb1f4eb546af6ffd4f7003e13b410064bf2c48d86e035c9a35c1b320713fb0a",
-    "docs/validation/sec-proof-ready-v2.proposal.json": "10f2fffb4254eafc9d07152cc853675fdc87274320f150336402c930a52636a1",
-    "docs/validation/sec-proof-ready-v2-example.json": "d243d0e5d9bddf85137adf8a1883af7ebfc63dfa5563653d564453985fa63fb4"
+    "docs/validation/sec-proof-ready-v2.proposal.json": "047a5ed01c663f32ff18cdecd9811727a46a866db515408058705392169300bb",
+    "docs/validation/sec-proof-ready-v2-example.json": "0cdbb8e7cd8cf3918ce2c31d7de1068bb46cad38b3434fb89b0e14e22f9528f1"
   },
   "focused": {
     "actualTelemetry": 10,
-    "policyPrototype": 17,
+    "policyPrototype": 19,
     "productionMentorCapsule": 6,
     "mentorReadOnly": 2,
     "preservedActualWatcher": 7
@@ -107,14 +107,52 @@
     "gated.json": "0e23ac00ff663286bb9ddac2b1b8030b1344d3cc8bf317a037a7645f4f295588",
     "python.log": "d383d5e797701867573f3dbe2d50ede120bb8086a81f58d13c118a0535660f4c",
     "static.json": "a72ffbfa999ec8d525bfa7e8d31cd4bef27557b357ca50ce3fd17f85ad184db8",
-    "development-draft2/node.log": "005d623a0350339aba1b954659a44cb87d1a4cfc7f30e7642bff54eff40efc68"
+    "development-draft2/node.log": "005d623a0350339aba1b954659a44cb87d1a4cfc7f30e7642bff54eff40efc68",
+    "selection-draft3.log": "7a9e37a7f2cf3ed8a95600c2b1320408a9ac60ef06457f705bc587fae176c6d8",
+    "proposal-draft3-full.log": "4e595affaa9dd4f3d5aba4398eedefce2e368d03430a3c099522009e99476fcf",
+    "production-telemetry-draft3/node.log": "b003e5ecc9bc41df728ad966c39be53d5ee5994b65025536a6c1486541fcb56c",
+    "production-combined-draft3/node.log": "2ecfb2b611a565559ec987c1dd07ac603477bd94a246313d0128d96b7cbcc2af",
+    "static-draft3.json": "a72ffbfa999ec8d525bfa7e8d31cd4bef27557b357ca50ce3fd17f85ad184db8",
+    "development-draft3/node.log": "4cb0d6248469e517b37cfdc8918a17680bb78bd63b03c211588b0ab70824feb8",
+    "python-draft3.log": "e60757edb565e2356cacd0e6de574b10abcd088592490bd7442a28fc16bdf4ee"
   },
-  "reviewSource": "04e24416013dacb7cddcb86528510e2db4b5f28d",
-  "prototypeRevision": "SEC_PROOF_READY_V2_DRAFT2_REVIEW_ONLY",
+  "reviewSource": "119de64b323f86f2f45e6d3a40e13383294ee648",
+  "prototypeRevision": "SEC_PROOF_READY_V2_DRAFT3_REVIEW_ONLY",
   "development": {
     "files": 226,
-    "cases": 2184,
+    "cases": 2186,
     "failures": [],
-    "runtimeCodeSource": "04e24416013dacb7cddcb86528510e2db4b5f28d"
+    "runtimeCodeSource": "119de64b323f86f2f45e6d3a40e13383294ee648"
+  },
+  "v2Draft3Corrections": [
+    "Immutable enabled RUN_STARTED permits empty first source frame without claiming feed absence",
+    "First source-ready events preserve their remaining entry lifetime after09:34; no new readiness after cutoff",
+    "Actual pre-open watcher prefixes replayed unchanged at09:30/09:31/09:32 with original clocks and pre-readiness quote context; one synthetic pair, zero admissions"
+  ],
+  "earlierCandidate": {
+    "sha": "a5b39aed9e6f5b5ca24b68f578bdce4586f60222",
+    "checks": 6,
+    "conclusion": "PASS",
+    "subsequentFindings": "Empty-start initialization and buffered-entry expiry corrected in Draft3; earlier passing tests did not establish adoption readiness"
+  },
+  "passiveWatcherInspection": {
+    "asOf": "2026-11-01",
+    "latestVisibleScheduledRun": 41072889693,
+    "source": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+    "postWatcherAndSecDeploymentNaturalEvidence": "PENDING",
+    "postDSTMarketSessionEvidence": "PENDING",
+    "noRunDispatched": true
+  },
+  "chronologicalScheduleEvidence": {
+    "synthetic": true,
+    "actualWatcherPrefixReplay": true,
+    "liveV2HostClaimed": false,
+    "frames": [
+      0,
+      0,
+      1
+    ],
+    "policyTests": 19,
+    "genuineAdmissions": 0
   }
 }
