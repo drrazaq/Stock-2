@@ -57,9 +57,13 @@ jobs:
               with (base / 'sip-access-approval.json').open('x') as f:
                   f.write(value)
           except Exception:
-              for name, value in [('sip-access.code', 'BLOCKED_INPUT\n'), ('sip-access.exit', '2\n')]:
-                  with (base / name).open('x') as f:
-                      f.write(value)
+              try:
+                  for name, value in [('sip-access.code', 'BLOCKED_INPUT\n'), ('sip-access.exit', '2\n')]:
+                      with (base / name).open('x') as f:
+                          f.write(value)
+              except Exception:
+                  print('ERROR')
+                  raise SystemExit(1)
               print('BLOCKED_INPUT')
               raise SystemExit(2)
           PY
@@ -90,9 +94,13 @@ jobs:
                   code = 'BLOCKED_START_TOO_LATE'
                   raise ValueError()
           except Exception:
-              for name, value in [('sip-access.code', code + '\n'), ('sip-access.exit', '2\n')]:
-                  with (base / name).open('x') as f:
-                      f.write(value)
+              try:
+                  for name, value in [('sip-access.code', code + '\n'), ('sip-access.exit', '2\n')]:
+                      with (base / name).open('x') as f:
+                          f.write(value)
+              except Exception:
+                  print('ERROR')
+                  raise SystemExit(1)
               print(code)
               raise SystemExit(2)
           PY
@@ -134,17 +142,22 @@ jobs:
               code, rc = normalize(bounded('sip-access.raw', 128), os.environ['SIP_RAW_EXIT'])
           except Exception:
               code, rc = 'ERROR', 1
-          for name, value in [('sip-access.code', code + '\n'), ('sip-access.exit', str(rc) + '\n')]:
-              p = base / name
-              if p.is_symlink():
-                  print('ERROR')
-                  raise SystemExit(1)
-              p.write_text(value, encoding='ascii')
+          try:
+              for name, value in [('sip-access.code', code + '\n'), ('sip-access.exit', str(rc) + '\n')]:
+                  p = base / name
+                  if p.is_symlink():
+                      raise ValueError()
+                  p.write_text(value, encoding='ascii')
+          except Exception:
+              print('ERROR')
+              raise SystemExit(1)
           print(code)
           raise SystemExit(rc)
           PY
       - name: Validate final result independently
         if: always()
+        env:
+          SIP_WRAPPER_OUTCOME: ${{ steps.diagnostic.outcome }}
         run: |
           python3 - <<'PY'
           import json, os, pathlib, re, sys
@@ -174,6 +187,9 @@ jobs:
               if not re.fullmatch(r'[012]\n', rc_text):
                   raise ValueError()
               code, rc = normalize(bounded('sip-access.code', 128), rc_text[:-1])
+              outcome = os.environ.get('SIP_WRAPPER_OUTCOME', '')
+              if outcome not in ('success', 'failure', 'skipped', 'cancelled') or (rc == 0 and outcome != 'success') or (rc != 0 and outcome == 'success'):
+                  raise ValueError()
           except Exception:
               code, rc = 'ERROR', 1
           print(code)

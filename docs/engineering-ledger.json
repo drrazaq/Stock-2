@@ -5337,7 +5337,14 @@
     "observerPackage": "fbbd0e43b15009f85f371efbe8647a5fed983ac1",
     "observerCI": "PASS_HOSTED_MAIN_BASE",
     "V2SourceCandidate": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
-    "V2Verification": "Exact-SHA hosted checks required; local executor unavailable",
+    "V2Verification": {
+      "sha": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304257278/job/124841310307",
+      "focusedTests": 7,
+      "actualProducerPath": true,
+      "scope": "Synthetic producer prefixes->source guard->41 frames->encrypted checkpoint/client ACK->restart->paired exits; missingness, losses, partial writes, concurrent attempts and unconfirmed/timeout ACKs. No live binding or admissions."
+    },
     "V1Changed": false,
     "contractsChanged": false,
     "productionChanged": false,
@@ -5345,7 +5352,16 @@
     "credentialsUsed": false,
     "providerCalls": 0,
     "mondayNaturalEvidence": "PENDING_2026_11_02",
-    "next": "DISCOVERY-04 remaining V2 host/report/guard engineering; CATALYST-03 source contracts next"
+    "next": "DISCOVERY-04 remaining V2 host/report/guard engineering; CATALYST-03 source contracts next",
+    "observerCurrentMainCompatibility": {
+      "packageSource": "fbbd0e43b15009f85f371efbe8647a5fed983ac1",
+      "testedCurrentMain": "97001c3fd1b5ea04603f98d1900324a882c951cc",
+      "compatibilityCommit": "7b3e5a6cae542f2290efa2c283d4b118b23bc31a",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304745853/job/124842748853",
+      "scope": "All existing current-main tests plus unchanged runtime/package/parity tests. Agent-C changes preserved, not merged into development. No main changes."
+    },
+    "diagnosticStorageFollowup": "510ef31cb90c9623ee8a0170cfed1010ebfd28bf; exact-SHA CI required"
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",

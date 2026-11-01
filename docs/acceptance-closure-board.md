@@ -82,7 +82,7 @@ Deployed accounting `bdc984e9`, watcher `be315901`, SEC `bd70f5a7` and feed-inte
 
 **Completed evidence:** V1 unchanged; existing artifact zero admissions retained; D1–D3 and inactive host/client/parent proofs preserved.
 
-**Smallest gap:** V1 normal proof order cannot enroll. V2 policy unadopted; offline encrypted transport/outcomes are under actual-caller tests. Trusted live V2 host/guard integration remains engineering.
+**Smallest gap:** V1 normal proof order cannot enroll. V2 policy unadopted; offline encrypted transport/outcomes are verified against the actual synthetic producer path. Trusted live V2 host/guard integration remains engineering.
 
 **Dependency type:** IMPLEMENTATION, EXTERNAL_EVIDENCE, OWNER_DECISION.
 

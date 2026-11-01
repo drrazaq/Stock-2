@@ -26,3 +26,11 @@ Deployed accountingbdc984e9, watcherbe315901, SECbd70f5a and feedb680988b remain
 4. Monday passive inspection only when natural runs exist. Claude's separate repo/workflow/delivery/claim audit remains separate.
 
 Smallest immediate decision: independent focused re-review of the corrected inactive diagnostic and separate observer package. Only after that review may the owner consider exact diagnostic workflow installation, existing bindings and ONE dated run. That approval does not activate V2, install shadow capture, endorse a strategy or deploy the observer. No new approval is requested to continue offline engineering.
+
+## Completed source verification and updated compatibility
+
+V2 source243bf2f2: [7/7 actual-caller/failure controls and full hosted suite PASS](https://github.com/drrazaq/Stock-2/actions/runs/41304257278/job/124841310307). This completes this offline transport/outcome increment, not the remaining production-capable V2 host/guard or independent remote-recovery engineering. The earlier original V1 guard/evaluator remains untouched.
+
+Production main subsequently advanced with independent Agent-C source/workflow/test changes. Observer watcher/snapshot dependencies remain identical. The unchanged observer package was applied on current main97001c3f in separate test commit7b3e5a6c and [all current-main tests passed](https://github.com/drrazaq/Stock-2/actions/runs/41304745853/job/124842748853). No Agent-C history was merged into this development checkpoint, no Agent-C lab was dispatched and no production code was modified.
+
+A final defensive C2 followup makes result/refusal-file storage errors emit only ERROR and cross-checks the finalizer against the protected step's native outcome, so a failed step cannot leave an apparently valid PASS receipt. Literal-Python storage/symlink and native-outcome regressions are added. This followup must pass its exact-SHA checks before review.

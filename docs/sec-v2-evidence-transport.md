@@ -34,3 +34,7 @@ The guard intentionally accepts OFFLINE_REHEARSAL_V2 and synthetic native proven
 After these gaps and independent chronology/control review, owner decisions would cover explicit V2/continuity policy adoption, exact budgets and a dated scope. Existing Algo Trader Plus and Massive Starter subscriptions are confirmed; endpoint binding, current quote access and applicable retention/reference permissions remain distinct checks. No owner approval is needed to finish offline engineering.
 
 No strategy is endorsed; no profitable or admissible case is claimed.
+
+## Verified execution
+
+[Exact-source hosted PASS](https://github.com/drrazaq/Stock-2/actions/runs/41304257278/job/124841310307) on243bf2f24fa5986a86fdaf0afdabe0e476bd29ad:7/7 focused tests, full existing suite. Source/state/guard/failure and real synthetic producer integration passed. This is hosted execution of our tests; local Node and Claude attachment/harness access remain unavailable. Latest consolidated HEAD still needs its own tests; these passes do not fill the remaining live-binding or independent-evidence gaps.

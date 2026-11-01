@@ -4,13 +4,20 @@
   "sourceCandidate": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
   "baseline": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30",
   "sourceChecks": "https://github.com/drrazaq/Stock-2/commit/243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
-  "verification": "Hosted exact-SHA checks establish execution; no independent local Node execution available. Published sources include synthetic end-to-end and failure tests.",
+  "verification": {
+    "sha": "243bf2f24fa5986a86fdaf0afdabe0e476bd29ad",
+    "result": "PASS",
+    "job": "https://github.com/drrazaq/Stock-2/actions/runs/41304257278/job/124841310307",
+    "focusedTests": 7,
+    "actualProducerPath": true,
+    "scope": "Synthetic producer prefixes->source guard->41 frames->encrypted checkpoint/client ACK->restart->paired exits; missingness, losses, partial writes, concurrent attempts and unconfirmed/timeout ACKs. No live binding or admissions."
+  },
   "fileHashes": {
     "sec-proof-ready-proposal.mjs": "c314a55ca5bb09219bb8aa96404ca6f4fd7943a23c22488e8521b03f6462de8b",
     "sec-v2-outcomes.mjs": "813ed8a3c67c99a346f9dbe0a644fe2729b4ae5c8137902beaca0996f89aa5ce",
     "sec-v2-evidence.mjs": "2aba830c6a6f2f51ba2e99c625ebac906f7b314c6f7348bb8a78dae35b4309c5",
     "test/sec-v2-evidence.test.mjs": "26ed04cb4c1cb359eb34bd51e155ccb2d4511d6ab47902953b0b9bef79aaaa59",
-    "docs/sec-v2-evidence-transport.md": "1ebff77fb1e8c3351c5ce8145ac20dcd4da524bb69dbecbe7d8f8bad48bfd2c9"
+    "docs/sec-v2-evidence-transport.md": "e2e857ac6014c90f722a79d2e52428bc2f0dfcf641699241626c6a7f0b60623f"
   },
   "guardDependencyGitBlobs": {
     "artifact-wire-client.mjs": "d8c0c30831c4903a18ad487255e33d5a8cd9630d",
