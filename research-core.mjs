@@ -152,6 +152,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'isc') { ch += preRegisterIsc(LB); continue; }
     if (R.family === 'rpo') { ch += preRegisterRpo(LB); continue; }
     if (R.family === 'eat') { ch += preRegisterEat(LB); continue; }
+    if (R.family === 'tax') { ch += preRegisterTax(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -376,4 +377,70 @@ export function preRegisterEat(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of EAT_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-31 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.', sources: EAT_SOURCES, hold: R.hold, note: EAT_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 6 (pre-registered 1 Nov 2026, before any run): TAX EXPENSE MOMENTUM (tax expense surprise) ----------------
+// Source: Thomas and Zhang, "Tax Expense Momentum", Journal of Accounting Research 49(3), 2011, 791-821 (doi 10.1111/j.1475-679X.2011.00409.x;
+// working paper "Tax expense surprises and future returns", Yale ICF 2531, 2007): dT = tax expense in quarter q minus tax expense in
+// quarter q-4, scaled by assets of q-4; the top decile beat the bottom decile by 3.89% over the next three months (1977-2005, t 10.9;
+// 2.58% after removing the book-income surprise); strong for two quarters, then gone. Tax expense is a cleaner read of true taxable profit
+// (managers manage book income more than tax). NEW information (the tax line of the income statement, official SEC XBRL); nothing in the
+// library uses it (SQ12-REVEPS uses revenue and EPS). Long only: buy the top; the bottom is an AVOID check (never a buy).
+// MEASURE (fixed now, no tuning): us-gaap:IncomeTaxExpenseBenefit, unit USD, DISCRETE QUARTERS only (start..end 80-100 days), forms 10-Q
+// or 10-K (no amendments), period end from 2019-06-01. us-gaap:Assets (instant, USD, 10-Q/10-K). Read in order of the SEC 'filed' date.
+// A filing date F is an EVENT when the latest quarter end E it reports is later than every quarter end reported before F and
+// 0 <= F - E <= 120 days. CURRENT = that filing's quarter value for E. PRIOR = the quarter value (latest filed on or before F) for the
+// quarter end closest to E - 365 within E-385..E-345. ASSETS = total assets (latest filed on or before F) at the instant closest to the
+// PRIOR end within +-20 days; ASSETS >= 10M USD. dT = (CURRENT - PRIOR) / ASSETS (totals, not per share: a simplification, stated).
+// Q4 is rarely tagged as a discrete quarter in 10-Ks, so most events are Q1-Q3 10-Qs (stated in the report).
+// RANK (point in time, the lazy-prices ranker): dT's percentile among ALL events filed in the 365 days before F (300+ needed).
+//   RQ-TAX-63     BUY the next open after a filing whose dT is in the top 20% (percentile >= 0.80); sell the close 63 later (the paper's 3 months).
+//   RQ-TAX-126    the same, hold 126 sessions (the paper's two quarters).
+//   RQ-TAX-LOW63  AVOID check: bottom 20% dT (percentile <= 0.20), 63 sessions; judged GROSS vs GROSS (the 31 Oct method fix). Never a buy.
+// Public on the 'filed' date: bought at the OPEN of the first session strictly AFTER it (conservative). Liquid (system rule) on the
+// session before entry. One open trade per stock per rule.
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies looked up in the SEC bulk company facts file, (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 15,000+ events from 2021-10-01 (fewer = the reader is broken: fix it, no verdict).
+export const TAX = { tag: 'IncomeTaxExpenseBenefit', assets: 'Assets', endFrom: '2019-06-01', qLo: 80, qHi: 100, maxLag: 120, prevLo: 345, prevHi: 385, aWin: 20, minAssets: 10e6, eventsFrom: '2021-10-01' };
+export const TAX_DATA = { looked: 0.95, map: 0.85, events: 15000 };
+RULES['RQ-TAX-63'] = { kind: 'buy', hold: 63, side: 'top', family: 'tax', name: 'Tax expense surprise (tax up vs a year before, per assets) in the top 20%, hold 3 months',
+  rule: 'Buy the next open after a 10-Q/10-K whose quarterly income tax expense minus the same quarter a year before, divided by total assets a year before (SEC XBRL), is in the top 20% (percentile >= 0.80 vs all such filings of the prior 365 days; filed within 120 days of the quarter end; assets 10M USD+); stock liquid; sell the close 63 sessions later.' };
+RULES['RQ-TAX-126'] = { kind: 'buy', hold: 126, side: 'top', family: 'tax', name: 'Tax expense surprise in the top 20%, hold 6 months', rule: 'As RQ-TAX-63, hold 126 sessions.' };
+RULES['RQ-TAX-LOW63'] = { kind: 'avoid', hold: 63, side: 'bottom', family: 'tax', name: 'AVOID check: tax expense surprise in the bottom 20%, 63 sessions',
+  rule: 'Information only: stocks whose tax expense change per assets is among the 20% lowest (percentile <= 0.20), bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+export const TAX_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'tax');
+for (const id of TAX_IDS) { if (!IDS.includes(id)) IDS.push(id); if (RULES[id].kind === 'buy' && !BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// companyfacts JSON -> { q: [[start, end, val, filed, form]] discrete quarters of tax expense, a: [[end, val, filed]] assets }, sorted by filed
+export function taxRows(j) { const g = j && j.facts && j.facts['us-gaap'], uq = g && g[TAX.tag] && g[TAX.tag].units, ua = g && g[TAX.assets] && g[TAX.assets].units;
+  const q = [], a = [], sq = new Set(), sa = new Set(), form = (x) => x.form === '10-Q' || x.form === '10-K';
+  for (const x of (uq && Array.isArray(uq.USD) ? uq.USD : [])) { if (!x || !x.start || !x.end || !x.filed || !ok(x.val) || !form(x) || x.end < TAX.endFrom) continue;
+    const len = daysBetween(x.start, x.end); if (len < TAX.qLo || len > TAX.qHi) continue; const k = x.start + '|' + x.end + '|' + x.val + '|' + x.filed; if (sq.has(k)) continue; sq.add(k); q.push([x.start, x.end, x.val, x.filed, x.form]); }
+  for (const x of (ua && Array.isArray(ua.USD) ? ua.USD : [])) { if (!x || x.start || !x.end || !x.filed || !ok(x.val) || x.val <= 0 || !form(x) || x.end < '2018-03-01') continue;
+    const k = x.end + '|' + x.val + '|' + x.filed; if (sa.has(k)) continue; sa.add(k); a.push([x.end, x.val, x.filed]); }
+  const byF = (i) => (p, r) => p[i] < r[i] ? -1 : p[i] > r[i] ? 1 : 0;
+  return { q: q.sort((p, r) => byF(3)(p, r) || byF(1)(p, r)), a: a.sort((p, r) => byF(2)(p, r) || byF(0)(p, r)) }; }
+// rows -> events [{ d (filed), end, cur, prior, assets, g (= dT), form }]
+export function taxEvents(rows) { const out = [], q = (rows && rows.q) || [], A = (rows && rows.a) || []; let maxEnd = '';
+  const byF = new Map(); for (const r of q) (byF.get(r[3]) || byF.set(r[3], []).get(r[3])).push(r);
+  const known = [];
+  for (const F of [...byF.keys()].sort()) { const here = byF.get(F); known.push(...here); const E = here.reduce((m, r) => r[1] > m ? r[1] : m, '');
+    if (E > maxEnd && daysBetween(E, F) >= 0 && daysBetween(E, F) <= TAX.maxLag) { const cur = here.filter(r => r[1] === E).pop()[2], target = addDays(E, -365); let best = null;
+      for (const r of known) { const gap = daysBetween(r[1], E); if (gap < TAX.prevLo || gap > TAX.prevHi) continue;
+        if (!best || Math.abs(daysBetween(r[1], target)) < Math.abs(daysBetween(best[1], target)) || (r[1] === best[1] && r[3] >= best[3])) best = r; }
+      let as = null; if (best) for (const x of A) { if (x[2] > F) break; const gap = Math.abs(daysBetween(x[0], best[1])); if (gap > TAX.aWin) continue;
+        if (!as || gap < Math.abs(daysBetween(as[0], best[1])) || (x[0] === as[0] && x[2] >= as[2])) as = x; }
+      if (best && as && as[1] >= TAX.minAssets) out.push({ d: F, end: E, cur, prior: best[2], assets: as[1], g: +((cur - best[2]) / as[1]).toFixed(6), form: here.find(r => r[1] === E)[4] }); }
+    if (E > maxEnd) maxEnd = E; }
+  return out; }
+export function taxDataRule({ ciks, looked, liqMonths, liqMapped, events }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= TAX_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= TAX_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= TAX_DATA.events)) why.push('tax surprise events ' + events + ' (15,000 needed: reader check)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const TAX_SOURCES = ['https://doi.org/10.1111/j.1475-679X.2011.00409.x', 'https://ideas.repec.org/a/bla/joares/v49y2011i3p791-821.html', 'https://repec.som.yale.edu/icfpub/publications/2531.pdf'];
+const TAX_NOTE = 'Daily researcher 2026-11-01: Thomas and Zhang (2011, JAR) "Tax Expense Momentum": the year-on-year change in quarterly tax expense, per assets, predicts returns for two quarters (top minus bottom decile 3.89% over 3 months, 1977-2005). New information family (the tax line, official SEC XBRL company facts), not in the library. Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 2 Nov 2026.';
+export function preRegisterTax(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of TAX_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-01 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.', sources: TAX_SOURCES, hold: R.hold, note: TAX_NOTE }); ch++; }
   return ch; }
