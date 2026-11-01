@@ -25,16 +25,20 @@
   "planSha256": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
   "workflowSha256": "4cd8081c6d0800f929d425e9ff777d0a4605ae8161c733728230afa013b95a26",
   "fileHashes": {
-    "sip-access-diagnostic.mjs": "008f8b23db51b226ebc61890d816ff55031e37ac2a5d7b913568174e0aacb151",
-    "tools/run-sip-access-diagnostic.mjs": "9f32782726db84b94dc9ce0ce04a5ffd4c21544f8562d63c64d53a0605f0cb63",
-    "test/sip-access-diagnostic.test.mjs": "82bb1338b4646c8ed39b8b25624ad28434ce125dbd87d7f4b03523bac95f2a4b",
+    "sip-access-diagnostic.mjs": "8810a1220102786119b3fdf0caf296b8a38412c87bd9f3c1bc5ee9cb58d35d8a",
+    "tools/run-sip-access-diagnostic.mjs": "9125bf7b2060e2b04579d3bb1e9b850abc83f60614ff6bf4007e6db6f75f3355",
+    "test/sip-access-diagnostic.test.mjs": "43529ab4b4b71ad57c17d885a3713488342cd33e689a8394885503f2c567bcb8",
     "docs/validation/sip-access-plan.proposed.json": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
     "docs/market-data-contracts-review-pass.md": "114d060f091c9db417eccc4b3a8697603c105ae968e894024afd68a0278dcc81",
     "docs/sip-access-diagnostic-proposal.md": "04a812c4531daab14e582cd324db899067a10a0a00af4245c95fd49c91319503",
     "docs/contracts-integration-proposal.md": "e2b52311b914ef1e0267b841bcf9b084229cd769570616cb6a2a5fce1744f047",
     "docs/validation/sip-access-diagnostic.workflow.yml.proposed": "4cd8081c6d0800f929d425e9ff777d0a4605ae8161c733728230afa013b95a26",
     "test/sip-access-package.test.mjs": "c69e16a8f167021626e730b954b20792399aea01dce093d378c6b4ca833b6905",
-    "docs/validation/sip-access-approval.example.json": "2bb89ed07d7fc04177b3f2a8265861edfdd9b1d58e4b351f2f59298ba3008a34"
+    "docs/validation/sip-access-approval.example.json": "2bb89ed07d7fc04177b3f2a8265861edfdd9b1d58e4b351f2f59298ba3008a34",
+    "sip-access-result.mjs": "01a3c1859003e49a5caf5001bfd6219faf3fcf88b68549b81127528ea09a337b",
+    "tools/validate-sip-access-result.mjs": "7a6b93e17edb4a1dd3250d0028cc1d3f06aa355a158b7eefeed9839e6b260744",
+    "test/sip-access-real-fixture.mjs": "58d34bff75550ee6c182841ec0338639582a49b42f2592f4774b779d2700a511",
+    "test/sip-access-corrections.test.mjs": "9030380d11cb4c74b548dd4cde914ba3e270643057b8a929ad44fa02327df8c3"
   },
   "verification": {
     "independentLocalNode": "UNAVAILABLE: managed executor initialization failed",
@@ -46,12 +50,15 @@
       "result": "PASS_ALL_5_APPLICABLE_CHECKS",
       "focusedCases": 12
     },
-    "approvalRequired": "Exact workflow installation, existing provider bindings and ONE dated run; no automatic replacement/retry; operator checks run history"
+    "approvalRequired": "Exact workflow installation, existing provider bindings and ONE dated run; no automatic replacement/retry; operator checks run history",
+    "currentRevision": "Hosted execution pending; previous source/CI claims remain historical only."
   },
   "acceptance": {
     "complete": 24,
     "total": 40,
     "newClosures": 0,
     "genuineAdmissions": 0
-  }
+  },
+  "revisionStatus": "C1_C2_SOURCE_CHECKPOINT_UNVERIFIED_DO_NOT_INSTALL",
+  "previousReviewedCheckpoint": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30"
 }

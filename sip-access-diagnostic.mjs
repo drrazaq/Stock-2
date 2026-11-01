@@ -1,6 +1,7 @@
 // INACTIVE SIP-access diagnostic. No ambient fetch, credentials, messages, orders or strategy inputs.
 // Application traffic only: exactly the seven fixed GET slots below; no retries or pagination followups.
 export const LIMITS=Object.freeze({requests:7,bodyBytes:131072,totalBytes:917504,reportBytes:16384,requestMs:10000,wallMs:180000,repeatMs:90000});
+export const DIAGNOSTIC_TIMING=Object.freeze({earlyStartMs:600000,latestStartMs:30000,runnerMs:790000,shutdownMs:10000});
 const ORIGIN='https://data.alpaca.markets',SYMBOLS='SPY,AAPL';
 const finite=x=>typeof x==='number'&&Number.isFinite(x);
 const fail=code=>{throw Object.assign(Error(code),{code});};
@@ -20,6 +21,25 @@ export function validatePlan(p){
  if([0,6].includes(new Date(t).getUTCDay())||minute<575||minute>945||t%60000)fail('INVALID_PLAN');
  return {t0:t,deadline:t+LIMITS.wallMs};
 }
+
+export async function waitDiagnosticStart(plan,{now,monotonic,wait,signal}){
+ const {t0,deadline}=validatePlan(plan);let last=now(),mono=monotonic();
+ if(!finite(last)||!finite(mono))fail('CLOCK');
+ if(last<t0-DIAGNOSTIC_TIMING.earlyStartMs)fail('START_TOO_EARLY');
+ if(last>t0+DIAGNOSTIC_TIMING.latestStartMs)fail('START_TOO_LATE');
+ const began=mono;
+ if(signal?.aborted)fail(signal.reason==='DEADLINE'?'DEADLINE':'INTERRUPTED');
+ while(last<t0){
+  if(signal?.aborted)fail(signal.reason==='DEADLINE'?'DEADLINE':'INTERRUPTED');
+  await wait(Math.min(1000,t0-last));
+  const n=now(),m=monotonic();if(!finite(n)||n<last||!finite(m)||m<mono)fail('CLOCK');last=n;mono=m;
+  if(m-began>DIAGNOSTIC_TIMING.earlyStartMs+DIAGNOSTIC_TIMING.shutdownMs)fail('DEADLINE');
+ }
+ if(signal?.aborted)fail(signal.reason==='DEADLINE'?'DEADLINE':'INTERRUPTED');
+ if(last>t0+DIAGNOSTIC_TIMING.latestStartMs)fail('START_TOO_LATE');
+ return {t0,deadline};
+}
+
 function route(path,params){return ORIGIN+path+'?'+Object.entries(params).map(([k,v])=>encodeURIComponent(k)+'='+encodeURIComponent(v)).join('&');}
 export function requestsFor(p){
  const {t0}=validatePlan(p),closed=new Date(t0-1).toISOString(),start=new Date(t0-5*60000).toISOString();
@@ -62,13 +82,13 @@ function revisionCount(a,b){
  const index=body=>{const out=new Map();for(const [s,rows]of Object.entries(mapOf(body,'bars'))){if(!Array.isArray(rows))fail('SCHEMA_ERROR');for(const r of rows){if(!r||instant(r.t)===null||out.has(s+'|'+r.t))fail('SCHEMA_ERROR');out.set(s+'|'+r.t,JSON.stringify(['o','h','l','c','v','n','vw'].map(k=>r[k])));}}return out;};
  const x=index(a),y=index(b),keys=new Set([...x.keys(),...y.keys()]);return [...keys].filter(k=>x.get(k)!==y.get(k)).length;
 }
-const CODES=new Set(['INVALID_PLAN','CLOCK','DEADLINE','TIMEOUT','TOO_LARGE','HTTP_401','HTTP_403','HTTP_429','HTTP_ERROR','INVALID_JSON','SCHEMA_ERROR','INCOMPLETE_PAGE','TRANSPORT_ERROR']);
-export async function runSipDiagnostic(plan,{request,now,wait,approval}={}){
+const CODES=new Set(['INVALID_PLAN','CLOCK','DEADLINE','TIMEOUT','TOO_LARGE','HTTP_401','HTTP_403','HTTP_429','HTTP_ERROR','INVALID_JSON','SCHEMA_ERROR','INCOMPLETE_PAGE','TRANSPORT_ERROR','INTERRUPTED']);
+export async function runSipDiagnostic(plan,{request,now,wait,approval,signal}={}){
  const {t0,deadline}=validatePlan(plan);
  if(typeof request!=='function'||typeof now!=='function'||typeof wait!=='function'||approval?.granted!==true||approval.scope!=='SIP_ACCESS_SAMPLE_V1')fail('APPROVAL_REQUIRED');
  let last=now(),bytes=0,attempts=0,initial=null;const results=[];
  if(!finite(last)||last<t0||last>t0+30000)fail('CLOCK');
- const check=()=>{const t=now();if(!finite(t)||t<last)fail('CLOCK');last=t;if(t>deadline)fail('DEADLINE');return t;};
+ const check=()=>{if(signal?.aborted)fail(signal.reason==='DEADLINE'?'DEADLINE':'INTERRUPTED');const t=now();if(!finite(t)||t<last)fail('CLOCK');last=t;if(t>deadline)fail('DEADLINE');return t;};
  let status='COMPLETE_SAMPLED',reason=null;
  for(const slot of requestsFor(plan)){
   try{
@@ -90,21 +110,21 @@ export async function runSipDiagnostic(plan,{request,now,wait,approval}={}){
 }
 // This adapter is inert until a future, separately approved runner injects fetch and the existing binding.
 // A timeout covers fetch AND body reads, including a non-cooperative transport. Error text/body is never returned.
-export function createBoundedSipRequest({fetcher,headers}={}){
+export function createBoundedSipRequest({fetcher,headers,signal}={}){
  if(typeof fetcher!=='function'||!headers||Object.keys(headers).sort().join(',')!=='APCA-API-KEY-ID,APCA-API-SECRET-KEY'||Object.values(headers).some(x=>typeof x!=='string'||!x))fail('TRANSPORT_ERROR');
  return async slot=>{
   const u=new URL(slot.url);
   if(u.origin!==ORIGIN||u.username||u.password||u.hash||u.searchParams.get('feed')!=='sip'||!['/v2/stocks/snapshots','/v2/stocks/quotes/latest','/v2/stocks/trades/latest','/v2/stocks/bars','/v2/stocks/trades'].includes(u.pathname))fail('TRANSPORT_ERROR');
   if(!finite(slot.timeoutMs)||slot.timeoutMs<=0||slot.timeoutMs>LIMITS.requestMs||slot.maxBytes!==LIMITS.bodyBytes)fail('TRANSPORT_ERROR');
-  const abort=new AbortController();let timer,reader;
+  const abort=new AbortController();let timer,reader,cancel;const stopped=()=>fail(signal?.reason==='DEADLINE'?'DEADLINE':'INTERRUPTED');if(signal?.aborted)stopped();
   try{return await Promise.race([
-   (async()=>{const r=await fetcher(slot.url,{method:'GET',redirect:'error',headers,signal:abort.signal});
+   (async()=>{const r=await fetcher(slot.url,{method:'GET',redirect:'error',headers,signal:signal?AbortSignal.any([abort.signal,signal]):abort.signal});
     if(r.status!==200)return {status:r.status,bytes:0,body:null};
     if(!r.body?.getReader)fail('TRANSPORT_ERROR');reader=r.body.getReader();let bytes=0,text='';const decoder=new TextDecoder('utf-8',{fatal:true});
     while(true){const next=await reader.read();if(next.done)break;bytes+=next.value.byteLength;if(bytes>slot.maxBytes)fail('TOO_LARGE');text+=decoder.decode(next.value,{stream:true});}
     text+=decoder.decode();let body;try{body=JSON.parse(text);}catch{fail('INVALID_JSON');}const header=n=>{const x=r.headers?.get?.(n);return typeof x==='string'&&/^\d{1,10}$/.test(x)&&Number.isSafeInteger(Number(x))?Number(x):null;};return {status:r.status,bytes,body,rateLimitSample:{limit:header('x-ratelimit-limit'),remaining:header('x-ratelimit-remaining'),reset:header('x-ratelimit-reset')}};
    })(),
-   new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(Error('TIMEOUT'),{code:'TIMEOUT'})),slot.timeoutMs);})
-  ]);}finally{clearTimeout(timer);abort.abort();if(reader)Promise.resolve(reader.cancel()).catch(()=>{});}
+   new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(Error('TIMEOUT'),{code:'TIMEOUT'})),slot.timeoutMs);if(signal){cancel=()=>reject(Object.assign(Error(signal.reason==='DEADLINE'?'DEADLINE':'INTERRUPTED'),{code:signal.reason==='DEADLINE'?'DEADLINE':'INTERRUPTED'}));signal.addEventListener('abort',cancel,{once:true});}})
+  ]);}finally{clearTimeout(timer);if(cancel)signal.removeEventListener('abort',cancel);abort.abort();if(reader)Promise.resolve(reader.cancel()).catch(()=>{});}
  };
 }
