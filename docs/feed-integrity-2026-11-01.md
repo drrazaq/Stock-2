@@ -1,4 +1,4 @@
-# Feed integrity: SIP/IEX attribution, errors and provider clocks (1 Nov 2026, revision 2)
+# Feed integrity: SIP/IEX attribution, errors and provider clocks (1 Nov 2026, revision 3)
 
 **Status:** verified offline, then published on the separate branch `claude/feed-integrity`. Not deployed, not merged and not activated. No provider was contacted, and no feed default changed.
 
@@ -45,19 +45,32 @@ Revision 2 answers Codex's review of `3b91b7a`.
 | `ignition-watch.mjs` | SIP is judged per response. The top-50 fallback applies the same per-field clock validation (future volume, price and quote clocks are rejected; the newer valid clock wins) and keeps its original field set. The source label names this minute's feeds. The refresh symbol scope and decision tree are unchanged. |
 | `premarket-check.mjs` | New York date for "today's" trade. Every line names its price basis (below). The header names the response feed. |
 
-## Pre-market price basis (strategy rules unchanged)
+## Pre-market check: production decisions, with evidence on every line (revision 3)
 
-| Basis | Meaning | Possible outcome |
-|---|---|---|
-| CURRENT | Today's (New York date) pre-market trade, at most 30 min old | SELL / WATCH / HOLD, as before |
-| STALE | Today's pre-market trade, older than 30 min | SELL if at or under the stop, worded "stale … check the price at the open"; otherwise NO CURRENT PRICE |
-| PREV_CLOSE | No trade today; the last close (snapshot previous-day bar, or last night's scan, which is named) | SELL if the close is at or under the stop ("no current price"); otherwise NO CURRENT PRICE |
-| MISSING | No usable price | NO CURRENT PRICE ("NO PRICE") |
+**Revision 3 removes revision 2's 30-minute cut-off.** That cut-off, the CURRENT/STALE labels and the NO CURRENT PRICE section are gone. They had changed decisions (a HOLD/WATCH on a non-current price moved to a new section), and no freshness contract for this message is approved.
 
-- **Preserved:** ACTIONS SELLs and last-night-scan SELLs apply on any basis, and their lines show the basis.
-- **New section:** NO CURRENT PRICE ("stale, previous close only or missing: not a HOLD"). It replaces a HOLD or WATCH that would have rested on a non-current price.
-- **The 30-minute threshold** only labels freshness; it is not a trading rule.
-- **Rule preservation check:** a 64-case grid (4 price bases × 4 price levels × 4 instruction types) gives an identical SELL set on production and on this branch (48 symbols each).
+**Decisions are production's, unchanged:**
+- `px` = today's pre-market trade, otherwise the prior close;
+- at or under the stop → SELL at the open;
+- the ACTIONS and last-night-scan SELLs;
+- within 3% of the stop → WATCH;
+- otherwise HOLD (also when no price exists, as before).
+
+The one input correction kept from revision 1: "today" is the New York date, so a 7–8 pm after-hours trade from the previous evening is not today's pre-market trade.
+
+**Evidence on every line:**
+
+| Basis | Shown |
+|---|---|
+| PREMARKET_TRADE | price, feed (SIP or IEX), New York time to the second, exact age (h/min/s), change vs the prior close |
+| PRIOR_CLOSE | price and source: SIP/IEX snapshot previous-day bar with its session date, snapshot daily bar with its session date, or last night's scan with its session |
+| NONE | "no price available" (with the feed note) |
+
+- **HOLD/WATCH lines** end with the basis: "Based on the pre-market trade above.", "Based on the prior close, not on a price from today.", or "No price: this is the default, not an assessment."
+- **A stop SELL on the prior close** reads "PRIOR-CLOSE INSTRUCTION: the prior close is at or under your stop (no price from today)". It is kept distinct from a stop SELL on a pre-market trade.
+- **No wording** calls a price current, fresh or fit for an entry.
+
+**Decision preservation:** an 80-case grid (5 price bases × 4 price levels × 4 instruction types) through production main `c7d95f01` and this branch gives identical SELL/WATCH/HOLD per symbol (60/8/12 each, 0 differences). The after-hours UTC-date case is left out of the grid, because it is a deliberate input correction.
 
 ## Defects fixed (each reproduced on production by the tests)
 
@@ -67,7 +80,7 @@ Revision 2 answers Codex's review of `3b91b7a`.
 4. **Massive daily close** clocked by the snapshot's `updated` time.
 5. **Volume clocked by the trade time.**
 6. **Top-50 fallback volume:** it discarded same-response SIP volume, and kept future-clocked Massive volume.
-7. **Pre-market check:** used the UTC date (from 2 Nov a 7–8 pm New York after-hours trade would have looked like today's pre-market), and gave HOLD/WATCH on non-current prices.
+7. **Pre-market check:** used the UTC date (from 2 Nov a 7–8 pm New York after-hours trade would have looked like today's pre-market), and showed no source, timestamp, age or price basis.
 8. **Source label:** a process-wide guess, now replaced by the feeds actually observed.
 
 ## Test repairs (test files only; assertions preserved)
@@ -91,3 +104,12 @@ Revision 2 answers Codex's review of `3b91b7a`.
 - **One-sided Alpaca quotes** (no bid) no longer replace Massive's quote.
 - **A future-clocked price** in the top-50 fallback with no other source is dropped (price 0, so not evaluated).
 - **Deployment** needs independent review and owner approval.
+
+## Revision 3 verification (exact patch on production main)
+
+- **Patch:** `docs/validation/feed-integrity.patch` applied with `git apply` to a clean worktree of production main (hash in the manifest). The 12 resulting files are byte-identical to this branch.
+- **Full suite with the gated process tests** (`INCIDENT_WATCHER_SRC` set to the exact tree's watcher): 127 files, 1,246 pass, 0 fail, 0 skipped. This includes `watcher-incident-revision` 11/11, `watcher-resilience` 9/9 (8 actual-watcher process cases) and `sec-request-runtime` 10/10.
+- **Hosted-CI-equivalent loop** (`node "$f"`, no gated variable): 126 files, 0 failed.
+- **Production main baseline:** 124 files, 1,212 pass, 9 fail. These are the 9 failures that the test-only repairs above fix.
+
+**Verification limitation:** these suites, including the `INCIDENT_WATCHER_SRC`-gated actual-watcher process tests, were run only in this Claude session and by hosted GitHub CI. Hosted CI does not set the gated variable, so it does not run the gated process tests. Codex's runtime cannot currently run any of these suites (process and thread exhaustion), so none of this has been independently reproduced by Codex.

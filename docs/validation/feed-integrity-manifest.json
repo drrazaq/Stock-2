@@ -1,9 +1,9 @@
 {
- "kind": "FEED_INTEGRITY_PRODUCTION_CANDIDATE_V2",
- "revision": 2,
- "previousRevision": "3b91b7a7a61b38eff07bb6e95adc211a5242393e",
+ "kind": "FEED_INTEGRITY_PRODUCTION_CANDIDATE_V3",
+ "revision": 3,
+ "previousRevision": "7cbc7dc4d2824073c0ee2668fe94d48b1a0ccd56",
  "owner": "Claude (takeover; not Codex candidate a78e11d1, which is unpublished and unverified)",
- "productionBase": "e1f6effa25a7327f2e36f7928014eecad7363fe8",
+ "productionBase": "c7d95f01cbcb0a24355e8f1e27067715b49c67f6",
  "sourcesPorted": {
   "developmentCheckpoint": "cfc8550d47aa26699c9266258b77d71a1be2f770",
   "files": [
@@ -30,30 +30,30 @@
  "patches": {
   "combined": {
    "path": "docs/validation/feed-integrity.patch",
-   "sha256": "fe5cbd19d7121c055971c0cbca1dd22d119e9a5afbe1c20c913dcc18ecf05c90"
+   "sha256": "85c11d329cf4b85da9b82d7d8a3c1d9e20b087856266bc5e80db85742cb677e0"
   },
   "runtime": {
    "path": "docs/validation/feed-integrity-runtime.patch",
-   "sha256": "93fb1f5b1c4baa623532c395dc1189dea61bb085ce56d3429aae03619fc8ae8a"
+   "sha256": "8a70f529c99a6293a4969c3ccb5f24b27715d2057d56cb14ac2b7e5501dc6c70"
   },
   "tests": {
    "path": "docs/validation/feed-integrity-tests.patch",
-   "sha256": "3ec97a277148d169c61cf4b56bf92f5405c3c81c3d654344a057c43b0ffa9ef6"
+   "sha256": "724990c3ae36c5082999fdfe2e64abe3029217cd9003998fb6533c15a8d73c9c"
   },
-  "appliesTo": "e1f6effa25a7327f2e36f7928014eecad7363fe8"
+  "appliesTo": "c7d95f01cbcb0a24355e8f1e27067715b49c67f6"
  },
  "runtimeFiles": {
   "alpaca-feed.mjs": "3318c8a27a1f6e576bba1890f05fd6b8b91b06aab9b2384627ce5c42b99da120",
   "market-symbol.mjs": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
   "snapshot-fields.mjs": "1f06f2270ee796aab30d624065b04a31f70fae18bedf39bd98ff7f3bae50950e",
   "ignition-watch.mjs": "15dd3c13ca75dae65e128ce69b1cd7e248de9b7acae45aa2cf6b554c1247f604",
-  "premarket-check.mjs": "829927decc5f2e42a6843788cb9311c2c442862fb37ccc86086e54b08e97ad50"
+  "premarket-check.mjs": "bf263f5877e01824f18e024dc0971d15768974e66f749668ac2de2d05946cc88"
  },
  "testFiles": {
   "test/alpaca-feed.test.mjs": "cb6c14a2fdb5a3532acc94d06cbf93b276c26c30a8a24fc58e47354007e675e6",
   "test/feed-integrity.test.mjs": "8e1fc0a0d1d3193be658fc2d7ba2bbf561edfa07087000b5b81075856e5a46b7",
   "test/feed-integrity-watcher.test.mjs": "a50b577c792593cfea6d4577e78b9c6e8a0e54cc8a27e1353ca11244ddce04f0",
-  "test/premarket-feed.test.mjs": "bad49ec1630f037212d3e42e21bbcaf2b2431aed5727c04f9517f049be405a44",
+  "test/premarket-feed.test.mjs": "d4c9902dd6478fc6d055a8754f698777d12c10d5b7843786e22b73a8ddd8d218",
   "test/bot-actions.test.mjs": "2e234bda6758f5225377589641dff117dcc8150815da50f4d9b522dbe2a87690",
   "test/watcher-incident-revision.test.mjs": "04283a5a686205c090e1fece5b5a7bbcaa8e49bfed4a057b74057ab58d2299c8",
   "test/watcher-resilience.test.mjs": "af4bcb4a4915cbd5a03c1d67988bcb56c8819f8f0cffa6e2b4a153ef54a0d62c"
@@ -68,5 +68,17 @@
  ],
  "deployed": false,
  "activated": false,
- "providerContacted": false
+ "providerContacted": false,
+ "premarket": {
+  "freshnessCutoff": "REMOVED (revision 2 introduced a 30-minute CURRENT/STALE cut-off; not approved)",
+  "decisions": "production, unchanged (80-case grid identical)",
+  "evidencePerLine": [
+   "basis PREMARKET_TRADE|PRIOR_CLOSE|NONE",
+   "source (feed / snapshot bar + session / scan + session)",
+   "New York timestamp to the second",
+   "exact age"
+  ],
+  "priorCloseSell": "labelled PRIOR-CLOSE INSTRUCTION",
+  "inputCorrection": "New York date (not UTC) for today’s pre-market trade"
+ }
 }

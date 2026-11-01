@@ -1,67 +1,70 @@
 {
  "kind": "FEED_INTEGRITY_OFFLINE_VERIFICATION",
- "revision": 2,
+ "revision": 3,
  "date": "2026-11-01",
  "localNode": "v22.22.0",
+ "productionMain": "c7d95f01cbcb0a24355e8f1e27067715b49c67f6",
+ "exactPatchExecution": {
+  "method": "clean worktree of production main + git apply of docs/validation/feed-integrity.patch; the 12 resulting files byte-identical to this branch",
+  "fullSuiteWithGatedProcessTests": {
+   "env": "INCIDENT_WATCHER_SRC=<exact tree>/ignition-watch.mjs",
+   "command": "node --test on each test/*.test.mjs and tests/*.test.mjs",
+   "files": 127,
+   "failedFiles": 0,
+   "pass": 1246,
+   "fail": 0,
+   "skipped": 0,
+   "gated": {
+    "test/watcher-incident-revision.test.mjs": {
+     "pass": 11,
+     "fail": 0
+    },
+    "test/watcher-resilience.test.mjs": {
+     "pass": 9,
+     "fail": 0,
+     "actualWatcherProcessCases": 8
+    },
+    "test/sec-request-runtime.test.mjs": {
+     "pass": 10,
+     "fail": 0
+    }
+   }
+  },
+  "hostedCiEquivalentLoop": {
+   "command": "node \"$f\" for each test/*.test.mjs, no INCIDENT_WATCHER_SRC (mirrors .github/workflows/tests.yml)",
+   "files": 126,
+   "failedFiles": 0
+  },
+  "productionMainBaseline": {
+   "env": "INCIDENT_WATCHER_SRC=<main>/ignition-watch.mjs",
+   "files": 124,
+   "failedFiles": 3,
+   "pass": 1212,
+   "fail": 9,
+   "failing": [
+    "bot-actions #6 (Sunday section helper)",
+    "watcher-incident-revision #6 and watcher-resilience #2-4,6-9 (real-clock date dependency)"
+   ]
+  }
+ },
  "focused": {
   "test/feed-integrity.test.mjs": {
-   "pass": 13,
-   "fail": 0
+   "pass": 13
   },
   "test/feed-integrity-watcher.test.mjs": {
-   "pass": 8,
-   "fail": 0,
-   "productionNegativeControl": "fails SIP-label, 422, 429, race, top-50 future-Massive-volume, top-50 both-future; passes 403 and top-50 field-set controls"
+   "pass": 8
   },
   "test/premarket-feed.test.mjs": {
-   "pass": 4,
-   "fail": 0,
-   "productionNegativeControl": "all 4 fail"
+   "pass": 4
   },
   "test/alpaca-feed.test.mjs": {
-   "pass": 3,
-   "fail": 0
+   "pass": 3
   }
  },
- "rulePreservation": {
-  "premarketSellSetGrid": "64 cases (4 price bases x 4 price levels x 4 instruction types): SELL set identical on production and branch (48 each)"
+ "decisionPreservation": {
+  "premarketGrid": "80 cases (5 bases x 4 levels x 4 instructions): SELL 60 / WATCH 8 / HOLD 12 on production and branch, 0 differences"
  },
- "archivePreservation": {
-  "sip-ok": "8 files, identical key schema",
-  "sip-403": "7 files, identical key schema",
-  "top50": "7 files, identical key schema",
-  "premarketRecord": "data/premarket.jsonl byte-identical (sha256 prefix f98aa81497fd7987)"
- },
- "previouslyFailingNine": {
-  "fix": "test-only: bot-actions section helper (Sunday scoreboard sub-heading); frozen watcher+fixture clock in incident/resilience tests",
-  "resultAgainstProductionWatcher": "bot-actions 8/8, watcher-incident-revision 11/11, watcher-resilience 9/9",
-  "resultAgainstBranchWatcher": "bot-actions 8/8, watcher-incident-revision 11/11, watcher-resilience 9/9",
-  "earlierExplanationRetracted": "the 8 watcher failures were a real-clock date dependency, not an environment-variable mismatch"
- },
- "fullSuite": {
-  "command": "each test/*.test.mjs and tests/*.test.mjs with node --test; INCIDENT_WATCHER_SRC=<tree>/ignition-watch.mjs",
-  "productionMain": {
-   "commit": "e1f6effa25a7327f2e36f7928014eecad7363fe8",
-   "files": 123,
-   "failedFiles": 3,
-   "pass": 1207,
-   "fail": 9
-  },
-  "branch": {
-   "files": 126,
-   "failedFiles": 0,
-   "pass": 1241,
-   "fail": 0
-  }
- },
- "hostedCI": {
-  "previousRevision": {
-   "commit": "3b91b7a7a61b38eff07bb6e95adc211a5242393e",
-   "run": 41286756963,
-   "conclusion": "failure (not reported at the time; failing file not visible in the retrieved log tail)"
-  },
-  "thisRevision": "see the run for the pushed head commit"
- },
+ "verificationLimitation": "These suites, including the INCIDENT_WATCHER_SRC-gated actual-watcher process tests, were executed only in this Claude session (local Node v22.22.0) and by hosted GitHub CI (which runs test/*.test.mjs without the gated variable). Codex’s runtime cannot currently run them (process/thread exhaustion), so they have not been independently reproduced by Codex. Hosted CI does not execute the gated process tests.",
  "notVerified": [
   "live SIP entitlement and endpoint/key mapping",
   "real snapshot field behaviour, BBO ages/sizes/coverage",
