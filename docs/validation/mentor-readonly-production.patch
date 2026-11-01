@@ -1,9 +1,9 @@
 diff --git a/mentor-plan.mjs b/mentor-plan.mjs
 new file mode 100644
-index 0000000..aa19fa5
+index 0000000..f7ff28e
 --- /dev/null
 +++ b/mentor-plan.mjs
-@@ -0,0 +1,99 @@
+@@ -0,0 +1,112 @@
 +// Read-only contract explanation for an existing lane; never an executable BUY gate.
 +import {createHash} from 'node:crypto';
 +import {marketSession} from './market-session.mjs';
@@ -42,34 +42,36 @@ index 0000000..aa19fa5
 + const issues=[];
 + if(!marketSession(asOfDay).known)issues.push('AS_OF_CALENDAR_UNKNOWN');
 + if(p&&!selected)issues.push('OTHER_LANE_NOT_SUPPORTED');
-+ if(selected){if(!buySession)issues.push('BUY_SESSION_UNKNOWN');if(!fill)issues.push('FILL_UNKNOWN');if(!exitSession)issues.push('TIME_EXIT_UNRESOLVED');
++ if(selected){if(!buySession)issues.push('BUY_SESSION_UNKNOWN');if(!fill)issues.push('FILL_UNKNOWN');if(!exitSession)issues.push('TIME_EXIT_UNRESOLVED');if(p.ldHold!==undefined&&p.ldHold!==null&&p.ldHold!==126)issues.push('HOLD_PERIOD_DIFFERS_FROM_REGISTERED_126');
 +  if(!target)issues.push('TARGET_UNKNOWN');else if(fill&&Math.abs(target-Number((fill*1.2).toFixed(2)))>0.005)issues.push('TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT');
 +  if(p.stop!==undefined&&p.stop!==null&&p.stop!==0)issues.push('STOP_VARIANT_NOT_TESTED_BY_THIS_RULE');
 +  if(!units)issues.push('WHOLE_SHARE_QUANTITY_UNKNOWN');if(notional>1000)issues.push('RECORDED_NOTIONAL_EXCEEDS_SLOT_ALLOCATION');if(buySession&&buySession>asOfDay)issues.push('BUY_SESSION_FUTURE');
 + }else if(!validSignal)issues.push('NO_VALID_SOURCE_SIGNAL');
 + if(!entrySession)issues.push('ENTRY_WINDOW_UNRESOLVED');if(selected&&!validSignal)issues.push('ORIGINAL_SIGNAL_IDENTITY_UNKNOWN');
-+ if(selected&&entrySession&&buySession!==entrySession)issues.push('RECORDED_ENTRY_DIFFERS_FROM_NEXT_OPEN_SESSION');
++ if(selected&&entrySession&&buySession&&buySession!==entrySession)issues.push('RECORDED_ENTRY_DIFFERS_FROM_NEXT_OPEN_SESSION');
 + if(selected)issues.push('EXACT_OPEN_FILL_NOT_VERIFIED');
 + let clock=null;
 + if(Number.isFinite(asOfMs)&&Number.isFinite(new Date(asOfMs).getTime())){const parts={};for(const p of new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(new Date(asOfMs)))parts[p.type]=p.value;const day=parts.year+'-'+parts.month+'-'+parts.day;if(day===asOfDay)clock=+parts.hour*3600+ +parts.minute*60+ +parts.second;else issues.push('CLOCK_DAY_MISMATCH');}
 + const entryState=!entrySession||!marketSession(asOfDay).known||issues.includes('CLOCK_DAY_MISMATCH')?'UNKNOWN':asOfDay>entrySession?'EXPIRED':asOfDay<entrySession?'NEXT_OPEN_ONLY':clock===null?'OPEN_ONLY_TIME_AND_QUOTE_UNVERIFIED':clock>marketSession(entrySession).open*60?'EXPIRED':clock<marketSession(entrySession).open*60?'BEFORE_REGISTERED_OPEN':'OPEN_ONLY_TIME_AND_QUOTE_UNVERIFIED';
 + const holdingState=!exitSession||!marketSession(asOfDay).known||buySession>asOfDay?'UNKNOWN':asOfDay>exitSession?'REGISTERED_DEADLINE_PASSED':asOfDay===exitSession?'REGISTERED_CLOSE_DUE_TODAY':'MONITOR_CONTRACT_NOT_A_HOLD_APPROVAL';
-+ const structuralIssues=issues.filter(x=>x!=='EXACT_OPEN_FILL_NOT_VERIFIED');
-+ const planStatus=structuralIssues.length?'UNRESOLVED':selected?'LOCAL_CONTRACT_ONLY_UNVERIFIED':entryState==='EXPIRED'?'EXPIRED_ENTRY':'RESEARCH_CONTEXT_UNVERIFIED';
-+ const plan={version:'LEADER_DIP_MENTOR_V1',symbol,scope:selected?'RECORDED_LEADER_DIP':p?'OTHER_LANE_UNSUPPORTED':validSignal?'SOURCE_LEAD':'NO_PLAN',decision:'EXPLANATION_ONLY',actionability:'NOT_ACTIONABLE',planStatus,evidence:'NOT PROVEN; target exit not adopted under the frozen comparison',rule:'SQ11-PB12 / A-TGT-TGT20-PB12',horizonSessions:126,zadStatus,
++ const contradictionCodes=new Set(['TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT','STOP_VARIANT_NOT_TESTED_BY_THIS_RULE','RECORDED_NOTIONAL_EXCEEDS_SLOT_ALLOCATION','BUY_SESSION_FUTURE','RECORDED_ENTRY_DIFFERS_FROM_NEXT_OPEN_SESSION','HOLD_PERIOD_DIFFERS_FROM_REGISTERED_126','CLOCK_DAY_MISMATCH']);
++ const contradictions=issues.filter(x=>contradictionCodes.has(x)),evidenceGaps=issues.filter(x=>!contradictionCodes.has(x));
++ const missingFacts=selected&&(!buySession||!fill||!exitSession||!marketSession(asOfDay).known);
++ const planStatus=p&&!selected?'UNSUPPORTED':contradictions.length?'UNRESOLVED':selected?missingFacts?'INCOMPLETE_RECORDED_PLAN':!validSignal?'RECORDED_PLAN_PROVENANCE_MISSING':!units?'RECORDED_PLAN_DETAILS_MISSING':'LOCAL_CONTRACT_ONLY_UNVERIFIED':!validSignal?'NO_PLAN':entryState==='EXPIRED'?'EXPIRED_ENTRY':'RESEARCH_CONTEXT_UNVERIFIED';
++ const plan={version:'LEADER_DIP_MENTOR_V2',symbol,scope:selected?'RECORDED_LEADER_DIP':p?'OTHER_LANE_UNSUPPORTED':validSignal?'SOURCE_LEAD':'NO_PLAN',decision:'EXPLANATION_ONLY',actionability:'NOT_ACTIONABLE',planStatus,evidence:'NOT PROVEN; target exit not adopted under the frozen comparison',rule:'SQ11-PB12 / A-TGT-TGT20-PB12',horizonSessions:126,zadStatus,
 +  asOf:{day:asOfDay,clockSeconds:clock},
 +  selection:{rule:'SQ11-PB12',condition:'Prior-month-end top20% 12-1 momentum leaders among300 largest eligible US companies; first close at least12% below50-session highest close, still above200-session average; previous close less than12% below its own50-session high',verified:false},
 +  source:validSignal?{day:signal.day,referenceClose:signal.close,sha256:signal.sha256||null,generatedAt:signal.generatedAt||null}:null,
 +  entry:{session:entrySession,state:entryState,range:null,recordedFill:fill,recordedSession:buySession,fillAtOpenVerified:false},
 +  risk:{quantity:units,notional,maximumAllocationPerSlot:1000,maximumSlots:3,stopDefinedLossCap:null,feesSlippage:'UNKNOWN'},
-+  exit:{referenceState:holdingState,baseRule:'SQ11-PB12',baseExit:'SESSION_126_CLOSE_NO_FIXED_TARGET',targetStudy:'A-TGT-TGT20-PB12',targetStudyVerdict:'NOT PROVEN',targetStudyAdopted:false,recordedStop:positive(p?.stop)?p.stop:null,storedTarget:target,session:exitSession,time:'REGISTERED_SESSION_CLOSE',storedTargetMatchesOverlay:fill!==null&&target!==null&&!issues.includes('TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT')},holdingState:planStatus==='UNRESOLVED'?'UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE':holdingState,issues};
++  exit:{referenceState:holdingState,baseRule:'SQ11-PB12',baseExit:'SESSION_126_CLOSE_NO_FIXED_TARGET',targetStudy:'A-TGT-TGT20-PB12',targetStudyVerdict:'NOT PROVEN',targetStudyAdopted:false,recordedStop:positive(p?.stop)?p.stop:null,storedTarget:target,session:exitSession,time:'REGISTERED_SESSION_CLOSE',storedTargetMatchesOverlay:fill!==null&&target!==null&&!issues.includes('TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT')},recordedLane:p?.src||p?.kind||null,contradictions,evidenceGaps,holdingState:planStatus==='UNRESOLVED'?'UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE':holdingState,issues};
 + plan.guide=leaderDipDecisionGuide(plan);return plan;
 +}
 +export function leaderDipDecisionGuide(p){
 + const close=p.exit.session?marketSession(p.exit.session).close:null,clock=p.asOf.clockSeconds;
 + const deadlineState=!p.exit.session?'UNKNOWN':p.asOf.day>p.exit.session?'PASSED':p.asOf.day<p.exit.session?'FUTURE':clock===null?'CLOSE_TODAY_CLOCK_UNKNOWN':clock<close*60?'CLOSE_TODAY_PENDING':'PASSED';
-+ const stage=p.planStatus==='UNRESOLVED'?'RECONCILE_PLAN':p.scope==='RECORDED_LEADER_DIP'?deadlineState==='PASSED'?'CLOSE_REACHED_EXECUTION_UNVERIFIED':deadlineState==='CLOSE_TODAY_PENDING'?'REGISTERED_CLOSE_TODAY':deadlineState==='CLOSE_TODAY_CLOCK_UNKNOWN'?'VERIFY_EXIT_CLOCK':'MONITOR_RESEARCH_CONTRACT':p.entry.state==='EXPIRED'?'ENTRY_EXPIRED':'VERIFY_BEFORE_NEXT_OPEN';
-+ const next={RECONCILE_PLAN:'Resolve the listed source/fill/variant contradictions before treating the stored plan as guidance; keep original records.',CLOSE_REACHED_EXECUTION_UNVERIFIED:'Verify whether the registered close exit occurred and reconcile actual holding status. If missed, next-open recovery is an unvalidated timing variant, not the frozen exit.',REGISTERED_CLOSE_TODAY:'The frozen reference ends at today’s close. Confirm actual holdings, eligibility and executable exit evidence; this view does not issue an order.',VERIFY_EXIT_CLOCK:'Verify the New York clock before classifying the registered close as pending or missed.',MONITOR_RESEARCH_CONTRACT:'Review the unchanged contract and current eligibility/execution evidence; this is not approval to hold.',ENTRY_EXPIRED:'Do not present this lead as a current next-open entry. A later entry is a different, unvalidated variant.',VERIFY_BEFORE_NEXT_OPEN:'Verify source selection, identity, current ZAD, executable opening evidence, costs and portfolio capacity. No executable entry range is established.'}[stage];
++ const stage=p.planStatus==='UNRESOLVED'?'RECONCILE_PLAN':p.planStatus==='INCOMPLETE_RECORDED_PLAN'?'VERIFY_RECORDED_DETAILS':p.scope==='RECORDED_LEADER_DIP'?deadlineState==='PASSED'?'CLOSE_REACHED_EXECUTION_UNVERIFIED':deadlineState==='CLOSE_TODAY_PENDING'?'REGISTERED_CLOSE_TODAY':deadlineState==='CLOSE_TODAY_CLOCK_UNKNOWN'?'VERIFY_EXIT_CLOCK':'MONITOR_RESEARCH_CONTRACT':p.entry.state==='EXPIRED'?'ENTRY_EXPIRED':'VERIFY_BEFORE_NEXT_OPEN';
++ const next={VERIFY_RECORDED_DETAILS:'Verify the missing recorded fill, buy date or hold before calculating a complete holding reference; do not invent the original signal.',RECONCILE_PLAN:'Resolve the listed source/fill/variant contradictions before treating the stored plan as guidance; keep original records.',CLOSE_REACHED_EXECUTION_UNVERIFIED:'Verify whether the registered close exit occurred and reconcile actual holding status. If missed, next-open recovery is an unvalidated timing variant, not the frozen exit.',REGISTERED_CLOSE_TODAY:'The frozen reference ends at today’s close. Confirm actual holdings, eligibility and executable exit evidence; this view does not issue an order.',VERIFY_EXIT_CLOCK:'Verify the New York clock before classifying the registered close as pending or missed.',MONITOR_RESEARCH_CONTRACT:'Review the unchanged contract and current eligibility/execution evidence; this is not approval to hold.',ENTRY_EXPIRED:'Do not present this lead as a current next-open entry. A later entry is a different, unvalidated variant.',VERIFY_BEFORE_NEXT_OPEN:'Verify source selection, identity, current ZAD, executable opening evidence, costs and portfolio capacity. No executable entry range is established.'}[stage];
 + return {version:'LEADER_DIP_DECISION_GUIDE_V1',stage,next,referenceCloseMinute:close,deadlineState,executable:false,changes:[
 +  {event:'OPEN_PASSES_WITHOUT_VERIFIED_FILL',effect:'Entry expires; no chase or invented replacement price.'},
 +  {event:'SOURCE_FILL_OR_RULE_DIFFERS',effect:'Reconcile as unresolved; do not borrow a later signal or tested returns.'},
@@ -79,30 +81,41 @@ index 0000000..aa19fa5
 +  {event:'REPORTED_SALE',effect:'Only an actual owner-reported execution enters existing transaction recording; this read-only view never records a sale.'}
 + ]};
 +}
-+const money=n=>positive(n)?n.toFixed(2):'UNKNOWN';
-+export function renderLeaderDipMentor(p){return [
-+ 'MENTOR '+p.symbol+' | LEADER DIP | up to126 sessions (about6months)',
-+ 'EXPLANATION ONLY: no new BUY or HOLD approval. '+p.evidence+'.',
-+ 'Plan status: '+p.planStatus+' | '+p.actionability+'. Unsupported/contradictory plans are unresolved, never an action.',
-+ 'Scope: '+p.scope+'.',
-+ 'Workflow: '+p.guide.stage+'; '+p.guide.next,
-+ 'Entry condition (not independently verified): '+p.selection.condition+'.',
-+ 'Selection: existing owner lane, chosen for contract/accounting continuity; not a proven winner.',
-+ 'Source: '+(p.source?p.source.day+' close '+money(p.source.referenceClose)+' (reference, not executable price)':'UNKNOWN; no source signal matched')+'.',
-+ 'Original-input fingerprint: '+(p.source?.sha256||'UNKNOWN')+'; checksum is not provider authentication.',
-+ 'Entry: next session OPEN only; '+(p.entry.session||'UNKNOWN')+'; '+p.entry.state+'. No executable price/range is established. The legacy +3% ceiling is not the registered next-open fill.',
-+ 'Recorded fill: '+money(p.entry.recordedFill)+' on '+(p.entry.recordedSession||'UNKNOWN')+'; exact opening fill NOT VERIFIED.',
-+ 'Position: '+(p.risk.quantity||'UNKNOWN')+' whole shares; recorded notional '+money(p.risk.notional)+'. Existing lane limits:1,000USD per slot,3slots; allocation is not a loss budget.',
-+ 'Risk: the frozen baseline and target study model no stop; recorded stop '+money(p.exit.recordedStop)+' is not a validated change to that contract. No stop-defined loss cap is established here. A cash-stock purchase can lose its full notional, plus costs. Gaps, halts, dilution and unavailable quotes can prevent exit; actual fees/slippage UNKNOWN.',
-+ 'Frozen base exit (SQ11-PB12, NOT PROVEN): close of session126; no fixed profit target. Separate target study: +20%, A-TGT-TGT20-PB12, NOT PROVEN; adoption=false.',
-+ 'Unadopted owner-lane overlay: stored target '+money(p.exit.storedTarget)+(p.exit.storedTargetMatchesOverlay?' arithmetically matches recorded fill +20%; this does not validate or adopt the overlay':' is UNKNOWN or inconsistent with the unadopted overlay')+'; a touched daily high does not prove a limit fill.',
-+ 'Time exit reference (not an actionable instruction): '+(p.exit.session||'UNKNOWN')+' at that session CLOSE in both frozen base and target study, counting the buy session as1. Reference state: '+p.exit.referenceState+'; guidance state: '+p.holdingState+'.',
-+ 'Timing mismatch: current legacy reminder says next open; that recovery timing differs from the registered close and is not validated by the frozen returns. No reminder or exit rule was changed by this view.',
-+ 'Holding checks: recheck current ZAD, identity, filings, fresh executable bid/ask, liquidity and portfolio exposure. ZAD summary: '+p.zadStatus+'. Identity/quotes/liquidity are not verified by this view. Do not infer approval from a recorded holding.',
-+ 'What changes the decision: entry expiry, changed source/fill/rule, lost eligibility or execution evidence, session126 close, or a confirmed reported sale. A target touch alone is not execution. Portfolio-wide capacity is not verified.',
-+ 'Costs/evidence: historical model0.8% round trip,1.2% stress; actual executable costs/depth and admitted prospective outcomes remain unestablished. No target return is promised.',
-+ 'Unresolved: '+(p.issues.join(', ')||'no structural contract issue found; execution/prospective evidence still missing')+'.',
-+].join('\n');}
++const money=n=>positive(n)?'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'unknown';
++const date=day=>day?new Date(day+'T12:00:00Z').toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short',year:'numeric'}):'unknown';
++const plainIssues={TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT:'Stored target differs from the unadopted +20% overlay.',STOP_VARIANT_NOT_TESTED_BY_THIS_RULE:'The recorded stop is a variant outside the tested no-stop rule.',RECORDED_NOTIONAL_EXCEEDS_SLOT_ALLOCATION:'Recorded size exceeds the $1,000 slot limit.',BUY_SESSION_FUTURE:'Recorded buy date is in the future.',RECORDED_ENTRY_DIFFERS_FROM_NEXT_OPEN_SESSION:'Recorded buy date differs from the saved signal’s next-open session.',HOLD_PERIOD_DIFFERS_FROM_REGISTERED_126:'Recorded holding period differs from 126 sessions.',CLOCK_DAY_MISMATCH:'The supplied clock and date disagree.'};
++export function renderLeaderDipMentor(p){
++ const safe='Explanation only; NOT PROVEN. No new BUY or HOLD approval.';
++ if(p.scope==='OTHER_LANE_UNSUPPORTED')return 'MENTOR '+p.symbol+' — LEADER DIP only.\nRecorded lane: '+(typeof p.recordedLane==='string'?p.recordedLane.replace(/\s+/g,' ').slice(0,60):'unknown')+'. This view does not cover that lane. '+safe;
++ if(p.scope==='NO_PLAN')return 'MENTOR '+p.symbol+' — no LEADER DIP signal or holding on file.\n'+safe;
++ const held=p.scope==='RECORDED_LEADER_DIP',r=p.risk,ex=p.exit;
++ const close=ex.session?marketSession(ex.session).close:null,closeText=close===null?'':String(Math.floor(close/60)).padStart(2,'0')+':'+String(close%60).padStart(2,'0');
++ const overlay=ex.storedTarget?money(ex.storedTarget)+(p.entry.recordedFill?' ('+((ex.storedTarget/p.entry.recordedFill-1)*100).toFixed(0)+'% vs recorded entry)':'')+' target on file; order/fill unverified. The target study is not adopted.':'none recorded. The tested base has no fixed profit target.';
++ const entryStates={EXPIRED:'expired; do not treat this as a current entry',NEXT_OPEN_ONLY:'next open only',BEFORE_REGISTERED_OPEN:'not open yet',OPEN_ONLY_TIME_AND_QUOTE_UNVERIFIED:'opening time and quote not verified',UNKNOWN:'not established'};
++ const limitations=p.contradictions.length?'Check recorded plan differences below.':held&&!p.source?'Original signal not on file; this is missing history, not a contradiction.':held?'Original input checksum is not provider authentication.':'Selection and execution are not verified.';
++ const first=[
++  'MENTOR '+p.symbol+' — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)',
++  held?'1. Position: '+(r.quantity===null?'unknown quantity':r.quantity+' whole shares')+'; recorded entry '+money(p.entry.recordedFill)+'; bought '+date(p.entry.recordedSession)+'.':'1. Lead: '+money(p.source?.referenceClose)+' reference close on '+date(p.source?.day)+'; not an executable price.',
++  held?'2. Owner overlay: '+overlay:'2. Entry: '+date(p.entry.session)+' New York OPEN only; '+entryStates[p.entry.state]+'.',
++  '3. Tested exit reference: '+(ex.session?date(ex.session)+' at '+closeText+' New York CLOSE.':'126 sessions, counting the buy day; no filled-position exit date established.'),
++  '4. Size/risk: '+(held?money(r.notional)+' recorded; ':'')+'$1,000 per slot, 3 slots. Base has no stop'+(ex.recordedStop?'; recorded stop '+money(ex.recordedStop)+' is an untested variant':'')+': full notional can be lost, plus costs.',
++  '5. Limits: '+limitations+' Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.',
++  '6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.',
++  'No new BUY or HOLD approval.'
++ ];
++ const details=[
++  'Details:',
++  ...(p.contradictions.length?p.contradictions.map(x=>'Check: '+plainIssues[x]):[]),
++  ...(held&&!p.source?['Original signal not on file. Recorded buy date: '+date(p.entry.recordedSession)+'. It does not establish an original signal date or an exact opening fill.']:[]),
++  ...(!p.entry.recordedSession&&held?['Recorded buy session is missing; the exit date cannot be calculated.']:[]),
++  'Entry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.',
++  ...(p.source?['Source: '+p.source.day+' close '+money(p.source.referenceClose)+' (reference, not executable price). No executable price/range is established.']:['No executable price/range is established.']),
++  ...(p.guide.deadlineState==='PASSED'?['The registered close has passed. Verify actual holding/sale status; a reached date or target does not prove a sale.']:[]),
++  'A touched daily high does not prove a limit fill.',
++  'Historical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit.'
++ ];
++ return [...first,...details].join('\n');
++}
 diff --git a/scan.mjs b/scan.mjs
 index 85d40c5..152d23d 100644
 --- a/scan.mjs
@@ -171,15 +184,31 @@ index 8c08127..a94607f 100644
    fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
    fs.mkdirSync(path.join(dir, 'data'));
    // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
+diff --git a/test/mentor-m1-m3.test.mjs b/test/mentor-m1-m3.test.mjs
+new file mode 100644
+index 0000000..032dab0
+--- /dev/null
++++ b/test/mentor-m1-m3.test.mjs
+@@ -0,0 +1,10 @@
++import test from 'node:test';import assert from 'node:assert/strict';import {leaderDipMentorPlan,renderLeaderDipMentor} from '../mentor-plan.mjs';import {mentorReleaseExamples} from './mentor-release-examples.mjs';
++const holding={src:'leader dip',entry:100,target:120,ldHold:126,boughtSession:'2026-10-30'};
++const plan=(x={})=>leaderDipMentorPlan({symbol:'ZZQ',position:holding,quantity:10,signal:null,asOfDay:'2026-11-02',asOfMs:Date.parse('2026-11-02T16:00:00Z'),...x});
++test('M1 missing original provenance is not a contradiction and recorded buy is retained',()=>{const p=plan(),text=renderLeaderDipMentor(p);assert.equal(p.planStatus,'RECORDED_PLAN_PROVENANCE_MISSING');assert.deepEqual(p.contradictions,[]);assert.equal(p.source,null);assert.equal(p.entry.session,null);assert.equal(p.entry.recordedSession,'2026-10-30');assert.equal(p.exit.session,'2027-05-03');assert.notEqual(p.guide.stage,'RECONCILE_PLAN');assert.match(text,/bought 30 Oct 2026/);assert.match(text,/Original signal not on file/);assert.doesNotMatch(text,/Resolve.*contradictions|Plan status: UNRESOLVED/);assert.equal(p.actionability,'NOT_ACTIONABLE');});
++test('M1 optional owner target and missing quantity do not invent contradictions',()=>{for(const x of [{position:{...holding,target:undefined}},{quantity:null}]){const p=plan(x);assert.deepEqual(p.contradictions,[]);assert.notEqual(p.planStatus,'UNRESOLVED');assert.equal(p.source,null);}});
++for(const [change,code] of [[{target:130},'TARGET_DIFFERS_FROM_REGISTERED_20_PERCENT'],[{stop:90},'STOP_VARIANT_NOT_TESTED_BY_THIS_RULE'],[{boughtSession:'2026-11-03'},'BUY_SESSION_FUTURE'],[{ldHold:5},'HOLD_PERIOD_DIFFERS_FROM_REGISTERED_126']])test('M1 actual plan difference remains unresolved: '+code,()=>{const p=plan({position:{...holding,...change}});assert.equal(p.planStatus,'UNRESOLVED');assert.ok(p.contradictions.includes(code));assert.equal(p.guide.stage,'RECONCILE_PLAN');assert.match(renderLeaderDipMentor(p),/Check:/);});
++test('M1 missing holding facts remain incomplete, not contradictory; oversize is a real difference',()=>{const p=plan({position:{...holding,boughtSession:null}});assert.equal(p.planStatus,'INCOMPLETE_RECORDED_PLAN');assert.deepEqual(p.contradictions,[]);assert.equal(p.exit.session,null);assert.equal(plan({quantity:25}).planStatus,'UNRESOLVED');});
++test('M2 numbers-first summary is short and contains no internal enums or fingerprints',()=>{const p=plan(),s=renderLeaderDipMentor(p),first=s.split('\nDetails:')[0];assert.ok(first.length<1000,first.length);assert.ok(s.length<1900,s.length);for(const text of ['10 whole shares','$100.00','30 Oct 2026','$120.00','3 May 2027','$1,000','3 slots','no stop','next open','NOT PROVEN'])assert.ok(first.includes(text),text);assert.doesNotMatch(s,/RECONCILE_PLAN|NOT_ACTIONABLE|ORIGINAL_SIGNAL_IDENTITY_UNKNOWN|SQ11-PB12|fingerprint/);assert.match(s,/No new BUY or HOLD approval/);assert.match(s,/target study is not adopted/);});
++test('M2 unsupported and unknown replies are concise and do not provide a borrowed plan',()=>{for(const p of [plan({position:{src:'try small',entry:50}}),plan({position:{src:'x'.repeat(2000)}}),plan({position:null})]){const s=renderLeaderDipMentor(p);assert.ok(s.length<300,s);assert.match(s,/NOT PROVEN/);assert.match(s,/No new BUY or HOLD approval/);assert.doesNotMatch(s,/Tested exit reference|Owner overlay/);}});
++test('M1/M2 actual mentorText examples retain dates and source absence without financial changes',async()=>{const xs=await mentorReleaseExamples(),legacy=xs.find(x=>x.id==='legacy');assert.match(legacy.text,/bought 2 Nov 2026/);assert.match(legacy.text,/Original signal not on file/);assert.doesNotMatch(legacy.text,/RECONCILE_PLAN/);assert.ok(xs.find(x=>x.id==='missing').text.length<300);});
 diff --git a/test/mentor-readonly.test.mjs b/test/mentor-readonly.test.mjs
 new file mode 100644
-index 0000000..45b16ca
+index 0000000..13d031f
 --- /dev/null
 +++ b/test/mentor-readonly.test.mjs
 @@ -0,0 +1,3 @@
 +// Synthetic owner commands only; no real messages, broker/provider calls or financial records.
 +import test from 'node:test';import assert from 'node:assert/strict';import http from 'node:http';import fs from 'node:fs';import {loadScan,blocked} from './load-scan.mjs';
-+for(const mixed of [false,true])test('mentor-only preserves financial bytes; explicit mixed owner stop keeps existing recording: '+mixed,async t=>{let updates=[],sent=[];const server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{let out={ok:true,result:[]};if(req.url.includes('/getUpdates')){out.result=updates;updates=[];}else if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);out.result={message_id:1};}res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.closeAllConnections();server.close();});const s=await loadScan({files:{'data/my-positions.json':{AMD:{src:'leader dip',entry:100,target:150,stop:90,ldHold:126,boughtSession:'2026-11-02'}},'data/leaderdip-ledger.jsonl':[]},env:{TG_TOKEN:'fixture',TG_CHAT:'42',TG_BASE:'http://127.0.0.1:'+server.address().port,PRIVATE_KEY:'synthetic-only'}});s.fn('privWrite')({shares:{AMD:10},buys:[]});s.write('data/tg-state.json',{offset:0,menuV:s.value('MENU_V')});const files=['data/my-positions.json','data/private.enc','data/leaderdip-ledger.jsonl'],before=files.map(f=>s.read(f));updates=[{update_id:5,message:{chat:{id:42},text:'mentor AMD'}},{update_id:6,message:{chat:{id:99},text:'foreign input'}}];if(mixed)updates.push({update_id:7,message:{chat:{id:42},text:'stop AMD 95'}});await s.fn('tgCommands')(null);assert.match(sent.join('\n'),/MENTOR AMD/);assert.match(sent.join('\n'),/NOT PROVEN/);assert.match(sent.join('\n'),/NOT_ACTIONABLE/);assert.match(sent.join('\n'),/current legacy reminder says next open/);assert.equal(s.read('data/private.enc'),before[1]);assert.equal(s.read('data/leaderdip-ledger.jsonl'),before[2]);if(!mixed)assert.equal(s.read('data/my-positions.json'),before[0]);else assert.equal(s.readJson('data/my-positions.json').AMD.stop,95);assert.ok(s.readJson('data/tg-state.json').offset>=7);assert.equal(fs.existsSync(s.dir+'/data/my-trades.jsonl'),false);assert.equal(blocked.length,0);});
++for(const mixed of [false,true])test('mentor-only preserves financial bytes; explicit mixed owner stop keeps existing recording: '+mixed,async t=>{let updates=[],sent=[];const server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{let out={ok:true,result:[]};if(req.url.includes('/getUpdates')){out.result=updates;updates=[];}else if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);out.result={message_id:1};}res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.closeAllConnections();server.close();});const s=await loadScan({files:{'data/my-positions.json':{AMD:{src:'leader dip',entry:100,target:150,stop:90,ldHold:126,boughtSession:'2026-11-02'}},'data/leaderdip-ledger.jsonl':[]},env:{TG_TOKEN:'fixture',TG_CHAT:'42',TG_BASE:'http://127.0.0.1:'+server.address().port,PRIVATE_KEY:'synthetic-only'}});s.fn('privWrite')({shares:{AMD:10},buys:[]});s.write('data/tg-state.json',{offset:0,menuV:s.value('MENU_V')});const files=['data/my-positions.json','data/private.enc','data/leaderdip-ledger.jsonl'],before=files.map(f=>s.read(f));updates=[{update_id:5,message:{chat:{id:42},text:'mentor AMD'}},{update_id:6,message:{chat:{id:99},text:'foreign input'}}];if(mixed)updates.push({update_id:7,message:{chat:{id:42},text:'stop AMD 95'}});await s.fn('tgCommands')(null);assert.match(sent.join('\n'),/MENTOR AMD/);assert.match(sent.join('\n'),/NOT PROVEN/);assert.match(sent.join('\n'),/No new BUY or HOLD approval/);assert.match(sent.join('\n'),/bot reminder says next open/);assert.equal(s.read('data/private.enc'),before[1]);assert.equal(s.read('data/leaderdip-ledger.jsonl'),before[2]);if(!mixed)assert.equal(s.read('data/my-positions.json'),before[0]);else assert.equal(s.readJson('data/my-positions.json').AMD.stop,95);assert.ok(s.readJson('data/tg-state.json').offset>=7);assert.equal(fs.existsSync(s.dir+'/data/my-trades.jsonl'),false);assert.equal(blocked.length,0);});
 diff --git a/test/mentor-release-examples.mjs b/test/mentor-release-examples.mjs
 new file mode 100644
 index 0000000..d3c8a40
@@ -207,7 +236,7 @@ index 0000000..d3c8a40
 +}
 diff --git a/test/mentor-release-plan.test.mjs b/test/mentor-release-plan.test.mjs
 new file mode 100644
-index 0000000..b60119e
+index 0000000..eef174c
 --- /dev/null
 +++ b/test/mentor-release-plan.test.mjs
 @@ -0,0 +1,11 @@
@@ -215,16 +244,16 @@ index 0000000..b60119e
 +import {leaderDipMentorPlan,renderLeaderDipMentor,captureLeaderDipContract,savedLeaderDipSignal,mentorSessionAfter} from '../mentor-plan.mjs';import {marketSession} from '../market-session.mjs';import {mentorReleaseExamples} from './mentor-release-examples.mjs';
 +const source={rule:'SQ11-PB12',day:'2026-10-30',close:100,sha256:'a'.repeat(64)},position={src:'leader dip',entry:100,target:120,ldHold:126,boughtSession:'2026-11-02'};
 +const plan=(x={})=>leaderDipMentorPlan({symbol:'ZZQ',position,signal:source,quantity:5,asOfDay:'2026-11-02',...x});
-+test('frozen base no-target close exit remains distinct from unadopted20% overlay and full-loss allocation',()=>{const p=plan(),s=renderLeaderDipMentor(p);assert.equal(p.actionability,'NOT_ACTIONABLE');assert.equal(p.exit.baseExit,'SESSION_126_CLOSE_NO_FIXED_TARGET');assert.equal(p.exit.targetStudyAdopted,false);assert.equal(p.risk.notional,500);assert.equal(p.risk.maximumAllocationPerSlot,1000);assert.equal(p.risk.maximumSlots,3);assert.equal(p.risk.stopDefinedLossCap,null);assert.match(s,/NOT PROVEN/);assert.match(s,/can lose its full notional/);assert.match(s,/next open.*differs from the registered close/);});
++test('frozen base no-target close exit remains distinct from unadopted20% overlay and full-loss allocation',()=>{const p=plan(),s=renderLeaderDipMentor(p);assert.equal(p.actionability,'NOT_ACTIONABLE');assert.equal(p.exit.baseExit,'SESSION_126_CLOSE_NO_FIXED_TARGET');assert.equal(p.exit.targetStudyAdopted,false);assert.equal(p.risk.notional,500);assert.equal(p.risk.maximumAllocationPerSlot,1000);assert.equal(p.risk.maximumSlots,3);assert.equal(p.risk.stopDefinedLossCap,null);assert.match(s,/NOT PROVEN/);assert.match(s,/full notional can be lost/);assert.match(s,/bot reminder says next open; the tested exit is the close/);});
 +for(const [signalDay,day,open] of [['2026-10-29','2026-10-30','2026-10-30T13:30:00Z'],['2026-10-30','2026-11-02','2026-11-02T14:30:00Z']])test('registered entry expires at the actual New York open, DST preserved: '+day,()=>{const input={position:null,signal:{...source,day:signalDay},asOfDay:day},t=Date.parse(open);assert.equal(plan({...input,asOfMs:t-1000}).entry.state,'BEFORE_REGISTERED_OPEN');assert.equal(plan({...input,asOfMs:t}).entry.state,'OPEN_ONLY_TIME_AND_QUOTE_UNVERIFIED');assert.equal(plan({...input,asOfMs:t+1000}).entry.state,'EXPIRED');});
-+test('legacy/missing/contradictory sources and unsupported lanes remain unresolved',()=>{for(const x of [{signal:null},{position:{...position,target:150}},{position:{...position,stop:90}},{position:{...position,ldHold:5}},{position:{...position,src:'other lane'}}]){const p=plan(x);assert.equal(p.planStatus,'UNRESOLVED');assert.equal(p.holdingState,'UNRESOLVED_PLAN_NOT_HOLD_GUIDANCE');assert.equal(p.actionability,'NOT_ACTIONABLE');}});
++test('legacy/missing/contradictory sources and unsupported lanes remain unresolved',()=>{for(const x of [{position:{...position,target:150}},{position:{...position,stop:90}},{position:{...position,ldHold:5}},{position:{...position,src:'other lane'}}]){const p=plan(x);assert.equal(p.planStatus,x.position.src==='other lane'?'UNSUPPORTED':'UNRESOLVED');assert.equal(p.actionability,'NOT_ACTIONABLE');}});
 +test('archived contract checksum rejects mutation and is explicitly not authentication',()=>{const c=captureLeaderDipContract(source);assert.equal(c.status,'CAPTURED_SOURCE_NOT_AUTHENTICATED');assert.deepEqual(savedLeaderDipSignal(c),{...source,generatedAt:null});assert.equal(savedLeaderDipSignal({...c,hold:63}),null);assert.equal(savedLeaderDipSignal({...c,source:{...source,close:999}}),null);assert.equal(captureLeaderDipContract({...source,sha256:null}),null);});
-+test('unknown calendars and mismatched clocks cannot create executable guidance',()=>{const p=plan({asOfDay:'2030-01-01'});assert.equal(p.planStatus,'UNRESOLVED');assert.equal(p.entry.state,'UNKNOWN');assert.equal(mentorSessionAfter('2030-01-01',1),null);assert.equal(plan({asOfMs:Date.parse('2026-10-30T13:30:00Z')}).entry.state,'UNKNOWN');});
++test('unknown calendars and mismatched clocks cannot create executable guidance',()=>{const p=plan({asOfDay:'2030-01-01'});assert.equal(p.planStatus,'INCOMPLETE_RECORDED_PLAN');assert.equal(p.entry.state,'UNKNOWN');assert.equal(mentorSessionAfter('2030-01-01',1),null);assert.equal(plan({asOfMs:Date.parse('2026-10-30T13:30:00Z')}).entry.state,'UNKNOWN');});
 +test('session126 half-day close is13:00, never silently next-open recovery or confirmed sale',()=>{const end='2026-11-27';let ms=Date.parse(end+'T12:00:00Z'),n=0;while(n<125){ms-=86400000;const s=marketSession(new Date(ms).toISOString().slice(0,10));assert.equal(s.known,true);if(!s.closed)n++;}const buy=new Date(ms).toISOString().slice(0,10);do{ms-=86400000;}while(marketSession(new Date(ms).toISOString().slice(0,10)).closed);const signalDay=new Date(ms).toISOString().slice(0,10);assert.equal(mentorSessionAfter(buy,125),end);const input={position:{...position,boughtSession:buy},signal:{...source,day:signalDay},asOfDay:end};const before=plan({...input,asOfMs:Date.parse(end+'T17:59:59Z')}),after=plan({...input,asOfMs:Date.parse(end+'T18:00:00Z')});assert.equal(before.guide.referenceCloseMinute,780);assert.equal(before.guide.stage,'REGISTERED_CLOSE_TODAY');assert.equal(after.guide.stage,'CLOSE_REACHED_EXECUTION_UNVERIFIED');assert.equal(after.guide.executable,false);});
-+test('five actual mentorText examples preserve synthetic financial bytes and unresolved context',async()=>{const examples=await mentorReleaseExamples();assert.equal(examples.length,5);for(const x of examples){assert.match(x.text,/NOT PROVEN/);assert.match(x.text,/NOT_ACTIONABLE/);assert.match(x.text,/No executable price\/range is established/);}assert.match(examples.find(x=>x.id==='legacy').text,/ORIGINAL_SIGNAL_IDENTITY_UNKNOWN/);assert.match(examples.find(x=>x.id==='expired').text,/EXPIRED/);assert.match(examples.find(x=>x.id==='missing').text,/NO_VALID_SOURCE_SIGNAL/);assert.match(examples.find(x=>x.id==='contradictory').text,/TARGET_DIFFERS/);});
++test('five actual mentorText examples preserve financial bytes and plain safety wording',async()=>{const examples=await mentorReleaseExamples();assert.equal(examples.length,5);for(const x of examples){assert.match(x.text,/NOT PROVEN/);assert.match(x.text,/No new BUY or HOLD approval/);}assert.match(examples.find(x=>x.id==='legacy').text,/Original signal not on file/);assert.match(examples.find(x=>x.id==='expired').text,/expired/);assert.match(examples.find(x=>x.id==='missing').text,/no LEADER DIP signal or holding on file/);assert.match(examples.find(x=>x.id==='contradictory').text,/Stored target differs/);});
 diff --git a/test/mentor-release.test.mjs b/test/mentor-release.test.mjs
 new file mode 100644
-index 0000000..89e3749
+index 0000000..32368d8
 --- /dev/null
 +++ b/test/mentor-release.test.mjs
 @@ -0,0 +1,15 @@
@@ -237,7 +266,7 @@ index 0000000..89e3749
 + return {s,base,sent,routes,set(text,foreign=false){updates=[{update_id:101,message:{chat:{id:42},text}},...(foreign?[{update_id:102,message:{chat:{id:99},text:'unrelated foreign input'}}]:[])];},reject(){reject=true;},unchanged(){assert.deepEqual(protectedNames.map(p=>s.read(p)),before);assert.equal(blocked.length,0);assert.ok(routes.every(x=>/\/(?:getUpdates|sendMessage)/.test(x)));}};
 +}
 +for(const text of ['mentor','mentor 123','mentor ZZQ extra','/mentor@fixture ZZQ extra'])test('malformed mentor command refuses without fallback or financial writes: '+text,async t=>{const f=await fixture(t);f.set(text,true);await f.s.fn('tgCommands')(null);f.unchanged();assert.match(f.sent.join('\n'),/MENTOR.*EXPLANATION ONLY/);assert.match(f.sent.join('\n'),/Use mentor SYMBOL/);assert.doesNotMatch(f.sent.join('\n'),/TODAY.S ACTIONS|TOP PICK|OK to buy/);assert.equal(f.s.readJson('data/tg-state.json').offset,103);});
-+for(const text of ['mentor ZZQ\nmentor QQZ','/mentor@fixture ZZQ\n/mentor@fixture QQZ'])test('multiple owner mentor commands each stay read-only: '+text.replaceAll('\n',' / '),async t=>{const f=await fixture(t);f.set(text);await f.s.fn('tgCommands')(null);f.unchanged();assert.match(f.sent.join('\n'),/MENTOR ZZQ/);assert.match(f.sent.join('\n'),/MENTOR QQZ/);assert.match(f.sent.join('\n'),/ORIGINAL_SIGNAL_IDENTITY_UNKNOWN/);assert.match(f.sent.join('\n'),/NOT PROVEN/);assert.match(f.sent.join('\n'),/NOT_ACTIONABLE/);});
++for(const text of ['mentor ZZQ\nmentor QQZ','/mentor@fixture ZZQ\n/mentor@fixture QQZ'])test('multiple owner mentor commands each stay read-only: '+text.replaceAll('\n',' / '),async t=>{const f=await fixture(t);f.set(text);await f.s.fn('tgCommands')(null);f.unchanged();assert.match(f.sent.join('\n'),/MENTOR ZZQ/);assert.match(f.sent.join('\n'),/MENTOR QQZ/);assert.match(f.sent.join('\n'),/Original signal not on file/);assert.match(f.sent.join('\n'),/NOT PROVEN/);assert.match(f.sent.join('\n'),/No new BUY or HOLD approval/);});
 +test('rejected mentor reply preserves financial evidence and ordinary offset semantics; owner may repeat read-only request',async t=>{const f=await fixture(t);f.reject();f.set('mentor ZZQ');await f.s.fn('tgCommands')(null);f.unchanged();assert.equal(f.s.readJson('data/tg-state.json').offset,102);assert.ok(f.sent.length>0);});
 +for(const text of ['mentor ZZQ','mentor'])test('actual scan main fast-reply entry has no provider or financial mutation: '+text,async t=>{const f=await fixture(t);f.set(text);fs.copyFileSync(process.env.SCAN_SRC||path.join(root,'scan.mjs'),path.join(f.s.dir,'scan.mjs'));const preload=path.join(f.s.dir,'guard.mjs');fs.writeFileSync(preload,`const raw=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(f.base+'/')}))throw Error('SYNTHETIC_EXTERNAL_REQUEST_BLOCKED');return raw(u,o);};`);
 + const child=spawn(process.execPath,['scan.mjs'],{cwd:f.s.dir,env:{PATH:process.env.PATH,HOME:f.s.dir,TWELVE_KEY:'synthetic',TG_TOKEN:'synthetic',TG_CHAT:'42',TG_BASE:f.base,PRIVATE_KEY:'SYNTHETIC_MENTOR_ONLY',GITHUB_WORKFLOW:'Telegram bot replies',MODE:'chat',BOT_ONLY:'1',NODE_OPTIONS:'--import='+preload},stdio:['ignore','pipe','pipe']});let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>output+=x);const timer=setTimeout(()=>child.kill('SIGKILL'),10000);t.after(()=>clearTimeout(timer));const exit=await new Promise((resolve,reject)=>{child.on('error',reject);child.on('close',resolve);});assert.equal(exit,0,output);f.unchanged();assert.match(f.sent.join('\n'),/MENTOR/);assert.equal(f.s.readJson('data/tg-state.json').offset,102);});

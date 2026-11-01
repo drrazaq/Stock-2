@@ -1,98 +1,34 @@
 {
-  "kind": "MENTOR_CURRENT_PRODUCTION_VERIFICATION_V2",
+  "kind": "MENTOR_M1_M3_REPRODUCTION_V1",
+  "reviewCommit": "06c137f1a6c43704c9d5788fee374b22246a9c5c",
+  "reviewSha256": "e3802dde81cc0a615ebc9ffd715caea5642d2ea4baf45c7905384364995b52bc",
+  "harnessSha256": "75d4c9b24b65bc53f6be5726921163f44d853099035dd235c22cd59979d8b471",
   "productionBase": "f6a9b1668d0591cf24a734034949b96b241fe35b",
-  "patchSha256": "6c6d14dcc9db494583aa9ba997de52ed753720ee72b42f20f9beaa3d5cb2f5fb",
-  "localRuntime": "v24.19.0",
-  "unpatchedProduction": {
-    "files": 129,
-    "pass": 129,
-    "fail": 0,
-    "ordinaryWorkflowFiles": 128,
-    "additionalInstrumentTestFiles": 1
+  "patchSha256": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
+  "localRuntime": "Node24.19.0",
+  "reviewOriginallyTargeted": "d63d3d10/v1, not latest8e9cb9be; M1/M2 independently reproduced on latestv2 as well; M3 already fixed in v2 and rechecked.",
+  "before": {
+    "consistentStatus": "UNRESOLVED",
+    "chars": 3243
   },
-  "patchedProduction": {
-    "completeLoopFiles": 131,
-    "completeLoopPass": 131,
-    "completeLoopFail": 0,
-    "addedPlanFileCases": {
-      "tests": 8,
-      "pass": 8,
-      "fail": 0
-    },
-    "currentDistinctFiles": 132,
-    "qualification": "Plan file added after first loop enumeration; final10-case caller and8-case plan separately rerun. Hosted ordinary CI must run131 test/*.test.mjs files; tests/instrument-type.test.mjs is an additional unchanged local file."
+  "after": {
+    "chars": 1386,
+    "dataReadOnlyCases": 13,
+    "mixedOwnerStop": 46,
+    "independentDateComparisons": 186,
+    "dateMismatches": 0,
+    "sampleText": "MENTOR GOOD \u2014 LEADER DIP (NOT PROVEN; EXPLANATION ONLY)\n1. Position: 10 whole shares; recorded entry $100.00; bought 30 Oct 2026.\n2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.\n3. Tested exit reference: 3 May 2027 at 16:00 New York CLOSE.\n4. Size/risk: $1,000.00 recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.\n5. Limits: Original signal not on file; this is missing history, not a contradiction. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.\n6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.\nNo new BUY or HOLD approval.\nDetails:\nOriginal signal not on file. Recorded buy date: 30 Oct 2026. It does not establish an original signal date or an exact opening fill.\nEntry rule (not independently verified): prior-month top 20% by 12\u20131 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.\nNo executable price/range is established.\nA touched daily high does not prove a limit fill.\nHistorical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit."
   },
-  "focused": {
-    "oldPr3CurrentBase": {
-      "tests": 10,
-      "pass": 3,
-      "fail": 7
-    },
-    "repairedCaller": {
-      "tests": 10,
-      "pass": 10,
-      "fail": 0
-    },
-    "unchangedOldCaller": {
-      "tests": 2,
-      "pass": 2,
-      "fail": 0
-    },
-    "plan": {
-      "tests": 8,
-      "pass": 8,
-      "fail": 0
-    },
-    "gatedWatcherIncident": {
-      "tests": 11,
-      "pass": 11,
-      "fail": 0
-    },
-    "gatedWatcherResilience": {
-      "tests": 9,
-      "pass": 9,
-      "fail": 0
-    },
-    "developmentCaller": {
-      "tests": 10,
-      "pass": 10,
-      "fail": 0
-    },
-    "developmentPlan": {
-      "tests": 8,
-      "pass": 8,
-      "fail": 0
-    }
-  },
-  "productionDataPreservation": {
-    "baseBlobs": 425,
-    "beforeAfterEqual": true,
-    "protectedCredentialsUsed": false,
-    "protectedPrivateStateDecrypted": false,
-    "publicRepositoryDataHashedOnly": true
-  },
-  "baselineClassifications": {
-    "ordinaryFailuresReproduced": 0,
-    "priorDateFixturesOrNineReportedFailures": "Historical results retained; none reproduced on this exact ordinary base. Existing production bot-actions helper fix preserved byte-identically; no baseline assertions changed.",
-    "basketWrapper": "Existing sixth-argumenttrue wrapper remains untouched; this release does not certify new basket behavior.",
-    "legacyReply": "Existing inline helper can retry ambiguous transport and advance command offset before confirmed receipt; may duplicate or lose a read-only reply. No new durable-delivery claim."
-  },
-  "unchangedFrozenModuleSha256": "c9450320caa3f54abd11d957676ff600a509ebe8014a38b77c7a7596a3ba99c9",
+  "parserCompatibility": "Unchanged Claude harness legacy enum/date-text selectors no longer parse revised plain-English replies. Its saysNotActionable boolean requires literal NOT_ACTIONABLE and is therefore false afterM2; this is not a safety verdict. New author tests assert machine actionability unchanged plus plain no-BUY/HOLD wording; actual unchanged-file hashes/offsets and independent date counter still pass.",
+  "focusedCases": 30,
+  "focusedPass": 30,
+  "mainPlusPatchFiles": 133,
+  "mainPlusPatchPass": 133,
+  "mainPlusPatchFail": 0,
+  "wholeDevTests": "Final exact commit hosted checks separate; not inferred.",
+  "frozenRulesOrHistoricalResultsChanged": false,
+  "historicalSignalInvented": false,
   "productionDeployment": false,
-  "providerCalls": 0,
-  "realMessages": 0,
-  "genuineAdmissions": 0,
-  "newAcceptanceClosures": [],
-  "hostedCI": "External exact-source ordinary push/PR checks; no hosted result inferred from local tests.",
-  "independentReview": "New exact package pending Claude; preserve previous module checks where unchanged.",
-  "exactPatchReapplication": {
-    "cleanBase": "f6a9b1668d0591cf24a734034949b96b241fe35b",
-    "applies": true,
-    "fileDependencyAndCallerHashes": 16,
-    "hashesMatch": true,
-    "focusedCases": 20,
-    "pass": 20,
-    "fail": 0,
-    "reversePatchCheckRequiredAtDeployment": true
-  }
+  "realMessagesOrProviderCalls": 0,
+  "claimCatalogueScopeEdited": false
 }
