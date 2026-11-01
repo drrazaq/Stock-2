@@ -110,10 +110,11 @@ if (MODE === 'fetch') {
       const r = { d: q.date, t: timing === 'BMO' ? 'bmo' : timing === 'AMC' ? 'amc' : null, a: eps(q.epsActual), e: eps(q.epsEstimate), src:'FINNHUB', timing };
       const had=cache.revisionConflicts?.[id.symbol+'|'+r.d];
       if(!addRep(id.symbol,r)){calendarRejected++;if(had)FHS.quarantinedRows++;else if(cache.revisionConflicts?.[id.symbol+'|'+r.d])FHS.conflictRows++;else FHS.malformedRows++;continue;}
-      const stored=cache.syms[id.symbol].find(x=>x.d===r.d),react=reactionSession(r.d,timing);
-      recent.push({ sym: id.symbol,d:r.d,t:r.t,a:r.a,e:r.e,sourceId:id.symbol+'|'+r.d,firstObservedAt:stored.firstObservedAt||null,
-        src:'FINNHUB',timing,publicationDay:r.d,reactionSession:react.session||null,reactionStatus:react.status,...(react.candidates?{reactionCandidates:react.candidates}:{}),
-        corroboratedBy:stored.corroboratedBy||[],sourceRevisionId:digest({a:r.a,e:r.e,timing}),sourceIdentityBasis:'PROVIDER_TICKER_NOT_SECURITY_ID',sourceClockBasis:'DATE_ONLY_PROVIDER_REPORT',epsUnit:'PROVIDER_REPORTED_PER_SHARE_CURRENCY_UNSTATED' }); } }
+      // The exported row describes the merged report: a timing another provider supplied fills Finnhub's unknown hour.
+      const stored=cache.syms[id.symbol].find(x=>x.d===r.d),tm=timing!=='UNKNOWN'?timing:stored.timing||(stored.t==='bmo'?'BMO':stored.t==='amc'?'AMC':'UNKNOWN'),react=reactionSession(r.d,tm);
+      recent.push({ sym: id.symbol,d:r.d,t:stored.t??null,a:r.a,e:r.e,sourceId:id.symbol+'|'+r.d,firstObservedAt:stored.firstObservedAt||null,
+        src:'FINNHUB',timing:tm,timingFrom:timing!=='UNKNOWN'?'FINNHUB':stored.timingFrom||stored.src||null,publicationDay:r.d,reactionSession:react.session||null,reactionStatus:react.status,...(react.candidates?{reactionCandidates:react.candidates}:{}),
+        providers:[stored.src||'UNRECORDED',...(stored.corroboratedBy||[])],corroboratedBy:[stored.src,...(stored.corroboratedBy||[])].filter(x=>x&&x!=='FINNHUB'),sourceRevisionId:digest({a:r.a,e:r.e,timing:tm}),sourceIdentityBasis:'PROVIDER_TICKER_NOT_SECURITY_ID',sourceClockBasis:'DATE_ONLY_PROVIDER_REPORT',epsUnit:'PROVIDER_REPORTED_PER_SHARE_CURRENCY_UNSTATED' }); } }
   // Status vocabulary kept for discovery-runtime: a malformed/conflicting row makes the calendar PARTIAL_OR_UNKNOWN; pending rows
   // (not reported yet) and unsupported share classes are counted but do not make an observed calendar look broken.
   const fhStatus=calendarStatus!=='OBSERVED'?calendarStatus:FHS.malformedRows||FHS.conflictRows?'PARTIAL_OR_UNKNOWN':'OBSERVED';

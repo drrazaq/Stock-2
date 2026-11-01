@@ -100,3 +100,28 @@ test('combined status: one failing provider keeps the lane from reading as a suc
  assert.equal(combineStatus(['OBSERVED','CONFLICT']),'CONFLICT');
  assert.equal(combineStatus([]),'NOT_FETCHED');
 });
+
+test('bounded JSON transport: a hung fetcher times out, an oversized or invalid body is never an observed answer', async () => {
+ const {readJsonSource}=await import('../source-contract.mjs');
+ const hung=()=>new Promise(()=>{});                                                          // ignores AbortSignal entirely
+ assert.equal((await readJsonSource(hung,'http://x',{timeoutMs:30})).status,'TIMEOUT');
+ const big=()=>Promise.resolve(new Response('['+'1,'.repeat(3000)+'1]'));
+ assert.equal((await readJsonSource(big,'http://x',{maxBytes:1000})).status,'BODY_LIMIT');
+ assert.equal((await readJsonSource(()=>Promise.resolve(new Response('{oops')),'http://x')).status,'INVALID_JSON');
+ assert.equal((await readJsonSource(()=>Promise.resolve(new Response('x',{status:402})),'http://x')).status,'REFUSED');
+ assert.equal((await readJsonSource(()=>Promise.resolve(new Response('x',{status:429})),'http://x')).status,'RATE_LIMITED');
+ assert.equal((await readJsonSource(()=>Promise.reject(Error('dns')),'http://x')).status,'NETWORK_ERROR');
+ const ok=await readJsonSource(()=>Promise.resolve(new Response('{"a":1}')),'http://x');assert.equal(ok.status,'OK');assert.deepEqual(ok.body,{a:1});
+});
+
+test('session-based close freshness: weekends and holidays do not age a close', async () => {
+ const {latestCompletedSession,closeLagSessions}=await import('../source-contract.mjs');
+ assert.equal(latestCompletedSession(Date.parse('2026-11-02T15:00:00Z')),'2026-10-30');      // Monday 10:00 New York: Friday is current
+ assert.equal(latestCompletedSession(Date.parse('2026-11-02T21:05:00Z')),'2026-11-02');      // after Monday's 16:00 close
+ assert.equal(latestCompletedSession(Date.parse('2026-11-27T18:05:00Z')),'2026-11-27');      // half day: closed at 13:00
+ assert.equal(closeLagSessions('2026-10-30',Date.parse('2026-11-02T15:00:00Z')),0);
+ assert.equal(closeLagSessions('2026-10-29',Date.parse('2026-11-02T15:00:00Z')),1);
+ assert.equal(closeLagSessions('2026-11-25',Date.parse('2026-11-30T15:00:00Z')),1);           // Thanksgiving is not a session
+ assert.equal(closeLagSessions('2026-11-03',Date.parse('2026-11-02T15:00:00Z')),-1);
+ assert.equal(latestCompletedSession(Date.parse('2031-01-02T15:00:00Z')),null);
+});
