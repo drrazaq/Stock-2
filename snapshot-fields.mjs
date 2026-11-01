@@ -17,7 +17,7 @@ export function massiveSnapshot(x) {
     vol:minuteVolume?mn.av:number(dy.v),vt:minuteVolume?number(mn.t):number(dy.t),
     bid:number(q.p),ask:number(q.P),qt:nsTime(q.t),
     priceProvider:'MASSIVE',priceKind:trade?'TRADE':minute?'MINUTE_BAR':'DAILY_BAR',
-    quoteProvider:'MASSIVE',quoteFeed:'PLAN_DEPENDENT',volumeProvider:'MASSIVE'};
+    quoteProvider:'MASSIVE',quoteFeed:'PLAN_DEPENDENT',quoteBidSizeRaw:q.s??null,quoteAskSizeRaw:q.S??null,quoteSizeUnit:'UNKNOWN',volumeProvider:'MASSIVE'};
 }
 // Alpaca snapshot volume contract (official docs, read 1 Nov 2026):
 //  - Snapshot reference (docs.alpaca.markets/us/reference/stocksnapshotsingle): "A snapshot provides the latest trade, latest quote,
@@ -54,7 +54,7 @@ export function alpacaSnapshot(symbol,x={},sip=false,nowMs=Date.now()) {
     volumeRejected:dv.ok?null:dv.reason,
     bid:number(q.bp),ask:number(q.ap),qt:isoTime(q.t),
     priceProvider:'ALPACA',priceFeed:sip?'sip':'iex',priceKind:trade?'TRADE':'DAILY_BAR',
-    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',volumeProvider:dv.ok?'ALPACA':null,volumeFeed:dv.ok?'sip':null};
+    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',quoteBidSizeRaw:q.bs??null,quoteAskSizeRaw:q.as??null,quoteSizeUnit:isoTime(q.t)>=Date.parse('2025-11-03T00:00:00-05:00')?'SHARES':'ROUND_LOTS_OR_UNKNOWN',volumeProvider:dv.ok?'ALPACA':null,volumeFeed:dv.ok?'sip':null};
 }
 // Per-field clock validation for rows that are used without a merge (top-50 fallback): a future or missing clock never vouches for its value.
 export function validateClocks(row, nowMs = Date.now()) {
@@ -88,7 +88,7 @@ export function mergeLiveSnapshot(row, live, nowMs = Date.now()) {
   // Equal-clock conflicts are not resolved by choosing the last arriving quote.
   if (positive(live.bid) && positive(live.ask) && live.ask>=live.bid && positive(live.qt) && live.qt<=nowMs &&
       (live.qt>row.qt || row.qt>nowMs || !positive(row.qt))) {
-    row.bid=live.bid;row.ask=live.ask;row.qt=live.qt;row.quoteProvider=live.quoteProvider||'UNKNOWN';row.quoteFeed=live.quoteFeed||null;
+    row.bid=live.bid;row.ask=live.ask;row.qt=live.qt;row.quoteProvider=live.quoteProvider||'UNKNOWN';row.quoteFeed=live.quoteFeed||null;row.quoteBidSizeRaw=live.quoteBidSizeRaw??null;row.quoteAskSizeRaw=live.quoteAskSizeRaw??null;row.quoteSizeUnit=live.quoteSizeUnit||'UNKNOWN';
   }
   return refreshed;
 }

@@ -1,0 +1,97 @@
+{
+  "kind": "INACTIVE_SIP_ACCESS_DIAGNOSTIC_V1",
+  "sourceCommit": "b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c",
+  "reviewDate": "2026-11-01",
+  "contractsReviewed": {
+    "sha": "f61bcf748c569bd86ec6997267bc23fa5984e113",
+    "verdict": "PASS_INACTIVE_ONLY",
+    "diffSha256": "d49ff0fa3c5045ea0a0b72f61945a4f8e891b567a36c4c0c45445eebc8013f4d"
+  },
+  "contractsEdited": false,
+  "productionDeployment": false,
+  "providerCallsMade": 0,
+  "installed": false,
+  "approved": false,
+  "requestBudgets": {
+    "referencePreparation": 0,
+    "sipSampling": 7,
+    "combinedApplicationMaximum": 7,
+    "controlPlane": "checkout/setup/artifact separate from seven application attempts;20min job,16KiB artifact,3day retention"
+  },
+  "sourceHashes": {
+    "sip-access-diagnostic.mjs": "8810a1220102786119b3fdf0caf296b8a38412c87bd9f3c1bc5ee9cb58d35d8a",
+    "sip-access-result.mjs": "01a3c1859003e49a5caf5001bfd6219faf3fcf88b68549b81127528ea09a337b",
+    "sip-access-https.mjs": "cd82157e48daf7c53822c2a0fb2e1ea6f01433058ee0ac61bb20c8bc47dccfd9",
+    "tools/run-sip-access-diagnostic.mjs": "2728669651e1fcdb9f1ff01af457bf7dd13cbf89da92fcb3b551cbf4e2499866",
+    "tools/validate-sip-access-result.mjs": "7a6b93e17edb4a1dd3250d0028cc1d3f06aa355a158b7eefeed9839e6b260744"
+  },
+  "planSha256": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
+  "workflowSha256": "5c707d1df5494398e13068eab82f7f02464b0a00ae805a90d87c3bb656c6d1c3",
+  "fileHashes": {
+    "sip-access-diagnostic.mjs": "8810a1220102786119b3fdf0caf296b8a38412c87bd9f3c1bc5ee9cb58d35d8a",
+    "tools/run-sip-access-diagnostic.mjs": "2728669651e1fcdb9f1ff01af457bf7dd13cbf89da92fcb3b551cbf4e2499866",
+    "test/sip-access-diagnostic.test.mjs": "83f2f113a6c0e768293ab7f2e33b7d943ba15ccb9a828eae6bf220dae7a3085d",
+    "docs/validation/sip-access-plan.proposed.json": "c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05",
+    "docs/market-data-contracts-review-pass.md": "114d060f091c9db417eccc4b3a8697603c105ae968e894024afd68a0278dcc81",
+    "docs/sip-access-diagnostic-proposal.md": "e4dd85ff58a33e527c7b7ef35972a98f1f3e4a8b81c4b0a7d9e8f56379f38d5e",
+    "docs/contracts-integration-proposal.md": "e2b52311b914ef1e0267b841bcf9b084229cd769570616cb6a2a5fce1744f047",
+    "sip-access-https.mjs": "cd82157e48daf7c53822c2a0fb2e1ea6f01433058ee0ac61bb20c8bc47dccfd9",
+    "test/sip-access-real-fixture.mjs": "cf4fc5115e19a9037971830bd336b996e497569f099cfd63e1135a378e1e4a12",
+    "sip-access-result.mjs": "01a3c1859003e49a5caf5001bfd6219faf3fcf88b68549b81127528ea09a337b",
+    "tools/validate-sip-access-result.mjs": "7a6b93e17edb4a1dd3250d0028cc1d3f06aa355a158b7eefeed9839e6b260744",
+    "test/sip-access-corrections.test.mjs": "9030380d11cb4c74b548dd4cde914ba3e270643057b8a929ad44fa02327df8c3",
+    "test/sip-access-package.test.mjs": "70b49c194d6333483de4443b24dd285159dd8efc0bdfc67ce3ff7ae6abad6a41",
+    "docs/validation/sip-access-diagnostic.workflow.yml.proposed": "5c707d1df5494398e13068eab82f7f02464b0a00ae805a90d87c3bb656c6d1c3",
+    "docs/validation/sip-access-approval.example.json": "0dc7c13127a8a9fb81f221bb5d8bcae1ac4f34052881928d2f203312fbefdfc7",
+    "docs/sip-access-c1-c2-review.md": "28e23e01a98a77a66ff4ff52f6a150bae03ad2327aff7a0e2022a8b39b878df4",
+    "test/sip-access-workflow.test.mjs": "e14143f857fcf7cedd2323c348c7054f6ddac4b590039a4b94d59d1fc0ea627f",
+    "docs/validation/sip-access-action-provenance.json": "1ea86cf1aa19f32246c938d07484c218abf26d0c4b701224fda459862e5a69f7"
+  },
+  "verification": {
+    "independentLocalNode": "UNAVAILABLE: managed executor initialization failed",
+    "independentPureMock": "Historical pure mock checks only; hosted process tests are separately linked. Claude's attached harness unread due failed execution workspace.",
+    "hostedSourceCi": {
+      "sha": "b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41302824284/job/124837129889",
+      "tests": "12 diagnostic +6 correction tests, all original main tests; final literal-wrapper tests checked separately"
+    },
+    "approvalRequired": "Exact workflow installation, existing provider bindings and ONE dated run; no automatic replacement/retry; operator checks run history",
+    "currentRevision": {
+      "sha": "ccf091c1044b7563259c1c173d0d910633f75816",
+      "result": "PASS",
+      "job": "https://github.com/drrazaq/Stock-2/actions/runs/41303964171/job/124840463268",
+      "scope": "Production-base full suite; literal proposed protected-wrapper and finalizer Python executed with every code, timeout/interruption exits, malformed/missing output. No credentials/provider traffic."
+    },
+    "firstCorrectionFailure": {
+      "sha": "5a885fdb74b448c528e17b4578ae59e0f087ebde",
+      "job": 124834335972,
+      "cases": [
+        "real-path timer failed to accelerate a shifted repeat wait",
+        "native fetch produced two local HTTP requests for one application attempt on connection failure"
+      ],
+      "result": "PRESERVED; fixed and source tests PASS on b8e0fe8c, including exactly one local wire request on connection failure"
+    },
+    "wrapperStorageCorrection": "Added fixed ERROR handling for refusal/result-file storage errors, with literal-Python directory/symlink failure regressions; final exact-SHA tests required."
+  },
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "newClosures": 0,
+    "genuineAdmissions": 0
+  },
+  "revisionStatus": "C1_C2_OFFLINE_SOURCE_AND_LITERAL_WRAPPERS_PASS_NOT_AUTHORIZED",
+  "previousReviewedCheckpoint": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30",
+  "timing": {
+    "t0": "2026-11-03T16:00:00Z",
+    "dispatchProposed": "2026-11-03T15:50:00Z",
+    "startEarliest": "T0-600seconds",
+    "latest": "T0+30seconds",
+    "dataDeadline": "T0+180seconds",
+    "runnerCeilingSeconds": 790,
+    "processCeilingSeconds": 800,
+    "killGraceSeconds": 5,
+    "jobMinutes": 20,
+    "approved": false
+  }
+}
