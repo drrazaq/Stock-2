@@ -1,0 +1,538 @@
+diff --git a/alpaca-feed.mjs b/alpaca-feed.mjs
+index 2e6682f7..8b921f11 100644
+--- a/alpaca-feed.mjs
++++ b/alpaca-feed.mjs
+@@ -1,13 +1,48 @@
+-// Alpaca live snapshots: the full-market SIP feed first (Algo Trader Plus, 99 USD a month), IEX (free plan) on 403.
+-// ALPACA_FEED=iex or =sip forces one. feedUsed() says which feed the run used, so every report can name it.
+-let FEED = null;
+-export const resetFeed = () => { FEED = null; };
+-export const feedUsed = () => FEED || (process.env.ALPACA_FEED || 'sip');
+-export async function snapshots(base, syms, opts, f = fetch) {
+-  const forced = process.env.ALPACA_FEED; if (!FEED && (forced === 'iex' || forced === 'sip')) FEED = forced;
+-  const ask = (feed) => f(base + '/v2/stocks/snapshots?feed=' + feed + '&symbols=' + syms.map(encodeURIComponent).join(','), opts);
+-  if (!FEED || FEED === 'sip') { const r = await ask('sip');
+-    if (r.ok) { FEED = 'sip'; return await r.json(); }
+-    if ((r.status === 403 || r.status === 422) && forced !== 'sip') FEED = 'iex'; else return null; }
+-  const r = await ask('iex'); return r.ok ? await r.json() : null;
++import {marketSymbol} from './market-symbol.mjs';
++// Alpaca snapshots: SIP first, IEX only after an explicit SIP 403. Every payload carries the feed
++// of the response that produced it (snapshotFeed); feedUsed() summarises what was observed.
++export const COOLDOWN_CAP_MS=300000;
++// Request preference never substitutes for provenance of a different response.
++let preferred=null,observed=new Set(),metadata=new WeakMap(),cooldownUntil=0,evidence={requests:0,statuses:{},lastFailure:null,invalidSymbolInputs:0,requestedSymbolAttempts:0};
++export const resetFeed=()=>{preferred=null;observed=new Set();metadata=new WeakMap();cooldownUntil=0;evidence={requests:0,statuses:{},lastFailure:null,invalidSymbolInputs:0,requestedSymbolAttempts:0};};
++export const feedUsed=()=>observed.size>1?'mixed':[...observed][0]||'unobserved';
++export const snapshotFeed=payload=>payload&&typeof payload==='object'?metadata.get(payload)||'unknown':'unknown';
++export const feedEvidence=()=>structuredClone(evidence);
++export async function snapshots(base,syms,opts={},fetcher=fetch) {
++ let u;try{u=new URL(base);}catch{evidence.lastFailure='INVALID_PROVIDER_BASE';return null;}
++ if(!(u.origin==='https://data.alpaca.markets'||u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname))||u.pathname!=='/'||u.search||u.hash||u.username||u.password){evidence.lastFailure='INVALID_PROVIDER_BASE';return null;}
++ if(!Array.isArray(syms)||!syms.length){evidence.lastFailure='INVALID_SYMBOL_SCOPE';return null;}
++ const valid=syms.filter(x=>typeof x==='string'&&marketSymbol(x)===x);evidence.invalidSymbolInputs+=syms.length-valid.length;
++ syms=[...new Set(valid)];if(!syms.length){evidence.lastFailure='INVALID_SYMBOL_SCOPE';return null;}base=u.origin;const requestedSymbols=new Set(syms);
++ const forced=process.env.ALPACA_FEED;
++ if(Date.now()<cooldownUntil){evidence.lastFailure='RATE_LIMIT_COOLDOWN';return null;}
++ if(forced&&!['sip','iex'].includes(forced)){evidence.lastFailure='INVALID_FEED_CONFIGURATION';return null;}
++ const ask=async feed=>{
++  let response;evidence.requests++;evidence.requestedSymbolAttempts+=syms.length;
++  try{response=await fetcher(base+'/v2/stocks/snapshots?feed='+feed+'&symbols='+syms.map(encodeURIComponent).join(','),{...opts,method:'GET',redirect:'error',signal:opts.signal||AbortSignal.timeout(10000)});}
++  catch{evidence.lastFailure='NETWORK_ERROR';const k=feed+':NETWORK_ERROR';evidence.statuses[k]=(evidence.statuses[k]||0)+1;return {status:null};}
++  const key=feed+':'+response.status;evidence.statuses[key]=(evidence.statuses[key]||0)+1;
++  const header=name=>response.headers?.get?.(name);
++  evidence.rateLimit={limit:header('x-ratelimit-limit')||null,remaining:header('x-ratelimit-remaining')||null,reset:header('x-ratelimit-reset')||null};
++  if(response.status===429){const raw=header('retry-after'),seconds=raw&&/^\d+$/.test(raw)?Number(raw):null,parsed=seconds!==null?Date.now()+seconds*1000:Date.parse(raw);
++   // Honour Retry-After, but never let one header silence a session: at most 5 minutes.
++   cooldownUntil=Math.min(Number.isFinite(parsed)&&parsed>Date.now()?parsed:Date.now()+60000,Date.now()+COOLDOWN_CAP_MS);evidence.cooldownUntil=new Date(cooldownUntil).toISOString();}
++  if(!response.ok){evidence.lastFailure='HTTP_'+response.status;return {status:response.status};}
++  try{
++   const payload=await response.json();
++   if(!payload||typeof payload!=='object'||Array.isArray(payload)||payload.error||payload.message)throw Error('invalid snapshot map');
++   // A null entry is an explicit no-data answer for that symbol, not a reason to discard the batch.
++   for(const [symbol,row] of Object.entries(payload))if(row===null&&requestedSymbols.has(symbol))delete payload[symbol];
++   if(Object.entries(payload).some(([symbol,row])=>!requestedSymbols.has(symbol)||!row||typeof row!=='object'||Array.isArray(row)||!['latestTrade','latestQuote','minuteBar','dailyBar','prevDailyBar'].some(k=>Object.hasOwn(row,k))))throw Error('invalid symbol snapshot');
++   metadata.set(payload,feed);observed.add(feed);return {payload,status:response.status};
++  }catch{evidence.lastFailure='INVALID_SNAPSHOT_JSON';return {status:response.status};}
++ };
++ const requested=forced||preferred||'sip',result=await ask(requested);
++ if(result.payload)return result.payload;
++ // 422 can mean invalid parameters, not entitlement. 403 is a coverage
++ // downgrade, not evidence of a particular subscription. 429 is never retried here.
++ if(requested==='sip'&&result.status===403&&forced!=='sip'){
++  preferred='iex';return (await ask('iex')).payload||null;
++ }
++ return null;
+ }
+diff --git a/ignition-watch.mjs b/ignition-watch.mjs
+index 7e8b7b4f..216cec50 100644
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -17,7 +17,8 @@ import {sessionFinished,preferSession,runIdentity,sessionEvidence} from './watch
+ // Alpaca snapshots (IEX, free) for the whole snapshot universe; thin stocks may have no recent IEX trade (never alerted; the audit
+ // says so). Volume stays the late Massive figure (can only undercount). Last fallback: Alpaca's top-50 gainers (PARTIAL coverage).
+ // Read-only; never places an order.
+-import { snapshots, feedUsed } from './alpaca-feed.mjs';
++import { snapshots, feedUsed, snapshotFeed } from './alpaca-feed.mjs';
++import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot } from './snapshot-fields.mjs';   // (1 Nov) every field keeps its own provider clock and feed
+ import { sendAlert } from './opp-mode.mjs';
+ import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
+ import { stopHits } from './stop-watch.mjs';
+@@ -76,20 +77,19 @@ const LOTT = (readJson('data/signals.json', {}) || {}).lottery || {};   // teste
+ let src = null, mode = 'NO_USABLE_MARKET_DATA', note = '';
+ async function snapMassive() {
+   try { const r = await fetch(MV + '/v2/snapshot/locale/us/markets/stocks/tickers?apiKey=' + encodeURIComponent(env.MASSIVE_KEY || '')); if (r.status === 401 || r.status === 403) { note = 'Massive snapshot not in the plan (HTTP ' + r.status + ')'; return null; } if (!r.ok) return []; const j = await r.json();
+-    return (j.tickers || []).filter(x => /^[A-Z]{1,5}$/.test(x.ticker || '')).map(x => { const lt = x.lastTrade || {}, mn = x.min || {}, dy = x.day || {}, pd = x.prevDay || {}, lq = x.lastQuote || {}, tms = lt.t ? lt.t / 1e6 : mn.t || (x.updated ? x.updated / 1e6 : 0);
+-      return { sym: x.ticker, price: +(lt.p || mn.c || dy.c || 0), prevC: +(pd.c || 0), prevV: +(pd.v || 0), open: +(dy.o || 0), hi: +(dy.h || 0), lo: +(dy.l || 0), vol: +(mn.av || dy.v || 0), t: tms, vt: tms, bid: +(lq.p || 0), ask: +(lq.P || 0), qt: lq.t ? lq.t / 1e6 : 0 }; }); } catch (e) { return []; } }
++    return (j.tickers || []).filter(x => /^[A-Z]{1,5}$/.test(x.ticker || '')).map(massiveSnapshot); } catch (e) { return []; } }   // price clock follows the price actually used (never the snapshot's 'updated' time)
+ const AH = () => ({ headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } });
+ async function snapTop50() {
+   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
+   try { const r = await fetch(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
+-    const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = feedUsed() === 'sip';
+-    return syms.map(s => { const x = sj[s] || {}, lt = x.latestTrade || {}, db = x.dailyBar || {}, pb = x.prevDailyBar || {}, t = lt.t ? Date.parse(lt.t) : 0; return { sym: s, price: +(lt.p || db.c || 0), prevC: +(pb.c || 0), open: +(db.o || 0), vol: sip && db.v ? +db.v : null, t, vt: sip && db.v ? t : 0 }; }); } catch (e) { return null; } }
++    const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
++    return syms.map(s => alpacaSnapshot(s, sj[s] || {}, sip)); } catch (e) { return null; } }
+ async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
+   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
+   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
+   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
+-    try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = feedUsed() === 'sip';   // SIP = every exchange, so its day volume is the real one
+-      for (const [s, x] of Object.entries(sj || {})) { const lt = (x && x.latestTrade) || {}, db = (x && x.dailyBar) || {}, lq = (x && x.latestQuote) || {}; if (lt.p > 0) out.set(s, { price: +lt.p, t: lt.t ? Date.parse(lt.t) : 0, open: +(db.o || 0), vol: sip && db.v ? +db.v : null, bid: +(lq.bp || 0), ask: +(lq.ap || 0), qt: lq.t ? Date.parse(lq.t) : 0 }); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
++    try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
++      for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x || {}, sip); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
+   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
+   return out; }
+ async function snap() {
+@@ -97,13 +97,17 @@ async function snap() {
+   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
+   if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
+   if (m && m.length) { const live = await alpacaAll(m.filter(r => r.prevC >= 1).map(r => r.sym));
+-    if (live) { let n = 0; for (const r of m) { const x = live.get(r.sym); if (x && x.t > r.t) { r.price = x.price; r.t = x.t; if (x.open > 0) r.open = x.open; if (x.vol > 0) { r.vol = x.vol; r.vt = x.t; } n++; } if (x && x.ask > 0 && x.qt >= (r.qt || 0)) { r.bid = x.bid; r.ask = x.ask; r.qt = x.qt; } }
+-      src = 'alpaca live prices (' + feedUsed().toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (feedUsed() === 'sip' ? 'live SIP volume' : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
++    if (live) { let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, now)) n++; if (x && x.volumeFeed === 'sip' && r.volumeFeed === 'sip') sv++; }
++      const feeds = [...new Set([...live.values()].map(x => x.priceFeed))], feedLabel = feeds.length === 1 ? feeds[0] : feeds.length ? 'mixed' : feedUsed();   // this minute's responses, not the whole day's
++      src = 'alpaca live prices (' + feedLabel.toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (sv ? 'live SIP volume for ' + sv : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
+   const a = await snapTop50();
+   if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
+   src = 'alpaca top-50 gainers only'; mode = 'PARTIAL_TOP50_FALLBACK';
+   const byM = new Map((m || []).map(r => [r.sym, r]));
+-  for (const r of a) { const x = byM.get(r.sym); r.vol = x ? x.vol : null; r.vt = x ? x.vt : 0; if (!(r.prevC > 0) && x) r.prevC = x.prevC; if (!(r.open > 0) && x) r.open = x.open; byM.set(r.sym, r); }
++  // Field set unchanged (price/prevC/open/volume). Volume: the newer of this response's own SIP figure and Massive's, each on its own clock.
++  for (const r of a) { const x = byM.get(r.sym); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed;
++    if (x && !(r.vol > 0 && r.vt > 0 && r.vt >= (x.vt || 0))) { r.vol = x.vol; r.vt = x.vt; r.volumeProvider = x.volumeProvider || null; r.volumeFeed = x.volumeFeed || null; }
++    if (!(r.prevC > 0) && x) r.prevC = x.prevC; if (!(r.open > 0) && x) r.open = x.open; byM.set(r.sym, r); }
+   return [...byM.values()];
+ }
+ async function minuteBars(sym) { try { const r = await fetch(MV + `/v2/aggs/ticker/${sym}/range/1/minute/${day}/${day}?adjusted=true&sort=asc&limit=50000&apiKey=` + encodeURIComponent(env.MASSIVE_KEY || '')); if (!r.ok) return null; return toBars((await r.json()).results, day); } catch (e) { return null; } }
+diff --git a/market-symbol.mjs b/market-symbol.mjs
+new file mode 100644
+index 00000000..c626ead0
+--- /dev/null
++++ b/market-symbol.mjs
+@@ -0,0 +1,7 @@
++// Syntax normalization only: no issuer alias, tradability or halal inference.
++// Dot and hyphen securities remain distinct until authoritative IDs map them.
++export function marketSymbol(value) {
++ if(typeof value!=='string')return null;
++ const symbol=value.trim().toUpperCase();
++ return /^[A-Z][A-Z0-9]{0,5}(?:[.\-][A-Z0-9]{1,3})?$/.test(symbol)?symbol:null;
++}
+diff --git a/premarket-check.mjs b/premarket-check.mjs
+index 7fb3ff42..99df4171 100644
+--- a/premarket-check.mjs
++++ b/premarket-check.mjs
+@@ -3,9 +3,10 @@
+ //   SELL (at the open, after the first 15 minutes): the pre-market price is at/under your stop, or last night's scan already said sell.
+ //   WATCH: within 3% of your stop.  HOLD: otherwise.
+ // Pre-market prices are thin (few trades, wide spreads, often reversed at the open), so the system never says "sell pre-market"; the
+-// decision is acted on in the regular session. Prices: Alpaca market-data snapshots (free IEX feed; the paper keys are enough).
++// decision is acted on in the regular session. Prices: Alpaca market-data snapshots (SIP first, IEX after a SIP 403); the message names the feed
++// of the response actually used and each trade's own New York time (1 Nov: dates are New York dates, never UTC slices).
+ // Read-only; places no orders. Sends one Telegram message.
+-import { snapshots } from './alpaca-feed.mjs';
++import { snapshots, snapshotFeed } from './alpaca-feed.mjs';
+ import fs from 'node:fs';
+ const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
+ const AD = local(env.ALPACA_DATA_BASE) || 'https://data.alpaca.markets', TG = local(env.TG_BASE) || 'https://api.telegram.org';
+@@ -15,15 +16,18 @@ const pcs = (x) => x === null || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x
+ const AS = J('data/actions-sells.json', { sells: [] }), asell = Object.fromEntries((Date.now() - Date.parse(AS.at || 0) < 4 * 864e5 ? AS.sells : []).map(x => [x.sym, x.why]));
+ const P = J('data/my-positions.json', {}), SG = J('data/signals.json', {}), pv = SG.posVerdict || {}, syms = Object.keys(P).filter(s => P[s] && P[s].entry);
+ if (!syms.length) { console.log('premarket: no positions'); process.exit(0); }
+-const ny = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+-let snaps = {}, note = '';
++const nyDate = (d) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d), ny = nyDate(new Date());
++// A provider clock counts only if it is a real instant; an after-hours trade at 7:30 pm New York is 00:30 UTC the next day in winter.
++const at = (x) => { const ms = typeof x === 'string' ? Date.parse(x) : NaN; return Number.isFinite(ms) && ms <= Date.now() ? new Date(ms) : null; };
++const nyTime = (d) => new Intl.DateTimeFormat('en-GB', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(d);
++let snaps = {}, note = '', feed = null;
+ if (env.ALPACA_KEY && env.ALPACA_SECRET) { try { const j = await snapshots(AD, syms, { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } });
+-    if (j) snaps = j; else note = 'price feed refused'; } catch (e) { note = 'price feed unreachable'; } } else note = 'no Alpaca key in this workflow';
++    if (j) { snaps = j; feed = snapshotFeed(j); } else note = 'price feed refused'; } catch (e) { note = 'price feed unreachable'; } } else note = 'no Alpaca key in this workflow';
+ const last = {}; for (const x of SG.stocks || []) if (x.last) last[x.sym] = x.last;
+ const rows = { sell: [], watch: [], hold: [] };
+-for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade, prevC = (sn.prevDailyBar && sn.prevDailyBar.c) || (sn.dailyBar && String(sn.dailyBar.t || '').slice(0, 10) < ny ? sn.dailyBar.c : null) || last[s] || null;
+-  const pre = lt && String(lt.t || '').slice(0, 10) === ny ? lt.p : null, px = pre || prevC, stop = p.stop || null, chg = pre && prevC ? pre / prevC - 1 : null, toStop = px && stop ? px / stop - 1 : null;
+-  const tag = s + ' ' + (pre ? 'pre-market ' + money(pre) + ' (' + pcs(chg) + ' vs close)' : 'no pre-market trade yet, close ' + money(prevC)) + ', stop ' + (stop ? money(stop) + (toStop !== null ? ' (' + pcs(toStop) + ' away)' : '') : 'NOT SET') + ', you ' + pcs(px && p.entry ? px / p.entry - 1 : null);
++for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade, dbAt = sn.dailyBar && at(sn.dailyBar.t), prevC = (sn.prevDailyBar && sn.prevDailyBar.c) || (dbAt && nyDate(dbAt) < ny ? sn.dailyBar.c : null) || last[s] || null;
++  const ltAt = lt && lt.p > 0 ? at(lt.t) : null, pre = ltAt && nyDate(ltAt) === ny ? lt.p : null, px = pre || prevC, stop = p.stop || null, chg = pre && prevC ? pre / prevC - 1 : null, toStop = px && stop ? px / stop - 1 : null;
++  const tag = s + ' ' + (pre ? 'pre-market ' + money(pre) + ' at ' + nyTime(ltAt) + ' NY (' + pcs(chg) + ' vs close)' : 'no pre-market trade yet, close ' + money(prevC)) + ', stop ' + (stop ? money(stop) + (toStop !== null ? ' (' + pcs(toStop) + ' away)' : '') : 'NOT SET') + ', you ' + pcs(px && p.entry ? px / p.entry - 1 : null);
+   if (stop && px && px <= stop) rows.sell.push('- ' + tag + ': SELL at the open (after the first 15 minutes). The price is at or under your stop.');
+   else if (asell[s]) rows.sell.push('- ' + tag + ': SELL today, as the last ACTIONS message said: ' + asell[s].replace(/^[A-Z.]+[^:]*: /, '').slice(0, 160));
+   else if (pv[s] && !(/stop/i.test(pv[s]) && stop && px && px > stop)) rows.sell.push('- ' + tag + ': SELL today, as last night’s scan said: ' + pv[s].replace(/\.$/, '') + '.');
+@@ -31,7 +35,7 @@ for (const s of syms) { const p = P[s], sn = snaps[s] || {}, lt = sn.latestTrade
+   else rows.hold.push('- ' + tag + ': HOLD.'); }
+ // (28 Oct) Kuwait time of 9:30 New York on that New York day: Kuwait is UTC+3 all year, New York moves on 1 Nov (never a fixed string)
+ const openKuwait = (d) => { const noon = new Date(d + 'T12:00:00Z'), h = +new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', hourCycle: 'h23' }).format(noon), k = 570 - (h - 12) * 60 + 180; return (Math.floor(k / 60) % 12 || 12) + ':' + String(k % 60).padStart(2, '0') + ' pm'; };
+-const msg = ['PRE-MARKET CHECK ' + ny + ' (your stocks, before the open: ' + openKuwait(ny) + ' Kuwait)' + (note ? ' [' + note + ']' : ''), '',
++const msg = ['PRE-MARKET CHECK ' + ny + ' (your stocks, before the open: ' + openKuwait(ny) + ' Kuwait)' + (note ? ' [' + note + ']' : feed ? ' [prices: ' + feed.toUpperCase() + ' feed]' : ''), '',
+   ...(rows.sell.length ? ['SELL', ...rows.sell, ''] : ['SELL: nothing.', '']), ...(rows.watch.length ? ['WATCH', ...rows.watch, ''] : []), ...(rows.hold.length ? ['HOLD', ...rows.hold, ''] : []),
+   'Do not trade in the pre-market itself (thin, wide spreads, often reversed at the open). Act in the regular session; keep every stop at your broker. After you sell, send  sold SYM PRICE .'];
+ console.log(msg.join('\n'));
+diff --git a/snapshot-fields.mjs b/snapshot-fields.mjs
+new file mode 100644
+index 00000000..fb9c4200
+--- /dev/null
++++ b/snapshot-fields.mjs
+@@ -0,0 +1,56 @@
++// Each field keeps its own provider clock. Missing clocks remain unknown (0).
++const positive = x => typeof x === 'number' && Number.isFinite(x) && x > 0;
++const number = x => positive(x) ? x : 0;
++const isoTime = x => {
++ // Date.parse normalizes impossible days (for example February30) into another session.
++ if(typeof x!=='string'||!/^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,9})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/.test(x))return 0;
++ const day=new Date(x.slice(0,10)+'T00:00:00Z'),ms=Date.parse(x);
++ return Number.isFinite(+day)&&day.toISOString().slice(0,10)===x.slice(0,10)&&Number.isFinite(ms)?ms:0;
++};
++const nsTime = x => positive(x) ? x / 1e6 : 0;
++export function massiveSnapshot(x) {
++  const lt=x.lastTrade||{}, mn=x.min||{}, dy=x.day||{}, pd=x.prevDay||{}, q=x.lastQuote||{};
++  const trade=positive(lt.p), minute=!trade&&positive(mn.c), minuteVolume=positive(mn.av);
++  return {sym:x.ticker,price:trade?lt.p:minute?mn.c:number(dy.c),
++    t:trade?nsTime(lt.t):minute?number(mn.t):number(dy.t),
++    prevC:number(pd.c),prevV:number(pd.v),open:number(dy.o),hi:number(dy.h),lo:number(dy.l),
++    vol:minuteVolume?mn.av:number(dy.v),vt:minuteVolume?number(mn.t):number(dy.t),
++    bid:number(q.p),ask:number(q.P),qt:nsTime(q.t),
++    priceProvider:'MASSIVE',priceKind:trade?'TRADE':minute?'MINUTE_BAR':'DAILY_BAR',
++    quoteProvider:'MASSIVE',quoteFeed:'PLAN_DEPENDENT',volumeProvider:'MASSIVE'};
++}
++export function alpacaSnapshot(symbol,x={},sip=false) {
++  const lt=x.latestTrade||{}, db=x.dailyBar||{}, pb=x.prevDailyBar||{}, q=x.latestQuote||{}, mb=x.minuteBar||{};
++  const trade=positive(lt.p), volume=sip&&positive(db.v);
++  // dailyBar.t is the bar's session start, not an as-of time. The same response's
++  // latest minute-bar start (same daily bar) is a conservative as-of lower bound
++  // for the cumulative volume; the trade clock is never borrowed.
++  const dayStart=isoTime(db.t),minuteStart=isoTime(mb.t),volumeClock=dayStart&&minuteStart>=dayStart&&minuteStart<dayStart+86400000?minuteStart:dayStart;
++  return {sym:symbol,price:trade?lt.p:number(db.c),t:trade?isoTime(lt.t):dayStart,
++    prevC:number(pb.c),open:number(db.o),vol:volume?db.v:null,vt:volume?volumeClock:0,
++    bid:number(q.bp),ask:number(q.ap),qt:isoTime(q.t),
++    priceProvider:'ALPACA',priceFeed:sip?'sip':'iex',priceKind:trade?'TRADE':'DAILY_BAR',
++    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',volumeProvider:volume?'ALPACA':null,volumeFeed:volume?'sip':null};
++}
++export function mergeLiveSnapshot(row, live, nowMs = Date.now()) {
++  if (!live) return false;
++  let refreshed=false;
++  if (positive(live.price) && positive(live.t) && live.t <= nowMs &&
++      (live.t > row.t || row.t > nowMs || !positive(row.t))) {
++    row.price=live.price;row.t=live.t;refreshed=true;
++    if (positive(live.open)) row.open=live.open;
++    row.priceProvider=live.priceProvider||'UNKNOWN';row.priceFeed=live.priceFeed||null;row.priceKind=live.priceKind||'UNKNOWN';
++  }
++  // An updated trade is no evidence that the aggregate volume has advanced.
++  if (positive(live.vol) && positive(live.vt) && live.vt<=nowMs &&
++      (live.vt>row.vt || row.vt>nowMs || !positive(row.vt))) {
++    row.vol=live.vol;row.vt=live.vt;row.volumeProvider=live.volumeProvider||'UNKNOWN';row.volumeFeed=live.volumeFeed||null;
++  }
++  // A future clock must not pin either BBO or volume against later real data.
++  // Equal-clock conflicts are not resolved by choosing the last arriving quote.
++  if (positive(live.bid) && positive(live.ask) && live.ask>=live.bid && positive(live.qt) && live.qt<=nowMs &&
++      (live.qt>row.qt || row.qt>nowMs || !positive(row.qt))) {
++    row.bid=live.bid;row.ask=live.ask;row.qt=live.qt;row.quoteProvider=live.quoteProvider||'UNKNOWN';row.quoteFeed=live.quoteFeed||null;
++  }
++  return refreshed;
++}
+diff --git a/test/alpaca-feed.test.mjs b/test/alpaca-feed.test.mjs
+index 5aa3e95d..bfde1360 100644
+--- a/test/alpaca-feed.test.mjs
++++ b/test/alpaca-feed.test.mjs
+@@ -9,16 +9,16 @@ const fake = (sipOk) => { const calls = []; const f = async (url) => { calls.pus
+   if (sip && !sipOk) return { ok: false, status: 403, json: async () => ({ message: 'subscription does not permit querying recent SIP data' }) };
+   return { ok: true, status: 200, json: async () => ({ AAA: { latestTrade: { p: 10 }, dailyBar: { v: sip ? 5e6 : 1e5 } } }) }; }; f.calls = calls; return f; };
+ 
+-test('upgraded plan: SIP is used and its full volume comes back', async () => {
+-  resetFeed(); const f = fake(true); const j = await snapshots('https://x', ['AAA'], {}, f);
++test('synthetic SIP response preserves reported volume without inferring account plan', async () => {
++  resetFeed(); const f = fake(true); const j = await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f);
+   assert.equal(feedUsed(), 'sip'); assert.equal(j.AAA.dailyBar.v, 5e6); assert.equal(f.calls.length, 1);
+ });
+-test('free plan: SIP refused with 403, IEX used, and later calls go straight to IEX', async () => {
+-  resetFeed(); const f = fake(false); const j = await snapshots('https://x', ['AAA'], {}, f);
++test('synthetic SIP403 explicitly downgrades to IEX; later requests prefer IEX', async () => {
++  resetFeed(); const f = fake(false); const j = await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f);
+   assert.equal(feedUsed(), 'iex'); assert.equal(j.AAA.latestTrade.p, 10);
+-  await snapshots('https://x', ['AAA'], {}, f); assert.equal(f.calls.filter(u => /feed=sip/.test(u)).length, 1);
++  await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f); assert.equal(f.calls.filter(u => /feed=sip/.test(u)).length, 1);
+ });
+ test('ALPACA_FEED=iex forces IEX', async () => {
+-  resetFeed(); process.env.ALPACA_FEED = 'iex'; const f = fake(true); await snapshots('https://x', ['AAA'], {}, f);
++  resetFeed(); process.env.ALPACA_FEED = 'iex'; const f = fake(true); await snapshots('http://127.0.0.1:12345', ['AAA'], {}, f);
+   assert.equal(feedUsed(), 'iex'); assert.ok(!f.calls.some(u => /feed=sip/.test(u))); delete process.env.ALPACA_FEED;
+ });
+diff --git a/test/feed-integrity-watcher.test.mjs b/test/feed-integrity-watcher.test.mjs
+new file mode 100644
+index 00000000..5166eeec
+--- /dev/null
++++ b/test/feed-integrity-watcher.test.mjs
+@@ -0,0 +1,87 @@
++// Full production watcher (ignition-watch.mjs) against synthetic local Massive + Alpaca services: SIP/IEX attribution,
++// 403/422/429 handling, quote clocks and archive output. No credentials, provider, message or order; external fetch is refused.
++// FEED_INTEGRITY_ROOT can point at another tree's modules (used to show the defects on unpatched production).
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import zlib from 'node:zlib';
++import { spawn, execFileSync } from 'node:child_process';
++const root = path.resolve(process.env.FEED_INTEGRITY_ROOT || path.join(import.meta.dirname, '..'));
++const day = '2026-10-30', epoch = Date.parse(day + 'T13:40:00Z'), late = epoch - 20 * 60000, L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
++const sleep = (ms) => new Promise(r => setTimeout(r, ms));
++
++async function run(t, scenario) {
++  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'feed-integrity-watcher-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
++  for (const f of fs.readdirSync(root).filter(p => p.endsWith('.mjs'))) fs.copyFileSync(path.join(root, f), path.join(dir, f));
++  fs.mkdirSync(path.join(dir, 'data'));
++  execFileSync('git', ['init', '-q'], { cwd: dir, stdio: 'ignore' }); execFileSync('git', ['-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', 'commit', '--allow-empty', '-qm', 'fixture'], { cwd: dir, stdio: 'ignore' });
++  const SYMS = scenario === 'race' ? Array.from({ length: 250 }, (_, i) => 'Z' + L[Math.floor(i / 26) % 26] + L[i % 26]) : ['ZZQ'];
++  const mrow = (s) => ({ ticker: s, lastTrade: { p: 10, t: late * 1e6 }, lastQuote: { p: 9.98, P: 10.02, t: late * 1e6 }, prevDay: { c: 9.5, v: 2e6 }, min: { c: 10, t: late, av: 1e5 }, day: { c: 10, o: 9.6, v: 1e5 } });
++  const calls = [], sockets = new Set();
++  const server = http.createServer(async (req, res) => { const u = new URL(req.url, 'http://localhost'), feed = u.searchParams.get('feed'); calls.push(u.pathname + (feed ? '?feed=' + feed : '')); res.setHeader('Content-Type', 'application/json');
++    if (u.pathname.includes('/v2/snapshot/locale')) return res.end(JSON.stringify({ tickers: SYMS.map(mrow) }));
++    if (u.pathname.includes('/screener/')) return res.end(JSON.stringify({ gainers: [{ symbol: 'ZZQ' }] }));
++    if (u.pathname === '/v2/stocks/snapshots') { const syms = (u.searchParams.get('symbols') || '').split(',');
++      if (scenario === 'race') { if (feed === 'sip' && syms[0] === SYMS[0]) { await sleep(50); res.statusCode = 403; return res.end('{}'); } await sleep(feed === 'iex' ? 300 : 150); }
++      if (feed === 'sip' && scenario === 'sip-403') { res.statusCode = 403; return res.end('{"message":"subscription does not permit"}'); }
++      if (feed === 'sip' && scenario === 'sip-422') { res.statusCode = 422; return res.end('{"message":"invalid"}'); }
++      if (scenario === 'sip-429') { res.statusCode = 429; res.setHeader('retry-after', '86400'); return res.end('{}'); }
++      const tt = new Date(epoch - 30000).toISOString();
++      return res.end(JSON.stringify(Object.fromEntries(syms.map(s => [s, { latestTrade: { p: 11, t: tt }, latestQuote: { bp: 10.99, ap: 11.01, t: tt }, minuteBar: { t: new Date(epoch - 60000).toISOString(), c: 11, v: 1000 }, dailyBar: { t: day + 'T04:00:00Z', o: 9.6, c: 11, v: feed === 'sip' ? 3e6 : 5e4 }, prevDailyBar: { c: 9.5, v: 2e6 } }])))); }
++    res.statusCode = 404; res.end('{}'); });
++  server.on('connection', s => { sockets.add(s); s.on('close', () => sockets.delete(s)); }); await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => { for (const s of sockets) s.destroy(); server.close(); });
++  const base = 'http://127.0.0.1:' + server.address().port, preload = path.join(dir, 'local-only.mjs');
++  fs.writeFileSync(preload, `const D=Date,start=D.now(),at=${epoch};globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[at+D.now()-start]));}static now(){return at+D.now()-start;}};const f=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(base + '/')}))throw Error('NO_EXTERNAL_ACCESS');return f(u,o);};`);
++  const env = { PATH: process.env.PATH, IG_DAY: day, IG_FAKE_MIN: '580', IG_FAKE_STEP: '400', IG_RUN_MIN: '1', IG_NO_RADAR: '1', MASSIVE_BASE: base, ALPACA_DATA: base, ALPACA_KEY: 'synthetic', ALPACA_SECRET: 'synthetic', SEC_BASE: base, SEC_UA: 'synthetic fixture', GITHUB_RUN_ID: 'synthetic-' + scenario, GITHUB_RUN_ATTEMPT: '1' };
++  if (scenario !== 'top50') env.MASSIVE_KEY = 'synthetic';
++  const child = spawn(process.execPath, ['--import', preload, 'ignition-watch.mjs'], { cwd: dir, env, stdio: ['ignore', 'pipe', 'pipe'] }); t.after(() => { if (child.exitCode === null) child.kill('SIGKILL'); });
++  let output = ''; child.stdout.on('data', x => output += x); child.stderr.on('data', x => output += x);
++  const timer = setTimeout(() => child.kill('SIGKILL'), 60000); const code = await new Promise((resolve, reject) => { child.on('error', reject); child.on('close', resolve); }); clearTimeout(timer);
++  assert.equal(code, 0, output);
++  const live = JSON.parse(fs.readFileSync(path.join(dir, 'data/ignition-live.json'))), rd = path.join(dir, 'data/ignition-runs', day);
++  const shadow = fs.readdirSync(rd).filter(n => n.endsWith('.shadow.jsonl.gz')).flatMap(n => zlib.gunzipSync(fs.readFileSync(path.join(rd, n))).toString().trim().split('\n').filter(Boolean).map(JSON.parse));
++  assert.equal(calls.some(p => /sendMessage|orders/.test(p)), false, 'no message or order endpoint');
++  return { calls, live, shadow, SYMS, snaps: calls.filter(c => c.startsWith('/v2/stocks/snapshots')) };
++}
++
++test('SIP answer: live SIP price, volume and quote with their own clocks; archive says SIP', async t => {
++  const r = await run(t, 'sip-ok'), x = r.shadow.find(s => s.sym === 'ZZQ'), ig = x.ig[0];
++  assert.deepEqual(r.snaps, ['/v2/stocks/snapshots?feed=sip']);
++  assert.match(r.live.src, /SIP feed/); assert.match(r.live.src, /live SIP volume for 1/);
++  assert.equal(x.px0, 11); assert.equal(x.rv0, 1.5, 'full-market SIP volume 3e6 / previous 2e6');
++  assert.equal(ig.bid, 10.99); assert.equal(ig.qAgeSec, 30, 'quote age from the quote clock');
++});
++
++test('SIP 403: IEX price is used, IEX volume is never used as market volume', async t => {
++  const r = await run(t, 'sip-403'), x = r.shadow.find(s => s.sym === 'ZZQ');
++  assert.deepEqual(r.snaps, ['/v2/stocks/snapshots?feed=sip', '/v2/stocks/snapshots?feed=iex']);
++  assert.match(r.live.src, /IEX feed/); assert.match(r.live.src, /massive volume \(late\)/);
++  assert.equal(x.px0, 11); assert.equal(x.rv0, 0.05, 'late Massive volume 1e5 kept; IEX 5e4 not used');
++});
++
++test('SIP 422: a failed request, not a downgrade; no IEX request is made', async t => {
++  const r = await run(t, 'sip-422');
++  assert.ok(!r.snaps.includes('/v2/stocks/snapshots?feed=iex'), 'IEX must not be requested after 422: ' + r.snaps.join(' '));
++  assert.match(r.live.note, /Alpaca snapshots failed/);
++});
++
++test('429: one request, no retry inside the cool-down', async t => {
++  const r = await run(t, 'sip-429'); assert.equal(r.snaps.length, 1, r.snaps.join(' '));
++});
++
++test('concurrent parts: an IEX response is never read as SIP when another part\'s SIP answer lands in between', async t => {
++  const r = await run(t, 'race'), rv = new Map(r.shadow.map(s => [s.sym, s.rv0]));
++  const iexPart = r.SYMS.slice(0, 200).map(s => rv.get(s)).filter(v => v !== undefined), sipPart = r.SYMS.slice(200).map(s => rv.get(s)).filter(v => v !== undefined);
++  assert.ok(iexPart.length > 100 && sipPart.length > 20);
++  assert.deepEqual([...new Set(iexPart)], [0.05], 'IEX-answered symbols keep late Massive volume, never IEX 5e4 as market volume');
++  assert.deepEqual([...new Set(sipPart)], [1.5]);
++  assert.match(r.live.src, /MIXED feed/);
++});
++
++test('top-50 fallback keeps its original field set (no quote fields added)', async t => {
++  const r = await run(t, 'top50'), x = r.shadow.find(s => s.sym === 'ZZQ');
++  assert.equal(r.live.mode, 'PARTIAL_TOP50_FALLBACK'); assert.equal(x.px0, 11); assert.equal(x.ig[0].bid, null); assert.equal(x.ig[0].qAgeSec, null);
++});
+diff --git a/test/feed-integrity.test.mjs b/test/feed-integrity.test.mjs
+new file mode 100644
+index 00000000..8781153a
+--- /dev/null
++++ b/test/feed-integrity.test.mjs
+@@ -0,0 +1,105 @@
++// Feed integrity (1 Nov 2026): per-response SIP/IEX attribution, error handling and per-field provider clocks.
++// Synthetic local fetchers only; no provider, credential or message. Run: node --test test/feed-integrity.test.mjs
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { snapshots, feedUsed, snapshotFeed, feedEvidence, resetFeed, COOLDOWN_CAP_MS } from '../alpaca-feed.mjs';
++import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot } from '../snapshot-fields.mjs';
++
++const BASE = 'http://127.0.0.1:9';
++const row = (v) => ({ latestTrade: { p: 10, t: '2026-10-30T14:00:00Z' }, dailyBar: { t: '2026-10-30T04:00:00Z', v } });
++const reply = (status, body, headers = {}) => ({ ok: status >= 200 && status < 300, status, headers: new Headers(headers), json: async () => body });
++const sleep = (ms) => new Promise(r => setTimeout(r, ms));
++const feedOf = (url) => new URL(url).searchParams.get('feed');
++
++test('each payload carries the feed of its own response, even when concurrent requests race on a SIP 403', async () => {
++  resetFeed(); const calls = [];
++  // Part A: SIP 403 at 20 ms, then IEX at 80 ms. Part B: SIP 200 at 40 ms, between A's 403 and A's IEX answer.
++  const f = async (url) => { const feed = feedOf(url), part = new URL(url).searchParams.get('symbols'); calls.push(feed + ':' + part);
++    if (part === 'AAA' && feed === 'sip') { await sleep(20); return reply(403, {}); }
++    if (part === 'AAA') { await sleep(80); return reply(200, { AAA: row(5e4) }); }
++    await sleep(40); return reply(200, { BBB: row(3e6) }); };
++  const [a, b] = await Promise.all([snapshots(BASE, ['AAA'], {}, f), snapshots(BASE, ['BBB'], {}, f)]);
++  assert.equal(snapshotFeed(a), 'iex'); assert.equal(snapshotFeed(b), 'sip');
++  assert.equal(feedUsed(), 'mixed', 'a run that saw both feeds must not claim one');
++  assert.deepEqual(calls.sort(), ['iex:AAA', 'sip:AAA', 'sip:BBB']);
++});
++
++test('SIP 422 is a failed request, never an entitlement downgrade: no IEX request, nothing returned', async () => {
++  resetFeed(); const calls = []; const f = async (url) => { calls.push(feedOf(url)); return reply(422, { message: 'invalid' }); };
++  assert.equal(await snapshots(BASE, ['AAA'], {}, f), null);
++  assert.deepEqual(calls, ['sip']); assert.equal(feedEvidence().lastFailure, 'HTTP_422'); assert.equal(feedUsed(), 'unobserved');
++  assert.equal(await snapshots(BASE, ['AAA'], {}, f), null); assert.deepEqual(calls, ['sip', 'sip'], 'later requests still ask SIP');
++});
++
++test('forced SIP never falls back to IEX on 403', async () => {
++  resetFeed(); process.env.ALPACA_FEED = 'sip'; const calls = [];
++  try { assert.equal(await snapshots(BASE, ['AAA'], {}, async (url) => { calls.push(feedOf(url)); return reply(403, {}); }), null); }
++  finally { delete process.env.ALPACA_FEED; }
++  assert.deepEqual(calls, ['sip']);
++});
++
++test('an invalid forced feed is refused before any request', async () => {
++  resetFeed(); process.env.ALPACA_FEED = 'delayed_sip'; let n = 0;
++  try { assert.equal(await snapshots(BASE, ['AAA'], {}, async () => { n++; return reply(200, { AAA: row(1) }); }), null); }
++  finally { delete process.env.ALPACA_FEED; }
++  assert.equal(n, 0); assert.equal(feedEvidence().lastFailure, 'INVALID_FEED_CONFIGURATION');
++});
++
++test('429 is not retried; Retry-After is honoured but capped at 5 minutes', async () => {
++  resetFeed(); let n = 0; const f = async () => { n++; return reply(429, {}, { 'retry-after': '86400' }); };
++  const before = Date.now(); assert.equal(await snapshots(BASE, ['AAA'], {}, f), null); assert.equal(n, 1);
++  const until = Date.parse(feedEvidence().cooldownUntil); assert.ok(until <= before + COOLDOWN_CAP_MS + 1000 && until > before + COOLDOWN_CAP_MS - 1000);
++  assert.equal(await snapshots(BASE, ['AAA'], {}, f), null); assert.equal(n, 1, 'no request during the pause');
++  assert.equal(feedEvidence().lastFailure, 'RATE_LIMIT_COOLDOWN');
++});
++
++test('network failure, non-JSON body and an unrequested symbol all return nothing (never a partial guess)', async () => {
++  for (const [name, f] of [
++    ['network', async () => { throw Error('ECONNRESET'); }],
++    ['bad-json', async () => ({ ok: true, status: 200, headers: new Headers(), json: async () => { throw SyntaxError('x'); } })],
++    ['foreign-symbol', async () => reply(200, { AAA: row(1), ZZZ: row(1) })],
++    ['error-object', async () => reply(200, { message: 'quota' })],
++  ]) { resetFeed(); assert.equal(await snapshots(BASE, ['AAA'], {}, f), null, name); }
++});
++
++test('a null row is dropped for that symbol only; the rest of the batch is kept', async () => {
++  resetFeed(); const j = await snapshots(BASE, ['AAA', 'BBB'], {}, async () => reply(200, { AAA: row(7), BBB: null }));
++  assert.deepEqual(Object.keys(j), ['AAA']); assert.equal(snapshotFeed(j), 'sip');
++});
++
++test('only the Alpaca data origin or a local test service is accepted as a base', async () => {
++  for (const base of ['https://evil.example', 'https://data.alpaca.markets/v2', 'http://data.alpaca.markets']) { resetFeed(); let n = 0;
++    assert.equal(await snapshots(base, ['AAA'], {}, async () => { n++; return reply(200, { AAA: row(1) }); }), null, base); assert.equal(n, 0); }
++});
++
++test('Alpaca volume: SIP only, clocked by the same response\'s latest minute bar, never by the trade', () => {
++  const x = { latestTrade: { p: 11, t: '2026-10-30T14:29:30Z' }, minuteBar: { t: '2026-10-30T14:28:00Z' }, dailyBar: { t: '2026-10-30T04:00:00Z', c: 11, v: 3e6 }, latestQuote: { bp: 10.99, ap: 11.01, t: '2026-10-30T14:29:31Z' } };
++  const sip = alpacaSnapshot('AAA', x, true), iex = alpacaSnapshot('AAA', x, false);
++  assert.equal(sip.vol, 3e6); assert.equal(sip.vt, Date.parse('2026-10-30T14:28:00Z')); assert.equal(sip.volumeFeed, 'sip');
++  assert.equal(iex.vol, null); assert.equal(iex.vt, 0); assert.equal(iex.quoteFeed, 'iex'); assert.equal(iex.priceFeed, 'iex');
++  assert.equal(sip.t, Date.parse('2026-10-30T14:29:30Z')); assert.equal(sip.qt, Date.parse('2026-10-30T14:29:31Z'));
++  const noMinute = alpacaSnapshot('AAA', { ...x, minuteBar: undefined }, true); assert.equal(noMinute.vt, Date.parse('2026-10-30T04:00:00Z'), 'without a minute bar only the session start is known');
++  const staleMinute = alpacaSnapshot('AAA', { ...x, minuteBar: { t: '2026-10-29T19:59:00Z' } }, true); assert.equal(staleMinute.vt, Date.parse('2026-10-30T04:00:00Z'), 'a minute bar from another session is not this volume\'s clock');
++  const closeOnly = alpacaSnapshot('AAA', { dailyBar: { t: '2026-10-30T04:00:00Z', c: 12 }, latestTrade: { t: '2026-10-30T14:29:30Z' } }, true);
++  assert.equal(closeOnly.price, 12); assert.equal(closeOnly.priceKind, 'DAILY_BAR'); assert.equal(closeOnly.t, Date.parse('2026-10-30T04:00:00Z'), 'a bar price never borrows the trade clock');
++});
++
++test('Massive price clock follows the price actually used; the snapshot "updated" time is never a price clock', () => {
++  const u = 1793370000000;
++  const trade = massiveSnapshot({ ticker: 'AAA', lastTrade: { p: 10, t: u * 1e6 }, min: { c: 9, t: u - 60000, av: 500 }, day: { c: 8, v: 900 }, updated: (u + 5000) * 1e6 });
++  assert.equal(trade.t, u); assert.equal(trade.vt, u - 60000); assert.equal(trade.vol, 500);
++  const dayOnly = massiveSnapshot({ ticker: 'AAA', day: { c: 8, v: 900 }, updated: (u + 5000) * 1e6 });
++  assert.equal(dayOnly.price, 8); assert.equal(dayOnly.t, 0, 'a close with no clock must not look fresh');
++});
++
++test('merge: newer SIP volume replaces late Massive volume; IEX never does; future and crossed values never win', () => {
++  const now = Date.parse('2026-10-30T14:30:00Z');
++  const m = massiveSnapshot({ ticker: 'AAA', lastTrade: { p: 10, t: (now - 20 * 60000) * 1e6 }, min: { c: 10, t: now - 21 * 60000, av: 1e5 }, lastQuote: { p: 9.9, P: 10.1, t: (now - 20 * 60000) * 1e6 } });
++  const x = { latestTrade: { p: 11, t: new Date(now - 30000).toISOString() }, minuteBar: { t: new Date(now - 60000).toISOString() }, dailyBar: { t: '2026-10-30T04:00:00Z', v: 3e6 }, latestQuote: { bp: 10.99, ap: 11.01, t: new Date(now - 30000).toISOString() } };
++  const a = { ...m }; assert.equal(mergeLiveSnapshot(a, alpacaSnapshot('AAA', x, true), now), true);
++  assert.equal(a.price, 11); assert.equal(a.vol, 3e6); assert.equal(a.volumeFeed, 'sip'); assert.equal(a.bid, 10.99); assert.equal(a.quoteFeed, 'sip');
++  const b = { ...m }; mergeLiveSnapshot(b, alpacaSnapshot('AAA', x, false), now);
++  assert.equal(b.price, 11); assert.equal(b.vol, 1e5, 'IEX volume is one venue only'); assert.equal(b.quoteFeed, 'iex', 'an IEX quote is labelled as IEX, not NBBO');
++  const c = { ...m }; mergeLiveSnapshot(c, alpacaSnapshot('AAA', { ...x, latestTrade: { p: 50, t: new Date(now + 60000).toISOString() }, latestQuote: { bp: 11, ap: 10, t: new Date(now - 1000).toISOString() } }, true), now);
++  assert.equal(c.price, 10, 'future trade clock refused'); assert.equal(c.bid, 9.9, 'crossed quote refused');
++});
+diff --git a/test/premarket-feed.test.mjs b/test/premarket-feed.test.mjs
+new file mode 100644
+index 00000000..4424af84
+--- /dev/null
++++ b/test/premarket-feed.test.mjs
+@@ -0,0 +1,49 @@
++// Actual premarket-check.mjs against a synthetic local Alpaca service: the "pre-market trade" test uses New York dates
++// (a late after-hours trade is the next UTC day), and the message names the response feed and the trade's own time.
++// No Telegram variables are set, so nothing is sent; any non-local fetch throws. PREMARKET_ROOT can point at another tree.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import { spawn } from 'node:child_process';
++const root = path.resolve(process.env.PREMARKET_ROOT || path.join(import.meta.dirname, '..'));
++const nyDate = (d) => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
++// Start of today's New York date, found by stepping back from now (works in both EDT and EST).
++const nyMidnight = () => { const today = nyDate(new Date()); let t = Date.now() - (Date.now() % 60000); while (nyDate(new Date(t - 60000)) === today) t -= 60000; return t; };
++
++async function run(t, feedStatus) {
++  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'premarket-feed-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
++  for (const f of ['premarket-check.mjs', 'alpaca-feed.mjs', 'market-symbol.mjs']) if (fs.existsSync(path.join(root, f))) fs.copyFileSync(path.join(root, f), path.join(dir, f));
++  fs.mkdirSync(path.join(dir, 'data'));
++  fs.writeFileSync(path.join(dir, 'data/my-positions.json'), JSON.stringify({ AAA: { entry: 10, stop: 8 }, BBB: { entry: 10, stop: 8 } }));
++  const mid = nyMidnight(), lateAfterHours = new Date(mid - 30 * 60000).toISOString(), fresh = new Date(Date.now() - 60000).toISOString(), calls = [];
++  const server = http.createServer((req, res) => { const u = new URL(req.url, 'http://l'), feed = u.searchParams.get('feed'); calls.push(feed);
++    if (feed === 'sip' && feedStatus !== 200) { res.statusCode = feedStatus; return res.end('{}'); }
++    res.setHeader('Content-Type', 'application/json');
++    res.end(JSON.stringify({ AAA: { latestTrade: { p: 9, t: lateAfterHours }, prevDailyBar: { c: 9.5 } }, BBB: { latestTrade: { p: 9.9, t: fresh }, prevDailyBar: { c: 9.5 } } })); });
++  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => server.close());
++  const base = 'http://127.0.0.1:' + server.address().port, preload = path.join(dir, 'local-only.mjs');
++  fs.writeFileSync(preload, `const f=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(base + '/')}))throw Error('NO_EXTERNAL_ACCESS');return f(u,o);};`);
++  const child = spawn(process.execPath, ['--import', preload, 'premarket-check.mjs'], { cwd: dir, env: { PATH: process.env.PATH, ALPACA_DATA_BASE: base, ALPACA_KEY: 'synthetic', ALPACA_SECRET: 'synthetic' }, stdio: ['ignore', 'pipe', 'pipe'] });
++  let out = ''; child.stdout.on('data', x => out += x); child.stderr.on('data', x => out += x);
++  const code = await new Promise(r => child.on('close', r)); assert.equal(code, 0, out);
++  return { out, calls, lateAfterHours };
++}
++
++test('a late after-hours trade (next UTC date, previous New York date) is not today\'s pre-market price', async t => {
++  const r = await run(t, 200), aaa = r.out.split('\n').find(l => l.includes('AAA'));
++  assert.equal(new Date(r.lateAfterHours).toISOString().slice(0, 10), nyDate(new Date()), 'fixture: the trade has today\'s UTC date');
++  assert.match(aaa, /AAA no pre-market trade yet, close 9\.50/);
++});
++
++test('a real pre-market trade is shown with its own New York time, and the header names the response feed', async t => {
++  const r = await run(t, 200), bbb = r.out.split('\n').find(l => l.includes('BBB'));
++  assert.match(bbb, /BBB pre-market 9\.90 at \d\d:\d\d NY \(\+4\.2% vs close\)/);
++  assert.match(r.out, /\[prices: SIP feed\]/); assert.deepEqual(r.calls, ['sip']);
++});
++
++test('after a SIP 403 the header says IEX', async t => {
++  const r = await run(t, 403); assert.match(r.out, /\[prices: IEX feed\]/); assert.deepEqual(r.calls, ['sip', 'iex']);
++});
