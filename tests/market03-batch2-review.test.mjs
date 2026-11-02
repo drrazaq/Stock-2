@@ -67,3 +67,15 @@ test('B2-4: every count must be a finite whole number >= 0; missing and invalid 
  const s=(await run(t,'smart-money.mjs',smart([R(month(0),'4',3,3),R(month(-1),2,2,6)]))).json('smart-money.json');
  assert.deepEqual(s.analysts.map(x=>x.now),[7],'a numeric string count is still a valid count');
 });
+
+test('follow-up: a genuine empty dividend answer counts as none; unnamed or all-malformed rows never do; counts stay encrypted', async t=>{
+ let f=await run(t,'calendar.mjs',cal({div:()=>({status:'OK',results:[]})}));let d=f.cal().privateStatus.dividends;
+ assert.deepEqual([d.observed,d.none,d.malformedOnly,d.identityMissing],[0,1,0,0]);assert.equal(f.json('calendar-status.json').massiveContract.dividends.status,'OBSERVED');
+ f=await run(t,'calendar.mjs',cal({div:()=>({results:[{ticker:'AAA',ex_dividend_date:'2026-13-01',cash_amount:1},{ticker:'AAA',ex_dividend_date:'2026-11-20',cash_amount:'x'}]})}));d=f.cal().privateStatus.dividends;
+ assert.deepEqual([d.observed,d.none,d.malformedOnly,d.malformedRows],[0,0,1,2]);assert.equal(f.cal().div.AAA,undefined);assert.equal(f.json('calendar-status.json').massiveContract.dividends.status,'UNAVAILABLE');
+ f=await run(t,'calendar.mjs',cal({div:()=>({results:[{ex_dividend_date:'2026-11-20',cash_amount:1}]})}));d=f.cal().privateStatus.dividends;
+ assert.deepEqual([d.none,d.identityMissing],[0,1]);
+ f=await run(t,'calendar.mjs',cal({div:s=>s==='AAA'?{results:[]}:s==='BBB'?{results:[{ticker:'BBB',ex_dividend_date:'2026-11-23',cash_amount:0.2,currency:'USD'}]}:{results:[{ticker:'CCC',ex_dividend_date:'bad',cash_amount:1}]}}),{AAA:{entry:1},BBB:{entry:2},CCC:{entry:3}});
+ d=f.cal().privateStatus.dividends;assert.deepEqual([d.held,d.observed,d.none,d.malformedOnly],[3,1,1,1]);assert.equal(f.json('calendar-status.json').massiveContract.dividends.status,'PARTIAL');
+ assert.deepEqual(Object.keys(f.json('calendar-status.json').massiveContract.dividends),['status']);for(const s of ['AAA','BBB','CCC'])assert.equal(f.text('calendar-status.json').includes(s),false);
+});

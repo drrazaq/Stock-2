@@ -140,7 +140,7 @@ if (MODE === 'fetch') {
   // carry a valid ex-date and a finite amount; a non-USD amount is labelled with its currency. The public status holds counts
   // only, never the held symbols.
   const M = { holidays: { status: 'NOT_FETCHED', received: 0, kept: 0, malformedRows: 0, pastRows: 0, conflicts: 0, calendarDisagreements: 0 },
-    dividends: { status: 'NOT_FETCHED', held: 0, observed: 0, none: 0, failed: 0, identityMismatch: 0, identityMissing: 0, malformedRows: 0, nonUsd: 0 } };
+    dividends: { status: 'NOT_FETCHED', held: 0, observed: 0, none: 0, failed: 0, identityMismatch: 0, identityMissing: 0, malformedOnly: 0, malformedRows: 0, nonUsd: 0 } };
   out.holidays = (out.holidays || []).filter(x => x && typeof x.d === 'string' && x.d >= iso(Date.now()));
   if (env.MASSIVE_KEY) {
     const get = (p) => readJsonSource(fetch, PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY), { timeoutMs: 20000 });
@@ -166,6 +166,9 @@ if (MODE === 'fetch') {
       if (dr.status !== 'OK') { M.dividends.failed++; await sleep(150); continue; }   // as before: nothing shown, but the failure is counted
       const r = dr.body && Array.isArray(dr.body.results) ? dr.body.results : null;
       if (!r) { M.dividends.failed++; M.dividends.malformedRows++; await sleep(150); continue; }
+      // Follow-up review (Codex, 2 Nov): an authenticated, well-formed answer with no rows is a genuine "no upcoming dividend" and is
+      // counted as none. Unnamed or malformed rows are never counted as none (see identityMissing and malformedOnly below).
+      if (!r.length) { M.dividends.none++; await sleep(150); continue; }
       if (r.some(x => x && x.ticker !== undefined && x.ticker !== null && x.ticker !== '' && providerSymbol(x.ticker, { provider: 'MASSIVE', requested: s }).status !== 'OK')) { M.dividends.identityMismatch++; await sleep(150); continue; }
       // Review B2-2 (Codex, 2 Nov): a row that does not name its ticker is not this holding's dividend. It is kept, encrypted, as
       // unattributed evidence of the lookup, never shown as the held stock's ex-dividend date.
@@ -176,9 +179,9 @@ if (MODE === 'fetch') {
         if (!x || !isDay(x.ex_dividend_date) || amt.status === 'INVALID' || amt.status === 'OUT_OF_RANGE') { M.dividends.malformedRows++; continue; }
         const cur = typeof x.currency === 'string' && x.currency.trim() ? x.currency.trim().toUpperCase() : null; if (cur && cur !== 'USD') M.dividends.nonUsd++;
         rows.push({ ex: x.ex_dividend_date, pay: isDay(x.pay_date) ? x.pay_date : null, amt: amt.status === 'OK' ? amt.value : null, currency: cur || 'UNSTATED' }); }
-      if (rows.length) { out.div[s] = rows; M.dividends.observed++; } else M.dividends.none++;
+      if (rows.length) { out.div[s] = rows; M.dividends.observed++; } else M.dividends.malformedOnly++;   // every named row malformed: not none
       await sleep(150); }
-    M.dividends.status = !held.length ? 'EMPTY' : M.dividends.failed + M.dividends.identityMismatch + M.dividends.identityMissing >= held.length && !M.dividends.observed ? 'UNAVAILABLE' : M.dividends.failed || M.dividends.identityMismatch || M.dividends.identityMissing || M.dividends.malformedRows ? 'PARTIAL' : 'OBSERVED'; }
+    M.dividends.status = !held.length ? 'EMPTY' : M.dividends.failed + M.dividends.identityMismatch + M.dividends.identityMissing + M.dividends.malformedOnly >= held.length && !M.dividends.observed ? 'UNAVAILABLE' : M.dividends.failed || M.dividends.identityMismatch || M.dividends.identityMissing || M.dividends.malformedRows ? 'PARTIAL' : 'OBSERVED'; }
   // Privacy (review note, 2 Nov): dividend counts derive from the holdings (how many, how many pay), so they are kept only in the
   // encrypted calendar file; the public status carries the outcome word. Holiday counts come from public market data.
   out.privateStatus = { dividends: M.dividends };
