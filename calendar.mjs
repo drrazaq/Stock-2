@@ -14,7 +14,9 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
-import {readJsonSource,providerSymbol,strictNumber,isDay} from './source-contract.mjs';
+import {readJsonSource,providerSymbol,strictNumber,isDay as isDayShared} from './source-contract.mjs';
+// Review B2-1 (Codex, 2 Nov): an impossible day is a malformed row, never a crash, whichever shared-helper version is in use.
+const isDay = (d) => { try { return isDayShared(d); } catch { return false; } };
 import {marketSession} from './market-session.mjs';
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch', local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const MCP = (local(env.TR_BASE) || 'https://mcp.tipranks.com') + '/mcp/?apikey=' + encodeURIComponent(env.TIPRANKS_KEY || ''), PX = local(env.PX_BASE) || 'https://api.massive.com';
@@ -138,7 +140,7 @@ if (MODE === 'fetch') {
   // carry a valid ex-date and a finite amount; a non-USD amount is labelled with its currency. The public status holds counts
   // only, never the held symbols.
   const M = { holidays: { status: 'NOT_FETCHED', received: 0, kept: 0, malformedRows: 0, pastRows: 0, conflicts: 0, calendarDisagreements: 0 },
-    dividends: { status: 'NOT_FETCHED', held: 0, observed: 0, none: 0, failed: 0, identityMismatch: 0, malformedRows: 0, nonUsd: 0 } };
+    dividends: { status: 'NOT_FETCHED', held: 0, observed: 0, none: 0, failed: 0, identityMismatch: 0, identityMissing: 0, malformedRows: 0, nonUsd: 0 } };
   out.holidays = (out.holidays || []).filter(x => x && typeof x.d === 'string' && x.d >= iso(Date.now()));
   if (env.MASSIVE_KEY) {
     const get = (p) => readJsonSource(fetch, PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY), { timeoutMs: 20000 });
@@ -164,16 +166,24 @@ if (MODE === 'fetch') {
       if (dr.status !== 'OK') { M.dividends.failed++; await sleep(150); continue; }   // as before: nothing shown, but the failure is counted
       const r = dr.body && Array.isArray(dr.body.results) ? dr.body.results : null;
       if (!r) { M.dividends.failed++; M.dividends.malformedRows++; await sleep(150); continue; }
-      if (r.some(x => x && x.ticker !== undefined && providerSymbol(x.ticker, { provider: 'MASSIVE', requested: s }).status !== 'OK')) { M.dividends.identityMismatch++; await sleep(150); continue; }
-      const rows = []; for (const x of r) { const amt = strictNumber(x && x.cash_amount, { min: 0 });
+      if (r.some(x => x && x.ticker !== undefined && x.ticker !== null && x.ticker !== '' && providerSymbol(x.ticker, { provider: 'MASSIVE', requested: s }).status !== 'OK')) { M.dividends.identityMismatch++; await sleep(150); continue; }
+      // Review B2-2 (Codex, 2 Nov): a row that does not name its ticker is not this holding's dividend. It is kept, encrypted, as
+      // unattributed evidence of the lookup, never shown as the held stock's ex-dividend date.
+      const unnamed = r.filter(x => x && (x.ticker === undefined || x.ticker === null || x.ticker === ''));
+      if (unnamed.length) { M.dividends.identityMissing++; (out.divUnattributed ||= []).push({ requested: s, rows: unnamed.slice(0, 3).map(x => ({ ex: isDay(x.ex_dividend_date) ? x.ex_dividend_date : null, amt: strictNumber(x.cash_amount, { min: 0 }).value, currency: typeof x.currency === 'string' ? x.currency.trim().toUpperCase() : 'UNSTATED' })) }); }
+      const named = r.filter(x => !unnamed.includes(x)); if (!named.length) { await sleep(150); continue; }
+      const rows = []; for (const x of named) { const amt = strictNumber(x && x.cash_amount, { min: 0 });
         if (!x || !isDay(x.ex_dividend_date) || amt.status === 'INVALID' || amt.status === 'OUT_OF_RANGE') { M.dividends.malformedRows++; continue; }
         const cur = typeof x.currency === 'string' && x.currency.trim() ? x.currency.trim().toUpperCase() : null; if (cur && cur !== 'USD') M.dividends.nonUsd++;
         rows.push({ ex: x.ex_dividend_date, pay: isDay(x.pay_date) ? x.pay_date : null, amt: amt.status === 'OK' ? amt.value : null, currency: cur || 'UNSTATED' }); }
       if (rows.length) { out.div[s] = rows; M.dividends.observed++; } else M.dividends.none++;
       await sleep(150); }
-    M.dividends.status = !held.length ? 'EMPTY' : M.dividends.failed + M.dividends.identityMismatch === held.length ? 'UNAVAILABLE' : M.dividends.failed || M.dividends.identityMismatch || M.dividends.malformedRows ? 'PARTIAL' : 'OBSERVED'; }
-  status.massiveContract = M;
-  status.massive = !env.MASSIVE_KEY ? 'not tried (no MASSIVE_KEY)' : 'holidays ' + M.holidays.status + ' (' + M.holidays.kept + ' kept' + (M.holidays.conflicts + M.holidays.calendarDisagreements ? ', ' + (M.holidays.conflicts + M.holidays.calendarDisagreements) + ' conflicting' : '') + '); dividends ' + M.dividends.status + ' (' + M.dividends.observed + ' of ' + M.dividends.held + ' held stocks with an upcoming ex-date' + (M.dividends.failed ? ', ' + M.dividends.failed + ' lookups failed' : '') + ')';
+    M.dividends.status = !held.length ? 'EMPTY' : M.dividends.failed + M.dividends.identityMismatch + M.dividends.identityMissing >= held.length && !M.dividends.observed ? 'UNAVAILABLE' : M.dividends.failed || M.dividends.identityMismatch || M.dividends.identityMissing || M.dividends.malformedRows ? 'PARTIAL' : 'OBSERVED'; }
+  // Privacy (review note, 2 Nov): dividend counts derive from the holdings (how many, how many pay), so they are kept only in the
+  // encrypted calendar file; the public status carries the outcome word. Holiday counts come from public market data.
+  out.privateStatus = { dividends: M.dividends };
+  status.massiveContract = { holidays: M.holidays, dividends: { status: M.dividends.status } };
+  status.massive = !env.MASSIVE_KEY ? 'not tried (no MASSIVE_KEY)' : 'holidays ' + M.holidays.status + ' (' + M.holidays.kept + ' kept' + (M.holidays.conflicts + M.holidays.calendarDisagreements ? ', ' + (M.holidays.conflicts + M.holidays.calendarDisagreements) + ' conflicting' : '') + '); dividends ' + M.dividends.status;
   out.study = old.study || null;
   calWrite(out); status.econUpcoming = out.econ.filter(e => e.t >= new Date().toISOString().slice(0, 10)).length; status.econUpcomingOfficial = out.econ.filter(e => e.src && e.t >= new Date().toISOString().slice(0, 10)).length;
   fs.writeFileSync(STATUS, JSON.stringify(status, null, 1)); console.log('calendar: ' + JSON.stringify(status));

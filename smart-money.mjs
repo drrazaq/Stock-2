@@ -1,6 +1,8 @@
 import {telegramFetch as sharedTelegramFetch,splitTelegramText} from './telegram-delivery.mjs';
 const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
-import {readJsonSource,providerSymbol,strictNumber,parseSourceTime,latestCompletedSession,closeLagSessions,adjustmentBasis,nextSession,isDay} from './source-contract.mjs';
+import {readJsonSource,providerSymbol,strictNumber,parseSourceTime,latestCompletedSession,closeLagSessions,adjustmentBasis,nextSession,isDay as isDayShared} from './source-contract.mjs';
+// Review B2-1 (Codex, 2 Nov): an impossible day is a malformed row, never a crash, whichever shared-helper version is in use.
+const isDay = (d) => { try { return isDayShared(d); } catch { return false; } };
 // SMART MONEY AND ANALYSTS. Once each market morning (Kuwait ~2:20 pm):
 //   1. INSIDER BUYING (Finnhub, free): company executives buying their own stock on the open market in the last 14 days:
 //      two or more buyers of 10,000 USD+ each (50,000 USD+ together), or 250,000 USD+ in total.
@@ -88,7 +90,14 @@ console.log('smart money universe:', UNI.length, 'stocks');
 // ---- 1 + 2: insider buying and analyst trends
 const today = iso(Date.now()), since14 = iso(Date.now() - 14 * 86400000), insiders = [], analysts = [], snap = [];
 const counts = () => ({ calls: 0, observed: 0, empty: 0, failed: 0, identityMismatch: 0, malformedRows: 0, duplicateRows: 0, failures: {} });
-const insS = counts(), recS = { ...counts(), notConsecutive: 0, unordered: 0 };
+const insS = counts(), recS = { ...counts(), notConsecutive: 0, unordered: 0, futureRows: 0, missingCountRows: 0 };
+// Review B2-3/B2-4 (Codex, 2 Nov): a recommendation row counts only if its period is a real day in a month that has started (no future
+// observation can create a current turn) and all five counts are finite whole numbers >= 0. Missing and invalid counts are
+// kept apart from zero and from each other.
+const REC_FIELDS = ['strongBuy', 'buy', 'hold', 'sell', 'strongSell'], monthStart = today.slice(0, 7) + '-01';
+const recRow = (x) => { if (!x || typeof x !== 'object' || !isDay(String(x.period || ''))) return { bad: 'MALFORMED' }; if (x.period > monthStart) return { bad: 'FUTURE' };
+  const v = {}; for (const f of REC_FIELDS) { const n = strictNumber(x[f], { min: 0 }); if (n.status === 'MISSING') return { bad: 'MISSING_COUNT' }; if (n.status !== 'OK' || !Number.isInteger(n.value)) return { bad: 'MALFORMED' }; v[f] = n.value; }
+  return { row: { ...x, ...v } }; };
 const fail = (S, st) => { S.failed++; S.failures[st] = (S.failures[st] || 0) + 1; };
 const person = (n) => String(n).trim().replace(/\s+/g, ' ').toUpperCase();          // one person, however the name is spaced or cased
 const monthBefore = (p) => { const [y, m] = p.split('-').map(Number), t = new Date(Date.UTC(y, m - 2, 1)); return t.toISOString().slice(0, 7); };
@@ -115,8 +124,7 @@ for (const sym of UNI) {
   recS.calls++; const recR = await fhLive('/stock/recommendation?symbol=' + sym); let rec = null;
   if (recR.status !== 'OK') fail(recS, recR.status);
   else if (!Array.isArray(recR.body)) fail(recS, 'MALFORMED');
-  else { const rows = recR.body.filter(x => x && typeof x === 'object' && isDay(String(x.period || '')));
-    if (rows.length !== recR.body.length) recS.malformedRows += recR.body.length - rows.length;
+  else { const rows = []; for (const x of recR.body) { const v = recRow(x); if (v.row) rows.push(v.row); else if (v.bad === 'FUTURE') recS.futureRows++; else if (v.bad === 'MISSING_COUNT') recS.missingCountRows++; else recS.malformedRows++; }
     if (rows.some(x => x.symbol !== undefined && providerSymbol(x.symbol, { provider: 'FINNHUB', requested: sym }).status !== 'OK')) recS.identityMismatch++;
     else { const sorted = [...rows].sort((p, q) => q.period < p.period ? -1 : q.period > p.period ? 1 : 0); if (sorted.some((x, i) => x !== rows[i])) recS.unordered++;
       rec = sorted; if (rec.length) recS.observed++; else recS.empty++; } }
@@ -148,7 +156,7 @@ if (env.FMP_KEY) {
     upgrades = sel.filter((u, i) => sel.findIndex(v => v.sym === u.sym) === i && px(u.sym));
     fmpS.status = fmpS.malformedRows ? 'PARTIAL' : arr.length ? 'OBSERVED' : 'EMPTY'; }
 }
-const live = (S) => S.calls === 0 ? 'NOT_FETCHED' : S.failed + S.identityMismatch === S.calls ? 'UNAVAILABLE' : S.failed || S.identityMismatch || S.malformedRows ? 'PARTIAL' : S.observed ? 'OBSERVED' : 'EMPTY';
+const live = (S) => S.calls === 0 ? 'NOT_FETCHED' : S.failed + S.identityMismatch === S.calls ? 'UNAVAILABLE' : S.failed || S.identityMismatch || S.malformedRows || S.futureRows || S.missingCountRows ? 'PARTIAL' : S.observed ? 'OBSERVED' : 'EMPTY';
 const sourceStatus = { GROUPED_PRICES: priceStatus, FINNHUB_INSIDER: { status: live(insS), ...insS }, FINNHUB_RECOMMENDATION: { status: live(recS), ...recS }, FMP_UPGRADES: fmpS };
 
 // ---- hand the names to the nightly scan, and log each as a tip of its source (scored against the S&P 500)

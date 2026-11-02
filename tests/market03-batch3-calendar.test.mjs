@@ -55,7 +55,8 @@ test('dividends: wrong ticker, malformed rows, failed lookups and non-USD amount
   :s==='BBB'?[200,{results:[{ticker:'BBBX',ex_dividend_date:'2026-11-20',cash_amount:9}]}]
   :s==='CCC'?[500,{}]
   :[200,{results:[{ticker:'DDD',ex_dividend_date:'2026-11-21',cash_amount:1.1,currency:'CAD'},{ticker:'DDD',ex_dividend_date:'nope',cash_amount:1}]}]}));
- const c=f.cal(),D=f.status().massiveContract.dividends;
+ const c=f.cal(),D=c.privateStatus.dividends;                    // holding-derived counts live only in the encrypted file
+ assert.deepEqual(Object.keys(f.status().massiveContract.dividends),['status'],'public status: outcome word only');assert.equal(f.status().massiveContract.dividends.status,'PARTIAL');
  assert.deepEqual(Object.keys(c.div).sort(),['AAA','DDD']);assert.equal(c.div.AAA[0].currency,'USD');assert.equal(c.div.DDD[0].currency,'CAD');
  assert.equal(D.identityMismatch,1);assert.equal(D.failed,1);assert.equal(D.malformedRows,1);assert.equal(D.nonUsd,1);assert.equal(D.status,'PARTIAL');
  const pub=fs.readFileSync(path.join(f.dir,'data/calendar-status.json'),'utf8');for(const s of ['AAA','BBB','CCC','DDD'])assert.equal(pub.includes(s),false,'held symbol '+s+' in the public status');

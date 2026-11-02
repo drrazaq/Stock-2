@@ -342,7 +342,7 @@
     "revision": "P",
     "status": "Y",
     "by": "claude/market03-batch2 (batch 3)",
-    "note": "holidays: validated, past dropped, NYSE/Nasdaq and exchange-calendar disagreements kept as CONFLICT, failure never ok; dividends: held-ticker identity, valid ex-date, finite amount, currency labelled; public status counts only"
+    "note": "holidays: validated, past dropped, NYSE/Nasdaq and exchange-calendar disagreements kept as CONFLICT, failure never ok; dividends: held-ticker identity (a row without a ticker stays unattributed, encrypted), valid ex-date, finite amount, currency labelled; impossible days are malformed rows; public status: holiday counts, dividend outcome word only"
    }
   },
   {
@@ -2015,7 +2015,7 @@
     "revision": "P",
     "status": "Y",
     "by": "claude/market03-batch2",
-    "note": "insider + recommendation: outcome per call, requested-symbol identity, strict numbers, no future dates, duplicate rows once, one person once, consecutive sorted months; study block unchanged"
+    "note": "insider + recommendation: outcome per call, requested-symbol identity, strict numbers, no future dates or periods, whole-number analyst counts (missing/invalid apart), duplicate rows once, one person once, consecutive sorted months; study block unchanged"
    }
   },
   {
