@@ -5,6 +5,8 @@ const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // (revenue growth, profit trend, debt, cash) and writes a short list of small, fast-growing companies to data/discovery.json.
 // It finds candidates to research. It does not give buy signals and cannot trade.
 import fs from 'node:fs';
+import { latestCompletedSession, nextSession, closeLagSessions, adjustmentBasis, isDay } from './source-contract.mjs';
+import { marketSession } from './market-session.mjs';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
 
 const env = process.env;
@@ -27,21 +29,33 @@ fs.mkdirSync('data', { recursive: true });
 
 // ---- 1. Whole-market prices: one call returns every US stock for one day (Massive, formerly Polygon, free plan: 5 calls a minute)
 let host = 0, calls = 0;
+// Price-day ingress contract (MARKET-03, 2 Nov 2026). Same request, retries and host fallback as before, but every answer keeps
+// its outcome: OBSERVED (a full-market day), INCOMPLETE (a session day with too few rows to be the whole market), EMPTY (an
+// authenticated answer with no rows), REFUSED (plan: e.g. today's data), MALFORMED, RATE_LIMITED or FAILED. Only OBSERVED rows are
+// used; a failure is never mistaken for a market holiday (holidays come from the exchange calendar and are never requested).
+const MIN_MARKET_ROWS = 500;
 async function grouped(date) {
+  let last = 'FAILED';
   for (let attempt = 0; attempt < 4; attempt++) {
     if (calls && !FAST) await sleep(13000);
     calls++;
     let r;
-    try { r = await fetch(PX_HOSTS[host] + '/v2/aggs/grouped/locale/us/market/stocks/' + date + '?adjusted=true&apiKey=' + encodeURIComponent(env.MASSIVE_KEY)); }
-    catch (e) { if (host + 1 < PX_HOSTS.length) { host++; continue; } throw e; }
-    if (r.status === 429) { await sleep(FAST ? 5 : 61000); continue; }
+    try { r = await fetch(PX_HOSTS[host] + '/v2/aggs/grouped/locale/us/market/stocks/' + date + '?adjusted=true&apiKey=' + encodeURIComponent(env.MASSIVE_KEY), { redirect: 'error', signal: AbortSignal.timeout(60000) }); }
+    catch (e) { if (host + 1 < PX_HOSTS.length) { host++; continue; } return { outcome: 'FAILED', rows: [] }; }
+    if (r.status === 429) { last = 'RATE_LIMITED'; await sleep(FAST ? 5 : 61000); continue; }
     if (r.status === 401) { console.error('The MASSIVE_KEY secret was rejected.'); process.exit(1); }
-    if (r.status === 403) return [];                      // not available on this plan yet (for example today's data)
+    if (r.status === 403) return { outcome: 'REFUSED', rows: [] };            // not available on this plan yet (for example today's data)
     if (r.status === 404 && host + 1 < PX_HOSTS.length) { host++; continue; }
-    const j = await r.json().catch(() => ({}));
-    return j.results || [];
+    if (!r.ok) return { outcome: 'FAILED', httpStatus: r.status, rows: [] };
+    const j = await r.json().catch(() => null);
+    if (!j || typeof j !== 'object' || Array.isArray(j) || !['OK', 'DELAYED'].includes(j.status) || j.adjusted === false) return { outcome: 'MALFORMED', rows: [] };
+    if (j.results === undefined) return (j.resultsCount === 0 || j.queryCount === 0) ? { outcome: 'EMPTY', rows: [] } : { outcome: 'MALFORMED', rows: [] };
+    if (!Array.isArray(j.results)) return { outcome: 'MALFORMED', rows: [] };
+    const rows = j.results.filter(x => x && typeof x.T === 'string' && Number.isFinite(x.c) && x.c > 0 && Number.isFinite(x.v) && x.v >= 0);
+    if (!rows.length) return { outcome: 'EMPTY', rows: [] };
+    return rows.length > MIN_MARKET_ROWS ? { outcome: 'OBSERVED', rows, rejectedRows: j.results.length - rows.length } : { outcome: 'INCOMPLETE', rows: [], received: rows.length };
   }
-  return [];
+  return { outcome: last, rows: [] };
 }
 // The list of real companies (common stocks and ADRs), refreshed monthly and kept in data/companies.json, so funds and
 // leveraged products (TQQQ, SOXX, BULZ, AAPU...) never enter the radar or the lists. About 8 calls a month.
@@ -64,17 +78,33 @@ async function companies() {
   if (out.size > 3000) { fs.writeFileSync('data/companies.json', JSON.stringify({ at: new Date().toISOString(), complete, syms: [...out].sort() })); return out; }
   return old ? new Set(old.syms) : null;          // could not load: use the last list, or no filter at all
 }
-// Walk back from a calendar date to the nearest day that has data (skips weekends and holidays).
-async function sessionOnOrBefore(ms) {
-  for (let k = 0; k < 7; k++) {
-    const d = new Date(ms - k * 86400000), wd = d.getUTCDay();
-    if (wd === 0 || wd === 6) continue;
-    const rows = await grouped(iso(d.getTime()));
-    if (rows.length > 500) return { date: iso(d.getTime()), rows };
+// The session on or before a calendar day, on the exchange calendar (market-session.mjs): weekends and holidays are never requested.
+// Returns { date, rows, outcome, attempts }. A historical sample may fall back to the previous session (recorded); the current day
+// is handled by currentSession() and never falls back.
+const prevSessionOf = (d) => { let x = d; for (let i = 0; i < 10; i++) { x = new Date(Date.parse(x + 'T12:00:00Z') - 86400000).toISOString().slice(0, 10); const m = marketSession(x); if (!m.known) return null; if (!m.closed) return x; } return null; };
+const sessionOnOrBeforeDay = (d) => { const m = marketSession(d); return !m.known ? null : !m.closed ? d : prevSessionOf(d); };
+async function sessionOnOrBefore(ms, { maxFallbacks = 2 } = {}) {
+  const target = iso(ms), attempts = [];
+  if (!marketSession(target).known) {
+    // Outside the exchange calendar's years (market-session.mjs): the original weekday walk, with every outcome recorded and the
+    // sample labelled; a day that fails or has no market data is not called a holiday, it is recorded as what it was.
+    for (let k = 0; k < 7; k++) { const d = iso(ms - k * 86400000), wd = new Date(ms - k * 86400000).getUTCDay(); if (wd === 0 || wd === 6) continue;
+      const g = await grouped(d); attempts.push({ day: d, outcome: g.outcome });
+      if (g.outcome === 'OBSERVED') return { date: d, rows: g.rows, outcome: 'OBSERVED', target, attempts, fellBack: attempts.length > 1, calendarBasis: 'WEEKDAY_WALK_UNVERIFIED' }; }
+    return { date: null, rows: [], outcome: 'UNAVAILABLE', target, attempts, calendarBasis: 'WEEKDAY_WALK_UNVERIFIED' };
   }
-  return null;
+  let d = sessionOnOrBeforeDay(target);
+  for (let k = 0; d && k <= maxFallbacks; k++) { const g = await grouped(d); attempts.push({ day: d, outcome: g.outcome });
+    if (g.outcome === 'OBSERVED') return { date: d, rows: g.rows, outcome: 'OBSERVED', target, attempts, fellBack: k > 0, calendarBasis: 'EXCHANGE_CALENDAR' };
+    d = prevSessionOf(d); }
+  return { date: null, rows: [], outcome: attempts.length ? 'UNAVAILABLE' : 'CALENDAR_UNKNOWN', target, attempts, calendarBasis: 'EXCHANGE_CALENDAR' };
 }
-
+// The current price day is the latest COMPLETED session (never today's unfinished one). If it cannot be read, the run stops: an
+// older day is never presented as current.
+async function currentSession(nowMs) {
+  const day = latestCompletedSession(nowMs); if (!day) return { date: null, rows: [], outcome: 'CALENDAR_UNKNOWN', attempts: [] };
+  const g = await grouped(day); return { date: g.outcome === 'OBSERVED' ? day : null, rows: g.rows, outcome: g.outcome, attempts: [{ day, outcome: g.outcome }], expected: day };
+}
 let secNote = '';
 async function sec(url) {
   await sleep(FAST ? 0 : 250);                            // SEC fair-use limit is 10 requests a second
@@ -97,13 +127,21 @@ async function telegram(text) {
 
 // ---- sweep
 const now = Date.now(), samples = [];
-const first = await sessionOnOrBefore(now);
-if (!first) { console.error('No market data returned. Check the MASSIVE_KEY secret.'); process.exit(1); }
-samples.push(first);
 const prev = readJson('data/discovery.json', null);
+const first = await currentSession(now);
+const priceDay = { status: first.outcome === 'OBSERVED' ? 'OBSERVED' : first.outcome, expected: first.expected || null, session: first.date, attempts: first.attempts, basis: adjustmentBasis({ provider: 'MASSIVE', adjusted: true }) };
+if (first.outcome !== 'OBSERVED') {
+  // Not a silent fallback: the previous discovery stays as it was (its own session date), and this attempt is recorded beside it.
+  const why = first.outcome === 'CALENDAR_UNKNOWN' ? 'the exchange calendar does not cover today' : 'the latest completed session (' + first.expected + ') could not be read: ' + first.outcome;
+  if (prev && typeof prev === 'object') fs.writeFileSync('data/discovery.json', JSON.stringify({ ...prev, lastAttempt: { at: new Date(now).toISOString(), priceDay, note: 'no new discovery: ' + why } }, null, 1));
+  console.error('No new discovery: ' + why + '. The previous list (session ' + (prev && prev.session || 'none') + ') is unchanged and is not presented as current.'); process.exit(1); }
+samples.push(first);
 if (prev && prev.session === first.date && !env.FORCE) { console.log('No new session since ' + first.date + '. Nothing to do.'); process.exit(0); }
-for (let k = 1; k <= CFG.MONTHS; k++) { const s = await sessionOnOrBefore(Date.parse(first.date) - k * 30.44 * 86400000); if (!s) break; samples.push(s); }
-console.log('price samples:', samples.map(s => s.date).join(' '));
+const priceSamples = [];
+for (let k = 1; k <= CFG.MONTHS; k++) { const s = await sessionOnOrBefore(Date.parse(first.date) - k * 30.44 * 86400000); priceSamples.push({ month: k, target: s.target, day: s.date, outcome: s.outcome, fellBack: !!s.fellBack, calendarBasis: s.calendarBasis, attempts: s.attempts });
+  if (s.outcome !== 'OBSERVED') break; samples.push(s); }
+priceDay.lagSessions = closeLagSessions(first.date, now); priceDay.samples = priceSamples; priceDay.samplesComplete = samples.length === CFG.MONTHS + 1;
+console.log('price samples:', samples.map(s => s.date).join(' ') + (priceDay.samplesComplete ? '' : ' (INCOMPLETE: ' + priceSamples.filter(x => x.outcome !== 'OBSERVED').map(x => 'month ' + x.month + ' ' + x.outcome).join(', ') + ')'));
 
 const closes = samples.map(s => new Map(s.rows.map(r => [r.T, r])));
 const spyNow = closes[0].get('SPY') ? closes[0].get('SPY').c : null;
@@ -360,7 +398,7 @@ const record = aged.length ? { n: aged.length, avgReturn: aged.reduce((a, x) => 
 // The public file carries only what came from the price sweep and Finnhub. FMP and TipRanks material goes to Telegram only,
 // because their terms do not allow displaying it on a public page.
 const pub = top.map(({ privateNotes, deep, analyst, ...c }) => c);
-fs.writeFileSync('data/discovery.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session: first.date, swept: closes[0].size, strong: strong.length, quarter: P, source: source.replace(' + FMP statements', '').replace(' + Alpha Vantage statements', ''), secNote, record, candidates: pub }, null, 1));
+fs.writeFileSync('data/discovery.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session: first.date, priceDay, swept: closes[0].size, strong: strong.length, quarter: P, source: source.replace(' + FMP statements', '').replace(' + Alpha Vantage statements', ''), secNote, record, candidates: pub }, null, 1));
 console.log('discovery done:', top.length, 'candidates,', fresh.length, 'new');
 
 // Statement findings (cash flow, debt, dilution) are private, so they are sent once per company even when it is not a new candidate.
