@@ -13,6 +13,7 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import fs from 'node:fs';
 import { loadScan as loadScan0, blocked } from './load-scan.mjs';
+import {marketSession} from '../market-session.mjs';
 // (27 Oct 2026) TRY SMALL is paper-only by default now; these tests pin the REAL-money lane, so they switch it on unless a test sets settings.
 const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'data/settings.json': { trySmallReal: true, ...(((o.files || {})['data/settings.json']) || {}) } } });
 
@@ -33,9 +34,17 @@ test('1. a new-signal list from an older close than the newest session is not sh
 });
 
 test('1b. without a session, a list whose close is more than 5 trading sessions old is not shown', async () => {
-  const S = await loadScan({ files: lab(day(10)) });
+  // A UTC ten-day lookback can be only five NY sessions before midnight after a weekend.
+  // Pin the intended six-session stale / one-session fresh boundaries on the exchange calendar.
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+  const todayNY=parts.year+'-'+parts.month+'-'+parts.day,closes=[];let d=todayNY;
+  for(let i=0;i<60&&closes.length<7;i++){const session=marketSession(d);assert.equal(session.known,true);if(!session.closed)closes.push(d);d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
+  assert.equal(closes.length,7);
+  const S = await loadScan({ files: lab(closes[6]) });
+  assert.equal(S.fn('sessionsAfter')(closes[6],todayNY),6);
   assert.deepEqual(S.fn('trySmallLines')({}, {}), []);
-  const S2 = await loadScan({ files: lab(day(1)) });
+  const S2 = await loadScan({ files: lab(closes[1]) });
+  assert.equal(S2.fn('sessionsAfter')(closes[1],todayNY),1);
   assert.match(S2.fn('trySmallLines')({}, {}).join('\n'), /- BUY TPC/);
 });
 
