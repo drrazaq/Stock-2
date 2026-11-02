@@ -159,15 +159,15 @@ If that record cannot be posted, there is no push.
 | Disposition | Positive evidence required |
 |---|---|
 | **APPLIED** | A fresh read of `main` contains the exact candidate SHA. |
-| **NOT APPLIED** | Either the push client received an explicit rejection (for example, non-fast-forward or a permission error), or a fresh read shows `main` at a commit that is **not** the expected parent and does **not** contain the candidate. In the second case the update can never apply, because every write in this procedure is non-force with an expected HEAD and nobody moves `main` backwards. |
-| **UNKNOWN** | Anything else, including a timeout, a lost response, an unchanged `main` still at the expected parent, silence, a "SUSPENDED" message, or the passage of time. |
+| **NOT APPLIED** | **Only** a definitive terminal rejection of **that exact request**, received by the writer that sent it: for example, an explicit non-fast-forward, expected-HEAD mismatch or permission error returned for that push. The movement or non-movement of `main` is **never** proof of NOT APPLIED. |
+| **UNKNOWN** | Anything else, including a timeout, a lost response, `main` unchanged or moved without the candidate, silence, a "SUSPENDED" message, or the passage of time. |
 
 **While any update is UNKNOWN:**
 - **no further push or retry** by anyone;
 - **no write takeover** (§9b);
 - **no "VERIFIED V0 / V1 / V2"** or Enable invitation, even if `main` currently looks V0 or V2, because the pending update could still change it.
 
-The bot stays disabled. The writer reports, read-only, exactly which evidence is missing, and re-reads `main` until the update is APPLIED or NOT APPLIED. Reading `main` is necessary, but the absence of the candidate alone is never enough to retry. This applies equally to Claude's updates and to Codex's own R.
+The bot stays disabled. The writer reports, read-only, exactly which evidence is missing. Re-reading `main` can show APPLIED; it can never show NOT APPLIED. **If neither positive outcome is ever obtained, the update stays UNKNOWN and the bot stays disabled; the owner decides the next step.** Nobody infers a result. Reading `main` is necessary, but the absence of the candidate alone is never enough to retry. This applies equally to Claude's updates and to Codex's own R.
 
 ## 7. Entry conditions (all checked before the owner is asked to Disable)
 
@@ -325,8 +325,8 @@ Nothing else changed.
 
 1. **Uncertain main-ref writes (new §6d; applied in §8 step 5, §9a and §9b):**
    - Every update is recorded first ("PUSHING <candidate> onto <expected parent>").
-   - It is resolved only by positive evidence: APPLIED, or NOT APPLIED by an explicit rejection or by `main` having moved off the expected parent without the candidate.
-   - Anything else is UNKNOWN. The "landed or rejected, no third outcome" claim and the 5-minute settle are removed.
+   - It is resolved only by positive evidence: **APPLIED** when a fresh read of `main` contains the exact candidate, or **NOT APPLIED** only on a definitive terminal rejection of that exact request. Movement of `main` is not proof of NOT APPLIED; it was removed from revision 5 before confirmation.
+   - Anything else, including a lost response or any reading of `main` that lacks the candidate, is UNKNOWN. The "landed or rejected, no third outcome" claim and the 5-minute settle are removed.
    - Any UNKNOWN blocks retries, takeover and every VERIFIED / Enable signal, for Claude's updates and Codex's alike.
 2. **Designated bot job J (§6c, §7.6):** at entry and during the drain, J (and the jobless D-Q) are explicitly allowed. The pre-push WC requires J terminal with SUCCESS and save evidence, no executing writer, and no UNKNOWN write.
 3. **Labels only:** the rule references change from r4 to r5 (ACK TRANSFER RULE r5, ROLLBACK TRANSFER r5).
