@@ -227,10 +227,13 @@
       "requiredVerification": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
       "partialEvidence": "Independent clock/provider/feed repairs and explicit-universe offline session contracts; all-provider audit remains open.",
       "continuationEvidence": "Actual SEC Insider dash/dot classes remain distinct through producer/cache/cluster/discovery, and CIK padding cannot count one owner twice. Other provider ingress, ticker changes, units, corporate-action and session basis remain OPEN.",
-      "latestExactUnmetRequirement": "No complete actual-ingress symbol/units/session/corporate-action/ticker-change matrix across every provider; history/DST repairs cover only scoped paths.",
+      "latestExactUnmetRequirement": "Scoped source-contract/earnings/Discovery2/Comeback symbol,clock,units,status and SPY-envelope R1-R3 repairs are integrated and actual-caller tested. Complete all-provider ingress/consumer symbol identity, ticker-change, exchange/session/corporate-action and units normalization remains OPEN; smart-money/calendar and discover await rebased independent review. Matrix labels do not establish whole-row verification.",
       "latestEvidence": [
-        "docs/d3-session-history-review.md"
-      ]
+        "docs/d3-session-history-review.md",
+        "docs/reviews/market03-catalyst03-r3/REVIEW.md",
+        "docs/validation/market03-catalyst03-accepted-manifest.json"
+      ],
+      "preSourceR3UnmetRequirement": "No complete actual-ingress symbol/units/session/corporate-action/ticker-change matrix across every provider; history/DST repairs cover only scoped paths."
     },
     {
       "id": "MARKET-04",
@@ -238,7 +241,7 @@
       "status": "OPEN",
       "actionability": "APPROVED_LIVE_EVIDENCE",
       "requiredVerification": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this.",
-      "latestExactUnmetRequirement": "No observed complete regular, premarket and half-day intended-minute/freshness/denominator/p95/outage dataset; configured09:30–15:00 excludes the final hour and post-DST evidence is pending.",
+      "latestExactUnmetRequirement": "No observed complete regular, premarket and half-day intended-minute/freshness/denominator/p95/outage dataset; configured09:30\u201315:00 excludes the final hour and post-DST evidence is pending.",
       "latestEvidence": []
     },
     {
@@ -269,10 +272,13 @@
       "requiredVerification": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
       "partialEvidence": "Verified bb93fb2: 55 reconstructed source regressions, malformed/failed/empty source distinctions and SEC structural coverage. Full identity/revision/persistence evidence remains OPEN; docs/validation/catalyst-source-ci.json.",
       "continuationEvidence": "News remote intent/revisions and SEC/earnings metadata controls:5cc2dbb; Insider persistence/Leaders publication:691bbf9; SEC bounds/class identity:60be0ee; Chain revisions/clocks:7bcf591. Exact CI evidence in validation/*caller-ci.json and source matrix. Full source/revision/persistence/materiality scope remains OPEN. Share-supply/current SEC identity and shared Discovery2 caller candidate: docs/validation/share-supply-source-caller.json; full eight-lane criterion remains OPEN.",
-      "latestExactUnmetRequirement": "Native SEC clocks/joins/revisions/restart have actual-path proof, but events-study/news full-body revision contracts, earnings AV/FMP provenance/shape handling and Discovery2/Comeback derived-event contracts still lack a complete eight-lane materiality/conflict/persistence matrix. Independent historical authenticity belongs separately to CATALYST-04.",
+      "latestExactUnmetRequirement": "Scoped bounded news-field revisions, earnings provider provenance/shape handling and Discovery2/Comeback derived-event contracts now have actual-caller proof, including R1 row isolation,R2 truthful response envelopes and R3 retained conflicts. Still require the complete eight-lane identity/publication/ingestion/materiality/threat/conflicting/missing-evidence matrix and durable cross-job persistence under all applicable publication/write failures. Independent historical authenticity remains separate CATALYST-04; this row is not engineering-complete or accepted.",
       "latestEvidence": [
-        "docs/d3-session-history-review.md"
-      ]
+        "docs/d3-session-history-review.md",
+        "docs/reviews/market03-catalyst03-r3/REVIEW.md",
+        "docs/validation/market03-catalyst03-accepted-manifest.json"
+      ],
+      "preSourceR3UnmetRequirement": "Native SEC clocks/joins/revisions/restart have actual-path proof, but events-study/news full-body revision contracts, earnings AV/FMP provenance/shape handling and Discovery2/Comeback derived-event contracts still lack a complete eight-lane materiality/conflict/persistence matrix. Independent historical authenticity belongs separately to CATALYST-04."
     },
     {
       "id": "CATALYST-04",
@@ -467,5 +473,17 @@
     "productionChanged": false,
     "V1Changed": false,
     "thresholdsAdopted": false
+  },
+  "latestSourceContractIntegration": {
+    "runtimeSource": "75c53a802befbaebfaeb52cb4790893746420b5a",
+    "authorCode": "ad3af0f33975356180feb4b036165b56f2c0cdc3",
+    "verdict": "PASS_SCOPED_DEVELOPMENT",
+    "rows": [
+      "MARKET-03",
+      "CATALYST-03"
+    ],
+    "rowsClosed": [],
+    "scoreUnchanged": true,
+    "evidence": "docs/reviews/market03-catalyst03-r3/REVIEW.md"
   }
 }

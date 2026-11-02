@@ -9,8 +9,9 @@ import path from 'node:path';
 import http from 'node:http';
 import {spawn} from 'node:child_process';
 import {spyEnvelope} from '../comeback-provenance.mjs';
-import {latestCompletedSession} from '../source-contract.mjs';
-const root=path.resolve(import.meta.dirname,'..'),day=latestCompletedSession(Date.now()),bar={t:Date.parse(day+'T04:00:00Z'),o:500,c:501};
+import {latestCompletedSession,parseSourceTime} from '../source-contract.mjs';
+const fixtureBar=day=>({t:Date.parse(day+'T05:00:00Z'),o:500,c:501});
+const root=path.resolve(import.meta.dirname,'..'),day=latestCompletedSession(Date.now()),bar=fixtureBar(day);
 const base={status:'OK',ticker:'SPY'};
 
 test('spyEnvelope: every documented field validated; only justified count relationships enforced', () => {
@@ -59,4 +60,9 @@ test('R3 preserved: a malformed-count answer after a retained conflict keeps CON
   f.set(200,body);r=await f.run();assert.equal(r.spy.response,'MALFORMED');assert.equal(r.spy.status,'CONFLICT');assert.equal(r.spy.integrity,'CONFLICT_UNRESOLVED');
   assert.deepEqual(r.cache.bars[day],{o:500,c:501});assert.deepEqual(r.cache.conflicts[day],first);}
  f.set(200,{...base,queryCount:0,resultsCount:0});r=await f.run();assert.equal(r.spy.response,'EMPTY');assert.equal(r.spy.status,'CONFLICT','a valid empty answer resolves nothing');
+});
+
+// Test fixture identity is stable across the November clock change; these are synthetic daily bars.
+test('synthetic daily-bar fixtures keep their declared New York day in both DST regimes',()=>{
+ for(const d of ['2026-10-30','2026-11-02'])assert.equal(parseSourceTime(fixtureBar(d).t,{kind:'epoch_ms',at:'2026-11-03T16:00:00Z'}).nyDay,d);
 });

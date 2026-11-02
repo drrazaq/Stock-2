@@ -18,7 +18,7 @@ function workdir(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'c03s-'));fs.
 const run=(dir,script,env)=>new Promise((resolve,reject)=>{const c=spawn(process.execPath,[path.join(root,script)],{cwd:dir,env:{PATH:process.env.PATH,...env}});let out='';c.stdout.on('data',x=>out+=x);c.stderr.on('data',x=>out+=x);c.on('exit',code=>code===0?resolve(out):reject(Error(script+' exit '+code+': '+out.slice(-1500))));});
 
 test('comeback SPY ingress: malformed bars rejected, today\'s unfinished bar excluded, a revised cached bar kept as the original', async t=>{
- const w=workdir(t),latest=latestCompletedSession(now),prior=prevSession(latest),barMs=d=>Date.parse(d+'T04:00:00Z');
+ const w=workdir(t),latest=latestCompletedSession(now),prior=prevSession(latest),barMs=d=>Date.parse(d+'T05:00:00Z');
  w.put('data/comeback-spy.json',{bars:{[prior]:{o:500,c:501}}});
  const p=await provider(t,async()=>[200,{ticker:'SPY',status:'OK',results:[{t:barMs(prior),o:500,c:999},{t:barMs(latest),o:510,c:511},{t:now+3600e3,o:1,c:1},{t:'bad',o:1,c:1},{t:barMs(day(now)),o:520,c:'x'}]}]);
  await run(w.dir,'comeback-lab.mjs',{MASSIVE_BASE:p.base});

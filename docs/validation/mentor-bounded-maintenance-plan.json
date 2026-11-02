@@ -3,9 +3,9 @@
   "executionAuthorized": false,
   "executionReady": false,
   "naturalBoundaryApprovalPreserved": true,
-  "observedAtUTC": "2026-11-02T05:32:00Z",
-  "observedAtKuwait": "2026-11-02T08:32:00+03:00",
-  "main": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+  "observedAtUTC": "2026-11-02T05:46:35Z",
+  "observedAtKuwait": "2026-11-02T08:46:35+03:00",
+  "main": "491039321ed9ab45e4850ccef46e9f6a737a9e56",
   "developmentBase": "92ebff50c729fd3b39963fd9548dac5265aefd2e",
   "approvedMentorHead": "25a85000b076c4da649634606467e71b577bc75c",
   "patchSha256": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
@@ -81,7 +81,8 @@
   "blockers": [
     "Workflow enabled-state/control endpoint not supported by this connector: HTTP400 INVALID_ARGUMENT; no bypass attempted",
     "No original-run final local-state/offset versus authoritative-commit receipt; job success is insufficient",
-    "Production baseline TRY SMALL fixture failures require explicit test disposition; do not modify approved mentor patch"
+    "Production baseline TRY SMALL fixture failures require explicit test disposition; do not modify approved mentor patch",
+    "Pending-only cancellation must have a verified no-start fence; status recheck alone cannot establish atomicity. If unavailable, do not cancel or start an infeasible pause."
   ],
   "currentEvidence": {
     "focusedMentorOnProductionPlusExactPatch": "30/30PASS",
@@ -106,5 +107,15 @@
     "accepted": 24,
     "total": 40,
     "newClosures": 0
-  }
+  },
+  "originalInspectedMain": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+  "sourceCompatibilityAfterDataOnlyAdvance": {
+    "oldMain": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+    "currentMain": "491039321ed9ab45e4850ccef46e9f6a737a9e56",
+    "sourceChanged": false,
+    "approvedMentorBeforeAndDependencyHashesMatch": true,
+    "dataContentsInspected": false,
+    "notFinalSaveOrOffsetProof": true
+  },
+  "pendingCancellationFenceVerified": false
 }

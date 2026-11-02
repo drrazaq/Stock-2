@@ -57,7 +57,7 @@ async function producer(t){
   const code=await new Promise(r=>c.on('close',r));assert.equal(code,0,log);return {today:JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-today.json'),'utf8')).sourceStatus.SPY_BARS,cache:JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-spy.json'),'utf8'))};};
  return {dir,run,set:(st,body)=>reply=[st,body],calls:()=>calls};
 }
-const day=latestCompletedSession(Date.now()),barT=Date.parse(day+'T04:00:00Z');
+const day=latestCompletedSession(Date.now()),barT=Date.parse(day+'T05:00:00Z');
 
 test('R2: only the official SPY aggregates envelope is an answer; empty is EMPTY, never OBSERVED', async t=>{
  const f=await producer(t);

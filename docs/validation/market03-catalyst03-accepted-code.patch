@@ -1,0 +1,1315 @@
+diff --git a/comeback-lab.mjs b/comeback-lab.mjs
+index 2bd4fc5d..b5a41b84 100644
+--- a/comeback-lab.mjs
++++ b/comeback-lab.mjs
+@@ -4,6 +4,8 @@
+ // data/comeback-lab.json, data/comeback-today.json. Never places an order; no Telegram (scan.mjs shows the board).
+ // Run: node comeback-lab.mjs   (GitHub Actions: .github/workflows/comeback.yml, weekday evenings after the labs' paper lanes + Sunday)
+ import fs from 'node:fs';
++import { readJsonSource, parseSourceTime, strictNumber, latestCompletedSession, adjustmentBasis } from './source-contract.mjs';
++import { withComebackProvenance, spyEnvelope } from './comeback-provenance.mjs';
+ import { LABS, verdictFile, paperFile, todayPath, effectiveRuns, scanSets, buildBoard, labFile, todayOut, boardText, preRegister, PAPER_FROM } from './comeback-core.mjs';
+ 
+ const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, PX = local(env.MASSIVE_BASE) || 'https://api.massive.com';
+@@ -16,12 +18,33 @@ const BOARD = 'data/comeback-board.json', LAB = 'data/comeback-lab.json', TODAY
+ { const LB = J(LIB, null); if (preRegister(LB)) { LB.updated = iso(Date.now()); fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); log('library: COMEBACK-1 pre-registered now'); } }
+ 
+ // 1. SPY daily bars from the first forward day (open of the buy session, close of the sell session)
+-const SPY = J(SPYF, { bars: {} });
++const SPY = J(SPYF, { bars: {} }); SPY.bars ||= {}; SPY.conflicts ||= {};
++const validConflict = (c) => c && typeof c === 'object' && c.original && c.reported;   // retained revision evidence, never cleared here
++// SPY ingress contract (MARKET-03, 2 Nov 2026): bounded read, Massive envelope checked, bar day from the New York calendar,
++// today's unfinished bar excluded, and a cached bar that a later answer revises is KEPT and recorded as a conflict (never
++// silently overwritten). Status is explicit so a failed fetch is never presented as fresh bars.
++const spyStatus = { status: 'NOT_FETCHED', response: 'NOT_FETCHED', integrity: 'CLEAN', unresolvedConflicts: 0, basis: adjustmentBasis({ provider: 'MASSIVE', adjusted: true }), added: 0, revised: 0, rejectedBars: 0, transport: null };
+ if (env.MASSIVE_KEY || local(env.MASSIVE_BASE)) {
+-  try { const from = '2026-10-01', r = await fetch(PX + '/v2/aggs/ticker/SPY/range/1/day/' + from + '/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000&apiKey=' + encodeURIComponent(env.MASSIVE_KEY || ''), { signal: AbortSignal.timeout(60000) });
+-    if (r.ok) { const j = await r.json(); let k = 0; for (const b of j.results || []) { const d = iso(b.t + 12 * 3600e3); if (b.o > 0 && b.c > 0) { SPY.bars[d] = { o: b.o, c: b.c }; k++; } } log('SPY: ' + k + ' daily bars from Massive'); }
+-    else log('SPY: Massive answered ' + r.status + '; the cached bars are used'); } catch (e) { log('SPY: fetch failed (' + e.message + '); the cached bars are used'); } }
++  const from = '2026-10-01', res = await readJsonSource(fetch, PX + '/v2/aggs/ticker/SPY/range/1/day/' + from + '/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000&apiKey=' + encodeURIComponent(env.MASSIVE_KEY || ''), { timeoutMs: 60000 });
++  spyStatus.transport = res.status; const j = res.body, done = latestCompletedSession(Date.now()), at = new Date().toISOString();
++  if (res.status !== 'OK') { spyStatus.response = res.status === 'REFUSED' || res.status === 'RATE_LIMITED' ? res.status : 'UNAVAILABLE'; log('SPY: Massive ' + res.status + (res.httpStatus ? ' (HTTP ' + res.httpStatus + ')' : '') + '; the cached bars are used'); }
++  // Review R2 (Codex, 1-2 Nov): a 200 answer counts only if it is a valid SPY aggregates envelope; see spyEnvelope() in
++  // comeback-provenance.mjs. Contradictory, fractional or non-numeric counts are MALFORMED, never EMPTY or OBSERVED.
++  else if ((spyStatus.envelope = spyEnvelope(j)).kind === 'MALFORMED') { spyStatus.response = 'MALFORMED'; log('SPY: malformed or non-SPY Massive answer (' + spyStatus.envelope.reason + '); the cached bars are used'); }
++  else if (spyStatus.envelope.kind === 'EMPTY') { spyStatus.response = 'EMPTY'; log('SPY: Massive answered with no bars (' + spyStatus.envelope.reason + '); the cached bars are used'); }
++  else { for (const b of j.results || []) { const t = b && parseSourceTime(b.t, { kind: 'epoch_ms', at: Date.now() }), o = strictNumber(b && b.o, { min: 1e-9 }), c = strictNumber(b && b.c, { min: 1e-9 });
++      if (!t || t.status !== 'OK' || o.status !== 'OK' || c.status !== 'OK') { spyStatus.rejectedBars++; continue; }
++      const d = t.nyDay; if (!done || d > done) continue;                                         // the session has not closed yet
++      const old = SPY.bars[d], bar = { o: o.value, c: c.value };
++      if (old && (old.o !== bar.o || old.c !== bar.c)) { SPY.conflicts[d] ||= { firstObservedAt: at, original: old, reported: bar }; spyStatus.revised++; continue; }
++      if (!old) { SPY.bars[d] = bar; spyStatus.added++; } }
++    spyStatus.response = spyStatus.rejectedBars ? 'PARTIAL' : 'OBSERVED';
++    log('SPY: ' + spyStatus.added + ' new daily bars from Massive (' + spyStatus.response + (spyStatus.revised ? ', ' + spyStatus.revised + ' revised bars kept as original' : '') + ')'); } }
+ else log('SPY: no MASSIVE_KEY; the cached bars and the labs\' own SPY figures are used');
++// Review R3 (Codex, 1 Nov): a retained revision conflict stays unresolved across reversions, restarts and later failures. The
++// latest response is reported separately (response); the lane status is CONFLICT while any conflict is retained.
++{ const open = Object.values(SPY.conflicts).filter(validConflict).length; spyStatus.unresolvedConflicts = open; spyStatus.integrity = open ? 'CONFLICT_UNRESOLVED' : 'CLEAN';
++  spyStatus.status = open ? 'CONFLICT' : spyStatus.response; }
+ const spyOf = (buy, sell) => { const a = SPY.bars[buy], b = SPY.bars[sell]; return a && b && a.o > 0 ? b.c / a.o - 1 : null; };
+ 
+ // 2. every lab: effective frozen runs (read only), forward ledger, today file
+@@ -37,6 +60,8 @@ const sets = scanSets(scanSrc); log('scan.mjs sets: ' + sets.duplicate.size + '
+ const board = buildBoard(labs, { sets, names, spyOf }); board.text = boardText(board);
+ fs.writeFileSync(BOARD, JSON.stringify(board));
+ fs.writeFileSync(LAB, JSON.stringify(labFile(board), null, 1));
+-fs.writeFileSync(TODAY, JSON.stringify(todayOut(board, todays), null, 1));
+-fs.writeFileSync(SPYF, JSON.stringify({ updated: new Date().toISOString(), from: PAPER_FROM, note: 'SPY daily open / close (Massive, split-adjusted) for the comeback board\'s per-year-of-capital comparison', bars: SPY.bars }));
++// Today-file provenance (CATALYST-03): see comeback-provenance.mjs.
++const todayDoc = withComebackProvenance(todayOut(board, todays), todays, { spyStatus });
++fs.writeFileSync(TODAY, JSON.stringify(todayDoc, null, 1));
++fs.writeFileSync(SPYF, JSON.stringify({ updated: new Date().toISOString(), from: PAPER_FROM, conflicts: SPY.conflicts, status: spyStatus.status, response: spyStatus.response, integrity: spyStatus.integrity, note: 'SPY daily open / close (Massive, split-adjusted) for the comeback board\'s per-year-of-capital comparison', bars: SPY.bars }));
+ log(board.text);
+diff --git a/comeback-provenance.mjs b/comeback-provenance.mjs
+new file mode 100644
+index 00000000..983fc166
+--- /dev/null
++++ b/comeback-provenance.mjs
+@@ -0,0 +1,48 @@
++// COMEBACK today-file provenance (CATALYST-03, Claude, 2 Nov 2026). Pure; called by comeback-lab.mjs after todayOut().
++// Each COMEBACK method's signals come from its lab's own today file. A missing, undated or stale lab file (close older than
++// the previous completed session) cannot supply current signals: its lines move to retainedSignals with the reason. Every
++// emitted line carries its close day, identity basis and revision id. The pre-registered rule (comeback-core.mjs) is unchanged.
++import {closeLagSessions,providerSymbol,adjustmentBasis,digest} from './source-contract.mjs';
++export function withComebackProvenance(todayDoc,todays,{nowMs=Date.now(),spyStatus=null}={}){
++ const labState={};
++ for(const [rule,m] of Object.entries(todayDoc.methods||{})){
++  const T=todays[m.lab],close=T&&typeof T.lastClose==='string'?T.lastClose:null,lag=close?closeLagSessions(close,nowMs):null;
++  const st=!T?'MISSING':!(typeof T.generatedAt==='string'&&Number.isFinite(Date.parse(T.generatedAt)))||!close?'MALFORMED':lag===null?'UNKNOWN':lag<0?'FUTURE':lag>1?'STALE':'OBSERVED';
++  labState[m.lab]={status:st,lastClose:close,lagSessions:lag};
++  const rows=[],kept=[];
++  for(const p of m.newSignals||[]){const id=providerSymbol(p&&p.sym,{provider:'LAB:'+m.lab});
++   if(st!=='OBSERVED'||id.status!=='OK'){kept.push({...p,withheld:st!=='OBSERVED'?'LAB_TODAY_FILE_'+st:'SYMBOL_'+id.status});continue;}
++   rows.push({...p,sym:id.symbol,lastCloseDay:close,sourceId:digest(['COMEBACK',m.lab,rule,id.symbol,close]),sourceRevisionId:digest(p),sourceClockBasis:'LAB_TODAY_FILE_LAST_CLOSE',priceBasis:adjustmentBasis({provider:'LAB_REPORTED'}),sourceIdentityBasis:id.identityBasis});}
++  m.newSignals=rows;if(kept.length)m.retainedSignals=kept;m.sourceStatus=labState[m.lab];
++ }
++ const used=Object.values(labState);
++ todayDoc.sourceStatus={LAB_TODAY_FILES:{status:used.length?'OBSERVED':'EMPTY',labs:used.length,withheldLabs:used.filter(x=>x.status!=='OBSERVED').length,detail:labState},...(spyStatus?{SPY_BARS:spyStatus}:{})};
++ return todayDoc;
++}
++
++// SPY aggregates envelope (review R2 residual, Codex 2 Nov): one pure classification of a Massive /v2/aggs answer.
++// Each documented field is validated on its own and only justified relationships are enforced:
++//  - status OK or DELAYED, ticker SPY; adjusted, when present, exactly true;
++//  - queryCount and resultsCount, when present, are non-negative safe integers (a present string, fraction, negative, null or NaN
++//    is MALFORMED: never a missing optional field, never zero);
++//  - results, when present, is an array and a present resultsCount equals its length (queryCount is NOT tied to the array:
++//    queried base aggregates and returned aggregates can differ);
++//  - results absent: EMPTY needs positive zero evidence that nothing contradicts: resultsCount 0, or (resultsCount absent)
++//    queryCount 0. A positive returned count without results is MALFORMED.
++// Returns { kind: 'MALFORMED' | 'EMPTY' | 'ROWS', reason }.
++const COUNT=x=>typeof x==='number'&&Number.isSafeInteger(x)&&x>=0;
++export function spyEnvelope(j){
++ if(!j||typeof j!=='object'||Array.isArray(j))return {kind:'MALFORMED',reason:'NOT_AN_OBJECT'};
++ if(!['OK','DELAYED'].includes(j.status))return {kind:'MALFORMED',reason:'STATUS'};
++ if(j.ticker!=='SPY')return {kind:'MALFORMED',reason:'TICKER'};
++ if('adjusted' in j&&j.adjusted!==true)return {kind:'MALFORMED',reason:'ADJUSTED'};
++ for(const f of ['queryCount','resultsCount'])if(f in j&&!COUNT(j[f]))return {kind:'MALFORMED',reason:'INVALID_'+f.toUpperCase()};
++ const hasRC='resultsCount' in j,hasQC='queryCount' in j;
++ if(!('results' in j)||j.results===undefined){
++  if(hasRC)return j.resultsCount===0?{kind:'EMPTY',reason:'RESULTS_COUNT_ZERO'}:{kind:'MALFORMED',reason:'COUNT_WITHOUT_RESULTS'};
++  return hasQC&&j.queryCount===0?{kind:'EMPTY',reason:'QUERY_COUNT_ZERO'}:{kind:'MALFORMED',reason:'NO_RESULTS_NO_ZERO_EVIDENCE'};
++ }
++ if(!Array.isArray(j.results))return {kind:'MALFORMED',reason:'RESULTS_NOT_ARRAY'};
++ if(hasRC&&j.resultsCount!==j.results.length)return {kind:'MALFORMED',reason:'RESULTS_COUNT_MISMATCH'};
++ return j.results.length?{kind:'ROWS',reason:'RESULTS'}:{kind:'EMPTY',reason:'EMPTY_RESULTS_ARRAY'};
++}
+diff --git a/discovery-runtime.mjs b/discovery-runtime.mjs
+index f2a7279a..0e7672bb 100644
+--- a/discovery-runtime.mjs
++++ b/discovery-runtime.mjs
+@@ -3,8 +3,15 @@
+ import {createHash} from 'node:crypto';
+ import {LANES,assembleMultiAngle} from './multi-angle-discovery.mjs';
+ import {isFreshPriceAge} from './ignition-gates.mjs';
++import {marketSymbol} from './market-symbol.mjs';
++import {SOURCE_STATUS,closeLagSessions,isDay} from './source-contract.mjs';
+ const clock=x=>typeof x==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
+-const symbol=x=>typeof x==='string'&&/^[A-Z][A-Z0-9.\-]{0,9}$/.test(x);
++const symbol=x=>typeof x==='string'&&marketSymbol(x)===x;
++// Provider statuses this package adds; absent ones are LEGACY_UNSTATED (labelled, never read as observed).
++const ADDED_PRODUCERS=new Set(['ALPHA_VANTAGE','FMP','PRICE_CACHE','LAB_TODAY_FILES','SPY_BARS']);
++const PRODUCER_STATUSES=new Set(['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN','CONFLICT',...SOURCE_STATUS]);
++// Daily-close producers: a close older than the previous completed session is stale (sessions, not calendar hours).
++const CLOSE_LAG_LIMIT=1;
+ const observationIdentity=(source,row,sym)=>[source.path,sym,row.sourceId||row.id||row.url||row.rule||'',row.p||row.d||row.filed||row.signalDay||'',row.h||row.f||row.chain||''];
+ const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
+ const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
+@@ -56,12 +63,16 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
+     }
+     if(!parsedObjects&&preRejected){sources.push({...source,status:'MALFORMED',rows:0,inputRows,rejected:preRejected,malformedLines,truncated:inputTruncated,rejectionReasons});continue;}
+     rows.sort((a,b)=>b.t-a.t);
+-   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt!==undefined?doc.generatedAt:doc.updated;rows=rowsOf(source.lane,doc);if(Array.isArray(doc.quarantinedSourceIds))revokedReportedIds=doc.quarantinedSourceIds.filter(x=>typeof x==='string').slice(0,1000);if(['SEC_EVENT','EARNINGS_SURPRISE','INSIDER_CLUSTER','INDUSTRY_RIPPLE','SUPPLY_SHIFT','TECHNICAL_BUILDUP'].includes(source.lane)){producerStatus={};for(const name of source.lane==='SEC_EVENT'?['SEC','OPENFDA']:source.lane==='INSIDER_CLUSTER'?['SEC_FORM4']:source.lane==='INDUSTRY_RIPPLE'?['CHAIN_ANALYSIS']:source.lane==='SUPPLY_SHIFT'?['SEC_INDEX','SEC_TICKERS']:source.lane==='TECHNICAL_BUILDUP'?['SEC_INDEX']:['FINNHUB_CALENDAR']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN','CONFLICT'].includes(v.status)?v.status:'UNKNOWN'};}}if((source.lane==='INSIDER_CLUSTER'&&doc.sourceStatus?.SEC_FORM4?.status==='UNKNOWN')||(source.lane==='INDUSTRY_RIPPLE'&&doc.sourceStatus?.CHAIN_ANALYSIS?.status==='UNKNOWN')||(source.lane==='SUPPLY_SHIFT'&&['SEC_INDEX','SEC_TICKERS'].some(k=>doc.sourceStatus?.[k]?.status==='UNKNOWN'))||(source.lane==='TECHNICAL_BUILDUP'&&doc.sourceStatus?.SEC_INDEX?.status==='UNKNOWN')){preRejected+=rows.length;rows=[];}}
++   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt!==undefined?doc.generatedAt:doc.updated;rows=rowsOf(source.lane,doc);if(Array.isArray(doc.quarantinedSourceIds))revokedReportedIds=doc.quarantinedSourceIds.filter(x=>typeof x==='string').slice(0,1000);if(['SEC_EVENT','EARNINGS_SURPRISE','INSIDER_CLUSTER','INDUSTRY_RIPPLE','SUPPLY_SHIFT','TECHNICAL_BUILDUP','MARKET_DISLOCATION'].includes(source.lane)){producerStatus={};for(const name of source.lane==='SEC_EVENT'?['SEC','OPENFDA']:source.lane==='INSIDER_CLUSTER'?['SEC_FORM4']:source.lane==='INDUSTRY_RIPPLE'?['CHAIN_ANALYSIS']:source.lane==='SUPPLY_SHIFT'?['SEC_INDEX','SEC_TICKERS']:source.lane==='TECHNICAL_BUILDUP'?['SEC_INDEX','PRICE_CACHE']:source.lane==='MARKET_DISLOCATION'?['LAB_TODAY_FILES','SPY_BARS']:['FINNHUB_CALENDAR','ALPHA_VANTAGE','FMP']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&PRODUCER_STATUSES.has(v.status)?v.status:v===undefined&&ADDED_PRODUCERS.has(name)?'LEGACY_UNSTATED':'UNKNOWN'};}}if((source.lane==='INSIDER_CLUSTER'&&doc.sourceStatus?.SEC_FORM4?.status==='UNKNOWN')||(source.lane==='INDUSTRY_RIPPLE'&&doc.sourceStatus?.CHAIN_ANALYSIS?.status==='UNKNOWN')||(source.lane==='SUPPLY_SHIFT'&&['SEC_INDEX','SEC_TICKERS'].some(k=>doc.sourceStatus?.[k]?.status==='UNKNOWN'))||(source.lane==='TECHNICAL_BUILDUP'&&doc.sourceStatus?.SEC_INDEX?.status==='UNKNOWN')
++    ||(source.lane==='TECHNICAL_BUILDUP'&&doc.sourceStatus?.PRICE_CACHE!==undefined&&producerStatus.PRICE_CACHE.status!=='OBSERVED')
++    ||(source.lane==='MARKET_DISLOCATION'&&doc.sourceStatus?.LAB_TODAY_FILES!==undefined&&!['OBSERVED','EMPTY'].includes(producerStatus.LAB_TODAY_FILES.status))
++    ||(source.lane==='EARNINGS_SURPRISE'&&doc.sourceStatus?.FINNHUB_CALENDAR?.status==='UNKNOWN')){preRejected+=rows.length;rows=[];}}
+    if(!Array.isArray(rows))throw Error('invalid rows');
+    if(source.lane!=='NEWS_CATALYST'&&!clock(generated)){sources.push({...source,status:'MISSING_OUTPUT_TIMESTAMP',rows:rows.length});continue;}
+    if(generated&&(Date.parse(generated)>at||at-Date.parse(generated)>source.hours*3600000)){sources.push({...source,status:Date.parse(generated)>at?'FUTURE':'STALE',rows:rows.length});continue;}
+-   let accepted=0,rejected=preRejected;
++   let accepted=0,rejected=preRejected,rowErrors=0;
+    for(const row of rows.slice(0,500)){
++    try{
+     if(!object(row)){rejected++;continue;}
+     if(row.revisionStatus==='CONFLICT'){rejected++;continue;}
+     const sym=row.sym||row.symbol;if(!symbol(sym)){rejected++;continue;}
+@@ -74,6 +85,10 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
+     if(source.lane==='SEC_EVENT'&&rawPublic!==undefined&&!clock(rawPublic)){rejected++;continue;}
+     if(row.sourceDataDay!==undefined){const d=row.sourceDataDay,ms=typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)?Date.parse(d+'T00:00:00Z'):NaN;if(!Number.isFinite(ms)||new Date(ms).toISOString().slice(0,10)!==d||ms>at||at-ms>source.hours*3600000){rejected++;continue;}}
+     if(row.derivedAvailableAt!==undefined&&!clock(row.derivedAvailableAt)){rejected++;continue;}
++    // Earnings rows carrying their report day: a report older than the lane window is not a fresh catalyst, whatever the
++    // file's generatedAt says (day precision: one extra day of tolerance for the unknown time of day).
++    if(source.lane==='EARNINGS_SURPRISE'&&row.publicationDay!==undefined){const d=row.publicationDay,ms=isDay(d)?Date.parse(d+'T00:00:00Z'):NaN;if(!Number.isFinite(ms)||ms>at||at-ms>(source.hours+24)*3600000){rejected++;continue;}}
++    if(row.lastCloseDay!==undefined){const lag=closeLagSessions(row.lastCloseDay,at);if(lag===null||lag<0||lag>CLOSE_LAG_LIMIT){rejected++;continue;}}
+     const primary=clock(rawPublic),asOf=primary?rawPublic:row.derivedAvailableAt??generated;
+     if(source.lane==='SEC_EVENT'&&row.firstObservedAt!=null&&(!clock(row.firstObservedAt)||Date.parse(row.firstObservedAt)>at||primary&&Date.parse(row.firstObservedAt)<Date.parse(rawPublic))){rejected++;continue;}
+     if(!clock(asOf)||Date.parse(asOf)>at||at-Date.parse(asOf)>source.hours*3600000){rejected++;continue;}
+@@ -84,9 +99,12 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
+      caveat:primary?'Source report; materiality/direction not established by lane presence':'Original public event time unavailable; generatedAt is derived output availability only',
+      sourcePath:source.path,sourceCapturedAt:source.lane==='NEWS_CATALYST'?row.at:source.lane==='SEC_EVENT'?(clock(row.firstObservedAt)?row.firstObservedAt:null):(source.lane==='SUPPLY_SHIFT'&&clock(row.firstObservedAt)?row.firstObservedAt:row.derivedAvailableAt??generated),
+      ...(source.lane!=='SEC_EVENT'?{reportedSourceId:row.sourceId||row.id||null,sourceRevisionId:row.sourceRevisionId||null,sourceIdentityBasis:row.sourceIdentityBasis||'UNVERIFIED',sourceDataDay:row.sourceDataDay||null,reportedPublicationDay:row.publicationDay||null,sourceClockBasis:row.sourceClockBasis||'UNKNOWN',priceBasis:row.priceBasis||'UNKNOWN'}:{}),
+-     ...(source.lane==='SEC_EVENT'?{reportedSourceId:row.sourceId||null,sourceNamespace:row.sourceNamespace||'UNKNOWN',outputAvailableAt:generated}:{} )});accepted++;
++     ...(source.lane==='SEC_EVENT'?{reportedSourceId:row.sourceId||null,sourceNamespace:row.sourceNamespace||'UNKNOWN',outputAvailableAt:generated}:{} ),
++     ...(source.lane==='EARNINGS_SURPRISE'&&row.timing!==undefined?{earnings:{provider:row.src||null,timing:row.timing,reactionSession:row.reactionSession??null,reactionStatus:row.reactionStatus||'UNKNOWN',reactionCandidates:Array.isArray(row.reactionCandidates)?row.reactionCandidates.slice(0,2):null,corroboratedBy:Array.isArray(row.corroboratedBy)?row.corroboratedBy.slice(0,4):[],epsUnit:row.epsUnit||'UNKNOWN'}}:{}),
++     ...(row.lastCloseDay!==undefined?{lastCloseDay:row.lastCloseDay,closeLagSessions:closeLagSessions(row.lastCloseDay,at)}:{})});accepted++;
++    }catch{rejected++;rowErrors++;}
+    }
+-   sources.push({...source,status:'READ',revokedSourceIds,revokedReportedIds,rows:rows.length,accepted,rejected,truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(producerStatus?{producerStatus}:{}),...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
++   sources.push({...source,status:'READ',revokedSourceIds,revokedReportedIds,rows:rows.length,accepted,rejected,...(rowErrors?{rowErrors}:{}),truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(producerStatus?{producerStatus}:{}),...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
+   }catch{sources.push({...source,status:'MALFORMED',rows:0});}
+  }
+  return {observations,sources};
+@@ -98,7 +116,7 @@ export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
+  for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;
+   for(const o of Object.values(state.observations))if(o.lane===source.lane&&(source.revokedSourceIds?.includes(o.sourceId)||source.revokedReportedIds?.includes(String(o.reportedSourceId)))){o.sourceConflict=true;o.sourceConflictReason='SOURCE_REVISION_CONFLICT';}
+   if(source.upstream){r.upstreamStatusCounts||={};r.upstreamStatusCounts[source.upstream.status]=(r.upstreamStatusCounts[source.upstream.status]||0)+1;r.lastUpstream={...source.upstream};}
+-  if(source.producerStatus){r.producerStatusCounts||={};for(const name of ['SEC','OPENFDA','FINNHUB_CALENDAR','SEC_FORM4','CHAIN_ANALYSIS','SEC_INDEX','SEC_TICKERS']){const v=source.producerStatus[name];if(!v)continue;const counts=r.producerStatusCounts[name]||={};counts[v.status]=(counts[v.status]||0)+1;}r.lastProducerStatus=structuredClone(source.producerStatus);}
++  if(source.producerStatus){r.producerStatusCounts||={};for(const name of ['SEC','OPENFDA','FINNHUB_CALENDAR','SEC_FORM4','CHAIN_ANALYSIS','SEC_INDEX','SEC_TICKERS','ALPHA_VANTAGE','FMP','PRICE_CACHE','LAB_TODAY_FILES','SPY_BARS']){const v=source.producerStatus[name];if(!v)continue;const counts=r.producerStatusCounts[name]||={};counts[v.status]=(counts[v.status]||0)+1;}r.lastProducerStatus=structuredClone(source.producerStatus);}
+   if(source.origin){r.originCounts||={};r.originCounts[source.origin]=(r.originCounts[source.origin]||0)+1;}
+  }
+  const suppress=(o,reason)=>{const key=hash([o?.symbol,o?.lane,o?.sourceId,reason]);if(!state.suppressed[key]&&Object.keys(state.suppressed).length<5000)state.suppressed[key]={symbol:o?.symbol||null,lane:o?.lane||null,sourceId:o?.sourceId||null,reason,firstObservedAt:cutoff};};
+diff --git a/discovery2.mjs b/discovery2.mjs
+index d105db55..694af905 100644
+--- a/discovery2.mjs
++++ b/discovery2.mjs
+@@ -24,6 +24,7 @@
+ //    DISCOVERED in ACTIONS and logs them to data/tier2-ledger.jsonl as discovery:<id>).
+ // WEEKLY: a run at least 6 days after the last batch adds the next 10 UNTESTED rules of the frozen pool; the luck bar uses every rule
+ //    tested so far (counter testedTotal), so each new batch faces a higher bar. The pool itself is never re-learned.
++import {closeLagSessions,digest} from './source-contract.mjs';
+ import fs from 'node:fs';
+ import {createSupplySource} from './share-supply-source.mjs';
+ import zlib from 'node:zlib';
+@@ -283,8 +284,17 @@ const hsh = (q) => { let h = 2166136261; for (let k = 0; k < q.length; k++) { h
+   // ---- 5. LIVE list: signals at the last close of every rule that reached tier 2 ----
+   const future = tradingSessions(new Date(Date.parse(last) + 864e5).toISOString().slice(0, 10), new Date(Date.parse(last) + 140 * 864e5).toISOString().slice(0, 10));
+   const HAL = J('data/halal.json', {}) || {}, ZAD = J('data/zad-list.json', {}) || {}, zbad = new Set(ZAD.notHalal || []), halOf = (s) => zbad.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+-  const buys = []; for (const r of rules) if (tierOf(r.id)) for (const x of live[r.id]) buys.push({ rule: r.id, sym: x.sym, buy: future[0], sell: future[r.hold - 1], hold: r.hold, stopPct: K.STOP, lastClose: x.lastClose, combo: r.conds.map(K.condText).join(' AND '), features: x.features, halal: halOf(x.sym) });
+-  W(TODAY_OUT, { generatedAt: new Date().toISOString(), lastClose: last, sessions: future.slice(0, 90), rules: Object.fromEntries(rules.map(r => [r.id, tierOf(r.id)])), verdicts: Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.verdict])), buys, buyUpToPct: 0.03,
++  // Source contract (MARKET-03 / CATALYST-03, 2 Nov 2026): every live line carries the close day, identity basis, price basis and
++  // a revision id; the file states its own price-cache freshness. A cache whose last close is older than the previous completed
++  // session is STALE: its lines move to retainedBuys (kept, not actionable) instead of being shown as today's buys. Rules,
++  // gates, verdicts and the frozen firstRun are unchanged.
++  const lag = closeLagSessions(last, Date.now()), priceStatus = lag === null ? 'UNKNOWN' : lag < 0 ? 'FUTURE' : lag <= 1 ? 'OBSERVED' : 'STALE';
++  const PRICE_BASIS = 'SPLIT_ADJUSTED_AS_OF_FETCH_WITH_SPLIT_REPAIR (study-cache grouped bars; share classes excluded by the cache)';
++  const allBuys = []; for (const r of rules) if (tierOf(r.id)) for (const x of live[r.id]) allBuys.push({ rule: r.id, sym: x.sym, buy: future[0], sell: future[r.hold - 1], hold: r.hold, stopPct: K.STOP, lastClose: x.lastClose, combo: r.conds.map(K.condText).join(' AND '), features: x.features, halal: halOf(x.sym),
++    lastCloseDay: last, sourceId: digest(['DISCOVERY2', r.id, x.sym, last]), sourceRevisionId: digest([x.lastClose, x.features]), sourceClockBasis: 'DAILY_CLOSE_CACHE', priceBasis: PRICE_BASIS, sourceIdentityBasis: 'PRICE_CACHE_TICKER_NOT_SECURITY_ID' });
++  const buys = priceStatus === 'OBSERVED' ? allBuys : [], retainedBuys = priceStatus === 'OBSERVED' ? [] : allBuys;
++  W(TODAY_OUT, { generatedAt: new Date().toISOString(), lastClose: last, sessions: future.slice(0, 90), rules: Object.fromEntries(rules.map(r => [r.id, tierOf(r.id)])), verdicts: Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.verdict])), buys, retainedBuys, buyUpToPct: 0.03,
++    sourceStatus: { SEC_INDEX: { status: 'OBSERVED' }, PRICE_CACHE: { status: priceStatus, lastClose: last, lagSessions: lag, basis: PRICE_BASIS } },
+     note: 'Signals of the discovered rules at the last cached close. buys holds lines only for a rule whose frozen newer-half verdict is TRADABLE SMALL; gates in the test and here: 3 USD+, 2M USD+ a day, no 15%+ one-day jump in 21 sessions, no 424B4/424B5 in 20 sessions; halal from data/halal.json + ZAD (unknown = check ZAD first).' });
+ 
+   const out = { generatedAt: new Date().toISOString(), status: 'OK', preRegistered: state.frozenAt, window: [D[0], last], split: K.SPLIT, newerHalfFrom: D[tNew], complete, sources: SRC, missing,
+@@ -299,7 +309,7 @@ const hsh = (q) => { let h = 2166136261; for (let k = 0; k < q.length; k++) { h
+   console.log('DISCOVERY ENGINE v2 (newer half ' + D[tNew] + ' to ' + last + ', ' + out.testedTotal + ' rules tested in all)');
+   for (const r of rules) { const x = results[r.id], s = RES[r.id].newer || {}; console.log('- ' + r.id + ' [' + r.def + ', bar ' + RES[r.id].bar + '] ' + x.verdict + ' | ' + (s.n || 0) + ' trades, avg ' + pc(s.avg) + ' (1.2%: ' + pc(s.avgStress) + '), edge ' + pc(s.edge) + ' t ' + s.t + ' block t ' + s.tBlock + ', vs own ' + pc(s.vsOwn) + ', no top 2 ' + pc(s.noTop2) + ' | ' + r.conds.map(K.condText).join(' AND ')); }
+   const cr = out.costReality; console.log('cost reality: ' + Object.entries(cr.bySource).map(([k, v]) => k + ' ' + v.rules + ' rules, +at 0.8% ' + v.positiveAt08 + ', +at 0.4% ' + v.positiveAt04 + ', +at 0.2% ' + v.positiveAt02).join(' | '));
+-  console.log('live: ' + buys.length + ' discovered buys (' + rules.filter(r => tierOf(r.id)).length + ' rules at tier 2)');
++  console.log('live: ' + buys.length + ' discovered buys' + (retainedBuys.length ? ' (' + retainedBuys.length + ' withheld: price cache ' + priceStatus + ')' : '') + ' (' + rules.filter(r => tierOf(r.id)).length + ' rules at tier 2)');
+ })().catch(e => { console.log('Error: discovery2 crashed: ' + (e && e.stack || e)); process.exitCode = 1; });
+ 
+ // library: every rule in a batch gets its written spec (pre-registered, frozen before the newer half); status from firstRun only
+diff --git a/earnings-study.mjs b/earnings-study.mjs
+index cc95191e..c212a813 100644
+--- a/earnings-study.mjs
++++ b/earnings-study.mjs
+@@ -18,6 +18,7 @@ const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
+ //   Verdict saved in data/earnings-study.json.
+ import fs from 'node:fs';
+ import zlib from 'node:zlib';
++import {providerSymbol,strictNumber,earningsTiming,reactionSession,digest,readJsonSource} from './source-contract.mjs';
+ const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch';
+ const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
+ const AV = local(env.AV_BASE) || 'https://www.alphavantage.co', FMPB = local(env.FMP_BASE) || 'https://financialmodelingprep.com', FH = local(env.FH_BASE) || 'https://finnhub.io/api/v1', TG = local(env.TG_BASE) || 'https://api.telegram.org';
+@@ -32,35 +33,97 @@ try { cache = JSON.parse(zlib.gunzipSync(fs.readFileSync(CACHE)).toString()); }
+ cache.syms = cache.syms || {}; cache.tried = cache.tried || {};
+ const save = () => fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(cache)));
+ // one report: { d: report date, t: 'bmo'|'amc'|null, a: actual EPS, e: estimated EPS }
+-const eps=x=>typeof x==='number'&&Number.isFinite(x)?x:typeof x==='string'&&/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(x.trim())?Number(x):NaN;
+-const addRep = (sym, r) => { if (!r || typeof r.d!=='string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.d)||!Number.isFinite(Date.parse(r.d+'T00:00:00Z'))||iso(Date.parse(r.d+'T00:00:00Z'))!==r.d||r.d>iso(Date.now())||!Number.isFinite(r.a)||!Number.isFinite(r.e)) return false; const L = cache.syms[sym] || (cache.syms[sym] = []); const k = L.findIndex(x => x.d === r.d);if(cache.revisionConflicts?.[sym+'|'+r.d])return false; if (k >= 0) {if(L[k].a!==r.a||L[k].e!==r.e||(L[k].t??null)!==(r.t??null)){cache.revisionConflicts||={};cache.revisionConflicts[sym+'|'+r.d]||={firstObservedAt:new Date().toISOString(),original:{...L[k]},reported:r};return false;}}else L.push({...r,firstObservedAt:new Date().toISOString()}); L.sort((x, y) => x.d < y.d ? -1 : 1);return true; };
+-async function getJson(url) { try { const r = await fetch(url,{redirect:'error',signal:AbortSignal.timeout(15000)}); if (r.status === 401 || r.status === 403 || r.status === 402) return { refused: r.status }; if (!r.ok) return null; return await r.json(); } catch (e) { return null; } }
++// ---- fetch-mode ingress contract (MARKET-03 / CATALYST-03, 2 Nov 2026) -----------------------------------------------------
++// Every provider answer is classified (OBSERVED / EMPTY / RATE_LIMITED / REFUSED / MALFORMED / IDENTITY_MISMATCH / ...), so a
++// refusal, limit or malformed body is never recorded as "no reports". A provider row must name the symbol that was asked for.
++// A value that is missing (not yet reported, "None") is pending, not malformed. `t` keeps its exact meaning for MODE=study
++// ('bmo' | 'amc' | null); the provider timing, including Finnhub's during-market-hours, is kept separately in `timing`.
++// Revisions: the same provider changing a report latches a conflict exactly as before. Across providers, a value that agrees
++// to the cent is corroboration, and a provider that does not report timing (FMP) is unknown, not a disagreement.
++const eps=x=>{const v=strictNumber(x);return v.status==='OK'?v.value:NaN;};
++const epsState=x=>strictNumber(x).status;
++const sameValue=(x,y,crossProvider)=>crossProvider?Math.abs(x-y)<=0.005+1e-9:x===y;
++const addRep = (sym, r) => { if (!r || typeof r.d!=='string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.d)||!Number.isFinite(Date.parse(r.d+'T00:00:00Z'))||iso(Date.parse(r.d+'T00:00:00Z'))!==r.d||r.d>iso(Date.now())||!Number.isFinite(r.a)||!Number.isFinite(r.e)) return false;
++  const L = cache.syms[sym] || (cache.syms[sym] = []); const k = L.findIndex(x => x.d === r.d);if(cache.revisionConflicts?.[sym+'|'+r.d])return false;
++  if (k >= 0) {const o=L[k],cross=!!(o.src&&r.src&&o.src!==r.src),tKnown=(o.t??null)!==null&&(r.t??null)!==null;
++    if(!sameValue(o.a,r.a,cross)||!sameValue(o.e,r.e,cross)||tKnown&&o.t!==r.t||!cross&&(o.t??null)!==(r.t??null)){cache.revisionConflicts||={};cache.revisionConflicts[sym+'|'+r.d]||={firstObservedAt:new Date().toISOString(),original:{...o},reported:r,kind:cross?'CROSS_PROVIDER':'SAME_PROVIDER_REVISION'};return false;}
++    if(cross&&!(o.corroboratedBy||[]).includes(r.src))(o.corroboratedBy||=[]).push(r.src);
++    if((o.t??null)===null&&(r.t??null)!==null&&cross){o.timingFrom=r.src;o.t=r.t;o.timing=r.timing;}
++  } else L.push({...r,firstObservedAt:new Date().toISOString()}); L.sort((x, y) => x.d < y.d ? -1 : 1);return true; };
++const getJson = (url) => readJsonSource(fetch, url, {timeoutMs:15000});
++const providerStatus=()=>({status:'NOT_FETCHED',calls:0,unknownSymbol:0,observedSymbols:0,emptySymbols:0,identityMismatch:0,malformedRows:0,pendingRows:0,rejectedRows:0,acceptedRows:0,conflictRows:0,stopReason:null});
+ 
+ if (MODE === 'fetch') {
+   const sig = readJson('data/signals.json', {}), order = [...new Set([...(sig.stocks || []).map(x => x.sym), ...((sig.uni || []).map(x => x.sym))])].filter(s => /^[A-Z]{1,5}$/.test(s));
+   const today = iso(Date.now()), stale = (s) => !cache.tried[s] || (Date.now() - Date.parse(cache.tried[s])) / 864e5 > 100;
+-  const todo = order.filter(stale); let av = 0, fmp = 0, fmpOff = false, avOff = false;
++  const todo = order.filter(stale); const AVS=providerStatus(),FMPS=providerStatus(); let av = 0, fmp = 0, fmpOff = false, avOff = false;
++  const put=(S,sym,r)=>{const before=cache.revisionConflicts?.[sym+'|'+r.d];if(addRep(sym,r))S.acceptedRows++;else{S.rejectedRows++;if(!before&&cache.revisionConflicts?.[sym+'|'+r.d])S.conflictRows++;}};
++  const finish=(S,stopStatus)=>{S.status=S.calls===0?'NOT_FETCHED':stopStatus||(S.observedSymbols+S.emptySymbols===S.calls&&!S.identityMismatch&&!S.malformedRows&&!S.unknownSymbol?(S.observedSymbols?'OBSERVED':'EMPTY'):S.observedSymbols+S.emptySymbols?'PARTIAL':'UNKNOWN');};
+   // 1. Alpha Vantage: full quarterly history with report date and time (free plan: 25 calls a day, 5 a minute)
++  let avStop=null;
+   if (env.ALPHAVANTAGE_KEY) for (const sym of todo) { if (av >= +(env.AV_CALLS || 25) || avOff) break;
+-    const j = await getJson(AV + '/query?function=EARNINGS&symbol=' + sym + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)); av++;
+-    if (j && (j.Note || j.Information)) { avOff = true; console.log('Alpha Vantage limit reached:', String(j.Note || j.Information).slice(0, 120)); break; }
+-    if (j && Array.isArray(j.quarterlyEarnings)) { for (const q of j.quarterlyEarnings) addRep(sym, { d: q.reportedDate, t: /pre/i.test(q.reportTime || '') ? 'bmo' : /post/i.test(q.reportTime || '') ? 'amc' : null, a: eps(q.reportedEPS), e: eps(q.estimatedEPS) }); cache.tried[sym] = today; }
++    const res = await getJson(AV + '/query?function=EARNINGS&symbol=' + sym + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)); av++; AVS.calls++;
++    const j=res.status==='OK'?res.body:null;
++    if (res.status==='RATE_LIMITED'||j && (j.Note || j.Information)) { avOff = true; avStop='RATE_LIMITED'; AVS.stopReason='provider limit'; console.log('Alpha Vantage limit reached:', String(j?.Note || j?.Information || 'HTTP 429').slice(0, 120)); break; }
++    if (res.status==='REFUSED') { avOff = true; avStop='REFUSED'; AVS.stopReason='HTTP '+res.httpStatus; break; }
++    if (!j || typeof j!=='object' || Array.isArray(j)) { AVS.malformedRows++; }
++    else if (j['Error Message']) { AVS.unknownSymbol=(AVS.unknownSymbol||0)+1; }                // AV does not know this symbol: not observed, not empty
++    else if (providerSymbol(j.symbol,{provider:'ALPHA_VANTAGE',requested:sym}).status!=='OK') { AVS.identityMismatch++; }
++    else if (Array.isArray(j.quarterlyEarnings)) { if(!j.quarterlyEarnings.length)AVS.emptySymbols++;else AVS.observedSymbols++;
++      for (const q of j.quarterlyEarnings) { if(!q||typeof q!=='object'){AVS.malformedRows++;continue;}const sa=epsState(q.reportedEPS),se=epsState(q.estimatedEPS);if(sa==='INVALID'||se==='INVALID'){AVS.malformedRows++;continue;}if(sa==='MISSING'||se==='MISSING'){AVS.pendingRows++;continue;}
++        const timing=earningsTiming('ALPHA_VANTAGE',q.reportTime);
++        put(AVS,sym,{ d: q.reportedDate, t: timing==='BMO' ? 'bmo' : timing==='AMC' ? 'amc' : null, a: eps(q.reportedEPS), e: eps(q.estimatedEPS), src:'ALPHA_VANTAGE', timing, fiscalPeriodEnd:typeof q.fiscalDateEnding==='string'?q.fiscalDateEnding.slice(0,10):null }); }
++      cache.tried[sym] = today; }
++    else AVS.malformedRows++;
+     if (!local(env.AV_BASE)) await sleep(13000); }
++  finish(AVS,avStop);
+   // 2. FMP (only if the key's plan includes earnings history): report dates, actual and estimated EPS
++  let fmpStop=null;
+   if (env.FMP_KEY) for (const sym of todo.filter(s => cache.tried[s] !== today)) { if (fmp >= +(env.FMP_CALLS || 200) || fmpOff) break;
+-    const j = await getJson(FMPB + '/stable/earnings?symbol=' + sym + '&limit=40&apikey=' + encodeURIComponent(env.FMP_KEY)); fmp++;
+-    if (j && j.refused) { fmpOff = true; console.log('FMP earnings history is not in this plan (HTTP ' + j.refused + '); Alpha Vantage and Finnhub only.'); break; }
+-    if (Array.isArray(j)) { for (const q of j) addRep(sym, { d: String(q.date || '').slice(0, 10), t: null, a: eps(q.epsActual), e: eps(q.epsEstimated) }); cache.tried[sym] = today; }
++    const res = await getJson(FMPB + '/stable/earnings?symbol=' + sym + '&limit=40&apikey=' + encodeURIComponent(env.FMP_KEY)); fmp++; FMPS.calls++;
++    if (res.status==='REFUSED') { fmpOff = true; fmpStop='REFUSED'; FMPS.stopReason='HTTP '+res.httpStatus; console.log('FMP earnings history is not in this plan (HTTP ' + res.httpStatus + '); Alpha Vantage and Finnhub only.'); break; }
++    if (res.status==='RATE_LIMITED') { fmpOff = true; fmpStop='RATE_LIMITED'; FMPS.stopReason='HTTP 429'; break; }
++    const j=res.status==='OK'?res.body:null;
++    // A response carrying any other symbol is not this security's history: the whole answer is rejected, nothing stored.
++    const foreign=Array.isArray(j)?j.filter(q=>q&&typeof q==='object'&&providerSymbol(q.symbol,{provider:'FMP',requested:sym}).status!=='OK').length:0;
++    if (Array.isArray(j)&&foreign) { FMPS.identityMismatch++; FMPS.rejectedRows+=j.length; }
++    else if (Array.isArray(j)) { if(!j.length)FMPS.emptySymbols++;else FMPS.observedSymbols++;
++      for (const q of j) { if(!q||typeof q!=='object'){FMPS.malformedRows++;continue;}
++        const sa=epsState(q.epsActual),se=epsState(q.epsEstimated);if(sa==='INVALID'||se==='INVALID'){FMPS.malformedRows++;continue;}if(sa==='MISSING'||se==='MISSING'){FMPS.pendingRows++;continue;}
++        put(FMPS,sym,{ d: String(q.date || '').slice(0, 10), t: null, a: eps(q.epsActual), e: eps(q.epsEstimated), src:'FMP', timing:'UNKNOWN' }); }
++      cache.tried[sym] = today; }
++    else FMPS.malformedRows++;
+     if (!local(env.FMP_BASE)) await sleep(300); }
++  finish(FMPS,fmpStop);
+   // 3. Finnhub calendar: the last 10 days of reports for every company (actual vs estimate, before/after the market)
+-  let recent = [], calendarStatus='NOT_FETCHED',calendarRejected=0;
+-  if (env.FINNHUB_KEY) { const j = await getJson(FH + '/calendar/earnings?from=' + iso(Date.now() - 10 * 864e5) + '&to=' + today + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
+-    const rows = j&&!j.error&&Array.isArray(j.earningsCalendar)?j.earningsCalendar:[];calendarStatus=j&&!j.error&&Array.isArray(j.earningsCalendar)?'OBSERVED':'UNKNOWN';
+-    for (const q of rows) { if (!q||typeof q!=='object'||!/^[A-Z]{1,5}$/.test(q.symbol || '')) {calendarRejected++;continue;}
+-      const r = { d: q.date, t: q.hour === 'bmo' ? 'bmo' : q.hour === 'amc' ? 'amc' : null, a: eps(q.epsActual), e: eps(q.epsEstimate) }; if(!addRep(q.symbol,r)){calendarRejected++;continue;}const stored=cache.syms[q.symbol].find(x=>x.d===r.d);recent.push({ sym: q.symbol,...r,sourceId:q.symbol+'|'+r.d,firstObservedAt:stored.firstObservedAt||null }); } }
+-  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), reports: recent,sourceStatus:{FINNHUB_CALENDAR:{status:calendarRejected&&calendarStatus==='OBSERVED'?'PARTIAL_OR_UNKNOWN':calendarStatus,rejectedRows:calendarRejected}} }, null, 1));
++  let recent = [], calendarStatus='NOT_FETCHED',calendarRejected=0; const FHS={malformedRows:0,pendingRows:0,unsupportedClassRows:0,conflictRows:0,quarantinedRows:0,receivedRows:0,transport:null};
++  if (env.FINNHUB_KEY) { const res = await getJson(FH + '/calendar/earnings?from=' + iso(Date.now() - 10 * 864e5) + '&to=' + today + '&token=' + encodeURIComponent(env.FINNHUB_KEY)); FHS.transport=res.status;
++    const j=res.status==='OK'?res.body:null, valid=!!(j&&typeof j==='object'&&!j.error&&Array.isArray(j.earningsCalendar));
++    const rows = valid?j.earningsCalendar:[];calendarStatus=valid?'OBSERVED':'UNKNOWN';FHS.receivedRows=rows.length;
++    for (const q of rows) { if (!q||typeof q!=='object') {calendarRejected++;FHS.malformedRows++;continue;}
++      const id=providerSymbol(q.symbol,{provider:'FINNHUB'});if(id.status!=='OK'){calendarRejected++;FHS.malformedRows++;continue;}
++      if(!/^[A-Z]{1,5}$/.test(id.symbol)){calendarRejected++;FHS.unsupportedClassRows++;continue;}             // cache keys are plain tickers; classes are not mapped
++      const sa=epsState(q.epsActual),se=epsState(q.epsEstimate);
++      if(sa==='INVALID'||se==='INVALID'){calendarRejected++;FHS.malformedRows++;continue;}
++      if(sa==='MISSING'||se==='MISSING'){calendarRejected++;FHS.pendingRows++;continue;}                 // scheduled or no estimate: not a report yet
++      const timing=earningsTiming('FINNHUB',q.hour);
++      const r = { d: q.date, t: timing === 'BMO' ? 'bmo' : timing === 'AMC' ? 'amc' : null, a: eps(q.epsActual), e: eps(q.epsEstimate), src:'FINNHUB', timing };
++      const had=cache.revisionConflicts?.[id.symbol+'|'+r.d];
++      if(!addRep(id.symbol,r)){calendarRejected++;if(had)FHS.quarantinedRows++;else if(cache.revisionConflicts?.[id.symbol+'|'+r.d])FHS.conflictRows++;else FHS.malformedRows++;continue;}
++      // The exported row describes the merged report: a timing another provider supplied fills Finnhub's unknown hour.
++      const stored=cache.syms[id.symbol].find(x=>x.d===r.d),tm=timing!=='UNKNOWN'?timing:stored.timing||(stored.t==='bmo'?'BMO':stored.t==='amc'?'AMC':'UNKNOWN'),react=reactionSession(r.d,tm);
++      recent.push({ sym: id.symbol,d:r.d,t:stored.t??null,a:r.a,e:r.e,sourceId:id.symbol+'|'+r.d,firstObservedAt:stored.firstObservedAt||null,
++        src:'FINNHUB',timing:tm,timingFrom:timing!=='UNKNOWN'?'FINNHUB':stored.timingFrom||stored.src||null,publicationDay:r.d,reactionSession:react.session||null,reactionStatus:react.status,...(react.candidates?{reactionCandidates:react.candidates}:{}),
++        providers:[stored.src||'UNRECORDED',...(stored.corroboratedBy||[])],corroboratedBy:[stored.src,...(stored.corroboratedBy||[])].filter(x=>x&&x!=='FINNHUB'),sourceRevisionId:digest({a:r.a,e:r.e,timing:tm}),sourceIdentityBasis:'PROVIDER_TICKER_NOT_SECURITY_ID',sourceClockBasis:'DATE_ONLY_PROVIDER_REPORT',epsUnit:'PROVIDER_REPORTED_PER_SHARE_CURRENCY_UNSTATED' }); } }
++  // Status vocabulary kept for discovery-runtime: a malformed/conflicting row makes the calendar PARTIAL_OR_UNKNOWN; pending rows
++  // (not reported yet) and unsupported share classes are counted but do not make an observed calendar look broken.
++  const fhStatus=calendarStatus!=='OBSERVED'?calendarStatus:FHS.malformedRows||FHS.conflictRows?'PARTIAL_OR_UNKNOWN':'OBSERVED';
++  const quarantinedSourceIds=Object.keys(cache.revisionConflicts||{}).filter(k=>{const d=k.split('|')[1];return d&&d>=iso(Date.now()-10*864e5);}).slice(0,1000);
++  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), reports: recent,quarantinedSourceIds,
++    sourceStatus:{FINNHUB_CALENDAR:{status:fhStatus,rejectedRows:calendarRejected,...FHS},ALPHA_VANTAGE:AVS,FMP:FMPS},
++    contract:'earnings ingress v2 (2 Nov 2026): provider symbol must equal the request; pending/unsupported rows are not malformed; t is the study timing, timing is the provider timing; EPS currency is not stated by the providers' }, null, 1));
+   save();
+-  console.log('earnings history: ' + Object.keys(cache.syms).length + ' stocks (' + Object.values(cache.syms).reduce((a, x) => a + x.length, 0) + ' reports) | today: Alpha Vantage ' + av + ' calls, FMP ' + fmp + (fmpOff ? ' (not in plan)' : '') + ', Finnhub calendar ' + recent.length + ' recent reports | still to fetch ' + todo.filter(s => cache.tried[s] !== today).length);
++  console.log('earnings history: ' + Object.keys(cache.syms).length + ' stocks (' + Object.values(cache.syms).reduce((a, x) => a + x.length, 0) + ' reports) | today: Alpha Vantage ' + av + ' calls (' + AVS.status + '), FMP ' + fmp + ' (' + FMPS.status + ')' + (fmpOff ? ' (stopped: ' + FMPS.stopReason + ')' : '') + ', Finnhub calendar ' + recent.length + ' recent reports (' + fhStatus + ') | still to fetch ' + todo.filter(s => cache.tried[s] !== today).length);
+   process.exit(0);
+ }
+ 
+diff --git a/news-revision-archive.mjs b/news-revision-archive.mjs
+new file mode 100644
+index 00000000..463f2f9f
+--- /dev/null
++++ b/news-revision-archive.mjs
+@@ -0,0 +1,33 @@
++// NEWS FIELD ARCHIVE (CATALYST-03, Claude, 2 Nov 2026). Evidence only; never authorizes a message.
++// news-revision-state.mjs decides whether a story revision is new (hash of headline, summary, url, time); that hash and its
++// semantics are unchanged. This archive adds, per logical story:
++//  - per-field digests of every revision seen (up to 8), so a later reader can tell WHICH field changed;
++//  - an attribution digest (related symbols, source, category) that the content hash does not cover. If the same story is
++//    later attributed to different symbols or a different source, the story is held back as ATTRIBUTION_CONFLICT (latched).
++// Text is NOT stored: the delivery state is published, and story text tied to the owner's holdings must not be added to a
++// public file. Keeping full text needs a private storage path (an owner privacy decision; see the package README).
++import {createHash} from 'node:crypto';
++const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
++const d16=x=>createHash('sha256').update(JSON.stringify(x===undefined?null:x)).digest('hex').slice(0,16);
++const hex16=x=>typeof x==='string'&&/^[a-f0-9]{16}$/.test(x),hex64=x=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
++export const NEWS_FIELD_LIMITS=Object.freeze({stories:10000,revisionsPerStory:8});
++export const CONTENT_FIELDS=Object.freeze(['headline','summary','url','datetime']);
++const relatedSet=x=>typeof x==='string'?[...new Set(x.split(',').map(s=>s.trim().toUpperCase()).filter(Boolean))].sort():null;
++export const attributionOf=row=>d16({related:relatedSet(row?.related),source:typeof row?.source==='string'?row.source.trim():null,category:typeof row?.category==='string'?row.category.trim():null});
++export const fieldDigests=row=>Object.fromEntries(CONTENT_FIELDS.map(f=>[f,d16(f==='headline'&&typeof row?.[f]==='string'?row[f].trim():row?.[f]??null)]));
++export function validNewsFieldArchive(a){
++ return object(a)&&Object.keys(a).length<=NEWS_FIELD_LIMITS.stories&&Object.entries(a).every(([k,e])=>hex64(k)&&object(e)&&hex64(e.first)&&hex16(e.attribution)&&typeof e.attributionConflict==='boolean'&&object(e.revisions)&&Object.keys(e.revisions).length<=NEWS_FIELD_LIMITS.revisionsPerStory&&!!e.revisions[e.first]&&Object.entries(e.revisions).every(([r,v])=>hex64(r)&&object(v)&&Number.isFinite(Date.parse(v.firstObservedAt))&&object(v.fields)&&CONTENT_FIELDS.every(f=>hex16(v.fields[f]))));
++}
++// logicalId / revision come from observeNewsRevision (64-hex). Returns the archive verdict and which fields changed.
++export function observeNewsFields(archive,{logicalId,revision,row,at}){
++ if(!object(archive)||!hex64(logicalId)||!hex64(revision)||!Number.isFinite(Date.parse(at)))throw Error('NEWS_FIELD_ARCHIVE_UNREADABLE');
++ let e=archive[logicalId];const fields=fieldDigests(row),attribution=attributionOf(row);
++ if(e&&!validNewsFieldArchive({[logicalId]:e}))throw Error('NEWS_FIELD_ARCHIVE_UNREADABLE');
++ if(!e){if(Object.keys(archive).length>=NEWS_FIELD_LIMITS.stories)return {status:'CAPACITY',changedFields:[]};
++  archive[logicalId]={first:revision,attribution,attributionConflict:false,revisions:{[revision]:{firstObservedAt:at,fields}}};return {status:'FIRST',changedFields:[]};}
++ const base=e.revisions[e.first].fields,changedFields=CONTENT_FIELDS.filter(f=>base[f]!==fields[f]);
++ if(attribution!==e.attribution){e.attributionConflict=true;changedFields.push('attribution');}
++ if(!e.revisions[revision]&&Object.keys(e.revisions).length<NEWS_FIELD_LIMITS.revisionsPerStory)e.revisions[revision]={firstObservedAt:at,fields};
++ if(e.attributionConflict)return {status:'ATTRIBUTION_CONFLICT',changedFields};
++ return {status:revision===e.first?'SAME':'CONTENT_REVISION',changedFields};
++}
+diff --git a/news-watch.mjs b/news-watch.mjs
+index ef3d813a..bff32e7d 100644
+--- a/news-watch.mjs
++++ b/news-watch.mjs
+@@ -1,6 +1,7 @@
+ import {createNewsStatePublication,newsStateDigest} from './news-state-publication.mjs';
+ import {randomUUID} from 'node:crypto';
+ import {observeNewsRevision,validNewsRevisions} from './news-revision-state.mjs';
++import {observeNewsFields,validNewsFieldArchive} from './news-revision-archive.mjs';
+ import {readNewsSource} from './news-source.mjs';
+ import {saveAlertState,alertAvailable,deliverAlertOnce} from './alert-delivery-state.mjs';
+ import {telegramFetch} from './telegram-delivery.mjs';
+@@ -18,7 +19,7 @@ const sleep = (ms) => new Promise(r => setTimeout(r, FAST ? 0 : ms)), readJson =
+ if (!env.FINNHUB_KEY) { console.log('news watch: no FINNHUB_KEY'); process.exit(0); }
+ const iso = (ms) => new Date(ms).toISOString().slice(0, 10), now = Date.now();
+ let calls = 0;const newsSources=[];
+-async function fh(p) { if (calls) await sleep(1100); calls++; if(/^\/(?:company-news|news)\?/.test(p)){const r=await readNewsSource(fetch,FH+p+(p.includes('?')?'&':'?')+'token='+encodeURIComponent(env.FINNHUB_KEY));let {rows,...evidence}=r;if(rows){rows=rows.filter(x=>{const key='FINNHUB|'+String(x.id||x.url||x.headline+'|'+x.datetime);const v=observeNewsRevision(delivery.sourceRevisions,{key,row:x,at:new Date().toISOString()});if(!v.eligible){evidence.revisionQuarantined=(evidence.revisionQuarantined||0)+1;const audit={recordType:'SOURCE_REVISION_QUARANTINE',at:new Date().toISOString(),reason:v.reason,logicalId:v.logicalId||null,revisionId:v.revision||null,reportedId:['string','number'].includes(typeof x.id)?String(x.id).slice(0,256):null,publicationSeconds:x.datetime,headline:x.headline.slice(0,1024),summary:typeof x.summary==='string'?x.summary.slice(0,4000):null,url:typeof x.url==='string'?x.url.slice(0,2000):null};audit.truncated=x.headline.length>1024||(typeof x.summary==='string'&&x.summary.length>4000)||(typeof x.url==='string'&&x.url.length>2000);fs.appendFileSync('data/news-log.jsonl',JSON.stringify(audit)+'\n');}return v.eligible;});saveDelivery();}newsSources.push({...evidence,source:p.split('&from=')[0]});console.log('news source: '+JSON.stringify(newsSources.at(-1)));return rows;} try { const r = await fetch(FH + p + (p.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY)); return r.ok ? await r.json() : null; } catch (e) { return null; } }
++async function fh(p) { if (calls) await sleep(1100); calls++; if(/^\/(?:company-news|news)\?/.test(p)){const r=await readNewsSource(fetch,FH+p+(p.includes('?')?'&':'?')+'token='+encodeURIComponent(env.FINNHUB_KEY));let {rows,...evidence}=r;if(rows){rows=rows.filter(x=>{const key='FINNHUB|'+String(x.id||x.url||x.headline+'|'+x.datetime);const at0=new Date().toISOString(),v0=observeNewsRevision(delivery.sourceRevisions,{key,row:x,at:at0}),fv=v0.logicalId&&v0.revision?observeNewsFields(delivery.sourceFieldArchive,{logicalId:v0.logicalId,revision:v0.revision,row:x,at:at0}):{status:'NOT_ARCHIVED',changedFields:[]};const v=v0.eligible&&['ATTRIBUTION_CONFLICT','CAPACITY'].includes(fv.status)?{...v0,eligible:false,reason:fv.status==='CAPACITY'?'FIELD_ARCHIVE_CAPACITY':'ATTRIBUTION_CONFLICT'}:v0;if(!v.eligible){evidence.revisionQuarantined=(evidence.revisionQuarantined||0)+1;const audit={recordType:'SOURCE_REVISION_QUARANTINE',at:new Date().toISOString(),reason:v.reason,changedFields:fv.changedFields,fieldArchive:fv.status,logicalId:v.logicalId||null,revisionId:v.revision||null,reportedId:['string','number'].includes(typeof x.id)?String(x.id).slice(0,256):null,publicationSeconds:x.datetime,headline:x.headline.slice(0,1024),summary:typeof x.summary==='string'?x.summary.slice(0,4000):null,url:typeof x.url==='string'?x.url.slice(0,2000):null};audit.truncated=x.headline.length>1024||(typeof x.summary==='string'&&x.summary.length>4000)||(typeof x.url==='string'&&x.url.length>2000);fs.appendFileSync('data/news-log.jsonl',JSON.stringify(audit)+'\n');}return v.eligible;});saveDelivery();}newsSources.push({...evidence,source:p.split('&from=')[0]});console.log('news source: '+JSON.stringify(newsSources.at(-1)));return rows;} try { const r = await fetch(FH + p + (p.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY)); return r.ok ? await r.json() : null; } catch (e) { return null; } }
+ // ---- whom to watch: what you hold (with your stop) and today's buy list
+ const pos = readJson('data/my-positions.json', {}), sig = readJson('data/signals.json', {});
+ const held = Object.keys(pos).filter(s => /^[A-Z.]{1,6}$/.test(s));
+@@ -67,7 +68,7 @@ const delivery=initialDelivery?JSON.parse(initialDelivery.toString('utf8')):{unk
+ const remotePublication=createNewsStatePublication({expectedDigest:newsStateDigest(initialDelivery),allowLocalOrigin:!!local(env.TG_BASE)&&env.NEWS_JOURNAL_LOCAL_FIXTURE==='1'});
+ const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
+ if(!object(delivery)||!object(delivery.unknown)||delivery.sent!==undefined&&!object(delivery.sent)||delivery.delivery!==undefined&&!object(delivery.delivery))throw Error('NEWS_DELIVERY_STATE_UNREADABLE');
+-delivery.sent||={};delivery.delivery||={};if(delivery.sourceRevisions===undefined)delivery.sourceRevisions={};if(!validNewsRevisions(delivery.sourceRevisions))throw Error('NEWS_REVISION_STATE_UNREADABLE');
++delivery.sent||={};delivery.delivery||={};if(delivery.sourceRevisions===undefined)delivery.sourceRevisions={};if(!validNewsRevisions(delivery.sourceRevisions))throw Error('NEWS_REVISION_STATE_UNREADABLE');if(delivery.sourceFieldArchive===undefined)delivery.sourceFieldArchive={};if(!validNewsFieldArchive(delivery.sourceFieldArchive))throw Error('NEWS_FIELD_ARCHIVE_UNREADABLE');
+ for(const [key,value]of Object.entries(delivery.unknown)){if(!object(value))throw Error('NEWS_DELIVERY_STATE_UNREADABLE');delivery.delivery[key]||={status:'UNKNOWN',at:value.at||null};}
+ let deliveryFailures=0;
+ const unconfirmed=r=>!r.ok&&!/^HTTP_(?:400|401|403|404|429)$/.test(r.reason||'');
+diff --git a/source-contract.mjs b/source-contract.mjs
+new file mode 100644
+index 00000000..7be19ccc
+--- /dev/null
++++ b/source-contract.mjs
+@@ -0,0 +1,195 @@
++// SOURCE CONTRACT (MARKET-03 / CATALYST-03, Claude, 2 Nov 2026). Shared, pure helpers for provider ingress:
++// symbol identity, units, clocks, New York session, earnings timing, price adjustment basis and revisions.
++// Rules of this module:
++//  - It never guesses. An alias, unit, zone or timing it cannot establish is returned as an explicit non-OK status,
++//    never coerced into a plausible value. Dot and dash share classes stay distinct (market-symbol.mjs).
++//  - Missing, unavailable, malformed, conflicting, stale and future evidence keep different statuses, so a source
++//    failure can never read as a successful empty check.
++//  - It reads no files, makes no requests and has no strategy inputs, gates or thresholds.
++import {createHash} from 'node:crypto';
++import {marketSymbol} from './market-symbol.mjs';
++import {marketSession} from './market-session.mjs';
++
++export const SOURCE_STATUS=Object.freeze(['OBSERVED','EMPTY','PARTIAL','NOT_FETCHED','MISSING','UNAVAILABLE','REFUSED','RATE_LIMITED','MALFORMED','IDENTITY_MISMATCH','CONFLICT','STALE','FUTURE','UNKNOWN']);
++const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
++export const canonicalJson=x=>JSON.stringify(x,(k,v)=>object(v)?Object.fromEntries(Object.keys(v).sort().map(key=>[key,v[key]])):v);
++export const digest=x=>createHash('sha256').update(canonicalJson(x)).digest('hex');
++
++// ---- symbol identity -----------------------------------------------------------------------------------------------
++// Class shares: no provider's separator convention is treated as verified, so a class symbol is kept exactly as the
++// provider wrote it (BRK.B and BRK-B are two different keys) and labelled; nothing maps one onto the other.
++export function providerSymbol(raw,{provider='UNKNOWN',requested=null}={}){
++ if(raw===undefined||raw===null||raw==='')return {status:'MISSING',symbol:null,provider,raw:raw??null};
++ // Mixed case is a provider notation (Massive writes preferreds as XYZpA); upper-casing it would silently alias another ticker.
++ if(typeof raw==='string'&&/[a-z]/.test(raw)&&/[A-Z]/.test(raw))return {status:'INVALID',symbol:null,provider,raw:raw.slice(0,32),reason:'MIXED_CASE_PROVIDER_NOTATION'};
++ const symbol=marketSymbol(raw);
++ if(!symbol)return {status:'INVALID',symbol:null,provider,raw:typeof raw==='string'?raw.slice(0,32):String(raw).slice(0,32)};
++ if(requested!==null){const want=marketSymbol(requested);if(!want||want!==symbol)return {status:'IDENTITY_MISMATCH',symbol:null,provider,raw:String(raw).slice(0,32),requested:String(requested).slice(0,32)};}
++ const classShare=/[.\-]/.test(symbol);
++ return {status:'OK',symbol,provider,classShare,identityBasis:classShare?'PROVIDER_CLASS_SYMBOL_UNMAPPED':'PROVIDER_TICKER_NOT_SECURITY_ID'};
++}
++
++// ---- strict numbers and units --------------------------------------------------------------------------------------
++const MISSING_TOKENS=new Set(['','none','null','n/a','na','-','--','nan']);
++export function strictNumber(x,{min=-Infinity,max=Infinity}={}){
++ if(x===undefined||x===null)return {status:'MISSING',value:null};
++ if(typeof x==='string'){const s=x.trim();if(MISSING_TOKENS.has(s.toLowerCase()))return {status:'MISSING',value:null};
++  if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(s))return {status:'INVALID',value:null};x=Number(s);}
++ if(typeof x!=='number'||!Number.isFinite(x))return {status:'INVALID',value:null};
++ if(x<min||x>max)return {status:'OUT_OF_RANGE',value:null};
++ return {status:'OK',value:x};
++}
++
++// ---- clocks --------------------------------------------------------------------------------------------------------
++const MIN_MS=Date.parse('2000-01-01T00:00:00Z'),MAX_MS=Date.parse('2100-01-01T00:00:00Z');
++// A JS Date holds |ms| <= 8.64e15; outside that, Date/Intl formatting throws. Every formatter below checks first.
++const inRange=ms=>typeof ms==='number'&&Number.isFinite(ms)&&Math.abs(ms)<=8.64e15;
++// Review R1 (Codex, 1 Nov): an impossible day (month 13 or 00, day 32, 30 Feb) is false, never a thrown RangeError.
++const validDay=d=>{if(typeof d!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(d))return false;const ms=Date.parse(d+'T00:00:00Z');return inRange(ms)&&new Date(ms).toISOString().slice(0,10)===d;};
++export const isDay=validDay;
++export function nyParts(ms){
++ if(!inRange(ms))return {day:null,minute:null};
++ const p={};for(const x of new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ms)))p[x.type]=x.value;
++ return {day:p.year+'-'+p.month+'-'+p.day,minute:+p.hour*60+ +p.minute};
++}
++// kind: 'epoch_s' | 'epoch_ms' | 'iso' (explicit Z or +hh:mm required) | 'date' (YYYY-MM-DD, day precision)
++export function parseSourceTime(value,{kind,at,maxFutureMs=0,maxAgeMs=null}={}){
++ const now=typeof at==='string'?Date.parse(at):at;
++ if(!inRange(now))throw new TypeError('parseSourceTime needs an explicit observation clock');
++ if(value===undefined||value===null||value==='')return {status:'MISSING'};
++ let ms,precision='INSTANT',basis;
++ if(kind==='epoch_s'||kind==='epoch_ms'){
++  if(typeof value!=='number'||!Number.isFinite(value)||value<=0)return {status:'INVALID'};
++  // A seconds clock read as milliseconds (or the reverse) lands decades away; report the unit, never rescale.
++  if(kind==='epoch_s'&&value>1e11||kind==='epoch_ms'&&value<1e11)return {status:'UNIT_MISMATCH'};
++  ms=kind==='epoch_s'?value*1000:value;basis='UTC_EPOCH';
++ }else if(kind==='iso'){
++  if(typeof value!=='string')return {status:'INVALID'};
++  const m=value.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})?$/);
++  if(!m||!validDay(m[1])||+m[2]>23||+m[3]>59||m[4]!==undefined&&+m[4]>59)return {status:'INVALID'};
++  if(!m[5])return {status:'AMBIGUOUS_ZONE'};
++  ms=Date.parse(value);basis='EXPLICIT_OFFSET';
++ }else if(kind==='date'){
++  if(!validDay(value))return {status:'INVALID'};
++  ms=Date.parse(value+'T00:00:00Z');precision='DAY';basis='DATE_ONLY';
++ }else throw new TypeError('unknown time kind');
++ if(!Number.isFinite(ms)||ms<MIN_MS||ms>=MAX_MS)return {status:'INVALID'};
++ if(precision==='DAY'){
++  const today=nyParts(now).day;if(value>today)return {status:'FUTURE',day:value,precision,basis};
++  if(maxAgeMs!==null&&Date.parse(today+'T00:00:00Z')-ms>maxAgeMs)return {status:'STALE',day:value,precision,basis};
++  return {status:'OK',day:value,precision,basis};
++ }
++ const iso=new Date(ms).toISOString();
++ if(ms>now+maxFutureMs)return {status:'FUTURE',iso,precision,basis};
++ if(maxAgeMs!==null&&now-ms>maxAgeMs)return {status:'STALE',iso,precision,basis};
++ return {status:'OK',iso,ms,precision,basis,nyDay:nyParts(ms).day};
++}
++
++// ---- New York session --------------------------------------------------------------------------------------------
++// Phases use the exchange calendar in market-session.mjs; a day outside it is CALENDAR_UNKNOWN, never assumed open.
++export function sessionPhase(ms){
++ if(!inRange(ms))return {phase:'INVALID'};
++ const {day,minute}=nyParts(ms),s=marketSession(day);
++ if(!s.known)return {phase:'CALENDAR_UNKNOWN',day};
++ if(s.closed)return {phase:'CLOSED',day};
++ const halfDay=s.close<960,phase=minute<240?'OVERNIGHT':minute<s.open?'PREMARKET':minute<s.close?'REGULAR':minute<1200?'AFTER_HOURS':'OVERNIGHT';
++ return {phase,day,halfDay,openMinute:s.open,closeMinute:s.close};
++}
++export function nextSession(day,{inclusive=false}={}){
++ if(!validDay(day))return null;let d=day;
++ for(let i=0;i<15;i++){if(!(inclusive&&i===0))d=new Date(Date.parse(d+'T12:00:00Z')+864e5).toISOString().slice(0,10);const s=marketSession(d);if(!s.known)return null;if(!s.closed)return d;}
++ return null;
++}
++
++// ---- earnings timing -----------------------------------------------------------------------------------------------
++const TIMING={FINNHUB:{bmo:'BMO',amc:'AMC',dmh:'DMH'},ALPHA_VANTAGE:{'pre-market':'BMO','post-market':'AMC'}};
++export function earningsTiming(provider,raw){
++ const t=typeof raw==='string'?TIMING[provider]?.[raw.trim().toLowerCase()]:null;
++ return t||'UNKNOWN';
++}
++// First regular session whose prices can reflect a report. UNKNOWN timing is not resolved by guessing: both
++// candidate sessions are returned (the Nasdaq/no-time case in CLAUDE.md open items).
++export function reactionSession(day,timing){
++ if(!validDay(day))return {status:'INVALID'};
++ if(!marketSession(day).known)return {status:'CALENDAR_UNKNOWN'};
++ const same=nextSession(day,{inclusive:true}),next=nextSession(day);
++ if(!same||!next)return {status:'CALENDAR_UNKNOWN'};
++ const tradingDay=!marketSession(day).closed;
++ if(timing==='BMO'||timing==='DMH')return {status:'OK',session:same};
++ if(timing==='AMC')return {status:'OK',session:tradingDay?next:same};
++ return {status:'AMBIGUOUS',session:null,candidates:tradingDay?[same,next]:[same]};
++}
++
++// ---- price adjustment basis ----------------------------------------------------------------------------------------
++export function adjustmentBasis({provider,adjusted}={}){
++ if(['MASSIVE','POLYGON'].includes(provider)){if(adjusted===true)return 'SPLIT_ADJUSTED_AS_OF_FETCH';if(adjusted===false)return 'RAW_UNADJUSTED';}
++ if(provider==='LAB_REPORTED')return 'LAB_REPORTED_BASIS_UNVERIFIED';
++ return 'UNKNOWN';
++}
++
++// ---- revisions -----------------------------------------------------------------------------------------------------
++// A generic, bounded revision book. The first content seen for a key is the original; any different content later
++// latches CONFLICT for that key permanently (a later reversion does not clear it). Capacity and chronology failures
++// are explicit statuses, never silent admission.
++export function validRevisionBook(book){
++ return object(book)&&Object.entries(book).every(([k,e])=>/^[a-f0-9]{64}$/.test(k)&&object(e)&&['OBSERVED','CONFLICT'].includes(e.status)&&/^[a-f0-9]{64}$/.test(e.first)&&object(e.revisions)&&!!e.revisions[e.first]&&Object.values(e.revisions).every(v=>object(v)&&Number.isFinite(Date.parse(v.firstObservedAt))));
++}
++export function observeRevision(book,{key,content,at,capacity=10000,maxRevisions=16}){
++ if(!object(book)||typeof key!=='string'||!key||!Number.isFinite(Date.parse(at)))throw new TypeError('REVISION_BOOK_UNREADABLE');
++ const id=digest(key),rev=digest(content);let e=book[id];
++ if(e&&!validRevisionBook({[id]:e}))throw new TypeError('REVISION_BOOK_UNREADABLE');
++ if(!e){if(Object.keys(book).length>=capacity)return {status:'CAPACITY',id,revision:rev};e=book[id]={status:'OBSERVED',first:rev,revisions:{[rev]:{firstObservedAt:at}}};return {status:'FIRST',id,revision:rev,firstObservedAt:at};}
++ if(Date.parse(at)<Date.parse(e.revisions[e.first].firstObservedAt))return {status:'CHRONOLOGY',id,revision:rev};
++ if(e.revisions[rev]&&e.status==='OBSERVED')return {status:'SAME',id,revision:rev,firstObservedAt:e.revisions[e.first].firstObservedAt};
++ if(!e.revisions[rev]&&Object.keys(e.revisions).length<maxRevisions)e.revisions[rev]={firstObservedAt:at};
++ e.status='CONFLICT';
++ return {status:'CONFLICT',id,revision:rev,original:e.first,firstObservedAt:e.revisions[e.first].firstObservedAt};
++}
++
++// ---- combining provider statuses ---------------------------------------------------------------------------------
++// A lane is OBSERVED only when every required provider observed; any failure keeps the lane non-OBSERVED.
++export function combineStatus(statuses){
++ const s=statuses.filter(Boolean);if(!s.length)return 'NOT_FETCHED';
++ if(s.every(x=>x==='OBSERVED'||x==='EMPTY'))return s.every(x=>x==='EMPTY')?'EMPTY':'OBSERVED';
++ if(s.includes('CONFLICT'))return 'CONFLICT';
++ if(s.some(x=>x==='OBSERVED'||x==='EMPTY'||x==='PARTIAL'))return 'PARTIAL';
++ return 'UNKNOWN';
++}
++
++// ---- bounded JSON transport ------------------------------------------------------------------------------------------
++// One request, no redirect, a hard deadline even if the fetcher ignores AbortSignal, a counted byte cap and distinct
++// failure statuses. A refused/limited/oversized/unparseable answer is never returned as an observed empty body.
++export const JSON_SOURCE_LIMITS=Object.freeze({bytes:4194304,timeoutMs:15000});
++export async function readJsonSource(fetcher,url,{maxBytes=JSON_SOURCE_LIMITS.bytes,timeoutMs=JSON_SOURCE_LIMITS.timeoutMs}={}){
++ const controller=new AbortController(),requestedAt=new Date().toISOString();let timer,reader;
++ const out=(status,extra={})=>({status,requestedAt,receivedAt:new Date().toISOString(),body:null,...extra});
++ const deadline=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('SOURCE_TIMEOUT'));},timeoutMs);});
++ const task=async()=>{
++  const r=await fetcher(url,{redirect:'error',signal:controller.signal});
++  if(!r.ok){try{r.body?.cancel?.()?.catch?.(()=>{});}catch{}return out(r.status===429?'RATE_LIMITED':[401,402,403].includes(r.status)?'REFUSED':'HTTP_ERROR',{httpStatus:r.status});}
++  let text;
++  if(r.body?.getReader){reader=r.body.getReader();const parts=[];let bytes=0;
++   for(;;){const p=await reader.read();if(p.done)break;bytes+=p.value.byteLength;if(bytes>maxBytes)return out('BODY_LIMIT',{httpStatus:r.status});parts.push(Buffer.from(p.value));}
++   try{text=new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(parts));}catch{return out('INVALID_JSON',{httpStatus:r.status});}}
++  else return out('INVALID_JSON',{httpStatus:r.status});
++  let body;try{body=JSON.parse(text);}catch{return out('INVALID_JSON',{httpStatus:r.status});}
++  return out('OK',{httpStatus:r.status,body});
++ };
++ try{return await Promise.race([task(),deadline]);}catch(e){return out(e.message==='SOURCE_TIMEOUT'?'TIMEOUT':'NETWORK_ERROR');}
++ finally{clearTimeout(timer);controller.abort();try{reader?.cancel()?.catch(()=>{});}catch{}}
++}
++
++// ---- daily-close freshness ---------------------------------------------------------------------------------------------
++// The newest regular session whose close has happened at `ms` (New York calendar). Weekends and holidays do not age a close:
++// Friday's close is current until Monday's close. Outside the known calendar the answer is null (unknown), never a guess.
++export function latestCompletedSession(ms){
++ if(!inRange(ms))return null;const {day,minute}=nyParts(ms);let d=day;
++ for(let i=0;i<15;i++){const s=marketSession(d);if(!s.known)return null;if(!s.closed&&(d<day||minute>=s.close))return d;d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
++ return null;
++}
++// Sessions between a data day and the latest completed session (0 = current close). null when the calendar cannot say.
++export function closeLagSessions(day,ms){
++ const latest=latestCompletedSession(ms);if(!latest||!validDay(day))return null;if(day>latest)return -1;
++ let n=0,d=latest;while(d>day&&n<60){d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);const s=marketSession(d);if(!s.known)return null;if(!s.closed)n++;}
++ return d===day||d<day?n:null;
++}
+diff --git a/tests/catalyst03-source-to-candidate.test.mjs b/tests/catalyst03-source-to-candidate.test.mjs
+new file mode 100644
+index 00000000..3d385ef5
+--- /dev/null
++++ b/tests/catalyst03-source-to-candidate.test.mjs
+@@ -0,0 +1,150 @@
++// CATALYST-03 / MARKET-03 end to end (Claude, 2 Nov 2026): representative provider responses -> the ACTUAL producer scripts ->
++// their output files -> discovery-runtime normalization -> candidate eligibility -> the evidence fields a research record shows.
++// Local fake providers on 127.0.0.1 only; no credentials, no network, no Telegram; strategy rules and frozen results untouched.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import zlib from 'node:zlib';
++import {spawn} from 'node:child_process';
++import {collectDiscovery,discoveryState,updateDiscovery} from '../discovery-runtime.mjs';
++import {withComebackProvenance} from '../comeback-provenance.mjs';
++import {latestCompletedSession,nextSession} from '../source-contract.mjs';
++const root=path.resolve(import.meta.dirname,'..');
++const day=ms=>new Date(ms).toISOString().slice(0,10),now=Date.now(),cutoff=new Date(now).toISOString();
++const prevSession=d=>{let x=d;for(let i=0;i<10;i++){x=day(Date.parse(x+'T12:00:00Z')-864e5);if(nextSession(x,{inclusive:true})===x)return x;}return null;};
++
++async function provider(t,route){
++ const hits=[];const server=http.createServer(async(req,res)=>{const u=new URL(req.url,'http://x');hits.push(u.pathname+'?'+u.searchParams.get('symbol'));const [status,body]=await route(u,hits);res.statusCode=status;res.setHeader('content-type','application/json');res.end(typeof body==='string'?body:JSON.stringify(body));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());return {base:'http://127.0.0.1:'+server.address().port,hits};
++}
++function workdir(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'c03-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ return {dir,put:(f,v)=>fs.writeFileSync(path.join(dir,f),typeof v==='string'?v:JSON.stringify(v)),read:f=>fs.readFileSync(path.join(dir,f),'utf8'),json:f=>JSON.parse(fs.readFileSync(path.join(dir,f),'utf8'))};}
++const run=(dir,script,env)=>new Promise((resolve,reject)=>{const c=spawn(process.execPath,[path.join(root,script)],{cwd:dir,env:{PATH:process.env.PATH,...env}});let out='';c.stdout.on('data',x=>out+=x);c.stderr.on('data',x=>out+=x);c.on('exit',code=>code===0?resolve(out):reject(Error(script+' exit '+code+': '+out.slice(-1500))));});
++
++// ---------------------------------------------------------------- earnings -----------------------------------------------------
++const d3=day(now-3*864e5),d2=day(now-2*864e5),d1=day(now-1*864e5);
++function earningsRoute({fhAAA=1.2300001}={}){
++ return async u=>{
++  if(u.pathname==='/query'){const s=u.searchParams.get('symbol');
++   if(s==='AAA')return [200,{symbol:'AAA',quarterlyEarnings:[{fiscalDateEnding:'2026-09-30',reportedDate:d3,reportedEPS:'1.23',estimatedEPS:'1.00',reportTime:'pre-market'},{fiscalDateEnding:'2026-12-31',reportedDate:d1,reportedEPS:'None',estimatedEPS:'1.10'}]}];
++   if(s==='BBB')return [200,{symbol:'XYZ',quarterlyEarnings:[{reportedDate:d3,reportedEPS:'9',estimatedEPS:'1'}]}];   // answers for another ticker
++   return [200,{Information:'rate limit reached'}];}
++  if(u.pathname==='/stable/earnings'){const s=u.searchParams.get('symbol');
++   if(s==='BBB')return [200,[{symbol:'BBB',date:d3,epsActual:2,epsEstimated:1},{symbol:'BBB.W',date:d2,epsActual:5,epsEstimated:1}]];
++   return [402,{error:'plan'}];}
++  if(u.pathname==='/calendar/earnings')return [200,{earningsCalendar:[
++   {symbol:'AAA',date:d3,hour:'',epsActual:fhAAA,epsEstimate:1.0},              // same report as Alpha Vantage, to the cent
++   {symbol:'DDD',date:d2,hour:'dmh',epsActual:2,epsEstimate:1},                  // during market hours
++   {symbol:'EEE',date:d1,hour:'amc',epsActual:null,epsEstimate:0.4},             // scheduled, not reported yet
++   {symbol:'BRK.B',date:d2,hour:'bmo',epsActual:3,epsEstimate:2},                // share class: not mapped to a plain key
++   {symbol:'FFF',date:d1,hour:'amc',epsActual:0.5,epsEstimate:0.4},
++   {symbol:'GGG',date:d1,hour:'bmo',epsActual:false,epsEstimate:1}]}];          // malformed
++  return [404,{}];};
++}
++async function earningsRun(t,w,p){
++ return run(w.dir,'earnings-study.mjs',{ALPHAVANTAGE_KEY:'fixture',AV_BASE:p.base,FMP_KEY:'fixture',FMP_BASE:p.base,FINNHUB_KEY:'fixture',FH_BASE:p.base,AV_CALLS:'5'});
++}
++
++test('earnings: every provider outcome is distinct; identity, pending, class and malformed rows never read as an observed empty check', async t=>{
++ const w=workdir(t),p=await provider(t,earningsRoute());w.put('data/signals.json',{stocks:[{sym:'AAA'},{sym:'BBB'},{sym:'CCC'}]});
++ await earningsRun(t,w,p);const doc=w.json('data/earnings-recent.json'),S=doc.sourceStatus;
++ assert.equal(S.ALPHA_VANTAGE.status,'RATE_LIMITED');assert.equal(S.ALPHA_VANTAGE.identityMismatch,1);assert.equal(S.ALPHA_VANTAGE.pendingRows,1);
++ assert.equal(S.FMP.status,'REFUSED');assert.equal(S.FMP.identityMismatch,1);
++ const cache=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(w.dir,'data/earnings-cache.json.gz'))));
++ assert.equal(cache.syms.BBB,undefined,'a response carrying another symbol stores nothing');assert.equal(cache.syms.XYZ,undefined);
++ assert.equal(S.FINNHUB_CALENDAR.status,'PARTIAL_OR_UNKNOWN','one malformed row (GGG) keeps the calendar from reading clean');
++ assert.equal(S.FINNHUB_CALENDAR.pendingRows,1);assert.equal(S.FINNHUB_CALENDAR.unsupportedClassRows,1);assert.equal(S.FINNHUB_CALENDAR.malformedRows,1);
++ const by=Object.fromEntries(doc.reports.map(r=>[r.sym,r]));assert.deepEqual(Object.keys(by).sort(),['AAA','DDD','FFF']);
++ assert.deepEqual(by.AAA.corroboratedBy,['ALPHA_VANTAGE']);assert.equal(by.AAA.t,'bmo','Alpha Vantage timing fills the unknown Finnhub hour');
++ assert.equal(by.DDD.timing,'DMH');assert.equal(by.DDD.t,null,'study timing keeps its meaning (null)');
++ assert.equal(by.FFF.reactionSession,nextSession(d1,{inclusive:true})===d1?nextSession(d1):nextSession(d1,{inclusive:true}),'after-the-close report reacts at the next session');
++ assert.equal(by.AAA.timing,'BMO');assert.equal(by.AAA.timingFrom,'ALPHA_VANTAGE');
++ // -> discovery: eligible observations carry the report's provider, timing and reaction session; failures are visible.
++ const cut=new Date().toISOString(),i=collectDiscovery({readText:f=>w.read(f),cutoff:cut});const src=i.sources.find(x=>x.lane==='EARNINGS_SURPRISE');
++ assert.equal(src.producerStatus.ALPHA_VANTAGE.status,'RATE_LIMITED');assert.equal(src.producerStatus.FMP.status,'REFUSED');
++ const obs=Object.fromEntries(i.observations.filter(o=>o.lane==='EARNINGS_SURPRISE').map(o=>[o.symbol,o]));
++ assert.deepEqual(Object.keys(obs).sort(),['AAA','DDD','FFF']);
++ assert.equal(obs.DDD.earnings.timing,'DMH');assert.equal(obs.AAA.reportedPublicationDay,d3);assert.equal(obs.AAA.publicationBasis,'DERIVED_OUTPUT_AVAILABLE');
++ const state=discoveryState();updateDiscovery(state,{observations:i.observations,rows:[],cutoff:cut,sources:i.sources});
++ const rec=Object.values(state.observations).find(o=>o.symbol==='AAA');assert.equal(rec.classification,'RESEARCH ONLY');assert.equal(rec.status,'NOT AN APPROVED BUY');
++ assert.equal(state.sourceReliability.EARNINGS_SURPRISE.lastProducerStatus.ALPHA_VANTAGE.status,'RATE_LIMITED');
++});
++
++test('earnings: a later cross-provider disagreement is a conflict that revokes the shown observation in the next cycle', async t=>{
++ const w=workdir(t);w.put('data/signals.json',{stocks:[{sym:'AAA'}]});
++ const p1=await provider(t,earningsRoute());await earningsRun(t,w,p1);
++ const c1=new Date().toISOString(),state=discoveryState(),i1=collectDiscovery({readText:f=>w.read(f),cutoff:c1});updateDiscovery(state,{observations:i1.observations,rows:[],cutoff:c1,sources:i1.sources});
++ assert.ok(Object.values(state.observations).some(o=>o.symbol==='AAA'&&!o.sourceConflict));
++ const p2=await provider(t,earningsRoute({fhAAA:1.31}));await earningsRun(t,w,p2);              // Finnhub now reports 1.31 for the same report
++ const doc=w.json('data/earnings-recent.json');assert.equal(doc.reports.some(r=>r.sym==='AAA'),false);assert.ok(doc.quarantinedSourceIds.includes('AAA|'+d3));
++ const cache=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(w.dir,'data/earnings-cache.json.gz'))));
++ assert.equal(cache.revisionConflicts['AAA|'+d3].kind,'CROSS_PROVIDER');assert.equal(cache.syms.AAA.find(x=>x.d===d3).a,1.23,'the original report is kept');
++ const later=new Date(Date.now()+1000).toISOString(),i2=collectDiscovery({readText:f=>w.read(f),cutoff:later});updateDiscovery(state,{observations:i2.observations,rows:[],cutoff:later,sources:i2.sources});
++ const rec=Object.values(state.observations).find(o=>o.symbol==='AAA');assert.equal(rec.sourceConflict,true);assert.equal(rec.sourceConflictReason,'SOURCE_REVISION_CONFLICT');
++});
++
++test('earnings: an old report is not a fresh catalyst even when the file was generated just now', ()=>{
++ const doc={updated:cutoff,reports:[{sym:'OLD',d:day(now-9*864e5),a:2,e:1,t:'bmo',publicationDay:day(now-9*864e5),timing:'BMO',src:'FINNHUB'},{sym:'NEW',d:d1,a:2,e:1,t:'bmo',publicationDay:d1,timing:'BMO',src:'FINNHUB'},
++  {sym:'LEG',d:day(now-9*864e5),a:2,e:1,t:'bmo'}],sourceStatus:{FINNHUB_CALENDAR:{status:'OBSERVED'}}};
++ const i=collectDiscovery({readText:f=>{if(f==='data/earnings-recent.json')return JSON.stringify(doc);throw Error('absent');},cutoff});
++ const syms=i.observations.map(o=>o.symbol).sort();assert.deepEqual(syms,['LEG','NEW'],'legacy rows without a report day keep their earlier handling; dated old rows are refused');
++ assert.equal(i.sources.find(x=>x.lane==='EARNINGS_SURPRISE').producerStatus.ALPHA_VANTAGE.status,'LEGACY_UNSTATED');
++});
++
++// ------------------------------------------------------------ discovery2 / comeback ----------------------------------------------
++test('daily-close producers: freshness counts sessions, so Friday\'s close is current on Monday and a week-old close is refused', ()=>{
++ const latest=latestCompletedSession(now),older=prevSession(prevSession(prevSession(latest)));
++ const file=(buys,sourceStatus)=>JSON.stringify({generatedAt:cutoff,buys,...(sourceStatus?{sourceStatus}:{})});
++ const fresh={sym:'AAA',rule:'r1',lastCloseDay:latest,sourceId:'x',priceBasis:'SPLIT_ADJUSTED_AS_OF_FETCH',sourceIdentityBasis:'PRICE_CACHE_TICKER_NOT_SECURITY_ID'},old={...fresh,sym:'BBB',lastCloseDay:older,sourceId:'y'};
++ const read=doc=>f=>{if(f==='data/discovery2-today.json')return doc;throw Error('absent');};
++ let i=collectDiscovery({readText:read(file([fresh,old],{SEC_INDEX:{status:'OBSERVED'},PRICE_CACHE:{status:'OBSERVED'}})),cutoff});
++ assert.deepEqual(i.observations.map(o=>o.symbol),['AAA']);assert.equal(i.observations[0].closeLagSessions,0);assert.equal(i.observations[0].lastCloseDay,latest);
++ i=collectDiscovery({readText:read(file([fresh],{SEC_INDEX:{status:'OBSERVED'},PRICE_CACHE:{status:'STALE'}})),cutoff});
++ assert.equal(i.observations.length,0,'a producer that says its prices are stale admits nothing');
++ i=collectDiscovery({readText:read(file([{sym:'AAA',rule:'legacy'}])),cutoff});
++ assert.equal(i.observations.length,1);assert.equal(i.sources.find(x=>x.lane==='TECHNICAL_BUILDUP').producerStatus.PRICE_CACHE.status,'LEGACY_UNSTATED');
++});
++
++test('comeback: signals from a missing, undated or stale lab file are withheld with the reason; fresh ones carry provenance', ()=>{
++ const latest=latestCompletedSession(now),stale=prevSession(prevSession(prevSession(latest)));
++ const doc={generatedAt:cutoff,methods:{
++  'A-1':{lab:'alpha',newSignals:[{sym:'AAA',close:10,halal:'unknown'},{sym:'XYZpA',close:5}]},
++  'B-1':{lab:'beta',newSignals:[{sym:'BBB',close:20}]},
++  'C-1':{lab:'gamma',newSignals:[{sym:'CCC',close:30}]},
++  'D-1':{lab:'delta',newSignals:[{sym:'DDD',close:40}]}}};
++ const todays={alpha:{generatedAt:cutoff,lastClose:latest},beta:{generatedAt:cutoff,lastClose:stale},gamma:{generatedAt:cutoff}};
++ const out=withComebackProvenance(doc,todays,{nowMs:now,spyStatus:{status:'UNAVAILABLE'}});
++ assert.deepEqual(out.methods['A-1'].newSignals.map(x=>x.sym),['AAA']);assert.equal(out.methods['A-1'].retainedSignals[0].withheld,'SYMBOL_INVALID');
++ assert.equal(out.methods['B-1'].retainedSignals[0].withheld,'LAB_TODAY_FILE_STALE');assert.equal(out.methods['C-1'].retainedSignals[0].withheld,'LAB_TODAY_FILE_MALFORMED');
++ assert.equal(out.methods['D-1'].retainedSignals[0].withheld,'LAB_TODAY_FILE_MISSING');
++ assert.equal(out.sourceStatus.LAB_TODAY_FILES.withheldLabs,3);assert.equal(out.sourceStatus.SPY_BARS.status,'UNAVAILABLE');
++ const a=out.methods['A-1'].newSignals[0];assert.equal(a.lastCloseDay,latest);assert.equal(a.priceBasis,'LAB_REPORTED_BASIS_UNVERIFIED');assert.match(a.sourceId,/^[a-f0-9]{64}$/);
++ const i=collectDiscovery({readText:f=>{if(f==='data/comeback-today.json')return JSON.stringify(out);throw Error('absent');},cutoff});
++ assert.deepEqual(i.observations.map(o=>o.symbol),['AAA']);const o=i.observations[0];
++ assert.equal(o.priceBasis,'LAB_REPORTED_BASIS_UNVERIFIED');assert.equal(o.sourceIdentityBasis,'PROVIDER_TICKER_NOT_SECURITY_ID');assert.equal(o.publicationBasis,'DERIVED_OUTPUT_AVAILABLE');
++});
++
++// --------------------------------------------------------------------- news --------------------------------------------------------
++test('news: the same story re-attributed to other symbols is held back, with which field changed recorded and no text added', async t=>{
++ const w=workdir(t),pub=Math.floor(now/1000)-120;let related='AAA';const sent=[];
++ w.put('data/my-positions.json',{AAA:{entry:10,stop:9}});w.put('data/news-meta.json',{AAA:{at:cutoff,name:'Example',peers:[],words:[]}});
++ const p=await provider(t,async(u)=>{
++  if(u.pathname==='/company-news')return [200,[{id:77,headline:'AAA announces share offering',summary:'Offering of new shares.',url:'https://example.invalid/a',datetime:pub,related,source:'Wire',category:'company'}]];
++  if(u.pathname==='/news')return [200,[]];
++  if(u.pathname.includes('/sendMessage')){sent.push(1);return [200,{ok:true,result:{message_id:sent.length}}];}
++  if(u.pathname.includes('/quote'))return [200,{c:10,pc:10,t:Math.floor(now/1000)}];
++  return [200,{}];});
++ const env={FINNHUB_KEY:'fixture',FH_BASE:p.base,TG_BASE:p.base,TG_TOKEN:'fixture',TG_CHAT:'fixture',ALPACA_KEY:'fixture',ALPACA_SECRET:'fixture',ALPACA_DATA_BASE:p.base};
++ await run(w.dir,'news-watch.mjs',env);
++ const book1=w.json('data/news-delivery.json');assert.equal(Object.keys(book1.sourceFieldArchive).length,1);
++ const entry=Object.values(book1.sourceFieldArchive)[0];assert.equal(JSON.stringify(entry).includes('offering'),false,'no story text in the published state');
++ related='AAA,ZZZ';await run(w.dir,'news-watch.mjs',env);
++ const audits=w.read('data/news-log.jsonl').split('\n').filter(Boolean).map(l=>JSON.parse(l)).filter(x=>x.recordType==='SOURCE_REVISION_QUARANTINE');
++ assert.equal(audits.length,1);assert.equal(audits[0].reason,'ATTRIBUTION_CONFLICT');assert.deepEqual(audits[0].changedFields,['attribution']);
++ assert.equal(Object.values(w.json('data/news-delivery.json').sourceFieldArchive)[0].attributionConflict,true);
++ related='AAA';await run(w.dir,'news-watch.mjs',env);                                             // reverting does not clear it
++ assert.equal(w.read('data/news-log.jsonl').split('\n').filter(l=>l.includes('ATTRIBUTION_CONFLICT')).length,2);
++});
+diff --git a/tests/market03-comeback-spy.test.mjs b/tests/market03-comeback-spy.test.mjs
+new file mode 100644
+index 00000000..e87acc2b
+--- /dev/null
++++ b/tests/market03-comeback-spy.test.mjs
+@@ -0,0 +1,32 @@
++// MARKET-03 Massive SPY daily-bar ingress through the ACTUAL comeback-lab.mjs (Claude, 2 Nov 2026). Local fake provider only.
++// Independent of discovery-runtime.mjs, so it also runs on production main with the comeback hunks applied.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import {spawn} from 'node:child_process';
++import {latestCompletedSession,nextSession} from '../source-contract.mjs';
++const root=path.resolve(import.meta.dirname,'..');
++const day=ms=>new Date(ms).toISOString().slice(0,10),now=Date.now();
++const prevSession=d=>{let x=d;for(let i=0;i<10;i++){x=day(Date.parse(x+'T12:00:00Z')-864e5);if(nextSession(x,{inclusive:true})===x)return x;}return null;};
++async function provider(t,route){const server=http.createServer(async(req,res)=>{const [status,body]=await route(new URL(req.url,'http://x'));res.statusCode=status;res.end(JSON.stringify(body));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());return {base:'http://127.0.0.1:'+server.address().port};}
++function workdir(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'c03s-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ return {dir,put:(f,v)=>fs.writeFileSync(path.join(dir,f),JSON.stringify(v)),json:f=>JSON.parse(fs.readFileSync(path.join(dir,f),'utf8'))};}
++const run=(dir,script,env)=>new Promise((resolve,reject)=>{const c=spawn(process.execPath,[path.join(root,script)],{cwd:dir,env:{PATH:process.env.PATH,...env}});let out='';c.stdout.on('data',x=>out+=x);c.stderr.on('data',x=>out+=x);c.on('exit',code=>code===0?resolve(out):reject(Error(script+' exit '+code+': '+out.slice(-1500))));});
++
++test('comeback SPY ingress: malformed bars rejected, today\'s unfinished bar excluded, a revised cached bar kept as the original', async t=>{
++ const w=workdir(t),latest=latestCompletedSession(now),prior=prevSession(latest),barMs=d=>Date.parse(d+'T05:00:00Z');
++ w.put('data/comeback-spy.json',{bars:{[prior]:{o:500,c:501}}});
++ const p=await provider(t,async()=>[200,{ticker:'SPY',status:'OK',results:[{t:barMs(prior),o:500,c:999},{t:barMs(latest),o:510,c:511},{t:now+3600e3,o:1,c:1},{t:'bad',o:1,c:1},{t:barMs(day(now)),o:520,c:'x'}]}]);
++ await run(w.dir,'comeback-lab.mjs',{MASSIVE_BASE:p.base});
++ const spy=w.json('data/comeback-spy.json');assert.equal(spy.bars[prior].c,501,'the cached bar is not overwritten');assert.deepEqual(spy.conflicts[prior].reported,{o:500,c:999});
++ assert.equal(spy.bars[latest].c,511);assert.equal(spy.status,'CONFLICT');
++ const today=w.json('data/comeback-today.json');assert.equal(today.sourceStatus.SPY_BARS.status,'CONFLICT');assert.equal(today.sourceStatus.SPY_BARS.rejectedBars>=2,true);assert.equal(today.sourceStatus.LAB_TODAY_FILES.status,'EMPTY');
++ const p2=await provider(t,async()=>[503,{}]);await run(w.dir,'comeback-lab.mjs',{MASSIVE_BASE:p2.base});
++ const later=w.json('data/comeback-today.json').sourceStatus.SPY_BARS;
++ assert.equal(later.response,'UNAVAILABLE','a failed fetch is never shown as fresh bars');
++ assert.equal(later.status,'CONFLICT','review R3: the conflict retained from the first run stays unresolved through a later failure');
++});
+diff --git a/tests/market03-ingress-matrix.test.mjs b/tests/market03-ingress-matrix.test.mjs
+new file mode 100644
+index 00000000..db5a99bd
+--- /dev/null
++++ b/tests/market03-ingress-matrix.test.mjs
+@@ -0,0 +1,16 @@
++// MARKET-03 ingress matrix drift guard (Claude, 2 Nov 2026): every provider host a source file can call is classified, and the
++// committed matrix equals what the sources produce now. A new provider call fails here until it is classified and reviewed.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import path from 'node:path';
++import {buildMatrix,CONTRACTS} from '../tools/market03-ingress-matrix.mjs';
++const root=path.resolve(import.meta.dirname,'..');
++test('no provider host is unclassified', () => { assert.deepEqual(buildMatrix(root).summary.unclassified,[]); });
++test('the committed matrix matches the current sources', () => {
++ const committed=JSON.parse(fs.readFileSync(path.join(root,'docs/validation/market03-ingress-matrix.json'),'utf8'));
++ assert.deepEqual(buildMatrix(root),committed,'run: node tools/market03-ingress-matrix.mjs --write, and review the change');
++});
++test('every reviewed contract names its package and uses the Y/P/N/NA scale', () => {
++ for(const [k,c] of Object.entries(CONTRACTS)){assert.ok(c.by,k);for(const d of ['identity','units','clock','session','adjustment','revision','status'])assert.ok(['Y','P','N','NA'].includes(c[d]),k+' '+d);}
++});
+diff --git a/tests/market03-r2-spy-counts.test.mjs b/tests/market03-r2-spy-counts.test.mjs
+new file mode 100644
+index 00000000..eaac25b4
+--- /dev/null
++++ b/tests/market03-r2-spy-counts.test.mjs
+@@ -0,0 +1,68 @@
++// Review R2 residual (Codex, 2 Nov): SPY aggregates counts and structure (Claude, revision r3). A pure table for spyEnvelope() plus the
++// ACTUAL comeback-lab.mjs against a loopback stub: valid zero, valid populated, malformed, partial and source-failure states stay
++// distinct, and a retained R3 conflict survives a malformed-count answer. Synthetic only; no network, credentials or messages.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import {spawn} from 'node:child_process';
++import {spyEnvelope} from '../comeback-provenance.mjs';
++import {latestCompletedSession,parseSourceTime} from '../source-contract.mjs';
++const fixtureBar=day=>({t:Date.parse(day+'T05:00:00Z'),o:500,c:501});
++const root=path.resolve(import.meta.dirname,'..'),day=latestCompletedSession(Date.now()),bar=fixtureBar(day);
++const base={status:'OK',ticker:'SPY'};
++
++test('spyEnvelope: every documented field validated; only justified count relationships enforced', () => {
++ const M=(j,reason)=>{const r=spyEnvelope(j);assert.equal(r.kind,'MALFORMED',JSON.stringify(j));if(reason)assert.equal(r.reason,reason,JSON.stringify(j));};
++ // structure
++ for(const j of [null,[],'x',{},{...base,status:'ERROR'},{status:'OK',ticker:'QQQ',results:[bar]},{...base,adjusted:false,results:[bar]},{...base,adjusted:'true',results:[bar]},{...base,results:{0:bar}}])M(j);
++ // counts present but invalid: never a missing optional field, never zero
++ for(const v of [0.5,-1,'invalid','1',null,true,1e300,Number.MAX_SAFE_INTEGER+2]){M({...base,resultsCount:v,results:[bar]},'INVALID_RESULTSCOUNT');M({...base,queryCount:v,results:[bar]},'INVALID_QUERYCOUNT');}
++ // contradictions
++ M({...base,queryCount:0,resultsCount:1},'COUNT_WITHOUT_RESULTS');
++ M({...base,resultsCount:3},'COUNT_WITHOUT_RESULTS');
++ M({...base},'NO_RESULTS_NO_ZERO_EVIDENCE');M({...base,queryCount:2},'NO_RESULTS_NO_ZERO_EVIDENCE');
++ M({...base,resultsCount:2,results:[bar]},'RESULTS_COUNT_MISMATCH');M({...base,resultsCount:0,results:[bar]},'RESULTS_COUNT_MISMATCH');
++ // valid zero
++ for(const j of [{...base,resultsCount:0},{...base,queryCount:0},{...base,queryCount:0,resultsCount:0},{...base,queryCount:4,resultsCount:0},{...base,results:[]},{...base,resultsCount:0,results:[]},{...base,status:'DELAYED',queryCount:0,resultsCount:0}])assert.equal(spyEnvelope(j).kind,'EMPTY',JSON.stringify(j));
++ // valid populated: queryCount is not tied to the returned array
++ for(const j of [{...base,results:[bar]},{...base,resultsCount:1,results:[bar]},{...base,adjusted:true,queryCount:1,resultsCount:1,results:[bar]},{...base,queryCount:5,resultsCount:1,results:[bar]},{...base,status:'DELAYED',resultsCount:2,results:[bar,bar]}])assert.equal(spyEnvelope(j).kind,'ROWS',JSON.stringify(j));
++});
++
++async function producer(t){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'r2c-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ let reply=[200,{}],calls=0;const server=http.createServer((q,s)=>{calls++;s.statusCode=reply[0];s.setHeader('content-type','application/json');s.end(JSON.stringify(reply[1]));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));const url='http://127.0.0.1:'+server.address().port;
++ const run=async()=>{const before=calls;const c=spawn(process.execPath,[path.join(root,'comeback-lab.mjs')],{cwd:dir,env:{PATH:process.env.PATH,MASSIVE_KEY:'synthetic',MASSIVE_BASE:url}});let log='';c.stdout.on('data',x=>log+=x);c.stderr.on('data',x=>log+=x);
++  const code=await new Promise(r=>c.on('close',r));assert.equal(code,0,log);assert.equal(calls-before,1,'one request per run');
++  return {spy:JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-today.json'),'utf8')).sourceStatus.SPY_BARS,cache:JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-spy.json'),'utf8'))};};
++ return {dir,run,set:(st,body)=>reply=[st,body]};
++}
++
++test('actual producer: valid zero, valid populated, malformed, partial and source-failure states stay distinct', async t=>{
++ const f=await producer(t);
++ const table=[
++  [200,{...base,queryCount:0,resultsCount:0},'EMPTY'],[200,{...base,resultsCount:0},'EMPTY'],[200,{...base,results:[]},'EMPTY'],
++  [200,{...base,adjusted:true,queryCount:5,resultsCount:1,results:[bar]},'OBSERVED'],[200,{...base,results:[bar]},'OBSERVED'],
++  [200,{...base,resultsCount:2,results:[bar,{t:'bad',o:1,c:1}]},'PARTIAL'],
++  [200,{...base,queryCount:0,resultsCount:1},'MALFORMED'],[200,{...base,resultsCount:0.5,results:[bar]},'MALFORMED'],[200,{...base,resultsCount:'invalid',results:[bar]},'MALFORMED'],
++  [200,{...base,resultsCount:null,results:[bar]},'MALFORMED'],[200,{...base,queryCount:-3,results:[bar]},'MALFORMED'],[200,{...base},'MALFORMED'],
++  [503,{},'UNAVAILABLE'],[429,{},'RATE_LIMITED'],[403,{},'REFUSED']];
++ for(const [st,body,want] of table){f.set(st,body);const r=await f.run();assert.equal(r.spy.response,want,st+' '+JSON.stringify(body));assert.equal(r.spy.status,want,st+' '+JSON.stringify(body));}
++});
++
++test('R3 preserved: a malformed-count answer after a retained conflict keeps CONFLICT; original bar and first record untouched', async t=>{
++ const f=await producer(t);fs.writeFileSync(path.join(f.dir,'data/comeback-spy.json'),JSON.stringify({bars:{[day]:{o:500,c:501}}}));
++ f.set(200,{...base,results:[{...bar,c:999}]});let r=await f.run();assert.equal(r.spy.status,'CONFLICT');const first=structuredClone(r.cache.conflicts[day]);
++ for(const body of [{...base,queryCount:0,resultsCount:1},{...base,resultsCount:0.5,results:[{...bar,c:777}]},{...base,resultsCount:'invalid',results:[{...bar,c:777}]}]){
++  f.set(200,body);r=await f.run();assert.equal(r.spy.response,'MALFORMED');assert.equal(r.spy.status,'CONFLICT');assert.equal(r.spy.integrity,'CONFLICT_UNRESOLVED');
++  assert.deepEqual(r.cache.bars[day],{o:500,c:501});assert.deepEqual(r.cache.conflicts[day],first);}
++ f.set(200,{...base,queryCount:0,resultsCount:0});r=await f.run();assert.equal(r.spy.response,'EMPTY');assert.equal(r.spy.status,'CONFLICT','a valid empty answer resolves nothing');
++});
++
++// Test fixture identity is stable across the November clock change; these are synthetic daily bars.
++test('synthetic daily-bar fixtures keep their declared New York day in both DST regimes',()=>{
++ for(const d of ['2026-10-30','2026-11-02'])assert.equal(parseSourceTime(fixtureBar(d).t,{kind:'epoch_ms',at:'2026-11-03T16:00:00Z'}).nyDay,d);
++});
+diff --git a/tests/market03-review-codex-additional.test.mjs b/tests/market03-review-codex-additional.test.mjs
+new file mode 100644
+index 00000000..eb306659
+--- /dev/null
++++ b/tests/market03-review-codex-additional.test.mjs
+@@ -0,0 +1,38 @@
++// Desired-behavior review regressions; all inputs and endpoints are synthetic. Not a frozen experiment or live probe.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import {spawn} from 'node:child_process';
++import {pathToFileURL} from 'node:url';
++const root=path.resolve(process.env.REVIEW_TREE||process.cwd());
++const {parseSourceTime,latestCompletedSession}=await import(pathToFileURL(path.join(root,'source-contract.mjs')));
++const {collectDiscovery}=await import(pathToFileURL(path.join(root,'discovery-runtime.mjs')));
++test('malformed months return INVALID without throwing',()=>{
++ for(const value of ['2026-13-01','2026-00-10'])assert.equal(parseSourceTime(value,{kind:'date',at:'2026-11-02T16:00:00Z'}).status,'INVALID');
++});
++test('actual discovery caller isolates malformed publication day before a valid row',()=>{
++ const cutoff='2026-11-02T16:00:00Z',base={d:'2026-11-02',a:2,e:1,t:'bmo',timing:'BMO',src:'FINNHUB'};
++ const reports=[{...base,sym:'BAD',publicationDay:'2026-13-01'},{...base,sym:'AAA',publicationDay:'2026-11-02'}];
++ const out=collectDiscovery({cutoff,readText:p=>{if(p!=='data/earnings-recent.json')throw Error('absent');return JSON.stringify({updated:cutoff,reports,sourceStatus:{FINNHUB_CALENDAR:{status:'OBSERVED'}}});}});
++ assert.deepEqual(out.observations.map(x=>x.symbol),['AAA']);
++ assert.equal(out.sources.find(x=>x.lane==='EARNINGS_SURPRISE').status,'READ');
++});
++async function fixture(t){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'market03-review-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ let response={},calls=0;const server=http.createServer((q,s)=>{calls++;s.setHeader('content-type','application/json');s.end(JSON.stringify(response));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));const base='http://127.0.0.1:'+server.address().port;
++ const run=async()=>{const child=spawn(process.execPath,[path.join(root,'comeback-lab.mjs')],{cwd:dir,env:{PATH:process.env.PATH,MASSIVE_KEY:'synthetic',MASSIVE_BASE:base},stdio:['ignore','pipe','pipe']});let log='';child.stdout.on('data',x=>log+=x);child.stderr.on('data',x=>log+=x);const timer=setTimeout(()=>child.kill('SIGKILL'),5000);const code=await new Promise(r=>child.on('close',r));clearTimeout(timer);assert.equal(code,0,log);return JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-today.json'),'utf8'));};
++ return {dir,run,set:x=>response=x,calls:()=>calls};
++}
++test('actual comeback producer rejects a structurally empty success envelope',async t=>{
++ const f=await fixture(t);f.set({});const out=await f.run();assert.equal(f.calls(),1);assert.equal(out.sourceStatus.SPY_BARS.status,'MALFORMED');
++});
++test('actual comeback producer keeps unresolved cached revision status after a reversion',async t=>{
++ const f=await fixture(t),day=latestCompletedSession(Date.now());const bar={t:Date.parse(day+'T05:00:00Z'),o:500,c:501};
++ fs.writeFileSync(path.join(f.dir,'data/comeback-spy.json'),JSON.stringify({bars:{[day]:{o:500,c:501}}}));
++ f.set({ticker:'SPY',status:'OK',results:[{...bar,c:999}]});assert.equal((await f.run()).sourceStatus.SPY_BARS.status,'CONFLICT');
++ f.set({ticker:'SPY',status:'OK',results:[bar]});const out=await f.run();assert.equal(f.calls(),2);assert.equal(out.sourceStatus.SPY_BARS.status,'CONFLICT');
++});
+diff --git a/tests/market03-review-codex-spy-envelope.test.mjs b/tests/market03-review-codex-spy-envelope.test.mjs
+new file mode 100644
+index 00000000..0ca90581
+--- /dev/null
++++ b/tests/market03-review-codex-spy-envelope.test.mjs
+@@ -0,0 +1,18 @@
++// Desired behavior review; synthetic local service only. No real data or credentials.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';import {spawn} from 'node:child_process';import {pathToFileURL} from 'node:url';
++const root=path.resolve(process.env.REVIEW_TREE||process.cwd());
++const {latestCompletedSession}=await import(pathToFileURL(path.join(root,'source-contract.mjs')));
++const bar={t:Date.parse(latestCompletedSession(Date.now())+'T20:00:00Z'),o:500,c:501};
++const cases=[
++ ['conflicting explicit empty counts',{status:'OK',ticker:'SPY',queryCount:0,resultsCount:1},'MALFORMED'],
++ ['noninteger returned count',{status:'OK',ticker:'SPY',resultsCount:0.5,results:[bar]},'MALFORMED'],
++ ['negative returned count',{status:'OK',ticker:'SPY',resultsCount:-1,results:[bar]},'MALFORMED'],
++ ['nonnumeric returned count',{status:'OK',ticker:'SPY',resultsCount:'invalid',results:[bar]},'MALFORMED'],
++ ['valid explicit empty',{status:'OK',ticker:'SPY',queryCount:0,resultsCount:0},'EMPTY'],
++ ['valid one-bar result',{status:'OK',ticker:'SPY',adjusted:true,queryCount:1,resultsCount:1,results:[bar]},'OBSERVED']
++];
++for(const [name,body,expected]of cases)test(name,async t=>{
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'spy-count-review-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));let calls=0;
++ const server=http.createServer((q,s)=>{calls++;s.setHeader('content-type','application/json');s.end(JSON.stringify(body));});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));
++ const child=spawn(process.execPath,[path.join(root,'comeback-lab.mjs')],{cwd:dir,env:{PATH:process.env.PATH,MASSIVE_KEY:'synthetic',MASSIVE_BASE:'http://127.0.0.1:'+server.address().port},stdio:['ignore','pipe','pipe']});let log='';child.stdout.on('data',x=>log+=x);child.stderr.on('data',x=>log+=x);const timer=setTimeout(()=>child.kill('SIGKILL'),5000);const code=await new Promise((r,j)=>{child.on('error',j);child.on('close',r);});clearTimeout(timer);assert.equal(code,0,log);assert.equal(calls,1);const out=JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-today.json')));assert.equal(out.sourceStatus.SPY_BARS.response,expected);assert.equal(out.sourceStatus.SPY_BARS.status,expected);
++});
+diff --git a/tests/market03-review-r1-r3.test.mjs b/tests/market03-review-r1-r3.test.mjs
+new file mode 100644
+index 00000000..92b055f7
+--- /dev/null
++++ b/tests/market03-review-r1-r3.test.mjs
+@@ -0,0 +1,92 @@
++// Regressions for Codex's review findings R1-R3 on claude/market03-catalyst03 @ e6a1382c (Claude, revision r2).
++// R1 invalid calendar days never throw and one bad row never sinks its neighbours; R2 only the official SPY aggregates envelope
++// counts as an answer; R3 a retained SPY revision conflict stays unresolved across reversion, restart and later failure.
++// Synthetic inputs, loopback stub only; no network, credentials or messages.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import {spawn} from 'node:child_process';
++import {parseSourceTime,isDay,nyParts,sessionPhase,latestCompletedSession,closeLagSessions,nextSession,reactionSession} from '../source-contract.mjs';
++import {collectDiscovery} from '../discovery-runtime.mjs';
++import {withComebackProvenance} from '../comeback-provenance.mjs';
++const root=path.resolve(import.meta.dirname,'..'),AT='2026-11-02T16:00:00Z';
++
++// ------------------------------------------------------------------ R1 -----------------------------------------------------------
++test('R1: every impossible calendar day is INVALID/false, never a thrown RangeError', () => {
++ for(const d of ['2026-13-01','2026-00-10','2026-02-30','2026-04-31','2026-12-32','2026-11-00','9999-99-99','0000-00-00']){
++  assert.doesNotThrow(()=>isDay(d),d);assert.equal(isDay(d),false,d);
++  assert.equal(parseSourceTime(d,{kind:'date',at:AT}).status,'INVALID',d);
++  assert.equal(parseSourceTime(d+'T10:00:00Z',{kind:'iso',at:AT}).status,'INVALID',d);
++  assert.equal(nextSession(d),null,d);assert.equal(reactionSession(d,'AMC').status,'INVALID',d);
++  assert.equal(closeLagSessions(d,Date.parse(AT)),null,d);}
++ assert.equal(isDay('2028-02-29'),true);assert.equal(isDay('2026-02-29'),false);
++});
++
++test('R1: out-of-range epochs are INVALID in every formatter, never thrown', () => {
++ for(const ms of [1e20,-1e20,8.64e15+1,Infinity,NaN]){
++  assert.doesNotThrow(()=>nyParts(ms));assert.equal(sessionPhase(ms).phase,'INVALID');assert.equal(latestCompletedSession(ms),null);}
++ assert.throws(()=>parseSourceTime('2026-11-02',{kind:'date',at:1e20}),/observation clock/);   // an impossible clock is a caller error
++});
++
++test('R1: the actual discovery consumer keeps valid rows next to rows with impossible days, with truthful counts', () => {
++ const cutoff=AT,base={d:'2026-11-02',a:2,e:1,t:'bmo',timing:'BMO',src:'FINNHUB'};
++ const earnings={updated:cutoff,sourceStatus:{FINNHUB_CALENDAR:{status:'OBSERVED'}},reports:[{...base,sym:'BAD',publicationDay:'2026-13-01'},{...base,sym:'BAE',publicationDay:'2026-00-10'},{...base,sym:'AAA',publicationDay:'2026-11-02'},{...base,sym:'BAF',publicationDay:'2026-02-30'},{...base,sym:'BBB',publicationDay:'2026-10-30'}]};
++ const d2={generatedAt:cutoff,sourceStatus:{SEC_INDEX:{status:'OBSERVED'},PRICE_CACHE:{status:'OBSERVED'}},buys:[{sym:'CCC',rule:'r',lastCloseDay:'2026-13-01'},{sym:'DDD',rule:'r',lastCloseDay:'2026-10-30'},{sym:'EEE',rule:'r',sourceDataDay:'2026-02-30'}]};
++ const out=collectDiscovery({cutoff,readText:p=>{if(p==='data/earnings-recent.json')return JSON.stringify(earnings);if(p==='data/discovery2-today.json')return JSON.stringify(d2);throw Error('absent');}});
++ const e=out.sources.find(x=>x.lane==='EARNINGS_SURPRISE'),t=out.sources.find(x=>x.lane==='TECHNICAL_BUILDUP');
++ assert.equal(e.status,'READ');assert.equal(e.accepted,2);assert.equal(e.rejected,3);
++ assert.equal(t.status,'READ');assert.equal(t.accepted,1);assert.equal(t.rejected,2);
++ assert.deepEqual(out.observations.map(o=>o.symbol).sort(),['AAA','BBB','DDD']);
++});
++
++test('R1: comeback provenance with an impossible lab close day withholds, never throws', () => {
++ const doc={generatedAt:AT,methods:{'A-1':{lab:'alpha',newSignals:[{sym:'AAA',close:1}]}}};
++ const out=withComebackProvenance(doc,{alpha:{generatedAt:AT,lastClose:'2026-13-01'}},{nowMs:Date.parse(AT)});
++ assert.equal(out.methods['A-1'].newSignals.length,0);assert.equal(out.methods['A-1'].retainedSignals[0].withheld,'LAB_TODAY_FILE_UNKNOWN');
++});
++
++// --------------------------------------------------------------- R2 / R3 ----------------------------------------------------------
++async function producer(t){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'r2r3-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ let reply=[200,{}],calls=0;const server=http.createServer((q,s)=>{calls++;s.statusCode=reply[0];s.setHeader('content-type','application/json');s.end(JSON.stringify(reply[1]));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));const base='http://127.0.0.1:'+server.address().port;
++ const run=async()=>{const c=spawn(process.execPath,[path.join(root,'comeback-lab.mjs')],{cwd:dir,env:{PATH:process.env.PATH,MASSIVE_KEY:'synthetic',MASSIVE_BASE:base}});let log='';c.stdout.on('data',x=>log+=x);c.stderr.on('data',x=>log+=x);
++  const code=await new Promise(r=>c.on('close',r));assert.equal(code,0,log);return {today:JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-today.json'),'utf8')).sourceStatus.SPY_BARS,cache:JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-spy.json'),'utf8'))};};
++ return {dir,run,set:(st,body)=>reply=[st,body],calls:()=>calls};
++}
++const day=latestCompletedSession(Date.now()),barT=Date.parse(day+'T05:00:00Z');
++
++test('R2: only the official SPY aggregates envelope is an answer; empty is EMPTY, never OBSERVED', async t=>{
++ const f=await producer(t);
++ const cases=[[{} ,'MALFORMED'],[{status:'OK',results:[]},'MALFORMED'],[{status:'OK',ticker:'QQQ',results:[{t:barT,o:1,c:1}]},'MALFORMED'],[{status:'ERROR',ticker:'SPY',error:'x'},'MALFORMED'],
++  [{status:'OK',ticker:'SPY',adjusted:false,results:[{t:barT,o:1,c:1}]},'MALFORMED'],[{status:'OK',ticker:'SPY',resultsCount:2,results:[{t:barT,o:1,c:1}]},'MALFORMED'],
++  [{status:'OK',ticker:'SPY',queryCount:0,resultsCount:0},'EMPTY'],[{status:'OK',ticker:'SPY'},'MALFORMED'],[{status:'OK',ticker:'SPY',resultsCount:0,results:[]},'EMPTY'],
++  [{status:'DELAYED',ticker:'SPY',adjusted:true,resultsCount:1,results:[{t:barT,o:500,c:501}]},'OBSERVED']];
++ for(const [body,want] of cases){f.set(200,body);const r=await f.run();assert.equal(r.today.response,want,JSON.stringify(body));assert.equal(r.today.status,want,JSON.stringify(body));}
++ assert.equal(f.calls(),cases.length,'one request per run; endpoint and scope unchanged');
++});
++
++test('R3: a retained revision conflict survives reversion, restart and later failure; originals never rewritten', async t=>{
++ const f=await producer(t);fs.writeFileSync(path.join(f.dir,'data/comeback-spy.json'),JSON.stringify({bars:{[day]:{o:500,c:501}}}));
++ f.set(200,{status:'OK',ticker:'SPY',results:[{t:barT,o:500,c:999}]});let r=await f.run();                              // revision
++ assert.equal(r.today.status,'CONFLICT');assert.equal(r.today.integrity,'CONFLICT_UNRESOLVED');assert.equal(r.today.response,'OBSERVED');
++ const first=structuredClone(r.cache.conflicts[day]);assert.deepEqual(r.cache.bars[day],{o:500,c:501});
++ f.set(200,{status:'OK',ticker:'SPY',results:[{t:barT,o:500,c:501}]});r=await f.run();                                 // reversion
++ assert.equal(r.today.status,'CONFLICT');assert.equal(r.today.response,'OBSERVED');assert.equal(r.cache.status,'CONFLICT');
++ r=await f.run();                                                                                                     // restart, same answer
++ assert.equal(r.today.status,'CONFLICT');assert.equal(r.today.unresolvedConflicts,1);
++ f.set(503,{});r=await f.run();                                                                                       // later failure
++ assert.equal(r.today.status,'CONFLICT');assert.equal(r.today.response,'UNAVAILABLE');
++ assert.deepEqual(r.cache.bars[day],{o:500,c:501},'original bar never rewritten');assert.deepEqual(r.cache.conflicts[day],first,'first conflict record never rewritten');
++ f.set(200,{status:'OK',ticker:'SPY',results:[{t:barT,o:500,c:777}]});r=await f.run();                                 // a second, different revision
++ assert.deepEqual(r.cache.conflicts[day],first,'the retained record is not replaced by a later revision');assert.equal(r.today.status,'CONFLICT');
++});
++
++test('R3: with no retained conflict the lane status is the latest response', async t=>{
++ const f=await producer(t);f.set(200,{status:'OK',ticker:'SPY',results:[{t:barT,o:500,c:501}]});let r=await f.run();
++ assert.equal(r.today.status,'OBSERVED');assert.equal(r.today.integrity,'CLEAN');
++ f.set(503,{});r=await f.run();assert.equal(r.today.status,'UNAVAILABLE');assert.equal(r.cache.bars[day].c,501);
++});
+diff --git a/tests/market03-source-contract.test.mjs b/tests/market03-source-contract.test.mjs
+new file mode 100644
+index 00000000..19a3c4f1
+--- /dev/null
++++ b/tests/market03-source-contract.test.mjs
+@@ -0,0 +1,127 @@
++// MARKET-03 source contract: identity, units, clocks, sessions, timing, adjustment basis, revisions (Claude, 2 Nov 2026).
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {providerSymbol,strictNumber,parseSourceTime,sessionPhase,nextSession,earningsTiming,reactionSession,adjustmentBasis,observeRevision,validRevisionBook,combineStatus} from '../source-contract.mjs';
++const AT='2026-11-02T16:00:00Z';
++
++test('share classes and preferreds stay distinct or fail closed; no alias is guessed', () => {
++ const dot=providerSymbol('BRK.B',{provider:'FINNHUB'}),dash=providerSymbol('BRK-B',{provider:'FMP'});
++ assert.equal(dot.status,'OK');assert.equal(dash.status,'OK');assert.notEqual(dot.symbol,dash.symbol);
++ assert.equal(dot.identityBasis,'PROVIDER_CLASS_SYMBOL_UNMAPPED');
++ for(const raw of ['BRK/B','BRK B','XYZpA','^SPX','ABC.WS.A','TOOLONGX'])assert.equal(providerSymbol(raw).status,'INVALID',raw);
++ assert.equal(providerSymbol('PBR.A').status,'OK');                                   // class kept literally, never mapped to PBR-A
++ assert.equal(providerSymbol(null).status,'MISSING');assert.equal(providerSymbol('').status,'MISSING');
++ assert.equal(providerSymbol(' aapl ').symbol,'AAPL');
++});
++
++test('a provider answering for a different ticker (ticker change, alias, share class) is an identity mismatch', () => {
++ assert.equal(providerSymbol('META',{requested:'FB'}).status,'IDENTITY_MISMATCH');
++ assert.equal(providerSymbol('BRK-B',{requested:'BRK.B'}).status,'IDENTITY_MISMATCH');
++ assert.equal(providerSymbol('BRKB',{requested:'BRK.B'}).status,'IDENTITY_MISMATCH');
++ assert.equal(providerSymbol('aapl',{requested:'AAPL'}).status,'OK');
++});
++
++test('numbers: missing tokens are MISSING, coercions are INVALID, ranges are explicit', () => {
++ for(const x of [null,undefined,'','None','  n/a ','-'])assert.equal(strictNumber(x).status,'MISSING',String(x));
++ for(const x of [false,true,'1,2','12abc','0x10',NaN,Infinity,{},[]])assert.equal(strictNumber(x).status,'INVALID',String(x));
++ assert.deepEqual(strictNumber(' -0.25 '),{status:'OK',value:-0.25});
++ assert.equal(strictNumber(-1,{min:0}).status,'OUT_OF_RANGE');
++});
++
++test('clocks: unit mix-ups, zone-less ISO, impossible dates, future and stale are distinct statuses', () => {
++ assert.equal(parseSourceTime(1762099200000,{kind:'epoch_s',at:AT}).status,'UNIT_MISMATCH');
++ assert.equal(parseSourceTime(1762099200,{kind:'epoch_ms',at:AT}).status,'UNIT_MISMATCH');
++ assert.equal(parseSourceTime(1762099200,{kind:'epoch_s',at:AT}).status,'OK');
++ assert.equal(parseSourceTime('2026-11-02T09:30:00',{kind:'iso',at:AT}).status,'AMBIGUOUS_ZONE');
++ assert.equal(parseSourceTime('2026-02-30',{kind:'date',at:AT}).status,'INVALID');
++ assert.equal(parseSourceTime('2026-02-30T10:00:00Z',{kind:'iso',at:AT}).status,'INVALID');
++ assert.equal(parseSourceTime('2026-11-03',{kind:'date',at:AT}).status,'FUTURE');
++ assert.equal(parseSourceTime('2026-11-02T16:00:01Z',{kind:'iso',at:AT}).status,'FUTURE');
++ assert.equal(parseSourceTime('2026-10-20',{kind:'date',at:AT,maxAgeMs:5*864e5}).status,'STALE');
++ assert.equal(parseSourceTime(undefined,{kind:'iso',at:AT}).status,'MISSING');
++ assert.throws(()=>parseSourceTime('2026-11-02',{kind:'date'}),/observation clock/);
++});
++
++test('DST: the repeated 01:30 New York hour on 1 Nov 2026 is two distinct instants when offsets are explicit', () => {
++ const edt=parseSourceTime('2026-11-01T01:30:00-04:00',{kind:'iso',at:AT}),est=parseSourceTime('2026-11-01T01:30:00-05:00',{kind:'iso',at:AT});
++ assert.equal(edt.status,'OK');assert.equal(est.status,'OK');assert.equal(est.ms-edt.ms,3600e3);
++ assert.equal(edt.nyDay,'2026-11-01');
++ // first trading day after DST: 9:30 New York is 14:30 UTC, not 13:30
++ assert.equal(sessionPhase(Date.parse('2026-11-02T14:29:00Z')).phase,'PREMARKET');
++ assert.equal(sessionPhase(Date.parse('2026-11-02T14:30:00Z')).phase,'REGULAR');
++ assert.equal(sessionPhase(Date.parse('2026-10-30T13:30:00Z')).phase,'REGULAR');            // still EDT on 30 Oct
++});
++
++test('sessions: half day, holiday, weekend and beyond-calendar days', () => {
++ const half=sessionPhase(Date.parse('2026-11-27T18:30:00Z'));                              // 13:30 New York, after the 13:00 close
++ assert.equal(half.phase,'AFTER_HOURS');assert.equal(half.halfDay,true);
++ assert.equal(sessionPhase(Date.parse('2026-11-27T17:59:00Z')).phase,'REGULAR');
++ assert.equal(sessionPhase(Date.parse('2026-11-26T15:00:00Z')).phase,'CLOSED');           // Thanksgiving
++ assert.equal(sessionPhase(Date.parse('2030-01-02T15:00:00Z')).phase,'CALENDAR_UNKNOWN');
++ assert.equal(nextSession('2026-11-25'),'2026-11-27');assert.equal(nextSession('2026-11-28',{inclusive:true}),'2026-11-30');
++});
++
++test('earnings timing: provider codes map explicitly, unknown timing returns both candidate reaction sessions', () => {
++ assert.equal(earningsTiming('FINNHUB','dmh'),'DMH');assert.equal(earningsTiming('ALPHA_VANTAGE','post-market'),'AMC');
++ assert.equal(earningsTiming('FMP',undefined),'UNKNOWN');assert.equal(earningsTiming('FINNHUB',''),'UNKNOWN');
++ assert.deepEqual(reactionSession('2026-11-25','AMC'),{status:'OK',session:'2026-11-27'});   // after the close before Thanksgiving
++ assert.deepEqual(reactionSession('2026-11-02','BMO'),{status:'OK',session:'2026-11-02'});
++ assert.deepEqual(reactionSession('2026-11-02','UNKNOWN'),{status:'AMBIGUOUS',session:null,candidates:['2026-11-02','2026-11-03']});
++ assert.deepEqual(reactionSession('2026-11-01','AMC'),{status:'OK',session:'2026-11-02'});   // weekend report
++ assert.equal(reactionSession('2030-01-02','BMO').status,'CALENDAR_UNKNOWN');
++});
++
++test('adjustment basis is labelled from the request, never assumed', () => {
++ assert.equal(adjustmentBasis({provider:'MASSIVE',adjusted:true}),'SPLIT_ADJUSTED_AS_OF_FETCH');
++ assert.equal(adjustmentBasis({provider:'MASSIVE',adjusted:false}),'RAW_UNADJUSTED');
++ assert.equal(adjustmentBasis({provider:'MASSIVE'}),'UNKNOWN');assert.equal(adjustmentBasis({provider:'TWELVE'}),'UNKNOWN');
++});
++
++test('revision book: first, same, conflict latches through reversion, capacity and chronology are explicit', () => {
++ const book={},a={eps:1.2},b={eps:1.3};
++ assert.equal(observeRevision(book,{key:'AAA|2026-10-29',content:a,at:'2026-10-30T00:00:00Z'}).status,'FIRST');
++ assert.equal(observeRevision(book,{key:'AAA|2026-10-29',content:{...a},at:'2026-10-31T00:00:00Z'}).status,'SAME');
++ assert.equal(observeRevision(book,{key:'AAA|2026-10-29',content:b,at:'2026-11-01T00:00:00Z'}).status,'CONFLICT');
++ assert.equal(observeRevision(book,{key:'AAA|2026-10-29',content:a,at:'2026-11-02T00:00:00Z'}).status,'CONFLICT');
++ assert.equal(observeRevision(book,{key:'AAA|2026-10-29',content:a,at:'2026-10-01T00:00:00Z'}).status,'CHRONOLOGY');
++ assert.ok(validRevisionBook(book));
++ const full={};observeRevision(full,{key:'x',content:1,at:AT,capacity:1});
++ assert.equal(observeRevision(full,{key:'y',content:1,at:AT,capacity:1}).status,'CAPACITY');
++ assert.equal(validRevisionBook({bad:{}}),false);                                    // a corrupt book is refused at load
++ const corrupt={};observeRevision(corrupt,{key:'z',content:1,at:AT});const id=Object.keys(corrupt)[0];corrupt[id].first='0'.repeat(64);
++ assert.throws(()=>observeRevision(corrupt,{key:'z',content:1,at:AT}),/UNREADABLE/);      // a corrupt entry is never overwritten
++});
++
++test('combined status: one failing provider keeps the lane from reading as a successful check', () => {
++ assert.equal(combineStatus(['OBSERVED','OBSERVED']),'OBSERVED');
++ assert.equal(combineStatus(['EMPTY','EMPTY']),'EMPTY');
++ assert.equal(combineStatus(['OBSERVED','RATE_LIMITED']),'PARTIAL');
++ assert.equal(combineStatus(['REFUSED','MALFORMED']),'UNKNOWN');
++ assert.equal(combineStatus(['OBSERVED','CONFLICT']),'CONFLICT');
++ assert.equal(combineStatus([]),'NOT_FETCHED');
++});
++
++test('bounded JSON transport: a hung fetcher times out, an oversized or invalid body is never an observed answer', async () => {
++ const {readJsonSource}=await import('../source-contract.mjs');
++ const hung=()=>new Promise(()=>{});                                                          // ignores AbortSignal entirely
++ assert.equal((await readJsonSource(hung,'http://x',{timeoutMs:30})).status,'TIMEOUT');
++ const big=()=>Promise.resolve(new Response('['+'1,'.repeat(3000)+'1]'));
++ assert.equal((await readJsonSource(big,'http://x',{maxBytes:1000})).status,'BODY_LIMIT');
++ assert.equal((await readJsonSource(()=>Promise.resolve(new Response('{oops')),'http://x')).status,'INVALID_JSON');
++ assert.equal((await readJsonSource(()=>Promise.resolve(new Response('x',{status:402})),'http://x')).status,'REFUSED');
++ assert.equal((await readJsonSource(()=>Promise.resolve(new Response('x',{status:429})),'http://x')).status,'RATE_LIMITED');
++ assert.equal((await readJsonSource(()=>Promise.reject(Error('dns')),'http://x')).status,'NETWORK_ERROR');
++ const ok=await readJsonSource(()=>Promise.resolve(new Response('{"a":1}')),'http://x');assert.equal(ok.status,'OK');assert.deepEqual(ok.body,{a:1});
++});
++
++test('session-based close freshness: weekends and holidays do not age a close', async () => {
++ const {latestCompletedSession,closeLagSessions}=await import('../source-contract.mjs');
++ assert.equal(latestCompletedSession(Date.parse('2026-11-02T15:00:00Z')),'2026-10-30');      // Monday 10:00 New York: Friday is current
++ assert.equal(latestCompletedSession(Date.parse('2026-11-02T21:05:00Z')),'2026-11-02');      // after Monday's 16:00 close
++ assert.equal(latestCompletedSession(Date.parse('2026-11-27T18:05:00Z')),'2026-11-27');      // half day: closed at 13:00
++ assert.equal(closeLagSessions('2026-10-30',Date.parse('2026-11-02T15:00:00Z')),0);
++ assert.equal(closeLagSessions('2026-10-29',Date.parse('2026-11-02T15:00:00Z')),1);
++ assert.equal(closeLagSessions('2026-11-25',Date.parse('2026-11-30T15:00:00Z')),1);           // Thanksgiving is not a session
++ assert.equal(closeLagSessions('2026-11-03',Date.parse('2026-11-02T15:00:00Z')),-1);
++ assert.equal(latestCompletedSession(Date.parse('2031-01-02T15:00:00Z')),null);
++});
+diff --git a/tools/market03-ingress-matrix.mjs b/tools/market03-ingress-matrix.mjs
+new file mode 100644
+index 00000000..3f9459f9
+--- /dev/null
++++ b/tools/market03-ingress-matrix.mjs
+@@ -0,0 +1,91 @@
++// MARKET-03 / CATALYST-03 provider-ingress matrix (Claude, 2 Nov 2026). Static and offline: reads the repository's own .mjs
++// sources, finds every provider host each file can call, classifies the (file, host) pair, and joins it with the reviewed
++// contract status of each live or catalyst ingress. Run: node tools/market03-ingress-matrix.mjs [--write]
++// The test tests/market03-ingress-matrix.test.mjs fails if a new provider call appears without a classification.
++import fs from 'node:fs';
++import path from 'node:path';
++import {execFileSync} from 'node:child_process';
++import {fileURLToPath} from 'node:url';
++const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
++
++// Hosts that are not market/catalyst data providers.
++const OPS=new Set(['api.github.com','api.telegram.org']);
++// Research citations and reading lists: URLs that sit in comments/notes, never fetched.
++const REFERENCE=/^(doi\.org|papers\.ssrn\.com|ssrn\.com|ideas\.repec\.org|repec\.cepr\.org|www\.nber\.org|www\.jstor\.org|onlinelibrary\.wiley\.com|www\.wiley\.com|www\.emeraldinsight\.com|www\.joim\.com|www\.openassetpricing\.com|www\.johnhcochrane\.com|alphaarchitect\.com|funds\.alphaarchitect\.com|www\.cxoadvisory\.com|quantpedia\.com|.*\.substack\.com|www\.investopedia\.com|www\.investors\.com|www\.amazon\.com|en\.wikipedia\.org|www\.dimensional\.com|www\.luxalgo\.com|www\.msci\.com|www\.zacks\.com|www\.validea\.com|www\.etfstrategy\.com|www\.etftrends\.com|www\.evidenceinvestor\.com|www\.fool\.com|www\.opb\.org|gvwire\.com|in\.benzinga\.com|www\.allsides\.com|www\.schaeffersresearch\.com|www\.ecfr\.gov|completetradersedge\.com|thepatternsite\.com|tradingsetupsreview\.com|www\.alphatrends\.net|www\.financialwisdomtv\.com|www\.warriortrading\.com|it\.tradingview\.com|www\.tradingview\.com|usethinkscript\.com|wl6\.wealth-lab\.com|www\.followingthetrend\.com|www\.quantconnect\.com|www\.thechartist\.com|www\.tradingmarkets\.com|www\.innovatoretfs\.com|www\.kjtradingsystems\.com|www\.magicformulainvesting\.com|www\.optimalmomentum\.com|www\.quant-investing\.com|www\.quantrocket\.com|www\.smbtraining\.com|www\.tradertom\.com|www\.nyse\.com)$/;
++const PROVIDER={
++ 'api.twelvedata.com':'TWELVE_DATA','data.alpaca.markets':'ALPACA_DATA','paper-api.alpaca.markets':'ALPACA_PAPER','api.massive.com':'MASSIVE','api.polygon.io':'POLYGON',
++ 'finnhub.io':'FINNHUB','financialmodelingprep.com':'FMP','www.alphavantage.co':'ALPHA_VANTAGE','www.sec.gov':'SEC','data.sec.gov':'SEC','efts.sec.gov':'SEC',
++ 'api.fda.gov':'OPENFDA','api.nasdaq.com':'NASDAQ','www.nasdaq.com':'NASDAQ','api.finra.org':'FINRA','api.openfigi.com':'OPENFIGI','mcp.tipranks.com':'TIPRANKS',
++ 'public-api.etoro.com':'ETORO','api.stocktwits.com':'STOCKTWITS','stocktwits.com':'STOCKTWITS','apewisdom.io':'APEWISDOM','api.halalterminal.com':'HALALTERMINAL',
++ 'api.usaspending.gov':'USASPENDING','clinicaltrials.gov':'CLINICALTRIALS','www.googleapis.com':'YOUTUBE','www.youtube.com':'YOUTUBE','youtube.com':'YOUTUBE',
++ 'arkfunds.io':'ARKFUNDS','www.bls.gov':'BLS','www.federalreserve.gov':'FEDERAL_RESERVE'};
++// Where a file sits in the decision flow.
++const LIVE=new Set(['scan.mjs','ignition-watch.mjs','alpaca-feed.mjs','intraday-radar.mjs','news-watch.mjs','premarket-check.mjs','movers.mjs','opportunity-radar.mjs','research-collector.mjs','early-alerts.mjs','deals.mjs','discover.mjs','smart-money.mjs','regime-gate.mjs','tipranks.mjs','calendar.mjs','squad26-watch.mjs','shadow-outcomes.mjs','shadow-stream.mjs','hybrid-snapshot-transport.mjs','hybrid-research-fixture.mjs','paper-transport.mjs','paper-capture-ports.mjs','paper-capture-references.mjs','scorecard-1023.mjs','missed-runners.mjs','exits.mjs','follow-lane.mjs','tip-sources.mjs','gov-awards.mjs','gov-awards2.mjs','native-sec-events.mjs','shares.mjs','fastmover-lab.mjs']);
++const CATALYST=new Set(['events-study.mjs','earnings-study.mjs','insider-study.mjs','chain-ripple.mjs','share-supply.mjs','share-supply-source.mjs','discovery2.mjs','comeback-lab.mjs','news-watch.mjs','research-collector.mjs']);
++const SHARED_INPUT=new Set(['leaders-study.mjs']);       // builds the shared daily price cache other producers read
++const DIAGNOSTIC=/^(tools\/|sip-access-|c0-diagnostic|options-survey|expert-probe)/;
++export function roleOf(file){
++ if(CATALYST.has(file))return 'CATALYST_LANE_PRODUCER';if(LIVE.has(file))return 'LIVE_DELIVERY_PATH';if(SHARED_INPUT.has(file))return 'SHARED_PRICE_INPUT';
++ if(DIAGNOSTIC.test(file))return 'DIAGNOSTIC_TOOL';return 'FROZEN_RESEARCH_PRODUCER';
++}
++
++// Reviewed contract status per live/catalyst ingress. Dimensions: identity, units, clock, session, adjustment, revision, status.
++// Y = covered by actual-caller tests; P = partial (stated); N = open; NA = not applicable. `by` names the package.
++const C=(identity,units,clock,session,adjustment,revision,status,by,note)=>({identity,units,clock,session,adjustment,revision,status,by,note});
++export const CONTRACTS={
++ 'earnings-study.mjs|ALPHA_VANTAGE':C('Y','P','Y','Y','NA','Y','Y','claude/market03-catalyst03','requested-symbol identity; EPS strict, currency not stated by provider (labelled); report day + provider timing; reaction session'),
++ 'earnings-study.mjs|FMP':C('Y','P','P','N','NA','Y','Y','claude/market03-catalyst03','whole response rejected on any foreign symbol; FMP gives no timing (UNKNOWN, both reaction candidates)'),
++ 'earnings-study.mjs|FINNHUB':C('Y','P','Y','Y','NA','Y','Y','Codex 86b25cc + claude/market03-catalyst03','pending vs malformed vs class rows; DMH kept; cross-provider corroboration vs same-provider revision'),
++ 'news-watch.mjs|FINNHUB':C('P','NA','Y','N','NA','Y','Y','Codex 0f29b05/5cc2dbb + claude/market03-catalyst03','company-news bounds/status/revisions (Codex); per-field and attribution digests (this package); quote/profile/metadata paths still legacy nullable'),
++ 'research-collector.mjs|FINNHUB':C('P','NA','Y','N','NA','P','Y','Codex cf7f964','live vs cached origin carried to reliability; no cross-job revision guarantee'),
++ 'events-study.mjs|SEC':C('Y','NA','Y','P','NA','P','Y','Codex SEC caller/native lineage','accession + reported publication metadata; body revisions/authenticity open'),
++ 'events-study.mjs|OPENFDA':C('P','NA','P','N','NA','N','Y','Codex FDA continuation','weekly marker only on success; schema/refresh failures distinct'),
++ 'insider-study.mjs|SEC':C('Y','Y','P','NA','NA','Y','Y','Codex insider ZIP/TSV','dash/dot classes distinct; CIK padding; legacy rows lack accession/ingestion clocks'),
++ 'chain-ripple.mjs|MASSIVE':C('P','P','Y','P','P','Y','Y','Codex chain continuation','price-day ids and raw hashes; corporate-action basis not authenticated'),
++ 'share-supply-source.mjs|SEC':C('Y','NA','Y','NA','NA','Y','Y','Codex share-supply','literal class punctuation; unique CIK mapping; bounded index'),
++ 'discovery2.mjs|SEC':C('Y','NA','Y','NA','NA','Y','Y','Codex share-supply (shared index contract)',''),
++ 'discovery2.mjs|PRICE_CACHE':C('P','NA','Y','Y','P','Y','Y','claude/market03-catalyst03','reads the shared cache (no fetch): close day, session-based lag, basis label, revision id; stale lines withheld'),
++ 'comeback-lab.mjs|MASSIVE':C('Y','Y','Y','Y','Y','Y','Y','claude/market03-catalyst03','SPY only; NY bar day; unfinished bar excluded; revised bars kept as original'),
++ 'alpaca-feed.mjs|ALPACA_DATA':C('Y','P','Y','Y','NA','N','P','Codex market-ingress-calendar','DST/half-day/impossible calendar controls; dot/dash classes distinct; intraday basis raw'),
++ 'ignition-watch.mjs|ALPACA_DATA':C('Y','P','Y','Y','NA','N','P','Codex market-ingress-calendar','actual alpacaAll caller test'),
++ 'ignition-watch.mjs|MASSIVE':C('N','N','P','P','N','N','P','open','15-minute delayed plan; contract not reviewed in this package (Codex watcher scope)'),
++ 'leaders-study.mjs|MASSIVE':C('P','P','P','N','P','N','P','open (Codex-owned shared cache)','grouped bars split-adjusted as of each fetch + heuristic split repair; share classes excluded (/^[A-Z]{1,5}$/); ticker reuse not detected'),
++ 'scan.mjs|TWELVE_DATA':C('N','N','N','N','N','N','N','open (scan.mjs owned by main session)','proposal in docs/market03-catalyst03/SCAN-PROPOSAL.md'),
++ 'scan.mjs|ALPACA_DATA':C('N','N','P','P','N','N','N','open (scan.mjs owned by main session)','proposal'),
++ 'scan.mjs|FINNHUB':C('N','N','N','N','NA','N','N','open (scan.mjs owned by main session)','proposal'),
++ 'scan.mjs|FMP':C('N','N','N','NA','NA','N','N','open (scan.mjs owned by main session)','proposal'),
++ 'scan.mjs|POLYGON':C('N','N','N','N','N','N','N','open (scan.mjs owned by main session)','proposal'),
++ 'scan.mjs|SEC':C('P','NA','P','NA','NA','N','P','open (scan.mjs owned by main session)','danger-filing reads; proposal'),
++ 'intraday-radar.mjs|FINNHUB':C('N','N','N','N','NA','N','N','open',''),
++ 'premarket-check.mjs|ALPACA_DATA':C('N','N','P','P','NA','N','N','open','prior-close / old-trade guard covered by Codex news tests only'),
++ 'movers.mjs|POLYGON':C('N','N','N','N','N','N','N','open',''),
++ 'movers.mjs|FINNHUB':C('N','N','N','N','NA','N','N','open',''),
++};
++
++const hostRe=/https?:\/\/([a-z0-9.\-]+\.(?:com|io|gov|org|markets|net|co))(?=[\/'"`?\s)]|$)/gi;
++export function buildMatrix(root=ROOT){
++ const files=execFileSync('git',['ls-files','*.mjs'],{cwd:root,encoding:'utf8'}).split('\n').filter(f=>f&&!/^(test|tests|docs)\//.test(f));
++ const pairs=[];
++ for(const file of files){const src=fs.readFileSync(path.join(root,file),'utf8'),hosts=new Set();for(const m of src.matchAll(hostRe))hosts.add(m[1].toLowerCase());
++  for(const host of [...hosts].sort()){
++   const kind=OPS.has(host)?'OPS':REFERENCE.test(host)?'REFERENCE_ONLY':PROVIDER[host]?'PROVIDER':'UNCLASSIFIED';
++   if(kind!=='PROVIDER'){pairs.push({file,host,kind});continue;}
++   const provider=PROVIDER[host],role=roleOf(file),contract=CONTRACTS[file+'|'+provider]||null;
++   pairs.push({file,host,kind,provider,role,contract:contract||(role==='FROZEN_RESEARCH_PRODUCER'?'OUT_OF_SCOPE_FROZEN_INPUTS':role==='DIAGNOSTIC_TOOL'?'DIAGNOSTIC_NOT_A_DECISION_PATH':'NOT_REVIEWED')});}
++ }
++ // Ingress that is not a URL in the file (shared cache readers) is listed from the contract table.
++ for(const key of Object.keys(CONTRACTS)){const [file,provider]=key.split('|');if(!pairs.some(p=>p.file===file&&p.provider===provider))pairs.push({file,host:null,kind:'PROVIDER',provider,role:roleOf(file),contract:CONTRACTS[key],via:'shared cache or injected transport'});}
++ pairs.sort((a,b)=>a.file<b.file?-1:a.file>b.file?1:String(a.host)<String(b.host)?-1:1);
++ const providerPairs=pairs.filter(p=>p.kind==='PROVIDER'),decision=providerPairs.filter(p=>['LIVE_DELIVERY_PATH','CATALYST_LANE_PRODUCER','SHARED_PRICE_INPUT'].includes(p.role));
++ const reviewed=decision.filter(p=>typeof p.contract==='object');
++ const full=reviewed.filter(p=>['identity','units','clock','session','adjustment','revision','status'].every(k=>['Y','NA'].includes(p.contract[k])));
++ return {summary:{files:files.length,pairs:pairs.length,providerPairs:providerPairs.length,decisionPathPairs:decision.length,reviewedDecisionPairs:reviewed.length,fullyCoveredDecisionPairs:full.length,
++  unreviewedDecisionPairs:[...new Set(decision.filter(p=>typeof p.contract!=='object').map(p=>p.file+'|'+p.provider))],unclassified:pairs.filter(p=>p.kind==='UNCLASSIFIED').map(p=>p.file+'|'+p.host),
++  frozenResearchPairs:providerPairs.filter(p=>p.role==='FROZEN_RESEARCH_PRODUCER').length,
++  decisionIngress:new Set(decision.map(p=>p.file+'|'+p.provider)).size,reviewedIngress:new Set(reviewed.map(p=>p.file+'|'+p.provider)).size,fullyCoveredIngress:[...new Set(full.map(p=>p.file+'|'+p.provider))]},pairs};
++}
++if(process.argv[1]===fileURLToPath(import.meta.url)){
++ const m=buildMatrix();
++ if(process.argv.includes('--write'))fs.writeFileSync(path.join(ROOT,'docs/validation/market03-ingress-matrix.json'),JSON.stringify(m,null,1)+'\n');
++ console.log(JSON.stringify(m.summary,null,1));
++}

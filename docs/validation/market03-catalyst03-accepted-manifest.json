@@ -1,0 +1,167 @@
+{
+  "kind": "INDEPENDENT_ACCEPTED_DEVELOPMENT_SOURCE_CONTRACT_INTEGRATION",
+  "verdict": "PASS_SCOPED_DEVELOPMENT_REPAIR",
+  "authorPackageHead": "ac7990dea013d8d9f778db5b713b093aa853c160",
+  "authorCodeHead": "ad3af0f33975356180feb4b036165b56f2c0cdc3",
+  "developmentBase": "92ebff50c729fd3b39963fd9548dac5265aefd2e",
+  "publishedRuntimeSource": "75c53a802befbaebfaeb52cb4790893746420b5a",
+  "authorManifestSha256": "4403d5acc5f025dc8e2c354bec76c156be9117f2ab184ca8f0f34aba66f053e2",
+  "authorPackagePatch": {
+    "file": "docs/validation/market03-catalyst03-r3-code.patch",
+    "sha256": "8339f678f322ca47227c8b3b7b1667b15c8783a3c08cc1eb5fcf5feb7e7d7cc9",
+    "scope": "development 92ebff50 -> ad3af0f3",
+    "files": [
+      "comeback-lab.mjs",
+      "comeback-provenance.mjs",
+      "discovery-runtime.mjs",
+      "discovery2.mjs",
+      "earnings-study.mjs",
+      "news-revision-archive.mjs",
+      "news-watch.mjs",
+      "source-contract.mjs",
+      "tests/catalyst03-source-to-candidate.test.mjs",
+      "tests/market03-comeback-spy.test.mjs",
+      "tests/market03-ingress-matrix.test.mjs",
+      "tests/market03-r2-spy-counts.test.mjs",
+      "tests/market03-review-codex-additional.test.mjs",
+      "tests/market03-review-codex-spy-envelope.test.mjs",
+      "tests/market03-review-r1-r3.test.mjs",
+      "tests/market03-source-contract.test.mjs",
+      "tools/market03-ingress-matrix.mjs"
+    ]
+  },
+  "authorFixDeltaPatch": {
+    "file": "docs/validation/market03-catalyst03-r3-fix-delta.patch",
+    "sha256": "dbebf53bbaadafeacdd47470aa364d1c12dbbee663146db2b559d0c7a8da836a",
+    "scope": "re-pin 28633430 -> ad3af0f3 (the R2 residual fix only)",
+    "files": [
+      "comeback-lab.mjs",
+      "comeback-provenance.mjs",
+      "tests/market03-r2-spy-counts.test.mjs",
+      "tests/market03-review-codex-spy-envelope.test.mjs"
+    ]
+  },
+  "requiredMatrix": {
+    "file": "docs/validation/market03-ingress-matrix.json",
+    "sha256": "a2e21c9a2a6ea2b0f444c48cd3287ab8c576bc43d7b70c487b9f9c2b1491255b",
+    "note": "same bytes as reviewed r2"
+  },
+  "integratedPatch": {
+    "file": "docs/validation/market03-catalyst03-accepted-code.patch",
+    "sha256": "0b8a13382b0f88812c29895ee509290457996ad0b3a997c281fed049fd7a5769",
+    "files": [
+      "comeback-lab.mjs",
+      "comeback-provenance.mjs",
+      "discovery-runtime.mjs",
+      "discovery2.mjs",
+      "earnings-study.mjs",
+      "news-revision-archive.mjs",
+      "news-watch.mjs",
+      "source-contract.mjs",
+      "tests/catalyst03-source-to-candidate.test.mjs",
+      "tests/market03-comeback-spy.test.mjs",
+      "tests/market03-ingress-matrix.test.mjs",
+      "tests/market03-r2-spy-counts.test.mjs",
+      "tests/market03-review-codex-additional.test.mjs",
+      "tests/market03-review-codex-spy-envelope.test.mjs",
+      "tests/market03-review-r1-r3.test.mjs",
+      "tests/market03-source-contract.test.mjs",
+      "tools/market03-ingress-matrix.mjs"
+    ],
+    "requiredAdditionalFile": "docs/validation/market03-ingress-matrix.json"
+  },
+  "before": {
+    "comeback-lab.mjs": "68559eea87bc814984bec1fbb75d233781065db16094b62f54be5283ba858b7b",
+    "comeback-provenance.mjs": null,
+    "discovery-runtime.mjs": "a4a4ac558c34c387e40c5f225a044aef7d2826112bb278e94e4e494073a9280e",
+    "discovery2.mjs": "709033f065571b41bedaff062fe9fe952f162d5a05dbcffcd0af44431da93fee",
+    "earnings-study.mjs": "763bd4733a3c11ef6aa626ad7e61e426605c6ef54dcea582ba04282a1487e09d",
+    "news-revision-archive.mjs": null,
+    "news-watch.mjs": "70c59c185e34c2c7f34499a8df26252e5d07d45984f930f83203b25df457a32d",
+    "source-contract.mjs": null,
+    "tests/catalyst03-source-to-candidate.test.mjs": null,
+    "tests/market03-comeback-spy.test.mjs": null,
+    "tests/market03-ingress-matrix.test.mjs": null,
+    "tests/market03-r2-spy-counts.test.mjs": null,
+    "tests/market03-review-codex-additional.test.mjs": null,
+    "tests/market03-review-codex-spy-envelope.test.mjs": null,
+    "tests/market03-review-r1-r3.test.mjs": null,
+    "tests/market03-source-contract.test.mjs": null,
+    "tools/market03-ingress-matrix.mjs": null
+  },
+  "after": {
+    "comeback-lab.mjs": "02a17a6d193e7f21d795343f9d6330f1e3ade520d8906ec74f6c335af387f670",
+    "comeback-provenance.mjs": "c37b8c75510c4f3f2878d8c48a7d5a12b181604bfe32726c25b76b8239463f31",
+    "discovery-runtime.mjs": "8fac4c05fdd9fbd92f5b4e8575ff2ca1ba012cdaad427e4bf3800ed1fd39b1e7",
+    "discovery2.mjs": "122660f00e580e300591d15fdcc2edf4df916d15ac29cd86229eb599cf44a6b7",
+    "earnings-study.mjs": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+    "news-revision-archive.mjs": "2eec1e227f88df432ab1caa5c10649bb4afa461a06d11ca1e1560ed305b83e3d",
+    "news-watch.mjs": "08335f2aa69970e65fa5cdc6f5deee2d59d21d712dd4e33ae67e600372e17701",
+    "source-contract.mjs": "515f20341ff46ae1b3477fb0f98b0012e9f9fd1a0c2bc13142fd0395c4a3d31f",
+    "tests/catalyst03-source-to-candidate.test.mjs": "1f3d404dc7d268227b956645fc117af4013a4ea06aca2f5f206a9e004e1cf25c",
+    "tests/market03-comeback-spy.test.mjs": "dee40918cdfcad6d597dbcd9431282621966768adfdbdae004519c7fd83f7fa8",
+    "tests/market03-ingress-matrix.test.mjs": "299120bded7d98d4fbc95b81f4a3d83e5a91beae41f445afaa39c95710052f0f",
+    "tests/market03-r2-spy-counts.test.mjs": "6764cfc344a769d38fb33c2feffaff1cc7f3f5ed1f4454e069070a568bd7a3d7",
+    "tests/market03-review-codex-additional.test.mjs": "9c3d7475b662d9214df488faf4b4f66a1cb538779e00872eda8a6e6fe74c6029",
+    "tests/market03-review-codex-spy-envelope.test.mjs": "fc2a918795f921943209bace204ef9abedfa7382db52fa66e74fdd77af66c4b4",
+    "tests/market03-review-r1-r3.test.mjs": "39afe2887bf8e2ad534e604ba6fd1effe380145c1b275cd6ae4d87933a61d4bf",
+    "tests/market03-source-contract.test.mjs": "8bc469b8708b9e1fdc9d16a27377bf7710059a75f09d964fe5de568153b4a364",
+    "tools/market03-ingress-matrix.mjs": "ec8187d5072008faf5e5b34a563936a120755296916529a1542eba8146545568"
+  },
+  "protectedDependencies": {
+    "scan.mjs": "18a5765c1a72391630aaa4d519bee32c2c5992c1cee1629981ffbd0bc27e0eab",
+    "ignition-watch.mjs": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734",
+    "market-symbol.mjs": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+    "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+    "comeback-core.mjs": "7c25bce42a0a1fa70a0c28fa9aa178c4af9606bda60281abb15c75ebdf9e7ad6",
+    "discovery2-core.mjs": "a453f3f624094aeb6d9caa8492ef93fe45498261dc413c2b30b3dbf88279316b",
+    "news-revision-state.mjs": "4437791c9e05502e6953f06ad7e5ea454ca153a0c6947c15ae5be19fe8ad96c4",
+    "news-source.mjs": "55015ab59063d784f9b7cd8e1e81fce5a8bebc80b5f13cfcf8b9aea57b4a24e8",
+    "share-supply-source.mjs": "d1718c31458db28a63296719b9c4dabfc53452c840cebe10def4854056db3fe8",
+    "mentor-plan.mjs": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+    "alpaca-feed.mjs": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568",
+    "leaders-study.mjs": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3"
+  },
+  "testOnlyDeparturesFromAuthor": [
+    "tests/market03-r2-spy-counts.test.mjs",
+    "tests/market03-review-r1-r3.test.mjs",
+    "tests/market03-comeback-spy.test.mjs"
+  ],
+  "testOnlyReason": "04Z synthetic daily-bar fixtures map to prior NY date after DST; use05Z for declared same NY day and assert both regimes. Runtime bytes remain author-identical.",
+  "independentLocal": {
+    "node": "24.19.0",
+    "uid": 1000,
+    "exactAuthorTargeted": {
+      "pass": 82,
+      "fail": 0
+    },
+    "selectedCurrentBeforeFixtureCorrection": {
+      "pass": 82,
+      "fail": 0
+    },
+    "finalIntegratedTargeted": {
+      "pass": 83,
+      "fail": 0
+    },
+    "independentEnvelope": {
+      "pass": 6,
+      "fail": 0
+    },
+    "permissionCasesIncluded": 7,
+    "historyPreservation": {
+      "pass": 11,
+      "fail": 0
+    },
+    "DSTFixtureNegativeControl": "FAIL as expected,2026-11-02T04Z yieldsNY2026-11-01",
+    "liveProviderCalls": 0,
+    "realMessages": 0
+  },
+  "genuineAdmissions": 0,
+  "acceptance": {
+    "accepted": 24,
+    "total": 40,
+    "newClosures": 0
+  },
+  "market03AndCatalyst03": "OPEN; scoped R1/R2/R3 repaired, complete all-source/provider identity/materiality/normalization still required",
+  "productionIntegration": false
+}

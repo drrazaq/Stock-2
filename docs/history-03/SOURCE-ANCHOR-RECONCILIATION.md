@@ -1,3 +1,5 @@
+> Source-only continuation: anchors now pin accepted runtime `75c53a802befbaebfaeb52cb4790893746420b5a`;100 records/151 locations and all prior states remain unchanged. The source package changes no owner policy or historical result. [Scoped review](../reviews/market03-catalyst03-r3/REVIEW.md).
+
 > **2 November continuation:** source snapshot9b78b51d, same100 records/151 locations; [12 synthetic actual-command renderings and additional repairs](../november02-engineering-checkpoint.md), [tagged output](../validation/history03-synthetic-render-20261102.json). Original catalogue/ERRATA/policies preserved. Older paragraphs below are checkpoint evidence, not a claim that current mentor deployment or privacy cutover occurred.
 
 # HISTORY-03 source-anchor reconciliation
