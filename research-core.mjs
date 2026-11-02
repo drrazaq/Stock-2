@@ -153,6 +153,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'rpo') { ch += preRegisterRpo(LB); continue; }
     if (R.family === 'eat') { ch += preRegisterEat(LB); continue; }
     if (R.family === 'tax') { ch += preRegisterTax(LB); continue; }
+    if (R.family === 'rdi') { ch += preRegisterRdi(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -443,4 +444,72 @@ export function preRegisterTax(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of TAX_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-01 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.', sources: TAX_SOURCES, hold: R.hold, note: TAX_NOTE }); ch++; }
+  return ch; }
+// ---------------- IDEA 7 (pre-registered 2 Nov 2026, before any run): R&D INCREASES (Eberhart, Maxwell and Siddique 2004) ----------------
+// Source: Eberhart, Maxwell and Siddique, "An Examination of Long-Term Abnormal Stock Returns and Operating Performance Following R&D
+// Increases", Journal of Finance 59(2), 2004, 623-650 (doi 10.1111/j.1540-6261.2004.00644.x); follow-up "Does the stock market underreact
+// to R&D increases?" (JOIM 2008). Firms that raise R&D by a meaningful amount (R&D intensity 5%+, R&D up 5%+ and R&D per assets up 5%+)
+// earned positive long-term abnormal returns over the next years: the market under-reacts to the benefit of the extra R&D.
+// NEW EVENT: the library has R&D LEVEL (ANOM-RD, rejected) and R&D share of revenue with growth and margins (SQ4-RDCOMP, rejected); no
+// rule uses a year-on-year R&D INCREASE event. Long only.
+// MEASURE (fixed now, no tuning): us-gaap:ResearchAndDevelopmentExpense (unit USD; a company with no quarter of it uses
+// us-gaap:ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost instead), DISCRETE QUARTERS only (80-100 days), forms 10-Q/10-K
+// (no amendments), period end from 2019-06-01; us-gaap:Assets (instant, USD). Event timing, quarter matching and the 120-day freshness
+// rule exactly as IDEA 6 (taxEvents): an EVENT is a filing date F whose latest quarter end E is new and 0-120 days old; CUR = R&D of E,
+// PRIOR = R&D of the quarter ending E-365 (E-385..E-345, latest filed on or before F); A1 = assets at E, A0 = assets at the prior end
+// (instant within +-20 days, latest filed on or before F). A0 >= 10M USD, CUR > 0, PRIOR > 0.
+// QUALIFIES (the paper's three tests, quarterly year-on-year form): CUR >= 1.05 x PRIOR, CUR/A1 >= 1.05 x PRIOR/A0, 4 x CUR / A1 >= 5%.
+// Simplification (stated): the paper also asks R&D/sales >= 5%; not used here (revenue tags vary). The paper is annual; this is the
+// same test on each quarter versus the same quarter a year before.
+//   RQ-RDI-126  BUY the next open after a qualifying filing (stock liquid on the session before); sell the close 126 sessions later.
+//   RQ-RDI-252  the same, hold 252 sessions (one year; the paper's effect is long-term).
+// One open trade per stock per rule. No ranking, no tuning.
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies looked up in the SEC bulk company facts file, (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 10,000+ R&D year-on-year events (qualifying or not) from 2021-10-01 (fewer = reader broken).
+export const RDI = { tags: ['ResearchAndDevelopmentExpense', 'ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost'], assets: 'Assets', endFrom: '2019-06-01', qLo: 80, qHi: 100, maxLag: 120, prevLo: 345, prevHi: 385, aWin: 20, minAssets: 10e6, rise: 1.05, intensity: 0.05, eventsFrom: '2021-10-01' };
+export const RDI_DATA = { looked: 0.95, map: 0.85, events: 10000 };
+RULES['RQ-RDI-126'] = { kind: 'buy', hold: 126, family: 'rdi', name: 'R&D increase (R&D up 5%+ on a year before, per assets up 5%+, R&D 5%+ of assets), hold 6 months',
+  rule: 'Buy the next open after a 10-Q/10-K (SEC XBRL) whose quarterly R&D expense is 5%+ above the same quarter a year before, whose R&D per total assets is also 5%+ higher, and whose annualised R&D (4 x quarter) is 5%+ of assets (filed within 120 days of the quarter end; assets 10M USD+); stock liquid; sell the close 126 sessions later.' };
+RULES['RQ-RDI-252'] = { kind: 'buy', hold: 252, family: 'rdi', name: 'R&D increase, hold 1 year', rule: 'As RQ-RDI-126, hold 252 sessions.' };
+export const RDI_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'rdi');
+for (const id of RDI_IDS) { if (!IDS.includes(id)) IDS.push(id); if (!BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// companyfacts JSON -> { q: [[start, end, val, filed, form]] R&D discrete quarters, a: [[end, val, filed]] assets, tag }, sorted by filed
+export function rdiRows(j) { const g = j && j.facts && j.facts['us-gaap'], form = (x) => x.form === '10-Q' || x.form === '10-K';
+  const quarters = (tag) => { const u = g && g[tag] && g[tag].units, q = [], s = new Set();
+    for (const x of (u && Array.isArray(u.USD) ? u.USD : [])) { if (!x || !x.start || !x.end || !x.filed || !ok(x.val) || !form(x) || x.end < RDI.endFrom) continue;
+      const len = daysBetween(x.start, x.end); if (len < RDI.qLo || len > RDI.qHi) continue; const k = x.start + '|' + x.end + '|' + x.val + '|' + x.filed; if (s.has(k)) continue; s.add(k); q.push([x.start, x.end, x.val, x.filed, x.form]); }
+    return q; };
+  let q = quarters(RDI.tags[0]), tag = RDI.tags[0]; if (!q.length) { q = quarters(RDI.tags[1]); tag = q.length ? RDI.tags[1] : null; }
+  const ua = g && g[RDI.assets] && g[RDI.assets].units, a = [], sa = new Set();
+  for (const x of (ua && Array.isArray(ua.USD) ? ua.USD : [])) { if (!x || x.start || !x.end || !x.filed || !ok(x.val) || x.val <= 0 || !form(x) || x.end < '2018-03-01') continue;
+    const k = x.end + '|' + x.val + '|' + x.filed; if (sa.has(k)) continue; sa.add(k); a.push([x.end, x.val, x.filed]); }
+  const byF = (i) => (p, r) => p[i] < r[i] ? -1 : p[i] > r[i] ? 1 : 0;
+  return { q: q.sort((p, r) => byF(3)(p, r) || byF(1)(p, r)), a: a.sort((p, r) => byF(2)(p, r) || byF(0)(p, r)), tag }; }
+const assetsNear = (A, F, end) => { let as = null; for (const x of A) { if (x[2] > F) break; const gap = Math.abs(daysBetween(x[0], end)); if (gap > RDI.aWin) continue;
+  if (!as || gap < Math.abs(daysBetween(as[0], end)) || (x[0] === as[0] && x[2] >= as[2])) as = x; } return as; };
+// rows -> events [{ d (filed), end, cur, prior, a1, a0, g (= CUR/PRIOR - 1), intensity (4 CUR / A1), qualifies, form }]
+export function rdiEvents(rows) { const out = [], q = (rows && rows.q) || [], A = (rows && rows.a) || []; let maxEnd = '';
+  const byF = new Map(); for (const r of q) (byF.get(r[3]) || byF.set(r[3], []).get(r[3])).push(r);
+  const known = [];
+  for (const F of [...byF.keys()].sort()) { const here = byF.get(F); known.push(...here); const E = here.reduce((m, r) => r[1] > m ? r[1] : m, '');
+    if (E > maxEnd && daysBetween(E, F) >= 0 && daysBetween(E, F) <= RDI.maxLag) { const cur = here.filter(r => r[1] === E).pop()[2], target = addDays(E, -365); let best = null;
+      for (const r of known) { const gap = daysBetween(r[1], E); if (gap < RDI.prevLo || gap > RDI.prevHi) continue;
+        if (!best || Math.abs(daysBetween(r[1], target)) < Math.abs(daysBetween(best[1], target)) || (r[1] === best[1] && r[3] >= best[3])) best = r; }
+      const a0 = best ? assetsNear(A, F, best[1]) : null, a1 = assetsNear(A, F, E);
+      if (best && a0 && a1 && a0[1] >= RDI.minAssets && cur > 0 && best[2] > 0) { const prior = best[2], intensity = 4 * cur / a1[1];
+        const qualifies = cur >= RDI.rise * prior - 1e-9 && cur / a1[1] >= RDI.rise * prior / a0[1] - 1e-12 && intensity >= RDI.intensity - 1e-12;
+        out.push({ d: F, end: E, cur, prior, a1: a1[1], a0: a0[1], g: +(cur / prior - 1).toFixed(6), intensity: +intensity.toFixed(6), qualifies, form: here.find(r => r[1] === E)[4] }); } }
+    if (E > maxEnd) maxEnd = E; }
+  return out; }
+export function rdiDataRule({ ciks, looked, liqMonths, liqMapped, events }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= RDI_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= RDI_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= RDI_DATA.events)) why.push('R&D year-on-year events ' + events + ' (10,000 needed: reader check)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const RDI_SOURCES = ['https://doi.org/10.1111/j.1540-6261.2004.00644.x', 'https://papers.ssrn.com/abstract=560043', 'https://papers.ssrn.com/abstract=897385'];
+const RDI_NOTE = 'Daily researcher 2026-11-02: Eberhart, Maxwell and Siddique (2004, Journal of Finance) R&D increases: firms that raise R&D meaningfully (intensity 5%+, R&D and R&D/assets up 5%+) earned positive long-term abnormal returns. New event (the year-on-year R&D increase; ANOM-RD tested the level, SQ4-RDCOMP the share of revenue with growth). Quarterly year-on-year version from official SEC XBRL company facts; R&D/sales test left out (stated). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 3 Nov 2026.';
+export function preRegisterRdi(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of RDI_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-02 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Measure, quarter filter, year-ago match, the three increase tests and the data rule fixed in research-core.mjs (IDEA 7) before any run.', sources: RDI_SOURCES, hold: R.hold, note: RDI_NOTE }); ch++; }
   return ch; }

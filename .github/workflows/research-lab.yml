@@ -10,7 +10,8 @@ name: Research lab
 # the SEC bulk company facts file, read once into research-cache/rpo.json.gz; paper via companyconcept). Idea 5 (31 Oct 2026): EARNINGS ANNOUNCEMENT
 # TIMING (RQ-EAT-*; Johnson and So 2018): item-2.02 8-K dates vs the year-ago date, from the idea-3 8-K lists in research-cache/isc; paper via fresh submissions. Idea 6 (1 Nov 2026): TAX EXPENSE MOMENTUM
 # (RQ-TAX-*; Thomas and Zhang 2011): quarterly IncomeTaxExpenseBenefit + Assets from the same SEC bulk company facts file, read once into
-# research-cache/tax.json.gz; paper via companyconcept. The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
+# research-cache/tax.json.gz; paper via companyconcept. Idea 7 (2 Nov 2026): R&D INCREASES (RQ-RDI-*; Eberhart, Maxwell and Siddique 2004):
+# quarterly R&D + Assets from the same bulk file, read once into research-cache/rdi.json.gz; paper via companyconcept. The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
 # research-cache is saved. Commits only its own output files and its own library entries. Never places an order.
 # Start by hand: change run-research-now.txt (or run the workflow).
 on:
