@@ -30,7 +30,7 @@
      steps:
        - uses: actions/checkout@v4
          with:
-@@ -24,19 +24,13 @@
+@@ -24,23 +24,13 @@
        - uses: actions/setup-node@v4
          with:
            node-version: 20
@@ -44,41 +44,45 @@
            path: fm-cache
            key: fm-cache-none
            restore-keys: fm-cache-
+-      - name: Recheck watcher admission after cache
+-        if: steps.admission.outputs.run == 'true'
+-        id: ready
+-        run: node watcher-schedule.mjs
        # Checks the whole market every minute for stocks starting to run. Alerts only rules that passed the minute test.
 -      - name: Observe configured session
--        if: steps.admission.outputs.run == 'true'
+-        if: steps.ready.outputs.run == 'true'
 -        shell: bash
 +      - shell: bash
          run: |
            set -o pipefail
            node ignition-watch.mjs 2>&1 | tee run.log
-@@ -49,10 +43,10 @@
+@@ -53,10 +43,10 @@
            TG_CHAT: ${{ secrets.TG_CHAT }}
            SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
        # Durable per-stock ledger of today's 15%+ movers (the missed-runner autopsy reads it; no data calls).
--      - if: always() && steps.admission.outputs.run == 'true'
+-      - if: always() && steps.ready.outputs.run == 'true'
 +      - if: always()
          continue-on-error: true
          run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
--      - if: always() && steps.admission.outputs.run == 'true'
+-      - if: always() && steps.ready.outputs.run == 'true'
 +      - if: always()
          run: |
            set -euo pipefail
            git config user.name "scanner"
-@@ -61,7 +55,7 @@
+@@ -65,7 +55,7 @@
            git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
            ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
            [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
--      - if: failure() && steps.admission.outputs.run == 'true'
+-      - if: failure() && steps.ready.outputs.run == 'true'
 +      - if: failure()
          env:
            TG_TOKEN: ${{ secrets.TG_TOKEN }}
            TG_CHAT: ${{ secrets.TG_CHAT }}
-@@ -69,7 +63,7 @@
+@@ -73,7 +63,7 @@
            WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
            curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
  
--      - if: always() && steps.admission.outputs.run == 'true'
+-      - if: always() && steps.ready.outputs.run == 'true'
 +      - if: always()
          uses: actions/upload-artifact@v4
          with:
@@ -449,7 +453,7 @@
 - const start='2026-11-02T14:10:00Z',r=await f.workflow({start,event:'schedule',schedule:'CURRENT_CRON',setupMinutes:5,cacheMinutes:20});assert.equal(r.code,0,r.output);assert.match(r.output,/LATE_PARTIAL_START/);const j=f.read('data/ignition-runs/2026-11-02/101-1.json');assert.equal(j.processStart,'09:35');assert.equal(j.heartbeat[0].m,575);assert.equal(Math.max(...j.heartbeat.map(x=>x.m)),f.expectedLastMinute);assert.ok(r.trace.ended-Date.parse(start)<360*60000);assert.equal(j.heartbeat.some(x=>x.m===570),false);
 -}));
 -test('setup/cache delays beyond the configured window never manufacture observations',()=>scenario(async f=>{
-- const r=await f.workflow({start:'2026-11-02T19:50:00Z',event:'schedule',schedule:'CURRENT_CRON',cacheMinutes:20});assert.equal(r.code,0,r.output);assert.equal(r.skipped,true);assert.match(r.output,/CONFIGURED_WINDOW_ENDED/);assert.equal(f.state.providerRequests,0);assert.equal(fs.existsSync(path.join(f.dir,'data/ignition-runs/2026-11-02/101-1.json')),false);
+- const r=await f.workflow({start:'2026-11-02T19:50:00Z',event:'schedule',schedule:'CURRENT_CRON',cacheMinutes:20});assert.equal(r.code,0,r.output);assert.equal(r.skipped,true);assert.match(r.output,/CONFIGURED_WINDOW_ENDED/);if(f.expectedLastMinute===900)assert.equal(r.skippedAt,'post-cache-admission','expired cache wait must skip the watcher AND every post-observation write step');assert.equal(f.state.providerRequests,0);assert.equal(fs.existsSync(path.join(f.dir,'data/ignition-runs/2026-11-02/101-1.json')),false);
 -}));
 --- a/test/watcher-nov2-guard.test.mjs
 +++ /dev/null
@@ -523,7 +527,7 @@
 -});
 --- a/test/watcher-nov2-fixture.mjs
 +++ /dev/null
-@@ -1,57 +0,0 @@
+@@ -1,64 +0,0 @@
 -// Synthetic clock and loopback services. Official URLs are intercepted before any network call.
 -import fs from 'node:fs';
 -import os from 'node:os';
@@ -568,7 +572,7 @@
 -  const yaml=fs.readFileSync(path.join(root,'.github/workflows/ignition.yml'),'utf8');
 -  if(['CURRENT_CRON','OPPOSITE_CRON'].includes(options.schedule)){const pair=[...yaml.matchAll(/cron: '([^']+)'/g)].map(x=>x[1]);const offset=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',timeZoneName:'shortOffset'}).formatToParts(Date.parse(options.start)).find(x=>x.type==='timeZoneName').value;const i=offset==='GMT-4'?0:1;options={...options,schedule:pair[options.schedule==='CURRENT_CRON'?i:1-i]};}
 -  const output=path.join(dir,'admission-'+(options.id||'101')+'.txt');
--  if(yaml.includes('run: node watcher-schedule.mjs')){copy('watcher-schedule.mjs');const gate=await run('watcher-schedule.mjs',{...options,GITHUB_OUTPUT:output});if(gate.code!==0||!fs.readFileSync(output,'utf8').includes('run=true'))return {...gate,skipped:true};}
+-  if(yaml.includes('run: node watcher-schedule.mjs')){copy('watcher-schedule.mjs');const gate=await run('watcher-schedule.mjs',{...options,GITHUB_OUTPUT:output});if(gate.code!==0||!fs.readFileSync(output,'utf8').includes('run=true'))return {...gate,skipped:true,skippedAt:'initial-admission'};}
 -  if(yaml.includes('name: Ignore opposite DST schedule')) {
 -   const at=Date.parse(options.start||'2026-11-02T14:10:00Z'),parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',timeZoneName:'shortOffset'}).formatToParts(at),offset=parts.find(x=>x.type==='timeZoneName').value==='GMT-4'?'-0400':'-0500';
 -   const bin=path.join(dir,'clock-bin');fs.mkdirSync(bin,{recursive:true});fs.writeFileSync(path.join(bin,'date'),'#!/bin/sh\necho '+offset+'\n',{mode:0o755});
@@ -576,7 +580,14 @@
 -   const result=spawnSync('bash',['-c',block.split('\n').map(l=>l.replace(/^          /,'')).join('\n')],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,GITHUB_EVENT_NAME:options.event||'workflow_dispatch',SCHEDULE:options.schedule||'',GITHUB_OUTPUT:output},encoding:'utf8'});
 -   if(result.status!==0)throw Error(result.stderr);if(!fs.readFileSync(output,'utf8').includes('run=true'))return {code:0,output:result.stdout+'OPPOSITE_DST_CRON',skipped:true};
 -  }
--  const result=await run('ignition-watch.mjs',{...options,start:new Date(Date.parse(options.start)+cacheMinutes*60000).toISOString()});return {...result,skipped:/watcher admission: (?:OPPOSITE_DST_CRON|TOO_EARLY_FOR_BOUNDED_JOB|CONFIGURED_WINDOW_ENDED)/.test(result.output)};
+-  const afterCache={...options,start:new Date(Date.parse(options.start)+cacheMinutes*60000).toISOString()};
+-  if(yaml.includes('name: Recheck watcher admission after cache')) {
+-   const tail=yaml.slice(yaml.indexOf('name: Observe configured session'));
+-   if(!tail.includes("if: steps.ready.outputs.run == 'true'")||tail.includes("steps.admission.outputs.run"))throw Error('POST_CACHE_ADMISSION_NOT_ENFORCED');
+-   const latest=path.join(dir,'ready-'+(options.id||'101')+'.txt'),gate=await run('watcher-schedule.mjs',{...afterCache,GITHUB_OUTPUT:latest});
+-   if(gate.code!==0||!fs.readFileSync(latest,'utf8').includes('run=true'))return {...gate,skipped:true,skippedAt:'post-cache-admission'};
+-  }
+-  const result=await run('ignition-watch.mjs',afterCache);return {...result,skipped:/watcher admission: (?:OPPOSITE_DST_CRON|TOO_EARLY_FOR_BOUNDED_JOB|CONFIGURED_WINDOW_ENDED)/.test(result.output)};
 - }
 - const expectedLastMinute=fs.readFileSync(path.join(root,'ignition-watch.mjs'),'utf8').includes('m===SEGMENT_END && SEGMENT_END<SESSION.close')?899:900;
 - return {dir,root,state,run,workflow,expectedLastMinute,read:file=>JSON.parse(fs.readFileSync(path.join(dir,file),'utf8')),write:(file,data)=>{const p=path.join(dir,file);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(data));},close:()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});}};

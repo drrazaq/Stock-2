@@ -4,13 +4,13 @@
   "originalEvidence": "47a74865b09fef65cfac0f7ae9585adfdad2a002",
   "deploymentApproved": false,
   "installed": false,
-  "patchSha256": "9d4df8cee43e13cc013b7c402f2d240fa15fa308767f219afa97eba45a57f0cb",
-  "inverseSha256": "9b88c41eec388dcf41952fa50a574c4650e7780804d402c1954d5d0ff91db037",
+  "patchSha256": "781f6644faf97b160451d3b455dfb12efb84679a5adcec9e69a5cafdee431d2e",
+  "inverseSha256": "3f628c2e8a2d3788712aa94250703d83657268b11e3bcc8d8d911a12732c3c86",
   "files": [
     {
       "path": ".github/workflows/ignition.yml",
       "beforeSha256": "b5ebab71b7f6d33ceb4d41e965fe8247db81e610e6016b35272095fa87b43909",
-      "afterSha256": "9eb12738f17f26ef713d41557207a83aad20285bfeef4ceb27995dd19d4381b8"
+      "afterSha256": "d8496c62ae27285e5c3892ef7847ee3abff7f406c3901ffb088fd6e66d830e58"
     },
     {
       "path": "ignition-watch.mjs",
@@ -45,7 +45,7 @@
     {
       "path": "test/watcher-nov2-clock.test.mjs",
       "beforeSha256": null,
-      "afterSha256": "82713e8501953d40facc84b836db80d00eb4d8e4edf8bd06df374c07bac6013b"
+      "afterSha256": "dd7964ceb7c4752fe4534d348866fe7becef2b89e40da37155543a40f18493d1"
     },
     {
       "path": "test/watcher-nov2-guard.test.mjs",
@@ -55,7 +55,7 @@
     {
       "path": "test/watcher-nov2-fixture.mjs",
       "beforeSha256": null,
-      "afterSha256": "e9220d81e6c0984c6e3006f0857174ca27e75b5ac3fa404b4c8ad94659ecd8e9"
+      "afterSha256": "954c2ed54495176092efb2e385fbc317db728af0a697aef04b164f4a350900cb"
     }
   ],
   "unchangedDependencies": [
@@ -188,7 +188,9 @@
     "jobTimeoutMinutes": 360,
     "newSecretBindings": [],
     "permissionChanges": false,
-    "newAutomaticPostStopRecovery": false
+    "newAutomaticPostStopRecovery": false,
+    "postCacheAdmissionRevalidated": true,
+    "postObservationWritesRequireFinalAdmission": true
   },
   "controlPlaneBounds": {
     "requests": 24,

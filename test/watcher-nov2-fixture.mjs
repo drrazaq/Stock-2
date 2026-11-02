@@ -42,7 +42,7 @@ export async function nov2Fixture(root=process.env.NOV2_TREE||defaultRoot) {
   const yaml=fs.readFileSync(path.join(root,'.github/workflows/ignition.yml'),'utf8');
   if(['CURRENT_CRON','OPPOSITE_CRON'].includes(options.schedule)){const pair=[...yaml.matchAll(/cron: '([^']+)'/g)].map(x=>x[1]);const offset=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',timeZoneName:'shortOffset'}).formatToParts(Date.parse(options.start)).find(x=>x.type==='timeZoneName').value;const i=offset==='GMT-4'?0:1;options={...options,schedule:pair[options.schedule==='CURRENT_CRON'?i:1-i]};}
   const output=path.join(dir,'admission-'+(options.id||'101')+'.txt');
-  if(yaml.includes('run: node watcher-schedule.mjs')){copy('watcher-schedule.mjs');const gate=await run('watcher-schedule.mjs',{...options,GITHUB_OUTPUT:output});if(gate.code!==0||!fs.readFileSync(output,'utf8').includes('run=true'))return {...gate,skipped:true};}
+  if(yaml.includes('run: node watcher-schedule.mjs')){copy('watcher-schedule.mjs');const gate=await run('watcher-schedule.mjs',{...options,GITHUB_OUTPUT:output});if(gate.code!==0||!fs.readFileSync(output,'utf8').includes('run=true'))return {...gate,skipped:true,skippedAt:'initial-admission'};}
   if(yaml.includes('name: Ignore opposite DST schedule')) {
    const at=Date.parse(options.start||'2026-11-02T14:10:00Z'),parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',timeZoneName:'shortOffset'}).formatToParts(at),offset=parts.find(x=>x.type==='timeZoneName').value==='GMT-4'?'-0400':'-0500';
    const bin=path.join(dir,'clock-bin');fs.mkdirSync(bin,{recursive:true});fs.writeFileSync(path.join(bin,'date'),'#!/bin/sh\necho '+offset+'\n',{mode:0o755});
@@ -50,7 +50,14 @@ export async function nov2Fixture(root=process.env.NOV2_TREE||defaultRoot) {
    const result=spawnSync('bash',['-c',block.split('\n').map(l=>l.replace(/^          /,'')).join('\n')],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,GITHUB_EVENT_NAME:options.event||'workflow_dispatch',SCHEDULE:options.schedule||'',GITHUB_OUTPUT:output},encoding:'utf8'});
    if(result.status!==0)throw Error(result.stderr);if(!fs.readFileSync(output,'utf8').includes('run=true'))return {code:0,output:result.stdout+'OPPOSITE_DST_CRON',skipped:true};
   }
-  const result=await run('ignition-watch.mjs',{...options,start:new Date(Date.parse(options.start)+cacheMinutes*60000).toISOString()});return {...result,skipped:/watcher admission: (?:OPPOSITE_DST_CRON|TOO_EARLY_FOR_BOUNDED_JOB|CONFIGURED_WINDOW_ENDED)/.test(result.output)};
+  const afterCache={...options,start:new Date(Date.parse(options.start)+cacheMinutes*60000).toISOString()};
+  if(yaml.includes('name: Recheck watcher admission after cache')) {
+   const tail=yaml.slice(yaml.indexOf('name: Observe configured session'));
+   if(!tail.includes("if: steps.ready.outputs.run == 'true'")||tail.includes("steps.admission.outputs.run"))throw Error('POST_CACHE_ADMISSION_NOT_ENFORCED');
+   const latest=path.join(dir,'ready-'+(options.id||'101')+'.txt'),gate=await run('watcher-schedule.mjs',{...afterCache,GITHUB_OUTPUT:latest});
+   if(gate.code!==0||!fs.readFileSync(latest,'utf8').includes('run=true'))return {...gate,skipped:true,skippedAt:'post-cache-admission'};
+  }
+  const result=await run('ignition-watch.mjs',afterCache);return {...result,skipped:/watcher admission: (?:OPPOSITE_DST_CRON|TOO_EARLY_FOR_BOUNDED_JOB|CONFIGURED_WINDOW_ENDED)/.test(result.output)};
  }
  const expectedLastMinute=fs.readFileSync(path.join(root,'ignition-watch.mjs'),'utf8').includes('m===SEGMENT_END && SEGMENT_END<SESSION.close')?899:900;
  return {dir,root,state,run,workflow,expectedLastMinute,read:file=>JSON.parse(fs.readFileSync(path.join(dir,file),'utf8')),write:(file,data)=>{const p=path.join(dir,file);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(data));},close:()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});}};

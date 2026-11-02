@@ -1,0 +1,26 @@
+{
+  "type": "UNMODIFIED_PRODUCTION_TEST_WALL_TIME_BOUND",
+  "originalLoadedFailure": "age1min2s, expected1min0or1s",
+  "syntheticDelayMs": 2200,
+  "controls": [
+    {
+      "tree": "unchanged-production",
+      "exit": 1,
+      "preMarketSourceSha256": "bf263f5877e01824f18e024dc0971d15768974e66f749668ac2de2d05946cc88",
+      "testSha256": "d4c9902dd6478fc6d055a8754f698777d12c10d5b7843786e22b73a8ddd8d218",
+      "logSha256": "78e09d0b5f99d804a6086da49e175196d29a9528fe2a79bc7eea1ca215ae380d"
+    },
+    {
+      "tree": "scheduling-candidate",
+      "exit": 1,
+      "preMarketSourceSha256": "bf263f5877e01824f18e024dc0971d15768974e66f749668ac2de2d05946cc88",
+      "testSha256": "d4c9902dd6478fc6d055a8754f698777d12c10d5b7843786e22b73a8ddd8d218",
+      "logSha256": "6786a70410f573a74476f7fee75f7311d1d23303fc8509011cf773866cd0df07"
+    }
+  ],
+  "cause": "Test snapshots Date.now()-61000 before asynchronous fixture setup/child startup, but allows only60/61seconds at later rendering. Actual age correctly increases with elapsed time. Both source and test hashes match baseline/candidate.",
+  "testOrSourceChanged": false,
+  "assertionsPreserved": true,
+  "firstLoadedRunRetained": true,
+  "productionWatcherPatchIncludesThisPath": false
+}
