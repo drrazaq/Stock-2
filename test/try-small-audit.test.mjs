@@ -26,20 +26,29 @@ const lab = (lastClose, extra = {}) => ({ 'data/value-lab.json': { firstRun: {} 
   'data/squad6-lab.json': { firstRun: { 'SQ6-MTUM': good(126) } },
   'data/squad6-today.json': { generatedAt: now, lastClose, methods: { 'SQ6-MTUM': { name: 'MTUM-style momentum', hold: 126, newSignals: [{ sym: 'TPC', close: 78, d: lastClose }] } } }, ...extra });
 
+// Historical literal closes eventually expire under the real caller's independent NY freshness check.
+// Use known exchange sessions for freshness fixtures; keep historical entry/stop/hold expectations unchanged.
+function sessionFixtureDays() {
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+  const todayNY=parts.year+'-'+parts.month+'-'+parts.day,closes=[];let d=todayNY;
+  for(let i=0;i<60&&closes.length<7;i++){const session=marketSession(d);assert.equal(session.known,true);if(!session.closed)closes.push(d);d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
+  assert.equal(closes.length,7);
+  return {todayNY,closes};
+}
+
 test('1. a new-signal list from an older close than the newest session is not shown as a buy', async () => {
-  const S = await loadScan({ files: lab('2026-10-16') });
-  assert.deepEqual(S.fn('trySmallLines')({}, {}, null, '2026-10-23'), []);
-  const S2 = await loadScan({ files: lab('2026-10-23') });
-  assert.match(S2.fn('trySmallLines')({}, {}, null, '2026-10-23').join('\n'), /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/);
+  const {todayNY,closes}=sessionFixtureDays(),fresh=closes[1];
+  const S = await loadScan({ files: lab(closes[2]) });
+  assert.deepEqual(S.fn('trySmallLines')({}, {}, null, fresh), []);
+  const S2 = await loadScan({ files: lab(fresh) });
+  assert.equal(S2.fn('sessionsAfter')(fresh,todayNY),1);
+  assert.match(S2.fn('trySmallLines')({}, {}, null, fresh).join('\n'), /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/);
 });
 
 test('1b. without a session, a list whose close is more than 5 trading sessions old is not shown', async () => {
   // A UTC ten-day lookback can be only five NY sessions before midnight after a weekend.
   // Pin the intended six-session stale / one-session fresh boundaries on the exchange calendar.
-  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
-  const todayNY=parts.year+'-'+parts.month+'-'+parts.day,closes=[];let d=todayNY;
-  for(let i=0;i<60&&closes.length<7;i++){const session=marketSession(d);assert.equal(session.known,true);if(!session.closed)closes.push(d);d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
-  assert.equal(closes.length,7);
+  const {todayNY,closes}=sessionFixtureDays();
   const S = await loadScan({ files: lab(closes[6]) });
   assert.equal(S.fn('sessionsAfter')(closes[6],todayNY),6);
   assert.deepEqual(S.fn('trySmallLines')({}, {}), []);
@@ -66,13 +75,17 @@ test('2b. ACTIONS prices TRY SMALL from sig.uni too (QLYS was only there on 23 O
 });
 
 test('3. a stock already a BUY elsewhere in the message is not bought again by TRY SMALL', async () => {
-  const S = await loadScan({ files: lab('2026-10-23') });
-  assert.deepEqual(S.fn('trySmallLines')({}, { TPC: 78 }, new Set(['TPC']), '2026-10-23'), []);
+  const fresh=sessionFixtureDays().closes[1],files=lab(fresh);
+  const control=await loadScan({files});
+  assert.match(control.fn('trySmallLines')({}, {TPC:78}, null, fresh).join('\n'), /- BUY TPC/);
+  const S = await loadScan({ files });
+  assert.deepEqual(S.fn('trySmallLines')({}, { TPC: 78 }, new Set(['TPC']), fresh), []);
 });
 
 test('3b. the TRY SMALL ledger row carries the hold and stop that were shown', async () => {
-  const S = await loadScan({ files: lab('2026-10-23') });
-  S.fn('trySmallLines')({}, { TPC: 78 }, null, '2026-10-23');
+  const fresh=sessionFixtureDays().closes[1];
+  const S = await loadScan({ files: lab(fresh) });
+  S.fn('trySmallLines')({}, { TPC: 78 }, null, fresh);
   const row = S.read('data/tier2-ledger.jsonl').trim().split('\n').map(x => JSON.parse(x)).find(r => r.kind === 'try:SQ6-MTUM');
   assert.equal(row.hold, 126); assert.equal(row.stopPct, 0.35); assert.equal(row.sym, 'TPC');
 });

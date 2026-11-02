@@ -43,3 +43,11 @@ The original manifest's scanner pin is older than current development: base/r2 `
 MARKET-03 and CATALYST-03 remain OPEN. These scoped passes do not complete the all-provider normalization or all-source identity/materiality/revision matrices. Acceptance stays **24/40**. Mentor approval is unaffected; deployment still requires its own natural recording boundary and final persistence proof.
 
 Replay: `REVIEW_TREE=/path/to/exact-or-candidate node --test docs/reviews/market03-catalyst03-r2/spy-envelope-review.mjs`.
+
+## Post-review CI fixture correction (separate from r2)
+
+Development evidence head `dabbcb5d` failed the full hosted suite at 05:02 UTC in historical TRY SMALL fixtures **1 and 3b**, while 253 other test files passed. Unchanged development `58be2ace` reproduces **14 PASS/2 FAIL**: after New York midnight, 23 October is six sessions old, so the real caller correctly withholds the entry and creates no ledger row. A clock fixed at **2 November 05:10 UTC** reproduces it. This is distinct from original case 1b's pre-midnight five-session error.
+
+Only `test/try-small-audit.test.mjs` is corrected: freshness fixtures use known exchange-session dates, keep original price/stop/hold/exclusion assertions, and add a positive exclusion control so stale data cannot make that test pass vacuously. The existing six-session rejection/one-session acceptance assertions remain. **16/16 PASS before and after NY midnight**, and **16/16 against unchanged scanner source**. No scanner/strategy/mentor patch changes.
+
+Further actual-path checks: earnings producer → persisted output → reader retains two valid neighbors beside three invalid dates, status PARTIAL_OR_UNKNOWN with three rejections, on both candidates. Matrix tests are **3/3 PASS on exact and staged current candidate**. An initial unstaged candidate reported only a file-count difference (297 vs293): its four added source/tool paths were absent from `git ls-files`; staging exact selected paths fixed the review setup without changing code/assertions. Selected current candidate with the corrected existing fixture and matrix tests: **73/73 PASS**. Residual R2 harness remains **3 PASS/3 FAIL**, so integration is still refused.

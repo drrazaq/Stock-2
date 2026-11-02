@@ -134,5 +134,43 @@
     "accepted": 24,
     "total": 40,
     "newClosures": 0
+  },
+  "postReviewVerification": {
+    "matrixExact": {
+      "pass": 3,
+      "fail": 0
+    },
+    "matrixSelectedStagedCandidate": {
+      "pass": 3,
+      "fail": 0
+    },
+    "unstagedMatrixSetupFailure": "Only summary.files differed:297vs293 because git ls-files excluded four new files; corrected by staging exact candidate paths, no source/assertion change",
+    "actualEarningsProducerToPersistedReader": "PASS exact and selected candidate; two valid neighbors,three invalid date rows,PARTIAL_OR_UNKNOWN,rejectedRows3,one loopback request",
+    "newYorkMidnightCI": {
+      "failedHead": "dabbcb5d9a07e15b8810b0b5349812be4c1a90b8",
+      "job": 125102395641,
+      "cause": "Two historical fixed-close fixtures 1 and3b expired after NYmidnight; independently reproduced on unchanged58be2ace and under fixed clock05:10UTC",
+      "unmodifiedDevelopment": {
+        "pass": 14,
+        "fail": 2
+      },
+      "clockBefore": "2026-11-02T04:50:15.594Z",
+      "clockAfter": "2026-11-02T05:10:00.000Z",
+      "testOnlyCorrection": {
+        "path": "test/try-small-audit.test.mjs",
+        "sha256": "cfd71b94906d0fbe37fda4bcdfa5e9ab542edf53d4f05a0a1a2b91805942dfd7",
+        "passBefore": 16,
+        "passAfter": 16,
+        "passAgainstUnchangedScanner": 16,
+        "originalAssertionsRetained": true,
+        "positiveExclusionControlAdded": true,
+        "strategyChanges": false
+      }
+    },
+    "finalSelectedCandidate": {
+      "pass": 73,
+      "fail": 0,
+      "includesMatrixAndCorrectedFixture": true
+    }
   }
 }
