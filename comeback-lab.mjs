@@ -5,7 +5,7 @@
 // Run: node comeback-lab.mjs   (GitHub Actions: .github/workflows/comeback.yml, weekday evenings after the labs' paper lanes + Sunday)
 import fs from 'node:fs';
 import { readJsonSource, parseSourceTime, strictNumber, latestCompletedSession, adjustmentBasis } from './source-contract.mjs';
-import { withComebackProvenance } from './comeback-provenance.mjs';
+import { withComebackProvenance, spyEnvelope } from './comeback-provenance.mjs';
 import { LABS, verdictFile, paperFile, todayPath, effectiveRuns, scanSets, buildBoard, labFile, todayOut, boardText, preRegister, PAPER_FROM } from './comeback-core.mjs';
 
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, PX = local(env.MASSIVE_BASE) || 'https://api.massive.com';
@@ -28,12 +28,10 @@ if (env.MASSIVE_KEY || local(env.MASSIVE_BASE)) {
   const from = '2026-10-01', res = await readJsonSource(fetch, PX + '/v2/aggs/ticker/SPY/range/1/day/' + from + '/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000&apiKey=' + encodeURIComponent(env.MASSIVE_KEY || ''), { timeoutMs: 60000 });
   spyStatus.transport = res.status; const j = res.body, done = latestCompletedSession(Date.now()), at = new Date().toISOString();
   if (res.status !== 'OK') { spyStatus.response = res.status === 'REFUSED' || res.status === 'RATE_LIMITED' ? res.status : 'UNAVAILABLE'; log('SPY: Massive ' + res.status + (res.httpStatus ? ' (HTTP ' + res.httpStatus + ')' : '') + '; the cached bars are used'); }
-  // Review R2 (Codex, 1 Nov): a 200 answer counts only if it is the official aggregates envelope for SPY: status OK or DELAYED,
-  // ticker SPY, and results an array (Massive omits results when there are none: then resultsCount/queryCount must say 0).
-  else if (!j || typeof j !== 'object' || Array.isArray(j) || !['OK', 'DELAYED'].includes(j.status) || j.ticker !== 'SPY' || j.adjusted === false
-    || (j.results === undefined ? !(j.resultsCount === 0 || j.queryCount === 0) : !Array.isArray(j.results))
-    || (Array.isArray(j.results) && Number.isInteger(j.resultsCount) && j.resultsCount !== j.results.length)) { spyStatus.response = 'MALFORMED'; log('SPY: malformed or non-SPY Massive answer; the cached bars are used'); }
-  else if (!Array.isArray(j.results) || !j.results.length) { spyStatus.response = 'EMPTY'; log('SPY: Massive answered with no bars; the cached bars are used'); }
+  // Review R2 (Codex, 1-2 Nov): a 200 answer counts only if it is a valid SPY aggregates envelope; see spyEnvelope() in
+  // comeback-provenance.mjs. Contradictory, fractional or non-numeric counts are MALFORMED, never EMPTY or OBSERVED.
+  else if ((spyStatus.envelope = spyEnvelope(j)).kind === 'MALFORMED') { spyStatus.response = 'MALFORMED'; log('SPY: malformed or non-SPY Massive answer (' + spyStatus.envelope.reason + '); the cached bars are used'); }
+  else if (spyStatus.envelope.kind === 'EMPTY') { spyStatus.response = 'EMPTY'; log('SPY: Massive answered with no bars (' + spyStatus.envelope.reason + '); the cached bars are used'); }
   else { for (const b of j.results || []) { const t = b && parseSourceTime(b.t, { kind: 'epoch_ms', at: Date.now() }), o = strictNumber(b && b.o, { min: 1e-9 }), c = strictNumber(b && b.c, { min: 1e-9 });
       if (!t || t.status !== 'OK' || o.status !== 'OK' || c.status !== 'OK') { spyStatus.rejectedBars++; continue; }
       const d = t.nyDay; if (!done || d > done) continue;                                         // the session has not closed yet

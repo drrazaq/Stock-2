@@ -19,3 +19,30 @@ export function withComebackProvenance(todayDoc,todays,{nowMs=Date.now(),spyStat
  todayDoc.sourceStatus={LAB_TODAY_FILES:{status:used.length?'OBSERVED':'EMPTY',labs:used.length,withheldLabs:used.filter(x=>x.status!=='OBSERVED').length,detail:labState},...(spyStatus?{SPY_BARS:spyStatus}:{})};
  return todayDoc;
 }
+
+// SPY aggregates envelope (review R2 residual, Codex 2 Nov): one pure classification of a Massive /v2/aggs answer.
+// Each documented field is validated on its own and only justified relationships are enforced:
+//  - status OK or DELAYED, ticker SPY; adjusted, when present, exactly true;
+//  - queryCount and resultsCount, when present, are non-negative safe integers (a present string, fraction, negative, null or NaN
+//    is MALFORMED: never a missing optional field, never zero);
+//  - results, when present, is an array and a present resultsCount equals its length (queryCount is NOT tied to the array:
+//    queried base aggregates and returned aggregates can differ);
+//  - results absent: EMPTY needs positive zero evidence that nothing contradicts: resultsCount 0, or (resultsCount absent)
+//    queryCount 0. A positive returned count without results is MALFORMED.
+// Returns { kind: 'MALFORMED' | 'EMPTY' | 'ROWS', reason }.
+const COUNT=x=>typeof x==='number'&&Number.isSafeInteger(x)&&x>=0;
+export function spyEnvelope(j){
+ if(!j||typeof j!=='object'||Array.isArray(j))return {kind:'MALFORMED',reason:'NOT_AN_OBJECT'};
+ if(!['OK','DELAYED'].includes(j.status))return {kind:'MALFORMED',reason:'STATUS'};
+ if(j.ticker!=='SPY')return {kind:'MALFORMED',reason:'TICKER'};
+ if('adjusted' in j&&j.adjusted!==true)return {kind:'MALFORMED',reason:'ADJUSTED'};
+ for(const f of ['queryCount','resultsCount'])if(f in j&&!COUNT(j[f]))return {kind:'MALFORMED',reason:'INVALID_'+f.toUpperCase()};
+ const hasRC='resultsCount' in j,hasQC='queryCount' in j;
+ if(!('results' in j)||j.results===undefined){
+  if(hasRC)return j.resultsCount===0?{kind:'EMPTY',reason:'RESULTS_COUNT_ZERO'}:{kind:'MALFORMED',reason:'COUNT_WITHOUT_RESULTS'};
+  return hasQC&&j.queryCount===0?{kind:'EMPTY',reason:'QUERY_COUNT_ZERO'}:{kind:'MALFORMED',reason:'NO_RESULTS_NO_ZERO_EVIDENCE'};
+ }
+ if(!Array.isArray(j.results))return {kind:'MALFORMED',reason:'RESULTS_NOT_ARRAY'};
+ if(hasRC&&j.resultsCount!==j.results.length)return {kind:'MALFORMED',reason:'RESULTS_COUNT_MISMATCH'};
+ return j.results.length?{kind:'ROWS',reason:'RESULTS'}:{kind:'EMPTY',reason:'EMPTY_RESULTS_ARRAY'};
+}
